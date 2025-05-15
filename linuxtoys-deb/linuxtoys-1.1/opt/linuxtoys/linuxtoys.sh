@@ -84,17 +84,28 @@ rocm_in () {
 
 }
 
+# install PPA for automatic updates on Ubuntu
+ppa_in () {
+	
+	if whiptail --title "LinuxToys PPA" --yesno "This will not work outside latest Ubuntu. Proceed?" 8 78; then
+        sudo add-apt-repository ppa:psygreg/linuxtoys
+		sudo apt update
+    fi
+    	
+}
+
 # main menu
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "Choose an option" 25 78 16 \
-        "0" "Set up Flathub" \
-        "1" "Set up Gnome Software" \
-        "2" "Apply Shader Booster" \
-        "3" "Install or update FireAlpaca" \
-        "4" "Install or update linux-cachyos Kernel" \
-        "5" "Install ROCm for AMD GPUs" \
-        "6" "Exit" 3>&1 1>&2 2>&3)
+    	"0" "Install LinuxToys PPA (latest Ubuntu only)" \
+        "1" "Set up Flathub" \
+        "2" "Set up Gnome Software" \
+        "3" "Apply Shader Booster" \
+        "4" "Install or update FireAlpaca" \
+        "5" "Install or update linux-cachyos Kernel" \
+        "6" "Install ROCm for AMD GPUs" \
+        "7" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -103,13 +114,14 @@ while :; do
     fi
 
     case $CHOICE in
-    0) flatpak_in ;;
-    1) gsoftware_in ;;
-    2) booster_in ;;
-    3) firealpaca_in ;;
-    4) kernel_in ;;
-    5) rocm_in ;;
-    6 | q) break ;;
+    0) ppa_in ;;
+    1) flatpak_in ;;
+    2) gsoftware_in ;;
+    3) booster_in ;;
+    4) firealpaca_in ;;
+    5) kernel_in ;;
+    6) rocm_in ;;
+    7 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

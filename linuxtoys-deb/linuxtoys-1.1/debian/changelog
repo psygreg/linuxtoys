@@ -1,0 +1,6 @@
+linuxtoys (1.1-1) plucky; urgency=medium
+
+  * Added applications menu icon.
+  * Added PPA installation option.
+
+ -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300
