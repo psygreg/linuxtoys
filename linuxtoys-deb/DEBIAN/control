@@ -1,5 +1,5 @@
 Package: linuxtoys
-Architecture: any
+Architecture: amd64
 Version: 1.0
 Section: utils
 Priority: optional
