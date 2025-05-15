@@ -3,3 +3,7 @@
 *.changes
 *.upload
 *.dsc
+linuxtoys-deb/linuxtoys-1.2/debian/.debhelper
+*.substvars
+debhelper-build-stamp
+linuxtoys-deb/linuxtoys-1.2/debian/linuxtoys
