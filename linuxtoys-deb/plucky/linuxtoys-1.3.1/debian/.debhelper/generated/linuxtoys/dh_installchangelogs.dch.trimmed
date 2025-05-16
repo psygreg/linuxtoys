@@ -1,0 +1,5 @@
+linuxtoys (1.3.1-1) plucky; urgency=medium
+
+  * Bugfix for kernel install script.
+  
+ -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300
