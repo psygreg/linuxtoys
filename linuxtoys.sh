@@ -109,6 +109,16 @@ ppa_in () {
     	
 }
 
+# disable split lock mitigate for extra performance in some games
+split_disable () {
+
+    if whiptail --title "Disable Split Lock Mitigate" --yesno "Mitigating split locks can cause performance losses in games and older applications. This will disable that behaviour, and fix such performance losses. Proceed?" 8 78; then
+        sudo cat > /etc/sysctl.d/99-splitlock.conf <<< 'kernel.split_lock_mitigate=0'
+        whiptail --title "Split Lock Mitigation Disabled" --msgbox "Reboot to apply changes." 8 78
+    fi
+
+}
+
 # main menu
 while :; do
 
@@ -117,11 +127,12 @@ while :; do
         "1" "Set up Flathub" \
         "2" "Set up Gnome Software" \
         "3" "Apply Shader Booster" \
-        "4" "Install Mangohud and GOverlay" \
-        "5" "Install or update FireAlpaca" \
-        "6" "Compile and install/update linux-cachyos Kernel" \
-        "7" "Install ROCm for AMD GPUs" \
-        "8" "Exit" 3>&1 1>&2 2>&3)
+        "4" "Disable Split Lock Mitigate" \
+        "5" "Install Mangohud and GOverlay" \
+        "6" "Install or update FireAlpaca" \
+        "7" "Compile and install/update linux-cachyos Kernel" \
+        "8" "Install ROCm for AMD GPUs" \
+        "9" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -134,11 +145,12 @@ while :; do
     1) flatpak_in ;;
     2) gsoftware_in ;;
     3) booster_in ;;
-    4) mango_in ;;
-    5) firealpaca_in ;;
-    6) kernel_in ;;
-    7) rocm_in ;;
-    8 | q) break ;;
+    4) split_disable ;;
+    5) mango_in ;;
+    6) firealpaca_in ;;
+    7) kernel_in ;;
+    8) rocm_in ;;
+    9 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
