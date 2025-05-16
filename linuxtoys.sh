@@ -79,7 +79,7 @@ kernel_in () {
     if whiptail --title "CachyOS Custom Kernel Installer" --yesno "This will open the menu to set up a custom kernel from linux-cachyos patches. Proceed?" 8 78; then
         # patching
         if [ ! -f “patcher.sh” ]; then
-            wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/cachyos-deb.sh
+            wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
             chmod +x cachyos-deb.sh
         fi
         ./cachyos-deb.sh
