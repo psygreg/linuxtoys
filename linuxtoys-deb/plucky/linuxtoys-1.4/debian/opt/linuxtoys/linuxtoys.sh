@@ -70,6 +70,17 @@ firealpaca_in () {
         ./installer.sh
     fi
 
+}
+
+# download and install DaVinci Resolve as a deb package
+resolve_in () {
+
+    if whiptail --title "DaVinci Resolve Installer" --yesno "This will download, convert to a deb package and install Resolve (either Free or Studio). Proceed?" 8 78; then
+        whiptail --title "DaVinci Resolve Installer" --msgbox "REMINDER: you will need a license key or dongle to use the Studio version, which should be purchased from Blackmagic Design." 8 78
+        wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/autoresolvedeb.sh
+        chmod +x autoresolvedeb.sh
+        ./autoresolvedeb.sh
+    fi
 
 }
 
@@ -130,9 +141,10 @@ while :; do
         "4" "Disable Split Lock Mitigate" \
         "5" "Install Mangohud and GOverlay" \
         "6" "Install or update FireAlpaca" \
-        "7" "Compile and install/update linux-cachyos Kernel" \
-        "8" "Install ROCm for AMD GPUs" \
-        "9" "Exit" 3>&1 1>&2 2>&3)
+        "7" "Install or update DaVinci Resolve" \
+        "8" "Compile and install/update linux-cachyos Kernel" \
+        "9" "Install ROCm for AMD GPUs" \
+        "10" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -148,9 +160,10 @@ while :; do
     4) split_disable ;;
     5) mango_in ;;
     6) firealpaca_in ;;
-    7) kernel_in ;;
-    8) rocm_in ;;
-    9 | q) break ;;
+    7) resolve_in ;;
+    8) kernel_in ;;
+    9) rocm_in ;;
+    10 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
