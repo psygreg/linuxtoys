@@ -43,6 +43,21 @@ booster_in () {
 
 }
 
+# install mangohud and goverlay for game monitoring
+mango_in () {
+
+    if whiptail --title "Installing Mangohud and GOverlay" --yesno "This allows you to monitor game performance, similarly to RivaTuner on Windows. Proceed?" 8 78; then
+        # installing
+        sudo apt install mangohud goverlay
+        if command -v flatpak &> /dev/null; then
+            flatpak install --or-update org.freedesktop.Platform.VulkanLayer.MangoHud
+        fi
+        whiptail --title "Mangohud and GOverlay installed" --msgbox "Configure your in-game overlay using GOverlay." 8 78
+    fi
+
+}
+
+
 # download and properly install FireAlpaca as a .deb package
 firealpaca_in () {
 
@@ -102,10 +117,11 @@ while :; do
         "1" "Set up Flathub" \
         "2" "Set up Gnome Software" \
         "3" "Apply Shader Booster" \
-        "4" "Install or update FireAlpaca" \
-        "5" "Install or update linux-cachyos Kernel" \
-        "6" "Install ROCm for AMD GPUs" \
-        "7" "Exit" 3>&1 1>&2 2>&3)
+        "4" "Install Mangohud and GOverlay" \
+        "5" "Install or update FireAlpaca" \
+        "6" "Compile and install/update linux-cachyos Kernel" \
+        "7" "Install ROCm for AMD GPUs" \
+        "8" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -118,10 +134,11 @@ while :; do
     1) flatpak_in ;;
     2) gsoftware_in ;;
     3) booster_in ;;
-    4) firealpaca_in ;;
-    5) kernel_in ;;
-    6) rocm_in ;;
-    7 | q) break ;;
+    4) mango_in ;;
+    5) firealpaca_in ;;
+    6) kernel_in ;;
+    7) rocm_in ;;
+    8 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

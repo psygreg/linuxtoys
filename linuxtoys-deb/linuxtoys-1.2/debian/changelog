@@ -1,5 +1,0 @@
-linuxtoys (1.2-1) plucky; urgency=medium
-
-  * Fixed various problems causing the package not to install properly.
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300
