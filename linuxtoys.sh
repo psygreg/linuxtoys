@@ -122,7 +122,7 @@ ppa_in () {
 split_disable () {
 
     if whiptail --title "Disable Split Lock Mitigate" --yesno "Mitigating split locks can cause performance losses in games and older applications. This will disable that behaviour, and fix such performance losses. Proceed?" 8 78; then
-        sudo cat > /etc/sysctl.d/99-splitlock.conf <<< 'kernel.split_lock_mitigate=0'
+        echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
         whiptail --title "Split Lock Mitigation Disabled" --msgbox "Reboot to apply changes." 8 78
     fi
 
@@ -131,7 +131,7 @@ split_disable () {
 # main menu
 while :; do
 
-    CHOICE=$(whiptail --title "LinuxToys" --menu "Choose an option" 25 78 16 \
+    CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys v1.4.3" 25 78 16 \
     	"0" "Install LinuxToys PPA (latest Ubuntu only)" \
         "1" "Set up Flathub" \
         "2" "Set up Gnome Software" \
