@@ -1,5 +1,0 @@
-linuxtoys (1.4.1-1) plucky; urgency=medium
-
-  * Fixed bug causing Resolve installer to fail.
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300

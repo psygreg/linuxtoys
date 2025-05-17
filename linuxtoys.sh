@@ -34,11 +34,10 @@ booster_in () {
 
     if whiptail --title "Shader Booster" --yesno "This will patch your shader cache size, fixing stutters in many games. Proceed?" 8 78; then
         # patching
-        if [ ! -f “patcher.sh” ]; then
-            wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
-            chmod +x patcher.sh
-        fi
+        wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
+        chmod +x patcher.sh
         ./patcher.sh
+        rm patcher.sh
     fi
 
 }
@@ -63,11 +62,10 @@ firealpaca_in () {
 
     if whiptail --title "FireAlpaca Installer" --yesno "This will install FireAlpaca from a deb package created from the original AppImage. Proceed?" 8 78; then
         # patching
-        if [ ! -f “installer.sh” ]; then
-            wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
-            chmod +x installer.sh
-        fi
+        wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
+        chmod +x installer.sh
         ./installer.sh
+        rm installer.sh
     fi
 
 }
@@ -80,6 +78,7 @@ resolve_in () {
         wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
         chmod +x autoresolvedeb.sh
         ./autoresolvedeb.sh
+        rm autoresolvedeb.sh
     fi
 
 }
@@ -89,11 +88,10 @@ kernel_in () {
 
     if whiptail --title "CachyOS Custom Kernel Installer" --yesno "This will open the menu to set up a custom kernel from linux-cachyos patches. Proceed?" 8 78; then
         # patching
-        if [ ! -f “patcher.sh” ]; then
-            wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
-            chmod +x cachyos-deb.sh
-        fi
+        wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
+        chmod +x cachyos-deb.sh
         ./cachyos-deb.sh
+        rm cachyos-deb.sh
     fi
 
 }
