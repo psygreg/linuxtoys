@@ -7,11 +7,14 @@ flatpak_in () {
     # ask confirmation before proceeding
     if whiptail --title "Enabling Flatpaks" --yesno "This will enable Flatpaks and add the Flathub source to your system. Proceed?" 8 78; then
         # installation
-        sudo apt install flatpak
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-        # notify that a reboot is required to enable flatpaks
-        whiptail --title "Flatpaks Enabled" --msgbox "Reboot to add it to PATH and show apps in the menu." 8 78
+        if dpkg -s "flatpak" 2>/dev/null 1>&2; then
+            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+            # notify that a reboot is required to enable flatpaks
+            whiptail --title "Flatpaks Enabled" --msgbox "Reboot to add it to PATH and show apps in the menu." 8 78
+        else
+            whiptail --title "Flatpaks Enabled" --msgbox "Flatpaks already enabled in your system." 8 78
+        fi
     fi
 
 }
@@ -22,7 +25,21 @@ gsoftware_in () {
     # ask confirmation before proceeding
     if whiptail --title "Installing Gnome Software" --yesno "This will install the Software app (and necessary plugins) as apt and flatpak front-end. Proceed?" 8 78; then
         # installation
-        sudo apt install gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
+        local packages=(gnome-software gnome-software-plugin-flatpak)
+        for pac in "${packages[@]}"; do
+            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo apt install -y "$dep"
+            fi
+        done
+        if command -v snap &> /dev/null; then
+            if dpkg -s "gnome-software-plugin-snap" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo apt install -y gnome-software-plugin-snap
+            fi
+        fi
         # confirm completion
         whiptail --title "Gnome Software Installed" --msgbox "Installation successful." 8 78
     fi
@@ -47,7 +64,14 @@ mango_in () {
 
     if whiptail --title "Installing Mangohud and GOverlay" --yesno "This allows you to monitor game performance, similarly to RivaTuner on Windows. Proceed?" 8 78; then
         # installing
-        sudo apt install mangohud goverlay
+        local packages=(mangohud goverlay)
+        for pac in "${packages[@]}"; do
+            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo apt install -y "$pac"
+            fi
+        done
         if command -v flatpak &> /dev/null; then
             flatpak install --or-update org.freedesktop.Platform.VulkanLayer.MangoHud
         fi
@@ -55,7 +79,6 @@ mango_in () {
     fi
 
 }
-
 
 # download and properly install FireAlpaca as a .deb package
 firealpaca_in () {
@@ -101,9 +124,16 @@ rocm_in () {
 
     whiptail --title "ROCm Installer" --msgbox "This will install ROCm in your system, and is ONLY meant for AMD graphics cards, RDNA 2 or newer." 8 78
     if whiptail --title "ROCm Installer" --yesno "This may not work outside Ubuntu and its flavours. Proceed?" 8 78; then
-        sudo apt install libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo 
+        local packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
+        for pac in "${packages[@]}"; do
+            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo apt install -y "$pac"
+            fi
+        done
         sudo usermod -aG render,video $USER
-        whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes."
+        whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes." 8 78
     fi
 
 }
@@ -122,9 +152,12 @@ ppa_in () {
 split_disable () {
 
     if whiptail --title "Disable Split Lock Mitigate" --yesno "Mitigating split locks can cause performance losses in games and older applications. This will disable that behaviour, and fix such performance losses. Proceed?" 8 78; then
-        echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-        whiptail --title "Split Lock Mitigation Disabled" --msgbox "Reboot to apply changes." 8 78
-        cd
+        if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
+            echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
+            whiptail --title "Split Lock Mitigation Disabled" --msgbox "Reboot to apply changes." 8 78
+        else
+            whiptail --title "Split Lock Mitigation Disabled" --msgbox "Your system has already disabled Split Lock Mitigation." 8 78
+        fi
     fi
 
 }
@@ -132,7 +165,7 @@ split_disable () {
 # main menu
 while :; do
 
-    CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys v1.4.3" 25 78 16 \
+    CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys v1.5" 25 78 16 \
     	"0" "Install LinuxToys PPA (latest Ubuntu only)" \
         "1" "Set up Flathub" \
         "2" "Set up Gnome Software" \

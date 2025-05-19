@@ -1,5 +1,0 @@
-linuxtoys (1.4.3-1) plucky; urgency=medium
-
-  * Bugfix: disable split lock mitigate now working.
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300
