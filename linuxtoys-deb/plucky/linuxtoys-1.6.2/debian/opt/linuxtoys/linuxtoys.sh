@@ -10,7 +10,7 @@ ver_upd () {
         if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
-            nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78" >/dev/null 2>&1 && disown
+            nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.deb" >/dev/null 2>&1 && disown
             exit 0
         fi
     else
@@ -41,13 +41,14 @@ ufw_in () {
 
 }
 
-# enable flatpaks
+# enable flatpaks (for Ubuntu and flavours)
 flatpak_in () {
 
     # ask confirmation before proceeding
     if whiptail --title "Enabling Flatpaks" --yesno "This will enable Flatpaks and add the Flathub source to your system. Proceed?" 8 78; then
         # installation
         if dpkg -s "flatpak" 2>/dev/null 1>&2; then
+            sudo apt install -y flatpak
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
             # notify that a reboot is required to enable flatpaks
@@ -120,7 +121,6 @@ mango_in () {
 
 }
 
-
 # download and properly install FireAlpaca as a .deb package
 firealpaca_in () {
 
@@ -174,7 +174,7 @@ rocm_in () {
             fi
         done
         sudo usermod -aG render,video $USER
-        whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes."
+        whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes." 8 78
     fi
 
 }
@@ -244,4 +244,3 @@ while :; do
     *) echo "Invalid Option" ;;
     esac
 done
-

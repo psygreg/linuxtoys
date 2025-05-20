@@ -1,7 +1,0 @@
-linuxtoys (1.6.1-1) plucky; urgency=medium
-
-  * Bugfix: Gnome Software installer now works as intended
-  * Added Firewall Setup and Updater features.
-  * Bugfix: now LinuxToys works as intended.
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300
