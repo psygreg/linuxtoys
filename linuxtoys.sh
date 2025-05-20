@@ -1,6 +1,46 @@
 #!/bin/bash
 # functions
 
+# updater
+ver_upd () {
+
+    current_ltver="1.6.1"
+    local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
+    if [[ "$ver" != "$current_ltver" ]]; then
+        if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
+            cd $HOME
+            wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
+            nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78" >/dev/null 2>&1 && disown
+            exit 0
+        fi
+    else
+        whiptail --title "LinuxToys is up to date" --msgbox "You are running the latest LinuxToys version." 8 78
+    fi
+
+}
+
+# set up firewall (ufw)
+ufw_in () {
+
+    if whiptail --title "Firewall Setup" --yesno "This will install and enable a basic firewall setup for your safety. Proceed?" 8 78; then
+        local packages=(ufw gufw)
+        for pac in "${packages[@]}"; do
+            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo apt install -y "$pac"
+            fi
+        done
+        if command -v ufw &> /dev/null; then
+            sudo ufw default deny incoming
+            sudo ufw default allow outgoing
+            sudo ufw enable
+        fi
+        whiptail --title "Firewall Setup" --msgbox "Setup completed. You can change settings with the Firewall Settings app." 8 78
+    fi
+
+}
+
 # enable flatpaks
 flatpak_in () {
 
@@ -30,12 +70,12 @@ gsoftware_in () {
             if dpkg -s "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$dep"
+                sudo apt install -y "$pac"
             fi
         done
         if command -v snap &> /dev/null; then
             if dpkg -s "gnome-software-plugin-snap" 2>/dev/null 1>&2; then
-                continue
+                return
             else
                 sudo apt install -y gnome-software-plugin-snap
             fi
@@ -166,18 +206,20 @@ split_disable () {
 # main menu
 while :; do
 
-    CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys v1.5" 25 78 16 \
-    	"0" "Install LinuxToys PPA (latest Ubuntu only)" \
-        "1" "Set up Flathub" \
-        "2" "Set up Gnome Software" \
-        "3" "Apply Shader Booster" \
-        "4" "Disable Split Lock Mitigate" \
-        "5" "Install Mangohud and GOverlay" \
-        "6" "Install or update FireAlpaca" \
-        "7" "Install or update DaVinci Resolve" \
-        "8" "Compile and install/update linux-cachyos Kernel" \
-        "9" "Install ROCm for AMD GPUs" \
-        "10" "Exit" 3>&1 1>&2 2>&3)
+    CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
+    	"0" "Update LinuxToys" \
+        "1" "Install LinuxToys PPA (latest Ubuntu only)" \
+        "2" "Set up a basic Firewall" \
+        "3" "Set up Flathub" \
+        "4" "Set up Gnome Software" \
+        "5" "Apply Shader Booster" \
+        "6" "Disable Split Lock Mitigate" \
+        "7" "Install Mangohud and GOverlay" \
+        "8" "Install or update FireAlpaca" \
+        "9" "Install or update DaVinci Resolve" \
+        "10" "Compile and install/update linux-cachyos Kernel" \
+        "11" "Install ROCm for AMD GPUs" \
+        "12" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -186,17 +228,19 @@ while :; do
     fi
 
     case $CHOICE in
-    0) ppa_in ;;
-    1) flatpak_in ;;
-    2) gsoftware_in ;;
-    3) booster_in ;;
-    4) split_disable ;;
-    5) mango_in ;;
-    6) firealpaca_in ;;
-    7) resolve_in ;;
-    8) kernel_in ;;
-    9) rocm_in ;;
-    10 | q) break ;;
+    0) ver_upd ;;
+    1) ppa_in ;;
+    2) ufw_in ;;
+    3) flatpak_in ;;
+    4) gsoftware_in ;;
+    5) booster_in ;;
+    6) split_disable ;;
+    7) mango_in ;;
+    8) firealpaca_in ;;
+    9) resolve_in ;;
+    10) kernel_in ;;
+    11) rocm_in ;;
+    12 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
