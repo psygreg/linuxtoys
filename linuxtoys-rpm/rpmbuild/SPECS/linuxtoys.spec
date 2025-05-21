@@ -7,7 +7,7 @@ BuildArch:      amd64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.gz
 
-Requires:       bash whiptail curl wget
+Requires:       bash newt curl wget
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.

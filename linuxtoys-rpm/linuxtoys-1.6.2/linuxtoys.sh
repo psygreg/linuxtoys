@@ -105,7 +105,12 @@ rocm_in () {
 
     whiptail --title "ROCm Installer" --msgbox "This will install ROCm in your system, and is ONLY meant for AMD graphics cards, GCN2 or newer." 8 78
     if whiptail --title "ROCm Installer" --yesno "This may not work outside Fedora and its spins. Proceed?" 8 78; then
-        local packages=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
+        local packages=()
+        if [ "$ID_LIKE" == "suse" ]; then
+            packages=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
+        else
+            packages=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
+        fi
         for pac in "${packages[@]}"; do
             if rpm -qi "$pac" 2>/dev/null 1>&2; then
                 continue
