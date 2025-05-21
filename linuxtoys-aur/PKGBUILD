@@ -2,7 +2,7 @@ pkgname='linuxtoys'
 pkgver='1.6.2'
 pkgrel=1
 arch=('x86_64')
-depends=(bash curl wget newt base-devel)
+depends=(bash curl wget libnewt base-devel)
 makedepends=()
 conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
