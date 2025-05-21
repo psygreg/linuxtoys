@@ -1,13 +1,14 @@
 Name:           linuxtoys
 Version:        1.6.2
-Release:        1%{?dist}
+Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
 
 License:        GPL3
-Source0:        linuxtoys-%{version}.tar.gz
+Source0:        linuxtoys-%{version}.tar.xz
 
 Requires:       bash newt curl wget
+BuildRequires:  desktop-file-utils
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
@@ -16,19 +17,21 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %setup -q
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/%{_bindir}
-cp linuxtoys.sh $RPM_BUILD_ROOT/%{_bindir}
-cp linuxtoys.png $RPM_BUILD_ROOT/%{_bindir}
-cp LinuxToys.desktop $RPM_BUILD_ROOT/usr/share/applications
+mkdir -p %{buildroot}/usr/bin
+install -m 755 linuxtoys.sh %{buildroot}/usr/bin/
+mkdir -p %{buildroot}/usr/share/applications
+desktop-file-install --dir=%{buildroot}/usr/share/applications LinuxToys.desktop
+mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
+install -m 644 linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%{_bindir}/linuxtoys.sh
-%{_bindir}/linuxtoys.png
+%defattr(-, root, root, -)
+/usr/bin/linuxtoys.sh
 /usr/share/applications/LinuxToys.desktop
+/usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
 * Tue May  20 2025 Victor Gregory <psygreg@pm.me> - 1.6.2
