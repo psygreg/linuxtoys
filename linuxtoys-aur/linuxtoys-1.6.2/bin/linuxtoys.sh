@@ -147,8 +147,8 @@ kernel_in () {
 
     if whiptail --title "CachyOS Custom Kernel Installer" --yesno "This requires having installed the Chaotic-AUR repository first. Proceed?" 8 78; then
         # patching
-        sudo pacman -S linux-cachyos
-        whiptail --title "CachyOS Custom Kernel Installer" --msgbox "Installation complete. Reboot for changes to take effect." 8 78; then
+        sudo pacman -S --noconfirm linux-cachyos
+        whiptail --title "CachyOS Custom Kernel Installer" --msgbox "Installation complete. Reboot for changes to take effect." 8 78
     fi
 
 }
