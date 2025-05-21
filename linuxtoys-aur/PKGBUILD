@@ -1,0 +1,18 @@
+pkgname='linuxtoys'
+pkgver='1.6.2'
+pkgrel=1
+arch=('x86_64')
+depends=(bash curl wget newt base-devel)
+makedepends=()
+conflicts=(linuxtoys)
+provides=("linuxtoys=$pkgver")
+source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
+sha256sums=('your_script_sha256_checksum')
+
+package() {
+
+    mkdir -p ${pkgdir}/usr
+
+    cp -rf ${srcdir}/linuxtoys-${pkgver}/{bin,share} ${pkgdir}/usr
+
+}

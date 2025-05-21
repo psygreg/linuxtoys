@@ -2,7 +2,7 @@ Name:           linuxtoys
 Version:        1.6.2
 Release:        1%{?dist}
 Summary:        A set of tools for Linux presented in a user-friendly way
-BuildArch:      amd64
+BuildArch:      x86_64
 
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.gz
