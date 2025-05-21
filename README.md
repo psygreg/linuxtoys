@@ -20,4 +20,4 @@ Requires `rpmbuild`.
 
 - Clone the repo.
 - Open terminal on the `rpmbuild` subdirectory.
-- `rpmbuild -bb /SPECS/linuxtoys.spec`
+- `rpmbuild -bb SPECS/linuxtoys.spec`
