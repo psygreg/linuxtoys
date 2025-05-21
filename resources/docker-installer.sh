@@ -40,8 +40,6 @@ dep_check () {
 
 }
 
-}
-
 # install docker and portainer CE
 docker_in () {
 
