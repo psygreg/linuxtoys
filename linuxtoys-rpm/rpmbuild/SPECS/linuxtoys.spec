@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.6.2
+Version:        1.7.0
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -34,5 +34,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Tue May  20 2025 Victor Gregory <psygreg@pm.me> - 1.6.2
-- First version ported to .rpm package
+* Wed May  21 2025 Victor Gregory <psygreg@pm.me> - 1.7.0
+- Added docker installer
+- Added grub-btrfs setup
+- Fixed app icon

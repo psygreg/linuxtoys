@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.6.2"
+current_ltver="1.7.0"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -121,6 +121,17 @@ mango_in () {
 
 }
 
+# set up grub-btrfs for snapshots on boot menu
+grubtrfs_t () {
+
+    cd $HOME
+    curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+    chmod +x grub-btrfs-installer.sh
+    ./grub-btrfs-installer.sh
+    rm grub-btrfs-installer.sh
+
+}
+
 # download and properly install FireAlpaca as a .deb package
 firealpaca_in () {
 
@@ -179,6 +190,17 @@ rocm_in () {
 
 }
 
+# install docker and deploy Portainer web interface
+docker_t () {
+
+    cd $HOME
+    curl -O docker-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    chmod +x docker-installer.sh
+    ./docker-installer.sh
+    rm docker-installer.sh
+
+}
+
 # install PPA for automatic updates on Ubuntu
 ppa_in () {
 	
@@ -217,9 +239,11 @@ while :; do
         "7" "Install Mangohud and GOverlay" \
         "8" "Install or update FireAlpaca" \
         "9" "Install or update DaVinci Resolve" \
-        "10" "Compile and install/update linux-cachyos Kernel" \
-        "11" "Install ROCm for AMD GPUs" \
-        "12" "Exit" 3>&1 1>&2 2>&3)
+        "10" "Set up GRUB-Btrfs" \
+        "11" "Set up Docker + Portainer CE" \
+        "12" "Compile and install/update linux-cachyos Kernel" \
+        "13" "Install ROCm for AMD GPUs" \
+        "14" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -238,9 +262,11 @@ while :; do
     7) mango_in ;;
     8) firealpaca_in ;;
     9) resolve_in ;;
-    10) kernel_in ;;
-    11) rocm_in ;;
-    12 | q) break ;;
+    10) grubtrfs_t ;;
+    11) docker_t ;;
+    12) kernel_in ;;
+    13) rocm_in ;;
+    14 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

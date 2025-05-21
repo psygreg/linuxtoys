@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.6.2"
+current_ltver="1.7.0"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -129,6 +129,17 @@ mango_in () {
 
 }
 
+# set up grub-btrfs for snapshots on boot menu
+grubtrfs_t () {
+
+    cd $HOME
+    curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+    chmod +x grub-btrfs-installer.sh
+    ./grub-btrfs-installer.sh
+    rm grub-btrfs-installer.sh
+
+}
+
 # pull and install Resolve with my PKGBUILD
 resolve_in () {
 
@@ -139,6 +150,17 @@ resolve_in () {
         ./autoresolvepkg.sh
         rm autoresolvepkg.sh
     fi
+
+}
+
+# install docker and deploy Portainer web interface
+docker_t () {
+
+    cd $HOME
+    curl -O docker-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    chmod +x docker-installer.sh
+    ./docker-installer.sh
+    rm docker-installer.sh
 
 }
 
@@ -199,9 +221,11 @@ while :; do
         "6" "Install Mangohud and GOverlay" \
         "7" "Add Chaotic-AUR repository" \
         "8" "Install or update DaVinci Resolve" \
-        "9" "Install linux-cachyos Kernel" \
-        "10" "Install ROCm for AMD GPUs" \
-        "11" "Exit" 3>&1 1>&2 2>&3)
+        "9" "Set up GRUB-Btrfs" \
+        "10" "Set up Docker + Portainer CE" \
+        "11" "Install linux-cachyos Kernel" \
+        "12" "Install ROCm for AMD GPUs" \
+        "13" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -219,9 +243,11 @@ while :; do
     6) mango_in ;;
     7) chaotic_in ;;
     8) resolve_in ;;
-    9) kernel_in ;;
-    10) rocm_in ;;
-    11 | q) break ;;
+    9) grubtrfs_t ;;
+    10) docker_t ;;
+    11) kernel_in ;;
+    12) rocm_in ;;
+    13 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.6.2"
+current_ltver="1.7.0"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -87,6 +87,17 @@ mango_in () {
 
 }
 
+# set up grub-btrfs for snapshots on boot menu
+grubtrfs_t () {
+
+    cd $HOME
+    curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+    chmod +x grub-btrfs-installer.sh
+    ./grub-btrfs-installer.sh
+    rm grub-btrfs-installer.sh
+
+}
+
 # download and install DaVinci Resolve on Fedora-based distros and openSUSE (TODO autoresolverpm)
 resolve_in () {
 
@@ -97,6 +108,17 @@ resolve_in () {
         ./autoresolverpm.sh
         rm autoresolverpm.sh
     fi
+
+}
+
+# install docker and deploy Portainer web interface
+docker_t () {
+
+    cd $HOME
+    curl -O docker-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    chmod +x docker-installer.sh
+    ./docker-installer.sh
+    rm docker-installer.sh
 
 }
 
@@ -220,10 +242,12 @@ while :; do
         "3" "Disable Split Lock Mitigate" \
         "4" "Install Mangohud and GOverlay" \
         "5" "Install or update DaVinci Resolve" \
-        "6" "Instal linux-cachyos Kernel" \
-        "7" "Install ROCm for AMD GPUs" \
-        "8" "Fix SELinux policies for WINE/Proton" \
-        "9" "Exit" 3>&1 1>&2 2>&3)
+        "6" "Set up GRUB-Btrfs" \
+        "7" "Set up Docker + Portainer" \
+        "8" "Instal linux-cachyos Kernel" \
+        "9" "Install ROCm for AMD GPUs" \
+        "10" "Fix SELinux policies for WINE/Proton" \
+        "11" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -238,10 +262,12 @@ while :; do
     3) split_disable ;;
     4) mango_in ;;
     5) resolve_in ;;
-    6) kernel_in ;;
-    7) rocm_in ;;
-    8) fix_se_suse ;;
-    9 | q) break ;;
+    6) grubtrfs_t ;;
+    7) docker_t ;;
+    8) kernel_in ;;
+    9) rocm_in ;;
+    10) fix_se_suse ;;
+    11 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

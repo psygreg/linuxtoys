@@ -1,7 +1,0 @@
-linuxtoys (1.6.2-1) plucky; urgency=medium
-
-  * Bugfix: Flatpak installer now works as intended
-  * Bugfix: Current LinuxToys version now displayed at main menu as intended
-  * New icon
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 15 May 2025 11:00:47 -0300
