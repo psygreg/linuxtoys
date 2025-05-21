@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.0"
+current_ltver="1.7.1"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -17,8 +17,6 @@ ver_upd () {
             fi
             exit 0
         fi
-    else
-        whiptail --title "LinuxToys is up to date" --msgbox "You are running the latest LinuxToys version." 8 78
     fi
 
 }
@@ -90,11 +88,15 @@ mango_in () {
 # set up grub-btrfs for snapshots on boot menu
 grubtrfs_t () {
 
-    cd $HOME
-    curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
-    chmod +x grub-btrfs-installer.sh
-    ./grub-btrfs-installer.sh
-    rm grub-btrfs-installer.sh
+    if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+        cd $HOME
+        curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+        chmod +x grub-btrfs-installer.sh
+        ./grub-btrfs-installer.sh
+        rm grub-btrfs-installer.sh
+    else
+        whiptail --title "Not a BTRFS filesystem" --msgbox "Your root filesystem is not BTRFS." 8 78
+    fi
 
 }
 
@@ -233,21 +235,21 @@ kernel_in () {
 
 # main menu
 . /etc/os-release
+ver_upd
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
-    	"0" "Update LinuxToys" \
-        "1" "Set up a basic Firewall" \
-        "2" "Apply Shader Booster" \
-        "3" "Disable Split Lock Mitigate" \
-        "4" "Install Mangohud and GOverlay" \
-        "5" "Install or update DaVinci Resolve" \
-        "6" "Set up GRUB-Btrfs" \
-        "7" "Set up Docker + Portainer" \
-        "8" "Instal linux-cachyos Kernel" \
-        "9" "Install ROCm for AMD GPUs" \
-        "10" "Fix SELinux policies for WINE/Proton" \
-        "11" "Exit" 3>&1 1>&2 2>&3)
+        "0" "Set up a basic Firewall" \
+        "1" "Apply Shader Booster" \
+        "2" "Disable Split Lock Mitigate" \
+        "3" "Install Mangohud and GOverlay" \
+        "4" "Install or update DaVinci Resolve" \
+        "5" "Set up GRUB-Btrfs" \
+        "6" "Set up Docker + Portainer" \
+        "7" "Instal linux-cachyos Kernel" \
+        "8" "Install ROCm for AMD GPUs" \
+        "9" "Fix SELinux policies for WINE/Proton" \
+        "10" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -256,18 +258,17 @@ while :; do
     fi
 
     case $CHOICE in
-    0) ver_upd ;;
-    1) ufw_in ;;
-    2) booster_in ;;
-    3) split_disable ;;
-    4) mango_in ;;
-    5) resolve_in ;;
-    6) grubtrfs_t ;;
-    7) docker_t ;;
-    8) kernel_in ;;
-    9) rocm_in ;;
-    10) fix_se_suse ;;
-    11 | q) break ;;
+    0) ufw_in ;;
+    1) booster_in ;;
+    2) split_disable ;;
+    3) mango_in ;;
+    4) resolve_in ;;
+    5) grubtrfs_t ;;
+    6) docker_t ;;
+    7) kernel_in ;;
+    8) rocm_in ;;
+    9) fix_se_suse ;;
+    10 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

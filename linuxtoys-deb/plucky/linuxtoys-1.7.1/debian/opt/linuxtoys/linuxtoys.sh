@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.0"
+current_ltver="1.7.1"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -13,8 +13,6 @@ ver_upd () {
             nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.deb" >/dev/null 2>&1 && disown
             exit 0
         fi
-    else
-        whiptail --title "LinuxToys is up to date" --msgbox "You are running the latest LinuxToys version." 8 78
     fi
 
 }
@@ -124,11 +122,15 @@ mango_in () {
 # set up grub-btrfs for snapshots on boot menu
 grubtrfs_t () {
 
-    cd $HOME
-    curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
-    chmod +x grub-btrfs-installer.sh
-    ./grub-btrfs-installer.sh
-    rm grub-btrfs-installer.sh
+    if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+        cd $HOME
+        curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+        chmod +x grub-btrfs-installer.sh
+        ./grub-btrfs-installer.sh
+        rm grub-btrfs-installer.sh
+    else
+        whiptail --title "Not a BTRFS filesystem" --msgbox "Your root filesystem is not BTRFS." 8 78
+    fi
 
 }
 
@@ -226,24 +228,25 @@ split_disable () {
 }
 
 # main menu
+. /etc/os-release
+ver_upd
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
-    	"0" "Update LinuxToys" \
-        "1" "Install LinuxToys PPA (latest Ubuntu only)" \
-        "2" "Set up a basic Firewall" \
-        "3" "Set up Flathub" \
-        "4" "Set up Gnome Software" \
-        "5" "Apply Shader Booster" \
-        "6" "Disable Split Lock Mitigate" \
-        "7" "Install Mangohud and GOverlay" \
-        "8" "Install or update FireAlpaca" \
-        "9" "Install or update DaVinci Resolve" \
-        "10" "Set up GRUB-Btrfs" \
-        "11" "Set up Docker + Portainer CE" \
-        "12" "Compile and install/update linux-cachyos Kernel" \
-        "13" "Install ROCm for AMD GPUs" \
-        "14" "Exit" 3>&1 1>&2 2>&3)
+        "0" "Install LinuxToys PPA (latest Ubuntu only)" \
+        "1" "Set up a basic Firewall" \
+        "2" "Set up Flathub" \
+        "3" "Set up Gnome Software" \
+        "4" "Apply Shader Booster" \
+        "5" "Disable Split Lock Mitigate" \
+        "6" "Install Mangohud and GOverlay" \
+        "7" "Install or update FireAlpaca" \
+        "8" "Install or update DaVinci Resolve" \
+        "9" "Set up GRUB-Btrfs" \
+        "10" "Set up Docker + Portainer CE" \
+        "11" "Compile and install/update linux-cachyos Kernel" \
+        "12" "Install ROCm for AMD GPUs" \
+        "13" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -252,21 +255,20 @@ while :; do
     fi
 
     case $CHOICE in
-    0) ver_upd ;;
-    1) ppa_in ;;
-    2) ufw_in ;;
-    3) flatpak_in ;;
-    4) gsoftware_in ;;
-    5) booster_in ;;
-    6) split_disable ;;
-    7) mango_in ;;
-    8) firealpaca_in ;;
-    9) resolve_in ;;
-    10) grubtrfs_t ;;
-    11) docker_t ;;
-    12) kernel_in ;;
-    13) rocm_in ;;
-    14 | q) break ;;
+    0) ppa_in ;;
+    1) ufw_in ;;
+    2) flatpak_in ;;
+    3) gsoftware_in ;;
+    4) booster_in ;;
+    5) split_disable ;;
+    6) mango_in ;;
+    7) firealpaca_in ;;
+    8) resolve_in ;;
+    9) grubtrfs_t ;;
+    10) docker_t ;;
+    11) kernel_in ;;
+    12) rocm_in ;;
+    13 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

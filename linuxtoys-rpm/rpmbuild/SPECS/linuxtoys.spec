@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.0
+Version:        1.7.1
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -34,7 +34,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  21 2025 Victor Gregory <psygreg@pm.me> - 1.7.0
-- Added docker installer
-- Added grub-btrfs setup
-- Fixed app icon
+* Wed May  21 2025 Victor Gregory <psygreg@pm.me> - 1.7.1
+- Improved grub-btrfs setup with basic snapper configuration
+- Automatic updater implemented

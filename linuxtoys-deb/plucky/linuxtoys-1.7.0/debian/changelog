@@ -1,6 +1,0 @@
-linuxtoys (1.7.0-1) plucky; urgency=medium
-
-  * Added docker installer
-  * Added grub-btrfs setup
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 21 May 2025 1:00:47 -0300

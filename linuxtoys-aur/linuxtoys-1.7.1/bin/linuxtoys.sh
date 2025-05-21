@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.0"
+current_ltver="1.7.1"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -13,8 +13,6 @@ ver_upd () {
             nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && makepkg -si && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm PKGBUILD" >/dev/null 2>&1 && disown
             exit 0
         fi
-    else
-        whiptail --title "LinuxToys is up to date" --msgbox "You are running the latest LinuxToys version." 8 78
     fi
 
 }
@@ -132,11 +130,15 @@ mango_in () {
 # set up grub-btrfs for snapshots on boot menu
 grubtrfs_t () {
 
-    cd $HOME
-    curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
-    chmod +x grub-btrfs-installer.sh
-    ./grub-btrfs-installer.sh
-    rm grub-btrfs-installer.sh
+    if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+        cd $HOME
+        curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+        chmod +x grub-btrfs-installer.sh
+        ./grub-btrfs-installer.sh
+        rm grub-btrfs-installer.sh
+    else
+        whiptail --title "Not a BTRFS filesystem" --msgbox "Your root filesystem is not BTRFS." 8 78
+    fi
 
 }
 
@@ -209,23 +211,23 @@ split_disable () {
 }
 
 # main menu
+ver_upd
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
-    	"0" "Update LinuxToys" \
-        "1" "Set up a basic Firewall" \
-        "2" "Set up Flathub" \
-        "3" "Set up Gnome Software" \
-        "4" "Apply Shader Booster" \
-        "5" "Disable Split Lock Mitigate" \
-        "6" "Install Mangohud and GOverlay" \
-        "7" "Add Chaotic-AUR repository" \
-        "8" "Install or update DaVinci Resolve" \
-        "9" "Set up GRUB-Btrfs" \
-        "10" "Set up Docker + Portainer CE" \
-        "11" "Install linux-cachyos Kernel" \
-        "12" "Install ROCm for AMD GPUs" \
-        "13" "Exit" 3>&1 1>&2 2>&3)
+        "0" "Set up a basic Firewall" \
+        "1" "Set up Flathub" \
+        "2" "Set up Gnome Software" \
+        "3" "Apply Shader Booster" \
+        "4" "Disable Split Lock Mitigate" \
+        "5" "Install Mangohud and GOverlay" \
+        "6" "Add Chaotic-AUR repository" \
+        "7" "Install or update DaVinci Resolve" \
+        "8" "Set up GRUB-Btrfs" \
+        "9" "Set up Docker + Portainer CE" \
+        "10" "Install linux-cachyos Kernel" \
+        "11" "Install ROCm for AMD GPUs" \
+        "12" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -234,20 +236,19 @@ while :; do
     fi
 
     case $CHOICE in
-    0) ver_upd ;;
-    1) ufw_in ;;
-    2) flatpak_in ;;
-    3) gsoftware_in ;;
-    4) booster_in ;;
-    5) split_disable ;;
-    6) mango_in ;;
-    7) chaotic_in ;;
-    8) resolve_in ;;
-    9) grubtrfs_t ;;
-    10) docker_t ;;
-    11) kernel_in ;;
-    12) rocm_in ;;
-    13 | q) break ;;
+    0) ufw_in ;;
+    1) flatpak_in ;;
+    2) gsoftware_in ;;
+    3) booster_in ;;
+    4) split_disable ;;
+    5) mango_in ;;
+    6) chaotic_in ;;
+    7) resolve_in ;;
+    8) grubtrfs_t ;;
+    9) docker_t ;;
+    10) kernel_in ;;
+    11) rocm_in ;;
+    12 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
