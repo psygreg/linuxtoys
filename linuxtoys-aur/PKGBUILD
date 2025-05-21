@@ -12,7 +12,7 @@ sha256sums=('8644924a352fc0f5113221f7941007b3514ca0f315fca4ea7e445f04ff28ae36')
 package() {
 
     mkdir -p ${pkgdir}/usr
-    chmod +x ${srcdir}/linuxtoys-${pkgver}/bin/linuxtoys.sh
     cp -rf ${srcdir}/linuxtoys-${pkgver}/{bin,share} ${pkgdir}/usr
+    chmod +x ${pkgdir}/usr/bin/linuxtoys.sh
 
 }
