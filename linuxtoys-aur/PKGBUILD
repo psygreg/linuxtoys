@@ -13,6 +13,6 @@ package() {
 
     mkdir -p ${pkgdir}/usr
     cp -rf ${srcdir}/linuxtoys-${pkgver}/{bin,share} ${pkgdir}/usr
-    sudo chmod +x /usr/bin/linuxtoys.sh
+    chmod +x "${pkgdir}/usr/bin/linuxtoys.sh"
 
 }
