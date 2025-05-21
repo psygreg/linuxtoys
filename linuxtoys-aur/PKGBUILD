@@ -7,7 +7,7 @@ makedepends=()
 conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('your_script_sha256_checksum')
+sha256sums=('8644924a352fc0f5113221f7941007b3514ca0f315fca4ea7e445f04ff28ae36')
 
 package() {
 
