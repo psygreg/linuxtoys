@@ -61,6 +61,7 @@ grubtrfs_in () {
         snapper -c root create-config /
         snapper -c root create --command apt
     fi
+    sudo systemctl enable snapper-boot.timer
     sudo systemctl enable snapper-cleanup.timer
     sudo systemctl start snapper-cleanup.timer
     git clone https://github.com/Antynea/grub-btrfs.git
