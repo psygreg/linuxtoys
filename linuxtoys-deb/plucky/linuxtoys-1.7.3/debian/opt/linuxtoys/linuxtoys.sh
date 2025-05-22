@@ -43,7 +43,7 @@ ufw_in () {
 swapfile_t () {
 
     if whiptail --title "Shader Booster" --yesno "This creates a swapfile, that can be used to deal with memory pressure. Proceed?" 8 78; then
-        curl -O swapper.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
         chmod +x swapper.sh
         ./swapper.sh
         rm swapper.sh
@@ -208,7 +208,7 @@ rocm_in () {
 docker_t () {
 
     cd $HOME
-    curl -O docker-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
     chmod +x docker-installer.sh
     ./docker-installer.sh
     rm docker-installer.sh
