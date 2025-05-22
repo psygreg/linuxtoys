@@ -1,13 +1,14 @@
 pkgname='linuxtoys'
-pkgver='1.7.1'
+pkgver='1.7.2'
 pkgrel=1
 arch=('x86_64')
 depends=(bash curl wget libnewt base-devel)
 makedepends=()
 conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
+install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('8afccbecd469d38f8bc60db97ae4f5811bf08a3caf2144401084a2b3c837155e')
+sha256sums=('0c8c20da40eff276cc1bb0c4a40da5204840845cf88818584b3ca541739fe2b7')
 
 package() {
 

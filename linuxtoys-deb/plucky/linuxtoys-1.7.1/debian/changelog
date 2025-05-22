@@ -1,6 +1,0 @@
-linuxtoys (1.7.1-1) plucky; urgency=medium
-
-  * Improved grub-btrfs setup, now includes basic snapper configuration
-  * Automatic updater implemented
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 21 May 2025 1:00:47 -0300

@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.1"
+current_ltver="1.7.2"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -43,6 +43,18 @@ ufw_in () {
             sudo ufw enable
         fi
         whiptail --title "Firewall Setup" --msgbox "Setup completed. You can change settings with the Firewall Settings app." 8 78
+    fi
+
+}
+
+# configure swapfile
+swapfile_t () {
+
+    if whiptail --title "Shader Booster" --yesno "This creates a swapfile, that can be used to deal with memory pressure. Proceed?" 8 78; then
+        curl -O swapper.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
+        chmod +x swapper.sh
+        ./swapper.sh
+        rm swapper.sh
     fi
 
 }
@@ -240,16 +252,17 @@ while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
         "0" "Set up a basic Firewall" \
-        "1" "Apply Shader Booster" \
-        "2" "Disable Split Lock Mitigate" \
-        "3" "Install Mangohud and GOverlay" \
-        "4" "Install or update DaVinci Resolve" \
-        "5" "Set up GRUB-Btrfs" \
-        "6" "Set up Docker + Portainer" \
-        "7" "Instal linux-cachyos Kernel" \
-        "8" "Install ROCm for AMD GPUs" \
-        "9" "Fix SELinux policies for WINE/Proton" \
-        "10" "Exit" 3>&1 1>&2 2>&3)
+        "1" "Configure a Swapfile" \
+        "2" "Apply Shader Booster" \
+        "3" "Disable Split Lock Mitigate" \
+        "4" "Install Mangohud and GOverlay" \
+        "5" "Install or update DaVinci Resolve" \
+        "6" "Set up GRUB-Btrfs" \
+        "7" "Set up Docker + Portainer" \
+        "8" "Instal linux-cachyos Kernel" \
+        "9" "Install ROCm for AMD GPUs" \
+        "10" "Fix SELinux policies for WINE/Proton" \
+        "11" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -259,16 +272,17 @@ while :; do
 
     case $CHOICE in
     0) ufw_in ;;
-    1) booster_in ;;
-    2) split_disable ;;
-    3) mango_in ;;
-    4) resolve_in ;;
-    5) grubtrfs_t ;;
-    6) docker_t ;;
-    7) kernel_in ;;
-    8) rocm_in ;;
-    9) fix_se_suse ;;
-    10 | q) break ;;
+    1) swapfile_t ;;
+    2) booster_in ;;
+    3) split_disable ;;
+    4) mango_in ;;
+    5) resolve_in ;;
+    6) grubtrfs_t ;;
+    7) docker_t ;;
+    8) kernel_in ;;
+    9) rocm_in ;;
+    10) fix_se_suse ;;
+    11 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

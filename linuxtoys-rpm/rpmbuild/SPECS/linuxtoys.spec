@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.1
+Version:        1.7.2
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -24,6 +24,17 @@ desktop-file-install --dir=%{buildroot}/usr/share/applications LinuxToys.desktop
 mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
 install -m 644 linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 
+%post
+alias_name="linuxtoys"
+alias_command="/usr/bin/linuxtoys.sh"
+target_file="/etc/bash.bashrc"
+if ! grep -q "alias $alias_name=" "$target_file"; then
+    echo "alias $alias_name='$alias_command'" >> "$target_file"
+    echo "Alias '$alias_name' created."
+else
+    echo "Alias '$alias_name' already exists."
+fi
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -34,6 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  21 2025 Victor Gregory <psygreg@pm.me> - 1.7.1
-- Improved grub-btrfs setup with basic snapper configuration
-- Automatic updater implemented
+* Wed May  22 2025 Victor Gregory <psygreg@pm.me> - 1.7.2
+- Implanted alias for terminal
+- Added swapfile configuration
