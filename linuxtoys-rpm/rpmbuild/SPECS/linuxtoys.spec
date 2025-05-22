@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.2
+Version:        1.7.3
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,6 +45,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  22 2025 Victor Gregory <psygreg@pm.me> - 1.7.2
-- Implanted alias for terminal
-- Added swapfile configuration
+* Wed May  22 2025 Victor Gregory <psygreg@pm.me> - 1.7.3
+- Bugfixes

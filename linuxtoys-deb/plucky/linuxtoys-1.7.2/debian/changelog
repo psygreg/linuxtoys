@@ -1,6 +1,0 @@
-linuxtoys (1.7.2-1) plucky; urgency=medium
-
-  * Implanted alias for terminal
-  * Added swapfile configuration
-  
- -- Victor Gregory <psygreg@pm.me>  Thu, 21 May 2025 1:00:47 -0300

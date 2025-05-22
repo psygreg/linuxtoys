@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.2"
+current_ltver="1.7.3"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -51,7 +51,7 @@ ufw_in () {
 swapfile_t () {
 
     if whiptail --title "Shader Booster" --yesno "This creates a swapfile, that can be used to deal with memory pressure. Proceed?" 8 78; then
-        curl -O swapper.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
         chmod +x swapper.sh
         ./swapper.sh
         rm swapper.sh
@@ -102,7 +102,7 @@ grubtrfs_t () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
         cd $HOME
-        curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
         chmod +x grub-btrfs-installer.sh
         ./grub-btrfs-installer.sh
         rm grub-btrfs-installer.sh
@@ -129,7 +129,7 @@ resolve_in () {
 docker_t () {
 
     cd $HOME
-    curl -O docker-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
     chmod +x docker-installer.sh
     ./docker-installer.sh
     rm docker-installer.sh

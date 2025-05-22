@@ -2,15 +2,15 @@
 # functions
 
 # updater
-current_ltver="1.7.2"
+current_ltver="1.7.3"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
     if [[ "$ver" != "$current_ltver" ]]; then
         if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
             cd $HOME
-            wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
-            nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.deb" >/dev/null 2>&1 && disown
+            wget https://github.com/psygreg/linuxtoys/releases/latest/download/PKGBUILD
+            nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && makepkg -si && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm PKGBUILD" >/dev/null 2>&1 && disown
             exit 0
         fi
     fi
@@ -23,10 +23,10 @@ ufw_in () {
     if whiptail --title "Firewall Setup" --yesno "This will install and enable a basic firewall setup for your safety. Proceed?" 8 78; then
         local packages=(ufw gufw)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
         if command -v ufw &> /dev/null; then
@@ -43,7 +43,7 @@ ufw_in () {
 swapfile_t () {
 
     if whiptail --title "Shader Booster" --yesno "This creates a swapfile, that can be used to deal with memory pressure. Proceed?" 8 78; then
-        curl -O swapper.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
         chmod +x swapper.sh
         ./swapper.sh
         rm swapper.sh
@@ -57,8 +57,8 @@ flatpak_in () {
     # ask confirmation before proceeding
     if whiptail --title "Enabling Flatpaks" --yesno "This will enable Flatpaks and add the Flathub source to your system. Proceed?" 8 78; then
         # installation
-        if dpkg -s "flatpak" 2>/dev/null 1>&2; then
-            sudo apt install -y flatpak
+        if pacman -Qi "flatpak" 2>/dev/null 1>&2; then
+            sudo pacman -S --noconfirm flatpak
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
             # notify that a reboot is required to enable flatpaks
@@ -74,26 +74,34 @@ flatpak_in () {
 gsoftware_in () {
 
     # ask confirmation before proceeding
-    if whiptail --title "Installing Gnome Software" --yesno "This will install the Software app (and necessary plugins) as apt and flatpak front-end. Proceed?" 8 78; then
+    if whiptail --title "Installing Gnome Software" --yesno "This will install the Software app as a flatpak front-end. Proceed?" 8 78; then
         # installation
         local packages=(gnome-software gnome-software-plugin-flatpak)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
-        if command -v snap &> /dev/null; then
-            if dpkg -s "gnome-software-plugin-snap" 2>/dev/null 1>&2; then
-                return
-            else
-                sudo apt install -y gnome-software-plugin-snap
-            fi
-        fi
         # confirm completion
         whiptail --title "Gnome Software Installed" --msgbox "Installation successful." 8 78
     fi
+
+}
+
+# TODO enable Chaotic AUR repo
+chaotic_in () {
+
+    cd $HOME
+    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    sudo pacman-key --lsign-key 3056513887B78AEB
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
+    sudo sed -i -f script.sed /etc/pacman.conf
+    whiptail --title "Chaotic AUR" --msgbox "Repository enabled successfully." 8 78
+    rm script.sed
 
 }
 
@@ -117,10 +125,10 @@ mango_in () {
         # installing
         local packages=(mangohud goverlay)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then 
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
         if command -v flatpak &> /dev/null; then
@@ -136,7 +144,7 @@ grubtrfs_t () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
         cd $HOME
-        curl -O grub-btrfs-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
         chmod +x grub-btrfs-installer.sh
         ./grub-btrfs-installer.sh
         rm grub-btrfs-installer.sh
@@ -146,60 +154,15 @@ grubtrfs_t () {
 
 }
 
-# download and properly install FireAlpaca as a .deb package
-firealpaca_in () {
-
-    if whiptail --title "FireAlpaca Installer" --yesno "This will install FireAlpaca from a deb package created from the original AppImage. Proceed?" 8 78; then
-        # patching
-        wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
-        chmod +x installer.sh
-        ./installer.sh
-        rm installer.sh
-    fi
-
-}
-
-# download and install DaVinci Resolve as a deb package
+# pull and install Resolve with my PKGBUILD
 resolve_in () {
 
     if whiptail --title "DaVinci Resolve Installer" --yesno "This will download, convert to a deb package and install Resolve (either Free or Studio). Proceed?" 8 78; then
         whiptail --title "DaVinci Resolve Installer" --msgbox "REMINDER: you will need a license key or dongle to use the Studio version, which should be purchased from Blackmagic Design." 8 78
-        wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
-        chmod +x autoresolvedeb.sh
-        ./autoresolvedeb.sh
-        rm autoresolvedeb.sh
-    fi
-
-}
-
-# install linux-cachyos optimized kernel
-kernel_in () {
-
-    if whiptail --title "CachyOS Custom Kernel Installer" --yesno "This will open the menu to set up a custom kernel from linux-cachyos patches. Proceed?" 8 78; then
-        # patching
-        wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
-        chmod +x cachyos-deb.sh
-        ./cachyos-deb.sh
-        rm cachyos-deb.sh
-    fi
-
-}
-
-# install ROCm for AMD GPU computing
-rocm_in () {
-
-    whiptail --title "ROCm Installer" --msgbox "This will install ROCm in your system, and is ONLY meant for AMD graphics cards, RDNA 2 or newer." 8 78
-    if whiptail --title "ROCm Installer" --yesno "This may not work outside Ubuntu and its flavours. Proceed?" 8 78; then
-        local packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
-        for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
-                continue
-            else
-                sudo apt install -y "$pac"
-            fi
-        done
-        sudo usermod -aG render,video $USER
-        whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes." 8 78
+        wget -O autoresolvepkg.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
+        chmod +x autoresolvepkg.sh
+        ./autoresolvepkg.sh
+        rm autoresolvepkg.sh
     fi
 
 }
@@ -208,21 +171,41 @@ rocm_in () {
 docker_t () {
 
     cd $HOME
-    curl -O docker-installer.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
     chmod +x docker-installer.sh
     ./docker-installer.sh
     rm docker-installer.sh
 
 }
 
-# install PPA for automatic updates on Ubuntu
-ppa_in () {
-	
-	if whiptail --title "LinuxToys PPA" --yesno "This will not work outside latest Ubuntu. Proceed?" 8 78; then
-        sudo add-apt-repository ppa:psygreg/linuxtoys
-		sudo apt update
+# install CachyOS kernel from Chaotic
+kernel_in () {
+
+    if whiptail --title "CachyOS Custom Kernel Installer" --yesno "This requires having installed the Chaotic-AUR repository first. Proceed?" 8 78; then
+        # patching
+        sudo pacman -S --noconfirm linux-cachyos
+        whiptail --title "CachyOS Custom Kernel Installer" --msgbox "Installation complete. Reboot for changes to take effect." 8 78
     fi
-    	
+
+}
+
+# install ROCm for AMD GPU computing
+rocm_in () { 
+
+    whiptail --title "ROCm Installer" --msgbox "This will install ROCm in your system, and is ONLY meant for AMD graphics cards, RDNA 2 or newer." 8 78
+    if whiptail --title "ROCm Installer" --yesno "This may not work outside Ubuntu and its flavours. Proceed?" 8 78; then
+        local packages=(amd-comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi rocminfo hipcc hiprand hiprtc radeontop rocm-opencl-runtime ocl-icd clinfo)
+        for pac in "${packages[@]}"; do
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then 
+                continue
+            else
+                sudo pacman -S --noconfirm "$pac"
+            fi
+        done
+        sudo usermod -aG render,video $USER
+        whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes." 8 78
+    fi
+
 }
 
 # disable split lock mitigate for extra performance in some games
@@ -240,26 +223,24 @@ split_disable () {
 }
 
 # main menu
-. /etc/os-release
 ver_upd
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
-        "0" "Install LinuxToys PPA (latest Ubuntu only)" \
-        "1" "Set up a basic Firewall" \
-        "2" "Configure a Swapfile" \
-        "3" "Set up Flathub" \
-        "4" "Set up Gnome Software" \
-        "5" "Apply Shader Booster" \
-        "6" "Disable Split Lock Mitigate" \
-        "7" "Install Mangohud and GOverlay" \
-        "8" "Install or update FireAlpaca" \
-        "9" "Install or update DaVinci Resolve" \
-        "10" "Set up GRUB-Btrfs" \
-        "11" "Set up Docker + Portainer CE" \
-        "12" "Compile and install/update linux-cachyos Kernel" \
-        "13" "Install ROCm for AMD GPUs" \
-        "14" "Exit" 3>&1 1>&2 2>&3)
+        "0" "Set up a basic Firewall" \
+        "1" "Configure a Swapfile" \
+        "2" "Set up Flathub" \
+        "3" "Set up Gnome Software" \
+        "4" "Apply Shader Booster" \
+        "5" "Disable Split Lock Mitigate" \
+        "6" "Install Mangohud and GOverlay" \
+        "7" "Add Chaotic-AUR repository" \
+        "8" "Install or update DaVinci Resolve" \
+        "9" "Set up GRUB-Btrfs" \
+        "10" "Set up Docker + Portainer CE" \
+        "11" "Install linux-cachyos Kernel" \
+        "12" "Install ROCm for AMD GPUs" \
+        "13" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -268,21 +249,20 @@ while :; do
     fi
 
     case $CHOICE in
-    0) ppa_in ;;
-    1) ufw_in ;;
-    2) swapfile_t ;;
-    3) flatpak_in ;;
-    4) gsoftware_in ;;
-    5) booster_in ;;
-    6) split_disable ;;
-    7) mango_in ;;
-    8) firealpaca_in ;;
-    9) resolve_in ;;
-    10) grubtrfs_t ;;
-    11) docker_t ;;
-    12) kernel_in ;;
-    13) rocm_in ;;
-    14 | q) break ;;
+    0) ufw_in ;;
+    1) swapfile_t ;;
+    2) flatpak_in ;;
+    3) gsoftware_in ;;
+    4) booster_in ;;
+    5) split_disable ;;
+    6) mango_in ;;
+    7) chaotic_in ;;
+    8) resolve_in ;;
+    9) grubtrfs_t ;;
+    10) docker_t ;;
+    11) kernel_in ;;
+    12) rocm_in ;;
+    13 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
