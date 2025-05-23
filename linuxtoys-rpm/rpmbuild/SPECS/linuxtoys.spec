@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.5
+Version:        1.7.6
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,6 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  22 2025 Victor Gregory <psygreg@pm.me> - 1.7.5
-- Bugfix: updater now works as intended
-- Added LACT installation
+* Wed May  23 2025 Victor Gregory <psygreg@pm.me> - 1.7.6
+- Added gamemode and gamescope setup
+- Added Lucidglyph setup

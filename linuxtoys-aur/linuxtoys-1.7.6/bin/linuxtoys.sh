@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.5"
+current_ltver="1.7.6"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -90,7 +90,25 @@ gsoftware_in () {
 
 }
 
-# TODO enable Chaotic AUR repo
+# 'cleartype'-like settings for Linux
+lucidglyph_in () {
+
+    local lgver="0.11.0"
+    if whiptail --title "LucidGlyph Setup" --yesno "This will set up improved font aliasing configuration, similar to Windows' ClearType. Proceed?" 8 78; then  
+        cd $HOME
+        wget https://github.com/maximilionus/lucidglyph/archive/refs/tags/v${lgver}.tar.gz
+        tar -xvzf v0.11.0.tar.gz 
+        cd lucidglyph-${lgver}
+        chmod +x lucidglyph.sh
+        sudo ./lucidglyph.sh install
+        cd ..
+        rm -rf lucidglyph-${lgver}
+        whiptail --title "Setup Complete" --msgbox "Reboot to take effect." 10 78
+    fi
+
+}
+
+# enable Chaotic AUR repo
 chaotic_in () {
 
     cd $HOME
@@ -114,6 +132,25 @@ booster_in () {
         chmod +x patcher.sh
         ./patcher.sh
         rm patcher.sh
+    fi
+
+}
+
+# download and properly install gamemode and gamescope
+gamescope_in () {
+
+    if whiptail --title "Installer" --yesno "This will install gamemode and gamescope. Gamemode triggers a series of CPU usage optimizations for games, while Gamescope effectively does what Lossless Scaling can do on Windows. Proceed?" 12 78; then
+        local packages=(gamemode gamescope)
+        for pac in "${packages[@]}"; do
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo pacman -S --noconfirm "$pac"
+            fi
+        done
+        if command -v flatpak &> /dev/null; then
+            flatpak install --or-update -y org.freedesktop.Platform.VulkanLayer.gamescope
+        fi
     fi
 
 }
@@ -246,17 +283,19 @@ while :; do
         "1" "Configure a Swapfile" \
         "2" "Set up Flathub" \
         "3" "Set up Gnome Software" \
-        "4" "Apply Shader Booster" \
-        "5" "Disable Split Lock Mitigate" \
-        "6" "Install Mangohud and GOverlay" \
-        "7" "Install LACT Overclock & Fan Control" \
-        "8" "Add Chaotic-AUR repository" \
-        "9" "Install or update DaVinci Resolve" \
-        "10" "Set up GRUB-Btrfs" \
-        "11" "Set up Docker + Portainer CE" \
-        "12" "Install linux-cachyos Kernel" \
-        "13" "Install ROCm for AMD GPUs" \
-        "14" "Exit" 3>&1 1>&2 2>&3)
+        "4" "Set up Lucidglyph - 'ClearType' for Linux" \
+        "5" "Apply Shader Booster" \
+        "6" "Disable Split Lock Mitigate" \
+        "7" "Install Gamemode and Gamescope" \
+        "8" "Install Mangohud and GOverlay" \
+        "9" "Install LACT Overclock & Fan Control" \
+        "10" "Add Chaotic-AUR repository" \
+        "11" "Install or update DaVinci Resolve" \
+        "12" "Set up GRUB-Btrfs" \
+        "13" "Set up Docker + Portainer CE" \
+        "14" "Install linux-cachyos Kernel" \
+        "15" "Install ROCm for AMD GPUs" \
+        "16" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -269,17 +308,19 @@ while :; do
     1) swapfile_t ;;
     2) flatpak_in ;;
     3) gsoftware_in ;;
-    4) booster_in ;;
-    5) split_disable ;;
-    6) mango_in ;;
-    7) lact_in ;;
-    8) chaotic_in ;;
-    9) resolve_in ;;
-    10) grubtrfs_t ;;
-    11) docker_t ;;
-    12) kernel_in ;;
-    13) rocm_in ;;
-    14 | q) break ;;
+    4) lucidglyph_in ;;
+    5) booster_in ;;
+    6) split_disable ;;
+    7) gamescope_in ;;
+    8) mango_in ;;
+    9) lact_in ;;
+    10) chaotic_in ;;
+    11) resolve_in ;;
+    12) grubtrfs_t ;;
+    13) docker_t ;;
+    14) kernel_in ;;
+    15) rocm_in ;;
+    16 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

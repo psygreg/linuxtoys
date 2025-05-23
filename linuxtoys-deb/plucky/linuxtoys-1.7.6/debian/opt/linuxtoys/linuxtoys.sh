@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.5"
+current_ltver="1.7.6"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -97,6 +97,25 @@ gsoftware_in () {
 
 }
 
+
+# 'cleartype'-like settings for Linux
+lucidglyph_in () {
+
+    local lgver="0.11.0"
+    if whiptail --title "LucidGlyph Setup" --yesno "This will set up improved font aliasing configuration, similar to Windows' ClearType. Proceed?" 8 78; then  
+        cd $HOME
+        wget https://github.com/maximilionus/lucidglyph/archive/refs/tags/v${lgver}.tar.gz
+        tar -xvzf v0.11.0.tar.gz 
+        cd lucidglyph-${lgver}
+        chmod +x lucidglyph.sh
+        sudo ./lucidglyph.sh install
+        cd ..
+        rm -rf lucidglyph-${lgver}
+        whiptail --title "Setup Complete" --msgbox "Reboot to take effect." 10 78
+    fi
+
+}
+
 # fetch and patch shader cache using shader-booster
 booster_in () {
 
@@ -106,6 +125,25 @@ booster_in () {
         chmod +x patcher.sh
         ./patcher.sh
         rm patcher.sh
+    fi
+
+}
+
+# download and properly install gamemode and gamescope
+gamescope_in () {
+
+    if whiptail --title "Installer" --yesno "This will install gamemode and gamescope. Gamemode triggers a series of CPU usage optimizations for games, while Gamescope effectively does what Lossless Scaling can do on Windows. Proceed?" 12 78; then
+        local packages=(gamemode gamescope)
+        for pac in "${packages[@]}"; do
+            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                continue
+            else
+                sudo apt install -y "$pac"
+            fi
+        done
+        if command -v flatpak &> /dev/null; then
+            flatpak install --or-update -y org.freedesktop.Platform.VulkanLayer.gamescope
+        fi
     fi
 
 }
@@ -258,22 +296,23 @@ ver_upd
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
-        "0" "Install LinuxToys PPA (latest Ubuntu only)" \
-        "1" "Set up a basic Firewall" \
-        "2" "Configure a Swapfile" \
-        "3" "Set up Flathub" \
-        "4" "Set up Gnome Software" \
+        "0" "Set up a basic Firewall" \
+        "1" "Configure a Swapfile" \
+        "2" "Set up Flathub" \
+        "3" "Set up Gnome Software" \
+        "4" "Set up Lucidglyph - 'ClearType' for Linux" \
         "5" "Apply Shader Booster" \
         "6" "Disable Split Lock Mitigate" \
-        "7" "Install Mangohud and GOverlay" \
-        "8" "Install LACT Overclock & Fan Control" \
-        "9" "Install or update FireAlpaca" \
-        "10" "Install or update DaVinci Resolve" \
-        "11" "Set up GRUB-Btrfs" \
-        "12" "Set up Docker + Portainer CE" \
-        "13" "Compile and install/update linux-cachyos Kernel" \
-        "14" "Install ROCm for AMD GPUs" \
-        "15" "Exit" 3>&1 1>&2 2>&3)
+        "7" "Install Gamemode and Gamescope" \
+        "8" "Install Mangohud and GOverlay" \
+        "9" "Install LACT Overclock & Fan Control" \
+        "10" "Install or update FireAlpaca" \
+        "11" "Install or update DaVinci Resolve" \
+        "12" "Set up GRUB-Btrfs" \
+        "13" "Set up Docker + Portainer CE" \
+        "14" "Compile and install/update linux-cachyos Kernel" \
+        "15" "Install ROCm for AMD GPUs" \
+        "16" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -282,22 +321,23 @@ while :; do
     fi
 
     case $CHOICE in
-    0) ppa_in ;;
-    1) ufw_in ;;
-    2) swapfile_t ;;
-    3) flatpak_in ;;
-    4) gsoftware_in ;;
+    0) ufw_in ;;
+    1) swapfile_t ;;
+    2) flatpak_in ;;
+    3) gsoftware_in ;;
+    4) lucidglyph_in ;;
     5) booster_in ;;
     6) split_disable ;;
-    7) mango_in ;;
-    8) lact_in ;;
-    9) firealpaca_in ;;
-    10) resolve_in ;;
-    11) grubtrfs_t ;;
-    12) docker_t ;;
-    13) kernel_in ;;
-    14) rocm_in ;;
-    15 | q) break ;;
+    7) gamescope_in ;;
+    8) mango_in ;;
+    9) lact_in ;;
+    10) firealpaca_in ;;
+    11) resolve_in ;;
+    12) grubtrfs_t ;;
+    13) docker_t ;;
+    14) kernel_in ;;
+    15) rocm_in ;;
+    16 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

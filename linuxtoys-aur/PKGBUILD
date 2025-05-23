@@ -1,5 +1,5 @@
 pkgname='linuxtoys'
-pkgver='1.7.5'
+pkgver='1.7.6'
 pkgrel=1
 arch=('x86_64')
 depends=(bash curl wget libnewt base-devel gnome-terminal)
@@ -8,7 +8,7 @@ conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('6fd6cbc9293f2c967140ee844228d2f066a667e61daef206370101e9f0ceea47')
+sha256sums=('b91fb52120b52cb973d9b4c080a405fa6fb157877bee4ccfb24bb93b113fae15')
 
 package() {
 
