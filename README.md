@@ -22,3 +22,10 @@ Requires `rpmbuild`.
 - Clone the repo.
 - Open terminal on the `rpmbuild` subdirectory.
 - `rpmbuild -bb SPECS/linuxtoys.spec`
+
+## Credits
+
+- [Lucidglyph](https://github.com/maximilionus/lucidglyph/tree/v0.11.0) by **Maximilionus**
+- [GRUB-btrfs](https://github.com/Antynea/grub-btrfs) by **Antynea**
+- [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
+- And the Linux Community
