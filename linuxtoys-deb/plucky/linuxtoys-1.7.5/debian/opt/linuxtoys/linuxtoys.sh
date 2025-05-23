@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.4"
+current_ltver="1.7.5"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -10,7 +10,7 @@ ver_upd () {
         if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
-            nohup gnome-terminal -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.deb" >/dev/null 2>&1 && disown
+            nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.deb" >/dev/null 2>&1 & disown
             exit 0
         fi
     fi
@@ -127,6 +127,19 @@ mango_in () {
             flatpak install --or-update org.freedesktop.Platform.VulkanLayer.MangoHud
         fi
         whiptail --title "Mangohud and GOverlay installed" --msgbox "Configure your in-game overlay using GOverlay." 8 78
+    fi
+
+}
+
+# install LACT for overclocking and fan control
+lact_in () {
+
+    if whiptail --title "LACT Installation" --yesno "This will install LACT, an overclocking and fan control utility on your system. Proceed?" 8 78; then
+        if command -v flatpak &> /dev/null; then
+            flatpak install -y io.github.ilya_zlobintsev.LACT
+        else
+            whiptail --title "LACT Installation" --msgbox "This requires flatpak in your system. You may install it from the previous menu." 8 78
+        fi
     fi
 
 }
@@ -253,13 +266,14 @@ while :; do
         "5" "Apply Shader Booster" \
         "6" "Disable Split Lock Mitigate" \
         "7" "Install Mangohud and GOverlay" \
-        "8" "Install or update FireAlpaca" \
-        "9" "Install or update DaVinci Resolve" \
-        "10" "Set up GRUB-Btrfs" \
-        "11" "Set up Docker + Portainer CE" \
-        "12" "Compile and install/update linux-cachyos Kernel" \
-        "13" "Install ROCm for AMD GPUs" \
-        "14" "Exit" 3>&1 1>&2 2>&3)
+        "8" "Install LACT Overclock & Fan Control" \
+        "9" "Install or update FireAlpaca" \
+        "10" "Install or update DaVinci Resolve" \
+        "11" "Set up GRUB-Btrfs" \
+        "12" "Set up Docker + Portainer CE" \
+        "13" "Compile and install/update linux-cachyos Kernel" \
+        "14" "Install ROCm for AMD GPUs" \
+        "15" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -276,13 +290,14 @@ while :; do
     5) booster_in ;;
     6) split_disable ;;
     7) mango_in ;;
-    8) firealpaca_in ;;
-    9) resolve_in ;;
-    10) grubtrfs_t ;;
-    11) docker_t ;;
-    12) kernel_in ;;
-    13) rocm_in ;;
-    14 | q) break ;;
+    8) lact_in ;;
+    9) firealpaca_in ;;
+    10) resolve_in ;;
+    11) grubtrfs_t ;;
+    12) docker_t ;;
+    13) kernel_in ;;
+    14) rocm_in ;;
+    15 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

@@ -1,0 +1,6 @@
+linuxtoys (1.7.5-1) plucky; urgency=medium
+
+  * Bugfix: updater now works as intended
+  * Added LACT installation
+  
+ -- Victor Gregory <psygreg@pm.me>  Thu, 21 May 2025 1:00:47 -0300

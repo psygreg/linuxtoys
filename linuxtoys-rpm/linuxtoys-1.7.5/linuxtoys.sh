@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.4"
+current_ltver="1.7.5"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -11,9 +11,9 @@ ver_upd () {
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm
             if [ "$ID_LIKE" == "suse" ]; then
-                nohup gnome-terminal -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 && disown
+                nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 & disown
             else
-                nohup gnome-terminal -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 && disown  
+                nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 & disown  
             fi
             exit 0
         fi
@@ -93,6 +93,19 @@ mango_in () {
             flatpak install --or-update org.freedesktop.Platform.VulkanLayer.MangoHud
         fi
         whiptail --title "Mangohud and GOverlay installed" --msgbox "Configure your in-game overlay using GOverlay." 8 78
+    fi
+
+}
+
+# install LACT for overclocking and fan control
+lact_in () {
+
+    if whiptail --title "LACT Installation" --yesno "This will install LACT, an overclocking and fan control utility on your system. Proceed?" 8 78; then
+        if command -v flatpak &> /dev/null; then
+            flatpak install -y io.github.ilya_zlobintsev.LACT
+        else
+            whiptail --title "LACT Installation" --msgbox "This requires flatpak in your system. You may install it from the previous menu." 8 78
+        fi
     fi
 
 }
@@ -260,13 +273,14 @@ while :; do
         "2" "Apply Shader Booster" \
         "3" "Disable Split Lock Mitigate" \
         "4" "Install Mangohud and GOverlay" \
-        "5" "Install or update DaVinci Resolve" \
-        "6" "Set up GRUB-Btrfs" \
-        "7" "Set up Docker + Portainer" \
-        "8" "Instal linux-cachyos Kernel" \
-        "9" "Install ROCm for AMD GPUs" \
-        "10" "Fix SELinux policies for WINE/Proton" \
-        "11" "Exit" 3>&1 1>&2 2>&3)
+        "5" "Install LACT Overclock & Fan Control" \
+        "6" "Install or update DaVinci Resolve" \
+        "7" "Set up GRUB-Btrfs" \
+        "8" "Set up Docker + Portainer" \
+        "9" "Instal linux-cachyos Kernel" \
+        "10" "Install ROCm for AMD GPUs" \
+        "11" "Fix SELinux policies for WINE/Proton" \
+        "12" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -280,13 +294,14 @@ while :; do
     2) booster_in ;;
     3) split_disable ;;
     4) mango_in ;;
-    5) resolve_in ;;
-    6) grubtrfs_t ;;
-    7) docker_t ;;
-    8) kernel_in ;;
-    9) rocm_in ;;
-    10) fix_se_suse ;;
-    11 | q) break ;;
+    5) lact_in ;;
+    6) resolve_in ;;
+    7) grubtrfs_t ;;
+    8) docker_t ;;
+    9) kernel_in ;;
+    10) rocm_in ;;
+    11) fix_se_suse ;;
+    12 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
