@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.3"
+current_ltver="1.7.4"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -10,7 +10,7 @@ ver_upd () {
         if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/PKGBUILD
-            nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && makepkg -si && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm PKGBUILD" >/dev/null 2>&1 && disown
+            nohup gnome-terminal -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && makepkg -si && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm PKGBUILD" >/dev/null 2>&1 && disown
             exit 0
         fi
     fi
@@ -184,6 +184,12 @@ kernel_in () {
     if whiptail --title "CachyOS Custom Kernel Installer" --yesno "This requires having installed the Chaotic-AUR repository first. Proceed?" 8 78; then
         # patching
         sudo pacman -S --noconfirm linux-cachyos
+        if command -v dracut >/dev/null 2>&1; then
+            sudo dracut -f --regenerate-all
+        elif command -v mkinitcpio >/dev/null 2>&1; then
+            sudo mkinitcpio -P
+        fi
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
         whiptail --title "CachyOS Custom Kernel Installer" --msgbox "Installation complete. Reboot for changes to take effect." 8 78
     fi
 

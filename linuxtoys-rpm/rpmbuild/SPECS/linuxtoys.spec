@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.3
+Version:        1.7.4
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget
+Requires:       bash newt curl wget gnome-terminal
 BuildRequires:  desktop-file-utils
 
 %description
@@ -45,5 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  22 2025 Victor Gregory <psygreg@pm.me> - 1.7.3
-- Bugfixes
+* Wed May  22 2025 Victor Gregory <psygreg@pm.me> - 1.7.4
+- Bugfix: updater now uses gnome-terminal, which is now a dependency
+- Bugfix: now refreshes all boot images after installing CachyOS kernel

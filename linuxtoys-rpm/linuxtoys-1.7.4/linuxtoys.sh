@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.3"
+current_ltver="1.7.4"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -11,9 +11,9 @@ ver_upd () {
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm
             if [ "$ID_LIKE" == "suse" ]; then
-                nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 && disown
+                nohup gnome-terminal -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 && disown
             else
-                nohup xterm -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 && disown  
+                nohup gnome-terminal -e "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 && disown  
             fi
             exit 0
         fi
@@ -196,6 +196,8 @@ kernel_compat () {
     sudo dnf copr enable bieszczaders/kernel-cachyos
     sudo dnf install kernel-cachyos kernel-cachyos-devel-matched
     sudo setsebool -P domain_kernel_load_modules on
+    sudo dracut -f --regenerate-all
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     whiptail --title "CachyOS Kernel Installer" --msgbox "Installation complete. Reboot for changes to take effect." 8 78
 
 }
@@ -205,6 +207,8 @@ kernel_performance () {
     sudo dnf copr enable bieszczaders/kernel-cachyos-lto
     sudo dnf install kernel-cachyos-lto kernel-cachyos-lto-devel-matched
     sudo setsebool -P domain_kernel_load_modules on
+    sudo dracut -f --regenerate-all
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     whiptail --title "CachyOS Kernel Installer" --msgbox "Installation complete. Reboot for changes to take effect." 8 78
 
 }

@@ -3,7 +3,7 @@
 *.changes
 *.upload
 *.dsc
-linuxtoys-deb/plucky/linuxtoys-1.7.3/debian/.debhelper
+linuxtoys-deb/plucky/linuxtoys-1.7.4/debian/.debhelper
 *.substvars
 debhelper-build-stamp
-linuxtoys-deb/plucky/linuxtoys-1.7.3/debian/linuxtoys
+linuxtoys-deb/plucky/linuxtoys-1.7.4/debian/linuxtoys
