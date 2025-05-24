@@ -8,6 +8,12 @@ A collection of tools for Linux in a user-friendly way.
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
+## Limitations
+- **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
+- **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
+- **Lucidglyph** is only confirmed to work on **Gnome** and **Plasma** desktops. With all others, your mileage may vary.
+- The **linux-cachyos** kernel port to Debian/Ubuntu-based systems may require its **LTO** setting changed to 'Full' or 'Disable' to work in some systems. *ThinLTO is only known to work in the standard Ubuntu-Gnome flavour and in Debian Testing, so far, although it is the optimal setting if it works for your system.*
+
 ## Building from source
 ### .deb package
 This will require `debuild`, obtained from the `devscripts` package..
