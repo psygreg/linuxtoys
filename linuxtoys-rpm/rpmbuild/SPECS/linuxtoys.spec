@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.6
+Version:        1.7.7
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget gnome-terminal
+Requires:       bash newt curl wget xterm
 BuildRequires:  desktop-file-utils
 
 %description
@@ -45,6 +45,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  23 2025 Victor Gregory <psygreg@pm.me> - 1.7.6
-- Added gamemode and gamescope setup
-- Added Lucidglyph setup
+* Sat May  24 2025 Victor Gregory <psygreg@pm.me> - 1.7.7
+- Fixed updater
+- No longer depends on gnome-terminal
+- Now depends on xterm
+- Added Nvidia driver installer

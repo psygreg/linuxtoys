@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.6"
+current_ltver="1.7.7"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -10,7 +10,7 @@ ver_upd () {
         if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
-            nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dpkg -i linuxtoys_${ver}-1_amd64.deb && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm linuxtoys_${ver}-1_amd64.deb" >/dev/null 2>&1 & disown
+            nohup xterm -e "bash -c 'whiptail --title \"Updater\" --msgbox \"Close LinuxToys now to continue.\" 8 78 && sudo dpkg -i ${HOME}/linuxtoys_${ver}-1_amd64.deb -y && whiptail --title \"Updater\" --msgbox \"Update complete.\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.deb'" >/dev/null 2>&1 && disown
             exit 0
         fi
     fi

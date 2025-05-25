@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.6"
+current_ltver="1.7.7"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -11,9 +11,9 @@ ver_upd () {
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm
             if [ "$ID_LIKE" == "suse" ]; then
-                nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 & disown
+                nohup xterm -e "bash -c 'whiptail --title \"Updater\" --msgbox \"Close LinuxToys now to continue.\" 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title \"Updater\" --msgbox \"Update complete.\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.rpm'" >/dev/null 2>&1 && disown
             else
-                nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.rpm" >/dev/null 2>&1 & disown  
+                nohup xterm -e "bash -c 'whiptail --title \"Updater\" --msgbox \"Close LinuxToys now to continue.\" 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1_amd64.rpm -y && whiptail --title \"Updater\" --msgbox \"Update complete.\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.rpm'" >/dev/null 2>&1 && disown  
             fi
             exit 0
         fi
@@ -217,6 +217,88 @@ rocm_in () {
         sudo usermod -aG render,video $USER
         whiptail --title "ROCm Installer" --msgbox "Installation complete. Reboot to apply changes." 8 78
     fi
+
+}
+
+# Nvidia driver installer - it is a montrosity, but it works, trust me bro
+nvidia_in () {
+
+    while :; do
+
+        CHOICE=$(whiptail --title "Nvidia Driver Installation" --menu "Choose your version:" 25 78 16 \
+        "0" "Current cards (GeForce 900 series or newer)" \
+        "1" "Older cards (GeForce 600 and 700 series)" \
+        "2" "Cancel" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+            # Exit the script if the user presses Esc
+            break
+        fi
+
+        case $CHOICE in
+        0) if [ "$ID_LIKE" == "suse" ]; then
+                local REPO_ALIAS="nvidia"
+                case "$VERSION_ID" in
+                    *Tumbleweed*)
+                        REPO_URL="https://download.nvidia.com/opensuse/tumbleweed"
+                        ;;
+                    15.*)
+                        REPO_URL="https://download.nvidia.com/opensuse/leap/$VERSION_ID"
+                        ;;
+                    *)
+                        whiptail --title "Unsupported openSUSE version" --msgbox "Unsupported openSUSE version: $VERSION_ID" 8 78
+                        ;;
+                esac
+                if zypper lr | grep -q "^${REPO_ALIAS}\s"; then
+                    continue
+                else
+                    sudo zypper ar -f "$REPO_URL" "nvidia"
+                fi
+                sudo zypper install x11-video-nvidiaG06 nvidia-computeG06 -y
+           else
+                if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
+                    sudo dnf in https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm 
+                fi
+                if ! sudo dnf repolist | grep -q "rpmfusion-nonfree"; then
+                    sudo dnf in https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+                fi
+                sudo dnf in akmod-nvidia xorg-x11-drv-nvidia-cuda -y
+           fi 
+           sudo dracut -f --regenerate-all ;;
+        1) if [ "$ID_LIKE" == "suse" ]; then
+                local REPO_ALIAS="nvidia"
+                case "$VERSION_ID" in
+                    *Tumbleweed*)
+                        REPO_URL="https://download.nvidia.com/opensuse/tumbleweed"
+                        ;;
+                    15.*)
+                        REPO_URL="https://download.nvidia.com/opensuse/leap/$VERSION_ID"
+                        ;;
+                    *)
+                        whiptail --title "Unsupported openSUSE version" --msgbox "Unsupported openSUSE version: $VERSION_ID" 8 78
+                        ;;
+                esac
+                if zypper lr | grep -q "^${REPO_ALIAS}\s"; then
+                    continue
+                else
+                    sudo zypper ar -f "$REPO_URL" "nvidia"
+                fi
+                sudo zypper install x11-video-nvidiaG05 nvidia-computeG05 -y
+           else
+                if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
+                    sudo dnf in https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm 
+                fi
+                if ! sudo dnf repolist | grep -q "rpmfusion-nonfree"; then
+                    sudo dnf in https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+                fi
+                sudo dnf in xorg-x11-drv-nvidia-470xx akmod-nvidia-470xx xorg-x11-drv-nvidia-470xx-cuda -y
+           fi 
+           sudo dracut -f --regenerate-all ;;
+        2 | q) break ;;
+        *) echo "Invalid Option" ;;
+        esac
+    done
 
 }
 

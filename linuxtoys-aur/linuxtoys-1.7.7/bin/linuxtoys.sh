@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="1.7.6"
+current_ltver="1.7.7"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -10,7 +10,8 @@ ver_upd () {
         if whiptail --title "Update available" --yesno "Do you wish to download and install the new version?" 8 78; then
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/PKGBUILD
-            nohup gnome-terminal -- bash -c "whiptail --title 'Updater' --msgbox 'Close LinuxToys now to continue.' 8 78 && makepkg -si && whiptail --title 'Updater' --msgbox 'Update complete.' 8 78 && rm PKGBUILD" >/dev/null 2>&1 & disown
+            wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys.install
+            nohup xterm -e "bash -c 'whiptail --title \"Updater\" --msgbox \"Close LinuxToys now to continue.\" 8 78 && makepkg -si && whiptail --title \"Updater\" --msgbox \"Update complete.\" 8 78 && rm PKGBUILD && rm linuxtoys.install'" >/dev/null 2>&1 && disown
             exit 0
         fi
     fi
