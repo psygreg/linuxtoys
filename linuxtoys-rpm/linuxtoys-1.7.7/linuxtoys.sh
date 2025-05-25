@@ -404,10 +404,11 @@ while :; do
         "8" "Install or update DaVinci Resolve" \
         "9" "Set up GRUB-Btrfs" \
         "10" "Set up Docker + Portainer" \
-        "11" "Instal linux-cachyos Kernel" \
-        "12" "Install ROCm for AMD GPUs" \
-        "13" "Fix SELinux policies for WINE/Proton" \
-        "14" "Exit" 3>&1 1>&2 2>&3)
+        "11" "Install linux-cachyos Kernel" \
+        "12" "Install Nvidia drivers" \
+        "13" "Install ROCm for AMD GPUs" \
+        "14" "Fix SELinux policies for WINE/Proton" \
+        "15" "Exit" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -428,9 +429,10 @@ while :; do
     9) grubtrfs_t ;;
     10) docker_t ;;
     11) kernel_in ;;
-    12) rocm_in ;;
-    13) fix_se_suse ;;
-    14 | q) break ;;
+    12) nvidia_in ;;
+    13) rocm_in ;;
+    14) fix_se_suse ;;
+    15 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
