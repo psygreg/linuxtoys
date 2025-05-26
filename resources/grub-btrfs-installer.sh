@@ -70,7 +70,7 @@ grubtrfs_in () {
     sudo systemctl start snapper-cleanup.timer
     git clone https://github.com/Antynea/grub-btrfs.git
     cd grub-btrfs
-    make install
+    sudo make install
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
         sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     elif [ "$ID" == "arch" ]; then
