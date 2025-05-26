@@ -30,9 +30,18 @@ Requires `rpmbuild`.
 - Open terminal on the `rpmbuild` subdirectory.
 - `rpmbuild -bb SPECS/linuxtoys.spec`
 
+## Contributing
+
+To contribute with translations, you can fork this repo, add a new language file to the `resources/lang` folder and send a Pull Request. I can make the necessary adjustments to the program's code myself to accomodate new languages.
+
+Other contributions can be made by forking, adding your changes and sending a Pull Request as well.
+
+**All Pull Requests will be manually checked before approval.**
+
 ## Credits
 
 - [Lucidglyph](https://github.com/maximilionus/lucidglyph/tree/v0.11.0) by **Maximilionus**
 - [GRUB-btrfs](https://github.com/Antynea/grub-btrfs) by **Antynea**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
+- [Chaotic AUR](https://aur.chaotic.cx/)
 - And the Linux Community
