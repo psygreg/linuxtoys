@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.7.7
+Version:        1.8.0
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,8 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Sat May  24 2025 Victor Gregory <psygreg@pm.me> - 1.7.7
-- Fixed updater
-- No longer depends on gnome-terminal
-- Now depends on xterm
-- Added Nvidia driver installer
+* Mon May  26 2025 Victor Gregory <psygreg@pm.me> - 1.8.0
+- Fixed updater for Fedora/SUSE edition
+- Fixed gamescope installation with correct version of flatpak runtime
+- Now multilingual

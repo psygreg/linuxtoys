@@ -1,7 +1,0 @@
-linuxtoys (1.7.7-1) plucky; urgency=medium
-
-  * Fixed updater
-  * No longer depends on gnome-terminal
-  * Now depends on xterm
-  
- -- Victor Gregory <psygreg@pm.me>  Sat, 24 May 2025 1:00:47 -0300
