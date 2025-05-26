@@ -47,23 +47,23 @@ grubtrfs_in () {
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]]; then
         sudo dnf rm snapper -y
         sudo dnf in snapper btrfs-assistant -y
-        snapper -c root create-config /
-        snapper -c root create --command dnf
+        sudo snapper -c root create-config /
+        sudo snapper -c root create --command dnf
     elif [ "$ID_LIKE" == "suse" ]; then
         sudo zypper rm snapper -y
         sudo zypper in snapper btrfs-assistant -y
-        snapper -c root create-config /
-        snapper -c root create --command zypper
+        sudo snapper -c root create-config /
+        sudo snapper -c root create --command zypper
     elif [ "$ID" == "arch" ]; then
         sudo pacman -Rsn --noconfirm snapper
         sudo pacman -S --noconfirm snapper
-        snapper -c root create-config /
-        snapper -c root create --command pacman
+        sudo snapper -c root create-config /
+        sudo snapper -c root create --command pacman
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
         sudo apt purge -y snapper
         sudo apt install -y snapper btrfs-assistant
-        snapper -c root create-config /
-        snapper -c root create --command apt
+        sudo snapper -c root create-config /
+        sudo snapper -c root create --command apt
     fi
     sudo systemctl enable snapper-boot.timer
     sudo systemctl enable snapper-cleanup.timer
