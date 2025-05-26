@@ -45,19 +45,23 @@ grubtrfs_in () {
 
     cd $HOME
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]]; then
+        sudo dnf rm snapper -y
         sudo dnf in snapper btrfs-assistant -y
         snapper -c root create-config /
         snapper -c root create --command dnf
     elif [ "$ID_LIKE" == "suse" ]; then
+        sudo zypper rm snapper -y
         sudo zypper in snapper btrfs-assistant -y
         snapper -c root create-config /
         snapper -c root create --command zypper
     elif [ "$ID" == "arch" ]; then
+        sudo pacman -Rsn --noconfirm snapper
         sudo pacman -S --noconfirm snapper
         snapper -c root create-config /
         snapper -c root create --command pacman
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
-        sudo apt install snapper btrfs-assistant
+        sudo apt purge -y snapper
+        sudo apt install -y snapper btrfs-assistant
         snapper -c root create-config /
         snapper -c root create --command apt
     fi
