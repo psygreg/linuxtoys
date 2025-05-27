@@ -43,7 +43,6 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Lucidglyph](https://github.com/maximilionus/lucidglyph/tree/v0.11.0) by **Maximilionus**
 - [GRUB-btrfs](https://github.com/Antynea/grub-btrfs) by **Antynea**
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
-- [TuxClocker](https://github.com/Lurkki14/tuxclocker) by **Jussi Kuokkanen**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - And the Linux Community
