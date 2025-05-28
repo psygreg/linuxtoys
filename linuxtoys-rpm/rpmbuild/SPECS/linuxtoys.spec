@@ -48,4 +48,5 @@ rm -rf $RPM_BUILD_ROOT
 * Wed May  28 2025 Victor Gregory <psygreg@pm.me> - 1.8.1
 - Fixed updater for Debian/Ubuntu edition
 - Fixed Chaotic-AUR installation for Arch edition
+- Language updates now work as intended
 - Logger implemented for useful bug reports

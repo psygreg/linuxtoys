@@ -8,7 +8,7 @@ conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('d846b95d4650979cf66e0a39cfbd3208afacc2c322d16d42479ef32142277b32')
+sha256sums=('17062f7ec129ca934a4a05ab6170dcbd3022da7e60416b0e0ec7bb55232b5bb8')
 
 package() {
 

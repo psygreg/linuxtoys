@@ -19,10 +19,10 @@ det_langfile () {
     else
         langfile=".ltlang-en"
     fi
-    if [ -f "$HOME/.local/$langfile" ]; then
+    if [ -f "$HOME/.local/${langfile}_${current_ltver}" ]; then
         return
     else
-        curl -fLo $HOME/.local/$langfile https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/lang/${langfile}
+        curl -fLo $HOME/.local/${langfile}_${current_ltver} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/lang/${langfile}_${current_ltver}
     fi
 
 }
@@ -309,7 +309,7 @@ split_disable () {
 
 # logger
 logfile="$HOME/.local/linuxtoys-log.txt"
-exec 2> "$logfile"
+exec 2> >(tee "$logfile" >&2)
 
 # language and upd checks
 det_langfile
