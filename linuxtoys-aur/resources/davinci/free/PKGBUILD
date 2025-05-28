@@ -11,7 +11,7 @@
 # It can be obtained from chromium -> Developer Tools -> Network -> XHR -> click latest-version and copy downloadId
 
 pkgname=davinci-resolve
-pkgver=19.1.4
+pkgver=20.0.0
 pkgrel=1
 
 _product="DaVinci Resolve"
