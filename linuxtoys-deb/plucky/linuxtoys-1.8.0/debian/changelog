@@ -1,7 +1,0 @@
-linuxtoys (1.8.0-1) plucky; urgency=medium
-
-  * Fixed updater for Fedora/SUSE edition
-  * Fixed gamescope installation with correct version of flatpak runtime
-  * Now multilingual
-  
- -- Victor Gregory <psygreg@pm.me>  Mon, 26 May 2025 1:00:47 -0300

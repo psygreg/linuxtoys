@@ -28,7 +28,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="1.8.0"
+current_ltver="1.8.1"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -99,6 +99,21 @@ lucidglyph_in () {
         cd ..
         rm -rf lucidglyph-${lgver}
         whiptail --title "$msg021" --msgbox "$msg022" 10 78
+    fi
+
+}
+
+# install proper codecs on openSUSE
+suse_codecs () {
+
+    if whiptail --title "$msg006" --yesno "$msg080" 8 78
+        if [ "$ID_LIKE" == "suse" ]; then
+            sudo zypper in opi -y
+            sudo opi codecs
+            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+        else
+            whiptail --title "$msg006" --msgbox "$msg077" 8 78
+        fi
     fi
 
 }
@@ -421,11 +436,17 @@ kernel_in () {
 
 }
 
-# main menu
+# logger
+logfile="$HOME/.local/linuxtoys-log.txt"
+exec 2> "$logfile"
+
+# language and upd checks
 det_langfile
 source $HOME/.local/$langfile
 . /etc/os-release
 ver_upd
+
+# main menu
 while :; do
 
     CHOICE=$(whiptail --title "LinuxToys" --menu "LinuxToys ${current_ltver}" 25 78 16 \
@@ -433,18 +454,19 @@ while :; do
         "1" "$msg045" \
         "2" "$msg048" \
         "3" "$msg049" \
-        "4" "$msg041" \
-        "5" "$msg050" \
-        "6" "$msg051" \
-        "7" "$msg052" \
-        "8" "$msg054" \
-        "9" "$msg055" \
-        "10" "$msg056" \
-        "11" "$msg057" \
-        "12" "$msg078" \
-        "13" "$msg058" \
-        "14" "$msg079" \
-        "15" "$msg059" 3>&1 1>&2 2>&3)
+        "4" "$msg081" \
+        "5" "$msg041" \
+        "6" "$msg050" \
+        "7" "$msg051" \
+        "8" "$msg052" \
+        "9" "$msg054" \
+        "10" "$msg055" \
+        "11" "$msg056" \
+        "12" "$msg057" \
+        "13" "$msg078" \
+        "14" "$msg058" \
+        "15" "$msg079" \
+        "16" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -457,18 +479,19 @@ while :; do
     1) swapfile_t ;;
     2) lucidglyph_in ;;
     3) booster_in ;;
-    4) split_disable ;;
-    5) gamescope_in ;;
-    6) mango_in ;;
-    7) lact_in ;;
-    8) resolve_in ;;
-    9) grubtrfs_t ;;
-    10) docker_t ;;
-    11) kernel_in ;;
-    12) nvidia_in ;;
-    13) rocm_in ;;
-    14) fix_se_suse ;;
-    15 | q) break ;;
+    4) suse_codecs ;;
+    5) split_disable ;;
+    6) gamescope_in ;;
+    7) mango_in ;;
+    8) lact_in ;;
+    9) resolve_in ;;
+    10) grubtrfs_t ;;
+    11) docker_t ;;
+    12) kernel_in ;;
+    13) nvidia_in ;;
+    14) rocm_in ;;
+    15) fix_se_suse ;;
+    16 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

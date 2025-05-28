@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.8.0
+Version:        1.8.1
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,7 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Mon May  26 2025 Victor Gregory <psygreg@pm.me> - 1.8.0
-- Fixed updater for Fedora/SUSE edition
-- Fixed gamescope installation with correct version of flatpak runtime
-- Now multilingual
+* Wed May  28 2025 Victor Gregory <psygreg@pm.me> - 1.8.1
+- Fixed updater for Debian/Ubuntu edition
+- Fixed Chaotic-AUR installation for Arch edition
+- Logger implemented for useful bug reports
