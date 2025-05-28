@@ -22,21 +22,23 @@ det_langfile () {
     if [ -f "$HOME/.local/${langfile}_${current_ltver}" ]; then
         return
     else
+        rm -f "$HOME/.local/.ltlang-"* 2>/dev/null
         curl -fLo $HOME/.local/${langfile}_${current_ltver} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/lang/${langfile}_${current_ltver}
     fi
 
 }
 
 # updater
-current_ltver="1.8.1"
+current_ltver="1.8.2"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
     if [[ "$ver" != "$current_ltver" ]]; then
         if whiptail --title "$msg001" --yesno "$msg002" 8 78; then
             cd $HOME
-            wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
-            nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo dpkg -i ${HOME}/linuxtoys_${ver}-1_amd64.deb && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.deb'" >/dev/null 2>&1 && disown
+            wget https://github.com/psygreg/linuxtoys/releases/latest/download/PKGBUILD
+            wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys.install
+            nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && makepkg -si && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm PKGBUILD && rm linuxtoys.install'" >/dev/null 2>&1 && disown
             exit 0
         fi
     fi
@@ -49,10 +51,10 @@ ufw_in () {
     if whiptail --title "$msg006" --yesno "$msg007" 8 78; then
         local packages=(ufw gufw)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
         if command -v ufw &> /dev/null; then
@@ -83,8 +85,8 @@ flatpak_in () {
     # ask confirmation before proceeding
     if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
         # installation
-        if dpkg -s "flatpak" 2>/dev/null 1>&2; then
-            sudo apt install -y flatpak
+        if pacman -Qi "flatpak" 2>/dev/null 1>&2; then
+            sudo pacman -S --noconfirm flatpak
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
             # notify that a reboot is required to enable flatpaks
@@ -100,29 +102,21 @@ flatpak_in () {
 gsoftware_in () {
 
     # ask confirmation before proceeding
-    if whiptail --title "$msg016" --yesno "$msg060" 8 78; then
+    if whiptail --title "$msg016" --yesno "$msg017" 8 78; then
         # installation
         local packages=(gnome-software gnome-software-plugin-flatpak)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
-        if command -v snap &> /dev/null; then
-            if dpkg -s "gnome-software-plugin-snap" 2>/dev/null 1>&2; then
-                return
-            else
-                sudo apt install -y gnome-software-plugin-snap
-            fi
-        fi
         # confirm completion
         whiptail --title "$msg016" --msgbox "$msg018" 8 78
     fi
 
 }
-
 
 # 'cleartype'-like settings for Linux
 lucidglyph_in () {
@@ -137,8 +131,24 @@ lucidglyph_in () {
         sudo ./lucidglyph.sh install
         cd ..
         rm -rf lucidglyph-${lgver}
-        whiptail --title "$msg019" --msgbox "$msg022" 10 78
+        whiptail --title "$msg021" --msgbox "$msg022" 10 78
     fi
+
+}
+
+# enable Chaotic AUR repo
+chaotic_in () {
+
+    cd $HOME
+    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    sudo pacman-key --lsign-key 3056513887B78AEB
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
+    sudo sed -i -f script.sed /etc/pacman.conf
+    sudo pacman -Sy
+    whiptail --title "$msg023" --msgbox "$msg024" 8 78
+    rm script.sed
 
 }
 
@@ -161,10 +171,10 @@ gamescope_in () {
     if whiptail --title "$msg006" --yesno "$msg027" 12 78; then
         local packages=(gamemode gamescope)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
         if command -v flatpak &> /dev/null; then
@@ -182,29 +192,16 @@ mango_in () {
         # installing
         local packages=(mangohud goverlay)
         for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+            if pacman -Qi "$pac" 2>/dev/null 1>&2; then 
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo pacman -S --noconfirm "$pac"
             fi
         done
         if command -v flatpak &> /dev/null; then
             flatpak install --or-update org.freedesktop.Platform.VulkanLayer.MangoHud
         fi
         whiptail --title "$msg006" --msgbox "$msg029" 8 78
-    fi
-
-}
-
-# install LACT for overclocking and fan control
-lact_in () {
-
-    if whiptail --title "$msg006" --yesno "$msg032" 8 78; then
-        if command -v flatpak &> /dev/null; then
-            flatpak install -y io.github.ilya_zlobintsev.LACT
-        else
-            whiptail --title "$msg006" --msgbox "$msg061" 8 78
-        fi
     fi
 
 }
@@ -224,65 +221,24 @@ grubtrfs_t () {
 
 }
 
-# download and properly install FireAlpaca as a .deb package
-firealpaca_in () {
+# install LACT for overclocking and fan control
+lact_in () {
 
-    if whiptail --title "$msg006" --yesno "$msg062" 8 78; then
-        # patching
-        wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
-        chmod +x installer.sh
-        ./installer.sh
-        rm installer.sh
+    if whiptail --title "$msg006" --yesno "$msg032" 8 78; then
+        sudo pacman -S --noconfirm lact
     fi
 
 }
 
-# download and install DaVinci Resolve as a deb package
+# pull and install Resolve with my PKGBUILD
 resolve_in () {
 
     if whiptail --title "$msg006" --yesno "$msg033" 8 78; then
-        whiptail --title "$msg006" --msgbox "$msg034" 8 78
-        wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
-        chmod +x autoresolvedeb.sh
-        ./autoresolvedeb.sh
-        rm autoresolvedeb.sh
-    fi
-
-}
-
-# install linux-cachyos optimized kernel
-kernel_in () {
-
-    if whiptail --title "$msg006" --yesno "$msg063" 8 78; then
-        # patching
-        wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
-        chmod +x cachyos-deb.sh
-        ./cachyos-deb.sh
-        rm cachyos-deb.sh
-    fi
-
-}
-
-# install ROCm for AMD GPU computing
-rocm_in () {
-
-    local GPU=$(lspci | grep -i 'radeon .*')
-    if [[ $GPU == *' radeon '* ]]; then
-        whiptail --title "$msg006" --msgbox "$msg037" 8 78
-        if whiptail --title "$msg006" --yesno "$msg038" 8 78; then
-            local packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
-            for pac in "${packages[@]}"; do
-                if dpkg -s "$pac" 2>/dev/null 1>&2; then
-                    continue
-                else
-                    sudo apt install -y "$pac"
-                fi
-            done
-            sudo usermod -aG render,video $USER
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
-        fi
-    else
-        whiptail --title "$msg039" --msgbox "$msg040" 8 78
+        whiptail --title "$msg006" --msgbox "$msg034" 12 78
+        wget -O autoresolvepkg.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
+        chmod +x autoresolvepkg.sh
+        ./autoresolvepkg.sh
+        rm autoresolvepkg.sh
     fi
 
 }
@@ -298,13 +254,53 @@ docker_t () {
 
 }
 
+# install CachyOS kernel from Chaotic
+kernel_in () {
+
+    if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
+        # patching
+        sudo pacman -S --noconfirm linux-cachyos linux-cachyos-headers
+        if command -v dracut >/dev/null 2>&1; then
+            sudo dracut -f --regenerate-all
+        elif command -v mkinitcpio >/dev/null 2>&1; then
+            sudo mkinitcpio -P
+        fi
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+        whiptail --title "$msg006" --msgbox "$msg036" 8 78
+    fi
+
+}
+
+# install ROCm for AMD GPU computing
+rocm_in () { 
+
+    local GPU=$(lspci | grep -i 'radeon .*')
+    if [[ $GPU == *' radeon '* ]]; then
+        if whiptail --title "$msg006" --yesno "$msg037" 8 78; then
+            local packages=(amd-comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi rocminfo hipcc hiprand hiprtc radeontop rocm-opencl-runtime ocl-icd clinfo)
+            for pac in "${packages[@]}"; do
+                if pacman -Qi "$pac" 2>/dev/null 1>&2; then 
+                    continue
+                else
+                    sudo pacman -S --noconfirm "$pac"
+                fi
+            done
+            sudo usermod -aG render,video $USER
+            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+        fi
+    else
+        whiptail --title "$msg039" --msgbox "$msg040" 8 78
+    fi
+
+}
+
 # disable split lock mitigate for extra performance in some games
 split_disable () {
 
     if whiptail --title "$msg041" --yesno "$msg042" 12 78; then
         if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
             echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-            whiptail --title "$msg041" --msgbox "$msg036" 8 78
+            whiptail --title "$msg041" --msgbox "$msg022" 8 78
         else
             whiptail --title "$msg041" --msgbox "$msg043" 8 78
         fi
@@ -318,8 +314,7 @@ exec 2> >(tee "$logfile" >&2)
 
 # language and upd checks
 det_langfile
-source $HOME/.local/$langfile
-. /etc/os-release
+source $HOME/.local/${langfile}_${current_ltver}
 ver_upd
 
 # main menu
@@ -336,11 +331,11 @@ while :; do
         "7" "$msg050" \
         "8" "$msg051" \
         "9" "$msg052" \
-        "10" "$msg064" \
+        "10" "$msg053" \
         "11" "$msg054" \
         "12" "$msg055" \
         "13" "$msg056" \
-        "14" "$msg065" \
+        "14" "$msg057" \
         "15" "$msg058" \
         "16" "$msg059" 3>&1 1>&2 2>&3)
 
@@ -361,7 +356,7 @@ while :; do
     7) gamescope_in ;;
     8) mango_in ;;
     9) lact_in ;;
-    10) firealpaca_in ;;
+    10) chaotic_in ;;
     11) resolve_in ;;
     12) grubtrfs_t ;;
     13) docker_t ;;

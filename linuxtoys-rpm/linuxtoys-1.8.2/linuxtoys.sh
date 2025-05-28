@@ -22,13 +22,14 @@ det_langfile () {
     if [ -f "$HOME/.local/${langfile}_${current_ltver}" ]; then
         return
     else
+        rm -f "$HOME/.local/.ltlang-"* 2>/dev/null
         curl -fLo $HOME/.local/${langfile}_${current_ltver} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/lang/${langfile}_${current_ltver}
     fi
 
 }
 
 # updater
-current_ltver="1.8.1"
+current_ltver="1.8.2"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -442,7 +443,7 @@ exec 2> >(tee "$logfile" >&2)
 
 # language and upd checks
 det_langfile
-source $HOME/.local/$langfile
+source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
 ver_upd
 

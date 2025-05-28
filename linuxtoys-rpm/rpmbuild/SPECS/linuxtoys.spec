@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.8.1
+Version:        1.8.2
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,8 +45,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  28 2025 Victor Gregory <psygreg@pm.me> - 1.8.1
-- Fixed updater for Debian/Ubuntu edition
-- Fixed Chaotic-AUR installation for Arch edition
-- Language updates now work as intended
-- Logger implemented for useful bug reports
+* Wed May  28 2025 Victor Gregory <psygreg@pm.me> - 1.8.2
+- Fixed language filename mismatch

@@ -1,8 +1,0 @@
-linuxtoys (1.8.1-1) plucky; urgency=medium
-
-  * Fixed updater for Debian/Ubuntu edition
-  * Fixed Chaotic-AUR installation for Arch edition
-  * Language files now update as intended
-  * Logger implemented for useful bug reports
-
- -- Victor Gregory <psygreg@pm.me>  Wed, 28 May 2025 1:00:47 -0300
