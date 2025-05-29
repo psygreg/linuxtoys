@@ -238,7 +238,7 @@ docker_t () {
 rocm_in () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
-    if [[ $GPU == *' radeon '* ]]; then
+    if [[ -n "$GPU" ]]; then
         if whiptail --title "$msg006" --yesno "$msg037" 8 78; then
             local packages=()
             if [ "$ID_LIKE" == "suse" ]; then

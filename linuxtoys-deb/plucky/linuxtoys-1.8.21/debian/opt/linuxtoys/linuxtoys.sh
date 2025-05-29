@@ -267,17 +267,11 @@ kernel_in () {
 
 }
 
-kernel_cleanup () {
-
-    dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt-get purge
-
-}
-
 # install ROCm for AMD GPU computing
 rocm_in () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
-    if [[ $GPU == *' radeon '* ]]; then
+    if [[ -n "$GPU" ]]; then
         whiptail --title "$msg006" --msgbox "$msg037" 8 78
         if whiptail --title "$msg006" --yesno "$msg038" 8 78; then
             local packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)

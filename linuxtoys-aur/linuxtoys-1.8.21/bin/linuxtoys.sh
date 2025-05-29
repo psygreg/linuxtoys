@@ -275,7 +275,7 @@ kernel_in () {
 rocm_in () { 
 
     local GPU=$(lspci | grep -i 'radeon .*')
-    if [[ $GPU == *' radeon '* ]]; then
+    if [[ -n "$GPU" ]]; then
         if whiptail --title "$msg006" --yesno "$msg037" 8 78; then
             local packages=(amd-comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi rocminfo hipcc hiprand hiprtc radeontop rocm-opencl-runtime ocl-icd clinfo)
             for pac in "${packages[@]}"; do

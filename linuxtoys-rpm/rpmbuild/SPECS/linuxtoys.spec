@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.8.2
+Version:        1.8.21
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,5 +45,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed May  28 2025 Victor Gregory <psygreg@pm.me> - 1.8.2
-- Fixed language filename mismatch
+* Thu May  29 2025 Victor Gregory <psygreg@pm.me> - 1.8.21
+- Fixed error on Radeon GPU detection
