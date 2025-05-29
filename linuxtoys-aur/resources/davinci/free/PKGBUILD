@@ -1,7 +1,6 @@
-# Former Maintainer: Muflone http://www.muflone.com/contacts/english/
+# Maintainer: Psygreg https://github.com/psygreg
 # Contributor: Alex S. <shantanna_at_hotmail_dot_com>
 # Contributor: Jonathon Fernyhough <jonathon_at_manjaro_dot_org>
-# Current Maintainer: Psygreg https://github.com/psygreg
 
 # Hardware support is limited. Nvidia cards should work fine.
 # If you're running a hybrid setup, try with primusrun/optirun.
