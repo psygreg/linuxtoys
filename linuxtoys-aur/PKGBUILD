@@ -1,5 +1,5 @@
 pkgname='linuxtoys'
-pkgver='1.8.21'
+pkgver='1.8.3'
 pkgrel=1
 arch=('x86_64')
 depends=(bash curl wget libnewt base-devel xterm)
@@ -8,7 +8,7 @@ conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('c703114faea0f51370f2fe194776f2a74c213487659997c59d93de048b7f9a97')
+sha256sums=('5e82e31e5da05d20dea0e5fe65844a485b08aa159a4c92a610d5dea13286e836')
 
 package() {
 

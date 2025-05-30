@@ -5,31 +5,31 @@
 dep_check () {
 
     local dependencies=()
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
+    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         dependencies=(newt)
-    elif [ "$ID" == "arch" ]; then
+    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
         dependencies=(libnewt)
-    elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+    elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         dependencies=(whiptail)
     fi
     for dep in "${dependencies[@]}"; do
-        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
+        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
             if rpm -qi "$dep" 2>/dev/null 1>&2; then
                 continue
             else
-                if [ "$ID_LIKE" == "suse" ]; then
+                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                     sudo zypper in "$dep" -y
                 else
                     sudo dnf in "$dep" -y
                 fi
             fi
-        elif [ "$ID" == "arch" ]; then
+        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
             if pacman -Qi "$dep" 2>/dev/null 1>&2; then
                 continue
             else
                 sudo pacman -S --noconfirm "$dep"
             fi
-        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if dpkg -s "$dep" 2>/dev/null 1>&2; then
                 continue
             else
@@ -43,15 +43,15 @@ dep_check () {
 # install docker and portainer CE
 docker_in () {
 
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
-        if [ "$ID_LIKE" = "suse" ]; then
+    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
+        if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             sudo zypper in docker -y
         else
             sudo dnf in docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
         fi
-    elif [ "$ID" == "arch" ]; then
+    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
         sudo pacman -S --noconfirm docker
-    elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+    elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         sudo apt install -y docker.io
     fi
     sudo systemctl enable docker

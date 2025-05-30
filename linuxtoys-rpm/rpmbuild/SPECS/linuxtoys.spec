@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.8.21
+Version:        1.8.3
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,5 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Thu May  29 2025 Victor Gregory <psygreg@pm.me> - 1.8.21
-- Fixed error on Radeon GPU detection
+* Fri May  30 2025 Victor Gregory <psygreg@pm.me> - 1.8.3
+- Fixed multiple system detection errors
+- Added Pipewire Audio Capture installation for OBS Studio

@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="1.8.21"
+current_ltver="1.8.3"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -37,7 +37,7 @@ ver_upd () {
         if whiptail --title "$msg001" --yesno "$msg002" 8 78; then
             cd $HOME
             wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm
-            if [ "$ID_LIKE" == "suse" ]; then
+            if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                 nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown
             else
                 nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown  
@@ -57,7 +57,7 @@ ufw_in () {
             if rpm -qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                if [ "$ID_LIKE" == "suse" ]; then
+                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                     sudo zypper in "$pac" -y
                 else
                     sudo dnf in "$pac" -y
@@ -108,7 +108,7 @@ lucidglyph_in () {
 suse_codecs () {
 
     if whiptail --title "$msg006" --yesno "$msg080" 8 78; then
-        if [ "$ID_LIKE" == "suse" ]; then
+        if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             sudo zypper in opi -y
             sudo opi codecs
             whiptail --title "$msg006" --msgbox "$msg018" 8 78
@@ -142,7 +142,7 @@ gamescope_in () {
             if rpm -qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                if [ "$ID_LIKE" == "suse" ]; then
+                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                     sudo zypper in "$pac" -y
                 else
                     sudo dnf in "$pac" -y
@@ -167,7 +167,7 @@ mango_in () {
             if rpm -qi "$pac" 2>/dev/null 1>&2; then
                 continue
             else
-                if [ "$ID_LIKE" == "suse" ]; then
+                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                     sudo zypper in "$pac" -y
                 else
                     sudo dnf in "$pac" -y
@@ -178,6 +178,23 @@ mango_in () {
             flatpak install --or-update org.freedesktop.Platform.VulkanLayer.MangoHud
         fi
         whiptail --title "$msg006" --msgbox "$msg029" 8 78
+    fi
+
+}
+
+# install pipewire audio plugin for OBS Studio
+obs_pipe () {
+
+    if rpm -qi "pipewire" 2>/dev/null 1>&2; then
+        if whiptail --title "$msg006" --yesno "$msg082" 8 78; then
+            cd $HOME
+            curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/pipewire-obs.sh
+            chmod +x pipewire-obs.sh
+            ./pipewire-obs.sh
+            rm pipewire-obs.sh
+        fi
+    else
+        whiptail --title "$msg030" --msgbox "$msg083" 8 78
     fi
 
 }
@@ -241,7 +258,7 @@ rocm_in () {
     if [[ -n "$GPU" ]]; then
         if whiptail --title "$msg006" --yesno "$msg037" 8 78; then
             local packages=()
-            if [ "$ID_LIKE" == "suse" ]; then
+            if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                 packages=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
             else
                 packages=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
@@ -250,7 +267,7 @@ rocm_in () {
                 if rpm -qi "$pac" 2>/dev/null 1>&2; then
                     continue
                 else
-                    if [ "$ID_LIKE" == "suse" ]; then
+                    if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                         sudo zypper in "$pac" -y
                     else
                         sudo dnf in "$pac" -y
@@ -285,7 +302,7 @@ nvidia_in () {
             fi
 
             case $CHOICE in
-            0) if [ "$ID_LIKE" == "suse" ]; then
+            0) if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                     local REPO_ALIAS="nvidia"
                     case "$VERSION_ID" in
                         *Tumbleweed*)
@@ -314,7 +331,7 @@ nvidia_in () {
                     sudo dnf in akmod-nvidia xorg-x11-drv-nvidia-cuda -y
                fi 
                sudo dracut -f --regenerate-all ;;
-            1) if [ "$ID_LIKE" == "suse" ]; then
+            1) if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                     local REPO_ALIAS="nvidia"
                     case "$VERSION_ID" in
                         *Tumbleweed*)
@@ -369,7 +386,7 @@ split_disable () {
 # fix SELinux policies for gaming on openSUSE
 fix_se_suse () {
 
-    if [ "$ID_LIKE" == "suse" ]; then
+    if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
         sudo setsebool -P selinuxuser_execmod 1
         whiptail --title "$msg072" --msgbox "$msg022" 8 78
     else
@@ -427,9 +444,7 @@ kernel_menu () {
 
 kernel_in () {
 
-    if [ "$ID_LIKE" == "rhel fedora" ]; then
-        kernel_menu
-    elif [[ "$ID" == "fedora" || "$ID_LIKE" == *fedora* ]]; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
         kernel_menu
     else
         whiptail --title "$msg074" --msgbox "$msg077" 8 78
