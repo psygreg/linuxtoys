@@ -45,4 +45,5 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Chaotic AUR](https://aur.chaotic.cx/)
+- [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - And the Linux Community
