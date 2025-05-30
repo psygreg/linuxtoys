@@ -5,7 +5,7 @@
 dep_check () {
 
     local dependencies=()
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
+    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
         dependencies=(newt btrfs-progs grub2 bash gawk inotify-tools)
     elif [ "$ID" == "arch" ]; then
         dependencies=(libnewt btrfs-progs grub bash gawk inotify-tools)
@@ -13,7 +13,7 @@ dep_check () {
         dependencies=(whiptail btrfs-progs grub bash gawk inotify-tools)
     fi
     for dep in "${dependencies[@]}"; do
-        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
+        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
             if rpm -qi "$dep" 2>/dev/null 1>&2; then
                 continue
             else
@@ -44,7 +44,7 @@ dep_check () {
 grubtrfs_in () {
 
     cd $HOME
-    if [[ "$ID_LIKE" =~ (rhel|fedora) ]]; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) || "$ID" == "fedora" ]]; then
         sudo dnf rm snapper -y
         sudo dnf in snapper btrfs-assistant -y
         sudo snapper -c root create-config /
@@ -71,7 +71,7 @@ grubtrfs_in () {
     git clone https://github.com/Antynea/grub-btrfs.git
     cd grub-btrfs
     sudo make install
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
+    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
         sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     elif [ "$ID" == "arch" ]; then
         sudo grub-mkconfig -o /boot/grub/grub.cfg

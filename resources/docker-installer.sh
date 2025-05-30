@@ -5,7 +5,7 @@
 dep_check () {
 
     local dependencies=()
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
+    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
         dependencies=(newt)
     elif [ "$ID" == "arch" ]; then
         dependencies=(libnewt)
@@ -13,7 +13,7 @@ dep_check () {
         dependencies=(whiptail)
     fi
     for dep in "${dependencies[@]}"; do
-        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
+        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
             if rpm -qi "$dep" 2>/dev/null 1>&2; then
                 continue
             else
@@ -43,7 +43,7 @@ dep_check () {
 # install docker and portainer CE
 docker_in () {
 
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]]; then
+    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) || "$ID" == "fedora" ]]; then
         if [ "$ID_LIKE" = "suse" ]; then
             sudo zypper in docker -y
         else

@@ -429,7 +429,7 @@ kernel_in () {
 
     if [ "$ID_LIKE" == "rhel fedora" ]; then
         kernel_menu
-    elif [ "$ID_LIKE" == "fedora" ]; then
+    elif [[ "$ID" == "fedora" || "$ID_LIKE" == *fedora* ]]; then
         kernel_menu
     else
         whiptail --title "$msg074" --msgbox "$msg077" 8 78
