@@ -44,7 +44,7 @@ dep_check () {
 grubtrfs_in () {
 
     cd $HOME
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         sudo dnf rm snapper -y
         sudo dnf in snapper btrfs-assistant -y
         sudo snapper -c root create-config /
