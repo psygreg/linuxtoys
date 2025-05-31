@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.0.0
+Version:        2.0.1
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,7 +45,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Sat May  31 2025 Victor Gregory <psygreg@pm.me> - 2.0.0
-- Major code refactoring into categorized submenus
-- Added Pipewire Audio Capture installation for OBS Studio
-- Added quick install of multiple applications 
+* Sat May  31 2025 Victor Gregory <psygreg@pm.me> - 2.0.1
+- New menu sections for About and GitHub repository

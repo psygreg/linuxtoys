@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="2.0.0"
+current_ltver="2.0.1"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -85,7 +85,11 @@ while :; do
         "1" "$msg121" \
         "2" "$msg122" \
         "3" "$msg123" \
-        "4" "$msg059" 3>&1 1>&2 2>&3)
+        "" "" \
+        "" "" \
+        "4" "$msg124" \
+        "5" "GitHub" \
+        "6" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -98,7 +102,9 @@ while :; do
     1) supmenu="osupermenu" && supermenu_run ;;
     2) supmenu="gsupermenu" && supermenu_run ;;
     3) supmenu="esupermenu" && supermenu_run ;;
-    4 | q) break ;;
+    4) whiptail --title "LinuxToys v${current_ltver}" --msgbox "Made with <3 by psygreg -- GNU GPLv3 license" 8 78 ;;
+    5) xdg-open https://github.com/psygreg/linuxtoys ;;
+    6 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
