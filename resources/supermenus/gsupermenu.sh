@@ -160,10 +160,17 @@ sboost_t () {
 
     if [[ -n "$_sboost" ]]; then
         cd $HOME
-        wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
-        chmod +x patcher.sh
-        ./patcher.sh
-        rm patcher.sh
+        if [ "$ID" == "cachyos" ]; then
+            wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher-cachy.fish
+            chmod +x patcher-cachy.fish
+            fish ./patcher-cachy.fish
+            rm patcher-cachy.fish
+        else
+            wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
+            chmod +x patcher.sh
+            ./patcher.sh
+            rm patcher.sh
+        fi
     fi
 
 }

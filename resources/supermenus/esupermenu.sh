@@ -276,29 +276,33 @@ chaotic_in () {
 # install linux-cachyos optimized kernel
 kernel_in () {
 
-    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        # summon installer
-        wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
-        chmod +x cachyos-deb.sh
-        ./cachyos-deb.sh
-        rm cachyos-deb.sh
-        # clean old kernels
-        dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-        dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
-        kernel_menu
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        chaotic_in
-        sudo pacman -S --noconfirm linux-cachyos linux-cachyos-headers
-        if command -v dracut >/dev/null 2>&1; then
-            sudo dracut -f --regenerate-all
-        elif command -v mkinitcpio >/dev/null 2>&1; then
-            sudo mkinitcpio -P
-        fi
-        sudo grub-mkconfig -o /boot/grub/grub.cfg
-        whiptail --title "$msg006" --msgbox "$msg036" 8 78
+    if [ "$ID" == "cachyos" ]; then
+        whiptail --title "$msg030" --msgbox "$msg077" 8 78
     else
-        whiptail --title "$msg074" --msgbox "$msg077" 8 78
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            # summon installer
+            wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
+            chmod +x cachyos-deb.sh
+            ./cachyos-deb.sh
+            rm cachyos-deb.sh
+            # clean old kernels
+            dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+            dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            kernel_menu
+        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+            chaotic_in
+            sudo pacman -S --noconfirm linux-cachyos linux-cachyos-headers
+            if command -v dracut >/dev/null 2>&1; then
+                sudo dracut -f --regenerate-all
+            elif command -v mkinitcpio >/dev/null 2>&1; then
+                sudo mkinitcpio -P
+            fi
+            sudo grub-mkconfig -o /boot/grub/grub.cfg
+            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+        else
+            whiptail --title "$msg074" --msgbox "$msg077" 8 78
+        fi
     fi
 
 }
