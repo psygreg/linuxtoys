@@ -287,11 +287,11 @@ install_flatpak () {
     local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb)
     if command -v flatpak &> /dev/null; then
         for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update -y $flat
+            flatpak install --or-update -y $flat --system
         done
         if [[ -n "$_hndbrk" ]]; then
             if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK
+                flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
             fi
         fi
         if [[ -n "$_oprgb" ]]; then
@@ -307,11 +307,11 @@ install_flatpak () {
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
                 for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -y $flat
+                    flatpak install --or-update -y $flat --system
                 done
                 if [[ -n "$_hndbrk" ]]; then
                     if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                        flatpak install fr.handbrake.ghb.Plugin.IntelMediaSDK
+                        flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
                     fi
                 fi
                 if [[ -n "$_oprgb" ]]; then
@@ -327,11 +327,11 @@ install_flatpak () {
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
                 for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -y $flat
+                    flatpak install --or-update -y $flat --system
                 done
                 if [[ -n "$_hndbrk" ]]; then
                     if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                        flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK
+                        flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
                     fi
                 fi
                 if [[ -n "$_oprgb" ]]; then

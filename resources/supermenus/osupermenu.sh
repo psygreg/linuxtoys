@@ -163,7 +163,7 @@ install_flatpak () {
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
                 for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -y $flat
+                    flatpak install --or-update -u -y $flat
                 done
                 # notify that a reboot is required to enable flatpaks
                 whiptail --title "$msg013" --msgbox "$msg014" 8 78
@@ -172,7 +172,7 @@ install_flatpak () {
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
                 for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -y $flat
+                    flatpak install --or-update -u -y $flat
                 done
                 # notify that a reboot is required to enable flatpaks
                 whiptail --title "$msg013" --msgbox "$msg014" 8 78

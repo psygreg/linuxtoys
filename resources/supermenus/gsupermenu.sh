@@ -117,12 +117,12 @@ install_native () {
     fi
     if [[ -n "$_gscope" ]]; then
         if command -v flatpak &> /dev/null; then
-            flatpak install --or-update -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
+            flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
         fi
     fi
     if [[ -n "$_mhud" ]]; then
         if command -v flatpak &> /dev/null; then
-            flatpak install --or-update -y org.freedesktop.Platform.VulkanLayer.MangoHud
+            flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.MangoHud
         fi
     fi
 
@@ -134,7 +134,7 @@ install_flatpak () {
     local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst)
     if command -v flatpak &> /dev/null; then
         for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update -y $flat
+            flatpak install --or-update -u -y $flat
         done
     else
         if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
@@ -146,7 +146,7 @@ install_flatpak () {
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
             for flat in "${_flatpaks[@]}"; do
-                flatpak install --or-update -y $flat
+                flatpak install --or-update -u -y $flat
             done
             # notify that a reboot is required to enable flatpaks
             whiptail --title "$msg013" --msgbox "$msg014" 8 78    
