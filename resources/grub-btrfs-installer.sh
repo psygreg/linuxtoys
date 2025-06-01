@@ -48,7 +48,6 @@ dep_check () {
 # install grub-btrfs and set up automatic snapshot listing
 grubtrfs_in () {
 
-    cd $HOME
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         sudo dnf rm snapper -y
         sudo dnf in snapper btrfs-assistant -y
@@ -73,9 +72,10 @@ grubtrfs_in () {
     sudo systemctl enable snapper-boot.timer
     sudo systemctl enable snapper-cleanup.timer
     sudo systemctl start snapper-cleanup.timer
+    cd $HOME
     git clone https://github.com/Antynea/grub-btrfs.git
     cd grub-btrfs
-    sudo make install
+    make install
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
