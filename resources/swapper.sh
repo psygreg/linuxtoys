@@ -25,15 +25,15 @@ root_swap () {
 home_swap () {
 
     if [ "$(findmnt -n -o FSTYPE /home)" = "btrfs" ]; then
-        btrfs subvolume create /home/swap
-        btrfs filesystem mkswapfile --size 8g --uuid clear /home/swap/swapfile
-        swapon /home/swap/swapfile
+        sudo btrfs subvolume create /home/swap
+        sudo btrfs filesystem mkswapfile --size 8g --uuid clear /home/swap/swapfile
+        sudo swapon /home/swap/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/home/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
         whiptail --title "Swapfile Creator" --msgbox "Swapfile creation succesful." 8 78
     else
-        mkswap -U clear --size 8G --file /home/swapfile
-        swapon /home/swapfile
+        sudo mkswap -U clear --size 8G --file /home/swapfile
+        sudo swapon /home/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/home/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
         whiptail --title "Swapfile Creator" --msgbox "Swapfile creation succesful." 8 78
