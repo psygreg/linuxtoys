@@ -10,11 +10,11 @@ dep_check () {
     else
         local dependencies=()
         if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-            dependencies=(gawk inotify-tools)
+            dependencies=(gawk inotify-tools make)
         elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-            dependencies=(gawk inotify-tools)
+            dependencies=(gawk inotify-tools make)
         elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            dependencies=(gawk inotify-tools)
+            dependencies=(gawk inotify-tools make)
         fi
         for dep in "${dependencies[@]}"; do
             if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
