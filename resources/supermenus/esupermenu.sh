@@ -386,7 +386,7 @@ while :; do
     1) swapfile_t ;;
     2) flatpak_in ;;
     3) lucidglyph_in ;;
-    4) grubtrfs_in ;;
+    4) grubtrfs_t ;;
     5) kernel_in ;;
     6) suse_codecs ;;
     7) fix_se_suse ;;
