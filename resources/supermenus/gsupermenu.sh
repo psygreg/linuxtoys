@@ -136,6 +136,10 @@ install_flatpak () {
         for flat in "${_flatpaks[@]}"; do
             flatpak install --or-update -u -y $flat
         done
+        if [[ -n "$_steam" ]]; then
+            flatpak install --or-update -u -y com.valvesoftware.Steam
+            sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+        fi
     else
         if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
             if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
@@ -147,6 +151,10 @@ install_flatpak () {
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
             for flat in "${_flatpaks[@]}"; do
                 flatpak install --or-update -u -y $flat
+                if [[ -n "$_steam" ]]; then
+                    flatpak install --or-update -u -y com.valvesoftware.Steam
+                    sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+                fi
             done
             # notify that a reboot is required to enable flatpaks
             whiptail --title "$msg013" --msgbox "$msg014" 8 78    
