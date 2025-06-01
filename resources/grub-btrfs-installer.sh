@@ -12,7 +12,7 @@ dep_check () {
         if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
             dependencies=(gawk inotify-tools make)
         elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-            dependencies=(gawk inotify-tools make)
+            dependencies=(gawk inotify-tools)
         elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             dependencies=(gawk inotify-tools make)
         fi
@@ -72,10 +72,14 @@ grubtrfs_in () {
     sudo systemctl enable snapper-boot.timer
     sudo systemctl enable snapper-cleanup.timer
     sudo systemctl start snapper-cleanup.timer
-    cd $HOME
-    git clone https://github.com/Antynea/grub-btrfs.git
-    cd grub-btrfs
-    make install
+    if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        sudo pacman -S --noconfirm grub-btrfs
+    else
+        cd $HOME
+        git clone https://github.com/Antynea/grub-btrfs.git
+        cd grub-btrfs
+        make install
+    fi
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
