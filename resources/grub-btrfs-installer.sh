@@ -4,39 +4,44 @@
 # check dependencies
 dep_check () {
 
-    local dependencies=()
-    if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-        dependencies=(newt btrfs-progs grub2 bash gawk inotify-tools)
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        dependencies=(libnewt btrfs-progs grub bash gawk inotify-tools)
-    elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        dependencies=(whiptail btrfs-progs grub bash gawk inotify-tools)
-    fi
-    for dep in "${dependencies[@]}"; do
+    if ! dpkg -l | grep -q grub-efi; then
+        whiptail --title "Cancelled" --msgbox "No GRUB found." 8 78
+        exit 1
+    else
+        local dependencies=()
         if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-            if rpm -qi "$dep" 2>/dev/null 1>&2; then
-                continue
-            else
-                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-                    sudo zypper in "$dep" -y
+            dependencies=(gawk inotify-tools)
+        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+            dependencies=(gawk inotify-tools)
+        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            dependencies=(gawk inotify-tools)
+        fi
+        for dep in "${dependencies[@]}"; do
+            if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
+                if rpm -qi "$dep" 2>/dev/null 1>&2; then
+                    continue
                 else
-                    sudo dnf in "$dep" -y
+                    if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+                        sudo zypper in "$dep" -y
+                    else
+                        sudo dnf in "$dep" -y
+                    fi
+                fi
+            elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                if pacman -Qi "$dep" 2>/dev/null 1>&2; then
+                    continue
+                else
+                    sudo pacman -S --noconfirm "$dep"
+                fi
+            elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+                if dpkg -s "$dep" 2>/dev/null 1>&2; then
+                    continue
+                else
+                    sudo apt install -y "$dep"
                 fi
             fi
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-            if pacman -Qi "$dep" 2>/dev/null 1>&2; then
-                continue
-            else
-                sudo pacman -S --noconfirm "$dep"
-            fi
-        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            if dpkg -s "$dep" 2>/dev/null 1>&2; then
-                continue
-            else
-                sudo apt install -y "$dep"
-            fi
-        fi
-    done
+        done
+    fi
 
 }
 
