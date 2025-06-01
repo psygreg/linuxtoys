@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="2.0.1"
+current_ltver="2.0.2"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -57,6 +57,28 @@ ver_upd () {
 
 }
 
+# kernel update checker for debian/ubuntu
+krn_chk () {
+
+    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        source $HOME/.local/kernelsetting
+        if [ ${_psygreg_krn} == "yes" ]; then
+            if [ $(uname -r) != $(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/psy-krn) ]; then
+                if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
+                    wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
+                    chmod +x cachyos-deb.sh
+                    ./cachyos-deb.sh
+                    rm cachyos-deb.sh
+                    # clean old kernels
+                    dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+                    dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+                fi
+            fi
+        fi
+    fi
+
+}
+
 # supermenu run
 supermenu_run () {
 
@@ -76,6 +98,7 @@ det_langfile
 source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
 ver_upd
+krn_chk
 
 # main menu
 while :; do
@@ -102,7 +125,7 @@ while :; do
     1) supmenu="osupermenu" && supermenu_run ;;
     2) supmenu="gsupermenu" && supermenu_run ;;
     3) supmenu="esupermenu" && supermenu_run ;;
-    4) whiptail --title "LinuxToys v${current_ltver}" --msgbox "Made with <3 by psygreg -- GNU GPLv3 license" 8 78 ;;
+    4) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
     5) xdg-open https://github.com/psygreg/linuxtoys ;;
     6 | q) break ;;
     *) echo "Invalid Option" ;;
