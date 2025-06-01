@@ -20,6 +20,26 @@ det_langfile () {
 
 }
 
+export NEWT_COLORS='
+    root=white,blue
+    border=black,lightgray
+    window=black,lightgray
+    shadow=black,gray
+    title=black,lightgray
+    button=black,cyan
+    actbutton=white,blue
+    checkbox=black,lightgray
+    actcheckbox=black,cyan
+    entry=black,lightgray
+    label=black,lightgray
+    listbox=black,lightgray
+    actlistbox=black,cyan
+    textbox=black,lightgray
+    acttextbox=black,cyan
+    helpline=white,blue
+    roottext=black,lightgray
+'
+
 # supermenu checklist
 osupermenu () {
 
