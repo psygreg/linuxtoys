@@ -97,20 +97,16 @@ lucidglyph_in () {
 # set up grub-btrfs for snapshots on boot menu 
 grubtrfs_t () {
 
-    if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-        whiptail --title "$msg006" --msgbox "GRUB-btrfs is currently not compatible with your operating system." 8 78
+    if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+        cd $HOME
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+        chmod +x grub-btrfs-installer.sh
+        ./grub-btrfs-installer.sh
+        rm grub-btrfs-installer.sh
     else
-        if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-            cd $HOME
-            curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
-            chmod +x grub-btrfs-installer.sh
-            ./grub-btrfs-installer.sh
-            rm grub-btrfs-installer.sh
-        else
-            whiptail --title "$msg030" --msgbox "$msg031" 8 78
-        fi
+        whiptail --title "$msg030" --msgbox "$msg031" 8 78
     fi
-    
+
 }
 
 # Nvidia driver installer for Fedora/SUSE - it is a montrosity, but it works, trust me bro
