@@ -88,118 +88,120 @@ install_native () {
     else
         local _packages=($_obs $_slar $_oprzr $_droid $_dckr)
     fi
-    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
-            if [[ -n "$_slar" ]]; then
-                sudo add-apt-repository ppa:solaar-unifying/stable
-                sudo apt update
+    if [[ -n "$_packages" ]]; then
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+                if [[ -n "$_slar" ]]; then
+                    sudo add-apt-repository ppa:solaar-unifying/stable
+                    sudo apt update
+                fi
             fi
-        fi
-        if [[ -n "$_droid" ]]; then
-            sudo apt install curl ca-certificates -y
-            curl -s https://repo.waydro.id | sudo bash
-        fi
-        if [[ -n "$_dckr" ]]; then
-            docker_t
-        fi
-        if [[ -n "$_rocm" ]]; then
-            rocm_deb
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" == "yes" ]]; then
-                continue
+            if [[ -n "$_droid" ]]; then
+                sudo apt install curl ca-certificates -y
+                curl -s https://repo.waydro.id | sudo bash
             fi
-            sudo apt install -y $pak
-        done
-        if [[ -n "$_obs" ]]; then
-            if dpkg -s "pipewire" 2>/dev/null 1>&2; then
-                obs_pipe
+            if [[ -n "$_dckr" ]]; then
+                docker_t
             fi
-        fi
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        if [[ -n "$_btassist" ]]; then
-            if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
-                cd $HOME
-                sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-                sudo pacman-key --lsign-key 3056513887B78AEB
-                sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-                sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-                curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
-                sudo sed -i -f script.sed /etc/pacman.conf
-                sudo pacman -Sy
-                rm script.sed
-            else
-                whiptail --title "$msg006" --msgbox "Skipping btrfs-assistant installation." 8 78
+            if [[ -n "$_rocm" ]]; then
+                rocm_deb
             fi
-        fi
-        if [[ -n "$_dckr" ]]; then
-            docker_t
-        fi
-        if [[ -n "$_rocm" ]]; then
-            rocm_arch
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" =~ (openrazer|yes) ]]; then
-                sudo pacman -S --noconfirm openrazer-daemon
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" == "yes" ]]; then
+                    continue
+                fi
+                sudo apt install -y $pak
+            done
+            if [[ -n "$_obs" ]]; then
+                if dpkg -s "pipewire" 2>/dev/null 1>&2; then
+                    obs_pipe
+                fi
             fi
-            sudo pacman -S --noconfirm $pak
-        done
-        if [[ -n "$_obs" ]]; then
-            if pacman -Qi "pipewire" 2>/dev/null 1>&2; then
-                obs_pipe
+        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+            if [[ -n "$_btassist" ]]; then
+                if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
+                    cd $HOME
+                    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+                    sudo pacman-key --lsign-key 3056513887B78AEB
+                    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+                    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+                    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
+                    sudo sed -i -f script.sed /etc/pacman.conf
+                    sudo pacman -Sy
+                    rm script.sed
+                else
+                    whiptail --title "$msg006" --msgbox "Skipping btrfs-assistant installation." 8 78
+                fi
             fi
-        fi
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        if [[ -n "$_oprzr" ]]; then
-            sudo dnf in kernel-devel -y
-            sudo dnf config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo
-            sudo dnf in openrazer-meta -y
-        fi
-        if [[ -n "$_dckr" ]]; then
-            docker_t
-        fi
-        if [[ -n "$_rocm" ]]; then
-            rocm_rpm
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" =~ (openrazer|yes) ]]; then
-                continue
+            if [[ -n "$_dckr" ]]; then
+                docker_t
             fi
-            sudo dnf in $pak -y
-        done
-        if [[ -n "$_obs" ]]; then
-            if rpm -qi "pipewire" 2>/dev/null 1>&2; then
-                obs_pipe
+            if [[ -n "$_rocm" ]]; then
+                rocm_arch
             fi
-        fi
-    elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-        if [[ -n "$_oprzr" ]]; then
-            if grep -qi "slowroll" /etc/os-release; then
-                sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Slowroll/hardware:razer.repo
-            else
-                sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Tumbleweed/hardware:razer.repo
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ (openrazer|yes) ]]; then
+                    sudo pacman -S --noconfirm openrazer-daemon
+                fi
+                sudo pacman -S --noconfirm $pak
+            done
+            if [[ -n "$_obs" ]]; then
+                if pacman -Qi "pipewire" 2>/dev/null 1>&2; then
+                    obs_pipe
+                fi
             fi
-            sudo zypper refresh
-            sudo zypper in openrazer-meta -y
-        fi
-        if [[ -n "$_dckr" ]]; then
-            docker_t
-        fi
-        if [[ -n "$_rocm" ]]; then
-            rocm_rpm
-        fi
-        if [[ -n "$_droid" ]]; then
-            whiptail --title "Waydroid" --msgbox "$msg097" 12 78
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" =~ (openrazer|yes|waydroid) ]]; then
-                continue
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+            if [[ -n "$_oprzr" ]]; then
+                sudo dnf in kernel-devel -y
+                sudo dnf config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo
+                sudo dnf in openrazer-meta -y
             fi
-            sudo zypper in $pak -y
-        done
-        if [[ -n "$_obs" ]]; then
-            if rpm -qi "pipewire" 2>/dev/null 1>&2; then
-                obs_pipe
+            if [[ -n "$_dckr" ]]; then
+                docker_t
+            fi
+            if [[ -n "$_rocm" ]]; then
+                rocm_rpm
+            fi
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ (openrazer|yes) ]]; then
+                    continue
+                fi
+                sudo dnf in $pak -y
+            done
+            if [[ -n "$_obs" ]]; then
+                if rpm -qi "pipewire" 2>/dev/null 1>&2; then
+                    obs_pipe
+                fi
+            fi
+        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            if [[ -n "$_oprzr" ]]; then
+                if grep -qi "slowroll" /etc/os-release; then
+                    sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Slowroll/hardware:razer.repo
+                else
+                    sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Tumbleweed/hardware:razer.repo
+                fi
+                sudo zypper refresh
+                sudo zypper in openrazer-meta -y
+            fi
+            if [[ -n "$_dckr" ]]; then
+                docker_t
+            fi
+            if [[ -n "$_rocm" ]]; then
+                rocm_rpm
+            fi
+            if [[ -n "$_droid" ]]; then
+                whiptail --title "Waydroid" --msgbox "$msg097" 12 78
+            fi
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ (openrazer|yes|waydroid) ]]; then
+                    continue
+                fi
+                sudo zypper in $pak -y
+            done
+            if [[ -n "$_obs" ]]; then
+                if rpm -qi "pipewire" 2>/dev/null 1>&2; then
+                    obs_pipe
+                fi
             fi
         fi
     fi
@@ -300,63 +302,65 @@ rocm_arch () {
 install_flatpak () {
 
     local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb)
-    if command -v flatpak &> /dev/null; then
-        for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update -y $flat --system
-        done
-        if [[ -n "$_hndbrk" ]]; then
-            if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
+    if [[ -n "$_flatpaks" ]]; then
+        if command -v flatpak &> /dev/null; then
+            for flat in "${_flatpaks[@]}"; do
+                flatpak install --or-update -y $flat --system
+            done
+            if [[ -n "$_hndbrk" ]]; then
+                if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
+                    flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
+                fi
             fi
-        fi
-        if [[ -n "$_oprgb" ]]; then
-            cd $HOME
-            wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
-            sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
-            sudo udevadm control --reload-rules && sudo udevadm trigger
-        fi
-    else
-        if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                sudo apt install -y flatpak
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -y $flat --system
-                done
-                if [[ -n "$_hndbrk" ]]; then
-                    if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                        flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
+            if [[ -n "$_oprgb" ]]; then
+                cd $HOME
+                wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
+                sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
+                sudo udevadm control --reload-rules && sudo udevadm trigger
+            fi
+        else
+            if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+                    sudo apt install -y flatpak
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+                    for flat in "${_flatpaks[@]}"; do
+                        flatpak install --or-update -y $flat --system
+                    done
+                    if [[ -n "$_hndbrk" ]]; then
+                        if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
+                            flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
+                        fi
                     fi
-                fi
-                if [[ -n "$_oprgb" ]]; then
-                    cd $HOME
-                    wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
-                    sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
-                    sudo udevadm control --reload-rules && sudo udevadm trigger
-                fi
-                # notify that a reboot is required to enable flatpaks
-                whiptail --title "$msg013" --msgbox "$msg014" 8 78
-            elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-                sudo pacman -S --noconfirm flatpak
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -y $flat --system
-                done
-                if [[ -n "$_hndbrk" ]]; then
-                    if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                        flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
+                    if [[ -n "$_oprgb" ]]; then
+                        cd $HOME
+                        wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
+                        sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
+                        sudo udevadm control --reload-rules && sudo udevadm trigger
                     fi
+                    # notify that a reboot is required to enable flatpaks
+                    whiptail --title "$msg013" --msgbox "$msg014" 8 78
+                elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                    sudo pacman -S --noconfirm flatpak
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+                    for flat in "${_flatpaks[@]}"; do
+                        flatpak install --or-update -y $flat --system
+                    done
+                    if [[ -n "$_hndbrk" ]]; then
+                        if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
+                            flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
+                        fi
+                    fi
+                    if [[ -n "$_oprgb" ]]; then
+                        cd $HOME
+                        wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
+                        sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
+                        sudo udevadm control --reload-rules && sudo udevadm trigger
+                    fi
+                    # notify that a reboot is required to enable flatpaks
+                    whiptail --title "$msg013" --msgbox "$msg014" 8 78
                 fi
-                if [[ -n "$_oprgb" ]]; then
-                    cd $HOME
-                    wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
-                    sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
-                    sudo udevadm control --reload-rules && sudo udevadm trigger
-                fi
-                # notify that a reboot is required to enable flatpaks
-                whiptail --title "$msg013" --msgbox "$msg014" 8 78
             fi
         fi
     fi

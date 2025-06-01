@@ -29,6 +29,7 @@ gsupermenu () {
     local pp_status=$([ "$_pp" = "com.vysp3r.ProtonPlus" ] && echo "ON" || echo "OFF")
     local stl_status=$([ "$_stl" = "com.valvesoftware.Steam.Utility.steamtinkerlaunch" ] && echo "ON" || echo "OFF")
     local sober_status=$([ "$_sobst" = "org.vinegarhq.Sober" ] && echo "ON" || echo "OFF")
+    local disc_status=$([ "$_disc" = "com.discordapp.Discord" ] && echo "ON" || echo "OFF")
     local gmode_status=$([ "$_gmode" = "gamemode" ] && echo "ON" || echo "OFF")
     local gscope_status=$([ "$_gscope" = "gamescope" ] && echo "ON" || echo "OFF")
     local mhud_status=$([ "$_mhud" = "mangohud" ] && echo "ON" || echo "OFF")
@@ -47,6 +48,7 @@ gsupermenu () {
             "ProtonPlus" "$msg112" $pp_status \
             "SteamTinkerLaunch" "$msg113" $stl_status \
             "Sober" "$msg114" $sober_status \
+            "Discord" "$msg130" $disc_status \
             "Gamemode" "$msg115" $gmode_status \
             "Gamescope" "$msg116" $gscope_status \
             "Mangohud" "$msg117" $mhud_status \
@@ -67,6 +69,7 @@ gsupermenu () {
         [[ "$selection" == *"ProtonPlus"* ]] && _pp="com.vysp3r.ProtonPlus" || _pp=""
         [[ "$selection" == *"SteamTinkerLaunch"* ]] && _stl="com.valvesoftware.Steam.Utility.steamtinkerlaunch" || _stl=""
         [[ "$selection" == *"Sober"* ]] && _sobst="org.vinegarhq.Sober" || _sobst=""
+        [[ "$selection" == *"Discord"* ]] && _disc="com.discordapp.Discord" || _gmode=""
         [[ "$selection" == *"Gamemode"* ]] && _gmode="gamemode" || _gmode=""
         [[ "$selection" == *"Gamescope"* ]] && _gscope="gamescope" || _gscope=""
         [[ "$selection" == *"Mangohud"* ]] && _mhud="mangohud" || _mhud=""
@@ -89,40 +92,42 @@ gsupermenu () {
 install_native () {
 
     local _packages=($_steam $_gmode $_govl $_gscope $_mhud)
-    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        if [[ -n "$_steam" ]]; then
-            cd $HOME
-            wget https://cdn.fastly.steamstatic.com/client/installer/steam.deb
-            sudo dpkg -i steam.deb
-            rm steam.deb
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" == "steam" ]]; then
-                continue
+    if [[ -n "$_packages" ]]; then
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            if [[ -n "$_steam" ]]; then
+                cd $HOME
+                wget https://cdn.fastly.steamstatic.com/client/installer/steam.deb
+                sudo dpkg -i steam.deb
+                rm steam.deb
             fi
-            sudo apt install -y $pak
-        done
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        for pak in "${_packages[@]}"; do
-            sudo pacman -S --noconfirm $pak
-        done
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        for pak in "${_packages[@]}"; do
-            sudo dnf in $pak -y
-        done
-    elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-        for pak in "${_packages[@]}"; do
-            sudo zypper in $pak -y
-        done
-    fi
-    if [[ -n "$_gscope" ]]; then
-        if command -v flatpak &> /dev/null; then
-            flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" == "steam" ]]; then
+                    continue
+                fi
+                sudo apt install -y $pak
+            done
+        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+            for pak in "${_packages[@]}"; do
+                sudo pacman -S --noconfirm $pak
+            done
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+            for pak in "${_packages[@]}"; do
+                sudo dnf in $pak -y
+            done
+        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            for pak in "${_packages[@]}"; do
+                sudo zypper in $pak -y
+            done
         fi
-    fi
-    if [[ -n "$_mhud" ]]; then
-        if command -v flatpak &> /dev/null; then
-            flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.MangoHud
+        if [[ -n "$_gscope" ]]; then
+            if command -v flatpak &> /dev/null; then
+                flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
+            fi
+        fi
+        if [[ -n "$_mhud" ]]; then
+            if command -v flatpak &> /dev/null; then
+                flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.MangoHud
+            fi
         fi
     fi
 
@@ -131,33 +136,35 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst)
-    if command -v flatpak &> /dev/null; then
-        for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update -u -y $flat
-        done
-        if [[ -n "$_steam" ]]; then
-            flatpak install --or-update -u -y com.valvesoftware.Steam
-            sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
-        fi
-    else
-        if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                sudo apt install -y flatpak
-            elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-                sudo pacman -S --noconfirm flatpak
-            fi
-            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc)
+    if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
+        if command -v flatpak &> /dev/null; then
             for flat in "${_flatpaks[@]}"; do
                 flatpak install --or-update -u -y $flat
-                if [[ -n "$_steam" ]]; then
-                    flatpak install --or-update -u -y com.valvesoftware.Steam
-                    sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
-                fi
             done
-            # notify that a reboot is required to enable flatpaks
-            whiptail --title "$msg013" --msgbox "$msg014" 8 78    
+            if [[ -n "$_steam" ]]; then
+                flatpak install --or-update -u -y com.valvesoftware.Steam
+                sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+            fi
+        else
+            if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+                    sudo apt install -y flatpak
+                elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                    sudo pacman -S --noconfirm flatpak
+                fi
+                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+                for flat in "${_flatpaks[@]}"; do
+                    flatpak install --or-update -u -y $flat
+                    if [[ -n "$_steam" ]]; then
+                        flatpak install --or-update -u -y com.valvesoftware.Steam
+                        sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+                    fi
+                done
+                # notify that a reboot is required to enable flatpaks
+                whiptail --title "$msg013" --msgbox "$msg014" 8 78    
+            fi
         fi
     fi
 

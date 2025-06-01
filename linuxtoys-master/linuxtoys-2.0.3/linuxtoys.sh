@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="2.0.2"
+current_ltver="2.0.3"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -39,9 +39,9 @@ ver_upd () {
             if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
                 wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm
                 if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-                    nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo zypper in ${HOME}/linuxtoys_${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown
+                    nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo zypper in ${HOME}/linuxtoys-${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown
                 else
-                    nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo dnf in ${HOME}/linuxtoys_${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown  
+                    nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo dnf in ${HOME}/linuxtoys-${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown  
                 fi
             elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
                 wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
@@ -89,9 +89,18 @@ supermenu_run () {
 
 }
 
+# runtime
 # logger
 logfile="$HOME/.local/linuxtoys-log.txt"
 exec 2> >(tee "$logfile" >&2)
+
+# check internet connection
+# ping google
+ping -c 1 -W 2 8.8.8.8 > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78
+    exit 1
+fi
 
 # language and upd checks
 det_langfile

@@ -33,12 +33,16 @@ osupermenu () {
     local fcad_status=$([ "$_fcad" = "org.freecad.FreeCAD" ] && echo "ON" || echo "OFF")
     local drslv_status=$([ "$_drslv" = "yes" ] && echo "ON" || echo "OFF")
     local fial_status=$([ "$_fial" = "yes" ] && echo "ON" || echo "OFF")
+    local chrome_status=$([ "$_chrome" = "com.google.Chrome" ] && echo "ON" || echo "OFF")
+    local zen_status=$([ "$_zen" = "app.zen_browser.zen" ] && echo "ON" || echo "OFF")
 
     while :; do
     
         local selection
         selection=$(whiptail --title "Office Supermenu" --checklist \
             "$msg090" 20 78 15 \
+            "Zen" "$msg128" $zen_status \
+            "Chrome" "$msg129" $chrome_status \
             "Onlyoffice" "$msg099" $oofice_status \
             "MS Teams" "$msg100" $msteams_status \
             "Anydesk" "$msg101" $anyd_status \
@@ -67,6 +71,8 @@ osupermenu () {
         [[ "$selection" == *"FreeCAD"* ]] && _fcad="org.freecad.FreeCAD" || _fcad=""
         [[ "$selection" == *"DaVinci Resolve"* ]] && _drslv="yes" || _drslv=""
         [[ "$selection" == *"FireAlpaca"* ]] && _fial="yes" || _fial=""
+        [[ "$selection" == *"Chrome"* ]] && _chrome="com.google.Chrome" || _fial=""
+        [[ "$selection" == *"Zen"* ]] && _fial="app.zen_browser.zen" || _fial=""
 
         install_flatpak
         install_native
@@ -81,69 +87,71 @@ osupermenu () {
 install_native () {
 
     local _packages=($_drslv $_fial)
-    cd $HOME
-    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        if [[ -n "$_drslv" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg034" 8 78
-            wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
-            chmod +x autoresolvedeb.sh
-            ./autoresolvedeb.sh
-            rm autoresolvedeb.sh
-        fi
-        if [[ -n "$_fial" ]]; then
-            wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
-            chmod +x installer.sh
-            ./installer.sh
-            rm installer.sh
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" == "yes" ]]; then
-                continue
+    if [[ -n "$_packages" ]]; then
+        cd $HOME
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            if [[ -n "$_drslv" ]]; then
+                whiptail --title "$msg006" --msgbox "$msg034" 8 78
+                wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
+                chmod +x autoresolvedeb.sh
+                ./autoresolvedeb.sh
+                rm autoresolvedeb.sh
             fi
-            sudo apt install -y $pak
-        done
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        if [[ -n "$_drslv" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg034" 12 78
-            wget -O autoresolvepkg.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
-            chmod +x autoresolvepkg.sh
-            ./autoresolvepkg.sh
-            rm autoresolvepkg.sh
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" == "yes" ]]; then
-                continue
+            if [[ -n "$_fial" ]]; then
+                wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
+                chmod +x installer.sh
+                ./installer.sh
+                rm installer.sh
             fi
-            sudo pacman -S --noconfirm $pak
-        done
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
-        if [[ -n "$_drslv" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg034" 8 78
-            wget -O autoresolverpm.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
-            chmod +x autoresolverpm.sh
-            ./autoresolverpm.sh
-            rm autoresolverpm.sh
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" == "yes" ]]; then
-                continue
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" == "yes" ]]; then
+                    continue
+                fi
+                sudo apt install -y $pak
+            done
+        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+            if [[ -n "$_drslv" ]]; then
+                whiptail --title "$msg006" --msgbox "$msg034" 12 78
+                wget -O autoresolvepkg.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
+                chmod +x autoresolvepkg.sh
+                ./autoresolvepkg.sh
+                rm autoresolvepkg.sh
             fi
-            sudo dnf in $pak -y
-        done
-    elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-        if [[ -n "$_drslv" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg034" 8 78
-            wget -O autoresolverpm.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
-            chmod +x autoresolverpm.sh
-            ./autoresolverpm.sh
-            rm autoresolverpm.sh
-        fi
-        for pak in "${_packages[@]}"; do
-            if [[ "$pak" == "yes" ]]; then
-                continue
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" == "yes" ]]; then
+                    continue
+                fi
+                sudo pacman -S --noconfirm $pak
+            done
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
+            if [[ -n "$_drslv" ]]; then
+                whiptail --title "$msg006" --msgbox "$msg034" 8 78
+                wget -O autoresolverpm.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
+                chmod +x autoresolverpm.sh
+                ./autoresolverpm.sh
+                rm autoresolverpm.sh
             fi
-            sudo zypper in $pak -y
-        done
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" == "yes" ]]; then
+                    continue
+                fi
+                sudo dnf in $pak -y
+            done
+        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            if [[ -n "$_drslv" ]]; then
+                whiptail --title "$msg006" --msgbox "$msg034" 8 78
+                wget -O autoresolverpm.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
+                chmod +x autoresolverpm.sh
+                ./autoresolverpm.sh
+                rm autoresolverpm.sh
+            fi
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" == "yes" ]]; then
+                    continue
+                fi
+                sudo zypper in $pak -y
+            done
+        fi
     fi
 
 }
@@ -151,34 +159,36 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck)
-    if command -v flatpak &> /dev/null; then
-        for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update -y $flat
-        done
-    else
-        if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                sudo apt install -y flatpak
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -u -y $flat
-                done
-                # notify that a reboot is required to enable flatpaks
-                whiptail --title "$msg013" --msgbox "$msg014" 8 78
-            elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-                sudo pacman -S --noconfirm flatpak
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -u -y $flat
-                done
-                # notify that a reboot is required to enable flatpaks
-                whiptail --title "$msg013" --msgbox "$msg014" 8 78
-            fi
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen)
+    if [[ -n "$_flatpaks" ]]; then
+        if command -v flatpak &> /dev/null; then
+            for flat in "${_flatpaks[@]}"; do
+                flatpak install --or-update -y $flat
+            done
         else
-            whiptail --title "$msg030" --msgbox "Cannot install selected flatpak packages." 8 78
+            if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+                    sudo apt install -y flatpak
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+                    for flat in "${_flatpaks[@]}"; do
+                        flatpak install --or-update -u -y $flat
+                    done
+                    # notify that a reboot is required to enable flatpaks
+                    whiptail --title "$msg013" --msgbox "$msg014" 8 78
+                elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                    sudo pacman -S --noconfirm flatpak
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+                    for flat in "${_flatpaks[@]}"; do
+                        flatpak install --or-update -u -y $flat
+                    done
+                    # notify that a reboot is required to enable flatpaks
+                    whiptail --title "$msg013" --msgbox "$msg014" 8 78
+                fi
+            else
+                whiptail --title "$msg030" --msgbox "Cannot install selected flatpak packages." 8 78
+            fi
         fi
     fi
 
