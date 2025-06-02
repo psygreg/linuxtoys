@@ -63,14 +63,6 @@ dsupermenu () {
             "NeoVim" "$msg111" $nvim_status \
             "IntelliJ IDEA" "$msg112" $idea_status \
             "Godot 4" "$msg113" $godot_status \
-            "Sober" "$msg114" $sober_status \
-            "Discord" "$msg130" $disc_status \
-            "Gamemode" "$msg115" $gmode_status \
-            "Gamescope" "$msg116" $gscope_status \
-            "Mangohud" "$msg117" $mhud_status \
-            "GOverlay" "$msg118" $govl_status \
-            "Shader Booster" "$msg119" $sboost_status \
-            "Disable SLM" "$msg041" $dsplitm_status \
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
