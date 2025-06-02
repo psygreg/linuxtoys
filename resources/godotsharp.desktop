@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Godot Engine (.NET)
+Type=Application
+Exec=/opt/godot/Godot_v4.4.1-stable_mono_linux.x86_64
+Terminal=false
+Icon=/opt/godot/godot.png
+Comment=Open source game engine with C# support (.NET)
+NoDisplay=false
+Categories=Development

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=IntelliJ IDEA
+Type=Application
+Exec=/opt/idea-IU/bin/idea.sh
+Terminal=false
+Icon=/opt/idea-IU/bin/idea.png
+Comment=Jetbrains IDE for Java/Kotlin
+NoDisplay=false
+Categories=Development
