@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="2.0.3"
+current_ltver="2.0.4"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)

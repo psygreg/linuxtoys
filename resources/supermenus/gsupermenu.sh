@@ -60,7 +60,7 @@ gsupermenu () {
     while :; do
 
         local selection
-        selection=$(whiptail --title "Gaming Supermenu" --checklist \
+        selection=$(whiptail --title "Gaming Supermenu" --checklist "$msg131" \
             "$msg090" 20 78 15 \
             "Steam" "$msg109" $steam_status \
             "Lutris" "$msg110" $lutris_status \

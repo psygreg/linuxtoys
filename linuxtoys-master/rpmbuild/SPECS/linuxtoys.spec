@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.0.3
+Version:        2.0.4
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,7 +45,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Sun Jun  1 2025 Victor Gregory <psygreg@pm.me> - 2.0.3
-- fixed updater for Fedora/SUSE
-- added installers for Zen and Chrome browsers and Discord
-- code optimization and safety improvements
+* Sun Jun  1 2025 Victor Gregory <psygreg@pm.me> - 2.0.4
+- clear indicator to select options on checklists

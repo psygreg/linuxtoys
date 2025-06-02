@@ -59,7 +59,7 @@ osupermenu () {
     while :; do
     
         local selection
-        selection=$(whiptail --title "Office Supermenu" --checklist \
+        selection=$(whiptail --title "Office Supermenu" --checklist "$msg131" \
             "$msg090" 20 78 15 \
             "Zen" "$msg128" $zen_status \
             "Chrome" "$msg129" $chrome_status \

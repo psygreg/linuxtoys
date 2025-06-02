@@ -1,7 +1,0 @@
-linuxtoys (2.0.3-1) plucky; urgency=medium
-
-  * fixed updater for Fedora/SUSE
-  * added installers for Zen and Chrome browsers and Discord
-  * code optimization and safety improvements
-
- -- Victor Gregory <psygreg@pm.me>  Sun, 1 Jun 2025 3:00:47 -0300
