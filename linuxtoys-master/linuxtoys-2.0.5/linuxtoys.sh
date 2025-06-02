@@ -82,7 +82,7 @@ krn_chk () {
 # supermenu run
 supermenu_run () {
 
-    wget -O ${supmenu}.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/supermenus/${supmenu}.sh
+    wget -nc -O ${supmenu}.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/supermenus/${supmenu}.sh
     chmod +x ${supmenu}.sh
     ./${supmenu}.sh
 
