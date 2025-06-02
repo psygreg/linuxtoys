@@ -68,7 +68,7 @@ ufw_in () {
 swapfile_t () {
 
     if whiptail --title "$msg009" --yesno "$msg010" 8 78; then
-        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/swapper.sh
         chmod +x swapper.sh
         ./swapper.sh
         rm swapper.sh
@@ -102,7 +102,7 @@ grubtrfs_t () {
     else
         if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
             cd $HOME
-            curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/grub-btrfs-installer.sh
             chmod +x grub-btrfs-installer.sh
             ./grub-btrfs-installer.sh
             rm grub-btrfs-installer.sh
@@ -266,7 +266,7 @@ chaotic_in () {
         sudo pacman-key --lsign-key 3056513887B78AEB
         sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
         sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
         sudo sed -i -f script.sed /etc/pacman.conf
         sudo pacman -Sy
         whiptail --title "$msg023" --msgbox "$msg024" 8 78

@@ -151,7 +151,7 @@ install_native () {
                     sudo pacman-key --lsign-key 3056513887B78AEB
                     sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
                     sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-                    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
+                    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
                     sudo sed -i -f script.sed /etc/pacman.conf
                     sudo pacman -Sy
                     rm script.sed
@@ -239,7 +239,7 @@ obs_pipe () {
 
     whiptail --title "$msg006" --msgbox "$msg098" 8 78
     cd $HOME
-    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/pipewire-obs.sh
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/pipewire-obs.sh
     chmod +x pipewire-obs.sh
     ./pipewire-obs.sh
     rm pipewire-obs.sh
@@ -250,7 +250,7 @@ obs_pipe () {
 docker_t () {
 
     cd $HOME
-    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/docker-installer.sh
     chmod +x docker-installer.sh
     ./docker-installer.sh
     rm docker-installer.sh
