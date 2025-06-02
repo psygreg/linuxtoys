@@ -58,8 +58,8 @@ usupermenu () {
     while :; do
 
         local selection
-        selection=$(whiptail --title "Utilities Supermenu" --checklist "$msg131" \
-            "$msg090" 20 78 15 \
+        selection=$(whiptail --title "Utilities Supermenu" --checklist \
+            "$msg131" 20 78 15 \
             "GPU Screen Recorder" "$msg086" $gsr_status \
             "OBS Studio" "Open Broadcaster Software" $obs_status \
             "HandBrake" "$msg087" $hndbrk_status \
