@@ -56,6 +56,7 @@ usupermenu () {
     local droid_status=$([ "$_droid" = "waydroid" ] && echo "ON" || echo "OFF")
     local dckr_status=$([ "$_dckr" = "yes" ] && echo "ON" || echo "OFF")
     local rocm_status=$([ "$_rocm" = "yes" ] && echo "ON" || echo "OFF")
+    local fseal_status=$([ "$_fseal" = "com.github.tchx84.Flatseal" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -68,6 +69,7 @@ usupermenu () {
             "Solaar" "$msg088" $slar_status \
             "OpenRazer" "$msg089" $oprzr_status \
             "OpenRGB" "$msg091" $oprgb_status \
+            "Flatseal" "$msg133" $fseal_status \
             "btrfs-Assistant" "$msg092" $btassist_status \
             "LACT" "$msg093" $lact_status \
             "Waydroid" "$msg094" $droid_status \
@@ -91,7 +93,8 @@ usupermenu () {
         [[ "$selection" == *"LACT"* ]] && _lact="io.github.ilya_zlobintsev.LACT" || _lact=""
         [[ "$selection" == *"Waydroid"* ]] && _droid="waydroid" || _droid=""
         [[ "$selection" == *"Docker"* ]] && _dckr="yes" || _dckr=""
-        [[ "$selection" == *"ROCm"* ]] && _rocm="yes" || _dckr=""
+        [[ "$selection" == *"ROCm"* ]] && _rocm="yes" || _rocm=""
+        [[ "$selection" == *"Flatseal"* ]] && _fseal="com.github.tchx84.Flatseal" || _fseal=""
 
         install_flatpak
         install_native
@@ -327,7 +330,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb)
+    local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb $_fseal)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             for flat in "${_flatpaks[@]}"; do
