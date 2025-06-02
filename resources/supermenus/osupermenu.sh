@@ -40,6 +40,8 @@ export NEWT_COLORS='
     roottext=black,lightgray
 '
 
+# initialize variables for reboot status
+flatpak_run=""
 # supermenu checklist
 osupermenu () {
 
@@ -96,7 +98,11 @@ osupermenu () {
 
         install_flatpak
         install_native
-        whiptail --title "$msg006" --msgbox "$msg036" 8 78
+        if [[ -n "$flatpak_run" ]]; then
+            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+        else
+            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+        fi
     
     done
 
@@ -187,6 +193,7 @@ install_flatpak () {
             done
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+                flatpak_run="1"
                 if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
                     sudo apt install -y flatpak
                     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -207,7 +214,7 @@ install_flatpak () {
                     whiptail --title "$msg013" --msgbox "$msg014" 8 78
                 fi
             else
-                whiptail --title "$msg030" --msgbox "Cannot install selected flatpak packages." 8 78
+                whiptail --title "$msg030" --msgbox "$msg132" 8 78
             fi
         fi
     fi

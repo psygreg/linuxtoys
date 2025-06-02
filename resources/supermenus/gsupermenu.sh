@@ -40,6 +40,10 @@ export NEWT_COLORS='
     roottext=black,lightgray
 '
 
+# initialize variables for reboot status
+flatpak_run=""
+sboost_run=""
+dsplitm_run=""
 # supermenu checklist
 gsupermenu () {
 
@@ -101,7 +105,11 @@ gsupermenu () {
         install_native
         sboost_t
         dsplitm_t
-        whiptail --title "$msg006" --msgbox "$msg036" 8 78
+        if [[ -n "$flatpak_run" || -n "$dsplitm_run" || -n "$sboost_run" ]]; then
+            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+        else
+            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+        fi
     
     done
 
@@ -168,6 +176,7 @@ install_flatpak () {
             fi
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+                flatpak_run="1"
                 if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
                     sudo apt install -y flatpak
                 elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
@@ -182,8 +191,8 @@ install_flatpak () {
                         sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
                     fi
                 done
-                # notify that a reboot is required to enable flatpaks
-                whiptail --title "$msg013" --msgbox "$msg014" 8 78    
+            else
+                whiptail --title "$msg030" --msgbox "$msg132" 8 78
             fi
         fi
     fi
@@ -195,6 +204,7 @@ sboost_t () {
 
     if [[ -n "$_sboost" ]]; then
         cd $HOME
+        sboost_run="1"
         if [ "$ID" == "cachyos" ]; then
             wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher-cachy.fish
             chmod +x patcher-cachy.fish
@@ -214,6 +224,7 @@ sboost_t () {
 dsplitm_t () {
 
     if [[ -n "$_dsplitm" ]]; then
+        dsplitm_run="1"
         if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
             echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
             whiptail --title "$msg041" --msgbox "$msg022" 8 78

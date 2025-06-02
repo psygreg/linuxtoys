@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="2.0.4"
+current_ltver="2.0.5"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -85,7 +85,6 @@ supermenu_run () {
     wget -O ${supmenu}.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/supermenus/${supmenu}.sh
     chmod +x ${supmenu}.sh
     ./${supmenu}.sh
-    rm ${supmenu}.sh
 
 }
 
@@ -126,7 +125,7 @@ while :; do
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
         # Exit the script if the user presses Esc
-        break
+        find "$HOME" -maxdepth 1 -type f -name '*supermenu.sh' -exec rm -f {} + && break
     fi
 
     case $CHOICE in
@@ -136,7 +135,7 @@ while :; do
     3) supmenu="esupermenu" && supermenu_run ;;
     4) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
     5) xdg-open https://github.com/psygreg/linuxtoys ;;
-    6 | q) break ;;
+    6 | q) find "$HOME" -maxdepth 1 -type f -name '*supermenu.sh' -exec rm -f {} + && break ;;
     *) echo "Invalid Option" ;;
     esac
 done

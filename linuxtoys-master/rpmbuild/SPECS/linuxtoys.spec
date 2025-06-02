@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.0.4
+Version:        2.0.5
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget xterm
+Requires:       bash newt curl wget xterm git
 BuildRequires:  desktop-file-utils
 
 %description
@@ -45,5 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Sun Jun  1 2025 Victor Gregory <psygreg@pm.me> - 2.0.4
-- clear indicator to select options on checklists
+* Mon Jun  2 2025 Victor Gregory <psygreg@pm.me> - 2.0.5
+- now only prompts for reboot after procedures when necessary
+- now only cleans up menus when closed, avoiding repeated downloads by navigating menus
+- git is now a dependency
