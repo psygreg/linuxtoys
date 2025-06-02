@@ -60,7 +60,9 @@ osupermenu () {
     
         local selection
         selection=$(whiptail --title "Office Supermenu" --checklist \
-            "$msg131" 20 78 15 \
+            "" 20 78 15 \
+            "$msg131" "" \
+            "" "" \
             "Zen" "$msg128" $zen_status \
             "Chrome" "$msg129" $chrome_status \
             "Onlyoffice" "$msg099" $oofice_status \

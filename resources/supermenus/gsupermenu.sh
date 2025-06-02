@@ -61,7 +61,9 @@ gsupermenu () {
 
         local selection
         selection=$(whiptail --title "Gaming Supermenu" --checklist \
-            "$msg131" 20 78 15 \
+            "" 20 78 15 \
+            "$msg131" "" \
+            "" "" \
             "Steam" "$msg109" $steam_status \
             "Lutris" "$msg110" $lutris_status \
             "Heroic Games Launcher" "$msg111" $heroic_status \
