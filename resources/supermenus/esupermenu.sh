@@ -228,7 +228,7 @@ suse_codecs () {
             sudo opi codecs
             whiptail --title "$msg006" --msgbox "$msg018" 8 78
         else
-            whiptail --title "$msg006" --msgbox "$msg077" 8 78
+            whiptail --title "$msg030" --msgbox "$msg077" 8 78
         fi
     fi
 
@@ -260,16 +260,20 @@ flatpak_in () {
 # enable Chaotic AUR repo for Arch
 chaotic_in () {
 
-    cd $HOME
-    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-    sudo pacman-key --lsign-key 3056513887B78AEB
-    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-    curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
-    sudo sed -i -f script.sed /etc/pacman.conf
-    sudo pacman -Sy
-    whiptail --title "$msg023" --msgbox "$msg024" 8 78
-    rm script.sed
+    if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        cd $HOME
+        sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+        sudo pacman-key --lsign-key 3056513887B78AEB
+        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+        curl -O https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/linuxtoys-aur/resources/script.sed
+        sudo sed -i -f script.sed /etc/pacman.conf
+        sudo pacman -Sy
+        whiptail --title "$msg023" --msgbox "$msg024" 8 78
+        rm script.sed
+    else
+        whiptail --title "$msg030" --msgbox "$msg077" 8 78
+    fi
 
 }
 
