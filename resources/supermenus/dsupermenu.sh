@@ -42,8 +42,6 @@ export NEWT_COLORS='
 
 # initialize variables for reboot status
 flatpak_run=""
-aa_run=""
-bb_run=""
 # supermenu checklist
 dsupermenu () {
 
@@ -51,6 +49,8 @@ dsupermenu () {
     local codium_status=$([ "$_codium" = "com.vscodium.codium" ] && echo "ON" || echo "OFF")
     local nvim_status=$([ "$_nvim" = "neovim" ] && echo "ON" || echo "OFF")
     local idea_status=$([ "$_idea" = "idea" ] && echo "ON" || echo "OFF")
+    local nvm_status=$([ "$_nvm" = "nvm" ] && echo "ON" || echo "OFF")
+    local pyenv_status=$([ "$_pyenv" = "pyenv" ] && echo "ON" || echo "OFF")
     local godot_status=$([ "$_godot" = "godot" ] && echo "ON" || echo "OFF")
 
     while :; do
@@ -62,6 +62,8 @@ dsupermenu () {
             "VSCodium" "$msg110" $codium_status \
             "NeoVim" "$msg111" $nvim_status \
             "IntelliJ IDEA" "$msg112" $idea_status \
+            "NodeJS" "Node Version Manager" $nvm_status \
+            "Python" "$msg134" $pyenv_status \
             "Godot 4" "$msg113" $godot_status \
             3>&1 1>&2 2>&3)
 
@@ -75,13 +77,15 @@ dsupermenu () {
         [[ "$selection" == *"VSCodium"* ]] && _codium="com.vscodium.codium" || _codium=""
         [[ "$selection" == *"NeoVim"* ]] && _nvim="neovim" || _nvim=""
         [[ "$selection" == *"IntelliJ IDEA"* ]] && _idea="idea" || _idea=""
+        [[ "$selection" == *"NodeJS"* ]] && _nvm="nodejs" || _nvm=""
+        [[ "$selection" == *"Python"* ]] && _pyenv="pyenv" || _pyenv=""
         [[ "$selection" == *"Godot 4"* ]] && _godot="godot" || _godot=""
 
         install_flatpak
         install_native
         others_t
         # adjust if rebooting is required for any software
-        if [[ -n "$flatpak_run" ]]; then
+        if [[ -n "$flatpak_run" || -n "$_pyenv" || -n "$_nvm" ]]; then
             whiptail --title "$msg006" --msgbox "$msg036" 8 78
         else
             whiptail --title "$msg006" --msgbox "$msg018" 8 78
@@ -95,7 +99,7 @@ dsupermenu () {
 # native packages
 install_native () {
 
-    local _packages=($_code $_nvim)
+    local _packages=($_code $_nvim $_nvm)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if [[ -n "$_code" ]]; then
@@ -104,8 +108,11 @@ install_native () {
                 sudo dpkg -i code_1.100.2-1747260578_amd64.deb
                 rm code_1.100.2-1747260578_amd64.deb
             fi
+            if [[ -n "$_pyenv" ]]; then
+                sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code) ]]; then
+                if [[ "$pak" =~ (code|pyenv) ]]; then
                     continue
                 fi
                 sudo apt install -y $pak
@@ -127,8 +134,11 @@ install_native () {
                     whiptail --title "$msg006" --msgbox "Skipping Visual Studio Code installation." 8 78
                 fi
             fi
+            if [[ -n "$_pyenv" ]]; then
+                sudo pacman -S --needed --noconfirm base-devel openssl zlib xz tk
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code) ]]; then
+                if [[ "$pak" =~ (code|pyenv) ]]; then
                     continue
                 fi
                 sudo pacman -S --noconfirm $pak
@@ -140,8 +150,11 @@ install_native () {
                 sudo dnf check-update
                 sudo dnf in code -y
             fi
+            if [[ -n "$_pyenv" ]]; then
+                sudo dnf in make gcc patch zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel libuuid-devel gdbm-libs libnsl2 -y
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code) ]]; then
+                if [[ "$pak" =~ (code|pyenv) ]]; then
                     continue
                 fi
                 sudo dnf in $pak -y
@@ -152,8 +165,11 @@ install_native () {
                 echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" |sudo tee /etc/zypp/repos.d/vscode.repo > /dev/null
                 sudo zypper install code -y
             fi
+            if [[ -n "$_pyenv" ]]; then
+                sudo zypper in gcc automake bzip2 libbz2-devel xz xz-devel openssl-devel ncurses-devel readline-devel zlib-devel tk-devel libffi-devel sqlite3-devel gdbm-devel make findutils patch -y
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code) ]]; then
+                if [[ "$pak" =~ (code|pyenv) ]]; then
                     continue
                 fi
                 sudo zypper in $pak -y
@@ -343,6 +359,35 @@ others_t () {
     fi
     if [[ -n "$_godot" ]]; then
         godot_in
+    fi
+    if [[ -n "$_nvm" ]]; then
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+        rm install.sh
+        npm i --global yarn
+        # basic usage instruction prompt
+        whiptail --title "$msg006" --msgbox "$msg136" 8 78
+        xdg-open https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage
+    fi
+    if [[ -n "$_pyenv" ]]; then
+        # pyenv and python build requirements installation
+        curl -fsSL https://pyenv.run | bash
+        if [[ -f "${HOME}/.bash_profile" ]]; then
+            echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+            echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+            echo 'eval "$(pyenv init - bash)"' >> ~/.bash_profile
+        elif [[ -f "$HOME/.profile" ]]; then
+            echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
+            echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
+            echo 'eval "$(pyenv init - bash)"' >> ~/.profile
+        fi
+        if [[ -f "$HOME/.zshrc" ]]; then
+            echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+            echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+            echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
+        fi
+        # basic usage instruction prompt
+        whiptail --title "$msg006" --msgbox "$msg135" 8 78
+        xdg-open https://github.com/pyenv/pyenv?tab=readme-ov-file#usage
     fi
 
 }

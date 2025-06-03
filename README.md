@@ -14,6 +14,7 @@ A collection of tools for Linux in a user-friendly way.
 - **Lucidglyph** is only confirmed to work on **Gnome** and **Plasma** desktops. With all others, your mileage may vary.
 - The **linux-cachyos** kernel port to Debian/Ubuntu-based systems may require its **LTO** setting changed to 'Full' or 'Disable' to work in some systems. *ThinLTO is only known to work in the standard Ubuntu-Gnome flavour and in Debian Testing, so far, although it is the optimal setting if it works for your system.*
 - **LACT** is an overclocking tool. Use with caution.
+- **PyEnv** only supports running in `bash` or `zsh` shells.
 
 ## Building from source
 ### .deb package
