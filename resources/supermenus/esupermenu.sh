@@ -130,7 +130,7 @@ nvidia_in () {
                 exitstatus=$?
                 if [ $exitstatus != 0 ]; then
                     # Exit the script if the user presses Esc
-                    break
+                    return
                 fi
 
                 case $CHOICE in
@@ -346,7 +346,7 @@ kernel_menu () {
         exitstatus=$?
         if [ $exitstatus != 0 ]; then
             # Exit the script if the user presses Esc
-            break
+            return
         fi
 
         case $CHOICE in
