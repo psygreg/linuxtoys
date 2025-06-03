@@ -312,7 +312,7 @@ rocm_arch () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local packages=(amd-comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi rocminfo hipcc hiprand hiprtc radeontop rocm-opencl-runtime ocl-icd clinfo)
+        local packages=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi rocminfo hipcc hiprand hiprtc radeontop rocm-opencl-runtime ocl-icd clinfo)
         for pac in "${packages[@]}"; do
             if pacman -Qi "$pac" 2>/dev/null 1>&2; then 
                 continue
