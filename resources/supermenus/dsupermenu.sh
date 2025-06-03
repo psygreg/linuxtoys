@@ -52,19 +52,21 @@ dsupermenu () {
     local nvm_status=$([ "$_nvm" = "nvm" ] && echo "ON" || echo "OFF")
     local pyenv_status=$([ "$_pyenv" = "pyenv" ] && echo "ON" || echo "OFF")
     local godot_status=$([ "$_godot" = "godot" ] && echo "ON" || echo "OFF")
+    local unity_status=$([ "$_unity" = "unityhub" ] && echo "ON" || echo "OFF")
 
     while :; do
 
         local selection
         selection=$(whiptail --title "$msg131" --checklist \
             "$msg131" 20 78 15 \
-            "VS Code" "$msg109" $code_status \
-            "VSCodium" "$msg110" $codium_status \
-            "NeoVim" "$msg111" $nvim_status \
-            "IntelliJ IDEA" "$msg112" $idea_status \
-            "NodeJS" "Node Version Manager" $nvm_status \
+            "VS Code" "$msg141" $code_status \
+            "VSCodium" "$msg142" $codium_status \
+            "NeoVim" "$msg140" $nvim_status \
+            "IntelliJ IDEA" "$msg138" $idea_status \
+            "NodeJS" "+ Node Version Manager" $nvm_status \
             "Python" "$msg134" $pyenv_status \
-            "Godot 4" "$msg113" $godot_status \
+            "Godot 4" "$msg139" $godot_status \
+            "Unity Hub" "$msg137" $unity_status \
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -80,6 +82,7 @@ dsupermenu () {
         [[ "$selection" == *"NodeJS"* ]] && _nvm="nodejs" || _nvm=""
         [[ "$selection" == *"Python"* ]] && _pyenv="pyenv" || _pyenv=""
         [[ "$selection" == *"Godot 4"* ]] && _godot="godot" || _godot=""
+        [[ "$selection" == *"Unity Hub"* ]] && _unity="unityhub" || _unity=""
 
         install_flatpak
         install_native
@@ -99,7 +102,7 @@ dsupermenu () {
 # native packages
 install_native () {
 
-    local _packages=($_code $_nvim $_nvm)
+    local _packages=($_code $_nvim $_nvm $_pyenv $_unity)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if [[ -n "$_code" ]]; then
@@ -110,6 +113,11 @@ install_native () {
             fi
             if [[ -n "$_pyenv" ]]; then
                 sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+            fi
+            if [[ -n "$_unity" ]]; then
+                wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null
+                sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list'
+                sudo apt update
             fi
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ (code|pyenv) ]]; then
@@ -137,8 +145,11 @@ install_native () {
             if [[ -n "$_pyenv" ]]; then
                 sudo pacman -S --needed --noconfirm base-devel openssl zlib xz tk
             fi
+            if [[ -n "$_unity" ]]; then
+                whiptail --title "Unity Hub" --msgbox "$msg077" 8 78
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv) ]]; then
+                if [[ "$pak" =~ (code|pyenv|unityhub) ]]; then
                     continue
                 fi
                 sudo pacman -S --noconfirm $pak
@@ -152,6 +163,15 @@ install_native () {
             fi
             if [[ -n "$_pyenv" ]]; then
                 sudo dnf in make gcc patch zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel libuuid-devel gdbm-libs libnsl2 -y
+            fi
+            if [[ -n "$_unity" ]]; then
+                if [ "$ID" == "rhel" ]; then
+                    sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo'
+                    sudo yum check-update
+                    sudo yum install unityhub
+                else
+                    whiptail --title "Unity Hub" --msgbox "$msg077" 8 78
+                fi
             fi
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ (code|pyenv) ]]; then

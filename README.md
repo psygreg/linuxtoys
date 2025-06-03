@@ -16,6 +16,7 @@ A collection of tools for Linux in a user-friendly way.
 - **LACT** is an overclocking tool. Use with caution.
 - **PyEnv** only supports running in `bash` or `zsh` shells.
 - **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft for those.
+- **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Building from source
 ### .deb package

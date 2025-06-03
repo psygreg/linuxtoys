@@ -1,7 +1,0 @@
-linuxtoys (2.0.5-1) plucky; urgency=medium
-
-  * now only prompts for reboot after procedures when necessary
-  * now only cleans up menus when closed, avoiding repeated downloads by navigating menus
-  * git is now a dependency
-
- -- Victor Gregory <psygreg@pm.me>  Mon, 2 Jun 2025 4:00:47 -0300

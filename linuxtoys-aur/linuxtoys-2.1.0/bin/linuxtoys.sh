@@ -29,7 +29,7 @@ det_langfile () {
 }
 
 # updater
-current_ltver="2.0.5"
+current_ltver="2.1.0"
 ver_upd () {
 
     local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
@@ -116,11 +116,12 @@ while :; do
         "1" "$msg121" \
         "2" "$msg122" \
         "3" "$msg123" \
+        "4" "$msg143" \
         "" "" \
         "" "" \
-        "4" "$msg124" \
-        "5" "GitHub" \
-        "6" "$msg059" 3>&1 1>&2 2>&3)
+        "5" "$msg124" \
+        "6" "GitHub" \
+        "7" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -133,9 +134,10 @@ while :; do
     1) supmenu="osupermenu" && supermenu_run ;;
     2) supmenu="gsupermenu" && supermenu_run ;;
     3) supmenu="esupermenu" && supermenu_run ;;
-    4) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
-    5) xdg-open https://github.com/psygreg/linuxtoys ;;
-    6 | q) find "$HOME" -maxdepth 1 -type f -name '*supermenu.sh' -exec rm -f {} + && break ;;
+    4) supmenu="dsupermenu" && supermenu_run ;;
+    5) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
+    6) xdg-open https://github.com/psygreg/linuxtoys ;;
+    7 | q) find "$HOME" -maxdepth 1 -type f -name '*supermenu.sh' -exec rm -f {} + && break ;;
     *) echo "Invalid Option" ;;
     esac
 done
