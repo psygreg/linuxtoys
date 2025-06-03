@@ -15,6 +15,7 @@ A collection of tools for Linux in a user-friendly way.
 - The **linux-cachyos** kernel port to Debian/Ubuntu-based systems may require its **LTO** setting changed to 'Full' or 'Disable' to work in some systems. *ThinLTO is only known to work in the standard Ubuntu-Gnome flavour and in Debian Testing, so far, although it is the optimal setting if it works for your system.*
 - **LACT** is an overclocking tool. Use with caution.
 - **PyEnv** only supports running in `bash` or `zsh` shells.
+- **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft for those.
 
 ## Building from source
 ### .deb package
