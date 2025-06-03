@@ -265,20 +265,20 @@ rocm_rpm () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local packages=()
+        local pkgs=()
         if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            packages=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
+            pkgs=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
         else
-            packages=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
+            pkgs=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
         fi
-        for pac in "${packages[@]}"; do
-            if rpm -qi "$pac" 2>/dev/null 1>&2; then
+        for pkg in "${pkgs[@]}"; do
+            if rpm -qi "$pkg" 2>/dev/null 1>&2; then
                 continue
             else
                 if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-                    sudo zypper in "$pac" -y
+                    sudo zypper in "$pkg" -y
                 else
-                    sudo dnf in "$pac" -y
+                    sudo dnf in "$pkg" -y
                 fi
             fi
         done
@@ -293,12 +293,12 @@ rocm_deb () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
-        for pac in "${packages[@]}"; do
-            if dpkg -s "$pac" 2>/dev/null 1>&2; then
+        local pkgs=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
+        for pkg in "${pkgs[@]}"; do
+            if dpkg -s "$pkg" 2>/dev/null 1>&2; then
                 continue
             else
-                sudo apt install -y "$pac"
+                sudo apt install -y "$pkg"
             fi
         done
         sudo usermod -aG render,video $USER
@@ -312,12 +312,12 @@ rocm_arch () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local packages=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi rocminfo hipcc hiprand hiprtc radeontop rocm-opencl-runtime ocl-icd clinfo)
-        for pac in "${packages[@]}"; do
-            if pacman -Qi "$pac" 2>/dev/null 1>&2; then 
+        local pkgs=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo)
+        for pkg in "${pkgs[@]}"; do
+            if pacman -Qi "$pkg" 2>/dev/null 1>&2; then 
                 continue
             else
-                sudo pacman -S --noconfirm "$pac"
+                sudo pacman -S --noconfirm "$pkg"
             fi
         done
         sudo usermod -aG render,video $USER
