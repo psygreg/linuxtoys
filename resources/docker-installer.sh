@@ -7,7 +7,7 @@ dep_check () {
     local dependencies=()
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         dependencies=(newt)
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+    elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
         dependencies=(libnewt)
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         dependencies=(whiptail)
@@ -23,7 +23,7 @@ dep_check () {
                     sudo dnf in "$dep" -y
                 fi
             fi
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
             if pacman -Qi "$dep" 2>/dev/null 1>&2; then
                 continue
             else
@@ -49,7 +49,7 @@ docker_in () {
         else
             sudo dnf in docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
         fi
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+    elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
         sudo pacman -S --noconfirm docker
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         sudo apt install -y docker.io

@@ -16,7 +16,7 @@ depcheck_pipe () {
                     sudo dnf in "$dep" -y
                 fi
             fi
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
             if pacman -Qi "$dep" 2>/dev/null 1>&2; then
                 continue
             else
@@ -75,7 +75,7 @@ obscheck () {
         else
             whiptail --title "Installer" --msgbox "OBS Studio not found." 8 78
         fi
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+    elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
         if pacman -Q | grep -q "obs-studio"; then
             native_pipe
         else

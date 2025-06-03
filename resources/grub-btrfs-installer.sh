@@ -11,7 +11,7 @@ dep_check () {
         local dependencies=()
         if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
             dependencies=(gawk inotify-tools make)
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
             dependencies=(gawk inotify-tools)
         elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             dependencies=(gawk inotify-tools make)
@@ -58,7 +58,7 @@ grubtrfs_in () {
         sudo zypper in snapper btrfs-assistant -y
         sudo snapper -c root create-config /
         sudo snapper -c root create --command zypper
-    elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+    elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
         sudo pacman -Rsn --noconfirm snapper
         sudo pacman -S --noconfirm snapper
         sudo snapper -c root create-config /

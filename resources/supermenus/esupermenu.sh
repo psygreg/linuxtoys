@@ -37,7 +37,7 @@ ufw_in () {
                     fi
                 fi
             done
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
             for pac in "${packages[@]}"; do
                 if pacman -Qi "$pac" 2>/dev/null 1>&2; then
                     continue
@@ -243,7 +243,7 @@ flatpak_in () {
         if command -v flatpak &> /dev/null; then
             if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
                 sudo apt install -y flatpak
-            elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+            elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
                 sudo pacman -S --noconfirm flatpak
             fi
             flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -260,7 +260,7 @@ flatpak_in () {
 # enable Chaotic AUR repo for Arch
 chaotic_in () {
 
-    if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+    if [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
         cd $HOME
         sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
         sudo pacman-key --lsign-key 3056513887B78AEB

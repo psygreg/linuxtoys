@@ -146,7 +146,7 @@ install_native () {
                     obs_pipe
                 fi
             fi
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
             if [[ -n "$_btassist" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
                     cd $HOME
@@ -368,7 +368,7 @@ install_flatpak () {
                         sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
                         sudo udevadm control --reload-rules && sudo udevadm trigger
                     fi
-                elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
                     sudo pacman -S --noconfirm flatpak
                     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
                     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
