@@ -48,4 +48,6 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
+- [Pyenv](https://github.com/pyenv)
+- [NVM-sh](https://github.com/nvm-sh)
 - And the Linux Community
