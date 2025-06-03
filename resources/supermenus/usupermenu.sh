@@ -113,9 +113,9 @@ usupermenu () {
 install_native () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-        local _packages=($_obs $_slar $_oprzr $_btassist $_droid $_dckr)
+        local _packages=($_obs $_slar $_oprzr $_btassist $_droid $_dckr $_rocm)
     else
-        local _packages=($_obs $_slar $_oprzr $_droid $_dckr)
+        local _packages=($_obs $_slar $_oprzr $_droid $_dckr $_rocm)
     fi
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
