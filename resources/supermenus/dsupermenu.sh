@@ -53,6 +53,8 @@ dsupermenu () {
     local pyenv_status=$([ "$_pyenv" = "pyenv" ] && echo "ON" || echo "OFF")
     local godot_status=$([ "$_godot" = "godot" ] && echo "ON" || echo "OFF")
     local unity_status=$([ "$_unity" = "unityhub" ] && echo "ON" || echo "OFF")
+    local dotnet_status=$([ "$_dotnet" = "dotnet-sdk-9.0" ] && echo "ON" || echo "OFF")
+    local java_status=$([ "$_java" = "java" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -65,6 +67,8 @@ dsupermenu () {
             "IntelliJ IDEA" "$msg138" $idea_status \
             "NodeJS" "+ Node Version Manager" $nvm_status \
             "Python" "$msg134" $pyenv_status \
+            "C#" "Microsoft .NET SDK" $dotnet_status \
+            "Java" "OpenJDK/JRE" $java_status \
             "Godot 4" "$msg139" $godot_status \
             "Unity Hub" "$msg137" $unity_status \
             3>&1 1>&2 2>&3)
@@ -83,6 +87,9 @@ dsupermenu () {
         [[ "$selection" == *"Python"* ]] && _pyenv="pyenv" || _pyenv=""
         [[ "$selection" == *"Godot 4"* ]] && _godot="godot" || _godot=""
         [[ "$selection" == *"Unity Hub"* ]] && _unity="unityhub" || _unity=""
+        [[ "$selection" == *"C#"* ]] && _dotnet="dotnet-sdk-9.0" || _dotnet=""
+        [[ "$selection" == *"Java"* ]] && _java="java" || _java=""
+
 
         install_flatpak
         install_native
@@ -102,7 +109,7 @@ dsupermenu () {
 # native packages
 install_native () {
 
-    local _packages=($_code $_nvim $_nvm $_pyenv $_unity)
+    local _packages=($_code $_nvim $_nvm $_pyenv $_unity $_dotnet)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if [[ -n "$_code" ]]; then
@@ -117,6 +124,12 @@ install_native () {
             if [[ -n "$_unity" ]]; then
                 wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null
                 sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list'
+                sudo apt update
+            fi
+            if [[ -n "$_dotnet" && "$ID" == "debian" ]]; then
+                wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+                sudo dpkg -i packages-microsoft-prod.deb
+                rm packages-microsoft-prod.deb
                 sudo apt update
             fi
             for pak in "${_packages[@]}"; do
@@ -148,8 +161,11 @@ install_native () {
             if [[ -n "$_unity" ]]; then
                 whiptail --title "Unity Hub" --msgbox "$msg077" 8 78
             fi
+            if [[ -n "$_dotnet" ]]; then
+                whiptail --title ".NET SDK" --msgbox "$msg077" 8 78
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv|unityhub) ]]; then
+                if [[ "$pak" =~ (code|pyenv|unityhub|dotnet-sdk-9.0) ]]; then
                     continue
                 fi
                 sudo pacman -S --noconfirm $pak
@@ -188,8 +204,20 @@ install_native () {
             if [[ -n "$_pyenv" ]]; then
                 sudo zypper in gcc automake bzip2 libbz2-devel xz xz-devel openssl-devel ncurses-devel readline-devel zlib-devel tk-devel libffi-devel sqlite3-devel gdbm-devel make findutils patch -y
             fi
+            if [[ -n "$_dotnet" ]]; then
+                if [ "$NAME" == "openSUSE Leap" ]; then
+                    sudo zypper in libicu -y
+                    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+                    wget https://packages.microsoft.com/config/opensuse/15/prod.repo
+                    sudo mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
+                    sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
+                    sudo zypper in dotnet-sdk-9.0 -y
+                else
+                    whiptail --title ".NET SDK" --msgbox "$msg077" 8 78
+                fi
+            fi
             for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv) ]]; then
+                if [[ "$pak" =~ (code|pyenv|dotnet-sdk-9.0) ]]; then
                     continue
                 fi
                 sudo zypper in $pak -y
@@ -243,7 +271,7 @@ idea_in () {
         exitstatus=$?
         if [ $exitstatus != 0 ]; then
             # Exit the script if the user presses Esc
-            break
+            return
         fi
 
         case $CHOICE in
@@ -298,7 +326,7 @@ godot_in () {
         exitstatus=$?
         if [ $exitstatus != 0 ]; then
             # Exit the script if the user presses Esc
-            break
+            return
         fi
 
         case $CHOICE in
@@ -371,6 +399,64 @@ godot_shrp () {
 
 }
 
+# java JDK + JRE installation
+jdk_install () {
+
+    local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
+    for jav in "${javas[@]}"; do
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            sudo apt install -y openjdk-${jav}-jdk openjdk-${jav}-jre
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+            if [ $jav == "8" ]; then
+                sudo dnf in java-1.8.0-openjdk java-1.8.0-openjdk-devel -y
+                continue
+            fi
+            sudo dnf in java-${jav}-openjdk java-${jav}-openjdk-devel -y
+        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            sudo zypper in java-${jav}-openjdk java-${jav}-openjdk-devel -y
+        fi
+    done
+
+}
+
+java_in () {
+
+    local jdk8_status=$([ "$_jdk8" = "8" ] && echo "ON" || echo "OFF")
+    local jdk11_status=$([ "$_jdk11" = "11" ] && echo "ON" || echo "OFF")
+    local jdk17_status=$([ "$_jdk17" = "17" ] && echo "ON" || echo "OFF")
+    local jdk21_status=$([ "$_jdk21" = "21" ] && echo "ON" || echo "OFF")
+    local jdk24_status=$([ "$_jdk24" = "24" ] && echo "ON" || echo "OFF")
+
+    while :; do
+
+        local selection
+        selection=$(whiptail --title "$msg131" --checklist \
+            "$msg131" 20 78 15 \
+            "Java 8" "LTS" $jdk8_status \
+            "Java 11" "LTS" $jdk11_status \
+            "Java 17" "LTS" $jdk17_status \
+            "Java 21" "LTS" $jdk21_status \
+            "Java 24" "Latest" $jdk24_status \
+            3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+        # Exit the script if the user presses Esc
+            return
+        fi
+
+        [[ "$selection" == *"Java 8"* ]] && _jdk8="8" || _jdk8=""
+        [[ "$selection" == *"Java 11"* ]] && _jdk11="11" || _jdk11=""
+        [[ "$selection" == *"Java 17"* ]] && _jdk17="17" || _jdk17=""
+        [[ "$selection" == *"Java 21"* ]] && _jdk21="21" || _jdk21=""
+        [[ "$selection" == *"Java 24"* ]] && _jdk24="24" || _jdk24=""
+
+        jdk_install
+
+    done
+
+}
+
 # triggers for OS-agnostic installers
 others_t () {
 
@@ -411,6 +497,9 @@ others_t () {
         whiptail --title "$msg006" --msgbox "$msg135" 8 78
         xdg-open https://github.com/pyenv/pyenv?tab=readme-ov-file#usage
         xdg-open https://github.com/pyenv/pyenv-virtualenv?tab=readme-ov-file#usage
+    fi
+    if [[ -n "$_java" ]]; then
+        java_in
     fi
 
 }
