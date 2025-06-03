@@ -118,7 +118,7 @@ install_native () {
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 8 78
-                wget -O autoresolvedeb.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
+                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
                 chmod +x autoresolvedeb.sh
                 ./autoresolvedeb.sh
                 rm autoresolvedeb.sh
@@ -138,7 +138,7 @@ install_native () {
         elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 12 78
-                wget -O autoresolvepkg.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
+                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
                 chmod +x autoresolvepkg.sh
                 ./autoresolvepkg.sh
                 rm autoresolvepkg.sh
@@ -152,7 +152,7 @@ install_native () {
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 8 78
-                wget -O autoresolverpm.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
+                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
                 chmod +x autoresolverpm.sh
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
@@ -166,7 +166,7 @@ install_native () {
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 8 78
-                wget -O autoresolverpm.sh https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
+                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
                 chmod +x autoresolverpm.sh
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
