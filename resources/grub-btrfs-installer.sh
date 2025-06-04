@@ -69,6 +69,11 @@ grubtrfs_in () {
         sudo snapper -c root create-config /
         sudo snapper -c root create --command apt
     fi
+    sudo sed -i 's/^TIMELINE_CREATE=.*/TIMELINE_CREATE="no"/' '/etc/snapper/configs/root'
+    sudo sed -i 's/^NUMBER_LIMIT=.*/NUMBER_LIMIT="5"/' '/etc/snapper/configs/root'
+    sudo sed -i 's/^NUMBER_LIMIT_IMPORTANT=.*/NUMBER_LIMIT_IMPORTANT="5"/' '/etc/snapper/configs/root'
+    sudo sed -i 's/^NUMBER_CLEANUP=.*/NUMBER_CLEANUP="yes"/' '/etc/snapper/configs/root'
+    sudo sed -i 's/^EMPTY_PRE_POST_CLEANUP=.*/EMPTY_PRE_POST_CLEANUP="yes"/' '/etc/snapper/configs/root'
     sudo systemctl enable snapper-boot.timer
     sudo systemctl enable snapper-cleanup.timer
     sudo systemctl start snapper-cleanup.timer
@@ -81,6 +86,9 @@ grubtrfs_in () {
         make install
     fi
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
+        sudo sed -i 's|^GRUB_BTRFS_MKCONFIG=.*|GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig|' '/etc/default/grub-btrfs/config'
+        sudo sed -i 's|^GRUB_BTRFS_GRUB_DIRNAME=.*|GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"|' '/etc/default/grub-btrfs/config'
+        sudo sed -i 's|^GRUB_BTRFS_SCRIPT_CHECK=.*|GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|' '/etc/default/grub-btrfs/config'
         sudo grub2-mkconfig -o /boot/grub2/grub.cfg
     elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
         sudo grub-mkconfig -o /boot/grub/grub.cfg
