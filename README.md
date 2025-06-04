@@ -50,6 +50,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Darktable](https://www.darktable.org)
+- [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)

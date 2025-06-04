@@ -58,6 +58,7 @@ osupermenu () {
     local chrome_status=$([ "$_chrome" = "com.google.Chrome" ] && echo "ON" || echo "OFF")
     local zen_status=$([ "$_zen" = "app.zen_browser.zen" ] && echo "ON" || echo "OFF")
     local drktb_status=$([ "$_drktb" = "org.darktable.Darktable" ] && echo "ON" || echo "OFF")
+    local foli_status=$([ "$_foli" = "com.github.johnfactotum.Foliate" ] && echo "ON" || echo "OFF")
 
     while :; do
     
@@ -67,6 +68,7 @@ osupermenu () {
             "Zen" "$msg128" $zen_status \
             "Chrome" "$msg129" $chrome_status \
             "Onlyoffice" "$msg099" $oofice_status \
+            "Foliate" "$msg149" $foli_status \
             "MS Teams" "$msg100" $msteams_status \
             "Anydesk" "$msg101" $anyd_status \
             "Slack" "$msg102" $slck_status \
@@ -96,8 +98,9 @@ osupermenu () {
         [[ "$selection" == *"FreeCAD"* ]] && _fcad="org.freecad.FreeCAD" || _fcad=""
         [[ "$selection" == *"DaVinci Resolve"* ]] && _drslv="yes" || _drslv=""
         [[ "$selection" == *"FireAlpaca"* ]] && _fial="yes" || _fial=""
-        [[ "$selection" == *"Chrome"* ]] && _chrome="com.google.Chrome" || _fial=""
-        [[ "$selection" == *"Zen"* ]] && _fial="app.zen_browser.zen" || _fial=""
+        [[ "$selection" == *"Chrome"* ]] && _chrome="com.google.Chrome" || _chrome=""
+        [[ "$selection" == *"Zen"* ]] && _zen="app.zen_browser.zen" || _zen=""
+        [[ "$selection" == *"Foliate"* ]] && _foli="com.github.johnfactotum.Foliate" || _foli=""
 
         install_flatpak
         install_native
@@ -188,7 +191,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb)
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             for flat in "${_flatpaks[@]}"; do
