@@ -185,7 +185,7 @@ install_flatpak () {
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
-                whiptail --title "Oversteer" --msgbox "Some additional modules might be required for your hardware. A webpage will be opened with instructions." 12 78
+                whiptail --title "Oversteer" --msgbox "$msg146" 12 78
                 xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
             fi
         else
@@ -209,7 +209,7 @@ install_flatpak () {
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
-                    whiptail --title "Oversteer" --msgbox "Some additional modules might be required for your hardware. A webpage will be opened with instructions." 12 78
+                    whiptail --title "Oversteer" --msgbox "$msg146" 12 78
                     xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
                 fi
             else
