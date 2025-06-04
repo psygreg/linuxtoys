@@ -135,7 +135,7 @@ install_native () {
                 fi
                 sudo apt install -y $pak
             done
-        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 12 78
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
@@ -203,7 +203,7 @@ install_flatpak () {
                     done
                     # notify that a reboot is required to enable flatpaks
                     whiptail --title "$msg013" --msgbox "$msg014" 8 78
-                elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
                     sudo pacman -S --noconfirm flatpak
                     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
                     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system

@@ -134,7 +134,7 @@ install_native () {
                 fi
                 sudo apt install -y $pak
             done
-        elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             for pak in "${_packages[@]}"; do
                 sudo pacman -S --noconfirm $pak
             done
@@ -179,7 +179,7 @@ install_flatpak () {
                 flatpak_run="1"
                 if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
                     sudo apt install -y flatpak
-                elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
+                elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
                     sudo pacman -S --noconfirm flatpak
                 fi
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
