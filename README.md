@@ -47,6 +47,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [GRUB-btrfs](https://github.com/Antynea/grub-btrfs) by **Antynea**
 - [Pipewire Audio Capture plugin for OBS Studio](https://github.com/dimtpap/obs-pipewire-audio-capture) by **Dimitris Papaioanou**
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
+- [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)

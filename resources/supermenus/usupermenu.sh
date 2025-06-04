@@ -57,6 +57,7 @@ usupermenu () {
     local dckr_status=$([ "$_dckr" = "yes" ] && echo "ON" || echo "OFF")
     local rocm_status=$([ "$_rocm" = "yes" ] && echo "ON" || echo "OFF")
     local fseal_status=$([ "$_fseal" = "com.github.tchx84.Flatseal" ] && echo "ON" || echo "OFF")
+    local efx_status=$([ "$_efx" = "com.github.wwmm.easyeffects" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -70,6 +71,7 @@ usupermenu () {
             "OpenRazer" "$msg089" $oprzr_status \
             "OpenRGB" "$msg091" $oprgb_status \
             "Flatseal" "$msg133" $fseal_status \
+            "EasyEffects" "$msg147" $efx_status \
             "btrfs-Assistant" "$msg092" $btassist_status \
             "LACT" "$msg093" $lact_status \
             "Waydroid" "$msg094" $droid_status \
@@ -95,6 +97,7 @@ usupermenu () {
         [[ "$selection" == *"Docker"* ]] && _dckr="yes" || _dckr=""
         [[ "$selection" == *"ROCm"* ]] && _rocm="yes" || _rocm=""
         [[ "$selection" == *"Flatseal"* ]] && _fseal="com.github.tchx84.Flatseal" || _fseal=""
+        [[ "$selection" == *"Easy Effects"* ]] && _efx="com.github.wwmm.easyeffects" || _efx=""
 
         install_flatpak
         install_native
@@ -141,11 +144,6 @@ install_native () {
                 fi
                 sudo apt install -y $pak
             done
-            if [[ -n "$_obs" ]]; then
-                if dpkg -s "pipewire" 2>/dev/null 1>&2; then
-                    obs_pipe
-                fi
-            fi
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             if [[ -n "$_btassist" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
@@ -174,11 +172,6 @@ install_native () {
                 fi
                 sudo pacman -S --noconfirm $pak
             done
-            if [[ -n "$_obs" ]]; then
-                if pacman -Qi "pipewire" 2>/dev/null 1>&2; then
-                    obs_pipe
-                fi
-            fi
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [[ -n "$_oprzr" ]]; then
                 sudo dnf in kernel-devel -y
@@ -197,11 +190,6 @@ install_native () {
                 fi
                 sudo dnf in $pak -y
             done
-            if [[ -n "$_obs" ]]; then
-                if rpm -qi "pipewire" 2>/dev/null 1>&2; then
-                    obs_pipe
-                fi
-            fi
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_oprzr" ]]; then
                 if grep -qi "slowroll" /etc/os-release; then
@@ -227,11 +215,9 @@ install_native () {
                 fi
                 sudo zypper in $pak -y
             done
-            if [[ -n "$_obs" ]]; then
-                if rpm -qi "pipewire" 2>/dev/null 1>&2; then
-                    obs_pipe
-                fi
-            fi
+        fi
+        if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+            obs_pipe
         fi
     fi
 
@@ -347,6 +333,9 @@ install_flatpak () {
                 sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
                 sudo udevadm control --reload-rules && sudo udevadm trigger
             fi
+            if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+                flatpak install --or-update -y $_efx --system
+            fi
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
@@ -368,6 +357,9 @@ install_flatpak () {
                         sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
                         sudo udevadm control --reload-rules && sudo udevadm trigger
                     fi
+                    if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+                        flatpak install --or-update -y $_efx --system
+                    fi
                 elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
                     sudo pacman -S --noconfirm flatpak
                     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -385,6 +377,9 @@ install_flatpak () {
                         wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
                         sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
                         sudo udevadm control --reload-rules && sudo udevadm trigger
+                    fi
+                    if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+                        flatpak install --or-update -y $_efx --system
                     fi
                 fi
             else
