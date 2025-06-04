@@ -60,6 +60,7 @@ gsupermenu () {
     local govl_status=$([ "$_govl" = "goverlay" ] && echo "ON" || echo "OFF")
     local sboost_status=$([ "$_sboost" = "yes" ] && echo "ON" || echo "OFF")
     local dsplitm_status=$([ "$_dsplitm" = "yes" ] && echo "ON" || echo "OFF")
+    local wivrn_status=$([ "$_wivrn" = "io.github.wivrn.wivrn" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -79,6 +80,7 @@ gsupermenu () {
             "GOverlay" "$msg118" $govl_status \
             "Shader Booster" "$msg119" $sboost_status \
             "Disable SLM" "$msg041" $dsplitm_status \
+            "WiVRn" "$msg144" $wivrn_status \
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -100,6 +102,7 @@ gsupermenu () {
         [[ "$selection" == *"GOverlay"* ]] && _govl="goverlay" || _govl=""
         [[ "$selection" == *"Shader Booster"* ]] && _sboost="yes" || _sboost=""
         [[ "$selection" == *"Disable SLM"* ]] && _dsplitm="yes" || _dsplitm=""
+        [[ "$selection" == *"WiVRn"* ]] && _wivrn="io.github.wivrn.wivrn" || _wivrn=""
 
         install_flatpak
         install_native
@@ -164,7 +167,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc)
+    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
             for flat in "${_flatpaks[@]}"; do
