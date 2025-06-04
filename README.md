@@ -49,6 +49,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
+- [Darktable](https://www.darktable.org)
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)

@@ -57,6 +57,7 @@ osupermenu () {
     local fial_status=$([ "$_fial" = "yes" ] && echo "ON" || echo "OFF")
     local chrome_status=$([ "$_chrome" = "com.google.Chrome" ] && echo "ON" || echo "OFF")
     local zen_status=$([ "$_zen" = "app.zen_browser.zen" ] && echo "ON" || echo "OFF")
+    local drktb_status=$([ "$_drktb" = "org.darktable.Darktable" ] && echo "ON" || echo "OFF")
 
     while :; do
     
@@ -70,6 +71,7 @@ osupermenu () {
             "Anydesk" "$msg101" $anyd_status \
             "Slack" "$msg102" $slck_status \
             "Cohesion" "$msg103" $notion_status \
+            "Darktable" "$msg148" $drktb_status \
             "GIMP" "$msg104" $gimp_status \
             "Inkscape" "$msg105" $inksc_status \
             "FreeCAD" "$msg106" $fcad_status \
@@ -88,6 +90,7 @@ osupermenu () {
         [[ "$selection" == *"Anydesk"* ]] && _anyd="com.anydesk.Anydesk" || _anyd=""
         [[ "$selection" == *"Slack"* ]] && _slck="com.slack.Slack" || _slck=""
         [[ "$selection" == *"Cohesion"* ]] && _notion="io.github.brunofin.Cohesion" || _notion=""
+        [[ "$selection" == *"Darktable"* ]] && _drktb="org.darktable.Darktable" || _drktb=""
         [[ "$selection" == *"GIMP"* ]] && _gimp="org.gimp.GIMP" || _gimp=""
         [[ "$selection" == *"Inkscape"* ]] && _inksc="org.inkscape.Inkscape" || _inksc=""
         [[ "$selection" == *"FreeCAD"* ]] && _fcad="org.freecad.FreeCAD" || _fcad=""
@@ -185,7 +188,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen)
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             for flat in "${_flatpaks[@]}"; do
