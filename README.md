@@ -52,4 +52,5 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)
 - [NVM-sh](https://github.com/nvm-sh)
+- [WiVRn](https://github.com/WiVRn)
 - And the Linux Community
