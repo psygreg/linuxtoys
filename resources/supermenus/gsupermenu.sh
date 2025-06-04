@@ -82,7 +82,7 @@ gsupermenu () {
             "GOverlay" "$msg118" $govl_status \
             "Shader Booster" "$msg119" $sboost_status \
             "Disable SLM" "$msg041" $dsplitm_status \
-            "Oversteer" "$msg041" $steer_status \
+            "Oversteer" "$msg145" $steer_status \
             "WiVRn" "$msg144" $wivrn_status \
             3>&1 1>&2 2>&3)
 
