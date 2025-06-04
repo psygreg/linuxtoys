@@ -71,7 +71,7 @@ usupermenu () {
             "OpenRazer" "$msg089" $oprzr_status \
             "OpenRGB" "$msg091" $oprgb_status \
             "Flatseal" "$msg133" $fseal_status \
-            "EasyEffects" "$msg147" $efx_status \
+            "Easy Effects" "$msg147" $efx_status \
             "btrfs-Assistant" "$msg092" $btassist_status \
             "LACT" "$msg093" $lact_status \
             "Waydroid" "$msg094" $droid_status \
