@@ -61,6 +61,8 @@ gsupermenu () {
     local sboost_status=$([ "$_sboost" = "yes" ] && echo "ON" || echo "OFF")
     local dsplitm_status=$([ "$_dsplitm" = "yes" ] && echo "ON" || echo "OFF")
     local wivrn_status=$([ "$_wivrn" = "io.github.wivrn.wivrn" ] && echo "ON" || echo "OFF")
+    local steer_status=$([ "$_steer" = "io.github.berarma.Oversteer" ] && echo "ON" || echo "OFF")
+
 
     while :; do
 
@@ -80,6 +82,7 @@ gsupermenu () {
             "GOverlay" "$msg118" $govl_status \
             "Shader Booster" "$msg119" $sboost_status \
             "Disable SLM" "$msg041" $dsplitm_status \
+            "Oversteer" "$msg041" $steer_status \
             "WiVRn" "$msg144" $wivrn_status \
             3>&1 1>&2 2>&3)
 
@@ -103,6 +106,7 @@ gsupermenu () {
         [[ "$selection" == *"Shader Booster"* ]] && _sboost="yes" || _sboost=""
         [[ "$selection" == *"Disable SLM"* ]] && _dsplitm="yes" || _dsplitm=""
         [[ "$selection" == *"WiVRn"* ]] && _wivrn="io.github.wivrn.wivrn" || _wivrn=""
+        [[ "$selection" == *"Oversteer"* ]] && _steer="io.github.berarma.Oversteer" || _steer=""
 
         install_flatpak
         install_native
@@ -167,7 +171,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn)
+    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
             for flat in "${_flatpaks[@]}"; do
@@ -176,6 +180,13 @@ install_flatpak () {
             if [[ -n "$_steam" ]]; then
                 flatpak install --or-update -u -y com.valvesoftware.Steam
                 sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+            fi
+            if [[ -n "$_steer" ]]; then
+                sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
+                sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
+                sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
+                whiptail --title "Oversteer" --msgbox "Some additional modules might be required for your hardware. A webpage will be opened with instructions." 12 78
+                xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
             fi
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
@@ -189,11 +200,18 @@ install_flatpak () {
                 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
                 for flat in "${_flatpaks[@]}"; do
                     flatpak install --or-update -u -y $flat
-                    if [[ -n "$_steam" ]]; then
-                        flatpak install --or-update -u -y com.valvesoftware.Steam
-                        sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
-                    fi
                 done
+                if [[ -n "$_steam" ]]; then
+                    flatpak install --or-update -u -y com.valvesoftware.Steam
+                    sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+                fi
+                if [[ -n "$_steer" ]]; then
+                    sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
+                    sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
+                    sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
+                    whiptail --title "Oversteer" --msgbox "Some additional modules might be required for your hardware. A webpage will be opened with instructions." 12 78
+                    xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
+                fi
             else
                 whiptail --title "$msg030" --msgbox "$msg132" 8 78
             fi
