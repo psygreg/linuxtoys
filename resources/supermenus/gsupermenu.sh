@@ -135,24 +135,6 @@ install_native () {
                 sudo dpkg -i steam.deb
                 rm steam.deb
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" == "steam" ]]; then
-                    continue
-                fi
-                sudo apt install -y $pak
-            done
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-            for pak in "${_packages[@]}"; do
-                sudo pacman -S --noconfirm $pak
-            done
-        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-            for pak in "${_packages[@]}"; do
-                sudo dnf in $pak -y
-            done
-        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            for pak in "${_packages[@]}"; do
-                sudo zypper in $pak -y
-            done
         fi
         if [[ -n "$_gscope" ]]; then
             if command -v flatpak &> /dev/null; then
@@ -165,6 +147,7 @@ install_native () {
             fi
         fi
     fi
+    install_n_lib
 
 }
 
@@ -174,9 +157,7 @@ install_flatpak () {
     local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
-            for flat in "${_flatpaks[@]}"; do
-                flatpak install --or-update -u -y $flat
-            done
+            install_f_lib
             if [[ -n "$_steam" ]]; then
                 flatpak install --or-update -u -y com.valvesoftware.Steam
                 sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
@@ -191,16 +172,8 @@ install_flatpak () {
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
-                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                    sudo apt install -y flatpak
-                elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-                    sudo pacman -S --noconfirm flatpak
-                fi
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -u -y $flat
-                done
+                flatpak_in_lib
+                install_f_lib
                 if [[ -n "$_steam" ]]; then
                     flatpak install --or-update -u -y com.valvesoftware.Steam
                     sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
@@ -261,4 +234,5 @@ det_langfile
 current_ltver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
 source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/linuxtoys.lib)
 gsupermenu

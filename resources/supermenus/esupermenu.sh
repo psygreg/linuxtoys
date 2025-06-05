@@ -233,22 +233,9 @@ suse_codecs () {
 # install flatpak support
 flatpak_in () {
 
-    # ask confirmation before proceeding
     if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
-        # installation
-        if command -v flatpak &> /dev/null; then
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                sudo apt install -y flatpak
-            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-                sudo pacman -S --noconfirm flatpak
-            fi
-            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-            flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-            # notify that a reboot is required to enable flatpaks
-            whiptail --title "$msg013" --msgbox "$msg014" 8 78
-        else
-            whiptail --title "$msg013" --msgbox "$msg015" 8 78
-        fi
+        flatpak_in_lib
+        whiptail --title "$msg013" --msgbox "$msg014" 8 78
     fi
 
 }
@@ -360,6 +347,7 @@ det_langfile
 current_ltver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
 source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/linuxtoys.lib)
 # extras menu
 while :; do
 

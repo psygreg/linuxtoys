@@ -1,0 +1,63 @@
+# linuxtoys modules library
+
+install_n_lib () {
+    
+    if [[ -n "$_packages" ]]; then
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ ^(steam|yes|code|pyenv)$ ]]; then
+                    continue
+                fi
+                sudo apt install -y $pak
+            done
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ ^(yes|openrazer|code|pyenv|unityhub|dotnet-sdk-9.0)$ ]]; then
+                    continue
+                fi
+                sudo apt install -y $pak
+            done
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ ^(yes|openrazer|code|pyenv)$ ]]; then
+                    continue
+                fi
+                sudo dnf in $pak -y
+            done
+        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            for pak in "${_packages[@]}"; do
+                if [[ "$pak" =~ ^(yes|openrazer|waydroid|code|pyenv|dotnet-sdk-9.0)$ ]]; then
+                    continue
+                fi
+                sudo zypper in $pak -y
+            done
+        fi
+    fi
+
+}
+
+install_f_lib () {
+
+    if [[ -n "$_flatpaks" ]]; then
+        for flat in "${_flatpaks[@]}"; do
+            flatpak install --or-update -u -y $flat
+        done
+    fi
+
+}
+
+flatpak_in_lib () {
+
+    if command -v flatpak &> /dev/null; then
+        whiptail --title "$msg013" --msgbox "$msg015" 8 78
+    else
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            sudo apt install -y flatpak
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+            sudo pacman -S --noconfirm flatpak
+        fi
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+    fi
+
+}

@@ -233,22 +233,12 @@ install_flatpak () {
     local _flatpaks=($_codium)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
-            for flat in "${_flatpaks[@]}"; do
-                flatpak install --or-update -u -y $flat
-            done
+            install_f_lib
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
-                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                    sudo apt install -y flatpak
-                elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-                    sudo pacman -S --noconfirm flatpak
-                fi
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                for flat in "${_flatpaks[@]}"; do
-                    flatpak install --or-update -u -y $flat
-                done
+                flatpak_in_lib
+                install_f_lib
             else
                 whiptail --title "$msg030" --msgbox "$msg132" 8 78
             fi
@@ -509,4 +499,5 @@ det_langfile
 current_ltver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
 source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/linuxtoys.lib)
 dsupermenu

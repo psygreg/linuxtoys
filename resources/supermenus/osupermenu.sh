@@ -119,8 +119,8 @@ osupermenu () {
 install_native () {
 
     local _packages=($_drslv $_fial)
+    cd $HOME
     if [[ -n "$_packages" ]]; then
-        cd $HOME
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 8 78
@@ -135,12 +135,6 @@ install_native () {
                 ./installer.sh
                 rm installer.sh
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" == "yes" ]]; then
-                    continue
-                fi
-                sudo apt install -y $pak
-            done
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 12 78
@@ -149,12 +143,6 @@ install_native () {
                 ./autoresolvepkg.sh
                 rm autoresolvepkg.sh
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" == "yes" ]]; then
-                    continue
-                fi
-                sudo pacman -S --noconfirm $pak
-            done
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 8 78
@@ -163,12 +151,6 @@ install_native () {
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" == "yes" ]]; then
-                    continue
-                fi
-                sudo dnf in $pak -y
-            done
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_drslv" ]]; then
                 whiptail --title "$msg006" --msgbox "$msg034" 8 78
@@ -177,14 +159,9 @@ install_native () {
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" == "yes" ]]; then
-                    continue
-                fi
-                sudo zypper in $pak -y
-            done
         fi
     fi
+    install_n_lib
 
 }
 
@@ -194,31 +171,12 @@ install_flatpak () {
     local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
-            for flat in "${_flatpaks[@]}"; do
-                flatpak install --or-update -y $flat
-            done
+            install_f_lib
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
-                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                    sudo apt install -y flatpak
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                    for flat in "${_flatpaks[@]}"; do
-                        flatpak install --or-update -u -y $flat
-                    done
-                    # notify that a reboot is required to enable flatpaks
-                    whiptail --title "$msg013" --msgbox "$msg014" 8 78
-                elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-                    sudo pacman -S --noconfirm flatpak
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                    for flat in "${_flatpaks[@]}"; do
-                        flatpak install --or-update -u -y $flat
-                    done
-                    # notify that a reboot is required to enable flatpaks
-                    whiptail --title "$msg013" --msgbox "$msg014" 8 78
-                fi
+                flatpak_in_lib
+                install_f_lib
             else
                 whiptail --title "$msg030" --msgbox "$msg132" 8 78
             fi
@@ -232,4 +190,5 @@ det_langfile
 current_ltver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
 source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/linuxtoys.lib)
 osupermenu

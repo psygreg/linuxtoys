@@ -138,12 +138,6 @@ install_native () {
             if [[ -n "$_rocm" ]]; then
                 rocm_deb
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" == "yes" ]]; then
-                    continue
-                fi
-                sudo apt install -y $pak
-            done
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             if [[ -n "$_btassist" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
@@ -184,12 +178,6 @@ install_native () {
             if [[ -n "$_rocm" ]]; then
                 rocm_rpm
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (openrazer|yes) ]]; then
-                    continue
-                fi
-                sudo dnf in $pak -y
-            done
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_oprzr" ]]; then
                 if grep -qi "slowroll" /etc/os-release; then
@@ -209,17 +197,12 @@ install_native () {
             if [[ -n "$_droid" ]]; then
                 whiptail --title "Waydroid" --msgbox "$msg097" 12 78
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (openrazer|yes|waydroid) ]]; then
-                    continue
-                fi
-                sudo zypper in $pak -y
-            done
         fi
         if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
             obs_pipe
         fi
     fi
+    install_n_lib
 
 }
 
@@ -319,9 +302,7 @@ install_flatpak () {
     local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb $_fseal)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
-            for flat in "${_flatpaks[@]}"; do
-                flatpak install --or-update -y $flat --system
-            done
+            install_f_lib
             if [[ -n "$_hndbrk" ]]; then
                 if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
                     flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
@@ -339,48 +320,21 @@ install_flatpak () {
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
-                if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                    sudo apt install -y flatpak
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                    for flat in "${_flatpaks[@]}"; do
-                        flatpak install --or-update -y $flat --system
-                    done
-                    if [[ -n "$_hndbrk" ]]; then
-                        if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                            flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
-                        fi
+                flatpak_in_lib
+                install_f_lib
+                if [[ -n "$_hndbrk" ]]; then
+                    if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
+                        flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
                     fi
-                    if [[ -n "$_oprgb" ]]; then
-                        cd $HOME
-                        wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
-                        sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
-                        sudo udevadm control --reload-rules && sudo udevadm trigger
-                    fi
-                    if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
-                        flatpak install --or-update -y $_efx --system
-                    fi
-                elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-                    sudo pacman -S --noconfirm flatpak
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-                    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-                    for flat in "${_flatpaks[@]}"; do
-                        flatpak install --or-update -y $flat --system
-                    done
-                    if [[ -n "$_hndbrk" ]]; then
-                        if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
-                            flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
-                        fi
-                    fi
-                    if [[ -n "$_oprgb" ]]; then
-                        cd $HOME
-                        wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
-                        sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
-                        sudo udevadm control --reload-rules && sudo udevadm trigger
-                    fi
-                    if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
-                        flatpak install --or-update -y $_efx --system
-                    fi
+                fi
+                if [[ -n "$_oprgb" ]]; then
+                    cd $HOME
+                    wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
+                    sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
+                    sudo udevadm control --reload-rules && sudo udevadm trigger
+                fi
+                if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+                    flatpak install --or-update -y $_efx --system
                 fi
             else
                 whiptail --title "$msg030" --msgbox "$msg132" 8 78
@@ -395,4 +349,5 @@ det_langfile
 current_ltver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/ver)
 source $HOME/.local/${langfile}_${current_ltver}
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/linuxtoys.lib)
 usupermenu
