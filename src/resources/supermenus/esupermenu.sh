@@ -5,13 +5,15 @@ ufw_in () {
 
     if whiptail --title "$msg006" --yesno "$msg007" 8 78; then
         local _packages=(ufw gufw)
-        install_n_lib
+        _install_
         if command -v ufw &> /dev/null; then
             sudo ufw default deny incoming
             sudo ufw default allow outgoing
             sudo ufw enable
         fi
-        whiptail --title "$msg006" --msgbox "$msg008" 8 78
+        local title="$msg006"
+        local msg="$msg008"
+        _msgbox_
     fi
 
 }
@@ -21,7 +23,7 @@ swapfile_t () {
 
     if whiptail --title "$msg009" --yesno "$msg010" 8 78; then
         local subscript="swapper"
-        invoke_lib
+        _invoke_
     fi
 
 }
@@ -39,7 +41,9 @@ lucidglyph_in () {
         sudo ./lucidglyph.sh install
         cd ..
         rm -rf lucidglyph-${lgver}
-        whiptail --title "$msg021" --msgbox "$msg022" 10 78
+        local title="$msg021"
+        local msg="$msg022"
+        _msgbox_
     fi
 
 }
@@ -49,9 +53,11 @@ grubtrfs_t () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
         local subscript="grub-btrfs-installer"
-        invoke_lib
+        _invoke_
     else
-        whiptail --title "$msg030" --msgbox "$msg031" 8 78
+        local title="$msg030"
+        local msg="$msg031"
+        _msgbox_
     fi
 
 }
@@ -87,7 +93,9 @@ nvidia_in () {
                                 REPO_URL="https://download.nvidia.com/opensuse/leap/$VERSION_ID"
                                 ;;
                             *)
-                                whiptail --title "Unsupported openSUSE version" --msgbox "Unsupported openSUSE version: $VERSION_ID" 8 78
+                                local title="Unsupported openSUSE version"
+                                local msg="Unsupported version $VERSION_ID"
+                                _msgbox_
                                 ;;
                         esac
                         if zypper lr | grep -q "^${REPO_ALIAS}\s"; then
@@ -95,15 +103,15 @@ nvidia_in () {
                         else
                             sudo zypper ar -f "$REPO_URL" "nvidia"
                         fi
-                        sudo zypper in x11-video-nvidiaG06 nvidia-computeG06 -y
+                        insta x11-video-nvidiaG06 nvidia-computeG06
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
-                            sudo dnf in https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+                            insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
                         fi
                         if ! sudo dnf repolist | grep -q "rpmfusion-nonfree"; then
-                            sudo dnf in https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+                            insta https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
                         fi
-                        sudo dnf in akmod-nvidia xorg-x11-drv-nvidia-cuda -y
+                        insta akmod-nvidia xorg-x11-drv-nvidia-cuda
                    fi 
                    sudo dracut -f --regenerate-all ;;
                 1) if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
@@ -116,7 +124,9 @@ nvidia_in () {
                                 REPO_URL="https://download.nvidia.com/opensuse/leap/$VERSION_ID"
                                 ;;
                             *)
-                                whiptail --title "Unsupported openSUSE version" --msgbox "Unsupported openSUSE version: $VERSION_ID" 8 78
+                                local title="Unsupported openSUSE version"
+                                local msg="Unsupported version $VERSION_ID"
+                                _msgbox_
                                 ;;
                         esac
                         if zypper lr | grep -q "^${REPO_ALIAS}\s"; then
@@ -124,15 +134,15 @@ nvidia_in () {
                         else
                             sudo zypper ar -f "$REPO_URL" "nvidia"
                         fi
-                        sudo zypper in x11-video-nvidiaG05 nvidia-computeG05 -y
+                        insta x11-video-nvidiaG05 nvidia-computeG05
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
-                            sudo dnf in https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+                            insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
                         fi
                         if ! sudo dnf repolist | grep -q "rpmfusion-nonfree"; then
-                            sudo dnf in https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+                            insta https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
                         fi
-                        sudo dnf in xorg-x11-drv-nvidia-470xx akmod-nvidia-470xx xorg-x11-drv-nvidia-470xx-cuda -y
+                        insta xorg-x11-drv-nvidia-470xx akmod-nvidia-470xx xorg-x11-drv-nvidia-470xx-cuda
                    fi 
                    sudo dracut -f --regenerate-all ;;
                 2 | q) break ;;
@@ -142,10 +152,14 @@ nvidia_in () {
             done
             
         else
-            whiptail --title "$msg039" --msgbox "$msg077" 8 78
+            local title="$msg039"
+            local msg="$msg077"
+            _msgbox_
         fi
     else
-        whiptail --title "$msg039" --msgbox "$msg071" 8 78
+        local title="$msg039"
+        local msg="$msg071"
+        _msgbox_
     fi
 
 }
@@ -155,9 +169,13 @@ fix_se_suse () {
 
     if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
         sudo setsebool -P selinuxuser_execmod 1
-        whiptail --title "$msg072" --msgbox "$msg022" 8 78
+        local title="$msg072"
+        local msg="$msg022"
+        _msgbox_
     else
-        whiptail --title "$msg072" --msgbox "$msg073" 8 78
+        local title="$msg072"
+        local msg="$msg073"
+        _msgbox_
     fi
 
 }
@@ -167,11 +185,15 @@ suse_codecs () {
 
     if whiptail --title "$msg006" --yesno "$msg080" 8 78; then
         if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            sudo zypper in opi -y
+            insta opi
             sudo opi codecs
-            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+            local title="$msg006"
+            local msg="$msg018"
+            _msgbox_
         else
-            whiptail --title "$msg030" --msgbox "$msg077" 8 78
+            local title="$msg030"
+            local msg="$msg077"
+            _msgbox_
         fi
     fi
 
@@ -182,7 +204,9 @@ flatpak_in () {
 
     if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
         flatpak_in_lib
-        whiptail --title "$msg013" --msgbox "$msg014" 8 78
+        local title="$msg013"
+        local msg="$msg014"
+        _msgbox_
     fi
 
 }
@@ -191,7 +215,9 @@ flatpak_in () {
 kernel_in () {
 
     if [ "$ID" == "cachyos" ]; then
-        whiptail --title "$msg030" --msgbox "$msg077" 8 78
+        local title="$msg030"
+        local msg="$msg077"
+        _msgbox_
     else
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             # summon installer
@@ -203,21 +229,27 @@ kernel_in () {
             # clean old kernels
             dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
             dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+            local title="$msg006"
+            local msg="$msg036"
+            _msgbox_
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
             kernel_menu
         elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" == *arch* ]]; then
             chaotic_aur_lib
-            sudo pacman -S --noconfirm linux-cachyos linux-cachyos-headers
+            insta linux-cachyos linux-cachyos-headers
             if command -v dracut >/dev/null 2>&1; then
                 sudo dracut -f --regenerate-all
             elif command -v mkinitcpio >/dev/null 2>&1; then
                 sudo mkinitcpio -P
             fi
             sudo grub-mkconfig -o /boot/grub/grub.cfg
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+            local title="$msg006"
+            local msg="$msg036"
+            _msgbox_
         else
-            whiptail --title "$msg074" --msgbox "$msg077" 8 78
+            local title="$msg074"
+            local msg="$msg077"
+            _msgbox_
         fi
     fi
 
@@ -227,22 +259,26 @@ kernel_in () {
 kernel_compat () {
 
     sudo dnf copr enable bieszczaders/kernel-cachyos
-    sudo dnf install kernel-cachyos kernel-cachyos-devel-matched
+    sudo insta kernel-cachyos kernel-cachyos-devel-matched
     sudo setsebool -P domain_kernel_load_modules on
     sudo dracut -f --regenerate-all
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    whiptail --title "$msg006" --msgbox "$msg036" 8 78
+    local title="$msg006"
+    local msg="$msg036"
+    _msgbox_
 
 }
 
 kernel_performance () {
 
     sudo dnf copr enable bieszczaders/kernel-cachyos-lto
-    sudo dnf install kernel-cachyos-lto kernel-cachyos-lto-devel-matched
+    sudo insta kernel-cachyos-lto kernel-cachyos-lto-devel-matched
     sudo setsebool -P domain_kernel_load_modules on
     sudo dracut -f --regenerate-all
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    whiptail --title "$msg006" --msgbox "$msg036" 8 78
+    local title="$msg006"
+    local msg="$msg036"
+    _msgbox_
 
 }
 
@@ -271,10 +307,10 @@ kernel_menu () {
 }
 
 # runtime
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-det_langfile
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+_lang_
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # extras menu
 while :; do
 

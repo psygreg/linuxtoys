@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="2.1.4"
+current_ltver="2.1.5"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -70,23 +70,22 @@ krn_chk () {
 }
 
 # runtime
-# logger
-logfile="$HOME/.local/linuxtoys-log.txt"
-exec 2> >(tee "$logfile" >&2)
-
 # check internet connection
 # ping google
+. /etc/os-release
 ping -c 1 -W 2 8.8.8.8 > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78
     exit 1
 fi
-
-# language and upd checks
+# call linuxtoys fastbash lib
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-det_langfile
+# logger
+logfile="$HOME/.local/linuxtoys-log.txt"
+_log_
+# language and upd checks
+_lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
-. /etc/os-release
 ver_upd
 krn_chk
 
@@ -112,14 +111,14 @@ while :; do
     fi
 
     case $CHOICE in
-    0) supmenu="usupermenu" && invoke_lib ;;
-    1) supmenu="osupermenu" && invoke_lib ;;
-    2) supmenu="gsupermenu" && invoke_lib ;;
-    3) supmenu="esupermenu" && invoke_lib ;;
-    4) supmenu="dsupermenu" && invoke_lib ;;
+    0) supmenu="usupermenu" && _invoke_ ;;
+    1) supmenu="osupermenu" && _invoke_ ;;
+    2) supmenu="gsupermenu" && _invoke_ ;;
+    3) supmenu="esupermenu" && _invoke_ ;;
+    4) supmenu="dsupermenu" && _invoke_ ;;
     5) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
     6) xdg-open https://github.com/psygreg/linuxtoys ;;
-    7 | q) find "$HOME" -maxdepth 1 -type f -name '*supermenu.sh' -exec rm -f {} + && break ;;
+    7 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

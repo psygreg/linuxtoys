@@ -4,8 +4,8 @@
 # depcheck
 depcheck_pipe () {
 
-    local dependencies=(wireplumber)
-    depchecker_lib
+    local _packages=(wireplumber)
+    _install_
 
 }
 
@@ -24,7 +24,9 @@ flatpak_pipe () {
         cd ..
         rm -rf obspipe
     else 
-        whiptail --title "Installer" --msgbox "OBS Studio flatpak not installed." 8 78
+        title="Installer"
+        msg="OBS Studio flatpak not installed."
+        _msgbox_
     fi
 
 }

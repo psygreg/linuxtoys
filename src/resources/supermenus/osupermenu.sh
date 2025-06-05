@@ -65,9 +65,13 @@ osupermenu () {
         install_flatpak
         install_native
         if [[ -n "$flatpak_run" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+            local title="$msg006"
+            local msg="$msg036"
+            _msgbox_
         else
-            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+            local title="$msg006"
+            local msg="$msg018"
+            _msgbox_
         fi
     
     done
@@ -81,47 +85,46 @@ install_native () {
     local _packages=($_drslv $_fial)
     cd $HOME
     if [[ -n "$_packages" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            if [[ -n "$_drslv" ]]; then
-                whiptail --title "$msg006" --msgbox "$msg034" 8 78
+        if [[ -n "$_drslv" ]]; then
+                local title="$msg006"
+                local msg="$msg034"
+                _msgbox_
+            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
                 chmod +x autoresolvedeb.sh
                 ./autoresolvedeb.sh
                 rm autoresolvedeb.sh
-            fi
-            if [[ -n "$_fial" ]]; then
-                wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
-                chmod +x installer.sh
-                ./installer.sh
-                rm installer.sh
-            fi
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-            if [[ -n "$_drslv" ]]; then
-                whiptail --title "$msg006" --msgbox "$msg034" 12 78
+            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then 
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
                 chmod +x autoresolvepkg.sh
                 ./autoresolvepkg.sh
                 rm autoresolvepkg.sh
-            fi
-        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
-            if [[ -n "$_drslv" ]]; then
-                whiptail --title "$msg006" --msgbox "$msg034" 8 78
+            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
                 chmod +x autoresolverpm.sh
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
-            fi
-        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            if [[ -n "$_drslv" ]]; then
-                whiptail --title "$msg006" --msgbox "$msg034" 8 78
+            elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
                 chmod +x autoresolverpm.sh
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
             fi
         fi
+        if [[ -n "$_fial" ]]; then   
+            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then      
+                wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
+                chmod +x installer.sh
+                ./installer.sh
+                rm installer.sh
+            else
+                local title="$msg030"
+                local msg="$msg077"
+                _msgbox_
+            fi
+        fi   
     fi
-    install_n_lib
+    _install_
 
 }
 
@@ -131,14 +134,16 @@ install_flatpak () {
     local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
-            install_f_lib
+            _flatpak_
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
                 flatpak_in_lib
-                install_f_lib
+                _flatpak_
             else
-                whiptail --title "$msg030" --msgbox "$msg132" 8 78
+                local title="$msg030"
+                local msg="$msg132"
+                _msgbox_
             fi
         fi
     fi
@@ -146,8 +151,8 @@ install_flatpak () {
 }
 
 # runtime
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-det_langfile
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+_lang_
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 osupermenu

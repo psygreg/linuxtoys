@@ -1,0 +1,6 @@
+linuxtoys (2.1.5-1) plucky; urgency=medium
+
+  * bugfix: Arch package parsing now works as intended
+  * library improvements
+
+ -- Victor Gregory <psygreg@pm.me>  Thu, 5 Jun 2025 3:00:47 -0300

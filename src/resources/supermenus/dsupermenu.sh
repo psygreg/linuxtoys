@@ -56,9 +56,13 @@ dsupermenu () {
         others_t
         # adjust if rebooting is required for any software
         if [[ -n "$flatpak_run" || -n "$_pyenv" || -n "$_nvm" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+            local title="$msg006"
+            local msg="$msg036"
+            _msgbox_
         else
-            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+            local title="$msg006"
+            local msg="$msg018"
+            _msgbox_
         fi
     
     done
@@ -79,7 +83,7 @@ install_native () {
                 rm code_1.100.2-1747260578_amd64.deb
             fi
             if [[ -n "$_pyenv" ]]; then
-                sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+                insta make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
             fi
             if [[ -n "$_unity" ]]; then
                 wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null
@@ -97,27 +101,33 @@ install_native () {
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
                     chaotic_aur_lib
                 else
-                    whiptail --title "$msg006" --msgbox "Skipping Visual Studio Code installation." 8 78
+                    local title="$msg006"
+                    local msg="Skipping Visual Studio Code installation."
+                    _msgbox_
                 fi
             fi
             if [[ -n "$_pyenv" ]]; then
-                sudo pacman -S --needed --noconfirm base-devel openssl zlib xz tk
+                insta base-devel openssl zlib xz tk
             fi
             if [[ -n "$_unity" ]]; then
-                whiptail --title "Unity Hub" --msgbox "$msg077" 8 78
+                local title="Unity Hub"
+                local msg="$msg077"
+                _msgbox_
             fi
             if [[ -n "$_dotnet" ]]; then
-                whiptail --title ".NET SDK" --msgbox "$msg077" 8 78
+                local title=".NET SDK"
+                local msg="$msg077"
+                _msgbox_
             fi
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [[ -n "$_code" ]]; then
                 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
                 echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
                 sudo dnf check-update
-                sudo dnf in code -y
+                insta code 
             fi
             if [[ -n "$_pyenv" ]]; then
-                sudo dnf in make gcc patch zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel libuuid-devel gdbm-libs libnsl2 -y
+                insta make gcc patch zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel libuuid-devel gdbm-libs libnsl2 -y
             fi
             if [[ -n "$_unity" ]]; then
                 if [ "$ID" == "rhel" ]; then
@@ -125,32 +135,36 @@ install_native () {
                     sudo yum check-update
                     sudo yum install unityhub
                 else
-                    whiptail --title "Unity Hub" --msgbox "$msg077" 8 78
+                    local title="Unity Hub"
+                    local msg="$msg077"
+                    _msgbox_
                 fi
             fi
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_code" ]]; then
                 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
                 echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" |sudo tee /etc/zypp/repos.d/vscode.repo > /dev/null
-                sudo zypper install code -y
+                insta code
             fi
             if [[ -n "$_pyenv" ]]; then
-                sudo zypper in gcc automake bzip2 libbz2-devel xz xz-devel openssl-devel ncurses-devel readline-devel zlib-devel tk-devel libffi-devel sqlite3-devel gdbm-devel make findutils patch -y
+                insta gcc automake bzip2 libbz2-devel xz xz-devel openssl-devel ncurses-devel readline-devel zlib-devel tk-devel libffi-devel sqlite3-devel gdbm-devel make findutils patch -y
             fi
             if [[ -n "$_dotnet" ]]; then
                 if [ "$NAME" == "openSUSE Leap" ]; then
-                    sudo zypper in libicu -y
+                    insta libicu
                     sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
                     wget https://packages.microsoft.com/config/opensuse/15/prod.repo
                     sudo mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
                     sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
-                    sudo zypper in dotnet-sdk-9.0 -y
+                    insta dotnet-sdk-9.0
                 else
-                    whiptail --title ".NET SDK" --msgbox "$msg077" 8 78
+                    local title=".NET SDK"
+                    local msg="$msg077"
+                    _msgbox_
                 fi
             fi
         fi
-        install_n_lib
+        _install_
     fi
 
 }
@@ -161,14 +175,16 @@ install_flatpak () {
     local _flatpaks=($_codium)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
-            install_f_lib
+            _flatpak_
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
                 flatpak_in_lib
-                install_f_lib
+                _flatpak_
             else
-                whiptail --title "$msg030" --msgbox "$msg132" 8 78
+                local title="$msg030"
+                local msg="$msg132"
+                _msgbox_
             fi
         fi
     fi
@@ -293,25 +309,27 @@ godot_shrp () {
         sudo cp godotsharp.desktop /usr/share/applications
         rm godotsharp.desktop
         if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-            sudo dnf in dotnet-sdk-9.0 -y
+            insta dotnet-sdk-9.0
         elif [ "$ID" == "ubuntu" ]; then
-            sudo apt install -y dotnet-sdk-9.0
+            insta dotnet-sdk-9.0
         elif [ "$ID" == "debian" ]; then
             wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
             sudo dpkg -i packages-microsoft-prod.deb
             rm packages-microsoft-prod.deb
             sudo apt update
-            sudo apt install -y dotnet-sdk-9.0
+            insta dotnet-sdk-9.0
         elif [[ "$NAME" == "openSUSE Leap" ]]; then
-            sudo zypper in libicu -y
+            sudo insta libicu
             sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
             wget https://packages.microsoft.com/config/opensuse/15/prod.repo
             sudo mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
             sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
-            sudo zypper in dotnet-sdk-9.0 -y
+            insta dotnet-sdk-9.0 
         fi
     else
-        whiptail --title "$msg030" --msgbox "$msg077" 8 78
+        local title="$msg030"
+        local msg="$msg077"
+        _msgbox_
     fi
     
 
@@ -323,15 +341,15 @@ jdk_install () {
     local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
     for jav in "${javas[@]}"; do
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            sudo apt install -y openjdk-${jav}-jdk openjdk-${jav}-jre
+            insta openjdk-${jav}-jdk openjdk-${jav}-jre
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [ $jav == "8" ]; then
-                sudo dnf in java-1.8.0-openjdk java-1.8.0-openjdk-devel -y
+                insta java-1.8.0-openjdk java-1.8.0-openjdk-devel
                 continue
             fi
-            sudo dnf in java-${jav}-openjdk java-${jav}-openjdk-devel -y
+            insta java-${jav}-openjdk java-${jav}-openjdk-devel
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            sudo zypper in java-${jav}-openjdk java-${jav}-openjdk-devel -y
+            insta java-${jav}-openjdk java-${jav}-openjdk-devel
         fi
     done
 
@@ -389,7 +407,9 @@ others_t () {
         rm install.sh
         npm i --global yarn
         # basic usage instruction prompt
-        whiptail --title "$msg006" --msgbox "$msg136" 8 78
+        local title="$msg006"
+        local msg="$msg136"
+        _msgbox_
         xdg-open https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage
     fi
     if [[ -n "$_pyenv" ]]; then
@@ -412,7 +432,9 @@ others_t () {
         git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
         echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
         # basic usage instruction prompt
-        whiptail --title "$msg006" --msgbox "$msg135" 8 78
+        local title="$msg006"
+        local msg="$msg135"
+        _msgbox_
         xdg-open https://github.com/pyenv/pyenv?tab=readme-ov-file#usage
         xdg-open https://github.com/pyenv/pyenv-virtualenv?tab=readme-ov-file#usage
     fi
@@ -423,8 +445,8 @@ others_t () {
 }
 
 # runtime
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-det_langfile
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+_lang_
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 dsupermenu

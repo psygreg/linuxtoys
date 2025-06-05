@@ -5,18 +5,20 @@
 dep_check () {
 
     if ! dpkg -l | grep -q grub-efi; then
-        whiptail --title "Cancelled" --msgbox "No GRUB found." 8 78
+        local title="Cancelled"
+        local msg="No GRUB found."
+        _msgbox_
         exit 1
     else
-        local dependencies=()
+        local _packages=()
         if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-            dependencies=(gawk inotify-tools make)
+            _packages=(gawk inotify-tools make)
         elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
-            dependencies=(gawk inotify-tools)
+            _packages=(gawk inotify-tools)
         elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            dependencies=(gawk inotify-tools make)
+            _packages=(gawk inotify-tools make)
         fi
-        depchecker_lib
+        _install_
     fi
 
 }
@@ -26,22 +28,22 @@ grubtrfs_in () {
 
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         sudo dnf rm snapper -y
-        sudo dnf in snapper btrfs-assistant -y
+        insta snapper btrfs-assistant
         sudo snapper -c root create-config /
         sudo snapper -c root create --command dnf
     elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
         sudo zypper rm snapper -y
-        sudo zypper in snapper btrfs-assistant -y
+        insta snapper btrfs-assistant
         sudo snapper -c root create-config /
         sudo snapper -c root create --command zypper
     elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
         sudo pacman -Rsn --noconfirm snapper
-        sudo pacman -S --noconfirm snapper
+        insta snapper
         sudo snapper -c root create-config /
         sudo snapper -c root create --command pacman
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         sudo apt purge -y snapper
-        sudo apt install -y snapper btrfs-assistant
+        insta snapper btrfs-assistant
         sudo snapper -c root create-config /
         sudo snapper -c root create --command apt
     fi
@@ -54,7 +56,7 @@ grubtrfs_in () {
     sudo systemctl enable snapper-cleanup.timer
     sudo systemctl start snapper-cleanup.timer
     if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        sudo pacman -S --noconfirm grub-btrfs
+        insta grub-btrfs
     else
         cd $HOME
         git clone https://github.com/Antynea/grub-btrfs.git
@@ -82,7 +84,9 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 dep_check
 if whiptail --title "Grub-Btrfs Installer" --yesno "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" 8 78; then
     grubtrfs_in
-    whiptail --title "Grub-Btrfs Installer" --msgbox "Installation successful."
+    title="Grub-Btrfs Installer"
+    msg="Installation successful."
+    _msgbox_
     cd ..
     rm -rf grub-btrfs
     exit 0

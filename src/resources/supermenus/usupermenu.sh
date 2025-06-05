@@ -62,9 +62,13 @@ usupermenu () {
         install_flatpak
         install_native
         if [[ -n "$flatpak_run" || -n "$_oprzr" || -n "$_rocm" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+            local title="$msg006"
+            local msg="$msg036"
+            _msgbox_
         else
-            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+            local title="$msg006"
+            local msg="$msg018"
+            _msgbox_
         fi
     
     done
@@ -89,7 +93,7 @@ install_native () {
                 fi
             fi
             if [[ -n "$_droid" ]]; then
-                sudo apt install curl ca-certificates -y
+                insta curl ca-certificates -y
                 curl -s https://repo.waydro.id | sudo bash
             fi
             if [[ -n "$_dckr" ]]; then
@@ -103,7 +107,9 @@ install_native () {
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
                     chaotic_aur_lib
                 else
-                    whiptail --title "$msg006" --msgbox "Skipping btrfs-assistant installation." 8 78
+                    local title="$msg006"
+                    local msg="Skipping btrfs-assistant installation."
+                    _msgbox_
                 fi
             fi
             if [[ -n "$_dckr" ]]; then
@@ -114,15 +120,15 @@ install_native () {
             fi
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ (openrazer|yes) ]]; then
-                    sudo pacman -S --noconfirm openrazer-daemon
+                    insta openrazer-daemon
                 fi
-                sudo pacman -S --noconfirm $pak
+                insta $pak
             done
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [[ -n "$_oprzr" ]]; then
-                sudo dnf in kernel-devel -y
+                insta kernel-devel -y
                 sudo dnf config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo
-                sudo dnf in openrazer-meta -y
+                insta openrazer-meta -y
             fi
             if [[ -n "$_dckr" ]]; then
                 docker_t
@@ -138,7 +144,7 @@ install_native () {
                     sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Tumbleweed/hardware:razer.repo
                 fi
                 sudo zypper refresh
-                sudo zypper in openrazer-meta -y
+                insta openrazer-meta
             fi
             if [[ -n "$_dckr" ]]; then
                 docker_t
@@ -147,23 +153,27 @@ install_native () {
                 rocm_rpm
             fi
             if [[ -n "$_droid" ]]; then
-                whiptail --title "Waydroid" --msgbox "$msg097" 12 78
+                local title="Waydroid"
+                local msg="$msg097"
+                _msgbox_
             fi
         fi
         if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
             obs_pipe
         fi
     fi
-    install_n_lib
+    _install_
 
 }
 
 # obs pipewire audio capture plugin installation
 obs_pipe () {
 
-    whiptail --title "$msg006" --msgbox "$msg098" 8 78
+    local title="$msg006"
+    local msg="$msg098"
+    _msgbox_
     local subscript="pipewire-obs"
-    invoke_lib
+    _invoke_
 
 }
 
@@ -172,7 +182,7 @@ docker_t () {
 
     cd $HOME
     local subscript="docker-installer"
-    invoke_lib
+    _invoke_
 
 }
 
@@ -181,26 +191,18 @@ rocm_rpm () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local pkgs=()
+        local _packages=()
         if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            pkgs=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
+            _packages=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
         else
-            pkgs=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
+            _packages=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)
         fi
-        for pkg in "${pkgs[@]}"; do
-            if rpm -qi "$pkg" 2>/dev/null 1>&2; then
-                continue
-            else
-                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-                    sudo zypper in "$pkg" -y
-                else
-                    sudo dnf in "$pkg" -y
-                fi
-            fi
-        done
+        _install_
         sudo usermod -aG render,video $USER
     else
-        whiptail --title "$msg039" --msgbox "$msg040" 8 78
+        local title="$msg039"
+        local msg="$msg040"
+        _msgbox_
     fi
 
 }
@@ -209,17 +211,13 @@ rocm_deb () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local pkgs=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
-        for pkg in "${pkgs[@]}"; do
-            if dpkg -s "$pkg" 2>/dev/null 1>&2; then
-                continue
-            else
-                sudo apt install -y "$pkg"
-            fi
-        done
+        local _packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
+        _install_
         sudo usermod -aG render,video $USER
     else
-        whiptail --title "$msg039" --msgbox "$msg040" 8 78
+        local title="$msg039"
+        local msg="$msg040"
+        _msgbox_
     fi
 
 }
@@ -228,17 +226,13 @@ rocm_arch () {
 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local pkgs=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo)
-        for pkg in "${pkgs[@]}"; do
-            if pacman -Qi "$pkg" 2>/dev/null 1>&2; then 
-                continue
-            else
-                sudo pacman -S --noconfirm "$pkg"
-            fi
-        done
+        local _packages=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo)
+        _install_
         sudo usermod -aG render,video $USER
     else
-        whiptail --title "$msg039" --msgbox "$msg040" 8 78
+        local title="$msg039"
+        local msg="$msg040"
+        _msgbox_
     fi
 
 }
@@ -249,7 +243,7 @@ install_flatpak () {
     local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb $_fseal)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
-            install_f_lib
+            _flatpak_
             if [[ -n "$_hndbrk" ]]; then
                 if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
                     flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
@@ -268,7 +262,7 @@ install_flatpak () {
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
                 flatpak_in_lib
-                install_f_lib
+                _flatpak_
                 if [[ -n "$_hndbrk" ]]; then
                     if lspci | grep -iE 'vga|3d' | grep -iq 'intel'; then
                         flatpak install --or-update -y fr.handbrake.ghb.Plugin.IntelMediaSDK --system
@@ -284,7 +278,9 @@ install_flatpak () {
                     flatpak install --or-update -y $_efx --system
                 fi
             else
-                whiptail --title "$msg030" --msgbox "$msg132" 8 78
+                local title="$msg030"
+                local msg="$msg132"
+                _msgbox_
             fi
         fi
     fi
@@ -292,8 +288,8 @@ install_flatpak () {
 }
 
 # runtime
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-det_langfile
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+_lang_
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 usupermenu

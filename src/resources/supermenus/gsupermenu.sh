@@ -73,9 +73,13 @@ gsupermenu () {
         sboost_t
         dsplitm_t
         if [[ -n "$flatpak_run" || -n "$dsplitm_run" || -n "$sboost_run" ]]; then
-            whiptail --title "$msg006" --msgbox "$msg036" 8 78
+            local title="$msg006"
+            local msg="$msg036"
+            _msgbox_
         else
-            whiptail --title "$msg006" --msgbox "$msg018" 8 78
+            local title="$msg006"
+            local msg="$msg018"
+            _msgbox_
         fi
     
     done
@@ -107,7 +111,7 @@ install_native () {
             fi
         fi
     fi
-    install_n_lib
+    _install_
 
 }
 
@@ -117,7 +121,7 @@ install_flatpak () {
     local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
-            install_f_lib
+            _flatpak_
             if [[ -n "$_steam" ]]; then
                 flatpak install --or-update -u -y com.valvesoftware.Steam
                 sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
@@ -126,14 +130,16 @@ install_flatpak () {
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
-                whiptail --title "Oversteer" --msgbox "$msg146" 12 78
+                local title="Oversteer"
+                local msg="$msg146"
+                _msgbox_
                 xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
             fi
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
                 flatpak_run="1"
                 flatpak_in_lib
-                install_f_lib
+                _flatpak_
                 if [[ -n "$_steam" ]]; then
                     flatpak install --or-update -u -y com.valvesoftware.Steam
                     sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
@@ -142,11 +148,15 @@ install_flatpak () {
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
-                    whiptail --title "Oversteer" --msgbox "$msg146" 12 78
+                    local title="Oversteer"
+                    local msg="$msg146"
+                    _msgbox_
                     xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
                 fi
             else
-                whiptail --title "$msg030" --msgbox "$msg132" 8 78
+                local title="$msg030"
+                local msg="$msg132"
+                _msgbox_
             fi
         fi
     fi
@@ -181,17 +191,21 @@ dsplitm_t () {
         dsplitm_run="1"
         if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
             echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-            whiptail --title "$msg041" --msgbox "$msg022" 8 78
+            local title="$msg041"
+            local msg="$msg022"
+            _msgbox_
         else
-            whiptail --title "$msg041" --msgbox "$msg043" 8 78
+            local title="$msg041"
+            local msg="$msg043"
+            _msgbox_
         fi
     fi
 
 }
 
 # runtime
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-det_langfile
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 . /etc/os-release
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+_lang_
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 gsupermenu
