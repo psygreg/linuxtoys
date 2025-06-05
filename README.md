@@ -1,5 +1,7 @@
-# linuxtoys
+# LinuxToys
 A collection of tools for Linux in a user-friendly way.
+
+![LinuxToys](https://github.com/psygreg/linuxtoys/blob/42463f6539d54f710ec2a915aa85ee1a68b7413a/src/scrnshot.png)
 
 ## Usage
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu.
