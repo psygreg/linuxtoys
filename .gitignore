@@ -12,4 +12,6 @@ src/buildfiles/rpm/rpmbuild/x86_64/linuxtoys*
 src/buildfiles/deb/linuxtoys-*/debian/opt/linuxtoys/*
 src/buildfiles/rpm/linuxtoys-*/x86_64/linuxtoys*
 src/buildfiles/pkgbuild/linuxtoys-*/bin/*
+src/buildfiles/rpm/linuxtoys-*/linuxtoys.sh
+src/buildfiles/rpm/linuxtoys-*/linuxtoys.png
 

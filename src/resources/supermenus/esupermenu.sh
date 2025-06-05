@@ -250,7 +250,11 @@ kernel_in () {
             # summon installer
             wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
             chmod +x cachyos-deb.sh
-            ./cachyos-deb.sh
+            if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
+                ./cachyos-deb.sh -s
+            else
+                ./cachyos-deb.sh
+            fi
             rm cachyos-deb.sh
             # clean old kernels
             dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
