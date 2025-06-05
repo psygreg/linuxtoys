@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.1.1
+Version:        2.1.2
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget xterm git
+Requires:       bash newt curl wget alacritty git
 BuildRequires:  desktop-file-utils
 
 %description
@@ -45,5 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Wed Jun  4 2025 Victor Gregory <psygreg@pm.me> - 2.1.1
-- refactored code to use new libraries
+* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.2
+- fixed updater now using alacritty, which has become a dependency
+- no longer depends on xterm

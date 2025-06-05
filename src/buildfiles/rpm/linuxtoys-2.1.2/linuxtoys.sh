@@ -2,32 +2,52 @@
 # functions
 
 # updater
-current_ltver="2.1.1"
+current_ltver="2.1.2"
 ver_upd () {
-
-    local ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
+    local ver
+    ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
     if [[ "$ver" != "$current_ltver" ]]; then
         if whiptail --title "$msg001" --yesno "$msg002" 8 78; then
-            cd $HOME
+            cd "$HOME" || exit 1
             if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-                wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm
-                if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-                    nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo zypper in ${HOME}/linuxtoys-${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown
+                wget "https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys-${ver}-1.amd64.rpm"
+                if [[ "$ID_LIKE" == "suse" ]] || [[ "$ID" == "suse" ]]; then
+                    nohup alacritty -e bash -c '
+                        whiptail --title "'"$msg003"'" --msgbox "'"$msg004"'" 8 78 &&
+                        sudo zypper in "'"$HOME"'/linuxtoys-'"$ver"'-1.amd64.rpm" -y &&
+                        whiptail --title "'"$msg003"'" --msgbox "'"$msg005"'" 8 78 &&
+                        rm -f "'"$HOME"'/linuxtoys-'"$ver"'-1.amd64.rpm"
+                    ' >/dev/null 2>&1 &
                 else
-                    nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo dnf in ${HOME}/linuxtoys-${ver}-1.amd64.rpm -y && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1.amd64.rpm'" >/dev/null 2>&1 && disown  
+                    nohup alacritty -e bash -c '
+                        whiptail --title "'"$msg003"'" --msgbox "'"$msg004"'" 8 78 &&
+                        sudo dnf install "'"$HOME"'/linuxtoys-'"$ver"'-1.amd64.rpm" -y &&
+                        whiptail --title "'"$msg003"'" --msgbox "'"$msg005"'" 8 78 &&
+                        rm -f "'"$HOME"'/linuxtoys-'"$ver"'-1.amd64.rpm"
+                    ' >/dev/null 2>&1 &
                 fi
-            elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-                wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb
-                nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && sudo dpkg -i ${HOME}/linuxtoys_${ver}-1_amd64.deb && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm ${HOME}/linuxtoys_${ver}-1_amd64.deb'" >/dev/null 2>&1 && disown
+            elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [[ "$ID" == "debian" ]]; then
+                wget "https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys_${ver}-1_amd64.deb"
+                nohup alacritty -e bash -c '
+                    whiptail --title "'"$msg003"'" --msgbox "'"$msg004"'" 8 78 &&
+                    sudo dpkg -i "'"$HOME"'/linuxtoys_'"$ver"'-1_amd64.deb" &&
+                    whiptail --title "'"$msg003"'" --msgbox "'"$msg005"'" 8 78 &&
+                    rm -f "'"$HOME"'/linuxtoys_'"$ver"'-1_amd64.deb"
+                ' >/dev/null 2>&1 &
             elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-                wget https://github.com/psygreg/linuxtoys/releases/latest/download/PKGBUILD
-                wget https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys.install
-                nohup xterm -e "bash -c 'whiptail --title \"$msg003\" --msgbox \"$msg004\" 8 78 && makepkg -si && whiptail --title \"$msg003\" --msgbox \"$msg005\" 8 78 && rm PKGBUILD && rm linuxtoys.install'" >/dev/null 2>&1 && disown
+                wget "https://github.com/psygreg/linuxtoys/releases/latest/download/PKGBUILD"
+                wget "https://github.com/psygreg/linuxtoys/releases/latest/download/linuxtoys.install"
+                nohup alacritty -e bash -c '
+                    whiptail --title "'"$msg003"'" --msgbox "'"$msg004"'" 8 78 &&
+                    makepkg -si &&
+                    whiptail --title "'"$msg003"'" --msgbox "'"$msg005"'" 8 78 &&
+                    rm -f PKGBUILD linuxtoys.install
+                ' >/dev/null 2>&1 &
             fi
+            disown
             exit 0
         fi
     fi
-
 }
 
 # kernel update checker for debian/ubuntu
