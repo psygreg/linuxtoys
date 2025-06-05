@@ -1,6 +1,0 @@
-linuxtoys (2.1.3-1) plucky; urgency=medium
-
-  * finished code optimization with linuxtoys library
-  * added quick-install and quick-update options for 'stable' cachyos kernel
-
- -- Victor Gregory <psygreg@pm.me>  Thu, 5 Jun 2025 2:00:47 -0300

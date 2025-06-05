@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="2.1.3"
+current_ltver="2.1.4"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -45,7 +45,7 @@ ver_upd () {
                 ' >/dev/null 2>&1 &
             fi
             disown
-            exit 0
+            return 0
         fi
     fi
 }
