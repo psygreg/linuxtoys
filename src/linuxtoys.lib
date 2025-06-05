@@ -184,3 +184,21 @@ chaotic_aur_lib () {
     fi
 
 }
+
+# wraps all commands in a function in sudo -- usage: _root_ function_name
+_root_ () {
+
+    if [ $# -eq 0 ]; then
+        return 1
+    fi
+
+    local cmd=("$@")
+
+    # Check if already root
+    if [ "$(id -u)" -eq 0 ]; then
+        "${cmd[@]}"
+    else
+        sudo bash -c "$(declare -f "${cmd[0]}") ; ${cmd[*]}"
+    fi
+
+}
