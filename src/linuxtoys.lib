@@ -28,28 +28,44 @@ install_n_lib () {
                 if [[ "$pak" =~ ^(steam|yes|code|pyenv)$ ]]; then
                     continue
                 fi
-                sudo apt install -y $pak
+                if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                    continue
+                else
+                    sudo apt install -y $pak
+                fi
             done
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(yes|openrazer|code|pyenv|unityhub|dotnet-sdk-9.0)$ ]]; then
                     continue
                 fi
-                sudo apt install -y $pak
+                if pacman -Qi "$pac" 2>/dev/null 1>&2; then
+                    continue
+                else
+                    sudo apt install -y $pak
+                fi
             done
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(yes|openrazer|code|pyenv)$ ]]; then
                     continue
                 fi
-                sudo dnf in $pak -y
+                if rpm -qi "$pac" 2>/dev/null 1>&2; then
+                    continue
+                else
+                    sudo dnf in $pak -y
+                fi
             done
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(yes|openrazer|waydroid|code|pyenv|dotnet-sdk-9.0)$ ]]; then
                     continue
                 fi
-                sudo zypper in $pak -y
+                if rpm -qi "$pac" 2>/dev/null 1>&2; then
+                    continue
+                else
+                    sudo zypper in $pak -y
+                fi
             done
         fi
     fi

@@ -92,12 +92,6 @@ install_native () {
                 rm packages-microsoft-prod.deb
                 sudo apt update
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv) ]]; then
-                    continue
-                fi
-                sudo apt install -y $pak
-            done
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             if [[ -n "$_code" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
@@ -124,12 +118,6 @@ install_native () {
             if [[ -n "$_dotnet" ]]; then
                 whiptail --title ".NET SDK" --msgbox "$msg077" 8 78
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv|unityhub|dotnet-sdk-9.0) ]]; then
-                    continue
-                fi
-                sudo pacman -S --noconfirm $pak
-            done
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [[ -n "$_code" ]]; then
                 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -149,12 +137,6 @@ install_native () {
                     whiptail --title "Unity Hub" --msgbox "$msg077" 8 78
                 fi
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv) ]]; then
-                    continue
-                fi
-                sudo dnf in $pak -y
-            done
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_code" ]]; then
                 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -176,13 +158,8 @@ install_native () {
                     whiptail --title ".NET SDK" --msgbox "$msg077" 8 78
                 fi
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (code|pyenv|dotnet-sdk-9.0) ]]; then
-                    continue
-                fi
-                sudo zypper in $pak -y
-            done
         fi
+        install_n_lib
     fi
 
 }
@@ -352,7 +329,7 @@ godot_shrp () {
 # java JDK + JRE installation
 jdk_install () {
 
-    local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
+    local packages=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
     for jav in "${javas[@]}"; do
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             sudo apt install -y openjdk-${jav}-jdk openjdk-${jav}-jre

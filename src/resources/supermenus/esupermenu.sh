@@ -4,36 +4,8 @@
 ufw_in () {
 
     if whiptail --title "$msg006" --yesno "$msg007" 8 78; then
-        local packages=(ufw gufw)
-        if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-            for pac in "${packages[@]}"; do
-                if rpm -qi "$pac" 2>/dev/null 1>&2; then
-                    continue
-                else
-                    if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-                        sudo zypper in "$pac" -y
-                    else
-                        sudo dnf in "$pac" -y
-                    fi
-                fi
-            done
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-            for pac in "${packages[@]}"; do
-                if pacman -Qi "$pac" 2>/dev/null 1>&2; then
-                    continue
-                else
-                    sudo pacman -S --noconfirm "$pac"
-                fi
-            done
-        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            for pac in "${packages[@]}"; do
-                if dpkg -s "$pac" 2>/dev/null 1>&2; then
-                    continue
-                else
-                    sudo apt install -y "$pac"
-                fi
-            done
-        fi
+        local _packages=(ufw gufw)
+        install_n_lib
         if command -v ufw &> /dev/null; then
             sudo ufw default deny incoming
             sudo ufw default allow outgoing
