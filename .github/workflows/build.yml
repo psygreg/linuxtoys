@@ -1,0 +1,92 @@
+name: Build DEB and RPM Packages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential devscripts makepkg rpm
+
+    - name: Prepare version
+      id: read_version_file
+      run: echo "{name}=$(cat src/ver)" >> $GITHUB_OUTPUT
+
+    - name: Build AUR package
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      run: |
+        pushd src/buildfiles/pkgbuild
+        makepkg -s
+        mv linuxtoys-${LINUXTOYS_VERSION}-1-x86_64.pkg.tar.zst ../../../
+        popd
+
+    - name: Build DEB package
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      run: |
+        mkdir -p src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys
+        mkdir -p src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
+        cp src/{linuxtoys.sh,linuxtoys.png} src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys
+        cp src/LinuxToys.desktop src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
+        dpkg-deb --build --root-owner-group src/buildfiles/deb/linuxtoys/
+        mv src/buildfiles/deb/linuxtoys.deb linuxtoys-${LINUXTOYS_VERSION}-1_amd64.deb
+
+    - name: Build RPM package
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      run: |
+        mkdir -p src/buildfiles/rpm/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+        mkdir -p src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/{opt/linuxtoys,usr/share/applications}
+        cp src/{linuxtoys.sh,linuxtoys.png} src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/opt/linuxtoys
+        cp src/LinuxToys.desktop src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/applications
+        pushd src/buildfiles/rpm/
+        tar -cJf rpmbuild/SOURCES/linuxtoys-${LINUXTOYS_VERSION}.tar.xz linuxtoys-${LINUXTOYS_VERSION}/
+        pushd rpmbuild
+        rpmbuild --define "_topdir `pwd`" -bb SPECS/linuxtoys.spec
+        mv RPMS/noarch/linuxtoys-${LINUXTOYS_VERSION}-1.noarch.rpm ../../../../linuxtoys-${LINUXTOYS_VERSION}-1_amd64.noarch.rpm
+        popd
+        popd
+
+    - name: Upload AUR package
+      uses: actions/upload-artifact@v4
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      with:
+        name: linuxtoys-${LINUXTOYS_VERSION}-1-x86_64.pkg.tar.zst
+        path: linuxtoys-${LINUXTOYS_VERSION}-1-x86_64.pkg.tar.zst
+
+    - name: Upload DEB package
+      uses: actions/upload-artifact@v4
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      with:
+        name: linuxtoys-${LINUXTOYS_VERSION}.deb
+        path: linuxtoys-${LINUXTOYS_VERSION}-1_amd64.deb
+
+    - name: Upload RPM package
+      uses: actions/upload-artifact@v4
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      with:
+        name: linuxtoys-${LINUXTOYS_VERSION}.rpm
+        path: linuxtoys-${LINUXTOYS_VERSION}-1_amd64.noarch.rpm
+

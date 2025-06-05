@@ -3,15 +3,21 @@
 *.changes
 *.upload
 *.dsc
-src/buildfiles/deb/linuxtoys-*/debian/.debhelper
 *.substvars
 debhelper-build-stamp
-src/buildfiles/deb/linuxtoys-*/debian/linuxtoys
+
+src/buildfiles/deb/linuxtoys/DEBIAN/opt
+src/buildfiles/deb/linuxtoys/DEBIAN/usr
+src/buildfiles/deb/linuxtoys/DEBIAN/.debhelper
+src/buildfiles/deb/linuxtoys/DEBIAN/linuxtoys
 src/buildfiles/deb/*.deb
+
 src/buildfiles/rpm/rpmbuild/x86_64/linuxtoys*
-src/buildfiles/deb/linuxtoys-*/debian/opt/linuxtoys/*
-src/buildfiles/rpm/linuxtoys-*/x86_64/linuxtoys*
+src/buildfiles/rpm/rpmbuild/BUILD/
+src/buildfiles/rpm/rpmbuild/SOURCES/
+src/buildfiles/rpm/linuxtoys-*/
+
 src/buildfiles/pkgbuild/linuxtoys-*/bin/*
-src/buildfiles/rpm/linuxtoys-*/linuxtoys.sh
-src/buildfiles/rpm/linuxtoys-*/linuxtoys.png
+src/buildfiles/pkgbuild/pkg
+src/buildfiles/pkgbuild/src
 

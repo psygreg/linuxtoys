@@ -17,12 +17,11 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %setup -q
 
 %install
-mkdir -p %{buildroot}/usr/bin
-install -m 755 linuxtoys.sh %{buildroot}/usr/bin/
+mkdir -p %{buildroot}/opt/linuxtoys
+install -m 755 opt/linuxtoys/linuxtoys.sh %{buildroot}/opt/linuxtoys
+install -m 644 opt/linuxtoys/linuxtoys.png %{buildroot}/opt/linuxtoys
 mkdir -p %{buildroot}/usr/share/applications
-desktop-file-install --dir=%{buildroot}/usr/share/applications LinuxToys.desktop
-mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
-install -m 644 linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
+desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
 
 %post
 alias_name="linuxtoys"
@@ -40,9 +39,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root, -)
-/usr/bin/linuxtoys.sh
+/opt/linuxtoys/linuxtoys.sh
+/opt/linuxtoys/linuxtoys.png
 /usr/share/applications/LinuxToys.desktop
-/usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
 * Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.4
