@@ -329,7 +329,7 @@ godot_shrp () {
 # java JDK + JRE installation
 jdk_install () {
 
-    local packages=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
+    local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
     for jav in "${javas[@]}"; do
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             sudo apt install -y openjdk-${jav}-jdk openjdk-${jav}-jre
