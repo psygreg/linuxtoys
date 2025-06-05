@@ -1,5 +1,6 @@
-# linuxtoys modules library
+## linuxtoys modules library
 
+# whiptail color palette
 export NEWT_COLORS='
     root=white,blue
     border=black,lightgray
@@ -20,6 +21,7 @@ export NEWT_COLORS='
     roottext=black,lightgray
 '
 
+# native package installation
 install_n_lib () {
     
     if [[ -n "$_packages" ]]; then
@@ -72,6 +74,7 @@ install_n_lib () {
 
 }
 
+# flatpak installation
 install_f_lib () {
 
     if [[ -n "$_flatpaks" ]]; then
@@ -82,6 +85,7 @@ install_f_lib () {
 
 }
 
+# flatpak enabler
 flatpak_in_lib () {
 
     if command -v flatpak &> /dev/null; then
@@ -98,6 +102,7 @@ flatpak_in_lib () {
 
 }
 
+# language detect
 det_langfile () {
 
     local lang="${LANG:0:2}"
@@ -118,6 +123,7 @@ det_langfile () {
 
 }
 
+# dependency check
 depchecker_lib () {
 
     for dep in "${dependencies[@]}"; do
@@ -145,5 +151,36 @@ depchecker_lib () {
             fi
         fi
     done
+
+}
+
+# subscript invoker
+invoke_lib () {
+
+    if [[ -n "$supmenu" ]]; then
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh)
+    elif [[ -n "$subscript" ]]; then
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/${subscript}.sh)
+    fi
+
+}
+
+# add chaotic aur to arch repos
+chaotic_aur_lib () {
+
+    if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+        cd $HOME
+        sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+        sudo pacman-key --lsign-key 3056513887B78AEB
+        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
+        sudo sed -i -f script.sed /etc/pacman.conf
+        sudo pacman -Sy
+        whiptail --title "$msg023" --msgbox "$msg024" 8 78
+        rm script.sed
+    else
+        whiptail --title "$msg030" --msgbox "$msg077" 8 78
+    fi
 
 }

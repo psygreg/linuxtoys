@@ -14,6 +14,7 @@ flatpak_pipe () {
 
     if flatpak list --app | grep -q com.obsproject.Studio; then
         local ver="1.2.0"
+        cd $HOME
         mkdir obspipe
         cd obspipe
         wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/${ver}/download/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
@@ -32,6 +33,7 @@ flatpak_pipe () {
 native_pipe () {
 
     local ver="1.2.0"
+    cd $HOME
     mkdir obspipe
     cd obspipe
     wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/${ver}/download/linux-pipewire-audio-${ver}.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }

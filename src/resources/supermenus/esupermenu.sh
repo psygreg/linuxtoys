@@ -20,10 +20,8 @@ ufw_in () {
 swapfile_t () {
 
     if whiptail --title "$msg009" --yesno "$msg010" 8 78; then
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/swapper.sh
-        chmod +x swapper.sh
-        ./swapper.sh
-        rm swapper.sh
+        local subscript="swapper"
+        invoke_lib
     fi
 
 }
@@ -50,11 +48,8 @@ lucidglyph_in () {
 grubtrfs_t () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-        cd $HOME
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/grub-btrfs-installer.sh
-        chmod +x grub-btrfs-installer.sh
-        ./grub-btrfs-installer.sh
-        rm grub-btrfs-installer.sh
+        local subscript="grub-btrfs-installer"
+        invoke_lib
     else
         whiptail --title "$msg030" --msgbox "$msg031" 8 78
     fi
@@ -192,26 +187,6 @@ flatpak_in () {
 
 }
 
-# enable Chaotic AUR repo for Arch
-chaotic_in () {
-
-    if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-        cd $HOME
-        sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-        sudo pacman-key --lsign-key 3056513887B78AEB
-        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
-        sudo sed -i -f script.sed /etc/pacman.conf
-        sudo pacman -Sy
-        whiptail --title "$msg023" --msgbox "$msg024" 8 78
-        rm script.sed
-    else
-        whiptail --title "$msg030" --msgbox "$msg077" 8 78
-    fi
-
-}
-
 # install linux-cachyos optimized kernel
 kernel_in () {
 
@@ -220,14 +195,11 @@ kernel_in () {
     else
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             # summon installer
-            wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
-            chmod +x cachyos-deb.sh
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
-                ./cachyos-deb.sh -s
+                bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh) -s
             else
-                ./cachyos-deb.sh
+                bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh)
             fi
-            rm cachyos-deb.sh
             # clean old kernels
             dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
             dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
@@ -235,7 +207,7 @@ kernel_in () {
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
             kernel_menu
         elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" == *arch* ]]; then
-            chaotic_in
+            chaotic_aur_lib
             sudo pacman -S --noconfirm linux-cachyos linux-cachyos-headers
             if command -v dracut >/dev/null 2>&1; then
                 sudo dracut -f --regenerate-all
@@ -335,7 +307,7 @@ while :; do
     6) suse_codecs ;;
     7) fix_se_suse ;;
     8) nvidia_in ;;
-    9) chaotic_in ;;
+    9) chaotic_aur_lib ;;
     10 | q) break ;;
     *) echo "Invalid Option" ;;
     esac

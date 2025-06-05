@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.1.2
+Version:        2.1.3
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,6 +45,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.2
-- fixed updater now using alacritty, which has become a dependency
-- no longer depends on xterm
+* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.3
+- finished code optimization with linxutoys library

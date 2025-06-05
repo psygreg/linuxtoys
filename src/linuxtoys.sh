@@ -58,10 +58,7 @@ krn_chk () {
         if [ ${_psygreg_krn} == "yes" ]; then
             if [ $(uname -r) != $(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn) ]; then
                 if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
-                    wget -O cachyos-deb.sh https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh
-                    chmod +x cachyos-deb.sh
-                    ./cachyos-deb.sh -s
-                    rm cachyos-deb.sh
+                    bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh) -s
                     # clean old kernels
                     dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
                     dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
@@ -69,15 +66,6 @@ krn_chk () {
             fi
         fi
     fi
-
-}
-
-# supermenu run
-supermenu_run () {
-
-    wget -nc -O ${supmenu}.sh https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh
-    chmod +x ${supmenu}.sh
-    ./${supmenu}.sh
 
 }
 
@@ -124,11 +112,11 @@ while :; do
     fi
 
     case $CHOICE in
-    0) supmenu="usupermenu" && supermenu_run ;;
-    1) supmenu="osupermenu" && supermenu_run ;;
-    2) supmenu="gsupermenu" && supermenu_run ;;
-    3) supmenu="esupermenu" && supermenu_run ;;
-    4) supmenu="dsupermenu" && supermenu_run ;;
+    0) supmenu="usupermenu" && invoke_lib ;;
+    1) supmenu="osupermenu" && invoke_lib ;;
+    2) supmenu="gsupermenu" && invoke_lib ;;
+    3) supmenu="esupermenu" && invoke_lib ;;
+    4) supmenu="dsupermenu" && invoke_lib ;;
     5) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
     6) xdg-open https://github.com/psygreg/linuxtoys ;;
     7 | q) find "$HOME" -maxdepth 1 -type f -name '*supermenu.sh' -exec rm -f {} + && break ;;

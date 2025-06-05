@@ -101,15 +101,7 @@ install_native () {
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             if [[ -n "$_btassist" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
-                    cd $HOME
-                    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-                    sudo pacman-key --lsign-key 3056513887B78AEB
-                    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-                    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-                    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
-                    sudo sed -i -f script.sed /etc/pacman.conf
-                    sudo pacman -Sy
-                    rm script.sed
+                    chaotic_aur_lib
                 else
                     whiptail --title "$msg006" --msgbox "Skipping btrfs-assistant installation." 8 78
                 fi
@@ -170,11 +162,8 @@ install_native () {
 obs_pipe () {
 
     whiptail --title "$msg006" --msgbox "$msg098" 8 78
-    cd $HOME
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/pipewire-obs.sh
-    chmod +x pipewire-obs.sh
-    ./pipewire-obs.sh
-    rm pipewire-obs.sh
+    local subscript="pipewire-obs"
+    invoke_lib
 
 }
 
@@ -182,10 +171,8 @@ obs_pipe () {
 docker_t () {
 
     cd $HOME
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/docker-installer.sh
-    chmod +x docker-installer.sh
-    ./docker-installer.sh
-    rm docker-installer.sh
+    local subscript="docker-installer"
+    invoke_lib
 
 }
 
