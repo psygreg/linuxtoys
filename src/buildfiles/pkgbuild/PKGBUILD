@@ -1,0 +1,19 @@
+pkgname='linuxtoys'
+pkgver='2.1.1'
+pkgrel=1
+arch=('x86_64')
+depends=(bash curl wget libnewt base-devel xterm git)
+makedepends=()
+conflicts=(linuxtoys)
+provides=("linuxtoys=$pkgver")
+install=linuxtoys.install
+source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
+sha256sums=('c7b475da78ef59f5ca1153f1391fb71a3994ab585776c3e0f86af87464bf20e6')
+
+package() {
+
+    mkdir -p ${pkgdir}/usr
+    cp -rf ${srcdir}/linuxtoys-${pkgver}/{bin,share} ${pkgdir}/usr
+    chmod +x "${pkgdir}/usr/bin/linuxtoys.sh"
+
+}
