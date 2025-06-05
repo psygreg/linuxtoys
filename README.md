@@ -23,14 +23,14 @@ A collection of tools for Linux in a user-friendly way.
 This will require `debuild`, obtained from the `devscripts` package..
 
 - Clone the repo.
-- Open terminal on `linuxtoys-deb/linuxtoys-1.2`
+- Open terminal on `src/buildfiles/deb/linuxtoys*`
 - Run `debuild -S` for .changes file or `debuild -us -uc` for a .deb package.
 
 ### .rpm package
 Requires `rpmbuild`.
 
 - Clone the repo.
-- Open terminal on the `rpmbuild` subdirectory.
+- Open terminal on the `src/buildfiles/rpm/rpmbuild` subdirectory.
 - `rpmbuild -bb SPECS/linuxtoys.spec`
 
 ## Contributing
