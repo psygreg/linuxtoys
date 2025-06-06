@@ -27,14 +27,24 @@ runners_menu () {
 
         if [[ -n "$_spritz" ]]; then
             cd $HOME
-            wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
-            tar -xf spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
-            cp -rf spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
-            rm spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
-            rm -rf spritz-wine-tkg-10.9
+            local krnver=$(uname -r | cut -d- -f1)
+            local krnmaj=$(echo "$krnver" | cut -d. -f1)
+            local krnmin=$(echo "$krnver" | cut -d. -f2)
+            if (( KERNEL_MAJOR > 6 )) || { (( KERNEL_MAJOR == 6 )) && (( KERNEL_MINOR > 13 )); }; then
+                wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
+                tar -xf spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
+                cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                rm spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
+                rm -rf spritz-wine-tkg-ntsync-10.9
+            else
+                wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
+                tar -xf spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
+                cp -rf spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                rm spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
+                rm -rf spritz-wine-tkg-10.9
+            fi
         fi
         if [[ -n "$_osu" ]]; then
-            cd $HOME
             wget https://github.com/NelloKudo/WineBuilder/releases/download/wine-osu-staging-10.8-2/wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
             tar -xf wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
             cp -rf wine-osu $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
