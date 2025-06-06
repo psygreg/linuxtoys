@@ -50,6 +50,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Pipewire Audio Capture plugin for OBS Studio](https://github.com/dimtpap/obs-pipewire-audio-capture) by **Dimitris Papaioanou**
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
+- [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Darktable](https://www.darktable.org)
 - [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
