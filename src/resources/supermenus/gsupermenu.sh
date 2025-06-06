@@ -47,7 +47,6 @@ gsupermenu () {
             "Oversteer" "$msg145" $steer_status \
             "WiVRn" "$msg144" $wivrn_status \
             "Wine" "$msg156" $runner_status \
-            
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
