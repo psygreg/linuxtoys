@@ -28,14 +28,14 @@ runners_menu () {
         if [[ -n "$_spritz" ]]; then
             wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
             tar -xf spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
-            cp spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+            cp -rf spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
             rm spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
             rm -rf spritz-wine-tkg-10.9
         fi
         if [[ -n "$_osu" ]]; then
             wget https://github.com/NelloKudo/WineBuilder/releases/download/wine-osu-staging-10.8-2/wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
             tar -xf wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
-            cp wine-osu $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+            cp -rf wine-osu $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
             rm wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
             rm -rf wine-osu
         fi
