@@ -23,7 +23,7 @@ gsupermenu () {
     local wivrn_status=$([ "$_wivrn" = "io.github.wivrn.wivrn" ] && echo "ON" || echo "OFF")
     local steer_status=$([ "$_steer" = "io.github.berarma.Oversteer" ] && echo "ON" || echo "OFF")
     local gfn_status=$([ "$_gfn" = "yes" ] && echo "ON" || echo "OFF")
-
+    local runner_status=$([ "$_runner" = "runners" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -46,6 +46,7 @@ gsupermenu () {
             "Disable SLM" "$msg041" $dsplitm_status \
             "Oversteer" "$msg145" $steer_status \
             "WiVRn" "$msg144" $wivrn_status \
+            "Wine" "$msg156" $runner_status \
             
             3>&1 1>&2 2>&3)
 
@@ -71,11 +72,13 @@ gsupermenu () {
         [[ "$selection" == *"WiVRn"* ]] && _wivrn="io.github.wivrn.wivrn" || _wivrn=""
         [[ "$selection" == *"Oversteer"* ]] && _steer="io.github.berarma.Oversteer" || _steer=""
         [[ "$selection" == *"GeForce NOW"* ]] && _gfn="yes" || _gfn=""
+        [[ "$selection" == *"Wine"* ]] && _runner="runners" || _runner=""
 
         install_flatpak
         install_native
         sboost_t
         dsplitm_t
+        runners_t
         if [[ -n "$flatpak_run" || -n "$dsplitm_run" || -n "$sboost_run" ]]; then
             local title="$msg006"
             local msg="$msg036"
@@ -211,6 +214,16 @@ dsplitm_t () {
             local msg="$msg043"
             _msgbox_
         fi
+    fi
+
+}
+
+# custom runners
+runners_t () {
+
+    if [[ -n "$_runner" ]]; then
+        local subscript="$_runner"
+        _invoke_
     fi
 
 }

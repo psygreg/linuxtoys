@@ -2,7 +2,56 @@
 # functions
 
 # menu
-whiptail --title "Custom Runners" --checklist \
-"Choose to install" 14 78 6 \
-"Spritz" "for Hoyoverse games" OFF \
-"Osu-TkG" "for Osu!" OFF \
+runners_menu () {
+
+    local spritz_status=$([ "$_spritz" = "1" ] && echo "ON" || echo "OFF")
+    local osu_status=$([ "$_osu" = "1" ] && echo "ON" || echo "OFF")
+
+    while :; do
+
+        local selection
+        selection=$(whiptail --title "$msg131" --checklist \
+            "$msg131" 20 78 15 \
+            "Spritz" "$msg153" $spritz_status \
+            "Osu!-Wine" "$msg154" $osu_status \
+            3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+        # Exit the script if the user presses Esc
+            break
+        fi
+
+        [[ "$selection" == *"Spritz"* ]] && _spritz="1" || _spritz=""
+        [[ "$selection" == *"Osu!-Wine"* ]] && _osu="1" || _osu=""
+
+        if [[ -n "$_spritz" ]]; then
+            wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
+            tar -xf spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
+            cp spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+            rm spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
+            rm -rf spritz-wine-tkg-10.9
+        fi
+        if [[ -n "$_osu" ]]; then
+            wget https://github.com/NelloKudo/WineBuilder/releases/download/wine-osu-staging-10.8-2/wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
+            tar -xf wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
+            cp wine-osu $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+            rm wine-osu-winello-fonts-wow64-10.8-2-x86_64.tar.xz
+            rm -rf wine-osu
+        fi
+    
+    done
+
+}
+
+# runtime
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+_lang_
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+if command -v flatpak &> /dev/null && flatpak list | grep -q 'net.lutris.Lutris'; then
+    runners_menu
+else
+    title="$msg030"
+    msg="$msg155"
+    _msgbox_
+fi
