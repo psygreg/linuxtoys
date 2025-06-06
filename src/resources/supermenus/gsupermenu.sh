@@ -22,6 +22,7 @@ gsupermenu () {
     local dsplitm_status=$([ "$_dsplitm" = "yes" ] && echo "ON" || echo "OFF")
     local wivrn_status=$([ "$_wivrn" = "io.github.wivrn.wivrn" ] && echo "ON" || echo "OFF")
     local steer_status=$([ "$_steer" = "io.github.berarma.Oversteer" ] && echo "ON" || echo "OFF")
+    local gfn_status=$([ "$_gfn" = "yes" ] && echo "ON" || echo "OFF")
 
 
     while :; do
@@ -40,10 +41,12 @@ gsupermenu () {
             "Gamescope" "$msg116" $gscope_status \
             "Mangohud" "$msg117" $mhud_status \
             "GOverlay" "$msg118" $govl_status \
+            "GeForce NOW" "$msg152" $gfn_status \
             "Shader Booster" "$msg119" $sboost_status \
             "Disable SLM" "$msg041" $dsplitm_status \
             "Oversteer" "$msg145" $steer_status \
             "WiVRn" "$msg144" $wivrn_status \
+            
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -67,6 +70,7 @@ gsupermenu () {
         [[ "$selection" == *"Disable SLM"* ]] && _dsplitm="yes" || _dsplitm=""
         [[ "$selection" == *"WiVRn"* ]] && _wivrn="io.github.wivrn.wivrn" || _wivrn=""
         [[ "$selection" == *"Oversteer"* ]] && _steer="io.github.berarma.Oversteer" || _steer=""
+        [[ "$selection" == *"GeForce NOW"* ]] && _gfn="yes" || _gfn=""
 
         install_flatpak
         install_native
@@ -119,12 +123,16 @@ install_native () {
 install_flatpak () {
 
     local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer)
-    if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
+    if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]] || [[ -n "$_gfn" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_
             if [[ -n "$_steam" ]]; then
                 flatpak install --or-update -u -y com.valvesoftware.Steam
                 sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+            fi
+            if [[ -n "$_gfn" ]]; then
+                flatpak remote-add --user --if-not-exists GeForceNOW
+                flatpak install -y --user GeForceNOW com.nvidia.geforcenow
             fi
             if [[ -n "$_steer" ]]; then
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
@@ -143,6 +151,10 @@ install_flatpak () {
                 if [[ -n "$_steam" ]]; then
                     flatpak install --or-update -u -y com.valvesoftware.Steam
                     sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
+                fi
+                if [[ -n "$_gfn" ]]; then
+                    flatpak remote-add --user --if-not-exists GeForceNOW
+                    flatpak install -y --user GeForceNOW com.nvidia.geforcenow
                 fi
                 if [[ -n "$_steer" ]]; then
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
