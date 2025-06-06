@@ -18,6 +18,7 @@ usupermenu () {
     local rocm_status=$([ "$_rocm" = "yes" ] && echo "ON" || echo "OFF")
     local fseal_status=$([ "$_fseal" = "com.github.tchx84.Flatseal" ] && echo "ON" || echo "OFF")
     local efx_status=$([ "$_efx" = "com.github.wwmm.easyeffects" ] && echo "ON" || echo "OFF")
+    local sc_status=$([ "$_sc" = "com.core447.StreamController" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -29,6 +30,7 @@ usupermenu () {
             "HandBrake" "$msg087" $hndbrk_status \
             "Solaar" "$msg088" $slar_status \
             "OpenRazer" "$msg089" $oprzr_status \
+            "StreamController" "$msg151" $sc_status \
             "OpenRGB" "$msg091" $oprgb_status \
             "Flatseal" "$msg133" $fseal_status \
             "Easy Effects" "$msg147" $efx_status \
@@ -58,6 +60,7 @@ usupermenu () {
         [[ "$selection" == *"ROCm"* ]] && _rocm="yes" || _rocm=""
         [[ "$selection" == *"Flatseal"* ]] && _fseal="com.github.tchx84.Flatseal" || _fseal=""
         [[ "$selection" == *"Easy Effects"* ]] && _efx="com.github.wwmm.easyeffects" || _efx=""
+        [[ "$selection" == *"StreamController"* ]] && _sc="com.core447.StreamController" || _sc=""
 
         install_flatpak
         install_native
@@ -240,7 +243,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb $_fseal)
+    local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb $_fseal $_sc)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_
