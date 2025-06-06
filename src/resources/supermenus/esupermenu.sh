@@ -204,6 +204,9 @@ flatpak_in () {
 
     if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
         flatpak_in_lib
+        if [ "$ID" == "ubuntu" ]; then
+            insta gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
+        fi
         local title="$msg013"
         local msg="$msg014"
         _msgbox_
