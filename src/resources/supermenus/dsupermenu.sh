@@ -228,7 +228,7 @@ idea_ic () {
         mv idea-IC* idea-IC
         sudo cp -rf idea-IC /opt
         rm ideaIC-2025.1.1.1.tar.gz
-        rm idea-IC
+        rm -rf idea-IC
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellijce.desktop
         sudo cp intellijce.desktop /usr/share/applications
         rm intellijce.desktop
@@ -245,7 +245,7 @@ idea_ic () {
         sudo rm -rf /opt/idea-IC
         sudo cp -rf idea-IC /opt
         rm ideaIC-2025.1.1.1.tar.gz
-        rm idea-IC
+        rm -rf idea-IC
     fi
 
 }
@@ -259,6 +259,7 @@ idea_iu () {
         tar -xvzf ideaIU-2025.1.1.1.tar.gz
         mv idea-IU* idea-IU
         sudo cp -rf idea-IU /opt
+        rm -rf idea-IU
         rm ideaIU-2025.1.1.1.tar.gz
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellij.desktop
         sudo cp intellij.desktop /usr/share/applications
@@ -276,7 +277,7 @@ idea_iu () {
         sudo rm -rf /opt/idea-IU
         sudo cp -rf idea-IU /opt
         rm ideaIU-2025.1.1.1.tar.gz
-        rm idea-IU
+        rm -rf idea-IU
     fi
 
 }
