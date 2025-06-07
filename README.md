@@ -10,6 +10,10 @@ A collection of tools for Linux in a user-friendly way.
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
+## Dependencies
+
+Requires `curl`, `wget`, `git`, `bash` and `alacritty`. Alacritty should be available in most distros, but for the ones that it isn't, you can either install it following the [instructions](https://github.com/alacritty/alacritty/blob/master/INSTALL.md) or force-install ignoring dependencies through terminal, as it is only required for the internet updater to work.
+
 ## Limitations
 - **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
 - **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
@@ -54,6 +58,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Darktable](https://www.darktable.org)
 - [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
+- [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)
