@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y base-devel build-essential desktop-file-utils devscripts makepkg rpm
+        sudo apt-get install -y build-essential devscripts makepkg rpm
 
     - name: Prepare version
       id: read_version_file
@@ -46,7 +46,7 @@ jobs:
         mkdir -p src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys
         mkdir -p src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
         cp src/{linuxtoys.sh,linuxtoys.png} src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys
-        cp src/desktopfiles/LinuxToys.desktop src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
+        cp src/LinuxToys.desktop src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
         dpkg-deb --build --root-owner-group src/buildfiles/deb/linuxtoys/
         mv src/buildfiles/deb/linuxtoys.deb linuxtoys-${LINUXTOYS_VERSION}-1_amd64.deb
 
@@ -55,15 +55,14 @@ jobs:
         LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
       run: |
         mkdir -p src/buildfiles/rpm/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-        mkdir -p src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/{bin/,share/applications/,share/icons/hicolor/scalable/apps/}
-        cp src/linuxtoys.sh src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/bin/
-        cp src/linuxtoys.png src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/icons/hicolor/scalable/apps/
-        cp src/desktopfiles/LinuxToys_rpm.desktop src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/applications/LinuxToys.desktop
+        mkdir -p src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/{opt/linuxtoys,usr/share/applications}
+        cp src/{linuxtoys.sh,linuxtoys.png} src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/opt/linuxtoys
+        cp src/LinuxToys.desktop src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/applications
         pushd src/buildfiles/rpm/
         tar -cJf rpmbuild/SOURCES/linuxtoys-${LINUXTOYS_VERSION}.tar.xz linuxtoys-${LINUXTOYS_VERSION}/
         pushd rpmbuild
         rpmbuild --define "_topdir `pwd`" -bb SPECS/linuxtoys.spec
-        mv RPMS/x86_64/linuxtoys-${LINUXTOYS_VERSION}-1.x86_64.rpm ../../../../linuxtoys-${LINUXTOYS_VERSION}-1_amd64.rpm
+        mv RPMS/noarch/linuxtoys-${LINUXTOYS_VERSION}-1.noarch.rpm ../../../../linuxtoys-${LINUXTOYS_VERSION}-1_amd64.noarch.rpm
         popd
         popd
 
@@ -89,5 +88,5 @@ jobs:
         LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
       with:
         name: linuxtoys-${LINUXTOYS_VERSION}.rpm
-        path: linuxtoys-${LINUXTOYS_VERSION}-1_amd64.rpm
+        path: linuxtoys-${LINUXTOYS_VERSION}-1_amd64.noarch.rpm
 
