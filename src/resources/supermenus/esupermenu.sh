@@ -65,8 +65,8 @@ grubtrfs_t () {
 # Nvidia driver installer for Fedora/SUSE - it is a montrosity, but it works, trust me bro
 nvidia_in () {
 
-    local GPU=$(lspci | grep -i '.* vga .* nvidia .*')
-    if [[ "${GPU,,}" == *nvidia* ]]; then
+    local GPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
+    if [[ -n "$GPU" ]]; then
         if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
 
             while :; do
