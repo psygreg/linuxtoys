@@ -14,6 +14,7 @@ osupermenu () {
     local inksc_status=$([ "$_inksc" = "org.inkscape.Inkscape" ] && echo "ON" || echo "OFF")
     local fcad_status=$([ "$_fcad" = "org.freecad.FreeCAD" ] && echo "ON" || echo "OFF")
     local drslv_status=$([ "$_drslv" = "yes" ] && echo "ON" || echo "OFF")
+    local blender_status=$([ "$_blender" = "org.blender.Blender" ] && echo "ON" || echo "OFF")
     local fial_status=$([ "$_fial" = "yes" ] && echo "ON" || echo "OFF")
     local chrome_status=$([ "$_chrome" = "com.google.Chrome" ] && echo "ON" || echo "OFF")
     local zen_status=$([ "$_zen" = "app.zen_browser.zen" ] && echo "ON" || echo "OFF")
@@ -37,6 +38,7 @@ osupermenu () {
             "GIMP" "$msg104" $gimp_status \
             "Inkscape" "$msg105" $inksc_status \
             "FreeCAD" "$msg106" $fcad_status \
+            "Blender" "$msg159" $blender_status \
             "DaVinci Resolve" "$msg107" $drslv_status \
             "FireAlpaca" "$msg108" $fial_status \
             3>&1 1>&2 2>&3)
@@ -57,6 +59,7 @@ osupermenu () {
         [[ "$selection" == *"Inkscape"* ]] && _inksc="org.inkscape.Inkscape" || _inksc=""
         [[ "$selection" == *"FreeCAD"* ]] && _fcad="org.freecad.FreeCAD" || _fcad=""
         [[ "$selection" == *"DaVinci Resolve"* ]] && _drslv="yes" || _drslv=""
+        [[ "$selection" == *"Blender"* ]] && _blender="org.blender.Blender" || _blender=""
         [[ "$selection" == *"FireAlpaca"* ]] && _fial="yes" || _fial=""
         [[ "$selection" == *"Chrome"* ]] && _chrome="com.google.Chrome" || _chrome=""
         [[ "$selection" == *"Zen"* ]] && _zen="app.zen_browser.zen" || _zen=""
@@ -131,7 +134,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli)
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_
