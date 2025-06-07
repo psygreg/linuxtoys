@@ -232,6 +232,12 @@ idea_ic () {
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellijce.desktop
         sudo cp intellijce.desktop /usr/share/applications
         rm intellijce.desktop
+        if grep -q "alias idea-ce=" ~/.bashrc; then
+          return
+        else
+          echo "alias idea-ce=\"/opt/idea-IC/bin/idea\"" >> ~/.bashrc
+          source ~/.bashrc
+        fi
     else # update
         wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
         tar -xvzf ideaIC-2025.1.1.1.tar.gz
@@ -257,6 +263,12 @@ idea_iu () {
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellij.desktop
         sudo cp intellij.desktop /usr/share/applications
         rm intellij.desktop
+        if grep -q "alias idea-ue=" ~/.bashrc; then
+          return
+        else
+          echo "alias idea-ue=\"/opt/idea-IU/bin/idea\"" >> ~/.bashrc
+          source ~/.bashrc
+        fi
     else # update
         wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
         tar -xvzf ideaIU-2025.1.1.1.tar.gz
