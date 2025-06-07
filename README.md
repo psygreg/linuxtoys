@@ -12,7 +12,7 @@ There's a PPA available for LinuxToys. To use it:
 sudo apt update`
 
 ### Arch Linux
-Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) with `yay`, `paru` or whatever AUR package helper of choice; or
+Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin); or
 
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
