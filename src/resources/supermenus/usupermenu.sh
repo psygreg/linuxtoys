@@ -6,7 +6,7 @@ flatpak_run=""
 usupermenu () {
 
     local gsr_status=$([ "$_gsr" = "com.dec05eba.gpu_screen_recorder" ] && echo "ON" || echo "OFF")
-    local obs_status=$([ "$_obs" = "obs-studio" ] && echo "ON" || echo "OFF")
+    local obs_status=$([ "$_obs" = "com.obsproject.Studio" ] && echo "ON" || echo "OFF")
     local hndbrk_status=$([ "$_hndbrk" = "fr.handbrake.ghb" ] && echo "ON" || echo "OFF")
     local slar_status=$([ "$_slar" = "solaar" ] && echo "ON" || echo "OFF")
     local oprzr_status=$([ "$_oprzr" = "openrazer" ] && echo "ON" || echo "OFF")
@@ -50,7 +50,7 @@ usupermenu () {
         fi
 
         [[ "$selection" == *"GPU Screen Recorder"* ]] && _gsr="com.dec05eba.gpu_screen_recorder" || _gsr=""
-        [[ "$selection" == *"OBS Studio"* ]] && _obs="obs-studio" || _obs=""
+        [[ "$selection" == *"OBS Studio"* ]] && _obs="com.obsproject.Studio" || _obs=""
         [[ "$selection" == *"HandBrake"* ]] && _hndbrk="fr.handbrake.ghb" || _hndbrk=""
         [[ "$selection" == *"Solaar"* ]] && _slar="solaar" || _slar=""
         [[ "$selection" == *"OpenRazer"* ]] && _oprzr="openrazer" || _oprzr=""
@@ -86,9 +86,9 @@ usupermenu () {
 install_native () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-        local _packages=($_obs $_slar $_oprzr $_btassist $_droid $_dckr $_rocm)
+        local _packages=($_slar $_oprzr $_btassist $_droid $_dckr $_rocm)
     else
-        local _packages=($_obs $_slar $_oprzr $_droid $_dckr $_rocm)
+        local _packages=($_slar $_oprzr $_droid $_dckr $_rocm)
     fi
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
@@ -163,9 +163,6 @@ install_native () {
                 local msg="$msg097"
                 _msgbox_
             fi
-        fi
-        if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
-            obs_pipe
         fi
     fi
     _install_
@@ -274,7 +271,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_hndbrk $_lact $_gsr $_oprgb $_fseal $_sc)
+    local _flatpaks=($_obs $_hndbrk $_lact $_gsr $_oprgb $_fseal $_sc)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_
@@ -291,6 +288,9 @@ install_flatpak () {
             fi
             if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
                 flatpak install --or-update -y $_efx --system
+            fi
+            if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+                obs_pipe
             fi
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
@@ -310,6 +310,9 @@ install_flatpak () {
                 fi
                 if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
                     flatpak install --or-update -y $_efx --system
+                fi
+                if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
+                    obs_pipe
                 fi
             else
                 local title="$msg030"
