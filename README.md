@@ -17,10 +17,6 @@ Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxt
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
-## Dependencies
-
-Requires `curl`, `wget`, `git`, `bash` and `alacritty`. Alacritty should be available in most distros, but for the ones that it isn't, you can either install it following the [instructions](https://github.com/alacritty/alacritty/blob/master/INSTALL.md) or force-install ignoring dependencies through terminal, as it is only required for the internet updater to work.
-
 ## Limitations
 - **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
 - **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
