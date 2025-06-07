@@ -1,0 +1,5 @@
+RUSTICL_ENABLE=radeonsi
+OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd
+
+#curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-amd \
+#    | sudo tee -a /etc/environment > /dev/null
