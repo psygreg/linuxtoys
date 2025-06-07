@@ -6,6 +6,11 @@ A collection of tools for Linux in a user-friendly way.
 ## Usage
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu.
 
+### Ubuntu (latest and latest LTS releases)
+There's a PPA available for LinuxToys. To use it:
+  sudo add-apt-repository ppa:psygreg/linuxtoys
+  sudo apt update
+
 ### Arch Linux
 Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) with `yay`, `paru` or whatever AUR package helper of choice; or
 
