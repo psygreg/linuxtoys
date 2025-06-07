@@ -8,8 +8,8 @@ A collection of tools for Linux in a user-friendly way.
 
 ### Ubuntu (latest and latest LTS releases)
 There's a PPA available for LinuxToys. To use it:
-  sudo add-apt-repository ppa:psygreg/linuxtoys
-  sudo apt update
+``sudo add-apt-repository ppa:psygreg/linuxtoys
+sudo apt update``
 
 ### Arch Linux
 Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) with `yay`, `paru` or whatever AUR package helper of choice; or
