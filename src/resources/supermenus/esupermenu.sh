@@ -222,10 +222,18 @@ psaver () {
             sudo add-apt-repository ppa:linrunner/tlp
             sudo apt update
         fi
-        insta tlp tlp-rdw smartmontools ethtool
+        insta powertop tlp tlp-rdw smartmontools ethtool
         sudo systemctl enable tlp.service
         sudo systemctl enable NetworkManager-dispatcher.service
         sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+        cd $HOME
+        git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+        cd auto-cpufreq && sudo ./auto-cpufreq-installer
+        cd ..
+        rm -rf auto-cpufreq
+        local title="$msg006"
+        local msg="$msg036"
+        _msgbox_
     fi
 
 }
