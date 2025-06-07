@@ -10,6 +10,8 @@ Source0:        linuxtoys-%{version}.tar.xz
 Requires:       bash newt curl wget alacritty git
 BuildRequires:  desktop-file-utils
 
+%global debug_package %{nil}
+
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
 
@@ -17,11 +19,13 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %setup -q
 
 %install
-mkdir -p %{buildroot}/opt/linuxtoys
-install -m 755 opt/linuxtoys/linuxtoys.sh %{buildroot}/opt/linuxtoys
-install -m 644 opt/linuxtoys/linuxtoys.png %{buildroot}/opt/linuxtoys
+rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/bin
+install -m 755 usr/bin/linuxtoys.sh %{buildroot}/usr/bin/
 mkdir -p %{buildroot}/usr/share/applications
 desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
+mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
+install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 
 %post
 alias_name="linuxtoys"
@@ -39,9 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root, -)
-/opt/linuxtoys/linuxtoys.sh
-/opt/linuxtoys/linuxtoys.png
+/usr/bin/linuxtoys.sh
 /usr/share/applications/LinuxToys.desktop
+/usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
 * Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.4

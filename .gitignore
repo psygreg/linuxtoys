@@ -12,8 +12,8 @@ src/buildfiles/deb/linuxtoys/DEBIAN/.debhelper
 src/buildfiles/deb/linuxtoys/DEBIAN/linuxtoys
 src/buildfiles/deb/*.deb
 
-src/buildfiles/rpm/rpmbuild/x86_64/linuxtoys*
 src/buildfiles/rpm/rpmbuild/BUILD/
+src/buildfiles/rpm/rpmbuild/RPMS/
 src/buildfiles/rpm/rpmbuild/SOURCES/
 src/buildfiles/rpm/linuxtoys-*/
 
