@@ -11,7 +11,7 @@ There's a PPA available for LinuxToys. To use it:
 `sudo add-apt-repository ppa:psygreg/linuxtoys &&
 sudo apt update`
 
-### Fedora, OpenSUSE and Red Hat Enterprise Linux (latest)
+### Fedora, OpenSUSE, AlmaLinux and RHEL
 You may obtain it and keep it up-to-date from the COPR repository: `sudo dnf copr enable psygreg/linuxtoys`
 
 ### Arch Linux
