@@ -214,6 +214,22 @@ flatpak_in () {
 
 }
 
+# linux kernel power saving optimized settings when on battery
+psaver () {
+
+    if whiptail --title "$msg006" --yesno "$msg176" 12 78; then
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+            sudo add-apt-repository ppa:linrunner/tlp
+            sudo apt update
+        fi
+        insta tlp tlp-rdw smartmontools ethtool
+        sudo systemctl enable tlp.service
+        sudo systemctl enable NetworkManager-dispatcher.service
+        sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+    fi
+
+}
+
 # install linux-cachyos optimized kernel
 kernel_in () {
 
@@ -323,12 +339,13 @@ while :; do
         "2" "$msg046" \
         "3" "$msg048" \
         "4" "$msg055" \
-        "5" "$msg057" \
-        "6" "$msg081" \
-        "7" "$msg079" \
-        "8" "$msg078" \
-        "9" "$msg053" \
-        "10" "$msg059" 3>&1 1>&2 2>&3)
+        "5" "$msg177" \
+        "6" "$msg057" \
+        "7" "$msg081" \
+        "8" "$msg079" \
+        "9" "$msg078" \
+        "10" "$msg053" \
+        "11" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -342,12 +359,13 @@ while :; do
     2) flatpak_in ;;
     3) lucidglyph_in ;;
     4) grubtrfs_t ;;
-    5) kernel_in ;;
-    6) suse_codecs ;;
-    7) fix_se_suse ;;
-    8) nvidia_in ;;
-    9) chaotic_aur_lib ;;
-    10 | q) break ;;
+    5) psaver ;;
+    6) kernel_in ;;
+    7) suse_codecs ;;
+    8) fix_se_suse ;;
+    9) nvidia_in ;;
+    10) chaotic_aur_lib ;;
+    11 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
