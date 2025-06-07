@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential desktop-file-utils devscripts makepkg rpm
+        sudo apt-get install -y base-devel build-essential desktop-file-utils devscripts makepkg rpm
 
     - name: Prepare version
       id: read_version_file
