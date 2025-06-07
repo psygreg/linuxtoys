@@ -7,6 +7,8 @@ A collection of tools for Linux in a user-friendly way.
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu.
 
 ### Arch Linux
+- Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) with `yay`, `paru` or whatever AUR package helper of choice; or
+
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
