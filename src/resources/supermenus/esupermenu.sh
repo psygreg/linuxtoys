@@ -231,6 +231,7 @@ psaver () {
         cd auto-cpufreq && sudo ./auto-cpufreq-installer
         cd ..
         rm -rf auto-cpufreq
+        sudo auto-cpufreq --install
         local title="$msg006"
         local msg="$msg036"
         _msgbox_
