@@ -65,7 +65,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Darktable](https://www.darktable.org)
 - [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
 - [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
-- [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) by **Adnan Hozic**
+- [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) by **Adnan Hodzic**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)
