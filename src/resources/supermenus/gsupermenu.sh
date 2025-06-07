@@ -23,6 +23,7 @@ gsupermenu () {
     local wivrn_status=$([ "$_wivrn" = "io.github.wivrn.wivrn" ] && echo "ON" || echo "OFF")
     local steer_status=$([ "$_steer" = "io.github.berarma.Oversteer" ] && echo "ON" || echo "OFF")
     local gfn_status=$([ "$_gfn" = "yes" ] && echo "ON" || echo "OFF")
+    local mcbe_status=$([ "$_mcbe" = "io.mrarm.mcpelauncher" ] && echo "ON" || echo "OFF")
     local runner_status=$([ "$_runner" = "runners" ] && echo "ON" || echo "OFF")
 
     while :; do
@@ -36,6 +37,7 @@ gsupermenu () {
             "ProtonPlus" "$msg112" $pp_status \
             "SteamTinkerLaunch" "$msg113" $stl_status \
             "Sober" "$msg114" $sober_status \
+            "Bedrock Launcher" "$msg160" $mcbe_status \
             "Discord" "$msg130" $disc_status \
             "Gamemode" "$msg115" $gmode_status \
             "Gamescope" "$msg116" $gscope_status \
@@ -61,6 +63,7 @@ gsupermenu () {
         [[ "$selection" == *"ProtonPlus"* ]] && _pp="com.vysp3r.ProtonPlus" || _pp=""
         [[ "$selection" == *"SteamTinkerLaunch"* ]] && _stl="com.valvesoftware.Steam.Utility.steamtinkerlaunch" || _stl=""
         [[ "$selection" == *"Sober"* ]] && _sobst="org.vinegarhq.Sober" || _sobst=""
+        [[ "$selection" == *"Bedrock Launcher"* ]] && _mcbe="io.mrarm.mcpelauncher" || _mcbe=""
         [[ "$selection" == *"Discord"* ]] && _disc="com.discordapp.Discord" || _gmode=""
         [[ "$selection" == *"Gamemode"* ]] && _gmode="gamemode" || _gmode=""
         [[ "$selection" == *"Gamescope"* ]] && _gscope="gamescope" || _gscope=""
@@ -124,7 +127,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer)
+    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer $_mcbe)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]] || [[ -n "$_gfn" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_
@@ -144,6 +147,11 @@ install_flatpak () {
                 local msg="$msg146"
                 _msgbox_
                 xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
+            fi
+            if [[ -n "$_mcbe" ]]; then
+                local title="Bedrock Launcher"
+                local msg="$msg161"
+                _msgbox_
             fi
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
@@ -166,6 +174,11 @@ install_flatpak () {
                     local msg="$msg146"
                     _msgbox_
                     xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
+                fi
+                if [[ -n "$_mcbe" ]]; then
+                    local title="Bedrock Launcher"
+                    local msg="$msg161"
+                    _msgbox_
                 fi
             else
                 local title="$msg030"
