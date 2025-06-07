@@ -66,7 +66,7 @@ grubtrfs_t () {
 nvidia_in () {
 
     local GPU=$(lspci | grep -i '.* vga .* nvidia .*')
-    if [[ $GPU == *' nvidia '* ]]; then
+    if [[ "${GPU,,}" == *nvidia* ]]; then
         if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
 
             while :; do
