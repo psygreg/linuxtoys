@@ -9,7 +9,8 @@ dsupermenu () {
     local codium_status=$([ "$_codium" = "com.vscodium.codium" ] && echo "ON" || echo "OFF")
     local nvim_status=$([ "$_nvim" = "neovim" ] && echo "ON" || echo "OFF")
     local jb_status=$([ "$_jb" = "1" ] && echo "ON" || echo "OFF")
-    local nvm_status=$([ "$_nvm" = "nvm" ] && echo "ON" || echo "OFF")
+    local nvm_status=$([ "$_nvm" = "nodejs" ] && echo "ON" || echo "OFF")
+    local mvn_status=$([ "$_mvn" = "maven" ] && echo "ON" || echo "OFF")
     local pyenv_status=$([ "$_pyenv" = "pyenv" ] && echo "ON" || echo "OFF")
     local godot_status=$([ "$_godot" = "godot" ] && echo "ON" || echo "OFF")
     local unity_status=$([ "$_unity" = "unityhub" ] && echo "ON" || echo "OFF")
@@ -26,6 +27,7 @@ dsupermenu () {
             "NeoVim" "$msg140" $nvim_status \
             "Jetbrains" "$msg162" $jb_status \
             "NodeJS" "+ Node Version Manager" $nvm_status \
+            "Maven" "$msg178" $mvn_status \
             "Python" "$msg134" $pyenv_status \
             "C#" "Microsoft .NET SDK" $dotnet_status \
             "Java" "OpenJDK/JRE" $java_status \
@@ -44,6 +46,7 @@ dsupermenu () {
         [[ "$selection" == *"NeoVim"* ]] && _nvim="neovim" || _nvim=""
         [[ "$selection" == *"Jetbrains"* ]] && _jb="1" || _jb=""
         [[ "$selection" == *"NodeJS"* ]] && _nvm="nodejs" || _nvm=""
+        [[ "$selection" == *"Maven"* ]] && _mvn="maven" || _mvn=""
         [[ "$selection" == *"Python"* ]] && _pyenv="pyenv" || _pyenv=""
         [[ "$selection" == *"Godot 4"* ]] && _godot="godot" || _godot=""
         [[ "$selection" == *"Unity Hub"* ]] && _unity="unityhub" || _unity=""
@@ -73,7 +76,7 @@ dsupermenu () {
 # native packages
 install_native () {
 
-    local _packages=($_code $_nvim $_nvm $_pyenv $_unity $_dotnet)
+    local _packages=($_code $_nvim $_nvm $_mvn $_pyenv $_unity $_dotnet)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
             if [[ -n "$_code" ]]; then
