@@ -221,28 +221,51 @@ idea_in () {
 idea_ic () {
 
     cd $HOME
-    wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
-    tar -xvzf ideaIC-2025.1.1.1.tar.gz
-    mv idea-IC* idea-IC
-    sudo cp -rf idea-IC /opt
-    rm ideaIC-2025.1.1.1.tar.gz
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellijce.desktop
-    sudo cp intellijce.desktop /usr/share/applications
-    rm intellijce.desktop
+    # first installation
+    if [ ! -d "/opt/idea-IC" ]; then
+        wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
+        tar -xvzf ideaIC-2025.1.1.1.tar.gz
+        mv idea-IC* idea-IC
+        sudo cp -rf idea-IC /opt
+        rm ideaIC-2025.1.1.1.tar.gz
+        rm idea-IC
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellijce.desktop
+        sudo cp intellijce.desktop /usr/share/applications
+        rm intellijce.desktop
+    else # update
+        wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
+        tar -xvzf ideaIC-2025.1.1.1.tar.gz
+        mv idea-IC* idea-IC
+        sudo rm -rf /opt/idea-IC
+        sudo cp -rf idea-IC /opt
+        rm ideaIC-2025.1.1.1.tar.gz
+        rm idea-IC
+    fi
 
 }
 
 idea_iu () {
 
     cd $HOME
-    wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
-    tar -xvzf ideaIU-2025.1.1.1.tar.gz
-    mv idea-IU* idea-IU
-    sudo cp -rf idea-IU /opt
-    rm ideaIU-2025.1.1.1.tar.gz
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellij.desktop
-    sudo cp intellij.desktop /usr/share/applications
-    rm intellij.desktop
+    # first installation
+    if [ ! -d "/opt/idea-IU" ]; then
+        wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
+        tar -xvzf ideaIU-2025.1.1.1.tar.gz
+        mv idea-IU* idea-IU
+        sudo cp -rf idea-IU /opt
+        rm ideaIU-2025.1.1.1.tar.gz
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellij.desktop
+        sudo cp intellij.desktop /usr/share/applications
+        rm intellij.desktop
+    else # update
+        wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
+        tar -xvzf ideaIU-2025.1.1.1.tar.gz
+        mv idea-IU* idea-IU
+        sudo rm -rf /opt/idea-IU
+        sudo cp -rf idea-IU /opt
+        rm ideaIU-2025.1.1.1.tar.gz
+        rm idea-IU
+    fi
 
 }
 
@@ -276,19 +299,30 @@ godot_in () {
 godot_st () {
 
     cd $HOME
-    wget 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/15634981/5c13b07c-aad3-4bde-8712-9f0825758bb2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250602%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250602T210343Z&X-Amz-Expires=300&X-Amz-Signature=2b5d1d411f853ce8c1eb9045af1b02f3567a4a8de13d754a3f1b3fce345a0051&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGodot_v4.4.1-stable_linux.x86_64.zip&response-content-type=application%2Foctet-stream'
-    unzip Godot_v4.4.1-stable_linux.x86_64.zip
-    mv Godot_v4.4.1-stable_linux.x86_64 Godot
-    sudo mkdir -p /opt/godot
-    sudo cp Godot -f /opt/godot
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godot.png
-    sudo cp godot.png /opt/godot
-    rm Godot
-    rm godot.png
-    rm Godot_v4.4.1-stable_linux.x86_64.zip
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godot.desktop
-    sudo cp godot.desktop /usr/share/applications
-    rm godot.desktop
+    # first install
+    if [ ! -d "/opt/godot" ]; then
+        wget 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/15634981/5c13b07c-aad3-4bde-8712-9f0825758bb2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250602%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250602T210343Z&X-Amz-Expires=300&X-Amz-Signature=2b5d1d411f853ce8c1eb9045af1b02f3567a4a8de13d754a3f1b3fce345a0051&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGodot_v4.4.1-stable_linux.x86_64.zip&response-content-type=application%2Foctet-stream'
+        unzip Godot_v4.4.1-stable_linux.x86_64.zip
+        mv Godot_v4.4.1-stable_linux.x86_64 Godot
+        sudo mkdir -p /opt/godot
+        sudo cp Godot -f /opt/godot
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godot.png
+        sudo cp godot.png /opt/godot
+        rm Godot
+        rm godot.png
+        rm Godot_v4.4.1-stable_linux.x86_64.zip
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godot.desktop
+        sudo cp godot.desktop /usr/share/applications
+        rm godot.desktop
+    else # update
+        wget 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/15634981/5c13b07c-aad3-4bde-8712-9f0825758bb2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250602%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250602T210343Z&X-Amz-Expires=300&X-Amz-Signature=2b5d1d411f853ce8c1eb9045af1b02f3567a4a8de13d754a3f1b3fce345a0051&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGodot_v4.4.1-stable_linux.x86_64.zip&response-content-type=application%2Foctet-stream'
+        unzip Godot_v4.4.1-stable_linux.x86_64.zip
+        mv Godot_v4.4.1-stable_linux.x86_64 Godot
+        sudo cp Godot -f /opt/godot
+        rm Godot
+        rm Godot_v4.4.1-stable_linux.x86_64.zip
+    fi
+    
 
 }
 
@@ -296,35 +330,46 @@ godot_shrp () {
 
     if [[ "$ID_LIKE" =~ (rhel|fedora) || "$ID" =~ (fedora|ubuntu|debian) || "$NAME" == "openSUSE Leap" ]]; then
         cd $HOME
-        wget 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/15634981/8976b3a0-fb60-4d98-bd70-b623b9eaf9d3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250602%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250602T211639Z&X-Amz-Expires=300&X-Amz-Signature=11f42225a48cf9dea2a262ff4918e8c594b8494bd70ac108cf2e0b014fb8ac46&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGodot_v4.4.1-stable_mono_linux_x86_64.zip&response-content-type=application%2Foctet-stream'
-        mkdir -p godot
-        unzip -d $HOME/godot Godot_v4.4.1-stable_mono_linux.x86_64.zip
-        sudo cp -rf godot /opt/
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godot.png
-        sudo cp godot.png /opt/godot
-        rm -rf godot
-        rm godot.png
-        rm Godot_v4.4.1-stable_mono_linux.x86_64.zip
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godotsharp.desktop
-        sudo cp godotsharp.desktop /usr/share/applications
-        rm godotsharp.desktop
-        if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-            insta dotnet-sdk-9.0
-        elif [ "$ID" == "ubuntu" ]; then
-            insta dotnet-sdk-9.0
-        elif [ "$ID" == "debian" ]; then
-            wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-            sudo dpkg -i packages-microsoft-prod.deb
-            rm packages-microsoft-prod.deb
-            sudo apt update
-            insta dotnet-sdk-9.0
-        elif [[ "$NAME" == "openSUSE Leap" ]]; then
-            sudo insta libicu
-            sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-            wget https://packages.microsoft.com/config/opensuse/15/prod.repo
-            sudo mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
-            sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
-            insta dotnet-sdk-9.0 
+        # first install
+        if [ ! -d "/opt/godot" ]; then
+            wget 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/15634981/8976b3a0-fb60-4d98-bd70-b623b9eaf9d3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250602%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250602T211639Z&X-Amz-Expires=300&X-Amz-Signature=11f42225a48cf9dea2a262ff4918e8c594b8494bd70ac108cf2e0b014fb8ac46&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGodot_v4.4.1-stable_mono_linux_x86_64.zip&response-content-type=application%2Foctet-stream'
+            mkdir -p godot
+            unzip -d $HOME/godot Godot_v4.4.1-stable_mono_linux.x86_64.zip
+            sudo cp -rf godot /opt/
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godot.png
+            sudo cp godot.png /opt/godot
+            rm -rf godot
+            rm godot.png
+            rm Godot_v4.4.1-stable_mono_linux.x86_64.zip
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/godotsharp.desktop
+            sudo cp godotsharp.desktop /usr/share/applications
+            rm godotsharp.desktop
+            if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+                insta dotnet-sdk-9.0
+            elif [ "$ID" == "ubuntu" ]; then
+                insta dotnet-sdk-9.0
+            elif [ "$ID" == "debian" ]; then
+                wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+                sudo dpkg -i packages-microsoft-prod.deb
+                rm packages-microsoft-prod.deb
+                sudo apt update
+                insta dotnet-sdk-9.0
+            elif [[ "$NAME" == "openSUSE Leap" ]]; then
+                sudo insta libicu
+                sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+                wget https://packages.microsoft.com/config/opensuse/15/prod.repo
+                sudo mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
+                sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
+                insta dotnet-sdk-9.0 
+            fi
+        else # update
+            wget 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/15634981/8976b3a0-fb60-4d98-bd70-b623b9eaf9d3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250602%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250602T211639Z&X-Amz-Expires=300&X-Amz-Signature=11f42225a48cf9dea2a262ff4918e8c594b8494bd70ac108cf2e0b014fb8ac46&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGodot_v4.4.1-stable_mono_linux_x86_64.zip&response-content-type=application%2Foctet-stream'
+            mkdir -p godot
+            unzip -d $HOME/godot Godot_v4.4.1-stable_mono_linux.x86_64.zip
+            sudo rm -rf /opt/godot
+            sudo cp -rf godot /opt/
+            rm -rf godot
+            rm Godot_v4.4.1-stable_mono_linux.x86_64.zip
         fi
     else
         local title="$msg030"
