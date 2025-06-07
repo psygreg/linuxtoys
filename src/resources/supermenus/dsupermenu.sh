@@ -8,7 +8,7 @@ dsupermenu () {
     local code_status=$([ "$_code" = "code" ] && echo "ON" || echo "OFF")
     local codium_status=$([ "$_codium" = "com.vscodium.codium" ] && echo "ON" || echo "OFF")
     local nvim_status=$([ "$_nvim" = "neovim" ] && echo "ON" || echo "OFF")
-    local idea_status=$([ "$_idea" = "idea" ] && echo "ON" || echo "OFF")
+    local jb_status=$([ "$_jb" = "1" ] && echo "ON" || echo "OFF")
     local nvm_status=$([ "$_nvm" = "nvm" ] && echo "ON" || echo "OFF")
     local pyenv_status=$([ "$_pyenv" = "pyenv" ] && echo "ON" || echo "OFF")
     local godot_status=$([ "$_godot" = "godot" ] && echo "ON" || echo "OFF")
@@ -24,7 +24,7 @@ dsupermenu () {
             "VS Code" "$msg141" $code_status \
             "VSCodium" "$msg142" $codium_status \
             "NeoVim" "$msg140" $nvim_status \
-            "IntelliJ IDEA" "$msg138" $idea_status \
+            "Jetbrains" "$msg162" $jb_status \
             "NodeJS" "+ Node Version Manager" $nvm_status \
             "Python" "$msg134" $pyenv_status \
             "C#" "Microsoft .NET SDK" $dotnet_status \
@@ -42,7 +42,7 @@ dsupermenu () {
         [[ "$selection" == *"VS Code"* ]] && _code="code" || _code=""
         [[ "$selection" == *"VSCodium"* ]] && _codium="com.vscodium.codium" || _codium=""
         [[ "$selection" == *"NeoVim"* ]] && _nvim="neovim" || _nvim=""
-        [[ "$selection" == *"IntelliJ IDEA"* ]] && _idea="idea" || _idea=""
+        [[ "$selection" == *"Jetbrains"* ]] && _jb="1" || _jb=""
         [[ "$selection" == *"NodeJS"* ]] && _nvm="nodejs" || _nvm=""
         [[ "$selection" == *"Python"* ]] && _pyenv="pyenv" || _pyenv=""
         [[ "$selection" == *"Godot 4"* ]] && _godot="godot" || _godot=""
@@ -187,97 +187,6 @@ install_flatpak () {
                 _msgbox_
             fi
         fi
-    fi
-
-}
-
-# IntelliJ IDEA installer
-idea_in () {
-
-    # menu
-    while :; do
-
-        CHOICE=$(whiptail --title "IntelliJ IDEA" --menu "$msg067" 25 78 16 \
-            "0" "Community Edition (free)" \
-            "1" "Ultimate" \
-            "2" "Cancel" 3>&1 1>&2 2>&3)
-
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
-            return
-        fi
-
-        case $CHOICE in
-        0) idea_ic ;;
-        1) idea_iu ;;
-        2 | q) break ;;
-        *) echo "Invalid Option" ;;
-        esac
-    done
-
-}
-
-idea_ic () {
-
-    cd $HOME
-    # first installation
-    if [ ! -d "/opt/idea-IC" ]; then
-        wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
-        tar -xvzf ideaIC-2025.1.1.1.tar.gz
-        mv idea-IC* idea-IC
-        sudo cp -rf idea-IC /opt
-        rm ideaIC-2025.1.1.1.tar.gz
-        rm -rf idea-IC
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellijce.desktop
-        sudo cp intellijce.desktop /usr/share/applications
-        rm intellijce.desktop
-        if grep -q "alias idea-ce=" ~/.bashrc; then
-          return
-        else
-          echo "alias idea-ce=\"/opt/idea-IC/bin/idea\"" >> ~/.bashrc
-          source ~/.bashrc
-        fi
-    else # update
-        wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
-        tar -xvzf ideaIC-2025.1.1.1.tar.gz
-        mv idea-IC* idea-IC
-        sudo rm -rf /opt/idea-IC
-        sudo cp -rf idea-IC /opt
-        rm ideaIC-2025.1.1.1.tar.gz
-        rm -rf idea-IC
-    fi
-
-}
-
-idea_iu () {
-
-    cd $HOME
-    # first installation
-    if [ ! -d "/opt/idea-IU" ]; then
-        wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
-        tar -xvzf ideaIU-2025.1.1.1.tar.gz
-        mv idea-IU* idea-IU
-        sudo cp -rf idea-IU /opt
-        rm -rf idea-IU
-        rm ideaIU-2025.1.1.1.tar.gz
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/intellij.desktop
-        sudo cp intellij.desktop /usr/share/applications
-        rm intellij.desktop
-        if grep -q "alias idea-ue=" ~/.bashrc; then
-          return
-        else
-          echo "alias idea-ue=\"/opt/idea-IU/bin/idea\"" >> ~/.bashrc
-          source ~/.bashrc
-        fi
-    else # update
-        wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
-        tar -xvzf ideaIU-2025.1.1.1.tar.gz
-        mv idea-IU* idea-IU
-        sudo rm -rf /opt/idea-IU
-        sudo cp -rf idea-IU /opt
-        rm ideaIU-2025.1.1.1.tar.gz
-        rm -rf idea-IU
     fi
 
 }
@@ -454,8 +363,9 @@ java_in () {
 # triggers for OS-agnostic installers
 others_t () {
 
-    if [[ -n "$_idea" ]]; then
-        idea_in
+    if [[ -n "$_jb" ]]; then
+        source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/jetbrainsmenu.lib)
+        jetbrains_menu
     fi
     if [[ -n "$_godot" ]]; then
         godot_in

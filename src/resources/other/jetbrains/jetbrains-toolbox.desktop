@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=JetBrains Toolbox
+Exec=/opt/toolbox/jetbrains-toolbox
+Icon=jetbrains-toolbox
+StartupNotify=false
+Terminal=false
+MimeType=x-scheme-handler/jetbrains;
+X-AppImage-Integrate=false

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=DataGrip
+Type=Application
+Exec=/opt/datagrip/bin/datagrip
+Terminal=false
+Icon=/opt/datagrip/bin/datagrip.png
+Comment=Jetbrains tool for multiple databases
+NoDisplay=false
+Categories=Development

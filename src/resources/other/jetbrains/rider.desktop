@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Rider
+Type=Application
+Exec=/opt/rider/bin/rider
+Terminal=false
+Icon=/opt/rider/bin/rider.png
+Comment=Jetbrains IDE for .NET and game developers
+NoDisplay=false
+Categories=Development
