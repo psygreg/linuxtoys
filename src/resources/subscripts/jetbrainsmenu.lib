@@ -385,7 +385,7 @@ toolbox_in () {
     wget https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-2.6.2.41321.tar.gz
     # first installation
     if [ ! -d "/opt/toolbox" ]; then
-        if whiptail --title "Jetbrains Toolbox" --yesno "$msg174"; then
+        if whiptail --title "Jetbrains Toolbox" --yesno "$msg174" 12 78; then
             insta fuse
             tar -xvzf jetbrains-toolbox-2.6.2.41321.tar.gz
             mv jetbrains-* toolbox
@@ -429,7 +429,7 @@ toolbox_in () {
 jetbrains_t () {
 
     if [[ -n "$_tb" ]]; then
-        if whiptail --title "Jetbrains Toolbox" --yesno "$msg173"; then
+        if whiptail --title "Jetbrains Toolbox" --yesno "$msg173" 12 78; then
             _pycharm=""
             _idea=""
             _wstorm=""
