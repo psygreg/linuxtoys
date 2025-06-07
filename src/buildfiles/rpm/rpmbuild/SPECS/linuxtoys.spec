@@ -13,6 +13,8 @@ BuildRequires:  desktop-file-utils
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
 
+%global debug_package %{nil}
+
 %prep
 %setup -q
 
