@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.1.5
+Version:        2.1.6
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget alacritty git
+Requires:       bash newt curl wget git
 BuildRequires:  desktop-file-utils
 
 %description
@@ -45,6 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.5
-- bugfix: arch package parsing now works as intended
-- library improvements
+* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.6
+- updater removed, replaced by an update prompter
+- alacritty is no longer a dependency
