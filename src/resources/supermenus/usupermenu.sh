@@ -16,6 +16,7 @@ usupermenu () {
     local droid_status=$([ "$_droid" = "waydroid" ] && echo "ON" || echo "OFF")
     local dckr_status=$([ "$_dckr" = "yes" ] && echo "ON" || echo "OFF")
     local rocm_status=$([ "$_rocm" = "yes" ] && echo "ON" || echo "OFF")
+    local rcl_status=$([ "$_rcl" = "yes" ] && echo "ON" || echo "OFF")
     local fseal_status=$([ "$_fseal" = "com.github.tchx84.Flatseal" ] && echo "ON" || echo "OFF")
     local efx_status=$([ "$_efx" = "com.github.wwmm.easyeffects" ] && echo "ON" || echo "OFF")
     local sc_status=$([ "$_sc" = "com.core447.StreamController" ] && echo "ON" || echo "OFF")
@@ -38,6 +39,7 @@ usupermenu () {
             "LACT" "$msg093" $lact_status \
             "Waydroid" "$msg094" $droid_status \
             "Docker" "$msg095" $dckr_status \
+            "Rusticl" "$msg158" $rcl_status \
             "ROCm" "$msg096" $rocm_status \
             3>&1 1>&2 2>&3)
 
@@ -58,6 +60,7 @@ usupermenu () {
         [[ "$selection" == *"Waydroid"* ]] && _droid="waydroid" || _droid=""
         [[ "$selection" == *"Docker"* ]] && _dckr="yes" || _dckr=""
         [[ "$selection" == *"ROCm"* ]] && _rocm="yes" || _rocm=""
+        [[ "$selection" == *"Rusticl"* ]] && _rcl="yes" || _rcl=""
         [[ "$selection" == *"Flatseal"* ]] && _fseal="com.github.tchx84.Flatseal" || _fseal=""
         [[ "$selection" == *"Easy Effects"* ]] && _efx="com.github.wwmm.easyeffects" || _efx=""
         [[ "$selection" == *"StreamController"* ]] && _sc="com.core447.StreamController" || _sc=""
@@ -166,6 +169,34 @@ install_native () {
         fi
     fi
     _install_
+
+}
+
+# rusticl installation
+rusticl_in () {
+
+    if [[ -n "$_rcl" ]]; then
+        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            insta mesa-opencl-icd clinfo
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+            insta mesa-libOpenCL clinfo
+        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            insta Mesa-libRusticlOpenCL clinfo
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+            insta opencl-mesa clinfo
+        fi
+        local GPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
+        if [[ -n "$GPU" ]]; then
+            curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-amd \
+                | sudo tee -a /etc/environment > /dev/null
+        else
+            local GPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
+            if [[ -n "$GPU" ]]; then
+                curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-intel \
+                    | sudo tee -a /etc/environment > /dev/null
+            fi
+        fi
+    fi
 
 }
 
