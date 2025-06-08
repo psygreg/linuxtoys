@@ -271,7 +271,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_obs $_hndbrk $_lact $_gsr $_oprgb $_fseal $_sc)
+    local _flatpaks=($_obs $_hndbrk $_lact $_oprgb $_fseal $_sc)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_
@@ -288,6 +288,9 @@ install_flatpak () {
             fi
             if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
                 flatpak install --or-update -y $_efx --system
+            fi
+            if [[ -n "$_gsr" ]]; then
+                flatpak install --or-update -y $_gsr --system
             fi
             if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
                 obs_pipe
@@ -310,6 +313,9 @@ install_flatpak () {
                 fi
                 if [[ -n "$_efx" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
                     flatpak install --or-update -y $_efx --system
+                fi
+                if [[ -n "$_gsr" ]]; then
+                    flatpak install --or-update -y $_gsr --system
                 fi
                 if [[ -n "$_obs" ]] && ( rpm -qi "pipewire" 2>/dev/null 1>&2 || pacman -Qi "pipewire" 2>/dev/null 1>&2 || dpkg -s "pipewire" 2>/dev/null 1>&2 ); then
                     obs_pipe
