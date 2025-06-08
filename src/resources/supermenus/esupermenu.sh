@@ -232,6 +232,7 @@ psaver () {
         cd ..
         rm -rf auto-cpufreq
         sudo auto-cpufreq --install
+        flatpak_in_lib
         flatpak install --or-update -y com.github.d4nj1.tlpui --system
         local title="$msg006"
         local msg="$msg036"
