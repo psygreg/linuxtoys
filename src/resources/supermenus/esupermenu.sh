@@ -62,12 +62,12 @@ grubtrfs_t () {
 
 }
 
-# Nvidia driver installer for Fedora/SUSE - it is a montrosity, but it works, trust me bro
+# Nvidia driver installer for Fedora/SUSE/Debian - it is a montrosity, but it works, trust me bro
 nvidia_in () {
 
     local GPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
     if [[ -n "$GPU" ]]; then
-        if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
+        if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]] || [ "$ID" = "debian" ]; then
 
             while :; do
 
@@ -104,6 +104,11 @@ nvidia_in () {
                             sudo zypper ar -f "$REPO_URL" "nvidia"
                         fi
                         insta x11-video-nvidiaG06 nvidia-computeG06
+                   elif [ "$ID" = "debian" ]; then
+                         wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb
+                         sudo dpkg -i cuda-keyring_1.1-1_all.deb
+                         sudo apt update
+                         insta cuda-drivers nvidia-open
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
                             insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -135,6 +140,11 @@ nvidia_in () {
                             sudo zypper ar -f "$REPO_URL" "nvidia"
                         fi
                         insta x11-video-nvidiaG05 nvidia-computeG05
+                   elif [ "$ID" = "debian" ]; then
+                        wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb
+                        sudo dpkg -i cuda-keyring_1.1-1_all.deb
+                        sudo apt update
+                        insta cuda-drivers-470
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
                             insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
