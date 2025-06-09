@@ -20,6 +20,7 @@ usupermenu () {
     local fseal_status=$([ "$_fseal" = "com.github.tchx84.Flatseal" ] && echo "ON" || echo "OFF")
     local efx_status=$([ "$_efx" = "com.github.wwmm.easyeffects" ] && echo "ON" || echo "OFF")
     local sc_status=$([ "$_sc" = "com.core447.StreamController" ] && echo "ON" || echo "OFF")
+    local qpw_status=$([ "$_qpw" = "org.rncbc.qpwgraph" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -35,6 +36,7 @@ usupermenu () {
             "OpenRGB" "$msg091" $oprgb_status \
             "Flatseal" "$msg133" $fseal_status \
             "Easy Effects" "$msg147" $efx_status \
+            "QPWGraph" "$msg179" $qpw_status \
             "btrfs-Assistant" "$msg092" $btassist_status \
             "LACT" "$msg093" $lact_status \
             "Waydroid" "$msg094" $droid_status \
@@ -64,6 +66,7 @@ usupermenu () {
         [[ "$selection" == *"Flatseal"* ]] && _fseal="com.github.tchx84.Flatseal" || _fseal=""
         [[ "$selection" == *"Easy Effects"* ]] && _efx="com.github.wwmm.easyeffects" || _efx=""
         [[ "$selection" == *"StreamController"* ]] && _sc="com.core447.StreamController" || _sc=""
+        [[ "$selection" == *"QPWGraph"* ]] && _qpw="org.rncbc.qpwgraph" || _qpw=""
 
         install_flatpak
         install_native
@@ -271,7 +274,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_obs $_hndbrk $_lact $_oprgb $_fseal $_sc)
+    local _flatpaks=($_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             _flatpak_

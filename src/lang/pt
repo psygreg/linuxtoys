@@ -174,5 +174,6 @@ msg173="Isto irá ignorar outros aplicativos selecionados, já que o Toolbox os 
 msg174="Toolbox é um AppImage e requer FUSE para funcionar. Prosseguir com a instalação?"
 msg175="Operação cancelada pelo usuário."
 msg176="Isto habilitará padrões otimizados para uso de bateria. Isto só deve ser usado em laptops. Prosseguir?"
-msg177="Otimizador de energia TLP"
+msg177="Otimizacões de uso de energia"
 msg178="ferramenta de build e gerenciamento Java"
+msg179="Painel de controle visual do Pipewire"
