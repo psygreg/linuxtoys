@@ -137,6 +137,7 @@ install_flatpak () {
     local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
+            flatpak_in_lib
             _flatpak_
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then

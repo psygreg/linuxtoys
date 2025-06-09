@@ -178,6 +178,7 @@ install_flatpak () {
     local _flatpaks=($_codium)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
+            flatpak_in_lib
             _flatpak_
         else
             if whiptail --title "$msg006" --yesno "$msg085" 8 78; then

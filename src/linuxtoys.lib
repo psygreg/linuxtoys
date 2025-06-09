@@ -207,7 +207,8 @@ chaotic_aur_lib () {
 flatpak_in_lib () {
 
     if command -v flatpak &> /dev/null; then
-        whiptail --title "$msg013" --msgbox "$msg015" 8 78
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
     else
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             sudo apt install -y flatpak
