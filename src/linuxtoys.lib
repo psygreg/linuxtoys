@@ -8,17 +8,17 @@ export NEWT_COLORS='
     window=black,lightgray
     shadow=black,gray
     title=black,lightgray
-    button=black,brightred
-    actbutton=white,brightred
+    button=black,white
+    actbutton=white,black
     checkbox=black,lightgray
-    actcheckbox=black,brightred
+    actcheckbox=black,white
     entry=black,lightgray
     label=black,lightgray
     listbox=black,lightgray
-    actlistbox=black,brightred
+    actlistbox=black,white
     textbox=black,lightgray
-    acttextbox=black,brightred
-    helpline=white,brightred
+    acttextbox=black,white
+    helpline=white,black
     roottext=black,lightgray
 '
 
