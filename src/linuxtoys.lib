@@ -3,22 +3,22 @@
 
 # whiptail color palette
 export NEWT_COLORS='
-    root=white,red
+    root=white,brightred
     border=black,lightgray
     window=black,lightgray
     shadow=black,gray
     title=black,lightgray
-    button=black,brightred
-    actbutton=white,brightred
+    button=black,red
+    actbutton=white,red
     checkbox=black,lightgray
-    actcheckbox=black,brightred
+    actcheckbox=black,red
     entry=black,lightgray
     label=black,lightgray
     listbox=black,lightgray
-    actlistbox=black,brightred
+    actlistbox=black,red
     textbox=black,lightgray
-    acttextbox=black,brightred
-    helpline=white,brightred
+    acttextbox=black,red
+    helpline=white,red
     roottext=black,lightgray
 '
 
