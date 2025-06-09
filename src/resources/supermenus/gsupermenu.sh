@@ -101,7 +101,7 @@ install_native () {
 
     local _packages=($_steam $_gmode $_govl $_gscope $_mhud)
     if [[ -n "$_packages" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             if [[ -n "$_steam" ]]; then
                 cd $HOME
                 wget https://cdn.fastly.steamstatic.com/client/installer/steam.deb

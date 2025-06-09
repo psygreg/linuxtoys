@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="2.1.6"
+current_ltver="2.1.7"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -19,15 +19,17 @@ ver_upd () {
 # kernel update checker for debian/ubuntu
 krn_chk () {
 
-    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+        if [ -f "$HOME/.local/kernelsetting" ]; then
         source $HOME/.local/kernelsetting
-        if [ ${_psygreg_krn} == "yes" ]; then
-            if [ $(uname -r) != $(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn) ]; then
-                if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
-                    bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh) -s
-                    # clean old kernels
-                    dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-                    dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+            if [ "$_psygreg_krn" == "yes" ]; then
+                if [ $(uname -r) != $(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn) ]; then
+                    if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
+                        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh) -s
+                        # clean old kernels
+                        dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+                        dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+                    fi
                 fi
             fi
         fi

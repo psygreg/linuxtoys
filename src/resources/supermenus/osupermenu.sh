@@ -92,7 +92,7 @@ install_native () {
                 local title="$msg006"
                 local msg="$msg034"
                 _msgbox_
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
                 chmod +x autoresolvedeb.sh
                 ./autoresolvedeb.sh
@@ -115,7 +115,7 @@ install_native () {
             fi
         fi
         if [[ -n "$_fial" ]]; then   
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then      
+            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
                 wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
                 chmod +x installer.sh
                 ./installer.sh

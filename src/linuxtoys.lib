@@ -33,7 +33,7 @@ _log_ () {
 _install_ () {
     
     if [[ -n "$_packages" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(steam|yes|code|pyenv)$ ]]; then
                     continue
@@ -83,7 +83,7 @@ _install_ () {
 }
 
 # INSTAnt install
-if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
     insta () {
         if [ "$#" -eq 0 ]; then
             return 1
@@ -209,7 +209,7 @@ flatpak_in_lib () {
     if command -v flatpak &> /dev/null; then
         whiptail --title "$msg013" --msgbox "$msg015" 8 78
     else
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             sudo apt install -y flatpak
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
             sudo pacman -S --noconfirm flatpak

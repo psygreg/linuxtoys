@@ -94,8 +94,8 @@ install_native () {
         local _packages=($_slar $_oprzr $_droid $_dckr $_rocm)
     fi
     if [[ -n "$_packages" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            if [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            if [ "$ID" == "ubuntu" ]; then
                 if [[ -n "$_slar" ]]; then
                     sudo add-apt-repository ppa:solaar-unifying/stable
                     sudo apt update
@@ -176,7 +176,7 @@ install_native () {
 rusticl_in () {
 
     if [[ -n "$_rcl" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             insta mesa-opencl-icd clinfo
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             insta mesa-libOpenCL clinfo

@@ -78,7 +78,7 @@ install_native () {
 
     local _packages=($_code $_nvim $_nvm $_mvn $_pyenv $_unity $_dotnet)
     if [[ -n "$_packages" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             if [[ -n "$_code" ]]; then
                 cd $HOME
                 wget https://vscode.download.prss.microsoft.com/dbazure/download/stable/848b80aeb52026648a8ff9f7c45a9b0a80641e2e/code_1.100.2-1747260578_amd64.deb
@@ -310,7 +310,7 @@ jdk_install () {
 
     local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
     for jav in "${javas[@]}"; do
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             insta openjdk-${jav}-jdk openjdk-${jav}-jre
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [ $jav == "8" ]; then

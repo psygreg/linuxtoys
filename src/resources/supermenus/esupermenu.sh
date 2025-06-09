@@ -228,7 +228,7 @@ flatpak_in () {
 psaver () {
 
     if whiptail --title "$msg006" --yesno "$msg176" 12 78; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             sudo add-apt-repository ppa:linrunner/tlp
             sudo apt update
         fi
@@ -259,7 +259,7 @@ kernel_in () {
         local msg="$msg077"
         _msgbox_
     else
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
                 bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/linuxtoys/cachyos-deb.sh) -s
