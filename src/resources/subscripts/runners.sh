@@ -104,6 +104,7 @@ jade_in () {
     whiptail --textbox txtbox 12 80
     rm v${ver}.zip
     rm txtbox
+    rm cmd.txt
 
 }
 
