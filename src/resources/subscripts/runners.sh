@@ -33,13 +33,23 @@ runners_menu () {
             if (( KERNEL_MAJOR > 6 )) || { (( KERNEL_MAJOR == 6 )) && (( KERNEL_MINOR > 13 )); }; then
                 wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
                 tar -xf spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
-                cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                if flatpak list | grep -q 'net.lutris.Lutris'; then
+                    cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                fi
+                if flatpak list | grep -q 'com.heroicgameslauncher.hgl'; then
+                    cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/com.heroicgameslauncher.hgl/config/heroic/tools/wine/
+                fi
                 rm spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
                 rm -rf spritz-wine-tkg-ntsync-10.9
             else
                 wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
                 tar -xf spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
-                cp -rf spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                if flatpak list | grep -q 'net.lutris.Lutris'; then
+                    cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                fi
+                if flatpak list | grep -q 'com.heroicgameslauncher.hgl'; then
+                    cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/com.heroicgameslauncher.hgl/config/heroic/tools/wine/
+                fi
                 rm spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
                 rm -rf spritz-wine-tkg-10.9
             fi
@@ -61,7 +71,7 @@ runners_menu () {
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
-if command -v flatpak &> /dev/null && flatpak list | grep -q 'net.lutris.Lutris'; then
+if command -v flatpak &> /dev/null && flatpak list | grep -q 'net.lutris.Lutris' || command -v flatpak &> /dev/null && flatpak list | grep -q 'com.heroicgameslauncher.hgl'; then
     runners_menu
 else
     title="$msg030"
