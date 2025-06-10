@@ -30,7 +30,7 @@ runners_menu () {
             local krnver=$(uname -r | cut -d- -f1)
             local krnmaj=$(echo "$krnver" | cut -d. -f1)
             local krnmin=$(echo "$krnver" | cut -d. -f2)
-            if (( KERNEL_MAJOR > 6 )) || { (( KERNEL_MAJOR == 6 )) && (( KERNEL_MINOR > 13 )); }; then
+            if (( KERNEL_MAJOR > 6 || (KERNEL_MAJOR == 6 && KERNEL_MINOR > 13) )); then
                 wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
                 tar -xf spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
                 if flatpak list | grep -q 'net.lutris.Lutris'; then
@@ -45,10 +45,10 @@ runners_menu () {
                 wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
                 tar -xf spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
                 if flatpak list | grep -q 'net.lutris.Lutris'; then
-                    cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
+                    cp -rf spritz-wine-tkg-10.9 $HOME/.var/app/net.lutris.Lutris/data/lutris/runners/wine/
                 fi
                 if flatpak list | grep -q 'com.heroicgameslauncher.hgl'; then
-                    cp -rf spritz-wine-tkg-ntsync-10.9 $HOME/.var/app/com.heroicgameslauncher.hgl/config/heroic/tools/wine/
+                    cp -rf spritz-wine-tkg-10.9 $HOME/.var/app/com.heroicgameslauncher.hgl/config/heroic/tools/wine/
                 fi
                 rm spritz-wine-tkg-fonts-wow64-10.9-2-x86_64.tar.xz
                 rm -rf spritz-wine-tkg-10.9
