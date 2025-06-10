@@ -94,6 +94,7 @@ jade_in () {
     unzip -d $HOME/jadeite/ v${ver}.zip
     cp cmd.txt jadeite
     cd jadeite
+    chmod +x block_analytics.sh
     sudo ./block_analytics.sh
     cd ..
     {
