@@ -93,6 +93,9 @@ jade_in () {
     mkdir -p jadeite
     unzip -d $HOME/jadeite/ v${ver}.zip
     cp cmd.txt jadeite
+    cd jadeite
+    sudo ./block-analytics.sh
+    cd ..
     {
         echo "$msg181"
         echo "$msg182"
