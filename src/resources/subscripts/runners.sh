@@ -30,7 +30,7 @@ runners_menu () {
             local krnver=$(uname -r | cut -d- -f1)
             local krnmaj=$(echo "$krnver" | cut -d. -f1)
             local krnmin=$(echo "$krnver" | cut -d. -f2)
-            if (( KERNEL_MAJOR > 6 || (KERNEL_MAJOR == 6 && KERNEL_MINOR > 13) )); then
+            if (( krnmaj > 6 || (krnmaj == 6 && krnmin > 13) )); then
                 wget https://github.com/NelloKudo/WineBuilder/releases/download/spritz-v10.9-1/spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
                 tar -xf spritz-wine-tkg-ntsync-fonts-wow64-10.9-2-x86_64.tar.xz
                 if flatpak list | grep -q 'net.lutris.Lutris'; then
