@@ -25,6 +25,7 @@ gsupermenu () {
     local gfn_status=$([ "$_gfn" = "yes" ] && echo "ON" || echo "OFF")
     local mcbe_status=$([ "$_mcbe" = "io.mrarm.mcpelauncher" ] && echo "ON" || echo "OFF")
     local runner_status=$([ "$_runner" = "runners" ] && echo "ON" || echo "OFF")
+    local nexmod_status=$([ "$_nexmod" = "yes" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -36,6 +37,7 @@ gsupermenu () {
             "Heroic Games Launcher" "$msg111" $heroic_status \
             "ProtonPlus" "$msg112" $pp_status \
             "SteamTinkerLaunch" "$msg113" $stl_status \
+            "NexusMods" "$msg189" $nexmod_status \
             "Sober" "$msg114" $sober_status \
             "Bedrock Launcher" "$msg160" $mcbe_status \
             "Discord" "$msg130" $disc_status \
@@ -75,12 +77,14 @@ gsupermenu () {
         [[ "$selection" == *"Oversteer"* ]] && _steer="io.github.berarma.Oversteer" || _steer=""
         [[ "$selection" == *"GeForce NOW"* ]] && _gfn="yes" || _gfn=""
         [[ "$selection" == *"Wine"* ]] && _runner="runners" || _runner=""
+        [[ "$selection" == *"NexusMods"* ]] && _nexmod="yes" || _nexmod=""
 
         install_flatpak
         install_native
         sboost_t
         dsplitm_t
         runners_t
+        nexusmods_t
         if [[ -n "$flatpak_run" || -n "$dsplitm_run" || -n "$sboost_run" ]]; then
             local title="$msg006"
             local msg="$msg036"
@@ -237,6 +241,35 @@ runners_t () {
     if [[ -n "$_runner" ]]; then
         local subscript="$_runner"
         _invoke_
+    fi
+
+}
+
+nexusmods_t () {
+
+    if [[ -n "$_nexmod" ]]; then
+        local ver=$(curl -s "https://api.github.com/repos/Nexus-Mods/NexusMods.App/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+        cd $HOME
+        insta fuse
+        wget https://github.com/Nexus-Mods/NexusMods.App/releases/download/${ver}/NexusMods.App.x86_64.AppImage
+        ./NexusMods.App.x86_64.AppImage --appimage-extract
+        cd squashfs-root
+        mkdir -p nexusmods
+        if [ -d /usr/bin/nexusmods ]; then
+            cp -rf usr/bin/ nexusmods
+            sudo rm -rf /usr/bin/nexusmods
+            sudo cp nexusmods /usr/bin
+        else
+            cp -rf usr/bin nexusmods
+            sudo cp nexusmods /usr/bin
+            sudo cp -r usr/share/applications/ /usr/share/applications/
+            sudo cp -r usr/share/icons/hicolor/scalable/apps/ /usr/share/icons/hicolor/scalable/apps/
+            sudo cp -r usr/share/metainfo/ /usr/share/metainfo/
+            sudo sed -i 's|^Exec=/usr/bin/NexusMods.App %u$|Exec=/usr/bin/nexusmods/NexusMods.App %u|' "/usr/share/applications/com.nexusmods.app.desktop"
+        fi
+        cd ..
+        rm -rf squashfs-root
+        rm NexusMods.App.x86_64.AppImage
     fi
 
 }
