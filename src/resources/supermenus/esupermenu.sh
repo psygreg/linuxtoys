@@ -31,16 +31,17 @@ swapfile_t () {
 # 'cleartype'-like settings for Linux
 lucidglyph_in () {
 
-    local lgver="0.11.0"
+    local tag=$(curl -s "https://api.github.com/repos/maximilionus/lucidglyph/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    local ver="${tag#v}"
     if whiptail --title "$msg019" --yesno "$msg020" 8 78; then  
         cd $HOME
-        wget https://github.com/maximilionus/lucidglyph/archive/refs/tags/v${lgver}.tar.gz
+        wget https://github.com/maximilionus/lucidglyph/archive/refs/tags/${tag}.tar.gz
         tar -xvzf v0.11.0.tar.gz 
-        cd lucidglyph-${lgver}
+        cd lucidglyph-${ver}
         chmod +x lucidglyph.sh
         sudo ./lucidglyph.sh install
         cd ..
-        rm -rf lucidglyph-${lgver}
+        rm -rf lucidglyph-${ver}
         local title="$msg021"
         local msg="$msg022"
         _msgbox_
