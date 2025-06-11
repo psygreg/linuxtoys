@@ -111,7 +111,7 @@ install_native () {
             if [[ -n "$_rocm" ]]; then
                 rocm_deb
             fi
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             if [[ -n "$_btassist" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
                     chaotic_aur_lib
@@ -182,7 +182,7 @@ rusticl_in () {
             insta mesa-libOpenCL clinfo
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             insta Mesa-libRusticlOpenCL clinfo
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             insta opencl-mesa clinfo
         fi
         local GPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')

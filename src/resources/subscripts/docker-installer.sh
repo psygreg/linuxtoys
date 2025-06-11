@@ -25,7 +25,7 @@ docker_in () {
         else
             insta docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
         fi
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         insta docker
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         insta docker.io

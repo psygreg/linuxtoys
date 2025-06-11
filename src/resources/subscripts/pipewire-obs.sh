@@ -55,7 +55,7 @@ obscheck () {
         else
             whiptail --title "Installer" --msgbox "OBS Studio not found." 8 78
         fi
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         if pacman -Qi "obs-studio" 2>/dev/null 1>&2; then
             native_pipe
         else

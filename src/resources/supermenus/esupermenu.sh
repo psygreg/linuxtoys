@@ -279,7 +279,7 @@ kernel_in () {
             _msgbox_
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
             kernel_menu
-        elif [ "$ID" == "arch" ] || [[ "$ID_LIKE" == *arch* ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             chaotic_aur_lib
             insta linux-cachyos linux-cachyos-headers
             if command -v dracut >/dev/null 2>&1; then

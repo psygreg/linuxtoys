@@ -99,7 +99,7 @@ install_native () {
                 rm packages-microsoft-prod.deb
                 sudo apt update
             fi
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             if [[ -n "$_code" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
                     chaotic_aur_lib

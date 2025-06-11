@@ -97,7 +97,7 @@ install_native () {
                 chmod +x autoresolvedeb.sh
                 ./autoresolvedeb.sh
                 rm autoresolvedeb.sh
-            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then 
+            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
                 chmod +x autoresolvepkg.sh
                 ./autoresolvepkg.sh
