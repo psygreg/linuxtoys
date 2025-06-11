@@ -86,12 +86,12 @@ osu_in () {
 
 jade_in () {
 
-    local ver="5.0.1"
+    local ver=$(curl -s "https://codeberg.org/api/v1/repos/mkrsym1/jadeite/releases" | jq -r '.[0].tag_name')
     cd $HOME
-    wget https://codeberg.org/mkrsym1/jadeite/releases/download/v${ver}/v${ver}.zip
+    wget https://codeberg.org/mkrsym1/jadeite/releases/download/${ver}/${ver}.zip
     wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/cmd.txt
     mkdir -p jadeite
-    unzip -d $HOME/jadeite/ v${ver}.zip
+    unzip -d $HOME/jadeite/ ${ver}.zip
     cp cmd.txt jadeite
     cd jadeite
     chmod +x block_analytics.sh
@@ -106,7 +106,7 @@ jade_in () {
         echo "$msg186"
     } > txtbox
     whiptail --textbox txtbox 12 80
-    rm v${ver}.zip
+    rm ${ver}.zip
     rm txtbox
     rm cmd.txt
 
