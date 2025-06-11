@@ -34,7 +34,7 @@ flatpak_pipe () {
 # install plugin for native packages
 native_pipe () {
 
-    local ver="1.2.0"
+    local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     cd $HOME
     mkdir obspipe
     cd obspipe
