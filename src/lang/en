@@ -197,3 +197,5 @@ msg196="This requires having Steam (flatpak) installed. You may install it throu
 msg197="All done! A webpage with instructions to add non-Steam games will be opened in your browser now."
 msg198="Console Mode disabled."
 msg199="Console Mode"
+msg200="This will install Touchégg, an utility to control multitouch gestures on touchpads. Proceed?"
+msg201="Touchpad multitouch gesture control"

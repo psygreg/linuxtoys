@@ -256,6 +256,31 @@ psaver () {
 
 }
 
+touchegg_t () {
+
+    local tag=$(curl -s "https://api.github.com/repos/JoseExposito/touchegg/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    if whiptail --title "$msg006" --yesno "$msg200" 12 78; then
+        cd $HOME
+        if [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
+            sudo add-apt-repository ppa:touchegg/stable
+            sudo apt update
+            insta touchegg
+        elif [ "$ID" == "debian" ] || [[ "$ID_LIKE" == *debian* ]]; then
+            wget https://github.com/JoseExposito/touchegg/archive/refs/tags/touchegg_${tag}_amd64.deb
+            sudo dpkg -i touchegg_${tag}_amd64.deb
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ] || [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ] || [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            insta touchegg
+            sudo systemctl enable touchegg.service
+            sudo systemctl start touchegg
+        else
+            title="$msg006"
+            msg="$msg077"
+            _msgbox_
+        fi
+    fi
+
+}
+
 # install linux-cachyos optimized kernel
 kernel_in () {
 
@@ -366,12 +391,13 @@ while :; do
         "3" "$msg048" \
         "4" "$msg055" \
         "5" "$msg177" \
-        "6" "$msg057" \
-        "7" "$msg081" \
-        "8" "$msg079" \
-        "9" "$msg078" \
-        "10" "$msg053" \
-        "11" "$msg059" 3>&1 1>&2 2>&3)
+        "6" "$msg201" \
+        "7" "$msg057" \
+        "8" "$msg081" \
+        "9" "$msg079" \
+        "10" "$msg078" \
+        "11" "$msg053" \
+        "12" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -386,12 +412,13 @@ while :; do
     3) lucidglyph_in ;;
     4) grubtrfs_t ;;
     5) psaver ;;
-    6) kernel_in ;;
-    7) suse_codecs ;;
-    8) fix_se_suse ;;
-    9) nvidia_in ;;
-    10) chaotic_aur_lib ;;
-    11 | q) break ;;
+    6) touchegg_t ;;
+    7) kernel_in ;;
+    8) suse_codecs ;;
+    9) fix_se_suse ;;
+    10) nvidia_in ;;
+    11) chaotic_aur_lib ;;
+    12 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
