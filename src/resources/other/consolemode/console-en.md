@@ -4,6 +4,7 @@ This is required to use them in console mode.
 ### Limitations
 - Games from Heroic Games Launcher cannot be launched unless HGL is open in the background. You will have to tick "Close to taskbar", "Start minimized" and "Minimize Heroic when launching a game" in HGL settings.
 - Lutris games should work without issue, although you still need mouse and keyboard to operate other game stores' launchers, so it is recommended you add only direct shortcuts to games to Steam.
+- You should enable autologin since having to type your user password defeats the purpose of this trick. For Plasma, go to System Settings > Color and Theme > Authentication (SDDM) > Behaviour > tick the first box and select the proper session.
 
 ## How-To
 

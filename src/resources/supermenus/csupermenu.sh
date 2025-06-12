@@ -20,10 +20,14 @@ enabler_c () {
         sudo cp com.valvesoftware.Steam.desktop $HOME/.config/autostart/
         flatpak override com.valvesoftware.Steam --talk-name=org.freedesktop.Flatpak
         flatpak override com.valvesoftware.Steam --filesystem=${HOME}/.local/share/flatpak
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/consolemode/com.heroicgameslauncher.hgl.desktop
+        sudo cp com.heroicgameslauncher.hgl.desktop $HOME/.config/autostart/
         local title="$msg006"
         local msg="$msg197"
         _msgbox_
         xdg-open https://github.com/psygreg/linuxtoys/blob/main/src/resources/other/consolemode/console-${langfile}.md
+        rm com.heroicgameslauncher.hgl.desktop
+        rm com.valvesoftware.Steam.desktop
     else
         local title="$msg030"
         local msg="$msg196"
