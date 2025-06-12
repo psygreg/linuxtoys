@@ -79,6 +79,7 @@ usupermenu () {
             local msg="$msg018"
             _msgbox_
         fi
+        break
     
     done
 

@@ -37,6 +37,7 @@ runners_menu () {
         if [[ -n "$_jade" ]]; then
             jade_in
         fi
+        break
     
     done
 

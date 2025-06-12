@@ -23,6 +23,7 @@ flatpak_pipe () {
         sudo flatpak override --filesystem=xdg-run/pipewire-0 com.obsproject.Studio
         cd ..
         rm -rf obspipe
+        return 0
     else 
         title="Installer"
         msg="OBS Studio flatpak not installed."
@@ -43,6 +44,7 @@ native_pipe () {
     cp -rf linux-pipewire-audio $HOME/.config/obs-studio/plugins/linux-pipewire-audio/
     cd ..
     rm -rf obspipe
+    return 0
 
 }
 
@@ -90,8 +92,8 @@ while :; do
     fi
 
     case $CHOICE in
-    0) obscheck ;;
-    1) flatpak_pipe ;;
+    0) obscheck && break ;;
+    1) flatpak_pipe && break ;;
     2 | q) break ;;
     *) echo "Invalid Option" ;;
     esac

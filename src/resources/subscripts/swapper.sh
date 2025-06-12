@@ -13,6 +13,7 @@ root_swap () {
         title="Swapfile Creator"
         msg="Swapfile creation succesful."
         _msgbox_
+        return 0
     else
         mkswap -U clear --size 8G --file /swapfile
         swapon /swapfile
@@ -21,6 +22,7 @@ root_swap () {
         title="Swapfile Creator"
         msg="Swapfile creation succesful."
         _msgbox_
+        return 0
     fi
 
 }
@@ -37,6 +39,7 @@ home_swap () {
         title="Swapfile Creator"
         msg="Swapfile creation succesful."
         _msgbox_
+        return 0
     else
         sudo mkswap -U clear --size 8G --file /home/swapfile
         sudo swapon /home/swapfile
@@ -45,6 +48,7 @@ home_swap () {
         title="Swapfile Creator"
         msg="Swapfile creation succesful."
         _msgbox_
+        return 0
     fi
 
 }
@@ -70,8 +74,8 @@ else
         fi
 
         case $CHOICE in
-        0) root_swap ;;
-        1) home_swap ;;
+        0) root_swap && break;;
+        1) home_swap && break;;
         2 | q) break ;;
         *) echo "Invalid Option" ;;
         esac

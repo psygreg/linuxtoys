@@ -48,6 +48,16 @@ disabler_c () {
 
 }
 
+# open instructions in browser
+instructions_c () {
+
+    local title="$msg199"
+    local msg="$msg203"
+    _msgbox_
+    xdg-open https://github.com/psygreg/linuxtoys/blob/main/src/resources/other/consolemode/console-${langfile}.md
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -60,7 +70,8 @@ while :; do
         "0" "$msg190" \
         "1" "$msg193" \
         "2" "$msg194" \
-        "3" "$msg070" 3>&1 1>&2 2>&3)
+        "3" "$msg202" \
+        "4" "$msg070" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -72,7 +83,8 @@ while :; do
     0) about_c ;;
     1) enabler_c ;;
     2) disabler_c ;;
-    3 | q) break ;;
+    3) instructions_c ;;
+    4 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 
