@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="2.1.7"
+current_ltver="2.2"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -66,6 +66,7 @@ while :; do
         "2" "$msg122" \
         "3" "$msg123" \
         "4" "$msg143" \
+        "5" "$msg199" \
         "" "" \
         "" "" \
         "5" "$msg124" \
@@ -84,9 +85,10 @@ while :; do
     2) supmenu="gsupermenu" && _invoke_ ;;
     3) supmenu="esupermenu" && _invoke_ ;;
     4) supmenu="dsupermenu" && _invoke_ ;;
-    5) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
-    6) xdg-open https://github.com/psygreg/linuxtoys ;;
-    7 | q) break ;;
+    5) supmenu="csupermenu" && _invoke_ ;;
+    6) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
+    7) xdg-open https://github.com/psygreg/linuxtoys ;;
+    8 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
