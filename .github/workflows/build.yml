@@ -31,7 +31,7 @@ jobs:
 
     - name: Prepare version
       id: read_version_file
-      run: echo "{name}=$(cat src/ver)" >> $GITHUB_OUTPUT
+      run: echo "version=$(cat src/ver)" >> $GITHUB_OUTPUT
 
     - name: Build AUR package
       run: |
