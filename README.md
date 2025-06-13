@@ -67,6 +67,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
 - [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) by **Adnan Hodzic**
 - [Touchégg](https://github.com/JoseExposito/touchegg) by **José Expósito**
+- [Vinegar](https://vinegarhq.org/Home/index.html) by **the VinegarHQ team**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)
