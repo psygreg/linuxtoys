@@ -41,11 +41,7 @@ krn_chk () {
 # check internet connection
 # ping google
 . /etc/os-release
-ping -c 1 -W 2 8.8.8.8 > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78
-    exit 1
-fi
+wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78 && exit 1
 # call linuxtoys fastbash lib
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 # logger
