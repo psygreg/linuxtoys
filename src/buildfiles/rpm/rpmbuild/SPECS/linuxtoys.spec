@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.1.6
+Version:        3.0
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -47,6 +47,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.png
 
 %changelog
-* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.6
-- updater removed, replaced by an update prompter
-- alacritty is no longer a dependency
+* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 3.0
+- added Console Mode
+- bugfix internet detection (GitHub #10)

@@ -1,6 +1,0 @@
-linuxtoys (2.1.6-1) plucky; urgency=medium
-
-  * updater removed, now replaced by an update prompter
-  * alacritty is no longer a dependency
-
- -- Victor Gregory <psygreg@pm.me>  Fri, 6 Jun 2025 3:00:47 -0300

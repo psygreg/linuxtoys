@@ -2,7 +2,7 @@
 # functions
 
 # updater
-current_ltver="2.2"
+current_ltver="3.0"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -41,8 +41,8 @@ krn_chk () {
 # check internet connection
 # ping google
 . /etc/os-release
-wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78 && exit 1
-# call linuxtoys fastbash lib
+wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
+# call linuxtoys turbobash lib
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 # logger
 logfile="$HOME/.local/linuxtoys-log.txt"
@@ -65,9 +65,9 @@ while :; do
         "5" "$msg199" \
         "" "" \
         "" "" \
-        "5" "$msg124" \
-        "6" "GitHub" \
-        "7" "$msg059" 3>&1 1>&2 2>&3)
+        "6" "$msg124" \
+        "7" "GitHub" \
+        "8" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
