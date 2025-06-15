@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Android Studio
+Type=Application
+Exec=/opt/android-studio/bin/studio.sh
+Terminal=false
+Icon=/opt/android-studio/bin/studio.png
+Comment=Android developer kit
+NoDisplay=false
+Categories=Development

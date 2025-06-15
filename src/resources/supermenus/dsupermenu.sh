@@ -16,6 +16,7 @@ dsupermenu () {
     local unity_status=$([ "$_unity" = "unityhub" ] && echo "ON" || echo "OFF")
     local dotnet_status=$([ "$_dotnet" = "dotnet-sdk-9.0" ] && echo "ON" || echo "OFF")
     local java_status=$([ "$_java" = "java" ] && echo "ON" || echo "OFF")
+    local droidstd_status=$([ "$_droidstd" = "droidstd" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -31,6 +32,7 @@ dsupermenu () {
             "Python" "$msg134" $pyenv_status \
             "C#" "Microsoft .NET SDK" $dotnet_status \
             "Java" "OpenJDK/JRE" $java_status \
+            "Android Studio" "$msg206" $droidstd_status \
             "Godot 4" "$msg139" $godot_status \
             "Unity Hub" "$msg137" $unity_status \
             3>&1 1>&2 2>&3)
@@ -52,7 +54,7 @@ dsupermenu () {
         [[ "$selection" == *"Unity Hub"* ]] && _unity="unityhub" || _unity=""
         [[ "$selection" == *"C#"* ]] && _dotnet="dotnet-sdk-9.0" || _dotnet=""
         [[ "$selection" == *"Java"* ]] && _java="java" || _java=""
-
+        [[ "$selection" == *"Android Studio"* ]] && _droidstd="droidstd" || _droidstd=""
 
         install_flatpak
         install_native
@@ -413,6 +415,10 @@ others_t () {
     fi
     if [[ -n "$_java" ]]; then
         java_in
+    fi
+    if [[ -n "$_droidstd" ]]; then
+        local subscript="android-studio-in"
+        _invoke_
     fi
 
 }
