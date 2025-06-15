@@ -382,6 +382,9 @@ kernel_menu () {
 preload_in () {
 
     if whiptail --title "Preload" --yesno "$msg208" 12 78; then
+        if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            chaotic_aur_lib
+        fi
         insta preload
         sudo systemctl enable preload
         sudo systemctl start preload
