@@ -114,6 +114,7 @@ jade_in () {
             echo "$msg186"
         } > txtbox
         whiptail --textbox txtbox 12 80
+        flatpak override com.valvesoftware.Steam --filesystem=${HOME}/jadeite
         rm ${ver}.zip
         rm txtbox
         rm cmd.txt
