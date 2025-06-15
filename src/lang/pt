@@ -204,3 +204,5 @@ msg203="Uma página com instruções para adicionar jogos não-Steam será abert
 msg204="Roblox Studio para Linux"
 msg205="Parece que você não tem Steam (flatpak) instalado. Você pode instalá-lo através do menu Jogos."
 msg206="Kit para desenvolvedores Android"
+msg207="Habilitar pré-carregamento para RAM"
+msg208="Isto habilitará preload, um daemon que carrega os binários e bibliotecas mais usados para RAM acelerando sua inicialização. NÃO É RECOMENDADO usar este recurso em sistemas com menos de 12GB de RAM. Prosseguir?"

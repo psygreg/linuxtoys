@@ -378,6 +378,17 @@ kernel_menu () {
 
 }
 
+# install and enable preloading
+preload_in () {
+
+    if whiptail --title "Preload" --yesno "$msg208" 12 78; then
+        insta preload
+        sudo systemctl enable preload
+        sudo systemctl start preload
+    fi
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -391,15 +402,16 @@ while :; do
         "1" "$msg045" \
         "2" "$msg046" \
         "3" "$msg048" \
-        "4" "$msg055" \
-        "5" "$msg177" \
-        "6" "$msg201" \
-        "7" "$msg057" \
-        "8" "$msg081" \
-        "9" "$msg079" \
-        "10" "$msg078" \
-        "11" "$msg053" \
-        "12" "$msg059" 3>&1 1>&2 2>&3)
+        "4" "$msg207" \
+        "5" "$msg055" \
+        "6" "$msg177" \
+        "7" "$msg201" \
+        "8" "$msg057" \
+        "9" "$msg081" \
+        "10" "$msg079" \
+        "11" "$msg078" \
+        "12" "$msg053" \
+        "13" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -412,15 +424,16 @@ while :; do
     1) swapfile_t ;;
     2) flatpak_in ;;
     3) lucidglyph_in ;;
-    4) grubtrfs_t ;;
-    5) psaver ;;
-    6) touchegg_t ;;
-    7) kernel_in ;;
-    8) suse_codecs ;;
-    9) fix_se_suse ;;
-    10) nvidia_in ;;
-    11) chaotic_aur_lib ;;
-    12 | q) break ;;
+    4) preload_in ;;
+    5) grubtrfs_t ;;
+    6) psaver ;;
+    7) touchegg_t ;;
+    8) kernel_in ;;
+    9) suse_codecs ;;
+    10) fix_se_suse ;;
+    11) nvidia_in ;;
+    12) chaotic_aur_lib ;;
+    13 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
