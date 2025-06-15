@@ -93,29 +93,35 @@ osu_in () {
 
 jade_in () {
 
-    local ver=$(curl -s "https://codeberg.org/api/v1/repos/mkrsym1/jadeite/releases" | jq -r '.[0].tag_name')
-    cd $HOME
-    wget https://codeberg.org/mkrsym1/jadeite/releases/download/${ver}/${ver}.zip
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/cmd.txt
-    mkdir -p jadeite
-    unzip -d $HOME/jadeite/ ${ver}.zip
-    cp cmd.txt jadeite
-    cd jadeite
-    chmod +x block_analytics.sh
-    sudo ./block_analytics.sh
-    cd ..
-    {
-        echo "$msg181"
-        echo "$msg182"
-        echo "$msg183"
-        echo "$msg184"
-        echo "$msg185"
-        echo "$msg186"
-    } > txtbox
-    whiptail --textbox txtbox 12 80
-    rm ${ver}.zip
-    rm txtbox
-    rm cmd.txt
+    if flatpak list | grep -q 'com.valvesoftware.Steam'; then
+        local ver=$(curl -s "https://codeberg.org/api/v1/repos/mkrsym1/jadeite/releases" | jq -r '.[0].tag_name')
+        cd $HOME
+        wget https://codeberg.org/mkrsym1/jadeite/releases/download/${ver}/${ver}.zip
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/cmd.txt
+        mkdir -p jadeite
+        unzip -d $HOME/jadeite/ ${ver}.zip
+        cp cmd.txt jadeite
+        cd jadeite
+        chmod +x block_analytics.sh
+        sudo ./block_analytics.sh
+        cd ..
+        {
+            echo "$msg181"
+            echo "$msg182"
+            echo "$msg183"
+            echo "$msg184"
+            echo "$msg185"
+            echo "$msg186"
+        } > txtbox
+        whiptail --textbox txtbox 12 80
+        rm ${ver}.zip
+        rm txtbox
+        rm cmd.txt
+    else
+        local title="$msg030"
+        local msg="$msg205"
+        _msgbox_
+    fi
 
 }
 
@@ -135,7 +141,7 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 title="$msg187"
 msg="$msg188"
 _msgbox_
-if command -v flatpak &> /dev/null && flatpak list | grep -q 'net.lutris.Lutris' || command -v flatpak &> /dev/null && flatpak list | grep -q 'com.heroicgameslauncher.hgl'; then
+if command -v flatpak &> /dev/null && flatpak list | grep -q 'net.lutris.Lutris' || command -v flatpak &> /dev/null && flatpak list | grep -q 'com.heroicgameslauncher.hgl' || command -v flatpak &> /dev/null && flatpak list | grep -q 'com.valvesoftware.Steam'; then
     runners_menu
 else
     title="$msg030"

@@ -1,1 +1,1 @@
-bash -c "cmd=(%command%)"'; cmd[-1]="$HOME/jadeite/jadeite.exe"; cmd+=("$HOME/.local/share/Steam/steamapps/common/Wuthering Waves/Client/Binaries/Win64/Client-Win64-Shipping.exe" "--"); WINEDLLOVERRIDES="KRSDKExternal.exe=d" "${cmd[@]}" -dx11'
+bash -c "cmd=(%command%)"'; cmd[-1]="$HOME/jadeite/jadeite.exe"; cmd+=("$HOME/.var/app/com.valvesoftware.Steam/data/Steam/steamapps/common/Wuthering Waves/Client/Binaries/Win64/Client-Win64-Shipping.exe" "--"); WINEDLLOVERRIDES="KRSDKExternal.exe=d" "${cmd[@]}" -dx11'
