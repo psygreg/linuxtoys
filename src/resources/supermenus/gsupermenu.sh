@@ -269,6 +269,7 @@ nexusmods_t () {
             sudo sed -i 's|^Exec=/usr/bin/NexusMods.App %u$|Exec=/usr/bin/nexusmods/NexusMods.App %u|' "/usr/share/applications/com.nexusmods.app.desktop"
         fi
         cd ..
+        sleep 1
         rm -rf squashfs-root
         rm NexusMods.App.x86_64.AppImage
     fi

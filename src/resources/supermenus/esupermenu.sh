@@ -41,6 +41,7 @@ lucidglyph_in () {
         chmod +x lucidglyph.sh
         sudo ./lucidglyph.sh install
         cd ..
+        sleep 1
         rm -rf lucidglyph-${ver}
         local title="$msg021"
         local msg="$msg022"
@@ -245,6 +246,7 @@ psaver () {
         git clone https://github.com/AdnanHodzic/auto-cpufreq.git
         cd auto-cpufreq && sudo ./auto-cpufreq-installer
         cd ..
+        sleep 1
         rm -rf auto-cpufreq
         sudo auto-cpufreq --install
         flatpak_in_lib
