@@ -21,6 +21,7 @@ usupermenu () {
     local efx_status=$([ "$_efx" = "com.github.wwmm.easyeffects" ] && echo "ON" || echo "OFF")
     local sc_status=$([ "$_sc" = "com.core447.StreamController" ] && echo "ON" || echo "OFF")
     local qpw_status=$([ "$_qpw" = "org.rncbc.qpwgraph" ] && echo "ON" || echo "OFF")
+    local wrhs_status=$([ "$_wrhs" = "io.github.flattool.Warehouse" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -35,6 +36,7 @@ usupermenu () {
             "StreamController" "$msg151" $sc_status \
             "OpenRGB" "$msg091" $oprgb_status \
             "Flatseal" "$msg133" $fseal_status \
+            "Warehouse" "$msg218" $wrhs_status \
             "Easy Effects" "$msg147" $efx_status \
             "QPWGraph" "$msg179" $qpw_status \
             "btrfs-Assistant" "$msg092" $btassist_status \
@@ -67,6 +69,7 @@ usupermenu () {
         [[ "$selection" == *"Easy Effects"* ]] && _efx="com.github.wwmm.easyeffects" || _efx=""
         [[ "$selection" == *"StreamController"* ]] && _sc="com.core447.StreamController" || _sc=""
         [[ "$selection" == *"QPWGraph"* ]] && _qpw="org.rncbc.qpwgraph" || _qpw=""
+        [[ "$selection" == *"Warehouse"* ]] && _wrhs="io.github.flattool.Warehouse" || _wrhs=""
 
         install_flatpak
         install_native
@@ -275,7 +278,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw)
+    local _flatpaks=($_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw $_wrhs)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
