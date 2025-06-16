@@ -74,4 +74,5 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [NVM-sh](https://github.com/nvm-sh)
 - [WiVRn](https://github.com/WiVRn)
 - [Oversteer](https://github.com/berarma/oversteer) by **Bernat**
+- [WinApps](https://github.com/winapps-org/winapps)
 - And the Linux Community
