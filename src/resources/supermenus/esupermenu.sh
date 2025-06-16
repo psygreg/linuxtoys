@@ -392,6 +392,29 @@ preload_in () {
 
 }
 
+# install linux subsystem for windows
+lsw_in () {
+
+    {
+        echo "$msg209"
+        echo "$msg210"
+        echo "$msg211"
+        echo "$msg212"
+        echo "$msg213"
+        echo "$msg214"
+        echo "$msg215"
+        echo "$msg216"
+    } > txtbox
+    whiptail --textbox txtbox 12 80
+    if whiptail --title "LSW" --yesno "$msg217"; then
+        cd $HOME
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/lsw/refs/heads/main/src/lsw-in.sh)
+        sleep 1
+        rm txtbox
+    fi
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -414,7 +437,8 @@ while :; do
         "10" "$msg079" \
         "11" "$msg078" \
         "12" "$msg053" \
-        "13" "$msg059" 3>&1 1>&2 2>&3)
+        "13" "$msg209" \
+        "14" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -436,7 +460,8 @@ while :; do
     10) fix_se_suse ;;
     11) nvidia_in ;;
     12) chaotic_aur_lib ;;
-    13 | q) break ;;
+    13) lsw_in ;;
+    14 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
