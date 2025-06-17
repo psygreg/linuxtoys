@@ -406,7 +406,7 @@ lsw_in () {
         echo "$msg216"
     } > txtbox
     whiptail --textbox txtbox 12 80
-    if whiptail --title "LSW" --yesno "$msg217"; then
+    if whiptail --title "LSW" --yesno "$msg217" 12 78; then
         cd $HOME
         bash <(curl -s https://raw.githubusercontent.com/psygreg/lsw/refs/heads/main/src/lsw-in.sh)
         sleep 1
