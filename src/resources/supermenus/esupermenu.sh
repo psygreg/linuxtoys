@@ -331,7 +331,7 @@ kernel_in () {
 kernel_compat () {
 
     sudo dnf copr enable bieszczaders/kernel-cachyos
-    sudo insta kernel-cachyos kernel-cachyos-devel-matched
+    insta kernel-cachyos kernel-cachyos-devel-matched
     sudo setsebool -P domain_kernel_load_modules on
     sudo dracut -f --regenerate-all
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -344,7 +344,7 @@ kernel_compat () {
 kernel_performance () {
 
     sudo dnf copr enable bieszczaders/kernel-cachyos-lto
-    sudo insta kernel-cachyos-lto kernel-cachyos-lto-devel-matched
+    insta kernel-cachyos-lto kernel-cachyos-lto-devel-matched
     sudo setsebool -P domain_kernel_load_modules on
     sudo dracut -f --regenerate-all
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
