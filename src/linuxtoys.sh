@@ -37,9 +37,22 @@ krn_chk () {
 
 }
 
+# check wget and curl are installed
+check_wget_curl () {
+    if ! command -v wget &> /dev/null; then
+        whiptail --title "Error" --msgbox "wget is not installed. Please install wget to continue." 8 78
+        exit 1
+    fi
+    if ! command -v curl &> /dev/null; then
+        whiptail --title "Error" --msgbox "curl is not installed. Please install curl to continue." 8 78
+        exit 1
+    fi
+}
+
 # runtime
 # check internet connection
 # ping google
+check_wget_curl
 . /etc/os-release
 wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
 # call linuxtoys turbobash lib
