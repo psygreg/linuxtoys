@@ -35,8 +35,11 @@ lucidglyph_in () {
     local ver="${tag#v}"
     if whiptail --title "$msg019" --yesno "$msg020" 8 78; then  
         cd $HOME
-        wget https://github.com/maximilionus/lucidglyph/archive/refs/tags/${tag}.tar.gz
-        tar -xvzf v0.11.0.tar.gz 
+
+        [ -f "${tag}.tar.gz" ] && rm -f "${tag}.tar.gz"
+
+        wget -O "${tag}.tar.gz" "https://github.com/maximilionus/lucidglyph/archive/refs/tags/${tag}.tar.gz"
+        tar -xvzf "${tag}.tar.gz"
         cd lucidglyph-${ver}
         chmod +x lucidglyph.sh
         sudo ./lucidglyph.sh install
