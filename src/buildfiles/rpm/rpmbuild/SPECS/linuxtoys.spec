@@ -8,7 +8,7 @@ License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
 Requires:       bash newt curl wget alacritty git
-BuildRequires:  desktop-file-utils
+# BuildRequires:  desktop-file-utils
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
