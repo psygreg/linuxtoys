@@ -47,6 +47,7 @@ grubtrfs_in () {
         sudo snapper -c root create-config /
         sudo snapper -c root create --command apt
     fi
+    sleep 1
     sudo sed -i 's/^TIMELINE_CREATE=.*/TIMELINE_CREATE="no"/' '/etc/snapper/configs/root'
     sudo sed -i 's/^NUMBER_LIMIT=.*/NUMBER_LIMIT="5"/' '/etc/snapper/configs/root'
     sudo sed -i 's/^NUMBER_LIMIT_IMPORTANT=.*/NUMBER_LIMIT_IMPORTANT="5"/' '/etc/snapper/configs/root'

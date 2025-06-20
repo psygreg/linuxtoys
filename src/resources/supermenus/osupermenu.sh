@@ -20,6 +20,10 @@ osupermenu () {
     local zen_status=$([ "$_zen" = "app.zen_browser.zen" ] && echo "ON" || echo "OFF")
     local drktb_status=$([ "$_drktb" = "org.darktable.Darktable" ] && echo "ON" || echo "OFF")
     local foli_status=$([ "$_foli" = "com.github.johnfactotum.Foliate" ] && echo "ON" || echo "OFF")
+    local kcad_status=$([ "$_kcad" = "org.kicad.KiCad" ] && echo "ON" || echo "OFF")
+    local fig_status=$([ "$_fig" = "1" ] && echo "ON" || echo "OFF")
+    local pnta_status=$([ "$_pnta" = "com.github.PintaProject.Pinta" ] && echo "ON" || echo "OFF")
+    local krt_status=$([ "$_krt" = "org.kde.krita" ] && echo "ON" || echo "OFF")
 
     while :; do
     
@@ -33,11 +37,15 @@ osupermenu () {
             "MS Teams" "$msg100" $msteams_status \
             "Anydesk" "$msg101" $anyd_status \
             "Slack" "$msg102" $slck_status \
+            "Figma" "$msg223" $fig_status \
             "Cohesion" "$msg103" $notion_status \
             "Darktable" "$msg148" $drktb_status \
+            "Pinta" "$msg224" $pnta_status \
+            "Krita" "$msg225" $krt_status \
             "GIMP" "$msg104" $gimp_status \
             "Inkscape" "$msg105" $inksc_status \
             "FreeCAD" "$msg106" $fcad_status \
+            "KiCad" "$msg222" $kcad_status \
             "Blender" "$msg159" $blender_status \
             "DaVinci Resolve" "$msg107" $drslv_status \
             "FireAlpaca" "$msg108" $fial_status \
@@ -64,9 +72,14 @@ osupermenu () {
         [[ "$selection" == *"Chrome"* ]] && _chrome="com.google.Chrome" || _chrome=""
         [[ "$selection" == *"Zen"* ]] && _zen="app.zen_browser.zen" || _zen=""
         [[ "$selection" == *"Foliate"* ]] && _foli="com.github.johnfactotum.Foliate" || _foli=""
+        [[ "$selection" == *"KiCad"* ]] && _kcad="org.kicad.KiCad" || _kcad=""
+        [[ "$selection" == *"Figma"* ]] && _fig="1" || _fig=""
+        [[ "$selection" == *"Pinta"* ]] && _pnta="com.github.PintaProject.Pinta" || _pnta=""
+        [[ "$selection" == *"Krita"* ]] && _krt="org.kde.krita" || _krt=""
 
         install_flatpak
         install_native
+        figma_t
         if [[ -n "$flatpak_run" ]]; then
             local title="$msg006"
             local msg="$msg036"
@@ -135,7 +148,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender)
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender $_kcad)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
@@ -151,6 +164,19 @@ install_flatpak () {
                 _msgbox_
             fi
         fi
+    fi
+
+}
+
+# figma installer
+figma_t () {
+
+    if [[ -n "$_fig" ]]; then
+        cd $HOME
+        local tag=$(curl -s https://api.github.com/repos/Figma-Linux/figma-linux/releases/latest | grep '"tag_name"' | cut -d '"' -f4 | sed 's/^v//')
+        wget https://github.com/Figma-Linux/figma-linux/releases/download/v${tag}/figma-linux_${tag}_linux_x86_64.AppImage
+        chmod +x figma-linux-*.AppImage
+        sudo ./figma-linux-*.AppImage -i
     fi
 
 }
