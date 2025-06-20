@@ -92,11 +92,23 @@ usupermenu () {
 # native packages
 install_native () {
 
+    local _bt_package=""
+    local _wd_package=""
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-        local _packages=($_slar $_oprzr $_btassist $_droid $_dckr $_rocm)
+        _bt_package=($_btassist)
     else
-        local _packages=($_slar $_oprzr $_droid $_dckr $_rocm)
+        local title="btrfs-Assistant"
+        local msg="$msg220"
+        _msgbox_
     fi
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+        _wd_package=($_droid)
+    else
+        local title="Waydroid"
+        local msg="$msg219"
+        _msgbox_
+    fi
+    local _packages=($_slar $_oprzr $_droid $_dckr $_rocm $_wd_package $_bt_package)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             if [ "$ID" == "ubuntu" ]; then
