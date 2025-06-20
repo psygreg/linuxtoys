@@ -69,26 +69,35 @@ jobs:
         FILE=$(ls *.deb | head -n1)
         echo "file=$FILE" >> $GITHUB_OUTPUT
 
-    - name: Build RPM package
+    - name: Build (S)RPM packages
       env:
         LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
       run: |
         mkdir -p src/buildfiles/rpm/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-        mkdir -p src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/{opt/linuxtoys,usr/share/applications}
-        cp src/{linuxtoys.sh,linuxtoys.png} src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/opt/linuxtoys
+        mkdir -p src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/{bin,share/{applications,icons/hicolor/scalable/apps}}
+        cp src/linuxtoys.sh src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/bin
+        cp src/linuxtoys.png src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/icons/hicolor/scalable/apps
         cp src/LinuxToys.desktop src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/applications
         pushd src/buildfiles/rpm/
         tar -cJf rpmbuild/SOURCES/linuxtoys-${LINUXTOYS_VERSION}.tar.xz linuxtoys-${LINUXTOYS_VERSION}/
         pushd rpmbuild
-        rpmbuild --define "_topdir `pwd`" -bb SPECS/linuxtoys.spec
+        rpmbuild --define "_topdir `pwd`" --define "debug_package %{nil}" -ba SPECS/linuxtoys.spec
+        rpmbuild --define "_topdir `pwd`" --define "debug_package %{nil}" -bb SPECS/linuxtoys.spec
         popd
         popd
         cp src/buildfiles/rpm/rpmbuild/RPMS/x86_64/*.rpm ./linuxtoys-${LINUXTOYS_VERSION}-1_amd64.rpm
+        cp src/buildfiles/rpm/rpmbuild/SRPMS/*.src.rpm ./linuxtoys-${LINUXTOYS_VERSION}-1_amd64.src.rpm
 
     - name: Get RPM package
       id: rpm_package_path
       run: |
-        FILE=$(ls *.rpm | head -n1)
+        FILE=$(ls *amd64.rpm | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Get SRPM package
+      id: srpm_package_path
+      run: |
+        FILE=$(ls *amd64.src.rpm | head -n1)
         echo "file=$FILE" >> $GITHUB_OUTPUT
 
     - name: Upload AUR package
@@ -108,4 +117,10 @@ jobs:
       with:
         name: ${{ steps.rpm_package_path.outputs.file }}
         path: ${{ steps.rpm_package_path.outputs.file }}
+
+    - name: Upload SRPM package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.srpm_package_path.outputs.file }}
+        path: ${{ steps.srpm_package_path.outputs.file }}
 
