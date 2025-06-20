@@ -220,3 +220,6 @@ msg219="Uma sessão Wayland é necessária, e você parece estar numa sessão X1
 msg220="O sistema de arquivos não é btrfs, pulando..."
 msg221="Runtime completo para o jogo de ritmo"
 msg222="Toolkit EDA para design de placas de circuito"
+msg223="Ferramenta de design e prototipagem"
+msg224="Abordagem open-source do Paint"
+msg225="Pintura digital profissional open-source"

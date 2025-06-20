@@ -220,3 +220,6 @@ msg219="A Wayland session is required, and you seem to be on X11. Waydroid insta
 msg220="Filesystem is not btrfs, skipping..."
 msg221="Complete runtime for the rhythm game"
 msg222="EDA toolkit for PCB designing"
+msg223="Design and prototyping tool"
+msg224="Open-source Paint"
+msg225="Professional open-source digital painting"
