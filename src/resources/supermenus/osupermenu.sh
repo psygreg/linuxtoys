@@ -20,6 +20,7 @@ osupermenu () {
     local zen_status=$([ "$_zen" = "app.zen_browser.zen" ] && echo "ON" || echo "OFF")
     local drktb_status=$([ "$_drktb" = "org.darktable.Darktable" ] && echo "ON" || echo "OFF")
     local foli_status=$([ "$_foli" = "com.github.johnfactotum.Foliate" ] && echo "ON" || echo "OFF")
+    local kcad_status=$([ "$_kcad" = "org.kicad.KiCad" ] && echo "ON" || echo "OFF")
 
     while :; do
     
@@ -38,6 +39,7 @@ osupermenu () {
             "GIMP" "$msg104" $gimp_status \
             "Inkscape" "$msg105" $inksc_status \
             "FreeCAD" "$msg106" $fcad_status \
+            "KiCad" "$msg222" $kcad_status \
             "Blender" "$msg159" $blender_status \
             "DaVinci Resolve" "$msg107" $drslv_status \
             "FireAlpaca" "$msg108" $fial_status \
@@ -64,6 +66,7 @@ osupermenu () {
         [[ "$selection" == *"Chrome"* ]] && _chrome="com.google.Chrome" || _chrome=""
         [[ "$selection" == *"Zen"* ]] && _zen="app.zen_browser.zen" || _zen=""
         [[ "$selection" == *"Foliate"* ]] && _foli="com.github.johnfactotum.Foliate" || _foli=""
+        [[ "$selection" == *"KiCad"* ]] && _kcad="org.kicad.KiCad" || _kcad=""
 
         install_flatpak
         install_native
@@ -135,7 +138,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender)
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender $_kcad)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
