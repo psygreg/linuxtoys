@@ -1,3 +1,6 @@
+####### Build #######
+
+# General build files
 *.build
 *.buildinfo
 *.changes
@@ -6,18 +9,22 @@
 *.substvars
 debhelper-build-stamp
 
+# Debian build files
 src/buildfiles/deb/linuxtoys/DEBIAN/opt
 src/buildfiles/deb/linuxtoys/DEBIAN/usr
 src/buildfiles/deb/linuxtoys/DEBIAN/.debhelper
 src/buildfiles/deb/linuxtoys/DEBIAN/linuxtoys
 src/buildfiles/deb/*.deb
 
+# Red Hat build files
 src/buildfiles/rpm/rpmbuild/x86_64/linuxtoys*
 src/buildfiles/rpm/rpmbuild/BUILD/
+src/buildfiles/rpm/rpmbuild/RPMS
+src/buildfiles/rpm/rpmbuild/SRPMS
 src/buildfiles/rpm/rpmbuild/SOURCES/
 src/buildfiles/rpm/linuxtoys-*/
 
+# Arch build files
 src/buildfiles/pkgbuild/linuxtoys-*/bin/*
 src/buildfiles/pkgbuild/pkg
 src/buildfiles/pkgbuild/src
-
