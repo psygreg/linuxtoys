@@ -177,6 +177,8 @@ figma_t () {
         wget https://github.com/Figma-Linux/figma-linux/releases/download/v${tag}/figma-linux_${tag}_linux_x86_64.AppImage
         chmod +x figma-linux-*.AppImage
         sudo ./figma-linux-*.AppImage -i
+        sleep 1
+        rm figma-linux-*.AppImage
     fi
 
 }
