@@ -120,6 +120,8 @@ install_native () {
             if [[ -n "$_droid" ]]; then
                 insta curl ca-certificates -y
                 curl -s https://repo.waydro.id | sudo bash
+                sleep 1
+                sudo systemctl enable --now waydroid-container
             fi
             if [[ -n "$_dckr" ]]; then
                 docker_t
@@ -149,6 +151,9 @@ install_native () {
                 fi
                 insta $pak
             done
+            if [[ -n "$_droid" ]]; then
+                sudo systemctl enable --now waydroid-container
+            fi
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [[ -n "$_oprzr" ]]; then
                 insta kernel-devel -y
@@ -160,6 +165,9 @@ install_native () {
             fi
             if [[ -n "$_rocm" ]]; then
                 rocm_rpm
+            fi
+            if [[ -n "$_droid" ]]; then
+                sudo systemctl enable --now waydroid-container
             fi
         elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
             if [[ -n "$_oprzr" ]]; then
