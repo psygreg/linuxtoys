@@ -113,7 +113,7 @@ install_native () {
             if [[ -n "$_steam" ]]; then
                 cd $HOME
                 wget https://cdn.fastly.steamstatic.com/client/installer/steam.deb
-                sudo dpkg -i steam.deb
+                sudo apt install ./steam.deb
                 rm steam.deb
             fi
         fi
@@ -262,10 +262,10 @@ nexusmods_t () {
         if [ -d /usr/bin/nexusmods ]; then
             cp -rf usr/bin/ nexusmods
             sudo rm -rf /usr/bin/nexusmods
-            sudo cp nexusmods /usr/bin
+            sudo cp -r nexusmods /usr/bin
         else
-            cp -rf usr/bin nexusmods
-            sudo cp nexusmods /usr/bin
+            cp -rf usr/bin/ nexusmods
+            sudo cp -r nexusmods /usr/bin
             sudo cp -r usr/share/applications/ /usr/share/applications/
             sudo cp -r usr/share/icons/hicolor/scalable/apps/ /usr/share/icons/hicolor/scalable/apps/
             sudo cp -r usr/share/metainfo/ /usr/share/metainfo/
