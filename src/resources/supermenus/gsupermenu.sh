@@ -142,6 +142,7 @@ install_flatpak () {
             _flatpak_
             if [[ -n "$_steam" ]]; then
                 flatpak install --or-update -u -y com.valvesoftware.Steam
+                sleep 1
                 sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
             fi
             if [[ -n "$_gfn" ]]; then
