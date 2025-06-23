@@ -17,6 +17,7 @@ dsupermenu () {
     local dotnet_status=$([ "$_dotnet" = "dotnet-sdk-9.0" ] && echo "ON" || echo "OFF")
     local java_status=$([ "$_java" = "java" ] && echo "ON" || echo "OFF")
     local droidstd_status=$([ "$_droidstd" = "droidstd" ] && echo "ON" || echo "OFF")
+    local omb_status=$([ "$_omb" = "1" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -27,6 +28,7 @@ dsupermenu () {
             "VSCodium" "$msg142" $codium_status \
             "NeoVim" "$msg140" $nvim_status \
             "Jetbrains" "$msg162" $jb_status \
+            "OhMyBash" "$msg226" $omb_status \
             "NodeJS" "+ Node Version Manager" $nvm_status \
             "Maven" "$msg178" $mvn_status \
             "Python" "$msg134" $pyenv_status \
@@ -55,6 +57,7 @@ dsupermenu () {
         [[ "$selection" == *"C#"* ]] && _dotnet="dotnet-sdk-9.0" || _dotnet=""
         [[ "$selection" == *"Java"* ]] && _java="java" || _java=""
         [[ "$selection" == *"Android Studio"* ]] && _droidstd="droidstd" || _droidstd=""
+        [[ "$selection" == *"OhMyBash"* ]] && _omb="1" || _omb=""
 
         install_flatpak
         install_native
@@ -419,6 +422,9 @@ others_t () {
     if [[ -n "$_droidstd" ]]; then
         local subscript="android-studio-in"
         _invoke_
+    fi
+    if [[ -n "$_omb" ]]; then
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
     fi
 
 }

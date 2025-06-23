@@ -113,7 +113,7 @@ nvidia_in () {
                          wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb
                          sudo dpkg -i cuda-keyring_1.1-1_all.deb
                          sudo apt update
-                         insta cuda-drivers nvidia-open
+                         insta cuda-drivers
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
                             insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -387,6 +387,9 @@ preload_in () {
     if whiptail --title "Preload" --yesno "$msg208" 12 78; then
         if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             chaotic_aur_lib
+        fi
+        if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            sudo dnf copr enable elxreno/preload -y
         fi
         insta preload
         sudo systemctl enable preload
