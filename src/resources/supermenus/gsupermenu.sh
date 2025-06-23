@@ -255,7 +255,7 @@ nexusmods_t () {
     if [[ -n "$_nexmod" ]]; then
         local ver=$(curl -s "https://api.github.com/repos/Nexus-Mods/NexusMods.App/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
         cd $HOME
-        insta fuse
+        insta fuse3
         wget https://github.com/Nexus-Mods/NexusMods.App/releases/download/${ver}/NexusMods.App.x86_64.AppImage
         ./NexusMods.App.x86_64.AppImage --appimage-extract
         cd squashfs-root
