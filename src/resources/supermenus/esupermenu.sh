@@ -388,6 +388,9 @@ preload_in () {
         if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             chaotic_aur_lib
         fi
+        if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            sudo dnf copr enable elxreno/preload -y
+        fi
         insta preload
         sudo systemctl enable preload
         sudo systemctl start preload
