@@ -35,6 +35,11 @@ krn_chk () {
                             sleep 1
                             rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
                             rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
+                            if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+                                wget https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh
+                                chmod +x create-key.sh
+                                ./create-key.sh --linuxtoys
+                            fi
                         fi
                         # clean old kernels
                         dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge

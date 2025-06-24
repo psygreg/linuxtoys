@@ -309,6 +309,11 @@ kernel_in () {
                 sleep 1
                 rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
                 rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
+                if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+                    wget https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh
+                    chmod +x create-key.sh
+                    ./create-key.sh --linuxtoys
+                fi
             else
                 bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
             fi
