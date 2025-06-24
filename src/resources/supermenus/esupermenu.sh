@@ -298,9 +298,17 @@ kernel_in () {
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
                 local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+                cd $HOME
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
                 sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
+                cd $HOME/.local
+                sleep 1
+                wget -O "kernelsetting" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults
+                cd $HOME
+                sleep 1
+                rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
+                rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
             else
                 bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
             fi
