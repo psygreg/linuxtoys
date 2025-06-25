@@ -1,0 +1,126 @@
+name: Build AUR, DEB, and RPM Packages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential devscripts rpm desktop-file-utils
+
+    - name: Prepare version
+      id: read_version_file
+      run: echo "version=$(cat src/ver)" >> $GITHUB_OUTPUT
+
+    - name: Build AUR package
+      run: |
+        docker run --rm -v "$PWD:/workspace" -w /workspace archlinux:base-devel \
+        bash -c "
+          pacman -Syu --noconfirm &&
+          pacman -S --needed --noconfirm base-devel wget libnewt alacritty git &&
+          useradd -m builder &&
+          chown -R builder . &&
+          su builder -c 'cd src/buildfiles/pkgbuild && makepkg -s --noconfirm' &&
+          cp src/buildfiles/pkgbuild/*.pkg.tar.* ./
+        "
+        sudo chown -R $(id -u):$(id -g) .
+
+    - name: Get AUR package
+      id: aur_package_path
+      run: |
+        FILE=$(ls linuxtoys-*-x86_64.pkg.tar.* | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Build DEB package
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      run: |
+        mkdir -p src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys
+        mkdir -p src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
+        cp src/{linuxtoys.sh,linuxtoys.png} src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys
+        cp src/LinuxToys.desktop src/buildfiles/deb/linuxtoys/DEBIAN/usr/share/applications
+        dpkg-deb --build --root-owner-group src/buildfiles/deb/linuxtoys/
+        cp src/buildfiles/deb/*.deb ./linuxtoys-${LINUXTOYS_VERSION}-1_amd64.deb
+
+    - name: Get DEB package
+      id: deb_package_path
+      run: |
+        FILE=$(ls *.deb | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Build (S)RPM packages
+      env:
+        LINUXTOYS_VERSION: ${{ steps.read_version_file.outputs.version }}
+      run: |
+        mkdir -p src/buildfiles/rpm/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+        mkdir -p src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/{bin,share/{applications,icons/hicolor/scalable/apps}}
+        cp src/linuxtoys.sh src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/bin
+        cp src/linuxtoys.png src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/icons/hicolor/scalable/apps
+        cp src/LinuxToys.desktop src/buildfiles/rpm/linuxtoys-${LINUXTOYS_VERSION}/usr/share/applications
+        pushd src/buildfiles/rpm/
+        tar -cJf rpmbuild/SOURCES/linuxtoys-${LINUXTOYS_VERSION}.tar.xz linuxtoys-${LINUXTOYS_VERSION}/
+        pushd rpmbuild
+        rpmbuild --define "_topdir `pwd`" --define "debug_package %{nil}" -ba SPECS/linuxtoys.spec
+        rpmbuild --define "_topdir `pwd`" --define "debug_package %{nil}" -bb SPECS/linuxtoys.spec
+        popd
+        popd
+        cp src/buildfiles/rpm/rpmbuild/RPMS/x86_64/*.rpm ./linuxtoys-${LINUXTOYS_VERSION}-1_amd64.rpm
+        cp src/buildfiles/rpm/rpmbuild/SRPMS/*.src.rpm ./linuxtoys-${LINUXTOYS_VERSION}-1_amd64.src.rpm
+
+    - name: Get RPM package
+      id: rpm_package_path
+      run: |
+        FILE=$(ls *amd64.rpm | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Get SRPM package
+      id: srpm_package_path
+      run: |
+        FILE=$(ls *amd64.src.rpm | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Upload AUR package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.aur_package_path.outputs.file }}
+        path: ${{ steps.aur_package_path.outputs.file }}
+
+    - name: Upload DEB package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.deb_package_path.outputs.file }}
+        path: ${{ steps.deb_package_path.outputs.file }}
+
+    - name: Upload RPM package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.rpm_package_path.outputs.file }}
+        path: ${{ steps.rpm_package_path.outputs.file }}
+
+    - name: Upload SRPM package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.srpm_package_path.outputs.file }}
+        path: ${{ steps.srpm_package_path.outputs.file }}
+

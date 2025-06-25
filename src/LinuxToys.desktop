@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=LinuxToys 
+Type=Application
+Exec=/opt/linuxtoys/linuxtoys.sh
+Terminal=true
+Icon=/opt/linuxtoys/linuxtoys.png
+Comment=A set of tools for Linux presented in a user-friendly way
+NoDisplay=false
+Categories=Development
