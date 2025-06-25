@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=PyCharm
+Type=Application
+Exec=/opt/pycharm/bin/pycharm
+Terminal=false
+Icon=/opt/pycharm/bin/pycharm.png
+Comment=Jetbrains IDE for Python and data scientists
+NoDisplay=false
+Categories=Development

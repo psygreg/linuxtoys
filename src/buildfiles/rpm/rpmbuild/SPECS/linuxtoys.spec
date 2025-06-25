@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        2.1.4
+Version:        3.0
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,11 +7,13 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget alacritty git
+Requires:       bash newt curl wget git
 # BuildRequires:  desktop-file-utils
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
+
+%global debug_package %{nil}
 
 %prep
 %setup -q
@@ -45,5 +47,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 2.1.4
-- bugfix: now updater works as intended
+* Thu Jun  5 2025 Victor Gregory <psygreg@pm.me> - 3.0
+- added Console Mode
+- bugfix internet detection (GitHub #10)

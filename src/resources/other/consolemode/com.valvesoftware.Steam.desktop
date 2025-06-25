@@ -1,0 +1,65 @@
+[Desktop Entry]
+Actions=Store;Community;Library;Servers;Screenshots;News;Settings;BigPicture;Friends;
+Categories=Network;FileTransfer;Game;
+Comment=Aplicativo para jogar e gerenciar jogos no Steam
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/bigpicture
+Icon=com.valvesoftware.Steam
+MimeType=x-scheme-handler/steam;x-scheme-handler/steamlink;
+Name=Big Picture
+NoDisplay=false
+Path=
+StartupNotify=true
+StartupWMClass=Steam
+Terminal=false
+TerminalOptions=
+Type=Application
+X-Desktop-File-Install-Version=0.28
+X-Flatpak=com.valvesoftware.Steam
+X-Flatpak-RenamedFrom=steam.desktop;
+X-Flatpak-Tags=proprietary;
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+
+[Desktop Action BigPicture]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/bigpicture
+Name=Big Picture
+
+[Desktop Action Community]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://url/SteamIDControlPage
+Name[pt_BR]=Comunidade
+Name=Community
+
+[Desktop Action Friends]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/friends
+Name[pt_BR]=Amigos
+Name=Friends
+
+[Desktop Action Library]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/games
+Name[pt_BR]=Biblioteca
+Name=Library
+
+[Desktop Action News]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/news
+Name[pt_BR]=Notícias
+Name=News
+
+[Desktop Action Screenshots]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/screenshots
+Name[pt_BR]=Capturas de tela
+Name=Screenshots
+
+[Desktop Action Servers]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/servers
+Name[pt_BR]=Servidores
+Name=Servers
+
+[Desktop Action Settings]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://open/settings
+Name[pt_BR]=Configurações
+Name=Settings
+
+[Desktop Action Store]
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=steam com.valvesoftware.Steam steam://store
+Name[pt_BR]=Loja
+Name=Store

@@ -1,50 +1,58 @@
-## linuxtoys modules library
+## turbobash library
+. /etc/os-release
 
 # whiptail color palette
 export NEWT_COLORS='
-    root=white,blue
+    root=white,black
     border=black,lightgray
     window=black,lightgray
     shadow=black,gray
     title=black,lightgray
-    button=black,cyan
-    actbutton=white,blue
+    button=black,red
+    actbutton=white,red
     checkbox=black,lightgray
-    actcheckbox=black,cyan
+    actcheckbox=black,red
     entry=black,lightgray
     label=black,lightgray
     listbox=black,lightgray
-    actlistbox=black,cyan
+    actlistbox=black,red
     textbox=black,lightgray
-    acttextbox=black,cyan
-    helpline=white,blue
+    acttextbox=black,red
+    helpline=white,red
     roottext=black,lightgray
 '
 
+# logger -- define variable 'logfile' as the full path to log file
+_log_ () {
+
+    exec 2> >(tee "$logfile" >&2)
+
+}
+
 # native package installation
-install_n_lib () {
+_install_ () {
     
     if [[ -n "$_packages" ]]; then
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(steam|yes|code|pyenv)$ ]]; then
                     continue
                 fi
-                if dpkg -s "$pac" 2>/dev/null 1>&2; then
+                if dpkg -s "$pak" 2>/dev/null 1>&2; then
                     continue
                 else
                     sudo apt install -y $pak
                 fi
             done
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(yes|openrazer|code|pyenv|unityhub|dotnet-sdk-9.0)$ ]]; then
                     continue
                 fi
-                if pacman -Qi "$pac" 2>/dev/null 1>&2; then
+                if pacman -Qi "$pak" 2>/dev/null 1>&2; then
                     continue
                 else
-                    sudo apt install -y $pak
+                    sudo pacman -S --noconfirm $pak
                 fi
             done
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
@@ -52,7 +60,7 @@ install_n_lib () {
                 if [[ "$pak" =~ ^(yes|openrazer|code|pyenv)$ ]]; then
                     continue
                 fi
-                if rpm -qi "$pac" 2>/dev/null 1>&2; then
+                if rpm -qi "$pak" 2>/dev/null 1>&2; then
                     continue
                 else
                     sudo dnf in $pak -y
@@ -63,7 +71,7 @@ install_n_lib () {
                 if [[ "$pak" =~ ^(yes|openrazer|waydroid|code|pyenv|dotnet-sdk-9.0)$ ]]; then
                     continue
                 fi
-                if rpm -qi "$pac" 2>/dev/null 1>&2; then
+                if rpm -qi "$pak" 2>/dev/null 1>&2; then
                     continue
                 else
                     sudo zypper in $pak -y
@@ -74,8 +82,39 @@ install_n_lib () {
 
 }
 
+# INSTAnt install
+if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo apt install -y "$@"
+    }
+elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo pacman -S --noconfirm "$@"
+    }
+elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo dnf in "$@" -y
+    }
+elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo zypper in "$@" -y
+    }
+fi
+
 # flatpak installation
-install_f_lib () {
+_flatpak_ () {
 
     if [[ -n "$_flatpaks" ]]; then
         for flat in "${_flatpaks[@]}"; do
@@ -85,25 +124,8 @@ install_f_lib () {
 
 }
 
-# flatpak enabler
-flatpak_in_lib () {
-
-    if command -v flatpak &> /dev/null; then
-        whiptail --title "$msg013" --msgbox "$msg015" 8 78
-    else
-        if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            sudo apt install -y flatpak
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-            sudo pacman -S --noconfirm flatpak
-        fi
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-    fi
-
-}
-
-# language detect
-det_langfile () {
+# language detect -- add elif for each language in the last if statement
+_lang_ () {
 
     local lang="${LANG:0:2}"
     local available=("pt")
@@ -116,46 +138,15 @@ det_langfile () {
         ulang="en"
     fi
     if [ $ulang == "pt" ]; then
-        langfile="ltlang-pt"
+        langfile="pt"
     else
-        langfile="ltlang-en"
+        langfile="en"
     fi
 
 }
 
-# dependency check
-depchecker_lib () {
-
-    for dep in "${dependencies[@]}"; do
-        if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-            if rpm -qi "$dep" 2>/dev/null 1>&2; then
-                continue
-            else
-                if [ "$ID_LIKE" == "suse" ]; then
-                    sudo zypper in "$dep" -y
-                else
-                    sudo dnf in "$dep" -y
-                fi
-            fi
-        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-            if pacman -Qi "$dep" 2>/dev/null 1>&2; then
-                continue
-            else
-                sudo pacman -S --noconfirm "$dep"
-            fi
-        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-            if dpkg -s "$dep" 2>/dev/null 1>&2; then
-                continue
-            else
-                sudo apt install -y "$dep"
-            fi
-        fi
-    done
-
-}
-
-# subscript invoker
-invoke_lib () {
+# subscript invoker ## TODO REWORK
+_invoke_ () {
 
     if [[ -n "$supmenu" ]]; then
         bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh)
@@ -165,22 +156,69 @@ invoke_lib () {
 
 }
 
+# wraps all commands in a function in sudo -- usage: _root_ function_name
+_root_ () {
+
+    if [ $# -eq 0 ]; then
+        return 1
+    fi
+
+    local cmd=("$@")
+
+    # Check if already root
+    if [ "$(id -u)" -eq 0 ]; then
+        "${cmd[@]}"
+    else
+        sudo bash -c "$(declare -f "${cmd[0]}") ; ${cmd[*]}"
+    fi
+
+}
+
+# whiptail messagebox
+_msgbox_ () {
+
+    whiptail --title "$title" --msgbox "$msg" 12 78
+
+}
+
+## non-fastbash functions can be added HERE
+
 # add chaotic aur to arch repos
 chaotic_aur_lib () {
 
-    if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-        cd $HOME
-        sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-        sudo pacman-key --lsign-key 3056513887B78AEB
-        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-        sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
-        sudo sed -i -f script.sed /etc/pacman.conf
-        sudo pacman -Sy
-        whiptail --title "$msg023" --msgbox "$msg024" 8 78
-        rm script.sed
+    if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+        if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
+            cd $HOME
+            sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+            sudo pacman-key --lsign-key 3056513887B78AEB
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
+            sudo sed -i -f script.sed /etc/pacman.conf
+            sudo pacman -Sy
+            whiptail --title "$msg023" --msgbox "$msg024" 8 78
+            rm script.sed
+        fi
     else
         whiptail --title "$msg030" --msgbox "$msg077" 8 78
+    fi
+
+}
+
+# flatpak enabler
+flatpak_in_lib () {
+
+    if command -v flatpak &> /dev/null; then
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+    else
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            sudo apt install -y flatpak
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            sudo pacman -S --noconfirm flatpak
+        fi
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
     fi
 
 }

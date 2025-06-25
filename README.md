@@ -1,12 +1,22 @@
 # LinuxToys
 A collection of tools for Linux in a user-friendly way.
 
-![LinuxToys](https://github.com/psygreg/linuxtoys/blob/42463f6539d54f710ec2a915aa85ee1a68b7413a/src/scrnshot.png)
+![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
 
 ## Usage
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu.
 
+### Ubuntu (latest and latest LTS releases)
+There's a PPA available for LinuxToys. To use it:
+`sudo add-apt-repository ppa:psygreg/linuxtoys &&
+sudo apt update`
+
+### Fedora, OpenSUSE, AlmaLinux and RHEL
+You may obtain it and keep it up-to-date from the COPR repository: `sudo dnf copr enable psygreg/linuxtoys`
+
 ### Arch Linux
+Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) using `aura -A linuxtoys-bin`; or
+
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
@@ -50,13 +60,19 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Pipewire Audio Capture plugin for OBS Studio](https://github.com/dimtpap/obs-pipewire-audio-capture) by **Dimitris Papaioanou**
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
+- [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [Darktable](https://www.darktable.org)
 - [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
+- [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
+- [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) by **Adnan Hodzic**
+- [Touchégg](https://github.com/JoseExposito/touchegg) by **José Expósito**
+- [Vinegar](https://vinegarhq.org/Home/index.html) by **the VinegarHQ team**
 - [Chaotic AUR](https://aur.chaotic.cx/)
 - [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
 - [Pyenv](https://github.com/pyenv)
 - [NVM-sh](https://github.com/nvm-sh)
 - [WiVRn](https://github.com/WiVRn)
 - [Oversteer](https://github.com/berarma/oversteer) by **Bernat**
+- [WinApps](https://github.com/winapps-org/winapps)
 - And the Linux Community

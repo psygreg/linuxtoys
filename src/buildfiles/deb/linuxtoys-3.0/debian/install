@@ -1,0 +1,3 @@
+debian/opt/linuxtoys/linuxtoys.png /opt/linuxtoys
+debian/opt/linuxtoys/linuxtoys.sh /opt/linuxtoys
+debian/usr/share/applications/LinuxToys.desktop /usr/share/applications

@@ -4,15 +4,15 @@
 # check dependencies
 dep_check () {
 
-    local dependencies=()
+    local _packages=()
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-        dependencies=(newt)
+        _packages=(newt)
     elif [[ "$ID" =~ (arch|cachyos) ]] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        dependencies=(libnewt)
+        _packages=(libnewt)
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        dependencies=(whiptail)
+        _packages=(whiptail)
     fi
-    depchecker_lib
+    _install_
 
 }
 
@@ -21,14 +21,14 @@ docker_in () {
 
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
-            sudo zypper in docker -y
+            insta docker
         else
-            sudo dnf in docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+            insta docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
         fi
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
-        sudo pacman -S --noconfirm docker
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+        insta docker
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        sudo apt install -y docker.io
+        insta docker.io
     fi
     sudo systemctl enable docker
     sudo systemctl start docker
@@ -43,6 +43,9 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 dep_check
 if whiptail --title "Docker + Portainer CE Setup" --yesno "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" 8 78; then
     docker_in
-    whiptail --title "Docker + Portainer CE Setup" --msgbox "Setup complete. You can acess your Portainer dashboard at https://localhost:9443" 8 78
+    title="Docker + Portainer CE Setup"
+    msg="Setup complete. Your Portainer dashboard will open in your web browser now."
+    _msgbox_
+    xdg-open https://localhost:9443
     exit 0
 fi

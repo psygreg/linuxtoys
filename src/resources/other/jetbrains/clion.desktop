@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=CLion
+Type=Application
+Exec=/opt/clion/bin/clion
+Terminal=false
+Icon=/opt/clion/bin/clion.png
+Comment=Jetbrains IDE for C and C++
+NoDisplay=false
+Categories=Development

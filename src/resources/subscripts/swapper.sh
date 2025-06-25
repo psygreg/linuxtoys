@@ -10,13 +10,19 @@ root_swap () {
         swapon /swap/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        whiptail --title "Swapfile Creator" --msgbox "Swapfile creation succesful." 8 78
+        title="Swapfile Creator"
+        msg="Swapfile creation succesful."
+        _msgbox_
+        return 0
     else
         mkswap -U clear --size 8G --file /swapfile
         swapon /swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        whiptail --title "Swapfile Creator" --msgbox "Swapfile creation succesful." 8 78
+        title="Swapfile Creator"
+        msg="Swapfile creation succesful."
+        _msgbox_
+        return 0
     fi
 
 }
@@ -30,35 +36,48 @@ home_swap () {
         sudo swapon /home/swap/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/home/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        whiptail --title "Swapfile Creator" --msgbox "Swapfile creation succesful." 8 78
+        title="Swapfile Creator"
+        msg="Swapfile creation succesful."
+        _msgbox_
+        return 0
     else
         sudo mkswap -U clear --size 8G --file /home/swapfile
         sudo swapon /home/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/home/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        whiptail --title "Swapfile Creator" --msgbox "Swapfile creation succesful." 8 78
+        title="Swapfile Creator"
+        msg="Swapfile creation succesful."
+        _msgbox_
+        return 0
     fi
 
 }
 
-# menu
-while :; do
+if swapon --show | grep -q '^'; then
+    title="Swapfile Creator"
+    msg="Swap already enabled in your system."
+    _msgbox_
+    exit 0
+else
+    # menu
+    while :; do
 
-    CHOICE=$(whiptail --title "Swapfile Creator" --menu "Create swapfile on:" 25 78 16 \
-        "0" "/ (root)" \
-        "1" "/home (home)" \
-        "2" "Cancel" 3>&1 1>&2 2>&3)
+        CHOICE=$(whiptail --title "Swapfile Creator" --menu "Create swapfile on:" 25 78 16 \
+            "0" "/ (root)" \
+            "1" "/home (home)" \
+            "2" "Cancel" 3>&1 1>&2 2>&3)
 
-    exitstatus=$?
-    if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-        break
-    fi
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+            # Exit the script if the user presses Esc
+            break
+        fi
 
-    case $CHOICE in
-    0) root_swap ;;
-    1) home_swap ;;
-    2 | q) break ;;
-    *) echo "Invalid Option" ;;
-    esac
-done
+        case $CHOICE in
+        0) root_swap && break;;
+        1) home_swap && break;;
+        2 | q) break ;;
+        *) echo "Invalid Option" ;;
+        esac
+    done
+fi

@@ -4,8 +4,8 @@
 # depcheck
 depcheck_pipe () {
 
-    local dependencies=(wireplumber)
-    depchecker_lib
+    local _packages=(wireplumber)
+    _install_
 
 }
 
@@ -13,18 +13,21 @@ depcheck_pipe () {
 flatpak_pipe () {
 
     if flatpak list --app | grep -q com.obsproject.Studio; then
-        local ver="1.2.0"
+        local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
         cd $HOME
         mkdir obspipe
         cd obspipe
-        wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/${ver}/download/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
+        wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
         tar xvzf linux-pipewire-audio-${ver}-flatpak-30.tar.gz
-        cp -rf linux-pipewire-audio $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/
-        flatpak override --filesystem=xdg-run/pipewire-0 com.obsproject.Studio
+        cp -rf linux-pipewire-audio $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio/
+        sudo flatpak override --filesystem=xdg-run/pipewire-0 com.obsproject.Studio
         cd ..
         rm -rf obspipe
+        return 0
     else 
-        whiptail --title "Installer" --msgbox "OBS Studio flatpak not installed." 8 78
+        title="Installer"
+        msg="OBS Studio flatpak not installed."
+        _msgbox_
     fi
 
 }
@@ -32,15 +35,16 @@ flatpak_pipe () {
 # install plugin for native packages
 native_pipe () {
 
-    local ver="1.2.0"
+    local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     cd $HOME
     mkdir obspipe
     cd obspipe
-    wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/${ver}/download/linux-pipewire-audio-${ver}.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
+    wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
     tar xvzf linux-pipewire-audio-${ver}.tar.gz
-    cp -rf linux-pipewire-audio $HOME/.config/obs-studio/plugins/
+    cp -rf linux-pipewire-audio $HOME/.config/obs-studio/plugins/linux-pipewire-audio/
     cd ..
     rm -rf obspipe
+    return 0
 
 }
 
@@ -53,7 +57,7 @@ obscheck () {
         else
             whiptail --title "Installer" --msgbox "OBS Studio not found." 8 78
         fi
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]]; then
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         if pacman -Qi "obs-studio" 2>/dev/null 1>&2; then
             native_pipe
         else
@@ -88,8 +92,8 @@ while :; do
     fi
 
     case $CHOICE in
-    0) obscheck ;;
-    1) flatpak_pipe ;;
+    0) obscheck && break ;;
+    1) flatpak_pipe && break ;;
     2 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
