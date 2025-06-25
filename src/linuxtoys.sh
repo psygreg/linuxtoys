@@ -23,7 +23,8 @@ krn_chk () {
         if [ -f "$HOME/.local/kernelsetting" ]; then
         source $HOME/.local/kernelsetting
             if [ "$_psygreg_krn" == "yes" ]; then
-                if [ $(uname -r) != "$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)-psycachy" ] && [ $(uname -r) != "$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)-cachyos" ]; then
+                local _kversion=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
+                if [ $(uname -r) != "${_kversion}-psycachy" ] && [ $(uname -r) != "${_kversion}-cachyos" ]; then
                     if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
                         if ! diff -q "$HOME/.local/kernelsetting" <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
                             bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
