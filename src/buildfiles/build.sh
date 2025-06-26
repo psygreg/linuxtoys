@@ -152,10 +152,9 @@ pacman_prepare()
   local packages="bash curl wget libnewt base-devel git"
 
   if [ $GITHUB_RUN -eq 1 ]; then
-    ROOT_RUN="%s"
-    root_script "pacman -Syu --noconfirm" && script_constructor "${RSCRIPT}"
-    root_script "useradd -m builder" && script_constructor "${RSCRIPT}"
-    root_script "chown -R builder ." && script_constructor "${RSCRIPT}"
+    script_constructor "pacman -Syu --noconfirm"
+    script_constructor "useradd -m builder"
+    script_constructor "chown -R builder ."
   fi
 
   root_script "pacman -S --needed --noconfirm ${packages}" && script_constructor "${RSCRIPT}"
@@ -166,7 +165,7 @@ pacman_prepare()
 pacman_build()
 {
   if [ $GITHUB_RUN -eq 1 ]; then
-    script_constructor "su builder -c 'cd pkgbuild && makepkg -s --noconfirm'"
+    script_constructor "sh ./pkgbuild/build.sh"
   else
     script_constructor "cd pkgbuild"
     script_constructor "makepkg -s --noconfirm"

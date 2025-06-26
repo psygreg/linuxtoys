@@ -24,7 +24,7 @@ jobs:
         docker run --rm -v "$PWD:/workspace" -w /workspace archlinux:base-devel \
         bash -c "
           pushd src/buildfiles
-          bash ./build.sh --package-manager pacman
+          bash ./build.sh --package-manager pacman --test-ci
           mv ./*.pkg.tar.* ../../
           popd
         "
