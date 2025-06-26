@@ -1,5 +1,6 @@
-linuxtoys (2.1.4-1) plucky; urgency=medium
+linuxtoys (3.0-1) plucky; urgency=medium
 
-  * bugfix: now updater works as intended
+  * Console Mode added
+  * Bugfix internet detector (GitHub #10)
 
- -- Victor Gregory <psygreg@pm.me>  Thu, 5 Jun 2025 3:00:47 -0300
+ -- Victor Gregory <psygreg@pm.me>  Fri, 6 Jun 2025 3:00:47 -0300
