@@ -17,6 +17,8 @@ You may obtain it and keep it up-to-date from the COPR repository: `sudo dnf cop
 ### Arch Linux
 Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) using `aura -A linuxtoys-bin`; or
 
+Download the `linuxtoys-*.pkg.tar.zst` file from [Releases](https://github.com/psygreg/linuxtoys/releases) and run `sudo pacman -U linuxtoys-*.pkg.tar.zst` to install; or
+
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
