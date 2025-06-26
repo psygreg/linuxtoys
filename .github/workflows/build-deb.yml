@@ -19,7 +19,7 @@ jobs:
     - name: Build DEB package
       run: |
         cd src/buildfiles
-        sh ./build.sh --package-manager dpkg
+        bash ./build.sh --package-manager dpkg
         mv ./*.deb ../../
 
     - name: Get DEB package

@@ -24,7 +24,7 @@ jobs:
     - name: Build (S)RPM packages
       run: |
         cd src/buildfiles
-        sh ./build.sh --package-manager rpm
+        bash ./build.sh --package-manager rpm
         mv ./*.rpm ../../
 
     - name: Get RPM package
