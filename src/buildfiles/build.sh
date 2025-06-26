@@ -181,13 +181,10 @@ pacman_build()
 
 rpm_prepare()
 {
-  if [ $GITHUB_RUN -eq 1 ]; then
-    local packages="rpm desktop-file-utils"
-    root_script "apt-get update" && script_constructor "${RSCRIPT}"
-    root_script "apt-get install -y ${packages}" && script_constructor "${RSCRIPT}"
-  else
-    printf "Insert rpm install\n"
-  fi
+  local packages="rpm desktop-file-utils"
+
+  root_script "apt-get update" && script_constructor "${RSCRIPT}"
+  root_script "apt-get install -y ${packages}" && script_constructor "${RSCRIPT}"
 
   return 0
 }
