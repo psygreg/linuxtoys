@@ -1,6 +1,5 @@
-linuxtoys (3.0-1) plucky; urgency=medium
+linuxtoys (3.1-1) plucky; urgency=medium
 
-  * Console Mode added
-  * Bugfix internet detector (GitHub #10)
+  * Kernel updater reworked with prebuit packages and Secure Boot compatibility
 
- -- Victor Gregory <psygreg@pm.me>  Fri, 6 Jun 2025 3:00:47 -0300
+ -- Victor Gregory <psygreg@pm.me>  Thu, 26 Jun 2025 3:00:47 -0300
