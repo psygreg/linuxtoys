@@ -1,6 +1,0 @@
-linuxtoys (3.0-1) plucky; urgency=medium
-
-  * Console Mode added
-  * Bugfix internet detector (GitHub #10)
-
- -- Victor Gregory <psygreg@pm.me>  Fri, 6 Jun 2025 3:00:47 -0300

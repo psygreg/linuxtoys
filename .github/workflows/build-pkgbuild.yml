@@ -1,0 +1,44 @@
+name: Build PKGBUILD package
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build AUR package
+      run: |
+        docker run --rm -v "$PWD:/workspace" -w /workspace archlinux:base-devel \
+        bash -c "
+          pushd src/buildfiles
+          bash ./build.sh --package-manager pacman --test-ci
+          mv ./*.pkg.tar.* ../../
+          popd
+        "
+        sudo chown -R $(id -u):$(id -g) .
+
+    - name: Get AUR package
+      id: aur_package_path
+      run: |
+        FILE=$(ls linuxtoys-*-x86_64.pkg.tar.* | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Upload AUR package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.aur_package_path.outputs.file }}
+        path: ${{ steps.aur_package_path.outputs.file }}
+

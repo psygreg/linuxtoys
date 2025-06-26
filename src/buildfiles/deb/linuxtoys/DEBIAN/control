@@ -9,10 +9,10 @@ Standards-Version: 4.7.2
 Homepage: https://github.com/psygreg/linuxtoys
 #Vcs-Browser: https://salsa.debian.org/debian/linuxtoys
 #Vcs-Git: https://salsa.debian.org/debian/linuxtoys.git
+
 Package: linuxtoys
-Version: 2.1.4
 Architecture: amd64
-Depends: bash, git, curl, wget, whiptail, alacritty
+Depends: bash, git, curl, wget, whiptail
 Description: A set of tools for Linux presented in a user-friendly way.
  .
  A menu with various handy tools for Linux gaming, optimization and other tweaks.
