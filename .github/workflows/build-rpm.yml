@@ -1,0 +1,53 @@
+name: Build (S)RPM packages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.8'
+
+    - name: Build (S)RPM packages
+      run: |
+        cd src/buildfiles
+        bash ./build.sh --package-manager rpm
+        mv ./*.rpm ../../
+
+    - name: Get RPM package
+      id: rpm_package_path
+      run: |
+        FILE=$(ls *amd64.rpm | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Get SRPM package
+      id: srpm_package_path
+      run: |
+        FILE=$(ls *amd64.src.rpm | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Upload RPM package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.rpm_package_path.outputs.file }}
+        path: ${{ steps.rpm_package_path.outputs.file }}
+
+    - name: Upload SRPM package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.srpm_package_path.outputs.file }}
+        path: ${{ steps.srpm_package_path.outputs.file }}
+

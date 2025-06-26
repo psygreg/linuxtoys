@@ -1,0 +1,36 @@
+name: Build DEB package
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build DEB package
+      run: |
+        cd src/buildfiles
+        bash ./build.sh --package-manager dpkg
+        mv ./*.deb ../../
+
+    - name: Get DEB package
+      id: deb_package_path
+      run: |
+        FILE=$(ls *.deb | head -n1)
+        echo "file=$FILE" >> $GITHUB_OUTPUT
+
+    - name: Upload DEB package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.deb_package_path.outputs.file }}
+        path: ${{ steps.deb_package_path.outputs.file }}
+
