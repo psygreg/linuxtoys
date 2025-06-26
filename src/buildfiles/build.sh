@@ -5,7 +5,8 @@ help()
   printf "Usage: build.sh [option(s)] [parameter(s)]\n                                                      \
         \r\n                                                                                                \
         \rOptions:\n                                                                                        \
-        \r  --package-manager: define a single package manager to build.\n                                  \
+        \r  --debuild:         use a easier solution to build DEB package\n                                 \
+        \r  --package-manager: define a single package manager to build\n                                   \
         \r  --print:           only print commands\n                                                        \
         \r  --skip-install:    build only\n                                                                 \
         \r  --steps:           prompt \`ENTER\` key after every build. Useful to debug multiple packages\n  \
@@ -24,6 +25,7 @@ GITHUB_RUN=0
 PRINT_ONLY=0
 SKIP_INSTALLATION=0
 TEST_WORKFLOW=0
+USE_DEBUILD=0
 USE_SINGLE_PACKAGE_MANAGER=0
 USE_STEPS=0
 
@@ -139,9 +141,25 @@ deb_build()
   script_constructor "cp ../linuxtoys.sh deb/linuxtoys/DEBIAN/opt/linuxtoys"
   script_constructor "cp ../linuxtoys.png deb/linuxtoys/DEBIAN/opt/linuxtoys"
   script_constructor "cp ../LinuxToys.desktop deb/linuxtoys/DEBIAN/usr/share/applications"
-  script_constructor "cp deb/control.dpkg deb/linuxtoys/DEBIAN/control"
-  script_constructor "chmod 755 deb/linuxtoys/DEBIAN/postinst"
-  script_constructor "dpkg-deb --build --root-owner-group deb/linuxtoys"
+  if [ $USE_DEBUILD -eq 0 ]; then
+    script_constructor "cp deb/control.dpkg deb/linuxtoys/DEBIAN/control"
+    script_constructor "chmod 755 deb/linuxtoys/DEBIAN/postinst"
+    script_constructor "dpkg-deb --build --root-owner-group deb/linuxtoys"
+  else
+    script_constructor "pushd deb"
+    script_constructor "cp -r linuxtoys linuxtoys-${LINUXTOYS_VERSION}.orig"
+    script_constructor "pushd linuxtoys-*.orig"
+    script_constructor "mv DEBIAN debian"
+    script_constructor "cp -r debian/opt .."
+    script_constructor "cp -r debian/usr .."
+    script_constructor "popd"
+    script_constructor "tar -cJf linuxtoys_${LINUXTOYS_VERSION}.orig.tar.xz opt usr"
+    script_constructor "mv *.orig.tar.* linuxtoys-*.orig"
+    script_constructor "pushd linuxtoys-*.orig"
+    script_constructor "debuild -S"
+    script_constructor "popd"
+    script_constructor "popd"
+  fi
   script_constructor "cp deb/*.deb ./linuxtoys-${LINUXTOYS_VERSION}-1_amd64.deb"
 }
 
@@ -221,6 +239,9 @@ while true; do
 
   case "${OPTION}" in
   -h|--help) help; exit 0 ;;
+  --debuild)
+    USE_DEBUILD=1
+    ;;
   --package-manager)
     USE_SINGLE_PACKAGE_MANAGER=1
     shift
