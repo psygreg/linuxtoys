@@ -31,8 +31,8 @@ krn_chk () {
                         else
                             local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-                            wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-                            sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
+                            wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
+                            sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb
                             sleep 1
                             rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
                             rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
