@@ -301,7 +301,8 @@ kernel_in () {
                 cd $HOME
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-                sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb || exit 10
+                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
+                sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
                 cd $HOME/.local
                 sleep 1
                 wget -O "kernelsetting" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults
