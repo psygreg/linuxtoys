@@ -1,5 +1,7 @@
 #!/bin/bash
 
+UHANDLER="${LINUXTOYS_UHANDLER}"
+
 #check dependencies
 depcheck () {
 
@@ -43,8 +45,8 @@ android_in () {
 
 # runtime
 . /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 depcheck
 android_in

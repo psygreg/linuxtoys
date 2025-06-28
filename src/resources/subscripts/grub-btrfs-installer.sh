@@ -1,6 +1,8 @@
 #!/bin/bash
 # functions
 
+UHANDLER="${LINUXTOYS_UHANDLER}"
+
 # check dependencies
 dep_check () {
 
@@ -81,7 +83,7 @@ grubtrfs_in () {
 
 # runtime
 . /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 dep_check
 if whiptail --title "Grub-Btrfs Installer" --yesno "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" 8 78; then
     grubtrfs_in

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+UHANDLER="${LINUXTOYS_UHANDLER}"
+
 # initialize variables for reboot status
 flatpak_run=""
 sboost_run=""
@@ -253,7 +255,7 @@ runners_t () {
 nexusmods_t () {
 
     if [[ -n "$_nexmod" ]]; then
-        local ver=$(curl -s "https://api.github.com/repos/Nexus-Mods/NexusMods.App/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+        local ver=$(${UHANDLER} "https://api.github.com/repos/Nexus-Mods/NexusMods.App/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
         cd $HOME
         insta fuse3
         wget https://github.com/Nexus-Mods/NexusMods.App/releases/download/${ver}/NexusMods.App.x86_64.AppImage
@@ -282,7 +284,7 @@ nexusmods_t () {
 
 # runtime
 . /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 gsupermenu
