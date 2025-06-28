@@ -356,9 +356,7 @@ kernel_in () {
                 rm -rf sysctl-config
                 # sign kernel image for secure boot
                 if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-                    wget https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh
-                    chmod +x create-key.sh
-                    ./create-key.sh --linuxtoys
+                    bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh) --linuxtoys
                 fi
             else
                 bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
