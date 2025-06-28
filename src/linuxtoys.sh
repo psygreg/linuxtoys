@@ -1,10 +1,67 @@
 #!/bin/bash
 # functions
 
+# Create linuxtoys path
+LINUXTOYS_HOME="${LINUXTOYS_HOME}"
+LINUXTOYS_PROFILE="${LINUXTOYS_PROFILE}"
+set_linuxtoys_home()
+{
+  local _SHELL=$(basename "${SHELL}")
+  local UHOME=""
+  if id -u $USER > /dev/null 2>&1; then
+    UHOME="/home/$USER"
+  else
+    UHOME="/root"
+  fi
+  LINUXTOYS_HOME="${UHOME}/.local/share/linuxtoys"
+  LINUXTOYS_PROFILE="${LINUXTOYS_HOME}/profile"
+
+  mkdir -p "${LINUXTOYS_HOME}"
+  if [ ! -d "${LINUXTOYS_HOME}" ]; then
+    printf "\033[1mERROR: An error occurred trying to create the linuxtoys home directory.\033[0m\n"
+    exit 1
+  else
+    touch "${LINUXTOYS_PROFILE}"
+    echo "export LINUXTOYS_HOME=\"${LINUXTOYS_HOME}\"" >> "${LINUXTOYS_PROFILE}"
+    echo "export LINUXTOYS_PROFILE=\"${LINUXTOYS_PROFILE}\"" >> "${LINUXTOYS_PROFILE}"
+    echo ". \"${LINUXTOYS_PROFILE}\"" >> "${UHOME}/.profile"
+    echo ". \"${LINUXTOYS_PROFILE}\"" >> "${UHOME}/.${_SHELL}rc"
+  fi
+
+  return 0
+}
+if [ -z "${LINUXTOYS_HOME}" ]; then set_linuxtoys_home; fi
+
+# Set URL backend
+UHANDLER="${LINUXTOYS_UHANDLER}"
+set_url_handler()
+{
+  UHANDLER="wget"
+  local UHANDLER_FLAGS="-qO-"
+  local WGET_NOSSL=0
+  if ! wget -q https://www.kernel.org > /dev/null 2>&1 ; then
+    WGET_NOSSL=1
+    UHANDLER="curl"
+    UHANDLER_FLAGS="-s"
+  fi
+
+  if [ $WGET_NOSSL -eq 1 ] && ! which curl > /dev/null 2>&1; then
+    printf "\033[1mERROR: 'wget' does not have SSL support and '${UHANDLER}' is not installed.\033[0m\n"
+    exit 1
+  fi
+
+  echo "export LINUXTOYS_UHANDLER=\"${UHANDLER} ${UHANDLER_FLAGS}\"" >> "${LINUXTOYS_HOME}/profile"
+  UHANDLER="${UHANDLER} ${UHANDLER_FLAGS}"
+  rm index.html
+
+  return 0
+}
+if [ -z "${UHANDLER}" ]; then set_url_handler; fi
+
 # updater
 current_ltver="3.1"
 ver_upd () {
-    local ver=$(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
+    local ver=$(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
     if [[ "$ver" != "$current_ltver" ]]; then
         if whiptail --title "$msg001" --yesno "$msg002" 8 78; then
             local title="$msg001"
@@ -22,13 +79,13 @@ krn_chk () {
         if [ -f "$HOME/.local/kernelsetting" ]; then
         source $HOME/.local/kernelsetting
             if [ "$_psygreg_krn" == "yes" ]; then
-                local _kversion=$(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
+                local _kversion=$(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
                 if [ $(uname -r) != "${_kversion}-psycachy" ] && [ $(uname -r) != "${_kversion}-cachyos" ]; then
                     if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
-                        if ! diff -q "$HOME/.local/kernelsetting" <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
-                            bash <(wget -qO- https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
+                        if ! diff -q "$HOME/.local/kernelsetting" <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
+                            bash <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
                         else
-                            local psycachy_tag=$(wget -qO- "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+                            local psycachy_tag=$(${UHANDLER} "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
@@ -57,15 +114,15 @@ krn_chk () {
 # check internet connection
 # ping google
 . /etc/os-release
-wget -qO- "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
+${UHANDLER} "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
 # call linuxtoys turbobash lib
-source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 # logger
 logfile="$HOME/.local/linuxtoys-log.txt"
 _log_
 # language and upd checks
 _lang_
-source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 ver_upd
 krn_chk
 
