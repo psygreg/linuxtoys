@@ -1,8 +1,6 @@
 #!/bin/bash
 # functions
 
-UHANDLER="${LINUXTOYS_UHANDLER}"
-
 # menu
 runners_menu () {
 
@@ -96,7 +94,7 @@ osu_in () {
 jade_in () {
 
     if flatpak list | grep -q 'com.valvesoftware.Steam'; then
-        local ver=$(${UHANDLER} "https://codeberg.org/api/v1/repos/mkrsym1/jadeite/releases" | jq -r '.[0].tag_name')
+        local ver=$(curl -s "https://codeberg.org/api/v1/repos/mkrsym1/jadeite/releases" | jq -r '.[0].tag_name')
         cd $HOME
         wget https://codeberg.org/mkrsym1/jadeite/releases/download/${ver}/${ver}.zip
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/cmd.txt
@@ -138,9 +136,9 @@ vinegar_in () {
 
 # runtime
 . /etc/os-release
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 title="$msg187"
 msg="$msg188"
 _msgbox_

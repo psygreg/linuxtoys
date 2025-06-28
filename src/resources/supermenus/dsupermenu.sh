@@ -1,7 +1,5 @@
 #!/bin/bash
 
-UHANDLER="${LINUXTOYS_UHANDLER}"
-
 # initialize variables for reboot status
 flatpak_run=""
 # supermenu checklist
@@ -376,14 +374,14 @@ java_in () {
 others_t () {
 
     if [[ -n "$_jb" ]]; then
-        source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/jetbrainsmenu.lib)
+        source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/jetbrainsmenu.lib)
         jetbrains_menu
     fi
     if [[ -n "$_godot" ]]; then
         godot_in
     fi
     if [[ -n "$_nvm" ]]; then
-        ${UHANDLER} https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
         rm install.sh
         npm i --global yarn
         # basic usage instruction prompt
@@ -433,7 +431,7 @@ others_t () {
 
 # runtime
 . /etc/os-release
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 dsupermenu

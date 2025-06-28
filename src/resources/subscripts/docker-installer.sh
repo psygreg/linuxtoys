@@ -1,8 +1,6 @@
 #!/bin/bash
 # functions
 
-UHANDLER="${LINUXTOYS_UHANDLER}"
-
 # check dependencies
 dep_check () {
 
@@ -41,7 +39,7 @@ docker_in () {
 
 # runtime
 . /etc/os-release
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 dep_check
 if whiptail --title "Docker + Portainer CE Setup" --yesno "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" 8 78; then
     docker_in

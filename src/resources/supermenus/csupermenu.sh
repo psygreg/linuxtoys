@@ -1,7 +1,4 @@
 #!/bin/bash
-
-UHANDLER="${LINUXTOYS_UHANDLER}"
-
 # give user a rundown of its capabilities
 about_c () {
 
@@ -63,9 +60,9 @@ instructions_c () {
 
 # runtime
 . /etc/os-release
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # menu
 while :; do
 

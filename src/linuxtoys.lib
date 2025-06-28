@@ -1,8 +1,6 @@
 ## turbobash library
 . /etc/os-release
 
-UHANDLER="${LINUXTOYS_UHANDLER}"
-
 # whiptail color palette
 export NEWT_COLORS='
     root=white,black
@@ -151,9 +149,9 @@ _lang_ () {
 _invoke_ () {
 
     if [[ -n "$supmenu" ]]; then
-        bash <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh)
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh)
     elif [[ -n "$subscript" ]]; then
-        bash <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/${subscript}.sh)
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/${subscript}.sh)
     fi
 
 }
