@@ -4,8 +4,7 @@
 # updater
 current_ltver="3.1"
 ver_upd () {
-    local ver
-    ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
+    local ver=$(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
     if [[ "$ver" != "$current_ltver" ]]; then
         if whiptail --title "$msg001" --yesno "$msg002" 8 78; then
             local title="$msg001"
@@ -23,13 +22,13 @@ krn_chk () {
         if [ -f "$HOME/.local/kernelsetting" ]; then
         source $HOME/.local/kernelsetting
             if [ "$_psygreg_krn" == "yes" ]; then
-                local _kversion=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
+                local _kversion=$(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
                 if [ $(uname -r) != "${_kversion}-psycachy" ] && [ $(uname -r) != "${_kversion}-cachyos" ]; then
                     if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
-                        if ! diff -q "$HOME/.local/kernelsetting" <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
-                            bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
+                        if ! diff -q "$HOME/.local/kernelsetting" <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
+                            bash <(wget -qO- https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
                         else
-                            local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+                            local psycachy_tag=$(wget -qO- "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
                             wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
@@ -58,15 +57,15 @@ krn_chk () {
 # check internet connection
 # ping google
 . /etc/os-release
-wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
+wget -qO- "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
 # call linuxtoys turbobash lib
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 # logger
 logfile="$HOME/.local/linuxtoys-log.txt"
 _log_
 # language and upd checks
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 ver_upd
 krn_chk
 

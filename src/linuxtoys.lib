@@ -149,9 +149,9 @@ _lang_ () {
 _invoke_ () {
 
     if [[ -n "$supmenu" ]]; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh)
+        bash <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/supermenus/${supmenu}.sh)
     elif [[ -n "$subscript" ]]; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/${subscript}.sh)
+        bash <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/${subscript}.sh)
     fi
 
 }

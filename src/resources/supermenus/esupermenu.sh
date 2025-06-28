@@ -31,7 +31,7 @@ swapfile_t () {
 # 'cleartype'-like settings for Linux
 lucidglyph_in () {
 
-    local tag=$(curl -s "https://api.github.com/repos/maximilionus/lucidglyph/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    local tag=$(wget -qO- "https://api.github.com/repos/maximilionus/lucidglyph/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     local ver="${tag#v}"
     if whiptail --title "$msg019" --yesno "$msg020" 8 78; then  
         cd $HOME
@@ -263,7 +263,7 @@ psaver () {
 
 touchegg_t () {
 
-    local tag=$(curl -s "https://api.github.com/repos/JoseExposito/touchegg/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    local tag=$(wget -qO- "https://api.github.com/repos/JoseExposito/touchegg/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     if whiptail --title "$msg006" --yesno "$msg200" 12 78; then
         cd $HOME
         if [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
@@ -297,7 +297,7 @@ kernel_in () {
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
-                local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+                local psycachy_tag=$(wget -qO- "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
                 cd $HOME
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
@@ -361,7 +361,7 @@ kernel_in () {
                     ./create-key.sh --linuxtoys
                 fi
             else
-                bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
+                bash <(wget -qO- https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
             fi
             # clean old kernels
             dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
@@ -476,7 +476,7 @@ lsw_in () {
     whiptail --textbox txtbox 12 80
     if whiptail --title "LSW" --yesno "$msg217" 12 78; then
         cd $HOME
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/lsw/refs/heads/main/src/lsw-in.sh)
+        bash <(wget -qO- https://raw.githubusercontent.com/psygreg/lsw/refs/heads/main/src/lsw-in.sh)
         sleep 1
         rm txtbox
     fi
@@ -485,9 +485,9 @@ lsw_in () {
 
 # runtime
 . /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # extras menu
 while :; do
 

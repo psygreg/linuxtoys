@@ -374,7 +374,7 @@ java_in () {
 others_t () {
 
     if [[ -n "$_jb" ]]; then
-        source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/jetbrainsmenu.lib)
+        source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/jetbrainsmenu.lib)
         jetbrains_menu
     fi
     if [[ -n "$_godot" ]]; then
@@ -431,7 +431,7 @@ others_t () {
 
 # runtime
 . /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 dsupermenu

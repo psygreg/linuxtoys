@@ -119,7 +119,7 @@ install_native () {
             fi
             if [[ -n "$_droid" ]]; then
                 insta curl ca-certificates -y
-                curl -s https://repo.waydro.id | sudo bash
+                wget -qO- https://repo.waydro.id | sudo bash
                 sleep 1
                 sudo systemctl enable --now waydroid-container
             fi
@@ -211,12 +211,12 @@ rusticl_in () {
         fi
         local GPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
         if [[ -n "$GPU" ]]; then
-            curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-amd \
+            wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-amd \
                 | sudo tee -a /etc/environment > /dev/null
         else
             local GPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
             if [[ -n "$GPU" ]]; then
-                curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-intel \
+                wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/resources/subscripts/rusticl-intel \
                     | sudo tee -a /etc/environment > /dev/null
             fi
         fi
@@ -360,7 +360,7 @@ install_flatpak () {
 
 # runtime
 . /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 usupermenu
