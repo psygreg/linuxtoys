@@ -1,6 +1,8 @@
 #!/bin/bash
 # functions
 
+UHANDLER="${LINUXTOYS_UHANDLER}"
+
 # depcheck
 depcheck_pipe () {
 
@@ -13,7 +15,7 @@ depcheck_pipe () {
 flatpak_pipe () {
 
     if flatpak list --app | grep -q com.obsproject.Studio; then
-        local ver=$(wget -qO- "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+        local ver=$(${UHANDLER} "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
         cd $HOME
         mkdir obspipe
         cd obspipe
@@ -35,7 +37,7 @@ flatpak_pipe () {
 # install plugin for native packages
 native_pipe () {
 
-    local ver=$(wget -qO- "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    local ver=$(${UHANDLER} "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     cd $HOME
     mkdir obspipe
     cd obspipe
@@ -75,7 +77,7 @@ obscheck () {
 
 }
 
-source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 depcheck_pipe
 # menu
 while :; do

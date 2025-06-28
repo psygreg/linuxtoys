@@ -1,5 +1,7 @@
 #!/bin/bash
 
+UHANDLER="${LINUXTOYS_UHANDLER}"
+
 # initialize variables for reboot status
 flatpak_run=""
 # supermenu checklist
@@ -173,7 +175,7 @@ figma_t () {
 
     if [[ -n "$_fig" ]]; then
         cd $HOME
-        local tag=$(wget -qO- https://api.github.com/repos/Figma-Linux/figma-linux/releases/latest | grep '"tag_name"' | cut -d '"' -f4 | sed 's/^v//')
+        local tag=$(${UHANDLER} https://api.github.com/repos/Figma-Linux/figma-linux/releases/latest | grep '"tag_name"' | cut -d '"' -f4 | sed 's/^v//')
         wget https://github.com/Figma-Linux/figma-linux/releases/download/v${tag}/figma-linux_${tag}_linux_x86_64.AppImage
         chmod +x figma-linux-*.AppImage
         sudo ./figma-linux-*.AppImage -i
@@ -185,7 +187,7 @@ figma_t () {
 
 # runtime
 . /etc/os-release
-source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
-source <(wget -qO- https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source <(${UHANDLER} https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 osupermenu
