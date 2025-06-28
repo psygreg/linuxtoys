@@ -4,7 +4,10 @@ A collection of tools for Linux in a user-friendly way.
 ![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
 
 ## Usage
-- Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu.
+- Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
+
+### Standalone, directly from source
+`bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh)`
 
 ### Ubuntu (latest and latest LTS releases)
 There's a PPA available for LinuxToys. To use it:
