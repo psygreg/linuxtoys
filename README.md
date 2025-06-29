@@ -5,7 +5,7 @@ A collection of tools for Linux in a user-friendly way.
 
 ## Compatibility
 
-- LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems mentioned in the **Usage** section. Your mileage may vary in other operating systems, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
+LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems mentioned in the **Usage** section. Your mileage may vary in other operating systems, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
 
 ## Usage
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
