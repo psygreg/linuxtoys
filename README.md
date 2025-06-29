@@ -3,6 +3,10 @@ A collection of tools for Linux in a user-friendly way.
 
 ![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
 
+## Compatibility
+
+- LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems mentioned in the **Usage** section. Your mileage may vary in other operating systems, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
+
 ## Usage
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
 
@@ -13,6 +17,9 @@ A collection of tools for Linux in a user-friendly way.
 There's a PPA available for LinuxToys. To use it:
 `sudo add-apt-repository ppa:psygreg/linuxtoys &&
 sudo apt update`
+
+### Debian
+Use the **.deb** package provided in [Releases](https://github.com/psygreg/linuxtoys/releases).
 
 ### Fedora, OpenSUSE, AlmaLinux and RHEL
 You may obtain it and keep it up-to-date from the COPR repository: `sudo dnf copr enable psygreg/linuxtoys`
