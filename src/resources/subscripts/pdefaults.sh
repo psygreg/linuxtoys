@@ -5,7 +5,13 @@ sysag_run () {
 
     cachyos_sysd_lib
     sboost_lib
-    preload_lib
+    # set safe minimum ram to use preload
+    local total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
+    local total_gb=$(( total_kb / 1024 / 1024 ))
+    _cram=$(( total_gb ))
+    if (( _cram < 16 )); then
+        preload_lib
+    fi
     dsplitm_lib
 
 }
