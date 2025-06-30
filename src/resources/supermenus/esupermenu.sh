@@ -299,9 +299,12 @@ kernel_in () {
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
                 local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
                 cd $HOME
-                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
+                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
+                sleep 1
+                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
+                sleep 1
+                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
+                sleep 1
                 sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
                 cd $HOME/.local
                 sleep 1
@@ -310,6 +313,7 @@ kernel_in () {
                 sleep 1
                 rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
                 rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
+                rm linux-libc-dev_${psycachy_tag}-1_amd64.deb
                 # apply system config
                 local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
                 mkdir -p sysctl-config
