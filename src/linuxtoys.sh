@@ -29,20 +29,9 @@ krn_chk () {
                         if ! diff -q "$HOME/.local/kernelsetting" <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
                             bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
                         else
-                            local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-                            wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-                            wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-                            wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
-                            sleep 1
-                            sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb
-                            sleep 1
-                            rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
-                            rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
-                            if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-                                wget https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh
-                                chmod +x create-key.sh
-                                ./create-key.sh --linuxtoys
-                            fi
+                            psycachy_lib
+                            # update systemd settings
+                            cachyos_sysd_lib
                         fi
                         # clean old kernels
                         dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
@@ -81,11 +70,12 @@ while :; do
         "3" "$msg123" \
         "4" "$msg143" \
         "5" "$msg199" \
+        "6" "$msg227" \
         "" "" \
         "" "" \
-        "6" "$msg124" \
-        "7" "GitHub" \
-        "8" "$msg059" 3>&1 1>&2 2>&3)
+        "7" "$msg124" \
+        "8" "GitHub" \
+        "9" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -100,9 +90,10 @@ while :; do
     3) supmenu="esupermenu" && _invoke_ ;;
     4) supmenu="dsupermenu" && _invoke_ ;;
     5) supmenu="csupermenu" && _invoke_ ;;
-    6) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
-    7) xdg-open https://github.com/psygreg/linuxtoys ;;
-    8 | q) break ;;
+    6) subscript="pdefaults" && _invoke_ ;;
+    7) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
+    8) xdg-open https://github.com/psygreg/linuxtoys ;;
+    9 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done

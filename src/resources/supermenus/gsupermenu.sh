@@ -84,8 +84,12 @@ gsupermenu () {
 
         install_flatpak
         install_native
-        sboost_t
-        dsplitm_t
+        if [[ -n "$_sboost" ]]; then
+            sboost_lib
+        fi
+        if [[ -n "$_dsplitm" ]]; then
+            dsplitm_lib
+        fi
         runners_t
         nexusmods_t
         if [[ -n "$flatpak_run" || -n "$dsplitm_run" || -n "$sboost_run" ]]; then
@@ -195,46 +199,6 @@ install_flatpak () {
                 local msg="$msg132"
                 _msgbox_
             fi
-        fi
-    fi
-
-}
-
-# shader booster
-sboost_t () {
-
-    if [[ -n "$_sboost" ]]; then
-        cd $HOME
-        sboost_run="1"
-        if [ "$ID" == "cachyos" ]; then
-            wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher-cachy.fish
-            chmod +x patcher-cachy.fish
-            fish ./patcher-cachy.fish
-            rm patcher-cachy.fish
-        else
-            wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
-            chmod +x patcher.sh
-            ./patcher.sh
-            rm patcher.sh
-        fi
-    fi
-
-}
-
-# split lock mitigation disabler
-dsplitm_t () {
-
-    if [[ -n "$_dsplitm" ]]; then
-        dsplitm_run="1"
-        if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
-            echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-            local title="$msg041"
-            local msg="$msg022"
-            _msgbox_
-        else
-            local title="$msg041"
-            local msg="$msg043"
-            _msgbox_
         fi
     fi
 

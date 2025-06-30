@@ -297,89 +297,23 @@ kernel_in () {
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
-                local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-                cd $HOME
-                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-                wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
-                sleep 1
-                sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
-                cd $HOME/.local
-                sleep 1
-                wget -O "kernelsetting" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults
-                cd $HOME
-                sleep 1
-                rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
-                rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
-                rm linux-libc-dev_${psycachy_tag}-1_amd64.deb
-                # apply system config
-                local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
-                mkdir -p sysctl-config
-                sleep 1
-                cd sysctl-config
-                {
-                    echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
-                    echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
-                    echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
-                    echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
-                    echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
-                    echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
-                    } > "udev.txt"
-                {
-                    echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
-                    echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
-                    echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-                    } > "tmpfiles.txt"
-                {
-                    echo "${_cfgsource}/lib/modprobe.d/20-audio-pm.conf"
-                    echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
-                    echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
-                    } > "modprobe.txt"
-                {
-                    echo "${_cfgsource}/lib/NetworkManager/conf.d/dns.conf"
-                    echo "${_cfgsource}/lib/sysctl.d/99-cachyos-settings.conf"
-                    echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
-                    echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
-                    } > "other.txt"
-                sleep 1
-                while read -r url; do wget -P udev "$url"; done < udev.txt
-                while read -r url; do wget -P tmpfiles "$url"; done < tmpfiles.txt
-                while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
-                while read -r url; do wget "$url"; done < other.txt
-                sleep 1
-                sudo cp -rf udev/* /usr/lib/udev/rules.d/
-                sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
-                sudo cp -rf modprobe/* /usr/lib/modprobe.d/
-                sudo cp -f dns.conf /usr/lib/NetworkManager/conf.d/
-                sudo cp -f 99-cachyos-settings.conf /usr/lib/sysctl.d/
-                sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-                sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
-                cd ..
-                rm -rf sysctl-config
-                # sign kernel image for secure boot
-                if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-                    bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh) --linuxtoys
-                fi
+                psycachy_lib
             else
                 bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
             fi
             # clean old kernels
             dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
             dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
+            cachyos_sysd_lib
             local title="$msg006"
             local msg="$msg036"
             _msgbox_
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
-            kernel_menu
+            fedora_cachyos_menu_lib
+            cachyos_sysd_lib
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            chaotic_aur_lib
-            insta linux-cachyos linux-cachyos-headers
-            if command -v dracut >/dev/null 2>&1; then
-                sudo dracut -f --regenerate-all
-            elif command -v mkinitcpio >/dev/null 2>&1; then
-                sudo mkinitcpio -P
-            fi
-            sudo grub-mkconfig -o /boot/grub/grub.cfg
+            cachyos_arch_lib
+            cachyos_sysd_lib
             local title="$msg006"
             local msg="$msg036"
             _msgbox_
@@ -388,74 +322,6 @@ kernel_in () {
             local msg="$msg077"
             _msgbox_
         fi
-    fi
-
-}
-
-# CachyOS kernel for Fedora
-kernel_compat () {
-
-    sudo dnf copr enable bieszczaders/kernel-cachyos
-    insta kernel-cachyos kernel-cachyos-devel-matched
-    sudo setsebool -P domain_kernel_load_modules on
-    sudo dracut -f --regenerate-all
-    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    local title="$msg006"
-    local msg="$msg036"
-    _msgbox_
-
-}
-
-kernel_performance () {
-
-    sudo dnf copr enable bieszczaders/kernel-cachyos-lto
-    insta kernel-cachyos-lto kernel-cachyos-lto-devel-matched
-    sudo setsebool -P domain_kernel_load_modules on
-    sudo dracut -f --regenerate-all
-    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    local title="$msg006"
-    local msg="$msg036"
-    _msgbox_
-
-}
-
-kernel_menu () {
-
-    while :; do
-        CHOICE=$(whiptail --title "LinuxToys" --menu "$msg074" 25 78 16 \
-    	    "0" "$msg075" \
-            "1" "$msg076" \
-            "2" "$msg070" 3>&1 1>&2 2>&3)
-
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
-            return
-        fi
-
-        case $CHOICE in
-        0) kernel_compat ;;
-        1) kernel_performance ;;
-        3 | q) break ;;
-        *) echo "Invalid Option" ;;
-        esac
-    done
-
-}
-
-# install and enable preloading
-preload_in () {
-
-    if whiptail --title "Preload" --yesno "$msg208" 12 78; then
-        if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            chaotic_aur_lib
-        fi
-        if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
-            sudo dnf copr enable elxreno/preload -y
-        fi
-        insta preload
-        sudo systemctl enable preload
-        sudo systemctl start preload
     fi
 
 }
@@ -519,7 +385,7 @@ while :; do
     1) swapfile_t ;;
     2) flatpak_in ;;
     3) lucidglyph_in ;;
-    4) preload_in ;;
+    4) preload_lib ;;
     5) grubtrfs_t ;;
     6) psaver ;;
     7) touchegg_t ;;
