@@ -300,9 +300,7 @@ kernel_in () {
                 local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
                 cd $HOME
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-                sleep 1
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-                sleep 1
                 wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
                 sleep 1
                 sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
