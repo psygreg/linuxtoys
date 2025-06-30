@@ -385,7 +385,17 @@ while :; do
     1) swapfile_t ;;
     2) flatpak_in ;;
     3) lucidglyph_in ;;
-    4) preload_lib ;;
+    4) total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
+       total_gb=$(( total_kb / 1024 / 1024 ))
+       _cram=$(( total_gb ))
+       if (( _cram < 16 )); then
+          preload_lib
+       else
+          title="Preload"
+          msg="$msg228"
+          _msgbox_
+       fi
+       ;;
     5) grubtrfs_t ;;
     6) psaver ;;
     7) touchegg_t ;;
