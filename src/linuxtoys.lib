@@ -410,3 +410,29 @@ cachyos_arch_lib () {
     sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 }
+
+# power optimizer for laptops
+psave_lib () {
+
+    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+        sudo add-apt-repository ppa:linrunner/tlp
+        sudo apt update
+    fi
+    insta powertop tlp tlp-rdw smartmontools ethtool
+    sudo systemctl enable tlp.service
+    sudo systemctl enable NetworkManager-dispatcher.service
+    sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+    cd $HOME
+    git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+    cd auto-cpufreq && sudo ./auto-cpufreq-installer
+    cd ..
+    sleep 1
+    rm -rf auto-cpufreq
+    sudo auto-cpufreq --install
+    flatpak_in_lib
+    flatpak install --or-update -y com.github.d4nj1.tlpui --system
+    local title="$msg006"
+    local msg="$msg036"
+    _msgbox_
+
+}
