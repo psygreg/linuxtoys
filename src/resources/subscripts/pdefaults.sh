@@ -3,7 +3,9 @@
 # system-agnostic scripts
 sysag_run () {
 
-    cachyos_sysd_lib
+    if [[ "$ID" != "cachyos" ]]; then
+        cachyos_sysd_lib
+    fi
     sboost_lib
     # set safe minimum ram to use preload
     local total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
@@ -38,11 +40,16 @@ optimizer () {
         fi
         # run system-agnostic optimizations
         sysag_run
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    elif [[ "$ID" =~ ^(arch)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
             cachyos_arch_lib
         fi
         # run system-agnostic optimizations
+        sysag_run
+        local title="$msg006"
+        local msg="$msg036"
+        _msgbox_
+    elif [ "$ID" == "cachyos" ]; then
         sysag_run
         local title="$msg006"
         local msg="$msg036"
