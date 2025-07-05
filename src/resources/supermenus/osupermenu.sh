@@ -103,30 +103,10 @@ install_native () {
     cd $HOME
     if [[ -n "$_packages" ]]; then
         if [[ -n "$_drslv" ]]; then
-                local title="$msg006"
-                local msg="$msg034"
-                _msgbox_
-            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
-                chmod +x autoresolvedeb.sh
-                ./autoresolvedeb.sh
-                rm autoresolvedeb.sh
-            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
-                chmod +x autoresolvepkg.sh
-                ./autoresolvepkg.sh
-                rm autoresolvepkg.sh
-            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
-                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
-                chmod +x autoresolverpm.sh
-                ./autoresolverpm.sh
-                rm autoresolverpm.sh
-            elif [[ "$ID_LIKE" == *suse* ]]; then
-                wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
-                chmod +x autoresolverpm.sh
-                ./autoresolverpm.sh
-                rm autoresolverpm.sh
-            fi
+            local title="$msg006"
+            local msg="$msg034"
+            _msgbox_
+            davincimenu
         fi
         if [[ -n "$_fial" ]]; then   
             if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
@@ -180,6 +160,68 @@ figma_t () {
         sleep 1
         rm figma-linux-*.AppImage
     fi
+
+}
+
+# davinci resolve menu
+davincimenu () {
+
+    # menu
+    while :; do
+
+        CHOICE=$(whiptail --title "DaVinci Resolve" --menu "$msg230" 25 78 16 \
+            "0" "$msg231" \
+            "1" "$msg232" \
+            "2" "$msg070" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+            # Exit the script if the user presses Esc
+            break
+        fi
+
+        case $CHOICE in
+        0) davinciboxd && return ;;
+        1) davincinatd && return ;;
+        2 | q) break ;;
+        *) echo "Invalid Option" ;;
+        esac
+    done
+
+}
+
+davincinatd () {
+
+    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+        wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
+        chmod +x autoresolvedeb.sh
+        ./autoresolvedeb.sh
+        rm autoresolvedeb.sh
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+        wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvepkg.sh
+        chmod +x autoresolvepkg.sh
+        ./autoresolvepkg.sh
+        rm autoresolvepkg.sh
+    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
+        wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
+        chmod +x autoresolverpm.sh
+        ./autoresolverpm.sh
+        rm autoresolverpm.sh
+    elif [[ "$ID_LIKE" == *suse* ]]; then
+        wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
+        chmod +x autoresolverpm.sh
+        ./autoresolverpm.sh
+        rm autoresolverpm.sh
+    fi
+
+}
+
+davinciboxd () {
+
+    wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autodavincibox.sh
+    chmod +x autodavincibox.sh
+    ./autodavincibox.sh
+    rm autodavincibox.sh
 
 }
 
