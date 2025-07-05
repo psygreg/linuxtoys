@@ -121,7 +121,7 @@ install_native () {
                 chmod +x autoresolverpm.sh
                 ./autoresolverpm.sh
                 rm autoresolverpm.sh
-            elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+            elif [[ "$ID_LIKE" == *suse* ]]; then
                 wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolverpm.sh
                 chmod +x autoresolverpm.sh
                 ./autoresolverpm.sh

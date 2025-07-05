@@ -169,7 +169,7 @@ install_native () {
             if [[ -n "$_droid" ]]; then
                 sudo systemctl enable --now waydroid-container
             fi
-        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+        elif [[ "$ID_LIKE" == *suse* ]]; then
             if [[ -n "$_oprzr" ]]; then
                 if grep -qi "slowroll" /etc/os-release; then
                     sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Slowroll/hardware:razer.repo
@@ -204,7 +204,7 @@ rusticl_in () {
             insta mesa-opencl-icd clinfo
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             insta mesa-libOpenCL clinfo
-        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+        elif [[ "$ID_LIKE" == *suse* ]]; then
             insta Mesa-libRusticlOpenCL clinfo
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             insta opencl-mesa clinfo
@@ -250,7 +250,7 @@ rocm_rpm () {
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
         local _packages=()
-        if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+        if [[ "$ID_LIKE" == *suse* ]]; then
             _packages=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
         else
             _packages=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand hiprtc radeontop rocm-opencl ocl-icd clinfo)

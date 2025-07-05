@@ -88,7 +88,7 @@ nvidia_in () {
                 fi
 
                 case $CHOICE in
-                0) if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+                0) if [[ "$ID_LIKE" == *suse* ]]; then
                         local REPO_ALIAS="nvidia"
                         case "$VERSION_ID" in
                             *Tumbleweed*)
@@ -124,7 +124,7 @@ nvidia_in () {
                         insta akmod-nvidia xorg-x11-drv-nvidia-cuda
                    fi 
                    sudo dracut -f --regenerate-all ;;
-                1) if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+                1) if [[ "$ID_LIKE" == *suse* ]]; then
                         local REPO_ALIAS="nvidia"
                         case "$VERSION_ID" in
                             *Tumbleweed*)
@@ -182,7 +182,7 @@ nvidia_in () {
 # fix SELinux policies for gaming on openSUSE 
 fix_se_suse () {
 
-    if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+    if [[ "$ID_LIKE" == *suse* ]]; then
         sudo setsebool -P selinuxuser_execmod 1
         local title="$msg072"
         local msg="$msg022"
@@ -199,7 +199,7 @@ fix_se_suse () {
 suse_codecs () {
 
     if whiptail --title "$msg006" --yesno "$msg080" 8 78; then
-        if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+        if [[ "$ID_LIKE" == *suse* ]]; then
             insta opi
             sudo opi codecs
             local title="$msg006"

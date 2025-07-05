@@ -31,7 +31,7 @@ grubtrfs_in () {
         insta snapper btrfs-assistant
         sudo snapper -c root create-config /
         sudo snapper -c root create --command dnf
-    elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+    elif [[ "$ID_LIKE" == *suse* ]]; then
         sudo zypper rm snapper -y
         insta snapper btrfs-assistant
         sudo snapper -c root create-config /

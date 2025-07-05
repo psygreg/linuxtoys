@@ -66,7 +66,7 @@ _install_ () {
                     sudo dnf in $pak -y
                 fi
             done
-        elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+        elif [[ "$ID_LIKE" == *suse* ]]; then
             for pak in "${_packages[@]}"; do
                 if [[ "$pak" =~ ^(yes|openrazer|waydroid|code|pyenv|dotnet-sdk-9.0)$ ]]; then
                     continue
@@ -104,7 +104,7 @@ elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
         fi
         sudo dnf in "$@" -y
     }
-elif [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+elif [[ "$ID_LIKE" == *suse* ]]; then
     insta () {
         if [ "$#" -eq 0 ]; then
             return 1

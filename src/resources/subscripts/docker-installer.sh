@@ -20,7 +20,7 @@ dep_check () {
 docker_in () {
 
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
-        if [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ]; then
+        if [[ "$ID_LIKE" == *suse* ]]; then
             insta docker
         else
             insta docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
