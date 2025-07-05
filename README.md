@@ -72,6 +72,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
 - [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
+- [DaVinciBox](https://github.com/zelikos/davincibox) by **Patrick Csikos**
 - [Darktable](https://www.darktable.org)
 - [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
 - [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
