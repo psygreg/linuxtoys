@@ -84,11 +84,13 @@ gsupermenu () {
 
         install_flatpak
         install_native
-        if [[ -n "$_sboost" ]]; then
-            sboost_lib
-        fi
-        if [[ -n "$_dsplitm" ]]; then
-            dsplitm_lib
+        if [ ! -f /.autopatch.state ]; then
+            if [[ -n "$_sboost" ]]; then
+                sboost_lib
+            fi
+            if [[ -n "$_dsplitm" ]]; then
+                dsplitm_lib
+            fi
         fi
         runners_t
         nexusmods_t
