@@ -390,7 +390,7 @@ fedora_cachyos_menu_lib () {
         case $CHOICE in
         0) kernel_compat ;;
         1) kernel_performance ;;
-        3 | q) break ;;
+        2 | q) return ;;
         *) echo "Invalid Option" ;;
         esac
     done
