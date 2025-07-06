@@ -217,17 +217,22 @@ suse_codecs () {
 # install flatpak support
 flatpak_in () {
 
-    if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
-        flatpak_in_lib
-        if command -v flatpak &> /dev/null; then
-            whiptail --title "$msg013" --msgbox "$msg015" 8 78
-        else
-            if [ "$ID" == "ubuntu" ]; then
-                insta gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
+    if [ ! -f /.autopatch.state ]; then
+        if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
+            flatpak_in_lib
+            if command -v flatpak &> /dev/null; then
+                whiptail --title "$msg013" --msgbox "$msg015" 8 78
+                if [ "$ID" == "ubuntu" ]; then
+                    insta gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
+                fi
             fi
+            local title="$msg013"
+            local msg="$msg014"
+            _msgbox_
         fi
-        local title="$msg013"
-        local msg="$msg014"
+    else
+        local title="AutoPatcher"
+        local msg="$msg234"
         _msgbox_
     fi
 
@@ -236,8 +241,14 @@ flatpak_in () {
 # linux kernel power saving optimized settings when on battery
 psaver () {
 
-    if whiptail --title "$msg006" --yesno "$msg176" 12 78; then
-        psave_lib
+    if [ ! -f /.autopatch.state ]; then
+        if whiptail --title "$msg006" --yesno "$msg176" 12 78; then
+            psave_lib
+        fi
+    else
+        local title="AutoPatcher"
+        local msg="$msg234"
+        _msgbox_
     fi
 
 }
@@ -352,8 +363,9 @@ while :; do
         "10" "$msg079" \
         "11" "$msg078" \
         "12" "$msg053" \
-        "13" "$msg209" \
-        "14" "$msg059" 3>&1 1>&2 2>&3)
+        "13" "$msg233" \
+        "14" "$msg209" \
+        "15" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -385,8 +397,16 @@ while :; do
     10) fix_se_suse ;;
     11) nvidia_in ;;
     12) chaotic_aur_lib ;;
-    13) lsw_in ;;
-    14 | q) break ;;
+    13) if [ ! -f /.autopatch.state ]; then
+           debfixer_lib
+        else
+           title="AutoPatcher"
+           msg="$msg234"
+           _msgbox_
+        fi
+        ;;
+    14) lsw_in ;;
+    15 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
