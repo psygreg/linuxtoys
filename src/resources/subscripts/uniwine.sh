@@ -16,7 +16,9 @@ getproton () {
             DEST_FILE="${HOME}/.zshrc"
         fi
         cp $DEST_FILE ${DEST_FILE}.bak
-        cat "${HOME}/wineprefix.cat" >> "${DEST_FILE}"
+        while IFS= read -r line; do
+            grep -Fxq "$line" "$DEST_FILE" || echo "$line" >> "$DEST_FILE"
+        done < wineprefix.cat
         rm wineprefix.cat
     fi
     # download and install proton
@@ -69,6 +71,7 @@ winetrix () {
     local title="UniWine"
     local msg="$msg236"
     _msgbox_
+    sleep 1
     wine winecfg
     winetricks -q win11
     local msg="$msg237"
