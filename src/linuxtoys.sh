@@ -69,13 +69,14 @@ while :; do
         "2" "$msg122" \
         "3" "$msg123" \
         "4" "$msg143" \
-        "5" "$msg199" \
-        "6" "$msg227" \
+        "5" "$msg227" \
+        "6" "$msg199" \
+        "7" "UniWine" \
         "" "" \
         "" "" \
-        "7" "$msg124" \
-        "8" "GitHub" \
-        "9" "$msg059" 3>&1 1>&2 2>&3)
+        "8" "$msg124" \
+        "9" "GitHub" \
+        "10" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -89,11 +90,12 @@ while :; do
     2) supmenu="gsupermenu" && _invoke_ ;;
     3) supmenu="esupermenu" && _invoke_ ;;
     4) supmenu="dsupermenu" && _invoke_ ;;
-    5) supmenu="csupermenu" && _invoke_ ;;
-    6) subscript="pdefaults" && _invoke_ ;;
-    7) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
-    8) xdg-open https://github.com/psygreg/linuxtoys ;;
-    9 | q) break ;;
+    5) subscript="pdefaults" && _invoke_ ;;
+    6) supmenu="csupermenu" && _invoke_ ;;
+    7) subscript="uniwine" && _invoke_ ;;
+    8) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
+    9) xdg-open https://github.com/psygreg/linuxtoys ;;
+    10 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
