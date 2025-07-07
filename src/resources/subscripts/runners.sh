@@ -7,6 +7,7 @@ runners_menu () {
     local spritz_status=$([ "$_spritz" = "1" ] && echo "ON" || echo "OFF")
     local osu_status=$([ "$_osu" = "1" ] && echo "ON" || echo "OFF")
     local jade_status=$([ "$_jade" = "1" ] && echo "ON" || echo "OFF")
+    local tricks_status=$([ "$_tricks" = "1" ] && echo "ON" || echo "OFF")
     local vngr_status=$([ "$_vngr" = "1" ] && echo "ON" || echo "OFF")
 
     while :; do
@@ -17,6 +18,7 @@ runners_menu () {
             "Spritz" "$msg153" $spritz_status \
             "Osu!-Wine" "$msg154" $osu_status \
             "Jadeite" "$msg180" $jade_status \
+            "Protontricks" "$msg235" $tricks_status \
             "Vinegar" "$msg204" $vngr_status \
             3>&1 1>&2 2>&3)
 
@@ -29,6 +31,7 @@ runners_menu () {
         [[ "$selection" == *"Spritz"* ]] && _spritz="1" || _spritz=""
         [[ "$selection" == *"Osu!-Wine"* ]] && _osu="1" || _osu=""
         [[ "$selection" == *"Jadeite"* ]] && _jade="1" || _jade=""
+        [[ "$selection" == *"Protontricks"* ]] && _tricks="1" || _tricks=""
         [[ "$selection" == *"Vinegar"* ]] && _vngr="1" || _vngr=""
 
         if [[ -n "$_spritz" ]]; then
@@ -39,6 +42,11 @@ runners_menu () {
         fi
         if [[ -n "$_jade" ]]; then
             jade_in
+        fi
+        if [[ -n "$_tricks" ]]; then
+            flatpak_in_lib
+            local _flatpaks="com.github.Matoking.protontricks"
+            _flatpak_
         fi
         if [[ -n "$_vngr" ]]; then
             vinegar_in
