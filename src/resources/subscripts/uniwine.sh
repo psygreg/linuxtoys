@@ -121,32 +121,30 @@ uniwinerm () {
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
-# check if wine is already installed and stop if it is
-type=$(type -t wine)
-if [ -z "$type" ] || [ "$type" = "alias" ] ; then
-    # menu
-    while :; do
-
-        CHOICE=$(whiptail --title "UniWine" --menu "" 25 78 16 \
-            "0" "$msg239" \
-            "1" "$msg240" \
-            "2" "$msg070" 3>&1 1>&2 2>&3)
-
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
-            break
-        fi
-
-        case $CHOICE in
-        0) getproton && winetrix && break;;
-        1) uniwinerm && break;;
-        2 | q) break ;;
-        *) echo "Invalid Option" ;;
-        esac
-    done
-else
+# check if wine is already installed
+if command -v wine >/dev/null 2>&1; then
     title="UniWine"
     msg="$msg238"
     _msgbox_
 fi
+# menu
+while :; do
+
+    CHOICE=$(whiptail --title "UniWine" --menu "" 25 78 16 \
+        "0" "$msg239" \
+        "1" "$msg240" \
+        "2" "$msg070" 3>&1 1>&2 2>&3)
+
+    exitstatus=$?
+    if [ $exitstatus != 0 ]; then
+        # Exit the script if the user presses Esc
+        break
+    fi
+
+    case $CHOICE in
+    0) getproton && winetrix && break;;
+    1) uniwinerm && break;;
+    2 | q) break ;;
+    *) echo "Invalid Option" ;;
+    esac
+done
