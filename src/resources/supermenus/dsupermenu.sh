@@ -429,6 +429,143 @@ others_t () {
 
 }
 
+# intellij idea
+idea_in () {
+
+    # menu
+    while :; do
+
+        CHOICE=$(whiptail --title "IntelliJ IDEA" --menu "$msg067" 25 78 16 \
+            "0" "Community Edition (free)" \
+            "1" "Ultimate" \
+            "2" "Cancel" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+            # Exit the script if the user presses Esc
+            return
+        fi
+
+        case $CHOICE in
+        0) idea_ic && return ;;
+        1) idea_iu && return ;;
+        2 | q) return ;;
+        *) echo "Invalid Option" ;;
+        esac
+    done
+
+}
+
+# jetbrains trigger
+jetbrains_t () {
+
+    if [[ -n "$_tb" ]]; then
+        if whiptail --title "Jetbrains Toolbox" --yesno "$msg173" 12 78; then
+            _pycharm=""
+            _idea=""
+            _wstorm=""
+            _rider=""
+            _clion=""
+            _rustr=""
+            _rubym=""
+            _datag=""
+            _phpstorm=""
+            _goland=""
+            toolbox_in
+            return
+        fi
+    fi
+    if [[ -n "$_pycharm" ]]; then
+      pycharm_in
+    fi
+    if [[ -n "$_idea" ]]; then
+      idea_in
+    fi
+    if [[ -n "$_wstorm" ]]; then
+      webstorm_in
+    fi
+    if [[ -n "$_rider" ]]; then
+      rider_in
+    fi
+    if [[ -n "$_clion" ]]; then
+      clion_in
+    fi
+    if [[ -n "$_rustr" ]]; then
+      rustrover_in
+    fi
+    if [[ -n "$_rubym" ]]; then
+      rubymine_in
+    fi
+    if [[ -n "$_datag" ]]; then
+      datagrip_in
+    fi
+    if [[ -n "$_phpstorm" ]]; then
+      phpstorm_in
+    fi
+    if [[ -n "$_goland" ]]; then
+      goland_in
+    fi
+
+}
+
+
+# Jetbrains menu
+jetbrains_menu () {
+
+    local pycharm_status=$([ "$_pycharm" = "1" ] && echo "ON" || echo "OFF")
+    local idea_status=$([ "$_idea" = "1" ] && echo "ON" || echo "OFF")
+    local webstorm_status=$([ "$_wstorm" = "1" ] && echo "ON" || echo "OFF")
+    local rider_status=$([ "$_rider" = "1" ] && echo "ON" || echo "OFF")
+    local clion_status=$([ "$_clion" = "1" ] && echo "ON" || echo "OFF")
+    local rustrover_status=$([ "$_rustr" = "1" ] && echo "ON" || echo "OFF")
+    local rubymine_status=$([ "$_rubym" = "1" ] && echo "ON" || echo "OFF")
+    local datagrip_status=$([ "$_datag" = "1" ] && echo "ON" || echo "OFF")
+    local phpstorm_status=$([ "$_phpstorm" = "1" ] && echo "ON" || echo "OFF")
+    local goland_status=$([ "$_goland" = "1" ] && echo "ON" || echo "OFF")
+    local toolbox_status=$([ "$_tb" = "1" ] && echo "ON" || echo "OFF")
+
+    while :; do
+
+        local selection
+        selection=$(whiptail --title "$msg131" --checklist \
+            "$msg131" 20 78 15 \
+            "PyCharm" "$msg163" $pycharm_status \
+            "IntelliJ IDEA" "$msg138" $idea_status \
+            "WebStorm" "$msg164" $webstorm_status \
+            "Rider" "$msg165" $rider_status \
+            "CLion" "$msg166" $clion_status \
+            "RustRover" "$msg167" $rustrover_status \
+            "RubyMine" "$msg168" $rubymine_status \
+            "DataGrip" "$msg169" $datagrip_status \
+            "PhpStorm" "$msg170" $phpstorm_status \
+            "GoLand" "$msg171" $goland_status \
+            "Toolbox" "$msg172" $toolbox_status \
+            3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus != 0 ]; then
+        # Exit the script if the user presses Esc
+          return
+        fi
+
+        [[ "$selection" == *"PyCharm"* ]] && _pycharm="1" || _pycharm=""
+        [[ "$selection" == *"IntelliJ IDEA"* ]] && _idea="1" || _idea=""
+        [[ "$selection" == *"WebStorm"* ]] && _wstorm="1" || _wstorm=""
+        [[ "$selection" == *"Rider"* ]] && _rider="1" || _rider=""
+        [[ "$selection" == *"CLion"* ]] && _clion="1" || _clion=""
+        [[ "$selection" == *"RustRover"* ]] && _rustr="1" || _rustr=""
+        [[ "$selection" == *"RubyMine"* ]] && _rubym="1" || _rubym=""
+        [[ "$selection" == *"DataGrip"* ]] && _datag="1" || _datag=""
+        [[ "$selection" == *"PhpStorm"* ]] && _phpstorm="1" || _phpstorm=""
+        [[ "$selection" == *"GoLand"* ]] && _goland="1" || _goland=""
+        [[ "$selection" == *"Toolbox"* ]] && _tb="1" || _tb=""
+
+        jetbrains_t
+
+    done
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)

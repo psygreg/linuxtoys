@@ -7,7 +7,9 @@ pycharm_in () {
     # first installation
     if [ ! -d "/opt/pycharm" ]; then
         tar -xvzf pycharm-2025.1.1.1.tar.gz
-        mv pycharm-* pycharm
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "pycharm-*") pycharm
+        sleep 1
         sudo cp -rf pycharm /opt
         rm pycharm-2025.1.1.1.tar.gz
         rm -rf pycharm
@@ -22,7 +24,8 @@ pycharm_in () {
         fi
     else # update
         tar -xvzf pycharm-2025.1.1.1.tar.gz
-        mv pycharm-* pycharm
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "pycharm-*") pycharm
         sudo rm -rf /opt/pycharm
         sudo cp -rf pycharm /opt
         rm pycharm-2025.1.1.1.tar.gz
@@ -32,32 +35,6 @@ pycharm_in () {
 }
 
 # intellij idea
-idea_in () {
-
-    # menu
-    while :; do
-
-        CHOICE=$(whiptail --title "IntelliJ IDEA" --menu "$msg067" 25 78 16 \
-            "0" "Community Edition (free)" \
-            "1" "Ultimate" \
-            "2" "Cancel" 3>&1 1>&2 2>&3)
-
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
-            return
-        fi
-
-        case $CHOICE in
-        0) idea_ic ;;
-        1) idea_iu ;;
-        2 | q) break ;;
-        *) echo "Invalid Option" ;;
-        esac
-    done
-
-}
-
 idea_ic () {
 
     cd $HOME
@@ -65,7 +42,9 @@ idea_ic () {
     if [ ! -d "/opt/idea-IC" ]; then
         wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
         tar -xvzf ideaIC-2025.1.1.1.tar.gz
-        mv idea-IC* idea-IC
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "idea-IC*") idea-IC
+        sleep 1
         sudo cp -rf idea-IC /opt
         rm ideaIC-2025.1.1.1.tar.gz
         rm -rf idea-IC
@@ -81,7 +60,8 @@ idea_ic () {
     else # update
         wget https://download-cdn.jetbrains.com/idea/ideaIC-2025.1.1.1.tar.gz
         tar -xvzf ideaIC-2025.1.1.1.tar.gz
-        mv idea-IC* idea-IC
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "idea-IC*") idea-IC
         sudo rm -rf /opt/idea-IC
         sudo cp -rf idea-IC /opt
         rm ideaIC-2025.1.1.1.tar.gz
@@ -97,7 +77,9 @@ idea_iu () {
     if [ ! -d "/opt/idea-IU" ]; then
         wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
         tar -xvzf ideaIU-2025.1.1.1.tar.gz
-        mv idea-IU* idea-IU
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "idea-IU*") idea-IU
+        sleep 1
         sudo cp -rf idea-IU /opt
         rm -rf idea-IU
         rm ideaIU-2025.1.1.1.tar.gz
@@ -113,7 +95,8 @@ idea_iu () {
     else # update
         wget https://download-cdn.jetbrains.com/idea/ideaIU-2025.1.1.1.tar.gz
         tar -xvzf ideaIU-2025.1.1.1.tar.gz
-        mv idea-IU* idea-IU
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "idea-IU*") idea-IU
         sudo rm -rf /opt/idea-IU
         sudo cp -rf idea-IU /opt
         rm ideaIU-2025.1.1.1.tar.gz
@@ -130,7 +113,9 @@ webstorm_in () {
     # first installation
     if [ ! -d "/opt/WebStorm" ]; then
         tar -xvzf WebStorm-2025.1.2.tar.gz
-        mv WebStorm-* WebStorm
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "WebStorm-*") WebStorm
+        sleep 1
         sudo cp -rf WebStorm /opt
         rm WebStorm-2025.1.2.tar.gz
         rm -rf WebStorm
@@ -145,7 +130,8 @@ webstorm_in () {
         fi
     else # update
         tar -xvzf WebStorm-2025.1.2.tar.gz
-        mv WebStorm-* WebStorm
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "WebStorm-*") WebStorm
         sudo rm -rf /opt/WebStorm
         sudo cp -rf WebStorm /opt
         rm WebStorm-2025.1.2.tar.gz
@@ -162,7 +148,9 @@ rider_in () {
     # first installation
     if [ ! -d "/opt/rider" ]; then
         tar -xvzf JetBrains.Rider-2025.1.2.tar.gz
-        mv JetBrains* rider
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "JetBrains*") rider
+        sleep 1
         sudo cp -rf rider /opt
         rm JetBrains.Rider-2025.1.2.tar.gz
         rm -rf rider
@@ -177,7 +165,8 @@ rider_in () {
         fi
     else # update
         tar -xvzf JetBrains.Rider-2025.1.2.tar.gz
-        mv JetBrains* rider
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "JetBrains*") rider
         sudo rm -rf /opt/rider
         sudo cp -rf rider /opt
         rm JetBrains.Rider-2025.1.2.tar.gz
@@ -194,7 +183,9 @@ clion_in () {
     # first installation
     if [ ! -d "/opt/clion" ]; then
         tar -xvzf CLion-2025.1.2.tar.gz
-        mv clion-* clion
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "clion-*") clion
+        sleep 1
         sudo cp -rf clion /opt
         rm CLion-2025.1.2.tar.gz
         rm -rf clion
@@ -209,7 +200,8 @@ clion_in () {
         fi
     else # update
         tar -xvzf CLion-2025.1.2.tar.gz
-        mv clion-* clion
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "clion-*") clion
         sudo rm -rf /opt/clion
         sudo cp -rf clion /opt
         rm CLion-2025.1.2.tar.gz
@@ -226,7 +218,9 @@ rustrover_in () {
     # first installation
     if [ ! -d "/opt/rustrover" ]; then
         tar -xvzf RustRover-2025.1.3.tar.gz
-        mv RustRover-* rustrover
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "RustRover-*") rustrover
+        sleep 1
         sudo cp -rf rustrover /opt
         rm RustRover-2025.1.3.tar.gz
         rm -rf rustrover
@@ -241,7 +235,8 @@ rustrover_in () {
         fi
     else # update
         tar -xvzf RustRover-2025.1.3.tar.gz
-        mv RustRover-* rustrover
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "RustRover-*") rustrover
         sudo rm -rf /opt/rustrover
         sudo cp -rf rustrover /opt
         rm RustRover-2025.1.3.tar.gz
@@ -258,7 +253,9 @@ rubymine_in () {
     # first installation
     if [ ! -d "/opt/rubymine" ]; then
         tar -xvzf RubyMine-2025.1.2.tar.gz
-        mv RubyMine-* rubymine
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "RubyMine-*") rubymine
+        sleep 1
         sudo cp -rf rubymine /opt
         rm RubyMine-2025.1.2.tar.gz
         rm -rf rubymine
@@ -273,7 +270,8 @@ rubymine_in () {
         fi
     else # update
         tar -xvzf RubyMine-2025.1.2.tar.gz
-        mv RubyMine-* rubymine
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "RubyMine-*") rubymine
         sudo rm -rf /opt/rubymine
         sudo cp -rf rubymine /opt
         rm RubyMine-2025.1.2.tar.gz
@@ -290,7 +288,9 @@ datagrip_in () {
     # first installation
     if [ ! -d "/opt/datagrip" ]; then
         tar -xvzf datagrip-2025.1.3.tar.gz
-        mv DataGrip-* datagrip
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "DataGrip-*") datagrip
+        sleep 1
         sudo cp -rf datagrip /opt
         rm datagrip-2025.1.3.tar.gz
         rm -rf datagrip
@@ -305,7 +305,8 @@ datagrip_in () {
         fi
     else # update
         tar -xvzf datagrip-2025.1.3.tar.gz
-        mv DataGrip-* datagrip
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "DataGrip-*") datagrip
         sudo rm -rf /opt/datagrip
         sudo cp -rf datagrip /opt
         rm datagrip-2025.1.3.tar.gz
@@ -322,7 +323,9 @@ phpstorm_in () {
     # first installation
     if [ ! -d "/opt/phpstorm" ]; then
         tar -xvzf PhpStorm-2025.1.2.tar.gz
-        mv PhpStorm-* phpstorm
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "PhpStorm-*") phpstorm
+        sleep 1
         sudo cp -rf phpstorm /opt
         rm PhpStorm-2025.1.2.tar.gz
         rm -rf phpstorm
@@ -337,7 +340,8 @@ phpstorm_in () {
         fi
     else # update
         tar -xvzf PhpStorm-2025.1.2.tar.gz
-        mv PhpStorm-* phpstorm
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "PhpStorm-*") phpstorm
         sudo rm -rf /opt/phpstorm
         sudo cp -rf phpstorm /opt
         rm PhpStorm-2025.1.2.tar.gz
@@ -354,7 +358,9 @@ goland_in () {
     # first installation
     if [ ! -d "/opt/goland" ]; then
         tar -xvzf goland-2025.1.2.tar.gz
-        mv GoLand-* goland
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "GoLand-*") goland
+        sleep 1
         sudo cp -rf goland /opt
         rm goland-2025.1.2.tar.gz
         rm -rf goland
@@ -369,7 +375,8 @@ goland_in () {
         fi
     else # update
         tar -xvzf goland-2025.1.2.tar.gz
-        mv GoLand-* goland
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "GoLand-*") goland
         sudo rm -rf /opt/goland
         sudo cp -rf goland /opt
         rm goland-2025.1.2.tar.gz
@@ -388,7 +395,9 @@ toolbox_in () {
         if whiptail --title "Jetbrains Toolbox" --yesno "$msg174" 12 78; then
             insta fuse
             tar -xvzf jetbrains-toolbox-2.6.2.41321.tar.gz
-            mv jetbrains-* toolbox
+            sleep 1
+            mv $(find . -maxdepth 1 -type d -name "jetbrains-*") toolbox
+            sleep 1
             ./toolbox/jetbrains-toolbox --appimage-extract
             cd toolbox
             mv squashfs-root toolbox
@@ -413,7 +422,9 @@ toolbox_in () {
         fi
     else # update
         tar -xvzf jetbrains-toolbox-2.6.2.41321.tar.gz
-        mv jetbrains-* toolbox
+        sleep 1
+        mv $(find . -maxdepth 1 -type d -name "jetbrains-*") toolbox
+        sleep 1
         ./toolbox/jetbrains-toolbox --appimage-extract
         cd toolbox
         mv squashfs-root toolbox
@@ -422,115 +433,5 @@ toolbox_in () {
         rm jetbrains-toolbox-2.6.2.41321.tar.gz
         rm -rf toolbox
     fi
-
-}
-
-# jetbrains trigger
-jetbrains_t () {
-
-    if [[ -n "$_tb" ]]; then
-        if whiptail --title "Jetbrains Toolbox" --yesno "$msg173" 12 78; then
-            _pycharm=""
-            _idea=""
-            _wstorm=""
-            _rider=""
-            _clion=""
-            _rustr=""
-            _rubym=""
-            _datag=""
-            _phpstorm=""
-            _goland=""
-            toolbox_in
-            return
-        fi
-    fi
-    if [[ -n "$_pycharm" ]]; then
-      pycharm_in
-    fi
-    if [[ -n "$_idea" ]]; then
-      idea_in
-    fi
-    if [[ -n "$_wstorm" ]]; then
-      webstorm_in
-    fi
-    if [[ -n "$_rider" ]]; then
-      rider_in
-    fi
-    if [[ -n "$_clion" ]]; then
-      clion_in
-    fi
-    if [[ -n "$_rustr" ]]; then
-      rustrover_in
-    fi
-    if [[ -n "$_rubym" ]]; then
-      rubymine_in
-    fi
-    if [[ -n "$_datag" ]]; then
-      datagrip_in
-    fi
-    if [[ -n "$_phpstorm" ]]; then
-      phpstorm_in
-    fi
-    if [[ -n "$_goland" ]]; then
-      goland_in
-    fi
-
-}
-
-
-# Jetbrains menu
-jetbrains_menu () {
-
-    local pycharm_status=$([ "$_pycharm" = "1" ] && echo "ON" || echo "OFF")
-    local idea_status=$([ "$_idea" = "1" ] && echo "ON" || echo "OFF")
-    local webstorm_status=$([ "$_wstorm" = "1" ] && echo "ON" || echo "OFF")
-    local rider_status=$([ "$_rider" = "1" ] && echo "ON" || echo "OFF")
-    local clion_status=$([ "$_clion" = "1" ] && echo "ON" || echo "OFF")
-    local rustrover_status=$([ "$_rustr" = "1" ] && echo "ON" || echo "OFF")
-    local rubymine_status=$([ "$_rubym" = "1" ] && echo "ON" || echo "OFF")
-    local datagrip_status=$([ "$_datag" = "1" ] && echo "ON" || echo "OFF")
-    local phpstorm_status=$([ "$_phpstorm" = "1" ] && echo "ON" || echo "OFF")
-    local goland_status=$([ "$_goland" = "1" ] && echo "ON" || echo "OFF")
-    local toolbox_status=$([ "$_tb" = "1" ] && echo "ON" || echo "OFF")
-
-    while :; do
-
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "PyCharm" "$msg163" $pycharm_status \
-            "IntelliJ IDEA" "$msg138" $idea_status \
-            "WebStorm" "$msg164" $webstorm_status \
-            "Rider" "$msg165" $rider_status \
-            "CLion" "$msg166" $clion_status \
-            "RustRover" "$msg167" $rustrover_status \
-            "RubyMine" "$msg168" $rubymine_status \
-            "DataGrip" "$msg169" $datagrip_status \
-            "PhpStorm" "$msg170" $phpstorm_status \
-            "GoLand" "$msg171" $goland_status \
-            "Toolbox" "$msg172" $toolbox_status \
-            3>&1 1>&2 2>&3)
-
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-          return
-        fi
-
-        [[ "$selection" == *"PyCharm"* ]] && _pycharm="1" || _pycharm=""
-        [[ "$selection" == *"IntelliJ IDEA"* ]] && _idea="1" || _idea=""
-        [[ "$selection" == *"WebStorm"* ]] && _wstorm="1" || _wstorm=""
-        [[ "$selection" == *"Rider"* ]] && _rider="1" || _rider=""
-        [[ "$selection" == *"CLion"* ]] && _clion="1" || _clion=""
-        [[ "$selection" == *"RustRover"* ]] && _rustr="1" || _rustr=""
-        [[ "$selection" == *"RubyMine"* ]] && _rubym="1" || _rubym=""
-        [[ "$selection" == *"DataGrip"* ]] && _datag="1" || _datag=""
-        [[ "$selection" == *"PhpStorm"* ]] && _phpstorm="1" || _phpstorm=""
-        [[ "$selection" == *"GoLand"* ]] && _goland="1" || _goland=""
-        [[ "$selection" == *"Toolbox"* ]] && _tb="1" || _tb=""
-
-        jetbrains_t
-
-    done
 
 }
