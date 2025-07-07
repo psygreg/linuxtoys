@@ -71,12 +71,12 @@ while :; do
         "4" "$msg143" \
         "5" "$msg227" \
         "6" "$msg199" \
-        "7" "UniWine" \
         "" "" \
         "" "" \
         "8" "$msg124" \
         "9" "GitHub" \
         "10" "$msg059" 3>&1 1>&2 2>&3)
+        #"7" "UniWine" \ -- disabled option
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -92,7 +92,7 @@ while :; do
     4) supmenu="dsupermenu" && _invoke_ ;;
     5) subscript="pdefaults" && _invoke_ ;;
     6) supmenu="csupermenu" && _invoke_ ;;
-    7) subscript="uniwine" && _invoke_ ;;
+    # 7) subscript="uniwine" && _invoke_ ;; -- disabled option
     8) whiptail --title "LinuxToys v${current_ltver}" --msgbox "$msg125" 8 78 ;;
     9) xdg-open https://github.com/psygreg/linuxtoys ;;
     10 | q) break ;;

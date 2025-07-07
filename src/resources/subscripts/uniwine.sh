@@ -68,12 +68,12 @@ getproton () {
 # prepare necessary winetricks
 winetrix () {
 
-    #local title="UniWine"
-    #local msg="$msg236"
-    #_msgbox_
-    #echo "Setting up wineprefix"
-    #sleep 2
-    #wine winecfg
+    local title="UniWine"
+    local msg="$msg236"
+    _msgbox_
+    echo "Setting up wineprefix"
+    sleep 2
+    wine winecfg
     winetricks -q win11
     local msg="$msg237"
     _msgbox_
