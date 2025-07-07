@@ -123,7 +123,7 @@ _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # check if wine is already installed and stop if it is
 type=$(type -t wine)
-if ! command -v wine >/dev/null 2>&1 || [ "$type" == "alias" ] ; then
+if [ -z "$type" ] || [ "$type" = "alias" ] ; then
     # menu
     while :; do
 
