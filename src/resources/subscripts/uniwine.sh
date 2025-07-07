@@ -71,7 +71,8 @@ winetrix () {
     local title="UniWine"
     local msg="$msg236"
     _msgbox_
-    sleep 1
+    echo "Setting up wineprefix"
+    sleep 2
     wine winecfg
     winetricks -q win11
     local msg="$msg237"
