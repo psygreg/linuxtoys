@@ -109,6 +109,7 @@ install_native () {
             if [[ -n "$_code" ]]; then
                 if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
                     chaotic_aur_lib
+                    insta visual-studio-code-bin
                 else
                     local title="$msg006"
                     local msg="Skipping Visual Studio Code installation."
