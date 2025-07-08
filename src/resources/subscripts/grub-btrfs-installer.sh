@@ -27,12 +27,12 @@ dep_check () {
 grubtrfs_in () {
 
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        insta snapper btrfs-assistant
+        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command dnf
     elif [[ "$ID_LIKE" == *suse* ]]; then
-        insta snapper btrfs-assistant
+        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command zypper
@@ -42,7 +42,7 @@ grubtrfs_in () {
         sudo snapper -c root create-config /
         sudo snapper -c root create --command pacman
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        insta snapper btrfs-assistant
+        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command apt
