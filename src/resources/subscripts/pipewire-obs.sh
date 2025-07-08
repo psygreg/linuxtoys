@@ -42,6 +42,7 @@ native_pipe () {
     cd obspipe
     wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
     tar xvzf linux-pipewire-audio-${ver}.tar.gz
+    mkdir -p $HOME/.config/obs-studio/plugins/linux-pipewire-audio
     cp -rf linux-pipewire-audio $HOME/.config/obs-studio/plugins/linux-pipewire-audio/
     cd ..
     rm -rf obspipe
