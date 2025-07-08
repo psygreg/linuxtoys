@@ -5,7 +5,7 @@
 docker_in () {
 
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
-        local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog freerdp3-sdl git iproute2 libnotify-bin netcat-openbsd)
+        local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog git iproute2 libnotify-bin)
         insta ca-certificates curl
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -16,7 +16,7 @@ docker_in () {
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
     elif [ "$ID" == "debian" ]; then
-        local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog freerdp3-sdl git iproute2 libnotify-bin netcat-openbsd)
+        local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog git iproute2 libnotify-bin)
         insta ca-certificates curl
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
@@ -29,11 +29,11 @@ docker_in () {
     elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         sudo dnf -y install dnf-plugins-core
         sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-        local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin curl dialog freerdp git iproute libnotify nmap-ncat)
+        local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin curl dialog git iproute libnotify)
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        local _packages=(docker docker-compose curl dialog freerdp git iproute2 libnotify gnu-netcat)
+        local _packages=(docker docker-compose curl dialog git iproute2 libnotify)
     elif [[ "$ID_LIKE" == *suse* ]]; then
-        local _packages=(docker docker-compose curl dialog freerdp git iproute2 libnotify-tools netcat-openbsd)
+        local _packages=(docker docker-compose curl dialog git iproute2 libnotify-tools)
     fi
     _install_
     sudo usermod -aG docker $USER

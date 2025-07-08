@@ -275,11 +275,11 @@ psycachy_lib () {
 
     local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     cd $HOME
-    wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-cachyos-deb/archive/refs/tags/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
     sleep 1
-    sudo dpkg -i -y linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
+    sudo dpkg -i linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
     cd $HOME/.local
     sleep 1
     wget -O "kernelsetting" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults

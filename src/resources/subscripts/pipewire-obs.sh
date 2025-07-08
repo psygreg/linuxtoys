@@ -19,7 +19,8 @@ flatpak_pipe () {
         cd obspipe
         wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
         tar xvzf linux-pipewire-audio-${ver}-flatpak-30.tar.gz
-        cp -rf linux-pipewire-audio $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio/
+        mkdir -p $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio
+        cp -rf linux-pipewire-audio/ $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio/
         sudo flatpak override --filesystem=xdg-run/pipewire-0 com.obsproject.Studio
         cd ..
         rm -rf obspipe
@@ -41,7 +42,8 @@ native_pipe () {
     cd obspipe
     wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
     tar xvzf linux-pipewire-audio-${ver}.tar.gz
-    cp -rf linux-pipewire-audio $HOME/.config/obs-studio/plugins/linux-pipewire-audio/
+    mkdir -p $HOME/.config/obs-studio/plugins/linux-pipewire-audio
+    cp -rf linux-pipewire-audio/ $HOME/.config/obs-studio/plugins/linux-pipewire-audio/
     cd ..
     rm -rf obspipe
     return 0

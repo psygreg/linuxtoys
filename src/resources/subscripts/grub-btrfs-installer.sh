@@ -27,23 +27,23 @@ dep_check () {
 grubtrfs_in () {
 
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        sudo dnf rm snapper -y
-        insta snapper btrfs-assistant
+        insta snapper
+        sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command dnf
     elif [[ "$ID_LIKE" == *suse* ]]; then
-        sudo zypper rm snapper -y
-        insta snapper btrfs-assistant
+        insta snapper
+        sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command zypper
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        sudo pacman -Rsn --noconfirm snapper
         insta snapper
+        sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command pacman
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        sudo apt purge -y snapper
-        insta snapper btrfs-assistant
+        insta snapper
+        sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command apt
     fi
@@ -62,7 +62,7 @@ grubtrfs_in () {
         cd $HOME
         git clone https://github.com/Antynea/grub-btrfs.git
         cd grub-btrfs
-        make install
+        sudo make install
     fi
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         sudo sed -i 's|^GRUB_BTRFS_MKCONFIG=.*|GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig|' '/etc/default/grub-btrfs/config'
@@ -74,8 +74,7 @@ grubtrfs_in () {
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         sudo update-grub
     fi
-    sudo systemctl enable grub-btrfsd
-    sudo systemctl start grub-btrfsd
+    sudo systemctl enable --now grub-btrfsd
 
 }
 
