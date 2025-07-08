@@ -9,7 +9,7 @@ usupermenu () {
     local obs_status=$([ "$_obs" = "com.obsproject.Studio" ] && echo "ON" || echo "OFF")
     local hndbrk_status=$([ "$_hndbrk" = "fr.handbrake.ghb" ] && echo "ON" || echo "OFF")
     local slar_status=$([ "$_slar" = "solaar" ] && echo "ON" || echo "OFF")
-    local oprzr_status=$([ "$_oprzr" = "openrazer" ] && echo "ON" || echo "OFF")
+    local oprzr_status=$([ "$_oprzr" = "openrazer-meta" ] && echo "ON" || echo "OFF")
     local oprgb_status=$([ "$_oprgb" = "org.openrgb.OpenRGB" ] && echo "ON" || echo "OFF")
     local btassist_status=$([ "$_btassist" = "btrfs-assistant" ] && echo "ON" || echo "OFF")
     local lact_status=$([ "$_lact" = "io.github.ilya_zlobintsev.LACT" ] && echo "ON" || echo "OFF")
@@ -57,7 +57,7 @@ usupermenu () {
         [[ "$selection" == *"OBS Studio"* ]] && _obs="com.obsproject.Studio" || _obs=""
         [[ "$selection" == *"HandBrake"* ]] && _hndbrk="fr.handbrake.ghb" || _hndbrk=""
         [[ "$selection" == *"Solaar"* ]] && _slar="solaar" || _slar=""
-        [[ "$selection" == *"OpenRazer"* ]] && _oprzr="openrazer" || _oprzr=""
+        [[ "$selection" == *"OpenRazer"* ]] && _oprzr="openrazer-meta" || _oprzr=""
         [[ "$selection" == *"OpenRGB"* ]] && _oprgb="org.openrgb.OpenRGB" || _oprgb=""
         [[ "$selection" == *"btrfs-Assistant"* ]] && _btassist="btrfs-assistant" || _btassist=""
         [[ "$selection" == *"LACT"* ]] && _lact="io.github.ilya_zlobintsev.LACT" || _lact=""
@@ -94,19 +94,23 @@ install_native () {
 
     local _bt_package=""
     local _wd_package=""
-    if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-        _bt_package=($_btassist)
-    else
-        local title="btrfs-Assistant"
-        local msg="$msg220"
-        _msgbox_
+    if [[ -n "$_btassist" ]]; then
+        if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+            _bt_package=($_btassist)
+        else
+            local title="btrfs-Assistant"
+            local msg="$msg220"
+            _msgbox_
+        fi
     fi
-    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-        _wd_package=($_droid)
-    else
-        local title="Waydroid"
-        local msg="$msg219"
-        _msgbox_
+    if [[ -n "$_droid" ]]; then
+        if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+            _wd_package=($_droid)
+        else
+            local title="Waydroid"
+            local msg="$msg219"
+            _msgbox_
+        fi
     fi
     local _packages=($_slar $_oprzr $_droid $_dckr $_rocm $_wd_package $_bt_package)
     if [[ -n "$_packages" ]]; then
@@ -114,6 +118,10 @@ install_native () {
             if [ "$ID" == "ubuntu" ]; then
                 if [[ -n "$_slar" ]]; then
                     sudo add-apt-repository ppa:solaar-unifying/stable
+                    sudo apt update
+                fi
+                if [[ -n "$_oprzr" ]]; then
+                    sudo add-apt-repository ppa:openrazer/stable
                     sudo apt update
                 fi
             fi
@@ -145,12 +153,6 @@ install_native () {
             if [[ -n "$_rocm" ]]; then
                 rocm_arch
             fi
-            for pak in "${_packages[@]}"; do
-                if [[ "$pak" =~ (openrazer|yes) ]]; then
-                    insta openrazer-daemon
-                fi
-                insta $pak
-            done
             if [[ -n "$_droid" ]]; then
                 sudo systemctl enable --now waydroid-container
             fi
@@ -158,7 +160,6 @@ install_native () {
             if [[ -n "$_oprzr" ]]; then
                 insta kernel-devel -y
                 sudo dnf config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo
-                insta openrazer-meta -y
             fi
             if [[ -n "$_dckr" ]]; then
                 docker_t
@@ -177,7 +178,6 @@ install_native () {
                     sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Tumbleweed/hardware:razer.repo
                 fi
                 sudo zypper refresh
-                insta openrazer-meta
             fi
             if [[ -n "$_dckr" ]]; then
                 docker_t
