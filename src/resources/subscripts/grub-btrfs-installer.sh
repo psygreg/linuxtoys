@@ -62,7 +62,7 @@ grubtrfs_in () {
         cd $HOME
         git clone https://github.com/Antynea/grub-btrfs.git
         cd grub-btrfs
-        make install
+        sudo make install
     fi
     if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
         sudo sed -i 's|^GRUB_BTRFS_MKCONFIG=.*|GRUB_BTRFS_MKCONFIG=/sbin/grub2-mkconfig|' '/etc/default/grub-btrfs/config'
