@@ -73,15 +73,16 @@ winetrix () {
     local title="UniWine"
     local msg="$msg236"
     _msgbox_
-    echo "Setting up wineprefix"
     sleep 2
     wine winecfg
+    sleep 1
     winetricks -q win11
     local msg="$msg237"
     _msgbox_
     # install necessary winetricks
     for trick in "${_tricks[@]}"; do
         winetricks $trick
+        sleep 1
     done
     # check nvidia
     local GPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
