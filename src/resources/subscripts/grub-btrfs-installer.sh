@@ -74,8 +74,7 @@ grubtrfs_in () {
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         sudo update-grub
     fi
-    sudo systemctl enable grub-btrfsd
-    sudo systemctl start grub-btrfsd
+    sudo systemctl enable --now grub-btrfsd
 
 }
 
