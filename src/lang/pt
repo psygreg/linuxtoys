@@ -238,3 +238,5 @@ msg237="A instalação de Winetricks vai começar. Siga as instruções na tela,
 msg238="UniWine não pode ser instalado com uma instalação do wine já presente. Remova antes de prosseguir. Você pode ignorar este aviso se estiver atualizando o UniWine."
 msg239="Instalar"
 msg240="Remover"
+msg241="Editor de vídeo simples e poderoso"
+msg242="Editor de áudio open-source"

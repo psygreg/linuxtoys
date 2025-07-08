@@ -24,6 +24,8 @@ osupermenu () {
     local fig_status=$([ "$_fig" = "1" ] && echo "ON" || echo "OFF")
     local pnta_status=$([ "$_pnta" = "com.github.PintaProject.Pinta" ] && echo "ON" || echo "OFF")
     local krt_status=$([ "$_krt" = "org.kde.krita" ] && echo "ON" || echo "OFF")
+    local klive_status=$([ "$_klive" = "org.kde.kdenlive" ] && echo "ON" || echo "OFF")
+    local audc_status=$([ "$_audc" = "org.audacityteam.Audacity" ] && echo "ON" || echo "OFF")
 
     while :; do
     
@@ -43,9 +45,11 @@ osupermenu () {
             "Pinta" "$msg224" $pnta_status \
             "Krita" "$msg225" $krt_status \
             "GIMP" "$msg104" $gimp_status \
+            "Audacity" "$msg242" $audc_status \
             "Inkscape" "$msg105" $inksc_status \
             "FreeCAD" "$msg106" $fcad_status \
             "KiCad" "$msg222" $kcad_status \
+            "Kdenlive" "$msg241" $klive_status \
             "Blender" "$msg159" $blender_status \
             "DaVinci Resolve" "$msg107" $drslv_status \
             "FireAlpaca" "$msg108" $fial_status \
@@ -76,6 +80,8 @@ osupermenu () {
         [[ "$selection" == *"Figma"* ]] && _fig="1" || _fig=""
         [[ "$selection" == *"Pinta"* ]] && _pnta="com.github.PintaProject.Pinta" || _pnta=""
         [[ "$selection" == *"Krita"* ]] && _krt="org.kde.krita" || _krt=""
+        [[ "$selection" == *"Kdenlive"* ]] && _klive="org.kde.kdenlive" || _klive=""
+        [[ "$selection" == *"Audacity"* ]] && _audc="org.audacityteam.Audacity" || _audc=""
 
         install_flatpak
         install_native
@@ -128,7 +134,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender $_kcad)
+    local _flatpaks=($_oofice $_anyd $_fcad $_gimp $_inksc $_notion $_msteams $_slck $_chrome $_zen $_drktb $_foli $_blender $_kcad $_klive $_audc)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
