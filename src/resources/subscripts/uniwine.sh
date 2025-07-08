@@ -68,6 +68,8 @@ getproton () {
 # prepare necessary winetricks
 winetrix () {
 
+    # set winetricks in array
+    local _tricks=(cmd vcrun2008 vcrun2010 dxvk vcrun2022 d3dcompiler_42 d3dcompiler_43 d3dcompiler_46 d3dcompiler_47 d3drm d3dx10 d3dx11_42 d3dx11_43 d3dx9 d3dxof dotnet9 dotnetdesktop9 ucrtbase2019 pdh vkd3d vcrun2012 vcrun2013 vcrun6 xinput andale arial comicsans courier georgia impact times trebuchet verdana webdings corefonts tahoma)
     local title="UniWine"
     local msg="$msg236"
     _msgbox_
@@ -78,7 +80,9 @@ winetrix () {
     local msg="$msg237"
     _msgbox_
     # install necessary winetricks
-    winetricks vcrun2008 vcrun2010 vcrun2012 vcrun2013 vcrun2022 d3dcompiler_42 d3dcompiler_43 d3dcompiler_46 d3dcompiler_47 d3drm d3dx10 d3dx11_42 d3dx11_43 d3dx9 d3dxof dotnet9 dotnetdesktop9 dxvk pdh vkd3d vcrun6 xinput andale arial comicsans courier georgia impact times trebuchet verdana webdings corefonts cmd ucrtbase2019 tahoma
+    for trick in "${_tricks[@]}"; do
+        winetricks $trick
+    done
     # check nvidia
     local GPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
     if [[ -n "$GPU" ]]; then
