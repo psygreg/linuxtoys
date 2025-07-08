@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        3.1
+Version:        3.2
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -47,5 +47,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Thu Jun  26 2025 Victor Gregory <psygreg@pm.me> - 3.1
-- Updated psycachy kernel updater to use new naming scheme and prebuilt packages
+* Mon Jul  7 2025 Victor Gregory <psygreg@pm.me> - 3.2
+- Updated psycachy kernel updater
+- Added optimized recommended defaults option

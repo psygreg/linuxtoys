@@ -1,5 +1,5 @@
 pkgname='linuxtoys'
-pkgver='3.1'
+pkgver='3.2'
 pkgrel=1
 arch=('x86_64')
 depends=(bash curl wget libnewt base-devel git)
@@ -8,7 +8,7 @@ conflicts=(linuxtoys)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('295a365ba08cd5a96f1c059c7c18917be2d27a1df60d160e0226e9bade565752')
+sha256sums=('b9b82375995b24c42c64841b33d3162ffb9511653008e525086c87678a7036a2')
 
 package() {
 
