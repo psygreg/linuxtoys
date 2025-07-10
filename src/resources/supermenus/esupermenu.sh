@@ -290,6 +290,7 @@ kernel_in () {
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
                 psycachy_lib
+                kupid_lib
             else
                 bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
             fi

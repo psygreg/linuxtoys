@@ -33,6 +33,7 @@ optimizer () {
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
                 psycachy_lib
+                kupid_lib
             fi
             # clean old kernels
             dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge

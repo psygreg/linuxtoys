@@ -295,6 +295,22 @@ psycachy_lib () {
 
 }
 
+# KUPiD - install psycachy kernel update checker
+kupid_lib () {
+
+    cd $HOME
+    mkdir -p kupid
+    cd kupid
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-chk.sh
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-upd.sh
+    cd ..
+    mv kupid $HOME/.local
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
+    mkdir -p $HOME/.config/autostart
+    mv kupid.desktop $HOME/.config/autostart/
+
+}
+
 # preload installer
 preload_lib () {
 

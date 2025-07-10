@@ -16,6 +16,7 @@ enabler_c () {
 
     if command -v flatpak &> /dev/null && flatpak list | grep -q 'com.valvesoftware.Steam'; then
         cd $HOME
+        mkdir -p $HOME/.config/autostart
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/consolemode/com.valvesoftware.Steam.desktop
         sudo cp com.valvesoftware.Steam.desktop $HOME/.config/autostart/
         flatpak override com.valvesoftware.Steam --talk-name=org.freedesktop.Flatpak

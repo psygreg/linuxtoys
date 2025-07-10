@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Kernel Update Checker
+Type=Application
+Exec=bash -c '$HOME/.local/kupid/kupid-chk.sh'
+Terminal=false
+Icon=/opt/linuxtoys/linuxtoys.png
+Comment=Check for updates to Psycachy kernel
+NoDisplay=false
+Categories=Utility

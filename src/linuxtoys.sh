@@ -16,34 +16,6 @@ ver_upd () {
     fi
 }
 
-# kernel update checker for debian/ubuntu
-krn_chk () {
-
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        if [ -f "$HOME/.local/kernelsetting" ]; then
-        source $HOME/.local/kernelsetting
-            if [ "$_psygreg_krn" == "yes" ]; then
-                local _kversion=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
-                if [ $(uname -r) != "${_kversion}-psycachy" ] && [ $(uname -r) != "${_kversion}-cachyos" ]; then
-                    if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
-                        if ! diff -q "$HOME/.local/kernelsetting" <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
-                            bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) -s
-                        else
-                            psycachy_lib
-                            # update systemd settings
-                            cachyos_sysd_lib
-                        fi
-                        # clean old kernels
-                        dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-                        dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-                    fi
-                fi
-            fi
-        fi
-    fi
-
-}
-
 # runtime
 # check internet connection
 # ping google
@@ -58,7 +30,6 @@ _log_
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 ver_upd
-krn_chk
 
 # main menu
 while :; do
