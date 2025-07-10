@@ -242,4 +242,5 @@ msg241="Simple yet powerful video editor"
 msg242="Open source audio editor"
 msg243="WARNING: IWD can cause issues with enterprise networks. You may revert it with Remove on the IWD menu that will appear now."
 msg244="IWD is an improved wireless networking daemon offering improved latency and more consistent download/upload speed. Continue?"
-msg245=Lightweight and intuitive tool for testing and debugging REST and GraphQL APIs.
+msg245="Lightweight and intuitive tool for testing and debugging REST and GraphQL APIs."
+msg=246="Modern command-line client to interact with APIs in a simple and readable way."

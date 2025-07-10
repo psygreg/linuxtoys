@@ -19,6 +19,7 @@ dsupermenu () {
     local droidstd_status=$([ "$_droidstd" = "droidstd" ] && echo "ON" || echo "OFF")
     local omb_status=$([ "$_omb" = "1" ] && echo "ON" || echo "OFF")
     local insomnia_status=$([ "$_insomnia" = "rest.insomnia.Insomnia" ] && echo "ON" || echo "OFF")
+    local httpie_status=$([ "$_httpie" = "io.httpie.Httpie" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -39,6 +40,7 @@ dsupermenu () {
             "Godot 4" "$msg139" $godot_status \
             "Unity Hub" "$msg137" $unity_status \
             "Insomnia" "$msg245" $insomnia_status \
+            "Httpie" "$msg246" $httpie_status \
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -61,6 +63,7 @@ dsupermenu () {
         [[ "$selection" == *"Android Studio"* ]] && _droidstd="droidstd" || _droidstd=""
         [[ "$selection" == *"OhMyBash"* ]] && _omb="1" || _omb=""
         [[ "$selection" == *"Insomnia"* ]] && _insomnia="rest.insomnia.Insomnia" || _insomnia=""
+        [[ "$selection" == *"Httpie"* ]] && _httpie="io.httpie.Httpie" || _insomnia=""
 
         install_flatpak
         install_native
@@ -185,7 +188,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_codium $_insomnia)
+    local _flatpaks=($_codium $_insomnia $_httpie)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
