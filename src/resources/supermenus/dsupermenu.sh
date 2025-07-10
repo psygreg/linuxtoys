@@ -20,6 +20,7 @@ dsupermenu () {
     local omb_status=$([ "$_omb" = "1" ] && echo "ON" || echo "OFF")
     local insomnia_status=$([ "$_insomnia" = "rest.insomnia.Insomnia" ] && echo "ON" || echo "OFF")
     local httpie_status=$([ "$_httpie" = "io.httpie.Httpie" ] && echo "ON" || echo "OFF")
+    local postman_status=$([ "$_postman" = "getpostman.Postman" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -41,6 +42,7 @@ dsupermenu () {
             "Unity Hub" "$msg137" $unity_status \
             "Insomnia" "$msg245" $insomnia_status \
             "Httpie" "$msg246" $httpie_status \
+            "Postman" "$msg246" $postman_status \
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -64,6 +66,7 @@ dsupermenu () {
         [[ "$selection" == *"OhMyBash"* ]] && _omb="1" || _omb=""
         [[ "$selection" == *"Insomnia"* ]] && _insomnia="rest.insomnia.Insomnia" || _insomnia=""
         [[ "$selection" == *"Httpie"* ]] && _httpie="io.httpie.Httpie" || _insomnia=""
+        [[ "$selection" == *"Postman"* ]] && _postman="getpostman.Postman" || _postman=""
 
         install_flatpak
         install_native
@@ -188,7 +191,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_codium $_insomnia $_httpie)
+    local _flatpaks=($_codium $_insomnia $_httpie $_postman)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
