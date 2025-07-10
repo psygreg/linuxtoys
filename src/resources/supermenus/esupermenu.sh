@@ -319,6 +319,18 @@ kernel_in () {
 
 }
 
+# inet wireless daemon installer
+iwd_summon () {
+
+    if whiptail --title "iNet Wireless Daemon" --yesno "$msg244" 12 78; then
+        local title="iNet Wireless Daemon"
+        local msg="$msg243"
+        _msgbox_
+        local subscript="iwdwifi" && _invoke_
+    fi
+
+}
+
 # install linux subsystem for windows
 lsw_in () {
 
