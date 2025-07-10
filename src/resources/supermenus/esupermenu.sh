@@ -371,14 +371,15 @@ while :; do
         "5" "$msg055" \
         "6" "$msg177" \
         "7" "$msg201" \
-        "8" "$msg057" \
-        "9" "$msg081" \
-        "10" "$msg079" \
-        "11" "$msg078" \
-        "12" "$msg053" \
-        "13" "$msg233" \
-        "14" "$msg209" \
-        "15" "$msg059" 3>&1 1>&2 2>&3)
+        "8" "iNet Wireless Daemon" \
+        "9" "$msg057" \
+        "10" "$msg081" \
+        "11" "$msg079" \
+        "12" "$msg078" \
+        "13" "$msg053" \
+        "14" "$msg233" \
+        "15" "$msg209" \
+        "16" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -405,12 +406,13 @@ while :; do
     5) grubtrfs_t ;;
     6) psaver ;;
     7) touchegg_t ;;
-    8) kernel_in ;;
-    9) suse_codecs ;;
-    10) fix_se_suse ;;
-    11) nvidia_in ;;
-    12) chaotic_aur_lib ;;
-    13) if [ ! -f /.autopatch.state ]; then
+    8) iwd_summon ;;
+    9) kernel_in ;;
+    10) suse_codecs ;;
+    11) fix_se_suse ;;
+    12) nvidia_in ;;
+    13) chaotic_aur_lib ;;
+    14) if [ ! -f /.autopatch.state ]; then
            debfixer_lib
         else
            title="AutoPatcher"
@@ -418,8 +420,8 @@ while :; do
            _msgbox_
         fi
         ;;
-    14) lsw_in ;;
-    15 | q) break ;;
+    15) lsw_in ;;
+    16 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
