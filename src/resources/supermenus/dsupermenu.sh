@@ -20,7 +20,7 @@ dsupermenu () {
     local omb_status=$([ "$_omb" = "1" ] && echo "ON" || echo "OFF")
     local insomnia_status=$([ "$_insomnia" = "rest.insomnia.Insomnia" ] && echo "ON" || echo "OFF")
     local httpie_status=$([ "$_httpie" = "io.httpie.Httpie" ] && echo "ON" || echo "OFF")
-    local postman_status=$([ "$_postman" = "getpostman.Postman" ] && echo "ON" || echo "OFF")
+    local postman_status=$([ "$_postman" = "com.getpostman.Postman" ] && echo "ON" || echo "OFF")
 
     while :; do
 
@@ -42,7 +42,7 @@ dsupermenu () {
             "Unity Hub" "$msg137" $unity_status \
             "Insomnia" "$msg245" $insomnia_status \
             "Httpie" "$msg246" $httpie_status \
-            "Postman" "$msg246" $postman_status \
+            "Postman" "$msg247" $postman_status \
             3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -65,8 +65,8 @@ dsupermenu () {
         [[ "$selection" == *"Android Studio"* ]] && _droidstd="droidstd" || _droidstd=""
         [[ "$selection" == *"OhMyBash"* ]] && _omb="1" || _omb=""
         [[ "$selection" == *"Insomnia"* ]] && _insomnia="rest.insomnia.Insomnia" || _insomnia=""
-        [[ "$selection" == *"Httpie"* ]] && _httpie="io.httpie.Httpie" || _insomnia=""
-        [[ "$selection" == *"Postman"* ]] && _postman="getpostman.Postman" || _postman=""
+        [[ "$selection" == *"Httpie"* ]] && _httpie="io.httpie.Httpie" || _httpie=""
+        [[ "$selection" == *"Postman"* ]] && _postman="com.getpostman.Postman" || _postman=""
 
         install_flatpak
         install_native
