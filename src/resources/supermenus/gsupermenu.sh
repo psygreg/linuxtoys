@@ -129,8 +129,10 @@ install_native () {
                 flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
             fi
             if [ "$ID" == "debian" ] && [[ "$codename" =~ ^(trixie|testing)$ ]]; then
+                cd $HOME
                 wget http://ftp.us.debian.org/debian/pool/contrib/g/gamescope/gamescope_3.16.14-1_amd64.deb
                 sudo apt install ./gamescope_3.16.14-1_amd64.deb
+                rm gamescope_3.16.14-1_amd64.deb
             fi
         fi
         if [[ -n "$_mhud" ]]; then
