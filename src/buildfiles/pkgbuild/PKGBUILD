@@ -1,4 +1,4 @@
-pkgname='linuxtoys'
+pkgname='linuxtoys-bin'
 pkgver='3.2'
 pkgrel=1
 arch=('x86_64')
