@@ -113,6 +113,7 @@ gsupermenu () {
 # native packages
 install_native () {
 
+    local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
     local _packages=($_steam $_gmode $_govl $_gscope $_mhud)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
@@ -126,6 +127,10 @@ install_native () {
         if [[ -n "$_gscope" ]]; then
             if command -v flatpak &> /dev/null; then
                 flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
+            fi
+            if [ "$ID" == "debian" ] && [[ "$codename" =~ ^(trixie|testing)$ ]]; then
+                wget http://ftp.us.debian.org/debian/pool/contrib/g/gamescope/gamescope_3.16.14-1_amd64.deb
+                sudo apt install ./gamescope_3.16.14-1_amd64.deb
             fi
         fi
         if [[ -n "$_mhud" ]]; then
