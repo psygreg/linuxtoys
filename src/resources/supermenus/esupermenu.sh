@@ -357,6 +357,9 @@ lsw_in () {
 # install lsfg-vk
 lsfg_vk_in () {
 
+    local title="LSFG-VK"
+    local msg="$msg251"
+    _msgbox_
     if whiptail --title "LSFG-VK" --yesno "$msg250" 12 78; then
         curl -sSf https://pancake.gay/lsfg-vk.sh | sh
         local title="LSFG-VK"
