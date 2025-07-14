@@ -354,6 +354,20 @@ lsw_in () {
 
 }
 
+# install lsfg-vk
+lsfg_vk_in () {
+
+    if whiptail --title "LSFG-VK" --yesno "$msg250" 12 78; then
+        curl -sSf https://pancake.gay/lsfg-vk.sh | sh
+        local title="LSFG-VK"
+        local msg="$msg249"
+        _msgbox_
+        xdg-open https://github.com/PancakeTAS/lsfg-vk/wiki/Configuring-lsfg%E2%80%90vk
+    fi
+
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -368,18 +382,19 @@ while :; do
         "2" "$msg046" \
         "3" "$msg048" \
         "4" "$msg207" \
-        "5" "$msg055" \
-        "6" "$msg177" \
-        "7" "$msg201" \
-        "8" "iNet Wireless Daemon" \
-        "9" "$msg057" \
-        "10" "$msg081" \
-        "11" "$msg079" \
-        "12" "$msg078" \
-        "13" "$msg053" \
-        "14" "$msg233" \
-        "15" "$msg209" \
-        "16" "$msg059" 3>&1 1>&2 2>&3)
+        "5" "$msg248" \
+        "6" "$msg055" \
+        "7" "$msg177" \
+        "8" "$msg201" \
+        "9" "iNet Wireless Daemon" \
+        "10" "$msg057" \
+        "11" "$msg081" \
+        "12" "$msg079" \
+        "13" "$msg078" \
+        "14" "$msg053" \
+        "15" "$msg233" \
+        "16" "$msg209" \
+        "17" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -403,16 +418,17 @@ while :; do
           _msgbox_
        fi
        ;;
-    5) grubtrfs_t ;;
-    6) psaver ;;
-    7) touchegg_t ;;
-    8) iwd_summon ;;
-    9) kernel_in ;;
-    10) suse_codecs ;;
-    11) fix_se_suse ;;
-    12) nvidia_in ;;
-    13) chaotic_aur_lib ;;
-    14) if [ ! -f /.autopatch.state ]; then
+    5) lsfg_vk_in ;;
+    6) grubtrfs_t ;;
+    7) psaver ;;
+    8) touchegg_t ;;
+    9) iwd_summon ;;
+    10) kernel_in ;;
+    11) suse_codecs ;;
+    12) fix_se_suse ;;
+    13) nvidia_in ;;
+    14) chaotic_aur_lib ;;
+    15) if [ ! -f /.autopatch.state ]; then
            debfixer_lib
         else
            title="AutoPatcher"
@@ -420,8 +436,8 @@ while :; do
            _msgbox_
         fi
         ;;
-    15) lsw_in ;;
-    16 | q) break ;;
+    16) lsw_in ;;
+    17 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
