@@ -1,4 +1,5 @@
 #!/bin/bash
+releases=$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases")
 lts_tag=$(echo "$releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)
 std_tag=$(echo "$releases" | jq -r '.[].tag_name' | grep -i '^STD-' | sort -Vr | head -n 1)
 kver_lts="${lts_tag#LTS-}"

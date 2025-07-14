@@ -25,6 +25,7 @@ if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "d
             fi
         fi
     elif [ -f "$HOME/.local/kernelsetting-lts" ]; then
+        releases=$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases")
         lts_tag=$(echo "$releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)
         kver_lts="${lts_tag#LTS-}"
         if [ $(uname -r) != "${kver_lts}-psycachy-lts" ]; then
