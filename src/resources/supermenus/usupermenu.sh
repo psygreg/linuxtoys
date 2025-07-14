@@ -298,7 +298,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw $_wrhs)
+    local _flatpaks=($_gsr $_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw $_wrhs)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
