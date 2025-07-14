@@ -290,14 +290,7 @@ kernel_in () {
             # summon installer
             if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
                 psycachy_lib
-                kupid_lib
-            else
-                bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh)
             fi
-            # clean old kernels
-            dpkg --list | grep -v $(uname -r) | grep -E 'linux-image-[0-9]|linux-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-            dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
-            cachyos_sysd_lib
             local title="$msg006"
             local msg="$msg036"
             _msgbox_

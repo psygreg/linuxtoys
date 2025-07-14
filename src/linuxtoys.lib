@@ -270,26 +270,24 @@ cachyos_sysd_lib () {
 
 }
 
-# psycachy kernel installer
+# psycachy kernel and KUPiD updater installer
 psycachy_lib () {
 
     bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/psycachy/psycachy-install.sh)
-
-}
-
-# KUPiD - install psycachy kernel update checker
-kupid_lib () {
-
-    cd $HOME
-    mkdir -p kupid
-    cd kupid
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-chk.sh
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-upd.sh
-    cd ..
-    mv kupid $HOME/.local
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
-    mkdir -p $HOME/.config/autostart
-    mv kupid.desktop $HOME/.config/autostart/
+    if [ $? -eq 0 ]; then
+        cd $HOME
+        mkdir -p kupid
+        cd kupid
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-chk.sh
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-upd.sh
+        cd ..
+        mv kupid $HOME/.local
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
+        mkdir -p $HOME/.config/autostart
+        mv kupid.desktop $HOME/.config/autostart/
+        # install cachyos systemd configs
+        cachyos_sysd_lib
+    fi
 
 }
 

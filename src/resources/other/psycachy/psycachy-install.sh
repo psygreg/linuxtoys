@@ -85,14 +85,14 @@ while :; do
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
         # Exit the script if the user presses Esc
-        break
+        exit 2
     fi
 
     case $CHOICE in
-    Standard) psycachy_std && break ;;
-    LTS) psycachy_lts && break ;;
-    Latest) bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) && break ;;
-    Cancel | q) break ;;
+    Standard) psycachy_std && exit 0 ;;
+    LTS) psycachy_lts && exit 0 ;;
+    Latest) bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) && exit 1 ;;
+    Cancel | q) exit 2 ;;
     *) echo "Invalid Option" ;;
     esac
 done
