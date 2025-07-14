@@ -275,16 +275,13 @@ psycachy_lib () {
 
     bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/psycachy/psycachy-install.sh)
     if [ $? -eq 0 ]; then
-        cd $HOME
-        mkdir -p kupid
-        cd kupid
+        mkdir -p $HOME/.local/kupid
+        cd $HOME/.local/kupid
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-chk.sh
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-upd.sh
-        cd ..
-        mv kupid $HOME/.local
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
         mkdir -p $HOME/.config/autostart
-        mv kupid.desktop $HOME/.config/autostart/
+        cd $HOME/.config/autostart
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
         # install cachyos systemd configs
         cachyos_sysd_lib
     fi
