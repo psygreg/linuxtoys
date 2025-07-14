@@ -273,25 +273,7 @@ cachyos_sysd_lib () {
 # psycachy kernel installer
 psycachy_lib () {
 
-    local psycachy_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-cachyos-deb/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-    cd $HOME
-    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${psycachy_tag}/linux-headers-psycachy_${psycachy_tag}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${psycachy_tag}/linux-image-psycachy_${psycachy_tag}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${psycachy_tag}/linux-libc-dev_${psycachy_tag}-1_amd64.deb"
-    sleep 1
-    sudo dpkg -i linux-image-psycachy_${psycachy_tag}-1_amd64.deb linux-headers-psycachy_${psycachy_tag}-1_amd64.deb linux-libc-dev_${psycachy_tag}-1_amd64.deb || exit 10
-    cd $HOME/.local
-    sleep 1
-    wget -O "kernelsetting" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults
-    cd $HOME
-    sleep 1
-    rm linux-image-psycachy_${psycachy_tag}-1_amd64.deb
-    rm linux-headers-psycachy_${psycachy_tag}-1_amd64.deb
-    rm linux-libc-dev_${psycachy_tag}-1_amd64.deb
-    # sign kernel image for secure boot
-    if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh) --linuxtoys
-    fi
+    bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/psycachy/psycachy-install.sh)
 
 }
 
