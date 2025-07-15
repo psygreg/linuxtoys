@@ -357,7 +357,7 @@ lsfg_vk_in () {
         curl -sSf https://pancake.gay/lsfg-vk.sh | sh
         if [ $? -eq 0 ]; then
             # Ask user for path to Lossless.dll
-            DLL_PATH=$(whiptail --inputbox "$msg252" 10 30 3>&1 1>&2 2>&3)
+            DLL_PATH=$(whiptail --inputbox "$msg252" 10 30 --title "LSFG-VK" 3>&1 1>&2 2>&3)
             if [ ! -f "$DLL_PATH" ]; then
                 echo "Not found: $DLL_PATH"
                 return 1
