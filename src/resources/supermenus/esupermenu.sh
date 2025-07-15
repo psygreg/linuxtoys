@@ -360,12 +360,12 @@ lsfg_vk_in () {
             DLL_PATH=$(whiptail --inputbox "$msg252" 10 30 3>&1 1>&2 2>&3)
             if [ ! -f "$DLL_PATH" ]; then
                 echo "Not found: $DLL_PATH"
-                exit 1
+                return 1
             fi
             # check flatpaks
-            APP_NAME=(com.valvesoftware.Steam com.heroicgameslauncher.hgl net.lutris.Lutris)
+            declare -a APP_NAME=(com.valvesoftware.Steam com.heroicgameslauncher.hgl net.lutris.Lutris)
             for APP in "${APP_NAME[@]}"; do
-                if flatpak list --app | grep -q "^${APP}[[:space:]]"; then
+                if flatpak info "$APP" &>/dev/null; then
                     APP_DIR="$HOME/.var/app/$APP"
                     # Make directories in Flatpak location
                     mkdir -p "$APP_DIR/lib"
@@ -383,7 +383,6 @@ lsfg_vk_in () {
             xdg-open https://github.com/PancakeTAS/lsfg-vk/wiki/Configuring-lsfg%E2%80%90vk
         fi
     fi
-
 
 }
 
