@@ -355,10 +355,33 @@ lsfg_vk_in () {
     _msgbox_
     if whiptail --title "LSFG-VK" --yesno "$msg250" 12 78; then
         curl -sSf https://pancake.gay/lsfg-vk.sh | sh
-        local title="LSFG-VK"
-        local msg="$msg249"
-        _msgbox_
-        xdg-open https://github.com/PancakeTAS/lsfg-vk/wiki/Configuring-lsfg%E2%80%90vk
+        if [ $? -eq 0 ]; then
+            # Ask user for path to Lossless.dll
+            DLL_PATH=$(whiptail --inputbox "$msg252" 10 30 3>&1 1>&2 2>&3)
+            if [ ! -f "$DLL_PATH" ]; then
+                echo "Not found: $DLL_PATH"
+                exit 1
+            fi
+            # check flatpaks
+            APP_NAME=(com.valvesoftware.Steam com.heroicgameslauncher.hgl net.lutris.Lutris)
+            for APP in "${APP_NAME[@]}"; do
+                if flatpak list --app | grep -q "^${APP}[[:space:]]"; then
+                    APP_DIR="$HOME/.var/app/$APP"
+                    # Make directories in Flatpak location
+                    mkdir -p "$APP_DIR/lib"
+                    mkdir -p "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/"
+                    mkdir -p "$APP_DIR/config/vulkan/implicit_layer.d/"
+
+                    cp -v ~/.local/lib/liblsfg-vk.so "$APP_DIR/lib/" && echo
+                    cp -v "$DLL_PATH" "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/" && echo
+                    cp -v ~/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json "$APP_DIR/config/vulkan/implicit_layer.d/" && echo
+                fi
+            done
+            local title="LSFG-VK"
+            local msg="$msg249"
+            _msgbox_
+            xdg-open https://github.com/PancakeTAS/lsfg-vk/wiki/Configuring-lsfg%E2%80%90vk
+        fi
     fi
 
 
