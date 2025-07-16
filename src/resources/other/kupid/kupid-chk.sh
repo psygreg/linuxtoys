@@ -1,11 +1,13 @@
 #!/bin/bash
 . /etc/os-release
+releases=$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases")
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
     if [ -f "$HOME/.local/kernelsetting" ]; then
         source $HOME/.local/kernelsetting
         if [ "$_psygreg_krn" == "yes" ]; then
-            _kversion=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/psy-krn)
-            if [ $(uname -r) != "${_kversion}-psycachy" ] && [ $(uname -r) != "${_kversion}-cachyos" ]; then
+            std_tag=$(echo "$releases" | jq -r '.[].tag_name' | grep -i '^STD-' | sort -Vr | head -n 1)
+            kver_std="${std_tag#STD-}"
+            if [ $(uname -r) != "${kver_std}-psycachy" ] && [ $(uname -r) != "${kver_std}-cachyos" ]; then
                 if ! diff -q "$HOME/.local/kernelsetting" <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults) > /dev/null; then
                     exit 1
                 else
@@ -25,7 +27,6 @@ if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "d
             fi
         fi
     elif [ -f "$HOME/.local/kernelsetting-lts" ]; then
-        releases=$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases")
         lts_tag=$(echo "$releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)
         kver_lts="${lts_tag#LTS-}"
         if [ $(uname -r) != "${kver_lts}-psycachy-lts" ]; then
