@@ -279,6 +279,8 @@ psycachy_lib () {
         cd $HOME/.local/kupid
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-chk.sh
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-upd.sh
+        chmod +x kupid-chk.sh
+        chmod +x kupid-upd.sh
         mkdir -p $HOME/.config/autostart
         cd $HOME/.config/autostart
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
