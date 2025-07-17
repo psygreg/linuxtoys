@@ -8,7 +8,7 @@ License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
 Requires:       bash newt curl wget git
-# BuildRequires:  desktop-file-utils
+BuildRequires:  desktop-file-utils
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
@@ -19,8 +19,8 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %setup -q
 
 %install
-mkdir -p %{buildroot}/usr/bin
-mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
+mkdir -p %{buildroot}/usr/bin/lsw/
+mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 install -m 755 usr/bin/linuxtoys.sh %{buildroot}/usr/bin
 install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps
 mkdir -p %{buildroot}/usr/share/applications
