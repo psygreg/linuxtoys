@@ -373,8 +373,12 @@ lsfg_vk_in () {
                     mkdir -p "$APP_DIR/config/vulkan/implicit_layer.d/"
 
                     cp -vf ~/.local/lib/liblsfg-vk.so "$APP_DIR/lib/" && echo
-                    cp -vf "$DLL_PATH" "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/" && echo
                     cp -vf ~/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json "$APP_DIR/config/vulkan/implicit_layer.d/" && echo
+                    if [[ "$APP" != "com.valvesoftware.Steam" ]]; then
+                        cp -vf "$DLL_PATH" "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/" && echo
+                    else
+                        cp -v "$DLL_PATH" "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/" && echo
+                    fi
                 fi
             done
             local title="LSFG-VK"
