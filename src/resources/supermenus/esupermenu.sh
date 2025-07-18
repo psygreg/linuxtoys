@@ -33,7 +33,7 @@ lucidglyph_in () {
 
     local tag=$(curl -s "https://api.github.com/repos/maximilionus/lucidglyph/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     local ver="${tag#v}"
-    if whiptail --title "$msg019" --yesno "$msg020" 8 78; then  
+    if whiptail --title "$msg019" --yesno "$msg020" 8 78; then
         cd $HOME
 
         [ -f "${tag}.tar.gz" ] && rm -f "${tag}.tar.gz"
@@ -53,7 +53,7 @@ lucidglyph_in () {
 
 }
 
-# set up grub-btrfs for snapshots on boot menu 
+# set up grub-btrfs for snapshots on boot menu
 grubtrfs_t () {
 
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
@@ -122,7 +122,7 @@ nvidia_in () {
                             insta https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
                         fi
                         insta akmod-nvidia xorg-x11-drv-nvidia-cuda
-                   fi 
+                   fi
                    sudo dracut -f --regenerate-all ;;
                 1) if [[ "$ID_LIKE" == *suse* ]]; then
                         local REPO_ALIAS="nvidia"
@@ -158,14 +158,14 @@ nvidia_in () {
                             insta https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
                         fi
                         insta xorg-x11-drv-nvidia-470xx akmod-nvidia-470xx xorg-x11-drv-nvidia-470xx-cuda
-                   fi 
+                   fi
                    sudo dracut -f --regenerate-all ;;
                 2 | q) break ;;
                 *) echo "Invalid Option" ;;
                 esac
 
             done
-            
+
         else
             local title="$msg039"
             local msg="$msg077"
@@ -179,7 +179,7 @@ nvidia_in () {
 
 }
 
-# fix SELinux policies for gaming on openSUSE 
+# fix SELinux policies for gaming on openSUSE
 fix_se_suse () {
 
     if [[ "$ID_LIKE" == *suse* ]]; then
@@ -372,9 +372,9 @@ lsfg_vk_in () {
                     mkdir -p "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/"
                     mkdir -p "$APP_DIR/config/vulkan/implicit_layer.d/"
 
-                    cp -v ~/.local/lib/liblsfg-vk.so "$APP_DIR/lib/" && echo
-                    cp -v "$DLL_PATH" "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/" && echo
-                    cp -v ~/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json "$APP_DIR/config/vulkan/implicit_layer.d/" && echo
+                    cp -vf ~/.local/lib/liblsfg-vk.so "$APP_DIR/lib/" && echo
+                    cp -vf "$DLL_PATH" "$APP_DIR/data/Steam/steamapps/common/Lossless Scaling/" && echo
+                    cp -vf ~/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json "$APP_DIR/config/vulkan/implicit_layer.d/" && echo
                 fi
             done
             local title="LSFG-VK"
