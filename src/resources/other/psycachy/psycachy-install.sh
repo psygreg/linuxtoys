@@ -29,7 +29,7 @@ psycachy_std () {
     rm linux-libc-dev_${kver_psycachy}-1_amd64.deb
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh) --linuxtoys
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --linuxtoys
     fi
 
 }
@@ -38,9 +38,9 @@ psycachy_std () {
 psycachy_lts () {
 
     cd $HOME
-    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${lts_tag}/linux-headers-psycachy_${kver_lts}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${lts_tag}/linux-image-psycachy_${kver_lts}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-cachyos-deb/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachyreleases/download/${lts_tag}/linux-headers-psycachy_${kver_lts}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy_${kver_lts}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
     sleep 1
     sudo dpkg -i linux-image-psycachy-lts_${kver_lts}-1_amd64.deb linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb linux-libc-dev_${kver_lts}-1_amd64.deb || exit 10
     cd $HOME/.local
@@ -53,7 +53,7 @@ psycachy_lts () {
     rm linux-libc-dev_${kver_lts}-1_amd64.deb
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/secureboot/create-key.sh) --lts
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --lts
     fi
 
 }
@@ -90,7 +90,7 @@ while :; do
     case $CHOICE in
     Standard) psycachy_std && exit 0 ;;
     LTS) psycachy_lts && exit 0 ;;
-    Latest) bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-cachyos-deb/refs/heads/master/src/cachyos-deb.sh) && exit 1 ;;
+    Latest) bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/src/cachyos-deb.sh) && exit 1 ;;
     Cancel | q) exit 2 ;;
     *) echo "Invalid Option" ;;
     esac
