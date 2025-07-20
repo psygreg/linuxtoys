@@ -352,8 +352,8 @@ lsw_in () {
 flatpak_enabler () {
 
     # initialize variables with locations
-    local DLL_ABSOLUTE_PATH=$(dirname "$(realpath "$DLL_FIND")")
-    local ESCAPED_DLL_PATH=$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')
+    local DLL_ABSOLUTE_PATH="$(dirname "$(realpath "$DLL_FIND")")"
+    local ESCAPED_DLL_PATH="$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')"
     local CONF_LOC="${HOME}/.config/lsfg-vk/conf.toml"
     # check if config exists, and if not, gets a model file
     if [ ! -f "$CONF_LOC" ]; then
@@ -416,15 +416,15 @@ lsfg_vk_in () {
     _msgbox_
     if whiptail --title "LSFG-VK" --yesno "$msg250" 12 78; then
         # add check for DLL location
-        DLL_FIND=$(find $HOME -name Lossless.dll | head -n 1) || local title="LSFG-VK" && local msg="Lossless.dll not found. Did you install Lossless Scaling?" && _msgbox_ && return 1
+        DLL_FIND="$(find $HOME -name Lossless.dll | head -n 1)"
+        if [ -z "$DLL_FIND" ]; then
+            local title="LSFG-VK"
+            local msg="Lossless.dll not found. Did you install Lossless Scaling?"
+            _msgbox_
+            return 1
+        fi
         curl -sSf https://pancake.gay/lsfg-vk.sh | sh
         if [ $? -eq 0 ]; then
-            # Ask user for path to Lossless.dll
-            DLL_PATH=$(whiptail --inputbox "$msg252" 10 78 --title "LSFG-VK" 3>&1 1>&2 2>&3)
-            if [ ! -f "$DLL_PATH" ]; then
-                echo "Not found: $DLL_PATH"
-                return 1
-            fi
             # check flatpaks
             if command -v flatpak &> /dev/null; then
                 flatpak_enabler
