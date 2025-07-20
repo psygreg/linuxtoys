@@ -37,7 +37,7 @@ psycachy_std () {
 psycachy_lts () {
 
     cd $HOME
-    wget "https://github.com/psygreg/linux-psycachyreleases/download/${lts_tag}/linux-headers-psycachy_${kver_lts}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-headers-psycachy_${kver_lts}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy_${kver_lts}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
     sleep 1
