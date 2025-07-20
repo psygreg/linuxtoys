@@ -375,7 +375,7 @@ flatpak_enabler () {
                   --user \
                   --filesystem="/usr/lib/liblsfg-vk.so:ro" \
                   --filesystem="/etc/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json:ro" \
-                  --filesystem="xdg-config/lsfg-vk:ro" \
+                  --filesystem="$HOME/.config/lsfg-vk:ro" \
                   --filesystem="$DLL_ABSOLUTE_PATH" \
                   "$flat"
             # overrides for install script
@@ -383,8 +383,8 @@ flatpak_enabler () {
                 flatpak override \
                   --user \
                   --filesystem="$HOME/.local/lib/liblsfg-vk.so:ro" \
-                  --filesystem="xdg-data/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json:ro" \
-                  --filesystem="xdg-config/lsfg-vk:ro" \
+                  --filesystem="$HOME/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json:ro" \
+                  --filesystem="$HOME/.config/lsfg-vk:ro" \
                   --filesystem="$DLL_ABSOLUTE_PATH" \
                   "$flat"
             fi
