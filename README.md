@@ -10,8 +10,17 @@ LinuxToys and it's features' compatibility is only *guaranteed* on the operating
 ## Usage
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
 
-### Standalone, directly from source
-`bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh)`
+### Standalone
+Paste the command into your terminal to get the script from the source.
+
+### Stable branch
+```bash
+curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh | bash
+```
+### Dev branch
+```bash
+curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh | sh
+```
 
 ### Ubuntu (latest and latest LTS releases)
 There's a PPA available for LinuxToys. To use it:
