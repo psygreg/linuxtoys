@@ -3,7 +3,7 @@
 # ensure correct working directory
 cd "$(dirname "$(realpath "$0")")"
 # get updated LinuxToys and set proper filename
-cp linuxtoys.sh linuxtoys1.sh
+cp src/linuxtoys.sh linuxtoys1.sh
 mv linuxtoys1.sh linuxtoys
 mv -f linuxtoys appimagebuild/LinuxToys.AppDir/usr/bin/
 
