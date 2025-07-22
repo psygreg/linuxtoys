@@ -14,9 +14,9 @@ LinuxToys and it's features' compatibility is only *guaranteed* on the operating
 Install dependencies then paste the command into your terminal to get the script from the source, in Arch Linux you will need to install `libnewt` to run the script.
 
 #### Dependencies
--Debian/Ubuntu: `bash curl git wget whiptail`
--Fedora: `bash curl git wget newt`
--Arch: `bash curl git wget libnewt`
+- Debian/Ubuntu: `bash curl git wget whiptail`
+- Fedora: `bash curl git wget newt`
+- Arch: `bash curl git wget libnewt`
 
 #### Stable branch
 ```bash
