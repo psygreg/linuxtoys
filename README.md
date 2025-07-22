@@ -8,10 +8,11 @@ A collection of tools for Linux in a user-friendly way.
 LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems explicitly mentioned in the **Usage** section. Your mileage may vary in operating systems derivated from those, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
 
 ## Usage
-- Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
+- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended).
+- Alternatively, install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or run it directly from source with the standalone terminal command.
 
 ### Standalone
-Install dependencies then paste the command into your terminal to get the script from the source, in Arch Linux you will need to install `libnewt` to run the script.
+Install dependencies then paste the command into your terminal to get the script from the source.
 
 #### Dependencies
 - Debian/Ubuntu: `bash curl git wget whiptail`
