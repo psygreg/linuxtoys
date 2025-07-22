@@ -17,10 +17,6 @@ Paste the command into your terminal to get the script from the source.
 ```bash
 curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh | bash
 ```
-### Dev branch
-```bash
-curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh | sh
-```
 
 ### Ubuntu (latest and latest LTS releases)
 There's a PPA available for LinuxToys. To use it:
