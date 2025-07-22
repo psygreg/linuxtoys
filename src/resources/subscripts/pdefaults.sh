@@ -68,6 +68,9 @@ optimizer () {
             local msg="$msg077"
             _msgbox_
         fi
+        if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
+            dconf write /org/gnome/mutter/check-alive-timeout 15000
+        fi
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/autopatch.state
         sudo mv autopatch.state /.autopatch.state
     else
