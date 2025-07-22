@@ -11,7 +11,12 @@ LinuxToys and it's features' compatibility is only *guaranteed* on the operating
 - Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
 
 ### Standalone
-Paste the command into your terminal to get the script from the source, in Arch Linux you will need to install `libnewt` to run the script.
+Install dependencies then paste the command into your terminal to get the script from the source, in Arch Linux you will need to install `libnewt` to run the script.
+
+#### Dependencies
+-Debian/Ubuntu: `bash curl git wget whiptail`
+-Fedora: `bash curl git wget newt`
+-Arch: `bash curl git wget libnewt`
 
 #### Stable branch
 ```bash
