@@ -2,11 +2,13 @@
 # functions
 
 # menu -- jadeite disabled, deprecated by Proton-EM
+    # local jade_status=$([ "$_jade" = "1" ] && echo "ON" || echo "OFF")
+            # "Jadeite" "$msg180" $jade_status
+        # [[ "$selection" == *"Jadeite"* ]] && _jade="1" || _jade=""
 runners_menu () {
 
     local spritz_status=$([ "$_spritz" = "1" ] && echo "ON" || echo "OFF")
     local osu_status=$([ "$_osu" = "1" ] && echo "ON" || echo "OFF")
-    # local jade_status=$([ "$_jade" = "1" ] && echo "ON" || echo "OFF")
     local tricks_status=$([ "$_tricks" = "1" ] && echo "ON" || echo "OFF")
     local vngr_status=$([ "$_vngr" = "1" ] && echo "ON" || echo "OFF")
 
@@ -17,7 +19,6 @@ runners_menu () {
             "$msg131" 20 78 15 \
             "Spritz" "$msg153" $spritz_status \
             "Osu!-Wine" "$msg154" $osu_status \
-            # "Jadeite" "$msg180" $jade_status
             "Protontricks" "$msg235" $tricks_status \
             "Vinegar" "$msg204" $vngr_status \
             3>&1 1>&2 2>&3)
@@ -30,7 +31,6 @@ runners_menu () {
 
         [[ "$selection" == *"Spritz"* ]] && _spritz="1" || _spritz=""
         [[ "$selection" == *"Osu!-Wine"* ]] && _osu="1" || _osu=""
-        # [[ "$selection" == *"Jadeite"* ]] && _jade="1" || _jade=""
         [[ "$selection" == *"Protontricks"* ]] && _tricks="1" || _tricks=""
         [[ "$selection" == *"Vinegar"* ]] && _vngr="1" || _vngr=""
 
