@@ -7,7 +7,7 @@ mkdir -p appimagebuild/LinuxToys.AppDir/usr/bin
 mkdir -p appimagebuild/LinuxToys.AppDir/usr/lib
 
 # get updated LinuxToys and set proper filename
-cp linuxtoys.sh linuxtoys1.sh
+cp src/linuxtoys.sh linuxtoys1.sh
 mv linuxtoys1.sh linuxtoys
 mv -f linuxtoys appimagebuild/LinuxToys.AppDir/usr/bin/
 
