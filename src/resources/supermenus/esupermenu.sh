@@ -348,67 +348,6 @@ lsw_in () {
 }
 
 # install lsfg-vk
-# set up flatpak enabler function
-flatpak_enabler () {
-
-    # initialize variables with locations
-    local DLL_ABSOLUTE_PATH="$(dirname "$(realpath "$DLL_FIND")")"
-    local ESCAPED_DLL_PATH="$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')"
-    local CONF_LOC="${HOME}/.config/lsfg-vk/conf.toml"
-    # check if config exists, and if not, gets a model file
-    if [ ! -f "$CONF_LOC" ]; then
-        # make sure target dir exists
-        mkdir -p ${HOME}/.config/lsfg-vk/
-        wget https://raw.githubusercontent.com/psygreg/lsfg-vk/refs/heads/develop/conf.toml
-        mv conf.toml ${HOME}/.config/lsfg-vk/
-    fi
-    # register dll location in config file
-    sed -i -E "s|^# dll = \".*\"|dll = \"$ESCAPED_DLL_PATH\"|" ${HOME}/.config/lsfg-vk/conf.toml
-    # apply flatpak overrides -- Lutris has permission for /home, so won't need any, but still needs the symlinks
-    _flatpaks=(com.heroicgameslauncher.hgl com.valvesoftware.Steam net.lutris.Lutris org.prismlauncher.PrismLauncher com.mojang.Minecraft com.atlauncher.ATLauncher org.polymc.PolyMC at.vintagestory.VintageStory)
-    for flat in "${_flatpaks[@]}"; do
-        if flatpak list | grep -q "$flat"; then
-            APP_DIR="$HOME/.var/app/$flat"
-            # overrides for AUR/CachyOS packages
-            if pacman -Qi lsfg-vk 2>/dev/null 1>&2; then
-                flatpak override \
-                  --user \
-                  --filesystem="/usr/lib/liblsfg-vk.so:ro" \
-                  --filesystem="/etc/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json:ro" \
-                  --filesystem="$HOME/.config/lsfg-vk:ro" \
-                  --filesystem="$DLL_ABSOLUTE_PATH" \
-                  "$flat"
-            # overrides for install script
-            elif [ -f "$HOME/.local/lib/liblsfg-vk.so" ] && [ -f "$HOME/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json" ]; then
-                flatpak override \
-                  --user \
-                  --filesystem="$HOME/.local/lib/liblsfg-vk.so:ro" \
-                  --filesystem="$HOME/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json:ro" \
-                  --filesystem="$HOME/.config/lsfg-vk:ro" \
-                  --filesystem="$DLL_ABSOLUTE_PATH" \
-                  "$flat"
-            fi
-            # set up directories for symlinks
-            mkdir -p "$APP_DIR/lib"
-            mkdir -p "$APP_DIR/config/vulkan/implicit_layer.d/"
-            mkdir -p "$APP_DIR/config/lsfg-vk/"
-            # symlinks for AUR/CachyOS packages
-            if pacman -Qi lsfg-vk 2>/dev/null 1>&2; then
-                ln -sf "/usr/lib/liblsfg-vk.so" "$APP_DIR/lib/liblsfg-vk.so"
-                ln -sf "/etc/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json" "$APP_DIR/config/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json"
-                ln -sf "$HOME/.config/lsfg-vk/conf.toml" "$APP_DIR/config/lsfg-vk/conf.toml"
-            # symlinks for installation script -- elif so it only creates the symlinks if files exist at the expected locations
-            elif [ -f "$HOME/.local/lib/liblsfg-vk.so" ] && [ -f "$HOME/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json" ]; then
-                ln -sf "$HOME/.local/lib/liblsfg-vk.so" "$APP_DIR/lib/liblsfg-vk.so"
-                ln -sf "$HOME/.local/share/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json" "$APP_DIR/config/vulkan/implicit_layer.d/VkLayer_LS_frame_generation.json"
-                ln -sf "$HOME/.config/lsfg-vk/conf.toml" "$APP_DIR/config/lsfg-vk/conf.toml"
-            fi
-            echo "Usage enabled successfully for $flat."
-        fi
-    done
-
-}
-
 lsfg_vk_in () {
 
     local title="LSFG-VK"
@@ -427,7 +366,7 @@ lsfg_vk_in () {
         if [ $? -eq 0 ]; then
             # check flatpaks
             if command -v flatpak &> /dev/null; then
-                flatpak_enabler
+                curl -fsSL https://raw.githubusercontent.com/psygreg/lsfg-vk-flatpak/main/flatpak-enabler.sh | bash
             fi
             local title="LSFG-VK"
             local msg="$msg249"
