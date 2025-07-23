@@ -4,8 +4,18 @@ A collection of tools for Linux in a user-friendly way.
 ![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
 
 ## Compatibility
-
 LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems explicitly mentioned in the **Usage** section. Your mileage may vary in operating systems derivated from those, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
+
+### Limitations
+- The **CachyOS systemd configurations** and **linux-psycachy** kernel may not work as intended on systems with package bases older than ***Debian Trixie***. This also applies for the **Optimized Defaults**.
+- **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
+- **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
+- **Lucidglyph** is only confirmed to work on **Gnome** and **Plasma** desktops. With all others, your mileage may vary.
+- The **linux-cachyos** kernel port to Debian/Ubuntu-based systems may require its **LTO** setting changed to 'Full' or 'None' to work in some systems. *ThinLTO is only known to work in the standard Ubuntu-Gnome flavour and in Debian Testing, so far, although it is the optimal setting if it works for your system.*
+- **LACT** is an overclocking tool. Use with caution.
+- **PyEnv** only supports running in `bash` or `zsh` shells.
+- **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those.
+- **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Usage
 - Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended).
@@ -40,17 +50,6 @@ Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxt
 
 - Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
 - Run `makepkg -si` on the folder you downloaded the file to install.
-
-## Limitations
-- The **CachyOS systemd configurations** and **linux-psycachy** kernel may not work as intended on systems with package bases older than Debian Trixie. This also applies for the **Optimized Defaults**.
-- **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
-- **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
-- **Lucidglyph** is only confirmed to work on **Gnome** and **Plasma** desktops. With all others, your mileage may vary.
-- The **linux-cachyos** kernel port to Debian/Ubuntu-based systems may require its **LTO** setting changed to 'Full' or 'None' to work in some systems. *ThinLTO is only known to work in the standard Ubuntu-Gnome flavour and in Debian Testing, so far, although it is the optimal setting if it works for your system.*
-- **LACT** is an overclocking tool. Use with caution.
-- **PyEnv** only supports running in `bash` or `zsh` shells.
-- **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those.
-- **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Building from source
 ### .deb package
