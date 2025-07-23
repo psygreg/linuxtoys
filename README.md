@@ -42,6 +42,7 @@ Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxt
 - Run `makepkg -si` on the folder you downloaded the file to install.
 
 ## Limitations
+- The **CachyOS systemd configurations** and **linux-psycachy** kernel may not work as intended on systems with package bases older than Debian Trixie. This also applies for the **Optimized Defaults**.
 - **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
 - **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
 - **Lucidglyph** is only confirmed to work on **Gnome** and **Plasma** desktops. With all others, your mileage may vary.
