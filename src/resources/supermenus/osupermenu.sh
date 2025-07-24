@@ -28,7 +28,7 @@ osupermenu () {
     local audc_status=$([ "$_audc" = "org.audacityteam.Audacity" ] && echo "ON" || echo "OFF")
 
     while :; do
-    
+
         local selection
         selection=$(whiptail --title "$msg131" --checklist \
             "$msg131" 20 78 15 \
@@ -96,7 +96,7 @@ osupermenu () {
             _msgbox_
         fi
         break
-    
+
     done
 
 }
@@ -114,7 +114,7 @@ install_native () {
             _msgbox_
             davincimenu
         fi
-        if [[ -n "$_fial" ]]; then   
+        if [[ -n "$_fial" ]]; then
             if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
                 wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
                 chmod +x installer.sh
@@ -125,7 +125,7 @@ install_native () {
                 local msg="$msg077"
                 _msgbox_
             fi
-        fi   
+        fi
     fi
     _install_
 
@@ -148,6 +148,31 @@ install_flatpak () {
                 local title="$msg030"
                 local msg="$msg132"
                 _msgbox_
+            fi
+        fi
+        if [[ -n "$_gimp" ]]; then
+            if whiptail --title "PhotoGIMP" --yesno "$msg253" 12 78; then
+                local title="PhotoGIMP"
+                local msg="$msg254"
+                _msgbox_
+                flatpak run org.gimp.GIMP & sleep 1
+                PID=($(pgrep -f "gimp"))
+                if [ -z "$PID" ]; then
+                    echo "Failed to find Flatpak process."
+                    exit 1
+                fi
+                echo "Found Flatpak app running as PID $PID"
+                sleep 20
+                for ID in "${PID[@]}"; do
+                    kill "$ID"
+                done
+                wait "$PID" 2>/dev/null
+                git clone https://github.com/Diolinux/PhotoGIMP.git
+                cd PhotoGIMP
+                cp -rf .config/* $HOME/.config/
+                cp -rf .local/* $HOME/.local/
+                cd ..
+                rm -rf PhotoGIMP
             fi
         fi
     fi

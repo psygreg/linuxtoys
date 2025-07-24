@@ -250,3 +250,6 @@ msg249="Uma página contendo instruções de uso da Wiki do LSFG-VK abrirá no s
 msg250="Este, por enquanto, é um projeto experimental, e é aconselhado que leia a Wiki dele atentamente após a instalação. Prosseguir?"
 msg251="Para utilizar o LSFG-VK, você precisará do Lossless Scaling, um software proprietário que deve ser adquirido pela Steam."
 msg252="Insira o caminho completo para o arquivo Lossless.dll"
+msg253="PhotoGIMP é um patch para fazer o GIMP se parecer mais com o Photoshop para os que estão migrando dele ou gostam de sua interface. Deseja instalar?"
+msg254="Uma janela do GIMP se abrirá por alguns segundos, pois PhotoGIMP requer ter iniciado o app uma vez para funcionar. Ele se fechará sozinho posteriormente e continuará o patch. NÃO interaja com a janela enquanto isso!"
+msg255="Você deve ter o GIMP instalado para usar PhotoGIMP. Você pode instalá-lo a partir do menu Produtividade."

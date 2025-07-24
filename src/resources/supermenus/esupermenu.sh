@@ -377,6 +377,41 @@ lsfg_vk_in () {
 
 }
 
+# photogimp - for those who already have GIMP installed
+photogimp_in () {
+
+    if whiptail --title "PhotoGIMP" --yesno "$msg253" 12 78; then
+        if flatpak list --app | grep -q org.gimp.GIMP; then
+            local title="PhotoGIMP"
+            local msg="$msg254"
+            _msgbox_
+            flatpak run org.gimp.GIMP & sleep 1
+            PID=($(pgrep -f "gimp"))
+            if [ -z "$PID" ]; then
+                echo "Failed to find Flatpak process."
+                return 1
+            fi
+            echo "Found Flatpak app running as PID $PID"
+            sleep 20
+            for ID in "${PID[@]}"; do
+                kill "$ID"
+            done
+            wait "$PID" 2>/dev/null
+            git clone https://github.com/Diolinux/PhotoGIMP.git
+            cd PhotoGIMP
+            cp -rf .config/* $HOME/.config/
+            cp -rf .local/* $HOME/.local/
+            cd ..
+            rm -rf PhotoGIMP
+        else
+            local title="PhotoGIMP"
+            local msg="$msg255"
+            _msgbox_
+        fi
+    fi
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -392,18 +427,19 @@ while :; do
         "3" "$msg048" \
         "4" "$msg207" \
         "5" "$msg248" \
-        "6" "$msg055" \
-        "7" "$msg177" \
-        "8" "$msg201" \
-        "9" "iNet Wireless Daemon" \
-        "10" "$msg057" \
-        "11" "$msg081" \
-        "12" "$msg079" \
-        "13" "$msg078" \
-        "14" "$msg053" \
-        "15" "$msg233" \
-        "16" "$msg209" \
-        "17" "$msg059" 3>&1 1>&2 2>&3)
+        "6" "PhotoGIMP" \
+        "7" "$msg055" \
+        "8" "$msg177" \
+        "9" "$msg201" \
+        "10" "iNet Wireless Daemon" \
+        "11" "$msg057" \
+        "12" "$msg081" \
+        "13" "$msg079" \
+        "14" "$msg078" \
+        "15" "$msg053" \
+        "16" "$msg233" \
+        "17" "$msg209" \
+        "18" "$msg059" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -428,16 +464,17 @@ while :; do
        fi
        ;;
     5) lsfg_vk_in ;;
-    6) grubtrfs_t ;;
-    7) psaver ;;
-    8) touchegg_t ;;
-    9) iwd_summon ;;
-    10) kernel_in ;;
-    11) suse_codecs ;;
-    12) fix_se_suse ;;
-    13) nvidia_in ;;
-    14) chaotic_aur_lib ;;
-    15) if [ ! -f /.autopatch.state ]; then
+    6) photogimp_in ;;
+    7) grubtrfs_t ;;
+    8) psaver ;;
+    9) touchegg_t ;;
+    10) iwd_summon ;;
+    11) kernel_in ;;
+    12) suse_codecs ;;
+    13) fix_se_suse ;;
+    14) nvidia_in ;;
+    15) chaotic_aur_lib ;;
+    16) if [ ! -f /.autopatch.state ]; then
            debfixer_lib
         else
            title="AutoPatcher"
@@ -445,8 +482,8 @@ while :; do
            _msgbox_
         fi
         ;;
-    16) lsw_in ;;
-    17 | q) break ;;
+    17) lsw_in ;;
+    18 | q) break ;;
     *) echo "Invalid Option" ;;
     esac
 done
