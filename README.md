@@ -82,6 +82,7 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
 - [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
+- [PhotoGIMP](https://github.com/Diolinux/PhotoGIMP) by **'Diolinux'**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [DaVinciBox](https://github.com/zelikos/davincibox) by **Patrick Csikos**
 - [Darktable](https://www.darktable.org)
