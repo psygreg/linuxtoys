@@ -148,6 +148,7 @@ install_flatpak () {
                 local title="$msg030"
                 local msg="$msg132"
                 _msgbox_
+                return 1
             fi
         fi
         if [[ -n "$_gimp" ]]; then
