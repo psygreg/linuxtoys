@@ -137,7 +137,7 @@ install_native () {
         fi
         if [[ -n "$_mhud" ]]; then
             if command -v flatpak &> /dev/null; then
-                flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.MangoHud
+                flatpak install --or-update --system -y com.valvesoftware.Steam.VulkanLayer.MangoHud/x86_64/stable org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
             fi
         fi
     fi
