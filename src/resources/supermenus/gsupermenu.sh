@@ -104,7 +104,7 @@ gsupermenu () {
             _msgbox_
         fi
         break
-    
+
     done
 
 }
@@ -126,7 +126,7 @@ install_native () {
         fi
         if [[ -n "$_gscope" ]]; then
             if command -v flatpak &> /dev/null; then
-                flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
+                flatpak install --or-update --system -y org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08
             fi
             if [ "$ID" == "debian" ] && [[ "$codename" =~ ^(trixie|testing)$ ]]; then
                 cd $HOME
