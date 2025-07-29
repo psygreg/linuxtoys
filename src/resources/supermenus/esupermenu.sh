@@ -205,6 +205,17 @@ suse_codecs () {
             local title="$msg006"
             local msg="$msg018"
             _msgbox_
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            if rpm -qi rpmfusion-free-release || rpm -qi rpmfusion-nonfree-release; then
+                local _packages=(libavcodec-freeworld)
+            else
+                wget https://download1.rpmfusion.org/free/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+                wget https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+                insta rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+                rm rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+                local _packages=(libavcodec-freeworld)
+            fi
+            _install_
         else
             local title="$msg030"
             local msg="$msg077"
