@@ -361,28 +361,96 @@ lsw_in () {
 # install lsfg-vk
 lsfg_vk_in () {
 
-    local title="LSFG-VK"
-    local msg="$msg251"
-    _msgbox_
-    if whiptail --title "LSFG-VK" --yesno "$msg250" 12 78; then
-        # add check for DLL location
-        DLL_FIND="$(find / -name Lossless.dll 2>/dev/null | head -n 1at.vintagestory.VintageStory)"
+    local tag=$(curl -s "https://api.github.com/repos/PancakeTAS/lsfg-vk/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    local ver="${tag#v}"
+    if rpm -qi lsfg-vk &> /dev/null || pacman -Qi lsfg-vk 2>/dev/null 1>&2 || dpkg -s lsfg-vk 2>/dev/null 1>&2; then
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.deb
+            sudo apt install -y ./lsfg-vk-${ver}.x86_64.deb
+            rm lsfg-vk-${ver}.x86_64.deb
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.rpm
+            sudo dnf install -y ./lsfg-vk-${ver}.x86_64.rpm
+            rm lsfg-vk-${ver}.x86_64.rpm
+        elif [[ "$ID_LIKE" == *suse* ]] || [ "$ID" == "suse" ]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.rpm
+            sudo zypper install -y ./lsfg-vk-${ver}.x86_64.rpm
+            rm lsfg-vk-${ver}.x86_64.rpm
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.tar.zst
+            sudo pacman -u --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
+            rm lsfg-vk-${ver}.x86_64.tar.zst
+        fi
+        if command -v flatpak &> /dev/null; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
+            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
+            rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
+            for flatapp in "${flatapps[@]}"; do
+                if flatpak info "$flatapp" &> /dev/null; then
+                    flatpak override --user --filesystem=$HOME/.config/lsfg-vk:rw "$flatapp"
+                    flatpak override --user --env=LSFG_CONFIG=$HOME/.config/lsfg-vk/conf.toml "$flatapp"
+                    if [ "$flatapp" != "com.valvesoftware.Steam" ]; then
+                        flatpak override --user --filesystem="$DLL_ABSOLUTE_PATH:ro" "$flatapp"
+                    fi
+                fi
+            done
+        fi
+    else
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.deb
+            sudo apt install -y ./lsfg-vk-${ver}.x86_64.deb
+            rm lsfg-vk-${ver}.x86_64.deb
+        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.rpm
+            sudo dnf install -y ./lsfg-vk-${ver}.x86_64.rpm
+            rm lsfg-vk-${ver}.x86_64.rpm
+        elif [[ "$ID_LIKE" == *suse* ]] || [ "$ID" == "suse" ]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.rpm
+            sudo zypper install -y ./lsfg-vk-${ver}.x86_64.rpm
+            rm lsfg-vk-${ver}.x86_64.rpm
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.tar.zst
+            sudo pacman -u --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
+            rm lsfg-vk-${ver}.x86_64.tar.zst
+        fi
+        DLL_FIND="$(find / -name Lossless.dll 2>/dev/null | head -n 1)"
         if [ -z "$DLL_FIND" ]; then
-            local title="LSFG-VK"
-            local msg="Lossless.dll not found. Did you install Lossless Scaling?"
-            _msgbox_
+            nonfatal "Lossless.dll not found. Did you install Lossless Scaling?"
             return 1
         fi
-        curl -sSf https://pancake.gay/lsfg-vk.sh | sh
-        if [ $? -eq 0 ]; then
-            # check flatpaks
-            if command -v flatpak &> /dev/null; then
-                curl -fsSL https://raw.githubusercontent.com/psygreg/lsfg-vk-flatpak/main/flatpak-enabler.sh | bash
-            fi
-            local title="LSFG-VK"
-            local msg="$msg249"
-            _msgbox_
-            xdg-open https://github.com/PancakeTAS/lsfg-vk/wiki/Configuring-lsfg%E2%80%90vk
+        DLL_ABSOLUTE_PATH=$(dirname "$(realpath "$DLL_FIND")")
+        ESCAPED_DLL_PATH=$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')
+        CONF_LOC="${HOME}/.config/lsfg-vk/conf.toml"
+        if [ ! -f "$CONF_LOC" ]; then
+            # make sure target dir exists
+            mkdir -p ${HOME}/.config/lsfg-vk/
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/src/patches/conf.toml
+            mv conf.toml ${HOME}/.config/lsfg-vk/
+        fi
+        # register dll location in config file
+        sed -i -E "s|^# dll = \".*\"|dll = \"$ESCAPED_DLL_PATH\"|" ${HOME}/.config/lsfg-vk/conf.toml
+        # flatpak runtime
+        if command -v flatpak &> /dev/null; then
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
+            wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
+            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
+            rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
+            for flatapp in "${flatapps[@]}"; do
+                if flatpak info "$flatapp" &> /dev/null; then
+                    flatpak override --user --filesystem=$HOME/.config/lsfg-vk:rw "$flatapp"
+                    flatpak override --user --env=LSFG_CONFIG=$HOME/.config/lsfg-vk/conf.toml "$flatapp"
+                    if [ "$flatapp" != "com.valvesoftware.Steam" ]; then
+                        flatpak override --user --filesystem="$DLL_ABSOLUTE_PATH:ro" "$flatapp"
+                    fi
+                fi
+            done
         fi
     fi
 

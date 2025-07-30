@@ -307,6 +307,16 @@ preload_lib () {
 
 }
 
+# error handlers
+fatal() {
+    zenity --error --title "Fatal Error" --text "$1"
+    exit 1
+}
+nonfatal() {
+    zenity --error --title "Error" --text "$1"
+    return 1
+}
+
 # shader booster
 sboost_lib () {
 
