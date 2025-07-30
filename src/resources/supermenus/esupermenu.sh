@@ -414,7 +414,7 @@ lsfg_vk_in () {
             rm lsfg-vk-${ver}.x86_64.rpm
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.tar.zst
-            sudo pacman -u --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
+            sudo pacman -U --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
             rm lsfg-vk-${ver}.x86_64.tar.zst
         fi
         DLL_FIND="$(find / -name Lossless.dll 2>/dev/null | head -n 1)"
