@@ -363,6 +363,13 @@ lsfg_vk_in () {
 
     local tag=$(curl -s "https://api.github.com/repos/PancakeTAS/lsfg-vk/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     local ver="${tag#v}"
+    local DLL_FIND="$(find / -name Lossless.dll 2>/dev/null | head -n 1)"
+    if [ -z "$DLL_FIND" ]; then
+        nonfatal "Lossless.dll not found. Did you install Lossless Scaling?"
+        return 1
+    fi
+    local DLL_ABSOLUTE_PATH=$(dirname "$(realpath "$DLL_FIND")")
+    local ESCAPED_DLL_PATH=$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')
     if rpm -qi lsfg-vk &> /dev/null || pacman -Qi lsfg-vk 2>/dev/null 1>&2 || dpkg -s lsfg-vk 2>/dev/null 1>&2; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.deb
@@ -417,13 +424,6 @@ lsfg_vk_in () {
             sudo pacman -U --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
             rm lsfg-vk-${ver}.x86_64.tar.zst
         fi
-        DLL_FIND="$(find / -name Lossless.dll 2>/dev/null | head -n 1)"
-        if [ -z "$DLL_FIND" ]; then
-            nonfatal "Lossless.dll not found. Did you install Lossless Scaling?"
-            return 1
-        fi
-        DLL_ABSOLUTE_PATH=$(dirname "$(realpath "$DLL_FIND")")
-        ESCAPED_DLL_PATH=$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')
         CONF_LOC="${HOME}/.config/lsfg-vk/conf.toml"
         if [ ! -f "$CONF_LOC" ]; then
             # make sure target dir exists
