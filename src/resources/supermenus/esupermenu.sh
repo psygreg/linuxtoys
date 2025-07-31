@@ -395,7 +395,7 @@ lsfg_vk_in () {
             flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
-            local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
+            local flatapps=(com.usebottles.bottles net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
             for flatapp in "${flatapps[@]}"; do
                 if flatpak info "$flatapp" &> /dev/null; then
                     flatpak override --user --filesystem="$HOME/.config/lsfg-vk:rw" "$flatapp"
@@ -441,7 +441,7 @@ lsfg_vk_in () {
             flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
-            local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
+            local flatapps=(com.usebottles.bottles net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
             for flatapp in "${flatapps[@]}"; do
                 if flatpak info "$flatapp" &> /dev/null; then
                     flatpak override --user --filesystem="$HOME/.config/lsfg-vk:rw" "$flatapp"
