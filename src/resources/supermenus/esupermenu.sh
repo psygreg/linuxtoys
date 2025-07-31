@@ -378,14 +378,14 @@ lsfg_vk_in () {
             rm lsfg-vk-${ver}.x86_64.rpm
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.tar.zst
-            sudo pacman -u --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
+            sudo pacman -U --noconfirm lsfg-vk-${ver}.x86_64.tar.zst
             rm lsfg-vk-${ver}.x86_64.tar.zst
         fi
         if command -v flatpak &> /dev/null; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
-            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
-            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
+            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
@@ -437,8 +437,8 @@ lsfg_vk_in () {
         if command -v flatpak &> /dev/null; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
-            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
-            flatpak install --reinstall --system -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
+            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
