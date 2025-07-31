@@ -391,8 +391,8 @@ lsfg_vk_in () {
             local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
             for flatapp in "${flatapps[@]}"; do
                 if flatpak info "$flatapp" &> /dev/null; then
-                    flatpak override --user --filesystem=$HOME/.config/lsfg-vk:rw "$flatapp"
-                    flatpak override --user --env=LSFG_CONFIG=$HOME/.config/lsfg-vk/conf.toml "$flatapp"
+                    flatpak override --user --filesystem="$HOME/.config/lsfg-vk:rw" "$flatapp"
+                    flatpak override --user --env=LSFG_CONFIG="$HOME/.config/lsfg-vk/conf.toml" "$flatapp"
                     if [ "$flatapp" != "com.valvesoftware.Steam" ]; then
                         flatpak override --user --filesystem="$DLL_ABSOLUTE_PATH:ro" "$flatapp"
                     fi
@@ -444,8 +444,8 @@ lsfg_vk_in () {
             local flatapps=(net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)
             for flatapp in "${flatapps[@]}"; do
                 if flatpak info "$flatapp" &> /dev/null; then
-                    flatpak override --user --filesystem=$HOME/.config/lsfg-vk:rw "$flatapp"
-                    flatpak override --user --env=LSFG_CONFIG=$HOME/.config/lsfg-vk/conf.toml "$flatapp"
+                    flatpak override --user --filesystem="$HOME/.config/lsfg-vk:rw" "$flatapp"
+                    flatpak override --user --env=LSFG_CONFIG="$HOME/.config/lsfg-vk/conf.toml" "$flatapp"
                     if [ "$flatapp" != "com.valvesoftware.Steam" ]; then
                         flatpak override --user --filesystem="$DLL_ABSOLUTE_PATH:ro" "$flatapp"
                     fi
