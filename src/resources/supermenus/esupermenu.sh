@@ -491,6 +491,28 @@ photogimp_in () {
 
 }
 
+# preload installation
+preload_in () {
+
+    local total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
+    local total_gb=$(( total_kb / 1024 / 1024 ))
+    _cram=$(( total_gb ))
+
+    if (( _cram < 16 )); then
+        if whiptail --title "$msg006" --yesno "$msg228" 12 78; then
+            insta preload
+            local title="$msg006"
+            local msg="$msg229"
+            _msgbox_
+        fi
+    else
+        local title="$msg006"
+        local msg="$msg230"
+        _msgbox_
+    fi
+
+}
+
 # runtime
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -531,17 +553,7 @@ while :; do
     1) swapfile_t ;;
     2) flatpak_in ;;
     3) lucidglyph_in ;;
-    4) total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
-       total_gb=$(( total_kb / 1024 / 1024 ))
-       _cram=$(( total_gb ))
-       if (( $_cram < 16 )); then
-          preload_lib
-       else
-          title="Preload"
-          msg="$msg228"
-          _msgbox_
-       fi
-       ;;
+    4) preload_in ;;
     5) lsfg_vk_in ;;
     6) photogimp_in ;;
     7) grubtrfs_t ;;
