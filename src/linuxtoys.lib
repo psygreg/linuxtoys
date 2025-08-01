@@ -1,7 +1,7 @@
 ## turbobash library
 . /etc/os-release
 
-# whiptail color palette
+# whiptail color palette -- remove after full port to zenity
 export NEWT_COLORS='
     root=white,black
     border=black,lightgray
@@ -174,7 +174,7 @@ _root_ () {
 
 }
 
-# whiptail messagebox
+# whiptail messagebox --- remove after full zenity port
 _msgbox_ () {
 
     whiptail --title "$title" --msgbox "$msg" 12 78
@@ -307,15 +307,26 @@ preload_lib () {
 
 }
 
-# error handlers
+# zenity libs
+zeninf () {
+    zenity --info --text "$1" --width 360 --height 300
+    return 0
+}
+zenwrn () {
+    zenity --warning --text "$1" --width 360 --height 300
+    return 0
+}
+
+## error handlers
 fatal() {
-    zenity --error --title "Fatal Error" --text "$1"
+    zenity --error --title "Fatal Error" --text "$1" --width 360 --height 300
     exit 1
 }
 nonfatal() {
-    zenity --error --title "Error" --text "$1"
+    zenity --error --title "Error" --text "$1" --width 360 --height 300
     return 1
 }
+
 
 # shader booster
 sboost_lib () {
