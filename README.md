@@ -30,7 +30,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended).
 - Alternatively, install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or run it directly from source with the standalone terminal command.
 
-### Standalone
+### Direct command
 Install dependencies then paste the command into your terminal to get the script from the source.
 #### Dependencies
 `bash curl git wget zenity`
