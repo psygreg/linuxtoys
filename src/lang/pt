@@ -253,3 +253,8 @@ msg252="Insira o caminho completo para o arquivo Lossless.dll"
 msg253="PhotoGIMP é um patch para fazer o GIMP se parecer mais com o Photoshop para os que estão migrando dele ou gostam de sua interface. Deseja instalar?"
 msg254="Uma janela do GIMP se abrirá por alguns segundos, pois PhotoGIMP requer ter iniciado o app uma vez para funcionar. Ele se fechará sozinho posteriormente e continuará o patch. NÃO interaja com a janela enquanto isso!"
 msg255="Você deve ter o GIMP instalado para usar PhotoGIMP. Você pode instalá-lo a partir do menu Produtividade."
+# zenity stuff starts here
+msg274="Menu Principal"
+msg275="Doar"
+msg276="Entendido."
+msg277="Selecione versões para instalar"
