@@ -1,7 +1,7 @@
 # LinuxToys
 A collection of tools for Linux in a user-friendly way. For Fedora-based and Universal Blue immutable systems, see [LinuxToys Atom](github.com/psygreg/linuxtoys-atom).
 
-![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
+![LinuxToys](https://github.com/psygreg/linuxtoys/blob/dc32bbe9a5f6bd40fd30f409f13f33b3be3695ad/src/screenshot3.png)
 
 ## Compatibility
 ### AppImage
