@@ -494,7 +494,7 @@ photogimp_in () {
 # preload installation
 preload_in () {
 
-    local total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
+    local total_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
     local total_gb=$(( total_kb / 1024 / 1024 ))
     _cram=$(( total_gb ))
 
