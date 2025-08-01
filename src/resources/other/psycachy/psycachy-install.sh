@@ -72,18 +72,18 @@ if [ -n "$1" ]; then
 fi
 
 # menu
-while :; do
+while true; do
 
-    CHOICE=$(whiptail --title "Kernel Version" --menu "Select:" 25 78 16 \
-        "Standard" "$kver_psycachy" \
-        "LTS" "$kver_lts" \
-        "Latest" "$_kv_latest" \
-        "Cancel" "" 3>&1 1>&2 2>&3)
+    CHOICE=$(zenity --list --title "Psycachy Kernel Installer" --text "Select the kernel version to install:" \
+        --column "Versions" \
+        "Standard" \
+        "LTS" \
+        "Latest (CachyOS, may not work)" \
+        "Cancel" \
+        --width 360 --height 360 )
 
-    exitstatus=$?
-    if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-        exit 2
+    if [ $? -ne 0 ]; then
+        exit 0
     fi
 
     case $CHOICE in

@@ -7,80 +7,98 @@ dsplitm_run=""
 # supermenu checklist
 gsupermenu () {
 
-    local steam_status=$([ "$_steam" = "steam" ] && echo "ON" || echo "OFF")
-    local lutris_status=$([ "$_lutris" = "net.lutris.Lutris" ] && echo "ON" || echo "OFF")
-    local heroic_status=$([ "$_heroic" = "com.heroicgameslauncher.hgl" ] && echo "ON" || echo "OFF")
-    local pp_status=$([ "$_pp" = "com.vysp3r.ProtonPlus" ] && echo "ON" || echo "OFF")
-    local stl_status=$([ "$_stl" = "com.valvesoftware.Steam.Utility.steamtinkerlaunch" ] && echo "ON" || echo "OFF")
-    local sober_status=$([ "$_sobst" = "org.vinegarhq.Sober" ] && echo "ON" || echo "OFF")
-    local disc_status=$([ "$_disc" = "com.discordapp.Discord" ] && echo "ON" || echo "OFF")
-    local gmode_status=$([ "$_gmode" = "gamemode" ] && echo "ON" || echo "OFF")
-    local gscope_status=$([ "$_gscope" = "gamescope" ] && echo "ON" || echo "OFF")
-    local mhud_status=$([ "$_mhud" = "mangohud" ] && echo "ON" || echo "OFF")
-    local govl_status=$([ "$_govl" = "goverlay" ] && echo "ON" || echo "OFF")
-    local sboost_status=$([ "$_sboost" = "yes" ] && echo "ON" || echo "OFF")
-    local dsplitm_status=$([ "$_dsplitm" = "yes" ] && echo "ON" || echo "OFF")
-    local wivrn_status=$([ "$_wivrn" = "io.github.wivrn.wivrn" ] && echo "ON" || echo "OFF")
-    local steer_status=$([ "$_steer" = "io.github.berarma.Oversteer" ] && echo "ON" || echo "OFF")
-    local gfn_status=$([ "$_gfn" = "yes" ] && echo "ON" || echo "OFF")
-    local mcbe_status=$([ "$_mcbe" = "io.mrarm.mcpelauncher" ] && echo "ON" || echo "OFF")
-    local runner_status=$([ "$_runner" = "runners" ] && echo "ON" || echo "OFF")
-    local nexmod_status=$([ "$_nexmod" = "yes" ] && echo "ON" || echo "OFF")
-    local osuf_status=$([ "$_osuf" = "sh.ppy.osu" ] && echo "ON" || echo "OFF")
+    local selection
+    local selection_str
+    local selected
+    local search_item
+    local item
+    declare -a search_item=(
+        "Steam"
+        "Lutris"
+        "Heroic Games Launcher"
+        "ProtonPlus"
+        "SteamTinkerLaunch"
+        "NexusMods"
+        "Sober"
+        "Osu!"
+        "Prism Launcher"
+        "Bedrock Launcher"
+        "Discord"
+        "Gamemode"
+        "Gamescope"
+        "Mangohud"
+        "GOverlay"
+        "GeForce NOW"
+        "Shader Booster"
+        "Disable SLM"
+        "Oversteer"
+        "WiVRn"
+        "Wine"
+        "Runners"
+        "NexusMods"
+    )
 
-    while :; do
+    while true; do
 
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "Steam" "$msg109" $steam_status \
-            "Lutris" "$msg110" $lutris_status \
-            "Heroic Games Launcher" "$msg111" $heroic_status \
-            "ProtonPlus" "$msg112" $pp_status \
-            "SteamTinkerLaunch" "$msg113" $stl_status \
-            "NexusMods" "$msg189" $nexmod_status \
-            "Sober" "$msg114" $sober_status \
-            "Osu!" "$msg221" $osuf_status \
-            "Bedrock Launcher" "$msg160" $mcbe_status \
-            "Discord" "$msg130" $disc_status \
-            "Gamemode" "$msg115" $gmode_status \
-            "Gamescope" "$msg116" $gscope_status \
-            "Mangohud" "$msg117" $mhud_status \
-            "GOverlay" "$msg118" $govl_status \
-            "GeForce NOW" "$msg152" $gfn_status \
-            "Shader Booster" "$msg119" $sboost_status \
-            "Disable SLM" "$msg041" $dsplitm_status \
-            "Oversteer" "$msg145" $steer_status \
-            "WiVRn" "$msg144" $wivrn_status \
-            "Wine" "$msg156" $runner_status \
-            3>&1 1>&2 2>&3)
+        selection_str=$(zenity --list --checklist --title="Gaming Menu" \
+            --column="" \
+            --column="Apps" \
+            FALSE "Steam" \
+            FALSE "Lutris" \
+            FALSE "Heroic Games Launcher" \
+            FALSE "ProtonPlus" \
+            FALSE "SteamTinkerLaunch" \
+            FALSE "NexusMods" \
+            FALSE "Sober" \
+            FALSE "Osu!" \
+            FALSE "Bedrock Launcher" \
+            FALSE "Discord" \
+            FALSE "Gamemode" \
+            FALSE "Gamescope" \
+            FALSE "Mangohud" \
+            FALSE "GOverlay" \
+            FALSE "GeForce NOW" \
+            FALSE "Shader Booster" \
+            FALSE "Disable SLM" \
+            FALSE "Oversteer" \
+            FALSE "WiVRn" \
+            FALSE "Wine - Custom Runners" \
+            --height=830 --width=330 --separator="|")
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
+        if [ $? -ne 0 ]; then
             break
         fi
 
-        [[ "$selection" == *"Steam"* ]] && _steam="steam" || _steam=""
-        [[ "$selection" == *"Lutris"* ]] && _lutris="net.lutris.Lutris" || _lutris=""
-        [[ "$selection" == *"Heroic Games Launcher"* ]] && _heroic="com.heroicgameslauncher.hgl" || _heroic=""
-        [[ "$selection" == *"ProtonPlus"* ]] && _pp="com.vysp3r.ProtonPlus" || _pp=""
-        [[ "$selection" == *"SteamTinkerLaunch"* ]] && _stl="com.valvesoftware.Steam.Utility.steamtinkerlaunch" || _stl=""
-        [[ "$selection" == *"Sober"* ]] && _sobst="org.vinegarhq.Sober" || _sobst=""
-        [[ "$selection" == *"Osu!"* ]] && _osuf="sh.ppy.osu" || _osuf=""
-        [[ "$selection" == *"Bedrock Launcher"* ]] && _mcbe="io.mrarm.mcpelauncher" || _mcbe=""
-        [[ "$selection" == *"Discord"* ]] && _disc="com.discordapp.Discord" || _gmode=""
-        [[ "$selection" == *"Gamemode"* ]] && _gmode="gamemode" || _gmode=""
-        [[ "$selection" == *"Gamescope"* ]] && _gscope="gamescope" || _gscope=""
-        [[ "$selection" == *"Mangohud"* ]] && _mhud="mangohud" || _mhud=""
-        [[ "$selection" == *"GOverlay"* ]] && _govl="goverlay" || _govl=""
-        [[ "$selection" == *"Shader Booster"* ]] && _sboost="yes" || _sboost=""
-        [[ "$selection" == *"Disable SLM"* ]] && _dsplitm="yes" || _dsplitm=""
-        [[ "$selection" == *"WiVRn"* ]] && _wivrn="io.github.wivrn.wivrn" || _wivrn=""
-        [[ "$selection" == *"Oversteer"* ]] && _steer="io.github.berarma.Oversteer" || _steer=""
-        [[ "$selection" == *"GeForce NOW"* ]] && _gfn="yes" || _gfn=""
-        [[ "$selection" == *"Wine"* ]] && _runner="runners" || _runner=""
-        [[ "$selection" == *"NexusMods"* ]] && _nexmod="yes" || _nexmod=""
+        IFS='|' read -ra selection <<< "$selection_str"
+
+        for item in "${search_item[@]}"; do
+            for selected in "${selection[@]}"; do
+                if [[ "$selected" == "$item" ]]; then
+                    case $item in
+                        "Steam") _steam="steam" ;;
+                        "Lutris") _lutris="net.lutris.Lutris" ;;
+                        "Heroic Games Launcher") _heroic="com.heroicgameslauncher.hgl" ;;
+                        "ProtonPlus") _pp="com.vysp3r.ProtonPlus" ;;
+                        "SteamTinkerLaunch") _stl="com.valvesoftware.Steam.Utility.steamtinkerlaunch" ;;
+                        "NexusMods") _nexmod="yes" ;;
+                        "Sober") _sobst="org.vinegarhq.Sober" ;;
+                        "Osu!") _osuf="sh.ppy.osu" ;;
+                        "Bedrock Launcher") _mcbe="io.mrarm.mcpelauncher" ;;
+                        "Discord") _disc="com.discordapp.Discord" ;;
+                        "Gamemode") _gmode="gamemode" ;;
+                        "Gamescope") _gscope="gamescope" ;;
+                        "Mangohud") _mhud="mangohud" ;;
+                        "GOverlay") _govl="goverlay" ;;
+                        "GeForce NOW") _gfn="yes" ;;
+                        "Shader Booster") _sboost="yes" ;;
+                        "Disable SLM") _dsplitm="yes" ;;
+                        "Oversteer") _steer="io.github.berarma.Oversteer" ;;
+                        "WiVRn") _wivrn="io.github.wivrn.wivrn" ;;
+                        "Wine - Custom Runners") _runner="runners" ;;
+                    esac
+                fi
+            done
+        done
 
         install_flatpak
         install_native
@@ -95,13 +113,9 @@ gsupermenu () {
         runners_t
         nexusmods_t
         if [[ -n "$flatpak_run" || -n "$dsplitm_run" || -n "$sboost_run" ]]; then
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         else
-            local title="$msg006"
-            local msg="$msg018"
-            _msgbox_
+            zeninf "$msg018"
         fi
         break
 
@@ -166,18 +180,14 @@ install_flatpak () {
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
-                local title="Oversteer"
-                local msg="$msg146"
-                _msgbox_
+                zeninf "$msg146"
                 xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
             fi
             if [[ -n "$_mcbe" ]]; then
-                local title="Bedrock Launcher"
-                local msg="$msg161"
-                _msgbox_
+                zeninf "$msg161"
             fi
         else
-            if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+            if zenity --question --text "$msg085" --width 360 --height 300; then
                 flatpak_run="1"
                 flatpak_in_lib
                 _flatpak_
@@ -193,20 +203,14 @@ install_flatpak () {
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /etc/udev/rules.d
                     sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /etc/udev/rules.d
-                    local title="Oversteer"
-                    local msg="$msg146"
-                    _msgbox_
+                    zeninf "$msg146"
                     xdg-open https://github.com/berarma/oversteer?tab=readme-ov-file#supported-devices
                 fi
                 if [[ -n "$_mcbe" ]]; then
-                    local title="Bedrock Launcher"
-                    local msg="$msg161"
-                    _msgbox_
+                    zeninf "$msg161"
                 fi
             else
-                local title="$msg030"
-                local msg="$msg132"
-                _msgbox_
+                nonfatal "$msg132"
             fi
         fi
     fi

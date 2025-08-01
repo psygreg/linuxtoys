@@ -26,9 +26,7 @@ flatpak_pipe () {
         rm -rf obspipe
         return 0
     else 
-        title="Installer"
-        msg="OBS Studio flatpak not installed."
-        _msgbox_
+        nonfatal "OBS Studio flatpak not installed."
     fi
 
 }
@@ -57,22 +55,23 @@ obscheck () {
         if rpm -qi "obs-studio" 2>/dev/null 1>&2; then
             native_pipe
         else
-            whiptail --title "Installer" --msgbox "OBS Studio not found." 8 78
+            nonfatal "OBS Studio not found."
         fi
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         if pacman -Qi "obs-studio" 2>/dev/null 1>&2; then
             native_pipe
         else
-            whiptail --title "Installer" --msgbox "OBS Studio not found." 8 78
+            nonfatal "OBS Studio not found."
         fi
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
         if dpkg -s "obs-studio" 2>/dev/null 1>&2; then
             native_pipe
         else
-            whiptail --title "Installer" --msgbox "OBS Studio not found." 8 78
+            nonfatal "OBS Studio not found."
         fi
     else
-        whiptail --title "Installer" --msgbox "Invalid Operating System." 8 78
+        nonfatal "Invalid Operating System."
+        exit 1
     fi
 
 }
@@ -80,23 +79,23 @@ obscheck () {
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 depcheck_pipe
 # menu
-while :; do
+while true; do
 
-    CHOICE=$(whiptail --title "OBS Pipewire Audio Capture" --menu "Choose your OBS version:" 25 78 16 \
-        "0" "Native" \
-        "1" "Flatpak" \
-        "2" "Cancel" 3>&1 1>&2 2>&3)
+    CHOICE=$(zenity --list --title "OBS Pipewire Audio Capture" --text "Choose your OBS version:" \
+        --column "Options" \
+        "Native" \
+        "Flatpak" \
+        "Cancel" \
+        --width 300 --height 330)
 
-    exitstatus=$?
-    if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-        break
+    if [ $? -ne 0 ]; then
+        exit 0
     fi
 
     case $CHOICE in
-    0) obscheck && break ;;
-    1) flatpak_pipe && break ;;
-    2 | q) break ;;
+    "Native") obscheck && break ;;
+    "Flatpak") flatpak_pipe && break ;;
+    "Cancel") break ;;
     *) echo "Invalid Option" ;;
     esac
 done

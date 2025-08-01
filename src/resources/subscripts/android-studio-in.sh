@@ -8,8 +8,7 @@ depcheck () {
     elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         local _packages=(zlib.i686 ncurses-libs.i686 bzip2-libs.i686)
     else
-        local title="Android Studio"
-        local msg="$msg077"
+        nonfatal "$msg077"
         exit 1
     fi
     _install_

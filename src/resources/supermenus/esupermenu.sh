@@ -3,7 +3,7 @@
 # set up firewall (ufw)
 ufw_in () {
 
-    if whiptail --title "$msg006" --yesno "$msg007" 8 78; then
+    if zenity --question --text "$msg007" --width 360 --height 300; then
         local _packages=(ufw gufw)
         _install_
         if command -v ufw &> /dev/null; then
@@ -11,9 +11,7 @@ ufw_in () {
             sudo ufw default allow outgoing
             sudo ufw enable
         fi
-        local title="$msg006"
-        local msg="$msg008"
-        _msgbox_
+        zeninf "$msg008"
     fi
 
 }
@@ -21,7 +19,7 @@ ufw_in () {
 # configure swapfile
 swapfile_t () {
 
-    if whiptail --title "$msg009" --yesno "$msg010" 8 78; then
+    if zenity --question --text "$msg010" --width 360 --height 300; then
         local subscript="swapper"
         _invoke_
     fi
@@ -33,7 +31,7 @@ lucidglyph_in () {
 
     local tag=$(curl -s "https://api.github.com/repos/maximilionus/lucidglyph/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     local ver="${tag#v}"
-    if whiptail --title "$msg019" --yesno "$msg020" 8 78; then
+    if zenity --question --text "$msg020" --width 360 --height 300; then 
         cd $HOME
 
         [ -f "${tag}.tar.gz" ] && rm -f "${tag}.tar.gz"
@@ -46,9 +44,7 @@ lucidglyph_in () {
         cd ..
         sleep 1
         rm -rf lucidglyph-${ver}
-        local title="$msg021"
-        local msg="$msg022"
-        _msgbox_
+        zeninf "$msg022"
     fi
 
 }
@@ -60,9 +56,7 @@ grubtrfs_t () {
         local subscript="grub-btrfs-installer"
         _invoke_
     else
-        local title="$msg030"
-        local msg="$msg031"
-        _msgbox_
+        nonfatal "$msg031"
     fi
 
 }
@@ -74,21 +68,21 @@ nvidia_in () {
     if [[ -n "$GPU" ]]; then
         if [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]] || [[ "$ID" =~ (fedora|suse) ]] || [ "$ID" = "debian" ]; then
 
-            while :; do
+            while true; do
 
-                CHOICE=$(whiptail --title "$msg006" --menu "$msg067" 25 78 16 \
-                "0" "$msg068" \
-                "1" "$msg069" \
-                "2" "$msg070" 3>&1 1>&2 2>&3)
+                CHOICE=$(zenity --list --title "Nvidia Drivers" \
+                --column="$msg067" \
+                "$msg068" \
+                "$msg069" \
+                "$msg070" \
+                --height=330 --width=360)
 
-                exitstatus=$?
-                if [ $exitstatus != 0 ]; then
-                    # Exit the script if the user presses Esc
-                    return
+                if [ $? -ne 0 ]; then
+                    break
                 fi
 
                 case $CHOICE in
-                0) if [[ "$ID_LIKE" == *suse* ]]; then
+                "$msg068") if [[ "$ID_LIKE" == *suse* ]]; then
                         local REPO_ALIAS="nvidia"
                         case "$VERSION_ID" in
                             *Tumbleweed*)
@@ -124,7 +118,7 @@ nvidia_in () {
                         insta akmod-nvidia xorg-x11-drv-nvidia-cuda
                    fi
                    sudo dracut -f --regenerate-all ;;
-                1) if [[ "$ID_LIKE" == *suse* ]]; then
+                "$msg069") if [[ "$ID_LIKE" == *suse* ]]; then
                         local REPO_ALIAS="nvidia"
                         case "$VERSION_ID" in
                             *Tumbleweed*)
@@ -160,21 +154,17 @@ nvidia_in () {
                         insta xorg-x11-drv-nvidia-470xx akmod-nvidia-470xx xorg-x11-drv-nvidia-470xx-cuda
                    fi
                    sudo dracut -f --regenerate-all ;;
-                2 | q) break ;;
+                "$msg070") break ;;
                 *) echo "Invalid Option" ;;
                 esac
 
             done
 
         else
-            local title="$msg039"
-            local msg="$msg077"
-            _msgbox_
+            nonfatal "$msg077"
         fi
     else
-        local title="$msg039"
-        local msg="$msg071"
-        _msgbox_
+        nonfatal "$msg071"
     fi
 
 }
@@ -184,13 +174,9 @@ fix_se_suse () {
 
     if [[ "$ID_LIKE" == *suse* ]]; then
         sudo setsebool -P selinuxuser_execmod 1
-        local title="$msg072"
-        local msg="$msg022"
-        _msgbox_
+        zeninf "$msg022"
     else
-        local title="$msg072"
-        local msg="$msg073"
-        _msgbox_
+        nonfatal "$msg073"
     fi
 
 }
@@ -198,13 +184,11 @@ fix_se_suse () {
 # install proper codec support on openSUSE
 suse_codecs () {
 
-    if whiptail --title "$msg006" --yesno "$msg080" 8 78; then
+    if zenity --question --text "$msg080" --width 360 --height 300; then
         if [[ "$ID_LIKE" == *suse* ]]; then
             insta opi
             sudo opi codecs
-            local title="$msg006"
-            local msg="$msg018"
-            _msgbox_
+            zeninf "$msg018"
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
             if rpm -qi rpmfusion-free-release || rpm -qi rpmfusion-nonfree-release; then
                 local _packages=(libavcodec-freeworld)
@@ -217,9 +201,7 @@ suse_codecs () {
             fi
             _install_
         else
-            local title="$msg030"
-            local msg="$msg077"
-            _msgbox_
+            zeninf "$msg077"
         fi
     fi
 
@@ -229,22 +211,18 @@ suse_codecs () {
 flatpak_in () {
 
     if [ ! -f /.autopatch.state ]; then
-        if whiptail --title "$msg011" --yesno "$msg012" 8 78; then
+        if zenity --question --text "$msg012" --width 360 --height 300; then
             flatpak_in_lib
             if command -v flatpak &> /dev/null; then
-                whiptail --title "$msg013" --msgbox "$msg015" 8 78
+                zeninf "$msg015"
                 if [ "$ID" == "ubuntu" ]; then
                     insta gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
                 fi
             fi
-            local title="$msg013"
-            local msg="$msg014"
-            _msgbox_
+            zeninf "$msg014"
         fi
     else
-        local title="AutoPatcher"
-        local msg="$msg234"
-        _msgbox_
+        nonfatal "$msg234"
     fi
 
 }
@@ -253,13 +231,11 @@ flatpak_in () {
 psaver () {
 
     if [ ! -f /.autopatch.state ]; then
-        if whiptail --title "$msg006" --yesno "$msg176" 12 78; then
+        if zenity --question --text "$msg176" --width 360 --height 300; then
             psave_lib
         fi
     else
-        local title="AutoPatcher"
-        local msg="$msg234"
-        _msgbox_
+        nonfatal "$msg234"
     fi
 
 }
@@ -267,23 +243,25 @@ psaver () {
 touchegg_t () {
 
     local tag=$(curl -s "https://api.github.com/repos/JoseExposito/touchegg/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-    if whiptail --title "$msg006" --yesno "$msg200" 12 78; then
-        cd $HOME
-        if [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
-            sudo add-apt-repository ppa:touchegg/stable
-            sudo apt update
-            insta touchegg
-        elif [ "$ID" == "debian" ] || [[ "$ID_LIKE" == *debian* ]]; then
-            wget https://github.com/JoseExposito/touchegg/archive/refs/tags/touchegg_${tag}_amd64.deb
-            sudo dpkg -i touchegg_${tag}_amd64.deb
-        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ] || [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ] || [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            insta touchegg
-            sudo systemctl enable touchegg.service
-            sudo systemctl start touchegg
+    if zenity --question --text "$msg200" --width 360 --height 300; then
+        if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
+            cd $HOME
+            if [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
+                sudo add-apt-repository ppa:touchegg/stable
+                sudo apt update
+                insta touchegg
+            elif [ "$ID" == "debian" ] || [[ "$ID_LIKE" == *debian* ]]; then
+                wget https://github.com/JoseExposito/touchegg/archive/refs/tags/touchegg_${tag}_amd64.deb
+                sudo dpkg -i touchegg_${tag}_amd64.deb
+            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ] || [ "$ID_LIKE" == "suse" ] || [ "$ID" == "suse" ] || [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+                insta touchegg
+                sudo systemctl enable touchegg.service
+                sudo systemctl start touchegg
+            else
+                nonfatal "$msg077"
+            fi
         else
-            title="$msg006"
-            msg="$msg077"
-            _msgbox_
+            nonfatal "$msg077"
         fi
     fi
 
@@ -293,31 +271,23 @@ touchegg_t () {
 kernel_in () {
 
     if [ "$ID" == "cachyos" ]; then
-        local title="$msg030"
-        local msg="$msg077"
-        _msgbox_
+        nonfatal "$msg077"
     else
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             # summon installer
-            if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
+            if zenity --question --text "$msg150" --width 360 --height 300; then
                 psycachy_lib
             fi
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
             fedora_cachyos_menu_lib
             cachyos_sysd_lib
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             cachyos_arch_lib
             cachyos_sysd_lib
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         else
-            local title="$msg074"
-            local msg="$msg077"
-            _msgbox_
+            nonfatal "$msg077"
         fi
     fi
 
@@ -326,15 +296,14 @@ kernel_in () {
 # inet wireless daemon installer
 iwd_summon () {
 
-    if whiptail --title "iNet Wireless Daemon" --yesno "$msg244" 12 78; then
-        local title="iNet Wireless Daemon"
-        local msg="$msg243"
-        _msgbox_
+    if zenity --question --text "$msg244" --width 360 --height 300; then
+        zenwrn "$msg243"
         local subscript="iwdwifi" && _invoke_
     fi
 
 }
 
+# install linux subsystem for windows
 # install linux subsystem for windows
 lsw_in () {
 
@@ -348,8 +317,14 @@ lsw_in () {
         echo "$msg215"
         echo "$msg216"
     } > txtbox
-    whiptail --textbox txtbox 12 80
-    if whiptail --title "LSW" --yesno "$msg217" 12 78; then
+
+    zenity --text-info \
+       --title="LSW" \
+       --filename=txtbox \
+       --checkbox="$msg276" \
+       --width=400 --height=360
+    
+    if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
         cd $HOME
         bash <(curl -s https://raw.githubusercontent.com/psygreg/lsw/refs/heads/main/src/lsw-in.sh)
         sleep 1
@@ -459,11 +434,9 @@ lsfg_vk_in () {
 # photogimp - for those who already have GIMP installed
 photogimp_in () {
 
-    if whiptail --title "PhotoGIMP" --yesno "$msg253" 12 78; then
+    if zenity --question --text "$msg253" --width 360 --height 300; then
         if flatpak list --app | grep -q org.gimp.GIMP; then
-            local title="PhotoGIMP"
-            local msg="$msg254"
-            _msgbox_
+            zeninf "$msg254"
             flatpak run org.gimp.GIMP & sleep 1
             PID=($(pgrep -f "gimp"))
             if [ -z "$PID" ]; then
@@ -483,9 +456,7 @@ photogimp_in () {
             cd ..
             rm -rf PhotoGIMP
         else
-            local title="PhotoGIMP"
-            local msg="$msg255"
-            _msgbox_
+            nonfatal "$msg255"
         fi
     fi
 
@@ -499,16 +470,12 @@ preload_in () {
     _cram=$(( total_gb ))
 
     if (( _cram < 16 )); then
-        if whiptail --title "$msg006" --yesno "$msg228" 12 78; then
+        if zenity --question --text "$msg228" --width 360 --height 300; then
             insta preload
-            local title="$msg006"
-            local msg="$msg229"
-            _msgbox_
+            zeninf "$msg229"
         fi
     else
-        local title="$msg006"
-        local msg="$msg230"
-        _msgbox_
+        nonfatal "$msg230"
     fi
 
 }
@@ -519,53 +486,53 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # extras menu
-while :; do
+while true; do
 
-    CHOICE=$(whiptail --title "Extras Supermenu" --menu "LinuxToys ${current_ltver}" 25 78 16 \
-        "0" "$msg044" \
-        "1" "$msg045" \
-        "2" "$msg046" \
-        "3" "$msg048" \
-        "4" "$msg207" \
-        "5" "$msg248" \
-        "6" "PhotoGIMP" \
-        "7" "$msg055" \
-        "8" "$msg177" \
-        "9" "$msg201" \
-        "10" "iNet Wireless Daemon" \
-        "11" "$msg057" \
-        "12" "$msg081" \
-        "13" "$msg079" \
-        "14" "$msg078" \
-        "15" "$msg053" \
-        "16" "$msg233" \
-        "17" "$msg209" \
-        "18" "$msg059" 3>&1 1>&2 2>&3)
+    CHOICE=$(zenity --list --title "Extras Menu" \
+        --column="" \
+        "$msg044" \
+        "$msg045" \
+        "$msg046" \
+        "$msg048" \
+        "$msg207" \
+        "$msg248" \
+        "PhotoGIMP" \
+        "$msg055" \
+        "$msg177" \
+        "$msg201" \
+        "iNet Wireless Daemon" \
+        "$msg057" \
+        "$msg081" \
+        "$msg079" \
+        "$msg078" \
+        "$msg053" \
+        "$msg233" \
+        "$msg209" \
+        "$msg059" \
+        --height=680 --width=450 --separator="|")
 
-    exitstatus=$?
-    if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
+    if [ $? -ne 0 ]; then
         break
     fi
 
     case $CHOICE in
-    0) ufw_in ;;
-    1) swapfile_t ;;
-    2) flatpak_in ;;
-    3) lucidglyph_in ;;
-    4) preload_in ;;
-    5) lsfg_vk_in ;;
-    6) photogimp_in ;;
-    7) grubtrfs_t ;;
-    8) psaver ;;
-    9) touchegg_t ;;
-    10) iwd_summon ;;
-    11) kernel_in ;;
-    12) suse_codecs ;;
-    13) fix_se_suse ;;
-    14) nvidia_in ;;
-    15) chaotic_aur_lib ;;
-    16) if [ ! -f /.autopatch.state ]; then
+    "$msg044") ufw_in ;;
+    "$msg045") swapfile_t ;;
+    "$msg046") flatpak_in ;;
+    "$msg048") lucidglyph_in ;;
+    "$msg207") preload_in ;;
+    "$msg248") lsfg_vk_in ;;
+    "PhotoGIMP") photogimp_in ;;
+    "$msg055") grubtrfs_t ;;
+    "$msg177") psaver ;;
+    "$msg201") touchegg_t ;;
+    "iNet Wireless Daemon") iwd_summon ;;
+    "$msg057") kernel_in ;;
+    "$msg081") suse_codecs ;;
+    "$msg079") fix_se_suse ;;
+    "$msg078") nvidia_in ;;
+    "$msg053") chaotic_aur_lib ;;
+    "$msg233") if [ ! -f /.autopatch.state ]; then
            debfixer_lib
         else
            title="AutoPatcher"
@@ -573,8 +540,8 @@ while :; do
            _msgbox_
         fi
         ;;
-    17) lsw_in ;;
-    18 | q) break ;;
+    "$msg209") lsw_in ;;
+    "$msg059") break ;;
     *) echo "Invalid Option" ;;
     esac
 done

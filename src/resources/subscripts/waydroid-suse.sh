@@ -1,4 +1,5 @@
 #!/bin/bash
+# TODO fix, someday
 if grep -qi "slowroll" /etc/os-release; then
     sudo zypper addrepo https://download.opensuse.org/repositories/home:runa-chin/openSUSE_Slowroll/home:runa-chin.repo && sudo zypper ref
 else

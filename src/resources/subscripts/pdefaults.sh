@@ -31,7 +31,7 @@ optimizer () {
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             debfixer_lib
             # summon installer
-            if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
+            if zenity --question --text "$msg150" --width 360 --height 300; then
                 psycachy_lib
                 kupid_lib
             fi
@@ -40,33 +40,26 @@ optimizer () {
             dpkg --list | grep -v $(uname -r) | grep -E 'custom-kernel-[0-9]|custom-kernel-headers-[0-9]' | awk '{print $2" "$3}' | sort -k2,2 | head -n -2 | awk '{print $1}' | xargs sudo apt purge
             # run system-agnostic optimizations
             sysag_run
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
-            if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
+            if zenity --question --text "$msg150" --width 360 --height 300; then
                 fedora_cachyos_menu_lib
             fi
             # run system-agnostic optimizations
             sysag_run
         elif [[ "$ID" =~ ^(arch)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            if whiptail --title "CachyOS Kernel" --yesno "$msg150" 12 78; then
+            if zenity --question --text "$msg150" --width 360 --height 300; then
                 cachyos_arch_lib
             fi
             # run system-agnostic optimizations
             sysag_run
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         elif [ "$ID" == "cachyos" ]; then
             sysag_run
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         else
-            local title="$msg074"
-            local msg="$msg077"
-            _msgbox_
+            nonfatal "$msg077"
+            exit 1
         fi
         if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
             dconf write /org/gnome/mutter/check-alive-timeout "20000"
@@ -74,9 +67,7 @@ optimizer () {
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/autopatch.state
         sudo mv autopatch.state /.autopatch.state
     else
-        local title="AutoPatcher"
-        local msg="$msg234"
-        _msgbox_
+        nonfatal "$msg234"
     fi
 
 }
@@ -88,23 +79,23 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # menu
-while :; do
+while true; do
 
-    CHOICE=$(whiptail --title "Power Optimizer" --menu "$msg229" 25 78 16 \
-        "0" "Desktop" \
-        "1" "Laptop" \
-        "2" "Cancel" 3>&1 1>&2 2>&3)
+    CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \
+        --column "Options" \
+        "Desktop" \
+        "Laptop" \
+        "Cancel" \
+        --width 300 --height 330 )
 
-    exitstatus=$?
-    if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-        break
+    if [ $? -ne 0 ]; then
+        exit 0
     fi
 
     case $CHOICE in
-    0) optimizer && break ;;
-    1) optimizer && psave_lib && break ;;
-    2 | q) break ;;
+    "Desktop") optimizer && break ;;
+    "Laptop") optimizer && psave_lib && break ;;
+    "Cancel") break ;;
     *) echo "Invalid Option" ;;
     esac
 done

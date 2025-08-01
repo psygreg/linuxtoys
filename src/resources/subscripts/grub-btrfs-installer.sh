@@ -5,9 +5,7 @@
 dep_check () {
 
     if ! dpkg -l | grep -q grub-efi; then
-        local title="Cancelled"
-        local msg="No GRUB found."
-        _msgbox_
+        nonfatal "No GRUB found."
         exit 1
     else
         local _packages=()
@@ -82,12 +80,8 @@ grubtrfs_in () {
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 dep_check
-if whiptail --title "Grub-Btrfs Installer" --yesno "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" 8 78; then
+if zenity --question --text "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" --width 360 --height 300; then
     grubtrfs_in
-    title="Grub-Btrfs Installer"
-    msg="Installation successful."
-    _msgbox_
-    cd ..
-    rm -rf grub-btrfs
+    zeninf "Installation successful."
     exit 0
 fi

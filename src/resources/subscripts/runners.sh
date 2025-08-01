@@ -7,32 +7,49 @@
         # [[ "$selection" == *"Jadeite"* ]] && _jade="1" || _jade=""
 runners_menu () {
 
-    local spritz_status=$([ "$_spritz" = "1" ] && echo "ON" || echo "OFF")
-    local osu_status=$([ "$_osu" = "1" ] && echo "ON" || echo "OFF")
-    local tricks_status=$([ "$_tricks" = "1" ] && echo "ON" || echo "OFF")
-    local vngr_status=$([ "$_vngr" = "1" ] && echo "ON" || echo "OFF")
+    local selection_str
+    local selected
+    local selection
+    local search_item
+    local item
+    declare -a search_item=(
+        "Spritz - ${msg153}"
+        "Osu!-Wine - ${msg154}"
+        "Protontricks - ${msg235}"
+        "Vinegar - ${msg204}"
+    )
 
-    while :; do
+    while true; do
 
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "Spritz" "$msg153" $spritz_status \
-            "Osu!-Wine" "$msg154" $osu_status \
-            "Protontricks" "$msg235" $tricks_status \
-            "Vinegar" "$msg204" $vngr_status \
-            3>&1 1>&2 2>&3)
+        selection_str=$(zenity --list --checklist --title="Runners" \
+        	--column="" \
+        	--column="" \
+            FALSE "Spritz - ${msg153}" \
+            FALSE "Osu!-Wine - ${msg154}" \
+            FALSE "Protontricks - ${msg235}" \
+            FALSE "Vinegar - ${msg204}" \
+            --height=380 --width=400 --separator="|")
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
+        if [ $? -ne 0 ]; then
             break
         fi
 
-        [[ "$selection" == *"Spritz"* ]] && _spritz="1" || _spritz=""
-        [[ "$selection" == *"Osu!-Wine"* ]] && _osu="1" || _osu=""
-        [[ "$selection" == *"Protontricks"* ]] && _tricks="1" || _tricks=""
-        [[ "$selection" == *"Vinegar"* ]] && _vngr="1" || _vngr=""
+        IFS='|' read -ra selection <<< "$selection_str"
+
+        # compare array elements
+        for item in "${search_item[@]}"; do
+            for selected in "${selection[@]}"; do
+                if [[ "$selected" == "$item" ]]; then
+                # if item is found, set the corresponding variable
+                    case $item in
+                        "Spritz - ${msg153}") _spritz="1" ;;
+                        "Osu!-Wine - ${msg154}") _osu="1" ;;
+                        "Protontricks - ${msg235}") _tricks="1" ;;
+                        "Vinegar - ${msg204}") _vngr="1" ;;
+                    esac
+                fi
+            done
+        done
 
         if [[ -n "$_spritz" ]]; then
             spritz_in
@@ -132,9 +149,7 @@ jade_in () {
         rm txtbox
         rm cmd.txt
     else
-        local title="$msg030"
-        local msg="$msg205"
-        _msgbox_
+        nonfatal "$msg205"
     fi
 
 }
@@ -152,13 +167,9 @@ vinegar_in () {
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
-title="$msg187"
-msg="$msg188"
-_msgbox_
+zenwrn "$msg188"
 if command -v flatpak &> /dev/null && flatpak list | grep -q 'net.lutris.Lutris' || command -v flatpak &> /dev/null && flatpak list | grep -q 'com.heroicgameslauncher.hgl' || command -v flatpak &> /dev/null && flatpak list | grep -q 'com.valvesoftware.Steam'; then
     runners_menu
 else
-    title="$msg030"
-    msg="$msg155"
-    _msgbox_
+    nonfatal "$msg155"
 fi

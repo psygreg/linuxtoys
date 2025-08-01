@@ -392,7 +392,7 @@ toolbox_in () {
     wget https://download-cdn.jetbrains.com/toolbox/jetbrains-toolbox-2.6.2.41321.tar.gz
     # first installation
     if [ ! -d "/opt/toolbox" ]; then
-        if whiptail --title "Jetbrains Toolbox" --yesno "$msg174" 12 78; then
+        if zenity --question --text "$msg174" --width 360 --height 300; then
             insta fuse
             tar -xvzf jetbrains-toolbox-2.6.2.41321.tar.gz
             sleep 1
@@ -415,9 +415,7 @@ toolbox_in () {
               source ~/.bashrc
             fi
         else
-            local title="$msg030"
-            local msg="$msg175"
-            _msgbox_
+            zeninf "$msg175"
             return
         fi
     else # update

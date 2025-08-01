@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# TODO FIX, someday
 # set up latest proton-cachyos
 getproton () {
 

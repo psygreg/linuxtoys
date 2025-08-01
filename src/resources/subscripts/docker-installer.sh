@@ -48,11 +48,9 @@ docker_in () {
 . /etc/os-release
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
 dep_check
-if whiptail --title "Docker + Portainer CE Setup" --yesno "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" 8 78; then
+if zenity --question --text "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" --width 360 --height 300; then
     docker_in
-    title="Docker + Portainer CE Setup"
-    msg="Setup complete. Your Portainer dashboard will open in your web browser now."
-    _msgbox_
+    zeninf "Setup complete. Your Portainer dashboard will open in your web browser now."
     xdg-open https://localhost:9443
     exit 0
 fi

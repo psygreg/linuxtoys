@@ -7,7 +7,18 @@ about_c () {
         echo "$msg191"
         echo "$msg192"
     } > txtbox
-    whiptail --textbox txtbox 12 80
+
+    zenity --text-info \
+       --title="Console Mode" \
+       --filename=txtbox \
+       --checkbox="$msg276" \
+       --width=400 --height=300
+
+    case $? in
+        0) enabler_c ;;
+        1) echo "Cancelled." ;;
+        -1) echo "An unexpected error has occurred." ;;
+    esac
 
 }
 
@@ -25,16 +36,12 @@ enabler_c () {
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/consolemode/com.heroicgameslauncher.hgl.desktop
             sudo cp com.heroicgameslauncher.hgl.desktop $HOME/.config/autostart/
         fi
-        local title="$msg006"
-        local msg="$msg197"
-        _msgbox_
+        zeninf "$msg197"
         xdg-open https://github.com/psygreg/linuxtoys/blob/main/src/resources/other/consolemode/console-${langfile}.md
         rm com.heroicgameslauncher.hgl.desktop
         rm com.valvesoftware.Steam.desktop
     else
-        local title="$msg030"
-        local msg="$msg196"
-        _msgbox_
+        nonfatal "$msg196"
     fi
 
 }
@@ -45,18 +52,14 @@ disabler_c () {
     if [ -f "$HOME/.config/autostart/com.valvesoftware.Steam.desktop" ]; then
         sudo rm $HOME/.config/autostart/com.valvesoftware.Steam.desktop
     fi
-    title="$msg006"
-    msg="$msg198"
-    _msgbox_
+    zeninf "$msg198"
 
 }
 
 # open instructions in browser
 instructions_c () {
 
-    local title="$msg199"
-    local msg="$msg203"
-    _msgbox_
+    zeninf "$msg203"
     xdg-open https://github.com/psygreg/linuxtoys/blob/main/src/resources/other/consolemode/console-${langfile}.md
 
 }
@@ -67,14 +70,15 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # menu
-while :; do
+while true; do
 
-    CHOICE=$(whiptail --title "LinuxToys" --menu "$msg195" 20 78 10 \
-        "0" "$msg190" \
-        "1" "$msg193" \
-        "2" "$msg194" \
-        "3" "$msg202" \
-        "4" "$msg070" 3>&1 1>&2 2>&3)
+    CHOICE=$(zenity --list --title "$msg199" \
+        --column="$msg195" \
+        "$msg193" \
+        "$msg194" \
+        "$msg202" \
+        "$msg070" \
+        --height=360 --width=300)
 
     exitstatus=$?
     if [ $exitstatus != 0 ]; then
@@ -83,11 +87,10 @@ while :; do
     fi
 
     case $CHOICE in
-    0) about_c ;;
-    1) enabler_c ;;
-    2) disabler_c ;;
-    3) instructions_c ;;
-    4 | q) break ;;
+    "$msg193") about_c ;;
+    "$msg194") disabler_c ;;
+    "$msg202") instructions_c ;;
+    "$msg070") break ;;
     *) echo "Invalid Option" ;;
     esac
 

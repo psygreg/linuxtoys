@@ -5,81 +5,93 @@ flatpak_run=""
 # supermenu checklist
 dsupermenu () {
 
-    local code_status=$([ "$_code" = "code" ] && echo "ON" || echo "OFF")
-    local codium_status=$([ "$_codium" = "com.vscodium.codium" ] && echo "ON" || echo "OFF")
-    local nvim_status=$([ "$_nvim" = "neovim" ] && echo "ON" || echo "OFF")
-    local jb_status=$([ "$_jb" = "1" ] && echo "ON" || echo "OFF")
-    local nvm_status=$([ "$_nvm" = "nodejs" ] && echo "ON" || echo "OFF")
-    local mvn_status=$([ "$_mvn" = "maven" ] && echo "ON" || echo "OFF")
-    local pyenv_status=$([ "$_pyenv" = "pyenv" ] && echo "ON" || echo "OFF")
-    local godot_status=$([ "$_godot" = "godot" ] && echo "ON" || echo "OFF")
-    local unity_status=$([ "$_unity" = "unityhub" ] && echo "ON" || echo "OFF")
-    local dotnet_status=$([ "$_dotnet" = "dotnet-sdk-9.0" ] && echo "ON" || echo "OFF")
-    local java_status=$([ "$_java" = "java" ] && echo "ON" || echo "OFF")
-    local droidstd_status=$([ "$_droidstd" = "droidstd" ] && echo "ON" || echo "OFF")
-    local omb_status=$([ "$_omb" = "1" ] && echo "ON" || echo "OFF")
-    local insomnia_status=$([ "$_insomnia" = "rest.insomnia.Insomnia" ] && echo "ON" || echo "OFF")
-    local httpie_status=$([ "$_httpie" = "io.httpie.Httpie" ] && echo "ON" || echo "OFF")
-    local postman_status=$([ "$_postman" = "com.getpostman.Postman" ] && echo "ON" || echo "OFF")
+    local selection_str
+    local selected
+    local selection
+    local search_item
+    local item
+    declare -a search_item=(
+        "VS Code"
+        "VSCodium"
+        "NeoVim"
+        "Jetbrains - ${msg162}"
+        "OhMyBash"
+        "NodeJS + NVM"
+        "Maven"
+        "Python + Pyenv"
+        "C# - .NET SDK"
+        "Java - OpenJDK/JRE"
+        "Android Studio"
+        "Godot 4"
+        "Unity Hub"
+        "Insomnia"
+        "Httpie"
+        "Postman"
+    )
 
-    while :; do
+    while true; do
 
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "VS Code" "$msg141" $code_status \
-            "VSCodium" "$msg142" $codium_status \
-            "NeoVim" "$msg140" $nvim_status \
-            "Jetbrains" "$msg162" $jb_status \
-            "OhMyBash" "$msg226" $omb_status \
-            "NodeJS" "+ Node Version Manager" $nvm_status \
-            "Maven" "$msg178" $mvn_status \
-            "Python" "$msg134" $pyenv_status \
-            "C#" "Microsoft .NET SDK" $dotnet_status \
-            "Java" "OpenJDK/JRE" $java_status \
-            "Android Studio" "$msg206" $droidstd_status \
-            "Godot 4" "$msg139" $godot_status \
-            "Unity Hub" "$msg137" $unity_status \
-            "Insomnia" "$msg245" $insomnia_status \
-            "Httpie" "$msg246" $httpie_status \
-            "Postman" "$msg247" $postman_status \
-            3>&1 1>&2 2>&3)
+        selection_str=$(zenity --list --checklist --title="Developer Menu" \
+            --column="" \
+            --column="Apps" \
+            FALSE "VS Code" \
+            FALSE "VSCodium" \
+            FALSE "NeoVim" \
+            FALSE "Jetbrains - ${msg162}" \
+            FALSE "OhMyBash" \
+            FALSE "NodeJS + NVM" \
+            FALSE "Maven" \
+            FALSE "Python + Pyenv" \
+            FALSE "C# - .NET SDK" \
+            FALSE "Java - OpenJDK/JRE"\
+            FALSE "Android Studio" \
+            FALSE "Godot 4" \
+            FALSE "Unity Hub" \
+            FALSE "Insomnia" \
+            FALSE "Httpie" \
+            FALSE "Postman" \
+            --height=730 --width=360 --separator="|")
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
+        if [ $? -ne 0 ]; then
             break
         fi
 
-        [[ "$selection" == *"VS Code"* ]] && _code="code" || _code=""
-        [[ "$selection" == *"VSCodium"* ]] && _codium="com.vscodium.codium" || _codium=""
-        [[ "$selection" == *"NeoVim"* ]] && _nvim="neovim" || _nvim=""
-        [[ "$selection" == *"Jetbrains"* ]] && _jb="1" || _jb=""
-        [[ "$selection" == *"NodeJS"* ]] && _nvm="nodejs" || _nvm=""
-        [[ "$selection" == *"Maven"* ]] && _mvn="maven" || _mvn=""
-        [[ "$selection" == *"Python"* ]] && _pyenv="pyenv" || _pyenv=""
-        [[ "$selection" == *"Godot 4"* ]] && _godot="godot" || _godot=""
-        [[ "$selection" == *"Unity Hub"* ]] && _unity="unityhub" || _unity=""
-        [[ "$selection" == *"C#"* ]] && _dotnet="dotnet-sdk-9.0" || _dotnet=""
-        [[ "$selection" == *"Java"* ]] && _java="java" || _java=""
-        [[ "$selection" == *"Android Studio"* ]] && _droidstd="droidstd" || _droidstd=""
-        [[ "$selection" == *"OhMyBash"* ]] && _omb="1" || _omb=""
-        [[ "$selection" == *"Insomnia"* ]] && _insomnia="rest.insomnia.Insomnia" || _insomnia=""
-        [[ "$selection" == *"Httpie"* ]] && _httpie="io.httpie.Httpie" || _httpie=""
-        [[ "$selection" == *"Postman"* ]] && _postman="com.getpostman.Postman" || _postman=""
+        IFS='|' read -ra selection <<< "$selection_str"
+
+        for item in "${search_item[@]}"; do
+            for selected in "${selection[@]}"; do
+                if [[ "$selected" == "$item" ]]; then
+                    # if item is found, set the corresponding variable
+                    case $item in
+                        "VS Code") _code="code" ;;
+                        "VSCodium") _codium="com.vscodium.codium" ;;
+                        "NeoVim") _nvim="neovim" ;;
+                        "Jetbrains - ${msg162}") _jb="1" ;;
+                        "OhMyBash") _omb="1" ;;
+                        "NodeJS + NVM") _nvm="nodejs" ;;
+                        "Maven") _mvn="maven" ;;
+                        "Python + Pyenv") _pyenv="pyenv" ;;
+                        "C# - .NET SDK") _dotnet="dotnet-sdk-9.0" ;;
+                        "Java - OpenJDK/JRE") _java="java" ;;
+                        "Android Studio") _droidstd="droidstd" ;;
+                        "Godot 4") _godot="godot" ;;
+                        "Unity Hub") _unity="unityhub" ;;
+                        "Insomnia") _insomnia="rest.insomnia.Insomnia" ;;
+                        "Httpie") _httpie="io.httpie.Httpie" ;;
+                        "Postman") _postman="com.getpostman.Postman" ;;
+                    esac
+                fi
+            done
+        done
 
         install_flatpak
         install_native
         others_t
         # adjust if rebooting is required for any software
         if [[ -n "$flatpak_run" || -n "$_pyenv" || -n "$_nvm" ]]; then
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         else
-            local title="$msg006"
-            local msg="$msg018"
-            _msgbox_
+            zeninf "$msg018"
         fi
         break
     
@@ -116,27 +128,21 @@ install_native () {
             fi
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             if [[ -n "$_code" ]]; then
-                if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
+                if zenity --question --text "$msg035" --width 360 --height 300; then
                     chaotic_aur_lib
                     insta visual-studio-code-bin
                 else
-                    local title="$msg006"
-                    local msg="Skipping Visual Studio Code installation."
-                    _msgbox_
+                    zenwrn "Skipping Visual Studio Code installation."
                 fi
             fi
             if [[ -n "$_pyenv" ]]; then
                 insta base-devel openssl zlib xz tk
             fi
             if [[ -n "$_unity" ]]; then
-                local title="Unity Hub"
-                local msg="$msg077"
-                _msgbox_
+                nonfatal "$msg077"
             fi
             if [[ -n "$_dotnet" ]]; then
-                local title=".NET SDK"
-                local msg="$msg077"
-                _msgbox_
+                nonfatal "$msg077"
             fi
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
             if [[ -n "$_code" ]]; then
@@ -154,9 +160,7 @@ install_native () {
                     sudo yum check-update
                     sudo yum install unityhub
                 else
-                    local title="Unity Hub"
-                    local msg="$msg077"
-                    _msgbox_
+                    nonfatal "$msg077"
                 fi
             fi
         elif [[ "$ID_LIKE" == *suse* ]]; then
@@ -177,9 +181,7 @@ install_native () {
                     sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
                     insta dotnet-sdk-9.0
                 else
-                    local title=".NET SDK"
-                    local msg="$msg077"
-                    _msgbox_
+                    nonfatal "$msg077"
                 fi
             fi
         fi
@@ -197,14 +199,12 @@ install_flatpak () {
             flatpak_in_lib
             _flatpak_
         else
-            if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+            if zenity --question --text "$msg085" --width 360 --height 300; then
                 flatpak_run="1"
                 flatpak_in_lib
                 _flatpak_
             else
-                local title="$msg030"
-                local msg="$msg132"
-                _msgbox_
+                nonfatal "$msg132"
             fi
         fi
     fi
@@ -217,21 +217,21 @@ godot_in () {
     # menu
     while :; do
 
-        CHOICE=$(whiptail --title "Godot Engine" --menu "$msg067" 25 78 16 \
-            "0" "Godot (Default)" \
-            "1" "Godot .NET (C# Support)" \
-            "2" "Cancel" 3>&1 1>&2 2>&3)
+        CHOICE=$(zenity --list --title "Godot Engine" --text "$msg067" \
+            --column "Options" \
+            "Godot (Default)" \
+            "Godot .NET (C# Support)" \
+            "Cancel" \
+            --width 300 --height 330)
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
-            return
+        if [ $? -ne 0 ]; then
+            exit 0
         fi
 
         case $CHOICE in
-        0) godot_st ;;
-        1) godot_shrp ;;
-        2 | q) break ;;
+        "Godot (Default)") godot_st ;;
+        "Godot .NET (C# Support)") godot_shrp ;;
+        "Cancel") break ;;
         *) echo "Invalid Option" ;;
         esac
     done
@@ -314,9 +314,8 @@ godot_shrp () {
             rm Godot_v4.4.1-stable_mono_linux.x86_64.zip
         fi
     else
-        local title="$msg030"
-        local msg="$msg077"
-        _msgbox_
+        nonfatal "$msg077"
+
     fi
     
 
@@ -344,35 +343,50 @@ jdk_install () {
 
 java_in () {
 
-    local jdk8_status=$([ "$_jdk8" = "8" ] && echo "ON" || echo "OFF")
-    local jdk11_status=$([ "$_jdk11" = "11" ] && echo "ON" || echo "OFF")
-    local jdk17_status=$([ "$_jdk17" = "17" ] && echo "ON" || echo "OFF")
-    local jdk21_status=$([ "$_jdk21" = "21" ] && echo "ON" || echo "OFF")
-    local jdk24_status=$([ "$_jdk24" = "24" ] && echo "ON" || echo "OFF")
+    local search_java
+    local jav
+    local chosen_javas
+    local chosen_jav
+    local javas
+    declare -a search_java=(
+        "Java 8 LTS"
+        "Java 11 LTS"
+        "Java 17 LTS"
+        "Java 21 LTS"
+        "Java 24 Latest"
+    )
 
-    while :; do
+    while true; do
 
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "Java 8" "LTS" $jdk8_status \
-            "Java 11" "LTS" $jdk11_status \
-            "Java 17" "LTS" $jdk17_status \
-            "Java 21" "LTS" $jdk21_status \
-            "Java 24" "Latest" $jdk24_status \
-            3>&1 1>&2 2>&3)
+        chosen_javas=$(zenity --list --checklist --title="Java JDK" \
+        	--column="" \
+        	--column="$msg277" \
+            FALSE "Java 8 LTS" \
+            FALSE "Java 11 LTS" \
+            FALSE "Java 17 LTS" \
+            FALSE "Java 21 LTS" \
+            FALSE "Java 24 Latest" \
+            --height=410 --width=300 --separator="|")
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-            return
+        if [ $? -ne 0 ]; then
+            break
         fi
 
-        [[ "$selection" == *"Java 8"* ]] && _jdk8="8" || _jdk8=""
-        [[ "$selection" == *"Java 11"* ]] && _jdk11="11" || _jdk11=""
-        [[ "$selection" == *"Java 17"* ]] && _jdk17="17" || _jdk17=""
-        [[ "$selection" == *"Java 21"* ]] && _jdk21="21" || _jdk21=""
-        [[ "$selection" == *"Java 24"* ]] && _jdk24="24" || _jdk24=""
+        IFS='|' read -ra javas <<< "$chosen_javas"
+
+        for jav in "${search_java[@]}"; do
+            for chosen_jav in "${javas[@]}"; do
+                if [[ "$chosen_jav" == "$jav" ]]; then
+                    case $jav in
+                        "Java 8 LTS") _jdk8="8" ;;
+                        "Java 11 LTS") _jdk11="11" ;;
+                        "Java 17 LTS") _jdk17="17" ;;
+                        "Java 21 LTS") _jdk21="21" ;;
+                        "Java 24 Latest") _jdk24="24" ;;
+                    esac
+                fi
+            done
+        done
 
         jdk_install
 
@@ -395,9 +409,7 @@ others_t () {
         rm install.sh
         npm i --global yarn
         # basic usage instruction prompt
-        local title="$msg006"
-        local msg="$msg136"
-        _msgbox_
+        zeninf "$msg136"
         xdg-open https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage
     fi
     if [[ -n "$_pyenv" ]]; then
@@ -420,9 +432,7 @@ others_t () {
         git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
         echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
         # basic usage instruction prompt
-        local title="$msg006"
-        local msg="$msg135"
-        _msgbox_
+        zeninf "$msg135"
         xdg-open https://github.com/pyenv/pyenv?tab=readme-ov-file#usage
         xdg-open https://github.com/pyenv/pyenv-virtualenv?tab=readme-ov-file#usage
     fi
@@ -443,23 +453,23 @@ others_t () {
 idea_in () {
 
     # menu
-    while :; do
+    while true; do
 
-        CHOICE=$(whiptail --title "IntelliJ IDEA" --menu "$msg067" 25 78 16 \
-            "0" "Community Edition (free)" \
-            "1" "Ultimate" \
-            "2" "Cancel" 3>&1 1>&2 2>&3)
+        CHOICE=$(zenity --list --title "IntelliJ IDEA" --text "$msg067" \
+            --column "Options" \
+            "Community Edition (free)" \
+            "Ultimate" \
+            "Cancel" \
+            --width 300 --height 330)
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
-            return
+        if [ $? -ne 0 ]; then
+            exit 0
         fi
 
         case $CHOICE in
-        0) idea_ic && return ;;
-        1) idea_iu && return ;;
-        2 | q) return ;;
+        "Community Edition (free)") idea_ic && return ;;
+        "Ultimate") idea_iu && return ;;
+        "Cancel") return ;;
         *) echo "Invalid Option" ;;
         esac
     done
@@ -470,7 +480,7 @@ idea_in () {
 jetbrains_t () {
 
     if [[ -n "$_tb" ]]; then
-        if whiptail --title "Jetbrains Toolbox" --yesno "$msg173" 12 78; then
+        if zenity --question --text "$msg173" --width 360 --height 300; then
             _pycharm=""
             _idea=""
             _wstorm=""
@@ -522,53 +532,68 @@ jetbrains_t () {
 # Jetbrains menu
 jetbrains_menu () {
 
-    local pycharm_status=$([ "$_pycharm" = "1" ] && echo "ON" || echo "OFF")
-    local idea_status=$([ "$_idea" = "1" ] && echo "ON" || echo "OFF")
-    local webstorm_status=$([ "$_wstorm" = "1" ] && echo "ON" || echo "OFF")
-    local rider_status=$([ "$_rider" = "1" ] && echo "ON" || echo "OFF")
-    local clion_status=$([ "$_clion" = "1" ] && echo "ON" || echo "OFF")
-    local rustrover_status=$([ "$_rustr" = "1" ] && echo "ON" || echo "OFF")
-    local rubymine_status=$([ "$_rubym" = "1" ] && echo "ON" || echo "OFF")
-    local datagrip_status=$([ "$_datag" = "1" ] && echo "ON" || echo "OFF")
-    local phpstorm_status=$([ "$_phpstorm" = "1" ] && echo "ON" || echo "OFF")
-    local goland_status=$([ "$_goland" = "1" ] && echo "ON" || echo "OFF")
-    local toolbox_status=$([ "$_tb" = "1" ] && echo "ON" || echo "OFF")
+    local selection_str
+    local selected
+    local selection
+    local search_item
+    declare -a search_item=(
+        "PyCharm"
+        "IntelliJ IDEA"
+        "WebStorm"
+        "Rider"
+        "CLion"
+        "RustRover"
+        "RubyMine"
+        "DataGrip"
+        "PhpStorm"
+        "GoLand"
+        "Toolbox"
+    )
 
-    while :; do
+    while true; do
 
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "PyCharm" "$msg163" $pycharm_status \
-            "IntelliJ IDEA" "$msg138" $idea_status \
-            "WebStorm" "$msg164" $webstorm_status \
-            "Rider" "$msg165" $rider_status \
-            "CLion" "$msg166" $clion_status \
-            "RustRover" "$msg167" $rustrover_status \
-            "RubyMine" "$msg168" $rubymine_status \
-            "DataGrip" "$msg169" $datagrip_status \
-            "PhpStorm" "$msg170" $phpstorm_status \
-            "GoLand" "$msg171" $goland_status \
-            "Toolbox" "$msg172" $toolbox_status \
-            3>&1 1>&2 2>&3)
+        selection_str=$(zenity --list --checklist --title="$msg131" \
+            --column="" \
+            --column="Apps" \
+            FALSE "PyCharm" \
+            FALSE "IntelliJ IDEA" \
+            FALSE "WebStorm" \
+            FALSE "Rider" \
+            FALSE "CLion" \
+            FALSE "RustRover" \
+            FALSE "RubyMine" \
+            FALSE "DataGrip" \
+            FALSE "PhpStorm" \
+            FALSE "GoLand" \
+            FALSE "Toolbox" \
+            --height=620 --width=300 --separator="|")
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
-          return
+        if [ $? -ne 0 ]; then
+            break
         fi
 
-        [[ "$selection" == *"PyCharm"* ]] && _pycharm="1" || _pycharm=""
-        [[ "$selection" == *"IntelliJ IDEA"* ]] && _idea="1" || _idea=""
-        [[ "$selection" == *"WebStorm"* ]] && _wstorm="1" || _wstorm=""
-        [[ "$selection" == *"Rider"* ]] && _rider="1" || _rider=""
-        [[ "$selection" == *"CLion"* ]] && _clion="1" || _clion=""
-        [[ "$selection" == *"RustRover"* ]] && _rustr="1" || _rustr=""
-        [[ "$selection" == *"RubyMine"* ]] && _rubym="1" || _rubym=""
-        [[ "$selection" == *"DataGrip"* ]] && _datag="1" || _datag=""
-        [[ "$selection" == *"PhpStorm"* ]] && _phpstorm="1" || _phpstorm=""
-        [[ "$selection" == *"GoLand"* ]] && _goland="1" || _goland=""
-        [[ "$selection" == *"Toolbox"* ]] && _tb="1" || _tb=""
+        IFS='|' read -ra selection <<< "$selection_str"
+
+        for item in "${search_item[@]}"; do
+            for selected in "${selection[@]}"; do
+                if [[ "$selected" == "$item" ]]; then
+                    # if item is found, set the corresponding variable
+                    case $item in
+                        "PyCharm") _pycharm="1" ;;
+                        "IntelliJ IDEA") _idea="1" ;;
+                        "WebStorm") _wstorm="1" ;;
+                        "Rider") _rider="1" ;;
+                        "CLion") _clion="1" ;;
+                        "RustRover") _rustr="1" ;;
+                        "RubyMine") _rubym="1" ;;
+                        "DataGrip") _datag="1" ;;
+                        "PhpStorm") _phpstorm="1" ;;
+                        "GoLand") _goland="1" ;;
+                        "Toolbox") _tb="1" ;;
+                    esac
+                fi
+            done
+        done
 
         jetbrains_t
 

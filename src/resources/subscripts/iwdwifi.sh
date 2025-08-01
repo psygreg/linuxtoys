@@ -26,9 +26,7 @@ iwd_in () {
         sudo systemctl restart NetworkManager
         return 0
     else
-        local title="Cancelled"
-        local msg="No WiFi device found."
-        _msgbox_
+        nonfatal "No WiFi device found."
         return 2
     fi
 
@@ -44,32 +42,30 @@ iwd_rm () {
         sudo systemctl restart NetworkManager
         return 0
     else
-        local title="Cancelled"
-        local msg="iwd.conf file not found. IWD was not enabled in this system."
-        _msgbox_
+        nonfatal "iwd.conf file not found. IWD was not enabled in this system."
         return 1
     fi
 
 }
 
 # menu
-while :; do
+while true; do
 
-    CHOICE=$(whiptail --title "iNet Wireless Daemon" --menu "" 25 78 16 \
-        "0" "Install" \
-        "1" "Remove" \
-        "2" "Cancel" 3>&1 1>&2 2>&3)
+    CHOICE=$(zenity --list --title "iNet Wireless Daemon" \
+        --column="Options" \
+        "Install" \
+        "Remove" \
+        "Cancel" \
+        --height=360 --width=300)
 
-    exitstatus=$?
-    if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
+    if [ $? -ne 0 ]; then
         break
     fi
 
     case $CHOICE in
-    0) iwd_in && break;;
-    1) iwd_rm && break;;
-    2 | q) break ;;
+    "Install") iwd_in && break;;
+    "Remove") iwd_rm && break;;
+    "Cancel") break ;;
     *) echo "Invalid Option" ;;
     esac
 

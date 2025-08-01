@@ -4,7 +4,7 @@ source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/
 _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 # updater
-if whiptail --title "$msg126" --yesno "$msg127" 8 78; then
+if zenity --question --title "$msg126" --text "$msg127" --width 360 --height 300; then
     if [ -f "$HOME/.local/kernelsetting-lts" ]; then
         bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/psycachy/psycachy-install.sh) --lts
     elif [ -f "$HOME/.local/kernelsetting" ]; then

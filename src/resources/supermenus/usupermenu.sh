@@ -5,82 +5,93 @@ flatpak_run=""
 # supermenu checklist
 usupermenu () {
 
-    local gsr_status=$([ "$_gsr" = "com.dec05eba.gpu_screen_recorder" ] && echo "ON" || echo "OFF")
-    local obs_status=$([ "$_obs" = "com.obsproject.Studio" ] && echo "ON" || echo "OFF")
-    local hndbrk_status=$([ "$_hndbrk" = "fr.handbrake.ghb" ] && echo "ON" || echo "OFF")
-    local slar_status=$([ "$_slar" = "solaar" ] && echo "ON" || echo "OFF")
-    local oprzr_status=$([ "$_oprzr" = "openrazer-meta" ] && echo "ON" || echo "OFF")
-    local oprgb_status=$([ "$_oprgb" = "org.openrgb.OpenRGB" ] && echo "ON" || echo "OFF")
-    local btassist_status=$([ "$_btassist" = "btrfs-assistant" ] && echo "ON" || echo "OFF")
-    local lact_status=$([ "$_lact" = "io.github.ilya_zlobintsev.LACT" ] && echo "ON" || echo "OFF")
-    local droid_status=$([ "$_droid" = "waydroid" ] && echo "ON" || echo "OFF")
-    local dckr_status=$([ "$_dckr" = "yes" ] && echo "ON" || echo "OFF")
-    local rocm_status=$([ "$_rocm" = "yes" ] && echo "ON" || echo "OFF")
-    local rcl_status=$([ "$_rcl" = "yes" ] && echo "ON" || echo "OFF")
-    local fseal_status=$([ "$_fseal" = "com.github.tchx84.Flatseal" ] && echo "ON" || echo "OFF")
-    local efx_status=$([ "$_efx" = "com.github.wwmm.easyeffects" ] && echo "ON" || echo "OFF")
-    local sc_status=$([ "$_sc" = "com.core447.StreamController" ] && echo "ON" || echo "OFF")
-    local qpw_status=$([ "$_qpw" = "org.rncbc.qpwgraph" ] && echo "ON" || echo "OFF")
-    local wrhs_status=$([ "$_wrhs" = "io.github.flattool.Warehouse" ] && echo "ON" || echo "OFF")
+    local selection
+    local selection_str
+    local selected
+    local search_item
+    local item
+    declare -a search_item=(
+        "GPU Screen Recorder"
+        "OBS Studio"
+        "HandBrake"
+        "Solaar"
+        "OpenRazer"
+        "OpenRGB"
+        "StreamController"
+        "Flatseal"
+        "Warehouse"
+        "Easy Effects"
+        "QPWGraph"
+        "btrfs-Assistant"
+        "LACT"
+        "Waydroid"
+        "Docker"
+        "Rusticl"
+        "ROCm"
+    )
 
-    while :; do
+    while true; do
 
-        local selection
-        selection=$(whiptail --title "$msg131" --checklist \
-            "$msg131" 20 78 15 \
-            "GPU Screen Recorder" "$msg086" $gsr_status \
-            "OBS Studio" "Open Broadcaster Software" $obs_status \
-            "HandBrake" "$msg087" $hndbrk_status \
-            "Solaar" "$msg088" $slar_status \
-            "OpenRazer" "$msg089" $oprzr_status \
-            "StreamController" "$msg151" $sc_status \
-            "OpenRGB" "$msg091" $oprgb_status \
-            "Flatseal" "$msg133" $fseal_status \
-            "Warehouse" "$msg218" $wrhs_status \
-            "Easy Effects" "$msg147" $efx_status \
-            "QPWGraph" "$msg179" $qpw_status \
-            "btrfs-Assistant" "$msg092" $btassist_status \
-            "LACT" "$msg093" $lact_status \
-            "Waydroid" "$msg094" $droid_status \
-            "Docker" "$msg095" $dckr_status \
-            "Rusticl" "$msg158" $rcl_status \
-            "ROCm" "$msg096" $rocm_status \
-            3>&1 1>&2 2>&3)
+        selection_str=$(zenity --list --checklist --title="Utilities Menu" \
+            --column="" \
+            --column="Apps" \
+            FALSE "GPU Screen Recorder" \
+            FALSE "OBS Studio" \
+            FALSE "HandBrake" \
+            FALSE "Solaar" \
+            FALSE "OpenRazer" \
+            FALSE "OpenRGB" \
+            FALSE "StreamController" \
+            FALSE "Flatseal" \
+            FALSE "Warehouse" \
+            FALSE "Easy Effects" \
+            FALSE "QPWGraph" \
+            FALSE "btrfs-Assistant" \
+            FALSE "LACT" \
+            FALSE "Waydroid" \
+            FALSE "Docker" \
+            FALSE "Rusticl" \
+            FALSE "ROCm" \
+            --height=740 --width=360 --separator="|")
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-        # Exit the script if the user presses Esc
+        if [ $? -ne 0 ]; then
             break
         fi
 
-        [[ "$selection" == *"GPU Screen Recorder"* ]] && _gsr="com.dec05eba.gpu_screen_recorder" || _gsr=""
-        [[ "$selection" == *"OBS Studio"* ]] && _obs="com.obsproject.Studio" || _obs=""
-        [[ "$selection" == *"HandBrake"* ]] && _hndbrk="fr.handbrake.ghb" || _hndbrk=""
-        [[ "$selection" == *"Solaar"* ]] && _slar="solaar" || _slar=""
-        [[ "$selection" == *"OpenRazer"* ]] && _oprzr="openrazer-meta" || _oprzr=""
-        [[ "$selection" == *"OpenRGB"* ]] && _oprgb="org.openrgb.OpenRGB" || _oprgb=""
-        [[ "$selection" == *"btrfs-Assistant"* ]] && _btassist="btrfs-assistant" || _btassist=""
-        [[ "$selection" == *"LACT"* ]] && _lact="io.github.ilya_zlobintsev.LACT" || _lact=""
-        [[ "$selection" == *"Waydroid"* ]] && _droid="waydroid" || _droid=""
-        [[ "$selection" == *"Docker"* ]] && _dckr="yes" || _dckr=""
-        [[ "$selection" == *"ROCm"* ]] && _rocm="yes" || _rocm=""
-        [[ "$selection" == *"Rusticl"* ]] && _rcl="yes" || _rcl=""
-        [[ "$selection" == *"Flatseal"* ]] && _fseal="com.github.tchx84.Flatseal" || _fseal=""
-        [[ "$selection" == *"Easy Effects"* ]] && _efx="com.github.wwmm.easyeffects" || _efx=""
-        [[ "$selection" == *"StreamController"* ]] && _sc="com.core447.StreamController" || _sc=""
-        [[ "$selection" == *"QPWGraph"* ]] && _qpw="org.rncbc.qpwgraph" || _qpw=""
-        [[ "$selection" == *"Warehouse"* ]] && _wrhs="io.github.flattool.Warehouse" || _wrhs=""
+        IFS='|' read -ra selection <<< "$selection_str"
+
+        for item in "${search_item[@]}"; do
+            for selected in "${selection[@]}"; do
+                if [[ "$selected" == "$item" ]]; then
+                    case $item in
+                        "GPU Screen Recorder") _gsr="com.dec05eba.gpu_screen_recorder" ;;
+                        "OBS Studio") _obs="com.obsproject.Studio" ;;
+                        "HandBrake") _hndbrk="fr.handbrake.ghb" ;;
+                        "Solaar") _slar="solaar" ;;
+                        "OpenRazer") _oprzr="openrazer-meta" ;;
+                        "OpenRGB") _oprgb="org.openrgb.OpenRGB" ;;
+                        "StreamController") _sc="com.core447.StreamController" ;;
+                        "Flatseal") _fseal="com.github.tchx84.Flatseal" ;;
+                        "Warehouse") _wrhs="io.github.flattool.Warehouse" ;;
+                        "Easy Effects") _efx="com.github.wwmm.easyeffects" ;;
+                        "QPWGraph") _qpw="org.rncbc.qpwgraph" ;;
+                        "btrfs-Assistant") _btassist="btrfs-assistant" ;;
+                        "LACT") _lact="io.github.ilya_zlobintsev.LACT" ;;
+                        "Waydroid") _droid="waydroid" ;;
+                        "Docker") _dckr="yes" ;;
+                        "Rusticl") _rcl="yes" ;;
+                        "ROCm") _rocm="yes" ;;
+                    esac
+                fi
+            done
+        done
 
         install_flatpak
         install_native
         if [[ -n "$flatpak_run" || -n "$_oprzr" || -n "$_rocm" ]]; then
-            local title="$msg006"
-            local msg="$msg036"
-            _msgbox_
+            zeninf "$msg036"
         else
-            local title="$msg006"
-            local msg="$msg018"
-            _msgbox_
+            zeninf "$msg018"
         fi
         break
     
@@ -98,18 +109,14 @@ install_native () {
         if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
             _bt_package=($_btassist)
         else
-            local title="btrfs-Assistant"
-            local msg="$msg220"
-            _msgbox_
+            nonfatal "$msg220"
         fi
     fi
     if [[ -n "$_droid" ]]; then
         if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
             _wd_package=($_droid)
         else
-            local title="Waydroid"
-            local msg="$msg219"
-            _msgbox_
+            nonfatal "$msg219"
         fi
     fi
     local _packages=($_slar $_oprzr $_droid $_dckr $_rocm $_wd_package $_bt_package)
@@ -139,12 +146,10 @@ install_native () {
             fi
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
             if [[ -n "$_btassist" ]]; then
-                if whiptail --title "$msg006" --yesno "$msg035" 8 78; then
+                if zenity --question --text "$msg035" --width 360 --height 300; then
                     chaotic_aur_lib
                 else
-                    local title="$msg006"
-                    local msg="Skipping btrfs-assistant installation."
-                    _msgbox_
+                    zenwrn "Skipping btrfs-assistant installation."
                 fi
             fi
             if [[ -n "$_dckr" ]]; then
@@ -186,9 +191,7 @@ install_native () {
                 rocm_rpm
             fi
             if [[ -n "$_droid" ]]; then
-                local title="Waydroid"
-                local msg="$msg097"
-                _msgbox_
+                nonfatal "$msg097"
             fi
         fi
     fi
@@ -227,9 +230,7 @@ rusticl_in () {
 # obs pipewire audio capture plugin installation
 obs_pipe () {
 
-    local title="$msg006"
-    local msg="$msg098"
-    _msgbox_
+    zenwrn "$msg098"
     local subscript="pipewire-obs"
     _invoke_
 
@@ -258,9 +259,7 @@ rocm_rpm () {
         _install_
         sudo usermod -aG render,video $USER
     else
-        local title="$msg039"
-        local msg="$msg040"
-        _msgbox_
+        nonfatal "$msg040"
     fi
 
 }
@@ -273,9 +272,7 @@ rocm_deb () {
         _install_
         sudo usermod -aG render,video $USER
     else
-        local title="$msg039"
-        local msg="$msg040"
-        _msgbox_
+        nonfatal "$msg040"
     fi
 
 }
@@ -288,9 +285,7 @@ rocm_arch () {
         _install_
         sudo usermod -aG render,video $USER
     else
-        local title="$msg039"
-        local msg="$msg040"
-        _msgbox_
+        nonfatal "$msg040"
     fi
 
 }
@@ -324,7 +319,7 @@ install_flatpak () {
                 obs_pipe
             fi
         else
-            if whiptail --title "$msg006" --yesno "$msg085" 8 78; then
+            if zenity --question --text "$msg085" --width 360 --height 300; then
                 flatpak_run="1"
                 flatpak_in_lib
                 _flatpak_
@@ -349,9 +344,7 @@ install_flatpak () {
                     obs_pipe
                 fi
             else
-                local title="$msg030"
-                local msg="$msg132"
-                _msgbox_
+                nonfatal "$msg132"
             fi
         fi
     fi
