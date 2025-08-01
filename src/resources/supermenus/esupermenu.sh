@@ -112,8 +112,8 @@ nvidia_in () {
                    elif [ "$ID" = "debian" ]; then
                          wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb
                          sudo dpkg -i cuda-keyring_1.1-1_all.deb
-                         sudo apt update
-                         insta cuda-drivers
+                         sudo apt-get update
+                         sudo apt-get install cuda-drivers
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
                             insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
