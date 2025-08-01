@@ -534,7 +534,7 @@ while :; do
     4) total_kb=$(grep MemTotal /proc/meminfo | awk '{ print $2 }')
        total_gb=$(( total_kb / 1024 / 1024 ))
        _cram=$(( total_gb ))
-       if (( _cram < 16 )); then
+       if (( $_cram < 16 )); then
           preload_lib
        else
           title="Preload"
