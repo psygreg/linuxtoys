@@ -1,10 +1,19 @@
 # LinuxToys
 A collection of tools for Linux in a user-friendly way. For Fedora-based and Universal Blue immutable systems, see [LinuxToys Atom](github.com/psygreg/linuxtoys-atom).
 
-![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
+![LinuxToys](https://github.com/psygreg/linuxtoys/blob/dc32bbe9a5f6bd40fd30f409f13f33b3be3695ad/src/screenshot3.png)
 
 ## Compatibility
-LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems explicitly mentioned in the **Usage** section. Your mileage may vary in operating systems derivated from those, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
+### AppImage
+- **Ubuntu 25.04**
+- **Debian 13**
+- **Fedora** and derivatives (non-atomic)
+- **OpenSUSE Slowroll/Tumbleweed** and derivatives
+- **Arch Linux** and derivatives
+### Direct terminal command
+- **Ubuntu >24.04** and derivatives
+- **Debian >12** and derivatives
+- Other systems mentioned in AppImage (still better to use the packaged version though)
 
 ### Limitations
 - The **CachyOS systemd configurations** and **linux-psycachy** kernel may not work as intended on systems with package bases older than ***Debian Trixie***. This also applies for the **Optimized Defaults**.
@@ -21,50 +30,14 @@ LinuxToys and it's features' compatibility is only *guaranteed* on the operating
 - Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended).
 - Alternatively, install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or run it directly from source with the standalone terminal command.
 
-### Standalone
+### Direct command
 Install dependencies then paste the command into your terminal to get the script from the source.
-
 #### Dependencies
-- Debian/Ubuntu: `bash curl git wget whiptail`
-- Fedora: `bash curl git wget newt`
-- Arch: `bash curl git wget libnewt`
-
+`bash curl git wget zenity`
 #### Stable branch
 ```bash
 curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh | bash
 ```
-
-### Ubuntu (latest and latest LTS releases)
-There's a PPA available for LinuxToys. To use it:
-`sudo add-apt-repository ppa:psygreg/linuxtoys &&
-sudo apt update`
-
-### Debian
-Use the **.deb** package provided in [Releases](https://github.com/psygreg/linuxtoys/releases).
-
-### Fedora, OpenSUSE, AlmaLinux and RHEL
-You may obtain it and keep it up-to-date from the COPR repository: `sudo dnf copr enable psygreg/linuxtoys`
-
-### Arch Linux
-Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) using `aura -A linuxtoys-bin`; or
-
-- Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
-- Run `makepkg -si` on the folder you downloaded the file to install.
-
-## Building from source
-### .deb package
-This will require `debuild`, obtained from the `devscripts` package..
-
-- Clone the repo.
-- Open terminal on `src/buildfiles/deb/linuxtoys*`
-- Run `debuild -S` for .changes file or `debuild -us -uc` for a .deb package.
-
-### .rpm package
-Requires `rpmbuild`.
-
-- Clone the repo.
-- Open terminal on the `src/buildfiles/rpm/rpmbuild` subdirectory.
-- `rpmbuild -bb SPECS/linuxtoys.spec`
 
 ## Contributing
 
