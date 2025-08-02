@@ -21,7 +21,7 @@ cp -u /usr/bin/git-* appimagebuild/LinuxToys.AppDir/usr/bin/
 cp -u /etc/ssl/certs/ca-certificates.crt appimagebuild/LinuxToys.AppDir/etc/ssl/certs/
 
 # fetch libraries for dependencies
-for bin in curl wget git bash; do
+for bin in curl wget git bash zenity; do
     for dep in $(ldd /usr/bin/$bin | awk '{if ($3 ~ /^\//) print $3}'); do
         cp -u --parents "$dep" appimagebuild/LinuxToys.AppDir/usr/lib64/
     done
