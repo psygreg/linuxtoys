@@ -1,8 +1,17 @@
 #!/bin/bash
 # functions
+fatal() {
+    zenity --error --title "Fatal Error" --text "$1" --height=300 --width=300
+    exit 1
+}
+
+# sudo request
+sudo_rq () {
+    zenity --password | sudo -Sv || fatal "Wrong password. Do you have sudo?"
+}
 
 # updater
-current_ltver="4.0"
+current_ltver="4.1"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -18,7 +27,7 @@ ver_upd () {
 # check internet connection
 # ping google
 . /etc/os-release
-wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || { whiptail --title "Disconnected" --msgbox "LinuxToys requires an internet connection to proceed." 8 78; exit 1; }
+wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || fatal "LinuxToys requires an internet connection to proceed."
 # call linuxtoys turbobash lib
 sleep 1
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
@@ -30,6 +39,7 @@ _lang_
 source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
 sleep 1
 ver_upd
+sudo_rq
 
 # main menu
 while true; do

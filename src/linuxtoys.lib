@@ -196,11 +196,11 @@ chaotic_aur_lib () {
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
             sudo sed -i -f script.sed /etc/pacman.conf
             sudo pacman -Sy
-            whiptail --title "$msg023" --msgbox "$msg024" 8 78
+            zenity --info --text "$msg024" --height 300 --width 300
             rm script.sed
         fi
     else
-        whiptail --title "$msg030" --msgbox "$msg077" 8 78
+        zenity --error --text "$msg077" --height 300 --width 300
     fi
 
 }
@@ -352,13 +352,9 @@ dsplitm_lib () {
 
     if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
         echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-        local title="$msg041"
-        local msg="$msg022"
-        _msgbox_
+        zeninf "$msg022"
     else
-        local title="$msg041"
-        local msg="$msg043"
-        _msgbox_
+        zeninf "$msg043"
     fi
 
 }
@@ -371,9 +367,7 @@ kernel_compat () {
     sudo setsebool -P domain_kernel_load_modules on
     sudo dracut -f --regenerate-all
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    local title="$msg006"
-    local msg="$msg036"
-    _msgbox_
+    zeninf "$msg036"
 
 }
 
@@ -384,30 +378,28 @@ kernel_performance () {
     sudo setsebool -P domain_kernel_load_modules on
     sudo dracut -f --regenerate-all
     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    local title="$msg006"
-    local msg="$msg036"
-    _msgbox_
+    zeninf "$msg036"
 
 }
 
 fedora_cachyos_menu_lib () {
 
     while :; do
-        CHOICE=$(whiptail --title "LinuxToys" --menu "$msg074" 25 78 16 \
-    	    "0" "$msg075" \
-            "1" "$msg076" \
-            "2" "$msg070" 3>&1 1>&2 2>&3)
+        CHOICE=$(zenity --list --title "CachyOS Kernel" \
+            --column Version \
+    	    "$msg075" \
+            "$msg076" \
+            "$msg070" \
+            --height 330 --width 300)
 
-        exitstatus=$?
-        if [ $exitstatus != 0 ]; then
-            # Exit the script if the user presses Esc
+        if [ $? -ne 0 ]; then
             return
         fi
 
         case $CHOICE in
-        0) kernel_compat ;;
-        1) kernel_performance ;;
-        2 | q) return ;;
+        "$msg075") kernel_compat ;;
+        "$msg076") kernel_performance ;;
+        "$msg070") return ;;
         *) echo "Invalid Option" ;;
         esac
     done
@@ -448,9 +440,7 @@ psave_lib () {
     sudo auto-cpufreq --install
     flatpak_in_lib
     flatpak install --or-update -y com.github.d4nj1.tlpui --system
-    local title="$msg006"
-    local msg="$msg036"
-    _msgbox_
+    zeninf "$msg036"
 
 }
 
