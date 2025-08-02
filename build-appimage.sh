@@ -27,13 +27,11 @@ for bin in curl wget git bash zenity; do
     done
 done
 # libwget fix
-cp -u /usr/lib/x86_64-linux-gnu/libwget.so.3 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-cp -u /usr/lib/x86_64-linux-gnu/libgnutls-dane.so.0 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-cp -u /usr/lib/x86_64-linux-gnu/libunbound.so.8 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-cp -u /usr/lib/x86_64-linux-gnu/libduktape.so.207 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-cp -u /usr/lib/x86_64-linux-gnu/libproxy.so.1 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-cp -u /usr/lib/x86_64-linux-gnu/libevent-2.1.so.7 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-cp -u /usr/lib/x86_64-linux-gnu/liblz.so.1 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
+for lib in /usr/lib/x86_64-linux-gnu/libwget.so.3; do
+    for dep in $(ldd $lib | awk '{if ($3 ~ /^\//) print $3}'); do
+        cp -u --parents "$dep" appimagebuild/LinuxToys.AppDir/usr/lib64/
+    done
+done
 
 # get git-core
 mkdir -p appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/git-core
