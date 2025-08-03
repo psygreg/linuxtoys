@@ -9,10 +9,10 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - **Debian 13**
 - **Fedora** and derivatives (non-atomic)
 - **OpenSUSE Slowroll/Tumbleweed** and derivatives
-- **Arch Linux** and derivatives
 ### Direct terminal command
 - **Ubuntu >24.04** and derivatives
 - **Debian >12** and derivatives
+- **Arch Linux** and derivatives
 - Other systems mentioned in AppImage (still better to use the packaged version though)
 
 ### Limitations
