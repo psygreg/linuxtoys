@@ -27,7 +27,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Usage
-- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended).
+- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!**
 - Alternatively, install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or run it directly from source with the standalone terminal command.
 
 ### Direct command
