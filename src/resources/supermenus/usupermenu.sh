@@ -13,6 +13,7 @@ usupermenu () {
     declare -a search_item=(
         "GPU Screen Recorder"
         "OBS Studio"
+        "Mission Center"
         "HandBrake"
         "Solaar"
         "OpenRazer"
@@ -37,6 +38,7 @@ usupermenu () {
             --column="Apps" \
             FALSE "GPU Screen Recorder" \
             FALSE "OBS Studio" \
+            FALSE "Mission Center" \
             FALSE "HandBrake" \
             FALSE "Solaar" \
             FALSE "OpenRazer" \
@@ -52,7 +54,7 @@ usupermenu () {
             FALSE "Docker" \
             FALSE "Rusticl" \
             FALSE "ROCm" \
-            --height=740 --width=360 --separator="|")
+            --height=770 --width=360 --separator="|")
 
         if [ $? -ne 0 ]; then
             break
@@ -66,6 +68,7 @@ usupermenu () {
                     case $item in
                         "GPU Screen Recorder") _gsr="com.dec05eba.gpu_screen_recorder" ;;
                         "OBS Studio") _obs="com.obsproject.Studio" ;;
+                        "Mission Center") _mctl="io.missioncenter.MissionCenter" ;;
                         "HandBrake") _hndbrk="fr.handbrake.ghb" ;;
                         "Solaar") _slar="solaar" ;;
                         "OpenRazer") _oprzr="openrazer-meta" ;;
@@ -204,13 +207,13 @@ rusticl_in () {
 
     if [[ -n "$_rcl" ]]; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-            insta mesa-opencl-icd clinfo
+            insta mesa-opencl-icd && insta clinfo
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-            insta mesa-libOpenCL clinfo
+            insta mesa-libOpenCL && insta clinfo
         elif [[ "$ID_LIKE" == *suse* ]]; then
-            insta Mesa-libRusticlOpenCL clinfo
+            insta Mesa-libRusticlOpenCL && insta clinfo
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            insta opencl-mesa clinfo
+            insta opencl-mesa && insta clinfo
         fi
         local GPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
         if [[ -n "$GPU" ]]; then
@@ -293,7 +296,7 @@ rocm_arch () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_gsr $_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw $_wrhs)
+    local _flatpaks=($_gsr $_obs $_hndbrk $_lact $_oprgb $_fseal $_sc $_qpw $_wrhs $_mctl)
     if [[ -n "$_flatpaks" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
