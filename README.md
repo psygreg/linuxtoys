@@ -5,12 +5,11 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 
 ## Compatibility
 ### AppImage
-- **Ubuntu >25.04** and derivatives
 - **Debian >13** or **Sid** and derivatives
 - **Fedora** and derivatives (non-atomic)
 - **OpenSUSE Slowroll/Tumbleweed** and derivatives
 ### Direct terminal command
-- **Ubuntu >24.04** and derivatives
+- **Ubuntu** and derivatives
 - **Debian >12** and derivatives
 - **Arch Linux** and derivatives
 - Other systems mentioned in AppImage (still better to use the packaged version though)
