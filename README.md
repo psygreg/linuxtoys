@@ -5,7 +5,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 
 ## Compatibility
 ### AppImage
-- **Debian >13** or **Sid** and derivatives
+- **Debian 13 onwards** or **Sid** and derivatives
 - **Fedora** and derivatives (non-atomic)
 - **OpenSUSE Slowroll/Tumbleweed** and derivatives
 ### Direct terminal command
