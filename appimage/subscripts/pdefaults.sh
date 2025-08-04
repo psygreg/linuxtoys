@@ -21,6 +21,10 @@ sysag_run () {
             insta gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
         fi
     fi
+    # add alive timeout fix for Gnome
+    if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
+        dconf write /org/gnome/mutter/check-alive-timeout "20000"
+    fi
 
 }
 

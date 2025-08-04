@@ -11,7 +11,7 @@ sudo_rq () {
 }
 
 # updater
-current_ltver="4.1"
+current_ltver="4.2"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -53,12 +53,13 @@ while true; do
         "${msg143}" \
         "$msg227" \
         "$msg199" \
+        "$msg279" \
         "" \
         "$msg124" \
         "GitHub" \
         "${msg275}" \
         "$msg059" \
-        --height=500 --width=360)
+        --height=530 --width=360)
         #"7" "UniWine" \ -- disabled option
 
     if [ $? -ne 0 ]; then
@@ -73,6 +74,7 @@ while true; do
     "${msg143}") supmenu="dsupermenu" && _invoke_ ;;
     "$msg227") subscript="pdefaults" && _invoke_ ;;
     "$msg199") supmenu="csupermenu" && _invoke_ ;;
+    "$msg279") subscript="psypicks" && _invoke_ ;;
     # 7) subscript="uniwine" && _invoke_ ;; -- disabled option
     "$msg124") zeninf "$msg125";;
     "GitHub") xdg-open https://github.com/psygreg/linuxtoys ;;
