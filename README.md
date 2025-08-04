@@ -53,8 +53,10 @@ Other contributions can be made by forking, adding your changes and sending a Pu
 - [Pipewire Audio Capture plugin for OBS Studio](https://github.com/dimtpap/obs-pipewire-audio-capture) by **Dimitris Papaioanou**
 - [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
 - [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
+- [Mission Center](https://missioncenter.io)
 - [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
 - [PhotoGIMP](https://github.com/Diolinux/PhotoGIMP) by **'Diolinux'**
+- [GPU Screen Recorder](https://git.dec05eba.com/?p=about) by **'dec05eba'**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [DaVinciBox](https://github.com/zelikos/davincibox) by **Patrick Csikos**
 - [Darktable](https://www.darktable.org)
