@@ -5,14 +5,13 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 
 ## Compatibility
 ### AppImage
-- **Ubuntu 25.04**
-- **Debian 13**
+- **Debian 13 onwards** or **Sid** and derivatives
 - **Fedora** and derivatives (non-atomic)
 - **OpenSUSE Slowroll/Tumbleweed** and derivatives
-- **Arch Linux** and derivatives
 ### Direct terminal command
-- **Ubuntu >24.04** and derivatives
+- **Ubuntu** and derivatives
 - **Debian >12** and derivatives
+- **Arch Linux** and derivatives
 - Other systems mentioned in AppImage (still better to use the packaged version though)
 
 ### Limitations
@@ -27,7 +26,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Usage
-- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended).
+- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!**
 - Alternatively, install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or run it directly from source with the standalone terminal command.
 
 ### Direct command
