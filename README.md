@@ -32,7 +32,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
 
 ### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
-You may use the AUR helper of your choice to install it.
+You may use the AUR helper of your choice to install it, with the package name `linuxtoys-bin`.
 
 ## Usage
 - Download and install the package for your distribution; or
