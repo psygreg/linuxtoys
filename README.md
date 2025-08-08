@@ -27,7 +27,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Official Repositories
-### Fedora COPR
+### [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/)
 `dnf copr enable psygreg/linuxtoys `
 Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
 
