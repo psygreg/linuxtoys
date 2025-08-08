@@ -26,6 +26,14 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those.
 - **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
+## Official Repositories
+### Fedora COPR
+`dnf copr enable psygreg/linuxtoys `
+Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
+
+### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
+You may use the AUR helper of your choice to install it.
+
 ## Usage
 - Download and install the package for your distribution; or
 - Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!**
