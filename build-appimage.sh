@@ -47,7 +47,7 @@ for bin in curl wget git bash zenity; do
 done
 # libwget fix
 cp -u /usr/lib/libwget.so.2 appimagebuild/LinuxToys.AppDir/usr/lib64/lib/x86_64-linux-gnu/
-for lib in /usr/lib/x86_64-linux-gnu/libwget.so.2; do
+for lib in /usr/lib/libwget.so.2; do
     for dep in $(ldd $lib | awk '{if ($3 ~ /^\//) print $3}'); do
         if ! should_exclude "$dep"; then
             cp -u --parents "$dep" appimagebuild/LinuxToys.AppDir/usr/lib64/
