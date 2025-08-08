@@ -34,7 +34,7 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 ### Direct command
 Install dependencies then paste the command into your terminal to get the script from the source.
 #### Dependencies
-`bash curl git wget zenity`
+`bash curl git wget zenity jq`
 #### Stable branch
 ```bash
 curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh | bash
