@@ -22,7 +22,6 @@ debhelper-build-stamp
 /src/buildfiles/rpm/rpmbuild/RPMS
 /src/buildfiles/rpm/rpmbuild/SRPMS
 /src/buildfiles/rpm/rpmbuild/SOURCES/
-/src/buildfiles/rpm/linuxtoys-*/
 
 # Arch build files
 /src/buildfiles/pkgbuild/linuxtoys-*/bin/*

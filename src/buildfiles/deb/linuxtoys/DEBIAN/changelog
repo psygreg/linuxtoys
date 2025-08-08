@@ -1,5 +1,0 @@
-linuxtoys (3.1-1) plucky; urgency=medium
-
-  * Kernel updater reworked with prebuit packages and Secure Boot compatibility
-
- -- Victor Gregory <psygreg@pm.me>  Thu, 26 Jun 2025 3:00:47 -0300

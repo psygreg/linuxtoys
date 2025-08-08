@@ -1,14 +1,14 @@
 pkgname='linuxtoys-bin'
-pkgver='3.2'
+pkgver='4.2'
 pkgrel=1
 arch=('x86_64')
-depends=(bash curl wget libnewt base-devel git)
+depends=(bash curl wget zenity base-devel git)
 makedepends=()
-conflicts=(linuxtoys)
+conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('b9b82375995b24c42c64841b33d3162ffb9511653008e525086c87678a7036a2')
+sha256sums=('8781dd3621690d60b1f30a04577845ead38c6e7a752be0fa47643151166dde03')
 
 package() {
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 alias_name="linuxtoys"
-alias_command="/opt/linuxtoys/linuxtoys.sh"
+alias_command="/usr/bin/linuxtoys.sh"
     
 # Check if the alias already exists
 if ! alias "$alias_name" 2>/dev/null; then
