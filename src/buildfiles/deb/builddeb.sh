@@ -1,6 +1,6 @@
 #!/bin/bash
 # ask version to package
-lt_version=$(zenity --entry --title="Debian Builder" --text="Version number:"  --entry-text "" --height=300 --width=300)
+read -p "Version number: " lt_version
 # set up dir structure
 mkdir -p linuxtoys_${lt_version}.orig/usr || echo "fatal error 1" && sleep 3 && exit 1
 mv linuxtoys-* linuxtoys-${lt_version} || echo "fatal error 2" && sleep 3 && exit 2
