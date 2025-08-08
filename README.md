@@ -6,13 +6,14 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 ## Compatibility
 ### AppImage
 - **Debian 13 onwards** or **Sid** and derivatives
-- **Fedora** and derivatives (non-atomic)
+- **Fedora 42** and derivatives (non-atomic)
 - **OpenSUSE Slowroll/Tumbleweed** and derivatives
-### Direct terminal command
+### Packages or direct terminal usage
 - **Ubuntu** and derivatives
 - **Debian >12** and derivatives
 - **Arch Linux** and derivatives
-- Other systems mentioned in AppImage (still better to use the packaged version though)
+- **Fedora** and derivatives (non-atomic)
+- **OpenSUSE** (any) and derivatives
 
 ### Limitations
 - The **CachyOS systemd configurations** and **linux-psycachy** kernel may not work as intended on systems with package bases older than ***Debian Trixie***. This also applies for the **Optimized Defaults**.
@@ -26,8 +27,9 @@ A collection of tools for Linux in a user-friendly way. For Fedora-based and Uni
 - **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
 
 ## Usage
-- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) (recommended) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!**
-- Alternatively, install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or run it directly from source with the standalone terminal command.
+- Download and install the package for your distribution; or
+- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!**
+- Alternatively, run it directly from source with the direct terminal command.
 
 ### Direct command
 Install dependencies then paste the command into your terminal to get the script from the source.
