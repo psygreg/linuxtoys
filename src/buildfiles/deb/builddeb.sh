@@ -18,3 +18,4 @@ sed -i "5c\\$changelog_line2" linuxtoys-${lt_version}/debian/changelog
 # build package
 cd linuxtoys-${lt_version} || echo "fatal error 3" && sleep 3 && exit 3
 debuild -us -uc # this builder script requires devscripts!!
+echo "All done" && sleep 3 && exit 0
