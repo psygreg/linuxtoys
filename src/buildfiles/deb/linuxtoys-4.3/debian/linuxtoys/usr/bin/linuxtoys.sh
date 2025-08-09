@@ -30,13 +30,13 @@ ver_upd () {
 wget -q -O - "https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/README.md" > /dev/null || fatal "LinuxToys requires an internet connection to proceed."
 # call linuxtoys turbobash lib
 sleep 1
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
+source /usr/bin/linuxtoys/linuxtoys.lib
 # logger
 logfile="$HOME/.local/linuxtoys-log.txt"
 _log_
 # language and upd checks
 _lang_
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/lang/${langfile})
+source /usr/bin/linuxtoys/${langfile}
 sleep 1
 ver_upd
 sudo_rq

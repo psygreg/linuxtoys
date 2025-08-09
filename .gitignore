@@ -10,9 +10,7 @@
 debhelper-build-stamp
 
 # Debian build files
-/src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys/*
-/src/buildfiles/deb/linuxtoys/DEBIAN/usr
-/src/buildfiles/deb/linuxtoys/DEBIAN/.debhelper
+/src/buildfiles/deb/linuxtoys-*/debian/.debhelper
 /src/buildfiles/deb/linuxtoys/DEBIAN/linuxtoys
 /src/buildfiles/deb/*.deb
 
@@ -28,3 +26,9 @@ debhelper-build-stamp
 /src/buildfiles/pkgbuild/pkg
 /src/buildfiles/pkgbuild/src
 /src/buildfiles/pkgbuild/linuxtoys-*.tar.*
+
+# AppImage build files
+/appimagebuild/LinuxToys.AppDir/etc/*
+/appimagebuild/LinuxToys.AppDir/usr/lib64/*
+/appimagebuild/LinuxToys.AppDir/usr/bin/*
+/LinuxToys_-x86_64*

@@ -1,5 +1,5 @@
 pkgname='linuxtoys-bin'
-pkgver='4.2'
+pkgver='4.3'
 pkgrel=1
 arch=('x86_64')
 depends=(bash curl wget zenity base-devel git)
@@ -8,7 +8,7 @@ conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('50f6bcfecb78e1422b7f44e59bd971155a8ff062ce164259509b155691c9a543')
+sha256sums=('58cf64f075bc23487ec3124ea0d45350c8aa6ab4ea928327fb6c1d0c4aa5c086')
 
 package() {
 

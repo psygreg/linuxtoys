@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        4.2
+Version:        4.3
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -54,5 +54,5 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Fri Aug 8 2025 Victor Gregory <psygreg@pm.me> - 4.2
+* Sat Aug 09 2025 Victor Gregory <psygreg@pm.me> - 4.3
 - Reinstated distribution packaging

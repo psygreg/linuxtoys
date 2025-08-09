@@ -11,7 +11,7 @@ sudo_rq () {
 }
 
 # updater
-current_ltver="4.2"
+current_ltver="4.3"
 ver_upd () {
     local ver
     ver=$(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/ver)
@@ -56,7 +56,7 @@ while true; do
         "$msg279" \
         "" \
         "$msg124" \
-        "GitHub" \
+        "Wiki" \
         "${msg275}" \
         "$msg059" \
         --height=530 --width=360)
@@ -77,7 +77,7 @@ while true; do
     "$msg279") subscript="psypicks" && _invoke_ ;;
     # 7) subscript="uniwine" && _invoke_ ;; -- disabled option
     "$msg124") zeninf "$msg125";;
-    "GitHub") xdg-open https://github.com/psygreg/linuxtoys ;;
+    "Wiki") xdg-open https://github.com/psygreg/linuxtoys/wiki ;;
     "${msg275}") xdg-open https://ko-fi.com/psygreg ;;
     "$msg059") break ;;
     *) echo "Invalid Option" ;;

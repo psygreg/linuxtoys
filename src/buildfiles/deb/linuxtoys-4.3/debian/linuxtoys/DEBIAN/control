@@ -1,0 +1,12 @@
+Package: linuxtoys
+Version: 4.3-1
+Architecture: amd64
+Maintainer: Victor Gregory <psygreg@pm.me>
+Installed-Size: 78
+Depends: bash, git, curl, wget, zenity
+Section: utils
+Priority: optional
+Homepage: https://github.com/psygreg/linuxtoys
+Description: A set of tools for Linux presented in a user-friendly way.
+ .
+ A menu with various handy tools for Linux gaming, optimization and other tweaks.
