@@ -1,5 +1,5 @@
 # LinuxToys
-A collection of tools for Linux in a user-friendly way. For Fedora-based and Universal Blue immutable systems, see [LinuxToys Atom](github.com/psygreg/linuxtoys-atom).
+A collection of tools for Linux in a user-friendly way. For Fedora-based and Universal Blue immutable systems, see [LinuxToys Atom](https://github.com/psygreg/linuxtoys-atom).
 
 ![LinuxToys](https://github.com/psygreg/linuxtoys/blob/dc32bbe9a5f6bd40fd30f409f13f33b3be3695ad/src/screenshot3.png)
 
@@ -53,7 +53,7 @@ curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoy
 
 To contribute with translations, you can fork this repo, add a new language file to the `resources/lang` folder and send a Pull Request. I can make the necessary adjustments to the program's code myself to accomodate new languages.
 
-Other contributions can be made by forking, adding your changes and sending a Pull Request as well.
+Other contributions can be made by forking, adding your changes to the scripts in the `src` folder and sending a Pull Request as well.
 
 **All Pull Requests will be manually checked before approval.**
 
