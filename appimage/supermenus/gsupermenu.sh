@@ -177,8 +177,9 @@ install_flatpak () {
                 sed -i 's/^Name=Steam$/Name=Steam (Flatpak)/' "$HOME/.local/share/applications/com.valvesoftware.Steam.desktop"
             fi
             if [[ -n "$_gfn" ]]; then
-                flatpak remote-add --user --if-not-exists GeForceNOW
+                flatpak remote-add --user --if-not-exists GeForceNOW https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo
                 flatpak install -y --user GeForceNOW com.nvidia.geforcenow
+                flatpak override --user --nosocket=wayland com.nvidia.geforcenow 
             fi
             if [[ -n "$_steer" ]]; then
                 sudo wget https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /etc/udev/rules.d
