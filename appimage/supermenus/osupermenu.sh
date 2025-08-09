@@ -31,7 +31,6 @@ osupermenu () {
         "Kdenlive"
         "Blender"
         "DaVinci Resolve"
-        "FireAlpaca"
     )
 
     while true; do
@@ -59,8 +58,7 @@ osupermenu () {
             FALSE "Kdenlive" \
             FALSE "Blender" \
             FALSE "DaVinci Resolve" \
-            FALSE "FireAlpaca" \
-            --height=860 --width=300 --separator="|")
+            --height=840 --width=300 --separator="|")
 
         if [ $? -ne 0 ]; then
             break
@@ -92,7 +90,6 @@ osupermenu () {
                         "Kdenlive") _klive="org.kde.kdenlive" ;;
                         "Blender") _blender="org.blender.Blender" ;;
                         "DaVinci Resolve") _drslv="yes" ;;
-                        "FireAlpaca") _fial="yes" ;;
                     esac
                 fi
             done
@@ -122,16 +119,6 @@ install_native () {
         if [[ -n "$_drslv" ]]; then
             zenwrn "$msg034"
             davincimenu
-        fi
-        if [[ -n "$_fial" ]]; then
-            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-                wget https://github.com/psygreg/firealpaca-deb/releases/latest/download/installer.sh
-                chmod +x installer.sh
-                ./installer.sh
-                rm installer.sh
-            else
-                nonfatal "$msg077"
-            fi
         fi
     fi
     _install_
