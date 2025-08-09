@@ -33,9 +33,8 @@ gsupermenu () {
         "Disable SLM"
         "Oversteer"
         "WiVRn"
-        "Wine"
-        "Runners"
-        "NexusMods"
+        "Wine - Custom Runners"
+
     )
 
     while true; do
