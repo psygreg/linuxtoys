@@ -15,7 +15,7 @@ osupermenu () {
         "Chrome"
         "Onlyoffice"
         "Foliate"
-        "MS Teams"
+        "Microsoft Teams"
         "Anydesk"
         "Slack"
         "Figma"
@@ -74,7 +74,7 @@ osupermenu () {
                         "Chrome") _chrome="com.google.Chrome" ;;
                         "Onlyoffice") _oofice="org.onlyoffice.desktopeditors" ;;
                         "Foliate") _foli="com.github.johnfactotum.Foliate" ;;
-                        "MS Teams") _msteams="com.github.IsmaelMartinez.teams_for_linux" ;;
+                        "Microsoft Teams") _msteams="com.github.IsmaelMartinez.teams_for_linux" ;;
                         "Anydesk") _anyd="com.anydesk.Anydesk" ;;
                         "Slack") _slck="com.slack.Slack" ;;
                         "Figma") _fig="1" ;;
