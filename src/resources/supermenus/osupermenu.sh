@@ -42,7 +42,7 @@ osupermenu () {
             FALSE "Chrome" \
             FALSE "Onlyoffice" \
             FALSE "Foliate" \
-            FALSE "MS Teams" \
+            FALSE "Microsoft Teams" \
             FALSE "Anydesk" \
             FALSE "Slack" \
             FALSE "Figma" \
@@ -58,7 +58,7 @@ osupermenu () {
             FALSE "Kdenlive" \
             FALSE "Blender" \
             FALSE "DaVinci Resolve" \
-            --height=840 --width=300 --separator="|")
+            --height=840 --width=310 --separator="|")
 
         if [ $? -ne 0 ]; then
             break
