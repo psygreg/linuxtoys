@@ -26,6 +26,7 @@ debhelper-build-stamp
 /src/buildfiles/pkgbuild/pkg
 /src/buildfiles/pkgbuild/src
 /src/buildfiles/pkgbuild/linuxtoys-*.tar.*
+/src/buildfiles/pkgbuild/linuxtoys-*.pacman
 
 # AppImage build files
 /appimagebuild/LinuxToys.AppDir/etc/*
