@@ -27,6 +27,7 @@ gsupermenu () {
         "Gamemode"
         "Gamescope"
         "Mangohud"
+        "MangoJuice"
         "GOverlay"
         "GeForce NOW"
         "Shader Booster"
@@ -56,6 +57,7 @@ gsupermenu () {
             FALSE "Gamemode" \
             FALSE "Gamescope" \
             FALSE "Mangohud" \
+            FALSE "MangoJuice" \
             FALSE "GOverlay" \
             FALSE "GeForce NOW" \
             FALSE "Shader Booster" \
@@ -88,6 +90,7 @@ gsupermenu () {
                         "Gamemode") _gmode="gamemode" ;;
                         "Gamescope") _gscope="gamescope" ;;
                         "Mangohud") _mhud="mangohud" ;;
+                        "MangoJuice") _mgju="MangoJuice" ;;
                         "GOverlay") _govl="goverlay" ;;
                         "GeForce NOW") _gfn="yes" ;;
                         "Shader Booster") _sboost="yes" ;;
@@ -132,7 +135,7 @@ gsupermenu () {
 install_native () {
 
     local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
-    local _packages=($_steam $_gmode $_govl $_gscope $_mhud)
+    local _packages=($_steam $_gmode $_govl $_gscope $_mhud $_mgju)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             if [[ -n "$_steam" ]]; then
@@ -156,6 +159,11 @@ install_native () {
         if [[ -n "$_mhud" ]]; then
             if command -v flatpak &> /dev/null; then
                 flatpak install --or-update --system -y com.valvesoftware.Steam.VulkanLayer.MangoHud/x86_64/stable org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
+            fi
+        fi
+                if [[ -n "$_mgju" ]]; then
+            if command -v flatpak &> /dev/null; then
+                flatpak install --or-update --system -y io.github.radiolamp.mangojuice
             fi
         fi
     fi
