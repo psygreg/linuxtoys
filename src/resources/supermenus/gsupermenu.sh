@@ -65,7 +65,7 @@ gsupermenu () {
             FALSE "Oversteer" \
             FALSE "WiVRn" \
             FALSE "Wine - Custom Runners" \
-            --height=850 --width=330 --separator="|")
+            --height=870 --width=330 --separator="|")
 
         if [ $? -ne 0 ]; then
             break
@@ -90,7 +90,7 @@ gsupermenu () {
                         "Gamemode") _gmode="gamemode" ;;
                         "Gamescope") _gscope="gamescope" ;;
                         "Mangohud") _mhud="mangohud" ;;
-                        "MangoJuice") _mgju="MangoJuice" ;;
+                        "MangoJuice") _mgju="io.github.radiolamp.mangojuice" ;;
                         "GOverlay") _govl="goverlay" ;;
                         "GeForce NOW") _gfn="yes" ;;
                         "Shader Booster") _sboost="yes" ;;
@@ -135,7 +135,7 @@ gsupermenu () {
 install_native () {
 
     local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
-    local _packages=($_steam $_gmode $_govl $_gscope $_mhud $_mgju)
+    local _packages=($_steam $_gmode $_govl $_gscope $_mhud)
     if [[ -n "$_packages" ]]; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             if [[ -n "$_steam" ]]; then
@@ -161,11 +161,6 @@ install_native () {
                 flatpak install --or-update --system -y com.valvesoftware.Steam.VulkanLayer.MangoHud/x86_64/stable org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
             fi
         fi
-                if [[ -n "$_mgju" ]]; then
-            if command -v flatpak &> /dev/null; then
-                flatpak install --or-update --system -y io.github.radiolamp.mangojuice
-            fi
-        fi
     fi
     _install_
 
@@ -174,7 +169,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer $_mcbe $_osuf)
+    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer $_mcbe $_osuf $_mgju)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]] || [[ -n "$_gfn" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
