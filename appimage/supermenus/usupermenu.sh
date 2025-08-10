@@ -54,7 +54,7 @@ usupermenu () {
             FALSE "Docker" \
             FALSE "Rusticl" \
             FALSE "ROCm" \
-            --height=770 --width=360 --separator="|")
+            --height=700 --width=360 --separator="|")
 
         if [ $? -ne 0 ]; then
             break

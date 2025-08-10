@@ -50,7 +50,7 @@ dsupermenu () {
             FALSE "Insomnia" \
             FALSE "Httpie" \
             FALSE "Postman" \
-            --height=730 --width=360 --separator="|")
+            --height=700 --width=360 --separator="|")
 
         if [ $? -ne 0 ]; then
             break

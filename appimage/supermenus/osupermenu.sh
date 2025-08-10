@@ -58,7 +58,7 @@ osupermenu () {
             FALSE "Kdenlive" \
             FALSE "Blender" \
             FALSE "DaVinci Resolve" \
-            --height=840 --width=310 --separator="|")
+            --height=700 --width=310 --separator="|")
 
         if [ $? -ne 0 ]; then
             break
