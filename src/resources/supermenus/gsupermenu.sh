@@ -27,6 +27,7 @@ gsupermenu () {
         "Gamemode"
         "Gamescope"
         "Mangohud"
+        "MangoJuice"
         "GOverlay"
         "GeForce NOW"
         "Shader Booster"
@@ -56,6 +57,7 @@ gsupermenu () {
             FALSE "Gamemode" \
             FALSE "Gamescope" \
             FALSE "Mangohud" \
+            FALSE "MangoJuice" \
             FALSE "GOverlay" \
             FALSE "GeForce NOW" \
             FALSE "Shader Booster" \
@@ -63,7 +65,7 @@ gsupermenu () {
             FALSE "Oversteer" \
             FALSE "WiVRn" \
             FALSE "Wine - Custom Runners" \
-            --height=850 --width=330 --separator="|")
+            --height=750 --width=330 --separator="|")
 
         if [ $? -ne 0 ]; then
             break
@@ -88,6 +90,7 @@ gsupermenu () {
                         "Gamemode") _gmode="gamemode" ;;
                         "Gamescope") _gscope="gamescope" ;;
                         "Mangohud") _mhud="mangohud" ;;
+                        "MangoJuice") _mgju="io.github.radiolamp.mangojuice" ;;
                         "GOverlay") _govl="goverlay" ;;
                         "GeForce NOW") _gfn="yes" ;;
                         "Shader Booster") _sboost="yes" ;;
@@ -166,7 +169,7 @@ install_native () {
 # flatpak packages
 install_flatpak () {
 
-    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer $_mcbe $_osuf)
+    local _flatpaks=($_lutris $_heroic $_pp $_stl $_sobst $_disc $_wivrn $_steer $_mcbe $_osuf $_mgju)
     if [[ -n "$_flatpaks" ]] || [[ -n "$_steam" ]] || [[ -n "$_gfn" ]]; then
         if command -v flatpak &> /dev/null; then
             flatpak_in_lib
