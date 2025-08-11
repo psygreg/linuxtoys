@@ -103,11 +103,15 @@ nvidia_in () {
                             sudo zypper ar -f "$REPO_URL" "nvidia"
                         fi
                         insta x11-video-nvidiaG06 nvidia-computeG06
+                        sudo dracut -f --regenerate-all
+                        sudo grub2-mkconfig -o /boot/grub2/grub.cfg
                    elif [ "$ID" = "debian" ]; then
                          wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb
                          sudo dpkg -i cuda-keyring_1.1-1_all.deb
                          sudo apt-get update
                          sudo apt-get install cuda-drivers
+                         sudo update-initramfs -c
+                         sudo update-grub
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
                             insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -116,8 +120,9 @@ nvidia_in () {
                             insta https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
                         fi
                         insta akmod-nvidia xorg-x11-drv-nvidia-cuda
-                   fi
-                   sudo dracut -f --regenerate-all ;;
+                        sudo dracut -f --regenerate-all
+                        sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+                   fi ;;
                 "$msg069") if [[ "$ID_LIKE" == *suse* ]]; then
                         local REPO_ALIAS="nvidia"
                         case "$VERSION_ID" in
@@ -139,11 +144,15 @@ nvidia_in () {
                             sudo zypper ar -f "$REPO_URL" "nvidia"
                         fi
                         insta x11-video-nvidiaG05 nvidia-computeG05
+                        sudo dracut -f --regenerate-all
+                        sudo grub2-mkconfig -o /boot/grub2/grub.cfg
                    elif [ "$ID" = "debian" ]; then
                         wget https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb
                         sudo dpkg -i cuda-keyring_1.1-1_all.deb
                         sudo apt update
                         insta cuda-drivers-470
+                        sudo update-initramfs -c
+                        sudo update-grub
                    else
                         if ! sudo dnf repolist | grep -q "rpmfusion-free"; then
                             insta https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -152,8 +161,9 @@ nvidia_in () {
                             insta https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
                         fi
                         insta xorg-x11-drv-nvidia-470xx akmod-nvidia-470xx xorg-x11-drv-nvidia-470xx-cuda
-                   fi
-                   sudo dracut -f --regenerate-all ;;
+                        sudo dracut -f --regenerate-all
+                        sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+                   fi ;;
                 "$msg070") break ;;
                 *) echo "Invalid Option" ;;
                 esac
