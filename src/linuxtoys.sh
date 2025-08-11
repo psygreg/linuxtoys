@@ -72,10 +72,10 @@ while true; do
     "$msg122") supmenu="gsupermenu" && _invoke_ ;;
     "${msg123}") supmenu="esupermenu" && _invoke_ ;;
     "${msg143}") supmenu="dsupermenu" && _invoke_ ;;
-    "$msg227") subscript="pdefaults" && _invoke_ ;;
+    "$msg227") subscript="pdefaults" && unset supmenu && _invoke_ ;;
     "$msg199") supmenu="csupermenu" && _invoke_ ;;
-    "$msg279") subscript="psypicks" && _invoke_ ;;
-    # 7) subscript="uniwine" && _invoke_ ;; -- disabled option
+    "$msg279") subscript="psypicks" && unset supmenu && _invoke_ ;;
+    # 7) subscript="uniwine" && unset supmenu && _invoke_ ;; -- disabled option
     "$msg124") zeninf "$msg125";;
     "Wiki") xdg-open https://github.com/psygreg/linuxtoys/wiki ;;
     "${msg275}") xdg-open https://ko-fi.com/psygreg ;;
