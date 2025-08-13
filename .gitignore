@@ -1,6 +1,6 @@
 ####### Python cache #######
 
-/p3/app/__pycache__
+/p3/app/__pycache__/
 *.pyc
 
 ####### Build #######
