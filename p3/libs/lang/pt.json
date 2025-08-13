@@ -50,6 +50,8 @@
   "mgjuice_desc": "Uma ferramenta baseada em GTK para configurar o MangoHud, uma sobreposição para monitorar FPS e outras métricas de desempenho. Também instala o MangoHud.",
   "goverlay_desc": "Uma ferramenta baseada em Qt para configurar o MangoHud, uma sobreposição para monitorar FPS e outras métricas de desempenho. Também instala o MangoHud.",
   "gfn_desc": "Cliente GeForce NOW para Linux.",
+  "hgl_desc": "Gerenciador de jogos para Epic Games Store, Amazon e GOG Galaxy.",
+  "lutris_desc": "Uma plataforma de jogos para Linux que permite instalar e gerenciar jogos de várias fontes, incluindo emuladores.",
   "osu_desc": "Uma wrapper feita pela comunidade para o jogo de ritmo com uma grande comunidade e muitos beatmaps criados por usuários.",
   "oversteer_desc": "Uma ferramenta para configurar e gerenciar volantes de simuladores no Linux.",
   "wivrn_desc": "Uma ferramenta para configurar e gerenciar óculos e dispositivos VR no Linux.",
@@ -59,5 +61,14 @@
   "ptricks_desc": "Ferramenta de configuração do Proton, semelhante ao Winetricks. Útil em casos muito específicos.",
   "vinegar_desc": "Uma wrapper da comunidade para o Roblox Studio, para criadores de jogos do Roblox.",
   "pup_desc": "Uma ferramenta baseada em Qt para obter facilmente runners da comunidade para jogos no Linux.",
-  "lsfg_desc": "Uma camada de compatibilidade para o Lossless Scaling no Vulkan para Linux. Ainda requer o Lossless Scaling para Windows."
+  "lsfg_desc": "Uma camada de compatibilidade para o Lossless Scaling no Vulkan para Linux. Ainda requer o Lossless Scaling para Windows.",
+
+  "ufw": "Configurar Firewall",
+  "ufw_desc": "Instala e aplica uma configuração padrão ideal para a maioria dos usuários para o Uncomplicated Firewall (UFW).",
+  "swapfile": "Configurar Arquivo Swap",
+  "swapfile_desc": "Cria um arquivo de swap no seu sistema para aliviar a pressão de memória. Especialmente útil em sistemas com pouca RAM.",
+  "lg_desc": "Configurador de renderização de fontes que melhora a clareza e legibilidade do texto.",
+  "grubtrfs_desc": "Uma ferramenta para exibir e inicializar a partir de snapshots Btrfs no GRUB.",
+  "susefix": "Corrigir SELinux",
+  "susefix_desc": "Um script para corrigir políticas do SELinux que impedem o funcionamento do WINE/Proton no OpenSUSE."
 }

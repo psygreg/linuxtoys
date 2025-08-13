@@ -52,6 +52,8 @@
   "mgjuice_desc": "A GTK-based tool to configure MangoHud, an overlay for monitoring FPS and other performance metrics. Also installs MangoHud.",
   "goverlay_desc": "A Qt-based tool to configure MangoHud, an overlay for monitoring FPS and other performance metrics. Also installs MangoHud.",
   "gfn_desc": "GeForce NOW client for Linux.",
+  "hgl_desc": "Launcher and manager for Epic Games Store, Amazon and GOG Galaxy.",
+  "lutris_desc": "A gaming platform for Linux that allows you to install and manage games from various sources, including emulators.",
   "osu_desc": "A community-made wrapper for the rhythm game with a large community and many user-created beatmaps.",
   "oversteer_desc": "A tool for configuring and managing simracing steering wheels on Linux.",
   "wivrn_desc": "A tool for configuring and managing VR devices on Linux.",
@@ -61,5 +63,14 @@
   "ptricks_desc": "Proton configuration tool, akin to Winetricks. Useful in very specific cases.",
   "vinegar_desc": "A community wrapper for Roblox Studio, for Roblox game creators.",
   "pup_desc": "A Qt-based tool to easily obtain community runners for gaming on Linux.",
-  "lsfg_desc": "A compatibility layer for Lossless Scaling on Vulkan for Linux. Still requires Lossless Scaling for Windows."
+  "lsfg_desc": "A compatibility layer for Lossless Scaling on Vulkan for Linux. Still requires Lossless Scaling for Windows.",
+
+  "ufw": "Configure Firewall",
+  "ufw_desc": "Installs and applies a default setting ideal for most users for the Uncomplicated Firewall (UFW).",
+  "swapfile": "Configure Swap File",
+  "swapfile_desc": "Creates a swap file on your system to relieve memory pressure. Specially useful on systems with low RAM.",
+  "lg_desc": "Font rendering configurator that improves text clarity and readability.",
+  "grubtrfs_desc": "A tool for displaying and booting from Btrfs snapshots in GRUB.",
+  "susefix": "Fix SELinux",
+  "susefix_desc": "A script to fix SELinux issues causing WINE/Proton not to work on OpenSUSE."
 }

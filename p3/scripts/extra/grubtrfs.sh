@@ -1,9 +1,17 @@
 #!/bin/bash
-# functions
+# name: GRUB-btrfs
+# version: 1.0
+# description: grubtrfs_desc
+# icon: help-about
+# compat: ubuntu, debian, arch, fedora, suse, cachy
 
+# --- Start of the script code ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+. /etc/os-release
+# functions
 # check dependencies
 dep_check () {
-
     if ! dpkg -l | grep -q grub-efi; then
         nonfatal "No GRUB found."
         exit 1
@@ -18,12 +26,9 @@ dep_check () {
         fi
         _install_
     fi
-
 }
-
 # install grub-btrfs and set up automatic snapshot listing
 grubtrfs_in () {
-
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         insta snapper
         sudo btrfs subvolume delete -R /.snapshots
@@ -73,15 +78,15 @@ grubtrfs_in () {
         sudo update-grub
     fi
     sudo systemctl enable --now grub-btrfsd
-
 }
-
 # runtime
-. /etc/os-release
-source linuxtoys.lib
-dep_check
-if zenity --question --title "Grub-Btrfs Installer" --text "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" --width 360 --height 300; then
-    grubtrfs_in
-    zeninf "Installation successful."
-    exit 0
+if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+    if zenity --question --title "Grub-Btrfs Installer" --text "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" --width 360 --height 300; then
+        sudo_rq
+        dep_check
+        grubtrfs_in
+        zeninf "Installation successful."
+    fi
+else
+    nonfatal "$msg031"
 fi

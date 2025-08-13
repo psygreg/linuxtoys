@@ -8,6 +8,7 @@ from . import parser
 from . import header
 from . import footer
 from . import checklist_helper
+from . import compat
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -148,6 +149,20 @@ class AppWindow(Gtk.ApplicationWindow):
     def load_categories(self):
         """Loads categories and connects their click event."""
         categories = parser.get_categories(self.translations)
+        
+        # Filter categories based on system compatibility (for script categories)
+        system_compat_keys = compat.get_system_compat_keys()
+        compatible_categories = []
+        for cat in categories:
+            # If it's a script category, check compatibility
+            if cat.get('is_script') and 'path' in cat:
+                if compat.script_is_compatible(cat['path'], system_compat_keys):
+                    compatible_categories.append(cat)
+            else:
+                # Regular categories are always shown
+                compatible_categories.append(cat)
+        categories = compatible_categories
+        
         self.categories_flowbox.foreach(lambda widget: self.categories_flowbox.remove(widget))
         for cat in categories:
             widget = self.create_item_widget(cat)
@@ -162,6 +177,15 @@ class AppWindow(Gtk.ApplicationWindow):
             self.scripts_flowbox.remove(child)
 
         scripts = parser.get_scripts_for_category(category_info['path'], self.translations)
+        
+        # Filter scripts based on system compatibility
+        system_compat_keys = compat.get_system_compat_keys()
+        compatible_scripts = []
+        for script in scripts:
+            if compat.script_is_compatible(script['path'], system_compat_keys):
+                compatible_scripts.append(script)
+        scripts = compatible_scripts
+        
         checklist_mode = category_info.get('mode', 'menu') == 'checklist'
         self.check_buttons = []
 

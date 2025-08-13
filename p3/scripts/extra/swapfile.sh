@@ -1,9 +1,15 @@
 #!/bin/bash
-# functions
+# name: swapfile
+# version: 1.0
+# description: swapfile_desc
+# icon: help-about
+# compat: ubuntu, debian, arch
 
+# --- Start of the script code ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
 # create swap on root
 root_swap () {
-
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
         btrfs subvolume create /swap
         btrfs filesystem mkswapfile --size 8g --uuid clear /swap/swapfile
@@ -20,12 +26,10 @@ root_swap () {
         zeninf "Swapfile creation successful."
         return 0
     fi
-
 }
 
 # create swap on home
 home_swap () {
-
     if [ "$(findmnt -n -o FSTYPE /home)" = "btrfs" ]; then
         sudo btrfs subvolume create /home/swap
         sudo btrfs filesystem mkswapfile --size 8g --uuid clear /home/swap/swapfile
@@ -42,17 +46,14 @@ home_swap () {
         zeninf "Swapfile creation successful."
         return 0
     fi
-
 }
 
-source /usr/bin/linuxtoys/linuxtoys.lib
 if swapon --show | grep -q '^'; then
     nonfatal "Swap already enabled in your system."
     exit 0
 else
     # menu
     while true; do
-
         CHOICE=$(zenity --list --title "Swapfile Creator" --text "Create swapfile on:" \
             --column "Options" \
             "/ (root)" \
@@ -72,3 +73,4 @@ else
         esac
     done
 fi
+    
