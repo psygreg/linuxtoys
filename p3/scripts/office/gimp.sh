@@ -1,5 +1,5 @@
 #!/bin/bash
-# NAME: GIMP
+# NAME: GIMP (& PhotoGIMP)
 # VERSION: 3.0
 # DESCRIPTION: gimp_desc
 

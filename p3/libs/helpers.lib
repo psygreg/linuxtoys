@@ -38,9 +38,9 @@ chaotic_aur_lib () {
             sudo pacman-key --lsign-key 3056513887B78AEB
             sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
             sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/script.sed
             sudo sed -i -f script.sed /etc/pacman.conf
-            sudo pacman -Sy
+            sudo pacman -Syu
             zenity --info --text "$msg024" --height 300 --width 300
             rm script.sed
         fi

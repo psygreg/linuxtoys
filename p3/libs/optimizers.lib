@@ -2,7 +2,6 @@
 
 # cachyos safe systemd configs
 cachyos_sysd_lib () {
-
     local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
     mkdir -p sysctl-config
     sleep 1
@@ -45,29 +44,10 @@ cachyos_sysd_lib () {
     sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
     cd ..
     rm -rf sysctl-config
-
-}
-
-# preload installer
-preload_lib () {
-
-    if zenity --question --title "Preload" --text "$msg208" --width 300 --height 300; then
-        if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            chaotic_aur_lib
-        fi
-        if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
-            sudo dnf copr enable elxreno/preload -y
-        fi
-        insta preload
-        sudo systemctl enable preload
-        sudo systemctl start preload
-    fi
-
 }
 
 # shader booster
 sboost_lib () {
-
     cd $HOME
     if [ "$ID" == "cachyos" ]; then
         wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher-cachy.fish
@@ -80,29 +60,26 @@ sboost_lib () {
         ./patcher.sh
         rm patcher.sh
     fi
-
 }
 
 # split lock mitigation disabler
 dsplitm_lib () {
-
     if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
         echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
         zeninf "$msg022"
     else
         zeninf "$msg043"
     fi
-
 }
 
 # power optimizer for laptops
 psave_lib () {
-
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
         sudo add-apt-repository ppa:linrunner/tlp
         sudo apt update
     fi
-    insta powertop tlp tlp-rdw smartmontools ethtool
+    local _packages=(powertop tlp tlp-rdw smartmontools ethtool)
+    _install
     sudo systemctl enable tlp.service
     sudo systemctl enable NetworkManager-dispatcher.service
     sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
@@ -116,12 +93,10 @@ psave_lib () {
     flatpak_in_lib
     flatpak install --or-update -y com.github.d4nj1.tlpui --system
     zeninf "$msg036"
-
 }
 
 # patcher for debian testing
 debfixer_lib () {
-
     local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
     if [ "$ID" == "debian" ]; then
         if ! su -c 'grep -q "^${USER} ALL=(ALL:ALL) ALL" /etc/sudoers'; then
@@ -139,5 +114,4 @@ debfixer_lib () {
             rm debian.sources
         fi
     fi
-
 }

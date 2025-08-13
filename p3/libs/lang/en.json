@@ -72,5 +72,14 @@
   "lg_desc": "Font rendering configurator that improves text clarity and readability.",
   "grubtrfs_desc": "A tool for displaying and booting from Btrfs snapshots in GRUB.",
   "susefix": "Fix SELinux",
-  "susefix_desc": "A script to fix SELinux issues causing WINE/Proton not to work on OpenSUSE."
+  "susefix_desc": "A script to fix SELinux issues causing WINE/Proton not to work on OpenSUSE.",
+  "codecfix": "Streaming Codecs",
+  "codecfix_desc": "Install missing codecs for streaming media.",
+  "dsplitm": "Split-lock Mitigation Disabler",
+  "dsplitm_desc": "Disable split-lock mitigation, which is not a security feature therefore is safe to disable, for improved performance in many apps and games.",
+  "sboost_desc": "Increases the maximum shader cache size to improve performance in games, especially newer ones.",
+  "psaver": "Power Optimizer",
+  "psaver_desc": "Optimized power settings for better battery life on laptops.",
+  "iwd_desc": "A modern wireless daemon for Linux made by Intel, that offers better latency and speed than the standard wpa-supplicant. May not work with enterprise networks.",
+  "preload_desc": "A daemon that preloads frequently used libraries and binaries into memory to speed up application startup times."
 }
