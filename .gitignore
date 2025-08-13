@@ -33,3 +33,7 @@ debhelper-build-stamp
 /appimagebuild/LinuxToys.AppDir/usr/lib64/*
 /appimagebuild/LinuxToys.AppDir/usr/bin/*
 /LinuxToys_-x86_64*
+
+# Python bytecode and cache
+/p3/app/__pycache__
+*.pyc
