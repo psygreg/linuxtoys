@@ -8,10 +8,10 @@
 getresolve () {
 
   	local pkgname="$_upkgname"
-  	local major_version="20.0"
-  	local minor_version="1"
+  	local major_version="20.1"
+  	local minor_version="0"
   	pkgver="${major_version}.${minor_version}"
-	runver="20.0.1"
+	runver="20.1.0"
   	local _product=""
   	local _referid=""
   	local _siteurl=""
