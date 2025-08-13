@@ -1,0 +1,21 @@
+/* Defines the style for each item in our grid (FlowBox) */
+.script-item {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    /* min-width: 120px;
+    min-height: 120px; */
+}
+
+/* Style for when the mouse hovers over an item */
+.script-item:hover {
+    background-color: #e0e0e0;
+}
+
+/* This class is now only used as a selector in the code,
+   but we can keep it for future styling. */
+.script-label {
+    /* Properties like text wrapping are now handled in the Python code. */
+}

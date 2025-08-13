@@ -1,0 +1,83 @@
+import os
+
+# Defines the path to the scripts folder. In the future, this could come from a config file.
+SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
+
+def parse_script_header(file_path):
+    """
+    Reads the header of a .sh script file and returns a dictionary with the data.
+    """
+    header = {
+        'name': 'No Name',
+        'version': 'N/A',
+        'description': 'No Description.',
+        'icon': 'application-x-executable', # Default icon
+        'path': file_path
+    }
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.startswith('# '):
+                    # Removes '# ' and splits the line into key:value
+                    parts = line.strip('# ').split(':', 1)
+                    if len(parts) == 2:
+                        key = parts[0].strip().lower()
+                        value = parts[1].strip()
+                        if key in header:
+                            header[key] = value
+                # Stop reading the file as soon as the first line that is not a header comment is found
+                elif not line.startswith('#'):
+                    break
+    except Exception as e:
+        print(f"Error reading script {file_path}: {e}")
+
+    return header
+
+def get_categories():
+    """
+    Returns a list of dictionaries, where each one represents a category (folder).
+    """
+    categories = []
+    if not os.path.isdir(SCRIPTS_DIR):
+        return categories
+
+    # Add each root script as its own category using header info
+    for file_name in os.listdir(SCRIPTS_DIR):
+        file_path = os.path.join(SCRIPTS_DIR, file_name)
+        if file_name.endswith('.sh') and os.path.isfile(file_path):
+            header = parse_script_header(file_path)
+            categories.append({
+                'name': header.get('name', file_name),
+                'path': file_path,
+                'icon': header.get('icon', 'application-x-executable'),
+                'description': header.get('description', ''),
+                'is_script': True
+            })
+
+    # Add subfolders as categories
+    for category_name in os.listdir(SCRIPTS_DIR):
+        category_path = os.path.join(SCRIPTS_DIR, category_name)
+        if os.path.isdir(category_path):
+            categories.append({
+                'name': category_name,
+                'path': category_path,
+                'icon': 'folder',
+                'is_script': False
+            })
+    return sorted(categories, key=lambda cat: cat['name'])
+
+
+def get_scripts_for_category(category_path):
+    """
+    Returns a list of scripts (dictionaries) for a given category.
+    """
+    scripts = []
+    if not os.path.isdir(category_path):
+        return scripts
+
+    for file_name in os.listdir(category_path):
+        file_path = os.path.join(category_path, file_name)
+        if file_name.endswith('.sh') and os.path.isfile(file_path):
+            scripts.append(parse_script_header(file_path))
+
+    return sorted(scripts, key=lambda s: s['name'])

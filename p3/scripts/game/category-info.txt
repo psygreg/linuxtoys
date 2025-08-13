@@ -1,0 +1,3 @@
+ICON: input-gaming
+description: game_desc
+mode: checklist

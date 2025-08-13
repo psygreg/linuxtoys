@@ -1,0 +1,68 @@
+# library of helpers and repository checkers
+
+# Flatpak check
+flatpak_in_lib () {
+    if command -v flatpak &> /dev/null; then
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+    else
+        sudo_rq
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            sudo apt install -y flatpak
+        elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            sudo pacman -S --noconfirm flatpak
+        fi
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
+    fi
+}
+
+# Multilib repository check
+multilib_chk () {
+    if grep -q "^#\[multilib\]" /etc/pacman.conf; then
+        sudo sed -i '/^#\[multilib\]/{
+            s/^#//
+            n
+            s/^#//
+        }' /etc/pacman.conf
+        sudo pacman -Syu
+    fi
+}
+
+# Chaotic AUR check
+chaotic_aur_lib () {
+    if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+        if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
+            cd $HOME
+            sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+            sudo pacman-key --lsign-key 3056513887B78AEB
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/subscripts/script.sed
+            sudo sed -i -f script.sed /etc/pacman.conf
+            sudo pacman -Sy
+            zenity --info --text "$msg024" --height 300 --width 300
+            rm script.sed
+        fi
+    else
+        zenity --error --text "$msg077" --height 300 --width 300
+    fi
+}
+
+# RPMFusion check
+rpmfusion_chk () {
+    if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
+        if ! command -v rpm-ostree >/dev/null 2>&1; then
+            sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+        else
+            sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+        fi
+    fi
+    if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
+        if ! command -v rpm-ostree >/dev/null 2>&1; then
+            sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        else
+            sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        fi
+    fi
+}

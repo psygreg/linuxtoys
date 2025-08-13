@@ -1,0 +1,143 @@
+## linuxtoys optimizers lib -- scripts need to source linuxtoys.lib BEFORE calling this lib
+
+# cachyos safe systemd configs
+cachyos_sysd_lib () {
+
+    local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
+    mkdir -p sysctl-config
+    sleep 1
+    cd sysctl-config
+    {
+        echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
+        } > "udev.txt"
+    {
+        echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
+        echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
+        echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
+        } > "tmpfiles.txt"
+    {
+        echo "${_cfgsource}/lib/modprobe.d/20-audio-pm.conf"
+        echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
+        echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
+        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+        } > "modprobe.txt"
+    {
+        echo "${_cfgsource}/lib/sysctl.d/99-cachyos-settings.conf"
+        echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
+        echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
+        } > "other.txt"
+    sleep 1
+    while read -r url; do wget -P udev "$url"; done < udev.txt
+    while read -r url; do wget -P tmpfiles "$url"; done < tmpfiles.txt
+    while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
+    while read -r url; do wget "$url"; done < other.txt
+    sleep 1
+    sudo cp -rf udev/* /usr/lib/udev/rules.d/
+    sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
+    sudo cp -rf modprobe/* /usr/lib/modprobe.d/
+    sudo cp -f 99-cachyos-settings.conf /usr/lib/sysctl.d/
+    sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
+    sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
+    cd ..
+    rm -rf sysctl-config
+
+}
+
+# preload installer
+preload_lib () {
+
+    if zenity --question --title "Preload" --text "$msg208" --width 300 --height 300; then
+        if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            chaotic_aur_lib
+        fi
+        if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+            sudo dnf copr enable elxreno/preload -y
+        fi
+        insta preload
+        sudo systemctl enable preload
+        sudo systemctl start preload
+    fi
+
+}
+
+# shader booster
+sboost_lib () {
+
+    cd $HOME
+    if [ "$ID" == "cachyos" ]; then
+        wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher-cachy.fish
+        chmod +x patcher-cachy.fish
+        fish ./patcher-cachy.fish
+        rm patcher-cachy.fish
+    else
+        wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
+        chmod +x patcher.sh
+        ./patcher.sh
+        rm patcher.sh
+    fi
+
+}
+
+# split lock mitigation disabler
+dsplitm_lib () {
+
+    if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
+        echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
+        zeninf "$msg022"
+    else
+        zeninf "$msg043"
+    fi
+
+}
+
+# power optimizer for laptops
+psave_lib () {
+
+    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+        sudo add-apt-repository ppa:linrunner/tlp
+        sudo apt update
+    fi
+    insta powertop tlp tlp-rdw smartmontools ethtool
+    sudo systemctl enable tlp.service
+    sudo systemctl enable NetworkManager-dispatcher.service
+    sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+    cd $HOME
+    git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+    cd auto-cpufreq && sudo ./auto-cpufreq-installer
+    cd ..
+    sleep 1
+    rm -rf auto-cpufreq
+    sudo auto-cpufreq --install
+    flatpak_in_lib
+    flatpak install --or-update -y com.github.d4nj1.tlpui --system
+    zeninf "$msg036"
+
+}
+
+# patcher for debian testing
+debfixer_lib () {
+
+    local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
+    if [ "$ID" == "debian" ]; then
+        if ! su -c 'grep -q "^${USER} ALL=(ALL:ALL) ALL" /etc/sudoers'; then
+            su -c "sed -i '\|^root[[:space:]]\\+ALL=(ALL:ALL)[[:space:]]\\+ALL$|a ${USER} ALL=(ALL:ALL) ALL' /etc/sudoers"
+            sleep 1
+        fi
+        if [[ "$codename" =~ ^(trixie|testing)$ ]]; then
+            sudo apt modernize-sources
+            cd $HOME
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/debian/debian.sources
+            sleep 1
+            sudo cp -f debian.sources /etc/apt/sources.list.d/
+            sleep 1
+            sudo apt update
+            rm debian.sources
+        fi
+    fi
+
+}

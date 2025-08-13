@@ -1,0 +1,241 @@
+## linuxtoys function library
+
+# sudo request
+sudo_rq () {
+    zenity --password | sudo -Sv || fatal "Wrong password. Do you have sudo?"
+}
+
+# zenity libs
+zeninf () {
+    zenity --info --text "$1" --width 360 --height 300
+    return 0
+}
+zenwrn () {
+    zenity --warning --text "$1" --width 360 --height 300
+    return 0
+}
+
+## error handlers
+fatal() {
+    zenity --error --title "Fatal Error" --text "$1" --width 360 --height 300
+    exit 1
+}
+nonfatal() {
+    zenity --error --title "Error" --text "$1" --width 360 --height 300
+    return 1
+}
+
+# native package installation
+_install_ () {
+    
+    if [[ -n "$_packages" ]]; then
+        # rpm-ostree iteration -- ONLY USE WHEN PACKAGES ARE NOT IMPORTANT TO THE SYSTEM!
+        if command -v rpm-ostree &>/dev/null; then
+            declare -a _to_install=()
+            for pkg in "${_packages[@]}"; do
+                if ! rpm -qi "$pkg" &>/dev/null; then
+                    _to_install+=("$pkg")
+                fi
+            done
+            if [[ -n "$_to_install" ]]; then
+                rpm-ostree install -yA "${_to_install[@]}"
+            else
+                return 1
+            fi
+        else
+        # resume usual linuxtoys behaviour
+            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+                for pak in "${_packages[@]}"; do
+                    if [[ "$pak" =~ ^(steam|yes|code|pyenv)$ ]]; then
+                        continue
+                    fi
+                    if dpkg -s "$pak" 2>/dev/null 1>&2; then
+                        continue
+                    else
+                        sudo apt install -y $pak
+                    fi
+                done
+            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+                for pak in "${_packages[@]}"; do
+                    if [[ "$pak" =~ ^(yes|openrazer|code|pyenv|unityhub|dotnet-sdk-9.0)$ ]]; then
+                        continue
+                    fi
+                    if pacman -Qi "$pak" 2>/dev/null 1>&2; then
+                        continue
+                    else
+                        sudo pacman -S --noconfirm $pak
+                    fi
+                done
+            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+                for pak in "${_packages[@]}"; do
+                    if [[ "$pak" =~ ^(yes|openrazer|code|pyenv)$ ]]; then
+                        continue
+                    fi
+                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
+                        continue
+                    else
+                        sudo dnf in $pak -y
+                    fi
+                done
+            elif [[ "$ID_LIKE" == *suse* ]]; then
+                for pak in "${_packages[@]}"; do
+                    if [[ "$pak" =~ ^(yes|openrazer|waydroid|code|pyenv|dotnet-sdk-9.0)$ ]]; then
+                        continue
+                    fi
+                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
+                        continue
+                    else
+                        sudo zypper in $pak -y
+                    fi
+                done
+            fi
+        fi
+    fi
+
+}
+
+# INSTAnt install
+if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo apt install -y "$@"
+    }
+elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo pacman -S --noconfirm "$@"
+    }
+elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo dnf in "$@" -y
+    }
+elif [[ "$ID_LIKE" == *suse* ]]; then
+    insta () {
+        if [ "$#" -eq 0 ]; then
+            return 1
+        fi
+        sudo zypper in "$@" -y
+    }
+fi
+
+# flatpak installation
+_flatpak_ () {
+
+    if [[ -n "$_flatpaks" ]]; then
+        for flat in "${_flatpaks[@]}"; do
+            flatpak install --or-update -u -y $flat
+        done
+    fi
+
+}
+
+# language detect -- add elif for each language in the last if statement
+_lang_ () {
+
+    local lang="${LANG:0:2}"
+    local available=("pt")
+    local ulang=""
+    langfile=""
+
+    if [[ " ${available[*]} " == *"$lang"* ]]; then
+        ulang="$lang"
+    else
+        ulang="en"
+    fi
+    if [ $ulang == "pt" ]; then
+        langfile="pt"
+    else
+        langfile="en"
+    fi
+
+}
+
+### TODO Unlibrarize kernel stuff
+# psycachy kernel and KUPiD updater installer
+psycachy_lib () {
+
+    bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/psycachy/psycachy-install.sh)
+    if [ $? -eq 0 ]; then
+        mkdir -p $HOME/.local/kupid
+        cd $HOME/.local/kupid
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-chk.sh
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid-upd.sh
+        chmod +x kupid-chk.sh
+        chmod +x kupid-upd.sh
+        mkdir -p $HOME/.config/autostart
+        cd $HOME/.config/autostart
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/kupid/kupid.desktop
+        # install cachyos systemd configs
+        cachyos_sysd_lib
+    fi
+
+}
+
+# CachyOS kernel for Fedora
+kernel_compat () {
+
+    sudo dnf copr enable bieszczaders/kernel-cachyos
+    insta kernel-cachyos kernel-cachyos-devel-matched
+    sudo setsebool -P domain_kernel_load_modules on
+    sudo dracut -f --regenerate-all
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    zeninf "$msg036"
+
+}
+
+kernel_performance () {
+
+    sudo dnf copr enable bieszczaders/kernel-cachyos-lto
+    insta kernel-cachyos-lto kernel-cachyos-lto-devel-matched
+    sudo setsebool -P domain_kernel_load_modules on
+    sudo dracut -f --regenerate-all
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    zeninf "$msg036"
+
+}
+
+fedora_cachyos_menu_lib () {
+
+    while :; do
+        CHOICE=$(zenity --list --title "CachyOS Kernel" \
+            --column Version \
+    	    "$msg075" \
+            "$msg076" \
+            "$msg070" \
+            --height 330 --width 300)
+
+        if [ $? -ne 0 ]; then
+            return
+        fi
+
+        case $CHOICE in
+        "$msg075") kernel_compat ;;
+        "$msg076") kernel_performance ;;
+        "$msg070") return ;;
+        *) echo "Invalid Option" ;;
+        esac
+    done
+
+}
+
+# CachyOS kernel for Arch
+cachyos_arch_lib () {
+
+    chaotic_aur_lib
+    insta linux-cachyos linux-cachyos-headers
+    if command -v dracut >/dev/null 2>&1; then
+        sudo dracut -f --regenerate-all
+    elif command -v mkinitcpio >/dev/null 2>&1; then
+        sudo mkinitcpio -P
+    fi
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+}
+

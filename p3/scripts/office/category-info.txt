@@ -1,0 +1,4 @@
+name: office
+ICON: document-properties
+description: office_desc
+mode: checklist

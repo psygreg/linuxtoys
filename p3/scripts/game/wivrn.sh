@@ -1,0 +1,8 @@
+#!/bin/bash
+# name: WiVRn
+# version: 1.0
+# description: wivrn_desc
+
+# --- Start of the script code ---
+flatpak_in_lib
+flatpak install --or-update --user --noninteractive io.github.wivrn.wivrn

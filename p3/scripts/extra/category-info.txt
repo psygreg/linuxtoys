@@ -1,0 +1,2 @@
+ICON: applications-accessories
+description: extra_desc
