@@ -79,7 +79,7 @@ psave_lib () {
         sudo apt update
     fi
     local _packages=(powertop tlp tlp-rdw smartmontools ethtool)
-    _install
+    _install_
     sudo systemctl enable tlp.service
     sudo systemctl enable NetworkManager-dispatcher.service
     sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
