@@ -19,6 +19,10 @@
   "utils_desc": "System management, maintenance, monitoring and other tools.",
   "devs": "Developers",
   "devs_desc": "Tools and resources for software developers.",
+  "drivers": "Drivers",
+  "drivers_desc": "Drivers for various purposes and devices.",
+  "repos": "Adittional Repositories",
+  "repos_desc": "Additional sources for software on Linux. Only install what you really need.",
 
   "gimp_desc": "A powerful open source image editor.",
   "onlyoffice_desc": "A suite with better compatibility to Microsoft Office files.",

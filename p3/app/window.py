@@ -15,7 +15,7 @@ class AppWindow(Gtk.ApplicationWindow):
         super().__init__(application=application, *args, **kwargs)
         self.translations = translations
 
-        self.set_default_size(640, 480)
+        self.set_default_size(640, 520)
         self.set_title("LinuxToys")
 
         # --- Instance variables for script management ---
