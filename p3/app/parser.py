@@ -4,6 +4,27 @@ from .compat import get_system_compat_keys, script_is_compatible
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
 
+def script_requires_reboot(script_path, system_compat_keys):
+    """
+    Check if a script requires a reboot for the current system.
+    Returns True if script requires reboot and matches system compatibility.
+    """
+    try:
+        with open(script_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.startswith('# reboot:'):
+                    reboot_value = line[len('# reboot:'):].strip().lower()
+                    if reboot_value == 'yes':
+                        return True
+                    elif reboot_value == 'ostree':
+                        # Check if system has ostree or ublue compatibility
+                        return bool({'ostree', 'ublue'} & system_compat_keys)
+                if not line.startswith('#'):
+                    break
+    except Exception:
+        pass
+    return False
+
 def _parse_metadata_file(file_path, default_values, translations=None):
     """
     A generic parser for our metadata files (.sh headers or category-info.txt).
@@ -53,7 +74,8 @@ def get_categories(translations=None):
             defaults = {
                 'name': file_name,
                 'description': 'No Description.',
-                'icon': 'application-x-executable'
+                'icon': 'application-x-executable',
+                'reboot': 'no'
             }
             header = _parse_metadata_file(file_path, defaults, translations)
             # Filter by compatibility
@@ -104,7 +126,8 @@ def get_scripts_for_category(category_path, translations=None):
             defaults = {
                 'name': 'No Name', 'version': 'N/A',
                 'description': 'No Description.',
-                'icon': 'application-x-executable'
+                'icon': 'application-x-executable',
+                'reboot': 'no'
             }
             scripts.append(_parse_metadata_file(file_path, defaults, translations))
 

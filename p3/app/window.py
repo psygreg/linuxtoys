@@ -9,6 +9,7 @@ from . import header
 from . import footer
 from . import checklist_helper
 from . import compat
+from . import reboot_helper
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -21,6 +22,7 @@ class AppWindow(Gtk.ApplicationWindow):
         # --- Instance variables for script management ---
         self.script_is_running = False
         self.running_process = None
+        self.reboot_required = False  # Track if a reboot is required
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -239,6 +241,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def on_install_checklist(self, button):
         """Run checked scripts sequentially."""
+        # Check if reboot is required before proceeding
+        if self.reboot_required:
+            self._show_reboot_warning_dialog()
+            return
+            
         checklist_helper.handle_install_checklist(
             self.check_buttons, 
             self, 
@@ -275,6 +282,13 @@ class AppWindow(Gtk.ApplicationWindow):
                 self.running_process.wait()
                 return_code_msg = f"\n--- Script finished with exit code: {self.running_process.returncode} ---"
                 GLib.idle_add(self._append_text_to_buffer, text_buffer, return_code_msg)
+                
+                # Check if script requires reboot after successful execution
+                if self.running_process.returncode == 0:
+                    system_compat_keys = compat.get_system_compat_keys()
+                    if parser.script_requires_reboot(script_info['path'], system_compat_keys):
+                        self.reboot_required = True
+                        
             except Exception as e:
                 error_msg = f"\n--- An unexpected error occurred: {e} ---"
                 GLib.idle_add(self._append_text_to_buffer, text_buffer, error_msg)
@@ -295,6 +309,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def on_category_clicked(self, widget, event):
         """Handles category click or root script click."""
+        # Check if reboot is required before proceeding
+        if self.reboot_required:
+            self._show_reboot_warning_dialog()
+            return
+            
         info = widget.info
         # If this is a root script (shown as a category), execute it directly
         if info.get('is_script'):
@@ -326,6 +345,11 @@ class AppWindow(Gtk.ApplicationWindow):
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
         if self.script_is_running:
+            return
+
+        # Check if reboot is required before proceeding
+        if self.reboot_required:
+            self._show_reboot_warning_dialog()
             return
 
         self.script_is_running = True
@@ -373,6 +397,12 @@ class AppWindow(Gtk.ApplicationWindow):
             return_code_msg = f"\n--- Script finished with exit code: {self.running_process.returncode} ---"
             GLib.idle_add(self._append_text_to_buffer, text_buffer, return_code_msg)
 
+            # Check if script requires reboot after successful execution
+            if self.running_process.returncode == 0:
+                system_compat_keys = compat.get_system_compat_keys()
+                if parser.script_requires_reboot(script_path, system_compat_keys):
+                    self.reboot_required = True
+
         except Exception as e:
             error_msg = f"\n--- An unexpected error occurred: {e} ---"
             GLib.idle_add(self._append_text_to_buffer, text_buffer, error_msg)
@@ -395,6 +425,20 @@ class AppWindow(Gtk.ApplicationWindow):
         self.running_process = None
         self.script_is_running = False
         dialog.destroy()
+
+    def _show_reboot_warning_dialog(self):
+        """Shows a dialog warning that a reboot is required before continuing."""
+        reboot_helper.handle_reboot_requirement(
+            self, 
+            self.translations, 
+            self._close_application
+        )
+    
+    def _close_application(self):
+        """Closes the application gracefully."""
+        if self.running_process and self.running_process.poll() is None:
+            self.running_process.terminate()
+        self.get_application().quit()
 
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
