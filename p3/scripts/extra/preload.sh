@@ -6,20 +6,20 @@
 # compat: ubuntu, debian, fedora, ostree, ublue, cachy, arch
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 . /etc/os-release
 # language
 _lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/../libs/helpers.lib"
+source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../../libs/helpers.lib"
 # RAM check
 total_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 total_gb=$(( total_kb / 1024 / 1024 ))
 _cram=$(( total_gb ))
 # install only if user has enough RAM for preloading to not cause any issues
 if (( _cram > 12 )); then
-    if zenity --question --text "$msg228" --width 360 --height 300; then
+    if zenity --question --text "$msg208" --width 360 --height 300; then
         sudo_rq
         if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
             if command -v rpm-ostree &>/dev/null; then
@@ -27,6 +27,7 @@ if (( _cram > 12 )); then
                 wget https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-$(rpm -E %fedora)/elxreno-preload-fedora-$(rpm -E %fedora).repo
                 sudo install -o 0 -g 0 elxreno-preload-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/elxreno-preload-fedora-$(rpm -E %fedora).repo
                 rpm-ostree refresh-md
+                rm elxreno-preload-fedora-$(rpm -E %fedora).repo
             else
                 sudo dnf copr enable elxreno/preload -y
             fi
@@ -36,8 +37,8 @@ if (( _cram > 12 )); then
         _packages=(preload)
         _install_
         sudo systemctl enable --now preload
-        zeninf "$msg229"
+        zeninf "$msg036"
     fi
 else
-    nonfatal "$msg230"
+    nonfatal "$msg228"
 fi

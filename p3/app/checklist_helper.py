@@ -23,12 +23,12 @@ def run_scripts_sequentially(scripts, parent_window, on_dialog_closed_callback):
         temp_script.write('#!/bin/bash\n')
         # Add common initialization for checklist scripts
         temp_script.write('. /etc/os-release\n')
-        temp_script.write('SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"\n')
-        temp_script.write('source "$SCRIPT_DIR/../libs/linuxtoys.lib"\n')
+        temp_script.write('SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"\n')
+        temp_script.write('source "$SCRIPT_DIR/../../libs/linuxtoys.lib"\n')
         temp_script.write('# language\n')
         temp_script.write('_lang_\n')
-        temp_script.write('source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"\n')
-        temp_script.write('source "$SCRIPT_DIR/../libs/helpers.lib"\n')
+        temp_script.write('source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"\n')
+        temp_script.write('source "$SCRIPT_DIR/../../libs/helpers.lib"\n')
         temp_script.write('\n')
         
         # Check if any script uses flatpak_in_lib and add it once at the beginning

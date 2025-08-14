@@ -6,8 +6,8 @@
 # compat: ubuntu, debian, arch, fedora, suse, cachy
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 . /etc/os-release
 # functions
 # check dependencies

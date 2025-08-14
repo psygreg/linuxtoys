@@ -6,11 +6,11 @@
 # compat: ubuntu, debian, arch
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if zenity --question --text "$msg007" --width 360 --height 300; then
     _packages=(ufw gufw)
     _install_
