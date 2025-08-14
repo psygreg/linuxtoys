@@ -58,11 +58,14 @@ source "$SCRIPT_DIR/../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../libs/helpers.lib"
 if zenity --question --text "$msg280" --height=300 --width=300; then
     if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
         cd $HOME
         mkdir psypicks || exit 1
         cd psypicks || exit 1
+        sudo_rq
+        rpmfusion_chk
         packages=(steam steam-devices lutris vlc)
         if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
             packages+=(gnome-tweaks)

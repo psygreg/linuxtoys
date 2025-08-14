@@ -47,8 +47,8 @@ optimizer () {
         if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
             dconf write /org/gnome/mutter/check-alive-timeout "20000"
         fi
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/autopatch.state
-        sudo mv autopatch.state /.autopatch.state
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/autopatch.state
+        sudo mv autopatch.state $HOME/.local/.autopatch.state
     else
         nonfatal "$msg234"
     fi
@@ -75,8 +75,8 @@ while true; do
     fi
 
     case $CHOICE in
-    "Desktop") optimizer && break ;;
-    "Laptop") optimizer && psave_lib && break ;;
+    "Desktop") sudo_rq && optimizer && break ;;
+    "Laptop") sudo_rq && optimizer && psave_lib && break ;;
     "Cancel") break ;;
     *) echo "Invalid Option" ;;
     esac

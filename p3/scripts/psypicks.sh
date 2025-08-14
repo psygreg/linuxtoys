@@ -116,8 +116,9 @@ if zenity --question --text "$msg280" --height=300 --width=300; then
         mkdir psypicks || exit 1
         cd psypicks || exit 1
         # enable RPMFusion non-free repositories for Fedora
+        sudo_rq
         if command -v dnf &> /dev/null; then
-            sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+            rpmfusion_chk
             sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
         fi
         # package setup

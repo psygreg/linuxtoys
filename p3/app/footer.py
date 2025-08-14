@@ -62,13 +62,24 @@ def create_footer():
         uri="https://github.com/psygreg/linuxtoys/wiki", 
         label="Wiki"
     )
-    menu_separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+    menu_separator1 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+    
+    # Bug reporting button
+    report_label = translation.get('report_label', 'Report Bug')
+    menu_bug_button = Gtk.LinkButton(
+        uri="https://github.com/psygreg/linuxtoys/issues", 
+        label=report_label
+    )
+    menu_separator2 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+    
     menu_donation_button = Gtk.LinkButton(
         uri="https://ko-fi.com/psygreg", 
         label=support_label
     )
     main_vbox.menu_footer_box.pack_start(menu_website_button, False, False, 0)
-    main_vbox.menu_footer_box.pack_start(menu_separator, False, False, 10)
+    main_vbox.menu_footer_box.pack_start(menu_separator1, False, False, 10)
+    main_vbox.menu_footer_box.pack_start(menu_bug_button, False, False, 0)
+    main_vbox.menu_footer_box.pack_start(menu_separator2, False, False, 10)
     main_vbox.menu_footer_box.pack_start(menu_donation_button, False, False, 0)
     main_vbox.pack_start(main_vbox.menu_footer_box, False, False, 0)
 
