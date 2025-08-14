@@ -3,6 +3,7 @@
 # version: 1.0
 # description: psaver_desc
 # icon: power-saver
+# reboot: yes
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

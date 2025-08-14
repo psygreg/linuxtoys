@@ -4,6 +4,7 @@
 # description: preload_desc
 # icon: help-about
 # compat: ubuntu, debian, fedora, ostree, ublue, cachy, arch
+# reboot: ostree
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

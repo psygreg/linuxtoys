@@ -89,5 +89,8 @@
   "psaver": "Power Optimizer",
   "psaver_desc": "Optimized power settings for better battery life on laptops.",
   "iwd_desc": "A modern wireless daemon for Linux made by Intel, that offers better latency and speed than the standard wpa-supplicant. May not work with enterprise networks.",
-  "preload_desc": "A daemon that preloads frequently used libraries and binaries into memory to speed up application startup times."
+  "preload_desc": "A daemon that preloads frequently used libraries and binaries into memory to speed up application startup times.",
+
+  "nv_desc": "Current Nvidia drivers. Supported GPUs: Maxwell (GT 9xx) and newer.",
+  "nv_desc_470": "Legacy Nvidia drivers. Supported GPUs: Kepler (GT 6xx) and Fermi (GT 7xx)."
 }

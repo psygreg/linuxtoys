@@ -3,6 +3,7 @@
 # version: 1.0
 # description: iwd_desc
 # icon: help-about
+# reboot: yes
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -4,6 +4,7 @@
 # description: pdefaults_desc
 # icon: application-x-executable
 # compat: ubuntu, debian, fedora, suse, arch, ostree
+# reboot: yes
 
 # system-agnostic scripts
 sysag_run () {

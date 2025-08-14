@@ -87,5 +87,8 @@
   "psaver": "Otimizador de Energia",
   "psaver_desc": "Configurações de energia otimizadas para melhor duração da bateria em laptops.",
   "iwd_desc": "Um daemon de rede sem fio moderno para Linux feito pela Intel, que oferece melhor latência e velocidade que o wpa-supplicant. Pode não funcionar com redes corporativas.",
-  "preload_desc": "Um daemon que pré-carrega bibliotecas e binários frequentemente usados na memória para acelerar os tempos de inicialização dos aplicativos."
+  "preload_desc": "Um daemon que pré-carrega bibliotecas e binários frequentemente usados na memória para acelerar os tempos de inicialização dos aplicativos.",
+
+  "nv_desc": "Drivers Nvidia atuais. GPUs suportadas: Maxwell (GT 9xx) em diante.",
+  "nv_desc_470": "Drivers Nvidia legados. GPUs suportadas: Kepler (GT 6xx) e Fermi (GT 7xx)."
 }

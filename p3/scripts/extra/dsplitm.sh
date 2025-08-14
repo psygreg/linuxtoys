@@ -4,6 +4,7 @@
 # description: dsplitm_desc
 # icon: help-about
 # compat: ubuntu, debian, suse, fedora, arch, cachy
+# reboot: yes
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -3,6 +3,7 @@
 # version: 1.0
 # description: sboost_desc
 # icon: help-about
+# reboot: yes
 
 # --- Start of the script code ---
 # patch for Nvidia GPUs
