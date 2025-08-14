@@ -3,10 +3,11 @@
 # version: 1.0
 # description: psypicks_desc
 # icon: psyicon.png
+# compat: ubuntu, debian, fedora, suse, arch, cachy
 
+# --- Start of the script code ---
 # functions
 get_heroic () {
-
     local tag=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     local ver="${tag#v}"
     if command -v dnf &> /dev/null; then
@@ -76,12 +77,9 @@ get_heroic () {
             fi
         fi
     fi
-
 }
-
 # obs pipewire audio capture plugin installation
 obs_pipe () {
-
     if [ ! -d "$HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio" ]; then
         local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
         mkdir obspipe
@@ -104,15 +102,14 @@ obs_pipe () {
         cd ..
         rm -rf obspipe
     fi
-
 }
-
 # runtime
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../libs/helpers.lib"
 if zenity --question --text "$msg280" --height=300 --width=300; then
     if command -v flatpak &> /dev/null && command -v dnf &> /dev/null || command -v flatpak &> /dev/null && command -v apt &> /dev/null || command -v flatpak &> /dev/null && command -v zypper &> /dev/null || command -v flatpak &> /dev/null && command -v pacman &> /dev/null; then
         cd $HOME
@@ -135,6 +132,11 @@ if zenity --question --text "$msg280" --height=300 --width=300; then
         fi
         if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
             packages+=(gnome-tweaks)
+            if command -v flatpak &> /dev/null; then
+                if [ "$ID" == "ubuntu" ]; then
+                    sudo apt install -y gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
+                fi
+            fi
         fi
         _install_
         get_heroic

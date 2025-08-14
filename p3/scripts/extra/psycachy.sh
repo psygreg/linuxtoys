@@ -1,4 +1,11 @@
 #!/bin/bash
+# name: psycachy
+# version: 1.0
+# description: psycachy_desc
+# compat: ubuntu, debian
+# reboot: yes
+
+# --- Start of the script code ---
 lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)"
 std_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^STD-' | sort -Vr | head -n 1)"
 kver_lts="$(echo "$lts_tag" | cut -d'-' -f2-)"
@@ -8,10 +15,8 @@ _kv_url_latest=$(curl -s https://www.kernel.org | grep -A 1 'id="latest_link"' |
 _kv_latest=$(echo $_kv_url_latest | grep -oP 'linux-\K[^"]+')
 # remove the .tar.xz extension
 _kv_latest=$(basename $_kv_latest .tar.xz)
-
 # psycachy standard edition
 psycachy_std () {
-
     cd $HOME
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-headers-psycachy_${kver_psycachy}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-image-psycachy_${kver_psycachy}-1_amd64.deb"
@@ -30,12 +35,9 @@ psycachy_std () {
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
         bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --linuxtoys
     fi
-
 }
-
 # psycachy lts edition
 psycachy_lts () {
-
     cd $HOME
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy-lts_${kver_lts}-1_amd64.deb"
@@ -54,33 +56,15 @@ psycachy_lts () {
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
         bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --lts
     fi
-
 }
-
-# check if any argument was passed
-if [ -n "$1" ]; then
-    case "$1" in
-    --lts | -l)
-        psycachy_lts
-        exit 0
-        ;;
-    --std | -s)
-        psycachy_std
-        exit 0
-        ;;
-    esac
-fi
-
 # menu
 while true; do
-
     CHOICE=$(zenity --list --title "Psycachy Kernel Installer" --text "Select the kernel version to install:" \
         --column "Versions" \
         "Standard" \
         "LTS" \
-        "Latest (CachyOS, may not work)" \
         "Cancel" \
-        --width 360 --height 360 )
+        --width 300 --height 330 )
 
     if [ $? -ne 0 ]; then
         exit 0
@@ -89,7 +73,6 @@ while true; do
     case $CHOICE in
     Standard) psycachy_std && exit 0 ;;
     LTS) psycachy_lts && exit 0 ;;
-    Latest) bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/src/cachyos-deb.sh) && exit 1 ;;
     Cancel | q) exit 2 ;;
     *) echo "Invalid Option" ;;
     esac
