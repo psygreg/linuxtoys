@@ -1,0 +1,6 @@
+# LinuxToys Manifest File
+# List the names of scripts to run sequentially, one per line
+# Lines starting with # are comments and will be ignored
+
+# Example scripts (modify as needed):
+about

@@ -10,6 +10,7 @@ import json
 from .window import AppWindow
 from .compat import get_system_compat_keys, script_is_compatible
 from .lang_utils import load_translations, create_translator
+from .cli_helper import run_manifest_mode
 
 
 class Application(Gtk.Application):
@@ -40,6 +41,11 @@ translations = load_translations()  # Auto-detect language from lang_utils
 _ = create_translator()  # Create translator function from lang_utils
 
 def run():
+    # Check for CLI manifest mode
+    if os.environ.get('LT_MANIFEST') == '1':
+        # Run in CLI mode using manifest.txt
+        sys.exit(run_manifest_mode(translations))
+    
     # FIX: Set the application icon before running
     # Make sure you have an icon at 'app/icons/app-icon.png'
     icon_path = os.path.abspath("app/icons/app-icon.png")
