@@ -7,6 +7,7 @@
 
 # --- Start of the script code ---
 # when there are updates, make sure to edit the .desktop files in resources/godot as well!
+. /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_

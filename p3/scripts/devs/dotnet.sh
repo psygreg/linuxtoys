@@ -6,6 +6,7 @@
 # compat: fedora, suse, ostree, debian, ubuntu, ublue
 
 # --- Start of the script code ---
+. /etc/os-release
 # I am aware there is an AUR package for this. But AUR packages cannot be presumed safe, and it is not officially supported by Microsoft.
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
