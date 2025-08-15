@@ -93,9 +93,32 @@
   "psycachy_desc": "Um kernel modificado com patches portados do CachyOS juntamente com correções para melhor compatibilidade e estabilidade no Debian/Ubuntu.",
   "lsw": "Subsistema Linux para Windows",
   "lsw_desc": "Instala o Windows no Linux por um container do Docker (ou Podman para distros Fedora atômicas). Compatível com WinApps. NÃO possui aceleração de GPU.",
+  "btassist_desc": "Um gerenciador de snapshots e subvolumes Btrfs. Usa o snapper como back-end.",
 
   "nv_desc": "Drivers Nvidia atuais. GPUs suportadas: Maxwell (GT 9xx) em diante.",
   "nv_desc_470": "Drivers Nvidia legados. GPUs suportadas: Kepler (GT 6xx) e Fermi (GT 7xx).",
+  "rocm_desc": "Drivers ROCm para GPUs AMD. Suporta a arquitetura RDNA e mais recentes.",
+  "icr_desc": "Drivers Intel Compute Runtime para cargas computacionais em GPUs Intel.",
+  "rusticl_desc": "Uma implementação da comunidade baseada em Rust do padrão OpenCL, proporcionando melhor desempenho e compatibilidade. Deve ser usada apenas se sua GPU não for suportada pelo ROCm, CUDA ou Intel Compute Runtime.",
 
-  "flat_desc": "O repositório principal para aplicativos Flatpak, com muitos aplicativos exclusivos."
+  "flat_desc": "O repositório principal para aplicativos Flatpak, com muitos aplicativos exclusivos.",
+  "brew_desc": "Um gerenciador de pacotes de ferramentas CLI para macOS/Linux.",
+  "chaotic_desc": "Um repositório mantido e curado pela comunidade para usuários do Arch Linux.",
+  "rpmfusion_desc": "Um repositório que fornece pacotes adicionais para Fedora e RHEL.",
+
+  "obs_desc": "Um popular software de streaming e gravação de código aberto.",
+  "mctl_desc": "Um monitor de sistema para Linux semelhante ao Gerenciador de Tarefas do Windows, baseado em GTK4.",
+  "sc_desc": "Uma ferramenta para configurar Stream Decks e dispositivos semelhantes.",
+  "oprgb_desc": "Uma ferramenta para configurar e gerenciar iluminação RGB no Linux, suportando vários dispositivos e plataformas.",
+  "hndbrk_desc": "Conversor de vídeo open source com suporte a muitos formatos e codecs.",
+  "fseal_desc": "Uma interface gráfica para gerenciar permissões do Flatpak.",
+  "wrhs_desc": "Uma ferramenta rica em recursos para gerenciar aplicativos e repositórios Flatpak, voltada para usuários mais técnicos.",
+  "qpw_desc": "Uma ferramenta gráfica para gerenciar conexões de áudio do PipeWire.",
+  "efx_desc": "Uma poderosa ferramenta de processamento de áudio para Pipewire que oferece desde filtragem de ruído até áudio espacial.",
+  "waydroid_desc": "Uma abordagem baseada em container para o Android no Linux.",
+  "lact_desc": "Controle de ventoinhas e overclocking para GPUs. Use com cautela!",
+  "oprzr_desc": "Um driver e daemon feito pela comunidade para periféricos Razer.",
+  "slar_desc": "Um gerenciador de dispositivos Linux para o Receptor Unifying da Logitech e outros dispositivos suportados.",
+
+  "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web."
 }

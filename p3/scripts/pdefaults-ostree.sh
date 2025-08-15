@@ -7,6 +7,13 @@
 # reboot: ostree
 
 # --- Start of the script code ---
+. /etc/os-release
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+source "$SCRIPT_DIR/../libs/optimizers.lib"
+# language
+_lang_
+source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # functions
 optimizer () {
     if [ ! -f /.autopatch.state ]; then
@@ -84,14 +91,6 @@ end_msg () {
         zenity --info --title "$msg006" --text "$msg036" --height=300 --width=300
     fi
 }
-# runtime
-. /etc/os-release
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
-source "$SCRIPT_DIR/../libs/optimizers.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # menu
 while true; do
     CHOICE=$(zenity --list --title="Power Optimizer" \

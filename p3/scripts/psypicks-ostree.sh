@@ -6,6 +6,12 @@
 # reboot: ostree
 
 # --- Start of the script code ---
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+# language
+_lang_
+source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../libs/helpers.lib"
 # functions
 get_heroic () {
     local tag=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -52,13 +58,6 @@ obs_pipe () {
         rm -rf obspipe
     fi
 }
-# runtime
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/../libs/helpers.lib"
 if zenity --question --text "$msg280" --height=300 --width=300; then
     if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
         cd $HOME

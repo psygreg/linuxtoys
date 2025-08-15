@@ -7,6 +7,13 @@
 # reboot: yes
 
 # --- Start of the script code ---
+. /etc/os-release
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+source "$SCRIPT_DIR/../libs/optimizers.lib"
+# language
+_lang_
+source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # system-agnostic scripts
 sysag_run () {
     if [[ "$ID" != "cachyos" ]]; then
@@ -53,14 +60,6 @@ optimizer () {
         nonfatal "$msg234"
     fi
 }
-# runtime
-. /etc/os-release
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
-source "$SCRIPT_DIR/../libs/optimizers.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # menu
 while true; do
     CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \

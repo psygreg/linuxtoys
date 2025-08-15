@@ -1,9 +1,16 @@
 #!/bin/bash
+# name: Docker
+# version: 1.0
+# description: docker_desc
+# icon: docker
+# compat: fedora, suse, ubuntu, debian, arch, cachy
+
+# --- Start of the script code ---
+. /etc/os-release
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
 # functions
-
-# install docker and portainer CE
 docker_in () {
-
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
         local _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog git iproute2 libnotify-bin)
         insta ca-certificates curl
@@ -41,14 +48,8 @@ docker_in () {
     sleep 2
     sudo docker volume create portainer_data
     sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
-
 }
-
-# runtime
-. /etc/os-release
-source <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/linuxtoys.lib)
-dep_check
-if zenity --question --text "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" --width 360 --height 300; then
+if zenity --question --title "Docker + Portainer CE Setup" --text "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" --width 360 --height 300; then
     docker_in
     zeninf "Setup complete. Your Portainer dashboard will open in your web browser now."
     xdg-open https://localhost:9443

@@ -6,6 +6,7 @@
 # compat: suse, fedora, ostree
 
 # --- Start of the script code ---
+. /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
