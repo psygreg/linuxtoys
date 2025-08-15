@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: .NET SDK
 # version: 1.0
-# description: .NET SDK for building applications and games
+# description: dotnet_desc
 # icon: dotnet
 # compat: fedora, suse, ostree, debian, ubuntu, ublue
 

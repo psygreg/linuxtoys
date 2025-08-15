@@ -2,7 +2,7 @@
 # name: Godot Engine 4 Sharp
 # version: 1.0
 # description: godotsharp_desc
-# icon: godot-sharp
+# icon: godot
 # compat: fedora, ubuntu, debian, ostree, ublue, suse
 
 # --- Start of the script code ---
