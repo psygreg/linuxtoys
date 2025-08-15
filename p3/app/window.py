@@ -65,8 +65,8 @@ class AppWindow(Gtk.ApplicationWindow):
         self._check_ostree_deployments_on_startup()
 
         # --- Show the Window ---
-        self.show_categories_view()
         self.show_all()
+        self.show_categories_view()  # Call this after show_all to ensure proper visibility state
 
         # Connect focus events to enable/disable tooltips
         self.connect('focus-in-event', self._on_focus_in)
@@ -472,6 +472,8 @@ class AppWindow(Gtk.ApplicationWindow):
         self.header_widget.show()
         self.footer_widget.show()
         self.footer_widget.show_menu_footer()
+        # Ensure footer has proper spacing
+        self.footer_widget.set_margin_bottom(0)
 
     def show_scripts_view(self, category_name):
         """Switches to the view showing scripts in a category."""
@@ -486,5 +488,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if category_info and category_info.get('mode', 'menu') == 'checklist':
             self.footer_widget.show()
             self.footer_widget.show_checklist_footer()
+            # Ensure footer has proper spacing for checklist mode
+            self.footer_widget.set_margin_bottom(0)
         else:
             self.footer_widget.hide()

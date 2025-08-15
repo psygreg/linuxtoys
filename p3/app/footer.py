@@ -51,7 +51,7 @@ def create_footer():
     final_separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
 
     # Create a vertical box to hold the links and the top separator
-    main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+    main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
     main_vbox.pack_start(final_separator, False, False, 0)
     # Main menu footer section (use new widget instances)
     main_vbox.menu_footer_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
@@ -94,8 +94,8 @@ def create_footer():
     def show_menu_footer():
         main_vbox.menu_footer_box.set_margin_bottom(8)
         main_vbox.checklist_button_box.set_margin_bottom(0)
-        main_vbox.menu_footer_box.show()
         main_vbox.checklist_button_box.hide()
+        main_vbox.menu_footer_box.show()
     def show_checklist_footer():
         main_vbox.menu_footer_box.set_margin_bottom(0)
         main_vbox.checklist_button_box.set_margin_bottom(12)
