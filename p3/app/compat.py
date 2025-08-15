@@ -36,6 +36,16 @@ def get_system_compat_keys():
 
     return keys
 
+def get_current_locale():
+    """
+    Get the current system locale (language code).
+    Returns the detected language code (e.g., 'en', 'pt').
+    """
+    import os
+    # Get language from LANG environment variable (first 2 characters)
+    lang = os.environ.get('LANG', 'en_US')[:2]
+    return lang
+
 def script_is_compatible(script_path, compat_keys):
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
@@ -49,3 +59,23 @@ def script_is_compatible(script_path, compat_keys):
     except Exception:
         pass
     return True  # If no compat header, show by default
+
+def script_is_localized(script_path, current_locale):
+    """
+    Check if a script should be shown for the current locale.
+    Returns True if:
+    - No 'localize' header is present (show by default)
+    - 'localize' header contains the current locale
+    """
+    try:
+        with open(script_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.startswith('# localize:'):
+                    localize_line = line[len('# localize:'):].strip()
+                    localize_keys = set([k.strip().lower() for k in localize_line.split(',')])
+                    return current_locale.lower() in localize_keys
+                if not line.startswith('#'):
+                    break
+    except Exception:
+        pass
+    return True  # If no localize header, show by default

@@ -1,6 +1,6 @@
 import os
 
-from .compat import get_system_compat_keys, script_is_compatible
+from .compat import get_system_compat_keys, script_is_compatible, get_current_locale, script_is_localized
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
 
@@ -67,6 +67,10 @@ def get_categories(translations=None):
     if not os.path.isdir(SCRIPTS_DIR):
         return categories
 
+    # Get system compatibility and locale
+    compat_keys = get_system_compat_keys()
+    current_locale = get_current_locale()
+
     # Add each root script as its own category using header info
     for file_name in os.listdir(SCRIPTS_DIR):
         file_path = os.path.join(SCRIPTS_DIR, file_name)
@@ -78,9 +82,10 @@ def get_categories(translations=None):
                 'reboot': 'no'
             }
             header = _parse_metadata_file(file_path, defaults, translations)
-            # Filter by compatibility
-            compat_keys = get_system_compat_keys()
+            # Filter by compatibility and locale
             if not script_is_compatible(file_path, compat_keys):
+                continue
+            if not script_is_localized(file_path, current_locale):
                 continue
             categories.append({
                 'name': header.get('name', file_name),
@@ -119,9 +124,19 @@ def get_scripts_for_category(category_path, translations=None):
     if not os.path.isdir(category_path):
         return scripts
 
+    # Get system compatibility and locale
+    compat_keys = get_system_compat_keys()
+    current_locale = get_current_locale()
+
     for file_name in os.listdir(category_path):
         if file_name.endswith('.sh'):
             file_path = os.path.join(category_path, file_name)
+            
+            # Filter by compatibility and locale
+            if not script_is_compatible(file_path, compat_keys):
+                continue
+            if not script_is_localized(file_path, current_locale):
+                continue
             
             defaults = {
                 'name': 'No Name', 'version': 'N/A',
