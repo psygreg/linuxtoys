@@ -1,40 +1,45 @@
 from email import header
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
-
 import sys
 import os
 import json
 
-from .window import AppWindow
+# Only import GTK-related modules if not in CLI mode
+if os.environ.get('LT_MANIFEST') != '1':
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk
+    from .window import AppWindow
+
 from .compat import get_system_compat_keys, script_is_compatible
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
+from .update_helper import run_update_check
 
 
-class Application(Gtk.Application):
-    def __init__(self, translations, *args, **kwargs):
-        super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)
-        self.window = None
-        self.translations = translations
+# Only define GUI classes if not in CLI mode
+if os.environ.get('LT_MANIFEST') != '1':
+    class Application(Gtk.Application):
+        def __init__(self, translations, *args, **kwargs):
+            super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)
+            self.window = None
+            self.translations = translations
 
-    def do_activate(self):
-        if not self.window:
-            self.window = AppWindow(self, self.translations)
-            self.load_css()
-        self.window.present()
+        def do_activate(self):
+            if not self.window:
+                self.window = AppWindow(self, self.translations)
+                self.load_css()
+            self.window.present()
 
-    def load_css(self):
-        try:
-            css_provider = Gtk.CssProvider()
-            css_provider.load_from_path('app/style.css')
-            screen = Gdk.Screen.get_default()
-            Gtk.StyleContext.add_provider_for_screen(
-                screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-            )
-        except Exception as e:
-            print(f"Error loading CSS: {e}")
+        def load_css(self):
+            try:
+                css_provider = Gtk.CssProvider()
+                css_provider.load_from_path('app/style.css')
+                screen = Gdk.Screen.get_default()
+                Gtk.StyleContext.add_provider_for_screen(
+                    screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+            except Exception as e:
+                print(f"Error loading CSS: {e}")
 
 # Use lang_utils for all translation functionality
 translations = load_translations()  # Auto-detect language from lang_utils
@@ -45,6 +50,13 @@ def run():
     if os.environ.get('LT_MANIFEST') == '1':
         # Run in CLI mode using manifest.txt
         sys.exit(run_manifest_mode(translations))
+    
+    # In GUI mode, use the new GitHub API-based update checker
+    # This works for both git-cloned and packaged versions
+    try:
+        run_update_check(show_dialog=True, verbose=False, translations=translations)
+    except Exception as e:
+        print(f"Update check failed: {e}")
     
     # FIX: Set the application icon before running
     # Make sure you have an icon at 'app/icons/app-icon.png'

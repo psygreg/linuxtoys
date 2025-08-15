@@ -3,6 +3,8 @@ import sys
 import subprocess
 from .parser import get_categories, get_scripts_for_category
 from .compat import get_system_compat_keys, script_is_compatible
+from .update_helper import run_update_check
+from .reboot_helper import check_ostree_pending_deployments
 
 
 def find_script_by_name(script_name, translations=None):
@@ -83,13 +85,109 @@ def run_script(script_info):
         return 1
 
 
+def run_update_check_cli(translations=None):
+    """
+    CLI function to check for updates.
+    """
+    print("LinuxToys Update Checker")
+    print("=" * 40)
+    
+    # Run update check with verbose output and no dialog
+    return run_update_check(show_dialog=False, verbose=True, translations=translations)
+
+
+def check_ostree_deployment_cli(translations=None):
+    """
+    CLI function to check for pending ostree deployments and handle reboot requirement.
+    
+    Returns:
+        bool: True if user chose to continue despite pending deployments, 
+              False if user chose to exit/reboot
+    """
+    print("Checking for pending system updates...")
+    
+    if not check_ostree_pending_deployments():
+        return True  # No pending deployments, continue normally
+    
+    # Use translations if available, fallback to English
+    title = translations.get('ostree_deployment_title', 'Pending System Updates') if translations else 'Pending System Updates'
+    message = translations.get('ostree_deployment_message', 
+        'Your system has pending updates that require a reboot to complete. You must reboot your computer to apply these changes before installing additional features.'
+    ) if translations else 'Your system has pending updates that require a reboot to complete. You must reboot your computer to apply these changes before installing additional features.'
+    
+    reboot_now_text = translations.get('reboot_now_btn', 'Reboot Now') if translations else 'Reboot Now'
+    reboot_later_text = translations.get('reboot_later_btn', 'Reboot Later') if translations else 'Reboot Later'
+    
+    print("\n" + "=" * 60)
+    print(f"WARNING: {title.upper()}")
+    print("=" * 60)
+    print(message)
+    print()
+    print("Options:")
+    print(f"  1. {reboot_now_text} (recommended)")
+    print(f"  2. Exit LinuxToys and {reboot_later_text.lower()}")
+    print("  3. Continue anyway (not recommended)")
+    print()
+    
+    while True:
+        try:
+            choice = input("Please choose an option [1/2/3]: ").strip()
+            
+            if choice == '1':
+                # Attempt to reboot the system
+                print("Initiating system reboot...")
+                try:
+                    subprocess.run(['systemctl', 'reboot'], check=True)
+                    return False  # This line shouldn't be reached if reboot succeeds
+                except subprocess.CalledProcessError as e:
+                    print(f"Error: Failed to initiate reboot: {e}")
+                    print("Please reboot manually using your system's power menu.")
+                    return False
+                except Exception as e:
+                    print(f"Error: An error occurred while trying to reboot: {e}")
+                    print("Please reboot manually using your system's power menu.")
+                    return False
+                    
+            elif choice == '2':
+                # Exit the application
+                print(f"Exiting LinuxToys. Please reboot your system and try again.")
+                return False
+                
+            elif choice == '3':
+                # Continue despite warning
+                print("Warning: Continuing without rebooting may cause issues.")
+                print("Some scripts may not work correctly until you reboot.")
+                return True
+                
+            else:
+                print("Invalid choice. Please enter 1, 2, or 3.")
+                
+        except KeyboardInterrupt:
+            print("\n\nOperation cancelled. Exiting LinuxToys.")
+            return False
+        except EOFError:
+            print("\n\nInput ended. Exiting LinuxToys.")
+            return False
+
+
 def run_manifest_mode(translations=None):
     """
     Main function for CLI manifest mode.
     Loads the manifest, finds scripts, checks compatibility, and runs them sequentially.
     """
+    # Check if user wants to run update check
+    if len(sys.argv) > 1 and sys.argv[1] in ['check-updates', 'update-check', '--check-updates']:
+        return 1 if run_update_check_cli(translations) else 0
+    
     print("LinuxToys CLI Manifest Mode")
     print("=" * 40)
+    
+    # Check for pending ostree deployments on compatible systems
+    system_compat_keys = get_system_compat_keys()
+    if {'ostree', 'ublue'} & system_compat_keys:
+        if not check_ostree_deployment_cli(translations):
+            # User chose to exit or reboot
+            return 0
     
     # Load script names from manifest
     script_names = load_manifest()

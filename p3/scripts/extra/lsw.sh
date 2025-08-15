@@ -3,6 +3,7 @@
 # version: 1.0
 # description: lsw_desc
 # compat: ubuntu, debian, fedora, arch, cachy, suse
+# noconfirm: yes
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

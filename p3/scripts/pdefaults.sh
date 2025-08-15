@@ -5,6 +5,7 @@
 # icon: application-x-executable
 # compat: ubuntu, debian, fedora, suse, arch, cachy
 # reboot: yes
+# noconfirm: yes
 
 # --- Start of the script code ---
 . /etc/os-release

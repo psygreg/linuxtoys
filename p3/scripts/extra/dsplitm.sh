@@ -15,9 +15,7 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/optimizers.lib"
 . /etc/os-release
 if [ ! -f "$HOME/.local/.autopatch.state" ]; then
-    if zenity --question --text "$msg042" --width 360 --height 300; then
-        dsplitm_lib
-    fi
+    dsplitm_lib
 else
     nonfatal "$msg234"
 fi

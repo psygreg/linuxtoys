@@ -5,6 +5,7 @@
 # icon: help-about
 # compat: ubuntu, debian, fedora, ostree, ublue, cachy, arch
 # reboot: ostree
+# noconfirm: yes
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -4,6 +4,7 @@
 # description: psycachy_desc
 # compat: ubuntu, debian
 # reboot: yes
+# noconfirm: yes
 
 # --- Start of the script code ---
 lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)"

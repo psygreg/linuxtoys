@@ -8,6 +8,7 @@ from . import parser
 from . import header
 from . import footer
 from . import checklist_helper
+from . import confirm_helper
 from . import compat
 from . import reboot_helper
 
@@ -60,6 +61,9 @@ class AppWindow(Gtk.ApplicationWindow):
         
         self.back_button.connect("clicked", self.on_back_button_clicked)
 
+        # --- Check for pending ostree deployments ---
+        self._check_ostree_deployments_on_startup()
+
         # --- Show the Window ---
         self.show_categories_view()
         self.show_all()
@@ -67,6 +71,33 @@ class AppWindow(Gtk.ApplicationWindow):
         # Connect focus events to enable/disable tooltips
         self.connect('focus-in-event', self._on_focus_in)
         self.connect('focus-out-event', self._on_focus_out)
+
+    def _check_ostree_deployments_on_startup(self):
+        """
+        Check for pending ostree deployments on application startup.
+        If found on compatible systems, show warning dialog.
+        """
+        # Get system compatibility keys
+        system_compat_keys = compat.get_system_compat_keys()
+        
+        # Only check on ostree-based systems
+        if {'ostree', 'ublue'} & system_compat_keys:
+            if reboot_helper.check_ostree_pending_deployments():
+                # Use GLib.idle_add to ensure the dialog shows after the window is fully initialized
+                from gi.repository import GLib
+                GLib.idle_add(self._show_ostree_deployment_warning)
+
+    def _show_ostree_deployment_warning(self):
+        """
+        Show the ostree deployment warning dialog.
+        Called via GLib.idle_add to ensure proper timing.
+        """
+        reboot_helper.handle_ostree_deployment_requirement(
+            self, 
+            self.translations, 
+            self._close_application
+        )
+        return False  # Remove from idle callbacks
 
     def _set_tooltips_enabled(self, enabled):
         # Categories
@@ -228,7 +259,8 @@ class AppWindow(Gtk.ApplicationWindow):
         checklist_helper.handle_install_checklist(
             self.check_buttons, 
             self, 
-            self._on_dialog_closed
+            self._on_dialog_closed,
+            self.translations
         )
 
     def run_script_with_callback(self, script_info, callback):
@@ -297,6 +329,10 @@ class AppWindow(Gtk.ApplicationWindow):
         # If this is a root script (shown as a category), execute it directly
         if info.get('is_script'):
             if not self.script_is_running:
+                # Show confirmation dialog before executing root script
+                if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
+                    return  # User cancelled
+                    
                 self.script_is_running = True
                 dialog = Gtk.Dialog(title=f"Running \"{info['name']}\"", transient_for=self, flags=0)
                 close_button = dialog.add_button("Close", Gtk.ResponseType.CLOSE)
@@ -331,8 +367,13 @@ class AppWindow(Gtk.ApplicationWindow):
             self._show_reboot_warning_dialog()
             return
 
-        self.script_is_running = True
         info = widget.info
+        
+        # Show confirmation dialog before executing script
+        if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
+            return  # User cancelled
+        
+        self.script_is_running = True
         
         dialog = Gtk.Dialog(title=f"Running \"{info['name']}\"", transient_for=self, flags=0)
         # FIX 1: Get a direct reference to the button here in the main thread.

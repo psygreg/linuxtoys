@@ -5,6 +5,7 @@
 # icon: application-x-executable
 # compat: ostree, ublue
 # reboot: ostree
+# noconfirm: yes
 
 # --- Start of the script code ---
 . /etc/os-release

@@ -6,11 +6,13 @@ from app import main
 
 if __name__ == "__main__":
     # --- UPDATE CHECK ---
-    # Before launching the GUI, run the updater script.
-    # The updater will handle all logic, including restarting if necessary.
-    # If there are no updates, it will exit and the code below will run.
-    os.system('./helpers/update_self.sh')
+    # Only run git-based updater in CLI mode (when LT_MANIFEST is set)
+    # This preserves the git-based update functionality for development/git-cloned versions
+    # when used in CLI mode, while GUI mode uses the new GitHub API-based checker
+    if os.environ.get('LT_MANIFEST') == '1':
+        # In CLI mode, use the git-based updater for development versions
+        os.system('./helpers/update_self.sh')
 
     # --- LAUNCH GUI ---
-    # This part only runs if the updater script exits normally.
+    # This part runs after any CLI-mode updates, or immediately for GUI mode
     sys.exit(main.run())

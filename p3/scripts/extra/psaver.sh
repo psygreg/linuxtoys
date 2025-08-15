@@ -14,10 +14,8 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/optimizers.lib"
 . /etc/os-release
 if [ ! -f "$HOME/.local/.autopatch.state" ]; then
-    if zenity --question --text "$msg176" --width 360 --height 300; then
-        sudo_rq
-        psave_lib
-    fi
+    sudo_rq
+    psave_lib
 else
     nonfatal "$msg234"
 fi

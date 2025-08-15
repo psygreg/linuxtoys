@@ -58,27 +58,25 @@ obs_pipe () {
         rm -rf obspipe
     fi
 }
-if zenity --question --text "$msg280" --height=300 --width=300; then
-    if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
-        cd $HOME
-        mkdir psypicks || exit 1
-        cd psypicks || exit 1
-        sudo_rq
-        rpmfusion_chk
-        packages=(steam steam-devices lutris vlc)
-        if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
-            packages+=(gnome-tweaks)
-        fi
-        _install_
-        get_heroic
-        flatpaks=(org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord)
-        if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
-            flatpaks+=(com.mattjakeman.ExtensionManager)
-        fi
-        _flatpak_
-        obs_pipe
-        zenity --info --text "$msg036" --height=300 --width=300
-    else
-        nonfatal "$msg077"
+if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
+    cd $HOME
+    mkdir psypicks || exit 1
+    cd psypicks || exit 1
+    sudo_rq
+    rpmfusion_chk
+    packages=(steam steam-devices lutris vlc)
+    if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
+        packages+=(gnome-tweaks)
     fi
+    _install_
+    get_heroic
+    flatpaks=(org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord)
+    if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
+        flatpaks+=(com.mattjakeman.ExtensionManager)
+    fi
+    _flatpak_
+    obs_pipe
+    zenity --info --text "$msg036" --height=300 --width=300
+else
+    fatal "$msg077"
 fi

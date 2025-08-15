@@ -4,6 +4,7 @@
 # description: swapfile_desc
 # icon: help-about
 # compat: ubuntu, debian, arch
+# noconfirm: yes
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

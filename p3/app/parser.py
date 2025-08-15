@@ -79,7 +79,8 @@ def get_categories(translations=None):
                 'name': file_name,
                 'description': 'No Description.',
                 'icon': 'application-x-executable',
-                'reboot': 'no'
+                'reboot': 'no',
+                'noconfirm': 'no'
             }
             header = _parse_metadata_file(file_path, defaults, translations)
             # Filter by compatibility and locale
@@ -142,7 +143,8 @@ def get_scripts_for_category(category_path, translations=None):
                 'name': 'No Name', 'version': 'N/A',
                 'description': 'No Description.',
                 'icon': 'application-x-executable',
-                'reboot': 'no'
+                'reboot': 'no',
+                'noconfirm': 'no'
             }
             scripts.append(_parse_metadata_file(file_path, defaults, translations))
 

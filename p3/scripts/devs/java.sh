@@ -3,6 +3,7 @@
 # version: 1.0
 # description: java_desc
 # icon: java
+# noconfirm: yes
 
 # --- Start of the script code ---
 . /etc/os-release
