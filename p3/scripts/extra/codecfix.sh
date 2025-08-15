@@ -17,7 +17,7 @@ source "$SCRIPT_DIR/../../libs/helpers.lib"
 if zenity --question --text "$msg080" --width 360 --height 300; then
     sudo_rq
     if [[ "$ID_LIKE" == *suse* ]]; then
-        insta opi
+        sudo zypper in -y opi
         sudo opi codecs
         zeninf "$msg018"
     elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
