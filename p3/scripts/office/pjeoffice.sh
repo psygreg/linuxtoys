@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: PJeOffice Pro
 # version: 1.0
-# description: Um software disponibilizado gratuitamente pelo Conselho Nacional de Justiça (CNJ) para acesso ao PJE via certificado digital e assinatura eletrônica de documentos.
+# description: Um software disponibilizado gratuitamente pelo Conselho Nacional de Justiça (CNJ) do Brasil para acesso ao PJE via certificado digital e assinatura eletrônica de documentos.
 # icon: pjeoffice
 # compat: debian, ubuntu
 # localize: pt
