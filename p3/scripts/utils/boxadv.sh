@@ -10,6 +10,7 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../../libs/helpers.lib"
 sudo_rq
 if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
     _packages=(distrobox podman pcsc-lite pcsc-lite-ccid)
@@ -23,4 +24,6 @@ fi
 _install_ 
 sudo systemctl enable --now pcscd.service
 distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br
+flatpak_in_lib
+flatpak install --or-update -user --noninteractive com.ranfdev.DistroShelf
 zeninf "$msg018"
