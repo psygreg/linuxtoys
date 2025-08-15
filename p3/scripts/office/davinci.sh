@@ -6,7 +6,6 @@
 # functions
 #create JSON, user agent and download Resolve
 getresolve () {
-
   	local pkgname="$_upkgname"
   	local major_version="20.1"
   	local minor_version="0"
@@ -72,11 +71,9 @@ getresolve () {
     		"$_siteurl")
 
   	curl -L -o "${_archive_name}.zip" "$_srcurl"
-
 }
 
 davincinatd () {
-
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
         wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
         chmod +x autoresolvedeb.sh
@@ -98,22 +95,18 @@ davincinatd () {
         ./autoresolverpm.sh
         rm autoresolverpm.sh
     fi
-
 }
 
 davinciboxd () {
-
     wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autodavincibox.sh
     chmod +x autodavincibox.sh
     ./autodavincibox.sh
     rm autodavincibox.sh
-
 }
 
 davinciboxatom () {
 
     dv_atom_deps () {
-
         local _packages=(toolbox podman lshw)
         local amdGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
         local nvGPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
@@ -161,12 +154,10 @@ davinciboxatom () {
                     | sudo tee -a /etc/environment > /dev/null
             fi
         fi
-
     }
 
     # installation
     dv_atom_in () {
-
         dv_atom_deps
         git clone https://github.com/zelikos/davincibox.git
         sleep 1
@@ -178,7 +169,6 @@ davinciboxatom () {
 	    zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
         cd ..
         rm -rf davincibox
-
     }
 
     if [[ "$ID" == "bazzite" ]] || [[ "$ID" == "aurora" ]] || [[ "$ID" == "bluefin" ]]; then

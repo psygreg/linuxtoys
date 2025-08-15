@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Heroic Games Launcher (Startup)
-Exec=/usr/bin/flatpak run com.heroicgameslauncher.hgl
-Icon=com.heroicgameslauncher.hgl
-MimeType=x-scheme-handler/steam;x-scheme-handler/steamlink;
-NoDisplay=false
-Path=
-Terminal=false
-Type=Application

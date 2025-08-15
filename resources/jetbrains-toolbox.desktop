@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=JetBrains Toolbox
-Exec=/opt/toolbox/jetbrains-toolbox
+Exec=$HOME/.local/toolbox/jetbrains-toolbox
 Icon=jetbrains-toolbox
 StartupNotify=false
 Terminal=false

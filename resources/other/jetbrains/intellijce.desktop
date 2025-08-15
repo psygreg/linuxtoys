@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=IntelliJ IDEA CE
-Type=Application
-Exec=/opt/idea-IC/bin/idea
-Terminal=false
-Icon=/opt/idea-IC/bin/idea.png
-Comment=Jetbrains IDE for Java/Kotlin
-NoDisplay=false
-Categories=Development

@@ -120,5 +120,18 @@
   "oprzr_desc": "Um driver e daemon feito pela comunidade para periféricos Razer.",
   "slar_desc": "Um gerenciador de dispositivos Linux para o Receptor Unifying da Logitech e outros dispositivos suportados.",
 
-  "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web."
+  "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web.",
+  "mise_desc": "Assim como asdf (ou nvm ou pyenv, mas para qualquer linguagem), ele gerencia ferramentas de desenvolvimento como node, python, cmake, terraform e centenas mais. Substitui PyEnv, NVM, e os instaladores Java JDK e Maven desta seção.",
+  "nvm_desc": "Um gerenciador de versões para Node.js, permitindo que você alterne facilmente entre diferentes versões. Inclui Node.js, NPM e Yarn. Não é necessário se utilizar Mise.",
+  "pyenv_desc": "Uma ferramenta de gerenciamento de versões para Python. Não é necessária se utilizar Mise.",
+  "java_desc": "Menu de instalação do Java JDK. Não é necessário se utilizar Mise.",
+  "mvn_desc": "Uma ferramenta de automação de builds usada principalmente para projetos Java. Não é necessária se utilizar Mise.",
+  "droidstd_desc": "IDE e kit de ferramentas para desenvolvimento Android.",
+  "postman_desc": "Uma poderosa ferramenta de teste de APIs.",
+  "insomnia_desc": "Um poderoso cliente REST API com uma interface elegante.",
+  "httpie_desc": "Um cliente HTTP de linha de comando amigável ao usuário.",
+  "nvim_desc": "Um editor de texto em CLI moderno e extensível, baseado no Vim.",
+  "code_desc": "Um editor de código poderoso e repleto de recursos da Microsoft.",
+  "codium_desc": "Uma versão de código aberto do Visual Studio Code, baseada no VSCode-OSS.",
+  "jbtb_desc": "Uma ferramenta para gerenciar instalações de IDEs da JetBrains."
 }

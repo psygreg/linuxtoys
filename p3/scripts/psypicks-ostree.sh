@@ -18,15 +18,15 @@ get_heroic () {
     local ver="${tag#v}"
     if ! rpm -qi "heroic" 2>/dev/null; then
         wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
-        rpm-ostree install "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
+        sudo rpm-ostree install "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
         rm "Heroic-${ver}-linux-x86_64.rpm"
     else
         # update if already installed
         local hostver=$(rpm -qi "heroic" 2>/dev/null | grep "^Version" | awk '{print $3}')
         if [[ "$hostver" != "$ver" ]]; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
-            rpm-ostree remove heroic
-            rpm-ostree install "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
+            sudo rpm-ostree remove heroic
+            sudo rpm-ostree install "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
             rm "Heroic-${ver}-linux-x86_64.rpm"
         else
             zenity --info --text "$msg281" --height=300 --width=300

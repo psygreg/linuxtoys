@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=RustRover
-Type=Application
-Exec=/opt/rustrover/bin/rustrover
-Terminal=false
-Icon=/opt/rustrover/bin/rustrover.png
-Comment=Jetbrains IDE for Rust
-NoDisplay=false
-Categories=Development

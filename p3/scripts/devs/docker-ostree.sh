@@ -7,7 +7,7 @@
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 if zenity --question --title "Docker + Portainer CE Setup" --text "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" --width 360 --height 300; then
     cd $HOME
     sudo_rq

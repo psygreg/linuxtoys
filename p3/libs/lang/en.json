@@ -122,5 +122,18 @@
   "oprzr_desc": "A community-made driver and daemon for Razer peripherals.",
   "slar_desc": "A Linux device manager for Logitech's Unifying Receiver and other supported devices.",
 
-  "docker_desc": "The open source container service provider and basic tools for it, like docker-compose. Includes a container with Portainer CE for managing Docker from a web UI."
+  "docker_desc": "The open source container service provider and basic tools for it, like docker-compose. Includes a container with Portainer CE for managing Docker from a web UI.",
+  "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",
+  "nvm_desc": "A version manager for Node.js, allowing you to easily switch between different versions. Includes Node.js, NPM and Yarn. Not needed if using Mise.",
+  "pyenv_desc": "A Python version management tool. Not needed if using Mise.",
+  "java_desc": "Java JDK installation menu. Not needed if using Mise.",
+  "mvn_desc": "A build automation tool used primarily for Java projects. Not needed if using Mise.",
+  "droidstd_desc": "IDE and toolkit for Android development.",
+  "postman_desc": "A powerful API testing tool.",
+  "insomnia_desc": "A powerful REST API client with a sleek interface.",
+  "httpie_desc": "A user-friendly command-line HTTP client.",
+  "nvim_desc": "A powerful CLI-based text editor for developers.",
+  "code_desc": "A powerful and feature-rich code editor by Microsoft.",
+  "codium_desc": "An open-source version of Visual Studio Code, based on VSCode-OSS.",
+  "jbtb_desc": "A tool for managing JetBrains IDE installations."
 }

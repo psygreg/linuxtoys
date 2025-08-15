@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=GoLand
-Type=Application
-Exec=/opt/goland/bin/goland
-Terminal=false
-Icon=/opt/goland/bin/goland.png
-Comment=Jetbrains IDE for Go
-NoDisplay=false
-Categories=Development

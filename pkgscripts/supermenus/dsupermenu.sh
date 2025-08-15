@@ -63,22 +63,10 @@ dsupermenu () {
                 if [[ "$selected" == "$item" ]]; then
                     # if item is found, set the corresponding variable
                     case $item in
-                        "VS Code") _code="code" ;;
-                        "VSCodium") _codium="com.vscodium.codium" ;;
-                        "NeoVim") _nvim="neovim" ;;
-                        "Jetbrains - ${msg162}") _jb="1" ;;
                         "OhMyBash") _omb="1" ;;
-                        "NodeJS + NVM") _nvm="nodejs" ;;
-                        "Maven") _mvn="maven" ;;
-                        "Python + Pyenv") _pyenv="pyenv" ;;
                         "C# - .NET SDK") _dotnet="dotnet-sdk-9.0" ;;
-                        "Java - OpenJDK/JRE") _java="java" ;;
-                        "Android Studio") _droidstd="droidstd" ;;
                         "Godot 4") _godot="godot" ;;
                         "Unity Hub") _unity="unityhub" ;;
-                        "Insomnia") _insomnia="rest.insomnia.Insomnia" ;;
-                        "Httpie") _httpie="io.httpie.Httpie" ;;
-                        "Postman") _postman="com.getpostman.Postman" ;;
                     esac
                 fi
             done

@@ -27,11 +27,11 @@ if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
         git clone https://github.com/CheariX/silverblue-akmods-keys
         cd silverblue-akmods-keys
         sudo bash setup.sh
-        rpm-ostree install -yA akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
+        sudo rpm-ostree install -yA akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
         cd ..
         rm -r silverblue-akmods-keys
     fi
 fi
-rpm-ostree install akmod-nvidia xorg-x11-drv-nvidia-cuda
+sudo rpm-ostree install akmod-nvidia xorg-x11-drv-nvidia-cuda
 sudo rpm-ostree kargs --append=rd.driver.blacklist=nouveau,nova_core --append=modprobe.blacklist=nouveau --append=nvidia-drm.modeset=1
 zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300

@@ -19,7 +19,7 @@ optimizer () {
     if [ ! -f /.autopatch.state ]; then
         # filtered cachyos systemd configs
         wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/linuxtoys-cfg-atom/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.0-1.x86_64.rpm
-        rpm-ostree install -yA linuxtoys-cfg-atom-1.0-1.x86_64.rpm
+        sudo rpm-ostree install -yA linuxtoys-cfg-atom-1.0-1.x86_64.rpm
         # shader booster
         local script="shader-patcher-atom" && _invoke_
         # automatic updating
@@ -59,7 +59,7 @@ optimizer () {
                 git clone https://github.com/CheariX/silverblue-akmods-keys
                 cd silverblue-akmods-keys
                 sudo bash setup.sh
-                rpm-ostree install -yA akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
+                sudo rpm-ostree install -yA akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
             fi
         fi
         # fix alive timeout for Gnome
@@ -75,8 +75,8 @@ optimizer () {
         cfg_server="1.1"
         if [ "$cfg_host" != "$cfg_server" ]; then
             wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/linuxtoys-cfg-atom/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.1-1.x86_64.rpm
-            rpm-ostree remove linuxtoys-cfg-atom
-            rpm-ostree install -yA linuxtoys-cfg-atom-1.1-1.x86_64.rpm
+            sudo rpm-ostree remove linuxtoys-cfg-atom
+            sudo rpm-ostree install -yA linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         else
             zenity --info --text "$msg281" --height=300 --width=300
         fi

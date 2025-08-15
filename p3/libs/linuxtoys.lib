@@ -38,7 +38,7 @@ _install_ () {
                 fi
             done
             if [[ -n "$_to_install" ]]; then
-                rpm-ostree install -yA "${_to_install[@]}"
+                sudo rpm-ostree install -yA "${_to_install[@]}"
             else
                 return 1
             fi
@@ -90,17 +90,6 @@ _install_ () {
                 done
             fi
         fi
-    fi
-
-}
-
-# flatpak installation
-_flatpak_ () {
-
-    if [[ -n "$_flatpaks" ]]; then
-        for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update -u -y $flat
-        done
     fi
 
 }

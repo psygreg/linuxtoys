@@ -45,6 +45,7 @@ win_install () {
 	local _packages=(dialog netcat freerdp iproute libnotify)
 	_install_
     sleep 1
+    mkdir -p $HOME/.config/winapps
 	cd $HOME/.config/winapps
 	wget -nc https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/lsw-atom/winapps/compose.yaml
 	wget -nc https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/lsw-atom/winapps/winapps.conf
@@ -96,7 +97,7 @@ win_install () {
 lsw_install () {
 	if zenity --question --title "Setup" --text "Is the Windows installation finished?" --height=300 --width=300; then
 		wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/lsw-atom/rpmbuild/RPMS/x86_64/lsw-atom-shortcuts-1.1-1.x86_64.rpm
-		rpm-ostree install -yA lsw-atom-shortcuts-1.1-1.x86_64.rpm
+		sudo rpm-ostree install -yA lsw-atom-shortcuts-1.1-1.x86_64.rpm
 		exit 0
 	else
 		if zenity --question --title "Setup" --text "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!" --height=300 --width=360; then
