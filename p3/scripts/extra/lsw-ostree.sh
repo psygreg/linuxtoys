@@ -108,10 +108,12 @@ lsw_install () {
 # runtime
 hwcheck
 if command -v podman &> /dev/null; then
-		win_install
-		lsw_install
+    sudo_rq
+	win_install
+	lsw_install
 else
-		pdm_install
-		win_install
-		lsw_install
+    sudo_rq
+	pdm_install
+	win_install
+	lsw_install
 fi

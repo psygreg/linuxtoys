@@ -15,6 +15,7 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 . /etc/os-release
 if zenity --question --text "$msg080" --width 360 --height 300; then
+    sudo_rq
     if [[ "$ID_LIKE" == *suse* ]]; then
         insta opi
         sudo opi codecs

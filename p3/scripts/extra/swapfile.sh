@@ -11,6 +11,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # create swap on root
 root_swap () {
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
+        sudo_rq
         btrfs subvolume create /swap
         btrfs filesystem mkswapfile --size 8g --uuid clear /swap/swapfile
         swapon /swap/swapfile
@@ -19,8 +20,9 @@ root_swap () {
         zeninf "Swapfile creation successful."
         return 0
     else
-        mkswap -U clear --size 8G --file /swapfile
-        swapon /swapfile
+        sudo_rq
+        sudo mkswap -U clear --size 8G --file /swapfile
+        sudo swapon /swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
         zeninf "Swapfile creation successful."
@@ -31,6 +33,7 @@ root_swap () {
 # create swap on home
 home_swap () {
     if [ "$(findmnt -n -o FSTYPE /home)" = "btrfs" ]; then
+        sudo_rq
         sudo btrfs subvolume create /home/swap
         sudo btrfs filesystem mkswapfile --size 8g --uuid clear /home/swap/swapfile
         sudo swapon /home/swap/swapfile
@@ -39,6 +42,7 @@ home_swap () {
         zeninf "Swapfile creation successful."
         return 0
     else
+        sudo_rq
         sudo mkswap -U clear --size 8G --file /home/swapfile
         sudo swapon /home/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab

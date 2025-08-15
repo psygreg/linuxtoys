@@ -22,6 +22,7 @@ iwd_in () {
     done
     # only install if an adapter is found
     if [ $has_wifi -eq 1 ]; then
+        sudo_rq
         # install iwd
         if [ "$ID" == "bazzite" ] || [ "$ID" == "bluefin" ] || [ "$ID" == "aurora" ]; then
             # use their iwd installation script for ublue distros
@@ -46,6 +47,7 @@ iwd_in () {
 # disable iwd
 iwd_rm () {
     if [ -f "/etc/NetworkManager/conf.d/iwd.conf" ]; then
+        sudo_rq
         sudo rm /etc/NetworkManager/conf.d/iwd.conf
         sudo systemctl stop NetworkManager
         sudo systemctl enable --now wpa_supplicant

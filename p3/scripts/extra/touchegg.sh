@@ -17,6 +17,7 @@ tag=$(curl -s "https://api.github.com/repos/JoseExposito/touchegg/releases/lates
 if zenity --question --text "$msg200" --width 360 --height 300; then
     # touchegg is X11-only!
     if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
+        sudo_rq
         if [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
             cd $HOME
             sudo add-apt-repository ppa:touchegg/stable

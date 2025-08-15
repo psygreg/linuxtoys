@@ -17,6 +17,7 @@ _kv_latest=$(echo $_kv_url_latest | grep -oP 'linux-\K[^"]+')
 _kv_latest=$(basename $_kv_latest .tar.xz)
 # psycachy standard edition
 psycachy_std () {
+    sudo_rq
     cd $HOME
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-headers-psycachy_${kver_psycachy}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-image-psycachy_${kver_psycachy}-1_amd64.deb"
@@ -38,6 +39,7 @@ psycachy_std () {
 }
 # psycachy lts edition
 psycachy_lts () {
+    sudo_rq
     cd $HOME
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy-lts_${kver_lts}-1_amd64.deb"
