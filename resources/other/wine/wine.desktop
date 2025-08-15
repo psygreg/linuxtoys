@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Wine
-Type=Application
-Exec=/usr/bin/wine
-Terminal=false
-Icon=/usr/share/icons/hicolor/scalable/apps/wine-lt.png
-Comment=Is not an emulator - Proton-CachyOS
-NoDisplay=false
-Categories=Development

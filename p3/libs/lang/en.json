@@ -135,5 +135,8 @@
   "nvim_desc": "A powerful CLI-based text editor for developers.",
   "code_desc": "A powerful and feature-rich code editor by Microsoft.",
   "codium_desc": "An open-source version of Visual Studio Code, based on VSCode-OSS.",
-  "jbtb_desc": "A tool for managing JetBrains IDE installations."
+  "jbtb_desc": "A tool for managing JetBrains IDE installations.",
+  "unityhub_desc": "A hub for managing Unity Engine installations and projects.",
+  "godot_desc": "A popular open-source game engine for 2D and 3D game development. This version does not support Microsoft .NET (C#).",
+  "godotsharp_desc": "A popular open-source game engine for 2D and 3D game development with C# support. Includes .NET SDK."
 }

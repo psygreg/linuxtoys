@@ -28,6 +28,7 @@ jdk_install () {
     done
     sudo_rq
     _install_
+    zeninf "$msg018"
 }
 java_in () {
     local search_java

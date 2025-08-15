@@ -1,9 +1,9 @@
 [Desktop Entry]
 Name=Godot Engine
 Type=Application
-Exec=/opt/godot/Godot
+Exec=$HOME/.local/godot/Godot
 Terminal=false
-Icon=/opt/godot/godot.png
+Icon=$HOME/.local/godot.png
 Comment=Open source game engine
 NoDisplay=false
 Categories=Development

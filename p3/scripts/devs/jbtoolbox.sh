@@ -37,6 +37,7 @@ if [ ! -d "$HOME/.local/toolbox" ]; then
             echo "alias jbtoolbox=\"$HOME/.local/toolbox/jetbrains-toolbox\"" >> ~/.bashrc
             source ~/.bashrc
         fi
+        zeninf "$msg018"
     else
         zeninf "$msg175"
         exit 1
@@ -53,4 +54,5 @@ else # update or repair
     cd ..
     rm jetbrains-toolbox-2.6.2.41321.tar.gz
     rm -rf toolbox
+    zeninf "$msg018"
 fi
