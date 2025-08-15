@@ -4,7 +4,7 @@ A collection of tools for Linux in a user-friendly way. To check all its feature
 ![LinuxToys](https://github.com/psygreg/linuxtoys/blob/dc32bbe9a5f6bd40fd30f409f13f33b3be3695ad/src/screenshot3.png)
 
 ## Compatibility
-As long as you're running their latest stable versions:
+As long as you're running their up-to-date stable versions:
 - **Ubuntu** and derivatives
 - **Debian** and derivatives
 - **Arch Linux** and derivatives
