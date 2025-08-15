@@ -42,7 +42,7 @@ First, make sure you have all necessary dependencies. Most of those should be al
 - **Arch Linux**: `bash git curl wget zenity python python-gobject python-cairo gtk3`
 - **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject python3-gobject-cairo gtk3`
 
-Then, clone the repository with `git clone https://github.com/psygreg/linuxtoys.git`
+Then, clone the repository with `git clone --single-branch --branch indev-5 https://github.com/psygreg/linuxtoys.git`
 
 To run the app, give `p3/run.py` execution permissions with `chmod +x p3/run.py` from the cloned folder, then run it with `./p3/run.py`.
 
