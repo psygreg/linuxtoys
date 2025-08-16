@@ -114,7 +114,7 @@
 
   "nv_desc": "Drivers Nvidia atuais. GPUs suportadas: Maxwell (GT 9xx) em diante.",
   "nv_desc_470": "Drivers Nvidia legados. GPUs suportadas: Kepler (GT 6xx) e Fermi (GT 7xx).",
-  "rocm_desc": "Drivers ROCm para GPUs AMD. Suporta a arquitetura RDNA e mais recentes.",
+  "rocm_desc": "Drivers ROCm para GPUs AMD. Suporta GPUs dedicadas a partir da arquitetura RDNA.",
   "icr_desc": "Drivers Intel Compute Runtime para cargas computacionais em GPUs Intel.",
   "rusticl_desc": "Uma implementação da comunidade baseada em Rust do padrão OpenCL, proporcionando melhor desempenho e compatibilidade. Deve ser usada apenas se sua GPU não for suportada pelo ROCm, CUDA ou Intel Compute Runtime.",
   "bcm_desc": "Drivers proprietários Broadcom WiFi para Linux. Use apenas se sua placa não estiver funcionando com os drivers open-source embutidos no kernel.",
