@@ -20,30 +20,54 @@ flatpak_in_lib () {
 
 # Multilib repository check
 multilib_chk () {
-    if grep -q "^#\[multilib\]" /etc/pacman.conf; then
-        sudo sed -i '/^#\[multilib\]/{
-            s/^#//
+    # Check if multilib is already enabled (uncommented)
+    if grep -q "^\[multilib\]" /etc/pacman.conf && grep -A1 "^\[multilib\]" /etc/pacman.conf | grep -q "^Include = /etc/pacman.d/mirrorlist"; then
+        echo "Multilib repository is already enabled."
+        return 0
+    fi
+    
+    # Check if multilib exists but is commented out (with or without spaces after #)
+    if grep -q "^#[[:space:]]*\[multilib\]" /etc/pacman.conf; then
+        # Use sed to uncomment both the [multilib] line and the Include line
+        # Handle various spacing scenarios
+        sudo sed -i '/^#[[:space:]]*\[multilib\]/{
+            s/^#[[:space:]]*//
             n
-            s/^#//
+            s/^#[[:space:]]*Include = /Include = /
         }' /etc/pacman.conf
-        sudo pacman -Syu
+        
+        # Verify the change was successful
+        if grep -q "^\[multilib\]" /etc/pacman.conf && grep -A1 "^\[multilib\]" /etc/pacman.conf | grep -q "^Include = /etc/pacman.d/mirrorlist"; then
+            echo "Multilib repository enabled successfully."
+            sudo pacman -Syu
+        else
+            echo "Failed to enable multilib repository. Please check /etc/pacman.conf manually."
+            return 1
+        fi
+    else
+        echo "Multilib repository configuration not found in /etc/pacman.conf"
+        return 1
     fi
 }
 
 # Chaotic AUR check
 chaotic_aur_lib () {
     if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
+        # Check if Chaotic-AUR repository is already properly configured
+        if ! grep -A1 "\[chaotic-aur\]" /etc/pacman.conf | grep -q "Include = /etc/pacman.d/chaotic-mirrorlist"; then
             cd $HOME
             sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
             sudo pacman-key --lsign-key 3056513887B78AEB
             sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/script.sed
-            sudo sed -i -f script.sed /etc/pacman.conf
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'         
+            # Add Chaotic-AUR repository configuration if it doesn't exist
+            if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
+                echo "" | sudo tee -a /etc/pacman.conf
+                echo "[chaotic-aur]" | sudo tee -a /etc/pacman.conf
+                echo "Include = /etc/pacman.d/chaotic-mirrorlist" | sudo tee -a /etc/pacman.conf
+            fi       
             sudo pacman -Syu
             zenity --info --text "$msg024" --height 300 --width 300
-            rm script.sed
         fi
     else
         zenity --error --text "$msg077" --height 300 --width 300
