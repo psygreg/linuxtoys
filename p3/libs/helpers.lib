@@ -2,20 +2,40 @@
 
 # Flatpak check
 flatpak_in_lib () {
-    if command -v flatpak &> /dev/null; then
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
-    else
+    # Install flatpak if not present
+    if ! command -v flatpak &> /dev/null; then
         sudo_rq
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-            sudo apt install -y flatpak
+            if ! sudo apt install -y flatpak; then
+                echo "Failed to install flatpak via apt"
+                return 1
+            fi
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            sudo pacman -S --noconfirm flatpak
+            if ! sudo pacman -S --noconfirm flatpak; then
+                echo "Failed to install flatpak via pacman"
+                return 1
+            fi
+        else
+            echo "Unsupported distribution for automatic flatpak installation"
+            return 1
         fi
         sleep 1
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system
     fi
+    # Add Flathub remote for user
+    if ! flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user 2>/dev/null; then
+        echo "Warning: Failed to add Flathub remote for user"
+    fi
+    # Add Flathub remote system-wide (may fail without proper permissions)
+    if ! sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system 2>/dev/null; then
+        echo "Note: Could not add Flathub remote system-wide (this is normal for user-only installations)"
+    fi
+    # Verify at least one remote was added successfully
+    if ! flatpak remotes --user | grep -q "flathub" && ! flatpak remotes --system | grep -q "flathub" 2>/dev/null; then
+        echo "Error: Failed to add Flathub remote"
+        return 1
+    fi
+    echo "Flatpak and Flathub setup completed successfully"
+    return 0
 }
 
 # Multilib repository check
@@ -76,18 +96,50 @@ chaotic_aur_lib () {
 
 # RPMFusion check
 rpmfusion_chk () {
+    local fedora_version
+    if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
+        echo "Error: Could not determine Fedora version"
+        return 1
+    fi
+    
+    # Install RPMFusion Free
     if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
+        echo "Installing RPMFusion Free repository..."
+        local free_url="https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm"  
         if ! command -v rpm-ostree >/dev/null 2>&1; then
-            sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+            if ! sudo dnf install -y "$free_url"; then
+                echo "Error: Failed to install RPMFusion Free repository"
+                return 1
+            fi
         else
-            sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+            if ! sudo rpm-ostree install -yA "$free_url"; then
+                echo "Error: Failed to install RPMFusion Free repository via rpm-ostree"
+                return 1
+            fi
         fi
+        echo "RPMFusion Free repository installed successfully"
+    else
+        echo "RPMFusion Free repository is already installed"
     fi
+    
+    # Install RPMFusion Non-Free
     if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
+        echo "Installing RPMFusion Non-Free repository..."
+        local nonfree_url="https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"   
         if ! command -v rpm-ostree >/dev/null 2>&1; then
-            sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+            if ! sudo dnf install -y "$nonfree_url"; then
+                echo "Error: Failed to install RPMFusion Non-Free repository"
+                return 1
+            fi
         else
-            sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+            if ! sudo rpm-ostree install -yA "$nonfree_url"; then
+                echo "Error: Failed to install RPMFusion Non-Free repository via rpm-ostree"
+                return 1
+            fi
         fi
+        echo "RPMFusion Non-Free repository installed successfully"
+    else
+        echo "RPMFusion Non-Free repository is already installed"
     fi
+    return 0
 }
