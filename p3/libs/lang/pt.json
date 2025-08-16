@@ -117,6 +117,7 @@
   "rocm_desc": "Drivers ROCm para GPUs AMD. Suporta a arquitetura RDNA e mais recentes.",
   "icr_desc": "Drivers Intel Compute Runtime para cargas computacionais em GPUs Intel.",
   "rusticl_desc": "Uma implementação da comunidade baseada em Rust do padrão OpenCL, proporcionando melhor desempenho e compatibilidade. Deve ser usada apenas se sua GPU não for suportada pelo ROCm, CUDA ou Intel Compute Runtime.",
+  "bcm_desc": "Drivers proprietários Broadcom WiFi para Linux. Use apenas se sua placa não estiver funcionando com os drivers open-source embutidos no kernel.",
 
   "flat_desc": "O repositório principal para aplicativos Flatpak, com muitos aplicativos exclusivos.",
   "brew_desc": "Um gerenciador de pacotes de ferramentas CLI para macOS/Linux.",
