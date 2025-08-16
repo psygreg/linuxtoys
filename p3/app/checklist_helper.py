@@ -5,16 +5,15 @@ Handles checklist script execution and management
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk
 
-import subprocess
-import threading
 import tempfile
 import os
+from . import script_runner
 
 
 def run_scripts_sequentially(scripts, parent_window, on_dialog_closed_callback):
-    """Run all scripts in a single shell session via a temporary script."""
+    """Run all scripts in a single shell session via a temporary script using ScriptRunner."""
     if not scripts:
         return
 
@@ -78,50 +77,44 @@ def run_scripts_sequentially(scripts, parent_window, on_dialog_closed_callback):
         temp_script_path = temp_script.name
     os.chmod(temp_script_path, 0o700)
 
-    # Create execution dialog
-    dialog = Gtk.Dialog(title=f"Running checklist scripts", transient_for=parent_window, flags=0)
-    close_button = dialog.add_button("Close", Gtk.ResponseType.CLOSE)
-    dialog.set_default_size(600, 400)
-    dialog.set_deletable(False)
-    close_button.set_sensitive(False)
-    scrolled_window = Gtk.ScrolledWindow()
-    scrolled_window.set_hexpand(True)
-    scrolled_window.set_vexpand(True)
-    textview = Gtk.TextView()
-    textview.set_editable(False)
-    textview.set_cursor_visible(False)
-    textview.set_monospace(True)
-    scrolled_window.add(textview)
-    box = dialog.get_content_area()
-    box.add(scrolled_window)
-    dialog.show_all()
-    text_buffer = textview.get_buffer()
-
-    def thread_func():
-        try:
-            running_process = subprocess.Popen(
-                ['bash', temp_script_path], stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True
-            )
-            for line in running_process.stdout:
-                GLib.idle_add(_append_text_to_buffer, text_buffer, line)
-            running_process.wait()
-            return_code_msg = f"\n--- Checklist finished with exit code: {running_process.returncode} ---"
-            GLib.idle_add(_append_text_to_buffer, text_buffer, return_code_msg)
-        except Exception as e:
-            error_msg = f"\n--- An unexpected error occurred: {e} ---"
-            GLib.idle_add(_append_text_to_buffer, text_buffer, error_msg)
-        finally:
-            # Clean up temp script
-            try:
-                os.remove(temp_script_path)
-            except Exception:
-                pass
-            GLib.idle_add(close_button.set_sensitive, True)
-            dialog.connect("response", lambda *args: on_dialog_closed_callback(dialog, None))
+    # Create a script info object for the ScriptRunner
+    script_names = [script['name'] for script in scripts]
+    if len(script_names) == 1:
+        title = script_names[0]
+    else:
+        title = f"Checklist ({len(script_names)} scripts)"
     
-    thread = threading.Thread(target=thread_func)
-    thread.start()
+    checklist_script_info = {
+        'name': title,
+        'path': temp_script_path,
+        'description': f"Running {len(scripts)} selected scripts"
+    }
+    
+    # Create a ScriptRunner instance for the checklist execution
+    runner = script_runner.ScriptRunner(parent_window)
+    
+    # Define completion callback that cleans up and calls the original callback
+    def completion_handler():
+        # Clean up temp script
+        try:
+            os.remove(temp_script_path)
+        except Exception:
+            pass
+        # Call the original callback
+        if on_dialog_closed_callback:
+            on_dialog_closed_callback(None, None)
+    
+    # Use ScriptRunner to execute the checklist
+    dialog = runner.run_script(
+        checklist_script_info,
+        on_completion=completion_handler
+    )
+    
+    # Update dialog title to be more specific for checklists
+    if dialog:
+        dialog.set_title("Running checklist scripts")
+    
+    return dialog
 
 
 def handle_install_checklist(check_buttons, parent_window, on_dialog_closed_callback, translations=None):
@@ -138,9 +131,3 @@ def handle_install_checklist(check_buttons, parent_window, on_dialog_closed_call
         return  # User cancelled
     
     run_scripts_sequentially(selected_scripts, parent_window, on_dialog_closed_callback)
-
-
-def _append_text_to_buffer(buffer, text):
-    """Safely updates the Gtk.TextView from another thread."""
-    buffer.insert(buffer.get_end_iter(), text)
-    return False

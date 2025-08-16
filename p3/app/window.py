@@ -2,8 +2,6 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 
-import subprocess
-import threading
 from . import parser
 from . import header
 from . import footer
@@ -11,6 +9,7 @@ from . import checklist_helper
 from . import confirm_helper
 from . import compat
 from . import reboot_helper
+from . import script_runner
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -22,8 +21,10 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # --- Instance variables for script management ---
         self.script_is_running = False
-        self.running_process = None
         self.reboot_required = False  # Track if a reboot is required
+        
+        # Initialize script runner
+        self.script_runner = script_runner.ScriptRunner(self, self.translations)
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -256,58 +257,32 @@ class AppWindow(Gtk.ApplicationWindow):
             self._show_reboot_warning_dialog()
             return
             
+        def on_checklist_dialog_closed(dialog, response_id):
+            """Handle checklist dialog closure."""
+            if dialog:
+                dialog.destroy()
+                
         checklist_helper.handle_install_checklist(
             self.check_buttons, 
             self, 
-            self._on_dialog_closed,
+            on_checklist_dialog_closed,
             self.translations
         )
 
     def run_script_with_callback(self, script_info, callback):
         """Run a script and call callback when done."""
-        dialog = Gtk.Dialog(title=f"Running \"{script_info['name']}\"", transient_for=self, flags=0)
-        close_button = dialog.add_button("Close", Gtk.ResponseType.CLOSE)
-        dialog.set_default_size(600, 400)
-        dialog.set_deletable(False)
-        close_button.set_sensitive(False)
-        scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_hexpand(True)
-        scrolled_window.set_vexpand(True)
-        textview = Gtk.TextView()
-        textview.set_editable(False)
-        textview.set_cursor_visible(False)
-        textview.set_monospace(True)
-        scrolled_window.add(textview)
-        box = dialog.get_content_area()
-        box.add(scrolled_window)
-        dialog.show_all()
-        text_buffer = textview.get_buffer()
-        def thread_func():
-            try:
-                self.running_process = subprocess.Popen(
-                    ['bash', script_info['path']], stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True
-                )
-                for line in self.running_process.stdout:
-                    GLib.idle_add(self._append_text_to_buffer, text_buffer, line)
-                self.running_process.wait()
-                return_code_msg = f"\n--- Script finished with exit code: {self.running_process.returncode} ---"
-                GLib.idle_add(self._append_text_to_buffer, text_buffer, return_code_msg)
-                
-                # Check if script requires reboot after successful execution
-                if self.running_process.returncode == 0:
-                    system_compat_keys = compat.get_system_compat_keys()
-                    if parser.script_requires_reboot(script_info['path'], system_compat_keys):
-                        self.reboot_required = True
-                        
-            except Exception as e:
-                error_msg = f"\n--- An unexpected error occurred: {e} ---"
-                GLib.idle_add(self._append_text_to_buffer, text_buffer, error_msg)
-            finally:
-                GLib.idle_add(close_button.set_sensitive, True)
-                dialog.connect("response", lambda *args: (self._on_dialog_closed(dialog, None), callback()))
-        thread = threading.Thread(target=thread_func)
-        thread.start()
+        def completion_handler():
+            if callback:
+                callback()
+        
+        def reboot_handler():
+            self.reboot_required = True
+        
+        return self.script_runner.run_script(
+            script_info, 
+            on_completion=completion_handler,
+            on_reboot_required=reboot_handler
+        )
 
     def on_cancel_checklist(self, button):
         """Uncheck all boxes, remove checklist buttons from footer, and return to main menu."""
@@ -328,38 +303,31 @@ class AppWindow(Gtk.ApplicationWindow):
         info = widget.info
         # If this is a root script (shown as a category), execute it directly
         if info.get('is_script'):
-            if not self.script_is_running:
+            if not self.script_runner.is_running():
                 # Show confirmation dialog before executing root script
                 if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
                     return  # User cancelled
                     
                 self.script_is_running = True
-                dialog = Gtk.Dialog(title=f"Running \"{info['name']}\"", transient_for=self, flags=0)
-                close_button = dialog.add_button("Close", Gtk.ResponseType.CLOSE)
-                dialog.set_default_size(600, 400)
-                dialog.set_deletable(False)
-                close_button.set_sensitive(False)
-                scrolled_window = Gtk.ScrolledWindow()
-                scrolled_window.set_hexpand(True)
-                scrolled_window.set_vexpand(True)
-                textview = Gtk.TextView()
-                textview.set_editable(False)
-                textview.set_cursor_visible(False)
-                textview.set_monospace(True)
-                scrolled_window.add(textview)
-                box = dialog.get_content_area()
-                box.add(scrolled_window)
-                dialog.show_all()
-                text_buffer = textview.get_buffer()
-                thread = threading.Thread(target=self._execute_script_thread, args=(info['path'], text_buffer, dialog, close_button))
-                thread.start()
+                
+                def completion_handler():
+                    self.script_is_running = False
+                
+                def reboot_handler():
+                    self.reboot_required = True
+                
+                self.script_runner.run_script(
+                    info, 
+                    on_completion=completion_handler,
+                    on_reboot_required=reboot_handler
+                )
         else:
             self.load_scripts(info)
             self.show_scripts_view(info['name'])
 
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
-        if self.script_is_running:
+        if self.script_runner.is_running():
             return
 
         # Check if reboot is required before proceeding
@@ -375,76 +343,19 @@ class AppWindow(Gtk.ApplicationWindow):
         
         self.script_is_running = True
         
-        dialog = Gtk.Dialog(title=f"Running \"{info['name']}\"", transient_for=self, flags=0)
-        # FIX 1: Get a direct reference to the button here in the main thread.
-        close_button = dialog.add_button("Close", Gtk.ResponseType.CLOSE)
+        def completion_handler():
+            self.script_is_running = False
         
-        dialog.set_default_size(600, 400)
-        dialog.set_deletable(False)
-        close_button.set_sensitive(False) # Disable the button using the direct reference
-
-        scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_hexpand(True)
-        scrolled_window.set_vexpand(True)
-
-        textview = Gtk.TextView()
-        textview.set_editable(False)
-        textview.set_cursor_visible(False)
-        textview.set_monospace(True)
+        def reboot_handler():
+            self.reboot_required = True
         
-        scrolled_window.add(textview)
-        box = dialog.get_content_area()
-        box.add(scrolled_window)
-        dialog.show_all()
+        self.script_runner.run_script(
+            info, 
+            on_completion=completion_handler,
+            on_reboot_required=reboot_handler
+        )
 
-        text_buffer = textview.get_buffer()
-        # FIX 2: Pass the direct button reference to the thread.
-        thread = threading.Thread(target=self._execute_script_thread, args=(info['path'], text_buffer, dialog, close_button))
-        thread.start()
 
-    # FIX 3: The thread function now accepts the 'close_button' argument.
-    def _execute_script_thread(self, script_path, text_buffer, dialog, close_button):
-        """Runs in background, executes script, and sends output to GUI thread."""
-        try:
-            self.running_process = subprocess.Popen(
-                ['bash', script_path], stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True
-            )
-            for line in self.running_process.stdout:
-                GLib.idle_add(self._append_text_to_buffer, text_buffer, line)
-            
-            self.running_process.wait()
-            return_code_msg = f"\n--- Script finished with exit code: {self.running_process.returncode} ---"
-            GLib.idle_add(self._append_text_to_buffer, text_buffer, return_code_msg)
-
-            # Check if script requires reboot after successful execution
-            if self.running_process.returncode == 0:
-                system_compat_keys = compat.get_system_compat_keys()
-                if parser.script_requires_reboot(script_path, system_compat_keys):
-                    self.reboot_required = True
-
-        except Exception as e:
-            error_msg = f"\n--- An unexpected error occurred: {e} ---"
-            GLib.idle_add(self._append_text_to_buffer, text_buffer, error_msg)
-
-        finally:
-            # Now we use the direct reference, which is thread-safe.
-            GLib.idle_add(close_button.set_sensitive, True)
-            dialog.connect("response", self._on_dialog_closed)
-
-    def _append_text_to_buffer(self, buffer, text):
-        """Safely updates the Gtk.TextView from another thread."""
-        buffer.insert(buffer.get_end_iter(), text)
-        return False
-
-    def _on_dialog_closed(self, dialog, response_id):
-        """Cleans up after the script execution dialog is closed."""
-        if self.running_process and self.running_process.poll() is None:
-            self.running_process.terminate()
-        
-        self.running_process = None
-        self.script_is_running = False
-        dialog.destroy()
 
     def _show_reboot_warning_dialog(self):
         """Shows a dialog warning that a reboot is required before continuing."""
@@ -456,8 +367,7 @@ class AppWindow(Gtk.ApplicationWindow):
     
     def _close_application(self):
         """Closes the application gracefully."""
-        if self.running_process and self.running_process.poll() is None:
-            self.running_process.terminate()
+        self.script_runner.terminate()
         self.get_application().quit()
 
     def on_back_button_clicked(self, widget):

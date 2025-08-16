@@ -21,6 +21,9 @@
   "script_details": "Script Details",
   "selected_items": "Selected Items",
   "auto_confirm_notice": "Note: Some script(s) will run automatically without confirmation.",
+  "script_runner_title": "Running \"{script_name}\"",
+  "script_runner_close": "Close",
+  "script_runner_finished": "Script finished with exit code: {exit_code}",
 
   "psypicks": "Psygreg's Picks",
   "psypicks_desc": "Curated selection of software for gaming and quality of life on Linux.",

@@ -21,6 +21,9 @@
   "script_details": "Detalhes do Script",
   "selected_items": "Itens Selecionados",
   "auto_confirm_notice": "Nota: Alguns script(s) serão executados automaticamente sem confirmação.",
+  "script_runner_title": "Executando \"{script_name}\"",
+  "script_runner_close": "Fechar",
+  "script_runner_finished": "Script finalizado com código de saída: {exit_code}",
 
   "psypicks": "Seleção do Psygreg",
   "psypicks_desc": "Seleção curada de programas pra jogos e qualidade de vida no Linux.",
