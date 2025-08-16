@@ -65,6 +65,7 @@ Other contributions can be made by forking, adding your changes to the scripts i
 - [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
 - [PhotoGIMP](https://github.com/Diolinux/PhotoGIMP) by **'Diolinux'**
 - [GPU Screen Recorder](https://git.dec05eba.com/?p=about) by **'dec05eba'**
+- [Distroshelf](https://github.com/ranfdev/DistroShelf) by **'Ranfdev'**
 - [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
 - [DaVinciBox](https://github.com/zelikos/davincibox) by **Patrick Csikos**
 - [Darktable](https://www.darktable.org)
