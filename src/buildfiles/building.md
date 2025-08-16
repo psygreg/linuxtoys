@@ -13,6 +13,30 @@
 - `base-devel` group installed
 - Arch Linux system or container
 
+### For AppImage
+
+You'll need to install linuxdeploy tools. The scripts will download them automatically, but you can also install them manually:
+
+```bash
+# Download linuxdeploy
+wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+chmod +x linuxdeploy-x86_64.AppImage
+# Download linuxdeploy Python plugin
+wget https://github.com/niess/linuxdeploy-plugin-python/releases/download/continuous/linuxdeploy-plugin-python-x86_64.AppImage
+chmod +x linuxdeploy-plugin-python-x86_64.AppImage
+```
+
+### Python Dependencies
+
+Informed in the `requirements.txt` file:
+
+```
+# p3/requirements.txt
+requests>=2.25.0
+urllib3>=1.26.0
+certifi>=2021.5.25
+```
+
 ## Usage
 
 ### Individual package builds:
@@ -33,6 +57,20 @@
    ```bash
    cd pkgbuild
    ./buildpkg.sh
+   ```
+4. **AppImage:**
+Should be built in Ubuntu LTS!
+
+- Dependency check:
+   ```bash
+   cd appimage
+   ./appimagedeps.sh
+   ```
+
+- Packaging:
+   ```bash
+   cd appimage
+   ./buildappimage.sh
    ```
 
 ## Package structure:

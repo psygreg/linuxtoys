@@ -5,7 +5,7 @@
 
 ####### Build #######
 
-# General build files
+# Debian build files
 *.build
 *.buildinfo
 *.changes
@@ -13,8 +13,6 @@
 *.dsc
 *.substvars
 debhelper-build-stamp
-
-# Debian build files
 /src/buildfiles/deb/linuxtoys-*/debian/.debhelper
 /src/buildfiles/deb/linuxtoys/DEBIAN/linuxtoys
 /src/buildfiles/deb/*.deb
@@ -34,7 +32,4 @@ debhelper-build-stamp
 /src/buildfiles/pkgbuild/linuxtoys-*.pacman
 
 # AppImage build files
-/appimagebuild/LinuxToys.AppDir/etc/*
-/appimagebuild/LinuxToys.AppDir/usr/lib64/*
-/appimagebuild/LinuxToys.AppDir/usr/bin/*
-/LinuxToys_-x86_64*
+/src/buildfiles/appimage/build-linuxdeploy*
