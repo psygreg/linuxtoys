@@ -2,6 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango
 import os
+from . import get_icon_path
 
 def create_header(translations, category_info=None):
     """
@@ -99,7 +100,11 @@ def _create_icon_widget(category_info):
     if not category_info:
         # Default LinuxToys icon
         try:
-            logo = Gtk.Image.new_from_file("app/icons/app-icon.png")
+            icon_path = get_icon_path("app-icon.png")
+            if icon_path:
+                logo = Gtk.Image.new_from_file(icon_path)
+            else:
+                raise FileNotFoundError("app-icon.png not found")
         except Exception:
             # Fallback to a system icon if the logo is not found
             logo = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
@@ -112,12 +117,13 @@ def _create_icon_widget(category_info):
     
     # If icon_value looks like a file path or just a filename, use Gtk.Image.new_from_file
     if icon_value.endswith('.png') or icon_value.endswith('.svg'):
-        # If only a filename, presume it's in the icons folder
+        # If only a filename, use the global icon path resolver
         if not os.path.isabs(icon_value) and '/' not in icon_value:
-            icon_path = os.path.join(os.path.dirname(__file__), 'icons', icon_value)
+            icon_path = get_icon_path(icon_value)
         else:
-            icon_path = icon_value
-        if os.path.exists(icon_path):
+            icon_path = icon_value if os.path.exists(icon_value) else None
+            
+        if icon_path and os.path.exists(icon_path):
             icon_widget = Gtk.Image.new_from_file(icon_path)
         else:
             icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)

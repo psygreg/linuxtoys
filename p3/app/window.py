@@ -10,6 +10,7 @@ from . import confirm_helper
 from . import compat
 from . import reboot_helper
 from . import script_runner
+from . import get_icon_path
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -158,12 +159,13 @@ class AppWindow(Gtk.ApplicationWindow):
         icon_widget = None
         # If icon_value looks like a file path or just a filename, use Gtk.Image.new_from_file
         if icon_value.endswith('.png') or icon_value.endswith('.svg'):
-            # If only a filename, presume it's in the icons folder
+            # If only a filename, use the global icon path resolver
             if not os.path.isabs(icon_value) and '/' not in icon_value:
-                icon_path = os.path.join(os.path.dirname(__file__), 'icons', icon_value)
+                icon_path = get_icon_path(icon_value)
             else:
-                icon_path = icon_value
-            if os.path.exists(icon_path):
+                icon_path = icon_value if os.path.exists(icon_value) else None
+                
+            if icon_path and os.path.exists(icon_path):
                 icon_widget = Gtk.Image.new_from_file(icon_path)
             else:
                 icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)

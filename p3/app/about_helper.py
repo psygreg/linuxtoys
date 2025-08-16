@@ -5,6 +5,7 @@ import os
 import requests
 import threading
 import json
+from . import get_icon_path
 
 class AboutDialog:
     def __init__(self, parent_window, translations):
@@ -72,8 +73,12 @@ class AboutDialog:
         
         # App icon
         try:
-            app_icon = Gtk.Image.new_from_file("app/icons/app-icon.png")
-            app_icon.set_pixel_size(64)
+            icon_path = get_icon_path("app-icon.png")
+            if icon_path:
+                app_icon = Gtk.Image.new_from_file(icon_path)
+                app_icon.set_pixel_size(64)
+            else:
+                raise FileNotFoundError("app-icon.png not found")
         except Exception:
             app_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
             app_icon.set_pixel_size(64)
@@ -109,7 +114,11 @@ class AboutDialog:
         # Author photo
         try:
             # Load the author photo in its original resolution (36x36)
-            author_photo = Gtk.Image.new_from_file("app/icons/psyicon.png")
+            icon_path = get_icon_path("psyicon.png")
+            if icon_path:
+                author_photo = Gtk.Image.new_from_file(icon_path)
+            else:
+                raise FileNotFoundError("psyicon.png not found")
         except Exception:
             author_photo = Gtk.Image.new_from_icon_name("avatar-default", Gtk.IconSize.DIALOG)
             author_photo.set_pixel_size(36)
