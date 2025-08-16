@@ -106,7 +106,7 @@ debfixer_lib () {
         if [[ "$codename" =~ ^(trixie|testing)$ ]]; then
             sudo apt modernize-sources
             cd $HOME
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/other/debian/debian.sources
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/debian.sources
             sleep 1
             sudo cp -f debian.sources /etc/apt/sources.list.d/
             sleep 1
