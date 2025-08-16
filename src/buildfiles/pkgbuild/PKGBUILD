@@ -2,7 +2,7 @@ pkgname='linuxtoys-bin'
 pkgver='4.3'
 pkgrel=1
 arch=('x86_64')
-depends=(bash curl wget zenity base-devel git)
+depends=(bash git curl wget zenity python python-gobject python-cairo gtk3)
 makedepends=()
 conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
@@ -11,9 +11,7 @@ source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxt
 sha256sums=('58cf64f075bc23487ec3124ea0d45350c8aa6ab4ea928327fb6c1d0c4aa5c086')
 
 package() {
-
     mkdir -p ${pkgdir}/usr
-    cp -rf ${srcdir}/linuxtoys-${pkgver}/usr/{bin,share} ${pkgdir}/usr
-    chmod +x "${pkgdir}/usr/bin/linuxtoys.sh"
-
+    cp -rf ${srcdir}/linuxtoys-${pkgver}/usr/* ${pkgdir}/usr/
+    chmod +x "${pkgdir}/usr/bin/linuxtoys"
 }
