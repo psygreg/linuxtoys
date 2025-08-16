@@ -18,11 +18,12 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self.set_title("LinuxToys")
         self.set_default_size(960, 540) ## 
-        self.set_resizable(False) ## Desabilita o redimensionamento da janela
+        # self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # --- Instance variables for script management ---
         self.script_is_running = False
         self.reboot_required = False  # Track if a reboot is required
+        self.current_category_info = None  # Track current category for header updates
         
         # Initialize script runner
         self.script_runner = script_runner.ScriptRunner(self, self.translations)
@@ -129,7 +130,7 @@ class AppWindow(Gtk.ApplicationWindow):
         """Uses SelectionMode.NONE to disable selection highlight."""
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
-        flowbox.set_max_children_per_line(3)  ## número de ítens por linha (não esta funcionando em todas as categorias)
+        flowbox.set_max_children_per_line(5)  ## items per line
         flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
         flowbox.set_homogeneous(True)  # Make all children the same size
         ## Adiciona margem de 32 px em todos os lados
@@ -215,7 +216,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if checklist_mode:
             flowbox = Gtk.FlowBox()
             flowbox.set_valign(Gtk.Align.START)
-            flowbox.set_max_children_per_line(4)  # Two columns like standard menus
+            flowbox.set_max_children_per_line(5)  # Five columns max like standard menus
             flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
             flowbox.set_homogeneous(True)  # Make all children the same size
             flowbox.set_row_spacing(8)     # Reduce vertical spacing between rows
@@ -380,15 +381,31 @@ class AppWindow(Gtk.ApplicationWindow):
         self.script_runner.terminate()
         self.get_application().quit()
 
+    def _update_header(self, category_info=None):
+        """Updates the header with new category information."""
+        # Remove the old header
+        main_vbox = self.get_child()
+        main_vbox.remove(self.header_widget)
+        
+        # Create new header with category info
+        self.header_widget = header.create_header(self.translations, category_info)
+        main_vbox.pack_start(self.header_widget, False, False, 8)
+        main_vbox.reorder_child(self.header_widget, 0)  # Move to top
+        
+        # Show the new header
+        self.header_widget.show_all()
+
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
         self.show_categories_view()
         
     def show_categories_view(self):
         """Switches to the main categories view."""
+        self.current_category_info = None
         self.main_stack.set_visible_child_name("categories")
         self.back_button.hide()
         self.header_bar.props.title = "LinuxToys"
+        self._update_header()  # Reset to default header
         self.header_widget.show()
         self.footer_widget.show()
         self.footer_widget.show_menu_footer()
@@ -397,14 +414,20 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def show_scripts_view(self, category_name):
         """Switches to the view showing scripts in a category."""
-        self.main_stack.set_visible_child_name("scripts")
-        self.back_button.show()
-        self.header_bar.props.title = f"LinuxToys: {category_name}"
-        # self.header_widget.hide()
-        # Show footer only if checklist mode
         # Find the category info by name
         categories = parser.get_categories(self.translations)
         category_info = next((cat for cat in categories if cat['name'] == category_name), None)
+        
+        self.current_category_info = category_info
+        self.main_stack.set_visible_child_name("scripts")
+        self.back_button.show()
+        self.header_bar.props.title = f"LinuxToys: {category_name}"
+        
+        # Update header with category information
+        if category_info:
+            self._update_header(category_info)
+        
+        # Show footer only if checklist mode
         if category_info and category_info.get('mode', 'menu') == 'checklist':
             self.footer_widget.show()
             self.footer_widget.show_checklist_footer()
