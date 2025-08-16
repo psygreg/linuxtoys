@@ -2,6 +2,7 @@
 
 # Master build script for LinuxToys packages
 # This script builds DEB, RPM, and Arch packages in sequence
+# Placeholder, maybe can be made into workflow later?
 
 set -e  # Exit on any error
 
