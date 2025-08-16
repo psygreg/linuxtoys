@@ -11,7 +11,7 @@ def create_header(translations, category_info=None):
     Args:
         translations: Translation dictionary
         category_info: Dictionary with category information (name, description, icon, etc.)
-                      If None, shows default LinuxToys header
+                      If None, shows default LinuxToys header (clickable for About dialog)
     """
     # Main container for the header
     header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
@@ -50,10 +50,44 @@ def create_header(translations, category_info=None):
     text_vbox.pack_start(title_label, False, False, 0)
     text_vbox.pack_start(subtitle_label, False, False, 0)
     
-    # Add logo and text box to the main header box
-    logo.set_margin_end(10)  # 10px padding between icon and text
-    header_box.pack_start(logo, False, False, 0)
-    header_box.pack_start(text_vbox, True, True, 0)
+    # If this is the main menu (no category_info), make it clickable
+    if not category_info:
+        # Create an event box to capture click events
+        event_box = Gtk.EventBox()
+        event_box.set_above_child(True)
+        
+        # Create inner box for logo and text
+        inner_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        logo.set_margin_end(10)  # 10px padding between icon and text
+        inner_box.pack_start(logo, False, False, 0)
+        inner_box.pack_start(text_vbox, True, True, 0)
+        
+        # Add inner box to event box
+        event_box.add(inner_box)
+        
+        # Make it look clickable
+        event_box.set_can_focus(True)
+        
+        # Connect click event
+        def on_header_clicked(widget, event):
+            # Import here to avoid circular imports
+            from .about_helper import show_about_dialog
+            
+            # Find the main window to pass as parent
+            parent_window = widget.get_toplevel()
+            if isinstance(parent_window, Gtk.Window):
+                show_about_dialog(parent_window, translations)
+            return True
+            
+        event_box.connect("button-press-event", on_header_clicked)
+        
+        # Add event box to main header box
+        header_box.pack_start(event_box, True, True, 0)
+    else:
+        # Non-clickable version for category pages
+        logo.set_margin_end(10)  # 10px padding between icon and text
+        header_box.pack_start(logo, False, False, 0)
+        header_box.pack_start(text_vbox, True, True, 0)
 
     return header_box
 

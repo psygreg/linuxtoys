@@ -72,6 +72,14 @@ def create_footer():
     )
     menu_separator2 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
     
+    # Credits button
+    credits_label = translation.get('credits_label', 'Credits')
+    menu_credits_button = Gtk.LinkButton(
+        uri="https://github.com/psygreg/linuxtoys?tab=readme-ov-file#credits", 
+        label=credits_label
+    )
+    menu_separator3 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+    
     menu_donation_button = Gtk.LinkButton(
         uri="https://ko-fi.com/psygreg", 
         label=support_label
@@ -80,6 +88,8 @@ def create_footer():
     main_vbox.menu_footer_box.pack_start(menu_separator1, False, False, 10)
     main_vbox.menu_footer_box.pack_start(menu_bug_button, False, False, 0)
     main_vbox.menu_footer_box.pack_start(menu_separator2, False, False, 10)
+    main_vbox.menu_footer_box.pack_start(menu_credits_button, False, False, 0)
+    main_vbox.menu_footer_box.pack_start(menu_separator3, False, False, 10)
     main_vbox.menu_footer_box.pack_start(menu_donation_button, False, False, 0)
     main_vbox.pack_start(main_vbox.menu_footer_box, False, False, 0)
 
