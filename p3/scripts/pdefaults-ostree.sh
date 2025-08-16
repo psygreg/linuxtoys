@@ -102,13 +102,13 @@ while true; do
         --height=300 --width=300)
 
     if [ $? -ne 0 ]; then
-        break
+        exit 100
    	fi
 
     case $CHOICE in
     "Desktop") sudo_rq && optimizer && end_msg && break ;;
     "Laptop") sudo_rq && optimizer && psave_lib && end_msg && break ;;
-    "$msg070") break ;;
+    "$msg070") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
 done

@@ -70,13 +70,13 @@ while true; do
         --width 300 --height 330 )
 
     if [ $? -ne 0 ]; then
-        exit 0
+        exit 100
     fi
 
     case $CHOICE in
     Standard) psycachy_std && exit 0 ;;
     LTS) psycachy_lts && exit 0 ;;
-    Cancel | q) exit 2 ;;
+    Cancel | q) exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
 done

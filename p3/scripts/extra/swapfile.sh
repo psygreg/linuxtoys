@@ -67,13 +67,13 @@ else
             --height 330 --width 300)
 
         if [ $? -ne 0 ]; then
-            exit 0
+            exit 100
         fi
 
         case $CHOICE in
         "/ (root)") root_swap && break;;
         "/home (home)") home_swap && break;;
-        "Cancel") break ;;
+        "Cancel") exit 100 ;;
         *) echo "Invalid Option" ;;
         esac
     done

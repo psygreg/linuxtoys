@@ -71,13 +71,13 @@ while true; do
         --width 300 --height 330 )
 
     if [ $? -ne 0 ]; then
-        exit 0
+        exit 100
     fi
 
     case $CHOICE in
     "Desktop") sudo_rq && optimizer && break ;;
     "Laptop") sudo_rq && optimizer && psave_lib && break ;;
-    "Cancel") break ;;
+    "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
 done

@@ -58,7 +58,7 @@ java_in () {
             --height=410 --width=300 --separator="|")
 
         if [ $? -ne 0 ]; then
-            break
+            exit 100
         fi
 
         IFS='|' read -ra javas <<< "$chosen_javas"

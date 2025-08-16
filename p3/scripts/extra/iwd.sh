@@ -69,13 +69,13 @@ while true; do
         --height=360 --width=300)
 
     if [ $? -ne 0 ]; then
-        break
+        exit 100
     fi
 
     case $CHOICE in
         "Install") iwd_in && break;;
         "Remove") iwd_rm && break;;
-        "Cancel") break ;;
+        "Cancel") exit 100 ;;
         *) echo "Invalid Option" ;;
     esac
 done
