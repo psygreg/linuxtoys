@@ -8,11 +8,11 @@ def create_header(translations):
     This widget contains the logo, title, and subtitle.
     """
     # Main container for the header
-    header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
-    header_box.set_margin_top(15)
-    header_box.set_margin_bottom(15)
-    header_box.set_margin_start(15)
-    header_box.set_margin_end(15)
+    header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+    header_box.set_margin_top(4)
+    # header_box.set_margin_bottom(16)
+    # header_box.set_margin_start(16)
+    # header_box.set_margin_end(16)
     header_box.set_halign(Gtk.Align.CENTER)
 
     # Logo
@@ -28,7 +28,7 @@ def create_header(translations):
     
     # Title using Pango Markup for styling (bold and larger text)
     title_label = Gtk.Label()
-    title_label.set_markup("<big><b>LinuxToys</b></big>")
+    title_label.set_markup("<big><big><b>LinuxToys</b></big></big>")
     title_label.set_xalign(0) # Align left
 
     # Subtitle with text wrapping

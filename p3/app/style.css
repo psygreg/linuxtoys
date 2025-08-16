@@ -1,8 +1,9 @@
 /* Defines the style for each item in our grid (FlowBox) */
 .script-item {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid;
+    /* padding: 10px; */
+    /* margin: px; */
+    background-color: rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* borda branca semi-transparente */
     border-radius: 8px;
     /* Let GTK use system theme colors automatically */
 }
