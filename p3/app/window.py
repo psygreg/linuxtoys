@@ -16,8 +16,9 @@ class AppWindow(Gtk.ApplicationWindow):
         super().__init__(application=application, *args, **kwargs)
         self.translations = translations
 
-        self.set_default_size(640, 520)
         self.set_title("LinuxToys")
+        self.set_default_size(960, 540)
+        self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # --- Instance variables for script management ---
         self.script_is_running = False
@@ -31,7 +32,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.add(main_vbox)
 
         self.header_widget = header.create_header(self.translations)
-        main_vbox.pack_start(self.header_widget, False, False, 10)
+        main_vbox.pack_start(self.header_widget, False, False, 8)
 
         self.header_bar = Gtk.HeaderBar()
         self.header_bar.set_show_close_button(True)
@@ -128,15 +129,23 @@ class AppWindow(Gtk.ApplicationWindow):
         """Uses SelectionMode.NONE to disable selection highlight."""
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
-        flowbox.set_max_children_per_line(2)
+        flowbox.set_max_children_per_line(3)  ## número de ítens por linha (não esta funcionando em todas as categorias)
         flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
         flowbox.set_homogeneous(True)  # Make all children the same size
+        ## Adiciona margem de 32 px em todos os lados
+        flowbox.set_margin_left(32) 
+        flowbox.set_margin_top(8) 
+        flowbox.set_margin_right(32) 
+        flowbox.set_margin_bottom(32)
+        ## Define espaçamento horizontal e vertical entre os itens (em pixels)
+        flowbox.set_column_spacing(16)  ## espaço entre itens lado a lado
+        flowbox.set_row_spacing(12)     ## espaço entre linhas
         return flowbox
 
     def create_item_widget(self, item_info):
         import os
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        box.set_size_request(140, 60)  # Fixed width for all items
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        box.set_size_request(128, 52)  # Fixed width for all items
         box.set_hexpand(False)
         box.set_halign(Gtk.Align.FILL)
 
@@ -159,7 +168,7 @@ class AppWindow(Gtk.ApplicationWindow):
                 icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)
         else:
             icon_widget = Gtk.Image.new_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
-        icon_widget.set_pixel_size(40)
+        icon_widget.set_pixel_size(48) ## altura dos icones
         icon_widget.set_halign(Gtk.Align.START)
         icon_widget.set_valign(Gtk.Align.CENTER)
         box.pack_start(icon_widget, False, False, 0)
@@ -169,9 +178,10 @@ class AppWindow(Gtk.ApplicationWindow):
         label.set_justify(Gtk.Justification.CENTER)
         label.set_halign(Gtk.Align.CENTER)
         label.set_valign(Gtk.Align.CENTER)
-        label.set_max_width_chars(12)  # Limit label width
-        label.set_width_chars(10)      # Set consistent width
+        label.set_max_width_chars(28)  # Limit label width
+        label.set_width_chars(4)      # Set consistent width
         label.set_hexpand(False)
+        label.set_margin_end(28)  ## margem à direita
         box.pack_start(label, True, True, 0)
 
         event_box = Gtk.EventBox()
@@ -205,7 +215,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if checklist_mode:
             flowbox = Gtk.FlowBox()
             flowbox.set_valign(Gtk.Align.START)
-            flowbox.set_max_children_per_line(2)  # Two columns like standard menus
+            flowbox.set_max_children_per_line(4)  # Two columns like standard menus
             flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
             flowbox.set_homogeneous(True)  # Make all children the same size
             flowbox.set_row_spacing(8)     # Reduce vertical spacing between rows
@@ -218,7 +228,7 @@ class AppWindow(Gtk.ApplicationWindow):
                 check = Gtk.CheckButton(label=script_info['name'])
                 check.script_info = script_info
                 check.set_tooltip_text(script_info['description'])
-                check.set_size_request(140, 20)  # Reduce height for tighter spacing
+                check.set_size_request(128, 16)  # Reduce height for tighter spacing
                 flowbox.add(check)
                 self.check_buttons.append(check)
 
@@ -390,7 +400,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.main_stack.set_visible_child_name("scripts")
         self.back_button.show()
         self.header_bar.props.title = f"LinuxToys: {category_name}"
-        self.header_widget.hide()
+        # self.header_widget.hide()
         # Show footer only if checklist mode
         # Find the category info by name
         categories = parser.get_categories(self.translations)
