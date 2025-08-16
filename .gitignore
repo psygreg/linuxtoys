@@ -33,3 +33,4 @@ debhelper-build-stamp
 
 # AppImage build files
 /src/buildfiles/appimage/build-linuxdeploy*
+/LinuxToys_*.AppImage
