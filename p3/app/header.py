@@ -38,6 +38,7 @@ def create_header(translations, category_info=None):
 
     # Title using Pango Markup for styling (bold and larger text)
     title_label = Gtk.Label()
+    title_label.set_margin_top(10) ## margem acima do titulo
     title_label.set_markup(f"<big><big><b>{title_text}</b></big></big>")
     title_label.set_xalign(0) # Align left
 
