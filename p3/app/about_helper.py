@@ -21,41 +21,99 @@ class AboutDialog:
             parent=self.parent_window,
             flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT
         )
-        dialog.set_default_size(500, 430)
+        dialog.set_default_size(512, 310)
         dialog.set_resizable(False)
         
         # Add Close button
-        close_text = self.translations.get('script_runner_close', 'Close')
-        dialog.add_button(close_text, Gtk.ResponseType.CLOSE)
+        # close_text = self.translations.get('script_runner_close', 'Close')
+        # dialog.add_button(close_text, Gtk.ResponseType.CLOSE)
         
-        # Get content area
+        ## Cria uma barra superior para abas
+        notebook = Gtk.Notebook()
+        notebook.set_size_request(-1, 310)
         content_area = dialog.get_content_area()
-        content_area.set_spacing(20)
-        content_area.set_margin_left(20)
-        content_area.set_margin_right(20)
-        content_area.set_margin_top(20)
-        content_area.set_margin_bottom(20)
+        content_area.add(notebook)
+
+        # Get content area
+        # content_area.set_spacing(20)
+        # content_area.set_margin_left(20)
+        # content_area.set_margin_right(20)
+        # content_area.set_margin_top(8)
+        # content_area.set_margin_bottom(20)
+
+        ## ---------------------------
+        ## ABA: SOBRE
+        ## ---------------------------
+        aba_sobre = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        aba_sobre.set_border_width(16)
         
         # App header section
         app_header = self._create_app_header()
-        content_area.pack_start(app_header, False, False, 0)
+        aba_sobre.pack_start(app_header, False, False, 0)
         
         # Separator
         separator1 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        content_area.pack_start(separator1, False, False, 0)
+        aba_sobre.pack_start(separator1, False, False, 0)
         
         # Author section
         author_section = self._create_author_section()
-        content_area.pack_start(author_section, False, False, 0)
+        aba_sobre.pack_start(author_section, False, False, 0)
         
         # Separator
         separator2 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        content_area.pack_start(separator2, False, False, 0)
+        aba_sobre.pack_start(separator2, False, False, 0)
         
         # Contributors section
         contributors_section = self._create_contributors_section()
-        content_area.pack_start(contributors_section, True, True, 0)
+        aba_sobre.pack_start(contributors_section, False, False, 0)
         
+        notebook.append_page(aba_sobre, Gtk.Label(label="Sobre"))
+
+
+        ## ---------------------------
+        ## ABA: LICENÇA
+        ## ---------------------------
+        aba_licenca = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        aba_licenca.set_border_width(10)
+
+        licenca_text = """
+                      GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
+
+Preamble
+
+The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+        """
+
+        licenca_label = Gtk.Label(label=licenca_text)
+        licenca_label.set_justify(Gtk.Justification.LEFT)
+        licenca_label.set_line_wrap(True)
+        licenca_label.set_selectable(True)
+
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        scroll.add(licenca_label)
+
+        aba_licenca.pack_start(scroll, True, True, 0)
+        
+        notebook.append_page(aba_licenca, Gtk.Label(label="Licença"))
+
+        
+        ## ---------------------------
         # Show all widgets
         dialog.show_all()
         
@@ -65,10 +123,11 @@ class AboutDialog:
         # Run dialog
         response = dialog.run()
         dialog.destroy()
-        
+
+
     def _create_app_header(self):
         """Creates the app header with icon, name and description"""
-        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
+        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         header_box.set_halign(Gtk.Align.CENTER)
         
         # App icon
@@ -85,6 +144,7 @@ class AboutDialog:
         
         # Text box
         text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        text_box.set_margin_top(10) ## margem acima do titulo
         
         # App name
         name_label = Gtk.Label()
@@ -96,7 +156,7 @@ class AboutDialog:
         desc_label = Gtk.Label(label=description)
         desc_label.set_line_wrap(True)
         desc_label.set_halign(Gtk.Align.START)
-        desc_label.set_max_width_chars(40)
+        desc_label.set_max_width_chars(52)
         
         text_box.pack_start(name_label, False, False, 0)
         text_box.pack_start(desc_label, False, False, 0)
@@ -108,7 +168,7 @@ class AboutDialog:
         
     def _create_author_section(self):
         """Creates the author section with photo and info"""
-        author_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
+        author_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
         author_box.set_halign(Gtk.Align.CENTER)
         
         # Author photo
@@ -152,12 +212,12 @@ class AboutDialog:
         # Contributors title
         contributors_title = Gtk.Label()
         contributors_title.set_markup(f"<b>{self.translations.get('contributors', 'Contributors')}</b>")
-        contributors_title.set_halign(Gtk.Align.START)
+        contributors_title.set_halign(Gtk.Align.CENTER)
         
         # Contributors grid (will be populated when data loads)
         self.contributors_grid = Gtk.Grid()
-        self.contributors_grid.set_column_spacing(20)
-        self.contributors_grid.set_row_spacing(5)
+        self.contributors_grid.set_column_spacing(48)
+        self.contributors_grid.set_row_spacing(8)
         self.contributors_grid.set_halign(Gtk.Align.CENTER)
         
         # Loading label
@@ -202,8 +262,8 @@ class AboutDialog:
         
         # Add contributors in two columns
         for i, contributor in enumerate(self.contributors):
-            row = i // 2
-            col = i % 2
+            row = i // 3
+            col = i % 3
             
             # Create contributor label
             contributor_label = Gtk.Label(label=contributor['login'])
