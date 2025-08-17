@@ -6,3 +6,4 @@
 
 # --- Start of the script code ---
 bash <(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)
+zeninf "$msg018"

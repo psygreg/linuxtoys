@@ -129,6 +129,8 @@
   "brew_desc": "A CLI tools package manager for macOS/Linux.",
   "chaotic_desc": "A community-driven repository for Arch Linux users.",
   "rpmfusion_desc": "A repository providing additional packages for Fedora and RHEL.",
+  "pip_desc": "Python package manager. Typically useful for Python developers.",
+  "cargo_desc": "Rust package manager. Typically useful for Rust developers. Includes Rustup.",
 
   "obs_desc": "A popular open-source streaming and recording software.",
   "mctl_desc": "A system monitor for Linux very similar to Windows Task Manager, based on GTK4.",
