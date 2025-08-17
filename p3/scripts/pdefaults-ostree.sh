@@ -19,8 +19,8 @@ source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 optimizer () {
     if [ ! -f /.autopatch.state ]; then
         # filtered cachyos systemd configs
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/linuxtoys-cfg-atom/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.0-1.x86_64.rpm
-        sudo rpm-ostree install -yA linuxtoys-cfg-atom-1.0-1.x86_64.rpm
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/linuxtoys-cfg-atom/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.1-1.x86_64.rpm
+        sudo rpm-ostree install -yA linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         # shader booster
         local script="shader-patcher-atom" && _invoke_
         # automatic updating
