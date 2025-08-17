@@ -83,11 +83,11 @@ win_install () {
     sed -i "s|^\(\s*CPU_CORES:\s*\).*|\1\"${_wincpu}\"|" compose.yaml
     sed -i "s|^\(\s*DISK_SIZE:\s*\).*|\1\"${_winsize}\"|" compose.yaml
 	if command -v konsole &> /dev/null; then
-        setsid konsole --noclose -e  "sudo podman-compose --file ./compose.yaml up" >/dev/null 2>&1 < /dev/null &
+        setsid konsole --noclose -e  "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up" >/dev/null 2>&1 < /dev/null &
 	elif command -v ptyxis &> /dev/null; then
-		setsid ptyxis bash -c "sudo podman-compose --file ./compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
+		setsid ptyxis bash -c "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
     elif command -v gnome-terminal &> /dev/null; then
-        setsid gnome-terminal -- bash -c "sudo podman-compose --file ./compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
+        setsid gnome-terminal -- bash -c "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
     else
 		nonfatal "No compatible terminal emulator found to launch Podman Compose."
         exit 4
