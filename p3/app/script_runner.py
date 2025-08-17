@@ -114,6 +114,65 @@ class ScriptRunner:
             # Extract script path - handle both dict and direct path
             script_path = script_info.get('path') if isinstance(script_info, dict) else script_info
             
+            # Check if we should dry-run instead of execute
+            try:
+                from .dev_mode import should_dry_run_scripts, dry_run_script
+                if should_dry_run_scripts():
+                    GLib.idle_add(self._append_text_to_buffer, text_buffer, 
+                                "🧪 DEVELOPER MODE: Dry-run validation instead of execution\n\n")
+                    
+                    # Capture dry-run output
+                    import io
+                    import sys
+                    from contextlib import redirect_stdout
+                    
+                    output_buffer = io.StringIO()
+                    with redirect_stdout(output_buffer):
+                        dry_run_result = dry_run_script(script_path)
+                    
+                    # Send dry-run output to GUI
+                    dry_run_output = output_buffer.getvalue()
+                    GLib.idle_add(self._append_text_to_buffer, text_buffer, dry_run_output)
+                    
+                    # Create a more complete mock process object
+                    class MockProcess:
+                        def __init__(self, return_code):
+                            self.returncode = return_code
+                            self.stdout = None
+                            self.stderr = None
+                            self.stdin = None
+                            self._terminated = True
+                        
+                        def poll(self):
+                            # Return the exit code if process is "finished"
+                            return self.returncode
+                        
+                        def wait(self, timeout=None):
+                            # Process is already "finished"
+                            return self.returncode
+                        
+                        def terminate(self):
+                            # Already terminated, nothing to do
+                            pass
+                        
+                        def kill(self):
+                            # Already terminated, nothing to do
+                            pass
+                        
+                        def communicate(self, input=None, timeout=None):
+                            # Return empty output since process is finished
+                            return ('', '')
+                        
+                        def __repr__(self):
+                            return f"MockProcess(returncode={self.returncode})"
+                    
+                    # Simulate process completion
+                    exit_code = 0 if dry_run_result['syntax_valid'] and dry_run_result['dependencies_valid'] else 1
+                    self.running_process = MockProcess(exit_code)
+                    return
+            except ImportError:
+                pass  # dev_mode not available, continue with normal execution
+            
             self.running_process = subprocess.Popen(
                 ['bash', script_path], 
                 stdout=subprocess.PIPE,

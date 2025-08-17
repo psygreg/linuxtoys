@@ -5,6 +5,13 @@ import os # Import the 'os' module
 from app import main
 
 if __name__ == "__main__":
+    # --- DEVELOPER MODE BANNER ---
+    try:
+        from app.dev_mode import print_dev_mode_banner
+        print_dev_mode_banner()
+    except ImportError:
+        pass  # dev_mode not available
+    
     # --- UPDATE CHECK ---
     # Only run git-based updater in CLI mode (when LT_MANIFEST is set)
     # This preserves the git-based update functionality for development/git-cloned versions

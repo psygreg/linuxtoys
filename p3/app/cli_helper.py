@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 from .parser import get_categories, get_scripts_for_category
-from .compat import get_system_compat_keys, script_is_compatible
+from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .update_helper import run_update_check
 from .reboot_helper import check_ostree_pending_deployments
 
@@ -62,7 +62,19 @@ def load_manifest(manifest_path='manifest.txt'):
 def run_script(script_info):
     """
     Execute a single script and return its exit code.
+    In developer mode, performs dry-run validation instead of execution.
     """
+    # Check if we should dry-run instead of execute
+    try:
+        from .dev_mode import should_dry_run_scripts, dry_run_script
+        if should_dry_run_scripts():
+            print(f"🧪 DRY-RUN MODE: Validating script instead of executing")
+            dry_run_result = dry_run_script(script_info['path'])
+            # Return 0 if validation passed, 1 if failed
+            return 0 if dry_run_result['syntax_valid'] and dry_run_result['dependencies_valid'] else 1
+    except ImportError:
+        pass  # dev_mode not available, continue with normal execution
+    
     print(f"Running script: {script_info['name']} ({script_info['path']})")
     print("-" * 50)
     
@@ -217,6 +229,11 @@ def run_manifest_mode(translations=None):
         # Check compatibility
         if not script_is_compatible(script_info['path'], compat_keys):
             print(f"Warning: Script '{script_name}' is not compatible with this system. Skipping.")
+            continue
+            
+        # Check container compatibility
+        if is_containerized() and not script_is_container_compatible(script_info['path']):
+            print(f"Warning: Script '{script_name}' is not compatible with containerized systems. Skipping.")
             continue
             
         scripts_to_run.append(script_info)

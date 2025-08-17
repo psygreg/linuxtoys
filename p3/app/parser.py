@@ -1,6 +1,13 @@
 import os
 
-from .compat import get_system_compat_keys, script_is_compatible, get_current_locale, script_is_localized
+from .compat import (
+    get_system_compat_keys, 
+    script_is_compatible, 
+    get_current_locale, 
+    script_is_localized,
+    is_containerized,
+    script_is_container_compatible
+)
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
 
@@ -88,6 +95,9 @@ def get_categories(translations=None):
                 continue
             if not script_is_localized(file_path, current_locale):
                 continue
+            # Filter by container compatibility
+            if is_containerized() and not script_is_container_compatible(file_path):
+                continue
             categories.append({
                 'name': header.get('name', file_name),
                 'path': file_path,
@@ -137,6 +147,9 @@ def get_scripts_for_category(category_path, translations=None):
             if not script_is_compatible(file_path, compat_keys):
                 continue
             if not script_is_localized(file_path, current_locale):
+                continue
+            # Filter by container compatibility
+            if is_containerized() and not script_is_container_compatible(file_path):
                 continue
             
             defaults = {
