@@ -24,12 +24,12 @@ As long as you're running their up-to-date stable versions:
 ### [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/)
 Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
 
-- For non-immutable systems:
-`dnf copr enable psygreg/linuxtoys ` 
+#### For non-immutable systems:
+`dnf copr enable psygreg/linuxtoys` 
 
-- For Fedora atomic, three commands are required to install the repository: \
-- `wget https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/repo/fedora-$(rpm -E %fedora)/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` \
-- `sudo install -o 0 -g 0 psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` \
+#### For Fedora atomic, three commands are required to install the repository:
+- `wget https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/repo/fedora-$(rpm -E %fedora)/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` 
+- `sudo install -o 0 -g 0 psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` 
 - `rpm-ostree refresh-md`
 
 ### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
