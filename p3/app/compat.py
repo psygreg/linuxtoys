@@ -5,6 +5,10 @@ def is_containerized():
     This function checks multiple indicators to determine if the system
     is running in a containerized environment such as Docker, Podman, LXC, etc.
     
+    In developer mode:
+    - If CONTAINER=1 is set, simulate being in a container (return True)
+    - If CONTAINER is not set, use actual container detection
+    
     Detection methods:
     1. Environment variables (container, CONTAINER_ID, DOCKER_CONTAINER, PODMAN_CONTAINER)
     2. Container-specific files (/.dockerenv, /run/.containerenv)
@@ -15,6 +19,15 @@ def is_containerized():
         bool: True if containerized, False otherwise.
     """
     import os
+    
+    # Check for developer mode container simulation
+    try:
+        from .dev_mode import should_simulate_container
+        if should_simulate_container():
+            return True  # Simulate being in a container when CONTAINER=1
+    except ImportError:
+        # dev_mode not available, continue with normal behavior
+        pass
     
     # Check for container environment variables
     container_env_vars = [
@@ -150,6 +163,10 @@ def script_is_container_compatible(script_path):
     """
     Check if a script should be shown in containerized environments.
     
+    In developer mode:
+    - If CONTAINER is not set (default): override container checks (always return True)
+    - If CONTAINER=1: apply normal container compatibility logic
+    
     Scripts are considered incompatible with containers if:
     1. They use flatpak_in_lib function (automatic exclusion)
     2. They have a '# nocontainer' header (with optional system keys)
@@ -172,6 +189,15 @@ def script_is_container_compatible(script_path):
     Returns:
         bool: False if script should be hidden in containers, True otherwise
     """
+    # Check for developer mode container override
+    try:
+        from .dev_mode import should_override_container_checks
+        if should_override_container_checks():
+            return True  # Override: always show scripts regardless of container compatibility
+    except ImportError:
+        # dev_mode not available, continue with normal behavior
+        pass
+    
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
             content = f.read()

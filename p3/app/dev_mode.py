@@ -7,14 +7,18 @@ different system environments for development and testing purposes.
 Environment Variables:
 - DEV_MODE=1: Enable developer mode (shows all scripts regardless of compatibility)
 - COMPAT=<key>: Simulate a specific system (e.g., COMPAT=fedora, COMPAT=arch)
+- CONTAINER=1: Simulate container environment (applies container checks)
 
 Features:
 - Compatibility override and system simulation
+- Container environment simulation and override
 - Dry-run script validation (checks parsing and library sourcing)
 
 Usage:
-    DEV_MODE=1 python3 run.py  # Show all scripts
-    DEV_MODE=1 COMPAT=fedora python3 run.py  # Simulate Fedora system
+    DEV_MODE=1 python3 run.py                        # Show all scripts, ignore container checks
+    DEV_MODE=1 COMPAT=fedora python3 run.py          # Simulate Fedora system, ignore containers
+    DEV_MODE=1 CONTAINER=1 python3 run.py            # Show all scripts, simulate container
+    DEV_MODE=1 COMPAT=arch CONTAINER=1 python3 run.py # Simulate Arch in container
 """
 
 import os
@@ -42,6 +46,17 @@ def get_dev_compat_override():
         str or None: The compatibility key to simulate, or None if not set
     """
     return os.environ.get('COMPAT')
+
+
+def get_dev_container_override():
+    """
+    Get the container override from CONTAINER environment variable.
+    
+    Returns:
+        str or None: The container simulation setting ('1' to simulate container), 
+                     or None if not set
+    """
+    return os.environ.get('CONTAINER')
 
 
 def get_simulated_compat_keys():
@@ -86,6 +101,39 @@ def should_override_compatibility():
     return is_dev_mode_enabled()
 
 
+def should_override_container_checks():
+    """
+    Check if container checks should be overridden.
+    
+    In developer mode:
+    - Without CONTAINER=1: container checks are ignored (always return True for compatibility)
+    - With CONTAINER=1: container checks are simulated (follow normal container logic)
+    
+    Returns:
+        bool: True if container checks should be overridden (ignored)
+    """
+    if not is_dev_mode_enabled():
+        return False
+    
+    # If CONTAINER=1 is set, don't override - simulate container behavior
+    container_override = get_dev_container_override()
+    if container_override == '1':
+        return False
+    
+    # Default in dev mode: override (ignore) container checks
+    return True
+
+
+def should_simulate_container():
+    """
+    Check if container environment should be simulated.
+    
+    Returns:
+        bool: True if DEV_MODE=1 and CONTAINER=1 (simulate container environment)
+    """
+    return is_dev_mode_enabled() and get_dev_container_override() == '1'
+
+
 def get_effective_compat_keys():
     """
     Get the effective compatibility keys for the current session.
@@ -128,12 +176,23 @@ def get_dev_mode_status():
     if not is_dev_mode_enabled():
         return "Developer mode: OFF"
     
+    status_parts = ["Developer mode: ON"]
+    
     compat_override = get_dev_compat_override()
+    container_override = get_dev_container_override()
+    
     if compat_override:
         simulated_keys = get_simulated_compat_keys()
-        return f"Developer mode: ON (simulating {compat_override}, keys: {sorted(simulated_keys)})"
+        status_parts.append(f"simulating {compat_override}, keys: {sorted(simulated_keys)}")
     else:
-        return "Developer mode: ON (showing all scripts)"
+        status_parts.append("showing all scripts")
+    
+    if container_override == '1':
+        status_parts.append("simulating container environment")
+    else:
+        status_parts.append("ignoring container checks")
+    
+    return f"{status_parts[0]} ({', '.join(status_parts[1:])})"
 
 
 def get_script_dependencies(script_path):
@@ -491,12 +550,21 @@ def print_dev_mode_banner():
         print(get_dev_mode_status())
         
         compat_override = get_dev_compat_override()
+        container_override = get_dev_container_override()
+        
         if compat_override:
             print(f"📋 Simulating system: {compat_override}")
             print("   Scripts will be filtered as if running on this system")
         else:
             print("📋 Showing ALL scripts regardless of compatibility")
             print("   Use COMPAT=<system> to simulate a specific distribution")
+        
+        if container_override == '1':
+            print("📦 Container simulation: ENABLED")
+            print("   Container checks will be applied normally")
+        else:
+            print("📦 Container simulation: DISABLED (ignoring container checks)")
+            print("   Use CONTAINER=1 to simulate container environment")
         
         print("🧪 Script execution: DRY-RUN mode (validation only)")
         print("   Scripts will be validated but not executed")
