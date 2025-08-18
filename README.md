@@ -24,7 +24,13 @@ As long as you're running their up-to-date stable versions:
 ### [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/)
 Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
 
+- For non-immutable systems:
 `dnf copr enable psygreg/linuxtoys ` 
+
+- For Fedora atomic:
+```wget https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/repo/fedora-$(rpm -E %fedora)/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo
+sudo install -o 0 -g 0 psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo
+rpm-ostree refresh-md```
 
 ### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
 You may use the AUR helper of your choice to install it, with the package name `linuxtoys-bin`.
@@ -54,35 +60,4 @@ Other contributions can be made by forking, adding your changes to the scripts i
 
 **All Pull Requests will be manually checked before approval.**
 
-## Credits
-
-- [Lucidglyph](https://github.com/maximilionus/lucidglyph/tree/v0.11.0) by **Maximilionus**
-- [GRUB-btrfs](https://github.com/Antynea/grub-btrfs) by **Antynea**
-- [Pipewire Audio Capture plugin for OBS Studio](https://github.com/dimtpap/obs-pipewire-audio-capture) by **Dimitris Papaioanou**
-- [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
-- [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
-- [Mission Center](https://missioncenter.io)
-- [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
-- [PhotoGIMP](https://github.com/Diolinux/PhotoGIMP) by **'Diolinux'**
-- [GPU Screen Recorder](https://git.dec05eba.com/?p=about) by **'dec05eba'**
-- [Distroshelf](https://github.com/ranfdev/DistroShelf) by **'Ranfdev'**
-- [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
-- [DaVinciBox](https://github.com/zelikos/davincibox) by **Patrick Csikos**
-- [Darktable](https://www.darktable.org)
-- [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
-- [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
-- [LSFG-VK](https://github.com/PancakeTAS/lsfg-vk) by **'PancakeTAS'**
-- [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) by **Adnan Hodzic**
-- [Touchégg](https://github.com/JoseExposito/touchegg) by **José Expósito**
-- [Vinegar](https://vinegarhq.org/Home/index.html) by **the VinegarHQ team**
-- [xpadneo](https://github.com/atar-axis/xpadneo) by **Florian Dollinger**
-- [Chaotic AUR](https://aur.chaotic.cx/)
-- [Homebrew](https://brew.sh/)
-- [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
-- [Pyenv](https://github.com/pyenv)
-- [NVM-sh](https://github.com/nvm-sh)
-- [WiVRn](https://github.com/WiVRn)
-- [Oversteer](https://github.com/berarma/oversteer) by **Bernat**
-- [WinApps](https://github.com/winapps-org/winapps)
-- [Distrobox-Adv-Br](https://github.com/pedrohqb/distrobox-adv-br) by **'pedrohqb'**
-- And the Linux Community
+## [Credits](https://github.com/psygreg/linuxtoys/wiki/Credits)
