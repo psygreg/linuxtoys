@@ -49,6 +49,8 @@
   "drivers_desc": "Drivers para diversos propósitos e dispositivos.",
   "repos": "Repositórios Adicionais",
   "repos_desc": "Fontes adicionais de software no Linux. Instale apenas o que realmente precisa.",
+  "unoptimize": "Reverter Otimizações",
+  "unoptimize_desc": "Reverte as Otimizações Recomendadas.",
 
   "gimp_desc": "Um poderoso editor de imagens open source.",
   "onlyoffice_desc": "Uma suíte com melhor compatibilidade com arquivos do Microsoft Office.",

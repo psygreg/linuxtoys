@@ -3,9 +3,7 @@ Checklist functionality helper for LinuxToys
 Handles checklist script execution and management
 """
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from .gtk_common import Gtk
 
 import tempfile
 import os

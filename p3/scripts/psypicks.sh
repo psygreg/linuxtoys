@@ -4,6 +4,7 @@
 # description: psypicks_desc
 # icon: psyicon.png
 # compat: ubuntu, debian, fedora, suse, arch, cachy
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -6,6 +6,7 @@
 # compat: ubuntu, debian, fedora, suse, arch, cachy
 # reboot: yes
 # noconfirm: yes
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

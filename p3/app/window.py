@@ -1,6 +1,4 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from .gtk_common import Gtk, GLib
 
 from . import parser
 from . import header
@@ -88,7 +86,6 @@ class AppWindow(Gtk.ApplicationWindow):
         if {'ostree', 'ublue'} & system_compat_keys:
             if reboot_helper.check_ostree_pending_deployments():
                 # Use GLib.idle_add to ensure the dialog shows after the window is fully initialized
-                from gi.repository import GLib
                 GLib.idle_add(self._show_ostree_deployment_warning)
 
     def _show_ostree_deployment_warning(self):

@@ -3,11 +3,12 @@ import os
 from .compat import (
     get_system_compat_keys, 
     script_is_compatible, 
-    get_current_locale, 
     script_is_localized,
     is_containerized,
-    script_is_container_compatible
+    script_is_container_compatible,
+    should_show_optimization_script
 )
+from .lang_utils import detect_system_language
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
 
@@ -76,7 +77,7 @@ def get_categories(translations=None):
 
     # Get system compatibility and locale
     compat_keys = get_system_compat_keys()
-    current_locale = get_current_locale()
+    current_locale = detect_system_language()
 
     # Add each root script as its own category using header info
     for file_name in os.listdir(SCRIPTS_DIR):
@@ -97,6 +98,9 @@ def get_categories(translations=None):
                 continue
             # Filter by container compatibility
             if is_containerized() and not script_is_container_compatible(file_path):
+                continue
+            # Filter optimization scripts based on installation state
+            if not should_show_optimization_script(file_path):
                 continue
             categories.append({
                 'name': header.get('name', file_name),
@@ -137,7 +141,7 @@ def get_scripts_for_category(category_path, translations=None):
 
     # Get system compatibility and locale
     compat_keys = get_system_compat_keys()
-    current_locale = get_current_locale()
+    current_locale = detect_system_language()
 
     for file_name in os.listdir(category_path):
         if file_name.endswith('.sh'):
@@ -150,6 +154,9 @@ def get_scripts_for_category(category_path, translations=None):
                 continue
             # Filter by container compatibility
             if is_containerized() and not script_is_container_compatible(file_path):
+                continue
+            # Filter optimization scripts based on installation state
+            if not should_show_optimization_script(file_path):
                 continue
             
             defaults = {

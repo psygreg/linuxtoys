@@ -49,6 +49,8 @@
   "drivers_desc": "Drivers for various purposes and devices.",
   "repos": "Adittional Repositories",
   "repos_desc": "Additional sources for software on Linux. Only install what you really need.",
+  "unoptimize": "Undo Default Optimizations",
+  "unoptimize_desc": "Reverts the Default Optimizations.",
 
   "gimp_desc": "A powerful open source image editor.",
   "onlyoffice_desc": "A suite with better compatibility to Microsoft Office files.",

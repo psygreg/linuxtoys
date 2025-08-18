@@ -1,16 +1,11 @@
-from email import header
 import sys
 import os
-import json
 
 # Only import GTK-related modules if not in CLI mode
 if os.environ.get('LT_MANIFEST') != '1':
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk
+    from .gtk_common import Gtk, Gdk
     from .window import AppWindow
 
-from .compat import get_system_compat_keys, script_is_compatible
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
 from .update_helper import run_update_check

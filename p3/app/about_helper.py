@@ -1,6 +1,4 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from .gtk_common import Gtk, GdkPixbuf, GLib
 import os
 import requests
 import threading
@@ -276,9 +274,6 @@ your programs, too.
     def _show_contributors_error(self):
         """Shows error message when contributors can't be loaded"""
         self.loading_label.set_text("Unable to load contributors")
-
-# Import GLib for idle_add
-from gi.repository import GLib
 
 def show_about_dialog(parent_window, translations):
     """Convenience function to show the about dialog"""

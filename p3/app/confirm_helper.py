@@ -3,9 +3,7 @@ Confirmation dialog helper for LinuxToys
 Handles confirmation dialogs before script execution
 """
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from .gtk_common import Gtk
 
 
 def _should_skip_confirmation(script_info):

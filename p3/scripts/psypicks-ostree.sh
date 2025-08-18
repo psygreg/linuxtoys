@@ -1,9 +1,10 @@
 #!/bin/bash
-# name: pdefaults
-# description: pdefaults_desc
-# icon: pdefaults.png
+# name: psypicks
+# description: psypicks_desc
+# icon: psyicon.png
 # compat: ostree
 # reboot: ostree
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

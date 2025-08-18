@@ -1,6 +1,4 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from .gtk_common import Gtk, GLib
 
 import subprocess
 import threading

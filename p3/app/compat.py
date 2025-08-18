@@ -131,15 +131,88 @@ def get_system_compat_keys():
 
     return keys
 
-def get_current_locale():
+def are_optimizations_installed():
     """
-    Get the current system locale (language code).
-    Returns the detected language code (e.g., 'en', 'pt').
+    Check if system optimizations have been applied.
+    
+    This function checks for the presence of the autopatch state file
+    which indicates that LinuxToys optimizations have been installed.
+    
+    In developer mode:
+    - If OPTIMIZER=1 is set, simulate optimizations being installed (return True)
+    - If OPTIMIZER=0 is set, simulate optimizations not being installed (return False)
+    - If OPTIMIZER is not set, use actual file detection
+    
+    Returns:
+        bool: True if optimizations are installed, False otherwise
     """
     import os
-    # Get language from LANG environment variable (first 2 characters)
-    lang = os.environ.get('LANG', 'en_US')[:2]
-    return lang
+    
+    # Check for developer mode optimizer simulation
+    try:
+        from .dev_mode import should_simulate_optimizations_installed, should_simulate_optimizations_not_installed
+        if should_simulate_optimizations_installed():
+            return True   # Simulate optimizations installed
+        if should_simulate_optimizations_not_installed():
+            return False  # Simulate optimizations not installed
+    except ImportError:
+        # dev_mode not available, continue with normal behavior
+        pass
+    
+    autopatch_state_file = os.path.expanduser("~/.local/.autopatch.state")
+    return os.path.exists(autopatch_state_file)
+
+
+def should_show_optimization_script(script_path):
+    """
+    Determine if an optimization-related script should be shown based on current state.
+    
+    This function implements the toggle logic for optimization scripts:
+    - If optimizations are NOT installed: show installation scripts (pdefaults.sh, etc.)
+    - If optimizations ARE installed: show removal scripts (unoptimize.sh, etc.)
+    
+    In developer mode:
+    - Without OPTIMIZER set: override optimization checks (show both install and remove scripts)
+    - With OPTIMIZER=1 or OPTIMIZER=0: apply optimization simulation logic
+    
+    Args:
+        script_path (str): Path to the script file
+        
+    Returns:
+        bool: True if the script should be shown, False if it should be hidden
+    """
+    import os
+    
+    # Check for developer mode optimizer override
+    try:
+        from .dev_mode import should_override_optimizer_checks
+        if should_override_optimizer_checks():
+            return True  # Override: always show all optimization scripts
+    except ImportError:
+        # dev_mode not available, continue with normal behavior
+        pass
+    
+    script_name = os.path.basename(script_path)
+    optimizations_installed = are_optimizations_installed()
+    
+    # Installation scripts - show only when optimizations are NOT installed
+    installation_scripts = [
+        'pdefaults.sh', 
+        'pdefaults-ostree.sh'
+    ]
+    
+    # Removal scripts - show only when optimizations ARE installed  
+    removal_scripts = [
+        'unoptimize.sh',
+        'unoptimize-ostree.sh'
+    ]
+    
+    if script_name in installation_scripts:
+        return not optimizations_installed  # Show if NOT installed
+    elif script_name in removal_scripts:
+        return optimizations_installed      # Show if installed
+    else:
+        return True  # Show all other scripts normally
 
 def script_uses_flatpak_in_lib(script_path):
     """

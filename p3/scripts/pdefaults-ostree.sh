@@ -6,6 +6,7 @@
 # compat: ostree, ublue
 # reboot: ostree
 # noconfirm: yes
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release
