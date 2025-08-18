@@ -240,7 +240,7 @@ your programs, too.
                 # Filter out 'psygreg' since he's already mentioned as project lead
                 filtered_contributors = [c for c in contributors_data if c['login'].lower() != 'psygreg']
                 # Get top 10 contributors (after filtering)
-                self.contributors = filtered_contributors[:10]
+                self.contributors = filtered_contributors[:9]
                 # Update UI in main thread
                 GLib.idle_add(self._update_contributors_ui)
             else:
