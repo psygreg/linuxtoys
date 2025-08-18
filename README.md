@@ -27,7 +27,7 @@ Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap*
 - For non-immutable systems:
 `dnf copr enable psygreg/linuxtoys ` 
 
-- For Fedora atomic:
+- For Fedora atomic:\ \
 `wget https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/repo/fedora-$(rpm -E %fedora)/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` \
 `sudo install -o 0 -g 0 psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` \
 `rpm-ostree refresh-md`
