@@ -60,6 +60,10 @@ usr/share/applications/LinuxToys.desktop /usr/share/applications/
 usr/share/icons/hicolor/scalable/apps/linuxtoys.png /usr/share/icons/hicolor/scalable/apps/
 EOF
 
+# build and upload for PPA first - doesn't work if done after building the package
+debuild -S -sa
+dput ppa:psygreg/linuxtoys *.changes
+
 # build package
 debuild -us -uc # this builder script requires devscripts!!
 
