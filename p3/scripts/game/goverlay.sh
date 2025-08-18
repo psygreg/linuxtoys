@@ -2,6 +2,7 @@
 # name: GOverlay
 # version: 1.0
 # description: goverlay_desc
+# icon: goverlay
 
 # --- Start of the script code ---
 _packages=(mangohud goverlay) && _install_

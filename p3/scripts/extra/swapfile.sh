@@ -5,6 +5,7 @@
 # icon: help-about
 # compat: ubuntu, debian, arch
 # noconfirm: yes
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

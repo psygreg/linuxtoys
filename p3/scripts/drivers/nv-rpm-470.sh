@@ -5,6 +5,7 @@
 # icon: nvidia
 # compat: fedora
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

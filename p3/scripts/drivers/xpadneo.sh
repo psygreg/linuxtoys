@@ -5,6 +5,7 @@
 # icon: xpadneo
 # compat: fedora, ubuntu, debian, ostree, suse, arch
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

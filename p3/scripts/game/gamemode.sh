@@ -2,6 +2,7 @@
 # name: Gamemode
 # version: 1.0
 # description: gamemode_desc
+# icon: gamemode
 
 # --- Start of the script code ---
 if [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then

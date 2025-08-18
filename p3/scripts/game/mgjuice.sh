@@ -2,6 +2,7 @@
 # name: MangoJuice
 # version: 1.0
 # description: mgjuice_desc
+# icon: mangojuice
 
 # --- Start of the script code ---
 _packages=(mangohud) && _install_

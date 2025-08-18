@@ -4,6 +4,7 @@
 # DESCRIPTION: ufw_desc
 # ICON: help-about
 # compat: ubuntu, debian, arch
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

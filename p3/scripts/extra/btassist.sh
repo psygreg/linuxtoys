@@ -3,6 +3,7 @@
 # version: 1.0
 # description: btassist_desc
 # icon: btrfsassistant
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

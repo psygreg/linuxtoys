@@ -2,6 +2,8 @@
 # name: Heroic Games Launcher
 # version: 1.0
 # description: hgl_desc
+# icon: heroic
+# nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---
 tag=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')

@@ -2,6 +2,8 @@
 # name: Lutris
 # version: 1.0
 # description: lutris_desc
+# icon: lutris
+# nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---
 if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [[ "$ID_LIKE" =~ "fedora" ]]; then

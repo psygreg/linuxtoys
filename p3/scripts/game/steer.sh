@@ -2,6 +2,7 @@
 # name: Oversteer
 # version: 1.0
 # description: oversteer_desc
+# icon: oversteer
 
 # --- Start of the script code ---
 sudo_rq

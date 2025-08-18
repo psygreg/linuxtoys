@@ -2,6 +2,7 @@
 # NAME: Foliate
 # VERSION: 1.0
 # DESCRIPTION: foliate_desc
+# icon: foliate
 
 # --- Start of the script code ---
 flatpak_in_lib

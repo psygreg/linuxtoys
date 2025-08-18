@@ -2,6 +2,7 @@
 # name: Protontricks
 # version: 1.0
 # description: ptricks_desc
+# icon: protontricks
 
 # --- Start of the script code ---
 flatpak_in_lib

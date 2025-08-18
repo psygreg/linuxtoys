@@ -5,6 +5,7 @@
 # icon: help-about
 # reboot: yes
 # noconfirm: yes
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

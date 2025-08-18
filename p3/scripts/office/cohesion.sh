@@ -2,6 +2,7 @@
 # name: Cohesion
 # version: 1.0
 # description: cohesion_desc
+# icon: notion
 
 # --- Start of the script code ---
 flatpak_in_lib

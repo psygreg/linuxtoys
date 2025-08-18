@@ -4,6 +4,7 @@
 # description: docker_desc
 # icon: docker
 # compat: ostree, ublue
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

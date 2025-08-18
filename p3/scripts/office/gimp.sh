@@ -2,6 +2,7 @@
 # NAME: GIMP (& PhotoGIMP)
 # VERSION: 3.0
 # DESCRIPTION: gimp_desc
+# icon: gimp
 
 # --- Start of the script code ---
 flatpak_in_lib

@@ -2,6 +2,7 @@
 # name: GeForce NOW
 # version: 1.0
 # description: gfn_desc
+# icon: nvidia
 
 # --- Start of the script code ---
 flatpak_in_lib

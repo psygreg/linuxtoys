@@ -3,6 +3,7 @@
 # version: 1.0
 # description: figma_desc
 # compat: ubuntu, debian, fedora, suse, cachy, arch
+# icon: figma
 
 # --- Start of the script code ---
 sudo_rq

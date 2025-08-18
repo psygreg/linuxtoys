@@ -2,6 +2,7 @@
 # name: FreeCAD
 # version: 1.0
 # description: freecad_desc
+# icon: freecad
 
 # --- Start of the script code ---
 flatpak_in_lib

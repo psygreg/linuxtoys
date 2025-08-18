@@ -2,6 +2,8 @@
 # name: Steam
 # version: 1.0
 # description: steam_desc
+# icon: steam
+# nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---
 if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [[ "$ID_LIKE" =~ "fedora" ]]; then

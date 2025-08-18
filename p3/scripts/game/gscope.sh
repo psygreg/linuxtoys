@@ -2,6 +2,7 @@
 # name: Gamescope
 # version: 1.0
 # description: gscope_desc
+# icon: gamescope
 
 # --- Start of the script code ---
 if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [[ "$ID_LIKE" =~ "fedora" ]]; then

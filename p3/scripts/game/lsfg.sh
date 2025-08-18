@@ -2,6 +2,7 @@
 # name: Lossless Scaling
 # version: 1.0
 # description: lsfg_desc
+# icon: lsfgvk
 
 # --- Start of the script code ---
 sudo_rq

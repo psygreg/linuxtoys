@@ -5,6 +5,7 @@
 # icon: bcm
 # compat: fedora, ostree, ublue, arch, cachy
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

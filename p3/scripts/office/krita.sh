@@ -2,6 +2,7 @@
 # name: Krita
 # version: 1.0
 # description: krita_desc
+# icon: krita
 
 # --- Start of the script code ---
 flatpak_in_lib

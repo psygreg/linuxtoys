@@ -4,6 +4,7 @@
 # description: sboost_desc
 # icon: help-about
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 # patch for Nvidia GPUs

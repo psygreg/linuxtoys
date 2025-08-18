@@ -4,6 +4,7 @@
 # description: grubtrfs_desc
 # icon: help-about
 # compat: ubuntu, debian, arch, fedora, suse, cachy
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

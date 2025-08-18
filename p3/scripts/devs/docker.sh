@@ -4,6 +4,7 @@
 # description: docker_desc
 # icon: docker
 # compat: fedora, suse, ubuntu, debian, arch, cachy
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

@@ -5,6 +5,7 @@
 # icon: help-about
 # compat: ubuntu, debian, suse, fedora, arch, cachy
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -5,6 +5,7 @@
 # icon: nvidia
 # compat: suse
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

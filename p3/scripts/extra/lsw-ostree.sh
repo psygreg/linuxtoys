@@ -3,6 +3,7 @@
 # version: 1.0
 # description: lsw_desc
 # compat: ostree, ublue
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

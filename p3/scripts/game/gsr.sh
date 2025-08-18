@@ -2,6 +2,7 @@
 # name: GPU Screen Recorder
 # version: 1.0
 # description: gsr_desc
+# icon: gsr
 
 # --- Start of the script code ---
 flatpak_in_lib

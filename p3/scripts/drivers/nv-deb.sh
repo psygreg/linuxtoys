@@ -5,6 +5,7 @@
 # icon: nvidia
 # compat: debian
 # reboot: yes
+# nocontainer
 
 # --- Start of the script code ---
 cd $HOME
