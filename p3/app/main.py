@@ -9,6 +9,7 @@ if os.environ.get('LT_MANIFEST') != '1':
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
 from .update_helper import run_update_check
+from . import get_app_resource_path, get_icon_path
 
 
 # Only define GUI classes if not in CLI mode
@@ -28,7 +29,9 @@ if os.environ.get('LT_MANIFEST') != '1':
         def load_css(self):
             try:
                 css_provider = Gtk.CssProvider()
-                css_provider.load_from_path('app/style.css')
+                # Use the app resource path resolver
+                css_path = get_app_resource_path('style.css')
+                css_provider.load_from_path(css_path)
                 screen = Gdk.Screen.get_default()
                 Gtk.StyleContext.add_provider_for_screen(
                     screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
@@ -54,12 +57,12 @@ def run():
         print(f"Update check failed: {e}")
     
     # FIX: Set the application icon before running
-    # Make sure you have an icon at 'app/icons/app-icon.png'
-    icon_path = os.path.abspath("app/icons/app-icon.png")
-    if os.path.exists(icon_path):
+    # Use the icon path resolver
+    icon_path = get_icon_path("app-icon.png")
+    if icon_path:
         Gtk.Window.set_default_icon_from_file(icon_path)
     else:
-        print(f"Warning: App icon not found at {icon_path}")
+        print(f"Warning: App icon not found (app-icon.png)")
 
     # Use the already loaded translations from lang_utils
     app = Application(translations)
