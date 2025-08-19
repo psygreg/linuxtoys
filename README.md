@@ -57,7 +57,7 @@ Then, clone the repository with `git clone https://github.com/psygreg/linuxtoys.
 
 To run the app, give `p3/run.py` execution permissions with `chmod +x p3/run.py` from the cloned folder, then run it with `./p3/run.py`.
 
-Updating the app through this method is simple a `git pull` away.
+Updating the app through this method is a simple `git pull` away.
 
 ## CLI Mode
 LinuxToys has a CLI mode option for sysadmins and the like, which need something that can be automated quickly. To operate in this mode, all you have to do is getting the application through git cloning as mentioned above, then alter the `manifest.txt` file with the names of the scripts you wish to execute. After that, run LinuxToys with the CLI mode flag, like this: `LT_MANIFEST=1 ./p3/run.py` and it will pick up and execute the scripts of your choice. 
