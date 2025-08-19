@@ -37,7 +37,7 @@ Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap*
 - `sudo install -o 0 -g 0 psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo` 
 - `rpm-ostree refresh-md`
 
-### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
+### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin) - CURRENTLY UNAVAILABLE
 You may use the AUR helper of your choice to install it, with the package name `linuxtoys-bin`.
 
 ## Usage
