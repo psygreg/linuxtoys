@@ -1,4 +1,4 @@
-from .gtk_common import Gtk, GLib
+from .gtk_common import Gtk, GLib, Gdk
 from gi.repository import GdkPixbuf
 import os
 
@@ -253,6 +253,18 @@ class AppWindow(Gtk.ApplicationWindow):
         event_box.add(box)
         event_box.get_style_context().add_class("script-item")
         event_box.info = item_info
+        
+        # Enable mouse events for hover effects
+        event_box.set_events(event_box.get_events() | 
+                           Gdk.EventMask.ENTER_NOTIFY_MASK | 
+                           Gdk.EventMask.LEAVE_NOTIFY_MASK |
+                           Gdk.EventMask.BUTTON_PRESS_MASK |
+                           Gdk.EventMask.BUTTON_RELEASE_MASK)
+        
+        # Connect hover events only (click events are connected separately)
+        event_box.connect("enter-notify-event", self.on_item_enter)
+        event_box.connect("leave-notify-event", self.on_item_leave)
+        
         return event_box
 
     def load_categories(self):
@@ -458,6 +470,46 @@ class AppWindow(Gtk.ApplicationWindow):
         
         # Show the new header
         self.header_widget.show_all()
+
+    def on_item_enter(self, widget, event):
+        """Handle mouse entering a script/category item - add hover effect."""
+        try:
+            style_context = widget.get_style_context()
+            
+            # Create CSS for hover effect
+            css_provider = Gtk.CssProvider()
+            css_data = """
+            .script-item-hover {
+                background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                transition: all 200ms ease-in-out;
+            }
+            """
+            css_provider.load_from_data(css_data.encode())
+            style_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            style_context.add_class("script-item-hover")
+            
+            # Force a redraw
+            widget.queue_draw()
+        except Exception as e:
+            print(f"Error in hover enter: {e}")
+        
+        return False
+
+    def on_item_leave(self, widget, event):
+        """Handle mouse leaving a script/category item - remove hover effect."""
+        try:
+            style_context = widget.get_style_context()
+            style_context.remove_class("script-item-hover")
+            
+            # Force a redraw
+            widget.queue_draw()
+        except Exception as e:
+            print(f"Error in hover leave: {e}")
+        
+        return False
 
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
