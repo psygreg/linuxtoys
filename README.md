@@ -21,6 +21,10 @@ As long as you're running their up-to-date stable versions:
 - **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those. The same is applicable to **Unity Hub**.
 
 ## Official Repositories
+### [Ubuntu Launchpad](https://launchpad.net/~psygreg/+archive/ubuntu/linuxtoys)
+Can be added with: \
+`sudo add-apt-repository ppa:psygreg/linuxtoys && sudo apt update`
+
 ### [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/)
 Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
 
