@@ -21,7 +21,7 @@ As long as you're running their up-to-date stable versions:
 - **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those. The same is applicable to **Unity Hub**.
 
 ## Official Repositories
-### [Ubuntu Launchpad](https://launchpad.net/~psygreg/+archive/ubuntu/linuxtoys)
+### [Ubuntu Launchpad](https://launchpad.net/~psygreg/+archive/ubuntu/linuxtoys) (PPA)
 Can be added with:
 
 `sudo add-apt-repository ppa:psygreg/linuxtoys && sudo apt update`
@@ -53,7 +53,7 @@ First, make sure you have all necessary dependencies. Most of those should be al
 - **Arch Linux**: `bash git curl wget zenity python python-gobject gtk3`
 - **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject gtk3`
 
-Then, clone the repository with `git clone --single-branch --branch indev-5 https://github.com/psygreg/linuxtoys.git`
+Then, clone the repository with `git clone https://github.com/psygreg/linuxtoys.git`
 
 To run the app, give `p3/run.py` execution permissions with `chmod +x p3/run.py` from the cloned folder, then run it with `./p3/run.py`.
 
