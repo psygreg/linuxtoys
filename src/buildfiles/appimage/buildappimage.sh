@@ -94,10 +94,11 @@ echo_info "Creating AppDir structure..."
 mkdir -p "$APPDIR/usr/bin"
 mkdir -p "$APPDIR/usr/share/applications"
 mkdir -p "$APPDIR/usr/share/icons/hicolor/256x256/apps"
+mkdir -p "$APPDIR/usr/share"
 
 # Copy main application files
 echo_info "Copying application files..."
-cp -r "$PROJECT_ROOT/p3" "$APPDIR/usr/bin/"
+cp -ru "$PROJECT_ROOT/p3" "$APPDIR/usr/share/linuxtoys"
 
 # Copy system binaries that the app depends on
 echo_info "Copying system dependencies..."
@@ -121,7 +122,7 @@ fi
 # Create requirements.txt for Python dependencies
 if [ ! -f "$PROJECT_ROOT/p3/requirements.txt" ]; then
     echo_info "Creating requirements.txt..."
-    cat > "$APPDIR/usr/bin/p3/requirements.txt" << 'EOF'
+    cat > "$APPDIR/usr/share/linuxtoys/requirements.txt" << 'EOF'
 # Python dependencies for LinuxToys
 PyGObject>=3.36.0
 requests>=2.25.0
@@ -132,7 +133,7 @@ else
     echo_info "Using existing requirements.txt"
     # Ensure PyGObject is included for GTK support
     if ! grep -q "PyGObject" "$PROJECT_ROOT/p3/requirements.txt"; then
-        echo "PyGObject>=3.36.0" >> "$APPDIR/usr/bin/p3/requirements.txt"
+        echo "PyGObject>=3.36.0" >> "$APPDIR/usr/share/linuxtoys/requirements.txt"
     fi
 fi
 
@@ -146,7 +147,7 @@ from pathlib import Path
 
 # Get the directory containing this script
 script_dir = Path(__file__).parent.absolute()
-app_dir = script_dir / "p3"
+app_dir = script_dir.parent / "share" / "linuxtoys"
 appdir = script_dir.parent.parent
 
 # Set up environment for GTK and system tools
@@ -291,12 +292,15 @@ echo_info "Running linuxdeploy with Python plugin..."
 # Set environment variables for the Python plugin
 export DEPLOY_GTK_VERSION=3
 export LINUXDEPLOY_PLUGIN_PYTHON_INSTALL_SYSTEM_PACKAGES=1
+export LINUXDEPLOY_PLUGIN_PYTHON_SCAN_DIRS="$APPDIR/usr/share/linuxtoys"
+# Create dummy Tcl/Tk directories to prevent plugin errors
+sudo mkdir -p /usr/share/tcl8.6 /usr/share/tk8.6 2>/dev/null || true
 
 ./"$LINUXDEPLOY_BIN" \
     --appdir "$APPDIR" \
     --plugin python \
-    --executable "$APPDIR/usr/bin/linuxtoys" \
     --desktop-file "$APPDIR/LinuxToys.desktop" \
+    --executable "$APPDIR/usr/bin/linuxtoys" \
     --icon-file "$APPDIR/linuxtoys.png" \
     --library /usr/lib/x86_64-linux-gnu/libgtk-3.so.0 \
     --library /usr/lib/x86_64-linux-gnu/libgdk-3.so.0 \

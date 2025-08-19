@@ -43,10 +43,10 @@ You may use the AUR helper of your choice to install it, with the package name `
 ### Git cloning
 First, make sure you have all necessary dependencies. Most of those should be already present in your system.
 
-- **Debian/Ubuntu**: `bash git curl wget zenity python3 python3-gi python3-gi-cairo libgtk-3-0 gir1.2-gtk-3.0 jq`
-- **Fedora/RHEL**: `bash git curl wget zenity python3 python3-gobject python3-cairo-devel gtk3 jq`
-- **Arch Linux**: `bash git curl wget zenity python python-gobject python-cairo gtk3`
-- **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject python3-gobject-cairo gtk3`
+- **Debian/Ubuntu**: `bash git curl wget zenity python3 python3-gi libgtk-3-0 gir1.2-gtk-3.0 jq`
+- **Fedora/RHEL**: `bash git curl wget zenity python3 python3-gobject gtk3 jq`
+- **Arch Linux**: `bash git curl wget zenity python python-gobject gtk3`
+- **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject gtk3`
 
 Then, clone the repository with `git clone --single-branch --branch indev-5 https://github.com/psygreg/linuxtoys.git`
 

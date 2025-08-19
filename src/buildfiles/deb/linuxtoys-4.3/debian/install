@@ -1,6 +1,0 @@
-debian/usr/bin/linuxtoys/linuxtoys.png /usr/bin/linuxtoys
-debian/usr/bin/linuxtoys.sh /usr/bin
-debian/usr/share/applications/LinuxToys.desktop /usr/share/applications
-debian/usr/bin/linuxtoys/linuxtoys.lib /usr/bin/linuxtoys
-debian/usr/bin/linuxtoys/en /usr/bin/linuxtoys
-debian/usr/bin/linuxtoys/pt /usr/bin/linuxtoys

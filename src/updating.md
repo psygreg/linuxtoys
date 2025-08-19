@@ -3,7 +3,7 @@
 #### Updating the Version Number
 Use the provided helper script:
 ```bash
-python update_version.py 4.4
+python update_version.py 5.0
 ```
 
 This will update both:

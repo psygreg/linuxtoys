@@ -19,7 +19,6 @@ REQUIRED_PACKAGES=(
     "zenity"
     "python3"
     "python3-gi"
-    "python3-gi-cairo"
     "libgtk-3-0"
     "gir1.2-gtk-3.0"
     "jq"

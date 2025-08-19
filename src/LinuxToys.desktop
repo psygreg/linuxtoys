@@ -2,7 +2,7 @@
 Name=LinuxToys 
 Type=Application
 Exec=/usr/bin/linuxtoys
-Terminal=true
+Terminal=false
 Icon=linuxtoys
 Comment=A set of tools for Linux presented in a user-friendly way
 NoDisplay=false
