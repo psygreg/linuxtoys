@@ -22,7 +22,8 @@ As long as you're running their up-to-date stable versions:
 
 ## Official Repositories
 ### [Ubuntu Launchpad](https://launchpad.net/~psygreg/+archive/ubuntu/linuxtoys)
-Can be added with: \
+Can be added with:
+
 `sudo add-apt-repository ppa:psygreg/linuxtoys && sudo apt update`
 
 ### [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/)
