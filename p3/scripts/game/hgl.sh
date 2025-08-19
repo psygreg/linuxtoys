@@ -6,6 +6,12 @@
 # nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+# language
+_lang_
+source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../../libs/helpers.lib"
 tag=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 ver="${tag#v}"
 if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [ "$ID_LIKE" == "fedora" ]; then
