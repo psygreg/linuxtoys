@@ -41,8 +41,14 @@ Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap*
 You may use the AUR helper of your choice to install it, with the package name `linuxtoys-bin`.
 
 ## Usage
-- Download and install the package for your distribution; or
-- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!**
+- Download and install the **package for your distribution** from [Releases](https://github.com/psygreg/linuxtoys/releases):
+
+For Arch Linux and derivatives, the terminal is required for this: `sudo pacman -U linuxtoys-<version>-1-x86_64.pacman`.
+
+For `rpm-ostree`-based systems, it will also be needed: `rpm-ostree install linuxtoys-<version>-1.x86_64.rpm`. You may need to run `rpm-ostree remove linuxtoys` before using the install command to update the app due to limitations on how locally layered packages work - so it's recommended to use the COPR repository on those systems for your convenience.
+
+- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!** -- momentarily unavailable.
+
 - Alternatively, run it directly from the method below.
 
 ### Git cloning
@@ -66,9 +72,7 @@ You may want to save your modified `manifest.txt` file separately for later use.
 
 ## Contributing
 
-To contribute with translations, you can fork this repo, add a new language file to the `resources/lang` folder and send a Pull Request. I can make the necessary adjustments to the program's code myself to accomodate new languages.
-
-Other contributions can be made by forking, adding your changes to the scripts in the `src` folder and sending a Pull Request as well.
+Check the [Developer Handbook](https://github.com/psygreg/linuxtoys/wiki/Developer-Handbook) for the complete documentation on LinuxToys' libraries.
 
 **All Pull Requests will be manually checked before approval.**
 
