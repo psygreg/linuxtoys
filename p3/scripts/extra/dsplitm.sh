@@ -2,7 +2,7 @@
 # name: dsplitm
 # version: 1.0
 # description: dsplitm_desc
-# icon: help-about
+# icon: utils.svg
 # compat: ubuntu, debian, suse, fedora, arch, cachy
 # reboot: yes
 # nocontainer

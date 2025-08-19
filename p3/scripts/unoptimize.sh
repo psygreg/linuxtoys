@@ -2,7 +2,7 @@
 # name: unoptimize
 # version: 1.0
 # description: unoptimize_desc
-# icon: application-x-executable
+# icon: optimizer.svg
 # compat: ubuntu, debian, fedora, suse, arch, cachy
 # reboot: yes
 # noconfirm: yes

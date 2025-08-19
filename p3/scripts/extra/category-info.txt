@@ -1,2 +1,2 @@
-ICON: applications-accessories
+ICON: extras.svg
 description: extra_desc

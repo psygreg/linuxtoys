@@ -2,7 +2,7 @@
 # name: Postman
 # version: 1.0
 # description: postman_desc
-# icon: postman
+# icon: postman.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

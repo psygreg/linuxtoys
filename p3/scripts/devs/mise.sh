@@ -2,7 +2,7 @@
 # name: Mise
 # version: 1.0
 # description: mise_desc
-# icon: mise
+# icon: mise.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # name: QPWGraph
 # version: 1.0
 # description: qpw_desc
-# icon: qpwgraph
+# icon: qpwgraph.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

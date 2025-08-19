@@ -2,7 +2,7 @@
 # name: RustiCL
 # version: 1.0
 # description: rusticl_desc
-# icon: rusticl
+# icon: device.svg
 # reboot: yes
 
 # --- Start of the script code ---

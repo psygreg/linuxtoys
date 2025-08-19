@@ -2,7 +2,7 @@
 # name: Distroshelf
 # version: 1.0
 # description: distroshelf_desc
-# icon: distroshelf
+# icon: distroshelf.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

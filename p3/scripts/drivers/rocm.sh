@@ -2,7 +2,7 @@
 # name: ROCm
 # version: 1.0
 # description: rocm_desc
-# icon: amd
+# icon: amd.png
 # reboot: yes
 
 # --- Start of the script code ---

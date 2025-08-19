@@ -2,7 +2,7 @@
 # name: Visual Studio Code
 # version: 1.0
 # description: code_desc
-# icon: code
+# icon: code.svg
 
 # --- Start of the script code ---
 . /etc/os-release

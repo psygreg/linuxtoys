@@ -2,7 +2,7 @@
 # name: Flatseal
 # version: 1.0
 # description: fseal_desc
-# icon: flatseal
+# icon: flatseal.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

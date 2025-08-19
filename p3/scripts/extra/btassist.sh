@@ -2,7 +2,7 @@
 # name: btrfs-Assistant
 # version: 1.0
 # description: btassist_desc
-# icon: btrfsassistant
+# icon: btassist.svg
 # nocontainer
 
 # --- Start of the script code ---

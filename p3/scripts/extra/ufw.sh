@@ -2,7 +2,7 @@
 # NAME: ufw
 # VERSION: 1.0
 # DESCRIPTION: ufw_desc
-# ICON: help-about
+# ICON: firewall.svg
 # compat: ubuntu, debian, arch
 # nocontainer
 

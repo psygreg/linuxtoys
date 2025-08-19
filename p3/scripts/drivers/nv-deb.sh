@@ -2,7 +2,7 @@
 # name: Nvidia Drivers
 # version: 1.0
 # description: nv_desc
-# icon: nvidia
+# icon: nvidia.svg
 # compat: debian
 # reboot: yes
 # nocontainer

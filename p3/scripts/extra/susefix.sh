@@ -2,7 +2,7 @@
 # name: susefix
 # version: 1.0
 # description: susefix_desc
-# icon: help-about
+# icon: suse.svg
 # compat: suse
 
 # --- Start of the script code ---

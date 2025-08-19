@@ -2,7 +2,7 @@
 # name: PyEnv
 # version: 1.0
 # description: pyenv_desc
-# icon: pyenv
+# icon: python.svg
 
 # --- Start of the script code ---
 # install dependencies

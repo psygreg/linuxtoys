@@ -2,7 +2,7 @@
 # name: OBS Studio
 # version: 1.0
 # description: obs_desc
-# icon: obs
+# icon: obs.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

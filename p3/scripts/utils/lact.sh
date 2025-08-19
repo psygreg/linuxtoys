@@ -2,7 +2,7 @@
 # name: LACT
 # version: 1.0
 # description: lact_desc
-# icon: lact
+# icon: device.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

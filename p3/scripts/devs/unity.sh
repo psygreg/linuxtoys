@@ -2,7 +2,7 @@
 # name: Unity Hub
 # version: 1.0
 # description: unityhub_desc
-# icon: unityhub
+# icon: unityhub.svg
 # compat: debian, ubuntu, fedora, ostree, ublue
 
 # --- Start of the script code ---

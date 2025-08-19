@@ -2,7 +2,7 @@
 # name: HTTPie
 # version: 1.0
 # description: httpie_desc
-# icon: httpie
+# icon: httpie.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

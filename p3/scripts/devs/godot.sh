@@ -2,7 +2,7 @@
 # name: Godot Engine 4
 # version: 1.0
 # description: godot_desc
-# icon: godot
+# icon: godot.svg
 
 # --- Start of the script code ---
 # when there are updates, make sure to edit the .desktop files in resources/godot as well!

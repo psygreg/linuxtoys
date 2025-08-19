@@ -1,4 +1,4 @@
 name: office
-ICON: document-properties
+ICON: office.svg
 description: office_desc
 mode: checklist

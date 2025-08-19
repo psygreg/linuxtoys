@@ -2,7 +2,7 @@
 # name: Waydroid
 # version: 1.0
 # description: waydroid_desc
-# icon: waydroid
+# icon: waydroid.svg
 # compat: fedora, ostree, debian, ubuntu, arch, cachy, ublue
 
 # --- Start of the script code ---

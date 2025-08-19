@@ -2,7 +2,7 @@
 # name: pdefaults
 # version: 1.0
 # description: pdefaults_desc
-# icon: application-x-executable
+# icon: optimizer.svg
 # compat: ostree, ublue
 # reboot: ostree
 # noconfirm: yes

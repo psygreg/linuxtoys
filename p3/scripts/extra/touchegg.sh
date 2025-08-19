@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: susefix
+# name: Touchégg
 # version: 1.0
-# description: susefix_desc
-# icon: help-about
+# description: touchegg_desc
+# icon: touchegg.svg
 # compat: ubuntu, debian, fedora, suse
 
 # --- Start of the script code ---

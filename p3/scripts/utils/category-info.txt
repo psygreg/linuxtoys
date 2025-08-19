@@ -1,2 +1,2 @@
-ICON: system-software-install
+ICON: utils.svg
 description: utils_desc

@@ -2,7 +2,7 @@
 # name: NeoVim
 # version: 1.0
 # description: nvim_desc
-# icon: neovim
+# icon: neovim.svg
 
 # --- Start of the script code ---
 . /etc/os-release

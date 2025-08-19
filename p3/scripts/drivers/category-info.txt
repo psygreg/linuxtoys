@@ -1,2 +1,2 @@
-ICON: help-about
+ICON: device.svg
 description: drivers_desc

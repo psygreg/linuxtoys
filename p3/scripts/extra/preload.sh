@@ -2,7 +2,7 @@
 # name: Preload
 # version: 1.0
 # description: preload_desc
-# icon: help-about
+# icon: preload.svg
 # compat: ubuntu, debian, fedora, ostree, ublue, cachy, arch
 # reboot: ostree
 # noconfirm: yes

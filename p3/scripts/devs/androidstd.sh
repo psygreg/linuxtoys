@@ -2,7 +2,7 @@
 # name: Android Studio
 # version: 1.0
 # description: droidstd_desc
-# icon: androidstudio
+# icon: android-studio.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # name: GRUB-btrfs
 # version: 1.0
 # description: grubtrfs_desc
-# icon: help-about
+# icon: grubtrfs.svg
 # compat: ubuntu, debian, arch, fedora, suse, cachy
 # nocontainer
 

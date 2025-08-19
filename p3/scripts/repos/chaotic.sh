@@ -2,7 +2,7 @@
 # name: Chaotic AUR
 # version: 1.0
 # description: chaotic_desc
-# icon: chaotic
+# icon: aur.svg
 # compat: arch, cachy
 
 # --- Start of the script code ---

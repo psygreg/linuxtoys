@@ -2,7 +2,7 @@
 # name: iNet Wireless Daemon
 # version: 1.0
 # description: iwd_desc
-# icon: help-about
+# icon: iwd.svg
 # reboot: yes
 # noconfirm: yes
 # nocontainer

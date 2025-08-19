@@ -2,7 +2,7 @@
 # name: Solaar
 # version: 1.0
 # description: slar_desc
-# icon: solaar
+# icon: solaar.svg
 
 # --- Start of the script code ---
 . /etc/os-release

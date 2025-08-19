@@ -2,7 +2,7 @@
 # name: LucidGlyph
 # version: 1.0
 # description: lg_desc
-# icon: help-about
+# icon: lucidglyph.svg
 # compat: ubuntu, debian, arch, fedora, suse, cachy
 
 # --- Start of the script code ---

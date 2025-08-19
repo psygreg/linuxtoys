@@ -2,7 +2,7 @@
 # name: unoptimize
 # version: 1.0
 # description: unoptimize_desc
-# icon: application-x-executable
+# icon: optimizer.svg
 # compat: ostree, ublue
 # reboot: ostree
 # noconfirm: yes

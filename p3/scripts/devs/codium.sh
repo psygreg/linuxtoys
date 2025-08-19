@@ -2,7 +2,7 @@
 # name: VSCodium
 # version: 1.0
 # description: codium_desc
-# icon: codium
+# icon: vscodium.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

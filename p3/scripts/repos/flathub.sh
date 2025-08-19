@@ -2,7 +2,7 @@
 # name: Flathub
 # version: 1.0
 # description: flat_desc
-# icon: flathub
+# icon: flathub.svg
 # reboot: yes
 
 # --- Start of the script code ---

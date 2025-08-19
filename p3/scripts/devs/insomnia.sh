@@ -2,7 +2,7 @@
 # name: Insomnia
 # version: 1.0
 # description: insomnia_desc
-# icon: insomnia
+# icon: insomnia.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

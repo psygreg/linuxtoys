@@ -2,7 +2,7 @@
 # name: RPM Fusion
 # version: 1.0
 # description: rpmfusion_desc
-# icon: rpmfusion
+# icon: rpmfusion.svg
 # compat: fedora, ostree
 
 # --- Start of the script code ---

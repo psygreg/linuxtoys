@@ -2,7 +2,7 @@
 # name: Xpadneo
 # version: 1.0
 # description: Driver for official and generic Xbox controllers on Linux.
-# icon: xpadneo
+# icon: gaming.svg
 # compat: fedora, ubuntu, debian, ostree, suse, arch
 # reboot: yes
 # nocontainer

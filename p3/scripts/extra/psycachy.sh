@@ -2,6 +2,7 @@
 # name: psycachy
 # version: 1.0
 # description: psycachy_desc
+# icon: psycachy.svg
 # compat: ubuntu, debian
 # reboot: yes
 # noconfirm: yes

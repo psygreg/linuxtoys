@@ -2,7 +2,7 @@
 # name: Intel Compute Runtime
 # version: 1.0
 # description: icr_desc
-# icon: intel
+# icon: intel.png
 # reboot: yes
 
 # --- Start of the script code ---

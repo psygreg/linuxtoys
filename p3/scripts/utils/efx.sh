@@ -2,7 +2,7 @@
 # name: EasyEffects
 # version: 1.0
 # description: efx_desc
-# icon: easyeffects
+# icon: efx.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

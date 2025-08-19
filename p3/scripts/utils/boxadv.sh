@@ -2,7 +2,7 @@
 # name: Distrobox-Adv
 # version: 1.0
 # description: Container do Debian via distrobox com pacotes que fornecem ambiente para uso de certificado digital por advogados no Brasil. Também inclui o Distroshelf.
-# icon: adv
+# icon: boxadv.svg
 # localize: pt
 
 # --- Start of the script code ---

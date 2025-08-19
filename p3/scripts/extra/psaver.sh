@@ -2,7 +2,7 @@
 # name: psaver
 # version: 1.0
 # description: psaver_desc
-# icon: power-saver
+# icon: psaver.svg
 # reboot: yes
 # nocontainer
 

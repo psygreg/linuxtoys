@@ -2,7 +2,7 @@
 # name: codecfix
 # version: 1.0
 # description: codecfix_desc
-# icon: help-about
+# icon: codec.svg
 # compat: suse, fedora, ostree
 
 # --- Start of the script code ---

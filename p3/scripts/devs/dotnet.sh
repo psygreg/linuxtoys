@@ -2,7 +2,7 @@
 # name: .NET SDK
 # version: 1.0
 # description: dotnet_desc
-# icon: dotnet
+# icon: dotnet.svg
 # compat: fedora, suse, ostree, debian, ubuntu, ublue
 
 # --- Start of the script code ---

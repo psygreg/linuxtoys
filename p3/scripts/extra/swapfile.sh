@@ -2,7 +2,7 @@
 # name: swapfile
 # version: 1.0
 # description: swapfile_desc
-# icon: help-about
+# icon: swapfile.svg
 # compat: ubuntu, debian, arch
 # noconfirm: yes
 # nocontainer

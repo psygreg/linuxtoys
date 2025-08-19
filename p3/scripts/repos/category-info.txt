@@ -1,2 +1,2 @@
-ICON: help-about
+ICON: repos.svg
 description: repos_desc

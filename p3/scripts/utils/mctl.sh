@@ -2,7 +2,7 @@
 # name: Mission Center
 # version: 1.0
 # description: mctl_desc
-# icon: mctl
+# icon: mctl.svg
 # compat: ubuntu, debian, fedora, suse, cachy, arch, ostree
 
 # --- Start of the script code ---

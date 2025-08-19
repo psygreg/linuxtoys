@@ -2,6 +2,7 @@
 # name: lsw
 # version: 1.0
 # description: lsw_desc
+# icon: lsw.svg
 # compat: ostree, ublue
 # nocontainer
 

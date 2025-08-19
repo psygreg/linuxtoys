@@ -2,7 +2,7 @@
 # name: Shader Booster
 # version: 1.0
 # description: sboost_desc
-# icon: help-about
+# icon: gaming.svg
 # reboot: yes
 # nocontainer
 

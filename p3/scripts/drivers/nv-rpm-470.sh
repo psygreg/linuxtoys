@@ -2,7 +2,7 @@
 # name: Nvidia Drivers (v470)
 # version: 1.0
 # description: nv_desc_470
-# icon: nvidia
+# icon: nvidia.svg
 # compat: fedora
 # reboot: yes
 # nocontainer

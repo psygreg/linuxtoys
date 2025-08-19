@@ -1,2 +1,2 @@
-ICON: input-gaming
+ICON: devs.svg
 description: devs_desc

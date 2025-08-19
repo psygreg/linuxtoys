@@ -2,7 +2,7 @@
 # name: Warehouse
 # version: 1.0
 # description: wrhs_desc
-# icon: warehouse
+# icon: warehouse.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

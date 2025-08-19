@@ -2,7 +2,7 @@
 # name: OpenRGB
 # version: 1.0
 # description: oprgb_desc
-# icon: oprgb
+# icon: openrgb.svg
 
 # --- Start of the script code ---
 . /etc/os-release

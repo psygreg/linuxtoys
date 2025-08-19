@@ -2,7 +2,7 @@
 # name: Broadcom WiFi
 # version: 1.0
 # description: bcm_desc
-# icon: bcm
+# icon: bcm.png
 # compat: fedora, ostree, ublue, arch, cachy
 # reboot: yes
 # nocontainer

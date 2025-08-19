@@ -2,7 +2,7 @@
 # name: OpenRazer
 # version: 1.0
 # description: oprzr_desc
-# icon: openrazer
+# icon: gaming.svg
 
 # --- Start of the script code ---
 . /etc/os-release

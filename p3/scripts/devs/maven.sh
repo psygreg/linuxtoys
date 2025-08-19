@@ -2,7 +2,7 @@
 # name: Maven
 # version: 1.0
 # description: mvn_desc
-# icon: maven
+# icon: maven.svg
 
 # --- Start of the script code ---
 . /etc/os-release

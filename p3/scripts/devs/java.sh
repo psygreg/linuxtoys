@@ -2,7 +2,7 @@
 # name: Java OpenJDK
 # version: 1.0
 # description: java_desc
-# icon: java
+# icon: java.svg
 # noconfirm: yes
 
 # --- Start of the script code ---

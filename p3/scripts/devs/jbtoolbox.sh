@@ -2,7 +2,7 @@
 # name: JetBrains Toolbox
 # version: 1.0
 # description: jbtb_desc
-# icon: jbtoolbox
+# icon: toolbox.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

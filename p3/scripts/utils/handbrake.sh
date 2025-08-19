@@ -2,7 +2,7 @@
 # name: HandBrake
 # version: 1.0
 # description: hndbrk_desc
-# icon: handbrake
+# icon: handbrake.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

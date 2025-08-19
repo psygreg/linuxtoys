@@ -2,7 +2,7 @@
 # name: Docker
 # version: 1.0
 # description: docker_desc
-# icon: docker
+# icon: docker.svg
 # compat: ostree, ublue
 # nocontainer
 

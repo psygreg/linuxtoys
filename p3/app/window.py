@@ -1,4 +1,5 @@
 from .gtk_common import Gtk, GLib
+from gi.repository import GdkPixbuf
 
 from . import parser
 from . import header
@@ -154,6 +155,8 @@ class AppWindow(Gtk.ApplicationWindow):
 
         icon_value = item_info.get('icon', 'application-x-executable')
         icon_widget = None
+        icon_size = 38  # Target icon size
+        
         # If icon_value looks like a file path or just a filename, use Gtk.Image.new_from_file
         if icon_value.endswith('.png') or icon_value.endswith('.svg'):
             # If only a filename, use the global icon path resolver
@@ -163,12 +166,27 @@ class AppWindow(Gtk.ApplicationWindow):
                 icon_path = icon_value if os.path.exists(icon_value) else None
                 
             if icon_path and os.path.exists(icon_path):
-                icon_widget = Gtk.Image.new_from_file(icon_path)
+                if icon_path.endswith('.svg') or icon_path.endswith('.png'):
+                    # For SVG files, load as pixbuf with specific size
+                    try:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                            icon_path, icon_size, icon_size, True
+                        )
+                        icon_widget = Gtk.Image.new_from_pixbuf(pixbuf)
+                    except Exception:
+                        # Fallback to default icon if SVG loading fails
+                        icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)
+                        icon_widget.set_pixel_size(icon_size)
+                else:
+                    # For PNG files, use regular loading and set pixel size
+                    icon_widget = Gtk.Image.new_from_file(icon_path)
+                    icon_widget.set_pixel_size(icon_size)
             else:
                 icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)
+                icon_widget.set_pixel_size(icon_size)
         else:
             icon_widget = Gtk.Image.new_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
-        icon_widget.set_pixel_size(48) ## altura dos icones
+            icon_widget.set_pixel_size(icon_size) ## altura dos icones
         icon_widget.set_halign(Gtk.Align.START)
         icon_widget.set_valign(Gtk.Align.CENTER)
         box.pack_start(icon_widget, False, False, 0)

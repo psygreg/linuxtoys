@@ -2,7 +2,7 @@
 # name: Pip
 # version: 1.0
 # description: pip_desc
-# icon: python
+# icon: pip.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # name: Docker
 # version: 1.0
 # description: docker_desc
-# icon: docker
+# icon: docker.svg
 # compat: fedora, suse, ubuntu, debian, arch, cachy
 # nocontainer
 
