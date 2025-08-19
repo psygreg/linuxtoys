@@ -12,4 +12,4 @@ sudo_rq
 _packages=(podman distrobox)
 _install_
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive com.ranfdev.DistroShelf
+flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf

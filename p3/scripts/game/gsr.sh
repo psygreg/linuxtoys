@@ -8,4 +8,5 @@
 flatpak_in_lib
 # request sudo, GSR needs to be installed on system level
 sudo_rq
-flatpak install --or-update --system --noninteractive com.dec05eba.gpu_screen_recorder
+_flatpak_add_remote_$ID_
+flatpak install --or-update --system --noninteractive flathub com.dec05eba.gpu_screen_recorder

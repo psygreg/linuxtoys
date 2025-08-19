@@ -11,5 +11,5 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 flatpak_in_lib
-flatpak install --user --or-update --noninteractive rest.insomnia.Insomnia
+flatpak install --user --or-update --noninteractive flathub rest.insomnia.Insomnia
 zeninf "$msg018"

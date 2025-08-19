@@ -6,4 +6,4 @@
 
 # --- Start of the script code ---
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive io.github.brunofin.Cohesion
+flatpak install --or-update --user --noninteractive flathub io.github.brunofin.Cohesion

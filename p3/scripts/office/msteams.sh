@@ -5,4 +5,4 @@
 
 # --- Start of the script code ---
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive com.github.IsmaelMartinez.teams_for_linux
+flatpak install --or-update --user --noninteractive flathub com.github.IsmaelMartinez.teams_for_linux

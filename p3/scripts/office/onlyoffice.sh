@@ -6,4 +6,4 @@
 
 # --- Start of the script code ---
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive org.onlyoffice.desktopeditors
+flatpak install --or-update --user --noninteractive flathub org.onlyoffice.desktopeditors

@@ -11,5 +11,5 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 flatpak_in_lib
-flatpak install --user --or-update --noninteractive com.vscodium.codium
+flatpak install --user --or-update --noninteractive flathub com.vscodium.codium
 zeninf "$msg018"

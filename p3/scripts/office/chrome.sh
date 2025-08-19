@@ -6,4 +6,4 @@
 
 # --- Start of the script code ---
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive com.google.Chrome
+flatpak install --or-update --user --noninteractive flathub com.google.Chrome

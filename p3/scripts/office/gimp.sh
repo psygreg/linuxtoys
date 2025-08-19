@@ -6,7 +6,7 @@
 
 # --- Start of the script code ---
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive org.gimp.GIMP
+flatpak install --or-update --user --noninteractive flathub org.gimp.GIMP
 if zenity --question --text "$msg253" --width 360 --height 300; then
     zeninf "$msg254"
     flatpak run org.gimp.GIMP & sleep 1

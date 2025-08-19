@@ -11,4 +11,4 @@ source "$SCRIPT_DIR/../../libs/helpers.lib"
 flatpak_in_lib
 # request sudo, EasyEffects needs to be installed on system level
 sudo_rq
-flatpak install --or-update --system --noninteractive com.github.wwmm.easyeffects
+flatpak install --or-update --system --noninteractive flathub com.github.wwmm.easyeffects

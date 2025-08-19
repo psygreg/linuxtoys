@@ -61,7 +61,7 @@ elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]
     fi
 else
     flatpak_in_lib
-    flatpak install --or-update --user --noninteractive com.heroicgameslauncher.hgl
+    flatpak install --or-update --user --noninteractive flathub com.heroicgameslauncher.hgl
 fi
 unset tag
 unset ver

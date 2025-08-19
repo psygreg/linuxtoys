@@ -26,5 +26,5 @@ _install_
 sudo systemctl enable --now pcscd.service
 distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br
 flatpak_in_lib
-flatpak install --or-update -user --noninteractive com.ranfdev.DistroShelf
+flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf
 zeninf "$msg018"

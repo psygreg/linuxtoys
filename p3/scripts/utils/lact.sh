@@ -11,4 +11,4 @@ source "$SCRIPT_DIR/../../libs/helpers.lib"
 flatpak_in_lib
 # request sudo - LACT requires system level installation
 sudo_rq
-flatpak install --or-update --system --noninteractive io.github.ilya_zlobintsev.LACT
+flatpak install --or-update --system --noninteractive flathub io.github.ilya_zlobintsev.LACT
