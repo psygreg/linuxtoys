@@ -74,6 +74,7 @@ dsplitm_lib () {
 
 # power optimizer for laptops
 psave_lib () {
+    sudo_rq
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
         sudo add-apt-repository ppa:linrunner/tlp
         sudo apt update

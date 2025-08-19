@@ -35,6 +35,7 @@ sysag_run () {
 # consolidated installation
 optimizer () {
     if [ ! -f /.autopatch.state ]; then
+        sudo_rq
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             debfixer_lib
             # run system-agnostic optimizations
@@ -77,8 +78,8 @@ while true; do
     fi
 
     case $CHOICE in
-    "Desktop") sudo_rq && optimizer && break ;;
-    "Laptop") sudo_rq && optimizer && psave_lib && break ;;
+    "Desktop") optimizer && break ;;
+    "Laptop") optimizer && psave_lib && break ;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac

@@ -144,6 +144,7 @@ davinciboxatom () {
             # install intel compute runtime
             _packages+=("intel-compute-runtime")
         fi
+        sudo_rq
         _install_
         if [[ $? -eq 1 ]]; then
             echo "No packages to install."
