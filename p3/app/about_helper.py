@@ -130,7 +130,7 @@ your programs, too.
         
         # App icon
         try:
-            icon_path = get_icon_path("app-icon.png")
+            icon_path = get_icon_path("linuxtoys_64x64.png")
             if icon_path:
                 app_icon = Gtk.Image.new_from_file(icon_path)
                 app_icon.set_pixel_size(64)

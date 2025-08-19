@@ -8,4 +8,4 @@ Comment=A set of tools for Linux presented in a user-friendly way
 NoDisplay=false
 Categories=Development
 StartupNotify=true
-StartupWMClass=linuxtoys
+StartupWMClass=run.py
