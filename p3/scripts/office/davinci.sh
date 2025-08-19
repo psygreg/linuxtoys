@@ -207,10 +207,10 @@ zenwrn "$msg034"
 # if on atomic distros, go straight to davincibox
 cd $HOME
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom

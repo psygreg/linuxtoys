@@ -5,37 +5,21 @@ Handles checklist script execution and management
 
 from .gtk_common import Gtk
 from . import script_runner
+import os
 
 
 def run_scripts_sequentially(scripts, parent_window, on_dialog_closed_callback):
-    """Run scripts one after another using individual ScriptRunner instances."""
+    """Run scripts sequentially in a single ScriptRunner window."""
     if not scripts:
         return
     
-    def run_next_script(index=0):
-        """Recursively run scripts one by one."""
-        if index >= len(scripts):
-            # All scripts completed
-            if on_dialog_closed_callback:
-                on_dialog_closed_callback(None, None)
-            return
-        
-        current_script = scripts[index]
-        script_path = current_script.get('path') if isinstance(current_script, dict) else current_script
-        
-        # Create ScriptRunner for this script
-        runner = script_runner.ScriptRunner(parent_window)
-        
-        # Define callback for when this script completes
-        def on_script_complete():
-            # Run the next script
-            run_next_script(index + 1)
-        
-        # Run the current script
-        runner.run_script(script_path, on_completion=on_script_complete)
+    runner = script_runner.ScriptRunner(parent_window)
     
-    # Start running the first script
-    run_next_script(0)
+    def on_completion():
+        if on_dialog_closed_callback:
+            on_dialog_closed_callback(None, None)
+    
+    runner.run_scripts_sequentially(scripts, on_completion=on_completion)
 
 
 def handle_install_checklist(check_buttons, parent_window, on_dialog_closed_callback, translations=None):
