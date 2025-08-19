@@ -1,7 +1,7 @@
 # LinuxToys
 A collection of tools for Linux in a user-friendly way. To check all its features, pay the [Wiki](https://github.com/psygreg/linuxtoys/wiki) a visit!
 
-![LinuxToys](https://github.com/psygreg/linuxtoys/blob/dc32bbe9a5f6bd40fd30f409f13f33b3be3695ad/src/screenshot3.png)
+![LinuxToys](https://github.com/psygreg/linuxtoys/blob/66c0e9c3f99bcd7108a76407da84b8cba79f5387/src/screenshot.png)
 
 ## Compatibility
 As long as you're running their up-to-date stable versions:
