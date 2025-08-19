@@ -19,6 +19,9 @@ if os.environ.get('LT_MANIFEST') != '1':
             super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)
             self.window = None
             self.translations = translations
+            
+            # Set application properties for better desktop integration
+            self.set_application_id("com.linuxtoys.app")
 
         def do_activate(self):
             if not self.window:

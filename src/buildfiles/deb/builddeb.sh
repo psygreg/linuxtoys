@@ -23,8 +23,10 @@ cp ../../linuxtoys.png linuxtoys_$lt_version.orig/usr/share/icons/hicolor/scalab
 # Create the main executable script
 cat > linuxtoys_$lt_version.orig/usr/bin/linuxtoys << 'EOF'
 #!/bin/bash
+# Set process name for better desktop integration
+export LINUXTOYS_PROCESS_NAME="linuxtoys"
 cd /usr/share/linuxtoys
-python3 run.py "$@"
+exec python3 run.py "$@"
 EOF
 chmod +x linuxtoys_$lt_version.orig/usr/bin/linuxtoys
 

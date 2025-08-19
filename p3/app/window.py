@@ -1,5 +1,6 @@
 from .gtk_common import Gtk, GLib
 from gi.repository import GdkPixbuf
+import os
 
 from . import parser
 from . import header
@@ -19,6 +20,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.set_title("LinuxToys")
         self.set_default_size(740, 540) ## 
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
+
+        # Set window icon for proper GNOME integration
+        self._set_window_icon()
 
         # --- Instance variables for script management ---
         self.script_is_running = False
@@ -100,6 +104,49 @@ class AppWindow(Gtk.ApplicationWindow):
             self._close_application
         )
         return False  # Remove from idle callbacks
+
+    def _set_window_icon(self):
+        """
+        Set the window icon for proper GNOME desktop integration.
+        This ensures the icon appears correctly in the taskbar and window manager.
+        """
+        try:
+            # Try multiple icon locations in order of preference
+            icon_paths = [
+                # System-wide installation paths
+                "/usr/share/icons/hicolor/scalable/apps/linuxtoys.png",
+                "/usr/share/pixmaps/linuxtoys.png",
+                # Development/local paths
+                get_icon_path("linuxtoys.png"),
+                # Fallback to the icon in the source directory
+                os.path.join(os.path.dirname(__file__), "..", "..", "src", "linuxtoys.png"),
+                # Relative path from the script location
+                os.path.join(os.path.dirname(__file__), "..", "..", "..", "src", "linuxtoys.png")
+            ]
+            
+            icon_set = False
+            for icon_path in icon_paths:
+                if icon_path and os.path.exists(icon_path):
+                    try:
+                        # Set window icon from file
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file(icon_path)
+                        self.set_icon(pixbuf)
+                        icon_set = True
+                        break
+                    except Exception as e:
+                        # Continue to next path if this one fails
+                        continue
+            
+            # If no file-based icon worked, try setting icon name for theme integration
+            if not icon_set:
+                self.set_icon_name("linuxtoys")
+                
+        except Exception as e:
+            # Fallback: set a generic icon if all else fails
+            try:
+                self.set_icon_name("application-x-executable")
+            except:
+                pass  # If even this fails, just continue without an icon
 
     def _set_tooltips_enabled(self, enabled):
         # Categories
