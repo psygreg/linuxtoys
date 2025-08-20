@@ -166,5 +166,6 @@
   "unityhub_desc": "Um hub para gerenciar instalações e projetos do Unity Engine.",
   "godot_desc": "Um popular motor de jogo open source para desenvolvimento 2D e 3D. Esta versão não suporta Microsoft .NET (C#).",
   "godotsharp_desc": "Um popular motor de jogo open source para desenvolvimento 2D e 3D com suporte a C#. Inclui o SDK do .NET.",
-  "dotnet_desc": "Uma coleção de ferramentas e bibliotecas para criar aplicativos baseados na plataforma .NET."
+  "dotnet_desc": "Uma coleção de ferramentas e bibliotecas para criar aplicativos baseados na plataforma .NET.",
+  "sublime_desc": "Um editor de texto sofisticado para código, marcação e prosa."
 }
