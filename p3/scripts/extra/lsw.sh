@@ -32,7 +32,6 @@ zenity --text-info \
     --width=400 --height=360
     
 if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
-    cd $HOME
     bash <(curl -s https://raw.githubusercontent.com/psygreg/lsw/refs/heads/main/src/lsw-in.sh)
     sleep 1
     rm txtbox
