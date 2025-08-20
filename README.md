@@ -21,7 +21,9 @@ As long as you're running their up-to-date stable versions:
 - **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those. The same is applicable to **Unity Hub**.
 
 ## Usage
-- Use the `install.sh` script available in the latest of [Releases](https://github.com/psygreg/linuxtoys/releases). Give it permission to run as a program through whichever file manager you choose, or with `chmod +x install.sh` through terminal, then run it and it will figure out the installation procedure for your operating system.
+- Use the `install.sh` script available in the latest of [Releases](https://github.com/psygreg/linuxtoys/releases).
+
+Give it permission to run as a program through whichever file manager you choose, or with `chmod +x install.sh` through terminal, then run it and it will figure out the installation procedure for your operating system.
 
 - Download and install the **package for your distribution** from [Releases](https://github.com/psygreg/linuxtoys/releases):
 
