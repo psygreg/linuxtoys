@@ -3,7 +3,8 @@ import os
 import requests
 import threading
 import json
-from . import get_icon_path
+from . import get_app_resource_path, get_icon_path
+
 
 class AboutDialog:
     def __init__(self, parent_window, translations):
@@ -73,43 +74,31 @@ class AboutDialog:
         ## ---------------------------
         aba_licenca = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         aba_licenca.set_border_width(10)
+        license_path = get_app_resource_path("../../LICENSE")
+        licenca_label = Gtk.Label(label="""
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.      
 
-        licenca_text = """
-                      GNU GENERAL PUBLIC LICENSE
-                       Version 3, 29 June 2007
 
-Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
-Everyone is permitted to copy and distribute verbatim copies
-of this license document, but changing it is not allowed.
+       See https://www.gnu.org/licenses/gpl-3.0.html
 
-Preamble
-
-The GNU General Public License is a free, copyleft license for
-software and other kinds of works.
-
-The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works.  By contrast,
-the GNU General Public License is intended to guarantee your freedom to
-share and change all versions of a program--to make sure it remains free
-software for all its users.  We, the Free Software Foundation, use the
-GNU General Public License for most of our software; it applies also to
-any other work released this way by its authors.  You can apply it to
-your programs, too.
-        """
-
-        licenca_label = Gtk.Label(label=licenca_text)
+        """)
+        try:
+            with open(license_path, "r", encoding="utf-8") as f:
+                license_text = f.read()
+                licenca_label = Gtk.Label(label=license_text)
+        except Exception as e:
+            print(f"Erro ao carregar licença. {e}")
         licenca_label.set_justify(Gtk.Justification.LEFT)
         licenca_label.set_line_wrap(True)
         licenca_label.set_selectable(True)
-
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.add(licenca_label)
-
         aba_licenca.pack_start(scroll, True, True, 0)
-        
         notebook.append_page(aba_licenca, Gtk.Label(label="Licença"))
-
         
         ## ---------------------------
         # Show all widgets
