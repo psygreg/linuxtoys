@@ -13,6 +13,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+cd $HOME
 {
     echo "$msg209"
     echo "$msg210"

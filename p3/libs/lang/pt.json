@@ -99,7 +99,7 @@
   "ufw_desc": "Instala e aplica uma configuração padrão ideal para a maioria dos usuários para o Uncomplicated Firewall (UFW).",
   "swapfile": "Configurar Arquivo Swap",
   "swapfile_desc": "Cria um arquivo de swap no seu sistema para aliviar a pressão de memória. Especialmente útil em sistemas com pouca RAM.",
-  "lg_desc": "Configurador de renderização de fontes que melhora a clareza e legibilidade do texto.",
+  "lg_desc": "Configurador de renderização de fontes que melhora a clareza e legibilidade do texto. Esta opção também oferecerá a remoção caso já esteja instalado.",
   "grubtrfs_desc": "Uma ferramenta para exibir e inicializar a partir de snapshots Btrfs no GRUB.",
   "susefix": "Corrigir SELinux",
   "susefix_desc": "Um script para corrigir políticas do SELinux que impedem o funcionamento do WINE/Proton no OpenSUSE.",
