@@ -4,6 +4,6 @@
     /* margin: px; */
     background-color: rgba(0,0,0,0.1);
     border: 1px solid rgba(255, 255, 255, 0.3); /* borda branca semi-transparente */
-    border-radius: 8px;
+    border-radius: 16px;
     /* Let GTK use system theme colors automatically */
 }
