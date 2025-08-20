@@ -2,7 +2,7 @@
 # name: Thumbnailer
 # version: 1.0
 # description: thumb_desc
-# icon: thumb.svg
+# icon: handbrake.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
