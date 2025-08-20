@@ -200,6 +200,16 @@ class AppWindow(Gtk.ApplicationWindow):
         left_pad.set_size_request(10, 1)
         box.pack_start(left_pad, False, False, 0)
 
+        label = Gtk.Label(label=item_info['name'])
+        label.set_line_wrap(True)
+        label.set_justify(Gtk.Justification.CENTER)
+        label.set_halign(Gtk.Align.CENTER)
+        label.set_valign(Gtk.Align.CENTER)
+        label.set_max_width_chars(28)  # Limit label width
+        label.set_width_chars(4)      # Set consistent width
+        label.set_hexpand(False)
+        box.pack_start(label, True, True, 0)
+
         icon_value = item_info.get('icon', 'application-x-executable')
         icon_widget = None
         icon_size = 38  # Target icon size
@@ -234,20 +244,13 @@ class AppWindow(Gtk.ApplicationWindow):
         else:
             icon_widget = Gtk.Image.new_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
             icon_widget.set_pixel_size(icon_size) ## altura dos icones
-        icon_widget.set_halign(Gtk.Align.START)
+        icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
         box.pack_start(icon_widget, False, False, 0)
 
-        label = Gtk.Label(label=item_info['name'])
-        label.set_line_wrap(True)
-        label.set_justify(Gtk.Justification.CENTER)
-        label.set_halign(Gtk.Align.CENTER)
-        label.set_valign(Gtk.Align.CENTER)
-        label.set_max_width_chars(28)  # Limit label width
-        label.set_width_chars(4)      # Set consistent width
-        label.set_hexpand(False)
-        label.set_margin_end(28)  ## margem à direita
-        box.pack_start(label, True, True, 0)
+        right_pad = Gtk.Label()
+        right_pad.set_size_request(10, 1)
+        box.pack_start(right_pad, False, False, 0)
 
         event_box = Gtk.EventBox()
         event_box.add(box)
