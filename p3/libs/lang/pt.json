@@ -118,6 +118,7 @@
   "lsw_desc": "Instala o Windows no Linux por um container do Docker (ou Podman para distros Fedora atômicas). Compatível com WinApps. NÃO possui aceleração de GPU.",
   "btassist_desc": "Um gerenciador de snapshots e subvolumes Btrfs. Usa o snapper como back-end.",
   "touchegg_desc": "Um reconhecedor de gestos multi-toque que permite configurar gestos para várias ações em desktops Xorg.",
+  "thumb_desc": "Instala o ffmpegthumbnailer para gerar miniaturas de arquivos de vídeo em gerenciadores de arquivos.",
 
   "nv_desc": "Drivers Nvidia atuais. GPUs suportadas: Maxwell (GT 9xx) em diante.",
   "nv_desc_470": "Drivers Nvidia legados. GPUs suportadas: Kepler (GT 6xx) e Fermi (GT 7xx).",

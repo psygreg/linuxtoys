@@ -31,10 +31,13 @@ sysag_run () {
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         dconf write /org/gnome/mutter/check-alive-timeout "20000"
     fi
+    # fix video thumbnails
+    _packages=(ffmpegthumbnailer)
+    _install_
 }
 # consolidated installation
 optimizer () {
-    if [ ! -f /.autopatch.state ]; then
+    if [ ! -f $HOME/.local/.autopatch.state ]; then
         sudo_rq
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             debfixer_lib
@@ -61,7 +64,7 @@ optimizer () {
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/autopatch.state
         sudo mv autopatch.state $HOME/.local/.autopatch.state
     else
-        nonfatal "$msg234"
+        fatal "$msg234"
     fi
 }
 # menu

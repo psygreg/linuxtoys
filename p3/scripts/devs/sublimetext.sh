@@ -44,7 +44,6 @@ elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LI
     sudo pacman -Syu
     _packages=(sublime-text)
     _install_
-
 else
     fatal "$msg077" # Mensagem de "Sistema operacional não compatível"
 fi
