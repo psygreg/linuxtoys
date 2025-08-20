@@ -21,19 +21,17 @@ As long as you're running their up-to-date stable versions:
 - **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those. The same is applicable to **Unity Hub**.
 
 ## Usage
-- Use the `install.sh` script available in the latest of [Releases](https://github.com/psygreg/linuxtoys/releases).
+#### Use the `install.sh` script available in the latest of [Releases](https://github.com/psygreg/linuxtoys/releases).
 
 Give it permission to run as a program through whichever file manager you choose, or with `chmod +x install.sh` through terminal, then run it and it will figure out the installation procedure for your operating system.
 
-- Download and install the **package for your distribution** from [Releases](https://github.com/psygreg/linuxtoys/releases):
+#### Download and install the **package for your distribution** from [Releases](https://github.com/psygreg/linuxtoys/releases):
 
 For Arch Linux and derivatives, the terminal is required for this: `sudo pacman -U linuxtoys-<version>-1-x86_64.pacman`.
 
 For `rpm-ostree`-based systems, it will also be needed: `rpm-ostree install linuxtoys-<version>-1.x86_64.rpm`. You may need to run `rpm-ostree remove linuxtoys` before using the install command to update the app due to limitations on how locally layered packages work - so it's recommended to use the COPR repository on those systems for your convenience.
 
-- Download and run the **AppImage** package from [Releases](https://github.com/psygreg/linuxtoys/releases) - now also available on **[AM Application Manager](https://github.com/ivan-hc/AM)!** -- momentarily unavailable.
-
-- Alternatively, run it directly from the method below.
+#### Alternatively, run it directly from the method below.
 
 ### Git cloning
 First, make sure you have all necessary dependencies. Most of those should be already present in your system.
