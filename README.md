@@ -79,3 +79,9 @@ Check the [Developer Handbook](https://github.com/psygreg/linuxtoys/wiki/Develop
 **All Pull Requests will be manually checked before approval.**
 
 ## [Credits](https://github.com/psygreg/linuxtoys/wiki/Credits)
+
+## Contributors
+
+<a href="hhttps://github.com/psygreg/linuxtoys/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=psygreg/linuxtoys&max=500" alt="Lista de contribuidores" width="30%"/>
+</a>
