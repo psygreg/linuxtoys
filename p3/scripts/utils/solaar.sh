@@ -3,6 +3,7 @@
 # version: 1.0
 # description: slar_desc
 # icon: solaar.svg
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

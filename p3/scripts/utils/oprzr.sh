@@ -3,6 +3,7 @@
 # version: 1.0
 # description: oprzr_desc
 # icon: gaming.svg
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

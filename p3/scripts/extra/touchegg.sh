@@ -4,6 +4,7 @@
 # description: touchegg_desc
 # icon: touchegg.svg
 # compat: ubuntu, debian, fedora, suse
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release

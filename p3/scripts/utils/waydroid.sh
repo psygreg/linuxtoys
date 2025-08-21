@@ -4,6 +4,7 @@
 # description: waydroid_desc
 # icon: waydroid.svg
 # compat: fedora, ostree, debian, ubuntu, arch, cachy, ublue
+# nocontainer
 
 # --- Start of the script code ---
 . /etc/os-release
