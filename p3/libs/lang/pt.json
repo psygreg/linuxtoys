@@ -149,6 +149,7 @@
   "slar_desc": "Um gerenciador de dispositivos Linux para o Receptor Unifying da Logitech e outros dispositivos suportados.",
   "distroshelf_desc": "Uma ferramenta de gerenciamento de containers Distrobox com uma interface elegante. Inclui Podman e Distrobox.",
   "bottles_desc": "Uma ferramenta para gerenciar aplicativos Windows no Linux usando Wine.",
+  "dch_desc": "Faz com que os containers Distrobox sejam capazes de usar xdg-open e interagir com programas do host, se disponíveis.",
 
   "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web.",
   "mise_desc": "Assim como asdf (ou nvm ou pyenv, mas para qualquer linguagem), ele gerencia ferramentas de desenvolvimento como node, python, cmake, terraform e centenas mais. Substitui PyEnv, NVM, e os instaladores Java JDK e Maven desta seção.",

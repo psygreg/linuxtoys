@@ -249,12 +249,15 @@ def script_is_container_compatible(script_path):
     - '# nocontainer:' - hide in all containers (empty value)
     - '# nocontainer: debian, ubuntu' - hide only in debian/ubuntu containers
     - '# nocontainer: fedora' - hide only in fedora containers
+    - '# nocontainer: invert' - show ONLY in containers (hide on host)
+    - '# nocontainer: invert, debian' - show only in debian containers
     
     Priority rules:
     - If nocontainer header is present, it takes precedence over flatpak_in_lib
     - If nocontainer specifies keys that don't match current system, script is shown
       even if it contains flatpak_in_lib
     - If no nocontainer header, flatpak_in_lib causes automatic exclusion
+    - 'invert' keyword reverses the container logic
     
     Args:
         script_path (str): Path to the script file
@@ -277,6 +280,7 @@ def script_is_container_compatible(script_path):
             
             has_flatpak_in_lib = 'flatpak_in_lib' in content
             nocontainer_keys = None
+            has_invert = False
             
             # Check for nocontainer header
             for line in content.split('\n'):
@@ -285,7 +289,10 @@ def script_is_container_compatible(script_path):
                         # nocontainer with specific keys
                         nocontainer_line = line[line.index(':') + 1:].strip()
                         if nocontainer_line:
-                            nocontainer_keys = set([k.strip() for k in nocontainer_line.split(',')])
+                            keys = [k.strip() for k in nocontainer_line.split(',')]
+                            has_invert = 'invert' in keys
+                            # Remove 'invert' from the keys list to process other keys normally
+                            nocontainer_keys = set([k for k in keys if k != 'invert'])
                         else:
                             # Empty after colon means hide in all containers
                             nocontainer_keys = set()
@@ -296,18 +303,38 @@ def script_is_container_compatible(script_path):
                 if not line.startswith('#'):
                     break
             
+            # Check if we're actually in a container
+            is_in_container = is_containerized()
+            
             # If nocontainer header is present, it takes precedence
             if nocontainer_keys is not None:
-                if len(nocontainer_keys) == 0:
-                    # Hide in all containers
-                    return False
+                if has_invert:
+                    # Invert logic: show only in containers
+                    if not is_in_container:
+                        return False  # Hide on host when invert is specified
+                    
+                    # If we're in a container and have other keys, check compatibility
+                    if len(nocontainer_keys) > 0:
+                        current_compat_keys = get_system_compat_keys()
+                        return bool(current_compat_keys & nocontainer_keys)
+                    else:
+                        # Only 'invert' specified, show in any container
+                        return True
                 else:
-                    # Hide only in containers that match the specified keys
-                    current_compat_keys = get_system_compat_keys()
-                    return not bool(current_compat_keys & nocontainer_keys)
+                    # Normal logic: hide in containers
+                    if not is_in_container:
+                        return True  # Always show on host when no invert
+                    
+                    if len(nocontainer_keys) == 0:
+                        # Hide in all containers
+                        return False
+                    else:
+                        # Hide only in containers that match the specified keys
+                        current_compat_keys = get_system_compat_keys()
+                        return not bool(current_compat_keys & nocontainer_keys)
             
             # If no nocontainer header, fall back to flatpak_in_lib check
-            if has_flatpak_in_lib:
+            if has_flatpak_in_lib and is_in_container:
                 return False
                 
     except Exception:
