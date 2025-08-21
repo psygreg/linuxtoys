@@ -10,7 +10,8 @@ getresolve () {
   	local pkgname="$_upkgname"
   	local major_version="20.1"
   	local minor_version="0"
-  	pkgver="${major_version}"
+  	pkgver="${major_version}"."${minor_version}"
+    filever="${major_version}"
   	local _product=""
   	local _referid=""
   	local _siteurl=""
@@ -23,15 +24,15 @@ getresolve () {
     		_referid='dfd43085ef224766b06b579ce8a6d097'
     		_siteurl="https://www.blackmagicdesign.com/api/support/latest-stable-version/davinci-resolve/linux"
     		sha256sum='40bf13b7745b420ed9add11c545545c2ba2174429b6c8eafe8fceb94aa258766'
-    		_archive_name="DaVinci_Resolve_${pkgver}_Linux"
-    		_archive_run_name="DaVinci_Resolve_${pkgver}_Linux"
+    		_archive_name="DaVinci_Resolve_${filever}_Linux"
+    		_archive_run_name="DaVinci_Resolve_${filever}_Linux"
   	elif [ "$pkgname" == "davinci-resolve-studio" ]; then
     		_product="DaVinci Resolve Studio"
     		_referid='0978e9d6e191491da9f4e6eeeb722351'
     		_siteurl="https://www.blackmagicdesign.com/api/support/latest-stable-version/davinci-resolve-studio/linux"
     		sha256sum='5fb4614834c5a9f990afa977b7d5dcd2675c26529bc09a468e7cd287bbaf5097'
-    		_archive_name="DaVinci_Resolve_Studio_${pkgver}_Linux"
-    		_archive_run_name="DaVinci_Resolve_Studio_${pkgver}_Linux"
+    		_archive_name="DaVinci_Resolve_Studio_${filever}_Linux"
+    		_archive_run_name="DaVinci_Resolve_Studio_${filever}_Linux"
   	fi
 
   	local _useragent="User-Agent: Mozilla/5.0 (X11; Linux ${CARCH}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.75 Safari/537.36"
@@ -108,7 +109,7 @@ davinciboxd () {
 davinciboxatom () {
 
     dv_atom_deps () {
-        local _packages=(toolbox podman lshw)
+        _packages=(toolbox podman lshw)
         local amdGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
         local nvGPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
         local intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel|iris|xe')
@@ -149,6 +150,7 @@ davinciboxatom () {
         if [[ $? -eq 1 ]]; then
             echo "No packages to install."
         else
+            unset _packages
             if [[ "${_to_install[*]}" =~ "rocm" ]]; then
                 sudo usermod -aG render,video $USER
             elif [[ "${_to_install[*]}" =~ "mesa-libOpenCL" ]]; then
@@ -202,17 +204,16 @@ davinciboxatom () {
     fi
 
 }
-
-# warn about just installing Resolve, and still requiring a purchase from BMD to use Studio
-zenwrn "$msg034"
 # if on atomic distros, go straight to davincibox
-cd $HOME
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
+# warn about just installing Resolve, and still requiring a purchase from BMD to use Studio
+zenwrn "$msg034"
+cd $HOME
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
 else

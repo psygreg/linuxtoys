@@ -30,7 +30,7 @@ iwd_in () {
             # use their iwd installation script for ublue distros
             ujust iwd
         else
-            local _packages=(iwd)
+            _packages=(iwd)
             _install_
             # enforce iwd backend for networkmanager
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/iwd.conf

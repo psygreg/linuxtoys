@@ -49,13 +49,15 @@ optimizer () {
             sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
         fi
         # install codecs if absent
-        local _packages=("libavcodec-freeworld")
+        _packages=("libavcodec-freeworld")
         _install_
+        unset _packages
         # enable signing of kernel modules (akmods) like Nvidia and VirtualBox
         if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
             if ! rpm -qi "akmods-keys" &>/dev/null; then
-                local _packages=(rpmdevtools akmods)
+                _packages=(rpmdevtools akmods)
                 _install_
+                unset _packages
                 sudo kmodgenca
                 sudo mokutil --import /etc/pki/akmods/certs/public_key.der
                 git clone https://github.com/CheariX/silverblue-akmods-keys

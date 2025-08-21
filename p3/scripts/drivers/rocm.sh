@@ -16,7 +16,7 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 rocm_rpm () {
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local _packages=()
+        _packages=()
         if [[ "$ID_LIKE" == *suse* ]]; then
             _packages=(libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo)
         else
@@ -31,7 +31,7 @@ rocm_rpm () {
 rocm_deb () {
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local _packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
+        _packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
         _install_
         sudo usermod -aG render,video $USER
     else
@@ -41,7 +41,7 @@ rocm_deb () {
 rocm_arch () { 
     local GPU=$(lspci | grep -i 'radeon .*')
     if [[ -n "$GPU" ]]; then
-        local _packages=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo)
+        _packages=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo)
         _install_
         sudo usermod -aG render,video $USER
     else

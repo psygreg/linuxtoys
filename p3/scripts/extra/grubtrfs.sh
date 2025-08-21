@@ -17,7 +17,7 @@ dep_check () {
         nonfatal "No GRUB found."
         exit 1
     else
-        local _packages=()
+        _packages=()
         if [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]] || [[ "$ID" =~ (fedora|suse) ]]; then
             _packages=(gawk inotify-tools make)
         elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then

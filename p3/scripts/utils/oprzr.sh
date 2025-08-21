@@ -8,6 +8,8 @@
 . /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+_lang_
+source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 _packages=(openrazer-meta)
 sudo_rq
 if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
@@ -15,7 +17,6 @@ if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
     sudo apt update
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
     _packages+=(kernel-devel)
-    _install_
     if command -v rpm-ostree &>/dev/null; then
         cd $HOME
         wget https://openrazer.github.io/hardware:razer.repo
@@ -33,3 +34,4 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
     sudo zypper refresh
 fi
 _install_
+zeninf "$msg036"

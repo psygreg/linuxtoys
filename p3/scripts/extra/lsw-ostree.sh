@@ -14,8 +14,9 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # podman installation
 pdm_install () {
-	local _packages=(podman podman-compose)
+	_packages=(podman podman-compose)
 	_install_
+	unset _packages
 }
 # hardware requirements check
 hwcheck () {
@@ -44,8 +45,9 @@ hwcheck () {
 }
 # windows podman container setup
 win_install () {
-	local _packages=(dialog netcat freerdp iproute libnotify)
+	_packages=(dialog netcat freerdp iproute libnotify)
 	_install_
+	unset _packages
     sleep 1
     mkdir -p $HOME/.config/winapps
 	cd $HOME/.config/winapps
