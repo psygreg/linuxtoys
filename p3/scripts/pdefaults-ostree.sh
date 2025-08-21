@@ -48,8 +48,8 @@ optimizer () {
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
             sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
         fi
-        # install codecs if absent
-        _packages=("libavcodec-freeworld")
+        # install codecs and thumbnailer if absent
+        _packages=(libavcodec-freeworld ffmpegthumbnailer)
         _install_
         unset _packages
         # enable signing of kernel modules (akmods) like Nvidia and VirtualBox
@@ -70,9 +70,6 @@ optimizer () {
         if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
             dconf write /org/gnome/mutter/check-alive-timeout "20000"
         fi
-        # fix video thumbnails
-        _packages=(ffmpegthumbnailer)
-        _install_
         # save autopatch state
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/autopatch.state
         sudo mv autopatch.state $HOME/.local/.autopatch.state
