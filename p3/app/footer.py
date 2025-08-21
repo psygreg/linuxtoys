@@ -1,30 +1,12 @@
-import gi
-gi.require_version('WebKit2', '4.1')
-
 from .gtk_common import Gtk
-from gi.repository import WebKit2
 import webbrowser
 
-def create_webview_window(uri):
-    # Creates a new window to display a webview
-    window = Gtk.Window()
-    window.set_default_size(800, 600)
-    window.set_title("")
-
-    # Creates a webview widget and loads the specified URI
-    webview = WebKit2.WebView()
-    webview.load_uri(uri)
-
-    # Adds the webview to the window and shows all widgets
-    window.add(webview)
-    window.show_all()
-
 def create_footer():
-    # Creates the main horizontal box for the footer
+    # Main container for the footer
     footer_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
     footer_box.set_margin_top(10)
     footer_box.set_margin_bottom(10)
-    footer_box.set_halign(Gtk.Align.CENTER)
+    footer_box.set_halign(Gtk.Align.CENTER) # Center the whole footer
 
     # Attempts to load application translations
     translation = None
@@ -37,23 +19,27 @@ def create_footer():
         pass
     if translation is None:
         translation = {}
-    support_label = translation.get('support_footer', 'Apoie este projeto')
+    support_label = translation.get('support_footer', 'Support this project')
 
-    # GitHub button that opens in a webview
-    website_button = Gtk.Button(label="Check us out on GitHub")
-    website_button.connect("clicked", lambda _: create_webview_window("https://github.com/psygreg/linuxtoys"))
+    # Website LinkButton (opens in default browser)
+    website_button = Gtk.LinkButton(
+        uri="https://github.com/psygreg/linuxtoys", 
+        label="Check us out on GitHub"
+    )
 
     # Vertical separator between buttons
     separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
 
-    # Donation button that opens in the default web browser
-    donation_button = Gtk.Button(label=support_label)
-    donation_button.connect("clicked", lambda _: webbrowser.open("https://ko-fi.com/psygreg"))
+    # Donation LinkButton (opens in default browser)
+    donation_button = Gtk.LinkButton(
+        uri="https://ko-fi.com/psygreg", 
+        label=support_label
+    )
 
-    # Adds buttons and separator to the footer box
-    footer_box.pack_start(website_button, False, False, 0)
+    # Adds buttons and separator to the footer box, allowing them to expand
+    footer_box.pack_start(website_button, True, True, 0)
     footer_box.pack_start(separator, False, False, 10)
-    footer_box.pack_start(donation_button, False, False, 0)
+    footer_box.pack_start(donation_button, True, True, 0)
 
     # Horizontal separator at the top of the main footer box
     final_separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
@@ -61,48 +47,45 @@ def create_footer():
     # Main vertical box to organize the footer
     main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
     main_vbox.pack_start(final_separator, False, False, 0)
-    main_vbox.menu_footer_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+    main_vbox.menu_footer_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
     main_vbox.menu_footer_box.set_halign(Gtk.Align.CENTER)
     main_vbox.menu_footer_box.set_margin_top(10)
     main_vbox.menu_footer_box.set_margin_bottom(0)
 
-    # Wiki button that opens in a webview
-    menu_website_button = Gtk.Button(label="Wiki")
-    menu_website_button.connect("clicked", lambda _: create_webview_window("https://github.com/psygreg/linuxtoys/wiki"))
+    # Wiki LinkButton
+    menu_website_button = Gtk.LinkButton(
+        uri="https://github.com/psygreg/linuxtoys/wiki", 
+        label="Wiki"
+    )
     
-    # Changelog button that opens in a webview
-    changelog_button = Gtk.Button(label="Changelog")
-    changelog_button.connect("clicked", lambda _: create_webview_window("https://github.com/psygreg/linuxtoys/releases"))
-    
-    # Report bug button that opens in the default web browser
+    # Report bug LinkButton
     report_label = translation.get('report_label', 'Report Bug')
-    menu_bug_button = Gtk.Button(label=report_label)
-    menu_bug_button.connect("clicked", lambda _: webbrowser.open("https://github.com/psygreg/linuxtoys/issues/new?template=bug_report.md"))
+    menu_bug_button = Gtk.LinkButton(
+        uri="https://github.com/psygreg/linuxtoys/issues/new?template=bug_report.md",
+        label=report_label
+    )
     
-    # Credits button that opens in a webview
+    # Credits LinkButton
     credits_label = translation.get('credits_label', 'Credits')
-    menu_credits_button = Gtk.Button(label=credits_label)
-    menu_credits_button.connect("clicked", lambda _: create_webview_window("https://github.com/psygreg/linuxtoys/wiki/Credits"))
+    menu_credits_button = Gtk.LinkButton(
+        uri="https://github.com/psygreg/linuxtoys/wiki/Credits",
+        label=credits_label
+    )
     
-    # Donation button for the menu that opens in the default web browser
-    menu_donation_button = Gtk.Button(label=support_label)
-    menu_donation_button.connect("clicked", lambda _: webbrowser.open("https://ko-fi.com/psygreg"))
+    # Donation LinkButton for the menu
+    menu_donation_button = Gtk.LinkButton(
+        uri="https://ko-fi.com/psygreg", 
+        label=support_label
+    )
 
-    # List of buttons for easier addition to the footer
-    buttons = [
-        menu_website_button,
-        changelog_button,
-        menu_bug_button,
-        menu_credits_button,
-        menu_donation_button
-    ]
-
-    # Adds buttons and separators to the footer
-    for i, button in enumerate(buttons):
-        main_vbox.menu_footer_box.pack_start(button, False, False, 0)
-        if i < len(buttons) - 1:
-            separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-            main_vbox.menu_footer_box.pack_start(separator, False, False, 10)
+    # Adds buttons to the footer, allowing them to expand and fill space
+    main_vbox.menu_footer_box.pack_start(menu_website_button, True, True, 0)
+    main_vbox.menu_footer_box.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 10)
+    main_vbox.menu_footer_box.pack_start(menu_bug_button, True, True, 0)
+    main_vbox.menu_footer_box.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 10)
+    main_vbox.menu_footer_box.pack_start(menu_credits_button, True, True, 0)
+    main_vbox.menu_footer_box.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 10)
+    main_vbox.menu_footer_box.pack_start(menu_donation_button, True, True, 0)
 
     # Adds the menu footer box to the main vertical box
     main_vbox.pack_start(main_vbox.menu_footer_box, False, False, 0)
