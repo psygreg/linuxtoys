@@ -18,9 +18,9 @@ _referid='ee1da4f13df74d72b6da783ead2ed875'
 _siteurl="https://www.blackmagicdesign.com/api/support/latest-stable-version/davinci-resolve/linux"
 sha256sums=('9d7eb2f9fca7e9ecb7371e206f05baf94466f8c93c3666cd255b05a432db459b')
 pkgdesc='Professional A/V post-production software suite from Blackmagic Design'
-filever=20.1
-_archive_name=DaVinci_Resolve_${filever}_Linux
-_archive_run_name=DaVinci_Resolve_${filever}_Linux
+_filever=20.1
+_archive_name="DaVinci_Resolve_${_filever}_Linux"
+_archive_run_name="DaVinci_Resolve_${_filever}_Linux"
 conflicts=('davinci-resolve-studio' 'davinci-resolve-beta' 'davinci-resolve-studio-beta')
 
 _useragent="User-Agent: Mozilla/5.0 (X11; Linux ${CARCH}) \
