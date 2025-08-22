@@ -29,7 +29,7 @@ amdGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
 if [[ -n "$amdGPU" ]]; then
     sudo_rq
     rusticl_in
-    curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/resources/rusticl-amd \
+    curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/rusticl-amd \
         | sudo tee -a /etc/environment > /dev/null
     zeninf "$msg036"
 else
@@ -37,7 +37,7 @@ else
     if [[ -n "$intelGPU" ]]; then
         sudo_rq
         rusticl_in
-        curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/main/resources/rusticl-intel \
+        curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/rusticl-intel \
             | sudo tee -a /etc/environment > /dev/null
         zeninf "$msg036"
     else
