@@ -102,6 +102,7 @@ lsw_install () {
 	if zenity --question --title "Setup" --text "Is the Windows installation finished?" --height=300 --width=300; then
 		wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/lsw-atom/rpmbuild/RPMS/x86_64/lsw-atom-shortcuts-1.1-1.x86_64.rpm
 		sudo rpm-ostree install -yA lsw-atom-shortcuts-1.1-1.x86_64.rpm
+        rm lsw-atom-shortcuts-1.1-1.x86_64.rpm
 		exit 0
 	else
 		if zenity --question --title "Setup" --text "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!" --height=300 --width=360; then
