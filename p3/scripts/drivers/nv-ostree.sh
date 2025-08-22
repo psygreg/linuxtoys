@@ -34,5 +34,9 @@ if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
     fi
 fi
 sudo rpm-ostree install akmod-nvidia xorg-x11-drv-nvidia-cuda
-sudo rpm-ostree kargs --append=rd.driver.blacklist=nouveau,nova_core --append=modprobe.blacklist=nouveau --append=nvidia-drm.modeset=1
+sudo tee /etc/modprobe.d/blacklist-nouveau-nova.conf <<EOF
+blacklist nouveau
+blacklist nova_core
+EOF
+sudo rpm-ostree kargs --append=rd.driver.blacklist=nova_core --append=modprobe.blacklist=nova_core --append=rd.driver.blacklist=nouveau --append=modprobe.blacklist=nouveau --append=nvidia-drm.modeset=1
 zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300
