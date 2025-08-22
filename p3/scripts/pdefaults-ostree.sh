@@ -71,7 +71,7 @@ optimizer () {
             dconf write /org/gnome/mutter/check-alive-timeout "20000"
         fi
         # save autopatch state
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/autopatch.state
+        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
         sudo mv autopatch.state $HOME/.local/.autopatch.state
     else
         # update configs if already optimized
