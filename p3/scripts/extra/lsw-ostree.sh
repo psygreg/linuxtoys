@@ -89,7 +89,7 @@ win_install () {
 	if command -v konsole &> /dev/null; then
         setsid konsole --noclose -e  "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up" >/dev/null 2>&1 < /dev/null &
 	elif command -v ptyxis &> /dev/null; then
-		setsid ptyxis bash -c "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
+		setsid ptyxis -- bash -c "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
     elif command -v gnome-terminal &> /dev/null; then
         setsid gnome-terminal -- bash -c "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
     else
