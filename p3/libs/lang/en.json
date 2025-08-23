@@ -128,6 +128,7 @@
   "icr_desc": "Intel Compute Runtime drivers for compute workloads on Intel GPUs.",
   "rusticl_desc": "A community-driven implementation of the OpenCL standard based in Rust, providing better performance and compatibility. Should only be used if your GPU is not supported by ROCm, CUDA or Intel Compute Runtime.",
   "bcm_desc": "Proprietary Broadcom WiFi drivers for Linux. Only use if your card is not working with the kernel-embedded open-source drivers.",
+  "xneo_desc": "Driver for official and generic Xbox controllers on Linux.",
 
   "flat_desc": "The go-to repository for Flatpak applications, having many exclusive apps.",
   "brew_desc": "A CLI tools package manager for macOS/Linux.",
