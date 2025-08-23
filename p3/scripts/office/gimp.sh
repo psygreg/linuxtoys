@@ -15,18 +15,19 @@ flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub org.gimp.GIMP
 if zenity --question --text "$msg253" --width 360 --height 300; then
     zeninf "$msg254"
-    flatpak run org.gimp.GIMP & sleep 1
+    flatpak run org.gimp.GIMP & sleep 10
     PID=($(pgrep -f "gimp"))
     if [ -z "$PID" ]; then
         echo "Failed to find Flatpak process."
         exit 1
     fi
     echo "Found Flatpak app running as PID $PID"
-    sleep 20
+    sleep 15
     for ID in "${PID[@]}"; do
         kill "$ID"
     done
     wait "$PID" 2>/dev/null
+    cd $HOME
     git clone https://github.com/Diolinux/PhotoGIMP.git
     cd PhotoGIMP
     cp -rf .config/* $HOME/.config/
