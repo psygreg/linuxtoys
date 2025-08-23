@@ -313,6 +313,7 @@ install_cnf_handler() {
     echo "Installation completed successfully!"
     show_examples
 }
+sudo_rq
 if is_handler_installed; then
     echo "Distrobox command-not-found handler is currently installed."
     echo "Running removal mode..."
