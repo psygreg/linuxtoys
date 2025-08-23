@@ -21,23 +21,24 @@ if [ -z "$DLL_FIND" ]; then
 else 
     DLL_ABSOLUTE_PATH=$(dirname "$(realpath "$DLL_FIND")")
     ESCAPED_DLL_PATH=$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')
+    cd $HOME
     # try update if already installed
     if rpm -qi lsfg-vk &> /dev/null || pacman -Qi lsfg-vk 2>/dev/null 1>&2 || dpkg -s lsfg-vk 2>/dev/null 1>&2; then
         if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             if [[ "$(dpkg-query -W -f='${Version}' lsfg-vk 2>/dev/null | sed 's/^v//')" != "$ver" ]]; then
                 wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.deb
-                sudo apt install -y ./lsfg-vk-${ver}.x86_64.deb
+                sudo apt install -y lsfg-vk-${ver}.x86_64.deb
                 rm lsfg-vk-${ver}.x86_64.deb
             fi
         elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ] || [[ "$ID_LIKE" =~ suse ]] || [[ "$ID_LIKE" =~ opensuse ]] || [ "$ID" == "suse" ]; then
             if [[ "$(rpm -q --queryformat '%{VERSION}' lsfg-vk)" != "$ver" ]]; then
                 wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/lsfg-vk-${ver}.x86_64.rpm
                 if command -v rpm-ostree >/dev/null 2>&1; then
-                    sudo rpm-ostree install -yA ./lsfg-vk-${ver}.x86_64.rpm
+                    sudo rpm-ostree install -yA lsfg-vk-${ver}.x86_64.rpm
                 elif command -v zypper >/dev/null 2>&1; then
-                    sudo zypper install -y ./lsfg-vk-${ver}.x86_64.rpm
+                    sudo zypper install -y lsfg-vk-${ver}.x86_64.rpm
                 else
-                    sudo dnf install -y ./lsfg-vk-${ver}.x86_64.rpm
+                    sudo dnf install -y lsfg-vk-${ver}.x86_64.rpm
                 fi
                 rm lsfg-vk-${ver}.x86_64.rpm
             fi
