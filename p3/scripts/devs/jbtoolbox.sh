@@ -48,7 +48,7 @@ else # update or repair
     mv $(find . -maxdepth 1 -type d -name "jetbrains-*") toolbox
     sleep 1
     ./toolbox/jetbrains-toolbox --appimage-extract
-    cd toolbox
+    rm -r toolbox
     mv squashfs-root toolbox
     sudo cp -rf toolbox $HOME/.local
     cd ..
