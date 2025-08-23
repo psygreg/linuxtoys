@@ -4,14 +4,15 @@ import requests
 import threading
 import json
 from . import get_app_resource_path, get_icon_path
-
+from .update_helper import get_current_version
 
 class AboutDialog:
     def __init__(self, parent_window, translations):
         self.parent_window = parent_window
         self.translations = translations
         self.contributors = []
-        
+        self.app_version = get_current_version()
+
     def show_about_dialog(self):
         """Creates and shows the About dialog"""
         # Create the dialog
@@ -22,27 +23,16 @@ class AboutDialog:
         )
         dialog.set_default_size(512, 310)
         dialog.set_resizable(False)
-        
-        # Add Close button
-        # close_text = self.translations.get('script_runner_close', 'Close')
-        # dialog.add_button(close_text, Gtk.ResponseType.CLOSE)
-        
-        ## Cria uma barra superior para abas
+
+        # Creates a top bar for tabs
         notebook = Gtk.Notebook()
         notebook.set_size_request(-1, 310)
         content_area = dialog.get_content_area()
         content_area.add(notebook)
 
-        # Get content area
-        # content_area.set_spacing(20)
-        # content_area.set_margin_left(20)
-        # content_area.set_margin_right(20)
-        # content_area.set_margin_top(8)
-        # content_area.set_margin_bottom(20)
-
-        ## ---------------------------
-        ## ABA: SOBRE
-        ## ---------------------------
+        # ---------------------------
+        # TAB: ABOUT
+        # ---------------------------
         aba_sobre = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         aba_sobre.set_border_width(16)
         
@@ -69,28 +59,27 @@ class AboutDialog:
         notebook.append_page(aba_sobre, Gtk.Label(label="Sobre"))
 
 
-        ## ---------------------------
-        ## ABA: LICENÇA
-        ## ---------------------------
+        # ---------------------------
+        # TAB: LICENSE
+        # ---------------------------
         aba_licenca = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         aba_licenca.set_border_width(10)
         license_path = get_app_resource_path("../../LICENSE")
-        licenca_label = Gtk.Label(label="""
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.      
-
-
-       See https://www.gnu.org/licenses/gpl-3.0.html
-
-        """)
+        
+        # Add the version number to the license header
+        license_header_text = f"LinuxToys {self.app_version}\n\nGNU GENERAL PUBLIC LICENSE"
+        licenca_header = Gtk.Label(label=license_header_text)
+        licenca_header.set_justify(Gtk.Justification.CENTER)
+        aba_licenca.pack_start(licenca_header, False, False, 0)
+        
+        # Load license text from file
+        licenca_label = Gtk.Label(label="License file not found.")
         try:
             with open(license_path, "r", encoding="utf-8") as f:
                 license_text = f.read()
                 licenca_label = Gtk.Label(label=license_text)
         except Exception as e:
-            print(f"Erro ao carregar licença. {e}")
+            print(f"Error loading license. {e}")
         licenca_label.set_justify(Gtk.Justification.LEFT)
         licenca_label.set_line_wrap(True)
         licenca_label.set_selectable(True)
@@ -100,7 +89,7 @@ the Free Software Foundation, either version 3 of the License, or
         aba_licenca.pack_start(scroll, True, True, 0)
         notebook.append_page(aba_licenca, Gtk.Label(label="Licença"))
         
-        ## ---------------------------
+        # ---------------------------
         # Show all widgets
         dialog.show_all()
         
@@ -131,12 +120,17 @@ the Free Software Foundation, either version 3 of the License, or
         
         # Text box
         text_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        text_box.set_margin_top(10) ## margem acima do titulo
+        text_box.set_margin_top(10) # top margin
         
         # App name
         name_label = Gtk.Label()
-        name_label.set_markup("<big><big><b>LinuxToys</b></big></big>")
+        name_label.set_markup(f"<big><big><b>LinuxToys</b></big></big>")
         name_label.set_halign(Gtk.Align.START)
+
+        # App version
+        version_label = Gtk.Label()
+        version_label.set_markup(f"<small>{self.translations.get('version_label', 'Versão:')} {self.app_version}</small>")
+        version_label.set_halign(Gtk.Align.START)
         
         # App description
         description = self.translations.get("subtitle", "A collection of tools for Linux in a user-friendly way.")
@@ -146,6 +140,7 @@ the Free Software Foundation, either version 3 of the License, or
         desc_label.set_max_width_chars(52)
         
         text_box.pack_start(name_label, False, False, 0)
+        text_box.pack_start(version_label, False, False, 0) # Adds the version below the name
         text_box.pack_start(desc_label, False, False, 0)
         
         header_box.pack_start(app_icon, False, False, 0)
