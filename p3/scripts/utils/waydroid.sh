@@ -14,12 +14,13 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     sudo_rq
+    _packages=(waydroid)
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
         sudo apt install -y curl ca-certificates
         curl -s https://repo.waydro.id | sudo bash
         sleep 1
+        _packages+=(python3-venv)
     fi
-    _packages=(waydroid)
     _install_
     unset _packages
     sudo systemctl enable --now waydroid-container
