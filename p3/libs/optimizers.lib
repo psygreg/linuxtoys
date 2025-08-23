@@ -74,26 +74,30 @@ dsplitm_lib () {
 
 # power optimizer for laptops
 psave_lib () {
-    sudo_rq
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        sudo add-apt-repository ppa:linrunner/tlp
-        sudo apt update
+    if [[ "$ID" != "cachyos" ]]; then
+        sudo_rq
+        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            sudo add-apt-repository ppa:linrunner/tlp
+            sudo apt update
+        fi
+        local _packages=(powertop tlp tlp-rdw smartmontools ethtool)
+        _install_
+        sudo systemctl enable tlp.service
+        sudo systemctl enable NetworkManager-dispatcher.service
+        sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+        cd $HOME
+        git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+        cd auto-cpufreq && sudo ./auto-cpufreq-installer
+        cd ..
+        sleep 1
+        rm -rf auto-cpufreq
+        sudo auto-cpufreq --install
+        flatpak_in_lib
+        flatpak install --or-update -y com.github.d4nj1.tlpui --system
+        zeninf "$msg036"
+    else
+        zenwrn "$msg286"
     fi
-    local _packages=(powertop tlp tlp-rdw smartmontools ethtool)
-    _install_
-    sudo systemctl enable tlp.service
-    sudo systemctl enable NetworkManager-dispatcher.service
-    sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-    cd $HOME
-    git clone https://github.com/AdnanHodzic/auto-cpufreq.git
-    cd auto-cpufreq && sudo ./auto-cpufreq-installer
-    cd ..
-    sleep 1
-    rm -rf auto-cpufreq
-    sudo auto-cpufreq --install
-    flatpak_in_lib
-    flatpak install --or-update -y com.github.d4nj1.tlpui --system
-    zeninf "$msg036"
 }
 
 # patcher for debian testing

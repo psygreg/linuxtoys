@@ -48,3 +48,4 @@ msg284="Instruções para obter a certificação Google Play, necessária para u
 msg268="Reinicie e siga as instruções na tela para importar a nova chave (MOK) para o Secure Boot da sua máquina."
 msg256="Para GPUs GCN (RX4xx/5xx) ou integradas"
 msg285="LucidGlyph já está instalado. Deseja removê-lo de seu sistema?"
+msg286="Otimizador de Energia não é compatível com CachyOS, que tem sua própria implementação de perfis de energia. Pulando.."

@@ -47,3 +47,4 @@ msg284="Instructions to obtain Google Play certification, necessary to use the P
 msg268="Reboot and follow on screen instructions to import the new key (MOK) into your machine's Secure Boot."
 msg256="For GCN (RX4xx/5xx) and integrated GPUs"
 msg285="LucidGlyph is already installed. Do you wish to remove it from your system?"
+msg286="Power Optimizer is not compatible with CachyOS, which has its own implementation of power profiles. Skipping.."
