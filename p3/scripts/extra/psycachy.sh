@@ -25,6 +25,8 @@ _kv_url_latest=$(curl -s https://www.kernel.org | grep -A 1 'id="latest_link"' |
 _kv_latest=$(echo $_kv_url_latest | grep -oP 'linux-\K[^"]+')
 # remove the .tar.xz extension
 _kv_latest=$(basename $_kv_latest .tar.xz)
+# early sudo request - fixes error obtaining sudo
+sudo_rq
 # psycachy standard edition
 psycachy_std () {
     cd $HOME
@@ -32,7 +34,6 @@ psycachy_std () {
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-image-psycachy_${kver_psycachy}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-libc-dev_${kver_psycachy}-1_amd64.deb"
     sleep 1
-    sudo_rq
     sudo dpkg -i linux-image-psycachy_${kver_psycachy}-1_amd64.deb linux-headers-psycachy_${kver_psycachy}-1_amd64.deb linux-libc-dev_${kver_psycachy}-1_amd64.deb || exit 10
     cd $HOME/.local
     sleep 1
@@ -54,7 +55,6 @@ psycachy_lts () {
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy-lts_${kver_lts}-1_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
     sleep 1
-    sudo_rq
     sudo dpkg -i linux-image-psycachy-lts_${kver_lts}-1_amd64.deb linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb linux-libc-dev_${kver_lts}-1_amd64.deb || exit 10
     cd $HOME/.local
     sleep 1
