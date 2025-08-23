@@ -14,6 +14,7 @@
   "project_lead": "Líder do Projeto",
   "contributors": "Contribuidores",
   "about_title": "Sobre o LinuxToys",
+  "version_label": "Versão:",
   "update_available_title": "Atualização Disponível",
   "update_available_message": "Uma nova versão do LinuxToys está disponível.",
   "update_current_version": "Versão atual:",
