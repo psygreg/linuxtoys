@@ -64,10 +64,10 @@ class AboutDialog:
         # ---------------------------
         aba_licenca = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         aba_licenca.set_border_width(10)
-        license_path = get_app_resource_path("../../LICENSE")
+        license_path = get_app_resource_path("../LICENSE")
         
         # Add the version number to the license header
-        license_header_text = f"LinuxToys {self.app_version}\n\nGNU GENERAL PUBLIC LICENSE"
+        license_header_text = f"LinuxToys {self.app_version}"
         licenca_header = Gtk.Label(label=license_header_text)
         licenca_header.set_justify(Gtk.Justification.CENTER)
         aba_licenca.pack_start(licenca_header, False, False, 0)
