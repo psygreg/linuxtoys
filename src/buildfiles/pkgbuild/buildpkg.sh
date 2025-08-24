@@ -22,7 +22,7 @@ cat > linuxtoys-${lt_version}/usr/bin/linuxtoys << 'EOF'
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
 cd /usr/share/linuxtoys
-exec python3 run.py "$@"
+exec /usr/bin/python3 run.py "$@"
 EOF
 chmod +x linuxtoys-${lt_version}/usr/bin/linuxtoys
 
