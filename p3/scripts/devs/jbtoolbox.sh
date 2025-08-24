@@ -25,7 +25,6 @@ if [ ! -d "$HOME/.local/toolbox" ]; then
         rm -r toolbox
         mv squashfs-root toolbox
         sudo cp -rf toolbox $HOME/.local
-        cd ..
         rm jetbrains-toolbox-2.6.2.41321.tar.gz
         rm -rf toolbox
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/jetbrains-toolbox.desktop
@@ -51,7 +50,6 @@ else # update or repair
     rm -r toolbox
     mv squashfs-root toolbox
     sudo cp -rf toolbox $HOME/.local
-    cd ..
     rm jetbrains-toolbox-2.6.2.41321.tar.gz
     rm -rf toolbox
     zeninf "$msg018"
