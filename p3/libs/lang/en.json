@@ -46,6 +46,8 @@
   "utils_desc": "System management, maintenance, monitoring and other tools.",
   "devs": "Developers",
   "devs_desc": "Tools and resources for software developers.",
+  "privacy": "Privacy",
+  "privacy_desc": "Tools and resources for privacy on Linux.",
   "drivers": "Drivers",
   "drivers_desc": "Drivers for various purposes and devices.",
   "repos": "Adittional Repositories",

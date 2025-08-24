@@ -1,0 +1,2 @@
+ICON: privacy.svg
+description: privacy_desc
