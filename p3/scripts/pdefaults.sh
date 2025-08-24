@@ -17,7 +17,6 @@ _lang_
 source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # system-agnostic scripts
 sysag_run () {
-    cd $HOME
     if [[ "$ID" != "cachyos" ]]; then
         # systemd patches
         cachyos_sysd_lib
@@ -37,6 +36,7 @@ sysag_run () {
 # consolidated installation
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
+        cd $HOME
         sudo_rq
         if [ "$ID" == "debian" ]; then
             debfixer_lib
