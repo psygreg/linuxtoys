@@ -24,11 +24,11 @@ if [ ! -d "$HOME/.local/toolbox" ]; then
         ./toolbox/jetbrains-toolbox --appimage-extract
         rm -r toolbox
         mv squashfs-root toolbox
-        sudo cp -rf toolbox $HOME/.local
+        cp -rf toolbox $HOME/.local
         rm jetbrains-toolbox-2.6.2.41321.tar.gz
         rm -rf toolbox
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/jetbrains-toolbox.desktop
-        cp jetbrains-toolbox.desktop $HOME/.local/share/applications
+        cp -f jetbrains-toolbox.desktop $HOME/.local/share/applications
         rm jetbrains-toolbox.desktop
         if grep -q "alias toolbox=" ~/.bashrc; then
             return
