@@ -1,4 +1,5 @@
 ## linuxtoys function library
+source /etc/os-release
 
 # sudo request
 sudo_rq () {
