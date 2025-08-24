@@ -3,7 +3,7 @@
 # version: 1.0
 # description: grubtrfs_desc
 # icon: grubtrfs.svg
-# compat: ubuntu, debian, arch, fedora, suse, cachy
+# compat: ubuntu, debian, arch, fedora, suse
 # nocontainer
 
 # --- Start of the script code ---
