@@ -5,5 +5,11 @@
 # icon: brew.png
 
 # --- Start of the script code ---
-bash <(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+# language
+_lang_
+source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+sudo_rq
+curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 zeninf "$msg018"
