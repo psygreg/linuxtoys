@@ -6,14 +6,12 @@
 # compat: suse, fedora, ostree
 
 # --- Start of the script code ---
-. /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
-. /etc/os-release
 sudo_rq
 if [[ "$ID_LIKE" == *suse* ]]; then
     sudo zypper in -y opi

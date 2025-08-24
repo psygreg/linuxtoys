@@ -5,7 +5,6 @@
 # icon: openrgb.svg
 
 # --- Start of the script code ---
-. /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
