@@ -38,24 +38,14 @@ sysag_run () {
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         sudo_rq
-        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+        if [ "$ID" == "debian" ]; then
             debfixer_lib
             # run system-agnostic optimizations
             sysag_run
             zeninf "$msg036"
-        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
-            # run system-agnostic optimizations
-            sysag_run
-        elif [[ "$ID" =~ ^(arch)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            # run system-agnostic optimizations
-            sysag_run
-            zeninf "$msg036"
-        elif [ "$ID" == "cachyos" ]; then
-            sysag_run
-            zeninf "$msg036"
         else
-            nonfatal "$msg077"
-            exit 1
+            sysag_run
+            zeninf "$msg036"
         fi
         if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
             dconf write /org/gnome/mutter/check-alive-timeout "20000"
