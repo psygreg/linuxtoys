@@ -13,7 +13,7 @@ from . import get_app_resource_path, get_icon_path
 
 
 # Only define GUI classes if not in CLI mode
-if os.environ.get('LT_MANIFEST') != '1':
+if os.environ.get('LT_MANIFEST') != '0':
     class Application(Gtk.Application):
         def __init__(self, translations, *args, **kwargs):
             super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)

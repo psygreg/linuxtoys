@@ -74,6 +74,7 @@
   "blender_desc": "A free and open-source 3D creation suite.",
   "figma_desc": "A web-based UI/UX design application.",
   "davinci_desc": "Professional video editing software.",
+  "obsidian_desc": "A free, flexible app for your thoughts, notes, and organization.",
 
   "gsr": "GPU Screen Recorder",
   "gsr_desc": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
