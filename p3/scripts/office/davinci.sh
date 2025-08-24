@@ -197,7 +197,7 @@ davinciboxatom () {
 			    "Studio") _upkgname='davinci-resolve-studio'
 	  			    dv_atom_in
     			    break ;;
-			    "$msg070") break ;;
+			    "$msg070") break && return 100;;
 			    *) echo "Invalid Option" ;;
 		    esac
 	    done
@@ -234,7 +234,7 @@ else
         case $CHOICE in
         "$msg231") davinciboxd && break ;;
         "$msg232") davincinatd && break ;;
-        "$msg070") break ;;
+        "$msg070") break && exit 100;;
         *) echo "Invalid Option" ;;
         esac
         
