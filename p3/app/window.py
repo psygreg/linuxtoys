@@ -483,10 +483,10 @@ class AppWindow(Gtk.ApplicationWindow):
             css_provider = Gtk.CssProvider()
             css_data = """
                 .script-item-hover {
-                    /* Let GTK use system theme colors automatically */
-                    background-color: mix(@bg_color, @fg_color, 0.20);  /* Destaque: 20% da cor do texto sobre o fundo */
-                    border: 1px solid mix(@fg_color, @bg_color, 0.10);  /* Borda: 10% da cor do texto */
+                    background-color: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.9);
                     border-radius: 16px;
+                    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
                     transition: all 200ms ease-in-out;
                 }
             """
