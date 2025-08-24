@@ -27,10 +27,20 @@ if [ ! -d "$HOME/.local/toolbox" ]; then
         cp -rf toolbox $HOME/.local
         rm jetbrains-toolbox-2.6.2.41321.tar.gz
         rm -rf toolbox
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/jetbrains-toolbox.desktop
-        cp -f jetbrains-toolbox.desktop $HOME/.local/share/applications
-        rm jetbrains-toolbox.desktop
-        if grep -q "alias toolbox=" ~/.bashrc; then
+        # Create applications directory if it doesn't exist
+        mkdir -p "$HOME/.local/share/applications"
+        # Download and install desktop shortcut
+        cd "$HOME" || return
+        if wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/jetbrains-toolbox.desktop; then
+            if cp -f jetbrains-toolbox.desktop "$HOME/.local/share/applications/"; then
+                rm jetbrains-toolbox.desktop
+            else
+                fatal "Failed to copy desktop shortcut to applications directory"
+            fi
+        else
+            fatal "Failed to download desktop shortcut file"
+        fi
+        if grep -q "alias jbtoolbox=" ~/.bashrc; then
             return
         else
             echo "alias jbtoolbox=\"$HOME/.local/toolbox/jetbrains-toolbox\"" >> ~/.bashrc
@@ -49,8 +59,21 @@ else # update or repair
     ./toolbox/jetbrains-toolbox --appimage-extract
     rm -r toolbox
     mv squashfs-root toolbox
-    sudo cp -rf toolbox $HOME/.local
+    cp -rf toolbox $HOME/.local
     rm jetbrains-toolbox-2.6.2.41321.tar.gz
     rm -rf toolbox
+    # Create applications directory if it doesn't exist
+    mkdir -p "$HOME/.local/share/applications"
+    # Download and install desktop shortcut (in case it's missing or needs update)
+    cd "$HOME" || return
+    if wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/jetbrains-toolbox.desktop; then
+        if cp -f jetbrains-toolbox.desktop "$HOME/.local/share/applications/"; then
+            rm jetbrains-toolbox.desktop
+        else
+            fatal "Failed to copy desktop shortcut to applications directory"
+        fi
+    else
+        fatal "Failed to download desktop shortcut file"
+    fi
     zeninf "$msg018"
 fi
