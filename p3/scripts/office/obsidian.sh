@@ -2,7 +2,7 @@
 # NAME: Obsidian
 # VERSION: 1.9.10
 # DESCRIPTION: obsidian_desc
-# icon: obsidian
+# icon: obsidian.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
