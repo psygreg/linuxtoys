@@ -3,6 +3,7 @@
 # version: 1.0
 # description: earlyoom_desc
 # icon: preload.svg
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

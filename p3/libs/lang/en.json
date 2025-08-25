@@ -125,6 +125,7 @@
   "btassist_desc": "A Btrfs snapshots and subvolumes manager. Uses snapper as its back-end.",
   "touchegg_desc": "A multi-touch gesture recognizer allowing you to configure gestures for various actions on Xorg desktops.",
   "thumb_desc": "Installs ffmpegthumbnailer to generate thumbnails for video files in file managers.",
+  "earlyoom_desc": "A daemon that monitors system memory and swap usage, and kills processes when memory is low to prevent system freezes.",
 
   "nv_desc": "Current Nvidia drivers. Supported GPUs: Maxwell (GT 9xx) and newer.",
   "nv_desc_470": "Legacy Nvidia drivers. Supported GPUs: Kepler (GT 6xx) and Fermi (GT 7xx).",
