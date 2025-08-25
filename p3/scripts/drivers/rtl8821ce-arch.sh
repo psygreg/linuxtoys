@@ -3,7 +3,7 @@
 # version: 1.0
 # description: rtl8821ce_desc
 # icon: rtl.png
-# compat: ubuntu, debian
+# compat: arch, cachyos
 # reboot: yes
 # nocontainer
 
@@ -14,18 +14,13 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 cd $HOME
-git clone https://github.com/tomaspinho/rtl8821ce.git
+git clone https://aur.archlinux.org/rtl8821ce-dkms-git.git
 sudo_rq
 # set up dependencies
-_packages=(bc module-assistant build-essential dkms)
+_packages=(linux-headers dkms bc base-devel)
 _install_
-# ensure removal of older driver
-if dpkg -s rtl8821ce-dkms &>/dev/null; then
-    sudo apt remove -y rtl8821ce-dkms
-fi
-cd rtl8821ce
-sudo m-a prepare
-sudo ./dkms-install.sh
+cd rtl8821ce-dkms-git
+makepkg -i
 # blacklist rtw88_8821ce, which is borked
 if [ -f /etc/modprobe.d/blacklist.conf ]; then
     if grep -q "blacklist rtw88_8821ce" /etc/modprobe.d/blacklist.conf; then
@@ -37,5 +32,5 @@ else
     echo "blacklist rtw88_8821ce" | sudo tee /etc/modprobe.d/blacklist.conf
 fi
 cd ..
-rm -r rtl8821ce
+rm -r rtl8821ce-dkms-git
 zeninf "$msg036"
