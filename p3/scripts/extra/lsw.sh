@@ -14,6 +14,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 cd $HOME
+sleep 1
 {
     echo "$msg209"
     echo "$msg210"
