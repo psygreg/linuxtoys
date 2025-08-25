@@ -126,7 +126,7 @@ earlyoom_lib () {
     _packages=(earlyoom)
     _install_
     wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/earlyoom
-    sudo cp -r earlyoom /etc/default/
+    sudo cp -f earlyoom /etc/default/
     rm earlyoom
     sudo systemctl enable --now earlyoom
     unset _packages
