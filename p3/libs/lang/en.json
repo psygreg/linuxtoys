@@ -46,8 +46,8 @@
   "utils_desc": "System management, maintenance, monitoring and other tools.",
   "devs": "Developers",
   "devs_desc": "Tools and resources for software developers.",
-  "vpns": "VPNs",
-  "privacy_desc": "Virtual Private Network client installers. A subscription to their respective services is required to use them.",
+  "privacy": "Privacy",
+  "privacy_desc": "Tools and resources for privacy on Linux.",
   "drivers": "Drivers",
   "drivers_desc": "Drivers for various purposes and devices.",
   "repos": "Additional Repositories",
@@ -128,6 +128,7 @@
   "earlyoom_desc": "A daemon that monitors system memory and swap usage, and kills processes when memory is low to prevent system freezes.",
 
   "nv_desc": "Current Nvidia drivers. Supported GPUs: Maxwell (GT 9xx) and newer.",
+  "nv_rtx_desc": "Current Nvidia drivers with open kernel modules. Supported GPUs: GTX 16xx and any RTX-series. For laptops, prefer the proprietary option for power management.",
   "nv_desc_470": "Legacy Nvidia drivers. Supported GPUs: Kepler (GT 6xx) and Fermi (GT 7xx).",
   "rocm_desc": "AMD's computation workloads driver and tools. Supports discrete GPUs from RDNA and newer architectures.",
   "icr_desc": "Intel Compute Runtime drivers for compute workloads on Intel GPUs.",
