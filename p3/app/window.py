@@ -28,6 +28,8 @@ class AppWindow(Gtk.ApplicationWindow):
         self.script_is_running = False
         self.reboot_required = False  # Track if a reboot is required
         self.current_category_info = None  # Track current category for header updates
+        self.navigation_stack = []  # Stack to track navigation history for proper back button behavior
+        self.view_counter = 0  # Counter for unique view names
         
         # Initialize script runner
         self.script_runner = script_runner.ScriptRunner(self, self.translations)
@@ -48,6 +50,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self.main_stack = Gtk.Stack()
         self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+        self.main_stack.set_transition_duration(200)  # Set a reasonable transition duration
         main_vbox.pack_start(self.main_stack, True, True, 0)
 
         self.categories_flowbox = self.create_flowbox()
@@ -282,26 +285,28 @@ class AppWindow(Gtk.ApplicationWindow):
             self.categories_flowbox.add(widget)
         self.categories_flowbox.show_all()
             
-    def load_scripts(self, category_info):
-        """Loads scripts for a category and connects their click event. Supports checklist mode."""
-        for child in self.scripts_flowbox.get_children():
-            self.scripts_flowbox.remove(child)
+            
+    def _load_scripts_into_flowbox(self, flowbox, category_info):
+        """Helper method to load scripts into a specific flowbox."""
+        # Clear the flowbox first
+        for child in flowbox.get_children():
+            flowbox.remove(child)
 
         scripts = parser.get_scripts_for_category(category_info['path'], self.translations)
         
-        checklist_mode = category_info.get('mode', 'menu') == 'checklist'
+        checklist_mode = category_info.get('display_mode', 'menu') == 'checklist'
         self.check_buttons = []
 
         if checklist_mode:
-            flowbox = Gtk.FlowBox()
-            flowbox.set_valign(Gtk.Align.START)
-            flowbox.set_max_children_per_line(5)  # Five columns max like standard menus
-            flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
-            flowbox.set_homogeneous(True)  # Make all children the same size
-            flowbox.set_row_spacing(8)     # Reduce vertical spacing between rows
-            flowbox.set_column_spacing(10) # Add some horizontal spacing between columns
-            flowbox.set_margin_start(40)   # Symmetric margins for consistent layout
-            flowbox.set_margin_end(40)
+            inner_flowbox = Gtk.FlowBox()
+            inner_flowbox.set_valign(Gtk.Align.START)
+            inner_flowbox.set_max_children_per_line(5)  # Five columns max like standard menus
+            inner_flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+            inner_flowbox.set_homogeneous(True)  # Make all children the same size
+            inner_flowbox.set_row_spacing(8)     # Reduce vertical spacing between rows
+            inner_flowbox.set_column_spacing(10) # Add some horizontal spacing between columns
+            inner_flowbox.set_margin_start(40)   # Symmetric margins for consistent layout
+            inner_flowbox.set_margin_end(40)
             self.check_buttons = []
 
             for script_info in scripts:
@@ -312,15 +317,14 @@ class AppWindow(Gtk.ApplicationWindow):
                     widget = self.create_item_widget(script_info)
                     widget.set_tooltip_text(script_info['description'])
                     widget.connect("button-press-event", self.on_category_clicked)
-                    flowbox.add(widget)
+                    inner_flowbox.add(widget)
                 else:
                     # Scripts can be checked in checklist mode
                     check = Gtk.CheckButton(label=script_info['name'])
                     check.script_info = script_info
                     check.set_tooltip_text(script_info['description'])
                     check.set_size_request(128, 16)  # Reduce height for tighter spacing
-                    flowbox.add(check)
-                    self.check_buttons.append(check)
+                    inner_flowbox.add(check)
                     self.check_buttons.append(check)
 
             # Clear previous checklist buttons from footer
@@ -339,10 +343,9 @@ class AppWindow(Gtk.ApplicationWindow):
             vbox.set_margin_start(32)  # Add left padding
             vbox.set_margin_end(32)    # Add right padding
             vbox.set_margin_top(20)    # Add top padding for better spacing
-            vbox.pack_start(flowbox, True, True, 0)
+            vbox.pack_start(inner_flowbox, True, True, 0)
 
-            self.scripts_flowbox.add(vbox)
-            self.scripts_flowbox.show_all()
+            flowbox.add(vbox)
         else:
             for script_info in scripts:
                 widget = self.create_item_widget(script_info)
@@ -356,8 +359,12 @@ class AppWindow(Gtk.ApplicationWindow):
                     # This is a script, use script click handler for execution
                     widget.connect("button-press-event", self.on_script_clicked)
                     
-                self.scripts_flowbox.add(widget)
-            self.scripts_flowbox.show_all()
+                flowbox.add(widget)
+
+    def load_scripts(self, category_info):
+        """Loads scripts for a category and connects their click event. Supports checklist mode."""
+        self._load_scripts_into_flowbox(self.scripts_flowbox, category_info)
+        self.scripts_flowbox.show_all()
 
     def on_install_checklist(self, button):
         """Run checked scripts sequentially."""
@@ -394,13 +401,15 @@ class AppWindow(Gtk.ApplicationWindow):
         )
 
     def on_cancel_checklist(self, button):
-        """Uncheck all boxes, remove checklist buttons from footer, and return to main menu."""
+        """Uncheck all boxes, remove checklist buttons from footer, and return to previous view."""
         for cb in self.check_buttons:
             cb.set_active(False)
         # Remove checklist buttons from footer
         for child in self.footer_widget.checklist_button_box.get_children():
             self.footer_widget.checklist_button_box.remove(child)
-        self.show_categories_view()
+        
+        # Use back button logic to go to the appropriate previous view
+        self.on_back_button_clicked(None)
 
     def on_category_clicked(self, widget, event):
         """Handles category click, subcategory click, or root script click."""
@@ -431,9 +440,32 @@ class AppWindow(Gtk.ApplicationWindow):
                     on_reboot_required=reboot_handler
                 )
         else:
-            # This is a category or subcategory - navigate to show its contents
-            self.load_scripts(info)
-            self.show_scripts_view(info['name'])
+            # This is a category or subcategory - navigate to show its contents  
+            # Create a new view for the subcategory to enable proper animation
+            self.view_counter += 1
+            new_view_name = f"scripts_{self.view_counter}"
+            
+            # Create new flowbox and scrolled window for this level
+            new_flowbox = self.create_flowbox()
+            new_scrolled_view = Gtk.ScrolledWindow()
+            new_scrolled_view.add(new_flowbox)
+            
+            # Load content into the new view
+            self._load_scripts_into_flowbox(new_flowbox, info)
+            
+            # Add the new view to the stack
+            self.main_stack.add_named(new_scrolled_view, new_view_name)
+            new_scrolled_view.show_all()
+            
+            # Set transition for forward navigation
+            self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+            
+            # Update the scripts references
+            self.scripts_flowbox = new_flowbox
+            self.scripts_view = new_scrolled_view
+            
+            # Show the new view with animation
+            self.show_scripts_view(info)
 
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
@@ -536,11 +568,86 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
-        self.show_categories_view()
+        if self.navigation_stack:
+            # Store current view for cleanup
+            current_view = self.scripts_view
+            
+            # Go back to the previous category/subcategory
+            previous_category = self.navigation_stack.pop()
+            self.current_category_info = previous_category
+            
+            # Create a new view for the previous category
+            self.view_counter += 1
+            new_view_name = f"scripts_{self.view_counter}"
+            
+            new_flowbox = self.create_flowbox()
+            new_scrolled_view = Gtk.ScrolledWindow()
+            new_scrolled_view.add(new_flowbox)
+            
+            # Load content into the new view
+            self._load_scripts_into_flowbox(new_flowbox, previous_category)
+            
+            # Add the new view to the stack
+            self.main_stack.add_named(new_scrolled_view, new_view_name)
+            new_scrolled_view.show_all()
+            
+            # Set transition direction for going back
+            self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+            
+            # Update references
+            self.scripts_flowbox = new_flowbox
+            self.scripts_view = new_scrolled_view
+            
+            # Switch to the new view
+            self.main_stack.set_visible_child(new_scrolled_view)
+            
+            # Update UI
+            category_name = previous_category.get('name', 'Unknown')
+            self.header_bar.props.title = f"LinuxToys: {category_name}"
+            self._update_header(previous_category)
+            
+            # Show footer only if checklist mode
+            if previous_category.get('display_mode', 'menu') == 'checklist':
+                self.footer_widget.show()
+                self.footer_widget.show_checklist_footer()
+                self.footer_widget.set_margin_bottom(0)
+            else:
+                self.footer_widget.hide()
+            
+            # Clean up the old view after transition
+            def cleanup_old_view():
+                try:
+                    self.main_stack.remove(current_view)
+                except:
+                    pass  # View may already be removed
+                # Restore normal transition direction
+                self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+                return False
+            
+            GLib.timeout_add(300, cleanup_old_view)
+            
+        else:
+            # No more items in stack, go to main categories view
+            current_view = self.scripts_view
+            self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+            self.show_categories_view()
+            
+            # Clean up the scripts view after transition
+            def cleanup_scripts_view():
+                try:
+                    self.main_stack.remove(current_view)
+                except:
+                    pass
+                # Restore normal transition direction  
+                self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+                return False
+            
+            GLib.timeout_add(300, cleanup_scripts_view)
         
     def show_categories_view(self):
         """Switches to the main categories view."""
         self.current_category_info = None
+        self.navigation_stack.clear()  # Clear navigation history
         self.main_stack.set_visible_child_name("categories")
         self.back_button.hide()
         self.header_bar.props.title = "LinuxToys"
@@ -551,15 +658,23 @@ class AppWindow(Gtk.ApplicationWindow):
         # Ensure footer has proper spacing
         self.footer_widget.set_margin_bottom(0)
 
-    def show_scripts_view(self, category_name):
+    def show_scripts_view(self, category_info):
         """Switches to the view showing scripts in a category."""
-        # Find the category info by name
-        categories = parser.get_categories(self.translations)
-        category_info = next((cat for cat in categories if cat['name'] == category_name), None)
+        # If we have current category info, push it to navigation stack
+        if self.current_category_info:
+            self.navigation_stack.append(self.current_category_info)
         
         self.current_category_info = category_info
-        self.main_stack.set_visible_child_name("scripts")
+        
+        # Switch to the current scripts view (which may be a new one created for subcategories)
+        current_child = self.main_stack.get_visible_child()
+        if current_child != self.scripts_view:
+            self.main_stack.set_visible_child(self.scripts_view)
+        
         self.back_button.show()
+        
+        # Get the category name for the title
+        category_name = category_info.get('name', 'Unknown') if category_info else 'Unknown'
         self.header_bar.props.title = f"LinuxToys: {category_name}"
         
         # Update header with category information
@@ -567,7 +682,7 @@ class AppWindow(Gtk.ApplicationWindow):
             self._update_header(category_info)
         
         # Show footer only if checklist mode
-        if category_info and category_info.get('mode', 'menu') == 'checklist':
+        if category_info and category_info.get('display_mode', 'menu') == 'checklist':
             self.footer_widget.show()
             self.footer_widget.show_checklist_footer()
             # Ensure footer has proper spacing for checklist mode

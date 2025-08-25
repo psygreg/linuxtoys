@@ -16,8 +16,8 @@ def create_header(translations, category_info=None):
     header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
     header_box.set_margin_top(4)
     # header_box.set_margin_bottom(16)
-    # header_box.set_margin_start(16)
-    # header_box.set_margin_end(16)
+    header_box.set_margin_start(90)  # Add 40px left padding
+    header_box.set_margin_end(90)    # Add 40px right padding
     header_box.set_halign(Gtk.Align.CENTER)
 
     # Logo/Icon

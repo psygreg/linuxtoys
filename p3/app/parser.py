@@ -305,8 +305,8 @@ def get_category_mode(category_path, translations=None):
     mode = cat_info.get('mode', 'auto')
     
     if mode == 'auto':
-        # Auto-detect: leaf categories default to checklist
-        return 'checklist'
+        # Auto-detect: leaf categories default to menu (not checklist)
+        return 'menu'
     elif mode == 'checklist':
         # Explicit checklist mode - only allowed for leaf categories
         return 'checklist'
