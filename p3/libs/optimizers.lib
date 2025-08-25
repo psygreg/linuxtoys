@@ -111,7 +111,7 @@ debfixer_lib () {
         if [[ "$codename" =~ ^(trixie|testing)$ ]]; then
             sudo apt modernize-sources
             cd $HOME
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/resources/debian.sources
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/debian.sources
             sleep 1
             sudo cp -f debian.sources /etc/apt/sources.list.d/
             sleep 1
@@ -125,8 +125,9 @@ debfixer_lib () {
 earlyoom_lib () {
     _packages=(earlyoom)
     _install_
-    sudo earlyoom -m 2
-    sudo earlyoom -s 2
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/earlyoom
+    sudo cp -r earlyoom /etc/default/
+    rm earlyoom
     sudo systemctl enable --now earlyoom
     unset _packages
 }
