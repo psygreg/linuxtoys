@@ -1,2 +1,0 @@
-ICON: vpns.svg
-description: vpns_desc

@@ -1,2 +1,0 @@
-ICON: browser_private.svg
-description: browser_private_desc
