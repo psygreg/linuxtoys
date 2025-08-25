@@ -11,5 +11,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/optimizers.lib"
+cd $HOME
+sudo_rq
 earlyoom_lib
 zeninf "$msg036"
