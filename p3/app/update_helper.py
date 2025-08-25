@@ -34,7 +34,7 @@ def get_current_version():
 # Current version of the application
 CURRENT_VERSION = get_current_version()
 
-def get_latest_github_release(repo_owner="psygreg", repo_name="linuxtoys"):
+def get_latest_github_release(repo_owner="jeiel0rbit", repo_name="linuxtoys"):
     """
     Fetch the latest release info from GitHub API.
     Returns dict with tag_name and body if successful, None otherwise.
@@ -204,9 +204,10 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
 
         # MSG
         message_label = Gtk.Label()
-        message_label.set_text(
-            translations.get('update_available_message', 'A new version of LinuxToys is available.') if translations else 'A new version of LinuxToys is available.'
-        )
+        message_label.set_use_markup(True)
+        message_label.set_markup(
+    f"<b>{translations.get('update_available_message', 'A new version of LinuxToys is available.') if translations else 'A new version of LinuxToys is available.'}</b>"
+)
         message_label.set_line_wrap(True)
         message_label.set_halign(Gtk.Align.START)
         vbox.pack_start(message_label, False, False, 0)
