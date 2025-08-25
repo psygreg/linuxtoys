@@ -4,6 +4,7 @@
 # description: btassist_desc
 # icon: btassist.svg
 # nocontainer
+# compat: arch, cachy, fedora, suse, ubuntu, debian
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
