@@ -52,6 +52,8 @@ optimizer () {
         _packages=(libavcodec-freeworld ffmpegthumbnailer)
         _install_
         unset _packages
+        # set up earlyoom
+        earlyoom_lib
         # enable signing of kernel modules (akmods) like Nvidia and VirtualBox
         if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
             if ! rpm -qi "akmods-keys" &>/dev/null; then

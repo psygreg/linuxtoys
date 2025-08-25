@@ -120,3 +120,13 @@ debfixer_lib () {
         fi
     fi
 }
+
+# EarlyOOM - kills processes before a OOM event is triggered
+earlyoom_lib () {
+    _packages=(earlyoom)
+    _install_
+    sudo earlyoom -m 2
+    sudo earlyoom -s 2
+    sudo systemctl enable --now earlyoom
+    unset _packages
+}

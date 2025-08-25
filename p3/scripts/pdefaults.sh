@@ -25,6 +25,8 @@ sysag_run () {
     sboost_lib
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
     dsplitm_lib
+    # add earlyoom configuration
+    earlyoom_lib
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         dconf write /org/gnome/mutter/check-alive-timeout "20000"
