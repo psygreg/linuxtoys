@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Tailscale
 # version: 1.0
-# description: Tailscale
+# description: tailscale_desc
 # icon: tailscale.png
 # compat: ubuntu, debian, fedora, arch, cachy, suse
 

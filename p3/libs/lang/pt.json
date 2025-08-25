@@ -177,5 +177,6 @@
   "godot_desc": "Um popular motor de jogo open source para desenvolvimento 2D e 3D. Esta versão não suporta Microsoft .NET (C#).",
   "godotsharp_desc": "Um popular motor de jogo open source para desenvolvimento 2D e 3D com suporte a C#. Inclui o SDK do .NET.",
   "dotnet_desc": "Uma coleção de ferramentas e bibliotecas para criar aplicativos baseados na plataforma .NET.",
-  "sublime_desc": "Um editor de texto sofisticado para código, marcação e prosa."
+  "sublime_desc": "Um editor de texto sofisticado para código, marcação e prosa.",
+  "tailscale_desc": "Uma VPN sem configuração que conecta seus dispositivos com segurança pela Internet."
 }
