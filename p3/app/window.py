@@ -305,12 +305,23 @@ class AppWindow(Gtk.ApplicationWindow):
             self.check_buttons = []
 
             for script_info in scripts:
-                check = Gtk.CheckButton(label=script_info['name'])
-                check.script_info = script_info
-                check.set_tooltip_text(script_info['description'])
-                check.set_size_request(128, 16)  # Reduce height for tighter spacing
-                flowbox.add(check)
-                self.check_buttons.append(check)
+                if script_info.get('is_subcategory', False):
+                    # This should not happen in checklist mode, but handle it gracefully
+                    # by treating subcategories as navigable items
+                    print(f"Warning: Subcategory '{script_info['name']}' found in checklist mode category")
+                    widget = self.create_item_widget(script_info)
+                    widget.set_tooltip_text(script_info['description'])
+                    widget.connect("button-press-event", self.on_category_clicked)
+                    flowbox.add(widget)
+                else:
+                    # Scripts can be checked in checklist mode
+                    check = Gtk.CheckButton(label=script_info['name'])
+                    check.script_info = script_info
+                    check.set_tooltip_text(script_info['description'])
+                    check.set_size_request(128, 16)  # Reduce height for tighter spacing
+                    flowbox.add(check)
+                    self.check_buttons.append(check)
+                    self.check_buttons.append(check)
 
             # Clear previous checklist buttons from footer
             for child in self.footer_widget.checklist_button_box.get_children():
@@ -336,7 +347,15 @@ class AppWindow(Gtk.ApplicationWindow):
             for script_info in scripts:
                 widget = self.create_item_widget(script_info)
                 widget.set_tooltip_text(script_info['description'])
-                widget.connect("button-press-event", self.on_script_clicked)
+                
+                # Connect different click handlers based on whether it's a subcategory or script
+                if script_info.get('is_subcategory', False):
+                    # This is a subcategory, use category click handler for navigation
+                    widget.connect("button-press-event", self.on_category_clicked)
+                else:
+                    # This is a script, use script click handler for execution
+                    widget.connect("button-press-event", self.on_script_clicked)
+                    
                 self.scripts_flowbox.add(widget)
             self.scripts_flowbox.show_all()
 
@@ -384,7 +403,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.show_categories_view()
 
     def on_category_clicked(self, widget, event):
-        """Handles category click or root script click."""
+        """Handles category click, subcategory click, or root script click."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
             self._show_reboot_warning_dialog()
@@ -412,6 +431,7 @@ class AppWindow(Gtk.ApplicationWindow):
                     on_reboot_required=reboot_handler
                 )
         else:
+            # This is a category or subcategory - navigate to show its contents
             self.load_scripts(info)
             self.show_scripts_view(info['name'])
 

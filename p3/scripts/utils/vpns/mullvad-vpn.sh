@@ -3,7 +3,7 @@
 # version: 1.0
 # description: Mullvad VPN
 # icon: mullvadvpn.svg
-# compat: ubuntu, debian, fedora, arch, cachy
+# compat: ubuntu, debian, fedora, arch, cachy, ostree, ublue
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -20,7 +20,14 @@ if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "d
  	_packages=(mullvad-vpn)
 	_install_
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-	sudo dnf config-manager addrepo --from-repofile=https://repository.mullvad.net/rpm/stable/mullvad.repo
+	if command -v rpm-ostree &>/dev/null; then
+		cd $HOME
+		wget https://repository.mullvad.net/rpm/stable/mullvad.repo
+		sudo install -o root -g root -m 644 mullvad.repo /etc/yum.repos.d/
+		rpm-ostree refresh-md
+	else
+		sudo dnf config-manager addrepo --from-repofile=https://repository.mullvad.net/rpm/stable/mullvad.repo
+	fi
 	_packages=(mullvad-vpn)
 	_install_
 elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then

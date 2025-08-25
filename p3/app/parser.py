@@ -67,6 +67,42 @@ def _parse_metadata_file(file_path, default_values, translations=None):
 
     return metadata
 
+def get_subcategories_for_category(category_path, translations=None):
+    """
+    Returns a list of subcategories for a given category.
+    
+    Note: Categories that contain subcategories will automatically be set to 'menu' mode,
+    regardless of their mode setting in category-info.txt. Only leaf categories 
+    (without subdirectories) can use 'checklist' mode.
+    """
+    subcategories = []
+    if not os.path.isdir(category_path):
+        return subcategories
+
+    for item_name in os.listdir(category_path):
+        item_path = os.path.join(category_path, item_name)
+        if os.path.isdir(item_path):
+            info_file_path = os.path.join(item_path, 'category-info.txt')
+            defaults = {
+                'name': item_name,
+                'description': 'A subcategory of scripts.',
+                'icon': 'folder-open',
+                'mode': 'auto'  # subcategories can have their own mode
+            }
+            subcat_info = _parse_metadata_file(info_file_path, defaults, translations)
+            # Use folder name as 'name', but replace with translation if available
+            subcat_info['name'] = translations.get(item_name, item_name) if translations else item_name
+            subcat_info['path'] = item_path
+            subcat_info['is_script'] = False
+            subcat_info['is_subcategory'] = True
+            # Ensure subcategories also have the proper mode set
+            subcat_info['has_subcategories'] = has_subcategories(item_path)
+            subcat_info['display_mode'] = get_category_mode(item_path, translations)
+            subcategories.append(subcat_info)
+
+    return sorted(subcategories, key=lambda cat: cat['name'])
+
+
 def get_categories(translations=None):
     """
     Returns a list of categories, reading metadata from 'category-info.txt' in each folder.
@@ -119,13 +155,15 @@ def get_categories(translations=None):
                 'name': category_name,
                 'description': 'A category of scripts.',
                 'icon': 'folder-open',
-                'mode': 'menu'  # Default mode is menu
+                'mode': 'auto'  # auto, menu, checklist
             }
             cat_info = _parse_metadata_file(info_file_path, defaults, translations)
             # Use folder name as 'name', but replace with translation if available
             cat_info['name'] = translations.get(category_name, category_name) if translations else category_name
             cat_info['path'] = category_path
             cat_info['is_script'] = False
+            cat_info['has_subcategories'] = has_subcategories(category_path)
+            cat_info['display_mode'] = get_category_mode(category_path, translations)
             categories.append(cat_info)
 
     return sorted(categories, key=lambda cat: cat['name'])
@@ -133,16 +171,21 @@ def get_categories(translations=None):
 
 def get_scripts_for_category(category_path, translations=None):
     """
-    Returns a list of scripts for a given category.
+    Returns a list of scripts and subcategories for a given category.
     """
-    scripts = []
+    items = []
     if not os.path.isdir(category_path):
-        return scripts
+        return items
 
     # Get system compatibility and locale
     compat_keys = get_system_compat_keys()
     current_locale = detect_system_language()
 
+    # First, add subcategories
+    subcategories = get_subcategories_for_category(category_path, translations)
+    items.extend(subcategories)
+
+    # Then, add scripts
     for file_name in os.listdir(category_path):
         if file_name.endswith('.sh'):
             file_path = os.path.join(category_path, file_name)
@@ -166,6 +209,170 @@ def get_scripts_for_category(category_path, translations=None):
                 'reboot': 'no',
                 'noconfirm': 'no'
             }
-            scripts.append(_parse_metadata_file(file_path, defaults, translations))
+            script_info = _parse_metadata_file(file_path, defaults, translations)
+            script_info['is_script'] = True
+            script_info['is_subcategory'] = False
+            items.append(script_info)
 
-    return sorted(scripts, key=lambda s: s['name'])
+    return sorted(items, key=lambda s: (not s.get('is_subcategory', False), s['name']))
+
+
+def get_all_scripts_recursive(directory_path, translations=None):
+    """
+    Recursively gets all scripts from a directory and its subdirectories.
+    This is useful for bulk operations or searching across nested categories.
+    """
+    scripts = []
+    if not os.path.isdir(directory_path):
+        return scripts
+
+    # Get system compatibility and locale
+    compat_keys = get_system_compat_keys()
+    current_locale = detect_system_language()
+
+    for item_name in os.listdir(directory_path):
+        item_path = os.path.join(directory_path, item_name)
+        
+        if item_name.endswith('.sh') and os.path.isfile(item_path):
+            # Filter by compatibility and locale
+            if not script_is_compatible(item_path, compat_keys):
+                continue
+            if not script_is_localized(item_path, current_locale):
+                continue
+            # Filter by container compatibility
+            if is_containerized() and not script_is_container_compatible(item_path):
+                continue
+            # Filter optimization scripts based on installation state
+            if not should_show_optimization_script(item_path):
+                continue
+            
+            defaults = {
+                'name': 'No Name', 'version': 'N/A',
+                'description': 'No Description.',
+                'icon': 'application-x-executable',
+                'reboot': 'no',
+                'noconfirm': 'no'
+            }
+            script_info = _parse_metadata_file(item_path, defaults, translations)
+            script_info['is_script'] = True
+            script_info['is_subcategory'] = False
+            scripts.append(script_info)
+            
+        elif os.path.isdir(item_path):
+            # Recursively get scripts from subdirectories
+            scripts.extend(get_all_scripts_recursive(item_path, translations))
+
+    return scripts
+
+
+def has_subcategories(category_path):
+    """
+    Check if a category has any subdirectories (subcategories).
+    """
+    if not os.path.isdir(category_path):
+        return False
+    
+    for item_name in os.listdir(category_path):
+        item_path = os.path.join(category_path, item_name)
+        if os.path.isdir(item_path):
+            return True
+    
+    return False
+
+
+def get_category_mode(category_path, translations=None):
+    """
+    Determine the display mode for a category based on its metadata and content.
+    Returns 'menu' for navigation or 'checklist' for bulk operations.
+    
+    Important: Categories with subcategories MUST use 'menu' mode.
+    Only leaf categories (no subdirectories) can use 'checklist' mode.
+    """
+    # First check if this category has subcategories
+    has_subs = has_subcategories(category_path)
+    
+    # Categories with subcategories MUST be in menu mode
+    if has_subs:
+        return 'menu'
+    
+    # For leaf categories (no subcategories), check the metadata preference
+    info_file_path = os.path.join(category_path, 'category-info.txt')
+    defaults = {
+        'mode': 'auto'  # auto, menu, checklist
+    }
+    cat_info = _parse_metadata_file(info_file_path, defaults, translations)
+    
+    mode = cat_info.get('mode', 'auto')
+    
+    if mode == 'auto':
+        # Auto-detect: leaf categories default to checklist
+        return 'checklist'
+    elif mode == 'checklist':
+        # Explicit checklist mode - only allowed for leaf categories
+        return 'checklist'
+    else:
+        # menu mode or any other value defaults to menu
+        return 'menu'
+
+
+def get_breadcrumb_path(current_path, translations=None):
+    """
+    Generate a breadcrumb navigation path for nested categories.
+    Returns a list of dictionaries with 'name' and 'path' for each level.
+    """
+    breadcrumbs = []
+    
+    # Start from scripts directory
+    scripts_path = os.path.abspath(SCRIPTS_DIR)
+    current_abs_path = os.path.abspath(current_path)
+    
+    # If current path is not within scripts directory, return empty
+    if not current_abs_path.startswith(scripts_path):
+        return breadcrumbs
+    
+    # Get relative path from scripts directory
+    rel_path = os.path.relpath(current_abs_path, scripts_path)
+    
+    # If we're in the root scripts directory, return empty
+    if rel_path == '.':
+        return breadcrumbs
+    
+    # Build breadcrumb path
+    path_parts = rel_path.split(os.sep)
+    current_build_path = scripts_path
+    
+    for part in path_parts:
+        current_build_path = os.path.join(current_build_path, part)
+        
+        # Get the display name for this level
+        display_name = part
+        if translations:
+            display_name = translations.get(part, part)
+        
+        # Try to get name from category-info.txt if it exists
+        info_file = os.path.join(current_build_path, 'category-info.txt')
+        if os.path.exists(info_file):
+            defaults = {'name': part}
+            cat_info = _parse_metadata_file(info_file, defaults, translations)
+            display_name = cat_info.get('name', display_name)
+        
+        breadcrumbs.append({
+            'name': display_name,
+            'path': current_build_path
+        })
+    
+    return breadcrumbs
+
+
+def is_nested_category(category_path):
+    """
+    Check if a given path represents a nested category (not a top-level category).
+    """
+    scripts_path = os.path.abspath(SCRIPTS_DIR)
+    category_abs_path = os.path.abspath(category_path)
+    
+    if not category_abs_path.startswith(scripts_path):
+        return False
+    
+    rel_path = os.path.relpath(category_abs_path, scripts_path)
+    return os.sep in rel_path

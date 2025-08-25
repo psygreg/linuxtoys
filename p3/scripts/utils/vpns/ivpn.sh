@@ -3,7 +3,7 @@
 # version: 1.0
 # description: IVPN
 # icon: ivpn.svg
-# compat: ubuntu, debian, fedora
+# compat: ubuntu, debian, fedora, ostree, ublue
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -42,8 +42,14 @@ elif [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
 	_packages=(ivpn-ui)
 	_install_
 elif [[ "$ID_LIKE" == *fedora* ]] || [ "$ID" == "fedora" ]; then
-	# [Fedora 41+] Add the IVPN repository
-	sudo dnf config-manager addrepo --from-repofile=https://repo.ivpn.net/stable/fedora/generic/ivpn.repo
+	if command -v rpm-ostree &>/dev/null; then
+		cd $HOME
+		wget https://repo.ivpn.net/stable/fedora/generic/ivpn.repo
+		sudo install -o root -g root -m 644 ivpn.repo /etc/yum.repos.d/
+		rpm-ostree refresh-md
+	else
+		sudo dnf config-manager addrepo --from-repofile=https://repo.ivpn.net/stable/fedora/generic/ivpn.repo
+	fi
 	# Install IVPN software (CLI and UI)
 	_packages=(ivpn-ui)
 	_install_
