@@ -249,11 +249,7 @@ class AppWindow(Gtk.ApplicationWindow):
             icon_widget.set_pixel_size(icon_size) ## altura dos icones
         icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
-        box.pack_start(icon_widget, False, False, 0)
-
-        right_pad = Gtk.Label()
-        right_pad.set_size_request(10, 1)
-        box.pack_start(right_pad, False, False, 0)
+        box.pack_start(icon_widget, False, False, 20)
 
         event_box = Gtk.EventBox()
         event_box.add(box)
