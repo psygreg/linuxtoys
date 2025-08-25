@@ -3,7 +3,6 @@
 # version: 1.0
 # description: f3_desc
 # icon: utils.svg
-# compat: ubuntu, debian, fedora, arch, suse, cachy
 # nocontainer
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -14,4 +13,5 @@ source "$SCRIPT_DIR/../../libs/helpers.lib"
 _packages=(f3)
 sudo_rq
 _install_
-zeninf "$msg018"
+zeninf "$msg287"
+xdg-open https://fight-flash-fraud.readthedocs.io/en/latest/introduction.html#examples-1
