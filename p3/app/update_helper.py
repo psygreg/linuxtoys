@@ -6,6 +6,12 @@ import urllib.error
 import re
 import os
 import sys
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Pango, Gdk
+import webbrowser
+import os
+
 
 def get_current_version():
     """
@@ -34,7 +40,7 @@ def get_current_version():
 # Current version of the application
 CURRENT_VERSION = get_current_version()
 
-def get_latest_github_release(repo_owner="jeiel0rbit", repo_name="linuxtoys"):
+def get_latest_github_release(repo_owner="psygreg", repo_name="linuxtoys"):
     """
     Fetch the latest release info from GitHub API.
     Returns dict with tag_name and body if successful, None otherwise.
@@ -147,34 +153,71 @@ def show_update_dialog(latest_version, translations=None):
     # In CLI mode, don't show dialog
     return False
 
+# ---- Markdown to Gtk.TextBuffer ----
+def markdown_to_textbuffer(md_text):
+    """
+    Convert simplified Markdown to Gtk.TextBuffer with tags.
+    Supports:
+    - **bold**
+    - _italic_
+    - - lists
+    - [link](url) -> clickable
+    """
+    buffer = Gtk.TextBuffer()
 
-def markdown_to_pango(md_text):
-    
-    #Convert simplified Markdown to Pango Markup.
-    
-    import re
+    # Create tags
+    tag_bold = buffer.create_tag("bold", weight=Pango.Weight.BOLD)
+    tag_italic = buffer.create_tag("italic", style=Pango.Style.ITALIC)
+    tag_link = buffer.create_tag("link", foreground="blue", underline=Pango.Underline.SINGLE)
 
-    # **texto**
-    text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', md_text)
+    def insert_with_tag(text, tag=None):
+        end_iter = buffer.get_end_iter()
+        buffer.insert_with_tags(end_iter, text, tag) if tag else buffer.insert(end_iter, text)
 
-    # *texto*
-    text = re.sub(r'(?<!\*)\*(?!\*)(.*?)\*(?<!\*)', r'<i>\1</i>', text)
+    # Split by lines
+    for line in md_text.splitlines():
+        # Convert lists
+        line = re.sub(r'^\s*[-*]\s+', '• ', line)
 
-    # [texto](url) -> texto (url)
-    text = re.sub(r'\[(.*?)\]\((.*?)\)', r'<u>\1</u> (<span foreground="blue">\2</span>)', text)
+        pos = 0
+        while pos < len(line):
+            # Search for bold, italic, link
+            m_bold = re.search(r'\*\*(.+?)\*\*', line[pos:])
+            m_italic = re.search(r'_(.+?)_', line[pos:])
+            m_link = re.search(r'\[([^\]]+)\]\(([^)]+)\)', line[pos:])
+            matches = [m for m in [m_bold, m_italic, m_link] if m]
 
-    # - item -> • item
-    text = re.sub(r'^\s*[-*]\s+', '• ', text, flags=re.MULTILINE)
+            if not matches:
+                insert_with_tag(line[pos:])
+                break
 
-    return text
+            m_first = min(matches, key=lambda x: x.start())
+            start, end = m_first.span()
+            insert_with_tag(line[pos:pos+start])
 
+            if m_first == m_bold:
+                insert_with_tag(m_first.group(1), tag_bold)
+            elif m_first == m_italic:
+                insert_with_tag(m_first.group(1), tag_italic)
+            elif m_first == m_link:
+                iter_start = buffer.get_end_iter()
+                insert_with_tag(m_first.group(1), tag_link)
+                # Connect event to open link
+                tag_link.connect("event", lambda tag, widget, event, iter, url=m_first.group(2): open_link(event, url))
 
+            pos += end
+
+        insert_with_tag("\n")
+
+    return buffer
+
+def open_link(event, url):
+    if event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 1:
+        webbrowser.open(url)
+
+# ---- GTK Update Dialog ----
 def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
     try:
-        import gi
-        gi.require_version('Gtk', '3.0')
-        from gi.repository import Gtk, Pango
-
         dialog = Gtk.Dialog(
             title=translations.get('update_available_title', 'Update Available') if translations else 'Update Available',
             flags=Gtk.DialogFlags.MODAL
@@ -182,7 +225,6 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         dialog.set_default_size(400, 300)
         dialog.set_resizable(True)
 
-        # Botões
         download_btn = dialog.add_button(
             translations.get('update_download_btn', 'Download Update') if translations else 'Download Update',
             Gtk.ResponseType.YES
@@ -202,17 +244,17 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
 
-        # MSG
+        # Main message
         message_label = Gtk.Label()
         message_label.set_use_markup(True)
         message_label.set_markup(
-    f"<b>{translations.get('update_available_message', 'A new version of LinuxToys is available.') if translations else 'A new version of LinuxToys is available.'}</b>"
-)
+            f"<b>{translations.get('update_available_message', 'A new version of LinuxToys is available.') if translations else 'A new version of LinuxToys is available.'}</b>"
+        )
         message_label.set_line_wrap(True)
         message_label.set_halign(Gtk.Align.START)
         vbox.pack_start(message_label, False, False, 0)
 
-        # Version
+        # Current and latest version labels
         current_label = Gtk.Label(label=f"{translations.get('update_current_version', 'Current version:') if translations else 'Current version:'} {CURRENT_VERSION}")
         current_label.set_halign(Gtk.Align.START)
         vbox.pack_start(current_label, False, False, 0)
@@ -222,26 +264,25 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         latest_label.get_style_context().add_class("dim-label")
         vbox.pack_start(latest_label, False, False, 0)
 
-        # Changelog with Markdown
+        # Changelog with TextView
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scrolled.set_hexpand(True)
         scrolled.set_vexpand(True)
 
-        changelog_label = Gtk.Label()
-        changelog_label.set_use_markup(True)
-        changelog_label.set_line_wrap(True)
-        changelog_label.set_justify(Gtk.Justification.LEFT)
-        changelog_label.set_xalign(0.0)
-        changelog_label.set_selectable(True)
-        changelog_label.set_max_width_chars(70)
+        textview = Gtk.TextView()
+        textview.set_editable(False)
+        textview.set_cursor_visible(False)
+        textview.set_wrap_mode(Gtk.WrapMode.WORD)
 
         if changelog:
-            changelog_label.set_markup(markdown_to_pango(changelog.strip()))
+            textview.set_buffer(markdown_to_textbuffer(changelog.strip()))
         else:
-            changelog_label.set_text(translations.get('whatsnew_no_changelog', 'Nenhum changelog disponível.'))
+            buffer = Gtk.TextBuffer()
+            buffer.set_text(translations.get('whatsnew_no_changelog', 'No changelog available.'))
+            textview.set_buffer(buffer)
 
-        scrolled.add(changelog_label)
+        scrolled.add(textview)
         vbox.pack_start(scrolled, True, True, 0)
 
         content_area.pack_start(vbox, True, True, 0)
@@ -254,7 +295,6 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
     except Exception as e:
         print(f"Error showing GTK update dialog: {e}")
         return False
-
 
 def show_whatsnew_dialog(version, changelog, translations=None):
     """
