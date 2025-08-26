@@ -340,7 +340,27 @@ def validate_script_libraries(script_path):
         dict: Validation results with status and details
     """
     script_dir = os.path.dirname(os.path.abspath(script_path))
-    p3_root = os.path.join(script_dir, '..', '..')
+    
+    # Dynamically find the p3 root by looking for the 'libs' directory
+    # Support scripts at different nesting levels (scripts/, scripts/category/, scripts/category/subcategory/)
+    current_dir = script_dir
+    p3_root = None
+    max_levels = 5  # Safety limit to prevent infinite loops
+    
+    for _ in range(max_levels):
+        potential_libs_dir = os.path.join(current_dir, 'libs')
+        if os.path.exists(potential_libs_dir) and os.path.isdir(potential_libs_dir):
+            # Check if this looks like the actual libs directory by looking for known files
+            lib_files = [f for f in os.listdir(potential_libs_dir) if f.endswith('.lib')]
+            if lib_files:
+                p3_root = current_dir
+                break
+        current_dir = os.path.dirname(current_dir)
+    
+    if p3_root is None:
+        # Fallback to the old method if we can't find the libs directory
+        p3_root = os.path.join(script_dir, '..', '..')
+    
     libs_dir = os.path.join(p3_root, 'libs')
     
     validation = {
@@ -368,7 +388,6 @@ def validate_script_libraries(script_path):
         
         # Validate sourced files
         for source_file in dependencies['sources']:
-            source_path = source_file
             resolved = False
             
             # Handle variable substitutions
