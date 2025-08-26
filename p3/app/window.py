@@ -250,7 +250,15 @@ class AppWindow(Gtk.ApplicationWindow):
         icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
 
-        if item_info.get('is_subcategory', False):
+        # Check if this is a navigational item (category or subcategory)
+        # Main categories are identified by being in the categories flowbox or having type 'category'
+        is_main_category = self.current_category_info is None  # We're in the main menu
+        is_subcategory = item_info.get('is_subcategory', False)
+        is_category_type = item_info.get('type') == 'category'
+        is_not_script = not item_info.get('is_script', False)
+        
+        # Apply overlay to subcategories, categories, or main menu items that aren't scripts
+        if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
             style_ctx_box = box.get_style_context()
             css_provider = Gtk.CssProvider()
             css_data = f"""
@@ -258,6 +266,7 @@ class AppWindow(Gtk.ApplicationWindow):
                     background-image: url('{get_icon_path("jigsaw.svg")}');
                     background-size: 80px;
                     background-repeat: no-repeat;
+                    background-position: left;
                     border-radius: 16px;
                 }}
             """
