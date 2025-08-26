@@ -1,0 +1,2 @@
+ICON: peripherals.svg
+description: peripheral_desc
