@@ -158,6 +158,7 @@
   "bottles_desc": "Uma ferramenta para gerenciar aplicativos Windows no Linux usando Wine.",
   "dch_desc": "Faz com que os containers Distrobox sejam capazes de usar xdg-open e interagir com programas do host, se disponíveis. Esta opção também pode removê-lo se estiver instalado.",
   "f3_desc": "Uma ferramenta para verificar unidades USB falsas e corrigi-las para sua capacidade real.",
+  "bazaar_desc": "Uma nova loja de aplicativos com foco em descobrir e instalar aplicativos e complementos de repositórios Flatpak, apoiando os desenvolvedores que tornam o desktop Linux possível.",
 
   "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web.",
   "mise_desc": "Assim como asdf (ou nvm ou pyenv, mas para qualquer linguagem), ele gerencia ferramentas de desenvolvimento como node, python, cmake, terraform e centenas mais. Substitui PyEnv, NVM, e os instaladores Java JDK e Maven desta seção.",

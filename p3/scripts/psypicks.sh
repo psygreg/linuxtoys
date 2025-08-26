@@ -141,7 +141,7 @@ if command -v flatpak &> /dev/null && command -v dnf &> /dev/null || command -v 
     _install_
     get_heroic
     # flatpak setup
-    flatpaks=(org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord)
+    flatpaks=(org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord io.github.kolunmi.Bazaar)
     if command -v apt &> /dev/null; then
         flatpaks+=(com.valvesoftware.Steam)
     fi

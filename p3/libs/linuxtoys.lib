@@ -83,6 +83,15 @@ _install_ () {
 
 }
 
+# flatpak installer
+_flatpak_ () {
+    if [[ -n "$_flatpaks" ]]; then
+        for flat in "${_flatpaks[@]}"; do
+            flatpak install --or-update --user --noninteractive flathub "$flat"
+        done
+    fi
+}
+
 # language detect -- add elif for each language in the last if statement
 _lang_ () {
 
