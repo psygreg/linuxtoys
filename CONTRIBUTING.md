@@ -1,4 +1,4 @@
-# Contributors Guide
+# Contributing
 
 Thank you for your interest in contributing to LinuxToys! This project aims to provide a collection of tools for Linux in a user-friendly way, making powerful functionality accessible to all users.
 
