@@ -13,13 +13,6 @@ As long as you're running their up-to-date stable versions:
 - **Atomic Fedora** and derivatives
 - **Universal Blue** images like **Bazzite**, **Bluefin** and **Aurora**
 
-### Limitations & Warnings
-- **Shader Booster** only works in systems using the `bash`, `zsh` or `fish` shells as default. 
-- **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
-- **LACT** is an overclocking tool. Use with caution.
-- **PyEnv** only supports running in `bash` or `zsh` shells.
-- **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those. The same is applicable to **Unity Hub**.
-
 ## Usage
 #### Use the `install.sh` script available in the latest of [Releases](https://github.com/psygreg/linuxtoys/releases).
 
@@ -71,11 +64,5 @@ Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap*
 
 ### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
 You may use the AUR helper of your choice to install it, with the package name `linuxtoys-bin`.
-
-## Contributing
-
-Check the [Developer Handbook](https://github.com/psygreg/linuxtoys/wiki/Developer-Handbook) for the complete documentation on LinuxToys' libraries.
-
-**All Pull Requests will be manually checked before approval.**
 
 ## [Credits](https://github.com/psygreg/linuxtoys/wiki/Credits)
