@@ -1,4 +1,4 @@
-# LinuxToys
+# [LinuxToys](https://linuxtoys.neoncore.xyz)
 A collection of tools for Linux in a user-friendly way. To check all its features, pay the [Wiki](https://github.com/psygreg/linuxtoys/wiki) a visit!
 
 ![LinuxToys](src/screenshot.png)
