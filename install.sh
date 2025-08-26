@@ -124,26 +124,42 @@ case "${ID:-}" in
         installed=true
         ;;
     fedora|rhel|centos|rocky|almalinux)
-        echo "Detected RHEL/Fedora-like by ID."
+            echo "Detected RHEL/Fedora-like by ID."
+            echo "Downloading: $rpm_pkg"
+            if ! dl_file "$rpm_url" "$rpm_pkg"; then
+                echo "============ ERROR ============="
+                echo "Failed to download: $rpm_url"
+                exit 4
+            fi
+            if command -v dnf >/dev/null 2>&1; then
+                sudo dnf install -y "./$rpm_pkg" || {
+                    echo "Installation failed (dnf)."
+                    rm -f "$rpm_pkg"
+                    exit 6
+                }
+            else
+                sudo yum install -y "./$rpm_pkg" || {
+                    echo "Installation failed (yum)."
+                    rm -f "$rpm_pkg"
+                    exit 6
+                }
+            fi
+            rm -f "$rpm_pkg"
+            installed=true
+            ;;
+    suse|opensuse)
+        echo "Detected SUSE/OpenSUSE by ID."
         echo "Downloading: $rpm_pkg"
         if ! dl_file "$rpm_url" "$rpm_pkg"; then
             echo "============ ERROR ============="
             echo "Failed to download: $rpm_url"
             exit 4
         fi
-        if command -v dnf >/dev/null 2>&1; then
-            sudo dnf install -y "./$rpm_pkg" || {
-                echo "Installation failed (dnf)."
-                rm -f "$rpm_pkg"
-                exit 6
-            }
-        else
-            sudo yum install -y "./$rpm_pkg" || {
-                echo "Installation failed (yum)."
-                rm -f "$rpm_pkg"
-                exit 6
-            }
-        fi
+        sudo zypper install -y "./$rpm_pkg" || {
+            echo "Installation failed (zypper)."
+            rm -f "$rpm_pkg"
+            exit 6
+        }
         rm -f "$rpm_pkg"
         installed=true
         ;;
@@ -206,6 +222,22 @@ if [ "$installed" != "true" ]; then
                     exit 6
                 }
             fi
+            rm -f "$rpm_pkg"
+            installed=true
+            ;;
+        *suse*|*opensuse*)
+            echo "Detected SUSE/OpenSUSE by ID_LIKE."
+            echo "Downloading: $rpm_pkg"
+            if ! dl_file "$rpm_url" "$rpm_pkg"; then
+                echo "============ ERROR ============="
+                echo "Failed to download: $rpm_url"
+                exit 4
+            fi
+            sudo zypper install -y "./$rpm_pkg" || {
+                echo "Installation failed (zypper)."
+                rm -f "$rpm_pkg"
+                exit 6
+            }
             rm -f "$rpm_pkg"
             installed=true
             ;;
