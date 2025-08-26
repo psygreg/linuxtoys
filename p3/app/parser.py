@@ -304,15 +304,12 @@ def get_category_mode(category_path, translations=None):
     
     mode = cat_info.get('mode', 'auto')
     
-    if mode == 'auto':
-        # Auto-detect: leaf categories default to menu (not checklist)
-        return 'menu'
-    elif mode == 'checklist':
+    if mode == 'checklist':
         # Explicit checklist mode - only allowed for leaf categories
         return 'checklist'
-    else:
-        # menu mode or any other value defaults to menu
-        return 'menu'
+
+    # menu mode or any other value defaults to menu
+    return 'menu'
 
 
 def get_breadcrumb_path(current_path, translations=None):
