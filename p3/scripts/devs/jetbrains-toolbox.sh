@@ -28,6 +28,7 @@ curl -fsSLo "${PKG_TMP}/${PKG_FLL}.tar.gz" "${PKG_URL}" && {
 		) && {
 			## Remove tarball from temporary directory 
 			rm -vf "${PKG_TMP}/${PKG_FLL}.tar.gz"; 
+			zeninf "$msg018";
 		}
 	};
 } || { exit 1; }
