@@ -249,6 +249,22 @@ class AppWindow(Gtk.ApplicationWindow):
             icon_widget.set_pixel_size(icon_size) ## altura dos icones
         icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
+
+        if item_info.get('is_subcategory', False):
+            style_ctx_box = box.get_style_context()
+            css_provider = Gtk.CssProvider()
+            css_data = f"""
+                .item-subcategory {{
+                    background-image: url('{get_icon_path("jigsaw.svg")}');
+                    background-size: 80px;
+                    background-repeat: no-repeat;
+                    border-radius: 16px;
+                }}
+            """
+            css_provider.load_from_data(css_data.encode())
+            style_ctx_box.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            style_ctx_box.add_class("item-subcategory")
+
         box.pack_start(icon_widget, False, False, 20)
 
         event_box = Gtk.EventBox()
