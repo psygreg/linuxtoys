@@ -79,6 +79,7 @@ _install_ () {
                 done
             fi
         fi
+        unset _packages
     fi
 
 }
@@ -89,6 +90,7 @@ _flatpak_ () {
         for flat in "${_flatpaks[@]}"; do
             flatpak install --or-update --user --noninteractive flathub "$flat"
         done
+        unset _flatpaks
     fi
 }
 
