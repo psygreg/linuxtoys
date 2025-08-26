@@ -17,9 +17,7 @@ PKG_URL="$(curl -fsSL 'https://data.services.jetbrains.com/products/releases?cod
 
 curl -fsSL "${PKG_URL}" -o- | sudo tar -xzvf - --strip-components=2 --one-top-level="/opt/${PKG_NAM}" && {
 	(
-		## Link .desktop file
-		sudo ln -v -s "/opt/${PKG_NAM}/${PKG_NAM}.desktop" "/usr/local/share/applications/";
-		## Link binary
+		sudo install -Dm 0644 "/opt/${PKG_NAM}/${PKG_NAM}.desktop" "/usr/local/share/applications/${PKG_NAM}.desktop";
 		sudo ln -v -s "/opt/${PKG_NAM}/${PKG_NAM}" "/usr/local/bin/";
 	) && { zeninf "$msg018"; }
 } || { exit 1; }
