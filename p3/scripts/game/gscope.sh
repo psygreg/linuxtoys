@@ -16,13 +16,11 @@ if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [[ "$ID_LIK
     rpmfusion_chk
     _packages=(gamescope)
     _install_
-    unset _packages
 elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
     sudo_rq
     multilib_chk
     _packages=(gamescope)
     _install_
-    unset _packages
 # debian has to be updated manually :/
 elif [ "$ID" == "debian" ]; then
     sudo_rq
@@ -34,7 +32,6 @@ else
     sudo_rq
     _packages=(gamescope)
     _install_
-    unset _packages
 fi
 # install flatpak runtime as well
 if command -v flatpak >/dev/null 2>&1; then

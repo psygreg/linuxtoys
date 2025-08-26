@@ -21,7 +21,6 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         _packages+=(python3-venv)
     fi
     _install_
-    unset _packages
     sudo systemctl enable --now waydroid-container
     sudo waydroid init --system-url https://ota.waydro.id/system_gapps --vendor-url https://ota.waydro.id/vendor_gapps
     if zenity --question --title="Waydroid" --text="$msg283" --width 300 --height 300; then
@@ -32,7 +31,6 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         cd waydroid_script
         _packages=(pip)
         _install_
-        unset _packages
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
         # Detect CPU vendor for proper ARM translation layer

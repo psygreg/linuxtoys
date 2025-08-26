@@ -17,13 +17,11 @@ if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [[ "$ID_LIK
     rpmfusion_chk
     _packages=(steam steam-devices)
     _install_
-    unset _packages
 elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
     sudo_rq
     multilib_chk
     _packages=(steam steam-devices)
     _install_
-    unset _packages
 else
     # use flatpak for all others, since native install usually only works well on Fedora and Arch
     sudo_rq
@@ -31,5 +29,4 @@ else
     flatpak install --or-update --user --noninteractive flathub com.valvesoftware.Steam
     _packages=(steam-devices)
     _install_
-    unset _packages
 fi

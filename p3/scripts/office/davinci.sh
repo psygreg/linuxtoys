@@ -150,7 +150,6 @@ davinciboxatom () {
         if [[ $? -eq 1 ]]; then
             echo "No packages to install."
         else
-            unset _packages
             if [[ "${_to_install[*]}" =~ "rocm" ]]; then
                 sudo usermod -aG render,video $USER
             elif [[ "${_to_install[*]}" =~ "mesa-libOpenCL" ]]; then

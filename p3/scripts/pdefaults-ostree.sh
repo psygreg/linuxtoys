@@ -51,7 +51,6 @@ optimizer () {
         # install codecs and thumbnailer if absent
         _packages=(libavcodec-freeworld ffmpegthumbnailer)
         _install_
-        unset _packages
         # set up earlyoom
         earlyoom_lib
         # enable signing of kernel modules (akmods) like Nvidia and VirtualBox
@@ -59,7 +58,6 @@ optimizer () {
             if ! rpm -qi "akmods-keys" &>/dev/null; then
                 _packages=(rpmdevtools akmods)
                 _install_
-                unset _packages
                 sudo kmodgenca
                 sudo mokutil --import /etc/pki/akmods/certs/public_key.der
                 git clone https://github.com/CheariX/silverblue-akmods-keys

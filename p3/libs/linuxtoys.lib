@@ -28,7 +28,6 @@ nonfatal() {
 
 # native package installation
 _install_ () {
-    
     if [[ -n "$_packages" ]]; then
         # rpm-ostree iteration -- ONLY USE WHEN PACKAGES ARE NOT IMPORTANT TO THE SYSTEM!
         if command -v rpm-ostree &>/dev/null; then
@@ -81,7 +80,6 @@ _install_ () {
         fi
         unset _packages
     fi
-
 }
 
 # flatpak installer
@@ -96,7 +94,6 @@ _flatpak_ () {
 
 # language detect -- add elif for each language in the last if statement
 _lang_ () {
-
     local lang="${LANG:0:2}"
     local available=("pt")
     local ulang=""
@@ -112,5 +109,4 @@ _lang_ () {
     else
         langfile="en"
     fi
-
 }

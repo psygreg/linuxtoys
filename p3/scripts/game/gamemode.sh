@@ -15,10 +15,8 @@ if [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] |
     sudo_rq
     _packages=(gamemode lib32-gamemode)
     _install_
-    unset _packages
 else
     sudo_rq
     _packages=(gamemode)
     _install_
-    unset _packages
 fi

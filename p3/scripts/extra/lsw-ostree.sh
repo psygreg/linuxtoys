@@ -16,7 +16,6 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 pdm_install () {
 	_packages=(podman podman-compose)
 	_install_
-	unset _packages
 }
 # hardware requirements check
 hwcheck () {
@@ -47,7 +46,6 @@ hwcheck () {
 win_install () {
 	_packages=(dialog netcat freerdp iproute libnotify)
 	_install_
-	unset _packages
     sleep 1
     mkdir -p $HOME/.config/winapps
 	cd $HOME/.config/winapps
