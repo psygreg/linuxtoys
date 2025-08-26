@@ -13,22 +13,13 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 sudo_rq
 
 PKG_NAM="jetbrains-toolbox"
-PKG_VER="2.8.1.52155"
-PKG_FLL="${PKG_NAM}-${PKG_VER}"
-PKG_URL="https://download.jetbrains.com/toolbox/${PKG_FLL}.tar.gz"
-PKG_TMP="$HOME"
+PKG_URL="$(curl -fsSL 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Pio '"linux":\{"link":"\K[^"]+')"
 
-## Download
-curl -fsSLo "${PKG_TMP}/${PKG_FLL}.tar.gz" "${PKG_URL}" && {
-	## Install in /opt
-	sudo tar -xvf "${PKG_TMP}/${PKG_FLL}.tar.gz" --strip-components=2 --one-top-level="$HOME/.local/${PKG_NAM}" && {
-		(
-			## Link .desktop file
-			sudo ln -v -s "$HOME/.local/${PKG_NAM}/${PKG_NAM}.desktop" "$HOME/.local/share/applications/";
-		) && {
-			## Remove tarball from temporary directory 
-			rm -vf "${PKG_TMP}/${PKG_FLL}.tar.gz"; 
-			zeninf "$msg018";
-		}
-	};
+curl -fsSL "${PKG_URL}" -o- | sudo tar -xzvf - --strip-components=2 --one-top-level="/opt/${PKG_NAM}" && {
+	(
+		## Link .desktop file
+		sudo ln -v -s "/opt/${PKG_NAM}/${PKG_NAM}.desktop" "/usr/local/share/applications/";
+		## Link binary
+		sudo ln -v -s "/opt/${PKG_NAM}/${PKG_NAM}" "/usr/local/bin/";
+	) && { zeninf "$msg018"; }
 } || { exit 1; }
