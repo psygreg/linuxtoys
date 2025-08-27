@@ -36,7 +36,8 @@ iwd_in () {
             sudo mv iwd.conf /etc/NetworkManager/conf.d/
             # restart networkmanager with wpasupplicant disabled
             sudo systemctl stop NetworkManager
-            sudo systemctl disable --now wpa_supplicant
+            sudo systemctl disable wpa_supplicant
+            sleep 1
             sudo systemctl restart NetworkManager
             return 0
         fi
