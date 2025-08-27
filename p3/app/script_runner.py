@@ -380,8 +380,10 @@ class ScriptRunner:
             except ImportError:
                 pass  # dev_mode not available, continue with normal execution
             
+            script_arg = script_info.get('arg') if script_info.get('arg') else '';
+
             self.running_process = subprocess.Popen(
-                ['bash', script_path], 
+                ['bash', script_path, script_arg],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, 
                 bufsize=1, 

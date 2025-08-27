@@ -7,6 +7,7 @@ from . import header
 from . import footer
 from . import checklist_helper
 from . import confirm_helper
+from . import context_menu
 from . import compat
 from . import reboot_helper
 from . import script_runner
@@ -65,6 +66,9 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self.footer_widget = footer.create_footer()
         main_vbox.pack_start(self.footer_widget, False, False, 0)
+
+        # --- Context Menu ---
+        self.menu = context_menu.ContextMenu(self.script_runner)
 
         # --- Load Data and Connect Signals ---
         self.load_categories()
@@ -490,6 +494,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
+        if event.button == 3:
+            self.menu.popup(None, None, None, None, event.button, event.get_time())
+            self.menu.info = widget.info
+            return
+
         if self.script_runner.is_running():
             return
 
