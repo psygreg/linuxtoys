@@ -44,39 +44,23 @@ _install_ () {
             fi
         else
         # resume usual linuxtoys behaviour
-            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-                for pak in "${_packages[@]}"; do
-                    if dpkg -s "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo apt install -y $pak
-                    fi
-                done
-            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-                for pak in "${_packages[@]}"; do
-                    if pacman -Qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo pacman -S --noconfirm $pak
-                    fi
-                done
-            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-                for pak in "${_packages[@]}"; do
-                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo dnf in $pak -y
-                    fi
-                done
-            elif [[ "$ID_LIKE" == *suse* ]]; then
-                for pak in "${_packages[@]}"; do
-                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo zypper in $pak -y
-                    fi
-                done
-            fi
+            case "$ID" in
+            *ubuntu*|*debian*)
+                sudo apt install -y "${_packages[@]}"
+                ;;
+            *arch*)
+                sudo pacman -S --needed --noconfirm "${_packages[@]}"
+                ;;
+            *rhel*|*fedora*)
+                sudo dnf install -y "${_packages[@]}"
+                ;;
+            *suse*)
+                sudo zypper install -y "${_packages[@]}"
+                ;;
+            *)
+                zenwrn "$msg077"
+                ;;
+            esac
         fi
         unset _packages
     fi
