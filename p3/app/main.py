@@ -61,11 +61,11 @@ def run():
     
     # FIX: Set the application icon before running
     # Use the icon path resolver
-    icon_path = get_icon_path("app-icon.png")
+    icon_path = get_icon_path("linuxtoys.svg")
     if icon_path:
         Gtk.Window.set_default_icon_from_file(icon_path)
     else:
-        print(f"Warning: App icon not found (app-icon.png)")
+        print(f"Warning: App icon not found (linuxtoys.svg)")
 
     # Use the already loaded translations from lang_utils
     app = Application(translations)
