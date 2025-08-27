@@ -126,6 +126,7 @@
   "touchegg_desc": "Um reconhecedor de gestos multi-toque que permite configurar gestos para várias ações em desktops Xorg.",
   "thumb_desc": "Instala o ffmpegthumbnailer para gerar miniaturas de arquivos de vídeo em gerenciadores de arquivos.",
   "earlyoom_desc": "Um daemon que monitora o uso de memória e swap do sistema, e mata processos quando a memória está baixa para evitar congelamentos do sistema.",
+  "mscf_desc": "Melhora a compatibilidade e aparência de muitos sites e aplicativos. Esta opção também oferecerá a remoção caso já esteja instalado.",
 
   "nv_desc": "Drivers Nvidia atuais. GPUs suportadas: Maxwell (GT 9xx) em diante.",
   "nv_rtx_desc": "Drivers Nvidia atuais com módulos de kernel abertos. GPUs suportadas: GTX 16xx e qualquer série RTX. Para laptops, prefira a opção proprietária para gerenciamento de energia.",
