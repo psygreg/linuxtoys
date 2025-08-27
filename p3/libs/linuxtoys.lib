@@ -27,56 +27,30 @@ nonfatal() {
 }
 
 # native package installation
-_install_ () {
-    if [[ -n "$_packages" ]]; then
+_install_() {
+    if [[ -n "${_packages[*]}" ]]; then
         # rpm-ostree iteration -- ONLY USE WHEN PACKAGES ARE NOT IMPORTANT TO THE SYSTEM!
         if command -v rpm-ostree &>/dev/null; then
-            declare -a _to_install=()
-            for pkg in "${_packages[@]}"; do
-                if ! rpm -qi "$pkg" &>/dev/null; then
-                    _to_install+=("$pkg")
-                fi
-            done
-            if [[ -n "$_to_install" ]]; then
-                sudo rpm-ostree install -yA "${_to_install[@]}"
-            else
-                return 0
-            fi
+            sudo rpm-ostree install -yA "${_packages[@]}"
         else
-        # resume usual linuxtoys behaviour
-            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-                for pak in "${_packages[@]}"; do
-                    if dpkg -s "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo apt install -y $pak
-                    fi
-                done
-            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-                for pak in "${_packages[@]}"; do
-                    if pacman -Qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo pacman -S --noconfirm $pak
-                    fi
-                done
-            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-                for pak in "${_packages[@]}"; do
-                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo dnf in $pak -y
-                    fi
-                done
-            elif [[ "$ID_LIKE" == *suse* ]]; then
-                for pak in "${_packages[@]}"; do
-                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo zypper in $pak -y
-                    fi
-                done
-            fi
+            # resume usual linuxtoys behaviour
+            case "$ID" in
+            *ubuntu*|*debian*)
+                sudo apt install -y "${_packages[@]}"
+                ;;
+            *arch*)
+                sudo pacman -S --needed --noconfirm "${_packages[@]}"
+                ;;
+            *rhel*|*fedora*)
+                sudo dnf install -y "${_packages[@]}"
+                ;;
+            *suse*)
+                sudo zypper install -y "${_packages[@]}"
+                ;;
+            *)
+                zenwrn "$msg077"
+                ;;
+            esac
         fi
         unset _packages
     fi
