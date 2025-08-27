@@ -5,7 +5,6 @@ Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
 
 License:        GPL3
-Source0:        linuxtoys-%{version}.tar.xz
 
 Requires:       git curl wget zenity python3 python3-gobject gtk3 jq python3-requests python3-urllib3 python3-certifi
 BuildRequires:  desktop-file-utils
@@ -16,7 +15,7 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %global debug_package %{nil}
 
 %prep
-%setup -q
+# No setup needed - we'll copy files directly from SOURCES
 
 %install
 mkdir -p %{buildroot}/usr/bin/
@@ -24,11 +23,12 @@ mkdir -p %{buildroot}/usr/share/linuxtoys/
 mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 mkdir -p %{buildroot}/usr/share/applications/
 
+# Install files directly from SOURCES
 # Install the main executable script
-install -m 755 usr/bin/linuxtoys %{buildroot}/usr/bin/
+install -m 755 %{_sourcedir}/linuxtoys-%{version}/usr/bin/linuxtoys %{buildroot}/usr/bin/
 
 # Install the Python application directory with all subdirectories
-cp -rf usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
+cp -rf %{_sourcedir}/linuxtoys-%{version}/usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
 
 # Set proper permissions for executable files
 chmod +x %{buildroot}/usr/share/linuxtoys/run.py
@@ -36,8 +36,8 @@ find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 
 # Install icon and desktop file
-install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
-desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
+install -m 644 %{_sourcedir}/linuxtoys-%{version}/usr/share/icons/hicolor/scalable/apps/linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
+desktop-file-install --dir=%{buildroot}/usr/share/applications %{_sourcedir}/linuxtoys-%{version}/usr/share/applications/LinuxToys.desktop
 
 %post
 alias_name="linuxtoys"
@@ -61,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Tue Aug 26 2025 Victor Gregory <psygreg@pm.me> - 5.1.6
+* Wed Aug 27 2025 Victor Gregory <psygreg@pm.me> - 5.1.6
 - Updated to current app structure with full Python application
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements

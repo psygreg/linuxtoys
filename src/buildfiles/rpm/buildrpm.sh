@@ -40,10 +40,8 @@ find linuxtoys-${lt_version}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chm
 find linuxtoys-${lt_version}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 chmod +x linuxtoys-${lt_version}/usr/share/linuxtoys/run.py
 
-# tarball it
-tar -cJf linuxtoys-${lt_version}.tar.xz linuxtoys-${lt_version}/
 # set up rpmbuild
-cp linuxtoys-${lt_version}.tar.xz rpmbuild/SOURCES
+cp -r linuxtoys-${lt_version} rpmbuild/SOURCES/
 day=$(date +%d)
 day_abbr=$(LC_TIME=C date +%a)  # This will always be in English
 month=$(LC_TIME=C date +%b)
