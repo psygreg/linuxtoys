@@ -32,7 +32,7 @@ iwd_in () {
             _packages=(iwd)
             _install_
             # enforce iwd backend for networkmanager
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/iwd.conf
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/iwd.conf
             sudo mv iwd.conf /etc/NetworkManager/conf.d/
             # restart networkmanager with wpasupplicant disabled
             sudo systemctl stop NetworkManager
