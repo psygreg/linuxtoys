@@ -78,15 +78,11 @@ chaotic_aur_lib () {
             cd $HOME
             sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
             sudo pacman-key --lsign-key 3056513887B78AEB
-            wget https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst
-            wget https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst
-            sudo pacman -U chaotic-keyring.pkg.tar.zst
-            sudo pacman -U chaotic-mirrorlist.pkg.tar.zst
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+            sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
             # Add Chaotic-AUR repository configuration if it doesn't exist
             if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
-                echo "" | sudo tee -a /etc/pacman.conf
-                echo "[chaotic-aur]" | sudo tee -a /etc/pacman.conf
-                echo "Include = /etc/pacman.d/chaotic-mirrorlist" | sudo tee -a /etc/pacman.conf
+                printf "\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist\n" | sudo tee -a /etc/pacman.conf
             fi       
             sudo pacman -Sy
             zenity --info --text "$msg024" --height 300 --width 300
