@@ -225,7 +225,7 @@ if [ "$installed" != "true" ]; then
             rm -f "$rpm_pkg"
             installed=true
             ;;
-        *suse*|*opensuse*)
+        *suse*)
             echo "Detected SUSE/OpenSUSE by ID_LIKE."
             echo "Downloading: $rpm_pkg"
             if ! dl_file "$rpm_url" "$rpm_pkg"; then
@@ -241,7 +241,7 @@ if [ "$installed" != "true" ]; then
             rm -f "$rpm_pkg"
             installed=true
             ;;
-        *arch*|*archlinux*)
+        *arch*)
             echo "Detected Arch-like by ID_LIKE."
             echo "Downloading: $arch_pkg"
             if ! dl_file "$arch_url" "$arch_pkg"; then
