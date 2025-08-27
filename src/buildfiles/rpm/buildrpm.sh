@@ -10,14 +10,13 @@ fi
 
 # ask version to package
 read -p "Version number: " lt_version
-# Clean up any existing build files
-rm -rf linuxtoys-* *.tar.xz
 
 # set up directory and copy files from p3
 mkdir -p linuxtoys-${lt_version}/usr/bin
 mkdir -p linuxtoys-${lt_version}/usr/share/linuxtoys
 mkdir -p linuxtoys-${lt_version}/usr/share/applications
 mkdir -p linuxtoys-${lt_version}/usr/share/icons/hicolor/scalable/apps
+mkdir -p rpmbuild/SOURCES
 
 # Copy the Python app from p3 directory
 cp -rf ../../../p3/* linuxtoys-${lt_version}/usr/share/linuxtoys/
