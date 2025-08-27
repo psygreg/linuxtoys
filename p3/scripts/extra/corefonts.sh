@@ -6,6 +6,7 @@
 # nocontainer
 
 # --- Start of the script code ---
+LT_PROGRAM="Microsoft CoreFonts"
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
