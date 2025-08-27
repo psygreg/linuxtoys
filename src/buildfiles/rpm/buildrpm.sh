@@ -50,6 +50,7 @@ specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm
 sed -i "2c\\$specfile_line" rpmbuild/SPECS/linuxtoys.spec
 sed -i "64c\\$specfile_line2" rpmbuild/SPECS/linuxtoys.spec
 # build
+rm -r $HOME/rpmbuild # ensure there's no leftover build artifacts previous to building
 cp -r rpmbuild $HOME # only works with this setup on Silverblue, which is what I use
 cd $HOME/rpmbuild || exit 1
 rpmbuild -ba SPECS/linuxtoys.spec
