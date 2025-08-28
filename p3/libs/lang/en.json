@@ -56,6 +56,8 @@
   "unoptimize_desc": "Reverts the Default Optimizations.",
   "peripherals": "Peripherals",
   "peripheral_desc": "Tools and resources for managing peripheral devices and lighting.",
+  "sysadm": "System Administration",
+  "sysadm_desc": "Tools for system administration and management for small businesses or at scale.",
 
   "gimp_desc": "A powerful open source image editor.",
   "onlyoffice_desc": "A suite with better compatibility to Microsoft Office files.",
@@ -185,5 +187,7 @@
   "godotsharp_desc": "A popular open-source game engine for 2D and 3D game development with C# support. Includes .NET SDK.",
   "dotnet_desc": "A collection of tools and libraries to create applications based on the .NET platform.",
   "sublime_desc": "A sophisticated text editor for code, markup and prose.",
-  "tailscale_desc": "A zero-config VPN that connects your devices securely over the internet."
+  "tailscale_desc": "A zero-config VPN that connects your devices securely over the internet.",
+
+  "cockpit_desc": "A web-based interface for monitoring and managing Linux servers."
 }

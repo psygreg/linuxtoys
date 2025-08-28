@@ -56,6 +56,8 @@
   "unoptimize_desc": "Reverte as Otimizações Recomendadas.",
   "peripherals": "Periféricos",
   "peripheral_desc": "Ferramentas e recursos para gerenciar dispositivos periféricos e iluminação.",
+  "sysadm": "Administração de Sistemas",
+  "sysadm_desc": "Ferramentas para administração e gerenciamento de sistemas para pequenas empresas ou em larga escala.",
 
   "gimp_desc": "Um poderoso editor de imagens open source.",
   "onlyoffice_desc": "Uma suíte com melhor compatibilidade com arquivos do Microsoft Office.",
@@ -183,5 +185,7 @@
   "godotsharp_desc": "Um popular motor de jogo open source para desenvolvimento 2D e 3D com suporte a C#. Inclui o SDK do .NET.",
   "dotnet_desc": "Uma coleção de ferramentas e bibliotecas para criar aplicativos baseados na plataforma .NET.",
   "sublime_desc": "Um editor de texto sofisticado para código, marcação e prosa.",
-  "tailscale_desc": "Uma VPN sem configuração que conecta seus dispositivos com segurança pela Internet."
+  "tailscale_desc": "Uma VPN sem configuração que conecta seus dispositivos com segurança pela Internet.",
+
+  "cockpit_desc": "Uma interface baseada na web para monitorar e gerenciar servidores Linux."
 }
