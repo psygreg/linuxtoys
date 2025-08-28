@@ -1,3 +1,44 @@
+#!/usr/bin/env python3
+"""
+LinuxToys CLI Helper Module
+
+This module provides command-line interface functionality for LinuxToys, allowing IT staff 
+and technicians to automate installations using manifest files.
+
+Key Features:
+- Automatic detection and installation of system packages
+- Automatic detection and installation of flatpaks
+- Execution of LinuxToys scripts
+- Custom manifest file support with validation
+- Cross-platform package manager support (apt, dnf, pacman, zypper, rpm-ostree)
+
+CLI Usage:
+    LT_MANIFEST=1 python3 run.py [options]
+
+Options:
+    <no arguments>          - Use default 'manifest.txt' in current directory
+    <manifest_path>         - Use specified manifest file
+    check-updates           - Check for LinuxToys updates
+    --help, -h              - Show usage information
+
+Manifest File Format:
+    - First line must be: # LinuxToys Manifest File
+    - List items one per line (scripts, packages, or flatpaks)
+    - Lines starting with # are comments
+    - Empty lines are ignored
+    - Priority: Scripts > Packages > Flatpaks
+
+Example Manifest:
+    # LinuxToys Manifest File
+    # Install system packages
+    vim
+    htop
+    # Install flatpaks
+    org.mozilla.firefox
+    # Run LinuxToys scripts
+    script-name
+"""
+
 import os
 import sys
 import subprocess
@@ -201,6 +242,7 @@ def find_script_by_name(script_name, translations=None):
 def load_manifest(manifest_path='manifest.txt'):
     """
     Load script names from a manifest file.
+    Validates that the first line is '# LinuxToys Manifest File' to confirm it's a valid manifest.
     Returns a list of script names, one per line.
     """
     if not os.path.exists(manifest_path):
@@ -210,11 +252,27 @@ def load_manifest(manifest_path='manifest.txt'):
     script_names = []
     try:
         with open(manifest_path, 'r', encoding='utf-8') as f:
-            for line_num, line in enumerate(f, 1):
+            lines = f.readlines()
+            
+            # Validate manifest format by checking first line
+            if not lines:
+                print(f"Error: Manifest file '{manifest_path}' is empty.")
+                return []
+                
+            first_line = lines[0].strip()
+            if first_line != '# LinuxToys Manifest File':
+                print(f"Error: '{manifest_path}' is not a valid LinuxToys manifest file.")
+                print(f"Expected first line: '# LinuxToys Manifest File'")
+                print(f"Found: '{first_line}'")
+                return []
+            
+            # Process the rest of the lines
+            for line_num, line in enumerate(lines[1:], 2):  # Start from line 2
                 line = line.strip()
                 # Skip empty lines and comments
                 if line and not line.startswith('#'):
                     script_names.append(line)
+                    
     except Exception as e:
         print(f"Error reading manifest file '{manifest_path}': {e}")
         return []
@@ -345,17 +403,71 @@ def check_ostree_deployment_cli(translations=None):
             return False
 
 
+def print_cli_usage():
+    """
+    Print usage information for CLI mode.
+    """
+    print("LinuxToys CLI Usage:")
+    print("=" * 40)
+    print("LT_MANIFEST=1 python3 run.py [options]")
+    print()
+    print("Options:")
+    print("  <no arguments>           - Use default 'manifest.txt' in current directory")
+    print("  <manifest_path>          - Use specified manifest file")
+    print("  check-updates            - Check for LinuxToys updates")
+    print("  update-check             - Check for LinuxToys updates")
+    print("  --check-updates          - Check for LinuxToys updates")
+    print("  --help, -h               - Show this help message")
+    print()
+    print("Manifest File Format:")
+    print("  - First line must be: # LinuxToys Manifest File")
+    print("  - List items one per line (scripts, packages, or flatpaks)")
+    print("  - Lines starting with # are comments")
+    print("  - Empty lines are ignored")
+    print()
+    print("Examples:")
+    print("  LT_MANIFEST=1 python3 run.py")
+    print("  LT_MANIFEST=1 python3 run.py /path/to/my-manifest.txt")
+    print("  LT_MANIFEST=1 python3 run.py check-updates")
+
+
 def run_manifest_mode(translations=None):
     """
     Main function for CLI manifest mode.
     Loads the manifest, finds scripts, checks compatibility, and runs them sequentially.
+    
+    Command-line usage:
+    - No arguments: uses default 'manifest.txt' in current directory
+    - check-updates/update-check/--check-updates: runs update check
+    - --help/-h: shows usage information
+    - <manifest_path>: uses specified manifest file path
     """
-    # Check if user wants to run update check
-    if len(sys.argv) > 1 and sys.argv[1] in ['check-updates', 'update-check', '--check-updates']:
-        return 1 if run_update_check_cli(translations) else 0
+    # Parse command-line arguments
+    manifest_path = 'manifest.txt'  # Default manifest path
+    
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        
+        # Check for help request
+        if arg in ['--help', '-h', 'help']:
+            print_cli_usage()
+            return 0
+        
+        # Check if user wants to run update check
+        elif arg in ['check-updates', 'update-check', '--check-updates']:
+            return 1 if run_update_check_cli(translations) else 0
+        
+        # Otherwise, treat the argument as a manifest file path
+        else:
+            manifest_path = arg
     
     print("LinuxToys CLI Manifest Mode")
     print("=" * 40)
+    
+    # Display which manifest file is being used
+    if manifest_path != 'manifest.txt':
+        print(f"Using manifest file: {manifest_path}")
+        print()
     
     # Check for pending ostree deployments on compatible systems
     system_compat_keys = get_system_compat_keys()
@@ -365,7 +477,7 @@ def run_manifest_mode(translations=None):
             return 0
     
     # Load script names from manifest
-    script_names = load_manifest()
+    script_names = load_manifest(manifest_path)
     if not script_names:
         print("No scripts found in manifest or manifest file is empty.")
         return 1

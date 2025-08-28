@@ -1,6 +1,16 @@
 # LinuxToys Manifest File
-# List the names of scripts to run sequentially, one per line
+# List the names of scripts, packages, or flatpaks to install sequentially, one per line
 # Lines starting with # are comments and will be ignored
 
-# Example scripts (modify as needed):
-about
+# Example entries (modify as needed):
+# System packages:
+# vim
+# htop
+# git
+
+# Flatpaks:
+# org.mozilla.firefox
+# org.gimp.GIMP
+
+# LinuxToys scripts:
+# script-name-here
