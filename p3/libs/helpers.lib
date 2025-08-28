@@ -145,3 +145,13 @@ rpmfusion_chk () {
     fi
     return 0
 }
+
+# install PyPI
+pip_lib () {
+    if [ "$ID" =~ "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]] || [ "$ID" == "debian" ]; then
+        _packages=(python3-pip)
+    else
+        _packages=(pip)
+    fi
+    _install_
+}

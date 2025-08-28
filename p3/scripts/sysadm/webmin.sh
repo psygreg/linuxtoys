@@ -1,8 +1,9 @@
 #!/bin/bash
-# name: Pip
+# name: Webmin
 # version: 1.0
-# description: pip_desc
-# icon: pip.svg
+# description: webmin_desc
+# icon: webmin.png
+# compat: debian, ubuntu, fedora
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -10,7 +11,9 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/../../libs/helpers.lib"
 sudo_rq
-pip_lib
+curl -o webmin-setup-repo.sh https://raw.githubusercontent.com/webmin/webmin/master/webmin-setup-repo.sh
+sh webmin-setup-repo.sh
+_packages=(webmin)
+_install_
 zeninf "$msg018"

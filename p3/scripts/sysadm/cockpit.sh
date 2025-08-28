@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: Cockpit
+# name: Cockpit Server
 # version: 1.0
 # description: cockpit_desc
-# icon: cockpit.svg
+# icon: cockpit.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -33,3 +33,4 @@ elif [[ "$ID" =~ "suse" ]]; then
     sudo firewall-cmd --permanent --zone=public --add-service=cockpit
     sudo firewall-cmd --reload
 fi
+zeninf "$msg018"

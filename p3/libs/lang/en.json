@@ -189,5 +189,8 @@
   "sublime_desc": "A sophisticated text editor for code, markup and prose.",
   "tailscale_desc": "A zero-config VPN that connects your devices securely over the internet.",
 
-  "cockpit_desc": "A web-based interface for monitoring and managing Linux servers."
+  "cockpit_desc": "A web-based interface for monitoring and managing Linux servers (server).",
+  "webmin_desc": "A web-based interface for system administration for Unix.",
+  "topgrade_desc": "A tool for upgrading all installed packages on any Linux system.",
+  "cockpitclient_desc": "A web-based interface for managing Linux servers (client)."
 }
