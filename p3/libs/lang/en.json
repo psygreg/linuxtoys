@@ -192,5 +192,6 @@
   "cockpit_desc": "A web-based interface for monitoring and managing Linux servers (server).",
   "webmin_desc": "A web-based interface for system administration for Unix.",
   "topgrade_desc": "A tool for upgrading all installed packages on any Linux system.",
-  "cockpitclient_desc": "A web-based interface for managing Linux servers (client)."
+  "cockpitclient_desc": "A web-based interface for managing Linux servers (client).",
+  "adir_desc": "Installs all packages necessary to join Active Directory domains using realmd."
 }

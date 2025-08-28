@@ -50,3 +50,4 @@ msg285="LucidGlyph is already installed. Do you wish to remove it from your syst
 msg286="Power Optimizer is not compatible with CachyOS, which has its own implementation of power profiles. Skipping.."
 msg287="The documentation for usage of this feature will open in your browser now."
 msg288="You already have $LT_PROGRAM installed. Do you wish to remove it?"
+msg289="Operations completed. You may now use 'realm' to join the Active Directory domain, or perform further configuration."

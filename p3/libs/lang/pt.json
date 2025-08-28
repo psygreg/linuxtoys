@@ -190,5 +190,6 @@
   "cockpit_desc": "Uma interface baseada na web para monitorar e gerenciar servidores Linux (servidor).",
   "webmin_desc": "Uma interface baseada na web para administração de sistemas Unix.",
   "topgrade_desc": "Uma ferramenta para atualizar todos os pacotes instalados em qualquer sistema Linux.",
-  "cockpitclient_desc": "Uma interface baseada na web para gerenciar servidores Linux (cliente)."
+  "cockpitclient_desc": "Uma interface baseada na web para gerenciar servidores Linux (cliente).",
+  "adir_desc": "Instala todos os pacotes necessários para ingressar em domínios do Active Directory usando o realmd."
 }
