@@ -28,6 +28,8 @@ if [ ! -d "$HOME/.local/share/fonts/mscorefonts" ]; then
     mkdir -p ~/.local/share/fonts
     mkdir -p ~/.local/share/fonts/mscorefonts
     cp -v fonts/*.ttf fonts/*.TTF ~/.local/share/fonts/mscorefonts/
+    rm *32.exe
+    rm -r fonts
     zeninf "$msg018"
 else
     if zenity --question --text "$msg288" --width 360 height 300; then
