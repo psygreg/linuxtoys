@@ -1,10 +1,173 @@
 import os
 import sys
 import subprocess
+import shutil
 from .parser import get_categories, get_scripts_for_category
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .update_helper import run_update_check
 from .reboot_helper import check_ostree_pending_deployments
+
+
+def get_os_info():
+    """
+    Parse /etc/os-release to get distribution information.
+    Returns a dict with ID, ID_LIKE, and other OS information.
+    """
+    os_info = {}
+    try:
+        with open('/etc/os-release', 'r') as f:
+            for line in f:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    # Remove quotes if present
+                    value = value.strip('"\'')
+                    os_info[key] = value
+    except FileNotFoundError:
+        # Fallback for systems without /etc/os-release
+        pass
+    return os_info
+
+
+def check_package_exists(package_name):
+    """
+    Check if a package exists in the system's package repositories.
+    Returns True if package exists, False otherwise.
+    """
+    os_info = get_os_info()
+    id_val = os_info.get('ID', '')
+    id_like = os_info.get('ID_LIKE', '')
+    
+    try:
+        # Check for rpm-ostree systems first
+        if shutil.which('rpm-ostree'):
+            # Use dnf to search since rpm-ostree uses DNF repos
+            result = subprocess.run(['dnf', 'search', '--quiet', package_name], 
+                                  capture_output=True, text=True, timeout=30)
+            return result.returncode == 0 and package_name in result.stdout
+            
+        # Debian/Ubuntu systems
+        elif (('debian' in id_like or 'ubuntu' in id_like or 
+               id_val in ['debian', 'ubuntu']) and 
+              shutil.which('apt-cache')):
+            result = subprocess.run(['apt-cache', 'search', '--names-only', f'^{package_name}$'], 
+                                  capture_output=True, text=True, timeout=30)
+            return result.returncode == 0 and result.stdout.strip() != ""
+            
+        # Arch-based systems
+        elif ((id_val in ['arch', 'cachyos'] or 
+               'arch' in id_like or 'archlinux' in id_like) and 
+              shutil.which('pacman')):
+            result = subprocess.run(['pacman', '-Ss', f'^{package_name}$'], 
+                                  capture_output=True, text=True, timeout=30)
+            return result.returncode == 0 and result.stdout.strip() != ""
+            
+        # Fedora/RHEL systems
+        elif (('rhel' in id_like or 'fedora' in id_like or 
+               'fedora' in id_val) and 
+              shutil.which('dnf')):
+            result = subprocess.run(['dnf', 'search', '--quiet', package_name], 
+                                  capture_output=True, text=True, timeout=30)
+            return result.returncode == 0 and package_name in result.stdout
+            
+        # openSUSE systems
+        elif (('suse' in id_like or 'suse' in id_val) and shutil.which('zypper')):
+            result = subprocess.run(['zypper', 'search', '--exact-match', package_name], 
+                                  capture_output=True, text=True, timeout=30)
+            return result.returncode == 0 and result.stdout.strip() != ""
+            
+    except (subprocess.TimeoutExpired, subprocess.CalledProcessError, Exception):
+        pass
+        
+    return False
+
+
+def check_flatpak_exists(flatpak_name):
+    """
+    Check if a flatpak exists in available repositories.
+    Returns True if flatpak exists, False otherwise.
+    """
+    if not shutil.which('flatpak'):
+        return False
+        
+    try:
+        # Search for exact match in flatpak remotes
+        result = subprocess.run(['flatpak', 'search', '--columns=application', flatpak_name], 
+                              capture_output=True, text=True, timeout=30)
+        if result.returncode == 0:
+            # Check if flatpak_name exactly matches any of the application IDs
+            for line in result.stdout.strip().split('\n'):
+                if line.strip() == flatpak_name:
+                    return True
+    except (subprocess.TimeoutExpired, subprocess.CalledProcessError, Exception):
+        pass
+        
+    return False
+
+
+def install_package(package_name):
+    """
+    Install a package using the system's package manager.
+    Returns True if successful, False otherwise.
+    """
+    try:
+        # Create a temporary script to install the package using linuxtoys.lib functions
+        lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
+        
+        script_content = f'''#!/bin/bash
+source "{lib_path}"
+_packages=("{package_name}")
+_install_
+'''
+        
+        # Execute the installation script
+        result = subprocess.run(['bash', '-c', script_content], 
+                              capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print(f"✓ Successfully installed package: {package_name}")
+            return True
+        else:
+            print(f"✗ Failed to install package: {package_name}")
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+            return False
+            
+    except Exception as e:
+        print(f"✗ Error installing package {package_name}: {e}")
+        return False
+
+
+def install_flatpak(flatpak_name):
+    """
+    Install a flatpak using the linuxtoys.lib _flatpak_ function.
+    Returns True if successful, False otherwise.
+    """
+    try:
+        # Create a temporary script to install the flatpak using linuxtoys.lib functions
+        lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
+        
+        script_content = f'''#!/bin/bash
+source "{lib_path}"
+_flatpaks=("{flatpak_name}")
+_flatpak_
+'''
+        
+        # Execute the installation script
+        result = subprocess.run(['bash', '-c', script_content], 
+                              capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print(f"✓ Successfully installed flatpak: {flatpak_name}")
+            return True
+        else:
+            print(f"✗ Failed to install flatpak: {flatpak_name}")
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+            return False
+            
+    except Exception as e:
+        print(f"✗ Error installing flatpak {flatpak_name}: {e}")
+        return False
 
 
 def find_script_by_name(script_name, translations=None):
@@ -217,16 +380,35 @@ def run_manifest_mode(translations=None):
     print(f"System compatibility keys: {', '.join(compat_keys) if compat_keys else 'None'}")
     print()
 
-    # Find and validate all scripts first
+    # Find and validate all scripts first, also check for packages/flatpaks
     scripts_to_run = []
+    packages_to_install = []
+    flatpaks_to_install = []
+    
     for script_name in script_names:
         script_info = find_script_by_name(script_name, translations)
         
         if script_info is None:
-            print(f"Warning: Script '{script_name}' not found. Skipping.")
+            # Script not found, check if it's a package or flatpak
+            print(f"Script '{script_name}' not found, checking if it's a package or flatpak...")
+            
+            # First check if it's a package (preferred over flatpak)
+            if check_package_exists(script_name):
+                print(f"✓ Found package: {script_name}")
+                packages_to_install.append(script_name)
+                continue
+            
+            # If not a package, check if it's a flatpak
+            elif check_flatpak_exists(script_name):
+                print(f"✓ Found flatpak: {script_name}")
+                flatpaks_to_install.append(script_name)
+                continue
+            
+            # Neither script, package, nor flatpak found
+            print(f"Warning: '{script_name}' not found as script, package, or flatpak. Skipping.")
             continue
             
-        # Check compatibility
+        # Check compatibility for scripts
         if not script_is_compatible(script_info['path'], compat_keys):
             print(f"Warning: Script '{script_name}' is not compatible with this system. Skipping.")
             continue
@@ -238,13 +420,19 @@ def run_manifest_mode(translations=None):
             
         scripts_to_run.append(script_info)
 
-    if not scripts_to_run:
-        print("No compatible scripts found to run.")
+    total_items = len(scripts_to_run) + len(packages_to_install) + len(flatpaks_to_install)
+    
+    if total_items == 0:
+        print("No compatible scripts, packages, or flatpaks found to run/install.")
         return 1
 
-    print(f"Will execute {len(scripts_to_run)} compatible script(s):")
+    print(f"Will execute/install {total_items} item(s):")
     for script in scripts_to_run:
-        print(f"  - {script['name']}")
+        print(f"  - [SCRIPT] {script['name']}")
+    for package in packages_to_install:
+        print(f"  - [PACKAGE] {package}")
+    for flatpak in flatpaks_to_install:
+        print(f"  - [FLATPAK] {flatpak}")
     print()
 
     # Ask for confirmation
@@ -257,21 +445,69 @@ def run_manifest_mode(translations=None):
         print("\nOperation cancelled.")
         return 0
 
-    # Execute scripts sequentially
-    failed_scripts = []
-    for i, script_info in enumerate(scripts_to_run, 1):
-        print(f"\n[{i}/{len(scripts_to_run)}] Executing: {script_info['name']}")
+    # Execute scripts and install packages/flatpaks sequentially
+    failed_items = []
+    current_item = 0
+    
+    # Install packages first
+    for package in packages_to_install:
+        current_item += 1
+        print(f"\n[{current_item}/{total_items}] Installing package: {package}")
+        print("=" * 60)
+        
+        success = install_package(package)
+        
+        if not success:
+            failed_items.append(('PACKAGE', package, 1))
+            print(f"Package '{package}' installation failed")
+            
+            # Ask if user wants to continue on failure
+            try:
+                response = input("Continue with remaining items? [y/N]: ").strip().lower()
+                if response not in ['y', 'yes']:
+                    print("Execution stopped.")
+                    break
+            except KeyboardInterrupt:
+                print("\nExecution stopped.")
+                break
+    
+    # Install flatpaks second
+    for flatpak in flatpaks_to_install:
+        current_item += 1
+        print(f"\n[{current_item}/{total_items}] Installing flatpak: {flatpak}")
+        print("=" * 60)
+        
+        success = install_flatpak(flatpak)
+        
+        if not success:
+            failed_items.append(('FLATPAK', flatpak, 1))
+            print(f"Flatpak '{flatpak}' installation failed")
+            
+            # Ask if user wants to continue on failure
+            try:
+                response = input("Continue with remaining items? [y/N]: ").strip().lower()
+                if response not in ['y', 'yes']:
+                    print("Execution stopped.")
+                    break
+            except KeyboardInterrupt:
+                print("\nExecution stopped.")
+                break
+    
+    # Execute scripts last
+    for script_info in scripts_to_run:
+        current_item += 1
+        print(f"\n[{current_item}/{total_items}] Executing script: {script_info['name']}")
         print("=" * 60)
         
         exit_code = run_script(script_info)
         
         if exit_code != 0:
-            failed_scripts.append((script_info['name'], exit_code))
+            failed_items.append(('SCRIPT', script_info['name'], exit_code))
             print(f"Script '{script_info['name']}' failed with exit code {exit_code}")
             
             # Ask if user wants to continue on failure
             try:
-                response = input("Continue with remaining scripts? [y/N]: ").strip().lower()
+                response = input("Continue with remaining items? [y/N]: ").strip().lower()
                 if response not in ['y', 'yes']:
                     print("Execution stopped.")
                     break
@@ -283,14 +519,14 @@ def run_manifest_mode(translations=None):
     print("\n" + "=" * 60)
     print("EXECUTION SUMMARY")
     print("=" * 60)
-    successful_count = len(scripts_to_run) - len(failed_scripts)
-    print(f"Successfully executed: {successful_count}/{len(scripts_to_run)} scripts")
+    successful_count = total_items - len(failed_items)
+    print(f"Successfully executed/installed: {successful_count}/{total_items} items")
     
-    if failed_scripts:
-        print(f"Failed scripts:")
-        for script_name, exit_code in failed_scripts:
-            print(f"  - {script_name} (exit code: {exit_code})")
+    if failed_items:
+        print("Failed items:")
+        for item_type, item_name, exit_code in failed_items:
+            print(f"  - [{item_type}] {item_name} (exit code: {exit_code})")
         return 1
     else:
-        print("All scripts executed successfully!")
+        print("All scripts executed and packages/flatpaks installed successfully!")
         return 0

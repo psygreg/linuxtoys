@@ -1,0 +1,8 @@
+# LinuxToys Test Manifest File
+# List the names of scripts to run sequentially, one per line
+# Lines starting with # are comments and will be ignored
+
+# Test mixing scripts, packages, and flatpaks:
+pdefaults
+vim
+org.mozilla.firefox
