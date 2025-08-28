@@ -1,9 +1,21 @@
 /* Defines the style for each item in our grid (FlowBox) */
 .script-item {
-    /* padding: 10px; */
-    /* margin: px; */
     background-color: rgba(0,0,0,0.1);
     border: 1px solid rgba(255, 255, 255, 0.3); /* borda branca semi-transparente */
     border-radius: 16px;
     /* Let GTK use system theme colors automatically */
+}
+.script-item-hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
+    transition: all 200ms ease-in-out;
+}
+.item-subcategory {
+    background-image: url('icons/jigsaw.svg');
+    background-size: 80px;
+    background-repeat: no-repeat;
+    background-position: left;
+    border-radius: 16px;
 }
