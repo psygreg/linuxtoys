@@ -259,20 +259,7 @@ class AppWindow(Gtk.ApplicationWindow):
         
         # Apply overlay to subcategories, categories, or main menu items that aren't scripts
         if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
-            style_ctx_box = box.get_style_context()
-            css_provider = Gtk.CssProvider()
-            css_data = f"""
-                .item-subcategory {{
-                    background-image: url('{get_icon_path("jigsaw.svg")}');
-                    background-size: 80px;
-                    background-repeat: no-repeat;
-                    background-position: left;
-                    border-radius: 16px;
-                }}
-            """
-            css_provider.load_from_data(css_data.encode())
-            style_ctx_box.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-            style_ctx_box.add_class("item-subcategory")
+            box.get_style_context().add_class("item-subcategory")
 
         box.pack_start(icon_widget, False, False, 20)
 
@@ -550,22 +537,8 @@ class AppWindow(Gtk.ApplicationWindow):
     def on_item_enter(self, widget, event):
         """Handle mouse entering a script/category item - add hover effect."""
         try:
-            style_context = widget.get_style_context()
-            
-            # Create CSS for hover effect
-            css_provider = Gtk.CssProvider()
-            css_data = """
-                .script-item-hover {
-                    background-color: rgba(255, 255, 255, 0.05);
-                    border: 1px solid rgba(255, 255, 255, 0.9);
-                    border-radius: 16px;
-                    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
-                    transition: all 200ms ease-in-out;
-                }
-            """
-            css_provider.load_from_data(css_data.encode())
-            style_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-            style_context.add_class("script-item-hover")
+            # Hover effect
+            widget.get_style_context().add_class("script-item-hover")
             
             # Force a redraw
             widget.queue_draw()
