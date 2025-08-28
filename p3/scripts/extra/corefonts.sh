@@ -13,6 +13,8 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if [ ! -d "$HOME/.local/share/fonts/mscorefonts" ]; then
+    _packages=(cabextract)
+    _install_
     # get corefonts
     _sfpath="http://downloads.sourceforge.net/corefonts"
     fonts=($_sfpath/andale32.exe $_sfpath/arial32.exe $_sfpath/arialb32.exe $_sfpath/comic32.exe $_sfpath/courie32.exe $_sfpath/georgi32.exe
