@@ -12,4 +12,4 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 flatpak_in_lib
-flatpak install flathub --or-update --user --noninteractive flathub org.vinegarhq.Sober
+flatpak install --or-update --user --noninteractive flathub org.vinegarhq.Sober
