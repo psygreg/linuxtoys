@@ -145,7 +145,6 @@
   "rpmfusion_desc": "Um repositório que fornece pacotes adicionais para Fedora e RHEL.",
   "pip_desc": "Gerenciador de pacotes Python. Tipicamente útil para desenvolvedores Python.",
   "cargo_desc": "Gerenciador de pacotes Rust. Tipicamente útil para desenvolvedores Rust. Inclui Rustup.",
-  "cloudflare_warp_desc": "Instala o cliente Cloudflare WARP, que protege e acelera sua conexão com a internet.",
 
   "obs_desc": "Um popular software de streaming e gravação de código aberto.",
   "mctl_desc": "Um monitor de sistema para Linux semelhante ao Gerenciador de Tarefas do Windows, baseado em GTK4.",
@@ -166,6 +165,7 @@
   "f3_desc": "Uma ferramenta para verificar unidades USB falsas e corrigi-las para sua capacidade real.",
   "bazaar_desc": "Uma nova loja de aplicativos com foco em descobrir e instalar aplicativos e complementos de repositórios Flatpak, apoiando os desenvolvedores que tornam o desktop Linux possível.",
   "archupd_desc": "Um notificador e gerenciador de atualizações do Arch Linux que roda discretamente na bandeja do sistema.",
+  "cloudflare_warp_desc": "Um serviço de DNS que oculta seu tráfego do ISP.",
 
   "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web.",
   "mise_desc": "Assim como asdf (ou nvm ou pyenv, mas para qualquer linguagem), ele gerencia ferramentas de desenvolvimento como node, python, cmake, terraform e centenas mais. Substitui PyEnv, NVM, e os instaladores Java JDK e Maven desta seção.",
