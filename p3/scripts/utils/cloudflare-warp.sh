@@ -4,6 +4,7 @@
 # description: cloudflare_warp_desc
 # icon: cloudflare-warp.svg
 # compat: ubuntu, debian, fedora
+# nocontainer
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
