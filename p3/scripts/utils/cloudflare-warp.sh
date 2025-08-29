@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cloudflare_warp_desc
 # icon: cloudflare-warp.svg
-# compat: ubuntu, debian, fedora
+# compat: ubuntu, debian, fedora, ostree, ublue
 # nocontainer
 
 # --- Start of the script code ---
@@ -35,7 +35,8 @@ elif command -v dnf &> /dev/null || command -v dnf &> /dev/null; then
     # Add cloudflare-warp.repo to /etc/yum.repos.d/
     curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo
     # Update and Install
-    sudo dnf install -y cloudflare-warp
+    _packages=(cloudflare-warp)
+    _install_
 else
     zeninf "$msg077"
     exit 1
