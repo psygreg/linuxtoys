@@ -29,6 +29,13 @@
   "script_runner_title": "Running \"{script_name}\"",
   "script_runner_close": "Close",
   "script_runner_finished": "Script finished with exit code: {exit_code}",
+  "waiting_title": "Waiting...",
+  "waiting_message": "Waiting...",
+  "load_manifest": "Load Manifest",
+  "choose_manifest_title": "Please choose your Manifest",
+  "select_button": "Select",
+  "loading_manifest_message": "Loading your manifest file... Please Wait...",
+  "packages_flatpaks": "Packages & Flatpaks",
 
   "psypicks": "Psygreg's Picks",
   "psypicks_desc": "Curated selection of software for gaming and quality of life on Linux.",

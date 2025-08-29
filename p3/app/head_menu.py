@@ -1,12 +1,15 @@
 from .gtk_common import Gtk, GLib
 from . import cli_helper
 from . import script_runner
-import threading, os
+from .lang_utils import create_translator
+import threading
+import os
 
 
 class WaitDialog(Gtk.Dialog):
 	def __init__(self, parent, message="Waiting..."):
-		super().__init__(title="Waiting...", transient_for=parent, modal=True)
+		_ = create_translator()
+		super().__init__(title=_("waiting_title"), transient_for=parent, modal=True)
 		self.set_default_size(128, 48)
 		self.set_resizable(False)
 
@@ -19,6 +22,9 @@ class WaitDialog(Gtk.Dialog):
 		self.spinner.set_size_request(32, 32)
 		h.pack_start(self.spinner, False, False, 0)
 
+		# Use translated message if default, otherwise use provided message
+		if message == "Waiting...":
+			message = _("waiting_message")
 		label = Gtk.Label(label=message)
 		label.set_xalign(0)
 		h.pack_start(label, True, True, 0)
@@ -36,6 +42,7 @@ class WaitDialog(Gtk.Dialog):
 class MenuButton(Gtk.MenuButton):
 	def __init__(self, script_runner: script_runner.ScriptRunner):
 		super().__init__()
+		_ = create_translator()
 		self.script_runner = script_runner
 		self.results = []
 		self._temp_sh = '/tmp/._temp_script.sh'
@@ -43,7 +50,7 @@ class MenuButton(Gtk.MenuButton):
 		_menu = Gtk.Menu()
 		_menu.set_halign(Gtk.Align.END)
 
-		load_manifest = Gtk.MenuItem(label="Load Manifest")
+		load_manifest = Gtk.MenuItem(label=_("load_manifest"))
 		load_manifest.connect("activate", self.__on_load_manifest)
 
 		_menu.append(load_manifest)
@@ -60,27 +67,28 @@ class MenuButton(Gtk.MenuButton):
 		if scripts_name is None:
 			return
 
-		thread = threading.Thread(
+		threading.Thread(
 			target=self.__wrapper_t,
 			args=(scripts_name,)
 		).start()
 
 	def __file_choose(self):
+		_ = create_translator()
 		scripts_name = []
 
 		dialog = Gtk.FileChooserDialog(
-			title="Please choose your Manifest",
+			title=_("choose_manifest_title"),
 			parent=self.get_toplevel(),
 			action=Gtk.FileChooserAction.OPEN,
 		)
 
 		dialog.add_buttons(
-			Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, "Select", Gtk.ResponseType.OK
+			Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, _("select_button"), Gtk.ResponseType.OK
 		)
 
 		response = dialog.run()
 		if response == Gtk.ResponseType.OK:
-			self.dlg = WaitDialog(self.get_toplevel(), "Loading your manifest file... Please Wait...")
+			self.dlg = WaitDialog(self.get_toplevel(), _("loading_manifest_message"))
 			self.dlg.start()
 			scripts_name = cli_helper.load_manifest(dialog.get_filename())
 		dialog.destroy()
@@ -88,6 +96,7 @@ class MenuButton(Gtk.MenuButton):
 		return scripts_name
 
 	def __wrapper_t(self, scripts_name):
+		_ = create_translator()
 		packages_to_install = []
 		flatpaks_to_install = []
 
@@ -105,7 +114,7 @@ class MenuButton(Gtk.MenuButton):
 				self.results.append(script_info)
 
 		if packages_to_install or flatpaks_to_install:
-			self.results.append({'name': 'Packages & Flatpaks','path': self._temp_sh, 'is_script': True})
+			self.results.append({'name': _("packages_flatpaks"),'path': self._temp_sh, 'is_script': True})
 			self.__temp_script(packages_to_install, flatpaks_to_install)
 
 		GLib.idle_add(self.__update_results)

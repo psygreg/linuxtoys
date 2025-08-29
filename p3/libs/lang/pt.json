@@ -29,6 +29,13 @@
   "script_runner_title": "Executando \"{script_name}\"",
   "script_runner_close": "Fechar",
   "script_runner_finished": "Script finalizado com código de saída: {exit_code}",
+  "waiting_title": "Aguardando...",
+  "waiting_message": "Aguardando...",
+  "load_manifest": "Carregar Manifest",
+  "choose_manifest_title": "Por favor, escolha seu Manifest",
+  "select_button": "Selecionar",
+  "loading_manifest_message": "Carregando seu arquivo de manifesto... Por favor, aguarde...",
+  "packages_flatpaks": "Pacotes & Flatpaks",
 
   "psypicks": "Seleção do Psygreg",
   "psypicks_desc": "Seleção curada de programas pra jogos e qualidade de vida no Linux.",
