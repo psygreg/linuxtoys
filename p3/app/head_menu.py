@@ -46,20 +46,23 @@ class MenuButton(Gtk.MenuButton):
 		self.script_runner = script_runner
 		self.results = []
 		self._temp_sh = '/tmp/._temp_script.sh'
-
-		_menu = Gtk.Menu()
-		_menu.set_halign(Gtk.Align.END)
-
-		load_manifest = Gtk.MenuItem(label=_("load_manifest"))
-		load_manifest.connect("activate", self.__on_load_manifest)
-
-		_menu.append(load_manifest)
-		_menu.show_all()
-
 		self.dlg = None
 
-		self.set_popup(_menu)
+		pop = Gtk.Popover()
 
+		vbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
+		vbox.set_border_width(6)
+
+		load_manifest = Gtk.ModelButton(label=_("load_manifest"))
+		load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
+		load_manifest.connect("clicked", self.__on_load_manifest)
+
+		vbox.pack_start(load_manifest, True, True, 0)
+		vbox.show_all()
+
+		pop.add(vbox)
+
+		self.set_popover(pop)
 
 	def __on_load_manifest(self, widget):
 		scripts_name = self.__file_choose()
