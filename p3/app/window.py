@@ -8,6 +8,7 @@ from . import footer
 from . import checklist_helper
 from . import confirm_helper
 from . import compat
+from . import head_menu
 from . import reboot_helper
 from . import script_runner
 from . import get_icon_path
@@ -47,6 +48,8 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self.back_button = Gtk.Button.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.BUTTON)
         self.header_bar.pack_start(self.back_button)
+
+        self.header_bar.pack_end(head_menu.MenuButton(self.script_runner))
 
         self.main_stack = Gtk.Stack()
         self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
