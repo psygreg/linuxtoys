@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cloudflare_warp_desc
 # icon: cloudflare-warp.svg
-# compat: ubuntu, debian, rhel, centos
+# compat: ubuntu, debian, fedora
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -22,14 +22,14 @@ fi
 
 sudo_rq
 
-if command -v apt-get &> /dev/null; then
+if command -v apt &> /dev/null; then
     # Add cloudflare gpg key
     curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 
     # Check for supported release
     RELEASE=$(lsb_release -cs)
     SUPPORTED_RELEASES=("noble" "jammy" "focal" "bookworm" "bullseye" "buster")
-    if [[ ! " ${SUPPORTED_RELEASES[@]} " =~ " ${RELEASE} " ]]; then
+    if [[ ! "${SUPPORTED_RELEASES[*]}" =~ "${RELEASE}" ]]; then
         RELEASE="jammy" # Fallback to a stable LTS release
     fi
 
@@ -39,7 +39,7 @@ if command -v apt-get &> /dev/null; then
     # Install
     sudo apt-get update && sudo apt-get install -y cloudflare-warp
 
-elif command -v yum &> /dev/null || command -v dnf &> /dev/null; then
+elif command -v dnf &> /dev/null || command -v dnf &> /dev/null; then
     # Add cloudflare-warp.repo to /etc/yum.repos.d/
     curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo
     # Update and Install
