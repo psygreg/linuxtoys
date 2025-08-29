@@ -43,7 +43,7 @@ import os
 import sys
 import subprocess
 import shutil
-from .parser import get_categories, get_scripts_for_category
+from .parser import get_categories, get_all_scripts_recursive
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .update_helper import run_update_check
 from .reboot_helper import check_ostree_pending_deployments
@@ -213,7 +213,7 @@ _flatpak_
 
 def find_script_by_name(script_name, translations=None):
     """
-    Find a script by its name across all categories and root scripts.
+    Find a script by its name across all categories and root scripts, including nested subcategories.
     Returns the script info dict if found, None otherwise.
     """
     # Check root scripts (those shown as categories)
@@ -226,11 +226,12 @@ def find_script_by_name(script_name, translations=None):
                 filename_without_ext.lower() == script_name.lower()):
                 return category
 
-    # Check scripts within categories
+    # Check scripts within categories (including nested subcategories)
     for category in categories:
         if not category.get('is_script'):
-            scripts = get_scripts_for_category(category['path'], translations)
-            for script in scripts:
+            # Use recursive search to find scripts in all subdirectories
+            all_scripts = get_all_scripts_recursive(category['path'], translations)
+            for script in all_scripts:
                 filename_without_ext = os.path.splitext(os.path.basename(script['path']))[0]
                 if (script['name'].lower() == script_name.lower() or 
                     filename_without_ext.lower() == script_name.lower()):
