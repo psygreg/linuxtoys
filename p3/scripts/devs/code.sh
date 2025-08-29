@@ -11,6 +11,7 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 sudo_rq
+cd $HOME
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
     wget https://vscode.download.prss.microsoft.com/dbazure/download/stable/848b80aeb52026648a8ff9f7c45a9b0a80641e2e/code_1.100.2-1747260578_amd64.deb
     sudo dpkg -i code_1.100.2-1747260578_amd64.deb
