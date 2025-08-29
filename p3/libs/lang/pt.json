@@ -145,6 +145,7 @@
   "rpmfusion_desc": "Um repositório que fornece pacotes adicionais para Fedora e RHEL.",
   "pip_desc": "Gerenciador de pacotes Python. Tipicamente útil para desenvolvedores Python.",
   "cargo_desc": "Gerenciador de pacotes Rust. Tipicamente útil para desenvolvedores Rust. Inclui Rustup.",
+  "cloudflare_warp_desc": "Instala o cliente Cloudflare WARP, que protege e acelera sua conexão com a internet.",
 
   "obs_desc": "Um popular software de streaming e gravação de código aberto.",
   "mctl_desc": "Um monitor de sistema para Linux semelhante ao Gerenciador de Tarefas do Windows, baseado em GTK4.",
