@@ -17,7 +17,7 @@ tag=$(curl -s "https://api.github.com/repos/PancakeTAS/lsfg-vk/releases/latest" 
 ver="${tag#v}"
 DLL_FIND="$(find / -name Lossless.dll 2>/dev/null | head -n 1)"
 if [ -z "$DLL_FIND" ]; then
-    nonfatal "Lossless.dll not found. Did you install Lossless Scaling?"
+    fatal "Lossless.dll not found. Did you install Lossless Scaling?"
 else 
     DLL_ABSOLUTE_PATH=$(dirname "$(realpath "$DLL_FIND")")
     ESCAPED_DLL_PATH=$(printf '%s\n' "$DLL_ABSOLUTE_PATH" | sed 's/[&/\]/\\&/g')
