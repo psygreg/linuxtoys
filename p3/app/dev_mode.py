@@ -518,19 +518,65 @@ def validate_script_libraries(script_path):
     return validation
 
 
-def dry_run_script(script_path):
+def validate_script_header(script_path):
     """
-    Perform a dry-run of a script, checking syntax and dependencies without execution.
-    
+    Validate that the script contains the required header metadata.
+
     Args:
         script_path (str): Path to the script file
-        
+
+    Returns:
+        dict: Validation results with missing fields and status
+    """
+    required_fields = ["name", "version", "description", "icon", "compat"]
+    found_fields = {}
+    missing_fields = []
+
+    try:
+        with open(script_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        # Only check first 15 lines (header area)
+        for line in lines[:15]:
+            if line.startswith("#"):
+                for field in required_fields:
+                    if line.lower().startswith(f"# {field}:"):
+                        found_fields[field] = line.strip().split(":", 1)[1].strip()
+
+        for field in required_fields:
+            if field not in found_fields:
+                missing_fields.append(field)
+
+        status = "valid" if not missing_fields else "invalid"
+
+        return {
+            "status": status,
+            "found": found_fields,
+            "missing": missing_fields,
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "found": {},
+            "missing": required_fields,
+            "error": str(e),
+        }
+
+
+def dry_run_script(script_path):
+    """
+    Perform a dry-run of a script, checking syntax, header and dependencies without execution.
+
+    Args:
+        script_path (str): Path to the script file
+
     Returns:
         dict: Dry-run results with validation status and details
     """
     print(f"🧪 DRY-RUN: {os.path.basename(script_path)}")
     print("=" * 50)
-    
+
     result = {
         'script': script_path,
         'syntax_valid': False,
@@ -539,20 +585,19 @@ def dry_run_script(script_path):
         'syntax_errors': [],
         'warnings': []
     }
-    
-    # Check bash syntax
+
+    # --- 1. Check bash syntax ---
     try:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as temp_file:
             with open(script_path, 'r', encoding='utf-8') as original:
                 temp_file.write(original.read())
             temp_file.flush()
-            
-            # Use bash -n to check syntax without execution
+
             syntax_check = subprocess.run(
                 ['bash', '-n', temp_file.name],
                 capture_output=True, text=True
             )
-            
+
             if syntax_check.returncode == 0:
                 result['syntax_valid'] = True
                 print("✅ Syntax: Valid")
@@ -562,17 +607,27 @@ def dry_run_script(script_path):
                 for error in result['syntax_errors']:
                     if error.strip():
                         print(f"   {error}")
-        
         os.unlink(temp_file.name)
-        
     except Exception as e:
         result['syntax_errors'].append(f"Syntax check failed: {str(e)}")
         print(f"❌ Syntax check failed: {str(e)}")
-    
-    # Validate dependencies
+
+    # --- 2. Validate header metadata ---
+    header_validation = validate_script_header(script_path)
+    if header_validation["status"] == "valid":
+        print("✅ Header: Valid")
+    elif header_validation["status"] == "invalid":
+        print("⚠️  Header: Missing fields -> " + ", ".join(header_validation["missing"]))
+        result["warnings"].append(
+            f"Script header missing fields: {', '.join(header_validation['missing'])}"
+        )
+    else:
+        print(f"❌ Header validation failed: {header_validation['error']}")
+
+    # --- 3. Validate dependencies ---
     validation = validate_script_libraries(script_path)
     result['validation'] = validation
-    
+
     if validation['status'] == 'valid':
         result['dependencies_valid'] = True
         print("✅ Dependencies: Valid")
@@ -580,7 +635,7 @@ def dry_run_script(script_path):
         print("❌ Dependencies: Invalid")
     else:
         print("⚠️  Dependencies: Errors occurred")
-    
+
     # Show dependency details
     deps = validation['dependencies']
     if deps['sources']:
@@ -592,28 +647,27 @@ def dry_run_script(script_path):
         print(f"🔧 Functions: {', '.join(deps['function_calls'])}")
     if deps['variables']:
         print(f"📝 Variables: {', '.join(deps['variables'])}")
-    
+
     # Show missing dependencies
     if validation['missing_sources']:
         print(f"❌ Missing sources: {', '.join(validation['missing_sources'])}")
     if validation['missing_functions']:
         print(f"⚠️  Undefined functions: {', '.join(validation['missing_functions'])}")
         result['warnings'].extend([f"Function '{f}' not found in libraries" for f in validation['missing_functions']])
-    
+
     # Show errors
     if validation['errors']:
         print("❌ Errors:")
         for error in validation['errors']:
             print(f"   {error}")
-    
+
     # Overall status
     overall_status = "✅ PASS" if result['syntax_valid'] and result['dependencies_valid'] else "❌ FAIL"
     print(f"\n🎯 Overall: {overall_status}")
     print("=" * 50)
     print()
-    
-    return result
 
+    return result
 
 def should_dry_run_scripts():
     """
