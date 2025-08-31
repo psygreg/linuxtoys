@@ -138,7 +138,7 @@ class MenuButton(Gtk.MenuButton):
 source "{lib_path}"
 
 _packages=("{' '.join(packages)}")
-_install_
+[ "${{#_packages[@]}}" -eq 0 ] || {{ sudo_rq; _install_; }}
 
 _flatpaks=("{' '.join(flatpaks)}")
 _flatpak_
