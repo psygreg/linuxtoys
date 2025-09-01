@@ -18,6 +18,12 @@ As long as you're running their up-to-date stable versions:
 
 Give it permission to run as a program through whichever file manager you choose, or with `chmod +x install.sh` through terminal, then run it and it will figure out the installation procedure for your operating system.
 
+or automatic installation:
+
+```shell
+echo y | bash <(curl -sSL https://raw.githubusercontent.com/psygreg/linuxtoys/master/install.sh)
+```
+
 #### Download and install the **package for your distribution** from [Releases](https://github.com/psygreg/linuxtoys/releases):
 
 For Arch Linux and derivatives, the terminal is required for this: `sudo pacman -U linuxtoys-<version>-1-x86_64.pacman`.
