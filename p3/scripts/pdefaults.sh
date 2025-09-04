@@ -29,7 +29,7 @@ sysag_run () {
     earlyoom_lib
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
-        dconf write /org/gnome/mutter/check-alive-timeout "20000"
+        sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
