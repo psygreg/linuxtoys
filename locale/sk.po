@@ -1,0 +1,410 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Operácie dokončené."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 bol nainštalovaný. Teraz sa otvorí okno prehliadača s pokynmi na používanie."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Chcete nainštalovať skripty pre preklad ARM? (odporúčané)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "Nastavenie Waydroidu je dokončené. Teraz ho môžete spustiť z ponuky aplikácií."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid vyžaduje na fungovanie reláciu Wayland."
+msgid "Reboot your system to apply the changes."
+msgstr "Reštartujte svoj systém, aby ste uplatnili zmeny."
+msgid "This script is not compatible with your operating system."
+msgstr "Tento skript nie je kompatibilný s vaším operačným systémom."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP je už nainštalovaný."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Tento systém bol už optimalizovaný spoločnosťou LinuxToys. Ak chcete znovu aplikovať, najprv "
+"použite skript 'Zrušiť optimalizácie'."
+msgid "Choose your device type:"
+msgstr "Vyberte typ zariadenia:"
+msgid "AMD Drivers"
+msgstr "Ovládače AMD"
+msgid "Installation successful."
+msgstr "Inštalácia bola úspešná."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Tento skript inštaluje iba softvér DaVinci Resolve. Na používanie verzie Studio je potrebná "
+"licencia od spoločnosti Blackmagic Design."
+msgid "The application is already up to date."
+msgstr "Aplikácia je už aktuálna."
+msgid "Optimization Complete"
+msgstr "Optimalizácia dokončená"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Optimalizácia dokončená. Prosím, reštartujte svoj systém. Budete vyzvaní na zaregistrovanie nového "
+"MOK (Kľúč vlastníka stroja) pre zabezpečené spúšťanie. Prosím, vyberte 'Zaregistrovať MOK' a "
+"postupujte podľa pokynov na dokončenie procesu."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"Boli nainštalované balíky pre integráciu s Active Directory. Teraz sa môžete pripojiť k doméne "
+"pomocou príkazu 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Tento skript vyžaduje, aby bol Lossless Scaling pre Windows nainštalovaný vo vašom systéme "
+"prostredníctvom Steamu, Lutris alebo Bottles. Uistite sa, že je nainštalovaný pred pokračovaním."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll sa nenašiel. Nainštalovali ste Lossless Scaling?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Skontrolujte kompatibilitu vašich kolies pred pokračovaním."
+msgid "Unsupported OpenSUSE version."
+msgstr "Nepodporovaná verzia OpenSUSE."
+msgid "No compatible AMD GPU found."
+msgstr "Nebola nájdená kompatibilná AMD GPU."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Tento program je už nainštalovaný. Chcete ho odstrániť?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Toto nainštaluje démon, ktorý prednačítava často používané aplikácie do pamäte, aby sa urýchlil čas "
+"spustenia. Toto sa odporúča iba pre systémy s viac ako 12 GB RAM. Pokračovať?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Váš systém nemá dostatok RAM na bezpečné používanie tejto funkcie."
+msgid "The firewall has been configured and enabled."
+msgstr "Firewall bol nakonfigurovaný a povolený."
+msgid "Welcome to the LSW installer!"
+msgstr "Vitajte v inštalátore LSW!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Tento skript vás prevedie inštaláciou systému Windows na Linuxe."
+msgid "WARNINGS:"
+msgstr "UPOZORNENIA:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Toto je automatizovaný skript. Používajte na vlastné riziko."
+msgid "* A stable internet connection is required."
+msgstr "* Je potrebné stabilné internetové pripojenie."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* Počas inštalácie NEZATVÁRAJTE terminál."
+msgid "* GPU acceleration is NOT available."
+msgstr "* Akcelerácia GPU nie je k dispozícii."
+msgid "I have read and understood the warnings."
+msgstr "Prečítal(a) som si a pochopil(a) varovania."
+msgid "Do you want to proceed with the installation?"
+msgstr "Chcete pokračovať v inštalácii?"
+msgid "Swapfile creation successful."
+msgstr "Vytvorenie swap súboru bolo úspešné."
+msgid "Swap already enabled in your system."
+msgstr "Swap je už vo vašom systéme povolený."
+msgid "No valid shell found."
+msgstr "Nebola nájdená platná príkazová schránka."
+msgid "Success! Reboot to apply."
+msgstr "Úspešne! Reštartujte na aplikovanie."
+msgid "System already patched."
+msgstr "Systém je už opravený."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Toto vyžaduje repozitár Chaotic-AUR. Chcete ho povoliť?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Preskočená inštalácia btrfs-assistant."
+msgid "Your root filesystem is not btrfs."
+msgstr "Váš koreňový súborový systém nie je btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Nedostatok RAM. Na pokračovanie je potrebné aspoň 12 GB celkovej pamäte."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Nedostatok voľnej RAM. Zatvorte niektoré aplikácie a skúste to znova."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Nedostatočný počet CPU vlákien na inštaláciu hypervízora Windows, minimum 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Zadajte veľkosť disku Windows (C:) v GB. Nechajte prázdne pre použitie 50GB."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Neplatný vstup pre veľkosť disku. Zadajte číslo."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Minimálny priestor na inštaláciu systému Windows (C:) je 40 GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Nedostatok miesta na disku: požaduje sa %s GB, k dispozícii %s GB."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Nenašiel sa žiadny kompatibilný terminálový emulátor na spustenie Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "Je inštalácia systému Windows dokončená?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "Chcete vrátiť všetky zmeny? UPOZORNENIE: Toto ZMAŽE všetky údaje Podman Compose!"
+msgid "No GRUB found."
+msgstr "GRUB nebol nájdený."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Toto zobrazí snímky vo vašom GRUB. Bude to fungovať iba v prípade, že váš koreňový súborový systém "
+"je btrfs. Pokračovať?"
+msgid "No WiFi device found."
+msgstr "Nebola nájdená žiadna WiFi zariadenie."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "Súbor iwd.conf nebol nájdený. IWD nebol v tomto systéme povolený."
+msgid "SELinux policy has been updated."
+msgstr "Politika SELinux bola aktualizovaná."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Tento skript je určený iba pre distribúcie založené na OpenSUSE."
+msgid "Docker + Portainer CE Setup"
+msgstr "Nastavenie Docker + Portainer CE"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr ""
+"Týmto sa nainštaluje Docker Engine a Portainer CE na jeho správu prostredníctvom webového "
+"rozhrania. Pokračovať?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Nastavenie dokončené. Vaša Portainer nástenka sa teraz otvorí vo vašom webovom prehliadači."
+msgid "Choose JDK versions to install"
+msgstr "Vyberte verzie JDK na inštaláciu"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM bol nainštalovaný. Prosím, reštartujte svoj terminál alebo načítajte svoj konfiguračný súbor "
+"shellu (napr. .bashrc, .zshrc), aby ste ho mohli začať používať. Teraz sa otvorí okno prehliadača s "
+"pokynmi na používanie."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv bol nainštalovaný. Prosím, reštartujte svoj terminál alebo načítajte svoj konfiguračný súbor "
+"shellu (napr. .bash_profile, .zshrc), aby ste ho mohli začať používať. Teraz sa otvorí okno "
+"prehliadača s pokynmi na používanie."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Mise bola nainštalovaná. Prosím, reštartujte svoj terminál alebo načítajte svoj konfiguračný súbor "
+"shellu (napr. .bashrc, .zshrc), aby ste ju mohli začať používať. Teraz sa otvorí okno prehliadača s "
+"oficiálnou dokumentáciou."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Podporte tento projekt"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Pozrite si nás na GitHub-e"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Wiki"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Nahlásiť chybu"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Kredity"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "názov_spúšťača_skriptu"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "script_bežec_zatvoriť"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Bežiaci kontrolný zoznam ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Zavrieť"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "spustenie_skriptu_skončené"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "titulky"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Nainštalovať"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Zrušiť"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "nasadenie_ostree_nazov"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "správa_deploymentu_ostree"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "reštartovať_hneď_tlačidlo"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "reštartovať_neskôr_tlačidlo"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "aktualizácia_dostupná_názov"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "aktualizovať_stiahnutie_tlačidlo"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "aktualizovať_ignorovať_tlačidlo"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Žiadny záznam zmien nie je k dispozícii."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "Čaká sa..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "načítanie_manifestu"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "vyberte_názov_manifestu"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "vybrať_tlačidlo"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "načítanie_súboru_manifestu"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "balíky_flatpaky"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Potvrdiť akciu"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Podrobnosti skriptu"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Potvrdiť inštaláciu"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Vybrané položky"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Poznámka: {} skript(y) sa spustia automaticky bez potvrdenia."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "O LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "O aplikácii"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "Súbor s licenciou nebol nájdený."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Licencia"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Vedúci projektu"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Načítanie prispievateľov..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Nemožno načítať prispievateľov"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Vyžaduje sa reštartovanie"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Reštartovať teraz"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Reštartovať neskôr"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"Bol spustený skript vyžadujúci reštart systému. Pred inštaláciou ďalších funkcií musíte reštartovať "
+"počítač."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "Čakajúce systémové aktualizácie"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Váš systém má čakajúce aktualizácie, ktoré si vyžadujú reštart na dokončenie. Prosím, reštartujte "
+"svoj počítač, aby ste aplikovali tieto aktualizácie pred pokračovaním."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Reštart zlyhal"

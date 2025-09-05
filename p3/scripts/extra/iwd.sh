@@ -42,7 +42,7 @@ iwd_in () {
             return 0
         fi
     else
-        nonfatal "No WiFi device found."
+        nonfatal $"No WiFi device found."
         return 2
     fi
 }
@@ -56,13 +56,13 @@ iwd_rm () {
         sudo systemctl restart NetworkManager
         return 0
     else
-        nonfatal "iwd.conf file not found. IWD was not enabled in this system."
+        nonfatal $"iwd.conf file not found. IWD was not enabled in this system."
         return 1
     fi
 }
 # menu
 while true; do
-    CHOICE=$(zenity --list --title "iNet Wireless Daemon" \
+    CHOICE=$(zenity --list --title="iNet Wireless Daemon" \
         --column="Options" \
         "Install" \
         "Remove" \

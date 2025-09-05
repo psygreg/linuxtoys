@@ -7,9 +7,6 @@
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 sudo_rq
 if [[ "$ID" =~ "fedora" ]] || [[ "$ID" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "fedora" ]]; then
     _packages=(sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python)
@@ -19,4 +16,4 @@ elif [ "$ID" == "debian" ]; then
     _packages=(sssd realmd adcli samba-common-bin adsys krb5-user libpam-krb5 libpam-ccreds auth-client-config oddjob oddjob-mkhomedir)
 fi
 _install_
-zeninf "$msg289"
+zeninf $"Packages for Active Directory integration have been installed. You can now join a domain using the 'realm join' command."

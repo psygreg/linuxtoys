@@ -1,91 +1,49 @@
 """
-Language detection and translation utilities
-Similar to linuxtoys.lib _lang_ function but for Python modules
+Language detection and translation utilities using Gettext.
 """
 
+import gettext
 import os
-import json
-import glob
+import builtins
+import locale
 
+APP_NAME = "linuxtoys"
+LOCALE_DIR = os.path.join(os.path.dirname(__file__), '..', 'locale')
 
-def detect_system_language():
+def setup_gettext():
     """
-    Detect system language using LANG environment variable
-    Returns language code (e.g., 'pt', 'en', 'es')
+    Set up the gettext translation system.
+    This installs the _() function in the builtins, making it globally available.
     """
-    # Get language from LANG environment variable (first 2 characters)
-    lang = os.environ.get('LANG', 'en_US')[:2]
-    
-    # Check available translation files
-    available_langs = []
-    lang_dir = os.path.join(os.path.dirname(__file__), '..', 'libs', 'lang')
-    
-    if os.path.exists(lang_dir):
-        for lang_file in glob.glob(os.path.join(lang_dir, '*.json')):
-            lang_code = os.path.basename(lang_file).replace('.json', '')
-            available_langs.append(lang_code)
-    
-    # If detected language is available, use it; otherwise fall back to English
-    if lang in available_langs:
-        return lang
-    else:
-        return 'en'
-
-
-def load_translations(lang_code=None):
-    """
-    Load translations for specified language code, or auto-detect if None
-    Returns dictionary of translations
-    """
-    if lang_code is None:
-        lang_code = detect_system_language()
-    
-    lang_dir = os.path.join(os.path.dirname(__file__), '..', 'libs', 'lang')
-    
     try:
-        lang_file = os.path.join(lang_dir, f'{lang_code}.json')
-        with open(lang_file, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        # Fall back to English if specified language file doesn't exist
-        try:
-            en_file = os.path.join(lang_dir, 'en.json')
-            with open(en_file, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            # If no translation files exist, return empty dict
-            print(f"Warning: No translation files found in {lang_dir}")
-            return {}
+        # Set up the translation domain
+        gettext.bindtextdomain(APP_NAME, LOCALE_DIR)
+        gettext.textdomain(APP_NAME)
+        
+        # Install the translator function into the builtins
+        builtins._ = gettext.gettext
+    except Exception as e:
+        print(f"Could not set up gettext: {e}")
+        # Fallback to a no-op function if gettext fails
+        builtins._ = lambda s: s
 
-
-def get_available_languages():
+def detect_system_language() -> str:
     """
-    Get list of available language codes based on existing .json files
-    Returns list of language codes
+    Detects the system's language code (e.g., 'en', 'pt_BR').
+    Falls back to environment variables or a default value.
     """
-    available_langs = []
-    lang_dir = os.path.join(os.path.dirname(__file__), '..', 'libs', 'lang')
-    
-    if os.path.exists(lang_dir):
-        for lang_file in glob.glob(os.path.join(lang_dir, '*.json')):
-            lang_code = os.path.basename(lang_file).replace('.json', '')
-            available_langs.append(lang_code)
-    
-    return sorted(available_langs)
+    try:
+        # Get the primary language code from the default locale
+        lang_code, _ = locale.getdefaultlocale()
+        if lang_code:
+            return lang_code
+    except (ValueError, TypeError):
+        # Fallback if locale is not set correctly
+        pass
 
+    # Fallback to environment variables
+    lang = os.getenv("LANG") or os.getenv("LANGUAGE")
+    if lang:
+        return lang.split(".")[0].split(":")[0]
 
-def create_translator(lang_code=None):
-    """
-    Create a translator function similar to the _() function
-    Usage: _ = create_translator(); translated = _('key')
-    """
-    translations = load_translations(lang_code)
-    
-    def translate(key):
-        return translations.get(key, key)
-    
-    return translate
-
-
-# Default translator instance for convenience
-_ = create_translator()
+    return "en_US"  # Default fallback

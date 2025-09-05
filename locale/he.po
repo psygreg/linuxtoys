@@ -1,0 +1,400 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "הפעולות הושלמו."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 הותקן. חלון דפדפן ייפתח כעת עם הוראות שימוש."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "האם אתה רוצה להתקין סקריפטים לתרגום ARM? (מומלץ)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "הגדרת Waydroid הושלמה. כעת תוכל להפעיל אותו מתפריט היישומים שלך."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid דורש מושב Wayland כדי לפעול."
+msgid "Reboot your system to apply the changes."
+msgstr "אתה צריך לאתחל את המערכת שלך כדי להחיל את השינויים."
+msgid "This script is not compatible with your operating system."
+msgstr "הסקריפט הזה אינו תואם למערכת ההפעלה שלך."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP כבר מותקן."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"מערכת זו כבר אופטימיזציה על ידי LinuxToys. כדי ליישם מחדש, אנא השתמש קודם בסקריפט 'ביטול "
+"אופטימיזציות'."
+msgid "Choose your device type:"
+msgstr "בחר את סוג המכשיר שלך:"
+msgid "AMD Drivers"
+msgstr "דרייברים של AMD"
+msgid "Installation successful."
+msgstr "ההתקנה הושלמה בהצלחה."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"סקריפט זה מתקין רק את תוכנת DaVinci Resolve. רישיון מ-Blackmagic Design נדרש כדי להשתמש בגרסה "
+"Studio."
+msgid "The application is already up to date."
+msgstr "היישום כבר מעודכן."
+msgid "Optimization Complete"
+msgstr "אופטימיזציה הושלמה"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"אופטימיזציה הושלמה. אנא הפעל מחדש את המערכת שלך. תתבקש להירשם למפתח בעל מכונה חדש (MOK) עבור אתחול "
+"מאובטח. אנא בחר 'הרשמה ל-MOK' ועקוב אחרי ההנחיות להשלמת התהליך."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"החבילות עבור אינטגרציה עם Active Directory הותקנו. כעת תוכל להצטרף לדומיין באמצעות הפקודה 'realm "
+"join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"סקריפט זה דורש שהסקלה ללא אובדן עבור Windows תהיה מותקנת במערכת שלך דרך Steam, Lutris או Bottles. "
+"אנא ודא שהיא מותקנת לפני שתמשיך."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll לא נמצא. האם התקנת את Lossless Scaling?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "אנא בדוק את התאמת הגלגל שלך לפני ההמשך."
+msgid "Unsupported OpenSUSE version."
+msgstr "גרסה לא נתמכת של OpenSUSE."
+msgid "No compatible AMD GPU found."
+msgstr "לא נמצאה כרטיס גרפי AMD תואם."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "התוכנית הזו כבר מותקנת. האם אתה רוצה להסיר אותה?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"זה יתקין דמון שמטעין מראש יישומים בשימוש תדיר לזיכרון כדי להאיץ את זמני ההשקה. זה מומלץ רק עבור "
+"מערכות עם יותר מ-12GB של RAM. להמשיך?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "למערכת שלך אין מספיק זיכרון RAM כדי להשתמש בתכונה זו בבטחה."
+msgid "The firewall has been configured and enabled."
+msgstr "החומת אש הוגדרה והופעלה."
+msgid "Welcome to the LSW installer!"
+msgstr "ברוך הבא להתקנת LSW!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "סקריפט זה ינחה אותך בהתקנת Windows על לינוקס."
+msgid "WARNINGS:"
+msgstr "אזהרות:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* זהו סקריפט אוטומטי. השתמש בו על אחריותך."
+msgid "* A stable internet connection is required."
+msgstr "נדרשת חיבור אינטרנט יציב."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* אל תסגור את הטרמינל במהלך ההתקנה."
+msgid "* GPU acceleration is NOT available."
+msgstr "* האצת GPU אינה זמינה."
+msgid "I have read and understood the warnings."
+msgstr "קראתי והבנתי את האזהרות."
+msgid "Do you want to proceed with the installation?"
+msgstr "האם אתה רוצה להמשיך עם ההתקנה?"
+msgid "Swapfile creation successful."
+msgstr "יצירת קובץ החלפה הצליחה."
+msgid "Swap already enabled in your system."
+msgstr "החלפה כבר מופעלת במערכת שלך."
+msgid "No valid shell found."
+msgstr "לא נמצא שורת פקודה תקפה."
+msgid "Success! Reboot to apply."
+msgstr "הצלחה! הפעל מחדש כדי ליישם."
+msgid "System already patched."
+msgstr "המערכת כבר תוקנה."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "זה דורש את מאגר Chaotic-AUR. האם אתה רוצה להפעיל אותו?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "דלג על התקנת btrfs-assistant."
+msgid "Your root filesystem is not btrfs."
+msgstr "מערכת הקבצים השורשית שלך אינה btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "אין מספיק זיכרון RAM. נדרש לפחות 12GB סך הכל כדי להמשיך."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "אין מספיק זיכרון RAM פנוי. סגור כמה יישומים ונסה שוב."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "אין מספיק חוטי CPU להתקנת היפרווייזר של Windows, מינימום 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "הזן את גודל הדיסק של Windows (C:) בג'יגה-בייט. השאר ריק כדי להשתמש ב-50GB."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "קלט לא חוקי עבור גודל הדיסק. אנא הזן מספר."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "המינימום שטח להתקנת Windows (C:) הוא 40GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "אין מספיק מקום בדיסק: נדרשים %s GB, %s GB זמינים."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "לא נמצא אמולטור טרמינל תואם כדי להפעיל את Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "האם התקנת Windows הושלמה?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "האם אתה רוצה לחזור על כל השינויים? אזהרה: זה ימחק את כל נתוני Podman Compose!"
+msgid "No GRUB found."
+msgstr "לא נמצא GRUB."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr "זה יפרט את התמונות במערכת ה-GRUB שלך. זה יעבוד רק אם מערכת הקבצים הראשית שלך היא btrfs. להמשיך?"
+msgid "No WiFi device found."
+msgstr "לא נמצא מכשיר WiFi."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "קובץ iwd.conf לא נמצא. IWD לא הופעל במערכת זו."
+msgid "SELinux policy has been updated."
+msgstr "מדיניות SELinux עודכנה."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "סקריפט זה מיועד רק להפצות מבוססות OpenSUSE."
+msgid "Docker + Portainer CE Setup"
+msgstr "הגדרת Docker + Portainer CE"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr "זה יתקין את מנוע Docker ו-Portainer CE כדי לנהל אותו דרך ממשק משתמש אינטרנטי. להמשיך?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "ההתקנה הושלמה. לוח המחוונים של Portainer ייפתח בדפדפן האינטרנט שלך עכשיו."
+msgid "Choose JDK versions to install"
+msgstr "בחר גרסאות JDK להתקנה"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM הותקן. אנא הפעל מחדש את הטרמינל שלך או טען את קובץ הקונפיגורציה של ה-shell שלך (למשל, .bashrc, "
+".zshrc) כדי להתחיל להשתמש בו. חלון דפדפן ייפתח כעת עם הוראות שימוש."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv הותקן. אנא הפעל מחדש את הטרמינל שלך או טען את קובץ ההגדרות של ה-shell שלך (למשל, "
+".bash_profile, .zshrc) כדי להתחיל להשתמש בו. חלון דפדפן ייפתח כעת עם הוראות שימוש."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"מיס הותקן. אנא הפעל מחדש את הטרמינל שלך או טען את קובץ הקונפיגורציה של ה-shell שלך (למשל, .bashrc, "
+".zshrc) כדי להתחיל להשתמש בו. חלון דפדפן ייפתח כעת עם התיעוד הרשמי."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "תמוך בפרויקט הזה"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "בדוק אותנו ב-GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "ויקי"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "דווח על באג"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "קרדיטים"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "כותרת_הרץ_סקריפט"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "סגירת_הרץ_סקריפט"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "רשימת בדיקה רצה ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "סגור"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "הרצת הסקריפט הסתיימה"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "כתוביות"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "התקן"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "ביטול"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "כותרת פריסת אוסטרי"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "הודעת פריסת אוסטרי"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "כפתור_אתחול_עכשיו"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "הפעל_מאוחר_יותר_כפתור"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "עדכון זמין"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "כפתור_הורדת_עדכון"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "עדכון_התעלם_כפתור"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "אין יומן שינויים זמין."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "ממתין..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "טען_מניפסט"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "בחר_כותרת_מניפסט"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "כפתור_בחירה"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "טוען_הודעת_מניפסט"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "חבילות_פלאטפאק"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "אשר פעולה"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "פרטי הסקריפט"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "אשר התקנה"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "פריטים שנבחרו"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "הערה: {} סקריפט(ים) ירוצו אוטומטית ללא אישור."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "על LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "אודות"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "קובץ הרישוי לא נמצא."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "רישיון"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "מנהל פרויקט"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "טוען תורמים..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "לא ניתן לטעון תורמים"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "דרוש אתחול"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "אתחל עכשיו"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "אתחל מאוחר"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr "הסקריפט שדורש אתחול מערכת בוצע. עליך לאתחל את המחשב שלך לפני התקנת תכונות נוספות."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "עדכוני מערכת ממתינים"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"למערכת שלך יש עדכונים ממתינים שדורשים אתחול כדי להשלים. אנא אתחל את המחשב שלך כדי ליישם את העדכונים "
+"הללו לפני ההמשך."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "הפעלה מחדש נכשלה"

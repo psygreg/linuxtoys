@@ -22,7 +22,7 @@ def run_scripts_sequentially(scripts, parent_window, on_dialog_closed_callback):
     runner.run_scripts_sequentially(scripts, on_completion=on_completion)
 
 
-def handle_install_checklist(check_buttons, parent_window, on_dialog_closed_callback, translations=None):
+def handle_install_checklist(check_buttons, parent_window, on_dialog_closed_callback):
     """Handle checklist installation - extract selected scripts and run them."""
     selected_scripts = [cb.script_info for cb in check_buttons if cb.get_active()]
     if not selected_scripts:
@@ -32,7 +32,7 @@ def handle_install_checklist(check_buttons, parent_window, on_dialog_closed_call
     from . import confirm_helper
     
     # Show confirmation dialog before executing checklist
-    if not confirm_helper.show_checklist_confirmation(selected_scripts, parent_window, translations or {}):
+    if not confirm_helper.show_checklist_confirmation(selected_scripts, parent_window):
         return  # User cancelled
     
     run_scripts_sequentially(selected_scripts, parent_window, on_dialog_closed_callback)

@@ -9,8 +9,6 @@
 . /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../../libs/lang/${langfile}.lib"
 sudo_rq
 if [[ "$ID_LIKE" =~ (ubuntu|debian) ]];then
 	_packages=(wireguard)
@@ -22,5 +20,5 @@ elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LI
 	_packages=(wireguard-tools)
 	_install_
 else
-    fatal "$msg077"
+    fatal $"This script is not compatible with your operating system."
 fi

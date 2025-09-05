@@ -1,5 +1,7 @@
-from .gtk_common import Gtk
 import webbrowser
+
+from .gtk_common import Gtk
+
 
 def create_footer():
     # Main container for the footer
@@ -8,23 +10,12 @@ def create_footer():
     footer_box.set_margin_bottom(10)
     footer_box.set_halign(Gtk.Align.CENTER) # Center the whole footer
 
-    # Attempts to load application translations
-    translation = None
-    try:
-        for win in Gtk.Window.list_toplevels():
-            if hasattr(win, 'translations'):
-                translation = win.translations
-                break
-    except Exception:
-        pass
-    if translation is None:
-        translation = {}
-    support_label = translation.get('support_footer', 'Support this project')
+    support_label = _('Support this project')
 
     # Website LinkButton (opens in default browser)
     website_button = Gtk.LinkButton(
         uri="https://github.com/psygreg/linuxtoys", 
-        label="Check us out on GitHub"
+        label=_("Check us out on GitHub")
     )
 
     # Vertical separator between buttons
@@ -55,23 +46,23 @@ def create_footer():
     # Wiki LinkButton
     menu_website_button = Gtk.LinkButton(
         uri="https://github.com/psygreg/linuxtoys/wiki", 
-        label="Wiki"
+        label=_("Wiki")
     )
-    
+
     # Report bug LinkButton
-    report_label = translation.get('report_label', 'Report Bug')
+    report_label = _('Report Bug')
     menu_bug_button = Gtk.LinkButton(
         uri="https://github.com/psygreg/linuxtoys/issues/new?template=bug_report.md",
         label=report_label
     )
-    
+
     # Credits LinkButton
-    credits_label = translation.get('credits_label', 'Credits')
+    credits_label = _('Credits')
     menu_credits_button = Gtk.LinkButton(
         uri="https://github.com/psygreg/linuxtoys/wiki/Credits",
         label=credits_label
     )
-    
+
     # Donation LinkButton for the menu
     menu_donation_button = Gtk.LinkButton(
         uri="https://ko-fi.com/psygreg", 

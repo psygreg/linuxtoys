@@ -7,12 +7,8 @@
 # nocontainer
 
 # --- Start of the script code ---
-# --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # patch for Nvidia GPUs
 patch_nv () {
     cd $HOME
@@ -39,7 +35,7 @@ if [ ! -f ${HOME}/.booster ]; then
     elif [[ -f "${HOME}/.zshrc" ]]; then
         DEST_FILE="${HOME}/.zshrc"
     else
-        fatal "No valid shell found."
+        fatal $"No valid shell found."
         exit 1
     fi
     
@@ -54,11 +50,11 @@ if [ ! -f ${HOME}/.booster ]; then
     fi
 
     if [ $PATCH_APPLIED -eq 1 ]; then
-        zeninf "Success! Reboot to apply."
+        zeninf $"Success! Reboot to apply."
         echo "1" > "${HOME}/.booster"
         exit 0
     fi
 else
-    zenwrn "System already patched."
+    zenwrn $"System already patched."
     exit 0
 fi

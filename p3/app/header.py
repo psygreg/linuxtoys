@@ -2,13 +2,12 @@ from .gtk_common import Gtk, Pango
 import os
 from . import get_icon_path
 
-def create_header(translations, category_info=None):
+def create_header(category_info=None):
     """
     Creates and returns the main header widget for the application.
     This widget contains the logo, title, and subtitle.
     
     Args:
-        translations: Translation dictionary
         category_info: Dictionary with category information (name, description, icon, etc.)
                       If None, shows default LinuxToys header (clickable for About dialog)
     """
@@ -29,10 +28,10 @@ def create_header(translations, category_info=None):
     # Title and subtitle based on category or default
     if category_info:
         title_text = category_info.get('name', 'LinuxToys')
-        subtitle_text = category_info.get('description', translations.get("subtitle", ""))
+        subtitle_text = category_info.get('description', _("subtitle"))
     else:
         title_text = "LinuxToys"
-        subtitle_text = translations.get("subtitle", "")
+        subtitle_text = _("subtitle")
 
     # Title using Pango Markup for styling (bold and larger text)
     title_label = Gtk.Label()
@@ -76,7 +75,7 @@ def create_header(translations, category_info=None):
             # Find the main window to pass as parent
             parent_window = widget.get_toplevel()
             if isinstance(parent_window, Gtk.Window):
-                show_about_dialog(parent_window, translations)
+                show_about_dialog(parent_window)
             return True
             
         event_box.connect("button-press-event", on_header_clicked)

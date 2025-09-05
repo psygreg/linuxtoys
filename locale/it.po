@@ -1,0 +1,409 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Operazioni completate."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 è stato installato. Ora si aprirà una finestra del browser con le istruzioni per l'uso."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Vuoi installare script per la traduzione ARM? (consigliato)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "La configurazione di Waydroid è completa. Ora puoi avviarlo dal menu delle applicazioni."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid richiede una sessione Wayland per funzionare."
+msgid "Reboot your system to apply the changes."
+msgstr "Riavvia il sistema per applicare le modifiche."
+msgid "This script is not compatible with your operating system."
+msgstr "Questo script non è compatibile con il tuo sistema operativo."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP è già installato."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Questo sistema è già stato ottimizzato da LinuxToys. Per riapplicare, si prega di utilizzare prima "
+"lo script 'Annulla ottimizzazioni'."
+msgid "Choose your device type:"
+msgstr "Scegli il tipo di dispositivo:"
+msgid "AMD Drivers"
+msgstr "Driver AMD"
+msgid "Installation successful."
+msgstr "Installazione riuscita."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Questo script installa solo il software DaVinci Resolve. È necessaria una licenza da Blackmagic "
+"Design per utilizzare la versione Studio."
+msgid "The application is already up to date."
+msgstr "L'applicazione è già aggiornata."
+msgid "Optimization Complete"
+msgstr "Ottimizzazione completata"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Ottimizzazione completata. Si prega di riavviare il sistema. Verrà richiesto di registrare un nuovo "
+"MOK (Machine Owner Key) per il Secure Boot. Selezionare 'Registrare MOK' e seguire le istruzioni "
+"per completare il processo."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"I pacchetti per l'integrazione di Active Directory sono stati installati. Ora puoi unirti a un "
+"dominio utilizzando il comando 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Questo script richiede che Lossless Scaling per Windows sia installato sul tuo sistema tramite "
+"Steam, Lutris o Bottles. Assicurati che sia installato prima di procedere."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll non trovato. Hai installato Lossless Scaling?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Si prega di controllare la compatibilità della ruota prima di procedere."
+msgid "Unsupported OpenSUSE version."
+msgstr "Version di OpenSUSE non supportata."
+msgid "No compatible AMD GPU found."
+msgstr "Nessuna GPU AMD compatibile trovata."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Questo programma è già installato. Vuoi rimuoverlo?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Questo installerà un demone che pre-carica le applicazioni utilizzate frequentemente nella memoria "
+"per velocizzare i tempi di avvio. Questo è consigliato solo per sistemi con più di 12 GB di RAM. "
+"Procedere?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Il tuo sistema non ha abbastanza RAM per utilizzare questa funzionalità in modo sicuro."
+msgid "The firewall has been configured and enabled."
+msgstr "Il firewall è stato configurato e abilitato."
+msgid "Welcome to the LSW installer!"
+msgstr "Benvenuto nell'installer LSW!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Questo script ti guiderà nell'installazione di Windows su Linux."
+msgid "WARNINGS:"
+msgstr "AVVERTENZE:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Questo è uno script automatizzato. Usalo a tuo rischio."
+msgid "* A stable internet connection is required."
+msgstr "È necessaria una connessione internet stabile."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* Non chiudere il terminale durante l'installazione."
+msgid "* GPU acceleration is NOT available."
+msgstr "* L'accelerazione GPU NON è disponibile."
+msgid "I have read and understood the warnings."
+msgstr "Ho letto e compreso gli avvisi."
+msgid "Do you want to proceed with the installation?"
+msgstr "Vuoi procedere con l'installazione?"
+msgid "Swapfile creation successful."
+msgstr "Creazione del file di scambio riuscita."
+msgid "Swap already enabled in your system."
+msgstr "Lo swap è già abilitato nel tuo sistema."
+msgid "No valid shell found."
+msgstr "Nessuna shell valida trovata."
+msgid "Success! Reboot to apply."
+msgstr "Successo! Riavvia per applicare."
+msgid "System already patched."
+msgstr "Sistema già aggiornato."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Questo richiede il repository Chaotic-AUR. Vuoi abilitarlo?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Salto dell'installazione di btrfs-assistant."
+msgid "Your root filesystem is not btrfs."
+msgstr "Il tuo filesystem radice non è btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "RAM insufficiente. È richiesto un totale di almeno 12GB per continuare."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Memoria RAM gratuita insufficiente. Chiudi alcune applicazioni e riprova."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Non ci sono abbastanza thread CPU per installare l'ipervisor di Windows, minimo 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Inserisci la dimensione del disco di Windows (C:) in GB. Lascia vuoto per utilizzare 50GB."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Input non valido per la dimensione del disco. Si prega di inserire un numero."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Lo spazio minimo per installare Windows (C:) è di 40 GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Spazio su disco insufficiente: %s GB richiesti, %s GB disponibili."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Nessun emulatore di terminale compatibile trovato per avviare Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "L'installazione di Windows è completata?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "Vuoi annullare tutte le modifiche? ATTENZIONE: Questo CANCELLA tutti i dati di Podman Compose!"
+msgid "No GRUB found."
+msgstr "Nessun GRUB trovato."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Questo elencherà gli snapshot nel tuo GRUB. Funzionerà solo se il tuo filesystem radice è btrfs. "
+"Procedere?"
+msgid "No WiFi device found."
+msgstr "Nessun dispositivo WiFi trovato."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "File iwd.conf non trovato. IWD non è stato abilitato in questo sistema."
+msgid "SELinux policy has been updated."
+msgstr "La politica SELinux è stata aggiornata."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Questo script è solo per distribuzioni basate su OpenSUSE."
+msgid "Docker + Portainer CE Setup"
+msgstr "Impostazione di Docker + Portainer CE"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr "Questo installerà Docker Engine e Portainer CE per gestirlo tramite un'interfaccia web. Procedere?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Impostazione completata. La tua dashboard di Portainer si aprirà ora nel tuo browser web."
+msgid "Choose JDK versions to install"
+msgstr "Scegli le versioni JDK da installare"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM è stato installato. Si prega di riavviare il terminale o di sorgere il file di configurazione "
+"della shell (ad es. .bashrc, .zshrc) per iniziare a usarlo. Ora si aprirà una finestra del browser "
+"con le istruzioni per l'uso."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv è stato installato. Riavvia il terminale o carica il file di configurazione della shell (ad "
+"es., .bash_profile, .zshrc) per iniziare a usarlo. Ora si aprirà una finestra del browser con le "
+"istruzioni per l'uso."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Mise è stato installato. Riavvia il tuo terminale o carica il file di configurazione della tua "
+"shell (ad esempio, .bashrc, .zshrc) per iniziare a usarlo. Si aprirà ora una finestra del browser "
+"con la documentazione ufficiale."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Sostieni questo progetto"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Controllaci su GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Wiki"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Segnala bug"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Crediti"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "titolo_esecutore_script"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "chiudi_script_runner"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Elenco di controllo in esecuzione ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Chiudi"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "esecuzione_script_completata"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "sottotitolo"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Installa"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Annulla"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "titolo_deployment_ostree"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "messaggio_deployment_ostree"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "riavvia_ora_btn"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "riavvia_dopo_btn"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "aggiornamento_disponibile_titolo"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "aggiorna_bottone_download"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "aggiorna_ignora_btn"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Nessun registro delle modifiche disponibile."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "In attesa..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "carica_manifesto"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "scegli_titolo_manifesto"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "pulsante_seleziona"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "messaggio_caricamento_manifesto"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "pacchetti_flatpak"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Conferma azione"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Dettagli dello script"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Conferma Installazione"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Elementi Selezionati"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Nota: {} script(s) verranno eseguiti automaticamente senza conferma."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "Informazioni su LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "Informazioni"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "File di licenza non trovata."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Licenza"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Responsabile del progetto"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Caricamento dei collaboratori..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Impossibile caricare i collaboratori"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Riavvio richiesto"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Riavvia ora"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Riavvia più tardi"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"È stato eseguito uno script che richiede un riavvio del sistema. Devi riavviare il computer prima "
+"di installare altre funzionalità."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "Aggiornamenti di sistema in sospeso"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Il tuo sistema ha aggiornamenti in sospeso che richiedono un riavvio per essere completati. Riavvia "
+"il computer per applicare questi aggiornamenti prima di continuare."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Riavvio non riuscito"

@@ -9,12 +9,9 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # Check if cloudflare-warp is already installed
 if command -v warp-cli &> /dev/null; then
-    # p3/libs/lang/*.json
-    zeninf " ✅ Cloudflare WARP"
+    zeninf $"Cloudflare WARP is already installed."
     exit 100
 fi
 sudo_rq
@@ -38,7 +35,7 @@ elif command -v dnf &> /dev/null || command -v dnf &> /dev/null; then
     _packages=(cloudflare-warp)
     _install_
 else
-    zeninf "$msg077"
+    fatal $"This script is not compatible with your operating system."
     exit 1
 fi
-zeninf "$msg018"
+zeninf $"Operations completed."

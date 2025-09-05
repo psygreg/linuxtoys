@@ -1,22 +1,25 @@
-from .gtk_common import Gtk, GLib, Gdk
-from gi.repository import GdkPixbuf
 import os
 
-from . import parser
-from . import header
-from . import footer
-from . import checklist_helper
-from . import confirm_helper
-from . import compat
-from . import head_menu
-from . import reboot_helper
-from . import script_runner
-from . import get_icon_path
+from gi.repository import GdkPixbuf
+
+from . import (
+    checklist_helper,
+    compat,
+    confirm_helper,
+    footer,
+    get_icon_path,
+    head_menu,
+    header,
+    parser,
+    reboot_helper,
+    script_runner,
+)
+from .gtk_common import Gdk, GLib, Gtk
+
 
 class AppWindow(Gtk.ApplicationWindow):
-    def __init__(self, application, translations, *args, **kwargs):
+    def __init__(self, application, *args, **kwargs):
         super().__init__(application=application, *args, **kwargs)
-        self.translations = translations
 
         self.set_title("LinuxToys")
         self.set_default_size(740, 540) ## 
@@ -33,13 +36,13 @@ class AppWindow(Gtk.ApplicationWindow):
         self.view_counter = 0  # Counter for unique view names
         
         # Initialize script runner
-        self.script_runner = script_runner.ScriptRunner(self, self.translations)
+        self.script_runner = script_runner.ScriptRunner(self)
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(main_vbox)
 
-        self.header_widget = header.create_header(self.translations)
+        self.header_widget = header.create_header()
         main_vbox.pack_start(self.header_widget, False, False, 8)
 
         self.header_bar = Gtk.HeaderBar()
@@ -106,7 +109,6 @@ class AppWindow(Gtk.ApplicationWindow):
         """
         reboot_helper.handle_ostree_deployment_requirement(
             self, 
-            self.translations, 
             self._close_application
         )
         return False  # Remove from idle callbacks
@@ -286,7 +288,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def load_categories(self):
         """Loads categories and connects their click event."""
-        categories = parser.get_categories(self.translations)
+        categories = parser.get_categories()
         
         self.categories_flowbox.foreach(lambda widget: self.categories_flowbox.remove(widget))
         for cat in categories:
@@ -303,7 +305,7 @@ class AppWindow(Gtk.ApplicationWindow):
         for child in flowbox.get_children():
             flowbox.remove(child)
 
-        scripts = parser.get_scripts_for_category(category_info['path'], self.translations)
+        scripts = parser.get_scripts_for_category(category_info['path'])
         
         checklist_mode = category_info.get('display_mode', 'menu') == 'checklist'
         self.check_buttons = []
@@ -342,8 +344,8 @@ class AppWindow(Gtk.ApplicationWindow):
             for child in self.footer_widget.checklist_button_box.get_children():
                 self.footer_widget.checklist_button_box.remove(child)
 
-            install_btn = Gtk.Button(label=self.translations.get('install_btn_label', 'Install'))
-            cancel_btn = Gtk.Button(label=self.translations.get('cancel_btn_label', 'Cancel'))
+            install_btn = Gtk.Button(label=_('Install'))
+            cancel_btn = Gtk.Button(label=_('Cancel'))
             install_btn.connect("clicked", self.on_install_checklist)
             cancel_btn.connect("clicked", self.on_cancel_checklist)
             self.footer_widget.checklist_button_box.pack_start(install_btn, False, False, 0)
@@ -392,8 +394,7 @@ class AppWindow(Gtk.ApplicationWindow):
         checklist_helper.handle_install_checklist(
             self.check_buttons, 
             self, 
-            on_checklist_dialog_closed,
-            self.translations
+            on_checklist_dialog_closed
         )
 
     def run_script_with_callback(self, script_info, callback):
@@ -434,7 +435,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if info.get('is_script'):
             if not self.script_runner.is_running():
                 # Show confirmation dialog before executing root script
-                if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
+                if not confirm_helper.show_single_script_confirmation(info, self):
                     return  # User cancelled
                     
                 self.script_is_running = True
@@ -491,7 +492,7 @@ class AppWindow(Gtk.ApplicationWindow):
         info = widget.info
         
         # Show confirmation dialog before executing script
-        if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
+        if not confirm_helper.show_single_script_confirmation(info, self):
             return  # User cancelled
         
         self.script_is_running = True
@@ -514,7 +515,6 @@ class AppWindow(Gtk.ApplicationWindow):
         """Shows a dialog warning that a reboot is required before continuing."""
         reboot_helper.handle_reboot_requirement(
             self, 
-            self.translations, 
             self._close_application
         )
     
@@ -530,7 +530,7 @@ class AppWindow(Gtk.ApplicationWindow):
         main_vbox.remove(self.header_widget)
         
         # Create new header with category info
-        self.header_widget = header.create_header(self.translations, category_info)
+        self.header_widget = header.create_header(category_info)
         main_vbox.pack_start(self.header_widget, False, False, 8)
         main_vbox.reorder_child(self.header_widget, 0)  # Move to top
         

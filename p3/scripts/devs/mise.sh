@@ -7,8 +7,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if [ -f $HOME/.bashrc ]; then
     curl https://mise.run/bash | sh
     mise use -g usage
@@ -30,6 +28,6 @@ if [ -f $HOME/.config/fish/config.fish ]; then
     mkdir -p ~/.config/fish/completions
     mise completion fish > ~/.config/fish/completions/mise.fish
 fi
-zeninf "$msg282"
+zeninf $"Mise has been installed. Please restart your terminal or source your shell configuration file (e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official documentation."
 xdg-open https://mise.jdx.dev/walkthrough.html
 exit 0

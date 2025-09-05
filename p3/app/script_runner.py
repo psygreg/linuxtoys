@@ -1,17 +1,15 @@
-from .gtk_common import Gtk, GLib
-
 import subprocess
 import threading
-from . import parser
-from . import compat
+
+from . import compat, parser
+from .gtk_common import GLib, Gtk
 
 
 class ScriptRunner:
     """Handles execution of scripts in a dialog window with real-time output."""
-    
-    def __init__(self, parent_window, translations=None):
+
+    def __init__(self, parent_window):
         self.parent_window = parent_window
-        self.translations = translations or {}
         self.running_process = None
         self.dialog = None
         self.close_button = None
@@ -35,16 +33,14 @@ class ScriptRunner:
             # If script_info is just a path string, extract filename
             import os
             script_name = os.path.basename(script_info) if script_info else 'Unknown Script'
-        
-        dialog_title = self.translations.get('script_runner_title', 'Running "{script_name}"').format(script_name=script_name)
+
+        dialog_title = _("script_runner_title").format(script_name=script_name)
         self.dialog = Gtk.Dialog(
-            title=dialog_title, 
-            transient_for=self.parent_window, 
-            flags=0
+            title=dialog_title, transient_for=self.parent_window, flags=0
         )
         
         # Add close button
-        close_text = self.translations.get('script_runner_close', 'Close')
+        close_text = _("script_runner_close")
         self.close_button = self.dialog.add_button(close_text, Gtk.ResponseType.CLOSE)
         
         # Configure dialog
@@ -127,9 +123,10 @@ class ScriptRunner:
         self.total_scripts = len(scripts_list)
         
         # Create the dialog with updated title for multiple scripts
-        dialog_title = self.translations.get('script_runner_checklist_title', 'Running Checklist ({current}/{total})')
-        dialog_title = dialog_title.format(current=1, total=self.total_scripts)
-        
+        dialog_title = _("Running Checklist ({current}/{total})").format(
+            current=1, total=self.total_scripts
+        )
+
         self.dialog = Gtk.Dialog(
             title=dialog_title, 
             transient_for=self.parent_window, 
@@ -137,7 +134,7 @@ class ScriptRunner:
         )
         
         # Add close button
-        close_text = self.translations.get('script_runner_close', 'Close')
+        close_text = _("Close")
         self.close_button = self.dialog.add_button(close_text, Gtk.ResponseType.CLOSE)
         
         # Configure dialog
@@ -188,8 +185,11 @@ class ScriptRunner:
         """Execute the next script in the sequence."""
         if self.current_script_index >= len(self.scripts_queue):
             # All scripts completed
-            GLib.idle_add(self._append_text_to_buffer, self.text_buffer, 
-                         f"\n{'='*50}\n✅ All scripts completed successfully!\n{'='*50}\n")
+            GLib.idle_add(
+                self._append_text_to_buffer,
+                self.text_buffer,
+                f"\n{'=' * 50}\n✅ {_('All scripts completed successfully!')}\n{'=' * 50}\n",
+            )
             GLib.idle_add(self._enable_close_button)
             if self.on_completion:
                 self.on_completion()
@@ -206,14 +206,15 @@ class ScriptRunner:
             script_name = os.path.basename(script_info) if script_info else 'Unknown Script'
         
         # Update dialog title
-        dialog_title = self.translations.get('script_runner_checklist_title', 'Running Checklist ({current}/{total})')
-        dialog_title = dialog_title.format(current=self.current_script_index + 1, total=self.total_scripts)
+        dialog_title = _("Running Checklist ({current}/{total})").format(
+            current=self.current_script_index + 1, total=self.total_scripts
+        )
         GLib.idle_add(lambda: self.dialog.set_title(dialog_title))
         
         # Add separator and script header
         separator = f"\n{'='*50}\n"
-        header = f"📦 Script {self.current_script_index + 1}/{self.total_scripts}: {script_name}\n"
-        separator += header + "="*50 + "\n"
+        header = f"📦 {_('Script')} {self.current_script_index + 1}/{self.total_scripts}: {script_name}\n"
+        separator += header + "=" * 50 + "\n"
         GLib.idle_add(self._append_text_to_buffer, self.text_buffer, separator)
         
         # Start script execution in a thread
@@ -231,11 +232,14 @@ class ScriptRunner:
             
             # Check if we should dry-run instead of execute
             try:
-                from .dev_mode import should_dry_run_scripts, dry_run_script
+                from .dev_mode import dry_run_script, should_dry_run_scripts
                 if should_dry_run_scripts():
-                    GLib.idle_add(self._append_text_to_buffer, self.text_buffer, 
-                                "🧪 DEVELOPER MODE: Dry-run validation instead of execution\n\n")
-                    
+                    GLib.idle_add(
+                        self._append_text_to_buffer,
+                        self.text_buffer,
+                        f"🧪 {_('DEVELOPER MODE: Dry-run validation instead of execution')}\n\n",
+                    )
+
                     # Capture dry-run output
                     import io
                     import sys
@@ -290,19 +294,25 @@ class ScriptRunner:
             
             # Show completion status
             if exit_code == 0:
-                GLib.idle_add(self._append_text_to_buffer, self.text_buffer, 
-                             f"\n✅ Script completed successfully (exit code: {exit_code})\n")
+                GLib.idle_add(
+                    self._append_text_to_buffer,
+                    self.text_buffer,
+                    f"\n✅ {_('Script completed successfully')} (exit code: {exit_code})\n",
+                )
             else:
-                GLib.idle_add(self._append_text_to_buffer, self.text_buffer, 
-                             f"\n❌ Script failed (exit code: {exit_code})\n")
-            
+                GLib.idle_add(
+                    self._append_text_to_buffer,
+                    self.text_buffer,
+                    f"\n❌ {_('Script failed')} (exit code: {exit_code})\n",
+                )
+
             # Check if reboot is required for this script
             if parser.script_requires_reboot(script_path, compat.get_system_compat_keys()):
                 if self.on_reboot_required:
                     GLib.idle_add(lambda: self.on_reboot_required())
             
         except Exception as e:
-            error_msg = f"\n❌ Error executing script: {str(e)}\n"
+            error_msg = f"\n❌ {_('Error executing script:')} {str(e)}\n"
             GLib.idle_add(self._append_text_to_buffer, self.text_buffer, error_msg)
         
         finally:
@@ -323,11 +333,14 @@ class ScriptRunner:
             
             # Check if we should dry-run instead of execute
             try:
-                from .dev_mode import should_dry_run_scripts, dry_run_script
+                from .dev_mode import dry_run_script, should_dry_run_scripts
                 if should_dry_run_scripts():
-                    GLib.idle_add(self._append_text_to_buffer, text_buffer, 
-                                "🧪 DEVELOPER MODE: Dry-run validation instead of execution\n\n")
-                    
+                    GLib.idle_add(
+                        self._append_text_to_buffer,
+                        text_buffer,
+                        f"🧪 {_('DEVELOPER MODE: Dry-run validation instead of execution')}\n\n",
+                    )
+
                     # Capture dry-run output
                     import io
                     import sys
@@ -394,7 +407,9 @@ class ScriptRunner:
             
             # Wait for process to complete
             self.running_process.wait()
-            return_code_text = self.translations.get('script_runner_finished', 'Script finished with exit code: {exit_code}').format(exit_code=self.running_process.returncode)
+            return_code_text = _("script_runner_finished").format(
+                exit_code=self.running_process.returncode
+            )
             return_code_msg = f"\n--- {return_code_text} ---"
             GLib.idle_add(self._append_text_to_buffer, text_buffer, return_code_msg)
             
@@ -406,7 +421,7 @@ class ScriptRunner:
                         GLib.idle_add(self.on_reboot_required)
                         
         except Exception as e:
-            error_msg = f"\n--- An unexpected error occurred: {e} ---"
+            error_msg = f"\n--- {_('An unexpected error occurred:')} {e} ---"
             GLib.idle_add(self._append_text_to_buffer, text_buffer, error_msg)
             
         finally:

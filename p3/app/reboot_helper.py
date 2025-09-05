@@ -3,8 +3,8 @@ Reboot requirement dialog helper module.
 Handles reboot warning dialogs and system reboot functionality.
 """
 
-import subprocess
 import os
+import subprocess
 
 
 def check_ostree_pending_deployments():
@@ -46,14 +46,13 @@ def check_ostree_pending_deployments():
         return False
 
 
-def show_reboot_warning_dialog(parent_window, translations):
+def show_reboot_warning_dialog(parent_window):
     """
     Shows a dialog warning that a reboot is required before continuing.
-    
+
     Args:
         parent_window: The parent GTK window for the dialog
-        translations: Dictionary containing translation keys
-    
+
     Returns:
         str: 'reboot_now', 'reboot_later', or 'cancelled'
     """
@@ -63,22 +62,14 @@ def show_reboot_warning_dialog(parent_window, translations):
     from gi.repository import Gtk
     
     dialog = Gtk.Dialog(
-        title=translations.get('reboot_required_title', 'Reboot Required'),
-        transient_for=parent_window,
-        flags=0
+        title=_("Reboot Required"), transient_for=parent_window, flags=0
     )
     dialog.set_default_size(400, 150)
     dialog.set_resizable(False)
     
     # Add custom buttons
-    reboot_now_btn = dialog.add_button(
-        translations.get('reboot_now_btn', 'Reboot Now'), 
-        Gtk.ResponseType.YES
-    )
-    reboot_later_btn = dialog.add_button(
-        translations.get('reboot_later_btn', 'Reboot Later'), 
-        Gtk.ResponseType.NO
-    )
+    reboot_now_btn = dialog.add_button(_("Reboot Now"), Gtk.ResponseType.YES)
+    reboot_later_btn = dialog.add_button(_("Reboot Later"), Gtk.ResponseType.NO)
     
     # Create message content
     content_area = dialog.get_content_area()
@@ -98,10 +89,11 @@ def show_reboot_warning_dialog(parent_window, translations):
     
     # Message text
     message_label = Gtk.Label()
-    message_label.set_text(translations.get(
-        'reboot_required_message',
-        'A script requiring a system reboot has been executed. You must reboot your computer before installing other features.'
-    ))
+    message_label.set_text(
+        _(
+            "A script requiring a system reboot has been executed. You must reboot your computer before installing other features."
+        )
+    )
     message_label.set_line_wrap(True)
     message_label.set_max_width_chars(50)
     message_label.set_justify(Gtk.Justification.LEFT)
@@ -122,14 +114,13 @@ def show_reboot_warning_dialog(parent_window, translations):
         return 'cancelled'
 
 
-def show_ostree_deployment_warning_dialog(parent_window, translations):
+def show_ostree_deployment_warning_dialog(parent_window):
     """
     Shows a dialog warning about pending ostree deployments that require reboot.
-    
+
     Args:
         parent_window: The parent GTK window for the dialog
-        translations: Dictionary containing translation keys
-    
+
     Returns:
         str: 'reboot_now', 'reboot_later', or 'cancelled'
     """
@@ -139,22 +130,14 @@ def show_ostree_deployment_warning_dialog(parent_window, translations):
     from gi.repository import Gtk
     
     dialog = Gtk.Dialog(
-        title=translations.get('ostree_deployment_title', 'Pending System Updates'),
-        transient_for=parent_window,
-        flags=0
+        title=_("Pending System Updates"), transient_for=parent_window, flags=0
     )
     dialog.set_default_size(400, 150)
     dialog.set_resizable(False)
     
     # Add custom buttons
-    reboot_now_btn = dialog.add_button(
-        translations.get('reboot_now_btn', 'Reboot Now'), 
-        Gtk.ResponseType.YES
-    )
-    reboot_later_btn = dialog.add_button(
-        translations.get('reboot_later_btn', 'Reboot Later'), 
-        Gtk.ResponseType.NO
-    )
+    reboot_now_btn = dialog.add_button(_("Reboot Now"), Gtk.ResponseType.YES)
+    reboot_later_btn = dialog.add_button(_("Reboot Later"), Gtk.ResponseType.NO)
     
     # Create message content
     content_area = dialog.get_content_area()
@@ -174,10 +157,11 @@ def show_ostree_deployment_warning_dialog(parent_window, translations):
     
     # Message text
     message_label = Gtk.Label()
-    message_label.set_text(translations.get(
-        'ostree_deployment_message',
-        'Your system has pending updates that require a reboot to complete. You must reboot your computer to apply these changes before installing additional features.'
-    ))
+    message_label.set_text(
+        _(
+            "Your system has pending updates that require a reboot to complete. Please reboot your computer to apply these updates before continuing."
+        )
+    )
     message_label.set_line_wrap(True)
     message_label.set_max_width_chars(50)
     message_label.set_justify(Gtk.Justification.LEFT)
@@ -215,18 +199,18 @@ def reboot_system(parent_window):
         # If systemctl fails, show error dialog
         _show_reboot_error_dialog(
             parent_window,
-            "Reboot Failed",
-            f"Failed to initiate system reboot: {e}\n"
-            "Please reboot manually using your system's power menu."
+            _("Reboot Failed"),
+            f"{_('Failed to initiate system reboot:')} {e}\n"
+            f"{_("Please reboot manually using your system's power menu.")}",
         )
         return False
     except Exception as e:
         # Handle other exceptions
         _show_reboot_error_dialog(
             parent_window,
-            "Reboot Failed",
-            f"An error occurred while trying to reboot: {e}\n"
-            "Please reboot manually using your system's power menu."
+            _("Reboot Failed"),
+            f"{_('An error occurred while trying to reboot:')} {e}\n"
+            f"{_("Please reboot manually using your system's power menu.")}",
         )
         return False
 
@@ -257,40 +241,38 @@ def _show_reboot_error_dialog(parent_window, title, message):
     error_dialog.destroy()
 
 
-def handle_reboot_requirement(parent_window, translations, close_app_callback):
+def handle_reboot_requirement(parent_window, close_app_callback):
     """
     Handles the complete reboot requirement flow.
     Shows dialog, handles user choice, and executes appropriate action.
-    
+
     Args:
         parent_window: The parent GTK window for dialogs
-        translations: Dictionary containing translation keys
         close_app_callback: Function to call if the application should be closed
     """
-    response = show_reboot_warning_dialog(parent_window, translations)
-    
-    if response == 'reboot_now':
+    response = show_reboot_warning_dialog(parent_window)
+
+    if response == "reboot_now":
         # Attempt to reboot the system
         if not reboot_system(parent_window):
             # If reboot failed, close the application as fallback
             close_app_callback()
-    elif response == 'reboot_later':
+    elif response == "reboot_later":
         # User chose to reboot later, close the application
         close_app_callback()
     # If cancelled, do nothing and return to the application
 
 
-def handle_ostree_deployment_requirement(parent_window, translations, close_app_callback):
+def handle_ostree_deployment_requirement(parent_window, close_app_callback):
     """
     Handles the complete ostree deployment requirement flow.
     Shows dialog, handles user choice, and executes appropriate action.
-    
+
     Args:
         parent_window: The parent GTK window for dialogs
-        translations: Dictionary containing translation keys
         close_app_callback: Function to call if the application should be closed
     """
-    response = show_ostree_deployment_warning_dialog(parent_window, translations)
+    response = show_ostree_deployment_warning_dialog(parent_window)
     
     if response == 'reboot_now':
         # Attempt to reboot the system

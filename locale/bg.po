@@ -1,0 +1,410 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Операциите са завършени."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 е инсталиран. Сега ще се отвори прозорец на браузъра с инструкции за употреба."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Искате ли да инсталирате скриптове за превод на ARM? (препоръчително)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "Настройката на Waydroid е завършена. Сега можете да го стартирате от менюто на приложенията."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid изисква сесия на Wayland, за да работи."
+msgid "Reboot your system to apply the changes."
+msgstr "Рестартирайте системата си, за да приложите промените."
+msgid "This script is not compatible with your operating system."
+msgstr "Този скрипт не е съвместим с вашата операционна система."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP вече е инсталиран."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Тази система вече е оптимизирана от LinuxToys. За да приложите отново, моля, първо използвайте "
+"скрипта 'Отмяна на оптимизации'."
+msgid "Choose your device type:"
+msgstr "Изберете типа на устройството си:"
+msgid "AMD Drivers"
+msgstr "AMD Драйвери"
+msgid "Installation successful."
+msgstr "Инсталацията е успешна."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Този скрипт инсталира само софтуера DaVinci Resolve. За използване на версията Studio е необходима "
+"лиценз от Blackmagic Design."
+msgid "The application is already up to date."
+msgstr "Приложението вече е актуализирано."
+msgid "Optimization Complete"
+msgstr "Оптимизацията е завършена"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Оптимизацията е завършена. Моля, рестартирайте системата си. Ще бъдете подканени да регистрирате "
+"нов MOK (Ключ на собственика на машината) за Secure Boot. Моля, изберете 'Регистрирайте MOK' и "
+"следвайте указанията, за да завършите процеса."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"Инсталирани са пакети за интеграция с Active Directory. Сега можете да се присъедините към домейн, "
+"използвайки командата 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Този скрипт изисква Lossless Scaling за Windows да бъде инсталиран на вашата система чрез Steam, "
+"Lutris или Bottles. Моля, уверете се, че е инсталиран преди да продължите."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll не е намерен. Инсталирахте ли Lossless Scaling?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Моля, проверете съвместимостта на колелото си, преди да продължите."
+msgid "Unsupported OpenSUSE version."
+msgstr "Неподдържана версия на OpenSUSE."
+msgid "No compatible AMD GPU found."
+msgstr "Не е намерен съвместим AMD GPU."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Тази програма вече е инсталирана. Искате ли да я премахнете?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Това ще инсталира демон, който предварително зарежда често използвани приложения в паметта, за да "
+"ускори времето за стартиране. Това се препоръчва само за системи с повече от 12GB RAM. Да продължим?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Вашата система няма достатъчно RAM, за да използва тази функция безопасно."
+msgid "The firewall has been configured and enabled."
+msgstr "Файърволът е конфигуриран и активиран."
+msgid "Welcome to the LSW installer!"
+msgstr "Добре дошли в инсталатора на LSW!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Този скрипт ще ви води през инсталирането на Windows на Linux."
+msgid "WARNINGS:"
+msgstr "ПРЕДУПРЕЖДЕНИЯ:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Това е автоматизиран скрипт. Използвайте на свой собствен риск."
+msgid "* A stable internet connection is required."
+msgstr "Изисква се стабилна интернет връзка."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* Не затваряйте терминала по време на инсталацията."
+msgid "* GPU acceleration is NOT available."
+msgstr "* Ускорението с GPU НЕ е налично."
+msgid "I have read and understood the warnings."
+msgstr "Прочел съм и разбрах предупрежденията."
+msgid "Do you want to proceed with the installation?"
+msgstr "Искате ли да продължите с инсталацията?"
+msgid "Swapfile creation successful."
+msgstr "Създаването на swap файл е успешно."
+msgid "Swap already enabled in your system."
+msgstr "Смяната вече е активирана в системата ви."
+msgid "No valid shell found."
+msgstr "Не е намерен валиден шел."
+msgid "Success! Reboot to apply."
+msgstr "Успех! Рестартирайте, за да приложите."
+msgid "System already patched."
+msgstr "Системата вече е поправена."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Това изисква репозитория Chaotic-AUR. Искате ли да го активирате?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Пропускане на инсталацията на btrfs-assistant."
+msgid "Your root filesystem is not btrfs."
+msgstr "Вашата коренова файлова система не е btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Недостатъчно RAM. Необходими са поне 12GB общо, за да продължите."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Недостатъчно свободна RAM. Затворете някои приложения и опитайте отново."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Недостатъчно CPU нишки за инсталиране на Windows хипервизор, минимум 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Въведете размера на Windows диск (C:) в GB. Оставете празно, за да използвате 50GB."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Невалиден вход за размер на диска. Моля, въведете число."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Минималното пространство за инсталиране на Windows (C:) е 40GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Недостатъчно дисково пространство: изискват се %s GB, налични %s GB."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Не е намерен съвместим терминален емулатор за стартиране на Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "Завършена ли е инсталацията на Windows?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "Искате ли да върнете всички промени? ПРЕДУПРЕЖДЕНИЕ: Това ще ИЗТРИЕ всички данни на Podman Compose!"
+msgid "No GRUB found."
+msgstr "Не е намерен GRUB."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Това ще изброи моментни снимки във вашия GRUB. То ще работи само ако вашата коренова файлова "
+"система е btrfs. Да продължим?"
+msgid "No WiFi device found."
+msgstr "Не е намерено WiFi устройство."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "Файл iwd.conf не е намерен. IWD не беше активиран в тази система."
+msgid "SELinux policy has been updated."
+msgstr "Политиката на SELinux е актуализирана."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Този скрипт е само за дистрибуции, базирани на OpenSUSE."
+msgid "Docker + Portainer CE Setup"
+msgstr "Настройка на Docker + Portainer CE"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr ""
+"Това ще инсталира Docker Engine и Portainer CE, за да го управлявате чрез уеб интерфейс. Да "
+"продължим?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Настройката е завършена. Вашият Portainer контролен панел ще се отвори в уеб браузъра ви сега."
+msgid "Choose JDK versions to install"
+msgstr "Изберете версии на JDK за инсталиране"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM е инсталиран. Моля, рестартирайте терминала си или заредете конфигурационния файл на шелла си "
+"(напр. .bashrc, .zshrc), за да започнете да го използвате. Сега ще се отвори прозорец на браузъра с "
+"инструкции за употреба."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv е инсталиран. Моля, рестартирайте терминала си или заредете конфигурационния файл на шелла си "
+"(напр. .bash_profile, .zshrc), за да започнете да го използвате. Сега ще се отвори прозорец на "
+"браузъра с инструкции за употреба."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Mise е инсталиран. Моля, рестартирайте терминала си или заредете конфигурационния файл на обвивката "
+"си (напр. .bashrc, .zshrc), за да започнете да го използвате. Сега ще се отвори прозорец на "
+"браузъра с официалната документация."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Подкрепете този проект"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Разгледайте ни в GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Уики"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Докладвай грешка"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Кредити"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "заглавие_на_скрипт_изпълнител"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "скрипт_изпълнител_затвори"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Изпълнение на контролен списък ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Затвори"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "скрипт_изпълнението_завърши"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "субтитри"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Инсталирай"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Отмяна"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "Заглавие на разгръщане на ostree"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "съобщение_за_разгръщане"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "презареди_сега_бутон"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "рестартиране_по-късно_бутон"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "Налична актуализация"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "бутон_за_изтегляне_на_актуализация"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "бутон_игнориране_на_актуализация"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Няма наличен журнал на промените."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "Изчакване..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "зареди_манифест"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "изберете_заглавие_на_манифеста"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "избор_бутон"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "зареждане_на_манифест_съобщение"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "пакети_flatpaks"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Потвърдете действието"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Детайли на скрипта"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Потвърдете инсталацията"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Избрани елементи"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Забележка: {} скрипт(и) ще се изпълнят автоматично без потвърждение."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "За LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "За програмата"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "Файл с лицензия не е намерен."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Лицензия"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Ръководител на проекта"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Зареждане на сътрудници..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Неуспешно зареждане на сътрудниците."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Необходимо е рестартиране"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Рестартиране сега"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Рестартиране по-късно"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"Изпълнен е скрипт, изискващ рестартиране на системата. Трябва да рестартирате компютъра си, преди "
+"да инсталирате други функции."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "Изчакващи системни актуализации"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Вашата система има изчакващи актуализации, които изискват рестартиране, за да бъдат завършени. "
+"Моля, рестартирайте компютъра си, за да приложите тези актуализации, преди да продължите."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Неуспешно рестартиране"

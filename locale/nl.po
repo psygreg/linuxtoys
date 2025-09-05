@@ -1,0 +1,406 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Operaties voltooid."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 is geïnstalleerd. Er wordt nu een browservenster geopend met gebruiksinstructies."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Wilt u scripts voor ARM-vertaling installeren? (aanbevolen)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "De Waydroid-installatie is voltooid. Je kunt het nu starten vanuit je applicatiemenu."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid vereist een Wayland-sessie om te werken."
+msgid "Reboot your system to apply the changes."
+msgstr "Herstart uw systeem om de wijzigingen toe te passen."
+msgid "This script is not compatible with your operating system."
+msgstr "Dit script is niet compatibel met uw besturingssysteem."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP is al geïnstalleerd."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Dit systeem is al geoptimaliseerd door LinuxToys. Gebruik eerst het script 'Optimalisaties Ongedaan "
+"Maken' om opnieuw toe te passen."
+msgid "Choose your device type:"
+msgstr "Kies uw apparaattype:"
+msgid "AMD Drivers"
+msgstr "AMD-stuurprogramma's"
+msgid "Installation successful."
+msgstr "Installatie succesvol."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Dit script installeert alleen de DaVinci Resolve-software. Een licentie van Blackmagic Design is "
+"vereist om de Studio-versie te gebruiken."
+msgid "The application is already up to date."
+msgstr "De applicatie is al up-to-date."
+msgid "Optimization Complete"
+msgstr "Optimalisatie Voltooid"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Optimalisatie voltooid. Herstart uw systeem alstublieft. U wordt gevraagd om een nieuwe MOK "
+"(Machine Owner Key) voor Secure Boot te registreren. Selecteer 'MOK registreren' en volg de "
+"aanwijzingen om het proces te voltooien."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"Pakketten voor Active Directory-integratie zijn geïnstalleerd. U kunt nu een domein toevoegen met "
+"het commando 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Dit script vereist dat Lossless Scaling voor Windows op uw systeem is geïnstalleerd via Steam, "
+"Lutris of Bottles. Zorg ervoor dat het is geïnstalleerd voordat u verdergaat."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll niet gevonden. Heb je Lossless Scaling geïnstalleerd?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Controleer de compatibiliteit van uw wiel voordat u verdergaat."
+msgid "Unsupported OpenSUSE version."
+msgstr "Niet-ondersteunde OpenSUSE-versie."
+msgid "No compatible AMD GPU found."
+msgstr "Geen compatibele AMD GPU gevonden."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Dit programma is al geïnstalleerd. Wilt u het verwijderen?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Dit installeert een daemon die vaak gebruikte applicaties in het geheugen laadt om de opstarttijden "
+"te versnellen. Dit wordt alleen aanbevolen voor systemen met meer dan 12 GB RAM. Doorgaan?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Uw systeem heeft niet genoeg RAM om deze functie veilig te gebruiken."
+msgid "The firewall has been configured and enabled."
+msgstr "De firewall is geconfigureerd en ingeschakeld."
+msgid "Welcome to the LSW installer!"
+msgstr "Welkom bij de LSW-installatieprogramma!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Dit script zal je begeleiden bij het installeren van Windows op Linux."
+msgid "WARNINGS:"
+msgstr "WAARSCHUWINGEN:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Dit is een geautomatiseerd script. Gebruik op eigen risico."
+msgid "* A stable internet connection is required."
+msgstr "* Een stabiele internetverbinding is vereist."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* Sluit de terminal NIET tijdens de installatie."
+msgid "* GPU acceleration is NOT available."
+msgstr "* GPU-versnelling is NIET beschikbaar."
+msgid "I have read and understood the warnings."
+msgstr "Ik heb de waarschuwingen gelezen en begrepen."
+msgid "Do you want to proceed with the installation?"
+msgstr "Wilt u doorgaan met de installatie?"
+msgid "Swapfile creation successful."
+msgstr "Swapfile creatie succesvol."
+msgid "Swap already enabled in your system."
+msgstr "Swap is al ingeschakeld in uw systeem."
+msgid "No valid shell found."
+msgstr "Geen geldige shell gevonden."
+msgid "Success! Reboot to apply."
+msgstr "Succes! Herstarten om toe te passen."
+msgid "System already patched."
+msgstr "Systeem is al gepatcht."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Dit vereist de Chaotic-AUR repository. Wilt u deze inschakelen?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Btrfs-assistent installatie overslaan."
+msgid "Your root filesystem is not btrfs."
+msgstr "Uw rootbestandssysteem is geen btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Niet genoeg RAM. Minimaal 12 GB totaal is vereist om door te gaan."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Niet genoeg vrije RAM. Sluit enkele toepassingen en probeer het opnieuw."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Niet genoeg CPU-threads om de Windows-hypervisor te installeren, minimaal 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Voer de grootte van de Windows-schijf (C:) in GB in. Laat leeg om 50 GB te gebruiken."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Ongeldige invoer voor schijfgrootte. Voer een getal in."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Minimale ruimte om Windows (C:) te installeren is 40GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Niet genoeg schijfruimte: %s GB vereist, %s GB beschikbaar."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Geen compatibele terminalemulator gevonden om Podman Compose te starten."
+msgid "Is the Windows installation finished?"
+msgstr "Is de Windows-installatie voltooid?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr ""
+"Wilt u alle wijzigingen terugdraaien? WAARSCHUWING: Dit zal alle Podman Compose-gegevens "
+"VERWIJDEREN!"
+msgid "No GRUB found."
+msgstr "Geen GRUB gevonden."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Dit zal snapshots in je GRUB weergeven. Het werkt alleen als je rootbestandssysteem btrfs is. "
+"Doorgaan?"
+msgid "No WiFi device found."
+msgstr "Geen WiFi-apparaat gevonden."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "iwd.conf-bestand niet gevonden. IWD was niet ingeschakeld in dit systeem."
+msgid "SELinux policy has been updated."
+msgstr "SELinux-beleid is bijgewerkt."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Dit script is alleen voor op OpenSUSE gebaseerde distributies."
+msgid "Docker + Portainer CE Setup"
+msgstr "Docker + Portainer CE Installatie"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr "Dit zal Docker Engine en Portainer CE installeren om het via een webinterface te beheren. Doorgaan?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Installatie voltooid. Uw Portainer-dashboard wordt nu geopend in uw webbrowser."
+msgid "Choose JDK versions to install"
+msgstr "Kies JDK-versies om te installeren"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM is geïnstalleerd. Herstart uw terminal of laad uw shell-configuratiebestand (bijv. .bashrc, "
+".zshrc) om het te gaan gebruiken. Een browservenster wordt nu geopend met gebruiksinstructies."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv is geïnstalleerd. Herstart uw terminal of laad uw shell-configuratiebestand (bijv. "
+".bash_profile, .zshrc) om het te gaan gebruiken. Een browservenster wordt nu geopend met "
+"gebruiksinstructies."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Mise is geïnstalleerd. Herstart uw terminal of laad uw shell-configuratiebestand (bijv. .bashrc, "
+".zshrc) om het te gaan gebruiken. Een browservenster wordt nu geopend met de officiële documentatie."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Steun dit project"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Bekijk ons op GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Wiki"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Bug Rapporteren"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Credits"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "script_loper_titel"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "script_loper_sluiten"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Uitvoeren Checklist ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Sluiten"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "script_loper_voltooid"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "ondertitel"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Installeren"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Annuleren"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "ostree_deployment_titel"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "ostree_implementatie_bericht"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "herstart_nu_knop"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "later_opnieuw_opstarten_knop"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "update_beschikbaar_titel"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "update_download_knop"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "update_negeer_knop"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Geen wijzigingslogboek beschikbaar."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "Wachten..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "laad_manifest"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "kies_manifest_titel"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "selecteer_knop"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "laden_manifest_bericht"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "pakketten_flatpaks"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Bevestig Actie"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Scriptdetails"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Bevestig installatie"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Geselecteerde items"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Opmerking: {} script(s) worden automatisch uitgevoerd zonder bevestiging."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "Over LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "Over"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "Licentiebestand niet gevonden."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Licentie"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Projectleider"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Bijdragers laden..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Kan bijdragers niet laden"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Herstart vereist"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Herstart nu"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Later opnieuw opstarten"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"Er is een script uitgevoerd dat een systeemherstart vereist. U moet uw computer opnieuw opstarten "
+"voordat u andere functies installeert."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "In afwachting van systeemupdates"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Uw systeem heeft wachtende updates die een herstart vereisen om te voltooien. Herstart uw computer "
+"om deze updates toe te passen voordat u doorgaat."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Herstarten mislukt"

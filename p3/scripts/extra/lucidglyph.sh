@@ -9,9 +9,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # Function to detect LucidGlyph installation
 detect_lucidglyph() {
     # Check for system-wide installation metadata
@@ -47,10 +44,10 @@ uninstall_lucidglyph() {
 }
 # Check if LucidGlyph is already installed
 if detect_lucidglyph; then
-    if zenity --question --text "$msg285" --width 360 --height 300; then
+    if zenity --question --text=$"This program is already installed. Do you want to remove it?" --width 360 --height 300; then
         sudo_rq
         uninstall_lucidglyph
-        zeninf "$msg036"
+        zeninf $"Reboot your system to apply the changes."
         exit 0
     else
         exit 100
@@ -70,4 +67,4 @@ cd .. || exit 1
 sleep 1
 rm -rf "lucidglyph-${ver}"
 rm -f "${tag}.tar.gz"
-zeninf "$msg036"
+zeninf $"Reboot your system to apply the changes."

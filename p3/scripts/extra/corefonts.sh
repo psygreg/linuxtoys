@@ -9,9 +9,6 @@
 LT_PROGRAM="Microsoft CoreFonts"
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if [ ! -d "$HOME/.local/share/fonts/mscorefonts" ]; then
     _packages=(cabextract)
     _install_
@@ -30,11 +27,11 @@ if [ ! -d "$HOME/.local/share/fonts/mscorefonts" ]; then
     cp -v fonts/*.ttf fonts/*.TTF ~/.local/share/fonts/mscorefonts/
     rm *32.exe
     rm -r fonts
-    zeninf "$msg018"
+    zeninf $"Operations completed."
 else
-    if zenity --question --text "$msg288" --width 360 height 300; then
+    if zenity --question --text=$"This program is already installed. Do you want to remove it?" --width 360 height 300; then
         rm -rf ~/.local/share/fonts/mscorefonts
-        zeninf "$msg018"
+        zeninf $"Operations completed."
     fi
     exit 100
 fi

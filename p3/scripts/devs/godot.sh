@@ -8,8 +8,6 @@
 # when there are updates, make sure to edit the .desktop files in resources/godot as well!
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 cd $HOME
 get_latest_godot_url() {
     curl -s https://api.github.com/repos/godotengine/godot/releases/latest | \
@@ -42,4 +40,4 @@ else # update
     rm Godot
     rm "$GODOT_ZIP"
 fi
-zeninf "$msg018"
+zeninf $"Operations completed."

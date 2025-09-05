@@ -7,8 +7,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 sudo_rq
 # Instalação para Debian e Ubuntu
@@ -44,6 +42,6 @@ elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LI
     _packages=(sublime-text)
     _install_
 else
-    fatal "$msg077" # Mensagem de "Sistema operacional não compatível"
+    fatal $"This script is not compatible with your operating system."
 fi
-zeninf "$msg018" # Mensagem de "Operações concluídas."
+zeninf $"Operations completed."

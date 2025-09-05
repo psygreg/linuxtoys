@@ -8,8 +8,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # functions
 jdk_install () {
     local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
@@ -29,7 +27,7 @@ jdk_install () {
     done
     sudo_rq
     _install_
-    zeninf "$msg018"
+    zeninf $"Operations completed."
 }
 java_in () {
     local search_java
@@ -48,7 +46,7 @@ java_in () {
     while true; do
         chosen_javas=$(zenity --list --checklist --title="Java JDK" \
         	--column="" \
-        	--column="$msg277" \
+        	--column=$"Choose JDK versions to install" \
             FALSE "Java 8 LTS" \
             FALSE "Java 11 LTS" \
             FALSE "Java 17 LTS" \

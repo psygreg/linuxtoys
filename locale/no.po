@@ -1,0 +1,410 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Operasjoner fullført."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 har blitt installert. Et nettleservindu vil nå åpne med bruksanvisning."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Vil du installere skript for ARM-oversettelse? (anbefalt)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "Waydroid-oppsett er fullført. Du kan nå starte det fra applikasjonsmenyen din."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid krever en Wayland-økt for å fungere."
+msgid "Reboot your system to apply the changes."
+msgstr "Start systemet på nytt for å bruke endringene."
+msgid "This script is not compatible with your operating system."
+msgstr "Dette skriptet er ikke kompatibelt med operativsystemet ditt."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP er allerede installert."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Dette systemet har allerede blitt optimalisert av LinuxToys. For å bruke det på nytt, vennligst "
+"bruk 'Angre optimaliseringer'-skriptet først."
+msgid "Choose your device type:"
+msgstr "Velg enhetstype:"
+msgid "AMD Drivers"
+msgstr "AMD-drivere"
+msgid "Installation successful."
+msgstr "Installasjonen var vellykket."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Dette skriptet installerer kun DaVinci Resolve-programvaren. En lisens fra Blackmagic Design er "
+"nødvendig for å bruke Studio-versjonen."
+msgid "The application is already up to date."
+msgstr "Applikasjonen er allerede oppdatert."
+msgid "Optimization Complete"
+msgstr "Optimalisering Fullført"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Optimalisering fullført. Vennligst start systemet på nytt. Du vil bli bedt om å registrere en ny "
+"MOK (Maskin Eier Nøkkel) for Sikker Oppstart. Vennligst velg 'Registrer MOK' og følg instruksjonene "
+"for å fullføre prosessen."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"Pakker for Active Directory-integrasjon har blitt installert. Du kan nå bli med i et domene ved å "
+"bruke kommandoen 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Dette skriptet krever at Lossless Scaling for Windows er installert på systemet ditt via Steam, "
+"Lutris eller Bottles. Vennligst sørg for at det er installert før du fortsetter."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll ble ikke funnet. Installerte du Lossless Scaling?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Vennligst sjekk hjulenes kompatibilitet før du fortsetter."
+msgid "Unsupported OpenSUSE version."
+msgstr "Ustøttet OpenSUSE-versjon."
+msgid "No compatible AMD GPU found."
+msgstr "Ingen kompatibel AMD GPU funnet."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Dette programmet er allerede installert. Vil du fjerne det?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Dette vil installere en daemon som forhåndslaster ofte brukte applikasjoner inn i minnet for å øke "
+"oppstartstider. Dette anbefales kun for systemer med mer enn 12 GB RAM. Fortsette?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Systemet ditt har ikke nok RAM til å bruke denne funksjonen trygt."
+msgid "The firewall has been configured and enabled."
+msgstr "Brannmuren har blitt konfigurert og aktivert."
+msgid "Welcome to the LSW installer!"
+msgstr "Velkommen til LSW-installasjonen!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Dette skriptet vil veilede deg gjennom installasjonen av Windows på Linux."
+msgid "WARNINGS:"
+msgstr "ADVARSLER:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Dette er et automatisert skript. Bruk på egen risiko."
+msgid "* A stable internet connection is required."
+msgstr "* En stabil internettforbindelse er påkrevd."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* Lukk ikke terminalen under installasjonen."
+msgid "* GPU acceleration is NOT available."
+msgstr "* GPU-akselerasjon er IKKE tilgjengelig."
+msgid "I have read and understood the warnings."
+msgstr "Jeg har lest og forstått advarslene."
+msgid "Do you want to proceed with the installation?"
+msgstr "Vil du fortsette med installasjonen?"
+msgid "Swapfile creation successful."
+msgstr "Byttefil opprettelse vellykket."
+msgid "Swap already enabled in your system."
+msgstr "Bytte er allerede aktivert i systemet ditt."
+msgid "No valid shell found."
+msgstr "Ingen gyldig skall funnet."
+msgid "Success! Reboot to apply."
+msgstr "Suksess! Start på nytt for å bruke."
+msgid "System already patched."
+msgstr "Systemet er allerede oppdatert."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Dette krever Chaotic-AUR-repositoriet. Vil du aktivere det?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Hopper btrfs-assistent installasjon."
+msgid "Your root filesystem is not btrfs."
+msgstr "Rotfilen ditt er ikke btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Ikke nok RAM. Minst 12 GB totalt kreves for å fortsette."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Ikke nok ledig RAM. Lukk noen applikasjoner og prøv igjen."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Ikke nok CPU-tråder til å installere Windows-hypervisor, minimum 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Skriv inn størrelsen på Windows-disk (C:) i GB. La stå tomt for å bruke 50 GB."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Ugyldig inndata for diskstørrelse. Vennligst skriv inn et tall."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Minimum plass for å installere Windows (C:) er 40GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Ikke nok diskplass: %s GB nødvendig, %s GB tilgjengelig."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Ingen kompatibel terminalemulator funnet for å starte Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "Er installasjonen av Windows ferdig?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "Vil du tilbakestille alle endringer? ADVARSEL: Dette vil SLETTE all Podman Compose-data!"
+msgid "No GRUB found."
+msgstr "Ingen GRUB funnet."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Dette vil liste øyeblikksbilder i GRUB-en din. Det vil bare fungere hvis rotfilsystemet ditt er "
+"btrfs. Fortsette?"
+msgid "No WiFi device found."
+msgstr "Ingen WiFi-enhet funnet."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "iwd.conf-fil ikke funnet. IWD ble ikke aktivert i dette systemet."
+msgid "SELinux policy has been updated."
+msgstr "SELinux-policy har blitt oppdatert."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Dette skriptet er kun for OpenSUSE-baserte distribusjoner."
+msgid "Docker + Portainer CE Setup"
+msgstr "Docker + Portainer CE Oppsett"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr ""
+"Dette vil installere Docker Engine og Portainer CE for å administrere det gjennom et "
+"webgrensesnitt. Fortsett?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Oppsett fullført. Din Portainer-dashbord vil åpne i nettleseren din nå."
+msgid "Choose JDK versions to install"
+msgstr "Velg JDK-versjoner å installere"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM har blitt installert. Vennligst start terminalen på nytt eller kilde konfigurasjonsfilen for "
+"skallet ditt (f.eks. .bashrc, .zshrc) for å begynne å bruke det. Et nettleservindu vil nå åpne med "
+"bruksanvisning."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv har blitt installert. Vennligst start terminalen på nytt eller kilde konfigurasjonsfilen for "
+"skallet ditt (f.eks. .bash_profile, .zshrc) for å begynne å bruke det. Et nettleservindu vil nå "
+"åpne med bruksanvisning."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Mise har blitt installert. Vennligst start terminalen på nytt eller kilde konfigurasjonsfilen for "
+"skallet ditt (f.eks. .bashrc, .zshrc) for å begynne å bruke det. Et nettleservindu vil nå åpne med "
+"den offisielle dokumentasjonen."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Støtt dette prosjektet"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Sjekk oss ut på GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Wiki"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Rapporter feil"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Kreditter"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "skript_kjører_tittel"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "script_løper_lukk"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Kjøre sjekkliste ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Lukk"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "skript_kjører_fullført"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "undertekst"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Installer"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Avbryt"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "ostree_deployment_tittel"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "ostree_deployment_melding"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "start_opp_nå_btn"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "omstart_senere_knapp"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "oppdatering_tilgjengelig_tittel"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "oppdater_nedlastingsknapp"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "oppdater_ignorer_knapp"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Ingen endringslogg tilgjengelig."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "Venter..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "last_manifest"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "velg_manifest_tittel"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "velg_knapp"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "laster_manifest_melding"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "pakker_flatpaks"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Bekreft handling"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Skript Detaljer"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Bekreft installasjon"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Valgte elementer"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Merk: {} skript(er) vil kjøre automatisk uten bekreftelse."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "Om LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "Om"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "Lisensfil ikke funnet."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Lisens"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Prosjektleder"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Laster inn bidragsytere..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Kan ikke laste inn bidragsytere"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Omstart kreves"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Start på nytt nå"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Start på nytt senere"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"Et skript som krever omstart av systemet har blitt kjørt. Du må starte datamaskinen på nytt før du "
+"installerer andre funksjoner."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "Ventende systemoppdateringer"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Systemet ditt har ventende oppdateringer som krever omstart for å fullføres. Vennligst start "
+"datamaskinen på nytt for å bruke disse oppdateringene før du fortsetter."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Omstart mislyktes"

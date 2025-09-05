@@ -9,9 +9,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../libs/helpers.lib"
 # functions
 get_heroic () {
@@ -30,7 +27,7 @@ get_heroic () {
             sudo rpm-ostree install "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
             rm "Heroic-${ver}-linux-x86_64.rpm"
         else
-            zenity --info --text "$msg281" --height=300 --width=300
+            zenity --info --text=$"The application is already up to date." --height=300 --width=300
         fi
     fi
 }
@@ -77,7 +74,7 @@ if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
     fi
     _flatpak_
     obs_pipe
-    zenity --info --text "$msg036" --height=300 --width=300
+    zenity --info --text=$"Reboot your system to apply the changes." --height=300 --width=300
 else
-    fatal "$msg077"
+    fatal $"This script is not compatible with your operating system."
 fi

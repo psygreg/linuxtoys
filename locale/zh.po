@@ -1,0 +1,380 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "操作完成。"
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3已安装。现在将打开一个浏览器窗口，显示使用说明。"
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "您要安装ARM翻译的脚本吗？（推荐）"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "Waydroid 设置已完成。您现在可以从应用程序菜单中启动它。"
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid 需要一个 Wayland 会话才能工作。"
+msgid "Reboot your system to apply the changes."
+msgstr "重新启动系统以应用更改。"
+msgid "This script is not compatible with your operating system."
+msgstr "此脚本与您的操作系统不兼容。"
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP 已经安装。"
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr "该系统已由LinuxToys进行优化。要重新应用，请先使用“撤消优化”脚本。"
+msgid "Choose your device type:"
+msgstr "选择您的设备类型："
+msgid "AMD Drivers"
+msgstr "AMD 驱动程序"
+msgid "Installation successful."
+msgstr "安装成功。"
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr "此脚本仅安装 DaVinci Resolve 软件。使用 Studio 版本需要 Blackmagic Design 的许可证。"
+msgid "The application is already up to date."
+msgstr "应用程序已经是最新版本。"
+msgid "Optimization Complete"
+msgstr "优化完成"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr "优化完成。请重启您的系统。系统将提示您注册新的 MOK（机器所有者密钥）以进行安全启动。请选择“注册 MOK”，并按照提示完成该过程。"
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr "已安装用于Active Directory集成的程序包。您现在可以使用'realm join'命令加入域。"
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr "此脚本需要在您的系统上通过 Steam、Lutris 或 Bottles 安装无损缩放。请确保在继续之前已安装它。"
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "未找到 Lossless.dll。您是否安装了 Lossless Scaling？"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "请在继续之前检查您的轮子的兼容性。"
+msgid "Unsupported OpenSUSE version."
+msgstr "不支持的 OpenSUSE 版本。"
+msgid "No compatible AMD GPU found."
+msgstr "未找到兼容的AMD GPU。"
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "该程序已安装。您想要卸载它吗？"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr "这将安装一个守护进程，将常用应用程序预加载到内存中，以加快启动时间。仅建议在内存超过12GB的系统上使用。继续吗？"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "您的系统没有足够的RAM来安全使用此功能。"
+msgid "The firewall has been configured and enabled."
+msgstr "防火墙已配置并启用。"
+msgid "Welcome to the LSW installer!"
+msgstr "欢迎使用LSW安装程序！"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "此脚本将指导您在Linux上安装Windows。"
+msgid "WARNINGS:"
+msgstr "警告："
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* 这是一个自动化脚本。请自行承担风险。"
+msgid "* A stable internet connection is required."
+msgstr "* 需要稳定的互联网连接。"
+msgid "* Do NOT close the terminal during installation."
+msgstr "* 安装过程中请勿关闭终端。"
+msgid "* GPU acceleration is NOT available."
+msgstr "* GPU 加速不可用。"
+msgid "I have read and understood the warnings."
+msgstr "我已阅读并理解警告。"
+msgid "Do you want to proceed with the installation?"
+msgstr "您要继续安装吗？"
+msgid "Swapfile creation successful."
+msgstr "交换文件创建成功。"
+msgid "Swap already enabled in your system."
+msgstr "您的系统中已启用交换。"
+msgid "No valid shell found."
+msgstr "未找到有效的 shell。"
+msgid "Success! Reboot to apply."
+msgstr "成功！重启以应用。"
+msgid "System already patched."
+msgstr "系统已修补。"
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "这需要 Chaotic-AUR 仓库。您想要启用它吗？"
+msgid "Skipping btrfs-assistant installation."
+msgstr "跳过 btrfs-assistant 安装。"
+msgid "Your root filesystem is not btrfs."
+msgstr "您的根文件系统不是 btrfs。"
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "内存不足。继续需要至少 12GB 的总内存。"
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "内存不足。请关闭一些应用程序，然后再试一次。"
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "安装 Windows 虚拟机监控程序所需的 CPU 线程不足，最低要求 4 个。"
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "输入Windows磁盘（C:）的大小（以GB为单位）。留空以使用50GB。"
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "磁盘大小输入无效。请输入一个数字。"
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "安装Windows (C:) 的最低空间为40GB。"
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "磁盘空间不足：需要 %s GB，当前可用 %s GB。"
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "未找到兼容的终端仿真器以启动 Podman Compose。"
+msgid "Is the Windows installation finished?"
+msgstr "Windows安装完成了吗？"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "您是否要撤销所有更改？警告：这将删除所有 Podman Compose 数据！"
+msgid "No GRUB found."
+msgstr "未找到 GRUB。"
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr "这将列出您在 GRUB 中的快照。只有在您的根文件系统是 btrfs 时才会有效。继续吗？"
+msgid "No WiFi device found."
+msgstr "未找到WiFi设备。"
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "未找到 iwd.conf 文件。此系统未启用 IWD。"
+msgid "SELinux policy has been updated."
+msgstr "SELinux 策略已更新。"
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "此脚本仅适用于基于OpenSUSE的发行版。"
+msgid "Docker + Portainer CE Setup"
+msgstr "Docker + Portainer CE 设置"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr "这将安装 Docker 引擎和 Portainer CE，以通过 Web 用户界面进行管理。继续吗？"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "设置完成。您的 Portainer 仪表板现在将在您的网页浏览器中打开。"
+msgid "Choose JDK versions to install"
+msgstr "选择要安装的JDK版本"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr "NVM 已安装。请重新启动您的终端或源您的 shell 配置文件（例如，.bashrc，.zshrc）以开始使用它。现在将打开一个浏览器窗口，显示使用说明。"
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr "PyEnv 已安装。请重新启动您的终端或源您的 shell 配置文件（例如，.bash_profile，.zshrc）以开始使用它。现在将打开一个浏览器窗口，显示使用说明。"
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr "Mise 已安装。请重新启动您的终端或源您的 shell 配置文件（例如，.bashrc，.zshrc）以开始使用它。现在将打开一个浏览器窗口，显示官方文档。"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "支持这个项目"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "在 GitHub 上查看我们"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "维基"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "报告错误"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "积分"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "脚本运行器标题"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "脚本运行器关闭"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "运行检查列表 ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "关闭"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "脚本运行完成"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "字幕"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "安装"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "取消"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "ostree_deployment_title"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "ostree_deployment_message"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "立即重启按钮"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "稍后重启按钮"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "更新可用标题"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "更新下载按钮"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "更新_忽略_按钮"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "没有可用的更新日志。"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "等待中..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "加载清单"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "选择清单标题"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "选择按钮"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "加载清单消息"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "平面包（Flatpak）软件包"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "确认操作"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "脚本详情"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "确认安装"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "已选择项目"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "注意：{} 脚本将自动运行，无需确认。"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "关于LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "关于"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "未找到许可证文件。"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "许可证"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "项目负责人"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "加载贡献者..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "无法加载贡献者"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "需要重启"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "立即重启"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "稍后重启"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr "已执行需要系统重启的脚本。您必须在安装其他功能之前重启计算机。"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "待处理系统更新"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr "您的系统有待处理的更新，需要重启才能完成。请重启计算机以应用这些更新，然后再继续。"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "重启失败"

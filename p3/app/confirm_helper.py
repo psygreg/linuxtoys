@@ -29,15 +29,14 @@ def _should_skip_confirmation(script_info):
     return False
 
 
-def show_single_script_confirmation(script_info, parent_window, translations):
+def show_single_script_confirmation(script_info, parent_window):
     """
     Show confirmation dialog for a single script execution.
-    
+
     Args:
         script_info: Dictionary containing script information (name, description, path)
         parent_window: Parent window for the dialog
-        translations: Translation dictionary
-        
+
     Returns:
         True if user confirms, False if cancelled
     """
@@ -46,10 +45,10 @@ def show_single_script_confirmation(script_info, parent_window, translations):
         return True
         
     # Get translated strings
-    confirm_title = translations.get('confirm_title', 'Confirm Action')
-    confirm_btn = translations.get('install_btn_label', 'Install')
-    cancel_btn = translations.get('cancel_btn_label', 'Cancel')
-    script_details_label = translations.get('script_details', 'Script Details')
+    confirm_title = _("Confirm Action")
+    confirm_btn = _("Install")
+    cancel_btn = _("Cancel")
+    script_details_label = _("Script Details")
     
     # Create confirmation dialog
     dialog = Gtk.Dialog(
@@ -118,15 +117,14 @@ def show_single_script_confirmation(script_info, parent_window, translations):
     return response == Gtk.ResponseType.OK
 
 
-def show_checklist_confirmation(selected_scripts, parent_window, translations):
+def show_checklist_confirmation(selected_scripts, parent_window):
     """
     Show confirmation dialog for checklist script execution.
-    
+
     Args:
         selected_scripts: List of selected script dictionaries
         parent_window: Parent window for the dialog
-        translations: Translation dictionary
-        
+
     Returns:
         True if user confirms, False if cancelled
     """
@@ -138,10 +136,10 @@ def show_checklist_confirmation(selected_scripts, parent_window, translations):
         return True
         
     # Get translated strings
-    confirm_title = translations.get('confirm_checklist_title', 'Confirm Installation')
-    confirm_btn = translations.get('install_btn_label', 'Install')
-    cancel_btn = translations.get('cancel_btn_label', 'Cancel')
-    selected_items_label = translations.get('selected_items', 'Selected Items')
+    confirm_title = _("Confirm Installation")
+    confirm_btn = _("Install")
+    cancel_btn = _("Cancel")
+    selected_items_label = _("Selected Items")
     
     # Create confirmation dialog
     dialog = Gtk.Dialog(
@@ -209,7 +207,9 @@ def show_checklist_confirmation(selected_scripts, parent_window, translations):
     if len(scripts_to_confirm) < len(selected_scripts):
         auto_count = len(selected_scripts) - len(scripts_to_confirm)
         notice_label = Gtk.Label()
-        notice_text = translations.get('auto_confirm_notice', f"Note: {auto_count} script(s) will run automatically without confirmation.")
+        notice_text = _(
+            "Note: {} script(s) will run automatically without confirmation."
+        ).format(auto_count)
         notice_label.set_markup(f"<i>{notice_text}</i>")
         notice_label.set_margin_top(5)
         notice_label.set_margin_left(30)

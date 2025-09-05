@@ -9,8 +9,6 @@
 . /etc/os-release
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../../libs/lang/${langfile}.lib"
 sudo_rq
 if [[ "$ID_LIKE" == *debian* ]] || [ "$ID" == "debian" ]; then
 	# Add IVPN's GPG key
@@ -53,5 +51,5 @@ elif [[ "$ID_LIKE" == *fedora* ]] || [ "$ID" == "fedora" ]; then
 	_packages=(ivpn-ui)
 	_install_
 else
-    fatal "$msg077"
+    fatal $"This script is not compatible with your operating system."
 fi

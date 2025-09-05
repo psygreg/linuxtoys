@@ -9,8 +9,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     sudo_rq
     _packages=(waydroid)
@@ -23,7 +21,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     _install_
     sudo systemctl enable --now waydroid-container
     sudo waydroid init --system-url https://ota.waydro.id/system_gapps --vendor-url https://ota.waydro.id/vendor_gapps
-    if zenity --question --title="Waydroid" --text="$msg283" --width 300 --height 300; then
+    if zenity --question --title="Waydroid" --text=$"Do you want to install scripts for ARM translation? (recommended)" --width 300 --height 300; then
         waydroid session stop
         sudo waydroid container stop
         cd $HOME
@@ -43,9 +41,9 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         cd ..
         rm -r waydroid_script
     fi
-    zeninf "$msg284"
+    zeninf $"Waydroid setup is complete. You can now launch it from your applications menu."
     xdg-open https://docs.waydro.id/faq/google-play-certification
 else
-    fatal "$msg219"
+    fatal $"Waydroid requires a Wayland session to work."
     exit 1
 fi

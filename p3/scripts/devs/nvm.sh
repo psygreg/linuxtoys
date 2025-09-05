@@ -7,8 +7,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 sudo_rq
 if command -v rpm-ostree &>/dev/null; then
     if [ ! -d "$HOME/.nvm" ]; then
@@ -36,5 +34,5 @@ else
 fi
 npm i --global yarn
 # basic usage instruction prompt
-zeninf "$msg136"
+zeninf $"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., .bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
 xdg-open https://github.com/nvm-sh/nvm?tab=readme-ov-file#usage

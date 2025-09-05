@@ -8,20 +8,17 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 sudo_rq
 if [[ "$ID_LIKE" == *suse* ]]; then
     sudo zypper in -y opi
     sudo opi codecs
-    zeninf "$msg018"
+    zeninf $"Operations completed."
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
     rpmfusion_chk
     _packages=(libavcodec-freeworld)
     _install_
-    zeninf "$msg018"
+    zeninf $"Operations completed."
 else
-    zeninf "$msg077"
+    zeninf $"This script is not compatible with your operating system."
 fi
