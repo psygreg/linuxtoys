@@ -1,240 +1,224 @@
-# Portuguese translation for linuxtoys
-# Copyright (C) 2024 The LinuxToys Authors
-# This file is distributed under the same license as the LinuxToys package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: linuxtoys 1.0\n"
+"Project-Id-Version: linuxtoys\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: Portuguese\n"
-"Language: pt\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
 msgid "Operations completed."
-msgstr "Operações concluídas."
+msgstr "操作が完了しました。"
 msgid "F3 has been installed. A browser window will now open with usage instructions."
-msgstr "O F3 foi instalado. Uma janela do navegador será aberta agora com instruções de uso."
+msgstr "F3がインストールされました。これから使用方法の指示が表示されたブラウザウィンドウが開きます。"
 msgid "Do you want to install scripts for ARM translation? (recommended)"
-msgstr "Deseja instalar scripts para tradução ARM? (recomendado)"
+msgstr "ARM翻訳用のスクリプトをインストールしますか？（推奨）"
 msgid "Waydroid setup is complete. You can now launch it from your applications menu."
-msgstr "A configuração do Waydroid está completa. Agora você pode iniciá-lo a partir do menu de aplicativos."
+msgstr "Waydroidのセットアップが完了しました。これでアプリケーションメニューから起動できます。"
 msgid "Waydroid requires a Wayland session to work."
-msgstr "O Waydroid requer uma sessão Wayland para funcionar."
+msgstr "Waydroidは動作するためにWaylandセッションを必要とします。"
 msgid "Reboot your system to apply the changes."
-msgstr "Reinicie o sistema para aplicar as alterações."
+msgstr "システムを再起動して変更を適用してください。"
 msgid "This script is not compatible with your operating system."
-msgstr "Este script não é compatível com o seu sistema operacional."
+msgstr "このスクリプトはあなたのオペレーティングシステムと互換性がありません。"
 msgid "Cloudflare WARP is already installed."
-msgstr "O Cloudflare WARP já está instalado."
+msgstr "Cloudflare WARPはすでにインストールされています。"
 msgid ""
 "This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
 "Optimizations' script first."
-msgstr ""
-"Este sistema já foi otimizado pelo LinuxToys. Para reaplicar, por favor, use primeiro o script "
-"'Reverter Otimizações'."
+msgstr "このシステムはすでにLinuxToysによって最適化されています。再適用するには、まず「最適化の元に戻す」スクリプトを使用してください。"
 msgid "Choose your device type:"
-msgstr "Escolha o tipo de dispositivo:"
+msgstr "デバイスタイプを選択してください:"
 msgid "AMD Drivers"
-msgstr "Drivers da AMD"
+msgstr "AMDドライバー"
 msgid "Installation successful."
-msgstr "Instalação bem-sucedida."
+msgstr "インストールに成功しました。"
 msgid ""
 "This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
 "required to use the Studio version."
-msgstr ""
-"Este script apenas instala o software DaVinci Resolve. É necessária uma licença da Blackmagic "
-"Design para usar a versão Studio."
+msgstr "このスクリプトはDaVinci Resolveソフトウェアのみをインストールします。スタジオ版を使用するにはBlackmagic Designのライセンスが必要です。"
 msgid "The application is already up to date."
-msgstr "O aplicativo já está atualizado."
+msgstr "アプリケーションはすでに最新です。"
 msgid "Optimization Complete"
-msgstr "Otimização Completa"
+msgstr "最適化が完了しました"
 msgid ""
 "Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
 "Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
 "process."
 msgstr ""
-"Otimização concluída. Por favor, reinicie seu sistema. Você será solicitado a registrar uma nova "
-"MOK (Chave do Proprietário da Máquina) para Inicialização Segura. Selecione 'Registrar MOK' e siga "
-"as instruções para concluir o processo."
+"最適化が完了しました。システムを再起動してください。セキュアブートのために新しいMOK（マシンオーナーキー）に登録するように求められます。「MOKを登録」を選択し、プロンプトに従ってプロセスを完了して"
+"ください。"
 msgid ""
 "Packages for Active Directory integration have been installed. You can now join a domain using the "
 "'realm join' command."
-msgstr ""
-"Os pacotes para integração com o Active Directory foram instalados. Você agora pode ingressar em um "
-"domínio usando o comando 'realm join'."
+msgstr "Active Directory統合用のパッケージがインストールされました。これで、'realm join'コマンドを使用してドメインに参加できます。"
 msgid ""
 "This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
 "Lutris or Bottles. Please make sure it is installed before proceeding."
 msgstr ""
-"Este script requer que o Lossless Scaling para Windows esteja instalado no seu sistema via Steam, "
-"Lutris ou Bottles. Por favor, certifique-se de que ele está instalado antes de prosseguir."
+"このスクリプトを実行するには、Steam、Lutris、またはBottlesを通じてWindowsにLossless "
+"Scalingがインストールされている必要があります。続行する前に、インストールされていることを確認してください。"
 msgid "Lossless.dll not found. Did you install Lossless Scaling?"
-msgstr "Lossless.dll não encontrado. Você instalou o Lossless Scaling?"
+msgstr "Lossless.dllが見つかりません。Lossless Scalingをインストールしましたか？"
 msgid "Please check your wheel's compatibility before proceeding."
-msgstr "Por favor, verifique a compatibilidade do seu volante antes de prosseguir."
+msgstr "進む前にホイールの互換性を確認してください。"
 msgid "Unsupported OpenSUSE version."
-msgstr "Versão do OpenSUSE não suportada."
+msgstr "サポートされていないOpenSUSEバージョン。"
 msgid "No compatible AMD GPU found."
-msgstr "Nenhuma GPU AMD compatível encontrada."
+msgstr "互換性のあるAMD GPUが見つかりませんでした。"
 msgid "This program is already installed. Do you want to remove it?"
-msgstr "Este programa já está instalado. Deseja removê-lo?"
+msgstr "このプログラムはすでにインストールされています。削除しますか？"
 msgid ""
 "This will install a daemon that preloads frequently used applications into memory to speed up "
 "launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
-msgstr ""
-"Isso instalará um daemon que pré-carrega aplicativos usados com frequência na memória para acelerar "
-"os tempos de inicialização. Isso é recomendado apenas para sistemas com mais de 12GB de RAM. "
-"Prosseguir?"
+msgstr "これは、頻繁に使用されるアプリケーションをメモリにプリロードして起動時間を短縮するデーモンをインストールします。これは、12GB以上のRAMを搭載したシステムにのみ推奨されます。続行しますか？"
 msgid "Your system does not have enough RAM to use this feature safely."
-msgstr "Seu sistema não tem RAM suficiente para usar este recurso com segurança."
+msgstr "この機能を安全に使用するには、システムのRAMが不足しています。"
 msgid "The firewall has been configured and enabled."
-msgstr "O firewall foi configurado e ativado."
+msgstr "ファイアウォールが構成され、有効化されました。"
 msgid "Welcome to the LSW installer!"
-msgstr "Bem-vindo ao instalador do LSW!"
+msgstr "LSWインストーラーへようこそ！"
 msgid "This script will guide you through installing Windows on Linux."
-msgstr "Este script irá guiá-lo na instalação do Windows no Linux."
+msgstr "このスクリプトは、LinuxにWindowsをインストールする手順を案内します。"
 msgid "WARNINGS:"
-msgstr "AVISOS:"
+msgstr "警告："
 msgid "* This is an automated script. Use at your own risk."
-msgstr "* Este é um script automatizado. Use por sua conta e risco."
+msgstr "* これは自動化されたスクリプトです。自己責任で使用してください。"
 msgid "* A stable internet connection is required."
-msgstr "* É necessária uma conexão de internet estável."
+msgstr "* 安定したインターネット接続が必要です。"
 msgid "* Do NOT close the terminal during installation."
-msgstr "* NÃO feche o terminal durante a instalação."
+msgstr "* インストール中にターミナルを閉じないでください。"
 msgid "* GPU acceleration is NOT available."
-msgstr "* A aceleração de GPU NÃO está disponível."
+msgstr "* GPUアクセラレーションは利用できません。"
 msgid "I have read and understood the warnings."
-msgstr "Li e entendi os avisos."
+msgstr "警告を読み、理解しました。"
 msgid "Do you want to proceed with the installation?"
-msgstr "Você deseja prosseguir com a instalação?"
+msgstr "インストールを続行しますか？"
 msgid "Swapfile creation successful."
-msgstr "Criação do arquivo de troca bem-sucedida."
+msgstr "スワップファイルの作成に成功しました。"
 msgid "Swap already enabled in your system."
-msgstr "Swap já habilitado em seu sistema."
+msgstr "システムでスワップが既に有効になっています。"
 msgid "No valid shell found."
-msgstr "Nenhum shell válido encontrado."
+msgstr "有効なシェルが見つかりません。"
 msgid "Success! Reboot to apply."
-msgstr "Sucesso! Reinicie para aplicar."
+msgstr "成功！再起動して適用します。"
 msgid "System already patched."
-msgstr "Sistema já corrigido."
+msgstr "システムはすでにパッチが適用されています。"
 msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
-msgstr "Isso requer o repositório Chaotic-AUR. Deseja habilitá-lo?"
+msgstr "これはChaotic-AURリポジトリを必要とします。これを有効にしますか？"
 msgid "Skipping btrfs-assistant installation."
-msgstr "Pulando a instalação do btrfs-assistant."
+msgstr "btrfsアシスタントのインストールをスキップしています。"
 msgid "Your root filesystem is not btrfs."
-msgstr "Seu sistema de arquivos raiz não é btrfs."
+msgstr "ルートファイルシステムはbtrfsではありません。"
 msgid "Not enough RAM. At least 12GB total is required to continue."
-msgstr "Memória RAM insuficiente. São necessários pelo menos 12GB no total para continuar."
+msgstr "RAMが不足しています。続行するには、合計で少なくとも12GBが必要です。"
 msgid "Not enough free RAM. Close some applications and try again."
-msgstr "Memória RAM livre insuficiente. Feche algumas aplicações e tente novamente."
+msgstr "空きRAMが不足しています。いくつかのアプリケーションを閉じて、再試行してください。"
 msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
-msgstr "Threads de CPU insuficientes para instalar o hipervisor do Windows, mínimo de 4."
+msgstr "Windows ハイパーバイザーをインストールするには、CPU スレッドが不足しています。最小 4 つ必要です。"
 msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
-msgstr "Digite o tamanho do disco do Windows (C:) em GB. Deixe em branco para usar 50GB."
+msgstr "Windowsディスク（C:）のサイズをGB単位で入力してください。50GBを使用するには空白のままにしてください。"
 msgid "Invalid input for disk size. Please enter a number."
-msgstr "Entrada inválida para o tamanho do disco. Por favor, insira um número."
+msgstr "ディスクサイズの無効な入力です。数字を入力してください。"
 msgid "Minimum space to install Windows (C:) is 40GB."
-msgstr "O espaço mínimo para instalar o Windows (C:) é de 40GB."
+msgstr "Windows (C:) のインストールに必要な最小スペースは 40GB です。"
 msgid "Not enough disk space: %s GB required, %s GB available."
-msgstr "Espaço em disco insuficiente: %s GB necessários, %s GB disponíveis."
+msgstr "ディスクスペースが不足しています: %s GBが必要で、%s GBが利用可能です。"
 msgid "No compatible terminal emulator found to launch Podman Compose."
-msgstr "Nenhum emulador de terminal compatível encontrado para iniciar o Podman Compose."
+msgstr "Podman Composeを起動するための互換性のあるターミナルエミュレーターが見つかりません。"
 msgid "Is the Windows installation finished?"
-msgstr "A instalação do Windows foi concluída?"
+msgstr "Windowsのインストールは完了しましたか？"
 msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
-msgstr "Deseja reverter todas as alterações? AVISO: Isso APAGARÁ todos os dados do Podman Compose!"
+msgstr "すべての変更を元に戻しますか？警告：これによりすべてのPodman Composeデータが消去されます！"
 msgid "No GRUB found."
-msgstr "Nenhum GRUB encontrado."
+msgstr "GRUBが見つかりません。"
 msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
-msgstr ""
-"Isso listará os snapshots no seu GRUB. Só funcionará se o seu sistema de arquivos raiz for btrfs. "
-"Prosseguir?"
+msgstr "これは、GRUBにスナップショットをリストします。ルートファイルシステムがbtrfsの場合にのみ機能します。続行しますか？"
 msgid "No WiFi device found."
-msgstr "Nenhum dispositivo WiFi encontrado."
+msgstr "WiFiデバイスが見つかりません。"
 msgid "iwd.conf file not found. IWD was not enabled in this system."
-msgstr "Arquivo iwd.conf não encontrado. O IWD não foi ativado neste sistema."
+msgstr "iwd.confファイルが見つかりません。IWDはこのシステムで有効になっていません。"
 msgid "SELinux policy has been updated."
-msgstr "A política do SELinux foi atualizada."
+msgstr "SELinuxポリシーが更新されました。"
 msgid "This script is only for OpenSUSE-based distributions."
-msgstr "Este script é apenas para distribuições baseadas em OpenSUSE."
+msgstr "このスクリプトはOpenSUSEベースのディストリビューション専用です。"
 msgid "Docker + Portainer CE Setup"
-msgstr "Configuração Docker + Portainer CE"
+msgstr "Docker + Portainer CE セットアップ"
 msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
-msgstr ""
-"Isso instalará o Docker Engine e o Portainer CE para gerenciá-lo através de uma interface web. "
-"Prosseguir?"
+msgstr "これにより、Docker EngineとPortainer CEがインストールされ、Web UIを通じて管理できるようになります。続行しますか？"
 msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
-msgstr "Configuração concluída. O painel do Portainer será aberto no seu navegador agora."
+msgstr "セットアップが完了しました。ポータイナーのダッシュボードがウェブブラウザで開きます。"
 msgid "Choose JDK versions to install"
-msgstr "Escolha as versões do JDK para instalar"
+msgstr "インストールするJDKバージョンを選択してください"
 msgid ""
 "NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
 ".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
 msgstr ""
-"O NVM foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"NVMがインストールされました。ターミナルを再起動するか、シェル設定ファイル（例：.bashrc、."
+"zshrc）をソースして使用を開始してください。使用方法の指示が表示されたブラウザウィンドウが開きます。"
 msgid ""
 "PyEnv has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
 "instructions."
 msgstr ""
-"O PyEnv foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração "
-"do shell (ex: .bash_profile, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"PyEnvがインストールされました。ターミナルを再起動するか、シェル設定ファイル（例：.bash_profile、."
+"zshrc）をソースして使用を開始してください。使用方法の指示が表示されたブラウザウィンドウが開きます。"
 msgid ""
 "Mise has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
 "documentation."
 msgstr ""
-"O Mise foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com a "
-"documentação oficial."
+"Miseがインストールされました。ターミナルを再起動するか、シェル設定ファイル（例：.bashrc、."
+"zshrc）をソースして使用を開始してください。公式ドキュメントが表示されるブラウザウィンドウが開きます。"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 13
 msgid "Support this project"
-msgstr "Apoie este projeto"
+msgstr "このプロジェクトをサポートしてください。"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 18
 msgid "Check us out on GitHub"
-msgstr "Confira-nos no GitHub"
+msgstr "GitHubで私たちをチェックしてください"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 49
 msgid "Wiki"
-msgstr "Wiki"
+msgstr "ウィキ"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 53
 msgid "Report Bug"
-msgstr "Relatar Bug"
+msgstr "バグを報告する"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 60
 msgid "Credits"
-msgstr "Créditos"
+msgstr "クレジット"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 37
 msgid "script_runner_title"
-msgstr "título_do_executador_de_script"
+msgstr "スクリプトランナーのタイトル"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 43
 msgid "script_runner_close"
-msgstr "fechar_script_executor"
+msgstr "スクリプトランナーを閉じる"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 126
 # File: linuxtoys/p3/app/script_runner.py, line: 209
 #, python-brace-format
 msgid "Running Checklist ({current}/{total})"
-msgstr "Lista de Verificação em Execução ({current}/{total})"
+msgstr "実行チェックリスト ({current}/{total})"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 137
 msgid "Close"
-msgstr "Fechar"
+msgstr "閉じる"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 410
 msgid "script_runner_finished"
-msgstr "execução_do_script_concluída"
+msgstr "スクリプトランナーが終了しました"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -242,7 +226,7 @@ msgstr "execução_do_script_concluída"
 # File: linuxtoys/p3/app/header.py, line: 34
 # File: linuxtoys/p3/app/about_helper.py, line: 140
 msgid "subtitle"
-msgstr "legenda"
+msgstr "字幕"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -250,7 +234,7 @@ msgstr "legenda"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 49
 # File: linuxtoys/p3/app/confirm_helper.py, line: 140
 msgid "Install"
-msgstr "Instalar"
+msgstr "インストール"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -258,40 +242,40 @@ msgstr "Instalar"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 50
 # File: linuxtoys/p3/app/confirm_helper.py, line: 141
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "キャンセル"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 346
 msgid "ostree_deployment_title"
-msgstr "Título da implantação do ostree"
+msgstr "ostree_deployment_title"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 347
 msgid "ostree_deployment_message"
-msgstr "mensagem_de_deploy_ostree"
+msgstr "ostree_deployment_message"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 348
 msgid "reboot_now_btn"
-msgstr "reiniciar_agora_btn"
+msgstr "再起動_now_btn"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 349
 msgid "reboot_later_btn"
-msgstr "reiniciar_depois_btn"
+msgstr "後で再起動ボタン"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 225
 msgid "update_available_title"
-msgstr "atualização_disponível_título"
+msgstr "アップデート利用可能タイトル"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 230
 msgid "update_download_btn"
-msgstr "atualizar_botão_download"
+msgstr "更新ダウンロードボタン"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 231
 msgid "update_ignore_btn"
-msgstr "atualizar_ignorar_btn"
+msgstr "更新無視ボタン"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 278
 # File: linuxtoys/p3/app/update_helper.py, line: 323
 msgid "No changelog available."
-msgstr "Nenhum registro de alterações disponível."
+msgstr "変更ログは利用できません。"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 336
 # 
@@ -300,111 +284,107 @@ msgstr "Nenhum registro de alterações disponível."
 # File: linuxtoys/p3/app/head_menu.py, line: 10
 # File: linuxtoys/p3/app/head_menu.py, line: 25
 msgid "Waiting..."
-msgstr "Aguardando..."
+msgstr "待機中..."
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 53
 msgid "load_manifest"
-msgstr "carregar_manifesto"
+msgstr "マニフェストを読み込む"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 79
 msgid "choose_manifest_title"
-msgstr "escolher_título_do_manifesto"
+msgstr "マニフェストのタイトルを選択"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 85
 msgid "select_button"
-msgstr "botão_selecionar"
+msgstr "選択ボタン"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 90
 msgid "loading_manifest_message"
-msgstr "mensagem_carregando_manifesto"
+msgstr "マニフェストを読み込んでいます。"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 115
 msgid "packages_flatpaks"
-msgstr "pacotes_flatpaks"
+msgstr "パッケージフラットパック"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 48
 msgid "Confirm Action"
-msgstr "Confirmar Ação"
+msgstr "アクションを確認する"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 51
 msgid "Script Details"
-msgstr "Detalhes do Script"
+msgstr "スクリプトの詳細"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 139
 msgid "Confirm Installation"
-msgstr "Confirmar Instalação"
+msgstr "インストールを確認する"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 142
 msgid "Selected Items"
-msgstr "Itens Selecionados"
+msgstr "選択したアイテム"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 211
 msgid "Note: {} script(s) will run automatically without confirmation."
-msgstr "Nota: {} script(s) serão executados automaticamente sem confirmação."
+msgstr "注意: {} スクリプトは確認なしに自動的に実行されます。"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 22
 msgid "About LinuxToys"
-msgstr "Sobre o LinuxToys"
+msgstr "LinuxToysについて"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 61
 msgid "About"
-msgstr "Sobre"
+msgstr "情報について"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 77
 msgid "License file not found."
-msgstr "Arquivo de licença não encontrado."
+msgstr "ライセンスファイルが見つかりません。"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 91
 msgid "License"
-msgstr "Licença"
+msgstr "ライセンス"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 185
 msgid "Project Lead"
-msgstr "Líder de Projeto"
+msgstr "プロジェクトリーダー"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 214
 msgid "Loading contributors..."
-msgstr "Carregando colaboradores..."
+msgstr "寄稿者を読み込んでいます..."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 270
 msgid "Unable to load contributors"
-msgstr "Incapaz de carregar colaboradores"
+msgstr "貢献者を読み込めません"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 65
 msgid "Reboot Required"
-msgstr "Reinicialização Necessária"
+msgstr "再起動が必要です"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 71
 # File: linuxtoys/p3/app/reboot_helper.py, line: 139
 msgid "Reboot Now"
-msgstr "Reiniciar Agora"
+msgstr "今すぐ再起動"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 72
 # File: linuxtoys/p3/app/reboot_helper.py, line: 140
 msgid "Reboot Later"
-msgstr "Reiniciar Depois"
+msgstr "後で再起動"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 94
 msgid ""
 "A script requiring a system reboot has been executed. You must reboot your computer before "
 "installing other features."
-msgstr ""
-"Um script que requer uma reinicialização do sistema foi executado. Você deve reiniciar seu "
-"computador antes de instalar outros recursos."
+msgstr "システム再起動を必要とするスクリプトが実行されました。他の機能をインストールする前にコンピュータを再起動する必要があります。"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 133
 msgid "Pending System Updates"
-msgstr "Atualizações do Sistema Pendentes"
+msgstr "保留中のシステム更新"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 162
 msgid ""
 "Your system has pending updates that require a reboot to complete. Please reboot your computer to "
 "apply these updates before continuing."
-msgstr ""
-"Seu sistema tem atualizações pendentes que requerem uma reinicialização para serem concluídas. Por "
-"favor, reinicie seu computador para aplicar essas atualizações antes de continuar."
+msgstr "システムには、完了するために再起動が必要な保留中の更新があります。続行する前に、これらの更新を適用するためにコンピュータを再起動してください。"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 202
 # File: linuxtoys/p3/app/reboot_helper.py, line: 211
 msgid "Reboot Failed"
-msgstr "Reinicialização Falhou"
+msgstr "再起動に失敗しました"

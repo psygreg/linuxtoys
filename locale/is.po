@@ -1,240 +1,240 @@
-# Portuguese translation for linuxtoys
-# Copyright (C) 2024 The LinuxToys Authors
-# This file is distributed under the same license as the LinuxToys package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: linuxtoys 1.0\n"
+"Project-Id-Version: linuxtoys\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: Portuguese\n"
-"Language: pt\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
 msgid "Operations completed."
-msgstr "Operações concluídas."
+msgstr "Aðgerðum lokið."
 msgid "F3 has been installed. A browser window will now open with usage instructions."
-msgstr "O F3 foi instalado. Uma janela do navegador será aberta agora com instruções de uso."
+msgstr "F3 hefur verið sett upp. Vafragluggi mun nú opnast með notkunarleiðbeiningum."
 msgid "Do you want to install scripts for ARM translation? (recommended)"
-msgstr "Deseja instalar scripts para tradução ARM? (recomendado)"
+msgstr "Viltu setja upp skriftir fyrir ARM þýðingu? (mælt með)"
 msgid "Waydroid setup is complete. You can now launch it from your applications menu."
-msgstr "A configuração do Waydroid está completa. Agora você pode iniciá-lo a partir do menu de aplicativos."
+msgstr "Waydroid uppsetning er lokið. Þú getur nú ræst það úr forritaskránni þinni."
 msgid "Waydroid requires a Wayland session to work."
-msgstr "O Waydroid requer uma sessão Wayland para funcionar."
+msgstr "Waydroid krefst Wayland sesíu til að virka."
 msgid "Reboot your system to apply the changes."
-msgstr "Reinicie o sistema para aplicar as alterações."
+msgstr "Endurrættu kerfið þitt til að beita breytingunum."
 msgid "This script is not compatible with your operating system."
-msgstr "Este script não é compatível com o seu sistema operacional."
+msgstr "Þetta skrift er ekki samhæf við stýrikerfið þitt."
 msgid "Cloudflare WARP is already installed."
-msgstr "O Cloudflare WARP já está instalado."
+msgstr "Cloudflare WARP er þegar uppsett."
 msgid ""
 "This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
 "Optimizations' script first."
 msgstr ""
-"Este sistema já foi otimizado pelo LinuxToys. Para reaplicar, por favor, use primeiro o script "
-"'Reverter Otimizações'."
+"Þetta kerfi hefur þegar verið hámarkað af LinuxToys. Til að endurhanna, vinsamlegast notaðu "
+"'Aftengja hámarkanir' skriftina fyrst."
 msgid "Choose your device type:"
-msgstr "Escolha o tipo de dispositivo:"
+msgstr "Veldu tæki tegund:"
 msgid "AMD Drivers"
-msgstr "Drivers da AMD"
+msgstr "AMD drifta"
 msgid "Installation successful."
-msgstr "Instalação bem-sucedida."
+msgstr "Uppsetning tókst."
 msgid ""
 "This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
 "required to use the Studio version."
 msgstr ""
-"Este script apenas instala o software DaVinci Resolve. É necessária uma licença da Blackmagic "
-"Design para usar a versão Studio."
+"Þessi skrift setur aðeins upp DaVinci Resolve hugbúnaðinn. Leyfi frá Blackmagic Design er "
+"nauðsynlegt til að nota Studio útgáfuna."
 msgid "The application is already up to date."
-msgstr "O aplicativo já está atualizado."
+msgstr "Forritið er þegar uppfært."
 msgid "Optimization Complete"
-msgstr "Otimização Completa"
+msgstr "Hagræðing Lokið"
 msgid ""
 "Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
 "Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
 "process."
 msgstr ""
-"Otimização concluída. Por favor, reinicie seu sistema. Você será solicitado a registrar uma nova "
-"MOK (Chave do Proprietário da Máquina) para Inicialização Segura. Selecione 'Registrar MOK' e siga "
-"as instruções para concluir o processo."
+"Vinnsla lokið. Vinsamlegast endurræstu kerfið þitt. Þú munt fá beiðni um að skrá nýjan MOK "
+"(Vélareiganda lykil) fyrir Öruggan Ræsingu. Vinsamlegast veldu 'Skrá MOK' og fylgdu leiðbeiningunum "
+"til að ljúka ferlinu."
 msgid ""
 "Packages for Active Directory integration have been installed. You can now join a domain using the "
 "'realm join' command."
 msgstr ""
-"Os pacotes para integração com o Active Directory foram instalados. Você agora pode ingressar em um "
-"domínio usando o comando 'realm join'."
+"Pakkar fyrir Active Directory samþættingu hafa verið settir upp. Þú getur nú tengst lén með 'realm "
+"join' skipuninni."
 msgid ""
 "This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
 "Lutris or Bottles. Please make sure it is installed before proceeding."
 msgstr ""
-"Este script requer que o Lossless Scaling para Windows esteja instalado no seu sistema via Steam, "
-"Lutris ou Bottles. Por favor, certifique-se de que ele está instalado antes de prosseguir."
+"Þessi skrift krefst þess að Lossless Scaling fyrir Windows sé uppsett á kerfinu þínu í gegnum "
+"Steam, Lutris eða Bottles. Vinsamlegast tryggðu að það sé uppsett áður en þú heldur áfram."
 msgid "Lossless.dll not found. Did you install Lossless Scaling?"
-msgstr "Lossless.dll não encontrado. Você instalou o Lossless Scaling?"
+msgstr "Lossless.dll fannst ekki. Hefurðu sett upp Lossless Scaling?"
 msgid "Please check your wheel's compatibility before proceeding."
-msgstr "Por favor, verifique a compatibilidade do seu volante antes de prosseguir."
+msgstr "Vinsamlegast athugaðu samhæfi hjólsins áður en þú heldur áfram."
 msgid "Unsupported OpenSUSE version."
-msgstr "Versão do OpenSUSE não suportada."
+msgstr "Óstuddur OpenSUSE útgáfa."
 msgid "No compatible AMD GPU found."
-msgstr "Nenhuma GPU AMD compatível encontrada."
+msgstr "Engin samhæfð AMD GPU fundin."
 msgid "This program is already installed. Do you want to remove it?"
-msgstr "Este programa já está instalado. Deseja removê-lo?"
+msgstr "Þetta forrit er þegar komið. Viltu fjarlægja það?"
 msgid ""
 "This will install a daemon that preloads frequently used applications into memory to speed up "
 "launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
 msgstr ""
-"Isso instalará um daemon que pré-carrega aplicativos usados com frequência na memória para acelerar "
-"os tempos de inicialização. Isso é recomendado apenas para sistemas com mais de 12GB de RAM. "
-"Prosseguir?"
+"Þetta mun setja upp daemón sem hleður oft notuðum forritum í minni til að flýta fyrir upphafstímum. "
+"Þetta er aðeins mælt með fyrir kerfi með meira en 12GB af RAM. Halda áfram?"
 msgid "Your system does not have enough RAM to use this feature safely."
-msgstr "Seu sistema não tem RAM suficiente para usar este recurso com segurança."
+msgstr "Kerfið þitt hefur ekki nægjanlegt RAM til að nota þessa eiginleika örugglega."
 msgid "The firewall has been configured and enabled."
-msgstr "O firewall foi configurado e ativado."
+msgstr "Brennið hefur verið stillt og virkjað."
 msgid "Welcome to the LSW installer!"
-msgstr "Bem-vindo ao instalador do LSW!"
+msgstr "Velkomin í LSW uppsetninguna!"
 msgid "This script will guide you through installing Windows on Linux."
-msgstr "Este script irá guiá-lo na instalação do Windows no Linux."
+msgstr "Þessi skrift mun leiða þig í gegnum uppsetningu á Windows á Linux."
 msgid "WARNINGS:"
-msgstr "AVISOS:"
+msgstr "VARNIR:"
 msgid "* This is an automated script. Use at your own risk."
-msgstr "* Este é um script automatizado. Use por sua conta e risco."
+msgstr "* Þetta er sjálfvirkur skrift. Notið á eigin ábyrgð."
 msgid "* A stable internet connection is required."
-msgstr "* É necessária uma conexão de internet estável."
+msgstr "* Krafist netteng tenging er nauðsynleg."
 msgid "* Do NOT close the terminal during installation."
-msgstr "* NÃO feche o terminal durante a instalação."
+msgstr "* Ekki loka terminalinum meðan á uppsetningu stendur."
 msgid "* GPU acceleration is NOT available."
-msgstr "* A aceleração de GPU NÃO está disponível."
+msgstr "* GPU hraðun er EKKI í boði."
 msgid "I have read and understood the warnings."
-msgstr "Li e entendi os avisos."
+msgstr "Ég hef lesið og skilið viðvaranirnar."
 msgid "Do you want to proceed with the installation?"
-msgstr "Você deseja prosseguir com a instalação?"
+msgstr "Viltu halda áfram með uppsetninguna?"
 msgid "Swapfile creation successful."
-msgstr "Criação do arquivo de troca bem-sucedida."
+msgstr "Skiptöflu stofnun árangursrík."
 msgid "Swap already enabled in your system."
-msgstr "Swap já habilitado em seu sistema."
+msgstr "Skipting er þegar virk í kerfinu þínu."
 msgid "No valid shell found."
-msgstr "Nenhum shell válido encontrado."
+msgstr "Engin gilt ekki fundin."
 msgid "Success! Reboot to apply."
-msgstr "Sucesso! Reinicie para aplicar."
+msgstr "Sigríkt! Endurræstu til að beita."
 msgid "System already patched."
-msgstr "Sistema já corrigido."
+msgstr "Kerfið er þegar lagfært."
 msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
-msgstr "Isso requer o repositório Chaotic-AUR. Deseja habilitá-lo?"
+msgstr "Þetta krefst Chaotic-AUR geymslunnar. Viltu virkja hana?"
 msgid "Skipping btrfs-assistant installation."
-msgstr "Pulando a instalação do btrfs-assistant."
+msgstr "Sleppa btrfs-assistant uppsetningu."
 msgid "Your root filesystem is not btrfs."
-msgstr "Seu sistema de arquivos raiz não é btrfs."
+msgstr "Rótkerfið þitt er ekki btrfs."
 msgid "Not enough RAM. At least 12GB total is required to continue."
-msgstr "Memória RAM insuficiente. São necessários pelo menos 12GB no total para continuar."
+msgstr "Ekki nægilegt RAM. Að minnsta kosti 12GB heildar er krafist til að halda áfram."
 msgid "Not enough free RAM. Close some applications and try again."
-msgstr "Memória RAM livre insuficiente. Feche algumas aplicações e tente novamente."
+msgstr "Ekki nóg frjáls RAM. Lokaðu nokkrum forritum og reyndu aftur."
 msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
-msgstr "Threads de CPU insuficientes para instalar o hipervisor do Windows, mínimo de 4."
+msgstr "Ekki nægjanleg CPU þræðir til að setja upp Windows hypervisor, lágmark 4."
 msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
-msgstr "Digite o tamanho do disco do Windows (C:) em GB. Deixe em branco para usar 50GB."
+msgstr "Sláðu inn Windows disk (C:) stærð í GB. Láttu tómt til að nota 50GB."
 msgid "Invalid input for disk size. Please enter a number."
-msgstr "Entrada inválida para o tamanho do disco. Por favor, insira um número."
+msgstr "Ógildur inntak fyrir diskastærð. Vinsamlegast sláðu inn tölu."
 msgid "Minimum space to install Windows (C:) is 40GB."
-msgstr "O espaço mínimo para instalar o Windows (C:) é de 40GB."
+msgstr "Lágmarkspláss til að setja Windows (C:) er 40GB."
 msgid "Not enough disk space: %s GB required, %s GB available."
-msgstr "Espaço em disco insuficiente: %s GB necessários, %s GB disponíveis."
+msgstr "Ekki nóg pláss á disknum: %s GB nauðsynlegt, %s GB tiltækt."
 msgid "No compatible terminal emulator found to launch Podman Compose."
-msgstr "Nenhum emulador de terminal compatível encontrado para iniciar o Podman Compose."
+msgstr "Engin sem ekki er að finna til að ræsa Podman Compose."
 msgid "Is the Windows installation finished?"
-msgstr "A instalação do Windows foi concluída?"
+msgstr "Er Windows uppsetningin lokið?"
 msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
-msgstr "Deseja reverter todas as alterações? AVISO: Isso APAGARÁ todos os dados do Podman Compose!"
+msgstr "Viltu afturkalla allar breytingar? VARÚÐ: Þetta mun EYÐA öllum Podman Compose gögnum!"
 msgid "No GRUB found."
-msgstr "Nenhum GRUB encontrado."
+msgstr "Engin GRUB fannst ekki."
 msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
 msgstr ""
-"Isso listará os snapshots no seu GRUB. Só funcionará se o seu sistema de arquivos raiz for btrfs. "
-"Prosseguir?"
+"Þetta mun lista myndir í GRUB þínum. Það mun aðeins virka ef rótarskrákerfið þitt er btrfs. Halda "
+"áfram?"
 msgid "No WiFi device found."
-msgstr "Nenhum dispositivo WiFi encontrado."
+msgstr "Engin WiFi fannst ekki."
 msgid "iwd.conf file not found. IWD was not enabled in this system."
-msgstr "Arquivo iwd.conf não encontrado. O IWD não foi ativado neste sistema."
+msgstr "iwd.conf skrá fannst ekki. IWD var ekki virkjað í þessu kerfi."
 msgid "SELinux policy has been updated."
-msgstr "A política do SELinux foi atualizada."
+msgstr "SELinux stefnir hefur verið uppfærð."
 msgid "This script is only for OpenSUSE-based distributions."
-msgstr "Este script é apenas para distribuições baseadas em OpenSUSE."
+msgstr "Þessi skrift er aðeins fyrir OpenSUSE-grunnu dreifingar."
 msgid "Docker + Portainer CE Setup"
-msgstr "Configuração Docker + Portainer CE"
+msgstr "Docker + Portainer CE Uppsetning"
 msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
 msgstr ""
-"Isso instalará o Docker Engine e o Portainer CE para gerenciá-lo através de uma interface web. "
-"Prosseguir?"
+"Þetta mun setja upp Docker Engine og Portainer CE til að stjórna því í gegnum vefviðmót. Halda "
+"áfram?"
 msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
-msgstr "Configuração concluída. O painel do Portainer será aberto no seu navegador agora."
+msgstr "Uppsetning lokið. Portainer stjórnborðið þitt mun opnast í vefvafranum þínum núna."
 msgid "Choose JDK versions to install"
-msgstr "Escolha as versões do JDK para instalar"
+msgstr "Veldu JDK útgáfur til að setja upp"
 msgid ""
 "NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
 ".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
 msgstr ""
-"O NVM foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"NVM hefur verið sett upp. Vinsamlegast endurræstu terminalinn þinn eða uppfærðu stillingaskrána "
+"þína (t.d. .bashrc, .zshrc) til að byrja að nota það. Vafragluggi mun nú opnast með "
+"notkunarleiðbeiningum."
 msgid ""
 "PyEnv has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
 "instructions."
 msgstr ""
-"O PyEnv foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração "
-"do shell (ex: .bash_profile, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"PyEnv hefur verið settur upp. Vinsamlegast endurræstu terminalinn þinn eða uppfærðu shell "
+"stillingaskrána þína (t.d. .bash_profile, .zshrc) til að byrja að nota hann. Vafragluggi mun nú "
+"opnast með notkunarleiðbeiningum."
 msgid ""
 "Mise has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
 "documentation."
 msgstr ""
-"O Mise foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com a "
-"documentação oficial."
+"Mise hefur verið sett upp. Vinsamlegast endurræstu terminalinn þinn eða uppfærðu stillingaskrána "
+"þína (t.d. .bashrc, .zshrc) til að byrja að nota það. Vafragluggi mun nú opnast með opinberu "
+"skjölunum."
 # 
 # File: linuxtoys/p3/app/footer.py, line: 13
 msgid "Support this project"
-msgstr "Apoie este projeto"
+msgstr "Stuðla að þessu verkefni"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 18
 msgid "Check us out on GitHub"
-msgstr "Confira-nos no GitHub"
+msgstr "Skoðaðu okkur á GitHub"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 49
 msgid "Wiki"
-msgstr "Wiki"
+msgstr "Vísindaskáld"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 53
 msgid "Report Bug"
-msgstr "Relatar Bug"
+msgstr "Skýra villu"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 60
 msgid "Credits"
-msgstr "Créditos"
+msgstr "Kreditar"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 37
 msgid "script_runner_title"
-msgstr "título_do_executador_de_script"
+msgstr "skrift_keyrari_titill"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 43
 msgid "script_runner_close"
-msgstr "fechar_script_executor"
+msgstr "skrift_runnar_loka"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 126
 # File: linuxtoys/p3/app/script_runner.py, line: 209
 #, python-brace-format
 msgid "Running Checklist ({current}/{total})"
-msgstr "Lista de Verificação em Execução ({current}/{total})"
+msgstr "Keyrska lista ({current}/{total})"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 137
 msgid "Close"
-msgstr "Fechar"
+msgstr "Lokaðu"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 410
 msgid "script_runner_finished"
-msgstr "execução_do_script_concluída"
+msgstr "skrift_rásin_lokið"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -242,7 +242,7 @@ msgstr "execução_do_script_concluída"
 # File: linuxtoys/p3/app/header.py, line: 34
 # File: linuxtoys/p3/app/about_helper.py, line: 140
 msgid "subtitle"
-msgstr "legenda"
+msgstr "undirskrift"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -250,7 +250,7 @@ msgstr "legenda"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 49
 # File: linuxtoys/p3/app/confirm_helper.py, line: 140
 msgid "Install"
-msgstr "Instalar"
+msgstr "Setja upp"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -258,40 +258,40 @@ msgstr "Instalar"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 50
 # File: linuxtoys/p3/app/confirm_helper.py, line: 141
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Hætta við"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 346
 msgid "ostree_deployment_title"
-msgstr "Título da implantação do ostree"
+msgstr "ostree_deployment_title"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 347
 msgid "ostree_deployment_message"
-msgstr "mensagem_de_deploy_ostree"
+msgstr "ostree_deployment_message"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 348
 msgid "reboot_now_btn"
-msgstr "reiniciar_agora_btn"
+msgstr "endurr_núna_takki"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 349
 msgid "reboot_later_btn"
-msgstr "reiniciar_depois_btn"
+msgstr "endurr_síðar_knappur"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 225
 msgid "update_available_title"
-msgstr "atualização_disponível_título"
+msgstr "uppfærslu_tilgengilegt_titill"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 230
 msgid "update_download_btn"
-msgstr "atualizar_botão_download"
+msgstr "uppfærsluhlaða_takka"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 231
 msgid "update_ignore_btn"
-msgstr "atualizar_ignorar_btn"
+msgstr "uppfærslu_ignora_takka"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 278
 # File: linuxtoys/p3/app/update_helper.py, line: 323
 msgid "No changelog available."
-msgstr "Nenhum registro de alterações disponível."
+msgstr "Engin ekki breytingaskrá til."
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 336
 # 
@@ -300,111 +300,111 @@ msgstr "Nenhum registro de alterações disponível."
 # File: linuxtoys/p3/app/head_menu.py, line: 10
 # File: linuxtoys/p3/app/head_menu.py, line: 25
 msgid "Waiting..."
-msgstr "Aguardando..."
+msgstr "Bíðandi..."
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 53
 msgid "load_manifest"
-msgstr "carregar_manifesto"
+msgstr "hlaða_manifest"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 79
 msgid "choose_manifest_title"
-msgstr "escolher_título_do_manifesto"
+msgstr "veldu_skrá_titil"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 85
 msgid "select_button"
-msgstr "botão_selecionar"
+msgstr "velja_takka"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 90
 msgid "loading_manifest_message"
-msgstr "mensagem_carregando_manifesto"
+msgstr "hlaða_manifest_skila"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 115
 msgid "packages_flatpaks"
-msgstr "pacotes_flatpaks"
+msgstr "pakka_flatpak"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 48
 msgid "Confirm Action"
-msgstr "Confirmar Ação"
+msgstr "Staðfesta aðgerð"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 51
 msgid "Script Details"
-msgstr "Detalhes do Script"
+msgstr "Skráarskýrsla"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 139
 msgid "Confirm Installation"
-msgstr "Confirmar Instalação"
+msgstr "Staðfesta uppsetningu"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 142
 msgid "Selected Items"
-msgstr "Itens Selecionados"
+msgstr "Valin valin."
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 211
 msgid "Note: {} script(s) will run automatically without confirmation."
-msgstr "Nota: {} script(s) serão executados automaticamente sem confirmação."
+msgstr "Athugið: {} skrift(ur) munu keyra sjálfkrafa án staðfestingar."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 22
 msgid "About LinuxToys"
-msgstr "Sobre o LinuxToys"
+msgstr "Um LinuxToys"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 61
 msgid "About"
-msgstr "Sobre"
+msgstr "Um umfjöllun"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 77
 msgid "License file not found."
-msgstr "Arquivo de licença não encontrado."
+msgstr "Skráningarskjal fannst ekki."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 91
 msgid "License"
-msgstr "Licença"
+msgstr "Leyfi"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 185
 msgid "Project Lead"
-msgstr "Líder de Projeto"
+msgstr "Verkefnisstjóri"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 214
 msgid "Loading contributors..."
-msgstr "Carregando colaboradores..."
+msgstr "Hlaða framleiðendum..."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 270
 msgid "Unable to load contributors"
-msgstr "Incapaz de carregar colaboradores"
+msgstr "Ekki hægt að hlaða framlagara."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 65
 msgid "Reboot Required"
-msgstr "Reinicialização Necessária"
+msgstr "Endurstilling nauðsynleg."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 71
 # File: linuxtoys/p3/app/reboot_helper.py, line: 139
 msgid "Reboot Now"
-msgstr "Reiniciar Agora"
+msgstr "Endurræsa núna"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 72
 # File: linuxtoys/p3/app/reboot_helper.py, line: 140
 msgid "Reboot Later"
-msgstr "Reiniciar Depois"
+msgstr "Endurræsa síðar"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 94
 msgid ""
 "A script requiring a system reboot has been executed. You must reboot your computer before "
 "installing other features."
 msgstr ""
-"Um script que requer uma reinicialização do sistema foi executado. Você deve reiniciar seu "
-"computador antes de instalar outros recursos."
+"Skrá sem krafðist kerfisendurræsingar hefur verið framkvæmd. Þú verður að endurræsa tölvuna þína "
+"áður en þú setur upp aðrar eiginleika."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 133
 msgid "Pending System Updates"
-msgstr "Atualizações do Sistema Pendentes"
+msgstr "Vélar uppfærslur í bið."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 162
 msgid ""
 "Your system has pending updates that require a reboot to complete. Please reboot your computer to "
 "apply these updates before continuing."
 msgstr ""
-"Seu sistema tem atualizações pendentes que requerem uma reinicialização para serem concluídas. Por "
-"favor, reinicie seu computador para aplicar essas atualizações antes de continuar."
+"Kerfið þitt hefur ókláraðar uppfærslur sem krafist er að endurræsa til að ljúka. Vinsamlegast "
+"endurræstu tölvuna þína til að beita þessum uppfærslum áður en þú heldur áfram."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 202
 # File: linuxtoys/p3/app/reboot_helper.py, line: 211
 msgid "Reboot Failed"
-msgstr "Reinicialização Falhou"
+msgstr "Endurræsing mistókst"

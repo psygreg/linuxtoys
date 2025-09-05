@@ -1,0 +1,413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Οι λειτουργίες ολοκληρώθηκαν."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "Η F3 έχει εγκατασταθεί. Τώρα θα ανοίξει ένα παράθυρο προγράμματος περιήγησης με οδηγίες χρήσης."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Θέλετε να εγκαταστήσετε σενάρια για μετάφραση ARM; (συνιστάται)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "Η ρύθμιση του Waydroid ολοκληρώθηκε. Μπορείτε τώρα να το εκκινήσετε από το μενού εφαρμογών σας."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Το Waydroid απαιτεί μια συνεδρία Wayland για να λειτουργήσει."
+msgid "Reboot your system to apply the changes."
+msgstr "Επανεκκινήστε το σύστημά σας για να εφαρμόσετε τις αλλαγές."
+msgid "This script is not compatible with your operating system."
+msgstr "Αυτό το σενάριο δεν είναι συμβατό με το λειτουργικό σας σύστημα."
+msgid "Cloudflare WARP is already installed."
+msgstr "Το Cloudflare WARP είναι ήδη εγκατεστημένο."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Αυτό το σύστημα έχει ήδη βελτιστοποιηθεί από το LinuxToys. Για να επαναλάβετε, παρακαλώ "
+"χρησιμοποιήστε πρώτα το σενάριο 'Αναίρεση Βελτιστοποιήσεων'."
+msgid "Choose your device type:"
+msgstr "Επιλέξτε τον τύπο της συσκευής σας:"
+msgid "AMD Drivers"
+msgstr "Οδηγοί AMD"
+msgid "Installation successful."
+msgstr "Η εγκατάσταση ολοκληρώθηκε με επιτυχία."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Αυτό το σενάριο εγκαθιστά μόνο το λογισμικό DaVinci Resolve. Απαιτείται άδεια από την Blackmagic "
+"Design για να χρησιμοποιήσετε την έκδοση Studio."
+msgid "The application is already up to date."
+msgstr "Η εφαρμογή είναι ήδη ενημερωμένη."
+msgid "Optimization Complete"
+msgstr "Η βελτιστοποίηση ολοκληρώθηκε"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Η βελτιστοποίηση ολοκληρώθηκε. Παρακαλώ επανεκκινήστε το σύστημά σας. Θα σας ζητηθεί να εγγραφείτε "
+"σε ένα νέο MOK (Κλειδί Ιδιοκτήτη Μηχανής) για την Ασφαλή Εκκίνηση. Παρακαλώ επιλέξτε 'Εγγραφή MOK' "
+"και ακολουθήστε τις οδηγίες για να ολοκληρώσετε τη διαδικασία."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"Τα πακέτα για την ενσωμάτωση του Active Directory έχουν εγκατασταθεί. Μπορείτε τώρα να συμμετάσχετε "
+"σε ένα τομέα χρησιμοποιώντας την εντολή 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Αυτό το σενάριο απαιτεί την εγκατάσταση του Lossless Scaling για Windows στο σύστημά σας μέσω του "
+"Steam, Lutris ή Bottles. Παρακαλώ βεβαιωθείτε ότι είναι εγκατεστημένο πριν προχωρήσετε."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Δεν βρέθηκε το Lossless.dll. Εγκαταστήσατε το Lossless Scaling;"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Παρακαλώ ελέγξτε τη συμβατότητα του τροχού σας πριν προχωρήσετε."
+msgid "Unsupported OpenSUSE version."
+msgstr "Μη υποsupported έκδοση OpenSUSE."
+msgid "No compatible AMD GPU found."
+msgstr "Δεν βρέθηκε συμβατή GPU AMD."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Αυτό το πρόγραμμα είναι ήδη εγκατεστημένο. Θέλετε να το αφαιρέσετε;"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Αυτό θα εγκαταστήσει έναν δαίμονα που προφορτώνει συχνά χρησιμοποιούμενες εφαρμογές στη μνήμη για "
+"να επιταχύνει τους χρόνους εκκίνησης. Συνιστάται μόνο για συστήματα με περισσότερα από 12GB RAM. "
+"Συνεχίσετε;"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Το σύστημά σας δεν διαθέτει αρκετή RAM για να χρησιμοποιήσει αυτή τη δυνατότητα με ασφάλεια."
+msgid "The firewall has been configured and enabled."
+msgstr "Το τείχος προστασίας έχει ρυθμιστεί και έχει ενεργοποιηθεί."
+msgid "Welcome to the LSW installer!"
+msgstr "Καλώς ήρθατε στον εγκαταστάτη LSW!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Αυτό το σενάριο θα σας καθοδηγήσει στη διαδικασία εγκατάστασης των Windows σε Linux."
+msgid "WARNINGS:"
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΕΙΣ:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Αυτό είναι ένα αυτοματοποιημένο σενάριο. Χρησιμοποιήστε το με δική σας ευθύνη."
+msgid "* A stable internet connection is required."
+msgstr "* Απαιτείται σταθερή σύνδεση στο διαδίκτυο."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* ΜΗΝ κλείσετε το τερματικό κατά τη διάρκεια της εγκατάστασης."
+msgid "* GPU acceleration is NOT available."
+msgstr "* Η επιτάχυνση GPU ΔΕΝ είναι διαθέσιμη."
+msgid "I have read and understood the warnings."
+msgstr "Έχω διαβάσει και κατανοήσει τις προειδοποιήσεις."
+msgid "Do you want to proceed with the installation?"
+msgstr "Θέλετε να προχωρήσετε με την εγκατάσταση;"
+msgid "Swapfile creation successful."
+msgstr "Η δημιουργία του αρχείου ανταλλαγής ήταν επιτυχής."
+msgid "Swap already enabled in your system."
+msgstr "Η εναλλαγή είναι ήδη ενεργοποιημένη στο σύστημά σας."
+msgid "No valid shell found."
+msgstr "Δεν βρέθηκε έγκυρο κέλυφος."
+msgid "Success! Reboot to apply."
+msgstr "Επιτυχία! Επανεκκίνηση για εφαρμογή."
+msgid "System already patched."
+msgstr "Το σύστημα έχει ήδη διορθωθεί."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Αυτό απαιτεί το αποθετήριο Chaotic-AUR. Θέλετε να το ενεργοποιήσετε;"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Παράλειψη εγκατάστασης btrfs-assistant."
+msgid "Your root filesystem is not btrfs."
+msgstr "Το ριζικό σας σύστημα αρχείων δεν είναι btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Δεν υπάρχει αρκετή RAM. Απαιτούνται τουλάχιστον 12GB συνολικά για να συνεχίσετε."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Δεν υπάρχει αρκετή ελεύθερη RAM. Κλείστε μερικές εφαρμογές και δοκιμάστε ξανά."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Δεν υπάρχουν αρκετοί πυρήνες CPU για να εγκαταστήσετε τον υπερ-επιβλέποντα των Windows, ελάχιστο 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Εισάγετε το μέγεθος του δίσκου Windows (C:) σε GB. Αφήστε κενό για να χρησιμοποιήσετε 50GB."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Μη έγκυρη είσοδος για το μέγεθος δίσκου. Παρακαλώ εισάγετε έναν αριθμό."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Ο ελάχιστος χώρος για την εγκατάσταση των Windows (C:) είναι 40GB."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Όχι αρκετός χώρος δίσκου: απαιτούνται %s GB, %s GB διαθέσιμα."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Δεν βρέθηκε συμβατός εκτελεστής τερματικού για την εκκίνηση του Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "Έχει ολοκληρωθεί η εγκατάσταση των Windows;"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr ""
+"Θέλετε να αναιρέσετε όλες τις αλλαγές; ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα ΔΙΑΓΡΑΨΕΙ όλα τα δεδομένα του Podman "
+"Compose!"
+msgid "No GRUB found."
+msgstr "Δεν βρέθηκε GRUB."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Αυτό θα καταγράψει τα στιγμιότυπα στο GRUB σας. Θα λειτουργήσει μόνο αν το ριζικό σας σύστημα "
+"αρχείων είναι btrfs. Θέλετε να προχωρήσετε;"
+msgid "No WiFi device found."
+msgstr "Δεν βρέθηκε συσκευή WiFi."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "Δεν βρέθηκε το αρχείο iwd.conf. Το IWD δεν ήταν ενεργοποιημένο σε αυτό το σύστημα."
+msgid "SELinux policy has been updated."
+msgstr "Η πολιτική SELinux έχει ενημερωθεί."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Αυτό το σενάριο είναι μόνο για διανομές που βασίζονται σε OpenSUSE."
+msgid "Docker + Portainer CE Setup"
+msgstr "Docker + Portainer CE Ρύθμιση"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr ""
+"Αυτό θα εγκαταστήσει το Docker Engine και το Portainer CE για να το διαχειριστείτε μέσω ενός "
+"διαδικτυακού UI. Συνεχίζετε;"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Η ρύθμιση ολοκληρώθηκε. Ο πίνακας ελέγχου του Portainer θα ανοίξει τώρα στον περιηγητή ιστού σας."
+msgid "Choose JDK versions to install"
+msgstr "Επιλέξτε εκδόσεις JDK για εγκατάσταση"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"Η NVM έχει εγκατασταθεί. Παρακαλώ επανεκκινήστε το τερματικό σας ή φορτώστε το αρχείο ρύθμισης του "
+"κελύφους σας (π.χ., .bashrc, .zshrc) για να αρχίσετε να το χρησιμοποιείτε. Ένα παράθυρο "
+"προγράμματος περιήγησης θα ανοίξει τώρα με οδηγίες χρήσης."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"Το PyEnv έχει εγκατασταθεί. Παρακαλώ επανεκκινήστε το τερματικό σας ή φορτώστε το αρχείο ρύθμισης "
+"του shell σας (π.χ., .bash_profile, .zshrc) για να αρχίσετε να το χρησιμοποιείτε. Ένα παράθυρο "
+"προγράμματος περιήγησης θα ανοίξει τώρα με οδηγίες χρήσης."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Η Mise έχει εγκατασταθεί. Παρακαλώ επανεκκινήστε το τερματικό σας ή φορτώστε το αρχείο ρύθμισης του "
+"κελύφους σας (π.χ., .bashrc, .zshrc) για να αρχίσετε να το χρησιμοποιείτε. Ένα παράθυρο "
+"προγράμματος περιήγησης θα ανοίξει τώρα με την επίσημη τεκμηρίωση."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Υποστηρίξτε αυτό το έργο"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Δείτε μας στο GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Wiki"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Αναφορά σφάλματος"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Πιστώσεις"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "τίτλος_εκτελεστή_σεναρίου"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "κλείσιμο_σεναρίου_εκτέλεσης"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Λίστα Ελέγχου Εκτέλεσης ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Κλείσιμο"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "ο_εκτελεστής_σεναρίου_ολοκληρώθηκε"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+msgid "subtitle"
+msgstr "υπότιτλος"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Εγκατάσταση"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Ακύρωση"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "τίτλος_αναπτύξεως_ostree"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "μήνυμα_αναπτύξεως_ostree"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "επανεκκίνηση_τώρα_κουμπί"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "επανεκκίνηση_αργότερα_κουμπί"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "διαθέσιμη_ενημέρωση_τίτλος"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "κουμπί_λήψης_ενημέρωσης"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "κουμπί_αγνοήσε_ενημέρωση"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Δεν είναι διαθέσιμο το ιστορικό αλλαγών."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "Αναμονή..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "φορτώστε_μανιφέστο"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "επιλέξτε_tίτλο_μανιφέστου"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "κουμπί_επιλογής"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "φόρτωση_μηνύματος_μανιφέστου"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "πακέτα_flatpaks"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Επιβεβαίωση Ενέργειας"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Λεπτομέρειες σεναρίου"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Επιβεβαίωση Εγκατάστασης"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Επιλεγμένα Αντικείμενα"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Σημείωση: {} σενάριο(α) θα εκτελούνται αυτόματα χωρίς επιβεβαίωση."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "Σχετικά με το LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "Σχετικά"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "Δεν βρέθηκε το αρχείο άδειας."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Άδεια"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Επικεφαλής Έργου"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Φόρτωση συνεισφερόντων..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Αδύνατη η φόρτωση συνεισφερόντων"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Απαιτείται Επανεκκίνηση"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Επανεκκίνηση Τώρα"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Επανεκκίνηση Αργότερα"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"Ένα σενάριο που απαιτεί επανεκκίνηση του συστήματος έχει εκτελεστεί. Πρέπει να επανεκκινήσετε τον "
+"υπολογιστή σας πριν εγκαταστήσετε άλλες δυνατότητες."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "Εκκρεμείς Ενημερώσεις Συστήματος"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Το σύστημά σας έχει εκκρεμείς ενημερώσεις που απαιτούν επανεκκίνηση για να ολοκληρωθούν. Παρακαλώ "
+"επανεκκινήστε τον υπολογιστή σας για να εφαρμόσετε αυτές τις ενημερώσεις πριν συνεχίσετε."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Αποτυχία επανεκκίνησης"

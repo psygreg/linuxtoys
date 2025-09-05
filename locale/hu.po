@@ -1,206 +1,210 @@
-# Portuguese translation for linuxtoys
-# Copyright (C) 2024 The LinuxToys Authors
-# This file is distributed under the same license as the LinuxToys package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: linuxtoys 1.0\n"
+"Project-Id-Version: linuxtoys\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: Portuguese\n"
-"Language: pt\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
 msgid "Operations completed."
-msgstr "Operações concluídas."
+msgstr "Műveletek befejezve."
 msgid "F3 has been installed. A browser window will now open with usage instructions."
-msgstr "O F3 foi instalado. Uma janela do navegador será aberta agora com instruções de uso."
+msgstr "Az F3 telepítve lett. Most egy böngészőablak nyílik meg a használati utasításokkal."
 msgid "Do you want to install scripts for ARM translation? (recommended)"
-msgstr "Deseja instalar scripts para tradução ARM? (recomendado)"
+msgstr "Szeretné telepíteni az ARM fordításhoz szükséges szkripteket? (ajánlott)"
 msgid "Waydroid setup is complete. You can now launch it from your applications menu."
-msgstr "A configuração do Waydroid está completa. Agora você pode iniciá-lo a partir do menu de aplicativos."
+msgstr "A Waydroid beállítása befejeződött. Mostantól elindíthatja az alkalmazások menüjéből."
 msgid "Waydroid requires a Wayland session to work."
-msgstr "O Waydroid requer uma sessão Wayland para funcionar."
+msgstr "A Waydroid működéséhez Wayland munkamenet szükséges."
 msgid "Reboot your system to apply the changes."
-msgstr "Reinicie o sistema para aplicar as alterações."
+msgstr "Indítsa újra a rendszert a változtatások alkalmazásához."
 msgid "This script is not compatible with your operating system."
-msgstr "Este script não é compatível com o seu sistema operacional."
+msgstr "Ez a szkript nem kompatibilis az operációs rendszerével."
 msgid "Cloudflare WARP is already installed."
-msgstr "O Cloudflare WARP já está instalado."
+msgstr "A Cloudflare WARP már telepítve van."
 msgid ""
 "This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
 "Optimizations' script first."
 msgstr ""
-"Este sistema já foi otimizado pelo LinuxToys. Para reaplicar, por favor, use primeiro o script "
-"'Reverter Otimizações'."
+"Ez a rendszer már optimalizálva lett a LinuxToys által. Az újraalkalmazáshoz először kérjük, "
+"használja az 'Optimalizálások visszavonása' szkriptet."
 msgid "Choose your device type:"
-msgstr "Escolha o tipo de dispositivo:"
+msgstr "Válaszd ki az eszköztípusodat:"
 msgid "AMD Drivers"
-msgstr "Drivers da AMD"
+msgstr "AMD illesztőprogramok"
 msgid "Installation successful."
-msgstr "Instalação bem-sucedida."
+msgstr "A telepítés sikeres."
 msgid ""
 "This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
 "required to use the Studio version."
 msgstr ""
-"Este script apenas instala o software DaVinci Resolve. É necessária uma licença da Blackmagic "
-"Design para usar a versão Studio."
+"Ez a szkript csak a DaVinci Resolve szoftvert telepíti. A Stúdió verzió használatához Blackmagic "
+"Design licenc szükséges."
 msgid "The application is already up to date."
-msgstr "O aplicativo já está atualizado."
+msgstr "Az alkalmazás már naprakész."
 msgid "Optimization Complete"
-msgstr "Otimização Completa"
+msgstr "Optimalizálás befejezve"
 msgid ""
 "Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
 "Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
 "process."
 msgstr ""
-"Otimização concluída. Por favor, reinicie seu sistema. Você será solicitado a registrar uma nova "
-"MOK (Chave do Proprietário da Máquina) para Inicialização Segura. Selecione 'Registrar MOK' e siga "
-"as instruções para concluir o processo."
+"Az optimalizálás befejeződött. Kérjük, indítsa újra a rendszert. Fel fogja kérni, hogy "
+"regisztráljon egy új MOK-ot (Gép Tulajdonos Kulcs) a Biztonságos Indításhoz. Kérjük, válassza az "
+"'Enroll MOK' lehetőséget, és kövesse az utasításokat a folyamat befejezéséhez."
 msgid ""
 "Packages for Active Directory integration have been installed. You can now join a domain using the "
 "'realm join' command."
 msgstr ""
-"Os pacotes para integração com o Active Directory foram instalados. Você agora pode ingressar em um "
-"domínio usando o comando 'realm join'."
+"Az Active Directory integrációhoz szükséges csomagok telepítve lettek. Most már csatlakozhat egy "
+"tartományhoz a 'realm join' parancs használatával."
 msgid ""
 "This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
 "Lutris or Bottles. Please make sure it is installed before proceeding."
 msgstr ""
-"Este script requer que o Lossless Scaling para Windows esteja instalado no seu sistema via Steam, "
-"Lutris ou Bottles. Por favor, certifique-se de que ele está instalado antes de prosseguir."
+"Ez a szkript a Lossless Scaling Windows-ra való telepítését igényli a rendszereden a Steamen, "
+"Lutris-on vagy Bottles-en keresztül. Kérjük, győződj meg róla, hogy telepítve van, mielőtt "
+"folytatnád."
 msgid "Lossless.dll not found. Did you install Lossless Scaling?"
-msgstr "Lossless.dll não encontrado. Você instalou o Lossless Scaling?"
+msgstr "A Lossless.dll nem található. Telepítetted a Lossless Scalinget?"
 msgid "Please check your wheel's compatibility before proceeding."
-msgstr "Por favor, verifique a compatibilidade do seu volante antes de prosseguir."
+msgstr "Kérjük, ellenőrizze a kerék kompatibilitását a folytatás előtt."
 msgid "Unsupported OpenSUSE version."
-msgstr "Versão do OpenSUSE não suportada."
+msgstr "Támogatott OpenSUSE verzió hiányzik."
 msgid "No compatible AMD GPU found."
-msgstr "Nenhuma GPU AMD compatível encontrada."
+msgstr "Nincs kompatibilis AMD GPU."
 msgid "This program is already installed. Do you want to remove it?"
-msgstr "Este programa já está instalado. Deseja removê-lo?"
+msgstr "Ez a program már telepítve van. El akarja távolítani?"
 msgid ""
 "This will install a daemon that preloads frequently used applications into memory to speed up "
 "launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
 msgstr ""
-"Isso instalará um daemon que pré-carrega aplicativos usados com frequência na memória para acelerar "
-"os tempos de inicialização. Isso é recomendado apenas para sistemas com mais de 12GB de RAM. "
-"Prosseguir?"
+"Ez telepíteni fog egy démon, amely a gyakran használt alkalmazásokat előtölti a memóriába a "
+"gyorsabb indítási idő érdekében. Ezt csak olyan rendszerekhez ajánljuk, amelyeknek több mint 12 GB "
+"RAM-juk van. Folytatja?"
 msgid "Your system does not have enough RAM to use this feature safely."
-msgstr "Seu sistema não tem RAM suficiente para usar este recurso com segurança."
+msgstr "A rendszeredben nincs elegendő RAM a funkció biztonságos használatához."
 msgid "The firewall has been configured and enabled."
-msgstr "O firewall foi configurado e ativado."
+msgstr "A tűzfal konfigurálva és engedélyezve lett."
 msgid "Welcome to the LSW installer!"
-msgstr "Bem-vindo ao instalador do LSW!"
+msgstr "Üdvözöljük az LSW telepítőjében!"
 msgid "This script will guide you through installing Windows on Linux."
-msgstr "Este script irá guiá-lo na instalação do Windows no Linux."
+msgstr "Ez a szkript végigvezet a Windows telepítésén Linuxon."
 msgid "WARNINGS:"
-msgstr "AVISOS:"
+msgstr "FIGYELMEZTETÉSEK:"
 msgid "* This is an automated script. Use at your own risk."
-msgstr "* Este é um script automatizado. Use por sua conta e risco."
+msgstr "* Ez egy automatizált szkript. Használja saját felelősségére."
 msgid "* A stable internet connection is required."
-msgstr "* É necessária uma conexão de internet estável."
+msgstr "* Stabil internetkapcsolat szükséges."
 msgid "* Do NOT close the terminal during installation."
-msgstr "* NÃO feche o terminal durante a instalação."
+msgstr "* Ne zárja be a terminált a telepítés során."
 msgid "* GPU acceleration is NOT available."
-msgstr "* A aceleração de GPU NÃO está disponível."
+msgstr "* GPU gyorsítás NEM elérhető."
 msgid "I have read and understood the warnings."
-msgstr "Li e entendi os avisos."
+msgstr "Elolvastam és megértettem a figyelmeztetéseket."
 msgid "Do you want to proceed with the installation?"
-msgstr "Você deseja prosseguir com a instalação?"
+msgstr "Szeretné folytatni a telepítést?"
 msgid "Swapfile creation successful."
-msgstr "Criação do arquivo de troca bem-sucedida."
+msgstr "A swapfájl létrehozása sikeres."
 msgid "Swap already enabled in your system."
-msgstr "Swap já habilitado em seu sistema."
+msgstr "A csere már engedélyezve van a rendszerében."
 msgid "No valid shell found."
-msgstr "Nenhum shell válido encontrado."
+msgstr "Nincs érvényes shell található."
 msgid "Success! Reboot to apply."
-msgstr "Sucesso! Reinicie para aplicar."
+msgstr "Siker! Indítsa újra a változtatások alkalmazásához."
 msgid "System already patched."
-msgstr "Sistema já corrigido."
+msgstr "A rendszer már javítva van."
 msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
-msgstr "Isso requer o repositório Chaotic-AUR. Deseja habilitá-lo?"
+msgstr "Ez megköveteli a Chaotic-AUR tárolót. Szeretné engedélyezni?"
 msgid "Skipping btrfs-assistant installation."
-msgstr "Pulando a instalação do btrfs-assistant."
+msgstr "A btrfs-assistant telepítésének kihagyása."
 msgid "Your root filesystem is not btrfs."
-msgstr "Seu sistema de arquivos raiz não é btrfs."
+msgstr "A gyökér fájlrendszere nem btrfs."
 msgid "Not enough RAM. At least 12GB total is required to continue."
-msgstr "Memória RAM insuficiente. São necessários pelo menos 12GB no total para continuar."
+msgstr "Nem elég a RAM. Legalább 12 GB összmemória szükséges a folytatáshoz."
 msgid "Not enough free RAM. Close some applications and try again."
-msgstr "Memória RAM livre insuficiente. Feche algumas aplicações e tente novamente."
+msgstr "Nincs elég szabad RAM. Zárjon be néhány alkalmazást, és próbálja újra."
 msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
-msgstr "Threads de CPU insuficientes para instalar o hipervisor do Windows, mínimo de 4."
+msgstr "Nincs elegendő CPU szál a Windows hypervisor telepítéséhez, minimum 4 szükséges."
 msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
-msgstr "Digite o tamanho do disco do Windows (C:) em GB. Deixe em branco para usar 50GB."
+msgstr "Adja meg a Windows lemez (C:) méretét GB-ban. Hagyja üresen, ha 50 GB-ot szeretne használni."
 msgid "Invalid input for disk size. Please enter a number."
-msgstr "Entrada inválida para o tamanho do disco. Por favor, insira um número."
+msgstr "Érvénytelen bemenet a lemezmérethez. Kérjük, adjon meg egy számot."
 msgid "Minimum space to install Windows (C:) is 40GB."
-msgstr "O espaço mínimo para instalar o Windows (C:) é de 40GB."
+msgstr "A Windows (C:) telepítéséhez minimális hely 40GB."
 msgid "Not enough disk space: %s GB required, %s GB available."
-msgstr "Espaço em disco insuficiente: %s GB necessários, %s GB disponíveis."
+msgstr "Nincs elegendő lemezterület: %s GB szükséges, %s GB elérhető."
 msgid "No compatible terminal emulator found to launch Podman Compose."
-msgstr "Nenhum emulador de terminal compatível encontrado para iniciar o Podman Compose."
+msgstr "Nincs kompatibilis terminálemulátor a Podman Compose indításához."
 msgid "Is the Windows installation finished?"
-msgstr "A instalação do Windows foi concluída?"
+msgstr "Befejeződött a Windows telepítése?"
 msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
-msgstr "Deseja reverter todas as alterações? AVISO: Isso APAGARÁ todos os dados do Podman Compose!"
+msgstr ""
+"Biztosan vissza szeretné állítani az összes változtatást? FIGYELEM: Ez TÖRLI az összes Podman "
+"Compose adatot!"
 msgid "No GRUB found."
-msgstr "Nenhum GRUB encontrado."
+msgstr "Nincs GRUB."
 msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
 msgstr ""
-"Isso listará os snapshots no seu GRUB. Só funcionará se o seu sistema de arquivos raiz for btrfs. "
-"Prosseguir?"
+"Ez a GRUB-ban található pillanatképeket fogja felsorolni. Csak akkor működik, ha a gyökér "
+"fájlrendszere btrfs. Folytatja?"
 msgid "No WiFi device found."
-msgstr "Nenhum dispositivo WiFi encontrado."
+msgstr "Nincs WiFi eszköz találva."
 msgid "iwd.conf file not found. IWD was not enabled in this system."
-msgstr "Arquivo iwd.conf não encontrado. O IWD não foi ativado neste sistema."
+msgstr "iwd.conf fájl nem található. Az IWD nem volt engedélyezve ebben a rendszerben."
 msgid "SELinux policy has been updated."
-msgstr "A política do SELinux foi atualizada."
+msgstr "Az SELinux házirend frissítve lett."
 msgid "This script is only for OpenSUSE-based distributions."
-msgstr "Este script é apenas para distribuições baseadas em OpenSUSE."
+msgstr "Ez a szkript csak OpenSUSE-alapú disztribúciókhoz készült."
 msgid "Docker + Portainer CE Setup"
-msgstr "Configuração Docker + Portainer CE"
+msgstr "Docker + Portainer CE Beállítás"
 msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
 msgstr ""
-"Isso instalará o Docker Engine e o Portainer CE para gerenciá-lo através de uma interface web. "
-"Prosseguir?"
+"Ez telepíti a Docker Engine-t és a Portainer CE-t, hogy webes felületen keresztül kezelhesse. "
+"Folytatni?"
 msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
-msgstr "Configuração concluída. O painel do Portainer será aberto no seu navegador agora."
+msgstr "A telepítés befejeződött. A Portainer irányítópultja most megnyílik a webböngészőjében."
 msgid "Choose JDK versions to install"
-msgstr "Escolha as versões do JDK para instalar"
+msgstr "Válassza ki a telepítendő JDK verziókat"
 msgid ""
 "NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
 ".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
 msgstr ""
-"O NVM foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"Az NVM telepítve lett. Kérjük, indítsa újra a terminált, vagy forrásolja a shell konfigurációs "
+"fájlt (pl. .bashrc, .zshrc) a használat megkezdéséhez. Most egy böngészőablak fog megnyílni a "
+"használati utasításokkal."
 msgid ""
 "PyEnv has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
 "instructions."
 msgstr ""
-"O PyEnv foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração "
-"do shell (ex: .bash_profile, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"A PyEnv telepítve lett. Kérjük, indítsa újra a terminálját, vagy forrásolja a shell konfigurációs "
+"fájlját (pl. .bash_profile, .zshrc) a használat megkezdéséhez. Most egy böngészőablak fog megnyílni "
+"a használati utasításokkal."
 msgid ""
 "Mise has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
 "documentation."
 msgstr ""
-"O Mise foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com a "
-"documentação oficial."
+"A Mise telepítve lett. Kérjük, indítsa újra a terminálját, vagy forrásolja a shell konfigurációs "
+"fájlját (pl. .bashrc, .zshrc), hogy elkezdhesse használni. Most egy böngészőablak nyílik meg a "
+"hivatalos dokumentációval."
 # 
 # File: linuxtoys/p3/app/footer.py, line: 13
 msgid "Support this project"
-msgstr "Apoie este projeto"
+msgstr "Támogassa ezt a projektet"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 18
 msgid "Check us out on GitHub"
-msgstr "Confira-nos no GitHub"
+msgstr "Nézd meg a GitHub-on!"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 49
 msgid "Wiki"
@@ -208,33 +212,33 @@ msgstr "Wiki"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 53
 msgid "Report Bug"
-msgstr "Relatar Bug"
+msgstr "Hiba Jelentése"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 60
 msgid "Credits"
-msgstr "Créditos"
+msgstr "Hitelpontok"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 37
 msgid "script_runner_title"
-msgstr "título_do_executador_de_script"
+msgstr "script_futtató_cím"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 43
 msgid "script_runner_close"
-msgstr "fechar_script_executor"
+msgstr "script_futtató_becsukása"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 126
 # File: linuxtoys/p3/app/script_runner.py, line: 209
 #, python-brace-format
 msgid "Running Checklist ({current}/{total})"
-msgstr "Lista de Verificação em Execução ({current}/{total})"
+msgstr "Futó ellenőrzőlista ({current}/{total})"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 137
 msgid "Close"
-msgstr "Fechar"
+msgstr "Bezárás"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 410
 msgid "script_runner_finished"
-msgstr "execução_do_script_concluída"
+msgstr "script_futtatás_befejezve"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -242,7 +246,7 @@ msgstr "execução_do_script_concluída"
 # File: linuxtoys/p3/app/header.py, line: 34
 # File: linuxtoys/p3/app/about_helper.py, line: 140
 msgid "subtitle"
-msgstr "legenda"
+msgstr "felirat"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -250,7 +254,7 @@ msgstr "legenda"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 49
 # File: linuxtoys/p3/app/confirm_helper.py, line: 140
 msgid "Install"
-msgstr "Instalar"
+msgstr "Telepítés"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -258,153 +262,153 @@ msgstr "Instalar"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 50
 # File: linuxtoys/p3/app/confirm_helper.py, line: 141
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Mégse"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 346
 msgid "ostree_deployment_title"
-msgstr "Título da implantação do ostree"
+msgstr "telepítés címe"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 347
 msgid "ostree_deployment_message"
-msgstr "mensagem_de_deploy_ostree"
+msgstr "ostree_deployment_üzenet"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 348
 msgid "reboot_now_btn"
-msgstr "reiniciar_agora_btn"
+msgstr "újraindítás_most_gomb"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 349
 msgid "reboot_later_btn"
-msgstr "reiniciar_depois_btn"
+msgstr "későbbi_újraindítás_gomb"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 225
 msgid "update_available_title"
-msgstr "atualização_disponível_título"
+msgstr "frissítés_elérhető_cím"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 230
 msgid "update_download_btn"
-msgstr "atualizar_botão_download"
+msgstr "frissítés_letöltés_gomb"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 231
 msgid "update_ignore_btn"
-msgstr "atualizar_ignorar_btn"
+msgstr "frissítés_figyelmen_kívül_hagyása_gomb"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 278
 # File: linuxtoys/p3/app/update_helper.py, line: 323
 msgid "No changelog available."
-msgstr "Nenhum registro de alterações disponível."
+msgstr "Nincs elérhető változásnapló."
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 336
-# 
-# File: linuxtoys/p3/app/update_helper.py, line: 336
+msgid "OK"
+msgstr "Rendben"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 10
 # File: linuxtoys/p3/app/head_menu.py, line: 25
 msgid "Waiting..."
-msgstr "Aguardando..."
+msgstr "Várakozás..."
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 53
 msgid "load_manifest"
-msgstr "carregar_manifesto"
+msgstr "betöltés_manifest"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 79
 msgid "choose_manifest_title"
-msgstr "escolher_título_do_manifesto"
+msgstr "válassza_ki_a_manifest_címet"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 85
 msgid "select_button"
-msgstr "botão_selecionar"
+msgstr "választó_gomb"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 90
 msgid "loading_manifest_message"
-msgstr "mensagem_carregando_manifesto"
+msgstr "betöltési_manifest_üzenet"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 115
 msgid "packages_flatpaks"
-msgstr "pacotes_flatpaks"
+msgstr "csomagok_flatpaks"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 48
 msgid "Confirm Action"
-msgstr "Confirmar Ação"
+msgstr "Művelet megerősítése"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 51
 msgid "Script Details"
-msgstr "Detalhes do Script"
+msgstr "Script részletek"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 139
 msgid "Confirm Installation"
-msgstr "Confirmar Instalação"
+msgstr "Telepítés megerősítése"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 142
 msgid "Selected Items"
-msgstr "Itens Selecionados"
+msgstr "Kiválasztott elemek"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 211
 msgid "Note: {} script(s) will run automatically without confirmation."
-msgstr "Nota: {} script(s) serão executados automaticamente sem confirmação."
+msgstr "Megjegyzés: {} szkript(ek) automatikusan futnak megerősítés nélkül."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 22
 msgid "About LinuxToys"
-msgstr "Sobre o LinuxToys"
+msgstr "A LinuxToys-ról"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 61
 msgid "About"
-msgstr "Sobre"
+msgstr "Névjegy"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 77
 msgid "License file not found."
-msgstr "Arquivo de licença não encontrado."
+msgstr "Licencfájl nem található."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 91
 msgid "License"
-msgstr "Licença"
+msgstr "Licenc"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 185
 msgid "Project Lead"
-msgstr "Líder de Projeto"
+msgstr "Projektvezető"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 214
 msgid "Loading contributors..."
-msgstr "Carregando colaboradores..."
+msgstr "Hozzájárulók betöltése..."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 270
 msgid "Unable to load contributors"
-msgstr "Incapaz de carregar colaboradores"
+msgstr "Nem sikerült betölteni a hozzájárulókat."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 65
 msgid "Reboot Required"
-msgstr "Reinicialização Necessária"
+msgstr "Újraindítás szükséges"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 71
 # File: linuxtoys/p3/app/reboot_helper.py, line: 139
 msgid "Reboot Now"
-msgstr "Reiniciar Agora"
+msgstr "Indítsa újra most"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 72
 # File: linuxtoys/p3/app/reboot_helper.py, line: 140
 msgid "Reboot Later"
-msgstr "Reiniciar Depois"
+msgstr "Újraindítás később"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 94
 msgid ""
 "A script requiring a system reboot has been executed. You must reboot your computer before "
 "installing other features."
 msgstr ""
-"Um script que requer uma reinicialização do sistema foi executado. Você deve reiniciar seu "
-"computador antes de instalar outros recursos."
+"A script, amely rendszer újraindítást igényel, végrehajtásra került. A többi funkció telepítése "
+"előtt újra kell indítania a számítógépét."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 133
 msgid "Pending System Updates"
-msgstr "Atualizações do Sistema Pendentes"
+msgstr "Függőben lévő rendszerfrissítések"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 162
 msgid ""
 "Your system has pending updates that require a reboot to complete. Please reboot your computer to "
 "apply these updates before continuing."
 msgstr ""
-"Seu sistema tem atualizações pendentes que requerem uma reinicialização para serem concluídas. Por "
-"favor, reinicie seu computador para aplicar essas atualizações antes de continuar."
+"A rendszerén függőben lévő frissítések vannak, amelyek telepítéséhez újraindítás szükséges. Kérjük, "
+"indítsa újra a számítógépét a frissítések alkalmazásához, mielőtt folytatná."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 202
 # File: linuxtoys/p3/app/reboot_helper.py, line: 211
 msgid "Reboot Failed"
-msgstr "Reinicialização Falhou"
+msgstr "Újraindítás sikertelen"

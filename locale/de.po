@@ -1,206 +1,210 @@
-# Portuguese translation for linuxtoys
-# Copyright (C) 2024 The LinuxToys Authors
-# This file is distributed under the same license as the LinuxToys package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: linuxtoys 1.0\n"
+"Project-Id-Version: linuxtoys\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: Portuguese\n"
-"Language: pt\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
 msgid "Operations completed."
-msgstr "Operações concluídas."
+msgstr "Vorgänge abgeschlossen."
 msgid "F3 has been installed. A browser window will now open with usage instructions."
-msgstr "O F3 foi instalado. Uma janela do navegador será aberta agora com instruções de uso."
+msgstr "F3 wurde installiert. Ein Browserfenster wird jetzt mit den Nutzungshinweisen geöffnet."
 msgid "Do you want to install scripts for ARM translation? (recommended)"
-msgstr "Deseja instalar scripts para tradução ARM? (recomendado)"
+msgstr "Möchten Sie Skripte für die ARM-Übersetzung installieren? (empfohlen)"
 msgid "Waydroid setup is complete. You can now launch it from your applications menu."
-msgstr "A configuração do Waydroid está completa. Agora você pode iniciá-lo a partir do menu de aplicativos."
+msgstr "Die Waydroid-Installation ist abgeschlossen. Sie können es jetzt aus Ihrem Anwendungsmenü starten."
 msgid "Waydroid requires a Wayland session to work."
-msgstr "O Waydroid requer uma sessão Wayland para funcionar."
+msgstr "Waydroid benötigt eine Wayland-Sitzung, um zu funktionieren."
 msgid "Reboot your system to apply the changes."
-msgstr "Reinicie o sistema para aplicar as alterações."
+msgstr "Starten Sie Ihr System neu, um die Änderungen anzuwenden."
 msgid "This script is not compatible with your operating system."
-msgstr "Este script não é compatível com o seu sistema operacional."
+msgstr "Dieses Skript ist mit Ihrem Betriebssystem nicht kompatibel."
 msgid "Cloudflare WARP is already installed."
-msgstr "O Cloudflare WARP já está instalado."
+msgstr "Cloudflare WARP ist bereits installiert."
 msgid ""
 "This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
 "Optimizations' script first."
 msgstr ""
-"Este sistema já foi otimizado pelo LinuxToys. Para reaplicar, por favor, use primeiro o script "
-"'Reverter Otimizações'."
+"Dieses System wurde bereits von LinuxToys optimiert. Um die Optimierungen erneut anzuwenden, "
+"verwenden Sie bitte zuerst das Skript 'Optimierungen Rückgängig machen'."
 msgid "Choose your device type:"
-msgstr "Escolha o tipo de dispositivo:"
+msgstr "Wählen Sie Ihren Gerätetyp aus:"
 msgid "AMD Drivers"
-msgstr "Drivers da AMD"
+msgstr "AMD-Treiber"
 msgid "Installation successful."
-msgstr "Instalação bem-sucedida."
+msgstr "Installation erfolgreich."
 msgid ""
 "This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
 "required to use the Studio version."
 msgstr ""
-"Este script apenas instala o software DaVinci Resolve. É necessária uma licença da Blackmagic "
-"Design para usar a versão Studio."
+"Dieses Skript installiert nur die DaVinci Resolve-Software. Eine Lizenz von Blackmagic Design ist "
+"erforderlich, um die Studio-Version zu verwenden."
 msgid "The application is already up to date."
-msgstr "O aplicativo já está atualizado."
+msgstr "Die Anwendung ist bereits auf dem neuesten Stand."
 msgid "Optimization Complete"
-msgstr "Otimização Completa"
+msgstr "Optimierung abgeschlossen"
 msgid ""
 "Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
 "Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
 "process."
 msgstr ""
-"Otimização concluída. Por favor, reinicie seu sistema. Você será solicitado a registrar uma nova "
-"MOK (Chave do Proprietário da Máquina) para Inicialização Segura. Selecione 'Registrar MOK' e siga "
-"as instruções para concluir o processo."
+"Optimierung abgeschlossen. Bitte starten Sie Ihr System neu. Sie werden aufgefordert, einen neuen "
+"MOK (Machine Owner Key) für Secure Boot zu registrieren. Bitte wählen Sie 'MOK registrieren' und "
+"folgen Sie den Anweisungen, um den Vorgang abzuschließen."
 msgid ""
 "Packages for Active Directory integration have been installed. You can now join a domain using the "
 "'realm join' command."
 msgstr ""
-"Os pacotes para integração com o Active Directory foram instalados. Você agora pode ingressar em um "
-"domínio usando o comando 'realm join'."
+"Pakete für die Active Directory-Integration wurden installiert. Sie können jetzt einer Domäne mit "
+"dem Befehl 'realm join' beitreten."
 msgid ""
 "This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
 "Lutris or Bottles. Please make sure it is installed before proceeding."
 msgstr ""
-"Este script requer que o Lossless Scaling para Windows esteja instalado no seu sistema via Steam, "
-"Lutris ou Bottles. Por favor, certifique-se de que ele está instalado antes de prosseguir."
+"Dieses Skript erfordert, dass Lossless Scaling für Windows über Steam, Lutris oder Bottles auf "
+"Ihrem System installiert ist. Bitte stellen Sie sicher, dass es installiert ist, bevor Sie "
+"fortfahren."
 msgid "Lossless.dll not found. Did you install Lossless Scaling?"
-msgstr "Lossless.dll não encontrado. Você instalou o Lossless Scaling?"
+msgstr "Lossless.dll nicht gefunden. Haben Sie Lossless Scaling installiert?"
 msgid "Please check your wheel's compatibility before proceeding."
-msgstr "Por favor, verifique a compatibilidade do seu volante antes de prosseguir."
+msgstr "Bitte überprüfen Sie die Kompatibilität Ihres Rades, bevor Sie fortfahren."
 msgid "Unsupported OpenSUSE version."
-msgstr "Versão do OpenSUSE não suportada."
+msgstr "Nicht unterstützte OpenSUSE-Version."
 msgid "No compatible AMD GPU found."
-msgstr "Nenhuma GPU AMD compatível encontrada."
+msgstr "Keine kompatible AMD-GPU gefunden."
 msgid "This program is already installed. Do you want to remove it?"
-msgstr "Este programa já está instalado. Deseja removê-lo?"
+msgstr "Dieses Programm ist bereits installiert. Möchten Sie es entfernen?"
 msgid ""
 "This will install a daemon that preloads frequently used applications into memory to speed up "
 "launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
 msgstr ""
-"Isso instalará um daemon que pré-carrega aplicativos usados com frequência na memória para acelerar "
-"os tempos de inicialização. Isso é recomendado apenas para sistemas com mais de 12GB de RAM. "
-"Prosseguir?"
+"Dies installiert einen Daemon, der häufig verwendete Anwendungen in den Arbeitsspeicher vorlädt, um "
+"die Startzeiten zu beschleunigen. Dies wird nur für Systeme mit mehr als 12 GB RAM empfohlen. "
+"Fortfahren?"
 msgid "Your system does not have enough RAM to use this feature safely."
-msgstr "Seu sistema não tem RAM suficiente para usar este recurso com segurança."
+msgstr "Ihr System verfügt nicht über genügend RAM, um diese Funktion sicher zu nutzen."
 msgid "The firewall has been configured and enabled."
-msgstr "O firewall foi configurado e ativado."
+msgstr "Die Firewall wurde konfiguriert und aktiviert."
 msgid "Welcome to the LSW installer!"
-msgstr "Bem-vindo ao instalador do LSW!"
+msgstr "Willkommen beim LSW-Installer!"
 msgid "This script will guide you through installing Windows on Linux."
-msgstr "Este script irá guiá-lo na instalação do Windows no Linux."
+msgstr "Dieses Skript führt Sie durch die Installation von Windows auf Linux."
 msgid "WARNINGS:"
-msgstr "AVISOS:"
+msgstr "WARNUNGEN:"
 msgid "* This is an automated script. Use at your own risk."
-msgstr "* Este é um script automatizado. Use por sua conta e risco."
+msgstr "* Dies ist ein automatisiertes Skript. Benutzen Sie es auf eigenes Risiko."
 msgid "* A stable internet connection is required."
-msgstr "* É necessária uma conexão de internet estável."
+msgstr "Eine stabile Internetverbindung ist erforderlich."
 msgid "* Do NOT close the terminal during installation."
-msgstr "* NÃO feche o terminal durante a instalação."
+msgstr "* Schließen Sie das Terminal während der Installation NICHT."
 msgid "* GPU acceleration is NOT available."
-msgstr "* A aceleração de GPU NÃO está disponível."
+msgstr "* GPU-Beschleunigung ist NICHT verfügbar."
 msgid "I have read and understood the warnings."
-msgstr "Li e entendi os avisos."
+msgstr "Ich habe die Warnungen gelesen und verstanden."
 msgid "Do you want to proceed with the installation?"
-msgstr "Você deseja prosseguir com a instalação?"
+msgstr "Möchten Sie mit der Installation fortfahren?"
 msgid "Swapfile creation successful."
-msgstr "Criação do arquivo de troca bem-sucedida."
+msgstr "Swapdatei-Erstellung erfolgreich."
 msgid "Swap already enabled in your system."
-msgstr "Swap já habilitado em seu sistema."
+msgstr "Swap ist bereits in Ihrem System aktiviert."
 msgid "No valid shell found."
-msgstr "Nenhum shell válido encontrado."
+msgstr "Keine gültige Shell gefunden."
 msgid "Success! Reboot to apply."
-msgstr "Sucesso! Reinicie para aplicar."
+msgstr "Erfolg! Neustart, um anzuwenden."
 msgid "System already patched."
-msgstr "Sistema já corrigido."
+msgstr "System bereits gepatcht."
 msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
-msgstr "Isso requer o repositório Chaotic-AUR. Deseja habilitá-lo?"
+msgstr "Dies erfordert das Chaotic-AUR-Repository. Möchten Sie es aktivieren?"
 msgid "Skipping btrfs-assistant installation."
-msgstr "Pulando a instalação do btrfs-assistant."
+msgstr "Überspringe die Installation von btrfs-assistant."
 msgid "Your root filesystem is not btrfs."
-msgstr "Seu sistema de arquivos raiz não é btrfs."
+msgstr "Ihr Root-Dateisystem ist kein btrfs."
 msgid "Not enough RAM. At least 12GB total is required to continue."
-msgstr "Memória RAM insuficiente. São necessários pelo menos 12GB no total para continuar."
+msgstr "Nicht genügend RAM. Mindestens 12 GB insgesamt sind erforderlich, um fortzufahren."
 msgid "Not enough free RAM. Close some applications and try again."
-msgstr "Memória RAM livre insuficiente. Feche algumas aplicações e tente novamente."
+msgstr "Nicht genügend freier RAM. Schließen Sie einige Anwendungen und versuchen Sie es erneut."
 msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
-msgstr "Threads de CPU insuficientes para instalar o hipervisor do Windows, mínimo de 4."
+msgstr "Nicht genügend CPU-Threads, um den Windows-Hypervisor zu installieren, mindestens 4."
 msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
-msgstr "Digite o tamanho do disco do Windows (C:) em GB. Deixe em branco para usar 50GB."
+msgstr ""
+"Geben Sie die Größe des Windows-Laufwerks (C:) in GB ein. Lassen Sie das Feld leer, um 50 GB zu "
+"verwenden."
 msgid "Invalid input for disk size. Please enter a number."
-msgstr "Entrada inválida para o tamanho do disco. Por favor, insira um número."
+msgstr "Ungültige Eingabe für die Festplattengröße. Bitte geben Sie eine Zahl ein."
 msgid "Minimum space to install Windows (C:) is 40GB."
-msgstr "O espaço mínimo para instalar o Windows (C:) é de 40GB."
+msgstr "Der minimale Speicherplatz für die Installation von Windows (C:) beträgt 40 GB."
 msgid "Not enough disk space: %s GB required, %s GB available."
-msgstr "Espaço em disco insuficiente: %s GB necessários, %s GB disponíveis."
+msgstr "Nicht genügend Speicherplatz: %s GB erforderlich, %s GB verfügbar."
 msgid "No compatible terminal emulator found to launch Podman Compose."
-msgstr "Nenhum emulador de terminal compatível encontrado para iniciar o Podman Compose."
+msgstr "Kein kompatibler Terminal-Emulator gefunden, um Podman Compose zu starten."
 msgid "Is the Windows installation finished?"
-msgstr "A instalação do Windows foi concluída?"
+msgstr "Ist die Windows-Installation abgeschlossen?"
 msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
-msgstr "Deseja reverter todas as alterações? AVISO: Isso APAGARÁ todos os dados do Podman Compose!"
+msgstr "Möchten Sie alle Änderungen zurücksetzen? WARNUNG: Dies wird alle Podman Compose-Daten LÖSCHEN!"
 msgid "No GRUB found."
-msgstr "Nenhum GRUB encontrado."
+msgstr "Kein GRUB gefunden."
 msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
 msgstr ""
-"Isso listará os snapshots no seu GRUB. Só funcionará se o seu sistema de arquivos raiz for btrfs. "
-"Prosseguir?"
+"Dies listet Snapshots in Ihrem GRUB auf. Es funktioniert nur, wenn Ihr Root-Dateisystem btrfs ist. "
+"Fortfahren?"
 msgid "No WiFi device found."
-msgstr "Nenhum dispositivo WiFi encontrado."
+msgstr "Kein WiFi-Gerät gefunden."
 msgid "iwd.conf file not found. IWD was not enabled in this system."
-msgstr "Arquivo iwd.conf não encontrado. O IWD não foi ativado neste sistema."
+msgstr "iwd.conf-Datei nicht gefunden. IWD wurde in diesem System nicht aktiviert."
 msgid "SELinux policy has been updated."
-msgstr "A política do SELinux foi atualizada."
+msgstr "Die SELinux-Richtlinie wurde aktualisiert."
 msgid "This script is only for OpenSUSE-based distributions."
-msgstr "Este script é apenas para distribuições baseadas em OpenSUSE."
+msgstr "Dieses Skript ist nur für OpenSUSE-basierte Distributionen."
 msgid "Docker + Portainer CE Setup"
-msgstr "Configuração Docker + Portainer CE"
+msgstr "Docker + Portainer CE Einrichtung"
 msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
 msgstr ""
-"Isso instalará o Docker Engine e o Portainer CE para gerenciá-lo através de uma interface web. "
-"Prosseguir?"
+"Dies installiert Docker Engine und Portainer CE, um es über eine Web-Benutzeroberfläche zu "
+"verwalten. Fortfahren?"
 msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
-msgstr "Configuração concluída. O painel do Portainer será aberto no seu navegador agora."
+msgstr "Einrichtung abgeschlossen. Ihr Portainer-Dashboard wird jetzt in Ihrem Webbrowser geöffnet."
 msgid "Choose JDK versions to install"
-msgstr "Escolha as versões do JDK para instalar"
+msgstr "Wählen Sie die JDK-Versionen zur Installation aus."
 msgid ""
 "NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
 ".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
 msgstr ""
-"O NVM foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"NVM wurde installiert. Bitte starten Sie Ihr Terminal neu oder laden Sie Ihre "
+"Shell-Konfigurationsdatei (z. B. .bashrc, .zshrc), um es zu verwenden. Ein Browserfenster wird "
+"jetzt mit den Benutzungsanweisungen geöffnet."
 msgid ""
 "PyEnv has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
 "instructions."
 msgstr ""
-"O PyEnv foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração "
-"do shell (ex: .bash_profile, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"PyEnv wurde installiert. Bitte starten Sie Ihr Terminal neu oder laden Sie Ihre "
+"Shell-Konfigurationsdatei (z. B. .bash_profile, .zshrc), um es zu verwenden. Ein Browserfenster "
+"wird jetzt mit den Benutzungsanweisungen geöffnet."
 msgid ""
 "Mise has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
 "documentation."
 msgstr ""
-"O Mise foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com a "
-"documentação oficial."
+"Mise wurde installiert. Bitte starten Sie Ihr Terminal neu oder laden Sie Ihre "
+"Shell-Konfigurationsdatei (z. B. .bashrc, .zshrc), um es zu verwenden. Ein Browserfenster wird "
+"jetzt mit der offiziellen Dokumentation geöffnet."
 # 
 # File: linuxtoys/p3/app/footer.py, line: 13
 msgid "Support this project"
-msgstr "Apoie este projeto"
+msgstr "Unterstützen Sie dieses Projekt"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 18
 msgid "Check us out on GitHub"
-msgstr "Confira-nos no GitHub"
+msgstr "Schau dir unser Projekt auf GitHub an."
 # 
 # File: linuxtoys/p3/app/footer.py, line: 49
 msgid "Wiki"
@@ -208,33 +212,33 @@ msgstr "Wiki"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 53
 msgid "Report Bug"
-msgstr "Relatar Bug"
+msgstr "Fehler melden"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 60
 msgid "Credits"
-msgstr "Créditos"
+msgstr "Credits"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 37
 msgid "script_runner_title"
-msgstr "título_do_executador_de_script"
+msgstr "Skript-Ausführungsüberschrift"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 43
 msgid "script_runner_close"
-msgstr "fechar_script_executor"
+msgstr "script_runner_schließen"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 126
 # File: linuxtoys/p3/app/script_runner.py, line: 209
 #, python-brace-format
 msgid "Running Checklist ({current}/{total})"
-msgstr "Lista de Verificação em Execução ({current}/{total})"
+msgstr "Ausführungscheckliste ({current}/{total})"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 137
 msgid "Close"
-msgstr "Fechar"
+msgstr "Schließen"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 410
 msgid "script_runner_finished"
-msgstr "execução_do_script_concluída"
+msgstr "Skript_Läufer_abgeschlossen"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -242,7 +246,7 @@ msgstr "execução_do_script_concluída"
 # File: linuxtoys/p3/app/header.py, line: 34
 # File: linuxtoys/p3/app/about_helper.py, line: 140
 msgid "subtitle"
-msgstr "legenda"
+msgstr "Untertitel"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -250,7 +254,7 @@ msgstr "legenda"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 49
 # File: linuxtoys/p3/app/confirm_helper.py, line: 140
 msgid "Install"
-msgstr "Instalar"
+msgstr "Installieren"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -258,40 +262,40 @@ msgstr "Instalar"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 50
 # File: linuxtoys/p3/app/confirm_helper.py, line: 141
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Abbrechen"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 346
 msgid "ostree_deployment_title"
-msgstr "Título da implantação do ostree"
+msgstr "Ostree-Bereitstellungstitel"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 347
 msgid "ostree_deployment_message"
-msgstr "mensagem_de_deploy_ostree"
+msgstr "ostree_Bereitstellungsnachricht"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 348
 msgid "reboot_now_btn"
-msgstr "reiniciar_agora_btn"
+msgstr "jetzt_neustarten_btn"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 349
 msgid "reboot_later_btn"
-msgstr "reiniciar_depois_btn"
+msgstr "später_neustarten_btn"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 225
 msgid "update_available_title"
-msgstr "atualização_disponível_título"
+msgstr "Update verfügbar"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 230
 msgid "update_download_btn"
-msgstr "atualizar_botão_download"
+msgstr "aktualisieren_download_btn"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 231
 msgid "update_ignore_btn"
-msgstr "atualizar_ignorar_btn"
+msgstr "aktualisierung_ignorieren_btn"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 278
 # File: linuxtoys/p3/app/update_helper.py, line: 323
 msgid "No changelog available."
-msgstr "Nenhum registro de alterações disponível."
+msgstr "Kein Änderungsprotokoll verfügbar."
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 336
 # 
@@ -300,111 +304,111 @@ msgstr "Nenhum registro de alterações disponível."
 # File: linuxtoys/p3/app/head_menu.py, line: 10
 # File: linuxtoys/p3/app/head_menu.py, line: 25
 msgid "Waiting..."
-msgstr "Aguardando..."
+msgstr "Warten..."
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 53
 msgid "load_manifest"
-msgstr "carregar_manifesto"
+msgstr "manifest_laden"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 79
 msgid "choose_manifest_title"
-msgstr "escolher_título_do_manifesto"
+msgstr "manifest auswählen"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 85
 msgid "select_button"
-msgstr "botão_selecionar"
+msgstr "auswahl_button"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 90
 msgid "loading_manifest_message"
-msgstr "mensagem_carregando_manifesto"
+msgstr "Lade_Mitteilungsdatei"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 115
 msgid "packages_flatpaks"
-msgstr "pacotes_flatpaks"
+msgstr "pakete_flatpaks"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 48
 msgid "Confirm Action"
-msgstr "Confirmar Ação"
+msgstr "Aktion bestätigen"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 51
 msgid "Script Details"
-msgstr "Detalhes do Script"
+msgstr "Skript-Details"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 139
 msgid "Confirm Installation"
-msgstr "Confirmar Instalação"
+msgstr "Installation bestätigen"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 142
 msgid "Selected Items"
-msgstr "Itens Selecionados"
+msgstr "Ausgewählte Elemente"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 211
 msgid "Note: {} script(s) will run automatically without confirmation."
-msgstr "Nota: {} script(s) serão executados automaticamente sem confirmação."
+msgstr "Hinweis: {} Skript(e) werden automatisch ohne Bestätigung ausgeführt."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 22
 msgid "About LinuxToys"
-msgstr "Sobre o LinuxToys"
+msgstr "Über LinuxToys"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 61
 msgid "About"
-msgstr "Sobre"
+msgstr "Über"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 77
 msgid "License file not found."
-msgstr "Arquivo de licença não encontrado."
+msgstr "Lizenzdatei nicht gefunden."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 91
 msgid "License"
-msgstr "Licença"
+msgstr "Lizenz"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 185
 msgid "Project Lead"
-msgstr "Líder de Projeto"
+msgstr "Projektleiter"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 214
 msgid "Loading contributors..."
-msgstr "Carregando colaboradores..."
+msgstr "Lade Mitwirkende..."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 270
 msgid "Unable to load contributors"
-msgstr "Incapaz de carregar colaboradores"
+msgstr "Kann die Mitwirkenden nicht laden"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 65
 msgid "Reboot Required"
-msgstr "Reinicialização Necessária"
+msgstr "Neustart erforderlich"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 71
 # File: linuxtoys/p3/app/reboot_helper.py, line: 139
 msgid "Reboot Now"
-msgstr "Reiniciar Agora"
+msgstr "Jetzt neu starten"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 72
 # File: linuxtoys/p3/app/reboot_helper.py, line: 140
 msgid "Reboot Later"
-msgstr "Reiniciar Depois"
+msgstr "Später neu starten"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 94
 msgid ""
 "A script requiring a system reboot has been executed. You must reboot your computer before "
 "installing other features."
 msgstr ""
-"Um script que requer uma reinicialização do sistema foi executado. Você deve reiniciar seu "
-"computador antes de instalar outros recursos."
+"Ein Skript, das einen Systemneustart erfordert, wurde ausgeführt. Sie müssen Ihren Computer neu "
+"starten, bevor Sie andere Funktionen installieren."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 133
 msgid "Pending System Updates"
-msgstr "Atualizações do Sistema Pendentes"
+msgstr "Ausstehende Systemupdates"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 162
 msgid ""
 "Your system has pending updates that require a reboot to complete. Please reboot your computer to "
 "apply these updates before continuing."
 msgstr ""
-"Seu sistema tem atualizações pendentes que requerem uma reinicialização para serem concluídas. Por "
-"favor, reinicie seu computador para aplicar essas atualizações antes de continuar."
+"Ihr System hat ausstehende Updates, die einen Neustart erfordern, um abgeschlossen zu werden. Bitte "
+"starten Sie Ihren Computer neu, um diese Updates anzuwenden, bevor Sie fortfahren."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 202
 # File: linuxtoys/p3/app/reboot_helper.py, line: 211
 msgid "Reboot Failed"
-msgstr "Reinicialização Falhou"
+msgstr "Neustart fehlgeschlagen"

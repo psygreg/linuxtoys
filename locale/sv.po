@@ -1,206 +1,206 @@
-# Portuguese translation for linuxtoys
-# Copyright (C) 2024 The LinuxToys Authors
-# This file is distributed under the same license as the LinuxToys package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: linuxtoys 1.0\n"
+"Project-Id-Version: linuxtoys\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: Portuguese\n"
-"Language: pt\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: attranslate\n"
 msgid "Operations completed."
-msgstr "Operações concluídas."
+msgstr "Operationer slutförda."
 msgid "F3 has been installed. A browser window will now open with usage instructions."
-msgstr "O F3 foi instalado. Uma janela do navegador será aberta agora com instruções de uso."
+msgstr "F3 har installerats. Ett webbläsarfönster öppnas nu med användarinstruktioner."
 msgid "Do you want to install scripts for ARM translation? (recommended)"
-msgstr "Deseja instalar scripts para tradução ARM? (recomendado)"
+msgstr "Vill du installera skript för ARM-översättning? (rekommenderas)"
 msgid "Waydroid setup is complete. You can now launch it from your applications menu."
-msgstr "A configuração do Waydroid está completa. Agora você pode iniciá-lo a partir do menu de aplicativos."
+msgstr "Waydroid-installationen är klar. Du kan nu starta den från din applikationsmeny."
 msgid "Waydroid requires a Wayland session to work."
-msgstr "O Waydroid requer uma sessão Wayland para funcionar."
+msgstr "Waydroid kräver en Wayland-session för att fungera."
 msgid "Reboot your system to apply the changes."
-msgstr "Reinicie o sistema para aplicar as alterações."
+msgstr "Starta om ditt system för att tillämpa ändringarna."
 msgid "This script is not compatible with your operating system."
-msgstr "Este script não é compatível com o seu sistema operacional."
+msgstr "Detta skript är inte kompatibelt med ditt operativsystem."
 msgid "Cloudflare WARP is already installed."
-msgstr "O Cloudflare WARP já está instalado."
+msgstr "Cloudflare WARP är redan installerat."
 msgid ""
 "This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
 "Optimizations' script first."
 msgstr ""
-"Este sistema já foi otimizado pelo LinuxToys. Para reaplicar, por favor, use primeiro o script "
-"'Reverter Otimizações'."
+"Detta system har redan optimerats av LinuxToys. För att återanvända, vänligen använd skriptet "
+"'Ångra optimeringar' först."
 msgid "Choose your device type:"
-msgstr "Escolha o tipo de dispositivo:"
+msgstr "Välj din enhetstyp:"
 msgid "AMD Drivers"
-msgstr "Drivers da AMD"
+msgstr "AMD-drivrutiner"
 msgid "Installation successful."
-msgstr "Instalação bem-sucedida."
+msgstr "Installation lyckades."
 msgid ""
 "This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
 "required to use the Studio version."
 msgstr ""
-"Este script apenas instala o software DaVinci Resolve. É necessária uma licença da Blackmagic "
-"Design para usar a versão Studio."
+"Detta skript installerar endast DaVinci Resolve-programvaran. En licens från Blackmagic Design "
+"krävs för att använda Studio-versionen."
 msgid "The application is already up to date."
-msgstr "O aplicativo já está atualizado."
+msgstr "Applikationen är redan uppdaterad."
 msgid "Optimization Complete"
-msgstr "Otimização Completa"
+msgstr "Optimering Slutförd"
 msgid ""
 "Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
 "Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
 "process."
 msgstr ""
-"Otimização concluída. Por favor, reinicie seu sistema. Você será solicitado a registrar uma nova "
-"MOK (Chave do Proprietário da Máquina) para Inicialização Segura. Selecione 'Registrar MOK' e siga "
-"as instruções para concluir o processo."
+"Optimering slutförd. Vänligen starta om ditt system. Du kommer att bli ombedd att registrera en ny "
+"MOK (Maskinägarnyckel) för Säker start. Vänligen välj 'Registrera MOK' och följ anvisningarna för "
+"att slutföra processen."
 msgid ""
 "Packages for Active Directory integration have been installed. You can now join a domain using the "
 "'realm join' command."
 msgstr ""
-"Os pacotes para integração com o Active Directory foram instalados. Você agora pode ingressar em um "
-"domínio usando o comando 'realm join'."
+"Paket för Active Directory-integration har installerats. Du kan nu gå med i en domän med kommandot "
+"'realm join'."
 msgid ""
 "This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
 "Lutris or Bottles. Please make sure it is installed before proceeding."
 msgstr ""
-"Este script requer que o Lossless Scaling para Windows esteja instalado no seu sistema via Steam, "
-"Lutris ou Bottles. Por favor, certifique-se de que ele está instalado antes de prosseguir."
+"Detta skript kräver att Lossless Scaling för Windows är installerat på ditt system via Steam, "
+"Lutris eller Bottles. Vänligen se till att det är installerat innan du fortsätter."
 msgid "Lossless.dll not found. Did you install Lossless Scaling?"
-msgstr "Lossless.dll não encontrado. Você instalou o Lossless Scaling?"
+msgstr "Lossless.dll hittades inte. Installerade du Lossless Scaling?"
 msgid "Please check your wheel's compatibility before proceeding."
-msgstr "Por favor, verifique a compatibilidade do seu volante antes de prosseguir."
+msgstr "Vänligen kontrollera din hjuls kompatibilitet innan du fortsätter."
 msgid "Unsupported OpenSUSE version."
-msgstr "Versão do OpenSUSE não suportada."
+msgstr "Ej stödd OpenSUSE-version."
 msgid "No compatible AMD GPU found."
-msgstr "Nenhuma GPU AMD compatível encontrada."
+msgstr "Ingen kompatibel AMD GPU hittades."
 msgid "This program is already installed. Do you want to remove it?"
-msgstr "Este programa já está instalado. Deseja removê-lo?"
+msgstr "Det här programmet är redan installerat. Vill du ta bort det?"
 msgid ""
 "This will install a daemon that preloads frequently used applications into memory to speed up "
 "launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
 msgstr ""
-"Isso instalará um daemon que pré-carrega aplicativos usados com frequência na memória para acelerar "
-"os tempos de inicialização. Isso é recomendado apenas para sistemas com mais de 12GB de RAM. "
-"Prosseguir?"
+"Detta kommer att installera en daemon som förladdar ofta använda applikationer i minnet för att "
+"snabba upp starttider. Detta rekommenderas endast för system med mer än 12 GB RAM. Fortsätta?"
 msgid "Your system does not have enough RAM to use this feature safely."
-msgstr "Seu sistema não tem RAM suficiente para usar este recurso com segurança."
+msgstr "Ditt system har inte tillräckligt med RAM för att använda den här funktionen säkert."
 msgid "The firewall has been configured and enabled."
-msgstr "O firewall foi configurado e ativado."
+msgstr "Brandväggen har konfigurerats och aktiverats."
 msgid "Welcome to the LSW installer!"
-msgstr "Bem-vindo ao instalador do LSW!"
+msgstr "Välkommen till LSW-installationen!"
 msgid "This script will guide you through installing Windows on Linux."
-msgstr "Este script irá guiá-lo na instalação do Windows no Linux."
+msgstr "Detta skript kommer att vägleda dig genom att installera Windows på Linux."
 msgid "WARNINGS:"
-msgstr "AVISOS:"
+msgstr "VARNINGAR:"
 msgid "* This is an automated script. Use at your own risk."
-msgstr "* Este é um script automatizado. Use por sua conta e risco."
+msgstr "* Detta är ett automatiserat skript. Använd på egen risk."
 msgid "* A stable internet connection is required."
-msgstr "* É necessária uma conexão de internet estável."
+msgstr "* En stabil internetanslutning krävs."
 msgid "* Do NOT close the terminal during installation."
-msgstr "* NÃO feche o terminal durante a instalação."
+msgstr "* Stäng INTE terminalen under installationen."
 msgid "* GPU acceleration is NOT available."
-msgstr "* A aceleração de GPU NÃO está disponível."
+msgstr "* GPU-acceleration är INTE tillgänglig."
 msgid "I have read and understood the warnings."
-msgstr "Li e entendi os avisos."
+msgstr "Jag har läst och förstått varningarna."
 msgid "Do you want to proceed with the installation?"
-msgstr "Você deseja prosseguir com a instalação?"
+msgstr "Vill du fortsätta med installationen?"
 msgid "Swapfile creation successful."
-msgstr "Criação do arquivo de troca bem-sucedida."
+msgstr "Swapfil skapad framgångsrikt."
 msgid "Swap already enabled in your system."
-msgstr "Swap já habilitado em seu sistema."
+msgstr "Byte har redan aktiverats i ditt system."
 msgid "No valid shell found."
-msgstr "Nenhum shell válido encontrado."
+msgstr "Ingen giltig skal hittades."
 msgid "Success! Reboot to apply."
-msgstr "Sucesso! Reinicie para aplicar."
+msgstr "Lyckad! Starta om för att tillämpa."
 msgid "System already patched."
-msgstr "Sistema já corrigido."
+msgstr "Systemet är redan uppdaterat."
 msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
-msgstr "Isso requer o repositório Chaotic-AUR. Deseja habilitá-lo?"
+msgstr "Detta kräver Chaotic-AUR-förvaret. Vill du aktivera det?"
 msgid "Skipping btrfs-assistant installation."
-msgstr "Pulando a instalação do btrfs-assistant."
+msgstr "Hoppar över installation av btrfs-assistent."
 msgid "Your root filesystem is not btrfs."
-msgstr "Seu sistema de arquivos raiz não é btrfs."
+msgstr "Ditt rotfilsystem är inte btrfs."
 msgid "Not enough RAM. At least 12GB total is required to continue."
-msgstr "Memória RAM insuficiente. São necessários pelo menos 12GB no total para continuar."
+msgstr "Inte tillräckligt med RAM. Minst 12 GB totalt krävs för att fortsätta."
 msgid "Not enough free RAM. Close some applications and try again."
-msgstr "Memória RAM livre insuficiente. Feche algumas aplicações e tente novamente."
+msgstr "Inte tillräckligt med ledigt RAM. Stäng några applikationer och försök igen."
 msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
-msgstr "Threads de CPU insuficientes para instalar o hipervisor do Windows, mínimo de 4."
+msgstr "Inte tillräckligt med CPU-trådar för att installera Windows-hypervisor, minimum 4."
 msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
-msgstr "Digite o tamanho do disco do Windows (C:) em GB. Deixe em branco para usar 50GB."
+msgstr "Ange storlek på Windows-disk (C:) i GB. Lämna tomt för att använda 50 GB."
 msgid "Invalid input for disk size. Please enter a number."
-msgstr "Entrada inválida para o tamanho do disco. Por favor, insira um número."
+msgstr "Ogiltig inmatning för diskstorlek. Vänligen ange ett nummer."
 msgid "Minimum space to install Windows (C:) is 40GB."
-msgstr "O espaço mínimo para instalar o Windows (C:) é de 40GB."
+msgstr "Minimalt utrymme för att installera Windows (C:) är 40GB."
 msgid "Not enough disk space: %s GB required, %s GB available."
-msgstr "Espaço em disco insuficiente: %s GB necessários, %s GB disponíveis."
+msgstr "Inte tillräckligt med diskutrymme: %s GB krävs, %s GB tillgängligt."
 msgid "No compatible terminal emulator found to launch Podman Compose."
-msgstr "Nenhum emulador de terminal compatível encontrado para iniciar o Podman Compose."
+msgstr "Ingen kompatibel terminalemulator hittades för att starta Podman Compose."
 msgid "Is the Windows installation finished?"
-msgstr "A instalação do Windows foi concluída?"
+msgstr "Är installationen av Windows klar?"
 msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
-msgstr "Deseja reverter todas as alterações? AVISO: Isso APAGARÁ todos os dados do Podman Compose!"
+msgstr "Vill du återställa alla ändringar? VARNING: Detta kommer att RADERA all Podman Compose-data!"
 msgid "No GRUB found."
-msgstr "Nenhum GRUB encontrado."
+msgstr "Ingen GRUB hittades."
 msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
 msgstr ""
-"Isso listará os snapshots no seu GRUB. Só funcionará se o seu sistema de arquivos raiz for btrfs. "
-"Prosseguir?"
+"Detta kommer att lista ögonblicksbilder i din GRUB. Det kommer endast att fungera om ditt "
+"rotfilsystem är btrfs. Fortsätta?"
 msgid "No WiFi device found."
-msgstr "Nenhum dispositivo WiFi encontrado."
+msgstr "Inga WiFi-enheter hittades."
 msgid "iwd.conf file not found. IWD was not enabled in this system."
-msgstr "Arquivo iwd.conf não encontrado. O IWD não foi ativado neste sistema."
+msgstr "iwd.conf-filen hittades inte. IWD var inte aktiverat i detta system."
 msgid "SELinux policy has been updated."
-msgstr "A política do SELinux foi atualizada."
+msgstr "SELinux-policy har uppdaterats."
 msgid "This script is only for OpenSUSE-based distributions."
-msgstr "Este script é apenas para distribuições baseadas em OpenSUSE."
+msgstr "Detta skript är endast för OpenSUSE-baserade distributioner."
 msgid "Docker + Portainer CE Setup"
-msgstr "Configuração Docker + Portainer CE"
+msgstr "Docker + Portainer CE-installation"
 msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
 msgstr ""
-"Isso instalará o Docker Engine e o Portainer CE para gerenciá-lo através de uma interface web. "
-"Prosseguir?"
+"Detta kommer att installera Docker Engine och Portainer CE för att hantera det genom ett "
+"webbgränssnitt. Fortsätta?"
 msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
-msgstr "Configuração concluída. O painel do Portainer será aberto no seu navegador agora."
+msgstr "Installation klar. Din Portainer-instrumentpanel öppnas nu i din webbläsare."
 msgid "Choose JDK versions to install"
-msgstr "Escolha as versões do JDK para instalar"
+msgstr "Välj JDK-versioner att installera"
 msgid ""
 "NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
 ".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
 msgstr ""
-"O NVM foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"NVM har installerats. Vänligen starta om din terminal eller käll din skalkonfigurationsfil (t.ex. "
+".bashrc, .zshrc) för att börja använda det. Ett webbläsarfönster öppnas nu med "
+"användarinstruktioner."
 msgid ""
 "PyEnv has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
 "instructions."
 msgstr ""
-"O PyEnv foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração "
-"do shell (ex: .bash_profile, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com "
-"instruções de uso."
+"PyEnv har installerats. Vänligen starta om din terminal eller käll din skalkonfigurationsfil (t.ex. "
+".bash_profile, .zshrc) för att börja använda det. Ett webbläsarfönster öppnas nu med "
+"användarinstruktioner."
 msgid ""
 "Mise has been installed. Please restart your terminal or source your shell configuration file "
 "(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
 "documentation."
 msgstr ""
-"O Mise foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do "
-"shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com a "
-"documentação oficial."
+"Mise har installerats. Vänligen starta om din terminal eller käll din skalkonfigurationsfil (t.ex. "
+".bashrc, .zshrc) för att börja använda den. Ett webbläsarfönster öppnas nu med den officiella "
+"dokumentationen."
 # 
 # File: linuxtoys/p3/app/footer.py, line: 13
 msgid "Support this project"
-msgstr "Apoie este projeto"
+msgstr "Stöd detta projekt"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 18
 msgid "Check us out on GitHub"
-msgstr "Confira-nos no GitHub"
+msgstr "Kolla in oss på GitHub"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 49
 msgid "Wiki"
@@ -208,33 +208,33 @@ msgstr "Wiki"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 53
 msgid "Report Bug"
-msgstr "Relatar Bug"
+msgstr "Rapportera fel"
 # 
 # File: linuxtoys/p3/app/footer.py, line: 60
 msgid "Credits"
-msgstr "Créditos"
+msgstr "Krediteringar"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 37
 msgid "script_runner_title"
-msgstr "título_do_executador_de_script"
+msgstr "skript_körarens_titel"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 43
 msgid "script_runner_close"
-msgstr "fechar_script_executor"
+msgstr "script_körning_stäng"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 126
 # File: linuxtoys/p3/app/script_runner.py, line: 209
 #, python-brace-format
 msgid "Running Checklist ({current}/{total})"
-msgstr "Lista de Verificação em Execução ({current}/{total})"
+msgstr "Körningschecklista ({current}/{total})"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 137
 msgid "Close"
-msgstr "Fechar"
+msgstr "Stäng"
 # 
 # File: linuxtoys/p3/app/script_runner.py, line: 410
 msgid "script_runner_finished"
-msgstr "execução_do_script_concluída"
+msgstr "skript_körning_avslutad"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -242,7 +242,7 @@ msgstr "execução_do_script_concluída"
 # File: linuxtoys/p3/app/header.py, line: 34
 # File: linuxtoys/p3/app/about_helper.py, line: 140
 msgid "subtitle"
-msgstr "legenda"
+msgstr "undertext"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -250,7 +250,7 @@ msgstr "legenda"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 49
 # File: linuxtoys/p3/app/confirm_helper.py, line: 140
 msgid "Install"
-msgstr "Instalar"
+msgstr "Installera"
 # 
 # #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
 # 
@@ -258,40 +258,40 @@ msgstr "Instalar"
 # File: linuxtoys/p3/app/confirm_helper.py, line: 50
 # File: linuxtoys/p3/app/confirm_helper.py, line: 141
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Avbryt"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 346
 msgid "ostree_deployment_title"
-msgstr "Título da implantação do ostree"
+msgstr "ostree_deployment_titel"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 347
 msgid "ostree_deployment_message"
-msgstr "mensagem_de_deploy_ostree"
+msgstr "ostree_deployment_meddelande"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 348
 msgid "reboot_now_btn"
-msgstr "reiniciar_agora_btn"
+msgstr "starta_om_nu_knapp"
 # 
 # File: linuxtoys/p3/app/cli_helper.py, line: 349
 msgid "reboot_later_btn"
-msgstr "reiniciar_depois_btn"
+msgstr "starta_om_senare_knapp"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 225
 msgid "update_available_title"
-msgstr "atualização_disponível_título"
+msgstr "uppdatering_tillgänglig_titel"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 230
 msgid "update_download_btn"
-msgstr "atualizar_botão_download"
+msgstr "uppdatera_nedladdningsknapp"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 231
 msgid "update_ignore_btn"
-msgstr "atualizar_ignorar_btn"
+msgstr "uppdatera_ignorera_knapp"
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 278
 # File: linuxtoys/p3/app/update_helper.py, line: 323
 msgid "No changelog available."
-msgstr "Nenhum registro de alterações disponível."
+msgstr "Ingen ändringslogg tillgänglig."
 # 
 # File: linuxtoys/p3/app/update_helper.py, line: 336
 # 
@@ -300,111 +300,111 @@ msgstr "Nenhum registro de alterações disponível."
 # File: linuxtoys/p3/app/head_menu.py, line: 10
 # File: linuxtoys/p3/app/head_menu.py, line: 25
 msgid "Waiting..."
-msgstr "Aguardando..."
+msgstr "Väntar..."
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 53
 msgid "load_manifest"
-msgstr "carregar_manifesto"
+msgstr "ladda_manifest"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 79
 msgid "choose_manifest_title"
-msgstr "escolher_título_do_manifesto"
+msgstr "välj_manifest_titel"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 85
 msgid "select_button"
-msgstr "botão_selecionar"
+msgstr "välj_knapp"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 90
 msgid "loading_manifest_message"
-msgstr "mensagem_carregando_manifesto"
+msgstr "laddar_manifest_meddelande"
 # 
 # File: linuxtoys/p3/app/head_menu.py, line: 115
 msgid "packages_flatpaks"
-msgstr "pacotes_flatpaks"
+msgstr "paket_flatpaks"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 48
 msgid "Confirm Action"
-msgstr "Confirmar Ação"
+msgstr "Bekräfta åtgärd"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 51
 msgid "Script Details"
-msgstr "Detalhes do Script"
+msgstr "Skript Detaljer"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 139
 msgid "Confirm Installation"
-msgstr "Confirmar Instalação"
+msgstr "Bekräfta installation"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 142
 msgid "Selected Items"
-msgstr "Itens Selecionados"
+msgstr "Valda objekt"
 # 
 # File: linuxtoys/p3/app/confirm_helper.py, line: 211
 msgid "Note: {} script(s) will run automatically without confirmation."
-msgstr "Nota: {} script(s) serão executados automaticamente sem confirmação."
+msgstr "Observera: {} skript kommer att köras automatiskt utan bekräftelse."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 22
 msgid "About LinuxToys"
-msgstr "Sobre o LinuxToys"
+msgstr "Om LinuxToys"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 61
 msgid "About"
-msgstr "Sobre"
+msgstr "Om"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 77
 msgid "License file not found."
-msgstr "Arquivo de licença não encontrado."
+msgstr "Licensfilen hittades inte."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 91
 msgid "License"
-msgstr "Licença"
+msgstr "Licens"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 185
 msgid "Project Lead"
-msgstr "Líder de Projeto"
+msgstr "Projektledare"
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 214
 msgid "Loading contributors..."
-msgstr "Carregando colaboradores..."
+msgstr "Laddar bidragsgivare..."
 # 
 # File: linuxtoys/p3/app/about_helper.py, line: 270
 msgid "Unable to load contributors"
-msgstr "Incapaz de carregar colaboradores"
+msgstr "Kunde inte ladda bidragsgivare"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 65
 msgid "Reboot Required"
-msgstr "Reinicialização Necessária"
+msgstr "Omstart krävs"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 71
 # File: linuxtoys/p3/app/reboot_helper.py, line: 139
 msgid "Reboot Now"
-msgstr "Reiniciar Agora"
+msgstr "Starta om nu"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 72
 # File: linuxtoys/p3/app/reboot_helper.py, line: 140
 msgid "Reboot Later"
-msgstr "Reiniciar Depois"
+msgstr "Starta om senare"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 94
 msgid ""
 "A script requiring a system reboot has been executed. You must reboot your computer before "
 "installing other features."
 msgstr ""
-"Um script que requer uma reinicialização do sistema foi executado. Você deve reiniciar seu "
-"computador antes de instalar outros recursos."
+"Ett skript som kräver en systemomstart har körts. Du måste starta om din dator innan du installerar "
+"andra funktioner."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 133
 msgid "Pending System Updates"
-msgstr "Atualizações do Sistema Pendentes"
+msgstr "Väntande systemuppdateringar"
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 162
 msgid ""
 "Your system has pending updates that require a reboot to complete. Please reboot your computer to "
 "apply these updates before continuing."
 msgstr ""
-"Seu sistema tem atualizações pendentes que requerem uma reinicialização para serem concluídas. Por "
-"favor, reinicie seu computador para aplicar essas atualizações antes de continuar."
+"Ditt system har väntande uppdateringar som kräver en omstart för att slutföras. Vänligen starta om "
+"din dator för att tillämpa dessa uppdateringar innan du fortsätter."
 # 
 # File: linuxtoys/p3/app/reboot_helper.py, line: 202
 # File: linuxtoys/p3/app/reboot_helper.py, line: 211
 msgid "Reboot Failed"
-msgstr "Reinicialização Falhou"
+msgstr "Omstart misslyckades"

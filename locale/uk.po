@@ -1,0 +1,413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linuxtoys package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: attranslate\n"
+msgid "Operations completed."
+msgstr "Операції завершено."
+msgid "F3 has been installed. A browser window will now open with usage instructions."
+msgstr "F3 було встановлено. Тепер відкриється вікно браузера з інструкціями щодо використання."
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Чи бажаєте ви встановити скрипти для перекладу ARM? (рекомендується)"
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "Налаштування Waydroid завершено. Тепер ви можете запустити його з меню програм."
+msgid "Waydroid requires a Wayland session to work."
+msgstr "Waydroid потребує сесію Wayland для роботи."
+msgid "Reboot your system to apply the changes."
+msgstr "Перезавантажте вашу систему, щоб застосувати зміни."
+msgid "This script is not compatible with your operating system."
+msgstr "Цей скрипт не сумісний з вашою операційною системою."
+msgid "Cloudflare WARP is already installed."
+msgstr "Cloudflare WARP вже встановлено."
+msgid ""
+"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo "
+"Optimizations' script first."
+msgstr ""
+"Ця система вже була оптимізована за допомогою LinuxToys. Щоб повторно застосувати, спочатку "
+"використайте скрипт 'Скасувати оптимізації'."
+msgid "Choose your device type:"
+msgstr "Виберіть тип вашого пристрою:"
+msgid "AMD Drivers"
+msgstr "Драйвери AMD"
+msgid "Installation successful."
+msgstr "Встановлення успішне."
+msgid ""
+"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is "
+"required to use the Studio version."
+msgstr ""
+"Цей скрипт лише встановлює програмне забезпечення DaVinci Resolve. Для використання версії Studio "
+"потрібна ліцензія від Blackmagic Design."
+msgid "The application is already up to date."
+msgstr "Застосунок вже оновлено."
+msgid "Optimization Complete"
+msgstr "Оптимізація завершена"
+msgid ""
+"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine "
+"Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the "
+"process."
+msgstr ""
+"Оптимізація завершена. Будь ласка, перезавантажте вашу систему. Вам буде запропоновано "
+"зареєструвати новий MOK (Ключ власника машини) для Безпечного завантаження. Будь ласка, виберіть "
+"'Зареєструвати MOK' і дотримуйтесь підказок, щоб завершити процес."
+msgid ""
+"Packages for Active Directory integration have been installed. You can now join a domain using the "
+"'realm join' command."
+msgstr ""
+"Пакети для інтеграції з Active Directory були встановлені. Тепер ви можете приєднатися до домену, "
+"використовуючи команду 'realm join'."
+msgid ""
+"This script requires Lossless Scaling for Windows to be installed on your system through Steam, "
+"Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr ""
+"Цей скрипт вимагає, щоб Lossless Scaling для Windows був встановлений на вашій системі через Steam, "
+"Lutris або Bottles. Будь ласка, переконайтеся, що він встановлений перед продовженням."
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll не знайдено. Ви встановили Lossless Scaling?"
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Будь ласка, перевірте сумісність вашого колеса перед продовженням."
+msgid "Unsupported OpenSUSE version."
+msgstr "Непідтримувана версія OpenSUSE."
+msgid "No compatible AMD GPU found."
+msgstr "Не знайдено сумісну графічну карту AMD."
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Ця програма вже встановлена. Ви хочете її видалити?"
+msgid ""
+"This will install a daemon that preloads frequently used applications into memory to speed up "
+"launch times. This is recommended only for systems with more than 12GB of RAM. Proceed?"
+msgstr ""
+"Це встановить демон, який попередньо завантажує часто використовувані програми в пам'ять для "
+"прискорення часу запуску. Це рекомендується лише для систем з більш ніж 12 ГБ оперативної пам'яті. "
+"Продовжити?"
+msgid "Your system does not have enough RAM to use this feature safely."
+msgstr "Ваша система не має достатньо оперативної пам'яті для безпечного використання цієї функції."
+msgid "The firewall has been configured and enabled."
+msgstr "Брандмауер було налаштовано та увімкнено."
+msgid "Welcome to the LSW installer!"
+msgstr "Ласкаво просимо до інсталятора LSW!"
+msgid "This script will guide you through installing Windows on Linux."
+msgstr "Цей скрипт проведе вас через установку Windows на Linux."
+msgid "WARNINGS:"
+msgstr "ПОПЕРЕДЖЕННЯ:"
+msgid "* This is an automated script. Use at your own risk."
+msgstr "* Це автоматизований скрипт. Використовуйте на свій страх і ризик."
+msgid "* A stable internet connection is required."
+msgstr "* Потрібне стабільне з'єднання з Інтернетом."
+msgid "* Do NOT close the terminal during installation."
+msgstr "* Не закривайте термінал під час встановлення."
+msgid "* GPU acceleration is NOT available."
+msgstr "* Прискорення GPU НЕ доступне."
+msgid "I have read and understood the warnings."
+msgstr "Я прочитав і зрозумів попередження."
+msgid "Do you want to proceed with the installation?"
+msgstr "Чи бажаєте ви продовжити встановлення?"
+msgid "Swapfile creation successful."
+msgstr "Створення файлу підкачки успішне."
+msgid "Swap already enabled in your system."
+msgstr "Свап вже увімкнено у вашій системі."
+msgid "No valid shell found."
+msgstr "Не знайдено дійсну оболонку."
+msgid "Success! Reboot to apply."
+msgstr "Успіх! Перезавантажте, щоб застосувати."
+msgid "System already patched."
+msgstr "Система вже виправлена."
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Це вимагає репозиторію Chaotic-AUR. Ви хочете його увімкнути?"
+msgid "Skipping btrfs-assistant installation."
+msgstr "Пропуск установки btrfs-assistant."
+msgid "Your root filesystem is not btrfs."
+msgstr "Ваш кореневий файловий система не btrfs."
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Недостатньо оперативної пам'яті. Для продовження потрібно щонайменше 12 ГБ загалом."
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Недостатньо вільної оперативної пам'яті. Закрийте деякі програми та спробуйте ще раз."
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Недостатньо потоків ЦП для встановлення гіпервізора Windows, мінімум 4."
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Введіть розмір диска Windows (C:) у ГБ. Залиште порожнім, щоб використовувати 50 ГБ."
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Неправильний ввід для розміру диска. Будь ласка, введіть число."
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "Мінімальний обсяг пам'яті для встановлення Windows (C:) становить 40 ГБ."
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Недостатньо місця на диску: потрібно %s ГБ, доступно %s ГБ."
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Не знайдено сумісний емулятор терміналу для запуску Podman Compose."
+msgid "Is the Windows installation finished?"
+msgstr "Чи закінчилась установка Windows?"
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "Чи хочете ви скасувати всі зміни? ПОПЕРЕДЖЕННЯ: Це СТЕРЕ всі дані Podman Compose!"
+msgid "No GRUB found."
+msgstr "GRUB не знайдено."
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr ""
+"Це відобразить знімки у вашому GRUB. Це буде працювати лише якщо ваша коренева файлова система - "
+"btrfs. Продовжити?"
+msgid "No WiFi device found."
+msgstr "Не знайдено жодного WiFi-пристрою."
+msgid "iwd.conf file not found. IWD was not enabled in this system."
+msgstr "iwd.conf файл не знайдено. IWD не був увімкнений у цій системі."
+msgid "SELinux policy has been updated."
+msgstr "Політика SELinux була оновлена."
+msgid "This script is only for OpenSUSE-based distributions."
+msgstr "Цей скрипт призначений лише для дистрибутивів на базі OpenSUSE."
+msgid "Docker + Portainer CE Setup"
+msgstr "Налаштування Docker + Portainer CE"
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr "Це встановить Docker Engine та Portainer CE для керування ним через веб-інтерфейс. Продовжити?"
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Налаштування завершено. Ваш інформаційний панель Portainer відкриється у вашому веб-браузері зараз."
+msgid "Choose JDK versions to install"
+msgstr "Виберіть версії JDK для встановлення"
+msgid ""
+"NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., "
+".bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr ""
+"NVM було встановлено. Будь ласка, перезапустіть ваш термінал або завантажте файл конфігурації вашої "
+"оболонки (наприклад, .bashrc, .zshrc), щоб почати його використовувати. Тепер відкриється вікно "
+"браузера з інструкціями щодо використання."
+msgid ""
+"PyEnv has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage "
+"instructions."
+msgstr ""
+"PyEnv було встановлено. Будь ласка, перезапустіть ваш термінал або завантажте файл конфігурації "
+"оболонки (наприклад, .bash_profile, .zshrc), щоб почати його використовувати. Тепер відкриється "
+"вікно браузера з інструкціями щодо використання."
+msgid ""
+"Mise has been installed. Please restart your terminal or source your shell configuration file "
+"(e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official "
+"documentation."
+msgstr ""
+"Mise було встановлено. Будь ласка, перезапустіть термінал або завантажте файл конфігурації оболонки "
+"(наприклад, .bashrc, .zshrc), щоб почати його використовувати. Тепер відкриється вікно браузера з "
+"офіційною документацією."
+# 
+# File: linuxtoys/p3/app/footer.py, line: 13
+msgid "Support this project"
+msgstr "Підтримайте цей проєкт"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 18
+msgid "Check us out on GitHub"
+msgstr "Перегляньте нас на GitHub"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 49
+msgid "Wiki"
+msgstr "Вікі"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 53
+msgid "Report Bug"
+msgstr "Повідомити про помилку"
+# 
+# File: linuxtoys/p3/app/footer.py, line: 60
+msgid "Credits"
+msgstr "Кредити"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 37
+msgid "script_runner_title"
+msgstr "скрипт_виконавець_заголовок"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 43
+msgid "script_runner_close"
+msgstr "script_runner_close"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 126
+# File: linuxtoys/p3/app/script_runner.py, line: 209
+#, python-brace-format
+msgid "Running Checklist ({current}/{total})"
+msgstr "Запуск списку перевірки ({current}/{total})"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 137
+msgid "Close"
+msgstr "Закрити"
+# 
+# File: linuxtoys/p3/app/script_runner.py, line: 410
+msgid "script_runner_finished"
+msgstr "скрипт_виконано"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/header.py, line: 31
+# File: linuxtoys/p3/app/header.py, line: 34
+# File: linuxtoys/p3/app/about_helper.py, line: 140
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 347
+# File: linuxtoys/p3/app/confirm_helper.py, line: 49
+# File: linuxtoys/p3/app/confirm_helper.py, line: 140
+msgid "Install"
+msgstr "Встановити"
+# 
+# #-#-#-#-#  linuxtoys.pot (linuxtoys)  #-#-#-#-#
+# 
+# File: linuxtoys/p3/app/window.py, line: 348
+# File: linuxtoys/p3/app/confirm_helper.py, line: 50
+# File: linuxtoys/p3/app/confirm_helper.py, line: 141
+msgid "Cancel"
+msgstr "Скасувати"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 346
+msgid "ostree_deployment_title"
+msgstr "ostree_розгортання_назва"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 347
+msgid "ostree_deployment_message"
+msgstr "ostree_розгортання_повідомлення"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 348
+msgid "reboot_now_btn"
+msgstr "перезавантажити_зараз_кнопка"
+# 
+# File: linuxtoys/p3/app/cli_helper.py, line: 349
+msgid "reboot_later_btn"
+msgstr "перезавантажити_пізніше_кнопка"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 225
+msgid "update_available_title"
+msgstr "Оновлення доступне"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 230
+msgid "update_download_btn"
+msgstr "update_download_button"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 231
+msgid "update_ignore_btn"
+msgstr "update_ігнорувати_кнопку"
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 278
+# File: linuxtoys/p3/app/update_helper.py, line: 323
+msgid "No changelog available."
+msgstr "Жодного журналу змін немає."
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/update_helper.py, line: 336
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 10
+# File: linuxtoys/p3/app/head_menu.py, line: 25
+msgid "Waiting..."
+msgstr "Очікування..."
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 53
+msgid "load_manifest"
+msgstr "завантажити_маніфест"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 79
+msgid "choose_manifest_title"
+msgstr "вибрати_назву_маніфесту"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 85
+msgid "select_button"
+msgstr "вибрати_кнопку"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 90
+msgid "loading_manifest_message"
+msgstr "завантаження_маніфесту_повідомлення"
+# 
+# File: linuxtoys/p3/app/head_menu.py, line: 115
+msgid "packages_flatpaks"
+msgstr "пакунки_flatpaks"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 48
+msgid "Confirm Action"
+msgstr "Підтвердити дію"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 51
+msgid "Script Details"
+msgstr "Деталі скрипту"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 139
+msgid "Confirm Installation"
+msgstr "Підтвердити встановлення"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 142
+msgid "Selected Items"
+msgstr "Вибрані елементи"
+# 
+# File: linuxtoys/p3/app/confirm_helper.py, line: 211
+msgid "Note: {} script(s) will run automatically without confirmation."
+msgstr "Примітка: {} скрипт(и) будуть виконуватись автоматично без підтвердження."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 22
+msgid "About LinuxToys"
+msgstr "Про LinuxToys"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 61
+msgid "About"
+msgstr "Про програму"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 77
+msgid "License file not found."
+msgstr "Файл ліцензії не знайдено."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 91
+msgid "License"
+msgstr "Ліцензія"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 185
+msgid "Project Lead"
+msgstr "Керівник проєкту"
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 214
+msgid "Loading contributors..."
+msgstr "Завантаження учасників..."
+# 
+# File: linuxtoys/p3/app/about_helper.py, line: 270
+msgid "Unable to load contributors"
+msgstr "Не вдалося завантажити учасників"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 65
+msgid "Reboot Required"
+msgstr "Перезавантаження необхідне"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 71
+# File: linuxtoys/p3/app/reboot_helper.py, line: 139
+msgid "Reboot Now"
+msgstr "Перезавантажити зараз"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 72
+# File: linuxtoys/p3/app/reboot_helper.py, line: 140
+msgid "Reboot Later"
+msgstr "Перезавантажити пізніше"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 94
+msgid ""
+"A script requiring a system reboot has been executed. You must reboot your computer before "
+"installing other features."
+msgstr ""
+"Скрипт, що вимагає перезавантаження системи, було виконано. Ви повинні перезавантажити комп'ютер "
+"перед встановленням інших функцій."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 133
+msgid "Pending System Updates"
+msgstr "Очікуючі системні оновлення"
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 162
+msgid ""
+"Your system has pending updates that require a reboot to complete. Please reboot your computer to "
+"apply these updates before continuing."
+msgstr ""
+"Вашій системі доступні оновлення, які потребують перезавантаження для завершення. Будь ласка, "
+"перезавантажте комп'ютер, щоб застосувати ці оновлення перед продовженням."
+# 
+# File: linuxtoys/p3/app/reboot_helper.py, line: 202
+# File: linuxtoys/p3/app/reboot_helper.py, line: 211
+msgid "Reboot Failed"
+msgstr "Перезавантаження не вдалося"
