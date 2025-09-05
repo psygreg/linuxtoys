@@ -28,6 +28,13 @@ iwd_in () {
         if [ "$ID" == "bazzite" ] || [ "$ID" == "bluefin" ] || [ "$ID" == "aurora" ]; then
             # use their iwd installation script for ublue distros
             ujust iwd
+        elif command -v rpm-ostree &>/dev/null; then
+            sudo rpm-ostree install iwd
+            # enforce iwd backend for networkmanager
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/iwd.conf
+            sudo mv iwd.conf /etc/NetworkManager/conf.d/
+            sudo systemctl disable wpa_supplicant
+            return 0
         else
             _packages=(iwd)
             _install_
