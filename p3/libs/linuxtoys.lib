@@ -68,7 +68,7 @@ _install_ () {
                         sudo dnf in $pak -y
                     fi
                 done
-            elif [[ "$ID_LIKE" == *suse* ]]; then
+            elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
                 for pak in "${_packages[@]}"; do
                     if rpm -qi "$pak" 2>/dev/null 1>&2; then
                         continue

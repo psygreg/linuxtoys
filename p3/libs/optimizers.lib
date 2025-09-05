@@ -76,24 +76,32 @@ dsplitm_lib () {
 psave_lib () {
     if [[ "$ID" != "cachyos" ]]; then
         sudo_rq
-        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-            sudo add-apt-repository ppa:linrunner/tlp
-            sudo apt update
+        if command -v rpm-ostree &>/dev/null; then
+            wget https://copr.fedorainfracloud.org/coprs/leo/power-options/repo/fedora-$(rpm -E %fedora)/leo-power-options-fedora-$(rpm -E %fedora).repo
+            sudo install -o 0 -g 0 leo-power-options-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/leo-power-options-fedora-$(rpm -E %fedora).repo
+            rpm-ostree refresh-md
+            rm leo-power-options-fedora-$(rpm -E %fedora).repo
+            sudo rpm-ostree install power-options
+        else
+            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+                _packages=(libgtk4-dev libadwaita-1-dev)
+            elif [[ "$ID" =~ "arch" ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+                _packages=(gtk4 libadwaita)
+            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
+                _packages=(gtk4-devel libadwaita-devel)
+            fi
+            _install_
+            git clone https://github.com/TheAlexDev23/power-options/ --depth=1
+            cd power-options/scripts
+            chmod +x *.sh
+            if ! which power-options &>/dev/null; then
+                ./install-gtk.sh
+                ./install-tray.sh
+                ./setup.sh
+            else
+                ./update.sh
+            fi
         fi
-        local _packages=(powertop tlp tlp-rdw smartmontools ethtool)
-        _install_
-        sudo systemctl enable tlp.service
-        sudo systemctl enable NetworkManager-dispatcher.service
-        sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-        cd $HOME
-        git clone https://github.com/AdnanHodzic/auto-cpufreq.git
-        cd auto-cpufreq && sudo ./auto-cpufreq-installer
-        cd ..
-        sleep 1
-        rm -rf auto-cpufreq
-        sudo auto-cpufreq --install
-        flatpak_in_lib
-        flatpak install --or-update -y com.github.d4nj1.tlpui --system
         zeninf "$msg036"
     else
         zenwrn "$msg286"
