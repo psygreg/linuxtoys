@@ -21,7 +21,7 @@ Give it permission to run as a program through whichever file manager you choose
 or automatic installation:
 
 ```shell
-curl -sSL https://raw.githubusercontent.com/psygreg/linuxtoys/master/install.sh | echo y | sh
+yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/master/install.sh)"
 ```
 
 #### Download and install the **package for your distribution** from [Releases](https://github.com/psygreg/linuxtoys/releases):
