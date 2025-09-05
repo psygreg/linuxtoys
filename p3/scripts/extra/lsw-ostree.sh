@@ -9,9 +9,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # podman installation
 pdm_install () {
 	_packages=(podman podman-compose)
@@ -26,19 +23,19 @@ hwcheck () {
     local available_gb=$(( available_kb / 1024 / 1024 ))
     _cram=$(( total_gb / 3 ))
     if (( _cram < 4 )); then
-		nonfatal "Not enough RAM. At least 12GB total is required to continue."
+		nonfatal $"Not enough RAM. At least 12GB total is required to continue."
         exit 5
     fi
     # Enforce availability with 1GB buffer (to avoid rounding issues)
     if (( available_gb < (_cram + 1) )); then
-		nonfatal "Not enough free RAM. Close some applications and try again."
+		nonfatal $"Not enough free RAM. Close some applications and try again."
         exit 5
     fi
     # CPU thread check
     local _total_threads=$(nproc)
     _ccpu=$(( _total_threads / 2 ))
     if (( _ccpu < 2 )); then
-		nonfatal "Not enough CPU threads to install Windows hypervisor, minimum 4."
+		nonfatal $"Not enough CPU threads to install Windows hypervisor, minimum 4."
         exit 6
     fi
 }
@@ -61,24 +58,26 @@ win_install () {
     # get cpu threads
     _wincpu="$_ccpu"
     # get C size
-    _csize=$(zenity --entry --title="LSW" --text="Enter Windows disk (C:) size in GB. Leave empty to use 50GB."  --entry-text "50" --height=300 --width=300)
+    _csize=$(zenity --entry --title="LSW" --text=$"Enter Windows disk (C:) size in GB. Leave empty to use 50GB."  --entry-text "50" --height=300 --width=300)
     local available_gb=$(df -BG "$HOME/.local" | awk 'NR==2 { gsub("G","",$4); print $4 }')
     if [ -z "$_csize" ]; then
         _winsize="50"
     else
         # stop if input size is not a number
 		if [[ -n "$_csize" && ! "$_csize" =~ ^[0-9]+$ ]]; then
-			nonfatal "Invalid input for disk size. Please enter a number."
+			nonfatal $"Invalid input for disk size. Please enter a number."
             return 10
         fi
         _winsize="$_csize"
     fi
     if (( _winsize < 40 )); then
-		nonfatal "Minimum space to install Windows (C:) is 40GB."
+		nonfatal $"Minimum space to install Windows (C:) is 40GB."
         return 11
     fi
-    if (( available_gb < _winsize )); then\
-		nonfatal "Not enough disk space: ${_winsize} GB required, ${available_gb} GB available."
+    if (( available_gb < _winsize )); then
+        local required_space_msg
+        required_space_msg=$(printf $"Not enough disk space: %s GB required, %s GB available." "$_winsize" "$available_gb")
+		nonfatal "$required_space_msg"
         exit 3
     fi
     sed -i "s|^\(\s*RAM_SIZE:\s*\).*|\1\"${_winram}G\"|" compose.yaml
@@ -91,20 +90,20 @@ win_install () {
     elif command -v gnome-terminal &> /dev/null; then
         setsid gnome-terminal -- bash -c "sudo podman-compose --file $HOME/.config/winapps/compose.yaml up; exec bash" >/dev/null 2>&1 < /dev/null &
     else
-		nonfatal "No compatible terminal emulator found to launch Podman Compose."
+		nonfatal $"No compatible terminal emulator found to launch Podman Compose."
         exit 4
     fi
 }
 # lsw shortcuts installation
 lsw_install () {
-	if zenity --question --title "Setup" --text "Is the Windows installation finished?" --height=300 --width=300; then
+	if zenity --question --title="Setup" --text=$"Is the Windows installation finished?" --height=300 --width=300; then
 		wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/lsw-atom/rpmbuild/RPMS/x86_64/lsw-atom-shortcuts-1.1-1.x86_64.rpm
 		sudo_rq
         sudo rpm-ostree install -yA lsw-atom-shortcuts-1.1-1.x86_64.rpm
         rm lsw-atom-shortcuts-1.1-1.x86_64.rpm
 		exit 0
 	else
-		if zenity --question --title "Setup" --text "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!" --height=300 --width=360; then
+		if zenity --question --title="Setup" --text=$"Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!" --height=300 --width=360; then
         	sudo podman-compose down --rmi=all --volumes
         	exit 7
 		fi

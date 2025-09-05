@@ -1,12 +1,12 @@
 import os
 
 from .compat import (
-    get_system_compat_keys, 
-    script_is_compatible, 
-    script_is_localized,
+    get_system_compat_keys,
     is_containerized,
+    script_is_compatible,
     script_is_container_compatible,
-    should_show_optimization_script
+    script_is_localized,
+    should_show_optimization_script,
 )
 from .lang_utils import detect_system_language
 
@@ -33,7 +33,7 @@ def script_requires_reboot(script_path, system_compat_keys):
         pass
     return False
 
-def _parse_metadata_file(file_path, default_values, translations=None):
+def _parse_metadata_file(file_path, default_values):
     """
     A generic parser for our metadata files (.sh headers or category-info.txt).
     """
@@ -58,8 +58,8 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                         key = parts[0].strip().lower()
                         value = parts[1].strip()
                         # Translation support for name/description
-                        if translations and key in ['name', 'description']:
-                            value = translations.get(value, value)
+                        if key in ['name', 'description']:
+                            value = _(value)
                         if key in metadata:
                             metadata[key] = value
     except Exception as e:
@@ -67,7 +67,7 @@ def _parse_metadata_file(file_path, default_values, translations=None):
 
     return metadata
 
-def get_subcategories_for_category(category_path, translations=None):
+def get_subcategories_for_category(category_path):
     """
     Returns a list of subcategories for a given category.
     
@@ -89,21 +89,21 @@ def get_subcategories_for_category(category_path, translations=None):
                 'icon': 'folder-open',
                 'mode': 'auto'  # subcategories can have their own mode
             }
-            subcat_info = _parse_metadata_file(info_file_path, defaults, translations)
+            subcat_info = _parse_metadata_file(info_file_path, defaults)
             # Use folder name as 'name', but replace with translation if available
-            subcat_info['name'] = translations.get(item_name, item_name) if translations else item_name
+            subcat_info['name'] = _(item_name)
             subcat_info['path'] = item_path
             subcat_info['is_script'] = False
             subcat_info['is_subcategory'] = True
             # Ensure subcategories also have the proper mode set
             subcat_info['has_subcategories'] = has_subcategories(item_path)
-            subcat_info['display_mode'] = get_category_mode(item_path, translations)
+            subcat_info['display_mode'] = get_category_mode(item_path)
             subcategories.append(subcat_info)
 
     return sorted(subcategories, key=lambda cat: cat['name'])
 
 
-def get_categories(translations=None):
+def get_categories():
     """
     Returns a list of categories, reading metadata from 'category-info.txt' in each folder.
     """
@@ -126,7 +126,7 @@ def get_categories(translations=None):
                 'reboot': 'no',
                 'noconfirm': 'no'
             }
-            header = _parse_metadata_file(file_path, defaults, translations)
+            header = _parse_metadata_file(file_path, defaults)
             # Filter by compatibility and locale
             if not script_is_compatible(file_path, compat_keys):
                 continue
@@ -157,19 +157,19 @@ def get_categories(translations=None):
                 'icon': 'folder-open',
                 'mode': 'auto'  # auto, menu, checklist
             }
-            cat_info = _parse_metadata_file(info_file_path, defaults, translations)
+            cat_info = _parse_metadata_file(info_file_path, defaults)
             # Use folder name as 'name', but replace with translation if available
-            cat_info['name'] = translations.get(category_name, category_name) if translations else category_name
+            cat_info['name'] = _(category_name)
             cat_info['path'] = category_path
             cat_info['is_script'] = False
             cat_info['has_subcategories'] = has_subcategories(category_path)
-            cat_info['display_mode'] = get_category_mode(category_path, translations)
+            cat_info['display_mode'] = get_category_mode(category_path)
             categories.append(cat_info)
 
     return sorted(categories, key=lambda cat: cat['name'])
 
 
-def get_scripts_for_category(category_path, translations=None):
+def get_scripts_for_category(category_path):
     """
     Returns a list of scripts and subcategories for a given category.
     """
@@ -182,7 +182,7 @@ def get_scripts_for_category(category_path, translations=None):
     current_locale = detect_system_language()
 
     # First, add subcategories
-    subcategories = get_subcategories_for_category(category_path, translations)
+    subcategories = get_subcategories_for_category(category_path)
     items.extend(subcategories)
 
     # Then, add scripts
@@ -209,7 +209,7 @@ def get_scripts_for_category(category_path, translations=None):
                 'reboot': 'no',
                 'noconfirm': 'no'
             }
-            script_info = _parse_metadata_file(file_path, defaults, translations)
+            script_info = _parse_metadata_file(file_path, defaults)
             script_info['is_script'] = True
             script_info['is_subcategory'] = False
             items.append(script_info)
@@ -217,7 +217,7 @@ def get_scripts_for_category(category_path, translations=None):
     return sorted(items, key=lambda s: (not s.get('is_subcategory', False), s['name']))
 
 
-def get_all_scripts_recursive(directory_path, translations=None):
+def get_all_scripts_recursive(directory_path):
     """
     Recursively gets all scripts from a directory and its subdirectories.
     This is useful for bulk operations or searching across nested categories.
@@ -253,14 +253,14 @@ def get_all_scripts_recursive(directory_path, translations=None):
                 'reboot': 'no',
                 'noconfirm': 'no'
             }
-            script_info = _parse_metadata_file(item_path, defaults, translations)
+            script_info = _parse_metadata_file(item_path, defaults)
             script_info['is_script'] = True
             script_info['is_subcategory'] = False
             scripts.append(script_info)
             
         elif os.path.isdir(item_path):
             # Recursively get scripts from subdirectories
-            scripts.extend(get_all_scripts_recursive(item_path, translations))
+            scripts.extend(get_all_scripts_recursive(item_path))
 
     return scripts
 
@@ -280,7 +280,7 @@ def has_subcategories(category_path):
     return False
 
 
-def get_category_mode(category_path, translations=None):
+def get_category_mode(category_path):
     """
     Determine the display mode for a category based on its metadata and content.
     Returns 'menu' for navigation or 'checklist' for bulk operations.
@@ -300,7 +300,7 @@ def get_category_mode(category_path, translations=None):
     defaults = {
         'mode': 'auto'  # auto, menu, checklist
     }
-    cat_info = _parse_metadata_file(info_file_path, defaults, translations)
+    cat_info = _parse_metadata_file(info_file_path, defaults)
     
     mode = cat_info.get('mode', 'auto')
     
@@ -312,7 +312,7 @@ def get_category_mode(category_path, translations=None):
     return 'menu'
 
 
-def get_breadcrumb_path(current_path, translations=None):
+def get_breadcrumb_path(current_path):
     """
     Generate a breadcrumb navigation path for nested categories.
     Returns a list of dictionaries with 'name' and 'path' for each level.
@@ -342,15 +342,13 @@ def get_breadcrumb_path(current_path, translations=None):
         current_build_path = os.path.join(current_build_path, part)
         
         # Get the display name for this level
-        display_name = part
-        if translations:
-            display_name = translations.get(part, part)
+        display_name = _(part)
         
         # Try to get name from category-info.txt if it exists
         info_file = os.path.join(current_build_path, 'category-info.txt')
         if os.path.exists(info_file):
             defaults = {'name': part}
-            cat_info = _parse_metadata_file(info_file, defaults, translations)
+            cat_info = _parse_metadata_file(info_file, defaults)
             display_name = cat_info.get('name', display_name)
         
         breadcrumbs.append({

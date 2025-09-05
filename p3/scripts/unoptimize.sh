@@ -11,9 +11,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 sudo_rq
 PATH_UDEV="/usr/lib/udev/rules.d"
 sudo rm $PATH_UDEV/20-audio-pm.rules \
@@ -65,4 +62,4 @@ if [ -f "${HOME}/.booster" ]; then
     echo "Shader booster completely removed."
 fi
 rm $HOME/.local/.autopatch.state
-zeninf "$msg036"
+zeninf $"Reboot your system to apply the changes."

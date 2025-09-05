@@ -12,9 +12,6 @@
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../libs/linuxtoys.lib"
 source "$SCRIPT_DIR/../libs/optimizers.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # system-agnostic scripts
 sysag_run () {
     if [[ "$ID" != "cachyos" ]]; then
@@ -47,15 +44,15 @@ optimizer () {
         sysag_run
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
         sudo mv autopatch.state $HOME/.local/.autopatch.state
-        zeninf "$msg036"
+        zeninf $"Reboot your system to apply the changes."
     else
-        fatal "$msg234"
+        fatal $"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo Optimizations' script first."
     fi
 }
 # menu
 while true; do
-    CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \
-        --column "Options" \
+    CHOICE=$(zenity --list --title="Power Optimizer" --text=$"Choose your device type:" \
+        --column="Options" \
         "Desktop" \
         "Laptop" \
         "Cancel" \

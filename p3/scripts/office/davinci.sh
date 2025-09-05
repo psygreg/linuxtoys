@@ -131,10 +131,10 @@ davinciboxatom () {
         elif [[ -n "$amdGPU" ]]; then
             # select ROCm or Rusticl
             while true; do
-                CHOICE=$(zenity --list --title="AMD Drivers" \
-        		    --column="$msg254" \
-            	    "ROCm - ${msg255}" \
-            	    "RustiCL - ${msg256}" \
+                CHOICE=$(zenity --list --title=$"AMD Drivers" \
+        		    --column="" \
+            	    "ROCm - Recommended for newer GPUs (RDNA and newer)" \
+            	    "RustiCL - Recommended for older GPUs" \
             	    --height=300 --width=360)
 
                 if [ $? -ne 0 ]; then
@@ -142,8 +142,8 @@ davinciboxatom () {
    			    fi
 
                 case $CHOICE in
-            	    "ROCm - ${msg255}") _packages+=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo) ;;
-            	    "RustiCL - ${msg256}") _packages+=(mesa-libOpenCL clinfo) ;;
+            	    "ROCm - Recommended for newer GPUs (RDNA and newer)") _packages+=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo) ;;
+            	    "RustiCL - Recommended for older GPUs") _packages+=(mesa-libOpenCL clinfo) ;;
             	    *) echo "Invalid Option" ;;
                 esac
 
@@ -177,7 +177,7 @@ davinciboxatom () {
         unzip $_archive_name.zip
         chmod +x setup.sh
         ./setup.sh $_archive_run_name.run
-	    zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
+	    zenity --info --title="AutoDaVinciBox" --text=$"Installation successful." --height=300 --width=300
         cd ..
         rm -rf davincibox
     }
@@ -190,7 +190,7 @@ davinciboxatom () {
         	    --column="Which version do you want to install?" \
 			    "Free" \
 			    "Studio" \
-			    "$msg070" \
+			    "Cancel" \
 			    --height=300 --width=300)
 
 		    if [ $? -ne 0 ]; then
@@ -204,7 +204,7 @@ davinciboxatom () {
 			    "Studio") _upkgname='davinci-resolve-studio'
 	  			    dv_atom_in
     			    break ;;
-			    "$msg070") break && return 100;;
+			    "Cancel") break && return 100;;
 			    *) echo "Invalid Option" ;;
 		    esac
 	    done
@@ -214,12 +214,9 @@ davinciboxatom () {
 # if on atomic distros, go straight to davincibox
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 # warn about just installing Resolve, and still requiring a purchase from BMD to use Studio
-zenwrn "$msg034"
+zenwrn $"This script only installs the DaVinci Resolve software. A license from Blackmagic Design is required to use the Studio version."
 cd $HOME
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
@@ -227,11 +224,11 @@ else
     # menu
     while true; do
 
-        CHOICE=$(zenity --list --title "DaVinci Resolve" \
+        CHOICE=$(zenity --list --title="DaVinci Resolve" \
             --column="" \
-            "$msg231" \
-            "$msg232" \
-            "$msg070" \
+            "Install in a container (recommended)" \
+            "Install on the host system (not recommended)" \
+            "Cancel" \
             --height=330 --width=300)
 
         if [ $? -ne 0 ]; then
@@ -239,12 +236,11 @@ else
         fi
 
         case $CHOICE in
-        "$msg231") davinciboxd && break ;;
-        "$msg232") davincinatd && break ;;
-        "$msg070") break && exit 100;;
+        "Install in a container (recommended)") davinciboxd && break ;;
+        "Install on the host system (not recommended)") davincinatd && break ;;
+        "Cancel") break && exit 100;;
         *) echo "Invalid Option" ;;
         esac
         
     done
 fi
-

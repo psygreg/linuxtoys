@@ -1,0 +1,136 @@
+# Portuguese translation for linuxtoys
+# Copyright (C) 2024 The LinuxToys Authors
+# This file is distributed under the same license as the LinuxToys package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: linuxtoys 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-18 10:00+0000\n"
+"PO-Revision-Date: 2024-05-18 10:00+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: Portuguese\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Operations completed."
+msgstr "Operações concluídas."
+
+msgid "Sudo privileges are required to continue."
+msgstr "Privilégios de superusuário são necessários para continuar."
+
+msgid "Unsupported package manager. Cannot install packages."
+msgstr "Gerenciador de pacotes não suportado. Não é possível instalar pacotes."
+
+msgid "This script is not compatible with your operating system."
+msgstr "Este script não é compatível com o seu sistema operacional."
+
+msgid "This requires the Chaotic-AUR repository. Do you want to enable it?"
+msgstr "Isso requer o repositório Chaotic-AUR. Deseja habilitá-lo?"
+
+msgid "Docker + Portainer CE Setup"
+msgstr "Configuração Docker + Portainer CE"
+
+msgid "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?"
+msgstr "Isso instalará o Docker Engine e o Portainer CE para gerenciá-lo através de uma interface web. Prosseguir?"
+
+msgid "Setup complete. Your Portainer dashboard will open in your web browser now."
+msgstr "Configuração concluída. O painel do Portainer será aberto no seu navegador agora."
+
+msgid "Choose JDK versions to install"
+msgstr "Escolha as versões do JDK para instalar"
+
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Este programa já está instalado. Deseja removê-lo?"
+
+msgid "Mise has been installed. Please restart your terminal or source your shell configuration file (e.g., .bashrc, .zshrc) to start using it. A browser window will now open with the official documentation."
+msgstr "O Mise foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com a documentação oficial."
+
+msgid "NVM has been installed. Please restart your terminal or source your shell configuration file (e.g., .bashrc, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr "O NVM foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do shell (ex: .bashrc, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com instruções de uso."
+
+msgid "PyEnv has been installed. Please restart your terminal or source your shell configuration file (e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage instructions."
+msgstr "O PyEnv foi instalado. Por favor, reinicie seu terminal ou recarregue seu arquivo de configuração do shell (ex: .bash_profile, .zshrc) para começar a usá-lo. Uma janela do navegador será aberta com instruções de uso."
+
+msgid "Reboot your system to apply the changes."
+msgstr "Reinicie o sistema para aplicar as alterações."
+
+msgid "No compatible terminal emulator found to launch Podman Compose."
+msgstr "Nenhum emulador de terminal compatível encontrado para iniciar o Podman Compose."
+
+msgid "Not enough RAM. At least 12GB total is required to continue."
+msgstr "Memória RAM insuficiente. São necessários pelo menos 12GB no total para continuar."
+
+msgid "Not enough free RAM. Close some applications and try again."
+msgstr "Memória RAM livre insuficiente. Feche algumas aplicações e tente novamente."
+
+msgid "Not enough CPU threads to install Windows hypervisor, minimum 4."
+msgstr "Threads de CPU insuficientes para instalar o hipervisor do Windows, mínimo de 4."
+
+msgid "Enter Windows disk (C:) size in GB. Leave empty to use 50GB."
+msgstr "Digite o tamanho do disco do Windows (C:) em GB. Deixe em branco para usar 50GB."
+
+msgid "Invalid input for disk size. Please enter a number."
+msgstr "Entrada inválida para o tamanho do disco. Por favor, insira um número."
+
+msgid "Minimum space to install Windows (C:) is 40GB."
+msgstr "O espaço mínimo para instalar o Windows (C:) é de 40GB."
+
+msgid "Not enough disk space: %s GB required, %s GB available."
+msgstr "Espaço em disco insuficiente: %s GB necessários, %s GB disponíveis."
+
+msgid "Is the Windows installation finished?"
+msgstr "A instalação do Windows foi concluída?"
+
+msgid "Do you want to revert all changes? WARNING: This will ERASE all Podman Compose data!"
+msgstr "Deseja reverter todas as alterações? AVISO: Isso APAGARÁ todos os dados do Podman Compose!"
+
+msgid "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?"
+msgstr "Isso listará os snapshots no seu GRUB. Só funcionará se o seu sistema de arquivos raiz for btrfs. Prosseguir?"
+
+msgid "Installation successful."
+msgstr "Instalação bem-sucedida."
+
+msgid "Your root filesystem is not btrfs."
+msgstr "Seu sistema de arquivos raiz não é btrfs."
+
+msgid "This program is already installed. Do you want to remove it?"
+msgstr "Este programa já está instalado. Deseja removê-lo?"
+
+msgid "This script is not compatible with your operating system."
+msgstr "Este script não é compatível com o seu sistema operacional."
+
+msgid "This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo Optimizations' script first."
+msgstr "Este sistema já foi otimizado pelo LinuxToys. Para reaplicar, por favor, use primeiro o script 'Reverter Otimizações'."
+
+msgid "This will install the PhotoGIMP patch for GIMP, making it look and feel more like Adobe Photoshop. This is optional. Proceed?"
+msgstr "Isso instalará o patch PhotoGIMP para o GIMP, tornando sua aparência e usabilidade mais parecidas com o Adobe Photoshop. Isso é opcional. Prosseguir?"
+
+msgid "Please wait while GIMP starts for the first time to create its configuration files..."
+msgstr "Por favor, aguarde enquanto o GIMP inicia pela primeira vez para criar seus arquivos de configuração..."
+
+msgid "This script requires Lossless Scaling for Windows to be installed on your system through Steam, Lutris or Bottles. Please make sure it is installed before proceeding."
+msgstr "Este script requer que o Lossless Scaling para Windows esteja instalado no seu sistema via Steam, Lutris ou Bottles. Por favor, certifique-se de que ele está instalado antes de prosseguir."
+
+msgid "Lossless.dll not found. Did you install Lossless Scaling?"
+msgstr "Lossless.dll não encontrado. Você instalou o Lossless Scaling?"
+
+msgid "Please check your wheel's compatibility before proceeding."
+msgstr "Por favor, verifique a compatibilidade do seu volante antes de prosseguir."
+
+msgid "The application is already up to date."
+msgstr "O aplicativo já está atualizado."
+
+msgid "Waydroid requires a Wayland session to work."
+msgstr "O Waydroid requer uma sessão Wayland para funcionar."
+
+msgid "Do you want to install scripts for ARM translation? (recommended)"
+msgstr "Deseja instalar scripts para tradução ARM? (recomendado)"
+
+msgid "Waydroid setup is complete. You can now launch it from your applications menu."
+msgstr "A configuração do Waydroid está completa. Agora você pode iniciá-lo a partir do menu de aplicativos."
+
+msgid "The firewall has been configured and enabled."
+msgstr "O firewall foi configurado e ativado."

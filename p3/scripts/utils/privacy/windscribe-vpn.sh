@@ -7,8 +7,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../../libs/lang/${langfile}.lib"
 sudo_rq
 cd $HOME
 if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [[ "$ID" =~ (ubuntu|debian) ]]; then
@@ -38,6 +36,6 @@ elif [[ "$ID" =~ (suse|opensuse) ]] || [[ "$ID_LIKE" == *suse* ]]; then
 	sudo zypper install -y windscribe.rpm
 	rm -f windscribe.rpm
 else
-    fatal "$msg077"
+    fatal $"This script is not compatible with your operating system."
 fi
-zeninf "$msg018"
+zeninf $"Operations completed."

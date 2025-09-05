@@ -7,8 +7,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 sudo_rq
 cd $HOME
@@ -17,11 +15,11 @@ if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "d
     echo "deb [signed-by=/usr/share/keyrings/vscode-keyring.asc arch=amd64] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
     sudo apt-get update
 elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-    if zenity --question --text "$msg035" --width 360 --height 300; then
+    if zenity --question --text=$"This requires the Chaotic-AUR repository. Do you want to enable it?" --width 360 --height 300; then
         chaotic_aur_lib
         sleep 1
         sudo pacman -S --noconfirm visual-studio-code-bin
-        zeninf "$msg018"
+        zeninf $"Operations completed."
         exit 0
     fi
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
@@ -38,4 +36,4 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
 fi
 _packages=(code)
 _install_
-zeninf "$msg018"
+zeninf $"Operations completed."

@@ -40,4 +40,4 @@ if [ -f "${HOME}/.booster" ]; then
     echo "Shader booster completely removed."
 fi
 rm $HOME/.local/.autopatch.state
-zeninf "$msg036"
+zeninf $"Reboot your system to apply the changes."

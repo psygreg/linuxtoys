@@ -10,9 +10,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 # check for rpmfusion repos before proceeding
 sudo_rq
@@ -39,4 +36,4 @@ blacklist nouveau
 blacklist nova_core
 EOF
 sudo rpm-ostree kargs --append=rd.driver.blacklist=nova_core --append=modprobe.blacklist=nova_core --append=rd.driver.blacklist=nouveau --append=modprobe.blacklist=nouveau --append=nvidia-drm.modeset=1
-zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300
+zenity --info --title="Nvidia Drivers" --text=$"Reboot your system to apply the changes." --width 300 --height 300

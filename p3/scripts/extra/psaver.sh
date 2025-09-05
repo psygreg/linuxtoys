@@ -9,13 +9,10 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/optimizers.lib"
 if [ ! -f "$HOME/.local/.autopatch.state" ]; then
     sudo_rq
     psave_lib
 else
-    nonfatal "$msg234"
+    nonfatal $"This system has already been optimized by LinuxToys. To re-apply, please use the 'Undo Optimizations' script first."
 fi

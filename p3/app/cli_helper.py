@@ -211,13 +211,13 @@ _flatpak_
         return False
 
 
-def find_script_by_name(script_name, translations=None):
+def find_script_by_name(script_name):
     """
     Find a script by its name across all categories and root scripts, including nested subcategories.
     Returns the script info dict if found, None otherwise.
     """
     # Check root scripts (those shown as categories)
-    categories = get_categories(translations)
+    categories = get_categories()
     for category in categories:
         if category.get('is_script'):
             # For root scripts, check both the filename and the parsed name
@@ -230,7 +230,7 @@ def find_script_by_name(script_name, translations=None):
     for category in categories:
         if not category.get('is_script'):
             # Use recursive search to find scripts in all subdirectories
-            all_scripts = get_all_scripts_recursive(category['path'], translations)
+            all_scripts = get_all_scripts_recursive(category['path'])
             for script in all_scripts:
                 filename_without_ext = os.path.splitext(os.path.basename(script['path']))[0]
                 if (script['name'].lower() == script_name.lower() or 
@@ -319,7 +319,7 @@ def run_script(script_info):
         return 1
 
 
-def run_update_check_cli(translations=None):
+def run_update_check_cli():
     """
     CLI function to check for updates.
     """
@@ -327,10 +327,10 @@ def run_update_check_cli(translations=None):
     print("=" * 40)
     
     # Run update check with verbose output and no dialog
-    return run_update_check(show_dialog=False, verbose=True, translations=translations)
+    return run_update_check(show_dialog=False, verbose=True)
 
 
-def check_ostree_deployment_cli(translations=None):
+def check_ostree_deployment_cli():
     """
     CLI function to check for pending ostree deployments and handle reboot requirement.
     
@@ -343,14 +343,10 @@ def check_ostree_deployment_cli(translations=None):
     if not check_ostree_pending_deployments():
         return True  # No pending deployments, continue normally
     
-    # Use translations if available, fallback to English
-    title = translations.get('ostree_deployment_title', 'Pending System Updates') if translations else 'Pending System Updates'
-    message = translations.get('ostree_deployment_message', 
-        'Your system has pending updates that require a reboot to complete. You must reboot your computer to apply these changes before installing additional features.'
-    ) if translations else 'Your system has pending updates that require a reboot to complete. You must reboot your computer to apply these changes before installing additional features.'
-    
-    reboot_now_text = translations.get('reboot_now_btn', 'Reboot Now') if translations else 'Reboot Now'
-    reboot_later_text = translations.get('reboot_later_btn', 'Reboot Later') if translations else 'Reboot Later'
+    title = _('ostree_deployment_title')
+    message = _('ostree_deployment_message')
+    reboot_now_text = _('reboot_now_btn')
+    reboot_later_text = _('reboot_later_btn')
     
     print("\n" + "=" * 60)
     print(f"WARNING: {title.upper()}")
@@ -432,7 +428,7 @@ def print_cli_usage():
     print("  LT_MANIFEST=1 python3 run.py check-updates")
 
 
-def run_manifest_mode(translations=None):
+def run_manifest_mode():
     """
     Main function for CLI manifest mode.
     Loads the manifest, finds scripts, checks compatibility, and runs them sequentially.
@@ -456,7 +452,7 @@ def run_manifest_mode(translations=None):
         
         # Check if user wants to run update check
         elif arg in ['check-updates', 'update-check', '--check-updates']:
-            return 1 if run_update_check_cli(translations) else 0
+            return 1 if run_update_check_cli() else 0
         
         # Otherwise, treat the argument as a manifest file path
         else:
@@ -473,7 +469,7 @@ def run_manifest_mode(translations=None):
     # Check for pending ostree deployments on compatible systems
     system_compat_keys = get_system_compat_keys()
     if {'ostree', 'ublue'} & system_compat_keys:
-        if not check_ostree_deployment_cli(translations):
+        if not check_ostree_deployment_cli():
             # User chose to exit or reboot
             return 0
     
@@ -499,7 +495,7 @@ def run_manifest_mode(translations=None):
     flatpaks_to_install = []
     
     for script_name in script_names:
-        script_info = find_script_by_name(script_name, translations)
+        script_info = find_script_by_name(script_name)
         
         if script_info is None:
             # Script not found, check if it's a package or flatpak

@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
 import json
-import urllib.request
-import urllib.error
+import os
 import re
-import os
 import sys
+import urllib.error
+import urllib.request
+
 import gi
+
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango, Gdk
-import webbrowser
 import os
+import webbrowser
+
+from gi.repository import Gdk, Gtk, Pango
 
 
 def get_current_version():
@@ -133,7 +136,7 @@ def check_for_updates(verbose=False):
             print("Current version is newer than the latest release.")
         return False
 
-def show_update_dialog(latest_version, translations=None):
+def show_update_dialog(latest_version):
     """
     Show update dialog using GTK.
     Returns True if user wants to update, False otherwise.
@@ -144,8 +147,8 @@ def show_update_dialog(latest_version, translations=None):
             import gi
             gi.require_version('Gtk', '3.0')
             from gi.repository import Gtk
-            
-            return _show_gtk_update_dialog(latest_version, translations)
+
+            return _show_gtk_update_dialog(latest_version)
         except ImportError:
             print("GTK not available for update dialog")
             return False
@@ -216,23 +219,16 @@ def open_link(event, url):
         webbrowser.open(url)
 
 # ---- GTK Update Dialog ----
-def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
+def _show_gtk_update_dialog(latest_version, changelog=None):
     try:
         dialog = Gtk.Dialog(
-            title=translations.get('update_available_title', 'Update Available') if translations else 'Update Available',
-            flags=Gtk.DialogFlags.MODAL
+            title=_("update_available_title"), flags=Gtk.DialogFlags.MODAL
         )
         dialog.set_default_size(400, 300)
         dialog.set_resizable(True)
 
-        download_btn = dialog.add_button(
-            translations.get('update_download_btn', 'Download Update') if translations else 'Download Update',
-            Gtk.ResponseType.YES
-        )
-        ignore_btn = dialog.add_button(
-            translations.get('update_ignore_btn', 'Ignore') if translations else 'Ignore',
-            Gtk.ResponseType.NO
-        )
+        download_btn = dialog.add_button(_("update_download_btn"), Gtk.ResponseType.YES)
+        ignore_btn = dialog.add_button(_("update_ignore_btn"), Gtk.ResponseType.NO)
         download_btn.get_style_context().add_class("suggested-action")
 
         content_area = dialog.get_content_area()
@@ -248,18 +244,18 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         message_label = Gtk.Label()
         message_label.set_use_markup(True)
         message_label.set_markup(
-            f"<b>{translations.get('update_available_message', 'A new version of LinuxToys is available.') if translations else 'A new version of LinuxToys is available.'}</b>"
+            f"<b>{_('A new version of LinuxToys is available')}</b>"
         )
         message_label.set_line_wrap(True)
         message_label.set_halign(Gtk.Align.START)
         vbox.pack_start(message_label, False, False, 0)
 
         # Current and latest version labels
-        current_label = Gtk.Label(label=f"{translations.get('update_current_version', 'Current version:') if translations else 'Current version:'} {CURRENT_VERSION}")
+        current_label = Gtk.Label(label=f"{_('Current version:')} {CURRENT_VERSION}")
         current_label.set_halign(Gtk.Align.START)
         vbox.pack_start(current_label, False, False, 0)
 
-        latest_label = Gtk.Label(label=f"{translations.get('update_latest_version', 'Latest version:') if translations else 'Latest version:'} {latest_version}")
+        latest_label = Gtk.Label(label=f"{_('Latest version:')} {latest_version}")
         latest_label.set_halign(Gtk.Align.START)
         latest_label.get_style_context().add_class("dim-label")
         vbox.pack_start(latest_label, False, False, 0)
@@ -279,7 +275,7 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
             textview.set_buffer(markdown_to_textbuffer(changelog.strip()))
         else:
             buffer = Gtk.TextBuffer()
-            buffer.set_text(translations.get('whatsnew_no_changelog', 'No changelog available.'))
+            buffer.set_text(_("No changelog available."))
             textview.set_buffer(buffer)
 
         scrolled.add(textview)
@@ -296,7 +292,7 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         print(f"Error showing GTK update dialog: {e}")
         return False
 
-def show_whatsnew_dialog(version, changelog, translations=None):
+def show_whatsnew_dialog(version, changelog):
     """
     Show 'What's New' dialog for the new version.
     """
@@ -306,8 +302,7 @@ def show_whatsnew_dialog(version, changelog, translations=None):
         from gi.repository import Gtk, Pango
 
         dialog = Gtk.Dialog(
-            title=f"{translations.get('whatsnew_title', 'O que há de novo')} – {version}" if translations else f"O que há de novo – {version}",
-            flags=Gtk.DialogFlags.MODAL
+            title=f"{_("What's New")} – {version}", flags=Gtk.DialogFlags.MODAL
         )
         dialog.set_default_size(-1, -1)
         dialog.set_resizable(True)
@@ -325,7 +320,7 @@ def show_whatsnew_dialog(version, changelog, translations=None):
         scrolled.set_vexpand(True)
 
         label = Gtk.Label()
-        label.set_text(changelog.strip() if changelog else translations.get('whatsnew_no_changelog', 'Nenhum changelog disponível.') if translations else "Nenhum changelog disponível.")
+        label.set_text(changelog.strip() if changelog else _("No changelog available."))
         label.set_line_wrap(True)
         label.set_justify(Gtk.Justification.LEFT)
         label.set_xalign(0.0)
@@ -338,7 +333,7 @@ def show_whatsnew_dialog(version, changelog, translations=None):
         scrolled.add(label)
         content_area.pack_start(scrolled, True, True, 0)
 
-        dialog.add_button(translations.get('whatsnew_ok', 'OK') if translations else "OK", Gtk.ResponseType.CLOSE)
+        dialog.add_button(_("OK"), Gtk.ResponseType.CLOSE)
         dialog.show_all()
         dialog.run()
         dialog.destroy()
@@ -359,7 +354,7 @@ def open_releases_page(repo_owner="psygreg", repo_name="linuxtoys"):
     except Exception as e:
         print(f"Error opening releases page: {e}")
 
-def run_update_check(show_dialog=True, verbose=False, translations=None):
+def run_update_check(show_dialog=True, verbose=False):
     """
     Main update check function.
     """
@@ -372,7 +367,7 @@ def run_update_check(show_dialog=True, verbose=False, translations=None):
         changelog = release_info["body"]
 
         if show_dialog and latest_version:
-            if _show_gtk_update_dialog(latest_version, changelog, translations):
+            if _show_gtk_update_dialog(latest_version, changelog):
                 open_releases_page()
 
         return True
@@ -383,8 +378,8 @@ if __name__ == "__main__":
     # Command line interface
     verbose = '--verbose' in sys.argv or '-v' in sys.argv
     no_dialog = '--no-dialog' in sys.argv
-    
-    if run_update_check(show_dialog=not no_dialog, verbose=verbose, translations=None):
+
+    if run_update_check(show_dialog=not no_dialog, verbose=verbose):
         sys.exit(1)  # Update available
     else:
         sys.exit(0)  # Up to date or check failed

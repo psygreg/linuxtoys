@@ -8,9 +8,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # functions
 rocm_rpm () {
     local GPU=$(lspci | grep -i 'radeon .*')
@@ -24,7 +21,7 @@ rocm_rpm () {
         _install_
         sudo usermod -aG render,video $USER
     else
-        nonfatal "$msg040"
+        nonfatal $"No compatible AMD GPU found."
     fi
 }
 rocm_deb () {
@@ -34,7 +31,7 @@ rocm_deb () {
         _install_
         sudo usermod -aG render,video $USER
     else
-        nonfatal "$msg040"
+        nonfatal $"No compatible AMD GPU found."
     fi
 }
 rocm_arch () { 
@@ -44,7 +41,7 @@ rocm_arch () {
         _install_
         sudo usermod -aG render,video $USER
     else
-        nonfatal "$msg040"
+        nonfatal $"No compatible AMD GPU found."
     fi
 }
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then

@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # check dependencies
 dep_check () {
     if ! dpkg -l | grep -q grub-efi; then
-        nonfatal "No GRUB found."
+        nonfatal $"No GRUB found."
         exit 1
     else
         _packages=()
@@ -81,12 +81,12 @@ grubtrfs_in () {
 }
 # runtime
 if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
-    if zenity --question --title "Grub-Btrfs Installer" --text "This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" --width 360 --height 300; then
+    if zenity --question --title="Grub-Btrfs Installer" --text=$"This will list snapshots in your GRUB. It will only work if your root filesystem is btrfs. Proceed?" --width 360 --height 300; then
         sudo_rq
         dep_check
         grubtrfs_in
-        zeninf "Installation successful."
+        zeninf $"Installation successful."
     fi
 else
-    nonfatal "$msg031"
+    nonfatal $"Your root filesystem is not btrfs."
 fi

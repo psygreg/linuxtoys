@@ -12,9 +12,6 @@
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../libs/linuxtoys.lib"
 source "$SCRIPT_DIR/../libs/optimizers.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
 # functions
 optimizer () {
     cd $HOME
@@ -82,26 +79,26 @@ optimizer () {
             sudo rpm-ostree remove linuxtoys-cfg-atom
             sudo rpm-ostree install -yA linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         else
-            zenity --info --text "$msg281" --height=300 --width=300
+            zenity --info --text=$"The application is already up to date." --height=300 --width=300
         fi
     fi
 }
 # end messagebox
 end_msg () {
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        zenity --info --title "$msg006" --text "$msg268" --height=300 --width=300
+        zenity --info --title=$"Optimization Complete" --text=$"Optimization complete. Please reboot your system. You will be prompted to enroll a new MOK (Machine Owner Key) for Secure Boot. Please select 'Enroll MOK' and follow the prompts to complete the process." --height=300 --width=300
         exit 0
     else
-        zenity --info --title "$msg006" --text "$msg036" --height=300 --width=300
+        zenity --info --title=$"Optimization Complete" --text=$"Reboot your system to apply the changes." --height=300 --width=300
     fi
 }
 # menu
 while true; do
     CHOICE=$(zenity --list --title="Power Optimizer" \
-        --column="$msg229" \
+        --column=$"Choose your device type:" \
         "Desktop" \
         "Laptop" \
-        "$msg070" \
+        "Cancel" \
         --height=300 --width=300)
 
     if [ $? -ne 0 ]; then
@@ -111,7 +108,7 @@ while true; do
     case $CHOICE in
     "Desktop") sudo_rq && optimizer && end_msg && break ;;
     "Laptop") sudo_rq && optimizer && psave_lib && end_msg && break ;;
-    "$msg070") exit 100 ;;
+    "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
 done

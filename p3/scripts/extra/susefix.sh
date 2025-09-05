@@ -8,13 +8,10 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 if [[ "$ID_LIKE" == *suse* ]]; then
     sudo_rq
     sudo setsebool -P selinuxuser_execmod 1
-    zeninf "$msg022"
+    zeninf $"SELinux policy has been updated."
 else
-    nonfatal "$msg073"
+    nonfatal $"This script is only for OpenSUSE-based distributions."
 fi

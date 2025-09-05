@@ -10,9 +10,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 cd $HOME
 git clone https://github.com/tomaspinho/rtl8821ce.git
 sudo_rq
@@ -38,4 +35,4 @@ else
 fi
 cd ..
 rm -r rtl8821ce
-zeninf "$msg036"
+zeninf $"Reboot your system to apply the changes."

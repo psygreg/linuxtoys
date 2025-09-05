@@ -8,8 +8,6 @@
 # install dependencies
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 sudo_rq
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
     _packages=(make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev)
@@ -40,6 +38,6 @@ fi
 git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 # basic usage instruction prompt
-zeninf "$msg135"
+zeninf $"PyEnv has been installed. Please restart your terminal or source your shell configuration file (e.g., .bash_profile, .zshrc) to start using it. A browser window will now open with usage instructions."
 xdg-open https://github.com/pyenv/pyenv?tab=readme-ov-file#usage
 xdg-open https://github.com/pyenv/pyenv-virtualenv?tab=readme-ov-file#usage

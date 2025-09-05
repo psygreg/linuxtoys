@@ -7,14 +7,11 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/helpers.lib"
 flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub org.gimp.GIMP
-if zenity --question --text "$msg253" --width 360 --height 300; then
-    zeninf "$msg254"
+if zenity --question --text=$"This will install the PhotoGIMP patch for GIMP, making it look and feel more like Adobe Photoshop. This is optional. Proceed?" --width 360 --height 300; then
+    zeninf $"Please wait while GIMP starts for the first time to create its configuration files..."
     flatpak run org.gimp.GIMP & sleep 10
     PID=($(pgrep -f "gimp"))
     if [ -z "$PID" ]; then

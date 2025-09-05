@@ -19,7 +19,7 @@ root_swap () {
         swapon /swap/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        zeninf "Swapfile creation successful."
+        zeninf $"Swapfile creation successful."
         return 0
     else
         sudo_rq
@@ -27,7 +27,7 @@ root_swap () {
         sudo swapon /swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        zeninf "Swapfile creation successful."
+        zeninf $"Swapfile creation successful."
         return 0
     fi
 }
@@ -41,7 +41,7 @@ home_swap () {
         sudo swapon /home/swap/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/home/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        zeninf "Swapfile creation successful."
+        zeninf $"Swapfile creation successful."
         return 0
     else
         sudo_rq
@@ -49,19 +49,19 @@ home_swap () {
         sudo swapon /home/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/home/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
-        zeninf "Swapfile creation successful."
+        zeninf $"Swapfile creation successful."
         return 0
     fi
 }
 
 if swapon --show | grep -q '^'; then
-    nonfatal "Swap already enabled in your system."
+    nonfatal $"Swap already enabled in your system."
     exit 0
 else
     # menu
     while true; do
-        CHOICE=$(zenity --list --title "Swapfile Creator" --text "Create swapfile on:" \
-            --column "Options" \
+        CHOICE=$(zenity --list --title="Swapfile Creator" --text="Create swapfile on:" \
+            --column="Options" \
             "/ (root)" \
             "/home (home)" \
             "Cancel" \
@@ -79,4 +79,3 @@ else
         esac
     done
 fi
-    

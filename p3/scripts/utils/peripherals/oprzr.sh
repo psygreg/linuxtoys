@@ -8,8 +8,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../../libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/../../../libs/lang/${langfile}.lib"
 _packages=(openrazer-meta)
 sudo_rq
 if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
@@ -34,4 +32,4 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
     sudo zypper refresh
 fi
 _install_
-zeninf "$msg036"
+zeninf $"Reboot your system to apply the changes."

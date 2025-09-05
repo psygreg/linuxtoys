@@ -8,9 +8,6 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # function
 rusticl_in () {
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
@@ -30,7 +27,7 @@ if [[ -n "$amdGPU" ]]; then
     rusticl_in
     curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/rusticl-amd \
         | sudo tee -a /etc/environment > /dev/null
-    zeninf "$msg036"
+    zeninf $"Reboot your system to apply the changes."
 else
     intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
     if [[ -n "$intelGPU" ]]; then
@@ -38,9 +35,9 @@ else
         rusticl_in
         curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/rusticl-intel \
             | sudo tee -a /etc/environment > /dev/null
-        zeninf "$msg036"
+        zeninf $"Reboot your system to apply the changes."
     else
-        nonfatal "$msg077"
+        nonfatal $"This script is not compatible with your operating system."
         exit 1
     fi
 fi
