@@ -110,7 +110,7 @@ obs_pipe () {
         rm -rf obspipe
     fi
 }
-if command -v flatpak &> /dev/null && command -v dnf &> /dev/null || command -v flatpak &> /dev/null && command -v apt &> /dev/null || command -v flatpak &> /dev/null && command -v zypper &> /dev/null || command -v flatpak &> /dev/null && command -v pacman &> /dev/null; then
+if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v apt &> /dev/null || command -v zypper &> /dev/null || command -v pacman &> /dev/null); then
     cd $HOME
     mkdir psypicks || exit 1
     cd psypicks || exit 1
