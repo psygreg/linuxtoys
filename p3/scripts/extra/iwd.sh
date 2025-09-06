@@ -28,6 +28,7 @@ iwd_in () {
         if [ "$ID" == "bazzite" ] || [ "$ID" == "bluefin" ] || [ "$ID" == "aurora" ]; then
             # use their iwd installation script for ublue distros
             ujust iwd
+            return 0
         elif command -v rpm-ostree &>/dev/null; then
             sudo rpm-ostree install iwd
             # enforce iwd backend for networkmanager

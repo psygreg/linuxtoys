@@ -214,6 +214,19 @@ class AppWindow(Gtk.ApplicationWindow):
         label.set_max_width_chars(28)  # Limit label width
         label.set_width_chars(4)      # Set consistent width
         label.set_hexpand(False)
+        
+        # Make categories and subcategories bold, keep scripts regular
+        is_main_category = self.current_category_info is None  # We're in the main menu
+        is_subcategory = item_info.get('is_subcategory', False)
+        is_category_type = item_info.get('type') == 'category'
+        is_not_script = not item_info.get('is_script', False)
+        
+        if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
+            # This is a category or subcategory - make it bold
+            # Escape HTML characters to prevent markup issues
+            import html
+            escaped_name = html.escape(item_info['name'])
+            label.set_markup(f"<b>{escaped_name}</b>")
         box.pack_start(label, True, True, 0)
 
         icon_value = item_info.get('icon', 'application-x-executable')
@@ -252,17 +265,6 @@ class AppWindow(Gtk.ApplicationWindow):
             icon_widget.set_pixel_size(icon_size) ## altura dos icones
         icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
-
-        # Check if this is a navigational item (category or subcategory)
-        # Main categories are identified by being in the categories flowbox or having type 'category'
-        is_main_category = self.current_category_info is None  # We're in the main menu
-        is_subcategory = item_info.get('is_subcategory', False)
-        is_category_type = item_info.get('type') == 'category'
-        is_not_script = not item_info.get('is_script', False)
-        
-        # Apply overlay to subcategories, categories, or main menu items that aren't scripts
-        if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
-            box.get_style_context().add_class("item-subcategory")
 
         box.pack_start(icon_widget, False, False, 20)
 
