@@ -34,10 +34,6 @@ psycachy_std () {
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-libc-dev_${kver_psycachy}-1_amd64.deb"
     sleep 1
     sudo dpkg -i linux-image-psycachy_${kver_psycachy}-1_amd64.deb linux-headers-psycachy_${kver_psycachy}-1_amd64.deb linux-libc-dev_${kver_psycachy}-1_amd64.deb || exit 10
-    cd $HOME/.local
-    sleep 1
-    wget -O "kernelsetting" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults
-    cd $HOME
     sleep 1
     rm linux-image-psycachy_${kver_psycachy}-1_amd64.deb
     rm linux-headers-psycachy_${kver_psycachy}-1_amd64.deb
@@ -55,10 +51,6 @@ psycachy_lts () {
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
     sleep 1
     sudo dpkg -i linux-image-psycachy-lts_${kver_lts}-1_amd64.deb linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb linux-libc-dev_${kver_lts}-1_amd64.deb || exit 10
-    cd $HOME/.local
-    sleep 1
-    wget -O "kernelsetting-lts" https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/src/kernelsetting-defaults
-    cd $HOME
     sleep 1
     rm linux-image-psycachy-lts_${kver_lts}-1_amd64.deb
     rm linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb
