@@ -9,10 +9,37 @@
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+# language
+_lang_
+source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # functions
 # check dependencies
 dep_check () {
-    if ! dpkg -l | grep -q grub-efi; then
+    # Check for GRUB installation across different distributions
+    grub_found=false
+    if [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
+        # Debian/Ubuntu: check for grub-efi or grub-pc packages
+        if dpkg -l | grep -q "grub-efi\|grub-pc"; then
+            grub_found=true
+        fi
+    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+        # Fedora/RHEL: check for grub2-efi or grub2-pc packages
+        if rpm -qa | grep -q "grub2-efi\|grub2-pc"; then
+            grub_found=true
+        fi
+    elif [[ "$ID_LIKE" == *suse* ]]; then
+        # OpenSUSE: check for grub2-efi or grub2-pc packages
+        if rpm -qa | grep -q "grub2-efi\|grub2-pc"; then
+            grub_found=true
+        fi
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+        # Arch Linux: check for grub package
+        if pacman -Qi grub &>/dev/null; then
+            grub_found=true
+        fi
+    fi
+    # install other dependencies if grub is found
+    if [ "$grub_found" = false ]; then
         nonfatal "No GRUB found."
         exit 1
     else
@@ -90,3 +117,4 @@ if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
 else
     nonfatal "$msg031"
 fi
+zeninf "$msg036"
