@@ -63,7 +63,7 @@ optimizer () {
                 git clone https://github.com/CheariX/silverblue-akmods-keys
                 cd silverblue-akmods-keys
                 sudo bash setup.sh
-                sudo rpm-ostree install -yA akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
+                sudo rpm-ostree install akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
             fi
         fi
         # fix alive timeout for Gnome
