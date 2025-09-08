@@ -36,14 +36,11 @@ elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         rpm-ostree refresh-md
         # Install openrazer-kmod for rpm-ostree systems
         sudo rpm-ostree install openrazer-kmod openrazer-kmod-common openrazer-daemon
-        flatpak_in_lib
-        flatpak install -y --system --noninteractive flathub app.polychromatic.controller
-        zeninf "$msg036"
-        exit 0
     else
         _packages+=(kernel-devel)
         # Regular Fedora systems - use standard approach
         sudo dnf config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo
+        _install_
     fi
 elif [[ "$ID_LIKE" == *suse* ]]; then
     if grep -qi "slowroll" /etc/os-release; then
@@ -52,6 +49,8 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
         sudo zypper addrepo https://download.opensuse.org/repositories/hardware:razer/openSUSE_Tumbleweed/hardware:razer.repo
     fi
     sudo zypper refresh
+    _install_
 fi
-_install_
+flatpak_in_lib
+flatpak install -y --system --noninteractive flathub app.polychromatic.controller
 zeninf "$msg036"

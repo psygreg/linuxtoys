@@ -164,7 +164,7 @@
   "efx_desc": "Uma poderosa ferramenta de processamento de áudio para Pipewire que oferece desde filtragem de ruído até áudio espacial.",
   "waydroid_desc": "Uma abordagem baseada em container para o Android no Linux.",
   "lact_desc": "Controle de ventoinhas e overclocking para GPUs. Use com cautela!",
-  "oprzr_desc": "Um driver e daemon feito pela comunidade para periféricos Razer.",
+  "oprzr_desc": "Um driver e daemon feito pela comunidade para periféricos Razer. Inclui a GUI Polychromatic.",
   "slar_desc": "Um gerenciador de dispositivos Linux para o Receptor Unifying da Logitech e outros dispositivos suportados.",
   "distroshelf_desc": "Uma ferramenta de gerenciamento de containers Distrobox com uma interface elegante. Inclui Podman e Distrobox.",
   "bottles_desc": "Uma ferramenta para gerenciar aplicativos Windows no Linux usando Wine.",
