@@ -116,16 +116,6 @@ debfixer_lib () {
             su -c "sed -i '\|^root[[:space:]]\\+ALL=(ALL:ALL)[[:space:]]\\+ALL$|a ${USER} ALL=(ALL:ALL) ALL' /etc/sudoers"
             sleep 1
         fi
-        if [[ "$codename" =~ ^(trixie|testing)$ ]]; then
-            sudo apt modernize-sources
-            cd $HOME
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/debian.sources
-            sleep 1
-            sudo cp -f debian.sources /etc/apt/sources.list.d/
-            sleep 1
-            sudo apt update
-            rm debian.sources
-        fi
     fi
 }
 

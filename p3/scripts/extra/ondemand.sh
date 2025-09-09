@@ -1,5 +1,5 @@
 #!/bin/bash
-# name: On-Demand Governor
+# name: CPU ondemand
 # version: 1.0
 # description: ondemand_desc
 # icon: optimizer.svg

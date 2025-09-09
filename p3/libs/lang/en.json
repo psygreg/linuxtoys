@@ -138,6 +138,7 @@
   "thumb_desc": "Installs ffmpegthumbnailer to generate thumbnails for video files in file managers.",
   "earlyoom_desc": "A daemon that monitors system memory and swap usage, and kills processes when memory is low to prevent system freezes.",
   "mscf_desc": "Improves web compatibility and appearance of many websites and apps. This option will offer you to remove it if already installed as well.",
+  "ondemand_desc": "Changes default CPU frequency governor to ondemand for higher performance. Not recommended on laptops.",
 
   "nv_desc": "Current Nvidia drivers. Supported GPUs: Maxwell (GT 9xx) and newer.",
   "nv_rtx_desc": "Current Nvidia drivers with open kernel modules. Supported GPUs: GTX 16xx and any RTX-series. For laptops, prefer the proprietary option for power management.",
@@ -147,6 +148,8 @@
   "rusticl_desc": "A community-driven implementation of the OpenCL standard based in Rust, providing better performance and compatibility. Should only be used if your GPU is not supported by ROCm, CUDA or Intel Compute Runtime.",
   "bcm_desc": "Proprietary Broadcom WiFi drivers for Linux. Only use if your card is not working with the kernel-embedded open-source drivers.",
   "xneo_desc": "Driver for official and generic Xbox controllers on Linux.",
+  "modsign": "Kernel module signing",
+  "modsign_desc": "Enables signing kernel modules and drivers with a Machine Owner Key for Secure Boot.",
 
   "flat_desc": "The go-to repository for Flatpak applications, having many exclusive apps.",
   "brew_desc": "A CLI tools package manager for macOS/Linux.",
