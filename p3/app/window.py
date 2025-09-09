@@ -19,7 +19,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.translations = translations
 
         self.set_title("LinuxToys")
-        self.set_default_size(740, 540) ## 
+        self.set_default_size(780, 560) ## 
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # Set window icon for proper GNOME integration

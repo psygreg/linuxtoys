@@ -215,6 +215,9 @@
   "lang_spanish": "Espagnol",
   "lang_german": "Allemand",
   "lang_french": "Français",
+  "lang_russian": "Russe",
+  "lang_chinese": "Chinois",
+  "lang_japanese": "Japonais",
   "about_tab": "À propos",
   "license_tab": "Licence"
 }
