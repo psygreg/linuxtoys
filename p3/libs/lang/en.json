@@ -178,6 +178,7 @@
   "bazaar_desc": "A new app store with a focus on discovering and installing applications and add-ons from Flatpak remotes, and supporting the developers who make the Linux desktop possible.",
   "archupd_desc": "An Arch Linux update notifier and handler that runs discretely in your system tray.",
   "cloudflare_warp_desc": "A DNS service that hides your traffic from your ISP.",
+  "piper_desc": "A GTK application to configure gaming mice using libratbag. Commonly used for Logitech, Roccat, Asus and Glorious mice.",
 
   "docker_desc": "The open source container service provider and basic tools for it, like docker-compose. Includes a container with Portainer CE for managing Docker from a web UI.",
   "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",
