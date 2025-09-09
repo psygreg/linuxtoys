@@ -39,7 +39,6 @@ sysag_run () {
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         cd $HOME
-        sudo_rq
         if [ "$ID" == "debian" ]; then
             debfixer_lib
         fi
@@ -66,8 +65,8 @@ while true; do
     fi
 
     case $CHOICE in
-    "Desktop") optimizer && break ;;
-    "Laptop") optimizer && psave_lib && break ;;
+    "Desktop") sudo_rq && pp_ondemand && optimizer && break ;;
+    "Laptop") sudo_rq && optimizer && psave_lib && break ;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac

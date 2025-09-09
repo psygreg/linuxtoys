@@ -9,6 +9,10 @@
 # nocontainer
 
 # --- Start of the script code ---
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+sudo_rq
 sudo rpm-ostree remove linuxtoys-cfg-atom
 # Remove shader booster patches
 if [ -f "${HOME}/.booster" ]; then
@@ -38,6 +42,12 @@ if [ -f "${HOME}/.booster" ]; then
     # Remove the booster marker file
     rm -f "${HOME}/.booster"
     echo "Shader booster completely removed."
+fi
+# revert ondemand governor
+if [ -f /etc/systemd/system/set-ondemand-governor.service ]; then
+    sudo rpm-ostree kargs --delete="intel_pstate=disable"
+    sudo systemctl disable set-ondemand-governor.service
+    sudo rm -f /etc/systemd/system/set-ondemand-governor.service
 fi
 rm $HOME/.local/.autopatch.state
 zeninf "$msg036"

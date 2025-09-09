@@ -109,7 +109,7 @@ while true; do
    	fi
 
     case $CHOICE in
-    "Desktop") sudo_rq && optimizer && end_msg && break ;;
+    "Desktop") sudo_rq && pp_ondemand && optimizer && end_msg && break ;;
     "Laptop") sudo_rq && optimizer && psave_lib && end_msg && break ;;
     "$msg070") exit 100 ;;
     *) echo "Invalid Option" ;;
