@@ -56,7 +56,7 @@ class AboutDialog:
         contributors_section = self._create_contributors_section()
         aba_sobre.pack_start(contributors_section, False, False, 0)
         
-        notebook.append_page(aba_sobre, Gtk.Label(label="Sobre"))
+        notebook.append_page(aba_sobre, Gtk.Label(label=self.translations.get('about_tab', 'About')))
 
 
         # ---------------------------
@@ -87,7 +87,7 @@ class AboutDialog:
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.add(licenca_label)
         aba_licenca.pack_start(scroll, True, True, 0)
-        notebook.append_page(aba_licenca, Gtk.Label(label="Licença"))
+        notebook.append_page(aba_licenca, Gtk.Label(label=self.translations.get('license_tab', 'License')))
         
         # ---------------------------
         # Show all widgets

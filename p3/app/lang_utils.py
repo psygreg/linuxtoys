@@ -6,13 +6,76 @@ Similar to linuxtoys.lib _lang_ function but for Python modules
 import os
 import json
 import glob
+import configparser
+
+
+def get_config_dir():
+    """
+    Get the configuration directory for LinuxToys
+    Creates it if it doesn't exist
+    """
+    config_dir = os.path.expanduser("~/.config/linuxtoys")
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir, exist_ok=True)
+    return config_dir
+
+
+def get_saved_language():
+    """
+    Get the user's saved language preference
+    Returns None if no preference is saved
+    """
+    config_file = os.path.join(get_config_dir(), "language.conf")
+    if os.path.exists(config_file):
+        try:
+            config = configparser.ConfigParser()
+            config.read(config_file)
+            return config.get('language', 'code', fallback=None)
+        except Exception:
+            return None
+    return None
+
+
+def save_language(lang_code):
+    """
+    Save the user's language preference
+    """
+    config_dir = get_config_dir()
+    config_file = os.path.join(config_dir, "language.conf")
+    
+    config = configparser.ConfigParser()
+    config['language'] = {'code': lang_code}
+    
+    try:
+        with open(config_file, 'w') as f:
+            config.write(f)
+        return True
+    except Exception as e:
+        print(f"Error saving language preference: {e}")
+        return False
 
 
 def detect_system_language():
     """
-    Detect system language using LANG environment variable
+    Detect language using saved preference first, then system language
     Returns language code (e.g., 'pt', 'en', 'es')
     """
+    # First check if user has saved a language preference
+    saved_lang = get_saved_language()
+    if saved_lang:
+        # Verify the saved language is still available
+        available_langs = []
+        lang_dir = os.path.join(os.path.dirname(__file__), '..', 'libs', 'lang')
+        
+        if os.path.exists(lang_dir):
+            for lang_file in glob.glob(os.path.join(lang_dir, '*.json')):
+                lang_code = os.path.basename(lang_file).replace('.json', '')
+                available_langs.append(lang_code)
+        
+        if saved_lang in available_langs:
+            return saved_lang
+    
+    # Fall back to system language detection
     # Get language from LANG environment variable (first 2 characters)
     lang = os.environ.get('LANG', 'en_US')[:2]
     
@@ -72,6 +135,42 @@ def get_available_languages():
             available_langs.append(lang_code)
     
     return sorted(available_langs)
+
+
+def get_language_names():
+    """
+    Get mapping of language codes to human-readable names
+    Returns dictionary of {code: name} pairs
+    """
+    return {
+        'en': 'English',
+        'pt': 'Português',
+        'es': 'Español', 
+        'de': 'Deutsch',
+        'fr': 'Français'
+    }
+
+
+def get_localized_language_names(current_translations):
+    """
+    Get language names in the currently selected language if available
+    Falls back to native language names
+    """
+    localized_names = {
+        'en': current_translations.get('lang_english', 'English'),
+        'pt': current_translations.get('lang_portuguese', 'Português'),
+        'es': current_translations.get('lang_spanish', 'Español'),
+        'de': current_translations.get('lang_german', 'Deutsch'),
+        'fr': current_translations.get('lang_french', 'Français')
+    }
+    
+    # Fall back to native names for any missing translations
+    native_names = get_language_names()
+    for code in native_names:
+        if localized_names.get(code) == current_translations.get(f'lang_{code}', ''):
+            localized_names[code] = native_names[code]
+    
+    return localized_names
 
 
 def create_translator(lang_code=None):

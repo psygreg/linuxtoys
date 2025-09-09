@@ -205,5 +205,16 @@
   "webmin_desc": "A web-based interface for system administration for Unix.",
   "topgrade_desc": "A tool for upgrading all installed packages on any Linux system.",
   "cockpitclient_desc": "A web-based interface for managing Linux servers (client).",
-  "adir_desc": "Installs all packages necessary to join Active Directory domains using realmd."
+  "adir_desc": "Installs all packages necessary to join Active Directory domains using realmd.",
+
+  "select_language": "Select Language",
+  "select_language_title": "Language Selection",
+  "select_language_message": "Please select your preferred language:",
+  "lang_english": "English",
+  "lang_portuguese": "Portuguese",
+  "lang_spanish": "Spanish",
+  "lang_german": "German",
+  "lang_french": "French",
+  "about_tab": "About",
+  "license_tab": "License"
 }

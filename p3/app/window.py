@@ -49,7 +49,13 @@ class AppWindow(Gtk.ApplicationWindow):
         self.back_button = Gtk.Button.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.BUTTON)
         self.header_bar.pack_start(self.back_button)
 
-        self.header_bar.pack_end(head_menu.MenuButton(self.script_runner))
+        # Store reference to the menu button for later updates
+        self.menu_button = head_menu.MenuButton(
+            self.script_runner, 
+            parent_window=self,
+            on_language_changed=self.on_language_changed
+        )
+        self.header_bar.pack_end(self.menu_button)
 
         self.main_stack = Gtk.Stack()
         self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -524,6 +530,62 @@ class AppWindow(Gtk.ApplicationWindow):
         """Closes the application gracefully."""
         self.script_runner.terminate()
         self.get_application().quit()
+
+    def on_language_changed(self, new_language_code):
+        """Handle language change by reloading translations and updating UI"""
+        from . import lang_utils
+        
+        # Load new translations
+        self.translations = lang_utils.load_translations(new_language_code)
+        
+        # Update the script runner's translations
+        self.script_runner.translations = self.translations
+        
+        # Refresh the UI with new translations
+        self._refresh_ui_with_new_translations()
+    
+    def _refresh_ui_with_new_translations(self):
+        """Refresh all UI elements with new translations"""
+        # Update header
+        self._update_header(self.current_category_info)
+        
+        # Update title bar
+        if self.current_category_info:
+            category_name = self.current_category_info.get('name', 'Unknown')
+            self.header_bar.props.title = f"LinuxToys: {category_name}"
+        else:
+            self.header_bar.props.title = "LinuxToys"
+        
+        # Refresh the dropdown menu with new translations
+        if hasattr(self, 'menu_button'):
+            self.menu_button.refresh_menu_translations()
+        
+        # Refresh the footer with new translations
+        if hasattr(self.footer_widget, 'refresh_translations'):
+            self.footer_widget.refresh_translations(self.translations)
+        
+        # Reload categories with new translations
+        if self.main_stack.get_visible_child_name() == "categories":
+            self.load_categories()
+        else:
+            # Reload current category/subcategory content
+            if self.current_category_info:
+                self.load_scripts(self.current_category_info)
+        
+        # Update footer if in checklist mode
+        if (self.current_category_info and 
+            self.current_category_info.get('display_mode', 'menu') == 'checklist'):
+            # Clear and recreate checklist buttons with new translations
+            for child in self.footer_widget.checklist_button_box.get_children():
+                self.footer_widget.checklist_button_box.remove(child)
+            
+            install_btn = Gtk.Button(label=self.translations.get('install_btn_label', 'Install'))
+            cancel_btn = Gtk.Button(label=self.translations.get('cancel_btn_label', 'Cancel'))
+            install_btn.connect("clicked", self.on_install_checklist)
+            cancel_btn.connect("clicked", self.on_cancel_checklist)
+            self.footer_widget.checklist_button_box.pack_start(install_btn, False, False, 0)
+            self.footer_widget.checklist_button_box.pack_start(cancel_btn, False, False, 0)
+            self.footer_widget.checklist_button_box.show_all()
 
     def _update_header(self, category_info=None):
         """Updates the header with new category information."""

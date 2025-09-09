@@ -203,5 +203,16 @@
   "webmin_desc": "Uma interface baseada na web para administração de sistemas Unix.",
   "topgrade_desc": "Uma ferramenta para atualizar todos os pacotes instalados em qualquer sistema Linux.",
   "cockpitclient_desc": "Uma interface baseada na web para gerenciar servidores Linux (cliente).",
-  "adir_desc": "Instala todos os pacotes necessários para ingressar em domínios do Active Directory usando o realmd."
+  "adir_desc": "Instala todos os pacotes necessários para ingressar em domínios do Active Directory usando o realmd.",
+
+  "select_language": "Selecionar Idioma",
+  "select_language_title": "Seleção de Idioma",
+  "select_language_message": "Por favor, selecione seu idioma preferido:",
+  "lang_english": "Inglês",
+  "lang_portuguese": "Português",
+  "lang_spanish": "Espanhol",
+  "lang_german": "Alemão",
+  "lang_french": "Francês",
+  "about_tab": "Sobre",
+  "license_tab": "Licença"
 }

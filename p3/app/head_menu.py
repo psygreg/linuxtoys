@@ -1,6 +1,7 @@
 from .gtk_common import Gtk, GLib
 from . import cli_helper
 from . import script_runner
+from . import language_selector
 from .lang_utils import create_translator
 import threading
 import os
@@ -40,10 +41,12 @@ class WaitDialog(Gtk.Dialog):
 
 
 class MenuButton(Gtk.MenuButton):
-	def __init__(self, script_runner: script_runner.ScriptRunner):
+	def __init__(self, script_runner: script_runner.ScriptRunner, parent_window=None, on_language_changed=None):
 		super().__init__()
 		_ = create_translator()
 		self.script_runner = script_runner
+		self.parent_window = parent_window
+		self.on_language_changed = on_language_changed
 		self.results = []
 		self._temp_sh = '/tmp/._temp_script.sh'
 		self.dlg = None
@@ -57,12 +60,54 @@ class MenuButton(Gtk.MenuButton):
 		load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
 		load_manifest.connect("clicked", self.__on_load_manifest)
 
+		language_select = Gtk.ModelButton(label=_("select_language"))
+		language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
+		language_select.connect("clicked", self.__on_language_select)
+
 		vbox.pack_start(load_manifest, True, True, 0)
+		vbox.pack_start(language_select, True, True, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
 
 		self.set_popover(pop)
+
+	def refresh_menu_translations(self):
+		"""Refresh menu items with new translations"""
+		_ = create_translator()
+		
+		# Recreate the popover with updated translations
+		pop = Gtk.Popover()
+
+		vbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
+		vbox.set_border_width(6)
+
+		load_manifest = Gtk.ModelButton(label=_("load_manifest"))
+		load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
+		load_manifest.connect("clicked", self.__on_load_manifest)
+
+		language_select = Gtk.ModelButton(label=_("select_language"))
+		language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
+		language_select.connect("clicked", self.__on_language_select)
+
+		vbox.pack_start(load_manifest, True, True, 0)
+		vbox.pack_start(language_select, True, True, 0)
+		vbox.show_all()
+
+		pop.add(vbox)
+		self.set_popover(pop)
+
+	def __on_language_select(self, widget):
+		"""Handle language selection menu item click"""
+		if self.parent_window:
+			from . import lang_utils
+			current_translations = lang_utils.load_translations()
+			selector = language_selector.LanguageSelector(
+				self.parent_window, 
+				current_translations, 
+				self.on_language_changed
+			)
+			selector.show_language_selector()
 
 	def __on_load_manifest(self, widget):
 		scripts_name = self.__file_choose()
@@ -74,6 +119,16 @@ class MenuButton(Gtk.MenuButton):
 			target=self.__wrapper_t,
 			args=(scripts_name,)
 		).start()
+
+	def __on_language_select(self, widget):
+		"""Handle language selection menu item click"""
+		if self.parent_window and hasattr(self.parent_window, 'translations'):
+			selector = language_selector.LanguageSelector(
+				self.parent_window,
+				self.parent_window.translations,
+				self.on_language_changed
+			)
+			selector.show_language_selector()
 
 	def __file_choose(self):
 		_ = create_translator()

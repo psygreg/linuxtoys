@@ -108,8 +108,25 @@ def create_footer():
         main_vbox.checklist_button_box.set_margin_bottom(12)
         main_vbox.menu_footer_box.hide()
         main_vbox.checklist_button_box.show()
+    
+    def refresh_translations(new_translations):
+        """Refresh footer with new translations"""
+        # Update support label text
+        support_label = new_translations.get('support_footer', 'Support this project')
+        donation_button.set_label(support_label)
+        menu_donation_button.set_label(support_label)
+        
+        # Update report bug label
+        report_label = new_translations.get('report_label', 'Report Bug')
+        menu_bug_button.set_label(report_label)
+        
+        # Update credits label
+        credits_label = new_translations.get('credits_label', 'Credits')
+        menu_credits_button.set_label(credits_label)
+    
     main_vbox.show_menu_footer = show_menu_footer
     main_vbox.show_checklist_footer = show_checklist_footer
+    main_vbox.refresh_translations = refresh_translations
 
     # Displays the menu footer by default
     main_vbox.show_menu_footer()
