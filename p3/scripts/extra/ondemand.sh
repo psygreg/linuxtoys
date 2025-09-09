@@ -15,7 +15,7 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/optimizers.lib"
 LT_PROGRAM="On-Demand Governor"
-if [ ! -f $HOME/.local/.autopatch.state ] && [ ! -f /etc/systemd/system/set-ondemand-governor.service ]; then
+if [ ! -f /etc/systemd/system/set-ondemand-governor.service ]; then
     pp_ondemand
 else
     if zenity --question --text "$msg288" --height=330 --width=330; then
