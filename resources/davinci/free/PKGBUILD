@@ -10,15 +10,15 @@
 # It can be obtained from chromium -> Developer Tools -> Network -> XHR -> click latest-version and copy downloadId
 
 pkgname=davinci-resolve
-pkgver=20.1.1
+pkgver=20.2
 pkgrel=0
 
 _product="DaVinci Resolve"
 _referid='ee1da4f13df74d72b6da783ead2ed875'
 _siteurl="https://www.blackmagicdesign.com/api/support/latest-stable-version/davinci-resolve/linux"
-sha256sums=('f9526cbd447705a0b8171cede208cb2346c1570f67d61cd380525c109ef340d7')
+sha256sums=('33ca1a627baaf2736a9e3386e68402079326775db8c7239b5b365c8f50bc7cb2')
 pkgdesc='Professional A/V post-production software suite from Blackmagic Design'
-_filever=20.1.1
+_filever=20.2
 _archive_name="DaVinci_Resolve_${_filever}_Linux"
 _archive_run_name="DaVinci_Resolve_${_filever}_Linux"
 conflicts=('davinci-resolve-studio' 'davinci-resolve-beta' 'davinci-resolve-studio-beta')
