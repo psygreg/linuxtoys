@@ -89,9 +89,7 @@
   "davinci_desc": "Professional video editing software.",
   "obsidian_desc": "A free, flexible app for your thoughts, notes, and organization.",
 
-  "gsr": "GPU Screen Recorder",
   "gsr_desc": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
-  "protonplus": "ProtonPlus",
   "pp_desc": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
   "sober_desc": "Roblox community port for Linux, based on the Android version of the game.",
   "mcbe_desc": "A community port of Minecraft Bedrock Edition for Linux.",
@@ -138,7 +136,7 @@
   "thumb_desc": "Installs ffmpegthumbnailer to generate thumbnails for video files in file managers.",
   "earlyoom_desc": "A daemon that monitors system memory and swap usage, and kills processes when memory is low to prevent system freezes.",
   "mscf_desc": "Improves web compatibility and appearance of many websites and apps. This option will offer you to remove it if already installed as well.",
-  "ondemand_desc": "Changes default CPU frequency governor to ondemand for higher performance. Not recommended on laptops.",
+  "ondemand_desc": "Changes default CPU frequency governor to ondemand for higher performance. Not recommended on laptops. This option can also revert it if already set.",
 
   "nv_desc": "Current Nvidia drivers. Supported GPUs: Maxwell (GT 9xx) and newer.",
   "nv_rtx_desc": "Current Nvidia drivers with open kernel modules. Supported GPUs: GTX 16xx and any RTX-series. For laptops, prefer the proprietary option for power management.",

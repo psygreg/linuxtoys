@@ -89,9 +89,7 @@
   "davinci_desc": "Professionelle Videobearbeitungs-Software.",
   "obsidian_desc": "Eine kostenlose, flexible App für Ihre Gedanken, Notizen und Organisation.",
 
-  "gsr": "GPU Screen Recorder",
   "gsr_desc": "Ein Bildschirmaufnahme-Tool mit Hardware-Kodierung ähnlich Shadowplay für jede GPU unter Linux.",
-  "protonplus": "ProtonPlus",
   "pp_desc": "Ein GTK-basiertes Tool zum einfachen Erhalten von Community-Runnern für Gaming unter Linux.",
   "sober_desc": "Roblox Community-Port für Linux, basierend auf der Android-Version des Spiels.",
   "mcbe_desc": "Ein Community-Port von Minecraft Bedrock Edition für Linux.",
@@ -138,7 +136,7 @@
   "thumb_desc": "Installiert ffmpegthumbnailer zur Generierung von Thumbnails für Videodateien in Dateimanagern.",
   "earlyoom_desc": "Ein Daemon, der System-Speicher- und Swap-Nutzung überwacht und Prozesse beendet, wenn der Speicher knapp wird, um System-Einfrierungen zu verhindern.",
   "mscf_desc": "Verbessert Web-Kompatibilität und Aussehen vieler Websites und Apps. Diese Option bietet Ihnen auch an, es zu entfernen, falls bereits installiert.",
-  "ondemand_desc": "Ändert den Standard-CPU-Frequenz-Governor zu ondemand für höhere Leistung. Nicht empfohlen auf Laptops.",
+  "ondemand_desc": "Ändert den Standard-CPU-Frequenz-Governor zu ondemand für höhere Leistung. Nicht empfohlen auf Laptops. Diese Option kann es auch entfernen, falls bereits gesetzt.",
 
   "nv_desc": "Aktuelle Nvidia-Treiber. Unterstützte GPUs: Maxwell (GT 9xx) und neuer.",
   "nv_rtx_desc": "Aktuelle Nvidia-Treiber mit offenen Kernel-Modulen. Unterstützte GPUs: GTX 16xx und jede RTX-Serie. Für Laptops bevorzugen Sie die proprietäre Option für Energieverwaltung.",

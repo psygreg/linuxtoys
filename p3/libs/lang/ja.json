@@ -89,9 +89,7 @@
   "davinci_desc": "プロフェッショナルなビデオ編集ソフトウェア。",
   "obsidian_desc": "思考、ノート、整理のための自由で柔軟なアプリ。",
 
-  "gsr": "GPUスクリーンレコーダー",
   "gsr_desc": "LinuxでどんなGPUでもShadowplayのような、ハードウェアエンコーディング付きのスクリーン録画ツール。",
-  "protonplus": "ProtonPlus",
   "pp_desc": "Linuxゲーミングのためのコミュニティランナーを簡単に取得するGTKベースのツール。",
   "sober_desc": "ゲームのAndroidバージョンを基にしたRobloxのコミュニティLinuxポート。",
   "mcbe_desc": "Minecraft Bedrock EditionのコミュニティLinuxポート。",
@@ -138,7 +136,7 @@
   "thumb_desc": "ファイルマネージャーでビデオファイルのサムネイルを生成するffmpegthumbnailerをインストール。",
   "earlyoom_desc": "システムメモリとスワップ使用量を監視し、メモリ不足時にプロセスを終了してシステムフリーズを防ぐデーモン。",
   "mscf_desc": "多くのウェブサイトとアプリのウェブ互換性と外観を改善。すでにインストールされている場合は削除オプションも提供します。",
-  "ondemand_desc": "より高いパフォーマンスのためにデフォルトCPU周波数ガバナーをondemandに変更。ラップトップでは推奨されません。",
+  "ondemand_desc": "より高いパフォーマンスのためにデフォルトCPU周波数ガバナーをondemandに変更。ラップトップでは推奨されません。 すでに設定されている場合は削除オプションも提供します。",
 
   "nv_desc": "現在のNvidiaドライバー。サポートGPU：Maxwell（GT 9xx）以降。",
   "nv_rtx_desc": "オープンカーネルモジュール付きの現在のNvidiaドライバー。サポートGPU：GTX 16xxと全RTXシリーズ。ラップトップでは電力管理のためにプロプライエタリオプションを推奨。",
