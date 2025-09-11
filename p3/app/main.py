@@ -11,7 +11,6 @@ from .cli_helper import run_manifest_mode
 from .update_helper import run_update_check
 from . import get_app_resource_path, get_icon_path
 
-
 # Only define GUI classes if not in CLI mode
 if os.environ.get('LT_MANIFEST') != '1':
     class Application(Gtk.Application):
@@ -51,21 +50,34 @@ def run():
     if os.environ.get('LT_MANIFEST') == '1':
         # Run in CLI mode using manifest.txt
         sys.exit(run_manifest_mode(translations))
-    
+
     # In GUI mode, use the new GitHub API-based update checker
     # This works for both git-cloned and packaged versions
+    # Run update check asynchronously to prevent blocking on Hyprland/Wayland
     try:
-        run_update_check(show_dialog=True, verbose=False, translations=translations)
+        import threading
+        def async_update_check():
+            try:
+                run_update_check(show_dialog=True, verbose=False, translations=translations)
+            except Exception as e:
+                print(f"Update check failed: {e}")
+        
+        # Run update check in background thread to prevent blocking
+        update_thread = threading.Thread(target=async_update_check, daemon=True)
+        update_thread.start()
     except Exception as e:
-        print(f"Update check failed: {e}")
-    
+        print(f"Update check thread failed: {e}")
+
     # FIX: Set the application icon before running
     # Use the icon path resolver
-    icon_path = get_icon_path("linuxtoys.svg")
-    if icon_path:
-        Gtk.Window.set_default_icon_from_file(icon_path)
-    else:
-        print(f"Warning: App icon not found (linuxtoys.svg)")
+    try:
+        icon_path = get_icon_path("linuxtoys.svg")
+        if icon_path:
+            Gtk.Window.set_default_icon_from_file(icon_path)
+        else:
+            print("Warning: App icon not found (linuxtoys.svg)")
+    except Exception as e:
+        print(f"Warning: Could not set app icon: {e}")
 
     # Use the already loaded translations from lang_utils
     app = Application(translations)

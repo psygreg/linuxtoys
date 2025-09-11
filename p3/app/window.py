@@ -42,8 +42,25 @@ class AppWindow(Gtk.ApplicationWindow):
         self.header_widget = header.create_header(self.translations)
         main_vbox.pack_start(self.header_widget, False, False, 8)
 
+        # HeaderBar setup with Hyprland/Wayland compatibility
         self.header_bar = Gtk.HeaderBar()
         self.header_bar.set_show_close_button(True)
+        
+        # Try to detect if we're running on Wayland/Hyprland and adjust accordingly
+        try:
+            # Check if we should use server-side decorations for better compatibility
+            display = Gdk.Display.get_default()
+            if display:
+                backend_type = type(display).__name__
+                if 'Wayland' in backend_type:
+                    # On Wayland (including Hyprland), prefer server-side decorations
+                    # This can help avoid hanging issues with client-side decorations
+                    self.set_decorated(True)  # Enable window manager decorations
+                    # Still set the headerbar but with less aggressive CSD
+                    self.header_bar.set_decoration_layout("menu:minimize,maximize,close")
+        except Exception as e:
+            print(f"Warning: Could not detect display backend: {e}")
+        
         self.set_titlebar(self.header_bar)
 
         self.back_button = Gtk.Button.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.BUTTON)
@@ -121,44 +138,51 @@ class AppWindow(Gtk.ApplicationWindow):
         """
         Set the window icon for proper GNOME desktop integration.
         This ensures the icon appears correctly in the taskbar and window manager.
+        Uses async loading to prevent blocking on Hyprland.
         """
-        try:
-            # Try multiple icon locations in order of preference
-            icon_paths = [
-                # System-wide installation paths
-                "/usr/share/icons/hicolor/scalable/apps/linuxtoys.png",
-                "/usr/share/pixmaps/linuxtoys.png",
-                # Development/local paths
-                get_icon_path("linuxtoys.png"),
-                # Fallback to the icon in the source directory
-                os.path.join(os.path.dirname(__file__), "..", "..", "src", "linuxtoys.png"),
-                # Relative path from the script location
-                os.path.join(os.path.dirname(__file__), "..", "..", "..", "src", "linuxtoys.png")
-            ]
-            
-            icon_set = False
-            for icon_path in icon_paths:
-                if icon_path and os.path.exists(icon_path):
-                    try:
-                        # Set window icon from file
-                        pixbuf = GdkPixbuf.Pixbuf.new_from_file(icon_path)
-                        self.set_icon(pixbuf)
-                        icon_set = True
-                        break
-                    except Exception as e:
-                        # Continue to next path if this one fails
-                        continue
-            
-            # If no file-based icon worked, try setting icon name for theme integration
-            if not icon_set:
-                self.set_icon_name("linuxtoys")
-                
-        except Exception as e:
-            # Fallback: set a generic icon if all else fails
+        def load_icon_async():
+            """Load icon in background thread to prevent blocking."""
             try:
-                self.set_icon_name("application-x-executable")
-            except:
-                pass  # If even this fails, just continue without an icon
+                # Try multiple icon locations in order of preference
+                icon_paths = [
+                    # System-wide installation paths
+                    "/usr/share/icons/hicolor/scalable/apps/linuxtoys.png",
+                    "/usr/share/pixmaps/linuxtoys.png",
+                    # Development/local paths
+                    get_icon_path("linuxtoys.png"),
+                    # Fallback to the icon in the source directory
+                    os.path.join(os.path.dirname(__file__), "..", "..", "src", "linuxtoys.png"),
+                    # Relative path from the script location
+                    os.path.join(os.path.dirname(__file__), "..", "..", "..", "src", "linuxtoys.png")
+                ]
+                
+                icon_set = False
+                for icon_path in icon_paths:
+                    if icon_path and os.path.exists(icon_path):
+                        try:
+                            # Set window icon from file using GLib.idle_add for thread safety
+                            pixbuf = GdkPixbuf.Pixbuf.new_from_file(icon_path)
+                            GLib.idle_add(lambda: self.set_icon(pixbuf))
+                            icon_set = True
+                            break
+                        except Exception:
+                            # Continue to next path if this one fails
+                            continue
+                
+                # If no file-based icon worked, try setting icon name for theme integration
+                if not icon_set:
+                    GLib.idle_add(lambda: self.set_icon_name("linuxtoys"))
+                    
+            except Exception:
+                # Fallback: set a generic icon if all else fails
+                try:
+                    GLib.idle_add(lambda: self.set_icon_name("application-x-executable"))
+                except Exception:
+                    pass  # If even this fails, just continue without an icon
+        
+        # Load icon asynchronously to prevent blocking on window manager issues
+        import threading
+        threading.Thread(target=load_icon_async, daemon=True).start()
 
     def _set_tooltips_enabled(self, enabled):
         # Categories
