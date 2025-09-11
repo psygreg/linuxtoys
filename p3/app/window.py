@@ -11,6 +11,7 @@ from . import compat
 from . import head_menu
 from . import reboot_helper
 from . import script_runner
+from . import search_helper
 from . import get_icon_path
 
 class AppWindow(Gtk.ApplicationWindow):
@@ -31,6 +32,11 @@ class AppWindow(Gtk.ApplicationWindow):
         self.current_category_info = None  # Track current category for header updates
         self.navigation_stack = []  # Stack to track navigation history for proper back button behavior
         self.view_counter = 0  # Counter for unique view names
+        
+        # Initialize search functionality
+        self.search_engine = search_helper.create_search_engine(self.translations)
+        self.search_active = False
+        self.search_results = []
         
         # Initialize script runner
         self.script_runner = script_runner.ScriptRunner(self, self.translations)
@@ -66,6 +72,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.back_button = Gtk.Button.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.BUTTON)
         self.header_bar.pack_start(self.back_button)
 
+        # Create search UI components
+        self._create_search_ui()
+
         # Store reference to the menu button for later updates
         self.menu_button = head_menu.MenuButton(
             self.script_runner, 
@@ -88,6 +97,12 @@ class AppWindow(Gtk.ApplicationWindow):
         self.scripts_view = Gtk.ScrolledWindow()
         self.scripts_view.add(self.scripts_flowbox)
         self.main_stack.add_named(self.scripts_view, "scripts")
+
+        # Create search results view
+        self.search_flowbox = self.create_flowbox()
+        self.search_view = Gtk.ScrolledWindow()
+        self.search_view.add(self.search_flowbox)
+        self.main_stack.add_named(self.search_view, "search")
 
         self.footer_widget = footer.create_footer()
         main_vbox.pack_start(self.footer_widget, False, False, 0)
@@ -207,6 +222,19 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def _on_focus_out(self, *args):
         self._set_tooltips_enabled(False)
+
+    def _create_search_ui(self):
+        """Create the search UI components for the header bar."""
+        # Create search entry
+        self.search_entry = Gtk.SearchEntry()
+        self.search_entry.set_placeholder_text(self.translations.get("search_placeholder", "Search features"))
+        self.search_entry.set_size_request(250, -1)  # Set minimum width
+        self.search_entry.connect("search-changed", self._on_search_changed)
+        self.search_entry.connect("activate", self._on_search_activate)
+        self.search_entry.connect("key-press-event", self._on_search_key_press)
+        
+        # Pack the search entry directly to the left side of the header (after back button)
+        self.header_bar.pack_start(self.search_entry)
 
     def create_flowbox(self):
         """Uses SelectionMode.NONE to disable selection highlight."""
@@ -565,6 +593,12 @@ class AppWindow(Gtk.ApplicationWindow):
         # Update the script runner's translations
         self.script_runner.translations = self.translations
         
+        # Update search engine translations
+        self.search_engine.update_translations(self.translations)
+        
+        # Update search entry placeholder text
+        self.search_entry.set_placeholder_text(self.translations.get("search_placeholder", "Search features"))
+        
         # Refresh the UI with new translations
         self._refresh_ui_with_new_translations()
     
@@ -651,8 +685,176 @@ class AppWindow(Gtk.ApplicationWindow):
         
         return False
 
+    def _on_search_changed(self, search_entry):
+        """Handle search text changes."""
+        query = search_entry.get_text().strip()
+        
+        if len(query) >= 2:
+            self._perform_search(query)
+        elif len(query) == 0 and self.search_active:
+            # If search is completely emptied, return to normal mode and remove focus
+            self._clear_search_results()
+            # Deselect the search entry (remove focus) using GLib.idle_add for deferred execution
+            from gi.repository import GLib
+            def remove_focus():
+                # Try to focus on the current visible child or the main container
+                current_child = self.main_stack.get_visible_child()
+                if current_child:
+                    current_child.grab_focus()
+                else:
+                    # Fallback: try to focus on the main window itself
+                    self.grab_focus()
+                return False  # Don't repeat this idle callback
+            GLib.idle_add(remove_focus)
+            # Also reset the header if we were in search mode
+            if self.current_category_info:
+                self._update_header(self.current_category_info)
+                category_name = self.current_category_info.get('name', 'Unknown')
+                self.header_bar.props.title = f"LinuxToys: {category_name}"
+            else:
+                self._update_header()  # Reset to default header
+                self.header_bar.props.title = "LinuxToys"
+
+    def _on_search_activate(self, search_entry):
+        """Handle search entry activation (Enter key)."""
+        # If there are search results, activate the first one
+        if self.search_results:
+            first_result = self.search_results[0]
+            self._activate_search_result(first_result)
+
+    def _on_search_key_press(self, widget, event):
+        """Handle key presses in search entry."""
+        if event.keyval == Gdk.KEY_Escape:
+            # Clear search on Escape
+            widget.set_text("")
+            # Deselect the search entry (remove focus) using GLib.idle_add for deferred execution
+            from gi.repository import GLib
+            def remove_focus():
+                # Try to focus on the current visible child or the main container
+                current_child = self.main_stack.get_visible_child()
+                if current_child:
+                    current_child.grab_focus()
+                else:
+                    # Fallback: try to focus on the main window itself
+                    self.grab_focus()
+                return False  # Don't repeat this idle callback
+            GLib.idle_add(remove_focus)
+            if self.search_active:
+                self._clear_search_results()
+                # Reset header appropriately
+                if self.current_category_info:
+                    self._update_header(self.current_category_info)
+                    category_name = self.current_category_info.get('name', 'Unknown')
+                    self.header_bar.props.title = f"LinuxToys: {category_name}"
+                else:
+                    self._update_header()  # Reset to default header
+                    self.header_bar.props.title = "LinuxToys"
+            return True
+        return False
+
+    def _perform_search(self, query):
+        """Perform the actual search and display results."""
+        self.search_results = self.search_engine.search(query)
+        self._display_search_results()
+
+    def _display_search_results(self):
+        """Display search results in the search view."""
+        self.search_active = True
+        
+        # Clear existing search results completely
+        for child in self.search_flowbox.get_children():
+            self.search_flowbox.remove(child)
+        
+        # Force switch to search view first to ensure we're in the right context
+        self.main_stack.set_visible_child_name("search")
+        
+        # Ensure the back button is visible when in search mode
+        self.back_button.show()
+        
+        # Add search results (all are scripts now)
+        for search_result in self.search_results:
+            item_info = search_result.item_info
+            widget = self.create_item_widget(item_info)
+            widget.set_tooltip_text(item_info.get('description', ''))
+            
+            # All search results are scripts, so connect script click handler
+            widget.connect("button-press-event", self.on_script_clicked)
+            
+            self.search_flowbox.add(widget)
+        
+        # Ensure all widgets are shown
+        self.search_flowbox.show_all()
+        
+        # Update header for search view
+        self._update_search_header()
+
+    def _activate_search_result(self, search_result):
+        """Activate a specific search result (simulate click)."""
+        # This would be called when Enter is pressed or result is directly activated
+        item_info = search_result.item_info
+        
+        # All search results are scripts now
+        if not self.script_runner.is_running():
+            if self.reboot_required:
+                self._show_reboot_warning_dialog()
+                return
+            
+            # Show confirmation dialog before executing script
+            if confirm_helper.show_single_script_confirmation(item_info, self, self.translations):
+                self.script_is_running = True
+                
+                def completion_handler():
+                    self.script_is_running = False
+                
+                def reboot_handler():
+                    self.reboot_required = True
+                
+                self.script_runner.run_script(
+                    item_info, 
+                    on_completion=completion_handler,
+                    on_reboot_required=reboot_handler
+                )
+
+    def _clear_search_results(self):
+        """Clear search results and return to previous view."""
+        self.search_active = False
+        self.search_results = []
+        
+        # Return to appropriate view
+        if self.current_category_info:
+            self.main_stack.set_visible_child(self.scripts_view)
+            # Ensure back button is visible for category views
+            self.back_button.show()
+        else:
+            self.main_stack.set_visible_child_name("categories")
+            # Hide back button for main categories view
+            self.back_button.hide()
+
+    def _update_search_header(self):
+        """Update header for search results view."""
+        search_query = self.search_entry.get_text().strip()
+        results_count = len(self.search_results)
+        
+        # Create search results info for header
+        search_info = {
+            'name': f"{self.translations.get('search_results', 'Search Results')}: \"{search_query}\"",
+            'description': f"{results_count} {self.translations.get('results_found', 'results found')}",
+            'icon': 'system-search-symbolic'
+        }
+        
+        self._update_header(search_info)
+        self.header_bar.props.title = f"LinuxToys: {self.translations.get('search', 'Search')}"
+        self.back_button.show()
+
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
+        # Check if we're in search view
+        if self.search_active:
+            # Clear the search bar when returning from search mode
+            self.search_entry.set_text("")
+            self._clear_search_results()
+            return
+            
         if self.navigation_stack:
             # Store current view for cleanup
             current_view = self.scripts_view
@@ -703,7 +905,7 @@ class AppWindow(Gtk.ApplicationWindow):
             def cleanup_old_view():
                 try:
                     self.main_stack.remove(current_view)
-                except:
+                except Exception:
                     pass  # View may already be removed
                 # Restore normal transition direction
                 self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -721,7 +923,7 @@ class AppWindow(Gtk.ApplicationWindow):
             def cleanup_scripts_view():
                 try:
                     self.main_stack.remove(current_view)
-                except:
+                except Exception:
                     pass
                 # Restore normal transition direction  
                 self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)

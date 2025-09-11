@@ -217,5 +217,9 @@
   "lang_chinese": "中国語",
   "lang_japanese": "日本語",
   "about_tab": "概要",
-  "license_tab": "ライセンス"
+  "license_tab": "ライセンス",
+  "search_placeholder": "機能を検索",
+  "search_results": "検索結果",
+  "results_found": "件の結果",
+  "search": "検索"
 }

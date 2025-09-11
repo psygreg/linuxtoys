@@ -217,5 +217,9 @@
   "lang_chinese": "Китайский",
   "lang_japanese": "Японский",
   "about_tab": "О программе",
-  "license_tab": "Лицензия"
+  "license_tab": "Лицензия",
+  "search_placeholder": "Поиск функций",
+  "search_results": "Результаты поиска",
+  "results_found": "результатов найдено",
+  "search": "Поиск"
 }

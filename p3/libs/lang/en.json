@@ -217,5 +217,9 @@
   "lang_chinese": "Chinese",
   "lang_japanese": "Japanese",
   "about_tab": "About",
-  "license_tab": "License"
+  "license_tab": "License",
+  "search_placeholder": "Search features",
+  "search_results": "Search Results",
+  "results_found": "results found",
+  "search": "Search"
 }
