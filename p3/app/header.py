@@ -1,4 +1,4 @@
-from .gtk_common import Gtk, Pango
+from .gtk_common import Gtk, Pango, GdkPixbuf
 import os
 from . import get_icon_path
 
@@ -101,7 +101,16 @@ def _create_icon_widget(category_info):
         try:
             icon_path = get_icon_path("linuxtoys.svg")
             if icon_path:
-                logo = Gtk.Image.new_from_file(icon_path)
+                # For SVG files, load as pixbuf with specific size
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        icon_path, 72, 72, True
+                    )
+                    logo = Gtk.Image.new_from_pixbuf(pixbuf)
+                except Exception:
+                    # Fallback if SVG loading fails
+                    logo = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
+                    logo.set_pixel_size(64)
             else:
                 raise FileNotFoundError("linuxtoys.svg not found")
         except Exception:

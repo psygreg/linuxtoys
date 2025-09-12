@@ -110,8 +110,16 @@ class AboutDialog:
         try:
             icon_path = get_icon_path("linuxtoys.svg")
             if icon_path:
-                app_icon = Gtk.Image.new_from_file(icon_path)
-                app_icon.set_pixel_size(64)
+                # For SVG files, load as pixbuf with specific size
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        icon_path, 72, 72, True
+                    )
+                    app_icon = Gtk.Image.new_from_pixbuf(pixbuf)
+                except Exception:
+                    # Fallback if SVG loading fails
+                    app_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
+                    app_icon.set_pixel_size(64)
             else:
                 raise FileNotFoundError("linuxtoys.svg not found")
         except Exception:
