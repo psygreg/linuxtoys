@@ -2,7 +2,7 @@
 # name: Minecraft Bedrock Launcher
 # version: 1.0
 # description: mcbe_desc
-# icon: minecraft
+# icon: minecraft.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

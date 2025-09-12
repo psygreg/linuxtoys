@@ -2,7 +2,7 @@
 # NAME: OnlyOffice
 # VERSION: 1.0
 # DESCRIPTION: onlyoffice_desc
-# icon: onlyoffice
+# icon: onlyoffice.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

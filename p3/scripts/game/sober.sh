@@ -2,7 +2,7 @@
 # name: Sober
 # version: 1.0
 # description: sober_desc
-# icon: sober
+# icon: sober.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

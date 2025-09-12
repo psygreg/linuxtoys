@@ -2,7 +2,7 @@
 # name: FreeCAD
 # version: 1.0
 # description: freecad_desc
-# icon: freecad
+# icon: freecad.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

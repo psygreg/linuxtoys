@@ -2,7 +2,7 @@
 # name: GPU Screen Recorder
 # version: 1.0
 # description: gsr_desc
-# icon: gsr
+# icon: gsr.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

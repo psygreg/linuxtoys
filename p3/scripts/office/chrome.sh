@@ -2,7 +2,7 @@
 # NAME: Google Chrome
 # VERSION: 1.0
 # DESCRIPTION: chrome_desc
-# icon: chrome
+# icon: chrome.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

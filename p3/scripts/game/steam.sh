@@ -2,7 +2,7 @@
 # name: Steam
 # version: 1.0
 # description: steam_desc
-# icon: steam
+# icon: steam.svg
 # nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---

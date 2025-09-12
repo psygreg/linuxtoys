@@ -2,7 +2,7 @@
 # name: Darktable
 # version: 1.0
 # description: darktable_desc
-# icon: darktable
+# icon: darktable.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

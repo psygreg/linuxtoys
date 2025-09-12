@@ -2,7 +2,7 @@
 # NAME: Pinta
 # VERSION: 1.0
 # DESCRIPTION: pinta_desc
-# icon: pinta
+# icon: pinta.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # name: WiVRn
 # version: 1.0
 # description: wivrn_desc
-# icon: wivrn
+# icon: wivrn.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # name: Osu!
 # version: 1.0
 # description: osu_desc
-# icon: osu
+# icon: osu.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

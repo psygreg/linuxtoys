@@ -2,7 +2,7 @@
 # name: Protontricks
 # version: 1.0
 # description: ptricks_desc
-# icon: protontricks
+# icon: proton.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,6 +2,7 @@
 # NAME: Microsoft Teams
 # VERSION: 1.0
 # DESCRIPTION: msteams_desc
+# icon: teams.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

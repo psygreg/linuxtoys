@@ -2,7 +2,7 @@
 # name: Oversteer
 # version: 1.0
 # description: oversteer_desc
-# icon: oversteer
+# icon: oversteer.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

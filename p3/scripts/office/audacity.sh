@@ -2,7 +2,7 @@
 # NAME: Audacity
 # VERSION: 1.0
 # DESCRIPTION: audacity_desc
-# icon: audacity
+# icon: audacity.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

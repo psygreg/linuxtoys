@@ -2,7 +2,7 @@
 # name: Kdenlive
 # version: 1.0
 # description: kdenlive_desc
-# icon: kdenlive
+# icon: kdenlive.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

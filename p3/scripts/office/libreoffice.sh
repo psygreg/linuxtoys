@@ -2,7 +2,7 @@
 # NAME: LibreOffice
 # VERSION: 1.0
 # DESCRIPTION: libreoffice_desc
-# ICON: libreoffice-startcenter
+# ICON: libreoffice.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # name: Heroic Games Launcher
 # version: 1.0
 # description: hgl_desc
-# icon: heroic
+# icon: heroic.svg
 # nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---

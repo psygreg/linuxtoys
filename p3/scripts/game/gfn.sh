@@ -2,7 +2,7 @@
 # name: GeForce NOW
 # version: 1.0
 # description: gfn_desc
-# icon: nvidia
+# icon: nvidia.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

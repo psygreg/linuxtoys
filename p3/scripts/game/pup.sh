@@ -2,7 +2,7 @@
 # name: ProtonUp
 # version: 1.0
 # description: pup_desc
-# icon: protonupqt
+# icon: pupgui.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

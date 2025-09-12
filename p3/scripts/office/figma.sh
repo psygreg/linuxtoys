@@ -3,7 +3,7 @@
 # version: 1.0
 # description: figma_desc
 # compat: ubuntu, debian, fedora, suse, cachy, arch
-# icon: figma
+# icon: figma.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

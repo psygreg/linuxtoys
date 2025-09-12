@@ -2,7 +2,7 @@
 # NAME: AnyDesk
 # VERSION: 1.0
 # DESCRIPTION: anydesk_desc
-# icon: anydesk
+# icon: anydesk.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

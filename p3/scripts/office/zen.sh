@@ -2,7 +2,7 @@
 # NAME: Zen Browser
 # VERSION: 1.0
 # DESCRIPTION: zen_desc
-# icon: zenbrowser
+# icon: zen.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -2,7 +2,7 @@
 # NAME: Foliate
 # VERSION: 1.0
 # DESCRIPTION: foliate_desc
-# icon: foliate
+# icon: foliate.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

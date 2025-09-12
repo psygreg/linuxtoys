@@ -2,7 +2,7 @@
 # name: ProtonPlus
 # version: 1.0
 # description: pp_desc
-# icon: protonplus
+# icon: protonplus.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

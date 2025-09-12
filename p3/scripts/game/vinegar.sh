@@ -2,7 +2,7 @@
 # name: Vinegar
 # version: 1.0
 # description: vinegar_desc
-# icon: vinegar
+# icon: vinegar.png
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

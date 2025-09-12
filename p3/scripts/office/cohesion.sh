@@ -2,7 +2,7 @@
 # name: Cohesion
 # version: 1.0
 # description: cohesion_desc
-# icon: notion
+# icon: notion.svg
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

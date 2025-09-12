@@ -2,7 +2,7 @@
 # name: DaVinci Resolve
 # version: 1.0
 # description: davinci_desc
-# icon: resolve
+# icon: resolve.svg
 
 # functions
 #create JSON, user agent and download Resolve

@@ -2,7 +2,7 @@
 # name: Lutris
 # version: 1.0
 # description: lutris_desc
-# icon: lutris
+# icon: lutris.svg
 # nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---
