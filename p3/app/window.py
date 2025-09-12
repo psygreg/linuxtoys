@@ -161,14 +161,14 @@ class AppWindow(Gtk.ApplicationWindow):
                 # Try multiple icon locations in order of preference
                 icon_paths = [
                     # System-wide installation paths
-                    "/usr/share/icons/hicolor/scalable/apps/linuxtoys.png",
-                    "/usr/share/pixmaps/linuxtoys.png",
+                    "/usr/share/icons/hicolor/scalable/apps/linuxtoys.svg",
+                    "/usr/share/pixmaps/linuxtoys.svg",
                     # Development/local paths
-                    get_icon_path("linuxtoys.png"),
+                    get_icon_path("linuxtoys.svg"),
                     # Fallback to the icon in the source directory
-                    os.path.join(os.path.dirname(__file__), "..", "..", "src", "linuxtoys.png"),
+                    os.path.join(os.path.dirname(__file__), "..", "..", "src", "linuxtoys.svg"),
                     # Relative path from the script location
-                    os.path.join(os.path.dirname(__file__), "..", "..", "..", "src", "linuxtoys.png")
+                    os.path.join(os.path.dirname(__file__), "..", "..", "..", "src", "linuxtoys.svg")
                 ]
                 
                 icon_set = False

@@ -36,7 +36,7 @@ find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 
 # Install icon and desktop file
-install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps/
+install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
 
 %post
@@ -57,7 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root, -)
 /usr/bin/linuxtoys
 /usr/share/linuxtoys
-/usr/share/icons/hicolor/scalable/apps/linuxtoys.png
+/usr/share/icons/hicolor/scalable/apps/linuxtoys.svg
 /usr/share/applications/LinuxToys.desktop
 
 %changelog

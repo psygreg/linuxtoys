@@ -108,12 +108,12 @@ class AboutDialog:
         
         # App icon
         try:
-            icon_path = get_icon_path("linuxtoys_64x64.png")
+            icon_path = get_icon_path("linuxtoys.svg")
             if icon_path:
                 app_icon = Gtk.Image.new_from_file(icon_path)
                 app_icon.set_pixel_size(64)
             else:
-                raise FileNotFoundError("app-icon.png not found")
+                raise FileNotFoundError("linuxtoys.svg not found")
         except Exception:
             app_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
             app_icon.set_pixel_size(64)

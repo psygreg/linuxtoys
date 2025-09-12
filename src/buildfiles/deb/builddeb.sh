@@ -18,7 +18,7 @@ find linuxtoys_$lt_version.orig/usr/share/linuxtoys/ -name "__pycache__" -type d
 find linuxtoys_$lt_version.orig/usr/share/linuxtoys/ -name "*.pyc" -delete 2>/dev/null || true
 # Copy desktop file and icon
 cp ../../LinuxToys.desktop linuxtoys_$lt_version.orig/usr/share/applications/
-cp ../../linuxtoys.png linuxtoys_$lt_version.orig/usr/share/icons/hicolor/scalable/apps/
+cp ../../linuxtoys.svg linuxtoys_$lt_version.orig/usr/share/icons/hicolor/scalable/apps/
 
 # Create the main executable script
 cat > linuxtoys_$lt_version.orig/usr/bin/linuxtoys << 'EOF'
@@ -162,7 +162,7 @@ cat > debian/install << 'EOF'
 usr/bin/linuxtoys /usr/bin/
 usr/share/linuxtoys /usr/share/
 usr/share/applications/LinuxToys.desktop /usr/share/applications/
-usr/share/icons/hicolor/scalable/apps/linuxtoys.png /usr/share/icons/hicolor/scalable/apps/
+usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/scalable/apps/
 EOF
 
 # build and upload for PPA first - doesn't work if done after building the package

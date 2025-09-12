@@ -22,7 +22,7 @@ mkdir -p rpmbuild/SOURCES
 cp -rf ../../../p3/* linuxtoys-${lt_version}/usr/share/linuxtoys/
 # Copy desktop file and icon
 cp ../../LinuxToys.desktop linuxtoys-${lt_version}/usr/share/applications/
-cp ../../linuxtoys.png linuxtoys-${lt_version}/usr/share/icons/hicolor/scalable/apps/
+cp ../../linuxtoys.svg linuxtoys-${lt_version}/usr/share/icons/hicolor/scalable/apps/
 
 # Create the main executable script
 cat > linuxtoys-${lt_version}/usr/bin/linuxtoys << 'EOF'

@@ -99,11 +99,11 @@ def _create_icon_widget(category_info):
     if not category_info:
         # Default LinuxToys icon
         try:
-            icon_path = get_icon_path("linuxtoys_64x64.png")
+            icon_path = get_icon_path("linuxtoys.svg")
             if icon_path:
                 logo = Gtk.Image.new_from_file(icon_path)
             else:
-                raise FileNotFoundError("app-icon.png not found")
+                raise FileNotFoundError("linuxtoys.svg not found")
         except Exception:
             # Fallback to a system icon if the logo is not found
             logo = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
