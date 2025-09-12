@@ -11,6 +11,7 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../../libs/helpers.lib"
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     sudo_rq
     _packages=(waydroid)
@@ -29,11 +30,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         cd $HOME
         git clone https://github.com/casualsnek/waydroid_script
         cd waydroid_script
-        if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-            _packages=(python-pip)
-        else
-            _packages=(python3-pip)
-        fi 
+        pip_lib
         _install_
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
