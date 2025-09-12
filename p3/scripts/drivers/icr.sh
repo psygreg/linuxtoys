@@ -14,12 +14,10 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # function
 icr_in () {
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        _packages=(intel-compute-runtime)
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        _packages=(intel-compute-runtime)
+        _packages=(intel-opencl-icd)
     elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID_LIKE" == *opensuse* ]] || [[ "$ID" =~ "suse" ]]; then
         _packages=(intel-opencl)
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    else
         _packages=(intel-compute-runtime)
     fi
     _install_
