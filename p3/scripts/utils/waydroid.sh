@@ -29,7 +29,11 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         cd $HOME
         git clone https://github.com/casualsnek/waydroid_script
         cd waydroid_script
-        _packages=(pip)
+        if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            _packages=(python-pip)
+        else
+            _packages=(python3-pip)
+        fi 
         _install_
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
