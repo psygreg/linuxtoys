@@ -163,7 +163,8 @@ def get_language_names():
         'ur': 'اردو',
         'th': 'ไทย',
         'sw': 'Kiswahili',
-        'fa': 'فارسی'
+        'fa': 'فارسی',
+        'nl': 'Nederlands'
     }
 
 
@@ -193,7 +194,8 @@ def get_localized_language_names(current_translations):
         'ur': current_translations.get('lang_urdu', 'اردو'),
         'th': current_translations.get('lang_thai', 'ไทย'),
         'sw': current_translations.get('lang_swahili', 'Kiswahili'),
-        'fa': current_translations.get('lang_persian', 'فارسی')
+        'fa': current_translations.get('lang_persian', 'فارسی'),
+        'nl': current_translations.get('lang_dutch', 'Nederlands')
     }
     
     # Fall back to native names for any missing translations
