@@ -177,6 +177,7 @@
   "archupd_desc": "시스템 트레이에서 신중하게 실행되는 Arch Linux 업데이트 알림 및 핸들러입니다.",
   "cloudflare_warp_desc": "ISP로부터 트래픽을 숨기는 DNS 서비스입니다.",
   "piper_desc": "libratbag을 사용하여 게임 마우스를 구성하기 위한 GTK 애플리케이션입니다. 일반적으로 Logitech, Roccat, Asus 및 Glorious 마우스에 사용됩니다.",
+  "glever_desc": "AppImage를 관리하는 유틸리티로, 데스크탑 항목 및 앱 메타데이터를 생성하고, 앱을 제자리에서 업데이트하거나 여러 버전을 나란히 유지할 수 있습니다.",
 
   "docker_desc": "docker-compose와 같은 기본 도구와 함께 오픈 소스 컨테이너 서비스 제공업체입니다. 웹 UI에서 Docker를 관리하기 위한 Portainer CE가 있는 컨테이너를 포함합니다.",
   "mise_desc": "asdf와 같이(또는 nvm이나 pyenv이지만 모든 언어용) node, python, cmake, terraform 및 수백 개 더 많은 개발 도구를 관리합니다. 이 섹션의 PyEnv, NVM, Java JDK 및 Maven 설치 프로그램을 대체합니다.",

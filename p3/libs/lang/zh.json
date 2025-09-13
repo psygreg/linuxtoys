@@ -179,6 +179,7 @@
   "archupd_desc": "Arch Linux更新通知器和处理程序，在系统托盘中谨慎运行。",
   "cloudflare_warp_desc": "从ISP隐藏流量的DNS服务。",
   "piper_desc": "使用libratbag配置游戏鼠标的GTK应用程序。通常用于Logitech、Roccat、Asus和Glorious鼠标。",
+  "glever_desc": "用于管理AppImage的实用程序，生成桌面条目和应用程序元数据，在原地更新应用程序或并排维护多个版本。",
 
   "docker_desc": "开源容器服务提供商和基本工具，如docker-compose。包括带有Portainer CE的容器，用于从Web UI管理Docker。",
   "mise_desc": "像asdf（或nvm或pyenv，但适用于任何语言），它管理node、python、cmake、terraform等数百种开发工具。替代本节中的PyEnv、NVM和Java JDK和Maven安装程序。",

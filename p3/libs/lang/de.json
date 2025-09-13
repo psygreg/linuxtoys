@@ -177,6 +177,7 @@
   "archupd_desc": "Ein Arch Linux Update-Benachrichtigungs- und Handler, der diskret in Ihrer Systemleiste läuft.",
   "cloudflare_warp_desc": "Ein DNS-Service, der Ihren Traffic vor Ihrem ISP verbirgt.",
   "piper_desc": "Eine GTK-Anwendung zur Konfiguration von Gaming-Mäusen mit libratbag. Häufig verwendet für Logitech-, Roccat-, Asus- und Glorious-Mäuse.",
+  "glever_desc": "Ein Tool zur Verwaltung von AppImage, das Desktop-Einträge und Anwendungs-Metadaten generiert, Anwendungen vor Ort aktualisiert oder mehrere Versionen nebeneinander speichert.",
 
   "docker_desc": "Der quelloffene Container-Service-Provider und grundlegende Tools dafür, wie docker-compose. Beinhaltet einen Container mit Portainer CE zur Verwaltung von Docker über eine Web-UI.",
   "mise_desc": "Wie asdf (oder nvm oder pyenv aber für jede Sprache) verwaltet es Dev-Tools wie node, python, cmake, terraform und Hunderte mehr. Ersetzt PyEnv, NVM und die Java JDK- und Maven-Installer aus diesem Abschnitt.",

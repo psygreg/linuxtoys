@@ -177,6 +177,7 @@
   "archupd_desc": "Mwongozaji na mshughulikaji wa masasisho ya Arch Linux ambayo inafanya kazi kwa utulivu katika kikasha chako cha mfumo.",
   "cloudflare_warp_desc": "Huduma ya DNS inayoficha trafiki yako kutoka kwa ISP yako.",
   "piper_desc": "Programu ya GTK ya kusanidi kipanya cha michezo kwa kutumia libratbag. Hutumika kwa kawaida kwa kipanya za Logitech, Roccat, Asus na Glorious.",
+  "glever_desc": "Chombo cha kusimamia AppImage, kuunda vichupo vya desktop na metadata ya programu, kuboresha programu kwenye tovuti au kuweka toleo nyingi kando.",
 
   "docker_desc": "Mtoa huduma wa chombo cha chanzo huria na zana za msingi kwa ajili yake, kama vile docker-compose. Inajumuisha chombo kilicho na Portainer CE kwa kusimamia Docker kutoka UI ya wavuti.",
   "mise_desc": "Kama asdf (au nvm au pyenv lakini kwa lugha yoyote) inasimamia zana za maendeleo kama node, python, cmake, terraform, na mamia mengine. Inachukua nafasi ya PyEnv, NVM, na vyasakinisha vya Java JDK na Maven kutoka sehemu hii.",

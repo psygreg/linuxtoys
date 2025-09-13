@@ -177,6 +177,7 @@
   "archupd_desc": "Een Arch Linux update notifier en handler die discreet in je systeemtray draait.",
   "cloudflare_warp_desc": "Een DNS service die je verkeer verbergt voor je ISP.",
   "piper_desc": "Een GTK applicatie om gaming muizen te configureren met libratbag. Veel gebruikt voor Logitech, Roccat, Asus en Glorious muizen.",
+  "glever_desc": "Een hulpprogramma om AppImages te beheren, desktop entries en app metadata te genereren, apps in-place bij te werken of meerdere versies zij aan zij te houden.",
 
   "docker_desc": "De open source container service provider en basistools ervoor, zoals docker-compose. Bevat een container met Portainer CE voor het beheren van Docker vanuit een web UI.",
   "mise_desc": "Zoals asdf (of nvm of pyenv maar voor elke taal) beheert het dev tools zoals node, python, cmake, terraform, en honderden meer. Vervangt PyEnv, NVM, en de Java JDK en Maven installers van deze sectie.",

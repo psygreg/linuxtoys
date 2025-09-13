@@ -177,6 +177,7 @@
   "archupd_desc": "በስርዓትዎ tray ውስጥ በድብቅ የሚሰራ የArch Linux ማሻሻያ ማሳወቂያ እና አያዥ።",
   "cloudflare_warp_desc": "ከISP የእርስዎን ትራፊክ የሚደብቅ DNS አገልግሎት።",
   "piper_desc": "libratbag በመጠቀም የጌሚንግ አይጦችን ለማዋቀር የGTK መተግበሪያ። በተለይ ለLogitech፣ Roccat፣ Asus እና Glorious አይጦች ይጠቅማል።",
+  "glever_desc": "የAppImage አስተዳደር መሳሪያ፣ የዴስክቶፕ ገጽታዎችን እና የመተግበሪያ መረጃዎችን ይፍጠራል፣ በቦታው ውስጥ የመተግበሪያዎችን እንዲያዘምኑ ይደግፋል ወይም በአንደኛ ቦታ የተዘጋጀ ብዙ እትም ይዘው ይቀመጣሉ።",
 
   "docker_desc": "የክፍት ምንጭ ኮንቴይነር አገልግሎት አቅራቢ እና እንደ docker-compose ያሉ መሠረታዊ መሳሪያዎች። ከድር UI ዶከርን ለማስተዳደር ከPortainer CE ጋር ኮንቴይነር ያጠቃልላል።",
   "mise_desc": "እንደ asdf (ወይም nvm ወይም pyenv ነገር ግን ለማንኛውም ቋንቋ) node፣ python፣ cmake፣ terraform እና በመቶዎች የሚቆጠሩ ሌሎችን ያሉ dev መሳሪያዎችን ያስተዳድራል። PyEnv፣ NVM እና ከዚህ ክፍል የJava JDK እና Maven installers ይተካል።",

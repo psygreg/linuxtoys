@@ -177,6 +177,7 @@
   "archupd_desc": "Sistem tepsinizdе gizlice çalışan Arch Linux güncelleme bildirici ve işleyici.",
   "cloudflare_warp_desc": "Trafiğinizi ISS'nizden gizleyen DNS hizmeti.",
   "piper_desc": "libratbag kullanarak oyun farelerini yapılandırmak için GTK uygulaması. Genellikle Logitech, Roccat, Asus ve Glorious fareler için kullanılır.",
+  "glever_desc": "AppImage'leri yönetmek için bir araç, masaüstü girişleri ve uygulama meta verileri oluşturur, uygulamaları yerinde günceller veya birden fazla sürümü yan yana tutar.",
 
   "docker_desc": "Açık kaynak konteyner hizmet sağlayıcısı ve docker-compose gibi temel araçları. Web UI'den Docker'ı yönetmek için Portainer CE ile bir konteyner içerir.",
   "mise_desc": "asdf gibi (veya nvm veya pyenv ama herhangi bir dil için) node, python, cmake, terraform ve yüzlerce daha fazlasını yönetir. Bu bölümden PyEnv, NVM ve Java JDK ve Maven yükleyicilerini değiştirir.",

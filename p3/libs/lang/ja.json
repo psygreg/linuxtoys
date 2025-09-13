@@ -177,6 +177,7 @@
   "archupd_desc": "システムトレイで控えめに実行されるArch Linux更新通知・処理ツール。",
   "cloudflare_warp_desc": "ISPからトラフィックを隠すDNSサービス。",
   "piper_desc": "libratbagを使用してゲーミングマウスを設定するGTKアプリケーション。Logitech、Roccat、Asus、Gloriousマウスによく使用されます。",
+  "glever_desc": "AppImageを管理するためのユーティリティで、デスクトップエントリやアプリメタデータを生成し、アプリをインプレースで更新したり、複数のバージョンを並行して保持したりします。",
 
   "docker_desc": "オープンソースコンテナサービスプロバイダーとdocker-composeなどの基本ツール。Web UIからDockerを管理するためのPortainer CEとのコンテナを含みます。",
   "mise_desc": "asdf（またはnvmやpyenvのようなものですが任意の言語用）のように、node、python、cmake、terraformなど数百の開発ツールを管理。このセクションのPyEnv、NVM、Java JDKとMavenインストーラーを置き換えます。",

@@ -177,6 +177,7 @@
   "archupd_desc": "Notifier dan handler pembaruan Arch Linux yang berjalan secara diam-diam di system tray Anda.",
   "cloudflare_warp_desc": "Layanan DNS yang menyembunyikan traffic Anda dari ISP.",
   "piper_desc": "Aplikasi GTK untuk mengkonfigurasi mouse gaming menggunakan libratbag. Umumnya digunakan untuk mouse Logitech, Roccat, Asus dan Glorious.",
+  "glever_desc": "Utilitas untuk mengelola AppImages, menghasilkan entri desktop dan metadata aplikasi, memperbarui aplikasi di tempat atau menyimpan beberapa versi berdampingan.",
 
   "docker_desc": "Penyedia layanan container open source dan alat dasar untuk itu, seperti docker-compose. Termasuk container dengan Portainer CE untuk mengelola Docker dari web UI.",
   "mise_desc": "Seperti asdf (atau nvm atau pyenv tapi untuk bahasa apa pun) ia mengelola dev tools seperti node, python, cmake, terraform, dan ratusan lainnya. Menggantikan installer PyEnv, NVM, dan Java JDK dan Maven dari bagian ini.",

@@ -177,6 +177,7 @@
   "archupd_desc": "מודיע ומטפל עדכוני Arch Linux הפועל בדיסקרטיות במגש המערכת שלך.",
   "cloudflare_warp_desc": "שירות DNS שמסתיר את התעבורה שלך מספק האינטרנט שלך.",
   "piper_desc": "אפליקציית GTK לקונפיגורציה של עכברי גיימינג באמצעות libratbag. נפוץ לעכברי Logitech, Roccat, Asus ו-Glorious.",
+  "glever_desc": "כלי לניהול AppImages, יצירת קיצורי דרך ותיאורי אפליקציות, עדכון אפליקציות במקום או שמירת מספר גרסאות זו לצד זו.",
 
   "docker_desc": "ספק שירותי מכלים בקוד פתוח וכלים בסיסיים עבורו, כמו docker-compose. כולל מכל עם Portainer CE לניהול Docker מממשק אינטרנט.",
   "mise_desc": "כמו asdf (או nvm או pyenv אבל לכל שפה) הוא מנהל כלי פיתוח כמו node, python, cmake, terraform, ומאות אחרים. מחליף את PyEnv, NVM ומתקיני Java JDK ו-Maven מהחלק הזה.",
