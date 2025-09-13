@@ -211,6 +211,7 @@
   "about_tab": "概要",
   "license_tab": "ライセンス",
   "search_placeholder": "機能を検索",
+  "search_languages_placeholder": "言語を検索",
   "search_results": "検索結果",
   "results_found": "件の結果",
   "search": "検索"
