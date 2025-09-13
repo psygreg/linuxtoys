@@ -89,7 +89,7 @@ get_heroic () {
 obs_pipe () {
     if [ ! -d "$HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio" ]; then
         local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-        mkdir obspipe
+        mkdir -p obspipe
         cd obspipe
         wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
         tar xvzf linux-pipewire-audio-${ver}-flatpak-30.tar.gz
@@ -100,7 +100,7 @@ obs_pipe () {
         rm -rf obspipe
     else
         local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-        mkdir obspipe
+        mkdir -p obspipe
         cd obspipe
         wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
         tar xvzf linux-pipewire-audio-${ver}-flatpak-30.tar.gz
@@ -112,7 +112,7 @@ obs_pipe () {
 }
 if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v apt &> /dev/null || command -v zypper &> /dev/null || command -v pacman &> /dev/null); then
     cd $HOME
-    mkdir psypicks || exit 1
+    mkdir -p psypicks || exit 1
     cd psypicks || exit 1
     # enable RPMFusion non-free repositories for Fedora
     sudo_rq
