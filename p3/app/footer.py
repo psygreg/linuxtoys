@@ -54,7 +54,7 @@ def create_footer():
 
     # Wiki LinkButton
     menu_website_button = Gtk.LinkButton(
-        uri="https://github.com/psygreg/linuxtoys/wiki", 
+        uri="https://linuxtoys.luminhost.xyz/knowledgebase.html", 
         label="Wiki"
     )
     
@@ -68,7 +68,7 @@ def create_footer():
     # Credits LinkButton
     credits_label = translation.get('credits_label', 'Credits')
     menu_credits_button = Gtk.LinkButton(
-        uri="https://github.com/psygreg/linuxtoys/wiki/Credits",
+        uri="https://linuxtoys.luminhost.xyz/credits.html",
         label=credits_label
     )
     
