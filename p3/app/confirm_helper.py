@@ -4,6 +4,7 @@ Handles confirmation dialogs before script execution
 """
 
 from .gtk_common import Gtk
+from .lang_utils import escape_for_markup
 
 
 def _should_skip_confirmation(script_info):
@@ -67,7 +68,7 @@ def show_single_script_confirmation(script_info, parent_window, translations):
     
     # Custom title label - bold and bigger
     title_label = Gtk.Label()
-    title_label.set_markup(f"<span size='large' weight='bold'>{confirm_title}</span>")
+    title_label.set_markup(f"<span size='large' weight='bold'>{escape_for_markup(confirm_title)}</span>")
     title_label.set_margin_top(15)
     title_label.set_margin_bottom(15)
     title_label.set_halign(Gtk.Align.CENTER)
@@ -89,7 +90,7 @@ def show_single_script_confirmation(script_info, parent_window, translations):
     # Script description only (removed name display)
     desc_label = Gtk.Label()
     description = script_info.get('description', 'No description available')
-    desc_label.set_markup(f"<b>{description}</b>")
+    desc_label.set_markup(f"<b>{escape_for_markup(description)}</b>")
     desc_label.set_halign(Gtk.Align.START)
     desc_label.set_line_wrap(True)
     desc_label.set_max_width_chars(50)
@@ -159,7 +160,7 @@ def show_checklist_confirmation(selected_scripts, parent_window, translations):
     
     # Custom title label - bold and bigger
     title_label = Gtk.Label()
-    title_label.set_markup(f"<span size='large' weight='bold'>{confirm_title}</span>")
+    title_label.set_markup(f"<span size='large' weight='bold'>{escape_for_markup(confirm_title)}</span>")
     title_label.set_margin_top(15)
     title_label.set_margin_bottom(15)
     title_label.set_halign(Gtk.Align.CENTER)
@@ -193,7 +194,7 @@ def show_checklist_confirmation(selected_scripts, parent_window, translations):
         # Script description only
         desc_label = Gtk.Label()
         description = script.get('description', 'No description available')
-        desc_label.set_markup(f"• <b>{description}</b>")
+        desc_label.set_markup(f"• <b>{escape_for_markup(description)}</b>")
         desc_label.set_halign(Gtk.Align.START)
         desc_label.set_line_wrap(True)
         desc_label.set_max_width_chars(60)
@@ -210,7 +211,7 @@ def show_checklist_confirmation(selected_scripts, parent_window, translations):
         auto_count = len(selected_scripts) - len(scripts_to_confirm)
         notice_label = Gtk.Label()
         notice_text = translations.get('auto_confirm_notice', f"Note: {auto_count} script(s) will run automatically without confirmation.")
-        notice_label.set_markup(f"<i>{notice_text}</i>")
+        notice_label.set_markup(f"<i>{escape_for_markup(notice_text)}</i>")
         notice_label.set_margin_top(5)
         notice_label.set_margin_left(30)
         notice_label.set_margin_right(30)

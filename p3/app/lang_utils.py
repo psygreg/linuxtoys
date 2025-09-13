@@ -158,7 +158,8 @@ def get_language_names():
         'id': 'Bahasa Indonesia',
         'ko': '한국어',
         'vi': 'Tiếng Việt',
-        'tl': 'Tagalog'
+        'tl': 'Tagalog',
+        'bn': 'বাংলা'
     }
 
 
@@ -183,7 +184,8 @@ def get_localized_language_names(current_translations):
         'id': current_translations.get('lang_indonesian', 'Bahasa Indonesia'),
         'ko': current_translations.get('lang_korean', '한국어'),
         'vi': current_translations.get('lang_vietnamese', 'Tiếng Việt'),
-        'tl': current_translations.get('lang_tagalog', 'Tagalog')
+        'tl': current_translations.get('lang_tagalog', 'Tagalog'),
+        'bn': current_translations.get('lang_bengali', 'বাংলা')
     }
     
     # Fall back to native names for any missing translations
@@ -204,6 +206,30 @@ def create_translator(lang_code=None):
     
     def translate(key):
         return translations.get(key, key)
+    
+    return translate
+
+
+def escape_for_markup(text):
+    """
+    Escape text for use in Pango markup contexts.
+    Converts & to &amp; for proper XML parsing.
+    """
+    if text is None:
+        return ""
+    return text.replace('&', '&amp;')
+
+
+def create_markup_translator(lang_code=None):
+    """
+    Create a translator function that escapes text for markup contexts.
+    Usage: _ = create_markup_translator(); markup_safe = _('key')
+    """
+    translations = load_translations(lang_code)
+    
+    def translate(key):
+        text = translations.get(key, key)
+        return escape_for_markup(text)
     
     return translate
 

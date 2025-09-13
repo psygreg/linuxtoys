@@ -5,6 +5,7 @@ import threading
 import json
 from . import get_app_resource_path, get_icon_path
 from .update_helper import get_current_version
+from .lang_utils import escape_for_markup
 
 class AboutDialog:
     def __init__(self, parent_window, translations):
@@ -137,7 +138,8 @@ class AboutDialog:
 
         # App version
         version_label = Gtk.Label()
-        version_label.set_markup(f"<small>{self.translations.get('version_label', 'Versão:')} {self.app_version}</small>")
+        version_text = self.translations.get('version_label', 'Versão:')
+        version_label.set_markup(f"<small>{escape_for_markup(version_text)} {self.app_version}</small>")
         version_label.set_halign(Gtk.Align.START)
         
         # App description
@@ -184,7 +186,7 @@ class AboutDialog:
         # Author role
         role_text = self.translations.get('project_lead', 'Project Lead')
         author_role = Gtk.Label()
-        author_role.set_markup(f"<small>{role_text}</small>")
+        author_role.set_markup(f"<small>{escape_for_markup(role_text)}</small>")
         author_role.set_halign(Gtk.Align.START)
         
         author_info_box.pack_start(author_name, False, False, 0)
@@ -201,7 +203,8 @@ class AboutDialog:
         
         # Contributors title
         contributors_title = Gtk.Label()
-        contributors_title.set_markup(f"<b>{self.translations.get('contributors', 'Contributors')}</b>")
+        contributors_text = self.translations.get('contributors', 'Contributors')
+        contributors_title.set_markup(f"<b>{escape_for_markup(contributors_text)}</b>")
         contributors_title.set_halign(Gtk.Align.CENTER)
         
         # Contributors grid (will be populated when data loads)

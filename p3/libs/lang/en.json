@@ -35,7 +35,7 @@
   "choose_manifest_title": "Please choose your Manifest",
   "select_button": "Select",
   "loading_manifest_message": "Loading your manifest file... Please Wait...",
-  "packages_flatpaks": "Packages & Flatpaks",
+  "packages_flatpaks": "Packages &amp; Flatpaks",
 
   "psypicks": "Psygreg's Picks",
   "psypicks_desc": "Curated selection of software for gaming and quality of life on Linux.",

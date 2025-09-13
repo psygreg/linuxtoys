@@ -1,6 +1,7 @@
 from .gtk_common import Gtk, Pango, GdkPixbuf
 import os
 from . import get_icon_path
+from .lang_utils import escape_for_markup
 
 def create_header(translations, category_info=None):
     """
@@ -37,7 +38,7 @@ def create_header(translations, category_info=None):
     # Title using Pango Markup for styling (bold and larger text)
     title_label = Gtk.Label()
     title_label.set_margin_top(10) ## margem acima do titulo
-    title_label.set_markup(f"<big><big><b>{title_text}</b></big></big>")
+    title_label.set_markup(f"<big><big><b>{escape_for_markup(title_text)}</b></big></big>")
     title_label.set_xalign(0) # Align left
 
     # Subtitle with text wrapping
