@@ -51,6 +51,10 @@ class MenuButton(Gtk.MenuButton):
 		self._temp_sh = '/tmp/._temp_script.sh'
 		self.dlg = None
 
+		# Set the hamburger menu icon (like GNOME)
+		hamburger_icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
+		self.set_image(hamburger_icon)
+
 		pop = Gtk.Popover()
 
 		vbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
