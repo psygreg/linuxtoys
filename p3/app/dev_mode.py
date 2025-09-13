@@ -518,6 +518,191 @@ def validate_script_libraries(script_path):
     return validation
 
 
+def validate_script_sudo_usage(script_path):
+    """
+    Validate that scripts properly call sudo_rq before using sudo commands.
+    
+    Analyzes both direct sudo usage in main script flow and function calls to ensure
+    that functions containing sudo are only called after sudo_rq is established.
+    
+    Args:
+        script_path (str): Path to the script file
+        
+    Returns:
+        dict: Validation results with sudo usage analysis
+    """
+    validation = {
+        'status': 'valid',
+        'sudo_commands_found': [],
+        'sudo_rq_found': False,
+        'sudo_rq_line': None,
+        'first_sudo_line': None,
+        'proper_usage': True,
+        'functions_with_sudo': [],
+        'function_calls_before_sudo_rq': [],
+        'function_calls_after_sudo_rq': [],
+        'errors': []
+    }
+    
+    try:
+        with open(script_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        sudo_rq_line_num = None
+        first_sudo_line_num = None
+        sudo_commands = []
+        functions_with_sudo = []
+        function_calls_before_sudo_rq = []
+        function_calls_after_sudo_rq = []
+        
+        # First pass: identify functions and their sudo usage
+        function_definitions = {}  # function_name -> has_sudo
+        in_function = False
+        function_name = None
+        brace_count = 0
+        
+        for line_num, line in enumerate(lines, 1):
+            stripped_line = line.strip()
+            if not stripped_line or stripped_line.startswith('#'):
+                continue
+                
+            line_without_quotes = re.sub(r'["\'].*?["\']', '', stripped_line)
+            
+            # Detect function definitions
+            func_match = re.match(r'(?:function\s+)?(\w+)\s*\(\)\s*\{?', line_without_quotes)
+            if func_match and not in_function:
+                in_function = True
+                function_name = func_match.group(1)
+                function_definitions[function_name] = False  # Initialize as no sudo
+                brace_count = line_without_quotes.count('{') - line_without_quotes.count('}')
+                continue
+            
+            if in_function:
+                brace_count += line_without_quotes.count('{') - line_without_quotes.count('}')
+                
+                # Check for sudo usage inside function
+                sudo_pattern = r'(?:^|[;&|]\s*)\s*sudo\s+\w+'
+                if re.search(sudo_pattern, line_without_quotes) and not re.search(r'\bsudo_rq\b', line_without_quotes):
+                    function_definitions[function_name] = True
+                    functions_with_sudo.append({
+                        'function': function_name,
+                        'line': line_num,
+                        'command': stripped_line
+                    })
+                
+                if brace_count <= 0:
+                    in_function = False
+                    function_name = None
+                continue
+        
+        # Second pass: analyze main script flow
+        in_function = False
+        brace_count = 0
+        
+        for line_num, line in enumerate(lines, 1):
+            stripped_line = line.strip()
+            if not stripped_line or stripped_line.startswith('#'):
+                continue
+                
+            line_without_quotes = re.sub(r'["\'].*?["\']', '', stripped_line)
+            
+            # Skip function definitions (we already processed them)
+            func_match = re.match(r'(?:function\s+)?(\w+)\s*\(\)\s*\{?', line_without_quotes)
+            if func_match and not in_function:
+                in_function = True
+                brace_count = line_without_quotes.count('{') - line_without_quotes.count('}')
+                continue
+            
+            if in_function:
+                brace_count += line_without_quotes.count('{') - line_without_quotes.count('}')
+                if brace_count <= 0:
+                    in_function = False
+                continue
+            
+            # Only analyze main script flow (outside functions)
+            
+            # Check for sudo_rq function call
+            if re.search(r'\bsudo_rq\b', line_without_quotes):
+                # Make sure it's not just in a comment - check if it's an actual command
+                # Remove comments for this check
+                line_without_comments = re.sub(r'#.*$', '', line_without_quotes)
+                if re.search(r'\bsudo_rq\b', line_without_comments.strip()):
+                    if sudo_rq_line_num is None:
+                        sudo_rq_line_num = line_num
+                        validation['sudo_rq_found'] = True
+                        validation['sudo_rq_line'] = line_num
+            
+            # Check for direct sudo commands in main script
+            sudo_pattern = r'(?:^|[;&|]\s*)\s*sudo\s+\w+'
+            if re.search(sudo_pattern, line_without_quotes) and not re.search(r'\bsudo_rq\b', line_without_quotes):
+                if first_sudo_line_num is None:
+                    first_sudo_line_num = line_num
+                    validation['first_sudo_line'] = line_num
+                
+                sudo_commands.append({
+                    'line': line_num,
+                    'command': stripped_line
+                })
+            
+            # Check for function calls in main script
+            for func_name in function_definitions:
+                if re.search(rf'\b{func_name}\b', line_without_quotes):
+                    # Check if this is actually a function call (not part of a larger word)
+                    func_call_pattern = rf'\b{func_name}\s*(?:\(\s*\)|\s|$|;|&|\|)'
+                    if re.search(func_call_pattern, line_without_quotes):
+                        call_info = {
+                            'function': func_name,
+                            'line': line_num,
+                            'has_sudo': function_definitions[func_name],
+                            'command': stripped_line
+                        }
+                        
+                        if sudo_rq_line_num is None or line_num < sudo_rq_line_num:
+                            function_calls_before_sudo_rq.append(call_info)
+                        else:
+                            function_calls_after_sudo_rq.append(call_info)
+        
+        validation['sudo_commands_found'] = sudo_commands
+        validation['functions_with_sudo'] = functions_with_sudo
+        validation['function_calls_before_sudo_rq'] = function_calls_before_sudo_rq
+        validation['function_calls_after_sudo_rq'] = function_calls_after_sudo_rq
+        
+        # Validate execution flow
+        errors = []
+        
+        # Check direct sudo usage in main flow
+        if sudo_commands:
+            if not validation['sudo_rq_found']:
+                errors.append("Script uses sudo commands in main flow but never calls sudo_rq")
+            elif sudo_rq_line_num > first_sudo_line_num:
+                errors.append(f"sudo_rq (line {sudo_rq_line_num}) called after first sudo usage in main flow (line {first_sudo_line_num})")
+        
+        # Check function calls with sudo before sudo_rq
+        functions_with_sudo_called_early = []
+        for call_info in function_calls_before_sudo_rq:
+            if call_info['has_sudo']:
+                functions_with_sudo_called_early.append(call_info)
+        
+        if functions_with_sudo_called_early:
+            if not validation['sudo_rq_found']:
+                func_names = [call['function'] for call in functions_with_sudo_called_early]
+                errors.append(f"Functions with sudo called but sudo_rq never called: {', '.join(set(func_names))}")
+            else:
+                for call_info in functions_with_sudo_called_early:
+                    errors.append(f"Function '{call_info['function']}' with sudo called at line {call_info['line']} before sudo_rq (line {sudo_rq_line_num})")
+        
+        if errors:
+            validation['status'] = 'invalid'
+            validation['proper_usage'] = False
+            validation['errors'] = errors
+        
+    except Exception as e:
+        validation['status'] = 'error'
+        validation['errors'] = [f"Failed to validate sudo usage: {str(e)}"]
+    
+    return validation
+
+
 def validate_script_header(script_path):
     """
     Validate that the script contains the required header metadata.
@@ -581,7 +766,9 @@ def dry_run_script(script_path):
         'script': script_path,
         'syntax_valid': False,
         'dependencies_valid': False,
+        'sudo_valid': False,
         'validation': {},
+        'sudo_validation': {},
         'syntax_errors': [],
         'warnings': []
     }
@@ -624,7 +811,68 @@ def dry_run_script(script_path):
     else:
         print(f"❌ Header validation failed: {header_validation['error']}")
 
-    # --- 3. Validate dependencies ---
+    # --- 3. Validate sudo usage ---
+    sudo_validation = validate_script_sudo_usage(script_path)
+    result['sudo_validation'] = sudo_validation
+
+    if sudo_validation['status'] == 'valid':
+        result['sudo_valid'] = True
+        if sudo_validation['sudo_commands_found']:
+            print("✅ Sudo: Valid (sudo_rq called before sudo usage)")
+        else:
+            print("✅ Sudo: Valid (no sudo commands found)")
+    elif sudo_validation['status'] == 'invalid':
+        print("❌ Sudo: Invalid")
+        for error in sudo_validation['errors']:
+            print(f"   {error}")
+    else:
+        print("⚠️  Sudo: Validation errors occurred")
+        for error in sudo_validation['errors']:
+            print(f"   {error}")
+
+    # Show sudo usage details if commands were found
+    if sudo_validation['sudo_commands_found']:
+        print(f"🔒 Sudo commands: {len(sudo_validation['sudo_commands_found'])} found in main flow")
+        if sudo_validation['sudo_rq_found']:
+            print(f"   sudo_rq call: line {sudo_validation['sudo_rq_line']}")
+        print(f"   First sudo: line {sudo_validation['first_sudo_line']}")
+    
+    # Show function call analysis
+    if sudo_validation['functions_with_sudo']:
+        print(f"ℹ️  Functions with sudo: {len(sudo_validation['functions_with_sudo'])} found")
+        func_summary = {}
+        for func_info in sudo_validation['functions_with_sudo']:
+            func_name = func_info['function']
+            if func_name not in func_summary:
+                func_summary[func_name] = 0
+            func_summary[func_name] += 1
+        for func_name, count in func_summary.items():
+            print(f"   {func_name}(): {count} sudo command(s)")
+    
+    # Show function call timing analysis
+    calls_before = sudo_validation['function_calls_before_sudo_rq']
+    calls_after = sudo_validation['function_calls_after_sudo_rq']
+    
+    if calls_before or calls_after:
+        print("📞 Function calls analysis:")
+        
+        if calls_before:
+            print(f"   Before sudo_rq: {len(calls_before)} calls")
+            sudo_calls_before = [call for call in calls_before if call['has_sudo']]
+            if sudo_calls_before:
+                print(f"      ⚠️  {len(sudo_calls_before)} with sudo: {', '.join([call['function'] for call in sudo_calls_before])}")
+            else:
+                print("      ✅ None with sudo")
+        
+        if calls_after:
+            print(f"   After sudo_rq: {len(calls_after)} calls")
+            sudo_calls_after = [call for call in calls_after if call['has_sudo']]
+            if sudo_calls_after:
+                print(f"      ✅ {len(sudo_calls_after)} with sudo: {', '.join([call['function'] for call in sudo_calls_after])}")
+    elif sudo_validation['functions_with_sudo']:
+        print("📞 No function calls detected in main flow")
+
+    # --- 4. Validate dependencies ---
     validation = validate_script_libraries(script_path)
     result['validation'] = validation
 
@@ -662,7 +910,7 @@ def dry_run_script(script_path):
             print(f"   {error}")
 
     # Overall status
-    overall_status = "✅ PASS" if result['syntax_valid'] and result['dependencies_valid'] else "❌ FAIL"
+    overall_status = "✅ PASS" if result['syntax_valid'] and result['dependencies_valid'] and result['sudo_valid'] else "❌ FAIL"
     print(f"\n🎯 Overall: {overall_status}")
     print("=" * 50)
     print()
