@@ -13,6 +13,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+sudo_rq
 if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
     if ! rpm -qi "akmods-keys" &>/dev/null; then
         _packages=(rpmdevtools akmods)
