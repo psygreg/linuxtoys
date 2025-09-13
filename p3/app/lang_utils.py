@@ -159,7 +159,8 @@ def get_language_names():
         'ko': '한국어',
         'vi': 'Tiếng Việt',
         'tl': 'Tagalog',
-        'bn': 'বাংলা'
+        'bn': 'বাংলা',
+        'ur': 'اردو'
     }
 
 
@@ -185,7 +186,8 @@ def get_localized_language_names(current_translations):
         'ko': current_translations.get('lang_korean', '한국어'),
         'vi': current_translations.get('lang_vietnamese', 'Tiếng Việt'),
         'tl': current_translations.get('lang_tagalog', 'Tagalog'),
-        'bn': current_translations.get('lang_bengali', 'বাংলা')
+        'bn': current_translations.get('lang_bengali', 'বাংলা'),
+        'ur': current_translations.get('lang_urdu', 'اردو')
     }
     
     # Fall back to native names for any missing translations
