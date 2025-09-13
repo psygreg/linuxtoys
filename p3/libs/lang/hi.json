@@ -187,17 +187,10 @@
   "select_language": "भाषा चुनें",
   "select_language_title": "भाषा चुनें",
   "select_language_message": "कृपया अपनी पसंदीदा भाषा चुनें:",
-  "lang_english": "अंग्रेजी",
-  "lang_portuguese": "पुर्तगाली",
-  "lang_spanish": "स्पेनिश",
-  "lang_german": "जर्मन",
-  "lang_french": "फ्रेंच",
-  "lang_italian": "इतालवी",
-  "lang_arabic": "अरबी",
-  "lang_russian": "रूसी",
-  "lang_chinese": "चीनी",
-  "lang_japanese": "जापानी",
-  "lang_hindi": "हिंदी",
-  "lang_turkish": "तुर्की",
-  "lang_indonesian": "इंडोनेशियाई"
+  "about_tab": "के बारे में",
+  "license_tab": "लाइसेंस",
+  "search_placeholder": "सुविधाएं खोजें",
+  "search_results": "खोज परिणाम",
+  "results_found": "परिणाम मिले",
+  "search": "खोजें"
 }
