@@ -149,6 +149,7 @@ def get_language_names():
         'de': 'Deutsch',
         'fr': 'Français',
         'it': 'Italiano',
+        'pl': 'Polski',
         'ar': 'العربية',
         'ru': 'Русский',
         'zh': '中文',
@@ -181,6 +182,7 @@ def get_localized_language_names(current_translations):
         'de': current_translations.get('lang_german', 'Deutsch'),
         'fr': current_translations.get('lang_french', 'Français'),
         'it': current_translations.get('lang_italian', 'Italiano'),
+        'pl': current_translations.get('lang_polish', 'Polski'),
         'ar': current_translations.get('lang_arabic', 'العربية'),
         'ru': current_translations.get('lang_russian', 'Русский'),
         'zh': current_translations.get('lang_chinese', '中文'),
@@ -198,9 +200,7 @@ def get_localized_language_names(current_translations):
         'fa': current_translations.get('lang_persian', 'فارسی'),
         'nl': current_translations.get('lang_dutch', 'Nederlands'),
         'am': current_translations.get('lang_amharic', 'አማርኛ')
-    }
-    
-    # Fall back to native names for any missing translations
+    }    # Fall back to native names for any missing translations
     native_names = get_language_names()
     for code in native_names:
         if localized_names.get(code) == current_translations.get(f'lang_{code}', ''):
