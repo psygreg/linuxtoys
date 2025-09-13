@@ -154,7 +154,8 @@ def get_language_names():
         'zh': '中文',
         'ja': '日本語',
         'hi': 'हिंदी',
-        'tr': 'Türkçe'
+        'tr': 'Türkçe',
+        'id': 'Bahasa Indonesia'
     }
 
 
@@ -175,7 +176,8 @@ def get_localized_language_names(current_translations):
         'zh': current_translations.get('lang_chinese', '中文'),
         'ja': current_translations.get('lang_japanese', '日本語'),
         'hi': current_translations.get('lang_hindi', 'हिंदी'),
-        'tr': current_translations.get('lang_turkish', 'Türkçe')
+        'tr': current_translations.get('lang_turkish', 'Türkçe'),
+        'id': current_translations.get('lang_indonesian', 'Bahasa Indonesia')
     }
     
     # Fall back to native names for any missing translations
