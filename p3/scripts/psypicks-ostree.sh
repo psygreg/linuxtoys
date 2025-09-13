@@ -71,7 +71,7 @@ if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
     fi
     _install_
     get_heroic
-    _flatpaks=(org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord io.github.kolunmi.Bazaar)
+    _flatpaks=(it.mijorus.gearlever org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord io.github.kolunmi.Bazaar)
     if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
         _flatpaks+=(com.mattjakeman.ExtensionManager)
     fi
