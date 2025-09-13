@@ -15,6 +15,7 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/../../libs/optimizers.lib"
 LT_PROGRAM="On-Demand Governor"
+sudo_rq
 if [ ! -f /etc/systemd/system/set-ondemand-governor.service ]; then
     pp_ondemand
 else
