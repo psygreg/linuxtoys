@@ -148,6 +148,7 @@ def get_language_names():
         'es': 'Español', 
         'de': 'Deutsch',
         'fr': 'Français',
+        'it': 'Italiano',
         'ru': 'Русский',
         'zh': '中文',
         'ja': '日本語'
@@ -165,6 +166,7 @@ def get_localized_language_names(current_translations):
         'es': current_translations.get('lang_spanish', 'Español'),
         'de': current_translations.get('lang_german', 'Deutsch'),
         'fr': current_translations.get('lang_french', 'Français'),
+        'it': current_translations.get('lang_italian', 'Italiano'),
         'ru': current_translations.get('lang_russian', 'Русский'),
         'zh': current_translations.get('lang_chinese', '中文'),
         'ja': current_translations.get('lang_japanese', '日本語')
