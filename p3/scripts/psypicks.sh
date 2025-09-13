@@ -150,6 +150,7 @@ if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v
     fi
     _flatpak_
     obs_pipe
+    rm -r $HOME/psypicks
     zenity --info --text "$msg036" --height=300 --width=300
 else
     nonfatal "$msg077"
