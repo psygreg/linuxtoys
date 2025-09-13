@@ -12,7 +12,7 @@ source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # functions
 docker_in () {
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
-        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog git iproute2 libnotify-bin)
+        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin curl dialog git iproute2 libnotify-bin)
         insta ca-certificates curl
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -23,7 +23,7 @@ docker_in () {
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
     elif [ "$ID" == "debian" ]; then
-        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin dialog git iproute2 libnotify-bin)
+        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin curl dialog git iproute2 libnotify-bin)
         insta ca-certificates curl
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc

@@ -77,6 +77,7 @@ if command -v flatpak &> /dev/null && command -v rpm-ostree &> /dev/null; then
     fi
     _flatpak_
     obs_pipe
+    cd ..
     rm -r $HOME/psypicks
     zenity --info --text "$msg036" --height=300 --width=300
 else
