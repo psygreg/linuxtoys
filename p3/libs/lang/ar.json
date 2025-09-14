@@ -219,5 +219,15 @@
   "search_languages_placeholder": "البحث في اللغات",
   "search_results": "نتائج البحث",
   "results_found": "نتيجة موجودة",
-  "search": "بحث"
+  "search": "بحث",
+  "delete_script": "حذف النص البرمجي",
+  "delete_script_title": "حذف النص البرمجي",
+  "delete_script_message": "هل أنت متأكد من أنك تريد حذف '{script_name}'؟",
+  "delete_script_warning": "<b>لا يمكن التراجع عن هذا الإجراء.</b>",
+  "delete_error_title": "خطأ في الحذف",
+  "delete_error_message": "فشل في حذف النص البرمجي: {error}",
+  "yes": "نعم",
+  "no": "لا",
+  "local_scripts_name": "النصوص البرمجية المحلية",
+  "local_scripts_desc": "النصوص البرمجية التي أضفتها بنفسك. يمكنك السحب والإفلات لإضافة نصوص برمجية جديدة هنا."
 }

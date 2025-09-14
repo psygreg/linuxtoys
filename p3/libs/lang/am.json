@@ -219,5 +219,15 @@
   "search_languages_placeholder": "ቋንቋዎችን ፈልግ",
   "search_results": "የፍለጋ ውጤቶች",
   "results_found": "ውጤቶች ተገኝተዋል",
-  "search": "ፈልግ"
+  "search": "ፈልግ",
+  "delete_script": "ስክሪፕት ሰርዝ",
+  "delete_script_title": "ስክሪፕት ሰርዝ",
+  "delete_script_message": "'{script_name}' ን ማጥፋት እርግጠኛ ነዎት?",
+  "delete_script_warning": "<b>ይህ ድርጊት መመለስ አይችልም።</b>",
+  "delete_error_title": "የማጥፋት ስህተት",
+  "delete_error_message": "ስክሪፕት ማጥፋት አልተሳካም: {error}",
+  "yes": "አዎ",
+  "no": "አይ",
+  "local_scripts_name": "አካባቢያዊ ስክሪፕቶች",
+  "local_scripts_desc": "የራስዎ የተጨመሩ ስክሪፕቶች። አዲስ ስክሪፕቶችን ለመጨመር እዚህ መጎተት እና መጣል ይችላሉ።"
 }

@@ -221,5 +221,15 @@
   "search_languages_placeholder": "搜索语言",
   "search_results": "搜索结果",
   "results_found": "个结果",
-  "search": "搜索"
+  "search": "搜索",
+  "delete_script": "删除脚本",
+  "delete_script_title": "删除脚本",
+  "delete_script_message": "您确定要删除 '{script_name}' 吗？",
+  "delete_script_warning": "<b>此操作无法撤消。</b>",
+  "delete_error_title": "删除错误",
+  "delete_error_message": "删除脚本失败：{error}",
+  "yes": "是",
+  "no": "否",
+  "local_scripts_name": "本地脚本",
+  "local_scripts_desc": "您自己添加的脚本。您可以拖放文件来在这里添加新脚本。"
 }

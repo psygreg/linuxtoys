@@ -219,5 +219,15 @@
   "search_languages_placeholder": "言語を検索",
   "search_results": "検索結果",
   "results_found": "件の結果",
-  "search": "検索"
+  "search": "検索",
+  "delete_script": "スクリプトを削除",
+  "delete_script_title": "スクリプトを削除",
+  "delete_script_message": "'{script_name}' を削除してもよろしいですか？",
+  "delete_script_warning": "<b>この操作は元に戻せません。</b>",
+  "delete_error_title": "削除エラー",
+  "delete_error_message": "スクリプトの削除に失敗しました：{error}",
+  "yes": "はい",
+  "no": "いいえ",
+  "local_scripts_name": "ローカルスクリプト",
+  "local_scripts_desc": "あなた自身が追加したスクリプトです。ここにドラッグ＆ドロップして新しいスクリプトを追加できます。"
 }

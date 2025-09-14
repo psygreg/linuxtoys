@@ -219,5 +219,15 @@
   "search_languages_placeholder": "زبانیں تلاش کریں",
   "search_results": "تلاش کے نتائج",
   "results_found": "نتائج ملے",
-  "search": "تلاش"
+  "search": "تلاش",
+  "delete_script": "اسکرپٹ حذف کریں",
+  "delete_script_title": "اسکرپٹ حذف کریں",
+  "delete_script_message": "کیا آپ واقعی '{script_name}' کو حذف کرنا چاہتے ہیں؟",
+  "delete_script_warning": "<b>یہ عمل واپس نہیں کیا جا سکتا۔</b>",
+  "delete_error_title": "حذف کرنے میں خرابی",
+  "delete_error_message": "اسکرپٹ حذف کرنے میں ناکام: {error}",
+  "yes": "ہاں",
+  "no": "نہیں",
+  "local_scripts_name": "مقامی اسکرپٹس",
+  "local_scripts_desc": "آپ کے اپنے شامل کردہ اسکرپٹس۔ نئے اسکرپٹس شامل کرنے کے لیے یہاں ڈریگ اینڈ ڈراپ کر سکتے ہیں۔"
 }

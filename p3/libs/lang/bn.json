@@ -219,5 +219,15 @@
   "search_languages_placeholder": "ভাষা অনুসন্ধান করুন",
   "search_results": "অনুসন্ধানের ফলাফল",
   "results_found": "ফলাফল পাওয়া গেছে",
-  "search": "অনুসন্ধান"
+  "search": "অনুসন্ধান",
+  "delete_script": "স্ক্রিপ্ট মুছুন",
+  "delete_script_title": "স্ক্রিপ্ট মুছুন",
+  "delete_script_message": "আপনি কি নিশ্চিত যে আপনি '{script_name}' মুছতে চান?",
+  "delete_script_warning": "<b>এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।</b>",
+  "delete_error_title": "মুছতে ত্রুটি",
+  "delete_error_message": "স্ক্রিপ্ট মুছতে ব্যর্থ: {error}",
+  "yes": "হ্যাঁ",
+  "no": "না",
+  "local_scripts_name": "স্থানীয় স্ক্রিপ্ট",
+  "local_scripts_desc": "আপনার নিজের যোগ করা স্ক্রিপ্ট। এখানে নতুন স্ক্রিপ্ট যোগ করতে আপনি ড্র্যাগ এবং ড্রপ করতে পারেন।"
 }

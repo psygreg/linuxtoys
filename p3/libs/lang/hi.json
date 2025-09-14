@@ -198,5 +198,15 @@
   "search_languages_placeholder": "भाषाएं खोजें",
   "search_results": "खोज परिणाम",
   "results_found": "परिणाम मिले",
-  "search": "खोजें"
+  "search": "खोजें",
+  "delete_script": "स्क्रिप्ट हटाएं",
+  "delete_script_title": "स्क्रिप्ट हटाएं",
+  "delete_script_message": "क्या आप वाकई '{script_name}' को हटाना चाहते हैं?",
+  "delete_script_warning": "<b>यह कार्य वापस नहीं किया जा सकता।</b>",
+  "delete_error_title": "हटाने में त्रुटि",
+  "delete_error_message": "स्क्रिप्ट हटाने में विफल: {error}",
+  "yes": "हाँ",
+  "no": "नहीं",
+  "local_scripts_name": "स्थानीय स्क्रिप्ट",
+  "local_scripts_desc": "आपकी अपनी जोड़ी गई स्क्रिप्ट। यहाँ नई स्क्रिप्ट जोड़ने के लिए आप खींच कर छोड़ सकते हैं।"
 }

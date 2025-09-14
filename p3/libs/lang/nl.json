@@ -220,5 +220,15 @@
   "search_results": "Zoekresultaten",
   "results_found": "resultaten gevonden",
   "search": "Zoeken",
+  "delete_script": "Script Verwijderen",
+  "delete_script_title": "Script Verwijderen",
+  "delete_script_message": "Weet u zeker dat u '{script_name}' wilt verwijderen?",
+  "delete_script_warning": "<b>Deze actie kan niet ongedaan worden gemaakt.</b>",
+  "delete_error_title": "Verwijderingsfout",
+  "delete_error_message": "Kan script niet verwijderen: {error}",
+  "yes": "Ja",
+  "no": "Nee",
+  "local_scripts_name": "Lokale Scripts",
+  "local_scripts_desc": "Uw eigen toegevoegde scripts. U kunt slepen en neerzetten om hier nieuwe scripts toe te voegen.",
   "lang_dutch": "Nederlands"
 }

@@ -219,5 +219,15 @@
   "search_languages_placeholder": "Buscar idiomas",
   "search_results": "Resultados de Búsqueda",
   "results_found": "resultados encontrados",
-  "search": "Buscar"
+  "search": "Buscar",
+  "delete_script": "Eliminar Script",
+  "delete_script_title": "Eliminar Script",
+  "delete_script_message": "¿Está seguro de que desea eliminar '{script_name}'?",
+  "delete_script_warning": "<b>Esta acción no se puede deshacer.</b>",
+  "delete_error_title": "Error al Eliminar",
+  "delete_error_message": "Error al eliminar el script: {error}",
+  "yes": "Sí",
+  "no": "No",
+  "local_scripts_name": "Scripts Locales",
+  "local_scripts_desc": "Sus propios scripts añadidos. Puede arrastrar y soltar para añadir nuevos scripts aquí."
 }

@@ -219,5 +219,15 @@
   "search_languages_placeholder": "Sprachen suchen",
   "search_results": "Suchergebnisse",
   "results_found": "Ergebnisse gefunden",
-  "search": "Suchen"
+  "search": "Suchen",
+  "delete_script": "Skript löschen",
+  "delete_script_title": "Skript löschen",
+  "delete_script_message": "Sind Sie sicher, dass Sie '{script_name}' löschen möchten?",
+  "delete_script_warning": "<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>",
+  "delete_error_title": "Löschfehler",
+  "delete_error_message": "Fehler beim Löschen des Skripts: {error}",
+  "yes": "Ja",
+  "no": "Nein",
+  "local_scripts_name": "Lokale Skripte",
+  "local_scripts_desc": "Ihre eigenen hinzugefügten Skripte. Sie können hier per Drag & Drop neue Skripte hinzufügen."
 }

@@ -87,6 +87,15 @@ class SearchEngine:
             score = self._calculate_match_score(query, script_info, 'script')
             if score > 0:
                 results.append(SearchResult(script_info, 'script', score))
+        
+        # Also search local scripts directory
+        local_scripts_dir = f'{os.environ.get("HOME", "")}/.local/linuxtoys/scripts'
+        if os.path.isdir(local_scripts_dir):
+            local_scripts = parser.get_all_scripts_recursive(local_scripts_dir, self.translations)
+            for script_info in local_scripts:
+                score = self._calculate_match_score(query, script_info, 'script')
+                if score > 0:
+                    results.append(SearchResult(script_info, 'script', score))
     
     def _is_script_available(self, script_path):
         """Check if a script should be available based on compatibility filters."""

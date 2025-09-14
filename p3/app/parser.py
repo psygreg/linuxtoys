@@ -121,7 +121,7 @@ def get_categories(translations=None):
         if file_name.endswith('.sh') and os.path.isfile(file_path):
             defaults = {
                 'name': file_name,
-                'description': 'No Description.',
+                'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'noconfirm': 'no'
@@ -184,6 +184,24 @@ def get_scripts_for_category(category_path, translations=None):
     # First, add subcategories
     subcategories = get_subcategories_for_category(category_path, translations)
     items.extend(subcategories)
+    
+    # Add Local Scripts as a subcategory when viewing sysadm directory
+    if category_path.endswith('sysadm') or category_path.endswith('sysadm/'):
+        local_dir = f'{os.environ["HOME"]}/.local/linuxtoys/scripts'
+        local_scripts_name = translations.get('local_scripts_name', 'Local Scripts')
+        local_scripts_desc = translations.get('local_scripts_desc', 'Drop your scripts here')
+        
+        items.append({
+            'name': local_scripts_name,
+            'description': local_scripts_desc,
+            'icon': 'local-script.svg',
+            'mode': 'auto',
+            'path': local_dir,
+            'is_script': False,
+            'is_subcategory': True,
+            'has_subcategories': False,
+            'display_mode': 'menu'
+        })
 
     # Then, add scripts
     for file_name in os.listdir(category_path):
@@ -202,14 +220,23 @@ def get_scripts_for_category(category_path, translations=None):
             if not should_show_optimization_script(file_path):
                 continue
             
+            # Check if this is a local script (in user's local directory)
+            is_local_script = '.local/linuxtoys/scripts' in file_path
+            
             defaults = {
                 'name': 'No Name', 'version': 'N/A',
-                'description': 'No Description.',
+                'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'noconfirm': 'no'
             }
             script_info = _parse_metadata_file(file_path, defaults, translations)
+            
+            # For local scripts, use filename if no name was found in headers
+            if is_local_script and script_info['name'] == 'No Name':
+                # Remove .sh extension and use filename as display name
+                script_info['name'] = os.path.splitext(file_name)[0]
+            
             script_info['is_script'] = True
             script_info['is_subcategory'] = False
             items.append(script_info)
@@ -248,12 +275,21 @@ def get_all_scripts_recursive(directory_path, translations=None):
             
             defaults = {
                 'name': 'No Name', 'version': 'N/A',
-                'description': 'No Description.',
+                'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'noconfirm': 'no'
             }
             script_info = _parse_metadata_file(item_path, defaults, translations)
+            
+            # Check if this is a local script (in user's local directory)
+            is_local_script = '.local/linuxtoys/scripts' in item_path
+            
+            # For local scripts, use filename if no name was found in headers
+            if is_local_script and script_info['name'] == 'No Name':
+                # Remove .sh extension and use filename as display name
+                script_info['name'] = os.path.splitext(item_name)[0]
+            
             script_info['is_script'] = True
             script_info['is_subcategory'] = False
             scripts.append(script_info)

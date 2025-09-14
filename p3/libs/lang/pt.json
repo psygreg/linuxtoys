@@ -219,5 +219,15 @@
   "search_languages_placeholder": "Pesquisar idiomas",
   "search_results": "Resultados da Pesquisa",
   "results_found": "resultados encontrados",
-  "search": "Pesquisar"
+  "search": "Pesquisar",
+  "delete_script": "Excluir Script",
+  "delete_script_title": "Excluir Script",
+  "delete_script_message": "Tem certeza de que deseja excluir '{script_name}'?",
+  "delete_script_warning": "<b>Esta ação não pode ser desfeita.</b>",
+  "delete_error_title": "Erro ao Excluir",
+  "delete_error_message": "Falha ao excluir o script: {error}",
+  "yes": "Sim",
+  "no": "Não",
+  "local_scripts_name": "Scripts Locais",
+  "local_scripts_desc": "Seus próprios scripts adicionados. Você pode arrastar e soltar para adicionar novos scripts aqui."
 }

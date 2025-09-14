@@ -220,5 +220,15 @@
   "search_results": "نتایج جستجو",
   "results_found": "نتیجه یافت شد",
   "search": "جستجو",
+  "delete_script": "حذف اسکریپت",
+  "delete_script_title": "حذف اسکریپت",
+  "delete_script_message": "آیا مطمئن هستید که می‌خواهید '{script_name}' را حذف کنید؟",
+  "delete_script_warning": "<b>این عمل قابل بازگشت نیست.</b>",
+  "delete_error_title": "خطای حذف",
+  "delete_error_message": "حذف اسکریپت ناموفق بود: {error}",
+  "yes": "بله",
+  "no": "خیر",
+  "local_scripts_name": "اسکریپت‌های محلی",
+  "local_scripts_desc": "اسکریپت‌های اضافه شده توسط خودتان. می‌توانید فایل‌ها را اینجا بکشید و رها کنید تا اسکریپت‌های جدید اضافه کنید.",
   "lang_persian": "فارسی"
 }

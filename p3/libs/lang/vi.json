@@ -219,5 +219,15 @@
   "search_languages_placeholder": "Tìm ngôn ngữ",
   "search_results": "Kết quả tìm kiếm",
   "results_found": "kết quả tìm thấy",
-  "search": "Tìm kiếm"
+  "search": "Tìm kiếm",
+  "delete_script": "Xóa Script",
+  "delete_script_title": "Xóa Script",
+  "delete_script_message": "Bạn có chắc chắn muốn xóa '{script_name}' không?",
+  "delete_script_warning": "<b>Hành động này không thể hoàn tác.</b>",
+  "delete_error_title": "Lỗi Xóa",
+  "delete_error_message": "Không thể xóa script: {error}",
+  "yes": "Có",
+  "no": "Không",
+  "local_scripts_name": "Script Cục Bộ",
+  "local_scripts_desc": "Các script do bạn tự thêm. Bạn có thể kéo và thả để thêm script mới ở đây."
 }

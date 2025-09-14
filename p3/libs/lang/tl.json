@@ -219,5 +219,15 @@
   "search_languages_placeholder": "Maghanap ng mga wika",
   "search_results": "Mga Resulta ng Paghahanap",
   "results_found": "mga resultang nahanap",
-  "search": "Maghanap"
+  "search": "Maghanap",
+  "delete_script": "Tanggalin ang Script",
+  "delete_script_title": "Tanggalin ang Script",
+  "delete_script_message": "Sigurado ka ba na gusto mong tanggalin ang '{script_name}'?",
+  "delete_script_warning": "<b>Hindi na mababawi ang aksyong ito.</b>",
+  "delete_error_title": "Error sa Pagtanggal",
+  "delete_error_message": "Hindi natanggal ang script: {error}",
+  "yes": "Oo",
+  "no": "Hindi",
+  "local_scripts_name": "Mga Lokal na Script",
+  "local_scripts_desc": "Ang inyong mga sariling nadagdag na script. Maaari kayong mag-drag at drop para magdagdag ng mga bagong script dito."
 }

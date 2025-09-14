@@ -219,5 +219,15 @@
   "search_languages_placeholder": "חפש שפות",
   "search_results": "תוצאות חיפוש",
   "results_found": "תוצאות נמצאו",
-  "search": "חפש"
+  "search": "חפש",
+  "delete_script": "מחק סקריפט",
+  "delete_script_title": "מחק סקריפט",
+  "delete_script_message": "האם אתה בטוח שברצונך למחוק את '{script_name}'?",
+  "delete_script_warning": "<b>פעולה זו אינה ניתנת לביטול.</b>",
+  "delete_error_title": "שגיאת מחיקה",
+  "delete_error_message": "נכשל במחיקת הסקריפט: {error}",
+  "yes": "כן",
+  "no": "לא",
+  "local_scripts_name": "סקריפטים מקומיים",
+  "local_scripts_desc": "הסקריפטים שלך שהוספת. אתה יכול לגרור ולשחרר כדי להוסיף סקריפטים חדשים כאן."
 }

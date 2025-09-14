@@ -219,5 +219,15 @@
   "search_languages_placeholder": "Dilleri ara",
   "search_results": "Arama Sonuçları",
   "results_found": "sonuç bulundu",
-  "search": "Ara"
+  "search": "Ara",
+  "delete_script": "Betiği Sil",
+  "delete_script_title": "Betiği Sil",
+  "delete_script_message": "'{script_name}' dosyasını silmek istediğinizden emin misiniz?",
+  "delete_script_warning": "<b>Bu işlem geri alınamaz.</b>",
+  "delete_error_title": "Silme Hatası",
+  "delete_error_message": "Betik silme başarısız: {error}",
+  "yes": "Evet",
+  "no": "Hayır",
+  "local_scripts_name": "Yerel Betikler",
+  "local_scripts_desc": "Kendi eklediğiniz betikler. Yeni betikler eklemek için buraya sürükleyip bırakabilirsiniz."
 }

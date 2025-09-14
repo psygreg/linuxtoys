@@ -220,5 +220,15 @@
   "search_results": "Matokeo ya Utafutaji",
   "results_found": "matokeo yamepatikana",
   "search": "Tafuta",
+  "delete_script": "Futa Hati",
+  "delete_script_title": "Futa Hati",
+  "delete_script_message": "Una uhakika unataka kufuta '{script_name}'?",
+  "delete_script_warning": "<b>Kitendo hiki hakiwezi kurudishwa.</b>",
+  "delete_error_title": "Hitilafu ya Kufuta",
+  "delete_error_message": "Imeshindwa kufuta hati: {error}",
+  "yes": "Ndiyo",
+  "no": "Hapana",
+  "local_scripts_name": "Hati za Ndani",
+  "local_scripts_desc": "Hati zako mwenyewe ulizoongeza. Unaweza kukokota na kuacha ili kuongeza hati mpya hapa.",
   "lang_swahili": "Kiswahili"
 }

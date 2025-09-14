@@ -126,25 +126,51 @@ class AppWindow(Gtk.ApplicationWindow):
         # Local scripts
         self.local_sh_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts/'
 
-        self.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
-        self.connect("drag-data-received", self._on_drag_data_received)
-        self.drag_dest_add_uri_targets()
+        # Initialize drag-and-drop but don't enable it by default
+        self._setup_drag_and_drop()
+
+    def _setup_drag_and_drop(self):
+        """Setup drag-and-drop functionality but don't enable it initially."""
+        self.drag_and_drop_enabled = False
+        self.drag_handler_id = None
+        # We'll enable/disable drag-and-drop dynamically based on the current view
+
+    def _enable_drag_and_drop(self):
+        """Enable drag-and-drop functionality for the Local Scripts category."""
+        if not hasattr(self, 'drag_and_drop_enabled'):
+            self._setup_drag_and_drop()
+        
+        if not self.drag_and_drop_enabled:
+            self.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
+            if self.drag_handler_id is None:
+                self.drag_handler_id = self.connect("drag-data-received", self._on_drag_data_received)
+            self.drag_dest_add_uri_targets()
+            self.drag_and_drop_enabled = True
+
+    def _disable_drag_and_drop(self):
+        """Disable drag-and-drop functionality."""
+        if not hasattr(self, 'drag_and_drop_enabled'):
+            return
+            
+        if self.drag_and_drop_enabled:
+            self.drag_dest_unset()
+            self.drag_and_drop_enabled = False
+
+    def _is_local_scripts_category(self, category_info):
+        """Check if the given category info represents the Local Scripts category."""
+        if not category_info or not hasattr(self, 'local_sh_dir'):
+            return False
+        return category_info.get('path') == self.local_sh_dir.rstrip('/')
 
     def _on_drag_data_received(self, widget, context, x, y, data, info, time):
+        """Handle drag-and-drop of .sh files. Only active when viewing Local Scripts category."""
         sh_paths = [ os.path.normpath(uri[7:]) for uri in data.get_uris() if uri.startswith('file://') and uri.endswith('.sh') ]
-        os.makedirs(os.path.dirname(self.local_sh_dir), exist_ok=True)
-        [ shutil.copy2(sh_path, f"{self.local_sh_dir}{os.path.basename(sh_path)}") for sh_path in sh_paths ]
-
-        self.load_scripts({
-            'name': 'Local Scripts',
-            'description': 'Drop your scripts here',
-            'icon': 'local-script.svg',
-            'mode': 'auto',
-            'path': self.local_sh_dir,
-            'is_script': False,
-            'has_subcategories': False,
-            'display_mode': 'menu'
-        })
+        if sh_paths:
+            os.makedirs(os.path.dirname(self.local_sh_dir), exist_ok=True)
+            [ shutil.copy2(sh_path, f"{self.local_sh_dir}{os.path.basename(sh_path)}") for sh_path in sh_paths ]
+            
+            # Refresh the current view since we know we're in Local Scripts category
+            self.load_scripts(self.current_category_info)
 
     def _check_ostree_deployments_on_startup(self):
         """
@@ -228,7 +254,11 @@ class AppWindow(Gtk.ApplicationWindow):
             widget = flowbox_child.get_child()
             widget.set_has_tooltip(enabled)
             if enabled:
-                widget.set_tooltip_text(getattr(widget, 'info', {}).get('description', ''))
+                description = getattr(widget, 'info', {}).get('description', '')
+                if description:
+                    widget.set_tooltip_text(description)
+                else:
+                    widget.set_tooltip_text(None)
             else:
                 widget.set_tooltip_text(None)
         # Scripts
@@ -236,7 +266,11 @@ class AppWindow(Gtk.ApplicationWindow):
             widget = flowbox_child.get_child()
             widget.set_has_tooltip(enabled)
             if enabled:
-                widget.set_tooltip_text(getattr(widget, 'info', {}).get('description', ''))
+                description = getattr(widget, 'info', {}).get('description', '')
+                if description:
+                    widget.set_tooltip_text(description)
+                else:
+                    widget.set_tooltip_text(None)
             else:
                 widget.set_tooltip_text(None)
 
@@ -354,7 +388,7 @@ class AppWindow(Gtk.ApplicationWindow):
         event_box.get_style_context().add_class("script-item")
         event_box.info = item_info
         
-        # Enable mouse events for hover effects
+        # Enable mouse events for hover effects and right-click
         event_box.set_events(event_box.get_events() | 
                            Gdk.EventMask.ENTER_NOTIFY_MASK | 
                            Gdk.EventMask.LEAVE_NOTIFY_MASK |
@@ -364,30 +398,22 @@ class AppWindow(Gtk.ApplicationWindow):
         # Connect hover events only (click events are connected separately)
         event_box.connect("enter-notify-event", self.on_item_enter)
         event_box.connect("leave-notify-event", self.on_item_leave)
+        event_box.connect("button-press-event", self.on_item_button_press)
         
         return event_box
 
     def load_categories(self):
         """Loads categories and connects their click event."""
         categories = parser.get_categories(self.translations)
-
-        local_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts'
-        categories.append({
-            'name': 'Local Scripts',
-            'description': 'Drop your scripts here',
-            'icon': 'local-script.svg',
-            'mode': 'auto',
-            'path': local_dir,
-            'is_script': False,
-            'has_subcategories': False,
-            'display_mode': 'menu'
-        })
         
         self.categories_flowbox.foreach(lambda widget: self.categories_flowbox.remove(widget))
         for cat in categories:
             widget = self.create_item_widget(cat)
-            widget.set_tooltip_text(cat.get('description', ''))
-            widget.connect("button-press-event", self.on_category_clicked)
+            description = cat.get('description', '')
+            if description:
+                widget.set_tooltip_text(description)
+            else:
+                widget.set_tooltip_text(None)
             self.categories_flowbox.add(widget)
         self.categories_flowbox.show_all()
             
@@ -421,14 +447,21 @@ class AppWindow(Gtk.ApplicationWindow):
                     # by treating subcategories as navigable items
                     print(f"Warning: Subcategory '{script_info['name']}' found in checklist mode category")
                     widget = self.create_item_widget(script_info)
-                    widget.set_tooltip_text(script_info['description'])
-                    widget.connect("button-press-event", self.on_category_clicked)
+                    description = script_info.get('description', '')
+                    if description:
+                        widget.set_tooltip_text(description)
+                    else:
+                        widget.set_tooltip_text(None)
                     inner_flowbox.add(widget)
                 else:
                     # Scripts can be checked in checklist mode
                     check = Gtk.CheckButton(label=script_info['name'])
                     check.script_info = script_info
-                    check.set_tooltip_text(script_info['description'])
+                    description = script_info.get('description', '')
+                    if description:
+                        check.set_tooltip_text(description)
+                    else:
+                        check.set_tooltip_text(None)
                     check.set_size_request(128, 16)  # Reduce height for tighter spacing
                     inner_flowbox.add(check)
                     self.check_buttons.append(check)
@@ -455,16 +488,11 @@ class AppWindow(Gtk.ApplicationWindow):
         else:
             for script_info in scripts:
                 widget = self.create_item_widget(script_info)
-                widget.set_tooltip_text(script_info['description'])
-                
-                # Connect different click handlers based on whether it's a subcategory or script
-                if script_info.get('is_subcategory', False):
-                    # This is a subcategory, use category click handler for navigation
-                    widget.connect("button-press-event", self.on_category_clicked)
+                description = script_info.get('description', '')
+                if description:
+                    widget.set_tooltip_text(description)
                 else:
-                    # This is a script, use script click handler for execution
-                    widget.connect("button-press-event", self.on_script_clicked)
-                    
+                    widget.set_tooltip_text(None)
                 flowbox.add(widget)
 
     def load_scripts(self, category_info):
@@ -720,6 +748,136 @@ class AppWindow(Gtk.ApplicationWindow):
         
         return False
 
+    def on_item_button_press(self, widget, event):
+        """Handle mouse button presses on items - both left and right clicks."""
+        if event.button == 1:  # Left click
+            # Determine the appropriate click handler based on item type and context
+            info = widget.info
+            
+            # If this is a search result, use script click handler
+            if self.search_active:
+                self.on_script_clicked(widget, event)
+                return True
+            
+            # If this is a subcategory or category, use category click handler
+            if info.get('is_subcategory', False) or (not info.get('is_script', False)):
+                self.on_category_clicked(widget, event)
+            else:
+                # This is a script, use script click handler
+                self.on_script_clicked(widget, event)
+            return True
+            
+        elif event.button == 3:  # Right click
+            self._show_context_menu(widget, event)
+            return True
+            
+        return False
+
+    def _show_context_menu(self, widget, event):
+        """Show context menu for right-click on items."""
+        info = widget.info
+        
+        # Only show context menu for local scripts
+        if not self._is_local_script(info):
+            return
+        
+        menu = Gtk.Menu()
+        
+        # Delete option
+        delete_item = Gtk.MenuItem(label=self.translations.get("delete_script", "Delete Script"))
+        delete_item.connect("activate", lambda item: self._delete_local_script(info))
+        menu.append(delete_item)
+        
+        menu.show_all()
+        menu.popup_at_pointer(event)
+
+    def _is_local_script(self, script_info):
+        """Check if a script is a local script that can be deleted."""
+        if not script_info or not script_info.get('is_script', False):
+            return False
+        
+        # Check if we're currently in the Local Scripts category
+        if not self._is_local_scripts_category(self.current_category_info):
+            return False
+        
+        # Check if the script path is within the local scripts directory
+        script_path = script_info.get('path', '')
+        if not hasattr(self, 'local_sh_dir'):
+            return False
+        
+        return script_path.startswith(self.local_sh_dir)
+
+    def _delete_local_script(self, script_info):
+        """Delete a local script after confirmation."""
+        script_name = script_info.get('name', 'Unknown Script')
+        script_path = script_info.get('path', '')
+        
+        if not script_path or not os.path.exists(script_path):
+            return
+        
+        # Show confirmation dialog without any icon or title
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.OTHER,  # Use OTHER to avoid default icons
+            buttons=Gtk.ButtonsType.NONE,  # Use NONE to add custom buttons
+            text=self.translations.get(
+                "delete_script_message", 
+                "Are you sure you want to delete '{script_name}'?"
+            ).format(script_name=script_name)
+        )
+        
+        # Add custom buttons with translations
+        dialog.add_button(self.translations.get("no", "No"), Gtk.ResponseType.NO)
+        dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
+        
+        # Create an empty image to hide the icon area
+        empty_image = Gtk.Image()
+        dialog.set_image(empty_image)
+        
+        # Add 20px padding to the top of the dialog
+        message_area = dialog.get_message_area()
+        message_area.set_margin_top(20)
+        
+        # Set secondary text with bold "This action cannot be undone"
+        dialog.format_secondary_text(
+            self.translations.get(
+                "delete_script_warning", 
+                "<b>This action cannot be undone.</b>"
+            )
+        )
+        
+        # Enable markup for the secondary text to display bold formatting
+        secondary_label = dialog.get_message_area().get_children()[1]  # Second label is secondary text
+        secondary_label.set_use_markup(True)
+        
+        response = dialog.run()
+        dialog.destroy()
+        
+        if response == Gtk.ResponseType.YES:
+            try:
+                os.remove(script_path)
+                # Refresh the current view to remove the deleted script
+                if self.current_category_info:
+                    self.load_scripts(self.current_category_info)
+            except Exception as e:
+                # Show error dialog
+                error_dialog = Gtk.MessageDialog(
+                    transient_for=self,
+                    flags=0,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=self.translations.get("delete_error_title", "Delete Error")
+                )
+                error_dialog.format_secondary_text(
+                    self.translations.get(
+                        "delete_error_message",
+                        "Failed to delete script: {error}"
+                    ).format(error=str(e))
+                )
+                error_dialog.run()
+                error_dialog.destroy()
+
     def _on_search_changed(self, search_entry):
         """Handle search text changes."""
         query = search_entry.get_text().strip()
@@ -806,15 +964,18 @@ class AppWindow(Gtk.ApplicationWindow):
         # Ensure the back button is visible when in search mode
         self.back_button.show()
         
+        # Disable drag-and-drop in search mode
+        self._disable_drag_and_drop()
+        
         # Add search results (all are scripts now)
         for search_result in self.search_results:
             item_info = search_result.item_info
             widget = self.create_item_widget(item_info)
-            widget.set_tooltip_text(item_info.get('description', ''))
-            
-            # All search results are scripts, so connect script click handler
-            widget.connect("button-press-event", self.on_script_clicked)
-            
+            description = item_info.get('description', '')
+            if description:
+                widget.set_tooltip_text(description)
+            else:
+                widget.set_tooltip_text(None)
             self.search_flowbox.add(widget)
         
         # Ensure all widgets are shown
@@ -860,10 +1021,18 @@ class AppWindow(Gtk.ApplicationWindow):
             self.main_stack.set_visible_child(self.scripts_view)
             # Ensure back button is visible for category views
             self.back_button.show()
+            
+            # Restore drag-and-drop state based on current category
+            if self._is_local_scripts_category(self.current_category_info):
+                self._enable_drag_and_drop()
+            else:
+                self._disable_drag_and_drop()
         else:
             self.main_stack.set_visible_child_name("categories")
             # Hide back button for main categories view
             self.back_button.hide()
+            # Disable drag-and-drop for main categories
+            self._disable_drag_and_drop()
 
     def _update_search_header(self):
         """Update header for search results view."""
@@ -928,6 +1097,12 @@ class AppWindow(Gtk.ApplicationWindow):
             self.header_bar.props.title = f"LinuxToys: {category_name}"
             self._update_header(previous_category)
             
+            # Update drag-and-drop state based on the category we're navigating to
+            if self._is_local_scripts_category(previous_category):
+                self._enable_drag_and_drop()
+            else:
+                self._disable_drag_and_drop()
+            
             # Show footer only if checklist mode
             if previous_category.get('display_mode', 'menu') == 'checklist':
                 self.footer_widget.show()
@@ -979,6 +1154,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.footer_widget.show_menu_footer()
         # Ensure footer has proper spacing
         self.footer_widget.set_margin_bottom(0)
+        
+        # Disable drag-and-drop when viewing main categories
+        self._disable_drag_and_drop()
 
     def show_scripts_view(self, category_info):
         """Switches to the view showing scripts in a category."""
@@ -1002,6 +1180,12 @@ class AppWindow(Gtk.ApplicationWindow):
         # Update header with category information
         if category_info:
             self._update_header(category_info)
+        
+        # Enable drag-and-drop only for Local Scripts category
+        if self._is_local_scripts_category(category_info):
+            self._enable_drag_and_drop()
+        else:
+            self._disable_drag_and_drop()
         
         # Show footer only if checklist mode
         if category_info and category_info.get('display_mode', 'menu') == 'checklist':

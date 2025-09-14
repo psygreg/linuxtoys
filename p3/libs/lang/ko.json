@@ -219,5 +219,15 @@
   "search_languages_placeholder": "언어 검색",
   "search_results": "검색 결과",
   "results_found": "개 결과를 찾았습니다",
-  "search": "검색"
+  "search": "검색",
+  "delete_script": "스크립트 삭제",
+  "delete_script_title": "스크립트 삭제",
+  "delete_script_message": "'{script_name}'을(를) 삭제하시겠습니까?",
+  "delete_script_warning": "<b>이 작업은 되돌릴 수 없습니다.</b>",
+  "delete_error_title": "삭제 오류",
+  "delete_error_message": "스크립트 삭제 실패: {error}",
+  "yes": "예",
+  "no": "아니요",
+  "local_scripts_name": "로컬 스크립트",
+  "local_scripts_desc": "사용자가 추가한 스크립트입니다. 새 스크립트를 추가하려면 여기에 드래그 앤 드롭하세요."
 }

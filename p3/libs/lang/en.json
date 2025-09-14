@@ -219,5 +219,16 @@
   "search_languages_placeholder": "Search languages",
   "search_results": "Search Results",
   "results_found": "results found",
-  "search": "Search"
+  "search": "Search",
+  "delete_script": "Delete Script",
+  "delete_script_title": "Delete Script",
+  "delete_script_message": "Are you sure you want to delete '{script_name}'?",
+  "delete_script_warning": "<b>This action cannot be undone.</b>",
+  "delete_error_title": "Delete Error",
+  "delete_error_message": "Failed to delete script: {error}",
+  "yes": "Yes",
+  "no": "No",
+  "local_scripts_name": "Local Scripts",
+  "local_scripts_desc": "Your own added scripts. You can drag and drop to add new scripts here.",
+  "validating": "Validating"
 }

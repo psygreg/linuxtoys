@@ -219,5 +219,15 @@
   "search_languages_placeholder": "ค้นหาภาษา",
   "search_results": "ผลการค้นหา",
   "results_found": "ผลลัพธ์ที่พบ",
-  "search": "ค้นหา"
+  "search": "ค้นหา",
+  "delete_script": "ลบสคริปต์",
+  "delete_script_title": "ลบสคริปต์",
+  "delete_script_message": "คุณแน่ใจหรือไม่ว่าต้องการลบ '{script_name}'?",
+  "delete_script_warning": "<b>การดำเนินการนี้ไม่สามารถยกเลิกได้</b>",
+  "delete_error_title": "ข้อผิดพลาดในการลบ",
+  "delete_error_message": "ไม่สามารถลบสคริปต์ได้: {error}",
+  "yes": "ใช่",
+  "no": "ไม่ใช่",
+  "local_scripts_name": "สคริปต์ในเครื่อง",
+  "local_scripts_desc": "สคริปต์ที่คุณเพิ่มเอง คุณสามารถลากและวางเพื่อเพิ่มสคริปต์ใหม่ที่นี่"
 }
