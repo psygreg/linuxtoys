@@ -43,12 +43,6 @@ if os.environ.get('LT_MANIFEST') != '1':
 
 # Use lang_utils for all translation functionality
 translations = load_translations()  # Auto-detect language from lang_utils
-
-# Debug: Check if our new keys are loaded
-print(f"DEBUG MAIN: 'local_scripts_name' in translations: {'local_scripts_name' in translations}")
-print(f"DEBUG MAIN: local_scripts_name = '{translations.get('local_scripts_name', 'NOT FOUND')}'")
-print(f"DEBUG MAIN: local_scripts_desc = '{translations.get('local_scripts_desc', 'NOT FOUND')}'")
-
 _ = create_translator()  # Create translator function from lang_utils
 
 def run():

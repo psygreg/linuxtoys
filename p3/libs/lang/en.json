@@ -229,6 +229,5 @@
   "yes": "Yes",
   "no": "No",
   "local_scripts_name": "Local Scripts",
-  "local_scripts_desc": "Your own added scripts. You can drag and drop to add new scripts here.",
-  "validating": "Validating"
+  "local_scripts_desc": "Your own added scripts. You can drag and drop to add new scripts here."
 }
