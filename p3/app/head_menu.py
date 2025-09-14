@@ -60,16 +60,16 @@ class MenuButton(Gtk.MenuButton):
 		vbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
 		vbox.set_border_width(6)
 
-		load_manifest = Gtk.ModelButton(label=_("load_manifest"))
-		load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
-		load_manifest.connect("clicked", self.__on_load_manifest)
+		self.load_manifest = Gtk.ModelButton(label=_("load_manifest"))
+		self.load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
+		self.load_manifest.connect("clicked", self.__on_load_manifest)
 
-		language_select = Gtk.ModelButton(label=_("select_language"))
-		language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
-		language_select.connect("clicked", self.__on_language_select)
+		self.language_select = Gtk.ModelButton(label=_("select_language"))
+		self.language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
+		self.language_select.connect("clicked", self.__on_language_select)
 
-		vbox.pack_start(load_manifest, True, True, 0)
-		vbox.pack_start(language_select, True, True, 0)
+		vbox.pack_start(self.load_manifest, True, True, 0)
+		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
@@ -79,27 +79,8 @@ class MenuButton(Gtk.MenuButton):
 	def refresh_menu_translations(self):
 		"""Refresh menu items with new translations"""
 		_ = create_translator()
-		
-		# Recreate the popover with updated translations
-		pop = Gtk.Popover()
-
-		vbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
-		vbox.set_border_width(6)
-
-		load_manifest = Gtk.ModelButton(label=_("load_manifest"))
-		load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
-		load_manifest.connect("clicked", self.__on_load_manifest)
-
-		language_select = Gtk.ModelButton(label=_("select_language"))
-		language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
-		language_select.connect("clicked", self.__on_language_select)
-
-		vbox.pack_start(load_manifest, True, True, 0)
-		vbox.pack_start(language_select, True, True, 0)
-		vbox.show_all()
-
-		pop.add(vbox)
-		self.set_popover(pop)
+		self.load_manifest.set_label(_("load_manifest"))
+		self.language_select.set_label(_("select_language"))
 
 	def __on_language_select(self, widget):
 		"""Handle language selection menu item click"""
