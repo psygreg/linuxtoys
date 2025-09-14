@@ -2,6 +2,7 @@
   "subtitle": "Bộ sưu tập các công cụ cho Linux một cách thân thiện với người dùng.",
   "install_btn_label": "Cài đặt",
   "cancel_btn_label": "Hủy bỏ",
+  "ok_btn_label": "Đồng ý",
   "reboot_required_title": "Yêu cầu khởi động lại",
   "reboot_required_message": "Một script yêu cầu khởi động lại hệ thống đã được thực thi. Bạn phải khởi động lại máy tính trước khi cài đặt các tính năng khác.",
   "reboot_now_btn": "Khởi động lại ngay",
@@ -229,5 +230,9 @@
   "yes": "Có",
   "no": "Không",
   "local_scripts_name": "Script Cục Bộ",
-  "local_scripts_desc": "Các script do bạn tự thêm. Bạn có thể kéo và thả để thêm script mới ở đây."
+  "local_scripts_desc": "Các script do bạn tự thêm. Bạn có thể kéo và thả để thêm script mới ở đây.",
+  "script_template_doc_comment": "# Tham khảo tài liệu tại https://linuxtoys.luminhost.xyz/handbook.html để biết thêm thông tin.",
+  "create_new_script_name": "Tạo Script Mới",
+  "create_new_script_desc": "Tạo một script cục bộ mới. Nó sẽ được mở trong trình soạn thảo văn bản mặc định của bạn sau khi tạo.",
+  "script_name_prompt": "Nhập tên script của bạn:"
 }

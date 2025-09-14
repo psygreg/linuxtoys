@@ -2,6 +2,7 @@
   "subtitle": "ለሊኑክስ የተሠሩ መሳሪያዎች በተጠቃሚ-ተስማሚ መንገድ።",
   "install_btn_label": "ጫን",
   "cancel_btn_label": "ሰርዝ",
+  "ok_btn_label": "እሺ",
   "reboot_required_title": "እንደገና ማስጀመር ያስፈልጋል",
   "reboot_required_message": "የስርዓት እንደገና ማስጀመር የሚፈልግ ስክሪፕት ተፈጽሟል። ሌሎች ባህሪያትን ከመጫን በፊት ኮምፒውተርዎን እንደገና ማስጀመር አለብዎት።",
   "reboot_now_btn": "አሁን እንደገና ይጀምሩ",
@@ -229,5 +230,9 @@
   "yes": "አዎ",
   "no": "አይ",
   "local_scripts_name": "አካባቢያዊ ስክሪፕቶች",
-  "local_scripts_desc": "የራስዎ የተጨመሩ ስክሪፕቶች። አዲስ ስክሪፕቶችን ለመጨመር እዚህ መጎተት እና መጣል ይችላሉ።"
+  "local_scripts_desc": "የራስዎ የተጨመሩ ስክሪፕቶች። አዲስ ስክሪፕቶችን ለመጨመር እዚህ መጎተት እና መጣል ይችላሉ።",
+  "script_template_doc_comment": "# ለበለጠ መረጃ በ https://linuxtoys.luminhost.xyz/handbook.html ያለውን ሰነድ ይመልከቱ።",
+  "create_new_script_name": "አዲስ ስክሪፕት ይፍጠሩ",
+  "create_new_script_desc": "አዲስ አካባቢያዊ ስክሪፕት ይፍጠሩ። ከተፈጠረ በኋላ በነባሪ የጽሑፍ አርታዒዎ ውስጥ ይከፈታል።",
+  "script_name_prompt": "የስክሪፕትዎን ስም ያስገቡ:"
 }

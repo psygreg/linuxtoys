@@ -2,6 +2,7 @@
   "subtitle": "אוסף כלים עבור לינוקס בצורה ידידותית למשתמש.",
   "install_btn_label": "התקן",
   "cancel_btn_label": "בטל",
+  "ok_btn_label": "אישור",
   "reboot_required_title": "נדרש אתחול",
   "reboot_required_message": "הופעל סקריפט הדורש אתחול מערכת. עליך לאתחל את המחשב לפני התקנת תכונות נוספות.",
   "reboot_now_btn": "אתחל עכשיו",
@@ -229,5 +230,9 @@
   "yes": "כן",
   "no": "לא",
   "local_scripts_name": "סקריפטים מקומיים",
-  "local_scripts_desc": "הסקריפטים שלך שהוספת. אתה יכול לגרור ולשחרר כדי להוסיף סקריפטים חדשים כאן."
+  "local_scripts_desc": "הסקריפטים שלך שהוספת. אתה יכול לגרור ולשחרר כדי להוסיף סקריפטים חדשים כאן.",
+  "script_template_doc_comment": "# עיין בתיעוד בכתובת https://linuxtoys.luminhost.xyz/handbook.html למידע נוסף.",
+  "create_new_script_name": "צור סקריפט חדש",
+  "create_new_script_desc": "צור סקריפט מקומי חדש. הוא ייפתח בעורך הטקסט ברירת המחדל שלך לאחר היצירה.",
+  "script_name_prompt": "הזן את שם הסקריפט שלך:"
 }

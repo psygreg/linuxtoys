@@ -1,7 +1,8 @@
 {
-  "subtitle": "Eine benutzerfreundliche Sammlung von Werkzeugen für Linux.",
+  "subtitle": "Eine freundliche Sammlung von Tools für Linux.",
   "install_btn_label": "Installieren",
   "cancel_btn_label": "Abbrechen",
+  "ok_btn_label": "OK",
   "reboot_required_title": "Neustart erforderlich",
   "reboot_required_message": "Ein Skript, das einen Systemneustart erfordert, wurde ausgeführt. Sie müssen Ihren Computer neu starten, bevor Sie andere Funktionen installieren.",
   "reboot_now_btn": "Jetzt neu starten",
@@ -229,5 +230,9 @@
   "yes": "Ja",
   "no": "Nein",
   "local_scripts_name": "Lokale Skripte",
-  "local_scripts_desc": "Ihre eigenen hinzugefügten Skripte. Sie können hier per Drag & Drop neue Skripte hinzufügen."
+  "local_scripts_desc": "Ihre eigenen hinzugefügten Skripte. Sie können hier per Drag & Drop neue Skripte hinzufügen.",
+  "script_template_doc_comment": "# Siehe die Dokumentation unter https://linuxtoys.luminhost.xyz/handbook.html für weitere Informationen.",
+  "create_new_script_name": "Neues Skript erstellen",
+  "create_new_script_desc": "Ein neues lokales Skript erstellen. Es wird nach der Erstellung in Ihrem Standard-Texteditor geöffnet.",
+  "script_name_prompt": "Geben Sie den Namen Ihres Skripts ein:"
 }

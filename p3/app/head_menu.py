@@ -4,45 +4,53 @@ from . import script_runner
 from . import language_selector
 from .lang_utils import create_translator
 import threading
-import os, re
+import os
 
 
 class InputDialog(Gtk.MessageDialog):
 	def __init__(self, parent):
-		super().__init__(parent=parent, flags=0, buttons=Gtk.ButtonsType.OK_CANCEL)
+		# Initialize without default buttons and with OTHER message type to avoid default icons
+		super().__init__(parent=parent, flags=0, buttons=Gtk.ButtonsType.NONE, message_type=Gtk.MessageType.OTHER)
+		
+		# Create translator
+		_ = create_translator()
+		
 		self.set_title("Input")
 		self.set_decorated(False)
+		
+		# Hide the icon by setting an empty image
+		empty_image = Gtk.Image()
+		self.set_image(empty_image)
+
+		# Add custom buttons using our translation system
+		self.add_button(_('cancel_btn_label'), Gtk.ResponseType.CANCEL)
+		ok_button = self.add_button(_('ok_btn_label'), Gtk.ResponseType.OK)
+		
+		# Set OK button as default
+		ok_button.set_can_default(True)
+		ok_button.grab_default()
 
 		content_area = self.get_content_area()
 
-		main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+		main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
 		content_area.add(main_box)
 
-		title_label = Gtk.Label(label="<span size='x-large'><b>Enter your script name</b></span>")
-		title_label.set_use_markup(True)
-		title_label.set_margin_bottom(5)
-		main_box.pack_start(title_label, False, False, 0)
+		# Simple prompt label with extra bold formatting
+		prompt_label = Gtk.Label()
+		prompt_label.set_markup(f"<span weight='ultrabold' size='large'>{_('script_name_prompt')}</span>")
+		prompt_label.set_margin_bottom(10)
+		main_box.pack_start(prompt_label, False, False, 0)
 
-		icon_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-		image = Gtk.Image.new_from_icon_name("text-x-script", Gtk.IconSize.MENU)
-		label = Gtk.Label(label="Type your script name")
-		icon_label_box.pack_start(image, False, False, 0)
-		icon_label_box.pack_start(label, False, False, 0)
-		main_box.pack_start(icon_label_box, False, False, 0)
-
-		entry_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-		entry_label = Gtk.Label(label="Name:")
+		# Entry field without placeholder text
 		self.entry_name = Gtk.Entry()
-		self.entry_name.set_placeholder_text("Type your script name here...")
-
-		entry_box.pack_start(entry_label, False, False, 0)
-		entry_box.pack_start(self.entry_name, False, False, 0)
+		main_box.pack_start(self.entry_name, False, False, 0)
+		
+		# Connect Enter key to OK response
+		self.entry_name.connect("activate", lambda widget: self.response(Gtk.ResponseType.OK))
 
 		main_box.set_margin_start(35)
 		main_box.set_margin_bottom(15)
 		main_box.set_margin_end(35)
-
-		main_box.pack_start(entry_box, False, False, 0)
 
 		self.show_all()
 
@@ -93,7 +101,6 @@ class MenuButton(Gtk.MenuButton):
 		self.results = []
 		self._temp_sh = '/tmp/._temp_script.sh'
 		self.dlg = None
-		self.local_sh_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts/'
 
 		# Set the hamburger menu icon (like GNOME)
 		hamburger_icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
@@ -108,54 +115,17 @@ class MenuButton(Gtk.MenuButton):
 		self.load_manifest.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
 		self.load_manifest.connect("clicked", self.__on_load_manifest)
 
-		self.create_script = Gtk.ModelButton(label="Create Local Script")
-		self.create_script.set_image(Gtk.Image.new_from_icon_name("text-x-script", Gtk.IconSize.MENU))
-		self.create_script.connect("clicked", self.__on_create_local_sh_manifest)
-
 		self.language_select = Gtk.ModelButton(label=_("select_language"))
 		self.language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
 		self.language_select.connect("clicked", self.__on_language_select)
 
 		vbox.pack_start(self.load_manifest, True, True, 0)
-		vbox.pack_start(self.create_script, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
 
 		self.set_popover(pop)
-
-	def __on_create_local_sh_manifest(self, widget):
-		dialog = InputDialog(parent=self.get_toplevel())
-
-		if dialog.run() == Gtk.ResponseType.OK:
-			sh_name = dialog.get_input()
-			sh_filename = re.sub(r'[^a-z0-9-_]', '', sh_name.lower())
-			sh_filename and self.__create_and_open_local_sh(filename=sh_filename, name=sh_name)
-
-		dialog.destroy()
-
-	def __create_and_open_local_sh(self, filename=None, name=None):
-		os.makedirs(os.path.dirname(self.local_sh_dir), exist_ok=True)
-		_template_local_script = f"""#!/bin/bash
-# name: {name.capitalize()}
-# version: 1.0
-# description: Local Script
-# icon: local-scripts.svg
-
-# --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-_lang_
-source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
-
-# Check the docs in https://linuxtoys.luminhost.xyz/handbook.html for more...
-		"""
-
-		with open(f"{self.local_sh_dir}{filename}.sh", "w+") as f:
-			f.write(_template_local_script)
-
-		os.system(f'xdg-open {self.local_sh_dir}{filename}.sh')
 
 	def refresh_menu_translations(self):
 		"""Refresh menu items with new translations"""

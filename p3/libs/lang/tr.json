@@ -2,6 +2,7 @@
   "subtitle": "Linux için kullanıcı dostu araçlar koleksiyonu.",
   "install_btn_label": "Yükle",
   "cancel_btn_label": "İptal",
+  "ok_btn_label": "Tamam",
   "reboot_required_title": "Yeniden Başlatma Gerekli",
   "reboot_required_message": "Sistem yeniden başlatması gerektiren bir betik çalıştırıldı. Diğer özellikleri yüklemeden önce bilgisayarınızı yeniden başlatmalısınız.",
   "reboot_now_btn": "Şimdi Yeniden Başlat",
@@ -229,5 +230,9 @@
   "yes": "Evet",
   "no": "Hayır",
   "local_scripts_name": "Yerel Betikler",
-  "local_scripts_desc": "Kendi eklediğiniz betikler. Yeni betikler eklemek için buraya sürükleyip bırakabilirsiniz."
+  "local_scripts_desc": "Kendi eklediğiniz betikler. Yeni betikler eklemek için buraya sürükleyip bırakabilirsiniz.",
+  "script_template_doc_comment": "# Daha fazla bilgi için https://linuxtoys.luminhost.xyz/handbook.html adresindeki belgelere bakın.",
+  "create_new_script_name": "Yeni Betik Oluştur",
+  "create_new_script_desc": "Yeni bir yerel betik oluşturun. Oluşturulduktan sonra varsayılan metin düzenleyicinizde açılacaktır.",
+  "script_name_prompt": "Betik adınızı girin:"
 }

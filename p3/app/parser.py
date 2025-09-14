@@ -241,7 +241,25 @@ def get_scripts_for_category(category_path, translations=None):
             script_info['is_subcategory'] = False
             items.append(script_info)
 
-    return sorted(items, key=lambda s: (not s.get('is_subcategory', False), s['name']))
+    # Add "Create New Script" option when viewing local scripts directory
+    if '.local/linuxtoys/scripts' in category_path:
+        create_script_name = translations.get('create_new_script_name', 'Create New Script') if translations else 'Create New Script'
+        create_script_desc = translations.get('create_new_script_desc', 'Create a new local script') if translations else 'Create a new local script'
+        
+        create_script_item = {
+            'name': create_script_name,
+            'description': create_script_desc,
+            'icon': 'document-new',
+            'path': category_path,
+            'is_script': False,
+            'is_subcategory': False,
+            'is_create_script': True  # Special flag to identify this option
+        }
+        
+        # Insert at the beginning so it appears first
+        items.insert(0, create_script_item)
+
+    return sorted(items, key=lambda s: (not s.get('is_create_script', False), not s.get('is_subcategory', False), s['name']))
 
 
 def get_all_scripts_recursive(directory_path, translations=None):

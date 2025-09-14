@@ -2,6 +2,7 @@
   "subtitle": "适用于Linux的用户友好工具集合。",
   "install_btn_label": "安装",
   "cancel_btn_label": "取消",
+  "ok_btn_label": "确定",
   "reboot_required_title": "需要重启",
   "reboot_required_message": "已执行需要系统重启的脚本。您必须重启计算机才能安装其他功能。",
   "reboot_now_btn": "立即重启",
@@ -231,5 +232,9 @@
   "yes": "是",
   "no": "否",
   "local_scripts_name": "本地脚本",
-  "local_scripts_desc": "您自己添加的脚本。您可以拖放文件来在这里添加新脚本。"
+  "local_scripts_desc": "您自己添加的脚本。您可以拖放文件来在这里添加新脚本。",
+  "script_template_doc_comment": "# 请参阅 https://linuxtoys.luminhost.xyz/handbook.html 的文档以获取更多信息。",
+  "create_new_script_name": "创建新脚本",
+  "create_new_script_desc": "创建一个新的本地脚本。创建后将在您的默认文本编辑器中打开。",
+  "script_name_prompt": "输入您的脚本名称："
 }

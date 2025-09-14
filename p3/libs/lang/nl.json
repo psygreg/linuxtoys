@@ -2,6 +2,7 @@
   "subtitle": "Een verzameling tools voor Linux op een gebruiksvriendelijke manier.",
   "install_btn_label": "Installeren",
   "cancel_btn_label": "Annuleren",
+  "ok_btn_label": "OK",
   "reboot_required_title": "Herstart Vereist",
   "reboot_required_message": "Een script dat een systeemherstart vereist is uitgevoerd. Je moet je computer herstarten voordat je andere functies installeert.",
   "reboot_now_btn": "Nu Herstarten",
@@ -230,5 +231,8 @@
   "no": "Nee",
   "local_scripts_name": "Lokale Scripts",
   "local_scripts_desc": "Uw eigen toegevoegde scripts. U kunt slepen en neerzetten om hier nieuwe scripts toe te voegen.",
-  "lang_dutch": "Nederlands"
+  "script_template_doc_comment": "# Raadpleeg de documentatie op https://linuxtoys.luminhost.xyz/handbook.html voor meer informatie.",
+  "create_new_script_name": "Nieuw Script Maken",
+  "create_new_script_desc": "Maak een nieuw lokaal script aan. Het wordt geopend in uw standaard teksteditor na aanmaak.",
+  "script_name_prompt": "Voer uw scriptnaam in:"
 }

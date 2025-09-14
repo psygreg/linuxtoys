@@ -2,6 +2,7 @@
   "subtitle": "مجموعة أدوات لنظام Linux بطريقة سهلة الاستخدام.",
   "install_btn_label": "تثبيت",
   "cancel_btn_label": "إلغاء",
+  "ok_btn_label": "موافق",
   "reboot_required_title": "إعادة التشغيل مطلوبة",
   "reboot_required_message": "تم تنفيذ سكريبت يتطلب إعادة تشغيل النظام. يجب إعادة تشغيل الحاسوب قبل تثبيت ميزات أخرى.",
   "reboot_now_btn": "إعادة التشغيل الآن",
@@ -229,5 +230,9 @@
   "yes": "نعم",
   "no": "لا",
   "local_scripts_name": "النصوص البرمجية المحلية",
-  "local_scripts_desc": "النصوص البرمجية التي أضفتها بنفسك. يمكنك السحب والإفلات لإضافة نصوص برمجية جديدة هنا."
+  "local_scripts_desc": "النصوص البرمجية التي أضفتها بنفسك. يمكنك السحب والإفلات لإضافة نصوص برمجية جديدة هنا.",
+  "script_template_doc_comment": "# راجع الوثائق على https://linuxtoys.luminhost.xyz/handbook.html للمزيد من المعلومات.",
+  "create_new_script_name": "إنشاء نص برمجي جديد",
+  "create_new_script_desc": "إنشاء نص برمجي محلي جديد. سيتم فتحه في محرر النصوص الافتراضي بعد الإنشاء.",
+  "script_name_prompt": "أدخل اسم النص البرمجي:"
 }

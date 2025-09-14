@@ -406,6 +406,10 @@ class AppWindow(Gtk.ApplicationWindow):
         """Loads categories and connects their click event."""
         categories = parser.get_categories(self.translations)
         
+        # Store current category info and temporarily set to None for proper bold formatting
+        temp_current_category = self.current_category_info
+        self.current_category_info = None
+        
         self.categories_flowbox.foreach(lambda widget: self.categories_flowbox.remove(widget))
         for cat in categories:
             widget = self.create_item_widget(cat)
@@ -415,6 +419,10 @@ class AppWindow(Gtk.ApplicationWindow):
             else:
                 widget.set_tooltip_text(None)
             self.categories_flowbox.add(widget)
+        
+        # Restore the current category info
+        self.current_category_info = temp_current_category
+        
         self.categories_flowbox.show_all()
             
             
@@ -553,6 +561,12 @@ class AppWindow(Gtk.ApplicationWindow):
             return
             
         info = widget.info
+        
+        # Check if this is the "Create New Script" option
+        if info.get('is_create_script'):
+            self._handle_create_new_script()
+            return
+        
         # If this is a root script (shown as a category), execute it directly
         if info.get('is_script'):
             if not self.script_runner.is_running():
@@ -613,6 +627,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
         info = widget.info
         
+        # Check if this is the "Create New Script" option
+        if info.get('is_create_script'):
+            self._handle_create_new_script()
+            return
+        
         # Show confirmation dialog before executing script
         if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
             return  # User cancelled
@@ -631,6 +650,64 @@ class AppWindow(Gtk.ApplicationWindow):
             on_reboot_required=reboot_handler
         )
 
+    def _handle_create_new_script(self):
+        """Handle the creation of a new local script."""
+        # Import the InputDialog from head_menu
+        from . import head_menu
+        
+        dialog = head_menu.InputDialog(parent=self)
+        
+        if dialog.run() == Gtk.ResponseType.OK:
+            sh_name = dialog.get_input()
+            if sh_name.strip():  # Check if name is not empty
+                import re
+                sh_filename = re.sub(r'[^a-z0-9-_]', '', sh_name.lower())
+                if sh_filename:
+                    self._create_and_open_local_sh(filename=sh_filename, name=sh_name)
+                    # Refresh the current view to show the new script
+                    self._refresh_current_local_scripts_view()
+        
+        dialog.destroy()
+
+    def _create_and_open_local_sh(self, filename=None, name=None):
+        """Create a new local script file and open it for editing."""
+        import os
+        
+        local_sh_dir = f'{os.environ["HOME"]}/.local/linuxtoys/scripts/'
+        os.makedirs(local_sh_dir, exist_ok=True)
+        
+        # Get translated documentation comment
+        doc_comment = self.translations.get("script_template_doc_comment", 
+                                           "# Refer to the documentation at https://linuxtoys.luminhost.xyz/handbook.html for more information.")
+        
+        _template_local_script = f"""#!/bin/bash
+# name: {name}
+# version: 1.0
+# description: Local Script
+# icon: local-scripts.svg
+
+# --- Start of the script code ---
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
+source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
+
+{doc_comment}
+"""
+
+        with open(f"{local_sh_dir}{filename}.sh", "w+") as f:
+            f.write(_template_local_script)
+
+        os.system(f'xdg-open {local_sh_dir}{filename}.sh')
+
+    def _refresh_current_local_scripts_view(self):
+        """Refresh the current view if we're viewing local scripts."""
+        if (hasattr(self, 'current_category_info') and 
+            self.current_category_info and 
+            '.local/linuxtoys/scripts' in self.current_category_info.get('path', '')):
+            # Reload the scripts for the current local scripts view
+            self._load_scripts_into_flowbox(self.scripts_flowbox, self.current_category_info)
+            self.scripts_flowbox.show_all()
 
 
     def _show_reboot_warning_dialog(self):
@@ -685,13 +762,30 @@ class AppWindow(Gtk.ApplicationWindow):
         if hasattr(self.footer_widget, 'refresh_translations'):
             self.footer_widget.refresh_translations(self.translations)
         
-        # Reload categories with new translations
+        # Always reload categories with new translations (so they're ready when user navigates back)
+        self.load_categories()
+        
+        # If we're currently viewing categories, we're done since load_categories() already updated the view
         if self.main_stack.get_visible_child_name() == "categories":
-            self.load_categories()
-        else:
-            # Reload current category/subcategory content
-            if self.current_category_info:
-                self.load_scripts(self.current_category_info)
+            return
+            
+        # If we're in a category/subcategory view, reload it with new translations
+        if self.current_category_info:
+            # Update navigation stack with fresh translations
+            self._refresh_navigation_stack_translations()
+            
+            # Get fresh category info with new translations
+            updated_category_info = self._get_fresh_category_info_with_translations()
+            if updated_category_info:
+                self.current_category_info = updated_category_info
+                # Update header with fresh category info
+                self._update_header(self.current_category_info)
+                # Update title bar with fresh category name
+                category_name = self.current_category_info.get('name', 'Unknown')
+                self.header_bar.props.title = f"LinuxToys: {category_name}"
+            
+            # Reload the scripts view with new translations
+            self.load_scripts(self.current_category_info)
         
         # Update footer if in checklist mode
         if (self.current_category_info and 
@@ -707,6 +801,111 @@ class AppWindow(Gtk.ApplicationWindow):
             self.footer_widget.checklist_button_box.pack_start(install_btn, False, False, 0)
             self.footer_widget.checklist_button_box.pack_start(cancel_btn, False, False, 0)
             self.footer_widget.checklist_button_box.show_all()
+
+    def _get_fresh_category_info_with_translations(self):
+        """Get fresh category info with updated translations"""
+        if not self.current_category_info:
+            return None
+            
+        current_path = self.current_category_info.get('path', '')
+        if not current_path:
+            return None
+        
+        from . import parser
+        
+        # Check if this is the Local Scripts directory
+        if '.local/linuxtoys/scripts' in current_path:
+            # Recreate Local Scripts category info with new translations
+            local_scripts_name = self.translations.get('local_scripts_name', 'Local Scripts')
+            local_scripts_desc = self.translations.get('local_scripts_desc', 'Drop your scripts here')
+            
+            return {
+                'name': local_scripts_name,
+                'description': local_scripts_desc,
+                'icon': 'local-script.svg',
+                'mode': 'auto',
+                'path': current_path,
+                'is_script': False,
+                'is_subcategory': True,
+                'has_subcategories': False,
+                'display_mode': 'menu'
+            }
+        
+        # Check if this is a main category
+        if current_path.startswith(parser.SCRIPTS_DIR):
+            # Get all categories with new translations
+            categories = parser.get_categories(self.translations)
+            
+            # Find matching category by path
+            for category in categories:
+                if category.get('path') == current_path:
+                    return category
+            
+            # If not found in main categories, check subcategories
+            # Get the parent directory to find subcategories
+            import os
+            parent_path = os.path.dirname(current_path)
+            if parent_path and parent_path != current_path:
+                subcategories = parser.get_subcategories_for_category(parent_path, self.translations)
+                for subcategory in subcategories:
+                    if subcategory.get('path') == current_path:
+                        return subcategory
+        
+        # If no match found, return the current info (fallback)
+        return self.current_category_info
+
+    def _refresh_navigation_stack_translations(self):
+        """Refresh all category info in the navigation stack with new translations"""
+        if not self.navigation_stack:
+            return
+            
+        # Update each category in the navigation stack with fresh translations
+        for i, category_info in enumerate(self.navigation_stack):
+            current_path = category_info.get('path', '')
+            if not current_path:
+                continue
+                
+            from . import parser
+            
+            # Check if this is the Local Scripts directory
+            if '.local/linuxtoys/scripts' in current_path:
+                # Update Local Scripts category info with new translations
+                local_scripts_name = self.translations.get('local_scripts_name', 'Local Scripts')
+                local_scripts_desc = self.translations.get('local_scripts_desc', 'Drop your scripts here')
+                
+                self.navigation_stack[i] = {
+                    'name': local_scripts_name,
+                    'description': local_scripts_desc,
+                    'icon': 'local-script.svg',
+                    'mode': 'auto',
+                    'path': current_path,
+                    'is_script': False,
+                    'is_subcategory': True,
+                    'has_subcategories': False,
+                    'display_mode': 'menu'
+                }
+                continue
+            
+            # Check if this is a main category
+            if current_path.startswith(parser.SCRIPTS_DIR):
+                # Get all categories with new translations
+                categories = parser.get_categories(self.translations)
+                
+                # Find matching category by path
+                for category in categories:
+                    if category.get('path') == current_path:
+                        self.navigation_stack[i] = category
+                        break
+                else:
+                    # If not found in main categories, check subcategories
+                    import os
+                    parent_path = os.path.dirname(current_path)
+                    if parent_path and parent_path != current_path:
+                        subcategories = parser.get_subcategories_for_category(parent_path, self.translations)
+                        for subcategory in subcategories:
+                            if subcategory.get('path') == current_path:
+                                self.navigation_stack[i] = subcategory
+                                break
 
     def _update_header(self, category_info=None):
         """Updates the header with new category information."""

@@ -2,6 +2,7 @@
   "subtitle": "사용자 친화적인 방법으로 Linux용 도구 모음입니다.",
   "install_btn_label": "설치",
   "cancel_btn_label": "취소",
+  "ok_btn_label": "확인",
   "reboot_required_title": "재부팅 필요",
   "reboot_required_message": "시스템 재부팅이 필요한 스크립트가 실행되었습니다. 다른 기능을 설치하기 전에 컴퓨터를 재부팅해야 합니다.",
   "reboot_now_btn": "지금 재부팅",
@@ -229,5 +230,9 @@
   "yes": "예",
   "no": "아니요",
   "local_scripts_name": "로컬 스크립트",
-  "local_scripts_desc": "사용자가 추가한 스크립트입니다. 새 스크립트를 추가하려면 여기에 드래그 앤 드롭하세요."
+  "local_scripts_desc": "사용자가 추가한 스크립트입니다. 새 스크립트를 추가하려면 여기에 드래그 앤 드롭하세요.",
+  "script_template_doc_comment": "# 자세한 정보는 https://linuxtoys.luminhost.xyz/handbook.html 문서를 참조하세요.",
+  "create_new_script_name": "새 스크립트 생성",
+  "create_new_script_desc": "새 로컬 스크립트를 생성합니다. 생성 후 기본 텍스트 편집기에서 열립니다.",
+  "script_name_prompt": "스크립트 이름을 입력하세요:"
 }

@@ -2,6 +2,7 @@
   "subtitle": "Uma coleção amigável de ferramentas para Linux.",
   "install_btn_label": "Instalar",
   "cancel_btn_label": "Cancelar",
+  "ok_btn_label": "OK",
   "reboot_required_title": "Reinicialização Necessária",
   "reboot_required_message": "Um script que requer reinicialização do sistema foi executado. Você deve reiniciar o computador antes de instalar outros recursos.",
   "reboot_now_btn": "Reiniciar Agora",
@@ -229,5 +230,9 @@
   "yes": "Sim",
   "no": "Não",
   "local_scripts_name": "Scripts Locais",
-  "local_scripts_desc": "Seus próprios scripts adicionados. Você pode arrastar e soltar para adicionar novos scripts aqui."
+  "local_scripts_desc": "Seus próprios scripts adicionados. Você pode arrastar e soltar para adicionar novos scripts aqui.",
+  "script_template_doc_comment": "# Consulte a documentação em https://linuxtoys.luminhost.xyz/handbook.html para mais informações.",
+  "create_new_script_name": "Criar Novo Script",
+  "create_new_script_desc": "Criar um novo script local. Será aberto no seu editor de texto padrão após a criação.",
+  "script_name_prompt": "Digite o nome do seu script:"
 }

@@ -2,6 +2,7 @@
   "subtitle": "Mkusanyiko wa zana za Linux kwa njia rahisi kwa mtumiaji.",
   "install_btn_label": "Sakinisha",
   "cancel_btn_label": "Ghairi",
+  "ok_btn_label": "Sawa",
   "reboot_required_title": "Unazima Upya Unahitajika",
   "reboot_required_message": "Hati iliyo na haja ya kuzima na kuwasha mfumo upya imeendeshwa. Ni lazima uzime na uwashe kompyuta yako kabla ya kusakinisha vipengele vingine.",
   "reboot_now_btn": "Zima Upya Sasa",
@@ -230,5 +231,8 @@
   "no": "Hapana",
   "local_scripts_name": "Hati za Ndani",
   "local_scripts_desc": "Hati zako mwenyewe ulizoongeza. Unaweza kukokota na kuacha ili kuongeza hati mpya hapa.",
-  "lang_swahili": "Kiswahili"
+  "script_template_doc_comment": "# Tazama nyaraka katika https://linuxtoys.luminhost.xyz/handbook.html kwa maelezo zaidi.",
+  "create_new_script_name": "Unda Hati Mpya",
+  "create_new_script_desc": "Unda hati mpya ya ndani. Itafunguliwa katika kihariri chako cha maandishi cha msingi baada ya kuundwa.",
+  "script_name_prompt": "Ingiza jina la hati yako:"
 }

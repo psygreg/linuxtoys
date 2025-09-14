@@ -2,6 +2,7 @@
   "subtitle": "Koleksi alat untuk Linux dengan cara yang ramah pengguna.",
   "install_btn_label": "Instal",
   "cancel_btn_label": "Batal",
+  "ok_btn_label": "OK",
   "reboot_required_title": "Perlu Restart",
   "reboot_required_message": "Skrip yang memerlukan restart sistem telah dijalankan. Anda harus me-restart komputer sebelum menginstal fitur lain.",
   "reboot_now_btn": "Restart Sekarang",
@@ -229,5 +230,9 @@
   "yes": "Ya",
   "no": "Tidak",
   "local_scripts_name": "Skrip Lokal",
-  "local_scripts_desc": "Skrip yang Anda tambahkan sendiri. Anda dapat menyeret dan menjatuhkan untuk menambahkan skrip baru di sini."
+  "local_scripts_desc": "Skrip yang Anda tambahkan sendiri. Anda dapat menyeret dan menjatuhkan untuk menambahkan skrip baru di sini.",
+  "script_template_doc_comment": "# Lihat dokumentasi di https://linuxtoys.luminhost.xyz/handbook.html untuk informasi lebih lanjut.",
+  "create_new_script_name": "Buat Skrip Baru",
+  "create_new_script_desc": "Buat skrip lokal baru. Akan dibuka di editor teks default Anda setelah dibuat.",
+  "script_name_prompt": "Masukkan nama skrip Anda:"
 }

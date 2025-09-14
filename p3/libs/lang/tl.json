@@ -2,6 +2,7 @@
   "subtitle": "Isang koleksyon ng mga tools para sa Linux sa user-friendly na paraan.",
   "install_btn_label": "I-install",
   "cancel_btn_label": "Kanselahin",
+  "ok_btn_label": "OK",
   "reboot_required_title": "Kailangan ng Reboot",
   "reboot_required_message": "Isang script na nangangailangan ng system reboot ay na-execute na. Kailangan mong i-reboot ang inyong computer bago mag-install ng ibang features.",
   "reboot_now_btn": "I-reboot Ngayon",
@@ -229,5 +230,9 @@
   "yes": "Oo",
   "no": "Hindi",
   "local_scripts_name": "Mga Lokal na Script",
-  "local_scripts_desc": "Ang inyong mga sariling nadagdag na script. Maaari kayong mag-drag at drop para magdagdag ng mga bagong script dito."
+  "local_scripts_desc": "Ang inyong mga sariling nadagdag na script. Maaari kayong mag-drag at drop para magdagdag ng mga bagong script dito.",
+  "script_template_doc_comment": "# Tingnan ang dokumentasyon sa https://linuxtoys.luminhost.xyz/handbook.html para sa karagdagang impormasyon.",
+  "create_new_script_name": "Gumawa ng Bagong Script",
+  "create_new_script_desc": "Gumawa ng bagong lokal na script. Mabubuksan ito sa inyong default text editor pagkatapos gumawa.",
+  "script_name_prompt": "Ilagay ang pangalan ng inyong script:"
 }

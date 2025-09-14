@@ -2,6 +2,7 @@
   "subtitle": "Linuxのためのユーザーフレンドリーなツール集。",
   "install_btn_label": "インストール",
   "cancel_btn_label": "キャンセル",
+  "ok_btn_label": "OK",
   "reboot_required_title": "再起動が必要",
   "reboot_required_message": "システムの再起動を必要とするスクリプトが実行されました。他の機能をインストールする前に、コンピューターを再起動する必要があります。",
   "reboot_now_btn": "今すぐ再起動",
@@ -229,5 +230,9 @@
   "yes": "はい",
   "no": "いいえ",
   "local_scripts_name": "ローカルスクリプト",
-  "local_scripts_desc": "あなた自身が追加したスクリプトです。ここにドラッグ＆ドロップして新しいスクリプトを追加できます。"
+  "local_scripts_desc": "あなた自身が追加したスクリプトです。ここにドラッグ＆ドロップして新しいスクリプトを追加できます。",
+  "script_template_doc_comment": "# 詳細については https://linuxtoys.luminhost.xyz/handbook.html のドキュメントを参照してください。",
+  "create_new_script_name": "新しいスクリプトを作成",
+  "create_new_script_desc": "新しいローカルスクリプトを作成します。作成後、デフォルトのテキストエディターで開かれます。",
+  "script_name_prompt": "スクリプト名を入力してください："
 }

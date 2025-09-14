@@ -2,6 +2,7 @@
   "subtitle": "Una collezione di strumenti per Linux in modo user-friendly.",
   "install_btn_label": "Installa",
   "cancel_btn_label": "Annulla",
+  "ok_btn_label": "OK",
   "reboot_required_title": "Riavvio Richiesto",
   "reboot_required_message": "È stato eseguito uno script che richiede il riavvio del sistema. Devi riavviare il computer prima di installare altre funzionalità.",
   "reboot_now_btn": "Riavvia Ora",
@@ -229,5 +230,9 @@
   "yes": "Sì",
   "no": "No",
   "local_scripts_name": "Script Locali",
-  "local_scripts_desc": "I tuoi script aggiunti. Puoi trascinare e rilasciare per aggiungere nuovi script qui."
+  "local_scripts_desc": "I tuoi script aggiunti. Puoi trascinare e rilasciare per aggiungere nuovi script qui.",
+  "script_template_doc_comment": "# Consulta la documentazione su https://linuxtoys.luminhost.xyz/handbook.html per maggiori informazioni.",
+  "create_new_script_name": "Crea Nuovo Script",
+  "create_new_script_desc": "Crea un nuovo script locale. Verrà aperto nel tuo editor di testo predefinito dopo la creazione.",
+  "script_name_prompt": "Inserisci il nome del tuo script:"
 }
