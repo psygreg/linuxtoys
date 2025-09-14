@@ -137,6 +137,8 @@
   "earlyoom_desc": "Daemon na nag-m-monitor ng system memory at swap usage, at pumapatay ng mga processes kapag mababa na ang memory para maiwasan ang system freezes.",
   "mscf_desc": "Nagpapaganda ng web compatibility at appearance ng maraming websites at apps. Mag-o-offer din itong i-remove kung naka-install na.",
   "ondemand_desc": "Binabago ang default CPU frequency governor sa ondemand para sa mas mataas na performance. Hindi inirekomenda sa mga laptop. Pwede rin itong i-revert kung naka-set na.",
+  "hwaccel-flatpak": "Hardware Acceleration para sa Flatpak",
+  "hwaccel-flatpak_desc": "Nag-i-install ng ffmpeg-full sa kasalukuyang supported flatpak platforms, nagbibigay-daan sa mga applications na gumamit ng hardware-accelerated media playback.",
 
   "nv_desc": "Kasalukuyang Nvidia drivers. Mga supported GPUs: Maxwell (GT 9xx) at mas bago.",
   "nv_rtx_desc": "Kasalukuyang Nvidia drivers na may open kernel modules. Mga supported GPUs: GTX 16xx at kahit anong RTX-series. Para sa mga laptop, mas prefer ang proprietary option para sa power management.",

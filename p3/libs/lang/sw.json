@@ -137,6 +137,8 @@
   "earlyoom_desc": "Pepo inayofuatilia matumizi ya kumbukumbu ya mfumo na kubadilishana, na kuua michakato wakati kumbukumbu ni kidogo ili kuzuia kuganda kwa mfumo.",
   "mscf_desc": "Inaboresha utangamano wa wavuti na mwonekano wa tovuti na programu nyingi. Chaguo hili litakuuliza kuliondoa ikiwa tayari limesakinishwa.",
   "ondemand_desc": "Inabadilisha gavana wa marudio ya CPU ya chaguo-msingi kuwa ondemand kwa utendaji wa juu zaidi. Hapendekezwi kwa kompyuta za kiganjani. Chaguo hili linaweza pia kulirudisha ikiwa tayari limewekwa.",
+  "hwaccel-flatpak": "Kuongeza Kasi kwa Vifaa vya Flatpak",
+  "hwaccel-flatpak_desc": "Inasakinisha ffmpeg-full katika majukwaa ya flatpak yanayosaidiwa kwa sasa, kuruhusu programu kutumia kucheza vyombo vya habari kwa kuongeza kasi kwa vifaa.",
 
   "nv_desc": "Viendeshaji vya sasa vya Nvidia. GPU zinazosaidiwa: Maxwell (GT 9xx) na mpya.",
   "nv_rtx_desc": "Viendeshaji vya sasa vya Nvidia na moduli za kernel wazi. GPU zinazosaidiwa: GTX 16xx na mfululizo wowote wa RTX. Kwa kompyuta za kiganjani, pendelea chaguo la kimila kwa usimamizi wa nishati.",

@@ -137,6 +137,8 @@
   "earlyoom_desc": "Un demonio que monitorea el uso de memoria del sistema y swap, y mata procesos cuando la memoria es baja para prevenir congelamiento del sistema.",
   "mscf_desc": "Mejora la compatibilidad web y apariencia de muchos sitios web y aplicaciones. Esta opción también le ofrecerá eliminarlo si ya está instalado.",
   "ondemand_desc": "Cambia el gobernador de frecuencia de CPU predeterminado a ondemand para mayor rendimiento. No recomendado en portátiles.",
+  "hwaccel-flatpak": "Aceleración por Hardware para Flatpak",
+  "hwaccel-flatpak_desc": "Instala ffmpeg-full en las plataformas flatpak actualmente soportadas, permitiendo que las aplicaciones usen reproducción de medios acelerada por hardware.",
 
   "nv_desc": "Controladores actuales de Nvidia. GPUs soportadas: Maxwell (GT 9xx) y más nuevas.",
   "nv_rtx_desc": "Controladores actuales de Nvidia con módulos de kernel abiertos. GPUs soportadas: GTX 16xx y cualquier serie RTX. Para portátiles, prefiera la opción propietaria para gestión de energía.",

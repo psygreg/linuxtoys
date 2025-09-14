@@ -137,6 +137,8 @@
   "earlyoom_desc": "Een daemon die systeemgeheugen en swap gebruik monitort, en processen doodt wanneer geheugen laag is om systeembevriezingen te voorkomen.",
   "mscf_desc": "Verbetert webcompatibiliteit en het uiterlijk van vele websites en apps. Deze optie zal je aanbieden om het te verwijderen als het al geïnstalleerd is.",
   "ondemand_desc": "Verandert standaard CPU frequentie governor naar ondemand voor hogere prestaties. Niet aanbevolen op laptops. Deze optie kan het ook terugdraaien als het al ingesteld is.",
+  "hwaccel-flatpak": "Hardware Versnelling voor Flatpak",
+  "hwaccel-flatpak_desc": "Installeert ffmpeg-full in de momenteel ondersteunde flatpak platforms, waardoor applicaties hardware-versnelde media afspelen kunnen gebruiken.",
 
   "nv_desc": "Huidige Nvidia drivers. Ondersteunde GPU's: Maxwell (GT 9xx) en nieuwer.",
   "nv_rtx_desc": "Huidige Nvidia drivers met open kernel modules. Ondersteunde GPU's: GTX 16xx en elke RTX-serie. Voor laptops, geef de voorkeur aan de proprietary optie voor power management.",

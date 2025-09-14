@@ -139,6 +139,8 @@
   "earlyoom_desc": "监控系统内存和交换使用情况的守护程序，当内存不足时终止进程以防止系统冻结。",
   "mscf_desc": "改善许多网站和应用程序的网络兼容性和外观。如果已安装，此选项还将提供删除选项。",
   "ondemand_desc": "将默认CPU频率调节器更改为ondemand以获得更高性能。不建议在笔记本电脑上使用。此选项还可以在已设置时将其恢复。",
+  "hwaccel-flatpak": "Flatpak硬件加速",
+  "hwaccel-flatpak_desc": "将ffmpeg-full安装到当前支持的flatpak平台中，允许应用程序使用硬件加速的媒体播放。",
 
   "nv_desc": "当前Nvidia驱动程序。支持的GPU：Maxwell（GT 9xx）及更新。",
   "nv_rtx_desc": "具有开放内核模块的当前Nvidia驱动程序。支持的GPU：GTX 16xx和任何RTX系列。对于笔记本电脑，首选专有选项以进行电源管理。",

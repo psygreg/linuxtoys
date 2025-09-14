@@ -137,6 +137,8 @@
   "earlyoom_desc": "Daemon yang memantau penggunaan memori sistem dan swap, dan menghentikan proses ketika memori rendah untuk mencegah sistem freeze.",
   "mscf_desc": "Meningkatkan kompatibilitas web dan tampilan banyak website dan aplikasi. Opsi ini juga akan menawarkan untuk menghapusnya jika sudah diinstal.",
   "ondemand_desc": "Mengubah governor frekuensi CPU default ke ondemand untuk performa yang lebih tinggi. Tidak direkomendasikan di laptop. Opsi ini juga dapat mengembalikannya jika sudah diatur.",
+  "hwaccel-flatpak": "Akselerasi Perangkat Keras untuk Flatpak",
+  "hwaccel-flatpak_desc": "Menginstal ffmpeg-full ke platform flatpak yang saat ini didukung, memungkinkan aplikasi menggunakan pemutaran media yang dipercepat perangkat keras.",
 
   "nv_desc": "Driver Nvidia saat ini. GPU yang didukung: Maxwell (GT 9xx) dan yang lebih baru.",
   "nv_rtx_desc": "Driver Nvidia saat ini dengan modul kernel terbuka. GPU yang didukung: GTX 16xx dan seri RTX apa pun. Untuk laptop, lebih pilih opsi proprietary untuk manajemen daya.",

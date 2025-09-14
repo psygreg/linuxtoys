@@ -137,6 +137,8 @@
   "earlyoom_desc": "Sistem belleğini ve takas kullanımını izleyen ve sistem donmasını önlemek için bellek düşük olduğunda işlemleri sonlandıran bir daemon.",
   "mscf_desc": "Birçok web sitesi ve uygulamanın web uyumluluğunu ve görünümünü artırır. Bu seçenek zaten yüklüyse kaldırma seçeneği de sunar.",
   "ondemand_desc": "Daha yüksek performans için varsayılan CPU frekans yöneticisini ondemand olarak değiştirir. Dizüstü bilgisayarlarda önerilmez. Bu seçenek zaten ayarlanmışsa geri de alabilir.",
+  "hwaccel-flatpak": "Flatpak için Donanım Hızlandırma",
+  "hwaccel-flatpak_desc": "Şu anda desteklenen flatpak platformlarına ffmpeg-full yükler, uygulamaların donanım hızlandırmalı medya oynatma kullanmasına olanak tanır.",
 
   "nv_desc": "Mevcut Nvidia sürücüleri. Desteklenen GPU'lar: Maxwell (GT 9xx) ve daha yeni.",
   "nv_rtx_desc": "Açık çekirdek modülleri ile mevcut Nvidia sürücüleri. Desteklenen GPU'lar: GTX 16xx ve herhangi bir RTX serisi. Dizüstü bilgisayarlar için güç yönetimi için tescilli seçeneği tercih edin.",

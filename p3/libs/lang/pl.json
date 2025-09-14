@@ -137,6 +137,8 @@
   "earlyoom_desc": "Demon monitorujący użycie pamięci systemowej i wymiany, zabijający procesy gdy pamięć jest niska, aby zapobiec zawieszeniu systemu.",
   "mscf_desc": "Poprawia kompatybilność internetową i wygląd wielu stron i aplikacji. Ta opcja pozwoli ci również usunąć go, jeśli jest już zainstalowany.",
   "ondemand_desc": "Zmienia domyślny governor częstotliwości CPU na ondemand dla wyższej wydajności. Nie zalecane na laptopach. Ta opcja może również to cofnąć, jeśli jest już ustawione.",
+  "hwaccel-flatpak": "Przyspieszenie Sprzętowe dla Flatpak",
+  "hwaccel-flatpak_desc": "Instaluje ffmpeg-full na obecnie obsługiwanych platformach flatpak, umożliwiając aplikacjom używanie sprzętowo-przyspieszonego odtwarzania multimediów.",
 
   "nv_desc": "Aktualne sterowniki Nvidia. Obsługiwane GPU: Maxwell (GT 9xx) i nowsze.",
   "nv_rtx_desc": "Aktualne sterowniki Nvidia z otwartymi modułami jądra. Obsługiwane GPU: GTX 16xx i każda seria RTX. Dla laptopów preferuj opcję własnościową dla zarządzania zasilaniem.",

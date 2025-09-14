@@ -137,6 +137,8 @@
   "earlyoom_desc": "Ein Daemon, der System-Speicher- und Swap-Nutzung überwacht und Prozesse beendet, wenn der Speicher knapp wird, um System-Einfrierungen zu verhindern.",
   "mscf_desc": "Verbessert Web-Kompatibilität und Aussehen vieler Websites und Apps. Diese Option bietet Ihnen auch an, es zu entfernen, falls bereits installiert.",
   "ondemand_desc": "Ändert den Standard-CPU-Frequenz-Governor zu ondemand für höhere Leistung. Nicht empfohlen auf Laptops. Diese Option kann es auch entfernen, falls bereits gesetzt.",
+  "hwaccel-flatpak": "Hardware-Beschleunigung für Flatpak",
+  "hwaccel-flatpak_desc": "Installiert ffmpeg-full in die derzeit unterstützten Flatpak-Plattformen und ermöglicht Anwendungen die Verwendung hardwarebeschleunigter Medienwiedergabe.",
 
   "nv_desc": "Aktuelle Nvidia-Treiber. Unterstützte GPUs: Maxwell (GT 9xx) und neuer.",
   "nv_rtx_desc": "Aktuelle Nvidia-Treiber mit offenen Kernel-Modulen. Unterstützte GPUs: GTX 16xx und jede RTX-Serie. Für Laptops bevorzugen Sie die proprietäre Option für Energieverwaltung.",
