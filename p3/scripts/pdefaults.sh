@@ -42,6 +42,10 @@ sysag_run () {
         sudo opi codecs
     fi
     _install_
+    # hardware accelerated video playback for flatpak applications - only if flatpak is already present, not enforced
+    if command -v flatpak &>/dev/null; then
+        hwaccel_flat_lib
+    fi
 }
 # consolidated installation
 optimizer () {
