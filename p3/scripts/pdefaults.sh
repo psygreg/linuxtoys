@@ -15,6 +15,7 @@ source "$SCRIPT_DIR/../libs/optimizers.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/../libs/helpers.lib"
 # system-agnostic scripts
 sysag_run () {
     if [[ "$ID" != "cachyos" ]]; then
