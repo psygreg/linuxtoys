@@ -982,6 +982,11 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         
         menu = Gtk.Menu()
         
+        # Edit option
+        edit_item = Gtk.MenuItem(label=self.translations.get("edit_script", "Edit Script"))
+        edit_item.connect("activate", lambda item: self._edit_local_script(info))
+        menu.append(edit_item)
+        
         # Delete option
         delete_item = Gtk.MenuItem(label=self.translations.get("delete_script", "Delete Script"))
         delete_item.connect("activate", lambda item: self._delete_local_script(info))
@@ -1076,6 +1081,50 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                 )
                 error_dialog.run()
                 error_dialog.destroy()
+
+    def _edit_local_script(self, script_info):
+        """Open a local script in the user's default text editor."""
+        script_path = script_info.get('path', '')
+        
+        if not script_path or not os.path.exists(script_path):
+            # Show error dialog if script doesn't exist
+            error_dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get("edit_error_title", "Edit Error")
+            )
+            error_dialog.format_secondary_text(
+                self.translations.get(
+                    "edit_error_message",
+                    "The script file could not be found."
+                )
+            )
+            error_dialog.run()
+            error_dialog.destroy()
+            return
+        
+        try:
+            # Use xdg-open to open the script in the default text editor
+            os.system(f'xdg-open "{script_path}"')
+        except Exception as e:
+            # Show error dialog if opening fails
+            error_dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get("edit_error_title", "Edit Error")
+            )
+            error_dialog.format_secondary_text(
+                self.translations.get(
+                    "edit_error_message",
+                    "Failed to open script: {error}"
+                ).format(error=str(e))
+            )
+            error_dialog.run()
+            error_dialog.destroy()
 
     def _on_search_changed(self, search_entry):
         """Handle search text changes."""
