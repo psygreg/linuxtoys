@@ -169,6 +169,7 @@ davinciboxatom () {
 
     # installation
     dv_atom_in () {
+        sudo_rq
         dv_atom_deps
         git clone https://github.com/zelikos/davincibox.git
         sleep 1
