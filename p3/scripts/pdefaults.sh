@@ -33,6 +33,14 @@ sysag_run () {
     fi
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
+    # codec fix for Fedora/OpenSUSE
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ "fedora" ]]; then
+        rpmfusion_chk
+        _packages+=(libavcodec-freeworld gstreamer1-plugins-ugly)
+    elif [[ "$ID_LIKE" == *suse* ]]; then
+        sudo zypper in -y opi
+        sudo opi codecs
+    fi
     _install_
 }
 # consolidated installation

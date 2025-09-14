@@ -19,7 +19,7 @@ if [[ "$ID_LIKE" == *suse* ]]; then
     zeninf "$msg018"
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
     rpmfusion_chk
-    _packages=(libavcodec-freeworld)
+    _packages=(libavcodec-freeworld gstreamer1-plugins-ugly)
     _install_
     zeninf "$msg018"
 else

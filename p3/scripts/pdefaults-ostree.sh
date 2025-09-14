@@ -49,7 +49,7 @@ optimizer () {
             sudo rpm-ostree install -yA https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
         fi
         # install codecs and thumbnailer if absent
-        _packages=(libavcodec-freeworld ffmpegthumbnailer)
+        _packages=(libavcodec-freeworld gstreamer1-plugins-ugly ffmpegthumbnailer)
         _install_
         # set up earlyoom
         earlyoom_lib
