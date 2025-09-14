@@ -7,7 +7,6 @@
 # nocontainer
 
 # --- Start of the script code ---
-# --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 # language
@@ -16,16 +15,16 @@ source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # patch for Nvidia GPUs
 patch_nv () {
     cd $HOME
-    wget -O patch-nvidia https://raw.githubusercontent.com/psygreg/shader-booster/refs/heads/main/patch-nvidia;
+    wget https://raw.githubusercontent.com/psygreg/shader-booster/refs/heads/main/patch-nvidia;
     echo -e "\n$(cat ${HOME}/patch-nvidia)" >> "${DEST_FILE}"
-    rm ${HOME}/patch-nvidia
+    rm "$HOME/patch-nvidia"
 }
 # patch for Mesa-driven GPUs
 patch_mesa () {
     cd $HOME
-    wget -O patch-mesa https://raw.githubusercontent.com/psygreg/shader-booster/refs/heads/main/patch-mesa;
+    wget https://raw.githubusercontent.com/psygreg/shader-booster/refs/heads/main/patch-mesa;
     echo -e "\n$(cat ${HOME}/patch-mesa)" >> "${DEST_FILE}"
-    rm ${HOME}/patch-mesa
+    rm "$HOME/patch-mesa"
 }
 # LÓGICA DE DETECÇÃO ALTERADA para suportar múltiplos GPUs.
 HAS_NVIDIA=$(lspci | grep -i 'nvidia')
