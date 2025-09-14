@@ -139,6 +139,8 @@
   "ondemand_desc": "ለከፍተኛ አፈጻጸም የነባር CPU ድግግሞሽ ገዥን ወደ ondemand ይቀይራል። በላፕቶፖች ላይ አይመከርም። ይህ አማራጭ ቀድሞውንም ከተሠየመ እንደገና መመለስ ይችላል።",
   "hwaccel-flatpak": "ለFlatpak የሃርድዌር ማፋጠን",
   "hwaccel-flatpak_desc": "ወደ በአሁኑ ጊዜ የሚደገፉ flatpak ፕላትፎርሞች ffmpeg-full ይጫናል፣ መተግበሪያዎች በሃርድዌር የተፋጠነ ሚዲያ ማጫወት እንዲጠቀሙ ያስችላቸዋል።",
+  "ostree-autoupd": "ለRPM-OSTree ራስ-ሰር ማሻሻያዎች",
+  "ostree-autoupd_desc": "የrpm-ostree ራስ-ሰር የማሻሻያ ባህሪን በstage ሁነታ (ዝምታ) ያስችላል። ማሻሻያዎች በድጋሚ በመጀመር ጊዜ ብቻ ይተገበራሉ፣ እና እንደገና እንዲጀምሩ አይጠየቁም።",
 
   "nv_desc": "ወቅታዊ Nvidia አንቀሳቃሾች። የሚደገፉ GPUs፦ Maxwell (GT 9xx) እና አዳዲስ።",
   "nv_rtx_desc": "ከክፍት ከርነል ሞጁሎች ጋር ወቅታዊ Nvidia አንቀሳቃሾች። የሚደገፉ GPUs፦ GTX 16xx እና ማንኛውም RTX-ተከታታይ። ለላፕቶፖች፣ ለኃይል አስተዳደር proprietary አማራጭን ይመርጡ።",

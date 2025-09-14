@@ -139,6 +139,8 @@
   "ondemand_desc": "より高いパフォーマンスのためにデフォルトCPU周波数ガバナーをondemandに変更。ラップトップでは推奨されません。 すでに設定されている場合は削除オプションも提供します。",
   "hwaccel-flatpak": "Flatpakハードウェアアクセラレーション",
   "hwaccel-flatpak_desc": "現在サポートされているflatpakプラットフォームにffmpeg-fullをインストールし、アプリケーションがハードウェア加速メディア再生を使用できるようにします。",
+  "ostree-autoupd": "RPM-OSTree自動更新",
+  "ostree-autoupd_desc": "rpm-ostreeのステージモード（サイレント）での自動更新機能を有効にします。更新は再起動時にのみ適用され、再起動を求められることはありません。",
 
   "nv_desc": "現在のNvidiaドライバー。サポートGPU：Maxwell（GT 9xx）以降。",
   "nv_rtx_desc": "オープンカーネルモジュール付きの現在のNvidiaドライバー。サポートGPU：GTX 16xxと全RTXシリーズ。ラップトップでは電力管理のためにプロプライエタリオプションを推奨。",

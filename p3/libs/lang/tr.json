@@ -139,6 +139,8 @@
   "ondemand_desc": "Daha yüksek performans için varsayılan CPU frekans yöneticisini ondemand olarak değiştirir. Dizüstü bilgisayarlarda önerilmez. Bu seçenek zaten ayarlanmışsa geri de alabilir.",
   "hwaccel-flatpak": "Flatpak için Donanım Hızlandırma",
   "hwaccel-flatpak_desc": "Şu anda desteklenen flatpak platformlarına ffmpeg-full yükler, uygulamaların donanım hızlandırmalı medya oynatma kullanmasına olanak tanır.",
+  "ostree-autoupd": "RPM-OSTree için Otomatik Güncellemeler",
+  "ostree-autoupd_desc": "rpm-ostree'nin stage modunda (sessiz) otomatik güncelleme özelliğini etkinleştirir. Güncellemeler yalnızca yeniden başlatmada uygulanır ve yeniden başlatmanız istenmez.",
 
   "nv_desc": "Mevcut Nvidia sürücüleri. Desteklenen GPU'lar: Maxwell (GT 9xx) ve daha yeni.",
   "nv_rtx_desc": "Açık çekirdek modülleri ile mevcut Nvidia sürücüleri. Desteklenen GPU'lar: GTX 16xx ve herhangi bir RTX serisi. Dizüstü bilgisayarlar için güç yönetimi için tescilli seçeneği tercih edin.",

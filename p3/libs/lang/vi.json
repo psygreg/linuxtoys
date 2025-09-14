@@ -139,6 +139,8 @@
   "ondemand_desc": "Thay đổi governor tần số CPU mặc định thành ondemand để hiệu suất cao hơn. Không khuyến nghị trên laptop. Tùy chọn này cũng có thể hoàn nguyên nó nếu đã được đặt.",
   "hwaccel-flatpak": "Gia tốc phần cứng cho Flatpak",
   "hwaccel-flatpak_desc": "Cài đặt ffmpeg-full vào các nền tảng flatpak hiện được hỗ trợ, cho phép ứng dụng sử dụng phát lại phương tiện được gia tốc bằng phần cứng.",
+  "ostree-autoupd": "Cập nhật tự động cho RPM-OSTree",
+  "ostree-autoupd_desc": "Kích hoạt tính năng cập nhật tự động của rpm-ostree ở chế độ stage (im lặng). Các bản cập nhật chỉ được áp dụng khi khởi động lại, và bạn sẽ không được nhắc khởi động lại.",
 
   "nv_desc": "Trình điều khiển Nvidia hiện tại. GPU được hỗ trợ: Maxwell (GT 9xx) và mới hơn.",
   "nv_rtx_desc": "Trình điều khiển Nvidia hiện tại với module kernel mở. GPU được hỗ trợ: GTX 16xx và bất kỳ series RTX nào. Đối với laptop, ưu tiên tùy chọn proprietary cho quản lý năng lượng.",

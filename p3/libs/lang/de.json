@@ -139,6 +139,8 @@
   "ondemand_desc": "Ändert den Standard-CPU-Frequenz-Governor zu ondemand für höhere Leistung. Nicht empfohlen auf Laptops. Diese Option kann es auch entfernen, falls bereits gesetzt.",
   "hwaccel-flatpak": "Hardware-Beschleunigung für Flatpak",
   "hwaccel-flatpak_desc": "Installiert ffmpeg-full in die derzeit unterstützten Flatpak-Plattformen und ermöglicht Anwendungen die Verwendung hardwarebeschleunigter Medienwiedergabe.",
+  "ostree-autoupd": "Automatische Updates für RPM-OSTree",
+  "ostree-autoupd_desc": "Aktiviert rpm-ostree's automatische Update-Funktion im Stage-Modus (stumm). Updates werden nur beim Neustart angewendet, und Sie werden nicht zum Neustart aufgefordert.",
 
   "nv_desc": "Aktuelle Nvidia-Treiber. Unterstützte GPUs: Maxwell (GT 9xx) und neuer.",
   "nv_rtx_desc": "Aktuelle Nvidia-Treiber mit offenen Kernel-Modulen. Unterstützte GPUs: GTX 16xx und jede RTX-Serie. Für Laptops bevorzugen Sie die proprietäre Option für Energieverwaltung.",

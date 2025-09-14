@@ -139,6 +139,8 @@
   "ondemand_desc": "Binabago ang default CPU frequency governor sa ondemand para sa mas mataas na performance. Hindi inirekomenda sa mga laptop. Pwede rin itong i-revert kung naka-set na.",
   "hwaccel-flatpak": "Hardware Acceleration para sa Flatpak",
   "hwaccel-flatpak_desc": "Nag-i-install ng ffmpeg-full sa kasalukuyang supported flatpak platforms, nagbibigay-daan sa mga applications na gumamit ng hardware-accelerated media playback.",
+  "ostree-autoupd": "Automatic Updates para sa RPM-OSTree",
+  "ostree-autoupd_desc": "Nag-e-enable ng automatic updating feature ng rpm-ostree sa stage mode (tahimik). Ang mga updates ay malalapat lang sa reboot, at hindi kayo tatanungin na mag-reboot.",
 
   "nv_desc": "Kasalukuyang Nvidia drivers. Mga supported GPUs: Maxwell (GT 9xx) at mas bago.",
   "nv_rtx_desc": "Kasalukuyang Nvidia drivers na may open kernel modules. Mga supported GPUs: GTX 16xx at kahit anong RTX-series. Para sa mga laptop, mas prefer ang proprietary option para sa power management.",

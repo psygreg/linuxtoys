@@ -139,6 +139,8 @@
   "ondemand_desc": "더 높은 성능을 위해 기본 CPU 주파수 조절기를 ondemand로 변경합니다. 노트북에서는 권장되지 않습니다. 이 옵션은 이미 설정된 경우 되돌릴 수도 있습니다.",
   "hwaccel-flatpak": "Flatpak 하드웨어 가속",
   "hwaccel-flatpak_desc": "현재 지원되는 flatpak 플랫폼에 ffmpeg-full을 설치하여 애플리케이션이 하드웨어 가속 미디어 재생을 사용할 수 있도록 합니다.",
+  "ostree-autoupd": "RPM-OSTree 자동 업데이트",
+  "ostree-autoupd_desc": "rpm-ostree의 스테이지 모드(무음)에서 자동 업데이트 기능을 활성화합니다. 업데이트는 재부팅 시에만 적용되며, 재부팅하라는 메시지가 표시되지 않습니다.",
 
   "nv_desc": "현재 Nvidia 드라이버입니다. 지원되는 GPU: Maxwell (GT 9xx) 및 최신 버전.",
   "nv_rtx_desc": "오픈 커널 모듈이 있는 현재 Nvidia 드라이버입니다. 지원되는 GPU: GTX 16xx 및 모든 RTX 시리즈. 노트북의 경우 전원 관리를 위해 전용 옵션을 선호합니다.",

@@ -139,6 +139,8 @@
   "ondemand_desc": "Inabadilisha gavana wa marudio ya CPU ya chaguo-msingi kuwa ondemand kwa utendaji wa juu zaidi. Hapendekezwi kwa kompyuta za kiganjani. Chaguo hili linaweza pia kulirudisha ikiwa tayari limewekwa.",
   "hwaccel-flatpak": "Kuongeza Kasi kwa Vifaa vya Flatpak",
   "hwaccel-flatpak_desc": "Inasakinisha ffmpeg-full katika majukwaa ya flatpak yanayosaidiwa kwa sasa, kuruhusu programu kutumia kucheza vyombo vya habari kwa kuongeza kasi kwa vifaa.",
+  "ostree-autoupd": "Masasisho ya Otomatiki kwa RPM-OSTree",
+  "ostree-autoupd_desc": "Inawezesha kipengele cha masasisho ya otomatiki cha rpm-ostree katika hali ya hatua (kimya). Masasisho yatatumika tu wakati wa kuanza upya, na hutaulizwa kuanza upya.",
 
   "nv_desc": "Viendeshaji vya sasa vya Nvidia. GPU zinazosaidiwa: Maxwell (GT 9xx) na mpya.",
   "nv_rtx_desc": "Viendeshaji vya sasa vya Nvidia na moduli za kernel wazi. GPU zinazosaidiwa: GTX 16xx na mfululizo wowote wa RTX. Kwa kompyuta za kiganjani, pendelea chaguo la kimila kwa usimamizi wa nishati.",
