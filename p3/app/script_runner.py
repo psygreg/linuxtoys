@@ -1,6 +1,6 @@
 from .gtk_common import Gtk, GLib
 
-import subprocess
+import subprocess, os
 import threading
 from . import parser
 from . import compat
@@ -15,6 +15,8 @@ class ScriptRunner:
         self.running_process = None
         self.dialog = None
         self.close_button = None
+        self.local_env = os.environ.copy()
+        self.local_env["SCRIPT_DIR"] = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
         
     def run_script(self, script_info, on_completion=None, on_reboot_required=None):
         """
@@ -256,6 +258,7 @@ class ScriptRunner:
                     # Normal execution
                     self.running_process = subprocess.Popen(
                         ['bash', script_path],
+                        env=self.local_env,
                         stdout=subprocess.PIPE,
                         stderr=subprocess.STDOUT,
                         universal_newlines=True,
@@ -274,6 +277,7 @@ class ScriptRunner:
                 # dev_mode not available, continue with normal execution
                 self.running_process = subprocess.Popen(
                     ['bash', script_path],
+                    env=self.local_env,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     universal_newlines=True,
@@ -382,6 +386,7 @@ class ScriptRunner:
             
             self.running_process = subprocess.Popen(
                 ['bash', script_path], 
+                env=self.local_env,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, 
                 bufsize=1, 

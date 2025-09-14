@@ -1,6 +1,6 @@
 from .gtk_common import Gtk, GLib, Gdk
 from gi.repository import GdkPixbuf
-import os
+import os, shutil
 
 from . import parser
 from . import header
@@ -122,6 +122,29 @@ class AppWindow(Gtk.ApplicationWindow):
         # Connect focus events to enable/disable tooltips
         self.connect('focus-in-event', self._on_focus_in)
         self.connect('focus-out-event', self._on_focus_out)
+
+        # Local scripts
+        self.local_sh_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts/'
+
+        self.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
+        self.connect("drag-data-received", self._on_drag_data_received)
+        self.drag_dest_add_uri_targets()
+
+    def _on_drag_data_received(self, widget, context, x, y, data, info, time):
+        sh_paths = [ os.path.normpath(uri[7:]) for uri in data.get_uris() if uri.startswith('file://') and uri.endswith('.sh') ]
+        os.makedirs(os.path.dirname(self.local_sh_dir), exist_ok=True)
+        [ shutil.copy2(sh_path, f"{self.local_sh_dir}{os.path.basename(sh_path)}") for sh_path in sh_paths ]
+
+        self.load_scripts({
+            'name': 'Local Scripts',
+            'description': 'Drop your scripts here',
+            'icon': 'local-script.svg',
+            'mode': 'auto',
+            'path': self.local_sh_dir,
+            'is_script': False,
+            'has_subcategories': False,
+            'display_mode': 'menu'
+        })
 
     def _check_ostree_deployments_on_startup(self):
         """
@@ -295,7 +318,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if icon_value.endswith('.png') or icon_value.endswith('.svg'):
             # If only a filename, use the global icon path resolver
             if not os.path.isabs(icon_value) and '/' not in icon_value:
-                icon_path = get_icon_path(icon_value)
+                icon_path = get_icon_path("local-script.svg" if ".local/linuxtoys/scripts" in item_info.get('path') else icon_value)
             else:
                 icon_path = icon_value if os.path.exists(icon_value) else None
                 
@@ -347,6 +370,18 @@ class AppWindow(Gtk.ApplicationWindow):
     def load_categories(self):
         """Loads categories and connects their click event."""
         categories = parser.get_categories(self.translations)
+
+        local_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts'
+        categories.append({
+            'name': 'Local Scripts',
+            'description': 'Drop your scripts here',
+            'icon': 'local-script.svg',
+            'mode': 'auto',
+            'path': local_dir,
+            'is_script': False,
+            'has_subcategories': False,
+            'display_mode': 'menu'
+        })
         
         self.categories_flowbox.foreach(lambda widget: self.categories_flowbox.remove(widget))
         for cat in categories:
