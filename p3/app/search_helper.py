@@ -96,7 +96,33 @@ class SearchEngine:
                 score = self._calculate_match_score(query, script_info, 'script')
                 if score > 0:
                     results.append(SearchResult(script_info, 'script', score))
+        
+        # Add "Create New Script" option as a searchable item
+        self._search_create_new_script_option(query, results, local_scripts_dir)
     
+    def _search_create_new_script_option(self, query, results, local_scripts_dir):
+        """Search for the 'Create New Script' option."""
+        # Always include the create script option since the directory can be created on demand
+        # We don't need to check if the directory exists as it will be created when needed
+        
+        create_script_name = self.translations.get('create_new_script_name', 'Create New Script')
+        create_script_desc = self.translations.get('create_new_script_desc', 'Create a new local script')
+        
+        create_script_item = {
+            'name': create_script_name,
+            'description': create_script_desc,
+            'icon': 'document-new',
+            'path': local_scripts_dir,
+            'is_script': False,
+            'is_subcategory': False,
+            'is_create_script': True
+        }
+        
+        # Calculate match score for the create script option
+        score = self._calculate_match_score(query, create_script_item, 'create_script')
+        if score > 0:
+            results.append(SearchResult(create_script_item, 'create_script', score))
+
     def _is_script_available(self, script_path):
         """Check if a script should be available based on compatibility filters."""
         if not script_is_compatible(script_path, self.system_compat_keys):
@@ -168,6 +194,8 @@ class SearchEngine:
         # Boost scores for certain item types
         if item_type == 'category':
             score += 10  # Categories slightly boosted for navigation
+        elif item_type == 'create_script':
+            score += 15  # Create script option gets a good boost for utility
             
         # Boost for shorter names (more specific matches)
         if score > 0 and len(name) < 20:

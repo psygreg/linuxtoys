@@ -1188,7 +1188,12 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # This would be called when Enter is pressed or result is directly activated
         item_info = search_result.item_info
         
-        # All search results are scripts now
+        # Check if this is the "Create New Script" option
+        if item_info.get('is_create_script'):
+            self._handle_create_new_script()
+            return
+        
+        # Handle regular scripts
         if not self.script_runner.is_running():
             if self.reboot_required:
                 self._show_reboot_warning_dialog()

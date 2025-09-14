@@ -2,6 +2,8 @@ from .gtk_common import Gtk, GLib
 from . import cli_helper
 from . import script_runner
 from . import language_selector
+from . import about_helper
+from . import get_icon_path
 from .lang_utils import create_translator
 import threading
 import os
@@ -119,8 +121,32 @@ class MenuButton(Gtk.MenuButton):
 		self.language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
 		self.language_select.connect("clicked", self.__on_language_select)
 
+		self.about_item = Gtk.ModelButton(label=_("about_title"))
+		# Try to load LinuxToys icon, fallback to applications-utilities
+		try:
+			icon_path = get_icon_path("linuxtoys.svg")
+			if icon_path:
+				# For SVG files in menu, use smaller size
+				from .gtk_common import GdkPixbuf
+				try:
+					pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+						icon_path, 16, 16, True
+					)
+					about_icon = Gtk.Image.new_from_pixbuf(pixbuf)
+				except Exception:
+					# Fallback if SVG loading fails
+					about_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.MENU)
+			else:
+				raise FileNotFoundError("linuxtoys.svg not found")
+		except Exception:
+			about_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.MENU)
+		
+		self.about_item.set_image(about_icon)
+		self.about_item.connect("clicked", self.__on_about)
+
 		vbox.pack_start(self.load_manifest, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
+		vbox.pack_start(self.about_item, True, True, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
@@ -132,6 +158,7 @@ class MenuButton(Gtk.MenuButton):
 		_ = create_translator()
 		self.load_manifest.set_label(_("load_manifest"))
 		self.language_select.set_label(_("select_language"))
+		self.about_item.set_label(_("about_title"))
 
 	def __on_language_select(self, widget):
 		"""Handle language selection menu item click"""
@@ -144,6 +171,11 @@ class MenuButton(Gtk.MenuButton):
 				self.on_language_changed
 			)
 			selector.show_language_selector()
+
+	def __on_about(self, widget):
+		"""Handle about menu item click"""
+		if self.parent_window and hasattr(self.parent_window, 'translations'):
+			about_helper.show_about_dialog(self.parent_window, self.parent_window.translations)
 
 	def __on_load_manifest(self, widget):
 		scripts_name = self.__file_choose()
