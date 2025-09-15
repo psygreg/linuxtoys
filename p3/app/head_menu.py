@@ -6,7 +6,19 @@ from . import about_helper
 from . import get_icon_path
 from .lang_utils import create_translator
 import threading
-import os
+import os, re, zipfile
+
+
+class FileChooser(Gtk.FileChooserDialog):
+    def __init__(self, title, parent, action=Gtk.FileChooserAction.OPEN):
+        super().__init__(title=title, parent=parent, flags=0, action=action)
+
+        self.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK
+        )
+
+        self.show_all()
 
 
 class InputDialog(Gtk.MessageDialog):
@@ -102,6 +114,7 @@ class MenuButton(Gtk.MenuButton):
 		self.on_language_changed = on_language_changed
 		self.results = []
 		self._temp_sh = '/tmp/._temp_script.sh'
+		self.local_sh_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts/'
 		self.dlg = None
 
 		# Set the hamburger menu icon (like GNOME)
@@ -120,6 +133,14 @@ class MenuButton(Gtk.MenuButton):
 		self.language_select = Gtk.ModelButton(label=_("select_language"))
 		self.language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
 		self.language_select.connect("clicked", self.__on_language_select)
+
+		self.export_local = Gtk.ModelButton(label="Export Local Script")
+		self.export_local.set_image(Gtk.Image.new_from_icon_name("document-open", Gtk.IconSize.MENU))
+		self.export_local.connect("clicked", self.__on_export_local)
+
+		self.import_local = Gtk.ModelButton(label="Import Local Script")
+		self.import_local.set_image(Gtk.Image.new_from_icon_name("document-save", Gtk.IconSize.MENU))
+		self.import_local.connect("clicked", self.__on_import_local)
 
 		self.about_item = Gtk.ModelButton(label=_("about_title"))
 		# Try to load LinuxToys icon, fallback to applications-utilities
@@ -145,6 +166,10 @@ class MenuButton(Gtk.MenuButton):
 		self.about_item.connect("clicked", self.__on_about)
 
 		vbox.pack_start(self.load_manifest, True, True, 0)
+		vbox.pack_start(Gtk.SeparatorMenuItem(), True, True, 0)
+		vbox.pack_start(self.export_local, True, True, 0)
+		vbox.pack_start(self.import_local, True, True, 0)
+		vbox.pack_start(Gtk.SeparatorMenuItem(), True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
 		vbox.show_all()
@@ -152,6 +177,49 @@ class MenuButton(Gtk.MenuButton):
 		pop.add(vbox)
 
 		self.set_popover(pop)
+
+	def __on_export_local(self, widget):
+		dialog = FileChooser(
+			title="Choose folder to save",
+			parent=self.get_toplevel(),
+			action=Gtk.FileChooserAction.SELECT_FOLDER,
+		)
+
+		response = dialog.run()
+		if response == Gtk.ResponseType.OK:
+			_zipsh = f"{dialog.get_filename()}/linuxtoys-local-scripts.zip"
+			threading.Thread(
+				target=self.__zip_directory,
+				args=(self.local_sh_dir, _zipsh)
+			).start()
+
+		dialog.destroy()
+
+	def __on_import_local(self, widget):
+		dialog = FileChooser(
+			title="Choose your linuxtoys scripts",
+			parent=self.get_toplevel()
+		)
+
+		response = dialog.run()
+		if response == Gtk.ResponseType.OK:
+			threading.Thread(
+				target=self.__unzip_directory,
+				args=(dialog.get_filename(), self.local_sh_dir)
+			).start()
+
+		dialog.destroy()
+
+	def __zip_directory(self, folder_path, output_zip_path):
+	    with zipfile.ZipFile(output_zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+	        for root, dirs, files in os.walk(folder_path):
+	            for file in files:
+	                file_path = os.path.join(root, file)
+	                zipf.write(file_path, os.path.relpath(file_path, folder_path))
+
+	def __unzip_directory(self, zip_file_path, extract_to_folder):
+	    with zipfile.ZipFile(zip_file_path, 'r') as zipf:
+	        zipf.extractall(extract_to_folder)
 
 	def refresh_menu_translations(self):
 		"""Refresh menu items with new translations"""
@@ -202,14 +270,10 @@ class MenuButton(Gtk.MenuButton):
 		_ = create_translator()
 		scripts_name = []
 
-		dialog = Gtk.FileChooserDialog(
+		dialog = FileChooser(
 			title=_("choose_manifest_title"),
 			parent=self.get_toplevel(),
 			action=Gtk.FileChooserAction.OPEN,
-		)
-
-		dialog.add_buttons(
-			Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, _("select_button"), Gtk.ResponseType.OK
 		)
 
 		response = dialog.run()
