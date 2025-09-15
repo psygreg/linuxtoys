@@ -37,7 +37,6 @@
   "select_button": "Selecteren",
   "loading_manifest_message": "Je manifestbestand wordt geladen... Even geduld alsjeblieft...",
   "packages_flatpaks": "Pakketten &amp; Flatpaks",
-
   "psypicks": "Psygreg's Keuzes",
   "psypicks_desc": "Geselecteerde software voor gaming en levenskwaliteit op Linux.",
   "pdefaults": "Geoptimaliseerde Standaardinstellingen",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Tools en bronnen voor het beheren van randapparatuur en verlichting.",
   "sysadm": "Systeembeheer",
   "sysadm_desc": "Tools voor systeembeheer en -management voor kleine bedrijven of op schaal.",
-
   "gimp_desc": "Een krachtige open source afbeeldingseditor.",
   "onlyoffice_desc": "Een suite met betere compatibiliteit met Microsoft Office bestanden.",
   "msteams_desc": "Een samenwerkingsplatform voor werken op afstand.",
@@ -89,7 +87,6 @@
   "figma_desc": "Een web-gebaseerde UI/UX ontwerp applicatie.",
   "davinci_desc": "Professionele video editing software.",
   "obsidian_desc": "Een gratis, flexibele app voor je gedachten, notities en organisatie.",
-
   "gsr_desc": "Een schermopname tool met hardware encoding vergelijkbaar met Shadowplay voor elke GPU op Linux.",
   "pp_desc": "Een GTK-gebaseerde tool om eenvoudig community runners te verkrijgen voor gaming op Linux.",
   "sober_desc": "Een community port van Roblox voor Linux, gebaseerd op de Android versie van het spel.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Een community wrapper voor Roblox Studio, voor Roblox game creators.",
   "pup_desc": "Een Qt-gebaseerde tool om eenvoudig community runners te verkrijgen voor gaming op Linux.",
   "lsfg_desc": "Een compatibiliteitslaag voor Lossless Scaling op Vulkan voor Linux. Vereist nog steeds Lossless Scaling voor Windows.",
-
   "ufw": "Firewall Configureren",
   "ufw_desc": "Installeert en past een standaardinstelling toe die ideaal is voor de meeste gebruikers voor de Uncomplicated Firewall (UFW).",
   "swapfile": "Swap File Configureren",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Installeert ffmpeg-full in de momenteel ondersteunde flatpak platforms, waardoor applicaties hardware-versnelde media afspelen kunnen gebruiken.",
   "ostree-autoupd": "Automatische Updates voor RPM-OSTree",
   "ostree-autoupd_desc": "Schakelt rpm-ostree's automatische update functie in stage modus (stil) in. Updates worden alleen toegepast bij herstart, en je wordt niet gevraagd om te herstarten.",
-
   "nv_desc": "Huidige Nvidia drivers. Ondersteunde GPU's: Maxwell (GT 9xx) en nieuwer.",
   "nv_rtx_desc": "Huidige Nvidia drivers met open kernel modules. Ondersteunde GPU's: GTX 16xx en elke RTX-serie. Voor laptops, geef de voorkeur aan de proprietary optie voor power management.",
   "nv_desc_470": "Legacy Nvidia drivers. Ondersteunde GPU's: Kepler (GT 6xx) en Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Driver voor officiële en generieke Xbox controllers op Linux.",
   "modsign": "Kernel module ondertekening",
   "modsign_desc": "Schakelt ondertekening van kernel modules en drivers in met een Machine Owner Key voor Secure Boot.",
-
   "flat_desc": "De go-to repository voor Flatpak applicaties, met veel exclusieve apps.",
   "brew_desc": "Een CLI tools pakketbeheerder voor macOS/Linux.",
   "chaotic_desc": "Een community-gedreven repository voor Arch Linux gebruikers.",
   "rpmfusion_desc": "Een repository die aanvullende pakketten biedt voor Fedora en RHEL.",
   "pip_desc": "Python pakketbeheerder. Meestal nuttig voor Python ontwikkelaars.",
   "cargo_desc": "Rust pakketbeheerder. Meestal nuttig voor Rust ontwikkelaars. Bevat Rustup.",
-
   "obs_desc": "Een populaire open-source streaming en opname software.",
   "mctl_desc": "Een systeemmonitor voor Linux zeer vergelijkbaar met Windows Task Manager, gebaseerd op GTK4.",
   "sc_desc": "Een tool voor het instellen van Stream Decks en vergelijkbare apparaten.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "Een DNS service die je verkeer verbergt voor je ISP.",
   "piper_desc": "Een GTK applicatie om gaming muizen te configureren met libratbag. Veel gebruikt voor Logitech, Roccat, Asus en Glorious muizen.",
   "glever_desc": "Een hulpprogramma om AppImages te beheren, desktop entries en app metadata te genereren, apps in-place bij te werken of meerdere versies zij aan zij te houden.",
-
   "docker_desc": "De open source container service provider en basistools ervoor, zoals docker-compose. Bevat een container met Portainer CE voor het beheren van Docker vanuit een web UI.",
   "mise_desc": "Zoals asdf (of nvm of pyenv maar voor elke taal) beheert het dev tools zoals node, python, cmake, terraform, en honderden meer. Vervangt PyEnv, NVM, en de Java JDK en Maven installers van deze sectie.",
   "nvm_desc": "Een versiebeheerder voor Node.js, waarmee je eenvoudig kunt schakelen tussen verschillende versies. Bevat Node.js, NPM en Yarn. Niet nodig bij het gebruik van Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "Een verzameling tools en bibliotheken voor het maken van applicaties gebaseerd op het .NET platform.",
   "sublime_desc": "Een geavanceerde teksteditor voor code, markup en proza.",
   "tailscale_desc": "Een zero-config VPN die je apparaten veilig verbindt via het internet.",
-
   "cockpit_desc": "Een web-gebaseerde interface voor het monitoren en beheren van Linux servers (server).",
   "webmin_desc": "Een web-gebaseerde interface voor systeembeheer voor Unix.",
   "topgrade_desc": "Een tool voor het upgraden van alle geïnstalleerde pakketten op elk Linux systeem.",
   "cockpitclient_desc": "Een web-gebaseerde interface voor het beheren van Linux servers (client).",
   "adir_desc": "Installeert alle pakketten die nodig zijn om lid te worden van Active Directory domeinen met realmd.",
-
   "select_language": "Taal Selecteren",
   "select_language_title": "Taalselectie",
   "select_language_message": "Selecteer alsjeblieft je gewenste taal:",
@@ -221,13 +211,13 @@
   "search_results": "Zoekresultaten",
   "results_found": "resultaten gevonden",
   "search": "Zoeken",
-  "delete_script": "Script Verwijderen",
+  "delete_script": "Verwijderen",
   "delete_script_title": "Script Verwijderen",
   "delete_script_message": "Weet u zeker dat u '{script_name}' wilt verwijderen?",
   "delete_script_warning": "<b>Deze actie kan niet ongedaan worden gemaakt.</b>",
   "delete_error_title": "Verwijderingsfout",
   "delete_error_message": "Kan script niet verwijderen: {error}",
-  "edit_script": "Script Bewerken",
+  "edit_script": "Bewerken",
   "edit_error_title": "Bewerkingsfout",
   "edit_error_message": "Kan script niet openen: {error}",
   "yes": "Ja",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# Raadpleeg de documentatie op https://linuxtoys.luminhost.xyz/handbook.html voor meer informatie.",
   "create_new_script_name": "Nieuw Script Maken",
   "create_new_script_desc": "Maak een nieuw lokaal script aan. Het wordt geopend in uw standaard teksteditor na aanmaak.",
-  "script_name_prompt": "Voer uw scriptnaam in:"
+  "script_name_prompt": "Voer uw scriptnaam in:",
+  "export_error_title": "Export Fout",
+  "export_error_message": "Mislukt om script te exporteren: {error}",
+  "export": "Exporteren",
+  "select_export_directory": "Selecteer Export Directory"
 }

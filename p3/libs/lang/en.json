@@ -220,13 +220,13 @@
   "search_results": "Search Results",
   "results_found": "results found",
   "search": "Search",
-  "delete_script": "Delete Script",
+  "delete_script": "Delete",
   "delete_script_title": "Delete Script",
   "delete_script_message": "Are you sure you want to delete '{script_name}'?",
   "delete_script_warning": "<b>This action cannot be undone.</b>",
   "delete_error_title": "Delete Error",
   "delete_error_message": "Failed to delete script: {error}",
-  "edit_script": "Edit Script",
+  "edit_script": "Edit",
   "edit_error_title": "Edit Error",
   "edit_error_message": "Failed to open script: {error}",
   "yes": "Yes",
@@ -237,5 +237,9 @@
   "create_new_script_name": "Create New Script",
   "create_new_script_desc": "Create a new local script. It will be opened in your default text editor after creation.",
   "script_name_prompt": "Enter your script name:",
-  "ok_btn_label": "OK"
+  "ok_btn_label": "OK",
+  "export_error_title": "Export Error",
+  "export_error_message": "Failed to export script: {error}",
+  "export": "Export",
+  "select_export_directory": "Select Export Directory"
 }

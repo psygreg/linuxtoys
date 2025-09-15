@@ -982,6 +982,11 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         
         menu = Gtk.Menu()
         
+        # Export option
+        export_item = Gtk.MenuItem(label=self.translations.get("export", "Export"))
+        export_item.connect("activate", lambda item: self._export_local_script(info))
+        menu.append(export_item)
+        
         # Edit option
         edit_item = Gtk.MenuItem(label=self.translations.get("edit_script", "Edit Script"))
         edit_item.connect("activate", lambda item: self._edit_local_script(info))
@@ -1125,6 +1130,61 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             )
             error_dialog.run()
             error_dialog.destroy()
+
+    def _export_local_script(self, script_info):
+        """Export a local script to a user-chosen directory."""
+        script_name = script_info.get('name', 'Unknown Script')
+        script_path = script_info.get('path', '')
+        
+        if not script_path or not os.path.exists(script_path):
+            return
+        
+        # Create file chooser dialog
+        dialog = Gtk.FileChooserDialog(
+            title=self.translations.get("select_export_directory", "Select Export Directory"),
+            parent=self,
+            action=Gtk.FileChooserAction.SELECT_FOLDER
+        )
+        
+        # Add buttons
+        dialog.add_button(self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL)
+        dialog.add_button(self.translations.get("export", "Export"), Gtk.ResponseType.OK)
+        
+        # Set default directory to user's home
+        dialog.set_current_folder(os.path.expanduser("~"))
+        
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            export_dir = dialog.get_filename()
+            dialog.destroy()
+            
+            # Copy the script to the selected directory
+            filename = os.path.basename(script_path)
+            dest_path = os.path.join(export_dir, filename)
+            
+            try:
+                import shutil
+                shutil.copy2(script_path, dest_path)
+                
+            except Exception as e:
+                # Show error dialog
+                error_dialog = Gtk.MessageDialog(
+                    transient_for=self,
+                    flags=0,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=self.translations.get("export_error_title", "Export Error")
+                )
+                error_dialog.format_secondary_text(
+                    self.translations.get(
+                        "export_error_message",
+                        "Failed to export script: {error}"
+                    ).format(error=str(e))
+                )
+                error_dialog.run()
+                error_dialog.destroy()
+        else:
+            dialog.destroy()
 
     def _on_search_changed(self, search_entry):
         """Handle search text changes."""

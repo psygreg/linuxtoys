@@ -37,7 +37,6 @@
   "select_button": "Pilih",
   "loading_manifest_message": "Memuat file manifest Anda... Harap tunggu...",
   "packages_flatpaks": "Paket & Flatpaks",
-
   "psypicks": "Pilihan Psygreg",
   "psypicks_desc": "Koleksi software pilihan untuk gaming dan kualitas hidup di Linux.",
   "pdefaults": "Default Teroptimasi",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Alat dan sumber daya untuk mengelola perangkat eksternal dan pencahayaan.",
   "sysadm": "Administrasi Sistem",
   "sysadm_desc": "Alat untuk administrasi dan manajemen sistem untuk bisnis kecil atau skala besar.",
-
   "gimp_desc": "Editor gambar open source yang powerful.",
   "onlyoffice_desc": "Suite dengan kompatibilitas yang lebih baik untuk file Microsoft Office.",
   "msteams_desc": "Platform kolaborasi untuk kerja jarak jauh.",
@@ -89,7 +87,6 @@
   "figma_desc": "Aplikasi desain UI/UX berbasis web.",
   "davinci_desc": "Software editing video profesional.",
   "obsidian_desc": "Aplikasi gratis dan fleksibel untuk pikiran, catatan, dan organisasi Anda.",
-
   "gsr_desc": "Alat perekaman layar dengan encoding hardware seperti Shadowplay untuk GPU apa pun di Linux.",
   "pp_desc": "Alat berbasis GTK untuk dengan mudah mendapatkan runner komunitas untuk gaming di Linux.",
   "sober_desc": "Port komunitas Roblox untuk Linux, berdasarkan versi Android dari game tersebut.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Wrapper komunitas untuk Roblox Studio, untuk kreator game Roblox.",
   "pup_desc": "Alat berbasis Qt untuk dengan mudah mendapatkan runner komunitas untuk gaming di Linux.",
   "lsfg_desc": "Layer kompatibilitas untuk Lossless Scaling di Vulkan untuk Linux. Masih memerlukan Lossless Scaling untuk Windows.",
-
   "ufw": "Konfigurasi Firewall",
   "ufw_desc": "Menginstal dan menerapkan pengaturan default yang ideal untuk sebagian besar pengguna untuk Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigurasi Swap File",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Menginstal ffmpeg-full ke platform flatpak yang saat ini didukung, memungkinkan aplikasi menggunakan pemutaran media yang dipercepat perangkat keras.",
   "ostree-autoupd": "Pembaruan Otomatis untuk RPM-OSTree",
   "ostree-autoupd_desc": "Mengaktifkan fitur pembaruan otomatis rpm-ostree dalam mode stage (senyap). Pembaruan hanya akan diterapkan saat restart, dan Anda tidak akan diminta untuk restart.",
-
   "nv_desc": "Driver Nvidia saat ini. GPU yang didukung: Maxwell (GT 9xx) dan yang lebih baru.",
   "nv_rtx_desc": "Driver Nvidia saat ini dengan modul kernel terbuka. GPU yang didukung: GTX 16xx dan seri RTX apa pun. Untuk laptop, lebih pilih opsi proprietary untuk manajemen daya.",
   "nv_desc_470": "Driver Nvidia legacy. GPU yang didukung: Kepler (GT 6xx) dan Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Driver untuk controller Xbox resmi dan generik di Linux.",
   "modsign": "Penandatanganan modul kernel",
   "modsign_desc": "Mengaktifkan penandatanganan modul kernel dan driver dengan Machine Owner Key untuk Secure Boot.",
-
   "flat_desc": "Repository utama untuk aplikasi Flatpak, memiliki banyak aplikasi eksklusif.",
   "brew_desc": "Package manager alat CLI untuk macOS/Linux.",
   "chaotic_desc": "Repository yang digerakkan komunitas untuk pengguna Arch Linux.",
   "rpmfusion_desc": "Repository yang menyediakan paket tambahan untuk Fedora dan RHEL.",
   "pip_desc": "Package manager Python. Umumnya berguna untuk developer Python.",
   "cargo_desc": "Package manager Rust. Umumnya berguna untuk developer Rust. Termasuk Rustup.",
-
   "obs_desc": "Software streaming dan recording open-source yang populer.",
   "mctl_desc": "Monitor sistem untuk Linux yang sangat mirip dengan Windows Task Manager, berbasis GTK4.",
   "sc_desc": "Alat untuk mengatur Stream Deck dan perangkat serupa.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "Layanan DNS yang menyembunyikan traffic Anda dari ISP.",
   "piper_desc": "Aplikasi GTK untuk mengkonfigurasi mouse gaming menggunakan libratbag. Umumnya digunakan untuk mouse Logitech, Roccat, Asus dan Glorious.",
   "glever_desc": "Utilitas untuk mengelola AppImages, menghasilkan entri desktop dan metadata aplikasi, memperbarui aplikasi di tempat atau menyimpan beberapa versi berdampingan.",
-
   "docker_desc": "Penyedia layanan container open source dan alat dasar untuk itu, seperti docker-compose. Termasuk container dengan Portainer CE untuk mengelola Docker dari web UI.",
   "mise_desc": "Seperti asdf (atau nvm atau pyenv tapi untuk bahasa apa pun) ia mengelola dev tools seperti node, python, cmake, terraform, dan ratusan lainnya. Menggantikan installer PyEnv, NVM, dan Java JDK dan Maven dari bagian ini.",
   "nvm_desc": "Version manager untuk Node.js, memungkinkan Anda dengan mudah beralih antara versi yang berbeda. Termasuk Node.js, NPM dan Yarn. Tidak diperlukan jika menggunakan Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "Koleksi alat dan library untuk membuat aplikasi berdasarkan platform .NET.",
   "sublime_desc": "Editor teks canggih untuk kode, markup dan prosa.",
   "tailscale_desc": "VPN zero-config yang menghubungkan perangkat Anda dengan aman melalui internet.",
-
   "cockpit_desc": "Antarmuka berbasis web untuk monitoring dan mengelola server Linux (server).",
   "webmin_desc": "Antarmuka berbasis web untuk administrasi sistem untuk Unix.",
   "topgrade_desc": "Alat untuk meng-upgrade semua paket yang diinstal di sistem Linux mana pun.",
   "cockpitclient_desc": "Antarmuka berbasis web untuk mengelola server Linux (klien).",
   "adir_desc": "Menginstal semua paket yang diperlukan untuk bergabung dengan domain Active Directory menggunakan realmd.",
-
   "select_language": "Pilih Bahasa",
   "select_language_title": "Pemilihan Bahasa",
   "select_language_message": "Silakan pilih bahasa pilihan Anda:",
@@ -221,13 +211,13 @@
   "search_results": "Hasil Pencarian",
   "results_found": "hasil ditemukan",
   "search": "Cari",
-  "delete_script": "Hapus Skrip",
+  "delete_script": "Hapus",
   "delete_script_title": "Hapus Skrip",
   "delete_script_message": "Apakah Anda yakin ingin menghapus '{script_name}'?",
   "delete_script_warning": "<b>Tindakan ini tidak dapat dibatalkan.</b>",
   "delete_error_title": "Kesalahan Hapus",
   "delete_error_message": "Gagal menghapus skrip: {error}",
-  "edit_script": "Edit Skrip",
+  "edit_script": "Edit",
   "edit_error_title": "Error Edit",
   "edit_error_message": "Gagal membuka skrip: {error}",
   "yes": "Ya",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# Lihat dokumentasi di https://linuxtoys.luminhost.xyz/handbook.html untuk informasi lebih lanjut.",
   "create_new_script_name": "Buat Skrip Baru",
   "create_new_script_desc": "Buat skrip lokal baru. Akan dibuka di editor teks default Anda setelah dibuat.",
-  "script_name_prompt": "Masukkan nama skrip Anda:"
+  "script_name_prompt": "Masukkan nama skrip Anda:",
+  "export_error_title": "Kesalahan Ekspor",
+  "export_error_message": "Gagal mengekspor skrip: {error}",
+  "export": "Ekspor",
+  "select_export_directory": "Pilih Direktori Ekspor"
 }

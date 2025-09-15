@@ -37,7 +37,6 @@
   "select_button": "Seç",
   "loading_manifest_message": "Manifest dosyanız yükleniyor... Lütfen bekleyin...",
   "packages_flatpaks": "Paketler ve Flatpaklar",
-
   "psypicks": "Psygreg'in Seçimleri",
   "psypicks_desc": "Linux'ta oyun ve yaşam kalitesi için seçilmiş yazılım koleksiyonu.",
   "pdefaults": "Optimize Edilmiş Varsayılanlar",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Çevre birimi cihazları ve aydınlatma yönetimi için araçlar ve kaynaklar.",
   "sysadm": "Sistem Yönetimi",
   "sysadm_desc": "Küçük işletmeler veya büyük ölçek için sistem yönetimi ve yönetim araçları.",
-
   "gimp_desc": "Güçlü bir açık kaynak görüntü düzenleyici.",
   "onlyoffice_desc": "Microsoft Office dosyalarıyla daha iyi uyumluluk sunan bir paket.",
   "msteams_desc": "Uzaktan çalışma için işbirliği platformu.",
@@ -89,7 +87,6 @@
   "figma_desc": "Web tabanlı UI/UX tasarım uygulaması.",
   "davinci_desc": "Profesyonel video düzenleme yazılımı.",
   "obsidian_desc": "Düşünceleriniz, notlarınız ve organizasyonunuz için ücretsiz, esnek bir uygulama.",
-
   "gsr_desc": "Linux'ta herhangi bir GPU için Shadowplay benzeri donanım kodlamalı ekran kayıt aracı.",
   "pp_desc": "Linux'ta oyun için topluluk çalıştırıcılarını kolayca elde etmek için GTK tabanlı araç.",
   "sober_desc": "Linux için Roblox topluluk portu, oyunun Android sürümüne dayalı.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Roblox oyun yaratıcıları için Roblox Studio topluluk sarmalayıcısı.",
   "pup_desc": "Linux'ta oyun için topluluk çalıştırıcılarını kolayca elde etmek için Qt tabanlı araç.",
   "lsfg_desc": "Linux için Vulkan üzerinde Lossless Scaling için uyumluluk katmanı. Hala Windows için Lossless Scaling gerektirir.",
-
   "ufw": "Güvenlik Duvarını Yapılandır",
   "ufw_desc": "Çoğu kullanıcı için ideal olan Uncomplicated Firewall (UFW) için varsayılan ayarı yükler ve uygular.",
   "swapfile": "Takas Dosyasını Yapılandır",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Şu anda desteklenen flatpak platformlarına ffmpeg-full yükler, uygulamaların donanım hızlandırmalı medya oynatma kullanmasına olanak tanır.",
   "ostree-autoupd": "RPM-OSTree için Otomatik Güncellemeler",
   "ostree-autoupd_desc": "rpm-ostree'nin stage modunda (sessiz) otomatik güncelleme özelliğini etkinleştirir. Güncellemeler yalnızca yeniden başlatmada uygulanır ve yeniden başlatmanız istenmez.",
-
   "nv_desc": "Mevcut Nvidia sürücüleri. Desteklenen GPU'lar: Maxwell (GT 9xx) ve daha yeni.",
   "nv_rtx_desc": "Açık çekirdek modülleri ile mevcut Nvidia sürücüleri. Desteklenen GPU'lar: GTX 16xx ve herhangi bir RTX serisi. Dizüstü bilgisayarlar için güç yönetimi için tescilli seçeneği tercih edin.",
   "nv_desc_470": "Eski Nvidia sürücüleri. Desteklenen GPU'lar: Kepler (GT 6xx) ve Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Linux'ta resmi ve genel Xbox kontrolcüleri için sürücü.",
   "modsign": "Çekirdek modülü imzalama",
   "modsign_desc": "Secure Boot için Machine Owner Key ile çekirdek modüllerini ve sürücüleri imzalamayı etkinleştirir.",
-
   "flat_desc": "Birçok özel uygulamaya sahip Flatpak uygulamaları için ana depo.",
   "brew_desc": "macOS/Linux için CLI araçları paket yöneticisi.",
   "chaotic_desc": "Arch Linux kullanıcıları için topluluk odaklı depo.",
   "rpmfusion_desc": "Fedora ve RHEL için ek paketler sağlayan depo.",
   "pip_desc": "Python paket yöneticisi. Genellikle Python geliştiricileri için yararlı.",
   "cargo_desc": "Rust paket yöneticisi. Genellikle Rust geliştiricileri için yararlı. Rustup'ı içerir.",
-
   "obs_desc": "Popüler açık kaynak yayın ve kayıt yazılımı.",
   "mctl_desc": "GTK4 tabanlı Windows Görev Yöneticisi'ne çok benzer Linux için sistem monitörü.",
   "sc_desc": "Stream Deck'leri ve benzer cihazları kurmak için araç.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "Trafiğinizi ISS'nizden gizleyen DNS hizmeti.",
   "piper_desc": "libratbag kullanarak oyun farelerini yapılandırmak için GTK uygulaması. Genellikle Logitech, Roccat, Asus ve Glorious fareler için kullanılır.",
   "glever_desc": "AppImage'leri yönetmek için bir araç, masaüstü girişleri ve uygulama meta verileri oluşturur, uygulamaları yerinde günceller veya birden fazla sürümü yan yana tutar.",
-
   "docker_desc": "Açık kaynak konteyner hizmet sağlayıcısı ve docker-compose gibi temel araçları. Web UI'den Docker'ı yönetmek için Portainer CE ile bir konteyner içerir.",
   "mise_desc": "asdf gibi (veya nvm veya pyenv ama herhangi bir dil için) node, python, cmake, terraform ve yüzlerce daha fazlasını yönetir. Bu bölümden PyEnv, NVM ve Java JDK ve Maven yükleyicilerini değiştirir.",
   "nvm_desc": "Node.js için farklı sürümler arasında kolayca geçiş yapmanızı sağlayan sürüm yöneticisi. Node.js, NPM ve Yarn'ı içerir. Mise kullanıyorsanız gerekli değil.",
@@ -204,13 +196,11 @@
   "dotnet_desc": ".NET platformu tabanlı uygulamalar oluşturmak için araç ve kütüphane koleksiyonu.",
   "sublime_desc": "Kod, işaretleme ve düzyazı için gelişmiş metin düzenleyici.",
   "tailscale_desc": "Cihazlarınızı internet üzerinden güvenle bağlayan sıfır yapılandırmalı VPN.",
-
   "cockpit_desc": "Linux sunucularını izlemek ve yönetmek için web tabanlı arayüz (sunucu).",
   "webmin_desc": "Unix için sistem yönetimi için web tabanlı arayüz.",
   "topgrade_desc": "Herhangi bir Linux sisteminde yüklü tüm paketleri yükseltmek için araç.",
   "cockpitclient_desc": "Linux sunucularını yönetmek için web tabanlı arayüz (istemci).",
   "adir_desc": "realmd kullanarak Active Directory etki alanlarına katılmak için gerekli tüm paketleri yükler.",
-
   "select_language": "Dil Seç",
   "select_language_title": "Dil Seçimi",
   "select_language_message": "Lütfen tercih ettiğiniz dili seçin:",
@@ -221,13 +211,13 @@
   "search_results": "Arama Sonuçları",
   "results_found": "sonuç bulundu",
   "search": "Ara",
-  "delete_script": "Betiği Sil",
+  "delete_script": "Sil",
   "delete_script_title": "Betiği Sil",
   "delete_script_message": "'{script_name}' dosyasını silmek istediğinizden emin misiniz?",
   "delete_script_warning": "<b>Bu işlem geri alınamaz.</b>",
   "delete_error_title": "Silme Hatası",
   "delete_error_message": "Betik silme başarısız: {error}",
-  "edit_script": "Betiği Düzenle",
+  "edit_script": "Düzenle",
   "edit_error_title": "Düzenleme Hatası",
   "edit_error_message": "Betik açma başarısız: {error}",
   "yes": "Evet",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# Daha fazla bilgi için https://linuxtoys.luminhost.xyz/handbook.html adresindeki belgelere bakın.",
   "create_new_script_name": "Yeni Betik Oluştur",
   "create_new_script_desc": "Yeni bir yerel betik oluşturun. Oluşturulduktan sonra varsayılan metin düzenleyicinizde açılacaktır.",
-  "script_name_prompt": "Betik adınızı girin:"
+  "script_name_prompt": "Betik adınızı girin:",
+  "export_error_title": "Dışa Aktarma Hatası",
+  "export_error_message": "Komut dosyası dışa aktarılamadı: {error}",
+  "export": "Dışa Aktar",
+  "select_export_directory": "Dışa Aktarma Dizinini Seç"
 }

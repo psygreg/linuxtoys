@@ -37,7 +37,6 @@
   "select_button": "Wybierz",
   "loading_manifest_message": "Ładowanie pliku manifestu... Proszę czekać...",
   "packages_flatpaks": "Pakiety i Flatpaki",
-
   "psypicks": "Wybór Psygreg'a",
   "psypicks_desc": "Wyselekcjonowana kolekcja oprogramowania do gier i poprawy jakości życia na Linuksie.",
   "pdefaults": "Zoptymalizowane ustawienia domyślne",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Narzędzia i zasoby do zarządzania urządzeniami peryferyjnymi i oświetleniem.",
   "sysadm": "Administracja systemu",
   "sysadm_desc": "Narzędzia do administracji i zarządzania systemem dla małych firm lub na dużą skalę.",
-
   "gimp_desc": "Potężny edytor obrazów o otwartym kodzie źródłowym.",
   "onlyoffice_desc": "Pakiet biurowy z lepszą kompatybilnością z plikami Microsoft Office.",
   "msteams_desc": "Platforma współpracy do pracy zdalnej.",
@@ -89,7 +87,6 @@
   "figma_desc": "Internetowa aplikacja do projektowania UI/UX.",
   "davinci_desc": "Profesjonalne oprogramowanie do edycji wideo.",
   "obsidian_desc": "Darmowa, elastyczna aplikacja do myśli, notatek i organizacji.",
-
   "gsr_desc": "Narzędzie do nagrywania ekranu z kodowaniem sprzętowym podobne do Shadowplay dla dowolnego GPU na Linuksie.",
   "pp_desc": "Narzędzie oparte na GTK do łatwego uzyskiwania społecznościowych runnerów do gier na Linuksie.",
   "sober_desc": "Port społecznościowy Roblox dla Linuksa, oparty na wersji Android gry.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Wrapper społecznościowy dla Roblox Studio, dla twórców gier Roblox.",
   "pup_desc": "Narzędzie oparte na Qt do łatwego uzyskiwania społecznościowych runnerów do gier na Linuksie.",
   "lsfg_desc": "Warstwa kompatybilności dla Lossless Scaling na Vulkan dla Linuksa. Nadal wymaga Lossless Scaling dla Windows.",
-
   "ufw": "Konfiguruj zaporę ogniową",
   "ufw_desc": "Instaluje i stosuje domyślne ustawienie idealne dla większości użytkowników dla prostej zapory ogniowej (UFW).",
   "swapfile": "Konfiguruj plik wymiany",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Instaluje ffmpeg-full na obecnie obsługiwanych platformach flatpak, umożliwiając aplikacjom używanie sprzętowo-przyspieszonego odtwarzania multimediów.",
   "ostree-autoupd": "Automatyczne Aktualizacje dla RPM-OSTree",
   "ostree-autoupd_desc": "Włącza funkcję automatycznych aktualizacji rpm-ostree w trybie stage (cichy). Aktualizacje będą zastosowane tylko przy restarcie, i nie zostaniesz poproszony o restart.",
-
   "nv_desc": "Aktualne sterowniki Nvidia. Obsługiwane GPU: Maxwell (GT 9xx) i nowsze.",
   "nv_rtx_desc": "Aktualne sterowniki Nvidia z otwartymi modułami jądra. Obsługiwane GPU: GTX 16xx i każda seria RTX. Dla laptopów preferuj opcję własnościową dla zarządzania zasilaniem.",
   "nv_desc_470": "Starsze sterowniki Nvidia. Obsługiwane GPU: Kepler (GT 6xx) i Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Sterownik dla oficjalnych i generycznych kontrolerów Xbox na Linuksie.",
   "modsign": "Podpisywanie modułów jądra",
   "modsign_desc": "Włącza podpisywanie modułów jądra i sterowników Machine Owner Key dla Secure Boot.",
-
   "flat_desc": "Główne repozytorium aplikacji Flatpak, mające wiele ekskluzywnych aplikacji.",
   "brew_desc": "Menedżer pakietów narzędzi CLI dla macOS/Linux.",
   "chaotic_desc": "Repozytorium społecznościowe dla użytkowników Arch Linux.",
   "rpmfusion_desc": "Repozytorium dostarczające dodatkowe pakiety dla Fedory i RHEL.",
   "pip_desc": "Menedżer pakietów Python. Zwykle przydatny dla programistów Python.",
   "cargo_desc": "Menedżer pakietów Rust. Zwykle przydatny dla programistów Rust. Zawiera Rustup.",
-
   "obs_desc": "Popularne otwarto-źródłowe oprogramowanie do streamingu i nagrywania.",
   "mctl_desc": "Monitor systemu dla Linuksa bardzo podobny do Menedżera zadań Windows, oparty na GTK4.",
   "sc_desc": "Narzędzie do konfiguracji Stream Decks i podobnych urządzeń.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "Usługa DNS ukrywająca twój ruch przed dostawcą internetowym.",
   "piper_desc": "Aplikacja GTK do konfiguracji myszy gamingowych przy użyciu libratbag. Powszechnie używana dla myszy Logitech, Roccat, Asus i Glorious.",
   "glever_desc": "Narzędzie do zarządzania AppImages, generujące wpisy na pulpicie i metadane aplikacji, aktualizujące aplikacje w miejscu lub utrzymujące wiele wersji obok siebie.",
-
   "docker_desc": "Dostawca usług kontenerów o otwartym kodzie źródłowym i podstawowe narzędzia dla niego, jak docker-compose. Zawiera kontener z Portainer CE do zarządzania Docker z interfejsu webowego.",
   "mise_desc": "Jak asdf (lub nvm lub pyenv ale dla dowolnego języka) zarządza narzędziami deweloperskimi jak node, python, cmake, terraform i setkami innych. Zastępuje PyEnv, NVM i instalatory Java JDK i Maven z tej sekcji.",
   "nvm_desc": "Menedżer wersji dla Node.js, pozwalający łatwo przełączać między różnymi wersjami. Zawiera Node.js, NPM i Yarn. Niepotrzebny przy użyciu Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "Kolekcja narzędzi i bibliotek do tworzenia aplikacji opartych na platformie .NET.",
   "sublime_desc": "Wyrafinowany edytor tekstu do kodu, znaczników i prozy.",
   "tailscale_desc": "VPN zero-config łączący twoje urządzenia bezpiecznie przez internet.",
-
   "cockpit_desc": "Interfejs webowy do monitorowania i zarządzania serwerami Linux (serwer).",
   "webmin_desc": "Interfejs webowy do administracji systemem dla Unix.",
   "topgrade_desc": "Narzędzie do aktualizacji wszystkich zainstalowanych pakietów w dowolnym systemie Linux.",
   "cockpitclient_desc": "Interfejs webowy do zarządzania serwerami Linux (klient).",
   "adir_desc": "Instaluje wszystkie pakiety niezbędne do dołączania do domen Active Directory przy użyciu realmd.",
-
   "select_language": "Wybierz język",
   "select_language_title": "Wybór języka",
   "select_language_message": "Proszę wybierz preferowany język:",
@@ -221,13 +211,13 @@
   "search_results": "Wyniki wyszukiwania",
   "results_found": "znalezionych wyników",
   "search": "Szukaj",
-  "delete_script": "Usuń skrypt",
+  "delete_script": "Usuń",
   "delete_script_title": "Usuń skrypt",
   "delete_script_message": "Czy na pewno chcesz usunąć '{script_name}'?",
   "delete_script_warning": "<b>Ta operacja nie może być cofnięta.</b>",
   "delete_error_title": "Błąd usuwania",
   "delete_error_message": "Nie udało się usunąć skryptu: {error}",
-  "edit_script": "Edytuj skrypt",
+  "edit_script": "Edytuj",
   "edit_error_title": "Błąd edycji",
   "edit_error_message": "Nie udało się otworzyć skryptu: {error}",
   "yes": "Tak",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# Sprawdź dokumentację na https://linuxtoys.luminhost.xyz/handbook.html aby uzyskać więcej informacji.",
   "create_new_script_name": "Utwórz nowy skrypt",
   "create_new_script_desc": "Utwórz nowy lokalny skrypt. Zostanie otwarty w domyślnym edytorze tekstu po utworzeniu.",
-  "script_name_prompt": "Wprowadź nazwę skryptu:"
+  "script_name_prompt": "Wprowadź nazwę skryptu:",
+  "export_error_title": "Błąd Eksportu",
+  "export_error_message": "Nie udało się wyeksportować skryptu: {error}",
+  "export": "Eksportuj",
+  "select_export_directory": "Wybierz Katalog Eksportu"
 }

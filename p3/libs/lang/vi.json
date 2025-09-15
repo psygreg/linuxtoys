@@ -37,7 +37,6 @@
   "select_button": "Chọn",
   "loading_manifest_message": "Đang tải tệp manifest của bạn... Vui lòng chờ...",
   "packages_flatpaks": "Gói & Flatpaks",
-
   "psypicks": "Lựa chọn của Psygreg",
   "psypicks_desc": "Tuyển chọn phần mềm được tuyển chọn cho gaming và chất lượng cuộc sống trên Linux.",
   "pdefaults": "Mặc định tối ưu",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Công cụ và tài nguyên để quản lý thiết bị ngoại vi và ánh sáng.",
   "sysadm": "Quản trị hệ thống",
   "sysadm_desc": "Công cụ cho quản trị hệ thống và quản lý cho doanh nghiệp nhỏ hoặc quy mô lớn.",
-
   "gimp_desc": "Trình chỉnh sửa hình ảnh mã nguồn mở mạnh mẽ.",
   "onlyoffice_desc": "Bộ ứng dụng với khả năng tương thích tốt hơn với các tệp Microsoft Office.",
   "msteams_desc": "Nền tảng cộng tác cho làm việc từ xa.",
@@ -89,7 +87,6 @@
   "figma_desc": "Ứng dụng thiết kế UI/UX dựa trên web.",
   "davinci_desc": "Phần mềm chỉnh sửa video chuyên nghiệp.",
   "obsidian_desc": "Ứng dụng miễn phí, linh hoạt cho suy nghĩ, ghi chú và tổ chức của bạn.",
-
   "gsr_desc": "Công cụ ghi màn hình với mã hóa phần cứng tương tự Shadowplay cho bất kỳ GPU nào trên Linux.",
   "pp_desc": "Công cụ dựa trên GTK để dễ dàng lấy các runner cộng đồng cho gaming trên Linux.",
   "sober_desc": "Cổng cộng đồng Roblox cho Linux, dựa trên phiên bản Android của trò chơi.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Wrapper cộng đồng cho Roblox Studio, dành cho người tạo game Roblox.",
   "pup_desc": "Công cụ dựa trên Qt để dễ dàng lấy các runner cộng đồng cho gaming trên Linux.",
   "lsfg_desc": "Lớp tương thích cho Lossless Scaling trên Vulkan cho Linux. Vẫn yêu cầu Lossless Scaling cho Windows.",
-
   "ufw": "Cấu hình Firewall",
   "ufw_desc": "Cài đặt và áp dụng cài đặt mặc định lý tưởng cho hầu hết người dùng cho Uncomplicated Firewall (UFW).",
   "swapfile": "Cấu hình tệp Swap",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Cài đặt ffmpeg-full vào các nền tảng flatpak hiện được hỗ trợ, cho phép ứng dụng sử dụng phát lại phương tiện được gia tốc bằng phần cứng.",
   "ostree-autoupd": "Cập nhật tự động cho RPM-OSTree",
   "ostree-autoupd_desc": "Kích hoạt tính năng cập nhật tự động của rpm-ostree ở chế độ stage (im lặng). Các bản cập nhật chỉ được áp dụng khi khởi động lại, và bạn sẽ không được nhắc khởi động lại.",
-
   "nv_desc": "Trình điều khiển Nvidia hiện tại. GPU được hỗ trợ: Maxwell (GT 9xx) và mới hơn.",
   "nv_rtx_desc": "Trình điều khiển Nvidia hiện tại với module kernel mở. GPU được hỗ trợ: GTX 16xx và bất kỳ series RTX nào. Đối với laptop, ưu tiên tùy chọn proprietary cho quản lý năng lượng.",
   "nv_desc_470": "Trình điều khiển Nvidia cũ. GPU được hỗ trợ: Kepler (GT 6xx) và Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Trình điều khiển cho tay cầm Xbox chính thức và generic trên Linux.",
   "modsign": "Ký module kernel",
   "modsign_desc": "Cho phép ký các module kernel và trình điều khiển với Machine Owner Key cho Secure Boot.",
-
   "flat_desc": "Kho chính cho các ứng dụng Flatpak, có nhiều ứng dụng độc quyền.",
   "brew_desc": "Trình quản lý gói công cụ CLI cho macOS/Linux.",
   "chaotic_desc": "Kho do cộng đồng điều khiển cho người dùng Arch Linux.",
   "rpmfusion_desc": "Kho cung cấp các gói bổ sung cho Fedora và RHEL.",
   "pip_desc": "Trình quản lý gói Python. Thường hữu ích cho các nhà phát triển Python.",
   "cargo_desc": "Trình quản lý gói Rust. Thường hữu ích cho các nhà phát triển Rust. Bao gồm Rustup.",
-
   "obs_desc": "Phần mềm streaming và ghi hình mã nguồn mở phổ biến.",
   "mctl_desc": "Trình giám sát hệ thống cho Linux rất giống Windows Task Manager, dựa trên GTK4.",
   "sc_desc": "Công cụ để thiết lập Stream Deck và các thiết bị tương tự.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "Dịch vụ DNS ẩn lưu lượng của bạn khỏi ISP.",
   "piper_desc": "Ứng dụng GTK để cấu hình chuột gaming bằng libratbag. Thường được sử dụng cho chuột Logitech, Roccat, Asus và Glorious.",
   "glever_desc": "Công cụ để quản lý AppImage, tạo các mục desktop và metadata ứng dụng, cập nhật ứng dụng tại chỗ hoặc giữ nhiều phiên bản song song.",
-
   "docker_desc": "Nhà cung cấp dịch vụ container mã nguồn mở và các công cụ cơ bản cho nó, như docker-compose. Bao gồm container với Portainer CE để quản lý Docker từ giao diện web.",
   "mise_desc": "Giống như asdf (hoặc nvm hoặc pyenv nhưng cho bất kỳ ngôn ngữ nào) nó quản lý các công cụ dev như node, python, cmake, terraform và hàng trăm công cụ khác. Thay thế PyEnv, NVM và các trình cài đặt Java JDK và Maven từ phần này.",
   "nvm_desc": "Trình quản lý phiên bản cho Node.js, cho phép bạn dễ dàng chuyển đổi giữa các phiên bản khác nhau. Bao gồm Node.js, NPM và Yarn. Không cần nếu sử dụng Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "Bộ sưu tập các công cụ và thư viện để tạo ứng dụng dựa trên nền tảng .NET.",
   "sublime_desc": "Trình chỉnh sửa văn bản tinh vi cho mã, markup và văn xuôi.",
   "tailscale_desc": "VPN không cấu hình kết nối các thiết bị của bạn một cách an toàn qua internet.",
-
   "cockpit_desc": "Giao diện dựa trên web để giám sát và quản lý máy chủ Linux (server).",
   "webmin_desc": "Giao diện dựa trên web cho quản trị hệ thống Unix.",
   "topgrade_desc": "Công cụ để nâng cấp tất cả các gói đã cài đặt trên bất kỳ hệ thống Linux nào.",
   "cockpitclient_desc": "Giao diện dựa trên web để quản lý máy chủ Linux (client).",
   "adir_desc": "Cài đặt tất cả các gói cần thiết để tham gia domain Active Directory bằng realmd.",
-
   "select_language": "Chọn ngôn ngữ",
   "select_language_title": "Lựa chọn ngôn ngữ",
   "select_language_message": "Vui lòng chọn ngôn ngữ ưa thích của bạn:",
@@ -221,13 +211,13 @@
   "search_results": "Kết quả tìm kiếm",
   "results_found": "kết quả tìm thấy",
   "search": "Tìm kiếm",
-  "delete_script": "Xóa Script",
+  "delete_script": "Xóa",
   "delete_script_title": "Xóa Script",
   "delete_script_message": "Bạn có chắc chắn muốn xóa '{script_name}' không?",
   "delete_script_warning": "<b>Hành động này không thể hoàn tác.</b>",
   "delete_error_title": "Lỗi Xóa",
   "delete_error_message": "Không thể xóa script: {error}",
-  "edit_script": "Chỉnh sửa Script",
+  "edit_script": "Chỉnh sửa",
   "edit_error_title": "Lỗi Chỉnh sửa",
   "edit_error_message": "Không thể mở script: {error}",
   "yes": "Có",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# Tham khảo tài liệu tại https://linuxtoys.luminhost.xyz/handbook.html để biết thêm thông tin.",
   "create_new_script_name": "Tạo Script Mới",
   "create_new_script_desc": "Tạo một script cục bộ mới. Nó sẽ được mở trong trình soạn thảo văn bản mặc định của bạn sau khi tạo.",
-  "script_name_prompt": "Nhập tên script của bạn:"
+  "script_name_prompt": "Nhập tên script của bạn:",
+  "export_error_title": "Lỗi Xuất",
+  "export_error_message": "Không thể xuất script: {error}",
+  "export": "Xuất",
+  "select_export_directory": "Chọn Thư Mục Xuất"
 }

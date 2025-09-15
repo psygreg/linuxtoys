@@ -37,7 +37,6 @@
   "select_button": "בחר",
   "loading_manifest_message": "טוען את קובץ המניפסט... אנא המתן...",
   "packages_flatpaks": "חבילות ו-Flatpaks",
-
   "psypicks": "הבחירות של Psygreg",
   "psypicks_desc": "מבחר מנוהל של תוכנות לגיימינג ולשיפור איכות החיים בלינוקס.",
   "pdefaults": "ברירות מחדל מותאמות",
@@ -66,7 +65,6 @@
   "peripheral_desc": "כלים ומשאבים לניהול התקנים פריפריאליים ותאורה.",
   "sysadm": "ניהול מערכת",
   "sysadm_desc": "כלים לניהול מערכת ולניהול עבור עסקים קטנים או בקנה מידה.",
-
   "gimp_desc": "עורך תמונות חזק בקוד פתוח.",
   "onlyoffice_desc": "חבילת משרד עם תאימות טובה יותר לקבצי Microsoft Office.",
   "msteams_desc": "פלטפורמת שיתוף לעבודה מרחוק.",
@@ -89,7 +87,6 @@
   "figma_desc": "אפליקציית עיצוב UI/UX מבוססת אינטרנט.",
   "davinci_desc": "תוכנת עריכת וידאו מקצועית.",
   "obsidian_desc": "אפליקציה חופשית וגמישה למחשבות, הערות וארגון שלך.",
-
   "gsr_desc": "כלי הקלטת מסך עם קידוד חומרה דומה ל-Shadowplay לכל GPU בלינוקס.",
   "pp_desc": "כלי מבוסס GTK להשגה קלה של runners קהילתיים לגיימינג בלינוקס.",
   "sober_desc": "פורט קהילתי של Roblox עבור לינוקס, מבוסס על גרסת Android של המשחק.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "wrapper קהילתי עבור Roblox Studio, ליוצרי משחקי Roblox.",
   "pup_desc": "כלי מבוסס Qt להשגה קלה של runners קהילתיים לגיימינג בלינוקס.",
   "lsfg_desc": "שכבת תאימות עבור Lossless Scaling על Vulkan עבור לינוקס. עדיין דורש Lossless Scaling עבור Windows.",
-
   "ufw": "קבע חומת אש",
   "ufw_desc": "מתקין ומחיל הגדרת ברירת מחדל אידיאלית לרוב המשתמשים עבור חומת האש הלא מסובכת (UFW).",
   "swapfile": "קבע קובץ swap",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "מתקין את ffmpeg-full בפלטפורמות flatpak הנתמכות כעת, מאפשר לאפליקציות להשתמש בהשמעת מדיה מואצת חומרתית.",
   "ostree-autoupd": "עדכונים אוטומטיים עבור RPM-OSTree",
   "ostree-autoupd_desc": "מפעיל את תכונת העדכון האוטומטי של rpm-ostree במצב stage (שקט). עדכונים יוחלו רק בהפעלה מחדש, ולא תתבקש להפעיל מחדש.",
-
   "nv_desc": "דרייברי Nvidia נוכחיים. GPU נתמכים: Maxwell (GT 9xx) וחדשים יותר.",
   "nv_rtx_desc": "דרייברי Nvidia נוכחיים עם מודולי kernel פתוחים. GPU נתמכים: GTX 16xx וכל סדרת RTX. עבור לפטופים, העדף את האפשרות הקניינית לניהול כוח.",
   "nv_desc_470": "דרייברי Nvidia מדור קודם. GPU נתמכים: Kepler (GT 6xx) ו-Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "דרייבר לבקרי Xbox רשמיים וגנריים בלינוקס.",
   "modsign": "חתימת מודולי kernel",
   "modsign_desc": "מאפשר חתימת מודולי kernel ודרייברים עם Machine Owner Key עבור Secure Boot.",
-
   "flat_desc": "המאגר העיקרי עבור אפליקציות Flatpak, בעל אפליקציות בלעדיות רבות.",
   "brew_desc": "מנהל חבילות כלי CLI עבור macOS/Linux.",
   "chaotic_desc": "מאגר מונע קהילה עבור משתמשי Arch Linux.",
   "rpmfusion_desc": "מאגר המספק חבילות נוספות עבור Fedora ו-RHEL.",
   "pip_desc": "מנהל חבילות Python. בדרך כלל שימושי למפתחי Python.",
   "cargo_desc": "מנהל חבילות Rust. בדרך כלל שימושי למפתחי Rust. כולל Rustup.",
-
   "obs_desc": "תוכנת הזרמה והקלטה פופולרית בקוד פתוח.",
   "mctl_desc": "מוניטור מערכת עבור לינוקס דומה מאוד למנהל המשימות של Windows, מבוסס GTK4.",
   "sc_desc": "כלי להגדרת Stream Decks ומכשירים דומים.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "שירות DNS שמסתיר את התעבורה שלך מספק האינטרנט שלך.",
   "piper_desc": "אפליקציית GTK לקונפיגורציה של עכברי גיימינג באמצעות libratbag. נפוץ לעכברי Logitech, Roccat, Asus ו-Glorious.",
   "glever_desc": "כלי לניהול AppImages, יצירת קיצורי דרך ותיאורי אפליקציות, עדכון אפליקציות במקום או שמירת מספר גרסאות זו לצד זו.",
-
   "docker_desc": "ספק שירותי מכלים בקוד פתוח וכלים בסיסיים עבורו, כמו docker-compose. כולל מכל עם Portainer CE לניהול Docker מממשק אינטרנט.",
   "mise_desc": "כמו asdf (או nvm או pyenv אבל לכל שפה) הוא מנהל כלי פיתוח כמו node, python, cmake, terraform, ומאות אחרים. מחליף את PyEnv, NVM ומתקיני Java JDK ו-Maven מהחלק הזה.",
   "nvm_desc": "מנהל גרסאות עבור Node.js, המאפשר לך לעבור בקלות בין גרסאות שונות. כולל Node.js, NPM ו-Yarn. לא נדרש בעת שימוש ב-Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "אוסף כלים וספריות ליצירת אפליקציות מבוססות פלטפורמת .NET.",
   "sublime_desc": "עורך טקסט מתוחכם לקוד, סימון ופרוזה.",
   "tailscale_desc": "VPN ללא תצורה שמחבר את המכשירים שלך בבטחה דרך האינטרנט.",
-
   "cockpit_desc": "ממשק מבוסס אינטרנט לניטור וניהול שרתי לינוקס (שרת).",
   "webmin_desc": "ממשק מבוסס אינטרנט לניהול מערכת עבור Unix.",
   "topgrade_desc": "כלי לשדרוג כל החבילות המותקנות בכל מערכת לינוקס.",
   "cockpitclient_desc": "ממשק מבוסס אינטרנט לניהול שרתי לינוקס (לקוח).",
   "adir_desc": "מתקין את כל החבילות הנחוצות להצטרפות לדומיינים Active Directory באמצעות realmd.",
-
   "select_language": "בחר שפה",
   "select_language_title": "בחירת שפה",
   "select_language_message": "אנא בחר את השפה המועדפת עליך:",
@@ -221,13 +211,13 @@
   "search_results": "תוצאות חיפוש",
   "results_found": "תוצאות נמצאו",
   "search": "חפש",
-  "delete_script": "מחק סקריפט",
+  "delete_script": "מחק",
   "delete_script_title": "מחק סקריפט",
   "delete_script_message": "האם אתה בטוח שברצונך למחוק את '{script_name}'?",
   "delete_script_warning": "<b>פעולה זו אינה ניתנת לביטול.</b>",
   "delete_error_title": "שגיאת מחיקה",
   "delete_error_message": "נכשל במחיקת הסקריפט: {error}",
-  "edit_script": "עריכת סקריפט",
+  "edit_script": "ערוך",
   "edit_error_title": "שגיאת עריכה",
   "edit_error_message": "פתיחת הסקריפט נכשלה: {error}",
   "yes": "כן",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# עיין בתיעוד בכתובת https://linuxtoys.luminhost.xyz/handbook.html למידע נוסף.",
   "create_new_script_name": "צור סקריפט חדש",
   "create_new_script_desc": "צור סקריפט מקומי חדש. הוא ייפתח בעורך הטקסט ברירת המחדל שלך לאחר היצירה.",
-  "script_name_prompt": "הזן את שם הסקריפט שלך:"
+  "script_name_prompt": "הזן את שם הסקריפט שלך:",
+  "export_error_title": "שגיאת ייצוא",
+  "export_error_message": "כשל בייצוא הסקריפט: {error}",
+  "export": "ייצוא",
+  "select_export_directory": "בחר תיקיית ייצוא"
 }

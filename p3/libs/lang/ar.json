@@ -37,7 +37,6 @@
   "select_button": "اختيار",
   "loading_manifest_message": "جاري تحميل ملف البيان... يرجى الانتظار...",
   "packages_flatpaks": "الحزم و Flatpaks",
-
   "psypicks": "اختيارات Psygreg",
   "psypicks_desc": "مجموعة منتقاة من البرامج للألعاب وتحسين جودة الحياة على Linux.",
   "pdefaults": "الإعدادات المحسنة",
@@ -66,7 +65,6 @@
   "peripheral_desc": "أدوات وموارد لإدارة الأجهزة الطرفية والإضاءة.",
   "sysadm": "إدارة النظام",
   "sysadm_desc": "أدوات لإدارة النظام للشركات الصغيرة أو على نطاق واسع.",
-
   "gimp_desc": "محرر صور مفتوح المصدر قوي.",
   "onlyoffice_desc": "مجموعة برامج بتوافق أفضل مع ملفات Microsoft Office.",
   "msteams_desc": "منصة تعاون للعمل عن بُعد.",
@@ -89,7 +87,6 @@
   "figma_desc": "تطبيق ويب لتصميم واجهة المستخدم/تجربة المستخدم.",
   "davinci_desc": "برنامج تحرير فيديو احترافي.",
   "obsidian_desc": "تطبيق مجاني ومرن لأفكارك وملاحظاتك وتنظيمك.",
-
   "gsr_desc": "أداة تسجيل شاشة مع ترميز الأجهزة مماثلة لـ Shadowplay لأي GPU على Linux.",
   "pp_desc": "أداة مبنية على GTK للحصول بسهولة على مشغلات مجتمعية للألعاب على Linux.",
   "sober_desc": "نسخة مجتمعية من Roblox لـ Linux، مبنية على إصدار Android من اللعبة.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "غلاف مجتمعي لـ Roblox Studio، لمبدعي ألعاب Roblox.",
   "pup_desc": "أداة مبنية على Qt للحصول بسهولة على مشغلات مجتمعية للألعاب على Linux.",
   "lsfg_desc": "طبقة توافق لـ Lossless Scaling على Vulkan لـ Linux. لا يزال يتطلب Lossless Scaling لـ Windows.",
-
   "ufw": "تكوين جدار الحماية",
   "ufw_desc": "يثبت ويطبق إعداد افتراضي مثالي لمعظم المستخدمين لجدار الحماية غير المعقد (UFW).",
   "swapfile": "تكوين ملف المبادلة",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "يثبت ffmpeg-full في منصات flatpak المدعومة حالياً، مما يتيح للتطبيقات استخدام تشغيل الوسائط المُسرع بالأجهزة.",
   "ostree-autoupd": "التحديثات التلقائية لـ RPM-OSTree",
   "ostree-autoupd_desc": "يُفعل ميزة التحديث التلقائي لـ rpm-ostree في وضع المرحلة (صامت). ستُطبق التحديثات فقط عند إعادة التشغيل، ولن يُطلب منك إعادة التشغيل.",
-
   "nv_desc": "محركات Nvidia الحالية. المعالجات المدعومة: Maxwell (GT 9xx) والأحدث.",
   "nv_rtx_desc": "محركات Nvidia الحالية مع وحدات نواة مفتوحة. المعالجات المدعومة: GTX 16xx وأي سلسلة RTX. لأجهزة الحاسوب المحمولة، يُفضل الخيار الملكي لإدارة الطاقة.",
   "nv_desc_470": "محركات Nvidia القديمة. المعالجات المدعومة: Kepler (GT 6xx) وFermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "محرك لوحدات تحكم Xbox الرسمية والعامة على Linux.",
   "modsign": "توقيع وحدات النواة",
   "modsign_desc": "يُمكن توقيع وحدات النواة والمحركات بمفتاح مالك الآلة للإقلاع الآمن.",
-
   "flat_desc": "المستودع المرجعي لتطبيقات Flatpak، يحتوي على العديد من التطبيقات الحصرية.",
   "brew_desc": "مدير حزم لأدوات سطر الأوامر لـ macOS/Linux.",
   "chaotic_desc": "مستودع مدفوع بالمجتمع لمستخدمي Arch Linux.",
   "rpmfusion_desc": "مستودع يوفر حزم إضافية لـ Fedora وRHEL.",
   "pip_desc": "مدير حزم Python. مفيد عادة لمطوري Python.",
   "cargo_desc": "مدير حزم Rust. مفيد عادة لمطوري Rust. يتضمن Rustup.",
-
   "obs_desc": "برنامج بث وتسجيل مفتوح المصدر شائع.",
   "mctl_desc": "مراقب نظام لـ Linux مشابه جداً لـ Windows Task Manager، مبني على GTK4.",
   "sc_desc": "أداة لتكوين Stream Deck وأجهزة مماثلة.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "خدمة DNS تخفي حركة المرور الخاصة بك من مزود خدمة الإنترنت.",
   "piper_desc": "تطبيق GTK لتكوين فئران الألعاب باستخدام libratbag. يُستخدم عادة لفئران Logitech وRoccat وAsus وGlorious.",
   "glever_desc": "أداة لإدارة AppImage، وإنشاء إدخالات سطح المكتب وبيانات تعريف التطبيقات، وتحديث التطبيقات في مكانها أو الحفاظ على إصدارات متعددة جنباً إلى جنب.",
-
   "docker_desc": "مزود خدمة الحاويات مفتوح المصدر والأدوات الأساسية له، مثل docker-compose. يتضمن حاوية مع Portainer CE لإدارة Docker من واجهة ويب.",
   "mise_desc": "مثل asdf (أو nvm أو pyenv ولكن لأي لغة) يدير أدوات التطوير مثل node وpython وcmake وterraform، ومئات أخرى. يحل محل PyEnv وNVM ومثبتات Java JDK وMaven من هذا القسم.",
   "nvm_desc": "مدير إصدارات لـ Node.js، يتيح التبديل بسهولة بين إصدارات مختلفة. يتضمن Node.js وNPM وYarn. غير مطلوب إذا كنت تستخدم Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "مجموعة أدوات ومكتبات لإنشاء تطبيقات مبنية على منصة .NET.",
   "sublime_desc": "محرر نص متطور للكود والترميز والنثر.",
   "tailscale_desc": "VPN بدون تكوين يربط أجهزتك بأمان عبر الإنترنت.",
-
   "cockpit_desc": "واجهة ويب لمراقبة وإدارة خوادم Linux (خادم).",
   "webmin_desc": "واجهة ويب لإدارة النظام لـ Unix.",
   "topgrade_desc": "أداة لترقية جميع الحزم المثبتة على أي نظام Linux.",
   "cockpitclient_desc": "واجهة ويب لإدارة خوادم Linux (عميل).",
   "adir_desc": "يثبت جميع الحزم اللازمة للانضمام إلى نطاقات Active Directory باستخدام realmd.",
-
   "select_language": "اختيار اللغة",
   "select_language_title": "اختيار اللغة",
   "select_language_message": "يرجى اختيار لغتك المفضلة:",
@@ -221,13 +211,13 @@
   "search_results": "نتائج البحث",
   "results_found": "نتيجة موجودة",
   "search": "بحث",
-  "delete_script": "حذف النص البرمجي",
+  "delete_script": "حذف",
   "delete_script_title": "حذف النص البرمجي",
   "delete_script_message": "هل أنت متأكد من أنك تريد حذف '{script_name}'؟",
   "delete_script_warning": "<b>لا يمكن التراجع عن هذا الإجراء.</b>",
   "delete_error_title": "خطأ في الحذف",
   "delete_error_message": "فشل في حذف النص البرمجي: {error}",
-  "edit_script": "تحرير النص البرمجي",
+  "edit_script": "تحرير",
   "edit_error_title": "خطأ في التحرير",
   "edit_error_message": "فشل في فتح النص البرمجي: {error}",
   "yes": "نعم",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# راجع الوثائق على https://linuxtoys.luminhost.xyz/handbook.html للمزيد من المعلومات.",
   "create_new_script_name": "إنشاء نص برمجي جديد",
   "create_new_script_desc": "إنشاء نص برمجي محلي جديد. سيتم فتحه في محرر النصوص الافتراضي بعد الإنشاء.",
-  "script_name_prompt": "أدخل اسم النص البرمجي:"
+  "script_name_prompt": "أدخل اسم النص البرمجي:",
+  "export_error_title": "خطأ في التصدير",
+  "export_error_message": "فشل في تصدير السكريپت: {error}",
+  "export": "تصدير",
+  "select_export_directory": "اختر دليل التصدير"
 }

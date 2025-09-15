@@ -37,7 +37,6 @@
   "select_button": "選択",
   "loading_manifest_message": "マニフェストファイルを読み込み中... お待ちください...",
   "packages_flatpaks": "パッケージとFlatpaks",
-
   "psypicks": "Psygregの選択",
   "psypicks_desc": "ゲームとLinuxでの生活の質向上のための厳選されたソフトウェア。",
   "pdefaults": "最適化されたデフォルト設定",
@@ -66,7 +65,6 @@
   "peripheral_desc": "周辺機器とライティングを管理するためのツールとリソース。",
   "sysadm": "システム管理",
   "sysadm_desc": "中小企業や大規模システム管理のためのツール。",
-
   "gimp_desc": "強力なオープンソース画像エディター。",
   "onlyoffice_desc": "Microsoft Officeファイルとの優れた互換性を持つオフィススイート。",
   "msteams_desc": "リモートワーク用のコラボレーションプラットフォーム。",
@@ -89,7 +87,6 @@
   "figma_desc": "ウェブベースのUI/UXデザインアプリケーション。",
   "davinci_desc": "プロフェッショナルなビデオ編集ソフトウェア。",
   "obsidian_desc": "思考、ノート、整理のための自由で柔軟なアプリ。",
-
   "gsr_desc": "LinuxでどんなGPUでもShadowplayのような、ハードウェアエンコーディング付きのスクリーン録画ツール。",
   "pp_desc": "Linuxゲーミングのためのコミュニティランナーを簡単に取得するGTKベースのツール。",
   "sober_desc": "ゲームのAndroidバージョンを基にしたRobloxのコミュニティLinuxポート。",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Robloxゲームクリエイター向けのRoblox Studioのコミュニティラッパー。",
   "pup_desc": "Linuxゲーミングのためのコミュニティランナーを簡単に取得するQtベースのツール。",
   "lsfg_desc": "Linux上でVulkan用Lossless Scalingの互換レイヤー。Windows用Lossless Scalingが依然として必要です。",
-
   "ufw": "ファイアウォールを設定",
   "ufw_desc": "Uncomplicated Firewall (UFW)をインストールし、ほとんどのユーザーに最適なデフォルト設定を適用します。",
   "swapfile": "スワップファイルを設定",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "現在サポートされているflatpakプラットフォームにffmpeg-fullをインストールし、アプリケーションがハードウェア加速メディア再生を使用できるようにします。",
   "ostree-autoupd": "RPM-OSTree自動更新",
   "ostree-autoupd_desc": "rpm-ostreeのステージモード（サイレント）での自動更新機能を有効にします。更新は再起動時にのみ適用され、再起動を求められることはありません。",
-
   "nv_desc": "現在のNvidiaドライバー。サポートGPU：Maxwell（GT 9xx）以降。",
   "nv_rtx_desc": "オープンカーネルモジュール付きの現在のNvidiaドライバー。サポートGPU：GTX 16xxと全RTXシリーズ。ラップトップでは電力管理のためにプロプライエタリオプションを推奨。",
   "nv_desc_470": "レガシーNvidiaドライバー。サポートGPU：Kepler（GT 6xx）とFermi（GT 7xx）。",
@@ -153,14 +148,12 @@
   "xneo_desc": "Linux上の公式と汎用Xboxコントローラー用ドライバー。",
   "modsign": "カーネルモジュール署名",
   "modsign_desc": "Secure Boot用のMachine Owner Keyでカーネルモジュールとドライバーの署名を有効化。",
-
   "flat_desc": "多くの独占アプリを持つFlatpakアプリケーションの定番リポジトリ。",
   "brew_desc": "macOS/Linux用CLIツールパッケージマネージャー。",
   "chaotic_desc": "Arch Linuxユーザー用のコミュニティ駆動リポジトリ。",
   "rpmfusion_desc": "FedoraとRHEL用の追加パッケージを提供するリポジトリ。",
   "pip_desc": "Pythonパッケージマネージャー。通常Python開発者に有用。",
   "cargo_desc": "Rustパッケージマネージャー。通常Rust開発者に有用。Rustupを含みます。",
-
   "obs_desc": "人気のオープンソースストリーミング・録画ソフトウェア。",
   "mctl_desc": "GTK4ベースのWindowsタスクマネージャーによく似たLinuxシステムモニター。",
   "sc_desc": "Stream Decksや類似デバイスを設定するツール。",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "ISPからトラフィックを隠すDNSサービス。",
   "piper_desc": "libratbagを使用してゲーミングマウスを設定するGTKアプリケーション。Logitech、Roccat、Asus、Gloriousマウスによく使用されます。",
   "glever_desc": "AppImageを管理するためのユーティリティで、デスクトップエントリやアプリメタデータを生成し、アプリをインプレースで更新したり、複数のバージョンを並行して保持したりします。",
-
   "docker_desc": "オープンソースコンテナサービスプロバイダーとdocker-composeなどの基本ツール。Web UIからDockerを管理するためのPortainer CEとのコンテナを含みます。",
   "mise_desc": "asdf（またはnvmやpyenvのようなものですが任意の言語用）のように、node、python、cmake、terraformなど数百の開発ツールを管理。このセクションのPyEnv、NVM、Java JDKとMavenインストーラーを置き換えます。",
   "nvm_desc": "Node.jsのバージョンマネージャーで、異なるバージョン間を簡単に切り替えできます。Node.js、NPM、Yarnを含みます。Miseを使用する場合は不要。",
@@ -204,13 +196,11 @@
   "dotnet_desc": ".NETプラットフォームベースのアプリケーションを作成するためのツールとライブラリのコレクション。",
   "sublime_desc": "コード、マークアップ、散文のための洗練されたテキストエディター。",
   "tailscale_desc": "インターネット上でデバイスを安全に接続するゼロ設定VPN。",
-
   "cockpit_desc": "Linuxサーバーの監視・管理のためのウェブベースインターフェース（サーバー）。",
   "webmin_desc": "Unixシステム管理のためのウェブベースインターフェース。",
   "topgrade_desc": "任意のLinuxシステムでインストール済みの全パッケージをアップグレードするツール。",
   "cockpitclient_desc": "Linuxサーバー管理のためのウェブベースインターフェース（クライアント）。",
   "adir_desc": "realmdを使用してActive Directoryドメインに参加するために必要な全パッケージをインストール。",
-
   "select_language": "言語を選択",
   "select_language_title": "言語選択",
   "select_language_message": "お好みの言語を選択してください：",
@@ -221,13 +211,13 @@
   "search_results": "検索結果",
   "results_found": "件の結果",
   "search": "検索",
-  "delete_script": "スクリプトを削除",
+  "delete_script": "削除",
   "delete_script_title": "スクリプトを削除",
   "delete_script_message": "'{script_name}' を削除してもよろしいですか？",
   "delete_script_warning": "<b>この操作は元に戻せません。</b>",
   "delete_error_title": "削除エラー",
   "delete_error_message": "スクリプトの削除に失敗しました：{error}",
-  "edit_script": "スクリプトを編集",
+  "edit_script": "編集",
   "edit_error_title": "編集エラー",
   "edit_error_message": "スクリプトを開けませんでした：{error}",
   "yes": "はい",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# 詳細については https://linuxtoys.luminhost.xyz/handbook.html のドキュメントを参照してください。",
   "create_new_script_name": "新しいスクリプトを作成",
   "create_new_script_desc": "新しいローカルスクリプトを作成します。作成後、デフォルトのテキストエディターで開かれます。",
-  "script_name_prompt": "スクリプト名を入力してください："
+  "script_name_prompt": "スクリプト名を入力してください：",
+  "export_error_title": "エクスポートエラー",
+  "export_error_message": "スクリプトのエクスポートに失敗しました: {error}",
+  "export": "エクスポート",
+  "select_export_directory": "エクスポートディレクトリを選択"
 }

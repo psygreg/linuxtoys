@@ -37,7 +37,6 @@
   "select_button": "선택",
   "loading_manifest_message": "매니페스트 파일을 로드하는 중... 잠시 기다려 주세요...",
   "packages_flatpaks": "패키지 및 Flatpaks",
-
   "psypicks": "Psygreg의 선택",
   "psypicks_desc": "Linux에서 게임과 삶의 질을 위한 엄선된 소프트웨어 모음입니다.",
   "pdefaults": "최적화된 기본값",
@@ -66,7 +65,6 @@
   "peripheral_desc": "주변 장치와 조명 관리를 위한 도구와 리소스입니다.",
   "sysadm": "시스템 관리",
   "sysadm_desc": "소규모 비즈니스나 대규모 시스템 관리 및 관리를 위한 도구입니다.",
-
   "gimp_desc": "강력한 오픈 소스 이미지 편집기입니다.",
   "onlyoffice_desc": "Microsoft Office 파일과 더 나은 호환성을 가진 제품군입니다.",
   "msteams_desc": "원격 작업을 위한 협업 플랫폼입니다.",
@@ -89,7 +87,6 @@
   "figma_desc": "웹 기반 UI/UX 디자인 애플리케이션입니다.",
   "davinci_desc": "전문 비디오 편집 소프트웨어입니다.",
   "obsidian_desc": "생각, 노트, 조직을 위한 무료이고 유연한 앱입니다.",
-
   "gsr_desc": "Linux의 모든 GPU를 위한 Shadowplay와 같은 하드웨어 인코딩이 있는 화면 녹화 도구입니다.",
   "pp_desc": "Linux에서 게임을 위한 커뮤니티 러너를 쉽게 얻기 위한 GTK 기반 도구입니다.",
   "sober_desc": "게임의 Android 버전을 기반으로 한 Linux용 Roblox 커뮤니티 포트입니다.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Roblox 게임 제작자를 위한 Roblox Studio의 커뮤니티 래퍼입니다.",
   "pup_desc": "Linux에서 게임을 위한 커뮤니티 러너를 쉽게 얻기 위한 Qt 기반 도구입니다.",
   "lsfg_desc": "Linux용 Vulkan에서 Lossless Scaling을 위한 호환성 레이어입니다. 여전히 Windows용 Lossless Scaling이 필요합니다.",
-
   "ufw": "방화벽 구성",
   "ufw_desc": "대부분의 사용자에게 이상적인 Uncomplicated Firewall (UFW)의 기본 설정을 설치하고 적용합니다.",
   "swapfile": "스왑 파일 구성",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "현재 지원되는 flatpak 플랫폼에 ffmpeg-full을 설치하여 애플리케이션이 하드웨어 가속 미디어 재생을 사용할 수 있도록 합니다.",
   "ostree-autoupd": "RPM-OSTree 자동 업데이트",
   "ostree-autoupd_desc": "rpm-ostree의 스테이지 모드(무음)에서 자동 업데이트 기능을 활성화합니다. 업데이트는 재부팅 시에만 적용되며, 재부팅하라는 메시지가 표시되지 않습니다.",
-
   "nv_desc": "현재 Nvidia 드라이버입니다. 지원되는 GPU: Maxwell (GT 9xx) 및 최신 버전.",
   "nv_rtx_desc": "오픈 커널 모듈이 있는 현재 Nvidia 드라이버입니다. 지원되는 GPU: GTX 16xx 및 모든 RTX 시리즈. 노트북의 경우 전원 관리를 위해 전용 옵션을 선호합니다.",
   "nv_desc_470": "레거시 Nvidia 드라이버입니다. 지원되는 GPU: Kepler (GT 6xx) 및 Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Linux에서 공식 및 일반 Xbox 컨트롤러용 드라이버입니다.",
   "modsign": "커널 모듈 서명",
   "modsign_desc": "Secure Boot를 위해 Machine Owner Key로 커널 모듈과 드라이버를 서명할 수 있게 합니다.",
-
   "flat_desc": "많은 독점 앱이 있는 Flatpak 애플리케이션의 주요 저장소입니다.",
   "brew_desc": "macOS/Linux용 CLI 도구 패키지 관리자입니다.",
   "chaotic_desc": "Arch Linux 사용자를 위한 커뮤니티 주도 저장소입니다.",
   "rpmfusion_desc": "Fedora와 RHEL을 위한 추가 패키지를 제공하는 저장소입니다.",
   "pip_desc": "Python 패키지 관리자입니다. 일반적으로 Python 개발자에게 유용합니다.",
   "cargo_desc": "Rust 패키지 관리자입니다. 일반적으로 Rust 개발자에게 유용합니다. Rustup을 포함합니다.",
-
   "obs_desc": "인기 있는 오픈 소스 스트리밍 및 녹화 소프트웨어입니다.",
   "mctl_desc": "GTK4 기반으로 Windows 작업 관리자와 매우 유사한 Linux용 시스템 모니터입니다.",
   "sc_desc": "Stream Deck 및 유사한 장치를 설정하기 위한 도구입니다.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "ISP로부터 트래픽을 숨기는 DNS 서비스입니다.",
   "piper_desc": "libratbag을 사용하여 게임 마우스를 구성하기 위한 GTK 애플리케이션입니다. 일반적으로 Logitech, Roccat, Asus 및 Glorious 마우스에 사용됩니다.",
   "glever_desc": "AppImage를 관리하는 유틸리티로, 데스크탑 항목 및 앱 메타데이터를 생성하고, 앱을 제자리에서 업데이트하거나 여러 버전을 나란히 유지할 수 있습니다.",
-
   "docker_desc": "docker-compose와 같은 기본 도구와 함께 오픈 소스 컨테이너 서비스 제공업체입니다. 웹 UI에서 Docker를 관리하기 위한 Portainer CE가 있는 컨테이너를 포함합니다.",
   "mise_desc": "asdf와 같이(또는 nvm이나 pyenv이지만 모든 언어용) node, python, cmake, terraform 및 수백 개 더 많은 개발 도구를 관리합니다. 이 섹션의 PyEnv, NVM, Java JDK 및 Maven 설치 프로그램을 대체합니다.",
   "nvm_desc": "다른 버전 간에 쉽게 전환할 수 있는 Node.js용 버전 관리자입니다. Node.js, NPM 및 Yarn을 포함합니다. Mise를 사용하는 경우 필요하지 않습니다.",
@@ -204,13 +196,11 @@
   "dotnet_desc": ".NET 플랫폼 기반 애플리케이션을 만들기 위한 도구와 라이브러리 모음입니다.",
   "sublime_desc": "코드, 마크업 및 산문을 위한 정교한 텍스트 편집기입니다.",
   "tailscale_desc": "인터넷을 통해 장치를 안전하게 연결하는 제로 구성 VPN입니다.",
-
   "cockpit_desc": "Linux 서버를 모니터링하고 관리하기 위한 웹 기반 인터페이스입니다(서버).",
   "webmin_desc": "Unix용 시스템 관리를 위한 웹 기반 인터페이스입니다.",
   "topgrade_desc": "모든 Linux 시스템에서 설치된 모든 패키지를 업그레이드하기 위한 도구입니다.",
   "cockpitclient_desc": "Linux 서버를 관리하기 위한 웹 기반 인터페이스입니다(클라이언트).",
   "adir_desc": "realmd를 사용하여 Active Directory 도메인에 가입하는 데 필요한 모든 패키지를 설치합니다.",
-
   "select_language": "언어 선택",
   "select_language_title": "언어 선택",
   "select_language_message": "원하는 언어를 선택하세요:",
@@ -221,13 +211,13 @@
   "search_results": "검색 결과",
   "results_found": "개 결과를 찾았습니다",
   "search": "검색",
-  "delete_script": "스크립트 삭제",
+  "delete_script": "삭제",
   "delete_script_title": "스크립트 삭제",
   "delete_script_message": "'{script_name}'을(를) 삭제하시겠습니까?",
   "delete_script_warning": "<b>이 작업은 되돌릴 수 없습니다.</b>",
   "delete_error_title": "삭제 오류",
   "delete_error_message": "스크립트 삭제 실패: {error}",
-  "edit_script": "스크립트 편집",
+  "edit_script": "편집",
   "edit_error_title": "편집 오류",
   "edit_error_message": "스크립트 열기 실패: {error}",
   "yes": "예",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# 자세한 정보는 https://linuxtoys.luminhost.xyz/handbook.html 문서를 참조하세요.",
   "create_new_script_name": "새 스크립트 생성",
   "create_new_script_desc": "새 로컬 스크립트를 생성합니다. 생성 후 기본 텍스트 편집기에서 열립니다.",
-  "script_name_prompt": "스크립트 이름을 입력하세요:"
+  "script_name_prompt": "스크립트 이름을 입력하세요:",
+  "export_error_title": "내보내기 오류",
+  "export_error_message": "스크립트 내보내기 실패: {error}",
+  "export": "내보내기",
+  "select_export_directory": "내보내기 디렉토리 선택"
 }

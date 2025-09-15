@@ -37,7 +37,6 @@
   "select_button": "选择",
   "loading_manifest_message": "正在加载清单文件... 请等待...",
   "packages_flatpaks": "软件包和Flatpaks",
-
   "psypicks": "Psygreg的推荐",
   "psypicks_desc": "为游戏和提升Linux生活品质而精选的软件。",
   "pdefaults": "优化默认设置",
@@ -66,7 +65,6 @@
   "peripheral_desc": "管理外设设备和灯光的工具和资源。",
   "sysadm": "系统管理",
   "sysadm_desc": "小型企业或规模化系统管理的工具。",
-
   "gimp_desc": "强大的开源图像编辑器。",
   "onlyoffice_desc": "与Microsoft Office文件更好兼容的办公套件。",
   "msteams_desc": "远程工作的协作平台。",
@@ -89,7 +87,6 @@
   "figma_desc": "基于网络的UI/UX设计应用程序。",
   "davinci_desc": "专业视频编辑软件。",
   "obsidian_desc": "自由灵活的思考、笔记和组织应用程序。",
-
   "gsr": "GPU屏幕录制器",
   "gsr_desc": "具有硬件编码的屏幕录制工具，类似于Linux上任何GPU的Shadowplay。",
   "protonplus": "ProtonPlus",
@@ -112,7 +109,6 @@
   "vinegar_desc": "Roblox Studio的社区包装器，适用于Roblox游戏创建者。",
   "pup_desc": "基于Qt的工具，用于轻松获取Linux游戏的社区运行器。",
   "lsfg_desc": "Linux上Vulkan无损缩放的兼容层。仍需要Windows版的Lossless Scaling。",
-
   "ufw": "配置防火墙",
   "ufw_desc": "安装并应用适合大多数用户的Uncomplicated Firewall (UFW)默认设置。",
   "swapfile": "配置交换文件",
@@ -144,7 +140,6 @@
   "hwaccel-flatpak_desc": "将ffmpeg-full安装到当前支持的flatpak平台中，允许应用程序使用硬件加速的媒体播放。",
   "ostree-autoupd": "RPM-OSTree自动更新",
   "ostree-autoupd_desc": "启用rpm-ostree在暂存模式（静默）下的自动更新功能。更新只会在重启时应用，您不会被提示重启。",
-
   "nv_desc": "当前Nvidia驱动程序。支持的GPU：Maxwell（GT 9xx）及更新。",
   "nv_rtx_desc": "具有开放内核模块的当前Nvidia驱动程序。支持的GPU：GTX 16xx和任何RTX系列。对于笔记本电脑，首选专有选项以进行电源管理。",
   "nv_desc_470": "旧版Nvidia驱动程序。支持的GPU：Kepler（GT 6xx）和Fermi（GT 7xx）。",
@@ -155,14 +150,12 @@
   "xneo_desc": "Linux上官方和通用Xbox控制器的驱动程序。",
   "modsign": "内核模块签名",
   "modsign_desc": "启用使用机器所有者密钥为Secure Boot签名内核模块和驱动程序。",
-
   "flat_desc": "Flatpak应用程序的首选存储库，拥有许多独家应用程序。",
   "brew_desc": "macOS/Linux的CLI工具包管理器。",
   "chaotic_desc": "Arch Linux用户的社区驱动存储库。",
   "rpmfusion_desc": "为Fedora和RHEL提供额外软件包的存储库。",
   "pip_desc": "Python包管理器。通常对Python开发者有用。",
   "cargo_desc": "Rust包管理器。通常对Rust开发者有用。包括Rustup。",
-
   "obs_desc": "流行的开源流媒体和录制软件。",
   "mctl_desc": "Linux系统监视器，非常类似于Windows任务管理器，基于GTK4。",
   "sc_desc": "设置Stream Decks和类似设备的工具。",
@@ -185,7 +178,6 @@
   "cloudflare_warp_desc": "从ISP隐藏流量的DNS服务。",
   "piper_desc": "使用libratbag配置游戏鼠标的GTK应用程序。通常用于Logitech、Roccat、Asus和Glorious鼠标。",
   "glever_desc": "用于管理AppImage的实用程序，生成桌面条目和应用程序元数据，在原地更新应用程序或并排维护多个版本。",
-
   "docker_desc": "开源容器服务提供商和基本工具，如docker-compose。包括带有Portainer CE的容器，用于从Web UI管理Docker。",
   "mise_desc": "像asdf（或nvm或pyenv，但适用于任何语言），它管理node、python、cmake、terraform等数百种开发工具。替代本节中的PyEnv、NVM和Java JDK和Maven安装程序。",
   "nvm_desc": "Node.js的版本管理器，允许您轻松在不同版本之间切换。包括Node.js、NPM和Yarn。如果使用Mise则不需要。",
@@ -206,13 +198,11 @@
   "dotnet_desc": "基于.NET平台创建应用程序的工具和库集合。",
   "sublime_desc": "用于代码、标记和散文的精密文本编辑器。",
   "tailscale_desc": "通过互联网安全连接设备的零配置VPN。",
-
   "cockpit_desc": "监控和管理Linux服务器的基于网络的界面（服务器）。",
   "webmin_desc": "Unix系统管理的基于网络的界面。",
   "topgrade_desc": "升级任何Linux系统上所有已安装软件包的工具。",
   "cockpitclient_desc": "管理Linux服务器的基于网络的界面（客户端）。",
   "adir_desc": "安装使用realmd加入Active Directory域所需的所有软件包。",
-
   "select_language": "选择语言",
   "select_language_title": "语言选择",
   "select_language_message": "请选择您的首选语言：",
@@ -223,13 +213,13 @@
   "search_results": "搜索结果",
   "results_found": "个结果",
   "search": "搜索",
-  "delete_script": "删除脚本",
+  "delete_script": "删除",
   "delete_script_title": "删除脚本",
   "delete_script_message": "您确定要删除 '{script_name}' 吗？",
   "delete_script_warning": "<b>此操作无法撤消。</b>",
   "delete_error_title": "删除错误",
   "delete_error_message": "删除脚本失败：{error}",
-  "edit_script": "编辑脚本",
+  "edit_script": "编辑",
   "edit_error_title": "编辑错误",
   "edit_error_message": "打开脚本失败：{error}",
   "yes": "是",
@@ -239,5 +229,9 @@
   "script_template_doc_comment": "# 请参阅 https://linuxtoys.luminhost.xyz/handbook.html 的文档以获取更多信息。",
   "create_new_script_name": "创建新脚本",
   "create_new_script_desc": "创建一个新的本地脚本。创建后将在您的默认文本编辑器中打开。",
-  "script_name_prompt": "输入您的脚本名称："
+  "script_name_prompt": "输入您的脚本名称：",
+  "export_error_title": "导出错误",
+  "export_error_message": "导出脚本失败: {error}",
+  "export": "导出",
+  "select_export_directory": "选择导出目录"
 }

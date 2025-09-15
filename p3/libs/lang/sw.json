@@ -37,7 +37,6 @@
   "select_button": "Chagua",
   "loading_manifest_message": "Inapakia faili la orodha yako... Tafadhali subiri...",
   "packages_flatpaks": "Vifurushi &amp; Flatpaks",
-
   "psypicks": "Machaguzi ya Psygreg",
   "psypicks_desc": "Uteuzi wa programu kwa ajili ya michezo na ubora wa maisha kwenye Linux.",
   "pdefaults": "Mipangilio Iliyorekebishwa",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Zana na rasilimali za kusimamia vifaa vya kando na mwanga.",
   "sysadm": "Utawala wa Mfumo",
   "sysadm_desc": "Zana za utawala na usimamizi wa mfumo kwa biashara ndogo au kubwa.",
-
   "gimp_desc": "Kihariri cha picha chenye nguvu cha chanzo huria.",
   "onlyoffice_desc": "Seti yenye upatanisho bora na faili za Microsoft Office.",
   "msteams_desc": "Jukwaa la ushirikiano kwa kazi ya mbali.",
@@ -89,7 +87,6 @@
   "figma_desc": "Programu ya kubuni UI/UX iliyo kwenye wavuti.",
   "davinci_desc": "Programu ya kuhariri video ya kitaalamu.",
   "obsidian_desc": "Programu ya bure na ya kubadilika kwa mawazo, vidokezo, na mpangilio wako.",
-
   "gsr_desc": "Chombo cha kurekodi skrini chenye usimbaji wa maunzi kama vile Shadowplay kwa GPU yoyote kwenye Linux.",
   "pp_desc": "Chombo cha msingi wa GTK kupata waendeshaji wa jamii kwa michezo kwenye Linux kwa urahisi.",
   "sober_desc": "Nakala ya jamii ya Roblox kwa Linux, inayotegemea toleo la Android la mchezo.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Kifungashio cha jamii kwa Roblox Studio, kwa watengenezaji wa michezo ya Roblox.",
   "pup_desc": "Chombo cha msingi wa Qt kupata waendeshaji wa jamii kwa michezo kwenye Linux kwa urahisi.",
   "lsfg_desc": "Tabaka la utangamano kwa Lossless Scaling kwenye Vulkan kwa Linux. Bado inahitaji Lossless Scaling kwa Windows.",
-
   "ufw": "Sanidi Ukuta wa Moto",
   "ufw_desc": "Inasakinisha na kutumia mpangilio wa chaguo-msingi unaofaa kwa watumiaji wengi kwa Ukuta wa Moto Usiokatatiza (UFW).",
   "swapfile": "Sanidi Faili la Kubadilishana",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Inasakinisha ffmpeg-full katika majukwaa ya flatpak yanayosaidiwa kwa sasa, kuruhusu programu kutumia kucheza vyombo vya habari kwa kuongeza kasi kwa vifaa.",
   "ostree-autoupd": "Masasisho ya Otomatiki kwa RPM-OSTree",
   "ostree-autoupd_desc": "Inawezesha kipengele cha masasisho ya otomatiki cha rpm-ostree katika hali ya hatua (kimya). Masasisho yatatumika tu wakati wa kuanza upya, na hutaulizwa kuanza upya.",
-
   "nv_desc": "Viendeshaji vya sasa vya Nvidia. GPU zinazosaidiwa: Maxwell (GT 9xx) na mpya.",
   "nv_rtx_desc": "Viendeshaji vya sasa vya Nvidia na moduli za kernel wazi. GPU zinazosaidiwa: GTX 16xx na mfululizo wowote wa RTX. Kwa kompyuta za kiganjani, pendelea chaguo la kimila kwa usimamizi wa nishati.",
   "nv_desc_470": "Viendeshaji vya zamani vya Nvidia. GPU zinazosaidiwa: Kepler (GT 6xx) na Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Kiendeshaji kwa vidhibiti rasmi na za jumla za Xbox kwenye Linux.",
   "modsign": "Kutia sahihi moduli za kernel",
   "modsign_desc": "Inawezesha kutia sahihi moduli za kernel na viendeshaji na Ufunguo wa Mmiliki wa Mashine kwa Ufunga Salama.",
-
   "flat_desc": "Ghala la kwenda-kwa la programu za Flatpak, likiwa na programu nyingi za kipekee.",
   "brew_desc": "Msimamizi wa vifurushi vya zana za CLI kwa macOS/Linux.",
   "chaotic_desc": "Ghala linaloendelea na jamii kwa watumiaji wa Arch Linux.",
   "rpmfusion_desc": "Ghala linaloongeza vifurushi vya ziada kwa Fedora na RHEL.",
   "pip_desc": "Msimamizi wa vifurushi vya Python. Kwa kawaida inafaa kwa watengenezaji wa Python.",
   "cargo_desc": "Msimamizi wa vifurushi vya Rust. Kwa kawaida inafaa kwa watengenezaji wa Rust. Inajumuisha Rustup.",
-
   "obs_desc": "Programu maarufu ya chanzo huria ya kutiririka na kurekodi.",
   "mctl_desc": "Mfuatiliaji wa mfumo kwa Linux inayofanana sana na Windows Task Manager, kulingana na GTK4.",
   "sc_desc": "Chombo cha kusanidi Stream Decks na vifaa vinavyofanana.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "Huduma ya DNS inayoficha trafiki yako kutoka kwa ISP yako.",
   "piper_desc": "Programu ya GTK ya kusanidi kipanya cha michezo kwa kutumia libratbag. Hutumika kwa kawaida kwa kipanya za Logitech, Roccat, Asus na Glorious.",
   "glever_desc": "Chombo cha kusimamia AppImage, kuunda vichupo vya desktop na metadata ya programu, kuboresha programu kwenye tovuti au kuweka toleo nyingi kando.",
-
   "docker_desc": "Mtoa huduma wa chombo cha chanzo huria na zana za msingi kwa ajili yake, kama vile docker-compose. Inajumuisha chombo kilicho na Portainer CE kwa kusimamia Docker kutoka UI ya wavuti.",
   "mise_desc": "Kama asdf (au nvm au pyenv lakini kwa lugha yoyote) inasimamia zana za maendeleo kama node, python, cmake, terraform, na mamia mengine. Inachukua nafasi ya PyEnv, NVM, na vyasakinisha vya Java JDK na Maven kutoka sehemu hii.",
   "nvm_desc": "Msimamizi wa toleo kwa Node.js, unaoruhusu kubadilisha kati ya matoleo mbalimbali kwa urahisi. Inajumuisha Node.js, NPM na Yarn. Haihitajiki wakati wa kutumia Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "Mkusanyiko wa zana na maktaba za kuunda programu kulingana na jukwaa la .NET.",
   "sublime_desc": "Kihariri cha maandishi chenye utata kwa msimbo, alama na nathari.",
   "tailscale_desc": "VPN isiyo na usanidi inayounganisha vifaa vyako kwa usalama kupitia mtandao.",
-
   "cockpit_desc": "Kiolesura cha wavuti cha kufuatilia na kusimamia seva za Linux (seva).",
   "webmin_desc": "Kiolesura cha wavuti cha utawala wa mfumo kwa Unix.",
   "topgrade_desc": "Chombo cha kuboresha vifurushi vyote vilivyosakinishwa kwenye mfumo wowote wa Linux.",
   "cockpitclient_desc": "Kiolesura cha wavuti cha kusimamia seva za Linux (mteja).",
   "adir_desc": "Inasakinisha vifurushi vyote vinavyohitajika kujiunga na maeneo ya Active Directory kwa kutumia realmd.",
-
   "select_language": "Chagua Lugha",
   "select_language_title": "Uchaguzi wa Lugha",
   "select_language_message": "Tafadhali chagua lugha unayopendelea:",
@@ -221,13 +211,13 @@
   "search_results": "Matokeo ya Utafutaji",
   "results_found": "matokeo yamepatikana",
   "search": "Tafuta",
-  "delete_script": "Futa Hati",
+  "delete_script": "Futa",
   "delete_script_title": "Futa Hati",
   "delete_script_message": "Una uhakika unataka kufuta '{script_name}'?",
   "delete_script_warning": "<b>Kitendo hiki hakiwezi kurudishwa.</b>",
   "delete_error_title": "Hitilafu ya Kufuta",
   "delete_error_message": "Imeshindwa kufuta hati: {error}",
-  "edit_script": "Hariri Hati",
+  "edit_script": "Hariri",
   "edit_error_title": "Hitilafu ya Uhariri",
   "edit_error_message": "Imeshindwa kufungua hati: {error}",
   "yes": "Ndiyo",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# Tazama nyaraka katika https://linuxtoys.luminhost.xyz/handbook.html kwa maelezo zaidi.",
   "create_new_script_name": "Unda Hati Mpya",
   "create_new_script_desc": "Unda hati mpya ya ndani. Itafunguliwa katika kihariri chako cha maandishi cha msingi baada ya kuundwa.",
-  "script_name_prompt": "Ingiza jina la hati yako:"
+  "script_name_prompt": "Ingiza jina la hati yako:",
+  "export_error_title": "Hitilafu ya Uhamishaji",
+  "export_error_message": "Imeshindwa kuhamisha hati: {error}",
+  "export": "Hamisha",
+  "select_export_directory": "Chagua Saraka ya Uhamishaji"
 }

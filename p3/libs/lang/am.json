@@ -37,7 +37,6 @@
   "select_button": "ምረጥ",
   "loading_manifest_message": "የማኒፌስት ፋይልዎን እየጫነ... እባክዎ ይጠብቁ...",
   "packages_flatpaks": "ፓኬጆች እና ፍላትፓኮች",
-
   "psypicks": "የሳይግሪግ ምርጫዎች",
   "psypicks_desc": "በሊኑክስ ላይ ለጌሚንግ እና የህይወት ጥራት የተመረጡ ሶፍትዌሮች።",
   "pdefaults": "የተማሻሉ ነባሮች",
@@ -66,7 +65,6 @@
   "peripheral_desc": "ተጨማሪ መሳሪያዎችን እና ብርሃንን ለመቆጣጠር መሳሪያዎች እና ግብአቶች።",
   "sysadm": "የስርዓት አስተዳደር",
   "sysadm_desc": "ለትናንሽ ንግዶች ወይም በሰፊው ለስርዓት አስተዳደር እና አመራር መሳሪያዎች።",
-
   "gimp_desc": "ኃይለኛ የክፍት ምንጭ ምስል አርታዒ።",
   "onlyoffice_desc": "ከማይክሮሶፍት ቢሮ ፋይሎች ጋር የተሻለ ተዳራሽነት ያለው ስብስብ።",
   "msteams_desc": "ለርቀት ስራ የትብብር መድረክ።",
@@ -89,7 +87,6 @@
   "figma_desc": "የድር-ተኮር UI/UX ዲዛይን መተግበሪያ።",
   "davinci_desc": "ባለሙያ የቪዲዮ አርትዖት ሶፍትዌር።",
   "obsidian_desc": "ለአመሳስሎችዎ፣ ማስታወሻዎችዎ እና ውስጥዎ ነፃ፣ ተለዋዋጭ መተግበሪያ።",
-
   "gsr_desc": "በሊኑክስ ላይ ለማንኛውም GPU ሻዶውፕሌይ የሚመስል ከሃርድዌር ኢንኮዲንግ ጋር የስክሪን መቅዳት መሳሪያ።",
   "pp_desc": "በሊኑክስ ላይ ለጌሚንግ የማህበረሰብ ተሯጭዎችን በቀላሉ ለማግኘት የ GTK-ተኮር መሳሪያ።",
   "sober_desc": "በጌሙ የAndroid ሥሪት ላይ የተመሠረተ ለሊኑክስ የሮብሎክስ ማህበረሰብ ወደብ።",
@@ -110,7 +107,6 @@
   "vinegar_desc": "ለRoblox ጌም ፈጣሪዎች ለRoblox Studio የማህበረሰብ wrapper።",
   "pup_desc": "በሊኑክስ ላይ ለጌሚንግ የማህበረሰብ ተሯጭዎችን በቀላሉ ለማግኘት የQt-ተኮር መሳሪያ።",
   "lsfg_desc": "በሊኑክስ ላይ በVulkan ላይ ለLossless Scaling የተኳሃኝነት ንብርብር። አሁንም ለዊንዶውስ Lossless Scaling ያስፈልጋል።",
-
   "ufw": "ፋየርዎልን ማዋቀር",
   "ufw_desc": "ለብዙሃኑ ተጠቃሚዎች ተስማሚ ያለውን ለUncomplicated Firewall (UFW) ነባር ቅንብርን ይጫናል እና ይተገብራል።",
   "swapfile": "የስዋፕ ፋይል ማዋቀር",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "ወደ በአሁኑ ጊዜ የሚደገፉ flatpak ፕላትፎርሞች ffmpeg-full ይጫናል፣ መተግበሪያዎች በሃርድዌር የተፋጠነ ሚዲያ ማጫወት እንዲጠቀሙ ያስችላቸዋል።",
   "ostree-autoupd": "ለRPM-OSTree ራስ-ሰር ማሻሻያዎች",
   "ostree-autoupd_desc": "የrpm-ostree ራስ-ሰር የማሻሻያ ባህሪን በstage ሁነታ (ዝምታ) ያስችላል። ማሻሻያዎች በድጋሚ በመጀመር ጊዜ ብቻ ይተገበራሉ፣ እና እንደገና እንዲጀምሩ አይጠየቁም።",
-
   "nv_desc": "ወቅታዊ Nvidia አንቀሳቃሾች። የሚደገፉ GPUs፦ Maxwell (GT 9xx) እና አዳዲስ።",
   "nv_rtx_desc": "ከክፍት ከርነል ሞጁሎች ጋር ወቅታዊ Nvidia አንቀሳቃሾች። የሚደገፉ GPUs፦ GTX 16xx እና ማንኛውም RTX-ተከታታይ። ለላፕቶፖች፣ ለኃይል አስተዳደር proprietary አማራጭን ይመርጡ።",
   "nv_desc_470": "ታሪካዊ Nvidia አንቀሳቃሾች። የሚደገፉ GPUs፦ Kepler (GT 6xx) እና Fermi (GT 7xx)።",
@@ -153,14 +148,12 @@
   "xneo_desc": "በሊኑክስ ላይ ለይፋዊ እና አጠቃላይ Xbox ማቆጣጠሪያዎች አንቀሳቃሽ።",
   "modsign": "የከርነል ሞጁል ፈረመ",
   "modsign_desc": "ለSecure Boot በMachine Owner Key ከርነል ሞጁሎችን እና አንቀሳቃሾችን ፈረመን ያስችላል።",
-
   "flat_desc": "ለFlatpak መተግበሪያዎች የሚሄድበት ማከማቻ፣ ብዙ ልዩ መተግበሪያዎች አሉት።",
   "brew_desc": "ለmacOS/Linux CLI መሳሪያዎች ፓኬጅ አስተዳዳሪ።",
   "chaotic_desc": "ለArch Linux ተጠቃሚዎች የማህበረሰብ-የሚመራ ማከማቻ።",
   "rpmfusion_desc": "ለFedora እና RHEL ተጨማሪ ፓኬጆችን የሚያቀርብ ማከማቻ።",
   "pip_desc": "የPython ፓኬጅ አስተዳዳሪ። በተለይ ለPython ገንቢዎች ጠቃሚ።",
   "cargo_desc": "የRust ፓኬጅ አስተዳዳሪ። በተለይ ለRust ገንቢዎች ጠቃሚ። Rustup ያጠቃልላል።",
-
   "obs_desc": "ታዋቂ የክፍት ምንጭ የስትሪሚንግ እና መቅዳት ሶፍትዌር።",
   "mctl_desc": "በGTK4 ላይ የተመሠረተ ከዊንዶውስ Task Manager ጋር በጣም ተመሳሳይ ለሊኑክስ የስርዓት ተቆጣጣሪ።",
   "sc_desc": "Stream Decks እና ተመሳሳይ መሳሪያዎችን ለማዋቀር መሳሪያ።",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "ከISP የእርስዎን ትራፊክ የሚደብቅ DNS አገልግሎት።",
   "piper_desc": "libratbag በመጠቀም የጌሚንግ አይጦችን ለማዋቀር የGTK መተግበሪያ። በተለይ ለLogitech፣ Roccat፣ Asus እና Glorious አይጦች ይጠቅማል።",
   "glever_desc": "የAppImage አስተዳደር መሳሪያ፣ የዴስክቶፕ ገጽታዎችን እና የመተግበሪያ መረጃዎችን ይፍጠራል፣ በቦታው ውስጥ የመተግበሪያዎችን እንዲያዘምኑ ይደግፋል ወይም በአንደኛ ቦታ የተዘጋጀ ብዙ እትም ይዘው ይቀመጣሉ።",
-
   "docker_desc": "የክፍት ምንጭ ኮንቴይነር አገልግሎት አቅራቢ እና እንደ docker-compose ያሉ መሠረታዊ መሳሪያዎች። ከድር UI ዶከርን ለማስተዳደር ከPortainer CE ጋር ኮንቴይነር ያጠቃልላል።",
   "mise_desc": "እንደ asdf (ወይም nvm ወይም pyenv ነገር ግን ለማንኛውም ቋንቋ) node፣ python፣ cmake፣ terraform እና በመቶዎች የሚቆጠሩ ሌሎችን ያሉ dev መሳሪያዎችን ያስተዳድራል። PyEnv፣ NVM እና ከዚህ ክፍል የJava JDK እና Maven installers ይተካል።",
   "nvm_desc": "ለNode.js የሥሪት አስተዳዳሪ፣ በተለያዩ ሥሪቶች መካከል በቀላሉ እንዲቀይሩ ያስችልዎታል። Node.js፣ NPM እና Yarn ያጠቃልላል። Mise እየተጠቀሙ ከሆነ አያስፈልግም።",
@@ -204,13 +196,11 @@
   "dotnet_desc": "በ.NET መድረክ ላይ የተመሠረቱ መተግበሪያዎችን ለመፍጠር የመሳሪያዎች እና ቤተ-መጻሕፍት ስብስብ።",
   "sublime_desc": "ለኮድ፣ ማርክ አፕ እና ፕሮዝ የተራቀቀ ጽሁፍ አርታዒ።",
   "tailscale_desc": "በኢንተርኔት ላይ መሳሪያዎችዎን በአስተማማኝ ሁኔታ የሚያገናኝ zero-config VPN።",
-
   "cockpit_desc": "የሊኑክስ አገልጋዮችን ለመቆጣጠር እና ለማስተዳደር የድር-ተኮር በይነገጽ (አገልጋይ)።",
   "webmin_desc": "ለUnix የስርዓት አስተዳደር የድር-ተኮር በይነገጽ።",
   "topgrade_desc": "በማንኛውም ሊኑክስ ስርዓት ላይ ሁሉንም የተጫኑ ፓኬጆች ለማሻሻል መሳሪያ።",
   "cockpitclient_desc": "የሊኑክስ አገልጋዮችን ለማስተዳደር የድር-ተኮር በይነገጽ (ክላይንት)።",
   "adir_desc": "realmd በመጠቀም ወደ Active Directory domains ለመቀላቀል አስፈላጊ ሁሉንም ፓኬጆች ይጫናል።",
-
   "select_language": "ቋንቋ ይምረጡ",
   "select_language_title": "የቋንቋ ምርጫ",
   "select_language_message": "እባክዎ የሚመርጡትን ቋንቋ ይምረጡ፦",
@@ -221,13 +211,13 @@
   "search_results": "የፍለጋ ውጤቶች",
   "results_found": "ውጤቶች ተገኝተዋል",
   "search": "ፈልግ",
-  "delete_script": "ስክሪፕት ሰርዝ",
+  "delete_script": "ሰርዝ",
   "delete_script_title": "ስክሪፕት ሰርዝ",
   "delete_script_message": "'{script_name}' ን ማጥፋት እርግጠኛ ነዎት?",
   "delete_script_warning": "<b>ይህ ድርጊት መመለስ አይችልም።</b>",
   "delete_error_title": "የማጥፋት ስህተት",
   "delete_error_message": "ስክሪፕት ማጥፋት አልተሳካም: {error}",
-  "edit_script": "ስክሪፕት ማዘጋጀት",
+  "edit_script": "ደርስ",
   "edit_error_title": "የማዘጋጀት ስህተት",
   "edit_error_message": "ስክሪፕት መክፈት አልተሳካም: {error}",
   "yes": "አዎ",
@@ -237,5 +227,9 @@
   "script_template_doc_comment": "# ለበለጠ መረጃ በ https://linuxtoys.luminhost.xyz/handbook.html ያለውን ሰነድ ይመልከቱ።",
   "create_new_script_name": "አዲስ ስክሪፕት ይፍጠሩ",
   "create_new_script_desc": "አዲስ አካባቢያዊ ስክሪፕት ይፍጠሩ። ከተፈጠረ በኋላ በነባሪ የጽሑፍ አርታዒዎ ውስጥ ይከፈታል።",
-  "script_name_prompt": "የስክሪፕትዎን ስም ያስገቡ:"
+  "script_name_prompt": "የስክሪፕትዎን ስም ያስገቡ:",
+  "export_error_title": "የመላክ ስህተት",
+  "export_error_message": "ስክሪፕቱን መላክ ተሳክቷል: {error}",
+  "export": "መላክ",
+  "select_export_directory": "የመላክ ዲሬክተሪ ይምረጡ"
 }
