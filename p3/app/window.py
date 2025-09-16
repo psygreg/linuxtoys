@@ -298,7 +298,8 @@ class AppWindow(Gtk.ApplicationWindow):
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
         flowbox.set_max_children_per_line(5)  ## items per line
-        flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        flowbox.set_activate_on_single_click(False)
+        flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
         flowbox.set_homogeneous(True)  # Make all children the same size
         ## Adiciona margem de 32 px em todos os lados
         flowbox.set_margin_left(32) 
@@ -396,11 +397,39 @@ class AppWindow(Gtk.ApplicationWindow):
                            Gdk.EventMask.BUTTON_RELEASE_MASK)
         
         # Connect hover events only (click events are connected separately)
+        event_box.drag_source_set(
+            Gdk.ModifierType.BUTTON1_MASK,
+            [Gtk.TargetEntry.new("text/uri-list", 0, 0)],
+            Gdk.DragAction.COPY,
+        )
+
         event_box.connect("enter-notify-event", self.on_item_enter)
         event_box.connect("leave-notify-event", self.on_item_leave)
         event_box.connect("button-press-event", self.on_item_button_press)
-        
+        event_box.connect("drag-data-get", self.on_drag_data_get)
+        event_box.connect("drag-end", self.on_drag_end)
+
         return event_box
+
+    def on_drag_end(self, widget, drag_context):
+        self.scripts_flowbox.unselect_all()
+
+    def on_drag_data_get(self, widget, drag_context, data, info, time):
+        selected_children = self.scripts_flowbox.get_selected_children()
+        uris = []
+
+        for child in selected_children:
+            event_box = child.get_child()
+            infos = event_box.info
+            if infos.get('path'):
+                uris.append(GLib.filename_to_uri(infos.get('path')))
+
+        if not uris:
+            infos = widget.info
+            if infos.get('path'):
+                uris.append(GLib.filename_to_uri(infos.get('path')))
+
+        data.set_uris(uris)
 
     def load_categories(self):
         """Loads categories and connects their click event."""
@@ -952,7 +981,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         if event.button == 1:  # Left click
             # Determine the appropriate click handler based on item type and context
             info = widget.info
-            
+
+            if ".local/linuxtoys/scripts/" in info.get('path') and event.state & Gdk.ModifierType.CONTROL_MASK:
+                return False
             # If this is a search result, use script click handler
             if self.search_active:
                 self.on_script_clicked(widget, event)
