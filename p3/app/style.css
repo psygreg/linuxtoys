@@ -19,3 +19,9 @@
     background-position: left;
     border-radius: 16px;
 }
+flowboxchild:selected {
+    border-radius: 16px;
+}
+flowboxchild {
+    outline: none;
+}
