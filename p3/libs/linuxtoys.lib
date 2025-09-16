@@ -63,7 +63,7 @@ _install_ () {
                     if dpkg -s "$pak" 2>/dev/null 1>&2; then
                         continue
                     else
-                        sudo apt install -y $pak
+                        sudo apt install -y "$pak"
                     fi
                 done
             elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
@@ -71,7 +71,7 @@ _install_ () {
                     if pacman -Qi "$pak" 2>/dev/null 1>&2; then
                         continue
                     else
-                        sudo pacman -S --noconfirm $pak
+                        sudo pacman -S --noconfirm "$pak"
                     fi
                 done
             elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
@@ -79,7 +79,7 @@ _install_ () {
                     if rpm -qi "$pak" 2>/dev/null 1>&2; then
                         continue
                     else
-                        sudo dnf in $pak -y
+                        sudo dnf in "$pak" -y
                     fi
                 done
             elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
@@ -87,7 +87,7 @@ _install_ () {
                     if rpm -qi "$pak" 2>/dev/null 1>&2; then
                         continue
                     else
-                        sudo zypper in $pak -y
+                        sudo zypper in "$pak" -y
                     fi
                 done
             fi
