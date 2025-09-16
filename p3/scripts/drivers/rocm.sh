@@ -13,7 +13,7 @@ _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
 # functions
 rocm_rpm () {
-    local GPU=$(lspci | grep -i 'radeon .*')
+    local GPU=$(lspci | grep -Ei '(radeon|rx)')
     if [[ -n "$GPU" ]]; then
         _packages=()
         if [[ "$ID_LIKE" == *suse* ]]; then
@@ -28,7 +28,7 @@ rocm_rpm () {
     fi
 }
 rocm_deb () {
-    local GPU=$(lspci | grep -i 'radeon .*')
+    local GPU=$(lspci | grep -Ei '(radeon|rx)')
     if [[ -n "$GPU" ]]; then
         _packages=(libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo)
         _install_
@@ -37,8 +37,8 @@ rocm_deb () {
         nonfatal "$msg040"
     fi
 }
-rocm_arch () { 
-    local GPU=$(lspci | grep -i 'radeon .*')
+rocm_arch () {
+    local GPU=$(lspci | grep -Ei '(radeon|rx)')
     if [[ -n "$GPU" ]]; then
         _packages=(comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo)
         _install_
