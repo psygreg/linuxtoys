@@ -231,5 +231,8 @@
   "export_error_title": "Błąd Eksportu",
   "export_error_message": "Nie udało się wyeksportować skryptu: {error}",
   "export": "Eksportuj",
-  "select_export_directory": "Wybierz Katalog Eksportu"
+  "select_export_directory": "Wybierz Katalog Eksportu",
+  "delete_scripts_message": "Czy na pewno chcesz usunąć {count} skryptów?",
+  "export_success": "Eksport Udany",
+  "export_success_message": "{count} skryptów zostało pomyślnie wyeksportowanych."
 }

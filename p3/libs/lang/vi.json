@@ -231,5 +231,8 @@
   "export_error_title": "Lỗi Xuất",
   "export_error_message": "Không thể xuất script: {error}",
   "export": "Xuất",
-  "select_export_directory": "Chọn Thư Mục Xuất"
+  "select_export_directory": "Chọn Thư Mục Xuất",
+  "delete_scripts_message": "Bạn có chắc chắn muốn xóa {count} script không?",
+  "export_success": "Xuất Thành Công",
+  "export_success_message": "Đã xuất thành công {count} script."
 }

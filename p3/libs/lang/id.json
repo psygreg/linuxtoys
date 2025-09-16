@@ -231,5 +231,8 @@
   "export_error_title": "Kesalahan Ekspor",
   "export_error_message": "Gagal mengekspor skrip: {error}",
   "export": "Ekspor",
-  "select_export_directory": "Pilih Direktori Ekspor"
+  "select_export_directory": "Pilih Direktori Ekspor",
+  "delete_scripts_message": "Apakah Anda yakin ingin menghapus {count} skrip?",
+  "export_success": "Ekspor Berhasil",
+  "export_success_message": "{count} skrip berhasil diekspor."
 }

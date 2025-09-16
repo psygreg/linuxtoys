@@ -211,5 +211,8 @@
   "export_error_title": "निर्यात त्रुटि",
   "export_error_message": "स्क्रिप्ट निर्यात करने में विफल: {error}",
   "export": "निर्यात",
-  "select_export_directory": "निर्यात निर्देशिका चुनें"
+  "select_export_directory": "निर्यात निर्देशिका चुनें",
+  "delete_scripts_message": "क्या आप वाकई {count} स्क्रिप्ट को हटाना चाहते हैं?",
+  "export_success": "निर्यात सफल",
+  "export_success_message": "{count} स्क्रिप्ट सफलतापूर्वक निर्यात की गईं।"
 }

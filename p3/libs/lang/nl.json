@@ -231,5 +231,8 @@
   "export_error_title": "Export Fout",
   "export_error_message": "Mislukt om script te exporteren: {error}",
   "export": "Exporteren",
-  "select_export_directory": "Selecteer Export Directory"
+  "select_export_directory": "Selecteer Export Directory",
+  "delete_scripts_message": "Weet u zeker dat u {count} scripts wilt verwijderen?",
+  "export_success": "Export Succesvol",
+  "export_success_message": "{count} scripts succesvol geëxporteerd."
 }

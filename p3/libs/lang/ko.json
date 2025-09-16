@@ -231,5 +231,8 @@
   "export_error_title": "내보내기 오류",
   "export_error_message": "스크립트 내보내기 실패: {error}",
   "export": "내보내기",
-  "select_export_directory": "내보내기 디렉토리 선택"
+  "select_export_directory": "내보내기 디렉토리 선택",
+  "delete_scripts_message": "{count}개의 스크립트를 삭제하시겠습니까?",
+  "export_success": "내보내기 성공",
+  "export_success_message": "{count}개의 스크립트가 성공적으로 내보내어졌습니다."
 }

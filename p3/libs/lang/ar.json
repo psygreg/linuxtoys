@@ -231,5 +231,8 @@
   "export_error_title": "خطأ في التصدير",
   "export_error_message": "فشل في تصدير السكريپت: {error}",
   "export": "تصدير",
-  "select_export_directory": "اختر دليل التصدير"
+  "select_export_directory": "اختر دليل التصدير",
+  "delete_scripts_message": "هل أنت متأكد من أنك تريد حذف {count} نصوص برمجية؟",
+  "export_success": "نجح التصدير",
+  "export_success_message": "تم تصدير {count} نصوص برمجية بنجاح."
 }

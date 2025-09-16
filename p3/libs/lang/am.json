@@ -231,5 +231,8 @@
   "export_error_title": "የመላክ ስህተት",
   "export_error_message": "ስክሪፕቱን መላክ ተሳክቷል: {error}",
   "export": "መላክ",
-  "select_export_directory": "የመላክ ዲሬክተሪ ይምረጡ"
+  "select_export_directory": "የመላክ ዲሬክተሪ ይምረጡ",
+  "delete_scripts_message": "{count} ስክሪፕቶችን መሰረዝ እርግጠኛ ነዎት?",
+  "export_success": "መላክ ተሳክቷል",
+  "export_success_message": "{count} ስክሪፕቶች በተሳካ ሁኔታ ተልከዋል።"
 }

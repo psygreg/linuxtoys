@@ -231,5 +231,8 @@
   "export_error_title": "রপ্তানি ত্রুটি",
   "export_error_message": "স্ক্রিপ্ট রপ্তানি করতে ব্যর্থ: {error}",
   "export": "রপ্তানি",
-  "select_export_directory": "রপ্তানি ডিরেক্টরি নির্বাচন করুন"
+  "select_export_directory": "রপ্তানি ডিরেক্টরি নির্বাচন করুন",
+  "delete_scripts_message": "আপনি কি নিশ্চিত যে আপনি {count}টি স্ক্রিপ্ট মুছে ফেলতে চান?",
+  "export_success": "রপ্তানি সফল",
+  "export_success_message": "{count}টি স্ক্রিপ্ট সফলভাবে রপ্তানি করা হয়েছে।"
 }

@@ -231,5 +231,8 @@
   "export_error_title": "ข้อผิดพลาดในการส่งออก",
   "export_error_message": "ไม่สามารถส่งออกสคริปต์: {error}",
   "export": "ส่งออก",
-  "select_export_directory": "เลือกไดเรกทอรีส่งออก"
+  "select_export_directory": "เลือกไดเรกทอรีส่งออก",
+  "delete_scripts_message": "คุณแน่ใจหรือไม่ว่าต้องการลบสคริปต์ {count} ตัว?",
+  "export_success": "ส่งออกสำเร็จ",
+  "export_success_message": "ส่งออกสคริปต์ {count} ตัวสำเร็จแล้ว"
 }

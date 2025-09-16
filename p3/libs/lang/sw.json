@@ -231,5 +231,8 @@
   "export_error_title": "Hitilafu ya Uhamishaji",
   "export_error_message": "Imeshindwa kuhamisha hati: {error}",
   "export": "Hamisha",
-  "select_export_directory": "Chagua Saraka ya Uhamishaji"
+  "select_export_directory": "Chagua Saraka ya Uhamishaji",
+  "delete_scripts_message": "Je, una uhakika unataka kufuta hati {count}?",
+  "export_success": "Uhamishaji Umefanikiwa",
+  "export_success_message": "Hati {count} zimehamishwa kwa mafanikio."
 }

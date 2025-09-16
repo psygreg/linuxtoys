@@ -231,5 +231,8 @@
   "export_error_title": "Ошибка экспорта",
   "export_error_message": "Не удалось экспортировать скрипт: {error}",
   "export": "Экспорт",
-  "select_export_directory": "Выберите каталог экспорта"
+  "select_export_directory": "Выберите каталог экспорта",
+  "delete_scripts_message": "Вы уверены, что хотите удалить {count} скриптов?",
+  "export_success": "Экспорт успешен",
+  "export_success_message": "{count} скриптов успешно экспортировано."
 }

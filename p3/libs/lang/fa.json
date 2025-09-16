@@ -231,5 +231,8 @@
   "export_error_title": "خطای صادرات",
   "export_error_message": "صادرات اسکریپت ناموفق بود: {error}",
   "export": "صادرات",
-  "select_export_directory": "انتخاب پوشه صادرات"
+  "select_export_directory": "انتخاب پوشه صادرات",
+  "delete_scripts_message": "آیا مطمئن هستید که می‌خواهید {count} اسکریپت را حذف کنید؟",
+  "export_success": "صادرات موفق",
+  "export_success_message": "{count} اسکریپت با موفقیت صادر شد."
 }

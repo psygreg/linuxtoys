@@ -231,5 +231,8 @@
   "export_error_title": "Dışa Aktarma Hatası",
   "export_error_message": "Komut dosyası dışa aktarılamadı: {error}",
   "export": "Dışa Aktar",
-  "select_export_directory": "Dışa Aktarma Dizinini Seç"
+  "select_export_directory": "Dışa Aktarma Dizinini Seç",
+  "delete_scripts_message": "{count} betiği silmek istediğinizden emin misiniz?",
+  "export_success": "Dışa Aktarma Başarılı",
+  "export_success_message": "{count} betik başarıyla dışa aktarıldı."
 }

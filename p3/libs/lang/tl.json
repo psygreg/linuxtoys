@@ -231,5 +231,8 @@
   "export_error_title": "Error sa Pag-export",
   "export_error_message": "Hindi na-export ang script: {error}",
   "export": "I-export",
-  "select_export_directory": "Piliin ang Export Directory"
+  "select_export_directory": "Piliin ang Export Directory",
+  "delete_scripts_message": "Sigurado ka ba na gusto mong burahin ang {count} scripts?",
+  "export_success": "Matagumpay na Na-export",
+  "export_success_message": "Matagumpay na na-export ang {count} scripts."
 }

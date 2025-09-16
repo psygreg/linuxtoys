@@ -231,5 +231,8 @@
   "export_error_title": "Erro de Exportação",
   "export_error_message": "Falha ao exportar script: {error}",
   "export": "Exportar",
-  "select_export_directory": "Selecionar Diretório de Exportação"
+  "select_export_directory": "Selecionar Diretório de Exportação",
+  "delete_scripts_message": "Tem certeza de que deseja excluir {count} scripts?",
+  "export_success": "Exportação Bem-sucedida",
+  "export_success_message": "{count} scripts exportados com sucesso."
 }

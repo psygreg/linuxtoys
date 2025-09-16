@@ -233,5 +233,8 @@
   "export_error_title": "导出错误",
   "export_error_message": "导出脚本失败: {error}",
   "export": "导出",
-  "select_export_directory": "选择导出目录"
+  "select_export_directory": "选择导出目录",
+  "delete_scripts_message": "您确定要删除 {count} 个脚本吗？",
+  "export_success": "导出成功",
+  "export_success_message": "已成功导出 {count} 个脚本。"
 }

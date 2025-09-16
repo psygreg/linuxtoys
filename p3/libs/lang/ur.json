@@ -231,5 +231,8 @@
   "export_error_title": "برآمد کی خرابی",
   "export_error_message": "اسکرپٹ برآمد کرنے میں ناکام: {error}",
   "export": "برآمد",
-  "select_export_directory": "برآمد ڈائرکٹری منتخب کریں"
+  "select_export_directory": "برآمد ڈائرکٹری منتخب کریں",
+  "delete_scripts_message": "کیا آپ واقعی {count} اسکرپٹس کو حذف کرنا چاہتے ہیں؟",
+  "export_success": "برآمد کامیاب",
+  "export_success_message": "{count} اسکرپٹس کامیابی سے برآمد ہو گئے۔"
 }
