@@ -123,11 +123,30 @@ class AppWindow(Gtk.ApplicationWindow):
         self.connect('focus-in-event', self._on_focus_in)
         self.connect('focus-out-event', self._on_focus_out)
 
+        self.connect("key-press-event", self._on_key_press)
+
         # Local scripts
         self.local_sh_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts/'
 
         # Initialize drag-and-drop but don't enable it by default
         self._setup_drag_and_drop()
+
+    def _on_key_press(self, widget, event):
+        keyval = event.keyval
+
+        if keyval == Gdk.KEY_Delete:
+            selected_children = [child.get_child().info for child in self.scripts_flowbox.get_selected_children()]
+            self._delete_local_scripts(selected_children)
+
+        elif (event.state & Gdk.ModifierType.CONTROL_MASK) and keyval == Gdk.KEY_a:
+            if self.current_category_info and f"{self.current_category_info.get('path')}/" == self.local_sh_dir:
+                [ self.scripts_flowbox.select_child(child) for child in self.scripts_flowbox.get_children()[1:] ]
+                return True
+
+        elif keyval == Gdk.KEY_Escape:
+            self.scripts_flowbox.unselect_all()
+
+        return False
 
     def _setup_drag_and_drop(self):
         """Setup drag-and-drop functionality but don't enable it initially."""
