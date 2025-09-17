@@ -146,6 +146,18 @@ class AppWindow(Gtk.ApplicationWindow):
         elif keyval == Gdk.KEY_Escape:
             self.scripts_flowbox.unselect_all()
 
+        # Quick search: if typing letters without modifiers, focus search entry and type there
+        current_focus = self.get_focus()
+        if (current_focus != self.search_entry and 
+            (65 <= keyval <= 90 or 97 <= keyval <= 122) and 
+            not (event.state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.META_MASK))):
+            self.search_entry.grab_focus()
+            current_text = self.search_entry.get_text()
+            char = chr(keyval)
+            self.search_entry.set_text(current_text + char)
+            self.search_entry.set_position(-1)  # Move cursor to end
+            return True
+
         return False
 
     def _setup_drag_and_drop(self):
