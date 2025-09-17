@@ -142,7 +142,7 @@ davinciboxatom () {
    			    fi
 
                 case $CHOICE in
-            	    "ROCm - ${msg255}") _packages+=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo) ;;
+            	    "ROCm - ${msg290}") _packages+=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo) ;;
             	    "RustiCL - ${msg256}") _packages+=(mesa-libOpenCL clinfo) ;;
             	    *) echo "Invalid Option" ;;
                 esac
