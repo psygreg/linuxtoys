@@ -6,7 +6,6 @@
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/helpers.lib"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
@@ -20,7 +19,7 @@ _fonts=($(
 	grep -Pio '(?<=href=")([^"]+.tar.xz)')
 )
 
-_fonts_names=($(for url in ${_fonts[@]}; do _url=${url##*/}; printf 'FALSE %s %s ' "${url}" "${_url%%.*}"; done))
+_fonts_names=($(for url in "${_fonts[@]}"; do _url=${url##*/}; printf 'FALSE %s %s ' "${url}" "${_url%%.*}"; done))
 
 _select_font=($(zenity --list \
   --title="Choice your prefered nerd font" \
@@ -37,7 +36,7 @@ _select_font=($(zenity --list \
 			curl -fsSL "https://github.com/${_font}" -o- | tar -xvJf - --one-top-level="${HOME}/.local/share/fonts/";
 		done;
 		fc-cache -fv;
-	) && { zeninf "Nerd-Fonts installed successfully"; } || { fatal "Nerd-Fonts installation unsuccessful"; }
+	) && { zeninf "$msg018"; } || { fatal "Nerd-Fonts installation unsuccessful"; }
 } || {
 	zenwrn "No font selected"
 }

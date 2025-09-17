@@ -59,3 +59,4 @@ msg288="እርስዎ ቀድሞውንም $LT_PROGRAM ተጭኗል። ማስወገ
 rmmsg="$msg288"
 msg289="ስራዎች ተጠናቅቀዋል። አሁን 'realm' በመጠቀም ወደ Active Directory domain መቀላቀል ወይም ተጨማሪ ማዋቀር ማድረግ ይችላሉ።"
 msg290="ለRDNA እና አዳዲስ GPUs"
+msg291="Starship በተለመደው መልክ ለመስራት በተለመደው ተርሚናል ውስጥ Nerd Font መገጣጠም እና መስጠት አስፈላጊ ነው። አንዱን ለመገጣጠም፣ ወደ 'Utilities' -> 'Nerd Fonts' መሄድ ትችላለህ።"

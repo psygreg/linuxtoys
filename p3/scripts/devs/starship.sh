@@ -6,7 +6,6 @@
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/helpers.lib"
 source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
@@ -25,5 +24,5 @@ curl -fsSL https://starship.rs/install.sh | sudo sh -s -- -f -y && {
 		echo -e "\nstarship init fish | source" >> ~/.config/fish/config.fish;
 	}
 
-	zenwrn "A Nerd Font installed and enabled in your terminal. To do this, go to `Utils` -> `Nerd Fonts` and install the one of your choice."
+	zenwrn "$msg291"
 }

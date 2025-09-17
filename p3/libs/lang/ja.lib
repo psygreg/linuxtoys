@@ -59,3 +59,4 @@ msg288="すでに$LT_PROGRAMがインストールされています。削除し�
 rmmsg="$msg288"
 msg289="操作が完了しました。'realm'を使用してActive Directoryドメインに参加するか、さらに設定を行うことができます。"
 msg290="RDNA以降のGPU用"
+msg291="Starship を正しく動作させるには、Nerd Font をインストールし、ターミナルで有効にする必要があります。インストールするには、'Utilities' -> 'Nerd Fonts' に移動してください。"

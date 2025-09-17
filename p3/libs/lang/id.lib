@@ -59,3 +59,4 @@ msg288="Anda sudah memiliki $LT_PROGRAM terinstal. Apakah Anda ingin menghapusny
 rmmsg="$msg288"
 msg289="Operasi selesai. Anda sekarang dapat menggunakan 'realm' untuk bergabung dengan domain Active Directory, atau melakukan konfigurasi lebih lanjut."
 msg290="Untuk GPU RDNA dan yang lebih baru"
+msg291="Starship memerlukan font Nerd yang diinstal dan diaktifkan di terminal Anda untuk berfungsi dengan benar. Untuk menginstal satu, Anda dapat pergi ke 'Utilities' -> 'Nerd Fonts'."
