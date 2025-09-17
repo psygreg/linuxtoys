@@ -234,5 +234,8 @@
   "select_export_directory": "Pilih Direktori Ekspor",
   "delete_scripts_message": "Apakah Anda yakin ingin menghapus {count} skrip?",
   "export_success": "Ekspor Berhasil",
-  "export_success_message": "{count} skrip berhasil diekspor."
+  "export_success_message": "{count} skrip berhasil diekspor.",
+  "omz_desc": "Sebuah framework untuk mengelola konfigurasi zsh Anda.",
+  "cryptomator_desc": "Enkripsi untuk cloud Anda dibuat mudah.",
+  "sirikali_desc": "GUI untuk Gocryptfs, Securefs dan Cryfs."
 }

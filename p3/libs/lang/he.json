@@ -234,5 +234,8 @@
   "select_export_directory": "בחר תיקיית ייצוא",
   "delete_scripts_message": "האם אתה בטוח שברצונך למחוק {count} סקריפטים?",
   "export_success": "ייצוא הצליח",
-  "export_success_message": "{count} סקריפטים יוצאו בהצלחה."
+  "export_success_message": "{count} סקריפטים יוצאו בהצלחה.",
+  "omz_desc": "מסגרת לניהול התצורה שלך ב-zsh.",
+  "cryptomator_desc": "הצפנה לענן שלך בקלות.",
+  "sirikali_desc": "ממשק גרפי עבור Gocryptfs, Securefs ו-Cryfs."
 }

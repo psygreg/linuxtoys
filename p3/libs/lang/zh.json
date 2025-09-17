@@ -236,5 +236,8 @@
   "select_export_directory": "选择导出目录",
   "delete_scripts_message": "您确定要删除 {count} 个脚本吗？",
   "export_success": "导出成功",
-  "export_success_message": "已成功导出 {count} 个脚本。"
+  "export_success_message": "已成功导出 {count} 个脚本。",
+  "omz_desc": "用于管理您的 zsh 配置的框架。",
+  "cryptomator_desc": "让您的云加密变得简单。",
+  "sirikali_desc": "Gocryptfs、Securefs 和 Cryfs 的 GUI。"
 }

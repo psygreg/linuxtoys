@@ -234,5 +234,8 @@
   "select_export_directory": "রপ্তানি ডিরেক্টরি নির্বাচন করুন",
   "delete_scripts_message": "আপনি কি নিশ্চিত যে আপনি {count}টি স্ক্রিপ্ট মুছে ফেলতে চান?",
   "export_success": "রপ্তানি সফল",
-  "export_success_message": "{count}টি স্ক্রিপ্ট সফলভাবে রপ্তানি করা হয়েছে।"
+  "export_success_message": "{count}টি স্ক্রিপ্ট সফলভাবে রপ্তানি করা হয়েছে।",
+  "omz_desc": "আপনার zsh কনফিগারেশন পরিচালনা করার জন্য একটি ফ্রেমওয়ার্ক।",
+  "cryptomator_desc": "আপনার ক্লাউডের জন্য এনক্রিপশন সহজ করে।",
+  "sirikali_desc": "Gocryptfs, Securefs এবং Cryfs এর জন্য একটি GUI।"
 }

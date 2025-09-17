@@ -234,5 +234,8 @@
   "select_export_directory": "เลือกไดเรกทอรีส่งออก",
   "delete_scripts_message": "คุณแน่ใจหรือไม่ว่าต้องการลบสคริปต์ {count} ตัว?",
   "export_success": "ส่งออกสำเร็จ",
-  "export_success_message": "ส่งออกสคริปต์ {count} ตัวสำเร็จแล้ว"
+  "export_success_message": "ส่งออกสคริปต์ {count} ตัวสำเร็จแล้ว",
+  "omz_desc": "เฟรมเวิร์กสำหรับจัดการการกำหนดค่า zsh ของคุณ",
+  "cryptomator_desc": "การเข้ารหัสสำหรับคลาวด์ของคุณทำได้ง่าย",
+  "sirikali_desc": "GUI สำหรับ Gocryptfs, Securefs และ Cryfs"
 }

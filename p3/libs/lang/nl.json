@@ -234,5 +234,8 @@
   "select_export_directory": "Selecteer Export Directory",
   "delete_scripts_message": "Weet u zeker dat u {count} scripts wilt verwijderen?",
   "export_success": "Export Succesvol",
-  "export_success_message": "{count} scripts succesvol geëxporteerd."
+  "export_success_message": "{count} scripts succesvol geëxporteerd.",
+  "omz_desc": "Een framework voor het beheren van uw zsh-configuratie.",
+  "cryptomator_desc": "Encryptie voor uw cloud eenvoudig gemaakt.",
+  "sirikali_desc": "Een GUI voor Gocryptfs, Securefs en Cryfs."
 }

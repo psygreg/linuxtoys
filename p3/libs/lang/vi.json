@@ -234,5 +234,8 @@
   "select_export_directory": "Chọn Thư Mục Xuất",
   "delete_scripts_message": "Bạn có chắc chắn muốn xóa {count} script không?",
   "export_success": "Xuất Thành Công",
-  "export_success_message": "Đã xuất thành công {count} script."
+  "export_success_message": "Đã xuất thành công {count} script.",
+  "omz_desc": "Một framework để quản lý cấu hình zsh của bạn.",
+  "cryptomator_desc": "Mã hóa cho đám mây của bạn được làm dễ dàng.",
+  "sirikali_desc": "Một GUI cho Gocryptfs, Securefs và Cryfs."
 }

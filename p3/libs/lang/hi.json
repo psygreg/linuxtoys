@@ -214,5 +214,8 @@
   "select_export_directory": "निर्यात निर्देशिका चुनें",
   "delete_scripts_message": "क्या आप वाकई {count} स्क्रिप्ट को हटाना चाहते हैं?",
   "export_success": "निर्यात सफल",
-  "export_success_message": "{count} स्क्रिप्ट सफलतापूर्वक निर्यात की गईं।"
+  "export_success_message": "{count} स्क्रिप्ट सफलतापूर्वक निर्यात की गईं।",
+  "omz_desc": "आपकी zsh कॉन्फ़िगरेशन को प्रबंधित करने के लिए एक फ्रेमवर्क।",
+  "cryptomator_desc": "आपके क्लाउड के लिए एन्क्रिप्शन आसान बना दिया।",
+  "sirikali_desc": "Gocryptfs, Securefs और Cryfs के लिए एक GUI।"
 }

@@ -234,5 +234,8 @@
   "select_export_directory": "Dışa Aktarma Dizinini Seç",
   "delete_scripts_message": "{count} betiği silmek istediğinizden emin misiniz?",
   "export_success": "Dışa Aktarma Başarılı",
-  "export_success_message": "{count} betik başarıyla dışa aktarıldı."
+  "export_success_message": "{count} betik başarıyla dışa aktarıldı.",
+  "omz_desc": "Zsh yapılandırmanızı yönetmek için bir çerçeve.",
+  "cryptomator_desc": "Bulutunuz için şifreleme kolaylaştırıldı.",
+  "sirikali_desc": "Gocryptfs, Securefs ve Cryfs için bir GUI."
 }

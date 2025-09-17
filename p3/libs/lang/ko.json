@@ -234,5 +234,8 @@
   "select_export_directory": "내보내기 디렉토리 선택",
   "delete_scripts_message": "{count}개의 스크립트를 삭제하시겠습니까?",
   "export_success": "내보내기 성공",
-  "export_success_message": "{count}개의 스크립트가 성공적으로 내보내어졌습니다."
+  "export_success_message": "{count}개의 스크립트가 성공적으로 내보내어졌습니다.",
+  "omz_desc": "zsh 구성을 관리하기 위한 프레임워크.",
+  "cryptomator_desc": "클라우드용 암호화를 쉽게.",
+  "sirikali_desc": "Gocryptfs, Securefs 및 Cryfs용 GUI."
 }

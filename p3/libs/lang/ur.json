@@ -234,5 +234,8 @@
   "select_export_directory": "برآمد ڈائرکٹری منتخب کریں",
   "delete_scripts_message": "کیا آپ واقعی {count} اسکرپٹس کو حذف کرنا چاہتے ہیں؟",
   "export_success": "برآمد کامیاب",
-  "export_success_message": "{count} اسکرپٹس کامیابی سے برآمد ہو گئے۔"
+  "export_success_message": "{count} اسکرپٹس کامیابی سے برآمد ہو گئے۔",
+  "omz_desc": "آپ کی zsh کنفیگریشن کو منظم کرنے کے لیے ایک فریم ورک۔",
+  "cryptomator_desc": "آپ کے کلاؤڈ کے لیے انکرپشن آسان بنا دیا گیا۔",
+  "sirikali_desc": "Gocryptfs، Securefs اور Cryfs کے لیے ایک GUI۔"
 }

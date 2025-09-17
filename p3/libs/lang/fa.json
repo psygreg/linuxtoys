@@ -234,5 +234,8 @@
   "select_export_directory": "انتخاب پوشه صادرات",
   "delete_scripts_message": "آیا مطمئن هستید که می‌خواهید {count} اسکریپت را حذف کنید؟",
   "export_success": "صادرات موفق",
-  "export_success_message": "{count} اسکریپت با موفقیت صادر شد."
+  "export_success_message": "{count} اسکریپت با موفقیت صادر شد.",
+  "omz_desc": "یک فریمورک برای مدیریت پیکربندی zsh شما.",
+  "cryptomator_desc": "رمزگذاری برای ابر شما آسان شد.",
+  "sirikali_desc": "یک رابط گرافیکی برای Gocryptfs، Securefs و Cryfs."
 }

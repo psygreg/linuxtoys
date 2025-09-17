@@ -234,5 +234,8 @@
   "select_export_directory": "የመላክ ዲሬክተሪ ይምረጡ",
   "delete_scripts_message": "{count} ስክሪፕቶችን መሰረዝ እርግጠኛ ነዎት?",
   "export_success": "መላክ ተሳክቷል",
-  "export_success_message": "{count} ስክሪፕቶች በተሳካ ሁኔታ ተልከዋል።"
+  "export_success_message": "{count} ስክሪፕቶች በተሳካ ሁኔታ ተልከዋል።",
+  "omz_desc": "ለእርስዎ zsh ውቅር ለማስተያየት አንድ መሠረተ ሥራ።",
+  "cryptomator_desc": "ለእርስዎ የደመና ምስጠር ቀላል ተስማሚ።",
+  "sirikali_desc": "ለ Gocryptfs፣ Securefs እና Cryfs GUI።"
 }

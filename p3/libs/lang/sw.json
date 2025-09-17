@@ -234,5 +234,8 @@
   "select_export_directory": "Chagua Saraka ya Uhamishaji",
   "delete_scripts_message": "Je, una uhakika unataka kufuta hati {count}?",
   "export_success": "Uhamishaji Umefanikiwa",
-  "export_success_message": "Hati {count} zimehamishwa kwa mafanikio."
+  "export_success_message": "Hati {count} zimehamishwa kwa mafanikio.",
+  "omz_desc": "Mfumo wa kusimamia usanidi wako wa zsh.",
+  "cryptomator_desc": "Usimbaji fiche kwa wingu lako ulifanywa rahisi.",
+  "sirikali_desc": "GUI kwa Gocryptfs, Securefs na Cryfs."
 }

@@ -247,5 +247,5 @@
   "export_success_message": "{count} scripts exported successfully.",
   "omz_desc": "A framework for managing your zsh configuration.",
   "cryptomator_desc": "Encryption for your cloud made easy.",
-  "sirikali_desc": "A GUI to Gocryptfs, Securefs, Cryfs."
+  "sirikali_desc": "A GUI to Gocryptfs, Securefs and Cryfs."
 }

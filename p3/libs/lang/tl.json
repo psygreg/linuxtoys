@@ -234,5 +234,8 @@
   "select_export_directory": "Piliin ang Export Directory",
   "delete_scripts_message": "Sigurado ka ba na gusto mong burahin ang {count} scripts?",
   "export_success": "Matagumpay na Na-export",
-  "export_success_message": "Matagumpay na na-export ang {count} scripts."
+  "export_success_message": "Matagumpay na na-export ang {count} scripts.",
+  "omz_desc": "Isang framework para sa pamamahala ng iyong zsh configuration.",
+  "cryptomator_desc": "Encryption para sa iyong cloud na ginawang madali.",
+  "sirikali_desc": "Isang GUI para sa Gocryptfs, Securefs at Cryfs."
 }

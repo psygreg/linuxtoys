@@ -234,5 +234,8 @@
   "select_export_directory": "اختر دليل التصدير",
   "delete_scripts_message": "هل أنت متأكد من أنك تريد حذف {count} نصوص برمجية؟",
   "export_success": "نجح التصدير",
-  "export_success_message": "تم تصدير {count} نصوص برمجية بنجاح."
+  "export_success_message": "تم تصدير {count} نصوص برمجية بنجاح.",
+  "omz_desc": "إطار عمل لإدارة تكوين zsh الخاص بك.",
+  "cryptomator_desc": "تشفير لسحابتك بسهولة.",
+  "sirikali_desc": "واجهة رسومية لـ Gocryptfs و Securefs و Cryfs."
 }

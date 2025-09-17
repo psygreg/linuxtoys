@@ -234,5 +234,8 @@
   "select_export_directory": "Wybierz Katalog Eksportu",
   "delete_scripts_message": "Czy na pewno chcesz usunąć {count} skryptów?",
   "export_success": "Eksport Udany",
-  "export_success_message": "{count} skryptów zostało pomyślnie wyeksportowanych."
+  "export_success_message": "{count} skryptów zostało pomyślnie wyeksportowanych.",
+  "omz_desc": "Framework do zarządzania konfiguracją zsh.",
+  "cryptomator_desc": "Szyfrowanie dla Twojej chmury stało się proste.",
+  "sirikali_desc": "GUI dla Gocryptfs, Securefs i Cryfs."
 }
