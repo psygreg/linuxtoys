@@ -16,14 +16,15 @@ tag=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLaun
 ver="${tag#v}"
 if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [ "$ID_LIKE" == "fedora" ]; then
     sudo_rq
+    cd $HOME
     if ! rpm -qi "heroic" 2>/dev/null; then
         if command -v rpm-ostree >/dev/null 2>&1; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
-            rpm-ostree install -yA ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
+            sudo rpm-ostree install -yA ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; exit 1; }
             rm "Heroic-${ver}-linux-x86_64.rpm"
         else
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
-            sudo dnf install -y ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
+            sudo dnf install -y ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; exit 1; }
             rm "Heroic-${ver}-linux-x86_64.rpm"
         fi
     else
@@ -32,13 +33,13 @@ if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [ "$ID_LIKE
         if [[ "$hostver" != "$ver" ]]; then
             if command -v rpm-ostree >/dev/null 2>&1; then
                 wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
-                rpm-ostree remove heroic
-                rpm-ostree install -yA ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
+                sudo rpm-ostree remove heroic
+                sudo rpm-ostree install -yA ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; exit 1; }
                 rm "Heroic-${ver}-linux-x86_64.rpm"
             else
                 wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
                 sudo dnf remove -y heroic
-                sudo dnf install -y ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
+                sudo dnf install -y ./Heroic-${ver}-linux-x86_64.rpm || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; exit 1; }
                 rm "Heroic-${ver}-linux-x86_64.rpm"
             fi
         else
@@ -48,6 +49,7 @@ if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [ "$ID_LIKE
     fi
 elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
     sudo_rq
+    cd $HOME
     if ! pacman -Qi "heroic" 2>/dev/null 1>&2; then
         wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x64.pacman"
         sudo pacman -U --noconfirm ./Heroic-${ver}-linux-x64.pacman || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x64.pacman"; return 1; }
