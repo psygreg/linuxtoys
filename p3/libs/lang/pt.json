@@ -237,5 +237,7 @@
   "export_success_message": "{count} scripts exportados com sucesso.",
   "omz_desc": "Um framework para gerenciar sua configuração do zsh.",
   "cryptomator_desc": "Criptografia para sua nuvem facilitada.",
-  "sirikali_desc": "Uma interface gráfica para Gocryptfs, Securefs e Cryfs."
+  "sirikali_desc": "Uma interface gráfica para Gocryptfs, Securefs e Cryfs.",
+  "codecfix-hw": "Codecs com Aceleração de Hardware",
+  "codecfix-hw_desc": "Os codecs e bibliotecas necessários para reprodução de vídeo com aceleração de hardware para H264/265 no Fedora através de VA-API e VDPAU."
 }

@@ -237,5 +237,7 @@
   "export_success_message": "{count} اسکریپت با موفقیت صادر شد.",
   "omz_desc": "یک فریمورک برای مدیریت پیکربندی zsh شما.",
   "cryptomator_desc": "رمزگذاری برای ابر شما آسان شد.",
-  "sirikali_desc": "یک رابط گرافیکی برای Gocryptfs، Securefs و Cryfs."
+  "sirikali_desc": "یک رابط گرافیکی برای Gocryptfs، Securefs و Cryfs.",
+  "codecfix-hw": "کدک‌های شتاب‌دهی سخت‌افزاری",
+  "codecfix-hw_desc": "کدک‌ها و کتابخانه‌های لازم برای پخش ویدیو شتاب‌دهی سخت‌افزاری برای H264/265 در Fedora از طریق VA-API و VDPAU."
 }

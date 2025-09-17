@@ -237,5 +237,7 @@
   "export_success_message": "{count} skryptów zostało pomyślnie wyeksportowanych.",
   "omz_desc": "Framework do zarządzania konfiguracją zsh.",
   "cryptomator_desc": "Szyfrowanie dla Twojej chmury stało się proste.",
-  "sirikali_desc": "GUI dla Gocryptfs, Securefs i Cryfs."
+  "sirikali_desc": "GUI dla Gocryptfs, Securefs i Cryfs.",
+  "codecfix-hw": "Kodeki Przyspieszane Sprzętowo",
+  "codecfix-hw_desc": "Niezbędne kodeki i biblioteki do sprzętowo przyspieszonego odtwarzania wideo dla H264/265 na Fedorze poprzez VA-API i VDPAU."
 }

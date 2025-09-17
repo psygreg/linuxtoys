@@ -237,5 +237,7 @@
   "export_success_message": "Hati {count} zimehamishwa kwa mafanikio.",
   "omz_desc": "Mfumo wa kusimamia usanidi wako wa zsh.",
   "cryptomator_desc": "Usimbaji fiche kwa wingu lako ulifanywa rahisi.",
-  "sirikali_desc": "GUI kwa Gocryptfs, Securefs na Cryfs."
+  "sirikali_desc": "GUI kwa Gocryptfs, Securefs na Cryfs.",
+  "codecfix-hw": "Kodeki Zinazoendeshwa na Vifaa",
+  "codecfix-hw_desc": "Kodeki na maktaba zinazohitajika kwa uchezaji wa video ulioendeshwa na vifaa kwa H264/265 kwenye Fedora kupitia VA-API na VDPAU."
 }

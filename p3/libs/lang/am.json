@@ -237,5 +237,7 @@
   "export_success_message": "{count} ስክሪፕቶች በተሳካ ሁኔታ ተልከዋል።",
   "omz_desc": "ለእርስዎ zsh ውቅር ለማስተያየት አንድ መሠረተ ሥራ።",
   "cryptomator_desc": "ለእርስዎ የደመና ምስጠር ቀላል ተስማሚ።",
-  "sirikali_desc": "ለ Gocryptfs፣ Securefs እና Cryfs GUI።"
+  "sirikali_desc": "ለ Gocryptfs፣ Securefs እና Cryfs GUI።",
+  "codecfix-hw": "የሃርድዌር የተፈጨ ኮዴኮች",
+  "codecfix-hw_desc": "በVA-API እና VDPAU በኩል በFedora ላይ H264/265 ለሃርድዌር የተፈጨ ቪዲዮ ማጫወቻ ያለባቸው ኮዴኮች እና ቤተ-መጽሔት።"
 }

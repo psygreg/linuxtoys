@@ -237,5 +237,7 @@
   "export_success_message": "ส่งออกสคริปต์ {count} ตัวสำเร็จแล้ว",
   "omz_desc": "เฟรมเวิร์กสำหรับจัดการการกำหนดค่า zsh ของคุณ",
   "cryptomator_desc": "การเข้ารหัสสำหรับคลาวด์ของคุณทำได้ง่าย",
-  "sirikali_desc": "GUI สำหรับ Gocryptfs, Securefs และ Cryfs"
+  "sirikali_desc": "GUI สำหรับ Gocryptfs, Securefs และ Cryfs",
+  "codecfix-hw": "ตัวแปลงสัญญาณที่เร่งด้วยฮาร์ดแวร์",
+  "codecfix-hw_desc": "ตัวแปลงสัญญาณและไลบรารีที่จำเป็นสำหรับการเล่นวิดีโอที่เร่งด้วยฮาร์ดแวร์สำหรับ H264/265 บน Fedora ผ่าน VA-API และ VDPAU."
 }

@@ -237,5 +237,7 @@
   "export_success_message": "{count} اسکرپٹس کامیابی سے برآمد ہو گئے۔",
   "omz_desc": "آپ کی zsh کنفیگریشن کو منظم کرنے کے لیے ایک فریم ورک۔",
   "cryptomator_desc": "آپ کے کلاؤڈ کے لیے انکرپشن آسان بنا دیا گیا۔",
-  "sirikali_desc": "Gocryptfs، Securefs اور Cryfs کے لیے ایک GUI۔"
+  "sirikali_desc": "Gocryptfs، Securefs اور Cryfs کے لیے ایک GUI۔",
+  "codecfix-hw": "ہارڈویئر تیز کردہ کوڈیکس",
+  "codecfix-hw_desc": "VA-API اور VDPAU کے ذریعے Fedora پر H264/265 کے لیے ہارڈویئر تیز کردہ ویڈیو پلے بیک کے لیے ضروری کوڈیکس اور لائبریریاں۔"
 }

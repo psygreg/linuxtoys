@@ -237,5 +237,7 @@
   "export_success_message": "{count} betik başarıyla dışa aktarıldı.",
   "omz_desc": "Zsh yapılandırmanızı yönetmek için bir çerçeve.",
   "cryptomator_desc": "Bulutunuz için şifreleme kolaylaştırıldı.",
-  "sirikali_desc": "Gocryptfs, Securefs ve Cryfs için bir GUI."
+  "sirikali_desc": "Gocryptfs, Securefs ve Cryfs için bir GUI.",
+  "codecfix-hw": "Donanım Hızlandırılmış Kodekler",
+  "codecfix-hw_desc": "VA-API ve VDPAU aracılığıyla Fedora'da H264/265 için donanım hızlandırılmış video oynatma için gerekli kodekler ve kütüphaneler."
 }

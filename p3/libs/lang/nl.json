@@ -237,5 +237,7 @@
   "export_success_message": "{count} scripts succesvol geëxporteerd.",
   "omz_desc": "Een framework voor het beheren van uw zsh-configuratie.",
   "cryptomator_desc": "Encryptie voor uw cloud eenvoudig gemaakt.",
-  "sirikali_desc": "Een GUI voor Gocryptfs, Securefs en Cryfs."
+  "sirikali_desc": "Een GUI voor Gocryptfs, Securefs en Cryfs.",
+  "codecfix-hw": "Hardwareversnelde Codecs",
+  "codecfix-hw_desc": "De benodigde codecs en bibliotheken voor hardwareversnelde videoweergave voor H264/265 op Fedora via VA-API en VDPAU."
 }

@@ -237,5 +237,7 @@
   "export_success_message": "{count}個のスクリプトが正常にエクスポートされました。",
   "omz_desc": "zsh設定を管理するためのフレームワーク。",
   "cryptomator_desc": "クラウドの暗号化を簡単に。",
-  "sirikali_desc": "Gocryptfs、Securefs、CryfsのGUI。"
+  "sirikali_desc": "Gocryptfs、Securefs、CryfsのGUI。",
+  "codecfix-hw": "ハードウェアアクセラレーションコーデック",
+  "codecfix-hw_desc": "Fedora上でVA-APIとVDPAUを通じてH264/265のハードウェアアクセラレーションビデオ再生に必要なコーデックとライブラリ。"
 }

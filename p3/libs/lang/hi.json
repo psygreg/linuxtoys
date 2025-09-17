@@ -217,5 +217,7 @@
   "export_success_message": "{count} स्क्रिप्ट सफलतापूर्वक निर्यात की गईं।",
   "omz_desc": "आपकी zsh कॉन्फ़िगरेशन को प्रबंधित करने के लिए एक फ्रेमवर्क।",
   "cryptomator_desc": "आपके क्लाउड के लिए एन्क्रिप्शन आसान बना दिया।",
-  "sirikali_desc": "Gocryptfs, Securefs और Cryfs के लिए एक GUI।"
+  "sirikali_desc": "Gocryptfs, Securefs और Cryfs के लिए एक GUI।",
+  "codecfix-hw": "हार्डवेयर-त्वरित कोडेक्स",
+  "codecfix-hw_desc": "VA-API और VDPAU के माध्यम से Fedora पर H264/265 के लिए हार्डवेयर-त्वरित वीडियो प्लेबैक के लिए आवश्यक कोडेक्स और लाइब्रेरी।"
 }

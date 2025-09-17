@@ -237,5 +237,7 @@
   "export_success_message": "{count} skrip berhasil diekspor.",
   "omz_desc": "Sebuah framework untuk mengelola konfigurasi zsh Anda.",
   "cryptomator_desc": "Enkripsi untuk cloud Anda dibuat mudah.",
-  "sirikali_desc": "GUI untuk Gocryptfs, Securefs dan Cryfs."
+  "sirikali_desc": "GUI untuk Gocryptfs, Securefs dan Cryfs.",
+  "codecfix-hw": "Kodek Dipercepat Perangkat Keras",
+  "codecfix-hw_desc": "Kodek dan pustaka yang diperlukan untuk pemutaran video yang dipercepat perangkat keras untuk H264/265 di Fedora melalui VA-API dan VDPAU."
 }

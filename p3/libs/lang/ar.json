@@ -237,5 +237,7 @@
   "export_success_message": "تم تصدير {count} نصوص برمجية بنجاح.",
   "omz_desc": "إطار عمل لإدارة تكوين zsh الخاص بك.",
   "cryptomator_desc": "تشفير لسحابتك بسهولة.",
-  "sirikali_desc": "واجهة رسومية لـ Gocryptfs و Securefs و Cryfs."
+  "sirikali_desc": "واجهة رسومية لـ Gocryptfs و Securefs و Cryfs.",
+  "codecfix-hw": "الترميزات المعجلة بالأجهزة",
+  "codecfix-hw_desc": "الترميزات والمكتبات اللازمة لتشغيل الفيديو المعجل بالأجهزة لـ H264/265 على Fedora من خلال VA-API و VDPAU."
 }
