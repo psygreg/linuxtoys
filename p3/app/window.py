@@ -184,9 +184,10 @@ class AppWindow(Gtk.ApplicationWindow):
     def _on_drag_data_received(self, widget, context, x, y, data, info, time):
         """Handle drag-and-drop of .sh files. Only active when viewing Local Scripts category."""
         sh_paths = [ os.path.normpath(uri[7:]) for uri in data.get_uris() if uri.startswith('file://') and uri.endswith('.sh') ]
+        from urllib.parse import unquote
         if sh_paths:
             os.makedirs(os.path.dirname(self.local_sh_dir), exist_ok=True)
-            [ shutil.copy2(sh_path, f"{self.local_sh_dir}{os.path.basename(sh_path)}") for sh_path in sh_paths ]
+            [ shutil.copy2(unquote(sh_path), f"{self.local_sh_dir}{os.path.basename(unquote(sh_path))}") for sh_path in sh_paths ]
             
             # Refresh the current view since we know we're in Local Scripts category
             self.load_scripts(self.current_category_info)
@@ -1002,6 +1003,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             info = widget.info
 
             if ".local/linuxtoys/scripts/" in info.get('path') and event.state & Gdk.ModifierType.CONTROL_MASK:
+                if event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
+                    self._edit_local_script(widget.info)
                 return False
             # If this is a search result, use script click handler
             if self.search_active:
