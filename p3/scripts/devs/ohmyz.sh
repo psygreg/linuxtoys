@@ -3,6 +3,7 @@
 # version: 1.0
 # description: Framework for managing your zsh configuration.
 # icon: zsh.png
+# compat: arch, debian, fedora, ubuntu, cachyos, suse
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
