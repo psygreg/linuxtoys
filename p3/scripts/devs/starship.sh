@@ -24,4 +24,6 @@ curl -fsSL https://starship.rs/install.sh | sudo sh -s -- -f -y && {
 	grep -q "starship init" ~/.config/fish/config.fish || {
 		echo -e "\nstarship init fish | source" >> ~/.config/fish/config.fish;
 	}
+
+	zenwrn "A Nerd Font installed and enabled in your terminal. To do this, go to `Utils` -> `Nerd Fonts` and install the one of your choice."
 }
