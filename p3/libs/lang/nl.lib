@@ -58,3 +58,4 @@ msg287="De documentatie voor het gebruik van deze functie zal nu openen in je br
 msg288="Je hebt al $LT_PROGRAM geïnstalleerd. Wil je het verwijderen?"
 rmmsg="$msg288"
 msg289="Bewerkingen voltooid. Je kunt nu 'realm' gebruiken om lid te worden van het Active Directory domein, of verdere configuratie uitvoeren."
+msg290="Voor RDNA en nieuwere GPU's"

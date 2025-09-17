@@ -58,3 +58,4 @@ msg287="Bubuksan na ngayon sa inyong browser ang documentation para sa paggamit 
 msg288="May naka-install na kayong $LT_PROGRAM. Gusto ninyo bang tanggalin ito?"
 rmmsg="$msg288"
 msg289="Natapos na ang mga operasyon. Pwede na ninyong gamitin ang 'realm' para sumali sa Active Directory domain, o mag-perform pa ng further configuration."
+msg290="Para sa RDNA at mas bagong mga GPU"

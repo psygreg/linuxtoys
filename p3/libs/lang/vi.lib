@@ -58,3 +58,4 @@ msg287="Tài liệu cho việc sử dụng tính năng này sẽ mở trong trì
 msg288="Bạn đã cài đặt $LT_PROGRAM. Bạn có muốn gỡ bỏ nó không?"
 rmmsg="$msg288"
 msg289="Các thao tác đã hoàn tất. Bây giờ bạn có thể sử dụng 'realm' để tham gia domain Active Directory, hoặc thực hiện cấu hình thêm."
+msg290="Dành cho GPU RDNA và mới hơn"

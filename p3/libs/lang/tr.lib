@@ -58,3 +58,4 @@ msg287="Bu özelliğin kullanımı için dokümantasyon şimdi tarayıcınızda 
 msg288="Zaten $LT_PROGRAM yüklü. Kaldırmak istiyor musunuz?"
 rmmsg="$msg288"
 msg289="İşlemler tamamlandı. Artık Active Directory etki alanına katılmak için 'realm' kullanabilir veya daha fazla yapılandırma yapabilirsiniz."
+msg290="RDNA ve daha yeni GPU'lar için"

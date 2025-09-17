@@ -58,3 +58,4 @@ msg287="La documentazione per l'uso di questa funzionalità si aprirà ora nel t
 msg288="Hai già $LT_PROGRAM installato. Vuoi rimuoverlo?"
 rmmsg="$msg288"
 msg289="Operazioni completate. Ora puoi usare 'realm' per unirti al dominio Active Directory, o eseguire ulteriori configurazioni."
+msg290="Per GPU RDNA e più recenti"

@@ -58,3 +58,4 @@ msg287="The documentation for usage of this feature will open in your browser no
 msg288="You already have $LT_PROGRAM installed. Do you wish to remove it?"
 rmmsg="$msg288"
 msg289="Operations completed. You may now use 'realm' to join the Active Directory domain, or perform further configuration."
+msg290="For RDNA and newer GPUs"

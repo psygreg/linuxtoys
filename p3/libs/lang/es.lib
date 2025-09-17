@@ -52,6 +52,7 @@ msg286="Optimizador de Energía no es compatible con CachyOS, que tiene su propi
 msg287="La documentación para el uso de esta característica se abrirá en su navegador ahora."
 msg288="Ya tiene $LT_PROGRAM instalado. ¿Desea eliminarlo?"
 msg289="Operaciones completadas. Ahora puede usar 'realm' para unirse al dominio Active Directory, o realizar más configuraciones."
+msg290="Para GPUs RDNA y más nuevas"
 finishmsg="$msg018"
 rebootmsg="$msg036"
 cancelmsg="$msg070"

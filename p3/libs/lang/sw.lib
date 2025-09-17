@@ -59,3 +59,4 @@ msg287="Hati za matumizi ya kipengele hiki zitafunguliwa katika kivinjari chako 
 msg288="Tayari una $LT_PROGRAM iliyosakinishwa. Je, ungependa kuiondoa?"
 rmmsg="$msg288"
 msg289="Shughuli zimekamilika. Sasa unaweza kutumia 'realm' kujiunga na uwanda wa Active Directory, au kufanya usanidi zaidi."
+msg290="Kwa GPUs za RDNA na za kisasa zaidi"
