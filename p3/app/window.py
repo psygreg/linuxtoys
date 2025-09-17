@@ -1002,6 +1002,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             info = widget.info
 
             if ".local/linuxtoys/scripts/" in info.get('path') and event.state & Gdk.ModifierType.CONTROL_MASK:
+                if event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
+                    self._edit_local_script(widget.info)
                 return False
             # If this is a search result, use script click handler
             if self.search_active:
