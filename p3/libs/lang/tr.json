@@ -239,5 +239,7 @@
   "cryptomator_desc": "Bulutunuz için şifreleme kolaylaştırıldı.",
   "sirikali_desc": "Gocryptfs, Securefs ve Cryfs için bir GUI.",
   "codecfix-hw": "Donanım Hızlandırılmış Kodekler",
-  "codecfix-hw_desc": "VA-API ve VDPAU aracılığıyla Fedora'da H264/265 için donanım hızlandırılmış video oynatma için gerekli kodekler ve kütüphaneler."
+  "codecfix-hw_desc": "VA-API ve VDPAU aracılığıyla Fedora'da H264/265 için donanım hızlandırılmış video oynatma için gerekli kodekler ve kütüphaneler.",
+  "nerdfonts_desc": "İkonik yazı tipi toplayıcısı, koleksiyonu ve yaması.",
+  "starship_desc": "Herhangi bir kabuk için minimal, şimşek hızında ve sonsuz derecede özelleştirilebilir istem."
 }

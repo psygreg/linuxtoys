@@ -239,5 +239,7 @@
   "cryptomator_desc": "Chiffrement pour votre cloud rendu facile.",
   "sirikali_desc": "Une interface graphique pour Gocryptfs, Securefs et Cryfs.",
   "codecfix-hw": "Codecs Accélérés par Matériel",
-  "codecfix-hw_desc": "Les codecs et bibliothèques nécessaires pour la lecture vidéo accélérée par matériel pour H264/265 sur Fedora via VA-API et VDPAU."
+  "codecfix-hw_desc": "Les codecs et bibliothèques nécessaires pour la lecture vidéo accélérée par matériel pour H264/265 sur Fedora via VA-API et VDPAU.",
+  "nerdfonts_desc": "Agrégateur, collection et patcher de polices iconiques.",
+  "starship_desc": "L'invite minimal, ultra-rapide et infiniment personnalisable pour n'importe quel shell."
 }

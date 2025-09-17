@@ -239,5 +239,7 @@
   "cryptomator_desc": "הצפנה לענן שלך בקלות.",
   "sirikali_desc": "ממשק גרפי עבור Gocryptfs, Securefs ו-Cryfs.",
   "codecfix-hw": "קודקים מואצים בחומרה",
-  "codecfix-hw_desc": "הקודקים והספריות הנדרשים להפעלת וידאו מואצת בחומרה עבור H264/265 ב-Fedora דרך VA-API ו-VDPAU."
+  "codecfix-hw_desc": "הקודקים והספריות הנדרשים להפעלת וידאו מואצת בחומרה עבור H264/265 ב-Fedora דרך VA-API ו-VDPAU.",
+  "nerdfonts_desc": "אגרגטור, אוסף ומתקן גופנים סמליים.",
+  "starship_desc": "הבקשה המינימלית, המהירה ביותר והניתנת להתאמה אינסופית עבור כל מעטפת."
 }

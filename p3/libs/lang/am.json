@@ -239,5 +239,7 @@
   "cryptomator_desc": "ለእርስዎ የደመና ምስጠር ቀላል ተስማሚ።",
   "sirikali_desc": "ለ Gocryptfs፣ Securefs እና Cryfs GUI።",
   "codecfix-hw": "የሃርድዌር የተፈጨ ኮዴኮች",
-  "codecfix-hw_desc": "በVA-API እና VDPAU በኩል በFedora ላይ H264/265 ለሃርድዌር የተፈጨ ቪዲዮ ማጫወቻ ያለባቸው ኮዴኮች እና ቤተ-መጽሔት።"
+  "codecfix-hw_desc": "በVA-API እና VDPAU በኩል በFedora ላይ H264/265 ለሃርድዌር የተፈጨ ቪዲዮ ማጫወቻ ያለባቸው ኮዴኮች እና ቤተ-መጽሔት።",
+  "nerdfonts_desc": "Պատկերակների տառատեսակների հավաքագրիչ, հավաքածու և փաթչեր.",
+  "starship_desc": "Նվազագույն, արագ և անվերջ հարմարեցված հուշում ցանկացած շելի համար."
 }

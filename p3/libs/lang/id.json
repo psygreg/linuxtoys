@@ -239,5 +239,7 @@
   "cryptomator_desc": "Enkripsi untuk cloud Anda dibuat mudah.",
   "sirikali_desc": "GUI untuk Gocryptfs, Securefs dan Cryfs.",
   "codecfix-hw": "Kodek Dipercepat Perangkat Keras",
-  "codecfix-hw_desc": "Kodek dan pustaka yang diperlukan untuk pemutaran video yang dipercepat perangkat keras untuk H264/265 di Fedora melalui VA-API dan VDPAU."
+  "codecfix-hw_desc": "Kodek dan pustaka yang diperlukan untuk pemutaran video yang dipercepat perangkat keras untuk H264/265 di Fedora melalui VA-API dan VDPAU.",
+  "nerdfonts_desc": "Agregator, koleksi, dan patcher font ikonik.",
+  "starship_desc": "Prompt minimal, super cepat, dan dapat dikustomisasi tanpa batas untuk shell apa pun."
 }

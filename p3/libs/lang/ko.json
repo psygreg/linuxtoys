@@ -239,5 +239,7 @@
   "cryptomator_desc": "클라우드용 암호화를 쉽게.",
   "sirikali_desc": "Gocryptfs, Securefs 및 Cryfs용 GUI.",
   "codecfix-hw": "하드웨어 가속 코덱",
-  "codecfix-hw_desc": "VA-API와 VDPAU를 통해 Fedora에서 H264/265용 하드웨어 가속 비디오 재생에 필요한 코덱과 라이브러리."
+  "codecfix-hw_desc": "VA-API와 VDPAU를 통해 Fedora에서 H264/265용 하드웨어 가속 비디오 재생에 필요한 코덱과 라이브러리.",
+  "nerdfonts_desc": "아이코닉 폰트 애그리게이터, 컬렉션 및 패처.",
+  "starship_desc": "모든 셸을 위한 최소, 초고속, 무한히 사용자 정의 가능한 프롬프트."
 }

@@ -239,5 +239,7 @@
   "cryptomator_desc": "Criptografia para sua nuvem facilitada.",
   "sirikali_desc": "Uma interface gráfica para Gocryptfs, Securefs e Cryfs.",
   "codecfix-hw": "Codecs com Aceleração de Hardware",
-  "codecfix-hw_desc": "Os codecs e bibliotecas necessários para reprodução de vídeo com aceleração de hardware para H264/265 no Fedora através de VA-API e VDPAU."
+  "codecfix-hw_desc": "Os codecs e bibliotecas necessários para reprodução de vídeo com aceleração de hardware para H264/265 no Fedora através de VA-API e VDPAU.",
+  "nerdfonts_desc": "Agregador, coleção e patcher de fontes icônicas.",
+  "starship_desc": "O prompt minimalista, ultra-rápido e infinitamente personalizável para qualquer shell."
 }

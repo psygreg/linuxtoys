@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Nerd Fonts
 # version: 1.0
-# description: Iconic font aggregator, collection, and patcher.
+# description: nerdfonts_desc
 # icon: nerdfonts.svg
 
 # --- Start of the script code ---

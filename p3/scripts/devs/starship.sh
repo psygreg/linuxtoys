@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Starship
 # version: 1.0
-# description: The minimal, blazing-fast, and infinitely customizable prompt for any shell!
+# description: starship_desc
 # icon: starship.png
 
 # --- Start of the script code ---
