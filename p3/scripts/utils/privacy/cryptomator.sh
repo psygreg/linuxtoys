@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Cryptomator
 # version: 1.0
-# description: Encryption for your cloud made easy
+# description: cryptomator_desc
 # icon: cryptomator.png
 
 # --- Start of the script code ---

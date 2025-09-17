@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: SiriKali
 # version: 1.0
-# description: A GUI to Gocryptfs, Securefs, Cryfs
+# description: sirikali_desc
 # icon: sirikali.png
 
 # --- Start of the script code ---
