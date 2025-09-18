@@ -9,9 +9,9 @@
 # nocontainer
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
 sudo rpm-ostree remove linuxtoys-cfg-atom
 # Remove shader booster patches

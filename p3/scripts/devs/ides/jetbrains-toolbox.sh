@@ -6,10 +6,10 @@
 
 # --- Start of the script code ---
 LT_PROGRAM="JetBrains Toolbox"
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 if [ ! -d "${HOME}/.local/jetbrains-toolbox" ]; then
 	PKG_NAM="jetbrains-toolbox"

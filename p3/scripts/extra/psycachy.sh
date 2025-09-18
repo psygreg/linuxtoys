@@ -9,11 +9,11 @@
 # nocontainer
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # get current tags and versions
 lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)"
 std_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^STD-' | sort -Vr | head -n 1)"

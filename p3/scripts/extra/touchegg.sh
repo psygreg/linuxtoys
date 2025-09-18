@@ -7,11 +7,11 @@
 # nocontainer
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # get latest release tag for touchegg
 tag=$(curl -s "https://api.github.com/repos/JoseExposito/touchegg/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
 if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
