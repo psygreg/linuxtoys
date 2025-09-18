@@ -8,8 +8,8 @@
 # nocontainer
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # create swap on root
 root_swap () {
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then

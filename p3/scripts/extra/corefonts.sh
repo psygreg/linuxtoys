@@ -7,11 +7,11 @@
 
 # --- Start of the script code ---
 LT_PROGRAM="Microsoft CoreFonts"
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 if [ ! -d "$HOME/.local/share/fonts/mscorefonts" ]; then
     _packages=(cabextract)
     _install_

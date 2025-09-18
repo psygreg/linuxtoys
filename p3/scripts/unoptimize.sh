@@ -9,11 +9,11 @@
 # nocontainer
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
 PATH_UDEV="/usr/lib/udev/rules.d"
 sudo rm $PATH_UDEV/20-audio-pm.rules \

@@ -6,12 +6,12 @@
 # icon: figma.svg
 
 # --- Start of the script code ---
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/../../libs/linuxtoys.lib"
+#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
-source "$SCRIPT_DIR/../../libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/../../libs/helpers.lib"
+source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
+source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
 cd $HOME
 figma_tag=$(curl -s https://api.github.com/repos/Figma-Linux/figma-linux/releases/latest | grep '"tag_name"' | cut -d '"' -f4 | sed 's/^v//')
