@@ -1,8 +1,9 @@
 #!/bin/bash
 # name: Nix Packages
 # version: 1.0
-# description: Nix Packages
+# description: nixpkgs_desc
 # icon: nix.svg
+# compat: fedora, arch, debian, ubuntu, cachy, suse
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

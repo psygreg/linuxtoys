@@ -241,5 +241,7 @@
   "codecfix-hw": "Kodeki Zinazoendeshwa na Vifaa",
   "codecfix-hw_desc": "Kodeki na maktaba zinazohitajika kwa uchezaji wa video ulioendeshwa na vifaa kwa H264/265 kwenye Fedora kupitia VA-API na VDPAU.",
   "nerdfonts_desc": "Mkusanyaji, mkusanyiko na kiraka cha fonti za ikoni.",
-  "starship_desc": "Kidokezo cha kima cha chini, cha kasi ya mwendo na kinachoweza kubadilishwa bila kikomo kwa shell yoyote."
+  "starship_desc": "Kidokezo cha kima cha chini, cha kasi ya mwendo na kinachoweza kubadilishwa bila kikomo kwa shell yoyote.",
+  "pnpm_desc": "Msimamizi wa vifurushi haraka na bora katika matumizi ya nafasi ya diski.",
+  "nixpkgs_desc": "Huongeza usaidizi wa vifurushi vya Nix na hazina ya NixPKGs kwenye mfumo wako."
 }

@@ -241,5 +241,7 @@
   "codecfix-hw": "Codec Accelerati dall'Hardware",
   "codecfix-hw_desc": "I codec e le librerie necessarie per la riproduzione video accelerata dall'hardware per H264/265 su Fedora tramite VA-API e VDPAU.",
   "nerdfonts_desc": "Aggregatore, raccolta e patcher di font iconici.",
-  "starship_desc": "Il prompt minimal, velocissimo e infinitamente personalizzabile per qualsiasi shell."
+  "starship_desc": "Il prompt minimal, velocissimo e infinitamente personalizzabile per qualsiasi shell.",
+  "pnpm_desc": "Gestore di pacchetti veloce ed efficiente in termini di spazio su disco.",
+  "nixpkgs_desc": "Aggiunge supporto per i pacchetti Nix e il repository NixPKGs sul tuo sistema."
 }

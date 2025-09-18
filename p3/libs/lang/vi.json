@@ -241,5 +241,7 @@
   "codecfix-hw": "Bộ mã hóa giải mã được tăng tốc phần cứng",
   "codecfix-hw_desc": "Các bộ mã hóa giải mã và thư viện cần thiết để phát lại video được tăng tốc phần cứng cho H264/265 trên Fedora thông qua VA-API và VDPAU.",
   "nerdfonts_desc": "Trình tổng hợp, bộ sưu tập và vá lỗi phông chữ biểu tượng.",
-  "starship_desc": "Lời nhắc tối thiểu, siêu nhanh và có thể tùy chỉnh vô hạn cho bất kỳ shell nào."
+  "starship_desc": "Lời nhắc tối thiểu, siêu nhanh và có thể tùy chỉnh vô hạn cho bất kỳ shell nào.",
+  "pnpm_desc": "Trình quản lý gói nhanh, hiệu quả về không gian ổ đĩa.",
+  "nixpkgs_desc": "Thêm hỗ trợ cho các gói Nix và kho NixPKGs trên hệ thống của bạn."
 }

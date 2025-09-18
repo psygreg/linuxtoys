@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: pNPm
 # version: 1.0
-# description: Fast, disk space efficient package manager
+# description: pnpm_desc
 # icon: pnpm.svg
 
 # --- Start of the script code ---

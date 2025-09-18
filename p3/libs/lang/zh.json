@@ -243,5 +243,7 @@
   "codecfix-hw": "硬件加速编解码器",
   "codecfix-hw_desc": "通过VA-API和VDPAU在Fedora上为H264/265提供硬件加速视频播放所需的编解码器和库。",
   "nerdfonts_desc": "图标字体聚合器、集合和补丁程序。",
-  "starship_desc": "适用于任何 shell 的最小、闪电般快速且无限可定制的提示符。"
+  "starship_desc": "适用于任何 shell 的最小、闪电般快速且无限可定制的提示符。",
+  "pnpm_desc": "快速、磁盘空间高效的包管理器。",
+  "nixpkgs_desc": "在您的系统上添加对 Nix 包和 NixPKGs 仓库的支持。"
 }

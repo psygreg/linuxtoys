@@ -241,5 +241,7 @@
   "codecfix-hw": "Donanım Hızlandırılmış Kodekler",
   "codecfix-hw_desc": "VA-API ve VDPAU aracılığıyla Fedora'da H264/265 için donanım hızlandırılmış video oynatma için gerekli kodekler ve kütüphaneler.",
   "nerdfonts_desc": "İkonik yazı tipi toplayıcısı, koleksiyonu ve yaması.",
-  "starship_desc": "Herhangi bir kabuk için minimal, şimşek hızında ve sonsuz derecede özelleştirilebilir istem."
+  "starship_desc": "Herhangi bir kabuk için minimal, şimşek hızında ve sonsuz derecede özelleştirilebilir istem.",
+  "pnpm_desc": "Hızlı, disk alanı verimli paket yöneticisi.",
+  "nixpkgs_desc": "Sisteminize Nix paketleri ve NixPKGs deposu desteği ekler."
 }

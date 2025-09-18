@@ -241,5 +241,7 @@
   "codecfix-hw": "Kodeki Przyspieszane Sprzętowo",
   "codecfix-hw_desc": "Niezbędne kodeki i biblioteki do sprzętowo przyspieszonego odtwarzania wideo dla H264/265 na Fedorze poprzez VA-API i VDPAU.",
   "nerdfonts_desc": "Agregator, kolekcja i łatka czcionek ikonowych.",
-  "starship_desc": "Minimalny, błyskawicznie szybki i nieskończenie konfigurowalny prompt dla każdej powłoki."
+  "starship_desc": "Minimalny, błyskawicznie szybki i nieskończenie konfigurowalny prompt dla każdej powłoki.",
+  "pnpm_desc": "Szybki menedżer pakietów, efektywny pod względem wykorzystania miejsca na dysku.",
+  "nixpkgs_desc": "Dodaje wsparcie dla pakietów Nix i repozytorium NixPKGs w Twoim systemie."
 }

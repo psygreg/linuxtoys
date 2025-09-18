@@ -241,5 +241,7 @@
   "codecfix-hw": "하드웨어 가속 코덱",
   "codecfix-hw_desc": "VA-API와 VDPAU를 통해 Fedora에서 H264/265용 하드웨어 가속 비디오 재생에 필요한 코덱과 라이브러리.",
   "nerdfonts_desc": "아이코닉 폰트 애그리게이터, 컬렉션 및 패처.",
-  "starship_desc": "모든 셸을 위한 최소, 초고속, 무한히 사용자 정의 가능한 프롬프트."
+  "starship_desc": "모든 셸을 위한 최소, 초고속, 무한히 사용자 정의 가능한 프롬프트.",
+  "pnpm_desc": "빠르고 디스크 공간 효율적인 패키지 관리자.",
+  "nixpkgs_desc": "시스템에 Nix 패키지와 NixPKGs 저장소 지원을 추가합니다."
 }
