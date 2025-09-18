@@ -1,9 +1,9 @@
 #!/bin/bash
 # name: Lazyman
 # version: 1.0
-# description: Manage Multiple Neovim Configurations
+# description: lazyman_desc
 # icon: lazyman.png
-# compat: fedora, arch, cachy
+# compat: fedora, arch, cachy, ostree, ublue, suse
 
 # --- Start of the script code ---
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -32,7 +32,7 @@ $HOME/.config/nvim-Lazyman/lazyman.sh -z && {
 	)
 
 	_selected_nvim=$(zenity --list \
-	--title="Choice your distro neovim" \
+	--title="$msg006" \
 	--width=420 --height=500 \
 	--column="Selected" --column="Options" --column="NVIMS" \
 	--hide-column=2 \
@@ -40,12 +40,13 @@ $HOME/.config/nvim-Lazyman/lazyman.sh -z && {
 	--radiolist \
 	"${_nvims[@]}")
 
-	[ -n ${_selected_nvim} ] && {
+	[ -n "$_selected_nvim" ] && {
 		$HOME/.config/nvim-Lazyman/lazyman.sh -${_selected_nvim} -z && {
-			zeninf "<b>Operation completed successfully!</b>\n\nSee the documentation: <a href='https://lazyman.dev/configurations/'>configurations</a>.";
+			zeninf "$msg287";
 			exit 0;
 		}
 	}
 
-	zeninf "<b>Operation completed successfully!</b>\n\nSee the documentation: <a href='https://lazyman.dev/configurations/'>configurations</a>."
+	zeninf "$msg175"
+	exit 100
 }

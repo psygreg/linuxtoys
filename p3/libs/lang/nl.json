@@ -243,5 +243,8 @@
   "nerdfonts_desc": "Iconische lettertype aggregator, verzameling en patcher.",
   "starship_desc": "De minimale, razendsnelle en oneindig aanpasbare prompt voor elke shell.",
   "pnpm_desc": "Snelle, schijfruimte-efficiënte pakketbeheerder.",
-  "nixpkgs_desc": "Voegt ondersteuning toe voor Nix-pakketten en de NixPKGs-repository op uw systeem."
+  "nixpkgs_desc": "Voegt ondersteuning toe voor Nix-pakketten en de NixPKGs-repository op uw systeem.",
+  "lazyman_desc": "Beheer meerdere NeoVim-configuraties.",
+  "ides": "IDE's",
+  "ides_desc": "Geïntegreerde ontwikkelomgevingen voor verschillende programmeertalen en frameworks."
 }

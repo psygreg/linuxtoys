@@ -243,5 +243,8 @@
   "nerdfonts_desc": "İkonik yazı tipi toplayıcısı, koleksiyonu ve yaması.",
   "starship_desc": "Herhangi bir kabuk için minimal, şimşek hızında ve sonsuz derecede özelleştirilebilir istem.",
   "pnpm_desc": "Hızlı, disk alanı verimli paket yöneticisi.",
-  "nixpkgs_desc": "Sisteminize Nix paketleri ve NixPKGs deposu desteği ekler."
+  "nixpkgs_desc": "Sisteminize Nix paketleri ve NixPKGs deposu desteği ekler.",
+  "lazyman_desc": "Birden fazla NeoVim yapılandırmasını yönetin.",
+  "ides": "IDE'ler",
+  "ides_desc": "Çeşitli programlama dilleri ve çerçeveler için Entegre Geliştirme Ortamları."
 }

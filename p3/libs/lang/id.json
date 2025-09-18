@@ -243,5 +243,8 @@
   "nerdfonts_desc": "Agregator, koleksi, dan patcher font ikonik.",
   "starship_desc": "Prompt minimal, super cepat, dan dapat dikustomisasi tanpa batas untuk shell apa pun.",
   "pnpm_desc": "Manajer paket cepat dan efisien ruang disk.",
-  "nixpkgs_desc": "Menambahkan dukungan untuk paket Nix dan repositori NixPKGs di sistem Anda."
+  "nixpkgs_desc": "Menambahkan dukungan untuk paket Nix dan repositori NixPKGs di sistem Anda.",
+  "lazyman_desc": "Kelola beberapa konfigurasi NeoVim.",
+  "ides": "IDE",
+  "ides_desc": "Lingkungan Pengembangan Terintegrasi untuk berbagai bahasa pemrograman dan framework."
 }

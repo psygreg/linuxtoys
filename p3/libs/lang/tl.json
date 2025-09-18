@@ -243,5 +243,8 @@
   "nerdfonts_desc": "Tagapagsama, koleksyon, at tagapag-patch ng mga iconic na font.",
   "starship_desc": "Ang minimal, napakabilis, at walang katapusang maaaring i-customize na prompt para sa anumang shell.",
   "pnpm_desc": "Mabilis, disk space efficient na package manager.",
-  "nixpkgs_desc": "Nagdaragdag ng suporta para sa mga Nix package at NixPKGs repository sa iyong system."
+  "nixpkgs_desc": "Nagdaragdag ng suporta para sa mga Nix package at NixPKGs repository sa iyong system.",
+  "lazyman_desc": "Pamahalaan ang maraming mga configuration ng NeoVim.",
+  "ides": "Mga IDE",
+  "ides_desc": "Mga Integrated Development Environment para sa iba't ibang mga programming language at framework."
 }

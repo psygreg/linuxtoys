@@ -243,5 +243,8 @@
   "nerdfonts_desc": "Trình tổng hợp, bộ sưu tập và vá lỗi phông chữ biểu tượng.",
   "starship_desc": "Lời nhắc tối thiểu, siêu nhanh và có thể tùy chỉnh vô hạn cho bất kỳ shell nào.",
   "pnpm_desc": "Trình quản lý gói nhanh, hiệu quả về không gian ổ đĩa.",
-  "nixpkgs_desc": "Thêm hỗ trợ cho các gói Nix và kho NixPKGs trên hệ thống của bạn."
+  "nixpkgs_desc": "Thêm hỗ trợ cho các gói Nix và kho NixPKGs trên hệ thống của bạn.",
+  "lazyman_desc": "Quản lý nhiều cấu hình NeoVim.",
+  "ides": "Môi trường phát triển tích hợp",
+  "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau."
 }

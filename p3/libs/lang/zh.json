@@ -245,5 +245,8 @@
   "nerdfonts_desc": "图标字体聚合器、集合和补丁程序。",
   "starship_desc": "适用于任何 shell 的最小、闪电般快速且无限可定制的提示符。",
   "pnpm_desc": "快速、磁盘空间高效的包管理器。",
-  "nixpkgs_desc": "在您的系统上添加对 Nix 包和 NixPKGs 仓库的支持。"
+  "nixpkgs_desc": "在您的系统上添加对 Nix 包和 NixPKGs 仓库的支持。",
+  "lazyman_desc": "管理多个 NeoVim 配置。",
+  "ides": "IDE",
+  "ides_desc": "用于各种编程语言和框架的集成开发环境。"
 }

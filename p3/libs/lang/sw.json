@@ -243,5 +243,8 @@
   "nerdfonts_desc": "Mkusanyaji, mkusanyiko na kiraka cha fonti za ikoni.",
   "starship_desc": "Kidokezo cha kima cha chini, cha kasi ya mwendo na kinachoweza kubadilishwa bila kikomo kwa shell yoyote.",
   "pnpm_desc": "Msimamizi wa vifurushi haraka na bora katika matumizi ya nafasi ya diski.",
-  "nixpkgs_desc": "Huongeza usaidizi wa vifurushi vya Nix na hazina ya NixPKGs kwenye mfumo wako."
+  "nixpkgs_desc": "Huongeza usaidizi wa vifurushi vya Nix na hazina ya NixPKGs kwenye mfumo wako.",
+  "lazyman_desc": "Dhibiti usanidi mbalimbali wa NeoVim.",
+  "ides": "Vituo vya Maendeleo Jumuishi",
+  "ides_desc": "Vituo vya Maendeleo Jumuishi kwa lugha mbalimbali za programu na mifumo."
 }

@@ -243,5 +243,8 @@
   "nerdfonts_desc": "Agrégateur, collection et patcher de polices iconiques.",
   "starship_desc": "L'invite minimal, ultra-rapide et infiniment personnalisable pour n'importe quel shell.",
   "pnpm_desc": "Gestionnaire de paquets rapide et efficace en espace disque.",
-  "nixpkgs_desc": "Ajoute la prise en charge des paquets Nix et du dépôt NixPKGs sur votre système."
+  "nixpkgs_desc": "Ajoute la prise en charge des paquets Nix et du dépôt NixPKGs sur votre système.",
+  "lazyman_desc": "Gérer plusieurs configurations NeoVim.",
+  "ides": "IDEs",
+  "ides_desc": "Environnements de Développement Intégrés pour divers langages de programmation et frameworks."
 }
