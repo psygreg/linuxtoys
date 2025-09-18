@@ -34,8 +34,8 @@ elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         rm "hardware:razer.repo"
         # Refresh metadata
         rpm-ostree refresh-md
-        # Install akmod-openrazer for rpm-ostree systems
-        sudo rpm-ostree install akmod-openrazer openrazer-daemon
+        # Install kmod-openrazer for rpm-ostree systems
+        sudo rpm-ostree install kmod-openrazer openrazer-daemon
     else
         _packages+=(kernel-devel)
         # Regular Fedora systems - use standard approach
