@@ -71,10 +71,28 @@ get_winboat () { # gets latest release
     local tag=$(curl -s "https://api.github.com/repos/TibixDev/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     local ver="${tag#v}"
     if command -v apt &> /dev/null; then
+        if dpkg -s "winboat" &> /dev/null; then
+            local hostver="$(dpkg -s winboat | grep -i Version | awk '{print $2}')"
+            if [ "$hostver" == "$ver" ]; then
+                zeninf "$msg018"
+                exit 0
+            fi
+        fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
+        sudo apt install -y "./winboat-$ver-amd64.deb"
     elif command -v dnf &> /dev/null || command -v zypper &> /dev/null || command -v rpm-ostree &> /dev/null; then
+        if rpm -qi "winboat" &> /dev/null; then
+            local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"
+            if [ "$hostver" == "$ver" ]; then
+                zeninf "$msg018"
+                exit 0
+            fi
+        fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-x86_64.rpm"
         if command -v rpm-ostree &> /dev/null; then
+            if rpm -qi "winboat" &> /dev/null; then
+                sudo rpm-ostree remove winboat
+            fi
             sudo rpm-ostree install "winboat-$ver-x86_64.rpm"
         elif command -v dnf &> /dev/null; then
             sudo dnf install -y "winboat-$ver-x86_64.rpm"
@@ -82,6 +100,13 @@ get_winboat () { # gets latest release
             sudo zypper install -y "winboat-$ver-x86_64.rpm"
         fi
     elif command -v pacman &> /dev/null; then
+        if pacman -Qi "winboat" &> /dev/null; then
+            local hostver="$(pacman -Qi winboat | grep -i Version | awk '{print $3}')"
+            if [ "$hostver" == "$ver" ]; then
+                zeninf "$msg018"
+                exit 0
+            fi
+        fi
         git clone https://aur.archlinux.org/winboat-bin.git
         cd winboat-bin || exit 1
         makepkg -i --noconfirm
@@ -108,22 +133,33 @@ zenity --text-info \
     --width=400 --height=360
     
 if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
-    mkdir -p lsw
-    cd lsw || exit 1
-    sudo_rq
-    # stage 1: docker
-    docker_in
-    # stage 2: freeRDP
-    flatpak_in_lib
-    flatpak install -y --user --noninteractive flathub com.freerdp.FreeRDP
-    # enable iptables kernel module
-    echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
-    # get latest winboat release
-    get_winboat
-    # cleanup
-    cd ..
-    rm -r lsw
-    rm txtbox
-    # request reboot for iptables module to load
-    zeninf "$msg036"
+    if ! which winboat &> /dev/null; then
+        mkdir -p lsw
+        cd lsw || exit 1
+        sudo_rq
+        # stage 1: docker
+        docker_in
+        # stage 2: freeRDP
+        flatpak_in_lib
+        flatpak install -y --user --noninteractive flathub com.freerdp.FreeRDP
+        # enable iptables kernel module
+        echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
+        # get latest winboat release
+        get_winboat
+        # cleanup
+        cd ..
+        rm -r lsw
+        rm txtbox
+        # request reboot for iptables module to load
+        zeninf "$msg036"
+    else # update
+        mkdir -p lsw
+        cd lsw || exit 1
+        sudo_rq
+        get_winboat
+        cd ..
+        rm -r lsw
+        rm txtbox
+        zeninf "$msg036"
+    fi
 fi
