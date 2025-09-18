@@ -61,3 +61,4 @@ msg289="Operasi selesai. Anda sekarang dapat menggunakan 'realm' untuk bergabung
 msg290="Untuk GPU RDNA dan yang lebih baru"
 msg291="Starship memerlukan font Nerd yang diinstal dan diaktifkan di terminal Anda untuk berfungsi dengan benar. Untuk menginstal satu, Anda dapat pergi ke 'Utilities' -> 'Nerd Fonts'."
 msg292="Anda harus menginstal Docker terlebih dahulu pada sistem ostree. Anda dapat menemukannya di bagian Pengembang."
+msg293="/dev/kvm tidak ditemukan. Anda harus mengaktifkan AMD SVM atau Intel VT-x/VT-d di BIOS sebelum menginstal LSW."

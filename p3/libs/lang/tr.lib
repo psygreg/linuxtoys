@@ -61,3 +61,4 @@ msg289="İşlemler tamamlandı. Artık Active Directory etki alanına katılmak 
 msg290="RDNA ve daha yeni GPU'lar için"
 msg291="Starship'in düzgün çalışması için terminalinizde Nerd Font'un yüklü ve etkinleştirilmiş olması gerekir. Bir tane yüklemek için 'Utilities' -> 'Nerd Fonts' bölümüne gidebilirsiniz."
 msg292="Önce ostree sistemlerinde Docker'ı yüklemeniz gerekir. Geliştiriciler bölümünde bulabilirsiniz."
+msg293="/dev/kvm bulunamadı. LSW'yi yüklemeden önce BIOS'ta AMD SVM veya Intel VT-x/VT-d'yi etkinleştirmelisiniz."

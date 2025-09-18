@@ -132,34 +132,41 @@ zenity --text-info \
     --checkbox="$msg276" \
     --width=400 --height=360
     
-if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
-    if ! which winboat &> /dev/null; then
-        mkdir -p lsw
-        cd lsw || exit 1
-        sudo_rq
-        # stage 1: docker
-        docker_in
-        # stage 2: freeRDP
-        flatpak_in_lib
-        flatpak install -y --user --noninteractive flathub com.freerdp.FreeRDP
-        # enable iptables kernel module
-        echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
-        # get latest winboat release
-        get_winboat
-        # cleanup
-        cd ..
-        rm -r lsw
+if [ -e /dev/kvm ]; then
+    if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
+        if ! which winboat &> /dev/null; then
+            mkdir -p lsw
+            cd lsw || exit 1
+            sudo_rq
+            # stage 1: docker
+            docker_in
+            # stage 2: freeRDP
+            flatpak_in_lib
+            flatpak install -y --user --noninteractive flathub com.freerdp.FreeRDP
+            # enable iptables kernel module
+            echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
+            # get latest winboat release
+            get_winboat
+            # cleanup
+            cd ..
+            rm -r lsw
+            rm txtbox
+            # request reboot for iptables module to load
+            zeninf "$msg036"
+        else # update
+            mkdir -p lsw
+            cd lsw || exit 1
+            sudo_rq
+            get_winboat
+            cd ..
+            rm -r lsw
+            rm txtbox
+            zeninf "$msg036"
+        fi
+    else
         rm txtbox
-        # request reboot for iptables module to load
-        zeninf "$msg036"
-    else # update
-        mkdir -p lsw
-        cd lsw || exit 1
-        sudo_rq
-        get_winboat
-        cd ..
-        rm -r lsw
-        rm txtbox
-        zeninf "$msg036"
+        exit 100
     fi
+else
+    fatal "$msg293"
 fi

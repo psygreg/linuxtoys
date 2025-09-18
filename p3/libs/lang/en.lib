@@ -61,3 +61,4 @@ msg289="Operations completed. You may now use 'realm' to join the Active Directo
 msg290="For RDNA and newer GPUs"
 msg291="Starship requires a Nerd Font installed and enabled in your terminal to work properly. To install one, you can go to 'Utilities' -> 'Nerd Fonts'."
 msg292="You must install Docker first on ostree systems. You can find it in the Developers section."
+msg293="/dev/kvm not found. You must enable AMD SVM or Intel VT-x/VT-d in BIOS before installing LSW."

@@ -61,3 +61,4 @@ msg289="Opérations terminées. Vous pouvez maintenant utiliser 'realm' pour rej
 msg290="Pour les GPUs RDNA et plus récents"
 msg291="Starship nécessite une police Nerd installée et activée dans votre terminal pour fonctionner correctement. Pour en installer une, vous pouvez aller dans 'Utilities' -> 'Nerd Fonts'."
 msg292="Vous devez d'abord installer Docker sur les systèmes ostree. Vous pouvez le trouver dans la section Développeurs."
+msg293="/dev/kvm introuvable. Vous devez activer AMD SVM ou Intel VT-x/VT-d dans le BIOS avant d'installer LSW."

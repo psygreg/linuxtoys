@@ -61,3 +61,4 @@ msg289="Các thao tác đã hoàn tất. Bây giờ bạn có thể sử dụng 
 msg290="Dành cho GPU RDNA và mới hơn"
 msg291="Starship yêu cầu cài đặt và kích hoạt phông chữ Nerd trong terminal của bạn để hoạt động đúng cách. Để cài đặt một, bạn có thể đi đến 'Utilities' -> 'Nerd Fonts'."
 msg292="Bạn phải cài đặt Docker trước trên các hệ thống ostree. Bạn có thể tìm thấy nó trong phần Nhà phát triển."
+msg293="/dev/kvm không tìm thấy. Bạn phải bật AMD SVM hoặc Intel VT-x/VT-d trong BIOS trước khi cài đặt LSW."

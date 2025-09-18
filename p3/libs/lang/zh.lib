@@ -61,3 +61,4 @@ msg289="操作完成。您现在可以使用'realm'加入Active Directory域，�
 msg290="适用于RDNA及更新的GPU"
 msg291="Starship 需要在您的终端中安装并启用 Nerd 字体才能正常工作。要安装一个，您可以转到 'Utilities' -> 'Nerd Fonts'。"
 msg292="您必须首先在 ostree 系统上安装 Docker。您可以在开发者部分找到它。"
+msg293="/dev/kvm 未找到。您必须在安装 LSW 之前在 BIOS 中启用 AMD SVM 或 Intel VT-x/VT-d。"
