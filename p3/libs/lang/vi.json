@@ -127,7 +127,7 @@
   "psycachy": "Kernel Psycachy",
   "psycachy_desc": "Kernel được sửa đổi với các bản vá được chuyển từ CachyOS cùng với các bản sửa lỗi để tương thích và ổn định tốt hơn trên Debian/Ubuntu.",
   "lsw": "Linux Subsystem cho Windows",
-  "lsw_desc": "Cài đặt Windows trên Linux thông qua container Docker. KHÔNG có gia tốc GPU.",
+  "lsw_desc": "Cho phép cài đặt Windows trên Linux trong một container Docker với WinBoat, thực hiện tất cả các phần khó của việc thiết lập cho bạn. KHÔNG CÓ gia tốc GPU.",
   "btassist_desc": "Trình quản lý snapshot và subvolume Btrfs. Sử dụng snapper làm back-end.",
   "touchegg_desc": "Trình nhận dạng cử chỉ đa chạm cho phép bạn cấu hình cử chỉ cho các hành động khác nhau trên desktop Xorg.",
   "thumb_desc": "Cài đặt ffmpegthumbnailer để tạo thumbnail cho tệp video trong trình quản lý tệp.",

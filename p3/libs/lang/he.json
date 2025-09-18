@@ -127,7 +127,7 @@
   "psycachy": "Kernel Psycachy",
   "psycachy_desc": "kernel שונה עם תיקונים שהועברו מ-CachyOS יחד עם תיקונים לתאימות ויציבות טובה יותר ב-Debian/Ubuntu.",
   "lsw": "Linux Subsystem עבור Windows",
-  "lsw_desc": "מתקין Windows על לינוקס דרך מכל Docker. אין לו האצת GPU.",
+  "lsw_desc": "מאפשר התקנת Windows על לינוקס בקונטיינר Docker עם WinBoat, שעושה את כל החלקים הקשים של ההגדרה עבורך. אין לו האצת GPU.",
   "btassist_desc": "מנהל תמונות ותת-נפחים של Btrfs. משתמש ב-snapper כback-end.",
   "touchegg_desc": "מזהה מחוות מרובות מגע המאפשר לך לקבוע מחוות לפעולות שונות בשולחנות עבודה של Xorg.",
   "thumb_desc": "מתקין את ffmpegthumbnailer ליצירת תמונות ממוזערות לקבצי וידאו במנהלי קבצים.",

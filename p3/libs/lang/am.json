@@ -127,7 +127,7 @@
   "psycachy": "Psycachy ከርነል",
   "psycachy_desc": "በDebian/Ubuntu ላይ የተሻለ ተኳሃኝነት እና መረጋጋት ለማግኘት patches ከCachyOS ጋር የተለጠፈ የተሻሻለ ከርነል።",
   "lsw": "ለዊንዶውስ ሊኑክስ ንዑስ ስርዓት",
-  "lsw_desc": "በDocker ኮንቴይነር አማካኝነት በሊኑክስ ላይ ዊንዶውስን ይጫናል። GPU acceleration የለውም።",
+  "lsw_desc": "በDocker ኮንቴይነር አማካኝነት በሊኑክስ ላይ ዊንዶውስን ይጫናል፣ የማስተካከል ሁሉንም አስቸጋሪ ክፍሎች ለእርስዎ ያስተካክላል። GPU acceleration የለውም።",
   "btassist_desc": "የBtrfs snapshots እና subvolumes አስተዳዳሪ። snapper እንደ back-end ይጠቀማል።",
   "touchegg_desc": "በXorg ዴስክቶፖች ላይ ለተለያዩ ድርጊቶች ምልክቶችን እንዲያዋቅሩ የሚያስችል ባለብዙ-ንክኪ ምልክት አሳይ።",
   "thumb_desc": "በፋይል አስተዳዳሪዎች ውስጥ ለቪዲዮ ፋይሎች thumbnails ለማመንጨት ffmpegthumbnailer ይጫናል።",

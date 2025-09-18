@@ -127,7 +127,7 @@
   "psycachy": "Psycachy Kernel",
   "psycachy_desc": "Een gemodificeerde kernel met patches geporteerd van CachyOS samen met fixes voor betere compatibiliteit en stabiliteit op Debian/Ubuntu.",
   "lsw": "Linux Subsystem voor Windows",
-  "lsw_desc": "Installeert Windows op Linux via een Docker container. Heeft GEEN GPU acceleratie.",
+  "lsw_desc": "Staat toe om Windows te installeren op Linux in een Docker-container met WinBoat, die alle moeilijke delen van de setup voor je doet. HEEFT GEEN GPU-versnelling.",
   "btassist_desc": "Een Btrfs snapshots en subvolumes manager. Gebruikt snapper als zijn back-end.",
   "touchegg_desc": "Een multi-touch gebaar herkenner die je toestaat om gebaren te configureren voor verschillende acties op Xorg desktops.",
   "thumb_desc": "Installeert ffmpegthumbnailer om thumbnails te genereren voor videobestanden in bestandsmanagers.",

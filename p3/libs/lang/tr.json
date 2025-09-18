@@ -127,7 +127,7 @@
   "psycachy": "Psycachy Çekirdek",
   "psycachy_desc": "CachyOS'tan port edilmiş yamalarla Debian/Ubuntu'da daha iyi uyumluluk ve kararlılık için düzeltmelerle değiştirilmiş çekirdek.",
   "lsw": "Windows için Linux Alt Sistemi",
-  "lsw_desc": "Docker konteyner aracılığıyla Linux'a Windows yükler. GPU hızlandırması YOK.",
+  "lsw_desc": "WinBoat ile Docker konteynerinde Linux'e Windows kurulumuna izin verir, kurulumun tüm zor kısımlarını sizin için yapar. GPU hızlandırması YOKTUR.",
   "btassist_desc": "Btrfs anlık görüntüleri ve alt birim yöneticisi. Arka uç olarak snapper kullanır.",
   "touchegg_desc": "Xorg masaüstlerinde çeşitli eylemler için hareketler yapılandırmanıza olanak tanıyan çok dokunuşlu hareket tanıyıcı.",
   "thumb_desc": "Dosya yöneticilerinde video dosyaları için küçük resimler oluşturmak için ffmpegthumbnailer yükler.",

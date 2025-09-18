@@ -127,7 +127,7 @@
   "psycachy": "نواة Psycachy",
   "psycachy_desc": "نواة معدلة مع رقع منقولة من CachyOS بالإضافة إلى إصلاحات لتوافق واستقرار أفضل على Debian/Ubuntu.",
   "lsw": "نظام Linux الفرعي لـ Windows",
-  "lsw_desc": "يثبت Windows على Linux من خلال حاوية Docker. لا يحتوي على تسريع GPU.",
+  "lsw_desc": "يسمح بتثبيت Windows على Linux في حاوية Docker باستخدام WinBoat، مما يقوم بجميع الأجزاء الصعبة من الإعداد نيابة عنك. لا يحتوي على تسريع GPU.",
   "btassist_desc": "مدير لقطات وأحجام فرعية Btrfs. يستخدم snapper كخلفية.",
   "touchegg_desc": "مُتعرف على الإيماءات متعددة اللمس يتيح تكوين الإيماءات لإجراءات متنوعة على أسطح مكتب Xorg.",
   "thumb_desc": "يثبت ffmpegthumbnailer لإنتاج صور مصغرة لملفات الفيديو في مديري الملفات.",

@@ -129,7 +129,7 @@
   "psycachy": "Psycachy内核",
   "psycachy_desc": "从CachyOS移植补丁的修改内核，以及为Debian/Ubuntu更好兼容性和稳定性的修复。",
   "lsw": "Linux Windows子系统",
-  "lsw_desc": "通过Docker容器在Linux上安装Windows。没有GPU加速。",
+  "lsw_desc": "允许使用 WinBoat 在 Docker 容器中在 Linux 上安装 Windows，处理设置的所有困难部分。不具有 GPU 加速。",
   "btassist_desc": "Btrfs快照和子卷管理器。使用snapper作为后端。",
   "touchegg_desc": "多点触控手势识别器，允许您为Xorg桌面上的各种操作配置手势。",
   "thumb_desc": "安装ffmpegthumbnailer为文件管理器中的视频文件生成缩略图。",
