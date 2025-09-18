@@ -127,7 +127,7 @@
   "psycachy": "Kernel Psycachy",
   "psycachy_desc": "Kernel yang dimodifikasi dengan patch yang diport dari CachyOS bersama dengan perbaikan untuk kompatibilitas dan stabilitas yang lebih baik di Debian/Ubuntu.",
   "lsw": "Linux Subsystem untuk Windows",
-  "lsw_desc": "Menginstal Windows di Linux melalui container Docker (atau Podman untuk distro Atomic Fedora). Kompatibel dengan WinApps. TIDAK memiliki akselerasi GPU.",
+  "lsw_desc": "Menginstal Windows di Linux melalui container Docker. TIDAK memiliki akselerasi GPU.",
   "btassist_desc": "Manager snapshot dan subvolume Btrfs. Menggunakan snapper sebagai back-end.",
   "touchegg_desc": "Pengenal gesture multi-touch yang memungkinkan Anda mengkonfigurasi gesture untuk berbagai aksi di desktop Xorg.",
   "thumb_desc": "Menginstal ffmpegthumbnailer untuk menghasilkan thumbnail untuk file video di file manager.",

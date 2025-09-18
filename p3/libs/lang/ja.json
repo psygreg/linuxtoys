@@ -127,7 +127,7 @@
   "psycachy": "Psyacahyカーネル",
   "psycachy_desc": "CachyOSから移植されたパッチと、Debian/Ubuntuでのより良い互換性と安定性のための修正を持つ変更されたカーネル。",
   "lsw": "Linux Subsystem for Windows",
-  "lsw_desc": "Dockerコンテナ（Atomic FedoraディストリビューションではPodman）を通してLinux上にWindowsをインストール。WinAppsと互換。GPU加速はありません。",
+  "lsw_desc": "Dockerコンテナを通してLinux上にWindowsをインストール。GPU加速はありません。",
   "btassist_desc": "Btrfsスナップショットとサブボリュームマネージャー。snapperをバックエンドとして使用。",
   "touchegg_desc": "Xorgデスクトップでさまざまなアクションのジェスチャーを設定できるマルチタッチジェスチャー認識器。",
   "thumb_desc": "ファイルマネージャーでビデオファイルのサムネイルを生成するffmpegthumbnailerをインストール。",

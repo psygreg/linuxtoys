@@ -127,7 +127,7 @@
   "psycachy": "Psycachy کرنل",
   "psycachy_desc": "CachyOS سے پورٹ کیے گئے پیچز کے ساتھ ایک تبدیل شدہ کرنل اور Debian/Ubuntu پر بہتر مطابقت اور استحکام کے لیے فکسز۔",
   "lsw": "Windows کے لیے Linux Subsystem",
-  "lsw_desc": "Docker کنٹینر (یا Atomic Fedora distros کے لیے Podman) کے ذریعے لینکس پر Windows انسٹال کرتا ہے۔ WinApps کے ساتھ مطابقت رکھتا ہے۔ GPU acceleration نہیں ہے۔",
+  "lsw_desc": "Docker کنٹینر کے ذریعے لینکس پر Windows رکھتا ہے۔ GPU acceleration نہیں ہے۔",
   "btassist_desc": "ایک Btrfs اسنیپ شاٹس اور سب ولیومز منیجر۔ snapper کو اپنے بیک اینڈ کے طور پر استعمال کرتا ہے۔",
   "touchegg_desc": "ایک ملٹی ٹچ gesture recognizer جو آپ کو Xorg ڈیسک ٹاپس پر مختلف کارروائیوں کے لیے gestures کنفیگر کرنے کی اجازت دیتا ہے۔",
   "thumb_desc": "فائل منیجرز میں ویڈیو فائلوں کے لیے تھمب نیلز بنانے کے لیے ffmpegthumbnailer انسٹال کرتا ہے۔",

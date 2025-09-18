@@ -127,7 +127,7 @@
   "psycachy": "Psycachy Kernel",
   "psycachy_desc": "Ein modifizierter Kernel mit von CachyOS portierten Patches zusammen mit Fixes für bessere Kompatibilität und Stabilität auf Debian/Ubuntu.",
   "lsw": "Linux Subsystem für Windows",
-  "lsw_desc": "Installiert Windows auf Linux durch einen Docker-Container (oder Podman für Atomic Fedora-Distros). Kompatibel mit WinApps. Hat KEINE GPU-Beschleunigung.",
+  "lsw_desc": "Installiert Windows auf Linux durch einen Docker-Container. Hat KEINE GPU-Beschleunigung.",
   "btassist_desc": "Ein Btrfs-Snapshots und Subvolume-Manager. Verwendet snapper als Backend.",
   "touchegg_desc": "Ein Multi-Touch-Gestenerkenner, mit dem Sie Gesten für verschiedene Aktionen auf Xorg-Desktops konfigurieren können.",
   "thumb_desc": "Installiert ffmpegthumbnailer zur Generierung von Thumbnails für Videodateien in Dateimanagern.",

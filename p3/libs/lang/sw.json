@@ -127,7 +127,7 @@
   "psycachy": "Kernel ya Psycachy",
   "psycachy_desc": "Kernel iliyorekebishwa na patches zilizopelekwa kutoka CachyOS pamoja na marekebisho kwa utangamano na uthabiti bora kwenye Debian/Ubuntu.",
   "lsw": "Linux Subsystem kwa Windows",
-  "lsw_desc": "Inasakinisha Windows kwenye Linux kupitia chombo cha Docker (au Podman kwa distro za Atomic Fedora). Inatangamana na WinApps. HAINA kasi ya GPU.",
+  "lsw_desc": "Inasakinisha Windows kwenye Linux kupitia chombo cha Docker. HAINA kasi ya GPU.",
   "btassist_desc": "Msimamizi wa picha za Btrfs na sauti ndogo. Hutumia snapper kama nyuma-mwisho.",
   "touchegg_desc": "Mtambui wa harakati za kugusa nyingi unaoruhusu kusanidi harakati kwa vitendo mbalimbali kwenye eneo la kazi la Xorg.",
   "thumb_desc": "Inasakinisha ffmpegthumbnailer ili kutoa vidokezo vya faili za video katika wasimamizi wa faili.",
