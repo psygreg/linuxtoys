@@ -27,7 +27,7 @@ if command -v rpm-ostree &> /dev/null; then
     libswscale-free \
     libavdevice-free \
     noopenh264 \
-    --install ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld vlc-plugins-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld
+    --install ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld
 else
     _rmpkgs=(ffmpeg-free libavcodec-free libavfilter-free libavformat-free libavutil-free libpostproc-free libswresample-free libswscale-free libavdevice-free noopenh264)
     for pkg in "${_rmpkgs[@]}"; do
@@ -35,7 +35,7 @@ else
             sudo dnf remove -y "$pkg"
         fi
     done
-    _packages=(ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld vlc-plugins-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld)
+    _packages=(ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld)
     _install_
 fi
 zeninf "$msg036"
