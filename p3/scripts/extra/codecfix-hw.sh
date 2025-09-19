@@ -3,7 +3,7 @@
 # version: 1.0
 # description: codecfix-hw_desc
 # icon: codec.svg
-# compat: fedora, ostree
+# compat: none
 # reboot: yes
 
 # --- Start of the script code ---
