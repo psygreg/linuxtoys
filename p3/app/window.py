@@ -126,7 +126,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.connect("key-press-event", self._on_key_press)
 
         # Local scripts
-        self.local_sh_dir = f'{os.environ['HOME']}/.local/linuxtoys/scripts/'
+        self.local_sh_dir = f"{os.environ['HOME']}/.local/linuxtoys/scripts/"
 
         # Initialize drag-and-drop but don't enable it by default
         self._setup_drag_and_drop()
