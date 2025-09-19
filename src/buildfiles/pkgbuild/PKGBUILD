@@ -1,14 +1,14 @@
 pkgname='linuxtoys'
-pkgver='5.3.0'
+pkgver='5.4.0'
 pkgrel=1
 arch=('x86_64')
-depends=(git curl wget zenity python python-gobject gtk3 jq)
+depends=(git curl wget zenity python python-gobject python-requests gtk3 jq)
 makedepends=()
 conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
 install=linuxtoys.install
-source=("linuxtoys-${pkgver}.tar.xz")
-sha256sums=('b60a2ab78863ab7f626daf34f38744b970d9d6f99b92632926dce746d8ec2c45')
+source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
+sha256sums=('636ff76cf46a2d5d7553e251658cc6cf9c11edd4bcc2b0615bb2fd05d1014d15')
 
 package() {
     mkdir -p ${pkgdir}/usr
