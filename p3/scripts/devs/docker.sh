@@ -11,6 +11,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # functions
 docker_in () { # install docker
+    cd $HOME
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
         _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
         sudo apt install -y ca-certificates curl
