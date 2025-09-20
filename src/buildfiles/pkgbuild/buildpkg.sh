@@ -39,7 +39,7 @@ sed -i "s/pkgver='[^']*'/pkgver='$lt_version'/" PKGBUILD
 sed -i "s/sha256sums=('[^']*')/sha256sums=('$hash')/" PKGBUILD
 
 # build package
-makepkg -s
+# makepkg -s
 
 # Clean up build artifacts but keep the tarball for Arch packaging
 rm -rf linuxtoys-${lt_version}/
