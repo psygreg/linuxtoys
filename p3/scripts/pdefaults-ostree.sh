@@ -72,7 +72,7 @@ optimizer () {
         fi
         # save autopatch state
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
-        sudo mv autopatch.state $HOME/.local/.autopatch.state
+        mv autopatch.state $HOME/.local/.autopatch.state
     else
         # update configs if already optimized
         cfg_host=$(rpm -qi "linuxtoys-cfg-atom" 2>/dev/null | grep "^Version" | awk '{print $3}')

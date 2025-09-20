@@ -58,7 +58,7 @@ optimizer () {
         # system-agnostic optimizations
         sysag_run
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
-        sudo mv autopatch.state $HOME/.local/.autopatch.state
+        mv autopatch.state $HOME/.local/.autopatch.state
         zeninf "$msg036"
     else
         fatal "$msg234"
