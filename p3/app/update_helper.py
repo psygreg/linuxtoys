@@ -275,7 +275,13 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         textview.set_wrap_mode(Gtk.WrapMode.WORD)
 
         if changelog:
-            textview.set_buffer(markdown_to_textbuffer(changelog.strip()))
+            buffer = markdown_to_textbuffer(changelog.strip())
+            if buffer:
+                textview.set_buffer(buffer)
+            else:
+                buffer = Gtk.TextBuffer()
+                buffer.set_text(translations.get('whatsnew_no_changelog', 'No changelog available.'))
+                textview.set_buffer(buffer)
         else:
             buffer = Gtk.TextBuffer()
             buffer.set_text(translations.get('whatsnew_no_changelog', 'No changelog available.'))
