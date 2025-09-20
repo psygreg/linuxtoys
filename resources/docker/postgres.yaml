@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:15.3-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_USER: ${POSTGRES_USER}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - pg_db_data:/var/lib/postgresql/data
+    networks:
+      - postgres-pgadmin
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASS}
+    ports:
+      - ${PGADMIN_PORT}:80
+    volumes:
+      - pg_db_data:/var/lib/pgadmin/data
+    networks:
+      - postgres-pgadmin
+
+networks:
+  postgres-pgadmin:
+
+volumes:
+  pg_db_data:

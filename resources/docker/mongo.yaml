@@ -1,0 +1,26 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "${MONGO_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${ROOT_PASS}
+    volumes:
+      - mongodb_data:/data/db
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "${MONGO_EXPRESS_PORT}:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ROOT_PASS}
+
+      ME_CONFIG_BASICAUTH: true
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_WEB_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_WEB_PASSWORD}
+    links:
+      - mongo
+volumes:
+  mongodb_data:

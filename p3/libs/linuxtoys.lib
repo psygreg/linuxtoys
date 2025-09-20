@@ -124,3 +124,49 @@ _lang_ () {
         langfile="en"
     fi
 }
+
+# docker compose up
+_docker_up() {
+	_docker_dir="${HOME}/.local/linuxtoys/docker/"
+
+	[ ! -z "${1}" -a -f "${1}" ] || { exit; }
+
+	_service=${1##*/}; _service="${_service%%.*}";
+
+	mkdir -p "${_docker_dir}/${_service}"
+
+	_env="${_docker_dir}/${_service}/.env"
+
+	type -p docker || { fatal "You need docker before run this script."; exit -1; }
+
+	[ -f "${_env}" ] && {
+		_config_path="$(realpath "${1}")"
+
+		sudo docker ps --format {{.Labels}} --filter "status=running" \
+			| grep -Pio '(?<=config_files=)[^,]*' | sort -u \
+			| grep -q "^${_config_path}$" && {
+			zenity --title="Docker Compose" --question --text="Service is already running." --ok-label="Stop" --cancel-label="Cancel" && {
+				sudo docker compose -f "${1}" --env-file "${_env}" down && { zeninf "$msg018"; exit 0; }
+			} || { exit 0; }
+		}
+		zenity --title="Docker Compose" --question --text="Run service or Create a New" --ok-label="Run" --cancel-label="Create" && {
+			sudo docker compose -f "${1}" --env-file "${_env}" up -d && { zeninf "$msg018"; exit 0; }
+		}
+	} || {
+		_vars=($(grep -oP '(?<=\${)[A-Za-z0-9_]*' "${1}" | awk '!seen[$0]++'))
+
+		_entries=()
+
+		for _v in ${_vars[@]}; do _entries+=("--add-entry="${_v}" ");done
+
+		_sets=($(zenity --forms --title="Docker Compose" --separator=" " --text="Fill in all fields" ${_entries[@]}))
+
+		[ ${#_sets[@]} -eq ${#_vars[@]} ] || { fatal "All fields are required"; exit -1; }
+
+		> "${_env}"
+
+		for i in ${!_sets[@]};do echo "${_vars[i]}"="${_sets[i]}" >> "${_env}";done
+
+		sudo docker compose -f "${1}" --env-file "${_env}" up -d && { zeninf "$msg018"; exit 0; }
+	}
+}
