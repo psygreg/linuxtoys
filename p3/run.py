@@ -2,7 +2,6 @@
 
 import sys
 import os # Import the 'os' module
-from app import main
 
 if __name__ == "__main__":
     # --- DEVELOPER MODE BANNER ---
@@ -19,6 +18,17 @@ if __name__ == "__main__":
     if os.environ.get('LT_MANIFEST') == '1':
         # In CLI mode, use the git-based updater for development versions
         os.system('./helpers/update_self.sh')
+
+    # --- DISPLAY CHECK FOR GUI MODE ---
+    # Check for display server before importing GTK to prevent crashes in headless environments
+    if os.environ.get('LT_MANIFEST') != '1':
+        if not os.environ.get('DISPLAY') and not os.environ.get('WAYLAND_DISPLAY'):
+            print("Error: No display server detected. Please run in a graphical environment.")
+            print("For CLI mode, set LT_MANIFEST=1 and run with appropriate arguments.")
+            sys.exit(1)
+
+    # --- IMPORT MAIN AFTER CHECKS ---
+    from app import main
 
     # --- LAUNCH GUI ---
     # This part runs after any CLI-mode updates, or immediately for GUI mode

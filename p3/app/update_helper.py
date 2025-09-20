@@ -371,8 +371,14 @@ def run_update_check(show_dialog=True, verbose=False, translations=None):
         changelog = release_info["body"]
 
         if show_dialog and latest_version:
-            if _show_gtk_update_dialog(latest_version, changelog, translations):
-                open_releases_page()
+            # Check if we have a display server before trying to show GTK dialog
+            if os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY'):
+                if _show_gtk_update_dialog(latest_version, changelog, translations):
+                    open_releases_page()
+            else:
+                # No display, print to console instead
+                print(f"Update available: {latest_version}")
+                print("Run in GUI mode to see update dialog.")
 
         return True
     
