@@ -3,19 +3,11 @@ source /etc/os-release
 
 # sudo request
 sudo_rq () { 
-    # Get password from zenity
-    local password
-    if ! password=$(zenity --password 2>/dev/null); then
-        fatal "Password dialog was cancelled or failed."
-    fi
+    sudo -Av
+    if [ "$(sudo whoami)" = "root" ]; then
     # Validate password with sudo
-    if echo "$password" | timeout 5 sudo -S -p "" true 2>/dev/null; then
-        # Keep sudo session alive for a bit
-        sudo -v 2>/dev/null
-        unset password
         return 0
     else
-        unset password
         fatal "Wrong password. Do you have sudo?"
     fi
 }
