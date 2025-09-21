@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       git curl wget zenity python3 python3-gobject gtk3 jq python3-requests python3-urllib3 python3-certifi
+Requires:       git curl wget zenity python3 python3-gobject gtk3 jq python3-requests python3-urllib3 python3-certifi openssh-askpass
 BuildRequires:  desktop-file-utils
 
 %description

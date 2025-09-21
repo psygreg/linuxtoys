@@ -2,7 +2,7 @@ pkgname='linuxtoys'
 pkgver='5.4.1'
 pkgrel=1
 arch=('x86_64')
-depends=(git curl wget zenity python python-gobject python-requests gtk3 jq)
+depends=(git curl wget zenity python python-gobject python-requests gtk3 jq x11-ssh-askpass)
 makedepends=()
 conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
