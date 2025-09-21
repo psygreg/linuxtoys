@@ -3,11 +3,15 @@ source /etc/os-release
 
 # set askpass for sudo requests
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-    export SUDO_ASKPASS="ssh-askpass"
+    export SUDO_ASKPASS="/usr/bin/ssh-askpass"
 elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-    export SUDO_ASKPASS="x11-ssh-askpass"
+    export SUDO_ASKPASS="/usr/lib/ssh/ssh-askpass"
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
-    export SUDO_ASKPASS="openssh-askpass"
+    if [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
+        export SUDO_ASKPASS="/usr/libexec/ssh/gnome-ssh-askpass"
+    else
+        export SUDO_ASKPASS="/usr/libexec/openssh/gnome-ssh-askpass"
+    fi
 fi
 # sudo request
 sudo_rq () { 
