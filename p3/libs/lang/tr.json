@@ -246,5 +246,6 @@
   "nixpkgs_desc": "Sisteminize Nix paketleri ve NixPKGs deposu desteği ekler.",
   "lazyman_desc": "Birden fazla NeoVim yapılandırmasını yönetin.",
   "ides": "IDE'ler",
-  "ides_desc": "Çeşitli programlama dilleri ve çerçeveler için Entegre Geliştirme Ortamları."
+  "ides_desc": "Çeşitli programlama dilleri ve çerçeveler için Entegre Geliştirme Ortamları.",
+  "vlc_desc": "Açık kaynaklı, tam özellikli medya oynatıcı. Fedora ve OpenSUSE için özel medya formatları için kodekler içerir."
 }

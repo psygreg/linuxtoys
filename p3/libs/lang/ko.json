@@ -246,5 +246,6 @@
   "nixpkgs_desc": "시스템에 Nix 패키지와 NixPKGs 저장소 지원을 추가합니다.",
   "lazyman_desc": "여러 NeoVim 구성을 관리합니다.",
   "ides": "IDE",
-  "ides_desc": "다양한 프로그래밍 언어와 프레임워크를 위한 통합 개발 환경."
+  "ides_desc": "다양한 프로그래밍 언어와 프레임워크를 위한 통합 개발 환경.",
+  "vlc_desc": "오픈 소스, 완전한 기능을 갖춘 미디어 플레이어. Fedora와 OpenSUSE용 독점 미디어 포맷의 코덱을 포함합니다."
 }

@@ -248,5 +248,6 @@
   "nixpkgs_desc": "在您的系统上添加对 Nix 包和 NixPKGs 仓库的支持。",
   "lazyman_desc": "管理多个 NeoVim 配置。",
   "ides": "IDE",
-  "ides_desc": "用于各种编程语言和框架的集成开发环境。"
+  "ides_desc": "用于各种编程语言和框架的集成开发环境。",
+  "vlc_desc": "开源、全功能媒体播放器。为 Fedora 和 OpenSUSE 包含专有媒体格式的编解码器。"
 }

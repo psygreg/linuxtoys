@@ -246,5 +246,6 @@
   "nixpkgs_desc": "Huongeza usaidizi wa vifurushi vya Nix na hazina ya NixPKGs kwenye mfumo wako.",
   "lazyman_desc": "Dhibiti usanidi mbalimbali wa NeoVim.",
   "ides": "Vituo vya Maendeleo Jumuishi",
-  "ides_desc": "Vituo vya Maendeleo Jumuishi kwa lugha mbalimbali za programu na mifumo."
+  "ides_desc": "Vituo vya Maendeleo Jumuishi kwa lugha mbalimbali za programu na mifumo.",
+  "vlc_desc": "Kicheza vyombo vya habari vya chanzo wazi, kilicho na vipengele kamili. Inajumuisha kodeki za umbizo la vyombo vya habari vya umiliki kwa Fedora na OpenSUSE."
 }

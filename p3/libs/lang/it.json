@@ -246,5 +246,6 @@
   "nixpkgs_desc": "Aggiunge supporto per i pacchetti Nix e il repository NixPKGs sul tuo sistema.",
   "lazyman_desc": "Gestire più configurazioni NeoVim.",
   "ides": "IDE",
-  "ides_desc": "Ambienti di Sviluppo Integrati per vari linguaggi di programmazione e framework."
+  "ides_desc": "Ambienti di Sviluppo Integrati per vari linguaggi di programmazione e framework.",
+  "vlc_desc": "Lettore multimediale open source e completo. Include codec per formati multimediali proprietari per Fedora e OpenSUSE."
 }

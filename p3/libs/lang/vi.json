@@ -246,5 +246,6 @@
   "nixpkgs_desc": "Thêm hỗ trợ cho các gói Nix và kho NixPKGs trên hệ thống của bạn.",
   "lazyman_desc": "Quản lý nhiều cấu hình NeoVim.",
   "ides": "Môi trường phát triển tích hợp",
-  "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau."
+  "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau.",
+  "vlc_desc": "Trình phát phương tiện mã nguồn mở, đầy đủ tính năng. Bao gồm các codec cho các định dạng phương tiện độc quyền cho Fedora và OpenSUSE."
 }
