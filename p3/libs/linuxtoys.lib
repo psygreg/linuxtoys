@@ -1,6 +1,14 @@
 ## linuxtoys function library
 source /etc/os-release
 
+# set askpass for sudo requests
+if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+    export SUDO_ASKPASS="ssh-askpass"
+elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    export SUDO_ASKPASS="x11-ssh-askpass"
+elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
+    export SUDO_ASKPASS="openssh-askpass"
+fi
 # sudo request
 sudo_rq () { 
     sudo -Av
