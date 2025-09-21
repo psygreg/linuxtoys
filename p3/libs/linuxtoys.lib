@@ -56,7 +56,9 @@ _install_ () {
                 fi
             done
             if [[ -n "$_to_install" ]]; then
-                sudo rpm-ostree install -yA "${_to_install[@]}"
+                for item in "${_to_install[@]}"; do
+                    sudo rpm-ostree install -yA "$item"
+                done
             else
                 return 0
             fi
