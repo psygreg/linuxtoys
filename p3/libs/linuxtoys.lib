@@ -113,7 +113,7 @@ _flatpak_ () {
 # language detect -- add elif for each language in the last if statement
 _lang_ () {
     local lang="${LANG:0:2}"
-    local available=("pt")
+    local available=("am" "ar" "bn" "cs" "de" "el" "en" "es" "fa" "fi" "fr" "he" "hi" "id" "it" "ja" "ko" "ms" "nl" "pl" "pt" "ru" "sv" "sw" "ta" "th" "tl" "tr" "uk" "ur" "vi" "zh")
     local ulang=""
     langfile=""
 
@@ -122,9 +122,5 @@ _lang_ () {
     else
         ulang="en"
     fi
-    if [ $ulang == "pt" ]; then
-        langfile="pt"
-    else
-        langfile="en"
-    fi
+    langfile="$ulang"
 }
