@@ -247,5 +247,6 @@
   "lazyman_desc": "Quản lý nhiều cấu hình NeoVim.",
   "ides": "Môi trường phát triển tích hợp",
   "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau.",
-  "vlc_desc": "Trình phát phương tiện mã nguồn mở, đầy đủ tính năng. Bao gồm các codec cho các định dạng phương tiện độc quyền cho Fedora và OpenSUSE."
+  "vlc_desc": "Trình phát phương tiện mã nguồn mở, đầy đủ tính năng. Bao gồm các codec cho các định dạng phương tiện độc quyền cho Fedora và OpenSUSE.",
+  "remapper_desc": "Một công cụ dễ sử dụng cho Linux để thay đổi hành vi của các thiết bị đầu vào của bạn. Ánh xạ bất kỳ đầu vào nào sang bất kỳ đầu vào nào khác."
 }

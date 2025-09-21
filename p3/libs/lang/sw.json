@@ -247,5 +247,6 @@
   "lazyman_desc": "Dhibiti usanidi mbalimbali wa NeoVim.",
   "ides": "Vituo vya Maendeleo Jumuishi",
   "ides_desc": "Vituo vya Maendeleo Jumuishi kwa lugha mbalimbali za programu na mifumo.",
-  "vlc_desc": "Kicheza vyombo vya habari vya chanzo wazi, kilicho na vipengele kamili. Inajumuisha kodeki za umbizo la vyombo vya habari vya umiliki kwa Fedora na OpenSUSE."
+  "vlc_desc": "Kicheza vyombo vya habari vya chanzo wazi, kilicho na vipengele kamili. Inajumuisha kodeki za umbizo la vyombo vya habari vya umiliki kwa Fedora na OpenSUSE.",
+  "remapper_desc": "Zana rahisi kutumia kwa Linux kubadilisha tabia ya vifaa vyako vya kuingiza. Inaweka ramani ya kuingiza yoyote kwenye kuingiza kingine chochote."
 }

@@ -247,5 +247,6 @@
   "lazyman_desc": "Verwalten Sie mehrere NeoVim-Konfigurationen.",
   "ides": "IDEs",
   "ides_desc": "Integrierte Entwicklungsumgebungen für verschiedene Programmiersprachen und Frameworks.",
-  "vlc_desc": "Open-Source, vollwertiger Media-Player. Enthält Codecs für proprietäre Medienformate für Fedora und OpenSUSE."
+  "vlc_desc": "Open-Source, vollwertiger Media-Player. Enthält Codecs für proprietäre Medienformate für Fedora und OpenSUSE.",
+  "remapper_desc": "Ein einfach zu bedienendes Tool für Linux, um das Verhalten Ihrer Eingabegeräte zu ändern. Ordnet jede Eingabe einer anderen Eingabe zu."
 }

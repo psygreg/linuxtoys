@@ -249,5 +249,6 @@
   "lazyman_desc": "管理多个 NeoVim 配置。",
   "ides": "IDE",
   "ides_desc": "用于各种编程语言和框架的集成开发环境。",
-  "vlc_desc": "开源、全功能媒体播放器。为 Fedora 和 OpenSUSE 包含专有媒体格式的编解码器。"
+  "vlc_desc": "开源、全功能媒体播放器。为 Fedora 和 OpenSUSE 包含专有媒体格式的编解码器。",
+  "remapper_desc": "一个易于使用的 Linux 工具，用于更改输入设备的行为。将任何输入映射到任何其他输入。"
 }

@@ -20,7 +20,7 @@ elif [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "debian"
         sudo apt update
     fi
     _packages=(distrobox podman pcsc-lite ccid)
-elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] ||[[ "$ID_LIKE" =~ "arch" ]]; then
+elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]; then
     _packages=(distrobox podman pcsclite ccid)
 elif [ "$ID" = "suse" ] || [[ "$ID" =~ "opensuse" ]] || [[ "$ID_LIKE" =~ "suse" ]]; then
     _packages=(distrobox podman pcsc-ccid)

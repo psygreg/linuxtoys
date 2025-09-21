@@ -247,5 +247,6 @@
   "lazyman_desc": "Kelola beberapa konfigurasi NeoVim.",
   "ides": "IDE",
   "ides_desc": "Lingkungan Pengembangan Terintegrasi untuk berbagai bahasa pemrograman dan framework.",
-  "vlc_desc": "Pemutar media sumber terbuka, lengkap fitur. Termasuk codec untuk format media proprietari untuk Fedora dan OpenSUSE."
+  "vlc_desc": "Pemutar media sumber terbuka, lengkap fitur. Termasuk codec untuk format media proprietari untuk Fedora dan OpenSUSE.",
+  "remapper_desc": "Alat yang mudah digunakan untuk Linux untuk mengubah perilaku perangkat input Anda. Memetakan input apa pun ke input lainnya."
 }

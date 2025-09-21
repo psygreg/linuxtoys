@@ -247,5 +247,6 @@
   "lazyman_desc": "Zarządzaj wieloma konfiguracjami NeoVim.",
   "ides": "Środowiska IDE",
   "ides_desc": "Zintegrowane środowiska programistyczne dla różnych języków programowania i frameworków.",
-  "vlc_desc": "Otwartoźródłowy, w pełni funkcjonalny odtwarzacz multimedialny. Zawiera kodeki dla formatów mediów własnościowych dla Fedora i OpenSUSE."
+  "vlc_desc": "Otwartoźródłowy, w pełni funkcjonalny odtwarzacz multimedialny. Zawiera kodeki dla formatów mediów własnościowych dla Fedora i OpenSUSE.",
+  "remapper_desc": "Łatwe w użyciu narzędzie dla Linux do zmiany zachowania urządzeń wejściowych. Mapuje dowolne wejście na dowolne inne wejście."
 }

@@ -247,5 +247,6 @@
   "lazyman_desc": "Birden fazla NeoVim yapılandırmasını yönetin.",
   "ides": "IDE'ler",
   "ides_desc": "Çeşitli programlama dilleri ve çerçeveler için Entegre Geliştirme Ortamları.",
-  "vlc_desc": "Açık kaynaklı, tam özellikli medya oynatıcı. Fedora ve OpenSUSE için özel medya formatları için kodekler içerir."
+  "vlc_desc": "Açık kaynaklı, tam özellikli medya oynatıcı. Fedora ve OpenSUSE için özel medya formatları için kodekler içerir.",
+  "remapper_desc": "Linux için giriş cihazlarınızın davranışını değiştirmek için kullanımı kolay bir araç. Herhangi bir girişi başka herhangi bir girişe eşler."
 }
