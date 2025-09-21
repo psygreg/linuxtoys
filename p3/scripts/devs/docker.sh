@@ -61,8 +61,8 @@ docker_in () { # install docker
     sudo systemctl enable --now docker.socket
     sleep 2
     # portainer setup
-    sudo docker volume create portainer_data
-    sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
+    docker volume create portainer_data
+    docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
 }
 if zenity --question --title "Docker + Portainer CE Setup" --text "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" --width 360 --height 300; then
     sudo_rq
