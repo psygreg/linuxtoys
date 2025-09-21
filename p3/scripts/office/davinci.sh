@@ -128,24 +128,17 @@ davinciboxatom () {
     # installation
     dv_atom_in () {
         sudo_rq
-        if [[ "$ID" == "bazzite" ]] || [[ "$ID" == "aurora" ]] || [[ "$ID" == "bluefin" ]]; then
-            dv_atom_deps
-            cd $HOME
-            getresolve
-            ujust --yes install-resolve
-        else
-            dv_atom_deps
-            git clone https://github.com/zelikos/davincibox.git
-            sleep 1
-            cd davincibox
-            getresolve
-            unzip $_archive_name.zip
-            chmod +x setup.sh
-            ./setup.sh $_archive_run_name.run
-	        zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
-            cd ..
-            rm -rf davincibox
-        fi
+        dv_atom_deps
+        git clone https://github.com/zelikos/davincibox.git
+        sleep 1
+        cd davincibox
+        getresolve
+        unzip $_archive_name.zip
+        chmod +x setup.sh
+        ./setup.sh $_archive_run_name.run
+	    zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
+        cd ..
+        rm -rf davincibox
     }
 
 	while true; do
