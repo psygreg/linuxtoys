@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "ISP로부터 트래픽을 숨기는 DNS 서비스입니다.",
   "piper_desc": "libratbag을 사용하여 게임 마우스를 구성하기 위한 GTK 애플리케이션입니다. 일반적으로 Logitech, Roccat, Asus 및 Glorious 마우스에 사용됩니다.",
   "glever_desc": "AppImage를 관리하는 유틸리티로, 데스크탑 항목 및 앱 메타데이터를 생성하고, 앱을 제자리에서 업데이트하거나 여러 버전을 나란히 유지할 수 있습니다.",
-  "docker_desc": "docker-compose와 같은 기본 도구와 함께 오픈 소스 컨테이너 서비스 제공업체입니다. 웹 UI에서 Docker를 관리하기 위한 Portainer CE가 있는 컨테이너를 포함합니다.",
+  "docker_desc": "Docker Engine 컨테이너 서비스 제공업체와 그에 대한 기본 도구, docker-compose와 같은 것들.",
   "mise_desc": "asdf와 같이(또는 nvm이나 pyenv이지만 모든 언어용) node, python, cmake, terraform 및 수백 개 더 많은 개발 도구를 관리합니다. 이 섹션의 PyEnv, NVM, Java JDK 및 Maven 설치 프로그램을 대체합니다.",
   "nvm_desc": "다른 버전 간에 쉽게 전환할 수 있는 Node.js용 버전 관리자입니다. Node.js, NPM 및 Yarn을 포함합니다. Mise를 사용하는 경우 필요하지 않습니다.",
   "pyenv_desc": "Python 버전 관리 도구입니다. Mise를 사용하는 경우 필요하지 않습니다.",
@@ -248,5 +248,6 @@
   "ides": "IDE",
   "ides_desc": "다양한 프로그래밍 언어와 프레임워크를 위한 통합 개발 환경.",
   "vlc_desc": "오픈 소스, 완전한 기능을 갖춘 미디어 플레이어. Fedora와 OpenSUSE용 독점 미디어 포맷의 코덱을 포함합니다.",
-  "remapper_desc": "Linux에서 입력 장치의 동작을 변경하는 쉬운 도구. 모든 입력을 다른 입력에 매핑합니다."
+  "remapper_desc": "Linux에서 입력 장치의 동작을 변경하는 쉬운 도구. 모든 입력을 다른 입력에 매핑합니다.",
+  "portainer_desc": "Docker를 위한 웹 기반 관리 UI로, 컨테이너, 이미지, 네트워크 및 볼륨을 쉽게 관리할 수 있습니다."
 }

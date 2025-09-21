@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "DNS service na nagtago ng inyong traffic sa inyong ISP.",
   "piper_desc": "GTK application para i-configure ang gaming mice gamit ang libratbag. Karaniwang ginagamit para sa Logitech, Roccat, Asus at Glorious mice.",
   "glever_desc": "Utility para i-manage ang AppImages, na nagge-generate ng desktop entries at app metadata, nag-a-update ng apps in-place o nagme-maintain ng multiple versions side-by-side.",
-  "docker_desc": "Open source container service provider at basic tools para dito, tulad ng docker-compose. Kasama ang container na may Portainer CE para sa pag-manage ng Docker mula sa web UI.",
+  "docker_desc": "Docker Engine container service provider at basic tools para dito, tulad ng docker-compose.",
   "mise_desc": "Tulad ng asdf (o nvm o pyenv pero para sa kahit anong language) nag-m-manage ito ng dev tools tulad ng node, python, cmake, terraform, at daan-daang iba pa. Pinapalitan ang PyEnv, NVM, at Java JDK at Maven installers mula sa section na ito.",
   "nvm_desc": "Version manager para sa Node.js, nagbibigay-daan sa madaling pag-switch between different versions. Kasama ang Node.js, NPM at Yarn. Hindi kailangan kung gumagamit ng Mise.",
   "pyenv_desc": "Python version management tool. Hindi kailangan kung gumagamit ng Mise.",
@@ -248,5 +248,6 @@
   "ides": "Mga IDE",
   "ides_desc": "Mga Integrated Development Environment para sa iba't ibang mga programming language at framework.",
   "vlc_desc": "Manlalarong media na bukas ang pinagmulan at may kumpletong tampok. Kasama ang mga codec para sa mga proprietary na format ng media para sa Fedora at OpenSUSE.",
-  "remapper_desc": "Isang madaling gamiting tool para sa Linux upang baguhin ang pag-uugali ng iyong mga input device. Nagmamapa ng anumang input sa anumang ibang input."
+  "remapper_desc": "Isang madaling gamiting tool para sa Linux upang baguhin ang pag-uugali ng iyong mga input device. Nagmamapa ng anumang input sa anumang ibang input.",
+  "portainer_desc": "Isang web-based na management UI para sa Docker, na nagbibigay-daan sa iyo na madaling pamahalaan ang iyong mga container, images, networks, at volumes."
 }

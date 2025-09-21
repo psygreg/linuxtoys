@@ -184,7 +184,7 @@
   "piper_desc": "En GTK-applikation för att konfigurera spel-möss med libratbag. Vanligtvis används för Logitech, Roccat, Asus och Glorious möss.",
   "glever_desc": "En utility för att hantera AppImages, generera desktop entries och app metadata, uppdatera appar på plats eller hålla flera versioner sida vid sida.",
 
-  "docker_desc": "Den open source container-tjänsteleverantören och grundläggande verktyg för det, som docker-compose. Inkluderar en container med Portainer CE för att hantera Docker från ett webb-UI.",
+  "docker_desc": "Docker Engine container-tjänsteleverantören och grundläggande verktyg för det, som docker-compose.",
   "mise_desc": "Som asdf (eller nvm eller pyenv men för vilket språk som helst) hanterar det dev-verktyg som node, python, cmake, terraform, och hundratals fler. Ersätter PyEnv, NVM, och Java JDK och Maven-installatörerna från denna sektion.",
   "nvm_desc": "En versionshanterare för Node.js, som tillåter dig att enkelt byta mellan olika versioner. Inkluderar Node.js, NPM och Yarn. Behövs inte om du använder Mise.",
   "pyenv_desc": "Ett Python-versionshanteringsverktyg. Behövs inte om du använder Mise.",
@@ -258,5 +258,6 @@
   "ides": "IDE:er",
   "ides_desc": "Integrerade utvecklingsmiljöer för olika programmeringsspråk och ramverk.",
   "vlc_desc": "Open source, fullt utrustad medieuppspelare. Inkluderar kodekar för proprietära medieformat för Fedora och OpenSUSE.",
-  "remapper_desc": "Ett lättanvänt verktyg för Linux för att ändra beteendet hos dina inmatningsenheter. Mappar vilken inmatning som helst till vilken annan inmatning som helst."
+  "remapper_desc": "Ett lättanvänt verktyg för Linux för att ändra beteendet hos dina inmatningsenheter. Mappar vilken inmatning som helst till vilken annan inmatning som helst.",
+  "portainer_desc": "Ett webbaserat hanteringsgränssnitt för Docker, som låter dig enkelt hantera dina containrar, bilder, nätverk och volymer."
 }

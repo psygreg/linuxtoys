@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Ein DNS-Service, der Ihren Traffic vor Ihrem ISP verbirgt.",
   "piper_desc": "Eine GTK-Anwendung zur Konfiguration von Gaming-Mäusen mit libratbag. Häufig verwendet für Logitech-, Roccat-, Asus- und Glorious-Mäuse.",
   "glever_desc": "Ein Tool zur Verwaltung von AppImage, das Desktop-Einträge und Anwendungs-Metadaten generiert, Anwendungen vor Ort aktualisiert oder mehrere Versionen nebeneinander speichert.",
-  "docker_desc": "Der quelloffene Container-Service-Provider und grundlegende Tools dafür, wie docker-compose. Beinhaltet einen Container mit Portainer CE zur Verwaltung von Docker über eine Web-UI.",
+  "docker_desc": "Der Docker Engine Container-Service-Provider und grundlegende Tools dafür, wie docker-compose.",
   "mise_desc": "Wie asdf (oder nvm oder pyenv aber für jede Sprache) verwaltet es Dev-Tools wie node, python, cmake, terraform und Hunderte mehr. Ersetzt PyEnv, NVM und die Java JDK- und Maven-Installer aus diesem Abschnitt.",
   "nvm_desc": "Ein Versions-Manager für Node.js, der Ihnen erlaubt, einfach zwischen verschiedenen Versionen zu wechseln. Beinhaltet Node.js, NPM und Yarn. Nicht benötigt bei Verwendung von Mise.",
   "pyenv_desc": "Ein Python-Versions-Verwaltungstool. Nicht benötigt bei Verwendung von Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDEs",
   "ides_desc": "Integrierte Entwicklungsumgebungen für verschiedene Programmiersprachen und Frameworks.",
   "vlc_desc": "Open-Source, vollwertiger Media-Player. Enthält Codecs für proprietäre Medienformate für Fedora und OpenSUSE.",
-  "remapper_desc": "Ein einfach zu bedienendes Tool für Linux, um das Verhalten Ihrer Eingabegeräte zu ändern. Ordnet jede Eingabe einer anderen Eingabe zu."
+  "remapper_desc": "Ein einfach zu bedienendes Tool für Linux, um das Verhalten Ihrer Eingabegeräte zu ändern. Ordnet jede Eingabe einer anderen Eingabe zu.",
+  "portainer_desc": "Eine webbasierte Verwaltungsoberfläche für Docker, mit der Sie Ihre Container, Images, Netzwerke und Volumes einfach verwalten können."
 }

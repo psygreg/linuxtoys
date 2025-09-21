@@ -4,7 +4,7 @@
 # description: docker_desc
 # icon: docker.svg
 # nocontainer
-# reboot: ostree
+# reboot: yes
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -60,14 +60,10 @@ docker_in () { # install docker
     sudo systemctl enable --now docker
     sudo systemctl enable --now docker.socket
     sleep 2
-    # portainer setup
-    docker volume create portainer_data
-    docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:lts
 }
-if zenity --question --title "Docker + Portainer CE Setup" --text "This will install Docker Engine and Portainer CE to manage it through a web UI. Proceed?" --width 360 --height 300; then
+if zenity --question --title "Docker" --text "This will install Docker Engine. Proceed?" --width 360 --height 300; then
     sudo_rq
     docker_in
-    zeninf "Setup complete. Your Portainer dashboard will open in your web browser now."
-    xdg-open https://localhost:9443
+    zeninf "Setup complete. You may install Portainer CE to manage Docker after rebooting."
     exit 0
 fi

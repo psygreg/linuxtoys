@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Un service DNS qui cache votre trafic à votre FAI.",
   "piper_desc": "Une application GTK pour configurer les souris gaming utilisant libratbag. Couramment utilisée pour les souris Logitech, Roccat, Asus et Glorious.",
   "glever_desc": "Un utilitaire pour gérer les AppImages, générant des entrées de bureau et des métadonnées d'applications, mettant à jour les applications sur place ou gardant plusieurs versions côte à côte.",
-  "docker_desc": "Le fournisseur de services de conteneurs open source et outils de base pour cela, comme docker-compose. Inclut un conteneur avec Portainer CE pour gérer Docker depuis une interface web.",
+  "docker_desc": "Le fournisseur de services de conteneurs Docker Engine et outils de base pour cela, comme docker-compose.",
   "mise_desc": "Comme asdf (ou nvm ou pyenv mais pour n'importe quel langage) il gère les outils de développement comme node, python, cmake, terraform, et des centaines d'autres. Remplace PyEnv, NVM, et les installateurs Java JDK et Maven de cette section.",
   "nvm_desc": "Un gestionnaire de versions pour Node.js, vous permettant de basculer facilement entre différentes versions. Inclut Node.js, NPM et Yarn. Non nécessaire si vous utilisez Mise.",
   "pyenv_desc": "Un outil de gestion de versions Python. Non nécessaire si vous utilisez Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDEs",
   "ides_desc": "Environnements de Développement Intégrés pour divers langages de programmation et frameworks.",
   "vlc_desc": "Lecteur multimédia open source et complet. Inclut des codecs pour les formats multimédias propriétaires pour Fedora et OpenSUSE.",
-  "remapper_desc": "Un outil facile à utiliser pour Linux pour changer le comportement de vos périphériques d'entrée. Mappe toute entrée à toute autre entrée."
+  "remapper_desc": "Un outil facile à utiliser pour Linux pour changer le comportement de vos périphériques d'entrée. Mappe toute entrée à toute autre entrée.",
+  "portainer_desc": "Une interface de gestion basée sur le web pour Docker, vous permettant de gérer facilement vos conteneurs, images, réseaux et volumes."
 }

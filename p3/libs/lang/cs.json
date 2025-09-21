@@ -184,7 +184,7 @@
   "piper_desc": "GTK aplikace pro konfiguraci herních myší pomocí libratbag. Běžně používaná pro Logitech, Roccat, Asus a Glorious myši.",
   "glever_desc": "Utility pro správu AppImages, generování desktop entries a app metadat, aktualizaci aplikací in-place nebo udržování více verzí vedle sebe.",
 
-  "docker_desc": "Open source poskytovatel kontejnerových služeb a základní nástroje pro něj, jako docker-compose. Zahrnuje kontejner s Portainer CE pro správu Docker z webového UI.",
+  "docker_desc": "Docker Engine poskytovatel kontejnerových služeb a základní nástroje pro něj, jako docker-compose.",
   "mise_desc": "Jako asdf (nebo nvm nebo pyenv, ale pro jakýkoli jazyk) spravuje dev nástroje jako node, python, cmake, terraform, a stovky dalších. Nahrazuje PyEnv, NVM, a Java JDK a Maven instalátory z této sekce.",
   "nvm_desc": "Manažer verzí pro Node.js, umožňující snadno přepínat mezi různými verzemi. Zahrnuje Node.js, NPM a Yarn. Není potřeba pokud používáte Mise.",
   "pyenv_desc": "Nástroj pro správu verzí Python. Není potřeba pokud používáte Mise.",
@@ -258,5 +258,6 @@
   "ides": "IDE",
   "ides_desc": "Integrovaná vývojová prostředí pro různé programovací jazyky a frameworky.",
   "vlc_desc": "Open source, plně vybavený media player. Zahrnuje kodeky pro proprietární formáty médií pro Fedora a OpenSUSE.",
-  "remapper_desc": "Snadno použitelný nástroj pro Linux pro změnu chování vašich vstupních zařízení. Mapuje jakýkoli vstup na jakýkoli jiný vstup."
+  "remapper_desc": "Snadno použitelný nástroj pro Linux pro změnu chování vašich vstupních zařízení. Mapuje jakýkoli vstup na jakýkoli jiný vstup.",
+  "portainer_desc": "Webové rozhraní pro správu Docker, které vám umožňuje snadno spravovat vaše kontejnery, obrázky, sítě a svazky."
 }

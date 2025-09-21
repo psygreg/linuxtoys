@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Um serviço de DNS que oculta seu tráfego do ISP.",
   "piper_desc": "Uma aplicação GTK para configurar mouses para jogos usando libratbag. Geralmente usado para mouses Logitech, Asus, Roccat e Glorious.",
   "glever_desc": "Uma utilidade para gerenciar AppImages, gerando entradas de desktop e metadados de aplicativos, atualizando aplicativos no local ou mantendo várias versões lado a lado.",
-  "docker_desc": "O provedor de serviços de container de código aberto e ferramentas básicas para ele, como docker-compose. Inclui um container com o Portainer CE para gerenciar o Docker a partir de uma interface da web.",
+  "docker_desc": "O provedor de serviços de container Docker Engine e ferramentas básicas para ele, como docker-compose.",
   "mise_desc": "Assim como asdf (ou nvm ou pyenv, mas para qualquer linguagem), ele gerencia ferramentas de desenvolvimento como node, python, cmake, terraform e centenas mais. Substitui PyEnv, NVM, e os instaladores Java JDK e Maven desta seção.",
   "nvm_desc": "Um gerenciador de versões para Node.js, permitindo que você alterne facilmente entre diferentes versões. Inclui Node.js, NPM e Yarn. Não é necessário se utilizar Mise.",
   "pyenv_desc": "Uma ferramenta de gerenciamento de versões para Python. Não é necessária se utilizar Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDEs",
   "ides_desc": "Ambientes de Desenvolvimento Integrados para várias linguagens de programação e frameworks.",
   "vlc_desc": "Leitor de mídia de código aberto e completo. Inclui codecs para formatos de mídia proprietários para Fedora e OpenSUSE.",
-  "remapper_desc": "Uma ferramenta fácil de usar para Linux para alterar o comportamento dos seus dispositivos de entrada. Mapeia qualquer entrada para qualquer outra entrada."
+  "remapper_desc": "Uma ferramenta fácil de usar para Linux para alterar o comportamento dos seus dispositivos de entrada. Mapeia qualquer entrada para qualquer outra entrada.",
+  "portainer_desc": "Uma interface de gerenciamento baseada na web para Docker, permitindo gerenciar facilmente seus contêineres, imagens, redes e volumes."
 }

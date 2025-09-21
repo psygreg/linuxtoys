@@ -184,7 +184,7 @@
   "piper_desc": "GTK-sovellus pelihiirien konfigurointiin libratbagia käyttäen. Yleisesti käytetty Logitechille, Roccatille, Asusille ja Glorious-hiirille.",
   "glever_desc": "Apuväline AppImages-hallintaan, luo työpöytämerkintöjä ja sovellusmetatietoja, päivitä sovelluksia paikallaan tai pidä useita versioita rinnakkain.",
 
-  "docker_desc": "Avoimen lähdekoodin konttipalveluntarjoaja ja perusvälineet sille, kuten docker-compose. Sisältää kontin Portainer CE:llä Dockerin hallintaan web-UI:sta.",
+  "docker_desc": "Docker Engine konttipalveluntarjoaja ja perusvälineet sille, kuten docker-compose.",
   "mise_desc": "Kuten asdf (tai nvm tai pyenv mutta mille tahansa kielelle) se hallinnoi dev-välineitä kuten node, python, cmake, terraform, ja satoja muita. Korvaa PyEnv:n, NVM:n, ja Java JDK:n ja Maven-asentajien tästä osiosta.",
   "nvm_desc": "Versiohallinnoija Node.js:lle, mahdollistaa helpon vaihtamisen eri versioiden välillä. Sisältää Node.js:n, NPM:n ja Yarnin. Ei tarvita jos käytät Miseä.",
   "pyenv_desc": "Python-versiohallintatyökalu. Ei tarvita jos käytät Miseä.",
@@ -258,5 +258,6 @@
   "ides": "IDE:t",
   "ides_desc": "Integroitu kehitysympäristö erilaisille ohjelmointikielille ja frameworkeille.",
   "vlc_desc": "Avoimen lähdekoodin, täysin varusteltu mediasoitin. Sisältää koodekit proprietäärisille mediaformaateille Fedoralle ja OpenSUSE:lle.",
-  "remapper_desc": "Helppo käyttää työkalu Linuxille syöttölaitteidesi käyttäytymisen muuttamiseen. Kartoittaa minkä tahansa syötteen mihin tahansa muuhun syötteeseen."
+  "remapper_desc": "Helppo käyttää työkalu Linuxille syöttölaitteidesi käyttäytymisen muuttamiseen. Kartoittaa minkä tahansa syötteen mihin tahansa muuhun syötteeseen.",
+  "portainer_desc": "Verkkopohjainen hallintakäyttöliittymä Dockerille, jonka avulla voit helposti hallita konttejasi, kuviasi, verkkojasi ja volyymejasi."
 }

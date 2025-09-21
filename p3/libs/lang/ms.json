@@ -183,7 +183,7 @@
   "piper_desc": "Aplikasi GTK untuk mengkonfigurasi tetikus permainan menggunakan libratbag. Biasanya digunakan untuk tetikus Logitech, Roccat, Asus dan Glorious.",
   "glever_desc": "Utiliti untuk mengurus AppImages, menjana entri desktop dan metadata aplikasi, mengemas kini aplikasi di tempat atau menyimpan berbilang versi sebelah-menyebelah.",
 
-  "docker_desc": "Penyedia perkhidmatan bekas sumber terbuka dan alat asas untuknya, seperti docker-compose. Termasuk bekas dengan Portainer CE untuk mengurus Docker dari UI web.",
+  "docker_desc": "Penyedia perkhidmatan bekas Docker Engine dan alat asas untuknya, seperti docker-compose.",
   "mise_desc": "Seperti asdf (atau nvm atau pyenv tetapi untuk mana-mana bahasa) ia mengurus alat dev seperti node, python, cmake, terraform, dan beratus-ratus lagi. Menggantikan PyEnv, NVM, dan pemasang JDK dan Maven Java dari bahagian ini.",
   "nvm_desc": "Pengurus versi untuk Node.js, membolehkan anda menukar dengan mudah antara versi yang berbeza. Termasuk Node.js, NPM dan Yarn. Tidak diperlukan jika menggunakan Mise.",
   "pyenv_desc": "Alat pengurusan versi Python. Tidak diperlukan jika menggunakan Mise.",
@@ -258,5 +258,6 @@
   "ides": "IDE",
   "ides_desc": "Persekitaran Pembangunan Bersepadu untuk pelbagai bahasa pengaturcaraan dan kerangka kerja.",
   "vlc_desc": "Pemain media sumber terbuka, lengkap ciri. Termasuk kodeks untuk format media proprietari untuk Fedora dan OpenSUSE.",
-  "remapper_desc": "Alat mudah digunakan untuk Linux untuk menukar tingkah laku peranti input anda. Memetakan mana-mana input ke mana-mana input lain."
+  "remapper_desc": "Alat mudah digunakan untuk Linux untuk menukar tingkah laku peranti input anda. Memetakan mana-mana input ke mana-mana input lain.",
+  "portainer_desc": "Antara muka pengurusan berasaskan web untuk Docker, membolehkan anda mengurus bekas, imej, rangkaian dan volum anda dengan mudah."
 }

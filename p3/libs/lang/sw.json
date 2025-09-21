@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Huduma ya DNS inayoficha trafiki yako kutoka kwa ISP yako.",
   "piper_desc": "Programu ya GTK ya kusanidi kipanya cha michezo kwa kutumia libratbag. Hutumika kwa kawaida kwa kipanya za Logitech, Roccat, Asus na Glorious.",
   "glever_desc": "Chombo cha kusimamia AppImage, kuunda vichupo vya desktop na metadata ya programu, kuboresha programu kwenye tovuti au kuweka toleo nyingi kando.",
-  "docker_desc": "Mtoa huduma wa chombo cha chanzo huria na zana za msingi kwa ajili yake, kama vile docker-compose. Inajumuisha chombo kilicho na Portainer CE kwa kusimamia Docker kutoka UI ya wavuti.",
+  "docker_desc": "Mtoa huduma wa chombo cha Docker Engine na zana za msingi kwa ajili yake, kama vile docker-compose.",
   "mise_desc": "Kama asdf (au nvm au pyenv lakini kwa lugha yoyote) inasimamia zana za maendeleo kama node, python, cmake, terraform, na mamia mengine. Inachukua nafasi ya PyEnv, NVM, na vyasakinisha vya Java JDK na Maven kutoka sehemu hii.",
   "nvm_desc": "Msimamizi wa toleo kwa Node.js, unaoruhusu kubadilisha kati ya matoleo mbalimbali kwa urahisi. Inajumuisha Node.js, NPM na Yarn. Haihitajiki wakati wa kutumia Mise.",
   "pyenv_desc": "Chombo cha usimamizi wa toleo la Python. Haihitajiki wakati wa kutumia Mise.",
@@ -248,5 +248,6 @@
   "ides": "Vituo vya Maendeleo Jumuishi",
   "ides_desc": "Vituo vya Maendeleo Jumuishi kwa lugha mbalimbali za programu na mifumo.",
   "vlc_desc": "Kicheza vyombo vya habari vya chanzo wazi, kilicho na vipengele kamili. Inajumuisha kodeki za umbizo la vyombo vya habari vya umiliki kwa Fedora na OpenSUSE.",
-  "remapper_desc": "Zana rahisi kutumia kwa Linux kubadilisha tabia ya vifaa vyako vya kuingiza. Inaweka ramani ya kuingiza yoyote kwenye kuingiza kingine chochote."
+  "remapper_desc": "Zana rahisi kutumia kwa Linux kubadilisha tabia ya vifaa vyako vya kuingiza. Inaweka ramani ya kuingiza yoyote kwenye kuingiza kingine chochote.",
+  "portainer_desc": "Kiolesura cha usimamizi cha msingi wa wavuti kwa Docker, kinachokuruhusu kusimamia vyombo vyako, picha, mitandao na ujazo kwa urahisi."
 }

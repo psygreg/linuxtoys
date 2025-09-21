@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Un servicio DNS que oculta su tráfico de su ISP.",
   "piper_desc": "Una aplicación GTK para configurar ratones gaming usando libratbag. Comúnmente usado para ratones Logitech, Roccat, Asus y Glorious.",
   "glever_desc": "Una utilidad para gestionar AppImages, generando entradas de escritorio y metadatos de aplicaciones, actualizando aplicaciones in situ o manteniendo múltiples versiones lado a lado.",
-  "docker_desc": "El proveedor de servicios de contenedores de código abierto y herramientas básicas para él, como docker-compose. Incluye un contenedor con Portainer CE para gestionar Docker desde una UI web.",
+  "docker_desc": "El proveedor de servicios de contenedores Docker Engine y herramientas básicas para él, como docker-compose.",
   "mise_desc": "Como asdf (o nvm o pyenv pero para cualquier lenguaje) gestiona herramientas de desarrollo como node, python, cmake, terraform, y cientos más. Reemplaza PyEnv, NVM, y los instaladores Java JDK y Maven de esta sección.",
   "nvm_desc": "Un gestor de versiones para Node.js, permitiendo cambiar fácilmente entre diferentes versiones. Incluye Node.js, NPM y Yarn. No necesario si usa Mise.",
   "pyenv_desc": "Una herramienta de gestión de versiones de Python. No necesaria si usa Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDEs",
   "ides_desc": "Entornos de Desarrollo Integrados para varios lenguajes de programación y frameworks.",
   "vlc_desc": "Reproductor de medios de código abierto y completo. Incluye códecs para formatos de medios propietarios para Fedora y OpenSUSE.",
-  "remapper_desc": "Una herramienta fácil de usar para Linux para cambiar el comportamiento de tus dispositivos de entrada. Mapea cualquier entrada a cualquier otra entrada."
+  "remapper_desc": "Una herramienta fácil de usar para Linux para cambiar el comportamiento de tus dispositivos de entrada. Mapea cualquier entrada a cualquier otra entrada.",
+  "portainer_desc": "Una interfaz de usuario de gestión basada en web para Docker, que le permite gestionar fácilmente sus contenedores, imágenes, redes y volúmenes."
 }

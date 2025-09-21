@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Un servizio DNS che nasconde il tuo traffico dal tuo ISP.",
   "piper_desc": "Un'applicazione GTK per configurare mouse da gaming usando libratbag. Comunemente usato per mouse Logitech, Roccat, Asus e Glorious.",
   "glever_desc": "Un'utilità per gestire AppImage, generando voci desktop e metadati delle app, aggiornando le app in loco o mantenendo più versioni affiancate.",
-  "docker_desc": "Il fornitore di servizi container open source e strumenti di base per esso, come docker-compose. Include un container con Portainer CE per gestire Docker da una UI web.",
+  "docker_desc": "Il fornitore di servizi container Docker Engine e strumenti di base per esso, come docker-compose.",
   "mise_desc": "Come asdf (o nvm o pyenv ma per qualsiasi linguaggio) gestisce strumenti di sviluppo come node, python, cmake, terraform, e centinaia di altri. Sostituisce PyEnv, NVM, e gli installatori JDK Java e Maven da questa sezione.",
   "nvm_desc": "Un gestore di versioni per Node.js, permettendo di passare facilmente tra diverse versioni. Include Node.js, NPM e Yarn. Non necessario se si usa Mise.",
   "pyenv_desc": "Uno strumento di gestione versioni Python. Non necessario se si usa Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDE",
   "ides_desc": "Ambienti di Sviluppo Integrati per vari linguaggi di programmazione e framework.",
   "vlc_desc": "Lettore multimediale open source e completo. Include codec per formati multimediali proprietari per Fedora e OpenSUSE.",
-  "remapper_desc": "Uno strumento facile da usare per Linux per cambiare il comportamento dei tuoi dispositivi di input. Mappa qualsiasi input a qualsiasi altro input."
+  "remapper_desc": "Uno strumento facile da usare per Linux per cambiare il comportamento dei tuoi dispositivi di input. Mappa qualsiasi input a qualsiasi altro input.",
+  "portainer_desc": "Un'interfaccia utente di gestione basata sul web per Docker, che consente di gestire facilmente i contenitori, le immagini, le reti e i volumi."
 }

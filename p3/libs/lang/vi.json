@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Dịch vụ DNS ẩn lưu lượng của bạn khỏi ISP.",
   "piper_desc": "Ứng dụng GTK để cấu hình chuột gaming bằng libratbag. Thường được sử dụng cho chuột Logitech, Roccat, Asus và Glorious.",
   "glever_desc": "Công cụ để quản lý AppImage, tạo các mục desktop và metadata ứng dụng, cập nhật ứng dụng tại chỗ hoặc giữ nhiều phiên bản song song.",
-  "docker_desc": "Nhà cung cấp dịch vụ container mã nguồn mở và các công cụ cơ bản cho nó, như docker-compose. Bao gồm container với Portainer CE để quản lý Docker từ giao diện web.",
+  "docker_desc": "Nhà cung cấp dịch vụ container Docker Engine và các công cụ cơ bản cho nó, như docker-compose.",
   "mise_desc": "Giống như asdf (hoặc nvm hoặc pyenv nhưng cho bất kỳ ngôn ngữ nào) nó quản lý các công cụ dev như node, python, cmake, terraform và hàng trăm công cụ khác. Thay thế PyEnv, NVM và các trình cài đặt Java JDK và Maven từ phần này.",
   "nvm_desc": "Trình quản lý phiên bản cho Node.js, cho phép bạn dễ dàng chuyển đổi giữa các phiên bản khác nhau. Bao gồm Node.js, NPM và Yarn. Không cần nếu sử dụng Mise.",
   "pyenv_desc": "Công cụ quản lý phiên bản Python. Không cần nếu sử dụng Mise.",
@@ -248,5 +248,6 @@
   "ides": "Môi trường phát triển tích hợp",
   "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau.",
   "vlc_desc": "Trình phát phương tiện mã nguồn mở, đầy đủ tính năng. Bao gồm các codec cho các định dạng phương tiện độc quyền cho Fedora và OpenSUSE.",
-  "remapper_desc": "Một công cụ dễ sử dụng cho Linux để thay đổi hành vi của các thiết bị đầu vào của bạn. Ánh xạ bất kỳ đầu vào nào sang bất kỳ đầu vào nào khác."
+  "remapper_desc": "Một công cụ dễ sử dụng cho Linux để thay đổi hành vi của các thiết bị đầu vào của bạn. Ánh xạ bất kỳ đầu vào nào sang bất kỳ đầu vào nào khác.",
+  "portainer_desc": "Giao diện quản lý dựa trên web cho Docker, cho phép bạn dễ dàng quản lý các container, hình ảnh, mạng và volume của mình."
 }

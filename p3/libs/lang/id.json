@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Layanan DNS yang menyembunyikan traffic Anda dari ISP.",
   "piper_desc": "Aplikasi GTK untuk mengkonfigurasi mouse gaming menggunakan libratbag. Umumnya digunakan untuk mouse Logitech, Roccat, Asus dan Glorious.",
   "glever_desc": "Utilitas untuk mengelola AppImages, menghasilkan entri desktop dan metadata aplikasi, memperbarui aplikasi di tempat atau menyimpan beberapa versi berdampingan.",
-  "docker_desc": "Penyedia layanan container open source dan alat dasar untuk itu, seperti docker-compose. Termasuk container dengan Portainer CE untuk mengelola Docker dari web UI.",
+  "docker_desc": "Penyedia layanan container Docker Engine dan alat dasar untuk itu, seperti docker-compose.",
   "mise_desc": "Seperti asdf (atau nvm atau pyenv tapi untuk bahasa apa pun) ia mengelola dev tools seperti node, python, cmake, terraform, dan ratusan lainnya. Menggantikan installer PyEnv, NVM, dan Java JDK dan Maven dari bagian ini.",
   "nvm_desc": "Version manager untuk Node.js, memungkinkan Anda dengan mudah beralih antara versi yang berbeda. Termasuk Node.js, NPM dan Yarn. Tidak diperlukan jika menggunakan Mise.",
   "pyenv_desc": "Alat manajemen versi Python. Tidak diperlukan jika menggunakan Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDE",
   "ides_desc": "Lingkungan Pengembangan Terintegrasi untuk berbagai bahasa pemrograman dan framework.",
   "vlc_desc": "Pemutar media sumber terbuka, lengkap fitur. Termasuk codec untuk format media proprietari untuk Fedora dan OpenSUSE.",
-  "remapper_desc": "Alat yang mudah digunakan untuk Linux untuk mengubah perilaku perangkat input Anda. Memetakan input apa pun ke input lainnya."
+  "remapper_desc": "Alat yang mudah digunakan untuk Linux untuk mengubah perilaku perangkat input Anda. Memetakan input apa pun ke input lainnya.",
+  "portainer_desc": "Antarmuka manajemen berbasis web untuk Docker, memungkinkan Anda dengan mudah mengelola kontainer, gambar, jaringan, dan volume Anda."
 }

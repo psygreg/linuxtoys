@@ -183,7 +183,7 @@
   "piper_desc": "A GTK application to configure gaming mice using libratbag. Commonly used for Logitech, Roccat, Asus and Glorious mice.",
   "glever_desc": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
 
-  "docker_desc": "The open source container service provider and basic tools for it, like docker-compose. Includes a container with Portainer CE for managing Docker from a web UI.",
+  "docker_desc": "The Docker Engine container service provider and basic tools for it, like docker-compose.",
   "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",
   "nvm_desc": "A version manager for Node.js, allowing you to easily switch between different versions. Includes Node.js, NPM and Yarn. Not needed if using Mise.",
   "pyenv_desc": "A Python version management tool. Not needed if using Mise.",
@@ -258,5 +258,6 @@
   "ides": "IDEs",
   "ides_desc": "Integrated Development Environments for various programming languages and frameworks.",
   "vlc_desc": "Open source, fully-featured media player. Includes codecs for proprietary media formats for Fedora and OpenSUSE.",
-  "remapper_desc": "An easy to use tool for Linux to change the behaviour of your input devices. Maps any input to any other input."
+  "remapper_desc": "An easy to use tool for Linux to change the behaviour of your input devices. Maps any input to any other input.",
+  "portainer_desc": "A web-based management UI for Docker, allowing you to easily manage your containers, images, networks and volumes."
 }

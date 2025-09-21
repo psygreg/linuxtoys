@@ -176,7 +176,7 @@
   "cloudflare_warp_desc": "Een DNS service die je verkeer verbergt voor je ISP.",
   "piper_desc": "Een GTK applicatie om gaming muizen te configureren met libratbag. Veel gebruikt voor Logitech, Roccat, Asus en Glorious muizen.",
   "glever_desc": "Een hulpprogramma om AppImages te beheren, desktop entries en app metadata te genereren, apps in-place bij te werken of meerdere versies zij aan zij te houden.",
-  "docker_desc": "De open source container service provider en basistools ervoor, zoals docker-compose. Bevat een container met Portainer CE voor het beheren van Docker vanuit een web UI.",
+  "docker_desc": "De Docker Engine container service provider en basistools ervoor, zoals docker-compose.",
   "mise_desc": "Zoals asdf (of nvm of pyenv maar voor elke taal) beheert het dev tools zoals node, python, cmake, terraform, en honderden meer. Vervangt PyEnv, NVM, en de Java JDK en Maven installers van deze sectie.",
   "nvm_desc": "Een versiebeheerder voor Node.js, waarmee je eenvoudig kunt schakelen tussen verschillende versies. Bevat Node.js, NPM en Yarn. Niet nodig bij het gebruik van Mise.",
   "pyenv_desc": "Een Python versie management tool. Niet nodig bij het gebruik van Mise.",
@@ -248,5 +248,6 @@
   "ides": "IDE's",
   "ides_desc": "Geïntegreerde ontwikkelomgevingen voor verschillende programmeertalen en frameworks.",
   "vlc_desc": "Open source, volledig uitgeruste mediaspeler. Bevat codecs voor propriëtaire mediaformaten voor Fedora en OpenSUSE.",
-  "remapper_desc": "Een eenvoudig te gebruiken tool voor Linux om het gedrag van uw invoerapparaten te veranderen. Map elke invoer naar elke andere invoer."
+  "remapper_desc": "Een eenvoudig te gebruiken tool voor Linux om het gedrag van uw invoerapparaten te veranderen. Map elke invoer naar elke andere invoer.",
+  "portainer_desc": "Een webgebaseerde beheerinterface voor Docker, waarmee u eenvoudig uw containers, images, netwerken en volumes kunt beheren."
 }
