@@ -118,99 +118,59 @@ davinciboxatom () {
 
     dv_atom_deps () {
         _packages=(toolbox podman lshw)
-        local amdGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
-        local nvGPU=$(lspci | grep -iE 'vga|3d' | grep -i nvidia)
-        local intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel|iris|xe')
-        if [[ -n "$nvGPU" ]]; then
-        # add repository and install nvidia container toolkit
-            curl -O https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
-            sudo install -o 0 -g 0 nvidia-container-toolkit.repo /etc/yum.repos.d/nvidia-container-toolkit.repo
-            rm nvidia-container-toolkit.repo
-            NVIDIA_CONTAINER_TOOLKIT_VERSION=1.17.8-1
-           _packages+=(nvidia-container-toolkit-${NVIDIA_CONTAINER_TOOLKIT_VERSION} nvidia-container-toolkit-base-${NVIDIA_CONTAINER_TOOLKIT_VERSION} libnvidia-container-tools-${NVIDIA_CONTAINER_TOOLKIT_VERSION} libnvidia-container1-${NVIDIA_CONTAINER_TOOLKIT_VERSION})
-        elif [[ -n "$amdGPU" ]]; then
-            # select ROCm or Rusticl
-            while true; do
-                CHOICE=$(zenity --list --title="AMD Drivers" \
-        		    --column="$msg006" \
-            	    "ROCm - ${msg290}" \
-            	    "RustiCL - ${msg256}" \
-            	    --height=300 --width=360)
-
-                if [ $? -ne 0 ]; then
-        		    break
-   			    fi
-
-                case $CHOICE in
-            	    "ROCm - ${msg290}") _packages+=(rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo) ;;
-            	    "RustiCL - ${msg256}") _packages+=(mesa-libOpenCL clinfo) ;;
-            	    *) echo "Invalid Option" ;;
-                esac
-
-			    break
-            done
-        elif [[ -n "$intelGPU" ]]; then
-            # install intel compute runtime
-            _packages+=("intel-compute-runtime")
-        fi
         sudo_rq
         _install_
         if [[ $? -eq 1 ]]; then
             echo "No packages to install."
-        else
-            if [[ "${_to_install[*]}" =~ "rocm" ]]; then
-                sudo usermod -aG render,video $USER
-            elif [[ "${_to_install[*]}" =~ "mesa-libOpenCL" ]]; then
-                curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys-atom/main/src/patches/rusticl-amd \
-                    | sudo tee -a /etc/environment > /dev/null
-            fi
         fi
     }
 
     # installation
     dv_atom_in () {
         sudo_rq
-        dv_atom_deps
-        git clone https://github.com/zelikos/davincibox.git
-        sleep 1
-        cd davincibox
-        getresolve
-        unzip $_archive_name.zip
-        chmod +x setup.sh
-        ./setup.sh $_archive_run_name.run
-	    zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
-        cd ..
-        rm -rf davincibox
+        if [[ "$ID" == "bazzite" ]] || [[ "$ID" == "aurora" ]] || [[ "$ID" == "bluefin" ]]; then
+            dv_atom_deps
+            cd $HOME
+            getresolve
+            ujust --yes install-resolve
+        else
+            dv_atom_deps
+            git clone https://github.com/zelikos/davincibox.git
+            sleep 1
+            cd davincibox
+            getresolve
+            unzip $_archive_name.zip
+            chmod +x setup.sh
+            ./setup.sh $_archive_run_name.run
+	        zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
+            cd ..
+            rm -rf davincibox
+        fi
     }
 
-    if [[ "$ID" == "bazzite" ]] || [[ "$ID" == "aurora" ]] || [[ "$ID" == "bluefin" ]]; then
-	    ujust install-resolve
-    else 
-	    while true; do
-		    CHOICE=$(zenity --list --title="AutoDaVinciBox" \
-        	    --column="Which version do you want to install?" \
-			    "Free" \
-			    "Studio" \
-			    "$msg070" \
-			    --height=300 --width=300)
+	while true; do
+		CHOICE=$(zenity --list --title="AutoDaVinciBox" \
+        	--column="Which version do you want to install?" \
+			"Free" \
+			"Studio" \
+			"$msg070" \
+			--height=300 --width=300)
 
-		    if [ $? -ne 0 ]; then
-        	    break
-   		    fi
+		if [ $? -ne 0 ]; then
+        	break
+   		fi
 
-		    case $CHOICE in
-			    "Free") _upkgname='davinci-resolve'
-    			    dv_atom_in
-				    break ;;
-			    "Studio") _upkgname='davinci-resolve-studio'
-	  			    dv_atom_in
-    			    break ;;
-			    "$msg070") break && return 100;;
-			    *) echo "Invalid Option" ;;
-		    esac
-	    done
-    fi
-
+		case $CHOICE in
+			"Free") _upkgname='davinci-resolve'
+    			dv_atom_in
+				break ;;
+			"Studio") _upkgname='davinci-resolve-studio'
+	  			dv_atom_in
+    			break ;;
+			"$msg070") break && return 100;;
+			*) echo "Invalid Option" ;;
+		esac
+	done
 }
 # if on atomic distros, go straight to davincibox
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
