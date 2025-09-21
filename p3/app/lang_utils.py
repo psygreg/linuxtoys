@@ -172,7 +172,8 @@ def get_language_names():
         'sv': 'Svenska',
         'fi': 'Suomeksi',
         'ms': 'Bahasa Melayu',
-        'ta': 'தமிழ்'
+        'ta': 'தமிழ்',
+        'uk': 'Українська'
     }
 
 
@@ -211,7 +212,8 @@ def get_localized_language_names(current_translations):
         'sv': current_translations.get('lang_swedish', 'Svenska'),
         'fi': current_translations.get('lang_finnish', 'Suomeksi'),
         'ms': current_translations.get('lang_malay', 'Bahasa Melayu'),
-        'ta': current_translations.get('lang_tamil', 'தமிழ்')
+        'ta': current_translations.get('lang_tamil', 'தமிழ்'),
+        'uk': current_translations.get('lang_ukrainian', 'Українська')
     }    # Fall back to native names for any missing translations
     native_names = get_language_names()
     for code in native_names:
