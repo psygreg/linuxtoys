@@ -21,7 +21,7 @@ _packages=(linux-headers dkms bc base-devel)
 _install_
 cd rtl8821ce-dkms-git
 makepkg -d
-sudo pacman --noconfirm -U rtl8821ce-dkms-git.tar.zst
+sudo pacman --noconfirm -U rtl8821ce-dkms-git-*.tar.zst
 # blacklist rtw88_8821ce, which is borked
 if [ -f /etc/modprobe.d/blacklist.conf ]; then
     if grep -q "blacklist rtw88_8821ce" /etc/modprobe.d/blacklist.conf; then
