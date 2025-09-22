@@ -83,6 +83,11 @@ class AppWindow(Gtk.ApplicationWindow):
         )
         self.header_bar.pack_end(self.menu_button)
 
+        self.pin_scripts_flowbox = self.create_flowbox()
+        self.pin_scripts_flowbox.set_valign(Gtk.Align.END)
+        self.pin_scripts_flowbox.set_margin_bottom(0)
+        main_vbox.pack_start(self.pin_scripts_flowbox, False, False, 0)
+
         self.main_stack = Gtk.Stack()
         self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
         self.main_stack.set_transition_duration(200)  # Set a reasonable transition duration
@@ -109,7 +114,8 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # --- Load Data and Connect Signals ---
         self.load_categories()
-        
+        self.load_pin_scripts()
+
         self.back_button.connect("clicked", self.on_back_button_clicked)
 
         # --- Check for pending ostree deployments ---
@@ -483,7 +489,6 @@ class AppWindow(Gtk.ApplicationWindow):
         
         # Restore the current category info
         self.current_category_info = temp_current_category
-        
         self.categories_flowbox.show_all()
             
             
@@ -1037,10 +1042,78 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             
         return False
 
+    def load_pin_scripts(self):
+        if pin_scripts := self.__pin_sh():
+            for key in pin_scripts.keys():
+                infos = parser.get_script(self.translations, pin_scripts.get(key))
+                wid = self.create_item_widget(infos)
+                if wid:
+                    wid.get_style_context().add_class("script-pin")
+                    wid.info.update({'pin': True})
+                    self.pin_scripts_flowbox.show()
+                    self.pin_scripts_flowbox.add(wid)
+                    self.pin_scripts_flowbox.hide()
+
+    def on_pin_or_unpin(self, info, add=False, rem=False):
+        self.pin_scripts_flowbox.foreach(lambda widget: self.pin_scripts_flowbox.remove(widget))
+        if pin_scripts := self.__pin_sh(info, add, rem):
+            for key in pin_scripts.keys():
+                infos = parser.get_script(self.translations, pin_scripts.get(key))
+                wid = self.create_item_widget(infos)
+                if wid:
+                    wid.get_style_context().add_class("script-pin")
+                    wid.info.update({'pin': True})
+                    self.pin_scripts_flowbox.show()
+                    self.pin_scripts_flowbox.add(wid)
+                    self.pin_scripts_flowbox.hide()
+
+        if not self.current_category_info:
+            self.pin_scripts_flowbox.show_all()
+
+    def __pin_sh(self, sh_info=dict, add=False, rem=False) -> dict:
+        from json import dump, loads
+        _conf = f"{os.environ['HOME']}/.config/linuxtoys/"
+        os.makedirs(os.path.dirname(_conf), exist_ok=True)
+        _pin_js = f"{_conf}/pin.json"
+
+        js = {}
+        if not os.path.exists(_pin_js):
+            with open(_pin_js, 'w') as f:
+                dump(js, f)
+
+        with open(_pin_js, "r+") as f:
+            js = loads(f.read())
+
+            if add and not sh_info is None:
+                js.update(dict({sh_info.get('icon'): sh_info.get('path')}))
+
+            elif rem and not sh_info is None:
+                js.pop(sh_info.get('icon')) if sh_info.get('icon') in js else None
+
+            f.seek(0)
+            dump(js, f, indent=4)
+            f.truncate()
+
+        return js
+
     def _show_context_menu(self, widget, event):
         """Show context menu for right-click on items."""
         info = widget.info
-        
+
+        if info.get('is_script'):
+            menu = Gtk.Menu()
+
+            if info.get('pin'):
+                pin = Gtk.MenuItem(label=self.translations.get("unpin_script", "Unpin Script"))
+                pin.connect("activate", lambda _: self.on_pin_or_unpin(info, rem=True))
+            else:
+                pin = Gtk.MenuItem(label=self.translations.get("pin_script", "Pin Script"))
+                pin.connect("activate", lambda _: self.on_pin_or_unpin(info, add=True))
+
+            menu.append(pin)
+            menu.show_all()
+            menu.popup_at_pointer(event)
+
         # Only show context menu for local scripts
         if not self._is_local_script(info):
             return
@@ -1686,6 +1759,7 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # Ensure footer has proper spacing
         self.footer_widget.set_margin_bottom(0)
         
+        self.pin_scripts_flowbox.show_all()
         # Disable drag-and-drop when viewing main categories
         self._disable_drag_and_drop()
 
@@ -1726,3 +1800,4 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self.footer_widget.set_margin_bottom(0)
         else:
             self.footer_widget.hide()
+            self.pin_scripts_flowbox.hide()

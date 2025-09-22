@@ -25,3 +25,9 @@ flowboxchild:selected {
 flowboxchild {
     outline: none;
 }
+.script-pin {
+    background-image: url('icons/starred.svg');
+    background-size: 18px;
+    background-repeat: no-repeat;
+    background-position: 10px;
+}

@@ -103,6 +103,38 @@ def get_subcategories_for_category(category_path, translations=None):
     return sorted(subcategories, key=lambda cat: cat['name'])
 
 
+def get_script(translations=None, script_file=None):
+    if script_file.endswith('.sh') and os.path.isfile(script_file):
+        defaults = {
+            'name': script_file,
+            'description': '',
+            'icon': 'application-x-executable',
+            'reboot': 'no',
+            'noconfirm': 'no'
+        }
+
+        script_info = _parse_metadata_file(script_file, defaults, translations)
+
+        compat_keys = get_system_compat_keys()
+
+        # Filter by compatibility and locale
+        if not script_is_compatible(script_file, compat_keys):
+            return {}
+        if not script_is_localized(script_file, None):
+            return {}
+        # Filter by container compatibility
+        if is_containerized() and not script_is_container_compatible(script_file):
+            return {}
+
+        return {
+            'name': script_info.get('name', script_file),
+            'path': script_file,
+            'icon': script_info.get('icon', 'application-x-executable'),
+            'description': script_info.get('description', ''),
+            'is_script': True
+        }
+
+
 def get_categories(translations=None):
     """
     Returns a list of categories, reading metadata from 'category-info.txt' in each folder.
