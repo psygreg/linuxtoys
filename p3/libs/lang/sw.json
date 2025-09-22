@@ -249,5 +249,6 @@
   "ides_desc": "Vituo vya Maendeleo Jumuishi kwa lugha mbalimbali za programu na mifumo.",
   "vlc_desc": "Kicheza vyombo vya habari vya chanzo wazi, kilicho na vipengele kamili. Inajumuisha kodeki za umbizo la vyombo vya habari vya umiliki kwa Fedora na OpenSUSE.",
   "remapper_desc": "Zana rahisi kutumia kwa Linux kubadilisha tabia ya vifaa vyako vya kuingiza. Inaweka ramani ya kuingiza yoyote kwenye kuingiza kingine chochote.",
-  "portainer_desc": "Kiolesura cha usimamizi cha msingi wa wavuti kwa Docker, kinachokuruhusu kusimamia vyombo vyako, picha, mitandao na ujazo kwa urahisi."
+  "portainer_desc": "Kiolesura cha usimamizi cha msingi wa wavuti kwa Docker, kinachokuruhusu kusimamia vyombo vyako, picha, mitandao na ujazo kwa urahisi.",
+  "logseq_desc": "Msingi wa maarifa wa chanzo wazi unaolenga faragha. Mbadala wa Obsidian."
 }

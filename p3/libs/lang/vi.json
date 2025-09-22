@@ -249,5 +249,6 @@
   "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau.",
   "vlc_desc": "Trình phát phương tiện mã nguồn mở, đầy đủ tính năng. Bao gồm các codec cho các định dạng phương tiện độc quyền cho Fedora và OpenSUSE.",
   "remapper_desc": "Một công cụ dễ sử dụng cho Linux để thay đổi hành vi của các thiết bị đầu vào của bạn. Ánh xạ bất kỳ đầu vào nào sang bất kỳ đầu vào nào khác.",
-  "portainer_desc": "Giao diện quản lý dựa trên web cho Docker, cho phép bạn dễ dàng quản lý các container, hình ảnh, mạng và volume của mình."
+  "portainer_desc": "Giao diện quản lý dựa trên web cho Docker, cho phép bạn dễ dàng quản lý các container, hình ảnh, mạng và volume của mình.",
+  "logseq_desc": "Một cơ sở kiến thức mã nguồn mở ưu tiên quyền riêng tư. Thay thế cho Obsidian."
 }

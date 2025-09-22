@@ -87,7 +87,6 @@
   "figma_desc": "Uma aplicação de design UI/UX baseada na web.",
   "davinci_desc": "Software de edição de vídeo profissional.",
   "obsidian_desc": "Um aplicativo gratuito e flexível para seus pensamentos, anotações e organização.",
-  "logseq_desc": "Uma base de conhecimento de código aberto e com foco em privacidade.",
   "gsr_desc": "Uma ferramenta de gravação de tela com codificação de hardware semelhante ao Shadowplay para qualquer GPU no Linux.",
   "pp_desc": "Uma ferramenta baseada em GTK para obter facilmente runners da comunidade para jogos no Linux.",
   "sober_desc": "Port da comunidade do Roblox para Linux, baseada na versão de Android do jogo.",
@@ -250,5 +249,6 @@
   "ides_desc": "Ambientes de Desenvolvimento Integrados para várias linguagens de programação e frameworks.",
   "vlc_desc": "Leitor de mídia de código aberto e completo. Inclui codecs para formatos de mídia proprietários para Fedora e OpenSUSE.",
   "remapper_desc": "Uma ferramenta fácil de usar para Linux para alterar o comportamento dos seus dispositivos de entrada. Mapeia qualquer entrada para qualquer outra entrada.",
-  "portainer_desc": "Uma interface de gerenciamento baseada na web para Docker, permitindo gerenciar facilmente seus contêineres, imagens, redes e volumes."
+  "portainer_desc": "Uma interface de gerenciamento baseada na web para Docker, permitindo gerenciar facilmente seus contêineres, imagens, redes e volumes.",
+  "logseq_desc": "Uma base de conhecimento de código aberto focada na privacidade. Alternativa ao Obsidian."
 }

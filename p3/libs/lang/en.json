@@ -88,7 +88,6 @@
   "figma_desc": "A web-based UI/UX design application.",
   "davinci_desc": "Professional video editing software.",
   "obsidian_desc": "A free, flexible app for your thoughts, notes, and organization.",
-  "logseq_desc": "Logseq: A privacy-first, open-source knowledge base",
 
   "gsr_desc": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
   "pp_desc": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
@@ -260,5 +259,6 @@
   "ides_desc": "Integrated Development Environments for various programming languages and frameworks.",
   "vlc_desc": "Open source, fully-featured media player. Includes codecs for proprietary media formats for Fedora and OpenSUSE.",
   "remapper_desc": "An easy to use tool for Linux to change the behaviour of your input devices. Maps any input to any other input.",
-  "portainer_desc": "A web-based management UI for Docker, allowing you to easily manage your containers, images, networks and volumes."
+  "portainer_desc": "A web-based management UI for Docker, allowing you to easily manage your containers, images, networks and volumes.",
+  "logseq_desc": "A privacy-first, open-source knowledge base. Alternative to Obsidian."
 }

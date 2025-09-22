@@ -1,7 +1,12 @@
+#### VS Code stuff ####
+
+.vscode
+
 ####### Python cache #######
 
 /p3/app/__pycache__/
 *.pyc
+.venv
 
 ####### Build #######
 

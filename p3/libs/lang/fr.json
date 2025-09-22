@@ -249,5 +249,6 @@
   "ides_desc": "Environnements de Développement Intégrés pour divers langages de programmation et frameworks.",
   "vlc_desc": "Lecteur multimédia open source et complet. Inclut des codecs pour les formats multimédias propriétaires pour Fedora et OpenSUSE.",
   "remapper_desc": "Un outil facile à utiliser pour Linux pour changer le comportement de vos périphériques d'entrée. Mappe toute entrée à toute autre entrée.",
-  "portainer_desc": "Une interface de gestion basée sur le web pour Docker, vous permettant de gérer facilement vos conteneurs, images, réseaux et volumes."
+  "portainer_desc": "Une interface de gestion basée sur le web pour Docker, vous permettant de gérer facilement vos conteneurs, images, réseaux et volumes.",
+  "logseq_desc": "Une base de connaissances open-source axée sur la confidentialité. Alternative à Obsidian."
 }

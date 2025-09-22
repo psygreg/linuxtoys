@@ -249,5 +249,6 @@
   "ides_desc": "Geïntegreerde ontwikkelomgevingen voor verschillende programmeertalen en frameworks.",
   "vlc_desc": "Open source, volledig uitgeruste mediaspeler. Bevat codecs voor propriëtaire mediaformaten voor Fedora en OpenSUSE.",
   "remapper_desc": "Een eenvoudig te gebruiken tool voor Linux om het gedrag van uw invoerapparaten te veranderen. Map elke invoer naar elke andere invoer.",
-  "portainer_desc": "Een webgebaseerde beheerinterface voor Docker, waarmee u eenvoudig uw containers, images, netwerken en volumes kunt beheren."
+  "portainer_desc": "Een webgebaseerde beheerinterface voor Docker, waarmee u eenvoudig uw containers, images, netwerken en volumes kunt beheren.",
+  "logseq_desc": "Een privacy-first, open-source kennisbank. Alternatief voor Obsidian."
 }

@@ -37,7 +37,6 @@
   "select_button": "Valitse",
   "loading_manifest_message": "Ladataan manifestitiedostoasi... Odota...",
   "packages_flatpaks": "Paketit & Flatpakit",
-
   "psypicks": "Psygregin valinnat",
   "psypicks_desc": "Kuratoidut valinnat ohjelmistoja pelaamiseen ja elämänlaatuun Linuxilla.",
   "pdefaults": "Optimoitu oletusasetukset",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Työkalut ja resurssit oheislaitteiden ja valaistuksen hallintaan.",
   "sysadm": "Järjestelmän hallinta",
   "sysadm_desc": "Työkalut järjestelmän hallintaan ja hallintaan pienille yrityksille tai suuremmassa mittakaavassa.",
-
   "gimp_desc": "Tehokas avoimen lähdekoodin kuvankäsittelyohjelma.",
   "onlyoffice_desc": "Paketti paremman yhteensopivuuden kanssa Microsoft Office -tiedostoihin.",
   "msteams_desc": "Yhteistyöalusta etätyöhön.",
@@ -89,7 +87,6 @@
   "figma_desc": "Verkkopohjainen UI/UX-suunnittelusovellus.",
   "davinci_desc": "Ammattimainen videonmuokkausohjelmisto.",
   "obsidian_desc": "Ilmainen, joustava sovellus ajatuksillesi, muistiinpanoillesi ja järjestelylle.",
-
   "gsr_desc": "Näytön tallennusväline laitteistokoodauksella samanlainen kuin Shadowplay mille tahansa GPU:lle Linuxilla.",
   "pp_desc": "GTK-pohjainen työkalu yhteisön ajajien helppoon hankintaan pelaamiseen Linuxilla.",
   "sober_desc": "Roblox-yhteisön portti Linuxille, perustuen Android-version peliin.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "Yhteisön wrapper Roblox Studiolle, Roblox-pelien luojille.",
   "pup_desc": "Qt-pohjainen työkalu yhteisön ajajien helppoon hankintaan pelaamiseen Linuxilla.",
   "lsfg_desc": "Yhteensopivuuskerros Lossless Scalingille Vulkanilla Linuxilla. Vaatii edelleen Lossless Scalingin Windowsille.",
-
   "ufw": "Konfiguroi palomuuri",
   "ufw_desc": "Asentaa ja soveltaa oletusasetuksen ihanteellisen useimmille käyttäjille Uncomplicated Firewall (UFW) -palomuurille.",
   "swapfile": "Konfiguroi swap-tiedosto",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Asentaa ffmpeg-full:n tällä hetkellä tuettuihin flatpak-alustoihin, jolloin sovellukset voivat käyttää laitteistokiihdytettyä mediatoistoa.",
   "ostree-autoupd": "Automaattiset päivitykset RPM-OSTree:lle",
   "ostree-autoupd_desc": "Ottaa käyttöön rpm-ostreen automaattisen päivitysominaisuuden stage-tilassa (hiljainen). Päivitykset sovelletaan vain uudelleenkäynnistyksessä, eikä sinua kehoteta uudelleenkäynnistykseen.",
-
   "nv_desc": "Nykyiset Nvidia-ajurit. Tuetut GPU:t: Maxwell (GT 9xx) ja uudemmat.",
   "nv_rtx_desc": "Nykyiset Nvidia-ajurit avoimilla kernel-moduuleilla. Tuetut GPU:t: GTX 16xx ja mikä tahansa RTX-sarja. Kannettaville tietokoneille suosi proprietääristä vaihtoehtoa virtanhallintaan.",
   "nv_desc_470": "Legacy Nvidia-ajurit. Tuetut GPU:t: Kepler (GT 6xx) ja Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Ajuri virallisille ja geneerisille Xbox-ohjaimille Linuxilla.",
   "modsign": "Kernel-moduulien allekirjoitus",
   "modsign_desc": "Ottaa käyttöön kernel-moduulien ja ajurien allekirjoituksen Machine Owner Key:llä Secure Bootille.",
-
   "flat_desc": "Mene-varasto Flatpak-sovelluksille, jossa on monia eksklusiivisia sovelluksia.",
   "brew_desc": "CLI-työkalupaketinhallinnoija macOS/Linuxille.",
   "chaotic_desc": "Yhteisön ajama varasto Arch Linux -käyttäjille.",
   "rpmfusion_desc": "Varasto, joka tarjoaa lisäpaketteja Fedoraan ja RHEL:iin.",
   "pip_desc": "Python-paketinhallinnoija. Tyypillisesti hyödyllinen Python-kehittäjille.",
   "cargo_desc": "Rust-paketinhallinnoija. Tyypillisesti hyödyllinen Rust-kehittäjille. Sisältää Rustupin.",
-
   "obs_desc": "Suosittu avoimen lähdekoodin suoratoisto- ja tallennusohjelmisto.",
   "mctl_desc": "Järjestelmämonitor Linuxille hyvin samanlainen kuin Windows Task Manager, perustuen GTK4:ään.",
   "sc_desc": "Työkalu Stream Deckien ja vastaavien laitteiden asentamiseen.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "DNS-palvelu, joka piilottaa liikenteesi ISP:ltäsi.",
   "piper_desc": "GTK-sovellus pelihiirien konfigurointiin libratbagia käyttäen. Yleisesti käytetty Logitechille, Roccatille, Asusille ja Glorious-hiirille.",
   "glever_desc": "Apuväline AppImages-hallintaan, luo työpöytämerkintöjä ja sovellusmetatietoja, päivitä sovelluksia paikallaan tai pidä useita versioita rinnakkain.",
-
   "docker_desc": "Docker Engine konttipalveluntarjoaja ja perusvälineet sille, kuten docker-compose.",
   "mise_desc": "Kuten asdf (tai nvm tai pyenv mutta mille tahansa kielelle) se hallinnoi dev-välineitä kuten node, python, cmake, terraform, ja satoja muita. Korvaa PyEnv:n, NVM:n, ja Java JDK:n ja Maven-asentajien tästä osiosta.",
   "nvm_desc": "Versiohallinnoija Node.js:lle, mahdollistaa helpon vaihtamisen eri versioiden välillä. Sisältää Node.js:n, NPM:n ja Yarnin. Ei tarvita jos käytät Miseä.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "Kokoelma työkaluja ja kirjastoja sovellusten luomiseen perustuen .NET-alustaan.",
   "sublime_desc": "Sofistikoitu tekstieditori koodille, markupille ja proosalle.",
   "tailscale_desc": "Zero-config VPN, joka yhdistää laitteesi turvallisesti internetin kautta.",
-
   "cockpit_desc": "Verkkopohjainen käyttöliittymä Linux-palvelimien valvontaan ja hallintaan (palvelin).",
   "webmin_desc": "Verkkopohjainen käyttöliittymä järjestelmän hallintaan Unixille.",
   "topgrade_desc": "Työkalu kaikkien asennettujen pakettien päivittämiseen millä tahansa Linux-järjestelmällä.",
   "cockpitclient_desc": "Verkkopohjainen käyttöliittymä Linux-palvelimien hallintaan (asiakas).",
   "adir_desc": "Asentaa kaikki paketit tarpeelliset Active Directory -toimialueisiin liittymiseksi realmdia käyttäen.",
-
   "select_language": "Valitse kieli",
   "select_language_title": "Kielen valinta",
   "select_language_message": "Valitse haluamasi kieli:",
@@ -259,5 +249,6 @@
   "ides_desc": "Integroitu kehitysympäristö erilaisille ohjelmointikielille ja frameworkeille.",
   "vlc_desc": "Avoimen lähdekoodin, täysin varusteltu mediasoitin. Sisältää koodekit proprietäärisille mediaformaateille Fedoralle ja OpenSUSE:lle.",
   "remapper_desc": "Helppo käyttää työkalu Linuxille syöttölaitteidesi käyttäytymisen muuttamiseen. Kartoittaa minkä tahansa syötteen mihin tahansa muuhun syötteeseen.",
-  "portainer_desc": "Verkkopohjainen hallintakäyttöliittymä Dockerille, jonka avulla voit helposti hallita konttejasi, kuviasi, verkkojasi ja volyymejasi."
+  "portainer_desc": "Verkkopohjainen hallintakäyttöliittymä Dockerille, jonka avulla voit helposti hallita konttejasi, kuviasi, verkkojasi ja volyymejasi.",
+  "logseq_desc": "Yksityisyyttä ensisijaisesti painottava avoimen lähdekoodin tietokanta. Vaihtoehto Obsidianille."
 }

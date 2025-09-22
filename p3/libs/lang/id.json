@@ -249,5 +249,6 @@
   "ides_desc": "Lingkungan Pengembangan Terintegrasi untuk berbagai bahasa pemrograman dan framework.",
   "vlc_desc": "Pemutar media sumber terbuka, lengkap fitur. Termasuk codec untuk format media proprietari untuk Fedora dan OpenSUSE.",
   "remapper_desc": "Alat yang mudah digunakan untuk Linux untuk mengubah perilaku perangkat input Anda. Memetakan input apa pun ke input lainnya.",
-  "portainer_desc": "Antarmuka manajemen berbasis web untuk Docker, memungkinkan Anda dengan mudah mengelola kontainer, gambar, jaringan, dan volume Anda."
+  "portainer_desc": "Antarmuka manajemen berbasis web untuk Docker, memungkinkan Anda dengan mudah mengelola kontainer, gambar, jaringan, dan volume Anda.",
+  "logseq_desc": "Basis pengetahuan sumber terbuka yang mengutamakan privasi. Alternatif untuk Obsidian."
 }

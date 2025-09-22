@@ -249,5 +249,6 @@
   "ides_desc": "Çeşitli programlama dilleri ve çerçeveler için Entegre Geliştirme Ortamları.",
   "vlc_desc": "Açık kaynaklı, tam özellikli medya oynatıcı. Fedora ve OpenSUSE için özel medya formatları için kodekler içerir.",
   "remapper_desc": "Linux için giriş cihazlarınızın davranışını değiştirmek için kullanımı kolay bir araç. Herhangi bir girişi başka herhangi bir girişe eşler.",
-  "portainer_desc": "Docker için web tabanlı bir yönetim UI'si, kapsayıcılarınızı, görüntülerinizi, ağlarınızı ve birimlerinizi kolayca yönetmenizi sağlar."
+  "portainer_desc": "Docker için web tabanlı bir yönetim UI'si, kapsayıcılarınızı, görüntülerinizi, ağlarınızı ve birimlerinizi kolayca yönetmenizi sağlar.",
+  "logseq_desc": "Gizliliği ön planda tutan açık kaynaklı bir bilgi tabanı. Obsidian alternatifi."
 }

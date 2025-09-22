@@ -36,7 +36,6 @@
   "select_button": "Pilih",
   "loading_manifest_message": "Memuatkan fail manifest anda... Sila Tunggu...",
   "packages_flatpaks": "Pakej &amp; Flatpaks",
-
   "psypicks": "Pilihan Psygreg",
   "psypicks_desc": "Pilihan perisian yang dikuratori untuk permainan dan kualiti hidup di Linux.",
   "pdefaults": "Tetapan Lalai Dioptimumkan",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Alat dan sumber untuk mengurus peranti periferal dan pencahayaan.",
   "sysadm": "Pentadbiran Sistem",
   "sysadm_desc": "Alat untuk pentadbiran dan pengurusan sistem untuk perniagaan kecil atau berskala besar.",
-
   "gimp_desc": "Editor imej sumber terbuka yang kuat.",
   "onlyoffice_desc": "Suite dengan keserasian yang lebih baik dengan fail Microsoft Office.",
   "msteams_desc": "Platform kolaborasi untuk kerja jauh.",
@@ -88,7 +86,6 @@
   "figma_desc": "Aplikasi reka bentuk UI/UX berasaskan web.",
   "davinci_desc": "Perisian penyuntingan video profesional.",
   "obsidian_desc": "Aplikasi percuma, fleksibel untuk fikiran, nota, dan organisasi anda.",
-
   "gsr_desc": "Alat rakaman skrin dengan pengekodan perkakasan serupa Shadowplay untuk mana-mana GPU di Linux.",
   "pp_desc": "Alat berasaskan GTK untuk mendapatkan pelari komuniti dengan mudah untuk permainan di Linux.",
   "sober_desc": "Port komuniti Roblox untuk Linux, berdasarkan versi Android permainan.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Wrapper komuniti untuk Roblox Studio, untuk pencipta permainan Roblox.",
   "pup_desc": "Alat berasaskan Qt untuk mendapatkan pelari komuniti dengan mudah untuk permainan di Linux.",
   "lsfg_desc": "Lapisan keserasian untuk Lossless Scaling pada Vulkan untuk Linux. Masih memerlukan Lossless Scaling untuk Windows.",
-
   "ufw": "Konfigurasi Firewall",
   "ufw_desc": "Memasang dan menggunakan tetapan lalai yang ideal untuk kebanyakan pengguna untuk Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigurasi Fail Swap",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Memasang ffmpeg-full ke dalam platform flatpak yang disokong semasa, membolehkan aplikasi menggunakan main balik media yang dipercepat perkakasan.",
   "ostree-autoupd": "Kemas Kini Automatik untuk RPM-OSTree",
   "ostree-autoupd_desc": "Mendayakan ciri kemas kini automatik rpm-ostree dalam mod pentas (senyap). Kemas kini hanya akan digunakan pada reboot, dan anda tidak akan diminta untuk reboot.",
-
   "nv_desc": "Pemandu Nvidia semasa. GPU yang disokong: Maxwell (GT 9xx) dan lebih baru.",
   "nv_rtx_desc": "Pemandu Nvidia semasa dengan modul kernel terbuka. GPU yang disokong: GTX 16xx dan mana-mana siri RTX. Untuk komputer riba, lebih suka pilihan proprietari untuk pengurusan kuasa.",
   "nv_desc_470": "Pemandu Nvidia warisan. GPU yang disokong: Kepler (GT 6xx) dan Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Pemandu untuk pengawal Xbox rasmi dan generik di Linux.",
   "modsign": "Penandatanganan modul kernel",
   "modsign_desc": "Mendayakan penandatanganan modul kernel dan pemandu dengan Kunci Pemilik Mesin untuk Boot Selamat.",
-
   "flat_desc": "Repositori utama untuk aplikasi Flatpak, mempunyai banyak aplikasi eksklusif.",
   "brew_desc": "Pengurus pakej alat CLI untuk macOS/Linux.",
   "chaotic_desc": "Repositori dipacu komuniti untuk pengguna Arch Linux.",
   "rpmfusion_desc": "Repositori yang menyediakan pakej tambahan untuk Fedora dan RHEL.",
   "pip_desc": "Pengurus pakej Python. Biasanya berguna untuk pembangun Python.",
   "cargo_desc": "Pengurus pakej Rust. Biasanya berguna untuk pembangun Rust. Termasuk Rustup.",
-
   "obs_desc": "Perisian penstriman dan rakaman sumber terbuka yang popular.",
   "mctl_desc": "Pemantau sistem untuk Linux yang sangat serupa dengan Pengurus Tugas Windows, berdasarkan GTK4.",
   "sc_desc": "Alat untuk menyediakan Stream Decks dan peranti serupa.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "Perkhidmatan DNS yang menyembunyikan trafik anda dari ISP anda.",
   "piper_desc": "Aplikasi GTK untuk mengkonfigurasi tetikus permainan menggunakan libratbag. Biasanya digunakan untuk tetikus Logitech, Roccat, Asus dan Glorious.",
   "glever_desc": "Utiliti untuk mengurus AppImages, menjana entri desktop dan metadata aplikasi, mengemas kini aplikasi di tempat atau menyimpan berbilang versi sebelah-menyebelah.",
-
   "docker_desc": "Penyedia perkhidmatan bekas Docker Engine dan alat asas untuknya, seperti docker-compose.",
   "mise_desc": "Seperti asdf (atau nvm atau pyenv tetapi untuk mana-mana bahasa) ia mengurus alat dev seperti node, python, cmake, terraform, dan beratus-ratus lagi. Menggantikan PyEnv, NVM, dan pemasang JDK dan Maven Java dari bahagian ini.",
   "nvm_desc": "Pengurus versi untuk Node.js, membolehkan anda menukar dengan mudah antara versi yang berbeza. Termasuk Node.js, NPM dan Yarn. Tidak diperlukan jika menggunakan Mise.",
@@ -203,13 +195,11 @@
   "dotnet_desc": "Koleksi alat dan perpustakaan untuk mencipta aplikasi berdasarkan platform .NET.",
   "sublime_desc": "Editor teks canggih untuk kod, markup dan prosa.",
   "tailscale_desc": "VPN sifar-konfig yang menyambung peranti anda dengan selamat melalui internet.",
-
   "cockpit_desc": "Antara muka berasaskan web untuk memantau dan mengurus pelayan Linux (pelayan).",
   "webmin_desc": "Antara muka berasaskan web untuk pentadbiran sistem untuk Unix.",
   "topgrade_desc": "Alat untuk menaik taraf semua pakej yang dipasang pada mana-mana sistem Linux.",
   "cockpitclient_desc": "Antara muka berasaskan web untuk mengurus pelayan Linux (klien).",
   "adir_desc": "Memasang semua pakej yang diperlukan untuk menyertai domain Active Directory menggunakan realmd.",
-
   "select_language": "Pilih Bahasa",
   "select_language_title": "Pemilihan Bahasa",
   "select_language_message": "Sila pilih bahasa pilihan anda:",
@@ -259,5 +249,6 @@
   "ides_desc": "Persekitaran Pembangunan Bersepadu untuk pelbagai bahasa pengaturcaraan dan kerangka kerja.",
   "vlc_desc": "Pemain media sumber terbuka, lengkap ciri. Termasuk kodeks untuk format media proprietari untuk Fedora dan OpenSUSE.",
   "remapper_desc": "Alat mudah digunakan untuk Linux untuk menukar tingkah laku peranti input anda. Memetakan mana-mana input ke mana-mana input lain.",
-  "portainer_desc": "Antara muka pengurusan berasaskan web untuk Docker, membolehkan anda mengurus bekas, imej, rangkaian dan volum anda dengan mudah."
+  "portainer_desc": "Antara muka pengurusan berasaskan web untuk Docker, membolehkan anda mengurus bekas, imej, rangkaian dan volum anda dengan mudah.",
+  "logseq_desc": "Pangkalan pengetahuan sumber terbuka yang mengutamakan privasi. Alternatif kepada Obsidian."
 }

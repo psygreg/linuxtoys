@@ -37,7 +37,6 @@
   "select_button": "Välj",
   "loading_manifest_message": "Laddar din manifestfil... Vänta...",
   "packages_flatpaks": "Paket & Flatpaks",
-
   "psypicks": "Psygregs val",
   "psypicks_desc": "Kuratörer valt urval av programvara för spel och livskvalitet på Linux.",
   "pdefaults": "Optimerade standardinställningar",
@@ -66,7 +65,6 @@
   "peripheral_desc": "Verktyg och resurser för hantering av perifera enheter och belysning.",
   "sysadm": "Systemadministration",
   "sysadm_desc": "Verktyg för systemadministration och hantering för små företag eller i stor skala.",
-
   "gimp_desc": "En kraftfull open source bildredigerare.",
   "onlyoffice_desc": "En svit med bättre kompatibilitet till Microsoft Office-filer.",
   "msteams_desc": "En plattform för samarbete vid distansarbete.",
@@ -89,7 +87,6 @@
   "figma_desc": "En webbaserad UI/UX-designapplikation.",
   "davinci_desc": "Professionell videoredigeringsprogramvara.",
   "obsidian_desc": "En gratis, flexibel app för dina tankar, anteckningar och organisation.",
-
   "gsr_desc": "Ett skärminspelningsverktyg med hårdvarukodning likt Shadowplay för alla GPU på Linux.",
   "pp_desc": "Ett GTK-baserat verktyg för att enkelt få community-runners för spel på Linux.",
   "sober_desc": "Roblox community-port för Linux, baserat på Android-versionen av spelet.",
@@ -110,7 +107,6 @@
   "vinegar_desc": "En community-wrapper för Roblox Studio, för Roblox-spelskapare.",
   "pup_desc": "Ett Qt-baserat verktyg för att enkelt få community-runners för spel på Linux.",
   "lsfg_desc": "Ett kompatibilitetslager för Lossless Scaling på Vulkan för Linux. Kräver fortfarande Lossless Scaling för Windows.",
-
   "ufw": "Konfigurera brandvägg",
   "ufw_desc": "Installerar och tillämpar en standardinställning idealisk för de flesta användare för Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigurera swapfil",
@@ -142,7 +138,6 @@
   "hwaccel-flatpak_desc": "Installerar ffmpeg-full i de för närvarande stödda flatpak-plattformarna, vilket tillåter applikationer att använda hårdvaruaccelererad medieuppspelning.",
   "ostree-autoupd": "Automatiska uppdateringar för RPM-OSTree",
   "ostree-autoupd_desc": "Aktiverar rpm-ostrees automatiska uppdateringsfunktion i stage-läge (tyst). Uppdateringar kommer endast att tillämpas vid omstart, och du kommer inte att uppmanas att starta om.",
-
   "nv_desc": "Nuvarande Nvidia-drivrutiner. Stödda GPU: Maxwell (GT 9xx) och nyare.",
   "nv_rtx_desc": "Nuvarande Nvidia-drivrutiner med öppna kernelmoduler. Stödda GPU: GTX 16xx och alla RTX-serier. För bärbara datorer, föredra den proprietära optionen för strömhantering.",
   "nv_desc_470": "Legacy Nvidia-drivrutiner. Stödda GPU: Kepler (GT 6xx) och Fermi (GT 7xx).",
@@ -153,14 +148,12 @@
   "xneo_desc": "Drivrutin för officiella och generiska Xbox-kontroller på Linux.",
   "modsign": "Kernelmodul-signering",
   "modsign_desc": "Aktiverar signering av kernelmoduler och drivrutiner med Machine Owner Key för Secure Boot.",
-
   "flat_desc": "Gå-till-arkivet för Flatpak-applikationer, har många exklusiva appar.",
   "brew_desc": "En CLI-verktygspaket-hanterare för macOS/Linux.",
   "chaotic_desc": "Ett community-drivet arkiv för Arch Linux-användare.",
   "rpmfusion_desc": "Ett arkiv som tillhandahåller ytterligare paket för Fedora och RHEL.",
   "pip_desc": "Python-paket-hanterare. Vanligtvis användbar för Python-utvecklare.",
   "cargo_desc": "Rust-paket-hanterare. Vanligtvis användbar för Rust-utvecklare. Inkluderar Rustup.",
-
   "obs_desc": "Populär open-source-programvara för streaming och inspelning.",
   "mctl_desc": "En systemmonitor för Linux mycket lik Windows Task Manager, baserad på GTK4.",
   "sc_desc": "Ett verktyg för att sätta upp Stream Decks och liknande enheter.",
@@ -183,7 +176,6 @@
   "cloudflare_warp_desc": "En DNS-tjänst som döljer din trafik från din ISP.",
   "piper_desc": "En GTK-applikation för att konfigurera spel-möss med libratbag. Vanligtvis används för Logitech, Roccat, Asus och Glorious möss.",
   "glever_desc": "En utility för att hantera AppImages, generera desktop entries och app metadata, uppdatera appar på plats eller hålla flera versioner sida vid sida.",
-
   "docker_desc": "Docker Engine container-tjänsteleverantören och grundläggande verktyg för det, som docker-compose.",
   "mise_desc": "Som asdf (eller nvm eller pyenv men för vilket språk som helst) hanterar det dev-verktyg som node, python, cmake, terraform, och hundratals fler. Ersätter PyEnv, NVM, och Java JDK och Maven-installatörerna från denna sektion.",
   "nvm_desc": "En versionshanterare för Node.js, som tillåter dig att enkelt byta mellan olika versioner. Inkluderar Node.js, NPM och Yarn. Behövs inte om du använder Mise.",
@@ -204,13 +196,11 @@
   "dotnet_desc": "En samling verktyg och bibliotek för att skapa applikationer baserade på .NET-plattformen.",
   "sublime_desc": "En sofistikerad textredigerare för kod, markup och prosa.",
   "tailscale_desc": "En zero-config VPN som ansluter dina enheter säkert över internet.",
-
   "cockpit_desc": "Ett webbaserat gränssnitt för övervakning och hantering av Linux-servrar (server).",
   "webmin_desc": "Ett webbaserat gränssnitt för systemadministration för Unix.",
   "topgrade_desc": "Ett verktyg för att uppgradera alla installerade paket på vilket Linux-system som helst.",
   "cockpitclient_desc": "Ett webbaserat gränssnitt för hantering av Linux-servrar (klient).",
   "adir_desc": "Installerar alla paket nödvändiga för att ansluta till Active Directory-domäner med realmd.",
-
   "select_language": "Välj språk",
   "select_language_title": "Språkval",
   "select_language_message": "Välj ditt föredragna språk:",
@@ -259,5 +249,6 @@
   "ides_desc": "Integrerade utvecklingsmiljöer för olika programmeringsspråk och ramverk.",
   "vlc_desc": "Open source, fullt utrustad medieuppspelare. Inkluderar kodekar för proprietära medieformat för Fedora och OpenSUSE.",
   "remapper_desc": "Ett lättanvänt verktyg för Linux för att ändra beteendet hos dina inmatningsenheter. Mappar vilken inmatning som helst till vilken annan inmatning som helst.",
-  "portainer_desc": "Ett webbaserat hanteringsgränssnitt för Docker, som låter dig enkelt hantera dina containrar, bilder, nätverk och volymer."
+  "portainer_desc": "Ett webbaserat hanteringsgränssnitt för Docker, som låter dig enkelt hantera dina containrar, bilder, nätverk och volymer.",
+  "logseq_desc": "En kunskapsbas med öppen källkod som prioriterar integritet. Alternativ till Obsidian."
 }
