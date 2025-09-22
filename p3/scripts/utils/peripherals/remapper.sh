@@ -2,6 +2,7 @@
 # name: Input Remapper
 # version: 1.0
 # description: remapper_desc
+# icon: input-remapper.png
 # compat: fedora, arch, debian, ubuntu, cachy, ostree
 # nocontainer
 # reboot: ostree
