@@ -8,7 +8,8 @@ import os
 import sys
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango, Gdk
+gi.require_version('GLib', '2.0')
+from gi.repository import Gtk, Pango, Gdk, GLib
 import webbrowser
 
 
@@ -34,7 +35,7 @@ def get_current_version():
             continue
     
     # Fallback to hardcoded version
-    return "5.4.5"
+    return "5.4.7"
 
 # Current version of the application
 CURRENT_VERSION = get_current_version()
@@ -167,7 +168,6 @@ def markdown_to_textbuffer(md_text):
     # Create tags
     tag_bold = buffer.create_tag("bold", weight=Pango.Weight.BOLD)
     tag_italic = buffer.create_tag("italic", style=Pango.Style.ITALIC)
-    tag_link = buffer.create_tag("link", foreground="blue", underline=Pango.Underline.SINGLE)
 
     def insert_with_tag(text, tag=None):
         end_iter = buffer.get_end_iter()
@@ -199,20 +199,15 @@ def markdown_to_textbuffer(md_text):
             elif m_first == m_italic:
                 insert_with_tag(m_first.group(1), tag_italic)
             elif m_first == m_link:
-                iter_start = buffer.get_end_iter()
-                insert_with_tag(m_first.group(1), tag_link)
-                # Connect event to open link
-                tag_link.connect("event", lambda tag, widget, event, iter, url=m_first.group(2): open_link(event, url))
+                link_tag = buffer.create_tag(None, foreground="blue", underline=Pango.Underline.SINGLE)
+                link_tag.set_data("url", m_first.group(2))
+                insert_with_tag(m_first.group(1), link_tag)
 
             pos += end
 
         insert_with_tag("\n")
 
     return buffer
-
-def open_link(event, url):
-    if event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 1:
-        webbrowser.open(url)
 
 # ---- GTK Update Dialog ----
 def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
@@ -273,6 +268,21 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         textview.set_editable(False)
         textview.set_cursor_visible(False)
         textview.set_wrap_mode(Gtk.WrapMode.WORD)
+
+        # Connect event handler for clickable links
+        def on_event_after(widget, event):
+            if event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 1:
+                x, y = widget.window_to_buffer_coords(Gtk.TextWindowType.TEXT, event.x, event.y)
+                iter_at_click, trailing = widget.get_iter_at_location(x, y)
+                tags = iter_at_click.get_tags()
+                for tag in tags:
+                    url = tag.get_data("url")
+                    if url:
+                        webbrowser.open(url)
+                        return True
+            return False
+
+        textview.connect("button-release-event", on_event_after)
 
         if changelog:
             buffer = markdown_to_textbuffer(changelog.strip())
@@ -379,8 +389,10 @@ def run_update_check(show_dialog=True, verbose=False, translations=None):
         if show_dialog and latest_version:
             # Check if we have a display server before trying to show GTK dialog
             if os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY'):
-                if _show_gtk_update_dialog(latest_version, changelog, translations):
-                    open_releases_page()
+                def show_dialog_and_open():
+                    if _show_gtk_update_dialog(latest_version, changelog, translations):
+                        open_releases_page()
+                GLib.idle_add(show_dialog_and_open)
             else:
                 # No display, print to console instead
                 print(f"Update available: {latest_version}")
