@@ -35,7 +35,7 @@ def get_current_version():
             continue
     
     # Fallback to hardcoded version
-    return "5.4.7"
+    return "5.4.8"
 
 # Current version of the application
 CURRENT_VERSION = get_current_version()
