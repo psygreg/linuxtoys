@@ -257,13 +257,13 @@ class MenuButton(Gtk.MenuButton):
 	def __temp_script(self, packages, flatpaks):
 		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
 
-		script_content = f'''#!/bin/bash
-source "{lib_path}"
+		script_content = '''#!/bin/bash
+source "''' + lib_path + '''"
 
-_packages=("{' '.join(packages)}")
-[ "${{#_packages[@]}}" -eq 0 ] || {{ sudo_rq; _install_; }}
+_packages=("''' + ' '.join(packages) + '''")
+[ "${#_packages[@]}" -eq 0 ] || { sudo_rq; _install_; }
 
-_flatpaks=("{' '.join(flatpaks)}")
+_flatpaks=("''' + ' '.join(flatpaks) + '''")
 _flatpak_
 '''
 		with open(self._temp_sh, 'w+') as f:
