@@ -250,5 +250,13 @@
   "vlc_desc": "Open source, plně vybavený media player. Zahrnuje kodeky pro proprietární formáty médií pro Fedora a OpenSUSE.",
   "remapper_desc": "Snadno použitelný nástroj pro Linux pro změnu chování vašich vstupních zařízení. Mapuje jakýkoli vstup na jakýkoli jiný vstup.",
   "portainer_desc": "Webové rozhraní pro správu Docker, které vám umožňuje snadno spravovat vaše kontejnery, obrázky, sítě a svazky.",
-  "logseq_desc": "Databáze znalostí s otevřeným zdrojovým kódem, která klade důraz na soukromí. Alternativa k Obsidian."
+  "logseq_desc": "Databáze znalostí s otevřeným zdrojovým kódem, která klade důraz na soukromí. Alternativa k Obsidian.",
+  "endlesskey_desc": "Kurátorské učení kdykoli, kdekoli.",
+  "gcompris_desc": "Vzdělávací hra pro děti.",
+  "geogebra_desc": "Dynamický matematický software.",
+  "kalzium_desc": "Periodická tabulka prvků.",
+  "kolibri_desc": "Offline vzdělávací platforma.",
+  "stellarium_desc": "Planetárium ve vašem počítači.",
+  "edu": "Vzdělávání",
+  "edu_desc": "Zdroje pro učení a výuku pro všechny věkové skupiny."
 }

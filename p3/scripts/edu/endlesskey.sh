@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: Kalzium
+# name: Endless Key
 # version: 1.0
-# description: Periodic Table of Elements
-# icon: kalzium.png
+# description: endlesskey_desc
+# icon: endlesskey.png
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -11,4 +11,4 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.kde.kalzium
+flatpak install --or-update --user --noninteractive flathub org.endlessos.Key

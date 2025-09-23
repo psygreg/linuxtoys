@@ -252,5 +252,13 @@
   "vlc_desc": "开源、全功能媒体播放器。为 Fedora 和 OpenSUSE 包含专有媒体格式的编解码器。",
   "remapper_desc": "一个易于使用的 Linux 工具，用于更改输入设备的行为。将任何输入映射到任何其他输入。",
   "portainer_desc": "一个基于 Web 的 Docker 管理 UI，允许您轻松管理容器、镜像、网络和卷。",
-  "logseq_desc": "一个以隐私为先的开源知识库。Obsidian 的替代品。"
+  "logseq_desc": "一个以隐私为先的开源知识库。Obsidian 的替代品。",
+  "endlesskey_desc": "随时随地精选学习。",
+  "gcompris_desc": "儿童教育游戏。",
+  "geogebra_desc": "动态数学软件。",
+  "kalzium_desc": "元素周期表。",
+  "kolibri_desc": "离线学习平台。",
+  "stellarium_desc": "您电脑中的天文馆。",
+  "edu": "教育",
+  "edu_desc": "适合所有年龄的学习和教学资源。"
 }

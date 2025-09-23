@@ -250,5 +250,13 @@
   "vlc_desc": "Açık kaynaklı, tam özellikli medya oynatıcı. Fedora ve OpenSUSE için özel medya formatları için kodekler içerir.",
   "remapper_desc": "Linux için giriş cihazlarınızın davranışını değiştirmek için kullanımı kolay bir araç. Herhangi bir girişi başka herhangi bir girişe eşler.",
   "portainer_desc": "Docker için web tabanlı bir yönetim UI'si, kapsayıcılarınızı, görüntülerinizi, ağlarınızı ve birimlerinizi kolayca yönetmenizi sağlar.",
-  "logseq_desc": "Gizliliği ön planda tutan açık kaynaklı bir bilgi tabanı. Obsidian alternatifi."
+  "logseq_desc": "Gizliliği ön planda tutan açık kaynaklı bir bilgi tabanı. Obsidian alternatifi.",
+  "endlesskey_desc": "Her zaman, her yerde küratörlü öğrenme.",
+  "gcompris_desc": "Çocuklar için eğitim oyunu.",
+  "geogebra_desc": "Dinamik matematik yazılımı.",
+  "kalzium_desc": "Elementlerin periyodik tablosu.",
+  "kolibri_desc": "Çevrimdışı öğrenme platformu.",
+  "stellarium_desc": "Bilgisayarınızda bir planetarium.",
+  "edu": "Eğitim",
+  "edu_desc": "Tüm yaş grupları için öğrenme ve öğretim kaynakları."
 }

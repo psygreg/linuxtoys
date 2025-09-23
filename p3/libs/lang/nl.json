@@ -250,5 +250,13 @@
   "vlc_desc": "Open source, volledig uitgeruste mediaspeler. Bevat codecs voor propriëtaire mediaformaten voor Fedora en OpenSUSE.",
   "remapper_desc": "Een eenvoudig te gebruiken tool voor Linux om het gedrag van uw invoerapparaten te veranderen. Map elke invoer naar elke andere invoer.",
   "portainer_desc": "Een webgebaseerde beheerinterface voor Docker, waarmee u eenvoudig uw containers, images, netwerken en volumes kunt beheren.",
-  "logseq_desc": "Een privacy-first, open-source kennisbank. Alternatief voor Obsidian."
+  "logseq_desc": "Een privacy-first, open-source kennisbank. Alternatief voor Obsidian.",
+  "endlesskey_desc": "Gecureerde leerinhoud altijd en overal.",
+  "gcompris_desc": "Educatief spel voor kinderen.",
+  "geogebra_desc": "Dynamische wiskundesoftware.",
+  "kalzium_desc": "Periodiek systeem van de elementen.",
+  "kolibri_desc": "Offline leerplatform.",
+  "stellarium_desc": "Een planetarium op je computer.",
+  "edu": "Onderwijs",
+  "edu_desc": "Bronnen voor leren en lesgeven voor alle leeftijden."
 }

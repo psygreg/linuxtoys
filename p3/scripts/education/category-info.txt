@@ -1,2 +1,0 @@
-ICON: education.png
-description: Educational Apps

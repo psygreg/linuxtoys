@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: Endless Key
+# name: GeoGebra
 # version: 1.0
-# description: Curated learning anytime, anywhere
-# icon: endlesskey.png
+# description: geogebra_desc
+# icon: geogebra.png
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -11,4 +11,4 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.endlessos.Key
+flatpak install --or-update --user --noninteractive flathub org.geogebra.GeoGebra

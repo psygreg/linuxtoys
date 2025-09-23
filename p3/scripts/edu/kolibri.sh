@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: Stellarium
+# name: Kolibri
 # version: 1.0
-# description: Desktop Planetarium
-# icon: stellarium.png
+# description: kolibri_desc
+# icon: kolibri.png
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -11,4 +11,4 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.stellarium.Stellarium
+flatpak install --or-update --user --noninteractive flathub org.learningequality.Kolibri

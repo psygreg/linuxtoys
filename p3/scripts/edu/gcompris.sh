@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: GeoGebra
+# name: GCompris
 # version: 1.0
-# description: Dynamic mathematics software
-# icon: geogebra.png
+# description: gcompris_desc
+# icon: gcompris.png
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -11,4 +11,4 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.geogebra.GeoGebra
+flatpak install --or-update --user --noninteractive flathub org.kde.gcompris

@@ -250,5 +250,13 @@
   "vlc_desc": "Open-Source, vollwertiger Media-Player. Enthält Codecs für proprietäre Medienformate für Fedora und OpenSUSE.",
   "remapper_desc": "Ein einfach zu bedienendes Tool für Linux, um das Verhalten Ihrer Eingabegeräte zu ändern. Ordnet jede Eingabe einer anderen Eingabe zu.",
   "portainer_desc": "Eine webbasierte Verwaltungsoberfläche für Docker, mit der Sie Ihre Container, Images, Netzwerke und Volumes einfach verwalten können.",
-  "logseq_desc": "Eine datenschutzfreundliche, quelloffene Wissensdatenbank. Alternative zu Obsidian."
+  "logseq_desc": "Eine datenschutzfreundliche, quelloffene Wissensdatenbank. Alternative zu Obsidian.",
+  "endlesskey_desc": "Kuratierte Lerninhalte jederzeit und überall.",
+  "gcompris_desc": "Bildungsspiel für Kinder.",
+  "geogebra_desc": "Dynamische Mathematik-Software.",
+  "kalzium_desc": "Periodensystem der Elemente.",
+  "kolibri_desc": "Offline-Lernplattform.",
+  "stellarium_desc": "Ein Planetarium auf Ihrem Computer.",
+  "edu": "Bildung",
+  "edu_desc": "Ressourcen für Lernen und Lehren für alle Altersgruppen."
 }

@@ -250,5 +250,13 @@
   "vlc_desc": "Lettore multimediale open source e completo. Include codec per formati multimediali proprietari per Fedora e OpenSUSE.",
   "remapper_desc": "Uno strumento facile da usare per Linux per cambiare il comportamento dei tuoi dispositivi di input. Mappa qualsiasi input a qualsiasi altro input.",
   "portainer_desc": "Un'interfaccia utente di gestione basata sul web per Docker, che consente di gestire facilmente i contenitori, le immagini, le reti e i volumi.",
-  "logseq_desc": "Una base di conoscenza open-source incentrata sulla privacy. Alternativa a Obsidian."
+  "logseq_desc": "Una base di conoscenza open-source incentrata sulla privacy. Alternativa a Obsidian.",
+  "endlesskey_desc": "Apprendimento curato in qualsiasi momento, ovunque.",
+  "gcompris_desc": "Gioco educativo per bambini.",
+  "geogebra_desc": "Software di matematica dinamica.",
+  "kalzium_desc": "Tavola periodica degli elementi.",
+  "kolibri_desc": "Piattaforma di apprendimento offline.",
+  "stellarium_desc": "Un planetario nel tuo computer.",
+  "edu": "Educazione",
+  "edu_desc": "Risorse per l'apprendimento e l'insegnamento per tutte le età."
 }

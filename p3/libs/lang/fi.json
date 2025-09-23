@@ -250,5 +250,13 @@
   "vlc_desc": "Avoimen lähdekoodin, täysin varusteltu mediasoitin. Sisältää koodekit proprietäärisille mediaformaateille Fedoralle ja OpenSUSE:lle.",
   "remapper_desc": "Helppo käyttää työkalu Linuxille syöttölaitteidesi käyttäytymisen muuttamiseen. Kartoittaa minkä tahansa syötteen mihin tahansa muuhun syötteeseen.",
   "portainer_desc": "Verkkopohjainen hallintakäyttöliittymä Dockerille, jonka avulla voit helposti hallita konttejasi, kuviasi, verkkojasi ja volyymejasi.",
-  "logseq_desc": "Yksityisyyttä ensisijaisesti painottava avoimen lähdekoodin tietokanta. Vaihtoehto Obsidianille."
+  "logseq_desc": "Yksityisyyttä ensisijaisesti painottava avoimen lähdekoodin tietokanta. Vaihtoehto Obsidianille.",
+  "endlesskey_desc": "Kuratoitu oppiminen milloin tahansa, missä tahansa.",
+  "gcompris_desc": "Opetuspeli lapsille.",
+  "geogebra_desc": "Dynaaminen matematiikkaohjelmisto.",
+  "kalzium_desc": "Alkuaineiden jaksollinen järjestelmä.",
+  "kolibri_desc": "Offline-oppimisalusta.",
+  "stellarium_desc": "Planeettario tietokoneessasi.",
+  "edu": "Koulutus",
+  "edu_desc": "Resurssit oppimiseen ja opettamiseen kaikille ikäryhmille."
 }

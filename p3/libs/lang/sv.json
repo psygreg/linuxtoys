@@ -250,5 +250,13 @@
   "vlc_desc": "Open source, fullt utrustad medieuppspelare. Inkluderar kodekar för proprietära medieformat för Fedora och OpenSUSE.",
   "remapper_desc": "Ett lättanvänt verktyg för Linux för att ändra beteendet hos dina inmatningsenheter. Mappar vilken inmatning som helst till vilken annan inmatning som helst.",
   "portainer_desc": "Ett webbaserat hanteringsgränssnitt för Docker, som låter dig enkelt hantera dina containrar, bilder, nätverk och volymer.",
-  "logseq_desc": "En kunskapsbas med öppen källkod som prioriterar integritet. Alternativ till Obsidian."
+  "logseq_desc": "En kunskapsbas med öppen källkod som prioriterar integritet. Alternativ till Obsidian.",
+  "endlesskey_desc": "Kurerat lärande när som helst, var som helst.",
+  "gcompris_desc": "Utbildningsspel för barn.",
+  "geogebra_desc": "Dynamisk matematikprogramvara.",
+  "kalzium_desc": "Periodiska systemet för element.",
+  "kolibri_desc": "Offline lärandeplattform.",
+  "stellarium_desc": "Ett planetarium i din dator.",
+  "edu": "Utbildning",
+  "edu_desc": "Resurser för lärande och undervisning för alla åldrar."
 }

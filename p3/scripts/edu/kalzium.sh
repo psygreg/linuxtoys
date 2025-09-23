@@ -1,8 +1,8 @@
 #!/bin/bash
-# name: GCompris
+# name: Kalzium
 # version: 1.0
-# description: Educational game for children
-# icon: gcompris.png
+# description: kalzium_desc
+# icon: kalzium.png
 
 # --- Start of the script code ---
 . /etc/os-release
@@ -11,4 +11,4 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.kde.gcompris
+flatpak install --or-update --user --noninteractive flathub org.kde.kalzium

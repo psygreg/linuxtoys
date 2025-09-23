@@ -250,5 +250,13 @@
   "vlc_desc": "Manlalarong media na bukas ang pinagmulan at may kumpletong tampok. Kasama ang mga codec para sa mga proprietary na format ng media para sa Fedora at OpenSUSE.",
   "remapper_desc": "Isang madaling gamiting tool para sa Linux upang baguhin ang pag-uugali ng iyong mga input device. Nagmamapa ng anumang input sa anumang ibang input.",
   "portainer_desc": "Isang web-based na management UI para sa Docker, na nagbibigay-daan sa iyo na madaling pamahalaan ang iyong mga container, images, networks, at volumes.",
-  "logseq_desc": "Isang privacy-first, open-source na knowledge base. Alternatibo sa Obsidian."
+  "logseq_desc": "Isang privacy-first, open-source na knowledge base. Alternatibo sa Obsidian.",
+  "endlesskey_desc": "Pinili na pag-aaral anumang oras, kahit saan.",
+  "gcompris_desc": "Laro ng edukasyon para sa mga bata.",
+  "geogebra_desc": "Dynamic na software ng matematika.",
+  "kalzium_desc": "Talaan ng mga elemento.",
+  "kolibri_desc": "Platform ng pag-aaral na offline.",
+  "stellarium_desc": "Isang planetarium sa iyong computer.",
+  "edu": "Edukasyon",
+  "edu_desc": "Mga mapagkukunan para sa pag-aaral at pagtuturo para sa lahat ng edad."
 }

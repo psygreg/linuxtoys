@@ -250,5 +250,13 @@
   "vlc_desc": "Trình phát phương tiện mã nguồn mở, đầy đủ tính năng. Bao gồm các codec cho các định dạng phương tiện độc quyền cho Fedora và OpenSUSE.",
   "remapper_desc": "Một công cụ dễ sử dụng cho Linux để thay đổi hành vi của các thiết bị đầu vào của bạn. Ánh xạ bất kỳ đầu vào nào sang bất kỳ đầu vào nào khác.",
   "portainer_desc": "Giao diện quản lý dựa trên web cho Docker, cho phép bạn dễ dàng quản lý các container, hình ảnh, mạng và volume của mình.",
-  "logseq_desc": "Một cơ sở kiến thức mã nguồn mở ưu tiên quyền riêng tư. Thay thế cho Obsidian."
+  "logseq_desc": "Một cơ sở kiến thức mã nguồn mở ưu tiên quyền riêng tư. Thay thế cho Obsidian.",
+  "endlesskey_desc": "Học tập được tuyển chọn bất cứ lúc nào, bất cứ đâu.",
+  "gcompris_desc": "Trò chơi giáo dục cho trẻ em.",
+  "geogebra_desc": "Phần mềm toán học động.",
+  "kalzium_desc": "Bảng tuần hoàn các nguyên tố.",
+  "kolibri_desc": "Nền tảng học tập ngoại tuyến.",
+  "stellarium_desc": "Một đài thiên văn trong máy tính của bạn.",
+  "edu": "Giáo dục",
+  "edu_desc": "Tài nguyên cho việc học và dạy cho mọi lứa tuổi."
 }

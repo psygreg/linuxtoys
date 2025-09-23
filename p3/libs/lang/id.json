@@ -250,5 +250,13 @@
   "vlc_desc": "Pemutar media sumber terbuka, lengkap fitur. Termasuk codec untuk format media proprietari untuk Fedora dan OpenSUSE.",
   "remapper_desc": "Alat yang mudah digunakan untuk Linux untuk mengubah perilaku perangkat input Anda. Memetakan input apa pun ke input lainnya.",
   "portainer_desc": "Antarmuka manajemen berbasis web untuk Docker, memungkinkan Anda dengan mudah mengelola kontainer, gambar, jaringan, dan volume Anda.",
-  "logseq_desc": "Basis pengetahuan sumber terbuka yang mengutamakan privasi. Alternatif untuk Obsidian."
+  "logseq_desc": "Basis pengetahuan sumber terbuka yang mengutamakan privasi. Alternatif untuk Obsidian.",
+  "endlesskey_desc": "Pembelajaran terkurasi kapan saja, di mana saja.",
+  "gcompris_desc": "Permainan edukasi untuk anak-anak.",
+  "geogebra_desc": "Perangkat lunak matematika dinamis.",
+  "kalzium_desc": "Tabel periodik unsur.",
+  "kolibri_desc": "Platform pembelajaran offline.",
+  "stellarium_desc": "Planetarium di komputer Anda.",
+  "edu": "Pendidikan",
+  "edu_desc": "Sumber daya untuk belajar dan mengajar untuk semua usia."
 }

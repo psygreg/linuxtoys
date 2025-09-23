@@ -250,5 +250,13 @@
   "vlc_desc": "Kicheza vyombo vya habari vya chanzo wazi, kilicho na vipengele kamili. Inajumuisha kodeki za umbizo la vyombo vya habari vya umiliki kwa Fedora na OpenSUSE.",
   "remapper_desc": "Zana rahisi kutumia kwa Linux kubadilisha tabia ya vifaa vyako vya kuingiza. Inaweka ramani ya kuingiza yoyote kwenye kuingiza kingine chochote.",
   "portainer_desc": "Kiolesura cha usimamizi cha msingi wa wavuti kwa Docker, kinachokuruhusu kusimamia vyombo vyako, picha, mitandao na ujazo kwa urahisi.",
-  "logseq_desc": "Msingi wa maarifa wa chanzo wazi unaolenga faragha. Mbadala wa Obsidian."
+  "logseq_desc": "Msingi wa maarifa wa chanzo wazi unaolenga faragha. Mbadala wa Obsidian.",
+  "endlesskey_desc": "Elimu iliyochaguliwa wakati wowote, mahali popote.",
+  "gcompris_desc": "Mchezo wa elimu kwa watoto.",
+  "geogebra_desc": "Programu ya hesabu ya nguvu.",
+  "kalzium_desc": "Jedwali la kipindi cha elementi.",
+  "kolibri_desc": "Jukwaa la kujifunza nje ya mtandao.",
+  "stellarium_desc": "Planetarium katika kompyuta yako.",
+  "edu": "Elimu",
+  "edu_desc": "Rasilimali za kujifunza na kufundisha kwa umri wote."
 }
