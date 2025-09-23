@@ -19,9 +19,6 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 optimizer () {
     cd $HOME
     if [ ! -f $HOME/.local/.autopatch.state ]; then
-        # filtered cachyos systemd configs
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys-atom/refs/heads/main/linuxtoys-cfg-atom/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.1-1.x86_64.rpm
-        sudo rpm-ostree install -yA linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         # shader booster
         local script="shader-patcher-atom" && _invoke_
         # automatic updating
@@ -69,6 +66,14 @@ optimizer () {
         # fix alive timeout for Gnome
         if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
             sudo gsettings set org.gnome.mutter check-alive-timeout 20000
+        fi
+        # filtered cachyos systemd configs
+        if [ "$ID" = "bluefin" ] || [ "$ID" = "bazzite" ] || [ "$ID" = "aurora" ]; then
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/optimize-cfg-ublue/rpmbuild/RPMS/x86_64/optimize-cfg-ublue-1.0-1.x86_64.rpm
+            sudo rpm-ostree install optimize-cfg-ublue-1.0-1.x86_64.rpm
+        else
+            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/optimize-cfg-ostree/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.1-1.x86_64.rpm
+            sudo rpm-ostree install linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         fi
         # save autopatch state
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
