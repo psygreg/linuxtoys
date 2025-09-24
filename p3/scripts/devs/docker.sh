@@ -44,6 +44,9 @@ docker_in () { # install docker
             sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
         fi
         _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
+        if command -v rpm-ostree &> /dev/null; then
+            _packages+=(podman-compose) # podman-compose is needed for rootless mode with ostree. the reasons for this are unknown, but without this it won't work at all.
+        fi
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         _packages=(docker docker-compose)
     elif [[ "$ID_LIKE" == *suse* ]]; then
