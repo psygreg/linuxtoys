@@ -220,7 +220,7 @@ def _show_gtk_update_dialog(latest_version, changelog=None, translations=None):
         dialog.set_resizable(True)
 
         download_btn = dialog.add_button(
-            translations.get('update_download_btn', 'Download Update') if translations else 'Download Update',
+            translations.get('update_download_btn', 'Install Update') if translations else 'Install Update',
             Gtk.ResponseType.YES
         )
         ignore_btn = dialog.add_button(
@@ -361,18 +361,19 @@ def show_whatsnew_dialog(version, changelog, translations=None):
     except Exception as e:
         print(f"Error showing What's New dialog: {e}")
 
-
-# repo_owner="test_your", repo_name="linuxtoys"):
-def open_releases_page(repo_owner="psygreg", repo_name="linuxtoys"):
+def run_install_script():
     """
-    Open the GitHub releases page in the default browser.
+    Run the installation script to update the app immediately.
     """
     try:
         import subprocess
-        releases_url = f"https://github.com/{repo_owner}/{repo_name}/releases"
-        subprocess.run(['xdg-open', releases_url])
+        command = 'yes | sh -c "$(curl -fsSL https://linux.toys/install.sh)"'
+        subprocess.run(['sh', '-c', command], check=True)
+        print("Update completed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error during update: {e}")
     except Exception as e:
-        print(f"Error opening releases page: {e}")
+        print(f"Unexpected error: {e}")
 
 def run_update_check(show_dialog=True, verbose=False, translations=None):
     """
@@ -389,10 +390,10 @@ def run_update_check(show_dialog=True, verbose=False, translations=None):
         if show_dialog and latest_version:
             # Check if we have a display server before trying to show GTK dialog
             if os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY'):
-                def show_dialog_and_open():
+                def show_dialog_and_update():
                     if _show_gtk_update_dialog(latest_version, changelog, translations):
-                        open_releases_page()
-                GLib.idle_add(show_dialog_and_open)
+                        run_install_script()
+                GLib.idle_add(show_dialog_and_update)
             else:
                 # No display, print to console instead
                 print(f"Update available: {latest_version}")
