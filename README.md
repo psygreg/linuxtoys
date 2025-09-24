@@ -35,8 +35,8 @@ For `rpm-ostree`-based systems, it will also be needed: `rpm-ostree install linu
 ### Git cloning
 First, make sure you have all necessary dependencies. Most of those should be already present in your system.
 
-- **Debian/Ubuntu**: `bash git curl wget zenity python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 jq ssh-askpass`
-- **Fedora/RHEL**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3 jq openssh-askpass`
+- **Debian/Ubuntu**: `bash git curl wget zenity python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 ssh-askpass`
+- **Fedora/RHEL**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3 openssh-askpass`
 - **Arch Linux**: `bash git curl wget zenity python python-gobject python-requests gtk3 x11-ssh-askpass`
 - **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3 openssh-askpass`
 

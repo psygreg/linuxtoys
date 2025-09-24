@@ -6,7 +6,7 @@ BuildArch:      x86_64
 
 License:        GPL3
 
-Requires:       git curl wget zenity python3 python3-gobject gtk3 jq python3-requests python3-urllib3 python3-certifi
+Requires:       bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi
 BuildRequires:  desktop-file-utils
 
 %description

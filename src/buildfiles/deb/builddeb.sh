@@ -63,7 +63,7 @@ Homepage: https://github.com/psygreg/linuxtoys
 
 Package: linuxtoys
 Architecture: amd64
-Depends: git, curl, wget, zenity, python3, python3-gi, python3-requests, libgtk-3-0, gir1.2-gtk-3.0, jq, ssh-askpass
+Depends: bash, git, curl, wget, zenity, python3, python3-gi, python3-requests, libgtk-3-0, gir1.2-gtk-3.0, ssh-askpass
 Description: A set of tools for Linux presented in a user-friendly way.
  .
  A menu with various handy tools for Linux gaming, optimization and other tweaks.
