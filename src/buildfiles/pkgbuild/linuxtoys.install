@@ -1,6 +1,6 @@
 post_install() {
     alias_name="linuxtoys"
-    alias_command="/usr/bin/linuxtoys.sh"
+    alias_command="/usr/bin/linuxtoys"
     target_file="/etc/bash.bashrc"
     if ! grep -q "alias $alias_name=" "$target_file"; then
         echo "alias $alias_name='$alias_command'" >> "$target_file"

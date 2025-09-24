@@ -52,7 +52,7 @@ year=$(date +%Y)
 specfile_line="Version:        ${lt_version}"
 specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${lt_version}"
 sed -i "2c\\$specfile_line" rpmbuild/SPECS/linuxtoys.spec
-sed -i "69c\\$specfile_line2" rpmbuild/SPECS/linuxtoys.spec
+sed -i "64c\\$specfile_line2" rpmbuild/SPECS/linuxtoys.spec
 # build
 rm -r $HOME/rpmbuild # ensure there's no leftover build artifacts previous to building
 cp -r rpmbuild $HOME # only works with this setup on Silverblue, which is what I use
