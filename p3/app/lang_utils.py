@@ -79,6 +79,10 @@ def detect_system_language():
     # Get language from LANG environment variable (first 2 characters)
     lang = os.environ.get('LANG', 'en_US')[:2]
     
+    # Map Nynorsk to Bokmål for Norwegian detection
+    if lang == 'nn':
+        lang = 'nb'
+    
     # Check available translation files
     available_langs = []
     lang_dir = os.path.join(os.path.dirname(__file__), '..', 'libs', 'lang')
@@ -226,7 +230,7 @@ def get_localized_language_names(current_translations):
         'sk': current_translations.get('lang_slovak', 'Slovenčina'),
         'sl': current_translations.get('lang_slovenian', 'Slovenščina'),
         'sr': current_translations.get('lang_serbian', 'Српски'),
-        'nb': current_translations.get('lang_bokmal', 'Norsk'),
+        'nb': current_translations.get('lang_bokmal', 'Norsk')
     }    # Fall back to native names for any missing translations
     native_names = get_language_names()
     for code in native_names:
