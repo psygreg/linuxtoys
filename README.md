@@ -1,5 +1,5 @@
 # [LinuxToys](https://linux.toys)
-A collection of tools for Linux in a user-friendly way. To check all its features, pay the [Wiki](https://linuxtoys.luminhost.xyz/knowledgebase.html) a visit!
+A collection of tools for Linux in a user-friendly way. To check all its features, pay the [Wiki](https://linux.toys/knowledgebase.html) a visit!
 
 ![LinuxToys](src/screenshot.png)
 
