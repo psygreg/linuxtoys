@@ -15,8 +15,8 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # get current tags and versions
-lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^LTS-' | sort -Vr | head -n 1)"
-std_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | jq -r '.[].tag_name' | grep -i '^STD-' | sort -Vr | head -n 1)"
+lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^LTS-' | sort -Vr | head -n 1)"
+std_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^STD-' | sort -Vr | head -n 1)"
 kver_lts="$(echo "$lts_tag" | cut -d'-' -f2-)"
 kver_psycachy="$(echo "$std_tag" | cut -d'-' -f2-)"
 _kv_url_latest=$(curl -s https://www.kernel.org | grep -A 1 'id="latest_link"' | awk 'NR==2' | grep -oP 'href="\K[^"]+')
