@@ -178,12 +178,9 @@ case "${ID:-}" in
             echo "Failed to download: $arch_url_post"
             exit 4
         fi
-        if [ "$ID" = "cachyos" ]; then # install missing dependency (no Arch/Extra repo)
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/cachyos/x11-ssh-askpass-1.2.4.1-8-x86_64.pkg.tar.zst
-            sudo pacman -U --noconfirm x11-ssh-askpass-*.pkg.tar.zst
-            rm x11-ssh-askpass-*.pkg.tar.zst
-        fi
-        makepkg -i || {
+        makepkg -d && {
+            sudo pacman -U --noconfirm linuxtoys-*.pkg.tar.zst;
+        } || {
             echo "Installation failed (pacman)."
             rm -f "$arch_pkg"
             rm -f "$arch_post_inst"
