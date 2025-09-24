@@ -1,4 +1,4 @@
-# [LinuxToys](https://linuxtoys.luminhost.xyz)
+# [LinuxToys](https://linux.toys)
 A collection of tools for Linux in a user-friendly way. To check all its features, pay the [Wiki](https://linuxtoys.luminhost.xyz/knowledgebase.html) a visit!
 
 ![LinuxToys](src/screenshot.png)
@@ -71,4 +71,4 @@ Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap*
 ### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
 You may use the AUR helper of your choice to install it, with the package name `linuxtoys-bin`.
 
-## [Credits](https://linuxtoys.luminhost.xyz/credits.html)
+## [Credits](https://linux.toys/credits.html)
