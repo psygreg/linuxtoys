@@ -53,7 +53,7 @@ docker_in () { # install docker
     # fix for ostree
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
-        sudo su -c '"$(getent group docker)" >> /etc/group'
+        sudo su -c 'echo "$(getent group docker)" >> /etc/group'
         sudo_rq # request another sudo to continue as it will be lost after su
     fi
     # enable rootless
