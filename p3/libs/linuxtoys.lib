@@ -1,18 +1,9 @@
 ## linuxtoys function library
 source /etc/os-release
+shopt -s expand_aliases
+export SUDO_ASKPASS="${SCRIPT_DIR}/libs/zpass.sh"
+alias sudo="sudo -A "
 
-# set askpass for sudo requests
-if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-    export SUDO_ASKPASS="/usr/bin/ssh-askpass"
-elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-    export SUDO_ASKPASS="/usr/lib/ssh/ssh-askpass"
-elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
-    if [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
-        export SUDO_ASKPASS="/usr/libexec/ssh/gnome-ssh-askpass"
-    else
-        export SUDO_ASKPASS="/usr/libexec/openssh/gnome-ssh-askpass"
-    fi
-fi
 # sudo request
 sudo_rq () { 
     sudo -Av
