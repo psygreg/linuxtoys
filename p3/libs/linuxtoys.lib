@@ -1,8 +1,6 @@
 ## linuxtoys function library
 source /etc/os-release
-shopt -s expand_aliases
-export SUDO_ASKPASS="${SCRIPT_DIR}/libs/zpass.sh"
-alias sudo="sudo -A "
+export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
 # sudo request
 sudo_rq () { 
