@@ -225,7 +225,8 @@ def get_localized_language_names(current_translations):
         'no': current_translations.get('lang_norwegian', 'Norsk'),
         'sk': current_translations.get('lang_slovak', 'Slovenčina'),
         'sl': current_translations.get('lang_slovenian', 'Slovenščina'),
-        'sr': current_translations.get('lang_serbian', 'Српски')
+        'sr': current_translations.get('lang_serbian', 'Српски'),
+        'nb': current_translations.get('lang_bokmal', 'Norsk'),
     }    # Fall back to native names for any missing translations
     native_names = get_language_names()
     for code in native_names:
