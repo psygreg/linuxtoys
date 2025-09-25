@@ -258,5 +258,7 @@
   "kolibri_desc": "Jukwaa la kujifunza nje ya mtandao.",
   "stellarium_desc": "Planetarium katika kompyuta yako.",
   "edu": "Elimu",
-  "edu_desc": "Rasilimali za kujifunza na kufundisha kwa umri wote."
+  "edu_desc": "Rasilimali za kujifunza na kufundisha kwa umri wote.",
+  "tweaks_desc": "Badilisha mipangilio inayohusiana na programu za GTK3 na GNOME Shell kutoka mandhari hadi uonyeshaji wa fonti.",
+  "extman_desc": "Tafuta, pakua na simamia viendelezi vya GNOME kwa urahisi."
 }

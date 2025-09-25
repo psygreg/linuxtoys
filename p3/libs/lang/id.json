@@ -258,5 +258,7 @@
   "kolibri_desc": "Platform pembelajaran offline.",
   "stellarium_desc": "Planetarium di komputer Anda.",
   "edu": "Pendidikan",
-  "edu_desc": "Sumber daya untuk belajar dan mengajar untuk semua usia."
+  "edu_desc": "Sumber daya untuk belajar dan mengajar untuk semua usia.",
+  "tweaks_desc": "Ubah pengaturan yang terkait dengan aplikasi GTK3 dan GNOME Shell dari tema hingga rendering font.",
+  "extman_desc": "Cari, unduh dan kelola ekstensi GNOME dengan mudah."
 }

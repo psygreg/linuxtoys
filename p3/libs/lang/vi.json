@@ -258,5 +258,7 @@
   "kolibri_desc": "Nền tảng học tập ngoại tuyến.",
   "stellarium_desc": "Một đài thiên văn trong máy tính của bạn.",
   "edu": "Giáo dục",
-  "edu_desc": "Tài nguyên cho việc học và dạy cho mọi lứa tuổi."
+  "edu_desc": "Tài nguyên cho việc học và dạy cho mọi lứa tuổi.",
+  "tweaks_desc": "Thay đổi cài đặt liên quan đến ứng dụng GTK3 và GNOME Shell từ chủ đề đến kết xuất phông chữ.",
+  "extman_desc": "Dễ dàng tìm kiếm, tải xuống và quản lý các tiện ích mở rộng GNOME."
 }

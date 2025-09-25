@@ -84,6 +84,9 @@ def get_system_compat_keys():
     
     Returns:
         set: Set of compatibility keys for the current system
+             (OS keys: debian, ubuntu, cachy, arch, fedora, suse, ostree, ublue;
+              GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
+              Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-other)
     """
     # Check if developer mode override is active
     try:
@@ -133,6 +136,10 @@ def get_system_compat_keys():
     gpu_keys = get_gpu_compat_keys()
     keys.update(gpu_keys)
 
+    # Add desktop compatibility keys
+    desktop_keys = get_desktop_compat_keys()
+    keys.update(desktop_keys)
+
     return keys
 
 def get_gpu_compat_keys():
@@ -168,6 +175,29 @@ def get_gpu_compat_keys():
             keys.add('gpu-nvidia')
     except Exception:
         pass
+    return keys
+
+def get_desktop_compat_keys():
+    """
+    Get the desktop environment compatibility keys based on detected DE.
+    
+    Returns:
+        set: Set of desktop compatibility keys ('desktop', 'desktop-gnome', 'desktop-plasma', 'desktop-other')
+    """
+    keys = set()
+    import os
+    desktop = os.environ.get('XDG_CURRENT_DESKTOP', '').upper()
+    
+    if desktop == 'GNOME':
+        keys.add('desktop-gnome')
+    elif desktop == 'KDE':
+        keys.add('desktop-plasma')
+    else:
+        keys.add('desktop-other')
+    
+    if keys:
+        keys.add('desktop')
+    
     return keys
 
 def are_optimizations_installed():
@@ -405,6 +435,7 @@ def script_is_compatible(script_path, compat_keys):
     
     os_compatible = True
     gpu_compatible = 'gpu' in compat_keys  # Default for unset GPU header
+    desktop_compatible = True  # Default for unset desktop header
     
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
@@ -432,12 +463,31 @@ def script_is_compatible(script_path, compat_keys):
                     else:
                         # Empty header, treat as general GPU
                         gpu_compatible = 'gpu' in compat_keys
+                elif line.startswith('# desktop:'):
+                    desktop_value = line[len('# desktop:'):].strip()
+                    desktop_values = [v.strip() for v in desktop_value.split(',') if v.strip()]
+                    desktop_script_keys = set()
+                    for v in desktop_values:
+                        if v.lower() == 'gnome':
+                            desktop_script_keys.add('desktop-gnome')
+                        elif v.lower() == 'plasma':
+                            desktop_script_keys.add('desktop-plasma')
+                        elif v.lower() == 'other':
+                            desktop_script_keys.add('desktop-other')
+                        else:
+                            # Unknown value, treat as general desktop
+                            desktop_script_keys.add('desktop')
+                    if desktop_script_keys:
+                        desktop_compatible = bool(compat_keys & desktop_script_keys)
+                    else:
+                        # Empty header, treat as general desktop
+                        desktop_compatible = 'desktop' in compat_keys
                 if not line.startswith('#'):
                     break
     except Exception:
         pass
     
-    return os_compatible and gpu_compatible
+    return os_compatible and gpu_compatible and desktop_compatible
 
 def script_is_localized(script_path, current_locale):
     """

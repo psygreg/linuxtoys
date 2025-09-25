@@ -258,5 +258,7 @@
   "kolibri_desc": "Platform pembelajaran luar talian.",
   "stellarium_desc": "Planetarium di komputer anda.",
   "edu": "Pendidikan",
-  "edu_desc": "Sumber untuk pembelajaran dan pengajaran untuk semua peringkat umur."
+  "edu_desc": "Sumber untuk pembelajaran dan pengajaran untuk semua peringkat umur.",
+  "tweaks_desc": "Tukar tetapan yang berkaitan dengan aplikasi GTK3 dan GNOME Shell dari tema ke rendering fon.",
+  "extman_desc": "Cari, muat turun dan urus sambungan GNOME dengan mudah."
 }

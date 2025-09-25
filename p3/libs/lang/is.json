@@ -268,5 +268,7 @@
   "kolibri_desc": "Ótengdur lærdómsvettvangur.",
   "stellarium_desc": "Stjörnuhús í tölvunni þinni.",
   "edu": "Menntun",
-  "edu_desc": "Auðlindir fyrir lærdóm og kennslu fyrir alla aldur."
+  "edu_desc": "Auðlindir fyrir lærdóm og kennslu fyrir alla aldur.",
+  "tweaks_desc": "Breyttu stillingum sem tengjast GTK3 forritum og GNOME Shell frá þemum til leturmyndunar.",
+  "extman_desc": "Leitaðu að, halaðu niður og stjórnaðu GNOME viðbótum auðveldlega."
 }

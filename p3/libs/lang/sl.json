@@ -268,5 +268,7 @@
   "kolibri_desc": "Offline učna platforma.",
   "stellarium_desc": "Planetarij v vašem računalniku.",
   "edu": "Izobraževanje",
-  "edu_desc": "Viri za učenje in poučevanje za vse starosti."
+  "edu_desc": "Viri za učenje in poučevanje za vse starosti.",
+  "tweaks_desc": "Spremenite nastavitve, povezane z aplikacijami GTK3 in GNOME Shell, od tem do upodabljanja pisav.",
+  "extman_desc": "Enostavno iščite, prenašajte in upravljajte razširitve GNOME."
 }

@@ -258,5 +258,7 @@
   "kolibri_desc": "Çevrimdışı öğrenme platformu.",
   "stellarium_desc": "Bilgisayarınızda bir planetarium.",
   "edu": "Eğitim",
-  "edu_desc": "Tüm yaş grupları için öğrenme ve öğretim kaynakları."
+  "edu_desc": "Tüm yaş grupları için öğrenme ve öğretim kaynakları.",
+  "tweaks_desc": "GTK3 uygulamaları ve GNOME Shell ile ilgili ayarları temalardan yazı tipi işlemeye kadar değiştirin.",
+  "extman_desc": "GNOME uzantılarını kolayca arayın, indirin ve yönetin."
 }

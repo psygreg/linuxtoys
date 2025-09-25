@@ -258,5 +258,7 @@
   "kolibri_desc": "Offline lärandeplattform.",
   "stellarium_desc": "Ett planetarium i din dator.",
   "edu": "Utbildning",
-  "edu_desc": "Resurser för lärande och undervisning för alla åldrar."
+  "edu_desc": "Resurser för lärande och undervisning för alla åldrar.",
+  "tweaks_desc": "Ändra inställningar relaterade till GTK3-appar och GNOME Shell, från teman till teckensnittsrendering.",
+  "extman_desc": "Sök, ladda ner och hantera GNOME-tillägg enkelt."
 }
