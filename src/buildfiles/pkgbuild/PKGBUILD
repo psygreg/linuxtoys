@@ -6,7 +6,6 @@ depends=(bash git curl wget zenity python python-gobject python-requests gtk3)
 makedepends=()
 conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
-install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
 sha256sums=('c320b59f78c4194e4a89cb8c38c954b3081494949c9b39ea31b3c376a7e9bc7c')
 
