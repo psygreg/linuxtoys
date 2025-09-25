@@ -35,7 +35,7 @@
   "choose_manifest_title": "Ju lutemi zgjidhni Manifestin tuaj",
   "select_button": "Zgjidh",
   "loading_manifest_message": "Duke ngarkuar skedarin tuaj të manifestit... Ju lutemi prisni...",
-  "packages_flatpaks": "Paketat &amp; Flatpak-et",
+  "packages_flatpaks": "Paketat & Flatpak-et",
 
   "psypicks": "Zgjedhjet e Psygreg",
   "psypicks_desc": "Zgjedhje e kuruar e softuerit për lojëra dhe cilësi jetese në Linux.",
@@ -43,7 +43,7 @@
   "pdefaults_desc": "Cilësimet e rekomanduara për të përmirësuar performancën.",
   "about": "Rreth LinuxToys",
   "about_desc": "Informacion rreth aplikimit.",
-  "office": "Zyre &amp; Punë",
+  "office": "Zyre & Punë",
   "office_desc": "Mjete dhe burime për produktivitet dhe detyra zyre.",
   "game": "Lojëra",
   "game_desc": "Mjete dhe burime për lojëra në Linux.",

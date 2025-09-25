@@ -35,7 +35,7 @@
   "choose_manifest_title": "Kérjük, válassza ki a Manifest-et",
   "select_button": "Kiválasztás",
   "loading_manifest_message": "A manifest fájl betöltése... Kérjük, várjon...",
-  "packages_flatpaks": "Csomagok &amp; Flatpakok",
+  "packages_flatpaks": "Csomagok & Flatpakok",
 
   "psypicks": "Psygreg választásai",
   "psypicks_desc": "Kiválasztott szoftverek játékhoz és életminőséghez Linuxon.",

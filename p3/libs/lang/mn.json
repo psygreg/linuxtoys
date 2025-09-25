@@ -35,7 +35,7 @@
   "choose_manifest_title": "Манифестээ сонгоно уу",
   "select_button": "Сонгох",
   "loading_manifest_message": "Таны манифест файлыг ачаалж байна... Хүлээгээрэй...",
-  "packages_flatpaks": "Багцууд &amp; Flatpak-ууд",
+  "packages_flatpaks": "Багцууд & Flatpak-ууд",
 
   "psypicks": "Psygreg-ийн сонголтууд",
   "psypicks_desc": "Linux-д тоглоом болон амьдралын чанарын програм хангамжийн сонгосон цуглуулга.",
@@ -43,7 +43,7 @@
   "pdefaults_desc": "Гүйцэтгэлийг сайжруулахад зөвлөж буй тохиргоо.",
   "about": "LinuxToys-ийн тухай",
   "about_desc": "Апп-ийн мэдээлэл.",
-  "office": "Офис &amp; Ажил",
+  "office": "Офис & Ажил",
   "office_desc": "Бүтээмж ба оффис даалгавруудын хэрэгслүүд ба нөөцүүд.",
   "game": "Тоглоом",
   "game_desc": "Linux-д тоглоомын хэрэгслүүд ба нөөцүүд.",

@@ -35,7 +35,7 @@
   "choose_manifest_title": "Lūdzu, izvēlieties savu manifestu",
   "select_button": "Atlasīt",
   "loading_manifest_message": "Ielādē jūsu manifesta failu... Lūdzu, uzgaidiet...",
-  "packages_flatpaks": "Pakotnes &amp; Flatpak",
+  "packages_flatpaks": "Pakotnes & Flatpak",
 
   "psypicks": "Psygreg izvēle",
   "psypicks_desc": "Kuruota programmatūras izvēle spēlēm un dzīves kvalitātei Linux.",
@@ -43,7 +43,7 @@
   "pdefaults_desc": "Ieteicamie iestatījumi veiktspējas uzlabošanai.",
   "about": "Par LinuxToys",
   "about_desc": "Informācija par lietotni.",
-  "office": "Birojs &amp; Darbs",
+  "office": "Birojs & Darbs",
   "office_desc": "Rīki un resursi produktivitātei un biroja uzdevumiem.",
   "game": "Spēles",
   "game_desc": "Rīki un resursi spēlēm Linux.",

@@ -35,7 +35,7 @@
   "choose_manifest_title": "Prašome pasirinkti savo manifestą",
   "select_button": "Pasirinkti",
   "loading_manifest_message": "Įkeliamas jūsų manifesto failas... Prašome palaukti...",
-  "packages_flatpaks": "Paketai &amp; Flatpak'ai",
+  "packages_flatpaks": "Paketai & Flatpak'ai",
 
   "psypicks": "Psygreg pasirinkimai",
   "psypicks_desc": "Kuruojamas programinės įrangos pasirinkimas žaidimams ir gyvenimo kokybei Linux.",
@@ -43,7 +43,7 @@
   "pdefaults_desc": "Rekomenduojami nustatymai našumui pagerinti.",
   "about": "Apie LinuxToys",
   "about_desc": "Informacija apie programą.",
-  "office": "Biuras &amp; Darbas",
+  "office": "Biuras & Darbas",
   "office_desc": "Įrankiai ir ištekliai produktyvumui ir biuro užduotims.",
   "game": "Žaidimai",
   "game_desc": "Įrankiai ir ištekliai žaidimams Linux.",

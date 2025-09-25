@@ -35,7 +35,7 @@
   "choose_manifest_title": "Vinsamlegast veldu Manifest þitt",
   "select_button": "Velja",
   "loading_manifest_message": "Hleður manifest skrá þinni... Vinsamlegast bíðið...",
-  "packages_flatpaks": "Pakkar &amp; Flatpaks",
+  "packages_flatpaks": "Pakkar & Flatpaks",
 
   "psypicks": "Psygreg's Val",
   "psypicks_desc": "Valin úrval hugbúnaðar fyrir leiki og lífsgæði á Linux.",
@@ -43,7 +43,7 @@
   "pdefaults_desc": "Mælt með stillingum til að bæta afköst.",
   "about": "Um LinuxToys",
   "about_desc": "Upplýsingar um forritið.",
-  "office": "Skrifstofa &amp; Vinna",
+  "office": "Skrifstofa & Vinna",
   "office_desc": "Verkfæri og auðlindir fyrir framleiðni og skrifstofustörf.",
   "game": "Leikir",
   "game_desc": "Verkfæri og auðlindir fyrir leiki á Linux.",

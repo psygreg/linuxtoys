@@ -35,7 +35,7 @@
   "choose_manifest_title": "Iltimos, o'z Manifestingizni tanlang",
   "select_button": "Tanlash",
   "loading_manifest_message": "Sizning manifest faylingiz yuklanmoqda... Iltimos, kuting...",
-  "packages_flatpaks": "Paketlar &amp; Flatpaklar",
+  "packages_flatpaks": "Paketlar & Flatpaklar",
 
   "psypicks": "Psygreg tanlovi",
   "psypicks_desc": "Linuxda o'yin va hayot sifati uchun tanlangan dasturiy ta'minot.",
@@ -43,7 +43,7 @@
   "pdefaults_desc": "Ish faoliyatini yaxshilash uchun tavsiya etilgan sozlamalar.",
   "about": "LinuxToys haqida",
   "about_desc": "Ilova haqida ma'lumot.",
-  "office": "Ofis &amp; Ish",
+  "office": "Ofis & Ish",
   "office_desc": "Mahsuldorlik va ofis vazifalari uchun vositalar va resurslar.",
   "game": "O'yin",
   "game_desc": "Linuxda o'yin uchun vositalar va resurslar.",
