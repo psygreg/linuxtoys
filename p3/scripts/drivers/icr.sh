@@ -4,6 +4,7 @@
 # description: icr_desc
 # icon: intel.png
 # reboot: yes
+# gpu: Intel
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

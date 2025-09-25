@@ -129,6 +129,45 @@ def get_system_compat_keys():
         else:
             keys = {'ostree'}  # Override all other keys
 
+    # Add GPU compatibility keys
+    gpu_keys = get_gpu_compat_keys()
+    keys.update(gpu_keys)
+
+    return keys
+
+def get_gpu_compat_keys():
+    """
+    Get the GPU compatibility keys based on detected GPUs.
+    
+    Returns:
+        set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel', 'gpu-nvidia')
+    """
+    keys = set()
+    try:
+        import subprocess
+        result = subprocess.run(['lspci'], capture_output=True, text=True, timeout=10)
+        lspci_output = result.stdout.lower()
+        
+        has_amd = 'radeon' in lspci_output or 'rx' in lspci_output
+        has_intel = False
+        has_nvidia = 'nvidia' in lspci_output
+        
+        # Check Intel GPU by ensuring 'intel' and ('vga' or '3d') are in the same line
+        for line in lspci_output.split('\n'):
+            if 'intel' in line and ('vga' in line or '3d' in line):
+                has_intel = True
+                break
+        
+        if has_amd or has_intel or has_nvidia:
+            keys.add('gpu')
+        if has_amd:
+            keys.add('gpu-amd')
+        if has_intel:
+            keys.add('gpu-intel')
+        if has_nvidia:
+            keys.add('gpu-nvidia')
+    except Exception:
+        pass
     return keys
 
 def are_optimizations_installed():
@@ -364,18 +403,41 @@ def script_is_compatible(script_path, compat_keys):
         # dev_mode not available, continue with normal behavior
         pass
     
+    os_compatible = True
+    gpu_compatible = 'gpu' in compat_keys  # Default for unset GPU header
+    
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
             for line in f:
                 if line.startswith('# compat:'):
                     compat_line = line[len('# compat:'):].strip()
                     script_keys = set([k.strip() for k in compat_line.split(',')])
-                    return bool(compat_keys & script_keys)
+                    os_compatible = bool(compat_keys & script_keys)
+                elif line.startswith('# gpu:'):
+                    gpu_value = line[len('# gpu:'):].strip()
+                    gpu_values = [v.strip() for v in gpu_value.split(',') if v.strip()]
+                    gpu_script_keys = set()
+                    for v in gpu_values:
+                        if v == 'AMD':
+                            gpu_script_keys.add('gpu-amd')
+                        elif v == 'Intel':
+                            gpu_script_keys.add('gpu-intel')
+                        elif v == 'Nvidia':
+                            gpu_script_keys.add('gpu-nvidia')
+                        else:
+                            # Unknown value, treat as general GPU
+                            gpu_script_keys.add('gpu')
+                    if gpu_script_keys:
+                        gpu_compatible = bool(compat_keys & gpu_script_keys)
+                    else:
+                        # Empty header, treat as general GPU
+                        gpu_compatible = 'gpu' in compat_keys
                 if not line.startswith('#'):
                     break
     except Exception:
         pass
-    return True  # If no compat header, show by default
+    
+    return os_compatible and gpu_compatible
 
 def script_is_localized(script_path, current_locale):
     """

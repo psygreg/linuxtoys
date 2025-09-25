@@ -4,6 +4,7 @@
 # description: rocm_desc
 # icon: amd.png
 # reboot: yes
+# gpu: AMD
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

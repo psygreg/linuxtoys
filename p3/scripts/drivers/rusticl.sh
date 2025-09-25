@@ -4,6 +4,7 @@
 # description: rusticl_desc
 # icon: device.svg
 # reboot: yes
+# gpu: Amd, Intel
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
