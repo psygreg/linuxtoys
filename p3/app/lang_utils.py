@@ -178,7 +178,34 @@ def get_language_names():
         'ms': 'Bahasa Melayu',
         'ta': 'தமிழ்',
         'uk': 'Українська',
-        'el': 'Ελληνικά'
+        'el': 'Ελληνικά',
+        'bg': 'Български',
+        'bs': 'Bosanski',
+        'da': 'Dansk',
+        'hr': 'Hrvatski',
+        'hu': 'Magyar',
+        'is': 'Íslenska',
+        'no': 'Norsk',
+        'sk': 'Slovenčina',
+        'sl': 'Slovenščina',
+        'sr': 'Српски',
+        'nb': 'Norsk',
+        'ro': 'Română',
+        'lt': 'Lietuvių',
+        'lv': 'Latviski',
+        'et': 'Eesti',
+        'ga': 'Gaeilge',
+        'az': 'Azərbaycanca',
+        'hy': 'Հայերեն',
+        'ka': 'ქართული',
+        'km': 'ខ្មែរ',
+        'lo': 'ລາວ',
+        'mn': 'Монгол',
+        'ne': 'नेपाली',
+        'my': 'မြန်မာ',
+        'sq': 'Shqip',
+        'tg': 'Тоҷикӣ',
+        'uz': "O'zbekcha"
     }
 
 
@@ -230,7 +257,23 @@ def get_localized_language_names(current_translations):
         'sk': current_translations.get('lang_slovak', 'Slovenčina'),
         'sl': current_translations.get('lang_slovenian', 'Slovenščina'),
         'sr': current_translations.get('lang_serbian', 'Српски'),
-        'nb': current_translations.get('lang_bokmal', 'Norsk')
+        'nb': current_translations.get('lang_bokmal', 'Norsk'),
+        'ro': current_translations.get('lang_romanian', 'Română'),
+        'lt': current_translations.get('lang_lithuanian', 'Lietuvių'),
+        'lv': current_translations.get('lang_latvian', 'Latviski'),
+        'et': current_translations.get('lang_estonian', 'Eesti'),
+        'ga': current_translations.get('lang_irish', 'Gaeilge'),
+        'az': current_translations.get('lang_azerbaijani', 'Azərbaycanca'),
+        'hy': current_translations.get('lang_armenian', 'Հայերեն'),
+        'ka': current_translations.get('lang_georgian', 'ქართული'),
+        'km': current_translations.get('lang_khmer', 'ខ្មែរ'),
+        'lo': current_translations.get('lang_lao', 'ລາວ'),
+        'mn': current_translations.get('lang_mongolian', 'Монгол'),
+        'ne': current_translations.get('lang_nepali', 'नेपाली'),
+        'my': current_translations.get('lang_burmese', 'မြန်မာ'),
+        'sq': current_translations.get('lang_albanian', 'Shqip'),
+        'tg': current_translations.get('lang_tajik', 'Тоҷикӣ'),
+        'uz': current_translations.get('lang_uzbek', "O'zbekcha")
     }    # Fall back to native names for any missing translations
     native_names = get_language_names()
     for code in native_names:
