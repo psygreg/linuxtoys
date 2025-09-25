@@ -39,17 +39,6 @@ find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 install -m 644 %{_sourcedir}/linuxtoys-%{version}/usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 desktop-file-install --dir=%{buildroot}/usr/share/applications %{_sourcedir}/linuxtoys-%{version}/usr/share/applications/LinuxToys.desktop
 
-%post
-alias_name="linuxtoys"
-alias_command="/usr/bin/linuxtoys"
-target_file="/etc/bash.bashrc"
-if ! grep -q "alias $alias_name=" "$target_file"; then
-    echo "alias $alias_name='$alias_command'" >> "$target_file"
-    echo "Alias '$alias_name' created."
-else
-    echo "Alias '$alias_name' already exists."
-fi
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 

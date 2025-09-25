@@ -119,24 +119,6 @@ cat > debian/source/format << 'EOF'
 3.0 (quilt)
 EOF
 
-# Create debian/postinst
-cat > debian/postinst << 'EOF'
-#!/bin/bash
-alias_name="linuxtoys"
-alias_command="/usr/bin/linuxtoys"
-    
-# Check if the alias already exists
-if ! alias "$alias_name" 2>/dev/null; then
-    # If it doesn't exist, add it to the appropriate file
-    echo "alias $alias_name='$alias_command'" >> /etc/bash.bashrc
-    echo "Alias '$alias_name' created."
-else
-    echo "Alias '$alias_name' already exists."
-fi
-exit 0
-EOF
-chmod +x debian/postinst
-
 # Create initial debian/changelog
 cat > debian/changelog << 'EOF'
 linuxtoys (5.0-1) noble; urgency=medium
