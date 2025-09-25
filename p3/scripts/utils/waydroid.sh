@@ -24,7 +24,15 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     fi
     _install_
     sudo systemctl enable --now waydroid-container
-    sudo waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS
+    waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS
+    if command -v firewall-cmd &> /dev/null; then # fedora rules for waydroid networking
+        sudo firewall-cmd --zone=trusted --add-interface=waydroid0 --permanent
+        sudo iptables -P FORWARD ACCEPT
+    elif command -v ufw &> /dev/null; then # other systems with ufw
+        sudo ufw allow 53
+        sudo ufw allow 67
+        sudo ufw default allow FORWARD
+    fi
     if zenity --question --title="Waydroid" --text="$msg283" --width 300 --height 300; then
         waydroid session stop
         sudo waydroid container stop
@@ -32,7 +40,6 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         git clone https://github.com/casualsnek/waydroid_script
         cd waydroid_script
         pip_lib
-        _install_
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
         # Detect CPU vendor for proper ARM translation layer
@@ -43,7 +50,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
             sudo venv/bin/python3 main.py install libndk
         fi
         cd ..
-        rm -r waydroid_script
+        sudo rm -rf waydroid_script
     fi
     zeninf "$msg284"
     xdg-open https://docs.waydro.id/faq/google-play-certification
