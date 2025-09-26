@@ -4,9 +4,15 @@ export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
 # sudo request
 sudo_rq () { 
+    if [ -f /tmp/linuxtoys_sudo_validated ]; then
+        return 0
+    fi
     sudo -Av
     if [ "$(sudo whoami)" = "root" ]; then
     # Validate password with sudo
+        if [ -n "$LINUXTOYS_CHECKLIST" ]; then
+            touch /tmp/linuxtoys_sudo_validated
+        fi
         return 0
     else
         fatal "Wrong password. Do you have sudo?"

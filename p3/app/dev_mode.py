@@ -198,7 +198,7 @@ def get_effective_compat_keys():
     Get the effective compatibility keys for the current session.
     
     In developer mode:
-    - If COMPAT is set: return simulated keys
+    - If COMPAT is set: return simulated keys plus GPU/desktop keys
     - If COMPAT is not set: return all possible keys (show everything)
     
     In normal mode:
@@ -215,7 +215,12 @@ def get_effective_compat_keys():
     compat_override = get_dev_compat_override()
     if compat_override:
         # Developer mode with specific system simulation
-        return get_simulated_compat_keys()
+        # Include simulated OS keys plus GPU and desktop keys
+        from .compat import get_gpu_compat_keys, get_desktop_compat_keys
+        keys = get_simulated_compat_keys()
+        keys.update(get_gpu_compat_keys())
+        keys.update(get_desktop_compat_keys())
+        return keys
     else:
         # Developer mode without simulation - show all scripts
         # Return a superset of all possible compatibility keys
@@ -242,8 +247,7 @@ def get_dev_mode_status():
     optimizer_override = get_dev_optimizer_override()
     
     if compat_override:
-        simulated_keys = get_simulated_compat_keys()
-        status_parts.append(f"simulating {compat_override}, keys: {sorted(simulated_keys)}")
+        status_parts.append(f"simulating {compat_override}, keys: {sorted(get_effective_compat_keys())}")
     else:
         status_parts.append("showing all scripts")
     

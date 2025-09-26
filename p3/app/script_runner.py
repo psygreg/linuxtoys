@@ -128,6 +128,9 @@ class ScriptRunner:
         self.current_script_index = 0
         self.total_scripts = len(scripts_list)
         
+        # Set flag to indicate this is a checklist execution
+        self.local_env['LINUXTOYS_CHECKLIST'] = '1'
+        
         # Create the dialog with updated title for multiple scripts
         dialog_title = self.translations.get('script_runner_checklist_title', 'Running Checklist ({current}/{total})')
         dialog_title = dialog_title.format(current=1, total=self.total_scripts)

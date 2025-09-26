@@ -2,6 +2,9 @@
 
 # Flatpak check
 flatpak_in_lib () {
+    if [ -f /tmp/linuxtoys_flatpak_done ]; then
+        return 0
+    fi
     # Install flatpak if not present
     if ! command -v flatpak &> /dev/null; then
         sudo_rq
@@ -35,6 +38,9 @@ flatpak_in_lib () {
         return 1
     fi
     echo "Flatpak and Flathub setup completed successfully"
+    if [ -n "$LINUXTOYS_CHECKLIST" ]; then
+        touch /tmp/linuxtoys_flatpak_done
+    fi
     return 0
 }
 

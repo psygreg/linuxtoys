@@ -16,6 +16,12 @@ def run_scripts_sequentially(scripts, parent_window, on_dialog_closed_callback):
     runner = script_runner.ScriptRunner(parent_window)
     
     def on_completion():
+        # Clean up flag files after checklist execution
+        flag_files = ['/tmp/linuxtoys_sudo_validated', '/tmp/linuxtoys_flatpak_done']
+        for flag_file in flag_files:
+            if os.path.exists(flag_file):
+                os.remove(flag_file)
+        
         if on_dialog_closed_callback:
             on_dialog_closed_callback(None, None)
     
