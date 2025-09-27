@@ -434,7 +434,7 @@ def script_is_compatible(script_path, compat_keys):
         pass
     
     os_compatible = True
-    gpu_compatible = 'gpu' in compat_keys  # Default for unset GPU header
+    gpu_compatible = True  # Default for unset GPU header
     desktop_compatible = True  # Default for unset desktop header
     
     try:
