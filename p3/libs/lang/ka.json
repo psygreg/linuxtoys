@@ -232,7 +232,7 @@
   "no": "არა",
   "local_scripts_name": "ლოკალური სკრიპტები",
   "local_scripts_desc": "თქვენი დამატებული სკრიპტები. შეგიძლიათ გადაათრიოთ და დაყაროთ ახალი სკრიპტების დასამატებლად.",
-  "script_template_doc_comment": "# მიმართეთ დოკუმენტაციას https://linuxtoys.luminhost.xyz/handbook.html საიტზე დამატებითი ინფორმაციისთვის.",
+  "script_template_doc_comment": "# მიმართეთ დოკუმენტაციას https://linux.toys/handbook.html საიტზე დამატებითი ინფორმაციისთვის.",
   "create_new_script_name": "ახალი სკრიპტის შექმნა",
   "create_new_script_desc": "შექმენით ახალი ლოკალური სკრიპტი. ის გაიხსნება თქვენს ნაგულისხმევ ტექსტურ რედაქტორში შექმნის შემდეგ.",
   "script_name_prompt": "შეიყვანეთ თქვენი სკრიპტის სახელი:",

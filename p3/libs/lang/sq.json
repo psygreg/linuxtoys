@@ -233,7 +233,7 @@
   "no": "Jo",
   "local_scripts_name": "Skriptet Lokale",
   "local_scripts_desc": "Skriptet tuaja të shtuara. Mund të tërhiqni dhe lëshoni për të shtuar skriptet e reja këtu.",
-  "script_template_doc_comment": "# Referojuni dokumentacionit në https://linuxtoys.luminhost.xyz/handbook.html për më shumë informacion.",
+  "script_template_doc_comment": "# Referojuni dokumentacionit në https://linux.toys/handbook.html për më shumë informacion.",
   "create_new_script_name": "Krijo Skript të Ri",
   "create_new_script_desc": "Krijo një skript lokal të ri. Do të hapet në redaktorin tuaj të paracaktuar të tekstit pas krijimit.",
   "script_name_prompt": "Shkruani emrin e skriptit tuaj:",

@@ -225,7 +225,7 @@
   "no": "Nej",
   "local_scripts_name": "Lokala skript",
   "local_scripts_desc": "Dina egna tillagda skript. Du kan dra och släppa för att lägga till nya skript här.",
-  "script_template_doc_comment": "# Hänvisa till dokumentationen på https://linuxtoys.luminhost.xyz/handbook.html för mer information.",
+  "script_template_doc_comment": "# Hänvisa till dokumentationen på https://linux.toys/handbook.html för mer information.",
   "create_new_script_name": "Skapa nytt skript",
   "create_new_script_desc": "Skapa ett nytt lokalt skript. Det kommer att öppnas i din standard textredigerare efter skapande.",
   "script_name_prompt": "Ange ditt skriptnamn:",

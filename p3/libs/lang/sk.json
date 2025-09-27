@@ -233,7 +233,7 @@
   "no": "Nie",
   "local_scripts_name": "Lokálne skripty",
   "local_scripts_desc": "Vaše vlastné pridané skripty. Môžete sem pretiahnuť a pustiť nové skripty.",
-  "script_template_doc_comment": "# Pozrite si dokumentáciu na https://linuxtoys.luminhost.xyz/handbook.html pre viac informácií.",
+  "script_template_doc_comment": "# Pozrite si dokumentáciu na https://linux.toys/handbook.html pre viac informácií.",
   "create_new_script_name": "Vytvoriť nový skript",
   "create_new_script_desc": "Vytvorte nový lokálny skript. Po vytvorení sa otvorí vo vašom predvolenom textovom editore.",
   "script_name_prompt": "Zadajte názov vášho skriptu:",

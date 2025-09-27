@@ -225,7 +225,7 @@
   "no": "Ei",
   "local_scripts_name": "Paikalliset skriptit",
   "local_scripts_desc": "Omat lisätyt skriptisi. Voit vetää ja pudottaa uusia skriptejä tähän.",
-  "script_template_doc_comment": "# Viittaa dokumentaatioon osoitteessa https://linuxtoys.luminhost.xyz/handbook.html lisätietoja varten.",
+  "script_template_doc_comment": "# Viittaa dokumentaatioon osoitteessa https://linux.toys/handbook.html lisätietoja varten.",
   "create_new_script_name": "Luo uusi skripti",
   "create_new_script_desc": "Luo uusi paikallinen skripti. Se avataan oletustekstieditorissasi luomisen jälkeen.",
   "script_name_prompt": "Anna skriptisi nimi:",

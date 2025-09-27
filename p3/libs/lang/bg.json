@@ -233,7 +233,7 @@
   "no": "Не",
   "local_scripts_name": "Локални скриптове",
   "local_scripts_desc": "Вашите собствени добавени скриптове. Можете да влачите и пускате, за да добавите нови скриптове тук.",
-  "script_template_doc_comment": "# Обърнете се към документацията на https://linuxtoys.luminhost.xyz/handbook.html за повече информация.",
+  "script_template_doc_comment": "# Обърнете се към документацията на https://linux.toys/handbook.html за повече информация.",
   "create_new_script_name": "Създай нов скрипт",
   "create_new_script_desc": "Създай нов локален скрипт. Ще бъде отворен във вашия текстов редактор по подразбиране след създаване.",
   "script_name_prompt": "Въведете името на вашия скрипт:",

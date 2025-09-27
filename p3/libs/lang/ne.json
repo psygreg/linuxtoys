@@ -233,7 +233,7 @@
   "no": "होइन",
   "local_scripts_name": "स्थानीय स्क्रिप्टहरू",
   "local_scripts_desc": "तपाईंले थपेका आफ्ना स्क्रिप्टहरू। नयाँ स्क्रिप्टहरू थप्न ड्र्याग र ड्रप गर्नुहोस्।",
-  "script_template_doc_comment": "# अधिक जानकारीका लागि https://linuxtoys.luminhost.xyz/handbook.html मा दस्तावेजहरू हेर्नुहोस्।",
+  "script_template_doc_comment": "# अधिक जानकारीका लागि https://linux.toys/handbook.html मा दस्तावेजहरू हेर्नुहोस्।",
   "create_new_script_name": "नयाँ स्क्रिप्ट सिर्जना गर्नुहोस्",
   "create_new_script_desc": "नयाँ स्थानीय स्क्रिप्ट सिर्जना गर्नुहोस्। यसलाई सिर्जना गरेपछि तपाईंको पूर्वनिर्धारित टेक्स्ट एडिटरमा खुल्नेछ।",
   "script_name_prompt": "आफ्नो स्क्रिप्ट नाम प्रविष्ट गर्नुहोस्:",

@@ -232,7 +232,7 @@
   "no": "Yo'q",
   "local_scripts_name": "Mahalliy skriptlar",
   "local_scripts_desc": "Sizning o'z qo'shgan skriptlaringiz. Bu yerda yangi skriptlar qo'shish uchun sudrab tashlashingiz mumkin.",
-  "script_template_doc_comment": "# Qo'shimcha ma'lumot uchun https://linuxtoys.luminhost.xyz/handbook.html da hujjatlarga murojaat qiling.",
+  "script_template_doc_comment": "# Qo'shimcha ma'lumot uchun https://linux.toys/handbook.html da hujjatlarga murojaat qiling.",
   "create_new_script_name": "Yangi skript yaratish",
   "create_new_script_desc": "Yangi mahalliy skript yaratish. Yaratilgandan keyin u sizning standart matn muharriringizda ochiladi.",
   "script_name_prompt": "Skript nomini kiriting:",

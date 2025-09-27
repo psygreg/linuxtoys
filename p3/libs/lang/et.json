@@ -233,7 +233,7 @@
   "no": "Ei",
   "local_scripts_name": "Kohalikud skriptid",
   "local_scripts_desc": "Teie enda lisatud skriptid. Uute skriptide lisamiseks võite lohistada ja kukutada.",
-  "script_template_doc_comment": "# Lisateabe saamiseks vaadake dokumentatsiooni aadressil https://linuxtoys.luminhost.xyz/handbook.html.",
+  "script_template_doc_comment": "# Lisateabe saamiseks vaadake dokumentatsiooni aadressil https://linux.toys/handbook.html.",
   "create_new_script_name": "Loo uus skript",
   "create_new_script_desc": "Loo uus kohalik skript. See avatakse teie vaikimisi tekstiredaktoris pärast loomist.",
   "script_name_prompt": "Sisestage oma skripti nimi:",

@@ -225,7 +225,7 @@
   "no": "አይ",
   "local_scripts_name": "አካባቢያዊ ስክሪፕቶች",
   "local_scripts_desc": "የራስዎ የተጨመሩ ስክሪፕቶች። አዲስ ስክሪፕቶችን ለመጨመር እዚህ መጎተት እና መጣል ይችላሉ።",
-  "script_template_doc_comment": "# ለበለጠ መረጃ በ https://linuxtoys.luminhost.xyz/handbook.html ያለውን ሰነድ ይመልከቱ።",
+  "script_template_doc_comment": "# ለበለጠ መረጃ በ https://linux.toys/handbook.html ያለውን ሰነድ ይመልከቱ።",
   "create_new_script_name": "አዲስ ስክሪፕት ይፍጠሩ",
   "create_new_script_desc": "አዲስ አካባቢያዊ ስክሪፕት ይፍጠሩ። ከተፈጠረ በኋላ በነባሪ የጽሑፍ አርታዒዎ ውስጥ ይከፈታል።",
   "script_name_prompt": "የስክሪፕትዎን ስም ያስገቡ:",

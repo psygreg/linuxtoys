@@ -225,7 +225,7 @@
   "no": "خیر",
   "local_scripts_name": "اسکریپت‌های محلی",
   "local_scripts_desc": "اسکریپت‌های اضافه شده توسط خودتان. می‌توانید فایل‌ها را اینجا بکشید و رها کنید تا اسکریپت‌های جدید اضافه کنید.",
-  "script_template_doc_comment": "# برای اطلاعات بیشتر به مستندات در https://linuxtoys.luminhost.xyz/handbook.html مراجعه کنید.",
+  "script_template_doc_comment": "# برای اطلاعات بیشتر به مستندات در https://linux.toys/handbook.html مراجعه کنید.",
   "create_new_script_name": "ایجاد اسکریپت جدید",
   "create_new_script_desc": "یک اسکریپت محلی جدید ایجاد کنید. پس از ایجاد در ویرایشگر متن پیش‌فرض شما باز خواهد شد.",
   "script_name_prompt": "نام اسکریپت خود را وارد کنید:",

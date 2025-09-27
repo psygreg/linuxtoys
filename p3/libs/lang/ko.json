@@ -225,7 +225,7 @@
   "no": "아니요",
   "local_scripts_name": "로컬 스크립트",
   "local_scripts_desc": "사용자가 추가한 스크립트입니다. 새 스크립트를 추가하려면 여기에 드래그 앤 드롭하세요.",
-  "script_template_doc_comment": "# 자세한 정보는 https://linuxtoys.luminhost.xyz/handbook.html 문서를 참조하세요.",
+  "script_template_doc_comment": "# 자세한 정보는 https://linux.toys/handbook.html 문서를 참조하세요.",
   "create_new_script_name": "새 스크립트 생성",
   "create_new_script_desc": "새 로컬 스크립트를 생성합니다. 생성 후 기본 텍스트 편집기에서 열립니다.",
   "script_name_prompt": "스크립트 이름을 입력하세요:",

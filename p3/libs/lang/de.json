@@ -225,7 +225,7 @@
   "no": "Nein",
   "local_scripts_name": "Lokale Skripte",
   "local_scripts_desc": "Ihre eigenen hinzugefügten Skripte. Sie können hier per Drag & Drop neue Skripte hinzufügen.",
-  "script_template_doc_comment": "# Siehe die Dokumentation unter https://linuxtoys.luminhost.xyz/handbook.html für weitere Informationen.",
+  "script_template_doc_comment": "# Siehe die Dokumentation unter https://linux.toys/handbook.html für weitere Informationen.",
   "create_new_script_name": "Neues Skript erstellen",
   "create_new_script_desc": "Ein neues lokales Skript erstellen. Es wird nach der Erstellung in Ihrem Standard-Texteditor geöffnet.",
   "script_name_prompt": "Geben Sie den Namen Ihres Skripts ein:",

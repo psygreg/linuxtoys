@@ -224,7 +224,7 @@
   "no": "Tidak",
   "local_scripts_name": "Skrip Tempatan",
   "local_scripts_desc": "Skrip anda sendiri yang ditambah. Anda boleh seret dan lepas untuk menambah skrip baru di sini.",
-  "script_template_doc_comment": "# Rujuk dokumentasi di https://linuxtoys.luminhost.xyz/handbook.html untuk maklumat lanjut.",
+  "script_template_doc_comment": "# Rujuk dokumentasi di https://linux.toys/handbook.html untuk maklumat lanjut.",
   "create_new_script_name": "Cipta Skrip Baru",
   "create_new_script_desc": "Cipta skrip tempatan baru. Ia akan dibuka dalam editor teks lalai anda selepas penciptaan.",
   "script_name_prompt": "Masukkan nama skrip anda:",

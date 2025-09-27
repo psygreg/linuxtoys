@@ -232,7 +232,7 @@
   "no": "Xeyr",
   "local_scripts_name": "Yerli skriptlər",
   "local_scripts_desc": "Sizin əlavə etdiyiniz skriptlər. Bu yerə yeni skriptlər əlavə etmək üçün sürükləyib buraxa bilərsiniz.",
-  "script_template_doc_comment": "# Əlavə məlumat üçün https://linuxtoys.luminhost.xyz/handbook.html sənədlərinə müraciət edin.",
+  "script_template_doc_comment": "# Əlavə məlumat üçün https://linux.toys/handbook.html sənədlərinə müraciət edin.",
   "create_new_script_name": "Yeni skript yarat",
   "create_new_script_desc": "Yeni yerli skript yarat. Yaratıldıqdan sonra standart mətn redaktorunuzda açılacaq.",
   "script_name_prompt": "Skript adını daxil edin:",

@@ -224,7 +224,7 @@
   "no": "Όχι",
   "local_scripts_name": "Τοπικά Σενάρια",
   "local_scripts_desc": "Τα δικά σας προστιθέμενα σενάρια. Μπορείτε να σύρετε και να αφήσετε για να προσθέσετε νέα σενάρια εδώ.",
-  "script_template_doc_comment": "# Ανατρέξτε στην τεκμηρίωση στο https://linuxtoys.luminhost.xyz/handbook.html για περισσότερες πληροφορίες.",
+  "script_template_doc_comment": "# Ανατρέξτε στην τεκμηρίωση στο https://linux.toys/handbook.html για περισσότερες πληροφορίες.",
   "create_new_script_name": "Δημιουργία Νέου Σεναρίου",
   "create_new_script_desc": "Δημιουργία νέου τοπικού σεναρίου. Θα ανοίξει στον προεπιλεγμένο επεξεργαστή κειμένου σας μετά τη δημιουργία.",
   "script_name_prompt": "Εισάγετε το όνομα του σεναρίου σας:",

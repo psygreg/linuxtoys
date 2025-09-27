@@ -225,7 +225,7 @@
   "no": "نہیں",
   "local_scripts_name": "مقامی اسکرپٹس",
   "local_scripts_desc": "آپ کے اپنے شامل کردہ اسکرپٹس۔ نئے اسکرپٹس شامل کرنے کے لیے یہاں ڈریگ اینڈ ڈراپ کر سکتے ہیں۔",
-  "script_template_doc_comment": "# مزید معلومات کے لیے https://linuxtoys.luminhost.xyz/handbook.html پر دستاویزات دیکھیں۔",
+  "script_template_doc_comment": "# مزید معلومات کے لیے https://linux.toys/handbook.html پر دستاویزات دیکھیں۔",
   "create_new_script_name": "نیا اسکرپٹ بنائیں",
   "create_new_script_desc": "ایک نیا مقامی اسکرپٹ بنائیں۔ یہ بننے کے بعد آپ کے ڈیفالٹ ٹیکسٹ ایڈیٹر میں کھلے گا۔",
   "script_name_prompt": "اپنے اسکرپٹ کا نام درج کریں:",

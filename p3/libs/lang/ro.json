@@ -233,7 +233,7 @@
   "no": "Nu",
   "local_scripts_name": "Scripturi Locale",
   "local_scripts_desc": "Scripturile dumneavoastră adăugate personal. Puteți trage și plasa pentru a adăuga scripturi noi aici.",
-  "script_template_doc_comment": "# Consultați documentația la https://linuxtoys.luminhost.xyz/handbook.html pentru mai multe informații.",
+  "script_template_doc_comment": "# Consultați documentația la https://linux.toys/handbook.html pentru mai multe informații.",
   "create_new_script_name": "Creați Script Nou",
   "create_new_script_desc": "Creați un script local nou. Va fi deschis în editorul de text prestabilit după creare.",
   "script_name_prompt": "Introduceți numele scriptului dumneavoastră:",

@@ -233,7 +233,7 @@
   "no": "Nē",
   "local_scripts_name": "Vietējie skripti",
   "local_scripts_desc": "Jūsu pievienotie skripti. Varat vilkt un nomest, lai pievienotu jaunus skriptus šeit.",
-  "script_template_doc_comment": "# Skatiet dokumentāciju https://linuxtoys.luminhost.xyz/handbook.html papildinformācijai.",
+  "script_template_doc_comment": "# Skatiet dokumentāciju https://linux.toys/handbook.html papildinformācijai.",
   "create_new_script_name": "Izveidot jaunu skriptu",
   "create_new_script_desc": "Izveidot jaunu vietējo skriptu. Tas tiks atvērts jūsu noklusējuma teksta redaktorā pēc izveides.",
   "script_name_prompt": "Ievadiet sava skripta nosaukumu:",

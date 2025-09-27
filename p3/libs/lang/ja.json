@@ -225,7 +225,7 @@
   "no": "いいえ",
   "local_scripts_name": "ローカルスクリプト",
   "local_scripts_desc": "あなた自身が追加したスクリプトです。ここにドラッグ＆ドロップして新しいスクリプトを追加できます。",
-  "script_template_doc_comment": "# 詳細については https://linuxtoys.luminhost.xyz/handbook.html のドキュメントを参照してください。",
+  "script_template_doc_comment": "# 詳細については https://linux.toys/handbook.html のドキュメントを参照してください。",
   "create_new_script_name": "新しいスクリプトを作成",
   "create_new_script_desc": "新しいローカルスクリプトを作成します。作成後、デフォルトのテキストエディターで開かれます。",
   "script_name_prompt": "スクリプト名を入力してください：",

@@ -233,7 +233,7 @@
   "no": "မဟုတ်ပေ",
   "local_scripts_name": "ဒေသဆိုင်ရာ စခရင့်များ",
   "local_scripts_desc": "သင့်ကိုယ်ပိုင် ထည့်သွင်းထားသော စခရင့်များ။ အသစ်စခရင့်များကို ထည့်သွင်းရန် ဒရက်နှင့် ချပါ။",
-  "script_template_doc_comment": "# အသေးစိတ်အချက်အလက်များအတွက် https://linuxtoys.luminhost.xyz/handbook.html တွင် စာရွက်စာတမ်းကို ကိုးကားပါ။",
+  "script_template_doc_comment": "# အသေးစိတ်အချက်အလက်များအတွက် https://linux.toys/handbook.html တွင် စာရွက်စာတမ်းကို ကိုးကားပါ။",
   "create_new_script_name": "အသစ်စခရင့် ဖန်တီးရန်",
   "create_new_script_desc": "ဒေသဆိုင်ရာ စခရင့်အသစ်ကို ဖန်တီးရန်။ ၎င်းကို ဖန်တီးပြီးနောက် သင့်ပုံသေ စာသားတည်းဖြတ်ကိရိယာတွင် ဖွင့်မည်။",
   "script_name_prompt": "သင့်စခရင့် အမည်ကို ထည့်သွင်းပါ:",

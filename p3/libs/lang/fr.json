@@ -225,7 +225,7 @@
   "no": "Non",
   "local_scripts_name": "Scripts locaux",
   "local_scripts_desc": "Vos propres scripts ajoutés. Vous pouvez glisser-déposer pour ajouter de nouveaux scripts ici.",
-  "script_template_doc_comment": "# Consultez la documentation sur https://linuxtoys.luminhost.xyz/handbook.html pour plus d'informations.",
+  "script_template_doc_comment": "# Consultez la documentation sur https://linux.toys/handbook.html pour plus d'informations.",
   "create_new_script_name": "Créer un nouveau script",
   "create_new_script_desc": "Créer un nouveau script local. Il sera ouvert dans votre éditeur de texte par défaut après la création.",
   "script_name_prompt": "Entrez le nom de votre script :",

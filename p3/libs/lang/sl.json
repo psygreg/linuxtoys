@@ -233,7 +233,7 @@
   "no": "Ne",
   "local_scripts_name": "Lokalne skripte",
   "local_scripts_desc": "Vaše lastne dodane skripte. Tukaj lahko povlečete in spustite nove skripte.",
-  "script_template_doc_comment": "# Glejte dokumentacijo na https://linuxtoys.luminhost.xyz/handbook.html za več informacij.",
+  "script_template_doc_comment": "# Glejte dokumentacijo na https://linux.toys/handbook.html za več informacij.",
   "create_new_script_name": "Ustvari novo skripto",
   "create_new_script_desc": "Ustvarite novo lokalno skripto. Odprla se bo v vašem privzetem urejevalniku besedil po ustvarjanju.",
   "script_name_prompt": "Vnesite ime vaše skripte:",

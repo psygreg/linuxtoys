@@ -225,7 +225,7 @@
   "no": "Нет",
   "local_scripts_name": "Локальные скрипты",
   "local_scripts_desc": "Ваши собственные добавленные скрипты. Вы можете перетащить файлы сюда, чтобы добавить новые скрипты.",
-  "script_template_doc_comment": "# Обратитесь к документации на https://linuxtoys.luminhost.xyz/handbook.html для получения дополнительной информации.",
+  "script_template_doc_comment": "# Обратитесь к документации на https://linux.toys/handbook.html для получения дополнительной информации.",
   "create_new_script_name": "Создать новый скрипт",
   "create_new_script_desc": "Создать новый локальный скрипт. Он будет открыт в вашем текстовом редакторе по умолчанию после создания.",
   "script_name_prompt": "Введите имя вашего скрипта:",

@@ -233,7 +233,7 @@
   "no": "Nej",
   "local_scripts_name": "Lokale scripts",
   "local_scripts_desc": "Dine egne tilføjede scripts. Du kan trække og slippe for at tilføje nye scripts her.",
-  "script_template_doc_comment": "# Se dokumentationen på https://linuxtoys.luminhost.xyz/handbook.html for mere information.",
+  "script_template_doc_comment": "# Se dokumentationen på https://linux.toys/handbook.html for mere information.",
   "create_new_script_name": "Opret nyt script",
   "create_new_script_desc": "Opret et nyt lokalt script. Det vil blive åbnet i din standard tekstredigerer efter oprettelse.",
   "script_name_prompt": "Indtast dit scriptnavn:",

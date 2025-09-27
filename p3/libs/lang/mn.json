@@ -232,7 +232,7 @@
   "no": "Үгүй",
   "local_scripts_name": "Дотоод скриптүүд",
   "local_scripts_desc": "Таны нэмсэн скриптүүд. Энд шинэ скриптүүд нэмэхийн тулд чирж тавих боломжтой.",
-  "script_template_doc_comment": "# Нэмэлт мэдээлэл авахын тулд https://linuxtoys.luminhost.xyz/handbook.html баримтжуулалтыг үзнэ үү.",
+  "script_template_doc_comment": "# Нэмэлт мэдээлэл авахын тулд https://linux.toys/handbook.html баримтжуулалтыг үзнэ үү.",
   "create_new_script_name": "Шинэ скрипт үүсгэх",
   "create_new_script_desc": "Шинэ дотоод скрипт үүсгэх. Үүсгэгдсэний дараа таны анхдагч текст засварлагчдаа нээгдэнэ.",
   "script_name_prompt": "Скриптийн нэрийг оруулна уу:",

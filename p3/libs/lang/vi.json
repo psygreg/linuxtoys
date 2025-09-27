@@ -225,7 +225,7 @@
   "no": "Không",
   "local_scripts_name": "Script Cục Bộ",
   "local_scripts_desc": "Các script do bạn tự thêm. Bạn có thể kéo và thả để thêm script mới ở đây.",
-  "script_template_doc_comment": "# Tham khảo tài liệu tại https://linuxtoys.luminhost.xyz/handbook.html để biết thêm thông tin.",
+  "script_template_doc_comment": "# Tham khảo tài liệu tại https://linux.toys/handbook.html để biết thêm thông tin.",
   "create_new_script_name": "Tạo Script Mới",
   "create_new_script_desc": "Tạo một script cục bộ mới. Nó sẽ được mở trong trình soạn thảo văn bản mặc định của bạn sau khi tạo.",
   "script_name_prompt": "Nhập tên script của bạn:",

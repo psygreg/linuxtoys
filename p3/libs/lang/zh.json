@@ -227,7 +227,7 @@
   "no": "否",
   "local_scripts_name": "本地脚本",
   "local_scripts_desc": "您自己添加的脚本。您可以拖放文件来在这里添加新脚本。",
-  "script_template_doc_comment": "# 请参阅 https://linuxtoys.luminhost.xyz/handbook.html 的文档以获取更多信息。",
+  "script_template_doc_comment": "# 请参阅 https://linux.toys/handbook.html 的文档以获取更多信息。",
   "create_new_script_name": "创建新脚本",
   "create_new_script_desc": "创建一个新的本地脚本。创建后将在您的默认文本编辑器中打开。",
   "script_name_prompt": "输入您的脚本名称：",

@@ -233,7 +233,7 @@
   "no": "ទេ",
   "local_scripts_name": "ស្គ្រីបមូលដ្ឋាន",
   "local_scripts_desc": "ស្គ្រីបដែលអ្នកបានបន្ថែមផ្ទាល់។ អ្នកអាចអូស និងទម្លាក់ដើម្បីបន្ថែមស្គ្រីបថ្មី។",
-  "script_template_doc_comment": "# សូមយោងទៅឯកសារនៅ https://linuxtoys.luminhost.xyz/handbook.html សម្រាប់ព័ត៌មានបន្ថែម។",
+  "script_template_doc_comment": "# សូមយោងទៅឯកសារនៅ https://linux.toys/handbook.html សម្រាប់ព័ត៌មានបន្ថែម។",
   "create_new_script_name": "បង្កើតស្គ្រីបថ្មី",
   "create_new_script_desc": "បង្កើតស្គ្រីបមូលដ្ឋានថ្មី។ វានឹងត្រូវបានបើកនៅក្នុងកម្មវិធីកែសម្រួលអត្ថបទលំនាំដើមរបស់អ្នកបន្ទាប់ពីបង្កើត។",
   "script_name_prompt": "បញ្ចូលឈ្មោះស្គ្រីបរបស់អ្នក៖",

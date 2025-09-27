@@ -233,7 +233,7 @@
   "no": "Nei",
   "local_scripts_name": "Lokale skript",
   "local_scripts_desc": "Dine egne tilføyde skript. Du kan dra og slippe for å legge til nye skript her.",
-  "script_template_doc_comment": "# Se dokumentasjonen på https://linuxtoys.luminhost.xyz/handbook.html for mer informasjon.",
+  "script_template_doc_comment": "# Se dokumentasjonen på https://linux.toys/handbook.html for mer informasjon.",
   "create_new_script_name": "Opprett nytt skript",
   "create_new_script_desc": "Opprett et nytt lokalt skript. Det vil åpnes i din standard tekstredigerer etter opprettelse.",
   "script_name_prompt": "Skriv inn skriptnavnet ditt:",

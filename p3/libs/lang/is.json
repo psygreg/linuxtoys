@@ -233,7 +233,7 @@
   "no": "Nei",
   "local_scripts_name": "Staðbundnar skriftur",
   "local_scripts_desc": "Þínar eigin bættar skriftur. Þú getur dregið og sleppt til að bæta við nýjum skriftum hér.",
-  "script_template_doc_comment": "# Vísar til skjölunarinnar á https://linuxtoys.luminhost.xyz/handbook.html fyrir frekari upplýsingar.",
+  "script_template_doc_comment": "# Vísar til skjölunarinnar á https://linux.toys/handbook.html fyrir frekari upplýsingar.",
   "create_new_script_name": "Búa til nýja skriftu",
   "create_new_script_desc": "Búa til nýja staðbundna skriftu. Hún verður opin í sjálfgefna textaritli þínum eftir að hún er búin til.",
   "script_name_prompt": "Sláðu inn nafn skriftunnar þinnar:",

@@ -233,7 +233,7 @@
   "no": "Не",
   "local_scripts_name": "Скриптҳои маҳаллӣ",
   "local_scripts_desc": "Скриптҳои худи шумо. Шумо метавонед скриптҳои навро бо кашидан ва гузоштан илова кунед.",
-  "script_template_doc_comment": "# Барои маълумоти бештар ба ҳуҷҷатҳо дар https://linuxtoys.luminhost.xyz/handbook.html муроҷиат кунед.",
+  "script_template_doc_comment": "# Барои маълумоти бештар ба ҳуҷҷатҳо дар https://linux.toys/handbook.html муроҷиат кунед.",
   "create_new_script_name": "Скрипти нав эҷод кунед",
   "create_new_script_desc": "Скрипти маҳаллии нав эҷод кунед. Он пас аз эҷод дар муҳаррири матнии пешфарзи шумо кушода мешавад.",
   "script_name_prompt": "Номи скрипти худро ворид кунед:",

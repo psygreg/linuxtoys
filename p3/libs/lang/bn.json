@@ -224,7 +224,7 @@
   "no": "না",
   "local_scripts_name": "স্থানীয় স্ক্রিপ্ট",
   "local_scripts_desc": "আপনার নিজের যোগ করা স্ক্রিপ্ট। এখানে নতুন স্ক্রিপ্ট যোগ করতে আপনি ড্র্যাগ এবং ড্রপ করতে পারেন।",
-  "script_template_doc_comment": "# আরও তথ্যের জন্য https://linuxtoys.luminhost.xyz/handbook.html এ ডকুমেন্টেশন দেখুন।",
+  "script_template_doc_comment": "# আরও তথ্যের জন্য https://linux.toys/handbook.html এ ডকুমেন্টেশন দেখুন।",
   "create_new_script_name": "নতুন স্ক্রিপ্ট তৈরি করুন",
   "create_new_script_desc": "একটি নতুন স্থানীয় স্ক্রিপ্ট তৈরি করুন। তৈরি হওয়ার পর এটি আপনার ডিফল্ট টেক্সট এডিটরে খোলা হবে।",
   "script_name_prompt": "আপনার স্ক্রিপ্টের নাম লিখুন:",

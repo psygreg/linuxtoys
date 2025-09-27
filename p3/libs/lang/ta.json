@@ -224,7 +224,7 @@
   "no": "இல்லை",
   "local_scripts_name": "உள்ளூரிய ஸ்கிரிப்ட்டுகள்",
   "local_scripts_desc": "நீங்கள் சேர்த்த உங்கள் சொந்த ஸ்கிரிப்ட்டுகள். புதிய ஸ்கிரிப்ட்டுகளைச் சேர்க்க இங்கே இழுக்க மற்றும் விட்டுவிடலாம்.",
-  "script_template_doc_comment": "# https://linuxtoys.luminhost.xyz/handbook.html இல் ஆவணத்தைப் பார்க்கவும்.",
+  "script_template_doc_comment": "# https://linux.toys/handbook.html இல் ஆவணத்தைப் பார்க்கவும்.",
   "create_new_script_name": "புதிய ஸ்கிரிப்ட்டை உருவாக்கு",
   "create_new_script_desc": "ஒரு புதிய உள்ளூரிய ஸ்கிரிப்ட்டை உருவாக்கு. உருவாக்கத்திற்குப் பிறகு இது உங்கள் இயல்புநிலை உரை எடிட்டரில் திறக்கப்படும்.",
   "script_name_prompt": "உங்கள் ஸ்கிரிப்ட் பெயரை உள்ளீடு செய்யவும்:",

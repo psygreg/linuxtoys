@@ -233,7 +233,7 @@
   "no": "ບໍ່",
   "local_scripts_name": "ສະຄິບທ້ອງຖິ່ນ",
   "local_scripts_desc": "ສະຄິບຂອງທ່ານທີ່ເພີ່ມເຂົ້າ. ທ່ານສາມາດລາກແລະວາງເພື່ອເພີ່ມສະຄິບໃໝ່ທີ່ນີ້.",
-  "script_template_doc_comment": "# ອ້າງອີງເຖິງເອກະສານໃນ https://linuxtoys.luminhost.xyz/handbook.html ສໍາລັບຂໍ້ມູນເພີ່ມເຕີມ.",
+  "script_template_doc_comment": "# ອ້າງອີງເຖິງເອກະສານໃນ https://linux.toys/handbook.html ສໍາລັບຂໍ້ມູນເພີ່ມເຕີມ.",
   "create_new_script_name": "ສ້າງສະຄິບໃໝ່",
   "create_new_script_desc": "ສ້າງສະຄິບທ້ອງຖິ່ນໃໝ່. ມັນຈະຖືກເປີດໃນເຄື່ອງມືແກ້ໄຂຂໍ້ຄວາມເລີ່ມຕົ້ນຂອງທ່ານຫຼັງຈາກການສ້າງ.",
   "script_name_prompt": "ໃສ່ຊື່ສະຄິບຂອງທ່ານ:",

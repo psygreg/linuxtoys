@@ -233,7 +233,7 @@
   "no": "Nem",
   "local_scripts_name": "Helyi szkriptek",
   "local_scripts_desc": "Saját hozzáadott szkriptek. Húzd és ejtsd ide új szkriptek hozzáadásához.",
-  "script_template_doc_comment": "# Lásd a dokumentációt a https://linuxtoys.luminhost.xyz/handbook.html címen további információért.",
+  "script_template_doc_comment": "# Lásd a dokumentációt a https://linux.toys/handbook.html címen további információért.",
   "create_new_script_name": "Új szkript létrehozása",
   "create_new_script_desc": "Hozzon létre új helyi szkriptet. Megnyílik az alapértelmezett szövegszerkesztőben létrehozás után.",
   "script_name_prompt": "Adja meg a szkript nevét:",

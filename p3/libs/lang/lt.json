@@ -233,7 +233,7 @@
   "no": "Ne",
   "local_scripts_name": "Vietiniai scenarijai",
   "local_scripts_desc": "Jūsų pridėti scenarijai. Galite vilkti ir mesti, kad pridėtumėte naujus scenarijus čia.",
-  "script_template_doc_comment": "# Žr. dokumentaciją https://linuxtoys.luminhost.xyz/handbook.html daugiau informacijos.",
+  "script_template_doc_comment": "# Žr. dokumentaciją https://linux.toys/handbook.html daugiau informacijos.",
   "create_new_script_name": "Sukurti naują scenarijų",
   "create_new_script_desc": "Sukurti naują vietinį scenarijų. Jis bus atidarytas jūsų numatytajame teksto redaktoriuje po sukūrimo.",
   "script_name_prompt": "Įveskite savo scenarijaus pavadinimą:",

@@ -225,7 +225,7 @@
   "no": "Hayır",
   "local_scripts_name": "Yerel Betikler",
   "local_scripts_desc": "Kendi eklediğiniz betikler. Yeni betikler eklemek için buraya sürükleyip bırakabilirsiniz.",
-  "script_template_doc_comment": "# Daha fazla bilgi için https://linuxtoys.luminhost.xyz/handbook.html adresindeki belgelere bakın.",
+  "script_template_doc_comment": "# Daha fazla bilgi için https://linux.toys/handbook.html adresindeki belgelere bakın.",
   "create_new_script_name": "Yeni Betik Oluştur",
   "create_new_script_desc": "Yeni bir yerel betik oluşturun. Oluşturulduktan sonra varsayılan metin düzenleyicinizde açılacaktır.",
   "script_name_prompt": "Betik adınızı girin:",

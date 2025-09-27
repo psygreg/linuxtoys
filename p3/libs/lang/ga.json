@@ -233,7 +233,7 @@
   "no": "Níl",
   "local_scripts_name": "Scriptanna Áitiúla",
   "local_scripts_desc": "Do scriptanna féin curtha leis. Is féidir leat tarraingt agus scaoileadh chun scriptanna nua a chur leis anseo.",
-  "script_template_doc_comment": "# Déan tagairt don doiciméadú ag https://linuxtoys.luminhost.xyz/handbook.html le haghaidh tuilleadh eolais.",
+  "script_template_doc_comment": "# Déan tagairt don doiciméadú ag https://linux.toys/handbook.html le haghaidh tuilleadh eolais.",
   "create_new_script_name": "Cruthaigh Script Nua",
   "create_new_script_desc": "Cruthaigh script áitiúil nua. Osclófar é i do chuiditheoir téacs réamhshocraithe tar éis cruthaithe.",
   "script_name_prompt": "Iontráil d'ainm script:",

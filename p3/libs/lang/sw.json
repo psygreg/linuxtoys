@@ -225,7 +225,7 @@
   "no": "Hapana",
   "local_scripts_name": "Hati za Ndani",
   "local_scripts_desc": "Hati zako mwenyewe ulizoongeza. Unaweza kukokota na kuacha ili kuongeza hati mpya hapa.",
-  "script_template_doc_comment": "# Tazama nyaraka katika https://linuxtoys.luminhost.xyz/handbook.html kwa maelezo zaidi.",
+  "script_template_doc_comment": "# Tazama nyaraka katika https://linux.toys/handbook.html kwa maelezo zaidi.",
   "create_new_script_name": "Unda Hati Mpya",
   "create_new_script_desc": "Unda hati mpya ya ndani. Itafunguliwa katika kihariri chako cha maandishi cha msingi baada ya kuundwa.",
   "script_name_prompt": "Ingiza jina la hati yako:",

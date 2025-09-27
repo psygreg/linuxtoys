@@ -232,7 +232,7 @@
   "no": "Ոչ",
   "local_scripts_name": "Լոկալ սկրիպտներ",
   "local_scripts_desc": "Ձեր սեփական ավելացված սկրիպտները: Դուք կարող եք քաշել և թողնել՝ նոր սկրիպտներ ավելացնելու համար:",
-  "script_template_doc_comment": "# Հղում դեպի փաստաթղթերը https://linuxtoys.luminhost.xyz/handbook.html կայքում լրացուցիչ տեղեկությունների համար:",
+  "script_template_doc_comment": "# Հղում դեպի փաստաթղթերը https://linux.toys/handbook.html կայքում լրացուցիչ տեղեկությունների համար:",
   "create_new_script_name": "Ստեղծել նոր սկրիպտ",
   "create_new_script_desc": "Ստեղծել նոր լոկալ սկրիպտ: Այն կբացվի ձեր նախընտրած տեքստային խմբագրիչում ստեղծումից հետո:",
   "script_name_prompt": "Մուտքագրեք ձեր սկրիպտի անունը:",

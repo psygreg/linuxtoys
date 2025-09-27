@@ -225,7 +225,7 @@
   "no": "Nee",
   "local_scripts_name": "Lokale Scripts",
   "local_scripts_desc": "Uw eigen toegevoegde scripts. U kunt slepen en neerzetten om hier nieuwe scripts toe te voegen.",
-  "script_template_doc_comment": "# Raadpleeg de documentatie op https://linuxtoys.luminhost.xyz/handbook.html voor meer informatie.",
+  "script_template_doc_comment": "# Raadpleeg de documentatie op https://linux.toys/handbook.html voor meer informatie.",
   "create_new_script_name": "Nieuw Script Maken",
   "create_new_script_desc": "Maak een nieuw lokaal script aan. Het wordt geopend in uw standaard teksteditor na aanmaak.",
   "script_name_prompt": "Voer uw scriptnaam in:",

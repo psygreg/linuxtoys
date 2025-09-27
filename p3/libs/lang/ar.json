@@ -225,7 +225,7 @@
   "no": "لا",
   "local_scripts_name": "النصوص البرمجية المحلية",
   "local_scripts_desc": "النصوص البرمجية التي أضفتها بنفسك. يمكنك السحب والإفلات لإضافة نصوص برمجية جديدة هنا.",
-  "script_template_doc_comment": "# راجع الوثائق على https://linuxtoys.luminhost.xyz/handbook.html للمزيد من المعلومات.",
+  "script_template_doc_comment": "# راجع الوثائق على https://linux.toys/handbook.html للمزيد من المعلومات.",
   "create_new_script_name": "إنشاء نص برمجي جديد",
   "create_new_script_desc": "إنشاء نص برمجي محلي جديد. سيتم فتحه في محرر النصوص الافتراضي بعد الإنشاء.",
   "script_name_prompt": "أدخل اسم النص البرمجي:",

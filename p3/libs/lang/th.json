@@ -225,7 +225,7 @@
   "no": "ไม่ใช่",
   "local_scripts_name": "สคริปต์ในเครื่อง",
   "local_scripts_desc": "สคริปต์ที่คุณเพิ่มเอง คุณสามารถลากและวางเพื่อเพิ่มสคริปต์ใหม่ที่นี่",
-  "script_template_doc_comment": "# ดูเอกสารได้ที่ https://linuxtoys.luminhost.xyz/handbook.html สำหรับข้อมูลเพิ่มเติม",
+  "script_template_doc_comment": "# ดูเอกสารได้ที่ https://linux.toys/handbook.html สำหรับข้อมูลเพิ่มเติม",
   "create_new_script_name": "สร้างสคริปต์ใหม่",
   "create_new_script_desc": "สร้างสคริปต์ในเครื่องใหม่ จะเปิดในโปรแกรมแก้ไขข้อความเริ่มต้นของคุณหลังจากสร้างเสร็จ",
   "script_name_prompt": "ป้อนชื่อสคริปต์ของคุณ:",

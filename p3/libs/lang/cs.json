@@ -225,7 +225,7 @@
   "no": "Ne",
   "local_scripts_name": "Lokální skripty",
   "local_scripts_desc": "Vaše vlastní přidané skripty. Můžete přetáhnout a pustit pro přidání nových skriptů zde.",
-  "script_template_doc_comment": "# Odkazujte na dokumentaci na https://linuxtoys.luminhost.xyz/handbook.html pro více informací.",
+  "script_template_doc_comment": "# Odkazujte na dokumentaci na https://linux.toys/handbook.html pro více informací.",
   "create_new_script_name": "Vytvořit nový skript",
   "create_new_script_desc": "Vytvořit nový lokální skript. Bude otevřen ve vašem výchozím textovém editoru po vytvoření.",
   "script_name_prompt": "Zadejte název vašeho skriptu:",

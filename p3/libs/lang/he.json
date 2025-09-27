@@ -225,7 +225,7 @@
   "no": "לא",
   "local_scripts_name": "סקריפטים מקומיים",
   "local_scripts_desc": "הסקריפטים שלך שהוספת. אתה יכול לגרור ולשחרר כדי להוסיף סקריפטים חדשים כאן.",
-  "script_template_doc_comment": "# עיין בתיעוד בכתובת https://linuxtoys.luminhost.xyz/handbook.html למידע נוסף.",
+  "script_template_doc_comment": "# עיין בתיעוד בכתובת https://linux.toys/handbook.html למידע נוסף.",
   "create_new_script_name": "צור סקריפט חדש",
   "create_new_script_desc": "צור סקריפט מקומי חדש. הוא ייפתח בעורך הטקסט ברירת המחדל שלך לאחר היצירה.",
   "script_name_prompt": "הזן את שם הסקריפט שלך:",
