@@ -201,6 +201,7 @@
   "topgrade_desc": "Uno strumento per aggiornare tutti i pacchetti installati su qualsiasi sistema Linux.",
   "cockpitclient_desc": "Un'interfaccia web per gestire server Linux (client).",
   "adir_desc": "Installa tutti i pacchetti necessari per unirsi a domini Active Directory usando realmd.",
+  "termius_desc": "Client SSH moderno per Linux con interfaccia grafica intuitiva e funzionalità avanzate di gestione delle connessioni.",
   "select_language": "Seleziona Lingua",
   "select_language_title": "Selezione Lingua",
   "select_language_message": "Seleziona la tua lingua preferita:",

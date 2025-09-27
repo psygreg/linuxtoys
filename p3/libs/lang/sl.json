@@ -209,7 +209,7 @@
   "topgrade_desc": "Orodje za nadgradnjo vseh nameščenih paketov na katerem koli Linux sistemu.",
   "cockpitclient_desc": "Spletni vmesnik za upravljanje Linux strežnikov (odjemalec).",
   "adir_desc": "Namesti vse potrebne pakete za pridružitev Active Directory domenam z uporabo realmd.",
-
+  "termius_desc": "Sodobni SSH odjemalec za Linux z intuitivnim grafičnim vmesnikom in naprednimi funkcijami upravljanja povezav.",
   "select_language": "Izberi jezik",
   "select_language_title": "Izbira jezika",
   "select_language_message": "Prosimo, izberite svoj preferirani jezik:",

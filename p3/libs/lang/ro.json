@@ -209,7 +209,7 @@
   "topgrade_desc": "Un instrument pentru actualizarea tuturor pachetelor instalate pe orice sistem Linux.",
   "cockpitclient_desc": "O interfață bazată pe web pentru gestionarea serverelor Linux (client).",
   "adir_desc": "Instalează toate pachetele necesare pentru alăturarea domeniilor Active Directory folosind realmd.",
-
+  "termius_desc": "Client SSH modern pentru Linux cu interfață grafică intuitivă și funcții avansate de gestionare a conexiunilor.",
   "select_language": "Selectați Limba",
   "select_language_title": "Selecția Limbii",
   "select_language_message": "Vă rugăm să selectați limba preferată:",

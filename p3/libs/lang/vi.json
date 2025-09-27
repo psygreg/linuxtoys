@@ -201,6 +201,7 @@
   "topgrade_desc": "Công cụ để nâng cấp tất cả các gói đã cài đặt trên bất kỳ hệ thống Linux nào.",
   "cockpitclient_desc": "Giao diện dựa trên web để quản lý máy chủ Linux (client).",
   "adir_desc": "Cài đặt tất cả các gói cần thiết để tham gia domain Active Directory bằng realmd.",
+  "termius_desc": "Khách hàng SSH hiện đại cho Linux với giao diện đồ họa trực quan và các tính năng quản lý kết nối nâng cao.",
   "select_language": "Chọn ngôn ngữ",
   "select_language_title": "Lựa chọn ngôn ngữ",
   "select_language_message": "Vui lòng chọn ngôn ngữ ưa thích của bạn:",

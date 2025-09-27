@@ -201,6 +201,7 @@
   "topgrade_desc": "Een tool voor het upgraden van alle geïnstalleerde pakketten op elk Linux systeem.",
   "cockpitclient_desc": "Een web-gebaseerde interface voor het beheren van Linux servers (client).",
   "adir_desc": "Installeert alle pakketten die nodig zijn om lid te worden van Active Directory domeinen met realmd.",
+  "termius_desc": "Moderne SSH-client voor Linux met een intuïtieve grafische interface en geavanceerde verbindingsbeheerfuncties.",
   "select_language": "Taal Selecteren",
   "select_language_title": "Taalselectie",
   "select_language_message": "Selecteer alsjeblieft je gewenste taal:",

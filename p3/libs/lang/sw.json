@@ -201,6 +201,7 @@
   "topgrade_desc": "Chombo cha kuboresha vifurushi vyote vilivyosakinishwa kwenye mfumo wowote wa Linux.",
   "cockpitclient_desc": "Kiolesura cha wavuti cha kusimamia seva za Linux (mteja).",
   "adir_desc": "Inasakinisha vifurushi vyote vinavyohitajika kujiunga na maeneo ya Active Directory kwa kutumia realmd.",
+  "termius_desc": "Mteja wa SSH wa kisasa kwa Linux na kiolesura cha picha rahisi kutumia na vipengele vya hali ya juu vya usimamizi wa uhusiano.",
   "select_language": "Chagua Lugha",
   "select_language_title": "Uchaguzi wa Lugha",
   "select_language_message": "Tafadhali chagua lugha unayopendelea:",

@@ -209,7 +209,7 @@
   "topgrade_desc": "Tól fyrir að uppfæra alla uppsetta pakka á hvaða Linux kerfi sem er.",
   "cockpitclient_desc": "Vefbyggður viðmót fyrir stjórnun Linux þjóna (viðskiptavinur).",
   "adir_desc": "Setur upp alla nauðsynlega pakka til að ganga í Active Directory lén með realmd.",
-
+  "termius_desc": "Nútíma SSH viðskiptavinur fyrir Linux með innsæi grafískum viðmóti og háþróuðum tengslastjórnunaraðgerðum.",
   "select_language": "Veldu tungumál",
   "select_language_title": "Tungumálaval",
   "select_language_message": "Vinsamlegast veldu æskilegt tungumál þitt:",

@@ -209,7 +209,7 @@
   "topgrade_desc": "Eszköz minden telepített csomag frissítéséhez bármely Linux rendszeren.",
   "cockpitclient_desc": "Web-alapú interfész Linux szerverek kezeléséhez (kliens).",
   "adir_desc": "Telepíti az összes szükséges csomagot Active Directory domain-ek csatlakozásához realmd használatával.",
-
+  "termius_desc": "Modern SSH kliens Linuxhoz intuitív grafikus felülettel és fejlett kapcsolatkezelési funkciókkal.",
   "select_language": "Nyelv kiválasztása",
   "select_language_title": "Nyelvválasztás",
   "select_language_message": "Kérjük, válassza ki a preferált nyelvet:",

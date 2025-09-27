@@ -209,7 +209,7 @@
   "topgrade_desc": "Rīks visu instalēto pakotņu atjaunināšanai jebkurā Linux sistēmā.",
   "cockpitclient_desc": "Tīmekļa bāzēts interfeiss Linux serveru pārvaldībai (klients).",
   "adir_desc": "Instalē visas nepieciešamās pakotnes, lai pievienotos Active Directory domēniem, izmantojot realmd.",
-
+  "termius_desc": "Mūsdienīgs SSH klients Linux ar intuitīvu grafisko saskarni un uzlabotām savienojumu pārvaldības funkcijām.",
   "select_language": "Atlasīt valodu",
   "select_language_title": "Valodas atlase",
   "select_language_message": "Lūdzu, atlasiet savu vēlamo valodu:",

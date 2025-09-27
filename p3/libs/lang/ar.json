@@ -201,6 +201,7 @@
   "topgrade_desc": "أداة لترقية جميع الحزم المثبتة على أي نظام Linux.",
   "cockpitclient_desc": "واجهة ويب لإدارة خوادم Linux (عميل).",
   "adir_desc": "يثبت جميع الحزم اللازمة للانضمام إلى نطاقات Active Directory باستخدام realmd.",
+  "termius_desc": "عميل SSH حديث لـ Linux مع واجهة رسومية بديهية وميزات إدارة اتصال متقدمة.",
   "select_language": "اختيار اللغة",
   "select_language_title": "اختيار اللغة",
   "select_language_message": "يرجى اختيار لغتك المفضلة:",

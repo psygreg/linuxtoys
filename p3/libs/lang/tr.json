@@ -201,6 +201,7 @@
   "topgrade_desc": "Herhangi bir Linux sisteminde yüklü tüm paketleri yükseltmek için araç.",
   "cockpitclient_desc": "Linux sunucularını yönetmek için web tabanlı arayüz (istemci).",
   "adir_desc": "realmd kullanarak Active Directory etki alanlarına katılmak için gerekli tüm paketleri yükler.",
+  "termius_desc": "Linux için sezgisel grafik arayüz ve gelişmiş bağlantı yönetimi özelliklerine sahip modern SSH istemcisi.",
   "select_language": "Dil Seç",
   "select_language_title": "Dil Seçimi",
   "select_language_message": "Lütfen tercih ettiğiniz dili seçin:",

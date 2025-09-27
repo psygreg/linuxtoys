@@ -201,6 +201,7 @@
   "topgrade_desc": "Työkalu kaikkien asennettujen pakettien päivittämiseen millä tahansa Linux-järjestelmällä.",
   "cockpitclient_desc": "Verkkopohjainen käyttöliittymä Linux-palvelimien hallintaan (asiakas).",
   "adir_desc": "Asentaa kaikki paketit tarpeelliset Active Directory -toimialueisiin liittymiseksi realmdia käyttäen.",
+  "termius_desc": "Moderni SSH-asiakas Linuxille intuitiivisella graafisella käyttöliittymällä ja edistyneillä yhteyksien hallintaominaisuuksilla.",
   "select_language": "Valitse kieli",
   "select_language_title": "Kielen valinta",
   "select_language_message": "Valitse haluamasi kieli:",

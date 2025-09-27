@@ -209,7 +209,7 @@
   "topgrade_desc": "Et verktøy for å oppgradere alle installerte pakker på ethvert Linux-system.",
   "cockpitclient_desc": "Et nettbasert grensesnitt for å administrere Linux-servere (klient).",
   "adir_desc": "Installerer alle pakker nødvendige for å bli med i Active Directory-domener ved hjelp av realmd.",
-
+  "termius_desc": "Moderne SSH-klient for Linux med intuitivt grafisk grensesnitt og avanserte funksjoner for tilkoblingsstyring.",
   "select_language": "Velg språk",
   "select_language_title": "Språkvalg",
   "select_language_message": "Velg ditt foretrukne språk:",

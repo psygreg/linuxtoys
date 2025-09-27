@@ -209,7 +209,7 @@
   "topgrade_desc": "Įrankis atnaujinti visus įdiegtus paketus bet kurioje Linux sistemoje.",
   "cockpitclient_desc": "Žiniatinklio pagrindu sukurtas sąsaja Linux serverių valdymui (klientas).",
   "adir_desc": "Įdiegia visus reikalingus paketus prisijungti prie Active Directory domenų naudojant realmd.",
-
+  "termius_desc": "Šiuolaikinis SSH klientas Linux su intuityviu grafiniu sąsaja ir pažangiomis ryšių valdymo funkcijomis.",
   "select_language": "Pasirinkti kalbą",
   "select_language_title": "Kalbos pasirinkimas",
   "select_language_message": "Prašome pasirinkti pageidaujamą kalbą:",

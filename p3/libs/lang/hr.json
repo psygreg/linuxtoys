@@ -209,7 +209,7 @@
   "topgrade_desc": "Alat za nadogradnju svih instaliranih paketa na bilo kom Linux sustavu.",
   "cockpitclient_desc": "Veb-bazirani interfejs za upravljanje Linux serverima (klijent).",
   "adir_desc": "Instalira sve pakete neophodne za pridruživanje Active Directory domenama koristeći realmd.",
-
+  "termius_desc": "Moderni SSH klijent za Linux s intuitivnim grafičkim interfejsom i naprednim funkcijama upravljanja vezama.",
   "select_language": "Odaberi jezik",
   "select_language_title": "Odabir jezika",
   "select_language_message": "Odaberite svoj preferirani jezik:",

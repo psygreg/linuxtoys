@@ -209,7 +209,7 @@
   "topgrade_desc": "Tööriist kõigi installitud pakettide uuendamiseks mis tahes Linuxi süsteemil.",
   "cockpitclient_desc": "Veebipõhine liides Linuxi serverite haldamiseks (klient).",
   "adir_desc": "Installib kõik paketid, mis on vajalikud Active Directory domeenidesse liitumiseks realmd'i abil.",
-
+  "termius_desc": "Kaasaegne SSH klient Linuxile intuitiivse graafilise liidesega ja täiustatud ühenduste haldamise funktsioonidega.",
   "select_language": "Vali keel",
   "select_language_title": "Keele valik",
   "select_language_message": "Palun valige oma eelistatud keel:",

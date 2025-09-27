@@ -201,6 +201,7 @@
   "topgrade_desc": "모든 Linux 시스템에서 설치된 모든 패키지를 업그레이드하기 위한 도구입니다.",
   "cockpitclient_desc": "Linux 서버를 관리하기 위한 웹 기반 인터페이스입니다(클라이언트).",
   "adir_desc": "realmd를 사용하여 Active Directory 도메인에 가입하는 데 필요한 모든 패키지를 설치합니다.",
+  "termius_desc": "Linux용 현대적인 SSH 클라이언트로, 직관적인 그래픽 인터페이스와 고급 연결 관리 기능을 제공합니다.",
   "select_language": "언어 선택",
   "select_language_title": "언어 선택",
   "select_language_message": "원하는 언어를 선택하세요:",

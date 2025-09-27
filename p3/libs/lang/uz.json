@@ -208,7 +208,7 @@
   "topgrade_desc": "Har qanday Linux tizimida barcha o'rnatilgan paketlarni yangilash vositasi.",
   "cockpitclient_desc": "Linux serverlarini boshqarish uchun veb-asosli interfeys (mijoz).",
   "adir_desc": "Realmd yordamida Active Directory domenlariga qo'shilish uchun kerakli barcha paketlarni o'rnatadi.",
-
+  "termius_desc": "Linux uchun zamonaviy SSH mijozi intuitiv grafik interfeys va ulanishlarni boshqarishning ilg'or funksiyalari bilan.",
   "select_language": "Tilni tanlash",
   "select_language_title": "Til tanlovi",
   "select_language_message": "Iltimos, o'z afzal tilingizni tanlang:",

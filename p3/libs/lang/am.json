@@ -201,6 +201,7 @@
   "topgrade_desc": "በማንኛውም ሊኑክስ ስርዓት ላይ ሁሉንም የተጫኑ ፓኬጆች ለማሻሻል መሳሪያ።",
   "cockpitclient_desc": "የሊኑክስ አገልጋዮችን ለማስተዳደር የድር-ተኮር በይነገጽ (ክላይንት)።",
   "adir_desc": "realmd በመጠቀም ወደ Active Directory domains ለመቀላቀል አስፈላጊ ሁሉንም ፓኬጆች ይጫናል።",
+  "termius_desc": "ለሊኑክስ የሚሆን የአሁኑ የSSH ክላይንት ኢንቱቲቭ ግራፊክ በይነገጽ እና የላቀ የግንኙነት አስተያየት ባህሪያት ጋር።",
   "select_language": "ቋንቋ ይምረጡ",
   "select_language_title": "የቋንቋ ምርጫ",
   "select_language_message": "እባክዎ የሚመርጡትን ቋንቋ ይምረጡ፦",

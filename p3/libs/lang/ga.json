@@ -209,7 +209,7 @@
   "topgrade_desc": "Uirlis chun gach pacáiste suiteáilte a uasghrádú ar aon chóras Linux.",
   "cockpitclient_desc": "Comhéadan gréasán-bhunaithe le haghaidh bainistíochta freastalaithe Linux (cliaint).",
   "adir_desc": "Suiteálann gach pacáiste riachtanach chun páirt a ghlacadh i bhfearainn Active Directory ag baint úsáide as realmd.",
-
+  "termius_desc": "Cliant SSH nua-aimseartha do Linux le comhéadan grafach intuigthe agus gnéithe chun bainistíocht nasc a chur chun cinn.",
   "select_language": "Roghnaigh Teanga",
   "select_language_title": "Roghnú Teanga",
   "select_language_message": "Roghnaigh do theanga roghnaithe le do thoil:",

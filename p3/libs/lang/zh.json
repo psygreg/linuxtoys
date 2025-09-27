@@ -203,6 +203,7 @@
   "topgrade_desc": "升级任何Linux系统上所有已安装软件包的工具。",
   "cockpitclient_desc": "管理Linux服务器的基于网络的界面（客户端）。",
   "adir_desc": "安装使用realmd加入Active Directory域所需的所有软件包。",
+  "termius_desc": "现代Linux SSH客户端，具有直观的图形界面和高级连接管理功能。",
   "select_language": "选择语言",
   "select_language_title": "语言选择",
   "select_language_message": "请选择您的首选语言：",
