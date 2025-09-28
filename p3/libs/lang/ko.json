@@ -261,5 +261,7 @@
   "edu": "교육",
   "edu_desc": "모든 연령대의 학습과 교육을 위한 리소스.",
   "tweaks_desc": "GTK3 앱과 GNOME Shell과 관련된 설정을 테마에서 글꼴 렌더링까지 변경합니다.",
-  "extman_desc": "GNOME 확장을 쉽게 검색, 다운로드 및 관리합니다."
+  "extman_desc": "GNOME 확장을 쉽게 검색, 다운로드 및 관리합니다.",
+  "yay_desc": "Go로 작성된 인기 있는 AUR 도우미. paru와 유사합니다.",
+  "paru_desc": "Rust로 작성된 인기 있는 AUR 도우미. yay와 유사합니다."
 }

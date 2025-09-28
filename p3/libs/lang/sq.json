@@ -270,5 +270,7 @@
   "edu": "Edukimi",
   "edu_desc": "Burime për mësim dhe mësimdhënie për të gjitha moshat.",
   "tweaks_desc": "Ndrysho cilësimet në lidhje me aplikimet GTK3 dhe GNOME Shell nga temat deri te renderimi i shkronjave.",
-  "extman_desc": "Kërko, shkarko dhe menaxho shtesat GNOME lehtësisht."
+  "extman_desc": "Kërko, shkarko dhe menaxho shtesat GNOME lehtësisht.",
+  "yay_desc": "Një ndihmës AUR popullor i shkruar në Go. Ngjashëm me paru.",
+  "paru_desc": "Një ndihmës AUR popullor i shkruar në Rust. Ngjashëm me yay."
 }

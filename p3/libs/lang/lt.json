@@ -270,5 +270,7 @@
   "edu": "Švietimas",
   "edu_desc": "Ištekliai mokymuisi ir mokymui visiems amžiams.",
   "tweaks_desc": "Keisti nustatymus, susijusius su GTK3 programomis ir GNOME Shell nuo temų iki šrifto atvaizdavimo.",
-  "extman_desc": "Lengvai ieškoti, atsisiųsti ir valdyti GNOME plėtinius."
+  "extman_desc": "Lengvai ieškoti, atsisiųsti ir valdyti GNOME plėtinius.",
+  "yay_desc": "Populiarus AUR pagalbininkas, parašytas Go. Panašus į paru.",
+  "paru_desc": "Populiarus AUR pagalbininkas, parašytas Rust. Panašus į yay."
 }

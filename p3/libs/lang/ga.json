@@ -270,5 +270,7 @@
   "edu": "Oideachas",
   "edu_desc": "Acmhainní le haghaidh foghlama agus teagaisc do gach aois.",
   "tweaks_desc": "Athraigh socruithe a bhaineann le haipeanna GTK3 agus GNOME Shell ó théamaí go rindreáil cló.",
-  "extman_desc": "Cuardaigh, íoslódáil agus bainistigh síntí GNOME go héasca."
+  "extman_desc": "Cuardaigh, íoslódáil agus bainistigh síntí GNOME go héasca.",
+  "yay_desc": "Cúntóir AUR móréilimh scríofa i Go. Cosúil le paru.",
+  "paru_desc": "Cúntóir AUR móréilimh scríofa i Rust. Cosúil le yay."
 }

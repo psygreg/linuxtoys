@@ -61,3 +61,4 @@ msg289="작업이 완료되었습니다. 이제 'realm'을 사용하여 Active D
 msg290="RDNA 및 최신 GPU용"
 msg291="Starship이 제대로 작동하려면 터미널에 Nerd Font를 설치하고 활성화해야 합니다. 하나를 설치하려면 'Utilities' -> 'Nerd Fonts'로 이동하십시오."
 msg292="먼저 ostree 시스템에 Docker를 설치해야 합니다. 개발자 섹션에서 찾을 수 있습니다."msg293="/dev/kvm을 찾을 수 없습니다. LSW를 설치하기 전에 BIOS에서 AMD SVM 또는 Intel VT-x/VT-d를 활성화해야 합니다."
+msg294="AUR에서 설치된 패키지는 안전하지 않을 수 있습니다. 주의해서 사용하십시오!"

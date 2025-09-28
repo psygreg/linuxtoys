@@ -270,5 +270,7 @@
   "edu": "Vzdelávanie",
   "edu_desc": "Zdroje pre učenie a vyučovanie pre všetky vekové skupiny.",
   "tweaks_desc": "Zmeňte nastavenia súvisiace s aplikáciami GTK3 a GNOME Shell od tém po vykresľovanie písiem.",
-  "extman_desc": "Ľahko vyhľadávajte, sťahujte a spravujte rozšírenia GNOME."
+  "extman_desc": "Ľahko vyhľadávajte, sťahujte a spravujte rozšírenia GNOME.",
+  "yay_desc": "Populárny pomocník AUR napísaný v Go. Podobný ako paru.",
+  "paru_desc": "Populárny pomocník AUR napísaný v Rust. Podobný ako yay."
 }

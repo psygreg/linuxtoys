@@ -261,5 +261,7 @@
   "edu": "Pendidikan",
   "edu_desc": "Sumber untuk pembelajaran dan pengajaran untuk semua peringkat umur.",
   "tweaks_desc": "Tukar tetapan yang berkaitan dengan aplikasi GTK3 dan GNOME Shell dari tema ke rendering fon.",
-  "extman_desc": "Cari, muat turun dan urus sambungan GNOME dengan mudah."
+  "extman_desc": "Cari, muat turun dan urus sambungan GNOME dengan mudah.",
+  "yay_desc": "Pembantu AUR popular yang ditulis dalam Go. Serupa dengan paru.",
+  "paru_desc": "Pembantu AUR popular yang ditulis dalam Rust. Serupa dengan yay."
 }

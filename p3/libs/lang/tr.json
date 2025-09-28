@@ -261,5 +261,7 @@
   "edu": "Eğitim",
   "edu_desc": "Tüm yaş grupları için öğrenme ve öğretim kaynakları.",
   "tweaks_desc": "GTK3 uygulamaları ve GNOME Shell ile ilgili ayarları temalardan yazı tipi işlemeye kadar değiştirin.",
-  "extman_desc": "GNOME uzantılarını kolayca arayın, indirin ve yönetin."
+  "extman_desc": "GNOME uzantılarını kolayca arayın, indirin ve yönetin.",
+  "yay_desc": "Go ile yazılmış popüler bir AUR yardımcısı. Paru'ya benzer.",
+  "paru_desc": "Rust ile yazılmış popüler bir AUR yardımcısı. Yay'a benzer."
 }

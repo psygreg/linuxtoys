@@ -270,5 +270,7 @@
   "edu": "Oktatás",
   "edu_desc": "Erőforrások tanuláshoz és tanításhoz minden korosztálynak.",
   "tweaks_desc": "Változtassa meg a GTK3 alkalmazásokkal és GNOME Shell-lel kapcsolatos beállításokat a témáktól a betűrenderelésig.",
-  "extman_desc": "Könnyen keresse, töltse le és kezelje a GNOME kiterjesztéseket."
+  "extman_desc": "Könnyen keresse, töltse le és kezelje a GNOME kiterjesztéseket.",
+  "yay_desc": "Népszerű AUR segítő, Go-ban írva. Hasonló a paru-hoz.",
+  "paru_desc": "Népszerű AUR segítő, Rust-ban írva. Hasonló a yay-hoz."
 }

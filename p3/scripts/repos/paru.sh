@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Paru
 # version: 1.0
-# description: Feature packed AUR helper
+# description: paru_desc
 # icon: archpkg.png
 # compat: arch
 
@@ -10,6 +10,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+zenwrn "$msg294"
 sudo_rq
 
 _packages=(base-devel)

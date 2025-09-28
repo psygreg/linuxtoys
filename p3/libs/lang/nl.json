@@ -261,5 +261,7 @@
   "edu": "Onderwijs",
   "edu_desc": "Bronnen voor leren en lesgeven voor alle leeftijden.",
   "tweaks_desc": "Instellingen wijzigen met betrekking tot GTK3-apps en GNOME Shell, van thema's tot fontrendering.",
-  "extman_desc": "GNOME-extensies eenvoudig zoeken, downloaden en beheren."
+  "extman_desc": "GNOME-extensies eenvoudig zoeken, downloaden en beheren.",
+  "yay_desc": "Een populaire AUR-helper geschreven in Go. Vergelijkbaar met paru.",
+  "paru_desc": "Een populaire AUR-helper geschreven in Rust. Vergelijkbaar met yay."
 }

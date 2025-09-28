@@ -270,5 +270,7 @@
   "edu": "Menntun",
   "edu_desc": "Auðlindir fyrir lærdóm og kennslu fyrir alla aldur.",
   "tweaks_desc": "Breyttu stillingum sem tengjast GTK3 forritum og GNOME Shell frá þemum til leturmyndunar.",
-  "extman_desc": "Leitaðu að, halaðu niður og stjórnaðu GNOME viðbótum auðveldlega."
+  "extman_desc": "Leitaðu að, halaðu niður og stjórnaðu GNOME viðbótum auðveldlega.",
+  "yay_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Go. Svipaður og paru.",
+  "paru_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Rust. Svipaður og yay."
 }

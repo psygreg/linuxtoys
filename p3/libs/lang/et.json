@@ -270,5 +270,7 @@
   "edu": "Haridus",
   "edu_desc": "Ressursid õppimiseks ja õpetamiseks kõigile vanustele.",
   "tweaks_desc": "Muuda seadeid, mis on seotud GTK3 rakenduste ja GNOME Shell'iga teemadest fondi renderdamiseni.",
-  "extman_desc": "Otsi, laadi alla ja halda GNOME laiendusi hõlpsasti."
+  "extman_desc": "Otsi, laadi alla ja halda GNOME laiendusi hõlpsasti.",
+  "yay_desc": "Populaarne AUR abiline, kirjutatud Go-s. Sarnane paru-ga.",
+  "paru_desc": "Populaarne AUR abiline, kirjutatud Rust-is. Sarnane yay-ga."
 }

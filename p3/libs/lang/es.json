@@ -261,5 +261,7 @@
   "edu": "Educación",
   "edu_desc": "Recursos para el aprendizaje y la enseñanza para todas las edades.",
   "tweaks_desc": "Cambiar configuraciones relacionadas con aplicaciones GTK3 y GNOME Shell desde temas hasta renderizado de fuentes.",
-  "extman_desc": "Buscar, descargar y gestionar extensiones de GNOME fácilmente."
+  "extman_desc": "Buscar, descargar y gestionar extensiones de GNOME fácilmente.",
+  "yay_desc": "Un asistente AUR popular escrito en Go. Similar a paru.",
+  "paru_desc": "Un asistente AUR popular escrito en Rust. Similar a yay."
 }

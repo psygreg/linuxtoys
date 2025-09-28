@@ -269,5 +269,7 @@
   "edu": "Ta'lim",
   "edu_desc": "Barcha yosh uchun o'rganish va o'qitish uchun resurslar.",
   "tweaks_desc": "GNOME Shell dan mavzulardan tortib shrift renderlashgacha GTK3 ilovalari bilan bog'liq sozlamalarni o'zgartiring.",
-  "extman_desc": "GNOME kengaytmalarini oson qidirish, yuklab olish va boshqarish."
+  "extman_desc": "GNOME kengaytmalarini oson qidirish, yuklab olish va boshqarish.",
+  "yay_desc": "Go tilida yozilgan mashhur AUR yordamchisi. Paru ga o'xshash.",
+  "paru_desc": "Rust tilida yozilgan mashhur AUR yordamchisi. Yay ga o'xshash."
 }

@@ -261,5 +261,7 @@
   "edu": "Giáo dục",
   "edu_desc": "Tài nguyên cho việc học và dạy cho mọi lứa tuổi.",
   "tweaks_desc": "Thay đổi cài đặt liên quan đến ứng dụng GTK3 và GNOME Shell từ chủ đề đến kết xuất phông chữ.",
-  "extman_desc": "Dễ dàng tìm kiếm, tải xuống và quản lý các tiện ích mở rộng GNOME."
+  "extman_desc": "Dễ dàng tìm kiếm, tải xuống và quản lý các tiện ích mở rộng GNOME.",
+  "yay_desc": "Một trợ lý AUR phổ biến được viết bằng Go. Tương tự như paru.",
+  "paru_desc": "Một trợ lý AUR phổ biến được viết bằng Rust. Tương tự như yay."
 }

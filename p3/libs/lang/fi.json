@@ -261,5 +261,7 @@
   "edu": "Koulutus",
   "edu_desc": "Resurssit oppimiseen ja opettamiseen kaikille ikäryhmille.",
   "tweaks_desc": "Muuta GTK3-sovelluksiin ja GNOME Shell -käyttöliittymään liittyviä asetuksia teemoista fonttien renderöintiin.",
-  "extman_desc": "Etsi, lataa ja hallitse GNOME-laajennuksia helposti."
+  "extman_desc": "Etsi, lataa ja hallitse GNOME-laajennuksia helposti.",
+  "yay_desc": "Suosittu AUR-avustaja kirjoitettu Go:lla. Samankaltainen kuin paru.",
+  "paru_desc": "Suosittu AUR-avustaja kirjoitettu Rustilla. Samankaltainen kuin yay."
 }
