@@ -62,7 +62,7 @@ docker_in () { # install docker
     sudo systemctl enable --now docker
     sudo systemctl enable --now docker.socket
     # firewalld fix for fedora
-    if command -v rpm-ostree &> /dev/null || command -v dnf &> /dev/null; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [ "$ID" = "suse" ]; then
         sudo firewall-cmd --zone=docker --change-interface=docker0
         sudo firewall-cmd --zone=docker --add-port=8006/tcp --permanent
         sudo firewall-cmd --zone=docker --add-port=3389/tcp --permanent
@@ -71,7 +71,7 @@ docker_in () { # install docker
 get_winboat () { # gets latest release
     local tag=$(curl -s "https://api.github.com/repos/TibixDev/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     local ver="${tag#v}"
-    if command -v apt &> /dev/null; then
+    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
         if dpkg -s "winboat" &> /dev/null; then
             local hostver="$(dpkg -s winboat | grep -i Version | awk '{print $2}')"
             if [ "$hostver" == "$ver" ]; then
@@ -81,7 +81,7 @@ get_winboat () { # gets latest release
         fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
         sudo apt install -y "./winboat-$ver-amd64.deb"
-    elif command -v dnf &> /dev/null || command -v zypper &> /dev/null || command -v rpm-ostree &> /dev/null; then
+    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [ "$ID" = "suse" ]; then
         if rpm -qi "winboat" &> /dev/null; then
             local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"
             if [ "$hostver" == "$ver" ]; then
@@ -100,7 +100,7 @@ get_winboat () { # gets latest release
         elif command -v zypper &> /dev/null; then
             sudo zypper install -y "winboat-$ver-x86_64.rpm"
         fi
-    elif command -v pacman &> /dev/null; then
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         if pacman -Qi "winboat" &> /dev/null; then
             local hostver="$(pacman -Qi winboat | grep -i Version | awk '{print $3}')"
             if [ "$hostver" == "$ver" ]; then
