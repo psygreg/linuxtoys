@@ -14,9 +14,9 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 root_swap () {
     if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
         sudo_rq
-        btrfs subvolume create /swap
-        btrfs filesystem mkswapfile --size 8g --uuid clear /swap/swapfile
-        swapon /swap/swapfile
+        sudo btrfs subvolume create /swap
+        sudo btrfs filesystem mkswapfile --size 8g --uuid clear /swap/swapfile
+        sudo swapon /swap/swapfile
         echo "# swapfile" | sudo tee -a /etc/fstab
         echo "/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
         zeninf "Swapfile creation successful."
