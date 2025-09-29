@@ -116,7 +116,7 @@ if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v
     cd psypicks || exit 1
     # enable RPMFusion non-free repositories for Fedora
     sudo_rq
-    if command -v dnf &> /dev/null; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         rpmfusion_chk
         sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
     fi
