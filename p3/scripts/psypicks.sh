@@ -17,7 +17,7 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 get_heroic () {
     local tag=$(curl -s https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     local ver="${tag#v}"
-    if command -v dnf &> /dev/null; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         if ! rpm -qi "heroic" 2>/dev/null; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
             sudo dnf in -y "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
@@ -34,7 +34,7 @@ get_heroic () {
                 zenity --info --text "$msg281" --height=300 --width=300
             fi
         fi
-    elif command -v apt &> /dev/null; then
+    elif [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
         if ! dpkg -s "heroic" 2>/dev/null 1>&2; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-amd64.deb"
             sudo apt install -y "Heroic-${ver}-linux-amd64.deb" || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-amd64.deb"; return 1; }
@@ -50,7 +50,7 @@ get_heroic () {
                 zenity --info --text "$msg281" --height=300 --width=300
             fi
         fi
-    elif command -v pacman &> /dev/null; then
+    elif [[ "$ID_LIKE" == *arch* ]] || [[ "$ID" == "arch" ]]; then
         if ! pacman -Qi "heroic" 2>/dev/null 1>&2; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x64.pacman"
             sudo pacman -U --noconfirm "Heroic-${ver}-linux-x64.pacman"
@@ -66,7 +66,7 @@ get_heroic () {
                 zenity --info --text "$msg281" --height=300 --width=300
             fi
         fi
-    elif command -v zypper &> /dev/null; then
+    elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
         if ! rpm -qi "heroic" 2>/dev/null; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
             sudo zypper in -y "Heroic-${ver}-linux-x86_64.rpm" || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x86_64.rpm"; return 1; }
@@ -121,11 +121,11 @@ if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v
         sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
     fi
     # package setup
-    if command -v dnf &> /dev/null || command -v zypper &> /dev/null; then
+    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" =~ (suse) ]] || [[ "$ID" =~ (suse) ]]; then
         packages=(steam steam-devices lutris vlc)
-    elif command -v apt &> /dev/null; then
+    elif [[ "$ID_LIKE" =~ (debian|ubuntu) ]] || [[ "$ID" =~ (ubuntu|debian) ]]; then
         packages=(steam-devices vlc)
-    elif command -v pacman &> /dev/null; then
+    elif [[ "$ID_LIKE" =~ (arch) ]] || [[ "$ID" =~ (arch) ]]; then
         sudo sed -i -e '/^#\[multilib\]$/s/^#//' -e '/^#Include = \/etc\/pacman\.d\/mirrorlist$/s/^#//' /etc/pacman.conf
         sudo pacman -Syu
         packages=(steam steam-devices lutris vlc)
@@ -133,7 +133,7 @@ if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v
     if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
         packages+=(gnome-tweaks)
         if command -v flatpak &> /dev/null; then
-            if [ "$ID" == "ubuntu" ]; then
+            if [ "$ID" = "ubuntu" ]; then
                 sudo apt install -y gnome-software gnome-software-plugin-flatpak gnome-software-plugin-snap
             fi
         fi
@@ -142,7 +142,7 @@ if command -v flatpak &> /dev/null && (command -v dnf &> /dev/null || command -v
     get_heroic
     # flatpak setup
     _flatpaks=(it.mijorus.gearlever org.prismlauncher.PrismLauncher io.missioncenter.MissionCenter com.github.tchx84.Flatseal com.vysp3r.ProtonPlus com.dec05eba.gpu_screen_recorder com.github.Matoking.protontricks com.obsproject.Studio com.discordapp.Discord io.github.kolunmi.Bazaar)
-    if command -v apt &> /dev/null; then
+    if [[ "$ID_LIKE" =~ (debian|ubuntu) ]] || [[ "$ID" =~ (ubuntu|debian) ]]; then
         _flatpaks+=(com.valvesoftware.Steam)
     fi
     if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]]; then
