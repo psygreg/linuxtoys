@@ -60,9 +60,7 @@ rpm_pkg="linuxtoys-${tag}-1.x86_64.rpm"
 rpm_url="https://github.com/psygreg/linuxtoys/releases/download/${tag}/${rpm_pkg}"
 
 arch_pkg="PKGBUILD"
-arch_post_inst="linuxtoys.install"
 arch_url="https://github.com/psygreg/linuxtoys/releases/download/${tag}/${arch_pkg}"
-arch_url_post="https://github.com/psygreg/linuxtoys/releases/download/${tag}/${arch_post_inst}"
 
 # Caso rpm-ostree (ex.: Silverblue/ Kinoite)
 if command -v rpm-ostree >/dev/null 2>&1; then
@@ -173,21 +171,14 @@ case "${ID:-}" in
             echo "Failed to download: $arch_url"
             exit 4
         fi
-        if ! dl_file "$arch_url_post" "$arch_post_inst"; then
-            echo "============ ERROR ============="
-            echo "Failed to download: $arch_url_post"
-            exit 4
-        fi
         makepkg -d && {
             sudo pacman -U --noconfirm linuxtoys-*.pkg.tar.zst;
         } || {
             echo "Installation failed (pacman)."
             rm -f "$arch_pkg"
-            rm -f "$arch_post_inst"
             exit 6
         }
         rm -f "$arch_pkg"
-        rm -f "$arch_post_inst"
         installed=true
         ;;
 esac
@@ -260,7 +251,9 @@ if [ "$installed" != "true" ]; then
                 echo "Failed to download: $arch_url"
                 exit 4
             fi
-            sudo pacman -U --noconfirm "./$arch_pkg" || {
+            makepkg -d && {
+                sudo pacman -U --noconfirm linuxtoys-*.pkg.tar.zst;
+            } || {
                 echo "Installation failed (pacman)."
                 rm -f "$arch_pkg"
                 exit 6
