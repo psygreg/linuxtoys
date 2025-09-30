@@ -264,5 +264,6 @@
   "yay_desc": "Go-da yazılmış məşhur AUR köməkçisi. Paru-ya bənzər.",
   "paru_desc": "Rust-da yazılmış məşhur AUR köməkçisi. Yay-a bənzər.",
   "cachyconfs_desc": "CachyOS-da standart olaraq istifadə olunan tipik problemlər üçün daha yaxşı performans və cavabdehlik, həmçinin kiçik düzəlişlər üçün optimallaşdırılmış konfiqurasiyalar, universal uyğunluq üçün süzülmüş.",
-  "cachyconfs": "CachyOS systemd Konfiqurasiyası"
+  "cachyconfs": "CachyOS systemd Konfiqurasiyası",
+  "omb_desc": "Bash konfiqurasiyanızı idarə etmək üçün xoşbəxt bir icma tərəfindən idarə olunan çərçivə."
 }

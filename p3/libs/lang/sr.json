@@ -265,5 +265,6 @@
   "yay_desc": "Популаран AUR помоћник написан у Go-у. Сличан paru-у.",
   "paru_desc": "Популаран AUR помоћник написан у Rust-у. Сличан yay-у.",
   "cachyconfs_desc": "Оптимизоване конфигурације за боље перформансе и одзивност, као и мале исправке за типичне проблеме који се користе подразумевано у CachyOS-у, филтриране за универзалну компатибилност.",
-  "cachyconfs": "Конфигурација systemd CachyOS"
+  "cachyconfs": "Конфигурација systemd CachyOS",
+  "omb_desc": "Zadovoljavajući okvir vođen zajednicom za upravljanje vašom bash konfiguracijom."
 }

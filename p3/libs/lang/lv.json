@@ -265,5 +265,6 @@
   "yay_desc": "Populārs AUR palīgs, rakstīts Go. Līdzīgs paru.",
   "paru_desc": "Populārs AUR palīgs, rakstīts Rust. Līdzīgs yay.",
   "cachyconfs_desc": "Optimizētas konfigurācijas labākai veiktspējai un atsaucībai, kā arī nelieli labojumi tipiskām problēmām, kas tiek izmantotas pēc noklusējuma CachyOS, filtrētas universālai saderībai.",
-  "cachyconfs": "CachyOS systemd konfigurācija"
+  "cachyconfs": "CachyOS systemd konfigurācija",
+  "omb_desc": "Jauks kopienas vadīts ietvars jūsu bash konfigurācijas pārvaldībai."
 }

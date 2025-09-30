@@ -265,5 +265,6 @@
   "yay_desc": "Népszerű AUR segítő, Go-ban írva. Hasonló a paru-hoz.",
   "paru_desc": "Népszerű AUR segítő, Rust-ban írva. Hasonló a yay-hoz.",
   "cachyconfs_desc": "Optimalizált konfigurációk jobb teljesítmény és reagálóképesség érdekében, valamint kis javítások a tipikus problémákra, amelyeket alapértelmezés szerint használnak a CachyOS-ban, szűrve az univerzális kompatibilitás érdekében.",
-  "cachyconfs": "CachyOS systemd konfiguráció"
+  "cachyconfs": "CachyOS systemd konfiguráció",
+  "omb_desc": "Egy elbűvölő, közösség által vezetett keretrendszer a bash konfigurációjának kezelésére."
 }

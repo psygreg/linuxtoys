@@ -265,5 +265,6 @@
   "yay_desc": "Populaarne AUR abiline, kirjutatud Go-s. Sarnane paru-ga.",
   "paru_desc": "Populaarne AUR abiline, kirjutatud Rust-is. Sarnane yay-ga.",
   "cachyconfs_desc": "Optimeeritud konfiguratsioonid parema jõudluse ja reageerimisvõime jaoks ning väikesed parandused tüüpiliste probleemide jaoks, mida kasutatakse vaikimisi CachyOS-is, filtreeritud universaalse ühilduvuse jaoks.",
-  "cachyconfs": "CachyOS systemd Konfiguratsioon"
+  "cachyconfs": "CachyOS systemd Konfiguratsioon",
+  "omb_desc": "Lõbus kogukonna juhitud raamistik teie bash-konfiguratsiooni haldamiseks."
 }

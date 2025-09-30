@@ -1,12 +1,11 @@
 #!/bin/bash
 # name: Oh My Bash
 # version: 1.0
-# description: Framework for managing your bash configuration.
+# description: omb_desc
 # icon: ohmybash.png
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 

@@ -264,5 +264,6 @@
   "yay_desc": "Go tilida yozilgan mashhur AUR yordamchisi. Paru ga o'xshash.",
   "paru_desc": "Rust tilida yozilgan mashhur AUR yordamchisi. Yay ga o'xshash.",
   "cachyconfs_desc": "CachyOS-da sukut bo'yicha ishlatiladigan yaxshi ishlash va javob berish uchun optimallashtirilgan konfiguratsiyalar, shuningdek, tipik muammolar uchun kichik tuzatishlar, universal moslik uchun filtrlangan.",
-  "cachyconfs": "CachyOS systemd konfiguratsiyasi"
+  "cachyconfs": "CachyOS systemd konfiguratsiyasi",
+  "omb_desc": "Sizning bash konfiguratsiyangizni boshqarish uchun yoqimli jamoa tomonidan boshqariladigan ramka."
 }

@@ -265,5 +265,6 @@
   "yay_desc": "Pembantu AUR populer yang ditulis dalam Go. Mirip dengan paru.",
   "paru_desc": "Pembantu AUR populer yang ditulis dalam Rust. Mirip dengan yay.",
   "cachyconfs_desc": "Konfigurasi yang dioptimalkan untuk performa dan responsivitas yang lebih baik, serta perbaikan kecil untuk masalah umum yang digunakan secara default di CachyOS, disaring untuk kompatibilitas universal.",
-  "cachyconfs": "Konfigurasi systemd CachyOS"
+  "cachyconfs": "Konfigurasi systemd CachyOS",
+  "omb_desc": "Kerangka kerja yang menyenangkan yang didorong oleh komunitas untuk mengelola konfigurasi bash Anda."
 }

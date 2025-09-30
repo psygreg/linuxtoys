@@ -265,5 +265,6 @@
   "yay_desc": "Go로 작성된 인기 있는 AUR 도우미. paru와 유사합니다.",
   "paru_desc": "Rust로 작성된 인기 있는 AUR 도우미. yay와 유사합니다.",
   "cachyconfs_desc": "CachyOS에서 기본적으로 사용되는 성능과 응답성을 향상시키는 최적화된 구성과 일반적인 문제에 대한 작은 수정. 범용 호환성을 위해 필터링되었습니다.",
-  "cachyconfs": "CachyOS systemd 구성"
+  "cachyconfs": "CachyOS systemd 구성",
+  "omb_desc": "귀하의 bash 구성을 관리하기 위한 유쾌한 커뮤니티 기반 프레임워크."
 }

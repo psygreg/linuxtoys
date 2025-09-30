@@ -265,5 +265,6 @@
   "yay_desc": "Go ile yazılmış popüler bir AUR yardımcısı. Paru'ya benzer.",
   "paru_desc": "Rust ile yazılmış popüler bir AUR yardımcısı. Yay'a benzer.",
   "cachyconfs_desc": "CachyOS'ta varsayılan olarak kullanılan daha iyi performans ve yanıt verme için optimize edilmiş yapılandırmalar ve tipik sorunlar için küçük düzeltmeler, evrensel uyumluluk için filtrelenmiştir.",
-  "cachyconfs": "CachyOS systemd Yapılandırması"
+  "cachyconfs": "CachyOS systemd Yapılandırması",
+  "omb_desc": "Bash yapılandırmanızı yönetmek için hoş bir topluluk odaklı çerçeve."
 }

@@ -265,5 +265,6 @@
   "yay_desc": "En populær AUR-hjælper skrevet i Go. Ligner paru.",
   "paru_desc": "En populær AUR-hjælper skrevet i Rust. Ligner yay.",
   "cachyconfs_desc": "Optimerede konfigurationer for bedre ydeevne og responsivitet, samt små rettelser til typiske problemer, der bruges som standard på CachyOS, filtreret for universel kompatibilitet.",
-  "cachyconfs": "CachyOS systemd Konfiguration"
+  "cachyconfs": "CachyOS systemd Konfiguration",
+  "omb_desc": "En dejlig fællesskabsdrevet ramme til at administrere din bash-konfiguration."
 }

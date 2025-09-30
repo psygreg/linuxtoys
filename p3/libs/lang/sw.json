@@ -263,5 +263,6 @@
   "tweaks_desc": "Badilisha mipangilio inayohusiana na programu za GTK3 na GNOME Shell kutoka mandhari hadi uonyeshaji wa fonti.",
   "extman_desc": "Tafuta, pakua na simamia viendelezi vya GNOME kwa urahisi.",
   "cachyconfs_desc": "Mipangilio iliyoboreshwa kwa utendaji bora na majibu, na marekebisho madogo kwa matatizo ya kawaida yanayotumiwa kwa chaguo-msingi kwenye CachyOS, yaliyochujwa kwa uwezo wa kuoana ulimwenguni.",
-  "cachyconfs": "Mpangilio wa systemd wa CachyOS"
+  "cachyconfs": "Mpangilio wa systemd wa CachyOS",
+  "omb_desc": "Mfumo wa kufurahisha unaoendeshwa na jamii kwa kusimamia usanidi wako wa bash."
 }

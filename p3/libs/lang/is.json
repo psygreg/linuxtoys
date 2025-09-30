@@ -265,5 +265,6 @@
   "yay_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Go. Svipaður og paru.",
   "paru_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Rust. Svipaður og yay.",
   "cachyconfs_desc": "Fínstilltar stillingar fyrir betri afköst og viðbragðsgetu, auk smár lagfæringar fyrir dæmigerð vandamál sem notuð eru sjálfgefið á CachyOS, síað fyrir alheimssamræmi.",
-  "cachyconfs": "CachyOS systemd stilling"
+  "cachyconfs": "CachyOS systemd stilling",
+  "omb_desc": "Gleðileg samfélagsstýrð rammi til að stjórna bash stillingum þínum."
 }
