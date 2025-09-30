@@ -36,7 +36,6 @@
   "select_button": "Kiválasztás",
   "loading_manifest_message": "A manifest fájl betöltése... Kérjük, várjon...",
   "packages_flatpaks": "Csomagok & Flatpakok",
-
   "psypicks": "Psygreg választásai",
   "psypicks_desc": "Kiválasztott szoftverek játékhoz és életminőséghez Linuxon.",
   "pdefaults": "Optimalizált alapbeállítások",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Eszközök és erőforrások perifériák és világítás kezeléséhez.",
   "sysadm": "Rendszeradminisztráció",
   "sysadm_desc": "Eszközök rendszeradminisztrációhoz és kezeléshez kisvállalkozásoknak vagy nagy léptékben.",
-
   "gimp_desc": "Erős nyílt forráskódú képszerkesztő.",
   "onlyoffice_desc": "Egy suite jobb kompatibilitással a Microsoft Office fájlokkal.",
   "msteams_desc": "Egy együttműködési platform távoli munkához.",
@@ -88,7 +86,6 @@
   "figma_desc": "Web-alapú UI/UX tervezési alkalmazás.",
   "davinci_desc": "Professzionális videószerkesztő szoftver.",
   "obsidian_desc": "Ingyenes, rugalmas app a gondolataidhoz, jegyzeteidhez és szervezettségedhez.",
-
   "gsr_desc": "Képernyőfelvételi eszköz hardveres kódolással, hasonló a Shadowplay-hez bármely GPU-ra Linuxon.",
   "pp_desc": "GTK-alapú eszköz a közösségi runner-ek könnyű megszerzéséhez játékhoz Linuxon.",
   "sober_desc": "Roblox közösségi port Linuxra, az Android verzió alapján.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Közösségi wrapper a Roblox Studio-hoz, Roblox játék alkotóknak.",
   "pup_desc": "Qt-alapú eszköz a közösségi runner-ek könnyű megszerzéséhez játékhoz Linuxon.",
   "lsfg_desc": "Kompatibilitási réteg a Lossless Scaling-hez Vulkan-on Linuxra. Még mindig igényli a Lossless Scaling-et Windows-ra.",
-
   "ufw": "Tűzfal konfigurálása",
   "ufw_desc": "Telepíti és alkalmazza az alapértelmezett beállítást, amely ideális a legtöbb felhasználónak az Uncomplicated Firewall (UFW) számára.",
   "swapfile": "Swap fájl konfigurálása",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Telepíti az ffmpeg-full-t a jelenleg támogatott flatpak platformokba, lehetővé téve az alkalmazások számára a hardver-gyorsított média lejátszást.",
   "ostree-autoupd": "Automatikus frissítések RPM-OSTree-hez",
   "ostree-autoupd_desc": "Engedélyezi az rpm-ostree automatikus frissítési funkcióját stage módban (csendes). A frissítések csak újraindításkor lesznek alkalmazva, és nem lesz felszólítva újraindításra.",
-
   "nv_desc": "Jelenlegi Nvidia illesztőprogramok. Támogatott GPU-k: Maxwell (GT 9xx) és újabbak.",
   "nv_rtx_desc": "Jelenlegi Nvidia illesztőprogramok nyitott kernel modulokkal. Támogatott GPU-k: GTX 16xx és bármely RTX-sorozat. Laptopoknál előnyben részesítse a proprietary opciót energia kezeléshez.",
   "nv_desc_470": "Legacy Nvidia illesztőprogramok. Támogatott GPU-k: Kepler (GT 6xx) és Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Illesztőprogram hivatalos és általános Xbox kontrollerekhez Linuxon.",
   "modsign": "Kernel modul aláírás",
   "modsign_desc": "Engedélyezi kernel modulok és illesztőprogramok aláírását Machine Owner Key-vel Secure Boot-hoz.",
-
   "flat_desc": "A fő tároló Flatpak alkalmazásokhoz, sok exkluzív app-pal.",
   "brew_desc": "CLI eszközök csomagmenedzser macOS/Linux-ra.",
   "chaotic_desc": "Közösségi-dráva tároló Arch Linux felhasználóknak.",
   "rpmfusion_desc": "Tároló további csomagok biztosítására Fedora és RHEL számára.",
   "pip_desc": "Python csomagmenedzser. Általában hasznos Python fejlesztőknek.",
   "cargo_desc": "Rust csomagmenedzser. Általában hasznos Rust fejlesztőknek. Tartalmazza a Rustup-ot.",
-
   "obs_desc": "Népszerű nyílt forráskódú streaming és felvételi szoftver.",
   "mctl_desc": "Rendszer monitor Linuxra, nagyon hasonló a Windows Task Manager-hez, GTK4-alapú.",
   "sc_desc": "Eszköz Stream Deck-ek és hasonló eszközök beállításához.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "DNS szolgáltatás, amely elrejti a forgalmat az ISP-től.",
   "piper_desc": "GTK alkalmazás játék egerek konfigurálásához libratbag használatával. Gyakran használt Logitech, Roccat, Asus és Glorious egerekhez.",
   "glever_desc": "Segédprogram AppImage-k kezeléséhez, desktop bejegyzések és app metaadatok generálásához, app-ok helyben frissítéséhez vagy többszörös verziók egymás mellett tartásához.",
-
   "docker_desc": "A Docker Engine konténer szolgáltatás szolgáltató és alapvető eszközök hozzá, mint docker-compose.",
   "mise_desc": "Mint asdf (vagy nvm vagy pyenv, de bármely nyelvhez) kezeli a dev eszközöket, mint node, python, cmake, terraform, és százakat többet. Lecseréli a PyEnv-et, NVM-et, és a Java JDK és Maven telepítőket ebből a szakaszból.",
   "nvm_desc": "Verzió menedzser Node.js-hez, lehetővé téve könnyű váltást különböző verziók között. Tartalmazza a Node.js-t, NPM-et és Yarn-t. Nem szükséges, ha Mise-t használ.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Eszközök és könyvtárak gyűjteménye alkalmazások létrehozásához a .NET platformon.",
   "sublime_desc": "Sofisztikált szövegszerkesztő kódhoz, markup-hoz és prózához.",
   "tailscale_desc": "Zero-config VPN, amely biztonságosan kapcsolja össze eszközeit az interneten keresztül.",
-
   "cockpit_desc": "Web-alapú interfész Linux szerverek monitorozásához és kezeléséhez (szerver).",
   "webmin_desc": "Web-alapú interfész rendszeradminisztrációhoz Unix-ra.",
   "topgrade_desc": "Eszköz minden telepített csomag frissítéséhez bármely Linux rendszeren.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Változtassa meg a GTK3 alkalmazásokkal és GNOME Shell-lel kapcsolatos beállításokat a témáktól a betűrenderelésig.",
   "extman_desc": "Könnyen keresse, töltse le és kezelje a GNOME kiterjesztéseket.",
   "yay_desc": "Népszerű AUR segítő, Go-ban írva. Hasonló a paru-hoz.",
-  "paru_desc": "Népszerű AUR segítő, Rust-ban írva. Hasonló a yay-hoz."
+  "paru_desc": "Népszerű AUR segítő, Rust-ban írva. Hasonló a yay-hoz.",
+  "cachyconfs_desc": "Optimalizált konfigurációk jobb teljesítmény és reagálóképesség érdekében, valamint kis javítások a tipikus problémákra, amelyeket alapértelmezés szerint használnak a CachyOS-ban, szűrve az univerzális kompatibilitás érdekében.",
+  "cachyconfs": "CachyOS systemd konfiguráció"
 }

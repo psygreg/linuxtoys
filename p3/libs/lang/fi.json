@@ -263,5 +263,7 @@
   "tweaks_desc": "Muuta GTK3-sovelluksiin ja GNOME Shell -käyttöliittymään liittyviä asetuksia teemoista fonttien renderöintiin.",
   "extman_desc": "Etsi, lataa ja hallitse GNOME-laajennuksia helposti.",
   "yay_desc": "Suosittu AUR-avustaja kirjoitettu Go:lla. Samankaltainen kuin paru.",
-  "paru_desc": "Suosittu AUR-avustaja kirjoitettu Rustilla. Samankaltainen kuin yay."
+  "paru_desc": "Suosittu AUR-avustaja kirjoitettu Rustilla. Samankaltainen kuin yay.",
+  "cachyconfs_desc": "Optimoitu konfiguraatiot paremman suorituskyvyn ja vasteajan sekä pienet korjaukset tyypillisiin ongelmiin, joita käytetään oletuksena CachyOS:ssa, suodatettu universaalia yhteensopivuutta varten.",
+  "cachyconfs": "CachyOS systemd -konfiguraatio"
 }

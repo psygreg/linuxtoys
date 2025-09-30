@@ -36,7 +36,6 @@
   "select_button": "Selectează",
   "loading_manifest_message": "Se încarcă fișierul manifest... Vă rugăm așteptați...",
   "packages_flatpaks": "Pachete & Flatpaks",
-
   "psypicks": "Selecțiile lui Psygreg",
   "psypicks_desc": "Selecție curată de software pentru gaming și calitate a vieții pe Linux.",
   "pdefaults": "Valori Prestabilite Optimizate",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Instrumente și resurse pentru gestionarea dispozitivelor periferice și iluminare.",
   "sysadm": "Administrare Sistem",
   "sysadm_desc": "Instrumente pentru administrarea și gestionarea sistemului pentru afaceri mici sau la scară largă.",
-
   "gimp_desc": "Un editor de imagini puternic cu sursă deschisă.",
   "onlyoffice_desc": "Un suite cu compatibilitate mai bună pentru fișierele Microsoft Office.",
   "msteams_desc": "O platformă de colaborare pentru munca la distanță.",
@@ -88,7 +86,6 @@
   "figma_desc": "O aplicație web pentru design UI/UX.",
   "davinci_desc": "Software profesional de editare video.",
   "obsidian_desc": "O aplicație gratuită, flexibilă pentru gândurile, notele și organizarea dumneavoastră.",
-
   "gsr_desc": "Un instrument de înregistrare ecran cu codare hardware similar cu Shadowplay pentru orice GPU pe Linux.",
   "pp_desc": "Un instrument bazat pe GTK pentru a obține ușor rulatoare comunitare pentru gaming pe Linux.",
   "sober_desc": "Port comunitar Roblox pentru Linux, bazat pe versiunea Android a jocului.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Un wrapper comunitar pentru Roblox Studio, pentru creatorii de jocuri Roblox.",
   "pup_desc": "Un instrument bazat pe Qt pentru a obține ușor rulatoare comunitare pentru gaming pe Linux.",
   "lsfg_desc": "Un strat de compatibilitate pentru Lossless Scaling pe Vulkan pentru Linux. Încă necesită Lossless Scaling pentru Windows.",
-
   "ufw": "Configurează Firewall",
   "ufw_desc": "Instalează și aplică setări prestabilite ideale pentru majoritatea utilizatorilor pentru Uncomplicated Firewall (UFW).",
   "swapfile": "Configurează Fișier Swap",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Instalează ffmpeg-full în platformele flatpak acceptate în prezent, permițând aplicațiilor să folosească redarea media cu accelerație hardware.",
   "ostree-autoupd": "Actualizări Automate pentru RPM-OSTree",
   "ostree-autoupd_desc": "Activează funcția de actualizare automată a rpm-ostree în modul stage (silent). Actualizările vor fi aplicate doar la repornire și nu veți fi solicitați să reporniți.",
-
   "nv_desc": "Drivere Nvidia curente. GPU-uri acceptate: Maxwell (GT 9xx) și mai noi.",
   "nv_rtx_desc": "Drivere Nvidia curente cu module kernel deschise. GPU-uri acceptate: GTX 16xx și orice serie RTX. Pentru laptopuri, preferați opțiunea proprietară pentru managementul energiei.",
   "nv_desc_470": "Drivere Nvidia moștenite. GPU-uri acceptate: Kepler (GT 6xx) și Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Driver pentru controlere Xbox oficiale și generice pe Linux.",
   "modsign": "Semnarea modulelor kernel",
   "modsign_desc": "Activează semnarea modulelor kernel și driverelor cu o cheie Machine Owner pentru Secure Boot.",
-
   "flat_desc": "Depozitul de referință pentru aplicații Flatpak, având multe aplicații exclusive.",
   "brew_desc": "Un manager de pachete pentru instrumente CLI pentru macOS/Linux.",
   "chaotic_desc": "Un depozit condus de comunitate pentru utilizatorii Arch Linux.",
   "rpmfusion_desc": "Un depozit care oferă pachete suplimentare pentru Fedora și RHEL.",
   "pip_desc": "Manager de pachete Python. De obicei util pentru dezvoltatorii Python.",
   "cargo_desc": "Manager de pachete Rust. De obicei util pentru dezvoltatorii Rust. Include Rustup.",
-
   "obs_desc": "Un software popular de streaming și înregistrare cu sursă deschisă.",
   "mctl_desc": "Un monitor de sistem pentru Linux foarte similar cu Windows Task Manager, bazat pe GTK4.",
   "sc_desc": "Un instrument pentru configurarea Stream Deck-urilor și dispozitivelor similare.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "Un serviciu DNS care ascunde traficul dumneavoastră de la ISP-ul dumneavoastră.",
   "piper_desc": "O aplicație GTK pentru configurarea șoarecilor de gaming folosind libratbag. Folosit în mod obișnuit pentru șoareci Logitech, Roccat, Asus și Glorious.",
   "glever_desc": "Un utilitar pentru gestionarea AppImage-urilor, generând intrări desktop și metadate aplicație, actualizând aplicațiile în loc sau păstrând versiuni multiple side-by-side.",
-
   "docker_desc": "Furnizorul de servicii container Docker Engine și instrumente de bază pentru acesta, cum ar fi docker-compose.",
   "mise_desc": "Ca asdf (sau nvm sau pyenv dar pentru orice limbaj) gestionează instrumente dev precum node, python, cmake, terraform și sute altele. Înlocuiește PyEnv, NVM și instalatoarele Java JDK și Maven din această secțiune.",
   "nvm_desc": "Un manager de versiuni pentru Node.js, permițându-vă să comutați ușor între versiuni diferite. Include Node.js, NPM și Yarn. Nu este necesar dacă folosiți Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "O colecție de instrumente și biblioteci pentru crearea aplicațiilor bazate pe platforma .NET.",
   "sublime_desc": "Un editor de text sofisticat pentru cod, markup și proză.",
   "tailscale_desc": "Un VPN zero-config care conectează dispozitivele dumneavoastră în siguranță prin internet.",
-
   "cockpit_desc": "O interfață bazată pe web pentru monitorizarea și gestionarea serverelor Linux (server).",
   "webmin_desc": "O interfață bazată pe web pentru administrarea sistemului pentru Unix.",
   "topgrade_desc": "Un instrument pentru actualizarea tuturor pachetelor instalate pe orice sistem Linux.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Schimbați setările legate de aplicații GTK3 și GNOME Shell de la teme la redarea fonturilor.",
   "extman_desc": "Căutați, descărcați și gestionați extensiile GNOME cu ușurință.",
   "yay_desc": "Un asistent AUR popular scris în Go. Similar cu paru.",
-  "paru_desc": "Un asistent AUR popular scris în Rust. Similar cu yay."
+  "paru_desc": "Un asistent AUR popular scris în Rust. Similar cu yay.",
+  "cachyconfs_desc": "Configurații optimizate pentru performanță și responsivitate mai bune, precum și mici remedieri pentru probleme tipice utilizate implicit în CachyOS, filtrate pentru compatibilitate universală.",
+  "cachyconfs": "Configurație systemd CachyOS"
 }

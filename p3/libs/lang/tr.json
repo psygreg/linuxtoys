@@ -263,5 +263,7 @@
   "tweaks_desc": "GTK3 uygulamaları ve GNOME Shell ile ilgili ayarları temalardan yazı tipi işlemeye kadar değiştirin.",
   "extman_desc": "GNOME uzantılarını kolayca arayın, indirin ve yönetin.",
   "yay_desc": "Go ile yazılmış popüler bir AUR yardımcısı. Paru'ya benzer.",
-  "paru_desc": "Rust ile yazılmış popüler bir AUR yardımcısı. Yay'a benzer."
+  "paru_desc": "Rust ile yazılmış popüler bir AUR yardımcısı. Yay'a benzer.",
+  "cachyconfs_desc": "CachyOS'ta varsayılan olarak kullanılan daha iyi performans ve yanıt verme için optimize edilmiş yapılandırmalar ve tipik sorunlar için küçük düzeltmeler, evrensel uyumluluk için filtrelenmiştir.",
+  "cachyconfs": "CachyOS systemd Yapılandırması"
 }

@@ -36,7 +36,6 @@
   "select_button": "Roghnaigh",
   "loading_manifest_message": "Ag lódáil do chomhad manifesto... Fan le do thoil...",
   "packages_flatpaks": "Pacáistí & Flatpaks",
-
   "psypicks": "Rogha Psygreg",
   "psypicks_desc": "Roghnúchán coimeádta bogearraí le haghaidh cluichíochta agus cáilíochta beatha ar Linux.",
   "pdefaults": "Réamhshocruithe Optamaithe",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Uirlisí agus acmhainní le haghaidh bainistíochta gléasanna forimeallacha agus soilsithe.",
   "sysadm": "Riarachán Córais",
   "sysadm_desc": "Uirlisí le haghaidh riaracháin chórais agus bainistíochta le haghaidh gnólachtaí beaga nó ar scála.",
-
   "gimp_desc": "Eagarthóir íomhánna foinse oscailte cumhachtach.",
   "onlyoffice_desc": "Sraith le comhoiriúnacht níos fearr le comhaid Microsoft Office.",
   "msteams_desc": "Ardán comhoibrithe le haghaidh oibre cianda.",
@@ -88,7 +86,6 @@
   "figma_desc": "Feidhmchlár dearaidh UI/UX gréasán-bhunaithe.",
   "davinci_desc": "Bogearra eagarthóireachta físe gairmiúil.",
   "obsidian_desc": "Aip saor in aisce, solúbtha le haghaidh do smaointe, nótaí agus eagrú.",
-
   "gsr_desc": "Uirlis taifeadta scáileáin le hionchódú crua-earraí cosúil le Shadowplay d'aon GPU ar Linux.",
   "pp_desc": "Uirlis GTK-bhunaithe chun reathaithe pobail a fháil go héasca le haghaidh cluichíochta ar Linux.",
   "sober_desc": "Port pobail Roblox do Linux, bunaithe ar an leagan Android den chluiche.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Fillteán pobail le haghaidh Roblox Studio, le haghaidh cruthaitheoirí cluichí Roblox.",
   "pup_desc": "Uirlis Qt-bhunaithe chun reathaithe pobail a fháil go héasca le haghaidh cluichíochta ar Linux.",
   "lsfg_desc": "Sraith comhoiriúnachta le haghaidh Lossless Scaling ar Vulkan do Linux. Éilíonn Lossless Scaling do Windows fós.",
-
   "ufw": "Cumraigh Balla Dóiteáin",
   "ufw_desc": "Suiteálann agus cuireann socrú réamhshocraithe i bhfeidhm atá oiriúnach don chuid is mó úsáideoirí don Balla Dóiteáin Neamhchasta (UFW).",
   "swapfile": "Cumraigh Comhad Babhtála",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Suiteálann ffmpeg-full isteach sna hardáin flatpak a dtacaítear leo faoi láthair, ag ceadú d'fheidhmchláir athsheinm meáin luasghéaraithe crua-earraí a úsáid.",
   "ostree-autoupd": "Nuashonruithe Uathoibríocha do RPM-OSTree",
   "ostree-autoupd_desc": "Cumasaíonn gné nuashonraithe uathoibríoch rpm-ostree i mód stáitse (ciúin). Ní chuirfear nuashonruithe i bhfeidhm ach ar atosaú, agus ní iarrfar ort atosaú.",
-
   "nv_desc": "Tiománaithe Nvidia reatha. GPUanna a dtacaítear leo: Maxwell (GT 9xx) agus níos nuaí.",
   "nv_rtx_desc": "Tiománaithe Nvidia reatha le modúil eithne oscailte. GPUanna a dtacaítear leo: GTX 16xx agus aon tsraith RTX. Le haghaidh ríomhairí glúine, b'fhearr an rogha dílseánaigh le haghaidh bainistíochta cumhachta.",
   "nv_desc_470": "Tiománaithe Nvidia oidhreachta. GPUanna a dtacaítear leo: Kepler (GT 6xx) agus Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Tiománaí le haghaidh rialaitheoirí Xbox oifigiúla agus cineálacha ginearálta ar Linux.",
   "modsign": "Síniú modúl eithne",
   "modsign_desc": "Cumasaíonn síniú modúl eithne agus tiománaithe le hEochair Úinéara Meaisín le haghaidh Tosaithe Slán.",
-
   "flat_desc": "An stór go-to le haghaidh feidhmchlár Flatpak, le go leor aipeanna eisiacha.",
   "brew_desc": "Bainisteoir pacáiste uirlisí CLI do macOS/Linux.",
   "chaotic_desc": "Stór pobail-tiomáinte le haghaidh úsáideoirí Arch Linux.",
   "rpmfusion_desc": "Stór a sholáthraíonn pacáistí breise le haghaidh Fedora agus RHEL.",
   "pip_desc": "Bainisteoir pacáiste Python. Go hiondúil úsáideach le haghaidh forbróirí Python.",
   "cargo_desc": "Bainisteoir pacáiste Rust. Go hiondúil úsáideach le haghaidh forbróirí Rust. Áiríonn Rustup.",
-
   "obs_desc": "Bogearra sruthaithe agus taifeadta foinse oscailte móréilimh.",
   "mctl_desc": "Monatóir córais do Linux an-chosúil le Bainisteoir Tasc Windows, bunaithe ar GTK4.",
   "sc_desc": "Uirlis chun Stream Decks agus gléasanna cosúla a shocrú.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "Seirbhís DNS a cheiltíonn do thrácht ó do ISP.",
   "piper_desc": "Feidhmchlár GTK chun lucha gamers a chumrú ag baint úsáide as libratbag. Go hiondúil úsáideach le haghaidh Logitech, Roccat, Asus agus Glorious.",
   "glever_desc": "Uirlis chun AppImages a bhainistiú, ag cruthú iontrálacha deisce agus meiteashonraí aipeanna, ag nuashonrú aipeanna in-situ nó ag coinneáil leaganacha iolracha taobh le taobh.",
-
   "docker_desc": "An soláthraí seirbhíse coimeádán Docker agus uirlisí bunúsacha leis, mar docker-compose.",
   "mise_desc": "Cosúil le asdf (nó nvm nó pyenv ach do theanga ar bith) bainistíonn sé uirlisí forbartha cosúil le node, python, cmake, terraform, agus na céadta eile. Cuireann sé PyEnv, NVM, agus suiteálaithe JDK agus Maven de Java sa roinn seo as feidhm.",
   "nvm_desc": "Bainisteoir leagan do Node.js, a cheadaíonn duit aistriú go héasca idir leaganacha éagsúla. Áiríonn Node.js, NPM agus Yarn. Ní gá Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Bailiúchán uirlisí agus leabharlanna chun feidhmchláir a chruthú bunaithe ar an ardán .NET.",
   "sublime_desc": "Eagarthóir sofaisticiúil téacs le haghaidh cód, marcáil agus prós.",
   "tailscale_desc": "VPN gan chumraíocht a nascann do ghléasanna go slán thar an idirlíon.",
-
   "cockpit_desc": "Comhéadan gréasán-bhunaithe le haghaidh monatóireachta agus bainistíochta freastalaithe Linux (freastalaí).",
   "webmin_desc": "Comhéadan gréasán-bhunaithe le haghaidh riaracháin chórais le haghaidh Unix.",
   "topgrade_desc": "Uirlis chun gach pacáiste suiteáilte a uasghrádú ar aon chóras Linux.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Athraigh socruithe a bhaineann le haipeanna GTK3 agus GNOME Shell ó théamaí go rindreáil cló.",
   "extman_desc": "Cuardaigh, íoslódáil agus bainistigh síntí GNOME go héasca.",
   "yay_desc": "Cúntóir AUR móréilimh scríofa i Go. Cosúil le paru.",
-  "paru_desc": "Cúntóir AUR móréilimh scríofa i Rust. Cosúil le yay."
+  "paru_desc": "Cúntóir AUR móréilimh scríofa i Rust. Cosúil le yay.",
+  "cachyconfs_desc": "Cumraíochtaí optamaithe le haghaidh feidhmíocht níos fearr agus freagrúlacht, chomh maith le socruithe beaga do fhadhbanna tipiciúla a úsáidtear de réir réamhshocraithe ar CachyOS, scagtha le haghaidh comhoiriúnacht uilíoch.",
+  "cachyconfs": "Cumraíocht systemd CachyOS"
 }

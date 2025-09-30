@@ -36,7 +36,6 @@
   "select_button": "Seç",
   "loading_manifest_message": "Manifest faylınız yüklənilir... Zəhmət olmasa gözləyin...",
   "packages_flatpaks": "Paketlər & Flatpaklar",
-
   "psypicks": "Psygreg seçimi",
   "psypicks_desc": "Linuxda oyun və həyat keyfiyyəti üçün seçilmiş proqram təminatı.",
   "pdefaults": "Optimallaşdırılmış standartlar",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Periferiya qurğularını və işıqlandırmanı idarə etmək üçün vasitələr və resurslar.",
   "sysadm": "Sistem administrasiyası",
   "sysadm_desc": "Kiçik bizneslər və ya geniş miqyasda sistem administrasiyası və idarəetmə üçün vasitələr.",
-
   "gimp_desc": "Güclü açıq mənbəli şəkil redaktoru.",
   "onlyoffice_desc": "Microsoft Office fayllarına daha yaxşı uyğunluq olan paket.",
   "msteams_desc": "Uzaqdan iş üçün əməkdaşlıq platforması.",
@@ -87,7 +85,6 @@
   "figma_desc": "Veb-əsaslı UI/UX dizayn tətbiqi.",
   "davinci_desc": "Peşəkar video redaktə proqram təminatı.",
   "obsidian_desc": "Pulsuz, çevik tətbiq sizin fikirləriniz, qeydləriniz və təşkilatınız üçün.",
-
   "gsr_desc": "Linuxda hər hansı GPU üçün Shadowplay-a bənzər aparat kodlaşdırması ilə ekran qeyd vasitəsi.",
   "pp_desc": "Linuxda oyun üçün icma işlədicilərini asanlıqla əldə etmək üçün GTK-əsaslı vasitə.",
   "sober_desc": "Linux üçün Roblox icma portu, oyunun Android versiyasına əsaslanır.",
@@ -108,7 +105,6 @@
   "vinegar_desc": "Roblox Studio üçün icma örtüyü, Roblox oyun yaratıcıları üçün.",
   "pup_desc": "Linuxda oyun üçün icma işlədicilərini asanlıqla əldə etmək üçün Qt-əsaslı vasitə.",
   "lsfg_desc": "Linuxda Vulkan üçün Lossless Scaling üçün uyğunluq qatı. Hələ də Windows üçün Lossless Scaling tələb edir.",
-
   "ufw": "Firewall-u konfiqurasiya et",
   "ufw_desc": "Əksər istifadəçilər üçün ideal standart parametrləri quraşdırır və tətbiq edir Uncomplicated Firewall (UFW) üçün.",
   "swapfile": "Swap faylını konfiqurasiya et",
@@ -140,7 +136,6 @@
   "hwaccel-flatpak_desc": "Hazırda dəstəklənən flatpak platformalarına ffmpeg-full quraşdırır, tətbiqlərə aparat sürətləndirilmiş media oynatma istifadə etməyə imkan verir.",
   "ostree-autoupd": "RPM-OSTree üçün avtomatik yeniləmələr",
   "ostree-autoupd_desc": "rpm-ostree-nin avtomatik yeniləmə xüsusiyyətini mərhələ rejimində (səssiz) aktivləşdirir. Yeniləmələr yalnız yenidən başlatmada tətbiq olunacaq, və sizdən yenidən başlatma soruşulmayacaq.",
-
   "nv_desc": "Cari Nvidia drayverləri. Dəstəklənən GPU-lar: Maxwell (GT 9xx) və daha yeni.",
   "nv_rtx_desc": "Açıq nüvə modulları ilə cari Nvidia drayverləri. Dəstəklənən GPU-lar: GTX 16xx və hər hansı RTX-seriyası. Noutbuklar üçün güc idarəetməsi üçün proprietary variantı üstün tutun.",
   "nv_desc_470": "Köhnə Nvidia drayverləri. Dəstəklənən GPU-lar: Kepler (GT 6xx) və Fermi (GT 7xx).",
@@ -151,14 +146,12 @@
   "xneo_desc": "Linuxda rəsmi və ümumi Xbox kontrollerləri üçün drayver.",
   "modsign": "Nüvə moduli imzalanması",
   "modsign_desc": "Nüvə modullarını və drayverləri Machine Owner Key ilə Secure Boot üçün imzalamağı aktivləşdirir.",
-
   "flat_desc": "Flatpak tətbiqləri üçün əsas repozitoriya, çoxlu eksklyuziv tətbiqlərə malikdir.",
   "brew_desc": "macOS/Linux üçün CLI vasitələr paket meneceri.",
   "chaotic_desc": "Arch Linux istifadəçiləri üçün icma idarəetmə repozitoriyası.",
   "rpmfusion_desc": "Fedora və RHEL üçün əlavə paketlər təmin edən repozitoriya.",
   "pip_desc": "Python paket meneceri. Adətən Python tərtibatçıları üçün faydalıdır.",
   "cargo_desc": "Rust paket meneceri. Adətən Rust tərtibatçıları üçün faydalıdır. Rustup-u özündə ehtiva edir.",
-
   "obs_desc": "Məşhur açıq mənbəli axın və qeyd proqram təminatı.",
   "mctl_desc": "Linux üçün Windows Task Manager-ə çox oxşar sistem monitoru, GTK4-ə əsaslanır.",
   "sc_desc": "Stream Deck-ləri və oxşar qurğuları quraşdırmaq üçün vasitə.",
@@ -181,7 +174,6 @@
   "cloudflare_warp_desc": "Sizin trafikınızı ISP-dən gizlədən DNS xidməti.",
   "piper_desc": "Libratbag istifadə edərək oyun siçanlarını konfiqurasiya etmək üçün GTK tətbiqi. Adətən Logitech, Roccat, Asus və Glorious üçün istifadə olunur.",
   "glever_desc": "AppImages-i idarə etmək üçün yardımçı, masaüstü girişləri və tətbiq metadatasını yaradır, tətbiqləri yerində yeniləyir və ya çoxlu versiyaları yan-yana saxlayır.",
-
   "docker_desc": "Docker Engine konteyner xidmət provayderi və onun üçün əsas vasitələr, məsələn docker-compose.",
   "mise_desc": "Asdf (və ya nvm və ya pyenv lakin hər hansı dil üçün) node, python, cmake, terraform və yüzlərlə başqasını idarə edir. Bu bölmədən PyEnv, NVM və Java JDK və Maven quraşdırıcılarını əvəz edir.",
   "nvm_desc": "Node.js üçün versiya meneceri, müxtəlif versiyalar arasında asanlıqla keçidə imkan verir. Node.js, NPM və Yarn-u özündə ehtiva edir. Əgər Mise istifadə edirsinizsə, lazım deyil.",
@@ -202,7 +194,6 @@
   "dotnet_desc": ".NET platforması əsasında tətbiqlər yaratmaq üçün vasitələr və kitabxanalar kolleksiyası.",
   "sublime_desc": "Kod, işarələmə və nəsr üçün mürəkkəb mətn redaktoru.",
   "tailscale_desc": "Sizin qurğularınızı internet üzərindən təhlükəsiz bağlayan sıfır-konfiqurasiya VPN.",
-
   "cockpit_desc": "Linux serverlərini monitorinq etmək və idarə etmək üçün veb-əsaslı interfeys (server).",
   "webmin_desc": "Unix üçün sistem administrasiyası üçün veb-əsaslı interfeys.",
   "topgrade_desc": "Hər hansı Linux sistemində bütün quraşdırılmış paketləri yeniləmək üçün vasitə.",
@@ -271,5 +262,7 @@
   "tweaks_desc": "GTK3 tətbiqləri və GNOME Shell ilə bağlı parametrləri mövzulardan şrift renderinə qədər dəyişdirin.",
   "extman_desc": "GNOME genişləndirmələrini asanlıqla axtarın, yükləyin və idarə edin.",
   "yay_desc": "Go-da yazılmış məşhur AUR köməkçisi. Paru-ya bənzər.",
-  "paru_desc": "Rust-da yazılmış məşhur AUR köməkçisi. Yay-a bənzər."
+  "paru_desc": "Rust-da yazılmış məşhur AUR köməkçisi. Yay-a bənzər.",
+  "cachyconfs_desc": "CachyOS-da standart olaraq istifadə olunan tipik problemlər üçün daha yaxşı performans və cavabdehlik, həmçinin kiçik düzəlişlər üçün optimallaşdırılmış konfiqurasiyalar, universal uyğunluq üçün süzülmüş.",
+  "cachyconfs": "CachyOS systemd Konfiqurasiyası"
 }

@@ -18,7 +18,7 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # system-agnostic scripts
 sysag_run () {
-    if [[ "$ID" != "cachyos" ]]; then
+    if [[ "$ID" != "cachyos" ]] || [ ! -f /usr/lib/sysctl.d/99-cachyos-settings.conf ]; then
         # systemd patches
         cachyos_sysd_lib
     fi

@@ -36,7 +36,6 @@
   "select_button": "Vælg",
   "loading_manifest_message": "Indlæser din manifestfil... Vent venligst...",
   "packages_flatpaks": "Pakker & Flatpaks",
-
   "psypicks": "Psygregs valg",
   "psypicks_desc": "Kureret udvalg af software til gaming og livskvalitet på Linux.",
   "pdefaults": "Optimerede standarder",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Værktøjer og ressourcer til styring af perifere enheder og belysning.",
   "sysadm": "Systemadministration",
   "sysadm_desc": "Værktøjer til systemadministration og styring for små virksomheder eller i stor skala.",
-
   "gimp_desc": "Et kraftfuldt open source-billedredigeringsprogram.",
   "onlyoffice_desc": "En suite med bedre kompatibilitet til Microsoft Office-filer.",
   "msteams_desc": "En samarbejdsplatform til fjernarbejde.",
@@ -88,7 +86,6 @@
   "figma_desc": "En webbaseret UI/UX designapplikation.",
   "davinci_desc": "Professionel videoredigeringssoftware.",
   "obsidian_desc": "En gratis, fleksibel app til dine tanker, noter og organisering.",
-
   "gsr_desc": "Et skærmoptagelsesværktøj med hardwarekodning lig Shadowplay for enhver GPU på Linux.",
   "pp_desc": "Et GTK-baseret værktøj til nemt at opnå community-runners til gaming på Linux.",
   "sober_desc": "Roblox community-port til Linux, baseret på Android-versionen af spillet.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "En community-wrapper til Roblox Studio, for Roblox spilskabere.",
   "pup_desc": "Et Qt-baseret værktøj til nemt at opnå community-runners til gaming på Linux.",
   "lsfg_desc": "Et kompatibilitetslag til Lossless Scaling på Vulkan til Linux. Kræver stadig Lossless Scaling til Windows.",
-
   "ufw": "Konfigurer firewall",
   "ufw_desc": "Installerer og anvender en standardindstilling ideel for de fleste brugere til Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigurer swapfil",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Installerer ffmpeg-full i de aktuelt understøttede flatpak-platforme, hvilket giver applikationer mulighed for at bruge hardware-akceleret medieafspilning.",
   "ostree-autoupd": "Automatiske opdateringer til RPM-OSTree",
   "ostree-autoupd_desc": "Aktiverer rpm-ostree's automatiske opdateringsfunktion i stage-modus (stille). Opdateringer vil kun blive anvendt ved genstart, og du vil ikke blive bedt om at genstarte.",
-
   "nv_desc": "Nuværende Nvidia-drivere. Understøttede GPU'er: Maxwell (GT 9xx) og nyere.",
   "nv_rtx_desc": "Nuværende Nvidia-drivere med åbne kernemoduler. Understøttede GPU'er: GTX 16xx og enhver RTX-serie. Til bærbare computere, foretræk proprietær til strømstyring.",
   "nv_desc_470": "Legacy Nvidia-drivere. Understøttede GPU'er: Kepler (GT 6xx) og Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Driver til officielle og generiske Xbox-controllere på Linux.",
   "modsign": "Kernemodul-signering",
   "modsign_desc": "Aktiverer signering af kernemoduler og drivere med Machine Owner Key til Secure Boot.",
-
   "flat_desc": "Gå-til-repositoriet til Flatpak-applikationer, med mange eksklusive apps.",
   "brew_desc": "En CLI-værktøjer pakkebehandler til macOS/Linux.",
   "chaotic_desc": "Et community-drevet repository til Arch Linux-brugere.",
   "rpmfusion_desc": "Et repository, der giver yderligere pakker til Fedora og RHEL.",
   "pip_desc": "Python pakkebehandler. Typisk nyttig for Python-udviklere.",
   "cargo_desc": "Rust pakkebehandler. Typisk nyttig for Rust-udviklere. Inkluderer Rustup.",
-
   "obs_desc": "Populær open-source streaming- og optagelsessoftware.",
   "mctl_desc": "En systemmonitor til Linux meget lig Windows Task Manager, baseret på GTK4.",
   "sc_desc": "Et værktøj til opsætning af Stream Decks og lignende enheder.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "En DNS-tjeneste, der skjuler din trafik fra din ISP.",
   "piper_desc": "En GTK-applikation til at konfigurere gaming-mus ved hjælp af libratbag. Almindeligvis brugt til Logitech, Roccat, Asus og Glorious mus.",
   "glever_desc": "Et værktøj til at administrere AppImages, generere desktop-opførsler og app-metadata, opdatere apps på stedet eller holde flere versioner side om side.",
-
   "docker_desc": "Docker Engine container-tjenesteudbyder og grundlæggende værktøjer til det, som docker-compose.",
   "mise_desc": "Lig asdf (eller nvm eller pyenv men for ethvert sprog) det administrerer dev-værktøjer som node, python, cmake, terraform, og hundreder mere. Erstatter PyEnv, NVM, og Java JDK og Maven installatørerne fra denne sektion.",
   "nvm_desc": "En versionsbehandler til Node.js, der giver dig mulighed for nemt at skifte mellem forskellige versioner. Inkluderer Node.js, NPM og Yarn. Ikke nødvendig, hvis du bruger Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "En samling værktøjer og biblioteker til at skabe applikationer baseret på .NET-platformen.",
   "sublime_desc": "Et sofistikeret tekstredigeringsprogram til kode, markup og prosa.",
   "tailscale_desc": "En zero-config VPN, der forbinder dine enheder sikkert over internettet.",
-
   "cockpit_desc": "En webbaseret grænseflade til overvågning og administration af Linux-servere (server).",
   "webmin_desc": "En webbaseret grænseflade til systemadministration for Unix.",
   "topgrade_desc": "Et værktøj til at opgradere alle installerede pakker på ethvert Linux-system.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Skift indstillinger relateret til GTK3-apps og GNOME Shell, fra temaer til skrifttypegengivelse.",
   "extman_desc": "Søg, download og administrer GNOME-udvidelser nemt.",
   "yay_desc": "En populær AUR-hjælper skrevet i Go. Ligner paru.",
-  "paru_desc": "En populær AUR-hjælper skrevet i Rust. Ligner yay."
+  "paru_desc": "En populær AUR-hjælper skrevet i Rust. Ligner yay.",
+  "cachyconfs_desc": "Optimerede konfigurationer for bedre ydeevne og responsivitet, samt små rettelser til typiske problemer, der bruges som standard på CachyOS, filtreret for universel kompatibilitet.",
+  "cachyconfs": "CachyOS systemd Konfiguration"
 }

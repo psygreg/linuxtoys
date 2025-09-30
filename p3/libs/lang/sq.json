@@ -36,7 +36,6 @@
   "select_button": "Zgjidh",
   "loading_manifest_message": "Duke ngarkuar skedarin tuaj të manifestit... Ju lutemi prisni...",
   "packages_flatpaks": "Paketat & Flatpak-et",
-
   "psypicks": "Zgjedhjet e Psygreg",
   "psypicks_desc": "Zgjedhje e kuruar e softuerit për lojëra dhe cilësi jetese në Linux.",
   "pdefaults": "Parazgjedhjet e Optimizuara",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Mjete dhe burime për menaxhimin e pajisjeve periferike dhe ndriçimit.",
   "sysadm": "Administrimi i Sistemit",
   "sysadm_desc": "Mjete për administrimin dhe menaxhimin e sistemit për bizneset e vogla ose në shkallë.",
-
   "gimp_desc": "Një redaktor i fuqishëm imazhesh me burim të hapur.",
   "onlyoffice_desc": "Një suitë me përputhshmëri më të mirë me skedarët e Microsoft Office.",
   "msteams_desc": "Një platformë bashkëpunimi për punë në distancë.",
@@ -88,7 +86,6 @@
   "figma_desc": "Një aplikim UI/UX në internet.",
   "davinci_desc": "Softuer profesional redaktimi video.",
   "obsidian_desc": "Një aplikim falas, fleksibël për mendimet, shënimet dhe organizimin tuaj.",
-
   "gsr_desc": "Një mjet regjistrimi ekrani me kodim hardware të ngjashëm me Shadowplay për çdo GPU në Linux.",
   "pp_desc": "Një mjet bazuar në GTK për të marrë lehtësisht runner komuniteti për lojëra në Linux.",
   "sober_desc": "Port komuniteti Roblox për Linux, bazuar në versionin Android të lojës.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Një wrapper komuniteti për Roblox Studio, për krijuesit e lojërave Roblox.",
   "pup_desc": "Një mjet bazuar në Qt për të marrë lehtësisht runner komuniteti për lojëra në Linux.",
   "lsfg_desc": "Një shtresë përputhshmërie për Lossless Scaling në Vulkan për Linux. Ende kërkon Lossless Scaling për Windows.",
-
   "ufw": "Konfiguro Firewall",
   "ufw_desc": "Instalon dhe aplikon një cilësim parazgjedhje ideal për shumicën e përdoruesve për Uncomplicated Firewall (UFW).",
   "swapfile": "Konfiguro Skedarin Swap",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Instalon ffmpeg-full në platformat flatpak aktualisht të mbështetura, duke lejuar aplikimet të përdorin riprodhim media me përshpejtim hardware.",
   "ostree-autoupd": "Përditësime Automatike për RPM-OSTree",
   "ostree-autoupd_desc": "Aktivizon veçorinë e përditësimit automatik të rpm-ostree në modalitetin e fazës (i heshtur). Përditësimet do të aplikohen vetëm në rinisje, dhe nuk do të kërkohet rinisje.",
-
   "nv_desc": "Drajverat aktuale Nvidia. GPU të mbështetura: Maxwell (GT 9xx) dhe më të rinj.",
   "nv_rtx_desc": "Drajverat aktuale Nvidia me module bërthame të hapura. GPU të mbështetura: GTX 16xx dhe çdo seri RTX. Për laptop, preferoni opsionin proprietary për menaxhimin e energjisë.",
   "nv_desc_470": "Drajverat e vjetra Nvidia. GPU të mbështetura: Kepler (GT 6xx) dhe Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Drajver për kontrolluesit zyrtarë dhe gjenerikë Xbox në Linux.",
   "modsign": "Nënshkrimi i modulit bërthamë",
   "modsign_desc": "Aktivizon nënshkrimin e moduleve bërthamë dhe drajverave me Machine Owner Key për Secure Boot.",
-
   "flat_desc": "Depoja kryesore për aplikimet Flatpak, duke pasur shumë aplikime ekskluzive.",
   "brew_desc": "Një menaxher paketash mjetesh CLI për macOS/Linux.",
   "chaotic_desc": "Një depo e drejtuar nga komuniteti për përdoruesit e Arch Linux.",
   "rpmfusion_desc": "Një depo që ofron paketa shtesë për Fedora dhe RHEL.",
   "pip_desc": "Menaxher paketash Python. Zakonisht i dobishëm për zhvilluesit Python.",
   "cargo_desc": "Menaxher paketash Rust. Zakonisht i dobishëm për zhvilluesit Rust. Përfshin Rustup.",
-
   "obs_desc": "Softuer i njohur me burim të hapur për streaming dhe regjistrim.",
   "mctl_desc": "Një monitor sistemi për Linux shumë i ngjashëm me Windows Task Manager, bazuar në GTK4.",
   "sc_desc": "Një mjet për konfigurimin e Stream Deck dhe pajisjeve të ngjashme.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "Një shërbim DNS që fsheh trafikun tuaj nga ISP juaj.",
   "piper_desc": "Një aplikim GTK për konfigurimin e miëve lojërash duke përdorur libratbag. Zakonisht përdoret për Logitech, Roccat, Asus dhe Glorious.",
   "glever_desc": "Një mjet për menaxhimin e AppImages, duke gjeneruar hyrje desktop dhe metadata aplikimi, duke përditësuar aplikimet në vend ose duke mbajtur versione të shumta anash.",
-
   "docker_desc": "Ofruesi i shërbimit kontejner Docker Engine dhe mjete bazë për të, si docker-compose.",
   "mise_desc": "Si asdf (ose nvm ose pyenv por për çdo gjuhë) ai menaxhon mjete zhvillimi si node, python, cmake, terraform, dhe qindra të tjera. Zëvendëson PyEnv, NVM, dhe instaluesit e Java JDK dhe Maven nga ky seksion.",
   "nvm_desc": "Një menaxher versioni për Node.js, duke lejuar kalimin e lehtë midis versioneve të ndryshme. Përfshin Node.js, NPM dhe Yarn. Nuk nevojitet nëse përdorni Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Një koleksion mjetesh dhe librarish për krijimin e aplikimeve bazuar në platformën .NET.",
   "sublime_desc": "Një redaktor tekst i sofistikuar për kod, markup dhe prozë.",
   "tailscale_desc": "Një VPN zero-konfig që lidh pajisjet tuaja në mënyrë të sigurt në internet.",
-
   "cockpit_desc": "Një ndërfaqe bazuar në web për monitorimin dhe menaxhimin e serverëve Linux (server).",
   "webmin_desc": "Një ndërfaqe bazuar në web për administrimin e sistemit për Unix.",
   "topgrade_desc": "Një mjet për përmirësimin e të gjitha paketave të instaluara në çdo sistem Linux.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Ndrysho cilësimet në lidhje me aplikimet GTK3 dhe GNOME Shell nga temat deri te renderimi i shkronjave.",
   "extman_desc": "Kërko, shkarko dhe menaxho shtesat GNOME lehtësisht.",
   "yay_desc": "Një ndihmës AUR popullor i shkruar në Go. Ngjashëm me paru.",
-  "paru_desc": "Një ndihmës AUR popullor i shkruar në Rust. Ngjashëm me yay."
+  "paru_desc": "Një ndihmës AUR popullor i shkruar në Rust. Ngjashëm me yay.",
+  "cachyconfs_desc": "Konfigurime të optimizuara për performancë dhe përgjegjshmëri më të mirë, si dhe riparime të vogla për probleme tipike që përdoren si parazgjedhje në CachyOS, të filtruara për pajtueshmëri universale.",
+  "cachyconfs": "Konfigurimi systemd CachyOS"
 }

@@ -263,5 +263,7 @@
   "tweaks_desc": "GTK3 앱과 GNOME Shell과 관련된 설정을 테마에서 글꼴 렌더링까지 변경합니다.",
   "extman_desc": "GNOME 확장을 쉽게 검색, 다운로드 및 관리합니다.",
   "yay_desc": "Go로 작성된 인기 있는 AUR 도우미. paru와 유사합니다.",
-  "paru_desc": "Rust로 작성된 인기 있는 AUR 도우미. yay와 유사합니다."
+  "paru_desc": "Rust로 작성된 인기 있는 AUR 도우미. yay와 유사합니다.",
+  "cachyconfs_desc": "CachyOS에서 기본적으로 사용되는 성능과 응답성을 향상시키는 최적화된 구성과 일반적인 문제에 대한 작은 수정. 범용 호환성을 위해 필터링되었습니다.",
+  "cachyconfs": "CachyOS systemd 구성"
 }

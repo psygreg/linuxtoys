@@ -263,5 +263,7 @@
   "tweaks_desc": "Einstellungen ändern, die sich auf GTK3-Apps und GNOME-Shell beziehen, von Themen bis zur Schriftwiedergabe.",
   "extman_desc": "GNOME-Erweiterungen einfach suchen, herunterladen und verwalten.",
   "yay_desc": "Ein beliebter AUR-Helfer, geschrieben in Go. Ähnlich wie paru.",
-  "paru_desc": "Ein beliebter AUR-Helfer, geschrieben in Rust. Ähnlich wie yay."
+  "paru_desc": "Ein beliebter AUR-Helfer, geschrieben in Rust. Ähnlich wie yay.",
+  "cachyconfs_desc": "Optimierte Konfigurationen für bessere Leistung und Reaktionsfähigkeit sowie kleine Fixes für typische Probleme, die standardmäßig auf CachyOS verwendet werden, gefiltert für universelle Kompatibilität.",
+  "cachyconfs": "CachyOS systemd Konfiguration"
 }

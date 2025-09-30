@@ -36,7 +36,6 @@
   "select_button": "Pasirinkti",
   "loading_manifest_message": "Įkeliamas jūsų manifesto failas... Prašome palaukti...",
   "packages_flatpaks": "Paketai & Flatpak'ai",
-
   "psypicks": "Psygreg pasirinkimai",
   "psypicks_desc": "Kuruojamas programinės įrangos pasirinkimas žaidimams ir gyvenimo kokybei Linux.",
   "pdefaults": "Optimizuotos numatytosios reikšmės",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Įrankiai ir ištekliai periferinių įrenginių ir apšvietimo valdymui.",
   "sysadm": "Sistemos administravimas",
   "sysadm_desc": "Įrankiai sistemos administravimui ir valdymui mažiems verslams arba dideliu mastu.",
-
   "gimp_desc": "Galingas atviro kodo vaizdo redaktorius.",
   "onlyoffice_desc": "Rinkinys su geresniu suderinamumu su Microsoft Office failais.",
   "msteams_desc": "Bendradarbiavimo platforma nuotoliniam darbui.",
@@ -88,7 +86,6 @@
   "figma_desc": "Žiniatinklio pagrindu sukurta UI/UX dizaino programa.",
   "davinci_desc": "Profesionali vaizdo redagavimo programinė įranga.",
   "obsidian_desc": "Nemokama, lanksti programa jūsų mintims, užrašams ir organizavimui.",
-
   "gsr_desc": "Ekrano įrašymo įrankis su aparatinės įrangos kodavimu, panašiu į Shadowplay bet kokiam GPU Linux.",
   "pp_desc": "GTK pagrindu sukurtas įrankis lengvai gauti bendruomenės vykdytojus žaidimams Linux.",
   "sober_desc": "Roblox bendruomenės prievadas Linux, pagrįstas žaidimo Android versija.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Bendruomenės wrapper Roblox Studio, Roblox žaidimų kūrėjams.",
   "pup_desc": "Qt pagrindu sukurtas įrankis lengvai gauti bendruomenės vykdytojus žaidimams Linux.",
   "lsfg_desc": "Suderinamumo sluoksnis Lossless Scaling Vulkan Linux. Vis dar reikalauja Lossless Scaling Windows.",
-
   "ufw": "Konfigūruoti ugniasienę",
   "ufw_desc": "Įdiegia ir taiko numatytąjį nustatymą, idealų daugumai vartotojų Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigūruoti swap failą",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Įdiegia ffmpeg-full į šiuo metu palaikomas flatpak platformas, leidžiant programoms naudoti aparatinės įrangos pagreitintą medijos atkūrimą.",
   "ostree-autoupd": "Automatiniai atnaujinimai RPM-OSTree",
   "ostree-autoupd_desc": "Įjungia rpm-ostree automatinio atnaujinimo funkciją scenos režime (tyliai). Atnaujinimai bus taikomi tik perkrovimo metu, ir jums nebus pasiūlyta perkrauti.",
-
   "nv_desc": "Dabartiniai Nvidia tvarkyklės. Palaikomi GPU: Maxwell (GT 9xx) ir naujesni.",
   "nv_rtx_desc": "Dabartiniai Nvidia tvarkyklės su atvirais branduolio moduliais. Palaikomi GPU: GTX 16xx ir bet kuri RTX serija. Nešiojamiesiems kompiuteriams pirmenybę teikite nuosavybės variantui energijos valdymui.",
   "nv_desc_470": "Paveldėti Nvidia tvarkyklės. Palaikomi GPU: Kepler (GT 6xx) ir Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Tvarkyklė oficialiems ir bendriesiems Xbox valdikliams Linux.",
   "modsign": "Branduolio modulio pasirašymas",
   "modsign_desc": "Įjungia branduolio modulių ir tvarkyklių pasirašymą Machine Owner Key Secure Boot.",
-
   "flat_desc": "Pagrindinė saugykla Flatpak programoms, turinti daug išskirtinių programų.",
   "brew_desc": "CLI įrankių paketų tvarkyklė macOS/Linux.",
   "chaotic_desc": "Bendruomenės vadovaujama saugykla Arch Linux vartotojams.",
   "rpmfusion_desc": "Saugykla, teikianti papildomus paketus Fedora ir RHEL.",
   "pip_desc": "Python paketų tvarkyklė. Paprastai naudinga Python kūrėjams.",
   "cargo_desc": "Rust paketų tvarkyklė. Paprastai naudinga Rust kūrėjams. Įtraukia Rustup.",
-
   "obs_desc": "Populiari atviro kodo streaming ir įrašymo programinė įranga.",
   "mctl_desc": "Sistemos monitorius Linux, labai panašus į Windows Task Manager, pagrįstas GTK4.",
   "sc_desc": "Įrankis Stream Deck ir panašių įrenginių sąrankai.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "DNS paslauga, kuri slepia jūsų srautą nuo jūsų ISP.",
   "piper_desc": "GTK programa žaidimų pelėms konfigūruoti naudojant libratbag. Paprastai naudojama Logitech, Roccat, Asus ir Glorious pelėms.",
   "glever_desc": "Naudmenys AppImages valdymui, generuojant darbalaukio įrašus ir programos metaduomenis, atnaujinant programas vietoje arba laikant kelias versijas greta.",
-
   "docker_desc": "Docker Engine konteinerių paslaugos teikėjas ir pagrindiniai įrankiai jam, kaip docker-compose.",
   "mise_desc": "Kaip asdf (arba nvm arba pyenv, bet bet kuriai kalbai) jis valdo dev įrankius kaip node, python, cmake, terraform ir šimtus kitų. Pakeičia PyEnv, NVM ir Java JDK ir Maven diegimo programas iš šio skyriaus.",
   "nvm_desc": "Node.js versijų tvarkyklė, leidžianti lengvai perjungti tarp skirtingų versijų. Įtraukia Node.js, NPM ir Yarn. Nereikia, jei naudojate Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Įrankių ir bibliotekų kolekcija .NET platformos pagrindu sukurtoms programoms kurti.",
   "sublime_desc": "Sudėtingas teksto redaktorius kodui, žymėjimui ir prozai.",
   "tailscale_desc": "Nulinės konfigūracijos VPN, kuris saugiai sujungia jūsų įrenginius per internetą.",
-
   "cockpit_desc": "Žiniatinklio pagrindu sukurtas sąsaja Linux serverių stebėjimui ir valdymui (serveris).",
   "webmin_desc": "Žiniatinklio pagrindu sukurtas sąsaja sistemos administravimui Unix.",
   "topgrade_desc": "Įrankis atnaujinti visus įdiegtus paketus bet kurioje Linux sistemoje.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Keisti nustatymus, susijusius su GTK3 programomis ir GNOME Shell nuo temų iki šrifto atvaizdavimo.",
   "extman_desc": "Lengvai ieškoti, atsisiųsti ir valdyti GNOME plėtinius.",
   "yay_desc": "Populiarus AUR pagalbininkas, parašytas Go. Panašus į paru.",
-  "paru_desc": "Populiarus AUR pagalbininkas, parašytas Rust. Panašus į yay."
+  "paru_desc": "Populiarus AUR pagalbininkas, parašytas Rust. Panašus į yay.",
+  "cachyconfs_desc": "Optimizuotos konfigūracijos geresniam našumui ir atsiliepimui, taip pat nedideli pataisymai tipiškoms problemoms, kurios naudojamos pagal numatytuosius nustatymus CachyOS, filtruojamos universaliu suderinamumui.",
+  "cachyconfs": "CachyOS systemd konfigūracija"
 }

@@ -36,7 +36,6 @@
   "select_button": "Izberi",
   "loading_manifest_message": "Nalaganje vaše datoteke manifesta... Prosimo, počakajte...",
   "packages_flatpaks": "Paketi & Flatpaki",
-
   "psypicks": "Psygregove izbire",
   "psypicks_desc": "Kuratirana izbira programske opreme za igranje in kakovost življenja v Linuxu.",
   "pdefaults": "Optimizirane privzete nastavitve",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Orodja in viri za upravljanje perifernih naprav in osvetlitve.",
   "sysadm": "Sistemska administracija",
   "sysadm_desc": "Orodja za sistemsko administracijo in upravljanje za majhna podjetja ali v velikem obsegu.",
-
   "gimp_desc": "Zmogljiv odprtokodni urejevalnik slik.",
   "onlyoffice_desc": "Paket z boljšo združljivostjo z datotekami Microsoft Office.",
   "msteams_desc": "Platforma za sodelovanje pri oddaljenem delu.",
@@ -88,7 +86,6 @@
   "figma_desc": "Spletna aplikacija za načrtovanje UI/UX.",
   "davinci_desc": "Profesionalna programska oprema za urejanje videa.",
   "obsidian_desc": "Brezplačna, prilagodljiva aplikacija za vaše misli, zapiske in organizacijo.",
-
   "gsr_desc": "Orodje za snemanje zaslona s strojnim kodiranjem, podobno Shadowplay za kateri koli GPU v Linuxu.",
   "pp_desc": "GTK-based orodje za enostavno pridobivanje skupnostnih runner-jev za igranje v Linuxu.",
   "sober_desc": "Skupnostni port Roblox za Linux, temelječ na Android različici igre.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Skupnostni wrapper za Roblox Studio, za ustvarjalce Roblox iger.",
   "pup_desc": "Qt-based orodje za enostavno pridobivanje skupnostnih runner-jev za igranje v Linuxu.",
   "lsfg_desc": "Sloj združljivosti za Lossless Scaling na Vulkan za Linux. Še vedno zahteva Lossless Scaling za Windows.",
-
   "ufw": "Konfiguriraj požarni zid",
   "ufw_desc": "Namesti in uporabi privzeto nastavitev, idealno za večino uporabnikov za Uncomplicated Firewall (UFW).",
   "swapfile": "Konfiguriraj swap datoteko",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Namesti ffmpeg-full v trenutno podprte flatpak platforme, kar omogoča aplikacijam uporabo strojno pospešenega predvajanja medijev.",
   "ostree-autoupd": "Samodejne posodobitve za RPM-OSTree",
   "ostree-autoupd_desc": "Omogoči samodejno posodabljanje funkcijo rpm-ostree v stage načinu (tiho). Posodobitve bodo uveljavljene samo ob ponovnem zagonu, in ne boste pozvani k ponovnemu zagonu.",
-
   "nv_desc": "Trenutni Nvidia gonilniki. Podprti GPU: Maxwell (GT 9xx) in novejši.",
   "nv_rtx_desc": "Trenutni Nvidia gonilniki z odprtimi jedrnimi moduli. Podprti GPU: GTX 16xx in katera koli RTX-serija. Za prenosnike preferirajte proprietary možnost za upravljanje energije.",
   "nv_desc_470": "Legacy Nvidia gonilniki. Podprti GPU: Kepler (GT 6xx) in Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Gonilnik za uradne in generične Xbox krmilnike v Linuxu.",
   "modsign": "Podpisovanje jedrnih modulov",
   "modsign_desc": "Omogoči podpisovanje jedrnih modulov in gonilnikov z Machine Owner Key za Secure Boot.",
-
   "flat_desc": "Glavni repozitorij za Flatpak aplikacije, ki ima veliko ekskluzivnih aplikacij.",
   "brew_desc": "Upravitelj paketov CLI orodij za macOS/Linux.",
   "chaotic_desc": "Skupnostno vodeni repozitorij za uporabnike Arch Linux.",
   "rpmfusion_desc": "Repozitorij, ki zagotavlja dodatne pakete za Fedora in RHEL.",
   "pip_desc": "Upravitelj paketov Python. Običajno uporabno za razvijalce Python.",
   "cargo_desc": "Upravitelj paketov Rust. Običajno uporabno za razvijalce Rust. Vključuje Rustup.",
-
   "obs_desc": "Priljubljena odprtokodna programska oprema za streaming in snemanje.",
   "mctl_desc": "Sistemski monitor za Linux, zelo podoben Windows Task Manager, temelječ na GTK4.",
   "sc_desc": "Orodje za nastavitev Stream Deck-ov in podobnih naprav.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "DNS storitev, ki skriva vaš promet pred vašim ISP.",
   "piper_desc": "GTK aplikacija za konfiguracijo igralnih mišk z uporabo libratbag. Običajno uporabljeno za Logitech, Roccat, Asus in Glorious miške.",
   "glever_desc": "Pripomoček za upravljanje AppImage, generiranje desktop vnosov in app metapodatkov, posodabljanje aplikacij na mestu ali ohranjanje več različic drug ob drugem.",
-
   "docker_desc": "Docker Engine ponudnik storitev vsebnikov in osnovna orodja za to, kot docker-compose.",
   "mise_desc": "Kot asdf (ali nvm ali pyenv, ampak za kateri koli jezik) upravlja dev orodja kot node, python, cmake, terraform, in na stotine več. Zamenja PyEnv, NVM, in Java JDK in Maven namestilce iz tega razdelka.",
   "nvm_desc": "Upravitelj različic za Node.js, ki omogoča enostavno preklapljanje med različnimi različicami. Vključuje Node.js, NPM in Yarn. Ni potrebno, če uporabljate Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Zbirka orodij in knjižnic za ustvarjanje aplikacij, temelječih na platformi .NET.",
   "sublime_desc": "Sofisticiran urejevalnik besedil za kodo, markup in prozo.",
   "tailscale_desc": "Zero-config VPN, ki varno povezuje vaše naprave prek interneta.",
-
   "cockpit_desc": "Spletni vmesnik za spremljanje in upravljanje Linux strežnikov (strežnik).",
   "webmin_desc": "Spletni vmesnik za sistemsko administracijo za Unix.",
   "topgrade_desc": "Orodje za nadgradnjo vseh nameščenih paketov na katerem koli Linux sistemu.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Spremenite nastavitve, povezane z aplikacijami GTK3 in GNOME Shell, od tem do upodabljanja pisav.",
   "extman_desc": "Enostavno iščite, prenašajte in upravljajte razširitve GNOME.",
   "yay_desc": "Priljubljen pomočnik AUR, napisan v Go. Podobno kot paru.",
-  "paru_desc": "Priljubljen pomočnik AUR, napisan v Rust. Podobno kot yay."
+  "paru_desc": "Priljubljen pomočnik AUR, napisan v Rust. Podobno kot yay.",
+  "cachyconfs_desc": "Optimizirane konfiguracije za boljšo učinkovitost in odzivnost, kot tudi majhne popravke za tipične težave, ki se uporabljajo privzeto v CachyOS, filtrirane za univerzalno združljivost.",
+  "cachyconfs": "Konfiguracija systemd CachyOS"
 }

@@ -263,5 +263,7 @@
   "tweaks_desc": "Thay đổi cài đặt liên quan đến ứng dụng GTK3 và GNOME Shell từ chủ đề đến kết xuất phông chữ.",
   "extman_desc": "Dễ dàng tìm kiếm, tải xuống và quản lý các tiện ích mở rộng GNOME.",
   "yay_desc": "Một trợ lý AUR phổ biến được viết bằng Go. Tương tự như paru.",
-  "paru_desc": "Một trợ lý AUR phổ biến được viết bằng Rust. Tương tự như yay."
+  "paru_desc": "Một trợ lý AUR phổ biến được viết bằng Rust. Tương tự như yay.",
+  "cachyconfs_desc": "Cấu hình được tối ưu hóa cho hiệu suất và khả năng đáp ứng tốt hơn, cũng như các bản sửa lỗi nhỏ cho các vấn đề điển hình được sử dụng mặc định trên CachyOS, được lọc cho khả năng tương thích phổ quát.",
+  "cachyconfs": "Cấu hình systemd CachyOS"
 }

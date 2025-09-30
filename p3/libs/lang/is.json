@@ -36,7 +36,6 @@
   "select_button": "Velja",
   "loading_manifest_message": "Hleður manifest skrá þinni... Vinsamlegast bíðið...",
   "packages_flatpaks": "Pakkar & Flatpaks",
-
   "psypicks": "Psygreg's Val",
   "psypicks_desc": "Valin úrval hugbúnaðar fyrir leiki og lífsgæði á Linux.",
   "pdefaults": "Bestaðir sjálfgefnir gildi",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Verkfæri og auðlindir fyrir stjórnun aðhaldstækja og lýsingar.",
   "sysadm": "Kerfisstjórnun",
   "sysadm_desc": "Verkfæri fyrir kerfisstjórnun og stjórnun fyrir litlar fyrirtæki eða í stærri mæli.",
-
   "gimp_desc": "Öflugt opinn myndvinnsluforrit.",
   "onlyoffice_desc": "Safn með betri samhæfni við Microsoft Office skrár.",
   "msteams_desc": "Samvinnuvettvangur fyrir fjarvinnu.",
@@ -88,7 +86,6 @@
   "figma_desc": "Vefbyggður UI/UX hönnunarforrit.",
   "davinci_desc": "Faglegt myndvinnsluforrit.",
   "obsidian_desc": "Ókeypis, sveigjanlegt forrit fyrir hugsanir þínar, minnispunktar og skipulag.",
-
   "gsr_desc": "Skjáupptökutól með vélbúnaðar kóðun svipað Shadowplay fyrir hvaða GPU sem er á Linux.",
   "pp_desc": "GTK byggt tól til að fá auðveldlega samfélagsræsara fyrir leiki á Linux.",
   "sober_desc": "Roblox samfélagsútgáfa fyrir Linux, byggð á Android útgáfu leiksins.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Samfélags umbúðir fyrir Roblox Studio, fyrir Roblox leikhönnuði.",
   "pup_desc": "Qt byggt tól til að fá auðveldlega samfélagsræsara fyrir leiki á Linux.",
   "lsfg_desc": "Samhæfnislög fyrir Lossless Scaling á Vulkan fyrir Linux. Krefst enn Lossless Scaling fyrir Windows.",
-
   "ufw": "Stilla eldvegg",
   "ufw_desc": "Setur upp og beitir sjálfgefnum stillingum hentugum fyrir flesta notendur fyrir Uncomplicated Firewall (UFW).",
   "swapfile": "Stilla skiptiskrá",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Setur upp ffmpeg-full í núverandi studda flatpak vettvanga, leyfir forritum að nota vélbúnaðar hröðuð miðla afspilun.",
   "ostree-autoupd": "Sjálfvirkar uppfærslur fyrir RPM-OSTree",
   "ostree-autoupd_desc": "Virkjar rpm-ostree sjálfvirku uppfærslu eiginleika í stigum ham (þögull). Uppfærslur verða aðeins beittar við endurræsingu, og þú verður ekki beðinn um að endurræsa.",
-
   "nv_desc": "Núverandi Nvidia reklar. Studdir GPU: Maxwell (GT 9xx) og nýrri.",
   "nv_rtx_desc": "Núverandi Nvidia reklar með opnum kjarna einingum. Studdir GPU: GTX 16xx og hvaða RTX-sería sem er. Fyrir fartölvur, kjósið einka valkost fyrir orku stjórnun.",
   "nv_desc_470": "Eldri Nvidia reklar. Studdir GPU: Kepler (GT 6xx) og Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Rekill fyrir opinbera og almenn Xbox stýringar á Linux.",
   "modsign": "Kjarnaeining undirritun",
   "modsign_desc": "Virkjar undirritun kjarnaeininga og rekla með Machine Owner Key fyrir Secure Boot.",
-
   "flat_desc": "Aðalganga fyrir Flatpak forrit, með mörgum einkaréttum forritum.",
   "brew_desc": "CLI verkfæra pakka stjórnandi fyrir macOS/Linux.",
   "chaotic_desc": "Samfélagsdrifin geymsla fyrir Arch Linux notendur.",
   "rpmfusion_desc": "Geymsla sem býður upp á viðbótar pakka fyrir Fedora og RHEL.",
   "pip_desc": "Python pakka stjórnandi. Venjulega nytsamlegt fyrir Python hönnuði.",
   "cargo_desc": "Rust pakka stjórnandi. Venjulega nytsamlegt fyrir Rust hönnuði. Inniheldur Rustup.",
-
   "obs_desc": "Vinsæll opinn straum og upptökuhugbúnaður.",
   "mctl_desc": "Kerfis eftirlitsforrit fyrir Linux mjög svipað Windows Task Manager, byggt á GTK4.",
   "sc_desc": "Tól fyrir að setja upp Stream Decks og svipuð tæki.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "DNS þjónusta sem felur umferð þína frá ISP þínum.",
   "piper_desc": "GTK forrit til að stilla leikjamús með libratbag. Algengt fyrir Logitech, Roccat, Asus og Glorious mús.",
   "glever_desc": "Hjálparforrit til að stjórna AppImages, býr til skjáborðsfærslur og forrit lýsigögn, uppfærir forrit á staðnum eða heldur mörgum útgáfum hlið við hlið.",
-
   "docker_desc": "Docker Engine gám þjónusta veitandi og grunnverkfæri fyrir það, eins og docker-compose.",
   "mise_desc": "Eins og asdf (eða nvm eða pyenv en fyrir hvaða tungumál sem er) það stjórnar þróunarverkfærum eins og node, python, cmake, terraform, og hundruðum fleiri. Kemur í stað PyEnv, NVM, og Java JDK og Maven uppsetjara frá þessum hluta.",
   "nvm_desc": "Útgáfa stjórnandi fyrir Node.js, leyfir þér að skipta auðveldlega milli mismunandi útgáfa. Inniheldur Node.js, NPM og Yarn. Ekki nauðsynlegt ef þú notar Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Safn af verkfærum og bókasöfnum til að búa til forrit byggð á .NET vettvangi.",
   "sublime_desc": "Flókið textaritill fyrir kóða, merkingar og prósa.",
   "tailscale_desc": "Núll-stilling VPN sem tengir tæki þín öruggt yfir internetið.",
-
   "cockpit_desc": "Vefbyggður viðmót fyrir eftirlit og stjórnun Linux þjóna (þjónn).",
   "webmin_desc": "Vefbyggður viðmót fyrir kerfisstjórnun fyrir Unix.",
   "topgrade_desc": "Tól fyrir að uppfæra alla uppsetta pakka á hvaða Linux kerfi sem er.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Breyttu stillingum sem tengjast GTK3 forritum og GNOME Shell frá þemum til leturmyndunar.",
   "extman_desc": "Leitaðu að, halaðu niður og stjórnaðu GNOME viðbótum auðveldlega.",
   "yay_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Go. Svipaður og paru.",
-  "paru_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Rust. Svipaður og yay."
+  "paru_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Rust. Svipaður og yay.",
+  "cachyconfs_desc": "Fínstilltar stillingar fyrir betri afköst og viðbragðsgetu, auk smár lagfæringar fyrir dæmigerð vandamál sem notuð eru sjálfgefið á CachyOS, síað fyrir alheimssamræmi.",
+  "cachyconfs": "CachyOS systemd stilling"
 }

@@ -36,7 +36,6 @@
   "select_button": "Vali",
   "loading_manifest_message": "Teie manifestifaili laadimine... Palun oodake...",
   "packages_flatpaks": "Paketid & Flatpakid",
-
   "psypicks": "Psygreg'i valikud",
   "psypicks_desc": "Kureeritud tarkvara valik mängimiseks ja elukvaliteedi parandamiseks Linuxis.",
   "pdefaults": "Optimeeritud vaikeseaded",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Tööriistad ja ressursid perifeersete seadmete ja valgustuse haldamiseks.",
   "sysadm": "Süsteemi administreerimine",
   "sysadm_desc": "Tööriistad süsteemi administreerimiseks ja haldamiseks väikestele ettevõtetele või suuremas ulatuses.",
-
   "gimp_desc": "Võimas avatud lähtekoodiga pildiredaktor.",
   "onlyoffice_desc": "Komplekt parema ühilduvusega Microsoft Office failidega.",
   "msteams_desc": "Koostööplatvorm kaugtööks.",
@@ -88,7 +86,6 @@
   "figma_desc": "Veebipõhine UI/UX disainirakendus.",
   "davinci_desc": "Professionaalne videoredigeerimistarkvara.",
   "obsidian_desc": "Tasuta, paindlik rakendus teie mõtete, märkmete ja organiseerimise jaoks.",
-
   "gsr_desc": "Ekraanisalvestustööriist riistvarakodeerimisega, sarnane Shadowplay'le mis tahes GPU-le Linuxis.",
   "pp_desc": "GTK-põhine tööriist kogukonna käivitajate hõlpsaks hankimiseks mängimiseks Linuxis.",
   "sober_desc": "Robloxi kogukonna port Linuxile, mis põhineb mängu Android-versioonil.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Kogukonna ümbris Roblox Studio jaoks, Roblox mängude loojatele.",
   "pup_desc": "Qt-põhine tööriist kogukonna käivitajate hõlpsaks hankimiseks mängimiseks Linuxis.",
   "lsfg_desc": "Ühilduvuskiht Lossless Scaling'ule Vulkanil Linuxile. Nõuab endiselt Lossless Scaling Windowsile.",
-
   "ufw": "Konfigureeri tulemüür",
   "ufw_desc": "Installib ja rakendab vaikeseade, mis on ideaalne enamikule kasutajatele Uncomplicated Firewall (UFW) jaoks.",
   "swapfile": "Konfigureeri vahetusfail",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Installib ffmpeg-full praegu toetatud flatpak platvormidesse, võimaldades rakendustel kasutada riistvarakiirendatud meedia taasesitust.",
   "ostree-autoupd": "Automaatsed uuendused RPM-OSTree jaoks",
   "ostree-autoupd_desc": "Lubab rpm-ostree automaatse uuendamise funktsiooni lavarežiimis (vaikne). Uuendused rakendatakse ainult taaskäivitamisel ja teid ei paluta taaskäivitada.",
-
   "nv_desc": "Praegused Nvidia draiverid. Toetatud GPU-d: Maxwell (GT 9xx) ja uuemad.",
   "nv_rtx_desc": "Praegused Nvidia draiverid avatud kernel moodulitega. Toetatud GPU-d: GTX 16xx ja mis tahes RTX-seeria. Sülearvutitel eelistage omandiõigust võimsushalduse jaoks.",
   "nv_desc_470": "Pärand Nvidia draiverid. Toetatud GPU-d: Kepler (GT 6xx) ja Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Draiver ametlikele ja üldistele Xbox kontrolleritele Linuxil.",
   "modsign": "Kernel mooduli allkirjastamine",
   "modsign_desc": "Lubab kernel moodulite ja draiverite allkirjastamise Machine Owner Key-ga Secure Boot'i jaoks.",
-
   "flat_desc": "Flatpak rakenduste peamine repositoorium, millel on palju eksklusiivseid rakendusi.",
   "brew_desc": "CLI tööriistade paketihaldur macOS/Linux jaoks.",
   "chaotic_desc": "Kogukonna juhitud repositoorium Arch Linux kasutajatele.",
   "rpmfusion_desc": "Repositoorium, mis pakub täiendavaid pakette Fedora ja RHEL jaoks.",
   "pip_desc": "Pythoni paketihaldur. Tavaliselt kasulik Pythoni arendajatele.",
   "cargo_desc": "Rusti paketihaldur. Tavaliselt kasulik Rust arendajatele. Sisaldab Rustup.",
-
   "obs_desc": "Populaarne avatud lähtekoodiga voogesituse ja salvestamise tarkvara.",
   "mctl_desc": "Süsteemi monitor Linuxile, väga sarnane Windows Task Manager'iga, GTK4 põhjal.",
   "sc_desc": "Tööriist Stream Deckide ja sarnaste seadmete seadistamiseks.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "DNS-teenus, mis peidab teie liikluse teie ISP-st.",
   "piper_desc": "GTK rakendus mänguhirvede konfigureerimiseks libratbag'i abil. Tavaliselt kasutatakse Logitech, Roccat, Asus ja Glorious hiirte jaoks.",
   "glever_desc": "Utiliit AppImage'ide haldamiseks, genereerides töölaudakirjeid ja rakenduste metaandmeid, uuendades rakendusi kohapeal või hoides mitu versiooni kõrvuti.",
-
   "docker_desc": "Docker Engine konteineriteenuse pakkuja ja põhilised tööriistad selle jaoks, nagu docker-compose.",
   "mise_desc": "Nagu asdf (või nvm või pyenv, kuid mis tahes keele jaoks) see haldab arendustööriistu nagu node, python, cmake, terraform ja sadu rohkem. Asendab PyEnv, NVM ja Java JDK ja Maven installijad sellest sektsioonist.",
   "nvm_desc": "Node.js versioonihaldur, mis võimaldab hõlpsasti vahetada erinevate versioonide vahel. Sisaldab Node.js, NPM ja Yarn. Ei ole vaja, kui kasutate Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Tööriistade ja teekide kogu .NET platvormil põhinevate rakenduste loomiseks.",
   "sublime_desc": "Täpsustatud tekstiredaktor koodi, märgistuse ja proosa jaoks.",
   "tailscale_desc": "Null-konfiguratsiooni VPN, mis ühendab teie seadmed turvaliselt interneti kaudu.",
-
   "cockpit_desc": "Veebipõhine liides Linuxi serverite jälgimiseks ja haldamiseks (server).",
   "webmin_desc": "Veebipõhine liides süsteemi administreerimiseks Unixi jaoks.",
   "topgrade_desc": "Tööriist kõigi installitud pakettide uuendamiseks mis tahes Linuxi süsteemil.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Muuda seadeid, mis on seotud GTK3 rakenduste ja GNOME Shell'iga teemadest fondi renderdamiseni.",
   "extman_desc": "Otsi, laadi alla ja halda GNOME laiendusi hõlpsasti.",
   "yay_desc": "Populaarne AUR abiline, kirjutatud Go-s. Sarnane paru-ga.",
-  "paru_desc": "Populaarne AUR abiline, kirjutatud Rust-is. Sarnane yay-ga."
+  "paru_desc": "Populaarne AUR abiline, kirjutatud Rust-is. Sarnane yay-ga.",
+  "cachyconfs_desc": "Optimeeritud konfiguratsioonid parema jõudluse ja reageerimisvõime jaoks ning väikesed parandused tüüpiliste probleemide jaoks, mida kasutatakse vaikimisi CachyOS-is, filtreeritud universaalse ühilduvuse jaoks.",
+  "cachyconfs": "CachyOS systemd Konfiguratsioon"
 }

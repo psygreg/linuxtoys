@@ -263,5 +263,7 @@
   "tweaks_desc": "Tukar tetapan yang berkaitan dengan aplikasi GTK3 dan GNOME Shell dari tema ke rendering fon.",
   "extman_desc": "Cari, muat turun dan urus sambungan GNOME dengan mudah.",
   "yay_desc": "Pembantu AUR popular yang ditulis dalam Go. Serupa dengan paru.",
-  "paru_desc": "Pembantu AUR popular yang ditulis dalam Rust. Serupa dengan yay."
+  "paru_desc": "Pembantu AUR popular yang ditulis dalam Rust. Serupa dengan yay.",
+  "cachyconfs_desc": "Konfigurasi yang dioptimumkan untuk prestasi dan responsiviti yang lebih baik, serta pembaikan kecil untuk masalah biasa yang digunakan secara lalai di CachyOS, ditapis untuk keserasian universal.",
+  "cachyconfs": "Konfigurasi systemd CachyOS"
 }

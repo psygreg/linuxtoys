@@ -36,7 +36,6 @@
   "select_button": "Tanlash",
   "loading_manifest_message": "Sizning manifest faylingiz yuklanmoqda... Iltimos, kuting...",
   "packages_flatpaks": "Paketlar & Flatpaklar",
-
   "psypicks": "Psygreg tanlovi",
   "psypicks_desc": "Linuxda o'yin va hayot sifati uchun tanlangan dasturiy ta'minot.",
   "pdefaults": "Optimallashtirilgan standartlar",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Chegaraviy qurilmalar va yoritishni boshqarish uchun vositalar va resurslar.",
   "sysadm": "Tizim administratsiyasi",
   "sysadm_desc": "Kichik biznes yoki keng ko'lamda tizim administratsiyasi va boshqaruvi uchun vositalar.",
-
   "gimp_desc": "Kuchli ochiq manbali rasm muharriri.",
   "onlyoffice_desc": "Microsoft Office fayllariga yaxshi mos keladigan paket.",
   "msteams_desc": "Masofaviy ish uchun hamkorlik platformasi.",
@@ -87,7 +85,6 @@
   "figma_desc": "Veb-asosli UI/UX dizayn ilovasi.",
   "davinci_desc": "Professional video tahrirlash dasturiy ta'minoti.",
   "obsidian_desc": "Bepul, moslashuvchan ilova sizning fikrlaringiz, eslatmalaringiz va tashkilotingiz uchun.",
-
   "gsr_desc": "Linuxda har qanday GPU uchun Shadowplay ga o'xshash apparat kodlash bilan ekran yozuv vositasi.",
   "pp_desc": "Linuxda o'yin uchun jamoa ishga tushiruvchilarini oson olish uchun GTK-asosli vosita.",
   "sober_desc": "Linux uchun Roblox jamoa porti, o'yinning Android versiyasiga asoslangan.",
@@ -108,7 +105,6 @@
   "vinegar_desc": "Roblox Studio uchun jamoa o'rash, Roblox o'yin yaratuvchilari uchun.",
   "pup_desc": "Linuxda o'yin uchun jamoa ishga tushiruvchilarini oson olish uchun Qt-asosli vosita.",
   "lsfg_desc": "Linuxda Vulkan uchun Lossless Scaling uchun moslik qatlami. Hali ham Windows uchun Lossless Scaling talab qiladi.",
-
   "ufw": "Xavfsizlik devorini sozlash",
   "ufw_desc": "Ko'pgina foydalanuvchilar uchun ideal standart sozlamani o'rnatadi va qo'llaydi Uncomplicated Firewall (UFW) uchun.",
   "swapfile": "Almashish faylini sozlash",
@@ -140,7 +136,6 @@
   "hwaccel-flatpak_desc": "Hozirda qo'llab-quvvatlanadigan flatpak platformalariga ffmpeg-full o'rnatadi, ilovalarga apparat tezlatilgan media ijro etishdan foydalanishga imkon beradi.",
   "ostree-autoupd": "RPM-OSTree uchun avtomatik yangilanishlar",
   "ostree-autoupd_desc": "rpm-ostree ning avtomatik yangilanish xususiyatini bosqich rejimida (jim) yoqadi. Yangilanishlar faqat qayta ishga tushirishda qo'llaniladi, va sizdan qayta ishga tushirish so'ralmaydi.",
-
   "nv_desc": "Joriy Nvidia drayverlari. Qo'llab-quvvatlanadigan GPUlar: Maxwell (GT 9xx) va yangiroq.",
   "nv_rtx_desc": "Ochiq yadro modullari bilan joriy Nvidia drayverlari. Qo'llab-quvvatlanadigan GPUlar: GTX 16xx va har qanday RTX-seriyasi. Noutbuklar uchun quvvat boshqaruvi uchun proprietary variantni afzal ko'ring.",
   "nv_desc_470": "Eski Nvidia drayverlari. Qo'llab-quvvatlanadigan GPUlar: Kepler (GT 6xx) va Fermi (GT 7xx).",
@@ -151,14 +146,12 @@
   "xneo_desc": "Linuxda rasmiy va umumiy Xbox kontrollerlari uchun drayver.",
   "modsign": "Yadro moduli imzolash",
   "modsign_desc": "Xavfsizlik Boot uchun Machine Owner Key bilan yadro modullar va drayverlarni imzolashni yoqadi.",
-
   "flat_desc": "Flatpak ilovalari uchun asosiy repozitoriya, ko'plab eksklyuziv ilovalarga ega.",
   "brew_desc": "macOS/Linux uchun CLI vositalar paket menejeri.",
   "chaotic_desc": "Arch Linux foydalanuvchilari uchun jamoa boshqaruvidagi repozitoriya.",
   "rpmfusion_desc": "Fedora va RHEL uchun qo'shimcha paketlar ta'minlovchi repozitoriya.",
   "pip_desc": "Python paket menejeri. Odatda Python ishlab chiquvchilari uchun foydali.",
   "cargo_desc": "Rust paket menejeri. Odatda Rust ishlab chiquvchilari uchun foydali. Rustup ni o'z ichiga oladi.",
-
   "obs_desc": "Mashhur ochiq manbali oqim va yozuv dasturiy ta'minoti.",
   "mctl_desc": "Linux uchun Windows Task Manager ga juda o'xshash tizim monitori, GTK4 ga asoslangan.",
   "sc_desc": "Stream Deck va shunga o'xshash qurilmalarni sozlash vositasi.",
@@ -181,7 +174,6 @@
   "cloudflare_warp_desc": "Sizning trafikni ISP dan yashiradigan DNS xizmati.",
   "piper_desc": "Libratbag yordamida o'yin sichqonlarini sozlash uchun GTK ilovasi. Odatda Logitech, Roccat, Asus va Glorious uchun ishlatiladi.",
   "glever_desc": "AppImages ni boshqarish uchun yordamchi, ish stoli yozuvlar va ilova metama'lumotlarini yaratish, ilovalarni joyida yangilash yoki bir nechta versiyalarni yonma-yon saqlash.",
-
   "docker_desc": "Docker Engine konteyner xizmat provayderi va uning asosiy vositalari, masalan docker-compose.",
   "mise_desc": "Asdf (yoki nvm yoki pyenv lekin har qanday til uchun) kabi u node, python, cmake, terraform va yuzlab boshqalarni boshqaradi. Ushbu bo'limdan PyEnv, NVM va Java JDK va Maven o'rnatuvchilarini o'rnini bosadi.",
   "nvm_desc": "Node.js uchun versiya menejeri, turli versiyalar o'rtasida oson o'tishga imkon beradi. Node.js, NPM va Yarn ni o'z ichiga oladi. Agar Mise ishlatayotgan bo'lsangiz, kerak emas.",
@@ -202,7 +194,6 @@
   "dotnet_desc": ".NET platformasi asosida ilovalar yaratish uchun vositalar va kutubxona to'plami.",
   "sublime_desc": "Kod, belgilash va nasr uchun murakkab matn muharriri.",
   "tailscale_desc": "Sizning qurilmalarini internet orqali xavfsiz ulaydigan nol-konfiguratsiya VPN.",
-
   "cockpit_desc": "Linux serverlarini monitoring qilish va boshqarish uchun veb-asosli interfeys (server).",
   "webmin_desc": "Unix uchun tizim administratsiyasi uchun veb-asosli interfeys.",
   "topgrade_desc": "Har qanday Linux tizimida barcha o'rnatilgan paketlarni yangilash vositasi.",
@@ -271,5 +262,7 @@
   "tweaks_desc": "GNOME Shell dan mavzulardan tortib shrift renderlashgacha GTK3 ilovalari bilan bog'liq sozlamalarni o'zgartiring.",
   "extman_desc": "GNOME kengaytmalarini oson qidirish, yuklab olish va boshqarish.",
   "yay_desc": "Go tilida yozilgan mashhur AUR yordamchisi. Paru ga o'xshash.",
-  "paru_desc": "Rust tilida yozilgan mashhur AUR yordamchisi. Yay ga o'xshash."
+  "paru_desc": "Rust tilida yozilgan mashhur AUR yordamchisi. Yay ga o'xshash.",
+  "cachyconfs_desc": "CachyOS-da sukut bo'yicha ishlatiladigan yaxshi ishlash va javob berish uchun optimallashtirilgan konfiguratsiyalar, shuningdek, tipik muammolar uchun kichik tuzatishlar, universal moslik uchun filtrlangan.",
+  "cachyconfs": "CachyOS systemd konfiguratsiyasi"
 }

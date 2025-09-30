@@ -36,7 +36,6 @@
   "select_button": "Atlasīt",
   "loading_manifest_message": "Ielādē jūsu manifesta failu... Lūdzu, uzgaidiet...",
   "packages_flatpaks": "Pakotnes & Flatpak",
-
   "psypicks": "Psygreg izvēle",
   "psypicks_desc": "Kuruota programmatūras izvēle spēlēm un dzīves kvalitātei Linux.",
   "pdefaults": "Optimizētās noklusējuma vērtības",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Rīki un resursi perifērijas ierīču un apgaismojuma pārvaldībai.",
   "sysadm": "Sistēmas administrēšana",
   "sysadm_desc": "Rīki sistēmas administrēšanai un pārvaldībai maziem uzņēmumiem vai lielā mērogā.",
-
   "gimp_desc": "Jaudīgs atvērtā koda attēlu redaktors.",
   "onlyoffice_desc": "Komplekts ar labāku saderību ar Microsoft Office failiem.",
   "msteams_desc": "Sadarbības platforma attālinātam darbam.",
@@ -88,7 +86,6 @@
   "figma_desc": "Tīmekļa bāzēta UI/UX dizaina lietotne.",
   "davinci_desc": "Profesionāla video rediģēšanas programmatūra.",
   "obsidian_desc": "Bezmaksas, elastīga lietotne jūsu domām, piezīmēm un organizācijai.",
-
   "gsr_desc": "Ekrāna ierakstīšanas rīks ar aparatūras kodēšanu, līdzīgu Shadowplay jebkuram GPU Linux.",
   "pp_desc": "GTK bāzēts rīks viegli iegūt kopienas palaižējus spēlēm Linux.",
   "sober_desc": "Roblox kopienas ports Linux, balstīts uz spēles Android versiju.",
@@ -109,7 +106,6 @@
   "vinegar_desc": "Kopienas wrapper Roblox Studio, Roblox spēļu veidotājiem.",
   "pup_desc": "Qt bāzēts rīks viegli iegūt kopienas palaižējus spēlēm Linux.",
   "lsfg_desc": "Saderības slānis Lossless Scaling Vulkan Linux. Joprojām prasa Lossless Scaling Windows.",
-
   "ufw": "Konfigurēt ugunsmūri",
   "ufw_desc": "Instalē un piemēro noklusējuma iestatījumu, kas ir ideāls lielākajai daļai lietotāju Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigurēt swap failu",
@@ -141,7 +137,6 @@
   "hwaccel-flatpak_desc": "Instalē ffmpeg-full pašreiz atbalstītajās flatpak platformās, ļaujot lietotnēm izmantot aparatūras paātrinātās mediju atskaņošanu.",
   "ostree-autoupd": "Automātiskie atjauninājumi RPM-OSTree",
   "ostree-autoupd_desc": "Iespējo rpm-ostree automātiskās atjaunināšanas funkciju posma režīmā (klusā). Atjauninājumi tiks piemēroti tikai pārstartēšanas laikā, un jums netiks piedāvāts pārstartēt.",
-
   "nv_desc": "Pašreizējie Nvidia draiveri. Atbalstītie GPU: Maxwell (GT 9xx) un jaunāki.",
   "nv_rtx_desc": "Pašreizējie Nvidia draiveri ar atvērtiem kodola moduļiem. Atbalstītie GPU: GTX 16xx un jebkura RTX sērija. Klēpjdatoriem dodiet priekšroku īpašuma opcijai enerģijas pārvaldībai.",
   "nv_desc_470": "Mantotie Nvidia draiveri. Atbalstītie GPU: Kepler (GT 6xx) un Fermi (GT 7xx).",
@@ -152,14 +147,12 @@
   "xneo_desc": "Draiveris oficiāliem un ģeneriskiem Xbox kontrolieriem Linux.",
   "modsign": "Kodola moduļa parakstīšana",
   "modsign_desc": "Iespējo kodola moduļu un draiveru parakstīšanu ar Machine Owner Key Secure Boot.",
-
   "flat_desc": "Galvenā krātuve Flatpak lietotnēm, ar daudzām ekskluzīvām lietotnēm.",
   "brew_desc": "CLI rīku pakotņu pārvaldnieks macOS/Linux.",
   "chaotic_desc": "Kopienas vadīta krātuve Arch Linux lietotājiem.",
   "rpmfusion_desc": "Krātuve, kas nodrošina papildu pakotnes Fedora un RHEL.",
   "pip_desc": "Python pakotņu pārvaldnieks. Parasti noderīgs Python izstrādātājiem.",
   "cargo_desc": "Rust pakotņu pārvaldnieks. Parasti noderīgs Rust izstrādātājiem. Ietver Rustup.",
-
   "obs_desc": "Populāra atvērtā koda straumēšanas un ierakstīšanas programmatūra.",
   "mctl_desc": "Sistēmas monitors Linux, ļoti līdzīgs Windows Task Manager, balstīts GTK4.",
   "sc_desc": "Rīks Stream Deck un līdzīgu ierīču iestatīšanai.",
@@ -182,7 +175,6 @@
   "cloudflare_warp_desc": "DNS pakalpojums, kas slēpj jūsu trafiku no jūsu ISP.",
   "piper_desc": "GTK lietotne spēļu pelēm konfigurēt, izmantojot libratbag. Parasti tiek izmantots Logitech, Roccat, Asus un Glorious pelēm.",
   "glever_desc": "Rīks AppImages pārvaldībai, ģenerējot darbvirsmas ierakstus un lietotnes metadatus, atjauninot lietotnes vietā vai saglabājot vairākas versijas blakus.",
-
   "docker_desc": "Docker Engine konteineru pakalpojumu sniedzējs un pamata rīki tam, piemēram, docker-compose.",
   "mise_desc": "Tāpat kā asdf (vai nvm vai pyenv, bet jebkurai valodai) tas pārvalda dev rīkus kā node, python, cmake, terraform un simtiem citu. Aizstāj PyEnv, NVM un Java JDK un Maven instalētājus no šīs sadaļas.",
   "nvm_desc": "Node.js versiju pārvaldnieks, ļaujot viegli pārslēgties starp dažādām versijām. Ietver Node.js, NPM un Yarn. Nav nepieciešams, ja izmantojat Mise.",
@@ -203,7 +195,6 @@
   "dotnet_desc": "Rīku un bibliotēku kolekcija .NET platformas bāzētu lietotņu izveidei.",
   "sublime_desc": "Sofisticēts teksta redaktors kodam, markup un prozai.",
   "tailscale_desc": "Nulle-konfigurācijas VPN, kas droši savieno jūsu ierīces internetā.",
-
   "cockpit_desc": "Tīmekļa bāzēts interfeiss Linux serveru uzraudzībai un pārvaldībai (serveris).",
   "webmin_desc": "Tīmekļa bāzēts interfeiss sistēmas administrēšanai Unix.",
   "topgrade_desc": "Rīks visu instalēto pakotņu atjaunināšanai jebkurā Linux sistēmā.",
@@ -272,5 +263,7 @@
   "tweaks_desc": "Mainīt iestatījumus, kas saistīti ar GTK3 lietotnēm un GNOME Shell no tēmām līdz šriftu atveidošanai.",
   "extman_desc": "Meklēt, lejupielādēt un pārvaldīt GNOME paplašinājumus viegli.",
   "yay_desc": "Populārs AUR palīgs, rakstīts Go. Līdzīgs paru.",
-  "paru_desc": "Populārs AUR palīgs, rakstīts Rust. Līdzīgs yay."
+  "paru_desc": "Populārs AUR palīgs, rakstīts Rust. Līdzīgs yay.",
+  "cachyconfs_desc": "Optimizētas konfigurācijas labākai veiktspējai un atsaucībai, kā arī nelieli labojumi tipiskām problēmām, kas tiek izmantotas pēc noklusējuma CachyOS, filtrētas universālai saderībai.",
+  "cachyconfs": "CachyOS systemd konfigurācija"
 }
