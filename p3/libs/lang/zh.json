@@ -268,5 +268,13 @@
   "paru_desc": "一个用 Rust 编写的流行 AUR 助手。与 yay 类似。",
   "cachyconfs_desc": "针对 CachyOS 默认使用的优化配置，以提高性能和响应能力，并修复典型问题，经过筛选以实现通用兼容性。",
   "cachyconfs": "CachyOS systemd 配置",
-  "omb_desc": "一个令人愉快的社区驱动框架，用于管理您的 bash 配置。"
+  "omb_desc": "一个令人愉快的社区驱动框架，用于管理您的 bash 配置。",
+  "sdkman_desc": "管理多个软件开发工具包的并行版本。",
+  "cpux_desc": "收集有关 CPU、主板等的信�",
+  "chat": "社交",
+  "chat_desc": "消息和社交应用。",
+  "signal_desc": "具有端到端加密且无用户ID的私人信使。",
+  "telegram_desc": "具有更好社交功能和更大群组限制的消息应用。",
+  "zap_desc": "WhatsApp Web 的 Electron 包装器。",
+  "peazip_desc": "支持多种格式的免费文件归档工具。"
 }

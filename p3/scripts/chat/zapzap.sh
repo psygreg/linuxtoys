@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: ZapZap
 # version: 1.0
-# description: WhatsApp Messenger
+# description: zap_desc
 # icon: zapzap.png
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

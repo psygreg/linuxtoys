@@ -266,5 +266,13 @@
   "paru_desc": "En populær AUR-hjælper skrevet i Rust. Ligner yay.",
   "cachyconfs_desc": "Optimerede konfigurationer for bedre ydeevne og responsivitet, samt små rettelser til typiske problemer, der bruges som standard på CachyOS, filtreret for universel kompatibilitet.",
   "cachyconfs": "CachyOS systemd Konfiguration",
-  "omb_desc": "En dejlig fællesskabsdrevet ramme til at administrere din bash-konfiguration."
+  "omb_desc": "En dejlig fællesskabsdrevet ramme til at administrere din bash-konfiguration.",
+  "sdkman_desc": "Administrerer parallelle versioner af flere softwareudviklingssæt.",
+  "cpux_desc": "Indsamler oplysninger om CPU, bundkort og mere.",
+  "chat": "Social",
+  "chat_desc": "Besked- og sociale apps.",
+  "signal_desc": "Privat messenger med end-to-end-kryptering og ingen bruger-ID'er.",
+  "telegram_desc": "Besked-app med bedre sociale funktioner og større gruppegrænser.",
+  "zap_desc": "En elektron indpakning til WhatsApp Web.",
+  "peazip_desc": "Gratis filarkiveringsværktøj, der understøtter mange formater."
 }

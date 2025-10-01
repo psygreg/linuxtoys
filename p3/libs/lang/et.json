@@ -266,5 +266,13 @@
   "paru_desc": "Populaarne AUR abiline, kirjutatud Rust-is. Sarnane yay-ga.",
   "cachyconfs_desc": "Optimeeritud konfiguratsioonid parema jõudluse ja reageerimisvõime jaoks ning väikesed parandused tüüpiliste probleemide jaoks, mida kasutatakse vaikimisi CachyOS-is, filtreeritud universaalse ühilduvuse jaoks.",
   "cachyconfs": "CachyOS systemd Konfiguratsioon",
-  "omb_desc": "Lõbus kogukonna juhitud raamistik teie bash-konfiguratsiooni haldamiseks."
+  "omb_desc": "Lõbus kogukonna juhitud raamistik teie bash-konfiguratsiooni haldamiseks.",
+  "sdkman_desc": "Halda mitme tarkvaraarenduskomplekti paralleelseid versioone.",
+  "cpux_desc": "Kogub teavet CPU, emaplaadi ja muu kohta.",
+  "chat": "Sotsiaalne",
+  "chat_desc": "Sõnumside ja sotsiaalsed rakendused.",
+  "signal_desc": "Privaatne sõnumside lõpust lõpuni krüptimisega ja ilma kasutaja ID-deta.",
+  "telegram_desc": "Sõnumside rakendus paremate sotsiaalsete funktsioonidega ja suuremate grupilimitidega.",
+  "zap_desc": "Elektronipakkija WhatsApp Web-i jaoks.",
+  "peazip_desc": "Tasuta failiarhiveerimise utiliit, mis toetab paljusid vorminguid."
 }

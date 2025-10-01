@@ -266,5 +266,13 @@
   "paru_desc": "Popularni AUR pomoćnik napisan u Rust-u. Sličan yay-u.",
   "cachyconfs_desc": "Optimizirane konfiguracije za bolje performanse i odzivnost, kao i male ispravke za tipične probleme koji se koriste prema zadanim postavkama na CachyOS-u, filtrirane za univerzalnu kompatibilnost.",
   "cachyconfs": "Konfiguracija systemd CachyOS",
-  "omb_desc": "Zadovoljavajući okvir vođen zajednicom za upravljanje vašom bash konfiguracijom."
+  "omb_desc": "Zadovoljavajući okvir vođen zajednicom za upravljanje vašom bash konfiguracijom.",
+  "sdkman_desc": "Upravlja paralelnim verzijama više softverskih razvojnih kompleta.",
+  "cpux_desc": "Prikuplja informacije o CPU-u, matičnoj ploči i još mnogo toga.",
+  "chat": "Društveni",
+  "chat_desc": "Aplikacije za razmjenu poruka i društvene mreže.",
+  "signal_desc": "Privatni messenger s end-to-end enkripcijom i bez korisničkih ID-ova.",
+  "telegram_desc": "Aplikacija za razmjenu poruka s boljim društvenim značajkama i većim ograničenjima grupa.",
+  "zap_desc": "Elektronski omotač za WhatsApp Web.",
+  "peazip_desc": "Besplatni alat za arhiviranje datoteka koji podržava mnoge formate."
 }

@@ -266,5 +266,13 @@
   "paru_desc": "Népszerű AUR segítő, Rust-ban írva. Hasonló a yay-hoz.",
   "cachyconfs_desc": "Optimalizált konfigurációk jobb teljesítmény és reagálóképesség érdekében, valamint kis javítások a tipikus problémákra, amelyeket alapértelmezés szerint használnak a CachyOS-ban, szűrve az univerzális kompatibilitás érdekében.",
   "cachyconfs": "CachyOS systemd konfiguráció",
-  "omb_desc": "Egy elbűvölő, közösség által vezetett keretrendszer a bash konfigurációjának kezelésére."
+  "omb_desc": "Egy elbűvölő, közösség által vezetett keretrendszer a bash konfigurációjának kezelésére.",
+  "sdkman_desc": "Több szoftverfejlesztési készlet párhuzamos verzióit kezeli.",
+  "cpux_desc": "Információkat gyűjt a CPU-ról, alaplapról és egyebekről.",
+  "chat": "Társadalmi",
+  "chat_desc": "Üzenetküldő és közösségi alkalmazások.",
+  "signal_desc": "Privát üzenetküldő végpontok közötti titkosítással és felhasználói azonosítók nélkül.",
+  "telegram_desc": "Üzenetküldő alkalmazás jobb közösségi funkciókkal és nagyobb csoportkorlátokkal.",
+  "zap_desc": "Elektron burkolat a WhatsApp Web-hez.",
+  "peazip_desc": "Ingyenes fájlarchiváló eszköz, amely sok formátumot támogat."
 }

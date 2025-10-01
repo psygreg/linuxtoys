@@ -265,5 +265,13 @@
   "paru_desc": "Rust tilida yozilgan mashhur AUR yordamchisi. Yay ga o'xshash.",
   "cachyconfs_desc": "CachyOS-da sukut bo'yicha ishlatiladigan yaxshi ishlash va javob berish uchun optimallashtirilgan konfiguratsiyalar, shuningdek, tipik muammolar uchun kichik tuzatishlar, universal moslik uchun filtrlangan.",
   "cachyconfs": "CachyOS systemd konfiguratsiyasi",
-  "omb_desc": "Sizning bash konfiguratsiyangizni boshqarish uchun yoqimli jamoa tomonidan boshqariladigan ramka."
+  "omb_desc": "Sizning bash konfiguratsiyangizni boshqarish uchun yoqimli jamoa tomonidan boshqariladigan ramka.",
+  "sdkman_desc": "Bir nechta dasturiy ta'minotni ishlab chiqish to'plamlarining parallel versiyalarini boshqaradi.",
+  "cpux_desc": "CPU, asosiy karta va boshqalar haqida ma'lumotlarni to'playdi.",
+  "chat": "Ijtimoiy",
+  "chat_desc": "Xabar almashish va ijtimoiy ilovalar.",
+  "signal_desc": "Oxirigacha shifrlash va foydalanuvchi ID-larisiz shaxsiy messenger.",
+  "telegram_desc": "Yaxshiroq ijtimoiy xususiyatlar va katta guruh chegaralari bilan xabar almashish ilovasi.",
+  "zap_desc": "WhatsApp Web uchun elektron qadoq.",
+  "peazip_desc": "Ko'plab formatlarni qo'llab-quvvatlaydigan bepul fayl arxivatori vositasi."
 }

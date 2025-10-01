@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: PeaZip
 # version: 1.0
-# description: Free file archiver utility
+# description: peazip_desc
 # icon: peazip.png
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

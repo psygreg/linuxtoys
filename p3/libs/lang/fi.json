@@ -266,5 +266,13 @@
   "paru_desc": "Suosittu AUR-avustaja kirjoitettu Rustilla. Samankaltainen kuin yay.",
   "cachyconfs_desc": "Optimoitu konfiguraatiot paremman suorituskyvyn ja vasteajan sekä pienet korjaukset tyypillisiin ongelmiin, joita käytetään oletuksena CachyOS:ssa, suodatettu universaalia yhteensopivuutta varten.",
   "cachyconfs": "CachyOS systemd -konfiguraatio",
-  "omb_desc": "Iloinen yhteisöohjattu kehys bash-konfiguraatiosi hallintaan."
+  "omb_desc": "Iloinen yhteisöohjattu kehys bash-konfiguraatiosi hallintaan.",
+  "sdkman_desc": "Hallinnoi useiden ohjelmistokehityspakettien rinnakkaisversioita.",
+  "cpux_desc": "Kerää tietoja CPU:sta, emolevystä ja muusta.",
+  "chat": "Sosiaalinen",
+  "chat_desc": "Viestintä- ja sosiaaliset sovellukset.",
+  "signal_desc": "Yksityinen messenger päästä päähän -salauksella ja ilman käyttäjätunnuksia.",
+  "telegram_desc": "Viestisovellus paremmin sosiaalisin ominaisuuksin ja suuremmilla ryhmärajoituksin.",
+  "zap_desc": "Elektronikuori WhatsApp Webille.",
+  "peazip_desc": "Ilmainen tiedostojen arkistointityökalu, joka tukee monia muotoja."
 }

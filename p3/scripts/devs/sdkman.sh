@@ -1,14 +1,14 @@
 #!/bin/bash
 # name: SDKMAN
 # version: 1.0
-# description: The Software Development Kit Manager
+# description: sdkman_desc
 # icon: sdkman.png
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
+LT_PROGRAM="SDKMAN"
 
 type -p zip unzip || {
 	sudo_rq
@@ -18,8 +18,7 @@ type -p zip unzip || {
 
 [ -d ~/.sdkman ] && {
 	zenity --question \
-	--title "You already have SDKMAN installed." \
-	--text "Would you like to uninstall?" \
+	--text "$rmmsg" \
 	--width 360 --height 300 && {
 		rm -rf ~/.sdkman && {
 			(

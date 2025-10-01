@@ -266,5 +266,13 @@
   "paru_desc": "Rust ile yazılmış popüler bir AUR yardımcısı. Yay'a benzer.",
   "cachyconfs_desc": "CachyOS'ta varsayılan olarak kullanılan daha iyi performans ve yanıt verme için optimize edilmiş yapılandırmalar ve tipik sorunlar için küçük düzeltmeler, evrensel uyumluluk için filtrelenmiştir.",
   "cachyconfs": "CachyOS systemd Yapılandırması",
-  "omb_desc": "Bash yapılandırmanızı yönetmek için hoş bir topluluk odaklı çerçeve."
+  "omb_desc": "Bash yapılandırmanızı yönetmek için hoş bir topluluk odaklı çerçeve.",
+  "sdkman_desc": "Birden fazla Yazılım Geliştirme Kiti'nin paralel sürümlerini yönetir.",
+  "cpux_desc": "CPU, anakart ve daha fazlası hakkında bilgi toplar.",
+  "chat": "Sosyal",
+  "chat_desc": "Mesajlaşma ve sosyal uygulamalar.",
+  "signal_desc": "Uçtan uca şifreleme ve kullanıcı kimlikleri olmadan özel mesajlaşma.",
+  "telegram_desc": "Daha iyi sosyal özellikler ve daha büyük grup limitleri ile mesajlaşma uygulaması.",
+  "zap_desc": "WhatsApp Web için bir Electron sarıcısı.",
+  "peazip_desc": "Birçok formatı destekleyen ücretsiz dosya arşivleme aracı."
 }

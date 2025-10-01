@@ -266,5 +266,13 @@
   "paru_desc": "Rust로 작성된 인기 있는 AUR 도우미. yay와 유사합니다.",
   "cachyconfs_desc": "CachyOS에서 기본적으로 사용되는 성능과 응답성을 향상시키는 최적화된 구성과 일반적인 문제에 대한 작은 수정. 범용 호환성을 위해 필터링되었습니다.",
   "cachyconfs": "CachyOS systemd 구성",
-  "omb_desc": "귀하의 bash 구성을 관리하기 위한 유쾌한 커뮤니티 기반 프레임워크."
+  "omb_desc": "귀하의 bash 구성을 관리하기 위한 유쾌한 커뮤니티 기반 프레임워크.",
+  "sdkman_desc": "여러 소프트웨어 개발 키트의 병렬 버전을 관리합니다.",
+  "cpux_desc": "CPU, 마더보드 등에 대한 정보를 수집합니다.",
+  "chat": "소셜",
+  "chat_desc": "메시징 및 소셜 앱.",
+  "signal_desc": "종단 간 암호화 및 사용자 ID가 없는 개인 메신저.",
+  "telegram_desc": "더 나은 소셜 기능과 더 큰 그룹 제한이 있는 메시징 앱.",
+  "zap_desc": "WhatsApp Web용 Electron 래퍼.",
+  "peazip_desc": "많은 형식을 지원하는 무료 파일 아카이버 유틸리티."
 }

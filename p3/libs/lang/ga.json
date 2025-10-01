@@ -266,5 +266,13 @@
   "paru_desc": "Cúntóir AUR móréilimh scríofa i Rust. Cosúil le yay.",
   "cachyconfs_desc": "Cumraíochtaí optamaithe le haghaidh feidhmíocht níos fearr agus freagrúlacht, chomh maith le socruithe beaga do fhadhbanna tipiciúla a úsáidtear de réir réamhshocraithe ar CachyOS, scagtha le haghaidh comhoiriúnacht uilíoch.",
   "cachyconfs": "Cumraíocht systemd CachyOS",
-  "omb_desc": "Creatlach aoibhinn tiomáinte ag an bpobal chun do chumraíocht bash a bhainistiú."
+  "omb_desc": "Creatlach aoibhinn tiomáinte ag an bpobal chun do chumraíocht bash a bhainistiú.",
+  "sdkman_desc": "Bainistíonn leaganacha comhthreomhara de il-uirlisí forbartha bogearraí.",
+  "cpux_desc": "Bailíonn sé faisnéis faoi CPU, máthairchlár agus níos mó.",
+  "chat": "Sóisialta",
+  "chat_desc": "Aipeanna teachtaireachtaí agus sóisialta.",
+  "signal_desc": "Teachtaire príobháideach le criptiú ceann go ceann agus gan aon ID úsáideora.",
+  "telegram_desc": "Aip teachtaireachtaí le gnéithe sóisialta níos fearr agus teorainneacha grúpa níos mó.",
+  "zap_desc": "Timfhilleadh leictreonach do WhatsApp Web.",
+  "peazip_desc": "Uirlis cartlannaithe comhad saor in aisce a thacaíonn le go leor formáidí."
 }

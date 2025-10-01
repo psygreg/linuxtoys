@@ -266,5 +266,13 @@
   "paru_desc": "Një ndihmës AUR popullor i shkruar në Rust. Ngjashëm me yay.",
   "cachyconfs_desc": "Konfigurime të optimizuara për performancë dhe përgjegjshmëri më të mirë, si dhe riparime të vogla për probleme tipike që përdoren si parazgjedhje në CachyOS, të filtruara për pajtueshmëri universale.",
   "cachyconfs": "Konfigurimi systemd CachyOS",
-  "omb_desc": "Një kornizë e këndshme e drejtuar nga komuniteti për të menaxhuar konfigurimin tuaj bash."
+  "omb_desc": "Një kornizë e këndshme e drejtuar nga komuniteti për të menaxhuar konfigurimin tuaj bash.",
+  "sdkman_desc": "Menaxhon versione paralele të disa grupeve të zhvillimit të softuerit.",
+  "cpux_desc": "Mbledh informacion për CPU-n, pllakën kryesore dhe më shumë.",
+  "chat": "Social",
+  "chat_desc": "Aplikime për mesazhe dhe sociale.",
+  "signal_desc": "Mesazhist privat me enkriptim nga fundi në fund dhe pa ID përdoruesi.",
+  "telegram_desc": "Aplikim për mesazhe me veçori sociale më të mira dhe kufij grupesh më të mëdhenj.",
+  "zap_desc": "Një mbështjellës elektronike për WhatsApp Web.",
+  "peazip_desc": "Një vegël arkivimi skedarësh falas që mbështet shumë formate."
 }

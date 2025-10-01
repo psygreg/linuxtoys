@@ -1,2 +1,0 @@
-ICON: chat.svg
-description: Messaging and Chat Apps

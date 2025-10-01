@@ -264,5 +264,13 @@
   "extman_desc": "Tafuta, pakua na simamia viendelezi vya GNOME kwa urahisi.",
   "cachyconfs_desc": "Mipangilio iliyoboreshwa kwa utendaji bora na majibu, na marekebisho madogo kwa matatizo ya kawaida yanayotumiwa kwa chaguo-msingi kwenye CachyOS, yaliyochujwa kwa uwezo wa kuoana ulimwenguni.",
   "cachyconfs": "Mpangilio wa systemd wa CachyOS",
-  "omb_desc": "Mfumo wa kufurahisha unaoendeshwa na jamii kwa kusimamia usanidi wako wa bash."
+  "omb_desc": "Mfumo wa kufurahisha unaoendeshwa na jamii kwa kusimamia usanidi wako wa bash.",
+  "sdkman_desc": "Inasimamia matoleo sambamba ya vifurushi vingi vya ukuzaji wa programu.",
+  "cpux_desc": "Hukusanya habari kuhusu CPU, ubao wa mama na zaidi.",
+  "chat": "Jamii",
+  "chat_desc": "Programu za ujumbe na jamii.",
+  "signal_desc": "Mjumbe wa faragha na usimbuaji wa mwisho hadi mwisho na hakuna vitambulisho vya mtumiaji.",
+  "telegram_desc": "Programu ya ujumbe na vipengele bora vya jamii na mipaka kubwa zaidi ya vikundi.",
+  "zap_desc": "Kifuniko cha elektroniki kwa WhatsApp Web.",
+  "peazip_desc": "Zana ya kumbukumbu ya faili ya bure inayounga mkono miundo mingi."
 }

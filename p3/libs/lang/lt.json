@@ -266,5 +266,13 @@
   "paru_desc": "Populiarus AUR pagalbininkas, parašytas Rust. Panašus į yay.",
   "cachyconfs_desc": "Optimizuotos konfigūracijos geresniam našumui ir atsiliepimui, taip pat nedideli pataisymai tipiškoms problemoms, kurios naudojamos pagal numatytuosius nustatymus CachyOS, filtruojamos universaliu suderinamumui.",
   "cachyconfs": "CachyOS systemd konfigūracija",
-  "omb_desc": "Malonus bendruomenės valdomas karkasas jūsų bash konfigūracijai valdyti."
+  "omb_desc": "Malonus bendruomenės valdomas karkasas jūsų bash konfigūracijai valdyti.",
+  "sdkman_desc": "Valdo kelių programinės įrangos kūrimo rinkinių lygiagrečias versijas.",
+  "cpux_desc": "Renka informaciją apie CPU, pagrindinę plokštę ir daugiau.",
+  "chat": "Socialinis",
+  "chat_desc": "Žinučių siuntimo ir socialiniai programos.",
+  "signal_desc": "Privatus pasiuntinys su galutiniu šifravimu ir be naudotojo ID.",
+  "telegram_desc": "Žinučių siuntimo programa su geresnėmis socialinėmis funkcijomis ir didesniais grupių limitais.",
+  "zap_desc": "Elektroninis įvyniojimas WhatsApp Web.",
+  "peazip_desc": "Nemokama failų archyvavimo priemonė, palaikanti daug formatų."
 }

@@ -266,5 +266,13 @@
   "paru_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Rust. Svipaður og yay.",
   "cachyconfs_desc": "Fínstilltar stillingar fyrir betri afköst og viðbragðsgetu, auk smár lagfæringar fyrir dæmigerð vandamál sem notuð eru sjálfgefið á CachyOS, síað fyrir alheimssamræmi.",
   "cachyconfs": "CachyOS systemd stilling",
-  "omb_desc": "Gleðileg samfélagsstýrð rammi til að stjórna bash stillingum þínum."
+  "omb_desc": "Gleðileg samfélagsstýrð rammi til að stjórna bash stillingum þínum.",
+  "sdkman_desc": "Stjórnar samhliða útgáfum af mörgum hugbúnaðarþróunarpökkum.",
+  "cpux_desc": "Safnar upplýsingum um örgjörva, móðurborð og fleira.",
+  "chat": "Félagslegur",
+  "chat_desc": "Skilaboða- og félagslegar forrit.",
+  "signal_desc": "Einkamessenger með enda-í-enda dulritun og engum notandaauðkennum.",
+  "telegram_desc": "Skilaboðaforrit með betri félagslegum eiginleikum og stærri hóphöfum.",
+  "zap_desc": "Elektronhúð fyrir WhatsApp Web.",
+  "peazip_desc": "Ókeypis skráarsafnsverkfæri sem styður margar snið."
 }

@@ -266,5 +266,13 @@
   "paru_desc": "Isang sikat na AUR helper na isinulat sa Rust. Katulad ng yay.",
   "cachyconfs_desc": "Mga na-optimize na configuration para sa mas mahusay na pagganap at responsiveness, pati na rin maliit na mga fix para sa mga tipikal na isyu na ginagamit bilang default sa CachyOS, na-filter para sa universal na compatibility.",
   "cachyconfs": "CachyOS systemd Configuration",
-  "omb_desc": "Isang kasiya-siyang balangkas na hinihimok ng komunidad para sa pamamahala ng iyong bash configuration."
+  "omb_desc": "Isang kasiya-siyang balangkas na hinihimok ng komunidad para sa pamamahala ng iyong bash configuration.",
+  "sdkman_desc": "Namamahala ang mga parallel na bersyon ng maraming kit sa pag-unlad ng software.",
+  "cpux_desc": "Nagtitipon ng impormasyon tungkol sa CPU, motherboard at higit pa.",
+  "chat": "Social",
+  "chat_desc": "Mga app sa pagmemensahe at sosyal.",
+  "signal_desc": "Pribadong messenger na may end-to-end encryption at walang user IDs.",
+  "telegram_desc": "Messaging app na may mas mahusay na social features at mas malalaking group limits.",
+  "zap_desc": "Isang electron wrapper para sa WhatsApp Web.",
+  "peazip_desc": "Libreng file archiver utility na sumusuporta sa maraming format."
 }

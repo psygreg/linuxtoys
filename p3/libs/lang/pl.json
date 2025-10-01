@@ -266,5 +266,13 @@
   "paru_desc": "Popularny pomocnik AUR napisany w Rust. Podobny do yay.",
   "cachyconfs_desc": "Zoptymalizowane konfiguracje dla lepszej wydajności i responsywności oraz małe poprawki dla typowych problemów używanych domyślnie w CachyOS, filtrowane pod kątem uniwersalnej kompatybilności.",
   "cachyconfs": "Konfiguracja systemd CachyOS",
-  "omb_desc": "Zachwycająca struktura oparta na społeczności do zarządzania konfiguracją bash."
+  "omb_desc": "Zachwycająca struktura oparta na społeczności do zarządzania konfiguracją bash.",
+  "sdkman_desc": "Zarządza równoległymi wersjami wielu zestawów programistycznych.",
+  "cpux_desc": "Zbiera informacje o CPU, płycie głównej i innych.",
+  "chat": "Społecznościowy",
+  "chat_desc": "Aplikacje do wiadomości i społecznościowe.",
+  "signal_desc": "Prywatny komunikator z szyfrowaniem end-to-end i bez identyfikatorów użytkowników.",
+  "telegram_desc": "Aplikacja do wiadomości z lepszymi funkcjami społecznościowymi i większymi limitami grup.",
+  "zap_desc": "Opakowanie Electron dla WhatsApp Web.",
+  "peazip_desc": "Bezpłatne narzędzie do archiwizacji plików obsługujące wiele formatów."
 }
