@@ -63,3 +63,4 @@ msg291="Starship wymaga zainstalowanej i włączonej czcionki Nerd w terminalu, 
 msg292="Musisz najpierw zainstalować Docker na systemach ostree. Możesz go znaleźć w sekcji Deweloperzy."
 msg293="/dev/kvm nie znaleziono. Musisz włączyć AMD SVM lub Intel VT-x/VT-d w BIOS-ie przed zainstalowaniem LSW."
 msg294="Pakiety zainstalowane z AUR mogą nie być bezpieczne. Używaj ich ostrożnie!"
+msg295="Nie ma żadnych wymiernych korzyści z używania gamemode w systemach z już zastosowanym CPU ondemand scaling. Kontynuować mimo wszystko?"

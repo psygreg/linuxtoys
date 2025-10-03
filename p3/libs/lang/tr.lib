@@ -63,3 +63,4 @@ msg291="Starship'in düzgün çalışması için terminalinizde Nerd Font'un yü
 msg292="Önce ostree sistemlerinde Docker'ı yüklemeniz gerekir. Geliştiriciler bölümünde bulabilirsiniz."
 msg293="/dev/kvm bulunamadı. LSW'yi yüklemeden önce BIOS'ta AMD SVM veya Intel VT-x/VT-d'yi etkinleştirmelisiniz."
 msg294="AUR'dan yüklenen paketler güvenli olmayabilir. Dikkatli kullanın!"
+msg295="CPU ondemand scaling zaten uygulanmış sistemlerde gamemode kullanmanın somut faydaları yoktur. Yine de devam edilsin mi?"

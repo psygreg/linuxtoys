@@ -63,3 +63,4 @@ msg291="Starship zahteva Nerd Font nameščen in omogočen v vašem terminalu za
 msg292="Najprej morate namestiti Docker na ostree sistemih. Lahko ga najdete v sekciji Developers."
 msg293="/dev/kvm ni najden. Morate omogočiti AMD SVM ali Intel VT-x/VT-d v BIOS pred namestitvijo LSW."
 msg294="Paketi nameščeni iz AUR morda niso varni. Uporabljajte jih previdno!"
+msg295="Ni oprijemljivih koristi pri uporabi gamemode v sistemih z že uporabljenim CPU ondemand scaling. Vseeno nadaljevati?"

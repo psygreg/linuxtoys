@@ -63,3 +63,4 @@ msg291="Starship krefst Nerd Font uppsett og virkjuð í útstöðinni þinni ti
 msg292="Þú verður að setja upp Docker fyrst á ostree kerfum. Þú getur fundið það í Developers hlutanum."
 msg293="/dev/kvm ekki fundið. Þú verður að virkja AMD SVM eða Intel VT-x/VT-d í BIOS áður en LSW er sett upp."
 msg294="Pakkar uppsettir frá AUR kunna að vera óöruggir. Notaðu þá með varúð!"
+msg295="Það eru engir áþreifanlegir kostir við að nota gamemode í kerfum með CPU ondemand scaling þegar beitt. Halda samt áfram?"

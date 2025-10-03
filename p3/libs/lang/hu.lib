@@ -63,3 +63,4 @@ msg291="A Starship-nek szüksége van egy telepített és engedélyezett Nerd Fo
 msg292="Először telepítenie kell a Docker-t ostree rendszereken. Megtalálhatja a Developers szakaszban."
 msg293="/dev/kvm nem található. Engedélyeznie kell az AMD SVM vagy Intel VT-x/VT-d opciót a BIOS-ban az LSW telepítése előtt."
 msg294="Az AUR-ból telepített csomagok nem biztos, hogy biztonságosak. Használja őket óvatosan!"
+msg295="Nincs kézzelfogható előnye a gamemode használatának olyan rendszereken, ahol már alkalmazva van a CPU ondemand scaling. Mégis folytatja?"

@@ -63,3 +63,4 @@ msg291="Starship erfordert eine installierte und in Ihrem Terminal aktivierte Ne
 msg292="Sie müssen zuerst Docker auf ostree-Systemen installieren. Sie können es im Entwicklerbereich finden."
 msg293="/dev/kvm nicht gefunden. Sie müssen AMD SVM oder Intel VT-x/VT-d im BIOS aktivieren, bevor Sie LSW installieren."
 msg294="Pakete, die aus dem AUR installiert werden, sind möglicherweise nicht sicher. Verwenden Sie sie mit Vorsicht!"
+msg295="Es gibt keine greifbaren Vorteile bei der Verwendung von gamemode in Systemen mit bereits angewendetem CPU ondemand scaling. Trotzdem fortfahren?"

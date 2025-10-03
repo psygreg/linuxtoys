@@ -64,3 +64,4 @@ msg291="Starship inahitaji fonti ya Nerd iliyosakinishwa na kuwezeshwa katika te
 msg292="Lazima usakinishe Docker kwanza kwenye mifumo ya ostree. Unaweza kuipata katika sehemu ya Wasanidi programu."
 msg293="/dev/kvm haijapatikana. Lazima uwashe AMD SVM au Intel VT-x/VT-d katika BIOS kabla ya kusakinisha LSW."
 msg294="Vifurushi vilivyosakinishwa kutoka AUR vinaweza kutokuwa salama. Vitumie kwa tahadhari!"
+msg295="Hakuna faida za kushikika za kutumia gamemode katika mifumo yenye CPU ondemand scaling tayari imetumika. Endelea hata hivyo?"
