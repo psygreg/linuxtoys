@@ -5,6 +5,7 @@
 # icon: lsw.svg
 # reboot: yes
 # nocontainer
+# repo: https://github.com/TibixDev/winboat
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

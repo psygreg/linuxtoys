@@ -87,14 +87,33 @@ def show_single_script_confirmation(script_info, parent_window, translations):
     details_box.set_margin_top(5)
     details_box.set_margin_bottom(10)
     
-    # Script description only (removed name display)
-    desc_label = Gtk.Label()
-    description = script_info.get('description', 'No description available')
-    desc_label.set_markup(f"<b>{escape_for_markup(description)}</b>")
-    desc_label.set_halign(Gtk.Align.START)
-    desc_label.set_line_wrap(True)
-    desc_label.set_max_width_chars(50)
-    details_box.pack_start(desc_label, False, False, 0)
+    # Script name (with link if repo URL is available)
+    name_label = Gtk.Label()
+    name = script_info.get('name', 'Unknown script')
+    repo_url = script_info.get('repo', '')
+    
+    if repo_url:
+        # Make it a clickable link
+        name_label.set_markup(f"<b><a href='{escape_for_markup(repo_url)}'>{escape_for_markup(name)}</a></b>")
+    else:
+        name_label.set_markup(f"<b>{escape_for_markup(name)}</b>")
+    
+    name_label.set_halign(Gtk.Align.START)
+    name_label.set_line_wrap(True)
+    name_label.set_max_width_chars(50)
+    details_box.pack_start(name_label, False, False, 0)
+    
+    # Script description
+    description = script_info.get('description', '')
+    if description:
+        desc_label = Gtk.Label()
+        desc_label.set_markup(escape_for_markup(description))
+        desc_label.set_halign(Gtk.Align.START)
+        desc_label.set_line_wrap(True)
+        desc_label.set_max_width_chars(50)
+        desc_label.set_margin_top(5)
+        desc_label.get_style_context().add_class("dim-label")
+        details_box.pack_start(desc_label, False, False, 0)
     
     frame.add(details_box)
     content_area.pack_start(frame, True, True, 0)
@@ -185,20 +204,27 @@ def show_checklist_confirmation(selected_scripts, parent_window, translations):
     scripts_box.set_margin_bottom(10)
     scripts_box.set_halign(Gtk.Align.FILL)
     
-    # Add each script to the list (description only, no name)
+    # Add each script to the list (name only)
     for script in scripts_to_confirm:
         script_item = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         script_item.set_margin_bottom(8)
         script_item.set_halign(Gtk.Align.FILL)
         
-        # Script description only
-        desc_label = Gtk.Label()
-        description = script.get('description', 'No description available')
-        desc_label.set_markup(f"• <b>{escape_for_markup(description)}</b>")
-        desc_label.set_halign(Gtk.Align.START)
-        desc_label.set_line_wrap(True)
-        desc_label.set_max_width_chars(60)
-        script_item.pack_start(desc_label, False, False, 0)
+        # Script name (with link if repo URL is available)
+        name_label = Gtk.Label()
+        name = script.get('name', 'Unknown script')
+        repo_url = script.get('repo', '')
+        
+        if repo_url:
+            # Make it a clickable link
+            name_label.set_markup(f"• <b><a href='{escape_for_markup(repo_url)}'>{escape_for_markup(name)}</a></b>")
+        else:
+            name_label.set_markup(f"• <b>{escape_for_markup(name)}</b>")
+        
+        name_label.set_halign(Gtk.Align.START)
+        name_label.set_line_wrap(True)
+        name_label.set_max_width_chars(60)
+        script_item.pack_start(name_label, False, False, 0)
         
         scripts_box.pack_start(script_item, False, False, 0)
     

@@ -5,6 +5,7 @@
 # icon: grubtrfs.svg
 # compat: ubuntu, debian, arch, fedora, suse
 # nocontainer
+# repo: https://github.com/Antynea/grub-btrfs
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

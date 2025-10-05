@@ -124,7 +124,8 @@ def get_categories(translations=None):
                 'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
-                'noconfirm': 'no'
+                'noconfirm': 'no',
+                'repo': ''
             }
             header = _parse_metadata_file(file_path, defaults, translations)
             # Filter by compatibility and locale
@@ -247,7 +248,8 @@ def get_scripts_for_category(category_path, translations=None):
                 'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
-                'noconfirm': 'no'
+                'noconfirm': 'no',
+                'repo': ''
             }
             script_info = _parse_metadata_file(file_path, defaults, translations)
             
@@ -298,7 +300,8 @@ def get_all_scripts_recursive(directory_path, translations=None):
                 'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
-                'noconfirm': 'no'
+                'noconfirm': 'no',
+                'repo': ''
             }
             script_info = _parse_metadata_file(item_path, defaults, translations)
             
