@@ -274,5 +274,8 @@
   "signal_desc": "Einkamessenger með enda-í-enda dulritun og engum notandaauðkennum.",
   "telegram_desc": "Skilaboðaforrit með betri félagslegum eiginleikum og stærri hóphöfum.",
   "zap_desc": "Elektronhúð fyrir WhatsApp Web.",
-  "peazip_desc": "Ókeypis skráarsafnsverkfæri sem styður margar snið."
+  "peazip_desc": "Ókeypis skráarsafnsverkfæri sem styður margar snið.",
+  "ml_desc": "Opinn uppspretta PC biðlari fyrir NVIDIA GameStream og Sunshine.",
+  "sunshine_desc": "Sjálf-hýstur leikjastraumur hýsill fyrir Moonlight.",
+  "s3d_desc": "Breyttu S3, SFTP, WebDAV eða Rclone bakenda í þínu dulkóðuðu geymslu."
 }

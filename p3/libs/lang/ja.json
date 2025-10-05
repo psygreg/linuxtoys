@@ -274,5 +274,8 @@
   "signal_desc": "エンドツーエンド暗号化とユーザーIDなしのプライベートメッセンジャー。",
   "telegram_desc": "より良いソーシャル機能と大きなグループ制限を持つメッセージングアプリ。",
   "zap_desc": "WhatsApp Web の Electron ラッパー。",
-  "peazip_desc": "多くの形式をサポートする無料のファイルアーカイバーユーティリティ。"
+  "peazip_desc": "多くの形式をサポートする無料のファイルアーカイバーユーティリティ。",
+  "ml_desc": "NVIDIA GameStreamとSunshine用のオープンソースPCクライアント。",
+  "sunshine_desc": "Moonlight用のセルフホスト型ゲームストリームホスト。",
+  "s3d_desc": "S3、SFTP、WebDAV、またはRcloneのバックエンドを暗号化されたストレージに変換します。"
 }

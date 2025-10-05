@@ -274,5 +274,8 @@
   "signal_desc": "Messenger pribadi dengan enkripsi end-to-end dan tanpa ID pengguna.",
   "telegram_desc": "Aplikasi pesan dengan fitur sosial yang lebih baik dan batas grup yang lebih besar.",
   "zap_desc": "Pembungkus elektron untuk WhatsApp Web.",
-  "peazip_desc": "Utilitas pengarsipan file gratis yang mendukung banyak format."
+  "peazip_desc": "Utilitas pengarsipan file gratis yang mendukung banyak format.",
+  "ml_desc": "Klien PC open source untuk NVIDIA GameStream dan Sunshine.",
+  "sunshine_desc": "Host stream game yang di-hosting sendiri untuk Moonlight.",
+  "s3d_desc": "Ubah back-end S3, SFTP, WebDAV, atau Rclone menjadi penyimpanan terenkripsi Anda."
 }

@@ -274,5 +274,8 @@
   "signal_desc": "종단 간 암호화 및 사용자 ID가 없는 개인 메신저.",
   "telegram_desc": "더 나은 소셜 기능과 더 큰 그룹 제한이 있는 메시징 앱.",
   "zap_desc": "WhatsApp Web용 Electron 래퍼.",
-  "peazip_desc": "많은 형식을 지원하는 무료 파일 아카이버 유틸리티."
+  "peazip_desc": "많은 형식을 지원하는 무료 파일 아카이버 유틸리티.",
+  "ml_desc": "NVIDIA GameStream 및 Sunshine용 오픈 소스 PC 클라이언트.",
+  "sunshine_desc": "Moonlight용 자체 호스팅 게임 스트림 호스트.",
+  "s3d_desc": "S3, SFTP, WebDAV 또는 Rclone 백엔드를 암호화된 스토리지로 변환합니다."
 }

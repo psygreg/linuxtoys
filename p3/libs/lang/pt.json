@@ -270,9 +270,12 @@
   "sdkman_desc": "Gerencia versões paralelas de vários kits de desenvolvimento de software.",
   "cpux_desc": "Reúne informações sobre CPU, placa-mãe e mais.",
   "chat": "Social",
-  "chat_desc": "Aplicativos de mensagens e redes sociais.",
+  "chat_desc": "Aplicativos de mensagens e sociais.",
   "signal_desc": "Mensageiro privado com criptografia de ponta a ponta e sem IDs de usuário.",
   "telegram_desc": "Aplicativo de mensagens com melhores recursos sociais e limites de grupo maiores.",
   "zap_desc": "Um wrapper Electron para WhatsApp Web.",
-  "peazip_desc": "Utilitário gratuito de arquivamento de arquivos que suporta muitos formatos."
+  "peazip_desc": "Utilitário gratuito de arquivamento de arquivos que suporta muitos formatos.",
+  "ml_desc": "Cliente de PC de código aberto para NVIDIA GameStream e Sunshine.",
+  "sunshine_desc": "Host de transmissão de jogos auto-hospedado para Moonlight.",
+  "s3d_desc": "Converta o back-end S3, SFTP, WebDAV ou Rclone em seu armazenamento criptografado."
 }

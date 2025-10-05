@@ -272,5 +272,8 @@
   "signal_desc": "Mjumbe wa faragha na usimbuaji wa mwisho hadi mwisho na hakuna vitambulisho vya mtumiaji.",
   "telegram_desc": "Programu ya ujumbe na vipengele bora vya jamii na mipaka kubwa zaidi ya vikundi.",
   "zap_desc": "Kifuniko cha elektroniki kwa WhatsApp Web.",
-  "peazip_desc": "Zana ya kumbukumbu ya faili ya bure inayounga mkono miundo mingi."
+  "peazip_desc": "Zana ya kumbukumbu ya faili ya bure inayounga mkono miundo mingi.",
+  "ml_desc": "Mteja wa PC wa chanzo wazi kwa NVIDIA GameStream na Sunshine.",
+  "sunshine_desc": "Mwenyeji wa mkondo wa mchezo wa kujiandaa mwenyewe kwa Moonlight.",
+  "s3d_desc": "Badilisha back-end ya S3, SFTP, WebDAV au Rclone kuwa hifadhi yako iliyosimbwa."
 }

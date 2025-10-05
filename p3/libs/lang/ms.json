@@ -274,5 +274,8 @@
   "signal_desc": "Messenger peribadi dengan penyulitan hujung ke hujung dan tiada ID pengguna.",
   "telegram_desc": "Aplikasi pesanan dengan ciri sosial yang lebih baik dan had kumpulan yang lebih besar.",
   "zap_desc": "Pembalut elektron untuk WhatsApp Web.",
-  "peazip_desc": "Utiliti arkib fail percuma yang menyokong banyak format."
+  "peazip_desc": "Utiliti arkib fail percuma yang menyokong banyak format.",
+  "ml_desc": "Klien PC sumber terbuka untuk NVIDIA GameStream dan Sunshine.",
+  "sunshine_desc": "Host strim permainan dihoskan sendiri untuk Moonlight.",
+  "s3d_desc": "Tukar back-end S3, SFTP, WebDAV atau Rclone ke dalam penyimpanan disulitkan anda."
 }

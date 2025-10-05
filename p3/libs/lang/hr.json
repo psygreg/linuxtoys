@@ -274,5 +274,8 @@
   "signal_desc": "Privatni messenger s end-to-end enkripcijom i bez korisničkih ID-ova.",
   "telegram_desc": "Aplikacija za razmjenu poruka s boljim društvenim značajkama i većim ograničenjima grupa.",
   "zap_desc": "Elektronski omotač za WhatsApp Web.",
-  "peazip_desc": "Besplatni alat za arhiviranje datoteka koji podržava mnoge formate."
+  "peazip_desc": "Besplatni alat za arhiviranje datoteka koji podržava mnoge formate.",
+  "ml_desc": "Open source PC klijent za NVIDIA GameStream i Sunshine.",
+  "sunshine_desc": "Self-hosted game stream host za Moonlight.",
+  "s3d_desc": "Pretvorite S3, SFTP, WebDAV ili Rclone pozadinu u vaše šifrirano skladište."
 }

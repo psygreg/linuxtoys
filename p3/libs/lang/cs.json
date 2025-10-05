@@ -274,5 +274,8 @@
   "signal_desc": "Soukromý messenger s end-to-end šifrováním a bez uživatelských ID.",
   "telegram_desc": "Aplikace pro zasílání zpráv s lepšími sociálními funkcemi a většími limity skupin.",
   "zap_desc": "Elektronový obal pro WhatsApp Web.",
-  "peazip_desc": "Bezplatný nástroj pro archivaci souborů podporující mnoho formátů."
+  "peazip_desc": "Bezplatný nástroj pro archivaci souborů podporující mnoho formátů.",
+  "ml_desc": "Open source klient pro PC pro NVIDIA GameStream a Sunshine.",
+  "sunshine_desc": "Vlastně hostovaný herní stream host pro Moonlight.",
+  "s3d_desc": "Převeďte S3, SFTP, WebDAV nebo Rclone back-end na vaše šifrované úložiště."
 }

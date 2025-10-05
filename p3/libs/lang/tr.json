@@ -274,5 +274,8 @@
   "signal_desc": "Uçtan uca şifreleme ve kullanıcı kimlikleri olmadan özel mesajlaşma.",
   "telegram_desc": "Daha iyi sosyal özellikler ve daha büyük grup limitleri ile mesajlaşma uygulaması.",
   "zap_desc": "WhatsApp Web için bir Electron sarıcısı.",
-  "peazip_desc": "Birçok formatı destekleyen ücretsiz dosya arşivleme aracı."
+  "peazip_desc": "Birçok formatı destekleyen ücretsiz dosya arşivleme aracı.",
+  "ml_desc": "NVIDIA GameStream ve Sunshine için açık kaynak PC istemcisi.",
+  "sunshine_desc": "Moonlight için kendi kendine barındırılan oyun yayını ana bilgisayarı.",
+  "s3d_desc": "S3, SFTP, WebDAV veya Rclone arka ucunu şifrelenmiş depolama alanınıza dönüştürün."
 }

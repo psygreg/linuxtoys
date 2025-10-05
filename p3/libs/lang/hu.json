@@ -274,5 +274,8 @@
   "signal_desc": "Privát üzenetküldő végpontok közötti titkosítással és felhasználói azonosítók nélkül.",
   "telegram_desc": "Üzenetküldő alkalmazás jobb közösségi funkciókkal és nagyobb csoportkorlátokkal.",
   "zap_desc": "Elektron burkolat a WhatsApp Web-hez.",
-  "peazip_desc": "Ingyenes fájlarchiváló eszköz, amely sok formátumot támogat."
+  "peazip_desc": "Ingyenes fájlarchiváló eszköz, amely sok formátumot támogat.",
+  "ml_desc": "Nyílt forráskódú PC kliens az NVIDIA GameStream és Sunshine számára.",
+  "sunshine_desc": "Saját üzemeltetésű játékstreaming gazdagép Moonlight számára.",
+  "s3d_desc": "Alakítsa át az S3, SFTP, WebDAV vagy Rclone háttérrendszert titkosított tárhelyévé."
 }

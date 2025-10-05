@@ -274,5 +274,8 @@
   "signal_desc": "Privāts ziņotājs ar galu galā šifrēšanu un bez lietotāja ID.",
   "telegram_desc": "Ziņojumapmaiņas lietotne ar labākām sociālajām funkcijām un lielākiem grupu ierobežojumiem.",
   "zap_desc": "Elektronisks iesaiņojums WhatsApp Web.",
-  "peazip_desc": "Bezmaksas failu arhivēšanas rīks, kas atbalsta daudzus formātus."
+  "peazip_desc": "Bezmaksas failu arhivēšanas rīks, kas atbalsta daudzus formātus.",
+  "ml_desc": "Atvērtā koda PC klients NVIDIA GameStream un Sunshine.",
+  "sunshine_desc": "Pašizvietots spēļu straumēšanas saimnieks Moonlight.",
+  "s3d_desc": "Pārveidojiet S3, SFTP, WebDAV vai Rclone aizmuguri savā šifrētajā krātuvē."
 }

@@ -274,5 +274,8 @@
   "signal_desc": "Privater Messenger mit Ende-zu-Ende-Verschlüsselung und ohne Benutzer-IDs.",
   "telegram_desc": "Messaging-App mit besseren sozialen Funktionen und größeren Gruppenlimits.",
   "zap_desc": "Ein Electron-Wrapper für WhatsApp Web.",
-  "peazip_desc": "Kostenloses Datei-Archivierungstool, das viele Formate unterstützt."
+  "peazip_desc": "Kostenloses Datei-Archivierungstool, das viele Formate unterstützt.",
+  "ml_desc": "Open-Source-PC-Client für NVIDIA GameStream und Sunshine.",
+  "sunshine_desc": "Selbst gehosteter Game-Stream-Host für Moonlight.",
+  "s3d_desc": "Konvertieren Sie S3, SFTP, WebDAV oder Rclone-Backend in Ihren verschlüsselten Speicher."
 }

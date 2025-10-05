@@ -274,5 +274,8 @@
   "signal_desc": "Pribadong messenger na may end-to-end encryption at walang user IDs.",
   "telegram_desc": "Messaging app na may mas mahusay na social features at mas malalaking group limits.",
   "zap_desc": "Isang electron wrapper para sa WhatsApp Web.",
-  "peazip_desc": "Libreng file archiver utility na sumusuporta sa maraming format."
+  "peazip_desc": "Libreng file archiver utility na sumusuporta sa maraming format.",
+  "ml_desc": "Open source PC client para sa NVIDIA GameStream at Sunshine.",
+  "sunshine_desc": "Self-hosted game stream host para sa Moonlight.",
+  "s3d_desc": "I-convert ang S3, SFTP, WebDAV o Rclone back-end sa iyong encrypted storage."
 }

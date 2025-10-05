@@ -274,5 +274,8 @@
   "signal_desc": "Teachtaire príobháideach le criptiú ceann go ceann agus gan aon ID úsáideora.",
   "telegram_desc": "Aip teachtaireachtaí le gnéithe sóisialta níos fearr agus teorainneacha grúpa níos mó.",
   "zap_desc": "Timfhilleadh leictreonach do WhatsApp Web.",
-  "peazip_desc": "Uirlis cartlannaithe comhad saor in aisce a thacaíonn le go leor formáidí."
+  "peazip_desc": "Uirlis cartlannaithe comhad saor in aisce a thacaíonn le go leor formáidí.",
+  "ml_desc": "Cliant PC foinse oscailte le haghaidh NVIDIA GameStream agus Sunshine.",
+  "sunshine_desc": "Óstach sruthú cluiche féin-óstáilte do Moonlight.",
+  "s3d_desc": "Tiontaigh cúl S3, SFTP, WebDAV nó Rclone isteach i do stóras criptithe."
 }

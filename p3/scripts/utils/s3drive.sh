@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: S3Drive
 # version: 1.0
-# description: Convert S3, SFTP, WebDAV or Rclone back-end into your encrypted storage
+# description: s3d_desc
 # icon: s3drive.png
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

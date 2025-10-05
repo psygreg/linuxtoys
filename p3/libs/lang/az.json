@@ -273,5 +273,8 @@
   "signal_desc": "Sonadək şifrələmə ilə şəxsi mesajlaşma və istifadəçi ID-ləri yoxdur.",
   "telegram_desc": "Daha yaxşı sosial xüsusiyyətlər və daha böyük qrup limitləri ilə mesajlaşma tətbiqi.",
   "zap_desc": "WhatsApp Web üçün elektron qab.",
-  "peazip_desc": "Bir çox formatı dəstəkləyən pulsuz fayl arxivləşdirmə vasitəsi."
+  "peazip_desc": "Bir çox formatı dəstəkləyən pulsuz fayl arxivləşdirmə vasitəsi.",
+  "ml_desc": "NVIDIA GameStream və Sunshine üçün açıq mənbə PC müştərisi.",
+  "sunshine_desc": "Moonlight üçün özünü saxlayan oyun yayım ev sahibi.",
+  "s3d_desc": "S3, SFTP, WebDAV və ya Rclone arxa tərəfini şifrələnmiş saxlanma yerinizə çevirin."
 }

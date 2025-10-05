@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Sunshine
 # version: 1.0
-# description: Self-hosted game stream host for Moonlight.
+# description: sunshine_desc
 # icon: sunshine.png
 
 # --- Start of the script code ---

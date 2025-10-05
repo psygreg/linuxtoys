@@ -274,5 +274,8 @@
   "signal_desc": "Mesager privat cu criptare end-to-end și fără ID-uri de utilizator.",
   "telegram_desc": "Aplicație de mesagerie cu funcții sociale mai bune și limite de grup mai mari.",
   "zap_desc": "Un înveliș Electron pentru WhatsApp Web.",
-  "peazip_desc": "Utilitar gratuit de arhivare fișiere care suportă multe formate."
+  "peazip_desc": "Utilitar gratuit de arhivare fișiere care suportă multe formate.",
+  "ml_desc": "Client PC open source pentru NVIDIA GameStream și Sunshine.",
+  "sunshine_desc": "Gazdă de streaming jocuri auto-găzduită pentru Moonlight.",
+  "s3d_desc": "Convertește backend-ul S3, SFTP, WebDAV sau Rclone în spațiul tău de stocare criptat."
 }

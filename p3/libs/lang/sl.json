@@ -274,5 +274,8 @@
   "signal_desc": "Zasebni sporočevalec z end-to-end šifriranjem in brez uporabniških ID-jev.",
   "telegram_desc": "Aplikacija za sporočanje z boljšimi družbenimi funkcijami in večjimi omejitvami skupin.",
   "zap_desc": "Elektronski ovoj za WhatsApp Web.",
-  "peazip_desc": "Brezplačno orodje za arhiviranje datotek, ki podpira številne formate."
+  "peazip_desc": "Brezplačno orodje za arhiviranje datotek, ki podpira številne formate.",
+  "ml_desc": "Odprtokodni odjemalec PC za NVIDIA GameStream in Sunshine.",
+  "sunshine_desc": "Samogostovan gostitelj pretakanja iger za Moonlight.",
+  "s3d_desc": "Pretvorite ozadje S3, SFTP, WebDAV ali Rclone v vaše šifrirano shrambo."
 }

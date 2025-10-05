@@ -274,5 +274,8 @@
   "signal_desc": "Messenger riêng tư với mã hóa đầu cuối và không có ID người dùng.",
   "telegram_desc": "Ứng dụng nhắn tin với các tính năng xã hội tốt hơn và giới hạn nhóm lớn hơn.",
   "zap_desc": "Một trình bao bọc Electron cho WhatsApp Web.",
-  "peazip_desc": "Tiện ích lưu trữ tệp miễn phí hỗ trợ nhiều định dạng."
+  "peazip_desc": "Tiện ích lưu trữ tệp miễn phí hỗ trợ nhiều định dạng.",
+  "ml_desc": "Client PC mã nguồn mở cho NVIDIA GameStream và Sunshine.",
+  "sunshine_desc": "Máy chủ stream trò chơi tự lưu trữ cho Moonlight.",
+  "s3d_desc": "Chuyển đổi back-end S3, SFTP, WebDAV hoặc Rclone thành kho lưu trữ được mã hóa của bạn."
 }

@@ -274,5 +274,8 @@
   "signal_desc": "Privat messenger med end-to-end-kryptering och inga användar-ID.",
   "telegram_desc": "Meddelandeapp med bättre sociala funktioner och större gruppkänslor.",
   "zap_desc": "En elektronförpackning för WhatsApp Web.",
-  "peazip_desc": "Gratis filarkiveringsverktyg som stöder många format."
+  "peazip_desc": "Gratis filarkiveringsverktyg som stöder många format.",
+  "ml_desc": "Öppen källkod PC-klient för NVIDIA GameStream och Sunshine.",
+  "sunshine_desc": "Självvärd spelström värd för Moonlight.",
+  "s3d_desc": "Konvertera S3, SFTP, WebDAV eller Rclone back-end till din krypterade lagring."
 }

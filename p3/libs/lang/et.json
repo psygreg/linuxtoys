@@ -274,5 +274,8 @@
   "signal_desc": "Privaatne sõnumside lõpust lõpuni krüptimisega ja ilma kasutaja ID-deta.",
   "telegram_desc": "Sõnumside rakendus paremate sotsiaalsete funktsioonidega ja suuremate grupilimitidega.",
   "zap_desc": "Elektronipakkija WhatsApp Web-i jaoks.",
-  "peazip_desc": "Tasuta failiarhiveerimise utiliit, mis toetab paljusid vorminguid."
+  "peazip_desc": "Tasuta failiarhiveerimise utiliit, mis toetab paljusid vorminguid.",
+  "ml_desc": "Avatud lähtekoodiga arvutiklient NVIDIA GameStream ja Sunshine jaoks.",
+  "sunshine_desc": "Ise majutatud mängu voogesituse host Moonlight jaoks.",
+  "s3d_desc": "Teisenda S3, SFTP, WebDAV või Rclone tagaosa oma krüpteeritud salvestusruumiks."
 }
