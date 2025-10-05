@@ -86,12 +86,13 @@ chaotic_aur_lib () {
             sleep 3
             sudo pacman-key --lsign-key 3056513887B78AEB
             sleep 3
-            wget https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst
-            wget https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst
+            wget https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst || { rm -f chaotic-keyring.pkg.tar.zst chaotic-mirrorlist.pkg.tar.zst; fatal "Unexpected error downloading chaotic-keyring"; }
             sleep 3
-            sudo pacman -U chaotic-keyring.pkg.tar.zst
+            wget https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst || { rm -f chaotic-keyring.pkg.tar.zst chaotic-mirrorlist.pkg.tar.zst; fatal "Unexpected error downloading chaotic-mirrorlist"; }
             sleep 3
-            sudo pacman -U chaotic-mirrorlist.pkg.tar.zst
+            sudo pacman -U --noconfirm chaotic-keyring.pkg.tar.zst || { rm -f chaotic-keyring.pkg.tar.zst chaotic-mirrorlist.pkg.tar.zst; fatal "Unexpected error installing chaotic-keyring"; }
+            sleep 3
+            sudo pacman -U --noconfirm chaotic-mirrorlist.pkg.tar.zst || { rm -f chaotic-keyring.pkg.tar.zst chaotic-mirrorlist.pkg.tar.zst; fatal "Unexpected error installing chaotic-mirrorlist"; }
             sleep 3
             # Add Chaotic-AUR repository configuration if it doesn't exist
             if ! grep -q "\[chaotic-aur\]" /etc/pacman.conf; then
