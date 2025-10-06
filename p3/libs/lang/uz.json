@@ -276,5 +276,6 @@
   "peazip_desc": "Ko'plab formatlarni qo'llab-quvvatlaydigan bepul fayl arxivatori vositasi.",
   "ml_desc": "NVIDIA GameStream va Sunshine uchun ochiq manba PC mijozi.",
   "sunshine_desc": "Moonlight uchun o'z-o'zidan joylashtirilgan o'yin oqimi xosti.",
-  "s3d_desc": "S3, SFTP, WebDAV yoki Rclone orqa tomonini shifrlangan saqlash joyingizga aylantiring."
+  "s3d_desc": "S3, SFTP, WebDAV yoki Rclone orqa tomonini shifrlangan saqlash joyingizga aylantiring.",
+  "damx_desc": "Acer o'yin noutbuklari xususiyatlarini va ishlash sozlamalarini boshqarish uchun dastur."
 }

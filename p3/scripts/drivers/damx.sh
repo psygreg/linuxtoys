@@ -1,10 +1,10 @@
 #!/bin/bash
 # name: Acer Manager
 # version: 1.0
-# description: Utility for Acer laptops
+# description: damx_desc
 # icon: damx.png
 # reboot: yes
-# compat: arch, cachy, debian, ubuntu, fedora, suse
+# repo: https://github.com/PXDiv/Div-Acer-Manager-Max
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -20,11 +20,11 @@ _choice=$(zenity --list --title="DAMX Suite Installer" \
 --radiolist \
 --column="Choices" --column="num" --column="Options" \
 --hide-column=2 \
-TRUE  1 "Install DAMX Suite (complete)" \
-FALSE 2 "Install DAMX Suite (without drivers)" \
-FALSE 3 "Uninstall DAMX Suite" \
-FALSE 4 "Reinstall/Update DAMX Suite (recommended for upgrades)" \
-FALSE 5 "Check service status")
+TRUE  1 "$msg296" \
+FALSE 2 "$msg297" \
+FALSE 3 "$msg298" \
+FALSE 4 "$msg299" \
+FALSE 5 "$msg300")
 
 [ -n "${_choice}" ] || { zeninf "$msg281"; exit 0; }
 

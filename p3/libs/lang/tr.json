@@ -277,5 +277,6 @@
   "peazip_desc": "Birçok formatı destekleyen ücretsiz dosya arşivleme aracı.",
   "ml_desc": "NVIDIA GameStream ve Sunshine için açık kaynak PC istemcisi.",
   "sunshine_desc": "Moonlight için kendi kendine barındırılan oyun yayını ana bilgisayarı.",
-  "s3d_desc": "S3, SFTP, WebDAV veya Rclone arka ucunu şifrelenmiş depolama alanınıza dönüştürün."
+  "s3d_desc": "S3, SFTP, WebDAV veya Rclone arka ucunu şifrelenmiş depolama alanınıza dönüştürün.",
+  "damx_desc": "Acer oyun dizüstü bilgisayarı özelliklerini ve performans ayarlarını kontrol etmek için yardımcı program."
 }

@@ -277,5 +277,6 @@
   "peazip_desc": "Utilitaire d'archivage de fichiers gratuit prenant en charge de nombreux formats.",
   "ml_desc": "Client PC open source pour NVIDIA GameStream et Sunshine.",
   "sunshine_desc": "Hôte de streaming de jeux auto-hébergé pour Moonlight.",
-  "s3d_desc": "Convertissez le back-end S3, SFTP, WebDAV ou Rclone en votre stockage chiffré."
+  "s3d_desc": "Convertissez le back-end S3, SFTP, WebDAV ou Rclone en votre stockage chiffré.",
+  "damx_desc": "Utilitaire pour contrôler les fonctionnalités et régler les performances des ordinateurs portables gaming Acer."
 }

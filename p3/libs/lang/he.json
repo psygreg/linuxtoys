@@ -277,5 +277,6 @@
   "peazip_desc": "כלי ארכיון קבצים חינמי התומך ברבים פורמטים.",
   "ml_desc": "לקוח PC בקוד פתוח עבור NVIDIA GameStream ו-Sunshine.",
   "sunshine_desc": "מארח זרימת משחקים באחסון עצמי עבור Moonlight.",
-  "s3d_desc": "המר את הקצה האחורי S3, SFTP, WebDAV או Rclone לאחסון המוצפן שלך."
+  "s3d_desc": "המר את הקצה האחורי S3, SFTP, WebDAV או Rclone לאחסון המוצפן שלך.",
+  "damx_desc": "כלי עזר לשליטה בתכונות מחשבים ניידים לגיימינג של Acer וכיוון ביצועים."
 }

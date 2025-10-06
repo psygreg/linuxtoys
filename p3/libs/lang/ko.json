@@ -277,5 +277,6 @@
   "peazip_desc": "많은 형식을 지원하는 무료 파일 아카이버 유틸리티.",
   "ml_desc": "NVIDIA GameStream 및 Sunshine용 오픈 소스 PC 클라이언트.",
   "sunshine_desc": "Moonlight용 자체 호스팅 게임 스트림 호스트.",
-  "s3d_desc": "S3, SFTP, WebDAV 또는 Rclone 백엔드를 암호화된 스토리지로 변환합니다."
+  "s3d_desc": "S3, SFTP, WebDAV 또는 Rclone 백엔드를 암호화된 스토리지로 변환합니다.",
+  "damx_desc": "Acer 게이밍 노트북 기능 및 성능 튜닝을 제어하는 유틸리티."
 }

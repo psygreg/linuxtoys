@@ -277,5 +277,6 @@
   "peazip_desc": "Gratis filarkiveringsverktøy som støtter mange formater.",
   "ml_desc": "Åpen kildekode PC-klient for NVIDIA GameStream og Sunshine.",
   "sunshine_desc": "Selvvertet spill-stream-vert for Moonlight.",
-  "s3d_desc": "Konverter S3, SFTP, WebDAV eller Rclone bakstykke til din krypterte lagring."
+  "s3d_desc": "Konverter S3, SFTP, WebDAV eller Rclone bakstykke til din krypterte lagring.",
+  "damx_desc": "Verktøy for å kontrollere Acer gaming-laptop funksjoner og ytelsesoptimering."
 }

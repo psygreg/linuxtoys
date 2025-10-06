@@ -277,5 +277,6 @@
   "peazip_desc": "ብዙ ቅርጸቶችን የሚደግፍ ነጻ ፋይል አርክዋይቬር መሣሪያ።",
   "ml_desc": "ለ NVIDIA GameStream እና Sunshine ክፍት ምንጭ ፒሲ ደንበኛ።",
   "sunshine_desc": "ለ Moonlight የራስዎ የተጠናቀረ የጨዋታ ዥረት አስተናጋጅ።",
-  "s3d_desc": "S3፣ SFTP፣ WebDAV ወይም Rclone ኋላኛ-ጫፍን ወደ የእርስዎ የተመሰጠረ ማከማቻ ቀይር።"
+  "s3d_desc": "S3፣ SFTP፣ WebDAV ወይም Rclone ኋላኛ-ጫፍን ወደ የእርስዎ የተመሰጠረ ማከማቻ ቀይር።",
+  "damx_desc": "ለ Acer ጌሚንግ ላፕቶፕ ባህሪያትን እና አፈፃፀም ማስተካከያን ለመቆጣጠር መገልገያ።"
 }

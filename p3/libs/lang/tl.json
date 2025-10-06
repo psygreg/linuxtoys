@@ -277,5 +277,6 @@
   "peazip_desc": "Libreng file archiver utility na sumusuporta sa maraming format.",
   "ml_desc": "Open source PC client para sa NVIDIA GameStream at Sunshine.",
   "sunshine_desc": "Self-hosted game stream host para sa Moonlight.",
-  "s3d_desc": "I-convert ang S3, SFTP, WebDAV o Rclone back-end sa iyong encrypted storage."
+  "s3d_desc": "I-convert ang S3, SFTP, WebDAV o Rclone back-end sa iyong encrypted storage.",
+  "damx_desc": "Utility para sa pagkontrol ng mga feature ng Acer gaming laptop at pagpapahusay ng performance."
 }

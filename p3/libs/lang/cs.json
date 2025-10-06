@@ -277,5 +277,6 @@
   "peazip_desc": "Bezplatný nástroj pro archivaci souborů podporující mnoho formátů.",
   "ml_desc": "Open source klient pro PC pro NVIDIA GameStream a Sunshine.",
   "sunshine_desc": "Vlastně hostovaný herní stream host pro Moonlight.",
-  "s3d_desc": "Převeďte S3, SFTP, WebDAV nebo Rclone back-end na vaše šifrované úložiště."
+  "s3d_desc": "Převeďte S3, SFTP, WebDAV nebo Rclone back-end na vaše šifrované úložiště.",
+  "damx_desc": "Nástroj pro ovládání funkcí a ladění výkonu herních notebooků Acer."
 }

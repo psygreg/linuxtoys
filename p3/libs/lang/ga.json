@@ -277,5 +277,6 @@
   "peazip_desc": "Uirlis cartlannaithe comhad saor in aisce a thacaíonn le go leor formáidí.",
   "ml_desc": "Cliant PC foinse oscailte le haghaidh NVIDIA GameStream agus Sunshine.",
   "sunshine_desc": "Óstach sruthú cluiche féin-óstáilte do Moonlight.",
-  "s3d_desc": "Tiontaigh cúl S3, SFTP, WebDAV nó Rclone isteach i do stóras criptithe."
+  "s3d_desc": "Tiontaigh cúl S3, SFTP, WebDAV nó Rclone isteach i do stóras criptithe.",
+  "damx_desc": "Fóntais chun gnéithe ríomhaire glúine cearrbhachais Acer agus tiúnadh feidhmíochta a rialú."
 }

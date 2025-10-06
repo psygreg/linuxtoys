@@ -277,5 +277,6 @@
   "peazip_desc": "Ilmainen tiedostojen arkistointityökalu, joka tukee monia muotoja.",
   "ml_desc": "Avoimen lähdekoodin PC-asiakasohjelma NVIDIA GameStreamille ja Sunshinelle.",
   "sunshine_desc": "Itse isännöity pelisuoratoiston isäntä Moonlightille.",
-  "s3d_desc": "Muunna S3, SFTP, WebDAV tai Rclone-taustaosa salatuksi tallennustilaksi."
+  "s3d_desc": "Muunna S3, SFTP, WebDAV tai Rclone-taustaosa salatuksi tallennustilaksi.",
+  "damx_desc": "Työkalu Acer-pelilaptopien ominaisuuksien ja suorituskyvyn säätämiseen."
 }

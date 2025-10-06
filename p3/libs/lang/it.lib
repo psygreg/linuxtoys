@@ -63,3 +63,8 @@ msg291="Starship richiede un font Nerd installato e abilitato nel tuo terminale 
 msg292="Devi installare Docker prima sui sistemi ostree. Puoi trovarlo nella sezione Sviluppatori."msg293="/dev/kvm non trovato. È necessario abilitare AMD SVM o Intel VT-x/VT-d nel BIOS prima di installare LSW."
 msg294="I pacchetti installati dall'AUR potrebbero non essere sicuri. Usali con cautela!"
 msg295="Non ci sono vantaggi tangibili nell'usare gamemode su sistemi con CPU ondemand scaling già applicato. Procedere comunque?"
+msg296="Installa DAMX Suite (completo)"
+msg297="Installa DAMX Suite (senza driver)"
+msg298="Disinstalla DAMX Suite"
+msg299="Reinstalla/aggiorna DAMX Suite (consigliato per gli aggiornamenti)"
+msg300="Controlla stato del servizio"

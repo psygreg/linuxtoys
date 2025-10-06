@@ -277,5 +277,6 @@
   "peazip_desc": "Bezmaksas failu arhivēšanas rīks, kas atbalsta daudzus formātus.",
   "ml_desc": "Atvērtā koda PC klients NVIDIA GameStream un Sunshine.",
   "sunshine_desc": "Pašizvietots spēļu straumēšanas saimnieks Moonlight.",
-  "s3d_desc": "Pārveidojiet S3, SFTP, WebDAV vai Rclone aizmuguri savā šifrētajā krātuvē."
+  "s3d_desc": "Pārveidojiet S3, SFTP, WebDAV vai Rclone aizmuguri savā šifrētajā krātuvē.",
+  "damx_desc": "Utilīta Acer spēļu klēpjdatoru funkciju un veiktspējas regulēšanas kontrolei."
 }

@@ -275,5 +275,6 @@
   "peazip_desc": "Zana ya kumbukumbu ya faili ya bure inayounga mkono miundo mingi.",
   "ml_desc": "Mteja wa PC wa chanzo wazi kwa NVIDIA GameStream na Sunshine.",
   "sunshine_desc": "Mwenyeji wa mkondo wa mchezo wa kujiandaa mwenyewe kwa Moonlight.",
-  "s3d_desc": "Badilisha back-end ya S3, SFTP, WebDAV au Rclone kuwa hifadhi yako iliyosimbwa."
+  "s3d_desc": "Badilisha back-end ya S3, SFTP, WebDAV au Rclone kuwa hifadhi yako iliyosimbwa.",
+  "damx_desc": "Kifaa cha kudhibiti vipengele vya kompyuta za kuchezea za Acer na kusasisha utendaji."
 }
