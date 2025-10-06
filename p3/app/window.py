@@ -37,6 +37,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.search_engine = search_helper.create_search_engine(self.translations)
         self.search_active = False
         self.search_results = []
+
+        # Checklist
+        self.check_buttons = []
         
         # Initialize script runner
         self.script_runner = script_runner.ScriptRunner(self, self.translations)
@@ -343,7 +346,7 @@ class AppWindow(Gtk.ApplicationWindow):
         flowbox.set_row_spacing(12)     ## espaço entre linhas
         return flowbox
 
-    def create_item_widget(self, item_info):
+    def create_item_widget(self, item_info, checklist: bool = False):
         import os
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         box.set_size_request(128, 52)  # Fixed width for all items
@@ -368,7 +371,13 @@ class AppWindow(Gtk.ApplicationWindow):
         is_subcategory = item_info.get('is_subcategory', False)
         is_category_type = item_info.get('type') == 'category'
         is_not_script = not item_info.get('is_script', False)
-        
+
+        if checklist:
+            check = Gtk.CheckButton()
+            check.script_info = item_info
+            box.pack_start(check, False, False, 0)
+            self.check_buttons.append(check)
+
         if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
             # This is a category or subcategory - make it bold
             # Escape HTML characters to prevent markup issues
@@ -494,47 +503,19 @@ class AppWindow(Gtk.ApplicationWindow):
             flowbox.remove(child)
 
         scripts = parser.get_scripts_for_category(category_info['path'], self.translations)
-        
+
         checklist_mode = category_info.get('display_mode', 'menu') == 'checklist'
-        self.check_buttons = []
+
+        for script_info in scripts:
+            widget = self.create_item_widget(script_info, checklist=checklist_mode)
+            description = script_info.get('description', '')
+            if description:
+                widget.set_tooltip_text(description)
+            else:
+                widget.set_tooltip_text(None)
+            flowbox.add(widget)
 
         if checklist_mode:
-            inner_flowbox = Gtk.FlowBox()
-            inner_flowbox.set_valign(Gtk.Align.START)
-            inner_flowbox.set_max_children_per_line(5)  # Five columns max like standard menus
-            inner_flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
-            inner_flowbox.set_homogeneous(True)  # Make all children the same size
-            inner_flowbox.set_row_spacing(8)     # Reduce vertical spacing between rows
-            inner_flowbox.set_column_spacing(10) # Add some horizontal spacing between columns
-            inner_flowbox.set_margin_start(40)   # Symmetric margins for consistent layout
-            inner_flowbox.set_margin_end(40)
-            self.check_buttons = []
-
-            for script_info in scripts:
-                if script_info.get('is_subcategory', False):
-                    # This should not happen in checklist mode, but handle it gracefully
-                    # by treating subcategories as navigable items
-                    print(f"Warning: Subcategory '{script_info['name']}' found in checklist mode category")
-                    widget = self.create_item_widget(script_info)
-                    description = script_info.get('description', '')
-                    if description:
-                        widget.set_tooltip_text(description)
-                    else:
-                        widget.set_tooltip_text(None)
-                    inner_flowbox.add(widget)
-                else:
-                    # Scripts can be checked in checklist mode
-                    check = Gtk.CheckButton(label=script_info['name'])
-                    check.script_info = script_info
-                    description = script_info.get('description', '')
-                    if description:
-                        check.set_tooltip_text(description)
-                    else:
-                        check.set_tooltip_text(None)
-                    check.set_size_request(128, 16)  # Reduce height for tighter spacing
-                    inner_flowbox.add(check)
-                    self.check_buttons.append(check)
-
             # Clear previous checklist buttons from footer
             for child in self.footer_widget.checklist_button_box.get_children():
                 self.footer_widget.checklist_button_box.remove(child)
@@ -546,23 +527,6 @@ class AppWindow(Gtk.ApplicationWindow):
             self.footer_widget.checklist_button_box.pack_start(install_btn, False, False, 0)
             self.footer_widget.checklist_button_box.pack_start(cancel_btn, False, False, 0)
             self.footer_widget.checklist_button_box.show_all()
-
-            vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-            vbox.set_margin_start(32)  # Add left padding
-            vbox.set_margin_end(32)    # Add right padding
-            vbox.set_margin_top(20)    # Add top padding for better spacing
-            vbox.pack_start(inner_flowbox, True, True, 0)
-
-            flowbox.add(vbox)
-        else:
-            for script_info in scripts:
-                widget = self.create_item_widget(script_info)
-                description = script_info.get('description', '')
-                if description:
-                    widget.set_tooltip_text(description)
-                else:
-                    widget.set_tooltip_text(None)
-                flowbox.add(widget)
 
     def load_scripts(self, category_info):
         """Loads scripts for a category and connects their click event. Supports checklist mode."""
@@ -580,7 +544,7 @@ class AppWindow(Gtk.ApplicationWindow):
             """Handle checklist dialog closure."""
             if dialog:
                 dialog.destroy()
-                
+
         checklist_helper.handle_install_checklist(
             self.check_buttons, 
             self, 
