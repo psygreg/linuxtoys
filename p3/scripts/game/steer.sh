@@ -3,6 +3,7 @@
 # version: 1.0
 # description: oversteer_desc
 # icon: oversteer.png
+# repo: https://github.com/berarma/oversteer
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

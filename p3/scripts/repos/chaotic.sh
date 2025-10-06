@@ -4,6 +4,7 @@
 # description: chaotic_desc
 # icon: aur.svg
 # compat: arch, cachy
+# repo: https://aur.chaotic.cx/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

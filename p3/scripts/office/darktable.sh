@@ -3,6 +3,7 @@
 # version: 1.0
 # description: darktable_desc
 # icon: darktable.svg
+# repo: https://www.darktable.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

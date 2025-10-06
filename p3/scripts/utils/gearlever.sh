@@ -3,6 +3,7 @@
 # version: 1.0
 # description: glever_desc
 # icon: gearlever.png
+# repo: https://github.com/mijorus/gearlever
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

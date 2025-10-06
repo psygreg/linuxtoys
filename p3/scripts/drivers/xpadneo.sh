@@ -6,6 +6,7 @@
 # compat: fedora, ubuntu, debian, ostree, suse, arch
 # reboot: yes
 # nocontainer
+# repo: https://github.com/atar-axis/xpadneo
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

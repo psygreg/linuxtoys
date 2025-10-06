@@ -3,6 +3,7 @@
 # version: 1.0
 # description: lact_desc
 # icon: device.svg
+# repo: https://github.com/ilya-zlobintsev/LACT
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

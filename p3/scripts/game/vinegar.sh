@@ -3,6 +3,7 @@
 # version: 1.0
 # description: vinegar_desc
 # icon: vinegar.png
+# repo: https://vinegarhq.org/Home/index.html
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

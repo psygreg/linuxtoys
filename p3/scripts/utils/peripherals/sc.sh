@@ -2,7 +2,8 @@
 # name: StreamController
 # version: 1.0
 # description: sc_desc
-# icon: streamcontroller.svg
+# icon: sc.png
+# repo: https://github.com/StreamController/StreamController
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

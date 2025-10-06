@@ -3,6 +3,7 @@
 # version: 1.0
 # description: pyenv_desc
 # icon: python.svg
+# repo: https://github.com/pyenv
 
 # --- Start of the script code ---
 # install dependencies

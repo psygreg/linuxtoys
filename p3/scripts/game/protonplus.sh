@@ -3,6 +3,7 @@
 # version: 1.0
 # description: pp_desc
 # icon: protonplus.svg
+# repo: https://github.com/Vysp3r/ProtonPlus
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

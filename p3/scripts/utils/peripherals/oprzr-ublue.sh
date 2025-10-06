@@ -5,6 +5,7 @@
 # icon: gaming.svg
 # compat: ublue
 # nocontainer
+# repo: https://openrazer.github.io
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

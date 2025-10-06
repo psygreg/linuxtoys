@@ -6,6 +6,7 @@
 # compat: ubuntu, debian, arch, fedora, suse, cachy
 # nocontainer
 # desktop: other
+# repo: https://github.com/maximilionus/lucidglyph/tree/v0.11.0
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

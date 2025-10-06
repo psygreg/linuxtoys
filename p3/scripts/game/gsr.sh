@@ -3,6 +3,7 @@
 # version: 1.0
 # description: gsr_desc
 # icon: gsr.png
+# repo: https://git.dec05eba.com/?p=about
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

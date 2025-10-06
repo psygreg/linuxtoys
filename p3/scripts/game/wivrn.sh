@@ -3,6 +3,7 @@
 # version: 1.0
 # description: wivrn_desc
 # icon: wivrn.png
+# repo: https://github.com/WiVRn
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

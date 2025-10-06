@@ -3,6 +3,7 @@
 # version: 1.0
 # description: efx_desc
 # icon: efx.svg
+# repo: https://github.com/wwmm/easyeffects
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

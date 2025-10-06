@@ -5,6 +5,7 @@
 # icon: touchegg.svg
 # compat: ubuntu, debian, fedora, suse
 # nocontainer
+# repo: https://github.com/JoseExposito/touchegg
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

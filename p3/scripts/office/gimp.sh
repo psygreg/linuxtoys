@@ -3,6 +3,7 @@
 # VERSION: 3.0
 # DESCRIPTION: gimp_desc
 # icon: gimp.svg
+# repo: https://www.gimp.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

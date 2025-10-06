@@ -3,6 +3,7 @@
 # version: 1.0
 # description: nvm_desc
 # icon: nvm.svg
+# repo: https://github.com/nvm-sh
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

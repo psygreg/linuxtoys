@@ -4,6 +4,7 @@
 # description: earlyoom_desc
 # icon: preload.svg
 # nocontainer
+# repo: https://github.com/rfjakob/earlyoom
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

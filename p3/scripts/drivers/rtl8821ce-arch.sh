@@ -6,6 +6,7 @@
 # compat: arch, cachyos
 # reboot: yes
 # nocontainer
+# repo: https://github.com/tomaspinho/rtl8821ce
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

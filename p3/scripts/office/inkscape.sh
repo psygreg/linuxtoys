@@ -3,6 +3,7 @@
 # version: 1.0
 # description: inkscape_desc
 # icon: inkscape.svg
+# repo: https://inkscape.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

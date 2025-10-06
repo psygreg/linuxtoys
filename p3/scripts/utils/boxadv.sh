@@ -4,6 +4,7 @@
 # description: Container do Debian via distrobox com pacotes que fornecem ambiente para uso de certificado digital por advogados no Brasil. Também inclui o Distroshelf.
 # icon: boxadv.svg
 # localize: pt
+# repo: https://github.com/pedrohqb/distrobox-adv-br
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

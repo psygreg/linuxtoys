@@ -4,6 +4,7 @@
 # description: topgrade_desc
 # icon: topgrade.svg
 # compat: debian, ubuntu, fedora, arch, suse
+# repo: https://github.com/topgrade-rs/topgrade
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

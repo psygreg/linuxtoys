@@ -4,6 +4,7 @@
 # description: mctl_desc
 # icon: mctl.svg
 # compat: ubuntu, debian, fedora, suse, cachy, arch, ostree
+# repo: https://missioncenter.io
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

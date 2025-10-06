@@ -3,6 +3,7 @@
 # version: 1.0
 # description: brew_desc
 # icon: brew.png
+# repo: https://brew.sh/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

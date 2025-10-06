@@ -5,6 +5,7 @@
 # icon: archup.svg
 # compat: arch
 # nocontainer
+# repo: https://github.com/Antiz96/arch-update
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -6,6 +6,7 @@
 # compat: fedora, ostree, debian, ubuntu, arch, cachy, ublue
 # nocontainer
 # gpu: Amd, Intel
+# repo: https://waydro.id/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

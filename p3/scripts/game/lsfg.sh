@@ -3,6 +3,7 @@
 # version: 1.0
 # description: lsfg_desc
 # icon: lsfgvk.png
+# repo: https://github.com/PancakeTAS/lsfg-vk
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

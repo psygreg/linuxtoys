@@ -6,6 +6,7 @@
 # compat: fedora, arch, debian, ubuntu, cachy, ostree
 # nocontainer
 # reboot: ostree
+# repo: https://github.com/sezanzeb/input-remapper
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

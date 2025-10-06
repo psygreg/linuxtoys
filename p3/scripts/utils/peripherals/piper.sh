@@ -4,6 +4,7 @@
 # description: piper_desc
 # icon: piper.svg
 # reboot: yes
+# repo: https://github.com/libratbag/piper
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

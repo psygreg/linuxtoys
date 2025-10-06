@@ -3,6 +3,7 @@
 # version: 1.0
 # description: bazaar_desc
 # icon: bazaar.svg
+# repo: https://github.com/kolunmi/bazaar
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

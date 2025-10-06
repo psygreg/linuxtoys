@@ -4,6 +4,7 @@
 # description: f3_desc
 # icon: utils.svg
 # nocontainer
+# repo: https://github.com/AltraMayor/f3
 
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -3,6 +3,7 @@
 # version: 1.0
 # description: distroshelf_desc
 # icon: distroshelf.svg
+# repo: https://github.com/ranfdev/DistroShelf
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

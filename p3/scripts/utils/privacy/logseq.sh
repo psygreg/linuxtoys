@@ -3,6 +3,7 @@
 # VERSION: 0.10.13
 # DESCRIPTION: logseq_desc
 # icon: logseq.svg
+# repo: https://logseq.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
