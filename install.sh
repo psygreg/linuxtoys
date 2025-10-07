@@ -1,277 +1,150 @@
 #!/bin/sh
-# LINUXTOYS QUICK-INSTALLER (POSIX /bin/sh)
-
-echo "================== LINUXTOYS QUICK-INSTALLER ===================="
-printf "Do you wish to install or update LinuxToys? (y/n)\n"
-# shellcheck disable=SC2162
-read -r answer
-answer=$(printf '%s' "$answer" | tr '[:upper:]' '[:lower:]')
-if [ "$answer" != "y" ]; then
-    echo "===== CANCELLED ====="
-    echo "Installation aborted."
-    sleep 3
-    exit 100
-fi
-
-# Garante HOME e sai com erro claro se falhar
-cd "$HOME" || {
-    echo "============ ERROR ============="
-    echo "Fatal error: cannot change directory"
-    exit 2
+header() {
+	echo "  _      _               _______               "
+	echo " | |    (_)             |__   __|              "
+	echo " | |     _ _ __  _   ___  _| | ___  _   _ ___  "
+	echo " | |    | | '_ \| | | \ \/ / |/ _ \| | | / __| "
+	echo " | |____| | | | | |_| |>  <| | (_) | |_| \__ \ "
+	echo " |______|_|_| |_|\__,_/_/\_\_|\___/ \__, |___/ "
+	echo "                                     __/ |     "
+	echo "                                    |___/      "
+	echo "                QUICK-INSTALLER                "
+	echo
 }
 
-# Descobre a última tag via GitHub API (sem bashisms)
-tag=$(
-    curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest" \
-    | grep -o '"tag_name": *"[^"]*"' \
-    | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/'
-)
-if [ -z "$tag" ]; then
-    echo "============ ERROR ============="
-    echo "Could not determine latest release tag from GitHub."
-    exit 3
-fi
+info() { printf "\e[0;32m[INFO]\e[m %s\n" "${1}"; exit 0; }
 
-# Helper de download: tenta wget silencioso; se falhar, usa curl -O
-dl_file() {
-    # $1 = URL
-    # $2 = filename esperado
-    if command -v wget >/dev/null 2>&1; then
-        wget -q "$1" -O "$2" || {
-            if command -v curl >/dev/null 2>&1; then
-                curl -fsSL "$1" -o "$2" || return 1
-            else
-                return 1
-            fi
-        }
-    elif command -v curl >/dev/null 2>&1; then
-        curl -fsSL "$1" -o "$2" || return 1
-    else
-        return 1
-    fi
-    return 0
+error() { printf "\e[0;31m[ERROR]\e[m %s\n" "${1}"; exit 1; }
+
+ostree() {
+	if command -v rpm-ostree >&-; then
+		if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
+			if rpm -qi linuxtoys >&-; then
+				if ! sudo rpm-ostree remove linuxtoys; then
+					error "Failed to remove existing linuxtoys."
+				fi
+			fi
+
+			if sudo rpm-ostree install "/tmp/${_rpm_name}"; then
+				info "LinuxToys installed or updated!"
+			else
+				error "Installation failed (rpm-ostree)."
+			fi
+		else
+			error "Failed to download: ${_rpm_name}"
+		fi
+	fi
 }
 
-# Caminhos de artefatos por família
-deb_pkg="linuxtoys_${tag}-1_amd64.deb"
-deb_url="https://github.com/psygreg/linuxtoys/releases/download/${tag}/${deb_pkg}"
+osdeb() {
+	if curl -fsSL "${_deb}" -o "/tmp/${_deb_name}"; then
+		sudo apt update || true
+		if sudo apt install -y "/tmp/${_deb_name}"; then
+			info "LinuxToys installed or updated!"
+		else
+			error "Installation failed (apt)."
+		fi
+	else
+		error "Failed to download: ${_deb_name}"
+	fi
+}
 
-rpm_pkg="linuxtoys-${tag}-1.x86_64.rpm"
-rpm_url="https://github.com/psygreg/linuxtoys/releases/download/${tag}/${rpm_pkg}"
+osrpm() {
+	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
+		if command -v dnf >&- ; then
+			if sudo dnf install -y "/tmp/${_rpm_name}"; then
+				info "LinuxToys installed or updated!"
+			else
+				error "Installation failed (dnf)."
+			fi
+		else
+			if sudo yum install -y "/tmp/${_rpm_name}"; then
+				info "LinuxToys installed or updated!"
+			else
+				error "Installation failed (yum)."
+			fi
+		fi
+	else
+		error "Failed to download: ${_rpm_name}"
+	fi
+}
 
-arch_pkg="PKGBUILD"
-arch_url="https://github.com/psygreg/linuxtoys/releases/download/${tag}/${arch_pkg}"
+ossuse() {
+	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
+		if sudo zypper install -y --allow-unsigned-rpm "/tmp/${_rpm_name}"; then
+			info "LinuxToys installed or updated!"
+		else
+			error "Installation failed (zypper)."
+		fi
+	else
+		error "Failed to download: ${_rpm_name}"
+	fi
+}
 
-# Caso rpm-ostree (ex.: Silverblue/ Kinoite)
-if command -v rpm-ostree >/dev/null 2>&1; then
-    echo "Detected rpm-ostree system."
-    echo "Downloading: $rpm_pkg"
-    if ! dl_file "$rpm_url" "$rpm_pkg"; then
-        echo "============ ERROR ============="
-        echo "Failed to download: $rpm_url"
-        exit 4
-    fi
+osarch() {
+	_pkg_dir="/tmp/linuxtoys/"
+	mkdir -p ${_pkg_dir}
+	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
+		if makepkg -fcCd OPTIONS=-debug -D "${_pkg_dir}"; then
+			if sudo pacman -U --noconfirm ${_pkg_dir}linuxtoys-*.pkg.tar.zst; then
+				info "LinuxToys installed or updated!"
+			else
+				error "Installation failed (pacman)."	
+			fi
+		else
+			error "Build failed (makepkg)."
+		fi
+	else
+		error "Failed to download: ${_pkg_name}"
+	fi
+}
 
-    if rpm -qi linuxtoys >/dev/null 2>&1; then
-        sudo rpm-ostree remove linuxtoys || {
-            echo "Failed to remove existing linuxtoys."
-            rm -f "$rpm_pkg"
-            exit 5
-        }
-    fi
-    sudo rpm-ostree install "./$rpm_pkg" || {
-        echo "Installation failed (rpm-ostree)."
-        rm -f "$rpm_pkg"
-        exit 6
-    }
-    rm -f "$rpm_pkg"
-    echo "================== SUCCESS ===================="
-    echo "LinuxToys installed or updated! Reboot to apply."
-    sleep 3
-    exit 0
-fi
+installer() {
+	_api="$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest")"
+	if [ -z "${_api}" ] ; then error "Failed to get api"; fi
 
-# Demais distros via /etc/os-release
-if [ -r /etc/os-release ]; then
-    # shellcheck disable=SC1091
-    . /etc/os-release
+	_rpm=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?\.rpm)(?=")')
+	_rpm_name=$(basename "${_rpm}")
+
+	_deb=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?\.deb)(?=")')
+	_deb_name=$(basename "${_deb}")
+
+	_pkg=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?/PKGBUILD)(?=")')
+	_pkg_name=$(basename "${_pkg}")
+
+	ostree
+
+	if [ -r /etc/os-release ]; then
+		# shellcheck disable=SC1091
+		. /etc/os-release
+	else
+		error "Unsupported operating system (no /etc/os-release)."
+	fi
+
+	case "${ID:-}" in
+		debian|ubuntu) osdeb ;;
+		fedora|rhel|centos|rocky|almalinux) osrpm ;;
+		suse|opensuse) ossuse ;;
+		arch|cachyos) osarch ;;
+	esac
+
+	case "${ID_LIKE:-}" in
+		*debian*|*ubuntu*) osdeb ;;
+		*rhel*|*fedora*) osrpm ;;
+		*suse*) ossuse ;;
+		*arch*) osarch;;
+	esac
+
+	error "Unsupported operating system."
+}
+
+if [ -t 0 ]; then
+	header
+	printf 'Do you wish to install or update LinuxToys? (y/n): '
+	read -r _answer < /dev/tty
+	if [ "${_answer}" != "y" ]; then info "Installation aborted."; fi
+	installer
 else
-    echo "========== ERROR ============"
-    echo "Unsupported operating system (no /etc/os-release)."
-    sleep 3
-    exit 1
+	header
+	yes | installer
 fi
-
-installed=false
-
-# 1) Detecta por ID exato
-case "${ID:-}" in
-    debian|ubuntu)
-        echo "Detected Debian/Ubuntu."
-        echo "Downloading: $deb_pkg"
-        if ! dl_file "$deb_url" "$deb_pkg"; then
-            echo "============ ERROR ============="
-            echo "Failed to download: $deb_url"
-            exit 4
-        fi
-        sudo apt update || true
-        sudo apt install -y "./$deb_pkg" || {
-            echo "Installation failed (apt)."
-            rm -f "$deb_pkg"
-            exit 6
-        }
-        rm -f "$deb_pkg"
-        installed=true
-        ;;
-    fedora|rhel|centos|rocky|almalinux)
-            echo "Detected RHEL/Fedora-like by ID."
-            echo "Downloading: $rpm_pkg"
-            if ! dl_file "$rpm_url" "$rpm_pkg"; then
-                echo "============ ERROR ============="
-                echo "Failed to download: $rpm_url"
-                exit 4
-            fi
-            if command -v dnf >/dev/null 2>&1; then
-                sudo dnf install -y "./$rpm_pkg" || {
-                    echo "Installation failed (dnf)."
-                    rm -f "$rpm_pkg"
-                    exit 6
-                }
-            else
-                sudo yum install -y "./$rpm_pkg" || {
-                    echo "Installation failed (yum)."
-                    rm -f "$rpm_pkg"
-                    exit 6
-                }
-            fi
-            rm -f "$rpm_pkg"
-            installed=true
-            ;;
-    suse|opensuse)
-        echo "Detected SUSE/OpenSUSE by ID."
-        echo "Downloading: $rpm_pkg"
-        if ! dl_file "$rpm_url" "$rpm_pkg"; then
-            echo "============ ERROR ============="
-            echo "Failed to download: $rpm_url"
-            exit 4
-        fi
-        sudo zypper install -y "./$rpm_pkg" || {
-            echo "Installation failed (zypper)."
-            rm -f "$rpm_pkg"
-            exit 6
-        }
-        rm -f "$rpm_pkg"
-        installed=true
-        ;;
-    arch|cachyos)
-        echo "Detected Arch-like by ID."
-        echo "Downloading: $arch_pkg"
-        if ! dl_file "$arch_url" "$arch_pkg"; then
-            echo "============ ERROR ============="
-            echo "Failed to download: $arch_url"
-            exit 4
-        fi
-        makepkg -d && {
-            sudo pacman -U --noconfirm linuxtoys-*.pkg.tar.zst;
-        } || {
-            echo "Installation failed (pacman)."
-            rm -f "$arch_pkg"
-            exit 6
-        }
-        rm -f "$arch_pkg"
-        installed=true
-        ;;
-esac
-
-# 2) Se não decidiu pelo ID, tenta por ID_LIKE
-if [ "$installed" != "true" ]; then
-    case "${ID_LIKE:-}" in
-        *debian*|*ubuntu*)
-            echo "Detected Debian/Ubuntu-like by ID_LIKE."
-            echo "Downloading: $deb_pkg"
-            if ! dl_file "$deb_url" "$deb_pkg"; then
-                echo "============ ERROR ============="
-                echo "Failed to download: $deb_url"
-                exit 4
-            fi
-            sudo apt update || true
-            sudo apt install -y "./$deb_pkg" || {
-                echo "Installation failed (apt)."
-                rm -f "$deb_pkg"
-                exit 6
-            }
-            rm -f "$deb_pkg"
-            installed=true
-            ;;
-        *rhel*|*fedora*)
-            echo "Detected RHEL/Fedora-like by ID_LIKE."
-            echo "Downloading: $rpm_pkg"
-            if ! dl_file "$rpm_url" "$rpm_pkg"; then
-                echo "============ ERROR ============="
-                echo "Failed to download: $rpm_url"
-                exit 4
-            fi
-            if command -v dnf >/dev/null 2>&1; then
-                sudo dnf install -y "./$rpm_pkg" || {
-                    echo "Installation failed (dnf)."
-                    rm -f "$rpm_pkg"
-                    exit 6
-                }
-            else
-                sudo yum install -y "./$rpm_pkg" || {
-                    echo "Installation failed (yum)."
-                    rm -f "$rpm_pkg"
-                    exit 6
-                }
-            fi
-            rm -f "$rpm_pkg"
-            installed=true
-            ;;
-        *suse*)
-            echo "Detected SUSE/OpenSUSE by ID_LIKE."
-            echo "Downloading: $rpm_pkg"
-            if ! dl_file "$rpm_url" "$rpm_pkg"; then
-                echo "============ ERROR ============="
-                echo "Failed to download: $rpm_url"
-                exit 4
-            fi
-            sudo zypper install -y "./$rpm_pkg" || {
-                echo "Installation failed (zypper)."
-                rm -f "$rpm_pkg"
-                exit 6
-            }
-            rm -f "$rpm_pkg"
-            installed=true
-            ;;
-        *arch*)
-            echo "Detected Arch-like by ID_LIKE."
-            echo "Downloading: $arch_pkg"
-            if ! dl_file "$arch_url" "$arch_pkg"; then
-                echo "============ ERROR ============="
-                echo "Failed to download: $arch_url"
-                exit 4
-            fi
-            makepkg -d && {
-                sudo pacman -U --noconfirm linuxtoys-*.pkg.tar.zst;
-            } || {
-                echo "Installation failed (pacman)."
-                rm -f "$arch_pkg"
-                exit 6
-            }
-            rm -f "$arch_pkg"
-            installed=true
-            ;;
-    esac
-fi
-
-if [ "$installed" = "true" ]; then
-    echo "========== SUCCESS ============"
-    echo "LinuxToys installed or updated!"
-    sleep 3
-    exit 0
-fi
-
-echo "========== ERROR ============"
-echo "Unsupported operating system."
-sleep 3
-exit 1
