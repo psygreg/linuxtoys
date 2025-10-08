@@ -278,5 +278,6 @@
   "ml_desc": "Odprtokodni odjemalec PC za NVIDIA GameStream in Sunshine.",
   "sunshine_desc": "Samogostovan gostitelj pretakanja iger za Moonlight.",
   "s3d_desc": "Pretvorite ozadje S3, SFTP, WebDAV ali Rclone v vaše šifrirano shrambo.",
-  "damx_desc": "Pripomoček za nadzor funkcij prenosnikov za igre Acer in uglasitev zmogljivosti."
+  "damx_desc": "Pripomoček za nadzor funkcij prenosnikov za igre Acer in uglasitev zmogljivosti.",
+  "pacstall_desc": "Omogoča uporabo najnovejše programske opreme brez kompromisov, podobno kot AUR, vendar za Debian/Ubuntu. Uporabite previdno."
 }

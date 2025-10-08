@@ -278,5 +278,6 @@
   "ml_desc": "Klien PC sumber terbuka untuk NVIDIA GameStream dan Sunshine.",
   "sunshine_desc": "Host strim permainan dihoskan sendiri untuk Moonlight.",
   "s3d_desc": "Tukar back-end S3, SFTP, WebDAV atau Rclone ke dalam penyimpanan disulitkan anda.",
-  "damx_desc": "Utiliti untuk mengawal ciri laptop gaming Acer dan penalaan prestasi."
+  "damx_desc": "Utiliti untuk mengawal ciri laptop gaming Acer dan penalaan prestasi.",
+  "pacstall_desc": "Membolehkan anda menggunakan perisian terkini tanpa kompromi, serupa dengan AUR tetapi untuk Debian/Ubuntu. Gunakan dengan berhati-hati."
 }

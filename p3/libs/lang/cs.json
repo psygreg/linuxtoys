@@ -278,5 +278,6 @@
   "ml_desc": "Open source klient pro PC pro NVIDIA GameStream a Sunshine.",
   "sunshine_desc": "Vlastně hostovaný herní stream host pro Moonlight.",
   "s3d_desc": "Převeďte S3, SFTP, WebDAV nebo Rclone back-end na vaše šifrované úložiště.",
-  "damx_desc": "Nástroj pro ovládání funkcí a ladění výkonu herních notebooků Acer."
+  "damx_desc": "Nástroj pro ovládání funkcí a ladění výkonu herních notebooků Acer.",
+  "pacstall_desc": "Umožňuje používat nejnovější software bez kompromisů, podobně jako AUR, ale pro Debian/Ubuntu. Používejte opatrně."
 }

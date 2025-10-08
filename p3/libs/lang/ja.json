@@ -278,5 +278,6 @@
   "ml_desc": "NVIDIA GameStreamとSunshine用のオープンソースPCクライアント。",
   "sunshine_desc": "Moonlight用のセルフホスト型ゲームストリームホスト。",
   "s3d_desc": "S3、SFTP、WebDAV、またはRcloneのバックエンドを暗号化されたストレージに変換します。",
-  "damx_desc": "Acer ゲーミングラップトップの機能とパフォーマンスチューニングを制御するユーティリティ。"
+  "damx_desc": "Acer ゲーミングラップトップの機能とパフォーマンスチューニングを制御するユーティリティ。",
+  "pacstall_desc": "妥協することなく最新のソフトウェアを使用できます。AURに似ていますがDebian/Ubuntu用です。注意して使用してください。"
 }

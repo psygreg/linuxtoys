@@ -278,5 +278,6 @@
   "ml_desc": "Avatud lähtekoodiga arvutiklient NVIDIA GameStream ja Sunshine jaoks.",
   "sunshine_desc": "Ise majutatud mängu voogesituse host Moonlight jaoks.",
   "s3d_desc": "Teisenda S3, SFTP, WebDAV või Rclone tagaosa oma krüpteeritud salvestusruumiks.",
-  "damx_desc": "Tööriist Acer mänguarvutite funktsioonide ja jõudluse häälestamise juhtimiseks."
+  "damx_desc": "Tööriist Acer mänguarvutite funktsioonide ja jõudluse häälestamise juhtimiseks.",
+  "pacstall_desc": "Võimaldab kasutada uusimat tarkvara ilma kompromissideta, sarnaselt AUR-ile, kuid Debian/Ubuntu jaoks. Kasutage ettevaatlikult."
 }

@@ -278,5 +278,6 @@
   "ml_desc": "Opinn uppspretta PC biðlari fyrir NVIDIA GameStream og Sunshine.",
   "sunshine_desc": "Sjálf-hýstur leikjastraumur hýsill fyrir Moonlight.",
   "s3d_desc": "Breyttu S3, SFTP, WebDAV eða Rclone bakenda í þínu dulkóðuðu geymslu.",
-  "damx_desc": "Tól til að stjórna Acer leikjatölvu eiginleikum og frammistöðustillingu."
+  "damx_desc": "Tól til að stjórna Acer leikjatölvu eiginleikum og frammistöðustillingu.",
+  "pacstall_desc": "Gerir þér kleift að nota nýjustu hugbúnaðinn án málamiðlana, svipað og AUR en fyrir Debian/Ubuntu. Notaðu varlega."
 }

@@ -276,5 +276,6 @@
   "ml_desc": "Mteja wa PC wa chanzo wazi kwa NVIDIA GameStream na Sunshine.",
   "sunshine_desc": "Mwenyeji wa mkondo wa mchezo wa kujiandaa mwenyewe kwa Moonlight.",
   "s3d_desc": "Badilisha back-end ya S3, SFTP, WebDAV au Rclone kuwa hifadhi yako iliyosimbwa.",
-  "damx_desc": "Kifaa cha kudhibiti vipengele vya kompyuta za kuchezea za Acer na kusasisha utendaji."
+  "damx_desc": "Kifaa cha kudhibiti vipengele vya kompyuta za kuchezea za Acer na kusasisha utendaji.",
+  "pacstall_desc": "Inakuruhusu kutumia programu mpya zaidi bila makubaliano, kama AUR lakini kwa Debian/Ubuntu. Tumia kwa uangalifu."
 }

@@ -121,3 +121,69 @@ _lang_ () {
     fi
     langfile="$ulang"
 }
+
+# system detection
+is_arch_cachy () {
+    if [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+is_arch_nocachy () {
+    if [[ ("$ID" == "arch" || "$ID_LIKE" =~ "arch" || "$ID_LIKE" =~ "archlinux") && "$ID" != "cachyos" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+is_cachy () {
+    if [ "$ID" == "cachyos" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+is_fedora () {
+    if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] || [[ "$ID_LIKE" =~ "fedora" ]] || [[ "$ID_LIKE" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "centos" ]] || [ "$ID" == "centos" ]; then
+        if ! command -v rpm-ostree &>/dev/null; then
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
+is_ostree () {
+    if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] || [[ "$ID_LIKE" =~ "fedora" ]] || [[ "$ID_LIKE" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "centos" ]] || [ "$ID" == "centos" ]; then
+        if command -v rpm-ostree &>/dev/null; then
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
+is_debian () {
+    if [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "debian" ]] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+is_ubuntu () {
+    if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]] || [[ "$ID_LIKE" =~ "debian" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+is_suse () {
+    if [ "$ID" == "suse" ] || [ "$ID" == "opensuse" ] || [[ "$ID_LIKE" =~ "suse" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}

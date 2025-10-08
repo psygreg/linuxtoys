@@ -278,5 +278,6 @@
   "ml_desc": "Atvirojo kodo PC klientas NVIDIA GameStream ir Sunshine.",
   "sunshine_desc": "Savarankiškai talpinamas žaidimų srautinio perdavimo hostingas Moonlight.",
   "s3d_desc": "Konvertuokite S3, SFTP, WebDAV arba Rclone galinio galo į savo užšifruotą saugyklą.",
-  "damx_desc": "Įrankis Acer žaidimų nešiojamųjų kompiuterių funkcijoms ir našumo derinimui valdyti."
+  "damx_desc": "Įrankis Acer žaidimų nešiojamųjų kompiuterių funkcijoms ir našumo derinimui valdyti.",
+  "pacstall_desc": "Leidžia naudoti naujausią programinę įrangą be kompromisų, panašiai kaip AUR, bet skirta Debian/Ubuntu. Naudokite atsargiai."
 }

@@ -278,5 +278,6 @@
   "ml_desc": "Klient PC me burim të hapur për NVIDIA GameStream dhe Sunshine.",
   "sunshine_desc": "Nikoqir i transmetimit të lojërave të vetë-pritur për Moonlight.",
   "s3d_desc": "Konverto backend-in S3, SFTP, WebDAV ose Rclone në ruajtjen tënde të enkriptuar.",
-  "damx_desc": "Utilitet për kontrollimin e funksioneve të laptopëve gaming Acer dhe rregullimin e performancës."
+  "damx_desc": "Utilitet për kontrollimin e funksioneve të laptopëve gaming Acer dhe rregullimin e performancës.",
+  "pacstall_desc": "Ju lejon të përdorni softuerin më të fundit pa kompromis, i ngjashëm me AUR por për Debian/Ubuntu. Përdoreni me kujdes."
 }

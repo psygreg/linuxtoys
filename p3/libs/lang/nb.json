@@ -278,5 +278,6 @@
   "ml_desc": "Åpen kildekode PC-klient for NVIDIA GameStream og Sunshine.",
   "sunshine_desc": "Selvvertet spill-stream-vert for Moonlight.",
   "s3d_desc": "Konverter S3, SFTP, WebDAV eller Rclone bakstykke til din krypterte lagring.",
-  "damx_desc": "Verktøy for å kontrollere Acer gaming-laptop funksjoner og ytelsesoptimering."
+  "damx_desc": "Verktøy for å kontrollere Acer gaming-laptop funksjoner og ytelsesoptimering.",
+  "pacstall_desc": "Lar deg bruke den nyeste programvaren uten kompromisser, likt AUR men for Debian/Ubuntu. Bruk med forsiktighet."
 }

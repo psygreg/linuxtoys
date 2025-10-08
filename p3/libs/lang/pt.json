@@ -278,5 +278,6 @@
   "ml_desc": "Cliente de PC de código aberto para NVIDIA GameStream e Sunshine.",
   "sunshine_desc": "Host de transmissão de jogos auto-hospedado para Moonlight.",
   "s3d_desc": "Converta o back-end S3, SFTP, WebDAV ou Rclone em seu armazenamento criptografado.",
-  "damx_desc": "Utilitário para controlar recursos de laptops gaming Acer e ajuste de desempenho."
+  "damx_desc": "Utilitário para controlar recursos de laptops gaming Acer e ajuste de desempenho.",
+  "pacstall_desc": "Permite usar o software mais recente sem compromissos, semelhante ao AUR, mas para Debian/Ubuntu. Use com cautela."
 }

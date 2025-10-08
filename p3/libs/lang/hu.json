@@ -278,5 +278,6 @@
   "ml_desc": "Nyílt forráskódú PC kliens az NVIDIA GameStream és Sunshine számára.",
   "sunshine_desc": "Saját üzemeltetésű játékstreaming gazdagép Moonlight számára.",
   "s3d_desc": "Alakítsa át az S3, SFTP, WebDAV vagy Rclone háttérrendszert titkosított tárhelyévé.",
-  "damx_desc": "Segédprogram az Acer gaming laptopok funkcióinak vezérléséhez és teljesítményhangolásához."
+  "damx_desc": "Segédprogram az Acer gaming laptopok funkcióinak vezérléséhez és teljesítményhangolásához.",
+  "pacstall_desc": "Lehetővé teszi a legújabb szoftverek kompromisszumok nélküli használatát, hasonlóan az AUR-hoz, de Debian/Ubuntu rendszerekhez. Használd óvatosan."
 }

@@ -278,5 +278,6 @@
   "ml_desc": "Atvērtā koda PC klients NVIDIA GameStream un Sunshine.",
   "sunshine_desc": "Pašizvietots spēļu straumēšanas saimnieks Moonlight.",
   "s3d_desc": "Pārveidojiet S3, SFTP, WebDAV vai Rclone aizmuguri savā šifrētajā krātuvē.",
-  "damx_desc": "Utilīta Acer spēļu klēpjdatoru funkciju un veiktspējas regulēšanas kontrolei."
+  "damx_desc": "Utilīta Acer spēļu klēpjdatoru funkciju un veiktspējas regulēšanas kontrolei.",
+  "pacstall_desc": "Ļauj izmantot jaunāko programmatūru bez kompromisiem, līdzīgi kā AUR, bet Debian/Ubuntu. Izmantojiet piesardzīgi."
 }

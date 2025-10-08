@@ -278,5 +278,6 @@
   "ml_desc": "NVIDIA GameStream ve Sunshine için açık kaynak PC istemcisi.",
   "sunshine_desc": "Moonlight için kendi kendine barındırılan oyun yayını ana bilgisayarı.",
   "s3d_desc": "S3, SFTP, WebDAV veya Rclone arka ucunu şifrelenmiş depolama alanınıza dönüştürün.",
-  "damx_desc": "Acer oyun dizüstü bilgisayarı özelliklerini ve performans ayarlarını kontrol etmek için yardımcı program."
+  "damx_desc": "Acer oyun dizüstü bilgisayarı özelliklerini ve performans ayarlarını kontrol etmek için yardımcı program.",
+  "pacstall_desc": "Taviz vermeden en son yazılımı kullanmanıza olanak tanır, AUR'ye benzer ancak Debian/Ubuntu için. Dikkatli kullanın."
 }

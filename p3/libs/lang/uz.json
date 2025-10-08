@@ -277,5 +277,6 @@
   "ml_desc": "NVIDIA GameStream va Sunshine uchun ochiq manba PC mijozi.",
   "sunshine_desc": "Moonlight uchun o'z-o'zidan joylashtirilgan o'yin oqimi xosti.",
   "s3d_desc": "S3, SFTP, WebDAV yoki Rclone orqa tomonini shifrlangan saqlash joyingizga aylantiring.",
-  "damx_desc": "Acer o'yin noutbuklari xususiyatlarini va ishlash sozlamalarini boshqarish uchun dastur."
+  "damx_desc": "Acer o'yin noutbuklari xususiyatlarini va ishlash sozlamalarini boshqarish uchun dastur.",
+  "pacstall_desc": "AUR-ga o'xshash, lekin Debian/Ubuntu uchun hech qanday murosasiz eng yangi dasturiy ta'minotdan foydalanish imkonini beradi. Ehtiyotkorlik bilan foydalaning."
 }
