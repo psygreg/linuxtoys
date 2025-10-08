@@ -6,6 +6,7 @@
 # gpu: Intel
 # repo: https://git.dec05eba.com/?p=about
 # nocontainer
+# negates: gsr
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

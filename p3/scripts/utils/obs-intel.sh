@@ -5,6 +5,7 @@
 # icon: obs.svg
 # gpu: Intel
 # repo: https://github.com/dimtpap/obs-pipewire-audio-capture
+# negates: obs
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

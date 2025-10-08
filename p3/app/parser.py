@@ -12,6 +12,54 @@ from .lang_utils import detect_system_language
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
 
+def _get_negated_scripts(directory_path, compat_keys):
+    """
+    Scan a directory for scripts with 'negates:' headers and build a set of 
+    script filenames (without .sh extension) that should be hidden.
+    
+    Only scripts that are themselves compatible will negate other scripts.
+    
+    Args:
+        directory_path (str): Path to the directory to scan
+        compat_keys (set): Set of compatibility keys for the current system
+        
+    Returns:
+        set: Set of script filenames (without .sh) that should be hidden
+    """
+    negated_scripts = set()
+    
+    if not os.path.isdir(directory_path):
+        return negated_scripts
+    
+    for file_name in os.listdir(directory_path):
+        if not file_name.endswith('.sh'):
+            continue
+            
+        file_path = os.path.join(directory_path, file_name)
+        if not os.path.isfile(file_path):
+            continue
+        
+        # Check if this script is compatible
+        if not script_is_compatible(file_path, compat_keys):
+            continue
+        
+        # Check if this script has a negates header
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if not line.startswith('#'):
+                        break
+                    if line.startswith('# negates:'):
+                        negates_value = line[len('# negates:'):].strip()
+                        # Split by comma to support multiple negations
+                        negated_names = [n.strip() for n in negates_value.split(',') if n.strip()]
+                        negated_scripts.update(negated_names)
+                        break
+        except Exception:
+            pass
+    
+    return negated_scripts
+
 def script_requires_reboot(script_path, system_compat_keys):
     """
     Check if a script requires a reboot for the current system.
@@ -62,6 +110,9 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                             value = translations.get(value, value)
                         if key in metadata:
                             metadata[key] = value
+                        # Always capture 'negates' header even if not in defaults
+                        elif key == 'negates':
+                            metadata['negates'] = value
     except Exception as e:
         print(f"Error reading metadata from {file_path}: {e}")
 
@@ -114,11 +165,19 @@ def get_categories(translations=None):
     # Get system compatibility and locale
     compat_keys = get_system_compat_keys()
     current_locale = detect_system_language()
+    
+    # Get the set of scripts that should be hidden due to negation
+    negated_scripts = _get_negated_scripts(SCRIPTS_DIR, compat_keys)
 
     # Add each root script as its own category using header info
     for file_name in os.listdir(SCRIPTS_DIR):
         file_path = os.path.join(SCRIPTS_DIR, file_name)
         if file_name.endswith('.sh') and os.path.isfile(file_path):
+            # Check if this script is negated by another compatible script
+            script_name_without_ext = os.path.splitext(file_name)[0]
+            if script_name_without_ext in negated_scripts:
+                continue
+            
             defaults = {
                 'name': file_name,
                 'description': '',
@@ -200,6 +259,9 @@ def get_scripts_for_category(category_path, translations=None):
     # Get system compatibility and locale
     compat_keys = get_system_compat_keys()
     current_locale = detect_system_language()
+    
+    # Get the set of scripts that should be hidden due to negation
+    negated_scripts = _get_negated_scripts(category_path, compat_keys)
 
     # First, add subcategories
     subcategories = get_subcategories_for_category(category_path, translations)
@@ -227,6 +289,11 @@ def get_scripts_for_category(category_path, translations=None):
     for file_name in os.listdir(category_path):
         if file_name.endswith('.sh'):
             file_path = os.path.join(category_path, file_name)
+            
+            # Check if this script is negated by another compatible script
+            script_name_without_ext = os.path.splitext(file_name)[0]
+            if script_name_without_ext in negated_scripts:
+                continue
             
             # Filter by compatibility and locale
             if not script_is_compatible(file_path, compat_keys):
@@ -278,11 +345,19 @@ def get_all_scripts_recursive(directory_path, translations=None):
     # Get system compatibility and locale
     compat_keys = get_system_compat_keys()
     current_locale = detect_system_language()
+    
+    # Get the set of scripts that should be hidden due to negation
+    negated_scripts = _get_negated_scripts(directory_path, compat_keys)
 
     for item_name in os.listdir(directory_path):
         item_path = os.path.join(directory_path, item_name)
         
         if item_name.endswith('.sh') and os.path.isfile(item_path):
+            # Check if this script is negated by another compatible script
+            script_name_without_ext = os.path.splitext(item_name)[0]
+            if script_name_without_ext in negated_scripts:
+                continue
+            
             # Filter by compatibility and locale
             if not script_is_compatible(item_path, compat_keys):
                 continue
