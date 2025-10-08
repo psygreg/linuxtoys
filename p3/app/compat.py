@@ -449,11 +449,12 @@ def script_is_compatible(script_path, compat_keys):
                     gpu_values = [v.strip() for v in gpu_value.split(',') if v.strip()]
                     gpu_script_keys = set()
                     for v in gpu_values:
-                        if v == 'AMD':
+                        v_lower = v.lower()
+                        if v_lower == 'amd':
                             gpu_script_keys.add('gpu-amd')
-                        elif v == 'Intel':
+                        elif v_lower == 'intel':
                             gpu_script_keys.add('gpu-intel')
-                        elif v == 'Nvidia':
+                        elif v_lower == 'nvidia':
                             gpu_script_keys.add('gpu-nvidia')
                         else:
                             # Unknown value, treat as general GPU
