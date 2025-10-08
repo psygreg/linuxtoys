@@ -5,6 +5,7 @@
 # icon: gsr.png
 # gpu: Intel
 # repo: https://git.dec05eba.com/?p=about
+# nocontainer
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
