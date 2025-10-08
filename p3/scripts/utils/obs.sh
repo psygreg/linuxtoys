@@ -3,6 +3,8 @@
 # version: 1.0
 # description: obs_desc
 # icon: obs.svg
+# gpu: Amd, Nvidia
+# repo: https://github.com/dimtpap/obs-pipewire-audio-capture
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
