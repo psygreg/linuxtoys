@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
-if ! command -v rpm-ostree &>/dev/null; then
+if command -v rpm-ostree &>/dev/null; then
     if [ "$ID" = "bluefin" ] || [ "$ID" = "bazzite" ] || [ "$ID" = "aurora" ]; then
         cfg_host=$(rpm -qi "optimize-cfg-ublue" 2>/dev/null | grep "^Version" | awk '{print $3}')
         cfg_server="1.0"
