@@ -279,5 +279,7 @@
   "sunshine_desc": "Itse isännöity pelisuoratoiston isäntä Moonlightille.",
   "s3d_desc": "Muunna S3, SFTP, WebDAV tai Rclone-taustaosa salatuksi tallennustilaksi.",
   "damx_desc": "Työkalu Acer-pelilaptopien ominaisuuksien ja suorituskyvyn säätämiseen.",
-  "pacstall_desc": "Mahdollistaa uusimman ohjelmiston käytön ilman kompromisseja, samankaltainen kuin AUR mutta Debian/Ubuntulle. Käytä varoen."
+  "pacstall_desc": "Mahdollistaa uusimman ohjelmiston käytön ilman kompromisseja, samankaltainen kuin AUR mutta Debian/Ubuntulle. Käytä varoen.",
+  "gtk_bmg_fix": "GTK Battlemage -korjaus",
+  "gtk_bmg_fix_desc": "Korjaa renderöintiongelmia GTK-sovellusten kanssa Intel Battlemage (B-sarja) GPU:illa."
 }

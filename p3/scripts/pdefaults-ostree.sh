@@ -75,6 +75,8 @@ optimizer () {
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/optimize-cfg-ostree/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.1-1.x86_64.rpm
             sudo rpm-ostree install linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         fi
+        # fix GTK app rendering for Intel BMG GPUs
+        fix_intel_gtk
         # save autopatch state
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
         mv autopatch.state $HOME/.local/.autopatch.state

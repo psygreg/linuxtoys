@@ -279,5 +279,7 @@
   "sunshine_desc": "Host strim permainan dihoskan sendiri untuk Moonlight.",
   "s3d_desc": "Tukar back-end S3, SFTP, WebDAV atau Rclone ke dalam penyimpanan disulitkan anda.",
   "damx_desc": "Utiliti untuk mengawal ciri laptop gaming Acer dan penalaan prestasi.",
-  "pacstall_desc": "Membolehkan anda menggunakan perisian terkini tanpa kompromi, serupa dengan AUR tetapi untuk Debian/Ubuntu. Gunakan dengan berhati-hati."
+  "pacstall_desc": "Membolehkan anda menggunakan perisian terkini tanpa kompromi, serupa dengan AUR tetapi untuk Debian/Ubuntu. Gunakan dengan berhati-hati.",
+  "gtk_bmg_fix": "Pembaikan GTK Battlemage",
+  "gtk_bmg_fix_desc": "Membaiki isu rendering dengan aplikasi GTK pada GPU Intel Battlemage (siri B)."
 }

@@ -279,5 +279,7 @@
   "sunshine_desc": "Máy chủ stream trò chơi tự lưu trữ cho Moonlight.",
   "s3d_desc": "Chuyển đổi back-end S3, SFTP, WebDAV hoặc Rclone thành kho lưu trữ được mã hóa của bạn.",
   "damx_desc": "Tiện ích để điều khiển các tính năng và tinh chỉnh hiệu suất của laptop gaming Acer.",
-  "pacstall_desc": "Cho phép bạn sử dụng phần mềm mới nhất mà không cần thỏa hiệp, tương tự như AUR nhưng dành cho Debian/Ubuntu. Sử dụng cẩn thận."
+  "pacstall_desc": "Cho phép bạn sử dụng phần mềm mới nhất mà không cần thỏa hiệp, tương tự như AUR nhưng dành cho Debian/Ubuntu. Sử dụng cẩn thận.",
+  "gtk_bmg_fix": "Bản sửa lỗi GTK Battlemage",
+  "gtk_bmg_fix_desc": "Sửa lỗi hiển thị với các ứng dụng GTK trên GPU Intel Battlemage (dòng B)."
 }

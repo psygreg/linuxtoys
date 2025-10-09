@@ -279,5 +279,7 @@
   "sunshine_desc": "Selv-hostet game stream vært til Moonlight.",
   "s3d_desc": "Konverter S3, SFTP, WebDAV eller Rclone back-end til din krypterede lagring.",
   "damx_desc": "Værktøj til styring af Acer gaming-laptop funktioner og ydeevneoptimering.",
-  "pacstall_desc": "Giver dig mulighed for at bruge den nyeste software uden kompromiser, ligesom AUR men til Debian/Ubuntu. Brug med forsigtighed."
+  "pacstall_desc": "Giver dig mulighed for at bruge den nyeste software uden kompromiser, ligesom AUR men til Debian/Ubuntu. Brug med forsigtighed.",
+  "gtk_bmg_fix": "GTK Battlemage-rettelse",
+  "gtk_bmg_fix_desc": "Retter gengivelsesproblemerne med GTK-applikationer på Intel Battlemage (B-serien) GPU'er."
 }

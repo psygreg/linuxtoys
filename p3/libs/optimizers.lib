@@ -212,3 +212,14 @@ EOF
 hwaccel_flat_lib () {
     flatpak install --or-update --system --noninteractive flathub org.freedesktop.Platform.ffmpeg-full/x86_64/24.08 org.freedesktop.Platform.ffmpeg-full/x86_64/23.08 org.freedesktop.Platform.ffmpeg-full/x86_64/22.08
 }
+
+# for intel GPUs, fix GTK rendering bugs
+fix_intel_gtk () {
+    intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
+    if [[ -n "$intelGPU" ]]; then
+        if echo "$intelGPU" | grep -qi 'battlemage'; then
+            echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+        fi
+    fi
+    unset intelGPU
+}

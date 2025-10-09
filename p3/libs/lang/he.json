@@ -279,5 +279,7 @@
   "sunshine_desc": "מארח זרימת משחקים באחסון עצמי עבור Moonlight.",
   "s3d_desc": "המר את הקצה האחורי S3, SFTP, WebDAV או Rclone לאחסון המוצפן שלך.",
   "damx_desc": "כלי עזר לשליטה בתכונות מחשבים ניידים לגיימינג של Acer וכיוון ביצועים.",
-  "pacstall_desc": "מאפשר לך להשתמש בתוכנה העדכנית ביותר ללא פשרות, דומה ל-AUR אך עבור Debian/Ubuntu. השתמש בזהירות."
+  "pacstall_desc": "מאפשר לך להשתמש בתוכנה העדכנית ביותר ללא פשרות, דומה ל-AUR אך עבור Debian/Ubuntu. השתמש בזהירות.",
+  "gtk_bmg_fix": "תיקון GTK Battlemage",
+  "gtk_bmg_fix_desc": "מתקן בעיות עיבוד עם יישומי GTK על מעבדי גרפיקה Intel Battlemage (סדרת B)."
 }

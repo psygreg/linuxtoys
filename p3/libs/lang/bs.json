@@ -278,5 +278,7 @@
   "sunshine_desc": "Self-hosted game stream host za Moonlight.",
   "s3d_desc": "Pretvorite S3, SFTP, WebDAV ili Rclone pozadinu u vaše šifrirano skladište.",
   "damx_desc": "Alat za kontrolu Acer gaming laptop funkcija i podešavanje performansi.",
-  "pacstall_desc": "Omogućava vam da koristite najnoviji softver bez kompromisa, slično kao AUR ali za Debian/Ubuntu. Koristite oprezno."
+  "pacstall_desc": "Omogućava vam da koristite najnoviji softver bez kompromisa, slično kao AUR ali za Debian/Ubuntu. Koristite oprezno.",
+  "gtk_bmg_fix": "GTK Battlemage popravka",
+  "gtk_bmg_fix_desc": "Ispravlja probleme s renderovanjem GTK aplikacija na Intel Battlemage (B-serija) GPU-ovima."
 }

@@ -28,6 +28,8 @@ sysag_run () {
     dsplitm_lib
     # add earlyoom configuration
     earlyoom_lib
+    # fix GTK app rendering for Intel BMG GPUs
+    fix_intel_gtk
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000

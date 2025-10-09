@@ -279,5 +279,7 @@
   "sunshine_desc": "Vlastně hostovaný herní stream host pro Moonlight.",
   "s3d_desc": "Převeďte S3, SFTP, WebDAV nebo Rclone back-end na vaše šifrované úložiště.",
   "damx_desc": "Nástroj pro ovládání funkcí a ladění výkonu herních notebooků Acer.",
-  "pacstall_desc": "Umožňuje používat nejnovější software bez kompromisů, podobně jako AUR, ale pro Debian/Ubuntu. Používejte opatrně."
+  "pacstall_desc": "Umožňuje používat nejnovější software bez kompromisů, podobně jako AUR, ale pro Debian/Ubuntu. Používejte opatrně.",
+  "gtk_bmg_fix": "Oprava GTK Battlemage",
+  "gtk_bmg_fix_desc": "Opravuje problémy s vykreslováním aplikací GTK na GPU Intel Battlemage (řada B)."
 }
