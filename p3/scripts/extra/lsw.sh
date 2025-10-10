@@ -111,8 +111,9 @@ get_winboat () { # gets latest release
         fi
         git clone https://aur.archlinux.org/winboat-bin.git
         cd winboat-bin || exit 1
-        makepkg -d
-        sudo pacman --noconfirm -U "winboat-bin-$ver-1.tar.zst"
+        makepkg -s
+        sleep 1
+        sudo pacman -U --noconfirm "winboat-bin-$ver-1.tar.zst"
     fi
 }
 # runtime
