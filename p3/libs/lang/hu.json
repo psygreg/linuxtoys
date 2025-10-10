@@ -281,5 +281,7 @@
   "damx_desc": "Segédprogram az Acer gaming laptopok funkcióinak vezérléséhez és teljesítményhangolásához.",
   "pacstall_desc": "Lehetővé teszi a legújabb szoftverek kompromisszumok nélküli használatát, hasonlóan az AUR-hoz, de Debian/Ubuntu rendszerekhez. Használd óvatosan.",
   "gtk_bmg_fix": "GTK Battlemage javítás",
-  "gtk_bmg_fix_desc": "Javítja a GTK alkalmazások megjelenítési problémáit Intel Battlemage (B-sorozat) GPU-kon."
+  "gtk_bmg_fix_desc": "Javítja a GTK alkalmazások megjelenítési problémáit Intel Battlemage (B-sorozat) GPU-kon.",
+  "unsupported_os_title": "Nem támogatott rendszer",
+  "unsupported_os_message": "Nem támogatott operációs rendszer."
 }

@@ -281,5 +281,7 @@
   "damx_desc": "Utiliti untuk mengawal ciri laptop gaming Acer dan penalaan prestasi.",
   "pacstall_desc": "Membolehkan anda menggunakan perisian terkini tanpa kompromi, serupa dengan AUR tetapi untuk Debian/Ubuntu. Gunakan dengan berhati-hati.",
   "gtk_bmg_fix": "Pembaikan GTK Battlemage",
-  "gtk_bmg_fix_desc": "Membaiki isu rendering dengan aplikasi GTK pada GPU Intel Battlemage (siri B)."
+  "gtk_bmg_fix_desc": "Membaiki isu rendering dengan aplikasi GTK pada GPU Intel Battlemage (siri B).",
+  "unsupported_os_title": "Sistem tidak disokong",
+  "unsupported_os_message": "Sistem pengendalian tidak disokong."
 }

@@ -281,5 +281,7 @@
   "damx_desc": "Алатка за контролу функција Acer геjминг лаптопа и подешавање перформанси.",
   "pacstall_desc": "Омогућава вам да користите најновији софтвер без компромиса, слично као AUR али за Debian/Ubuntu. Користите опрезно.",
   "gtk_bmg_fix": "GTK Battlemage исправка",
-  "gtk_bmg_fix_desc": "Исправља проблеме са приказивањем GTK апликација на Intel Battlemage (Б-серија) GPU-овима."
+  "gtk_bmg_fix_desc": "Исправља проблеме са приказивањем GTK апликација на Intel Battlemage (Б-серија) GPU-овима.",
+  "unsupported_os_title": "Неподржани систем",
+  "unsupported_os_message": "Неподржани оперативни систем."
 }

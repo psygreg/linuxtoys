@@ -281,5 +281,7 @@
   "damx_desc": "Tööriist Acer mänguarvutite funktsioonide ja jõudluse häälestamise juhtimiseks.",
   "pacstall_desc": "Võimaldab kasutada uusimat tarkvara ilma kompromissideta, sarnaselt AUR-ile, kuid Debian/Ubuntu jaoks. Kasutage ettevaatlikult.",
   "gtk_bmg_fix": "GTK Battlemage parandus",
-  "gtk_bmg_fix_desc": "Parandab renderdamisprobleeme GTK-rakendustega Intel Battlemage (B-seeria) GPU-del."
+  "gtk_bmg_fix_desc": "Parandab renderdamisprobleeme GTK-rakendustega Intel Battlemage (B-seeria) GPU-del.",
+  "unsupported_os_title": "Toetamata süsteem",
+  "unsupported_os_message": "Toetamata operatsioonisüsteem."
 }

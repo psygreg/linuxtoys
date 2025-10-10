@@ -281,5 +281,7 @@
   "damx_desc": "أداة للتحكم في ميزات الأداء وضبط أداء أجهزة الكمبيوتر المحمولة Acer للألعاب.",
   "pacstall_desc": "يتيح لك استخدام أحدث البرامج دون تنازلات، مشابه لـ AUR ولكن لـ Debian/Ubuntu. استخدمه بحذر.",
   "gtk_bmg_fix": "إصلاح GTK Battlemage",
-  "gtk_bmg_fix_desc": "يصلح مشاكل العرض مع تطبيقات GTK على وحدات معالجة الرسومات Intel Battlemage (سلسلة B)."
+  "gtk_bmg_fix_desc": "يصلح مشاكل العرض مع تطبيقات GTK على وحدات معالجة الرسومات Intel Battlemage (سلسلة B).",
+  "unsupported_os_title": "نظام غير مدعوم",
+  "unsupported_os_message": "نظام تشغيل غير مدعوم."
 }

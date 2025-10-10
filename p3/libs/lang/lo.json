@@ -281,5 +281,7 @@
   "damx_desc": "ເຄື່ອງມືສໍາລັບຄວບຄຸມຄຸນສົມບັດ ແລະ ການປັບແຕ່ງປະສິດທິພາບຂອງແລັບທັອບເກມ Acer.",
   "pacstall_desc": "ອະນຸຍາດໃຫ້ທ່ານໃຊ້ຊອບແວຫຼ້າສຸດໂດຍບໍ່ມີການປະນີປະນອມ, ຄ້າຍກັບ AUR ແຕ່ສໍາລັບ Debian/Ubuntu. ໃຊ້ດ້ວຍຄວາມລະມັດລະວັງ.",
   "gtk_bmg_fix": "ການແກ້ໄຂ GTK Battlemage",
-  "gtk_bmg_fix_desc": "ແກ້ໄຂບັນຫາການສະແດງຜົນກັບແອັບພລິເຄຊັນ GTK ໃນ GPU Intel Battlemage (ຊີຣີ B)."
+  "gtk_bmg_fix_desc": "ແກ້ໄຂບັນຫາການສະແດງຜົນກັບແອັບພລິເຄຊັນ GTK ໃນ GPU Intel Battlemage (ຊີຣີ B).",
+  "unsupported_os_title": "ລະບົບທີ່ບໍ່ຮອງຮັບ",
+  "unsupported_os_message": "ລະບົບປະຕິບັດການທີ່ບໍ່ຮອງຮັບ."
 }

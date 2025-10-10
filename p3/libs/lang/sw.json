@@ -279,5 +279,7 @@
   "damx_desc": "Kifaa cha kudhibiti vipengele vya kompyuta za kuchezea za Acer na kusasisha utendaji.",
   "pacstall_desc": "Inakuruhusu kutumia programu mpya zaidi bila makubaliano, kama AUR lakini kwa Debian/Ubuntu. Tumia kwa uangalifu.",
   "gtk_bmg_fix": "Marekebisho ya GTK Battlemage",
-  "gtk_bmg_fix_desc": "Inarekebisha matatizo ya utoaji wa picha na programu za GTK kwenye GPU za Intel Battlemage (mfululizo wa B)."
+  "gtk_bmg_fix_desc": "Inarekebisha matatizo ya utoaji wa picha na programu za GTK kwenye GPU za Intel Battlemage (mfululizo wa B).",
+  "unsupported_os_title": "Mfumo usiotumika",
+  "unsupported_os_message": "Mfumo wa uendeshaji usiotumika."
 }

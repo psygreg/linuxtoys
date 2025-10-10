@@ -281,5 +281,7 @@
   "damx_desc": "Utilīta Acer spēļu klēpjdatoru funkciju un veiktspējas regulēšanas kontrolei.",
   "pacstall_desc": "Ļauj izmantot jaunāko programmatūru bez kompromisiem, līdzīgi kā AUR, bet Debian/Ubuntu. Izmantojiet piesardzīgi.",
   "gtk_bmg_fix": "GTK Battlemage labojums",
-  "gtk_bmg_fix_desc": "Labo renderēšanas problēmas ar GTK lietojumprogrammām Intel Battlemage (B sērijas) GPU."
+  "gtk_bmg_fix_desc": "Labo renderēšanas problēmas ar GTK lietojumprogrammām Intel Battlemage (B sērijas) GPU.",
+  "unsupported_os_title": "Neatbalstīta sistēma",
+  "unsupported_os_message": "Neatbalstīta operētājsistēma."
 }

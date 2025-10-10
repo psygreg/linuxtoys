@@ -9,6 +9,7 @@ if os.environ.get('LT_MANIFEST') != '1':
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
 from .update_helper import run_update_check
+from .compat import is_supported_system
 from . import get_app_resource_path, get_icon_path
 
 # Only define GUI classes if not in CLI mode
@@ -50,6 +51,23 @@ def run():
     if os.environ.get('LT_MANIFEST') == '1':
         # Run in CLI mode using manifest.txt
         sys.exit(run_manifest_mode(translations))
+
+    # Check if the system is supported before starting GUI
+    if not is_supported_system():
+        # Show error dialog and exit
+        dialog = Gtk.MessageDialog(
+            transient_for=None,
+            flags=0,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=translations.get('unsupported_os_title', 'Unsupported System')
+        )
+        dialog.format_secondary_text(
+            translations.get('unsupported_os_message', 'Unsupported operating system.')
+        )
+        dialog.run()
+        dialog.destroy()
+        sys.exit(1)
 
     # In GUI mode, use the new GitHub API-based update checker
     # This works for both git-cloned and packaged versions

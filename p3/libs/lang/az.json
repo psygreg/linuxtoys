@@ -280,5 +280,7 @@
   "damx_desc": "Acer oyun noutbuklarının xüsusiyyətlərini və performans tənzimləməsini idarə etmək üçün yardımçı proqram.",
   "pacstall_desc": "AUR-a bənzər şəkildə, lakin Debian/Ubuntu üçün güzəştlər olmadan ən son proqram təminatından istifadə etməyə imkan verir. Ehtiyatla istifadə edin.",
   "gtk_bmg_fix": "GTK Battlemage Düzəlişi",
-  "gtk_bmg_fix_desc": "Intel Battlemage (B-seriyası) GPU-larında GTK tətbiqləri ilə render problemlərini həll edir."
+  "gtk_bmg_fix_desc": "Intel Battlemage (B-seriyası) GPU-larında GTK tətbiqləri ilə render problemlərini həll edir.",
+  "unsupported_os_title": "Dəstəklənməyən Sistem",
+  "unsupported_os_message": "Dəstəklənməyən əməliyyat sistemi."
 }

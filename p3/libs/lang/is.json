@@ -281,5 +281,7 @@
   "damx_desc": "Tól til að stjórna Acer leikjatölvu eiginleikum og frammistöðustillingu.",
   "pacstall_desc": "Gerir þér kleift að nota nýjustu hugbúnaðinn án málamiðlana, svipað og AUR en fyrir Debian/Ubuntu. Notaðu varlega.",
   "gtk_bmg_fix": "GTK Battlemage lagfæring",
-  "gtk_bmg_fix_desc": "Lagar myndgerðarvandamál með GTK forritum á Intel Battlemage (B-röð) GPU."
+  "gtk_bmg_fix_desc": "Lagar myndgerðarvandamál með GTK forritum á Intel Battlemage (B-röð) GPU.",
+  "unsupported_os_title": "Óstutt kerfi",
+  "unsupported_os_message": "Óstutt stýrikerfi."
 }

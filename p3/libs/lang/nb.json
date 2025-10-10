@@ -281,5 +281,7 @@
   "damx_desc": "Verktøy for å kontrollere Acer gaming-laptop funksjoner og ytelsesoptimering.",
   "pacstall_desc": "Lar deg bruke den nyeste programvaren uten kompromisser, likt AUR men for Debian/Ubuntu. Bruk med forsiktighet.",
   "gtk_bmg_fix": "GTK Battlemage-retting",
-  "gtk_bmg_fix_desc": "Fikser renderingsproblemer med GTK-applikasjoner på Intel Battlemage (B-serie) GPU-er."
+  "gtk_bmg_fix_desc": "Fikser renderingsproblemer med GTK-applikasjoner på Intel Battlemage (B-serie) GPU-er.",
+  "unsupported_os_title": "Ikke støttet system",
+  "unsupported_os_message": "Ikke støttet operativsystem."
 }

@@ -75,6 +75,40 @@ def is_containerized():
     
     return False
 
+def is_supported_system():
+    """
+    Check if the current system is supported by LinuxToys.
+    
+    A system is considered supported if it matches at least one of the 
+    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, suse, ostree, ublue).
+    
+    In developer mode:
+    - If COMPAT is set to simulate a specific system, that system's compatibility is checked
+    - If COMPAT is not set (show all scripts), returns True (skip the check)
+    
+    Returns:
+        bool: True if the system is supported, False otherwise
+    """
+    # Check if developer mode override is active
+    try:
+        from .dev_mode import is_dev_mode_enabled, get_dev_compat_override
+        if is_dev_mode_enabled() and not get_dev_compat_override():
+            # Developer mode without specific system simulation - skip check
+            return True
+    except ImportError:
+        # dev_mode not available, continue with normal behavior
+        pass
+    
+    # Get system compatibility keys
+    compat_keys = get_system_compat_keys()
+    
+    # Define the set of supported OS compatibility keys
+    supported_os_keys = {'debian', 'ubuntu', 'cachy', 'arch', 'fedora', 'suse', 'ostree', 'ublue'}
+    
+    # Check if any OS compatibility key matches
+    return bool(compat_keys & supported_os_keys)
+
+
 def get_system_compat_keys():
     """
     Get the system compatibility keys.

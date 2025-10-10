@@ -281,5 +281,7 @@
   "damx_desc": "ለ Acer ጌሚንግ ላፕቶፕ ባህሪያትን እና አፈፃፀም ማስተካከያን ለመቆጣጠር መገልገያ።",
   "pacstall_desc": "ሙሉ በሙሉ ካለመስማማት ሳይኖር የቅርብ ጊዜ ሶፍትዌር እንዲጠቀሙ ያስችልዎታል፣ ከ AUR ጋር ተመሳሳይ ነገር ግን ለ Debian/Ubuntu። በጥንቃቄ ይጠቀሙ።",
   "gtk_bmg_fix": "GTK Battlemage ጥገና",
-  "gtk_bmg_fix_desc": "በ Intel Battlemage (B-ተከታታይ) GPUs ላይ ከ GTK አፕሊኬሽኖች ጋር ያሉትን የመስጠት ችግሮች ያስተካክላል።"
+  "gtk_bmg_fix_desc": "በ Intel Battlemage (B-ተከታታይ) GPUs ላይ ከ GTK አፕሊኬሽኖች ጋር ያሉትን የመስጠት ችግሮች ያስተካክላል።",
+  "unsupported_os_title": "ያልተደገፈ ስርዓት",
+  "unsupported_os_message": "ያልተደገፈ የስርዓት አሰራር።"
 }

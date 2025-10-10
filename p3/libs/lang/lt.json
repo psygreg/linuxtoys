@@ -281,5 +281,7 @@
   "damx_desc": "Įrankis Acer žaidimų nešiojamųjų kompiuterių funkcijoms ir našumo derinimui valdyti.",
   "pacstall_desc": "Leidžia naudoti naujausią programinę įrangą be kompromisų, panašiai kaip AUR, bet skirta Debian/Ubuntu. Naudokite atsargiai.",
   "gtk_bmg_fix": "GTK Battlemage pataisymas",
-  "gtk_bmg_fix_desc": "Taiso atvaizdavimo problemas su GTK programomis Intel Battlemage (B serijos) GPU."
+  "gtk_bmg_fix_desc": "Taiso atvaizdavimo problemas su GTK programomis Intel Battlemage (B serijos) GPU.",
+  "unsupported_os_title": "Nepalaikoma sistema",
+  "unsupported_os_message": "Nepalaikoma operacinė sistema."
 }

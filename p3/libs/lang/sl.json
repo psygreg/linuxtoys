@@ -281,5 +281,7 @@
   "damx_desc": "Pripomoček za nadzor funkcij prenosnikov za igre Acer in uglasitev zmogljivosti.",
   "pacstall_desc": "Omogoča uporabo najnovejše programske opreme brez kompromisov, podobno kot AUR, vendar za Debian/Ubuntu. Uporabite previdno.",
   "gtk_bmg_fix": "Popravek GTK Battlemage",
-  "gtk_bmg_fix_desc": "Odpravlja težave z upodabljanjem aplikacij GTK na GPU-jih Intel Battlemage (serija B)."
+  "gtk_bmg_fix_desc": "Odpravlja težave z upodabljanjem aplikacij GTK na GPU-jih Intel Battlemage (serija B).",
+  "unsupported_os_title": "Nepodprt sistem",
+  "unsupported_os_message": "Nepodprt operacijski sistem."
 }

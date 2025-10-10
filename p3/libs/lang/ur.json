@@ -281,5 +281,7 @@
   "damx_desc": "Acer گیمنگ لیپ ٹاپ کی خصوصیات اور کارکردگی کی ٹیوننگ کو کنٹرول کرنے کے لیے یوٹیلیٹی۔",
   "pacstall_desc": "آپ کو بغیر کسی سمجھوتے کے تازہ ترین سافٹ ویئر استعمال کرنے کی اجازت دیتا ہے، AUR کی طرح لیکن Debian/Ubuntu کے لیے۔ احتیاط سے استعمال کریں۔",
   "gtk_bmg_fix": "GTK Battlemage فکس",
-  "gtk_bmg_fix_desc": "Intel Battlemage (B-سیریز) GPU پر GTK ایپلیکیشنز کے ساتھ رینڈرنگ کے مسائل کو ٹھیک کرتا ہے۔"
+  "gtk_bmg_fix_desc": "Intel Battlemage (B-سیریز) GPU پر GTK ایپلیکیشنز کے ساتھ رینڈرنگ کے مسائل کو ٹھیک کرتا ہے۔",
+  "unsupported_os_title": "غیر معاون نظام",
+  "unsupported_os_message": "غیر معاون آپریٹنگ سسٹم۔"
 }

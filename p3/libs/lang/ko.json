@@ -281,5 +281,7 @@
   "damx_desc": "Acer 게이밍 노트북 기능 및 성능 튜닝을 제어하는 유틸리티.",
   "pacstall_desc": "타협 없이 최신 소프트웨어를 사용할 수 있습니다. AUR과 유사하지만 Debian/Ubuntu용입니다. 주의해서 사용하세요.",
   "gtk_bmg_fix": "GTK Battlemage 수정",
-  "gtk_bmg_fix_desc": "Intel Battlemage (B 시리즈) GPU에서 GTK 애플리케이션의 렌더링 문제를 수정합니다."
+  "gtk_bmg_fix_desc": "Intel Battlemage (B 시리즈) GPU에서 GTK 애플리케이션의 렌더링 문제를 수정합니다.",
+  "unsupported_os_title": "지원되지 않는 시스템",
+  "unsupported_os_message": "지원되지 않는 운영 체제입니다."
 }

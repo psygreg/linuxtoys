@@ -281,5 +281,7 @@
   "damx_desc": "ยูทิลิตี้สำหรับควบคุมคุณลักษณะแล็ปท็อปเกมมิ่ง Acer และการปรับแต่งประสิทธิภาพ",
   "pacstall_desc": "ช่วยให้คุณใช้ซอฟต์แวร์ล่าสุดโดยไม่ต้องประนีประนอม คล้ายกับ AUR แต่สำหรับ Debian/Ubuntu ใช้ด้วยความระมัดระวัง",
   "gtk_bmg_fix": "การแก้ไข GTK Battlemage",
-  "gtk_bmg_fix_desc": "แก้ไขปัญหาการเรนเดอร์กับแอปพลิเคชัน GTK บน GPU Intel Battlemage (ซีรีส์ B)"
+  "gtk_bmg_fix_desc": "แก้ไขปัญหาการเรนเดอร์กับแอปพลิเคชัน GTK บน GPU Intel Battlemage (ซีรีส์ B)",
+  "unsupported_os_title": "ระบบที่ไม่รองรับ",
+  "unsupported_os_message": "ระบบปฏิบัติการที่ไม่รองรับ"
 }
