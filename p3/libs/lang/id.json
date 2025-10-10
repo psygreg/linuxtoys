@@ -107,6 +107,7 @@
   "vinegar_desc": "Wrapper komunitas untuk Roblox Studio, untuk kreator game Roblox.",
   "pup_desc": "Alat berbasis Qt untuk dengan mudah mendapatkan runner komunitas untuk gaming di Linux.",
   "lsfg_desc": "Layer kompatibilitas untuk Lossless Scaling di Vulkan untuk Linux. Masih memerlukan Lossless Scaling untuk Windows.",
+  "prism_desc": "Peluncur kustom untuk Minecraft Java Edition dengan dukungan untuk mod dan shader.",
   "ufw": "Konfigurasi Firewall",
   "ufw_desc": "Menginstal dan menerapkan pengaturan default yang ideal untuk sebagian besar pengguna untuk Uncomplicated Firewall (UFW).",
   "swapfile": "Konfigurasi Swap File",

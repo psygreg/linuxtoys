@@ -109,6 +109,7 @@
   "vinegar_desc": "A community wrapper for Roblox Studio, for Roblox game creators.",
   "pup_desc": "A Qt-based tool to easily obtain community runners for gaming on Linux.",
   "lsfg_desc": "A compatibility layer for Lossless Scaling on Vulkan for Linux. Still requires Lossless Scaling for Windows.",
+  "prism_desc": "A custom launcher for Minecraft Java Edition with support for mods and shaders.",
 
   "ufw": "Configure Firewall",
   "ufw_desc": "Installs and applies a default setting ideal for most users for the Uncomplicated Firewall (UFW).",
