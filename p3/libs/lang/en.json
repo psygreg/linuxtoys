@@ -183,6 +183,7 @@
   "cloudflare_warp_desc": "A DNS service that hides your traffic from your ISP.",
   "piper_desc": "A GTK application to configure gaming mice using libratbag. Commonly used for Logitech, Roccat, Asus and Glorious mice.",
   "glever_desc": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
+  "pika_desc": "A simple and space-efficient backup application based on BorgBackup.",
 
   "docker_desc": "The Docker Engine container service provider and basic tools for it, like docker-compose.",
   "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",

@@ -177,6 +177,7 @@
   "cloudflare_warp_desc": "Layanan DNS yang menyembunyikan traffic Anda dari ISP.",
   "piper_desc": "Aplikasi GTK untuk mengkonfigurasi mouse gaming menggunakan libratbag. Umumnya digunakan untuk mouse Logitech, Roccat, Asus dan Glorious.",
   "glever_desc": "Utilitas untuk mengelola AppImages, menghasilkan entri desktop dan metadata aplikasi, memperbarui aplikasi di tempat atau menyimpan beberapa versi berdampingan.",
+  "pika_desc": "Aplikasi backup sederhana dan efisien berbasis BorgBackup.",
   "docker_desc": "Penyedia layanan container Docker Engine dan alat dasar untuk itu, seperti docker-compose.",
   "mise_desc": "Seperti asdf (atau nvm atau pyenv tapi untuk bahasa apa pun) ia mengelola dev tools seperti node, python, cmake, terraform, dan ratusan lainnya. Menggantikan installer PyEnv, NVM, dan Java JDK dan Maven dari bagian ini.",
   "nvm_desc": "Version manager untuk Node.js, memungkinkan Anda dengan mudah beralih antara versi yang berbeda. Termasuk Node.js, NPM dan Yarn. Tidak diperlukan jika menggunakan Mise.",
