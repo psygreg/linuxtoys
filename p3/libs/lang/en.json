@@ -88,6 +88,7 @@
   "figma_desc": "A web-based UI/UX design application.",
   "davinci_desc": "Professional video editing software.",
   "obsidian_desc": "A free, flexible app for your thoughts, notes, and organization.",
+  "brave_desc": "A privacy-focused web browser with built-in ad blocking.",
 
   "gsr_desc": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
   "pp_desc": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
@@ -109,6 +110,7 @@
   "vinegar_desc": "A community wrapper for Roblox Studio, for Roblox game creators.",
   "pup_desc": "A Qt-based tool to easily obtain community runners for gaming on Linux.",
   "lsfg_desc": "A compatibility layer for Lossless Scaling on Vulkan for Linux. Still requires Lossless Scaling for Windows.",
+  "prism_desc": "A custom launcher for Minecraft Java Edition with support for mods and shaders.",
 
   "ufw": "Configure Firewall",
   "ufw_desc": "Installs and applies a default setting ideal for most users for the Uncomplicated Firewall (UFW).",
@@ -182,6 +184,7 @@
   "cloudflare_warp_desc": "A DNS service that hides your traffic from your ISP.",
   "piper_desc": "A GTK application to configure gaming mice using libratbag. Commonly used for Logitech, Roccat, Asus and Glorious mice.",
   "glever_desc": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
+  "pika_desc": "A simple and space-efficient backup application based on BorgBackup.",
 
   "docker_desc": "The Docker Engine container service provider and basic tools for it, like docker-compose.",
   "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",
