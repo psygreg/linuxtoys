@@ -280,12 +280,13 @@
   "s3d_desc": "Alakítsa át az S3, SFTP, WebDAV vagy Rclone háttérrendszert titkosított tárhelyévé.",
   "damx_desc": "Segédprogram az Acer gaming laptopok funkcióinak vezérléséhez és teljesítményhangolásához.",
   "pacstall_desc": "Lehetővé teszi a legújabb szoftverek kompromisszumok nélküli használatát, hasonlóan az AUR-hoz, de Debian/Ubuntu rendszerekhez. Használd óvatosan.",
-  "gtk_bmg_fix": "GTK Battlemage javítás",
-  "gtk_bmg_fix_desc": "Javítja a GTK alkalmazások megjelenítési problémáit Intel Battlemage (B-sorozat) GPU-kon.",
+  "gtk_bmg_fix": "GTK renderelési javítás",
+  "gtk_bmg_fix_desc": "Javítja a GTK-alkalmazások renderelési problémáit Intel Battlemage (B-sorozat) és Nvidia GPU-kon.",
   "unsupported_os_title": "Nem támogatott rendszer",
   "unsupported_os_message": "Nem támogatott operációs rendszer.",
   "dnsmasq_desc": "Állítson be helyi DNS-gyorsítótárazást a tartománynevek feloldásának felgyorsításához, a böngészési teljesítmény javításához és a letöltési sebesség elvesztésével kapcsolatos problémák megoldásához a Steamen.",
   "pika_desc": "Egyszerű és helytakarékos biztonsági mentési alkalmazás, amely a BorgBackup-on alapul.",
   "prism_desc": "Egyedi indító a Minecraft Java Editionhoz modok és árnyékolók támogatásával.",
-  "brave_desc": "Adatvédelemre összpontosító webböngésző beépített hirdetésblokkolással."
+  "brave_desc": "Adatvédelemre összpontosító webböngésző beépített hirdetésblokkolással.",
+  "intelxe_desc": "Az Intel illesztőprogramokat az újabb Xe illesztőprogramra váltja a támogatott dedikált GPU-kon (Battlemage/Alchemist) a teljesítmény és kompatibilitás javítása érdekében."
 }

@@ -280,12 +280,13 @@
   "s3d_desc": "Pretvorite ozadje S3, SFTP, WebDAV ali Rclone v vaše šifrirano shrambo.",
   "damx_desc": "Pripomoček za nadzor funkcij prenosnikov za igre Acer in uglasitev zmogljivosti.",
   "pacstall_desc": "Omogoča uporabo najnovejše programske opreme brez kompromisov, podobno kot AUR, vendar za Debian/Ubuntu. Uporabite previdno.",
-  "gtk_bmg_fix": "Popravek GTK Battlemage",
-  "gtk_bmg_fix_desc": "Odpravlja težave z upodabljanjem aplikacij GTK na GPU-jih Intel Battlemage (serija B).",
+  "gtk_bmg_fix": "Popravek upodabljanja GTK",
+  "gtk_bmg_fix_desc": "Odpravi težave z upodabljanjem aplikacij GTK na Intel Battlemage (serija B) in Nvidia GPU.",
   "unsupported_os_title": "Nepodprt sistem",
   "unsupported_os_message": "Nepodprt operacijski sistem.",
   "dnsmasq_desc": "Nastavite lokalno predpomnjenje DNS za pospešitev razreševanja imen domen, izboljšanje zmogljivosti brskanja in odpravo težav z izgubo hitrosti prenosa v Steamu.",
   "pika_desc": "Preprosta in prostorsko učinkovita aplikacija za varnostne kopije, ki temelji na BorgBackupu.",
   "prism_desc": "Prilagojen zaganjalnik za Minecraft Java Edition s podporo za mode in senčila.",
-  "brave_desc": "Spletni brskalnik, osredotočen na zasebnost, z vgrajenim blokiranjem oglasov."
+  "brave_desc": "Spletni brskalnik, osredotočen na zasebnost, z vgrajenim blokiranjem oglasov.",
+  "intelxe_desc": "Preklopi gonilnike Intel na novejši gonilnik Xe na podprtih diskretnih GPU (Battlemage/Alchemist) za izboljšano zmogljivost in združljivost."
 }

@@ -280,12 +280,13 @@
   "s3d_desc": "Breyttu S3, SFTP, WebDAV eða Rclone bakenda í þínu dulkóðuðu geymslu.",
   "damx_desc": "Tól til að stjórna Acer leikjatölvu eiginleikum og frammistöðustillingu.",
   "pacstall_desc": "Gerir þér kleift að nota nýjustu hugbúnaðinn án málamiðlana, svipað og AUR en fyrir Debian/Ubuntu. Notaðu varlega.",
-  "gtk_bmg_fix": "GTK Battlemage lagfæring",
-  "gtk_bmg_fix_desc": "Lagar myndgerðarvandamál með GTK forritum á Intel Battlemage (B-röð) GPU.",
+  "gtk_bmg_fix": "GTK myndgerðarleiðrétting",
+  "gtk_bmg_fix_desc": "Lagar myndgerðarvandamál með GTK forritum á Intel Battlemage (B-röð) og Nvidia GPU.",
   "unsupported_os_title": "Óstutt kerfi",
   "unsupported_os_message": "Óstutt stýrikerfi.",
   "dnsmasq_desc": "Settu upp staðbundið DNS-skyndiminni til að flýta fyrir nafnalausn léna, bæta vafragetu og laga vandamál með tap á niðurhalsshraða á Steam.",
   "pika_desc": "Einfalt og pláss-hagkvæmt öryggisafrit forrit byggt á BorgBackup.",
   "prism_desc": "Sérsniðinn ræsir fyrir Minecraft Java Edition með stuðningi við breytingar og skugga.",
-  "brave_desc": "Friðhelgisvænn vafri með innbyggðri auglýsingablokk."
+  "brave_desc": "Friðhelgisvænn vafri með innbyggðri auglýsingablokk.",
+  "intelxe_desc": "Skiptir Intel reklunum yfir í nýrri Xe rekil á studdum aðgreindum GPU (Battlemage/Alchemist) til að bæta afköst og samhæfni."
 }

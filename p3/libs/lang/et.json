@@ -280,12 +280,13 @@
   "s3d_desc": "Teisenda S3, SFTP, WebDAV või Rclone tagaosa oma krüpteeritud salvestusruumiks.",
   "damx_desc": "Tööriist Acer mänguarvutite funktsioonide ja jõudluse häälestamise juhtimiseks.",
   "pacstall_desc": "Võimaldab kasutada uusimat tarkvara ilma kompromissideta, sarnaselt AUR-ile, kuid Debian/Ubuntu jaoks. Kasutage ettevaatlikult.",
-  "gtk_bmg_fix": "GTK Battlemage parandus",
-  "gtk_bmg_fix_desc": "Parandab renderdamisprobleeme GTK-rakendustega Intel Battlemage (B-seeria) GPU-del.",
+  "gtk_bmg_fix": "GTK renderdamise parandus",
+  "gtk_bmg_fix_desc": "Parandab renderdamisprobleeme GTK-rakendustega Intel Battlemage (B-seeria) ja Nvidia GPU-del.",
   "unsupported_os_title": "Toetamata süsteem",
   "unsupported_os_message": "Toetamata operatsioonisüsteem.",
   "dnsmasq_desc": "Seadistage kohalik DNS-i vahemällu salvestamine, et kiirendada domeenide nimede lahendamist, parandada sirvimise jõudlust ja lahendada probleeme allalaadimise kiiruse kaotamisega Steamis.",
   "pika_desc": "Lihtne ja ruumi säästev varundusrakendus, mis põhineb BorgBackupil.",
   "prism_desc": "Kohandatud käivitaja Minecraft Java Editioni jaoks modide ja shaderite toega.",
-  "brave_desc": "Privaatsusele keskendunud veebibrauser sisseehitatud reklaamiblokeerijaga."
+  "brave_desc": "Privaatsusele keskendunud veebibrauser sisseehitatud reklaamiblokeerijaga.",
+  "intelxe_desc": "Lülitab Intel draiverid uuemale Xe draiverile toetatud eraldiseisevatel GPU-del (Battlemage/Alchemist) parema jõudluse ja ühilduvuse tagamiseks."
 }

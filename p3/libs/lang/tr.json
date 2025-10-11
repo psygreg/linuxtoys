@@ -280,12 +280,13 @@
   "s3d_desc": "S3, SFTP, WebDAV veya Rclone arka ucunu şifrelenmiş depolama alanınıza dönüştürün.",
   "damx_desc": "Acer oyun dizüstü bilgisayarı özelliklerini ve performans ayarlarını kontrol etmek için yardımcı program.",
   "pacstall_desc": "Taviz vermeden en son yazılımı kullanmanıza olanak tanır, AUR'ye benzer ancak Debian/Ubuntu için. Dikkatli kullanın.",
-  "gtk_bmg_fix": "GTK Battlemage Düzeltmesi",
-  "gtk_bmg_fix_desc": "Intel Battlemage (B serisi) GPU'larda GTK uygulamalarıyla ilgili işleme sorunlarını düzeltir.",
+  "gtk_bmg_fix": "GTK İşleme Düzeltmesi",
+  "gtk_bmg_fix_desc": "Intel Battlemage (B serisi) ve Nvidia GPU'larda GTK uygulamalarıyla işleme sorunlarını düzeltir.",
   "unsupported_os_title": "Desteklenmeyen sistem",
   "unsupported_os_message": "Desteklenmeyen işletim sistemi.",
   "dnsmasq_desc": "Alan adı çözümlemesini hızlandırmak, tarayıcı performansını artırmak ve Steam'de indirme hızı kaybı sorunlarını çözmek için yerel DNS önbelleğe alma özelliğini ayarlayın.",
   "pika_desc": "BorgBackup tabanlı basit ve alan tasarruflu bir yedekleme uygulaması.",
   "prism_desc": "Modlar ve gölgelendiriciler desteğine sahip Minecraft Java Edition için özel bir başlatıcı.",
-  "brave_desc": "Yerleşik reklam engelleme özelliğine sahip gizlilik odaklı bir web tarayıcısı."
+  "brave_desc": "Yerleşik reklam engelleme özelliğine sahip gizlilik odaklı bir web tarayıcısı.",
+  "intelxe_desc": "Performansı ve uyumluluğu artırmak için desteklenen ayrık GPU'larda (Battlemage/Alchemist) Intel sürücülerini daha yeni Xe sürücüsüne değiştirir."
 }

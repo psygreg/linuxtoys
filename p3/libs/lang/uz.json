@@ -279,12 +279,13 @@
   "s3d_desc": "S3, SFTP, WebDAV yoki Rclone orqa tomonini shifrlangan saqlash joyingizga aylantiring.",
   "damx_desc": "Acer o'yin noutbuklari xususiyatlarini va ishlash sozlamalarini boshqarish uchun dastur.",
   "pacstall_desc": "AUR-ga o'xshash, lekin Debian/Ubuntu uchun hech qanday murosasiz eng yangi dasturiy ta'minotdan foydalanish imkonini beradi. Ehtiyotkorlik bilan foydalaning.",
-  "gtk_bmg_fix": "GTK Battlemage tuzatish",
-  "gtk_bmg_fix_desc": "Intel Battlemage (B seriyasi) GPU'larda GTK ilovalari bilan renderlash muammolarini tuzatadi.",
+  "gtk_bmg_fix": "GTK render tuzatishi",
+  "gtk_bmg_fix_desc": "Intel Battlemage (B-seriya) va Nvidia GPU-larda GTK dasturlari bilan render muammolarini tuzatadi.",
   "unsupported_os_title": "Qo'llab-quvvatlanmaydigan tizim",
   "unsupported_os_message": "Qo'llab-quvvatlanmaydigan operatsion tizim.",
   "dnsmasq_desc": "Domen nomlarini hal qilishni tezlashtirish, brauzer samaradorligini yaxshilash va Steam-da yuklab olish tezligini yo'qotish muammolarini hal qilish uchun mahalliy DNS keshingni sozlang.",
   "pika_desc": "BorgBackup asosida oddiy va joy tejovchi zaxira dasturi.",
   "prism_desc": "Modlar va sheyderlar qo'llab-quvvatlash bilan Minecraft Java Edition uchun maxsus ishga tushirgich.",
-  "brave_desc": "O'rnatilgan reklama bloklash bilan maxfiylikka qaratilgan veb-brauzer."
+  "brave_desc": "O'rnatilgan reklama bloklash bilan maxfiylikka qaratilgan veb-brauzer.",
+  "intelxe_desc": "Ishlash va moslikni yaxshilash uchun qo'llab-quvvatlanadigan diskret GPU-larda (Battlemage/Alchemist) Intel drayverlari yangi Xe drayveriga o'tkaziladi."
 }

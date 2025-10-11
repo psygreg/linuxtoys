@@ -1,10 +1,10 @@
 #!/bin/bash
-# name: gtk_bmg_fix
+# name: Intel Xe Driver
 # version: 1.0
-# description: gtk_bmg_fix_desc
+# description: intelxe_desc
 # icon: intel.png
 # reboot: yes
-# gpu: Intel, Nvidia
+# gpu: Intel
 # nocontainer
 
 # --- Start of the script code ---
@@ -14,5 +14,5 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
 sudo_rq
-fix_intel_gtk
+intel_xe_lib
 zeninf "$msg036"

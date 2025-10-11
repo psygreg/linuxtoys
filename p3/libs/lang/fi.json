@@ -280,12 +280,13 @@
   "s3d_desc": "Muunna S3, SFTP, WebDAV tai Rclone-taustaosa salatuksi tallennustilaksi.",
   "damx_desc": "Työkalu Acer-pelilaptopien ominaisuuksien ja suorituskyvyn säätämiseen.",
   "pacstall_desc": "Mahdollistaa uusimman ohjelmiston käytön ilman kompromisseja, samankaltainen kuin AUR mutta Debian/Ubuntulle. Käytä varoen.",
-  "gtk_bmg_fix": "GTK Battlemage -korjaus",
-  "gtk_bmg_fix_desc": "Korjaa renderöintiongelmia GTK-sovellusten kanssa Intel Battlemage (B-sarja) GPU:illa.",
+  "gtk_bmg_fix": "GTK-renderöintikorjaus",
+  "gtk_bmg_fix_desc": "Korjaa renderöintiongelmia GTK-sovelluksissa Intel Battlemage (B-sarja) ja Nvidia GPU:issa.",
   "unsupported_os_title": "Ei-tuettu järjestelmä",
   "unsupported_os_message": "Ei-tuettu käyttöjärjestelmä.",
   "dnsmasq_desc": "Määritä paikallinen DNS-välimuistitallennus nopeuttaaksesi verkkotunnusten nimenratkaisua, parantaaksesi selaimen suorituskykyä ja korjataksesi ongelmat latausnopeuden menettämisestä Steamissa.",
   "pika_desc": "Yksinkertainen ja tilaa säästävä varmuuskopiointisovellus, joka perustuu BorgBackupiin.",
   "prism_desc": "Mukautettu käynnistin Minecraft Java Editionille modien ja varjostimien tuella.",
-  "brave_desc": "Yksityisyyteen keskittyvä selain sisäänrakennetulla mainostenestolla."
+  "brave_desc": "Yksityisyyteen keskittyvä selain sisäänrakennetulla mainostenestolla.",
+  "intelxe_desc": "Vaihtaa Intel-ajurit uudempaan Xe-ajuriin tuetuissa erillisessä GPU:issa (Battlemage/Alchemist) parantaakseen suorituskykyä ja yhteensopivuutta."
 }

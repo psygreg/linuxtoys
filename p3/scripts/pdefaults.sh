@@ -30,7 +30,9 @@ sysag_run () {
     earlyoom_lib
     # add dnsmasq configuration
     dnsmasq_lib
-    # fix GTK app rendering for Intel BMG GPUs
+    # change intel driver to Xe on discrete GPUs
+    intel_xe_lib
+    # fix GTK app rendering for Intel BMG and Nvidia GPUs
     fix_intel_gtk
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then

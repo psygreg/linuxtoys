@@ -282,12 +282,13 @@
   "s3d_desc": "将 S3、SFTP、WebDAV 或 Rclone 后端转换为您的加密存储。",
   "damx_desc": "用于控制 Acer 游戏笔记本电脑功能和性能调整的实用程序。",
   "pacstall_desc": "允许您使用最新软件而无需妥协，类似于 AUR 但适用于 Debian/Ubuntu。请谨慎使用。",
-  "gtk_bmg_fix": "GTK Battlemage 修复",
-  "gtk_bmg_fix_desc": "修复 Intel Battlemage（B 系列）GPU 上 GTK 应用程序的渲染问题。",
+  "gtk_bmg_fix": "GTK渲染修复",
+  "gtk_bmg_fix_desc": "修复Intel Battlemage（B系列）和Nvidia GPU上GTK应用程序的渲染问题。",
   "unsupported_os_title": "不支持的系统",
   "unsupported_os_message": "不支持的操作系统。",
   "dnsmasq_desc": "设置本地DNS缓存以加快域名解析速度，提高浏览性能并修复Steam上下载速度丢失的问题。",
   "pika_desc": "一个基于BorgBackup的简单且节省空间的备份应用程序。",
   "prism_desc": "一个支持模组和光影的Minecraft Java版自定义启动器。",
-  "brave_desc": "一个注重隐私的网络浏览器，内置广告拦截功能。"
+  "brave_desc": "一个注重隐私的网络浏览器，内置广告拦截功能。",
+  "intelxe_desc": "将Intel驱动程序切换到受支持的独立GPU（Battlemage/Alchemist）上的较新Xe驱动程序，以提高性能和兼容性。"
 }

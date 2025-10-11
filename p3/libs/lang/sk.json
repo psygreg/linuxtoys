@@ -280,12 +280,13 @@
   "s3d_desc": "Preveďte back-end S3, SFTP, WebDAV alebo Rclone na vaše šifrované úložisko.",
   "damx_desc": "Nástroj na ovládanie funkcií herných notebookov Acer a ladenie výkonu.",
   "pacstall_desc": "Umožňuje používať najnovší softvér bez kompromisov, podobne ako AUR, ale pre Debian/Ubuntu. Používajte opatrne.",
-  "gtk_bmg_fix": "Oprava GTK Battlemage",
-  "gtk_bmg_fix_desc": "Opravuje problémy s vykresľovaním aplikácií GTK na GPU Intel Battlemage (séria B).",
+  "gtk_bmg_fix": "Oprava vykresľovania GTK",
+  "gtk_bmg_fix_desc": "Opravuje problémy s vykresľovaním aplikácií GTK na Intel Battlemage (B-séria) a Nvidia GPU.",
   "unsupported_os_title": "Nepodporovaný systém",
   "unsupported_os_message": "Nepodporovaný operačný systém.",
   "dnsmasq_desc": "Nastavte lokálne ukladanie DNS do vyrovnávacej pamäte na zrýchlenie prekladu doménových mien, zlepšenie výkonu prehliadania a opravu problémov so stratou rýchlosti sťahovania na Steame.",
   "pika_desc": "Jednoduchá a priestorovo úsporná zálohovacia aplikácia založená na BorgBackupe.",
   "prism_desc": "Vlastný spúšťač pre Minecraft Java Edition s podporou módov a shaderov.",
-  "brave_desc": "Webový prehliadač zameraný na súkromie s vstavaným blokovaním reklám."
+  "brave_desc": "Webový prehliadač zameraný na súkromie s vstavaným blokovaním reklám.",
+  "intelxe_desc": "Prepína ovládače Intel na novší ovládač Xe na podporovaných diskrétnych GPU (Battlemage/Alchemist) pre lepší výkon a kompatibilitu."
 }

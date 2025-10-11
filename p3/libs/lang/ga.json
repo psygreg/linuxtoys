@@ -280,12 +280,13 @@
   "s3d_desc": "Tiontaigh cúl S3, SFTP, WebDAV nó Rclone isteach i do stóras criptithe.",
   "damx_desc": "Fóntais chun gnéithe ríomhaire glúine cearrbhachais Acer agus tiúnadh feidhmíochta a rialú.",
   "pacstall_desc": "Ligeann duit an bogearraí is déanaí a úsáid gan comhréiteach, cosúil le AUR ach do Debian/Ubuntu. Úsáid le cúram.",
-  "gtk_bmg_fix": "Deisiúchán GTK Battlemage",
-  "gtk_bmg_fix_desc": "Deisíonn fadhbanna rindreála le feidhmchláir GTK ar GPUanna Intel Battlemage (sraith B).",
+  "gtk_bmg_fix": "Deisiú rindreála GTK",
+  "gtk_bmg_fix_desc": "Deisíonn fadhbanna rindreála le feidhmchláir GTK ar Intel Battlemage (sraith-B) agus GPUanna Nvidia.",
   "unsupported_os_title": "Córas gan tacaíocht",
   "unsupported_os_message": "Córas oibriúcháin gan tacaíocht.",
   "dnsmasq_desc": "Socraigh taisce áitiúil DNS chun réiteach ainmneacha fearainn a luathú, feidhmíocht brabhsála a fheabhsú agus fadhbanna le cailliúint luais íoslódála ar Steam a réiteach.",
   "pika_desc": "Feidhmchlár cúltaca simplí agus éifeachtach spáis bunaithe ar BorgBackup.",
   "prism_desc": "Lainseoir saincheaptha do Minecraft Java Edition le tacaíocht do mods agus scáthairí.",
-  "brave_desc": "Brabhsálaí gréasáin dírithe ar phríobháideachas le cosaint fógraí tógtha isteach."
+  "brave_desc": "Brabhsálaí gréasáin dírithe ar phríobháideachas le cosaint fógraí tógtha isteach.",
+  "intelxe_desc": "Aistríonn tiománaithe Intel chuig an tiománaí Xe níos nuaí ar GPUanna discrétacha tacaithe (Battlemage/Alchemist) chun feidhmíocht agus comhoiriúnacht a fheabhsú."
 }

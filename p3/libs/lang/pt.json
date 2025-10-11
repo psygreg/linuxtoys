@@ -280,12 +280,13 @@
   "s3d_desc": "Converta o back-end S3, SFTP, WebDAV ou Rclone em seu armazenamento criptografado.",
   "damx_desc": "Utilitário para controlar recursos de laptops gaming Acer e ajuste de desempenho.",
   "pacstall_desc": "Permite usar o software mais recente sem compromissos, semelhante ao AUR, mas para Debian/Ubuntu. Use com cautela.",
-  "gtk_bmg_fix": "Correção GTK Battlemage",
-  "gtk_bmg_fix_desc": "Corrige problemas de renderização com aplicações GTK em GPUs Intel Battlemage (série B).",
+  "gtk_bmg_fix": "Correção de renderização GTK",
+  "gtk_bmg_fix_desc": "Corrige problemas de renderização com aplicativos GTK em GPUs Intel Battlemage (série B) e Nvidia.",
   "unsupported_os_title": "Sistema não suportado",
   "unsupported_os_message": "Sistema operacional não suportado.",
   "dnsmasq_desc": "Configure o cache DNS local para acelerar a resolução de nomes de domínio, melhorar o desempenho de navegação e corrigir problemas com perda de velocidade de download no Steam.",
   "pika_desc": "Um aplicativo de backup simples e eficiente em espaço baseado em BorgBackup.",
   "prism_desc": "Um lançador personalizado para Minecraft Java Edition com suporte para mods e shaders.",
-  "brave_desc": "Um navegador web focado em privacidade com bloqueio de anúncios integrado."
+  "brave_desc": "Um navegador web focado em privacidade com bloqueio de anúncios integrado.",
+  "intelxe_desc": "Alterna os drivers Intel para o driver Xe mais recente em GPUs discretas suportadas (Battlemage/Alchemist) para melhorar o desempenho e a compatibilidade."
 }

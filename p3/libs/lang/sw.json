@@ -278,12 +278,13 @@
   "s3d_desc": "Badilisha back-end ya S3, SFTP, WebDAV au Rclone kuwa hifadhi yako iliyosimbwa.",
   "damx_desc": "Kifaa cha kudhibiti vipengele vya kompyuta za kuchezea za Acer na kusasisha utendaji.",
   "pacstall_desc": "Inakuruhusu kutumia programu mpya zaidi bila makubaliano, kama AUR lakini kwa Debian/Ubuntu. Tumia kwa uangalifu.",
-  "gtk_bmg_fix": "Marekebisho ya GTK Battlemage",
-  "gtk_bmg_fix_desc": "Inarekebisha matatizo ya utoaji wa picha na programu za GTK kwenye GPU za Intel Battlemage (mfululizo wa B).",
+  "gtk_bmg_fix": "Marekebisho ya Uwakilishi wa GTK",
+  "gtk_bmg_fix_desc": "Inarekebisha matatizo ya uwakilishi na programu za GTK kwenye Intel Battlemage (mfululizo wa B) na Nvidia GPUs.",
   "unsupported_os_title": "Mfumo usiotumika",
   "unsupported_os_message": "Mfumo wa uendeshaji usiotumika.",
   "dnsmasq_desc": "Weka akiba ya DNS ya eneo ili kuharakisha utatuzi wa jina la kikoa, kuboresha utendaji wa kuvinjari na kutatua matatizo ya kupoteza kasi ya kupakua kwenye Steam.",
   "pika_desc": "Programu ya hifadhi rahisi na yenye ufanisi wa nafasi inayotegemea BorgBackup.",
   "prism_desc": "Kizinduzi maalum kwa Minecraft Java Edition na usaidizi kwa mods na shaders.",
-  "brave_desc": "Kivinjari cha wavuti kinacholenga faragha na kuzuia matangazo yaliyojengwa."
+  "brave_desc": "Kivinjari cha wavuti kinacholenga faragha na kuzuia matangazo yaliyojengwa.",
+  "intelxe_desc": "Inabadilisha madereva ya Intel kwenda kwa dereva mpya zaidi ya Xe kwenye GPU maalum zinazotumika (Battlemage/Alchemist) kuboresha utendaji na upatanifu."
 }

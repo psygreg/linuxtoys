@@ -280,12 +280,13 @@
   "s3d_desc": "המר את הקצה האחורי S3, SFTP, WebDAV או Rclone לאחסון המוצפן שלך.",
   "damx_desc": "כלי עזר לשליטה בתכונות מחשבים ניידים לגיימינג של Acer וכיוון ביצועים.",
   "pacstall_desc": "מאפשר לך להשתמש בתוכנה העדכנית ביותר ללא פשרות, דומה ל-AUR אך עבור Debian/Ubuntu. השתמש בזהירות.",
-  "gtk_bmg_fix": "תיקון GTK Battlemage",
-  "gtk_bmg_fix_desc": "מתקן בעיות עיבוד עם יישומי GTK על מעבדי גרפיקה Intel Battlemage (סדרת B).",
+  "gtk_bmg_fix": "תיקון עיבוד GTK",
+  "gtk_bmg_fix_desc": "מתקן בעיות עיבוד עם יישומי GTK ב-Intel Battlemage (סדרת B) ו-Nvidia GPUs.",
   "unsupported_os_title": "מערכת לא נתמכת",
   "unsupported_os_message": "מערכת הפעלה לא נתמכת.",
   "dnsmasq_desc": "הגדר מטמון DNS מקומי כדי להאיץ את פתרון שמות הדומיין, לשפר את ביצועי הגלישה ולתקן בעיות עם איבוד מהירות ההורדה ב-Steam.",
   "pika_desc": "יישום גיבוי פשוט וחסכוני במקום המבוסס על BorgBackup.",
   "prism_desc": "משגר מותאם אישית עבור Minecraft Java Edition עם תמיכה במודים ושיידרים.",
-  "brave_desc": "דפדפן אינטרנט ממוקד פרטיות עם חסימת פרסומות מובנית."
+  "brave_desc": "דפדפן אינטרנט ממוקד פרטיות עם חסימת פרסומות מובנית.",
+  "intelxe_desc": "מעביר מנהלי התקן של Intel למנהל ההתקן החדש יותר Xe במעבדי גרפיקה נפרדים נתמכים (Battlemage/Alchemist) לשיפור ביצועים ותאימות."
 }
