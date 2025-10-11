@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage 수정",
   "gtk_bmg_fix_desc": "Intel Battlemage (B 시리즈) GPU에서 GTK 애플리케이션의 렌더링 문제를 수정합니다.",
   "unsupported_os_title": "지원되지 않는 시스템",
-  "unsupported_os_message": "지원되지 않는 운영 체제입니다."
+  "unsupported_os_message": "지원되지 않는 운영 체제입니다.",
+  "dnsmasq_desc": "로컬 DNS 캐싱을 설정하여 도메인 이름 확인 속도를 높이고, 브라우징 성능을 개선하며, Steam에서 다운로드 속도 손실 문제를 해결합니다.",
+  "pika_desc": "BorgBackup 기반의 간단하고 공간 효율적인 백업 애플리케이션입니다.",
+  "prism_desc": "모드와 셰이더를 지원하는 Minecraft Java Edition용 커스텀 런처입니다.",
+  "brave_desc": "광고 차단 기능이 내장된 개인정보 보호 중심 웹 브라우저입니다."
 }

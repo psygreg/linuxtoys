@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "Deisiúchán GTK Battlemage",
   "gtk_bmg_fix_desc": "Deisíonn fadhbanna rindreála le feidhmchláir GTK ar GPUanna Intel Battlemage (sraith B).",
   "unsupported_os_title": "Córas gan tacaíocht",
-  "unsupported_os_message": "Córas oibriúcháin gan tacaíocht."
+  "unsupported_os_message": "Córas oibriúcháin gan tacaíocht.",
+  "dnsmasq_desc": "Socraigh taisce áitiúil DNS chun réiteach ainmneacha fearainn a luathú, feidhmíocht brabhsála a fheabhsú agus fadhbanna le cailliúint luais íoslódála ar Steam a réiteach.",
+  "pika_desc": "Feidhmchlár cúltaca simplí agus éifeachtach spáis bunaithe ar BorgBackup.",
+  "prism_desc": "Lainseoir saincheaptha do Minecraft Java Edition le tacaíocht do mods agus scáthairí.",
+  "brave_desc": "Brabhsálaí gréasáin dírithe ar phríobháideachas le cosaint fógraí tógtha isteach."
 }

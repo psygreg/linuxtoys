@@ -286,5 +286,6 @@
   "gtk_bmg_fix": "Perbaikan GTK Battlemage",
   "gtk_bmg_fix_desc": "Memperbaiki masalah rendering dengan aplikasi GTK pada GPU Intel Battlemage (seri B).",
   "unsupported_os_title": "Sistem tidak didukung",
-  "unsupported_os_message": "Sistem operasi tidak didukung."
+  "unsupported_os_message": "Sistem operasi tidak didukung.",
+  "dnsmasq_desc": "Atur cache DNS lokal untuk mempercepat resolusi nama domain, meningkatkan kinerja penjelajahan, dan memperbaiki masalah kehilangan kecepatan unduh di Steam."
 }

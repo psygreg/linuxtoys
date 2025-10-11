@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "Popravek GTK Battlemage",
   "gtk_bmg_fix_desc": "Odpravlja težave z upodabljanjem aplikacij GTK na GPU-jih Intel Battlemage (serija B).",
   "unsupported_os_title": "Nepodprt sistem",
-  "unsupported_os_message": "Nepodprt operacijski sistem."
+  "unsupported_os_message": "Nepodprt operacijski sistem.",
+  "dnsmasq_desc": "Nastavite lokalno predpomnjenje DNS za pospešitev razreševanja imen domen, izboljšanje zmogljivosti brskanja in odpravo težav z izgubo hitrosti prenosa v Steamu.",
+  "pika_desc": "Preprosta in prostorsko učinkovita aplikacija za varnostne kopije, ki temelji na BorgBackupu.",
+  "prism_desc": "Prilagojen zaganjalnik za Minecraft Java Edition s podporo za mode in senčila.",
+  "brave_desc": "Spletni brskalnik, osredotočen na zasebnost, z vgrajenim blokiranjem oglasov."
 }

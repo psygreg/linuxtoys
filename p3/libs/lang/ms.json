@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "Pembaikan GTK Battlemage",
   "gtk_bmg_fix_desc": "Membaiki isu rendering dengan aplikasi GTK pada GPU Intel Battlemage (siri B).",
   "unsupported_os_title": "Sistem tidak disokong",
-  "unsupported_os_message": "Sistem pengendalian tidak disokong."
+  "unsupported_os_message": "Sistem pengendalian tidak disokong.",
+  "dnsmasq_desc": "Sediakan caching DNS tempatan untuk mempercepatkan penyelesaian nama domain, meningkatkan prestasi pelayaran dan menyelesaikan masalah kehilangan kelajuan muat turun di Steam.",
+  "pika_desc": "Aplikasi sandaran mudah dan jimat ruang berdasarkan BorgBackup.",
+  "prism_desc": "Pelancar tersuai untuk Minecraft Java Edition dengan sokongan untuk mod dan shader.",
+  "brave_desc": "Pelayar web yang tertumpu kepada privasi dengan penyekatan iklan terbina dalam."
 }

@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "Bản sửa lỗi GTK Battlemage",
   "gtk_bmg_fix_desc": "Sửa lỗi hiển thị với các ứng dụng GTK trên GPU Intel Battlemage (dòng B).",
   "unsupported_os_title": "Hệ thống không được hỗ trợ",
-  "unsupported_os_message": "Hệ điều hành không được hỗ trợ."
+  "unsupported_os_message": "Hệ điều hành không được hỗ trợ.",
+  "dnsmasq_desc": "Thiết lập bộ nhớ đệm DNS cục bộ để tăng tốc độ phân giải tên miền, cải thiện hiệu suất duyệt web và khắc phục sự cố mất tốc độ tải xuống trên Steam.",
+  "pika_desc": "Một ứng dụng sao lưu đơn giản và tiết kiệm không gian dựa trên BorgBackup.",
+  "prism_desc": "Một trình khởi động tùy chỉnh cho Minecraft Java Edition với hỗ trợ cho mod và shader.",
+  "brave_desc": "Một trình duyệt web tập trung vào quyền riêng tư với tính năng chặn quảng cáo tích hợp."
 }

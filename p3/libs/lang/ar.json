@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "إصلاح GTK Battlemage",
   "gtk_bmg_fix_desc": "يصلح مشاكل العرض مع تطبيقات GTK على وحدات معالجة الرسومات Intel Battlemage (سلسلة B).",
   "unsupported_os_title": "نظام غير مدعوم",
-  "unsupported_os_message": "نظام تشغيل غير مدعوم."
+  "unsupported_os_message": "نظام تشغيل غير مدعوم.",
+  "dnsmasq_desc": "قم بإعداد التخزين المؤقت المحلي لـ DNS لتسريع حل أسماء النطاقات، وتحسين أداء التصفح وإصلاح مشاكل فقدان سرعة التنزيل على Steam.",
+  "pika_desc": "تطبيق نسخ احتياطي بسيط وموفر للمساحة يعتمد على BorgBackup.",
+  "prism_desc": "مشغل مخصص لـ Minecraft Java Edition مع دعم التعديلات والظلال.",
+  "brave_desc": "متصفح ويب يركز على الخصوصية مع حظر إعلانات مدمج."
 }

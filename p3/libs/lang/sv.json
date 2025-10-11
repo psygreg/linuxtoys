@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage-rättning",
   "gtk_bmg_fix_desc": "Åtgärdar renderingsproblem med GTK-applikationer på Intel Battlemage (B-serien) GPU:er.",
   "unsupported_os_title": "Ej stöds system",
-  "unsupported_os_message": "Ej stöds operativsystem."
+  "unsupported_os_message": "Ej stöds operativsystem.",
+  "dnsmasq_desc": "Ställ in lokal DNS-cachning för att påskynda domännamnupplösning, förbättra webbläsarprestanda och åtgärda problem med förlust av nedladdningshastighet på Steam.",
+  "pika_desc": "En enkel och utrymmeseffektiv backup-applikation baserad på BorgBackup.",
+  "prism_desc": "En anpassad launcher för Minecraft Java Edition med stöd för moddar och shaders.",
+  "brave_desc": "En integritetsfokuserad webbläsare med inbyggd annonsblockering."
 }

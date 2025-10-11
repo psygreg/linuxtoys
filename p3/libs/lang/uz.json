@@ -282,5 +282,9 @@
   "gtk_bmg_fix": "GTK Battlemage tuzatish",
   "gtk_bmg_fix_desc": "Intel Battlemage (B seriyasi) GPU'larda GTK ilovalari bilan renderlash muammolarini tuzatadi.",
   "unsupported_os_title": "Qo'llab-quvvatlanmaydigan tizim",
-  "unsupported_os_message": "Qo'llab-quvvatlanmaydigan operatsion tizim."
+  "unsupported_os_message": "Qo'llab-quvvatlanmaydigan operatsion tizim.",
+  "dnsmasq_desc": "Domen nomlarini hal qilishni tezlashtirish, brauzer samaradorligini yaxshilash va Steam-da yuklab olish tezligini yo'qotish muammolarini hal qilish uchun mahalliy DNS keshingni sozlang.",
+  "pika_desc": "BorgBackup asosida oddiy va joy tejovchi zaxira dasturi.",
+  "prism_desc": "Modlar va sheyderlar qo'llab-quvvatlash bilan Minecraft Java Edition uchun maxsus ishga tushirgich.",
+  "brave_desc": "O'rnatilgan reklama bloklash bilan maxfiylikka qaratilgan veb-brauzer."
 }

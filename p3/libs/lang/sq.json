@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "Ndreqja GTK Battlemage",
   "gtk_bmg_fix_desc": "Ndreqë problemet e renderimit me aplikacionet GTK në GPU Intel Battlemage (seria B).",
   "unsupported_os_title": "Sistem i pambështetur",
-  "unsupported_os_message": "Sistem operativ i pambështetur."
+  "unsupported_os_message": "Sistem operativ i pambështetur.",
+  "dnsmasq_desc": "Konfiguro ruajtjen në cache DNS lokal për të shpejtuar zgjidhjen e emrave të domenit, për të përmirësuar performancën e shfletimit dhe për të zgjidhur problemet me humbjen e shpejtësisë së shkarkimit në Steam.",
+  "pika_desc": "Një aplikacion kopjeje rezervë i thjeshtë dhe efikas në hapësirë i bazuar në BorgBackup.",
+  "prism_desc": "Një nisës i personalizuar për Minecraft Java Edition me mbështetje për mods dhe shaders.",
+  "brave_desc": "Një shfletues ueb i fokusuar në privatësi me bllokues reklamash të integruar."
 }

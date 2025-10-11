@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "رفع اشکال GTK Battlemage",
   "gtk_bmg_fix_desc": "مشکلات رندرینگ با برنامه‌های GTK در GPU های Intel Battlemage (سری B) را برطرف می‌کند.",
   "unsupported_os_title": "سیستم پشتیبانی نشده",
-  "unsupported_os_message": "سیستم عامل پشتیبانی نشده."
+  "unsupported_os_message": "سیستم عامل پشتیبانی نشده.",
+  "dnsmasq_desc": "ذخیره‌سازی محلی DNS را برای تسریع حل نام دامنه، بهبود عملکرد مرورگر و رفع مشکلات از دست دادن سرعت دانلود در Steam تنظیم کنید.",
+  "pika_desc": "یک برنامه پشتیبان‌گیری ساده و صرفه‌جویی در فضا بر اساس BorgBackup.",
+  "prism_desc": "یک لانچر سفارشی برای Minecraft Java Edition با پشتیبانی از مادها و شیدرها.",
+  "brave_desc": "یک مرورگر وب متمرکز بر حریم خصوصی با مسدودسازی تبلیغات داخلی."
 }

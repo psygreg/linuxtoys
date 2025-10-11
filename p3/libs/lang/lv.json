@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage labojums",
   "gtk_bmg_fix_desc": "Labo renderēšanas problēmas ar GTK lietojumprogrammām Intel Battlemage (B sērijas) GPU.",
   "unsupported_os_title": "Neatbalstīta sistēma",
-  "unsupported_os_message": "Neatbalstīta operētājsistēma."
+  "unsupported_os_message": "Neatbalstīta operētājsistēma.",
+  "dnsmasq_desc": "Iestatiet vietējo DNS kešatmiņu, lai paātrinātu domēnu nosaukumu atrisināšanu, uzlabotu pārlūkošanas veiktspēju un novērstu problēmas ar lejupielādes ātruma zaudēšanu Steam.",
+  "pika_desc": "Vienkārša un vietu taupīga dublējuma lietojumprogramma, kas balstīta uz BorgBackup.",
+  "prism_desc": "Pielāgots palaidējs Minecraft Java izdevumam ar modu un ēnu atbalstu.",
+  "brave_desc": "Privātumam orientēts tīmekļa pārlūks ar iebūvētu reklāmu bloķēšanu."
 }

@@ -281,5 +281,9 @@
   "gtk_bmg_fix": "Marekebisho ya GTK Battlemage",
   "gtk_bmg_fix_desc": "Inarekebisha matatizo ya utoaji wa picha na programu za GTK kwenye GPU za Intel Battlemage (mfululizo wa B).",
   "unsupported_os_title": "Mfumo usiotumika",
-  "unsupported_os_message": "Mfumo wa uendeshaji usiotumika."
+  "unsupported_os_message": "Mfumo wa uendeshaji usiotumika.",
+  "dnsmasq_desc": "Weka akiba ya DNS ya eneo ili kuharakisha utatuzi wa jina la kikoa, kuboresha utendaji wa kuvinjari na kutatua matatizo ya kupoteza kasi ya kupakua kwenye Steam.",
+  "pika_desc": "Programu ya hifadhi rahisi na yenye ufanisi wa nafasi inayotegemea BorgBackup.",
+  "prism_desc": "Kizinduzi maalum kwa Minecraft Java Edition na usaidizi kwa mods na shaders.",
+  "brave_desc": "Kivinjari cha wavuti kinacholenga faragha na kuzuia matangazo yaliyojengwa."
 }

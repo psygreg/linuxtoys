@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage lagfæring",
   "gtk_bmg_fix_desc": "Lagar myndgerðarvandamál með GTK forritum á Intel Battlemage (B-röð) GPU.",
   "unsupported_os_title": "Óstutt kerfi",
-  "unsupported_os_message": "Óstutt stýrikerfi."
+  "unsupported_os_message": "Óstutt stýrikerfi.",
+  "dnsmasq_desc": "Settu upp staðbundið DNS-skyndiminni til að flýta fyrir nafnalausn léna, bæta vafragetu og laga vandamál með tap á niðurhalsshraða á Steam.",
+  "pika_desc": "Einfalt og pláss-hagkvæmt öryggisafrit forrit byggt á BorgBackup.",
+  "prism_desc": "Sérsniðinn ræsir fyrir Minecraft Java Edition með stuðningi við breytingar og skugga.",
+  "brave_desc": "Friðhelgisvænn vafri með innbyggðri auglýsingablokk."
 }

@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage -korjaus",
   "gtk_bmg_fix_desc": "Korjaa renderöintiongelmia GTK-sovellusten kanssa Intel Battlemage (B-sarja) GPU:illa.",
   "unsupported_os_title": "Ei-tuettu järjestelmä",
-  "unsupported_os_message": "Ei-tuettu käyttöjärjestelmä."
+  "unsupported_os_message": "Ei-tuettu käyttöjärjestelmä.",
+  "dnsmasq_desc": "Määritä paikallinen DNS-välimuistitallennus nopeuttaaksesi verkkotunnusten nimenratkaisua, parantaaksesi selaimen suorituskykyä ja korjataksesi ongelmat latausnopeuden menettämisestä Steamissa.",
+  "pika_desc": "Yksinkertainen ja tilaa säästävä varmuuskopiointisovellus, joka perustuu BorgBackupiin.",
+  "prism_desc": "Mukautettu käynnistin Minecraft Java Editionille modien ja varjostimien tuella.",
+  "brave_desc": "Yksityisyyteen keskittyvä selain sisäänrakennetulla mainostenestolla."
 }

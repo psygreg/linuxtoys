@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "Correctif GTK Battlemage",
   "gtk_bmg_fix_desc": "Corrige les problèmes de rendu avec les applications GTK sur les GPU Intel Battlemage (série B).",
   "unsupported_os_title": "Système non pris en charge",
-  "unsupported_os_message": "Système d'exploitation non pris en charge."
+  "unsupported_os_message": "Système d'exploitation non pris en charge.",
+  "dnsmasq_desc": "Configurez la mise en cache DNS locale pour accélérer la résolution des noms de domaine, améliorer les performances de navigation et résoudre les problèmes de perte de vitesse de téléchargement sur Steam.",
+  "pika_desc": "Une application de sauvegarde simple et économe en espace basée sur BorgBackup.",
+  "prism_desc": "Un lanceur personnalisé pour Minecraft Java Edition avec prise en charge des mods et des shaders.",
+  "brave_desc": "Un navigateur Web axé sur la confidentialité avec blocage des publicités intégré."
 }

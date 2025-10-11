@@ -36,7 +36,6 @@
   "select_button": "Select",
   "loading_manifest_message": "Loading your manifest file... Please Wait...",
   "packages_flatpaks": "Packages & Flatpaks",
-
   "psypicks": "Psygreg's Picks",
   "psypicks_desc": "Curated selection of software for gaming and quality of life on Linux.",
   "pdefaults": "Optimized Defaults",
@@ -65,7 +64,6 @@
   "peripheral_desc": "Tools and resources for managing peripheral devices and lighting.",
   "sysadm": "System Administration",
   "sysadm_desc": "Tools for system administration and management for small businesses or at scale.",
-
   "gimp_desc": "A powerful open source image editor.",
   "onlyoffice_desc": "A suite with better compatibility to Microsoft Office files.",
   "msteams_desc": "A collaboration platform for remote work.",
@@ -88,8 +86,6 @@
   "figma_desc": "A web-based UI/UX design application.",
   "davinci_desc": "Professional video editing software.",
   "obsidian_desc": "A free, flexible app for your thoughts, notes, and organization.",
-  "brave_desc": "A privacy-focused web browser with built-in ad blocking.",
-
   "gsr_desc": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
   "pp_desc": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
   "sober_desc": "Roblox community port for Linux, based on the Android version of the game.",
@@ -110,8 +106,6 @@
   "vinegar_desc": "A community wrapper for Roblox Studio, for Roblox game creators.",
   "pup_desc": "A Qt-based tool to easily obtain community runners for gaming on Linux.",
   "lsfg_desc": "A compatibility layer for Lossless Scaling on Vulkan for Linux. Still requires Lossless Scaling for Windows.",
-  "prism_desc": "A custom launcher for Minecraft Java Edition with support for mods and shaders.",
-
   "ufw": "Configure Firewall",
   "ufw_desc": "Installs and applies a default setting ideal for most users for the Uncomplicated Firewall (UFW).",
   "swapfile": "Configure Swap File",
@@ -143,7 +137,6 @@
   "hwaccel-flatpak_desc": "Installs ffmpeg-full into the currently supported flatpak platforms, allowing applications to use hardware-accelerated media playback.",
   "ostree-autoupd": "Automatic Updates for RPM-OSTree",
   "ostree-autoupd_desc": "Enables rpm-ostree's automatic updating feature in stage mode (silent). Updates will only be applied on reboot, and you will not be prompted to reboot.",
-
   "nv_desc": "Current Nvidia drivers. Supported GPUs: Maxwell (GT 9xx) and newer.",
   "nv_rtx_desc": "Current Nvidia drivers with open kernel modules. Supported GPUs: GTX 16xx and any RTX-series. For laptops, prefer the proprietary option for power management.",
   "nv_desc_470": "Legacy Nvidia drivers. Supported GPUs: Kepler (GT 6xx) and Fermi (GT 7xx).",
@@ -154,14 +147,12 @@
   "xneo_desc": "Driver for official and generic Xbox controllers on Linux.",
   "modsign": "Kernel module signing",
   "modsign_desc": "Enables signing kernel modules and drivers with a Machine Owner Key for Secure Boot.",
-
   "flat_desc": "The go-to repository for Flatpak applications, having many exclusive apps.",
   "brew_desc": "A CLI tools package manager for macOS/Linux.",
   "chaotic_desc": "A community-driven repository for Arch Linux users.",
   "rpmfusion_desc": "A repository providing additional packages for Fedora and RHEL.",
   "pip_desc": "Python package manager. Typically useful for Python developers.",
   "cargo_desc": "Rust package manager. Typically useful for Rust developers. Includes Rustup.",
-
   "obs_desc": "A popular open-source streaming and recording software.",
   "mctl_desc": "A system monitor for Linux very similar to Windows Task Manager, based on GTK4.",
   "sc_desc": "A tool for setting up Stream Decks and similar devices.",
@@ -184,8 +175,6 @@
   "cloudflare_warp_desc": "A DNS service that hides your traffic from your ISP.",
   "piper_desc": "A GTK application to configure gaming mice using libratbag. Commonly used for Logitech, Roccat, Asus and Glorious mice.",
   "glever_desc": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
-  "pika_desc": "A simple and space-efficient backup application based on BorgBackup.",
-
   "docker_desc": "The Docker Engine container service provider and basic tools for it, like docker-compose.",
   "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",
   "nvm_desc": "A version manager for Node.js, allowing you to easily switch between different versions. Includes Node.js, NPM and Yarn. Not needed if using Mise.",
@@ -206,14 +195,12 @@
   "dotnet_desc": "A collection of tools and libraries to create applications based on the .NET platform.",
   "sublime_desc": "A sophisticated text editor for code, markup and prose.",
   "tailscale_desc": "A zero-config VPN that connects your devices securely over the internet.",
-
   "cockpit_desc": "A web-based interface for monitoring and managing Linux servers (server).",
   "webmin_desc": "A web-based interface for system administration for Unix.",
   "topgrade_desc": "A tool for upgrading all installed packages on any Linux system.",
   "cockpitclient_desc": "A web-based interface for managing Linux servers (client).",
   "adir_desc": "Installs all packages necessary to join Active Directory domains using realmd.",
   "termius_desc": "Modern SSH client for Linux with intuitive graphical interface and advanced connection management features.",
-
   "select_language": "Select Language",
   "select_language_title": "Language Selection",
   "select_language_message": "Please select your preferred language:",
@@ -296,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage Fix",
   "gtk_bmg_fix_desc": "Fixes rendering issues with GTK applications on Intel Battlemage (B-series) GPUs.",
   "unsupported_os_title": "Unsupported System",
-  "unsupported_os_message": "Unsupported operating system."
+  "unsupported_os_message": "Unsupported operating system.",
+  "dnsmasq_desc": "Set up local DNS caching to speed up domain name resolution, improve browsing performance and fix problems with losing download speeds on Steam.",
+  "pika_desc": "A simple and space-efficient backup application based on BorgBackup.",
+  "prism_desc": "A custom launcher for Minecraft Java Edition with support for mods and shaders.",
+  "brave_desc": "A privacy-focused web browser with built-in ad blocking."
 }

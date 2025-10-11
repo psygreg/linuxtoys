@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage ጥገና",
   "gtk_bmg_fix_desc": "በ Intel Battlemage (B-ተከታታይ) GPUs ላይ ከ GTK አፕሊኬሽኖች ጋር ያሉትን የመስጠት ችግሮች ያስተካክላል።",
   "unsupported_os_title": "ያልተደገፈ ስርዓት",
-  "unsupported_os_message": "ያልተደገፈ የስርዓት አሰራር።"
+  "unsupported_os_message": "ያልተደገፈ የስርዓት አሰራር።",
+  "dnsmasq_desc": "የአካባቢ DNS መሸጎጫ ያዋቅሩ የጎራ ስም ውሳኔን ለማፋጠን፣ የማስስፋት አፈጻጸምን ለማሻሻል እና በSteam ላይ የማውረድ ፍጥነትን በማጣት ችግሮችን ለመፍታት።",
+  "pika_desc": "በBorgBackup ላይ የተመሰረተ ቀላል እና ቦታ ቆጣቢ የምትኩ አፕሊኬሽን።",
+  "prism_desc": "ለ Minecraft Java Edition ተስማሚ የሆነ ማበጀት የሚቻል ማስጀመሪያ ከሞድስ እና ሼደር ድጋፍ ጋር።",
+  "brave_desc": "ውስጣዊ ማስታወቂያ ማገድ ያለው በግላዊነት ላይ ያተኮረ ድር አሳሽ።"
 }

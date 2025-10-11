@@ -283,5 +283,9 @@
   "gtk_bmg_fix": "GTK Battlemage ပြုပြင်ခြင်း",
   "gtk_bmg_fix_desc": "Intel Battlemage (B-စီးရီး) GPU များတွင် GTK အက်ပလီကေးရှင်းများနှင့် ပုံဖော်မှုပြဿနာများကို ပြုပြင်သည်။",
   "unsupported_os_title": "မပံ့ပိုးသော စနစ်",
-  "unsupported_os_message": "မပံ့ပိုးသော လည်ပတ်မှုစနစ်။"
+  "unsupported_os_message": "မပံ့ပိုးသော လည်ပတ်မှုစနစ်။",
+  "dnsmasq_desc": "ဒိုမိန်းအမည်ဖြေရှင်းမှုကို မြန်ဆန်စေရန်၊ ဘရောက်ဇာစွမ်းဆောင်ရည်ကို မြှင့်တင်ရန်နှင့် Steam တွင် ဒေါင်းလုဒ်မြန်နှုန်းဆုံးရှုံးမှုပြဿနာများကို ဖြေရှင်းရန် local DNS caching ကို တပ်ဆင်ပါ။",
+  "pika_desc": "BorgBackup အပေါ်အခြေခံသော ရိုးရှင်းပြီး နေရာချွေတာသည့် backup application တစ်ခုဖြစ်သည်။",
+  "prism_desc": "Mods နှင့် shaders များအတွက် ပံ့ပိုးမှုရှိသော Minecraft Java Edition အတွက် စိတ်ကြိုက် launcher တစ်ခု။",
+  "brave_desc": "ပေါင်းစပ်ထားသော ကြော်ငြာပိတ်ဆို့မှုပါရှိသော privacy-focused web browser တစ်ခု။"
 }
