@@ -1,10 +1,10 @@
 #!/bin/bash
-# name: gtk_bmg_fix
+# name: DNSMasq
 # version: 1.0
-# description: gtk_bmg_fix_desc
-# icon: intel.png
+# description: dnsmasq_desc
+# icon: network.svg
+# nocontainer
 # reboot: yes
-# gpu: Intel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -13,5 +13,5 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
 sudo_rq
-fix_intel_gtk
+dnsmasq_lib
 zeninf "$msg036"

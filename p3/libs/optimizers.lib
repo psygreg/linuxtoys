@@ -223,3 +223,19 @@ fix_intel_gtk () {
     fi
     unset intelGPU
 }
+
+# use dnsmasq as a local caching DNS resolver - works generally better than systemd-resolved and fixes download speed issues with Steam
+dnsmasq_lib () {
+    _packages=(dnsmasq)
+    if is_debian; then
+        _packages+=(resolvconf)
+    fi
+    _install_
+    # Uncomment lines in dnsmasq.conf for optimal setup
+    if [ -f /etc/dnsmasq.conf ]; then
+        sudo sed -i 's/^#\s*domain-needed/domain-needed/' /etc/dnsmasq.conf
+        sudo sed -i 's/^#\s*bogus-priv/bogus-priv/' /etc/dnsmasq.conf
+        sudo sed -i 's/^#\s*bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
+    fi
+    sudo systemctl enable dnsmasq
+}
