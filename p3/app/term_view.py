@@ -84,7 +84,7 @@ class TermRunScripts(Gtk.Box):
 
 		self.terminal = Vte.Terminal()
 		self.terminal.connect("child-exited", self.on_child_exit)
-		self.terminal.set_size(80, 24)
+		self.terminal.set_vexpand(True)
 
 		self.vbox_main = InfosHead()
 
