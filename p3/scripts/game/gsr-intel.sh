@@ -36,7 +36,7 @@ elif is_arch || is_cachy; then
     sudo pacman -U --noconfirm gpu-screen-recorder-*.tar.zst
     cd ..
     rm -rf gpu-screen-recorder
-    _packages=(intel-media-driver)
+    _packages+=(libva-intel-driver intel-media-driver)
 fi    
 _install_
 zeninf "$msg018"

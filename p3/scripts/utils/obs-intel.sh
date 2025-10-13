@@ -30,8 +30,10 @@ sudo_rq
 _packages=(obs-studio wireplumber)
 if is_fedora || is_ostree; then
     _packages+=(libva-intel-media-driver)
-elif is_suse || is_debian || is_ubuntu || is_arch || is_cachy; then
+elif is_suse || is_debian || is_ubuntu; then
     _packages+=(intel-media-driver)
+elif is_arch || is_cachy; then
+    _packages+=(libva-intel-driver intel-media-driver)
 fi
 _install_
 sleep 1
