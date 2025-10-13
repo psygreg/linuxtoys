@@ -1,5 +1,6 @@
 from .gtk_common import Gtk, GLib, Gdk, Vte, Pango, GdkPixbuf
 from . import get_icon_path
+from . import dev_mode
 import os
 
 
@@ -126,10 +127,15 @@ class TermRunScripts(Gtk.Box):
 		script_path = current_script.get('path', 'true')
 		script_dir = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 
+		shell_exec = ["/bin/bash", f"{script_path}"]
+		if dev_mode.is_dev_mode_enabled():
+			lib_path = os.path.dirname(__file__)
+			shell_exec = ['python', '-c', f'import sys; sys.path.append("{lib_path}"); import dev_mode; dev_mode.dry_run_script("{script_path}")']
+
 		self.terminal.spawn_async(
 			Vte.PtyFlags.DEFAULT,
 			None,
-			["/bin/bash", f"{script_path}"],
+			shell_exec,
 			[f'SCRIPT_DIR={script_dir}'],
 			GLib.SpawnFlags.DO_NOT_REAP_CHILD,
 			None, None, -1, None, None
