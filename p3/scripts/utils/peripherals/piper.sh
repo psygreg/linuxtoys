@@ -15,8 +15,12 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 if [[ $ID =~ "ubuntu" ]] || [[ $ID =~ "debian" ]] || [[ $ID_LIKE == *ubuntu* ]]; then
     _packages=(ratbagd)
-else
+elif is_arch || is_cachy; then
     _packages=(libratbag)
+elif is_fedora || is_ostree; then
+    _packages=(libratbag-ratbagd)
+elif is_suse; then
+    _packages=(libratbag-tools)
 fi
 _install_
 flatpak_in_lib
