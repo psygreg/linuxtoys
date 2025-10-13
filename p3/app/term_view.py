@@ -129,7 +129,7 @@ class TermRunScripts(Gtk.Box):
 		self.terminal.spawn_async(
 			Vte.PtyFlags.DEFAULT,
 			None,
-			["/bin/bash", "-c", f"{script_path}"],
+			["/bin/bash", f"{script_path}"],
 			[f'SCRIPT_DIR={script_dir}'],
 			GLib.SpawnFlags.DO_NOT_REAP_CHILD,
 			None, None, -1, None, None

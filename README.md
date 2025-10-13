@@ -33,10 +33,10 @@ chmod +x install.sh
 3. Clone this repository <sup>*\*(recommended for developers)*</sup>
 
 - First, make sure you have all necessary dependencies. Most of those should be already present in your system.
-	- **Debian/Ubuntu**: `bash git curl wget zenity python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0`
-	- **Fedora/RHEL**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3`
-	- **Arch Linux**: `bash git curl wget zenity python python-gobject python-requests gtk3`
-	- **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3`
+	- **Debian/Ubuntu**: `bash git curl wget zenity python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91`
+	- **Fedora/RHEL**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3 vte`
+	- **Arch Linux**: `bash git curl wget zenity python python-gobject python-requests gtk3 vte3`
+	- **OpenSUSE**: `bash git curl wget zenity python3 python3-gobject python3-requests gtk3 vte`
 
 - Then, clone the repository with
 ```
