@@ -1,4 +1,4 @@
-from .gtk_common import Gtk, GLib, Gdk
+from .gtk_common import Gtk, GLib, Gdk, Vte, Pango
 from gi.repository import GdkPixbuf
 import os, shutil
 
@@ -13,6 +13,7 @@ from . import reboot_helper
 from . import script_runner
 from . import search_helper
 from . import get_icon_path
+from . import term_view
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -80,7 +81,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # Store reference to the menu button for later updates
         self.menu_button = head_menu.MenuButton(
-            self.script_runner, 
             parent_window=self,
             on_language_changed=self.on_language_changed
         )
@@ -148,6 +148,9 @@ class AppWindow(Gtk.ApplicationWindow):
 
         elif keyval == Gdk.KEY_Escape:
             self.scripts_flowbox.unselect_all()
+
+        if self.main_stack.get_visible_child_name() == "running_scripts":
+            return False
 
         # Quick search: if typing letters without modifiers, focus search entry and type there
         current_focus = self.get_focus()
@@ -539,18 +542,14 @@ class AppWindow(Gtk.ApplicationWindow):
         if self.reboot_required:
             self._show_reboot_warning_dialog()
             return
-            
-        def on_checklist_dialog_closed(dialog, response_id):
-            """Handle checklist dialog closure."""
-            if dialog:
-                dialog.destroy()
 
-        checklist_helper.handle_install_checklist(
-            self.check_buttons, 
-            self, 
-            on_checklist_dialog_closed,
-            self.translations
-        )
+        selected_scripts = [sh.script_info for sh in self.check_buttons if sh.get_active()]
+        if not selected_scripts:
+            return
+
+        self.open_term_view(selected_scripts)
+
+        for cb in self.check_buttons: cb.set_active(False)
 
     def run_script_with_callback(self, script_info, callback):
         """Run a script and call callback when done."""
@@ -640,6 +639,27 @@ class AppWindow(Gtk.ApplicationWindow):
             # Show the new view with animation
             self.show_scripts_view(info)
 
+    def open_term_view(self, infos):
+        run_box = term_view.TermRunScripts(infos, self)
+
+        self.header_widget.hide()
+
+        self.back_button.show()
+        self.footer_widget.hide()
+
+        child = self.main_stack.get_child_by_name("running_scripts")
+        if child is not None:
+            self.main_stack.remove(child)
+
+        self.main_stack.add_named(run_box, "running_scripts")
+
+        run_box.show_all()
+
+        if self.current_category_info and not self.search_active:
+            self.navigation_stack.append(self.current_category_info)
+
+        self.main_stack.set_visible_child_name("running_scripts")
+
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
         if self.script_runner.is_running():
@@ -656,24 +676,8 @@ class AppWindow(Gtk.ApplicationWindow):
         if info.get('is_create_script'):
             self._handle_create_new_script()
             return
-        
-        # Show confirmation dialog before executing script
-        if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
-            return  # User cancelled
-        
-        self.script_is_running = True
-        
-        def completion_handler():
-            self.script_is_running = False
-        
-        def reboot_handler():
-            self.reboot_required = True
-        
-        self.script_runner.run_script(
-            info, 
-            on_completion=completion_handler,
-            on_reboot_required=reboot_handler
-        )
+
+        self.open_term_view([info])
 
     def _handle_create_new_script(self):
         """Handle the creation of a new local script."""
