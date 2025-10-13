@@ -18,6 +18,8 @@ sudo_rq
 if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
     sudo add-apt-repository ppa:openrazer/stable
     sudo apt update
+    _install_
+    sudo gpasswd -a $USER plugdev
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
     if command -v rpm-ostree &>/dev/null; then
         cd $HOME
@@ -51,6 +53,10 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
     fi
     sudo zypper refresh
     _install_
+elif is_arch || is_cachy; then
+    chaotic_aur_lib
+    _install_
+    sudo gpasswd -a $USER plugdev
 fi
 flatpak_in_lib
 flatpak install -y --system --noninteractive flathub app.polychromatic.controller
