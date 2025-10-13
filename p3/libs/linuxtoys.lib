@@ -7,7 +7,12 @@ sudo_rq () {
     if [ -f /tmp/linuxtoys_sudo_validated ]; then
         return 0
     fi
-    sudo -Av
+    if command -v sudo-rs >&-;then
+        _pass=$(zenity --password --title="LinuxToys")
+	echo "${_pass}" | sudo-rs -Sv
+    else
+        sudo -Av
+    fi
     if [ "$(sudo whoami)" = "root" ]; then
     # Validate password with sudo
         if [ -n "$LINUXTOYS_CHECKLIST" ]; then
