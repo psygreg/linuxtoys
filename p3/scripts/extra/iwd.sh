@@ -47,6 +47,7 @@ iwd_in () {
             sudo systemctl disable wpa_supplicant
             sleep 1
             sudo systemctl restart NetworkManager
+            sudo systemctl enable iwd
             return 0
         fi
     else

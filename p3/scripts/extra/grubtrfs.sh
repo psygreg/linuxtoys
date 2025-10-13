@@ -57,23 +57,21 @@ dep_check () {
 }
 # install grub-btrfs and set up automatic snapshot listing
 grubtrfs_in () {
+    _packages=(snapper)
+    _install_
     if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command dnf
     elif [[ "$ID_LIKE" == *suse* ]]; then
-        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command zypper
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command pacman
     elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ]; then
-        insta snapper
         sudo btrfs subvolume delete -R /.snapshots
         sudo snapper -c root create-config /
         sudo snapper -c root create --command apt
@@ -88,7 +86,7 @@ grubtrfs_in () {
     sudo systemctl enable snapper-cleanup.timer
     sudo systemctl start snapper-cleanup.timer
     if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ (arch) ]]; then
-        insta grub-btrfs
+        sudo pacman -S grub-btrfs
     else
         cd $HOME
         git clone https://github.com/Antynea/grub-btrfs.git
