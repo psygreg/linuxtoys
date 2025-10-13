@@ -23,6 +23,7 @@ iwd_in () {
     done
     # only install if an adapter is found
     if [ $has_wifi -eq 1 ]; then
+        cd $HOME
         sudo_rq
         # install iwd
         if [ "$ID" == "bazzite" ] || [ "$ID" == "bluefin" ] || [ "$ID" == "aurora" ]; then
