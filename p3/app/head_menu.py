@@ -1,6 +1,5 @@
 from .gtk_common import Gtk, GLib
 from . import cli_helper
-from . import script_runner
 from . import language_selector
 from . import about_helper
 from . import get_icon_path
@@ -94,10 +93,9 @@ class WaitDialog(Gtk.Dialog):
 
 
 class MenuButton(Gtk.MenuButton):
-	def __init__(self, script_runner: script_runner.ScriptRunner, parent_window=None, on_language_changed=None):
+	def __init__(self, parent_window=None, on_language_changed=None):
 		super().__init__()
 		_ = create_translator()
-		self.script_runner = script_runner
 		self.parent_window = parent_window
 		self.on_language_changed = on_language_changed
 		self.results = []
@@ -252,7 +250,8 @@ class MenuButton(Gtk.MenuButton):
 			if os.path.exists(self._temp_sh):
 				os.remove(self._temp_sh)
 
-		self.script_runner.run_scripts_sequentially(scripts_list=self.results, on_completion=completion_handler)
+		if self.results:
+			self.parent_window.open_term_view(self.results)
 
 	def __temp_script(self, packages, flatpaks):
 		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
