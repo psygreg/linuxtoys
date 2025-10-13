@@ -16,22 +16,11 @@ flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub org.gimp.GIMP
 if zenity --question --text "$msg253" --width 360 --height 300; then
     zeninf "$msg254"
-    flatpak run org.gimp.GIMP &
-    GIMP_PID=$!
-    sleep 10
-    if ! kill -0 "$GIMP_PID" 2>/dev/null; then
-        echo "Failed to start GIMP."
-        exit 1
-    fi
-    echo "Found GIMP running as PID $GIMP_PID"
-    sleep 15
-    kill "$GIMP_PID"
-    wait "$GIMP_PID" 2>/dev/null
-    cd $HOME
-    git clone https://github.com/Diolinux/PhotoGIMP.git
-    cd PhotoGIMP
-    cp -rf .config/* $HOME/.config/
-    cp -rf .local/* $HOME/.local/
-    cd ..
-    rm -rf PhotoGIMP
+    flatpak run org.gimp.GIMP --batch-interpreter=plug-in-script-fu-eval -b "(gimp-quit 0)" && {
+        git clone --depth=1 https://github.com/Diolinux/PhotoGIMP.git /tmp/photogimp && {
+            (
+                cp -rvf /tmp/photogimp/.config/* ~/.config/ && cp -rvf /tmp/photogimp/.local/* ~/.local/
+            ) && { zeninf "$msg018"; } || { fatal "Unable to complete installation"; }
+        }
+    }
 fi
