@@ -19,14 +19,12 @@ if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
     sudo add-apt-repository ppa:openrazer/stable
     sudo apt update
     _install_
-    sudo gpasswd -a $USER plugdev
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
     if command -v rpm-ostree &>/dev/null; then
         cd $HOME
         if ! grep -q "plugdev" /etc/group; then
             sudo bash -c 'grep "plugdev" /lib/group >> /etc/group'
         fi
-        sudo usermod -aG plugdev $USER
         # Add ublue-os/akmods COPR repository for openrazer-kmod (needed for rpm-ostree systems)
         wget "https://copr.fedorainfracloud.org/coprs/ublue-os/akmods/repo/fedora-$(rpm -E %fedora)/ublue-os-akmods-fedora-$(rpm -E %fedora).repo"
         sudo install -o 0 -g 0 "ublue-os-akmods-fedora-$(rpm -E %fedora).repo" "/etc/yum.repos.d/ublue-os-akmods-fedora-$(rpm -E %fedora).repo"
@@ -56,8 +54,8 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
 elif is_arch || is_cachy; then
     chaotic_aur_lib
     _install_
-    sudo gpasswd -a $USER plugdev
 fi
+sudo gpasswd -a $USER plugdev
 flatpak_in_lib
 flatpak install -y --system --noninteractive flathub app.polychromatic.controller
 zeninf "$msg036"
