@@ -3,7 +3,7 @@
 # version: 1.0
 # description: grubtrfs_desc
 # icon: grubtrfs.svg
-# compat: ubuntu, debian, arch, fedora, suse
+# compat: ubuntu, debian, arch
 # nocontainer
 # repo: https://github.com/Antynea/grub-btrfs
 
