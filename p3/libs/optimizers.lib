@@ -311,4 +311,7 @@ EOF
             fi
         fi
     unset intelGPU
+    # install VDPAU decode driver
+    _packages=(libvdpau-va-gl)
+    _install_
 }
