@@ -16,6 +16,8 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
 chaotic_aur_lib
 sudo pacman -S --noconfirm arch-update
+systemctl --user enable --now arch-update-tray.service
+systemctl --user enable --now arch-update.timer
 sleep 1
 arch-update --tray --enable
 zeninf "$msg018"
