@@ -221,11 +221,15 @@ fix_intel_gtk () {
     nvGPU=$(lspci | grep -i 'nvidia')
     if [[ -n "$intelGPU" ]]; then
         if echo "$intelGPU" | grep -qi 'battlemage'; then
-            echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+            if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
+                echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+            fi
         fi
     fi
     if [[ -n "$nvGPU" ]]; then
-        echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+        if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
+            echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+        fi
     fi
     unset intelGPU
     unset nvGPU
@@ -314,4 +318,7 @@ EOF
     # install VDPAU decode driver
     _packages=(libvdpau-va-gl)
     _install_
+    if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
+        echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
+    fi
 }
