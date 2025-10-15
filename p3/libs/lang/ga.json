@@ -288,5 +288,11 @@
   "pika_desc": "Feidhmchlár cúltaca simplí agus éifeachtach spáis bunaithe ar BorgBackup.",
   "prism_desc": "Lainseoir saincheaptha do Minecraft Java Edition le tacaíocht do mods agus scáthairí.",
   "brave_desc": "Brabhsálaí gréasáin dírithe ar phríobháideachas le cosaint fógraí tógtha isteach.",
-  "intelxe_desc": "Aistríonn tiománaithe Intel chuig an tiománaí Xe níos nuaí ar GPUanna discrétacha tacaithe (Battlemage/Alchemist) chun feidhmíocht agus comhoiriúnacht a fheabhsú."
+  "intelxe_desc": "Aistríonn tiománaithe Intel chuig an tiománaí Xe níos nuaí ar GPUanna discrétacha tacaithe (Battlemage/Alchemist) chun feidhmíocht agus comhoiriúnacht a fheabhsú.",
+  "term_view_execute": " Forghníomhaigh ",
+  "term_view_running_label": " Ag rith ",
+  "term_view_done": " Déanta ",
+  "term_view_waiting": "Ag fanacht {current}/{total}",
+  "term_view_running": "Ag rith {current}/{total}",
+  "term_view_done_text": "Déanta"
 }

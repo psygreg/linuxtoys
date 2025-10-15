@@ -288,5 +288,11 @@
   "pika_desc": "Vienkārša un vietu taupīga dublējuma lietojumprogramma, kas balstīta uz BorgBackup.",
   "prism_desc": "Pielāgots palaidējs Minecraft Java izdevumam ar modu un ēnu atbalstu.",
   "brave_desc": "Privātumam orientēts tīmekļa pārlūks ar iebūvētu reklāmu bloķēšanu.",
-  "intelxe_desc": "Pārslēdz Intel draiverus uz jaunāko Xe draiveri uz atbalstītām diskrētām GPU (Battlemage/Alchemist), lai uzlabotu veiktspēju un saderību."
+  "intelxe_desc": "Pārslēdz Intel draiverus uz jaunāko Xe draiveri uz atbalstītām diskrētām GPU (Battlemage/Alchemist), lai uzlabotu veiktspēju un saderību.",
+  "term_view_execute": " Izpildīt ",
+  "term_view_running_label": " Izpildās ",
+  "term_view_done": " Pabeigts ",
+  "term_view_waiting": "Gaida {current}/{total}",
+  "term_view_running": "Izpildās {current}/{total}",
+  "term_view_done_text": "Pabeigts"
 }

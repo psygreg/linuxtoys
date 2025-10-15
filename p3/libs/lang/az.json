@@ -287,5 +287,11 @@
   "pika_desc": "BorgBackup əsasında sadə və yer qənaətli ehtiyat nüsxə proqramı.",
   "prism_desc": "Modlar və şeyderlər dəstəyi ilə Minecraft Java Edition üçün fərdi başladıcı.",
   "brave_desc": "Daxili reklam bloklama ilə məxfilik yönümlü veb brauzer.",
-  "intelxe_desc": "Dəstəklənən ayrıca GPU-larda (Battlemage/Alchemist) performans və uyğunluğu artırmaq üçün Intel sürücülərini daha yeni Xe sürücüsünə keçirir."
+  "intelxe_desc": "Dəstəklənən ayrıca GPU-larda (Battlemage/Alchemist) performans və uyğunluğu artırmaq üçün Intel sürücülərini daha yeni Xe sürücüsünə keçirir.",
+  "term_view_execute": " İcra et ",
+  "term_view_running_label": " İşləyir ",
+  "term_view_done": " Tamamlandı ",
+  "term_view_waiting": "Gözlənilir {current}/{total}",
+  "term_view_running": "İşləyir {current}/{total}",
+  "term_view_done_text": "Tamamlandı"
 }

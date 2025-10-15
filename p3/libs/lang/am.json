@@ -288,5 +288,11 @@
   "pika_desc": "በBorgBackup ላይ የተመሰረተ ቀላል እና ቦታ ቆጣቢ የምትኩ አፕሊኬሽን።",
   "prism_desc": "ለ Minecraft Java Edition ተስማሚ የሆነ ማበጀት የሚቻል ማስጀመሪያ ከሞድስ እና ሼደር ድጋፍ ጋር።",
   "brave_desc": "ውስጣዊ ማስታወቂያ ማገድ ያለው በግላዊነት ላይ ያተኮረ ድር አሳሽ።",
-  "intelxe_desc": "የተደገፉ የተለየ GPUs (Battlemage/Alchemist) ላይ የIntel ነጂዎችን ወደ አዲሱ Xe ነጂ ለማሻሻል እና ተኳኋንነትን ለማሻሻል ይቀይራል።"
+  "intelxe_desc": "የተደገፉ የተለየ GPUs (Battlemage/Alchemist) ላይ የIntel ነጂዎችን ወደ አዲሱ Xe ነጂ ለማሻሻል እና ተኳኋንነትን ለማሻሻል ይቀይራል።",
+  "term_view_execute": " አስፈፅም ",
+  "term_view_running_label": " በሂደት ላይ ",
+  "term_view_done": " ተጠናቅቋል ",
+  "term_view_waiting": "በመጠበቅ ላይ {current}/{total}",
+  "term_view_running": "በመስራት ላይ {current}/{total}",
+  "term_view_done_text": "ተጠናቅቋል"
 }

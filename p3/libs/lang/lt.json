@@ -288,5 +288,11 @@
   "pika_desc": "Paprasta ir erdvę taupanti atsarginių kopijų programa, pagrįsta BorgBackup.",
   "prism_desc": "Pritaikytas paleidėjas Minecraft Java leidimui su modų ir šešėlių palaikymu.",
   "brave_desc": "Privatumą orientuota interneto naršyklė su integruotu reklamų blokavimo įrankiu.",
-  "intelxe_desc": "Perjungia Intel tvarkykles į naujesnę Xe tvarkyklę palaikomuose diskretiniuose GPU (Battlemage/Alchemist), kad pagerintų našumą ir suderinamumą."
+  "intelxe_desc": "Perjungia Intel tvarkykles į naujesnę Xe tvarkyklę palaikomuose diskretiniuose GPU (Battlemage/Alchemist), kad pagerintų našumą ir suderinamumą.",
+  "term_view_execute": " Vykdyti ",
+  "term_view_running_label": " Vykdoma ",
+  "term_view_done": " Baigta ",
+  "term_view_waiting": "Laukiama {current}/{total}",
+  "term_view_running": "Vykdoma {current}/{total}",
+  "term_view_done_text": "Baigta"
 }

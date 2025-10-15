@@ -288,5 +288,11 @@
   "pika_desc": "Egyszerű és helytakarékos biztonsági mentési alkalmazás, amely a BorgBackup-on alapul.",
   "prism_desc": "Egyedi indító a Minecraft Java Editionhoz modok és árnyékolók támogatásával.",
   "brave_desc": "Adatvédelemre összpontosító webböngésző beépített hirdetésblokkolással.",
-  "intelxe_desc": "Az Intel illesztőprogramokat az újabb Xe illesztőprogramra váltja a támogatott dedikált GPU-kon (Battlemage/Alchemist) a teljesítmény és kompatibilitás javítása érdekében."
+  "intelxe_desc": "Az Intel illesztőprogramokat az újabb Xe illesztőprogramra váltja a támogatott dedikált GPU-kon (Battlemage/Alchemist) a teljesítmény és kompatibilitás javítása érdekében.",
+  "term_view_execute": " Végrehajtás ",
+  "term_view_running_label": " Futtatás ",
+  "term_view_done": " Kész ",
+  "term_view_waiting": "Várakozás {current}/{total}",
+  "term_view_running": "Futtatás {current}/{total}",
+  "term_view_done_text": "Kész"
 }

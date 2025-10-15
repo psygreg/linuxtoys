@@ -288,5 +288,11 @@
   "pika_desc": "Yksinkertainen ja tilaa säästävä varmuuskopiointisovellus, joka perustuu BorgBackupiin.",
   "prism_desc": "Mukautettu käynnistin Minecraft Java Editionille modien ja varjostimien tuella.",
   "brave_desc": "Yksityisyyteen keskittyvä selain sisäänrakennetulla mainostenestolla.",
-  "intelxe_desc": "Vaihtaa Intel-ajurit uudempaan Xe-ajuriin tuetuissa erillisessä GPU:issa (Battlemage/Alchemist) parantaakseen suorituskykyä ja yhteensopivuutta."
+  "intelxe_desc": "Vaihtaa Intel-ajurit uudempaan Xe-ajuriin tuetuissa erillisessä GPU:issa (Battlemage/Alchemist) parantaakseen suorituskykyä ja yhteensopivuutta.",
+  "term_view_execute": " Suorita ",
+  "term_view_running_label": " Suoritetaan ",
+  "term_view_done": " Valmis ",
+  "term_view_waiting": "Odotetaan {current}/{total}",
+  "term_view_running": "Suoritetaan {current}/{total}",
+  "term_view_done_text": "Valmis"
 }

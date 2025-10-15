@@ -288,5 +288,11 @@
   "pika_desc": "Một ứng dụng sao lưu đơn giản và tiết kiệm không gian dựa trên BorgBackup.",
   "prism_desc": "Một trình khởi động tùy chỉnh cho Minecraft Java Edition với hỗ trợ cho mod và shader.",
   "brave_desc": "Một trình duyệt web tập trung vào quyền riêng tư với tính năng chặn quảng cáo tích hợp.",
-  "intelxe_desc": "Chuyển driver Intel sang driver Xe mới hơn trên các GPU rời được hỗ trợ (Battlemage/Alchemist) để cải thiện hiệu suất và khả năng tương thích."
+  "intelxe_desc": "Chuyển driver Intel sang driver Xe mới hơn trên các GPU rời được hỗ trợ (Battlemage/Alchemist) để cải thiện hiệu suất và khả năng tương thích.",
+  "term_view_execute": " Thực thi ",
+  "term_view_running_label": " Đang chạy ",
+  "term_view_done": " Hoàn thành ",
+  "term_view_waiting": "Đang chờ {current}/{total}",
+  "term_view_running": "Đang chạy {current}/{total}",
+  "term_view_done_text": "Hoàn thành"
 }

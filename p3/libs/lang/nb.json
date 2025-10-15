@@ -288,5 +288,11 @@
   "pika_desc": "En enkel og plassbesparende backup-applikasjon basert på BorgBackup.",
   "prism_desc": "En tilpasset oppstarter for Minecraft Java Edition med støtte for modifikasjoner og shaders.",
   "brave_desc": "En personvernfokusert nettleser med innebygd annonseblokering.",
-  "intelxe_desc": "Bytter Intel-drivere til den nyere Xe-driveren på støttede diskrete GPU-er (Battlemage/Alchemist) for å forbedre ytelse og kompatibilitet."
+  "intelxe_desc": "Bytter Intel-drivere til den nyere Xe-driveren på støttede diskrete GPU-er (Battlemage/Alchemist) for å forbedre ytelse og kompatibilitet.",
+  "term_view_execute": " Kjør ",
+  "term_view_running_label": " Kjører ",
+  "term_view_done": " Ferdig ",
+  "term_view_waiting": "Venter {current}/{total}",
+  "term_view_running": "Kjører {current}/{total}",
+  "term_view_done_text": "Ferdig"
 }

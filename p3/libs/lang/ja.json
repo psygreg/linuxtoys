@@ -288,5 +288,11 @@
   "pika_desc": "BorgBackupベースのシンプルでスペース効率の良いバックアップアプリケーション。",
   "prism_desc": "MODとシェーダーのサポートを備えたMinecraft Java Editionのカスタムランチャー。",
   "brave_desc": "広告ブロック機能を内蔵したプライバシー重視のWebブラウザ。",
-  "intelxe_desc": "サポートされている独立GPU（Battlemage/Alchemist）でIntelドライバーを新しいXeドライバーに切り替えて、パフォーマンスと互換性を向上させます。"
+  "intelxe_desc": "サポートされている独立GPU（Battlemage/Alchemist）でIntelドライバーを新しいXeドライバーに切り替えて、パフォーマンスと互換性を向上させます。",
+  "term_view_execute": " 実行 ",
+  "term_view_running_label": " 実行中 ",
+  "term_view_done": " 完了 ",
+  "term_view_waiting": "待機中 {current}/{total}",
+  "term_view_running": "実行中 {current}/{total}",
+  "term_view_done_text": "完了"
 }

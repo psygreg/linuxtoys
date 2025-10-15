@@ -288,5 +288,11 @@
   "pika_desc": "Պարզ և տարածք խնայող պահուստավորման հավելված՝ հիմնված BorgBackup-ի վրա։",
   "prism_desc": "Հատուկ մեկնարկիչ Minecraft Java Edition-ի համար՝ մոդերի և շեյդերների աջակցությամբ։",
   "brave_desc": "Գաղտնիության վրա կենտրոնացած վեբ դիտարկիչ՝ ներկառուցված գովազդների արգելափակմամբ։",
-  "intelxe_desc": "Փոխում է Intel դրայվերները ավելի նոր Xe դրայվերի՝ աջակցվող առանձին GPU-ներում (Battlemage/Alchemist)՝ արդյունավետությունն ու համատեղելիությունը բարելավելու համար։"
+  "intelxe_desc": "Փոխում է Intel դրայվերները ավելի նոր Xe դրայվերի՝ աջակցվող առանձին GPU-ներում (Battlemage/Alchemist)՝ արդյունավետությունն ու համատեղելիությունը բարելավելու համար։",
+  "term_view_execute": " Կատարել ",
+  "term_view_running_label": " Կատարվում է ",
+  "term_view_done": " Ավարտված է ",
+  "term_view_waiting": "Սպասում {current}/{total}",
+  "term_view_running": "Կատարվում է {current}/{total}",
+  "term_view_done_text": "Ավարտված է"
 }

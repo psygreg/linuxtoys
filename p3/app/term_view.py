@@ -5,8 +5,9 @@ import os
 
 
 class InfosHead(Gtk.Box):
-	def __init__(self):
+	def __init__(self, translations=None):
 		super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+		self.translations = translations or {}
 		vbox_infos = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
 
 		self.label_name = Gtk.Label()
@@ -36,7 +37,9 @@ class InfosHead(Gtk.Box):
 
 		hbox_controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
 
-		self.button_run = Gtk.Button(label=" Execute ")
+		# Use translatable button label
+		execute_label = self.translations.get('term_view_execute', ' Execute ')
+		self.button_run = Gtk.Button(label=execute_label)
 		self.button_run.set_image(Gtk.Image.new_from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON))
 		self.button_run.set_halign(Gtk.Align.START)
 		self.button_run.set_size_request(125, 35)
@@ -75,9 +78,10 @@ class InfosHead(Gtk.Box):
 
 
 class TermRunScripts(Gtk.Box):
-	def __init__(self, scripts_infos: list, parent):
+	def __init__(self, scripts_infos: list, parent, translations=None):
 		super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 		self.parent = parent
+		self.translations = translations or {}
 		self.script_queue = scripts_infos.copy()
 		self.total_scripts = len(scripts_infos)
 		self.scripts_executed = 0
@@ -86,10 +90,12 @@ class TermRunScripts(Gtk.Box):
 		self.terminal.connect("child-exited", self.on_child_exit)
 		self.terminal.set_vexpand(True)
 
-		self.vbox_main = InfosHead()
+		self.vbox_main = InfosHead(translations)
 
 		self.vbox_main.button_run.connect("clicked", self.on_button_run_clicked)
-		self.vbox_main.progress_bar.set_text(f"Waiting {self.scripts_executed}/{self.total_scripts}")
+		# Use translatable waiting text
+		waiting_text = self.translations.get('term_view_waiting', 'Waiting {current}/{total}')
+		self.vbox_main.progress_bar.set_text(waiting_text.format(current=self.scripts_executed, total=self.total_scripts))
 
 		self.vbox_main.pack_start(self.terminal, True, True, 0)
 
@@ -100,22 +106,30 @@ class TermRunScripts(Gtk.Box):
 			self.vbox_main._update_header_labels(self.script_queue[0])
 
 	def on_button_run_clicked(self, widget):
-		self.vbox_main.progress_bar.set_text(f"Running {self.scripts_executed}/{self.total_scripts}")
-		self.vbox_main.button_run.set_label(" Running ")
+		# Use translatable running text
+		running_text = self.translations.get('term_view_running', 'Running {current}/{total}')
+		self.vbox_main.progress_bar.set_text(running_text.format(current=self.scripts_executed, total=self.total_scripts))
+		running_label = self.translations.get('term_view_running_label', ' Running ')
+		self.vbox_main.button_run.set_label(running_label)
 		self._run_next_script()
 
 	def on_child_exit(self, term, status):
 		self.scripts_executed += 1
 		progress = self.scripts_executed / self.total_scripts
 		self.vbox_main.progress_bar.set_fraction(progress)
-		self.vbox_main.progress_bar.set_text(f"Running {self.scripts_executed}/{self.total_scripts}")
+		# Use translatable running text
+		running_text = self.translations.get('term_view_running', 'Running {current}/{total}')
+		self.vbox_main.progress_bar.set_text(running_text.format(current=self.scripts_executed, total=self.total_scripts))
 		self._run_next_script()
 
 	def _run_next_script(self):
 		if not self.script_queue:
-			self.vbox_main.button_run.set_label(" Done ")
+			# Use translatable done text
+			done_label = self.translations.get('term_view_done', ' Done ')
+			done_text = self.translations.get('term_view_done_text', 'Done')
+			self.vbox_main.button_run.set_label(done_label)
 			self.vbox_main.button_run.set_image(Gtk.Image.new_from_icon_name("emblem-ok-symbolic", Gtk.IconSize.BUTTON))
-			self.vbox_main.progress_bar.set_text("Done")
+			self.vbox_main.progress_bar.set_text(done_text)
 			self.vbox_main.button_run.connect("clicked", self.on_done_clicked)
 
 			self.vbox_main.button_run.set_sensitive(True)

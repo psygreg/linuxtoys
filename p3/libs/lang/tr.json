@@ -288,5 +288,11 @@
   "pika_desc": "BorgBackup tabanlı basit ve alan tasarruflu bir yedekleme uygulaması.",
   "prism_desc": "Modlar ve gölgelendiriciler desteğine sahip Minecraft Java Edition için özel bir başlatıcı.",
   "brave_desc": "Yerleşik reklam engelleme özelliğine sahip gizlilik odaklı bir web tarayıcısı.",
-  "intelxe_desc": "Performansı ve uyumluluğu artırmak için desteklenen ayrık GPU'larda (Battlemage/Alchemist) Intel sürücülerini daha yeni Xe sürücüsüne değiştirir."
+  "intelxe_desc": "Performansı ve uyumluluğu artırmak için desteklenen ayrık GPU'larda (Battlemage/Alchemist) Intel sürücülerini daha yeni Xe sürücüsüne değiştirir.",
+  "term_view_execute": " Çalıştır ",
+  "term_view_running_label": " Çalışıyor ",
+  "term_view_done": " Tamamlandı ",
+  "term_view_waiting": "Bekleniyor {current}/{total}",
+  "term_view_running": "Çalışıyor {current}/{total}",
+  "term_view_done_text": "Tamamlandı"
 }

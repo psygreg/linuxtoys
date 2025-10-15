@@ -607,7 +607,7 @@ class AppWindow(Gtk.ApplicationWindow):
             self.show_scripts_view(info)
 
     def open_term_view(self, infos):
-        run_box = term_view.TermRunScripts(infos, self)
+        run_box = term_view.TermRunScripts(infos, self, self.translations)
 
         self.header_widget.hide()
 

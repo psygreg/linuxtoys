@@ -288,5 +288,11 @@
   "pika_desc": "BorgBackup အပေါ်အခြေခံသော ရိုးရှင်းပြီး နေရာချွေတာသည့် backup application တစ်ခုဖြစ်သည်။",
   "prism_desc": "Mods နှင့် shaders များအတွက် ပံ့ပိုးမှုရှိသော Minecraft Java Edition အတွက် စိတ်ကြိုက် launcher တစ်ခု။",
   "brave_desc": "ပေါင်းစပ်ထားသော ကြော်ငြာပိတ်ဆို့မှုပါရှိသော privacy-focused web browser တစ်ခု။",
-  "intelxe_desc": "စွမ်းဆောင်ရည်နှင့် လိုက်ဖက်မှုတိုးတက်စေရန် ထောက်ပံ့သော သီးခြား GPU များ (Battlemage/Alchemist) တွင် Intel ဒရိုင်ဘာများကို ပိုမိုအသစ်သော Xe ဒရိုင်ဘာသို့ ပြောင်းပေးသည်။"
+  "intelxe_desc": "စွမ်းဆောင်ရည်နှင့် လိုက်ဖက်မှုတိုးတက်စေရန် ထောက်ပံ့သော သီးခြား GPU များ (Battlemage/Alchemist) တွင် Intel ဒရိုင်ဘာများကို ပိုမိုအသစ်သော Xe ဒရိုင်ဘာသို့ ပြောင်းပေးသည်။",
+  "term_view_execute": " လုပ်ဆောင်မည် ",
+  "term_view_running_label": " လုပ်ဆောင်နေသည် ",
+  "term_view_done": " ပြီးပြီ ",
+  "term_view_waiting": "စောင့်နေသည် {current}/{total}",
+  "term_view_running": "လုပ်ဆောင်နေသည် {current}/{total}",
+  "term_view_done_text": "ပြီးပြီ"
 }

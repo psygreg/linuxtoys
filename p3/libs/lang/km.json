@@ -288,5 +288,11 @@
   "pika_desc": "កម្មវិធីបម្រុងទុកសាមញ្ញ និងប្រសិទ្ធិភាពទំហំផ្អែកលើ BorgBackup។",
   "prism_desc": "កម្មវិធីចាប់ផ្តើមផ្ទាល់ខ្លួនសម្រាប់ Minecraft Java Edition ជាមួយនឹងការគាំទ្រសម្រាប់ម៉ូដ និង shader។",
   "brave_desc": "កម្មវិធីរុករកបណ្តាញដែលផ្តោតលើឯកជនភាពជាមួយនឹងការទប់ស្កាត់ការផ្សព្វផ្សាយដែលមានរួមបញ្ចូល។",
-  "intelxe_desc": "ប្តូរកម្មវិធីបញ្ជា Intel ទៅកម្មវិធីបញ្ជា Xe ថ្មីលើ GPU ដាច់ដោយឡែកដែលគាំទ្រ (Battlemage/Alchemist) ដើម្បីកែលម្អការអនុវត្ត និងភាពឆបគ្នា។"
+  "intelxe_desc": "ប្តូរកម្មវិធីបញ្ជា Intel ទៅកម្មវិធីបញ្ជា Xe ថ្មីលើ GPU ដាច់ដោយឡែកដែលគាំទ្រ (Battlemage/Alchemist) ដើម្បីកែលម្អការអនុវត្ត និងភាពឆបគ្នា។",
+  "term_view_execute": " ប្រតិបត្តិ ",
+  "term_view_running_label": " កំពុងដំណើរការ ",
+  "term_view_done": " រួចរាល់ ",
+  "term_view_waiting": "កំពុងរង់ចាំ {current}/{total}",
+  "term_view_running": "កំពុងដំណើរការ {current}/{total}",
+  "term_view_done_text": "រួចរាល់"
 }

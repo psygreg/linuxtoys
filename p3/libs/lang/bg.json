@@ -288,5 +288,11 @@
   "pika_desc": "Просто и пестящо място приложение за резервно копие, базирано на BorgBackup.",
   "prism_desc": "Персонализиран стартер за Minecraft Java Edition с поддръжка на модове и шейдъри.",
   "brave_desc": "Уеб браузър, фокусиран върху поверителността, с вградено блокиране на реклами.",
-  "intelxe_desc": "Превключва Intel драйверите към по-новия Xe драйвер на поддържани дискретни GPU (Battlemage/Alchemist) за подобрена производителност и съвместимост."
+  "intelxe_desc": "Превключва Intel драйверите към по-новия Xe драйвер на поддържани дискретни GPU (Battlemage/Alchemist) за подобрена производителност и съвместимост.",
+  "term_view_execute": " Изпълни ",
+  "term_view_running_label": " Изпълнява се ",
+  "term_view_done": " Готово ",
+  "term_view_waiting": "Изчакване {current}/{total}",
+  "term_view_running": "Изпълнява се {current}/{total}",
+  "term_view_done_text": "Готово"
 }

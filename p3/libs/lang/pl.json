@@ -288,5 +288,11 @@
   "pika_desc": "Prosta i oszczędzająca miejsce aplikacja do tworzenia kopii zapasowych oparta na BorgBackup.",
   "prism_desc": "Niestandardowy launcher dla Minecraft Java Edition z obsługą modów i shaderów.",
   "brave_desc": "Przeglądarka internetowa skoncentrowana na prywatności z wbudowanym blokowaniem reklam.",
-  "intelxe_desc": "Przełącza sterowniki Intel na nowszy sterownik Xe na obsługiwanych dyskretnych GPU (Battlemage/Alchemist) w celu poprawy wydajności i kompatybilności."
+  "intelxe_desc": "Przełącza sterowniki Intel na nowszy sterownik Xe na obsługiwanych dyskretnych GPU (Battlemage/Alchemist) w celu poprawy wydajności i kompatybilności.",
+  "term_view_execute": " Wykonaj ",
+  "term_view_running_label": " Uruchomione ",
+  "term_view_done": " Gotowe ",
+  "term_view_waiting": "Oczekiwanie {current}/{total}",
+  "term_view_running": "Uruchomione {current}/{total}",
+  "term_view_done_text": "Gotowe"
 }

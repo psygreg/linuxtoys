@@ -288,5 +288,11 @@
   "pika_desc": "Aplikasi sandaran mudah dan jimat ruang berdasarkan BorgBackup.",
   "prism_desc": "Pelancar tersuai untuk Minecraft Java Edition dengan sokongan untuk mod dan shader.",
   "brave_desc": "Pelayar web yang tertumpu kepada privasi dengan penyekatan iklan terbina dalam.",
-  "intelxe_desc": "Menukar pemacu Intel kepada pemacu Xe yang lebih baharu pada GPU diskret yang disokong (Battlemage/Alchemist) untuk meningkatkan prestasi dan keserasian."
+  "intelxe_desc": "Menukar pemacu Intel kepada pemacu Xe yang lebih baharu pada GPU diskret yang disokong (Battlemage/Alchemist) untuk meningkatkan prestasi dan keserasian.",
+  "term_view_execute": " Laksanakan ",
+  "term_view_running_label": " Sedang berjalan ",
+  "term_view_done": " Selesai ",
+  "term_view_waiting": "Menunggu {current}/{total}",
+  "term_view_running": "Sedang berjalan {current}/{total}",
+  "term_view_done_text": "Selesai"
 }

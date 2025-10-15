@@ -287,5 +287,11 @@
   "pika_desc": "BorgBackup asosida oddiy va joy tejovchi zaxira dasturi.",
   "prism_desc": "Modlar va sheyderlar qo'llab-quvvatlash bilan Minecraft Java Edition uchun maxsus ishga tushirgich.",
   "brave_desc": "O'rnatilgan reklama bloklash bilan maxfiylikka qaratilgan veb-brauzer.",
-  "intelxe_desc": "Ishlash va moslikni yaxshilash uchun qo'llab-quvvatlanadigan diskret GPU-larda (Battlemage/Alchemist) Intel drayverlari yangi Xe drayveriga o'tkaziladi."
+  "intelxe_desc": "Ishlash va moslikni yaxshilash uchun qo'llab-quvvatlanadigan diskret GPU-larda (Battlemage/Alchemist) Intel drayverlari yangi Xe drayveriga o'tkaziladi.",
+  "term_view_execute": " Bajarish ",
+  "term_view_running_label": " Ishlayapti ",
+  "term_view_done": " Tugallandi ",
+  "term_view_waiting": "Kutilmoqda {current}/{total}",
+  "term_view_running": "Ishlayapti {current}/{total}",
+  "term_view_done_text": "Tugallandi"
 }

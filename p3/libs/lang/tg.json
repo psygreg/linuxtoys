@@ -288,5 +288,11 @@
   "pika_desc": "Барномаи нусхабардории оддӣ ва ҷойгиранда дар асоси BorgBackup.",
   "prism_desc": "Оғозгари фармоишӣ барои Minecraft Java Edition бо дастгирии модҳо ва шейдерҳо.",
   "brave_desc": "Браузери интернетии дар асоси махфият бо манъкунии реклама.",
-  "intelxe_desc": "Драйверҳои Intel-ро ба драйвери навтари Xe дар GPU-ҳои дискретии дастгиришаванда (Battlemage/Alchemist) табдил медиҳад, то иҷроиш ва мувофиқатро беҳтар кунад."
+  "intelxe_desc": "Драйверҳои Intel-ро ба драйвери навтари Xe дар GPU-ҳои дискретии дастгиришаванда (Battlemage/Alchemist) табдил медиҳад, то иҷроиш ва мувофиқатро беҳтар кунад.",
+  "term_view_execute": " Иҷро кунед ",
+  "term_view_running_label": " Иҷро шуда истодааст ",
+  "term_view_done": " Анҷом ёфт ",
+  "term_view_waiting": "Интизорӣ {current}/{total}",
+  "term_view_running": "Иҷро шуда истодааст {current}/{total}",
+  "term_view_done_text": "Анҷом ёфт"
 }

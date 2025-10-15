@@ -288,5 +288,11 @@
   "pika_desc": "ແອັບພລິເຄຊັນສໍາຮອງທີ່ງ່າຍດາຍ ແລະປະຫຍັດພື້ນທີ່ໂດຍອີງໃສ່ BorgBackup.",
   "prism_desc": "ຕົວເປີດແບບກຳນົດເອງສຳລັບ Minecraft Java Edition ທີ່ມີການສະໜັບສະໜູນ mods ແລະ shaders.",
   "brave_desc": "ບຣາວເຊີເວັບທີ່ສຸມໃສ່ຄວາມເປັນສ່ວນຕົວພ້ອມການບລັອກໂຄສະນາທີ່ສ້າງຂຶ້ນ.",
-  "intelxe_desc": "ສະຫຼັບໄດຣເວີ Intel ໄປຫາໄດຣເວີ Xe ໃໝ່ກວ່າໃນ GPU ແຍກທີ່ຮອງຮັບ (Battlemage/Alchemist) ເພື່ອປັບປຸງປະສິດທິພາບ ແລະຄວາມເຂົ້າກັນໄດ້."
+  "intelxe_desc": "ສະຫຼັບໄດຣເວີ Intel ໄປຫາໄດຣເວີ Xe ໃໝ່ກວ່າໃນ GPU ແຍກທີ່ຮອງຮັບ (Battlemage/Alchemist) ເພື່ອປັບປຸງປະສິດທິພາບ ແລະຄວາມເຂົ້າກັນໄດ້.",
+  "term_view_execute": " ປະຕິບັດ ",
+  "term_view_running_label": " ກຳລັງດຳເນີນການ ",
+  "term_view_done": " ສຳເລັດ ",
+  "term_view_waiting": "ກຳລັງລໍຖ້າ {current}/{total}",
+  "term_view_running": "ກຳລັງດຳເນີນການ {current}/{total}",
+  "term_view_done_text": "ສຳເລັດ"
 }

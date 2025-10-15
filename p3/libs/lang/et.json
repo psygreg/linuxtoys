@@ -288,5 +288,11 @@
   "pika_desc": "Lihtne ja ruumi säästev varundusrakendus, mis põhineb BorgBackupil.",
   "prism_desc": "Kohandatud käivitaja Minecraft Java Editioni jaoks modide ja shaderite toega.",
   "brave_desc": "Privaatsusele keskendunud veebibrauser sisseehitatud reklaamiblokeerijaga.",
-  "intelxe_desc": "Lülitab Intel draiverid uuemale Xe draiverile toetatud eraldiseisevatel GPU-del (Battlemage/Alchemist) parema jõudluse ja ühilduvuse tagamiseks."
+  "intelxe_desc": "Lülitab Intel draiverid uuemale Xe draiverile toetatud eraldiseisevatel GPU-del (Battlemage/Alchemist) parema jõudluse ja ühilduvuse tagamiseks.",
+  "term_view_execute": " Käivita ",
+  "term_view_running_label": " Töötab ",
+  "term_view_done": " Valmis ",
+  "term_view_waiting": "Ootamine {current}/{total}",
+  "term_view_running": "Töötab {current}/{total}",
+  "term_view_done_text": "Valmis"
 }

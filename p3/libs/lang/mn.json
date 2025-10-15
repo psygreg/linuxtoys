@@ -287,5 +287,11 @@
   "pika_desc": "BorgBackup дээр суурилсан энгийн болон орон зай хэмнэх нөөцлөх програм.",
   "prism_desc": "Модууд болон шейдерүүдийн дэмжлэгтэй Minecraft Java Edition-д зориулсан тохируулагдсан эхлүүлэгч.",
   "brave_desc": "Нууцлалд чиглэсэн вэб хөтөч нь суулгасан сурталчилгааны хаалттай.",
-  "intelxe_desc": "Гүйцэтгэл болон нийцтэй байдлыг сайжруулахын тулд дэмжигдсэн салангид GPU-ууд (Battlemage/Alchemist) дээр Intel драйверуудыг илүү шинэ Xe драйвер руу шилжүүлнэ."
+  "intelxe_desc": "Гүйцэтгэл болон нийцтэй байдлыг сайжруулахын тулд дэмжигдсэн салангид GPU-ууд (Battlemage/Alchemist) дээр Intel драйверуудыг илүү шинэ Xe драйвер руу шилжүүлнэ.",
+  "term_view_execute": " Гүйцэтгэх ",
+  "term_view_running_label": " Ажиллаж байна ",
+  "term_view_done": " Дууссан ",
+  "term_view_waiting": "Хүлээж байна {current}/{total}",
+  "term_view_running": "Ажиллаж байна {current}/{total}",
+  "term_view_done_text": "Дууссан"
 }

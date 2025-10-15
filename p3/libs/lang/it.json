@@ -288,5 +288,11 @@
   "pika_desc": "Un'applicazione di backup semplice ed efficiente nello spazio basata su BorgBackup.",
   "prism_desc": "Un launcher personalizzato per Minecraft Java Edition con supporto per mod e shader.",
   "brave_desc": "Un browser Web incentrato sulla privacy con blocco degli annunci integrato.",
-  "intelxe_desc": "Cambia i driver Intel al driver Xe più recente su GPU discrete supportate (Battlemage/Alchemist) per migliorare prestazioni e compatibilità."
+  "intelxe_desc": "Cambia i driver Intel al driver Xe più recente su GPU discrete supportate (Battlemage/Alchemist) per migliorare prestazioni e compatibilità.",
+  "term_view_execute": " Esegui ",
+  "term_view_running_label": " In esecuzione ",
+  "term_view_done": " Completato ",
+  "term_view_waiting": "In attesa {current}/{total}",
+  "term_view_running": "In esecuzione {current}/{total}",
+  "term_view_done_text": "Completato"
 }

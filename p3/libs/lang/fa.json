@@ -288,5 +288,11 @@
   "pika_desc": "یک برنامه پشتیبان‌گیری ساده و صرفه‌جویی در فضا بر اساس BorgBackup.",
   "prism_desc": "یک لانچر سفارشی برای Minecraft Java Edition با پشتیبانی از مادها و شیدرها.",
   "brave_desc": "یک مرورگر وب متمرکز بر حریم خصوصی با مسدودسازی تبلیغات داخلی.",
-  "intelxe_desc": "درایورهای Intel را به درایور جدیدتر Xe در GPUهای مجزای پشتیبانی‌شده (Battlemage/Alchemist) تغییر می‌دهد تا عملکرد و سازگاری را بهبود بخشد."
+  "intelxe_desc": "درایورهای Intel را به درایور جدیدتر Xe در GPUهای مجزای پشتیبانی‌شده (Battlemage/Alchemist) تغییر می‌دهد تا عملکرد و سازگاری را بهبود بخشد.",
+  "term_view_execute": " اجرا ",
+  "term_view_running_label": " در حال اجرا ",
+  "term_view_done": " انجام شد ",
+  "term_view_waiting": "در انتظار {current}/{total}",
+  "term_view_running": "در حال اجرا {current}/{total}",
+  "term_view_done_text": "انجام شد"
 }

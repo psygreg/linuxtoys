@@ -286,5 +286,11 @@
   "pika_desc": "Programu ya hifadhi rahisi na yenye ufanisi wa nafasi inayotegemea BorgBackup.",
   "prism_desc": "Kizinduzi maalum kwa Minecraft Java Edition na usaidizi kwa mods na shaders.",
   "brave_desc": "Kivinjari cha wavuti kinacholenga faragha na kuzuia matangazo yaliyojengwa.",
-  "intelxe_desc": "Inabadilisha madereva ya Intel kwenda kwa dereva mpya zaidi ya Xe kwenye GPU maalum zinazotumika (Battlemage/Alchemist) kuboresha utendaji na upatanifu."
+  "intelxe_desc": "Inabadilisha madereva ya Intel kwenda kwa dereva mpya zaidi ya Xe kwenye GPU maalum zinazotumika (Battlemage/Alchemist) kuboresha utendaji na upatanifu.",
+  "term_view_execute": " Tekeleza ",
+  "term_view_running_label": " Inaendesha ",
+  "term_view_done": " Imekamilika ",
+  "term_view_waiting": "Inasubiri {current}/{total}",
+  "term_view_running": "Inaendesha {current}/{total}",
+  "term_view_done_text": "Imekamilika"
 }

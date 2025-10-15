@@ -288,5 +288,11 @@
   "pika_desc": "Një aplikacion kopjeje rezervë i thjeshtë dhe efikas në hapësirë i bazuar në BorgBackup.",
   "prism_desc": "Një nisës i personalizuar për Minecraft Java Edition me mbështetje për mods dhe shaders.",
   "brave_desc": "Një shfletues ueb i fokusuar në privatësi me bllokues reklamash të integruar.",
-  "intelxe_desc": "Kalon drejtuesit Intel në drejtuesin më të ri Xe në GPU-të diskrete të mbështetura (Battlemage/Alchemist) për të përmirësuar performancën dhe përputhshmërinë."
+  "intelxe_desc": "Kalon drejtuesit Intel në drejtuesin më të ri Xe në GPU-të diskrete të mbështetura (Battlemage/Alchemist) për të përmirësuar performancën dhe përputhshmërinë.",
+  "term_view_execute": " Ekzekuto ",
+  "term_view_running_label": " Duke ekzekutuar ",
+  "term_view_done": " Përfunduar ",
+  "term_view_waiting": "Duke pritur {current}/{total}",
+  "term_view_running": "Duke ekzekutuar {current}/{total}",
+  "term_view_done_text": "Përfunduar"
 }

@@ -288,5 +288,11 @@
   "pika_desc": "แอปพลิเคชันสำรองข้อมูลที่เรียบง่ายและประหยัดพื้นที่ตาม BorgBackup",
   "prism_desc": "ตัวเปิดแบบกำหนดเองสำหรับ Minecraft Java Edition พร้อมการสนับสนุนสำหรับม็อดและเชดเดอร์",
   "brave_desc": "เว็บเบราว์เซอร์ที่เน้นความเป็นส่วนตัวพร้อมการบล็อกโฆษณาในตัว",
-  "intelxe_desc": "สลับไดรเวอร์ Intel ไปยังไดรเวอร์ Xe ที่ใหม่กว่าบน GPU แยกที่รองรับ (Battlemage/Alchemist) เพื่อปรับปรุงประสิทธิภาพและความเข้ากันได้"
+  "intelxe_desc": "สลับไดรเวอร์ Intel ไปยังไดรเวอร์ Xe ที่ใหม่กว่าบน GPU แยกที่รองรับ (Battlemage/Alchemist) เพื่อปรับปรุงประสิทธิภาพและความเข้ากันได้",
+  "term_view_execute": " ดำเนินการ ",
+  "term_view_running_label": " กำลังดำเนินการ ",
+  "term_view_done": " เสร็จสิ้น ",
+  "term_view_waiting": "กำลังรอ {current}/{total}",
+  "term_view_running": "กำลังดำเนินการ {current}/{total}",
+  "term_view_done_text": "เสร็จสิ้น"
 }

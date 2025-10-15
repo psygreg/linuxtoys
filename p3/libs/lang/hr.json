@@ -288,5 +288,11 @@
   "pika_desc": "Jednostavna i prostorno učinkovita sigurnosna aplikacija bazirana na BorgBackupu.",
   "prism_desc": "Prilagođeni pokretač za Minecraft Java Edition s podrškom za modove i shadere.",
   "brave_desc": "Web preglednik fokusiran na privatnost s ugrađenim blokiranjem reklama.",
-  "intelxe_desc": "Prebacuje Intel upravljačke programe na noviji Xe upravljački program na podržanim diskretnim GPU-ovima (Battlemage/Alchemist) za poboljšane performanse i kompatibilnost."
+  "intelxe_desc": "Prebacuje Intel upravljačke programe na noviji Xe upravljački program na podržanim diskretnim GPU-ovima (Battlemage/Alchemist) za poboljšane performanse i kompatibilnost.",
+  "term_view_execute": " Izvrši ",
+  "term_view_running_label": " Izvršava se ",
+  "term_view_done": " Gotovo ",
+  "term_view_waiting": "Čekanje {current}/{total}",
+  "term_view_running": "Izvršava se {current}/{total}",
+  "term_view_done_text": "Gotovo"
 }

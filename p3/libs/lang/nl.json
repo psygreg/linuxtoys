@@ -288,5 +288,11 @@
   "pika_desc": "Een eenvoudige en ruimtebesparende back-uptoepassing gebaseerd op BorgBackup.",
   "prism_desc": "Een aangepaste launcher voor Minecraft Java Edition met ondersteuning voor mods en shaders.",
   "brave_desc": "Een op privacy gerichte webbrowser met ingebouwde advertentieblokkering.",
-  "intelxe_desc": "Schakelt Intel-stuurprogramma's over naar het nieuwere Xe-stuurprogramma op ondersteunde discrete GPU's (Battlemage/Alchemist) om prestaties en compatibiliteit te verbeteren."
+  "intelxe_desc": "Schakelt Intel-stuurprogramma's over naar het nieuwere Xe-stuurprogramma op ondersteunde discrete GPU's (Battlemage/Alchemist) om prestaties en compatibiliteit te verbeteren.",
+  "term_view_execute": " Uitvoeren ",
+  "term_view_running_label": " Bezig ",
+  "term_view_done": " Klaar ",
+  "term_view_waiting": "Wachten {current}/{total}",
+  "term_view_running": "Bezig {current}/{total}",
+  "term_view_done_text": "Klaar"
 }

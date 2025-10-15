@@ -288,5 +288,11 @@
   "pika_desc": "Μια απλή και αποδοτική εφαρμογή δημιουργίας αντιγράφων ασφαλείας που βασίζεται στο BorgBackup.",
   "prism_desc": "Ένας προσαρμοσμένος εκκινητής για το Minecraft Java Edition με υποστήριξη για mods και shaders.",
   "brave_desc": "Ένας προγραμμα περιήγησης ιστού με επίκεντρο το απόρρητο με ενσωματωμένο αποκλεισμό διαφημίσεων.",
-  "intelxe_desc": "Μεταβάλλει τους οδηγούς Intel στον νεότερο οδηγό Xe σε υποστηριζόμενες διακριτές GPU (Battlemage/Alchemist) για βελτιωμένη απόδοση και συμβατότητα."
+  "intelxe_desc": "Μεταβάλλει τους οδηγούς Intel στον νεότερο οδηγό Xe σε υποστηριζόμενες διακριτές GPU (Battlemage/Alchemist) για βελτιωμένη απόδοση και συμβατότητα.",
+  "term_view_execute": " Εκτέλεση ",
+  "term_view_running_label": " Εκτέλεση ",
+  "term_view_done": " Ολοκληρώθηκε ",
+  "term_view_waiting": "Αναμονή {current}/{total}",
+  "term_view_running": "Εκτελείται {current}/{total}",
+  "term_view_done_text": "Ολοκληρώθηκε"
 }

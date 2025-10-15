@@ -288,5 +288,11 @@
   "pika_desc": "Једноставна и простору ефикасна апликација за прављење резервних копија заснована на BorgBackup-у.",
   "prism_desc": "Прилагођени покретач за Minecraft Java издање са подршком за модове и шејдере.",
   "brave_desc": "Веб претраживач усмерен на приватност са уграђеним блокирањем реклама.",
-  "intelxe_desc": "Пребацује Intel драјвере на новији Xe драјвер на подржаним дискретним GPU-овима (Battlemage/Alchemist) ради побољшања перформанси и компатибилности."
+  "intelxe_desc": "Пребацује Intel драјвере на новији Xe драјвер на подржаним дискретним GPU-овима (Battlemage/Alchemist) ради побољшања перформанси и компатибилности.",
+  "term_view_execute": " Изврши ",
+  "term_view_running_label": " Извршава се ",
+  "term_view_done": " Завршено ",
+  "term_view_waiting": "Чекање {current}/{total}",
+  "term_view_running": "Извршава се {current}/{total}",
+  "term_view_done_text": "Завршено"
 }

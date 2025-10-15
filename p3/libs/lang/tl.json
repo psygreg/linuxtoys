@@ -288,5 +288,11 @@
   "pika_desc": "Isang simple at space-efficient na backup application na batay sa BorgBackup.",
   "prism_desc": "Isang custom launcher para sa Minecraft Java Edition na may suporta para sa mga mod at shader.",
   "brave_desc": "Isang privacy-focused na web browser na may built-in na ad blocking.",
-  "intelxe_desc": "Lilipat ang mga Intel driver sa mas bagong Xe driver sa mga suportadong discrete GPU (Battlemage/Alchemist) upang mapabuti ang pagganap at compatibility."
+  "intelxe_desc": "Lilipat ang mga Intel driver sa mas bagong Xe driver sa mga suportadong discrete GPU (Battlemage/Alchemist) upang mapabuti ang pagganap at compatibility.",
+  "term_view_execute": " Isagawa ",
+  "term_view_running_label": " Tumatakbo ",
+  "term_view_done": " Tapos na ",
+  "term_view_waiting": "Naghihintay {current}/{total}",
+  "term_view_running": "Tumatakbo {current}/{total}",
+  "term_view_done_text": "Tapos na"
 }

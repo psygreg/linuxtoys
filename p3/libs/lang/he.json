@@ -288,5 +288,11 @@
   "pika_desc": "יישום גיבוי פשוט וחסכוני במקום המבוסס על BorgBackup.",
   "prism_desc": "משגר מותאם אישית עבור Minecraft Java Edition עם תמיכה במודים ושיידרים.",
   "brave_desc": "דפדפן אינטרנט ממוקד פרטיות עם חסימת פרסומות מובנית.",
-  "intelxe_desc": "מעביר מנהלי התקן של Intel למנהל ההתקן החדש יותר Xe במעבדי גרפיקה נפרדים נתמכים (Battlemage/Alchemist) לשיפור ביצועים ותאימות."
+  "intelxe_desc": "מעביר מנהלי התקן של Intel למנהל ההתקן החדש יותר Xe במעבדי גרפיקה נפרדים נתמכים (Battlemage/Alchemist) לשיפור ביצועים ותאימות.",
+  "term_view_execute": " הפעל ",
+  "term_view_running_label": " מריץ ",
+  "term_view_done": " הושלם ",
+  "term_view_waiting": "ממתין {current}/{total}",
+  "term_view_running": "מריץ {current}/{total}",
+  "term_view_done_text": "הושלם"
 }

@@ -288,5 +288,11 @@
   "brave_desc": "A privacy-focused web browser with built-in ad blocking.",
   "gtk_bmg_fix": "GTK Rendering Fix",
   "gtk_bmg_fix_desc": "Fixes rendering issues with GTK applications on Intel Battlemage (B-series) and Nvidia GPUs.",
-  "intelxe_desc": "Switches Intel drivers to the newer Xe driver on supported discrete GPUs (Battlemage/Alchemist) to improve performance and compatibility."
+  "intelxe_desc": "Switches Intel drivers to the newer Xe driver on supported discrete GPUs (Battlemage/Alchemist) to improve performance and compatibility.",
+  "term_view_execute": " Execute ",
+  "term_view_running_label": " Running ",
+  "term_view_done": " Done ",
+  "term_view_waiting": "Waiting {current}/{total}",
+  "term_view_running": "Running {current}/{total}",
+  "term_view_done_text": "Done"
 }

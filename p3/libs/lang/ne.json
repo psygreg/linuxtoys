@@ -288,5 +288,11 @@
   "pika_desc": "BorgBackup मा आधारित एक सरल र स्थान-दक्ष ब्याकअप अनुप्रयोग।",
   "prism_desc": "मोडहरू र शेडरहरूको समर्थन सहित Minecraft Java Edition को लागि एक अनुकूलन लन्चर।",
   "brave_desc": "अन्तर्निहित विज्ञापन अवरोधनको साथ गोपनीयता-केन्द्रित वेब ब्राउजर।",
-  "intelxe_desc": "प्रदर्शन र अनुकूलता सुधार गर्न समर्थित अलग GPUs (Battlemage/Alchemist) मा Intel ड्राइभरहरूलाई नयाँ Xe ड्राइभरमा स्विच गर्दछ।"
+  "intelxe_desc": "प्रदर्शन र अनुकूलता सुधार गर्न समर्थित अलग GPUs (Battlemage/Alchemist) मा Intel ड्राइभरहरूलाई नयाँ Xe ड्राइभरमा स्विच गर्दछ।",
+  "term_view_execute": " कार्यान्वयन गर्नुहोस् ",
+  "term_view_running_label": " चलिरहेको ",
+  "term_view_done": " पूरा भयो ",
+  "term_view_waiting": "प्रतीक्षा गर्दै {current}/{total}",
+  "term_view_running": "चलिरहेको {current}/{total}",
+  "term_view_done_text": "पूरा भयो"
 }

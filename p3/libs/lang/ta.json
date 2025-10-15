@@ -286,5 +286,11 @@
   "pika_desc": "BorgBackup அடிப்படையிலான எளிய மற்றும் இட-திறனுள்ள காப்புப்பிரதி பயன்பாடு.",
   "prism_desc": "மாட்ஸ் மற்றும் ஷேடர்களுக்கான ஆதரவுடன் Minecraft Java Edition க்கான தனிப்பயன் துவக்கி.",
   "brave_desc": "உள்ளமைக்கப்பட்ட விளம்பரத் தடுப்புடன் தனியுரிமை மையமான வலை உலாவி.",
-  "intelxe_desc": "செயல்திறன் மற்றும் பொருந்தக்கூடிய தன்மையை மேம்படுத்த ஆதரவளிக்கப்பட்ட தனித்தனி GPUகளில் (Battlemage/Alchemist) Intel இயக்கிகளை புதிய Xe இயக்கிக்கு மாற்றுகிறது."
+  "intelxe_desc": "செயல்திறன் மற்றும் பொருந்தக்கூடிய தன்மையை மேம்படுத்த ஆதரவளிக்கப்பட்ட தனித்தனி GPUகளில் (Battlemage/Alchemist) Intel இயக்கிகளை புதிய Xe இயக்கிக்கு மாற்றுகிறது.",
+  "term_view_execute": " செயல்படுத்து ",
+  "term_view_running_label": " இயங்குகிறது ",
+  "term_view_done": " முடிந்தது ",
+  "term_view_waiting": "காத்திருக்கிறது {current}/{total}",
+  "term_view_running": "இயங்குகிறது {current}/{total}",
+  "term_view_done_text": "முடிந்தது"
 }

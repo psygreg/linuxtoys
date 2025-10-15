@@ -290,5 +290,11 @@
   "pika_desc": "一个基于BorgBackup的简单且节省空间的备份应用程序。",
   "prism_desc": "一个支持模组和光影的Minecraft Java版自定义启动器。",
   "brave_desc": "一个注重隐私的网络浏览器，内置广告拦截功能。",
-  "intelxe_desc": "将Intel驱动程序切换到受支持的独立GPU（Battlemage/Alchemist）上的较新Xe驱动程序，以提高性能和兼容性。"
+  "intelxe_desc": "将Intel驱动程序切换到受支持的独立GPU（Battlemage/Alchemist）上的较新Xe驱动程序，以提高性能和兼容性。",
+  "term_view_execute": " 执行 ",
+  "term_view_running_label": " 运行中 ",
+  "term_view_done": " 完成 ",
+  "term_view_waiting": "等待中 {current}/{total}",
+  "term_view_running": "运行中 {current}/{total}",
+  "term_view_done_text": "完成"
 }

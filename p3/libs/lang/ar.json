@@ -288,5 +288,11 @@
   "pika_desc": "تطبيق نسخ احتياطي بسيط وموفر للمساحة يعتمد على BorgBackup.",
   "prism_desc": "مشغل مخصص لـ Minecraft Java Edition مع دعم التعديلات والظلال.",
   "brave_desc": "متصفح ويب يركز على الخصوصية مع حظر إعلانات مدمج.",
-  "intelxe_desc": "يقوم بتبديل برامج تشغيل Intel إلى برنامج التشغيل Xe الأحدث على وحدات معالجة الرسومات المنفصلة المدعومة (Battlemage/Alchemist) لتحسين الأداء والتوافق."
+  "intelxe_desc": "يقوم بتبديل برامج تشغيل Intel إلى برنامج التشغيل Xe الأحدث على وحدات معالجة الرسومات المنفصلة المدعومة (Battlemage/Alchemist) لتحسين الأداء والتوافق.",
+  "term_view_execute": " تنفيذ ",
+  "term_view_running_label": " قيد التشغيل ",
+  "term_view_done": " تم ",
+  "term_view_waiting": "في انتظار {current}/{total}",
+  "term_view_running": "قيد التشغيل {current}/{total}",
+  "term_view_done_text": "تم"
 }

@@ -288,5 +288,11 @@
   "unsupported_os_title": "Sistem tidak didukung",
   "unsupported_os_message": "Sistem operasi tidak didukung.",
   "dnsmasq_desc": "Atur cache DNS lokal untuk mempercepat resolusi nama domain, meningkatkan kinerja penjelajahan, dan memperbaiki masalah kehilangan kecepatan unduh di Steam.",
-  "intelxe_desc": "Mengalihkan driver Intel ke driver Xe yang lebih baru pada GPU diskrit yang didukung (Battlemage/Alchemist) untuk meningkatkan kinerja dan kompatibilitas."
+  "intelxe_desc": "Mengalihkan driver Intel ke driver Xe yang lebih baru pada GPU diskrit yang didukung (Battlemage/Alchemist) untuk meningkatkan kinerja dan kompatibilitas.",
+  "term_view_execute": " Jalankan ",
+  "term_view_running_label": " Berjalan ",
+  "term_view_done": " Selesai ",
+  "term_view_waiting": "Menunggu {current}/{total}",
+  "term_view_running": "Berjalan {current}/{total}",
+  "term_view_done_text": "Selesai"
 }

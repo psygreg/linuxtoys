@@ -288,5 +288,11 @@
   "pika_desc": "Jednoduchá a úsporná zálohovací aplikace založená na BorgBackupu.",
   "prism_desc": "Vlastní spouštěč pro Minecraft Java Edition s podporou modů a shaderů.",
   "brave_desc": "Webový prohlížeč zaměřený na soukromí s vestavěným blokováním reklam.",
-  "intelxe_desc": "Přepne ovladače Intel na novější ovladač Xe na podporovaných diskrétních GPU (Battlemage/Alchemist) pro lepší výkon a kompatibilitu."
+  "intelxe_desc": "Přepne ovladače Intel na novější ovladač Xe na podporovaných diskrétních GPU (Battlemage/Alchemist) pro lepší výkon a kompatibilitu.",
+  "term_view_execute": " Spustit ",
+  "term_view_running_label": " Probíhá ",
+  "term_view_done": " Hotovo ",
+  "term_view_waiting": "Čeká se {current}/{total}",
+  "term_view_running": "Probíhá {current}/{total}",
+  "term_view_done_text": "Hotovo"
 }

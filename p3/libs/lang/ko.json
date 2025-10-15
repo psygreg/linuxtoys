@@ -288,5 +288,11 @@
   "pika_desc": "BorgBackup 기반의 간단하고 공간 효율적인 백업 애플리케이션입니다.",
   "prism_desc": "모드와 셰이더를 지원하는 Minecraft Java Edition용 커스텀 런처입니다.",
   "brave_desc": "광고 차단 기능이 내장된 개인정보 보호 중심 웹 브라우저입니다.",
-  "intelxe_desc": "성능과 호환성을 향상시키기 위해 지원되는 별도 GPU(Battlemage/Alchemist)에서 Intel 드라이버를 최신 Xe 드라이버로 전환합니다."
+  "intelxe_desc": "성능과 호환성을 향상시키기 위해 지원되는 별도 GPU(Battlemage/Alchemist)에서 Intel 드라이버를 최신 Xe 드라이버로 전환합니다.",
+  "term_view_execute": " 실행 ",
+  "term_view_running_label": " 실행 중 ",
+  "term_view_done": " 완료 ",
+  "term_view_waiting": "대기 중 {current}/{total}",
+  "term_view_running": "실행 중 {current}/{total}",
+  "term_view_done_text": "완료"
 }

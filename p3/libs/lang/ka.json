@@ -288,5 +288,11 @@
   "pika_desc": "მარტივი და სივრცე-ეფექტური სარეზერვო აპლიკაცია, დაფუძნებული BorgBackup-ზე.",
   "prism_desc": "მორგებული გამშვები Minecraft Java Edition-ისთვის მოდებისა და შეიდერების მხარდაჭერით.",
   "brave_desc": "კონფიდენციალურობაზე ორიენტირებული ვებ ბრაუზერი ჩაშენებული რეკლამების დაბლოკვით.",
-  "intelxe_desc": "გადართავს Intel დრაივერებს უფრო ახალ Xe დრაივერზე მხარდაჭერილ დისკრეტულ GPU-ებზე (Battlemage/Alchemist) შესრულებისა და თავსებადობის გასაუმჯობესებლად."
+  "intelxe_desc": "გადართავს Intel დრაივერებს უფრო ახალ Xe დრაივერზე მხარდაჭერილ დისკრეტულ GPU-ებზე (Battlemage/Alchemist) შესრულებისა და თავსებადობის გასაუმჯობესებლად.",
+  "term_view_execute": " შესრულება ",
+  "term_view_running_label": " გაშვებულია ",
+  "term_view_done": " დასრულებულია ",
+  "term_view_waiting": "მოლოდინი {current}/{total}",
+  "term_view_running": "გაშვებულია {current}/{total}",
+  "term_view_done_text": "დასრულებულია"
 }
