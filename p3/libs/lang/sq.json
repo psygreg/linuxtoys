@@ -294,5 +294,7 @@
   "term_view_done": " Përfunduar ",
   "term_view_waiting": "Duke pritur {current}/{total}",
   "term_view_running": "Duke ekzekutuar {current}/{total}",
-  "term_view_done_text": "Përfunduar"
+  "term_view_done_text": "Përfunduar",
+  "archsb": "Secure Boot për Arch",
+  "archsb_desc": "Vendosni shpejt Secure Boot në Arch Linux. Kërkon vendosjen e modalitetit Secure Boot në \"Setup\" në cilësimet e firmware-it UEFI."
 }

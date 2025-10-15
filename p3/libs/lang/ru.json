@@ -294,5 +294,7 @@
   "term_view_done": " Готово ",
   "term_view_waiting": "Ожидание {current}/{total}",
   "term_view_running": "Выполняется {current}/{total}",
-  "term_view_done_text": "Готово"
+  "term_view_done_text": "Готово",
+  "archsb": "Безопасная загрузка для Arch",
+  "archsb_desc": "Быстро настройте безопасную загрузку на Arch Linux. Требуется установить режим безопасной загрузки в \"Setup\" в настройках прошивки UEFI."
 }

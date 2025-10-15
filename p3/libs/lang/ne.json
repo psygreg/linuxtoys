@@ -294,5 +294,7 @@
   "term_view_done": " पूरा भयो ",
   "term_view_waiting": "प्रतीक्षा गर्दै {current}/{total}",
   "term_view_running": "चलिरहेको {current}/{total}",
-  "term_view_done_text": "पूरा भयो"
+  "term_view_done_text": "पूरा भयो",
+  "archsb": "Arch को लागि सिक्योर बुट",
+  "archsb_desc": "Arch Linux मा सिक्योर बुटलाई छिटो सेटअप गर्नुहोस्। तपाईंको UEFI फर्मवेयर सेटिङहरूमा सिक्योर बुट मोडलाई \"Setup\" मा सेट गर्न आवश्यक छ।"
 }

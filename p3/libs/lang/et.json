@@ -294,5 +294,7 @@
   "term_view_done": " Valmis ",
   "term_view_waiting": "Ootamine {current}/{total}",
   "term_view_running": "Töötab {current}/{total}",
-  "term_view_done_text": "Valmis"
+  "term_view_done_text": "Valmis",
+  "archsb": "Secure Boot Archi jaoks",
+  "archsb_desc": "Seadistage Secure Boot kiiresti Arch Linuxis. Nõuab Secure Boot režiimi seadmist \"Setup\"-ile teie UEFI firmware seadetes."
 }

@@ -294,5 +294,7 @@
   "term_view_done": " Terminat ",
   "term_view_waiting": "Așteptare {current}/{total}",
   "term_view_running": "Rulează {current}/{total}",
-  "term_view_done_text": "Terminat"
+  "term_view_done_text": "Terminat",
+  "archsb": "Secure Boot pentru Arch",
+  "archsb_desc": "Configurați rapid Secure Boot pe Arch Linux. Necesită setarea modului Secure Boot pe \"Setup\" în setările firmware-ului UEFI."
 }

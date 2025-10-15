@@ -294,5 +294,7 @@
   "term_view_done": " ተጠናቅቋል ",
   "term_view_waiting": "በመጠበቅ ላይ {current}/{total}",
   "term_view_running": "በመስራት ላይ {current}/{total}",
-  "term_view_done_text": "ተጠናቅቋል"
+  "term_view_done_text": "ተጠናቅቋል",
+  "archsb": "ለArch የተጠበቀ ማስነሻ",
+  "archsb_desc": "በArch Linux ላይ የተጠበቀ ማስነሻን በፍጥነት ያዋቅሩ። በእርስዎ UEFI firmware ቅንብሮች ውስጥ የSecure Boot ሁነታን ወደ \"Setup\" ማዋቀር ያስፈልጋል።"
 }

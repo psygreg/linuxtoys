@@ -292,5 +292,7 @@
   "term_view_done": " Imekamilika ",
   "term_view_waiting": "Inasubiri {current}/{total}",
   "term_view_running": "Inaendesha {current}/{total}",
-  "term_view_done_text": "Imekamilika"
+  "term_view_done_text": "Imekamilika",
+  "archsb": "Secure Boot kwa Arch",
+  "archsb_desc": "Weka Secure Boot haraka kwenye Arch Linux. Inahitaji kuweka hali ya Secure Boot kuwa \"Setup\" katika mipangilio ya firmware ya UEFI yako."
 }

@@ -294,5 +294,7 @@
   "term_view_done": " Ολοκληρώθηκε ",
   "term_view_waiting": "Αναμονή {current}/{total}",
   "term_view_running": "Εκτελείται {current}/{total}",
-  "term_view_done_text": "Ολοκληρώθηκε"
+  "term_view_done_text": "Ολοκληρώθηκε",
+  "archsb": "Secure Boot για Arch",
+  "archsb_desc": "Ρυθμίστε γρήγορα το Secure Boot στο Arch Linux. Απαιτεί τη ρύθμιση της λειτουργίας Secure Boot σε \"Setup\" στις ρυθμίσεις του UEFI firmware σας."
 }

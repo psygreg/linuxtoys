@@ -294,5 +294,7 @@
   "term_view_done": " Klart ",
   "term_view_waiting": "Väntar {current}/{total}",
   "term_view_running": "Kör {current}/{total}",
-  "term_view_done_text": "Klart"
+  "term_view_done_text": "Klart",
+  "archsb": "Secure Boot för Arch",
+  "archsb_desc": "Ställ snabbt in Secure Boot på Arch Linux. Kräver att Secure Boot-läget ställs in på \"Setup\" i dina UEFI firmware-inställningar."
 }

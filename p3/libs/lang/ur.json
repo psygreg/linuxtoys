@@ -294,5 +294,7 @@
   "term_view_done": " مکمل ",
   "term_view_waiting": "انتظار {current}/{total}",
   "term_view_running": "چل رہا ہے {current}/{total}",
-  "term_view_done_text": "مکمل"
+  "term_view_done_text": "مکمل",
+  "archsb": "Arch کے لیے سیکیور بوٹ",
+  "archsb_desc": "Arch Linux پر سیکیور بوٹ کو تیزی سے سیٹ اپ کریں۔ آپ کی UEFI فرم ویئر سیٹنگز میں سیکیور بوٹ موڈ کو \"Setup\" پر سیٹ کرنے کی ضرورت ہے۔"
 }

@@ -294,5 +294,7 @@
   "term_view_done": " Pabeigts ",
   "term_view_waiting": "Gaida {current}/{total}",
   "term_view_running": "Izpildās {current}/{total}",
-  "term_view_done_text": "Pabeigts"
+  "term_view_done_text": "Pabeigts",
+  "archsb": "Secure Boot priekš Arch",
+  "archsb_desc": "Ātri iestatiet drošo sāknēšanu uz Arch Linux. Nepieciešams iestatīt drošās sāknēšanas režīmu uz \"Setup\" jūsu UEFI firmware iestatījumos."
 }

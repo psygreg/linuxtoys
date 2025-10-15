@@ -294,5 +294,7 @@
   "term_view_done": " Selesai ",
   "term_view_waiting": "Menunggu {current}/{total}",
   "term_view_running": "Berjalan {current}/{total}",
-  "term_view_done_text": "Selesai"
+  "term_view_done_text": "Selesai",
+  "archsb": "Secure Boot untuk Arch",
+  "archsb_desc": "Siapkan Secure Boot dengan cepat di Arch Linux. Memerlukan pengaturan mode Secure Boot ke \"Setup\" di pengaturan firmware UEFI Anda."
 }

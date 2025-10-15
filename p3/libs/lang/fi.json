@@ -294,5 +294,7 @@
   "term_view_done": " Valmis ",
   "term_view_waiting": "Odotetaan {current}/{total}",
   "term_view_running": "Suoritetaan {current}/{total}",
-  "term_view_done_text": "Valmis"
+  "term_view_done_text": "Valmis",
+  "archsb": "Secure Boot Archille",
+  "archsb_desc": "Määritä Secure Boot nopeasti Arch Linuxissa. Vaatii Secure Boot -tilan asettamisen \"Setup\"-tilaan UEFI-laiteohjelmiston asetuksissa."
 }

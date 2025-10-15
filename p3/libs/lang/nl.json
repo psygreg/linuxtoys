@@ -294,5 +294,7 @@
   "term_view_done": " Klaar ",
   "term_view_waiting": "Wachten {current}/{total}",
   "term_view_running": "Bezig {current}/{total}",
-  "term_view_done_text": "Klaar"
+  "term_view_done_text": "Klaar",
+  "archsb": "Secure Boot voor Arch",
+  "archsb_desc": "Stel Secure Boot snel in op Arch Linux. Vereist dat de Secure Boot-modus op \"Setup\" wordt ingesteld in uw UEFI-firmware-instellingen."
 }

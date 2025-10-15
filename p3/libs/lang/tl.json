@@ -294,5 +294,7 @@
   "term_view_done": " Tapos na ",
   "term_view_waiting": "Naghihintay {current}/{total}",
   "term_view_running": "Tumatakbo {current}/{total}",
-  "term_view_done_text": "Tapos na"
+  "term_view_done_text": "Tapos na",
+  "archsb": "Secure Boot para sa Arch",
+  "archsb_desc": "Mabilis na i-set up ang Secure Boot sa Arch Linux. Nangangailangan ng pagtatakda ng Secure Boot mode sa \"Setup\" sa iyong mga setting ng UEFI firmware."
 }

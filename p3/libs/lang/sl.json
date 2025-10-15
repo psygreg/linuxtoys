@@ -294,5 +294,7 @@
   "term_view_done": " Končano ",
   "term_view_waiting": "Čakanje {current}/{total}",
   "term_view_running": "Izvajanje {current}/{total}",
-  "term_view_done_text": "Končano"
+  "term_view_done_text": "Končano",
+  "archsb": "Secure Boot za Arch",
+  "archsb_desc": "Hitro nastavite Secure Boot na Arch Linux. Zahteva nastavitev načina Secure Boot na \"Setup\" v nastavitvah vdelane programske opreme UEFI."
 }

@@ -294,5 +294,7 @@
   "term_view_done": " Déanta ",
   "term_view_waiting": "Ag fanacht {current}/{total}",
   "term_view_running": "Ag rith {current}/{total}",
-  "term_view_done_text": "Déanta"
+  "term_view_done_text": "Déanta",
+  "archsb": "Tosaithe Slán do Arch",
+  "archsb_desc": "Socraigh Tosaithe Slán go tapa ar Arch Linux. Éilíonn sé an mód Tosaithe Slán a shocrú ar \"Setup\" i do shocruithe firmware UEFI."
 }

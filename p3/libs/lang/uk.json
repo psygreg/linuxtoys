@@ -294,5 +294,7 @@
   "term_view_done": " Готово ",
   "term_view_waiting": "Очікування {current}/{total}",
   "term_view_running": "Виконується {current}/{total}",
-  "term_view_done_text": "Готово"
+  "term_view_done_text": "Готово",
+  "archsb": "Безпечне завантаження для Arch",
+  "archsb_desc": "Швидко налаштуйте безпечне завантаження на Arch Linux. Потрібно встановити режим безпечного завантаження на \"Setup\" у налаштуваннях мікропрограми UEFI."
 }

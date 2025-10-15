@@ -294,5 +294,7 @@
   "term_view_done": " Lokið ",
   "term_view_waiting": "Bíður {current}/{total}",
   "term_view_running": "Keyrir {current}/{total}",
-  "term_view_done_text": "Lokið"
+  "term_view_done_text": "Lokið",
+  "archsb": "Secure Boot fyrir Arch",
+  "archsb_desc": "Settu upp Secure Boot fljótt á Arch Linux. Krefst þess að stilla Secure Boot ham á \"Setup\" í UEFI firmware stillingum þínum."
 }

@@ -293,5 +293,7 @@
   "term_view_done": " সম্পন্ন ",
   "term_view_waiting": "অপেক্ষা করছে {current}/{total}",
   "term_view_running": "চলছে {current}/{total}",
-  "term_view_done_text": "সম্পন্ন"
+  "term_view_done_text": "সম্পন্ন",
+  "archsb": "Arch এর জন্য সিকিউর বুট",
+  "archsb_desc": "Arch Linux-এ দ্রুত সিকিউর বুট সেট আপ করুন। আপনার UEFI ফার্মওয়্যার সেটিংসে সিকিউর বুট মোড \"Setup\"-এ সেট করা প্রয়োজন।"
 }

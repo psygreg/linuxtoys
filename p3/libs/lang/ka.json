@@ -294,5 +294,7 @@
   "term_view_done": " დასრულებულია ",
   "term_view_waiting": "მოლოდინი {current}/{total}",
   "term_view_running": "გაშვებულია {current}/{total}",
-  "term_view_done_text": "დასრულებულია"
+  "term_view_done_text": "დასრულებულია",
+  "archsb": "Secure Boot Arch-ისთვის",
+  "archsb_desc": "სწრაფად დააყენეთ Secure Boot Arch Linux-ზე. საჭიროებს Secure Boot რეჟიმის დაყენებას \"Setup\"-ზე თქვენს UEFI firmware პარამეტრებში."
 }

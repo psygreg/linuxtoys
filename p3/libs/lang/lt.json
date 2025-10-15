@@ -294,5 +294,7 @@
   "term_view_done": " Baigta ",
   "term_view_waiting": "Laukiama {current}/{total}",
   "term_view_running": "Vykdoma {current}/{total}",
-  "term_view_done_text": "Baigta"
+  "term_view_done_text": "Baigta",
+  "archsb": "Secure Boot Arch sistemai",
+  "archsb_desc": "Greitai nustatykite saugų paleidimą Arch Linux sistemoje. Reikalauja nustatyti saugaus paleidimo režimą į \"Setup\" jūsų UEFI firmware nustatymuose."
 }

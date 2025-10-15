@@ -294,5 +294,7 @@
   "term_view_done": " 完了 ",
   "term_view_waiting": "待機中 {current}/{total}",
   "term_view_running": "実行中 {current}/{total}",
-  "term_view_done_text": "完了"
+  "term_view_done_text": "完了",
+  "archsb": "Arch用セキュアブート",
+  "archsb_desc": "Arch Linuxでセキュアブートを素早く設定します。UEFIファームウェア設定でセキュアブートモードを\"Setup\"に設定する必要があります。"
 }

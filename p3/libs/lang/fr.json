@@ -294,5 +294,7 @@
   "term_view_done": " Terminé ",
   "term_view_waiting": "En attente {current}/{total}",
   "term_view_running": "En cours {current}/{total}",
-  "term_view_done_text": "Terminé"
+  "term_view_done_text": "Terminé",
+  "archsb": "Démarrage sécurisé pour Arch",
+  "archsb_desc": "Configurez rapidement le démarrage sécurisé sur Arch Linux. Nécessite de définir le mode de démarrage sécurisé sur \"Setup\" dans les paramètres du firmware UEFI."
 }

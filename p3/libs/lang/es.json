@@ -294,5 +294,7 @@
   "term_view_done": " Listo ",
   "term_view_waiting": "Esperando {current}/{total}",
   "term_view_running": "Ejecutando {current}/{total}",
-  "term_view_done_text": "Listo"
+  "term_view_done_text": "Listo",
+  "archsb": "Secure Boot para Arch",
+  "archsb_desc": "Configure rápidamente Secure Boot en Arch Linux. Requiere configurar el modo Secure Boot en \"Setup\" en la configuración del firmware UEFI."
 }

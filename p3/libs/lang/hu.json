@@ -294,5 +294,7 @@
   "term_view_done": " Kész ",
   "term_view_waiting": "Várakozás {current}/{total}",
   "term_view_running": "Futtatás {current}/{total}",
-  "term_view_done_text": "Kész"
+  "term_view_done_text": "Kész",
+  "archsb": "Secure Boot Arch-hoz",
+  "archsb_desc": "Állítsa be gyorsan a Secure Bootot Arch Linuxon. Meg kell adnia a Secure Boot módot \"Setup\"-ra az UEFI firmware beállításaiban."
 }

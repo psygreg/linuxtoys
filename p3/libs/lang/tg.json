@@ -294,5 +294,7 @@
   "term_view_done": " Анҷом ёфт ",
   "term_view_waiting": "Интизорӣ {current}/{total}",
   "term_view_running": "Иҷро шуда истодааст {current}/{total}",
-  "term_view_done_text": "Анҷом ёфт"
+  "term_view_done_text": "Анҷом ёфт",
+  "archsb": "Secure Boot барои Arch",
+  "archsb_desc": "Ба таври зуд Secure Boot-ро дар Arch Linux танзим кунед. Лозим аст, ки реҷаи Secure Boot-ро ба \"Setup\" дар танзимоти firmware UEFI-и худ гузоред."
 }

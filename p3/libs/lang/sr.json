@@ -294,5 +294,7 @@
   "term_view_done": " Завршено ",
   "term_view_waiting": "Чекање {current}/{total}",
   "term_view_running": "Извршава се {current}/{total}",
-  "term_view_done_text": "Завршено"
+  "term_view_done_text": "Завршено",
+  "archsb": "Безбедно покретање за Arch",
+  "archsb_desc": "Брзо подесите безбедно покретање на Arch Linux-у. Захтева постављање режима безбедног покретања на \"Setup\" у вашим UEFI firmware подешавањима."
 }

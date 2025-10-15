@@ -293,5 +293,7 @@
   "term_view_done": " Tamamlandı ",
   "term_view_waiting": "Gözlənilir {current}/{total}",
   "term_view_running": "İşləyir {current}/{total}",
-  "term_view_done_text": "Tamamlandı"
+  "term_view_done_text": "Tamamlandı",
+  "archsb": "Arch üçün Secure Boot",
+  "archsb_desc": "Arch Linux-da Secure Boot-u tez bir zamanda quraşdırın. UEFI firmware parametrlerinizdə Secure Boot rejimini \"Setup\" olaraq təyin etməyi tələb edir."
 }

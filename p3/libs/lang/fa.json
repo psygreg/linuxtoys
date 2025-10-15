@@ -294,5 +294,7 @@
   "term_view_done": " انجام شد ",
   "term_view_waiting": "در انتظار {current}/{total}",
   "term_view_running": "در حال اجرا {current}/{total}",
-  "term_view_done_text": "انجام شد"
+  "term_view_done_text": "انجام شد",
+  "archsb": "Secure Boot برای Arch",
+  "archsb_desc": "به سرعت Secure Boot را در Arch Linux راه‌اندازی کنید. نیاز به تنظیم حالت Secure Boot به \"Setup\" در تنظیمات firmware UEFI شما دارد."
 }

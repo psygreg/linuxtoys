@@ -294,5 +294,7 @@
   "term_view_done": " Hoàn thành ",
   "term_view_waiting": "Đang chờ {current}/{total}",
   "term_view_running": "Đang chạy {current}/{total}",
-  "term_view_done_text": "Hoàn thành"
+  "term_view_done_text": "Hoàn thành",
+  "archsb": "Secure Boot cho Arch",
+  "archsb_desc": "Thiết lập Secure Boot nhanh chóng trên Arch Linux. Yêu cầu đặt chế độ Secure Boot thành \"Setup\" trong cài đặt firmware UEFI của bạn."
 }

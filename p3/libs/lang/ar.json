@@ -294,5 +294,7 @@
   "term_view_done": " تم ",
   "term_view_waiting": "في انتظار {current}/{total}",
   "term_view_running": "قيد التشغيل {current}/{total}",
-  "term_view_done_text": "تم"
+  "term_view_done_text": "تم",
+  "archsb": "التشغيل الآمن لـ Arch",
+  "archsb_desc": "قم بإعداد التشغيل الآمن بسرعة على Arch Linux. يتطلب تعيين وضع التشغيل الآمن إلى \"Setup\" في إعدادات البرنامج الثابت UEFI الخاصة بك."
 }

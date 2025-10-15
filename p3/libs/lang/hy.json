@@ -294,5 +294,7 @@
   "term_view_done": " Ավարտված է ",
   "term_view_waiting": "Սպասում {current}/{total}",
   "term_view_running": "Կատարվում է {current}/{total}",
-  "term_view_done_text": "Ավարտված է"
+  "term_view_done_text": "Ավարտված է",
+  "archsb": "Secure Boot Arch-ի համար",
+  "archsb_desc": "Արագ կարգավորեք Secure Boot-ը Arch Linux-ում։ Անհրաժեշտ է Secure Boot ռեժիմը դնել \"Setup\" ձեր UEFI firmware կարգավորումներում։"
 }

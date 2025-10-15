@@ -294,5 +294,7 @@
   "term_view_done": " Ferdig ",
   "term_view_waiting": "Venter {current}/{total}",
   "term_view_running": "Kjører {current}/{total}",
-  "term_view_done_text": "Ferdig"
+  "term_view_done_text": "Ferdig",
+  "archsb": "Secure Boot for Arch",
+  "archsb_desc": "Sett opp Secure Boot raskt på Arch Linux. Krever at Secure Boot-modus settes til \"Setup\" i UEFI firmware-innstillingene dine."
 }

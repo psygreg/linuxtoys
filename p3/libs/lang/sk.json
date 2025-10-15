@@ -294,5 +294,7 @@
   "term_view_done": " Hotovo ",
   "term_view_waiting": "Čaká sa {current}/{total}",
   "term_view_running": "Prebieha {current}/{total}",
-  "term_view_done_text": "Hotovo"
+  "term_view_done_text": "Hotovo",
+  "archsb": "Secure Boot pre Arch",
+  "archsb_desc": "Rýchlo nastavte Secure Boot na Arch Linux. Vyžaduje nastavenie režimu Secure Boot na \"Setup\" v nastaveniach firmware UEFI."
 }

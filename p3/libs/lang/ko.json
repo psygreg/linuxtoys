@@ -294,5 +294,7 @@
   "term_view_done": " 완료 ",
   "term_view_waiting": "대기 중 {current}/{total}",
   "term_view_running": "실행 중 {current}/{total}",
-  "term_view_done_text": "완료"
+  "term_view_done_text": "완료",
+  "archsb": "Arch용 보안 부팅",
+  "archsb_desc": "Arch Linux에서 보안 부팅을 빠르게 설정합니다. UEFI 펌웨어 설정에서 보안 부팅 모드를 \"Setup\"으로 설정해야 합니다."
 }

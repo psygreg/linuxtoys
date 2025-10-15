@@ -293,5 +293,7 @@
   "term_view_done": " Tugallandi ",
   "term_view_waiting": "Kutilmoqda {current}/{total}",
   "term_view_running": "Ishlayapti {current}/{total}",
-  "term_view_done_text": "Tugallandi"
+  "term_view_done_text": "Tugallandi",
+  "archsb": "Arch uchun Secure Boot",
+  "archsb_desc": "Arch Linux-da Secure Boot-ni tez sozlang. UEFI firmware sozlamalaringizda Secure Boot rejimini \"Setup\" ga o'rnatishni talab qiladi."
 }

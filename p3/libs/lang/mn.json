@@ -293,5 +293,7 @@
   "term_view_done": " Дууссан ",
   "term_view_waiting": "Хүлээж байна {current}/{total}",
   "term_view_running": "Ажиллаж байна {current}/{total}",
-  "term_view_done_text": "Дууссан"
+  "term_view_done_text": "Дууссан",
+  "archsb": "Arch-д зориулсан Secure Boot",
+  "archsb_desc": "Arch Linux дээр Secure Boot-г хурдан тохируулна уу. UEFI firmware тохиргоондоо Secure Boot горимыг \"Setup\" болгож тохируулах шаардлагатай."
 }

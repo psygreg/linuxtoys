@@ -274,5 +274,7 @@
   "term_view_done": " पूर्ण ",
   "term_view_waiting": "प्रतीक्षा कर रहा है {current}/{total}",
   "term_view_running": "चल रहा है {current}/{total}",
-  "term_view_done_text": "पूर्ण"
+  "term_view_done_text": "पूर्ण",
+  "archsb": "Arch के लिए सिक्योर बूट",
+  "archsb_desc": "Arch Linux पर सिक्योर बूट को शीघ्रता से सेट अप करें। आपकी UEFI फर्मवेयर सेटिंग्स में सिक्योर बूट मोड को \"Setup\" पर सेट करने की आवश्यकता है।"
 }
