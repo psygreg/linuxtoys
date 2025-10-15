@@ -24,7 +24,7 @@ if [ "$(sbctl status | grep -i 'secure boot' | grep -i 'disabled')" ]; then
         fi
         # create and enroll keys with sbctl
         sudo sbctl create-keys
-        sudo sbctl enroll-keys -m
+        sudo sbctl enroll-keys -m -f
         # Sign all unsigned files
         while IFS= read -r line; do
             if [[ "$line" =~ ✗ ]]; then
