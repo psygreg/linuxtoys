@@ -5,7 +5,6 @@ import os, shutil
 from . import parser
 from . import header
 from . import footer
-from . import confirm_helper
 from . import compat
 from . import head_menu
 from . import reboot_helper
@@ -572,10 +571,6 @@ class AppWindow(Gtk.ApplicationWindow):
         
         # If this is a root script (shown as a category), execute it directly
         if info.get('is_script'):
-            # Show confirmation dialog before executing root script
-            if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
-                return  # User cancelled
-            
             # Use VTE-based term_view for execution
             self.open_term_view([info])
         else:
@@ -721,10 +716,7 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         
         # Load new translations
         self.translations = lang_utils.load_translations(new_language_code)
-        
-        # Update the script runner's translations
-        self.script_runner.translations = self.translations
-        
+
         # Update search engine translations
         self.search_engine.update_translations(self.translations)
         
@@ -1456,10 +1448,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self._show_reboot_warning_dialog()
             return
         
-        # Show confirmation dialog before executing script
-        if confirm_helper.show_single_script_confirmation(item_info, self, self.translations):
-            # Use VTE-based term_view for execution
-            self.open_term_view([item_info])
+        # Use VTE-based term_view for execution
+        self.open_term_view([item_info])
 
     def _clear_search_results(self):
         """Clear search results and return to previous view."""

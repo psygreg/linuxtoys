@@ -139,6 +139,9 @@ class TermRunScripts(Gtk.Box):
 		self.vbox_main._update_header_labels(current_script)
 
 		script_path = current_script.get('path', 'true')
+		if current_script.get('reboot') == "yes":
+			self.parent.reboot_required = True
+
 		script_dir = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 
 		shell_exec = ["/bin/bash", f"{script_path}"]
