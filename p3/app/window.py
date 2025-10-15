@@ -5,12 +5,10 @@ import os, shutil
 from . import parser
 from . import header
 from . import footer
-from . import checklist_helper
 from . import confirm_helper
 from . import compat
 from . import head_menu
 from . import reboot_helper
-from . import script_runner
 from . import search_helper
 from . import get_icon_path
 from . import term_view
@@ -28,7 +26,6 @@ class AppWindow(Gtk.ApplicationWindow):
         self._set_window_icon()
 
         # --- Instance variables for script management ---
-        self.script_is_running = False
         self.reboot_required = False  # Track if a reboot is required
         self.current_category_info = None  # Track current category for header updates
         self.navigation_stack = []  # Stack to track navigation history for proper back button behavior
@@ -41,9 +38,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # Checklist
         self.check_buttons = []
-        
-        # Initialize script runner
-        self.script_runner = script_runner.ScriptRunner(self, self.translations)
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -551,21 +545,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
         for cb in self.check_buttons: cb.set_active(False)
 
-    def run_script_with_callback(self, script_info, callback):
-        """Run a script and call callback when done."""
-        def completion_handler():
-            if callback:
-                callback()
-        
-        def reboot_handler():
-            self.reboot_required = True
-        
-        return self.script_runner.run_script(
-            script_info, 
-            on_completion=completion_handler,
-            on_reboot_required=reboot_handler
-        )
-
     def on_cancel_checklist(self, button):
         """Uncheck all boxes, remove checklist buttons from footer, and return to previous view."""
         for cb in self.check_buttons:
@@ -593,24 +572,12 @@ class AppWindow(Gtk.ApplicationWindow):
         
         # If this is a root script (shown as a category), execute it directly
         if info.get('is_script'):
-            if not self.script_runner.is_running():
-                # Show confirmation dialog before executing root script
-                if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
-                    return  # User cancelled
-                    
-                self.script_is_running = True
-                
-                def completion_handler():
-                    self.script_is_running = False
-                
-                def reboot_handler():
-                    self.reboot_required = True
-                
-                self.script_runner.run_script(
-                    info, 
-                    on_completion=completion_handler,
-                    on_reboot_required=reboot_handler
-                )
+            # Show confirmation dialog before executing root script
+            if not confirm_helper.show_single_script_confirmation(info, self, self.translations):
+                return  # User cancelled
+            
+            # Use VTE-based term_view for execution
+            self.open_term_view([info])
         else:
             # This is a category or subcategory - navigate to show its contents  
             # Create a new view for the subcategory to enable proper animation
@@ -662,9 +629,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
-        if self.script_runner.is_running():
-            return
-
         # Check if reboot is required before proceeding
         if self.reboot_required:
             self._show_reboot_warning_dialog()
@@ -749,7 +713,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
     
     def _close_application(self):
         """Closes the application gracefully."""
-        self.script_runner.terminate()
         self.get_application().quit()
 
     def on_language_changed(self, new_language_code):
@@ -1489,26 +1452,14 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             return
         
         # Handle regular scripts
-        if not self.script_runner.is_running():
-            if self.reboot_required:
-                self._show_reboot_warning_dialog()
-                return
-            
-            # Show confirmation dialog before executing script
-            if confirm_helper.show_single_script_confirmation(item_info, self, self.translations):
-                self.script_is_running = True
-                
-                def completion_handler():
-                    self.script_is_running = False
-                
-                def reboot_handler():
-                    self.reboot_required = True
-                
-                self.script_runner.run_script(
-                    item_info, 
-                    on_completion=completion_handler,
-                    on_reboot_required=reboot_handler
-                )
+        if self.reboot_required:
+            self._show_reboot_warning_dialog()
+            return
+        
+        # Show confirmation dialog before executing script
+        if confirm_helper.show_single_script_confirmation(item_info, self, self.translations):
+            # Use VTE-based term_view for execution
+            self.open_term_view([item_info])
 
     def _clear_search_results(self):
         """Clear search results and return to previous view."""
