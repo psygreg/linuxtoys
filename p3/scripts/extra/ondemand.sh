@@ -23,8 +23,8 @@ else
         if command -v rpm-ostree &> /dev/null; then
             sudo rpm-ostree kargs --delete="intel_pstate=disable"
         else
-            if [ -f /etc/grub.d/01_intel_pstate_disable ]; then
-                sudo rm -f /etc/grub.d/01_intel_pstate_disable
+            if [ -f /etc/default/grub.d/01_intel_pstate_disable ]; then
+                sudo rm -f /etc/default/grub.d/01_intel_pstate_disable
                 # Update GRUB configuration
                 if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
                     sudo grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -33,6 +33,10 @@ else
                 elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
                     sudo update-grub
                 fi
+            fi
+            # for systemd-boot
+            if [ -f /etc/kernel/cmdline.d/10-intel-pstate-disable.conf ]; then
+                sudo rm -f /etc/kernel/cmdline.d/10-intel-pstate-disable.conf
             fi
         fi
         sudo systemctl disable set-ondemand-governor.service

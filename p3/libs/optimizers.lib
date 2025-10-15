@@ -181,8 +181,26 @@ EOF
             echo "Intel P-State driver not detected or already disabled."
         fi
 
-        # Make ondemand the default governor on boot
-        if [ -n "$pstate_disabler" ]; then
+        # for AMD CPUs (Zen 2 and newer)
+        if grep -q amd-pstate-epp /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver 2>/dev/null; then
+            sudo tee /etc/systemd/system/set-ondemand-governor.service > /dev/null << 'EOF'
+[Unit]
+Description=Set CPU governor to ondemand
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do echo balance_performance > "$cpu" 2>/dev/null || true; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+            sudo systemctl enable set-ondemand-governor.service
+            echo "Created systemd service to set ondemand governor on boot."
+
+        # for Intel CPUs
+        elif [ -n "$pstate_disabler" ]; then
             sudo tee /etc/systemd/system/set-ondemand-governor.service > /dev/null << 'EOF'
 [Unit]
 Description=Set CPU governor to ondemand
@@ -199,22 +217,9 @@ EOF
             sudo systemctl enable set-ondemand-governor.service
             echo "Created systemd service to set ondemand governor on boot."
 
-        elif [ ! -f /etc/systemd/system/set-ondemand-governor.service ]; then
-            sudo tee /etc/systemd/system/set-ondemand-governor.service > /dev/null << 'EOF'
-[Unit]
-Description=Set CPU governor to ondemand
-After=multi-user.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash -c 'for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo ondemand > "$cpu" 2>/dev/null || true; done'
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-EOF
-            sudo systemctl enable set-ondemand-governor.service
-            echo "Created systemd service to set ondemand governor on boot."
+        else
+            echo "Incompatible CPU. No changes were made."
+            exit 100
         fi
     fi
 }
