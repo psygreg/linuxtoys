@@ -1,5 +1,6 @@
 ## linuxtoys function library
 source /etc/os-release
+source helpers.lib
 export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
 # sudo request
@@ -77,7 +78,20 @@ _install_ () {
                     if pacman -Qi "$pak" 2>/dev/null 1>&2; then
                         continue
                     else
-                        sudo pacman -S --noconfirm "$pak"
+                        if pacman -Ss "$pak" | grep -q "$pak"; then
+                            sudo pacman -S --noconfirm "$pak"
+                        else
+                            if ! command -v paru &>/dev/null; then
+                                if pacman -Ss paru | grep -q paru; then
+                                    sudo pacman -S --noconfirm paru
+                                else
+                                    chaotic_aur_lib
+                                    sleep 1
+                                    sudo pacman -S --noconfirm paru
+                                fi
+                            fi
+                            paru -S -a --noconfirm --skipreview "$pak"
+                        fi
                     fi
                 done
             elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
