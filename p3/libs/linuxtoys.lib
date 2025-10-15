@@ -81,16 +81,20 @@ _install_ () {
                         if pacman -Ss "$pak" | grep -q "$pak"; then
                             sudo pacman -S --noconfirm "$pak"
                         else
-                            if ! command -v paru &>/dev/null; then
-                                if pacman -Ss paru | grep -q paru; then
-                                    sudo pacman -S --noconfirm paru
-                                else
-                                    chaotic_aur_lib
-                                    sleep 1
-                                    sudo pacman -S --noconfirm paru
+                            if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
+                                if ! command -v paru &>/dev/null; then
+                                    if pacman -Ss paru | grep -q paru; then
+                                        sudo pacman -S --noconfirm paru
+                                    else
+                                        chaotic_aur_lib
+                                        sleep 1
+                                        sudo pacman -S --noconfirm paru
+                                    fi
                                 fi
+                                paru -S -a --noconfirm --skipreview "$pak"
+                            else
+                                return 1
                             fi
-                            paru -S -a --noconfirm --skipreview "$pak"
                         fi
                     fi
                 done

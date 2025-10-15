@@ -102,18 +102,16 @@ get_winboat () { # gets latest release
             sudo zypper install -y "winboat-$ver-x86_64.rpm"
         fi
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        if pacman -Qi "winboat" &> /dev/null; then
-            local hostver="$(pacman -Qi winboat | grep -i Version | awk '{print $3}')"
+        if pacman -Qi "winboat-bin" &> /dev/null; then
+            local hostver="$(pacman -Qi winboat-bin | grep -i Version | awk '{print $3}')"
             if [ "$hostver" == "$ver" ]; then
                 zeninf "$msg018"
                 exit 0
             fi
         fi
-        git clone https://aur.archlinux.org/winboat-bin.git
-        cd winboat-bin || exit 1
-        makepkg -s
-        sleep 1
-        sudo pacman -U --noconfirm "winboat-bin-$ver-1.tar.zst"
+        # now pulls from AUR using paru
+        _packages=(winboat-bin)
+        _install_
     fi
 }
 # runtime

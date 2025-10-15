@@ -30,12 +30,8 @@ elif is_debian || is_ubuntu; then
     pacstall -I gpu-screen-recorder
     _packages=(intel-media-driver)
 elif is_arch || is_cachy; then
-    git clone https://aur.archlinux.org/gpu-screen-recorder.git
-    cd gpu-screen-recorder || exit 1
-    makepkg -d
-    sudo pacman -U --noconfirm gpu-screen-recorder-*.tar.zst
-    cd ..
-    rm -rf gpu-screen-recorder
+    # now can pull from AUR using paru
+    _packages=(gpu-screen-recorder)
     _packages+=(libva-intel-driver intel-media-driver)
 fi    
 _install_
