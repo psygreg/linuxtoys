@@ -296,5 +296,6 @@
   "term_view_running": "በመስራት ላይ {current}/{total}",
   "term_view_done_text": "ተጠናቅቋል",
   "archsb": "ለArch የተጠበቀ ማስነሻ",
-  "archsb_desc": "በArch Linux ላይ የተጠበቀ ማስነሻን በፍጥነት ያዋቅሩ። በእርስዎ UEFI firmware ቅንብሮች ውስጥ የSecure Boot ሁነታን ወደ \"Setup\" ማዋቀር ያስፈልጋል።"
+  "archsb_desc": "በArch Linux ላይ የተጠበቀ ማስነሻን በፍጥነት ያዋቅሩ። በእርስዎ UEFI firmware ቅንብሮች ውስጥ የSecure Boot ሁነታን ወደ \"Setup\" ማዋቀር ያስፈልጋል።",
+  "mlight_desc": "ለNVIDIA GameStream እና Sunshine ክፍት ምንጭ ፒሲ ደንበኛ።"
 }

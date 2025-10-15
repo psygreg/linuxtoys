@@ -296,5 +296,6 @@
   "term_view_running": "Sedang berjalan {current}/{total}",
   "term_view_done_text": "Selesai",
   "archsb": "Secure Boot untuk Arch",
-  "archsb_desc": "Sediakan Secure Boot dengan cepat di Arch Linux. Memerlukan penetapan mod Secure Boot kepada \"Setup\" dalam tetapan perisian tegar UEFI anda."
+  "archsb_desc": "Sediakan Secure Boot dengan cepat di Arch Linux. Memerlukan penetapan mod Secure Boot kepada \"Setup\" dalam tetapan perisian tegar UEFI anda.",
+  "mlight_desc": "Klien PC sumber terbuka untuk NVIDIA GameStream dan Sunshine."
 }

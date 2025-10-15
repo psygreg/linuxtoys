@@ -295,5 +295,6 @@
   "term_view_running": "চলছে {current}/{total}",
   "term_view_done_text": "সম্পন্ন",
   "archsb": "Arch এর জন্য সিকিউর বুট",
-  "archsb_desc": "Arch Linux-এ দ্রুত সিকিউর বুট সেট আপ করুন। আপনার UEFI ফার্মওয়্যার সেটিংসে সিকিউর বুট মোড \"Setup\"-এ সেট করা প্রয়োজন।"
+  "archsb_desc": "Arch Linux-এ দ্রুত সিকিউর বুট সেট আপ করুন। আপনার UEFI ফার্মওয়্যার সেটিংসে সিকিউর বুট মোড \"Setup\"-এ সেট করা প্রয়োজন।",
+  "mlight_desc": "NVIDIA GameStream এবং Sunshine-এর জন্য ওপেন সোর্স পিসি ক্লায়েন্ট।"
 }

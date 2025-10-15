@@ -296,5 +296,6 @@
   "term_view_running": "Kører {current}/{total}",
   "term_view_done_text": "Færdig",
   "archsb": "Secure Boot til Arch",
-  "archsb_desc": "Opsæt hurtigt Secure Boot på Arch Linux. Kræver indstilling af Secure Boot-tilstand til \"Setup\" i dine UEFI firmware-indstillinger."
+  "archsb_desc": "Opsæt hurtigt Secure Boot på Arch Linux. Kræver indstilling af Secure Boot-tilstand til \"Setup\" i dine UEFI firmware-indstillinger.",
+  "mlight_desc": "Open source PC-klient til NVIDIA GameStream og Sunshine."
 }

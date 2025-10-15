@@ -296,5 +296,6 @@
   "term_view_running": "Keyrir {current}/{total}",
   "term_view_done_text": "Lokið",
   "archsb": "Secure Boot fyrir Arch",
-  "archsb_desc": "Settu upp Secure Boot fljótt á Arch Linux. Krefst þess að stilla Secure Boot ham á \"Setup\" í UEFI firmware stillingum þínum."
+  "archsb_desc": "Settu upp Secure Boot fljótt á Arch Linux. Krefst þess að stilla Secure Boot ham á \"Setup\" í UEFI firmware stillingum þínum.",
+  "mlight_desc": "Opinn uppspretta tölvubiðlari fyrir NVIDIA GameStream og Sunshine."
 }

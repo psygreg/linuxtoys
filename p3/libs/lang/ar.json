@@ -296,5 +296,6 @@
   "term_view_running": "قيد التشغيل {current}/{total}",
   "term_view_done_text": "تم",
   "archsb": "التشغيل الآمن لـ Arch",
-  "archsb_desc": "قم بإعداد التشغيل الآمن بسرعة على Arch Linux. يتطلب تعيين وضع التشغيل الآمن إلى \"Setup\" في إعدادات البرنامج الثابت UEFI الخاصة بك."
+  "archsb_desc": "قم بإعداد التشغيل الآمن بسرعة على Arch Linux. يتطلب تعيين وضع التشغيل الآمن إلى \"Setup\" في إعدادات البرنامج الثابت UEFI الخاصة بك.",
+  "mlight_desc": "عميل كمبيوتر مفتوح المصدر لـ NVIDIA GameStream و Sunshine."
 }

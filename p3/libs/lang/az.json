@@ -295,5 +295,6 @@
   "term_view_running": "İşləyir {current}/{total}",
   "term_view_done_text": "Tamamlandı",
   "archsb": "Arch üçün Secure Boot",
-  "archsb_desc": "Arch Linux-da Secure Boot-u tez bir zamanda quraşdırın. UEFI firmware parametrlerinizdə Secure Boot rejimini \"Setup\" olaraq təyin etməyi tələb edir."
+  "archsb_desc": "Arch Linux-da Secure Boot-u tez bir zamanda quraşdırın. UEFI firmware parametrlerinizdə Secure Boot rejimini \"Setup\" olaraq təyin etməyi tələb edir.",
+  "mlight_desc": "NVIDIA GameStream və Sunshine üçün açıq mənbəli PC müştərisi."
 }

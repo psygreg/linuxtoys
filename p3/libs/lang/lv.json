@@ -296,5 +296,6 @@
   "term_view_running": "Izpildās {current}/{total}",
   "term_view_done_text": "Pabeigts",
   "archsb": "Secure Boot priekš Arch",
-  "archsb_desc": "Ātri iestatiet drošo sāknēšanu uz Arch Linux. Nepieciešams iestatīt drošās sāknēšanas režīmu uz \"Setup\" jūsu UEFI firmware iestatījumos."
+  "archsb_desc": "Ātri iestatiet drošo sāknēšanu uz Arch Linux. Nepieciešams iestatīt drošās sāknēšanas režīmu uz \"Setup\" jūsu UEFI firmware iestatījumos.",
+  "mlight_desc": "Atvērtā pirmkoda PC klients NVIDIA GameStream un Sunshine."
 }

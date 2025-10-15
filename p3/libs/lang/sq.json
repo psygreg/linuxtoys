@@ -296,5 +296,6 @@
   "term_view_running": "Duke ekzekutuar {current}/{total}",
   "term_view_done_text": "Përfunduar",
   "archsb": "Secure Boot për Arch",
-  "archsb_desc": "Vendosni shpejt Secure Boot në Arch Linux. Kërkon vendosjen e modalitetit Secure Boot në \"Setup\" në cilësimet e firmware-it UEFI."
+  "archsb_desc": "Vendosni shpejt Secure Boot në Arch Linux. Kërkon vendosjen e modalitetit Secure Boot në \"Setup\" në cilësimet e firmware-it UEFI.",
+  "mlight_desc": "Klient PC me kod të hapur për NVIDIA GameStream dhe Sunshine."
 }

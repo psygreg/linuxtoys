@@ -294,5 +294,6 @@
   "term_view_running": "இயங்குகிறது {current}/{total}",
   "term_view_done_text": "முடிந்தது",
   "archsb": "Arch க்கான பாதுகாப்பான துவக்கம்",
-  "archsb_desc": "Arch Linux இல் பாதுகாப்பான துவக்கத்தை விரைவாக அமைக்கவும். உங்கள் UEFI firmware அமைப்புகளில் பாதுகாப்பான துவக்க பயன்முறையை \"Setup\" க்கு அமைக்க வேண்டும்."
+  "archsb_desc": "Arch Linux இல் பாதுகாப்பான துவக்கத்தை விரைவாக அமைக்கவும். உங்கள் UEFI firmware அமைப்புகளில் பாதுகாப்பான துவக்க பயன்முறையை \"Setup\" க்கு அமைக்க வேண்டும்.",
+  "mlight_desc": "NVIDIA GameStream மற்றும் Sunshine க்கான திறந்த மூல PC கிளையன்ட்."
 }

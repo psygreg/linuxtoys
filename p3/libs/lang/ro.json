@@ -296,5 +296,6 @@
   "term_view_running": "Rulează {current}/{total}",
   "term_view_done_text": "Terminat",
   "archsb": "Secure Boot pentru Arch",
-  "archsb_desc": "Configurați rapid Secure Boot pe Arch Linux. Necesită setarea modului Secure Boot pe \"Setup\" în setările firmware-ului UEFI."
+  "archsb_desc": "Configurați rapid Secure Boot pe Arch Linux. Necesită setarea modului Secure Boot pe \"Setup\" în setările firmware-ului UEFI.",
+  "mlight_desc": "Client PC open source pentru NVIDIA GameStream și Sunshine."
 }

@@ -296,5 +296,6 @@
   "term_view_running": "Đang chạy {current}/{total}",
   "term_view_done_text": "Hoàn thành",
   "archsb": "Secure Boot cho Arch",
-  "archsb_desc": "Thiết lập Secure Boot nhanh chóng trên Arch Linux. Yêu cầu đặt chế độ Secure Boot thành \"Setup\" trong cài đặt firmware UEFI của bạn."
+  "archsb_desc": "Thiết lập Secure Boot nhanh chóng trên Arch Linux. Yêu cầu đặt chế độ Secure Boot thành \"Setup\" trong cài đặt firmware UEFI của bạn.",
+  "mlight_desc": "Ứng dụng PC mã nguồn mở cho NVIDIA GameStream và Sunshine."
 }

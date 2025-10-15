@@ -298,5 +298,6 @@
   "term_view_running": "运行中 {current}/{total}",
   "term_view_done_text": "完成",
   "archsb": "Arch 安全启动",
-  "archsb_desc": "在 Arch Linux 上快速设置安全启动。需要在您的 UEFI 固件设置中将安全启动模式设置为\"Setup\"。"
+  "archsb_desc": "在 Arch Linux 上快速设置安全启动。需要在您的 UEFI 固件设置中将安全启动模式设置为\"Setup\"。",
+  "mlight_desc": "适用于NVIDIA GameStream和Sunshine的开源PC客户端。"
 }

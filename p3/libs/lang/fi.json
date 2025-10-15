@@ -296,5 +296,6 @@
   "term_view_running": "Suoritetaan {current}/{total}",
   "term_view_done_text": "Valmis",
   "archsb": "Secure Boot Archille",
-  "archsb_desc": "Määritä Secure Boot nopeasti Arch Linuxissa. Vaatii Secure Boot -tilan asettamisen \"Setup\"-tilaan UEFI-laiteohjelmiston asetuksissa."
+  "archsb_desc": "Määritä Secure Boot nopeasti Arch Linuxissa. Vaatii Secure Boot -tilan asettamisen \"Setup\"-tilaan UEFI-laiteohjelmiston asetuksissa.",
+  "mlight_desc": "Avoimen lähdekoodin PC-asiakas NVIDIA GameStreamille ja Sunshinelle."
 }

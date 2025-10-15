@@ -296,5 +296,6 @@
   "term_view_running": "Çalışıyor {current}/{total}",
   "term_view_done_text": "Tamamlandı",
   "archsb": "Arch için Güvenli Önyükleme",
-  "archsb_desc": "Arch Linux'ta Secure Boot'u hızlıca kurun. UEFI ürün yazılımı ayarlarınızda Secure Boot modunu \"Setup\" olarak ayarlamanız gerekir."
+  "archsb_desc": "Arch Linux'ta Secure Boot'u hızlıca kurun. UEFI ürün yazılımı ayarlarınızda Secure Boot modunu \"Setup\" olarak ayarlamanız gerekir.",
+  "mlight_desc": "NVIDIA GameStream ve Sunshine için açık kaynaklı PC istemcisi."
 }

@@ -296,5 +296,6 @@
   "term_view_running": "En cours {current}/{total}",
   "term_view_done_text": "Terminé",
   "archsb": "Démarrage sécurisé pour Arch",
-  "archsb_desc": "Configurez rapidement le démarrage sécurisé sur Arch Linux. Nécessite de définir le mode de démarrage sécurisé sur \"Setup\" dans les paramètres du firmware UEFI."
+  "archsb_desc": "Configurez rapidement le démarrage sécurisé sur Arch Linux. Nécessite de définir le mode de démarrage sécurisé sur \"Setup\" dans les paramètres du firmware UEFI.",
+  "mlight_desc": "Client PC open source pour NVIDIA GameStream et Sunshine."
 }

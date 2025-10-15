@@ -296,5 +296,6 @@
   "term_view_running": "در حال اجرا {current}/{total}",
   "term_view_done_text": "انجام شد",
   "archsb": "Secure Boot برای Arch",
-  "archsb_desc": "به سرعت Secure Boot را در Arch Linux راه‌اندازی کنید. نیاز به تنظیم حالت Secure Boot به \"Setup\" در تنظیمات firmware UEFI شما دارد."
+  "archsb_desc": "به سرعت Secure Boot را در Arch Linux راه‌اندازی کنید. نیاز به تنظیم حالت Secure Boot به \"Setup\" در تنظیمات firmware UEFI شما دارد.",
+  "mlight_desc": "کلاینت کامپیوتر متن‌باز برای NVIDIA GameStream و Sunshine."
 }

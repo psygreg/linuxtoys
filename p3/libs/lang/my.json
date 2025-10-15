@@ -296,5 +296,6 @@
   "term_view_running": "လုပ်ဆောင်နေသည် {current}/{total}",
   "term_view_done_text": "ပြီးပြီ",
   "archsb": "Arch အတွက် Secure Boot",
-  "archsb_desc": "Arch Linux တွင် Secure Boot ကို လျင်မြန်စွာ စနစ်ထည့်သွင်းပါ။ သင်၏ UEFI firmware ဆက်တင်များတွင် Secure Boot mode ကို \"Setup\" သို့ သတ်မှတ်ရန် လိုအပ်ပါသည်။"
+  "archsb_desc": "Arch Linux တွင် Secure Boot ကို လျင်မြန်စွာ စနစ်ထည့်သွင်းပါ။ သင်၏ UEFI firmware ဆက်တင်များတွင် Secure Boot mode ကို \"Setup\" သို့ သတ်မှတ်ရန် လိုအပ်ပါသည်။",
+  "mlight_desc": "NVIDIA GameStream နှင့် Sunshine အတွက် Open source PC client။"
 }

@@ -296,5 +296,6 @@
   "term_view_running": "ກຳລັງດຳເນີນການ {current}/{total}",
   "term_view_done_text": "ສຳເລັດ",
   "archsb": "Secure Boot ສຳລັບ Arch",
-  "archsb_desc": "ຕັ້ງຄ່າ Secure Boot ຢ່າງໄວວາໃນ Arch Linux. ຕ້ອງການການຕັ້ງຄ່າໂໝດ Secure Boot ເປັນ \"Setup\" ໃນການຕັ້ງຄ່າ firmware UEFI ຂອງທ່ານ."
+  "archsb_desc": "ຕັ້ງຄ່າ Secure Boot ຢ່າງໄວວາໃນ Arch Linux. ຕ້ອງການການຕັ້ງຄ່າໂໝດ Secure Boot ເປັນ \"Setup\" ໃນການຕັ້ງຄ່າ firmware UEFI ຂອງທ່ານ.",
+  "mlight_desc": "ລູກຄ້າຄອມພິວເຕີແຫຼ່ງເປີດສຳລັບ NVIDIA GameStream ແລະ Sunshine."
 }

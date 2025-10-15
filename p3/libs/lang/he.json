@@ -296,5 +296,6 @@
   "term_view_running": "מריץ {current}/{total}",
   "term_view_done_text": "הושלם",
   "archsb": "Secure Boot עבור Arch",
-  "archsb_desc": "הגדר במהירות Secure Boot ב-Arch Linux. דורש הגדרת מצב Secure Boot ל-\"Setup\" בהגדרות קושחת UEFI שלך."
+  "archsb_desc": "הגדר במהירות Secure Boot ב-Arch Linux. דורש הגדרת מצב Secure Boot ל-\"Setup\" בהגדרות קושחת UEFI שלך.",
+  "mlight_desc": "לקוח מחשב בקוד פתוח עבור NVIDIA GameStream ו-Sunshine."
 }

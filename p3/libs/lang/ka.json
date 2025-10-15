@@ -296,5 +296,6 @@
   "term_view_running": "გაშვებულია {current}/{total}",
   "term_view_done_text": "დასრულებულია",
   "archsb": "Secure Boot Arch-ისთვის",
-  "archsb_desc": "სწრაფად დააყენეთ Secure Boot Arch Linux-ზე. საჭიროებს Secure Boot რეჟიმის დაყენებას \"Setup\"-ზე თქვენს UEFI firmware პარამეტრებში."
+  "archsb_desc": "სწრაფად დააყენეთ Secure Boot Arch Linux-ზე. საჭიროებს Secure Boot რეჟიმის დაყენებას \"Setup\"-ზე თქვენს UEFI firmware პარამეტრებში.",
+  "mlight_desc": "ღია კოდის PC კლიენტი NVIDIA GameStream-ისთვის და Sunshine-ისთვის."
 }
