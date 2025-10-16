@@ -2,7 +2,7 @@
 # name: DNSMasq
 # version: 1.0
 # description: dnsmasq_desc
-# icon: network.svg
+# icon: dnsmasq.svg
 # nocontainer
 # reboot: yes
 
