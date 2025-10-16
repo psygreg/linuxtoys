@@ -3,6 +3,7 @@
 # version: 1.0
 # description: pup_desc
 # icon: pupgui.png
+# repo: https://davidotek.github.io/protonup-qt/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

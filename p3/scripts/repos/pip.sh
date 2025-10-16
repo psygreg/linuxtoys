@@ -3,6 +3,7 @@
 # version: 1.0
 # description: pip_desc
 # icon: pip.svg
+# repo: https://pypi.org/project/pip/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

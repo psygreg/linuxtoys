@@ -3,6 +3,7 @@
 # version: 1.0
 # description: pika_desc
 # icon: pika.svg
+# repo: https://apps.gnome.org/PikaBackup/
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

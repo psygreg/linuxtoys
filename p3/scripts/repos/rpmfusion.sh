@@ -4,6 +4,7 @@
 # description: rpmfusion_desc
 # icon: rpmfusion.svg
 # compat: fedora, ostree
+# repo: https://rpmfusion.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

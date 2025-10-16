@@ -7,6 +7,7 @@
 # reboot: yes
 # noconfirm: yes
 # nocontainer
+# repo: https://github.com/psygreg/linux-psycachy
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

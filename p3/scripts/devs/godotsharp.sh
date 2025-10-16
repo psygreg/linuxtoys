@@ -4,6 +4,7 @@
 # description: godotsharp_desc
 # icon: godotsh.svg
 # compat: fedora, ubuntu, debian, ostree, ublue, suse
+# repo: https://godotengine.org
 
 # --- Start of the script code ---
 # when there are updates, make sure to edit the .desktop files in resources/godot as well!

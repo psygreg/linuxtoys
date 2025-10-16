@@ -3,6 +3,7 @@
 # VERSION: 1.0
 # DESCRIPTION: pinta_desc
 # icon: pinta.svg
+# repo: https://www.pinta-project.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -5,6 +5,7 @@
 # icon: psaver.svg
 # reboot: yes
 # nocontainer
+# repo: https://thealexdev23.github.io/power-options/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

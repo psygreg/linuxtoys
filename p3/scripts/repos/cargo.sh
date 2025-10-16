@@ -3,6 +3,7 @@
 # version: 1.0
 # description: cargo_desc
 # icon: cargo.svg
+# repo: https://github.com/rust-lang/cargo
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

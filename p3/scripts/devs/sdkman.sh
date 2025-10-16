@@ -3,6 +3,7 @@
 # version: 1.0
 # description: sdkman_desc
 # icon: sdkman.png
+# repo: https://sdkman.io
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

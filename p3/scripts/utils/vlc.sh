@@ -3,6 +3,7 @@
 # description: vlc_desc
 # icon: vlc.svg
 # compat: fedora, suse, ubuntu, debian, arch, ostree, cachy
+# repo: https://www.videolan.org/vlc/
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

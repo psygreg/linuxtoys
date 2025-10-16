@@ -4,6 +4,7 @@
 # description: omz_desc
 # icon: zsh.png
 # compat: arch, debian, fedora, ubuntu, cachyos, suse
+# repo: https://ohmyz.sh
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

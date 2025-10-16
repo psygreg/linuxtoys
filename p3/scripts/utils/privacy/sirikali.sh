@@ -3,6 +3,7 @@
 # version: 1.0
 # description: sirikali_desc
 # icon: sirikali.png
+# repo: https://mhogomchungu.github.io/sirikali/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

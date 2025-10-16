@@ -3,6 +3,7 @@
 # version: 1.0
 # description: sunshine_desc
 # icon: sunshine.png
+# repo: https://github.com/LizardByte/Sunshine
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

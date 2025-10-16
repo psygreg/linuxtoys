@@ -3,6 +3,7 @@
 # version: 1.0
 # description: LibreWolf
 # icon: librewolf.svg
+# repo: https://librewolf.net
 
 # --- Start of the script code ---
 . /etc/os-release

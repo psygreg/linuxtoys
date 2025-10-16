@@ -3,6 +3,7 @@
 # version: 1.0
 # description: nvim_desc
 # icon: neovim.svg
+# repo: https://neovim.io
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

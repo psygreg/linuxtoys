@@ -3,6 +3,7 @@
 # version: 1.0
 # description: ptricks_desc
 # icon: proton.svg
+# repo: https://github.com/Matoking/protontricks
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

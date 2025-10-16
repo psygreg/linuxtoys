@@ -3,6 +3,7 @@
 # version: 1.0
 # description: kolibri_desc
 # icon: kolibri.png
+# repo: https://learningequality.org/kolibri/about-kolibri/
 
 # --- Start of the script code ---
 . /etc/os-release

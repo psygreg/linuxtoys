@@ -4,6 +4,7 @@
 # description: tweaks_desc
 # icon: tweaks.svg
 # desktop: gnome
+# repo: https://github.com/GNOME/gnome-tweaks
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

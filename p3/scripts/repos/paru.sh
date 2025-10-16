@@ -4,6 +4,7 @@
 # description: paru_desc
 # icon: archpkg.png
 # compat: arch
+# repo: https://github.com/Morganamilo/paru
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

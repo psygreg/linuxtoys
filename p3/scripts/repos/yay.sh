@@ -4,6 +4,7 @@
 # description: yay_desc
 # icon: archpkg.png
 # compat: arch
+# repo: https://github.com/Jguer/yay
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

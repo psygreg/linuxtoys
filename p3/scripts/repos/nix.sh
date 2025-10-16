@@ -4,6 +4,7 @@
 # description: nixpkgs_desc
 # icon: nix.svg
 # compat: fedora, arch, debian, ubuntu, cachy, suse
+# repo: https://github.com/NixOS/nixpkgs
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

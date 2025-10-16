@@ -3,6 +3,7 @@
 # version: 1.0
 # description: starship_desc
 # icon: starship.png
+# repo: https://starship.rs
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

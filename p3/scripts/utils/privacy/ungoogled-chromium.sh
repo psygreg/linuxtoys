@@ -3,6 +3,7 @@
 # version: 1.0
 # description: Ungoogled Chromium
 # icon: ungoogled_chromium.png
+# repo: https://github.com/ungoogled-software/ungoogled-chromium
 
 # --- Start of the script code ---
 . /etc/os-release

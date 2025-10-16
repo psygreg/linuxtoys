@@ -3,6 +3,7 @@
 # version: 1.0
 # description: kalzium_desc
 # icon: kalzium.png
+# repo: https://apps.kde.org/kalzium/
 
 # --- Start of the script code ---
 . /etc/os-release

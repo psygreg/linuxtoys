@@ -3,6 +3,7 @@
 # version: 1.0
 # description: pnpm_desc
 # icon: pnpm.svg
+# repo: https://pnpm.io
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

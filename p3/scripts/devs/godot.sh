@@ -3,6 +3,7 @@
 # version: 1.0
 # description: godot_desc
 # icon: godot.svg
+# repo: https://godotengine.org
 
 # --- Start of the script code ---
 # when there are updates, make sure to edit the .desktop files in resources/godot as well!

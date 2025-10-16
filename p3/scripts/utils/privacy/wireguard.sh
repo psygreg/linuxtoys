@@ -4,6 +4,7 @@
 # description: WireGuard
 # icon: wireguard.svg
 # compat: ubuntu, debian, fedora, arch, cachy, suse
+# repo: https://www.wireguard.com
 
 # --- Start of the script code ---
 . /etc/os-release

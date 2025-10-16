@@ -3,6 +3,7 @@
 # version: 1.0
 # description: cpux_desc
 # icon: cpu-x.png
+# repo: https://thetumultuousunicornofdarkness.github.io/CPU-X/
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

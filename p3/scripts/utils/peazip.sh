@@ -3,6 +3,7 @@
 # version: 1.0
 # description: peazip_desc
 # icon: peazip.png
+# repo: https://peazip.github.io
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

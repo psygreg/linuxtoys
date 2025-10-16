@@ -3,6 +3,7 @@
 # version: 1.0
 # description: wrhs_desc
 # icon: warehouse.svg
+# repo: https://github.com/flattool/warehouse
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

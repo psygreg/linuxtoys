@@ -3,6 +3,7 @@
 # version: 1.0
 # description: bottles_desc
 # icon: bottles.svg
+# repo: https://usebottles.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

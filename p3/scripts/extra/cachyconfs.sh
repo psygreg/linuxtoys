@@ -6,6 +6,7 @@
 # compat: ubuntu, debian, fedora, suse, arch, ostree, ublue
 # reboot: yes
 # nocontainer
+# repo: https://github.com/CachyOS/CachyOS-Settings
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

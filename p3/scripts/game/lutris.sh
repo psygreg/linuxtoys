@@ -4,6 +4,7 @@
 # description: lutris_desc
 # icon: lutris.svg
 # nocontainer: ubuntu, debian, suse
+# repo: https://lutris.net
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

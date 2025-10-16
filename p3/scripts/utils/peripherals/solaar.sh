@@ -4,6 +4,7 @@
 # description: slar_desc
 # icon: solaar.svg
 # nocontainer
+# repo: https://github.com/pwr-Solaar/Solaar
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

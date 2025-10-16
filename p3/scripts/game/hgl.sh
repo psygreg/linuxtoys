@@ -4,6 +4,7 @@
 # description: hgl_desc
 # icon: heroic.svg
 # nocontainer: ubuntu, debian, suse
+# repo: https://heroicgameslauncher.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

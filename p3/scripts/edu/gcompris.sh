@@ -3,6 +3,7 @@
 # version: 1.0
 # description: gcompris_desc
 # icon: gcompris.png
+# repo: https://www.gcompris.net
 
 # --- Start of the script code ---
 . /etc/os-release

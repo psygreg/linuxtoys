@@ -3,6 +3,7 @@
 # version: 1.0
 # description: codium_desc
 # icon: vscodium.svg
+# repo: https://vscodium.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

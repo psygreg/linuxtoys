@@ -3,6 +3,7 @@
 # version: 1.0
 # description: kdenlive_desc
 # icon: kdenlive.svg
+# repo: https://kde.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

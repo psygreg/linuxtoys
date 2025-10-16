@@ -3,6 +3,7 @@
 # version: 1.0
 # description: stellarium_desc
 # icon: stellarium.png
+# repo: https://stellarium.org
 
 # --- Start of the script code ---
 . /etc/os-release

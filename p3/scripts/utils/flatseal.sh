@@ -3,6 +3,7 @@
 # version: 1.0
 # description: fseal_desc
 # icon: flatseal.svg
+# repo: https://github.com/tchx84/Flatseal
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

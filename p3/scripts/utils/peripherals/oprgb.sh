@@ -3,6 +3,7 @@
 # version: 1.0
 # description: oprgb_desc
 # icon: openrgb.svg
+# repo: https://openrgb.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

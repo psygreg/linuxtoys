@@ -3,6 +3,7 @@
 # version: 1.0
 # description: qpw_desc
 # icon: qpwgraph.svg
+# repo: https://github.com/rncbc/qpwgraph
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -3,6 +3,7 @@
 # version: 1.0
 # description: endlesskey_desc
 # icon: endlesskey.png
+# repo: https://support.endlessos.org/en/endless-key/linux
 
 # --- Start of the script code ---
 . /etc/os-release

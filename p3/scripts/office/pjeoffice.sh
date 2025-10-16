@@ -5,6 +5,7 @@
 # icon: pjeoffice-pro.png
 # compat: debian, ubuntu
 # localize: pt
+# repo: https://github.com/psygreg/pje-installer
 
 # --- Start of the script code ---
 cd $HOME

@@ -4,6 +4,7 @@
 # description: lazyman_desc
 # icon: lazyman.png
 # compat: fedora, arch, cachy, ostree, ublue, suse
+# repo: https://lazyman.dev
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
