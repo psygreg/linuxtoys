@@ -3,6 +3,7 @@
 # version: 1.0
 # description: brave_desc
 # icon: brave.svg
+# repo: https://brave.com
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

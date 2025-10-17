@@ -4,6 +4,7 @@
 # description: Mullvad VPN
 # icon: mullvadvpn.svg
 # compat: ubuntu, debian, fedora, arch, cachy, ostree, ublue
+# repo: https://mullvad.net/vpn
 
 # --- Start of the script code ---
 . /etc/os-release
