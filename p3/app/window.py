@@ -4,13 +4,13 @@ import os, shutil
 
 from . import parser
 from . import header
-from . import footer
 from . import compat
 from . import head_menu
 from . import reboot_helper
 from . import search_helper
 from . import get_icon_path
 from . import term_view
+from . import revealer
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -100,8 +100,8 @@ class AppWindow(Gtk.ApplicationWindow):
         self.search_view.add(self.search_flowbox)
         self.main_stack.add_named(self.search_view, "search")
 
-        self.footer_widget = footer.create_footer()
-        main_vbox.pack_start(self.footer_widget, False, False, 0)
+        self.reveal = revealer.RevealerFooter(self)
+        main_vbox.pack_start(self.reveal, False, False, 0)
 
         # --- Load Data and Connect Signals ---
         self.load_categories()
@@ -342,6 +342,18 @@ class AppWindow(Gtk.ApplicationWindow):
         flowbox.set_row_spacing(12)     ## espaço entre linhas
         return flowbox
 
+    def _on_toggled_check(self, button):
+        if button.get_active():
+            if button not in self.check_buttons:
+                self.check_buttons.append(button)
+        else:
+            if button in self.check_buttons:
+                self.check_buttons.remove(button)
+
+        self.reveal.button_box.show_all()
+        self.reveal.support.hide()
+        self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+
     def create_item_widget(self, item_info, checklist: bool = False):
         import os
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
@@ -370,9 +382,9 @@ class AppWindow(Gtk.ApplicationWindow):
 
         if checklist:
             check = Gtk.CheckButton()
+            check.connect('toggled', self._on_toggled_check)
             check.script_info = item_info
             box.pack_start(check, False, False, 0)
-            self.check_buttons.append(check)
 
         if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
             # This is a category or subcategory - make it bold
@@ -512,17 +524,7 @@ class AppWindow(Gtk.ApplicationWindow):
             flowbox.add(widget)
 
         if checklist_mode:
-            # Clear previous checklist buttons from footer
-            for child in self.footer_widget.checklist_button_box.get_children():
-                self.footer_widget.checklist_button_box.remove(child)
-
-            install_btn = Gtk.Button(label=self.translations.get('install_btn_label', 'Install'))
-            cancel_btn = Gtk.Button(label=self.translations.get('cancel_btn_label', 'Cancel'))
-            install_btn.connect("clicked", self.on_install_checklist)
-            cancel_btn.connect("clicked", self.on_cancel_checklist)
-            self.footer_widget.checklist_button_box.pack_start(install_btn, False, False, 0)
-            self.footer_widget.checklist_button_box.pack_start(cancel_btn, False, False, 0)
-            self.footer_widget.checklist_button_box.show_all()
+            self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
     def load_scripts(self, category_info):
         """Loads scripts for a category and connects their click event. Supports checklist mode."""
@@ -540,18 +542,14 @@ class AppWindow(Gtk.ApplicationWindow):
         if not selected_scripts:
             return
 
-        self.open_term_view(selected_scripts)
+        for cb in self.check_buttons[:]: cb.set_active(False)
 
-        for cb in self.check_buttons: cb.set_active(False)
+        self.open_term_view(selected_scripts)
 
     def on_cancel_checklist(self, button):
         """Uncheck all boxes, remove checklist buttons from footer, and return to previous view."""
-        for cb in self.check_buttons:
-            cb.set_active(False)
-        # Remove checklist buttons from footer
-        for child in self.footer_widget.checklist_button_box.get_children():
-            self.footer_widget.checklist_button_box.remove(child)
-        
+        for cb in self.check_buttons[:]: cb.set_active(False)
+
         # Use back button logic to go to the appropriate previous view
         self.on_back_button_clicked(None)
 
@@ -605,9 +603,9 @@ class AppWindow(Gtk.ApplicationWindow):
         run_box = term_view.TermRunScripts(infos, self, self.translations)
 
         self.header_widget.hide()
-
+        self.reveal.set_reveal_child(False)
+        self.check_buttons.clear()
         self.back_button.show()
-        self.footer_widget.hide()
 
         child = self.main_stack.get_child_by_name("running_scripts")
         if child is not None:
@@ -742,10 +740,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         if hasattr(self, 'menu_button'):
             self.menu_button.refresh_menu_translations()
         
-        # Refresh the footer with new translations
-        if hasattr(self.footer_widget, 'refresh_translations'):
-            self.footer_widget.refresh_translations(self.translations)
-        
         # Always reload categories with new translations (so they're ready when user navigates back)
         self.load_categories()
         
@@ -767,24 +761,14 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                 # Update title bar with fresh category name
                 category_name = self.current_category_info.get('name', 'Unknown')
                 self.header_bar.props.title = f"LinuxToys: {category_name}"
-            
+
             # Reload the scripts view with new translations
             self.load_scripts(self.current_category_info)
-        
+
         # Update footer if in checklist mode
         if (self.current_category_info and 
             self.current_category_info.get('display_mode', 'menu') == 'checklist'):
-            # Clear and recreate checklist buttons with new translations
-            for child in self.footer_widget.checklist_button_box.get_children():
-                self.footer_widget.checklist_button_box.remove(child)
-            
-            install_btn = Gtk.Button(label=self.translations.get('install_btn_label', 'Install'))
-            cancel_btn = Gtk.Button(label=self.translations.get('cancel_btn_label', 'Cancel'))
-            install_btn.connect("clicked", self.on_install_checklist)
-            cancel_btn.connect("clicked", self.on_cancel_checklist)
-            self.footer_widget.checklist_button_box.pack_start(install_btn, False, False, 0)
-            self.footer_widget.checklist_button_box.pack_start(cancel_btn, False, False, 0)
-            self.footer_widget.checklist_button_box.show_all()
+            self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
     def _get_fresh_category_info_with_translations(self):
         """Get fresh category info with updated translations"""
@@ -1413,6 +1397,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # Ensure the back button is visible when in search mode
         self.back_button.show()
         
+        self.reveal.set_reveal_child(False)
+
         # Disable drag-and-drop in search mode
         self._disable_drag_and_drop()
         
@@ -1461,6 +1447,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self.main_stack.set_visible_child(self.scripts_view)
             # Ensure back button is visible for category views
             self.back_button.show()
+
+            if self.current_category_info.get('display_mode', 'menu') == 'checklist':
+                self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
             
             # Restore drag-and-drop state based on current category
             if self._is_local_scripts_category(self.current_category_info):
@@ -1498,6 +1487,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self.search_entry.set_text("")
             self._clear_search_results()
             return
+
+        self.check_buttons.clear()
             
         if self.navigation_stack:
             # Store current view for cleanup
@@ -1545,11 +1536,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             
             # Show footer only if checklist mode
             if previous_category.get('display_mode', 'menu') == 'checklist':
-                self.footer_widget.show()
-                self.footer_widget.show_checklist_footer()
-                self.footer_widget.set_margin_bottom(0)
+                self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
             else:
-                self.footer_widget.hide()
+                self.reveal.set_reveal_child(False)
             
             # Clean up the old view after transition
             def cleanup_old_view():
@@ -1589,11 +1578,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         self.back_button.hide()
         self.header_bar.props.title = "LinuxToys"
         self._update_header()  # Reset to default header
-        self.header_widget.show()
-        self.footer_widget.show()
-        self.footer_widget.show_menu_footer()
-        # Ensure footer has proper spacing
-        self.footer_widget.set_margin_bottom(0)
+        self.reveal.set_reveal_child(True)
+        self.reveal.button_box.hide()
+        self.reveal.support.show_all()
         
         # Disable drag-and-drop when viewing main categories
         self._disable_drag_and_drop()
@@ -1629,9 +1616,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         
         # Show footer only if checklist mode
         if category_info and category_info.get('display_mode', 'menu') == 'checklist':
-            self.footer_widget.show()
-            self.footer_widget.show_checklist_footer()
-            # Ensure footer has proper spacing for checklist mode
-            self.footer_widget.set_margin_bottom(0)
+            self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
         else:
-            self.footer_widget.hide()
+            self.reveal.set_reveal_child(False)
