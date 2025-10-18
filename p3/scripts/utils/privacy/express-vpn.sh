@@ -4,6 +4,7 @@
 # description: Express VPN
 # icon: expressvpn.svg
 # compat: ubuntu, debian, fedora, arch, cachy
+# repo: https://www.expressvpn.com
 
 # --- Start of the script code ---
 . /etc/os-release

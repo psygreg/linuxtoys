@@ -4,6 +4,7 @@
 # description: IVPN
 # icon: ivpn.svg
 # compat: ubuntu, debian, fedora, ostree, ublue
+# repo: https://www.ivpn.net
 
 # --- Start of the script code ---
 . /etc/os-release

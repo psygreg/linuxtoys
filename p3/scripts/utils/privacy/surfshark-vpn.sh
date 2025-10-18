@@ -3,6 +3,7 @@
 # version: 1.0
 # description: Surfshark VPN
 # icon: surfsharkvpn.svg
+# repo: https://surfshark.com
 
 # --- Start of the script code ---
 . /etc/os-release

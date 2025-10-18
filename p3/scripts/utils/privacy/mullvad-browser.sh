@@ -3,6 +3,7 @@
 # version: 1.0
 # description: Mullvad Browser
 # icon: mullvad_browser.svg
+# repo: https://mullvad.net/browser
 
 # --- Start of the script code ---
 . /etc/os-release
