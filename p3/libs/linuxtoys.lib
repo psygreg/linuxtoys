@@ -1,6 +1,6 @@
 ## linuxtoys function library
 source /etc/os-release
-source helpers.lib
+source "$SCRIPT_DIR/libs/helpers.lib"
 export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
 # sudo request
