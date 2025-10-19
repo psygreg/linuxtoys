@@ -3,6 +3,7 @@
 # version: 1.0
 # description: nerdfonts_desc
 # icon: nerdfonts.svg
+# repo: https://www.nerdfonts.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

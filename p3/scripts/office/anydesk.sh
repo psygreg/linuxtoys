@@ -3,6 +3,7 @@
 # VERSION: 1.0
 # DESCRIPTION: anydesk_desc
 # icon: anydesk.svg
+# repo: https://www.anydesk.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

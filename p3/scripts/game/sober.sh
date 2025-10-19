@@ -3,6 +3,7 @@
 # version: 1.0
 # description: sober_desc
 # icon: sober.png
+# repo: https://sober.vinegarhq.org
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

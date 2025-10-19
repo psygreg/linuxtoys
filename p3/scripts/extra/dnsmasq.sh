@@ -5,6 +5,7 @@
 # icon: dnsmasq.svg
 # nocontainer
 # reboot: yes
+# repo: https://thekelleys.org.uk/gitweb/?p=dnsmasq.git
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

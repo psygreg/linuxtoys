@@ -3,6 +3,7 @@
 # version: 1.0
 # description: hwaccel-flatpak_desc
 # icon: flathub.svg
+# repo: https://freedesktop-sdk.gitlab.io/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

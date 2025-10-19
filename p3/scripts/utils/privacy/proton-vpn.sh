@@ -3,6 +3,7 @@
 # version: 1.0
 # description: Proton VPN
 # icon: protonvpn.svg
+# repo: https://protonvpn.com
 
 # --- Start of the script code ---
 . /etc/os-release

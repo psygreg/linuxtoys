@@ -3,6 +3,7 @@
 # version: 1.0
 # description: gfn_desc
 # icon: nvidia.svg
+# repo: https://geforcenow.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

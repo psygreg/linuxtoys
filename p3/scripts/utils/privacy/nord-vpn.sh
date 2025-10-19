@@ -4,6 +4,7 @@
 # description: Nord VPN
 # icon: nordvpn.svg
 # compat: ubuntu, debian, fedora, arch, cachy, suse
+# repo: https://nordvpn.com
 
 # --- Start of the script code ---
 . /etc/os-release

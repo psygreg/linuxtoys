@@ -3,6 +3,7 @@
 # version: 1.0
 # description: Windscribe VPN
 # icon: windscribe.svg
+# repo: https://windscribe.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

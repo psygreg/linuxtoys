@@ -3,6 +3,7 @@
 # version: 1.0
 # description: droidstd_desc
 # icon: android-studio.svg
+# repo: https://developer.android.com/studio/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
