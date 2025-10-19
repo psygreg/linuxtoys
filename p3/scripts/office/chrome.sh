@@ -3,6 +3,7 @@
 # VERSION: 1.0
 # DESCRIPTION: chrome_desc
 # icon: chrome.svg
+# repo: https://chrome.google.com/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

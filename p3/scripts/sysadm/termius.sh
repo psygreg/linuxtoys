@@ -3,6 +3,7 @@
 # version: 1.0
 # description: termius_desc
 # icon: termius.png
+# repo: https://termius.com/
 # compat: debian, ubuntu, fedora, arch, suse
 
 # --- Start of the script code ---

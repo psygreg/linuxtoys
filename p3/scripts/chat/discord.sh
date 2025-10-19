@@ -3,6 +3,7 @@
 # version: 1.0
 # description: discord_desc
 # icon: discord.svg
+# repo: https://discord.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -3,6 +3,7 @@
 # version: 1.0
 # description: mcbe_desc
 # icon: minecraft.svg
+# repo: https://minecraft-linux.github.io
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -3,6 +3,7 @@
 # VERSION: 1.0
 # DESCRIPTION: slack_desc
 # icon: slack.svg
+# repo: https://slack.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -3,6 +3,7 @@
 # version: 1.0
 # description: postman_desc
 # icon: postman.svg
+# repo: https://www.postman.com
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
