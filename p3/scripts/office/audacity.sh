@@ -3,6 +3,7 @@
 # VERSION: 1.0
 # DESCRIPTION: audacity_desc
 # icon: audacity.svg
+# repo: https://www.audacityteam.org/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

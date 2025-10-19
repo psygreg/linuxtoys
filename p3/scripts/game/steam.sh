@@ -3,6 +3,7 @@
 # version: 1.0
 # description: steam_desc
 # icon: steam.svg
+# repo: https://store.steampowered.com/
 # nocontainer: ubuntu, debian, suse
 
 # --- Start of the script code ---

@@ -3,6 +3,7 @@
 # version: 1.0
 # description: geogebra_desc
 # icon: geogebra.png
+# repo: https://www.geogebra.org
 
 # --- Start of the script code ---
 . /etc/os-release

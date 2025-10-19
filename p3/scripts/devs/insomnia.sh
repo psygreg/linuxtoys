@@ -3,6 +3,7 @@
 # version: 1.0
 # description: insomnia_desc
 # icon: insomnia.svg
+# repo: https://insomnia.rest/
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

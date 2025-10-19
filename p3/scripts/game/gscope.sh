@@ -3,6 +3,7 @@
 # version: 1.0
 # description: gscope_desc
 # icon: gaming.svg
+# repo: https://github.com/ValveSoftware/gamescope
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

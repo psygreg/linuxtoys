@@ -3,6 +3,7 @@
 # version: 1.0
 # description: goverlay_desc
 # icon: goverlay.svg
+# repo: https://github.com/benjamimgois/goverlay
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
