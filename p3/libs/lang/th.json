@@ -297,5 +297,12 @@
   "term_view_done_text": "เสร็จสิ้น",
   "archsb": "Secure Boot สำหรับ Arch",
   "archsb_desc": "ตั้งค่า Secure Boot อย่างรวดเร็วบน Arch Linux ต้องการตั้งค่าโหมด Secure Boot เป็น \"Setup\" ในการตั้งค่าเฟิร์มแวร์ UEFI ของคุณ",
-  "mlight_desc": "ไคลเอนต์ PC โอเพนซอร์สสำหรับ NVIDIA GameStream และ Sunshine"
+  "mlight_desc": "ไคลเอนต์ PC โอเพนซอร์สสำหรับ NVIDIA GameStream และ Sunshine",
+  "kernel_update_available_title": "มีการอัปเดตเคอร์เนล",
+  "kernel_update_available_message": "มีเวอร์ชันใหม่ของเคอร์เนล",
+  "kernel_update_current_version": "เวอร์ชันปัจจุบัน:",
+  "kernel_update_latest_version": "เวอร์ชันล่าสุด:",
+  "kernel_update_install_btn": "ติดตั้งการอัปเดต",
+  "kernel_update_ignore_btn": "เพิกเฉย",
+  "kernel_update_reboot_required": "จะต้องรีบูตระบบหลังการติดตั้ง"
 }

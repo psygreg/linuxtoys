@@ -295,5 +295,12 @@
   "term_view_done_text": "Imekamilika",
   "archsb": "Secure Boot kwa Arch",
   "archsb_desc": "Weka Secure Boot haraka kwenye Arch Linux. Inahitaji kuweka hali ya Secure Boot kuwa \"Setup\" katika mipangilio ya firmware ya UEFI yako.",
-  "mlight_desc": "Mteja wa kompyuta ya chanzo wazi kwa NVIDIA GameStream na Sunshine."
+  "mlight_desc": "Mteja wa kompyuta ya chanzo wazi kwa NVIDIA GameStream na Sunshine.",
+  "kernel_update_available_title": "Sasisho la Kernel Linapatikana",
+  "kernel_update_available_message": "Toleo jipya la kernel limepatikana.",
+  "kernel_update_current_version": "Toleo la sasa:",
+  "kernel_update_latest_version": "Toleo la hivi punde:",
+  "kernel_update_install_btn": "Sakinisha Sasisho",
+  "kernel_update_ignore_btn": "Puuza",
+  "kernel_update_reboot_required": "Kuanzisha upya mfumo kutahitajika baada ya usakinishaji."
 }

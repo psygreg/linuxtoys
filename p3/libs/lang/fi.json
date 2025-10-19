@@ -297,5 +297,12 @@
   "term_view_done_text": "Valmis",
   "archsb": "Secure Boot Archille",
   "archsb_desc": "Määritä Secure Boot nopeasti Arch Linuxissa. Vaatii Secure Boot -tilan asettamisen \"Setup\"-tilaan UEFI-laiteohjelmiston asetuksissa.",
-  "mlight_desc": "Avoimen lähdekoodin PC-asiakas NVIDIA GameStreamille ja Sunshinelle."
+  "mlight_desc": "Avoimen lähdekoodin PC-asiakas NVIDIA GameStreamille ja Sunshinelle.",
+  "kernel_update_available_title": "Ytimen päivitys saatavilla",
+  "kernel_update_available_message": "Ytimen uusi versio on saatavilla.",
+  "kernel_update_current_version": "Nykyinen versio:",
+  "kernel_update_latest_version": "Uusin versio:",
+  "kernel_update_install_btn": "Asenna päivitys",
+  "kernel_update_ignore_btn": "Ohita",
+  "kernel_update_reboot_required": "Järjestelmän uudelleenkäynnistys vaaditaan asennuksen jälkeen."
 }

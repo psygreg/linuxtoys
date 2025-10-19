@@ -297,5 +297,12 @@
   "term_view_done_text": "Končano",
   "archsb": "Secure Boot za Arch",
   "archsb_desc": "Hitro nastavite Secure Boot na Arch Linux. Zahteva nastavitev načina Secure Boot na \"Setup\" v nastavitvah vdelane programske opreme UEFI.",
-  "mlight_desc": "Odprto kodna PC-klient za NVIDIA GameStream in Sunshine."
+  "mlight_desc": "Odprto kodna PC-klient za NVIDIA GameStream in Sunshine.",
+  "kernel_update_available_title": "Na voljo je posodobitev jedra",
+  "kernel_update_available_message": "Na voljo je nova različica jedra.",
+  "kernel_update_current_version": "Trenutna različica:",
+  "kernel_update_latest_version": "Najnovejša različica:",
+  "kernel_update_install_btn": "Namesti posodobitev",
+  "kernel_update_ignore_btn": "Prezri",
+  "kernel_update_reboot_required": "Po namestitvi bo potreben ponovni zagon sistema."
 }

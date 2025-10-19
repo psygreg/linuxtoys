@@ -296,5 +296,12 @@
   "term_view_done_text": "সম্পন্ন",
   "archsb": "Arch এর জন্য সিকিউর বুট",
   "archsb_desc": "Arch Linux-এ দ্রুত সিকিউর বুট সেট আপ করুন। আপনার UEFI ফার্মওয়্যার সেটিংসে সিকিউর বুট মোড \"Setup\"-এ সেট করা প্রয়োজন।",
-  "mlight_desc": "NVIDIA GameStream এবং Sunshine-এর জন্য ওপেন সোর্স পিসি ক্লায়েন্ট।"
+  "mlight_desc": "NVIDIA GameStream এবং Sunshine-এর জন্য ওপেন সোর্স পিসি ক্লায়েন্ট।",
+  "kernel_update_available_title": "কার্নেল আপডেট উপলব্ধ",
+  "kernel_update_available_message": "কার্নেলের একটি নতুন সংস্করণ উপলব্ধ।",
+  "kernel_update_current_version": "বর্তমান সংস্করণ:",
+  "kernel_update_latest_version": "সর্বশেষ সংস্করণ:",
+  "kernel_update_install_btn": "আপডেট ইনস্টল করুন",
+  "kernel_update_ignore_btn": "উপেক্ষা করুন",
+  "kernel_update_reboot_required": "ইনস্টলেশনের পরে একটি সিস্টেম রিবুট প্রয়োজন হবে।"
 }

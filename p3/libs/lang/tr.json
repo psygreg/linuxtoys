@@ -297,5 +297,12 @@
   "term_view_done_text": "Tamamlandı",
   "archsb": "Arch için Güvenli Önyükleme",
   "archsb_desc": "Arch Linux'ta Secure Boot'u hızlıca kurun. UEFI ürün yazılımı ayarlarınızda Secure Boot modunu \"Setup\" olarak ayarlamanız gerekir.",
-  "mlight_desc": "NVIDIA GameStream ve Sunshine için açık kaynaklı PC istemcisi."
+  "mlight_desc": "NVIDIA GameStream ve Sunshine için açık kaynaklı PC istemcisi.",
+  "kernel_update_available_title": "Çekirdek güncellemesi mevcut",
+  "kernel_update_available_message": "Çekirdeğin yeni bir sürümü mevcut.",
+  "kernel_update_current_version": "Mevcut sürüm:",
+  "kernel_update_latest_version": "En son sürüm:",
+  "kernel_update_install_btn": "Güncellemeyi yükle",
+  "kernel_update_ignore_btn": "Yoksay",
+  "kernel_update_reboot_required": "Kurulumdan sonra sistem yeniden başlatılması gerekecektir."
 }

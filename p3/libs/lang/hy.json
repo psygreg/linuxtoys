@@ -297,5 +297,12 @@
   "term_view_done_text": "Ավարտված է",
   "archsb": "Secure Boot Arch-ի համար",
   "archsb_desc": "Արագ կարգավորեք Secure Boot-ը Arch Linux-ում։ Անհրաժեշտ է Secure Boot ռեժիմը դնել \"Setup\" ձեր UEFI firmware կարգավորումներում։",
-  "mlight_desc": "Բաց կոդով PC հաճախորդ NVIDIA GameStream-ի և Sunshine-ի համար։"
+  "mlight_desc": "Բաց կոդով PC հաճախորդ NVIDIA GameStream-ի և Sunshine-ի համար։",
+  "kernel_update_available_title": "Միջուկի թարմացում հասանելի է",
+  "kernel_update_available_message": "Միջուկի նոր տարբերակ հասանելի է։",
+  "kernel_update_current_version": "Ներկայիս տարբերակ՝",
+  "kernel_update_latest_version": "Վերջին տարբերակ՝",
+  "kernel_update_install_btn": "Տեղադրել թարմացումը",
+  "kernel_update_ignore_btn": "Անտեսել",
+  "kernel_update_reboot_required": "Տեղադրումից հետո համակարգի վերագործարկում կպահանջվի։"
 }

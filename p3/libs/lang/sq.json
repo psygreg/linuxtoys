@@ -297,5 +297,12 @@
   "term_view_done_text": "Përfunduar",
   "archsb": "Secure Boot për Arch",
   "archsb_desc": "Vendosni shpejt Secure Boot në Arch Linux. Kërkon vendosjen e modalitetit Secure Boot në \"Setup\" në cilësimet e firmware-it UEFI.",
-  "mlight_desc": "Klient PC me kod të hapur për NVIDIA GameStream dhe Sunshine."
+  "mlight_desc": "Klient PC me kod të hapur për NVIDIA GameStream dhe Sunshine.",
+  "kernel_update_available_title": "Përditësim i kerneli në dispozicion",
+  "kernel_update_available_message": "Është në dispozicion një version i ri i kernelit.",
+  "kernel_update_current_version": "Versioni aktual:",
+  "kernel_update_latest_version": "Versioni më i fundit:",
+  "kernel_update_install_btn": "Instalo përditësimin",
+  "kernel_update_ignore_btn": "Injoro",
+  "kernel_update_reboot_required": "Do të kërkohet një rinisje e sistemit pas instalimit."
 }

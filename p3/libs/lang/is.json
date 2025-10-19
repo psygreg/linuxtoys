@@ -297,5 +297,12 @@
   "term_view_done_text": "Lokið",
   "archsb": "Secure Boot fyrir Arch",
   "archsb_desc": "Settu upp Secure Boot fljótt á Arch Linux. Krefst þess að stilla Secure Boot ham á \"Setup\" í UEFI firmware stillingum þínum.",
-  "mlight_desc": "Opinn uppspretta tölvubiðlari fyrir NVIDIA GameStream og Sunshine."
+  "mlight_desc": "Opinn uppspretta tölvubiðlari fyrir NVIDIA GameStream og Sunshine.",
+  "kernel_update_available_title": "Kjarnuppfærsla í boði",
+  "kernel_update_available_message": "Ný útgáfa af kjarnanum er í boði.",
+  "kernel_update_current_version": "Núverandi útgáfa:",
+  "kernel_update_latest_version": "Nýjasta útgáfa:",
+  "kernel_update_install_btn": "Setja upp uppfærslu",
+  "kernel_update_ignore_btn": "Hunsa",
+  "kernel_update_reboot_required": "Endurræsing kerfisins verður nauðsynleg eftir uppsetningu."
 }

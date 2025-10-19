@@ -297,5 +297,12 @@
   "term_view_done_text": "Déanta",
   "archsb": "Tosaithe Slán do Arch",
   "archsb_desc": "Socraigh Tosaithe Slán go tapa ar Arch Linux. Éilíonn sé an mód Tosaithe Slán a shocrú ar \"Setup\" i do shocruithe firmware UEFI.",
-  "mlight_desc": "Cliant PC foinse oscailte do NVIDIA GameStream agus Sunshine."
+  "mlight_desc": "Cliant PC foinse oscailte do NVIDIA GameStream agus Sunshine.",
+  "kernel_update_available_title": "Nuashonrú Eithne Ar Fáil",
+  "kernel_update_available_message": "Tá leagan nua den eithne ar fáil.",
+  "kernel_update_current_version": "Leagan reatha:",
+  "kernel_update_latest_version": "Leagan is déanaí:",
+  "kernel_update_install_btn": "Suiteáil an Nuashonrú",
+  "kernel_update_ignore_btn": "Déan neamhaird",
+  "kernel_update_reboot_required": "Beidh atosú córais ag teastáil tar éis an tsuiteála."
 }

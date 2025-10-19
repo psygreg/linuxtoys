@@ -297,5 +297,12 @@
   "term_view_done_text": "Pabeigts",
   "archsb": "Secure Boot priekš Arch",
   "archsb_desc": "Ātri iestatiet drošo sāknēšanu uz Arch Linux. Nepieciešams iestatīt drošās sāknēšanas režīmu uz \"Setup\" jūsu UEFI firmware iestatījumos.",
-  "mlight_desc": "Atvērtā pirmkoda PC klients NVIDIA GameStream un Sunshine."
+  "mlight_desc": "Atvērtā pirmkoda PC klients NVIDIA GameStream un Sunshine.",
+  "kernel_update_available_title": "Pieejams kodola atjauninājums",
+  "kernel_update_available_message": "Ir pieejama jauna kodola versija.",
+  "kernel_update_current_version": "Pašreizējā versija:",
+  "kernel_update_latest_version": "Jaunākā versija:",
+  "kernel_update_install_btn": "Instalēt atjauninājumu",
+  "kernel_update_ignore_btn": "Ignorēt",
+  "kernel_update_reboot_required": "Pēc instalēšanas būs nepieciešama sistēmas pārstartēšana."
 }

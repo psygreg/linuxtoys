@@ -297,5 +297,12 @@
   "term_view_done_text": "הושלם",
   "archsb": "Secure Boot עבור Arch",
   "archsb_desc": "הגדר במהירות Secure Boot ב-Arch Linux. דורש הגדרת מצב Secure Boot ל-\"Setup\" בהגדרות קושחת UEFI שלך.",
-  "mlight_desc": "לקוח מחשב בקוד פתוח עבור NVIDIA GameStream ו-Sunshine."
+  "mlight_desc": "לקוח מחשב בקוד פתוח עבור NVIDIA GameStream ו-Sunshine.",
+  "kernel_update_available_title": "עדכון ליבה זמין",
+  "kernel_update_available_message": "גרסה חדשה של הליבה זמינה.",
+  "kernel_update_current_version": "גרסה נוכחית:",
+  "kernel_update_latest_version": "גרסה אחרונה:",
+  "kernel_update_install_btn": "התקן עדכון",
+  "kernel_update_ignore_btn": "התעלם",
+  "kernel_update_reboot_required": "תידרש הפעלה מחדש של המערכת לאחר ההתקנה."
 }

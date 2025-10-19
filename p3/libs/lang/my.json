@@ -297,5 +297,12 @@
   "term_view_done_text": "ပြီးပြီ",
   "archsb": "Arch အတွက် Secure Boot",
   "archsb_desc": "Arch Linux တွင် Secure Boot ကို လျင်မြန်စွာ စနစ်ထည့်သွင်းပါ။ သင်၏ UEFI firmware ဆက်တင်များတွင် Secure Boot mode ကို \"Setup\" သို့ သတ်မှတ်ရန် လိုအပ်ပါသည်။",
-  "mlight_desc": "NVIDIA GameStream နှင့် Sunshine အတွက် Open source PC client။"
+  "mlight_desc": "NVIDIA GameStream နှင့် Sunshine အတွက် Open source PC client။",
+  "kernel_update_available_title": "Kernel အပ်ဒိတ်ရနိုင်ပါသည်",
+  "kernel_update_available_message": "kernel ၏ ဗားရှင်းအသစ်ရနိုင်ပါသည်။",
+  "kernel_update_current_version": "လက်ရှိဗားရှင်း:",
+  "kernel_update_latest_version": "နောက်ဆုံးဗားရှင်း:",
+  "kernel_update_install_btn": "အပ်ဒိတ်ထည့်သွင်းပါ",
+  "kernel_update_ignore_btn": "လျစ်လျူရှုပါ",
+  "kernel_update_reboot_required": "ထည့်သွင်းပြီးနောက် စနစ်ကို ပြန်လည်စတင်ရန် လိုအပ်ပါမည်။"
 }

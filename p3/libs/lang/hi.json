@@ -277,5 +277,12 @@
   "term_view_done_text": "पूर्ण",
   "archsb": "Arch के लिए सिक्योर बूट",
   "archsb_desc": "Arch Linux पर सिक्योर बूट को शीघ्रता से सेट अप करें। आपकी UEFI फर्मवेयर सेटिंग्स में सिक्योर बूट मोड को \"Setup\" पर सेट करने की आवश्यकता है।",
-  "mlight_desc": "NVIDIA GameStream और Sunshine के लिए ओपन सोर्स पीसी क्लाइंट।"
+  "mlight_desc": "NVIDIA GameStream और Sunshine के लिए ओपन सोर्स पीसी क्लाइंट।",
+  "kernel_update_available_title": "कर्नेल अपडेट उपलब्ध",
+  "kernel_update_available_message": "कर्नेल का एक नया संस्करण उपलब्ध है।",
+  "kernel_update_current_version": "वर्तमान संस्करण:",
+  "kernel_update_latest_version": "नवीनतम संस्करण:",
+  "kernel_update_install_btn": "अपडेट इंस्टॉल करें",
+  "kernel_update_ignore_btn": "अनदेखा करें",
+  "kernel_update_reboot_required": "इंस्टॉलेशन के बाद सिस्टम रीबूट की आवश्यकता होगी।"
 }

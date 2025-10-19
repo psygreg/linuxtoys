@@ -297,5 +297,12 @@
   "term_view_done_text": "រួចរាល់",
   "archsb": "Secure Boot សម្រាប់ Arch",
   "archsb_desc": "រៀបចំ Secure Boot យ៉ាងរហ័សនៅលើ Arch Linux។ ទាមទារការកំណត់របៀប Secure Boot ទៅ \"Setup\" នៅក្នុងការកំណត់ firmware UEFI របស់អ្នក។",
-  "mlight_desc": "កម្មវិធីអតិថិជនកុំព្យូទ័របើកចំហសម្រាប់ NVIDIA GameStream និង Sunshine។"
+  "mlight_desc": "កម្មវិធីអតិថិជនកុំព្យូទ័របើកចំហសម្រាប់ NVIDIA GameStream និង Sunshine។",
+  "kernel_update_available_title": "មានបច្ចុប្បន្នភាព Kernel",
+  "kernel_update_available_message": "កំណែថ្មីនៃ kernel មាន។",
+  "kernel_update_current_version": "កំណែបច្ចុប្បន្ន៖",
+  "kernel_update_latest_version": "កំណែចុងក្រោយ៖",
+  "kernel_update_install_btn": "ដំឡើងបច្ចុប្បន្នភាព",
+  "kernel_update_ignore_btn": "មិនអើពើ",
+  "kernel_update_reboot_required": "ការចាប់ផ្តើមប្រព័ន្ធឡើងវិញនឹងត្រូវការបន្ទាប់ពីការដំឡើង។"
 }

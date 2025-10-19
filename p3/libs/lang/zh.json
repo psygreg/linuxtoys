@@ -299,5 +299,12 @@
   "term_view_done_text": "完成",
   "archsb": "Arch 安全启动",
   "archsb_desc": "在 Arch Linux 上快速设置安全启动。需要在您的 UEFI 固件设置中将安全启动模式设置为\"Setup\"。",
-  "mlight_desc": "适用于NVIDIA GameStream和Sunshine的开源PC客户端。"
+  "mlight_desc": "适用于NVIDIA GameStream和Sunshine的开源PC客户端。",
+  "kernel_update_available_title": "内核更新可用",
+  "kernel_update_available_message": "有新版本的内核可用。",
+  "kernel_update_current_version": "当前版本：",
+  "kernel_update_latest_version": "最新版本：",
+  "kernel_update_install_btn": "安装更新",
+  "kernel_update_ignore_btn": "忽略",
+  "kernel_update_reboot_required": "安装后需要重新启动系统。"
 }

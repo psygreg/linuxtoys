@@ -297,5 +297,12 @@
   "term_view_done_text": "Tapos na",
   "archsb": "Secure Boot para sa Arch",
   "archsb_desc": "Mabilis na i-set up ang Secure Boot sa Arch Linux. Nangangailangan ng pagtatakda ng Secure Boot mode sa \"Setup\" sa iyong mga setting ng UEFI firmware.",
-  "mlight_desc": "Open source PC client para sa NVIDIA GameStream at Sunshine."
+  "mlight_desc": "Open source PC client para sa NVIDIA GameStream at Sunshine.",
+  "kernel_update_available_title": "Available ang Kernel Update",
+  "kernel_update_available_message": "Mayroon bagong bersyon ng kernel.",
+  "kernel_update_current_version": "Kasalukuyang bersyon:",
+  "kernel_update_latest_version": "Pinakabagong bersyon:",
+  "kernel_update_install_btn": "I-install ang Update",
+  "kernel_update_ignore_btn": "Huwag pansinin",
+  "kernel_update_reboot_required": "Kinakailangan ang pag-reboot ng system pagkatapos ng pag-install."
 }

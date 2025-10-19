@@ -297,5 +297,12 @@
   "term_view_done_text": "Hoàn thành",
   "archsb": "Secure Boot cho Arch",
   "archsb_desc": "Thiết lập Secure Boot nhanh chóng trên Arch Linux. Yêu cầu đặt chế độ Secure Boot thành \"Setup\" trong cài đặt firmware UEFI của bạn.",
-  "mlight_desc": "Ứng dụng PC mã nguồn mở cho NVIDIA GameStream và Sunshine."
+  "mlight_desc": "Ứng dụng PC mã nguồn mở cho NVIDIA GameStream và Sunshine.",
+  "kernel_update_available_title": "Có bản cập nhật kernel",
+  "kernel_update_available_message": "Có phiên bản mới của kernel.",
+  "kernel_update_current_version": "Phiên bản hiện tại:",
+  "kernel_update_latest_version": "Phiên bản mới nhất:",
+  "kernel_update_install_btn": "Cài đặt bản cập nhật",
+  "kernel_update_ignore_btn": "Bỏ qua",
+  "kernel_update_reboot_required": "Sẽ cần khởi động lại hệ thống sau khi cài đặt."
 }

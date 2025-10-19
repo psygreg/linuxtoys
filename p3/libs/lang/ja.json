@@ -297,5 +297,12 @@
   "term_view_done_text": "完了",
   "archsb": "Arch用セキュアブート",
   "archsb_desc": "Arch Linuxでセキュアブートを素早く設定します。UEFIファームウェア設定でセキュアブートモードを\"Setup\"に設定する必要があります。",
-  "mlight_desc": "NVIDIA GameStreamとSunshine用のオープンソースPCクライアント。"
+  "mlight_desc": "NVIDIA GameStreamとSunshine用のオープンソースPCクライアント。",
+  "kernel_update_available_title": "カーネルアップデートが利用可能",
+  "kernel_update_available_message": "カーネルの新しいバージョンが利用可能です。",
+  "kernel_update_current_version": "現在のバージョン：",
+  "kernel_update_latest_version": "最新バージョン：",
+  "kernel_update_install_btn": "アップデートをインストール",
+  "kernel_update_ignore_btn": "無視",
+  "kernel_update_reboot_required": "インストール後にシステムの再起動が必要になります。"
 }

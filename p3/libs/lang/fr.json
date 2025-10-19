@@ -297,5 +297,12 @@
   "term_view_done_text": "Terminé",
   "archsb": "Démarrage sécurisé pour Arch",
   "archsb_desc": "Configurez rapidement le démarrage sécurisé sur Arch Linux. Nécessite de définir le mode de démarrage sécurisé sur \"Setup\" dans les paramètres du firmware UEFI.",
-  "mlight_desc": "Client PC open source pour NVIDIA GameStream et Sunshine."
+  "mlight_desc": "Client PC open source pour NVIDIA GameStream et Sunshine.",
+  "kernel_update_available_title": "Mise à jour du noyau disponible",
+  "kernel_update_available_message": "Une nouvelle version du noyau est disponible.",
+  "kernel_update_current_version": "Version actuelle :",
+  "kernel_update_latest_version": "Dernière version :",
+  "kernel_update_install_btn": "Installer la mise à jour",
+  "kernel_update_ignore_btn": "Ignorer",
+  "kernel_update_reboot_required": "Un redémarrage du système sera nécessaire après l'installation."
 }

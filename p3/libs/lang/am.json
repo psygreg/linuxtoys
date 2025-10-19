@@ -297,5 +297,12 @@
   "term_view_done_text": "ተጠናቅቋል",
   "archsb": "ለArch የተጠበቀ ማስነሻ",
   "archsb_desc": "በArch Linux ላይ የተጠበቀ ማስነሻን በፍጥነት ያዋቅሩ። በእርስዎ UEFI firmware ቅንብሮች ውስጥ የSecure Boot ሁነታን ወደ \"Setup\" ማዋቀር ያስፈልጋል።",
-  "mlight_desc": "ለNVIDIA GameStream እና Sunshine ክፍት ምንጭ ፒሲ ደንበኛ።"
+  "mlight_desc": "ለNVIDIA GameStream እና Sunshine ክፍት ምንጭ ፒሲ ደንበኛ።",
+  "kernel_update_available_title": "የከርነል ማሻሻያ አለ",
+  "kernel_update_available_message": "አዲስ የከርነል ስሪት አለ።",
+  "kernel_update_current_version": "የአሁኑ ስሪት:",
+  "kernel_update_latest_version": "የቅርብ ጊዜ ስሪት:",
+  "kernel_update_install_btn": "ማሻሻያ ጫን",
+  "kernel_update_ignore_btn": "ችላ በል",
+  "kernel_update_reboot_required": "ከመጫን በኋላ የስርዓት እንደገና ማስጀመር ያስፈልጋል።"
 }

@@ -297,5 +297,12 @@
   "term_view_done_text": "مکمل",
   "archsb": "Arch کے لیے سیکیور بوٹ",
   "archsb_desc": "Arch Linux پر سیکیور بوٹ کو تیزی سے سیٹ اپ کریں۔ آپ کی UEFI فرم ویئر سیٹنگز میں سیکیور بوٹ موڈ کو \"Setup\" پر سیٹ کرنے کی ضرورت ہے۔",
-  "mlight_desc": "NVIDIA GameStream اور Sunshine کے لیے اوپن سورس PC کلائنٹ۔"
+  "mlight_desc": "NVIDIA GameStream اور Sunshine کے لیے اوپن سورس PC کلائنٹ۔",
+  "kernel_update_available_title": "کرنل اپ ڈیٹ دستیاب ہے",
+  "kernel_update_available_message": "کرنل کا ایک نیا ورژن دستیاب ہے۔",
+  "kernel_update_current_version": "موجودہ ورژن:",
+  "kernel_update_latest_version": "تازہ ترین ورژن:",
+  "kernel_update_install_btn": "اپ ڈیٹ انسٹال کریں",
+  "kernel_update_ignore_btn": "نظر انداز کریں",
+  "kernel_update_reboot_required": "تنصیب کے بعد سسٹم کو دوبارہ شروع کرنا ہوگا۔"
 }

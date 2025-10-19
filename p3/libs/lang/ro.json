@@ -297,5 +297,12 @@
   "term_view_done_text": "Terminat",
   "archsb": "Secure Boot pentru Arch",
   "archsb_desc": "Configurați rapid Secure Boot pe Arch Linux. Necesită setarea modului Secure Boot pe \"Setup\" în setările firmware-ului UEFI.",
-  "mlight_desc": "Client PC open source pentru NVIDIA GameStream și Sunshine."
+  "mlight_desc": "Client PC open source pentru NVIDIA GameStream și Sunshine.",
+  "kernel_update_available_title": "Actualizare kernel disponibilă",
+  "kernel_update_available_message": "Este disponibilă o nouă versiune a kernelului.",
+  "kernel_update_current_version": "Versiunea curentă:",
+  "kernel_update_latest_version": "Ultima versiune:",
+  "kernel_update_install_btn": "Instalează actualizarea",
+  "kernel_update_ignore_btn": "Ignoră",
+  "kernel_update_reboot_required": "Va fi necesară o repornire a sistemului după instalare."
 }

@@ -297,5 +297,12 @@
   "term_view_done_text": "დასრულებულია",
   "archsb": "Secure Boot Arch-ისთვის",
   "archsb_desc": "სწრაფად დააყენეთ Secure Boot Arch Linux-ზე. საჭიროებს Secure Boot რეჟიმის დაყენებას \"Setup\"-ზე თქვენს UEFI firmware პარამეტრებში.",
-  "mlight_desc": "ღია კოდის PC კლიენტი NVIDIA GameStream-ისთვის და Sunshine-ისთვის."
+  "mlight_desc": "ღია კოდის PC კლიენტი NVIDIA GameStream-ისთვის და Sunshine-ისთვის.",
+  "kernel_update_available_title": "ბირთვის განახლება ხელმისაწვდომია",
+  "kernel_update_available_message": "ხელმისაწვდომია ბირთვის ახალი ვერსია.",
+  "kernel_update_current_version": "მიმდინარე ვერსია:",
+  "kernel_update_latest_version": "უახლესი ვერსია:",
+  "kernel_update_install_btn": "განახლების დაყენება",
+  "kernel_update_ignore_btn": "იგნორირება",
+  "kernel_update_reboot_required": "ინსტალაციის შემდეგ საჭირო იქნება სისტემის გადატვირთვა."
 }

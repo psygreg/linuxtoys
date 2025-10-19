@@ -297,5 +297,12 @@
   "term_view_done_text": "تم",
   "archsb": "التشغيل الآمن لـ Arch",
   "archsb_desc": "قم بإعداد التشغيل الآمن بسرعة على Arch Linux. يتطلب تعيين وضع التشغيل الآمن إلى \"Setup\" في إعدادات البرنامج الثابت UEFI الخاصة بك.",
-  "mlight_desc": "عميل كمبيوتر مفتوح المصدر لـ NVIDIA GameStream و Sunshine."
+  "mlight_desc": "عميل كمبيوتر مفتوح المصدر لـ NVIDIA GameStream و Sunshine.",
+  "kernel_update_available_title": "تحديث النواة متاح",
+  "kernel_update_available_message": "إصدار جديد من النواة متاح.",
+  "kernel_update_current_version": "الإصدار الحالي:",
+  "kernel_update_latest_version": "أحدث إصدار:",
+  "kernel_update_install_btn": "تثبيت التحديث",
+  "kernel_update_ignore_btn": "تجاهل",
+  "kernel_update_reboot_required": "ستكون إعادة تشغيل النظام مطلوبة بعد التثبيت."
 }

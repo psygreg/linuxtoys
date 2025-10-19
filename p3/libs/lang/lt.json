@@ -297,5 +297,12 @@
   "term_view_done_text": "Baigta",
   "archsb": "Secure Boot Arch sistemai",
   "archsb_desc": "Greitai nustatykite saugų paleidimą Arch Linux sistemoje. Reikalauja nustatyti saugaus paleidimo režimą į \"Setup\" jūsų UEFI firmware nustatymuose.",
-  "mlight_desc": "Atvirojo kodo PC klientas NVIDIA GameStream ir Sunshine."
+  "mlight_desc": "Atvirojo kodo PC klientas NVIDIA GameStream ir Sunshine.",
+  "kernel_update_available_title": "Prieinama branduolio atnaujinimas",
+  "kernel_update_available_message": "Prieinama nauja branduolio versija.",
+  "kernel_update_current_version": "Dabartinė versija:",
+  "kernel_update_latest_version": "Naujausia versija:",
+  "kernel_update_install_btn": "Įdiegti atnaujinimą",
+  "kernel_update_ignore_btn": "Ignoruoti",
+  "kernel_update_reboot_required": "Po diegimo reikės paleisti sistemą iš naujo."
 }

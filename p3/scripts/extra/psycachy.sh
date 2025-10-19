@@ -61,23 +61,32 @@ psycachy_lts () {
         bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --lts
     fi
 }
-# menu
-while true; do
-    CHOICE=$(zenity --list --title "Psycachy Kernel Installer" --text "Select the kernel version to install:" \
-        --column "Versions" \
-        "Standard" \
-        "LTS" \
-        "Cancel" \
-        --width 300 --height 330 )
+# Parse command line arguments
+if [ "$1" = "-s" ] || [ "$1" = "--standard" ]; then
+    # Direct installation of standard edition
+    psycachy_std && exit 0
+elif [ "$1" = "-l" ] || [ "$1" = "--lts" ]; then
+    # Direct installation of LTS edition
+    psycachy_lts && exit 0
+else
+    # Show menu if no arguments provided
+    while true; do
+        CHOICE=$(zenity --list --title "Psycachy Kernel Installer" --text "Select the kernel version to install:" \
+            --column "Versions" \
+            "Standard" \
+            "LTS" \
+            "Cancel" \
+            --width 300 --height 330 )
 
-    if [ $? -ne 0 ]; then
-        exit 100
-    fi
+        if [ $? -ne 0 ]; then
+            exit 100
+        fi
 
-    case $CHOICE in
-    Standard) psycachy_std && exit 0 ;;
-    LTS) psycachy_lts && exit 0 ;;
-    Cancel | q) exit 100 ;;
-    *) echo "Invalid Option" ;;
-    esac
-done
+        case $CHOICE in
+        Standard) psycachy_std && exit 0 ;;
+        LTS) psycachy_lts && exit 0 ;;
+        Cancel | q) exit 100 ;;
+        *) echo "Invalid Option" ;;
+        esac
+    done
+fi

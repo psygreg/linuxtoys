@@ -297,5 +297,12 @@
   "term_view_done_text": "Gotowe",
   "archsb": "Secure Boot dla Arch",
   "archsb_desc": "Szybko skonfiguruj Secure Boot na Arch Linux. Wymaga ustawienia trybu Secure Boot na \"Setup\" w ustawieniach oprogramowania UEFI.",
-  "mlight_desc": "Klient PC o otwartym kodzie źródłowym dla NVIDIA GameStream i Sunshine."
+  "mlight_desc": "Klient PC o otwartym kodzie źródłowym dla NVIDIA GameStream i Sunshine.",
+  "kernel_update_available_title": "Dostępna aktualizacja jądra",
+  "kernel_update_available_message": "Dostępna jest nowa wersja jądra.",
+  "kernel_update_current_version": "Obecna wersja:",
+  "kernel_update_latest_version": "Najnowsza wersja:",
+  "kernel_update_install_btn": "Zainstaluj aktualizację",
+  "kernel_update_ignore_btn": "Ignoruj",
+  "kernel_update_reboot_required": "Po instalacji wymagane będzie ponowne uruchomienie systemu."
 }

@@ -296,5 +296,12 @@
   "term_view_done_text": "Дууссан",
   "archsb": "Arch-д зориулсан Secure Boot",
   "archsb_desc": "Arch Linux дээр Secure Boot-г хурдан тохируулна уу. UEFI firmware тохиргоондоо Secure Boot горимыг \"Setup\" болгож тохируулах шаардлагатай.",
-  "mlight_desc": "NVIDIA GameStream болон Sunshine-д зориулсан нээлттэй эхийн компьютерийн клиент."
+  "mlight_desc": "NVIDIA GameStream болон Sunshine-д зориулсан нээлттэй эхийн компьютерийн клиент.",
+  "kernel_update_available_title": "Цөмийн шинэчлэл боломжтой",
+  "kernel_update_available_message": "Цөмийн шинэ хувилбар боломжтой.",
+  "kernel_update_current_version": "Одоогийн хувилбар:",
+  "kernel_update_latest_version": "Хамгийн сүүлийн хувилбар:",
+  "kernel_update_install_btn": "Шинэчлэл суулгах",
+  "kernel_update_ignore_btn": "Үл тоох",
+  "kernel_update_reboot_required": "Суулгасны дараа системийг дахин эхлүүлэх шаардлагатай болно."
 }

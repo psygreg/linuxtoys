@@ -296,5 +296,12 @@
   "term_view_done_text": "Tamamlandı",
   "archsb": "Arch üçün Secure Boot",
   "archsb_desc": "Arch Linux-da Secure Boot-u tez bir zamanda quraşdırın. UEFI firmware parametrlerinizdə Secure Boot rejimini \"Setup\" olaraq təyin etməyi tələb edir.",
-  "mlight_desc": "NVIDIA GameStream və Sunshine üçün açıq mənbəli PC müştərisi."
+  "mlight_desc": "NVIDIA GameStream və Sunshine üçün açıq mənbəli PC müştərisi.",
+  "kernel_update_available_title": "Kernel Yeniləməsi Mövcuddur",
+  "kernel_update_available_message": "Kernelin yeni versiyası mövcuddur.",
+  "kernel_update_current_version": "Cari versiya:",
+  "kernel_update_latest_version": "Ən son versiya:",
+  "kernel_update_install_btn": "Yeniləməni Quraşdır",
+  "kernel_update_ignore_btn": "Nəzərə Alma",
+  "kernel_update_reboot_required": "Quraşdırmadan sonra sistem yenidən başlatma tələb olunacaq."
 }

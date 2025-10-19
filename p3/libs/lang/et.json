@@ -297,5 +297,12 @@
   "term_view_done_text": "Valmis",
   "archsb": "Secure Boot Archi jaoks",
   "archsb_desc": "Seadistage Secure Boot kiiresti Arch Linuxis. Nõuab Secure Boot režiimi seadmist \"Setup\"-ile teie UEFI firmware seadetes.",
-  "mlight_desc": "Avatud lähtekoodiga PC klient NVIDIA GameStream ja Sunshine jaoks."
+  "mlight_desc": "Avatud lähtekoodiga PC klient NVIDIA GameStream ja Sunshine jaoks.",
+  "kernel_update_available_title": "Kerneli värskendus saadaval",
+  "kernel_update_available_message": "Saadaval on kerneli uus versioon.",
+  "kernel_update_current_version": "Praegune versioon:",
+  "kernel_update_latest_version": "Viimane versioon:",
+  "kernel_update_install_btn": "Installi värskendus",
+  "kernel_update_ignore_btn": "Ignoreeri",
+  "kernel_update_reboot_required": "Pärast installimist on vajalik süsteemi taaskäivitamine."
 }

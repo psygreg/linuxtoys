@@ -297,5 +297,12 @@
   "term_view_done_text": "Ολοκληρώθηκε",
   "archsb": "Secure Boot για Arch",
   "archsb_desc": "Ρυθμίστε γρήγορα το Secure Boot στο Arch Linux. Απαιτεί τη ρύθμιση της λειτουργίας Secure Boot σε \"Setup\" στις ρυθμίσεις του UEFI firmware σας.",
-  "mlight_desc": "Πελάτης υπολογιστή ανοιχτού κώδικα για NVIDIA GameStream και Sunshine."
+  "mlight_desc": "Πελάτης υπολογιστή ανοιχτού κώδικα για NVIDIA GameStream και Sunshine.",
+  "kernel_update_available_title": "Διαθέσιμη ενημέρωση πυρήνα",
+  "kernel_update_available_message": "Μια νέα έκδοση του πυρήνα είναι διαθέσιμη.",
+  "kernel_update_current_version": "Τρέχουσα έκδοση:",
+  "kernel_update_latest_version": "Τελευταία έκδοση:",
+  "kernel_update_install_btn": "Εγκατάσταση ενημέρωσης",
+  "kernel_update_ignore_btn": "Αγνόηση",
+  "kernel_update_reboot_required": "Θα απαιτηθεί επανεκκίνηση του συστήματος μετά την εγκατάσταση."
 }

@@ -297,5 +297,12 @@
   "term_view_done_text": "완료",
   "archsb": "Arch용 보안 부팅",
   "archsb_desc": "Arch Linux에서 보안 부팅을 빠르게 설정합니다. UEFI 펌웨어 설정에서 보안 부팅 모드를 \"Setup\"으로 설정해야 합니다.",
-  "mlight_desc": "NVIDIA GameStream 및 Sunshine용 오픈 소스 PC 클라이언트."
+  "mlight_desc": "NVIDIA GameStream 및 Sunshine용 오픈 소스 PC 클라이언트.",
+  "kernel_update_available_title": "커널 업데이트 사용 가능",
+  "kernel_update_available_message": "새 버전의 커널을 사용할 수 있습니다.",
+  "kernel_update_current_version": "현재 버전:",
+  "kernel_update_latest_version": "최신 버전:",
+  "kernel_update_install_btn": "업데이트 설치",
+  "kernel_update_ignore_btn": "무시",
+  "kernel_update_reboot_required": "설치 후 시스템 재부팅이 필요합니다."
 }

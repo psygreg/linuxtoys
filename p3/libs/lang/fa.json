@@ -297,5 +297,12 @@
   "term_view_done_text": "انجام شد",
   "archsb": "Secure Boot برای Arch",
   "archsb_desc": "به سرعت Secure Boot را در Arch Linux راه‌اندازی کنید. نیاز به تنظیم حالت Secure Boot به \"Setup\" در تنظیمات firmware UEFI شما دارد.",
-  "mlight_desc": "کلاینت کامپیوتر متن‌باز برای NVIDIA GameStream و Sunshine."
+  "mlight_desc": "کلاینت کامپیوتر متن‌باز برای NVIDIA GameStream و Sunshine.",
+  "kernel_update_available_title": "به‌روزرسانی هسته در دسترس است",
+  "kernel_update_available_message": "نسخه جدیدی از هسته در دسترس است.",
+  "kernel_update_current_version": "نسخه فعلی:",
+  "kernel_update_latest_version": "آخرین نسخه:",
+  "kernel_update_install_btn": "نصب به‌روزرسانی",
+  "kernel_update_ignore_btn": "نادیده گرفتن",
+  "kernel_update_reboot_required": "پس از نصب، راه‌اندازی مجدد سیستم مورد نیاز است."
 }

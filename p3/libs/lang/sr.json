@@ -297,5 +297,12 @@
   "term_view_done_text": "Завршено",
   "archsb": "Безбедно покретање за Arch",
   "archsb_desc": "Брзо подесите безбедно покретање на Arch Linux-у. Захтева постављање режима безбедног покретања на \"Setup\" у вашим UEFI firmware подешавањима.",
-  "mlight_desc": "Клијент за рачунар отвореног кода за NVIDIA GameStream и Sunshine."
+  "mlight_desc": "Клијент за рачунар отвореног кода за NVIDIA GameStream и Sunshine.",
+  "kernel_update_available_title": "Доступно ажурирање кернела",
+  "kernel_update_available_message": "Доступна је нова верзија кернела.",
+  "kernel_update_current_version": "Тренутна верзија:",
+  "kernel_update_latest_version": "Најновија верзија:",
+  "kernel_update_install_btn": "Инсталирај ажурирање",
+  "kernel_update_ignore_btn": "Игнориши",
+  "kernel_update_reboot_required": "Биће потребно поновно покретање система након инсталације."
 }

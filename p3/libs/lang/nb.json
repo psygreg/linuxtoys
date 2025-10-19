@@ -297,5 +297,12 @@
   "term_view_done_text": "Ferdig",
   "archsb": "Secure Boot for Arch",
   "archsb_desc": "Sett opp Secure Boot raskt på Arch Linux. Krever at Secure Boot-modus settes til \"Setup\" i UEFI firmware-innstillingene dine.",
-  "mlight_desc": "Åpen kildekode PC-klient for NVIDIA GameStream og Sunshine."
+  "mlight_desc": "Åpen kildekode PC-klient for NVIDIA GameStream og Sunshine.",
+  "kernel_update_available_title": "Kjerneoppdatering tilgjengelig",
+  "kernel_update_available_message": "En ny versjon av kjernen er tilgjengelig.",
+  "kernel_update_current_version": "Nåværende versjon:",
+  "kernel_update_latest_version": "Siste versjon:",
+  "kernel_update_install_btn": "Installer oppdatering",
+  "kernel_update_ignore_btn": "Ignorer",
+  "kernel_update_reboot_required": "En systemomstart vil være nødvendig etter installasjonen."
 }

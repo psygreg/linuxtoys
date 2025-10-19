@@ -297,5 +297,12 @@
   "term_view_done_text": "Анҷом ёфт",
   "archsb": "Secure Boot барои Arch",
   "archsb_desc": "Ба таври зуд Secure Boot-ро дар Arch Linux танзим кунед. Лозим аст, ки реҷаи Secure Boot-ро ба \"Setup\" дар танзимоти firmware UEFI-и худ гузоред.",
-  "mlight_desc": "Клиенти компютерии сарчашмаи кушод барои NVIDIA GameStream ва Sunshine."
+  "mlight_desc": "Клиенти компютерии сарчашмаи кушод барои NVIDIA GameStream ва Sunshine.",
+  "kernel_update_available_title": "Навсозии ҳаста дастрас аст",
+  "kernel_update_available_message": "Версияи нави ҳаста дастрас аст.",
+  "kernel_update_current_version": "Версияи ҷорӣ:",
+  "kernel_update_latest_version": "Версияи охирин:",
+  "kernel_update_install_btn": "Навсозиро насб кунед",
+  "kernel_update_ignore_btn": "Рад кардан",
+  "kernel_update_reboot_required": "Баъди насбкунӣ аз нав оғозкунии система лозим хоҳад буд."
 }

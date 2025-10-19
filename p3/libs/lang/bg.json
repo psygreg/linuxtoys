@@ -297,5 +297,12 @@
   "term_view_done_text": "Готово",
   "archsb": "Secure Boot за Arch",
   "archsb_desc": "Бързо настройте Secure Boot на Arch Linux. Изисква настройване на режима на Secure Boot на \"Setup\" във вашите настройки на UEFI firmware.",
-  "mlight_desc": "Клиент с отворен код за NVIDIA GameStream и Sunshine."
+  "mlight_desc": "Клиент с отворен код за NVIDIA GameStream и Sunshine.",
+  "kernel_update_available_title": "Налична е актуализация на ядрото",
+  "kernel_update_available_message": "Налична е нова версия на ядрото.",
+  "kernel_update_current_version": "Текуща версия:",
+  "kernel_update_latest_version": "Най-нова версия:",
+  "kernel_update_install_btn": "Инсталирай актуализацията",
+  "kernel_update_ignore_btn": "Игнорирай",
+  "kernel_update_reboot_required": "След инсталацията ще бъде необходимо рестартиране на системата."
 }

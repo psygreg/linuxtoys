@@ -9,6 +9,7 @@ if os.environ.get('LT_MANIFEST') != '1':
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
 from .update_helper import run_update_check
+from .kernel_update_helper import run_kernel_update_check
 from .compat import is_supported_system
 from . import get_app_resource_path, get_icon_path
 
@@ -85,6 +86,21 @@ def run():
         update_thread.start()
     except Exception as e:
         print(f"Update check thread failed: {e}")
+    
+    # Run kernel update check for psycachy kernels (debian/ubuntu only)
+    try:
+        import threading
+        def async_kernel_check():
+            try:
+                run_kernel_update_check(show_dialog=True, verbose=False, translations=translations)
+            except Exception as e:
+                print(f"Kernel update check failed: {e}")
+        
+        # Run kernel check in background thread to prevent blocking
+        kernel_thread = threading.Thread(target=async_kernel_check, daemon=True)
+        kernel_thread.start()
+    except Exception as e:
+        print(f"Kernel update check thread failed: {e}")
 
     # FIX: Set the application icon before running
     # Use the icon path resolver

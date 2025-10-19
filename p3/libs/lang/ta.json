@@ -295,5 +295,12 @@
   "term_view_done_text": "முடிந்தது",
   "archsb": "Arch க்கான பாதுகாப்பான துவக்கம்",
   "archsb_desc": "Arch Linux இல் பாதுகாப்பான துவக்கத்தை விரைவாக அமைக்கவும். உங்கள் UEFI firmware அமைப்புகளில் பாதுகாப்பான துவக்க பயன்முறையை \"Setup\" க்கு அமைக்க வேண்டும்.",
-  "mlight_desc": "NVIDIA GameStream மற்றும் Sunshine க்கான திறந்த மூல PC கிளையன்ட்."
+  "mlight_desc": "NVIDIA GameStream மற்றும் Sunshine க்கான திறந்த மூல PC கிளையன்ட்.",
+  "kernel_update_available_title": "கர்னல் புதுப்பிப்பு கிடைக்கிறது",
+  "kernel_update_available_message": "கர்னலின் புதிய பதிப்பு கிடைக்கிறது.",
+  "kernel_update_current_version": "தற்போதைய பதிப்பு:",
+  "kernel_update_latest_version": "சமீபத்திய பதிப்பு:",
+  "kernel_update_install_btn": "புதுப்பிப்பை நிறுவு",
+  "kernel_update_ignore_btn": "புறக்கணி",
+  "kernel_update_reboot_required": "நிறுவலுக்குப் பிறகு கணினி மறுதொடக்கம் தேவைப்படும்."
 }

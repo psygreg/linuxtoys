@@ -297,5 +297,12 @@
   "term_view_done_text": "Gotovo",
   "archsb": "Secure Boot za Arch",
   "archsb_desc": "Brzo postavite Secure Boot na Arch Linuxu. Zahtijeva postavljanje Secure Boot načina na \"Setup\" u vašim UEFI firmware postavkama.",
-  "mlight_desc": "Open source PC klijent za NVIDIA GameStream i Sunshine."
+  "mlight_desc": "Open source PC klijent za NVIDIA GameStream i Sunshine.",
+  "kernel_update_available_title": "Dostupno ažuriranje kernela",
+  "kernel_update_available_message": "Dostupna je nova verzija kernela.",
+  "kernel_update_current_version": "Trenutna verzija:",
+  "kernel_update_latest_version": "Najnovija verzija:",
+  "kernel_update_install_btn": "Instaliraj ažuriranje",
+  "kernel_update_ignore_btn": "Ignoriraj",
+  "kernel_update_reboot_required": "Nakon instalacije bit će potrebno ponovno pokretanje sustava."
 }
