@@ -287,6 +287,12 @@ def run_script(script_info):
     In developer mode, performs dry-run validation instead of execution.
     """
     # Check if we should dry-run instead of execute
+
+    # Disable zenity for CLI execution
+    # This prevents GUI dialogs from appearing during script execution
+    # We handle user prompts via CLI instead
+    os.environ['DISABLE_ZENITY'] = '1'
+
     try:
         from .dev_mode import should_dry_run_scripts, dry_run_script
         if should_dry_run_scripts():
@@ -404,34 +410,6 @@ def check_ostree_deployment_cli(translations=None):
             return False
 
 
-def run_script_without_zenity(script_info):
-
-    os.environ['DISABLE_ZENITY'] = '1'
-
-    print(f"Running script: {script_info['name']} ({script_info['path']})")
-    print("-" * 50)
-
-    try:
-        # Substitui a interação do zenity por uma resposta simulada (sim)
-        result = subprocess.run(
-            ['bash', script_info['path']], 
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE, 
-            input="enter\n",  # Simula pressionamento de "y" (sim) para zenity
-            text=True
-        )
-        
-        # Print the output
-        if result.stdout:
-            print(result.stdout)
-        
-        print(f"\n--- Script finished with exit code: {result.returncode} ---")
-        return result.returncode
-        
-    except Exception as e:
-        print(f"Error executing script '{script_info['name']}': {e}")
-        return 1
-
 
 def ask_continue_on_failure():
     """ Pergunta ao usuário se deseja continuar após falha """
@@ -453,7 +431,7 @@ def execute_scripts_with_feedback(scripts_found):
         print(f"\n[{index}/{total}] 🚀 Executando: {name}")
         print("=" * 60)
 
-        exit_code = run_script_without_zenity(script_info)
+        exit_code = run_script(script_info)
 
         if exit_code == 0:
             print(f"✓ {name} concluído com sucesso.")
@@ -544,9 +522,8 @@ def easy_cli_handler(translations=None):
 
     args = sys.argv[1:]
 
-    # Verifica se é o modo de instalação
+
     if not args:
-          # Não é modo de instalação
         print("✗ Nenhum argumento fornecido.\n")
         easy_cli_help_mansage()
         return 0
