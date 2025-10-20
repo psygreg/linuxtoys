@@ -403,6 +403,39 @@ def check_ostree_deployment_cli(translations=None):
             print("\n\nInput ended. Exiting LinuxToys.")
             return False
 
+
+def ask_continue_on_failure():
+    """ Pergunta ao usuário se deseja continuar após falha """
+    try:
+        response = input("Continue com os itens restantes? [y/N]: ").strip().lower()
+        if response not in ['y', 'yes']:
+            print("Execução interrompida.")
+            return False
+    except KeyboardInterrupt:
+        print("\nExecução interrompida.")
+        return False
+    return True
+
+def execute_scripts_with_feedback(scripts_found):
+    total = len(scripts_found)
+    
+    for index, script_info in enumerate(scripts_found, 1):
+        name = script_info.get("name", os.path.basename(script_info["path"]))
+        print(f"\n[{index}/{total}] 🚀 Executando: {name}")
+        print("=" * 60)
+
+        exit_code = run_script_without_zenity(script_info)
+
+        if exit_code == 0:
+            print(f"✓ {name} concluído com sucesso.")
+        else:
+            print(f"✗ {name} falhou com código {exit_code}.")
+            
+            # Pergunta se o usuário quer continuar com os itens restantes
+            if not ask_continue_on_failure():
+                break
+
+
 def scripts_install(args:list, translations):
 
     # if "-y" in args or "--yes" in args:
