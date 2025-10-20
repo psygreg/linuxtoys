@@ -411,15 +411,15 @@ def check_ostree_deployment_cli(translations=None):
 
 
 
-def ask_continue_on_failure():
+def confirm_action(action_to_confirm_message):
     """ Pergunta ao usuário se deseja continuar após falha """
     try:
-        response = input("Continue com os itens restantes? [y/N]: ").strip().lower()
+        response = input(f"{action_to_confirm_message} [y/N]: ").strip().lower()
         if response not in ['y', 'yes']:
-            print("Execução interrompida.")
+            print("Operation cancelled.")
             return False
     except KeyboardInterrupt:
-        print("\nExecução interrompida.")
+        print("\nOperation cancelled")
         return False
     return True
 
@@ -439,7 +439,7 @@ def execute_scripts_with_feedback(scripts_found):
             print(f"✗ {name} falhou com código {exit_code}.")
             
             # Pergunta se o usuário quer continuar com os itens restantes
-            if not ask_continue_on_failure():
+            if not confirm_action("Continue com os itens restantes?"):
                 break
 
 
@@ -491,7 +491,9 @@ def scripts_install(args:list, translations):
         print(f" - {script_info['name']} | {os.path.basename (script_info['path'])}")
     print()
 
-    execute_scripts_with_feedback(scripts_found_list)
+    # Pergunta ao usuário se deseja continuar
+    if confirm_action("Deseja continuar com a execução dos scripts?"):
+        execute_scripts_with_feedback(scripts_found_list)
 
     
 def easy_cli_help_mansage():
