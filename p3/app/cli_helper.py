@@ -47,6 +47,7 @@ from .parser import get_categories, get_all_scripts_recursive
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .update_helper import run_update_check
 from .reboot_helper import check_ostree_pending_deployments
+from .update_helper import get_current_version
 
 
 def get_os_info():
@@ -443,10 +444,7 @@ def execute_scripts_with_feedback(scripts_found):
                 break
 
 
-def scripts_install(args:list, translations):
-
-    # if "-y" in args or "--yes" in args:
-    #     increase_privileges()
+def scripts_install(args:list, skip_confirmation, translations):
 
     # Filtra a lista de scripts removendo os flags de confirmação
     install_list = [arg for arg in args if arg not in ("-y", "--yes")]
@@ -492,7 +490,7 @@ def scripts_install(args:list, translations):
     print()
 
     # Pergunta ao usuário se deseja continuar
-    if confirm_action("Deseja continuar com a execução dos scripts?"):
+    if skip_confirmation or confirm_action("Deseja continuar com a execução dos scripts?"):
         execute_scripts_with_feedback(scripts_found_list)
 
     
@@ -522,6 +520,8 @@ def easy_cli_help_mansage():
     print("Other options:")
     print("  -h, --help         Show this help message")
     print("  -m, --manifest     Enable manifest mode features")
+    print("  -v, --version      Show version information")
+    print("  -y, --yes          Skip confirmation prompts (recommended to use as the last argument)")
     print()
 
     
@@ -534,6 +534,18 @@ def easy_cli_handler(translations=None):
 
     args = sys.argv[1:]
 
+    def skip_confirmation(args):
+        skip_flags = ("-y", "--yes")
+        found = False
+
+        for flag in skip_flags:
+            while flag in args:
+                args.remove(flag)
+                found = True
+
+        return found
+
+    skip_confirmation = skip_confirmation(args)
 
     if not args:
         print("✗ Nenhum argumento fornecido.\n")
@@ -542,16 +554,16 @@ def easy_cli_handler(translations=None):
     
     if args[0] in ("-i", "--install"):
         if args[1] in ("-s", "--script"): # Para instalação de scripts
-            scripts_install(args[2:], translations)
+            scripts_install(args[2:], skip_confirmation, translations)
             return 0
 
         # TODO : Implementar instalação de pacotes e flatpaks
         # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
-        #     packages_install(args[2:], translations)
+        #     packages_install(args[2:], skip_confirmation, translations)
         #     return 0
 
         # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
-        #     flatpaks_install(args[2:], translations)
+        #     flatpaks_install(args[2:], skip_confirmation, translations)
         #     return 0
 
         else:
@@ -573,6 +585,10 @@ def easy_cli_handler(translations=None):
     elif args[0] in ("--manifest", "-m"):
         # Run in CLI mode using manifest.txt
         return run_manifest_mode(translations)
+    
+    elif args[0] in ("-v", "--version"):
+        print(f"LinuxToys {get_current_version()}")
+        return 0
 
     else:
         print(f"\n✗ Ação desconhecida: {args[0]} \n")
