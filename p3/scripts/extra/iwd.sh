@@ -44,8 +44,8 @@ iwd_in () {
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/iwd.conf
             sudo mv iwd.conf /etc/NetworkManager/conf.d/
             # restart networkmanager with wpasupplicant disabled
-            sudo systemctl stop NetworkManager
             sudo systemctl disable wpa_supplicant
+            sudo systemctl stop NetworkManager
             sleep 1
             sudo systemctl restart NetworkManager
             sudo systemctl enable iwd
@@ -62,8 +62,8 @@ iwd_rm () {
         sudo_rq
         sudo rm /etc/NetworkManager/conf.d/iwd.conf
         sudo systemctl stop NetworkManager
-        sudo systemctl enable --now wpa_supplicant
         sudo systemctl restart NetworkManager
+        sudo systemctl enable --now wpa_supplicant
         return 0
     else
         nonfatal "iwd.conf file not found. IWD was not enabled in this system."
