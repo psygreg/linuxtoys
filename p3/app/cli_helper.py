@@ -403,6 +403,49 @@ def check_ostree_deployment_cli(translations=None):
             print("\n\nInput ended. Exiting LinuxToys.")
             return False
 
+        
+def handle_easy_cli_install(translations=None):
+
+    """
+    Easy CLI Install Mode
+    ---------------------
+    Permite executar diretamente scripts do LinuxToys via terminal.
+
+    Uso: EASY_CLI=1 python3 run.py --install -s <script1> <script2> ...
+    """
+
+    args = sys.argv[1:]
+
+    # Verifica se é o modo de instalação
+    if not args:
+          # Não é modo de instalação
+        return print("✗ Nenhum argumento fornecido.\n " \
+        "Uso: EASY_CLI=1 python3 run.py --install -s <script1> <script2> ...")
+    
+    if args[0] in ("-i", "--install"):
+        if args[1] in ("-s", "--script"): # Para instalação de scripts
+            scripts_install(args[2:], translations)
+
+        # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
+        #     packages_install(args[2:], translations)
+
+        # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
+        #     flatpaks_install(args[2:], translations)
+
+        else:
+            return print("✗ Parâmetro inválido após '--install'. \n "
+            "Use: \n"
+            "[-s | --script] for scripts \n"
+            "[-p | --package] for pacotes \n"
+            "[-f | --flatpak] for flatpaks\n")
+
+    else:
+        print(f"✗ Ação desconhecida: {args[0]}")
+        print("Parametro inválido.\n "
+        "Uso: EASY_CLI=1 python3 run.py --install -s <script1> <script2> ...")
+        return 0
+    
+
 
 def print_cli_usage():
     """
