@@ -403,6 +403,7 @@ def check_ostree_deployment_cli(translations=None):
             print("\n\nInput ended. Exiting LinuxToys.")
             return False
 
+
 def run_script_without_zenity(script_info):
 
     os.environ['DISABLE_ZENITY'] = '1'
@@ -430,7 +431,6 @@ def run_script_without_zenity(script_info):
     except Exception as e:
         print(f"Error executing script '{script_info['name']}': {e}")
         return 1
-
 
 
 def ask_continue_on_failure():
@@ -475,9 +475,10 @@ def scripts_install(args:list, translations):
 
     # Verifica se algum script foi especificado
     if not install_list:
-        print("✗ Nenhum script especificado após '--install'")
-        print("Uso: EASY_CLI=1 python3 run.py --install <script1> <script2> ...")
-        return True  # Interrompe o fluxo normal do programa
+        print("✗ Nenhum item especificado para instalação.\n")
+        print("Use: ")
+        print("   EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
+        return 0  # Interrompe o fluxo normal do programa
 
     print("🧰 EASY CLI INSTALL MODE")
     print("=" * 60)
@@ -515,15 +516,30 @@ def scripts_install(args:list, translations):
     execute_scripts_with_feedback(scripts_found_list)
 
     
+def easy_cli_help_mansage():
+    """
+    Print usage information for EASY CLI mode.
+    """
+    print("LinuxToys EASY CLI Usage:")
+    print("=" * 60)
+    print("Use: ")
+    print("   EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
+    print()
+    print("Options:")
+    print("  -s, --script       Install specified LinuxToys scripts")
+    print("  -p, --package      Install specified system packages")
+    print("  -f, --flatpak     Install specified flatpaks")
+    print()
+    print("Example:")
+    print("  EASY_CLI=1 python3 run.py --install -s script1 script2")
+    print("  EASY_CLI=1 python3 run.py --install -p package1 package2")
+    print("  EASY_CLI=1 python3 run.py --install -f flatpak1 flatpak2")
+    print()
         
-def handle_easy_cli_install(translations=None):
+def easy_cli_handler(translations=None):
 
     """
-    Easy CLI Install Mode
-    ---------------------
-    Permite executar diretamente scripts do LinuxToys via terminal.
-
-    Uso: EASY_CLI=1 python3 run.py --install -s <script1> <script2> ...
+    Main function for EASY CLI mode.
     """
 
     args = sys.argv[1:]
@@ -531,30 +547,39 @@ def handle_easy_cli_install(translations=None):
     # Verifica se é o modo de instalação
     if not args:
           # Não é modo de instalação
-        return print("✗ Nenhum argumento fornecido.\n " \
-        "Uso: EASY_CLI=1 python3 run.py --install -s <script1> <script2> ...")
+        print("✗ Nenhum argumento fornecido.\n")
+        easy_cli_help_mansage()
+        return 0
     
     if args[0] in ("-i", "--install"):
         if args[1] in ("-s", "--script"): # Para instalação de scripts
             scripts_install(args[2:], translations)
+            return 0
 
         # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
         #     packages_install(args[2:], translations)
+        #     return 0
 
         # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
         #     flatpaks_install(args[2:], translations)
+        #     return 0
 
         else:
-            return print("✗ Parâmetro inválido após '--install'. \n "
-            "Use: \n"
-            "[-s | --script] for scripts \n"
-            "[-p | --package] for pacotes \n"
-            "[-f | --flatpak] for flatpaks\n")
+            print("✗ Parâmetro inválido após '--install'. \n ")
+            print("Use:")
+            print("  [-s | --script] for scripts")
+            print("  [-p | --package] for pacotes")
+            print("  [-f | --flatpak] for flatpaks")
+            return 0
+        
+
+    elif args[0] in ("-h", "--help", "help"):
+        easy_cli_help_mansage()
+        return 0
 
     else:
-        print(f"✗ Ação desconhecida: {args[0]}")
-        print("Parametro inválido.\n "
-        "Uso: EASY_CLI=1 python3 run.py --install -s <script1> <script2> ...")
+        print(f"\n✗ Ação desconhecida: {args[0]} \n")
+        easy_cli_help_mansage()
         return 0
     
 
