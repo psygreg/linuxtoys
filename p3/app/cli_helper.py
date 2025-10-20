@@ -403,6 +403,35 @@ def check_ostree_deployment_cli(translations=None):
             print("\n\nInput ended. Exiting LinuxToys.")
             return False
 
+def run_script_without_zenity(script_info):
+
+    os.environ['DISABLE_ZENITY'] = '1'
+
+    print(f"Running script: {script_info['name']} ({script_info['path']})")
+    print("-" * 50)
+
+    try:
+        # Substitui a interação do zenity por uma resposta simulada (sim)
+        result = subprocess.run(
+            ['bash', script_info['path']], 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            input="enter\n",  # Simula pressionamento de "y" (sim) para zenity
+            text=True
+        )
+        
+        # Print the output
+        if result.stdout:
+            print(result.stdout)
+        
+        print(f"\n--- Script finished with exit code: {result.returncode} ---")
+        return result.returncode
+        
+    except Exception as e:
+        print(f"Error executing script '{script_info['name']}': {e}")
+        return 1
+
+
 
 def ask_continue_on_failure():
     """ Pergunta ao usuário se deseja continuar após falha """
