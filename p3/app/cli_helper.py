@@ -403,6 +403,56 @@ def check_ostree_deployment_cli(translations=None):
             print("\n\nInput ended. Exiting LinuxToys.")
             return False
 
+def scripts_install(args:list, translations):
+
+    # if "-y" in args or "--yes" in args:
+    #     increase_privileges()
+
+    # Filtra a lista de scripts removendo os flags de confirmação
+    install_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+    # Verifica se algum script foi especificado
+    if not install_list:
+        print("✗ Nenhum script especificado após '--install'")
+        print("Uso: EASY_CLI=1 python3 run.py --install <script1> <script2> ...")
+        return True  # Interrompe o fluxo normal do programa
+
+    print("🧰 EASY CLI INSTALL MODE")
+    print("=" * 60)
+    print(f"📜 Scripts solicitados: {', '.join(install_list)}\n")
+
+    scripts_found_list = []
+    scripts_missing = []
+
+    # Busca scripts com find_script_by_name()
+    for script_name in install_list:
+        script_info = find_script_by_name(script_name, translations)
+
+        if script_info:
+            scripts_found_list.append(script_info)
+        else:
+            scripts_missing.append(script_name)
+
+    # Relatório de scripts não encontrados
+    if scripts_missing:
+        print("⚠️ Scripts não encontrados:")
+        for name in scripts_missing:
+            print(f" - {name}")
+        print()
+
+    if not scripts_found_list:
+        print("✗ Nenhum script válido encontrado. Abortando.")
+        return True
+
+    # Relatório dos scripts encontrados
+    print(f"✅ {len(scripts_found_list)} script(s) encontrados e prontos para execução:\n")
+    for script_info in scripts_found_list:
+        print(f" - {script_info['name']} | {os.path.basename (script_info['path'])}")
+    print()
+
+    execute_scripts_with_feedback(scripts_found_list)
+
+    
         
 def handle_easy_cli_install(translations=None):
 
