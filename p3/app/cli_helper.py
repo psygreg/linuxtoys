@@ -497,22 +497,32 @@ def scripts_install(args:list, translations):
 def easy_cli_help_mansage():
     """
     Print usage information for EASY CLI mode.
+
+    To use it with the source code, run the following command:
+    #### EASY_CLI=1 SCRIPT_DIR=[path/to/lunuxtoys/p3] python3 run.py --install [option] <item1> <item2> ...
+
     """
     print("LinuxToys EASY CLI Usage:")
     print("=" * 60)
-    print("Use: ")
-    print("   EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
+    print("Usage:")
+    print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
     print()
-    print("Options:")
+    print("Install options:")
     print("  -s, --script       Install specified LinuxToys scripts")
     print("  -p, --package      Install specified system packages")
-    print("  -f, --flatpak     Install specified flatpaks")
+    print("  -f, --flatpak      Install specified Flatpak packages")
     print()
-    print("Example:")
+    print("Examples:")
     print("  EASY_CLI=1 python3 run.py --install -s script1 script2")
     print("  EASY_CLI=1 python3 run.py --install -p package1 package2")
     print("  EASY_CLI=1 python3 run.py --install -f flatpak1 flatpak2")
     print()
+    print("Other options:")
+    print("  -h, --help         Show this help message")
+    print("  -m, --manifest     Enable manifest mode features")
+    print()
+
+    
         
 def easy_cli_handler(translations=None):
 
@@ -533,6 +543,7 @@ def easy_cli_handler(translations=None):
             scripts_install(args[2:], translations)
             return 0
 
+        # TODO : Implementar instalação de pacotes e flatpaks
         # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
         #     packages_install(args[2:], translations)
         #     return 0
@@ -553,6 +564,13 @@ def easy_cli_handler(translations=None):
     elif args[0] in ("-h", "--help", "help"):
         easy_cli_help_mansage()
         return 0
+    
+    elif args[0] in ("check-updates", "update-check", "--check-updates"):
+        return 1 if run_update_check_cli(translations) else 0
+    
+    elif args[0] in ("--manifest", "-m"):
+        # Run in CLI mode using manifest.txt
+        return run_manifest_mode(translations)
 
     else:
         print(f"\n✗ Ação desconhecida: {args[0]} \n")
@@ -603,21 +621,40 @@ def run_manifest_mode(translations=None):
     # Parse command-line arguments
     manifest_path = 'manifest.txt'  # Default manifest path
     
-    if len(sys.argv) > 1:
-        arg = sys.argv[1]
-        
-        # Check for help request
-        if arg in ['--help', '-h', 'help']:
-            print_cli_usage()
-            return 0
-        
-        # Check if user wants to run update check
-        elif arg in ['check-updates', 'update-check', '--check-updates']:
-            return 1 if run_update_check_cli(translations) else 0
-        
-        # Otherwise, treat the argument as a manifest file path
-        else:
-            manifest_path = arg
+    # If LT_MANIFEST != "1", it means the script is running in EASY_CLI mode.
+    if os.environ.get("LT_MANIFEST") != "1":
+        if len(sys.argv) > 2:
+            arg = sys.argv[2]
+            
+            # Check for help request
+            if arg in ['--help', '-h', 'help']:
+                print_cli_usage()
+                return 0
+            
+            # Check if user wants to run update check
+            elif arg in ['check-updates', 'update-check', '--check-updates']:
+                return 1 if run_update_check_cli(translations) else 0
+            
+            # Otherwise, treat the argument as a manifest file path
+            else:
+                manifest_path = arg
+    
+    else:
+        if len(sys.argv) > 1:
+            arg = sys.argv[1]
+            
+            # Check for help request
+            if arg in ['--help', '-h', 'help']:
+                print_cli_usage()
+                return 0
+            
+            # Check if user wants to run update check
+            elif arg in ['check-updates', 'update-check', '--check-updates']:
+                return 1 if run_update_check_cli(translations) else 0
+            
+            # Otherwise, treat the argument as a manifest file path
+            else:
+                manifest_path = arg
     
     print("LinuxToys CLI Manifest Mode")
     print("=" * 40)
