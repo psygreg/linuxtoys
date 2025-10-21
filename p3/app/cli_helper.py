@@ -302,11 +302,19 @@ def run_script(script_info):
     print("-" * 50)
     
     try:
-        # Execute the script with bash, similar to how the GUI does it
-        result = subprocess.run(['bash', script_info['path']], 
-                              stdout=subprocess.PIPE, 
-                              stderr=subprocess.STDOUT, 
-                              universal_newlines=True)
+        if os.environ.get("EASY_CLI") == "1":
+            result = subprocess.run(['bash', script_info['path']],
+                                    stdin=sys.stdin,
+                                    stdout=sys.stdout,
+                                    stderr=sys.stderr,
+                                    check=True)
+
+        else:
+            # Execute the script with bash, similar to how the GUI does it
+            result = subprocess.run(['bash', script_info['path']], 
+                                stdout=subprocess.PIPE, 
+                                stderr=subprocess.STDOUT, 
+                                universal_newlines=True)
         
         # Print the output
         if result.stdout:
