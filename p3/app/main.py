@@ -8,7 +8,7 @@ if os.environ.get('LT_MANIFEST') != '1':
 
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
-from .cli_helper import easy_cli_handler
+from .easy_cli import easy_cli_handler
 from .update_helper import run_update_check
 from .kernel_update_helper import run_kernel_update_check
 from .compat import is_supported_system
