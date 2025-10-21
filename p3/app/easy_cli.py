@@ -195,7 +195,7 @@ def easy_cli_help_mansage():
     print()
 
     
-        
+# --- MAIN FUNCTION FOR EASY CLI ---
 def easy_cli_handler(translations=None):
     """
     Handles the EASY CLI mode for LinuxToys.
@@ -255,17 +255,23 @@ def easy_cli_handler(translations=None):
 
     dev_check(args)
 
-
+    # --- EASY CLI HANDLER ---
     if not args:
-        print("✗ Nenhum argumento fornecido.\n")
+        print("✗ No arguments provided.\n")
         easy_cli_help_mansage()
         return 0
     
     if args[0] in ("-i", "--install"):
-        if args[1] in ("-l", "--list"):
-            print_script_list(translations)
+
+        if len(args) < 2:
+            print("✗ Missing parameter after '-i' | '--install'.\n")
+            print("Use:")
+            print("  [-s | --script]    for scripts")
+            print("  [-p | --package]   for pacotes")
+            print("  [-f | --flatpak]   for flatpaks")
+            print("  [-l | --list]      list all available scripts")
             return 0
-        
+
         if args[1] in ("-s", "--script"): # Para instalação de scripts
             scripts_install(args[2:], skip_confirmation(args), translations)
             return 0
@@ -279,13 +285,17 @@ def easy_cli_handler(translations=None):
         #     flatpaks_install(args[2:], skip_confirmation(args), translations)
         #     return 0
 
+        elif args[1] in ("-l", "--list"):
+            print_script_list(translations)
+            return 0
+
         else:
-            print("✗ Parâmetro inválido após '--install'. \n ")
+            print("✗ Invalid parameter after '-i' | '--install'. \n ")
             print("Use:")
             print("  [-s | --script]    for scripts")
             print("  [-p | --package]   for pacotes")
             print("  [-f | --flatpak]   for flatpaks")
-            print("  [-l | --list]      to list all available scripts")
+            print("  [-l | --list]      list all available scripts")
             return 0
         
 
@@ -305,7 +315,7 @@ def easy_cli_handler(translations=None):
         return 0
 
     else:
-        print(f"\n✗ Ação desconhecida: {args[0]} \n")
+        print(f"\n✗ Unknown action: {args[0]} \n")
         easy_cli_help_mansage()
         return 0
     

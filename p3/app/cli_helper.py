@@ -47,7 +47,6 @@ from .parser import get_categories, get_all_scripts_recursive
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .update_helper import run_update_check
 from .reboot_helper import check_ostree_pending_deployments
-from .update_helper import get_current_version
 
 
 def get_os_info():
