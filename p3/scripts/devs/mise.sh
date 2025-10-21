@@ -31,13 +31,6 @@ if [ -f $HOME/.config/fish/config.fish ]; then
     mkdir -p ~/.config/fish/completions
     mise completion fish > ~/.config/fish/completions/mise.fish
 fi
-if [[ "$DISABLE_ZENITY" != "1" ]]; then
-    zeninf "$msg282"
-    xdg-open https://mise.jdx.dev/walkthrough.html
-    exit 0
-
-else
-    echo "$msg282"
-    xdg-open https://mise.jdx.dev/walkthrough.html
-    exit 0
-fi
+zeninf "$msg282"
+xdg-open https://mise.jdx.dev/walkthrough.html
+exit 0

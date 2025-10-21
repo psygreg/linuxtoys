@@ -197,14 +197,49 @@ def easy_cli_help_mansage():
     
         
 def easy_cli_handler(translations=None):
-
     """
-    Main function for EASY CLI mode.
+    Handles the EASY CLI mode for LinuxToys.
+
+    This function parses command-line arguments when EASY_CLI mode is active 
+    (EASY_CLI=1) and executes the corresponding actions such as:
+
+    - Installing scripts (--install -s <script1> <script2> ...)
+    - Listing available scripts (--install -l)
+    - Checking for updates (update, upgrade, --check-updates)
+    - Running in manifest mode (--manifest, -m)
+    - Displaying version (-v, --version)
+    - Displaying help (-h, --help)
+
+    It also supports developer mode (-D, --DEV_MODE) and optional automatic 
+    confirmation flags (-y, --yes) to skip prompts.
     """
 
-    args = sys.argv[1:]
+    # --- DEVELOPER MODE ---
+    def dev_check(args):
+        dev_flags = ("-D", "--DEV_MODE")
+        found = False
 
+        for flag in dev_flags:
+            while flag in args:
+                args.remove(flag)
+                found = True
+
+        if found and not os.environ.get("DEV_MODE"):
+            # Set DEV_MODE environment variable
+            os.environ["DEV_MODE"] = "1"
+
+                    # --- DEVELOPER MODE BANNER ---
+            try:
+                from app.dev_mode import print_dev_mode_banner
+                print_dev_mode_banner()
+            except ImportError:
+                pass  # dev_mode not available
+
+    # --- SKIP CONFIRMATION ---
     def skip_confirmation(args):
+        if os.environ.get("DEV_MODE") == "1":
+            return True
+        
         skip_flags = ("-y", "--yes")
         found = False
 
@@ -214,6 +249,11 @@ def easy_cli_handler(translations=None):
                 found = True
 
         return found
+
+
+    args = sys.argv[1:]
+
+    dev_check(args)
 
 
     if not args:
@@ -229,13 +269,14 @@ def easy_cli_handler(translations=None):
         if args[1] in ("-s", "--script"): # Para instalação de scripts
             scripts_install(args[2:], skip_confirmation(args), translations)
             return 0
+        
         # TODO : Implementar instalação de pacotes e flatpaks
         # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
-        #     packages_install(args[2:], skip_confirmation, translations)
+        #     packages_install(args[2:], skip_confirmation(args), translations)
         #     return 0
 
         # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
-        #     flatpaks_install(args[2:], skip_confirmation, translations)
+        #     flatpaks_install(args[2:], skip_confirmation(args), translations)
         #     return 0
 
         else:
@@ -252,7 +293,7 @@ def easy_cli_handler(translations=None):
         easy_cli_help_mansage()
         return 0
     
-    elif args[0] in ("check-updates", "update-check", "--check-updates"):
+    elif args[0] in ("update", "upgrade", "check-updates", "update-check", "--check-updates"):
         return 1 if run_update_check_cli(translations) else 0
     
     elif args[0] in ("--manifest", "-m"):
