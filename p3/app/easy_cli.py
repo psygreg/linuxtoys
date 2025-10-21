@@ -9,17 +9,38 @@ from .cli_helper import run_update_check_cli
 from .cli_helper import find_script_by_name
 from .cli_helper import run_script
 
+
+def easy_cli_run_script(script_info):
+
+    # Disable zenity for CLI execution
+    # This prevents GUI dialogs from appearing during script execution
+    # We handle user prompts via CLI instead
+    os.environ['DISABLE_ZENITY'] = '1'
+
+    
+    try:
+        run_script(script_info)
+    except KeyboardInterrupt:
+        print("\n⚠️  Programa encerrado pelo usuário.")
+        return 130  # código padrão de interrupção Ctrl+C
+    except Exception as e:
+        print(f"✗ Erro ao executar o script: {e}")
+        return 1
+    return 0
+
+
 def confirm_action(action_to_confirm_message):
-    """ Pergunta ao usuário se deseja continuar após falha """
+    """Pergunta ao usuário se deseja continuar após falha."""
     try:
         response = input(f"{action_to_confirm_message} [y/N]: ").strip().lower()
         if response not in ['y', 'yes']:
-            print("Operation cancelled.")
+            print("❌ Operação cancelada.")
             return False
     except KeyboardInterrupt:
-        print("\nOperation cancelled")
+        print("\n⚠️  Operação cancelada pelo usuário.")
         return False
     return True
+
 
 def execute_scripts_with_feedback(scripts_found):
     total = len(scripts_found)
@@ -29,16 +50,19 @@ def execute_scripts_with_feedback(scripts_found):
         print(f"\n[{index}/{total}] 🚀 Executando: {name}")
         print("=" * 60)
 
-        exit_code = run_script(script_info)
+        exit_code = easy_cli_run_script(script_info)
 
         if exit_code == 0:
             print(f"✓ {name} concluído com sucesso.")
+        elif exit_code == 130:
+            print("⚠️  Execução interrompida pelo usuário.")
+            break
         else:
             print(f"✗ {name} falhou com código {exit_code}.")
-            
             # Pergunta se o usuário quer continuar com os itens restantes
-            if not confirm_action("Continue com os itens restantes?"):
+            if not confirm_action("Deseja continuar com os scripts restantes?"):
                 break
+
 
 
 def scripts_install(args:list, skip_confirmation, translations):

@@ -5,6 +5,9 @@ export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
 # sudo request
 sudo_rq () { 
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        return 0
+    fi
     if [ -f /tmp/linuxtoys_sudo_validated ]; then
         return 0
     fi
@@ -27,10 +30,16 @@ sudo_rq () {
 
 # zenity libs
 zeninf () {
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        return 0
+    fi
     zenity --info --text "$1" --width 360 --height 300
     return 0
 }
 zenwrn () {
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        return 0
+    fi
     zenity --warning --text "$1" --width 360 --height 300
     return 0
 }

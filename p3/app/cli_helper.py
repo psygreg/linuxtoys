@@ -289,11 +289,6 @@ def run_script(script_info):
     """
     # Check if we should dry-run instead of execute
 
-    # Disable zenity for CLI execution
-    # This prevents GUI dialogs from appearing during script execution
-    # We handle user prompts via CLI instead
-    os.environ['DISABLE_ZENITY'] = '1'
-
     try:
         from .dev_mode import should_dry_run_scripts, dry_run_script
         if should_dry_run_scripts():
