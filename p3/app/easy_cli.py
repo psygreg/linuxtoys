@@ -2,6 +2,7 @@
 
 import os
 import sys
+import tempfile
 from .parser import get_categories, get_all_scripts_recursive
 from .update_helper import get_current_version
 from .cli_helper import run_manifest_mode
@@ -10,23 +11,42 @@ from .cli_helper import find_script_by_name
 from .cli_helper import run_script
 
 
-def easy_cli_run_script(script_info):
 
-    # Disable zenity for CLI execution
-    # This prevents GUI dialogs from appearing during script execution
-    # We handle user prompts via CLI instead
+def easy_cli_run_script(script_info):
+    """
+    Run a LinuxToys script in EASY_CLI mode while preventing any xdg-open calls.
+    """
+
+    # Disable zenity for EASY_CLI executions
     os.environ['DISABLE_ZENITY'] = '1'
 
-    
+    script_path = script_info['path']
+
+    # Cria uma cópia temporária do script removendo linhas que contenham 'xdg-open'
+    with open(script_path, "r") as f:
+        lines = f.readlines()
+    filtered_lines = [line for line in lines if "xdg-open" not in line]
+
+    tmp_file = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
+    tmp_file.writelines(filtered_lines)
+    tmp_file.close()
+    temp_script_path = tmp_file.name
+
     try:
-        run_script(script_info)
+        # Executa o script normalmente usando run_script
+        run_script({"name": script_info["name"], "path": temp_script_path})
     except KeyboardInterrupt:
         print("\n⚠️  Programa encerrado pelo usuário.")
-        return 130  # código padrão de interrupção Ctrl+C
+        return 130
     except Exception as e:
         print(f"✗ Erro ao executar o script: {e}")
         return 1
+    finally:
+        # Remove o script temporário
+        os.remove(temp_script_path)
+
     return 0
+
 
 
 def confirm_action(action_to_confirm_message):
