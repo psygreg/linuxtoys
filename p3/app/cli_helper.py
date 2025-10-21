@@ -493,6 +493,51 @@ def scripts_install(args:list, skip_confirmation, translations):
     if skip_confirmation or confirm_action("Deseja continuar com a execução dos scripts?"):
         execute_scripts_with_feedback(scripts_found_list)
 
+def print_script_list(translations):
+    scripts = get_all_scripts(translations)
+
+    # Calcula larguras para alinhar colunas
+    max_file_len = max(len(os.path.splitext(os.path.basename(s["path"]))[0]) for s in scripts)
+    max_name_len = max(len(s["name"]) for s in scripts)
+
+    print("\nScripts encontrados:\n")
+
+    print(f"   {'SCRIPT':<{max_file_len}}     {'NAME':<{max_name_len}}")
+    print("=" * (max_file_len + max_name_len + 4))
+
+    for script in sorted(scripts, key=lambda s: s["name"].lower()):
+        filename = os.path.splitext(os.path.basename(script["path"]))[0]
+        print(f" - {filename:<{max_file_len}} --> {script['name']:<{max_name_len}}")
+
+def get_all_scripts(translations=None):
+    """
+    Return a sorted list of all scripts as objects with 'name' and 'path' keys.
+    Includes nested categories and root scripts.
+    """
+    scripts = []
+    categories = get_categories(translations) or []
+
+    def add_script(name, path):
+        if not name or not path:
+            return
+        scripts.append({"name": name, "path": path})
+
+    for category in categories:
+        path = category.get('path')
+        name = category.get('name')
+        if not path or not name:
+            continue
+
+        if category.get('is_script'):
+            add_script(name, path)
+        else:
+            for script in (get_all_scripts_recursive(path, translations) or []):
+                add_script(script.get('name'), script.get('path'))
+
+    # Remove duplicados e ordena por nome
+    unique_scripts = { (s["name"], s["path"]) : s for s in scripts }.values()
+    return sorted(unique_scripts, key=lambda s: s["name"])
+
     
 def easy_cli_help_mansage():
     """
@@ -507,10 +552,14 @@ def easy_cli_help_mansage():
     print("Usage:")
     print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
     print()
+    print("Funcions:")
+    print("  -i, --install              Install selected options")
+    print()
     print("Install options:")
     print("  -s, --script       Install specified LinuxToys scripts")
     print("  -p, --package      Install specified system packages")
     print("  -f, --flatpak      Install specified Flatpak packages")
+    print("  -l, --list         List all available scripts")
     print()
     print("Examples:")
     print("  EASY_CLI=1 python3 run.py --install -s script1 script2")
@@ -545,7 +594,6 @@ def easy_cli_handler(translations=None):
 
         return found
 
-    skip_confirmation = skip_confirmation(args)
 
     if not args:
         print("✗ Nenhum argumento fornecido.\n")
@@ -553,10 +601,13 @@ def easy_cli_handler(translations=None):
         return 0
     
     if args[0] in ("-i", "--install"):
-        if args[1] in ("-s", "--script"): # Para instalação de scripts
-            scripts_install(args[2:], skip_confirmation, translations)
+        if args[1] in ("-l", "--list"):
+            print_script_list(translations)
             return 0
-
+        
+        if args[1] in ("-s", "--script"): # Para instalação de scripts
+            scripts_install(args[2:], skip_confirmation(args), translations)
+            return 0
         # TODO : Implementar instalação de pacotes e flatpaks
         # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
         #     packages_install(args[2:], skip_confirmation, translations)
@@ -569,9 +620,10 @@ def easy_cli_handler(translations=None):
         else:
             print("✗ Parâmetro inválido após '--install'. \n ")
             print("Use:")
-            print("  [-s | --script] for scripts")
-            print("  [-p | --package] for pacotes")
-            print("  [-f | --flatpak] for flatpaks")
+            print("  [-s | --script]    for scripts")
+            print("  [-p | --package]   for pacotes")
+            print("  [-f | --flatpak]   for flatpaks")
+            print("  [-l | --list]      to list all available scripts")
             return 0
         
 
