@@ -7,6 +7,29 @@ from .parser import get_categories, get_all_scripts_recursive
 from .update_helper import get_current_version
 from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script
 
+def ensure_script_dir():
+    """
+    Ensure SCRIPT_DIR exists based on the current file's location.
+    Searches parent directories until one containing 'libs' is found.
+    Sets SCRIPT_DIR to that absolute path.
+    Raises FileNotFoundError if no 'libs' directory is found.
+    """
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    while True:
+        libs_path = os.path.join(current_dir, "libs")
+        if os.path.isdir(libs_path):
+            os.environ["SCRIPT_DIR"] = current_dir
+            return current_dir
+
+        parent_dir = os.path.dirname(current_dir)
+        if parent_dir == current_dir:
+            break
+        current_dir = parent_dir
+
+    raise FileNotFoundError(f"'libs' folder not found relative to {__file__}")
+
+
 
 def easy_cli_run_script(script_info):
     """
@@ -18,19 +41,41 @@ def easy_cli_run_script(script_info):
 
     script_path = script_info['path']
 
-    # Create a temporary copy of the script excluding any 'xdg-open' lines
-    with open(script_path, "r") as f:
-        lines = f.readlines()
-    filtered_lines = [line for line in lines if "xdg-open" not in line]
+    # 🔍 Garante que SCRIPT_DIR esteja definido corretamente
+    script_dir = ensure_script_dir()
 
+    # Abre o script original
+    with open(script_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    filtered_lines = []
+    for line in lines:
+        # if "xdg-open" in line or "zeninf" in line:
+        if "xdg-open" in line:
+            continue
+        # Substituir $SCRIPT_DIR
+        line = line.replace("$SCRIPT_DIR", script_dir)
+        if line.strip().startswith("/libs/"):
+            line = line.replace("/libs/", f"{script_dir}/libs/")
+        elif " libs/" in line:
+            line = line.replace(" libs/", f" {script_dir}/libs/")
+        filtered_lines.append(line)
+
+
+    # Cria arquivo temporário com o script ajustado
     tmp_file = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
     tmp_file.writelines(filtered_lines)
     tmp_file.close()
     temp_script_path = tmp_file.name
 
+
     try:
         # Execute the script using run_script
-        run_script({"name": script_info["name"], "path": temp_script_path})
+        code = run_script({"name": script_info["name"], "path": temp_script_path})
+
+        if code != 0:
+            return 1
+        
     except KeyboardInterrupt:
         # Stop execution if the user presses Ctrl+C
         return 130
@@ -41,7 +86,7 @@ def easy_cli_run_script(script_info):
         # Remove the temporary script file
         os.remove(temp_script_path)
 
-    return 0
+    return code
 
 
 def confirm_action(prompt_message):
@@ -70,6 +115,10 @@ def execute_scripts_with_feedback(scripts_found):
 
         if exit_code == 0:
             print(f"✓ {name} Completed successfully.")
+
+        elif exit_code == 1:
+            print(f"✗ {name} Failed with exit code: {exit_code}.")
+            
         elif exit_code == 130:
             print("\n⚠️  Execution interrupted by the user.")
             break
