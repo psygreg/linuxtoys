@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "ເວີຊັນລ່າສຸດ:",
   "kernel_update_install_btn": "ຕິດຕັ້ງການອັບເດດ",
   "kernel_update_ignore_btn": "ບໍ່ສົນໃຈ",
-  "kernel_update_reboot_required": "ການເປີດລະບົບໃໝ່ຈະຖືກຕ້ອງການຫຼັງຈາກການຕິດຕັ້ງ."
+  "kernel_update_reboot_required": "ການເປີດລະບົບໃໝ່ຈະຖືກຕ້ອງການຫຼັງຈາກການຕິດຕັ້ງ.",
+  "optimusui_desc": "ຕົວຈິງໃຊ້ກາຟິກສໍາລັບໂນັ້ຕບຸກທີ່ມີ Nvidia Optimus Technology (ຕົວຢ່າງ: ກາຟິກທີ່ສາມາດປ່ຽນແປງໄດ້)."
 }

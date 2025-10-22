@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "เวอร์ชันล่าสุด:",
   "kernel_update_install_btn": "ติดตั้งการอัปเดต",
   "kernel_update_ignore_btn": "เพิกเฉย",
-  "kernel_update_reboot_required": "จะต้องรีบูตระบบหลังการติดตั้ง"
+  "kernel_update_reboot_required": "จะต้องรีบูตระบบหลังการติดตั้ง",
+  "optimusui_desc": "อินเตอร์เฟซผู้ใช้แบบกราฟิกสำหรับแล็ปท็อปที่มี Nvidia Optimus Technology (เช่น กราฟิกสที่สามารถเปลี่ยน)"
 }

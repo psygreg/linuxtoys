@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Última versão:",
   "kernel_update_install_btn": "Instalar atualização",
   "kernel_update_ignore_btn": "Ignorar",
-  "kernel_update_reboot_required": "Uma reinicialização do sistema será necessária após a instalação."
+  "kernel_update_reboot_required": "Uma reinicialização do sistema será necessária após a instalação.",
+  "optimusui_desc": "Uma interface gráfica de usuário para computadores portáteis com tecnologia Nvidia Optimus (por exemplo, gráficos comutáveis)."
 }

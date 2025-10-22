@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "آخرین نسخه:",
   "kernel_update_install_btn": "نصب به‌روزرسانی",
   "kernel_update_ignore_btn": "نادیده گرفتن",
-  "kernel_update_reboot_required": "پس از نصب، راه‌اندازی مجدد سیستم مورد نیاز است."
+  "kernel_update_reboot_required": "پس از نصب، راه‌اندازی مجدد سیستم مورد نیاز است.",
+  "optimusui_desc": "رابط گرافیکی کاربری برای لپ‌تاپ‌های دارای فناوری Nvidia Optimus (مثلاً گرافیک قابل تعویض)."
 }

@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Senaste version:",
   "kernel_update_install_btn": "Installera uppdatering",
   "kernel_update_ignore_btn": "Ignorera",
-  "kernel_update_reboot_required": "En systemomstart kommer att krävas efter installationen."
+  "kernel_update_reboot_required": "En systemomstart kommer att krävas efter installationen.",
+  "optimusui_desc": "Ett grafiskt användargränssnitt för bärbara datorer med Nvidia Optimus-teknik (t.ex. växlingsbar grafik)."
 }

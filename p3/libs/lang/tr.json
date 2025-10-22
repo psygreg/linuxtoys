@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "En son sürüm:",
   "kernel_update_install_btn": "Güncellemeyi yükle",
   "kernel_update_ignore_btn": "Yoksay",
-  "kernel_update_reboot_required": "Kurulumdan sonra sistem yeniden başlatılması gerekecektir."
+  "kernel_update_reboot_required": "Kurulumdan sonra sistem yeniden başlatılması gerekecektir.",
+  "optimusui_desc": "Nvidia Optimus Teknolojisine sahip dizüstü bilgisayarlar için grafik kullanıcı arayüzü (örn. değiştirilebilir grafikler)."
 }

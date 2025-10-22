@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Seneste version:",
   "kernel_update_install_btn": "Installer opdatering",
   "kernel_update_ignore_btn": "Ignorer",
-  "kernel_update_reboot_required": "En genstart af systemet vil være nødvendig efter installationen."
+  "kernel_update_reboot_required": "En genstart af systemet vil være nødvendig efter installationen.",
+  "optimusui_desc": "En grafisk brugergrænseflade til bærbare computere med Nvidia Optimus-teknologi (f.eks. skiflbar grafik)."
 }

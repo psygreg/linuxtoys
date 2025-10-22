@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Legújabb verzió:",
   "kernel_update_install_btn": "Frissítés telepítése",
   "kernel_update_ignore_btn": "Mellőzés",
-  "kernel_update_reboot_required": "A telepítés után rendszer-újraindítás szükséges."
+  "kernel_update_reboot_required": "A telepítés után rendszer-újraindítás szükséges.",
+  "optimusui_desc": "Grafikus felhasználói felület Nvidia Optimus technológiával rendelkező laptopokhoz (pl. váltható grafika)."
 }

@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Versioni më i fundit:",
   "kernel_update_install_btn": "Instalo përditësimin",
   "kernel_update_ignore_btn": "Injoro",
-  "kernel_update_reboot_required": "Do të kërkohet një rinisje e sistemit pas instalimit."
+  "kernel_update_reboot_required": "Do të kërkohet një rinisje e sistemit pas instalimit.",
+  "optimusui_desc": "Një ndërfaqe grafike për laptopet me teknologjinë Nvidia Optimus (p.sh. grafika e ndërrueshme)."
 }

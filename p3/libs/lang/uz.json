@@ -303,5 +303,6 @@
   "kernel_update_latest_version": "Eng yangi versiya:",
   "kernel_update_install_btn": "Yangilanishni o'rnatish",
   "kernel_update_ignore_btn": "E'tibor bermaslik",
-  "kernel_update_reboot_required": "O'rnatishdan keyin tizimni qayta ishga tushirish talab qilinadi."
+  "kernel_update_reboot_required": "O'rnatishdan keyin tizimni qayta ishga tushirish talab qilinadi.",
+  "optimusui_desc": "Nvidia Optimus texnologiyaga ega bo'lgan noutbuklar uchun grafik foydalanuvchi interfeysi (masalan, almashtiriladigan grafika)."
 }

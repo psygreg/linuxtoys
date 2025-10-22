@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "최신 버전:",
   "kernel_update_install_btn": "업데이트 설치",
   "kernel_update_ignore_btn": "무시",
-  "kernel_update_reboot_required": "설치 후 시스템 재부팅이 필요합니다."
+  "kernel_update_reboot_required": "설치 후 시스템 재부팅이 필요합니다.",
+  "optimusui_desc": "Nvidia Optimus 기술을 갖춘 노트북용 그래픽 사용자 인터페이스 (예: 전환 가능한 그래픽)."
 }

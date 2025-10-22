@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Nejnovější verze:",
   "kernel_update_install_btn": "Nainstalovat aktualizaci",
   "kernel_update_ignore_btn": "Ignorovat",
-  "kernel_update_reboot_required": "Po instalaci bude nutný restart systému."
+  "kernel_update_reboot_required": "Po instalaci bude nutný restart systému.",
+  "optimusui_desc": "Grafické uživatelské rozhraní pro notebooky s technologií Nvidia Optimus (např. přepínací grafika)."
 }

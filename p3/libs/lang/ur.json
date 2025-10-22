@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "تازہ ترین ورژن:",
   "kernel_update_install_btn": "اپ ڈیٹ انسٹال کریں",
   "kernel_update_ignore_btn": "نظر انداز کریں",
-  "kernel_update_reboot_required": "تنصیب کے بعد سسٹم کو دوبارہ شروع کرنا ہوگا۔"
+  "kernel_update_reboot_required": "تنصیب کے بعد سسٹم کو دوبارہ شروع کرنا ہوگا۔",
+  "optimusui_desc": "Nvidia Optimus ٹیکنالوجی والے لیپ ٹاپ کے لیے ایک گرافیکل صارف انٹرفیس (مثلاً، قابلِ تبدیلی گرافکس)۔"
 }

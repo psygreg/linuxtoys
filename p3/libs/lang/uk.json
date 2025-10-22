@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Остання версія:",
   "kernel_update_install_btn": "Встановити оновлення",
   "kernel_update_ignore_btn": "Ігнорувати",
-  "kernel_update_reboot_required": "Після встановлення буде потрібне перезавантаження системи."
+  "kernel_update_reboot_required": "Після встановлення буде потрібне перезавантаження системи.",
+  "optimusui_desc": "Графічний інтерфейс користувача для ноутбуків з технологією Nvidia Optimus (наприклад, перемикаються графіка)."
 }

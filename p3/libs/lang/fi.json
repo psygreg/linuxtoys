@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Uusin versio:",
   "kernel_update_install_btn": "Asenna päivitys",
   "kernel_update_ignore_btn": "Ohita",
-  "kernel_update_reboot_required": "Järjestelmän uudelleenkäynnistys vaaditaan asennuksen jälkeen."
+  "kernel_update_reboot_required": "Järjestelmän uudelleenkäynnistys vaaditaan asennuksen jälkeen.",
+  "optimusui_desc": "Graafinen käyttöliittymä kannettaville tietokoneille, joissa on Nvidia Optimus -teknologia (esim. vaihdettava grafiikka)."
 }

@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Τελευταία έκδοση:",
   "kernel_update_install_btn": "Εγκατάσταση ενημέρωσης",
   "kernel_update_ignore_btn": "Αγνόηση",
-  "kernel_update_reboot_required": "Θα απαιτηθεί επανεκκίνηση του συστήματος μετά την εγκατάσταση."
+  "kernel_update_reboot_required": "Θα απαιτηθεί επανεκκίνηση του συστήματος μετά την εγκατάσταση.",
+  "optimusui_desc": "Γραφική διεπαφή χρήστη για φορητούς υπολογιστές με τεχνολογία Nvidia Optimus (π.χ. εναλλάξιμα γραφικά)."
 }

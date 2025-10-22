@@ -302,5 +302,6 @@
   "kernel_update_latest_version": "சமீபத்திய பதிப்பு:",
   "kernel_update_install_btn": "புதுப்பிப்பை நிறுவு",
   "kernel_update_ignore_btn": "புறக்கணி",
-  "kernel_update_reboot_required": "நிறுவலுக்குப் பிறகு கணினி மறுதொடக்கம் தேவைப்படும்."
+  "kernel_update_reboot_required": "நிறுவலுக்குப் பிறகு கணினி மறுதொடக்கம் தேவைப்படும்.",
+  "optimusui_desc": "Nvidia Optimus தொழில்நுட்பம் கொண்ட மடிக்கணினிகளுக்கான ஒரு வரைகலை ব்যবহারকாரி இடைமுகம் (எ.கா. மாற்றக்கூடிய கிராபிக்ஸ்)."
 }

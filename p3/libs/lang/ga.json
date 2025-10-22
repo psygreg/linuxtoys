@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Leagan is déanaí:",
   "kernel_update_install_btn": "Suiteáil an Nuashonrú",
   "kernel_update_ignore_btn": "Déan neamhaird",
-  "kernel_update_reboot_required": "Beidh atosú córais ag teastáil tar éis an tsuiteála."
+  "kernel_update_reboot_required": "Beidh atosú córais ag teastáil tar éis an tsuiteála.",
+  "optimusui_desc": "Comhéadan úsáideora grafach do ríomhairí soghluaiste le teicneolaíocht Nvidia Optimus (m.sh. grafaic inathraithe)."
 }

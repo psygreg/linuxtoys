@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Versi terkini:",
   "kernel_update_install_btn": "Pasang Kemas Kini",
   "kernel_update_ignore_btn": "Abaikan",
-  "kernel_update_reboot_required": "But semula sistem akan diperlukan selepas pemasangan."
+  "kernel_update_reboot_required": "But semula sistem akan diperlukan selepas pemasangan.",
+  "optimusui_desc": "Antarmuka pengguna grafis untuk laptop dengan teknologi Nvidia Optimus (contohnya, grafis yang dapat ditukar)."
 }

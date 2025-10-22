@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Najnowsza wersja:",
   "kernel_update_install_btn": "Zainstaluj aktualizację",
   "kernel_update_ignore_btn": "Ignoruj",
-  "kernel_update_reboot_required": "Po instalacji wymagane będzie ponowne uruchomienie systemu."
+  "kernel_update_reboot_required": "Po instalacji wymagane będzie ponowne uruchomienie systemu.",
+  "optimusui_desc": "Interfejs graficzny użytkownika dla laptopów z technologią Nvidia Optimus (np. grafika przełączana)."
 }

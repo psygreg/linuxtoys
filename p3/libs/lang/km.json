@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "កំណែចុងក្រោយ៖",
   "kernel_update_install_btn": "ដំឡើងបច្ចុប្បន្នភាព",
   "kernel_update_ignore_btn": "មិនអើពើ",
-  "kernel_update_reboot_required": "ការចាប់ផ្តើមប្រព័ន្ធឡើងវិញនឹងត្រូវការបន្ទាប់ពីការដំឡើង។"
+  "kernel_update_reboot_required": "ការចាប់ផ្តើមប្រព័ន្ធឡើងវិញនឹងត្រូវការបន្ទាប់ពីការដំឡើង។",
+  "optimusui_desc": "ចំណុចប្រទាក់ប្រើប្រាស់ក្រាហ្វិកសម្រាប់ឡេპតូបដែលមាន Nvidia Optimus Technology (ឧ. ក្រាហ្វិកដែលអាចប្តូរបាន)។"
 }

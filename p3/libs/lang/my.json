@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "နောက်ဆုံးဗားရှင်း:",
   "kernel_update_install_btn": "အပ်ဒိတ်ထည့်သွင်းပါ",
   "kernel_update_ignore_btn": "လျစ်လျူရှုပါ",
-  "kernel_update_reboot_required": "ထည့်သွင်းပြီးနောက် စနစ်ကို ပြန်လည်စတင်ရန် လိုအပ်ပါမည်။"
+  "kernel_update_reboot_required": "ထည့်သွင်းပြီးနောက် စနစ်ကို ပြန်လည်စတင်ရန် လိုအပ်ပါမည်။",
+  "optimusui_desc": "Nvidia Optimus Technology ရှိသော လက်အိုချီုံးအတွက် graphical user interface (ဥပမာ၊ အပြောင်းအလဲ ဖြစ်နိုင်သော ဂရပ်ဖစ်)။"
 }
