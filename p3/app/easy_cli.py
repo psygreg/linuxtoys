@@ -6,8 +6,9 @@ import tempfile
 from .parser import get_categories, get_all_scripts_recursive
 from .update_helper import get_current_version
 from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script
+from .dev_mode import is_dev_mode_enabled
 
-def ensure_script_dir():
+def resolve_script_dir():
     """
     Ensure SCRIPT_DIR exists based on the current file's location.
     Searches parent directories until one containing 'libs' is found.
@@ -29,31 +30,24 @@ def ensure_script_dir():
 
     raise FileNotFoundError(f"'libs' folder not found relative to {__file__}")
 
-
-
-def easy_cli_run_script(script_info):
+def create_temp_file(script_path):
     """
-    Run a LinuxToys script in EASY_CLI mode while preventing any xdg-open calls.
+    Create a temporary script file by filtering out xdg-open calls.
     """
 
-    # Disable zenity to avoid GUI prompts during EASY_CLI execution
-    os.environ['DISABLE_ZENITY'] = '1'
+    # Resolve SCRIPT_DIR
+    script_dir = resolve_script_dir()
 
-    script_path = script_info['path']
-
-    # 🔍 Garante que SCRIPT_DIR esteja definido corretamente
-    script_dir = ensure_script_dir()
-
-    # Abre o script original
+    # Open the original script and set to a list
     with open(script_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     filtered_lines = []
     for line in lines:
-        # if "xdg-open" in line or "zeninf" in line:
+        # Ignore lines containing "xdg-open"
         if "xdg-open" in line:
             continue
-        # Substituir $SCRIPT_DIR
+        # Replace $SCRIPT_DIR
         line = line.replace("$SCRIPT_DIR", script_dir)
         if line.strip().startswith("/libs/"):
             line = line.replace("/libs/", f"{script_dir}/libs/")
@@ -61,17 +55,34 @@ def easy_cli_run_script(script_info):
             line = line.replace(" libs/", f" {script_dir}/libs/")
         filtered_lines.append(line)
 
-
-    # Cria arquivo temporário com o script ajustado
     tmp_file = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
     tmp_file.writelines(filtered_lines)
     tmp_file.close()
-    temp_script_path = tmp_file.name
+    temp_file_path = tmp_file.name
+    return temp_file_path
+
+
+def easy_cli_run_script(script_info):
+    """
+    Run a LinuxToys script in EASY_CLI mode while preventing any xdg-open calls.
+    """
+
+    # Check if dev mode is enabled and run the script
+    if is_dev_mode_enabled():
+        return run_script(script_info)
+    
+    # Disable zenity to avoid GUI prompts during EASY_CLI execution
+    os.environ['DISABLE_ZENITY'] = '1'
+
+    script_path = script_info['path']
+
+    # Create a temporary script file
+    temp_file_path = create_temp_file(script_path)
 
 
     try:
         # Execute the script using run_script
-        code = run_script({"name": script_info["name"], "path": temp_script_path})
+        code = run_script({"name": script_info["name"], "path": temp_file_path})
 
         if code != 0:
             return 1
@@ -84,13 +95,13 @@ def easy_cli_run_script(script_info):
         return 1
     finally:
         # Remove the temporary script file
-        os.remove(temp_script_path)
+        os.remove(temp_file_path)
 
     return code
 
 
 def confirm_action(prompt_message):
-    """Ask the user for confirmation to continue after a failure."""
+    """Ask the user to confirm an action."""
     try:
         response = input(f"{prompt_message} [y/N]: ").strip().lower()
         if response not in ['y', 'yes']:
@@ -201,7 +212,7 @@ def print_script_list(translations):
 
 
 def get_all_scripts(translations=None):
-    """Return a sorted list of all scripts including nested categories."""
+    """Return a sorted list of all scripts."""
     scripts = []
     categories = get_categories(translations) or []
 
@@ -232,7 +243,8 @@ def easy_cli_help_message():
     print("LinuxToys EASY CLI Usage:")
     print("=" * 60)
     print("Usage:")
-    print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
+    print("  EASY_CLI=1 linuxtoys -i [option] <item1> <item2> ...")
+    # print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
     print()
     print("Functions:")
     print("  -i, --install              Install selected options")
@@ -244,9 +256,9 @@ def easy_cli_help_message():
     print("  -l, --list         List all available scripts")
     print()
     print("Examples:")
-    print("  EASY_CLI=1 python3 run.py --install -s script1 script2")
-    print("  EASY_CLI=1 python3 run.py --install -p package1 package2")
-    print("  EASY_CLI=1 python3 run.py --install -f flatpak1 flatpak2")
+    print("  EASY_CLI=1 linuxtoys --install --script <script1> <script2>")
+    # print("  EASY_CLI=1 linuxtoys --install -p <package1> <package2>")
+    # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
     print("Other options:")
     print("  -h, --help         Show this help message")
@@ -324,7 +336,7 @@ def easy_cli_handler(translations=None):
             print("  [-l | --list]      list all available scripts")
             return 0
 
-        if args[1] in ("-s", "--script"):
+        if args[1] in ("-s", "--script", "--scripts"):
             scripts_install(args[2:], skip_confirmation(args), translations)
             return 0
         
@@ -345,6 +357,10 @@ def easy_cli_handler(translations=None):
             print("✗ Invalid parameter after '-i' | '--install'.\n")
             easy_cli_help_message()
             return 0
+        
+    elif args[0] in ("-l", "--list"):
+        print_script_list(translations)
+        return 0
 
     elif args[0] in ("-h", "--help", "help"):
         easy_cli_help_message()
