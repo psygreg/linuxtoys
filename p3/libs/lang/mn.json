@@ -303,5 +303,6 @@
   "kernel_update_latest_version": "Хамгийн сүүлийн хувилбар:",
   "kernel_update_install_btn": "Шинэчлэл суулгах",
   "kernel_update_ignore_btn": "Үл тоох",
-  "kernel_update_reboot_required": "Суулгасны дараа системийг дахин эхлүүлэх шаардлагатай болно."
+  "kernel_update_reboot_required": "Суулгасны дараа системийг дахин эхлүүлэх шаардлагатай болно.",
+  "optimusui_desc": "Nvidia Optimus технологи бүхий ноутбукуудын графикийн хэрэглэгчийн интерфейс (жишээ: солигдох график)."
 }

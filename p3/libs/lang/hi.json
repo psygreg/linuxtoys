@@ -284,5 +284,6 @@
   "kernel_update_latest_version": "नवीनतम संस्करण:",
   "kernel_update_install_btn": "अपडेट इंस्टॉल करें",
   "kernel_update_ignore_btn": "अनदेखा करें",
-  "kernel_update_reboot_required": "इंस्टॉलेशन के बाद सिस्टम रीबूट की आवश्यकता होगी।"
+  "kernel_update_reboot_required": "इंस्टॉलेशन के बाद सिस्टम रीबूट की आवश्यकता होगी।",
+  "optimusui_desc": "Nvidia Optimus प्रौद्योगिकी वाले लैपटॉप के लिए एक ग्राफिकल यूजर इंटरफेस (जैसे। स्विच करने योग्य ग्राफिक्स)।"
 }

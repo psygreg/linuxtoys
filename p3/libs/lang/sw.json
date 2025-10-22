@@ -302,5 +302,6 @@
   "kernel_update_latest_version": "Toleo la hivi punde:",
   "kernel_update_install_btn": "Sakinisha Sasisho",
   "kernel_update_ignore_btn": "Puuza",
-  "kernel_update_reboot_required": "Kuanzisha upya mfumo kutahitajika baada ya usakinishaji."
+  "kernel_update_reboot_required": "Kuanzisha upya mfumo kutahitajika baada ya usakinishaji.",
+  "optimusui_desc": "Kiolesura cha mtumiaji wa picha kwa tarakilishi yenye Nvidia Optimus Technology (mfano, picha inayoweza kubadilishwa)."
 }

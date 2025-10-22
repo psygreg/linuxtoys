@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "גרסה אחרונה:",
   "kernel_update_install_btn": "התקן עדכון",
   "kernel_update_ignore_btn": "התעלם",
-  "kernel_update_reboot_required": "תידרש הפעלה מחדש של המערכת לאחר ההתקנה."
+  "kernel_update_reboot_required": "תידרש הפעלה מחדש של המערכת לאחר ההתקנה.",
+  "optimusui_desc": "ממשק משתמש גרפי למחשבים ניידים עם טכנולוגיית Nvidia Optimus (לדוגמה, גרפיקה ניתנת להחלפה)."
 }

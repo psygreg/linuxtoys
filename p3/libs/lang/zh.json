@@ -306,5 +306,6 @@
   "kernel_update_latest_version": "最新版本：",
   "kernel_update_install_btn": "安装更新",
   "kernel_update_ignore_btn": "忽略",
-  "kernel_update_reboot_required": "安装后需要重新启动系统。"
+  "kernel_update_reboot_required": "安装后需要重新启动系统。",
+  "optimusui_desc": "适用于配备Nvidia Optimus技术的笔记本电脑的图形用户界面（例如，可切换的图形）。"
 }

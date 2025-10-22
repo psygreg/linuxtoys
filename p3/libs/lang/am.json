@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "የቅርብ ጊዜ ስሪት:",
   "kernel_update_install_btn": "ማሻሻያ ጫን",
   "kernel_update_ignore_btn": "ችላ በል",
-  "kernel_update_reboot_required": "ከመጫን በኋላ የስርዓት እንደገና ማስጀመር ያስፈልጋል።"
+  "kernel_update_reboot_required": "ከመጫን በኋላ የስርዓት እንደገና ማስጀመር ያስፈልጋል።",
+  "optimusui_desc": "ለNvidia Optimus Technology ያላቸው ላፕቶፖች የግራፊካል ተጠቃሚ ግንኙነት (ለምሳሌ። ሊቀየር የሚችል ግራፊክስ)።"
 }

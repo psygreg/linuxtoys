@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Най-нова версия:",
   "kernel_update_install_btn": "Инсталирай актуализацията",
   "kernel_update_ignore_btn": "Игнорирай",
-  "kernel_update_reboot_required": "След инсталацията ще бъде необходимо рестартиране на системата."
+  "kernel_update_reboot_required": "След инсталацията ще бъде необходимо рестартиране на системата.",
+  "optimusui_desc": "Графичен интерфейс за преносими компютри с технология Nvidia Optimus (напр. превключвана графика)."
 }

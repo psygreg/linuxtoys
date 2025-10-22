@@ -303,5 +303,6 @@
   "kernel_update_latest_version": "Ən son versiya:",
   "kernel_update_install_btn": "Yeniləməni Quraşdır",
   "kernel_update_ignore_btn": "Nəzərə Alma",
-  "kernel_update_reboot_required": "Quraşdırmadan sonra sistem yenidən başlatma tələb olunacaq."
+  "kernel_update_reboot_required": "Quraşdırmadan sonra sistem yenidən başlatma tələb olunacaq.",
+  "optimusui_desc": "Nvidia Optimus Texnologiyası olan Noutbuklar üçün qrafiki istifadəçi interfeysi (məs. dəyişkən Qrafika)."
 }

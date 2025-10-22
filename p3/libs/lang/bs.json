@@ -303,5 +303,6 @@
   "kernel_update_latest_version": "Najnovija verzija:",
   "kernel_update_install_btn": "Instaliraj ažuriranje",
   "kernel_update_ignore_btn": "Ignoriši",
-  "kernel_update_reboot_required": "Nakon instalacije bit će potrebno ponovno pokretanje sistema."
+  "kernel_update_reboot_required": "Nakon instalacije bit će potrebno ponovno pokretanje sistema.",
+  "optimusui_desc": "Grafičko korisničko sučelje za prijenosne računare s tehnologijom Nvidia Optimus (npr. promjenjiva grafika)."
 }

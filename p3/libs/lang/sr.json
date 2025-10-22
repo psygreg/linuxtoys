@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Најновија верзија:",
   "kernel_update_install_btn": "Инсталирај ажурирање",
   "kernel_update_ignore_btn": "Игнориши",
-  "kernel_update_reboot_required": "Биће потребно поновно покретање система након инсталације."
+  "kernel_update_reboot_required": "Биће потребно поновно покретање система након инсталације.",
+  "optimusui_desc": "Графички кориснички интерфејс за преносиве рачунаре са Nvidia Optimus технологијом (нпр. променљива графика)."
 }

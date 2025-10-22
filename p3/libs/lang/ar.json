@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "أحدث إصدار:",
   "kernel_update_install_btn": "تثبيت التحديث",
   "kernel_update_ignore_btn": "تجاهل",
-  "kernel_update_reboot_required": "ستكون إعادة تشغيل النظام مطلوبة بعد التثبيت."
+  "kernel_update_reboot_required": "ستكون إعادة تشغيل النظام مطلوبة بعد التثبيت.",
+  "optimusui_desc": "واجهة رسومية للكمبيوترات المحمولة التي تحتوي على تقنية Nvidia Optimus (مثل الرسومات القابلة للتبديل)."
 }

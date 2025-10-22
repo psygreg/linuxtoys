@@ -303,5 +303,6 @@
   "kernel_update_latest_version": "সর্বশেষ সংস্করণ:",
   "kernel_update_install_btn": "আপডেট ইনস্টল করুন",
   "kernel_update_ignore_btn": "উপেক্ষা করুন",
-  "kernel_update_reboot_required": "ইনস্টলেশনের পরে একটি সিস্টেম রিবুট প্রয়োজন হবে।"
+  "kernel_update_reboot_required": "ইনস্টলেশনের পরে একটি সিস্টেম রিবুট প্রয়োজন হবে।",
+  "optimusui_desc": "Nvidia Optimus প্রযুক্তি সহ ল্যাপটপগুলির জন্য একটি গ্রাফিকাল ব্যবহারকারী ইন্টারফেস (যেমন। সুইচযোগ্য গ্রাফিক্স)।"
 }

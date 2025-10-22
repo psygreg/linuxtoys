@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Phiên bản mới nhất:",
   "kernel_update_install_btn": "Cài đặt bản cập nhật",
   "kernel_update_ignore_btn": "Bỏ qua",
-  "kernel_update_reboot_required": "Sẽ cần khởi động lại hệ thống sau khi cài đặt."
+  "kernel_update_reboot_required": "Sẽ cần khởi động lại hệ thống sau khi cài đặt.",
+  "optimusui_desc": "Một giao diện người dùng đồ họa cho máy tính xách tay với Công nghệ Nvidia Optimus (ví dụ: đồ họa có thể chuyển đổi)."
 }

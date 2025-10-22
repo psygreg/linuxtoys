@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Վերջին տարբերակ՝",
   "kernel_update_install_btn": "Տեղադրել թարմացումը",
   "kernel_update_ignore_btn": "Անտեսել",
-  "kernel_update_reboot_required": "Տեղադրումից հետո համակարգի վերագործարկում կպահանջվի։"
+  "kernel_update_reboot_required": "Տեղադրումից հետո համակարգի վերագործարկում կպահանջվի։",
+  "optimusui_desc": "Գրաֆիկական օգտատեր ինտերֆեյս Nvidia Optimus տեխնոլոգիայով նոութբուքների համար (օրինակ՝ փոխանցվող գրաֆիկա)։"
 }

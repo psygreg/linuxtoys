@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Pinakabagong bersyon:",
   "kernel_update_install_btn": "I-install ang Update",
   "kernel_update_ignore_btn": "Huwag pansinin",
-  "kernel_update_reboot_required": "Kinakailangan ang pag-reboot ng system pagkatapos ng pag-install."
+  "kernel_update_reboot_required": "Kinakailangan ang pag-reboot ng system pagkatapos ng pag-install.",
+  "optimusui_desc": "Isang graphical user interface para sa mga laptop na may Nvidia Optimus Technology (halimbawa, napapalitin na graphics)."
 }

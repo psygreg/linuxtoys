@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Jaunākā versija:",
   "kernel_update_install_btn": "Instalēt atjauninājumu",
   "kernel_update_ignore_btn": "Ignorēt",
-  "kernel_update_reboot_required": "Pēc instalēšanas būs nepieciešama sistēmas pārstartēšana."
+  "kernel_update_reboot_required": "Pēc instalēšanas būs nepieciešama sistēmas pārstartēšana.",
+  "optimusui_desc": "Grafiski lietotāja interfeiss klēpjdatoriem ar Nvidia Optimus tehnoloģiju (piemēram, pārslegojama grafika)."
 }

@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Последняя версия:",
   "kernel_update_install_btn": "Установить обновление",
   "kernel_update_ignore_btn": "Игнорировать",
-  "kernel_update_reboot_required": "После установки потребуется перезагрузка системы."
+  "kernel_update_reboot_required": "После установки потребуется перезагрузка системы.",
+  "optimusui_desc": "Графический интерфейс пользователя для ноутбуков с технологией Nvidia Optimus (например, переключаемая графика)."
 }

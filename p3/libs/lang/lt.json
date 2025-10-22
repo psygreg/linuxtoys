@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Naujausia versija:",
   "kernel_update_install_btn": "Įdiegti atnaujinimą",
   "kernel_update_ignore_btn": "Ignoruoti",
-  "kernel_update_reboot_required": "Po diegimo reikės paleisti sistemą iš naujo."
+  "kernel_update_reboot_required": "Po diegimo reikės paleisti sistemą iš naujo.",
+  "optimusui_desc": "Grafinė vartotojo sąsaja nešiojamiesiems kompiuteriams su Nvidia Optimus technologija (pvz., keičiama grafika)."
 }

@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "უახლესი ვერსია:",
   "kernel_update_install_btn": "განახლების დაყენება",
   "kernel_update_ignore_btn": "იგნორირება",
-  "kernel_update_reboot_required": "ინსტალაციის შემდეგ საჭირო იქნება სისტემის გადატვირთვა."
+  "kernel_update_reboot_required": "ინსტალაციის შემდეგ საჭირო იქნება სისტემის გადატვირთვა.",
+  "optimusui_desc": "გრაფიკული ინტერფეისი Nvidia Optimus ტექნოლოგიის მქონე ლეპტოპებისთვის (მაგალითად, გარდაცვლადი გრაფიკა)."
 }

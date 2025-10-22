@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Neueste Version:",
   "kernel_update_install_btn": "Update installieren",
   "kernel_update_ignore_btn": "Ignorieren",
-  "kernel_update_reboot_required": "Nach der Installation ist ein Systemneustart erforderlich."
+  "kernel_update_reboot_required": "Nach der Installation ist ein Systemneustart erforderlich.",
+  "optimusui_desc": "Eine grafische Benutzeroberfläche für Laptops mit Nvidia-Optimus-Technologie (z. B. umschaltbare Grafik)."
 }

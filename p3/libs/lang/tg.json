@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Версияи охирин:",
   "kernel_update_install_btn": "Навсозиро насб кунед",
   "kernel_update_ignore_btn": "Рад кардан",
-  "kernel_update_reboot_required": "Баъди насбкунӣ аз нав оғозкунии система лозим хоҳад буд."
+  "kernel_update_reboot_required": "Баъди насбкунӣ аз нав оғозкунии система лозим хоҳад буд.",
+  "optimusui_desc": "Интерфейси графикии корбакор барои ноутбукҳо бо технологияи Nvidia Optimus (масалан, графикаи ивазшаванда)."
 }

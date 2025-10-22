@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "नवीनतम संस्करण:",
   "kernel_update_install_btn": "अपडेट स्थापना गर्नुहोस्",
   "kernel_update_ignore_btn": "बेवास्ता गर्नुहोस्",
-  "kernel_update_reboot_required": "स्थापना पछि प्रणाली पुन: सुरु आवश्यक हुनेछ।"
+  "kernel_update_reboot_required": "स्थापना पछि प्रणाली पुन: सुरु आवश्यक हुनेछ।",
+  "optimusui_desc": "Nvidia Optimus प्रविधि भएका ल्यापटपका लागि ग्राफिकल युजर इन्टरफेस (जस्तै। स्विच गर्न सक्ने ग्राफिक्स)।"
 }

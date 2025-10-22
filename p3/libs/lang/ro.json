@@ -304,5 +304,6 @@
   "kernel_update_latest_version": "Ultima versiune:",
   "kernel_update_install_btn": "Instalează actualizarea",
   "kernel_update_ignore_btn": "Ignoră",
-  "kernel_update_reboot_required": "Va fi necesară o repornire a sistemului după instalare."
+  "kernel_update_reboot_required": "Va fi necesară o repornire a sistemului după instalare.",
+  "optimusui_desc": "O interfață grafică de utilizator pentru laptopuri cu tehnologie Nvidia Optimus (de exemplu, grafică comutabilă)."
 }
