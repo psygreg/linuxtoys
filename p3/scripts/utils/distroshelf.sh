@@ -10,6 +10,10 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
+if is_ubuntu; then
+    sudo add-apt-repository ppa:michel-slm/distrobox -y
+    sudo apt update
+fi
 _packages=(podman distrobox)
 _install_
 flatpak_in_lib

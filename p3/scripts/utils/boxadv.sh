@@ -17,7 +17,7 @@ if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]
     _packages=(distrobox podman pcsc-lite pcsc-lite-ccid)
 elif [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "debian" ]] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
     if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
-        sudo add-apt-repository -y universe
+        sudo add-apt-repository ppa:michel-slm/distrobox -y
         sudo apt update
     fi
     _packages=(distrobox podman pcsc-lite ccid)
