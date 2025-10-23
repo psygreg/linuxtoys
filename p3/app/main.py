@@ -8,6 +8,7 @@ if os.environ.get('LT_MANIFEST') != '1':
 
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
+from .easy_cli import easy_cli_handler
 from .update_helper import run_update_check
 from .kernel_update_helper import run_kernel_update_check
 from .compat import is_supported_system
@@ -48,6 +49,13 @@ translations = load_translations()  # Auto-detect language from lang_utils
 _ = create_translator()  # Create translator function from lang_utils
 
 def run():
+
+    # Check for CLI mode 
+    if os.environ.get('EASY_CLI') == '1': 
+        # Run in EASY_CLI 
+        sys.exit(easy_cli_handler(translations))
+
+
     # Check for CLI manifest mode
     if os.environ.get('LT_MANIFEST') == '1':
         # Run in CLI mode using manifest.txt

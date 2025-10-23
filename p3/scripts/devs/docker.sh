@@ -66,7 +66,8 @@ docker_in () { # install docker
     sudo systemctl enable --now docker.socket
     sleep 2
 }
-if zenity --question --title "Docker" --text "This will install Docker Engine. Proceed?" --width 360 --height 300; then
+
+if [[ "$DISABLE_ZENITY" == "1" ]] || zenity --question --title "Docker" --text "This will install Docker Engine. Proceed?" --width 360 --height 300; then
     sudo_rq
     docker_in
     zeninf "Setup complete. You may install Portainer CE to manage Docker after rebooting."

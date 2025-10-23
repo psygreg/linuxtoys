@@ -5,6 +5,40 @@ export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
 # sudo request
 sudo_rq () { 
+    # CLI mode (no zenity) - ask password up to 3 times
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        # check if sudo is already authorized
+        if sudo -n true 2>/dev/null; then
+            # already validated
+            [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
+            return 0
+        fi
+
+        local max_attempts=3
+        local attempts=0
+
+        while [ $attempts -lt $max_attempts ]; do
+            # prompt for password silently
+            printf "Password: "
+            read -s _pass
+            printf "\n"
+
+            # validate password
+            if echo "${_pass}" | sudo -S -v >/dev/null 2>&1; then
+                # successfully validated
+                [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
+                return 0
+            else
+                attempts=$((attempts + 1))
+                echo "❌ Wrong password. Attempts: ${attempts}/${max_attempts}."
+            fi
+        done
+
+        # reached max attempts
+        fatal "❌ Wrong password or sudo failed (max attempts reached)."
+    fi
+
+    
     if [ -f /tmp/linuxtoys_sudo_validated ]; then
         return 0
     fi
@@ -27,20 +61,38 @@ sudo_rq () {
 
 # zenity libs
 zeninf () {
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        echo
+        echo "$1"
+        return 0
+    fi
     zenity --info --text "$1" --width 360 --height 300
     return 0
 }
 zenwrn () {
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        echo
+        echo "$1"
+        return 0
+    fi
     zenity --warning --text "$1" --width 360 --height 300
     return 0
 }
 
 ## error handlers
 fatal() {
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        echo "$1"
+        exit 1
+    fi
     zenity --error --title "Fatal Error" --text "$1" --width 360 --height 300
     exit 1
 }
 nonfatal() {
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        echo "$1"
+        exit 1
+    fi
     zenity --error --title "Error" --text "$1" --width 360 --height 300
     return 1
 }
