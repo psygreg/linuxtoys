@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Installa aggiornamento",
   "kernel_update_ignore_btn": "Ignora",
   "kernel_update_reboot_required": "Sarà necessario riavviare il sistema dopo l'installazione.",
-  "optimusui_desc": "Un'interfaccia grafica utente per laptop con tecnologia Nvidia Optimus (ad esempio, grafica commutabile)."
+  "optimusui_desc": "Un'interfaccia grafica utente per laptop con tecnologia Nvidia Optimus (ad esempio, grafica commutabile).",
+  "cancel_script_title": "Annulla lo script in esecuzione?",
+  "cancel_script_message": "Uno script è attualmente in esecuzione. Se torni indietro ora, l'attività in esecuzione verrà annullata. Sei sicuro di voler annullare?",
+  "cancel_script_continue_btn": "Continua Esecuzione",
+  "cancel_script_cancel_btn": "Annulla Script"
 }

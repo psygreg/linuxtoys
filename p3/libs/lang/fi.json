@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Asenna päivitys",
   "kernel_update_ignore_btn": "Ohita",
   "kernel_update_reboot_required": "Järjestelmän uudelleenkäynnistys vaaditaan asennuksen jälkeen.",
-  "optimusui_desc": "Graafinen käyttöliittymä kannettaville tietokoneille, joissa on Nvidia Optimus -teknologia (esim. vaihdettava grafiikka)."
+  "optimusui_desc": "Graafinen käyttöliittymä kannettaville tietokoneille, joissa on Nvidia Optimus -teknologia (esim. vaihdettava grafiikka).",
+  "cancel_script_title": "Peruuta käynnissä oleva komentosarja?",
+  "cancel_script_message": "Skripti on parhaillaan käynnissä. Jos palaat nyt, käynnissä oleva tehtävä peruutetaan. Oletko varma, että haluat peruuttaa?",
+  "cancel_script_continue_btn": "Jatka Suorittamista",
+  "cancel_script_cancel_btn": "Peruuta Komentosarja"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Įdiegti atnaujinimą",
   "kernel_update_ignore_btn": "Ignoruoti",
   "kernel_update_reboot_required": "Po diegimo reikės paleisti sistemą iš naujo.",
-  "optimusui_desc": "Grafinė vartotojo sąsaja nešiojamiesiems kompiuteriams su Nvidia Optimus technologija (pvz., keičiama grafika)."
+  "optimusui_desc": "Grafinė vartotojo sąsaja nešiojamiesiems kompiuteriams su Nvidia Optimus technologija (pvz., keičiama grafika).",
+  "cancel_script_title": "Atšaukti vykdomą scenarijų?",
+  "cancel_script_message": "Scenarijus šiuo metu bėga. Jei grįšite dabar, vykdoma užduotis bus atšaukta. Ar jūs tikrai norite atšaukti?",
+  "cancel_script_continue_btn": "Tęsti Vykdymą",
+  "cancel_script_cancel_btn": "Atšaukti Scenarijų"
 }

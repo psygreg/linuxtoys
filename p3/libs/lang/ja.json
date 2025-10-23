@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "アップデートをインストール",
   "kernel_update_ignore_btn": "無視",
   "kernel_update_reboot_required": "インストール後にシステムの再起動が必要になります。",
-  "optimusui_desc": "Nvidia Optimus テクノロジーを備えたノートパソコン用のグラフィカルユーザーインターフェイス (例：切り替え可能なグラフィックス)。"
+  "optimusui_desc": "Nvidia Optimus テクノロジーを備えたノートパソコン用のグラフィカルユーザーインターフェイス (例：切り替え可能なグラフィックス)。",
+  "cancel_script_title": "実行中のスクリプトをキャンセルしますか?",
+  "cancel_script_message": "現在スクリプトが実行されています。 今戻ると、実行中のタスクがキャンセルされます。 本当にキャンセルしますか?",
+  "cancel_script_continue_btn": "実行を続行",
+  "cancel_script_cancel_btn": "スクリプトをキャンセル"
 }

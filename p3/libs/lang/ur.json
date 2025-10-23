@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "اپ ڈیٹ انسٹال کریں",
   "kernel_update_ignore_btn": "نظر انداز کریں",
   "kernel_update_reboot_required": "تنصیب کے بعد سسٹم کو دوبارہ شروع کرنا ہوگا۔",
-  "optimusui_desc": "Nvidia Optimus ٹیکنالوجی والے لیپ ٹاپ کے لیے ایک گرافیکل صارف انٹرفیس (مثلاً، قابلِ تبدیلی گرافکس)۔"
+  "optimusui_desc": "Nvidia Optimus ٹیکنالوجی والے لیپ ٹاپ کے لیے ایک گرافیکل صارف انٹرفیس (مثلاً، قابلِ تبدیلی گرافکس)۔",
+  "cancel_script_title": "چلتی ہوئی اسکرپٹ کو منسوخ کریں؟",
+  "cancel_script_message": "ایک اسکرپٹ فی الوقت چل رہی ہے۔ اگر آپ ابھی واپس جائیں تو چلتا ہوا کام منسوخ کر دیا جائے گا۔ کیا آپ کو یقین ہے کہ آپ منسوخ کرنا چاہتے ہیں؟",
+  "cancel_script_continue_btn": "چلانا جاری رکھیں",
+  "cancel_script_cancel_btn": "اسکرپٹ منسوخ کریں"
 }

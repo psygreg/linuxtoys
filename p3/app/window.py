@@ -704,6 +704,47 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self._close_application
         )
     
+    def _show_cancel_script_warning_dialog(self):
+        """
+        Shows a confirmation dialog warning that cancelling will stop the running script.
+        
+        Returns:
+            bool: True if user confirmed to cancel, False if user chose to continue
+        """
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get('cancel_script_title', 'Cancel Running Script?')
+        )
+        
+        dialog.format_secondary_text(
+            self.translations.get(
+                'cancel_script_message',
+                'A script is currently running. If you go back now, the running task will be cancelled. Are you sure you want to cancel?'
+            )
+        )
+        
+        # Add buttons
+        dialog.add_button(
+            self.translations.get('cancel_script_continue_btn', 'Continue Running'),
+            Gtk.ResponseType.NO
+        )
+        dialog.add_button(
+            self.translations.get('cancel_script_cancel_btn', 'Cancel Script'),
+            Gtk.ResponseType.YES
+        )
+        
+        # Set focus to the "Continue Running" button (safer default)
+        dialog.set_default_response(Gtk.ResponseType.NO)
+        
+        response = dialog.run()
+        dialog.destroy()
+        
+        # Return True if user clicked "Cancel Script" (YES), False otherwise
+        return response == Gtk.ResponseType.YES
+    
     def _close_application(self):
         """Closes the application gracefully."""
         self.get_application().quit()
@@ -1487,6 +1528,12 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self.search_entry.set_text("")
             self._clear_search_results()
             return
+
+        # Check if a script is currently running
+        if self.main_stack.get_visible_child_name() == "running_scripts":
+            # Show warning dialog before cancelling the running script
+            if not self._show_cancel_script_warning_dialog():
+                return  # User cancelled the operation
 
         self.check_buttons.clear()
             

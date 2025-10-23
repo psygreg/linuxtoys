@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "အပ်ဒိတ်ထည့်သွင်းပါ",
   "kernel_update_ignore_btn": "လျစ်လျူရှုပါ",
   "kernel_update_reboot_required": "ထည့်သွင်းပြီးနောက် စနစ်ကို ပြန်လည်စတင်ရန် လိုအပ်ပါမည်။",
-  "optimusui_desc": "Nvidia Optimus Technology ရှိသော လက်အိုချီုံးအတွက် graphical user interface (ဥပမာ၊ အပြောင်းအလဲ ဖြစ်နိုင်သော ဂရပ်ဖစ်)။"
+  "optimusui_desc": "Nvidia Optimus Technology ရှိသော လက်အိုချီုံးအတွက် graphical user interface (ဥပမာ၊ အပြောင်းအလဲ ဖြစ်နိုင်သော ဂရပ်ဖစ်)။",
+  "cancel_script_title": "လည်ပတ်နေသောစာသားပိုင်းအား ပယ်ဖျက်ရန်?",
+  "cancel_script_message": "စာသားပိုင်းဆိုင်ရာသည် လည်ပတ်နေသည်။ အကယ်၍ သင်သည် အခုပြန်လည်သွားသည်ဆိုလျှင်၊ လည်ပတ်နေသောအလုပ်သည် ပယ်ဖျက်ခံရမည်ဖြစ်သည်။ သင်သည် ပယ်ဖျက်ရန်သည် သေချာပါသလား?",
+  "cancel_script_continue_btn": "အလုပ်စဉ်တည်ခိုင်ရှိနေ",
+  "cancel_script_cancel_btn": "စာသားပိုင်းဆိုင်ရာ ပယ်ဖျက်"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Update installieren",
   "kernel_update_ignore_btn": "Ignorieren",
   "kernel_update_reboot_required": "Nach der Installation ist ein Systemneustart erforderlich.",
-  "optimusui_desc": "Eine grafische Benutzeroberfläche für Laptops mit Nvidia-Optimus-Technologie (z. B. umschaltbare Grafik)."
+  "optimusui_desc": "Eine grafische Benutzeroberfläche für Laptops mit Nvidia-Optimus-Technologie (z. B. umschaltbare Grafik).",
+  "cancel_script_title": "Laufendes Skript abbrechen?",
+  "cancel_script_message": "Ein Skript wird derzeit ausgeführt. Wenn Sie jetzt zurückgehen, wird die laufende Aufgabe abgebrochen. Möchten Sie wirklich abbrechen?",
+  "cancel_script_continue_btn": "Weiterhin Ausführen",
+  "cancel_script_cancel_btn": "Skript Abbrechen"
 }

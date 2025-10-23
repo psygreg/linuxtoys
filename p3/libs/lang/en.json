@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Install Update",
   "kernel_update_ignore_btn": "Ignore",
   "kernel_update_reboot_required": "A system reboot will be required after installation.",
-  "optimusui_desc": "A graphical user interface for Laptops with Nvidia Optimus Technology (eg. switchable Graphics)."
+  "optimusui_desc": "A graphical user interface for Laptops with Nvidia Optimus Technology (eg. switchable Graphics).",
+  "cancel_script_title": "Cancel Running Script?",
+  "cancel_script_message": "A script is currently running. If you go back now, the running task will be cancelled. Are you sure you want to cancel?",
+  "cancel_script_continue_btn": "Continue Running",
+  "cancel_script_cancel_btn": "Cancel Script"
 }

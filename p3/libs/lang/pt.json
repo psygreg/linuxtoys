@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Instalar atualização",
   "kernel_update_ignore_btn": "Ignorar",
   "kernel_update_reboot_required": "Uma reinicialização do sistema será necessária após a instalação.",
-  "optimusui_desc": "Uma interface gráfica de usuário para computadores portáteis com tecnologia Nvidia Optimus (por exemplo, gráficos comutáveis)."
+  "optimusui_desc": "Uma interface gráfica de usuário para computadores portáteis com tecnologia Nvidia Optimus (por exemplo, gráficos comutáveis).",
+  "cancel_script_title": "Cancelar script em execução?",
+  "cancel_script_message": "Um script está em execução. Se você voltar agora, a tarefa em execução será cancelada. Tem certeza de que deseja cancelar?",
+  "cancel_script_continue_btn": "Continuar Execução",
+  "cancel_script_cancel_btn": "Cancelar Script"
 }

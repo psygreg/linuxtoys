@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "ማሻሻያ ጫን",
   "kernel_update_ignore_btn": "ችላ በል",
   "kernel_update_reboot_required": "ከመጫን በኋላ የስርዓት እንደገና ማስጀመር ያስፈልጋል።",
-  "optimusui_desc": "ለNvidia Optimus Technology ያላቸው ላፕቶፖች የግራፊካል ተጠቃሚ ግንኙነት (ለምሳሌ። ሊቀየር የሚችል ግራፊክስ)።"
+  "optimusui_desc": "ለNvidia Optimus Technology ያላቸው ላፕቶፖች የግራፊካል ተጠቃሚ ግንኙነት (ለምሳሌ። ሊቀየር የሚችል ግራፊክስ)።",
+  "cancel_script_title": "ስክሪፕ እየሰራ ያለ ሰርዝ?",
+  "cancel_script_message": "አንድ ሲሪፕ አሁን በሰሮ ላይ ነው። አሁን ወደ ኋላ ከሄዱ ፣ የሚሰሩት ሥራ ይሰረዛል። በእርግጥ ለመሰረዝ ይፈልጋሉ?",
+  "cancel_script_continue_btn": "ሥራ መለካት አሁንም ቀጥል",
+  "cancel_script_cancel_btn": "ስክሪፕ ሰርዝ"
 }

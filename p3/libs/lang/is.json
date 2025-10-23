@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Setja upp uppfærslu",
   "kernel_update_ignore_btn": "Hunsa",
   "kernel_update_reboot_required": "Endurræsing kerfisins verður nauðsynleg eftir uppsetningu.",
-  "optimusui_desc": "Grafísk notandaviðmót fyrir fartölvur með Nvidia Optimus tækni (t.d. skiptanleg grafík)."
+  "optimusui_desc": "Grafísk notandaviðmót fyrir fartölvur með Nvidia Optimus tækni (t.d. skiptanleg grafík).",
+  "cancel_script_title": "Hætta við keyra skriftu?",
+  "cancel_script_message": "Skrifta er nú keyrandi. Ef þú fer til baka núna, mun verkefnið sem keyrir verða hætt. Ertu viss um að þú viljir hætta við?",
+  "cancel_script_continue_btn": "Haltu áfram Keyrslu",
+  "cancel_script_cancel_btn": "Hætta við Skriftu"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Installera uppdatering",
   "kernel_update_ignore_btn": "Ignorera",
   "kernel_update_reboot_required": "En systemomstart kommer att krävas efter installationen.",
-  "optimusui_desc": "Ett grafiskt användargränssnitt för bärbara datorer med Nvidia Optimus-teknik (t.ex. växlingsbar grafik)."
+  "optimusui_desc": "Ett grafiskt användargränssnitt för bärbara datorer med Nvidia Optimus-teknik (t.ex. växlingsbar grafik).",
+  "cancel_script_title": "Avbryt köpande skript?",
+  "cancel_script_message": "Ett skript körs för närvarande. Om du går tillbaka nu kommer den körande uppgiften att avbrytas. Är du säker på att du vill avbryta?",
+  "cancel_script_continue_btn": "Fortsätt Körning",
+  "cancel_script_cancel_btn": "Avbryt Skript"
 }

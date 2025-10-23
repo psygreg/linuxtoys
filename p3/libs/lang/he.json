@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "התקן עדכון",
   "kernel_update_ignore_btn": "התעלם",
   "kernel_update_reboot_required": "תידרש הפעלה מחדש של המערכת לאחר ההתקנה.",
-  "optimusui_desc": "ממשק משתמש גרפי למחשבים ניידים עם טכנולוגיית Nvidia Optimus (לדוגמה, גרפיקה ניתנת להחלפה)."
+  "optimusui_desc": "ממשק משתמש גרפי למחשבים ניידים עם טכנולוגיית Nvidia Optimus (לדוגמה, גרפיקה ניתנת להחלפה).",
+  "cancel_script_title": "בטל את הסקריפט שפועל?",
+  "cancel_script_message": "סקריפט פועל כרגע. אם תחזור עכשיו, המשימה הפועלת תבוטל. האם אתה בטוח שברצונך לבטל?",
+  "cancel_script_continue_btn": "המשך הפעלה",
+  "cancel_script_cancel_btn": "בטל סקריפט"
 }

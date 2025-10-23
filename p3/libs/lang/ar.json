@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "تثبيت التحديث",
   "kernel_update_ignore_btn": "تجاهل",
   "kernel_update_reboot_required": "ستكون إعادة تشغيل النظام مطلوبة بعد التثبيت.",
-  "optimusui_desc": "واجهة رسومية للكمبيوترات المحمولة التي تحتوي على تقنية Nvidia Optimus (مثل الرسومات القابلة للتبديل)."
+  "optimusui_desc": "واجهة رسومية للكمبيوترات المحمولة التي تحتوي على تقنية Nvidia Optimus (مثل الرسومات القابلة للتبديل).",
+  "cancel_script_title": "إلغاء البرنامج النصي قيد التشغيل؟",
+  "cancel_script_message": "يتم تشغيل نص برمجي حاليا. إذا عدت الآن، فسيتم إلغاء المهمة قيد التنفيذ. هل تريد فعلا الإلغاء؟",
+  "cancel_script_continue_btn": "متابعة التشغيل",
+  "cancel_script_cancel_btn": "إلغاء البرنامج النصي"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Frissítés telepítése",
   "kernel_update_ignore_btn": "Mellőzés",
   "kernel_update_reboot_required": "A telepítés után rendszer-újraindítás szükséges.",
-  "optimusui_desc": "Grafikus felhasználói felület Nvidia Optimus technológiával rendelkező laptopokhoz (pl. váltható grafika)."
+  "optimusui_desc": "Grafikus felhasználói felület Nvidia Optimus technológiával rendelkező laptopokhoz (pl. váltható grafika).",
+  "cancel_script_title": "Futó szkript mégse?",
+  "cancel_script_message": "Egy szkript jelenleg fut. Ha most visszamegyünk, a futó feladat meg lesz szakítva. Biztos vagy, hogy meg akarod szakítani?",
+  "cancel_script_continue_btn": "Futtatás Folytatása",
+  "cancel_script_cancel_btn": "Szkript Mégse"
 }

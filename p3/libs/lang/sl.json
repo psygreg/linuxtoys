@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Namesti posodobitev",
   "kernel_update_ignore_btn": "Prezri",
   "kernel_update_reboot_required": "Po namestitvi bo potreben ponovni zagon sistema.",
-  "optimusui_desc": "Grafični uporabniški vmesnik za prenosne računalnike s tehnologijo Nvidia Optimus (npr. izmenljiva grafika)."
+  "optimusui_desc": "Grafični uporabniški vmesnik za prenosne računalnike s tehnologijo Nvidia Optimus (npr. izmenljiva grafika).",
+  "cancel_script_title": "Prekini skript v teku?",
+  "cancel_script_message": "Skript je trenutno v teku. Če se sedaj vrneš, bo tekoča naloga preklicana. Ali si prepričan, da želiš preklicati?",
+  "cancel_script_continue_btn": "Nadaljuj Izvajanje",
+  "cancel_script_cancel_btn": "Prekini Skript"
 }

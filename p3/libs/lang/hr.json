@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Instaliraj ažuriranje",
   "kernel_update_ignore_btn": "Ignoriraj",
   "kernel_update_reboot_required": "Nakon instalacije bit će potrebno ponovno pokretanje sustava.",
-  "optimusui_desc": "Grafičko korisničko sučelje za prijenosne računare s tehnologijom Nvidia Optimus (npr. promjenjiva grafika)."
+  "optimusui_desc": "Grafičko korisničko sučelje za prijenosne računare s tehnologijom Nvidia Optimus (npr. promjenjiva grafika).",
+  "cancel_script_title": "Otkazati pokrenuti skript?",
+  "cancel_script_message": "Skript se trenutno izvršava. Ako se vratite sada, tekući zadatak će biti otkazan. Jeste li sigurni da želite otkazati?",
+  "cancel_script_continue_btn": "Nastavi Pokretanje",
+  "cancel_script_cancel_btn": "Otkazati Skript"
 }

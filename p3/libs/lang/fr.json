@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Installer la mise à jour",
   "kernel_update_ignore_btn": "Ignorer",
   "kernel_update_reboot_required": "Un redémarrage du système sera nécessaire après l'installation.",
-  "optimusui_desc": "Une interface utilisateur graphique pour les ordinateurs portables dotés de la technologie Nvidia Optimus (par exemple, graphiques commutables)."
+  "optimusui_desc": "Une interface utilisateur graphique pour les ordinateurs portables dotés de la technologie Nvidia Optimus (par exemple, graphiques commutables).",
+  "cancel_script_title": "Annuler le script en cours d'exécution?",
+  "cancel_script_message": "Un script est en cours d'exécution. Si vous revenez maintenant, la tâche en cours sera annulée. Êtes-vous sûr de vouloir annuler?",
+  "cancel_script_continue_btn": "Continuer l'exécution",
+  "cancel_script_cancel_btn": "Annuler le Script"
 }

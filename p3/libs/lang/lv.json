@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Instalēt atjauninājumu",
   "kernel_update_ignore_btn": "Ignorēt",
   "kernel_update_reboot_required": "Pēc instalēšanas būs nepieciešama sistēmas pārstartēšana.",
-  "optimusui_desc": "Grafiski lietotāja interfeiss klēpjdatoriem ar Nvidia Optimus tehnoloģiju (piemēram, pārslegojama grafika)."
+  "optimusui_desc": "Grafiski lietotāja interfeiss klēpjdatoriem ar Nvidia Optimus tehnoloģiju (piemēram, pārslegojama grafika).",
+  "cancel_script_title": "Atcelt palaisto skriptu?",
+  "cancel_script_message": "Skripts pašlaik darbojas. Ja jūs grieziesties atpakaļ tagad, palaistais uzdevums tiks atcelts. Vai jūs tiešām vēlaties atcelt?",
+  "cancel_script_continue_btn": "Turpināt Izpildi",
+  "cancel_script_cancel_btn": "Atcelt Skriptu"
 }

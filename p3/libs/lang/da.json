@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Installer opdatering",
   "kernel_update_ignore_btn": "Ignorer",
   "kernel_update_reboot_required": "En genstart af systemet vil være nødvendig efter installationen.",
-  "optimusui_desc": "En grafisk brugergrænseflade til bærbare computere med Nvidia Optimus-teknologi (f.eks. skiflbar grafik)."
+  "optimusui_desc": "En grafisk brugergrænseflade til bærbare computere med Nvidia Optimus-teknologi (f.eks. skiflbar grafik).",
+  "cancel_script_title": "Annuller script der kører?",
+  "cancel_script_message": "Der kører i øjeblikket et script. Hvis du vender tilbage nu, bliver opgaven der kører aflyst. Er du sikker på at du vil annullere?",
+  "cancel_script_continue_btn": "Fortsæt Kørsel",
+  "cancel_script_cancel_btn": "Annuller Script"
 }

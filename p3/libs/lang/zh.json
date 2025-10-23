@@ -307,5 +307,9 @@
   "kernel_update_install_btn": "安装更新",
   "kernel_update_ignore_btn": "忽略",
   "kernel_update_reboot_required": "安装后需要重新启动系统。",
-  "optimusui_desc": "适用于配备Nvidia Optimus技术的笔记本电脑的图形用户界面（例如，可切换的图形）。"
+  "optimusui_desc": "适用于配备Nvidia Optimus技术的笔记本电脑的图形用户界面（例如，可切换的图形）。",
+  "cancel_script_title": "取消正在运行的脚本?",
+  "cancel_script_message": "脚本正在运行。 如果您现在返回，正在运行的任务将被取消。 您确定要取消吗?",
+  "cancel_script_continue_btn": "继续运行",
+  "cancel_script_cancel_btn": "取消脚本"
 }

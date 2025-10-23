@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Installi värskendus",
   "kernel_update_ignore_btn": "Ignoreeri",
   "kernel_update_reboot_required": "Pärast installimist on vajalik süsteemi taaskäivitamine.",
-  "optimusui_desc": "Graafika kasutajaliides sülearvutitele Nvidia Optimus technoloogiaga (nt. lülitav graafika)."
+  "optimusui_desc": "Graafika kasutajaliides sülearvutitele Nvidia Optimus technoloogiaga (nt. lülitav graafika).",
+  "cancel_script_title": "Töötava skripti tühistamine?",
+  "cancel_script_message": "Skript on praegu käivitatud. Kui nüüd tagasi lähete, käimasolev ülesanne tühistatakse. Kas olete kindel, et soovite tühistada?",
+  "cancel_script_continue_btn": "Jätka Käitamist",
+  "cancel_script_cancel_btn": "Skripti Tühistamine"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "I-install ang Update",
   "kernel_update_ignore_btn": "Huwag pansinin",
   "kernel_update_reboot_required": "Kinakailangan ang pag-reboot ng system pagkatapos ng pag-install.",
-  "optimusui_desc": "Isang graphical user interface para sa mga laptop na may Nvidia Optimus Technology (halimbawa, napapalitin na graphics)."
+  "optimusui_desc": "Isang graphical user interface para sa mga laptop na may Nvidia Optimus Technology (halimbawa, napapalitin na graphics).",
+  "cancel_script_title": "Kanselahin ang Script na Tumatakbo?",
+  "cancel_script_message": "Ang script ay kasalukuyang tumatakbo. Kung bumalik kayo ngayon, ang tumatakbong gawain ay magiging wala. Sigurado ka na ba na nais mong i-cancel?",
+  "cancel_script_continue_btn": "Magpatuloy na Tumakbo",
+  "cancel_script_cancel_btn": "Kanselahin ang Script"
 }

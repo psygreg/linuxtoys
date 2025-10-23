@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Update installeren",
   "kernel_update_ignore_btn": "Negeren",
   "kernel_update_reboot_required": "Na de installatie is een systeemherstart vereist.",
-  "optimusui_desc": "Een grafische gebruikersinterface voor laptops met Nvidia Optimus-technologie (bijv. verwisselbare afbeeldingen)."
+  "optimusui_desc": "Een grafische gebruikersinterface voor laptops met Nvidia Optimus-technologie (bijv. verwisselbare afbeeldingen).",
+  "cancel_script_title": "Lopende script annuleren?",
+  "cancel_script_message": "Een script wordt momenteel uitgevoerd. Als u nu terugkeert, wordt de actieve taak geannuleerd. Weet u zeker dat u wilt annuleren?",
+  "cancel_script_continue_btn": "Voortgaan met Uitvoering",
+  "cancel_script_cancel_btn": "Script Annuleren"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Cài đặt bản cập nhật",
   "kernel_update_ignore_btn": "Bỏ qua",
   "kernel_update_reboot_required": "Sẽ cần khởi động lại hệ thống sau khi cài đặt.",
-  "optimusui_desc": "Một giao diện người dùng đồ họa cho máy tính xách tay với Công nghệ Nvidia Optimus (ví dụ: đồ họa có thể chuyển đổi)."
+  "optimusui_desc": "Một giao diện người dùng đồ họa cho máy tính xách tay với Công nghệ Nvidia Optimus (ví dụ: đồ họa có thể chuyển đổi).",
+  "cancel_script_title": "Hủy bỏ tập lệnh đang chạy?",
+  "cancel_script_message": "Một tập lệnh đang chạy. Nếu bạn quay lại bây giờ, tác vụ đang chạy sẽ bị hủy. Bạn có chắc chắn muốn hủy không?",
+  "cancel_script_continue_btn": "Tiếp Tục Thực Thi",
+  "cancel_script_cancel_btn": "Hủy Bỏ Tập Lệnh"
 }

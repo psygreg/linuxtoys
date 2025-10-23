@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "ຕິດຕັ້ງການອັບເດດ",
   "kernel_update_ignore_btn": "ບໍ່ສົນໃຈ",
   "kernel_update_reboot_required": "ການເປີດລະບົບໃໝ່ຈະຖືກຕ້ອງການຫຼັງຈາກການຕິດຕັ້ງ.",
-  "optimusui_desc": "ຕົວຈິງໃຊ້ກາຟິກສໍາລັບໂນັ້ຕບຸກທີ່ມີ Nvidia Optimus Technology (ຕົວຢ່າງ: ກາຟິກທີ່ສາມາດປ່ຽນແປງໄດ້)."
+  "optimusui_desc": "ຕົວຈິງໃຊ້ກາຟິກສໍາລັບໂນັ້ຕບຸກທີ່ມີ Nvidia Optimus Technology (ຕົວຢ່າງ: ກາຟິກທີ່ສາມາດປ່ຽນແປງໄດ້).",
+  "cancel_script_title": "ບົດละຂໍ້ມູນທີ່ກຳລັງດໍາເນີນການ?",
+  "cancel_script_message": "ສະຄິບໃບບກະ ກຳລັງດໍາເນີນການ. ຖ້າຫາກວ່າທ່ານກັບຄືນໄປໃນປະຈຸບັນ, ບົດລະຫັດທີ່ກຳລັງດໍາເນີນການຈະຖືກຍົກເລີກ. ທ່ານແນ່ໃຈຫລືບໍ່ວ່າທ່ານຕ້ອງການຍົກເລີກ?",
+  "cancel_script_continue_btn": "ສືບຕໍ່ການດໍາເນີນການ",
+  "cancel_script_cancel_btn": "ລະຫັດເວົ້າກະ ບົດລະຫັດ"
 }

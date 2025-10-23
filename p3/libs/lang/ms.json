@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Pasang Kemas Kini",
   "kernel_update_ignore_btn": "Abaikan",
   "kernel_update_reboot_required": "But semula sistem akan diperlukan selepas pemasangan.",
-  "optimusui_desc": "Antarmuka pengguna grafis untuk laptop dengan teknologi Nvidia Optimus (contohnya, grafis yang dapat ditukar)."
+  "optimusui_desc": "Antarmuka pengguna grafis untuk laptop dengan teknologi Nvidia Optimus (contohnya, grafis yang dapat ditukar).",
+  "cancel_script_title": "Batalkan Skrip yang Sedang Berjalan?",
+  "cancel_script_message": "Skrip sedang berjalan. Jika anda kembali sekarang, tugas yang sedang berjalan akan dibatalkan. Apakah anda pasti ingin membatalkan?",
+  "cancel_script_continue_btn": "Teruskan Menjalankan",
+  "cancel_script_cancel_btn": "Batalkan Skrip"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Nainstalovat aktualizaci",
   "kernel_update_ignore_btn": "Ignorovat",
   "kernel_update_reboot_required": "Po instalaci bude nutný restart systému.",
-  "optimusui_desc": "Grafické uživatelské rozhraní pro notebooky s technologií Nvidia Optimus (např. přepínací grafika)."
+  "optimusui_desc": "Grafické uživatelské rozhraní pro notebooky s technologií Nvidia Optimus (např. přepínací grafika).",
+  "cancel_script_title": "Zrušit běžící skript?",
+  "cancel_script_message": "Skript je aktuálně spuštěn. Pokud se nyní vrátíte, spuštěná úloha bude zrušena. Jste si jistí, že chcete zrušit?",
+  "cancel_script_continue_btn": "Pokračovat v Běhu",
+  "cancel_script_cancel_btn": "Zrušit Skript"
 }

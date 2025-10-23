@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Instalează actualizarea",
   "kernel_update_ignore_btn": "Ignoră",
   "kernel_update_reboot_required": "Va fi necesară o repornire a sistemului după instalare.",
-  "optimusui_desc": "O interfață grafică de utilizator pentru laptopuri cu tehnologie Nvidia Optimus (de exemplu, grafică comutabilă)."
+  "optimusui_desc": "O interfață grafică de utilizator pentru laptopuri cu tehnologie Nvidia Optimus (de exemplu, grafică comutabilă).",
+  "cancel_script_title": "Anulează scriptul în execuție?",
+  "cancel_script_message": "Un script se execută în prezent. Dacă vă întoarceți acum, sarcina care se execută va fi anulată. Sunteți sigur că doriți să anulați?",
+  "cancel_script_continue_btn": "Continuă Execuția",
+  "cancel_script_cancel_btn": "Anuleaza Script"
 }

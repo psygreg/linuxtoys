@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "نصب به‌روزرسانی",
   "kernel_update_ignore_btn": "نادیده گرفتن",
   "kernel_update_reboot_required": "پس از نصب، راه‌اندازی مجدد سیستم مورد نیاز است.",
-  "optimusui_desc": "رابط گرافیکی کاربری برای لپ‌تاپ‌های دارای فناوری Nvidia Optimus (مثلاً گرافیک قابل تعویض)."
+  "optimusui_desc": "رابط گرافیکی کاربری برای لپ‌تاپ‌های دارای فناوری Nvidia Optimus (مثلاً گرافیک قابل تعویض).",
+  "cancel_script_title": "لغو اسکریپت در حال اجرا؟",
+  "cancel_script_message": "یک اسکریپت در حال اجرا است. اگر الآن برگردید، کار در حال انجام لغو خواهد شد. آیا مطمئن هستید که می‌خواهید لغو کنید؟",
+  "cancel_script_continue_btn": "ادامه اجرا",
+  "cancel_script_cancel_btn": "لغو اسکریپت"
 }

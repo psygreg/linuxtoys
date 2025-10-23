@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "업데이트 설치",
   "kernel_update_ignore_btn": "무시",
   "kernel_update_reboot_required": "설치 후 시스템 재부팅이 필요합니다.",
-  "optimusui_desc": "Nvidia Optimus 기술을 갖춘 노트북용 그래픽 사용자 인터페이스 (예: 전환 가능한 그래픽)."
+  "optimusui_desc": "Nvidia Optimus 기술을 갖춘 노트북용 그래픽 사용자 인터페이스 (예: 전환 가능한 그래픽).",
+  "cancel_script_title": "실행 중인 스크립트를 취소하시겠습니까?",
+  "cancel_script_message": "현재 스크립트가 실행 중입니다. 지금 돌아가면 실행 중인 작업이 취소됩니다. 정말 취소하시겠습니까?",
+  "cancel_script_continue_btn": "실행 계속",
+  "cancel_script_cancel_btn": "스크립트 취소"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "ติดตั้งการอัปเดต",
   "kernel_update_ignore_btn": "เพิกเฉย",
   "kernel_update_reboot_required": "จะต้องรีบูตระบบหลังการติดตั้ง",
-  "optimusui_desc": "อินเตอร์เฟซผู้ใช้แบบกราฟิกสำหรับแล็ปท็อปที่มี Nvidia Optimus Technology (เช่น กราฟิกสที่สามารถเปลี่ยน)"
+  "optimusui_desc": "อินเตอร์เฟซผู้ใช้แบบกราฟิกสำหรับแล็ปท็อปที่มี Nvidia Optimus Technology (เช่น กราฟิกสที่สามารถเปลี่ยน)",
+  "cancel_script_title": "ยกเลิกสคริปต์ที่กำลังทำงาน?",
+  "cancel_script_message": "สคริปต์กำลังทำงานในขณะนี้ หากคุณกลับไปเดี๋ยวนี้ งานที่กำลังทำงานจะถูกยกเลิก คุณแน่ใจหรือไม่ว่าต้องการยกเลิก?",
+  "cancel_script_continue_btn": "ทำงานต่อ",
+  "cancel_script_cancel_btn": "ยกเลิกสคริปต์"
 }

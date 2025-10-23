@@ -303,5 +303,9 @@
   "kernel_update_install_btn": "Sakinisha Sasisho",
   "kernel_update_ignore_btn": "Puuza",
   "kernel_update_reboot_required": "Kuanzisha upya mfumo kutahitajika baada ya usakinishaji.",
-  "optimusui_desc": "Kiolesura cha mtumiaji wa picha kwa tarakilishi yenye Nvidia Optimus Technology (mfano, picha inayoweza kubadilishwa)."
+  "optimusui_desc": "Kiolesura cha mtumiaji wa picha kwa tarakilishi yenye Nvidia Optimus Technology (mfano, picha inayoweza kubadilishwa).",
+  "cancel_script_title": "Ghairi Hati Inayofanya?",
+  "cancel_script_message": "Hati inafanya sasa. Ikiwa unageuka nyuma sasa, hati inayofanya itabadilishwa. Je, una uhakika kwamba unataka kukataa?",
+  "cancel_script_continue_btn": "Endelea na Utekelezaji",
+  "cancel_script_cancel_btn": "Ghairi Hati"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Instalo përditësimin",
   "kernel_update_ignore_btn": "Injoro",
   "kernel_update_reboot_required": "Do të kërkohet një rinisje e sistemit pas instalimit.",
-  "optimusui_desc": "Një ndërfaqe grafike për laptopet me teknologjinë Nvidia Optimus (p.sh. grafika e ndërrueshme)."
+  "optimusui_desc": "Një ndërfaqe grafike për laptopet me teknologjinë Nvidia Optimus (p.sh. grafika e ndërrueshme).",
+  "cancel_script_title": "Anulo skriptin në ekzekutim?",
+  "cancel_script_message": "Një skript po ekzekutohet. Nëse ktheesh prapa tani, detyra në ekzekutim do të anulohet. A jeni i sigurt se dëshironi të anuloni?",
+  "cancel_script_continue_btn": "Vazhdoni Ekzekutimin",
+  "cancel_script_cancel_btn": "Anulo Skriptin"
 }

@@ -305,5 +305,9 @@
   "kernel_update_install_btn": "Nainštalovať aktualizáciu",
   "kernel_update_ignore_btn": "Ignorovať",
   "kernel_update_reboot_required": "Po inštalácii bude potrebný reštart systému.",
-  "optimusui_desc": "Grafické používateľské rozhranie pre notebooky s technológiou Nvidia Optimus (napr. prepínateľná grafika)."
+  "optimusui_desc": "Grafické používateľské rozhranie pre notebooky s technológiou Nvidia Optimus (napr. prepínateľná grafika).",
+  "cancel_script_title": "Zrušiť spúšťaný skript?",
+  "cancel_script_message": "Skript je v súčasnosti spúšťaný. Ak sa teraz vrátite, spustený proces bude zrušený. Ste si istí, že chcete zrušiť?",
+  "cancel_script_continue_btn": "Pokračovať v Spúšťaní",
+  "cancel_script_cancel_btn": "Zrušiť Skript"
 }
