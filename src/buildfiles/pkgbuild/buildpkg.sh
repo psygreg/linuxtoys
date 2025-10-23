@@ -26,6 +26,18 @@ exec /usr/bin/python3 run.py "$@"
 EOF
 chmod +x linuxtoys-${lt_version}/usr/bin/linuxtoys
 
+# Create the CLI shortcut script
+cat > linuxtoys-${lt_version}/usr/bin/linuxtoys-cli << 'EOF'
+#!/bin/bash
+# Set process name for better desktop integration
+export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
+# Enable CLI mode
+export EASY_CLI=1
+cd /usr/share/linuxtoys
+exec /usr/bin/python3 run.py "$@"
+EOF
+chmod +x linuxtoys-${lt_version}/usr/bin/linuxtoys-cli
+
 # Make sure all shell scripts are executable
 find linuxtoys-${lt_version}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 find linuxtoys-${lt_version}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;

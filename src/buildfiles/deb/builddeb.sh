@@ -30,6 +30,18 @@ exec /usr/bin/python3 run.py "$@"
 EOF
 chmod +x linuxtoys_$lt_version.orig/usr/bin/linuxtoys
 
+# Create the CLI shortcut script
+cat > linuxtoys_$lt_version.orig/usr/bin/linuxtoys-cli << 'EOF'
+#!/bin/bash
+# Set process name for better desktop integration
+export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
+# Enable CLI mode
+export EASY_CLI=1
+cd /usr/share/linuxtoys
+exec /usr/bin/python3 run.py "$@"
+EOF
+chmod +x linuxtoys_$lt_version.orig/usr/bin/linuxtoys-cli
+
 # Make sure all shell scripts are executable
 find linuxtoys_$lt_version.orig/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 find linuxtoys_$lt_version.orig/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
@@ -142,6 +154,7 @@ sed -i "6c\\$changelog_line2" debian/changelog
 # Update debian/install file for new structure
 cat > debian/install << 'EOF'
 usr/bin/linuxtoys /usr/bin/
+usr/bin/linuxtoys-cli /usr/bin/
 usr/share/linuxtoys /usr/share/
 usr/share/applications/LinuxToys.desktop /usr/share/applications/
 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/scalable/apps/
