@@ -135,10 +135,11 @@ class TermRunScripts(Gtk.Box):
 			self.vbox_main.button_run.set_image(Gtk.Image.new_from_icon_name("emblem-ok-symbolic", Gtk.IconSize.BUTTON))
 			self.vbox_main.progress_bar.set_text(done_text)
 			self.vbox_main.button_run.connect("clicked", self.on_done_clicked)
-
+			self.parent._script_running = False
 			self.vbox_main.button_run.set_sensitive(True)
 			return
 
+		self.parent._script_running = True
 		current_script = self.script_queue.pop(0)
 		self.vbox_main._update_header_labels(current_script)
 
