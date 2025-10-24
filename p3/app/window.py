@@ -1,6 +1,6 @@
 from .gtk_common import Gtk, GLib, Gdk, Vte, Pango
 from gi.repository import GdkPixbuf
-import os, shutil
+import os, shutil, threading
 
 from . import parser
 from . import header
@@ -11,6 +11,9 @@ from . import search_helper
 from . import get_icon_path
 from . import term_view
 from . import revealer
+from .updater.update_helper import UpdateHelper
+from .updater.update_dialog import UpdateDialog
+
 
 class AppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, translations, *args, **kwargs):
@@ -126,6 +129,23 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # Initialize drag-and-drop but don't enable it by default
         self._setup_drag_and_drop()
+
+        GLib.idle_add(self._check_updates)
+
+    def _check_updates(self):
+        threading.Thread(
+            target=self._show_dialog_and_update,
+            daemon=True
+        ).start()
+
+    def _show_dialog_and_update(self):
+        self._check = UpdateHelper()
+        if self._check._update_available():
+            GLib.idle_add(self._open_update_dialog, self._check._latest_ver)
+
+    def _open_update_dialog(self, latest_ver):
+        UpdateDialog(latest_ver, self).show()
+        return False
 
     def _on_key_press(self, widget, event):
         keyval = event.keyval
