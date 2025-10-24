@@ -2,6 +2,7 @@ from .gtk_common import Gtk, GLib, Gdk, Vte, Pango, GdkPixbuf
 from . import get_icon_path
 from . import dev_mode
 import os, sys
+from .updater.update_dialog import DialogRestart
 
 
 class InfosHead(Gtk.Box):
@@ -114,6 +115,9 @@ class TermRunScripts(Gtk.Box):
 		self._run_next_script()
 
 	def on_child_exit(self, term, status):
+		if self._self_update:
+			DialogRestart(parent=self.get_toplevel()).show()
+
 		self.scripts_executed += 1
 		progress = self.scripts_executed / self.total_scripts
 		self.vbox_main.progress_bar.set_fraction(progress)
@@ -141,6 +145,8 @@ class TermRunScripts(Gtk.Box):
 		script_path = current_script.get('path', 'true')
 		if current_script.get('reboot') == "yes":
 			self.parent.reboot_required = True
+
+		self._self_update = current_script.get('self_update', False)
 
 		script_dir = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 

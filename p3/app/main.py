@@ -77,23 +77,6 @@ def run():
         dialog.run()
         dialog.destroy()
         sys.exit(1)
-
-    # In GUI mode, use the new GitHub API-based update checker
-    # This works for both git-cloned and packaged versions
-    # Run update check asynchronously to prevent blocking on Hyprland/Wayland
-    try:
-        import threading
-        def async_update_check():
-            try:
-                run_update_check(show_dialog=True, verbose=False, translations=translations)
-            except Exception as e:
-                print(f"Update check failed: {e}")
-        
-        # Run update check in background thread to prevent blocking
-        update_thread = threading.Thread(target=async_update_check, daemon=True)
-        update_thread.start()
-    except Exception as e:
-        print(f"Update check thread failed: {e}")
     
     # Run kernel update check for psycachy kernels (debian/ubuntu only)
     try:
