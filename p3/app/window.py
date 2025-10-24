@@ -130,6 +130,8 @@ class AppWindow(Gtk.ApplicationWindow):
         # Initialize drag-and-drop but don't enable it by default
         self._setup_drag_and_drop()
 
+        self._script_running = False
+
         GLib.idle_add(self._check_updates)
 
     def _check_updates(self):
@@ -1550,7 +1552,7 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             return
 
         # Check if a script is currently running
-        if self.main_stack.get_visible_child_name() == "running_scripts":
+        if self._script_running:
             # Show warning dialog before cancelling the running script
             if not self._show_cancel_script_warning_dialog():
                 return  # User cancelled the operation
