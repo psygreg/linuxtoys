@@ -3,7 +3,11 @@
 """
 Version Update Helper Script
 
-This script helps update the version number in both the src/ver file and as a fallback in update_helper.py.
+This script helps update the version number in:
+1. src/ver file (primary)
+2. app/updater/__init__.py (updater's __version__)
+3. app/update_helper.py (fallback version for backwards compatibility)
+
 Usage: python update_version.py <new_version>
 Example: python update_version.py 4.4
 """
@@ -29,6 +33,40 @@ def update_version_file(new_version, version_file_path="../src/ver"):
         
     except Exception as e:
         print(f"Error updating version file: {e}")
+        return False
+
+def update_updater_version(new_version, file_path="app/updater/__init__.py"):
+    """
+    Update the version in the updater's __init__.py file.
+    """
+    if not os.path.exists(file_path):
+        print(f"Warning: File {file_path} not found!")
+        return False
+    
+    try:
+        # Read the file
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Update the __version__ variable
+        pattern = r'__version__\s*=\s*"[^"]*"'
+        replacement = f'__version__ = "{new_version}"'
+        
+        new_content = re.sub(pattern, replacement, content)
+        
+        if new_content == content:
+            print("Warning: __version__ string not found or not changed in updater!")
+            return False
+        
+        # Write the updated content back
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        
+        print("Successfully updated version in updater/__init__.py")
+        return True
+        
+    except Exception as e:
+        print(f"Error updating updater version: {e}")
         return False
 
 def update_fallback_version_in_code(new_version, file_path="app/update_helper.py"):
@@ -65,7 +103,7 @@ def update_fallback_version_in_code(new_version, file_path="app/update_helper.py
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
         
-        print(f"Successfully updated fallback version in code")
+        print("Successfully updated fallback version in code")
         return True
         
     except Exception as e:
@@ -91,7 +129,11 @@ if __name__ == "__main__":
     if not update_version_file(new_version):
         success = False
     
-    # Update fallback version in code (secondary)
+    # Update updater's __version__ (secondary)
+    if not update_updater_version(new_version):
+        print("Warning: Could not update updater version (this is okay if version file exists)")
+    
+    # Update fallback version in code (tertiary)
     if not update_fallback_version_in_code(new_version):
         print("Warning: Could not update fallback version in code (this is okay if version file exists)")
     
