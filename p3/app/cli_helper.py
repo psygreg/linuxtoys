@@ -45,8 +45,8 @@ import subprocess
 import shutil
 from .parser import get_categories, get_all_scripts_recursive
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
-from .update_helper import run_update_check
 from .reboot_helper import check_ostree_pending_deployments
+from .updater.update_helper import UpdateHelper
 
 
 def get_os_info():
@@ -332,11 +332,21 @@ def run_update_check_cli(translations=None):
     """
     CLI function to check for updates.
     """
-    print("LinuxToys Update Checker")
-    print("=" * 40)
+    print("LinuxToys Update Checker\n")
     
     # Run update check with verbose output and no dialog
-    return run_update_check(show_dialog=False, verbose=True, translations=translations)
+    _check = UpdateHelper()
+    if _check._update_available():
+        print(f"⚡️ A new version {_check._latest_ver.get('tag_name', '')} of LinuxToys is available.\n")
+        print(_check._latest_ver.get('body', 'No changelog available.'), '\n')
+        resp = input(">>> Do you want to update to the latest version? [y/N]: ").strip().lower()
+        if resp == 'y':
+            try:
+                subprocess.run(['sh', '-c', 'curl -fsSL https://linux.toys/install.sh | sh'], check=True)
+            except Exception as e:
+                print(f"✗ An error occurred during the update process.\n{str(e)}")
+    else:
+        print("✓ It's already on the latest available version.")
 
 
 def check_ostree_deployment_cli(translations=None):
