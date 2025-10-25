@@ -1,154 +1,43 @@
 # Package name translator library
 # Translates package names between different Linux distributions using dictionary files
 #
-# USAGE in scripts:
-#   DICTIONARY="arch"      # Specify which dictionary the packages are from
-#   _packages=(pkg1 pkg2)  # Define packages from the source dictionary
-#   translate_packages_    # Translates _packages array in-place for current system
-#   _install_              # Install the translated packages
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
+_jspkgs="$SCRIPT_DIR/libs/packages.json"
 
-# Get the dictionary base path
-_DICT_PATH="$SCRIPT_DIR/libs/transpak"
-
-# Detect current system dictionary using librarized detection methods
-detect_system_dictionary() {
-    if is_arch || is_cachy; then
-        echo "arch"
-    elif is_ubuntu; then
-        echo "ubuntu"
-    elif is_debian; then
-        echo "debian"
-    elif is_fedora || is_ostree; then
-        echo "fedora"
-    elif is_suse; then
-        echo "suse"
-    fi
+# Detect current system
+os_is() {
+	if is_arch || is_cachy; then
+		echo "arch"
+	elif is_ubuntu; then
+		echo "ubuntu"
+	elif is_debian; then
+		echo "debian"
+	elif is_fedora || is_ostree; then
+		echo "fedora"
+	elif is_suse; then
+		echo "suse"
+	fi
 }
 
-# Get line number of a package in the source dictionary
-# Supports both single packages and multiple space-separated packages on a line
-_get_package_line() {
-    local package="$1"
-    local dict_file="$2"
-    
-    if [[ ! -f "$dict_file" ]]; then
-        return 1
-    fi
-    
-    # Search for the package name (can be part of space-separated list)
-    local line_num=0
-    while IFS= read -r line; do
-        line_num=$((line_num + 1))
-        # Check if package is in the line (exact word match)
-        if [[ " $line " =~ " $package " ]]; then
-            echo "$line_num"
-            return 0
-        fi
-    done < "$dict_file"
-    
-    return 1
-}
-
-# Get package name(s) at a specific line from dictionary
-# Returns all packages on that line (space-separated if multiple)
-_get_package_at_line() {
-    local line_num="$1"
-    local dict_file="$2"
-    
-    if [[ ! -f "$dict_file" ]]; then
-        return 1
-    fi
-    
-    # Read the specific line number
-    local current_line=0
-    while IFS= read -r line; do
-        current_line=$((current_line + 1))
-        if [[ $current_line -eq $line_num ]]; then
-            echo "$line"
-            return 0
-        fi
-    done < "$dict_file"
-    
-    return 1
-}
-
-# Translate the _packages array in-place using the DICTIONARY variable
-# This function modifies the global _packages array for the current system
-# Supports multi-package lines: if a line has "pkg1 pkg2", both get added to the array
-# Usage: translate_packages_
 translate_packages_() {
-    if [[ -z "${_packages[@]}" ]]; then
-        return 0
-    fi
-    
-    local source_dict="${DICTIONARY}"
-    
-    # Validate source dictionary is specified
-    if [[ -z "$source_dict" ]]; then
-        echo "ERROR: DICTIONARY variable not set in script" >&2
-        return 1
-    fi
-    
-    local target_system
-    target_system=$(detect_system_dictionary)
-    
-    local source_dict_file="${_DICT_PATH}/${source_dict}.dict"
-    local target_dict_file="${_DICT_PATH}/${target_system}.dict"
-    
-    # If source and target are the same, no translation needed
-    if [[ "$source_dict" == "$target_system" ]]; then
-        return 0
-    fi
-    
-    # Build new array with translated packages
-    local -a new_packages=()
-    
-    # Translate each package in the array
-    for i in "${!_packages[@]}"; do
-        local translated
-        translated=$(_translate_single_package "${_packages[$i]}" "$source_dict_file" "$target_dict_file")
-        
-        # Handle multi-package translations (space-separated)
-        # Add each package from translated result to the new array
-        for pkg in $translated; do
-            new_packages+=("$pkg")
-        done
-    done
-    
-    # Replace the original array with the translated one
-    _packages=("${new_packages[@]}")
-    
-    return 0
-}
+	if [[ -z "${_packages[@]}" || ! -f "${_jspkgs}" ]]; then
+		return 0
+	fi
 
-# Internal helper function to translate a single package
-_translate_single_package() {
-    local package="$1"
-    local source_dict_file="$2"
-    local target_dict_file="$3"
-    
-    # Find line number of package in source dictionary
-    local line_num
-    line_num=$(_get_package_line "$package" "$source_dict_file")
-    
-    if [[ $? -ne 0 ]]; then
-        # Package not found in source dictionary, return original name
-        echo "$package"
-        return 0
-    fi
-    
-    # Get package name at the same line in target dictionary
-    local translated_package
-    translated_package=$(_get_package_at_line "$line_num" "$target_dict_file")
-    
-    if [[ $? -ne 0 ]] || [[ -z "$translated_package" ]]; then
-        # Line not found in target dictionary or empty, return original
-        echo "$package"
-        return 0
-    fi
-    
-    echo "$translated_package"
-    return 0
-}
+	local target_system=$(os_is)
 
+	# Build new array with translated packages
+	local -a new_packages=()
+
+	# Translate each package in the array
+	for i in "${!_packages[@]}"; do
+		translated_pkg=$(python3 -c "import json, sys; data=json.load(open('${_jspkgs}')); print(data.get(sys.argv[1], {}).get(sys.argv[2], sys.argv[1]))" "${_packages[$i]}" "${target_system}")
+
+		new_packages+=("$translated_pkg")
+	done
+
+	# Replace the original array with the translated one
+	_packages=("${new_packages[@]}")
+
+	return 0
+}
