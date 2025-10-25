@@ -309,5 +309,7 @@
   "cancel_script_title": "¿Cancelar el script en ejecución?",
   "cancel_script_message": "Un script se está ejecutando actualmente. Si retrocede ahora, la tarea en ejecución se cancelará. ¿Está seguro de que desea cancelar?",
   "cancel_script_continue_btn": "Continuar Ejecución",
-  "cancel_script_cancel_btn": "Cancelar Script"
+  "cancel_script_cancel_btn": "Cancelar Script",
+  "rtl8821ce_desc": "controlador rtl8821CE con firmware",
+  "rcloneui_desc": "GUI para sincronización de rclone"
 }

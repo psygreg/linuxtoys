@@ -309,5 +309,7 @@
   "cancel_script_title": "Batalkan Skrip yang Berjalan?",
   "cancel_script_message": "Skrip sedang berjalan. Jika Anda kembali sekarang, tugas yang sedang berjalan akan dibatalkan. Apakah Anda yakin ingin membatalkan?",
   "cancel_script_continue_btn": "Lanjutkan Menjalankan",
-  "cancel_script_cancel_btn": "Batalkan Skrip"
+  "cancel_script_cancel_btn": "Batalkan Skrip",
+  "rtl8821ce_desc": "Driver rtl8821CE dengan firmware",
+  "rcloneui_desc": "GUI untuk sinkronisasi rclone"
 }

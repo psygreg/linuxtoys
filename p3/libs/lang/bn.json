@@ -308,5 +308,7 @@
   "cancel_script_title": "চলমান স্ক্রিপ্ট বাতিল করুন?",
   "cancel_script_message": "এখন একটি স্ক্রিপ্ট চলছে। যদি আপনি এখন ফিরে যান তবে চলমান কাজটি বাতিল হয়ে যাবে। আপনি কি সত্যিই বাতিল করতে চান?",
   "cancel_script_continue_btn": "চলমান অব্যাহত রাখুন",
-  "cancel_script_cancel_btn": "স্ক্রিপ্ট বাতিল করুন"
+  "cancel_script_cancel_btn": "স্ক্রিপ্ট বাতিল করুন",
+  "rtl8821ce_desc": "ফার্মওয়্যার সহ rtl8821CE ড্রাইভার",
+  "rcloneui_desc": "rclone সিঙ্ক্রোনাইজেশনের জন্য GUI"
 }

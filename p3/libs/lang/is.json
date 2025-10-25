@@ -309,5 +309,7 @@
   "cancel_script_title": "Hætta við keyra skriftu?",
   "cancel_script_message": "Skrifta er nú keyrandi. Ef þú fer til baka núna, mun verkefnið sem keyrir verða hætt. Ertu viss um að þú viljir hætta við?",
   "cancel_script_continue_btn": "Haltu áfram Keyrslu",
-  "cancel_script_cancel_btn": "Hætta við Skriftu"
+  "cancel_script_cancel_btn": "Hætta við Skriftu",
+  "rtl8821ce_desc": "rtl8821CE rekill með firmware",
+  "rcloneui_desc": "GUI fyrir rclone samstillingu"
 }

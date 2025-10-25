@@ -308,5 +308,7 @@
   "cancel_script_title": "Ishlamayotgan skriptni bekor qilasizmi?",
   "cancel_script_message": "Skript hozir bajarilmoqda. Agar siz hozir orqaga qaytarsangiz, bajarilayotgan vazifa bekor qilinadi. Siz haqiqatdan bekor qilishni xohlaysizmi?",
   "cancel_script_continue_btn": "Bajarilishni Davom Qiling",
-  "cancel_script_cancel_btn": "Skriptni Bekor Qilish"
+  "cancel_script_cancel_btn": "Skriptni Bekor Qilish",
+  "rtl8821ce_desc": "Rtl8821ce drayveri firmware bilan",
+  "rcloneui_desc": "Rclone sinhronizasiyasi uchun GUI"
 }

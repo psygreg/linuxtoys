@@ -309,5 +309,7 @@
   "cancel_script_title": "ยกเลิกสคริปต์ที่กำลังทำงาน?",
   "cancel_script_message": "สคริปต์กำลังทำงานในขณะนี้ หากคุณกลับไปเดี๋ยวนี้ งานที่กำลังทำงานจะถูกยกเลิก คุณแน่ใจหรือไม่ว่าต้องการยกเลิก?",
   "cancel_script_continue_btn": "ทำงานต่อ",
-  "cancel_script_cancel_btn": "ยกเลิกสคริปต์"
+  "cancel_script_cancel_btn": "ยกเลิกสคริปต์",
+  "rtl8821ce_desc": "ไดรเวอร์ rtl8821CE พร้อมเฟิร์มแวร์",
+  "rcloneui_desc": "GUI สำหรับการซิงค์ rclone"
 }

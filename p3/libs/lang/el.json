@@ -309,5 +309,7 @@
   "cancel_script_title": "Ακύρωση του εκτελούμενου σεναρίου;",
   "cancel_script_message": "Ένα σενάριο εκτελείται προς το παρόν. Εάν επιστρέψετε τώρα, η εργασία που εκτελείται θα ακυρωθεί. Είστε σίγουρος ότι θέλετε να ακυρώσετε;",
   "cancel_script_continue_btn": "Συνέχεια Εκτέλεσης",
-  "cancel_script_cancel_btn": "Ακύρωση Σεναρίου"
+  "cancel_script_cancel_btn": "Ακύρωση Σεναρίου",
+  "rtl8821ce_desc": "rtl8821CE δρ with firmware",
+  "rcloneui_desc": "GUI για συγχρονισμό rclone"
 }

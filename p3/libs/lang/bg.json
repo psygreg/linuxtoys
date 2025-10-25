@@ -309,5 +309,7 @@
   "cancel_script_title": "Отказ на изпълнения скрипт?",
   "cancel_script_message": "В момента се изпълнява скрипт. Ако се върнете сега, текущата задача ще бъде отменена. Сигурни ли сте, че искате да отмените?",
   "cancel_script_continue_btn": "Продължи Изпълнението",
-  "cancel_script_cancel_btn": "Отказ на Скрипт"
+  "cancel_script_cancel_btn": "Отказ на Скрипт",
+  "rtl8821ce_desc": "rtl8821CE драйвер с фърмуер",
+  "rcloneui_desc": "Графичен интерфейс за синхронизиране на rclone"
 }

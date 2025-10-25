@@ -309,5 +309,7 @@
   "cancel_script_title": "Prekini skript v teku?",
   "cancel_script_message": "Skript je trenutno v teku. Če se sedaj vrneš, bo tekoča naloga preklicana. Ali si prepričan, da želiš preklicati?",
   "cancel_script_continue_btn": "Nadaljuj Izvajanje",
-  "cancel_script_cancel_btn": "Prekini Skript"
+  "cancel_script_cancel_btn": "Prekini Skript",
+  "rtl8821ce_desc": "Gonilnik rtl8821CE s programsko opremo",
+  "rcloneui_desc": "Grafični vmesnik za sinhronizacijo rclone"
 }

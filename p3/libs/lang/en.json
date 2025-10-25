@@ -311,5 +311,5 @@
   "cancel_script_continue_btn": "Continue Running",
   "cancel_script_cancel_btn": "Cancel Script",
   "rtl8821ce_desc": "rtl8821CE driver with firmware",
-  "rcloneui_desc": "The GUI for rclone."
+  "rcloneui_desc": "A GUI for rclone synchronization."
 }

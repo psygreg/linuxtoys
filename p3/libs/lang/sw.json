@@ -307,5 +307,7 @@
   "cancel_script_title": "Ghairi Hati Inayofanya?",
   "cancel_script_message": "Hati inafanya sasa. Ikiwa unageuka nyuma sasa, hati inayofanya itabadilishwa. Je, una uhakika kwamba unataka kukataa?",
   "cancel_script_continue_btn": "Endelea na Utekelezaji",
-  "cancel_script_cancel_btn": "Ghairi Hati"
+  "cancel_script_cancel_btn": "Ghairi Hati",
+  "rtl8821ce_desc": "Mwendesha rtl8821CE na firmware",
+  "rcloneui_desc": "GUI kwa ulandanishi wa rclone"
 }

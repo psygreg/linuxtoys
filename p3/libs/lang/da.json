@@ -309,5 +309,7 @@
   "cancel_script_title": "Annuller script der kører?",
   "cancel_script_message": "Der kører i øjeblikket et script. Hvis du vender tilbage nu, bliver opgaven der kører aflyst. Er du sikker på at du vil annullere?",
   "cancel_script_continue_btn": "Fortsæt Kørsel",
-  "cancel_script_cancel_btn": "Annuller Script"
+  "cancel_script_cancel_btn": "Annuller Script",
+  "rtl8821ce_desc": "rtl8821CE-driver med firmware",
+  "rcloneui_desc": "GUI til rclone-synkronisering"
 }

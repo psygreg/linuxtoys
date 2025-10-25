@@ -309,5 +309,7 @@
   "cancel_script_title": "Çalışan Betiği İptal Et?",
   "cancel_script_message": "Bir script şu anda çalışıyor. Şimdi geri giderseniz, çalışan görev iptal edilecek. Gerçekten iptal etmek istiyor musunuz?",
   "cancel_script_continue_btn": "Çalıştırılmaya Devam Et",
-  "cancel_script_cancel_btn": "Betiği İptal Et"
+  "cancel_script_cancel_btn": "Betiği İptal Et",
+  "rtl8821ce_desc": "Donanım Yazılımı ile rtl8821CE sürücüsü",
+  "rcloneui_desc": "Rclone senkronizasyonu için GUI"
 }

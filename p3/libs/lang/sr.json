@@ -309,5 +309,7 @@
   "cancel_script_title": "Откажи извршни скрипт?",
   "cancel_script_message": "Скрипт је тренутно у извршавању. Ако се вратите сада, извршена задача ће бити отказана. Да ли сте сигурни да желите отказати?",
   "cancel_script_continue_btn": "Наставити Извршавање",
-  "cancel_script_cancel_btn": "Откажи Скрипт"
+  "cancel_script_cancel_btn": "Откажи Скрипт",
+  "rtl8821ce_desc": "rtl8821CE управљач са фирмвером",
+  "rcloneui_desc": "Графички интерфејс за синхронизацију rclone"
 }

@@ -308,5 +308,7 @@
   "cancel_script_title": "İşləyən Skripti Ləğv Etmək?",
   "cancel_script_message": "Hazırda bir skript işləyir. İndi geriyə qaytsanız, işləyən tapşırıq ləğv olunacaq. Həqiqətən də ləğv etmək istəyirsiniz?",
   "cancel_script_continue_btn": "İşləməyə Davam Edin",
-  "cancel_script_cancel_btn": "Skripti Ləğv Et"
+  "cancel_script_cancel_btn": "Skripti Ləğv Et",
+  "rtl8821ce_desc": "Firmware ilə rtl8821CE sürücüsü",
+  "rcloneui_desc": "rclone sinkronizasiyası üçün GUI"
 }

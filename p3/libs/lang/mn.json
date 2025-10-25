@@ -308,5 +308,7 @@
   "cancel_script_title": "Чиглэл үйлдэж буй скрипт болих үү?",
   "cancel_script_message": "Скрипт одоогор ажиллаж байна. Хэрэв та одоо буцаж ирвэл, ажиллаж буй даалгавар цуцлагдана. Та үнэхээр цуцлахыг хүсэж байна уу?",
   "cancel_script_continue_btn": "Гүйцэтгэлийг Үргэлжүүлүүлэх",
-  "cancel_script_cancel_btn": "Скриптийг Болих"
+  "cancel_script_cancel_btn": "Скриптийг Болих",
+  "rtl8821ce_desc": "rtl8821CE драйвер суулгацтай",
+  "rcloneui_desc": "rclone синхронизацийн GUI"
 }

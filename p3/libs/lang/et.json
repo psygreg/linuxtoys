@@ -309,5 +309,7 @@
   "cancel_script_title": "Töötava skripti tühistamine?",
   "cancel_script_message": "Skript on praegu käivitatud. Kui nüüd tagasi lähete, käimasolev ülesanne tühistatakse. Kas olete kindel, et soovite tühistada?",
   "cancel_script_continue_btn": "Jätka Käitamist",
-  "cancel_script_cancel_btn": "Skripti Tühistamine"
+  "cancel_script_cancel_btn": "Skripti Tühistamine",
+  "rtl8821ce_desc": "rtl8821CE draiver koos püsivara",
+  "rcloneui_desc": "GUI rclone sünkroniseerimiseks"
 }

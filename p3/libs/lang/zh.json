@@ -311,5 +311,7 @@
   "cancel_script_title": "取消正在运行的脚本?",
   "cancel_script_message": "脚本正在运行。 如果您现在返回，正在运行的任务将被取消。 您确定要取消吗?",
   "cancel_script_continue_btn": "继续运行",
-  "cancel_script_cancel_btn": "取消脚本"
+  "cancel_script_cancel_btn": "取消脚本",
+  "rtl8821ce_desc": "rtl8821CE驱动程序带固件",
+  "rcloneui_desc": "rclone同步的GUI"
 }

@@ -309,5 +309,7 @@
   "cancel_script_title": "ስክሪፕ እየሰራ ያለ ሰርዝ?",
   "cancel_script_message": "አንድ ሲሪፕ አሁን በሰሮ ላይ ነው። አሁን ወደ ኋላ ከሄዱ ፣ የሚሰሩት ሥራ ይሰረዛል። በእርግጥ ለመሰረዝ ይፈልጋሉ?",
   "cancel_script_continue_btn": "ሥራ መለካት አሁንም ቀጥል",
-  "cancel_script_cancel_btn": "ስክሪፕ ሰርዝ"
+  "cancel_script_cancel_btn": "ስክሪፕ ሰርዝ",
+  "rtl8821ce_desc": "rtl8821CE ሾፌር ከፍርማዌር ጋር",
+  "rcloneui_desc": "rclone ስምምነት ለ GUI"
 }

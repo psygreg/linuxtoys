@@ -309,5 +309,7 @@
   "cancel_script_title": "実行中のスクリプトをキャンセルしますか?",
   "cancel_script_message": "現在スクリプトが実行されています。 今戻ると、実行中のタスクがキャンセルされます。 本当にキャンセルしますか?",
   "cancel_script_continue_btn": "実行を続行",
-  "cancel_script_cancel_btn": "スクリプトをキャンセル"
+  "cancel_script_cancel_btn": "スクリプトをキャンセル",
+  "rtl8821ce_desc": "ファームウェア付きrtl8821CEドライバー",
+  "rcloneui_desc": "rclone同期用GUI"
 }

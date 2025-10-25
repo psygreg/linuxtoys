@@ -309,5 +309,7 @@
   "cancel_script_title": "لغو اسکریپت در حال اجرا؟",
   "cancel_script_message": "یک اسکریپت در حال اجرا است. اگر الآن برگردید، کار در حال انجام لغو خواهد شد. آیا مطمئن هستید که می‌خواهید لغو کنید؟",
   "cancel_script_continue_btn": "ادامه اجرا",
-  "cancel_script_cancel_btn": "لغو اسکریپت"
+  "cancel_script_cancel_btn": "لغو اسکریپت",
+  "rtl8821ce_desc": "درایور rtl8821CE با فریمور",
+  "rcloneui_desc": "رابط کاربری برای همگام سازی rclone"
 }

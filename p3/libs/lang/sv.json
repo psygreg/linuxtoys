@@ -309,5 +309,7 @@
   "cancel_script_title": "Avbryt köpande skript?",
   "cancel_script_message": "Ett skript körs för närvarande. Om du går tillbaka nu kommer den körande uppgiften att avbrytas. Är du säker på att du vill avbryta?",
   "cancel_script_continue_btn": "Fortsätt Körning",
-  "cancel_script_cancel_btn": "Avbryt Skript"
+  "cancel_script_cancel_btn": "Avbryt Skript",
+  "rtl8821ce_desc": "rtl8821CE-drivrutin med firmware",
+  "rcloneui_desc": "GUI för rclone-synkronisering"
 }

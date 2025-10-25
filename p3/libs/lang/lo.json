@@ -309,5 +309,7 @@
   "cancel_script_title": "ບົດละຂໍ້ມູນທີ່ກຳລັງດໍາເນີນການ?",
   "cancel_script_message": "ສະຄິບໃບບກະ ກຳລັງດໍາເນີນການ. ຖ້າຫາກວ່າທ່ານກັບຄືນໄປໃນປະຈຸບັນ, ບົດລະຫັດທີ່ກຳລັງດໍາເນີນການຈະຖືກຍົກເລີກ. ທ່ານແນ່ໃຈຫລືບໍ່ວ່າທ່ານຕ້ອງການຍົກເລີກ?",
   "cancel_script_continue_btn": "ສືບຕໍ່ການດໍາເນີນການ",
-  "cancel_script_cancel_btn": "ລະຫັດເວົ້າກະ ບົດລະຫັດ"
+  "cancel_script_cancel_btn": "ລະຫັດເວົ້າກະ ບົດລະຫັດ",
+  "rtl8821ce_desc": "ຕົວຜະລິດ rtl8821CE ກັບ firmware",
+  "rcloneui_desc": "GUI ສໍາລັບ rclone synchronization"
 }

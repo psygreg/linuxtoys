@@ -309,5 +309,7 @@
   "cancel_script_title": "An Script atá ag Rith a Chealú?",
   "cancel_script_message": "Tá scéimh ar siúl faoi láthair. Má fhilleann tú anois, cuirfear an tasc ar siúl ar ceal. An bhfuil tú cinnte go bhful ag iarraidh a chealú?",
   "cancel_script_continue_btn": "Lean ar an Rith",
-  "cancel_script_cancel_btn": "Cealaigh Scéimh"
+  "cancel_script_cancel_btn": "Cealaigh Scéimh",
+  "rtl8821ce_desc": "gealadh rtl8821CE le firmware",
+  "rcloneui_desc": "GUI do dhoimirt rclone"
 }

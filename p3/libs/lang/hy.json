@@ -309,5 +309,7 @@
   "cancel_script_title": "Չեղարկել գործող սկրիպտը:",
   "cancel_script_message": "Սկրիպտ այժմ գործում է: Եթե այժմ հետ գաք, ընթացիկ առաջադրանքը կչեղարկվի: Համոզված ե՞ք, որ ցանկանում եք չեղարկել:",
   "cancel_script_continue_btn": "Շարունակել Կատարումը",
-  "cancel_script_cancel_btn": "Չեղարկել Սկրիպտը"
+  "cancel_script_cancel_btn": "Չեղարկել Սկրիպտը",
+  "rtl8821ce_desc": "rtl8821CE շարժիչ ամրակցիկով",
+  "rcloneui_desc": "GUI rclone համաժամանակեցման համար"
 }

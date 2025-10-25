@@ -309,5 +309,7 @@
   "cancel_script_title": "Peruuta käynnissä oleva komentosarja?",
   "cancel_script_message": "Skripti on parhaillaan käynnissä. Jos palaat nyt, käynnissä oleva tehtävä peruutetaan. Oletko varma, että haluat peruuttaa?",
   "cancel_script_continue_btn": "Jatka Suorittamista",
-  "cancel_script_cancel_btn": "Peruuta Komentosarja"
+  "cancel_script_cancel_btn": "Peruuta Komentosarja",
+  "rtl8821ce_desc": "rtl8821CE-ohjain ja ohjelmisto",
+  "rcloneui_desc": "GUI rclone-synkronointiin"
 }

@@ -309,5 +309,7 @@
   "cancel_script_title": "실행 중인 스크립트를 취소하시겠습니까?",
   "cancel_script_message": "현재 스크립트가 실행 중입니다. 지금 돌아가면 실행 중인 작업이 취소됩니다. 정말 취소하시겠습니까?",
   "cancel_script_continue_btn": "실행 계속",
-  "cancel_script_cancel_btn": "스크립트 취소"
+  "cancel_script_cancel_btn": "스크립트 취소",
+  "rtl8821ce_desc": "ファームウェア포함 rtl8821CE드라이버",
+  "rcloneui_desc": "rclone 동기화를 위한 GUI"
 }

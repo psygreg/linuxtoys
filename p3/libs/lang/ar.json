@@ -309,5 +309,7 @@
   "cancel_script_title": "إلغاء البرنامج النصي قيد التشغيل؟",
   "cancel_script_message": "يتم تشغيل نص برمجي حاليا. إذا عدت الآن، فسيتم إلغاء المهمة قيد التنفيذ. هل تريد فعلا الإلغاء؟",
   "cancel_script_continue_btn": "متابعة التشغيل",
-  "cancel_script_cancel_btn": "إلغاء البرنامج النصي"
+  "cancel_script_cancel_btn": "إلغاء البرنامج النصي",
+  "rtl8821ce_desc": "برنامج rtl8821CE مع البرامج الثابتة",
+  "rcloneui_desc": "واجهة رسومية لمزامنة rclone"
 }

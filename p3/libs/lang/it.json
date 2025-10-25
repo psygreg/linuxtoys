@@ -309,5 +309,7 @@
   "cancel_script_title": "Annulla lo script in esecuzione?",
   "cancel_script_message": "Uno script è attualmente in esecuzione. Se torni indietro ora, l'attività in esecuzione verrà annullata. Sei sicuro di voler annullare?",
   "cancel_script_continue_btn": "Continua Esecuzione",
-  "cancel_script_cancel_btn": "Annulla Script"
+  "cancel_script_cancel_btn": "Annulla Script",
+  "rtl8821ce_desc": "Driver rtl8821CE con firmware",
+  "rcloneui_desc": "GUI per la sincronizzazione rclone"
 }

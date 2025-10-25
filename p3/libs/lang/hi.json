@@ -289,5 +289,7 @@
   "cancel_script_title": "चल रहे स्क्रिप्ट को रद्द करें?",
   "cancel_script_message": "एक स्क्रिप्ट वर्तमान में चल रही है। यदि आप अभी वापस जाएं, तो चलमान कार्य रद्द कर दिया जाएगा। क्या आप सुनिश्चित हैं कि आप रद्द करना चाहते हैं?",
   "cancel_script_continue_btn": "चलना जारी रखें",
-  "cancel_script_cancel_btn": "स्क्रिप्ट रद्द करें"
+  "cancel_script_cancel_btn": "स्क्रिप्ट रद्द करें",
+  "rtl8821ce_desc": "rtl8821CE ड्राइवर फर्मवेयर के साथ",
+  "rcloneui_desc": "rclone सिंक के लिए GUI"
 }

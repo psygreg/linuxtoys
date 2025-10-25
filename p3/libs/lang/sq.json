@@ -309,5 +309,7 @@
   "cancel_script_title": "Anulo skriptin në ekzekutim?",
   "cancel_script_message": "Një skript po ekzekutohet. Nëse ktheesh prapa tani, detyra në ekzekutim do të anulohet. A jeni i sigurt se dëshironi të anuloni?",
   "cancel_script_continue_btn": "Vazhdoni Ekzekutimin",
-  "cancel_script_cancel_btn": "Anulo Skriptin"
+  "cancel_script_cancel_btn": "Anulo Skriptin",
+  "rtl8821ce_desc": "Drajveri rtl8821CE me firmware",
+  "rcloneui_desc": "GUI për sinkronizimin rclone"
 }

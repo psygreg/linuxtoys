@@ -309,5 +309,7 @@
   "cancel_script_title": "Kanselahin ang Script na Tumatakbo?",
   "cancel_script_message": "Ang script ay kasalukuyang tumatakbo. Kung bumalik kayo ngayon, ang tumatakbong gawain ay magiging wala. Sigurado ka na ba na nais mong i-cancel?",
   "cancel_script_continue_btn": "Magpatuloy na Tumakbo",
-  "cancel_script_cancel_btn": "Kanselahin ang Script"
+  "cancel_script_cancel_btn": "Kanselahin ang Script",
+  "rtl8821ce_desc": "Drayber rtl8821CE na may firmware",
+  "rcloneui_desc": "GUI para sa rclone na pag-sync"
 }

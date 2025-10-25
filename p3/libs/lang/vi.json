@@ -309,5 +309,7 @@
   "cancel_script_title": "Hủy bỏ tập lệnh đang chạy?",
   "cancel_script_message": "Một tập lệnh đang chạy. Nếu bạn quay lại bây giờ, tác vụ đang chạy sẽ bị hủy. Bạn có chắc chắn muốn hủy không?",
   "cancel_script_continue_btn": "Tiếp Tục Thực Thi",
-  "cancel_script_cancel_btn": "Hủy Bỏ Tập Lệnh"
+  "cancel_script_cancel_btn": "Hủy Bỏ Tập Lệnh",
+  "rtl8821ce_desc": "Trình điều khiển rtl8821CE với chương trình",
+  "rcloneui_desc": "GUI để đồng bộ hóa rclone"
 }

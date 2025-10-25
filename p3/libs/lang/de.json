@@ -309,5 +309,7 @@
   "cancel_script_title": "Laufendes Skript abbrechen?",
   "cancel_script_message": "Ein Skript wird derzeit ausgeführt. Wenn Sie jetzt zurückgehen, wird die laufende Aufgabe abgebrochen. Möchten Sie wirklich abbrechen?",
   "cancel_script_continue_btn": "Weiterhin Ausführen",
-  "cancel_script_cancel_btn": "Skript Abbrechen"
+  "cancel_script_cancel_btn": "Skript Abbrechen",
+  "rtl8821ce_desc": "rtl8821CE-Treiber mit Firmware",
+  "rcloneui_desc": "GUI für rclone-Synchronisierung"
 }

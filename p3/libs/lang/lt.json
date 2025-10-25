@@ -309,5 +309,7 @@
   "cancel_script_title": "Atšaukti vykdomą scenarijų?",
   "cancel_script_message": "Scenarijus šiuo metu bėga. Jei grįšite dabar, vykdoma užduotis bus atšaukta. Ar jūs tikrai norite atšaukti?",
   "cancel_script_continue_btn": "Tęsti Vykdymą",
-  "cancel_script_cancel_btn": "Atšaukti Scenarijų"
+  "cancel_script_cancel_btn": "Atšaukti Scenarijų",
+  "rtl8821ce_desc": "rtl8821CE tvarkyklė su programine įranga",
+  "rcloneui_desc": "GUI rclone sinchronizavimui"
 }

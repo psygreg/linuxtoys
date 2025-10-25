@@ -309,5 +309,7 @@
   "cancel_script_title": "გაქართულებული სკრიპტის გაუქმება?",
   "cancel_script_message": "სკრიპტი ამჟამად იკვლება. თუ თქვენ ახლა უკან დაბრუნდეთ, მიმდინარე ამოცანა გაუქმდება. დარწმუნებული ხართ, რომ გსურთ გაუქმება?",
   "cancel_script_continue_btn": "გააგრძელეთ შესრულება",
-  "cancel_script_cancel_btn": "სკრიპტის გაუქმება"
+  "cancel_script_cancel_btn": "სკრიპტის გაუქმება",
+  "rtl8821ce_desc": "rtl8821CE ფაილი ფიქრით",
+  "rcloneui_desc": "GUI rclone სინქროულობისთვის"
 }

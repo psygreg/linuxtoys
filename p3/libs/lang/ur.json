@@ -309,5 +309,7 @@
   "cancel_script_title": "چلتی ہوئی اسکرپٹ کو منسوخ کریں؟",
   "cancel_script_message": "ایک اسکرپٹ فی الوقت چل رہی ہے۔ اگر آپ ابھی واپس جائیں تو چلتا ہوا کام منسوخ کر دیا جائے گا۔ کیا آپ کو یقین ہے کہ آپ منسوخ کرنا چاہتے ہیں؟",
   "cancel_script_continue_btn": "چلانا جاری رکھیں",
-  "cancel_script_cancel_btn": "اسکرپٹ منسوخ کریں"
+  "cancel_script_cancel_btn": "اسکرپٹ منسوخ کریں",
+  "rtl8821ce_desc": "rtl8821CE ڈرائیور فرم ویئر کے ساتھ",
+  "rcloneui_desc": "rclone ہم وقتی کے لیے GUI"
 }

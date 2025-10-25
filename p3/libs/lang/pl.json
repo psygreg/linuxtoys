@@ -309,5 +309,7 @@
   "cancel_script_title": "Anulować uruchomiony skrypt?",
   "cancel_script_message": "Skrypt jest aktualnie uruchamiany. Jeśli cofniesz się teraz, uruchomiony proces zostanie anulowany. Czy na pewno chcesz anulować?",
   "cancel_script_continue_btn": "Kontynuuj Uruchamianie",
-  "cancel_script_cancel_btn": "Anuluj Skrypt"
+  "cancel_script_cancel_btn": "Anuluj Skrypt",
+  "rtl8821ce_desc": "Sterownik rtl8821CE z oprogramowaniem",
+  "rcloneui_desc": "GUI dla synchronizacji rclone"
 }

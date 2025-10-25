@@ -309,5 +309,7 @@
   "cancel_script_title": "Atcelt palaisto skriptu?",
   "cancel_script_message": "Skripts pašlaik darbojas. Ja jūs grieziesties atpakaļ tagad, palaistais uzdevums tiks atcelts. Vai jūs tiešām vēlaties atcelt?",
   "cancel_script_continue_btn": "Turpināt Izpildi",
-  "cancel_script_cancel_btn": "Atcelt Skriptu"
+  "cancel_script_cancel_btn": "Atcelt Skriptu",
+  "rtl8821ce_desc": "rtl8821CE draiveris ar programmatūru",
+  "rcloneui_desc": "GUI rclone sinhronizācijai"
 }

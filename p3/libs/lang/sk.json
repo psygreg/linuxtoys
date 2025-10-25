@@ -309,5 +309,7 @@
   "cancel_script_title": "Zrušiť spúšťaný skript?",
   "cancel_script_message": "Skript je v súčasnosti spúšťaný. Ak sa teraz vrátite, spustený proces bude zrušený. Ste si istí, že chcete zrušiť?",
   "cancel_script_continue_btn": "Pokračovať v Spúšťaní",
-  "cancel_script_cancel_btn": "Zrušiť Skript"
+  "cancel_script_cancel_btn": "Zrušiť Skript",
+  "rtl8821ce_desc": "Ovládač rtl8821CE s firmvérom",
+  "rcloneui_desc": "GUI pre synchronizáciu rclone"
 }

@@ -309,5 +309,7 @@
   "cancel_script_title": "בטל את הסקריפט שפועל?",
   "cancel_script_message": "סקריפט פועל כרגע. אם תחזור עכשיו, המשימה הפועלת תבוטל. האם אתה בטוח שברצונך לבטל?",
   "cancel_script_continue_btn": "המשך הפעלה",
-  "cancel_script_cancel_btn": "בטל סקריפט"
+  "cancel_script_cancel_btn": "בטל סקריפט",
+  "rtl8821ce_desc": "כונן rtl8821CE עם הקנקייה",
+  "rcloneui_desc": "ממשק המשתמש הגרפי לסנכרון rclone"
 }

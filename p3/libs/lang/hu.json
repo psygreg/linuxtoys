@@ -309,5 +309,7 @@
   "cancel_script_title": "Futó szkript mégse?",
   "cancel_script_message": "Egy szkript jelenleg fut. Ha most visszamegyünk, a futó feladat meg lesz szakítva. Biztos vagy, hogy meg akarod szakítani?",
   "cancel_script_continue_btn": "Futtatás Folytatása",
-  "cancel_script_cancel_btn": "Szkript Mégse"
+  "cancel_script_cancel_btn": "Szkript Mégse",
+  "rtl8821ce_desc": "rtl8821CE meghajtó firmware-rel",
+  "rcloneui_desc": "GUI az rclone szinkronizáláshoz"
 }
