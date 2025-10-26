@@ -4,7 +4,7 @@ from . import language_selector
 from . import about_helper
 from . import get_icon_path
 from .lang_utils import create_translator
-import threading
+import threading, asyncio
 import os
 
 
@@ -251,7 +251,8 @@ class MenuButton(Gtk.MenuButton):
 				os.remove(self._temp_sh)
 
 		if self.results:
-			self.parent_window.open_term_view(self.results)
+			deps = asyncio.run(self.parent_window._process_needed_scripts(self.results))
+			self.parent_window.open_term_view(deps)
 
 	def __temp_script(self, packages, flatpaks):
 		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')

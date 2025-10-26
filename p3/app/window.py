@@ -1,6 +1,6 @@
 from .gtk_common import Gtk, GLib, Gdk, Vte, Pango
 from gi.repository import GdkPixbuf
-import os, shutil, threading
+import os, shutil, threading, asyncio
 
 from . import parser
 from . import header
@@ -9,6 +9,7 @@ from . import head_menu
 from . import reboot_helper
 from . import search_helper
 from . import get_icon_path
+from . import cli_helper
 from . import term_view
 from . import revealer
 from .updater.update_helper import UpdateHelper
@@ -566,7 +567,9 @@ class AppWindow(Gtk.ApplicationWindow):
 
         for cb in self.check_buttons[:]: cb.set_active(False)
 
-        self.open_term_view(selected_scripts)
+        deps = asyncio.run(self._process_needed_scripts(selected_scripts))
+
+        self.open_term_view(deps)
 
     def on_cancel_checklist(self, button):
         """Uncheck all boxes, remove checklist buttons from footer, and return to previous view."""
@@ -642,6 +645,18 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self.main_stack.set_visible_child_name("running_scripts")
 
+    async def _process_needed_scripts(self, script_infos):
+        deps = []
+        for info in script_infos:
+            if has_depends := info.get('needed'):
+                tasks = [cli_helper.find_script_by_name_async(_d, self.translations) for _d in has_depends]
+                res = await asyncio.gather(*tasks)
+                deps.extend([r for r in res if r])
+
+            deps.append(info)
+
+        return deps
+
     def on_script_clicked(self, widget, event):
         """Handles script click by creating the dialog and starting the thread."""
         # Check if reboot is required before proceeding
@@ -656,7 +671,9 @@ class AppWindow(Gtk.ApplicationWindow):
             self._handle_create_new_script()
             return
 
-        self.open_term_view([info])
+        deps = asyncio.run(self._process_needed_scripts([info]))
+
+        self.open_term_view(deps)
 
     def _handle_create_new_script(self):
         """Handle the creation of a new local script."""

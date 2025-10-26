@@ -113,6 +113,9 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                         # Always capture 'negates' header even if not in defaults
                         elif key == 'negates':
                             metadata['negates'] = value
+                        elif key == 'needed':
+                            metadata['needed'] =  value.split() or None
+
     except Exception as e:
         print(f"Error reading metadata from {file_path}: {e}")
 
