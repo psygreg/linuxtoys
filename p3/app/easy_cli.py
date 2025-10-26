@@ -5,7 +5,7 @@ import sys
 import tempfile
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
-from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script
+from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script, check_package_exists, install_package
 from .dev_mode import is_dev_mode_enabled
 
 def resolve_script_dir():
@@ -193,6 +193,75 @@ def scripts_install(args: list, skip_confirmation, translations):
     if skip_confirmation or confirm_action("Confirm script execution?"):
         execute_scripts_with_feedback(scripts_found_list)
 
+def install_packages_with_feedback(packages_found):
+    failed_items = []
+    current_item = 0
+    total_items = len(packages_found)
+
+    # Install packages first
+    for package in packages_found:
+        current_item += 1
+        print(f"\n[{current_item}/{total_items}] Installing package: {package}")
+        print("=" * 60)
+        
+        success = install_package(package)
+        
+        if not success:
+            failed_items.append(('PACKAGE', package, 1))
+            print(f"Package '{package}' installation failed")
+            
+            # Ask if user wants to continue on failure
+            if not confirm_action("Do you want to continue with the remaining installations?"):
+                print("❌ Operation cancelled.")
+                break
+
+def packages_install(args: list, skip_confirmation, translations):
+
+    # Filter out confirmation flags from the install list
+    install_to_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+
+    if not install_to_list:
+        print("\n✗ No items specified for installation.\n")
+        easy_cli_help_message()
+        return 0
+    
+    print("🧰 EASY CLI INSTALL MODE")
+    print("=" * 60)
+    print(f"📜 Requested pakeges: {', '.join(install_to_list)}\n")
+
+    packages_found_list = []
+    packages_missing = []
+
+    # Check if Packages exist by name
+    for package_name in install_to_list:
+        package_exist = check_package_exists(package_name)
+        if package_exist:
+            packages_found_list.append(package_name)
+        else:
+            packages_missing.append(package_name)
+
+    # Report missing packages
+    if packages_missing:
+        print("⚠️  Scripts not found:")
+        for name in packages_missing:
+            print(f" - {name}")
+        print()
+
+    if not packages_found_list:
+        print("✗ No valid packages found. Aborting.")
+        return 0
+    
+    # Display found packages
+    print(f"✅ {len(packages_found_list)} Package(s) found and ready for installation:\n")
+    for package_name in packages_found_list:
+        print(f" - {package_name}")
+    print()
+
+    # Ask user to confirm execution
+    if skip_confirmation or confirm_action("Confirm package installation?"):
+        install_packages_with_feedback(packages_found_list)
+
 
 def print_script_list(translations):
     """Print all available scripts in a formatted list."""
@@ -341,9 +410,9 @@ def easy_cli_handler(translations=None):
             return 0
         
         # TODO : Implement instalation of pakages and flatpaks
-        # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
-        #     packages_install(args[2:], skip_confirmation(args), translations)
-        #     return 0
+        elif args[1] in ("-p", "--package"): # Para instalação de pacotes
+            packages_install(args[2:], skip_confirmation(args), translations)
+            return 0
 
         # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
         #     flatpaks_install(args[2:], skip_confirmation(args), translations)
