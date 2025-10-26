@@ -4,7 +4,7 @@ import requests
 import threading
 import json
 from . import get_app_resource_path, get_icon_path
-from .update_helper import get_current_version
+from .updater import __version__
 from .lang_utils import escape_for_markup
 
 class AboutDialog:
@@ -12,7 +12,7 @@ class AboutDialog:
         self.parent_window = parent_window
         self.translations = translations
         self.contributors = []
-        self.app_version = get_current_version()
+        self.app_version = __version__
 
     def show_about_dialog(self):
         """Creates and shows the About dialog"""

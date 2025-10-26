@@ -4,7 +4,7 @@ import os
 import sys
 import tempfile
 from .parser import get_categories, get_all_scripts_recursive
-from .update_helper import get_current_version
+from .updater import __version__
 from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script
 from .dev_mode import is_dev_mode_enabled
 
@@ -373,7 +373,7 @@ def easy_cli_handler(translations=None):
         return run_manifest_mode(translations)
     
     elif args[0] in ("-v", "--version"):
-        print(f"LinuxToys {get_current_version()}")
+        print(f"LinuxToys {__version__}")
         return 0
     
     else:
