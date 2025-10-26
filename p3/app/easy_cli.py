@@ -198,13 +198,22 @@ def install_packages_with_feedback(packages_found):
     current_item = 0
     total_items = len(packages_found)
 
+    resolve_script_dir()
+
     # Install packages first
     for package in packages_found:
         current_item += 1
         print(f"\n[{current_item}/{total_items}] Installing package: {package}")
         print("=" * 60)
-        
-        success = install_package(package)
+
+        try:
+            success = install_package(package)
+        except KeyboardInterrupt:
+            # Stop execution if the user presses Ctrl+C
+            return print("\n⚠️  Execution interrupted by the user.")
+        except Exception as e:
+            print(f"✗ Error while executing the script: {e}")
+            return 1
         
         if not success:
             failed_items.append(('PACKAGE', package, 1))
@@ -243,7 +252,7 @@ def packages_install(args: list, skip_confirmation, translations):
 
     # Report missing packages
     if packages_missing:
-        print("⚠️  Scripts not found:")
+        print("⚠️  Packages not found:")
         for name in packages_missing:
             print(f" - {name}")
         print()
@@ -320,17 +329,17 @@ def easy_cli_help_message():
     print()
     print("Install options:")
     print("  -s, --script       Install specified LinuxToys scripts")
-    # print("  -p, --package     Install specified LinuxToys packages")
+    print("  -p, --package      Install packages from the system package manager")
     # print("  -f, --flatpak     Install specified LinuxToys flatpaks")
-    print("  -l, --list         List all available scripts")
     print()
     print("Examples:")
     print("  EASY_CLI=1 linuxtoys --install --script <script1> <script2>")
-    # print("  EASY_CLI=1 linuxtoys --install -p <package1> <package2>")
+    print("  EASY_CLI=1 linuxtoys --install --package <package1> <package2>")
     # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
     print("Other options:")
     print("  -h, --help         Show this help message")
+    print("  -l, --list         List all available scripts")
     print("  -m, --manifest     Enable manifest mode features")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
@@ -410,7 +419,7 @@ def easy_cli_handler(translations=None):
             return 0
         
         # TODO : Implement instalation of pakages and flatpaks
-        elif args[1] in ("-p", "--package"): # Para instalação de pacotes
+        elif args[1] in ("-p", "--package", "--packages"): # Para instalação de pacotes
             packages_install(args[2:], skip_confirmation(args), translations)
             return 0
 

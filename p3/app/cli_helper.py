@@ -160,9 +160,18 @@ _packages=("{package_name}")
 _install_
 '''
         
+        # Check if EASY_CLI mode is enabled
+        if os.environ.get("EASY_CLI") == "1":
+            result = subprocess.run(
+                ['bash', '-c', script_content],
+                stdin=sys.stdin,
+                stdout=sys.stdout,
+                stderr=sys.stderr
+            )
+        else:
         # Execute the installation script
-        result = subprocess.run(['bash', '-c', script_content], 
-                              capture_output=True, text=True)
+            result = subprocess.run(['bash', '-c', script_content], 
+                                capture_output=True, text=True)
         
         if result.returncode == 0:
             print(f"✓ Successfully installed package: {package_name}")
@@ -302,6 +311,7 @@ def run_script(script_info):
     print("-" * 50)
     
     try:
+        # Check if EASY_CLI mode is enabled
         if os.environ.get("EASY_CLI") == "1":
             result = subprocess.run(['bash', script_info['path']],
                                     stdin=sys.stdin,
