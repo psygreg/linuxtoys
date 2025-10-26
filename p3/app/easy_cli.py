@@ -194,10 +194,13 @@ def scripts_install(args: list, skip_confirmation, translations):
         execute_scripts_with_feedback(scripts_found_list)
 
 def install_packages_with_feedback(packages_found):
+    """Install each package sequentially and provide CLI feedback."""
+    
     failed_items = []
     current_item = 0
     total_items = len(packages_found)
 
+    # Ensure SCRIPT_DIR is set correctly
     resolve_script_dir()
 
     # Install packages first
@@ -225,6 +228,7 @@ def install_packages_with_feedback(packages_found):
                 break
 
 def packages_install(args: list, skip_confirmation, translations):
+    """Handle package installation in EASY_CLI mode."""
 
     # Filter out confirmation flags from the install list
     install_to_list = [arg for arg in args if arg not in ("-y", "--yes")]
@@ -318,31 +322,33 @@ def get_all_scripts(translations=None):
 
 def easy_cli_help_message():
     """Print usage information for EASY CLI mode."""
-    print("LinuxToys EASY CLI Usage:")
+    print("\nLinuxToys EASY CLI Usage:")
     print("=" * 60)
-    print("Usage:")
-    print("  EASY_CLI=1 linuxtoys -i [option] <item1> <item2> ...")
+    print("\nUsage:")
+    print("  linuxtoys-cli --install [Option] <item1> <item2> ...")
     # print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
     print()
     print("Functions:")
-    print("  -i, --install              Install selected options")
+    print("  -i, --install      Install selected options (scripts, packages)")
     print()
-    print("Install options:")
+    print("Options:")
     print("  -s, --script       Install specified LinuxToys scripts")
     print("  -p, --package      Install packages from the system package manager")
     # print("  -f, --flatpak     Install specified LinuxToys flatpaks")
     print()
     print("Examples:")
-    print("  EASY_CLI=1 linuxtoys --install --script <script1> <script2>")
-    print("  EASY_CLI=1 linuxtoys --install --package <package1> <package2>")
+    print("  linuxtoys-cli --install --script <script1> <script2>")
+    print("  linuxtoys-cli --install --package <package1> <package2>")
     # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
-    print("Other options:")
+    print("Other functions:")
     print("  -h, --help         Show this help message")
     print("  -l, --list         List all available scripts")
     print("  -m, --manifest     Enable manifest mode features")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
+    print("  update, upgrade    Check for updates and upgrade LinuxToys")
+    # print("  -D, --DEV_MODE     Enable developer mode (for scripts debugging)\n    Usage: EASY_CLI=1 python3 run.py -D -i -s <script1>")
     print()
 
 
@@ -409,7 +415,7 @@ def easy_cli_handler(translations=None):
             print("✗ Missing parameter after '-i' | '--install'.\n")
             print("Use:")
             print("  [-s | --script]    for scripts")
-            # print("  [-p | --package]  for packages")
+            print("  [-p | --package]  for packages")
             # print("  [-f | --flatpak]  for flatpaks")
             print("  [-l | --list]      list all available scripts")
             return 0
@@ -418,11 +424,11 @@ def easy_cli_handler(translations=None):
             scripts_install(args[2:], skip_confirmation(args), translations)
             return 0
         
-        # TODO : Implement instalation of pakages and flatpaks
         elif args[1] in ("-p", "--package", "--packages"): # Para instalação de pacotes
             packages_install(args[2:], skip_confirmation(args), translations)
             return 0
 
+        # TODO : Implement instalation of pakages and flatpaks
         # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
         #     flatpaks_install(args[2:], skip_confirmation(args), translations)
         #     return 0
