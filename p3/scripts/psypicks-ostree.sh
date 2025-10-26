@@ -2,7 +2,7 @@
 # name: psypicks
 # description: psypicks_desc
 # icon: psyicon.png
-# compat: ostree
+# compat: none
 # reboot: ostree
 # nocontainer
 

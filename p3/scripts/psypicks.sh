@@ -3,7 +3,7 @@
 # version: 1.0
 # description: psypicks_desc
 # icon: psyicon.png
-# compat: ubuntu, debian, fedora, suse, arch, cachy
+# compat: none
 # nocontainer
 
 # --- Start of the script code ---
