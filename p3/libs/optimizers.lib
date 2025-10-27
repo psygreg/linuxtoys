@@ -219,7 +219,7 @@ EOF
 
         else
             echo "Incompatible CPU. No changes were made."
-            exit 100
+            return 100
         fi
     fi
 }
