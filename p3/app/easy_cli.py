@@ -5,7 +5,7 @@ import sys
 import tempfile
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
-from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script
+from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script, check_package_exists, install_package
 from .dev_mode import is_dev_mode_enabled
 
 def resolve_script_dir():
@@ -193,6 +193,88 @@ def scripts_install(args: list, skip_confirmation, translations):
     if skip_confirmation or confirm_action("Confirm script execution?"):
         execute_scripts_with_feedback(scripts_found_list)
 
+def install_packages_with_feedback(packages_found):
+    """Install each package sequentially and provide CLI feedback."""
+    
+    failed_items = []
+    current_item = 0
+    total_items = len(packages_found)
+
+    # Ensure SCRIPT_DIR is set correctly
+    resolve_script_dir()
+
+    # Install packages first
+    for package in packages_found:
+        current_item += 1
+        print(f"\n[{current_item}/{total_items}] Installing package: {package}")
+        print("=" * 60)
+
+        try:
+            success = install_package(package)
+        except KeyboardInterrupt:
+            # Stop execution if the user presses Ctrl+C
+            return print("\n⚠️  Execution interrupted by the user.")
+        except Exception as e:
+            print(f"✗ Error while executing the script: {e}")
+            return 1
+        
+        if not success:
+            failed_items.append(('PACKAGE', package, 1))
+            print(f"Package '{package}' installation failed")
+            
+            # Ask if user wants to continue on failure
+            if not confirm_action("Do you want to continue with the remaining installations?"):
+                print("❌ Operation cancelled.")
+                break
+
+def packages_install(args: list, skip_confirmation, translations):
+    """Handle package installation in EASY_CLI mode."""
+
+    # Filter out confirmation flags from the install list
+    install_to_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+
+    if not install_to_list:
+        print("\n✗ No items specified for installation.\n")
+        easy_cli_help_message()
+        return 0
+    
+    print("🧰 EASY CLI INSTALL MODE")
+    print("=" * 60)
+    print(f"📜 Requested pakeges: {', '.join(install_to_list)}\n")
+
+    packages_found_list = []
+    packages_missing = []
+
+    # Check if Packages exist by name
+    for package_name in install_to_list:
+        package_exist = check_package_exists(package_name)
+        if package_exist:
+            packages_found_list.append(package_name)
+        else:
+            packages_missing.append(package_name)
+
+    # Report missing packages
+    if packages_missing:
+        print("⚠️  Packages not found:")
+        for name in packages_missing:
+            print(f" - {name}")
+        print()
+
+    if not packages_found_list:
+        print("✗ No valid packages found. Aborting.")
+        return 0
+    
+    # Display found packages
+    print(f"✅ {len(packages_found_list)} Package(s) found and ready for installation:\n")
+    for package_name in packages_found_list:
+        print(f" - {package_name}")
+    print()
+
+    # Ask user to confirm execution
+    if skip_confirmation or confirm_action("Confirm package installation?"):
+        install_packages_with_feedback(packages_found_list)
+
 
 def print_script_list(translations):
     """Print all available scripts in a formatted list."""
@@ -240,31 +322,33 @@ def get_all_scripts(translations=None):
 
 def easy_cli_help_message():
     """Print usage information for EASY CLI mode."""
-    print("LinuxToys EASY CLI Usage:")
+    print("\nLinuxToys EASY CLI Usage:")
     print("=" * 60)
-    print("Usage:")
-    print("  EASY_CLI=1 linuxtoys -i [option] <item1> <item2> ...")
+    print("\nUsage:")
+    print("  linuxtoys-cli --install [Option] <item1> <item2> ...")
     # print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
     print()
     print("Functions:")
-    print("  -i, --install              Install selected options")
+    print("  -i, --install      Install selected options (scripts, packages)")
     print()
-    print("Install options:")
+    print("Options:")
     print("  -s, --script       Install specified LinuxToys scripts")
-    # print("  -p, --package     Install specified LinuxToys packages")
+    print("  -p, --package      Install packages from the system package manager")
     # print("  -f, --flatpak     Install specified LinuxToys flatpaks")
-    print("  -l, --list         List all available scripts")
     print()
     print("Examples:")
-    print("  EASY_CLI=1 linuxtoys --install --script <script1> <script2>")
-    # print("  EASY_CLI=1 linuxtoys --install -p <package1> <package2>")
+    print("  linuxtoys-cli --install --script <script1> <script2>")
+    print("  linuxtoys-cli --install --package <package1> <package2>")
     # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
-    print("Other options:")
+    print("Other functions:")
     print("  -h, --help         Show this help message")
+    print("  -l, --list         List all available scripts")
     print("  -m, --manifest     Enable manifest mode features")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
+    print("  update, upgrade    Check for updates and upgrade LinuxToys")
+    # print("  -D, --DEV_MODE     Enable developer mode (for scripts debugging)\n    Usage: EASY_CLI=1 python3 run.py -D -i -s <script1>")
     print()
 
 
@@ -325,13 +409,18 @@ def easy_cli_handler(translations=None):
         print("✗ No arguments provided.\n")
         easy_cli_help_message()
         return 0
+    
+    if args[0][0] == "-" and args[0][1] != "-" and len(args[0]) > 2:
+        # Split combined flags (-isy to -i -s -y)
+        combined_flags = args[0][1:]
+        args = [f"-{flag}" for flag in combined_flags] + args[1:]
 
     if args[0] in ("-i", "--install"):
         if len(args) < 2:
             print("✗ Missing parameter after '-i' | '--install'.\n")
             print("Use:")
             print("  [-s | --script]    for scripts")
-            # print("  [-p | --package]  for packages")
+            print("  [-p | --package]  for packages")
             # print("  [-f | --flatpak]  for flatpaks")
             print("  [-l | --list]      list all available scripts")
             return 0
@@ -340,11 +429,11 @@ def easy_cli_handler(translations=None):
             scripts_install(args[2:], skip_confirmation(args), translations)
             return 0
         
-        # TODO : Implement instalation of pakages and flatpaks
-        # elif args[1] in ("-p", "--package"): # Para instalação de pacotes
-        #     packages_install(args[2:], skip_confirmation(args), translations)
-        #     return 0
+        elif args[1] in ("-p", "--package", "--packages"): # Para instalação de pacotes
+            packages_install(args[2:], skip_confirmation(args), translations)
+            return 0
 
+        # TODO : Implement instalation of pakages and flatpaks
         # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
         #     flatpaks_install(args[2:], skip_confirmation(args), translations)
         #     return 0
