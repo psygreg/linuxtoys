@@ -409,6 +409,11 @@ def easy_cli_handler(translations=None):
         print("✗ No arguments provided.\n")
         easy_cli_help_message()
         return 0
+    
+    if args[0][0] == "-" and len(args[0]) > 2:
+        # Split combined flags (-isy to -i -s -y)
+        combined_flags = args[0][1:]
+        args = [f"-{flag}" for flag in combined_flags] + args[1:]
 
     if args[0] in ("-i", "--install"):
         if len(args) < 2:
