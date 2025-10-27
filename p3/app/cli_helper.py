@@ -43,6 +43,7 @@ import os
 import sys
 import subprocess
 import shutil
+import asyncio
 from .parser import get_categories, get_all_scripts_recursive
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .reboot_helper import check_ostree_pending_deployments
@@ -247,6 +248,11 @@ def find_script_by_name(script_name, translations=None):
                     return script
 
     return None
+
+
+async def find_script_by_name_async(script_name, translations=None):
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, find_script_by_name, script_name, translations)
 
 
 def load_manifest(manifest_path='manifest.txt'):
