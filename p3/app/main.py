@@ -2,7 +2,7 @@ import sys
 import os
 
 # Only import GTK-related modules if not in CLI mode
-if os.environ.get('LT_MANIFEST') != '1':
+if os.environ.get('EASY_CLI') != '1':
     from .gtk_common import Gtk, Gdk
     from .window import AppWindow
 
@@ -14,7 +14,7 @@ from .compat import is_supported_system
 from . import get_app_resource_path, get_icon_path
 
 # Only define GUI classes if not in CLI mode
-if os.environ.get('LT_MANIFEST') != '1':
+if os.environ.get('EASY_CLI') != '1':
     class Application(Gtk.Application):
         def __init__(self, translations, *args, **kwargs):
             super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)
@@ -53,12 +53,6 @@ def run():
     if os.environ.get('EASY_CLI') == '1': 
         # Run in EASY_CLI 
         sys.exit(easy_cli_handler(translations))
-
-
-    # Check for CLI manifest mode
-    if os.environ.get('LT_MANIFEST') == '1':
-        # Run in CLI mode using manifest.txt
-        sys.exit(run_manifest_mode(translations))
 
     # Check if the system is supported before starting GUI
     if not is_supported_system():

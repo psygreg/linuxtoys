@@ -482,40 +482,22 @@ def run_manifest_mode(translations=None):
     # Parse command-line arguments
     manifest_path = 'manifest.txt'  # Default manifest path
     
-    # If LT_MANIFEST != "1", it means the script is running in EASY_CLI mode.
-    if os.environ.get("LT_MANIFEST") != "1":
-        if len(sys.argv) > 2:
-            arg = sys.argv[2]
-            
-            # Check for help request
-            if arg in ['--help', '-h', 'help']:
-                print_cli_usage()
-                return 0
-            
-            # Check if user wants to run update check
-            elif arg in ['check-updates', 'update-check', '--check-updates']:
-                return 1 if run_update_check_cli(translations) else 0
-            
-            # Otherwise, treat the argument as a manifest file path
-            else:
-                manifest_path = arg
+    if len(sys.argv) > 2:
+        arg = sys.argv[2]
+        
+        # Check for help request
+        if arg in ['--help', '-h', 'help']:
+            print_cli_usage()
+            return 0
+        
+        # Check if user wants to run update check
+        elif arg in ['check-updates', 'update-check', '--check-updates']:
+            return 1 if run_update_check_cli(translations) else 0
+        
+        # Otherwise, treat the argument as a manifest file path
+        else:
+            manifest_path = arg
     
-    else:
-        if len(sys.argv) > 1:
-            arg = sys.argv[1]
-            
-            # Check for help request
-            if arg in ['--help', '-h', 'help']:
-                print_cli_usage()
-                return 0
-            
-            # Check if user wants to run update check
-            elif arg in ['check-updates', 'update-check', '--check-updates']:
-                return 1 if run_update_check_cli(translations) else 0
-            
-            # Otherwise, treat the argument as a manifest file path
-            else:
-                manifest_path = arg
     
     print("LinuxToys CLI Manifest Mode")
     print("=" * 40)
