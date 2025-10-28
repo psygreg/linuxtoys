@@ -31,3 +31,4 @@ else # systemd-boot
     sudo bootctl update
 fi
 sudo systemctl enable apparmor
+zeninf "$msg018"
