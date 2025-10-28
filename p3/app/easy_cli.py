@@ -415,6 +415,15 @@ def easy_cli_handler(translations=None):
         combined_flags = args[0][1:]
         args = [f"-{flag}" for flag in combined_flags] + args[1:]
 
+    # Check if first argument is incompatible with default --install mode
+    incompatible_options = ("-h", "--help", "help", "-l", "--list", "-m", "--manifest",
+                           "-v", "--version", "update", "upgrade", "check-updates",
+                           "update-check", "--check-updates")
+    
+    # If first argument is not an incompatible option and not --install, prepend --install
+    if args[0] not in ("-i", "--install") and args[0] not in incompatible_options:
+        args = ["--install"] + args
+
     if args[0] in ("-i", "--install"):
         if len(args) < 2:
             print("✗ Missing parameter after '-i' | '--install'.\n")
