@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        5.5.1
+Version:        5.6
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -50,7 +50,7 @@ if ! rpm -q vte291 &>/dev/null && ! rpm -q vte &>/dev/null; then
         # Fedora/RHEL systems
         dnf install -y vte291 2>/dev/null || true
     elif command -v yum &>/dev/null; then
-        # CentOS/older RHEL systems
+* Tue Oct 28 2025 Victor Gregory <psygreg@pm.me> - 5.6
         yum install -y vte291 2>/dev/null || true
     fi
 fi
