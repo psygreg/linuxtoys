@@ -75,6 +75,7 @@ docker_in () { # install docker
 }
 get_winboat () { # gets latest release
     local tag=$(curl -s "https://api.github.com/repos/TibixDev/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    [ -z ${tag} ] && { fatal "It was not possible to obtain the latest available version of Winboat."; exit 1;}
     local ver="${tag#v}"
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
         if dpkg -s "winboat" &> /dev/null; then
