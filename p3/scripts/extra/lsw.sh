@@ -63,10 +63,14 @@ docker_in () { # install docker
     sudo systemctl enable --now docker
     sudo systemctl enable --now docker.socket
     # firewalld fix for fedora
-    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [ "$ID" = "suse" ]; then
+    if command -v firewalld &>/dev/null; then
         sudo firewall-cmd --zone=docker --change-interface=docker0
         sudo firewall-cmd --zone=docker --add-port=8006/tcp --permanent
         sudo firewall-cmd --zone=docker --add-port=3389/tcp --permanent
+    fi
+    # fix for apparmor.d users, leave only default profiles enabled
+    if [ -f /etc/apparmor.d/dockerd ]; then
+        sudo ln -s /etc/apparmor.d/dockerd /etc/apparmor.d/disable/
     fi
 }
 get_winboat () { # gets latest release
