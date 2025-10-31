@@ -2,7 +2,8 @@
 # name: AppArmor
 # version: 1.0
 # description: aa_desc
-# icon: apparmor.png
+# icon: apparmor.svg
+# repo: https://apparmor.net
 # compat: debian, arch, cachyos
 # reboot: yes
 # nocontainer
