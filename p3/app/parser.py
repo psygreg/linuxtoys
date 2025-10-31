@@ -273,8 +273,8 @@ def get_scripts_for_category(category_path, translations=None):
     # Add Local Scripts as a subcategory when viewing sysadm directory
     if category_path.endswith('sysadm') or category_path.endswith('sysadm/'):
         local_dir = f'{os.environ["HOME"]}/.local/linuxtoys/scripts'
-        local_scripts_name = translations.get('local_scripts_name', 'Local Scripts')
-        local_scripts_desc = translations.get('local_scripts_desc', 'Drop your scripts here')
+        local_scripts_name = translations.get('local_scripts_name', 'Local Scripts') if translations else 'Local Scripts'
+        local_scripts_desc = translations.get('local_scripts_desc', 'Drop your scripts here') if translations else 'Drop your scripts here'
         
         items.append({
             'name': local_scripts_name,
