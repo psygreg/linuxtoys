@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Çalıştırılmaya Devam Et",
   "cancel_script_cancel_btn": "Betiği İptal Et",
   "rtl8821ce_desc": "Donanım Yazılımı ile rtl8821CE sürücüsü",
-  "rcloneui_desc": "Rclone senkronizasyonu için GUI"
+  "rcloneui_desc": "Rclone senkronizasyonu için GUI",
+  "aa_desc": "Linux sisteminizin güvenliğini güçlendirerek her uygulamanın sistemde erişebileceği ve yapabileceği şeyleri sınırlandırır."
 }

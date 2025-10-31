@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Lean ar an Rith",
   "cancel_script_cancel_btn": "Cealaigh Scéimh",
   "rtl8821ce_desc": "gealadh rtl8821CE le firmware",
-  "rcloneui_desc": "GUI do dhoimirt rclone"
+  "rcloneui_desc": "GUI do dhoimirt rclone",
+  "aa_desc": "Laghdaíonn sé slándáil do chóras Linux trí a theorannú ar a bhféadfaidh gach feidhmchlár rochtain agus a dhéanamh ar an gcóras."
 }

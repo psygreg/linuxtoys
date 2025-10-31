@@ -310,5 +310,6 @@
   "cancel_script_continue_btn": "Гүйцэтгэлийг Үргэлжүүлүүлэх",
   "cancel_script_cancel_btn": "Скриптийг Болих",
   "rtl8821ce_desc": "rtl8821CE драйвер суулгацтай",
-  "rcloneui_desc": "rclone синхронизацийн GUI"
+  "rcloneui_desc": "rclone синхронизацийн GUI",
+  "aa_desc": "Linux системийн аюулгүй байдлыг сайжруулдаг - хэрэгслүүр бүрийг системд юу нэвтрэх, юу хийхийг хязгаарладаг."
 }

@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "ሥራ መለካት አሁንም ቀጥል",
   "cancel_script_cancel_btn": "ስክሪፕ ሰርዝ",
   "rtl8821ce_desc": "rtl8821CE ሾፌር ከፍርማዌር ጋር",
-  "rcloneui_desc": "rclone ስምምነት ለ GUI"
+  "rcloneui_desc": "rclone ስምምነት ለ GUI",
+  "aa_desc": "የLinux ስርዓትን ደህንነት ይጠናክራል እያንዳንዱ መተግበሪያ በስርዓቱ ውስጥ ምን ማድረግ እና መድረስ ይችል እንደሆነ በመገደብ።"
 }

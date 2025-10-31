@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Continuer l'exécution",
   "cancel_script_cancel_btn": "Annuler le Script",
   "rtl8821ce_desc": "Pilote rtl8821CE avec firmware",
-  "rcloneui_desc": "Interface graphique pour la synchronisation rclone"
+  "rcloneui_desc": "Interface graphique pour la synchronisation rclone",
+  "aa_desc": "Renforce la sécurité de votre système Linux en limitant ce que chaque application peut accéder et faire sur le système."
 }

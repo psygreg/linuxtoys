@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "ทำงานต่อ",
   "cancel_script_cancel_btn": "ยกเลิกสคริปต์",
   "rtl8821ce_desc": "ไดรเวอร์ rtl8821CE พร้อมเฟิร์มแวร์",
-  "rcloneui_desc": "GUI สำหรับการซิงค์ rclone"
+  "rcloneui_desc": "GUI สำหรับการซิงค์ rclone",
+  "aa_desc": "เสริมความปลอดภัยของระบบ Linux ของคุณโดยจำกัดว่าแต่ละแอปพลิเคชันสามารถเข้าถึงและทำได้บนระบบ"
 }

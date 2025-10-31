@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Барномаи компютериро Идома Биноед",
   "cancel_script_cancel_btn": "Барномаи компютериро Болих",
   "rtl8821ce_desc": "Драйвер rtl8821CE бо мафҳуми барқӣ",
-  "rcloneui_desc": "Интерфейси графикӣ барои sinkronizatsiya rclone"
+  "rcloneui_desc": "Интерфейси графикӣ барои sinkronizatsiya rclone",
+  "aa_desc": "Барномаи Linux системаи шумо аз ҷониби маҳдуд кардани он ки ҳар як барнома дар система кард метавонад."
 }

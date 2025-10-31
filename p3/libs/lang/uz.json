@@ -310,5 +310,6 @@
   "cancel_script_continue_btn": "Bajarilishni Davom Qiling",
   "cancel_script_cancel_btn": "Skriptni Bekor Qilish",
   "rtl8821ce_desc": "Rtl8821ce drayveri firmware bilan",
-  "rcloneui_desc": "Rclone sinhronizasiyasi uchun GUI"
+  "rcloneui_desc": "Rclone sinhronizasiyasi uchun GUI",
+  "aa_desc": "Linux sistemingizning xavfsizligini mustahkamlaydi - har bir ilovani sistemda nima kirish va qilish mumkinligini cheklaydi."
 }

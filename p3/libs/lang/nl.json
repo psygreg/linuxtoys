@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Voortgaan met Uitvoering",
   "cancel_script_cancel_btn": "Script Annuleren",
   "rtl8821ce_desc": "rtl8821CE-stuurprogramma met firmware",
-  "rcloneui_desc": "GUI voor rclone-synchronisatie"
+  "rcloneui_desc": "GUI voor rclone-synchronisatie",
+  "aa_desc": "Versterkt de veiligheid van uw Linux-systeem door te beperken wat elke applicatie op het systeem kan openen en doen."
 }

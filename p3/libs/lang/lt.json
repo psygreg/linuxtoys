@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Tęsti Vykdymą",
   "cancel_script_cancel_btn": "Atšaukti Scenarijų",
   "rtl8821ce_desc": "rtl8821CE tvarkyklė su programine įranga",
-  "rcloneui_desc": "GUI rclone sinchronizavimui"
+  "rcloneui_desc": "GUI rclone sinchronizavimui",
+  "aa_desc": "Sustiprina jūsų Linux sistemos saugumą ribodami tai, ką kiekviena programa gali pasiekti ir atlikti sistemoje."
 }

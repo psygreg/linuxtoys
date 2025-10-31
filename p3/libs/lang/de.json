@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Weiterhin Ausführen",
   "cancel_script_cancel_btn": "Skript Abbrechen",
   "rtl8821ce_desc": "rtl8821CE-Treiber mit Firmware",
-  "rcloneui_desc": "GUI für rclone-Synchronisierung"
+  "rcloneui_desc": "GUI für rclone-Synchronisierung",
+  "aa_desc": "Stärkt die Sicherheit deines Linux-Systems, indem es einschränkt, worauf jede Anwendung auf dem System zugreifen und was sie tun kann."
 }

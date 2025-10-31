@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Vazhdoni Ekzekutimin",
   "cancel_script_cancel_btn": "Anulo Skriptin",
   "rtl8821ce_desc": "Drajveri rtl8821CE me firmware",
-  "rcloneui_desc": "GUI për sinkronizimin rclone"
+  "rcloneui_desc": "GUI për sinkronizimin rclone",
+  "aa_desc": "Forcon sigurimin e sistemit Linux tuaj duke kufizon atë që çdo aplikacion mund të ketë akses dhe të bëjë në sistem."
 }

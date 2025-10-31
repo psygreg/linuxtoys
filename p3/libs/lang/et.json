@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Jätka Käitamist",
   "cancel_script_cancel_btn": "Skripti Tühistamine",
   "rtl8821ce_desc": "rtl8821CE draiver koos püsivara",
-  "rcloneui_desc": "GUI rclone sünkroniseerimiseks"
+  "rcloneui_desc": "GUI rclone sünkroniseerimiseks",
+  "aa_desc": "Tugevdab teie Linuxi süsteemi turvalisust, piirates seda, millele igal rakendusel on juurdepääs ja mida teha saab."
 }

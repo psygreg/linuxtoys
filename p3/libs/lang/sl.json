@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Nadaljuj Izvajanje",
   "cancel_script_cancel_btn": "Prekini Skript",
   "rtl8821ce_desc": "Gonilnik rtl8821CE s programsko opremo",
-  "rcloneui_desc": "Grafični vmesnik za sinhronizacijo rclone"
+  "rcloneui_desc": "Grafični vmesnik za sinhronizacijo rclone",
+  "aa_desc": "Okrepi varnost vašega Linux sistema z omejevanjem dostopa in delovanja vsake aplikacije v sistemu."
 }

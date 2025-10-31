@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Futtatás Folytatása",
   "cancel_script_cancel_btn": "Szkript Mégse",
   "rtl8821ce_desc": "rtl8821CE meghajtó firmware-rel",
-  "rcloneui_desc": "GUI az rclone szinkronizáláshoz"
+  "rcloneui_desc": "GUI az rclone szinkronizáláshoz",
+  "aa_desc": "Erősíti Linux-rendszered biztonságát azáltal, hogy korlátozza, mit érhet el és mit tehet minden alkalmazás a rendszeren."
 }

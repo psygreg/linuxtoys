@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "המשך הפעלה",
   "cancel_script_cancel_btn": "בטל סקריפט",
   "rtl8821ce_desc": "כונן rtl8821CE עם הקנקייה",
-  "rcloneui_desc": "ממשק המשתמש הגרפי לסנכרון rclone"
+  "rcloneui_desc": "ממשק המשתמש הגרפי לסנכרון rclone",
+  "aa_desc": "חוזק את אבטחת מערכת Linux שלך על ידי הגבלת מה שכל יישום יכול לגשת ולעשות במערכת."
 }

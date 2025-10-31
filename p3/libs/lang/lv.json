@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Turpināt Izpildi",
   "cancel_script_cancel_btn": "Atcelt Skriptu",
   "rtl8821ce_desc": "rtl8821CE draiveris ar programmatūru",
-  "rcloneui_desc": "GUI rclone sinhronizācijai"
+  "rcloneui_desc": "GUI rclone sinhronizācijai",
+  "aa_desc": "Pastiprināt jūsu Linux sistēmas drošību, ierobežojot, ko katra programma var piekļūt un darīt sistēmā."
 }

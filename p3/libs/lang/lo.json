@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "ສືບຕໍ່ການດໍາເນີນການ",
   "cancel_script_cancel_btn": "ລະຫັດເວົ້າກະ ບົດລະຫັດ",
   "rtl8821ce_desc": "ຕົວຜະລິດ rtl8821CE ກັບ firmware",
-  "rcloneui_desc": "GUI ສໍາລັບ rclone synchronization"
+  "rcloneui_desc": "GUI ສໍາລັບ rclone synchronization",
+  "aa_desc": "ເສີມສ້າງຄວາມປອດໄພຂອງລະບົບ Linux ຂອງທ່ານໂດຍການ ຈໍາກັດສິ່ງທີ່ແຕ່ລະໂປແກມອາດຈະເຂົ້າໄປໄດ້ ແລະ ເຮັດໃນລະບົບ."
 }

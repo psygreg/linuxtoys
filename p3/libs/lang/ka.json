@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "გააგრძელეთ შესრულება",
   "cancel_script_cancel_btn": "სკრიპტის გაუქმება",
   "rtl8821ce_desc": "rtl8821CE ფაილი ფიქრით",
-  "rcloneui_desc": "GUI rclone სინქროულობისთვის"
+  "rcloneui_desc": "GUI rclone სინქროულობისთვის",
+  "aa_desc": "Linux სისტემის უსაფრთხოების გაძლიერება თითოეული აპლიკაციის მიერ სისტემაში ხელმისაწვდომობისა და ქმედების შეზღუდვით."
 }

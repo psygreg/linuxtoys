@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "실행 계속",
   "cancel_script_cancel_btn": "스크립트 취소",
   "rtl8821ce_desc": "ファームウェア포함 rtl8821CE드라이버",
-  "rcloneui_desc": "rclone 동기화를 위한 GUI"
+  "rcloneui_desc": "rclone 동기화를 위한 GUI",
+  "aa_desc": "각 애플리케이션이 시스템에서 접근하고 할 수 있는 것을 제한하여 Linux 시스템의 보안을 강화합니다."
 }

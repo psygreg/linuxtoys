@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "چلانا جاری رکھیں",
   "cancel_script_cancel_btn": "اسکرپٹ منسوخ کریں",
   "rtl8821ce_desc": "rtl8821CE ڈرائیور فرم ویئر کے ساتھ",
-  "rcloneui_desc": "rclone ہم وقتی کے لیے GUI"
+  "rcloneui_desc": "rclone ہم وقتی کے لیے GUI",
+  "aa_desc": "آپ کے Linux سسٹم کی سیکیورٹی کو مضبوط بناتا ہے ہر ایپلیکیشن کو سسٹم میں رسائی اور کام کرنے کی چیزوں کو محدود کرتے ہوئے۔"
 }

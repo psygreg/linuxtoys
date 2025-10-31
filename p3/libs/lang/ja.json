@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "実行を続行",
   "cancel_script_cancel_btn": "スクリプトをキャンセル",
   "rtl8821ce_desc": "ファームウェア付きrtl8821CEドライバー",
-  "rcloneui_desc": "rclone同期用GUI"
+  "rcloneui_desc": "rclone同期用GUI",
+  "aa_desc": "Linux システムのセキュリティを強化し、各アプリケーションがシステムでアクセスおよび実行できることを制限します。"
 }

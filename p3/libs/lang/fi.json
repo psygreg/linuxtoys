@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Jatka Suorittamista",
   "cancel_script_cancel_btn": "Peruuta Komentosarja",
   "rtl8821ce_desc": "rtl8821CE-ohjain ja ohjelmisto",
-  "rcloneui_desc": "GUI rclone-synkronointiin"
+  "rcloneui_desc": "GUI rclone-synkronointiin",
+  "aa_desc": "Vahvistaa Linux-järjestelmäsi turvallisuutta rajoittamalla sitä, mitä jokainen sovellus voi käyttää ja tehdä järjestelmässä."
 }

@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Pokračovat v Běhu",
   "cancel_script_cancel_btn": "Zrušit Skript",
   "rtl8821ce_desc": "rtl8821CE ovladač s firmwarem",
-  "rcloneui_desc": "Grafické rozhraní pro synchronizaci rclone"
+  "rcloneui_desc": "Grafické rozhraní pro synchronizaci rclone",
+  "aa_desc": "Posiluje bezpečnost vašeho linuxového systému omezením toho, co každá aplikace může na systému přistupovat a dělat."
 }

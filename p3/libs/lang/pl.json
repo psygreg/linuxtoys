@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Kontynuuj Uruchamianie",
   "cancel_script_cancel_btn": "Anuluj Skrypt",
   "rtl8821ce_desc": "Sterownik rtl8821CE z oprogramowaniem",
-  "rcloneui_desc": "GUI dla synchronizacji rclone"
+  "rcloneui_desc": "GUI dla synchronizacji rclone",
+  "aa_desc": "Wzmacnia bezpieczeństwo systemu Linux poprzez ograniczenie dostępu każdej aplikacji na systemie."
 }

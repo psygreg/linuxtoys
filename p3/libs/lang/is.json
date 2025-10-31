@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Haltu áfram Keyrslu",
   "cancel_script_cancel_btn": "Hætta við Skriftu",
   "rtl8821ce_desc": "rtl8821CE rekill með firmware",
-  "rcloneui_desc": "GUI fyrir rclone samstillingu"
+  "rcloneui_desc": "GUI fyrir rclone samstillingu",
+  "aa_desc": "Styrkir öryggi Linux-kerfisins þíns með því að takmarka hvað hver forrit getur nálgast og gert á kerfinu."
 }

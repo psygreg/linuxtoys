@@ -313,5 +313,6 @@
   "cancel_script_continue_btn": "继续运行",
   "cancel_script_cancel_btn": "取消脚本",
   "rtl8821ce_desc": "rtl8821CE驱动程序带固件",
-  "rcloneui_desc": "rclone同步的GUI"
+  "rcloneui_desc": "rclone同步的GUI",
+  "aa_desc": "通过限制每个应用程序在系统上可以访问和执行的操作来加强Linux系统的安全性。"
 }

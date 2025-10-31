@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Nastavi Pokretanje",
   "cancel_script_cancel_btn": "Otkazati Skript",
   "rtl8821ce_desc": "rtl8821CE upravljač s firmverom",
-  "rcloneui_desc": "GUI za sinkronizaciju rclone"
+  "rcloneui_desc": "GUI za sinkronizaciju rclone",
+  "aa_desc": "Pojačava sigurnost vašeg Linux sustava ograničavanjem pristupa svakoj aplikaciji na sustavu."
 }

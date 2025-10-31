@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "متابعة التشغيل",
   "cancel_script_cancel_btn": "إلغاء البرنامج النصي",
   "rtl8821ce_desc": "برنامج rtl8821CE مع البرامج الثابتة",
-  "rcloneui_desc": "واجهة رسومية لمزامنة rclone"
+  "rcloneui_desc": "واجهة رسومية لمزامنة rclone",
+  "aa_desc": "يعزز أمان نظام Linux الخاص بك من خلال تحديد ما يمكن لكل تطبيق الوصول إليه والقيام به على النظام."
 }

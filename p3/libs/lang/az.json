@@ -310,5 +310,6 @@
   "cancel_script_continue_btn": "İşləməyə Davam Edin",
   "cancel_script_cancel_btn": "Skripti Ləğv Et",
   "rtl8821ce_desc": "Firmware ilə rtl8821CE sürücüsü",
-  "rcloneui_desc": "rclone sinkronizasiyası üçün GUI"
+  "rcloneui_desc": "rclone sinkronizasiyası üçün GUI",
+  "aa_desc": "Linux sisteminizin təhlükəsizliyini güçləndirir hər bir tətbiqin sistemdə nə qədər daxil olmağa və edə bilməsini məhdudlaşdırmaqla."
 }

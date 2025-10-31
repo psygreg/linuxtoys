@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Pokračovať v Spúšťaní",
   "cancel_script_cancel_btn": "Zrušiť Skript",
   "rtl8821ce_desc": "Ovládač rtl8821CE s firmvérom",
-  "rcloneui_desc": "GUI pre synchronizáciu rclone"
+  "rcloneui_desc": "GUI pre synchronizáciu rclone",
+  "aa_desc": "Posilňuje bezpečnosť vášho Linux systému obmedením toho, na čo môže každá aplikácia pristupovať a čo môže robiť v systéme."
 }

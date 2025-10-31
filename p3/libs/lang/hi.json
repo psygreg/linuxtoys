@@ -291,5 +291,6 @@
   "cancel_script_continue_btn": "चलना जारी रखें",
   "cancel_script_cancel_btn": "स्क्रिप्ट रद्द करें",
   "rtl8821ce_desc": "rtl8821CE ड्राइवर फर्मवेयर के साथ",
-  "rcloneui_desc": "rclone सिंक के लिए GUI"
+  "rcloneui_desc": "rclone सिंक के लिए GUI",
+  "aa_desc": "आपके Linux सिस्टम की सुरक्षा को मजबूत करता है प्रत्येक एप्लिकेशन को सिस्टम में क्या एक्सेस करने और करने की अनुमति है यह सीमित करके।"
 }

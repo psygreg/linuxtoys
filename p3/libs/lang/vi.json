@@ -311,5 +311,6 @@
   "cancel_script_continue_btn": "Tiếp Tục Thực Thi",
   "cancel_script_cancel_btn": "Hủy Bỏ Tập Lệnh",
   "rtl8821ce_desc": "Trình điều khiển rtl8821CE với chương trình",
-  "rcloneui_desc": "GUI để đồng bộ hóa rclone"
+  "rcloneui_desc": "GUI để đồng bộ hóa rclone",
+  "aa_desc": "Tăng cường bảo mật hệ thống Linux của bạn bằng cách giới hạn những gì mỗi ứng dụng có thể truy cập và làm trên hệ thống."
 }
