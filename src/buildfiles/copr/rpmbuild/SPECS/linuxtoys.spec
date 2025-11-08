@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi
+Requires:       bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291
 BuildRequires:  desktop-file-utils
 
 %description
@@ -39,21 +39,6 @@ find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 # Install icon and desktop file
 install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
-
-%post
-# Handle vte dependency for different distributions
-if ! rpm -q vte291 &>/dev/null && ! rpm -q vte &>/dev/null; then
-    if command -v zypper &>/dev/null; then
-        # OpenSUSE/SLED systems
-        zypper install -y vte 2>/dev/null || true
-    elif command -v dnf &>/dev/null; then
-        # Fedora/RHEL systems
-        dnf install -y vte291 2>/dev/null || true
-    elif command -v yum &>/dev/null; then
-* Tue Oct 28 2025 Victor Gregory <psygreg@pm.me> - 5.6
-        yum install -y vte291 2>/dev/null || true
-    fi
-fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
