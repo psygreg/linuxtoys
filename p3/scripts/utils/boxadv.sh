@@ -28,7 +28,11 @@ elif [ "$ID" = "suse" ] || [[ "$ID" =~ "opensuse" ]] || [[ "$ID_LIKE" =~ "suse" 
 fi
 _install_ 
 sudo systemctl enable --now pcscd.service
-distrobox-assemble create --file https://gitlab.com/pedrohqb/distrobox-adv-br/-/raw/main/distrobox-adv-br
+if is_ubuntu; then
+    distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br-ubuntu-24-04
+else
+    distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br
+fi
 flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf
 zeninf "$msg018"
