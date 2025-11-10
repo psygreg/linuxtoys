@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 header() {
 	echo "  _      _               _______               "
 	echo " | |    (_)             |__   __|              "
