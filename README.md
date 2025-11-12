@@ -20,7 +20,7 @@ As long as you're running their up-to-date stable versions:
 #### Install
 1. Automatic installation:
 ```
-curl -fsSL https://linux.toys/install.sh | sh
+curl -fsSL https://linux.toys/install.sh | bash
 ```
 
 2. Manually run `install.sh` script:
