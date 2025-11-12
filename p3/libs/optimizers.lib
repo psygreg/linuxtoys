@@ -322,8 +322,11 @@ EOF
             fi
         fi
     unset intelGPU
-    # install VDPAU decode driver
-    _packages=(libvdpau-va-gl)
+    # install decoder and encoder drivers
+    _packages=(libvdpau-va-gl intel-media-driver)
+    if is_arch; then
+        _packages+=(vpl-gpu-rt)
+    fi
     _install_
     if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
