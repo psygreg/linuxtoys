@@ -2,12 +2,11 @@
 
 .vscode
 
-####### Python cache and venv #######
+####### Python cache #######
 
 /p3/app/__pycache__/
 *.pyc
 .venv
-linuxtoys
 
 ####### Build #######
 

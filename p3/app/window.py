@@ -166,8 +166,18 @@ class AppWindow(Gtk.ApplicationWindow):
             self.scripts_flowbox.unselect_all()
 
         elif keyval == Gdk.KEY_Return:
-            # Handle Enter key to activate selected items
-            return self._on_enter_key_pressed()
+            selected_widget = (
+                self.categories_flowbox.get_selected_children()
+                if self.main_stack.get_visible_child_name() == "categories"
+                else self.scripts_flowbox.get_selected_children()
+            )
+
+            sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            sim_event.button = 1
+
+            if selected_widget:
+                selected_widget[0].get_child().emit("button-press-event", sim_event)
+            return True
 
         if self.main_stack.get_visible_child_name() == "running_scripts":
             return False
@@ -186,62 +196,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
         return False
 
-    def _on_enter_key_pressed(self):
-        """Handle Enter key pressed on selected items in flowbox."""
-        # Determine which flowbox is currently visible
-        visible_view = self.main_stack.get_visible_child_name()
-        
-        if visible_view == "categories":
-            flowbox = self.categories_flowbox
-        elif visible_view == "scripts":
-            flowbox = self.scripts_flowbox
-        elif visible_view == "search":
-            flowbox = self.search_flowbox
-        else:
-            return False
-        
-        # Get the currently selected children (can be multiple in MULTIPLE selection mode)
-        selected_children = flowbox.get_selected_children()
-        
-        if not selected_children:
-            return False
-        
-        # If multiple items are selected, run them in checklist mode
-        if len(selected_children) > 1:
-            selected_infos = [child.get_child().info for child in selected_children]
-            asyncio.run(self._process_and_run_scripts(selected_infos))
-            return True
-        
-        # Single item selected - activate it
-        child = selected_children[0]
-        widget = child.get_child()
-        
-        # Determine which click handler to use based on context
-        if visible_view == "categories":
-            self.on_category_clicked(widget, None)
-        elif visible_view == "scripts":
-            info = widget.info
-            # If this is a search result, use script click handler
-            if self.search_active:
-                self.on_script_clicked(widget, None)
-            # If this is a subcategory or category, use category click handler
-            elif info.get('is_subcategory', False) or (not info.get('is_script', False)):
-                self.on_category_clicked(widget, None)
-            else:
-                # This is a script, use script click handler
-                self.on_script_clicked(widget, None)
-        elif visible_view == "search":
-            self.on_script_clicked(widget, None)
-        
-        return True
-
-    async def _process_and_run_scripts(self, script_infos):
-        """Process multiple scripts and run them."""
-        deps = await self._process_needed_scripts(script_infos)
-        GLib.idle_add(self.open_term_view, deps)
-
     def _setup_drag_and_drop(self):
-
         """Setup drag-and-drop functionality but don't enable it initially."""
         self.drag_and_drop_enabled = False
         self.drag_handler_id = None
