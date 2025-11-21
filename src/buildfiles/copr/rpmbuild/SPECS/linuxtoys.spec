@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        5.6
+Version:        5.6.1
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
