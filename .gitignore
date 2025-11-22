@@ -7,6 +7,7 @@
 /p3/app/__pycache__/
 *.pyc
 .venv
+linuxtoys
 
 ####### Build #######
 
