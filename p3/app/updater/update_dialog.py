@@ -122,7 +122,7 @@ class UpdateDialog(Gtk.Dialog):
         self.destroy()
         try:
             with open("/tmp/.self_update_lt", 'w') as f:
-                script_content = '''#!/bin/bash\nsource "$SCRIPT_DIR/libs/linuxtoys.lib"\nsudo_rq\ncurl -fsSL https://linux.toys/install.sh | sh\n'''
+                script_content = '''#!/bin/bash\nsource "$SCRIPT_DIR/libs/linuxtoys.lib"\nsudo_rq\ncurl -fsSL https://linux.toys/install.sh | bash\n'''
                 f.write(script_content)
 
             self.parent.open_term_view([{
