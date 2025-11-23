@@ -72,7 +72,7 @@ osrpm() {
 ossuse() {
 	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
 		if sudo rpm -i -nodeps "/tmp/${_rpm_name}"; then
-			dependencies=(bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte)
+			dependencies=(bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi libvte-2_91-0 typelib-1_0-Vte-2.91)
 			for pkg in "${dependencies[@]}"; do
 				sudo zypper --non-interactive install "${pkg}"
 			done
