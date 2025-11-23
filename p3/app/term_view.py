@@ -90,6 +90,7 @@ class TermRunScripts(Gtk.Box):
 		self.terminal = Vte.Terminal()
 		self.terminal.connect("child-exited", self.on_child_exit)
 		self.terminal.set_vexpand(True)
+		self.terminal.set_can_focus(False)
 
 		self.vbox_main = InfosHead(translations)
 
@@ -112,6 +113,7 @@ class TermRunScripts(Gtk.Box):
 		self.vbox_main.progress_bar.set_text(running_text.format(current=self.scripts_executed, total=self.total_scripts))
 		running_label = self.translations.get('term_view_running_label', ' Running ')
 		self.vbox_main.button_run.set_label(running_label)
+		self.terminal.set_can_focus(True)
 		self._run_next_script()
 
 	def on_child_exit(self, term, status):
@@ -137,6 +139,8 @@ class TermRunScripts(Gtk.Box):
 			self.vbox_main.button_run.connect("clicked", self.on_done_clicked)
 			self.parent._script_running = False
 			self.vbox_main.button_run.set_sensitive(True)
+			self.terminal.set_can_focus(False)
+			self.vbox_main.button_run.grab_focus()
 			return
 
 		self.parent._script_running = True

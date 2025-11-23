@@ -153,6 +153,9 @@ class AppWindow(Gtk.ApplicationWindow):
     def _on_key_press(self, widget, event):
         keyval = event.keyval
 
+        if self.main_stack.get_visible_child_name() == "running_scripts":
+            return False
+
         if keyval == Gdk.KEY_Delete:
             selected_children = [child.get_child().info for child in self.scripts_flowbox.get_selected_children()]
             self._delete_local_scripts(selected_children)
@@ -165,8 +168,22 @@ class AppWindow(Gtk.ApplicationWindow):
         elif keyval == Gdk.KEY_Escape:
             self.scripts_flowbox.unselect_all()
 
-        if self.main_stack.get_visible_child_name() == "running_scripts":
-            return False
+        elif keyval == Gdk.KEY_Return:
+            screens = {
+                "categories": self.categories_flowbox.get_selected_children(),
+                "search": self.search_flowbox.get_selected_children()
+            }
+
+            selected_widget = (
+                screens.get(self.main_stack.get_visible_child_name(), self.scripts_flowbox.get_selected_children())
+            )
+
+            sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            sim_event.button = 1
+
+            if selected_widget:
+                selected_widget[0].get_child().emit("button-press-event", sim_event)
+            return True
 
         # Quick search: if typing letters without modifiers, focus search entry and type there
         current_focus = self.get_focus()
