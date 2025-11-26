@@ -84,8 +84,8 @@ while true; do
     fi
 
     case $CHOICE in
-    "Desktop") sudo_rq && pp_ondemand && optimizer && break ;;
-    "Laptop") sudo_rq && optimizer && psave_lib && break ;;
+    "Desktop") sudo_rq && pp_ondemand && optimizer && exit 0;;
+    "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
