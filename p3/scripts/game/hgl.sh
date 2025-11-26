@@ -51,23 +51,9 @@ if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [ "$ID_LIKE
 elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
     sudo_rq
     cd $HOME
-    if ! pacman -Qi "heroic" 2>/dev/null 1>&2; then
-        wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x64.pacman"
-        sudo pacman -U --noconfirm ./Heroic-${ver}-linux-x64.pacman || { echo "Heroic installation failed"; rm -f "Heroic-${ver}-linux-x64.pacman"; return 1; }
-        rm "Heroic-${ver}-linux-x64.pacman"
-    else
-        # update if already installed
-        hostver=$(pacman -Q "heroic" 2>/dev/null | awk '{print $2}' | cut -d'-' -f1)
-        if [[ "$hostver" != "$ver" ]]; then
-            wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x64.pacman"
-            sudo pacman -R --noconfirm heroic
-            sudo pacman -U --noconfirm ./Heroic-${ver}-linux-x64.pacman || { echo "Heroic update failed"; rm -f "Heroic-${ver}-linux-x64.pacman"; return 1; }
-            rm "Heroic-${ver}-linux-x64.pacman"
-        else
-            zeninf "$msg281" 
-        fi
-        unset hostver
-    fi
+    _packages=(heroic-games-launcher-bin)
+    _install_
+    zeninf "$msg281" 
 else
     flatpak_in_lib
     flatpak install --or-update --user --noninteractive flathub com.heroicgameslauncher.hgl
