@@ -13,8 +13,22 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 sudo_rq
-sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon && {
-	[ -f ~/.bashrc ] && {
-		echo -e "\nsource \${HOME}/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc;
+if is_arch; then
+	sudo pacman -S --noconfirm nix && {
+		[ -f ~/.bashrc ] && {
+			echo -e 'export PATH="$HOME/.nix-profile/bin:$PATH"' >> ~/.bashrc;
+		}
+		[ -f ~/.profile ] && {
+			echo -e 'export XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"' >> ~/.profile;
+		}
+		[ -f ~/.bash_profile ] && {
+			echo -e 'export XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"' >> ~/.bash_profile;
+		}
 	}
-}
+else
+	sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon && {
+		[ -f ~/.bashrc ] && {
+			echo -e "\nsource \${HOME}/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc;
+		}
+	}
+fi
