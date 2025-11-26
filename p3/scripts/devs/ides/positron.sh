@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Positron
 # version: 1.0
-# description: Unifies exploration and production work in one free, AI-assisted environment, empowering the full spectrum of data science in Python and R.
+# description: positron_desc
 # icon: positron.png
 # repo: https://positron.posit.co/
 # compat: debian, ubuntu, fedora

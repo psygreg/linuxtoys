@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: RStudio
 # version: 1.0
-# description: A set of tools built to help you be more productive with R and Python.
+# description: rstudio_desc
 # icon: rstudio.svg
 # repo: https://posit.co/products/open-source/rstudio/
 # compat: debian, ubuntu, fedora
