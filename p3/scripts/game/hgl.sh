@@ -50,7 +50,6 @@ if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [ "$ID_LIKE
     fi
 elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
     sudo_rq
-    cd $HOME
     _packages=(heroic-games-launcher-bin)
     _install_
     zeninf "$msg281" 
