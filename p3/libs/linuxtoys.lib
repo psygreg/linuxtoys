@@ -163,7 +163,7 @@ _install_ () {
                     if rpm -qi "$pak" 2>/dev/null 1>&2; then
                         continue
                     else
-                        sudo zypper in "$pak" -y
+                        sudo zypper in -y "$pak"
                     fi
                 done
             fi
