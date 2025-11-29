@@ -3,4 +3,6 @@ https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/udev/r
 https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/udev/rules.d/50-sata.rules
 https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/udev/rules.d/60-ioschedulers.rules
 https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/udev/rules.d/69-hdparm.rules
+https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/udev/rules.d/80-gpu-reset.rules
 https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/udev/rules.d/99-cpu-dma-latency.rules
+

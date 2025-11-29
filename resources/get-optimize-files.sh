@@ -11,6 +11,7 @@ get_cfgs () {
         echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
         echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
         echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/80-gpu-reset.rules"
         echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
         } > "udev.txt"
     {
