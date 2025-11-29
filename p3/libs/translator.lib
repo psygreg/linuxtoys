@@ -1,0 +1,43 @@
+# Package name translator library
+# Translates package names between different Linux distributions using dictionary files
+#
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
+_jspkgs="$SCRIPT_DIR/libs/packages.json"
+
+# Detect current system
+os_is() {
+	if is_arch || is_cachy; then
+		echo "arch"
+	elif is_ubuntu; then
+		echo "ubuntu"
+	elif is_debian; then
+		echo "debian"
+	elif is_fedora || is_ostree; then
+		echo "fedora"
+	elif is_suse; then
+		echo "suse"
+	fi
+}
+
+translate_packages_() {
+	if [[ -z "${_packages[@]}" || ! -f "${_jspkgs}" ]]; then
+		return 0
+	fi
+
+	local target_system=$(os_is)
+
+	# Build new array with translated packages
+	local -a new_packages=()
+
+	# Translate each package in the array
+	for i in "${!_packages[@]}"; do
+		translated_pkg=$(python3 -c "import json, sys; data=json.load(open('${_jspkgs}')); print(data.get(sys.argv[1], {}).get(sys.argv[2], sys.argv[1]))" "${_packages[$i]}" "${target_system}")
+
+		new_packages+=("$translated_pkg")
+	done
+
+	# Replace the original array with the translated one
+	_packages=("${new_packages[@]}")
+
+	return 0
+}

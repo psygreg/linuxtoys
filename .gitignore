@@ -1,6 +1,17 @@
+#### VS Code stuff ####
+
+.vscode
+
+####### Python cache #######
+
+/p3/app/__pycache__/
+*.pyc
+.venv
+linuxtoys
+
 ####### Build #######
 
-# General build files
+# Debian build files
 *.build
 *.buildinfo
 *.changes
@@ -8,11 +19,7 @@
 *.dsc
 *.substvars
 debhelper-build-stamp
-
-# Debian build files
-/src/buildfiles/deb/linuxtoys/DEBIAN/opt/linuxtoys/*
-/src/buildfiles/deb/linuxtoys/DEBIAN/usr
-/src/buildfiles/deb/linuxtoys/DEBIAN/.debhelper
+/src/buildfiles/deb/linuxtoys-*/debian/.debhelper
 /src/buildfiles/deb/linuxtoys/DEBIAN/linuxtoys
 /src/buildfiles/deb/*.deb
 
@@ -22,10 +29,15 @@ debhelper-build-stamp
 /src/buildfiles/rpm/rpmbuild/RPMS
 /src/buildfiles/rpm/rpmbuild/SRPMS
 /src/buildfiles/rpm/rpmbuild/SOURCES/
-/src/buildfiles/rpm/linuxtoys-*/
+/src/buildfiles/copr/rpmbuild/SOURCES/
 
 # Arch build files
 /src/buildfiles/pkgbuild/linuxtoys-*/bin/*
 /src/buildfiles/pkgbuild/pkg
 /src/buildfiles/pkgbuild/src
 /src/buildfiles/pkgbuild/linuxtoys-*.tar.*
+/src/buildfiles/pkgbuild/linuxtoys-*.pacman
+
+# AppImage build files
+/src/buildfiles/appimage/build-linuxdeploy*
+/LinuxToys_*.AppImage

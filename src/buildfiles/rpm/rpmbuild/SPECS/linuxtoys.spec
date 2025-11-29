@@ -1,14 +1,13 @@
 Name:           linuxtoys
-Version:        3.1
+Version:        5.1.7
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
 
 License:        GPL3
-Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash newt curl wget git
-# BuildRequires:  desktop-file-utils
+Requires:       bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291
+BuildRequires:  desktop-file-utils
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
@@ -16,36 +15,42 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %global debug_package %{nil}
 
 %prep
-%setup -q
+# No setup needed - we'll copy files directly from SOURCES
 
 %install
-mkdir -p %{buildroot}/usr/bin
-mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps
-install -m 755 usr/bin/linuxtoys.sh %{buildroot}/usr/bin
-install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.png %{buildroot}/usr/share/icons/hicolor/scalable/apps
-mkdir -p %{buildroot}/usr/share/applications
-desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
+mkdir -p %{buildroot}/usr/bin/
+mkdir -p %{buildroot}/usr/share/linuxtoys/
+mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps/
+mkdir -p %{buildroot}/usr/share/applications/
 
-%post
-alias_name="linuxtoys"
-alias_command="/usr/bin/linuxtoys.sh"
-target_file="/etc/bash.bashrc"
-if ! grep -q "alias $alias_name=" "$target_file"; then
-    echo "alias $alias_name='$alias_command'" >> "$target_file"
-    echo "Alias '$alias_name' created."
-else
-    echo "Alias '$alias_name' already exists."
-fi
+# Install files directly from SOURCES
+# Install the main executable script
+install -m 755 %{_sourcedir}/linuxtoys-%{version}/usr/bin/linuxtoys %{buildroot}/usr/bin/
+
+# Install the Python application directory with all subdirectories
+cp -rf %{_sourcedir}/linuxtoys-%{version}/usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
+
+# Set proper permissions for executable files
+chmod +x %{buildroot}/usr/share/linuxtoys/run.py
+find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
+find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
+
+# Install icon and desktop file
+install -m 644 %{_sourcedir}/linuxtoys-%{version}/usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
+desktop-file-install --dir=%{buildroot}/usr/share/applications %{_sourcedir}/linuxtoys-%{version}/usr/share/applications/LinuxToys.desktop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root, -)
-/usr/bin/linuxtoys.sh
-/usr/share/icons/hicolor/scalable/apps/linuxtoys.png
+/usr/bin/linuxtoys
+/usr/share/linuxtoys
+/usr/share/icons/hicolor/scalable/apps/linuxtoys.svg
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Thu Jun  26 2025 Victor Gregory <psygreg@pm.me> - 3.1
-- Updated psycachy kernel updater to use new naming scheme and prebuilt packages
+* Wed Aug 27 2025 Victor Gregory <psygreg@pm.me> - 5.1.7
+- Updated to current app structure with full Python application
+- Added proper file permissions for all scripts
+- Updated dependencies for current requirements

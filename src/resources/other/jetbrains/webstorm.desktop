@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=WebStorm
-Type=Application
-Exec=/opt/WebStorm/bin/webstorm
-Terminal=false
-Icon=/opt/WebStorm/bin/webstorm.png
-Comment=Jetbrains IDE for JavaScript and TypeScript
-NoDisplay=false
-Categories=Development

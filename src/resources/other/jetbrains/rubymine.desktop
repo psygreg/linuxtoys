@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=RubyMine
-Type=Application
-Exec=/opt/rubymine/bin/rubymine
-Terminal=false
-Icon=/opt/rubymine/bin/rubymine.png
-Comment=Jetbrains IDE for Ruby and Rails
-NoDisplay=false
-Categories=Development

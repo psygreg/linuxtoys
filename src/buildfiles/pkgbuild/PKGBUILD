@@ -1,19 +1,22 @@
 pkgname='linuxtoys'
-pkgver='3.1'
+pkgver='5.6.2'
 pkgrel=1
 arch=('x86_64')
-depends=(bash curl wget libnewt base-devel git)
+depends=(bash git curl wget zenity python python-gobject python-requests gtk3 vte3)
 makedepends=()
-conflicts=(linuxtoys)
+conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
-install=linuxtoys.install
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
-sha256sums=('295a365ba08cd5a96f1c059c7c18917be2d27a1df60d160e0226e9bade565752')
+sha256sums=('23d64ba67da4511fa293a84a696bda2005fb6cb51111fe280841ab4225681303')
 
 package() {
-
     mkdir -p ${pkgdir}/usr
-    cp -rf ${srcdir}/linuxtoys-${pkgver}/{bin,share} ${pkgdir}/usr
-    chmod +x "${pkgdir}/usr/bin/linuxtoys.sh"
-
+    cp -rf ${srcdir}/linuxtoys-${pkgver}/usr/* ${pkgdir}/usr/
+    
+    # Set proper permissions for executable files
+    chmod +x "${pkgdir}/usr/bin/linuxtoys"
+    chmod +x "${pkgdir}/usr/bin/linuxtoys-cli"
+    chmod +x "${pkgdir}/usr/share/linuxtoys/run.py"
+    find "${pkgdir}/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
+    find "${pkgdir}/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
 }

@@ -1,89 +1,102 @@
-# LinuxToys
-A collection of tools for Linux in a user-friendly way.
+# [LinuxToys](https://linux.toys)
+A collection of tools for Linux in a user-friendly way. To check all its features, pay the [Wiki](https://linux.toys/knowledgebase.html) a visit!
 
-![LinuxToys](https://github.com/psygreg/linuxtoys/blob/8836d345c41cf867e0d26aeb6cb88baf78835e5a/src/scrnshot.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="src/dark-lt.png">
+  <img alt="LinuxToys Screenshot" src="src/light-lt.png">
+</picture>
 
 ## Compatibility
-
-LinuxToys and it's features' compatibility is only *guaranteed* on the operating systems explicitly mentioned in the **Usage** section. Your mileage may vary in operating systems derivated from those, and I'll gladly accept contributions to get it running in more systems. It isn't compatible, *and never will be*, with immutable distributions, since the whole point of LinuxToys is to make changes to the host OS. 
+As long as you're running their up-to-date stable versions:
+- **Ubuntu** and derivatives
+- **Debian** and derivatives
+- **Arch Linux** and derivatives
+- **Fedora** and derivatives
+- **OpenSUSE** and derivatives
+- **Atomic Fedora** and derivatives
+- **Universal Blue** images like **Bazzite**, **Bluefin** and **Aurora**
 
 ## Usage
-- Install the proper package for your operating system from [Releases](https://github.com/psygreg/linuxtoys/releases) and run it from the applications menu or use it directly from source.
+#### Install
+1. Automatic installation:
+```
+curl -fsSL https://linux.toys/install.sh | bash
+```
 
-### Standalone, directly from source
-`bash <(curl -s https://raw.githubusercontent.com/psygreg/linuxtoys/main/src/linuxtoys.sh)`
+2. Manually run `install.sh` script:
+```
+curl -fsSLJO https://linux.toys/install.sh
+chmod +x install.sh
+./install.sh
+```
 
-### Ubuntu (latest and latest LTS releases)
-There's a PPA available for LinuxToys. To use it:
-`sudo add-apt-repository ppa:psygreg/linuxtoys &&
-sudo apt update`
+3. Clone this repository <sup>*\*(recommended for developers)*</sup>
 
-### Debian
-Use the **.deb** package provided in [Releases](https://github.com/psygreg/linuxtoys/releases).
+- First, make sure you have all necessary dependencies. Most of those should be already present in your system.
+	- **Debian/Ubuntu**:
+	```sh
+	sudo apt install -y bash git curl wget zenity python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91
+	```
+	- **Fedora/RHEL**:
+	```sh
+	sudo dnf install -y bash git curl wget zenity python3 python3-gobject python3-requests gtk3 vte291
+	```
+	- **Arch Linux**:
+	```sh
+	sudo pacman -S --noconfirm bash git curl wget zenity python python-gobject python-requests gtk3 vte3
+	```
+	- **OpenSUSE**:
+	```sh
+	sudo zypper in -y bash git curl wget zenity python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91
+	```
 
-### Fedora, OpenSUSE, AlmaLinux and RHEL
-You may obtain it and keep it up-to-date from the COPR repository: `sudo dnf copr enable psygreg/linuxtoys`
+- Then, clone the repository with
+```
+git clone --depth=1 https://github.com/psygreg/linuxtoys.git
+```
 
-### Arch Linux
-Get it from the [Arch User Repository](https://aur.archlinux.org/packages/linuxtoys-bin) using `aura -A linuxtoys-bin`; or
+- Run
+```
+linuxtoys/p3/run.py
+```
 
-- Download the PKGBUILD and `.install` files from [Releases](https://github.com/psygreg/linuxtoys/releases)
-- Run `makepkg -si` on the folder you downloaded the file to install.
+- Updating the app through this method is a simple
+```
+git pull
+```
 
-## Limitations
-- **Shader Booster** only works in systems using the `bash` or `zsh` shells as default. 
-- **GRUB-btrfs**, besides its obvious requirements, depends on `systemd-init` to enable boot snapshots and cleanup.
-- **Lucidglyph** is only confirmed to work on **Gnome** and **Plasma** desktops. With all others, your mileage may vary.
-- The **linux-cachyos** kernel port to Debian/Ubuntu-based systems may require its **LTO** setting changed to 'Full' or 'None' to work in some systems. *ThinLTO is only known to work in the standard Ubuntu-Gnome flavour and in Debian Testing, so far, although it is the optimal setting if it works for your system.*
-- **LACT** is an overclocking tool. Use with caution.
-- **PyEnv** only supports running in `bash` or `zsh` shells.
-- **Godot 4 .NET** a.k.a. *GodotSharp* is not compatible with Arch-based operating systems, as there isn't a .NET SDK available from Microsoft officially for those.
-- **Unity Hub** only supports **Debian**, **Ubuntu** and **Red Hat Enterprise Linux**, so its installer will only work on these systems.
+## Official Repositories
+### [Ubuntu Launchpad](https://launchpad.net/~psygreg/+archive/ubuntu/linuxtoys) (PPA)
+Can be added with:
 
-## Building from source
-### .deb package
-This will require `debuild`, obtained from the `devscripts` package..
+```
+sudo add-apt-repository ppa:psygreg/linuxtoys
+sudo apt update
+sudo apt install linuxtoys
+```
 
-- Clone the repo.
-- Open terminal on `src/buildfiles/deb/linuxtoys*`
-- Run `debuild -S` for .changes file or `debuild -us -uc` for a .deb package.
+### [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/)
+Available packages: **AlmaLinux 10**, **Fedora 41** and **42**, **OpenSUSE Leap** and **Tumbleweed**, **RHEL 9** and **10**.
 
-### .rpm package
-Requires `rpmbuild`.
+#### For non-immutable systems:
+```
+sudo dnf copr enable psygreg/linuxtoys
+sudo dnf install linuxtoys
+```
 
-- Clone the repo.
-- Open terminal on the `src/buildfiles/rpm/rpmbuild` subdirectory.
-- `rpmbuild -bb SPECS/linuxtoys.spec`
+#### For Fedora atomic, the following commands are required to install the repository:
+```
+curl -fsSL https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/repo/fedora-$(rpm -E %fedora)/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo | sudo tee /etc/yum.repos.d/psygreg-linuxtoys-fedora-$(rpm -E %fedora).repo
+```
+```
+sudo rpm-ostree install linuxtoys
+```
 
-## Contributing
+### [Arch User Repository - AUR](https://aur.archlinux.org/packages/linuxtoys-bin)
+```
+git clone --branch linuxtoys-bin --single-branch https://github.com/archlinux/aur.git /tmp/linuxtoys-bin
+makepkg -fcCd OPTIONS=-debug -D /tmp/linuxtoys-bin
+sudo pacman --noconfirm -U /tmp/linuxtoys-bin/linuxtoys-bin-*.tar.zst
+```
 
-To contribute with translations, you can fork this repo, add a new language file to the `resources/lang` folder and send a Pull Request. I can make the necessary adjustments to the program's code myself to accomodate new languages.
-
-Other contributions can be made by forking, adding your changes and sending a Pull Request as well.
-
-**All Pull Requests will be manually checked before approval.**
-
-## Credits
-
-- [Lucidglyph](https://github.com/maximilionus/lucidglyph/tree/v0.11.0) by **Maximilionus**
-- [GRUB-btrfs](https://github.com/Antynea/grub-btrfs) by **Antynea**
-- [Pipewire Audio Capture plugin for OBS Studio](https://github.com/dimtpap/obs-pipewire-audio-capture) by **Dimitris Papaioanou**
-- [LACT](https://github.com/ilya-zlobintsev/LACT) by **Ilya Zlobintsev**
-- [Easy Effects](https://github.com/wwmm/easyeffects) by **Wellington Wallace**
-- [StreamController](https://github.com/StreamController/StreamController) by **'Core447'**
-- [MakeResolveDeb](https://www.danieltufvesson.com/makeresolvedeb) by **Daniel Tufvesson**
-- [DaVinciBox](https://github.com/zelikos/davincibox) by **Patrick Csikos**
-- [Darktable](https://www.darktable.org)
-- [Foliate](https://johnfactotum.github.io/foliate) by **John Factotum**
-- [Custom Wine Builds](https://github.com/NelloKudo/WineBuilder) by **'NelloKudo'**
-- [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) by **Adnan Hodzic**
-- [Touchégg](https://github.com/JoseExposito/touchegg) by **José Expósito**
-- [Vinegar](https://vinegarhq.org/Home/index.html) by **the VinegarHQ team**
-- [Chaotic AUR](https://aur.chaotic.cx/)
-- [The CachyOS Team](https://github.com/CachyOS/linux-cachyos)
-- [Pyenv](https://github.com/pyenv)
-- [NVM-sh](https://github.com/nvm-sh)
-- [WiVRn](https://github.com/WiVRn)
-- [Oversteer](https://github.com/berarma/oversteer) by **Bernat**
-- [WinApps](https://github.com/winapps-org/winapps)
-- And the Linux Community
+## [Credits](https://linux.toys/credits.html)

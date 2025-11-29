@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/sysctl.d/99-cachyos-settings.conf
+https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/lib/systemd/journald.conf.d/00-journal-size.conf

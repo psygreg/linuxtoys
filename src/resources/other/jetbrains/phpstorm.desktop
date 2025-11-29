@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=PhpStorm
-Type=Application
-Exec=/opt/phpstorm/bin/phpstorm
-Terminal=false
-Icon=/opt/phpstorm/bin/phpstorm.png
-Comment=Jetbrains IDE for PHP
-NoDisplay=false
-Categories=Development

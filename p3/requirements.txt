@@ -1,0 +1,15 @@
+# Python dependencies for LinuxToys
+# GTK/GUI dependencies
+PyGObject>=3.36.0
+
+# HTTP/Network dependencies  
+requests>=2.25.0
+urllib3>=1.26.0
+certifi>=2021.5.25
+
+# JSON handling (usually built-in, but ensuring compatibility)
+# Standard library modules don't need to be listed here:
+# - json (built-in)
+# - os (built-in) 
+# - sys (built-in)
+# - pathlib (built-in)

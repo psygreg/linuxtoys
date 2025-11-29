@@ -1,0 +1,2 @@
+ICON: education.png
+description: edu_desc
