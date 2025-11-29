@@ -29,6 +29,7 @@ install -m 755 40-hpet-permissions.rules %{buildroot}/usr/lib/udev/rules.d
 install -m 755 50-sata.rules %{buildroot}/usr/lib/udev/rules.d
 install -m 755 60-ioschedulers.rules %{buildroot}/usr/lib/udev/rules.d
 install -m 755 69-hdparm.rules %{buildroot}/usr/lib/udev/rules.d
+install -m 755 80-gpu-reset.rules %{buildroot}/usr/lib/udev/rules.d
 install -m 755 99-cpu-dma-latency.rules %{buildroot}/usr/lib/udev/rules.d
 install -m 755 thp.conf %{buildroot}/usr/lib/tmpfiles.d
 install -m 755 thp-shrinker.conf %{buildroot}/usr/lib/tmpfiles.d
@@ -60,6 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/udev/rules.d/50-sata.rules
 /usr/lib/udev/rules.d/60-ioschedulers.rules
 /usr/lib/udev/rules.d/69-hdparm.rules
+/usr/lib/udev/rules.d/80-gpu-reset.rules
 /usr/lib/udev/rules.d/99-cpu-dma-latency.rules
 /etc/sysctl.d/99-splitlock.conf
 
