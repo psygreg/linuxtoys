@@ -38,6 +38,8 @@ sysag_run () {
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
+    # plasma VRAM usage fix
+    plasma_mem_fix
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
     # codec fix for Fedora/OpenSUSE

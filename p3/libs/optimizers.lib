@@ -333,3 +333,16 @@ EOF
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
     fi
 }
+
+# change Plasma 6 renderer to OpenGL(2) for VRAM savings
+plasma_mem_fix () {
+    local ENV_FILE="$HOME/.config/plasma-workspace/env/kwin_compose_fix.sh"
+    if [[ "$XDG_CURRENT_DESKTOP" == "KDE" ]] || pgrep -x "kwin_x11" > /dev/null || pgrep -x "kwin_wayland" > /dev/null; then
+        mkdir -p "$(dirname "$ENV_FILE")"
+        cat <<EOF > "$ENV_FILE"
+#!/bin/sh
+export KWIN_COMPOSE="O2ES"
+EOF
+        chmod +x "$ENV_FILE"
+    fi
+}

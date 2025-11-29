@@ -315,5 +315,6 @@
   "aa_desc": "Strengthens the security of your Linux system by limiting what each application can access and do on the system.",
   "positron_desc": "Unifies exploration and production work in one free, AI-assisted environment, empowering the full spectrum of data science in Python and R.",
   "rstudio_desc": "A set of tools built to help you be more productive with R and Python.",
-  "ananicy_desc": "A daemon that automatically adjusts the 'niceness' of running processes based on their behavior to improve system responsiveness, and makes 'gamemoderun' unnecessary for games."
+  "ananicy_desc": "A daemon that automatically adjusts the 'niceness' of running processes based on their behavior to improve system responsiveness, and makes 'gamemoderun' unnecessary for games.",
+  "kdememfix_desc": "Switches KDE Plasma's rendering backend to OpenGL, which uses significantly less VRAM."
 }

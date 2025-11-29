@@ -81,6 +81,8 @@ optimizer () {
         fix_intel_gtk
         # change intel driver to Xe on discrete GPUs
         intel_xe_lib
+        # plasma VRAM usage fix
+        plasma_mem_fix
         # save autopatch state
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
         mv autopatch.state $HOME/.local/.autopatch.state
