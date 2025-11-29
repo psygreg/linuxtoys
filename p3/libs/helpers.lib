@@ -18,6 +18,11 @@ flatpak_in_lib () {
                 echo "Failed to install flatpak via pacman"
                 return 1
             fi
+        elif [ "$ID" == "suse" ] || [ "$ID" == "opensuse" ] || [[ "$ID_LIKE" =~ "suse" ]]; then
+            if ! sudo zypper in -y flatpak; then
+                echo "Failed to install flatpak via zypper"
+                return 1
+            fi
         else
             echo "Unsupported distribution for automatic flatpak installation"
             return 1
