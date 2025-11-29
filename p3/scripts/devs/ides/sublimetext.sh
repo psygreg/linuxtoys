@@ -43,6 +43,11 @@ elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LI
     sudo pacman -Syu
     _packages=(sublime-text)
     _install_
+elif [ "$ID" == "suse" ] || [ "$ID" == "opensuse" ] || [[ "$ID_LIKE" =~ "suse" ]]; then
+    sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+    sudo zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+    _packages=(sublime-text)
+    _install_
 else
     fatal "$msg077" # Mensagem de "Sistema operacional não compatível"
 fi
