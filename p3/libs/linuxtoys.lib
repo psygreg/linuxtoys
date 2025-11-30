@@ -3,255 +3,175 @@ source /etc/os-release
 source "$SCRIPT_DIR/libs/helpers.lib"
 export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
 
-# sudo request
-sudo_rq () { 
-    # CLI mode (no zenity) - ask password up to 3 times
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        # check if sudo is already authorized
-        if sudo -n true 2>/dev/null; then
-            # already validated
-            [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
-            return 0
-        fi
+# --- UI & Logging ---
 
+# Unified message handler
+_msg() {
+    local type="$1"
+    local text="$2"
+    local title="${3:-LinuxToys}"
+
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        echo "$text"
+        return 0
+    fi
+
+    case "$type" in
+        info)    zenity --info --text "$text" --width 360 --height 300 ;;
+        warning) zenity --warning --text "$text" --width 360 --height 300 ;;
+        error)   zenity --error --title "$title" --text "$text" --width 360 --height 300 ;;
+        *)       echo "$text" ;;
+    esac
+}
+
+zeninf() { _msg info "$1"; }
+zenwrn() { _msg warning "$1"; }
+
+fatal() {
+    _msg error "$1" "Fatal Error"
+    exit 1
+}
+
+nonfatal() {
+    _msg error "$1" "Error"
+    return 1
+}
+
+# --- Sudo Handling ---
+
+sudo_rq() {
+    # Check if already authorized
+    if sudo -n true 2>/dev/null || [ -f /tmp/linuxtoys_sudo_validated ]; then
+        [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
+        return 0
+    fi
+
+    # CLI mode
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
         local max_attempts=3
         local attempts=0
 
-        while [ $attempts -lt $max_attempts ]; do
-            # prompt for password silently
-            printf "Password: "
-            read -s _pass
-            printf "\n"
-
-            # validate password
-            if echo "${_pass}" | sudo -S -v >/dev/null 2>&1; then
-                # successfully validated
+        while (( attempts < max_attempts )); do
+            read -rsp "Password: " _pass
+            echo
+            if echo "${_pass}" | sudo -S -v &>/dev/null; then
                 [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
                 return 0
-            else
-                attempts=$((attempts + 1))
-                echo "❌ Wrong password. Attempts: ${attempts}/${max_attempts}."
             fi
+            ((attempts++))
+            echo "❌ Wrong password. Attempts: ${attempts}/${max_attempts}."
         done
-
-        # reached max attempts
         fatal "❌ Wrong password or sudo failed (max attempts reached)."
     fi
 
-    
-    if [ -f /tmp/linuxtoys_sudo_validated ]; then
-        return 0
-    fi
-    if command -v sudo-rs >&-;then
+    # GUI mode
+    if command -v sudo-rs &>/dev/null; then
         _pass=$(zenity --password --title="LinuxToys")
-	echo "${_pass}" | sudo-rs -Sv
+        echo "${_pass}" | sudo-rs -Sv
     else
         sudo -Av
     fi
+
     if [ "$(sudo whoami)" = "root" ]; then
-    # Validate password with sudo
-        if [ -n "$LINUXTOYS_CHECKLIST" ]; then
-            touch /tmp/linuxtoys_sudo_validated
-        fi
+        [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
         return 0
     else
         fatal "Wrong password. Do you have sudo?"
     fi
 }
 
-# zenity libs
-zeninf () {
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        echo
-        echo "$1"
-        return 0
-    fi
-    zenity --info --text "$1" --width 360 --height 300
-    return 0
-}
-zenwrn () {
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        echo
-        echo "$1"
-        return 0
-    fi
-    zenity --warning --text "$1" --width 360 --height 300
-    return 0
-}
+# --- Package Management ---
 
-## error handlers
-fatal() {
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        echo "$1"
-        exit 1
-    fi
-    zenity --error --title "Fatal Error" --text "$1" --width 360 --height 300
-    exit 1
-}
-nonfatal() {
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        echo "$1"
-        exit 1
-    fi
-    zenity --error --title "Error" --text "$1" --width 360 --height 300
-    return 1
-}
+_install_() {
+    [[ -z "$_packages" ]] && return 0
 
-# native package installation
-_install_ () {
-    if [[ -n "$_packages" ]]; then
-        # rpm-ostree iteration -- ONLY USE WHEN PACKAGES ARE NOT IMPORTANT TO THE SYSTEM!
-        if command -v rpm-ostree &>/dev/null; then
-            declare -a _to_install=()
-            for pkg in "${_packages[@]}"; do
-                if ! rpm -qi "$pkg" &>/dev/null; then
-                    _to_install+=("$pkg")
-                fi
+    # OSTree handling
+    if command -v rpm-ostree &>/dev/null; then
+        local _to_install=()
+        for pkg in "${_packages[@]}"; do
+            rpm -qi "$pkg" &>/dev/null || _to_install+=("$pkg")
+        done
+        if [[ ${#_to_install[@]} -gt 0 ]]; then
+            for item in "${_to_install[@]}"; do
+                sudo rpm-ostree install -yA "$item"
             done
-            if [[ -n "$_to_install" ]]; then
-                for item in "${_to_install[@]}"; do
-                    sudo rpm-ostree install -yA "$item"
-                done
-            else
-                return 0
-            fi
-        else
-        # resume usual linuxtoys behaviour
-            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-                for pak in "${_packages[@]}"; do
-                    if dpkg -s "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo apt install -y "$pak"
-                    fi
-                done
-            elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-                for pak in "${_packages[@]}"; do
-                    if pacman -Qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        if pacman -Ss "$pak" | grep -q "$pak"; then
-                            sudo pacman -S --noconfirm "$pak"
-                        else
-                            if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
-                                if ! command -v paru &>/dev/null; then
-                                    if pacman -Ss paru | grep -q paru; then
-                                        sudo pacman -S --noconfirm paru
-                                    else
-                                        chaotic_aur_lib
-                                        sleep 1
-                                        sudo pacman -S --noconfirm paru
-                                    fi
-                                fi
-                                paru -S -a --noconfirm --skipreview "$pak"
-                            else
-                                return 1
-                            fi
-                        fi
-                    fi
-                done
-            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-                for pak in "${_packages[@]}"; do
-                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo dnf in "$pak" -y
-                    fi
-                done
-            elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
-                for pak in "${_packages[@]}"; do
-                    if rpm -qi "$pak" 2>/dev/null 1>&2; then
-                        continue
-                    else
-                        sudo zypper in -y "$pak"
-                    fi
-                done
-            fi
         fi
         unset _packages
+        return 0
     fi
+
+    # Standard Package Managers
+    case "$ID_LIKE" in
+        *debian*|*ubuntu*)
+            for pak in "${_packages[@]}"; do
+                dpkg -s "$pak" &>/dev/null || sudo apt install -y "$pak"
+            done
+            ;;
+        *arch*|*archlinux*)
+            for pak in "${_packages[@]}"; do
+                pacman -Qi "$pak" &>/dev/null && continue
+                
+                if pacman -Ss "$pak" | grep -q "$pak"; then
+                    sudo pacman -S --noconfirm "$pak"
+                else
+                    if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
+                        if ! command -v paru &>/dev/null; then
+                            if pacman -Ss paru | grep -q paru; then
+                                sudo pacman -S --noconfirm paru
+                            else
+                                chaotic_aur_lib
+                                sleep 1
+                                sudo pacman -S --noconfirm paru
+                            fi
+                        fi
+                        paru -S -a --noconfirm --skipreview "$pak"
+                    else
+                        return 1
+                    fi
+                fi
+            done
+            ;;
+        *rhel*|*fedora*|*centos*)
+             for pak in "${_packages[@]}"; do
+                rpm -qi "$pak" &>/dev/null || sudo dnf in -y "$pak"
+            done
+            ;;
+        *suse*)
+            for pak in "${_packages[@]}"; do
+                rpm -qi "$pak" &>/dev/null || sudo zypper in -y "$pak"
+            done
+            ;;
+    esac
+    unset _packages
 }
 
-# flatpak installer
-_flatpak_ () {
-    if [[ -n "$_flatpaks" ]]; then
-        for flat in "${_flatpaks[@]}"; do
-            flatpak install --or-update --user --noninteractive flathub "$flat"
-        done
-        unset _flatpaks
-    fi
+_flatpak_() {
+    [[ -z "$_flatpaks" ]] && return 0
+    for flat in "${_flatpaks[@]}"; do
+        flatpak install --or-update --user --noninteractive flathub "$flat"
+    done
+    unset _flatpaks
 }
 
-# language detect -- add elif for each language in the last if statement
-_lang_ () {
+# --- Utils ---
+
+_lang_() {
     local lang="${LANG:0:2}"
-    local available=("am" "ar" "bn" "cs" "de" "el" "en" "es" "fa" "fi" "fr" "he" "hi" "id" "it" "ja" "ko" "ms" "nl" "pl" "pt" "ru" "sv" "sw" "ta" "th" "tl" "tr" "uk" "ur" "vi" "zh" "bg" "bs" "da" "hr" "hu" "is" "no" "sk" "sl" "sr" "nb" "az" "lv" "ga" "ne" "my" "sq" "tg" "uz" "hy" "ka" "km" "lo" "mn" "ro" "et" "lt")
-    local ulang=""
-    langfile=""
-
-    if [[ " ${available[*]} " == *"$lang"* ]]; then
-        ulang="$lang"
+    local available=" am ar bn cs de el en es fa fi fr he hi id it ja ko ms nl pl pt ru sv sw ta th tl tr uk ur vi zh bg bs da hr hu is no sk sl sr nb az lv ga ne my sq tg uz hy ka km lo mn ro et lt "
+    
+    if [[ "$available" == *" $lang "* ]]; then
+        langfile="$lang"
     else
-        ulang="en"
+        langfile="en"
     fi
-    langfile="$ulang"
 }
 
-# system detection
-is_arch () {
-    if [[ ("$ID" == "arch" || "$ID_LIKE" =~ "arch" || "$ID_LIKE" =~ "archlinux") && "$ID" != "cachyos" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-is_cachy () {
-    if [ "$ID" == "cachyos" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-is_fedora () {
-    if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] || [[ "$ID_LIKE" =~ "fedora" ]] || [[ "$ID_LIKE" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "centos" ]] || [ "$ID" == "centos" ]; then
-        if ! command -v rpm-ostree &>/dev/null; then
-            return 0
-        else
-            return 1
-        fi
-    else
-        return 1
-    fi
-}
-is_ostree () {
-    if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] || [[ "$ID_LIKE" =~ "fedora" ]] || [[ "$ID_LIKE" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "centos" ]] || [ "$ID" == "centos" ]; then
-        if command -v rpm-ostree &>/dev/null; then
-            return 0
-        else
-            return 1
-        fi
-    else
-        return 1
-    fi
-}
-is_debian () {
-    if [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "debian" ]] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-is_ubuntu () {
-    if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]] || [[ "$ID_LIKE" =~ "debian" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-is_suse () {
-    if [ "$ID" == "suse" ] || [ "$ID" == "opensuse" ] || [[ "$ID_LIKE" =~ "suse" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
+# --- System Detection ---
+
+is_arch() { [[ ("$ID" == "arch" || "$ID_LIKE" =~ "arch") && "$ID" != "cachyos" ]]; }
+is_cachy() { [[ "$ID" == "cachyos" ]]; }
+is_fedora() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && ! command -v rpm-ostree &>/dev/null; }
+is_ostree() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null; }
+is_debian() { [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" =~ "debian" || "$ID_LIKE" =~ "ubuntu" ]]; }
+is_ubuntu() { [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
+is_suse() { [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
