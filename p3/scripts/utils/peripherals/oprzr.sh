@@ -55,7 +55,11 @@ elif is_arch || is_cachy; then
     chaotic_aur_lib
     _install_
 fi
-sudo gpasswd -a $USER plugdev
+if is_arch || is_cachy; then
+    sudo gpasswd -a $USER openrazer
+else    
+    sudo gpasswd -a $USER plugdev
+fi
 flatpak_in_lib
 flatpak install -y --system --noninteractive flathub app.polychromatic.controller
 zeninf "$msg036"
