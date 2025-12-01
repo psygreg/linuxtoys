@@ -316,5 +316,8 @@
   "positron_desc": "Unifies exploration and production work in one free, AI-assisted environment, empowering the full spectrum of data science in Python and R.",
   "rstudio_desc": "A set of tools built to help you be more productive with R and Python.",
   "ananicy_desc": "A daemon that automatically adjusts the 'niceness' of running processes based on their behavior to improve system responsiveness, and makes 'gamemoderun' unnecessary for games.",
-  "kdememfix_desc": "Switches KDE Plasma's rendering backend to OpenGL, which uses significantly less VRAM."
+  "kdememfix_desc": "Switches KDE Plasma's rendering backend to OpenGL, which uses significantly less VRAM.",
+  "openlinkhub_desc": "Control Corsair iCUE devices on Linux.",
+  "minfreefix_desc": "Dynamically adjusts the vm.min_free_kbytes setting based on total system RAM to improve performance and responsiveness.",
+  "minfreefix": "Dynamic Minimum Free Memory"
 }
