@@ -10,7 +10,7 @@
 linuxtoys
 
 ####### Build #######
-
+build_output
 # Debian build files
 *.build
 *.buildinfo
