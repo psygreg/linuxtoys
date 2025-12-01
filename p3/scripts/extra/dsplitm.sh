@@ -6,6 +6,7 @@
 # compat: ubuntu, debian, suse, fedora, arch, cachy
 # reboot: yes
 # nocontainer
+# optimized-only: yes
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

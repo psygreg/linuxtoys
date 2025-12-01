@@ -266,6 +266,31 @@ def are_optimizations_installed():
     return os.path.exists(autopatch_state_file)
 
 
+def _script_has_optimized_only_header(script_path):
+    """
+    Check if a script has the optimized-only header.
+    
+    The '# optimized-only:' header marks scripts as part of the recommended
+    optimizations that should be hidden when optimizations are already installed.
+    
+    Args:
+        script_path (str): Path to the script file
+        
+    Returns:
+        bool: True if the script has the optimized-only header, False otherwise
+    """
+    try:
+        with open(script_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.startswith('# optimized-only:'):
+                    return True
+                if not line.startswith('#'):
+                    break
+    except Exception:
+        pass
+    return False
+
+
 def should_show_optimization_script(script_path):
     """
     Determine if an optimization-related script should be shown based on current state.
@@ -273,6 +298,10 @@ def should_show_optimization_script(script_path):
     This function implements the toggle logic for optimization scripts:
     - If optimizations are NOT installed: show installation scripts (pdefaults.sh, etc.)
     - If optimizations ARE installed: show removal scripts (unoptimize.sh, etc.)
+    - Scripts with '# optimized-only:' header are hidden when optimizations ARE installed
+    
+    The '# optimized-only:' header marks scripts as part of the recommended optimizations,
+    so they are hidden when the system already has optimizations installed.
     
     In developer mode:
     - Without OPTIMIZER set: override optimization checks (show both install and remove scripts)
@@ -309,6 +338,13 @@ def should_show_optimization_script(script_path):
         'unoptimize.sh',
         'unoptimize-ostree.sh'
     ]
+    
+    # Check for optimized-only header
+    has_optimized_only = _script_has_optimized_only_header(script_path)
+    
+    # If script has optimized-only header and optimizations are installed, hide it
+    if has_optimized_only and optimizations_installed:
+        return False
     
     if script_name in installation_scripts:
         return not optimizations_installed  # Show if NOT installed

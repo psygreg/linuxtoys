@@ -4,6 +4,7 @@
 # description: minfreefix_desc
 # icon: preload.svg
 # compat: ubuntu, debian, fedora, suse, arch, cachy
+# optimized-only: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
