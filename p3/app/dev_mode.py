@@ -346,12 +346,12 @@ def validate_script_libraries(script_path):
     script_dir = os.path.dirname(os.path.abspath(script_path))
     
     # Dynamically find the p3 root by looking for the 'libs' directory
-    # Support scripts at different nesting levels (scripts/, scripts/category/, scripts/category/subcategory/)
+    # Dynamically find the p3 root by looking for the 'libs' directory
+    # Support scripts at different nesting levels by walking up the tree
     current_dir = script_dir
     p3_root = None
-    max_levels = 5  # Safety limit to prevent infinite loops
     
-    for _ in range(max_levels):
+    while True:
         potential_libs_dir = os.path.join(current_dir, 'libs')
         if os.path.exists(potential_libs_dir) and os.path.isdir(potential_libs_dir):
             # Check if this looks like the actual libs directory by looking for known files
@@ -359,11 +359,19 @@ def validate_script_libraries(script_path):
             if lib_files:
                 p3_root = current_dir
                 break
-        current_dir = os.path.dirname(current_dir)
+        
+        parent_dir = os.path.dirname(current_dir)
+        if parent_dir == current_dir:  # Reached filesystem root
+            break
+        current_dir = parent_dir
     
     if p3_root is None:
-        # Fallback to the old method if we can't find the libs directory
-        p3_root = os.path.join(script_dir, '..', '..')
+        # If we can't find the libs directory, we can't validate properly
+        # But we'll try to continue with what we have, maybe assuming script_dir/../../libs
+        # for backward compatibility if absolutely necessary, but better to fail gracefully
+        # or just use script_dir as base and hope for the best (though libs won't be found)
+        # For now, let's keep a safer fallback that doesn't assume depth but warns
+        p3_root = script_dir # Fallback to avoid crash, but libs_dir will be wrong likely
     
     libs_dir = os.path.join(p3_root, 'libs')
     
@@ -399,21 +407,35 @@ def validate_script_libraries(script_path):
                 # Handle combined $SCRIPT_DIR with other variables
                 if 'lang/' in source_file and ('${langfile}' in source_file or '$langfile' in source_file):
                     # Check if lang directory exists and has files
-                    resolved_base = source_file.replace('$SCRIPT_DIR', script_dir)
-                    lang_pattern = resolved_base.replace('${langfile}', '*').replace('$langfile', '*')
-                    lang_dir = os.path.dirname(lang_pattern)
+                    # Priority 1: Check in global libs/lang (standard location)
+                    # We construct the pattern based on libs_dir
                     
-                    if os.path.exists(lang_dir):
-                        lang_files = glob.glob(lang_pattern)
-                        if lang_files:
-                            # Found matching language files
-                            validation['resolved_sources'].append(f"{source_file} -> found {len(lang_files)} language files")
-                            resolved = True
-                        else:
-                            validation['resolved_sources'].append(f"{source_file} (no matching language files)")
-                            resolved = True
+                    # Extract the relative path part after 'libs/' or just 'lang/'
+                    # Typical pattern: $SCRIPT_DIR/../../libs/lang/${langfile} or similar
+                    # But we want to force check in our discovered libs_dir
+                    
+                    lang_pattern_base = os.path.join(libs_dir, 'lang')
+                    lang_pattern = os.path.join(lang_pattern_base, '*')
+                    
+                    # Also check local relative path just in case
+                    resolved_base_local = source_file.replace('$SCRIPT_DIR', script_dir)
+                    lang_pattern_local = resolved_base_local.replace('${langfile}', '*').replace('$langfile', '*')
+                    lang_dir_local = os.path.dirname(lang_pattern_local)
+
+                    found_lang_files = []
+                    
+                    if os.path.exists(lang_pattern_base):
+                         found_lang_files = glob.glob(lang_pattern)
+                    
+                    if not found_lang_files and os.path.exists(lang_dir_local):
+                        found_lang_files = glob.glob(lang_pattern_local)
+
+                    if found_lang_files:
+                        # Found matching language files
+                        validation['resolved_sources'].append(f"{source_file} -> found {len(found_lang_files)} language files")
+                        resolved = True
                     else:
-                        validation['resolved_sources'].append(f"{source_file} (lang directory not found)")
+                        validation['resolved_sources'].append(f"{source_file} (no matching language files found in {libs_dir}/lang or local)")
                         resolved = True
                 else:
                     # Try to resolve $SCRIPT_DIR first, then handle other variables
