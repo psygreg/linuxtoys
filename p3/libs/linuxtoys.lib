@@ -101,7 +101,7 @@ _install_() {
     fi
 
     # Standard Package Managers
-    case "$ID_LIKE" in
+    case "${ID_LIKE:-$ID}" in
         *debian*|*ubuntu*)
             for pak in "${_packages[@]}"; do
                 dpkg -s "$pak" &>/dev/null || sudo apt install -y "$pak"
