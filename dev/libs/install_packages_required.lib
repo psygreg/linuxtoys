@@ -10,7 +10,7 @@ _import_lib() {
     fi
 }
 
-_import_lib "libs/utils.lib"
+_import_lib "utils.lib"
 
 PACKAGE_MANAGERS=("dnf" "apt" "pacman" "zypper")
 
@@ -27,7 +27,7 @@ _msg "info" "Detected package manager: $PACKAGE_MANAGER"
 case $PACKAGE_MANAGER in
     dnf)
         INSTALLER="sudo dnf install -y"
-        PACKAGES="python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config"
+        PACKAGES="python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config patchelf dput devscripts"
         ;;
     apt)
         INSTALLER="sudo apt install -y"
@@ -38,16 +38,16 @@ case $PACKAGE_MANAGER in
         # cairo-gobject-devel -> (included in libcairo2-dev usually, but adding libcairo-gobject2 just in case)
         # gtk3 -> libgtk-3-dev
         # vte291 -> libvte-2.91-dev
-        PACKAGES="python3 python3-dev zenity jq libgirepository1.0-dev libcairo2-dev libcairo2 libcairo-gobject2 libgtk-3-dev curl wget git libvte-2.91-dev gcc pkg-config"
+        PACKAGES="python3 python3-dev zenity jq libgirepository1.0-dev libcairo2-dev libcairo2 libcairo-gobject2 libgtk-3-dev curl wget git libvte-2.91-dev gcc pkg-config patchelf dput devscripts"
         ;;
     pacman)
         INSTALLER="sudo pacman -S --noconfirm"
         # Arch names
-        PACKAGES="python zenity jq gobject-introspection cairo gtk3 curl wget git vte3 gcc pkgconf"
+        PACKAGES="python zenity jq gobject-introspection cairo gtk3 curl wget git vte3 gcc pkgconf patchelf"
         ;;
     zypper)
         INSTALLER="sudo zypper install -y"
-        PACKAGES="python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config"
+        PACKAGES="python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config patchelf dput devscripts"
         ;;
     *)
         _msg "error" "Unsupported package manager: $PACKAGE_MANAGER"

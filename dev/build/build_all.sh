@@ -4,6 +4,8 @@
 # This script builds DEB, RPM, and Arch packages in sequence
 
 set -e  # Exit on any error
+ROOT_DIR="$PWD"; while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done;
+
 _import_lib() {
     local lib_path="$1"
     if [ -f "$lib_path" ]; then
@@ -14,7 +16,7 @@ _import_lib() {
     fi
 }
 # Source utils library
-_import_lib "../libs/utils.lib"
+_import_lib "$ROOT_DIR/dev/libs/utils.lib"
 
 _msg "info" "=== LinuxToys Package Builder ==="
 _msg "info" "This script will build DEB, RPM, Arch, and AppImage packages"
@@ -32,45 +34,38 @@ if [ -z "$LT_VERSION" ]; then
 fi
 
 # Update the version file
-echo "$LT_VERSION" > ../../../src/ver
+# echo "$LT_VERSION" > ../../../src/ver
 
 _msg "info" "Building packages for version: $LT_VERSION"
 
 # Define Output Directory
-BUILD_OUTPUT_DIR="$(pwd)/../../build_output/$LT_VERSION"
+BUILD_OUTPUT_DIR="$(pwd)/../build_output/$LT_VERSION"
 mkdir -p "$BUILD_OUTPUT_DIR"
 
 # Build DEB package
 _msg "info" "=== Building DEB package ==="
 mkdir -p "$BUILD_OUTPUT_DIR/deb"
-cd deb
-./builddeb.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/deb"
-cd ..
+./deb/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/deb"
 _msg "info" "DEB package build completed!"
 
 # Build RPM package
 _msg "info" "=== Building RPM package ==="
 mkdir -p "$BUILD_OUTPUT_DIR/rpm"
-cd rpm
-./buildrpm.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/rpm"
-cd ..
+./rpm/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/rpm"
 _msg "info" "RPM package build completed!"
 
 # Build Arch package
 _msg "info" "=== Building Arch package ==="
 mkdir -p "$BUILD_OUTPUT_DIR/pkgbuild"
-cd pkgbuild
-./buildpkg.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/pkgbuild"
-cd ..
+./pkgbuild/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/pkgbuild"
 _msg "info" "Arch package build completed!"
 
+# Deprecated and removed
 # Build AppImage package
-_msg "info" "=== Building AppImage package ==="
-mkdir -p "$BUILD_OUTPUT_DIR/appimage"
-cd appimage
-./buildappimage.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/appimage"
-cd ..
-_msg "info" "AppImage package build completed!"
+# _msg "info" "=== Building AppImage package ==="
+# mkdir -p "$BUILD_OUTPUT_DIR/appimage"
+# ./appimage/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/appimage"
+# _msg "info" "AppImage package build completed!"
 
 _msg "info" "=== All packages built successfully! ==="
 _msg "info" "Artifacts are located in: $BUILD_OUTPUT_DIR"

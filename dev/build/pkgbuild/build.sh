@@ -1,6 +1,40 @@
 #!/bin/bash
-# ask version to package
-read -p "Version number: " lt_version
+# PKGBUILD/Arch build script for LinuxToys
+# Usage: build.sh <version> <output_path>
+# Example: build.sh 1.1 /tmp/builds
+
+# Source utils.lib
+SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
+source "$SCRIPT_DIR/../../libs/utils.lib"
+
+# Detect project root automatically
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../" && pwd)"
+
+# Check CLI arguments
+if [ $# -ne 2 ]; then
+    _msg error "Usage: $0 <version> <output_path>"
+    _msg info "Example: $0 1.1 /tmp/builds"
+    exit 1
+fi
+
+lt_version="$1"
+OUTPUT_PATH="$2"
+
+# Validate project structure
+if [ ! -d "$PROJECT_ROOT/p3" ]; then
+    _msg error "Invalid project structure: $PROJECT_ROOT/p3 not found"
+    exit 1
+fi
+
+# Create output directory if it doesn't exist
+mkdir -p "$OUTPUT_PATH"
+
+_msg info "Building LinuxToys version $lt_version for Arch Linux..."
+_msg info "Output path: $OUTPUT_PATH"
+
+# Change to output directory
+cd "$OUTPUT_PATH"
+
 # Clean up any existing build files except the final tarball
 rm -rf linuxtoys_${lt_version}.orig linuxtoys-${lt_version} pkg src
 
@@ -11,10 +45,10 @@ mkdir -p linuxtoys-${lt_version}/usr/share/applications
 mkdir -p linuxtoys-${lt_version}/usr/share/icons/hicolor/scalable/apps
 
 # Copy the Python app from p3 directory
-cp -rf ../../../p3/* linuxtoys-${lt_version}/usr/share/linuxtoys/
+cp -rf "$PROJECT_ROOT/p3"/* linuxtoys-${lt_version}/usr/share/linuxtoys/
 # Copy desktop file and icon
-cp ../../LinuxToys.desktop linuxtoys-${lt_version}/usr/share/applications/
-cp ../../linuxtoys.svg linuxtoys-${lt_version}/usr/share/icons/hicolor/scalable/apps/
+cp "$PROJECT_ROOT/dev/LinuxToys.desktop" linuxtoys-${lt_version}/usr/share/applications/
+cp "$PROJECT_ROOT/dev/linuxtoys.svg" linuxtoys-${lt_version}/usr/share/icons/hicolor/scalable/apps/
 
 # Create the main executable script
 cat > linuxtoys-${lt_version}/usr/bin/linuxtoys << 'EOF'
