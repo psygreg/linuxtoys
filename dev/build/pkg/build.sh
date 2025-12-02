@@ -71,7 +71,7 @@ chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/run.py"
 tar -cJf "$OUTPUT_PATH/linuxtoys-${LT_VERSION}.tar.xz" -C "$OUTPUT_PATH" "linuxtoys-${LT_VERSION}/"
 
 # Copy PKGBUILD to output directory
-cp "$ROOT_DIR/dev/build/pkgbuild/PKGBUILD" "$OUTPUT_PATH/PKGBUILD"
+cp "$ROOT_DIR/dev/build/pkg/PKGBUILD" "$OUTPUT_PATH/PKGBUILD"
 
 # update version and hash on PKGBUILD file
 hash=$(sha256sum "$OUTPUT_PATH/linuxtoys-${LT_VERSION}.tar.xz" | cut -d' ' -f1)
@@ -80,17 +80,10 @@ sed -i "s/sha256sums=('[^']*')/sha256sums=('$hash')/" "$OUTPUT_PATH/PKGBUILD"
 # Update source to use local tarball
 sed -i "s|source=.*|source=(\"linuxtoys-${LT_VERSION}.tar.xz\")|" "$OUTPUT_PATH/PKGBUILD"
 
-# build package
-if command -v makepkg &> /dev/null; then
-    (
-        cd "$OUTPUT_PATH"
-        # Use --nodeps to avoid checking for pacman/alpm database on non-Arch systems
-        makepkg --nodeps
-    )
-else
-    _msg warning "makepkg not found. Skipping package creation."
-    _msg info "Tarball and PKGBUILD are ready at $OUTPUT_PATH"
-fi
+(
+    cd "$OUTPUT_PATH"
+    makepkg
+)
 
 # Clean up build artifacts but keep the tarball for Arch packaging
 # rm -rf "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
