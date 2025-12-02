@@ -17,7 +17,7 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-lt_version="$1"
+LT_VERSION="$1"
 OUTPUT_PATH="$2"
 
 # Validate project structure
@@ -29,7 +29,7 @@ fi
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_PATH"
 
-_msg info "Building LinuxToys version $lt_version for Arch Linux..."
+_msg info "Building LinuxToys version $LT_VERSION for Arch Linux..."
 _msg info "Output path: $OUTPUT_PATH"
 
 # Change to output directory
@@ -81,7 +81,7 @@ chmod +x linuxtoys-${lt_version}/usr/share/linuxtoys/run.py
 tar -cJf linuxtoys-${lt_version}.tar.xz linuxtoys-${lt_version}/
 # update version and hash on PKGBUILD file
 hash=$(sha256sum linuxtoys-${lt_version}.tar.xz | cut -d' ' -f1)
-sed -i "s/pkgver='[^']*'/pkgver='$lt_version'/" PKGBUILD
+sed -i "s/pkgver='[^']*'/pkgver='$LT_VERSION'/" PKGBUILD
 sed -i "s/sha256sums=('[^']*')/sha256sums=('$hash')/" PKGBUILD
 
 # build package

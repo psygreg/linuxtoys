@@ -17,7 +17,7 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-lt_version="$1"
+LT_VERSION="$1"
 OUTPUT_PATH="$2"
 
 # Validate project structure
@@ -39,7 +39,7 @@ ENTRY_POINT="$PROJECT_ROOT/p3/run.py"
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_PATH"
 
-_msg info "Starting Nuitka build for version $lt_version..."
+_msg info "Starting Nuitka build for version $LT_VERSION..."
 _msg info "Project Root: $PROJECT_ROOT"
 _msg info "Entry Point: $ENTRY_POINT"
 _msg info "Output Path: $OUTPUT_PATH"

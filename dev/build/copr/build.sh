@@ -25,7 +25,7 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-lt_version="$1"
+LT_VERSION="$1"
 OUTPUT_PATH="$2"
 
 # Validate project structure
@@ -37,7 +37,7 @@ fi
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_PATH"
 
-_msg info "Building LinuxToys version $lt_version for COPR/RPM..."
+_msg info "Building LinuxToys version $LT_VERSION for COPR/RPM..."
 _msg info "Output path: $OUTPUT_PATH"
 
 # Change to output directory
