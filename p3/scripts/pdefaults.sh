@@ -40,6 +40,8 @@ sysag_run () {
     fi
     # plasma VRAM usage fix
     plasma_mem_fix
+    # vm.min_free_kbytes dynamic setup
+    free_mem_fix
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
     # codec fix for Fedora/OpenSUSE

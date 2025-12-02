@@ -4,6 +4,7 @@
 # description: susefix_desc
 # icon: suse.svg
 # compat: suse
+# optimized-only: yes
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

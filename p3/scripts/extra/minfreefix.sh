@@ -1,20 +1,15 @@
 #!/bin/bash
-# name: EarlyOOM
+# name: minfreefix
 # version: 1.0
-# description: earlyoom_desc
+# description: minfreefix_desc
 # icon: preload.svg
-# nocontainer
-# repo: https://github.com/rfjakob/earlyoom
+# compat: ubuntu, debian, fedora, suse, arch, cachy
 # optimized-only: yes
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
-cd $HOME
-sudo_rq
-earlyoom_lib
-zeninf "$msg036"
+free_mem_fix
+zeninf "$rebootmsg" # while immediate rebooting is not necessary, so I won

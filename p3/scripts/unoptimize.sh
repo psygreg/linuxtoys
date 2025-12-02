@@ -21,6 +21,7 @@ sudo rm $PATH_UDEV/20-audio-pm.rules \
         $PATH_UDEV/50-sata.rules \
         $PATH_UDEV/60-ioschedulers.rules \
         $PATH_UDEV/69-hdparm.rules \
+        $PATH_UDEV/80-gpu-reset.rules \
         $PATH_UDEV/99-cpu-dma-latency.rules
 PATH_TEMPFILES="/usr/lib/tmpfiles.d/"
 sudo rm $PATH_TEMPFILES/coredump.conf \
