@@ -1,46 +1,56 @@
 #!/bin/bash
+# Debian/DEB build script for LinuxToys
+# Usage: build.sh <version> <output_path>
+# Example: build.sh 1.1 /tmp/builds
 
-# Source utils library
-source "$(dirname "$0")/../../libs/utils.lib"
+ROOT_DIR="$PWD"
+while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
+source "$ROOT_DIR/dev/libs/utils.lib"
 
-LT_VERSION="$1"
-OUTPUT_DIR="$2"
-
-if [ -z "$LT_VERSION" ] || [ -z "$OUTPUT_DIR" ]; then
-    _msg "error" "Usage: $0 <version> <output_dir>"
+# Check CLI arguments
+if [ $# -ne 2 ]; then
+    _msg error "Usage: $0 <version> <output_path>"
+    _msg info "Example: $0 1.1 /tmp/builds"
     exit 1
 fi
 
-# Clean up any existing build files
-rm -rf linuxtoys-* linuxtoys_*.orig* *.tar.xz *.deb *.build* *.changes *.dsc
+LT_VERSION="$1"
+OUTPUT_PATH="$2"
+
+_msg info "Building LinuxToys version $LT_VERSION for Debian/Ubuntu..."
+_msg info "Output path: $OUTPUT_PATH"
+
+# Delete output directory if it exists
+rm -rf "$OUTPUT_PATH"
+mkdir -p "$OUTPUT_PATH"
 
 # set up dir structure for the new Python-based app
-mkdir -p linuxtoys_$LT_VERSION.orig/usr/bin
-mkdir -p linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys
-mkdir -p linuxtoys_$LT_VERSION.orig/usr/share/applications
-mkdir -p linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps
+mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin"
+mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys"
+mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications"
+mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps"
 
 # Copy the Python app from p3 directory to proper location
-cp -rf ../../../p3/* linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/
+cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/"
 # Clean up Python cache files to avoid warnings
-find linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/ -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-find linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/ -name "*.pyc" -delete 2>/dev/null || true
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" -name "*.pyc" -delete 2>/dev/null || true
 # Copy desktop file and icon
-cp ../../LinuxToys.desktop linuxtoys_$LT_VERSION.orig/usr/share/applications/
-cp ../../linuxtoys.svg linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps/
+cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications/"
+cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script
-cat > linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
 cd /usr/share/linuxtoys
 exec /usr/bin/python3 run.py "$@"
 EOF
-chmod +x linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys
+chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys"
 
 # Create the CLI shortcut script
-cat > linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
@@ -49,29 +59,27 @@ export EASY_CLI=1
 cd /usr/share/linuxtoys
 exec /usr/bin/python3 run.py "$@"
 EOF
-chmod +x linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli
+chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli"
 
 # Make sure all shell scripts are executable
-find linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
-find linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
-chmod +x linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/run.py
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
+chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/run.py"
 
 # Create orig tarball
-tar -cJf linuxtoys_$LT_VERSION.orig.tar.xz linuxtoys_$LT_VERSION.orig/
+tar -C "$OUTPUT_PATH" -cJf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig.tar.xz" "linuxtoys_$LT_VERSION.orig/"
 
 # Create debian package structure
-mkdir -p linuxtoys-$LT_VERSION
+mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
 
 # Copy the orig structure into the debian build directory
-cp -rf linuxtoys_$LT_VERSION.orig/* linuxtoys-$LT_VERSION/
-
-cd linuxtoys-$LT_VERSION || exit 1
+cp -rf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/* "$OUTPUT_PATH/linuxtoys-$LT_VERSION/"
 
 # Copy debian packaging files from existing structure (assuming they exist)
-mkdir -p debian/source
+mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source"
 
 # Create debian/control
-cat > debian/control << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/control" <<'EOF'
 Source: linuxtoys
 Section: utils
 Priority: optional
@@ -91,7 +99,7 @@ Description: A set of tools for Linux presented in a user-friendly way.
 EOF
 
 # Create debian/rules
-cat > debian/rules << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules" <<'EOF'
 #!/usr/bin/make -f
 
 %:
@@ -105,10 +113,10 @@ override_dh_install:
 	find debian/linuxtoys/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 	find debian/linuxtoys/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 EOF
-chmod +x debian/rules
+chmod +x "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules"
 
 # Create debian/copyright
-cat > debian/copyright << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/copyright" <<'EOF'
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: linuxtoys
 Source: https://github.com/psygreg/linuxtoys
@@ -136,12 +144,12 @@ License: GPL-3+
 EOF
 
 # Create debian/source/format
-cat > debian/source/format << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/format" <<'EOF'
 3.0 (quilt)
 EOF
 
 # Create initial debian/changelog
-cat > debian/changelog << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog" <<'EOF'
 linuxtoys (5.0-1) noble; urgency=medium
 
   * Initial release for new Python-based structure
@@ -152,16 +160,16 @@ EOF
 
 # set changelog file
 day=$(date +%d)
-day_abbr=$(LC_TIME=C date +%a)  # This will always be in English
+day_abbr=$(LC_TIME=C date +%a) # This will always be in English
 month=$(LC_TIME=C date +%b)
 year=$(date +%Y)
 changelog_line="linuxtoys (${LT_VERSION}-1) noble; urgency=medium"
 changelog_line2=" -- Victor Gregory <vicgregor@pm.me>  ${day_abbr}, ${day} ${month} ${year} 03:00:47 -0300"
-sed -i "1c\\$changelog_line" debian/changelog
-sed -i "6c\\$changelog_line2" debian/changelog
+sed -i "1c\\$changelog_line" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
+sed -i "6c\\$changelog_line2" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
 
 # Update debian/install file for new structure
-cat > debian/install << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/install" <<'EOF'
 usr/bin/linuxtoys /usr/bin/
 usr/bin/linuxtoys-cli /usr/bin/
 usr/share/linuxtoys /usr/share/
@@ -170,25 +178,16 @@ usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/sca
 EOF
 
 # build and upload for PPA first - doesn't work if done after building the package
-debuild -S -sa -kvicgregor@pm.me
-sleep 1
-# dput ppa:psygreg/linuxtoys ../linuxtoys_$LT_VERSION-1_source.changes
-# sleep 1
+(
+    cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION" || exit 1
+    debuild -S -sa -kvicgregor@pm.me
+    sleep 1
+    dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
+    sleep 1
+    # build package
+    debuild -us -uc # this builder script requires devscripts!!
+)
 
-# build package
-debuild -us -uc # this builder script requires devscripts!!
-
-# Move artifacts to output dir
-cd ..
-mv linuxtoys_${LT_VERSION}-1_amd64.deb "$OUTPUT_DIR/"
-mv linuxtoys_${LT_VERSION}-1.debian.tar.xz "$OUTPUT_DIR/"
-mv linuxtoys_${LT_VERSION}-1.dsc "$OUTPUT_DIR/"
-mv linuxtoys_${LT_VERSION}.orig.tar.xz "$OUTPUT_DIR/"
-mv linuxtoys_${LT_VERSION}-1_source.build "$OUTPUT_DIR/"
-mv linuxtoys_${LT_VERSION}-1_source.changes "$OUTPUT_DIR/"
-mv linuxtoys_${LT_VERSION}-1_source.ppa.upload "$OUTPUT_DIR/" 2>/dev/null || true
-
-# Clean up build artifacts
-rm -rf linuxtoys_$LT_VERSION.orig/ linuxtoys-$LT_VERSION/
-
-_msg "info" "DEB build done."
+# Clean up build artifacts but keep the final package
+rm -rf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig.tar.xz" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/"
+echo "All done" && sleep 3 && exit 0
