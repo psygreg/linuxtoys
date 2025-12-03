@@ -109,38 +109,42 @@ sudo zypper in -y bash git curl wget zenity python3 python3-gobject python3-requ
 
 ### Cloning and Running
 
-1.  **Clone the repository:**
-    ```bash
+**Clone the repository:**
+```bash
     git clone --depth=1 https://github.com/psygreg/linuxtoys.git
     cd linuxtoys
-    ```
+```
 
-2.  **Install Dependencies:**
+**Install Dependencies:**
 
-    **Option 1: Virtual Environment (Recommended)**
-    Create an isolated environment to avoid conflicts with system packages.
-    ```bash
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -r p3/requirements.txt
-    ```
+**Option 1: Virtual Environment (Recommended)**
 
-    **Option 2: Direct Installation (Not Recommended)**
-    > [!CAUTION]
-    > Installing packages globally can conflict with your system's package manager and cause instability.
-    ```bash
-    pip install -r p3/requirements.txt
-    ```
+Create an isolated environment to avoid conflicts with system packages.
 
-3.  **Run the application:**
-    ```bash
-    python3 p3/run.py
-    ```
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r p3/requirements.txt
+```
 
-4.  **Update the application:**
-    ```bash
-    git pull
-    ```
+**Option 2: Direct Installation (Not Recommended)**
+
+> [!CAUTION]
+> Installing packages globally can conflict with your system's package manager and cause instability.
+
+```bash
+pip install -r p3/requirements.txt
+```
+
+**Run the application:**
+```bash
+python3 p3/run.py
+```
+
+**Update the application:**
+```bash
+git pull
+```
 
 For more comprehensive developer documentation, please refer to the [Developer Guide](dev/README.md).
 
