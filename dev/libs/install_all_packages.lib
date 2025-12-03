@@ -35,7 +35,7 @@ apt)
 pacman)
     INSTALLER="sudo pacman -S --noconfirm"
     # Arch names
-    PACKAGES="python3.13 zenity jq gobject-introspection cairo gtk3 curl wget git vte3 gcc pkgconf patchelf rpmbuild"
+    PACKAGES="python python-setuptools python-pip base-devel zenity jq gobject-introspection cairo gtk3 curl wget git vte3 gcc pkgconf patchelf"
     ;;
 zypper)
     INSTALLER="sudo zypper install -y"

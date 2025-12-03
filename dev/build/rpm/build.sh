@@ -57,8 +57,8 @@ day=$(date +%d)
 day_abbr=$(LC_TIME=C date +%a) # This will always be in English
 month=$(LC_TIME=C date +%b)
 year=$(date +%Y)
-specfile_line="Version:        ${lt_version}"
-specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${lt_version}"
+specfile_line="Version:        ${LT_VERSION}"
+specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${LT_VERSION}"
 sed -i "2c\\$specfile_line" ${ROOT_DIR}/dev/build/rpm/linuxtoys.spec
 sed -i "53c\\$specfile_line2" ${ROOT_DIR}/dev/build/rpm/linuxtoys.spec
 # build
