@@ -7,17 +7,9 @@ set -e # Exit on any error
 ROOT_DIR="$PWD"
 while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 
-_import_lib() {
-    local lib_path="$1"
-    if [ -f "$lib_path" ]; then
-        source "$lib_path"
-    else
-        echo -e "\033[31mERROR:\033[0m Library not found: $lib_path. YOU must be in the same folder as the script."
-        exit 1
-    fi
-}
-# Source utils library
-_import_lib "$ROOT_DIR/dev/libs/utils.lib"
+source "$ROOT_DIR/dev/libs/utils.lib"
+
+BUILD_OUTPUT_DIR="$ROOT_DIR/dev/build_output/$LT_VERSION"
 
 _msg "info" "=== LinuxToys Package Builder ==="
 _msg "info" "This script will build DEB, RPM, Arch, and AppImage packages"
@@ -35,30 +27,22 @@ if [ -z "$LT_VERSION" ]; then
 fi
 
 # Update the version file
-# echo "$LT_VERSION" > ../../../src/ver
-
+echo "$LT_VERSION" >"$ROOT_DIR/src/ver"
 _msg "info" "Building packages for version: $LT_VERSION"
-
-# Define Output Directory
-BUILD_OUTPUT_DIR="$(pwd)/../build_output/$LT_VERSION"
-mkdir -p "$BUILD_OUTPUT_DIR"
 
 # Build DEB package
 _msg "info" "=== Building DEB package ==="
-mkdir -p "$BUILD_OUTPUT_DIR/deb"
-./deb/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/deb"
+$ROOT_DIR/dev/build/deb/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/deb"
 _msg "info" "DEB package build completed!"
 
 # Build RPM package
 _msg "info" "=== Building RPM package ==="
-mkdir -p "$BUILD_OUTPUT_DIR/rpm"
-./rpm/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/rpm"
+$ROOT_DIR/dev/build/rpm/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/rpm"
 _msg "info" "RPM package build completed!"
 
 # Build Arch package
 _msg "info" "=== Building Arch package ==="
-mkdir -p "$BUILD_OUTPUT_DIR/pkgbuild"
-./pkgbuild/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/pkgbuild"
+$ROOT_DIR/dev/build/pkg/build.sh "$LT_VERSION" "$BUILD_OUTPUT_DIR/pkg"
 _msg "info" "Arch package build completed!"
 
 # Deprecated and removed

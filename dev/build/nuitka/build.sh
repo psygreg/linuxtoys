@@ -44,31 +44,34 @@ setup_venv() {
     fi
 
     # Check if venv exists, if not create it
-    if [[ ! -d "$VENV_PATH" ]]; then
-        local python_cmd=""
-        # Detect Python version starting from 3.13 down to 3.6
-        for ver in 13 12 11 10 9 8 7 6; do
-            if command -v "python3.$ver" &>/dev/null; then
-                python_cmd="python3.$ver"
-                _msg info "Found Python version: $python_cmd"
-                break
-            fi
-        done
-
-        if [[ -z "$python_cmd" ]]; then
-            if command -v python3 &>/dev/null; then
-                python_cmd="python3"
-                _msg error "Specific Python version (3.6-3.13) not found! for secure build, please install one of these versions."
-                return 1
-            fi
-        fi
-
-        _msg info "Creating new Virtual Environment at $VENV_PATH using $python_cmd..."
-        $python_cmd -m venv "$VENV_PATH" || {
-            _msg error "Failed to create venv"
-            return 1
-        }
+    if [[ -d "$VENV_PATH" ]]; then
+        _msg info "Removing old Virtual Environment at $VENV_PATH"
+        rm -rf "$VENV_PATH"
     fi
+
+    local python_cmd=""
+    # Detect Python version starting from 3.13 down to 3.6
+    for ver in 13 12 11 10 9 8 7 6; do
+        if command -v "python3.$ver" &>/dev/null; then
+            python_cmd="python3.$ver"
+            _msg info "Found Python version: $python_cmd"
+            break
+        fi
+    done
+
+    if [[ -z "$python_cmd" ]]; then
+        if command -v python3 &>/dev/null; then
+            python_cmd="python3"
+            _msg error "Specific Python version (3.6-3.13) not found! for secure build, please install one of these versions."
+            return 1
+        fi
+    fi
+
+    _msg info "Creating new Virtual Environment at $VENV_PATH using $python_cmd..."
+    $python_cmd -m venv "$VENV_PATH" || {
+        _msg error "Failed to create venv"
+        return 1
+    }
 
     _msg info "Activating Virtual Environment..."
     source "$VENV_PATH/bin/activate" || {
@@ -112,14 +115,14 @@ mkdir -p "$OUTPUT_PATH"
 _msg info "Compiling LinuxToys version $LT_VERSION with Nuitka..."
 _msg info "Output path: $OUTPUT_PATH"
 
-$NUITKA --standalone --lto=no --debug --follow-imports --output-dir="$OUTPUT_PATH" \
+$NUITKA --onefile --follow-imports --output-dir="$OUTPUT_PATH" \
     --include-package=requests \
     --include-data-dir="$ROOT_DIR/p3/app/icons=app/icons" \
     --include-data-dir="$ROOT_DIR/p3/helpers=helpers" \
     --include-data-dir="$ROOT_DIR/p3/libs=libs" \
     --include-data-dir="$ROOT_DIR/p3/scripts=scripts" \
     --include-data-file="$ROOT_DIR/p3/LICENSE=LICENSE" \
-    --include-data-file="$ROOT_DIR/p3/app/style.css=style.css" \
+    --include-data-file="$ROOT_DIR/p3/app/style.css=app/style.css" \
     --include-data-file="$ROOT_DIR/p3/manifest.txt=manifest.txt" \
     --include-data-file="$ROOT_DIR/p3/update_version.py=update_version.py" \
     --enable-plugin=gi \
