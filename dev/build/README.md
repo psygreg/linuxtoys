@@ -19,4 +19,4 @@ bash build.sh (version) (path)
 ```
 
 > [!WARNING!]
-> The `build_all.sh` script may NOT work as it is still in test mode. Additionally, the packages required for compilation might not be available in the package manager of the operating system you are using.
+> For the `build_all.sh` script to work correctly, you must have at least 3 **Distrobox** containers created: **Arch Linux**, **Debian**, and **Fedora**. All 3 containers must be correctly configured with all dependencies installed for the build to succeed.

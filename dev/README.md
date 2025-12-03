@@ -47,7 +47,7 @@ The build system is located in `dev/build`.
 ### Global Build Script
 
 > [!WARNING]
-> `dev/build/build_all.sh` is in **TEST MODE**. It may not function correctly on all systems.
+> For `dev/build/build_all.sh` to work correctly, you must have at least 3 **Distrobox** containers created: **Arch Linux**, **Debian**, and **Fedora**. All 3 containers must be correctly configured with all dependencies installed for the build to succeed.
 
 To attempt building all packages:
 ```bash
