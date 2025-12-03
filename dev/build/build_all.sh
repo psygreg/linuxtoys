@@ -9,8 +9,6 @@ while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR=
 
 source "$ROOT_DIR/dev/libs/utils.lib"
 
-BUILD_OUTPUT_DIR="$ROOT_DIR/dev/build_output/$LT_VERSION"
-
 _msg "info" "=== LinuxToys Package Builder ==="
 _msg "info" "This script will build DEB, RPM, Arch, and AppImage packages"
 
@@ -25,6 +23,8 @@ if [ -z "$LT_VERSION" ]; then
     _msg "error" "Version number is required!"
     exit 1
 fi
+
+BUILD_OUTPUT_DIR="$ROOT_DIR/dev/build_output/$LT_VERSION"
 
 # Update the version file
 echo "$LT_VERSION" >"$ROOT_DIR/src/ver"

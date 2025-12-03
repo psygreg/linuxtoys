@@ -25,18 +25,6 @@ This script detects your package manager (dnf, apt, pacman, zypper) and installs
 - `base-devel` group installed
 - Arch Linux system or container
 
-### For AppImage
-
-You'll need to install linuxdeploy tools. The scripts will download them automatically, but you can also install them manually:
-
-```bash
-# Download linuxdeploy
-wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-chmod +x linuxdeploy-x86_64.AppImage
-# Download linuxdeploy Python plugin
-wget https://github.com/niess/linuxdeploy-plugin-python/releases/download/continuous/linuxdeploy-plugin-python-x86_64.AppImage
-chmod +x linuxdeploy-plugin-python-x86_64.AppImage
-```
 
 ### Python Dependencies
 
