@@ -50,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Tue Dec 02 2025 Victor Gregory <psygreg@pm.me> - 1.0
+* Wed Dec 03 2025 Victor Gregory <psygreg@pm.me> - 1.0
 - Updated to current app structure with full Python application
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements
