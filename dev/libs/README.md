@@ -11,5 +11,5 @@ If you need to output logs, you must use the `_msg` function by sourcing:
 
 ## Warnings
 
-> [!WARNING!]
+> [!WARNING]
 > The `install_all_packages.lib` library is currently in **TEST MODE**. Use it with caution as it may undergo significant changes or contain unstable features.

@@ -18,5 +18,5 @@ All `build.sh` files are automated CLI scripts to build the respective systems.
 bash build.sh (version) (path)
 ```
 
-> [!WARNING!]
+> [!WARNING]
 > For the `build_all.sh` script to work correctly, you must have at least 3 **Distrobox** containers created: **Arch Linux**, **Debian**, and **Fedora**. All 3 containers must be correctly configured with all dependencies installed for the build to succeed.

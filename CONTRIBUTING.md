@@ -4,7 +4,16 @@ Thank you for your interest in contributing to LinuxToys! This project aims to p
 
 ## Documentation
 
-Before getting started, please review the [Developer Handbook](https://github.com/psygreg/linuxtoys/wiki/Developer-Handbook) for complete documentation on LinuxToys' libraries and development practices.
+Before getting started, please review the [Knowledge Base](https://github.com/psygreg/linuxtoys/wiki/Knowledge-Base) for complete documentation on LinuxToys' libraries and development practices.
+
+**Important:** You must explicitly follow the instructions provided in all `README.md` files located in the project directories. These files contain essential guidelines for specific components of the project.
+
+**Like those:**
+- [dev/README.md](dev/README.md)
+- [dev/build/README.md](dev/build/README.md)
+- [dev/libs/README.md](dev/libs/README.md)
+
+**Note:** More `README.md` files may be added in the future. If any `README.md` file is not present in a directory, please follow the instructions provided in the [Knowledge Base](https://github.com/psygreg/linuxtoys/wiki/Knowledge-Base).
 
 ## Development Priorities
 
@@ -46,7 +55,7 @@ When contributing to LinuxToys, please keep these core priorities in mind, liste
 
 ## Getting Started
 
-1. Review the [Developer Handbook](https://github.com/psygreg/linuxtoys/wiki/Developer-Handbook)
+1. Review the [Knowledge Base](https://github.com/psygreg/linuxtoys/wiki/Knowledge-Base)
 2. Fork the repository and create a feature branch
 3. Make your changes following the development priorities
 4. Test thoroughly across supported systems

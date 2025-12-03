@@ -99,4 +99,7 @@ makepkg -fcCd OPTIONS=-debug -D /tmp/linuxtoys-bin
 sudo pacman --noconfirm -U /tmp/linuxtoys-bin/linuxtoys-bin-*.tar.zst
 ```
 
+## Contributing
+If you are interested in contributing to the project, please check out our [Contribution Guidelines](CONTRIBUTING.md).
+
 ## [Credits](https://linux.toys/credits.html)

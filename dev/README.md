@@ -10,7 +10,7 @@ Welcome to the **LinuxToys** developer documentation. This guide provides everyt
 
 To develop for LinuxToys, you need a Linux environment with the necessary build tools. We provide a library to help install dependencies, but please note the warning below.
 
-> [!WARNING!]
+> [!WARNING]
 > The `dev/libs/install_all_packages.lib` library is currently in **TEST MODE**. Use it with caution.
 
 ### Setting up the Environment
