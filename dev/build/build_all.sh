@@ -3,8 +3,9 @@
 # Master build script for LinuxToys packages
 # This script builds DEB, RPM, and Arch packages in sequence
 
-set -e  # Exit on any error
-ROOT_DIR="$PWD"; while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done;
+set -e # Exit on any error
+ROOT_DIR="$PWD"
+while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 
 _import_lib() {
     local lib_path="$1"

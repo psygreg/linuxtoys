@@ -4,8 +4,8 @@ _msg() {
     local text="$2"
 
     case "$type" in
-        info)    echo -e "\033[32mINFO:\033[0m $text" ;;
-        warning) echo -e "\033[33mWARNING:\033[0m $text" ;;
-        error)   echo -e "\033[31mERROR:\033[0m $text" ;;
+    info) echo -e "\033[32mINFO:\033[0m $text" ;;
+    warning) echo -e "\033[33mWARNING:\033[0m $text" ;;
+    error) echo -e "\033[31mERROR:\033[0m $text" ;;
     esac
 }

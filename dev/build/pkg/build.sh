@@ -4,7 +4,8 @@
 # Example: build.sh 1.1 /tmp/builds
 
 # Source utils.lib
-ROOT_DIR="$PWD"; while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done;
+ROOT_DIR="$PWD"
+while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 source "$ROOT_DIR/dev/libs/utils.lib"
 
 # Check CLI arguments
@@ -16,12 +17,6 @@ fi
 
 LT_VERSION="$1"
 OUTPUT_PATH="$2"
-
-# Validate project structure
-if [ ! -d "$ROOT_DIR/p3" ]; then
-    _msg error "Invalid project structure: $ROOT_DIR/p3 not found"
-    exit 1
-fi
 
 _msg info "Building LinuxToys version $LT_VERSION for Arch Linux..."
 _msg info "Output path: $OUTPUT_PATH"
@@ -41,7 +36,7 @@ cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/s
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script
-cat > "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
@@ -51,7 +46,7 @@ EOF
 chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys"
 
 # Create the CLI shortcut script
-cat > "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys-cli" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys-cli" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"

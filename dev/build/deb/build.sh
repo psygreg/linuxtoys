@@ -3,7 +3,8 @@
 # Usage: build.sh <version> <output_path>
 # Example: build.sh 1.1 /tmp/builds
 
-ROOT_DIR="$PWD"; while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done;
+ROOT_DIR="$PWD"
+while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 source "$ROOT_DIR/dev/libs/utils.lib"
 
 # Check CLI arguments
@@ -15,12 +16,6 @@ fi
 
 LT_VERSION="$1"
 OUTPUT_PATH="$2"
-
-# Validate project structure
-if [ ! -d "$ROOT_DIR/p3" ]; then
-    _msg error "Invalid project structure: $ROOT_DIR/p3 not found"
-    exit 1
-fi
 
 _msg info "Building LinuxToys version $LT_VERSION for Debian/Ubuntu..."
 _msg info "Output path: $OUTPUT_PATH"
@@ -45,7 +40,7 @@ cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/us
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script
-cat > "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
@@ -55,7 +50,7 @@ EOF
 chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys"
 
 # Create the CLI shortcut script
-cat > "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
@@ -84,7 +79,7 @@ cp -rf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/* "$OUTPUT_PATH/linuxtoys-$LT_V
 mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source"
 
 # Create debian/control
-cat > "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/control" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/control" <<'EOF'
 Source: linuxtoys
 Section: utils
 Priority: optional
@@ -104,7 +99,7 @@ Description: A set of tools for Linux presented in a user-friendly way.
 EOF
 
 # Create debian/rules
-cat > "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules" <<'EOF'
 #!/usr/bin/make -f
 
 %:
@@ -121,7 +116,7 @@ EOF
 chmod +x "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules"
 
 # Create debian/copyright
-cat > "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/copyright" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/copyright" <<'EOF'
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: linuxtoys
 Source: https://github.com/psygreg/linuxtoys
@@ -149,12 +144,12 @@ License: GPL-3+
 EOF
 
 # Create debian/source/format
-cat > "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/format" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/format" <<'EOF'
 3.0 (quilt)
 EOF
 
 # Create initial debian/changelog
-cat > "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog" <<'EOF'
 linuxtoys (5.0-1) noble; urgency=medium
 
   * Initial release for new Python-based structure
@@ -165,7 +160,7 @@ EOF
 
 # set changelog file
 day=$(date +%d)
-day_abbr=$(LC_TIME=C date +%a)  # This will always be in English
+day_abbr=$(LC_TIME=C date +%a) # This will always be in English
 month=$(LC_TIME=C date +%b)
 year=$(date +%Y)
 changelog_line="linuxtoys (${LT_VERSION}-1) noble; urgency=medium"
@@ -174,7 +169,7 @@ sed -i "1c\\$changelog_line" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelo
 sed -i "6c\\$changelog_line2" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
 
 # Update debian/install file for new structure
-cat > "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/install" << 'EOF'
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/install" <<'EOF'
 usr/bin/linuxtoys /usr/bin/
 usr/bin/linuxtoys-cli /usr/bin/
 usr/share/linuxtoys /usr/share/

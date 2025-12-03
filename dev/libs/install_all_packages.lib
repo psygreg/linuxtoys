@@ -1,6 +1,7 @@
 #!/bin/bash
 
-ROOT_DIR="$PWD"; while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done;
+ROOT_DIR="$PWD"
+while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 source "$ROOT_DIR/dev/libs/utils.lib"
 
 PACKAGE_MANAGERS=("dnf" "apt" "pacman" "zypper")
@@ -16,35 +17,35 @@ _msg "info" "Detected package manager: $PACKAGE_MANAGER"
 
 # Define package lists based on distro
 case $PACKAGE_MANAGER in
-    dnf)
-        INSTALLER="sudo dnf install -y"
-        PACKAGES="python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config patchelf dput devscripts rmpbuild"
-        ;;
-    apt)
-        INSTALLER="sudo apt install -y"
-        # Mapping Fedora names to Debian/Ubuntu names
-        # python3-devel -> python3-dev
-        # gobject-introspection-devel -> libgirepository1.0-dev
-        # cairo-devel -> libcairo2-dev
-        # cairo-gobject-devel -> (included in libcairo2-dev usually, but adding libcairo-gobject2 just in case)
-        # gtk3 -> libgtk-3-dev
-        # vte291 -> libvte-2.91-dev
-        PACKAGES="python3 python3-dev python3-venv zenity jq libgirepository1.0-dev libcairo2-dev libcairo2 libcairo-gobject2 libgtk-3-dev curl wget git libvte-2.91-dev gcc pkg-config patchelf dput devscripts rpmbuild"
-        ;;
-    pacman)
-        INSTALLER="sudo pacman -S --noconfirm"
-        # Arch names
-        PACKAGES="python zenity jq gobject-introspection cairo gtk3 curl wget git vte3 gcc pkgconf patchelf rpmbuild"
-        ;;
-    zypper)
-        INSTALLER="sudo zypper install -y"
-        PACKAGES="python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config patchelf dput devscripts rpmbuild"
-        ;;
-    *)
-        _msg "error" "Unsupported package manager: $PACKAGE_MANAGER"
-        _msg "error" "Please install the following packages manually: python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config"
-        exit 1
-        ;;
+dnf)
+    INSTALLER="sudo dnf install -y"
+    PACKAGES="python3.13 python3.13-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config patchelf devscripts rpmbuild"
+    ;;
+apt)
+    INSTALLER="sudo apt install -y"
+    # Mapping Fedora names to Debian/Ubuntu names
+    # python3-devel -> python3-dev
+    # gobject-introspection-devel -> libgirepository1.0-dev
+    # cairo-devel -> libcairo2-dev
+    # cairo-gobject-devel -> (included in libcairo2-dev usually, but adding libcairo-gobject2 just in case)
+    # gtk3 -> libgtk-3-dev
+    # vte291 -> libvte-2.91-dev
+    PACKAGES="python3.13 python3.13-dev python3.13-venv zenity jq libgirepository1.0-dev libcairo2-dev libcairo2 libcairo-gobject2 libgtk-3-dev curl wget git libvte-2.91-dev gcc pkg-config patchelf dput devscripts rpmbuild"
+    ;;
+pacman)
+    INSTALLER="sudo pacman -S --noconfirm"
+    # Arch names
+    PACKAGES="python3.13 zenity jq gobject-introspection cairo gtk3 curl wget git vte3 gcc pkgconf patchelf rpmbuild"
+    ;;
+zypper)
+    INSTALLER="sudo zypper install -y"
+    PACKAGES="python3.13 python3.13-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config patchelf dput devscripts rpmbuild"
+    ;;
+*)
+    _msg "error" "Unsupported package manager: $PACKAGE_MANAGER"
+    _msg "error" "Please install the following packages manually: python3 python3-devel zenity jq gobject-introspection-devel cairo-devel cairo cairo-gobject-devel gtk3 curl wget git vte291 gcc pkg-config"
+    exit 1
+    ;;
 esac
 
 _msg "info" "Installer command: $INSTALLER"

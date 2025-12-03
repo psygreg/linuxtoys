@@ -3,7 +3,8 @@
 # Usage: build.sh <version> <output_path>
 # Example: build.sh 1.1 /tmp/builds
 
-ROOT_DIR="$PWD"; while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done;
+ROOT_DIR="$PWD"
+while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 source "$ROOT_DIR/dev/libs/utils.lib"
 
 # Check CLI arguments
@@ -15,12 +16,6 @@ fi
 
 LT_VERSION="$1"
 OUTPUT_PATH="$2"
-
-# Validate project structure
-if [ ! -d "$ROOT_DIR/p3" ]; then
-    _msg error "Invalid project structure: $ROOT_DIR/p3 not found"
-    exit 1
-fi
 
 _msg info "Building LinuxToys version $LT_VERSION for RPM..."
 _msg info "Output path: $OUTPUT_PATH"
@@ -42,7 +37,7 @@ cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script
-cat > "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys" << 'EOF'
+cat >"$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
@@ -59,7 +54,7 @@ chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/run.py"
 # set up rpmbuild
 # cp -r "$OUTPUT_PATH/linuxtoys-$LT_VERSION" "$HOME/rpmbuild/SOURCES/"
 day=$(date +%d)
-day_abbr=$(LC_TIME=C date +%a)  # This will always be in English
+day_abbr=$(LC_TIME=C date +%a) # This will always be in English
 month=$(LC_TIME=C date +%b)
 year=$(date +%Y)
 specfile_line="Version:        ${lt_version}"
