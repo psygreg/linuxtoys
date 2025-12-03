@@ -220,7 +220,6 @@ EOF
 
         else
             echo "Incompatible CPU. No changes were made."
-            return 100
         fi
     fi
 }
