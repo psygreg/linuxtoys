@@ -117,21 +117,24 @@ sudo zypper in -y bash git curl wget zenity python3 python3-gobject python3-requ
 
 2.  **Install Dependencies:**
 
-    **Option 1: Virtual Environment (Recommended)**
-    Create an isolated environment to avoid conflicts with system packages.
-    ```bash
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -r p3/requirements.txt
-    ```
+    *   **Option 1: Virtual Environment (Recommended)**
 
-    **Option 2: Direct Installation (Not Recommended)**
+        Create an isolated environment to avoid conflicts with system packages.
 
-> [!CAUTION]
-> Installing packages globally can conflict with your system's package manager and cause instability.
-```bash
-pip install -r p3/requirements.txt
-```
+        ```bash
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install -r p3/requirements.txt
+        ```
+
+    *   **Option 2: Direct Installation (Not Recommended)**
+
+        > [!CAUTION]
+        > Installing packages globally can conflict with your system's package manager and cause instability.
+
+        ```bash
+        pip install -r p3/requirements.txt
+        ```
 
 3.  **Run the application:**
     ```bash
