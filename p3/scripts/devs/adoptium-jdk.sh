@@ -4,6 +4,7 @@
 # description: adoptium_desc
 # icon: adoptium.png
 # repo: https://adoptium.net/
+# compat: debian, ubuntu, fedora, suse
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

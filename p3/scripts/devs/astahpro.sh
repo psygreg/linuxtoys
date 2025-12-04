@@ -5,6 +5,7 @@
 # icon: astahpro.png
 # repo: https://astah.net/products/astah-professional/
 # needed: adoptium-jdk
+# compat: debian, ubuntu, fedora
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
