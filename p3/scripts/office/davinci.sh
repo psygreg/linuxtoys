@@ -117,7 +117,11 @@ davinciboxd () {
 davinciboxatom () {
 
     dv_atom_deps () {
+        local nvGPU=$(lspci | grep -Ei '(nvidia|geforce)')
         _packages=(toolbox podman lshw)
+        if [ -n "$nvGPU" ]; then
+            _packages+=(nvidia-container-toolkit)
+        fi
         sudo_rq
         _install_
         if [[ $? -eq 1 ]]; then
