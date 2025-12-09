@@ -72,8 +72,6 @@ cp "$ROOT_DIR/dev/build/pkg/PKGBUILD" "$OUTPUT_PATH/PKGBUILD"
 hash=$(sha256sum "$OUTPUT_PATH/linuxtoys-${LT_VERSION}.tar.xz" | cut -d' ' -f1)
 sed -i "s/pkgver='[^']*'/pkgver='$LT_VERSION'/" "$OUTPUT_PATH/PKGBUILD"
 sed -i "s/sha256sums=('[^']*')/sha256sums=('$hash')/" "$OUTPUT_PATH/PKGBUILD"
-# Update source to use local tarball
-sed -i "s|source=.*|source=(\"linuxtoys-${LT_VERSION}.tar.xz\")|" "$OUTPUT_PATH/PKGBUILD"
 
 (
     cd "$OUTPUT_PATH"
