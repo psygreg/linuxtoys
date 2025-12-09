@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        1.0
+Version:        5.6.3
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -50,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Wed Dec 03 2025 Victor Gregory <psygreg@pm.me> - 1.0
+* Tue Dec 09 2025 Victor Gregory <psygreg@pm.me> - 5.6.3
 - Updated to current app structure with full Python application
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements
