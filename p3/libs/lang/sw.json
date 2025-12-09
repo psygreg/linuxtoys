@@ -310,5 +310,14 @@
   "cancel_script_cancel_btn": "Ghairi Hati",
   "rtl8821ce_desc": "Mwendesha rtl8821CE na firmware",
   "rcloneui_desc": "GUI kwa ulandanishi wa rclone",
-  "aa_desc": "Inaamaisha usalama wa Linux system yako kwa kuzuia kile ambacho kila programu inaweza kufikia na kufanya kwenye mfumo."
+  "aa_desc": "Inaamaisha usalama wa Linux system yako kwa kuzuia kile ambacho kila programu inaweza kufikia na kufanya kwenye mfumo.",
+  "openlinkhub_desc": "Kudhibiti vifaa vya Corsair iCUE kwenye Linux",
+  "minfreefix_desc": "Kufanya kuongeza vm.min_free_kbytes kwa dynamiki kulingana na jumla ya RAM ya systemi",
+  "minfreefix": "Kumbukumbu Bila Huduma Chini ya Dinamiki",
+  "adoptium_desc": "Kazi kuu ya Java ya juu-kazi, mlipuko-platforma, na chanzo-linganifu",
+  "astapro_desc": "Zana ya muundo wa programu kwa ujumla na UML, ERD, mchoro wa mtiririko, DFD na zaidi",
+  "positron_desc": "Inaweka kazi ya utafiti na uzalishaji katika mazingira moja ya bure yanayoungana na AI",
+  "rstudio_desc": "Seti ya zana zilizoundwa kusaidia kuwa na uzalishaji zaidi na R na Python.",
+  "ananicy_desc": "Daemon inayobadilisha \"niceness\" ya michakato inayokimbia kulingana na tabia yake",
+  "kdememfix_desc": "Badilisha backend ya kuonyesha KDE Plasma kwa OpenGL inayotumiatu VRAM zaidi"
 }

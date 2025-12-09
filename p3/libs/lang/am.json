@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "ስክሪፕ ሰርዝ",
   "rtl8821ce_desc": "rtl8821CE ሾፌር ከፍርማዌር ጋር",
   "rcloneui_desc": "rclone ስምምነት ለ GUI",
-  "aa_desc": "የLinux ስርዓትን ደህንነት ይጠናክራል እያንዳንዱ መተግበሪያ በስርዓቱ ውስጥ ምን ማድረግ እና መድረስ ይችል እንደሆነ በመገደብ።"
+  "aa_desc": "የLinux ስርዓትን ደህንነት ይጠናክራል እያንዳንዱ መተግበሪያ በስርዓቱ ውስጥ ምን ማድረግ እና መድረስ ይችል እንደሆነ በመገደብ።",
+  "openlinkhub_desc": "Corsair iCUE устройства በ Linux ላይ ተቆጣጥር",
+  "minfreefix_desc": "vm.min_free_kbytes ቅናሽ በሙሉ ስርዓት RAM ላይ ተመስርተው ተለዋወጥ",
+  "minfreefix": "ተለዋዋጭ ዝቅተኛ ነጻ ማህደር",
+  "adoptium_desc": "ከተወሰንሰ ኢንተርፕራይዝ-ዝግጅት በጀቶች በ Java SE TCK-ሙከራ ተከታታይ ተግባራት",
+  "astapro_desc": "ሙሉ ሶስትdimensional ዲዛይን መሳሪያ ከ UML, ERD, ቅንጣት እና ሌላ",
+  "positron_desc": "ስሞ የመርሃ ግብር እና ምርት ስራን በአንድ ነጻ AI-supported ምግባር ያብራራል",
+  "rstudio_desc": "R እና Python ሆነ ያለዎ ተጨማሪ ማሳሩ ዎሩ ሳሃ ተሰሌ ከጀማቸው ተሠሩ",
+  "ananicy_desc": "ሞገዱ በራሳቸው ስርአታቸው ላይ እንዲስተካከል አግልግሎትወ (daemon) ዘርዝር ትንኮሳ",
+  "kdememfix_desc": "KDE Plasma's ገናዎን OpenGL ላይ ይቀይራል ከ VRAM ያነሰ ሞዛቲ ይጠቀማል"
 }

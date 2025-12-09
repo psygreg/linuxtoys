@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Hủy Bỏ Tập Lệnh",
   "rtl8821ce_desc": "Trình điều khiển rtl8821CE với chương trình",
   "rcloneui_desc": "GUI để đồng bộ hóa rclone",
-  "aa_desc": "Tăng cường bảo mật hệ thống Linux của bạn bằng cách giới hạn những gì mỗi ứng dụng có thể truy cập và làm trên hệ thống."
+  "aa_desc": "Tăng cường bảo mật hệ thống Linux của bạn bằng cách giới hạn những gì mỗi ứng dụng có thể truy cập và làm trên hệ thống.",
+  "openlinkhub_desc": "Kiểm soát các thiết bị Corsair iCUE trên Linux",
+  "minfreefix_desc": "Điều chỉnh động cài đặt vm.min_free_kbytes dựa trên tổng RAM của hệ thống",
+  "minfreefix": "Bộ nhớ tự do tối thiểu động",
+  "adoptium_desc": "Runtime Java nhị phân hiệu suất cao, đa nền tảng và mã nguồn mở",
+  "astapro_desc": "Công cụ thiết kế phần mềm tổng thể với UML, ERD, biểu đồ luồng, DFD và hơn thế nữa",
+  "positron_desc": "Thống nhất công việc khám phá và sản xuất trong một môi trường duy nhất miễn phí hỗ trợ bởi AI",
+  "rstudio_desc": "Bộ công cụ được thiết kế để giúp bạn trở nên năng suất hơn với R và Python.",
+  "ananicy_desc": "Một daemon tự động điều chỉnh \"niceness\" của các quy trình đang chạy dựa trên hành vi của chúng",
+  "kdememfix_desc": "Chuyển rendering backend của KDE Plasma sang OpenGL sử dụng ít VRAM hơn đáng kể"
 }

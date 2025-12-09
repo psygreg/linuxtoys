@@ -314,5 +314,14 @@
   "cancel_script_cancel_btn": "取消脚本",
   "rtl8821ce_desc": "rtl8821CE驱动程序带固件",
   "rcloneui_desc": "rclone同步的GUI",
-  "aa_desc": "通过限制每个应用程序在系统上可以访问和执行的操作来加强Linux系统的安全性。"
+  "aa_desc": "通过限制每个应用程序在系统上可以访问和执行的操作来加强Linux系统的安全性。",
+  "openlinkhub_desc": "在Linux上控制Corsair iCUE设备",
+  "minfreefix_desc": "根据系统总RAM动态调整vm.min_free_kbytes设置",
+  "minfreefix": "动态最小可用内存",
+  "adoptium_desc": "高性能、跨平台、开源Java运行时二进制文件",
+  "astapro_desc": "具有UML、ERD、流程图、DFD等的总体软件设计工具",
+  "positron_desc": "在AI辅助的免费环境中统一探索和生产工作",
+  "rstudio_desc": "为帮助您使用R和Python提高工作效率而构建的工具集。",
+  "ananicy_desc": "一个守护进程，根据进程的行为自动调整正在运行的进程的\"nice\"值",
+  "kdememfix_desc": "将KDE Plasma的渲染后端切换到OpenGL，其使用的VRAM明显要少得多"
 }

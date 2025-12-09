@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Anulo Skriptin",
   "rtl8821ce_desc": "Drajveri rtl8821CE me firmware",
   "rcloneui_desc": "GUI për sinkronizimin rclone",
-  "aa_desc": "Forcon sigurimin e sistemit Linux tuaj duke kufizon atë që çdo aplikacion mund të ketë akses dhe të bëjë në sistem."
+  "aa_desc": "Forcon sigurimin e sistemit Linux tuaj duke kufizon atë që çdo aplikacion mund të ketë akses dhe të bëjë në sistem.",
+  "openlinkhub_desc": "Kontrolloni pajisjet Corsair iCUE në Linux",
+  "minfreefix_desc": "Dinamikisht përshtatet parametri vm.min_free_kbytes bazuar në RAM-in total të sistemit",
+  "minfreefix": "Memoria minimale e lirë dinamike",
+  "adoptium_desc": "Runtime Java binar me performancë të lartë, shumëplatformë dhe me burim të hapur",
+  "astapro_desc": "Mjet i plotë për projektimin e software me UML, ERD, diagram rrjedhe, DFD dhe më shumë",
+  "positron_desc": "Bashkon punën e eksplorimit dhe prodhimit në një mjedis të vetëm të lirë të mbështetur nga AI",
+  "rstudio_desc": "Një seri mjetesh të krijuara për t'ju ndihmuar të jeni më produktiv me R dhe Python.",
+  "ananicy_desc": "Një daemon që automatikisht rregullon \"niceness\" e proceseve në ekzekutim bazuar në sjelljen e tyre",
+  "kdememfix_desc": "Ndërrimi i backend të renderimit të KDE Plasma në OpenGL i cili përdor shumë më pak VRAM"
 }

@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Cancelar Script",
   "rtl8821ce_desc": "Driver rtl8821CE com firmware",
   "rcloneui_desc": "GUI para sincronização rclone",
-  "aa_desc": "Fortalece a segurança do seu sistema Linux limitando o que cada aplicação pode acessar e fazer no sistema."
+  "aa_desc": "Fortalece a segurança do seu sistema Linux limitando o que cada aplicação pode acessar e fazer no sistema.",
+  "openlinkhub_desc": "Controle dispositivos Corsair iCUE no Linux",
+  "minfreefix_desc": "Ajusta dinamicamente a configuração vm.min_free_kbytes com base na RAM total do sistema",
+  "minfreefix": "Memória livre mínima dinâmica",
+  "adoptium_desc": "Binários de runtime Java de código aberto, multiplataforma e de alto desempenho",
+  "astapro_desc": "Ferramenta completa de design de software com UML, ERD, flowchart, DFD e mais",
+  "positron_desc": "Unifica trabalho de exploração e produção em um ambiente gratuito assistido por IA",
+  "rstudio_desc": "Um conjunto de ferramentas construído para ajudar você a ser mais produtivo com R e Python.",
+  "ananicy_desc": "Um daemon que ajusta automaticamente a \"niceness\" de processos em execução com base no seu comportamento",
+  "kdememfix_desc": "Alterna o backend de renderização do KDE Plasma para OpenGL, que usa significativamente menos VRAM"
 }

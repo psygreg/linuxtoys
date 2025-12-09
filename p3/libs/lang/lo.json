@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "ລະຫັດເວົ້າກະ ບົດລະຫັດ",
   "rtl8821ce_desc": "ຕົວຜະລິດ rtl8821CE ກັບ firmware",
   "rcloneui_desc": "GUI ສໍາລັບ rclone synchronization",
-  "aa_desc": "ເສີມສ້າງຄວາມປອດໄພຂອງລະບົບ Linux ຂອງທ່ານໂດຍການ ຈໍາກັດສິ່ງທີ່ແຕ່ລະໂປແກມອາດຈະເຂົ້າໄປໄດ້ ແລະ ເຮັດໃນລະບົບ."
+  "aa_desc": "ເສີມສ້າງຄວາມປອດໄພຂອງລະບົບ Linux ຂອງທ່ານໂດຍການ ຈໍາກັດສິ່ງທີ່ແຕ່ລະໂປແກມອາດຈະເຂົ້າໄປໄດ້ ແລະ ເຮັດໃນລະບົບ.",
+  "openlinkhub_desc": "ຄວບຄຸມອຸປະກອນ Corsair iCUE ໃນ Linux",
+  "minfreefix_desc": "ປັບປຸງ vm.min_free_kbytes ຕັ້ງຄ່າ dynamically ອີງຕາມ RAM ທັງໝົດຂອງລະບົບ",
+  "minfreefix": "ຫນ່ວຍຄວາມຈໍາອິສລະ​ຕໍ່າສຸດທີ່ໄດ້ຮັບລາຍງານ",
+  "adoptium_desc": "ສູງໃຈວນ, cross-platform, ບຸກເບີກ Java runtime binaries",
+  "astapro_desc": "ເຄື່ອງມືອອກແບບຊອບແວທັງໜ້າ ກັບ UML, ERD, ແຜນວາດ, DFD ແລະອື່ນໆ",
+  "positron_desc": "ລວມການສອບສວນ ແລະ ການផលិតកម្ម ໂຟນ ສະພາບແວດລ້ອມ ໃຫ້ໂອກາດ AI-backed",
+  "rstudio_desc": "ຊຸດເຄື່ອງມືທີ່ສ້າງຂຶ້ນເພື່ອຊ່ວຍໃຫ້ທ່ານມີຜົນຜະລິດຫຼາຍກັບ R ແລະ Python.",
+  "ananicy_desc": "Daemon ທີ່ຈັດຕັ້ງປະ \"niceness\" ຂອງ processes ກຳລັງຕັ້ງຕົວຕາມພຶດຕິກໍາຂອງພວກມັນ",
+  "kdememfix_desc": "ປ່ຽນ KDE Plasma's rendering backend ໄປ OpenGL ທີ່ໃຊ້ VRAM ໜ້ອຍລົງຫຼາຍ"
 }

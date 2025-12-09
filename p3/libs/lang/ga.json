@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Cealaigh Scéimh",
   "rtl8821ce_desc": "gealadh rtl8821CE le firmware",
   "rcloneui_desc": "GUI do dhoimirt rclone",
-  "aa_desc": "Laghdaíonn sé slándáil do chóras Linux trí a theorannú ar a bhféadfaidh gach feidhmchlár rochtain agus a dhéanamh ar an gcóras."
+  "aa_desc": "Laghdaíonn sé slándáil do chóras Linux trí a theorannú ar a bhféadfaidh gach feidhmchlár rochtain agus a dhéanamh ar an gcóras.",
+  "openlinkhub_desc": "Fhéadfaidh tú gréasáin Corsair iCUE a rialú ar Linux",
+  "minfreefix_desc": "Socrú vm.min_free_kbytes a athairiú go dinimiciúil bunaithe ar iomlán RAM an chórais",
+  "minfreefix": "Dínimiciúil Íosmhéid Saor-Chuimhne",
+  "adoptium_desc": "Fhad-tréimhse, tras-phlataim, oscailte fhoinse Java binaries",
+  "astapro_desc": "Uirlis dhearaidh bogearraí iomlán le UML, ERD, flowchart, DFD agus níos mó",
+  "positron_desc": "Aontaíonn saothar iniúchaidh agus táirgthe i bhfoluain amháin in aisce agus tacaíochta AI",
+  "rstudio_desc": "Tacar uirlisí tógtha chun cabhrú leat a bheith níos táirgiúla le R agus Python.",
+  "ananicy_desc": "Daemon a dhéanann coigeartú go huathoibríoch ar \"niceness\" próiseas a bhíonn ar siúl bunaithe ar a n-iompar",
+  "kdememfix_desc": "Athraíonn sé an backend a bhíonn ag déanamh KDE Plasma go OpenGL, a úsáideann i bhfad níos lú VRAM"
 }

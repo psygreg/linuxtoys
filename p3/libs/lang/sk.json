@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Zrušiť Skript",
   "rtl8821ce_desc": "Ovládač rtl8821CE s firmvérom",
   "rcloneui_desc": "GUI pre synchronizáciu rclone",
-  "aa_desc": "Posilňuje bezpečnosť vášho Linux systému obmedením toho, na čo môže každá aplikácia pristupovať a čo môže robiť v systéme."
+  "aa_desc": "Posilňuje bezpečnosť vášho Linux systému obmedením toho, na čo môže každá aplikácia pristupovať a čo môže robiť v systéme.",
+  "openlinkhub_desc": "Ovládajte zariadenia Corsair iCUE v Linuxe",
+  "minfreefix_desc": "Dynamicky upravuje nastavenie vm.min_free_kbytes na základe celkového operačného pamäti systému",
+  "minfreefix": "Dynamicky minimálna voľná pamäť",
+  "adoptium_desc": "Vysoko výkonný, cross-platform, otvorený Java runtime bináry",
+  "astapro_desc": "Úplný nástroj na návrh softvéru s UML, ERD, vývojovým diagramom, DFD a ďalšími",
+  "positron_desc": "Zjednocuje prieskumnú a produkčnú prácu v jednom bezplatnom prostredí s podporou AI",
+  "rstudio_desc": "Sada nástrojov navrhnutá na to, aby vám pomohla byť produktívnejší s R a Pythonom.",
+  "ananicy_desc": "Daemon, ktorý automaticky nastavuje \"niceness\" spustené procesy na základe ich správania",
+  "kdememfix_desc": "Prepína backend vykresľovania KDE Plasma na OpenGL, ktorý používa výrazne menej VRAM"
 }

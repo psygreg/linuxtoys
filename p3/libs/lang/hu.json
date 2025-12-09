@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Szkript Mégse",
   "rtl8821ce_desc": "rtl8821CE meghajtó firmware-rel",
   "rcloneui_desc": "GUI az rclone szinkronizáláshoz",
-  "aa_desc": "Erősíti Linux-rendszered biztonságát azáltal, hogy korlátozza, mit érhet el és mit tehet minden alkalmazás a rendszeren."
+  "aa_desc": "Erősíti Linux-rendszered biztonságát azáltal, hogy korlátozza, mit érhet el és mit tehet minden alkalmazás a rendszeren.",
+  "openlinkhub_desc": "Corsair iCUE eszközök irányítása Linuxon",
+  "minfreefix_desc": "Dinamikusan módosítja a vm.min_free_kbytes beállítást a teljes rendszermemória alapján",
+  "minfreefix": "Dinamikus minimális szabad memória",
+  "adoptium_desc": "Magas teljesítményű, platformok közötti, nyílt forráskódú Java futásidő bináris",
+  "astapro_desc": "Teljes szoftvartervezési eszköz UML, ERD, folyamatábra, DFD és további lehetőségekkel",
+  "positron_desc": "Az feltárási és produkciós munkát egy ingyenes, AI-támogatott környezetben egyesíti",
+  "rstudio_desc": "Az R és Python mellett termelékenyebb munkavégzésére tervezett eszközök készlete.",
+  "ananicy_desc": "Daemon, amely automatikusan beállítja a futó folyamatok \"niceness\" értékét viselkedésük alapján",
+  "kdememfix_desc": "KDE Plasma renderelési háttérét OpenGL-re vált, amely jelentősen kevesebb VRAM-ot használ"
 }

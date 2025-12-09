@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Betiği İptal Et",
   "rtl8821ce_desc": "Donanım Yazılımı ile rtl8821CE sürücüsü",
   "rcloneui_desc": "Rclone senkronizasyonu için GUI",
-  "aa_desc": "Linux sisteminizin güvenliğini güçlendirerek her uygulamanın sistemde erişebileceği ve yapabileceği şeyleri sınırlandırır."
+  "aa_desc": "Linux sisteminizin güvenliğini güçlendirerek her uygulamanın sistemde erişebileceği ve yapabileceği şeyleri sınırlandırır.",
+  "openlinkhub_desc": "Linux üzerinde Corsair iCUE cihazlarını kontrol edin",
+  "minfreefix_desc": "Sistem RAM'ının toplamına göre vm.min_free_kbytes ayarını dinamik olarak ayarla",
+  "minfreefix": "Dinamik Minimum Boş Bellek",
+  "adoptium_desc": "Yüksek performanslı, çapraz platform, açık kaynaklı Java çalışma zamanı ikili dosyaları",
+  "astapro_desc": "UML, ERD, akış şeması, DFD ve daha fazlasıyla toplam yazılım tasarım aracı",
+  "positron_desc": "Keşif ve üretim çalışmasını, AI tarafından desteklenen bir ücretsiz ortamda birleştirir",
+  "rstudio_desc": "R ve Python ile daha üretken olmana yardımcı olmak için tasarlanan bir araç seti.",
+  "ananicy_desc": "Çalışan işlemlerin \"niceness\" değerini otomatik olarak davranışlarına göre ayarlayan bir daemon",
+  "kdememfix_desc": "KDE Plasma'nın render backend'ini OpenGL'ye değiştirir ve önemli ölçüde daha az VRAM kullanır"
 }

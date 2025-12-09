@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Hætta við Skriftu",
   "rtl8821ce_desc": "rtl8821CE rekill með firmware",
   "rcloneui_desc": "GUI fyrir rclone samstillingu",
-  "aa_desc": "Styrkir öryggi Linux-kerfisins þíns með því að takmarka hvað hver forrit getur nálgast og gert á kerfinu."
+  "aa_desc": "Styrkir öryggi Linux-kerfisins þíns með því að takmarka hvað hver forrit getur nálgast og gert á kerfinu.",
+  "openlinkhub_desc": "Stjórnaðu Corsair iCUE-tækjum á Linux",
+  "minfreefix_desc": "Stillir vm.min_free_kbytes stillingu dýnamískt miðað við heildarminni kerfisins",
+  "minfreefix": "Dýnamísk lágmark fritt minni",
+  "adoptium_desc": "Háorkugildur, cross-platform, opinn Java runtime tvö binaries",
+  "astapro_desc": "Heildstætt hugbúnaðarhönnunartæki með UML, ERD, flæðikorti, DFD og margt fleira",
+  "positron_desc": "Sameinir rannsókn og framleiðsluvinnu í einu ókeypis umhverfi með AI stuðningi",
+  "rstudio_desc": "Sett af verkfærum sem eru hönnuð til að hjálpa þér að vera framleiðnari með R og Python.",
+  "ananicy_desc": "Daemon sem sjálfkrafa stillir \"niceness\" keyrrandi ferla miðað við hegðun þeirra",
+  "kdememfix_desc": "Skiptir renderingarafgreiðslunni KDE Plasma yfir til OpenGL sem notar verulega minni VRAM"
 }

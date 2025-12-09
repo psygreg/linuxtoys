@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Atcelt Skriptu",
   "rtl8821ce_desc": "rtl8821CE draiveris ar programmatūru",
   "rcloneui_desc": "GUI rclone sinhronizācijai",
-  "aa_desc": "Pastiprināt jūsu Linux sistēmas drošību, ierobežojot, ko katra programma var piekļūt un darīt sistēmā."
+  "aa_desc": "Pastiprināt jūsu Linux sistēmas drošību, ierobežojot, ko katra programma var piekļūt un darīt sistēmā.",
+  "openlinkhub_desc": "Vadiet Corsair iCUE ierīces operētājsistēmā Linux",
+  "minfreefix_desc": "Dinamiski pielāgo vm.min_free_kbytes iestatījumu, pamatojoties uz kopējo sistēmas RAM",
+  "minfreefix": "Dinamiskā minimālā brīvā atmiņa",
+  "adoptium_desc": "Augstā snieguma, cross-platform, atvērtā koda Java runtime binārais",
+  "astapro_desc": "Kompleksas programmatūras dizaina rīks ar UML, ERD, blokshēmu, DFD un vēl daudz ko",
+  "positron_desc": "Apvienoja izpētes un ražošanas darbu vienā bezmaksas AI atbalstītā vidē",
+  "rstudio_desc": "Rīku kopums, kas izstrādāts, lai palīdzētu jums būt produktīvākam ar R un Python.",
+  "ananicy_desc": "Dēmons, kas automātiski pielāgo \"niceness\" darbojošos procesus, pamatojoties uz to uzvedību",
+  "kdememfix_desc": "Pārslēdz KDE Plasma's renderēšanas backend uz OpenGL, kas izmanto daudz mazāk VRAM"
 }

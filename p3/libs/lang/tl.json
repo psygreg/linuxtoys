@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "Kanselahin ang Script",
   "rtl8821ce_desc": "Drayber rtl8821CE na may firmware",
   "rcloneui_desc": "GUI para sa rclone na pag-sync",
-  "aa_desc": "Nagpapalakas ng seguridad ng iyong Linux system sa pamamagitan ng pagbabawas ng kung ano ang maaaring i-access at gawin ng bawat application sa system."
+  "aa_desc": "Nagpapalakas ng seguridad ng iyong Linux system sa pamamagitan ng pagbabawas ng kung ano ang maaaring i-access at gawin ng bawat application sa system.",
+  "openlinkhub_desc": "I-control ang mga Corsair iCUE na device sa Linux",
+  "minfreefix_desc": "Dynamic na nag-adjust ng vm.min_free_kbytes setting batay sa kabuuang RAM ng system",
+  "minfreefix": "Dynamic Minimum Free Memory",
+  "adoptium_desc": "High-performance, cross-platform, open-source Java runtime binaries",
+  "astapro_desc": "Kompletong software design tool na may UML, ERD, flowchart, DFD at marami pang iba",
+  "positron_desc": "Pinagsasama ang gawaing pagsusuri at produksyon sa isang libreng AI-assisted na kapaligiran",
+  "rstudio_desc": "Isang hanay ng mga tool na idinisenyo upang tulungan kang maging mas produktibo sa R at Python.",
+  "ananicy_desc": "Isang daemon na awtomatikong inaayos ang \"niceness\" ng mga tumatakbong proseso batay sa kanilang pag-uugali",
+  "kdememfix_desc": "Isinasalin ang rendering backend ng KDE Plasma sa OpenGL na gumagamit ng mas kaunting VRAM"
 }

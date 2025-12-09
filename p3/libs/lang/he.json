@@ -312,5 +312,14 @@
   "cancel_script_cancel_btn": "בטל סקריפט",
   "rtl8821ce_desc": "כונן rtl8821CE עם הקנקייה",
   "rcloneui_desc": "ממשק המשתמש הגרפי לסנכרון rclone",
-  "aa_desc": "חוזק את אבטחת מערכת Linux שלך על ידי הגבלת מה שכל יישום יכול לגשת ולעשות במערכת."
+  "aa_desc": "חוזק את אבטחת מערכת Linux שלך על ידי הגבלת מה שכל יישום יכול לגשת ולעשות במערכת.",
+  "openlinkhub_desc": "שלוט במכשירי Corsair iCUE ב-Linux",
+  "minfreefix_desc": "התאמה דינמית של הגדרת vm.min_free_kbytes על בסיס סה\"כ זיכרון RAM של המערכת",
+  "minfreefix": "זיכרון חופשי מינימלי דינמי",
+  "adoptium_desc": "בינארי Java runtime בעל ביצועים גבוהים, חוצה פלטפורמות וקוד פתוח",
+  "astapro_desc": "כלי עיצוב תוכנה מלא עם UML, ERD, תרשים זרימה, DFD ועוד",
+  "positron_desc": "מאחד עבודת חקר וייצור בסביבה אחת חופשית בעלת תמיכה בבינה מלאכותית",
+  "rstudio_desc": "סט של כלים שנוצרו כדי לעזור לך להיות פרודוקטיבי יותר עם R ו-Python.",
+  "ananicy_desc": "daemon המתאים באופן אוטומטי את \"niceness\" של תהליכים פעילים על ​​בסיס ההתנהגות שלהם",
+  "kdememfix_desc": "מחליף את backend של KDE Plasma ל-OpenGL אשר משתמש בהרבה פחות VRAM"
 }

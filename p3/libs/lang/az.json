@@ -311,5 +311,14 @@
   "cancel_script_cancel_btn": "Skripti Ləğv Et",
   "rtl8821ce_desc": "Firmware ilə rtl8821CE sürücüsü",
   "rcloneui_desc": "rclone sinkronizasiyası üçün GUI",
-  "aa_desc": "Linux sisteminizin təhlükəsizliyini güçləndirir hər bir tətbiqin sistemdə nə qədər daxil olmağa və edə bilməsini məhdudlaşdırmaqla."
+  "aa_desc": "Linux sisteminizin təhlükəsizliyini güçləndirir hər bir tətbiqin sistemdə nə qədər daxil olmağa və edə bilməsini məhdudlaşdırmaqla.",
+  "openlinkhub_desc": "Linux-də Corsair iCUE cihazlarını idarə edin",
+  "minfreefix_desc": "vm.min_free_kbytes ayarını sistem RAM səviyyəsinə əsasən dinamik şəkildə tənzimləyin",
+  "minfreefix": "Dinamik Minimum Pulsuz Yaddaş",
+  "adoptium_desc": "Yüksək performanslı, platformlar arası, açıq mənbə Java runtime ikili faylları",
+  "astapro_desc": "UML, ERD, axın xəritəsi, DFD və daha çox ilə tam proqram tərtibatı aləti",
+  "positron_desc": "Kəşfiyyat və istehsal işini bir pulsuz AI-dəstəklənən mühitdə birləşdirir",
+  "rstudio_desc": "R və Python ilə daha məhsuldar olmağınıza kömək etmək üçün hazırlanmış bir sıra alətlər.",
+  "ananicy_desc": "İşləyən proseslərin \"niceness\" düzəltmə dəmonu davranışına əsasən sistemin cavab vermə qabiliyyətini artırır",
+  "kdememfix_desc": "KDE Plasma-nın göstərilmə arxa planını OpenGL-ə keçir ki bu VRAM-ı əhəmiyyətli dərəcədə azdır"
 }
