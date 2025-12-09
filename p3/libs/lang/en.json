@@ -321,5 +321,6 @@
   "minfreefix_desc": "Dynamically adjusts the vm.min_free_kbytes setting based on total system RAM to improve performance and responsiveness.",
   "minfreefix": "Dynamic Minimum Free Memory",
   "adoptium_desc": "High-performance, cross-platform, open-source Java runtime binaries that are enterprise-ready and Java SE TCK-tested for general use.",
-  "astapro_desc": "Total software design tool with UML, ERD, flowchart, DFD, and more."
+  "astapro_desc": "Total software design tool with UML, ERD, flowchart, DFD, and more.",
+  "zerotier_desc": "Creates virtual Ethernet networks of almost unlimited size."
 }
