@@ -320,5 +320,6 @@
   "positron_desc": "Kəşfiyyat və istehsal işini bir pulsuz AI-dəstəklənən mühitdə birləşdirir",
   "rstudio_desc": "R və Python ilə daha məhsuldar olmağınıza kömək etmək üçün hazırlanmış bir sıra alətlər.",
   "ananicy_desc": "İşləyən proseslərin \"niceness\" düzəltmə dəmonu davranışına əsasən sistemin cavab vermə qabiliyyətini artırır",
-  "kdememfix_desc": "KDE Plasma-nın göstərilmə arxa planını OpenGL-ə keçir ki bu VRAM-ı əhəmiyyətli dərəcədə azdır"
+  "kdememfix_desc": "KDE Plasma-nın göstərilmə arxa planını OpenGL-ə keçir ki bu VRAM-ı əhəmiyyətli dərəcədə azdır",
+  "zerotier_desc": "Demək olar ki, sınırsız ölçüdə virtual Ethernet şəbəkələri yaratır."
 }

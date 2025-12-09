@@ -321,5 +321,6 @@
   "positron_desc": "Az feltárási és produkciós munkát egy ingyenes, AI-támogatott környezetben egyesíti",
   "rstudio_desc": "Az R és Python mellett termelékenyebb munkavégzésére tervezett eszközök készlete.",
   "ananicy_desc": "Daemon, amely automatikusan beállítja a futó folyamatok \"niceness\" értékét viselkedésük alapján",
-  "kdememfix_desc": "KDE Plasma renderelési háttérét OpenGL-re vált, amely jelentősen kevesebb VRAM-ot használ"
+  "kdememfix_desc": "KDE Plasma renderelési háttérét OpenGL-re vált, amely jelentősen kevesebb VRAM-ot használ",
+  "zerotier_desc": "Szinte korlátlan méretű virtuális Ethernet-hálózatokat hoz létre."
 }

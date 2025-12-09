@@ -319,5 +319,6 @@
   "positron_desc": "Inaweka kazi ya utafiti na uzalishaji katika mazingira moja ya bure yanayoungana na AI",
   "rstudio_desc": "Seti ya zana zilizoundwa kusaidia kuwa na uzalishaji zaidi na R na Python.",
   "ananicy_desc": "Daemon inayobadilisha \"niceness\" ya michakato inayokimbia kulingana na tabia yake",
-  "kdememfix_desc": "Badilisha backend ya kuonyesha KDE Plasma kwa OpenGL inayotumiatu VRAM zaidi"
+  "kdememfix_desc": "Badilisha backend ya kuonyesha KDE Plasma kwa OpenGL inayotumiatu VRAM zaidi",
+  "zerotier_desc": "Huunda mitandao ya Ethernet ya kimataifa yenye ukubwa karibu bila kikomo."
 }

@@ -321,5 +321,6 @@
   "positron_desc": "Unifica el trabajo de exploración y producción en un entorno gratuito asistido por IA",
   "rstudio_desc": "Un conjunto de herramientas diseñadas para ayudarte a ser más productivo con R y Python.",
   "ananicy_desc": "Un daemon que ajusta automáticamente la \"niceness\" de los procesos en ejecución según su comportamiento",
-  "kdememfix_desc": "Cambia el backend de renderización de KDE Plasma a OpenGL, que usa significativamente menos VRAM"
+  "kdememfix_desc": "Cambia el backend de renderización de KDE Plasma a OpenGL, que usa significativamente menos VRAM",
+  "zerotier_desc": "Crea redes Ethernet virtuales de tamaño casi ilimitado."
 }

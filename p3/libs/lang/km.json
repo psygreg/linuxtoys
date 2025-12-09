@@ -321,5 +321,6 @@
   "positron_desc": "ហាម់នយ នៃការស្វាគមន៍ និងការផលិតកម្មក្នុងបរិស្ថានដែលមានមួយដោយឥតគិតថ្លៃ AI-backed",
   "rstudio_desc": "សំណុំឧបករណ៍សាលក្រមដើម្បីជួយឱ្យអ្នកមានភាពផលិតភាពលើ R និង Python។",
   "ananicy_desc": "ដេមិន​ដែល​ធ្វើ​ការ​កែប្រែ​ \"niceness\" នៃ​ដំណើរការ​ដែល​កំពុង​ដំណើរ​ការ​រោង",
-  "kdememfix_desc": "ប្តូរ KDE Plasma's rendering backend ទៅ OpenGL ដែលប្រើ VRAM តិចបន្តិច"
+  "kdememfix_desc": "ប្តូរ KDE Plasma's rendering backend ទៅ OpenGL ដែលប្រើ VRAM តិចបន្តិច",
+  "zerotier_desc": "បង្កើតបណ្តាញ Ethernet និម្មិតប្រហែលគ្មានដែនកំណត់ក្នុងទំហំ។"
 }

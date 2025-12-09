@@ -321,5 +321,6 @@
   "positron_desc": "ລວມການສອບສວນ ແລະ ການផលិតកម្ម ໂຟນ ສະພາບແວດລ້ອມ ໃຫ້ໂອກາດ AI-backed",
   "rstudio_desc": "ຊຸດເຄື່ອງມືທີ່ສ້າງຂຶ້ນເພື່ອຊ່ວຍໃຫ້ທ່ານມີຜົນຜະລິດຫຼາຍກັບ R ແລະ Python.",
   "ananicy_desc": "Daemon ທີ່ຈັດຕັ້ງປະ \"niceness\" ຂອງ processes ກຳລັງຕັ້ງຕົວຕາມພຶດຕິກໍາຂອງພວກມັນ",
-  "kdememfix_desc": "ປ່ຽນ KDE Plasma's rendering backend ໄປ OpenGL ທີ່ໃຊ້ VRAM ໜ້ອຍລົງຫຼາຍ"
+  "kdememfix_desc": "ປ່ຽນ KDE Plasma's rendering backend ໄປ OpenGL ທີ່ໃຊ້ VRAM ໜ້ອຍລົງຫຼາຍ",
+  "zerotier_desc": "ສ້າງຕາ່າງ Ethernet ແບບສົ່ວນຕົວກັບຂະຫນາດເກືອບບໍ່ມີຂອບເຂດ."
 }

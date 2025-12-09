@@ -321,5 +321,6 @@
   "positron_desc": "探索と本番業務を、AIが支援する無料の統合環境で統一",
   "rstudio_desc": "RおよびPythonを使用してより生産性の高い作業を支援するためのツールセット。",
   "ananicy_desc": "実行中のプロセスの動作に基づいて、それらの\"nice\"値を自動的に調整するデーモン",
-  "kdememfix_desc": "KDE PlasmaのレンダリングバックエンドをOpenGLに切り替え、大幅に少ないVRAMを使用します"
+  "kdememfix_desc": "KDE PlasmaのレンダリングバックエンドをOpenGLに切り替え、大幅に少ないVRAMを使用します",
+  "zerotier_desc": "ほぼ無制限のサイズの仮想イーサネットネットワークを作成します。"
 }

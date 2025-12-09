@@ -321,5 +321,6 @@
   "positron_desc": "Sjednocuje průzkumné a produkční práce v jednom bezplatném prostředí s podporou AI",
   "rstudio_desc": "Sada nástrojů navržených tak, aby vám pomohly být produktivnější s R a Pythonem.",
   "ananicy_desc": "Démon, který automaticky upravuje \"niceness\" spuštěné procesy na základě jejich chování",
-  "kdememfix_desc": "Přepíná backend pro vykreslování KDE Plasma na OpenGL, který používá výrazně méně VRAM"
+  "kdememfix_desc": "Přepíná backend pro vykreslování KDE Plasma na OpenGL, který používá výrazně méně VRAM",
+  "zerotier_desc": "Vytváří virtuální sítě Ethernet téměř neomezené velikosti."
 }

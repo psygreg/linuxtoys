@@ -321,5 +321,6 @@
   "positron_desc": "Aontaíonn saothar iniúchaidh agus táirgthe i bhfoluain amháin in aisce agus tacaíochta AI",
   "rstudio_desc": "Tacar uirlisí tógtha chun cabhrú leat a bheith níos táirgiúla le R agus Python.",
   "ananicy_desc": "Daemon a dhéanann coigeartú go huathoibríoch ar \"niceness\" próiseas a bhíonn ar siúl bunaithe ar a n-iompar",
-  "kdememfix_desc": "Athraíonn sé an backend a bhíonn ag déanamh KDE Plasma go OpenGL, a úsáideann i bhfad níos lú VRAM"
+  "kdememfix_desc": "Athraíonn sé an backend a bhíonn ag déanamh KDE Plasma go OpenGL, a úsáideann i bhfad níos lú VRAM",
+  "zerotier_desc": "Cruthaíonn líonraí Ethernet fíorúla ar fhairsinge beagnach gan teorainn."
 }

@@ -321,5 +321,6 @@
   "positron_desc": "Suvienija tyrinėjimų ir gamybos darbą vienoje nemokamoje AI pagalba palaikytoje aplinkoje",
   "rstudio_desc": "Įrankių rinkinys, sukurtas padėti jums būti produktyvesniam su R ir Python.",
   "ananicy_desc": "Demonas, kuris automatiškai reguliuoja \"niceness\" veikiančių procesų remiantis jų elgesiu",
-  "kdememfix_desc": "Perjungia KDE Plasma's testavimą back-endą į OpenGL, kurie naudoja žymiai mažiau VRAM"
+  "kdememfix_desc": "Perjungia KDE Plasma's testavimą back-endą į OpenGL, kurie naudoja žymiai mažiau VRAM",
+  "zerotier_desc": "Kuria virtualius Ethernet tinklus beveik neriboto dydžio."
 }

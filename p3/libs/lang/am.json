@@ -321,5 +321,6 @@
   "positron_desc": "ስሞ የመርሃ ግብር እና ምርት ስራን በአንድ ነጻ AI-supported ምግባር ያብራራል",
   "rstudio_desc": "R እና Python ሆነ ያለዎ ተጨማሪ ማሳሩ ዎሩ ሳሃ ተሰሌ ከጀማቸው ተሠሩ",
   "ananicy_desc": "ሞገዱ በራሳቸው ስርአታቸው ላይ እንዲስተካከል አግልግሎትወ (daemon) ዘርዝር ትንኮሳ",
-  "kdememfix_desc": "KDE Plasma's ገናዎን OpenGL ላይ ይቀይራል ከ VRAM ያነሰ ሞዛቲ ይጠቀማል"
+  "kdememfix_desc": "KDE Plasma's ገናዎን OpenGL ላይ ይቀይራል ከ VRAM ያነሰ ሞዛቲ ይጠቀማል",
+  "zerotier_desc": "ሲዓል ኢተርኔት ኔትወርኮች ሁሉንም ወሰን ያላቸው መጠን ይፈጥራል።"
 }

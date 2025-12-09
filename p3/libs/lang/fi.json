@@ -321,5 +321,6 @@
   "positron_desc": "Yhdistää tutkimis- ja tuotantotyön yhteen ilmaiseen tekoälynsä tuettuun ympäristöön",
   "rstudio_desc": "Joukko työkaluja, joiden avulla voit olla tuottavampi R:n ja Pythonin kanssa.",
   "ananicy_desc": "Daemon, joka automaattisesti säätää käynnissä olevien prosessien \"niceness\" niiden käyttäytymisen perusteella",
-  "kdememfix_desc": "Vaihtaa KDE Plasma'n renderöintitaustaa OpenGL:ksi, joka käyttää huomattavasti vähemmän VRAM:ia"
+  "kdememfix_desc": "Vaihtaa KDE Plasma'n renderöintitaustaa OpenGL:ksi, joka käyttää huomattavasti vähemmän VRAM:ia",
+  "zerotier_desc": "Luo virtuaalisia Ethernet-verkkoja lähes rajoittamattoman koon kanssa."
 }
