@@ -107,7 +107,7 @@ _install_() {
                 dpkg -s "$pak" &>/dev/null || sudo apt install -y "$pak"
             done
             ;;
-        *arch*|*archlinux*)
+        *arch*|*archlinux*|*cachyos*)
             for pak in "${_packages[@]}"; do
                 pacman -Qi "$pak" &>/dev/null && continue
                 
