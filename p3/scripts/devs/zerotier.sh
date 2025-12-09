@@ -4,6 +4,7 @@
 # description: zerotier_desc
 # icon: zerotier.png
 # repo: https://github.com/zerotier/ZeroTierOne
+# compat: fedora, ubuntu, debian, suse, arch, cachyos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
