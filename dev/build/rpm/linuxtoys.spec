@@ -52,5 +52,4 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Dec 09 2025 Victor Gregory <psygreg@pm.me> - 5.6.4
 - Updated to current app structure with full Python application
-- Added proper file permissions for all scripts
 - Updated dependencies for current requirements

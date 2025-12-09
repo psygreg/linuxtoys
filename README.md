@@ -51,6 +51,10 @@ sudo apt update
 sudo apt install linuxtoys
 ```
 
+#### Fedora / RHEL / OpenSUSE (COPR)
+
+Packages are available via [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/) for AlmaLinux 10, Fedora 41/42, OpenSUSE Leap/Tumbleweed, and RHEL 9/10.
+
 **For Standard Systems:**
 
 ```bash
