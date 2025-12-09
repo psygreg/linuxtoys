@@ -89,6 +89,7 @@ osarch() {
 	_pkg_dir="/tmp/linuxtoys/"
 	mkdir -p ${_pkg_dir}
 	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
+		curl -fsSL "${_pkg_tarball}" -o "${_pkg_dir}${_pkg_tarball_name}"
 		if makepkg -fcCd OPTIONS=-debug -D "${_pkg_dir}"; then
 			if sudo pacman -U --noconfirm ${_pkg_dir}linuxtoys-*.pkg.tar.zst; then
 				info "LinuxToys installed or updated!"
@@ -114,7 +115,9 @@ installer() {
 	_deb_name=$(basename "${_deb}")
 
 	_pkg=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?/PKGBUILD)(?=")')
+	_pkg_tarball=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?\.tar.xz)(?=")')
 	_pkg_name=$(basename "${_pkg}")
+	_pkg_tarball_name=$(basename "${_pkg_tarball}")
 
 	ostree
 
