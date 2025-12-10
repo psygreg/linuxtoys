@@ -74,3 +74,4 @@ msg302="Sąrankos režimas neįjungtas. Įjunkite sąrankos režimą UEFI nustat
 msg303="Saugus paleidimas jau įjungtas. Jokių veiksmų nereikia."
 msg304="Saugaus paleidimo įjungimas per 'sbctl', šios programos naudojamą metodą, gali sugadinti senesnius įrenginius. Prieš tęsdami patikrinkite, ar nėra pranešimų apie problemas naudojant šį įrankį su jūsų pagrindinės plokštės modeliu."
 msg305="Šiam diegimui reikia turėti paru, AUR pagalbininką. Ar norite jį įdiegti dabar?"
+nocl="OpenCL nerastas. Prašome diegti ROCm, RustiCL arba Intel's Compute Runtime iš Drivers meniu pagal jūsų GPU modelį."

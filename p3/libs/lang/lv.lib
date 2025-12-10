@@ -74,3 +74,4 @@ msg302="Iestatīšanas režīms nav iespējots. Lūdzu, iespējojiet iestatīša
 msg303="Droša sāknēšana jau ir iespējota. Nav nepieciešama darbība."
 msg304="Drošās sāknēšanas iespējošana, izmantojot 'sbctl', šīs lietotnes izmantoto metodi, var sabojāt vecākas ierīces. Pirms turpināt, pārbaudiet, vai ir ziņojumi par problēmām, izmantojot šo rīku ar jūsu mātesplates modeli."
 msg305="Šai instalācijai ir nepieciešams paru, AUR palīgs. Vai vēlaties to instalēt tūlīt?"
+nocl="OpenCL nav atrasts. Lūdzu, instalējiet ROCm, RustiCL vai Intel's Compute Runtime no Drivers izvēlnes saskaņā ar jūsu GPU modeli."

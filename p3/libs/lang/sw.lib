@@ -75,3 +75,4 @@ msg302="Hali ya Usanidi haijawezeshwa. Tafadhali wezesha hali ya usanidi katika 
 msg303="Secure Boot tayari imewezeshwa. Hakuna hatua inayohitajika."
 msg304="Kuwezesha Secure Boot kupitia 'sbctl', mbinu inayotumika na programu hii, inaweza kuharibu vifaa vya zamani. Angalia kama kuna ripoti yoyote ya matatizo ya kutumia kifaa hiki na mfano wa motherboard yako kabla ya kuendelea."
 msg305="Usakinishaji huu unahitaji kuwa na paru, msaidizi wa AUR, inapatikana. Je, ungependa kuisakinisha sasa?"
+nocl="OpenCL haikuonekani. Tafadhali sanidi ROCm, RustiCL, au Intel's Compute Runtime kutoka kwa menyu ya Drivers kulingana na muundo wa GPU yako."

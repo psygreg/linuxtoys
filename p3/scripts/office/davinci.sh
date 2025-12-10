@@ -84,6 +84,13 @@ getresolve () {
 }
 
 davincinatd () {
+    # opencl check for AMD/Intel GPUs
+    GPUCHK=$(lspci | grep -Ei '(radeon|rx|battlemage|alchemist|iris)')
+    if [[ -n "$GPUCHK" ]]; then
+        if ! clinfo_chk; then
+            fatal "$nocl"
+        fi
+    fi
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
         wget https://raw.githubusercontent.com/psygreg/autoresolvedeb/refs/heads/main/linuxtoys/autoresolvedeb.sh
         chmod +x autoresolvedeb.sh

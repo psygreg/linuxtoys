@@ -74,3 +74,4 @@ msg302="Kurulum Modu etkin değil. Lütfen UEFI ayarlarınızda Kurulum Modu'nu 
 msg303="Güvenli Önyükleme zaten etkin. Herhangi bir işlem gerekmez."
 msg304="Bu uygulamanın kullandığı yöntem olan 'sbctl' aracılığıyla Güvenli Önyükleme'yi etkinleştirmek eski cihazları bozabilir. Devam etmeden önce bu aracı anakart modelinizle kullanırken sorun bildirimleri olup olmadığını kontrol edin."
 msg305="Bu kurulum için paru adlı bir AUR yardımcısının mevcut olması gerekiyor. Şimdi yüklemek ister misiniz?"
+nocl="OpenCL bulunamadı. Lütfen GPU modelinize göre Drivers menüsünden ROCm, RustiCL veya Intel's Compute Runtime yükleyin."

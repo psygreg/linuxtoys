@@ -74,3 +74,4 @@ msg302="Le mode de configuration n'est pas activé. Veuillez activer le mode de 
 msg303="Le démarrage sécurisé est déjà activé. Aucune action nécessaire."
 msg304="L'activation du démarrage sécurisé via 'sbctl', la méthode utilisée par cette application, peut endommager les appareils plus anciens. Vérifiez s'il existe des rapports de problèmes lors de l'utilisation de cet outil avec votre modèle de carte mère avant de continuer."
 msg305="Cette installation nécessite la disponibilité de paru, un assistant AUR. Souhaitez-vous l'installer maintenant ?"
+nocl="OpenCL non détecté. Veuillez installer ROCm, RustiCL ou Intel's Compute Runtime à partir du menu Drivers selon votre modèle de GPU."

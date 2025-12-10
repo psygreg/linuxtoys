@@ -74,3 +74,4 @@ msg302="Níl an Mód Socraithe cumasaithe. Cumasaigh an Mód Socraithe i do shoc
 msg303="Tá Tosaithe Slán cumasaithe cheana féin. Níl gá le gníomh."
 msg304="Má chumasaítear Tosaithe Slán trí 'sbctl', an modh a úsáideann an aip seo, d'fhéadfadh sé gléasanna níos sine a bhriseadh. Seiceáil an bhfuil aon tuarascálacha ar shaincheisteanna ag baint úsáide as an uirlis seo le do shamhail cláir mháthair sula leanann tú ar aghaidh."
 msg305="Teastaíonn paru, cúntóir AUR, don tsuiteáil seo. Ar mhaith leat é a shuiteáil anois?"
+nocl="Níor bhraistí OpenCL. Socrú ROCm, RustiCL nó Intel's Compute Runtime ó roghchlár an Drivers de réir do ghréine GPU."

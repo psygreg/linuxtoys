@@ -74,3 +74,4 @@ msg302="A beállítási mód nincs engedélyezve. Engedélyezze a beállítási 
 msg303="A Secure Boot már engedélyezve van. Nincs szükség további lépésre."
 msg304="A Secure Boot engedélyezése az 'sbctl' segítségével, az alkalmazás által használt módszer, tönkreteheti a régebbi eszközöket. Folytatás előtt ellenőrizze, hogy vannak-e jelentések az eszköz használatával kapcsolatos problémákról az alaplapja modelljével kapcsolatban."
 msg305="Ez a telepítés megköveteli a paru, egy AUR segéd meglétét. Szeretné most telepíteni?"
+nocl="OpenCL nem talált. Kérem, telepítse a ROCm, RustiCL vagy Intel's Compute Runtime a Drivers menüből az Ön GPU modellje szerint."

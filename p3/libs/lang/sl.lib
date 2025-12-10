@@ -74,3 +74,4 @@ msg302="Način nastavitve ni omogočen. Omogočite način nastavitve v nastavitv
 msg303="Varni zagon je že omogočen. Ni potrebno nobeno dejanje."
 msg304="Omogočanje Secure Boot prek 'sbctl', metode, ki jo uporablja ta aplikacija, lahko poškoduje starejše naprave. Preverite, ali obstajajo poročila o težavah pri uporabi tega orodja z vašim modelom matične plošče, preden nadaljujete."
 msg305="Ta namestitev zahteva razpoložljivost paru, pomočnika AUR. Želite ga namestiti zdaj?"
+nocl="OpenCL ni bil najden. Prosim, namestite ROCm, RustiCL ali Intel's Compute Runtime iz menija Drivers v skladu z vašim modelom GPU."

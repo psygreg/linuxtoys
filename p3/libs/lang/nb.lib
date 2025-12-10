@@ -74,3 +74,4 @@ msg302="Oppsettmodus er ikke aktivert. Vennligst aktiver oppsettmodus i UEFI-inn
 msg303="Secure Boot er allerede aktivert. Ingen handling nødvendig."
 msg304="Aktivering av Secure Boot gjennom 'sbctl', metoden som brukes av denne appen, kan ødelegge eldre enheter. Sjekk om det finnes rapporter om problemer med å bruke dette verktøyet med hovedkortmodellen din før du fortsetter."
 msg305="Denne installasjonen krever at paru, en AUR-hjelper, er tilgjengelig. Ønsker du å installere den nå?"
+nocl="OpenCL ble ikke funnet. Installer ROCm, RustiCL eller Intel's Compute Runtime fra Drivers-menyen i henhold til GPU-modellen din."

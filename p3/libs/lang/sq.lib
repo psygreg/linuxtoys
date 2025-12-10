@@ -74,3 +74,4 @@ msg302="Modaliteti i konfigurimit nuk është i aktivizuar. Ju lutemi aktivizoni
 msg303="Secure Boot është tashmë i aktivizuar. Nuk nevojitet asnjë veprim."
 msg304="Aktivizimi i Secure Boot përmes 'sbctl', metoda e përdorur nga ky aplikacion, mund të dëmtojë pajisjet e vjetra. Kontrolloni nëse ka ndonjë raport problemesh duke përdorur këtë mjet me modelin e motherboard-it tuaj përpara se të vazhdoni."
 msg305="Ky instalim kërkon që paru, një ndihmës AUR, të jetë i disponueshëm. A dëshironi ta instaloni tani?"
+nocl="OpenCL nuk u zbulua. Ju lutemi instaloni ROCm, RustiCL ose Intel's Compute Runtime nga menyja e Drivers sipas modelit tuaj të GPU-s."

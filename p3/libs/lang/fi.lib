@@ -74,3 +74,4 @@ msg302="Asennustila ei ole käytössä. Ota asennustila käyttöön UEFI-asetuks
 msg303="Secure Boot on jo käytössä. Toimenpiteitä ei tarvita."
 msg304="Secure Bootin käyttöönotto 'sbctl':n kautta, tämän sovelluksen käyttämä menetelmä, voi rikkoa vanhempia laitteita. Tarkista ennen jatkamista, onko raportoitu ongelmia tämän työkalun käytöstä emolevysi mallilla."
 msg305="Tämä asennus vaatii paru-nimisen AUR-apuohjelman. Haluatko asentaa sen nyt?"
+nocl="OpenCL:ää ei havaittu. Asenna ROCm, RustiCL tai Intel's Compute Runtime Drivers-valikosta GPU-mallisi mukaan."

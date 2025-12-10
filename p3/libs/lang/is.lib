@@ -74,3 +74,4 @@ msg302="Uppsetningarhamur er ekki virkur. Vinsamlegast virkjaðu uppsetningarham
 msg303="Secure Boot er þegar virkur. Engin aðgerð nauðsynleg."
 msg304="Að virkja Secure Boot í gegnum 'sbctl', aðferðin sem þetta forrit notar, getur eyðilagt eldri tæki. Athugaðu hvort einhverjar tilkynningar séu um vandamál við notkun þessa verkfæris með móðurborðslíkaninu þínu áður en þú heldur áfram."
 msg305="Þessi uppsetning krefst þess að paru, AUR hjálpartól, sé tiltækt. Viltu setja það upp núna?"
+nocl="OpenCL fannst ekki. Settu upp ROCm, RustiCL eða Intel's Compute Runtime frá Drivers valmyndinni í samræmi við GPU módelinn þinn."

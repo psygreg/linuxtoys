@@ -74,3 +74,4 @@ msg302="Installatiemodus is niet ingeschakeld. Schakel installatiemodus in uw UE
 msg303="Secure Boot is al ingeschakeld. Geen actie nodig."
 msg304="Het inschakelen van Secure Boot via 'sbctl', de methode die door deze app wordt gebruikt, kan oudere apparaten beschadigen. Controleer of er rapporten zijn van problemen bij het gebruik van deze tool met uw moederbordmodel voordat u doorgaat."
 msg305="Deze installatie vereist dat paru, een AUR-helper, beschikbaar is. Wilt u het nu installeren?"
+nocl="OpenCL niet gedetecteerd. Installeer ROCm, RustiCL of Intel's Compute Runtime uit het Drivers-menu naar gelang uw GPU-model."

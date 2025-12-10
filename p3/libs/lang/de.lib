@@ -74,3 +74,4 @@ msg302="Setup-Modus ist nicht aktiviert. Bitte aktivieren Sie den Setup-Modus in
 msg303="Secure Boot ist bereits aktiviert. Keine Aktion erforderlich."
 msg304="Das Aktivieren von Secure Boot über 'sbctl', die von dieser App verwendete Methode, kann ältere Geräte beschädigen. Überprüfen Sie vor dem Fortfahren, ob es Berichte über Probleme mit der Verwendung dieses Tools mit Ihrem Motherboard-Modell gibt."
 msg305="Diese Installation erfordert paru, einen AUR-Helfer. Möchten Sie ihn jetzt installieren?"
+nocl="OpenCL nicht erkannt. Bitte installieren Sie ROCm, RustiCL oder Intel's Compute Runtime aus dem Drivers-Menü gemäß Ihrem GPU-Modell."

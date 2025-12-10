@@ -74,3 +74,4 @@ msg302="Chế độ thiết lập chưa được bật. Vui lòng bật chế đ
 msg303="Secure Boot đã được bật. Không cần thực hiện hành động nào."
 msg304="Bật Secure Boot thông qua 'sbctl', phương pháp được ứng dụng này sử dụng, có thể làm hỏng các thiết bị cũ hơn. Kiểm tra xem có bất kỳ báo cáo nào về sự cố khi sử dụng công cụ này với mẫu bo mạch chủ của bạn trước khi tiếp tục."
 msg305="Cài đặt này yêu cầu có paru, một trình trợ giúp AUR. Bạn có muốn cài đặt nó ngay bây giờ không?"
+nocl="Không tìm thấy OpenCL. Vui lòng cài đặt ROCm, RustiCL hoặc Intel's Compute Runtime từ menu Drivers theo mô hình GPU của bạn."

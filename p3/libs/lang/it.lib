@@ -73,3 +73,4 @@ msg302="La modalità di configurazione non è abilitata. Abilita la modalità di
 msg303="Secure Boot è già abilitato. Nessuna azione necessaria."
 msg304="L'abilitazione di Secure Boot tramite 'sbctl', il metodo impiegato da questa app, può danneggiare dispositivi più vecchi. Verificare se esistono segnalazioni di problemi nell'utilizzo di questo strumento con il proprio modello di scheda madre prima di procedere."
 msg305="Questa installazione richiede la disponibilità di paru, un helper AUR. Desideri installarlo ora?"
+nocl="OpenCL non rilevato. Installa ROCm, RustiCL o Intel's Compute Runtime dal menu Drivers secondo il tuo modello GPU."

@@ -74,3 +74,4 @@ msg302="Quraşdırma Rejimi aktiv deyil. Zəhmət olmasa UEFI parametrlərinizd�
 msg303="Secure Boot artıq aktivdir. Heç bir əməliyyat tələb olunmur."
 msg304="Bu tətbiq tərəfindən istifadə olunan metod olan 'sbctl' vasitəsilə Secure Boot-u aktivləşdirmək köhnə cihazları sıradan çıxara bilər. Davam etməzdən əvvəl bu alətin anakart modelinizlə istifadəsi ilə bağlı problemlər haqqında hər hansı hesabat olub-olmadığını yoxlayın."
 msg305="Bu quraşdırma üçün paru adlı AUR köməkçisinin mövcud olması tələb olunur. İndi quraşdırmaq istəyirsiniz?"
+nocl="OpenCL aşkar edilmədi. Lütfən GPU modelinizə uyğun olaraq Drivers menyusundan ROCm, RustiCL və ya Intel's Compute Runtime-ı quraşdırın."

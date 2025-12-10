@@ -74,3 +74,4 @@ msg302="Tryb konfiguracji nie jest włączony. Włącz tryb konfiguracji w ustaw
 msg303="Secure Boot jest już włączony. Żadna akcja nie jest potrzebna."
 msg304="Włączenie Secure Boot przez 'sbctl', metodę używaną przez tę aplikację, może uszkodzić starsze urządzenia. Sprawdź, czy istnieją raporty o problemach z używaniem tego narzędzia z twoim modelem płyty głównej przed kontynuowaniem."
 msg305="Ta instalacja wymaga dostępności paru, pomocnika AUR. Czy chcesz go teraz zainstalować?"
+nocl="OpenCL nie znaleziono. Prosimy zainstalować ROCm, RustiCL lub Intel's Compute Runtime z menu Drivers zgodnie z Twoim modelem GPU."

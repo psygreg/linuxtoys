@@ -15,11 +15,11 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # function
 icr_in () {
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        _packages=(intel-opencl-icd)
+        _packages=(intel-opencl-icd clinfo)
     elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID_LIKE" == *opensuse* ]] || [[ "$ID" =~ "suse" ]]; then
-        _packages=(intel-opencl)
+        _packages=(intel-opencl clinfo)
     else
-        _packages=(intel-compute-runtime)
+        _packages=(intel-compute-runtime clinfo)
     fi
     _install_
 }

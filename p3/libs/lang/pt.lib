@@ -75,3 +75,4 @@ msg302="O modo de configuração não está ativado. Ative o modo de configuraç
 msg303="O Secure Boot já está ativado. Nenhuma ação necessária."
 msg304="Ativar o Secure Boot através do 'sbctl', o método empregado por este aplicativo, pode danificar dispositivos mais antigos. Verifique se há relatos de problemas ao usar esta ferramenta com o modelo da sua placa-mãe antes de prosseguir."
 msg305="Esta instalação requer ter o paru, um auxiliar do AUR, disponível. Deseja instalá-lo agora?"
+nocl="OpenCL não detectado. Instale ROCm, RustiCL ou Intel's Compute Runtime no menu Drivers de acordo com o modelo da sua GPU."

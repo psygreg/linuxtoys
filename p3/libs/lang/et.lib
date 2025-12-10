@@ -74,3 +74,4 @@ msg302="Seadistusrežiim ei ole lubatud. Palun lubage seadistusrežiim oma UEFI 
 msg303="Secure Boot on juba lubatud. Toimingut pole vaja."
 msg304="Secure Boot lubamine 'sbctl' kaudu, selle rakenduse poolt kasutatav meetod, võib vanemad seadmed rikkuda. Enne jätkamist kontrollige, kas on teateid probleemidest selle tööriista kasutamisel teie emaplaadi mudeliga."
 msg305="See installatsioon nõuab paru, AUR-i abistaja olemasolu. Kas soovite selle nüüd installida?"
+nocl="OpenCL-i ei leitud. Palun installige ROCm, RustiCL või Intel's Compute Runtime menüüst Drivers vastavalt oma GPU mudelile."

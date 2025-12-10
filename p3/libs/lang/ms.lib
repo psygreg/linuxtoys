@@ -74,3 +74,4 @@ msg302="Mod Persediaan tidak diaktifkan. Sila aktifkan Mod Persediaan dalam teta
 msg303="Secure Boot sudah diaktifkan. Tiada tindakan diperlukan."
 msg304="Mengaktifkan Secure Boot melalui 'sbctl', kaedah yang digunakan oleh aplikasi ini, boleh merosakkan peranti lama. Semak sama ada terdapat sebarang laporan masalah menggunakan alat ini dengan model papan induk anda sebelum meneruskan."
 msg305="Pemasangan ini memerlukan paru, pembantu AUR, tersedia. Adakah anda ingin memasangnya sekarang?"
+nocl="OpenCL tidak dikesan. Sila pasang ROCm, RustiCL, atau Intel's Compute Runtime daripada menu Drivers mengikut model GPU anda."

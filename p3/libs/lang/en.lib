@@ -74,3 +74,4 @@ msg302="Setup Mode is not enabled. Please enable Setup Mode in your UEFI setting
 msg303="Secure Boot is already enabled. No action needed."
 msg304="Enabling Secure Boot through 'sbctl', the method employed by this app, can brick older devices. Check if there are any reports of issues using this tool with your motherboard model before proceeding."
 msg305="This installation requires having paru, an AUR helper, available. Do you wish to install it now?"
+nocl="No OpenCL detected. Please install ROCm, RustiCL, or Intel's Compute Runtime from the Drivers menu according to your GPU model."

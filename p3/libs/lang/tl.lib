@@ -74,3 +74,4 @@ msg302="Ang Setup Mode ay hindi pinagana. Mangyaring paganahin ang Setup Mode sa
 msg303="Ang Secure Boot ay pinagana na. Walang kinakailangang aksyon."
 msg304="Ang pagpapagana ng Secure Boot sa pamamagitan ng 'sbctl', ang pamamaraang ginagamit ng app na ito, ay maaaring sirain ang mga lumang device. Suriin kung may mga ulat ng mga isyu sa paggamit ng tool na ito sa iyong modelo ng motherboard bago magpatuloy."
 msg305="Ang pag-install na ito ay nangangailangan ng paru, isang katulong ng AUR, na available. Nais mo bang i-install ito ngayon?"
+nocl="Walang OpenCL na nahanap. Mangyaring i-install ang ROCm, RustiCL o Intel's Compute Runtime mula sa Drivers menu ayon sa iyong GPU model."

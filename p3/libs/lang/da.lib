@@ -74,3 +74,4 @@ msg302="Opsætningstilstand er ikke aktiveret. Aktiver venligst opsætningstilst
 msg303="Secure Boot er allerede aktiveret. Ingen handling nødvendig."
 msg304="Aktivering af Secure Boot gennem 'sbctl', metoden anvendt af denne app, kan ødelægge ældre enheder. Kontroller om der er rapporter om problemer ved brug af dette værktøj med din bundkortmodel før du fortsætter."
 msg305="Denne installation kræver, at paru, en AUR-hjælper, er tilgængelig. Ønsker du at installere den nu?"
+nocl="OpenCL blev ikke registreret. Installér venligst ROCm, RustiCL eller Intel's Compute Runtime fra Drivers-menuen i henhold til din GPU-model."

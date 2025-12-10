@@ -74,3 +74,4 @@ msg302="Režim nastavení není povolen. Povolte režim nastavení v nastavení 
 msg303="Secure Boot je již povolen. Není nutná žádná akce."
 msg304="Povolení Secure Boot prostřednictvím 'sbctl', metody používané touto aplikací, může poškodit starší zařízení. Před pokračováním zkontrolujte, zda existují nějaké zprávy o problémech s používáním tohoto nástroje s vaším modelem základní desky."
 msg305="Tato instalace vyžaduje dostupnost paru, AUR pomocníka. Přejete si jej nyní nainstalovat?"
+nocl="OpenCL nebyl zjištěn. Prosím, nainstalujte ROCm, RustiCL nebo Intel's Compute Runtime z nabídky Drivers podle vašeho modelu GPU."

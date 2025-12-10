@@ -74,3 +74,4 @@ msg302="Sozlash rejimi yoqilmagan. Iltimos, UEFI sozlamalaringizda sozlash rejim
 msg303="Secure Boot allaqachon yoqilgan. Hech qanday harakat kerak emas."
 msg304="Ushbu ilova tomonidan qo'llaniladigan usul bo'lgan 'sbctl' orqali Secure Boot-ni yoqish eski qurilmalarni buzishi mumkin. Davom etishdan oldin ushbu vosita bilan anakart modelingiz bilan muammolar haqida xabarlar bor-yo'qligini tekshiring."
 msg305="Bu o'rnatish uchun paru, AUR yordamchisi mavjud bo'lishi kerak. Uni hozir o'rnatmoqchimisiz?"
+nocl="OpenCL topilmadi. Iltimos, GPU modelingizga muvofiq Drivers menyusidan ROCm, RustiCL yoki Intel's Compute Runtime o'rnating."
