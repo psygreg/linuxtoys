@@ -23,14 +23,12 @@ flatpak_in_lib() {
     fi
 
     # Add Flathub remote if not exists
-    if ! flatpak remotes --user | grep -q "flathub" && ! flatpak remotes --system | grep -q "flathub" 2>/dev/null; then
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
         _msg warning "Failed to add Flathub remote for user"
 
-        sudo_rq
-        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system &>/dev/null|| \
+    sudo_rq
+    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system &>/dev/null|| \
         _msg warning "Failed to add Flathub remote on system"
-    fi
 
     # Verify
     if ! flatpak remotes --user | grep -q "flathub" && ! flatpak remotes --system | grep -q "flathub" 2>/dev/null; then
