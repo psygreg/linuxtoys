@@ -160,15 +160,11 @@ class TermRunScripts(Gtk.Box):
 			lib_path = os.path.dirname(__file__)
 			shell_exec = [sys.executable, '-c', f'import sys; sys.path.append("{lib_path}"); import dev_mode; dev_mode.dry_run_script("{script_path}")']
 
-		# Prepare environment: inherit current environment and add SCRIPT_DIR
-		env = os.environ.copy()
-		env['SCRIPT_DIR'] = script_dir
-
 		self.terminal.spawn_async(
 			Vte.PtyFlags.DEFAULT,
 			None,
 			shell_exec,
-			list(env.items()),
+			[f'SCRIPT_DIR={script_dir}'],
 			GLib.SpawnFlags.DEFAULT,
 			None, None, -1, None, None
 		)
