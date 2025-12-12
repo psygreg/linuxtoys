@@ -23,17 +23,13 @@ flatpak_in_lib() {
     fi
 
     # Add Flathub remote if not exists
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
-        _msg warning "Failed to add Flathub remote for user"
+    if ! flatpak remotes --user | grep -q "flathub" && ! flatpak remotes --system | grep -q "flathub"; then
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
+            _msg warning "Failed to add Flathub remote for user"; return 1;
 
-    sudo_rq
-    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system &>/dev/null|| \
-        _msg warning "Failed to add Flathub remote on system"
-
-    # Verify
-    if ! flatpak remotes --user | grep -q "flathub" && ! flatpak remotes --system | grep -q "flathub" 2>/dev/null; then
-        _msg error "Failed to add Flathub remote"
-        return 1
+        sudo_rq
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system &>/dev/null|| \
+            _msg warning "Failed to add Flathub remote on system"; return 1;
     fi
 
     [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_flatpak_done
