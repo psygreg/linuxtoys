@@ -34,8 +34,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.navigation_stack = []  # Stack to track navigation history for proper back button behavior
         self.view_counter = 0  # Counter for unique view names
         
-        # Initialize search functionality
-        self.search_engine = search_helper.create_search_engine(self.translations)
+        # Initialize search functionality with cache
+        self.script_cache = search_helper.ScriptCache()
+        self.search_engine = search_helper.create_search_engine(self.translations, self.script_cache)
         self.search_active = False
         self.search_results = []
 
@@ -133,7 +134,20 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self._script_running = False
 
+        # Populate search cache asynchronously to avoid blocking the UI
+        GLib.idle_add(self._populate_search_cache)
         GLib.idle_add(self._check_updates)
+
+    def _populate_search_cache(self):
+        """Populate the search cache in a background thread to avoid blocking the UI."""
+        def populate_in_background():
+            try:
+                self.script_cache.populate(self.translations)
+            except Exception as e:
+                print(f"Error populating search cache: {e}")
+        
+        threading.Thread(target=populate_in_background, daemon=True).start()
+        return False  # Remove from idle callbacks
 
     def _check_updates(self):
         threading.Thread(
