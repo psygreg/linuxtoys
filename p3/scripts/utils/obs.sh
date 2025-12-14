@@ -36,3 +36,5 @@ _packages=(wireplumber)
 _install_
 sleep 1
 obs_pipe
+# Set QT_QPA_PLATFORM environment variable for CEF
+flatpak override --user --env=QT_QPA_PLATFORM=xcb com.obsproject.Studio
