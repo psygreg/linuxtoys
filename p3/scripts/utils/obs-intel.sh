@@ -31,13 +31,23 @@ sudo_rq
 _packages=(wireplumber)
 if is_fedora || is_ostree; then
     rpmfusion_chk
-    _packages+=(obs-studio libva-intel-media-driver v4l2loopback)
+    _packages+=(obs-studio libva-intel-media-driver v4l2loopback intel-vpl-gpu-rt)
 elif is_suse || is_debian || is_ubuntu; then
     _packages+=(obs-studio intel-media-driver v4l2loopback)
 elif is_arch || is_cachy; then # get obs-studio-browser from AUR for browser source
-    _packages+=(obs-studio-browser libva-intel-driver intel-media-driver v4l2loopback-dkms)
+    _packages+=(obs-studio-browser libva-intel-driver intel-media-driver v4l2loopback-dkms vpl-gpu-rt)
 fi
 _install_
 sleep 1
 obs_pipe
+# Set QT_QPA_PLATFORM environment variable for CEF
+if [ -f "$HOME/.local/share/applications/com.obsproject.Studio.desktop" ]; then
+    if ! grep -q "QT_QPA_PLATFORM" "$HOME/.local/share/applications/com.obsproject.Studio.desktop"; then
+        sed -i '/^Exec=/s/$/ QT_QPA_PLATFORM=xcb/' "$HOME/.local/share/applications/com.obsproject.Studio.desktop"
+    fi
+elif [ -f "/usr/share/applications/obs.desktop" ]; then
+    mkdir -p "$HOME/.local/share/applications"
+    cp "/usr/share/applications/obs.desktop" "$HOME/.local/share/applications/obs.desktop"
+    sed -i '/^Exec=/s/$/ QT_QPA_PLATFORM=xcb/' "$HOME/.local/share/applications/obs.desktop"
+fi
 zeninf "$msg018"
