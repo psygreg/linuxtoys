@@ -34,8 +34,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.navigation_stack = []  # Stack to track navigation history for proper back button behavior
         self.view_counter = 0  # Counter for unique view names
         
-        # Initialize search functionality
-        self.search_engine = search_helper.create_search_engine(self.translations)
+        # Initialize search functionality with cache
+        self.script_cache = search_helper.ScriptCache()
+        self.search_engine = search_helper.create_search_engine(self.translations, self.script_cache)
         self.search_active = False
         self.search_results = []
 
@@ -133,7 +134,20 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self._script_running = False
 
+        # Populate search cache asynchronously to avoid blocking the UI
+        GLib.idle_add(self._populate_search_cache)
         GLib.idle_add(self._check_updates)
+
+    def _populate_search_cache(self):
+        """Populate the search cache in a background thread to avoid blocking the UI."""
+        def populate_in_background():
+            try:
+                self.script_cache.populate(self.translations)
+            except Exception as e:
+                print(f"Error populating search cache: {e}")
+        
+        threading.Thread(target=populate_in_background, daemon=True).start()
+        return False  # Remove from idle callbacks
 
     def _check_updates(self):
         threading.Thread(
@@ -740,6 +754,23 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         with open(f"{local_sh_dir}{filename}.sh", "w+") as f:
             f.write(_template_local_script)
 
+        defaults = {
+           'name': 'No Name',
+           'version': 'N/A',
+           'description': '',
+           'icon': 'application-x-executable',
+           'reboot': 'no',
+           'noconfirm': 'no',
+           'repo': ''
+        }
+
+        _local_data = parser._parse_metadata_file(
+            f"{local_sh_dir}{filename}.sh",
+            defaults,
+            self.translations)
+
+        self.script_cache.scripts.append(_local_data)
+
         os.system(f'xdg-open {local_sh_dir}{filename}.sh')
 
     def _refresh_current_local_scripts_view(self):
@@ -1162,6 +1193,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         if response == Gtk.ResponseType.YES:
             try:
                 os.remove(script_path)
+                self.script_cache.scripts[:] = filter(
+                    lambda s: s.get("path") != script_path,
+                    self.script_cache.scripts)
                 # Refresh the current view to remove the deleted script
                 self._refresh_current_local_scripts_view()
             except Exception as e:
@@ -1238,6 +1272,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                 if script_path and os.path.exists(script_path):
                     try:
                         os.remove(script_path)
+                        self.script_cache.scripts[:] = filter(
+                            lambda s: s.get("path") != script_path,
+                            self.script_cache.scripts)
                         deleted_count += 1
                     except Exception as e:
                         print(f"Failed to delete {script_path}: {e}")
