@@ -754,6 +754,23 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         with open(f"{local_sh_dir}{filename}.sh", "w+") as f:
             f.write(_template_local_script)
 
+        defaults = {
+           'name': 'No Name',
+           'version': 'N/A',
+           'description': '',
+           'icon': 'application-x-executable',
+           'reboot': 'no',
+           'noconfirm': 'no',
+           'repo': ''
+        }
+
+        _local_data = parser._parse_metadata_file(
+            f"{local_sh_dir}{filename}.sh",
+            defaults,
+            self.translations)
+
+        self.script_cache.scripts.append(_local_data)
+
         os.system(f'xdg-open {local_sh_dir}{filename}.sh')
 
     def _refresh_current_local_scripts_view(self):
@@ -1176,6 +1193,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         if response == Gtk.ResponseType.YES:
             try:
                 os.remove(script_path)
+                self.script_cache.scripts[:] = filter(
+                    lambda s: s.get("path") != script_path,
+                    self.script_cache.scripts)
                 # Refresh the current view to remove the deleted script
                 self._refresh_current_local_scripts_view()
             except Exception as e:
@@ -1252,6 +1272,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                 if script_path and os.path.exists(script_path):
                     try:
                         os.remove(script_path)
+                        self.script_cache.scripts[:] = filter(
+                            lambda s: s.get("path") != script_path,
+                            self.script_cache.scripts)
                         deleted_count += 1
                     except Exception as e:
                         print(f"Failed to delete {script_path}: {e}")
