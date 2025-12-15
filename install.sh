@@ -90,7 +90,7 @@ osarch() {
 	mkdir -p ${_pkg_dir}
 	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
 		# curl -fsSL "${_pkg_tarball}" -o "${_pkg_dir}${_pkg_tarball_name}"
-		if makepkg -fcCd OPTIONS=-debug -D "${_pkg_dir}"; then
+		if makepkg -s "${_pkg_dir}"; then
 			if sudo pacman -U --noconfirm ${_pkg_dir}linuxtoys-*.pkg.tar.zst; then
 				info "LinuxToys installed or updated!"
 			else
