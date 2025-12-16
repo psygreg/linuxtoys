@@ -1,27 +1,40 @@
 { pkgs ? import <nixpkgs> {} }:
 
-pkgs.mkShell {
+let
+  # Create a Python environment with all dependencies properly included
+  pythonEnv = pkgs.python312.withPackages (ps: with ps; [
+    # Core dependencies (from requirements.txt)
+    pygobject3
+    requests
+    urllib3
+    certifi
+  ]);
+in
+
+pkgs.mkShell rec {
   name = "linuxtoys-dev";
   
   buildInputs = with pkgs; [
-    # Python and runtime
-    python3
-    python311Packages.pip
-    python311Packages.venv
+    # Python environment (pre-configured with packages)
+    pythonEnv
     
-    # Core dependencies (from requirements.txt)
-    python311Packages.pygobject3
-    python311Packages.requests
-    python311Packages.urllib3
-    python311Packages.certifi
+    # GObject Introspection
+    gobject-introspection
     
     # GTK and GUI libraries
     gtk3
     libhandy
-    gnome.adwaita-icon-theme
+    adwaita-icon-theme
     
     # VTE (Virtual Terminal Emulator) - needed for terminal features
     vte
+    
+    # Pango (must come before GTK dependencies)
+    pango
+    
+    # Additional GObject Introspection typelibs
+    gdk-pixbuf
+    librsvg
     
     # Development utilities
     git
@@ -31,28 +44,21 @@ pkgs.mkShell {
     
     # Additional system libraries
     glib
-    librsvg
     libxml2
   ];
 
   # Set environment variables for proper GTK/GObject introspection
   shellHook = ''
-    # Create a virtual environment for Python packages
-    if [ ! -d ".venv" ]; then
-      ${pkgs.python3}/bin/python3 -m venv .venv
-    fi
+    export GI_TYPELIB_PATH="$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.gtk3}/lib/girepository-1.0:$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.vte}/lib/girepository-1.0:$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.pango}/lib/girepository-1.0:$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.gdk-pixbuf}/lib/girepository-1.0:$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.libhandy}/lib/girepository-1.0:$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.librsvg}/lib/girepository-1.0:$GI_TYPELIB_PATH"
+    export GI_TYPELIB_PATH="${pkgs.glib}/lib/girepository-1.0:$GI_TYPELIB_PATH"
     
-    source .venv/bin/activate
-    
-    # Install Python dependencies from requirements.txt
-    if [ -f "p3/requirements.txt" ]; then
-      pip install -q -r p3/requirements.txt 2>/dev/null || true
-    fi
-    
-    # Set up proper library paths for GObject introspection
-    export GI_TYPELIB_PATH="${pkgs.gtk3}/lib/girepository-1.0:${pkgs.libhandy}/lib/girepository-1.0:${pkgs.vte}/lib/girepository-1.0:$GI_TYPELIB_PATH"
-    export LD_LIBRARY_PATH="${pkgs.gtk3}/lib:${pkgs.libhandy}/lib:${pkgs.vte}/lib:$LD_LIBRARY_PATH"
-    export PKG_CONFIG_PATH="${pkgs.gtk3}/lib/pkgconfig:${pkgs.glib}/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export LD_LIBRARY_PATH="${pkgs.gtk3}/lib:${pkgs.pango}/lib:${pkgs.gdk-pixbuf}/lib:${pkgs.vte}/lib:${pkgs.glib}/lib:${pkgs.libhandy}/lib:${pkgs.librsvg}/lib:${pkgs.libxml2}/lib:$LD_LIBRARY_PATH"
     
     echo "✓ LinuxToys development environment loaded"
     echo "  Run 'python3 p3/run.py' to start the application"
