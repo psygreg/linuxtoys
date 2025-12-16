@@ -5,6 +5,7 @@
 # icon: obs.svg
 # gpu: Amd, Nvidia
 # repo: https://github.com/dimtpap/obs-pipewire-audio-capture
+# reboot: ostree
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -31,10 +32,23 @@ flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub com.obsproject.Studio
 sleep 1
 sudo_rq
-# check dependency for Pipewire Audio Capture plugin
+# check dependency for Pipewire Audio Capture plugin and xwayland
 _packages=(wireplumber)
+if is_arch || is_cachy; then
+    _packages+=(xorg-xwayland)
+elif is_debian || is_ubuntu; then
+    _packages+=(xwayland)
+elif is_fedora || is_suse || is_ostree; then
+    _packages+=(xorg-x11-server-Xwayland)
+fi
 _install_
 sleep 1
 obs_pipe
 # Set QT_QPA_PLATFORM environment variable for CEF
-flatpak override --user --env=QT_QPA_PLATFORM=xcb com.obsproject.Studio
+flatpak override --user \
+  --socket=x11 \
+  --nosocket=wayland \
+  --filesystem=/tmp/.X11-unix \
+  --env=QT_QPA_PLATFORM=xcb \
+  --env=DISPLAY=$VALID_DISPLAY \
+  com.obsproject.Studio

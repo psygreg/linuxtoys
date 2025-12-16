@@ -31,11 +31,11 @@ sudo_rq
 _packages=(wireplumber)
 if is_fedora || is_ostree; then
     rpmfusion_chk
-    _packages+=(obs-studio libva-intel-media-driver v4l2loopback intel-vpl-gpu-rt)
+    _packages+=(obs-studio libva-intel-media-driver v4l2loopback intel-vpl-gpu-rt xorg-x11-server-Xwayland)
 elif is_suse || is_debian || is_ubuntu; then
-    _packages+=(obs-studio intel-media-driver v4l2loopback)
+    _packages+=(obs-studio intel-media-driver v4l2loopback xwayland)
 elif is_arch || is_cachy; then # get obs-studio-browser from AUR for browser source
-    _packages+=(obs-studio-browser libva-intel-driver intel-media-driver v4l2loopback-dkms vpl-gpu-rt)
+    _packages+=(obs-studio-browser libva-intel-driver intel-media-driver v4l2loopback-dkms vpl-gpu-rt xorg-xwayland)
 fi
 _install_
 sleep 1
