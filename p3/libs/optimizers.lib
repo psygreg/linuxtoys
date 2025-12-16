@@ -271,7 +271,7 @@ plasma_mem_fix () {
         mkdir -p "$(dirname "$ENV_FILE")"
         cat <<EOF > "$ENV_FILE"
 #!/bin/sh
-export KWIN_COMPOSE="O2ES"
+export KWIN_COMPOSE="O"
 EOF
         chmod +x "$ENV_FILE"
     fi
