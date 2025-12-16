@@ -321,5 +321,6 @@
   "rstudio_desc": "R və Python ilə daha məhsuldar olmağınıza kömək etmək üçün hazırlanmış bir sıra alətlər.",
   "ananicy_desc": "İşləyən proseslərin \"niceness\" düzəltmə dəmonu davranışına əsasən sistemin cavab vermə qabiliyyətini artırır",
   "kdememfix_desc": "KDE Plasma-nın göstərilmə arxa planını OpenGL-ə keçir ki bu VRAM-ı əhəmiyyətli dərəcədə azdır",
-  "zerotier_desc": "Demək olar ki, sınırsız ölçüdə virtual Ethernet şəbəkələri yaratır."
+  "zerotier_desc": "Demək olar ki, sınırsız ölçüdə virtual Ethernet şəbəkələri yaratır.",
+  "faugus_desc": "Linux-də oyunlarınızı və onların WINE prefixlərini idarə etmək üçün daha yeni, yüngül və sadələşdirilmiş tətbiq, Lutris-ə bənzər."
 }

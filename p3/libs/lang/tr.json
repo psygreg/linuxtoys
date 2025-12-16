@@ -322,5 +322,6 @@
   "rstudio_desc": "R ve Python ile daha üretken olmana yardımcı olmak için tasarlanan bir araç seti.",
   "ananicy_desc": "Çalışan işlemlerin \"niceness\" değerini otomatik olarak davranışlarına göre ayarlayan bir daemon",
   "kdememfix_desc": "KDE Plasma'nın render backend'ini OpenGL'ye değiştirir ve önemli ölçüde daha az VRAM kullanır",
-  "zerotier_desc": "Neredeyse sınırsız boyuttaki sanal Ethernet ağlarını oluşturur."
+  "zerotier_desc": "Neredeyse sınırsız boyuttaki sanal Ethernet ağlarını oluşturur.",
+  "faugus_desc": "Linux'ta oyunlarınız ve WINE öneklerini yönetmek için daha yeni, daha hafif ve basitleştirilmiş bir uygulama, Lutris'e benzer."
 }

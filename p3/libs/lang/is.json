@@ -322,5 +322,6 @@
   "rstudio_desc": "Sett af verkfærum sem eru hönnuð til að hjálpa þér að vera framleiðnari með R og Python.",
   "ananicy_desc": "Daemon sem sjálfkrafa stillir \"niceness\" keyrrandi ferla miðað við hegðun þeirra",
   "kdememfix_desc": "Skiptir renderingarafgreiðslunni KDE Plasma yfir til OpenGL sem notar verulega minni VRAM",
-  "zerotier_desc": "Skapar sýndar Ethernet-net af næstum ótakmörkuðum stærðum."
+  "zerotier_desc": "Skapar sýndar Ethernet-net af næstum ótakmörkuðum stærðum.",
+  "faugus_desc": "Nýrri, léttari og einfaldari forrit til að stjórna leikjum þínum og WINE forskeytum þeirra á Linux, svipað og Lutris."
 }

@@ -320,5 +320,6 @@
   "rstudio_desc": "Seti ya zana zilizoundwa kusaidia kuwa na uzalishaji zaidi na R na Python.",
   "ananicy_desc": "Daemon inayobadilisha \"niceness\" ya michakato inayokimbia kulingana na tabia yake",
   "kdememfix_desc": "Badilisha backend ya kuonyesha KDE Plasma kwa OpenGL inayotumiatu VRAM zaidi",
-  "zerotier_desc": "Huunda mitandao ya Ethernet ya kimataifa yenye ukubwa karibu bila kikomo."
+  "zerotier_desc": "Huunda mitandao ya Ethernet ya kimataifa yenye ukubwa karibu bila kikomo.",
+  "faugus_desc": "Programu mpya, nyepesi na iliyoboreshwa kwa usimamizi wa michezo yako na viambishi vya WINE kwenye Linux, kama Lutris."
 }

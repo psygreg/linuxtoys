@@ -324,5 +324,6 @@
   "rstudio_desc": "为帮助您使用R和Python提高工作效率而构建的工具集。",
   "ananicy_desc": "一个守护进程，根据进程的行为自动调整正在运行的进程的\"nice\"值",
   "kdememfix_desc": "将KDE Plasma的渲染后端切换到OpenGL，其使用的VRAM明显要少得多",
-  "zerotier_desc": "创建几乎无限大小的虚拟以太网网络。"
+  "zerotier_desc": "创建几乎无限大小的虚拟以太网网络。",
+  "faugus_desc": "在Linux上管理您的游戏及其WINE前缀的一个更新、更轻量级和简化的应用程序，类似于Lutris。"
 }

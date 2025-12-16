@@ -322,5 +322,6 @@
   "rstudio_desc": "R 및 Python으로 더 생산적이 되도록 도와주기 위해 만들어진 도구 세트입니다.",
   "ananicy_desc": "실행 중인 프로세스의 동작에 따라 \"niceness\"를 자동으로 조정하는 데몬",
   "kdememfix_desc": "KDE Plasma의 렌더링 백엔드를 OpenGL로 전환하여 훨씬 적은 VRAM을 사용합니다",
-  "zerotier_desc": "거의 무제한의 크기로 가상 이더넷 네트워크를 생성합니다."
+  "zerotier_desc": "거의 무제한의 크기로 가상 이더넷 네트워크를 생성합니다.",
+  "faugus_desc": "Linux에서 게임과 WINE 접두사를 관리하기 위한 더 새롭고 가볍고 간단한 애플리케이션으로 Lutris와 유사합니다."
 }

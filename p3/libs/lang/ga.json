@@ -322,5 +322,6 @@
   "rstudio_desc": "Tacar uirlisí tógtha chun cabhrú leat a bheith níos táirgiúla le R agus Python.",
   "ananicy_desc": "Daemon a dhéanann coigeartú go huathoibríoch ar \"niceness\" próiseas a bhíonn ar siúl bunaithe ar a n-iompar",
   "kdememfix_desc": "Athraíonn sé an backend a bhíonn ag déanamh KDE Plasma go OpenGL, a úsáideann i bhfad níos lú VRAM",
-  "zerotier_desc": "Cruthaíonn líonraí Ethernet fíorúla ar fhairsinge beagnach gan teorainn."
+  "zerotier_desc": "Cruthaíonn líonraí Ethernet fíorúla ar fhairsinge beagnach gan teorainn.",
+  "faugus_desc": "Feidhmchlár níos nuaí, níos éadroime agus níos simplí chun do chluichí agus a réimíreanna WINE a bhainistiú ar Linux, cosúil le Lutris."
 }

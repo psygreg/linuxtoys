@@ -322,5 +322,6 @@
   "rstudio_desc": "Joukko työkaluja, joiden avulla voit olla tuottavampi R:n ja Pythonin kanssa.",
   "ananicy_desc": "Daemon, joka automaattisesti säätää käynnissä olevien prosessien \"niceness\" niiden käyttäytymisen perusteella",
   "kdememfix_desc": "Vaihtaa KDE Plasma'n renderöintitaustaa OpenGL:ksi, joka käyttää huomattavasti vähemmän VRAM:ia",
-  "zerotier_desc": "Luo virtuaalisia Ethernet-verkkoja lähes rajoittamattoman koon kanssa."
+  "zerotier_desc": "Luo virtuaalisia Ethernet-verkkoja lähes rajoittamattoman koon kanssa.",
+  "faugus_desc": "Uudempi, kevyempi ja yksinkertaistettu sovellus pelien ja niiden WINE-etuliitteiden hallintaan Linuxissa, samanlainen kuin Lutris."
 }

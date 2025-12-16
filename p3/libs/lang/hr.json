@@ -322,5 +322,6 @@
   "rstudio_desc": "Skup alata izgrađenih da vam pomognu da budete produktivniji s R i Python.",
   "ananicy_desc": "Daemon koji automatski prilagođava \"niceness\" pokrenute procese na osnovu njihovog ponašanja",
   "kdememfix_desc": "Prebacuje KDE Plasma-u backend za renderiranje na OpenGL koji koristi značajno manje VRAM",
-  "zerotier_desc": "Stvara virtualne Ethernet mreže gotovo neograničene veličine."
+  "zerotier_desc": "Stvara virtualne Ethernet mreže gotovo neograničene veličine.",
+  "faugus_desc": "Novija, lakša i pojednostavljena aplikacija za upravljanje vašim igrama i njihovim WINE prefiksima na Linux-u, slično Lutris-u."
 }

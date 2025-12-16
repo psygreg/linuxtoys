@@ -322,5 +322,6 @@
   "minfreefix": "Dynamic Minimum Free Memory",
   "adoptium_desc": "High-performance, cross-platform, open-source Java runtime binaries that are enterprise-ready and Java SE TCK-tested for general use.",
   "astapro_desc": "Total software design tool with UML, ERD, flowchart, DFD, and more.",
-  "zerotier_desc": "Creates virtual Ethernet networks of almost unlimited size."
+  "zerotier_desc": "Creates virtual Ethernet networks of almost unlimited size.",
+  "faugus_desc": "A newer, lightweight and simplified application to manage your games and their WINE prefixes on Linux, similarly to Lutris."
 }
