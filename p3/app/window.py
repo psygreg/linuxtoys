@@ -179,25 +179,83 @@ class AppWindow(Gtk.ApplicationWindow):
                 [ self.scripts_flowbox.select_child(child) for child in self.scripts_flowbox.get_children()[1:] ]
                 return True
 
+        elif keyval == Gdk.KEY_space:
+            # In checklist mode, Space toggles the checkbox of the currently selected item
+            if (self.current_category_info and 
+                self.current_category_info.get('display_mode', 'menu') == 'checklist'):
+                selected_children = self.scripts_flowbox.get_selected_children()
+                if selected_children:
+                    # Get the first selected child
+                    child = selected_children[0]
+                    event_box = child.get_child()
+                    # Use the stored checkbox reference
+                    if hasattr(event_box, 'checkbox'):
+                        event_box.checkbox.set_active(not event_box.checkbox.get_active())
+                        return True
+                return False
+
         elif keyval == Gdk.KEY_Escape:
-            self.scripts_flowbox.unselect_all()
+            # Determine which flowbox has selections based on current view
+            current_view = self.main_stack.get_visible_child_name()
+            flowbox_to_check = None
+            
+            if current_view == "categories":
+                flowbox_to_check = self.categories_flowbox
+            elif current_view == "search":
+                flowbox_to_check = self.search_flowbox
+            else:  # scripts view
+                flowbox_to_check = self.scripts_flowbox
+            
+            # First, deselect any selected items
+            if flowbox_to_check and flowbox_to_check.get_selected_children():
+                flowbox_to_check.unselect_all()
+                return True
+            
+            # If nothing is selected, go back to the previous menu
+            # (but not if we're already at the main categories view)
+            if current_view != "categories" or self.search_active:
+                self.on_back_button_clicked(None)
+                return True
+            
+            return False
 
         elif keyval == Gdk.KEY_Return:
-            screens = {
-                "categories": self.categories_flowbox.get_selected_children(),
-                "search": self.search_flowbox.get_selected_children()
-            }
+            # In checklist mode, special handling
+            if (self.current_category_info and 
+                self.current_category_info.get('display_mode', 'menu') == 'checklist'):
+                # Get all checked items
+                checked_scripts = [cb.script_info for cb in self.check_buttons if cb.get_active()]
+                
+                if checked_scripts:
+                    # Run all checked scripts
+                    self.on_install_checklist(None)
+                    return True
+                else:
+                    # If nothing is checked, run only the currently selected item
+                    selected_children = self.scripts_flowbox.get_selected_children()
+                    if selected_children:
+                        # Simulate a click on the selected item
+                        sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                        sim_event.button = 1
+                        selected_children[0].get_child().emit("button-press-event", sim_event)
+                        return True
+            else:
+                # Normal menu behavior: activate the selected item
+                screens = {
+                    "categories": self.categories_flowbox.get_selected_children(),
+                    "search": self.search_flowbox.get_selected_children()
+                }
 
-            selected_widget = (
-                screens.get(self.main_stack.get_visible_child_name(), self.scripts_flowbox.get_selected_children())
-            )
+                selected_widget = (
+                    screens.get(self.main_stack.get_visible_child_name(), self.scripts_flowbox.get_selected_children())
+                )
 
-            sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-            sim_event.button = 1
+                sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                sim_event.button = 1
 
-            if selected_widget:
-                selected_widget[0].get_child().emit("button-press-event", sim_event)
-            return True
+                if selected_widget:
+                    selected_widget[0].get_child().emit("button-press-event", sim_event)
+                return True
 
         # Quick search: if typing letters without modifiers, focus search entry and type there
         current_focus = self.get_focus()
@@ -438,6 +496,8 @@ class AppWindow(Gtk.ApplicationWindow):
             check = Gtk.CheckButton()
             check.connect('toggled', self._on_toggled_check)
             check.script_info = item_info
+            # Make checkbox non-focusable so it doesn't interfere with keyboard navigation
+            check.set_can_focus(False)
             box.pack_start(check, False, False, 0)
 
         if is_subcategory or (is_category_type and is_not_script) or (is_main_category and is_not_script):
@@ -491,6 +551,9 @@ class AppWindow(Gtk.ApplicationWindow):
         event_box.add(box)
         event_box.get_style_context().add_class("script-item")
         event_box.info = item_info
+        # Store reference to checkbox for easy access in keyboard handlers
+        if checklist:
+            event_box.checkbox = check
         
         # Enable mouse events for hover effects and right-click
         event_box.set_events(event_box.get_events() | 
@@ -1596,6 +1659,10 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self.back_button.hide()
             # Disable drag-and-drop for main categories
             self._disable_drag_and_drop()
+            # Restore footer state for main menu
+            self.reveal.set_reveal_child(True)
+            self.reveal.button_box.hide()
+            self.reveal.support.show_all()
 
     def _update_search_header(self):
         """Update header for search results view."""

@@ -104,6 +104,9 @@ class TermRunScripts(Gtk.Box):
 		self.set_border_width(12)
 		self.add(self.vbox_main)
 
+		# Connect key press event to handle Escape
+		self.connect("key-press-event", self._on_key_press)
+
 		if self.script_queue:
 			self.vbox_main._update_header_labels(self.script_queue[0])
 
@@ -170,6 +173,24 @@ class TermRunScripts(Gtk.Box):
 		)
 
 		self.vbox_main.button_run.set_sensitive(False)
+
+	def _on_key_press(self, widget, event):
+		"""Handle key press events - specifically Escape to go back."""
+		if event.keyval == Gdk.KEY_Escape:
+			# Check if a script is currently running
+			if self.parent._script_running:
+				# Show the warning dialog before cancelling
+				if self.parent._show_cancel_script_warning_dialog():
+					# User confirmed to cancel
+					self.on_done_clicked(None)
+				# Otherwise, continue running (user chose not to cancel)
+				return True
+			else:
+				# No script running, just go back
+				self.on_done_clicked(None)
+				return True
+		
+		return False
 
 	def on_done_clicked(self, button):
 		self.parent.set_focus(None)
