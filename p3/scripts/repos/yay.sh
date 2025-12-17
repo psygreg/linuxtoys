@@ -18,6 +18,6 @@ _packages=(base-devel)
 _install_
 
 git clone --branch yay-bin --single-branch https://github.com/archlinux/aur.git /tmp/yay-bin
-makepkg -fcCd OPTIONS=-debug -D /tmp/yay-bin && {
+cd /tmp/yay-bin && makepkg -s && {
 	sudo pacman --noconfirm -U /tmp/yay-bin/yay-bin-*.tar.zst && { zeninf "$msg018"; };
 } || { fatal "$msg077"; }
