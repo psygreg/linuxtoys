@@ -3,7 +3,7 @@
 # version: 1.0
 # description: omz_desc
 # icon: zsh.png
-# compat: arch, debian, fedora, ubuntu, cachyos, suse
+# compat: arch, debian, fedora, ubuntu, cachyos, suse, ostree
 # repo: https://ohmyz.sh
 
 # --- Start of the script code ---
