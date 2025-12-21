@@ -325,5 +325,6 @@
   "zerotier_desc": "Creates virtual Ethernet networks of almost unlimited size.",
   "faugus_desc": "A newer, lightweight and simplified application to manage your games and their WINE prefixes on Linux, similarly to Lutris.",
   "terra_desc": "Terra is a rolling-release Fedora repository for all the software you need.",
-  "zed_desc": "A minimal code editor crafted for speed and collaboration with humans and AI."
+  "zed_desc": "A minimal code editor crafted for speed and collaboration with humans and AI.",
+  "fisher_desc": "A plugin manager for Fish"
 }
