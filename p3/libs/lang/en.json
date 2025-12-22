@@ -327,5 +327,6 @@
   "terra_desc": "Terra is a rolling-release Fedora repository for all the software you need.",
   "zed_desc": "A minimal code editor crafted for speed and collaboration with humans and AI.",
   "bitwarden_desc": "A secure and free password manager for all of your devices",
-  "keepassxc_desc": "Secure and Full-featured Password Manager"
+  "keepassxc_desc": "Secure and Full-featured Password Manager",
+  "fisher_desc": "A plugin manager for Fish"
 }

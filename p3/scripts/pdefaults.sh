@@ -3,7 +3,7 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy
+# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin
 # reboot: yes
 # noconfirm: yes
 # nocontainer
@@ -38,8 +38,8 @@ sysag_run () {
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
-    # plasma VRAM usage fix
-    plasma_mem_fix
+    # plasma VRAM usage fix - suspended for issues on some systems
+    # plasma_mem_fix
     # vm.min_free_kbytes dynamic setup
     free_mem_fix
     # fix video thumbnails
