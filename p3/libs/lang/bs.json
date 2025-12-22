@@ -322,5 +322,10 @@
   "ananicy_desc": "Demon koji automatski prilagođava \"niceness\" pokrenute procese na osnovu njihovog ponašanja",
   "kdememfix_desc": "Prebacuje KDE Plasma-u backend za renderiranje na OpenGL, koji koristi značajno manje VRAM",
   "zerotier_desc": "Stvara virtuelne Ethernet mreže gotovo neograničene veličine.",
-  "faugus_desc": "Novija, lakša i pojednostavljena aplikacija za upravljanje vašim igrama i njihovim WINE prefiksima na Linux-u, slično Lutris-u."
+  "faugus_desc": "Novija, lakša i pojednostavljena aplikacija za upravljanje vašim igrama i njihovim WINE prefiksima na Linux-u, slično Lutris-u.",
+  "terra_desc": "Terra je Fedora rolling-release spremište za sav softver koji vam trebate.",
+  "zed_desc": "Minimalan editor koda osmišljen za brzinu i saradnju sa ljudima i AI.",
+  "bitwarden_desc": "Bezbedan i besplatna upravitelja lozinki za sve vaše uređaje.",
+  "keepassxc_desc": "Bezbedan i potpuno funkcionalan upravitelj lozinki",
+  "fisher_desc": "Upravitelj dodataka za Fish"
 }

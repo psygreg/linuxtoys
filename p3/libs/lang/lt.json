@@ -323,5 +323,10 @@
   "ananicy_desc": "Demonas, kuris automatiškai reguliuoja \"niceness\" veikiančių procesų remiantis jų elgesiu",
   "kdememfix_desc": "Perjungia KDE Plasma's testavimą back-endą į OpenGL, kurie naudoja žymiai mažiau VRAM",
   "zerotier_desc": "Kuria virtualius Ethernet tinklus beveik neriboto dydžio.",
-  "faugus_desc": "Naujesnė, lengvesnė ir supaprastinta programa jūsų žaidimams ir jų WINE priešdėliams tvarkyti sistemoje Linux, panašiai kaip Lutris."
+  "faugus_desc": "Naujesnė, lengvesnė ir supaprastinta programa jūsų žaidimams ir jų WINE priešdėliams tvarkyti sistemoje Linux, panašiai kaip Lutris.",
+  "terra_desc": "Terra yra Fedora rolling-release saugykla visai programinei įrangai, kurios jums reikia.",
+  "zed_desc": "Minimalus kodų redaktorius, skirtas greičiui ir bendradarbiavimui su žmonėmis ir AI.",
+  "bitwarden_desc": "Saugus ir nemokamas slaptažodžio tvarkytuvasis visoms jūsų įrenginiams.",
+  "keepassxc_desc": "Saugus ir visapusiškai aprašytas slaptažodžio tvarkytuvesis",
+  "fisher_desc": "Papildinių tvarkytuvesis Fish"
 }

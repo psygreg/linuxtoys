@@ -322,5 +322,10 @@
   "ananicy_desc": "İşləyən proseslərin \"niceness\" düzəltmə dəmonu davranışına əsasən sistemin cavab vermə qabiliyyətini artırır",
   "kdememfix_desc": "KDE Plasma-nın göstərilmə arxa planını OpenGL-ə keçir ki bu VRAM-ı əhəmiyyətli dərəcədə azdır",
   "zerotier_desc": "Demək olar ki, sınırsız ölçüdə virtual Ethernet şəbəkələri yaratır.",
-  "faugus_desc": "Linux-də oyunlarınızı və onların WINE prefixlərini idarə etmək üçün daha yeni, yüngül və sadələşdirilmiş tətbiq, Lutris-ə bənzər."
+  "faugus_desc": "Linux-də oyunlarınızı və onların WINE prefixlərini idarə etmək üçün daha yeni, yüngül və sadələşdirilmiş tətbiq, Lutris-ə bənzər.",
+  "terra_desc": "Terra, sizə ehtiyac duyduğunuz bütün proqramlar üçün Fedora rolling-release deposudur.",
+  "zed_desc": "İnsanlar və AI ilə sürət və əməkdaşlıq üçün hazırlanan minimal kod redaktoru.",
+  "bitwarden_desc": "Bütün cihazlarınız üçün təhlükəsiz və pulsuz parol meneceri.",
+  "keepassxc_desc": "Təhlükəsiz və tam xüsusiyyətli parol meneceri",
+  "fisher_desc": "Fish üçün plugin meneceri"
 }

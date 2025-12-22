@@ -323,5 +323,10 @@
   "ananicy_desc": "Çalışan işlemlerin \"niceness\" değerini otomatik olarak davranışlarına göre ayarlayan bir daemon",
   "kdememfix_desc": "KDE Plasma'nın render backend'ini OpenGL'ye değiştirir ve önemli ölçüde daha az VRAM kullanır",
   "zerotier_desc": "Neredeyse sınırsız boyuttaki sanal Ethernet ağlarını oluşturur.",
-  "faugus_desc": "Linux'ta oyunlarınız ve WINE öneklerini yönetmek için daha yeni, daha hafif ve basitleştirilmiş bir uygulama, Lutris'e benzer."
+  "faugus_desc": "Linux'ta oyunlarınız ve WINE öneklerini yönetmek için daha yeni, daha hafif ve basitleştirilmiş bir uygulama, Lutris'e benzer.",
+  "terra_desc": "Terra, ihtiyaç duyduğunuz tüm yazılım için bir Fedora rolling-release deposudur.",
+  "zed_desc": "İnsan ve AI ile hız ve işbirliği için tasarlanan minimal bir kod editörü.",
+  "bitwarden_desc": "Tüm cihazlarınız için güvenli ve ücretsiz bir şifre yöneticisi.",
+  "keepassxc_desc": "Güvenli ve tam özellikli bir şifre yöneticisi",
+  "fisher_desc": "Fish için bir eklenti yöneticisi"
 }

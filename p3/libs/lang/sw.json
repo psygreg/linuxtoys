@@ -321,5 +321,10 @@
   "ananicy_desc": "Daemon inayobadilisha \"niceness\" ya michakato inayokimbia kulingana na tabia yake",
   "kdememfix_desc": "Badilisha backend ya kuonyesha KDE Plasma kwa OpenGL inayotumiatu VRAM zaidi",
   "zerotier_desc": "Huunda mitandao ya Ethernet ya kimataifa yenye ukubwa karibu bila kikomo.",
-  "faugus_desc": "Programu mpya, nyepesi na iliyoboreshwa kwa usimamizi wa michezo yako na viambishi vya WINE kwenye Linux, kama Lutris."
+  "faugus_desc": "Programu mpya, nyepesi na iliyoboreshwa kwa usimamizi wa michezo yako na viambishi vya WINE kwenye Linux, kama Lutris.",
+  "terra_desc": "Terra ni Fedora rolling-release hazina kwa programu zote unayohitaji.",
+  "zed_desc": "Changanya kodi kidogo iliyoundwa kwa kasi na ushirikiano na wanadamu na AI.",
+  "bitwarden_desc": "Msimamizi wa nenosiri salama na mahali pa bure kwa vyombo vyote.",
+  "keepassxc_desc": "Msimamizi wa nenosiri salama na kamili",
+  "fisher_desc": "Msimamizi wa viongezi wa Fish"
 }

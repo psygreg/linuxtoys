@@ -323,5 +323,10 @@
   "ananicy_desc": "Një daemon që automatikisht rregullon \"niceness\" e proceseve në ekzekutim bazuar në sjelljen e tyre",
   "kdememfix_desc": "Ndërrimi i backend të renderimit të KDE Plasma në OpenGL i cili përdor shumë më pak VRAM",
   "zerotier_desc": "Krijon rrjete Ethernet virtuale me madhësi pothuajse të pakufizuara.",
-  "faugus_desc": "Një aplikacion më i ri, më i lehtë dhe i thjeshtëzuar për të menaxhuar lojërat tuaja dhe prefikset e tyre WINE në Linux, i ngjashëm me Lutris."
+  "faugus_desc": "Një aplikacion më i ri, më i lehtë dhe i thjeshtëzuar për të menaxhuar lojërat tuaja dhe prefikset e tyre WINE në Linux, i ngjashëm me Lutris.",
+  "terra_desc": "Terra është një depozitë rolling-release Fedora për të gjithë softërin që keni nevojë.",
+  "zed_desc": "Një redaktor kodi minimal i dizajnuar për shpejtësi dhe bashkëpunim me njerëz dhe AI.",
+  "bitwarden_desc": "Një menaxher i sigurt dhe i lirë i fjalëkalimeve për të gjitha pajisjet tuaja.",
+  "keepassxc_desc": "Menaxher i sigurt dhe i plotë fjalëkalimi",
+  "fisher_desc": "Një menaxher plugini për Fish"
 }

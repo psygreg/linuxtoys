@@ -323,5 +323,10 @@
   "ananicy_desc": "Daemon, mis automaatselt kohandab käivitatud protsesside \"niceness\" nende käitumise alusel",
   "kdememfix_desc": "Lülitab KDE Plasma renderdamise tausta OpenGL-le, mis kasutab oluliselt vähem VRAM-i",
   "zerotier_desc": "Loob virtuaalseid Ethernet-võrke peaaegu piiramatu suurusega.",
-  "faugus_desc": "Uuem, kergemad ja lihtsustatud rakendus teie mängude ja nende WINE eesliiteid Linux-is haldamiseks, sarnane Lutris-ega."
+  "faugus_desc": "Uuem, kergemad ja lihtsustatud rakendus teie mängude ja nende WINE eesliiteid Linux-is haldamiseks, sarnane Lutris-ega.",
+  "terra_desc": "Terra on Fedora rolling-release hoidla kõigi tarkvara jaoks, mida te vajate.",
+  "zed_desc": "Minimaalne koodiredaktor, mis on kujundatud kiiruse ja koostöö jaoks inimestega ja AI-ga.",
+  "bitwarden_desc": "Turvaline ja tasuta paroolihalduriseis kõigis seadmeis.",
+  "keepassxc_desc": "Turvaline ja täisfunktsionaalne paroolihaldur",
+  "fisher_desc": "Fish'i jaoks moodulite haldur"
 }

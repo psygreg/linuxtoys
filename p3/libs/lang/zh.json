@@ -325,5 +325,10 @@
   "ananicy_desc": "一个守护进程，根据进程的行为自动调整正在运行的进程的\"nice\"值",
   "kdememfix_desc": "将KDE Plasma的渲染后端切换到OpenGL，其使用的VRAM明显要少得多",
   "zerotier_desc": "创建几乎无限大小的虚拟以太网网络。",
-  "faugus_desc": "在Linux上管理您的游戏及其WINE前缀的一个更新、更轻量级和简化的应用程序，类似于Lutris。"
+  "faugus_desc": "在Linux上管理您的游戏及其WINE前缀的一个更新、更轻量级和简化的应用程序，类似于Lutris。",
+  "terra_desc": "Terra是一个Fedora rolling-release存储库，用于您需要的所有软件。",
+  "zed_desc": "为速度和与人类和AI合作而设计的最小代码编辑器。",
+  "bitwarden_desc": "为您的所有设备提供的安全且免费的密码管理器。",
+  "keepassxc_desc": "安全且功能完整的密码管理器",
+  "fisher_desc": "Fish的插件管理器"
 }

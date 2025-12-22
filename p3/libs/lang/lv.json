@@ -323,5 +323,10 @@
   "ananicy_desc": "Dēmons, kas automātiski pielāgo \"niceness\" darbojošos procesus, pamatojoties uz to uzvedību",
   "kdememfix_desc": "Pārslēdz KDE Plasma's renderēšanas backend uz OpenGL, kas izmanto daudz mazāk VRAM",
   "zerotier_desc": "Izveido virtuālos Ethernet tīklus gandrīz neierobežota izmēra.",
-  "faugus_desc": "Jaunāka, vieglāka un vienkāršota lietotne jūsu spēļu un to WINE prefiksu pārvaldīšanai Linux, līdzīgi kā Lutris."
+  "faugus_desc": "Jaunāka, vieglāka un vienkāršota lietotne jūsu spēļu un to WINE prefiksu pārvaldīšanai Linux, līdzīgi kā Lutris.",
+  "terra_desc": "Terra ir Fedora rolling-release repozitorijs visam programmatūrai, kuru jums nepieciešams.",
+  "zed_desc": "Minimāls koda redaktors ātrumam un sadarbībai ar cilvēkiem un AI.",
+  "bitwarden_desc": "Draugs un bezmaksas paroles pārvaldnieks visiem jūsu ierīcēm.",
+  "keepassxc_desc": "Draugs un pilnīgs paroles pārvaldnieks",
+  "fisher_desc": "Spraudņu menedžeris Fish"
 }

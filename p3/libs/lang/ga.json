@@ -323,5 +323,10 @@
   "ananicy_desc": "Daemon a dhéanann coigeartú go huathoibríoch ar \"niceness\" próiseas a bhíonn ar siúl bunaithe ar a n-iompar",
   "kdememfix_desc": "Athraíonn sé an backend a bhíonn ag déanamh KDE Plasma go OpenGL, a úsáideann i bhfad níos lú VRAM",
   "zerotier_desc": "Cruthaíonn líonraí Ethernet fíorúla ar fhairsinge beagnach gan teorainn.",
-  "faugus_desc": "Feidhmchlár níos nuaí, níos éadroime agus níos simplí chun do chluichí agus a réimíreanna WINE a bhainistiú ar Linux, cosúil le Lutris."
+  "faugus_desc": "Feidhmchlár níos nuaí, níos éadroime agus níos simplí chun do chluichí agus a réimíreanna WINE a bhainistiú ar Linux, cosúil le Lutris.",
+  "terra_desc": "Is stóras rolling-release Fedora an Terra do gach bogearraí a bhíonn de dhíth ort.",
+  "zed_desc": "Eagarthóir kóid íosta deartha do thapúlacht agus comhobair le daoine agus AI.",
+  "bitwarden_desc": "Bainisteoir focal-fhaire slán agus saor in aisce do do ghach gá.",
+  "keepassxc_desc": "Bainisteoir focal-fhaire slán agus iomlán-ghníomhach",
+  "fisher_desc": "Bainisteoir breiseán do Fish"
 }
