@@ -103,7 +103,7 @@ def is_supported_system():
     compat_keys = get_system_compat_keys()
     
     # Define the set of supported OS compatibility keys
-    supported_os_keys = {'debian', 'ubuntu', 'cachy', 'arch', 'fedora', 'suse', 'ostree', 'ublue'}
+    supported_os_keys = {'debian', 'ubuntu', 'cachy', 'arch', 'fedora', 'suse', 'ostree', 'ublue', 'zorin'}
     
     # Check if any OS compatibility key matches
     return bool(compat_keys & supported_os_keys)
@@ -149,6 +149,8 @@ def get_system_compat_keys():
         keys.add('debian')
     if id_val in ['ubuntu'] or 'ubuntu' in id_like or 'debian' in id_like:
         keys.add('ubuntu')
+    if id_val in ['zorin'] or 'zorin' in id_like:
+        keys.add('zorin')
     if id_val in ['cachyos']:
         keys.add('cachy')
     if (id_val in ['arch', 'archlinux'] or 'arch' in id_like or 'archlinux' in id_like) and id_val != 'cachyos':
@@ -512,8 +514,27 @@ def script_is_compatible(script_path, compat_keys):
             for line in f:
                 if line.startswith('# compat:'):
                     compat_line = line[len('# compat:'):].strip()
-                    script_keys = set([k.strip() for k in compat_line.split(',')])
-                    os_compatible = bool(compat_keys & script_keys)
+                    key_strings = [k.strip() for k in compat_line.split(',')]
+                    include_keys = set()
+                    exclude_keys = set()
+                    
+                    # Parse keys into include (whitelist) and exclude (blacklist)
+                    for key_str in key_strings:
+                        if key_str.startswith('!'):
+                            exclude_keys.add(key_str[1:])
+                        else:
+                            include_keys.add(key_str)
+                    
+                    # Check whitelist (include keys) - if specified, script must match at least one
+                    if include_keys:
+                        os_compatible = bool(compat_keys & include_keys)
+                    else:
+                        # No whitelist specified, default to True
+                        os_compatible = True
+                    
+                    # Check blacklist (exclude keys) - if specified, script must not match any
+                    if exclude_keys:
+                        os_compatible = os_compatible and not bool(compat_keys & exclude_keys)
                 elif line.startswith('# gpu:'):
                     gpu_value = line[len('# gpu:'):].strip()
                     gpu_values = [v.strip() for v in gpu_value.split(',') if v.strip()]

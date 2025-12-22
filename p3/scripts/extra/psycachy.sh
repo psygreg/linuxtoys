@@ -3,7 +3,7 @@
 # version: 1.0
 # description: psycachy_desc
 # icon: psycachy.svg
-# compat: ubuntu, debian
+# compat: ubuntu, debian, !zorin
 # reboot: yes
 # noconfirm: yes
 # nocontainer
