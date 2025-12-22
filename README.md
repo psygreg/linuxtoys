@@ -79,9 +79,12 @@ cd linuxtoys-bin
 makepkg -si
 ```
 
-## Development
+## From source [GIT](https://github.com/psygreg/linuxtoys/)
 
-For developers who wish to contribute or run the application from source, please follow these steps.
+> [!WARNING]
+> This version is under constant development, therefore it may have instability as well as new features not yet available in the stable versions.
+
+Running the application from source, please follow these steps.
 
 ### Prerequisites
 
@@ -111,42 +114,26 @@ sudo zypper in -y bash git curl wget zenity python3 python3-gobject python3-requ
 
 **Clone the repository:**
 ```bash
-    git clone --depth=1 https://github.com/psygreg/linuxtoys.git
-    cd linuxtoys
-```
-
-**Install Dependencies:**
-
-**Option 1: Virtual Environment (Recommended)**
-
-Create an isolated environment to avoid conflicts with system packages.
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r p3/requirements.txt
-```
-
-**Option 2: Direct Installation (Not Recommended)**
-
-> [!CAUTION]
-> Installing packages globally can conflict with your system's package manager and cause instability.
-
-```bash
-pip install -r p3/requirements.txt
+git clone --depth=1 https://github.com/psygreg/linuxtoys.git
+cd linuxtoys
 ```
 
 **Run the application:**
 ```bash
-python3 p3/run.py
+p3/run.py
 ```
 
 **Update the application:**
+> [!NOTE]
+> When choosing the GIT method, updates must be made via GIT.
+
 ```bash
 git pull
 ```
 
-For more comprehensive developer documentation, please refer to the [Developer Guide](dev/README.md).
+## Development
+
+For developers who wish to contribute, check our documentation, please refer to the [Developer Guide](dev/README.md).
 
 ## Contributing
 
