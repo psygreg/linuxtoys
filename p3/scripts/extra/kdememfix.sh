@@ -4,6 +4,7 @@
 # description: kdememfix_desc
 # icon: preload.svg
 # desktop: plasma
+# compat: none
 # optimized-only: yes
 
 # --- Start of the script code ---
