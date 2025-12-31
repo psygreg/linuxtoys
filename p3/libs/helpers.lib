@@ -8,8 +8,6 @@ flatpak_in_lib() {
 
     # Install flatpak if missing
     if ! command -v flatpak &>/dev/null; then
-        sudo_rq
-        
         case "${ID_LIKE:-$ID}" in
             *debian*|*ubuntu*)
                 sudo apt install -y flatpak || return 1 ;;
@@ -24,12 +22,9 @@ flatpak_in_lib() {
     fi
 
     # Add Flathub remote if not exists
-    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
-        _msg warning "Failed to add Flathub remote for user"; return 1;
+    sudo flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo 
 
-    sudo_rq
-    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --system &>/dev/null|| \
-        _msg warning "Failed to add Flathub remote on system"; return 1;
+    sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
     [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_flatpak_done
     return 0
