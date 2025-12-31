@@ -3,6 +3,7 @@
 # --- Flatpak ---
 
 flatpak_in_lib() {
+    sudo_rq
     [ -f /tmp/linuxtoys_flatpak_done ] && return 0
 
     # Install flatpak if missing
@@ -23,7 +24,7 @@ flatpak_in_lib() {
     fi
 
     # Add Flathub remote if not exists
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
+    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo --user &>/dev/null || \
         _msg warning "Failed to add Flathub remote for user"; return 1;
 
     sudo_rq
