@@ -328,5 +328,6 @@
   "zed_desc": "Một trình biên tập mã tối thiểu được thiết kế cho tốc độ và cộng tác với con người và AI.",
   "bitwarden_desc": "Một trình quản lý mật khẩu an toàn và miễn phí cho tất cả các thiết bị của bạn.",
   "keepassxc_desc": "Một trình quản lý mật khẩu an toàn và đầy đủ tính năng",
-  "fisher_desc": "Một trình quản lý plugin cho Fish"
+  "fisher_desc": "Một trình quản lý plugin cho Fish",
+  "kconnect_desc": "Khắc phục vấn đề do tường lửa gây ra là ngăn chặn KDE Connect thiết lập kết nối giữa các thiết bị bằng cách cho phép các cổng cần thiết qua tường lửa."
 }

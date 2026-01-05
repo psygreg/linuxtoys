@@ -328,5 +328,6 @@
   "zed_desc": "Minimal kóðaritill hönnuð fyrir hraða og samstarf með mönnum og AI.",
   "bitwarden_desc": "Örugglega og ókeypis aðgangsorðastjóri fyrir öll þín tæki.",
   "keepassxc_desc": "Öruggur og fullbúinn aðgangsorðastjóri",
-  "fisher_desc": "Innbótastjóri fyrir Fish"
+  "fisher_desc": "Innbótastjóri fyrir Fish",
+  "kconnect_desc": "Leysir vandamál sem stafar af eldveggum sem loka fyrir KDE Connect frá því að koma á tengingu milli tækja með því að leyfa nauðsynlega stafi um eldvegginn."
 }

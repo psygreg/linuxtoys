@@ -328,5 +328,6 @@
   "zed_desc": "En minimal kodeeditor designet til hastighed og samarbejde med mennesker og AI.",
   "bitwarden_desc": "En sikker og gratis adgangskodehåndterer til alle dine enheder.",
   "keepassxc_desc": "Sikker og fuldtfunktionel adgangskodehåndterer",
-  "fisher_desc": "En plugin-håndterer til Fish"
+  "fisher_desc": "En plugin-håndterer til Fish",
+  "kconnect_desc": "Løser et problem forårsaget af firewalls, der blokerer KDE Connect fra at etablere en forbindelse mellem enheder ved at tillade de nødvendige porte gennem firewallen."
 }

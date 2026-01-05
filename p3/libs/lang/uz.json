@@ -327,5 +327,6 @@
   "zed_desc": "Insonlar va AI bilan tezlik va hamkorlik uchun tayyorlangan minimal kod muharriri.",
   "bitwarden_desc": "Barcha qurilmalaringiz uchun xavfsiz va bepul parol menejeri.",
   "keepassxc_desc": "Xavfsiz va to'liq xususiyatli parol menejeri",
-  "fisher_desc": "Fish uchun plugin menejeri"
+  "fisher_desc": "Fish uchun plugin menejeri",
+  "kconnect_desc": "Xavfsizlik devori sababli vujudga kelgan muammoni bartaraf etadi, bu KDE Connect-ning qurilmalar orasida ulanish o'rnatishini blokirovka qiladi."
 }

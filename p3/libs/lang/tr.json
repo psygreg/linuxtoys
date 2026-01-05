@@ -328,5 +328,6 @@
   "zed_desc": "İnsan ve AI ile hız ve işbirliği için tasarlanan minimal bir kod editörü.",
   "bitwarden_desc": "Tüm cihazlarınız için güvenli ve ücretsiz bir şifre yöneticisi.",
   "keepassxc_desc": "Güvenli ve tam özellikli bir şifre yöneticisi",
-  "fisher_desc": "Fish için bir eklenti yöneticisi"
+  "fisher_desc": "Fish için bir eklenti yöneticisi",
+  "kconnect_desc": "Güvenlik duvarından kaynaklanan, KDE Connect'in cihazlar arasında bağlantı kurmasını engelleyen sorunu çözerek gerekli bağlantı noktalarına güvenlik duvarı üzerinden izin verir."
 }

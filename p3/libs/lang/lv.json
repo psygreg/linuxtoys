@@ -328,5 +328,6 @@
   "zed_desc": "Minimāls koda redaktors ātrumam un sadarbībai ar cilvēkiem un AI.",
   "bitwarden_desc": "Draugs un bezmaksas paroles pārvaldnieks visiem jūsu ierīcēm.",
   "keepassxc_desc": "Draugs un pilnīgs paroles pārvaldnieks",
-  "fisher_desc": "Spraudņu menedžeris Fish"
+  "fisher_desc": "Spraudņu menedžeris Fish",
+  "kconnect_desc": "Laboja problēmu, ko izraisa ugunsmūris, kas bloķē KDE Connect no savienojuma izveides starp ierīcēm, atļaujot nepieciešamos portus caur ugunsmūri."
 }

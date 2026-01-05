@@ -328,5 +328,6 @@
   "zed_desc": "Un editor de cod minimal conceput pentru viteză și colaborare cu oamenii și AI.",
   "bitwarden_desc": "Un manager de parolă sigur și gratuit pentru toate dispozitivele tale.",
   "keepassxc_desc": "Manager de parolă sigur și cu caracteristici complete",
-  "fisher_desc": "Un manager de plugin pentru Fish"
+  "fisher_desc": "Un manager de plugin pentru Fish",
+  "kconnect_desc": "Remediază o problemă cauzată de firewall-uri care blocheaza KDE Connect de la stabilirea unei conexiuni între dispozitive prin permiterea porturilor necesare prin firewall."
 }

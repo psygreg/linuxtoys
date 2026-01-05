@@ -328,5 +328,6 @@
   "zed_desc": "Një redaktor kodi minimal i dizajnuar për shpejtësi dhe bashkëpunim me njerëz dhe AI.",
   "bitwarden_desc": "Një menaxher i sigurt dhe i lirë i fjalëkalimeve për të gjitha pajisjet tuaja.",
   "keepassxc_desc": "Menaxher i sigurt dhe i plotë fjalëkalimi",
-  "fisher_desc": "Një menaxher plugini për Fish"
+  "fisher_desc": "Një menaxher plugini për Fish",
+  "kconnect_desc": "Rregullon një problem të shkaktuar nga muri i zjarrit që pengon KDE Connect nga vendosja e lidhjes midis pajisjeve duke lejuar portat e nevojshme përmes murit të zjarrit."
 }

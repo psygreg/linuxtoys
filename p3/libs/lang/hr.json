@@ -328,5 +328,6 @@
   "zed_desc": "Minimalan editor koda osmišljen za brzinu i saradnju sa ljudima i AI.",
   "bitwarden_desc": "Bezbedan i besplatna upravitelja lozinki za sve vaše uređaje.",
   "keepassxc_desc": "Bezbedan i potpuno funkcionalan upravitelj lozinki",
-  "fisher_desc": "Upravitelj dodataka za Fish"
+  "fisher_desc": "Upravitelj dodataka za Fish",
+  "kconnect_desc": "Rešava problem izazvan zaštitnim zidom koji sprečava KDE Connect da uspostavi konekciju između uređaja dozvoljavanjem potrebnih portova kroz zid."
 }

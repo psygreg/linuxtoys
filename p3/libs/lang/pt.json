@@ -328,5 +328,6 @@
   "zed_desc": "Um editor de código minimalista projetado para velocidade e colaboração com humanos e IA.",
   "bitwarden_desc": "Um gerenciador de senhas seguro e gratuito para todos os seus dispositivos.",
   "keepassxc_desc": "Gerenciador de senhas seguro e completo",
-  "fisher_desc": "Um gerenciador de plugins para Fish"
+  "fisher_desc": "Um gerenciador de plugins para Fish",
+  "kconnect_desc": "Corrige um problema causado por firewalls que bloqueiam KDE Connect de estabelecer uma conexão entre dispositivos permitindo as portas necessárias através do firewall."
 }

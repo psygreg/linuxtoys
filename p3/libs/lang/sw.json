@@ -326,5 +326,6 @@
   "zed_desc": "Changanya kodi kidogo iliyoundwa kwa kasi na ushirikiano na wanadamu na AI.",
   "bitwarden_desc": "Msimamizi wa nenosiri salama na mahali pa bure kwa vyombo vyote.",
   "keepassxc_desc": "Msimamizi wa nenosiri salama na kamili",
-  "fisher_desc": "Msimamizi wa viongezi wa Fish"
+  "fisher_desc": "Msimamizi wa viongezi wa Fish",
+  "kconnect_desc": "Hurekebisha tatizo linalosababishwa na firewall inayozuia KDE Connect kutoka kwa kuanzisha muunganisho kati ya vifaa kwa kuruhusu mabango yanayohitajika kupitia firewall."
 }

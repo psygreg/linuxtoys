@@ -328,5 +328,6 @@
   "zed_desc": "Ein minimaler Code-Editor für Geschwindigkeit und Zusammenarbeit zwischen Mensch und KI.",
   "bitwarden_desc": "Ein sicherer und kostenloser Passwort-Manager für alle Ihre Geräte.",
   "keepassxc_desc": "Sicherer und vollständig ausgestatteter Passwort-Manager",
-  "fisher_desc": "Ein Plugin-Manager für Fish"
+  "fisher_desc": "Ein Plugin-Manager für Fish",
+  "kconnect_desc": "Behebt ein Problem, das durch Firewalls verursacht wird, die KDE Connect am Aufbau einer Verbindung zwischen Geräten hindern, indem die erforderlichen Ports durch die Firewall zugelassen werden."
 }

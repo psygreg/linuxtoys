@@ -330,5 +330,6 @@
   "zed_desc": "为速度和与人类和AI合作而设计的最小代码编辑器。",
   "bitwarden_desc": "为您的所有设备提供的安全且免费的密码管理器。",
   "keepassxc_desc": "安全且功能完整的密码管理器",
-  "fisher_desc": "Fish的插件管理器"
+  "fisher_desc": "Fish的插件管理器",
+  "kconnect_desc": "修复由防火墙引起的问题，该问题阻止 KDE Connect 在设备之间建立连接，方法是允许必要的端口通过防火墙。"
 }

@@ -328,5 +328,6 @@
   "zed_desc": "Egy minimális kódszerkesztő a sebesség és az emberekkel és AI-val való együttműködéshez.",
   "bitwarden_desc": "Biztonságos és ingyenes jelszókezelő az összes eszközödhöz.",
   "keepassxc_desc": "Biztonságos és teljesen felszerelt jelszókezelő",
-  "fisher_desc": "Egy bővítményi kezelő a Fish-hez"
+  "fisher_desc": "Egy bővítményi kezelő a Fish-hez",
+  "kconnect_desc": "Megoldja azt a problémát, amely tüzfal okozta, amely megakadályozza a KDE Connect eszközök közötti kapcsolat létesítésétől a szükséges portok engedélyezésével a tűzfalon keresztül."
 }

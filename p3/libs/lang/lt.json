@@ -328,5 +328,6 @@
   "zed_desc": "Minimalus kodų redaktorius, skirtas greičiui ir bendradarbiavimui su žmonėmis ir AI.",
   "bitwarden_desc": "Saugus ir nemokamas slaptažodžio tvarkytuvasis visoms jūsų įrenginiams.",
   "keepassxc_desc": "Saugus ir visapusiškai aprašytas slaptažodžio tvarkytuvesis",
-  "fisher_desc": "Papildinių tvarkytuvesis Fish"
+  "fisher_desc": "Papildinių tvarkytuvesis Fish",
+  "kconnect_desc": "Išsprendžia problemą, kurią sukelia ugniasienė, kuri blokuoja KDE Connect nuo ryšio nustatymo tarp įrenginių, leisdama reikalingus prievadus per ugniasienę."
 }

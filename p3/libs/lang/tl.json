@@ -328,5 +328,6 @@
   "zed_desc": "Isang minimal na code editor na idinisenyo para sa bilis at pakikipagtulungan sa mga tao at AI.",
   "bitwarden_desc": "Isang ligtas at libre na password manager para sa lahat ng iyong mga device.",
   "keepassxc_desc": "Ligtas at buong-featured na password manager",
-  "fisher_desc": "Isang plugin manager para sa Fish"
+  "fisher_desc": "Isang plugin manager para sa Fish",
+  "kconnect_desc": "Nag-aayos ng isang problema na dulot ng firewall na pumipigil sa KDE Connect mula sa pagbuo ng koneksyon sa pagitan ng mga device sa pamamagitan ng pagbibigay-daan sa kinakailangang mga port sa pamamagitan ng firewall."
 }

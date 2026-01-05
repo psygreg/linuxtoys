@@ -328,5 +328,6 @@
   "zed_desc": "Un editor de código minimalista diseñado para la velocidad y la colaboración con humanos e IA.",
   "bitwarden_desc": "Un gestor de contraseñas seguro y gratuito para todos tus dispositivos.",
   "keepassxc_desc": "Gestor de contraseñas seguro y completo",
-  "fisher_desc": "Un gestor de complementos para Fish"
+  "fisher_desc": "Un gestor de complementos para Fish",
+  "kconnect_desc": "Soluciona un problema causado por cortafuegos que impiden que KDE Connect establezca una conexión entre dispositivos permitiendo los puertos necesarios a través del cortafuegos."
 }

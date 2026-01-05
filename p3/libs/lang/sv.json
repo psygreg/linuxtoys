@@ -328,5 +328,6 @@
   "zed_desc": "En minimal kodredigerare designad för hastighet och samarbete mellan människor och AI.",
   "bitwarden_desc": "En säker och gratis lösenordshanterare för alla dina enheter.",
   "keepassxc_desc": "Säker och fullt utrustad lösenordshanterare",
-  "fisher_desc": "En plugin-hanterare för Fish"
+  "fisher_desc": "En plugin-hanterare för Fish",
+  "kconnect_desc": "Löser ett problem orsakat av brandväggar som blockerar KDE Connect från att etablera en anslutning mellan enheter genom att tillåta de nödvändiga portarna genom brandväggen."
 }

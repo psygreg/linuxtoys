@@ -328,5 +328,6 @@
   "zed_desc": "Een minimale code-editor ontworpen voor snelheid en samenwerking met mensen en AI.",
   "bitwarden_desc": "Een veilige en gratis wachtwoordmanager voor al je apparaten.",
   "keepassxc_desc": "Veilige en volledig uitgeruste wachtwoordmanager",
-  "fisher_desc": "Een pluginbeheerder voor Fish"
+  "fisher_desc": "Een pluginbeheerder voor Fish",
+  "kconnect_desc": "Verhelpt een probleem dat wordt veroorzaakt door firewalls die KDE Connect blokkeren van het tot stand brengen van een verbinding tussen apparaten door de vereiste poorten door de firewall toe te staan."
 }
