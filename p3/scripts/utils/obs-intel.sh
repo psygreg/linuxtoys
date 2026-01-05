@@ -34,7 +34,10 @@ if is_fedora || is_ostree; then
     _packages+=(obs-studio libva-intel-media-driver v4l2loopback intel-vpl-gpu-rt xorg-x11-server-Xwayland)
 elif is_suse || is_debian || is_ubuntu; then
     _packages+=(obs-studio intel-media-driver v4l2loopback xwayland)
-elif is_arch || is_cachy; then # get obs-studio-browser from AUR for browser source
+elif is_arch || is_cachy; then # get obs-studio-browser from AUR for browser source, remove vlc-plugin-lua if installed to avoid conflicts with vlc-plugin-luajit
+    if pacman -Qi vlc-plugin-lua &> /dev/null; then
+        sudo pacman -R --noconfirm vlc-plugin-lua
+    fi
     _packages+=(obs-studio-browser libva-intel-driver intel-media-driver v4l2loopback-dkms vpl-gpu-rt xorg-xwayland)
 fi
 _install_
