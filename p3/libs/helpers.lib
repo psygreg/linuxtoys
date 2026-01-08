@@ -18,11 +18,11 @@ flatpak_in_lib() {
             *)
                 _msg error "Unsupported distribution for automatic flatpak installation"; return 1 ;;
         esac
-        sleep 1
+        sleep 2
     fi
 
     # Add Flathub remote if not exists
-    sudo flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo 
+    flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo 
 
     sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
