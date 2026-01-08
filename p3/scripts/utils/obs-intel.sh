@@ -33,6 +33,10 @@ if is_fedora || is_ostree; then
     rpmfusion_chk
     _packages+=(obs-studio libva-intel-media-driver v4l2loopback intel-vpl-gpu-rt xorg-x11-server-Xwayland)
 elif is_suse || is_debian || is_ubuntu; then
+    if [ "$ID" == "ubuntu" ]; then # install OBS Studio PPA for pure Ubuntu to avoid broken snap
+        sudo add-apt-repository -y ppa:obsproject/obs-studio
+        sudo apt-get update
+    fi
     _packages+=(obs-studio intel-media-driver v4l2loopback xwayland)
 elif is_arch || is_cachy; then # get obs-studio-browser from AUR for browser source, remove vlc-plugin-lua if installed to avoid conflicts with vlc-plugin-luajit
     if pacman -Qi vlc-plugin-lua &> /dev/null; then
