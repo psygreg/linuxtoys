@@ -26,7 +26,7 @@ flatpak_in_lib() {
 
     sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-    [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_flatpak_done
+    touch /tmp/linuxtoys_flatpak_done
     return 0
 }
 
