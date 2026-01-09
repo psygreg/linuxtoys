@@ -329,5 +329,6 @@
   "bitwarden_desc": "En sikker og gratis passordbehandler for alle enhetene dine.",
   "keepassxc_desc": "Sikker og fullstendig passordhåndterer",
   "fisher_desc": "En plugin-håndterer for Fish",
-  "kconnect_desc": "Løser et problem forårsaket av brannmurer som blokkerer KDE Connect fra å etablere en tilkobling mellom enheter ved å tillate de nødvendige portene gjennom brannmuren."
+  "kconnect_desc": "Løser et problem forårsaket av brannmurer som blokkerer KDE Connect fra å etablere en tilkobling mellom enheter ved å tillate de nødvendige portene gjennom brannmuren.",
+  "bwrapfix_desc": "Løser et problem forårsaket av en feilkonfigurert AppArmor som blokkerer Bubblewrap fra å fungere korrekt, noe som fører til feil ved oppstart av Flatpak-applikasjoner og spill under Proton."
 }

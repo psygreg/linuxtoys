@@ -329,5 +329,6 @@
   "bitwarden_desc": "Bezpečný a bezplatný správca hesiel pre všetky vaše zariadenia.",
   "keepassxc_desc": "Bezpečný a plne funkčný správca hesiel",
   "fisher_desc": "Správca modulov pre Fish",
-  "kconnect_desc": "Opravuje problém spôsobený firewallom, ktorý blokuje KDE Connect v nadväzovaní spojenia medzi zariadeniami povolením potrebných portov cez firewall."
+  "kconnect_desc": "Opravuje problém spôsobený firewallom, ktorý blokuje KDE Connect v nadväzovaní spojenia medzi zariadeniami povolením potrebných portov cez firewall.",
+  "bwrapfix_desc": "Opravuje problém spôsobený nesprávne nakonfigurovaným AppArmor, ktorý blokuje Bubblewrap v správnej funkcii, čo vedie k zlyhaniam pri spúšťaní aplikácií Flatpak a hier pod Protonom."
 }

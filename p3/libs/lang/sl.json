@@ -329,5 +329,6 @@
   "bitwarden_desc": "Varen in brezplačen upravitelj gesel za vse vaše naprave.",
   "keepassxc_desc": "Varen in v celoti opremljen upravljavec gesel",
   "fisher_desc": "Upravljavec priključkov za Fish",
-  "kconnect_desc": "Rešuje problem, ki ga povzročajo požarni zidovi, ki preprečujejo KDE Connect pri vzpostavitvi povezave med napravami z dovoljenjem potrebnih vrat skozi požarni zid."
+  "kconnect_desc": "Rešuje problem, ki ga povzročajo požarni zidovi, ki preprečujejo KDE Connect pri vzpostavitvi povezave med napravami z dovoljenjem potrebnih vrat skozi požarni zid.",
+  "bwrapfix_desc": "Rešuje težavo, ki jo povzroča nepravilno konfiguriran AppArmor, ki preprečuje Bubblewrap, da bi deloval pravilno, kar vodi do napak pri zagonu aplikacij Flatpak in iger pod Protonom."
 }

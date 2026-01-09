@@ -329,5 +329,6 @@
   "bitwarden_desc": "Tüm cihazlarınız için güvenli ve ücretsiz bir şifre yöneticisi.",
   "keepassxc_desc": "Güvenli ve tam özellikli bir şifre yöneticisi",
   "fisher_desc": "Fish için bir eklenti yöneticisi",
-  "kconnect_desc": "Güvenlik duvarından kaynaklanan, KDE Connect'in cihazlar arasında bağlantı kurmasını engelleyen sorunu çözerek gerekli bağlantı noktalarına güvenlik duvarı üzerinden izin verir."
+  "kconnect_desc": "Güvenlik duvarından kaynaklanan, KDE Connect'in cihazlar arasında bağlantı kurmasını engelleyen sorunu çözerek gerekli bağlantı noktalarına güvenlik duvarı üzerinden izin verir.",
+  "bwrapfix_desc": "Yanlış yapılandırılmış bir AppArmor'un Bubblewrap'in doğru çalışmasını engellediği bir sorunu çözer, bu da Flatpak uygulamalarını ve Proton altındaki oyunları başlatırken hatalara yol açar."
 }

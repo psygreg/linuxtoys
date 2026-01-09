@@ -329,5 +329,6 @@
   "bitwarden_desc": "모든 장치를 위한 안전한 무료 비밀번호 관리자.",
   "keepassxc_desc": "안전하고 완전한 기능의 비밀번호 관리자",
   "fisher_desc": "Fish용 플러그인 관리자",
-  "kconnect_desc": "방화벽으로 인해 KDE Connect가 장치 간 연결을 설정하는 것을 차단하는 문제를 수정하고 방화벽을 통해 필요한 포트를 허용합니다."
+  "kconnect_desc": "방화벽으로 인해 KDE Connect가 장치 간 연결을 설정하는 것을 차단하는 문제를 수정하고 방화벽을 통해 필요한 포트를 허용합니다.",
+  "bwrapfix_desc": "잘못 구성된 AppArmor가 Bubblewrap이 올바르게 작동하는 것을 차단하여 Flatpak 애플리케이션 및 Proton에서 게임을 실행할 때 실패하는 문제를 해결합니다."
 }

@@ -328,5 +328,6 @@
   "bitwarden_desc": "Bütün cihazlarınız üçün təhlükəsiz və pulsuz parol meneceri.",
   "keepassxc_desc": "Təhlükəsiz və tam xüsusiyyətli parol meneceri",
   "fisher_desc": "Fish üçün plugin meneceri",
-  "kconnect_desc": "Firewall tərəfindən bloklanmış KDE Connect-in cihazlar arasında əlaqə yaratmasını mane edən problemi düzəldir və lazım olan portlara icazə verir."
+  "kconnect_desc": "Firewall tərəfindən bloklanmış KDE Connect-in cihazlar arasında əlaqə yaratmasını mane edən problemi düzəldir və lazım olan portlara icazə verir.",
+  "bwrapfix_desc": "Düzgün konfiqurasiya edilməmiş AppArmor-un Bubblewrap-in düzgün işləməsini əngəlləyən problemini həll edir, bu da Flatpak tətbiqlərini və Proton altında oyunları başlatarkən uğursuzluğa səbəb olur."
 }

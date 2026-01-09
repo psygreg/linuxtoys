@@ -327,5 +327,6 @@
   "bitwarden_desc": "Msimamizi wa nenosiri salama na mahali pa bure kwa vyombo vyote.",
   "keepassxc_desc": "Msimamizi wa nenosiri salama na kamili",
   "fisher_desc": "Msimamizi wa viongezi wa Fish",
-  "kconnect_desc": "Hurekebisha tatizo linalosababishwa na firewall inayozuia KDE Connect kutoka kwa kuanzisha muunganisho kati ya vifaa kwa kuruhusu mabango yanayohitajika kupitia firewall."
+  "kconnect_desc": "Hurekebisha tatizo linalosababishwa na firewall inayozuia KDE Connect kutoka kwa kuanzisha muunganisho kati ya vifaa kwa kuruhusu mabango yanayohitajika kupitia firewall.",
+  "bwrapfix_desc": "Hutatua tatizo linalosababishwa na AppArmor iliyosanidiwa vibaya ambayo inazuia Bubblewrap isifanye kazi vizuri, ikiongoza kwa kushindwa kuanzisha programu za Flatpak na michezo chini ya Proton."
 }

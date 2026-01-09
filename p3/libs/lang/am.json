@@ -329,5 +329,6 @@
   "bitwarden_desc": "ደህንነት እና ነጻ መልካም ሬጌራ ሁሉ ሣቦ መሣሪያ ለ.",
   "keepassxc_desc": "ደህንነት እና ሙሉ ባህሪ ያለው የግቢ ቃል አስተዳዳሪ",
   "fisher_desc": "ለ ዓሳ የ plugin አስተዳዳሪ",
-  "kconnect_desc": "በ firewall ከተደረገ KDE Connect ን ሰርዝ፡ መሳሪያ ሰምምታ ለመመሪያ ፔርታተሪ አሉ።"
+  "kconnect_desc": "በ firewall ከተደረገ KDE Connect ን ሰርዝ፡ መሳሪያ ሰምምታ ለመመሪያ ፔርታተሪ አሉ።",
+  "bwrapfix_desc": "በአግባቡ ያልተዋቀረ AppArmor ቡብልራፕ በትክክል እንዳይሰራ የሚያደርግ ችግር ይፈታል። ይህም ፍላትፓክ መተግበሪያዎችን እና በፕሮቶን ስር ያሉ ጨዋታዎችን በማስጀመር ላይ ውድቀት ያስከትላል።"
 }

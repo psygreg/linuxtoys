@@ -329,5 +329,6 @@
   "bitwarden_desc": "Manajer kata sandi yang aman dan gratis untuk semua perangkat Anda.",
   "keepassxc_desc": "Manajer kata sandi yang aman dan lengkap",
   "fisher_desc": "Manajer plugin untuk Fish",
-  "kconnect_desc": "Memperbaiki masalah yang disebabkan oleh firewall yang memblokir KDE Connect dari membangun koneksi antara perangkat dengan mengizinkan port yang diperlukan melalui firewall."
+  "kconnect_desc": "Memperbaiki masalah yang disebabkan oleh firewall yang memblokir KDE Connect dari membangun koneksi antara perangkat dengan mengizinkan port yang diperlukan melalui firewall.",
+  "bwrapfix_desc": "Menyelesaikan masalah yang disebabkan oleh AppArmor yang dikonfigurasi dengan tidak betul yang menyekat Bubblewrap daripada berfungsi dengan betul, yang membawa kepada kegagalan semasa melancarkan aplikasi Flatpak dan permainan di bawah Proton."
 }

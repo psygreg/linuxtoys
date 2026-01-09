@@ -329,5 +329,6 @@
   "bitwarden_desc": "A secure and free password manager for all of your devices",
   "keepassxc_desc": "Secure and Full-featured Password Manager",
   "fisher_desc": "A plugin manager for Fish",
-  "kconnect_desc": "Fixes an issue caused by firewalls blocking KDE Connect from establishing a connection between devices by allowing the necessary ports through the firewall."
+  "kconnect_desc": "Fixes an issue caused by firewalls blocking KDE Connect from establishing a connection between devices by allowing the necessary ports through the firewall.",
+  "bwrapfix_desc": "Solves an issue causing an improperly configured AppArmor to block Bubblewrap from functioning correctly, leading to failures when launching Flatpak applications and games under Proton."
 }

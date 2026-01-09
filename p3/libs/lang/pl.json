@@ -329,5 +329,6 @@
   "bitwarden_desc": "Bezpieczny i bezpłatny menedżer haseł dla wszystkich twoich urządzeń.",
   "keepassxc_desc": "Bezpieczny i w pełni wyposażony menedżer haseł",
   "fisher_desc": "Menedżer wtyczek dla Fish",
-  "kconnect_desc": "Naprawia problem spowodowany zapory, która blokuje KDE Connect z nawiązywaniem połączenia między urządzeniami poprzez zezwolenie na wymagane porty za pośrednictwem zapory."
+  "kconnect_desc": "Naprawia problem spowodowany zapory, która blokuje KDE Connect z nawiązywaniem połączenia między urządzeniami poprzez zezwolenie na wymagane porty za pośrednictwem zapory.",
+  "bwrapfix_desc": "Naprawia problem spowodowany nieprawidłowo skonfigurowanym AppArmor, który blokuje Bubblewrap przed prawidłowym działaniem, prowadząc do niepowodzeń podczas uruchamiania aplikacji Flatpak i gier pod Protonem."
 }

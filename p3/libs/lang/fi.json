@@ -329,5 +329,6 @@
   "bitwarden_desc": "Turvallinen ja ilmainen salasananhallinta kaikille laitteillesi.",
   "keepassxc_desc": "Turvallinen ja täysin toiminnallinen salasananhallinta",
   "fisher_desc": "Liitännäisen hallinta Fish-ohjelmalle",
-  "kconnect_desc": "Korjaa ongelman, jonka aiheuttavat palomuuri, joka estää KDE Connectin muodostamasta yhteyttä laitteiden välillä sallimalla tarvittavat portit palomuurin läpi."
+  "kconnect_desc": "Korjaa ongelman, jonka aiheuttavat palomuuri, joka estää KDE Connectin muodostamasta yhteyttä laitteiden välillä sallimalla tarvittavat portit palomuurin läpi.",
+  "bwrapfix_desc": "Korjaa ongelman, jonka aiheuttaa väärin määritetty AppArmor, joka estää Bubblewrapin toimimasta oikein, mikä johtaa virheisiin käynnistettäessä Flatpak-sovelluksia ja pelejä Protonissa."
 }

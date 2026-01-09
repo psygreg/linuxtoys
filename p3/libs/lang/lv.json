@@ -329,5 +329,6 @@
   "bitwarden_desc": "Draugs un bezmaksas paroles pārvaldnieks visiem jūsu ierīcēm.",
   "keepassxc_desc": "Draugs un pilnīgs paroles pārvaldnieks",
   "fisher_desc": "Spraudņu menedžeris Fish",
-  "kconnect_desc": "Laboja problēmu, ko izraisa ugunsmūris, kas bloķē KDE Connect no savienojuma izveides starp ierīcēm, atļaujot nepieciešamos portus caur ugunsmūri."
+  "kconnect_desc": "Laboja problēmu, ko izraisa ugunsmūris, kas bloķē KDE Connect no savienojuma izveides starp ierīcēm, atļaujot nepieciešamos portus caur ugunsmūri.",
+  "bwrapfix_desc": "Atrisina problēmu, ko izraisa nepareizi konfigurēts AppArmor, kas bloķē Bubblewrap pareizu darbību, izraisot kļūmes, palaižot Flatpak lietojumprogrammas un spēles zem Proton."
 }

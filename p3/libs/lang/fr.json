@@ -329,5 +329,6 @@
   "bitwarden_desc": "Un gestionnaire de mots de passe sécurisé et gratuit pour tous vos appareils.",
   "keepassxc_desc": "Gestionnaire de mots de passe sécurisé et complet",
   "fisher_desc": "Un gestionnaire de plugins pour Fish",
-  "kconnect_desc": "Résout un problème causé par les pare-feu qui empêchent KDE Connect d'établir une connexion entre les appareils en autorisant les ports nécessaires à travers le pare-feu."
+  "kconnect_desc": "Résout un problème causé par les pare-feu qui empêchent KDE Connect d'établir une connexion entre les appareils en autorisant les ports nécessaires à travers le pare-feu.",
+  "bwrapfix_desc": "Résout un problème causé par un AppArmor mal configuré qui empêche Bubblewrap de fonctionner correctement, entraînant des échecs lors du lancement d'applications Flatpak et de jeux sous Proton."
 }

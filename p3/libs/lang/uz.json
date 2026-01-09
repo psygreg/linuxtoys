@@ -328,5 +328,6 @@
   "bitwarden_desc": "Barcha qurilmalaringiz uchun xavfsiz va bepul parol menejeri.",
   "keepassxc_desc": "Xavfsiz va to'liq xususiyatli parol menejeri",
   "fisher_desc": "Fish uchun plugin menejeri",
-  "kconnect_desc": "Xavfsizlik devori sababli vujudga kelgan muammoni bartaraf etadi, bu KDE Connect-ning qurilmalar orasida ulanish o'rnatishini blokirovka qiladi."
+  "kconnect_desc": "Xavfsizlik devori sababli vujudga kelgan muammoni bartaraf etadi, bu KDE Connect-ning qurilmalar orasida ulanish o'rnatishini blokirovka qiladi.",
+  "bwrapfix_desc": "Noto'g'ri sozlangan AppArmor sabab bo'lgan muammoni hal qiladi, bu Bubblewrap-ning to'g'ri ishlashiga to'sqinlik qiladi va Flatpak ilovalarini va Proton ostidagi o'yinlarni ishga tushirishda muvaffaqiyatsizliklarga olib keladi."
 }

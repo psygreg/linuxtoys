@@ -329,5 +329,6 @@
   "bitwarden_desc": "Un manager de parolă sigur și gratuit pentru toate dispozitivele tale.",
   "keepassxc_desc": "Manager de parolă sigur și cu caracteristici complete",
   "fisher_desc": "Un manager de plugin pentru Fish",
-  "kconnect_desc": "Remediază o problemă cauzată de firewall-uri care blocheaza KDE Connect de la stabilirea unei conexiuni între dispozitive prin permiterea porturilor necesare prin firewall."
+  "kconnect_desc": "Remediază o problemă cauzată de firewall-uri care blocheaza KDE Connect de la stabilirea unei conexiuni între dispozitive prin permiterea porturilor necesare prin firewall.",
+  "bwrapfix_desc": "Rezolvă o problemă cauzată de un AppArmor configurat incorect care blochează Bubblewrap să funcționeze corect, conducând la eșecuri la lansarea aplicațiilor Flatpak și jocurilor sub Proton."
 }

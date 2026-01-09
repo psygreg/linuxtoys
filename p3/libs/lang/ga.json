@@ -329,5 +329,6 @@
   "bitwarden_desc": "Bainisteoir focal-fhaire slán agus saor in aisce do do ghach gá.",
   "keepassxc_desc": "Bainisteoir focal-fhaire slán agus iomlán-ghníomhach",
   "fisher_desc": "Bainisteoir breiseán do Fish",
-  "kconnect_desc": "Deisitheoir an fhadhb a chúisíonn balla dóiteáin in KDE Connect a bhlocáil ó nasc a bhunú idir gléasanna trí na hardáin riachtanacha a cheadú tríd an bhalla dóiteáin."
+  "kconnect_desc": "Deisitheoir an fhadhb a chúisíonn balla dóiteáin in KDE Connect a bhlocáil ó nasc a bhunú idir gléasanna trí na hardáin riachtanacha a cheadú tríd an bhalla dóiteáin.",
+  "bwrapfix_desc": "Réitíonn sé fadhb a chúisíonn AppArmor atá cumraithe go mícheart cosc a chur ar Bubblewrap oibriú i gceart, rud a fhágann go dteipeann ar sheoladh feidhmchlár Flatpak agus cluichí faoi Proton."
 }
