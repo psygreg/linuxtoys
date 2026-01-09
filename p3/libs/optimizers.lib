@@ -255,12 +255,16 @@ EOF
     unset intelGPU
     # install decoder and encoder drivers
     if is_ubuntu; then
-      _packages=(libvdpau-va-gl1 intel-media-va-driver-non-free)
+        sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
+        _packages=(libvdpau-va-gl1 intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo)
     else
-      _packages=(libvdpau-va-gl intel-media-driver)
+        _packages=(libvdpau-va-gl intel-media-driver)
     fi
     if is_arch; then
         _packages+=(vpl-gpu-rt)
+    fi
+    if is_fedora; then
+        rpmfusion_chk
     fi
     _install_
     if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
