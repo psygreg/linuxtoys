@@ -54,8 +54,8 @@ if [ -f "$HOME/.local/share/applications/com.obsproject.Studio.desktop" ]; then
     fi
 elif [ -f "/usr/share/applications/obs.desktop" ]; then
     mkdir -p "$HOME/.local/share/applications"
-    sudo sed -i '/^Exec=/s/Exec=/Exec=env QT_QPA_PLATFORM=xcb /' "$HOME/.local/share/applications/com.obsproject.Studio.desktop"
+    sudo sed -i '/^Exec=/s/Exec=/Exec=QT_QPA_PLATFORM=xcb /' "$HOME/.local/share/applications/com.obsproject.Studio.desktop"
     cp "/usr/share/applications/obs.desktop" "$HOME/.local/share/applications/obs.desktop"
-    sed -i '/^Exec=/s/Exec=/Exec=QT_QPA_PLATFORM=xcb /' "$HOME/.local/share/applications/com.obsproject.Studio.desktop"
+    sed -i '/^Exec=/s/Exec=/Exec=env QT_QPA_PLATFORM=xcb /' "$HOME/.local/share/applications/com.obsproject.Studio.desktop"
 fi
 zeninf "$msg018"
