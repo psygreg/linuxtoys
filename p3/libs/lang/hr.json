@@ -330,5 +330,6 @@
   "keepassxc_desc": "Bezbedan i potpuno funkcionalan upravitelj lozinki",
   "fisher_desc": "Upravitelj dodataka za Fish",
   "kconnect_desc": "Rešava problem izazvan zaštitnim zidom koji sprečava KDE Connect da uspostavi konekciju između uređaja dozvoljavanjem potrebnih portova kroz zid.",
-  "bwrapfix_desc": "Rešava problem izazvan nepravilno konfiguriranim AppArmor-om koji sprečava Bubblewrap da funkcionira pravilno, što dovodi do neuspjeha prilikom pokretanja Flatpak aplikacija i igara pod Proton-om."
+  "bwrapfix_desc": "Rešava problem izazvan nepravilno konfiguriranim AppArmor-om koji sprečava Bubblewrap da funkcionira pravilno, što dovodi do neuspjeha prilikom pokretanja Flatpak aplikacija i igara pod Proton-om.",
+  "kisak_desc": "PPA koji pruža najnovije stabilno izdanje Mesa-e plus odabrane neinvazivne rane backporte za bolju performansu i kompatibilnost sa novijim grafičkim karticama."
 }

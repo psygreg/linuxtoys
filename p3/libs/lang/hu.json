@@ -330,5 +330,6 @@
   "keepassxc_desc": "Biztonságos és teljesen felszerelt jelszókezelő",
   "fisher_desc": "Egy bővítményi kezelő a Fish-hez",
   "kconnect_desc": "Megoldja azt a problémát, amely tüzfal okozta, amely megakadályozza a KDE Connect eszközök közötti kapcsolat létesítésétől a szükséges portok engedélyezésével a tűzfalon keresztül.",
-  "bwrapfix_desc": "Megoldja azt a problémát, amelyet egy helytelenül konfigurált AppArmor okoz, amely megakadályozza a Bubblewrap megfelelő működését, ami hibákhoz vezet a Flatpak alkalmazások és a Proton alatti játékok indításakor."
+  "bwrapfix_desc": "Megoldja azt a problémát, amelyet egy helytelenül konfigurált AppArmor okoz, amely megakadályozza a Bubblewrap megfelelő működését, ami hibákhoz vezet a Flatpak alkalmazások és a Proton alatti játékok indításakor.",
+  "kisak_desc": "Egy PPA, amely a Mesa legújabb stabil kiadását kínálja, valamint válogatott nem invazív korai backportokat a jobb teljesítmény és kompatibilitás érdekében az újabb grafikus kártyákkal."
 }

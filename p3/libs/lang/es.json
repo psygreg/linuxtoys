@@ -330,5 +330,6 @@
   "keepassxc_desc": "Gestor de contraseñas seguro y completo",
   "fisher_desc": "Un gestor de complementos para Fish",
   "kconnect_desc": "Soluciona un problema causado por cortafuegos que impiden que KDE Connect establezca una conexión entre dispositivos permitiendo los puertos necesarios a través del cortafuegos.",
-  "bwrapfix_desc": "Resuelve un problema causado por un AppArmor configurado incorrectamente que bloquea a Bubblewrap de funcionar correctamente, llevando a fallos al lanzar aplicaciones Flatpak y juegos bajo Proton."
+  "bwrapfix_desc": "Resuelve un problema causado por un AppArmor configurado incorrectamente que bloquea a Bubblewrap de funcionar correctamente, llevando a fallos al lanzar aplicaciones Flatpak y juegos bajo Proton.",
+  "kisak_desc": "Un PPA que proporciona la última versión estable de Mesa más backports tempranos selectos no invasivos para un mejor rendimiento y compatibilidad con tarjetas gráficas más nuevas."
 }

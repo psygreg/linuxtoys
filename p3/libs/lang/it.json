@@ -330,5 +330,6 @@
   "keepassxc_desc": "Gestore di password sicuro e completo",
   "fisher_desc": "Un gestore di plugin per Fish",
   "kconnect_desc": "Corregge un problema causato da firewall che bloccano KDE Connect dall'stabilire una connessione tra i dispositivi consentendo le porte necessarie attraverso il firewall.",
-  "bwrapfix_desc": "Risolve un problema causato da un AppArmor configurato in modo errato che blocca Bubblewrap dal funzionare correttamente, portando a fallimenti nel lancio di applicazioni Flatpak e giochi sotto Proton."
+  "bwrapfix_desc": "Risolve un problema causato da un AppArmor configurato in modo errato che blocca Bubblewrap dal funzionare correttamente, portando a fallimenti nel lancio di applicazioni Flatpak e giochi sotto Proton.",
+  "kisak_desc": "Un PPA che fornisce l'ultima versione stabile di Mesa più backport precoci selezionati non invasivi per migliori prestazioni e compatibilità con schede grafiche più recenti."
 }

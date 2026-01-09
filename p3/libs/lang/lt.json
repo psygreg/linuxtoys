@@ -330,5 +330,6 @@
   "keepassxc_desc": "Saugus ir visapusiškai aprašytas slaptažodžio tvarkytuvesis",
   "fisher_desc": "Papildinių tvarkytuvesis Fish",
   "kconnect_desc": "Išsprendžia problemą, kurią sukelia ugniasienė, kuri blokuoja KDE Connect nuo ryšio nustatymo tarp įrenginių, leisdama reikalingus prievadus per ugniasienę.",
-  "bwrapfix_desc": "Išsprendžia problemą, kurią sukelia netinkamai sukonfigūruotas AppArmor, kuris blokuoja Bubblewrap veikimą tinkamai, todėl nepavyksta paleisti Flatpak programų ir žaidimų po Proton."
+  "bwrapfix_desc": "Išsprendžia problemą, kurią sukelia netinkamai sukonfigūruotas AppArmor, kuris blokuoja Bubblewrap veikimą tinkamai, todėl nepavyksta paleisti Flatpak programų ir žaidimų po Proton.",
+  "kisak_desc": "PPA, kuris suteikia naujausią stabilią Mesa versiją kartu su pasirinktais neinvaziniais ankstyvais backportais geresniam veikimui ir suderinamumui su naujesnėmis grafikos plokštėmis."
 }

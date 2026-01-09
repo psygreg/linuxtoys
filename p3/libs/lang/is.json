@@ -330,5 +330,6 @@
   "keepassxc_desc": "Öruggur og fullbúinn aðgangsorðastjóri",
   "fisher_desc": "Innbótastjóri fyrir Fish",
   "kconnect_desc": "Leysir vandamál sem stafar af eldveggum sem loka fyrir KDE Connect frá því að koma á tengingu milli tækja með því að leyfa nauðsynlega stafi um eldvegginn.",
-  "bwrapfix_desc": "Leysir vandamál sem stafar af ranglega stilltu AppArmor sem lokar fyrir Bubblewrap frá því að virka rétt, sem leiðir til bilana við að ræsa Flatpak forrit og leiki undir Proton."
+  "bwrapfix_desc": "Leysir vandamál sem stafar af ranglega stilltu AppArmor sem lokar fyrir Bubblewrap frá því að virka rétt, sem leiðir til bilana við að ræsa Flatpak forrit og leiki undir Proton.",
+  "kisak_desc": "PPA sem veitir nýjustu stöðugu útgáfu af Mesa auk valinna óágengs snemma backporta fyrir betri frammistöðu og samhæfni við nýrri skjákort."
 }

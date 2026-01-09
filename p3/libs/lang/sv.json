@@ -330,5 +330,6 @@
   "keepassxc_desc": "Säker och fullt utrustad lösenordshanterare",
   "fisher_desc": "En plugin-hanterare för Fish",
   "kconnect_desc": "Löser ett problem orsakat av brandväggar som blockerar KDE Connect från att etablera en anslutning mellan enheter genom att tillåta de nödvändiga portarna genom brandväggen.",
-  "bwrapfix_desc": "Löser ett problem orsakat av en felkonfigurerad AppArmor som blockerar Bubblewrap från att fungera korrekt, vilket leder till fel vid start av Flatpak-applikationer och spel under Proton."
+  "bwrapfix_desc": "Löser ett problem orsakat av en felkonfigurerad AppArmor som blockerar Bubblewrap från att fungera korrekt, vilket leder till fel vid start av Flatpak-applikationer och spel under Proton.",
+  "kisak_desc": "En PPA som tillhandahåller den senaste stabila utgåvan av Mesa plus utvalda icke-invasiva tidiga backportar för bättre prestanda och kompatibilitet med nyare grafikkort."
 }
