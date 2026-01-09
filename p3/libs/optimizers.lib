@@ -255,7 +255,7 @@ EOF
     unset intelGPU
     # install decoder and encoder drivers
     if is_ubuntu; then
-      _packages=(intel-media-va-driver-non-free)
+      _packages=(libvdpau-va-gl1 intel-media-va-driver-non-free)
     else
       _packages=(libvdpau-va-gl intel-media-driver)
     fi
