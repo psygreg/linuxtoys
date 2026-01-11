@@ -62,9 +62,9 @@ sysag_run () {
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         cd $HOME
-        if [ "$ID" == "debian" ]; then
-            debfixer_lib
-        fi
+        #if [ "$ID" == "debian" ]; then
+            #debfixer_lib
+        #fi
         # system-agnostic optimizations
         sysag_run
         wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
