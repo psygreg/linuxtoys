@@ -18,8 +18,10 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # get current tags and versions
 lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^LTS-' | sort -Vr | head -n 1)"
 std_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^STD-' | sort -Vr | head -n 1)"
+ubuntu_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^Ubuntu-' | sort -Vr | head -n 1)"
 kver_lts="$(echo "$lts_tag" | cut -d'-' -f2-)"
 kver_psycachy="$(echo "$std_tag" | cut -d'-' -f2-)"
+kver_ubuntu="$(echo "$ubuntu_tag" | cut -d'-' -f2-)"
 _kv_url_latest=$(curl -s https://www.kernel.org | grep -A 1 'id="latest_link"' | awk 'NR==2' | grep -oP 'href="\K[^"]+')
 # extract only the version number
 _kv_latest=$(echo $_kv_url_latest | grep -oP 'linux-\K[^"]+')
@@ -61,6 +63,23 @@ psycachy_lts () {
         bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --lts
     fi
 }
+# psycachy for ubuntu lts with dkms support
+psycachy_ubuntu () {
+    cd $HOME
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-libc-dev_${kver_ubuntu}-1_amd64.deb"
+    sleep 1
+    sudo dpkg -i linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb linux-libc-dev_${kver_ubuntu}-1_amd64.deb || exit 10
+    sleep 1
+    rm linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb
+    rm linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb
+    rm linux-libc-dev_${kver_ubuntu}-1_amd64.deb
+    # sign kernel image for secure boot
+    if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/tags/Ubuntu-6.14.11/secureboot/create-key.sh) -u
+    fi
+}
 # Parse command line arguments
 if [ "$1" = "-s" ] || [ "$1" = "--standard" ]; then
     # Direct installation of standard edition
@@ -68,6 +87,8 @@ if [ "$1" = "-s" ] || [ "$1" = "--standard" ]; then
 elif [ "$1" = "-l" ] || [ "$1" = "--lts" ]; then
     # Direct installation of LTS edition
     psycachy_lts && exit 0
+elif [ "$1" = "-u" ] || [ "$1" = "--ubuntu" ]; then
+    psycachy_ubuntu && exit 0
 else
     # Show menu if no arguments provided
     while true; do
@@ -75,8 +96,9 @@ else
             --column "Versions" \
             "Standard" \
             "LTS" \
+            "Ubuntu LTS 24 with DKMS support" \
             "Cancel" \
-            --width 300 --height 330 )
+            --width 360 --height 360)
 
         if [ $? -ne 0 ]; then
             exit 100
@@ -85,6 +107,7 @@ else
         case $CHOICE in
         Standard) psycachy_std && exit 0 ;;
         LTS) psycachy_lts && exit 0 ;;
+        Ubuntu LTS 24 with DKMS support) psycachy_ubuntu && exit 0 ;;
         Cancel | q) exit 100 ;;
         *) echo "Invalid Option" ;;
         esac
