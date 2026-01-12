@@ -331,5 +331,6 @@
   "fisher_desc": "Một trình quản lý plugin cho Fish",
   "kconnect_desc": "Khắc phục vấn đề do tường lửa gây ra là ngăn chặn KDE Connect thiết lập kết nối giữa các thiết bị bằng cách cho phép các cổng cần thiết qua tường lửa.",
   "bwrapfix_desc": "Giải quyết vấn đề do AppArmor được cấu hình không đúng gây ra, chặn Bubblewrap hoạt động đúng cách, dẫn đến lỗi khi khởi chạy ứng dụng Flatpak và trò chơi dưới Proton.",
-  "kisak_desc": "Một PPA cung cấp bản phát hành ổn định mới nhất của Mesa cộng với các backport sớm được chọn lọc không xâm lấn để có hiệu suất và khả năng tương thích tốt hơn với các card đồ họa mới hơn."
+  "kisak_desc": "Một PPA cung cấp bản phát hành ổn định mới nhất của Mesa cộng với các backport sớm được chọn lọc không xâm lấn để có hiệu suất và khả năng tương thích tốt hơn với các card đồ họa mới hơn.",
+  "nala_desc": "Giao diện cho libapt-pkg với định dạng đầu ra tốt hơn và hỗ trợ tải xuống song song."
 }

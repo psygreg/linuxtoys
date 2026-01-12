@@ -330,5 +330,6 @@
   "fisher_desc": "Fish uchun plugin menejeri",
   "kconnect_desc": "Xavfsizlik devori sababli vujudga kelgan muammoni bartaraf etadi, bu KDE Connect-ning qurilmalar orasida ulanish o'rnatishini blokirovka qiladi.",
   "bwrapfix_desc": "Noto'g'ri sozlangan AppArmor sabab bo'lgan muammoni hal qiladi, bu Bubblewrap-ning to'g'ri ishlashiga to'sqinlik qiladi va Flatpak ilovalarini va Proton ostidagi o'yinlarni ishga tushirishda muvaffaqiyatsizliklarga olib keladi.",
-  "kisak_desc": "Yangi grafika kartalari bilan yaxshi ishlash va moslik uchun Mesa ning eng so'nggi barqaror chiqarilishini hamda tanlangan invaziv bo'lmagan erta backportlarni taqdim etuvchi PPA."
+  "kisak_desc": "Yangi grafika kartalari bilan yaxshi ishlash va moslik uchun Mesa ning eng so'nggi barqaror chiqarilishini hamda tanlangan invaziv bo'lmagan erta backportlarni taqdim etuvchi PPA.",
+  "nala_desc": "Yaxshi chiqish formatlash va parallel yuklab olish qo'llab-quvvatlash bilan libapt-pkg uchun interfeys."
 }

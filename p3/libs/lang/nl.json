@@ -331,5 +331,6 @@
   "fisher_desc": "Een pluginbeheerder voor Fish",
   "kconnect_desc": "Verhelpt een probleem dat wordt veroorzaakt door firewalls die KDE Connect blokkeren van het tot stand brengen van een verbinding tussen apparaten door de vereiste poorten door de firewall toe te staan.",
   "bwrapfix_desc": "Verhelpt een probleem dat wordt veroorzaakt door een onjuist geconfigureerde AppArmor die Bubblewrap blokkeert van correct functioneren, wat leidt tot fouten bij het starten van Flatpak-applicaties en games onder Proton.",
-  "kisak_desc": "Een PPA die de nieuwste stabiele release van Mesa biedt plus geselecteerde niet-invasieve vroege backports voor betere prestaties en compatibiliteit met nieuwere grafische kaarten."
+  "kisak_desc": "Een PPA die de nieuwste stabiele release van Mesa biedt plus geselecteerde niet-invasieve vroege backports voor betere prestaties en compatibiliteit met nieuwere grafische kaarten.",
+  "nala_desc": "Een interface voor libapt-pkg met betere uitvoeropmaak en ondersteuning voor parallel downloaden."
 }

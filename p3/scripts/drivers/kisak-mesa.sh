@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Kisak-Mesa
 # description: kisak_desc
-# icon: video-display
+# icon: kisak.svg
 # compat: ubuntu
 # nocontainer
 

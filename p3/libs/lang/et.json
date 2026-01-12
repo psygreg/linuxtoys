@@ -331,5 +331,6 @@
   "fisher_desc": "Fish'i jaoks moodulite haldur",
   "kconnect_desc": "Lahendab probleemi, mille põhjustavad tulemüürid, mis takistavad KDE Connect'il seadmete vahelist ühendust, lubades vajalikud pordid tulemüüri kaudu.",
   "bwrapfix_desc": "Lahendab probleemi, mille põhjustab valesti konfigureeritud AppArmor, mis takistab Bubblewrap'i korralikku toimimist, põhjustades tõrkeid Flatpak rakenduste ja Protoni all olevate mängude käivitamisel.",
-  "kisak_desc": "PPA, mis pakub Mesa uusimat stabiilset versiooni ning valitud mitteagressiivseid varajasi backporte parema jõudluse ja ühilduvuse tagamiseks uuemate graafikakaartidega."
+  "kisak_desc": "PPA, mis pakub Mesa uusimat stabiilset versiooni ning valitud mitteagressiivseid varajasi backporte parema jõudluse ja ühilduvuse tagamiseks uuemate graafikakaartidega.",
+  "nala_desc": "Liides libapt-pkg jaoks parema väljundi vorminduse ja paralleelse allalaadimise toega."
 }

@@ -331,5 +331,6 @@
   "fisher_desc": "Menedżer wtyczek dla Fish",
   "kconnect_desc": "Naprawia problem spowodowany zapory, która blokuje KDE Connect z nawiązywaniem połączenia między urządzeniami poprzez zezwolenie na wymagane porty za pośrednictwem zapory.",
   "bwrapfix_desc": "Naprawia problem spowodowany nieprawidłowo skonfigurowanym AppArmor, który blokuje Bubblewrap przed prawidłowym działaniem, prowadząc do niepowodzeń podczas uruchamiania aplikacji Flatpak i gier pod Protonem.",
-  "kisak_desc": "PPA, które zapewnia najnowsze stabilne wydanie Mesa wraz z wybranymi nieinwazyjnymi wczesnymi backportami dla lepszej wydajności i kompatybilności z nowszymi kartami graficznymi."
+  "kisak_desc": "PPA, które zapewnia najnowsze stabilne wydanie Mesa wraz z wybranymi nieinwazyjnymi wczesnymi backportami dla lepszej wydajności i kompatybilności z nowszymi kartami graficznymi.",
+  "nala_desc": "Interfejs dla libapt-pkg z lepszym formatowaniem wyjścia i obsługą równoległego pobierania."
 }

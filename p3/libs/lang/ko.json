@@ -331,5 +331,6 @@
   "fisher_desc": "Fish용 플러그인 관리자",
   "kconnect_desc": "방화벽으로 인해 KDE Connect가 장치 간 연결을 설정하는 것을 차단하는 문제를 수정하고 방화벽을 통해 필요한 포트를 허용합니다.",
   "bwrapfix_desc": "잘못 구성된 AppArmor가 Bubblewrap이 올바르게 작동하는 것을 차단하여 Flatpak 애플리케이션 및 Proton에서 게임을 실행할 때 실패하는 문제를 해결합니다.",
-  "kisak_desc": "최신 안정 버전의 Mesa와 더 나은 성능 및 최신 그래픽 카드와의 호환성을 위해 선택된 비침습적 초기 백포트를 제공하는 PPA입니다."
+  "kisak_desc": "최신 안정 버전의 Mesa와 더 나은 성능 및 최신 그래픽 카드와의 호환성을 위해 선택된 비침습적 초기 백포트를 제공하는 PPA입니다.",
+  "nala_desc": "더 나은 출력 형식 및 병렬 다운로드 지원을 갖춘 libapt-pkg 인터페이스입니다."
 }

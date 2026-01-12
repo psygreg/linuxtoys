@@ -1,7 +1,7 @@
 #!/bin/bash
 # name: Bubblewrap Fix
 # description: bwrapfix_desc
-# icon: system-run
+# icon: apparmor.svg
 # compat: ubuntu
 # nocontainer
 

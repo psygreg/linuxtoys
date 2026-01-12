@@ -331,5 +331,6 @@
   "fisher_desc": "Bainisteoir breiseán do Fish",
   "kconnect_desc": "Deisitheoir an fhadhb a chúisíonn balla dóiteáin in KDE Connect a bhlocáil ó nasc a bhunú idir gléasanna trí na hardáin riachtanacha a cheadú tríd an bhalla dóiteáin.",
   "bwrapfix_desc": "Réitíonn sé fadhb a chúisíonn AppArmor atá cumraithe go mícheart cosc a chur ar Bubblewrap oibriú i gceart, rud a fhágann go dteipeann ar sheoladh feidhmchlár Flatpak agus cluichí faoi Proton.",
-  "kisak_desc": "PPA a chuireann an leagan cobhsaí is déanaí de Mesa ar fáil móide backports luatha roghnaithe neamh-ionsaitheach le haghaidh feidhmíochta agus comhoiriúnachta níos fearr le cártaí grafaice níos nuaí."
+  "kisak_desc": "PPA a chuireann an leagan cobhsaí is déanaí de Mesa ar fáil móide backports luatha roghnaithe neamh-ionsaitheach le haghaidh feidhmíochta agus comhoiriúnachta níos fearr le cártaí grafaice níos nuaí.",
+  "nala_desc": "Comhéadan le haghaidh libapt-pkg le formáidiú aschuir níos fearr agus tacaíocht íoslódála comhthreomhar."
 }

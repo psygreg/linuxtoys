@@ -1,0 +1,17 @@
+<svg width="64" height="64" version="1.1" viewBox="0 0 16.933 16.933" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g transform="translate(-.265 -.265)">
+  <path d="m2.645 2.381c-0.879 0-1.587 0.708-1.587 1.587v7.939c0 0.879 0.708 1.587 1.587 1.587v-7.938c0-0.88 0.708-1.587 1.588-1.587h10.583c0-0.88-0.707-1.588-1.586-1.588z" fill="#72787e"/>
+  <rect x="2.646" y="3.969" width="13.758" height="11.112" rx="1.587" ry="1.587" fill="#f9f9f9" opacity=".9"/>
+  <image x="2.646" y="3.969" width="13.493" height="10.848" image-rendering="optimizeQuality" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAApCAYAAACY7BHXAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAA GXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAp1JREFUaIHtmcGK21YUhv9zrmJb JbZTDFlk0TYlEGrtuh+6yxuoj9DXkJ4nep7xMptk6yEeOrYk33P+LjwzmRI30DBEN6APhBY6iP/j 6J4LuoJbyrIML16+fqWa/SzwpQAZEsAAKOAiakTsYXojyo8SeRXC06s8b2/quo441QF/1fUPP/36 25tM9XeFr1IR+S/cXUSgMbZPAEzK8m0AAC3LMswP/gcEzwbO+NUUxUZIir54+frV9yzyEM1Efxk6 xGOhFCyGDvFYaOqL/f+gQwd4TEaZVBllUmWUSZVRJlVGmVQZZVJllEmVUSZVRplUGWWGQlX58P7Z 828b5+sxi0AEVJ0AEENGANgtFvdiycvIg264Ot2VBDzEyHbSEe+B9Xp9qjGc/rSneLkqYQaSdHfi 9jRANRhJn3Phy+U1mwYQATIhz35/QyEin/K4gwBFxEQZRfRoasfAEH2WR0bx7XZLoAHwJzLVEIeL /gUMoDpJUjREUnvCekjo3NH73/uY/zixd/mKxWrFpmmQEbEfOvc5VJQUpQZ1EhFinRJ7s3iQJ+zy fN7vdlMrltdeVRXrumYG05uhg58jqlMNFFFztSMkdGbxEIz7Pnjbzrrj81lnl5eXFBEAQEbYbuDc n6GqDBBQ6aR5QDi6o5fIrp96m9uz9rD9cFxfXFhVVX63zrLgshVJbEQbEUPGEONpkM2m0bmP+WTe t9PueNh+OK5WK9tsNvddAYAshKdXt2eDSaEOHCbGORfO+NHzPLfdbmrPZ52tLy5ss9mwrmsCuJ9+ WZ63NwAmw8U+z26x4OQ9MFtec7vd812es1heOwAvy/KuI//aVgQAyvJtKIqNnHnnoKzXazYNADQo ioJVVZ2VuONegGRyMsBpZ38Y80u1/wCGdnqcHTd7BAAAAABJRU5ErkJggg=="/>
+  <rect x="6.879" y="10.583" width="4.233" height=".529" ry=".265" fill="#666666" paint-order="stroke markers fill"/>
+  <path d="m5.56 5.783a0.264 0.264 0 0 0-0.262 0.13 0.264 0.264 0 0 0 0.097 0.362l2.842 1.64-2.842 1.641a0.264 0.264 0 0 0-0.097 0.362c0.074 0.127 0.235 0.17 0.362 0.097l3.207-1.852a0.26 0.26 0 0 0 0.127-0.225c2e-3 -8e-3 1e-3 -0.015 2e-3 -0.022 0-8e-3 0-0.015-2e-3 -0.023a0.26 0.26 0 0 0-0.127-0.224l-3.207-1.853a0.266 0.266 0 0 0-0.1-0.033z" fill="#666666" paint-order="stroke markers fill"/>
+ </g>
+ <g transform="translate(2.0401 -279.43)" paint-order="stroke markers fill">
+  <circle cx="11.718" cy="291.87" r="3.175" fill="#999999"/>
+  <circle cx="11.718" cy="291.87" r="1.588" opacity=".15"/>
+  <g fill="#ffffff">
+   <path d="m11.718 290.52a1.343 1.343 0 0 0-1.343 1.344 1.343 1.343 0 0 0 1.343 1.343 1.343 1.343 0 0 0 1.343-1.343 1.343 1.343 0 0 0-1.343-1.344zm0 0.61a0.733 0.733 0 0 1 0.733 0.734 0.733 0.733 0 0 1-0.733 0.732 0.733 0.733 0 0 1-0.733-0.732 0.733 0.733 0 0 1 0.733-0.733z"/>
+   <path d="m11.474 289.97h0.488v0.854h-0.488zm0 2.93h0.488v0.855h-0.488zm2.137-1.282v0.489h-0.855v-0.489zm-2.931 0v0.489h-0.855v-0.489zm2.55 1.41-0.346 0.346-0.604-0.605 0.345-0.345zm-2.073-2.072-0.345 0.345-0.605-0.604 0.345-0.345zm-0.605 2.418-0.345-0.346 0.605-0.604 0.345 0.345zm2.073-2.073-0.345-0.345 0.604-0.604 0.345 0.345z"/>
+  </g>
+ </g>
+</svg>

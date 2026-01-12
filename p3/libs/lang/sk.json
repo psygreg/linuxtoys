@@ -331,5 +331,6 @@
   "fisher_desc": "Správca modulov pre Fish",
   "kconnect_desc": "Opravuje problém spôsobený firewallom, ktorý blokuje KDE Connect v nadväzovaní spojenia medzi zariadeniami povolením potrebných portov cez firewall.",
   "bwrapfix_desc": "Opravuje problém spôsobený nesprávne nakonfigurovaným AppArmor, ktorý blokuje Bubblewrap v správnej funkcii, čo vedie k zlyhaniam pri spúšťaní aplikácií Flatpak a hier pod Protonom.",
-  "kisak_desc": "PPA, ktoré poskytuje najnovšie stabilné vydanie Mesa plus vybrané neinvazívne skoré backporty pre lepší výkon a kompatibilitu s novšími grafickými kartami."
+  "kisak_desc": "PPA, ktoré poskytuje najnovšie stabilné vydanie Mesa plus vybrané neinvazívne skoré backporty pre lepší výkon a kompatibilitu s novšími grafickými kartami.",
+  "nala_desc": "Rozhranie pre libapt-pkg s lepším formátovaním výstupu a podporou paralelného sťahovania."
 }

@@ -331,5 +331,6 @@
   "fisher_desc": "Fish için bir eklenti yöneticisi",
   "kconnect_desc": "Güvenlik duvarından kaynaklanan, KDE Connect'in cihazlar arasında bağlantı kurmasını engelleyen sorunu çözerek gerekli bağlantı noktalarına güvenlik duvarı üzerinden izin verir.",
   "bwrapfix_desc": "Yanlış yapılandırılmış bir AppArmor'un Bubblewrap'in doğru çalışmasını engellediği bir sorunu çözer, bu da Flatpak uygulamalarını ve Proton altındaki oyunları başlatırken hatalara yol açar.",
-  "kisak_desc": "Daha yeni grafik kartlarıyla daha iyi performans ve uyumluluk için Mesa'nın en son kararlı sürümünü artı seçilmiş istilacı olmayan erken geri portları sağlayan bir PPA."
+  "kisak_desc": "Daha yeni grafik kartlarıyla daha iyi performans ve uyumluluk için Mesa'nın en son kararlı sürümünü artı seçilmiş istilacı olmayan erken geri portları sağlayan bir PPA.",
+  "nala_desc": "Daha iyi çıktı biçimlendirmesi ve paralel indirme desteği ile libapt-pkg için bir arayüz."
 }
