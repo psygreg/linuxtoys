@@ -15,7 +15,7 @@ from gi.repository import Gtk, GLib
 def get_current_kernel():
     """
     Get the currently running kernel version.
-    Returns a tuple (kernel_name, kernel_version) or (None, None) if not psycachy.
+    Returns a tuple (kernel_name, kernel_version) or (None, None) if not a supported kernel.
     """
     try:
         result = subprocess.run(['uname', '-r'], capture_output=True, text=True, timeout=5)
@@ -27,8 +27,11 @@ def get_current_kernel():
             version_match = re.match(r'^(\d+\.\d+\.\d+)', kernel_string)
             if version_match:
                 return ('psycachy-lts', version_match.group(1))
+        elif 'psycachy-edge' in kernel_string.lower():
+            version_match = re.match(r'^(\d+\.\d+\.\d+)', kernel_string)
+            if version_match:
+                return ('psycachy-edge', version_match.group(1))
         elif 'psycachy' in kernel_string.lower():
-            # Extract version number
             version_match = re.match(r'^(\d+\.\d+\.\d+)', kernel_string)
             if version_match:
                 return ('psycachy', version_match.group(1))
@@ -42,7 +45,7 @@ def get_current_kernel():
 def get_latest_psycachy_releases():
     """
     Fetch the latest psycachy kernel releases from GitHub.
-    Returns dict with 'std' and 'lts' keys containing tag_name if successful, None otherwise.
+    Returns dict with 'std', 'lts', and 'ubuntu' keys containing version if successful, None otherwise.
     """
     try:
         api_url = "https://api.github.com/repos/psygreg/linux-psycachy/releases"
@@ -53,9 +56,10 @@ def get_latest_psycachy_releases():
             if response.status == 200:
                 releases = json.loads(response.read().decode('utf-8'))
                 
-                # Find latest STD and LTS releases
+                # Find latest STD, LTS, and Ubuntu releases
                 std_tag = None
                 lts_tag = None
+                ubuntu_tag = None
                 
                 for release in releases:
                     tag = release.get('tag_name', '')
@@ -63,14 +67,17 @@ def get_latest_psycachy_releases():
                         std_tag = tag
                     elif tag.startswith('LTS-') and lts_tag is None:
                         lts_tag = tag
+                    elif tag.startswith('Ubuntu-') and ubuntu_tag is None:
+                        ubuntu_tag = tag
                     
-                    # Break if we found both
-                    if std_tag and lts_tag:
+                    # Break if we found all three
+                    if std_tag and lts_tag and ubuntu_tag:
                         break
                 
                 return {
                     'std': std_tag.replace('STD-', '') if std_tag else None,
-                    'lts': lts_tag.replace('LTS-', '') if lts_tag else None
+                    'lts': lts_tag.replace('LTS-', '') if lts_tag else None,
+                    'ubuntu': ubuntu_tag.replace('Ubuntu-', '') if ubuntu_tag else None
                 }
     except Exception as e:
         print(f"Error fetching psycachy releases: {e}")
@@ -108,14 +115,14 @@ def compare_versions(current, latest):
 
 def check_for_kernel_updates(verbose=False):
     """
-    Check if a kernel update is available for the current psycachy kernel.
+    Check if a kernel update is available for the current supported kernel.
     Returns tuple (is_update_available, kernel_type, current_version, latest_version)
     """
     kernel_type, current_version = get_current_kernel()
     
     if kernel_type is None:
         if verbose:
-            print("Not running a psycachy kernel")
+            print("Not running a supported kernel")
         return (False, None, None, None)
     
     if verbose:
@@ -132,8 +139,10 @@ def check_for_kernel_updates(verbose=False):
     # Get the appropriate latest version based on kernel type
     if kernel_type == 'psycachy-lts':
         latest_version = releases.get('lts')
-    else:  # psycachy
+    elif kernel_type == 'psycachy-edge':
         latest_version = releases.get('std')
+    else:  # psycachy
+        latest_version = releases.get('ubuntu')
     
     if latest_version is None:
         if verbose:
@@ -182,7 +191,12 @@ def _show_gtk_kernel_update_dialog(kernel_type, current_version, latest_version,
     """
     try:
         # Get kernel type display name
-        kernel_display = "Psycachy LTS" if kernel_type == 'psycachy-lts' else "Psycachy"
+        kernel_display_map = {
+            'psycachy-lts': 'Psycachy LTS',
+            'psycachy-edge': 'Psycachy Edge',
+            'psycachy': 'Psycachy',
+        }
+        kernel_display = kernel_display_map.get(kernel_type, 'Kernel')
         
         dialog = Gtk.Dialog(
             title=translations.get('kernel_update_available_title', 'Kernel Update Available') if translations else 'Kernel Update Available',
@@ -271,10 +285,12 @@ def run_psycachy_installer(kernel_type):
         env['SCRIPT_DIR'] = os.path.dirname(os.path.dirname(__file__))
         
         # Determine which flag to use based on kernel type
-        if kernel_type == 'psycachy-lts':
-            flag = '-l'
-        else:  # psycachy
-            flag = '-s'
+        flag_map = {
+            'psycachy-lts': '-l',
+            'psycachy-edge': '-s',
+            'psycachy': '-u',
+        }
+        flag = flag_map.get(kernel_type, '-u')
         
         # Run the script with the appropriate flag
         subprocess.Popen(
