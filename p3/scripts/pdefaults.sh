@@ -81,7 +81,8 @@ while true; do
         "Desktop" \
         "Laptop" \
         "Cancel" \
-        --width 300 --height 330 )
+        "Install without Power Profile" \
+        --width 360 --height 360 )
 
     if [ $? -ne 0 ]; then
         exit 100
@@ -90,6 +91,7 @@ while true; do
     case $CHOICE in
     "Desktop") sudo_rq && pp_ondemand && optimizer && exit 0;;
     "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
+    "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
