@@ -157,7 +157,7 @@ EOF
 
 # add video playback with hardware acceleration capabilities to flatpaks
 hwaccel_flat_lib () {
-    flatpak install --or-update --system --noninteractive flathub org.freedesktop.Platform.ffmpeg-full/x86_64/24.08 org.freedesktop.Platform.ffmpeg-full/x86_64/23.08 org.freedesktop.Platform.ffmpeg-full/x86_64/22.08
+    flatpak_install --or-update --system --noninteractive flathub org.freedesktop.Platform.ffmpeg-full/x86_64/24.08 org.freedesktop.Platform.ffmpeg-full/x86_64/23.08 org.freedesktop.Platform.ffmpeg-full/x86_64/22.08
 }
 
 # for intel and nvidia GPUs, fix GTK rendering bugs

@@ -17,4 +17,4 @@ fi
 _packages=(podman distrobox)
 _install_
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf
+flatpak_install --or-update --noninteractive flathub com.ranfdev.DistroShelf

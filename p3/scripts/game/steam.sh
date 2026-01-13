@@ -27,7 +27,7 @@ else
     # use flatpak for all others, since native install usually only works well on Fedora and Arch
     sudo_rq
     flatpak_in_lib
-    flatpak install --or-update --user --noninteractive flathub com.valvesoftware.Steam
+    flatpak_install --or-update --noninteractive flathub com.valvesoftware.Steam
     _packages=(steam-devices)
     _install_
 fi

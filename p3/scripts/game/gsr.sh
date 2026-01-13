@@ -16,4 +16,4 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 # request sudo, GSR needs to be installed on system level
 sudo_rq
 flatpak_in_lib
-flatpak install --or-update --system --noninteractive flathub com.dec05eba.gpu_screen_recorder
+flatpak_install --or-update --system --noninteractive flathub com.dec05eba.gpu_screen_recorder

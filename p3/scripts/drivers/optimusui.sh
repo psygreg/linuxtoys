@@ -21,5 +21,5 @@ elif is_suse; then
 fi
 _install_
 flatpak_in_lib
-flatpak install --or-update --system --noninteractive de.z_ray.OptimusUI
+flatpak_install --or-update --system --noninteractive de.z_ray.OptimusUI
 zeninf "$msg018"

@@ -12,7 +12,7 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.openrgb.OpenRGB
+flatpak_install --or-update --noninteractive flathub org.openrgb.OpenRGB
 if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
     sudo_rq
     rpmfusion_chk

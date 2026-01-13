@@ -34,5 +34,5 @@ else
     distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br
 fi
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf
+flatpak_install --or-update --noninteractive flathub com.ranfdev.DistroShelf
 zeninf "$msg018"

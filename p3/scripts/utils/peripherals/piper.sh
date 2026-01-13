@@ -24,5 +24,5 @@ elif is_suse; then
 fi
 _install_
 flatpak_in_lib
-flatpak install -y --system --noninteractive flathub org.freedesktop.Piper
+flatpak_install -y --system --noninteractive flathub org.freedesktop.Piper
 zeninf "$finishmsg"

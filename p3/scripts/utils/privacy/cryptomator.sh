@@ -12,4 +12,4 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.cryptomator.Cryptomator
+flatpak_install --or-update --noninteractive flathub org.cryptomator.Cryptomator

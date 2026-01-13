@@ -54,8 +54,8 @@ else
         if command -v flatpak &> /dev/null; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
-            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
-            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            flatpak_install --reinstall -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
+            flatpak_install --reinstall -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             # update overrides if new additions are in this script
@@ -107,8 +107,8 @@ else
         if command -v flatpak &> /dev/null; then
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             wget https://github.com/PancakeTAS/lsfg-vk/releases/download/${tag}/org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
-            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak 
-            flatpak install --reinstall --user -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
+            flatpak_install --reinstall -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
+            flatpak_install --reinstall -y ./org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_23.08.flatpak
             rm org.freedesktop.Platform.VulkanLayer.lsfg_vk_24.08.flatpak
             flatapps=(com.usebottles.bottles net.lutris.Lutris com.valvesoftware.Steam com.heroicgameslauncher.hgl org.prismlauncher.PrismLauncher com.stremio.Stremio at.vintagestory.VintageStory org.vinegarhq.Sober)

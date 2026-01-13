@@ -21,13 +21,73 @@ flatpak_in_lib() {
         sleep 2
     fi
 
-    # Add Flathub remote if not exists
-    flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo 
-
-    sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    # Add Flathub remote only if it doesn't exist in either scope
+    if ! flatpak_has_remote user flathub && ! flatpak_has_remote system flathub; then
+        # Prefer system-wide remote when available
+        sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    fi
 
     touch /tmp/linuxtoys_flatpak_done
     return 0
+}
+
+flatpak_has_remote() {
+    local scope="$1"
+    local remote="$2"
+
+    flatpak remotes --"${scope}" --columns=name 2>/dev/null | grep -qx "$remote"
+}
+
+flatpak_pick_scope() {
+    local remote="$1"
+
+    if [[ -z "$remote" ]]; then
+        echo "user"
+        return 0
+    fi
+
+    if [[ -e "$remote" || "$remote" == *.flatpak || "$remote" == *.flatpakref || "$remote" == *.flatpakrepo ]]; then
+        echo "user"
+        return 0
+    fi
+
+    if flatpak_has_remote user "$remote"; then
+        echo "user"
+    elif flatpak_has_remote system "$remote"; then
+        echo "system"
+    else
+        echo "user"
+    fi
+}
+
+flatpak_install() {
+    local args=()
+    local scope=""
+    local remote=""
+
+    for arg in "$@"; do
+        case "$arg" in
+            --user) scope="user" ;;
+            --system) scope="system" ;;
+            *) args+=("$arg") ;;
+        esac
+    done
+
+    if [[ -z "$scope" ]]; then
+        for arg in "${args[@]}"; do
+            if [[ "$arg" != -* ]]; then
+                remote="$arg"
+                break
+            fi
+        done
+        scope="$(flatpak_pick_scope "$remote")"
+    fi
+
+    if [[ "$scope" == "system" ]]; then
+        sudo flatpak install --system "${args[@]}"
+    else
+        flatpak install --user "${args[@]}"
+    fi
 }
 
 # --- Multilib ---

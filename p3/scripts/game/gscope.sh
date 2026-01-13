@@ -37,5 +37,5 @@ fi
 # install flatpak runtime as well
 if command -v flatpak >/dev/null 2>&1; then
     flatpak_in_lib
-    flatpak install --or-update --user --noninteractive flathub org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08
+    flatpak_install --or-update --noninteractive flathub org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08
 fi

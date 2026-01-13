@@ -13,5 +13,5 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.termius.Termius
+flatpak_install --or-update --noninteractive flathub com.termius.Termius
 zeninf "$msg018"
