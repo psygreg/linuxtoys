@@ -12,6 +12,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
+sudo_rq
 if [ ! -d "$HOME/.local/share/fonts/mscorefonts" ]; then
     _packages=(cabextract)
     _install_
