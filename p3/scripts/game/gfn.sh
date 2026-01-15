@@ -13,7 +13,7 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.freedesktop.Sdk//24.08
+flatpak_install --or-update --noninteractive flathub org.freedesktop.Sdk//24.08
 flatpak remote-add --user --if-not-exists GeForceNOW https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo
-flatpak install --or-update --user --noninteractive GeForceNOW com.nvidia.geforcenow
+flatpak_install --or-update --noninteractive GeForceNOW com.nvidia.geforcenow
 flatpak override --user --nosocket=wayland com.nvidia.geforcenow

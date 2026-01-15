@@ -61,5 +61,5 @@ else
     sudo gpasswd -a $USER plugdev
 fi
 flatpak_in_lib
-flatpak install -y --system --noninteractive flathub app.polychromatic.controller
+flatpak_install -y --system --noninteractive flathub app.polychromatic.controller
 zeninf "$msg036"

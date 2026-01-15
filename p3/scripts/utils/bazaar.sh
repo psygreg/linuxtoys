@@ -13,5 +13,5 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
 flatpak_in_lib
-sudo flatpak install --or-update --system --noninteractive flathub io.github.kolunmi.Bazaar
+flatpak_install --or-update --system --noninteractive flathub io.github.kolunmi.Bazaar
 zeninf "$msg018"

@@ -13,5 +13,5 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub dev.lizardbyte.app.Sunshine
+flatpak_install --or-update --noninteractive flathub dev.lizardbyte.app.Sunshine
 flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine

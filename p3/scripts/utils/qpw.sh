@@ -10,4 +10,4 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.rncbc.qpwgraph
+flatpak_install --or-update --noninteractive flathub org.rncbc.qpwgraph

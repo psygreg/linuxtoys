@@ -148,7 +148,7 @@ _install_() {
 _flatpak_() {
     [[ -z "$_flatpaks" ]] && return 0
     for flat in "${_flatpaks[@]}"; do
-        flatpak install --or-update --user --noninteractive flathub "$flat"
+        flatpak_install --or-update --noninteractive flathub "$flat"
     done
     unset _flatpaks
 }

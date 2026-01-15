@@ -11,5 +11,5 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
-flatpak install --or-update --user --noninteractive org.prismlauncher.PrismLauncher
+flatpak_install --or-update --noninteractive org.prismlauncher.PrismLauncher
 zeninf "$msg018"
