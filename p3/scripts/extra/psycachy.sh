@@ -107,7 +107,7 @@ else
         case $CHOICE in
         Standard) psycachy_std && exit 0 ;;
         LTS) psycachy_lts && exit 0 ;;
-        Ubuntu LTS 24 with DKMS support) psycachy_ubuntu && exit 0 ;;
+        "Ubuntu LTS 24 with DKMS support") psycachy_ubuntu && exit 0 ;;
         Cancel | q) exit 100 ;;
         *) echo "Invalid Option" ;;
         esac
