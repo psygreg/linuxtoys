@@ -332,5 +332,6 @@
   "kconnect_desc": "Memperbaiki masalah yang disebabkan oleh firewall yang memblokir KDE Connect dari membangun koneksi antara perangkat dengan mengizinkan port yang diperlukan melalui firewall.",
   "bwrapfix_desc": "Memecahkan masalah yang disebabkan oleh AppArmor yang dikonfigurasi dengan tidak benar yang memblokir Bubblewrap agar tidak berfungsi dengan benar, yang menyebabkan kegagalan saat meluncurkan aplikasi Flatpak dan game di bawah Proton.",
   "kisak_desc": "Sebuah PPA yang menyediakan rilis stabil terbaru dari Mesa ditambah backport awal yang dipilih yang tidak invasif untuk kinerja dan kompatibilitas yang lebih baik dengan kartu grafis yang lebih baru.",
-  "nala_desc": "Antarmuka untuk libapt-pkg dengan pemformatan output yang lebih baik dan dukungan unduhan paralel."
+  "nala_desc": "Antarmuka untuk libapt-pkg dengan pemformatan output yang lebih baik dan dukungan unduhan paralel.",
+  "glight_desc": "Klien buatan komunitas untuk Xbox XCloud."
 }

@@ -332,5 +332,6 @@
   "kconnect_desc": "Laboja problēmu, ko izraisa ugunsmūris, kas bloķē KDE Connect no savienojuma izveides starp ierīcēm, atļaujot nepieciešamos portus caur ugunsmūri.",
   "bwrapfix_desc": "Atrisina problēmu, ko izraisa nepareizi konfigurēts AppArmor, kas bloķē Bubblewrap pareizu darbību, izraisot kļūmes, palaižot Flatpak lietojumprogrammas un spēles zem Proton.",
   "kisak_desc": "PPA, kas nodrošina jaunāko stabilo Mesa izdevumu plus atlasītus neinvazīvus agrus backportus labākai veiktspējai un saderībai ar jaunākām grafiskajām kartēm.",
-  "nala_desc": "Saskarne libapt-pkg ar labāku izvades formatēšanu un paralēlās lejupielādes atbalstu."
+  "nala_desc": "Saskarne libapt-pkg ar labāku izvades formatēšanu un paralēlās lejupielādes atbalstu.",
+  "glight_desc": "Kopienas izveidots klients Xbox XCloud."
 }

@@ -332,5 +332,6 @@
   "kconnect_desc": "Megoldja azt a problémát, amely tüzfal okozta, amely megakadályozza a KDE Connect eszközök közötti kapcsolat létesítésétől a szükséges portok engedélyezésével a tűzfalon keresztül.",
   "bwrapfix_desc": "Megoldja azt a problémát, amelyet egy helytelenül konfigurált AppArmor okoz, amely megakadályozza a Bubblewrap megfelelő működését, ami hibákhoz vezet a Flatpak alkalmazások és a Proton alatti játékok indításakor.",
   "kisak_desc": "Egy PPA, amely a Mesa legújabb stabil kiadását kínálja, valamint válogatott nem invazív korai backportokat a jobb teljesítmény és kompatibilitás érdekében az újabb grafikus kártyákkal.",
-  "nala_desc": "Egy felület a libapt-pkg számára jobb kimeneti formázással és párhuzamos letöltés támogatással."
+  "nala_desc": "Egy felület a libapt-pkg számára jobb kimeneti formázással és párhuzamos letöltés támogatással.",
+  "glight_desc": "Egy közösség által készített kliens az Xbox XCloud-hoz."
 }

@@ -334,5 +334,6 @@
   "kconnect_desc": "修复由防火墙引起的问题，该问题阻止 KDE Connect 在设备之间建立连接，方法是允许必要的端口通过防火墙。",
   "bwrapfix_desc": "解决由配置不当的 AppArmor 导致的问题，该问题阻止 Bubblewrap 正常运行，导致在 Proton 下启动 Flatpak 应用程序和游戏时失败。",
   "kisak_desc": "一个PPA，提供Mesa的最新稳定版本以及精选的非侵入性早期反向移植，以提高与较新显卡的性能和兼容性。",
-  "nala_desc": "一个用于 libapt-pkg 的界面，具有更好的输出格式和并行下载支持。"
+  "nala_desc": "一个用于 libapt-pkg 的界面，具有更好的输出格式和并行下载支持。",
+  "glight_desc": "Xbox XCloud 的社区制作客户端。"
 }

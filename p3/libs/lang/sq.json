@@ -332,5 +332,6 @@
   "kconnect_desc": "Rregullon një problem të shkaktuar nga muri i zjarrit që pengon KDE Connect nga vendosja e lidhjes midis pajisjeve duke lejuar portat e nevojshme përmes murit të zjarrit.",
   "bwrapfix_desc": "Zgjidh një problem të shkaktuar nga një AppArmor i konfiguruar gabimisht që bllokon Bubblewrap nga funksionimi i saktë, duke çuar në dështime kur lançohen aplikacione Flatpak dhe lojëra nën Proton.",
   "kisak_desc": "Një PPA që ofron versionin më të fundit të qëndrueshëm të Mesa plus backporte të hershme të zgjedhura jo-invazive për performancë dhe përputhshmëri më të mirë me kartat grafike më të reja.",
-  "nala_desc": "Një ndërfaqe për libapt-pkg me formatim më të mirë të daljes dhe mbështetje për shkarkimin paralel."
+  "nala_desc": "Një ndërfaqe për libapt-pkg me formatim më të mirë të daljes dhe mbështetje për shkarkimin paralel.",
+  "glight_desc": "Një klient i bërë nga komuniteti për Xbox XCloud."
 }

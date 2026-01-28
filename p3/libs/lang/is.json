@@ -332,5 +332,6 @@
   "kconnect_desc": "Leysir vandamál sem stafar af eldveggum sem loka fyrir KDE Connect frá því að koma á tengingu milli tækja með því að leyfa nauðsynlega stafi um eldvegginn.",
   "bwrapfix_desc": "Leysir vandamál sem stafar af ranglega stilltu AppArmor sem lokar fyrir Bubblewrap frá því að virka rétt, sem leiðir til bilana við að ræsa Flatpak forrit og leiki undir Proton.",
   "kisak_desc": "PPA sem veitir nýjustu stöðugu útgáfu af Mesa auk valinna óágengs snemma backporta fyrir betri frammistöðu og samhæfni við nýrri skjákort.",
-  "nala_desc": "Viðmót fyrir libapt-pkg með betri úttaksformi og stuðning við samhliða niðurhal."
+  "nala_desc": "Viðmót fyrir libapt-pkg með betri úttaksformi og stuðning við samhliða niðurhal.",
+  "glight_desc": "Viðskiptavinur gerður af samfélaginu fyrir Xbox XCloud."
 }
