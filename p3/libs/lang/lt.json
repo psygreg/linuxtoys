@@ -333,5 +333,6 @@
   "bwrapfix_desc": "Išsprendžia problemą, kurią sukelia netinkamai sukonfigūruotas AppArmor, kuris blokuoja Bubblewrap veikimą tinkamai, todėl nepavyksta paleisti Flatpak programų ir žaidimų po Proton.",
   "kisak_desc": "PPA, kuris suteikia naujausią stabilią Mesa versiją kartu su pasirinktais neinvaziniais ankstyvais backportais geresniam veikimui ir suderinamumui su naujesnėmis grafikos plokštėmis.",
   "nala_desc": "Sąsaja libapt-pkg su geresniu išvesties formatavimu ir lygiagrečios atsisiuntimo palaikymu.",
-  "glight_desc": "Bendruomenės sukurtas klientas Xbox XCloud."
+  "glight_desc": "Bendruomenės sukurtas klientas Xbox XCloud.",
+  "tacw_desc": "Šiuolaikinis akademinio rašymo asistentas, skirtas padėti studentams ir tyrėjams kurti struktūrizuotus akademinius tekstus naudojant Nuolatinio argumentavimo techniką (TAC)."
 }

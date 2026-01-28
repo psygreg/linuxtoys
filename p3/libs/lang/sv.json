@@ -333,5 +333,6 @@
   "bwrapfix_desc": "Löser ett problem orsakat av en felkonfigurerad AppArmor som blockerar Bubblewrap från att fungera korrekt, vilket leder till fel vid start av Flatpak-applikationer och spel under Proton.",
   "kisak_desc": "En PPA som tillhandahåller den senaste stabila utgåvan av Mesa plus utvalda icke-invasiva tidiga backportar för bättre prestanda och kompatibilitet med nyare grafikkort.",
   "nala_desc": "Ett gränssnitt för libapt-pkg med bättre utdataformatering och stöd för parallell nedladdning.",
-  "glight_desc": "En klient gjord av gemenskapen för Xbox XCloud."
+  "glight_desc": "En klient gjord av gemenskapen för Xbox XCloud.",
+  "tacw_desc": "Modern akademisk skrivassistent designad för att hjälpa studenter och forskare att skapa strukturerade akademiska texter med hjälp av Tekniken för kontinuerlig argumentation (TAC)."
 }

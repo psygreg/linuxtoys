@@ -333,5 +333,6 @@
   "bwrapfix_desc": "Yanlış yapılandırılmış bir AppArmor'un Bubblewrap'in doğru çalışmasını engellediği bir sorunu çözer, bu da Flatpak uygulamalarını ve Proton altındaki oyunları başlatırken hatalara yol açar.",
   "kisak_desc": "Daha yeni grafik kartlarıyla daha iyi performans ve uyumluluk için Mesa'nın en son kararlı sürümünü artı seçilmiş istilacı olmayan erken geri portları sağlayan bir PPA.",
   "nala_desc": "Daha iyi çıktı biçimlendirmesi ve paralel indirme desteği ile libapt-pkg için bir arayüz.",
-  "glight_desc": "Xbox XCloud için topluluk tarafından yapılan bir istemci."
+  "glight_desc": "Xbox XCloud için topluluk tarafından yapılan bir istemci.",
+  "tacw_desc": "Öğrencilerin ve araştırmacıların Sürekli Argümantasyon Tekniği (TAC) kullanarak yapılandırılmış akademik metinler oluşturmasına yardımcı olmak için tasarlanmış modern akademik yazma asistanı."
 }

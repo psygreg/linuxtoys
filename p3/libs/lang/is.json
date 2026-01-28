@@ -333,5 +333,6 @@
   "bwrapfix_desc": "Leysir vandamál sem stafar af ranglega stilltu AppArmor sem lokar fyrir Bubblewrap frá því að virka rétt, sem leiðir til bilana við að ræsa Flatpak forrit og leiki undir Proton.",
   "kisak_desc": "PPA sem veitir nýjustu stöðugu útgáfu af Mesa auk valinna óágengs snemma backporta fyrir betri frammistöðu og samhæfni við nýrri skjákort.",
   "nala_desc": "Viðmót fyrir libapt-pkg með betri úttaksformi og stuðning við samhliða niðurhal.",
-  "glight_desc": "Viðskiptavinur gerður af samfélaginu fyrir Xbox XCloud."
+  "glight_desc": "Viðskiptavinur gerður af samfélaginu fyrir Xbox XCloud.",
+  "tacw_desc": "Nútímafræði akademísk skrifaðstoð hönnuð til að hjálpa nemendum og rannsóknarmönnum að skapa skipulagða akademíska texta með því að nota Tækni samfelldrar röksemdar (TAC)."
 }

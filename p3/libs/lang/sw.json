@@ -331,5 +331,6 @@
   "bwrapfix_desc": "Hutatua tatizo linalosababishwa na AppArmor iliyosanidiwa vibaya ambayo inazuia Bubblewrap isifanye kazi vizuri, ikiongoza kwa kushindwa kuanzisha programu za Flatpak na michezo chini ya Proton.",
   "kisak_desc": "PPA inayotoa toleo la hivi karibuni la kudumu la Mesa pamoja na backports za mapema zilizochaguliwa zisizo-vamizi kwa utendaji bora na upatanisho na kadi za grafiksi mpya zaidi.",
   "nala_desc": "Kiolesura cha libapt-pkg chenye muundo bora wa matokeo na msaada wa kupakua kwa uwazi.",
-  "glight_desc": "Mteja aliyetengenezwa na jamii kwa Xbox XCloud."
+  "glight_desc": "Mteja aliyetengenezwa na jamii kwa Xbox XCloud.",
+  "tacw_desc": "Msaidizi wa kisasa wa uandishi wa kitaaluma iliyoundwa ili kusaidia wanafunzi na watafiti kuunda maandishi ya kitaaluma yaliyopangwa kwa kutumia Mbinu ya Hoja Endelevu (TAC)."
 }
