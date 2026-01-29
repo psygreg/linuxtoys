@@ -334,5 +334,7 @@
   "kisak_desc": "PPA a chuireann an leagan cobhsaí is déanaí de Mesa ar fáil móide backports luatha roghnaithe neamh-ionsaitheach le haghaidh feidhmíochta agus comhoiriúnachta níos fearr le cártaí grafaice níos nuaí.",
   "nala_desc": "Comhéadan le haghaidh libapt-pkg le formáidiú aschuir níos fearr agus tacaíocht íoslódála comhthreomhar.",
   "glight_desc": "Cliant déanta ag an bpobal do Xbox XCloud.",
-  "tacw_desc": "Cúntóir scríbhneoireachta acadúil nua-aimseartha deartha chun cabhrú le mic léinn agus le taighdeoirí téacsanna acadúla struchtúrtha a chruthú ag baint úsáide as an Teicníc Argóint Leanúnach (TAC)."
+  "tacw_desc": "Cúntóir scríbhneoireachta acadúil nua-aimseartha deartha chun cabhrú le mic léinn agus le taighdeoirí téacsanna acadúla struchtúrtha a chruthú ag baint úsáide as an Teicníc Argóint Leanúnach (TAC).",
+  "resolvehw": "DaVinci Resolve breiseán FFmpeg",
+  "resolvehw_desc": "Cumasaíonn 'sé ionchódú físeán luathaithe crua-earraí le 'haghaidh seachadta i DaVinci Resolve ar Linux trí ffmpeg, beag beann ar 'an monaróir GPU."
 }

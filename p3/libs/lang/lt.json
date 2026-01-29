@@ -334,5 +334,7 @@
   "kisak_desc": "PPA, kuris suteikia naujausią stabilią Mesa versiją kartu su pasirinktais neinvaziniais ankstyvais backportais geresniam veikimui ir suderinamumui su naujesnėmis grafikos plokštėmis.",
   "nala_desc": "Sąsaja libapt-pkg su geresniu išvesties formatavimu ir lygiagrečios atsisiuntimo palaikymu.",
   "glight_desc": "Bendruomenės sukurtas klientas Xbox XCloud.",
-  "tacw_desc": "Šiuolaikinis akademinio rašymo asistentas, skirtas padėti studentams ir tyrėjams kurti struktūrizuotus akademinius tekstus naudojant Nuolatinio argumentavimo techniką (TAC)."
+  "tacw_desc": "Šiuolaikinis akademinio rašymo asistentas, skirtas padėti studentams ir tyrėjams kurti struktūrizuotus akademinius tekstus naudojant Nuolatinio argumentavimo techniką (TAC).",
+  "resolvehw": "DaVinci Resolve FFmpeg įskiepis",
+  "resolvehw_desc": "Įjungia aparatinę įrangą pagreitintą vaizdo kodavimą pristatymui DaVinci Resolve programoje Linux per ffmpeg, nepriklausomai nuo GPU gamintojo."
 }

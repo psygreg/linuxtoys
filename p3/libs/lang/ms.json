@@ -334,5 +334,7 @@
   "kisak_desc": "Sebuah PPA yang menyediakan keluaran stabil terkini Mesa ditambah backport awal yang dipilih yang tidak invasif untuk prestasi dan keserasian yang lebih baik dengan kad grafik yang lebih baharu.",
   "nala_desc": "Antara muka untuk libapt-pkg dengan pemformatan output yang lebih baik dan sokongan muat turun selari.",
   "glight_desc": "Klien buatan komuniti untuk Xbox XCloud.",
-  "tacw_desc": "Pembantu penulisan akademik moden yang direka untuk membantu pelajar dan penyelidik mencipta teks akademik berstruktur menggunakan Teknik Argumentasi Berterusan (TAC)."
+  "tacw_desc": "Pembantu penulisan akademik moden yang direka untuk membantu pelajar dan penyelidik mencipta teks akademik berstruktur menggunakan Teknik Argumentasi Berterusan (TAC).",
+  "resolvehw": "DaVinci Resolve pemalam FFmpeg",
+  "resolvehw_desc": "Membolehkan pengekodan video dipercepat perkakasan untuk penghantaran dalam DaVinci Resolve di Linux melalui ffmpeg, tanpa mengira pengeluar GPU."
 }

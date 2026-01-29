@@ -333,5 +333,7 @@
   "kisak_desc": "Yangi grafika kartalari bilan yaxshi ishlash va moslik uchun Mesa ning eng so'nggi barqaror chiqarilishini hamda tanlangan invaziv bo'lmagan erta backportlarni taqdim etuvchi PPA.",
   "nala_desc": "Yaxshi chiqish formatlash va parallel yuklab olish qo'llab-quvvatlash bilan libapt-pkg uchun interfeys.",
   "glight_desc": "Xbox XCloud uchun hamjamiyat tomonidan yaratilgan mijoz.",
-  "tacw_desc": "Talabalar va tadqiqotchilarga uzluksiz argumentatsiya texnikasi (TAC) yordamida tuzilgan akademik matnlarni yaratishda yordam berish uchun mo'ljallangan zamonaviy akademik yozuv yordamchisi."
+  "tacw_desc": "Talabalar va tadqiqotchilarga uzluksiz argumentatsiya texnikasi (TAC) yordamida tuzilgan akademik matnlarni yaratishda yordam berish uchun mo'ljallangan zamonaviy akademik yozuv yordamchisi.",
+  "resolvehw": "DaVinci Resolve FFmpeg plagini",
+  "resolvehw_desc": "DaVinci Resolve-da Linux-da ffmpeg orqali yetkazish uchun apparat tezlatilgan video kodlashni yoqadi, GPU ishlab chiqaruvchisidan qat'i nazar."
 }

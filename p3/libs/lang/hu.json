@@ -334,5 +334,7 @@
   "kisak_desc": "Egy PPA, amely a Mesa legújabb stabil kiadását kínálja, valamint válogatott nem invazív korai backportokat a jobb teljesítmény és kompatibilitás érdekében az újabb grafikus kártyákkal.",
   "nala_desc": "Egy felület a libapt-pkg számára jobb kimeneti formázással és párhuzamos letöltés támogatással.",
   "glight_desc": "Egy közösség által készített kliens az Xbox XCloud-hoz.",
-  "tacw_desc": "Modern akadémiai írássegéd, amely arra szolgál, hogy segítsen a diákoknak és kutatóknak strukturált akadémiai szövegeket létrehozni a Folyamatos Érvelési Technika (TAC) használatával."
+  "tacw_desc": "Modern akadémiai írássegéd, amely arra szolgál, hogy segítsen a diákoknak és kutatóknak strukturált akadémiai szövegeket létrehozni a Folyamatos Érvelési Technika (TAC) használatával.",
+  "resolvehw": "DaVinci Resolve FFmpeg plugin",
+  "resolvehw_desc": "Hardvérovo gyorsított videó kódolást tesz lehetővé a DaVinci Resolve-ban Linuxon keresztül ffmpeg-en, a GPU gyártójától függetlenül."
 }

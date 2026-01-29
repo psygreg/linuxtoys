@@ -336,5 +336,7 @@
   "kisak_desc": "一个PPA，提供Mesa的最新稳定版本以及精选的非侵入性早期反向移植，以提高与较新显卡的性能和兼容性。",
   "nala_desc": "一个用于 libapt-pkg 的界面，具有更好的输出格式和并行下载支持。",
   "glight_desc": "Xbox XCloud 的社区制作客户端。",
-  "tacw_desc": "现代学术写作助手，旨在帮助学生和研究人员使用连续论证技术 (TAC) 创建结构化的学术文本。"
+  "tacw_desc": "现代学术写作助手，旨在帮助学生和研究人员使用连续论证技术 (TAC) 创建结构化的学术文本。",
+  "resolvehw": "DaVinci Resolve FFmpeg 插件",
+  "resolvehw_desc": "在 Linux 上通过 ffmpeg 为 DaVinci Resolve 中的交付启用硬件加速视频编码，无论 GPU 制造商如何。"
 }

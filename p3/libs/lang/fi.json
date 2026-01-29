@@ -334,5 +334,7 @@
   "kisak_desc": "PPA, joka tarjoaa Mesan uusimman vakaan version sekä valitut ei-invasiiviset varhaiset backportit parantaakseen suorituskykyä ja yhteensopivuutta uudempien näytönohjainten kanssa.",
   "nala_desc": "Käyttöliittymä libapt-pkg:lle paremmalla tulosteen muotoilulla ja rinnakkaisen latauksen tuella.",
   "glight_desc": "Yhteisön tekemä asiakas Xbox XCloudille.",
-  "tacw_desc": "Nykyaikainen akateemisen kirjoittamisen avustaja, joka on suunniteltu auttamaan opiskelijoita ja tutkijoita luomaan strukturoituja akateemisia tekstejä käyttämällä jatkuvaa argumentointitekniikkaa (TAC)."
+  "tacw_desc": "Nykyaikainen akateemisen kirjoittamisen avustaja, joka on suunniteltu auttamaan opiskelijoita ja tutkijoita luomaan strukturoituja akateemisia tekstejä käyttämällä jatkuvaa argumentointitekniikkaa (TAC).",
+  "resolvehw": "DaVinci Resolve FFmpeg -liitännäinen",
+  "resolvehw_desc": "Ottaa käyttöön laitteistokiihdytetyn videokoodauksen toimitukseen DaVinci Resolve -ohjelmassa Linuxissa ffmpeg:n kautta, riippumatta GPU-valmistajasta."
 }

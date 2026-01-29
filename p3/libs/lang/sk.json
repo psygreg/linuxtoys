@@ -334,5 +334,7 @@
   "kisak_desc": "PPA, ktoré poskytuje najnovšie stabilné vydanie Mesa plus vybrané neinvazívne skoré backporty pre lepší výkon a kompatibilitu s novšími grafickými kartami.",
   "nala_desc": "Rozhranie pre libapt-pkg s lepším formátovaním výstupu a podporou paralelného sťahovania.",
   "glight_desc": "Klient vytvorený komunitou pre Xbox XCloud.",
-  "tacw_desc": "Moderný asistent akademického písania navrhnutý na pomoc študentom a výskumníkom pri vytváraní štruktúrovaných akademických textov pomocou Techniky nepretržitej argumentácie (TAC)."
+  "tacw_desc": "Moderný asistent akademického písania navrhnutý na pomoc študentom a výskumníkom pri vytváraní štruktúrovaných akademických textov pomocou Techniky nepretržitej argumentácie (TAC).",
+  "resolvehw": "DaVinci Resolve plugin FFmpeg",
+  "resolvehw_desc": "Povoľuje hardvérovo zrýchlené kódovanie videa na doručenie v DaVinci Resolve na Linuxe prostredníctvom ffmpeg, bez ohľadu na výrobcu GPU."
 }

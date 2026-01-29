@@ -334,5 +334,7 @@
   "kisak_desc": "최신 안정 버전의 Mesa와 더 나은 성능 및 최신 그래픽 카드와의 호환성을 위해 선택된 비침습적 초기 백포트를 제공하는 PPA입니다.",
   "nala_desc": "더 나은 출력 형식 및 병렬 다운로드 지원을 갖춘 libapt-pkg 인터페이스입니다.",
   "glight_desc": "Xbox XCloud를 위한 커뮤니티 제작 클라이언트.",
-  "tacw_desc": "학생과 연구자들이 지속적 논증 기법 (TAC)을 사용하여 구조화된 학술 텍스트를 작성할 수 있도록 설계된 현대 학술 작문 도우미."
+  "tacw_desc": "학생과 연구자들이 지속적 논증 기법 (TAC)을 사용하여 구조화된 학술 텍스트를 작성할 수 있도록 설계된 현대 학술 작문 도우미.",
+  "resolvehw": "DaVinci Resolve FFmpeg 플러그인",
+  "resolvehw_desc": "DaVinci Resolve에서 Linux의 ffmpeg를 통해 배달을 위한 하드웨어 가속 비디오 인코딩을 활성화합니다. GPU 제조업체에 관계없이."
 }
