@@ -336,5 +336,7 @@
   "glight_desc": "Odjemalec, ki ga je ustvarila skupnost za Xbox XCloud.",
   "tacw_desc": "Sodobni pomočnik za akademsko pisanje, zasnovan za pomoč študentom in raziskovalcem pri ustvarjanju strukturiranih akademskih besedil z uporabo Tehnike nenehnega argumentiranja (TAC).",
   "resolvehw": "DaVinci Resolve vtičnik FFmpeg",
-  "resolvehw_desc": "Omogoča strojno pospešeno kodiranje videa za dostavo v DaVinci Resolve na Linuxu prek ffmpeg, ne glede na proizvajalca GPU."
+  "resolvehw_desc": "Omogoča strojno pospešeno kodiranje videa za dostavo v DaVinci Resolve na Linuxu prek ffmpeg, ne glede na proizvajalca GPU.",
+  "next_label": "Naslednji",
+  "cancel_label": "Prekliči"
 }

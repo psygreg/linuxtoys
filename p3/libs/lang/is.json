@@ -336,5 +336,7 @@
   "glight_desc": "Viðskiptavinur gerður af samfélaginu fyrir Xbox XCloud.",
   "tacw_desc": "Nútímafræði akademísk skrifaðstoð hönnuð til að hjálpa nemendum og rannsóknarmönnum að skapa skipulagða akademíska texta með því að nota Tækni samfelldrar röksemdar (TAC).",
   "resolvehw": "DaVinci Resolve FFmpeg viðbót",
-  "resolvehw_desc": "Virkjar vélbúnaðarhröðun myndskeiðakóðun fyrir afhendingu í DaVinci Resolve á Linux í gegnum ffmpeg, óháð GPU framleiðanda."
+  "resolvehw_desc": "Virkjar vélbúnaðarhröðun myndskeiðakóðun fyrir afhendingu í DaVinci Resolve á Linux í gegnum ffmpeg, óháð GPU framleiðanda.",
+  "next_label": "Næsta",
+  "cancel_label": "Hætta við"
 }

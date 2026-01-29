@@ -336,5 +336,7 @@
   "glight_desc": "Ühenduse loodud klient Xbox XCloud jaoks.",
   "tacw_desc": "Kaasaegne akadeemilise kirjutamise assistent, mis on loodud aitamaks üliõpilastel ja teadlastel luua struktureeritud akadeemilisi tekste, kasutades Jätkuva Argumentatsiooni Tehnikat (TAC).",
   "resolvehw": "DaVinci Resolve FFmpeg plugin",
-  "resolvehw_desc": "Võimaldab riistvaraliselt kiirendatud video kodeerimise DaVinci Resolve'is Linuxis ffmpeg'i kaudu, sõltumata GPU tootjast."
+  "resolvehw_desc": "Võimaldab riistvaraliselt kiirendatud video kodeerimise DaVinci Resolve'is Linuxis ffmpeg'i kaudu, sõltumata GPU tootjast.",
+  "next_label": "Järgmine",
+  "cancel_label": "Tühista"
 }

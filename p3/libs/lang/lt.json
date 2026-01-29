@@ -336,5 +336,7 @@
   "glight_desc": "Bendruomenės sukurtas klientas Xbox XCloud.",
   "tacw_desc": "Šiuolaikinis akademinio rašymo asistentas, skirtas padėti studentams ir tyrėjams kurti struktūrizuotus akademinius tekstus naudojant Nuolatinio argumentavimo techniką (TAC).",
   "resolvehw": "DaVinci Resolve FFmpeg įskiepis",
-  "resolvehw_desc": "Įjungia aparatinę įrangą pagreitintą vaizdo kodavimą pristatymui DaVinci Resolve programoje Linux per ffmpeg, nepriklausomai nuo GPU gamintojo."
+  "resolvehw_desc": "Įjungia aparatinę įrangą pagreitintą vaizdo kodavimą pristatymui DaVinci Resolve programoje Linux per ffmpeg, nepriklausomai nuo GPU gamintojo.",
+  "next_label": "Kitas",
+  "cancel_label": "Atšaukti"
 }

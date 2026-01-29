@@ -336,5 +336,7 @@
   "glight_desc": "Xbox XCloud için topluluk tarafından yapılan bir istemci.",
   "tacw_desc": "Öğrencilerin ve araştırmacıların Sürekli Argümantasyon Tekniği (TAC) kullanarak yapılandırılmış akademik metinler oluşturmasına yardımcı olmak için tasarlanmış modern akademik yazma asistanı.",
   "resolvehw": "DaVinci Resolve FFmpeg eklentisi",
-  "resolvehw_desc": "DaVinci Resolve'da Linux'ta ffmpeg aracılığıyla teslimat için donanım hızlandırmalı video kodlamayı etkinleştirir, GPU üreticisinden bağımsız olarak."
+  "resolvehw_desc": "DaVinci Resolve'da Linux'ta ffmpeg aracılığıyla teslimat için donanım hızlandırmalı video kodlamayı etkinleştirir, GPU üreticisinden bağımsız olarak.",
+  "next_label": "İleri",
+  "cancel_label": "İptal"
 }

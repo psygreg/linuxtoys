@@ -336,5 +336,7 @@
   "glight_desc": "Klijent izrađen od strane zajednice za Xbox XCloud.",
   "tacw_desc": "Moderni asistent za akademsko pisanje dizajniran da pomogne studentima i istraživačima u stvaranju strukturiranih akademskih tekstova koristeći Tehniku kontinuirane argumentacije (TAC).",
   "resolvehw": "DaVinci Resolve FFmpeg plugin",
-  "resolvehw_desc": "Omogućuje hardverski ubrzano video kodiranje za isporuku u DaVinci Resolve na Linuxu putem ffmpeg-a, bez obzira na proizvođača GPU-a."
+  "resolvehw_desc": "Omogućuje hardverski ubrzano video kodiranje za isporuku u DaVinci Resolve na Linuxu putem ffmpeg-a, bez obzira na proizvođača GPU-a.",
+  "next_label": "Sljedeći",
+  "cancel_label": "Otkaži"
 }

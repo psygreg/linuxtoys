@@ -336,5 +336,7 @@
   "glight_desc": "לקוח שנוצר על ידי הקהילה עבור Xbox XCloud.",
   "tacw_desc": "עוזר כתיבה אקדמית מודרני שנועד לעזור לסטודנטים וחוקרים ליצור טקסטים אקדמיים מובנים באמצעות טכניקת הטיעון הרציף (TAC).",
   "resolvehw": "DaVinci Resolve תוסף FFmpeg",
-  "resolvehw_desc": "מאפשר קידוד וידאו מואץ בחומרה למסירה ב'-DaVinci Resolve ב'-Linux דרך ffmpeg, ללא קשר ליצרן ה'-GPU."
+  "resolvehw_desc": "מאפשר קידוד וידאו מואץ בחומרה למסירה ב'-DaVinci Resolve ב'-Linux דרך ffmpeg, ללא קשר ליצרן ה'-GPU.",
+  "next_label": "הבא",
+  "cancel_label": "ביטול"
 }

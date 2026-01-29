@@ -336,5 +336,7 @@
   "glight_desc": "Kopienas izveidots klients Xbox XCloud.",
   "tacw_desc": "Mūsdienu akadēmiskā rakstīšanas palīgs, kas paredzēts, lai palīdzētu studentiem un pētniekiem izveidot strukturētus akadēmiskos tekstus, izmantojot Nepārtrauktās argumentācijas tehniku (TAC).",
   "resolvehw": "DaVinci Resolve FFmpeg spraudnis",
-  "resolvehw_desc": "Iespējo aparatūrā paātrinātu video kodēšanu piegādei DaVinci Resolve programmā Linux, izmantojot ffmpeg, neatkarīgi no GPU ražotāja."
+  "resolvehw_desc": "Iespējo aparatūrā paātrinātu video kodēšanu piegādei DaVinci Resolve programmā Linux, izmantojot ffmpeg, neatkarīgi no GPU ražotāja.",
+  "next_label": "Nākamais",
+  "cancel_label": "Atcelt"
 }

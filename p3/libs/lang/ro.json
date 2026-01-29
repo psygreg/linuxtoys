@@ -336,5 +336,7 @@
   "glight_desc": "Un client creat de comunitate pentru Xbox XCloud.",
   "tacw_desc": "Asistent modern de scriere academică conceput pentru a ajuta studenții și cercetătorii să creeze texte academice structurate folosind Tehnica Argumentării Continue (TAC).",
   "resolvehw": "DaVinci Resolve plugin FFmpeg",
-  "resolvehw_desc": "Activează codificarea video accelerată hardware pentru livrare în DaVinci Resolve pe Linux prin ffmpeg, indiferent de producătorul GPU."
+  "resolvehw_desc": "Activează codificarea video accelerată hardware pentru livrare în DaVinci Resolve pe Linux prin ffmpeg, indiferent de producătorul GPU.",
+  "next_label": "Următorul",
+  "cancel_label": "Anulare"
 }

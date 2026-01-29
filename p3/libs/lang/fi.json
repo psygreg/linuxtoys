@@ -336,5 +336,7 @@
   "glight_desc": "Yhteisön tekemä asiakas Xbox XCloudille.",
   "tacw_desc": "Nykyaikainen akateemisen kirjoittamisen avustaja, joka on suunniteltu auttamaan opiskelijoita ja tutkijoita luomaan strukturoituja akateemisia tekstejä käyttämällä jatkuvaa argumentointitekniikkaa (TAC).",
   "resolvehw": "DaVinci Resolve FFmpeg -liitännäinen",
-  "resolvehw_desc": "Ottaa käyttöön laitteistokiihdytetyn videokoodauksen toimitukseen DaVinci Resolve -ohjelmassa Linuxissa ffmpeg:n kautta, riippumatta GPU-valmistajasta."
+  "resolvehw_desc": "Ottaa käyttöön laitteistokiihdytetyn videokoodauksen toimitukseen DaVinci Resolve -ohjelmassa Linuxissa ffmpeg:n kautta, riippumatta GPU-valmistajasta.",
+  "next_label": "Seuraava",
+  "cancel_label": "Peruuta"
 }

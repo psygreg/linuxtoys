@@ -336,5 +336,7 @@
   "glight_desc": "Một ứng dụng khách được tạo bởi cộng đồng cho Xbox XCloud.",
   "tacw_desc": "Trợ lý viết học thuật hiện đại được thiết kế để giúp sinh viên và nhà nghiên cứu tạo ra các văn bản học thuật có cấu trúc bằng cách sử dụng Kỹ thuật Lập luận Liên tục (TAC).",
   "resolvehw": "DaVinci Resolve plugin FFmpeg",
-  "resolvehw_desc": "Kích hoạt mã hóa video được tăng tốc phần cứng để phân phối trong DaVinci Resolve trên Linux thông qua ffmpeg, bất kể nhà sản xuất GPU."
+  "resolvehw_desc": "Kích hoạt mã hóa video được tăng tốc phần cứng để phân phối trong DaVinci Resolve trên Linux thông qua ffmpeg, bất kể nhà sản xuất GPU.",
+  "next_label": "Tiếp theo",
+  "cancel_label": "Hủy"
 }

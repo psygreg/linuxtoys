@@ -336,5 +336,7 @@
   "glight_desc": "Isang kliyente na ginawa ng komunidad para sa Xbox XCloud.",
   "tacw_desc": "Modernong tagapag-ugnay sa pagsulat ng akademiko na idinisenyo upang tumulong sa mga mag-aaral at mananaliksik na lumikha ng mga tekstong akademiko na may istruktura gamit ang Teknik ng Patuloy na Argumentasyon (TAC).",
   "resolvehw": "DaVinci Resolve plugin ng FFmpeg",
-  "resolvehw_desc": "Nagbibigay-daan sa hardware-accelerated na video encoding para sa paghahatid sa DaVinci Resolve sa Linux sa pamamagitan ng ffmpeg, anuman ang tagagawa ng GPU."
+  "resolvehw_desc": "Nagbibigay-daan sa hardware-accelerated na video encoding para sa paghahatid sa DaVinci Resolve sa Linux sa pamamagitan ng ffmpeg, anuman ang tagagawa ng GPU.",
+  "next_label": "Susunod",
+  "cancel_label": "Kanselahin"
 }

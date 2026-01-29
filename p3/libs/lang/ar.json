@@ -336,5 +336,7 @@
   "glight_desc": "عميل مجتمعي لـ Xbox XCloud.",
   "tacw_desc": "مساعد كتابة أكاديمية حديث مصمم لمساعدة الطلاب والباحثين في إنشاء نصوص أكاديمية منظمة باستخدام تقنية الاستدلال المستمر (TAC).",
   "resolvehw": "DaVinci Resolve مكون FFmpeg إضافي",
-  "resolvehw_desc": "يُمكّن ترميز الفيديو المعجل بالأجهزة للتسليم في DaVinci Resolve على Linux من خلال ffmpeg، بغض النظر عن مصنع GPU."
+  "resolvehw_desc": "يُمكّن ترميز الفيديو المعجل بالأجهزة للتسليم في DaVinci Resolve على Linux من خلال ffmpeg، بغض النظر عن مصنع GPU.",
+  "next_label": "التالي",
+  "cancel_label": "إلغاء"
 }

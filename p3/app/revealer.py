@@ -44,17 +44,17 @@ class RevealerFooter(Gtk.Revealer):
         self.button_box.set_margin_top(5)
         self.button_box.set_margin_bottom(5)
 
-        self.button_next = Gtk.Button(label=self.parent.translations.get("next", "Next"))
+        self.button_next = Gtk.Button(label=self.parent.translations.get("next_label", "Next"))
         self.button_next.set_image(Gtk.Image.new_from_icon_name("go-next", Gtk.IconSize.BUTTON))
         self.button_next.set_always_show_image(True)
-        self.button_next.set_tooltip_text(self.parent.translations.get("next", "Next"))
+        self.button_next.set_tooltip_text(self.parent.translations.get("next_label", "Next"))
         self.button_next.set_size_request(125, 35)
         self.button_next.connect("clicked", self._on_next_clicked)
 
-        self.button_cancel = Gtk.Button(label=self.parent.translations.get("cancel", "Cancel"))
+        self.button_cancel = Gtk.Button(label=self.parent.translations.get("cancel_label", "Cancel"))
         self.button_cancel.set_image(Gtk.Image.new_from_icon_name("window-close", Gtk.IconSize.BUTTON))
         self.button_cancel.set_always_show_image(True)
-        self.button_cancel.set_tooltip_text(self.parent.translations.get("cancel", "Cancel"))
+        self.button_cancel.set_tooltip_text(self.parent.translations.get("cancel_label", "Cancel"))
         self.button_cancel.set_size_request(125, 35)
         self.button_cancel.connect("clicked", self._on_cancel_clicked)
 

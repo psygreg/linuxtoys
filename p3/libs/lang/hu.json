@@ -336,5 +336,7 @@
   "glight_desc": "Egy közösség által készített kliens az Xbox XCloud-hoz.",
   "tacw_desc": "Modern akadémiai írássegéd, amely arra szolgál, hogy segítsen a diákoknak és kutatóknak strukturált akadémiai szövegeket létrehozni a Folyamatos Érvelési Technika (TAC) használatával.",
   "resolvehw": "DaVinci Resolve FFmpeg plugin",
-  "resolvehw_desc": "Hardvérovo gyorsított videó kódolást tesz lehetővé a DaVinci Resolve-ban Linuxon keresztül ffmpeg-en, a GPU gyártójától függetlenül."
+  "resolvehw_desc": "Hardvérovo gyorsított videó kódolást tesz lehetővé a DaVinci Resolve-ban Linuxon keresztül ffmpeg-en, a GPU gyártójától függetlenül.",
+  "next_label": "Következő",
+  "cancel_label": "Mégse"
 }

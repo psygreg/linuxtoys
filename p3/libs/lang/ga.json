@@ -336,5 +336,7 @@
   "glight_desc": "Cliant déanta ag an bpobal do Xbox XCloud.",
   "tacw_desc": "Cúntóir scríbhneoireachta acadúil nua-aimseartha deartha chun cabhrú le mic léinn agus le taighdeoirí téacsanna acadúla struchtúrtha a chruthú ag baint úsáide as an Teicníc Argóint Leanúnach (TAC).",
   "resolvehw": "DaVinci Resolve breiseán FFmpeg",
-  "resolvehw_desc": "Cumasaíonn 'sé ionchódú físeán luathaithe crua-earraí le 'haghaidh seachadta i DaVinci Resolve ar Linux trí ffmpeg, beag beann ar 'an monaróir GPU."
+  "resolvehw_desc": "Cumasaíonn 'sé ionchódú físeán luathaithe crua-earraí le 'haghaidh seachadta i DaVinci Resolve ar Linux trí ffmpeg, beag beann ar 'an monaróir GPU.",
+  "next_label": "Ar Aghaidh",
+  "cancel_label": "Cealaigh"
 }

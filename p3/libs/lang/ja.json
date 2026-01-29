@@ -336,5 +336,7 @@
   "glight_desc": "Xbox XCloud のコミュニティ製クライアント。",
   "tacw_desc": "学生や研究者が継続的議論技法 (TAC) を使用して構造化された学術テキストを作成するのを助けるように設計された現代の学術ライティングアシスタント。",
   "resolvehw": "DaVinci Resolve FFmpeg プラグイン",
-  "resolvehw_desc": "DaVinci Resolve で Linux 上の ffmpeg を通じて配信するためのハードウェアアクセラレーションされたビデオエンコーディングを有効にします。GPU メーカーを問わず。"
+  "resolvehw_desc": "DaVinci Resolve で Linux 上の ffmpeg を通じて配信するためのハードウェアアクセラレーションされたビデオエンコーディングを有効にします。GPU メーカーを問わず。",
+  "next_label": "次へ",
+  "cancel_label": "キャンセル"
 }

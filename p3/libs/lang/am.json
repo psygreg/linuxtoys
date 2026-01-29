@@ -336,5 +336,7 @@
   "glight_desc": "የማህበረሰብ ሰሪው የ Xbox አውትድ ክላይንት።",
   "tacw_desc": "የዘመናዊ ተማሪያዊ ጽሁፍ ረዳት ተማሪዎች እና ምሁራን የተለያዩ ተማሪያዊ ጽሁፎችን በተከታታዊ አስተያየት ቴክኒክ (TAC) በመጠቀም ለመስራት የሚረዳ።",
   "resolvehw": "DaVinci Resolve FFmpeg ፕላግኢን",
-  "resolvehw_desc": "DaVinci Resolve ላይ Linux ላይ በ ffmpeg በኩል ለማስተላለፍ የሃርድዌር ተሽጋገር ቪዲዮ ኢንኮዲንግ ያስችላል፣ GPU ሰሪው ከሆነ ቢሆንም።"
+  "resolvehw_desc": "DaVinci Resolve ላይ Linux ላይ በ ffmpeg በኩል ለማስተላለፍ የሃርድዌር ተሽጋገር ቪዲዮ ኢንኮዲንግ ያስችላል፣ GPU ሰሪው ከሆነ ቢሆንም።",
+  "next_label": "ቀጣይ",
+  "cancel_label": "ያስቁሙ"
 }
