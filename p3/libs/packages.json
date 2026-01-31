@@ -1,0 +1,14 @@
+{
+    "vte3": {
+        "arch": "vte3",
+        "debian": "gir1.2-vte-2.91",
+        "fedora": "vte291",
+        "suse": "libvte-2_91-0"
+    },
+    "python-gobject": {
+        "arch": "python-gobject",
+        "debian": "python3-gi",
+        "fedora": "python3-gobject",
+        "suse": "python3-gobject"
+    }
+}

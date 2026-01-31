@@ -1,0 +1,7 @@
+# These default settings were approved by the Fedora Workstation SIG:
+# https://pagure.io/fedora-workstation/issue/119
+# The only modifications done are for the minimum memory thresholds, to ensure compatibility with memory-constrained systems, and inclusion of other package managers to avoid list
+
+EARLYOOM_ARGS="-r 0 -m 2 -M 256000 --prefer '^(Web Content|Isolated Web Co)$' --avoid '^(dnf|apt|pacman|rpm-ostree|packagekitd|gnome-shell|gnome-session-c|gnome-session-b|lightdm|sddm|sddm-helper|gdm|gdm-wayland-ses|gdm-session-wor|gdm-x-session|Xorg|Xwayland|systemd|systemd-logind|dbus-daemon|dbus-broker|cinnamon|cinnamon-sessio|kwin_x11|kwin_wayland|plasmashell|ksmserver|plasma_session|startplasma-way|sway|i3|xfce4-session|mate-session|marco|lxqt-session|openbox|cryptsetup)$'"
+
+# More documentation at `man earlyoom` or `earlyoom -h`.

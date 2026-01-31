@@ -1,0 +1,48 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Format: 1.8
+Date: Sat, 22 Nov 2025 03:00:47 -0300
+Source: linuxtoys
+Built-For-Profiles: noudeb
+Architecture: source
+Version: 5.6.2-1
+Distribution: noble
+Urgency: medium
+Maintainer: Victor Gregory <vicgregor@pm.me>
+Changed-By: Victor Gregory <vicgregor@pm.me>
+Changes:
+ linuxtoys (5.6.2-1) noble; urgency=medium
+ .
+   * Initial release for new Python-based structure
+   * Added complete application structure with scripts, libs, and helpers
+Checksums-Sha1:
+ 51e96dea96f4a19cc492790ec7f35ae46bc0de8b 1557 linuxtoys_5.6.2-1.dsc
+ 8a9a973596991e2e8b60c008cedac108f36404f7 1375828 linuxtoys_5.6.2.orig.tar.xz
+ be83bd8e183521e5ba2d6510edac7e9afdf6c776 1540 linuxtoys_5.6.2-1.debian.tar.xz
+ 7831e8b49f45fc89fc1617fe89b43fc05d181844 6872 linuxtoys_5.6.2-1_source.buildinfo
+Checksums-Sha256:
+ 29b76500f02bf67c166bf789c599c57ec6306903bbcb953c8f702e3d7a5e024a 1557 linuxtoys_5.6.2-1.dsc
+ fdb44ddebd11075943a1fef2238ad20150a87396c2fae68abcbce7d0a777f4f6 1375828 linuxtoys_5.6.2.orig.tar.xz
+ 5e279cedebe8d8bb35a79ad9beba5e36498845c9b2864522ae9609fab1afe76a 1540 linuxtoys_5.6.2-1.debian.tar.xz
+ 2cdf557f027dcdbd0f96e3712191fae3770b8bdcb60a68a93b87373ce5f21ae9 6872 linuxtoys_5.6.2-1_source.buildinfo
+Files:
+ 3766624965a9b56c619a6061df27fc28 1557 utils optional linuxtoys_5.6.2-1.dsc
+ 82820cc799b2ebb109f74b870277700c 1375828 utils optional linuxtoys_5.6.2.orig.tar.xz
+ b1b9b8d29eef6c9685163773c54632a0 1540 utils optional linuxtoys_5.6.2-1.debian.tar.xz
+ cbfd0945a089ef102144ef2a22718a68 6872 utils optional linuxtoys_5.6.2-1_source.buildinfo
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAEBCgAdFiEEnyVCE3MAD6U8HBB4K38f1hWyXCMFAmkhAcMACgkQK38f1hWy
+XCPqHQwAj4Ijiokr5dBWcXZHrVscfTySB4QPS7i3fgpvrT8gWnLAIGSptgFhyTKU
+c7B7UHHOCUkrk8nND62aFhUlfXTdXodyxI30VioJ5zNQ7iJ1WVH76x6daS1MQ5Bs
+fACc3FkOXgSz9cHsebgrn4R+9kQl07QUDMOH+AeZvTwzyTMcHz34I5JjbJUQiZFy
+Z7DqqNqa7DjDdjDY4d28bhjHpWpJv69ZPkwoMcl58H+/+lH1w+H+RLRD3eHPSVcb
+VvcyKDxpGofAZEEtKZPYVkRYTrz5oi7oMADyDxS7ac5G5526dIJtvbkSUNuipaUO
+Qt3Lr99RVdKtKwTvNb52xAc4L04UsE1QXtNDRRsXDYJmf0p41AXgZtaTpGXi7iW9
+uTahIKaQUSiKMvH9Xc4A9jDAqPjqz3NXvfyZtBuhoQt+axLaAiE+yKQG3VGjxE68
+1lJsREm2O6LhysFnQBG6djI4ab43PVbQAn1B3phaGJ2HcQn7Gn6HqGEMLJeFqPel
+xzfzyAKJ
+=UmYU
+-----END PGP SIGNATURE-----

@@ -1,0 +1,2 @@
+RUSTICL_ENABLE=radeonsi
+OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd

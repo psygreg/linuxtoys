@@ -1,0 +1,65 @@
+ dpkg-buildpackage -us -uc -ui
+dpkg-buildpackage: info: source package linuxtoys
+dpkg-buildpackage: info: source version 5.6.2-1
+dpkg-buildpackage: info: source distribution noble
+dpkg-buildpackage: info: source changed by Victor Gregory <vicgregor@pm.me>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+ debian/rules clean
+dh clean
+   dh_clean
+ dpkg-source -b .
+dpkg-source: info: using source format '3.0 (quilt)'
+dpkg-source: info: building linuxtoys using existing ./linuxtoys_5.6.2.orig.tar.xz
+dpkg-source: info: building linuxtoys in linuxtoys_5.6.2-1.debian.tar.xz
+dpkg-source: info: building linuxtoys in linuxtoys_5.6.2-1.dsc
+ debian/rules binary
+dh binary
+   dh_update_autotools_config
+   dh_autoreconf
+   create-stamp debian/debhelper-build-stamp
+   dh_prep
+   dh_auto_install --destdir=debian/linuxtoys/
+   debian/rules override_dh_install
+make[1]: Entering directory '/mnt/hdd1/dev/linuxtoys/src/buildfiles/deb/linuxtoys-5.6.2'
+dh_install
+# Set proper permissions for executable files after they are installed
+chmod +x debian/linuxtoys/usr/bin/linuxtoys
+chmod +x debian/linuxtoys/usr/share/linuxtoys/run.py
+find debian/linuxtoys/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
+find debian/linuxtoys/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
+make[1]: Leaving directory '/mnt/hdd1/dev/linuxtoys/src/buildfiles/deb/linuxtoys-5.6.2'
+   dh_installdocs
+   dh_installchangelogs
+   dh_icons
+   dh_perl
+   dh_link
+   dh_strip_nondeterminism
+   dh_compress
+   dh_fixperms
+   dh_missing
+   dh_dwz -a
+   dh_strip -a
+   dh_makeshlibs -a
+   dh_shlibdeps -a
+   dh_installdeb
+   dh_gencontrol
+   dh_md5sums
+   dh_builddeb
+dpkg-deb: building package 'linuxtoys' in '../linuxtoys_5.6.2-1_amd64.deb'.
+ dpkg-genbuildinfo -O../linuxtoys_5.6.2-1_amd64.buildinfo
+ dpkg-genchanges -O../linuxtoys_5.6.2-1_amd64.changes
+dpkg-genchanges: info: including full source code in upload
+ dpkg-source --after-build .
+dpkg-buildpackage: info: full upload (original source is included)
+Now running lintian linuxtoys_5.6.2-1_amd64.changes ...
+E: linuxtoys: depends-on-essential-package-without-using-version Depends: bash
+W: linuxtoys source: debhelper-but-no-misc-depends linuxtoys
+W: linuxtoys: description-synopsis-starts-with-article
+W: linuxtoys: extended-description-contains-empty-paragraph
+W: linuxtoys: extended-description-line-too-long line 2
+W: linuxtoys: initial-upload-closes-no-bugs [usr/share/doc/linuxtoys/changelog.Debian.gz:1]
+W: linuxtoys source: newer-standards-version 4.7.2 (current is 4.6.2)
+W: linuxtoys: no-manual-page [usr/bin/linuxtoys-cli]
+W: linuxtoys: no-manual-page [usr/bin/linuxtoys]
+Finished running lintian.

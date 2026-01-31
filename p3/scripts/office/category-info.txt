@@ -1,0 +1,4 @@
+name: office
+ICON: office.svg
+description: office_desc
+mode: checklist
