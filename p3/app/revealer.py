@@ -12,7 +12,7 @@ class SupportFooter(Gtk.Box):
 
         self.urls_labels = [
             ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg"),
-            ("https://github.com/psygreg/linuxtoys/issues/new?template=bug_report.md", self.translations.get('report_label', 'Report Bug'), "report.svg"),
+            ("https://codeberg.org/psygreg/linuxtoys/issues/new", self.translations.get('report_label', 'Report Bug'), "report.svg"),
             ("https://linux.toys/credits.html", self.translations.get('credits_label', 'Credits'), "credits.svg"),
             ("https://ko-fi.com/psygreg", self.translations.get('support_footer', 'Support this project'), "sponsor.svg")
         ]

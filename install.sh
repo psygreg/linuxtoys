@@ -105,17 +105,17 @@ osarch() {
 }
 
 installer() {
-	_api="$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest")"
+	_api="$(curl -fsSL "https://codeberg.org/api/v1/repos/psygreg/linuxtoys/releases/latest")"
 	if [ -z "${_api}" ] ; then error "Failed to get api"; fi
 
-	_rpm=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?\.rpm)(?=")')
+	_rpm=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.rpm')
 	_rpm_name=$(basename "${_rpm}")
 
-	_deb=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?\.deb)(?=")')
+	_deb=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.deb')
 	_deb_name=$(basename "${_deb}")
 
-	_pkg=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?/PKGBUILD)(?=")')
-	# _pkg_tarball=$(echo "${_api}" | grep -Pio '(?<=browser_download_url": ")([^"]+?\.tar.xz)(?=")')
+	_pkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?/PKGBUILD')
+	# _pkg_tarball=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.tar.xz')
 	_pkg_name=$(basename "${_pkg}")
 	# _pkg_tarball_name=$(basename "${_pkg_tarball}")
 

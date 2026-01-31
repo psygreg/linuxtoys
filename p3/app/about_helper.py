@@ -224,16 +224,17 @@ class AboutDialog:
         return contributors_box
         
     def _load_contributors(self):
-        """Loads contributors from GitHub API in background thread"""
+        """Loads contributors from Codeberg API in background thread"""
         try:
             response = requests.get(
-                "https://api.github.com/repos/psygreg/linuxtoys/contributors",
+                "https://codeberg.org/api/v1/repos/psygreg/linuxtoys/contributors",
                 timeout=10
             )
             if response.status_code == 200:
                 contributors_data = response.json()
                 # Filter out 'psygreg' since he's already mentioned as project lead
-                filtered_contributors = [c for c in contributors_data if c['login'].lower() != 'psygreg']
+                # Codeberg/Gitea API uses 'username' instead of 'login'
+                filtered_contributors = [c for c in contributors_data if c.get('username', c.get('login', '')).lower() != 'psygreg']
                 # Get top 10 contributors (after filtering)
                 self.contributors = filtered_contributors[:9]
                 # Update UI in main thread
@@ -259,7 +260,7 @@ class AboutDialog:
             col = i % 3
             
             # Create contributor label
-            contributor_label = Gtk.Label(label=contributor['login'])
+            contributor_label = Gtk.Label(label=contributor.get('username', contributor.get('login', '')))
             contributor_label.set_halign(Gtk.Align.START)
             
             self.contributors_grid.attach(contributor_label, col, row, 1, 1)

@@ -54,16 +54,12 @@ class UpdateHelper():
 
     def _get_latest_version(self, repo_owner="psygreg", repo_name="linuxtoys") -> dict:
         """
-        Fetch the latest release info from GitHub API.
+        Fetch the latest release info from Codeberg API.
         Returns dict with tag_name and body if successful, None otherwise.
         """
         try:
-            api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
+            api_url = f"https://codeberg.org/api/v1/repos/{repo_owner}/{repo_name}/releases/latest"
             request = urllib.request.Request(api_url)
-            """
-            User-Agent:
-            https://docs.github.com/en/rest/using-the-rest-api/getting-started-with-the-rest-api?apiVersion=2022-11-28#user-agent
-            """
             request.add_header('User-Agent', 'LinuxToys-UpdateChecker/1.0')
 
             with urllib.request.urlopen(request, timeout=10) as response:

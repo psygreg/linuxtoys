@@ -133,7 +133,7 @@ curl -fsSL https://linux.toys/install.sh | bash
                 'icon': "linuxtoys.svg",
                 'name': "Update LinuxToys",
                 'description': "Update to new version of LinuxToys.",
-                'repo': "https://github.com/psygreg/linuxtoys/releases",
+                'repo': "https://codeberg.org/psygreg/linuxtoys/releases",
                 'path': "/tmp/.self_update_lt",
                 'self_update': True,
                 'is_script': True
