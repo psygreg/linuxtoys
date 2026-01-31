@@ -119,9 +119,12 @@ _install_() {
                             if pacman -Ss paru | grep -q paru; then
                                 sudo pacman -S --noconfirm paru
                             else
-                                chaotic_aur_lib
-                                sleep 1
-                                sudo pacman -S --noconfirm paru
+                                # chaotic_aur_lib
+                                sudo pacman -S --needed base-devel
+                                cd $HOME
+                                git clone https://aur.archlinux.org/paru.git
+                                cd paru
+                                makepkg -si
                             fi
                         fi
                         paru -S -a --noconfirm --skipreview "$pak"
