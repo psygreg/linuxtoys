@@ -7,7 +7,7 @@
 # reboot: yes
 # noconfirm: yes
 # nocontainer
-# repo: https://github.com/psygreg/linux-psycachy
+# repo: https://codeberg.org/psygreg/linux-psycachy
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -16,9 +16,9 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # get current tags and versions
-lts_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^LTS-' | sort -Vr | head -n 1)"
-std_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^STD-' | sort -Vr | head -n 1)"
-ubuntu_tag="$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^Ubuntu-' | sort -Vr | head -n 1)"
+lts_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^LTS-' | sort -Vr | head -n 1)"
+std_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^STD-' | sort -Vr | head -n 1)"
+ubuntu_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^Ubuntu-' | sort -Vr | head -n 1)"
 kver_lts="$(echo "$lts_tag" | cut -d'-' -f2-)"
 kver_psycachy="$(echo "$std_tag" | cut -d'-' -f2-)"
 kver_ubuntu="$(echo "$ubuntu_tag" | cut -d'-' -f2-)"
@@ -32,9 +32,9 @@ sudo_rq
 # psycachy standard edition
 psycachy_std () {
     cd $HOME
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-headers-psycachy_${kver_psycachy}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-image-psycachy_${kver_psycachy}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${std_tag}/linux-libc-dev_${kver_psycachy}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${std_tag}/linux-headers-psycachy_${kver_psycachy}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${std_tag}/linux-image-psycachy_${kver_psycachy}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${std_tag}/linux-libc-dev_${kver_psycachy}-1_amd64.deb"
     sleep 1
     sudo dpkg -i linux-image-psycachy_${kver_psycachy}-1_amd64.deb linux-headers-psycachy_${kver_psycachy}-1_amd64.deb linux-libc-dev_${kver_psycachy}-1_amd64.deb || exit 10
     sleep 1
@@ -43,15 +43,15 @@ psycachy_std () {
     rm linux-libc-dev_${kver_psycachy}-1_amd64.deb
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --linuxtoys
+        bash <(curl -s https://codeberg.org/psygreg/linux-psycachy/raw/branch/master/secureboot/create-key.sh) --linuxtoys
     fi
 }
 # psycachy lts edition
 psycachy_lts () {
     cd $HOME
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy-lts_${kver_lts}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-image-psycachy-lts_${kver_lts}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${lts_tag}/linux-libc-dev_${kver_lts}-1_amd64.deb"
     sleep 1
     sudo dpkg -i linux-image-psycachy-lts_${kver_lts}-1_amd64.deb linux-headers-psycachy-lts_${kver_lts}-1_amd64.deb linux-libc-dev_${kver_lts}-1_amd64.deb || exit 10
     sleep 1
@@ -60,15 +60,15 @@ psycachy_lts () {
     rm linux-libc-dev_${kver_lts}-1_amd64.deb
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/heads/master/secureboot/create-key.sh) --lts
+        bash <(curl -s https://codeberg.org/psygreg/linux-psycachy/raw/branch/master/secureboot/create-key.sh) --lts
     fi
 }
 # psycachy for ubuntu lts with dkms support
 psycachy_ubuntu () {
     cd $HOME
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
-    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-libc-dev_${kver_ubuntu}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
+    wget "https://codeberg.org/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-libc-dev_${kver_ubuntu}-1_amd64.deb"
     sleep 1
     sudo dpkg -i linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb linux-libc-dev_${kver_ubuntu}-1_amd64.deb || exit 10
     sleep 1
@@ -77,7 +77,7 @@ psycachy_ubuntu () {
     rm linux-libc-dev_${kver_ubuntu}-1_amd64.deb
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psygreg/linux-psycachy/refs/tags/Ubuntu-6.14.11/secureboot/create-key.sh) -u
+        bash <(curl -s https://codeberg.org/psygreg/linux-psycachy/raw/tag/Ubuntu-6.14.11/secureboot/create-key.sh) -u
     fi
 }
 # Parse command line arguments
