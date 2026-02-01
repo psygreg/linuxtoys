@@ -50,13 +50,18 @@ cachyos_sysd_lib () {
 # shader booster
 sboost_lib () {
     cd $HOME
+    local _tag=$(curl -s https://codeberg.org/api/v1/repos/psygreg/shader-booster/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')
+    if [ -z "$_tag" ]; then
+        _tag=$(curl -s https://codeberg.org/api/v1/repos/psygreg/shader-booster/releases | grep -oP '"tag_name":\s*"\K[^"]+' | head -n 1)
+    fi
+
     if [ "$ID" == "cachyos" ]; then
-        wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher-cachy.fish
+        wget "https://codeberg.org/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish"
         chmod +x patcher-cachy.fish
         fish ./patcher-cachy.fish
         rm patcher-cachy.fish
     else
-        wget https://github.com/psygreg/shader-booster/releases/latest/download/patcher.sh
+        wget "https://codeberg.org/psygreg/shader-booster/releases/download/${_tag}/patcher.sh"
         chmod +x patcher.sh
         ./patcher.sh
         rm patcher.sh
@@ -124,7 +129,7 @@ debfixer_lib () {
 earlyoom_lib () {
     _packages=(earlyoom)
     _install_
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/earlyoom
+    wget https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/earlyoom
     sudo cp -f earlyoom /etc/default/
     rm earlyoom
     sudo systemctl enable --now earlyoom
