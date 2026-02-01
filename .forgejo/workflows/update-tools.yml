@@ -1,0 +1,62 @@
+name: Update Tools Categories
+
+on:
+  # Trigger on manual dispatch
+  workflow_dispatch:
+  
+  # Trigger on releases from LinuxToys repository
+  repository_dispatch:
+    types: [update-tools]
+  
+  # Schedule to run daily to check for new releases
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly at 00:00 on Sunday
+
+jobs:
+  update-tools:
+    runs-on: docker
+    permissions:
+      contents: write
+      actions: read
+    
+    steps:
+    - name: Checkout master branch
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Checkout pages branch
+      uses: actions/checkout@v4
+      with:
+        ref: pages
+        path: pages
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        npm install axios cheerio
+    
+    - name: Fetch and process LinuxToys data
+      run: |
+        node .forgejo/scripts/update-tools.js ./pages/cache
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Commit and push changes to pages branch
+      run: |
+        cd pages
+        git config --local user.email "psygreg@pm.me"
+        git config --local user.name "psygreg"
+        
+        if [ -n "$(git status --porcelain)" ]; then
+          git add cache/
+          git commit -m "Update tools categories from master branch"
+          git push origin pages
+        else
+          echo "No changes to commit"
+        fi

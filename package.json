@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "axios": "^1.12.1",
+    "cheerio": "^1.1.2"
+  }
+}
