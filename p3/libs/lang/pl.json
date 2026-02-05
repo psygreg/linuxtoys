@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve wtyczka FFmpeg",
   "resolvehw_desc": "Włącza sprzętowo przyspieszone kodowanie wideo do dostarczania w DaVinci Resolve na Linuxie przez ffmpeg, niezależnie od producenta GPU.",
   "next_label": "Dalej",
-  "cancel_label": "Anuluj"
+  "cancel_label": "Anuluj",
+  "haguichi_desc": "Ułatwia korzystanie z Hamachi w systemie Linux dzięki intuicyjnemu interfejsowi graficznemu, który obejmuje wszystkie jego funkcje."
 }

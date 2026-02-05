@@ -337,5 +337,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg plagini",
   "resolvehw_desc": "DaVinci Resolve-da Linux-da ffmpeg orqali yetkazish uchun apparat tezlatilgan video kodlashni yoqadi, GPU ishlab chiqaruvchisidan qat'i nazar.",
   "next_label": "Keyingi",
-  "cancel_label": "Bekor qilish"
+  "cancel_label": "Bekor qilish",
+  "haguichi_desc": "Linux-da Hamachi-dan foydalanishni osonlashtiradi, barcha xususiyatlarini qamrab oluvchi intuitiv grafik interfeys bilan."
 }

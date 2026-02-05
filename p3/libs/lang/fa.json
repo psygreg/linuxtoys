@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve افزونه FFmpeg",
   "resolvehw_desc": "رمزگذاری ویدیوی شتاب‌دهنده سخت‌افزاری را برای تحویل در DaVinci Resolve در Linux از طریق ffmpeg فعال می‌کند، صرف نظر از تولیدکننده GPU.",
   "next_label": "بعدی",
-  "cancel_label": "لغو"
+  "cancel_label": "لغو",
+  "haguichi_desc": "استفاده از Hamachi در Linux را با یک رابط گرافیکی بصری که تمام ویژگی‌های آن را پوشش می‌دهد، آسان می‌کند."
 }

@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve shtojcë FFmpeg",
   "resolvehw_desc": "Aktivizon kodimin e videos së përshpejtuar nga hardueri për shpërndarje në DaVinci Resolve në Linux përmes ffmpeg, pavarësisht nga prodhuesi i GPU-së.",
   "next_label": "Tjetër",
-  "cancel_label": "Anulo"
+  "cancel_label": "Anulo",
+  "haguichi_desc": "Lehtëson përdorimin e Hamachi në Linux me një ndërfaqe grafike intuitive që mbulon të gjitha veçoritë e tij."
 }

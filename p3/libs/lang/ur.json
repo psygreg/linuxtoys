@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg پلگ ان",
   "resolvehw_desc": "DaVinci Resolve میں Linux پر ffmpeg کے ذریعے ڈیلیوری کے لیے ہارڈ ویئر ایکسلریٹڈ ویڈیو انکوڈنگ کو فعال کرتا ہے، GPU مینوفیکچرر سے قطع نظر۔",
   "next_label": "اگلا",
-  "cancel_label": "منسوخ کریں"
+  "cancel_label": "منسوخ کریں",
+  "haguichi_desc": "Linux پر Hamachi کے استعمال کو آسان بناتا ہے ایک بدیہی گرافیکل انٹرفیس کے ساتھ جو اس کی تمام خصوصیات کا احاطہ کرتا ہے۔"
 }

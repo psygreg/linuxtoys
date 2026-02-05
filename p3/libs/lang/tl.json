@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve plugin ng FFmpeg",
   "resolvehw_desc": "Nagbibigay-daan sa hardware-accelerated na video encoding para sa paghahatid sa DaVinci Resolve sa Linux sa pamamagitan ng ffmpeg, anuman ang tagagawa ng GPU.",
   "next_label": "Susunod",
-  "cancel_label": "Kanselahin"
+  "cancel_label": "Kanselahin",
+  "haguichi_desc": "Pinapadali ang paggamit ng Hamachi sa Linux na may intuitive na graphical interface na sumasaklaw sa lahat ng mga feature nito."
 }

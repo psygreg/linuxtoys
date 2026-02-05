@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg დანამატი",
   "resolvehw_desc": "აქტიურებს აპარატურულად აჩქარებულ ვიდეო კოდირებას DaVinci Resolve-ში Linux-ზე ffmpeg-ის საშუალებით, GPU მწარმოებელის მიუხედავად.",
   "next_label": "შემდეგი",
-  "cancel_label": "გაუქმება"
+  "cancel_label": "გაუქმება",
+  "haguichi_desc": "ამარტივებს Hamachi-ის გამოყენებას Linux-ზე ინტუიციური გრაფიკული ინტერფეისით, რომელიც მოიცავს მის ყველა ფუნქციას."
 }

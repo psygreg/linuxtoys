@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg viðbót",
   "resolvehw_desc": "Virkjar vélbúnaðarhröðun myndskeiðakóðun fyrir afhendingu í DaVinci Resolve á Linux í gegnum ffmpeg, óháð GPU framleiðanda.",
   "next_label": "Næsta",
-  "cancel_label": "Hætta við"
+  "cancel_label": "Hætta við",
+  "haguichi_desc": "Auðveldar notkun Hamachi á Linux með leiðandi grafísku viðmóti sem nær yfir alla eiginleika þess."
 }

@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg spraudnis",
   "resolvehw_desc": "Iespējo aparatūrā paātrinātu video kodēšanu piegādei DaVinci Resolve programmā Linux, izmantojot ffmpeg, neatkarīgi no GPU ražotāja.",
   "next_label": "Nākamais",
-  "cancel_label": "Atcelt"
+  "cancel_label": "Atcelt",
+  "haguichi_desc": "Atvieglo Hamachi izmantošanu Linux ar intuitīvu grafisko saskarni, kas aptver visas tā funkcijas."
 }

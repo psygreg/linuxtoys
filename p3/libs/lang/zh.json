@@ -340,5 +340,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg 插件",
   "resolvehw_desc": "在 Linux 上通过 ffmpeg 为 DaVinci Resolve 中的交付启用硬件加速视频编码，无论 GPU 制造商如何。",
   "next_label": "下一步",
-  "cancel_label": "取消"
+  "cancel_label": "取消",
+  "haguichi_desc": "通过直观的图形界面简化在 Linux 上使用 Hamachi，涵盖其所有功能。"
 }

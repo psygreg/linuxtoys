@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve plug-in FFmpeg",
   "resolvehw_desc": "test",
   "next_label": "Suivant",
-  "cancel_label": "Annuler"
+  "cancel_label": "Annuler",
+  "haguichi_desc": "Facilite l'utilisation de Hamachi sur Linux avec une interface graphique intuitive qui couvre toutes ses fonctionnalités."
 }

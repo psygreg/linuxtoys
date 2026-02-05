@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg ፕላግኢን",
   "resolvehw_desc": "DaVinci Resolve ላይ Linux ላይ በ ffmpeg በኩል ለማስተላለፍ የሃርድዌር ተሽጋገር ቪዲዮ ኢንኮዲንግ ያስችላል፣ GPU ሰሪው ከሆነ ቢሆንም።",
   "next_label": "ቀጣይ",
-  "cancel_label": "ያስቁሙ"
+  "cancel_label": "ያስቁሙ",
+  "haguichi_desc": "በሊኑክስ ላይ ሃማቺን በቀላሉ ለመጠቀም የሚያስችል ሁሉንም ባህሪያቱን የሚሸፍን ቀላል የግራፊክስ በይነገጽ።"
 }

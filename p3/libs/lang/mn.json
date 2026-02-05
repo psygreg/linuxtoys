@@ -337,5 +337,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg залгаас",
   "resolvehw_desc": "DaVinci Resolve-д Linux дээр ffmpeg-ээр дамжуулан хүргэхийн тулд тоног төхөөрөмжийн түргэвчилсэн видео кодчилолыг идэвхжүүлнэ, GPU үйлдвэрлэгчээс үл хамааран.",
   "next_label": "Дараагийн",
-  "cancel_label": "Цуцлах"
+  "cancel_label": "Цуцлах",
+  "haguichi_desc": "Linux дээр Hamachi-г ашиглахад хялбар болгодог бүх функцуудыг хамарсан ойлгомжтой график интерфэйстэй."
 }

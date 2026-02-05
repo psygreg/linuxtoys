@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg додатак",
   "resolvehw_desc": "Омогућава хардверски убрзано видео кодирање за испоруку у DaVinci Resolve на Linux-у путем ffmpeg-а, без обзира на произвођача GPU-а.",
   "next_label": "Следећи",
-  "cancel_label": "Откажи"
+  "cancel_label": "Откажи",
+  "haguichi_desc": "Олакшава коришћење Hamachi-ја на Linux-у са интуитивним графичким интерфејсом који покрива све његове функције."
 }

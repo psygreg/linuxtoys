@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg 플러그인",
   "resolvehw_desc": "DaVinci Resolve에서 Linux의 ffmpeg를 통해 배달을 위한 하드웨어 가속 비디오 인코딩을 활성화합니다. GPU 제조업체에 관계없이.",
   "next_label": "다음",
-  "cancel_label": "취소"
+  "cancel_label": "취소",
+  "haguichi_desc": "모든 기능을 다루는 직관적인 그래픽 인터페이스로 Linux에서 Hamachi 사용을 용이하게 합니다."
 }

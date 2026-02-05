@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg փլագին",
   "resolvehw_desc": "Միացնում է սարքավարության արագացված տեսախցիկի կոդավորումը DaVinci Resolve-ում Linux-ում ffmpeg-ի միջոցով, անկախ GPU արտադրողից:",
   "next_label": "Հաջորդ",
-  "cancel_label": "Չեղարկել"
+  "cancel_label": "Չեղարկել",
+  "haguichi_desc": "Հեշտացնում է Hamachi-ի օգտագործումը Linux-ում ինտուիտիվ գրաֆիկական միջերեսով, որը ծածկում է նրա բոլոր հատկությունները:"
 }

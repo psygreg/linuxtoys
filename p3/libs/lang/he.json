@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve תוסף FFmpeg",
   "resolvehw_desc": "מאפשר קידוד וידאו מואץ בחומרה למסירה ב'-DaVinci Resolve ב'-Linux דרך ffmpeg, ללא קשר ליצרן ה'-GPU.",
   "next_label": "הבא",
-  "cancel_label": "ביטול"
+  "cancel_label": "ביטול",
+  "haguichi_desc": "מקל על השימוש ב-Hamachi ב-Linux עם ממשק גרפי אינטואיטיבי המכסה את כל התכונות שלו."
 }

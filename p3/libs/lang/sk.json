@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve plugin FFmpeg",
   "resolvehw_desc": "Povoľuje hardvérovo zrýchlené kódovanie videa na doručenie v DaVinci Resolve na Linuxe prostredníctvom ffmpeg, bez ohľadu na výrobcu GPU.",
   "next_label": "Ďalej",
-  "cancel_label": "Zrušiť"
+  "cancel_label": "Zrušiť",
+  "haguichi_desc": "Uľahčuje používanie Hamachi na Linuxe s intuitívnym grafickým rozhraním, ktoré pokrýva všetky jeho funkcie."
 }

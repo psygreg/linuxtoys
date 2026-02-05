@@ -338,5 +338,6 @@
   "resolvehw": "DaVinci Resolve FFmpeg प्लगइन",
   "resolvehw_desc": "DaVinci Resolve मा Linux मा ffmpeg मार्फत डेलिभरीका लागि हार्डवेयर-एक्सेलेरेटेड भिडियो इनकोडिङ सक्षम गर्दछ, GPU निर्माताको परवाह नगरी।",
   "next_label": "अर्को",
-  "cancel_label": "रद्द गर्नुहोस्"
+  "cancel_label": "रद्द गर्नुहोस्",
+  "haguichi_desc": "Linux मा Hamachi को प्रयोगलाई सहज बनाउँछ एक सहज ग्राफिकल इन्टरफेसको साथ जसले यसका सबै सुविधाहरू समेट्छ।"
 }

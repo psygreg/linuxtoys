@@ -336,5 +336,6 @@
   "resolvehw": "DaVinci Resolve programu-jalizi ya FFmpeg",
   "resolvehw_desc": "Huwezesha usimbaji fiche wa video uliohimiliwa na maunzi kwa utoaji katika DaVinci Resolve kwenye Linux kupitia ffmpeg, bila kujali mtengenezaji wa GPU.",
   "next_label": "Ijayo",
-  "cancel_label": "Ghairi"
+  "cancel_label": "Ghairi",
+  "haguichi_desc": "Hurahisisha matumizi ya Hamachi kwenye Linux na kiolesura cha picha cha ufahamu kinachofunika vipengele vyake vyote."
 }
