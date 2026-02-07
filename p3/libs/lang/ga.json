@@ -339,5 +339,6 @@
   "resolvehw_desc": "Cumasaíonn 'sé ionchódú físeán luathaithe crua-earraí le 'haghaidh seachadta i DaVinci Resolve ar Linux trí ffmpeg, beag beann ar 'an monaróir GPU.",
   "next_label": "Ar Aghaidh",
   "cancel_label": "Cealaigh",
-  "haguichi_desc": "Éascaíonn sé úsáid Hamachi ar Linux le comhéadan grafach iomasach a chlúdaíonn a ghnéithe go léir."
+  "haguichi_desc": "Éascaíonn sé úsáid Hamachi ar Linux le comhéadan grafach iomasach a chlúdaíonn a ghnéithe go léir.",
+  "firefoxsnap_desc": "Baineann Firefox Snap de chórais Ubuntu agus suiteálann sé an leagan oifigiúil Mozilla PPA agus cinntíonn sé go leanfaidh sé nuashonruithe ón taispeannach sin amach anseo."
 }

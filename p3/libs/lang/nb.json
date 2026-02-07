@@ -339,5 +339,6 @@
   "resolvehw_desc": "Aktiverer maskinvareakselerert videokoding for levering i DaVinci Resolve på Linux gjennom ffmpeg, uavhengig av GPU-produsent.",
   "next_label": "Neste",
   "cancel_label": "Avbryt",
-  "haguichi_desc": "Gjør det enklere å bruke Hamachi på Linux med et intuitivt grafisk grensesnitt som dekker alle funksjonene."
+  "haguichi_desc": "Gjør det enklere å bruke Hamachi på Linux med et intuitivt grafisk grensesnitt som dekker alle funksjonene.",
+  "firefoxsnap_desc": "Fjerner Firefox Snap fra Ubuntu-systemer og installerer den offisielle Mozilla PPA-versjonen, samtidig som det sikres at den vil spore oppdateringer fra det arkivet i fremtiden."
 }

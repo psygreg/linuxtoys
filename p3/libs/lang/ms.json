@@ -339,5 +339,6 @@
   "resolvehw_desc": "Membolehkan pengekodan video dipercepat perkakasan untuk penghantaran dalam DaVinci Resolve di Linux melalui ffmpeg, tanpa mengira pengeluar GPU.",
   "next_label": "Seterusnya",
   "cancel_label": "Batal",
-  "haguichi_desc": "Memudahkan penggunaan Hamachi di Linux dengan antara muka grafik intuitif yang merangkumi semua cirinya."
+  "haguichi_desc": "Memudahkan penggunaan Hamachi di Linux dengan antara muka grafik intuitif yang merangkumi semua cirinya.",
+  "firefoxsnap_desc": "Mengalih keluar Firefox Snap daripada sistem Ubuntu dan memasang versi Mozilla PPA rasmi sambil memastikan ia akan menjejaki kemas kini daripada repositori tersebut pada masa hadapan."
 }

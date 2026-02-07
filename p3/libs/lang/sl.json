@@ -339,5 +339,6 @@
   "resolvehw_desc": "Omogoča strojno pospešeno kodiranje videa za dostavo v DaVinci Resolve na Linuxu prek ffmpeg, ne glede na proizvajalca GPU.",
   "next_label": "Naslednji",
   "cancel_label": "Prekliči",
-  "haguichi_desc": "Olajša uporabo Hamachi v Linuxu z intuitivnim grafičnim vmesnikom, ki pokriva vse njegove funkcije."
+  "haguichi_desc": "Olajša uporabo Hamachi v Linuxu z intuitivnim grafičnim vmesnikom, ki pokriva vse njegove funkcije.",
+  "firefoxsnap_desc": "Odstrani Firefox Snap iz sistemov Ubuntu in namesti uradno različico Mozilla PPA, hkrati pa zagotavlja, at bo v prihodnje spremljala posodobitve iz tega repozitorija."
 }

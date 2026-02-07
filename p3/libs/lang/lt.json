@@ -339,5 +339,6 @@
   "resolvehw_desc": "Įjungia aparatinę įrangą pagreitintą vaizdo kodavimą pristatymui DaVinci Resolve programoje Linux per ffmpeg, nepriklausomai nuo GPU gamintojo.",
   "next_label": "Kitas",
   "cancel_label": "Atšaukti",
-  "haguichi_desc": "Palengvina Hamachi naudojimą Linux sistemoje su intuityvia grafine sąsaja, kuri apima visas jo funkcijas."
+  "haguichi_desc": "Palengvina Hamachi naudojimą Linux sistemoje su intuityvia grafine sąsaja, kuri apima visas jo funkcijas.",
+  "firefoxsnap_desc": "Pašalina „Firefox Snap“ iš „Ubuntu“ sistemų ir įdiegia oficialią „Mozilla PPA“ versiją, užtikrinant, at ateityje ji stebės atnaujinimus dari tos saugyklos."
 }

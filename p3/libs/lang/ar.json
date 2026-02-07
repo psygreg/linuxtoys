@@ -339,5 +339,6 @@
   "resolvehw_desc": "يُمكّن ترميز الفيديو المعجل بالأجهزة للتسليم في DaVinci Resolve على Linux من خلال ffmpeg، بغض النظر عن مصنع GPU.",
   "next_label": "التالي",
   "cancel_label": "إلغاء",
-  "haguichi_desc": "يسهل استخدام Hamachi على Linux بواجهة رسومية بديهية تغطي جميع ميزاته."
+  "haguichi_desc": "يسهل استخدام Hamachi على Linux بواجهة رسومية بديهية تغطي جميع ميزاته.",
+  "firefoxsnap_desc": "يزيل Firefox Snap من أنظمة Ubuntu ويثبت إصدار Mozilla PPA الرسمي مع ضمان تتبع التحديثات من ذلك المستودع في المستقبل."
 }

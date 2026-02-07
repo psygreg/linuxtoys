@@ -339,5 +339,6 @@
   "resolvehw_desc": "DaVinci Resolve で Linux 上の ffmpeg を通じて配信するためのハードウェアアクセラレーションされたビデオエンコーディングを有効にします。GPU メーカーを問わず。",
   "next_label": "次へ",
   "cancel_label": "キャンセル",
-  "haguichi_desc": "すべての機能をカバーする直感的なグラフィカルインターフェースで、Linux上でのHamachiの使用を容易にします。"
+  "haguichi_desc": "すべての機能をカバーする直感的なグラフィカルインターフェースで、Linux上でのHamachiの使用を容易にします。",
+  "firefoxsnap_desc": "UbuntuシステムからFirefox Snapを削除し、公式のMozilla PPAバージョンをインストールします。また、将来そのリポジトリからのアップデートを追跡することを保証します。"
 }
