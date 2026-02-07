@@ -16,12 +16,30 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # get current tags and versions
-lts_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^LTS-' | sort -Vr | head -n 1)"
-std_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^STD-' | sort -Vr | head -n 1)"
-ubuntu_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -oP '"tag_name": "\K(.*)(?=")' | grep -i '^Ubuntu-' | sort -Vr | head -n 1)"
+lts_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4 | grep -i '^LTS-' | sort -Vr | head -n 1)"
+std_tag="$(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4 | grep -i '^STD-' | sort -Vr | head -n 1)"
 kver_lts="$(echo "$lts_tag" | cut -d'-' -f2-)"
 kver_psycachy="$(echo "$std_tag" | cut -d'-' -f2-)"
-kver_ubuntu="$(echo "$ubuntu_tag" | cut -d'-' -f2-)"
+
+# get current running kernel version (just the version number)
+current_kver="$(uname -r | cut -d'-' -f1)"
+
+# get all Ubuntu tags and find a match with current kernel version
+ubuntu_tag=""
+kver_ubuntu=""
+
+# fetch all Ubuntu tags and iterate to find a match
+while IFS= read -r tag; do
+    # skip empty lines
+    [ -z "$tag" ] && continue
+    
+    tag_version="$(echo "$tag" | cut -d'-' -f2-)"
+    if [ "$tag_version" = "$current_kver" ]; then
+        ubuntu_tag="$tag"
+        kver_ubuntu="$tag_version"
+        break
+    fi
+done < <(curl -s "https://codeberg.org/api/v1/repos/psygreg/linux-psycachy/releases" | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4 | grep -i '^Ubuntu-')
 _kv_url_latest=$(curl -s https://www.kernel.org | grep -A 1 'id="latest_link"' | awk 'NR==2' | grep -oP 'href="\K[^"]+')
 # extract only the version number
 _kv_latest=$(echo $_kv_url_latest | grep -oP 'linux-\K[^"]+')
@@ -92,12 +110,19 @@ elif [ "$1" = "-u" ] || [ "$1" = "--ubuntu" ]; then
 else
     # Show menu if no arguments provided
     while true; do
+        # Build menu options dynamically
+        menu_options=("Standard" "LTS")
+        
+        # Only add Ubuntu option if a matching version was found
+        if [ -n "$kver_ubuntu" ]; then
+            menu_options+=("Ubuntu LTS with DKMS support")
+        fi
+        
+        menu_options+=("Cancel")
+        
         CHOICE=$(zenity --list --title "Psycachy Kernel Installer" --text "Select the kernel version to install:" \
             --column "Versions" \
-            "Standard" \
-            "LTS" \
-            "Ubuntu LTS 24 with DKMS support" \
-            "Cancel" \
+            "${menu_options[@]}" \
             --width 360 --height 360)
 
         if [ $? -ne 0 ]; then
