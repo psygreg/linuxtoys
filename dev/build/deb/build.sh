@@ -88,7 +88,7 @@ Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
 Standards-Version: 4.7.2
-Homepage: https://github.com/psygreg/linuxtoys
+Homepage: https://codeberg.org/psygreg/linuxtoys
 
 Package: linuxtoys
 Architecture: amd64
@@ -119,7 +119,7 @@ chmod +x "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules"
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/copyright" <<'EOF'
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: linuxtoys
-Source: https://github.com/psygreg/linuxtoys
+Source: https://codeberg.org/psygreg/linuxtoys
 
 Files: *
 Copyright: 2024-2025 Victor Gregory <vicgregor@pm.me>
