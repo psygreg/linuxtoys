@@ -41,22 +41,14 @@ cat >"$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
+# Enable CLI mode if arguments are provided
+if [ $# -gt 0 ]; then
+    export EASY_CLI=1
+fi
 cd /usr/share/linuxtoys
 exec /usr/bin/python3 run.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys"
-
-# Create the CLI shortcut script
-cat > "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys-cli" << 'EOF'
-#!/bin/bash
-# Set process name for better desktop integration
-export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
-# Enable CLI mode
-export EASY_CLI=1
-cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
-EOF
-chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys-cli"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
@@ -75,7 +67,7 @@ year=$(date +%Y)
 specfile_line="Version:        ${LT_VERSION}"
 specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${LT_VERSION}"
 sed -i "2c\\$specfile_line" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
-sed -i "55c\\$specfile_line2" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
+sed -i "54c\\$specfile_line2" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
 # build
 # rm -r $HOME/rpmbuild # ensure there's no leftover build artifacts previous to building
 # cp -r rpmbuild $HOME # only works with this setup on Silverblue, which is what I use

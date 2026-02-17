@@ -276,6 +276,87 @@ def packages_install(args: list, skip_confirmation, translations):
         install_packages_with_feedback(packages_found_list)
 
 
+def smart_install(args: list, skip_confirmation, translations):
+    """Handle smart installation - checks for scripts first, then packages."""
+    
+    # Filter out confirmation flags from the install list
+    install_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+    if not install_list:
+        print("\n✗ No items specified for installation.\n")
+        easy_cli_help_message()
+        return 0
+    
+    print("🧰 LINUXTOYS CLI SMART INSTALL MODE")
+    print("=" * 60)
+    print(f"📜 Requested items: {', '.join(install_list)}\n")
+
+    scripts_found_list = []
+    packages_to_install = []
+    items_missing = []
+
+    # For each item, check if it's a script first, then check if it's a package
+    for item_name in install_list:
+        # First, try to find it as a script
+        script_info = find_script_by_name(item_name, translations)
+        if script_info:
+            scripts_found_list.append(script_info)
+            print(f"✓ Found script: {item_name}")
+        else:
+            # If not a script, check if it's a package
+            package_exist = check_package_exists(item_name)
+            if package_exist:
+                packages_to_install.append(item_name)
+                print(f"✓ Found package: {item_name}")
+            else:
+                items_missing.append(item_name)
+                print(f"✗ Not found: {item_name}")
+    
+    print()
+
+    # Report missing items
+    if items_missing:
+        print("⚠️  Items not found (neither scripts nor packages):")
+        for name in items_missing:
+            print(f" - {name}")
+        print()
+
+    if not scripts_found_list and not packages_to_install:
+        print("✗ No valid items found. Aborting.")
+        return 0
+
+    # Display summary
+    if scripts_found_list:
+        max_file_len = max(len(os.path.basename(s["path"])) for s in scripts_found_list)
+        max_name_len = max(len(s["name"]) for s in scripts_found_list)
+        print(f"📜 {len(scripts_found_list)} Script(s) to execute:\n")
+        for script_info in scripts_found_list:
+            print(f" - {script_info['name']:<{max_name_len}} | {os.path.basename(script_info['path']):<{max_file_len}}")
+        print()
+
+    if packages_to_install:
+        print(f"📦 {len(packages_to_install)} Package(s) to install:\n")
+        for package_name in packages_to_install:
+            print(f" - {package_name}")
+        print()
+
+    # Ask user to confirm execution
+    if skip_confirmation or confirm_action("Confirm installation?"):
+        # Execute scripts first
+        if scripts_found_list:
+            print("\n" + "=" * 60)
+            print("EXECUTING SCRIPTS")
+            print("=" * 60)
+            execute_scripts_with_feedback(scripts_found_list)
+        
+        # Then install packages
+        if packages_to_install:
+            print("\n" + "=" * 60)
+            print("INSTALLING PACKAGES")
+            print("=" * 60)
+            install_packages_with_feedback(packages_to_install)
+
+
 def print_script_list(translations):
     """Print all available scripts in a formatted list."""
     scripts = get_all_scripts(translations)
@@ -322,10 +403,11 @@ def get_all_scripts(translations=None):
 
 def easy_cli_help_message():
     """Print usage information for EASY CLI mode."""
-    print("\nLinuxToys EASY CLI Usage:")
+    print("\nLinuxToys CLI Mode Usage:")
     print("=" * 60)
     print("\nUsage:")
-    print("  linuxtoys-cli --install [Option] <item1> <item2> ...")
+    print("  linuxtoys --install [Option] <item1> <item2> ...")
+    print("  linuxtoys --install <item1> <item2> ...  (smart mode)")
     # print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
     print()
     print("Functions:")
@@ -335,10 +417,12 @@ def easy_cli_help_message():
     print("  -s, --script       Install specified LinuxToys scripts")
     print("  -p, --package      Install packages from the system package manager")
     # print("  -f, --flatpak     Install specified LinuxToys flatpaks")
+    print("  (no option)        Smart mode: checks scripts first, then packages")
     print()
     print("Examples:")
-    print("  linuxtoys-cli --install --script <script1> <script2>")
-    print("  linuxtoys-cli --install --package <package1> <package2>")
+    print("  linuxtoys --install --script <script1> <script2>")
+    print("  linuxtoys --install --package <package1> <package2>")
+    print("  linuxtoys --install <item1> <item2>  (smart mode)")
     # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
     print("Other functions:")
@@ -355,7 +439,7 @@ def easy_cli_help_message():
 # --- MAIN EASY CLI HANDLER ---
 def easy_cli_handler(translations=None):
     """
-    Handles the EASY CLI mode for LinuxToys, parsing command-line arguments and executing actions.
+    Handles the CLI mode for LinuxToys, parsing command-line arguments and executing actions.
 
     Supports:
     - Installing scripts (--install -s <script1> <script2> ...)
@@ -432,6 +516,7 @@ def easy_cli_handler(translations=None):
             print("  [-p | --package]  for packages")
             # print("  [-f | --flatpak]  for flatpaks")
             print("  [-l | --list]      list all available scripts")
+            print("  [item names]       smart mode (checks scripts first, then packages)")
             return 0
 
         if args[1] in ("-s", "--script", "--scripts"):
@@ -452,8 +537,8 @@ def easy_cli_handler(translations=None):
             return 0
         
         else:
-            print("✗ Invalid parameter after '-i' | '--install'.\n")
-            easy_cli_help_message()
+            # Smart install mode - check if it's a script first, then package
+            smart_install(args[1:], skip_confirmation(args), translations)
             return 0
         
     elif args[0] in ("-l", "--list"):

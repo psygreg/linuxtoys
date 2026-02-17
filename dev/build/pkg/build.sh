@@ -40,22 +40,14 @@ cat >"$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
+# Enable CLI mode if arguments are provided
+if [ $# -gt 0 ]; then
+    export EASY_CLI=1
+fi
 cd /usr/share/linuxtoys
 exec /usr/bin/python3 run.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys"
-
-# Create the CLI shortcut script
-cat >"$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys-cli" <<'EOF'
-#!/bin/bash
-# Set process name for better desktop integration
-export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
-# Enable CLI mode
-export EASY_CLI=1
-cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
-EOF
-chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys-cli"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;

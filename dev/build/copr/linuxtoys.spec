@@ -26,7 +26,6 @@ mkdir -p %{buildroot}/usr/share/applications/
 
 # Install the main executable script
 install -m 755 usr/bin/linuxtoys %{buildroot}/usr/bin/
-install -m 755 usr/bin/linuxtoys-cli %{buildroot}/usr/bin/
 
 # Install the Python application directory with all subdirectories
 cp -rf usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/

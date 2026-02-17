@@ -44,22 +44,14 @@ cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
+# Enable CLI mode if arguments are provided
+if [ $# -gt 0 ]; then
+    export EASY_CLI=1
+fi
 cd /usr/share/linuxtoys
 exec /usr/bin/python3 run.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys"
-
-# Create the CLI shortcut script
-cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli" <<'EOF'
-#!/bin/bash
-# Set process name for better desktop integration
-export LINUXTOYS_PROCESS_NAME="linuxtoys-cli"
-# Enable CLI mode
-export EASY_CLI=1
-cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
-EOF
-chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys-cli"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
@@ -171,7 +163,6 @@ sed -i "6c\\$changelog_line2" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changel
 # Update debian/install file for new structure
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/install" <<'EOF'
 usr/bin/linuxtoys /usr/bin/
-usr/bin/linuxtoys-cli /usr/bin/
 usr/share/linuxtoys /usr/share/
 usr/share/applications/LinuxToys.desktop /usr/share/applications/
 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/scalable/apps/
