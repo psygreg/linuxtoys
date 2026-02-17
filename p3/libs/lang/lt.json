@@ -340,5 +340,6 @@
   "next_label": "Kitas",
   "cancel_label": "Atšaukti",
   "haguichi_desc": "Palengvina Hamachi naudojimą Linux sistemoje su intuityvia grafine sąsaja, kuri apima visas jo funkcijas.",
-  "firefoxsnap_desc": "Pašalina „Firefox Snap“ iš „Ubuntu“ sistemų ir įdiegia oficialią „Mozilla PPA“ versiją, užtikrinant, at ateityje ji stebės atnaujinimus dari tos saugyklos."
+  "firefoxsnap_desc": "Pašalina „Firefox Snap“ iš „Ubuntu“ sistemų ir įdiegia oficialią „Mozilla PPA“ versiją, užtikrinant, at ateityje ji stebės atnaujinimus dari tos saugyklos.",
+  "stoat_desc": "Nemokama ir atvirojo kodo pokalbių programa, „Discord“ alternatyva."
 }

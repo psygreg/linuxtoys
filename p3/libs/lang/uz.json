@@ -339,5 +339,6 @@
   "next_label": "Keyingi",
   "cancel_label": "Bekor qilish",
   "haguichi_desc": "Linux-da Hamachi-dan foydalanishni osonlashtiradi, barcha xususiyatlarini qamrab oluvchi intuitiv grafik interfeys bilan.",
-  "firefoxsnap_desc": "Firefox Snap-ni Ubuntu tizimlaridan olib tashlaydi va kelajakda ushbu ombordan yangilanishlarni kuzatib borishini ta'minlab, rasmi Mozilla PPA versiyasini o'rnatadi."
+  "firefoxsnap_desc": "Firefox Snap-ni Ubuntu tizimlaridan olib tashlaydi va kelajakda ushbu ombordan yangilanishlarni kuzatib borishini ta'minlab, rasmi Mozilla PPA versiyasini o'rnatadi.",
+  "stoat_desc": "Bepul va ochiq manbali chat mijozi, Discord-ga muqobil."
 }

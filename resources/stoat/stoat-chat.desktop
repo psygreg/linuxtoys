@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Stoat
+Comment=Stoat.chat
+Exec=/home/psygreg/.local/share/stoat/stoat-desktop
+Icon=/home/psygreg/.local/share/icons/hicolor/256x256/apps/stoat.png
+Terminal=false
+Categories=Network;Chat;
+StartupNotify=false
+StartupWMClass=stoat-desktop

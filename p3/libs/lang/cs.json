@@ -340,5 +340,6 @@
   "next_label": "Další",
   "cancel_label": "Zrušit",
   "haguichi_desc": "Usnadňuje používání Hamachi na Linuxu s intuitivnim grafickým rozhraním, které pokrývá všechny jeho funkce.",
-  "firefoxsnap_desc": "Odstraní Firefox Snap ze systémů Ubuntu a nainstaluje oficiální verzi Mozilla PPA, přičemž zajistí, že bude v budoucnu sledovat aktualizace z tohoto repozitáře."
+  "firefoxsnap_desc": "Odstraní Firefox Snap ze systémů Ubuntu a nainstaluje oficiální verzi Mozilla PPA, přičemž zajistí, že bude v budoucnu sledovat aktualizace z tohoto repozitáře.",
+  "stoat_desc": "Zdarma a open-source chatovací klient, alternativa k Discordu."
 }

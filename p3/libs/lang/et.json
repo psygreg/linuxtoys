@@ -340,5 +340,6 @@
   "next_label": "Järgmine",
   "cancel_label": "Tühista",
   "haguichi_desc": "Lihtsustab Hamachi kasutamist Linuxis intuitiivse graafilise liidesega, mis hõlmab kõiki selle funktsioone.",
-  "firefoxsnap_desc": "Eemaldab Ubuntu süsteemidest Firefox Snapi ja installib ametliku Mozilla PPA versiooni, tagades samal ajal, at see jälgib edaspidi selle hoidla värskendusi."
+  "firefoxsnap_desc": "Eemaldab Ubuntu süsteemidest Firefox Snapi ja installib ametliku Mozilla PPA versiooni, tagades samal ajal, at see jälgib edaspidi selle hoidla värskendusi.",
+  "stoat_desc": "Tasuta ja avatud lähtekoodiga vestlusklient, alternatiiv Discordile."
 }

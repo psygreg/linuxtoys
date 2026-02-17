@@ -338,5 +338,6 @@
   "next_label": "Ijayo",
   "cancel_label": "Ghairi",
   "haguichi_desc": "Hurahisisha matumizi ya Hamachi kwenye Linux na kiolesura cha picha cha ufahamu kinachofunika vipengele vyake vyote.",
-  "firefoxsnap_desc": "Huondoa Firefox Snap kwenye mifumo ya Ubuntu na kusakinisha toleo rasmi la Mozilla PPA huku akihakikisha kuwa itafuatilia masasisho kutoka kwa hazina hiyo katika siku zijazo."
+  "firefoxsnap_desc": "Huondoa Firefox Snap kwenye mifumo ya Ubuntu na kusakinisha toleo rasmi la Mozilla PPA huku akihakikisha kuwa itafuatilia masasisho kutoka kwa hazina hiyo katika siku zijazo.",
+  "stoat_desc": "Kiteja cha mazungumzo cha bure na cha wazi, mbadala wa Discord."
 }

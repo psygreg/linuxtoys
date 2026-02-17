@@ -340,5 +340,6 @@
   "next_label": "Seterusnya",
   "cancel_label": "Batal",
   "haguichi_desc": "Memudahkan penggunaan Hamachi di Linux dengan antara muka grafik intuitif yang merangkumi semua cirinya.",
-  "firefoxsnap_desc": "Mengalih keluar Firefox Snap daripada sistem Ubuntu dan memasang versi Mozilla PPA rasmi sambil memastikan ia akan menjejaki kemas kini daripada repositori tersebut pada masa hadapan."
+  "firefoxsnap_desc": "Mengalih keluar Firefox Snap daripada sistem Ubuntu dan memasang versi Mozilla PPA rasmi sambil memastikan ia akan menjejaki kemas kini daripada repositori tersebut pada masa hadapan.",
+  "stoat_desc": "Klien sembang percuma dan sumber terbuka, alternatif kepada Discord."
 }

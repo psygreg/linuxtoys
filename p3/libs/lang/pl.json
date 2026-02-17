@@ -340,5 +340,6 @@
   "next_label": "Dalej",
   "cancel_label": "Anuluj",
   "haguichi_desc": "Ułatwia korzystanie z Hamachi w systemie Linux dzięki intuitywnemu interfejsowi graficznemu, który obejmuje wszystkie jego funkcje.",
-  "firefoxsnap_desc": "Usuwa Firefox Snap z systemów Ubuntu i instaluje oficjalną wersję Mozilla PPA, zapewniając jednocześnie, że w przyszłości będzie śledzić aktualizacje z tego repozytorium."
+  "firefoxsnap_desc": "Usuwa Firefox Snap z systemów Ubuntu i instaluje oficjalną wersję Mozilla PPA, zapewniając jednocześnie, że w przyszłości będzie śledzić aktualizacje z tego repozytorium.",
+  "stoat_desc": "Darmowy i otwartoźródłowy klient czatu, alternatywa dla Discorda."
 }

@@ -340,5 +340,6 @@
   "next_label": "Tiếp theo",
   "cancel_label": "Hủy",
   "haguichi_desc": "Tạo điều kiện thuận lợi cho việc sử dụng Hamachi trên Linux với giao diện đồ họa trực quan bao gồm tất cả các tính năng của nó.",
-  "firefoxsnap_desc": "Xóa Firefox Snap khỏi hệ thống Ubuntu và cài đặt phiên bản Mozilla PPA chính thức, đồng thời đảm bảo rằng phiên bản này sẽ theo dõi các bản cập nhật từ kho lưu trữ đó trong tương lai."
+  "firefoxsnap_desc": "Xóa Firefox Snap khỏi hệ thống Ubuntu và cài đặt phiên bản Mozilla PPA chính thức, đồng thời đảm bảo rằng phiên bản này sẽ theo dõi các bản cập nhật từ kho lưu trữ đó trong tương lai.",
+  "stoat_desc": "Trình mã nguồn mở và miễn phí, lựa chọn thay thế cho Discord."
 }

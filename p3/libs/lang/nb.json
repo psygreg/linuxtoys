@@ -340,5 +340,6 @@
   "next_label": "Neste",
   "cancel_label": "Avbryt",
   "haguichi_desc": "Gjør det enklere å bruke Hamachi på Linux med et intuitivt grafisk grensesnitt som dekker alle funksjonene.",
-  "firefoxsnap_desc": "Fjerner Firefox Snap fra Ubuntu-systemer og installerer den offisielle Mozilla PPA-versjonen, samtidig som det sikres at den vil spore oppdateringer fra det arkivet i fremtiden."
+  "firefoxsnap_desc": "Fjerner Firefox Snap fra Ubuntu-systemer og installerer den offisielle Mozilla PPA-versjonen, samtidig som det sikres at den vil spore oppdateringer fra det arkivet i fremtiden.",
+  "stoat_desc": "Gratis og åpen kildekode-chatklient, alternativ til Discord."
 }

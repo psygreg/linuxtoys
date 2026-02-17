@@ -340,5 +340,6 @@
   "next_label": "다음",
   "cancel_label": "취소",
   "haguichi_desc": "모든 기능을 다루는 직관적인 그래픽 인터페이스로 Linux에서 Hamachi 사용을 용이하게 합니다.",
-  "firefoxsnap_desc": "Ubuntu 시스템에서 Firefox Snap을 제거하고 공식 Mozilla PPA 버전을 설치하는 동시에 향후 해당 저장소의 업데이트를 추적하도록 보장합니다."
+  "firefoxsnap_desc": "Ubuntu 시스템에서 Firefox Snap을 제거하고 공식 Mozilla PPA 버전을 설치하는 동시에 향후 해당 저장소의 업데이트를 추적하도록 보장합니다.",
+  "stoat_desc": "무료 오픈 소스 채팅 클라이언트, Discord의 대안."
 }

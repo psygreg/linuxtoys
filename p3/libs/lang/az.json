@@ -339,5 +339,6 @@
   "next_label": "Növbəti",
   "cancel_label": "Ləğv et",
   "haguichi_desc": "Linux-da Hamachi-dən istifadəni asanlaşdırır, bütün xüsusiyyətlərini əhatə edən intuitiv qrafik interfeys ilə.",
-  "firefoxsnap_desc": "Firefox Snap-ı Ubuntu sistemlərindən silir və gələcəkdə həmin depodan yeniləmələri izləməsini təmin edərək rəsmi Mozilla PPA versiyasını quraşdırır."
+  "firefoxsnap_desc": "Firefox Snap-ı Ubuntu sistemlərindən silir və gələcəkdə həmin depodan yeniləmələri izləməsini təmin edərək rəsmi Mozilla PPA versiyasını quraşdırır.",
+  "stoat_desc": "Pulsuz və açıq mənbəli söhbət müştərisi, Discord-a alternativ."
 }
