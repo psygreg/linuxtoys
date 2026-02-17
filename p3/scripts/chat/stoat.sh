@@ -19,7 +19,9 @@ unzip "Stoat-linux-x64-${ver}.zip"
 mkdir -p ~/.local/share/stoat
 cp -rf Stoat-linux-x64/* ~/.local/share/stoat # install or update
 wget -O stoat.png "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/p3/app/icons/stoat.png"
-wget -O stoat-chat.desktop "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/stoat/stoat-chat.desktop"
+mkdir -p ~/.local/share/icons/hicolor/256x256/apps
 cp stoat.png ~/.local/share/icons/hicolor/256x256/apps/stoat.png
+wget -O stoat-chat.desktop "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/stoat/stoat-chat.desktop"
 sed -i "s|/home/psygreg|${HOME}|g" stoat-chat.desktop
+mkdir -p ~/.local/share/applications
 cp stoat-chat.desktop ~/.local/share/applications/
