@@ -17,8 +17,8 @@ cd "$HOME" || exit 1
 wget -O "Stoat-linux-x64-${tag}.zip" "https://github.com/stoatchat/for-desktop/archive/refs/tags/Stoat-linux-x64-${tag}.zip"
 unzip "Stoat-linux-x64-${tag}.zip"
 cp -rf Stoat-linux-x64/* ~/.local/share/stoat # install or update
-wget # TODO png icon file raw
-wget # TODO desktop file raw
+wget -O stoat.png "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/p3/app/icons/stoat.png"
+wget -O stoat-chat.desktop "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/stoat/stoat-chat.desktop"
 cp stoat.png ~/.local/share/icons/hicolor/256x256/apps/stoat.png
 sed -i "s|/home/psygreg|$HOME|g" stoat-chat.desktop
 cp stoat-chat.desktop ~/.local/share/applications/
