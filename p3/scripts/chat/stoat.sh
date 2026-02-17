@@ -16,6 +16,7 @@ cd "$HOME" || exit 1
 [ -f "Stoat-linux-x64-${ver}.zip" ] && rm -f "Stoat-linux-x64-${ver}.zip"
 wget -O "Stoat-linux-x64-${ver}.zip" "https://github.com/stoatchat/for-desktop/releases/download/${tag}/Stoat-linux-x64-${ver}.zip"
 unzip "Stoat-linux-x64-${ver}.zip"
+mkdir -p ~/.local/share/stoat
 cp -rf Stoat-linux-x64/* ~/.local/share/stoat # install or update
 wget -O stoat.png "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/p3/app/icons/stoat.png"
 wget -O stoat-chat.desktop "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/stoat/stoat-chat.desktop"
