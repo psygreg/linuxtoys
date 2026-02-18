@@ -136,16 +136,31 @@ class LinuxToysDataProcessor {
     return translations[key] || key;
   }
 
+  // Subcategories promoted to top-level categories: { parentCategory: { subcategoryName: topLevelKey } }
+  get promotedSubcategories() {
+    return {
+      'utils': { 'privacy': 'privacy' }
+    };
+  }
+
   async processScriptsDirectory() {
     console.log('Processing scripts directory...');
 
     const scriptsDir = await this.fetchDirectoryListing('p3/scripts');
     if (!scriptsDir) return;
 
-    // Process category directories
+    // Process category directories (excluding 'extra', 'edu', and 'drivers')
+    const excludedDirs = ['extra', 'edu', 'drivers'];
     for (const item of scriptsDir) {
-      if (item.type === 'dir') {
+      if (item.type === 'dir' && !excludedDirs.includes(item.name)) {
         await this.processCategory(item.name, `p3/scripts/${item.name}`);
+      }
+    }
+
+    // Process promoted subcategories as top-level categories
+    for (const [parentName, promotions] of Object.entries(this.promotedSubcategories)) {
+      for (const [subName, topLevelKey] of Object.entries(promotions)) {
+        await this.processCategory(topLevelKey, `p3/scripts/${parentName}/${subName}`);
       }
     }
   }
@@ -179,12 +194,44 @@ class LinuxToysDataProcessor {
       subcategories: {}
     };
 
+    // Subcategories whose scripts should be merged directly into the parent category
+    const flattenedSubcategories = {
+      'devs': ['ides'],
+      'utils': ['peripherals']
+    };
+    const toFlatten = flattenedSubcategories[categoryName] || [];
+
+    // Subcategories promoted to their own top-level category (skip them here)
+    const toSkip = Object.keys(this.promotedSubcategories[categoryName] || {});
+
     // Process scripts and subcategories
     for (const item of categoryContents) {
       if (item.type === 'file' && item.name.endsWith('.sh')) {
         await this.processScript(categoryName, item.name, item.path);
       } else if (item.type === 'dir' && item.name !== '.git') {
-        await this.processSubcategory(categoryName, item.name, item.path);
+        if (toFlatten.includes(item.name)) {
+          // Flatten: merge scripts from this subdirectory into the parent category
+          await this.flattenSubcategory(categoryName, item.path);
+        } else if (toSkip.includes(item.name)) {
+          // Promoted to top-level category; processed separately, skip here
+          console.log(`Skipping promoted subcategory: ${categoryName}/${item.name}`);
+        } else {
+          await this.processSubcategory(categoryName, item.name, item.path);
+        }
+      }
+    }
+  }
+
+  async flattenSubcategory(parentCategory, subcategoryPath) {
+    console.log(`Flattening subcategory into ${parentCategory}: ${subcategoryPath}`);
+
+    const subcategoryContents = await this.fetchDirectoryListing(subcategoryPath);
+    if (!subcategoryContents) return;
+
+    // Merge scripts directly into the parent category's tools
+    for (const item of subcategoryContents) {
+      if (item.type === 'file' && item.name.endsWith('.sh')) {
+        await this.processScript(parentCategory, item.name, item.path);
       }
     }
   }
