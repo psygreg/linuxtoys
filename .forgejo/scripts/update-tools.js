@@ -1,21 +1,13 @@
-const axios = require('axios');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
 
 class LinuxToysDataProcessor {
   constructor() {
-    this.baseUrl = 'https://codeberg.org/api/v1/repos/psygreg/linuxtoys';
-    this.rawUrl = 'https://codeberg.org/psygreg/linuxtoys/raw/branch/master';
     this.cacheDir = process.argv[2] ? path.resolve(process.argv[2]) : path.join(process.cwd(), 'cache');
+    this.repoDir = process.argv[3] ? path.resolve(process.argv[3]) : path.join(process.cwd(), 'linuxtoys');
     this.categories = {};
     this.translations = {};
-    this.tools = {};
-
-    // Add auth token if available
-    this.token = process.env.GITHUB_TOKEN;
-    this.axiosConfig = this.token ? {
-      headers: { 'Authorization': `token ${this.token}` }
-    } : {};
   }
 
   async init() {
@@ -24,35 +16,44 @@ class LinuxToysDataProcessor {
     } catch {
       await fs.mkdir(this.cacheDir, { recursive: true });
     }
+
+    try {
+      await fs.access(this.repoDir);
+    } catch {
+      throw new Error(`LinuxToys repo not found at: ${this.repoDir}`);
+    }
   }
 
-  async fetchLatestRelease() {
+  async readLocalFile(filePath) {
     try {
-      const response = await axios.get(`${this.baseUrl}/releases/latest`, this.axiosConfig);
-      return response.data;
+      return await fs.readFile(path.join(this.repoDir, filePath), 'utf8');
     } catch (error) {
-      console.log('Could not fetch latest release, using main branch');
+      console.warn(`Could not read file: ${filePath}`, error.message);
       return null;
     }
   }
 
-  async fetchFileContents(filePath) {
+  async readLocalDir(dirPath) {
     try {
-      const response = await axios.get(`${this.rawUrl}/${filePath}`, this.axiosConfig);
-      return response.data;
+      const fullPath = path.join(this.repoDir, dirPath);
+      const entries = await fs.readdir(fullPath, { withFileTypes: true });
+      return entries.map(entry => ({
+        name: entry.name,
+        type: entry.isDirectory() ? 'dir' : 'file',
+        path: path.join(dirPath, entry.name)
+      }));
     } catch (error) {
-      console.warn(`Could not fetch file: ${filePath}`, error.message);
-      return null;
-    }
-  }
-
-  async fetchDirectoryListing(dirPath) {
-    try {
-      const response = await axios.get(`${this.baseUrl}/contents/${dirPath}`, this.axiosConfig);
-      return response.data;
-    } catch (error) {
-      console.warn(`Could not fetch directory: ${dirPath}`, error.message);
+      console.warn(`Could not read directory: ${dirPath}`, error.message);
       return [];
+    }
+  }
+
+  readLocalFileAsJson(filePath) {
+    try {
+      const content = fsSync.readFileSync(path.join(this.repoDir, filePath), 'utf8');
+      return JSON.parse(content);
+    } catch {
+      return null;
     }
   }
 
@@ -114,16 +115,10 @@ class LinuxToysDataProcessor {
 
     for (const lang of supportedLanguages) {
       try {
-        const content = await this.fetchFileContents(`p3/libs/lang/${lang}.json`);
-        if (content) {
-          // If content is already an object (axios parsed it), use it directly
-          // Otherwise, parse it as JSON string
-          if (typeof content === 'object') {
-            this.translations[lang] = content;
-          } else {
-            this.translations[lang] = JSON.parse(content);
-          }
-          console.log(`Loaded ${lang} translations: ${Object.keys(this.translations[lang]).length} keys`);
+        const parsed = this.readLocalFileAsJson(`p3/libs/lang/${lang}.json`);
+        if (parsed) {
+          this.translations[lang] = parsed;
+          console.log(`Loaded ${lang} translations: ${Object.keys(parsed).length} keys`);
         }
       } catch (error) {
         console.warn(`Could not load translations for ${lang}:`, error.message);
@@ -136,7 +131,6 @@ class LinuxToysDataProcessor {
     return translations[key] || key;
   }
 
-  // Subcategories promoted to top-level categories: { parentCategory: { subcategoryName: topLevelKey } }
   get promotedSubcategories() {
     return {
       'utils': { 'privacy': 'privacy' }
@@ -146,18 +140,16 @@ class LinuxToysDataProcessor {
   async processScriptsDirectory() {
     console.log('Processing scripts directory...');
 
-    const scriptsDir = await this.fetchDirectoryListing('p3/scripts');
-    if (!scriptsDir) return;
+    const scriptsDir = await this.readLocalDir('p3/scripts');
+    if (!scriptsDir.length) return;
 
-    // Process category directories (excluding 'extra', 'edu', and 'drivers')
-    const excludedDirs = ['extra', 'edu', 'drivers'];
+    const excludedDirs = ['edu'];
     for (const item of scriptsDir) {
       if (item.type === 'dir' && !excludedDirs.includes(item.name)) {
         await this.processCategory(item.name, `p3/scripts/${item.name}`);
       }
     }
 
-    // Process promoted subcategories as top-level categories
     for (const [parentName, promotions] of Object.entries(this.promotedSubcategories)) {
       for (const [subName, topLevelKey] of Object.entries(promotions)) {
         await this.processCategory(topLevelKey, `p3/scripts/${parentName}/${subName}`);
@@ -168,10 +160,9 @@ class LinuxToysDataProcessor {
   async processCategory(categoryName, categoryPath) {
     console.log(`Processing category: ${categoryName}`);
 
-    const categoryContents = await this.fetchDirectoryListing(categoryPath);
-    if (!categoryContents) return;
+    const categoryContents = await this.readLocalDir(categoryPath);
+    if (!categoryContents.length) return;
 
-    // Load category info
     const categoryInfoFile = categoryContents.find(f => f.name === 'category-info.txt');
     let categoryInfo = {
       icon: 'folder-open',
@@ -180,13 +171,12 @@ class LinuxToysDataProcessor {
     };
 
     if (categoryInfoFile) {
-      const infoContent = await this.fetchFileContents(categoryInfoFile.path);
+      const infoContent = await this.readLocalFile(categoryInfoFile.path);
       if (infoContent) {
         categoryInfo = this.parseCategoryInfo(infoContent);
       }
     }
 
-    // Initialize category
     this.categories[categoryName] = {
       name: categoryName,
       ...categoryInfo,
@@ -194,26 +184,20 @@ class LinuxToysDataProcessor {
       subcategories: {}
     };
 
-    // Subcategories whose scripts should be merged directly into the parent category
     const flattenedSubcategories = {
       'devs': ['ides'],
       'utils': ['peripherals']
     };
     const toFlatten = flattenedSubcategories[categoryName] || [];
-
-    // Subcategories promoted to their own top-level category (skip them here)
     const toSkip = Object.keys(this.promotedSubcategories[categoryName] || {});
 
-    // Process scripts and subcategories
     for (const item of categoryContents) {
       if (item.type === 'file' && item.name.endsWith('.sh')) {
         await this.processScript(categoryName, item.name, item.path);
       } else if (item.type === 'dir' && item.name !== '.git') {
         if (toFlatten.includes(item.name)) {
-          // Flatten: merge scripts from this subdirectory into the parent category
           await this.flattenSubcategory(categoryName, item.path);
         } else if (toSkip.includes(item.name)) {
-          // Promoted to top-level category; processed separately, skip here
           console.log(`Skipping promoted subcategory: ${categoryName}/${item.name}`);
         } else {
           await this.processSubcategory(categoryName, item.name, item.path);
@@ -225,10 +209,9 @@ class LinuxToysDataProcessor {
   async flattenSubcategory(parentCategory, subcategoryPath) {
     console.log(`Flattening subcategory into ${parentCategory}: ${subcategoryPath}`);
 
-    const subcategoryContents = await this.fetchDirectoryListing(subcategoryPath);
-    if (!subcategoryContents) return;
+    const subcategoryContents = await this.readLocalDir(subcategoryPath);
+    if (!subcategoryContents.length) return;
 
-    // Merge scripts directly into the parent category's tools
     for (const item of subcategoryContents) {
       if (item.type === 'file' && item.name.endsWith('.sh')) {
         await this.processScript(parentCategory, item.name, item.path);
@@ -239,10 +222,9 @@ class LinuxToysDataProcessor {
   async processSubcategory(parentCategory, subcategoryName, subcategoryPath) {
     console.log(`Processing subcategory: ${parentCategory}/${subcategoryName}`);
 
-    const subcategoryContents = await this.fetchDirectoryListing(subcategoryPath);
-    if (!subcategoryContents) return;
+    const subcategoryContents = await this.readLocalDir(subcategoryPath);
+    if (!subcategoryContents.length) return;
 
-    // Load subcategory info
     const categoryInfoFile = subcategoryContents.find(f => f.name === 'category-info.txt');
     let subcategoryInfo = {
       icon: 'folder-open',
@@ -251,20 +233,18 @@ class LinuxToysDataProcessor {
     };
 
     if (categoryInfoFile) {
-      const infoContent = await this.fetchFileContents(categoryInfoFile.path);
+      const infoContent = await this.readLocalFile(categoryInfoFile.path);
       if (infoContent) {
         subcategoryInfo = this.parseCategoryInfo(infoContent);
       }
     }
 
-    // Initialize subcategory
     this.categories[parentCategory].subcategories[subcategoryName] = {
       name: subcategoryName,
       ...subcategoryInfo,
       tools: []
     };
 
-    // Process scripts in subcategory
     for (const item of subcategoryContents) {
       if (item.type === 'file' && item.name.endsWith('.sh')) {
         await this.processScript(parentCategory, item.name, item.path, subcategoryName);
@@ -273,7 +253,7 @@ class LinuxToysDataProcessor {
   }
 
   async processScript(categoryName, scriptName, scriptPath, subcategoryName = null) {
-    const scriptContent = await this.fetchFileContents(scriptPath);
+    const scriptContent = await this.readLocalFile(scriptPath);
     if (!scriptContent) return;
 
     const metadata = this.parseScriptMetadata(scriptContent);
@@ -289,7 +269,6 @@ class LinuxToysDataProcessor {
       scriptPath: scriptPath
     };
 
-    // Add to appropriate category or subcategory
     if (subcategoryName) {
       this.categories[categoryName].subcategories[subcategoryName].tools.push(tool);
     } else {
@@ -319,7 +298,6 @@ class LinuxToysDataProcessor {
           subcategories: {}
         };
 
-        // Translate subcategories
         for (const [subKey, subData] of Object.entries(categoryData.subcategories)) {
           translatedCategory.subcategories[subKey] = {
             ...subData,
@@ -343,26 +321,22 @@ class LinuxToysDataProcessor {
   async saveCache() {
     console.log('Saving cache files...');
 
-    // Save raw categories data
     await fs.writeFile(
       path.join(this.cacheDir, 'categories.json'),
       JSON.stringify(this.categories, null, 2)
     );
 
-    // Save translations
     await fs.writeFile(
       path.join(this.cacheDir, 'translations.json'),
       JSON.stringify(this.translations, null, 2)
     );
 
-    // Build and save translated categories
     const translatedData = await this.buildTranslatedCategories();
     await fs.writeFile(
       path.join(this.cacheDir, 'translated-categories.json'),
       JSON.stringify(translatedData, null, 2)
     );
 
-    // Save summary for easy consumption
     const summary = {
       lastUpdated: new Date().toISOString(),
       categoryCount: Object.keys(this.categories).length,
@@ -387,12 +361,7 @@ class LinuxToysDataProcessor {
   async process() {
     try {
       await this.init();
-      console.log('Fetching LinuxToys data...');
-
-      const release = await this.fetchLatestRelease();
-      if (release) {
-        console.log(`Latest release: ${release.tag_name}`);
-      }
+      console.log(`Reading LinuxToys data from: ${this.repoDir}`);
 
       await this.loadTranslations();
       await this.processScriptsDirectory();
@@ -406,6 +375,5 @@ class LinuxToysDataProcessor {
   }
 }
 
-// Run the processor
 const processor = new LinuxToysDataProcessor();
 processor.process();

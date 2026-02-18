@@ -8,7 +8,7 @@ on:
   repository_dispatch:
     types: [update-tools]
   
-  # Schedule to run daily to check for new releases
+  # Schedule to run weekly
   schedule:
     - cron: '0 0 * * 0'  # Run weekly at 00:00 on Sunday
 
@@ -32,6 +32,10 @@ jobs:
         path: pages
         fetch-depth: 0
 
+    - name: Clone LinuxToys repository
+      run: |
+        git clone --depth=1 https://codeberg.org/psygreg/linuxtoys /tmp/linuxtoys
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -39,13 +43,18 @@ jobs:
     
     - name: Install dependencies
       run: |
-        npm install axios cheerio
+        npm install axios
     
     - name: Fetch and process LinuxToys data
       run: |
-        node .forgejo/scripts/update-tools.js ./pages/cache
+        node .forgejo/scripts/update-tools.js ./pages/cache /tmp/linuxtoys
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Clean up LinuxToys clone
+      if: always()
+      run: |
+        rm -rf /tmp/linuxtoys
     
     - name: Commit and push changes to pages branch
       run: |
