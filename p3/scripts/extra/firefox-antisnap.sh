@@ -28,6 +28,7 @@ EOF
 cat << 'EOF' | sudo tee /etc/apt/apt.conf.d/51-unattended-upgrades-firefox > /dev/null
 Unattended-Upgrade::Origins-Pattern { "archive=mozilla"; };
 EOF
+rm -rf ~/snap/firefox
 sudo snap remove firefox
 sudo apt remove firefox # ensure it was fully removed
 sudo apt update
