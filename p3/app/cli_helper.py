@@ -520,7 +520,7 @@ def run_manifest_mode(translations=None):
         print("No scripts found in manifest or manifest file is empty.")
         return 1
 
-    print(f"Found {len(script_names)} script(s) in manifest:")
+    print(f"Found {len(script_names)} item(s) in manifest:")
     for name in script_names:
         print(f"  - {name}")
     print()
@@ -536,26 +536,29 @@ def run_manifest_mode(translations=None):
     flatpaks_to_install = []
     
     for script_name in script_names:
+        # Heuristic: Flatpaks usually use reverse domain name notation (e.g., com.example.App)
+        # which contains at least two dots. System packages and internal scripts rarely follow this pattern.
+        if script_name.count('.') >= 2:
+            # If it looks like a flatpak, only check flatpak repositories
+            if check_flatpak_exists(script_name):
+                print(f"✓ Found flatpak: {script_name}")
+                flatpaks_to_install.append(script_name)
+            else:
+                print(f"Warning: '{script_name}' follows flatpak naming but not found in remotes. Skipping.")
+            continue
+
+        # If not a flatpak pattern, check if it's a script
         script_info = find_script_by_name(script_name, translations)
         
         if script_info is None:
-            # Script not found, check if it's a package or flatpak
-            print(f"Script '{script_name}' not found, checking if it's a package or flatpak...")
-            
-            # First check if it's a package (preferred over flatpak)
+            # Not a script, check if it's a system package
             if check_package_exists(script_name):
                 print(f"✓ Found package: {script_name}")
                 packages_to_install.append(script_name)
                 continue
             
-            # If not a package, check if it's a flatpak
-            elif check_flatpak_exists(script_name):
-                print(f"✓ Found flatpak: {script_name}")
-                flatpaks_to_install.append(script_name)
-                continue
-            
-            # Neither script, package, nor flatpak found
-            print(f"Warning: '{script_name}' not found as script, package, or flatpak. Skipping.")
+            # Neither script nor package found
+            print(f"Warning: '{script_name}' not found as script or package. Skipping.")
             continue
             
         # Check compatibility for scripts

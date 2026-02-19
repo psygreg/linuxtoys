@@ -5,7 +5,7 @@ import sys
 import tempfile
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
-from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script, check_package_exists, install_package
+from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script, check_package_exists, install_package, check_flatpak_exists, install_flatpak
 from .dev_mode import is_dev_mode_enabled
 
 def resolve_script_dir():
@@ -162,6 +162,12 @@ def scripts_install(args: list, skip_confirmation, translations):
 
     # Search scripts by name
     for script_name in install_list:
+        # Heuristic: if it looks like a flatpak, skip script search
+        if script_name.count('.') >= 2:
+            print(f"⚠️  Skipping script search for '{script_name}' (appears to be a flatpak)")
+            scripts_missing.append(f"{script_name} (Flatpak pattern)")
+            continue
+
         script_info = find_script_by_name(script_name, translations)
         if script_info:
             scripts_found_list.append(script_info)
@@ -248,6 +254,12 @@ def packages_install(args: list, skip_confirmation, translations):
 
     # Check if Packages exist by name
     for package_name in install_to_list:
+        # Heuristic: if it looks like a flatpak, skip package search
+        if package_name.count('.') >= 2:
+            print(f"⚠️  Skipping package search for '{package_name}' (appears to be a flatpak)")
+            packages_missing.append(f"{package_name} (Flatpak pattern)")
+            continue
+
         package_exist = check_package_exists(package_name)
         if package_exist:
             packages_found_list.append(package_name)
@@ -276,6 +288,89 @@ def packages_install(args: list, skip_confirmation, translations):
         install_packages_with_feedback(packages_found_list)
 
 
+def install_flatpaks_with_feedback(flatpaks_found):
+    """Install each flatpak sequentially and provide CLI feedback."""
+    
+    failed_items = []
+    current_item = 0
+    total_items = len(flatpaks_found)
+
+    # Ensure SCRIPT_DIR is set correctly
+    resolve_script_dir()
+
+    # Install flatpaks
+    for flatpak in flatpaks_found:
+        current_item += 1
+        print(f"\n[{current_item}/{total_items}] Installing flatpak: {flatpak}")
+        print("=" * 60)
+
+        try:
+            success = install_flatpak(flatpak)
+        except KeyboardInterrupt:
+            # Stop execution if the user presses Ctrl+C
+            return print("\n⚠️  Execution interrupted by the user.")
+        except Exception as e:
+            print(f"✗ Error while executing the script: {e}")
+            return 1
+        
+        if not success:
+            failed_items.append(('FLATPAK', flatpak, 1))
+            print(f"Flatpak '{flatpak}' installation failed")
+            
+            # Ask if user wants to continue on failure
+            if not confirm_action("Do you want to continue with the remaining installations?"):
+                print("❌ Operation cancelled.")
+                break
+
+
+def flatpaks_install(args: list, skip_confirmation, translations):
+    """Handle flatpak installation in EASY_CLI mode."""
+
+    # Filter out confirmation flags from the install list
+    install_to_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+    if not install_to_list:
+        print("\n✗ No items specified for installation.\n")
+        easy_cli_help_message()
+        return 0
+    
+    print("🧰 EASY CLI INSTALL MODE")
+    print("=" * 60)
+    print(f"📜 Requested flatpaks: {', '.join(install_to_list)}\n")
+
+    flatpaks_found_list = []
+    flatpaks_missing = []
+
+    # Check if Flatpaks exist by name
+    for flatpak_name in install_to_list:
+        flatpak_exist = check_flatpak_exists(flatpak_name)
+        if flatpak_exist:
+            flatpaks_found_list.append(flatpak_name)
+        else:
+            flatpaks_missing.append(flatpak_name)
+
+    # Report missing flatpaks
+    if flatpaks_missing:
+        print("⚠️  Flatpaks not found:")
+        for name in flatpaks_missing:
+            print(f" - {name}")
+        print()
+
+    if not flatpaks_found_list:
+        print("✗ No valid flatpaks found. Aborting.")
+        return 0
+    
+    # Display found flatpaks
+    print(f"✅ {len(flatpaks_found_list)} Flatpak(s) found and ready for installation:\n")
+    for flatpak_name in flatpaks_found_list:
+        print(f" - {flatpak_name}")
+    print()
+
+    # Ask user to confirm execution
+    if skip_confirmation or confirm_action("Confirm flatpak installation?"):
+        install_flatpaks_with_feedback(flatpaks_found_list)
+
+
 def smart_install(args: list, skip_confirmation, translations):
     """Handle smart installation - checks for scripts first, then packages."""
     
@@ -293,11 +388,24 @@ def smart_install(args: list, skip_confirmation, translations):
 
     scripts_found_list = []
     packages_to_install = []
+    flatpaks_to_install = []
     items_missing = []
 
-    # For each item, check if it's a script first, then check if it's a package
+    # For each item, decide based on its name pattern
     for item_name in install_list:
-        # First, try to find it as a script
+        # Heuristic: Flatpaks usually use reverse domain name notation (e.g., com.example.App)
+        # which contains at least two dots. System packages and internal scripts rarely follow this pattern.
+        if item_name.count('.') >= 2:
+            # If it looks like a flatpak, only check flatpak repositories
+            if check_flatpak_exists(item_name):
+                flatpaks_to_install.append(item_name)
+                print(f"✓ Found flatpak: {item_name}")
+            else:
+                items_missing.append(item_name)
+                print(f"✗ Flatpak not found: {item_name}")
+            continue
+
+        # Otherwise, try to find it as a script first
         script_info = find_script_by_name(item_name, translations)
         if script_info:
             scripts_found_list.append(script_info)
@@ -316,12 +424,12 @@ def smart_install(args: list, skip_confirmation, translations):
 
     # Report missing items
     if items_missing:
-        print("⚠️  Items not found (neither scripts nor packages):")
+        print("⚠️  Items not found:")
         for name in items_missing:
             print(f" - {name}")
         print()
 
-    if not scripts_found_list and not packages_to_install:
+    if not scripts_found_list and not packages_to_install and not flatpaks_to_install:
         print("✗ No valid items found. Aborting.")
         return 0
 
@@ -340,21 +448,34 @@ def smart_install(args: list, skip_confirmation, translations):
             print(f" - {package_name}")
         print()
 
+    if flatpaks_to_install:
+        print(f"📦 {len(flatpaks_to_install)} Flatpak(s) to install:\n")
+        for flatpak_name in flatpaks_to_install:
+            print(f" - {flatpak_name}")
+        print()
+
     # Ask user to confirm execution
     if skip_confirmation or confirm_action("Confirm installation?"):
-        # Execute scripts first
-        if scripts_found_list:
-            print("\n" + "=" * 60)
-            print("EXECUTING SCRIPTS")
-            print("=" * 60)
-            execute_scripts_with_feedback(scripts_found_list)
-        
-        # Then install packages
+        # Install packages first
         if packages_to_install:
             print("\n" + "=" * 60)
             print("INSTALLING PACKAGES")
             print("=" * 60)
             install_packages_with_feedback(packages_to_install)
+
+        # Install flatpaks second
+        if flatpaks_to_install:
+            print("\n" + "=" * 60)
+            print("INSTALLING FLATPAKS")
+            print("=" * 60)
+            install_flatpaks_with_feedback(flatpaks_to_install)
+
+        # Execute scripts last
+        if scripts_found_list:
+            print("\n" + "=" * 60)
+            print("EXECUTING SCRIPTS")
+            print("=" * 60)
+            execute_scripts_with_feedback(scripts_found_list)
 
 
 def print_script_list(translations):
@@ -416,12 +537,13 @@ def easy_cli_help_message():
     print("Options:")
     print("  -s, --script       Install specified LinuxToys scripts")
     print("  -p, --package      Install packages from the system package manager")
-    # print("  -f, --flatpak     Install specified LinuxToys flatpaks")
-    print("  (no option)        Smart mode: checks scripts first, then packages")
+    print("  -f, --flatpak      Install specified Flatpaks")
+    print("  (no option)        Smart mode: checks items by pattern (scripts, packages, flatpaks)")
     print()
     print("Examples:")
     print("  linuxtoys --install --script <script1> <script2>")
     print("  linuxtoys --install --package <package1> <package2>")
+    print("  linuxtoys --install --flatpak <flatpak1> <flatpak2>")
     print("  linuxtoys --install <item1> <item2>  (smart mode)")
     # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
@@ -527,17 +649,16 @@ def easy_cli_handler(translations=None):
             packages_install(args[2:], skip_confirmation(args), translations)
             return 0
 
-        # TODO : Implement instalation of pakages and flatpaks
-        # elif args[1] in ("-f", "--flatpak"): # Para instalação de flatpaks
-        #     flatpaks_install(args[2:], skip_confirmation(args), translations)
-        #     return 0
+        elif args[1] in ("-f", "--flatpak", "--flatpaks"): # Para instalação de flatpaks
+            flatpaks_install(args[2:], skip_confirmation(args), translations)
+            return 0
 
         elif args[1] in ("-l", "--list"):
             print_script_list(translations)
             return 0
         
         else:
-            # Smart install mode - check if it's a script first, then package
+            # Smart install mode - checks by pattern (scripts, packages, flatpaks)
             smart_install(args[1:], skip_confirmation(args), translations)
             return 0
         
