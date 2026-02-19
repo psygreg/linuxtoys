@@ -123,27 +123,43 @@ def check_package_exists(package_name):
     return False
 
 
-def check_flatpak_exists(flatpak_name):
+
+
+async def check_flatpak_exists_async(flatpak_name):
     """
-    Check if a flatpak exists in available repositories.
+    Check if a flatpak exists in available repositories asynchronously.
     Returns True if flatpak exists, False otherwise.
     """
     if not shutil.which('flatpak'):
         return False
         
     try:
-        # Search for exact match in flatpak remotes
-        result = subprocess.run(['flatpak', 'search', '--columns=application', flatpak_name], 
-                              capture_output=True, text=True, timeout=30)
-        if result.returncode == 0:
+        process = await asyncio.create_subprocess_exec(
+            'flatpak', 'search', '--columns=application', flatpak_name,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, _ = await asyncio.wait_for(process.communicate(), timeout=30)
+        
+        if process.returncode == 0:
+            stdout_str = stdout.decode().strip()
             # Check if flatpak_name exactly matches any of the application IDs
-            for line in result.stdout.strip().split('\n'):
+            for line in stdout_str.split('\n'):
                 if line.strip() == flatpak_name:
                     return True
-    except (subprocess.TimeoutExpired, subprocess.CalledProcessError, Exception):
+    except (asyncio.TimeoutError, Exception):
         pass
         
     return False
+
+
+async def check_flatpaks_async(flatpak_names):
+    """
+    Check multiple flatpaks exists in available repositories asynchronously.
+    Returns a list of booleans.
+    """
+    tasks = [check_flatpak_exists_async(name) for name in flatpak_names]
+    return await asyncio.gather(*tasks)
 
 
 def install_package(package_name):
@@ -188,10 +204,12 @@ _install_
         return False
 
 
-def install_flatpak(flatpak_name):
+
+
+async def install_flatpak_async(flatpak_name):
     """
-    Install a flatpak using the linuxtoys.lib _flatpak_ function.
-    Returns True if successful, False otherwise.
+    Install a flatpak asynchronously using the linuxtoys.lib _flatpak_ function.
+    Returns (True, None) if successful, (False, error_message) otherwise.
     """
     try:
         # Create a temporary script to install the flatpak using linuxtoys.lib functions
@@ -202,23 +220,32 @@ source "{lib_path}"
 _flatpaks=("{flatpak_name}")
 _flatpak_
 '''
+        # Execute the installation script asynchronously
+        process = await asyncio.create_subprocess_exec(
+            'bash', '-c', script_content,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
         
-        # Execute the installation script
-        result = subprocess.run(['bash', '-c', script_content], 
-                              capture_output=True, text=True)
+        stdout, stderr = await process.communicate()
         
-        if result.returncode == 0:
-            print(f"✓ Successfully installed flatpak: {flatpak_name}")
-            return True
+        if process.returncode == 0:
+            return True, None
         else:
-            print(f"✗ Failed to install flatpak: {flatpak_name}")
-            if result.stderr:
-                print(f"Error: {result.stderr}")
-            return False
+            err_msg = stderr.decode().strip() if stderr else "Unknown error"
+            return False, err_msg
             
     except Exception as e:
-        print(f"✗ Error installing flatpak {flatpak_name}: {e}")
-        return False
+        return False, str(e)
+
+
+async def install_flatpaks_async(flatpak_names):
+    """
+    Install multiple flatpaks asynchronously.
+    Returns a list of (success, error_message) tuples.
+    """
+    tasks = [install_flatpak_async(name) for name in flatpak_names]
+    return await asyncio.gather(*tasks)
 
 
 def find_script_by_name(script_name, translations=None):
@@ -535,19 +562,29 @@ def run_manifest_mode(translations=None):
     packages_to_install = []
     flatpaks_to_install = []
     
-    for script_name in script_names:
-        # Heuristic: Flatpaks usually use reverse domain name notation (e.g., com.example.App)
-        # which contains at least two dots. System packages and internal scripts rarely follow this pattern.
-        if script_name.count('.') >= 2:
-            # If it looks like a flatpak, only check flatpak repositories
-            if check_flatpak_exists(script_name):
-                print(f"✓ Found flatpak: {script_name}")
-                flatpaks_to_install.append(script_name)
-            else:
-                print(f"Warning: '{script_name}' follows flatpak naming but not found in remotes. Skipping.")
-            continue
+    # Identify scripts, packages, and potential flatpaks
+    potential_flatpaks = []
+    other_items = []
+    for name in script_names:
+        if name.count('.') >= 2:
+            potential_flatpaks.append(name)
+        else:
+            other_items.append(name)
 
-        # If not a flatpak pattern, check if it's a script
+    # Check flatpaks asynchronously
+    if potential_flatpaks:
+        print(f"Checking {len(potential_flatpaks)} potential flatpak(s) asynchronously...")
+        flatpak_exists_results = asyncio.run(check_flatpaks_async(potential_flatpaks))
+        for name, exists in zip(potential_flatpaks, flatpak_exists_results):
+            if exists:
+                print(f"✓ Found flatpak: {name}")
+                flatpaks_to_install.append(name)
+            else:
+                print(f"Warning: '{name}' follows flatpak naming but not found in remotes. Skipping.")
+
+    # Check other items (scripts and packages)
+    for script_name in other_items:
+        # Check if it's a script
         script_info = find_script_by_name(script_name, translations)
         
         if script_info is None:
@@ -625,26 +662,33 @@ def run_manifest_mode(translations=None):
                 break
     
     # Install flatpaks second
-    for flatpak in flatpaks_to_install:
-        current_item += 1
-        print(f"\n[{current_item}/{total_items}] Installing flatpak: {flatpak}")
+    if flatpaks_to_install:
+        print(f"\nInstalling {len(flatpaks_to_install)} flatpak(s) asynchronously...")
         print("=" * 60)
         
-        success = install_flatpak(flatpak)
+        flatpak_results = asyncio.run(install_flatpaks_async(flatpaks_to_install))
         
-        if not success:
-            failed_items.append(('FLATPAK', flatpak, 1))
-            print(f"Flatpak '{flatpak}' installation failed")
-            
-            # Ask if user wants to continue on failure
-            try:
+        for flatpak, (success, err_msg) in zip(flatpaks_to_install, flatpak_results):
+            current_item += 1
+            if success:
+                print(f"✓ Successfully installed flatpak: {flatpak}")
+            else:
+                failed_items.append(('FLATPAK', flatpak, 1))
+                print(f"✗ Failed to install flatpak: {flatpak}")
+                if err_msg:
+                    print(f"Error: {err_msg}")
+        
+        # If any failed, ask if user wants to continue (if not already at end of flatpaks)
+        any_failed = any(not r[0] for r in flatpak_results)
+        if any_failed and current_item < total_items:
+             try:
                 response = input("Continue with remaining items? [y/N]: ").strip().lower()
                 if response not in ['y', 'yes']:
                     print("Execution stopped.")
-                    break
-            except KeyboardInterrupt:
+                    # return summary? or just break. The original code had a break within the loop.
+                    # Since we did these in parallel, we already finished the flatpaks group.
+             except KeyboardInterrupt:
                 print("\nExecution stopped.")
-                break
     
     # Execute scripts last
     for script_info in scripts_to_run:

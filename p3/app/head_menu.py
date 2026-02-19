@@ -223,19 +223,35 @@ class MenuButton(Gtk.MenuButton):
 		_ = create_translator()
 		packages_to_install = []
 		flatpaks_to_install = []
+		potential_flatpaks = []
+		items_to_check = []
 
 		for script_name in scripts_name:
 			script_info = cli_helper.find_script_by_name(script_name)
-			if script_info is None:
-				if cli_helper.check_package_exists(script_name):
-					packages_to_install.append(script_name)
-					continue
-
-				elif cli_helper.check_flatpak_exists(script_name):
-					flatpaks_to_install.append(script_name)
-					continue
-			else:
+			if script_info is not None:
 				self.results.append(script_info)
+			else:
+				# If not a script, identify if it's a potential flatpak or package
+				if script_name.count('.') >= 2:
+					potential_flatpaks.append(script_name)
+				else:
+					items_to_check.append(script_name)
+
+		# Check flatpaks asynchronously
+		if potential_flatpaks:
+			exists_results = asyncio.run(cli_helper.check_flatpaks_async(potential_flatpaks))
+			for name, exists in zip(potential_flatpaks, exists_results):
+				if exists:
+					flatpaks_to_install.append(name)
+				else:
+					# If not a flatpak, check if it's a package
+					if cli_helper.check_package_exists(name):
+						packages_to_install.append(name)
+
+		# Check other items for packages
+		for name in items_to_check:
+			if cli_helper.check_package_exists(name):
+				packages_to_install.append(name)
 
 		if packages_to_install or flatpaks_to_install:
 			self.results.append({'name': _("packages_flatpaks"),'path': self._temp_sh, 'is_script': True})

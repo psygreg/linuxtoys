@@ -3,9 +3,14 @@
 import os
 import sys
 import tempfile
+import asyncio
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
-from .cli_helper import run_manifest_mode, run_update_check_cli, find_script_by_name, run_script, check_package_exists, install_package, check_flatpak_exists, install_flatpak
+from .cli_helper import (
+    run_manifest_mode, run_update_check_cli, find_script_by_name, 
+    run_script, check_package_exists, install_package, 
+    check_flatpaks_async, install_flatpaks_async
+)
 from .dev_mode import is_dev_mode_enabled
 
 def resolve_script_dir():
@@ -289,38 +294,39 @@ def packages_install(args: list, skip_confirmation, translations):
 
 
 def install_flatpaks_with_feedback(flatpaks_found):
-    """Install each flatpak sequentially and provide CLI feedback."""
+    """Install flatpaks asynchronously and provide CLI feedback."""
     
     failed_items = []
-    current_item = 0
     total_items = len(flatpaks_found)
 
     # Ensure SCRIPT_DIR is set correctly
     resolve_script_dir()
 
-    # Install flatpaks
-    for flatpak in flatpaks_found:
-        current_item += 1
-        print(f"\n[{current_item}/{total_items}] Installing flatpak: {flatpak}")
-        print("=" * 60)
+    print(f"\nInstalling {total_items} flatpak(s) asynchronously...")
+    print("=" * 60)
 
-        try:
-            success = install_flatpak(flatpak)
-        except KeyboardInterrupt:
-            # Stop execution if the user presses Ctrl+C
-            return print("\n⚠️  Execution interrupted by the user.")
-        except Exception as e:
-            print(f"✗ Error while executing the script: {e}")
-            return 1
+    try:
+        # Run asynchronous installation
+        results = asyncio.run(install_flatpaks_async(flatpaks_found))
         
-        if not success:
-            failed_items.append(('FLATPAK', flatpak, 1))
-            print(f"Flatpak '{flatpak}' installation failed")
-            
-            # Ask if user wants to continue on failure
-            if not confirm_action("Do you want to continue with the remaining installations?"):
-                print("❌ Operation cancelled.")
-                break
+        for flatpak, (success, err_msg) in zip(flatpaks_found, results):
+            if success:
+                print(f"✓ Successfully installed flatpak: {flatpak}")
+            else:
+                failed_items.append(('FLATPAK', flatpak, 1))
+                print(f"✗ Failed to install flatpak: {flatpak}")
+                if err_msg:
+                    print(f"Error: {err_msg}")
+        
+    except KeyboardInterrupt:
+        print("\n⚠️  Execution interrupted by the user.")
+        return
+    except Exception as e:
+        print(f"✗ Error during flatpak installation: {e}")
+        return 1
+
+    if failed_items:
+        print(f"\n⚠️  {len(failed_items)} flatpak installation(s) failed.")
 
 
 def flatpaks_install(args: list, skip_confirmation, translations):
@@ -341,13 +347,15 @@ def flatpaks_install(args: list, skip_confirmation, translations):
     flatpaks_found_list = []
     flatpaks_missing = []
 
-    # Check if Flatpaks exist by name
-    for flatpak_name in install_to_list:
-        flatpak_exist = check_flatpak_exists(flatpak_name)
-        if flatpak_exist:
-            flatpaks_found_list.append(flatpak_name)
-        else:
-            flatpaks_missing.append(flatpak_name)
+    # Check if Flatpaks exist by name asynchronously
+    if install_to_list:
+        print(f"Checking {len(install_to_list)} flatpak(s) asynchronously...")
+        exists_results = asyncio.run(check_flatpaks_async(install_to_list))
+        for name, exists in zip(install_to_list, exists_results):
+            if exists:
+                flatpaks_found_list.append(name)
+            else:
+                flatpaks_missing.append(name)
 
     # Report missing flatpaks
     if flatpaks_missing:
@@ -391,21 +399,25 @@ def smart_install(args: list, skip_confirmation, translations):
     flatpaks_to_install = []
     items_missing = []
 
-    # For each item, decide based on its name pattern
-    for item_name in install_list:
-        # Heuristic: Flatpaks usually use reverse domain name notation (e.g., com.example.App)
-        # which contains at least two dots. System packages and internal scripts rarely follow this pattern.
-        if item_name.count('.') >= 2:
-            # If it looks like a flatpak, only check flatpak repositories
-            if check_flatpak_exists(item_name):
-                flatpaks_to_install.append(item_name)
-                print(f"✓ Found flatpak: {item_name}")
-            else:
-                items_missing.append(item_name)
-                print(f"✗ Flatpak not found: {item_name}")
-            continue
+    # Identify potential flatpaks
+    potential_flatpaks = [item for item in install_list if item.count('.') >= 2]
+    other_items = [item for item in install_list if item.count('.') < 2]
 
-        # Otherwise, try to find it as a script first
+    # Check flatpaks asynchronously
+    if potential_flatpaks:
+        print(f"Checking {len(potential_flatpaks)} potential flatpak(s) asynchronously...")
+        exists_results = asyncio.run(check_flatpaks_async(potential_flatpaks))
+        for name, exists in zip(potential_flatpaks, exists_results):
+            if exists:
+                flatpaks_to_install.append(name)
+                print(f"✓ Found flatpak: {name}")
+            else:
+                items_missing.append(name)
+                print(f"✗ Flatpak not found: {name}")
+
+    # For other items, decide based on its name pattern
+    for item_name in other_items:
+        # try to find it as a script first
         script_info = find_script_by_name(item_name, translations)
         if script_info:
             scripts_found_list.append(script_info)
