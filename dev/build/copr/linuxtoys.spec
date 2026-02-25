@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        5.6.13
+Version:        5.6.14
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -45,13 +45,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root, -)
 /usr/bin/linuxtoys
-/usr/bin/linuxtoys-cli
 /usr/share/linuxtoys
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.svg
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Wed Feb 11 2026 Victor Gregory <psygreg@pm.me> - 5.6.13
+* Wed Feb 25 2026 Victor Gregory <psygreg@pm.me> - 5.6.14
 - Updated to current app structure with full Python application
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements
