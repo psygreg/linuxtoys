@@ -25,4 +25,5 @@ wget -O stoat-chat.desktop "https://codeberg.org/psygreg/linuxtoys/raw/branch/ma
 sed -i "s|/home/psygreg|${HOME}|g" stoat-chat.desktop
 mkdir -p ~/.local/share/applications
 cp stoat-chat.desktop ~/.local/share/applications/
+chmod +x ~/.local/share/applications/stoat-chat.desktop
 rm -rf Stoat-linux-x64-${ver}.zip Stoat-linux-x64 stoat.png stoat-chat.desktop
