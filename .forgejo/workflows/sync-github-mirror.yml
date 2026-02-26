@@ -6,7 +6,7 @@ on:
 
   # Schedule to run weekly (every Monday at 00:00 UTC)
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: "0 0 * * 1"
 
 jobs:
   sync-mirror:
@@ -15,39 +15,19 @@ jobs:
       contents: read
 
     steps:
-    - name: Checkout master branch
-      uses: actions/checkout@v4
-      with:
-        ref: master
-        fetch-depth: 0
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
 
-    - name: Push to GitHub mirror
-      run: |
-        git remote add github https://x-access-token:${{ secrets.GHTOKEN }}@github.com/psygreg/linuxtoys.git || true
-        git push -u github master --force
-      env:
-        GITHUB_MIRROR_TOKEN: ${{ secrets.GHTOKEN }}
+      - name: Push to GitHub mirror
+        run: |
+          git remote add github https://x-access-token:${{ secrets.GHTOKEN }}@github.com/psygreg/linuxtoys.git || true
+          git push -u github master --force
+        env:
+          GITHUB_MIRROR_TOKEN: ${{ secrets.GHTOKEN }}
 
-    - name: Verify mirror sync
-      run: |
-        echo "Successfully synced master branch to GitHub mirror"
-```
-
-**Setup Instructions:**
-
-To make this workflow function properly, you'll need to:
-
-1. **Create a GitHub Personal Access Token (PAT):**
-   - Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
-   - Create a new token with `public_repo` (or `repo` for private repos) scope
-   - Copy the token value
-
-2. **Add the secret to your Forgejo repository:**
-   - Go to your Forgejo repository Settings → Secrets
-   - Create a new secret named `GITHUB_MIRROR_TOKEN`
-   - Paste your GitHub PAT as the value
-
-3. **Verify the workflow:**
-   - The workflow will run every Monday at 00:00 UTC
-   - You can manually trigger it via "Actions" → "Sync GitHub Mirror" → "Run workflow"
-   - Only the `master` branch will be synced using `--force` to ensure it matches the source
+      - name: Verify mirror sync
+        run: |
+          echo "Successfully synced master branch to GitHub mirror"
