@@ -11,7 +11,7 @@ on:
 
   # Schedule to run weekly
   schedule:
-    - cron: "0 3 * * 6" # Run weekly at 03:00 on Sunday
+    - cron: "0 3 * * 6" # Run weekly at 03:00 on Saturday
 
 jobs:
   sync-gitea-to-github:
