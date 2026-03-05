@@ -20,7 +20,7 @@ jobs:
         env:
           GIT_SSL_NO_VERIFY: "true"
         run: |
-          git clone --depth=1 --branch page https://git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
+          git clone --depth=1 --branch page https://psygreg:${{ secrets.GITOKEN }}@git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
 
       - name: Install dependencies
         run: |
