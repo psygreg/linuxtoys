@@ -22,19 +22,12 @@ jobs:
 
     steps:
       - name: Checkout page branch
-        uses: actions/checkout@v4
-        with:
-          ref: page
-          fetch-depth: 0
-
-      - name: Clone LinuxToys repository from Gitea
         run: |
-          git clone --depth=1 https://git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
+          git clone --depth=1 --branch page https://git.linux.toys/psygreg/linuxtoys .
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
+        run: |
+          npm install --global npm@latest
 
       - name: Install dependencies
         run: |
@@ -42,14 +35,9 @@ jobs:
 
       - name: Fetch and process LinuxToys data
         run: |
-          node .gitea/scripts/update-tools.js ./cache /tmp/linuxtoys
+          node .gitea/scripts/update-tools.js ./cache .
         env:
           GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
-
-      - name: Clean up LinuxToys clone
-        if: always()
-        run: |
-          rm -rf /tmp/linuxtoys
 
       - name: Push changes to Gitea page branch
         run: |
