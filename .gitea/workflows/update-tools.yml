@@ -10,7 +10,7 @@ on:
 jobs:
   update-tools:
     runs-on: docker
-    container: node:18
+    container: catthehacker/ubuntu:act-latest
     permissions:
       contents: write
       actions: read
