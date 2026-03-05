@@ -15,6 +15,8 @@ on:
 jobs:
   update-tools:
     runs-on: docker
+    container:
+      image: node:18
     permissions:
       contents: write
       actions: read
@@ -35,11 +37,6 @@ jobs:
       - name: Clone LinuxToys repository
         run: |
           git clone --depth=1 https://git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
 
       - name: Install dependencies
         run: |
