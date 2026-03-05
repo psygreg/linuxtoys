@@ -15,9 +15,6 @@ on:
 jobs:
   update-tools:
     runs-on: docker
-    container:
-      image: catthehacker/ubuntu:act-latest
-      options: --network host
     permissions:
       contents: write
       actions: read
@@ -26,22 +23,18 @@ jobs:
       - name: Checkout master branch
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITOKEN }}
-          fetch-depth: 1
-          server_url: http://localhost:3000
+          fetch-depth: 0
 
       - name: Checkout page branch
         uses: actions/checkout@v4
         with:
           ref: page
           path: page
-          token: ${{ secrets.GITOKEN }}
-          fetch-depth: 1
-          server_url: http://localhost:3000
+          fetch-depth: 0
 
       - name: Clone LinuxToys repository
         run: |
-          git clone --depth=1 --branch page http://localhost:3000/psygreg/linuxtoys /tmp/linuxtoys
+          git clone --depth=1 https://git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -49,24 +42,25 @@ jobs:
           node-version: "18"
 
       - name: Install dependencies
-        run: npm install axios
+        run: |
+          npm install axios
 
       - name: Fetch and process LinuxToys data
         run: |
-          node .gitea/scripts/update-tools.js ./page/cache /tmp/linuxtoys
+          node .gitea/scripts/update-tools.js ./pages/cache /tmp/linuxtoys
         env:
-          GITHUB_TOKEN: ${{ secrets.GITOKEN }}
+          GITEA_TOKEN: ${{ secrets.GITOKEN }}
 
       - name: Clean up LinuxToys clone
         if: always()
-        run: rm -rf /tmp/linuxtoys
+        run: |
+          rm -rf /tmp/linuxtoys
 
-      - name: Commit and push changes to page branch
+      - name: Commit and push changes to pages branch
         run: |
           cd page
           git config --local user.email "psygreg@pm.me"
           git config --local user.name "psygreg"
-          git remote set-url origin http://psygreg:${{ secrets.GITOKEN }}@localhost:3000/psygreg/linuxtoys
 
           if [ -n "$(git status --porcelain)" ]; then
             git add cache/
