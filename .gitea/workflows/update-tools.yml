@@ -22,10 +22,8 @@ jobs:
 
     steps:
       - name: Checkout page branch
-        uses: actions/checkout@v4
-        with:
-          ref: page
-          fetch-depth: 1
+        run: |
+          git clone --depth=1 --branch page https://psygreg:${{ secrets.GITOKEN }}@git.linux.toys/psygreg/linuxtoys .
 
       - name: Setup Node.js
         run: |
@@ -45,6 +43,7 @@ jobs:
         run: |
           git config --local user.email "psygreg@pm.me"
           git config --local user.name "psygreg"
+          git remote set-url origin https://psygreg:${{ secrets.GITOKEN }}@git.linux.toys/psygreg/linuxtoys
 
           if [ -n "$(git status --porcelain)" ]; then
             git add cache/
