@@ -10,7 +10,7 @@ on:
 
   # Schedule to run weekly
   schedule:
-    - cron: '0 3 * * 0'  # Run weekly at 03:00 on Sunday
+    - cron: "0 3 * * 0" # Run weekly at 03:00 on Sunday
 
 jobs:
   update-tools:
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITOKEN }}
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Checkout page branch
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           ref: page
           path: page
           token: ${{ secrets.GITOKEN }}
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Clone LinuxToys repository
         run: |
@@ -44,7 +44,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm install axios
