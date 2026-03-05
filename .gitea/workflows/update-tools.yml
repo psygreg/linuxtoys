@@ -15,7 +15,7 @@ on:
 jobs:
   update-tools:
     runs-on: docker
-    container: node:18-alpine
+    container: node:18
     permissions:
       contents: write
       actions: read
