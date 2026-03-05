@@ -6,8 +6,8 @@
   "token": "e38bedc07dd44dc3f0f7369fd6c2550b7be8a590",
   "address": "https://git.linux.toys",
   "labels": [
-    "ubuntu-latest",
-    "docker"
+    "ubuntu-latest:host",
+    "docker:host"
   ],
   "ephemeral": false
 }

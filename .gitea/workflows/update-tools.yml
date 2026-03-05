@@ -28,6 +28,10 @@ jobs:
         with:
           token: ${{ secrets.GITOKEN }}
           fetch-depth: 1
+        env:
+          GIT_CONFIG_COUNT: 1
+          GIT_CONFIG_KEY_0: http.version
+          GIT_CONFIG_VALUE_0: HTTP/1.1
 
       - name: Checkout page branch
         uses: actions/checkout@v4
