@@ -9,7 +9,8 @@ on:
 
 jobs:
   update-tools:
-    runs-on: ubuntu-latest
+    runs-on: docker
+    container: catthehacker/ubuntu:act-latest
     permissions:
       contents: write
       actions: read
