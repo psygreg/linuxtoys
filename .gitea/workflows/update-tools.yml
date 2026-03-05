@@ -22,8 +22,10 @@ jobs:
 
     steps:
       - name: Checkout page branch
-        run: |
-          git clone --depth=1 --branch page https://git.linux.toys/psygreg/linuxtoys .
+        uses: actions/checkout@v4
+        with:
+          ref: page
+          fetch-depth: 1
 
       - name: Setup Node.js
         run: |
