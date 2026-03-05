@@ -35,4 +35,4 @@ jobs:
 
       - name: Push page branch to GitHub main
         run: |
-          git push https://x-access-token:${{ secrets.GHTOKEN }}@github.com/psygreg/linuxtoys-site.git page:main --force-with-lease
+          git push https://x-access-token:${{ secrets.GHTOKEN }}@github.com/psygreg/linuxtoys-site.git page:main --force
