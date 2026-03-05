@@ -28,10 +28,7 @@ jobs:
         with:
           token: ${{ secrets.GITOKEN }}
           fetch-depth: 1
-        env:
-          GIT_CONFIG_COUNT: 1
-          GIT_CONFIG_KEY_0: http.version
-          GIT_CONFIG_VALUE_0: HTTP/1.1
+          server_url: http://localhost:3000
 
       - name: Checkout page branch
         uses: actions/checkout@v4
@@ -40,10 +37,11 @@ jobs:
           path: page
           token: ${{ secrets.GITOKEN }}
           fetch-depth: 1
+          server_url: http://localhost:3000
 
       - name: Clone LinuxToys repository
         run: |
-          git clone --depth=1 --branch page https://git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
+          git clone --depth=1 --branch page http://localhost:3000/psygreg/linuxtoys /tmp/linuxtoys
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -68,7 +66,7 @@ jobs:
           cd page
           git config --local user.email "psygreg@pm.me"
           git config --local user.name "psygreg"
-          git remote set-url origin https://psygreg:${{ secrets.GITOKEN }}@git.linux.toys/psygreg/linuxtoys
+          git remote set-url origin http://psygreg:${{ secrets.GITOKEN }}@localhost:3000/psygreg/linuxtoys
 
           if [ -n "$(git status --porcelain)" ]; then
             git add cache/
