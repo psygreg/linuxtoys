@@ -1,47 +1,75 @@
 name: Update Tools Categories
 
 on:
+  # Trigger on manual dispatch
   workflow_dispatch:
+
+  # Trigger on releases from LinuxToys repository
   repository_dispatch:
     types: [update-tools]
+
+  # Schedule to run weekly
   schedule:
-    - cron: "0 3 * * 0"
+    - cron: '0 3 * * 0'  # Run weekly at 03:00 on Sunday
 
 jobs:
   update-tools:
     runs-on: docker
-    container: catthehacker/ubuntu:act-latest
-    options: --network host
+    container:
+      image: catthehacker/ubuntu:act-latest
+      options: --network host
     permissions:
       contents: write
       actions: read
 
     steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITOKEN }}
+          fetch-depth: 0
+
       - name: Checkout page branch
+        uses: actions/checkout@v4
+        with:
+          ref: page
+          path: page
+          token: ${{ secrets.GITOKEN }}
+          fetch-depth: 0
+
+      - name: Clone LinuxToys repository
         run: |
           git clone --depth=1 --branch page https://git.linux.toys/psygreg/linuxtoys /tmp/linuxtoys
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Install dependencies
-        run: |
-          cd /tmp/linuxtoys && npm install
+        run: npm install axios
 
       - name: Fetch and process LinuxToys data
         run: |
-          cd /tmp/linuxtoys && node .gitea/scripts/update-tools.js ./cache .
+          node .gitea/scripts/update-tools.js ./page/cache /tmp/linuxtoys
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITOKEN }}
 
-      - name: Push changes to Gitea page branch
+      - name: Clean up LinuxToys clone
+        if: always()
+        run: rm -rf /tmp/linuxtoys
+
+      - name: Commit and push changes to page branch
         run: |
-          cd /tmp/linuxtoys
+          cd page
           git config --local user.email "psygreg@pm.me"
           git config --local user.name "psygreg"
           git remote set-url origin https://psygreg:${{ secrets.GITOKEN }}@git.linux.toys/psygreg/linuxtoys
 
           if [ -n "$(git status --porcelain)" ]; then
             git add cache/
-            git commit -m "Update tools categories from Gitea repository"
+            git commit -m "Update tools categories from master branch"
             git push origin page
           else
             echo "No changes to commit"
           fi
-      - name: Cleanup
-        run: rm -rf /tmp/linuxtoys
