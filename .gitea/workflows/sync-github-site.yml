@@ -1,0 +1,36 @@
+name: Sync Gitea Page Branch to GitHub
+
+on:
+  # Trigger on manual dispatch
+  workflow_dispatch:
+
+  # Trigger on push to page branch
+  push:
+    branches:
+      - page
+
+  # Schedule to run weekly
+  schedule:
+    - cron: "0 1 * * 0" # Run weekly at 01:00 on Sunday
+
+jobs:
+  sync-gitea-to-github:
+    runs-on: docker
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout page branch
+        uses: actions/checkout@v4
+        with:
+          ref: page
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "psygreg@pm.me"
+          git config --local user.name "psygreg"
+
+      - name: Push page branch to GitHub main
+        run: |
+          git push https://x-access-token:${{ secrets.GHTOKEN }}@github.com/psygreg/linuxtoys-site.git page:main --force-with-lease

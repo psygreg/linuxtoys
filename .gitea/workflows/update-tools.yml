@@ -20,9 +20,10 @@ jobs:
       actions: read
 
     steps:
-      - name: Checkout master branch
+      - name: Checkout page branch
         uses: actions/checkout@v4
         with:
+          ref: page
           fetch-depth: 0
 
       - name: Clone LinuxToys repository from Gitea
@@ -49,7 +50,7 @@ jobs:
         run: |
           rm -rf /tmp/linuxtoys
 
-      - name: Push changes to GitHub Pages repository
+      - name: Push changes to Gitea page branch
         run: |
           git config --local user.email "psygreg@pm.me"
           git config --local user.name "psygreg"
@@ -57,7 +58,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add cache/
             git commit -m "Update tools categories from Gitea repository"
-            git push https://x-access-token:${{ secrets.GHTOKEN }}@github.com/psygreg/linuxtoys-site.git main
+            git push origin page
           else
             echo "No changes to commit"
           fi
