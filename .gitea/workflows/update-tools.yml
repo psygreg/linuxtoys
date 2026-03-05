@@ -9,8 +9,7 @@ on:
 
 jobs:
   update-tools:
-    runs-on: docker
-    container: catthehacker/ubuntu:act-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: read
@@ -42,3 +41,5 @@ jobs:
           else
             echo "No changes to commit"
           fi
+      - name: Cleanup
+        run: rm -rf /tmp/linuxtoys
