@@ -16,6 +16,8 @@ on:
 jobs:
   sync-gitea-to-github:
     runs-on: docker
+    container:
+      image: node:18
     permissions:
       contents: read
 
