@@ -99,6 +99,8 @@ psave_lib () {
                 _packages=(gtk4 libadwaita)
             elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
                 _packages=(gtk4-devel libadwaita-devel)
+            elif is_solus; then
+                _packages=(libgtk4-devel libadwaita-devel)
             fi
             _install_
             git clone https://github.com/TheAlexDev23/power-options/ --depth=1
@@ -131,8 +133,17 @@ debfixer_lib () {
 
 # EarlyOOM - kills processes before a OOM event is triggered
 earlyoom_lib () {
-    _packages=(earlyoom)
-    _install_
+    cd $HOME
+    if is_solus; then
+        git clone https://github.com/rfjakob/earlyoom.git
+        cd earlyoom
+        sudo make install
+        cd ..
+        sudo rm -r earlyoom
+    else
+        _packages=(earlyoom)
+        _install_
+    fi
     fetch_from_mirror "earlyoom" \
         "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/earlyoom" \
         "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/resources/earlyoom"

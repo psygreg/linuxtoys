@@ -30,6 +30,8 @@ flatpak_in_lib() {
                 sudo pacman -S --noconfirm flatpak; flatpak_path_pending="1" || return 1 ;;
             *suse*)
                 sudo zypper in -y flatpak; flatpak_path_pending="1" || return 1 ;;
+            *solus*)
+                sudo eopkg install -y flatpak; flatpak_path_pending="1" || return 1 ;;
             *)
                 _msg error "Unsupported distribution for automatic flatpak installation"; return 1 ;;
         esac
@@ -135,6 +137,8 @@ rpmfusion_chk() {
 pip_lib() {
     if [[ "$ID" =~ ^(arch|artix|cachyos)$ ]] || [[ "$ID_LIKE" =~ (arch|archlinux) ]]; then
         _packages=(python-pip python-pipx)
+    elif is_solus; then
+        _packages=(pip pipx)
     else
         _packages=(python3-pip pipx)
     fi

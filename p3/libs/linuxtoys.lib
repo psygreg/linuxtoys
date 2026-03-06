@@ -183,3 +183,4 @@ is_ostree() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora"
 is_debian() { [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" =~ "debian" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_ubuntu() { [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_suse() { [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
+is_solus() { [[ "$ID" == "solus" ]]; }
