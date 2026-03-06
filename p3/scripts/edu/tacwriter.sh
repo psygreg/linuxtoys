@@ -17,7 +17,6 @@ TMP_BUNDLE="/tmp/tac-writer.flatpak"
 TMP_LOG="/tmp/tac-writer-flatpak-install.log"
 
 sudo_rq
-
 # Ensure curl exists for GitHub API lookup
 if ! command -v curl >/dev/null 2>&1; then
     if is_debian; then
@@ -27,7 +26,6 @@ if ! command -v curl >/dev/null 2>&1; then
     _install_
     command -v curl >/dev/null 2>&1 || fatal "curl command not found after installation attempt."
 fi
-
 # Ensure flatpak exists across supported distro families
 if ! command -v flatpak >/dev/null 2>&1; then
     if is_debian; then
@@ -37,12 +35,12 @@ if ! command -v flatpak >/dev/null 2>&1; then
     _install_
     command -v flatpak >/dev/null 2>&1 || fatal "Flatpak command not found after installation attempt."
 fi
-
 # Ensure Flathub remotes exist so required runtimes can be resolved
 flatpak_in_lib || fatal "Failed to configure Flatpak/Flathub required for Tac Writer runtime dependencies."
-
-# Resolve latest .flatpak bundle from GitHub releases
-LATEST_BUNDLE_URL=$(curl -fsSL "$GITHUB_API" | grep 'browser_download_url' | grep '\.flatpak"' | head -1 | cut -d'"' -f4)
+# Resolve latest .flatpak bundle and version tag from GitHub releases
+GITHUB_JSON=$(curl -fsSL "$GITHUB_API")
+LATEST_BUNDLE_URL=$(echo "$GITHUB_JSON" | grep 'browser_download_url' | grep '\.flatpak"' | head -1 | cut -d'"' -f4)
+LATEST_VERSION=$(echo "$GITHUB_JSON" | grep '"tag_name"' | head -1 | cut -d'"' -f4 | sed 's/^v//')
 if [ -z "$LATEST_BUNDLE_URL" ]; then
     fatal "Could not find a .flatpak asset in the latest Tac Writer release."
 fi
@@ -50,13 +48,18 @@ fi
 if ! curl -fsSL "$LATEST_BUNDLE_URL" -o "$TMP_BUNDLE"; then
     fatal "Failed to download Tac Writer flatpak bundle."
 fi
-
 # Install bundle for current user (silent mode; show details only on failure)
 if ! flatpak install --user --noninteractive -y "$TMP_BUNDLE" >/dev/null 2>"$TMP_LOG"; then
     cat "$TMP_LOG"
     rm -f "$TMP_LOG"
     rm -f "$TMP_BUNDLE"
     fatal "Tac Writer flatpak installation failed."
+fi
+# Write version file so the in-app update checker can compare against GitHub tags
+if [ -n "$LATEST_VERSION" ]; then
+	VERSION_FILE="$HOME/.local/share/tac-writer/version.txt"
+	mkdir -p "$(dirname "$VERSION_FILE")"
+	echo "$LATEST_VERSION" > "$VERSION_FILE"
 fi
 
 rm -f "$TMP_LOG"
