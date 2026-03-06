@@ -50,18 +50,22 @@ cachyos_sysd_lib () {
 # shader booster
 sboost_lib () {
     cd $HOME
-    local _tag=$(curl -s https://codeberg.org/api/v1/repos/psygreg/shader-booster/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')
+    local _tag=$(curl -s https://api.github.com/repos/psygreg/shader-booster/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')
     if [ -z "$_tag" ]; then
-        _tag=$(curl -s https://codeberg.org/api/v1/repos/psygreg/shader-booster/releases | grep -oP '"tag_name":\s*"\K[^"]+' | head -n 1)
+        _tag=$(curl -s https://api.github.com/repos/psygreg/shader-booster/releases | grep -oP '"tag_name":\s*"\K[^"]+' | head -n 1)
     fi
 
     if [ "$ID" == "cachyos" ]; then
-        wget "https://codeberg.org/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish"
+        fetch_from_mirror "patcher-cachy.fish" \
+            "https://github.com/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish" \
+            "https://git.linux.toys/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish"
         chmod +x patcher-cachy.fish
         fish ./patcher-cachy.fish
         rm patcher-cachy.fish
     else
-        wget "https://codeberg.org/psygreg/shader-booster/releases/download/${_tag}/patcher.sh"
+        fetch_from_mirror "patcher.sh" \
+            "https://github.com/psygreg/shader-booster/releases/download/${_tag}/patcher.sh" \
+            "https://git.linux.toys/psygreg/shader-booster/releases/download/${_tag}/patcher.sh"
         chmod +x patcher.sh
         ./patcher.sh
         rm patcher.sh
@@ -129,7 +133,9 @@ debfixer_lib () {
 earlyoom_lib () {
     _packages=(earlyoom)
     _install_
-    wget https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/earlyoom
+    fetch_from_mirror "earlyoom" \
+        "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/earlyoom" \
+        "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/resources/earlyoom"
     sudo cp -f earlyoom /etc/default/
     rm earlyoom
     sudo systemctl enable --now earlyoom
@@ -208,12 +214,12 @@ intel_xe_lib () {
             if echo "$intelGPU" | grep -Eqi 'battlemage|alchemist'; then
                 # Extract DEVID from lspci output (e.g., e20b from [8086:e20b])
                 DEVID=$(lspci -nnd ::03xx | grep -Ei 'battlemage|alchemist' | sed -n 's/.*\[8086:\([0-9a-f]\+\)\].*/\1/p')
-                
+
                 if [[ -z "$DEVID" ]]; then
                     echo "Error: Could not detect Intel GPU device ID"
                     return 1
                 fi
-                
+
                 echo "Detected Intel GPU device ID: $DEVID"
                 if is_ostree; then
                     sudo rpm-ostree kargs --append='i915.force_probe=!'"$DEVID" --append="xe.force_probe=$DEVID"
@@ -221,7 +227,7 @@ intel_xe_lib () {
                     # Create kernel cmdline drop-in file for systemd-based systems
                     sudo mkdir -p /etc/kernel/cmdline.d
                     echo "i915.force_probe=!${DEVID} xe.force_probe=${DEVID}" | sudo tee /etc/kernel/cmdline.d/10-intel-xe-enable.conf >/dev/null
-                    
+
                     # Also create GRUB drop-in config for GRUB-based systems
                     sudo mkdir -p /etc/default/grub.d
                     sudo tee /etc/default/grub.d/10-intel-xe-enable.cfg > /dev/null << EOF
@@ -231,11 +237,11 @@ intel_xe_lib () {
 # To remove, delete this file and regenerate boot config
 GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} i915.force_probe=!${DEVID} xe.force_probe=${DEVID}"
 EOF
-            
+
                     echo "Created kernel parameter configuration:"
                     echo "  - systemd: /etc/kernel/cmdline.d/10-intel-xe-enable.conf"
                     echo "  - GRUB: /etc/default/grub.d/10-intel-xe-enable.cfg"
-            
+
                     # Update boot configuration
                     if ! is_ostree; then
                         if is_fedora || is_suse; then
@@ -249,7 +255,7 @@ EOF
                             echo "GRUB configuration updated. Reboot required to enable Xe driver."
                         fi
                     fi
-            
+
                     echo "To remove this configuration later:"
                     echo "  sudo rm /etc/kernel/cmdline.d/10-intel-xe-enable.conf"
                     echo "  sudo rm /etc/default/grub.d/10-intel-xe-enable.cfg"

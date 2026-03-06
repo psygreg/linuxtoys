@@ -81,7 +81,7 @@ getresolve () {
     		--compressed \
     		"$_siteurl")
 
-  	curl -L -o "${_archive_name}.zip" "$_srcurl"
+	curl -L -o "${_archive_name}.zip" "$_srcurl"
 }
 
 davincinatd () {
@@ -93,22 +93,30 @@ davincinatd () {
         fi
     fi
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        wget https://codeberg.org/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolvedeb.sh
+        fetch_from_mirror "autoresolvedeb.sh" \
+            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvedeb.sh" \
+            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolvedeb.sh"
         chmod +x autoresolvedeb.sh
         ./autoresolvedeb.sh
         rm autoresolvedeb.sh
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        wget https://codeberg.org/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolvepkg.sh
+        fetch_from_mirror "autoresolvepkg.sh" \
+            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvepkg.sh" \
+            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolvepkg.sh"
         chmod +x autoresolvepkg.sh
         ./autoresolvepkg.sh
         rm autoresolvepkg.sh
     elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
-        wget https://codeberg.org/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolverpm.sh
+        fetch_from_mirror "autoresolverpm.sh" \
+            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh" \
+            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolverpm.sh"
         chmod +x autoresolverpm.sh
         ./autoresolverpm.sh
         rm autoresolverpm.sh
     elif [[ "$ID_LIKE" == *suse* ]]; then
-        wget https://codeberg.org/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolverpm.sh
+        fetch_from_mirror "autoresolverpm.sh" \
+            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh" \
+            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolverpm.sh"
         chmod +x autoresolverpm.sh
         ./autoresolverpm.sh
         rm autoresolverpm.sh
@@ -116,7 +124,9 @@ davincinatd () {
 }
 
 davinciboxd () {
-    wget https://codeberg.org/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autodavincibox.sh
+    fetch_from_mirror "autodavincibox.sh" \
+        "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autodavincibox.sh" \
+        "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autodavincibox.sh"
     chmod +x autodavincibox.sh
     ./autodavincibox.sh
     rm autodavincibox.sh
@@ -217,7 +227,6 @@ else
         "$msg070") break && exit 100;;
         *) echo "Invalid Option" ;;
         esac
-        
+
     done
 fi
-

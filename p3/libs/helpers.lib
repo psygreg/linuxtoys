@@ -1,5 +1,20 @@
 # library of helpers and repository checkers
 
+# Helper function to fetch from multiple sources with fallback
+fetch_from_mirror () {
+    local filename="$1"
+    local github_url="$2"
+    local gitea_url="$3"
+
+    if wget "$github_url" -O "$filename"; then
+        return 0
+    fi
+    if wget "$gitea_url" -O "$filename"; then
+        return 0
+    fi
+    return 1
+}
+
 # --- Flatpak ---
 
 flatpak_in_lib() {

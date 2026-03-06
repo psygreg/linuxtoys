@@ -18,10 +18,14 @@ wget -O "Stoat-linux-x64-${ver}.zip" "https://github.com/stoatchat/for-desktop/r
 unzip "Stoat-linux-x64-${ver}.zip"
 mkdir -p ~/.local/share/stoat
 cp -rf Stoat-linux-x64/* ~/.local/share/stoat # install or update
-wget -O stoat.png "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/p3/app/icons/stoat.png"
+fetch_from_mirror "stoat.png" \
+    "https://raw.githubusercontent.com/psygreg/linuxtoys/master/p3/app/icons/stoat.png" \
+    "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/p3/app/icons/stoat.png"
 mkdir -p ~/.local/share/icons/hicolor/256x256/apps
 cp stoat.png ~/.local/share/icons/hicolor/256x256/apps/stoat.png
-wget -O stoat-chat.desktop "https://codeberg.org/psygreg/linuxtoys/raw/branch/master/resources/stoat/stoat-chat.desktop"
+fetch_from_mirror "stoat-chat.desktop" \
+    "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/stoat/stoat-chat.desktop" \
+    "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/resources/stoat/stoat-chat.desktop"
 sed -i "s|/home/psygreg|${HOME}|g" stoat-chat.desktop
 mkdir -p ~/.local/share/applications
 cp stoat-chat.desktop ~/.local/share/applications/
