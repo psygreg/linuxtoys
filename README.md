@@ -20,6 +20,12 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **OpenSUSE** (Leap and Tumbleweed)
 *   **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
 
+Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices.
+
+## Usage without installation
+
+You can use LinuxToys without installing it by downloading the new AppImage made by our friends at **[pkgforge-dev](https://github.com/pkgforge-dev)** from their [releases page](https://github.com/pkgforge-dev/LinuxToys-AppImage/releases). Just download the latest release, make it executable, and run it. Issues with the AppImage can be reported at [the AppImage repository](https://github.com/pkgforge-dev/LinuxToys-AppImage), and both of us will be working together to make it the best experience possible.
+
 ## Installation
 
 ### Automatic Installation
