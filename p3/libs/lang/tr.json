@@ -349,5 +349,7 @@
   "zash_desc": "Gelişmiş oturum yönetimi ve SSH iş akışları ile modern GTK4 terminali.",
   "kind_desc": "Yerel Kubernetes geliştirme için başlatıcı kind ve kubectl kurulumu.",
   "hiddify_desc": "Hiddify VPN istemcisi.",
-  "term_view_copy": "Çıktı Günlüğünü Kopyala"
+  "term_view_copy": "Çıktı Günlüğünü Kopyala",
+  "wayproton": "Wayland Modunda Proton",
+  "wayproton_desc": "Proton'u varsayılan olarak wine-wayland modunda çalışmak üzere ayarlar. Steam'de veya tercih ettiğiniz oyun başlatıcısında bu mod ile düzgün çalışmayabilecek oyunlar için çevre değişkeni PROTON_USE_WINE_WAYLAND=0'ı seçici olarak ayarlayabilirsiniz."
 }

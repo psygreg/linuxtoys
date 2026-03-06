@@ -347,5 +347,7 @@
   "zash_desc": "Kituo cha haraka cha GTK4 cha kisasa kilicho na usimamizi wa jukwaa linalotumia na mtiririko wa kazi wa SSH.",
   "kind_desc": "Mpango wa kuanza kwa kind na kubectl kwa maendeleo ya Kubernetes ya ndani.",
   "hiddify_desc": "Mteja wa Hiddify VPN.",
-  "term_view_copy": "Nakili Kumbukumbu ya Matokeo"
+  "term_view_copy": "Nakili Kumbukumbu ya Matokeo",
+  "wayproton": "Proton katika hali ya Wayland",
+  "wayproton_desc": "Weka Proton kuandika katika modi wine-wayland kwa chaguo-msingi. Unaweza weka utofauti wa mazingira PROTON_USE_WINE_WAYLAND=0 kwa michezo ambayo inaweza kutofautiana vizuri na modi hii katika chaguzi za kuanza katika Steam au kinara cha mchezo unaokuchagua."
 }

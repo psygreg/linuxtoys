@@ -348,5 +348,7 @@
   "zash_desc": "Moderan GTK4 terminal s naprednim upravljanjem sesije i SSH radnim tokovima.",
   "kind_desc": "Početna vrsta i kubectl postavka za lokalnu Kubernetes razvoj.",
   "hiddify_desc": "Hiddify VPN klijent.",
-  "term_view_copy": "Kopiraj izlazni dnevnik"
+  "term_view_copy": "Kopiraj izlazni dnevnik",
+  "wayproton": "Proton u Wayland režimu",
+  "wayproton_desc": "Postavlja Proton da se pokreće u wine-wayland modu prema zadanoj vrijednosti. Varijablu okruženja PROTON_USE_WINE_WAYLAND=0 možete selektivno postaviti za igre koje možda neće raditi pravilno s ovim modom u opcijama pokretanja u Steam-u ili odabranom pokretaču igara."
 }

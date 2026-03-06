@@ -34,6 +34,8 @@ sysag_run () {
     intel_xe_lib
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
     fix_intel_gtk
+    # set proton to run on wine-wayland mode by default
+    wayland_proton_lib
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
@@ -67,8 +69,7 @@ optimizer () {
         #fi
         # system-agnostic optimizations
         sysag_run
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
-        mv autopatch.state $HOME/.local/.autopatch.state
+        touch $HOME/.local/.autopatch.state
         zeninf "$msg036"
     else
         fatal "$msg234"

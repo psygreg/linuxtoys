@@ -349,5 +349,7 @@
   "zash_desc": "Moderno GTK4-terminal med avanceret sessionsadministration og SSH-arbejdsflow.",
   "kind_desc": "Starteropsætning af kind og kubectl til lokal Kubernetes-udvikling.",
   "hiddify_desc": "Hiddify VPN-klient.",
-  "term_view_copy": "Kopiér outputlog"
+  "term_view_copy": "Kopiér outputlog",
+  "wayproton": "Proton i Wayland-tilstand",
+  "wayproton_desc": "Indstiller Proton til at køre i wine-wayland-tilstand som standard. Du kan selektivt indstille miljøvariablen PROTON_USE_WINE_WAYLAND=0 for spil, der måske ikke fungerer korrekt med denne tilstand i startmuligheder i Steam eller dit valgte spillancerprogram."
 }

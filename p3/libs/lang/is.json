@@ -349,5 +349,7 @@
   "zash_desc": "Nútímalegur GTK4 skjáherramatur með háþróaðri lotastjórnun og SSH-verkum.",
   "kind_desc": "Hafta kind og kubectl uppsetning fyrir staðbundna Kubernetes þróun.",
   "hiddify_desc": "Hiddify VPN biðlari.",
-  "term_view_copy": "Afrita útfærslu annál"
+  "term_view_copy": "Afrita útfærslu annál",
+  "wayproton": "Proton í Wayland-ham",
+  "wayproton_desc": "Stillir Proton til að keyra í wine-wayland-ham sjálfgefið. Þú getur stilla breytuna PROTON_USE_WINE_WAYLAND=0 fyrir leiki sem gætu ekki unnið rétt með þessum ham í ræsingarkostum í Steam eða leikjaflytjara þinni."
 }

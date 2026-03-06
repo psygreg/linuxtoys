@@ -349,5 +349,7 @@
   "zash_desc": "Kaasaegne GTK4 terminal koos täpsema istungi hallimise ja SSH töövoogudega.",
   "kind_desc": "Algse kind ja kubectl seadistus kohalikule Kubernetes arendusele.",
   "hiddify_desc": "Hiddify VPN klient.",
-  "term_view_copy": "Väljund logi kopeerimine"
+  "term_view_copy": "Väljund logi kopeerimine",
+  "wayproton": "Proton Wayland režiimis",
+  "wayproton_desc": "Määrab Proton-i käivituma wine-wayland režiimis vaikimisi. Saate selektiivselt määrata keskkonnmuutuja PROTON_USE_WINE_WAYLAND=0 mängude jaoks, mis võivad selle režiimiga korralikult tööle ei hakka Steam'i või teie valitud mängude käivitaja käivitamissuvandites."
 }

@@ -349,5 +349,7 @@
   "zash_desc": "Terminal GTK4 moderno com gerenciamento avançado de sessões e fluxos de trabalho SSH.",
   "kind_desc": "Configuração inicial de kind e kubectl para desenvolvimento local do Kubernetes.",
   "hiddify_desc": "Cliente Hiddify VPN.",
-  "term_view_copy": "Copiar log de saída"
+  "term_view_copy": "Copiar log de saída",
+  "wayproton": "Proton no modo Wayland",
+  "wayproton_desc": "Define Proton para ser executado em modo wine-wayland por padrão. Você pode definir seletivamente a variável de ambiente PROTON_USE_WINE_WAYLAND=0 para jogos que podem não funcionar corretamente com este modo nas opções de inicialização no Steam ou seu inicializador de jogos preferido."
 }

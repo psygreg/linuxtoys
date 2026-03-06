@@ -189,13 +189,13 @@ fix_intel_gtk () {
     if [[ -n "$intelGPU" ]]; then
         if echo "$intelGPU" | grep -qi 'battlemage'; then
             if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
-                echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+                echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
             fi
         fi
     fi
     if [[ -n "$nvGPU" ]]; then
         if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
-            echo "GSK_RENDERER=ngl" | sudo tee -a /etc/environment
+            echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
         fi
     fi
     unset intelGPU
@@ -327,4 +327,11 @@ EOF
     sudo chmod 644 "/etc/systemd/system/set-min-free-mem.service"
     sudo systemctl daemon-reload
     sudo systemctl enable set-min-free-mem.service
+}
+
+# make Proton run in wine-wayland mode by default
+wayland_proton_lib () {
+    if ! grep -q "^PROTON_ENABLE_WAYLAND=1" /etc/environment 2>/dev/null; then
+        echo "PROTON_ENABLE_WAYLAND=1" | sudo tee -a /etc/environment
+    fi
 }

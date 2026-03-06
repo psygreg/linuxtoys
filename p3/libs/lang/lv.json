@@ -349,5 +349,7 @@
   "zash_desc": "Moderns GTK4 terminālis ar uzlabotu sesiju pārvaldību un SSH darbplūsmām.",
   "kind_desc": "Starta kind un kubectl iestatīšana lokālai Kubernetes izstrādei.",
   "hiddify_desc": "Hiddify VPN klients.",
-  "term_view_copy": "Kopēt izslēgšanas žurnālu"
+  "term_view_copy": "Kopēt izslēgšanas žurnālu",
+  "wayproton": "Proton Wayland režīmā",
+  "wayproton_desc": "Iestata Proton palaist wine-wayland režīmā pēc noklusējuma. Jūs varat selektīvi iestatīt vides mainīgo PROTON_USE_WINE_WAYLAND=0 spēlēm, kas darbības režīmā var nenormāli darboties Steam vai jūsu izvēlētajā spēļu palaidējā."
 }

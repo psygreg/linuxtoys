@@ -329,5 +329,7 @@
   "zash_desc": "उन्नत सेशन प्रबंधन और SSH वर्कफ़्लो के साथ आधुनिक GTK4 टर्मिनल।",
   "kind_desc": "स्थानीय Kubernetes विकास के लिए स्टार्टर kind और kubectl सेटअप।",
   "hiddify_desc": "Hiddify VPN क्लायंट।",
-  "term_view_copy": "आउटपुट लॉग कॉपी करें"
+  "term_view_copy": "आउटपुट लॉग कॉपी करें",
+  "wayproton": "Wayland मोड में Proton",
+  "wayproton_desc": "Proton को डिफ़ॉल्ट रूप से wine-wayland मोड में चलाने के लिए सेट करता है। आप Steam या आपकी पसंद के गेम लॉन्चर में लॉन्च विकल्प में इस मोड के साथ ठीक से काम न करने वाली गेम्स के लिए PROTON_USE_WINE_WAYLAND=0 वातावरण वैरिएबल को चुनिंदा तरीके से सेट कर सकते हैं।"
 }

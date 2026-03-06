@@ -349,5 +349,7 @@
   "zash_desc": "Terminal GTK4 modern me menaxhim të avancuar të seancës dhe fluxe pune SSH.",
   "kind_desc": "Vendosja e fillimit të kind dhe kubectl për zhvillimin lokal të Kubernetes.",
   "hiddify_desc": "Klient Hiddify VPN.",
-  "term_view_copy": "Kopjo regjistrin e daljes"
+  "term_view_copy": "Kopjo regjistrin e daljes",
+  "wayproton": "Proton në modalitetin Wayland",
+  "wayproton_desc": "Vendos Proton për të vëndosur në modalitetin wine-wayland si parazgjedhje. Mund të vendosni selektivisht variablin e mjedisit PROTON_USE_WINE_WAYLAND=0 për lojrat që mund të mos funksionojnë siç duhet me këtë modalitet në opsionet e lançimit në Steam ose në lançimin e lojes tuaj të preferuar."
 }

@@ -38,16 +38,16 @@ sudo rm /usr/share/X11/xorg.conf.d/20-touchpad.conf
 sudo rm /etc/sysctl.d/99-splitlock.conf
 # Remove shader booster patches
 if [ -f "${HOME}/.booster" ]; then
-    echo "Removing shader booster patches..."  
+    echo "Removing shader booster patches..."
     # Function to remove shader booster lines from a config file
     remove_shader_booster_from_file() {
         local file="$1"
         if [[ -f "$file" ]]; then
             # Create a temporary file to store cleaned content
             local temp_file
-            temp_file=$(mktemp)  
+            temp_file=$(mktemp)
             # Remove shader booster related lines
-            grep -v -E '^# increase Nvidia shader cache size to 12GB$|^export __GL_SHADER_DISK_CACHE_SIZE=12000000000$|^# enforce RADV vulkan implementation$|^export AMD_VULKAN_ICD=RADV$|^# increase AMD and Intel cache size to 12GB$|^export MESA_SHADER_CACHE_MAX_SIZE=12G$' "$file" > "$temp_file" 
+            grep -v -E '^# increase Nvidia shader cache size to 12GB$|^export __GL_SHADER_DISK_CACHE_SIZE=12000000000$|^# enforce RADV vulkan implementation$|^export AMD_VULKAN_ICD=RADV$|^# increase AMD and Intel cache size to 12GB$|^export MESA_SHADER_CACHE_MAX_SIZE=12G$' "$file" > "$temp_file"
             # Replace original file only if changes were made
             if ! cmp -s "$file" "$temp_file"; then
                 mv "$temp_file" "$file"
@@ -59,27 +59,40 @@ if [ -f "${HOME}/.booster" ]; then
     }
     # Clean all potential shell configuration files
     remove_shader_booster_from_file "${HOME}/.bash_profile"
-    remove_shader_booster_from_file "${HOME}/.profile" 
+    remove_shader_booster_from_file "${HOME}/.profile"
     remove_shader_booster_from_file "${HOME}/.zshrc"
     # Remove the booster marker file
     rm -f "${HOME}/.booster"
     echo "Shader booster completely removed."
-    # revert ondemand governor
-    if [ -f /etc/systemd/system/set-ondemand-governor.service ]; then
-        if [ -f /etc/grub.d/01_intel_pstate_disable ]; then
-            sudo rm -f /etc/grub.d/01_intel_pstate_disable
-            # Update GRUB configuration
-            if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
-                sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-            elif [[ "$ID" =~ ^(arch)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-                sudo grub-mkconfig -o /boot/grub/grub.cfg
-            elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-                sudo update-grub
-            fi
+fi
+# revert ondemand governor
+if [ -f /etc/systemd/system/set-ondemand-governor.service ]; then
+    if [ -f /etc/grub.d/01_intel_pstate_disable ]; then
+        sudo rm -f /etc/grub.d/01_intel_pstate_disable
+        # Update GRUB configuration
+         if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
+            sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+        elif [[ "$ID" =~ ^(arch)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            sudo grub-mkconfig -o /boot/grub/grub.cfg
+        elif [[ "$ID_LIKE" =~ (ubuntu|debian) ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            sudo update-grub
         fi
     fi
     sudo systemctl disable set-ondemand-governor.service
     sudo rm -f /etc/systemd/system/set-ondemand-governor.service
+fi
+# revert proton wayland
+if grep -q "^PROTON_ENABLE_WAYLAND=1" /etc/environment 2>/dev/null; then
+    sudo sed -i '/^PROTON_ENABLE_WAYLAND=1/d' /etc/environment
+fi
+# revert min free mem
+if -f /etc/systemd/system/set-min-free-mem.service; then
+    sudo systemctl disable set-min-free-mem.service
+    sudo rm -f /etc/systemd/system/set-min-free-mem.service
+fi
+# revert GTK patch for Intel/Nvidia
+if grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
+    sudo sed -i '/^GSK_RENDERER=/d' /etc/environment
 fi
 rm $HOME/.local/.autopatch.state
 zeninf "$msg036"

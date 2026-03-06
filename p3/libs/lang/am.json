@@ -349,5 +349,7 @@
   "zash_desc": "ዘመናዊ GTK4 ተርሚናል ከላቀ ክፍለ-ጊዜ 리리ንግ እና SSH ሥራዎች ጋር።",
   "kind_desc": "ለአካባቢ Kubernetes ልማት ጅምር kind እና kubectl ማዋቀር።",
   "hiddify_desc": "Hiddify VPN ক্লায়েন্ট।",
-  "term_view_copy": "አউትपুට ሎግ ቅጂ"
+  "term_view_copy": "አውტပုት ሎግ ቅጂ",
+  "wayproton": "Wayland ሁነታ ላይ ፕሮቶን",
+  "wayproton_desc": "ፕሮቶን በwine-wayland ሁነታ ውስጥ ሊሰራ እንዲቀመጥ ያስተካክላል። በቅድመ-ምርጫ አማራጮች ውስጥ PROTON_USE_WINE_WAYLAND=0 አካባቢ ተለዋዋጭ ለዋይን ፕሮቶን በዚህ ሁነታ ላይ በአግባቡ ላይሳተ በተቻለ ጊዜ በተናጥል ያዋቅሩ።"
 }

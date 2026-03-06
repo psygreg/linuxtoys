@@ -349,5 +349,7 @@
   "zash_desc": "Teirminéal GTK4 nua-aimseartha le bainistiú socruithe ardleibhéal agus sreafaí oibre SSH.",
   "kind_desc": "Socrú tosaigh kind agus kubectl do fhorbairt Kubernetes áitiúil.",
   "hiddify_desc": "Cliant Hiddify VPN.",
-  "term_view_copy": "Cóipeáil an logchomhad aschuir"
+  "term_view_copy": "Cóipeáil an logchomhad aschuir",
+  "wayproton": "Proton i mód Wayland",
+  "wayproton_desc": "Socraithe Proton chun a rith i mód wine-wayland de réir a thúisce. Acmhainneach a bheith duit an athróg timpeallachta PROTON_USE_WINE_WAYLAND=0 a leagan go roghnach d'imirt nach bhféadfadh a bheith ag feidhmiú go cuí leis an mód seo i roghanna tosaithe i Steam nó i do roghtha imirt a thiomsaithe."
 }

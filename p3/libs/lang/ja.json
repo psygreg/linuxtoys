@@ -349,5 +349,7 @@
   "zash_desc": "高度なセッション管理とSSHワークフロー備えた最新のGTK4ターミナル。",
   "kind_desc": "ローカルKubernetes開発用のスターターkindとkubectlセットアップ。",
   "hiddify_desc": "Hiddify VPNクライアント。",
-  "term_view_copy": "出力ログをコピー"
+  "term_view_copy": "出力ログをコピー",
+  "wayproton": "Wayland モードの Proton",
+  "wayproton_desc": "Proton をデフォルトで wine-wayland モードで実行するように設定します。Steam または選択したゲーム ランチャーの起動オプションで、このモードで適切に機能しない可能性があるゲームの環境変数 PROTON_USE_WINE_WAYLAND=0 を選択的に設定できます。"
 }

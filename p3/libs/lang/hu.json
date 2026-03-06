@@ -349,5 +349,7 @@
   "zash_desc": "Korszerű GTK4 terminál fejlett munkamenet-kezeléssel és SSH-munkafolyamatokkal.",
   "kind_desc": "Startercél és kubectl beállítás a helyi Kubernetes fejlesztéshez.",
   "hiddify_desc": "Hiddify VPN kliens.",
-  "term_view_copy": "Kimeneti napló másolása"
+  "term_view_copy": "Kimeneti napló másolása",
+  "wayproton": "Proton Wayland módban",
+  "wayproton_desc": "A Proton-t alapértelmezésben wine-wayland módban futtatja. Szelektíven beállíthatja a PROTON_USE_WINE_WAYLAND=0 környezeti változót olyan játékokhoz, amelyek lehetséges, hogy nem működnek megfelelően ezzel a móddal a Steam vagy az Ön által kiválasztott játékindiránál."
 }

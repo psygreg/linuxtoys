@@ -348,5 +348,7 @@
   "zash_desc": "Təkmilləşdirilmiş sesiya idarəçiliyi və SSH iş axını ilə müasır GTK4 terminalı.",
   "kind_desc": "Yerli Kubernetes inkişafı üçün başlanğıc kind və kubectl quraşdırması.",
   "hiddify_desc": "Hiddify VPN müştərisi.",
-  "term_view_copy": "Çıxış Jurnalını Kopyala"
+  "term_view_copy": "Çıxış Jurnalını Kopyala",
+  "wayproton": "Wayland Rejimdə Proton",
+  "wayproton_desc": "Proton-u varsayılan olaraq wine-wayland rejimində çalışmaq üçün təyin edir. Bu rejim ilə düzgün işləməyə biləcək oyunlar üçün Steam və ya seçdiyiniz oyun başlatıcısında PROTON_USE_WINE_WAYLAND=0 mühit dəyişənini seçici olaraq təyin edə bilərsiniz."
 }

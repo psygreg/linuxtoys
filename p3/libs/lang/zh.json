@@ -351,5 +351,7 @@
   "zash_desc": "具有高级会话管理和 SSH 工作流的现代 GTK4 终端。",
   "kind_desc": "本地 Kubernetes 开发的启动 kind 和 kubectl 设置。",
   "hiddify_desc": "Hiddify VPN 客户端。",
-  "term_view_copy": "复制输出日志"
+  "term_view_copy": "复制输出日志",
+  "wayproton": "Wayland 模式中的 Proton",
+  "wayproton_desc": "将Proton设置为默认在wine-wayland模式下运行。您可以在Steam或首选的游戏启动器中的启动选项中为可能无法正确使用此模式的游戏选择性地设置环境变量PROTON_USE_WINE_WAYLAND=0。"
 }

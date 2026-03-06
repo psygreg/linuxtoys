@@ -349,5 +349,7 @@
   "zash_desc": "Sodoben terminal GTK4 s naprednim upravljanjem sej in delovnimi tokovi SSH.",
   "kind_desc": "Začetni kind in kubectl nastavi za lokalni razvoj Kubernetes.",
   "hiddify_desc": "Odjemalec Hiddify VPN.",
-  "term_view_copy": "Kopiraj izhodny dnevnik"
+  "term_view_copy": "Kopiraj izhodny dnevnik",
+  "wayproton": "Proton v načinu Wayland",
+  "wayproton_desc": "Nastavi Proton da se zažene v načinu wine-wayland kot privzeto. Lahko selektivno nastavite okoljsko spremenljivko PROTON_USE_WINE_WAYLAND=0 za igre, ki morda ne delujejo pravilno s tem načinom v možnostih zagona v Steam ali izbranem zagonu igre."
 }

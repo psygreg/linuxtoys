@@ -81,11 +81,12 @@ optimizer () {
         fix_intel_gtk
         # change intel driver to Xe on discrete GPUs
         intel_xe_lib
+        # set proton to run on wine-wayland mode by default
+        wayland_proton_lib
         # plasma VRAM usage fix - suspended for issues on some systems
         # plasma_mem_fix
         # save autopatch state
-        wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/autopatch.state
-        mv autopatch.state $HOME/.local/.autopatch.state
+        touch $HOME/.local/.autopatch.state
     else
         # update configs if already optimized
         if [ "$ID" = "bluefin" ] || [ "$ID" = "bazzite" ] || [ "$ID" = "aurora" ]; then
