@@ -107,7 +107,7 @@ _install_() {
                 dpkg -s "$pak" &>/dev/null || sudo apt install -y "$pak"
             done
             ;;
-        *arch*|*archlinux*|*cachyos*)
+        *arch*|*artix*|*archlinux*|*cachyos*)
             for pak in "${_packages[@]}"; do
                 pacman -Qi "$pak" &>/dev/null && continue
 
@@ -176,7 +176,7 @@ _lang_() {
 
 # --- System Detection ---
 
-is_arch() { [[ ("$ID" == "arch" || "$ID_LIKE" =~ "arch") && "$ID" != "cachyos" ]]; }
+is_arch() { [[ ("$ID" =~ "arch" || "$ID" == "artix" || "$ID_LIKE" =~ "arch") && "$ID" != "cachyos" ]]; }
 is_cachy() { [[ "$ID" == "cachyos" ]]; }
 is_fedora() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && ! command -v rpm-ostree &>/dev/null; }
 is_ostree() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null; }

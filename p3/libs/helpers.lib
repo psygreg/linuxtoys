@@ -64,7 +64,7 @@ multilib_chk() {
 # --- Chaotic AUR ---
 
 chaotic_aur_lib() {
-    if [[ ! "$ID" =~ ^(arch|cachyos)$ ]] && [[ ! "$ID_LIKE" =~ (arch|archlinux) ]]; then
+    if [[ ! "$ID" =~ ^(arch|artix|cachyos)$ ]] && [[ ! "$ID_LIKE" =~ (arch|archlinux) ]]; then
         fatal "$msg077" # Assuming msg077 is defined elsewhere or should be replaced with text
     fi
 
@@ -133,7 +133,7 @@ rpmfusion_chk() {
 # --- PyPI ---
 
 pip_lib() {
-    if [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" =~ (arch|archlinux) ]]; then
+    if [[ "$ID" =~ ^(arch|artix|cachyos)$ ]] || [[ "$ID_LIKE" =~ (arch|archlinux) ]]; then
         _packages=(python-pip python-pipx)
     else
         _packages=(python3-pip pipx)

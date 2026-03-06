@@ -166,7 +166,9 @@ def get_system_compat_keys():
     if id_val in ["cachyos"]:
         keys.add("cachy")
     if (
-        id_val in ["arch", "archlinux"] or "arch" in id_like or "archlinux" in id_like
+        id_val in ["arch", "archlinux", "artix"]
+        or "arch" in id_like
+        or "archlinux" in id_like
     ) and id_val != "cachyos":
         keys.add("arch")
     if id_val in ["rhel", "fedora"] or "rhel" in id_like or "fedora" in id_like:
