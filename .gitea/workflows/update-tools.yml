@@ -22,8 +22,8 @@ jobs:
     steps:
       - name: Dependencies
         run: |
-          apt update
-          apt install nodejs npm -y
+          apt update -qq
+          apt install nodejs npm -y --quiet
 
       - name: Checkout master branch
         uses: actions/checkout@v4
