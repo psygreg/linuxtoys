@@ -14,9 +14,7 @@ on:
 
 jobs:
   update-tools:
-    runs-on: docker
-    container:
-      image: node:18
+    runs-on: micro
     permissions:
       contents: write
       actions: read
