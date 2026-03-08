@@ -22,6 +22,7 @@ jobs:
     steps:
       - name: Dependencies
         run: |
+          apt update
           apt install nodejs npm -y
 
       - name: Checkout master branch
