@@ -20,10 +20,9 @@ jobs:
       actions: read
 
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
+      - name: Dependencies
+        run: |
+          apt install nodejs npm -y
 
       - name: Checkout master branch
         uses: actions/checkout@v4
