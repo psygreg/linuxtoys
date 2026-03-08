@@ -15,7 +15,7 @@ on:
 
 jobs:
   sync-gitea-to-github:
-    runs-on: micro
+    runs-on: ubuntu-latest
     permissions:
       contents: read
 
