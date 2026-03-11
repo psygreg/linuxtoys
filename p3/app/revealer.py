@@ -13,7 +13,7 @@ class SupportFooter(Gtk.Box):
         self.urls_labels = [
             ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg"),
             (
-                "https://git.linux.toys/psygreg/linuxtoys/issues/new",
+                "https://github.com/psygreg/linuxtoys/issues/new",
                 self.translations.get("report_label", "Report Bug"),
                 "report.svg",
             ),
