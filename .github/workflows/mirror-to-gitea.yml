@@ -1,10 +1,10 @@
 name: Mirror Issues and PRs to Gitea
 
-#on:
-#issues:
-#types: [opened, edited, closed, reopened, labeled, unlabeled]
-#pull_request:
-#types: [opened, edited, closed, reopened]
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  pull_request:
+    types: [opened, edited, closed, reopened]
 
 jobs:
   mirror:
