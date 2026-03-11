@@ -1,0 +1,155 @@
+name: Build DEB Package & Upload to Launchpad PPA
+
+on:
+  # Trigger on manual dispatch
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (leave empty to auto-detect from source)"
+        required: false
+        default: ""
+      upload_to_ppa:
+        description: "Upload to Launchpad PPA"
+        required: false
+        type: boolean
+        default: true
+
+  # Trigger on push to main branch (build only, no PPA upload)
+  push:
+    branches:
+      - main
+    paths:
+      - "p3/**"
+      - "src/**"
+      - "dev/build/deb/**"
+      - ".gitea/workflows/build-deb-ppa.yml"
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debhelper devscripts dput
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            # Use manual input if provided
+            VERSION="${{ github.event.inputs.version }}"
+            echo "[INFO] Using manual version: $VERSION"
+          else
+            # Extract from p3/app/updater/__init__.py __version__ variable
+            VERSION=$(grep -oP '__version__\s*=\s*"\K[^"]+' p3/app/updater/__init__.py)
+            if [ -z "$VERSION" ]; then
+              echo "[ERROR] Could not extract version from p3/app/updater/__init__.py"
+              exit 1
+            fi
+            echo "[INFO] Using version from source: $VERSION"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Setup GPG key
+        if: ${{ github.event.inputs.upload_to_ppa == 'true' }}
+        run: |
+          # Create GPG directory with proper permissions
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+
+          # Import the private key
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import --no-tty
+
+          # List imported keys to verify
+          gpg --list-secret-keys
+
+          # Set trust level for the key
+          gpg --batch --import-ownertrust <<< "$(gpg --batch --list-secret-keys --with-colons vicgregor@pm.me | grep fpr | cut -d: -f10):6:"
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "vicgregor@pm.me"
+          git config --local user.name "Victor Gregory"
+
+      - name: Build DEB package
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OUTPUT_PATH="/tmp/deb-build"
+
+          # Run the existing build script
+          bash dev/build/deb/build.sh "$VERSION" "$OUTPUT_PATH"
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Verify build artifacts
+        run: |
+          OUTPUT_PATH="/tmp/deb-build"
+          echo "Contents of build directory:"
+          ls -lah "$OUTPUT_PATH/" || echo "Build directory not found"
+
+      - name: Setup dput for PPA
+        if: ${{ github.event.inputs.upload_to_ppa == 'true' }}
+        run: |
+          mkdir -p ~/.dput.d
+          cat > ~/.dput.d/ppa << 'DPUT_CONFIG'
+          [ppa:psygreg/linuxtoys]
+          fqdn = ppa.launchpad.net
+          method = sftp
+          incoming = ~${{ secrets.LAUNCHPAD_LOGIN }}/linuxtoys/ubuntu
+          login = ${{ secrets.LAUNCHPAD_LOGIN }}
+          DPUT_CONFIG
+
+      - name: Upload to Launchpad PPA
+        if: ${{ github.event.inputs.upload_to_ppa == 'true' }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OUTPUT_PATH="/tmp/deb-build"
+
+          # Allow time for file operations to complete
+          sleep 2
+
+          # Upload source package to PPA
+          if [ -f "$OUTPUT_PATH/linuxtoys_${VERSION}-1_source.changes" ]; then
+            echo "[INFO] Uploading source package to Launchpad PPA..."
+            cd "$OUTPUT_PATH"
+            dput ppa:${{ secrets.LAUNCHPAD_LOGIN }}/linuxtoys "linuxtoys_${VERSION}-1_source.changes"
+            echo "[INFO] Upload completed successfully"
+          else
+            echo "[ERROR] Source changes file not found"
+            echo "Available files:"
+            ls -lah "$OUTPUT_PATH/" || true
+            exit 1
+          fi
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          HOME: /root
+
+      - name: Upload DEB packages as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deb-packages-${{ steps.version.outputs.version }}
+          path: /tmp/deb-build/*.deb
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload all build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-artifacts-${{ steps.version.outputs.version }}
+          path: |
+            /tmp/deb-build/*.deb
+            /tmp/deb-build/*.changes
+            /tmp/deb-build/*.dsc
+            /tmp/deb-build/*.tar.xz
+          retention-days: 7
+          if-no-files-found: warn
