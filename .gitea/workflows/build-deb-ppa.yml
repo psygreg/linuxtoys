@@ -132,42 +132,33 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           HOME: /root
 
-      - name: Prepare and upload artifacts to Gitea
+      - name: Prepare artifacts for Gitea
         if: always()
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           OUTPUT_PATH="/tmp/deb-build"
-          ARTIFACTS_DIR="artifacts"
+          ARTIFACT_PATH="artifacts-${{ steps.version.outputs.version }}"
 
-          # Create artifacts directory
-          mkdir -p "$ARTIFACTS_DIR"
+          # Create artifact directory
+          mkdir -p "$ARTIFACT_PATH"
 
           # Copy all build artifacts
           if [ -d "$OUTPUT_PATH" ]; then
-            cp "$OUTPUT_PATH"/*.deb "$ARTIFACTS_DIR/" 2>/dev/null || true
-            cp "$OUTPUT_PATH"/*.changes "$ARTIFACTS_DIR/" 2>/dev/null || true
-            cp "$OUTPUT_PATH"/*.dsc "$ARTIFACTS_DIR/" 2>/dev/null || true
-            cp "$OUTPUT_PATH"/*.tar.xz "$ARTIFACTS_DIR/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.deb "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.changes "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.dsc "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
           fi
 
           # List artifacts
-          echo "[INFO] Artifacts prepared for upload:"
-          ls -lah "$ARTIFACTS_DIR/" || echo "No artifacts found"
+          echo "[INFO] Artifacts to be uploaded:"
+          ls -lah "$ARTIFACT_PATH/" || echo "No artifacts found"
 
-          # Create tar archive for Gitea
-          ARCHIVE_NAME="deb-packages-${VERSION}.tar.gz"
-          if [ -n "$(ls -A $ARTIFACTS_DIR 2>/dev/null)" ]; then
-            tar -czf "$ARCHIVE_NAME" -C "$ARTIFACTS_DIR" .
-            echo "[INFO] Created archive: $ARCHIVE_NAME"
-
-            # Move archive to standard Gitea artifacts location if it exists
-            if [ -d "${{ github.workspace }}/artifacts" ]; then
-              mv "$ARCHIVE_NAME" "${{ github.workspace }}/artifacts/"
-            fi
-
-            # List final artifacts
-            echo "[INFO] Final artifacts:"
-            find . -maxdepth 1 -name "*.tar.gz" -o -name "*.deb" | head -20
-          else
-            echo "[WARN] No artifacts found to upload"
-          fi
+      - name: Upload artifacts to Gitea
+        if: always()
+        uses: https://gitea.com/actions/upload-artifact@v3
+        with:
+          name: deb-packages-${{ steps.version.outputs.version }}
+          path: artifacts-${{ steps.version.outputs.version }}/
+          retention-days: 7
+          if-no-files-found: warn
