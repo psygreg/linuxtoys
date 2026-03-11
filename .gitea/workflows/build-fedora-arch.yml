@@ -21,20 +21,25 @@ on:
       - ".gitea/workflows/build-fedora-arch.yml"
 
 jobs:
-  build-packages:
+  build-fedora-arch:
     runs-on: ubuntu-latest
     container:
       image: fedora:latest
 
     steps:
+      - name: Install Node.js and git (required for actions/checkout)
+        run: |
+          dnf update -y
+          dnf install -y nodejs git
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
+      - name: Install build dependencies
         run: |
-          dnf install -y rpm-build rpmbuild gcc python3 python3-devel tar xz gzip git desktop-file-utils nodejs
+          dnf install -y @development-tools python3-devel rpm-build tar xz gzip binutils fakeroot base-devel desktop-file-utils
 
       - name: Determine version
         id: version
@@ -55,23 +60,20 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION"
 
-      - name: Build RPM package (COPR)
+      - name: Build Fedora/RPM package (COPR)
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          OUTPUT_PATH="/tmp/copr-build"
+          OUTPUT_PATH="/tmp/fedora-build"
 
           # Run the COPR build script
           bash dev/build/copr/build.sh "$VERSION" "$OUTPUT_PATH"
         env:
           HOME: /root
 
-      - name: Build Arch package
+      - name: Build Arch Linux package
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          OUTPUT_PATH="/tmp/pkg-build"
-
-          # Install makepkg dependencies
-          dnf install -y binutils fakeroot base-devel
+          OUTPUT_PATH="/tmp/arch-build"
 
           # Run the Arch build script
           bash dev/build/pkg/build.sh "$VERSION" "$OUTPUT_PATH"
@@ -80,14 +82,16 @@ jobs:
 
       - name: Verify build artifacts
         run: |
-          echo "=== COPR Build Artifacts ==="
-          ls -lah /tmp/copr-build/ || echo "COPR build directory not found"
+          echo "=== Fedora/RPM build artifacts ==="
+          ls -lah /tmp/fedora-build/ || echo "Fedora build directory not found"
+          find /tmp/fedora-build/ -type f \( -name "*.rpm" -o -name "*.srpm" \) 2>/dev/null || echo "No RPM artifacts found"
 
           echo ""
-          echo "=== Arch Build Artifacts ==="
-          ls -lah /tmp/pkg-build/ || echo "Arch build directory not found"
+          echo "=== Arch build artifacts ==="
+          ls -lah /tmp/arch-build/ || echo "Arch build directory not found"
+          find /tmp/arch-build/ -type f \( -name "*.tar.xz" -o -name "PKGBUILD" -o -name "*.pkg.tar.zst" \) 2>/dev/null || echo "No Arch artifacts found"
 
-      - name: Prepare artifacts for upload
+      - name: Prepare artifacts for Gitea
         if: always()
         run: |
           VERSION="${{ steps.version.outputs.version }}"
@@ -96,17 +100,16 @@ jobs:
           # Create artifact directory
           mkdir -p "$ARTIFACT_PATH"
 
-          # Copy RPM and SRPM packages from COPR build
-          if [ -d "/tmp/copr-build" ]; then
-            cp /tmp/copr-build/RPMS/*/*.rpm "$ARTIFACT_PATH/" 2>/dev/null || true
-            cp /tmp/copr-build/SRPMS/*.rpm "$ARTIFACT_PATH/" 2>/dev/null || true
+          # Copy RPM and SRPM packages from Fedora build
+          if [ -d "/tmp/fedora-build" ]; then
+            find /tmp/fedora-build -type f \( -name "*.rpm" -o -name "*.srpm" \) -exec cp {} "$ARTIFACT_PATH/" \;
           fi
 
           # Copy Arch Linux artifacts
-          if [ -d "/tmp/pkg-build" ]; then
-            cp /tmp/pkg-build/PKGBUILD "$ARTIFACT_PATH/" 2>/dev/null || true
-            cp /tmp/pkg-build/linuxtoys-${VERSION}.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
-            cp /tmp/pkg-build/*.pkg.tar.zst "$ARTIFACT_PATH/" 2>/dev/null || true
+          if [ -d "/tmp/arch-build" ]; then
+            cp /tmp/arch-build/PKGBUILD "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp /tmp/arch-build/linuxtoys-*.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp /tmp/arch-build/*.pkg.tar.zst "$ARTIFACT_PATH/" 2>/dev/null || true
           fi
 
           # List artifacts
