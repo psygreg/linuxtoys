@@ -24,9 +24,9 @@ jobs:
       - name: Run mirror script
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
-          GITEA_URL: ${{ secrets.GITEA_URL }}
-          GITEA_OWNER: ${{ secrets.GITEA_OWNER }}
-          GITEA_REPO: ${{ secrets.GITEA_REPO }}
+          GITEA_URL: ${{ vars.GITEA_URL }}
+          GITEA_OWNER: ${{ vars.GITEA_OWNER }}
+          GITEA_REPO: ${{ vars.GITEA_REPO }}
           EVENT_NAME: ${{ github.event_name }}
           EVENT_ACTION: ${{ github.event.action }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
