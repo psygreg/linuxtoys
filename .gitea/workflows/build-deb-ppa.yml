@@ -14,15 +14,12 @@ on:
         type: boolean
         default: true
 
-  # Trigger on push to main branch (build only, no PPA upload)
+  # Trigger on push to main branch (automatically upload to PPA on version change)
   push:
     branches:
       - main
     paths:
-      - "p3/**"
-      - "src/**"
-      - "dev/build/deb/**"
-      - ".gitea/workflows/build-deb-ppa.yml"
+      - "p3/app/updater/__init__.py"
 
 jobs:
   build-and-upload:
@@ -39,7 +36,7 @@ jobs:
           apt update -qq
           apt install -y -qq debhelper devscripts dput
 
-      - name: Determine version
+      - name: Determine version and upload decision
         id: version
         run: |
           if [ -n "${{ github.event.inputs.version }}" ]; then
@@ -56,10 +53,21 @@ jobs:
             echo "[INFO] Using version from source: $VERSION"
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          # Determine if we should upload to PPA
+          if [ -n "${{ github.event.inputs.upload_to_ppa }}" ]; then
+            # Use manual input if provided (workflow_dispatch)
+            UPLOAD_TO_PPA="${{ github.event.inputs.upload_to_ppa }}"
+          else
+            # For automatic triggers (push), default to true
+            UPLOAD_TO_PPA="true"
+          fi
+          echo "upload_to_ppa=$UPLOAD_TO_PPA" >> $GITHUB_OUTPUT
+          echo "[INFO] Upload to PPA: $UPLOAD_TO_PPA"
           echo "Building version: $VERSION"
 
       - name: Setup GPG key
-        if: ${{ github.event.inputs.upload_to_ppa == 'true' }}
+        if: ${{ steps.version.outputs.upload_to_ppa == 'true' }}
         run: |
           # Create GPG directory with proper permissions
           mkdir -p ~/.gnupg
@@ -96,7 +104,7 @@ jobs:
           ls -lah "$OUTPUT_PATH/" || echo "Build directory not found"
 
       - name: Setup dput for PPA
-        if: ${{ github.event.inputs.upload_to_ppa == 'true' }}
+        if: ${{ steps.version.outputs.upload_to_ppa == 'true' }}
         run: |
           mkdir -p ~/.dput.d
           cat > ~/.dput.d/ppa << 'DPUT_CONFIG'
@@ -108,7 +116,7 @@ jobs:
           DPUT_CONFIG
 
       - name: Upload to Launchpad PPA
-        if: ${{ github.event.inputs.upload_to_ppa == 'true' }}
+        if: ${{ steps.version.outputs.upload_to_ppa == 'true' }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           OUTPUT_PATH="/tmp/deb-build"

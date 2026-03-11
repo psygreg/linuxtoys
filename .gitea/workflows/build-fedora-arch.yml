@@ -14,11 +14,7 @@ on:
     branches:
       - main
     paths:
-      - "p3/**"
-      - "src/**"
-      - "dev/build/copr/**"
-      - "dev/build/pkg/**"
-      - ".gitea/workflows/build-fedora-arch.yml"
+      - "p3/app/updater/__init__.py"
 
 jobs:
   build-fedora-arch:
