@@ -39,47 +39,74 @@ try {
 }
 
 const baseUrl = `${GITEA_URL}/api/v1/repos/${GITEA_OWNER}/${GITEA_REPO}`;
-const headers = {
+
+// Headers with User-Agent to bypass Cloudflare challenges
+const getHeaders = () => ({
   Authorization: `token ${GITEA_TOKEN}`,
   "Content-Type": "application/json",
-};
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+});
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 async function getIssue(number) {
-  const res = await fetch(`${baseUrl}/issues/${number}`, { headers });
+  const url = `${baseUrl}/issues/${number}`;
+  const res = await fetch(url, {
+    headers: getHeaders(),
+  });
   if (res.status === 404) return null;
-  if (!res.ok)
-    throw new Error(`GET issue failed: ${res.status} ${await res.text()}`);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `GET issue failed: ${res.status} ${text.substring(0, 200)}`,
+    );
+  }
   return res.json();
 }
 
 async function createIssue(payload) {
   const res = await fetch(`${baseUrl}/issues`, {
     method: "POST",
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify(payload),
   });
-  if (!res.ok)
-    throw new Error(`POST issue failed: ${res.status} ${await res.text()}`);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `POST issue failed: ${res.status} ${text.substring(0, 200)}`,
+    );
+  }
   return res.json();
 }
 
 async function updateIssue(number, payload) {
-  const res = await fetch(`${baseUrl}/issues/${number}`, {
+  const url = `${baseUrl}/issues/${number}`;
+  const res = await fetch(url, {
     method: "PATCH",
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify(payload),
   });
-  if (!res.ok)
-    throw new Error(`PATCH issue failed: ${res.status} ${await res.text()}`);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `PATCH issue failed: ${res.status} ${text.substring(0, 200)}`,
+    );
+  }
   return res.json();
 }
 
 async function ensureLabel(name, color = "ededed") {
   // List existing labels and find a match
-  const res = await fetch(`${baseUrl}/labels?limit=50`, { headers });
-  if (!res.ok) throw new Error(`GET labels failed: ${res.status}`);
+  const res = await fetch(`${baseUrl}/labels?limit=50`, {
+    headers: getHeaders(),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `GET labels failed: ${res.status} ${text.substring(0, 200)}`,
+    );
+  }
   const labels = await res.json();
   const existing = labels.find((l) => l.name === name);
   if (existing) return existing.id;
@@ -87,10 +114,15 @@ async function ensureLabel(name, color = "ededed") {
   // Create it if missing
   const create = await fetch(`${baseUrl}/labels`, {
     method: "POST",
-    headers,
+    headers: getHeaders(),
     body: JSON.stringify({ name, color }),
   });
-  if (!create.ok) throw new Error(`POST label failed: ${create.status}`);
+  if (!create.ok) {
+    const text = await create.text();
+    throw new Error(
+      `POST label failed: ${create.status} ${text.substring(0, 200)}`,
+    );
+  }
   const label = await create.json();
   return label.id;
 }
