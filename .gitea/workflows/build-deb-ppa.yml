@@ -156,7 +156,7 @@ jobs:
 
       - name: Upload artifacts to Gitea
         if: always()
-        uses: gitea/upload-artifact@v4
+        uses: gitea.com/actions/upload-artifact@v4
         with:
           name: deb-packages-${{ steps.version.outputs.version }}
           path: artifacts-${{ steps.version.outputs.version }}/
