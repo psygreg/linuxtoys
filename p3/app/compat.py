@@ -113,7 +113,7 @@ def is_supported_system():
         "ostree",
         "ublue",
         "zorin",
-        "solus",
+        # "solus", ## TODO finish script adjustments for solus and re-enable this key
     }
 
     # Check if any OS compatibility key matches
