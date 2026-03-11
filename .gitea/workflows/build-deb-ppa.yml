@@ -36,8 +36,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y debhelper devscripts dput
+          sudo apt-get update -y --quiet
+          sudo apt-get install -y debhelper devscripts dput --quiet
 
       - name: Determine version
         id: version
@@ -132,24 +132,33 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           HOME: /root
 
-      - name: Upload DEB packages as artifact
-        uses: actions/upload-artifact@v4
+      - name: Prepare artifacts for Gitea
         if: always()
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OUTPUT_PATH="/tmp/deb-build"
+          ARTIFACT_PATH="artifacts-${{ steps.version.outputs.version }}"
+
+          # Create artifact directory
+          mkdir -p "$ARTIFACT_PATH"
+
+          # Copy all build artifacts
+          if [ -d "$OUTPUT_PATH" ]; then
+            cp "$OUTPUT_PATH"/*.deb "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.changes "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.dsc "$ARTIFACT_PATH/" 2>/dev/null || true
+            cp "$OUTPUT_PATH"/*.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
+          fi
+
+          # List artifacts
+          echo "[INFO] Artifacts to be uploaded:"
+          ls -lah "$ARTIFACT_PATH/" || echo "No artifacts found"
+
+      - name: Upload artifacts to Gitea
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: deb-packages-${{ steps.version.outputs.version }}
-          path: /tmp/deb-build/*.deb
-          retention-days: 7
-          if-no-files-found: warn
-
-      - name: Upload all build artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: build-artifacts-${{ steps.version.outputs.version }}
-          path: |
-            /tmp/deb-build/*.deb
-            /tmp/deb-build/*.changes
-            /tmp/deb-build/*.dsc
-            /tmp/deb-build/*.tar.xz
+          path: artifacts-${{ steps.version.outputs.version }}/
           retention-days: 7
           if-no-files-found: warn
