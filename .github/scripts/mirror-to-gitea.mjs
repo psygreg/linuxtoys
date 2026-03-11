@@ -18,6 +18,26 @@ const {
   PR_URL,
 } = process.env;
 
+// Validate required environment variables
+const requiredEnvVars = [
+  "GITEA_TOKEN",
+  "GITEA_URL",
+  "GITEA_OWNER",
+  "GITEA_REPO",
+];
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+
+// Validate GITEA_URL is a valid URL
+try {
+  new URL(GITEA_URL);
+} catch {
+  throw new Error(`Invalid GITEA_URL: "${GITEA_URL}" is not a valid URL`);
+}
+
 const baseUrl = `${GITEA_URL}/api/v1/repos/${GITEA_OWNER}/${GITEA_REPO}`;
 const headers = {
   Authorization: `token ${GITEA_TOKEN}`,
@@ -145,4 +165,7 @@ async function mirrorPR() {
     console.error("Mirror failed:", err.message);
     process.exit(1);
   }
-})();
+})().catch((err) => {
+  console.error("Fatal error:", err.message);
+  process.exit(1);
+});
