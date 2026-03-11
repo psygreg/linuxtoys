@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dnf install -y rpm-build rpmbuild gcc python3 python3-devel tar xz gzip git desktop-file-utils
+          dnf install -y rpm-build rpmbuild gcc python3 python3-devel tar xz gzip git desktop-file-utils nodejs
 
       - name: Determine version
         id: version
