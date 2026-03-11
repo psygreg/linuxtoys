@@ -12,7 +12,7 @@ on:
   # Trigger on push to main branch
   push:
     branches:
-      - main
+      - master
     paths:
       - "p3/app/updater/__init__.py"
 
