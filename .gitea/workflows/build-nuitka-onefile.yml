@@ -15,8 +15,6 @@ on:
       - master
     paths:
       - "p3/app/updater/__init__.py"
-      - "p3/run.py"
-      - "p3/requirements.txt"
 
 jobs:
   build-nuitka-onefile:
