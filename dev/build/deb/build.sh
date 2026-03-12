@@ -1,32 +1,25 @@
 #!/bin/bash
 # Debian/DEB build script for LinuxToys
-# Usage: build.sh <version> <output_path> <nuitka_binary_path>
-# Example: build.sh 1.1 /tmp/builds /path/to/linuxtoys.bin
+# Usage: build.sh <version> <output_path>
+# Example: build.sh 1.1 /tmp/builds
+# NOTE: This script expects the Nuitka artifact (linuxtoys.bin) to be available
 
 ROOT_DIR="$PWD"
 while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 source "$ROOT_DIR/dev/libs/utils.lib"
 
 # Check CLI arguments
-if [ $# -ne 3 ]; then
-    _msg error "Usage: $0 <version> <output_path> <nuitka_binary_path>"
-    _msg info "Example: $0 1.1 /tmp/builds /path/to/linuxtoys.bin"
+if [ $# -ne 2 ]; then
+    _msg error "Usage: $0 <version> <output_path>"
+    _msg info "Example: $0 1.1 /tmp/builds"
     exit 1
 fi
 
 LT_VERSION="$1"
 OUTPUT_PATH="$2"
-NUITKA_BINARY="$3"
 
 _msg info "Building LinuxToys version $LT_VERSION for Debian/Ubuntu (Nuitka binary)..."
 _msg info "Output path: $OUTPUT_PATH"
-_msg info "Using Nuitka binary: $NUITKA_BINARY"
-
-# Verify the Nuitka binary exists
-if [ ! -f "$NUITKA_BINARY" ]; then
-    _msg error "Nuitka binary not found at: $NUITKA_BINARY"
-    exit 1
-fi
 
 # Delete output directory if it exists
 rm -rf "$OUTPUT_PATH"
@@ -38,12 +31,69 @@ mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps"
 
-_msg info "Copying Nuitka binary to package..."
-cp "$NUITKA_BINARY" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/linuxtoys.bin"
+# Find and extract the Nuitka artifact
+_msg info "Looking for Nuitka artifact..."
+NUITKA_ARTIFACT=""
+
+# Check multiple possible locations for the artifact
+# 1. Current working directory nuitka-artifacts (from workflow dispatch)
+if [ -d "./nuitka-artifacts" ]; then
+    NUITKA_ARTIFACT=$(find "./nuitka-artifacts" -type f \( -name "*.zip" -o -name "linuxtoys.bin" \) | head -1)
+    if [ -n "$NUITKA_ARTIFACT" ]; then
+        _msg info "Found artifact in ./nuitka-artifacts"
+    fi
+fi
+
+# 2. Repository root nuitka-artifacts
+if [ -z "$NUITKA_ARTIFACT" ] && [ -d "$ROOT_DIR/nuitka-artifacts" ]; then
+    NUITKA_ARTIFACT=$(find "$ROOT_DIR/nuitka-artifacts" -type f \( -name "*.zip" -o -name "linuxtoys.bin" \) | head -1)
+    if [ -n "$NUITKA_ARTIFACT" ]; then
+        _msg info "Found artifact in $ROOT_DIR/nuitka-artifacts"
+    fi
+fi
+
+# 3. Common build location
+if [ -z "$NUITKA_ARTIFACT" ] && [ -f "/tmp/nuitka-build/linuxtoys.bin" ]; then
+    NUITKA_ARTIFACT="/tmp/nuitka-build/linuxtoys.bin"
+    _msg info "Found artifact in /tmp/nuitka-build"
+fi
+
+# If still not found, show error and exit
+if [ -z "$NUITKA_ARTIFACT" ] || [ ! -e "$NUITKA_ARTIFACT" ]; then
+    _msg error "Nuitka artifact (linuxtoys.bin or .zip) not found!"
+    _msg error "Expected locations checked:"
+    _msg error "  1. ./nuitka-artifacts/"
+    _msg error "  2. $ROOT_DIR/nuitka-artifacts/"
+    _msg error "  3. /tmp/nuitka-build/linuxtoys.bin"
+    _msg error ""
+    _msg error "Available files:"
+    [ -d "./nuitka-artifacts" ] && ls -la "./nuitka-artifacts/" || _msg error "  ./nuitka-artifacts/ does not exist"
+    [ -d "$ROOT_DIR/nuitka-artifacts" ] && ls -la "$ROOT_DIR/nuitka-artifacts/" || _msg error "  $ROOT_DIR/nuitka-artifacts/ does not exist"
+    [ -d "/tmp/nuitka-build" ] && ls -la "/tmp/nuitka-build/" || _msg error "  /tmp/nuitka-build/ does not exist"
+    exit 1
+fi
+
+_msg info "Using Nuitka artifact: $NUITKA_ARTIFACT"
+
+# Extract or copy the artifact
+if [ -f "$NUITKA_ARTIFACT" ]; then
+    if [[ "$NUITKA_ARTIFACT" == *.zip ]]; then
+        _msg info "Extracting linuxtoys.bin from zip artifact..."
+        unzip -q "$NUITKA_ARTIFACT" -d "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/"
+    else
+        _msg info "Copying Nuitka binary artifact..."
+        cp "$NUITKA_ARTIFACT" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/linuxtoys.bin"
+    fi
+else
+    _msg error "Nuitka artifact not found at: $NUITKA_ARTIFACT"
+    exit 1
+fi
 
 # Verify linuxtoys.bin exists
 if [ ! -f "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/linuxtoys.bin" ]; then
-    _msg error "Failed to copy linuxtoys.bin to package!"
+    _msg error "linuxtoys.bin not found in extracted artifact!"
+    _msg info "Contents of artifact extraction:"
+    ls -la "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" || true
     exit 1
 fi
 
