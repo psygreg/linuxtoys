@@ -14,12 +14,14 @@ on:
         type: boolean
         default: true
 
-  # Trigger on push to main branch (automatically upload to PPA on version change)
-  push:
+  # Trigger on successful completion of build-nuitka-onefile workflow
+  workflow_run:
+    workflows:
+      - "Build Nuitka One-File Binary"
+    types:
+      - completed
     branches:
       - master
-    paths:
-      - "p3/app/updater/__init__.py"
 
 jobs:
   build-and-upload:
@@ -30,6 +32,46 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Download Nuitka artifacts
+        if: github.event_name == 'workflow_run'
+        run: |
+          # Get the latest successful run of build-nuitka-onefile workflow
+          WORKFLOW_RUN_ID="${{ github.event.workflow_run.id }}"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
+
+          echo "[INFO] Downloading artifacts from workflow run: $WORKFLOW_RUN_ID"
+
+          # Create directory for artifacts
+          mkdir -p ./nuitka-artifacts
+
+          # Query Gitea API for artifacts from this workflow run
+          ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$WORKFLOW_RUN_ID/artifacts" | \
+            jq -r '.artifacts[] | .id')
+
+          if [ -z "$ARTIFACTS" ]; then
+            echo "[WARNING] No artifacts found for workflow run $WORKFLOW_RUN_ID"
+            exit 0
+          fi
+
+          # Download each artifact
+          for ARTIFACT_ID in $ARTIFACTS; do
+            echo "[INFO] Downloading artifact: $ARTIFACT_ID"
+            curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
+              -o "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" \
+              "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts/$ARTIFACT_ID/download"
+
+            # Extract the artifact
+            if [ -f "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" ]; then
+              unzip -q "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" -d "./nuitka-artifacts/"
+              rm "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip"
+            fi
+          done
+
+          echo "[INFO] Artifacts downloaded and extracted"
+          ls -lah ./nuitka-artifacts/ || echo "No artifacts found"
 
       - name: Install dependencies
         run: |
@@ -59,7 +101,7 @@ jobs:
             # Use manual input if provided (workflow_dispatch)
             UPLOAD_TO_PPA="${{ github.event.inputs.upload_to_ppa }}"
           else
-            # For automatic triggers (push), default to true
+            # For automatic triggers (push or workflow_run), default to true
             UPLOAD_TO_PPA="true"
           fi
           echo "upload_to_ppa=$UPLOAD_TO_PPA" >> $GITHUB_OUTPUT
@@ -156,6 +198,11 @@ jobs:
             cp "$OUTPUT_PATH"/*.changes "$ARTIFACT_PATH/" 2>/dev/null || true
             cp "$OUTPUT_PATH"/*.dsc "$ARTIFACT_PATH/" 2>/dev/null || true
             cp "$OUTPUT_PATH"/*.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
+          fi
+
+          # Also copy Nuitka artifacts if they were downloaded
+          if [ -d "./nuitka-artifacts" ]; then
+            find ./nuitka-artifacts -type f -exec cp {} "$ARTIFACT_PATH/" \; 2>/dev/null || true
           fi
 
           # List artifacts

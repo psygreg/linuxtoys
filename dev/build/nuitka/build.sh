@@ -135,6 +135,10 @@ $NUITKA --onefile --follow-imports --output-dir="$OUTPUT_PATH" \
 
 if [ $? -eq 0 ]; then
     _msg info "Nuitka build successful! Artifacts are in $OUTPUT_PATH"
+    if [[ -f "$OUTPUT_PATH/run.bin" ]]; then
+        mv "$OUTPUT_PATH/run.bin" "$OUTPUT_PATH/linuxtoys.bin"
+        _msg info "Renamed run.bin to linuxtoys.bin"
+    fi
     _msg info "Deleting venv..."
     rm -rf "$VENV_PATH"
 else

@@ -1,6 +1,15 @@
 name: Build Fedora & Arch Packages
 
 on:
+  # Trigger on successful completion of build-nuitka-onefile workflow
+  workflow_run:
+    workflows:
+      - "Build Nuitka One-File Binary"
+    types:
+      - completed
+    branches:
+      - master
+
   # Trigger on manual dispatch
   workflow_dispatch:
     inputs:
@@ -8,13 +17,6 @@ on:
         description: "Version to build (leave empty to auto-detect from source)"
         required: false
         default: ""
-
-  # Trigger on push to main branch
-  push:
-    branches:
-      - master
-    paths:
-      - "p3/app/updater/__init__.py"
 
 jobs:
   build-fedora-arch:
@@ -32,6 +34,46 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Download Nuitka artifacts
+        if: github.event_name == 'workflow_run'
+        run: |
+          # Get the latest successful run of build-nuitka-onefile workflow
+          WORKFLOW_RUN_ID="${{ github.event.workflow_run.id }}"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
+
+          echo "[INFO] Downloading artifacts from workflow run: $WORKFLOW_RUN_ID"
+
+          # Create directory for artifacts
+          mkdir -p ./nuitka-artifacts
+
+          # Query Gitea API for artifacts from this workflow run
+          ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$WORKFLOW_RUN_ID/artifacts" | \
+            jq -r '.artifacts[] | .id')
+
+          if [ -z "$ARTIFACTS" ]; then
+            echo "[WARNING] No artifacts found for workflow run $WORKFLOW_RUN_ID"
+            exit 0
+          fi
+
+          # Download each artifact
+          for ARTIFACT_ID in $ARTIFACTS; do
+            echo "[INFO] Downloading artifact: $ARTIFACT_ID"
+            curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
+              -o "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" \
+              "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts/$ARTIFACT_ID/download"
+
+            # Extract the artifact
+            if [ -f "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" ]; then
+              unzip -q "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" -d "./nuitka-artifacts/"
+              rm "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip"
+            fi
+          done
+
+          echo "[INFO] Artifacts downloaded and extracted"
+          ls -lah ./nuitka-artifacts/ || echo "No artifacts found"
 
       - name: Install build dependencies
         run: |
@@ -106,6 +148,11 @@ jobs:
             cp /tmp/arch-build/PKGBUILD "$ARTIFACT_PATH/" 2>/dev/null || true
             cp /tmp/arch-build/linuxtoys-*.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
             cp /tmp/arch-build/*.pkg.tar.zst "$ARTIFACT_PATH/" 2>/dev/null || true
+          fi
+
+          # Also copy Nuitka artifacts if they were downloaded
+          if [ -d "./nuitka-artifacts" ]; then
+            find ./nuitka-artifacts -type f -exec cp {} "$ARTIFACT_PATH/" \; 2>/dev/null || true
           fi
 
           # List artifacts
