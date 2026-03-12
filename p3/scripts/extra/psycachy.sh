@@ -40,12 +40,14 @@ psycachy_ubuntu () {
     cd $HOME
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy_${kver_ubuntu}-3_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-libc-dev_${kver_ubuntu}-3_amd64.deb"
 
     sleep 1
-    sudo dpkg -i linux-image-psycachy_${kver_ubuntu}-3_amd64.deb linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb || exit 10
+    sudo dpkg -i linux-image-psycachy_${kver_ubuntu}-3_amd64.deb linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb linux-libc-dev_${kver_ubuntu}-3_amd64.deb || exit 10
     sleep 1
     rm linux-image-psycachy_${kver_ubuntu}-3_amd64.deb
     rm linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb
+    rm linux-libc-dev_${kver_ubuntu}-3_amd64.deb
 
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -qi "secureboot enabled"; then
