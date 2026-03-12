@@ -39,7 +39,7 @@ def get_current_kernel():
 def get_latest_psycachy_releases():
     """
     Fetch the latest psycachy kernel releases from GitHub.
-    Returns dict with 'std', 'lts', and 'ubuntu' keys containing version if successful, None otherwise.
+    Returns dict with 'ubuntu' key containing version if successful, None otherwise.
     """
     try:
         api_url = "https://api.github.com/repos/psygreg/linux-psycachy/releases"
@@ -50,19 +50,18 @@ def get_latest_psycachy_releases():
             if response.status == 200:
                 releases = json.loads(response.read().decode("utf-8"))
 
-                # Find latest STD, LTS, and Ubuntu releases
-                ubuntu_tag = None
+                # Find latest Ubuntu release by checking release name
+                ubuntu_version = None
 
                 for release in releases:
-                    tag = release.get("tag_name", "")
-                    if tag.startswith("Ubuntu-") and ubuntu_tag is None:
-                        ubuntu_tag = tag
-                    if ubuntu_tag:
+                    name = release.get("name", "")
+                    if name.startswith("Ubuntu-") and ubuntu_version is None:
+                        # Extract version from name like "Ubuntu-6.17.13"
+                        ubuntu_version = name.replace("Ubuntu-", "")
+                    if ubuntu_version:
                         break
 
-                return {
-                    "ubuntu": ubuntu_tag.replace("Ubuntu-", "") if ubuntu_tag else None
-                }
+                return {"ubuntu": ubuntu_version}
     except Exception as e:
         print(f"Error fetching psycachy releases: {e}")
         return None

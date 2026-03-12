@@ -7,7 +7,7 @@
 # reboot: yes
 # noconfirm: yes
 # nocontainer
-# repo: https://github.com/psycachy/psycachy
+# repo: https://git.linux.toys/psygreg/linux-psycachy
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -18,39 +18,38 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 # get current running kernel version (just the version number)
 current_kver="$(uname -r | cut -d'-' -f1)"
-# get all Ubuntu tags and find a match with current kernel version
+# get all tags and find a match with current kernel version
 ubuntu_tag=""
 kver_ubuntu=""
-# fetch all Ubuntu tags and iterate to find a match
+# fetch all tags and iterate to find a match
 while IFS= read -r tag; do
     # skip empty lines
     [ -z "$tag" ] && continue
 
-    tag_version="$(echo "$tag" | cut -d'-' -f2-)"
-    if [ "$tag_version" = "$current_kver" ]; then
+    if [ "$tag" = "$current_kver" ]; then
         ubuntu_tag="$tag"
-        kver_ubuntu="$tag_version"
+        kver_ubuntu="$tag"
         break
     fi
-done < <(curl -s "https://api.github.com/repos/psycachy/psycachy/releases" | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4 | grep -i '^Ubuntu-')
+done < <(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
 
 # early sudo request - fixes error obtaining sudo
 sudo_rq
 # psycachy for ubuntu lts with dkms support
 psycachy_ubuntu () {
     cd $HOME
-    wget "https://github.com/psycachy/psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
-    wget "https://github.com/psycachy/psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb"
-    wget "https://github.com/psycachy/psycachy/releases/download/${ubuntu_tag}/linux-libc-dev_${kver_ubuntu}-1_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb"
+    wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy_${kver_ubuntu}-3_amd64.deb"
+
     sleep 1
-    sudo dpkg -i linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb linux-libc-dev_${kver_ubuntu}-1_amd64.deb || exit 10
+    sudo dpkg -i linux-image-psycachy_${kver_ubuntu}-3_amd64.deb linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb || exit 10
     sleep 1
-    rm linux-image-psycachy-lts_${kver_ubuntu}-1_amd64.deb
-    rm linux-headers-psycachy-lts_${kver_ubuntu}-1_amd64.deb
-    rm linux-libc-dev_${kver_ubuntu}-1_amd64.deb
+    rm linux-image-psycachy_${kver_ubuntu}-3_amd64.deb
+    rm linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb
+
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -qi "secureboot enabled"; then
-        bash <(curl -s https://raw.githubusercontent.com/psycachy/psycachy/Ubuntu-6.14.11/secureboot/create-key.sh) -u
+        bash <(curl -s https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/create-key.sh) -o /tmp/create-key.sh && chmod +x /tmp/create-key.sh && /tmp/create-key.sh -u
     fi
     zeninf "Tasks completed. Remember to reinstall any DKMS modules (e.g. NVIDIA) before rebooting to use the new kernel."
 }
@@ -83,7 +82,7 @@ else
 
         case $CHOICE in
         "Not available for your OS") exit 100 ;;
-        "Ubuntu LTS 24 with DKMS support") psycachy_ubuntu && exit 0 ;;
+        "Ubuntu with DKMS support") psycachy_ubuntu && exit 0 ;;
         Cancel | q) exit 100 ;;
         *) echo "Invalid Option" ;;
         esac
