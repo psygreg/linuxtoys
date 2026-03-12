@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download Nuitka artifacts
-        if: github.event_name == 'workflow_run'
+        # if: github.event_name == 'workflow_run'
         run: |
           # Get the latest successful run of build-nuitka-onefile workflow
           WORKFLOW_RUN_ID="${{ github.event.workflow_run.id }}"
