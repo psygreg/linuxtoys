@@ -4,6 +4,7 @@
 # description: stoat_desc
 # icon: stoat.png
 # repo: https://stoat.chat
+# compat: none
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
