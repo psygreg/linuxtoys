@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash git curl wget zenity gtk3 vte291
+Requires:       bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291
 BuildRequires:  desktop-file-utils
 
 %description
@@ -24,11 +24,16 @@ mkdir -p %{buildroot}/usr/share/linuxtoys/
 mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 mkdir -p %{buildroot}/usr/share/applications/
 
-# Install the main executable wrapper script
+# Install the main executable script
 install -m 755 usr/bin/linuxtoys %{buildroot}/usr/bin/
 
-# Install the Nuitka compiled binary
-install -m 755 usr/share/linuxtoys/linuxtoys.bin %{buildroot}/usr/share/linuxtoys/
+# Install the Python application directory with all subdirectories
+cp -rf usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
+
+# Set proper permissions for executable files
+chmod +x %{buildroot}/usr/share/linuxtoys/run.py
+find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
+find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 
 # Install icon and desktop file
 install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
@@ -40,12 +45,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root, -)
 /usr/bin/linuxtoys
-/usr/share/linuxtoys/linuxtoys.bin
+/usr/share/linuxtoys
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.svg
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
 * Wed Mar 11 2026 Victor Gregory <psygreg@pm.me> - 5.6.15
-- Updated to Nuitka-compiled binary for improved performance
-- Removed Python runtime dependency
-- Single self-contained executable
+- Updated to current app structure with full Python application
+- Added proper file permissions for all scripts
+- Updated dependencies for current requirements
