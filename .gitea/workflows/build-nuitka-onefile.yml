@@ -86,11 +86,13 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
 
-          # Check if there are changes
-          if git diff --quiet dev/build/nuitka/linuxtoys.bin; then
+          # Add the binary
+          git add dev/build/nuitka/linuxtoys.bin
+
+          # Check if there are staged changes
+          if git diff --quiet --cached; then
             echo "[INFO] No changes to binary, skipping commit"
           else
-            git add dev/build/nuitka/linuxtoys.bin
             git commit -m "build: update linuxtoys.bin to version $VERSION"
             git push origin master
             echo "[INFO] Binary pushed to master branch"
