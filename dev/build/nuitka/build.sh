@@ -88,6 +88,10 @@ setup_venv() {
             _msg error "Failed to install requirements"
             return 1
         }
+        pip install --quiet zstandard || {
+            _msg error "Failed to install zstandard"
+            return 1
+        }
     else
         _msg warning "Requirements file not found at $req_path"
     fi
