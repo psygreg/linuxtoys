@@ -38,30 +38,24 @@ def get_current_kernel():
 
 def get_latest_psycachy_releases():
     """
-    Fetch the latest psycachy kernel releases from GitHub.
+    Fetch the latest psycachy kernel release from GitHub.
     Returns dict with 'ubuntu' key containing version if successful, None otherwise.
     """
     try:
-        api_url = "https://api.github.com/repos/psygreg/linux-psycachy/releases"
+        api_url = "https://api.github.com/repos/psygreg/linux-psycachy/releases/latest"
         request = urllib.request.Request(api_url)
         request.add_header("User-Agent", "LinuxToys-KernelUpdateChecker/1.0")
 
         with urllib.request.urlopen(request, timeout=10) as response:
             if response.status == 200:
-                releases = json.loads(response.read().decode("utf-8"))
+                release = json.loads(response.read().decode("utf-8"))
+                name = release.get("name", "")
 
-                # Find latest Ubuntu release by checking release name
-                ubuntu_version = None
+                if name.startswith("Ubuntu-"):
+                    ubuntu_version = name.replace("Ubuntu-", "")
+                    return {"ubuntu": ubuntu_version}
 
-                for release in releases:
-                    name = release.get("name", "")
-                    if name.startswith("Ubuntu-") and ubuntu_version is None:
-                        # Extract version from name like "Ubuntu-6.17.13"
-                        ubuntu_version = name.replace("Ubuntu-", "")
-                    if ubuntu_version:
-                        break
-
-                return {"ubuntu": ubuntu_version}
+        return {"ubuntu": None}
     except Exception as e:
         print(f"Error fetching psycachy releases: {e}")
         return None
@@ -330,9 +324,9 @@ def run_kernel_update_check(show_dialog=True, verbose=False, translations=None):
         compat_keys = get_system_compat_keys()
 
         # Only run on debian/ubuntu systems
-        if not ("debian" in compat_keys or "ubuntu" in compat_keys):
+        if not "ubuntu" in compat_keys:
             if verbose:
-                print("Kernel update check skipped: not a Debian/Ubuntu system")
+                print("Kernel update check skipped: not a Ubuntu system")
             return False
     except Exception as e:
         if verbose:

@@ -55,9 +55,12 @@ psycachy_ubuntu () {
     fi
     zeninf "Tasks completed. Remember to reinstall any DKMS modules (e.g. NVIDIA) before rebooting to use the new kernel."
 }
-# Parse command line arguments
+# for updates, ignore version check since the currently running kernel will be an older psycachy
 if [ "$1" = "-u" ] || [ "$1" = "--ubuntu" ]; then
-    psycachy_ubuntu && exit 0
+    ubuntu_tag=$(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases/latest" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+    kver_ubuntu="$ubuntu_tag"
+    psycachy_ubuntu
+    exit 0
 else
     # Show menu if no arguments provided
     while true; do
