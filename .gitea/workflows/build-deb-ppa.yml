@@ -24,78 +24,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download Nuitka artifacts
-        run: |
-          REPO_OWNER="${{ github.repository_owner }}"
-          REPO_NAME="${{ github.event.repository.name }}"
-
-          echo "[INFO] Fetching latest nuitka workflow run"
-
-          # Create directory for artifacts
-          mkdir -p ./nuitka-artifacts
-
-          # Query Gitea API for workflow runs of build-nuitka-onefile
-          RUNS_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
-            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs?workflow=build-nuitka-onefile.yml&status=success&limit=1")
-
-          HTTP_CODE=$(echo "$RUNS_RESPONSE" | tail -n1)
-          RUNS_BODY=$(echo "$RUNS_RESPONSE" | sed '$d')
-
-          echo "[DEBUG] API HTTP Code: $HTTP_CODE"
-          echo "[DEBUG] API Response: $RUNS_BODY"
-
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "[WARNING] API returned HTTP $HTTP_CODE. Skipping artifact download."
-            exit 0
-          fi
-
-          # Get the latest successful workflow run ID
-          WORKFLOW_RUN_ID=$(echo "$RUNS_BODY" | jq -r '.workflow_runs[0]?.id' 2>/dev/null)
-
-          if [ -z "$WORKFLOW_RUN_ID" ]; then
-            echo "[WARNING] No successful nuitka workflow runs found"
-            exit 0
-          fi
-
-          echo "[INFO] Found latest workflow run: $WORKFLOW_RUN_ID"
-
-          # Now query artifacts from this specific workflow run
-          ARTIFACTS_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
-            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$WORKFLOW_RUN_ID/artifacts")
-
-          ARTIFACTS_HTTP_CODE=$(echo "$ARTIFACTS_RESPONSE" | tail -n1)
-          ARTIFACTS_BODY=$(echo "$ARTIFACTS_RESPONSE" | sed '$d')
-
-          echo "[DEBUG] Artifacts API HTTP Code: $ARTIFACTS_HTTP_CODE"
-          echo "[DEBUG] Artifacts API Response: $ARTIFACTS_BODY"
-
-          if [ "$ARTIFACTS_HTTP_CODE" != "200" ]; then
-            echo "[WARNING] Artifacts API returned HTTP $ARTIFACTS_HTTP_CODE. Skipping artifact download."
-            exit 0
-          fi
-
-          # Get the latest artifact ID from this run
-          LATEST_ARTIFACT=$(echo "$ARTIFACTS_BODY" | jq -r '.artifacts[0]?.id' 2>/dev/null)
-
-          if [ -z "$LATEST_ARTIFACT" ]; then
-            echo "[WARNING] No artifacts found in workflow run $WORKFLOW_RUN_ID"
-            exit 0
-          fi
-
-          echo "[INFO] Downloading artifact: $LATEST_ARTIFACT"
-          curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
-            -o "./nuitka-artifacts/artifact-latest.zip" \
-            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts/$LATEST_ARTIFACT/download"
-
-          # Extract the artifact
-          if [ -f "./nuitka-artifacts/artifact-latest.zip" ]; then
-            unzip -q "./nuitka-artifacts/artifact-latest.zip" -d "./nuitka-artifacts/"
-            rm "./nuitka-artifacts/artifact-latest.zip"
-          fi
-
-          echo "[INFO] Artifacts downloaded and extracted"
-          ls -lah ./nuitka-artifacts/ || echo "No artifacts found"
-
       - name: Install dependencies
         run: |
           apt-get update -qq
@@ -131,6 +59,16 @@ jobs:
           echo "[INFO] Upload to PPA: $UPLOAD_TO_PPA"
           echo "Building version: $VERSION"
 
+      - name: Verify Nuitka binary exists
+        run: |
+          if [ ! -f "dev/build/nuitka/linuxtoys.bin" ]; then
+            echo "[ERROR] linuxtoys.bin not found at dev/build/nuitka/linuxtoys.bin"
+            echo "[INFO] Please run the build-nuitka-onefile workflow first to build the binary."
+            exit 1
+          fi
+          echo "[INFO] Found linuxtoys.bin at dev/build/nuitka/linuxtoys.bin"
+          ls -lah dev/build/nuitka/linuxtoys.bin
+
       - name: Setup GPG key
         if: ${{ steps.version.outputs.upload_to_ppa == 'true' }}
         run: |
@@ -156,9 +94,10 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           OUTPUT_PATH="/tmp/deb-build"
+          NUITKA_BINARY="$PWD/dev/build/nuitka/linuxtoys.bin"
 
-          # Run the existing build script
-          bash dev/build/deb/build.sh "$VERSION" "$OUTPUT_PATH"
+          # Run the build script with the path to the Nuitka binary
+          bash dev/build/deb/build.sh "$VERSION" "$OUTPUT_PATH" "$NUITKA_BINARY"
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
@@ -221,11 +160,6 @@ jobs:
             cp "$OUTPUT_PATH"/*.changes "$ARTIFACT_PATH/" 2>/dev/null || true
             cp "$OUTPUT_PATH"/*.dsc "$ARTIFACT_PATH/" 2>/dev/null || true
             cp "$OUTPUT_PATH"/*.tar.xz "$ARTIFACT_PATH/" 2>/dev/null || true
-          fi
-
-          # Also copy Nuitka artifacts if they were downloaded
-          if [ -d "./nuitka-artifacts" ]; then
-            find ./nuitka-artifacts -type f -exec cp {} "$ARTIFACT_PATH/" \; 2>/dev/null || true
           fi
 
           # List artifacts
