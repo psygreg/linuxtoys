@@ -2,13 +2,13 @@ name: Build Fedora & Arch Packages
 
 on:
   # Trigger on successful completion of build-nuitka-onefile workflow
-  #workflow_run:
-  #workflows:
-  #- "Build Nuitka One-File Binary"
-  #types:
-  #- completed
-  #branches:
-  #- master
+  workflow_run:
+    workflows:
+      - "Build Nuitka One-File Binary"
+    types:
+      - completed
+    branches:
+      - master
 
   # Trigger on manual dispatch
   workflow_dispatch:

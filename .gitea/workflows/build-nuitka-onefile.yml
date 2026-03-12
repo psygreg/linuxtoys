@@ -66,32 +66,29 @@ jobs:
           ls -lah /tmp/nuitka-build/ || echo "Nuitka build directory not found"
           find /tmp/nuitka-build/ -type f -executable 2>/dev/null || echo "No executable artifacts found"
 
-      - name: Copy binary to dev/build/nuitka
-        run: |
-          if [ -f "/tmp/nuitka-build/linuxtoys.bin" ]; then
-            cp /tmp/nuitka-build/linuxtoys.bin dev/build/nuitka/linuxtoys.bin
-            echo "[INFO] Binary copied to dev/build/nuitka/linuxtoys.bin"
-            ls -lah dev/build/nuitka/linuxtoys.bin
-          else
-            echo "[ERROR] linuxtoys.bin not found in /tmp/nuitka-build/"
-            exit 1
-          fi
-
-      - name: Configure Git
-        run: |
-          git config --local user.email "action@gitea.local"
-          git config --local user.name "Gitea Action"
-
-      - name: Commit and push binary
+      - name: Prepare artifacts for Gitea
+        if: always()
         run: |
           VERSION="${{ steps.version.outputs.version }}"
+          ARTIFACT_PATH="artifacts-nuitka-$VERSION"
 
-          # Check if there are changes
-          if git diff --quiet dev/build/nuitka/linuxtoys.bin; then
-            echo "[INFO] No changes to binary, skipping commit"
-          else
-            git add dev/build/nuitka/linuxtoys.bin
-            git commit -m "build: update linuxtoys.bin to version $VERSION"
-            git push origin master
-            echo "[INFO] Binary pushed to master branch"
+          # Create artifact directory
+          mkdir -p "$ARTIFACT_PATH"
+
+          # Copy the one-file binary
+          if [ -d "/tmp/nuitka-build" ]; then
+            find /tmp/nuitka-build -type f -executable -exec cp {} "$ARTIFACT_PATH/" \;
           fi
+
+          # List artifacts
+          echo "[INFO] Artifacts to be uploaded:"
+          ls -lah "$ARTIFACT_PATH/" || echo "No artifacts found"
+
+      - name: Upload artifacts to Gitea
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuitka-onefile-${{ steps.version.outputs.version }}
+          path: artifacts-nuitka-${{ steps.version.outputs.version }}/
+          retention-days: 7
+          if-no-files-found: warn
