@@ -36,7 +36,7 @@ jobs:
 
           # Query Gitea API for workflow runs of build-nuitka-onefile
           RUNS_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
-            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/workflows/build-nuitka-onefile.yml/runs?limit=1&status=success")
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs?workflow=build-nuitka-onefile.yml&status=success&limit=1")
 
           HTTP_CODE=$(echo "$RUNS_RESPONSE" | tail -n1)
           RUNS_BODY=$(echo "$RUNS_RESPONSE" | sed '$d')
