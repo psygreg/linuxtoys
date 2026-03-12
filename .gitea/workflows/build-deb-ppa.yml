@@ -33,8 +33,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt update -qq
-          apt install -y -qq debhelper devscripts dput
+          apt-get update -qq
+          apt-get install -y -qq debhelper devscripts dput
 
       - name: Determine version and upload decision
         id: version

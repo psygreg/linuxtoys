@@ -1,0 +1,96 @@
+name: Build Nuitka One-File Binary
+
+on:
+  # Trigger on manual dispatch
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (leave empty to auto-detect from source)"
+        required: false
+        default: ""
+
+  # Trigger on push to main branch
+  push:
+    branches:
+      - master
+    paths:
+      - "p3/app/updater/__init__.py"
+      - "p3/run.py"
+      - "p3/requirements.txt"
+
+jobs:
+  build-nuitka-onefile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update -qq
+          apt-get install -y build-essential python3 python3-dev python3-pip python3-venv git node.js libglib2.0-0 libcairo2 libpango-1.0-0 libpangocairo-1.0-0 -qq
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            # Use manual input if provided
+            VERSION="${{ github.event.inputs.version }}"
+            echo "[INFO] Using manual version: $VERSION"
+          else
+            # Extract from p3/app/updater/__init__.py __version__ variable
+            VERSION=$(grep -oP '__version__\s*=\s*"\K[^"]+' p3/app/updater/__init__.py)
+            if [ -z "$VERSION" ]; then
+              echo "[ERROR] Could not extract version from p3/app/updater/__init__.py"
+              exit 1
+            fi
+            echo "[INFO] Using version from source: $VERSION"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Build Nuitka one-file binary
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OUTPUT_PATH="/tmp/nuitka-build"
+
+          # Run the Nuitka build script
+          bash dev/build/nuitka/build.sh "$VERSION" "$OUTPUT_PATH"
+        env:
+          HOME: /root
+
+      - name: Verify build artifacts
+        run: |
+          echo "=== Nuitka build artifacts ==="
+          ls -lah /tmp/nuitka-build/ || echo "Nuitka build directory not found"
+          find /tmp/nuitka-build/ -type f -executable 2>/dev/null || echo "No executable artifacts found"
+
+      - name: Prepare artifacts for Gitea
+        if: always()
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ARTIFACT_PATH="artifacts-nuitka-$VERSION"
+
+          # Create artifact directory
+          mkdir -p "$ARTIFACT_PATH"
+
+          # Copy the one-file binary
+          if [ -d "/tmp/nuitka-build" ]; then
+            find /tmp/nuitka-build -type f -executable -exec cp {} "$ARTIFACT_PATH/" \;
+          fi
+
+          # List artifacts
+          echo "[INFO] Artifacts to be uploaded:"
+          ls -lah "$ARTIFACT_PATH/" || echo "No artifacts found"
+
+      - name: Upload artifacts to Gitea
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuitka-onefile-${{ steps.version.outputs.version }}
+          path: artifacts-nuitka-${{ steps.version.outputs.version }}/
+          retention-days: 7
+          if-no-files-found: warn
