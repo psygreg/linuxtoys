@@ -14,15 +14,6 @@ on:
         type: boolean
         default: true
 
-  # Trigger on successful completion of build-nuitka-onefile workflow
-  workflow_run:
-    workflows:
-      - "Build Nuitka One-File Binary"
-    types:
-      - completed
-    branches:
-      - master
-
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
@@ -34,41 +25,48 @@ jobs:
           fetch-depth: 0
 
       - name: Download Nuitka artifacts
-        # if: github.event_name == 'workflow_run'
         run: |
-          # Get the latest successful run of build-nuitka-onefile workflow
-          WORKFLOW_RUN_ID="${{ github.event.workflow_run.id }}"
           REPO_OWNER="${{ github.repository_owner }}"
           REPO_NAME="${{ github.event.repository.name }}"
 
-          echo "[INFO] Downloading artifacts from workflow run: $WORKFLOW_RUN_ID"
+          echo "[INFO] Fetching latest nuitka artifacts"
 
           # Create directory for artifacts
           mkdir -p ./nuitka-artifacts
 
-          # Query Gitea API for artifacts from this workflow run
-          ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
-            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$WORKFLOW_RUN_ID/artifacts" | \
-            jq -r '.artifacts[] | .id')
+          # Query Gitea API for all artifacts from build-nuitka-onefile workflow
+          API_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts")
 
-          if [ -z "$ARTIFACTS" ]; then
-            echo "[WARNING] No artifacts found for workflow run $WORKFLOW_RUN_ID"
+          HTTP_CODE=$(echo "$API_RESPONSE" | tail -n1)
+          API_BODY=$(echo "$API_RESPONSE" | sed '$d')
+
+          echo "[DEBUG] API HTTP Code: $HTTP_CODE"
+          echo "[DEBUG] API Response: $API_BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "[WARNING] API returned HTTP $HTTP_CODE. Skipping artifact download."
             exit 0
           fi
 
-          # Download each artifact
-          for ARTIFACT_ID in $ARTIFACTS; do
-            echo "[INFO] Downloading artifact: $ARTIFACT_ID"
-            curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
-              -o "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" \
-              "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts/$ARTIFACT_ID/download"
+          # Filter for nuitka artifacts and get the most recent one
+          LATEST_ARTIFACT=$(echo "$API_BODY" | jq -r '.artifacts[]? | select(.name | startswith("nuitka-onefile-")) | .id' 2>/dev/null | head -n1)
 
-            # Extract the artifact
-            if [ -f "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" ]; then
-              unzip -q "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip" -d "./nuitka-artifacts/"
-              rm "./nuitka-artifacts/artifact-$ARTIFACT_ID.zip"
-            fi
-          done
+          if [ -z "$LATEST_ARTIFACT" ]; then
+            echo "[WARNING] No nuitka artifacts found"
+            exit 0
+          fi
+
+          echo "[INFO] Downloading latest nuitka artifact: $LATEST_ARTIFACT"
+          curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
+            -o "./nuitka-artifacts/artifact-latest.zip" \
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts/$LATEST_ARTIFACT/download"
+
+          # Extract the artifact
+          if [ -f "./nuitka-artifacts/artifact-latest.zip" ]; then
+            unzip -q "./nuitka-artifacts/artifact-latest.zip" -d "./nuitka-artifacts/"
+            rm "./nuitka-artifacts/artifact-latest.zip"
+          fi
 
           echo "[INFO] Artifacts downloaded and extracted"
           ls -lah ./nuitka-artifacts/ || echo "No artifacts found"
