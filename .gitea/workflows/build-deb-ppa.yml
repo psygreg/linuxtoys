@@ -29,35 +29,60 @@ jobs:
           REPO_OWNER="${{ github.repository_owner }}"
           REPO_NAME="${{ github.event.repository.name }}"
 
-          echo "[INFO] Fetching latest nuitka artifacts"
+          echo "[INFO] Fetching latest nuitka workflow run"
 
           # Create directory for artifacts
           mkdir -p ./nuitka-artifacts
 
-          # Query Gitea API for all artifacts from build-nuitka-onefile workflow
-          API_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
-            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts")
+          # Query Gitea API for workflow runs of build-nuitka-onefile
+          RUNS_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/workflows/build-nuitka-onefile.yml/runs?limit=1&status=success")
 
-          HTTP_CODE=$(echo "$API_RESPONSE" | tail -n1)
-          API_BODY=$(echo "$API_RESPONSE" | sed '$d')
+          HTTP_CODE=$(echo "$RUNS_RESPONSE" | tail -n1)
+          RUNS_BODY=$(echo "$RUNS_RESPONSE" | sed '$d')
 
           echo "[DEBUG] API HTTP Code: $HTTP_CODE"
-          echo "[DEBUG] API Response: $API_BODY"
+          echo "[DEBUG] API Response: $RUNS_BODY"
 
           if [ "$HTTP_CODE" != "200" ]; then
             echo "[WARNING] API returned HTTP $HTTP_CODE. Skipping artifact download."
             exit 0
           fi
 
-          # Filter for nuitka artifacts and get the most recent one
-          LATEST_ARTIFACT=$(echo "$API_BODY" | jq -r '.artifacts[]? | select(.name | startswith("nuitka-onefile-")) | .id' 2>/dev/null | head -n1)
+          # Get the latest successful workflow run ID
+          WORKFLOW_RUN_ID=$(echo "$RUNS_BODY" | jq -r '.workflow_runs[0]?.id' 2>/dev/null)
 
-          if [ -z "$LATEST_ARTIFACT" ]; then
-            echo "[WARNING] No nuitka artifacts found"
+          if [ -z "$WORKFLOW_RUN_ID" ]; then
+            echo "[WARNING] No successful nuitka workflow runs found"
             exit 0
           fi
 
-          echo "[INFO] Downloading latest nuitka artifact: $LATEST_ARTIFACT"
+          echo "[INFO] Found latest workflow run: $WORKFLOW_RUN_ID"
+
+          # Now query artifacts from this specific workflow run
+          ARTIFACTS_RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: token ${{ secrets.GITOKEN }}" \
+            "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/runs/$WORKFLOW_RUN_ID/artifacts")
+
+          ARTIFACTS_HTTP_CODE=$(echo "$ARTIFACTS_RESPONSE" | tail -n1)
+          ARTIFACTS_BODY=$(echo "$ARTIFACTS_RESPONSE" | sed '$d')
+
+          echo "[DEBUG] Artifacts API HTTP Code: $ARTIFACTS_HTTP_CODE"
+          echo "[DEBUG] Artifacts API Response: $ARTIFACTS_BODY"
+
+          if [ "$ARTIFACTS_HTTP_CODE" != "200" ]; then
+            echo "[WARNING] Artifacts API returned HTTP $ARTIFACTS_HTTP_CODE. Skipping artifact download."
+            exit 0
+          fi
+
+          # Get the latest artifact ID from this run
+          LATEST_ARTIFACT=$(echo "$ARTIFACTS_BODY" | jq -r '.artifacts[0]?.id' 2>/dev/null)
+
+          if [ -z "$LATEST_ARTIFACT" ]; then
+            echo "[WARNING] No artifacts found in workflow run $WORKFLOW_RUN_ID"
+            exit 0
+          fi
+
+          echo "[INFO] Downloading artifact: $LATEST_ARTIFACT"
           curl -s -H "Authorization: token ${{ secrets.GITOKEN }}" \
             -o "./nuitka-artifacts/artifact-latest.zip" \
             "https://git.linux.toys/api/v1/repos/$REPO_OWNER/$REPO_NAME/actions/artifacts/$LATEST_ARTIFACT/download"
