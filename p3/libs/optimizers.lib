@@ -331,6 +331,7 @@ EOF
 
 # make Proton run in wine-wayland mode by default
 wayland_proton_lib () {
+    { [[ "$XDG_SESSION_TYPE" =~ "wayland" ]] || [[ -n "$WAYLAND_DISPLAY" ]] } || nonfatal "Not running Wayland display protocol."
     if ! grep -q "^PROTON_ENABLE_WAYLAND=1" /etc/environment 2>/dev/null; then
         echo "PROTON_ENABLE_WAYLAND=1" | sudo tee -a /etc/environment
     fi
