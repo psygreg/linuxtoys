@@ -20,6 +20,7 @@ if [ ! -d "${HOME}/.local/jetbrains-toolbox" ]; then
 			## .desktop file
 			sed -i "/^Exec=/s|^.*$|Exec=${HOME}/.local/${PKG_NAM}/${PKG_NAM}|" ${HOME}/.local/${PKG_NAM}/${PKG_NAM}.desktop;
 			install -Dvm 0644 ${HOME}/.local/${PKG_NAM}/${PKG_NAM}.desktop ${HOME}/.local/share/applications/${PKG_NAM}.desktop;
+			chmod +x ${HOME}/.local/share/applications/${PKG_NAM}.desktop;
 		) && { zeninf "$msg018"; }
 	} || { exit 1; }
 else
