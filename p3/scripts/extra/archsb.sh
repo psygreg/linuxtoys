@@ -2,6 +2,7 @@
 # name: archsb
 # version: 1.0
 # description: archsb_desc
+# icon: sirikali.png
 # compat: arch, cachy
 # reboot: yes
 # nocontainer
@@ -33,7 +34,7 @@ if [ "$(sbctl status | grep -i 'secure boot' | grep -i 'disabled')" ]; then
                 sudo sbctl sign -s "$file"
             fi
         done < <(sudo sbctl verify)
-        
+
         echo "All files signed. Verifying..."
         sudo sbctl verify
         zeninf "$msg301"
