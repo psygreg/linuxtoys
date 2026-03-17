@@ -11,6 +11,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+sudo_rq
 _packages=(ananicy-cpp cachyos-ananicy-rules-git)
 _install_
 sudo systemctl enable --now ananicy-cpp.service

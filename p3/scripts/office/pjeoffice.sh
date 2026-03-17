@@ -8,8 +8,10 @@
 # repo: https://github.com/psygreg/pje-installer
 
 # --- Start of the script code ---
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 cd $HOME
 tag=$(curl -s "https://api.github.com/repos/psygreg/pje-installer/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
 wget https://github.com/psygreg/pje-installer/releases/download/${tag}/pje-installer_${tag}-1_amd64.deb
+sudo_rq
 sudo apt install -y ./pje-installer_${tag}-1_amd64.deb
 rm ./pje-installer_${tag}-1_amd64.deb

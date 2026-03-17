@@ -3,7 +3,7 @@
 # version: 1.0
 # description: rtl8821ce_desc
 # icon: rtl.png
-# compat: arch, cachyos
+# compat: arch, cachy
 # reboot: yes
 # nocontainer
 # repo: https://github.com/tomaspinho/rtl8821ce

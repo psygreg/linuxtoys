@@ -1,6 +1,7 @@
 import asyncio
 import os
 import shutil
+import subprocess
 import threading
 
 from gi.repository import GdkPixbuf
@@ -944,7 +945,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
         self.script_cache.scripts.append(_local_data)
 
-        os.system(f"xdg-open {local_sh_dir}{filename}.sh")
+        local_script_path = os.path.abspath(f"{local_sh_dir}{filename}.sh")
+        if shutil.which("xdg-open"):
+            subprocess.run(["xdg-open", local_script_path], check=False)
 
     def _refresh_current_local_scripts_view(self):
         """Refresh the current view if we're viewing local scripts."""
@@ -1517,7 +1520,7 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
         try:
             # Use xdg-open to open the script in the default text editor
-            os.system(f'xdg-open "{script_path}"')
+            subprocess.run(["xdg-open", os.path.abspath(script_path)], check=False)
         except Exception as e:
             # Show error dialog if opening fails
             error_dialog = Gtk.MessageDialog(

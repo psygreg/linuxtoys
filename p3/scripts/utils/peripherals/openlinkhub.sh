@@ -13,6 +13,7 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # for version comparison
 tag=$(curl -s "https://api.github.com/repos/jurkovic-nikola/OpenLinkHub/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+sudo_rq
 if is_ubuntu; then
     sudo add-apt-repository ppa:jurkovic-nikola/openlinkhub
     sudo apt update

@@ -12,6 +12,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/$langfile.lib"
+sudo_rq
 if is_arch || is_ubuntu; then
     sudo add-apt-repository -y universe
     sudo apt update

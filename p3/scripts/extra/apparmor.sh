@@ -4,7 +4,7 @@
 # description: aa_desc
 # icon: apparmor.svg
 # repo: https://apparmor.net
-# compat: debian, arch, cachyos
+# compat: debian, arch, cachy
 # reboot: yes
 # nocontainer
 
@@ -24,7 +24,7 @@ if pacman -Qi grub 2>/dev/null 1>&2 || dpkg -s grub-efi 2>/dev/null 1>&2; then #
     echo 'GRUB_CMDLINE_LINUX_DEFAULT="${GRUB_CMDLINE_LINUX_DEFAULT} apparmor=1 security=apparmor"' | sudo tee /etc/default/grub.d/99-apparmor.cfg
     if is_debian; then
         sudo update-grub
-    elif is_arch || is_cachyos; then
+    elif is_arch || is_cachy; then
         sudo grub-mkconfig -o /boot/grub/grub.cfg
     fi
 else # systemd-boot
