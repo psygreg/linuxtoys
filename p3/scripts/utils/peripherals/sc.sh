@@ -2,7 +2,7 @@
 # name: StreamController
 # version: 1.0
 # description: sc_desc
-# icon: sc.png
+# icon: streamcontroller.svg
 # repo: https://github.com/StreamController/StreamController
 
 # --- Start of the script code ---
