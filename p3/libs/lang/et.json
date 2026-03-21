@@ -351,5 +351,7 @@
   "hiddify_desc": "Hiddify VPN klient.",
   "term_view_copy": "Väljund logi kopeerimine",
   "wayproton": "Proton Wayland režiimis",
-  "wayproton_desc": "Määrab Proton-i käivituma wine-wayland režiimis vaikimisi. Saate selektiivselt määrata keskkonnmuutuja PROTON_USE_WINE_WAYLAND=0 mängude jaoks, mis võivad selle režiimiga korralikult tööle ei hakka Steam'i või teie valitud mängude käivitaja käivitamissuvandites."
+  "wayproton_desc": "Määrab Proton-i käivituma wine-wayland režiimis vaikimisi. Saate selektiivselt määrata keskkonnmuutuja PROTON_USE_WINE_WAYLAND=0 mängude jaoks, mis võivad selle režiimiga korralikult tööle ei hakka Steam'i või teie valitud mängude käivitaja käivitamissuvandites.",
+  "nv580_desc": "Nvidia 580xx pärandatud draiverid Maxwell (GTX 9xx), Pascal (GTX 10xx) ja mõne Kepler (GTX 750/750Ti) ja Turing (GTX 16xx) seeria GPU jaoks.",
+  "zram_desc": "zstd-iga tihendatud RAM-blokiseadis, mida saab kasutada tavapärase vahetusega seotud faili või partitsiooni asemel, parandab jõudlust eriti mälutõrje korral."
 }

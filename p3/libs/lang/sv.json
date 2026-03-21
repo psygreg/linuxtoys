@@ -351,5 +351,7 @@
   "hiddify_desc": "Hiddify VPN-klient.",
   "term_view_copy": "Kopiera utdatalogg",
   "wayproton": "Proton i Wayland-läge",
-  "wayproton_desc": "Ställer in Proton att köra i wine-wayland-läge som standard. Du kan selektivt ställa in miljövariabeln PROTON_USE_WINE_WAYLAND=0 för spel som kanske inte fungerar korrekt med det här läget i startalternativen i Steam eller ditt föredragna spellauncher."
+  "wayproton_desc": "Ställer in Proton att köra i wine-wayland-läge som standard. Du kan selektivt ställa in miljövariabeln PROTON_USE_WINE_WAYLAND=0 för spel som kanske inte fungerar korrekt med det här läget i startalternativen i Steam eller ditt föredragna spellauncher.",
+  "nv580_desc": "Nvidia 580xx äldre drivare för Maxwell (GTX 9xx), Pascal (GTX 10xx) och vissa Kepler (GTX 750/750Ti) och Turing (GTX 16xx) GPU-serier.",
+  "zram_desc": "RAM-blockenhet komprimerad med zstd som kan användas för swap i stället för en konventionell swap-fil eller partition, förbättrar prestanda speciellt under minnestryck."
 }

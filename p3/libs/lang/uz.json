@@ -350,5 +350,7 @@
   "hiddify_desc": "Hiddify VPN mijozi.",
   "term_view_copy": "Chiqish jurnalini nusxa qiling",
   "wayproton": "Wayland rejimida Proton",
-  "wayproton_desc": "Proton-ni wine-wayland rejimida ishga tushirish uchun standart sifatida o'rnatadi. Siz Steam yoki tanallagan o'yin ishga tushirgichida bu rejimda to'g'ri ishlashi mumkin bo'lmagan o'yinlar uchun PROTON_USE_WINE_WAYLAND=0 muhit o'zgaruvchisini tanlovchi ravishda o'rnata olasiz."
+  "wayproton_desc": "Proton-ni wine-wayland rejimida ishga tushirish uchun standart sifatida o'rnatadi. Siz Steam yoki tanallagan o'yin ishga tushirgichida bu rejimda to'g'ri ishlashi mumkin bo'lmagan o'yinlar uchun PROTON_USE_WINE_WAYLAND=0 muhit o'zgaruvchisini tanlovchi ravishda o'rnata olasiz.",
+  "nv580_desc": "Maxwell (GTX 9xx), Pascal (GTX 10xx) va ba'zi Kepler (GTX 750/750Ti) va Turing (GTX 16xx) seriya GPU uchun Nvidia 580xx meros drayverlari.",
+  "zram_desc": "zstd bilan siqilgan RAM blok qurilmasi, uning o'rniga tayyorlangan swap fayli yoki qismni o'rniga swap uchun ishlatilishi mumkin, ayniqsa xotira bosimi ostida unumni yaxshilaydi."
 }

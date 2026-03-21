@@ -351,5 +351,7 @@
   "hiddify_desc": "عميل Hiddify VPN.",
   "term_view_copy": "نسخ سجل الإخراج",
   "wayproton": "Proton في وضع Wayland",
-  "wayproton_desc": "يعيّن Proton للتشغيل في وضع wine-wayland افتراضياً. يمكنك تعيين متغير البيئة PROTON_USE_WINE_WAYLAND=0 بشكل انتقائي للألعاب التي قد لا تعمل بشكل صحيح مع هذا الوضع في خيارات الإطلاق في Steam أو مشغل الألعاب الذي تختاره."
+  "wayproton_desc": "يعيّن Proton للتشغيل في وضع wine-wayland افتراضياً. يمكنك تعيين متغير البيئة PROTON_USE_WINE_WAYLAND=0 بشكل انتقائي للألعاب التي قد لا تعمل بشكل صحيح مع هذا الوضع في خيارات الإطلاق في Steam أو مشغل الألعاب الذي تختاره.",
+  "nv580_desc": "برامج تشغيل Nvidia 580xx القديمة لمعالجات Maxwell (GTX 9xx) و Pascal (GTX 10xx) والبعض من معالجات Kepler (GTX 750/750Ti) و Turing (GTX 16xx).",
+  "zram_desc": "جهاز كتلة RAM مضغوط بـ zstd يمكن استخدامه للتبديل بدلاً من ملف أو قسم التبديل التقليدي، مما يحسن الأداء خاصة تحت ضغط الذاكرة."
 }

@@ -351,5 +351,7 @@
   "hiddify_desc": "Máy khách Hiddify VPN.",
   "term_view_copy": "Sao chép nhật ký đầu ra",
   "wayproton": "Proton ở chế độ Wayland",
-  "wayproton_desc": "Đặt Proton để chạy ở chế độ wine-wayland theo mặc định. Bạn có thể đặt biến môi trường PROTON_USE_WINE_WAYLAND=0 một cách có chọn lọc cho các trò chơi có thể không hoạt động chính xác với chế độ này trong các tùy chọn khởi chạy trong Steam hoặc trình khởi chạy trò chơi ưa thích của bạn."
+  "wayproton_desc": "Đặt Proton để chạy ở chế độ wine-wayland theo mặc định. Bạn có thể đặt biến môi trường PROTON_USE_WINE_WAYLAND=0 một cách có chọn lọc cho các trò chơi có thể không hoạt động chính xác với chế độ này trong các tùy chọn khởi chạy trong Steam hoặc trình khởi chạy trò chơi ưa thích của bạn.",
+  "nv580_desc": "Trình điều khiển cũ Nvidia 580xx cho Maxwell (GTX 9xx), Pascal (GTX 10xx) và một số GPU seri Kepler (GTX 750/750Ti) và Turing (GTX 16xx).",
+  "zram_desc": "Thiết bị khối RAM được nén bằng zstd có thể được sử dụng cho hoán đổi thay vì tệp hoặc phân vùng hoán đổi thông thường, cải thiện hiệu suất đặc biệt dưới áp lực bộ nhớ."
 }

@@ -351,5 +351,7 @@
   "hiddify_desc": "Hiddify VPN klijent.",
   "term_view_copy": "Kopiraj izlazni dnevnik",
   "wayproton": "Proton u režimu Wayland",
-  "wayproton_desc": "Postavlja Proton da se pokreće u wine-wayland modu prema zadanoj vrijednosti. Varijablu okruženja PROTON_USE_WINE_WAYLAND=0 možete selektivno postaviti za igre koje možda neće raditi pravilno s ovim modom u opcijama pokretanja u Steam-u ili odabranom pokretaču igara."
+  "wayproton_desc": "Postavlja Proton da se pokreće u wine-wayland modu prema zadanoj vrijednosti. Varijablu okruženja PROTON_USE_WINE_WAYLAND=0 možete selektivno postaviti za igre koje možda neće raditi pravilno s ovim modom u opcijama pokretanja u Steam-u ili odabranom pokretaču igara.",
+  "nv580_desc": "Nasljeđeni upravljači Nvidia 580xx za Maxwell (GTX 9xx), Pascal (GTX 10xx) i neke Kepler (GTX 750/750Ti) i Turing (GTX 16xx) serije GPU.",
+  "zram_desc": "RAM blok uređaj komprimiran sa zstd koji se može koristiti za zamjenu umjesto standardne datoteke zamjene ili particije, poboljšavajući performanse posebno pod pritiskom memorije."
 }

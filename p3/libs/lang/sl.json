@@ -351,5 +351,7 @@
   "hiddify_desc": "Odjemalec Hiddify VPN.",
   "term_view_copy": "Kopiraj izhodny dnevnik",
   "wayproton": "Proton v načinu Wayland",
-  "wayproton_desc": "Nastavi Proton da se zažene v načinu wine-wayland kot privzeto. Lahko selektivno nastavite okoljsko spremenljivko PROTON_USE_WINE_WAYLAND=0 za igre, ki morda ne delujejo pravilno s tem načinom v možnostih zagona v Steam ali izbranem zagonu igre."
+  "wayproton_desc": "Nastavi Proton da se zažene v načinu wine-wayland kot privzeto. Lahko selektivno nastavite okoljsko spremenljivko PROTON_USE_WINE_WAYLAND=0 za igre, ki morda ne delujejo pravilno s tem načinom v možnostih zagona v Steam ali izbranem zagonu igre.",
+  "nv580_desc": "Dedovani gonilniki Nvidia 580xx za Maxwell (GTX 9xx), Pascal (GTX 10xx) in nekatere serije Kepler (GTX 750/750Ti) in Turing (GTX 16xx) GPU.",
+  "zram_desc": "RAM blok naprava stisnjena z zstd, ki se lahko uporablja za zamenjavo namesto običajne datoteke zamenjave ali particije, izboljša zmogljivost posebno pod tlakom pomnilnika."
 }

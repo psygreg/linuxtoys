@@ -351,5 +351,7 @@
   "hiddify_desc": "Cliente Hiddify VPN.",
   "term_view_copy": "Copiar log de saída",
   "wayproton": "Proton no modo Wayland",
-  "wayproton_desc": "Define Proton para ser executado em modo wine-wayland por padrão. Você pode definir seletivamente a variável de ambiente PROTON_USE_WINE_WAYLAND=0 para jogos que podem não funcionar corretamente com este modo nas opções de inicialização no Steam ou seu inicializador de jogos preferido."
+  "wayproton_desc": "Define Proton para ser executado em modo wine-wayland por padrão. Você pode definir seletivamente a variável de ambiente PROTON_USE_WINE_WAYLAND=0 para jogos que podem não funcionar corretamente com este modo nas opções de inicialização no Steam ou seu inicializador de jogos preferido.",
+  "nv580_desc": "Drivers herdados do Nvidia 580xx para Maxwell (GTX 9xx), Pascal (GTX 10xx) e algumas séries Kepler (GTX 750/750Ti) e Turing (GTX 16xx) GPU.",
+  "zram_desc": "Dispositivo de bloco RAM comprimido com zstd que pode ser usado para swap em vez de um arquivo ou partição de swap convencional, melhora o desempenho especialmente sob pressão de memória."
 }

@@ -351,5 +351,7 @@
   "hiddify_desc": "Hiddify VPN ক্লায়েন্ট।",
   "term_view_copy": "አውტပုት ሎግ ቅጂ",
   "wayproton": "Wayland ሁነታ ላይ ፕሮቶን",
-  "wayproton_desc": "ፕሮቶን በwine-wayland ሁነታ ውስጥ ሊሰራ እንዲቀመጥ ያስተካክላል። በቅድመ-ምርጫ አማራጮች ውስጥ PROTON_USE_WINE_WAYLAND=0 አካባቢ ተለዋዋጭ ለዋይን ፕሮቶን በዚህ ሁነታ ላይ በአግባቡ ላይሳተ በተቻለ ጊዜ በተናጥል ያዋቅሩ።"
+  "wayproton_desc": "ፕሮቶን በwine-wayland ሁነታ ውስጥ ሊሰራ እንዲቀመጥ ያስተካክላል። በቅድመ-ምርጫ አማራጮች ውስጥ PROTON_USE_WINE_WAYLAND=0 አካባቢ ተለዋዋጭ ለዋይን ፕሮቶን በዚህ ሁነታ ላይ በአግባቡ ላይሳተ በተቻለ ጊዜ በተናጥል ያዋቅሩ።",
+  "nv580_desc": "Nvidia 580xx ጋር የተዛመደ አሪፍ 드라ይቦር ለMaxwell (GTX 9xx)፣ Pascal (GTX 10xx) እና አንዳንድ Kepler (GTX 750/750Ti) እና Turing (GTX 16xx) ተከታታይ GPUsአ",
+  "zram_desc": "zstd-የታመቀ RAM ብሎክ መሣሪያ ተለዋዋጭ swap ውስጥ ጥቅም ላይ ሊሆን ይችላል, ከተለመደው swap ፋይል ወይም ክፍልፋይ ይልቅ, በተለይ ስር ሙሉ ማስታወሻ ቅናሽ ግምገማ ስር ብቅ ያስወጣል."
 }

@@ -351,5 +351,7 @@
   "hiddify_desc": "לקוח Hiddify VPN.",
   "term_view_copy": "העתק את ההתחברות למוצא",
   "wayproton": "Proton במצב Wayland",
-  "wayproton_desc": "מגדיר את Proton לפעול במצב wine-wayland כברירת מחדל. אתה יכול להגדיר בבחירתיות את משתנה הסביבה PROTON_USE_WINE_WAYLAND=0 עבור משחקים שאולי לא יפעלו כראוי עם מצב זה באפשרויות ההשקה ב-Steam או במשגר המשחקים שלך."
+  "wayproton_desc": "מגדיר את Proton לפעול במצב wine-wayland כברירת מחדל. אתה יכול להגדיר בבחירתיות את משתנה הסביבה PROTON_USE_WINE_WAYLAND=0 עבור משחקים שאולי לא יפעלו כראוי עם מצב זה באפשרויות ההשקה ב-Steam או במשגר המשחקים שלך.",
+  "nv580_desc": "זיקנה של Nvidia 580xx עבור Maxwell (GTX 9xx), Pascal (GTX 10xx) וכמה סדרות Kepler (GTX 750/750Ti) ו- Turing (GTX 16xx) GPU.",
+  "zram_desc": "התקן בלוק RAM דחוס עם zstd שניתן לשמוש לחליפת מקום במקום קובץ החליפה או מחיצה קונבנציונלית, משפר ביצועים במיוחד תחת לחץ זיכרון."
 }

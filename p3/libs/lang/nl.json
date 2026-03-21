@@ -351,5 +351,7 @@
   "hiddify_desc": "Hiddify VPN-client.",
   "term_view_copy": "Uitvoerlogboek kopiëren",
   "wayproton": "Proton in Wayland-modus",
-  "wayproton_desc": "Stelt Proton in om standaard in wine-wayland-modus uit te voeren. U kunt de omgevingsvariabele PROTON_USE_WINE_WAYLAND=0 selectief instellen voor games die niet correct met deze modus werken in de startopties in Steam of uw gekozen gamelauncher."
+  "wayproton_desc": "Stelt Proton in om standaard in wine-wayland-modus uit te voeren. U kunt de omgevingsvariabele PROTON_USE_WINE_WAYLAND=0 selectief instellen voor games die niet correct met deze modus werken in de startopties in Steam of uw gekozen gamelauncher.",
+  "nv580_desc": "Nvidia 580xx legacy drivers voor Maxwell (GTX 9xx), Pascal (GTX 10xx) en enkele Kepler (GTX 750/750Ti) en Turing (GTX 16xx) GPU-series.",
+  "zram_desc": "RAM-blok apparaat gecomprimeerd met zstd dat kan worden gebruikt voor swap in plaats van een conventioneel swap-bestand of partitie, verbetert prestaties vooral onder geheugendruk."
 }

@@ -351,5 +351,7 @@
   "hiddify_desc": "Hiddify VPN istemcisi.",
   "term_view_copy": "Çıktı Günlüğünü Kopyala",
   "wayproton": "Wayland Modunda Proton",
-  "wayproton_desc": "Proton'u varsayılan olarak wine-wayland modunda çalışmak üzere ayarlar. Steam'de veya tercih ettiğiniz oyun başlatıcısında bu mod ile düzgün çalışmayabilecek oyunlar için çevre değişkeni PROTON_USE_WINE_WAYLAND=0'ı seçici olarak ayarlayabilirsiniz."
+  "wayproton_desc": "Proton'u varsayılan olarak wine-wayland modunda çalışmak üzere ayarlar. Steam'de veya tercih ettiğiniz oyun başlatıcısında bu mod ile düzgün çalışmayabilecek oyunlar için çevre değişkeni PROTON_USE_WINE_WAYLAND=0'ı seçici olarak ayarlayabilirsiniz.",
+  "nv580_desc": "Maxwell (GTX 9xx), Pascal (GTX 10xx) ve bazı Kepler (GTX 750/750Ti) ve Turing (GTX 16xx) seri GPU'lar için Nvidia 580xx eski sürücüleri.",
+  "zram_desc": "zstd ile sıkıştırılmış RAM blok cihazı, geleneksel swap dosyası veya bölümü yerine takas için kullanılabilir, özellikle bellek basıncı altında performansı iyileştirir."
 }
