@@ -2,7 +2,7 @@
 # name: ZRAM-Config
 # description: zram_desc
 # icon: preload.svg
-# compat: ubuntu, debian, fedora, arch
+# compat: ubuntu, debian, arch
 # nocontainer
 
 # --- Start of the script code ---
@@ -32,16 +32,6 @@ ALGO=zstd
 PERCENT=50
 EOF
     sudo systemctl restart zramswap
-    zeninf "$finishmsg"
-elif is_fedora; then
-    _packages=(zram-generator)
-    _install_
-    sudo tee /etc/systemd/zram-generator.conf << 'EOF'
-[zram0]
-zram-size = min(ram / 3, 16384)
-EOF
-    sudo systemctl daemon-reload   
-    sudo systemctl restart swap-create@zram0
     zeninf "$finishmsg"
 else
     fatal "$msg077"
