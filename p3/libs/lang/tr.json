@@ -353,5 +353,7 @@
   "wayproton": "Wayland Modunda Proton",
   "wayproton_desc": "Proton'u varsayılan olarak wine-wayland modunda çalışmak üzere ayarlar. Steam'de veya tercih ettiğiniz oyun başlatıcısında bu mod ile düzgün çalışmayabilecek oyunlar için çevre değişkeni PROTON_USE_WINE_WAYLAND=0'ı seçici olarak ayarlayabilirsiniz.",
   "nv580_desc": "Maxwell (GTX 9xx), Pascal (GTX 10xx) ve bazı Kepler (GTX 750/750Ti) ve Turing (GTX 16xx) seri GPU'lar için Nvidia 580xx eski sürücüleri.",
-  "zram_desc": "zstd ile sıkıştırılmış RAM blok cihazı, geleneksel swap dosyası veya bölümü yerine takas için kullanılabilir, özellikle bellek basıncı altında performansı iyileştirir."
+  "zram_desc": "zstd ile sıkıştırılmış RAM blok cihazı, geleneksel swap dosyası veya bölümü yerine takas için kullanılabilir, özellikle bellek basıncı altında performansı iyileştirir.",
+  "preempt_desc": "Fedora ve ilgili sistemlerde tam kernel preemption etkinleştirin, masaüstü için arzu edilen ve varsayılan kernel tarafından desteklenen, ancak sunucu ortamlarında kullanım nedeniyle varsayılan olarak devre dışı, burada yanıt verme ve gecikme kritik değildir.",
+  "preemptfedora": "Tam kernel preemption"
 }

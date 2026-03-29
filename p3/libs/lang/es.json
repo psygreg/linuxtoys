@@ -353,5 +353,7 @@
   "wayproton": "Proton en modo Wayland",
   "wayproton_desc": "Configura Proton para que se ejecute en modo wine-wayland de forma predeterminada. Puedes establecer selectivamente la variable de entorno PROTON_USE_WINE_WAYLAND=0 para juegos que podrían no funcionar correctamente con este modo en las opciones de inicio en Steam o tu lanzador de juegos preferido.",
   "nv580_desc": "Controladores heredados de Nvidia 580xx para Maxwell (GTX 9xx), Pascal (GTX 10xx) y algunas series Kepler (GTX 750/750Ti) y Turing (GTX 16xx) GPU.",
-  "zram_desc": "Dispositivo de bloque RAM comprimido con zstd que se puede usar para intercambio en lugar of archivo o partición de intercambio convencional, mejorando el rendimiento especialmente bajo presión de memoria."
+  "zram_desc": "Dispositivo de bloque RAM comprimido con zstd que se puede usar para intercambio en lugar of archivo o partición de intercambio convencional, mejorando el rendimiento especialmente bajo presión de memoria.",
+  "preempt_desc": "Habilitar preemción completa del kernel en Fedora y sistemas relacionados, que es deseable para escritorios y compatible con el kernel predeterminado, aunque está deshabilitado por defecto debido al uso en entornos de servidor, donde la reactividad y la latencia no son críticas.",
+  "preemptfedora": "Preemción completa del kernel"
 }

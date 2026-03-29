@@ -50,8 +50,8 @@ optimizer () {
         _install_
         # set up earlyoom
         earlyoom_lib
-        # configure dnsmasq
-        dnsmasq_lib
+        # configure dnsmasq - disabled due to potential selfhosting needs
+        # dnsmasq_lib
         # enable signing of kernel modules (akmods) like Nvidia and VirtualBox
         if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
             if ! rpm -qi "akmods-keys" &>/dev/null; then
@@ -79,6 +79,8 @@ optimizer () {
         fi
         # fix GTK app rendering for Intel BMG and Nvidia GPUs
         fix_intel_gtk
+        # full kernel preemption for better latency
+        preempt_lib
         # change intel driver to Xe on discrete GPUs
         intel_xe_lib
         # set proton to run on wine-wayland mode by default

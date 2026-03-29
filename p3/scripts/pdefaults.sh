@@ -28,8 +28,8 @@ sysag_run () {
     dsplitm_lib
     # add earlyoom configuration
     earlyoom_lib
-    # add dnsmasq configuration
-    dnsmasq_lib
+    # add dnsmasq configuration -- disabled due to potential selfhosting needs
+    # dnsmasq_lib
     # change intel driver to Xe on discrete GPUs
     intel_xe_lib
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
@@ -44,6 +44,8 @@ sysag_run () {
     # plasma_mem_fix
     # vm.min_free_kbytes dynamic setup
     free_mem_fix
+    # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
+    preempt_lib
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
     # codec fix for Fedora/OpenSUSE

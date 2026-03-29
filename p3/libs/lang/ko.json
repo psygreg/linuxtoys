@@ -353,5 +353,7 @@
   "wayproton": "Wayland 모드에서 Proton",
   "wayproton_desc": "Proton을 기본적으로 wine-wayland 모드에서 실행되도록 설정합니다. Steam 또는 선택한 게임 런처의 시작 옵션에서 이 모드에서 제대로 작동하지 않을 수 있는 게임에 대해 환경 변수 PROTON_USE_WINE_WAYLAND=0을 선택적으로 설정할 수 있습니다.",
   "nv580_desc": "Maxwell (GTX 9xx), Pascal (GTX 10xx) 및 일부 Kepler (GTX 750/750Ti) 및 Turing (GTX 16xx) 시리즈 GPU용 Nvidia 580xx 레거시 드라이버입니다.",
-  "zram_desc": "zstd로 압축된 RAM 블록 장치로, 기존 스왑 파일 또는 파티션 대신 스왑에 사용할 수 있으며, 특히 메모리 압력 아래에서 성능을 향상시킵니다."
+  "zram_desc": "zstd로 압축된 RAM 블록 장치로, 기존 스왑 파일 또는 파티션 대신 스왑에 사용할 수 있으며, 특히 메모리 압력 아래에서 성능을 향상시킵니다.",
+  "preempt_desc": "Fedora 및 관련 시스템에서 전체 커널 선점을 활성화하면 데스크톱에 바람직하며 기본 커널에서 지원합니다. 그러나 서버 환경에서의 사용으로 인해 기본적으로 비활성화되어 있으며, 여기서는 응답 및 대기 시간이 중요하지 않습니다.",
+  "preemptfedora": "전체 커널 선점"
 }

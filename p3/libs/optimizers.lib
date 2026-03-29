@@ -336,3 +336,15 @@ wayland_proton_lib () {
         echo "PROTON_ENABLE_WAYLAND=1" | sudo tee -a /etc/environment
     fi
 }
+
+# add preempt=full kernel parameter on boot on fedora
+preempt_lib () {
+    if is_fedora; then
+        if ! which grubby &> /dev/null; then
+            _packages=(grubby) && _install_
+        fi
+        sudo grubby --args="preempt=full" --update-kernel ALL
+    elif is_ostree; then
+        sudo rpm-ostree kargs --append='preempt=full'
+    fi
+}
