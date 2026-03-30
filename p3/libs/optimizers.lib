@@ -21,7 +21,6 @@ cachyos_sysd_lib () {
         echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
         } > "tmpfiles.txt"
     {
-        echo "${_cfgsource}/lib/modprobe.d/20-audio-pm.conf"
         echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
         echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
         echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
@@ -37,6 +36,10 @@ cachyos_sysd_lib () {
     while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
     while read -r url; do wget "$url"; done < other.txt
     sleep 1
+    for dir in udev/rules.d tmpfiles.d modprobe.d sysctl.d systemd/journald.conf.d; do # ensure directories exist before copy
+        [ -d "/usr/lib/$dir" ] || sudo mkdir -p "/usr/lib/$dir"
+    done
+    [ -d "/usr/share/X11/xorg.conf.d" ] || sudo mkdir -p "/usr/share/X11/xorg.conf.d"
     sudo cp -rf udev/* /usr/lib/udev/rules.d/
     sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
     sudo cp -rf modprobe/* /usr/lib/modprobe.d/
