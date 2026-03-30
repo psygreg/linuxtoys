@@ -8,6 +8,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
+sudo_rq
 # usb device list fetch
 select_usb_device() {
     local -a usb_devices
