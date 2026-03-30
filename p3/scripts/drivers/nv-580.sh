@@ -27,7 +27,7 @@ if is_debian; then
     sudo update-grub
     zeninf "$msg036"
 elif is_arch || is_cachy; then
-    _packages=(nvidia-580xx-dkms)
+    _packages=(nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings)
     _install_
     zeninf "$msg036"
 else
