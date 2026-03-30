@@ -42,7 +42,7 @@ if command -v rpm-ostree &>/dev/null; then
         zenity --info --text "$msg281" --height=300 --width=300
     fi
 else
-    if [ ! -f /usr/lib/sysctl.d/99-cachyos-settings.conf ]; then
+    if [ ! -f /usr/lib/sysctl.d/70-cachyos-settings.conf ]; then
         cachyos_sysd_lib
     else
         zenity --info --text "$msg281" --height=300 --width=300
