@@ -355,5 +355,7 @@
   "nv580_desc": "Nvidia 580xx örökölt illesztőprogramok Maxwell (GTX 9xx), Pascal (GTX 10xx) és néhány Kepler (GTX 750/750Ti) és Turing (GTX 16xx) sorozatú GPU-hoz.",
   "zram_desc": "zstd-vel tömörített RAM-blok-eszköz, amely a hagyományos swap-fájl vagy partíció helyett használható swap-hez, javítja a teljesítményt, különösen memória-nyomás alatt.",
   "preempt_desc": "Engedélyezze a teljes kernel preemption-t a Fedorán és a kapcsolódó rendszereken, amely kívánatos az asztali számítógépek számára és az alapértelmezett kernel támogatja, bár alapértelmezetten le van tiltva a szerver környezetekben való használat miatt, ahol a válaszkészség és a késleltetés nem kritikus.",
-  "preemptfedora": "Teljes kernel preemption"
+  "preemptfedora": "Teljes kernel preemption",
+  "udevpass": "Webalapú szoftver engedélyezése",
+  "udevpass_desc": "Lehetővé teszi a webalapú szoftverek, például az ATK HUB használatát az olyan perifériákon, amelyek ezeket rendelkezik. A Chromium-alapú böngésző továbbra is szükséges az ilyen szoftverek működéséhez."
 }

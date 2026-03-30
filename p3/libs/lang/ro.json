@@ -355,5 +355,7 @@
   "nv580_desc": "Drivere moștenite Nvidia 580xx pentru Maxwell (GTX 9xx), Pascal (GTX 10xx) și unele GPU serii Kepler (GTX 750/750Ti) și Turing (GTX 16xx).",
   "zram_desc": "Dispozitiv bloc RAM comprimat cu zstd care poate fi utilizat pentru swap în loc de fișierul sau partiția de swap convențional, îmbunătățește performanța în special sub presiunea memoriei.",
   "preempt_desc": "Activați preemptiunea completă a nucleului pe Fedora și sistemele conexe, dorită pentru desktop și susținută de nucleul implicit, deși dezactivată implicit datorită utilizării în mediile server, unde reactivitatea și latența nu sunt critice.",
-  "preemptfedora": "Preemptiunea completă a nucleului"
+  "preemptfedora": "Preemptiunea completă a nucleului",
+  "udevpass": "Activați software-ul bazat pe web",
+  "udevpass_desc": "Vă permite să utilizați software-ul bazat pe web, cum ar fi ATK HUB pentru dispozitivele periferice care le au. Un browser bazat pe Chromium este încă necesar pentru a funcționa un software de acest fel."
 }

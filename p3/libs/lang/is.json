@@ -355,5 +355,7 @@
   "nv580_desc": "Nvidia 580xx eldri stýrieining fyrir Maxwell (GTX 9xx), Pascal (GTX 10xx) og sumar Kepler (GTX 750/750Ti) og Turing (GTX 16xx) GPU raðir.",
   "zram_desc": "RAM-blok tæki þjöppað með zstd sem hægt er að nota til skipti á stað hefðbundins skiptaskrár eða skipta, bætir afköst sérstaklega undir minnisspyrnu.",
   "preempt_desc": "Virkjaðu fullan kernel forða á Fedora og tengdum kerfum, sem er æskilegt fyrir skjáborð og stutt af sjálfgefnum kernel, þó að það sé óvirkt sjálfgefið vegna notkunar í serverumhverfi, þar sem viðbragð og latency eru ekki mikilvæg.",
-  "preemptfedora": "Fullan kernel forða"
+  "preemptfedora": "Fullan kernel forða",
+  "udevpass": "Virkjaðu vefstigið hugbúnað",
+  "udevpass_desc": "Leyfir þér að nota vefstigið hugbúnað eins og ATK HUB fyrir jaðartæki sem hafa þau. Vefrithöfðingi byggð á Chromium er ennþá nauðsynlegur til að slíkur hugbúnaður virki."
 }

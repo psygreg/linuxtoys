@@ -355,5 +355,7 @@
   "nv580_desc": "Pengemudi warisan Nvidia 580xx untuk Maxwell (GTX 9xx), Pascal (GTX 10xx) dan beberapa GPU seri Kepler (GTX 750/750Ti) dan Turing (GTX 16xx).",
   "zram_desc": "Perangkat blok RAM yang dikompresi dengan zstd yang dapat digunakan untuk swap alih-alih file atau partisi swap konvensional, meningkatkan kinerja terutama di bawah tekanan memori.",
   "preempt_desc": "Aktifkan preemption kernel penuh di Fedora dan sistem terkait, yang diinginkan untuk desktop dan didukung oleh kernel default, meskipun dinonaktifkan secara default karena penggunaan di lingkungan server, di mana responsivitas dan latensi tidak kritis.",
-  "preemptfedora": "Preemption kernel penuh"
+  "preemptfedora": "Preemption kernel penuh",
+  "udevpass": "Aktifkan perangkat lunak berbasis web",
+  "udevpass_desc": "Memungkinkan Anda menggunakan perangkat lunak berbasis web seperti ATK HUB untuk perangkat pinggiran yang memilikinya. Browser berbasis Chromium masih diperlukan agar perangkat lunak semacam itu berfungsi."
 }

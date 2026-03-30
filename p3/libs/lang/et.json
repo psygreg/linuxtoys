@@ -355,5 +355,7 @@
   "nv580_desc": "Nvidia 580xx pärandatud draiverid Maxwell (GTX 9xx), Pascal (GTX 10xx) ja mõne Kepler (GTX 750/750Ti) ja Turing (GTX 16xx) seeria GPU jaoks.",
   "zram_desc": "zstd-iga tihendatud RAM-blokiseadis, mida saab kasutada tavapärase vahetusega seotud faili või partitsiooni asemel, parandab jõudlust eriti mälutõrje korral.",
   "preempt_desc": "Lubage täielik kerneli eelnemine Fedoras ja sarnastes süsteemides, mis on soovitav töölaudade jaoks ja toetatud vaikeseadistusega kernelitega, kuigi see on vaikimisi keelatud kella kasutamise tõttu serverikeskkondades, kus reaktiivsus ja latentsus ei ole kriitilised.",
-  "preemptfedora": "Täielik kerneli eelnemine"
+  "preemptfedora": "Täielik kerneli eelnemine",
+  "udevpass": "Luba veebi põhine tarkvara",
+  "udevpass_desc": "Võimaldab teil kasutada veebi põhist tarkvara nagu ATK HUB perifeeriaseadmete jaoks, millel need on. Chromium-põhine brauser on endiselt vajalik sellise tarkvara tööks."
 }

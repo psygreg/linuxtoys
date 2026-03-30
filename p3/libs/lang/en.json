@@ -355,5 +355,7 @@
   "nv580_desc": "Nvidia 580xx legacy drivers for Maxwell (GTX 9xx), Pascal (GTX 10xx) and some Kepler (GTX 750/750Ti) and Turing (GTX 16xx) series GPUs.",
   "zram_desc": "A zstd-compressed RAM block device that can be used for swap instead of a conventional swap file or partition, improving performance especially under memory pressure.",
   "preempt_desc": "Enable full kernel preemption on Fedora and related systems, which is desirable for desktops and supported by default kernel, despite being disabled by default due to usage in server environments, where responsiveness and latency are not critical.",
-  "preemptfedora": "Kernel Full Preemption" 
+  "preemptfedora": "Kernel Full Preemption",
+  "udevpass": "Enable Web-based Software",
+  "udevpass_desc": "Allows you to use web-based software like ATK HUB for peripherals that have those. A Chromium-based browser is still required for such software to work as well."
 }

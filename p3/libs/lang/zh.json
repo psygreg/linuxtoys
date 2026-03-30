@@ -357,5 +357,7 @@
   "nv580_desc": "Nvidia 580xx 旧版驱动程序，适用于Maxwell (GTX 9xx)、Pascal (GTX 10xx)以及部分Kepler (GTX 750/750Ti)和Turing (GTX 16xx)系列GPU。",
   "zram_desc": "zstd压缩的RAM块设备，可用于交换，而不是传统的交换文件或分区，特别在内存压力下改进性能。",
   "preempt_desc": "在 Fedora 和相关系统上启用完整的内核抢占，这对桌面来说是可取的，并由默认内核支持，尽管由于在服务器环境中使用而默认禁用，在那里响应性和延迟并不重要。",
-  "preemptfedora": "完整内核抢占"
+  "preemptfedora": "完整内核抢占",
+  "udevpass": "启用基于Web的软件",
+  "udevpass_desc": "允许您使用基于Web的软件，如ATK HUB，用于拥有这些功能的外设。仍然需要基于Chromium的浏览器使得此类软件能够正常运行。"
 }

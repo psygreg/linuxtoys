@@ -355,5 +355,7 @@
   "nv580_desc": "Nvidia 580xx Legacy-Treiber für Maxwell (GTX 9xx), Pascal (GTX 10xx) und einige Kepler (GTX 750/750Ti) und Turing (GTX 16xx) GPU-Serien.",
   "zram_desc": "RAM-Blockgerät, komprimiert mit zstd, das anstelle einer konventionellen Swap-Datei oder Partition für Swap verwendet werden kann, verbessert die Leistung besonders unter Speicherdruck.",
   "preempt_desc": "Aktivieren Sie die vollständige Kernel-Präemption auf Fedora und verwandten Systemen, was für Desktops wünschenswert ist und vom Standard-Kernel unterstützt wird, obwohl es standardmäßig deaktiviert ist, da es in Serverumgebungen verwendet wird, wo Reaktionsfähigkeit und Latenz nicht kritisch sind.",
-  "preemptfedora": "Vollständige Kernel-Präemption"
+  "preemptfedora": "Vollständige Kernel-Präemption",
+  "udevpass": "Webbasierte Software aktivieren",
+  "udevpass_desc": "Ermöglicht die Verwendung von webbasierter Software wie ATK HUB für Peripheriegeräte, die diese haben. Ein Chromium-basierter Browser ist weiterhin erforderlich, damit solche Software funktioniert."
 }

@@ -355,5 +355,7 @@
   "nv580_desc": "Trình điều khiển cũ Nvidia 580xx cho Maxwell (GTX 9xx), Pascal (GTX 10xx) và một số GPU seri Kepler (GTX 750/750Ti) và Turing (GTX 16xx).",
   "zram_desc": "Thiết bị khối RAM được nén bằng zstd có thể được sử dụng cho hoán đổi thay vì tệp hoặc phân vùng hoán đổi thông thường, cải thiện hiệu suất đặc biệt dưới áp lực bộ nhớ.",
   "preempt_desc": "Bật khóa kernel đầy đủ trên Fedora và các hệ thống liên quan, mong muốn cho máy tính để bàn và được hỗ trợ bởi kernel mặc định, mặc dù vô hiệu hóa theo mặc định do sử dụng trong môi trường máy chủ, nơi khả năng phản hồi và độ trễ không quan trọng.",
-  "preemptfedora": "Khóa kernel đầy đủ"
+  "preemptfedora": "Khóa kernel đầy đủ",
+  "udevpass": "Bật phần mềm dựa trên web",
+  "udevpass_desc": "Cho phép bạn sử dụng phần mềm dựa trên web như ATK HUB cho các thiết bị ngoài địa chỉ mà bạn có. Một trình duyệt dựa trên Chromium vẫn cần thiết để phần mềm như vậy hoạt động."
 }
