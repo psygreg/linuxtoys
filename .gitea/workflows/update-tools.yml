@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install axios
+          npm install axios@1.14.0
 
       - name: Fetch and process LinuxToys data
         run: |
