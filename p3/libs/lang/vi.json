@@ -357,5 +357,6 @@
   "preempt_desc": "Bật khóa kernel đầy đủ trên Fedora và các hệ thống liên quan, mong muốn cho máy tính để bàn và được hỗ trợ bởi kernel mặc định, mặc dù vô hiệu hóa theo mặc định do sử dụng trong môi trường máy chủ, nơi khả năng phản hồi và độ trễ không quan trọng.",
   "preemptfedora": "Khóa kernel đầy đủ",
   "udevpass": "Bật phần mềm dựa trên web",
-  "udevpass_desc": "Cho phép bạn sử dụng phần mềm dựa trên web như ATK HUB cho các thiết bị ngoài địa chỉ mà bạn có. Một trình duyệt dựa trên Chromium vẫn cần thiết để phần mềm như vậy hoạt động."
+  "udevpass_desc": "Cho phép bạn sử dụng phần mềm dựa trên web như ATK HUB cho các thiết bị ngoài địa chỉ mà bạn có. Một trình duyệt dựa trên Chromium vẫn cần thiết để phần mềm như vậy hoạt động.",
+  "sloth_desc": "Một thư viện bash giúp sử dụng terminal thân thiện và thực tế hơn cho các hệ thống headless, nhà phát triển và những người yêu thích. Cũng được phát triển bởi Psygreg."
 }

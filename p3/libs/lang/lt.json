@@ -357,5 +357,6 @@
   "preempt_desc": "Suaktyvinkite visišką branduolio preempcijos šaltinius Fedoroje ir susijusiose sistemose, kurie yra pageidautini darbo stalams ir palaikomi numatytajame branduolyje, nors jie yra numatytos negalės dėl serverio aplinkų naudojimo, kuriose atsakymas ir latenija nėra kritiniai.",
   "preemptfedora": "Visuotinė branduolio preempcija",
   "udevpass": "Suaktyvinkite žiniatinklį pagrįstą programinę įrangą",
-  "udevpass_desc": "Leidžia naudoti žiniatinklį pagrįstą programinę įrangą, tokią kaip ATK HUB periferiniam krašto. Chromium pagrįstas naršytuvas yra vis dar reikalingas tokiai programinei įrangai veikti."
+  "udevpass_desc": "Leidžia naudoti žiniatinklį pagrįstą programinę įrangą, tokią kaip ATK HUB periferiniam krašto. Chromium pagrįstas naršytuvas yra vis dar reikalingas tokiai programinei įrangai veikti.",
+  "sloth_desc": "Bash biblioteka, padaranti terminalų naudojimą draugiškiau ir praktiškiau headless sistemoms, programuotojams ir entuziastams. Taip pat sukūrė Psygreg."
 }

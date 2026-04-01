@@ -357,5 +357,6 @@
   "preempt_desc": "Aktivujte úplné vytesnenie jadra na Fedore a súvisiacich systémoch, čo je žiaduce pre počítače a podporované predvoleným jadrom, hoci je v predvolenom nastavení zakázané z dôvodu použitia v serverových prostrediach, kde responsivita a latencia nie sú kritické.",
   "preemptfedora": "Úplné vytesnenie jadra",
   "udevpass": "Povolte webový softvér",
-  "udevpass_desc": "Umožňuje vám použiť webový softvér ako ATK HUB pre periferné zariadenia, ktoré ich majú. Na fungovanie takého softvéru je stále potrebný Chromium-kompatibilný prehliadač."
+  "udevpass_desc": "Umožňuje vám použiť webový softvér ako ATK HUB pre periferné zariadenia, ktoré ich majú. Na fungovanie takého softvéru je stále potrebný Chromium-kompatibilný prehliadač.",
+  "sloth_desc": "Knižnica bash, ktorá robí používanie terminálu priateľskejším a praktickejším pre headless systémy, vývojárov a nadšencov. Taktiež vyvíjaná spoločnosťou Psygreg."
 }

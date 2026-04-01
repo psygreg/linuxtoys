@@ -357,5 +357,6 @@
   "preempt_desc": "Aktifkan preemption kernel penuh di Fedora dan sistem terkait, yang diinginkan untuk desktop dan didukung oleh kernel default, meskipun dinonaktifkan secara default karena penggunaan di lingkungan server, di mana responsivitas dan latensi tidak kritis.",
   "preemptfedora": "Preemption kernel penuh",
   "udevpass": "Aktifkan perangkat lunak berbasis web",
-  "udevpass_desc": "Memungkinkan Anda menggunakan perangkat lunak berbasis web seperti ATK HUB untuk perangkat pinggiran yang memilikinya. Browser berbasis Chromium masih diperlukan agar perangkat lunak semacam itu berfungsi."
+  "udevpass_desc": "Memungkinkan Anda menggunakan perangkat lunak berbasis web seperti ATK HUB untuk perangkat pinggiran yang memilikinya. Browser berbasis Chromium masih diperlukan agar perangkat lunak semacam itu berfungsi.",
+  "sloth_desc": "Perpustakaan bash yang membuat penggunaan terminal lebih ramah pengguna dan praktis untuk sistem headless, pengembang, dan penggemar. Juga dikembangkan oleh Psygreg."
 }

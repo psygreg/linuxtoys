@@ -357,5 +357,6 @@
   "preempt_desc": "Activez la préemption complète du noyau sur Fedora et les systèmes connexes, souhaitable pour les postes de travail et prise en charge par le noyau par défaut, bien qu'elle soit désactivée par défaut du fait de son utilisation dans les environnements de serveur, où la réactivité et la latence ne sont pas critiques.",
   "preemptfedora": "Préemption complète du noyau",
   "udevpass": "Activer les logiciels basés sur le Web",
-  "udevpass_desc": "Vous permet d'utiliser des logiciels basés sur le Web comme ATK HUB pour les appareils périphériques qui les possèdent. Un navigateur basé sur Chromium est toujours nécessaire pour que ce logiciel fonctionne."
+  "udevpass_desc": "Vous permet d'utiliser des logiciels basés sur le Web comme ATK HUB pour les appareils périphériques qui les possèdent. Un navigateur basé sur Chromium est toujours nécessaire pour que ce logiciel fonctionne.",
+  "sloth_desc": "Une bibliothèque bash qui rend l'utilisation du terminal plus conviviale et pratique pour les systèmes sans tête, les développeurs et les enthousiastes. Également développé par Psygreg."
 }

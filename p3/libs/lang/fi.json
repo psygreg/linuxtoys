@@ -357,5 +357,6 @@
   "preempt_desc": "Ota käyttöön täysi ytimen ennakointi Fedorassa ja niihin liittyvissä järjestelmissä, mikä on toivottavaa työpöydille ja tuetaan oletusytimellä, vaikka se on oletusarvoisesti poistettu käytöstä palvelinympäristöissä, joissa vasteen nopeudella ja latenssilla ei ole kriittistä merkitystä.",
   "preemptfedora": "Täysi ytimen ennakointi",
   "udevpass": "Ota verkkopohjainen ohjelmisto käyttöön",
-  "udevpass_desc": "Sallii verkkopohjaisen ohjelmiston, kuten ATK HUB, käytön näihin liittyville laitteille. Chromium-pohjainen selain vielä tarvitaan tällaisen ohjelmiston toimimiseksi."
+  "udevpass_desc": "Sallii verkkopohjaisen ohjelmiston, kuten ATK HUB, käytön näihin liittyville laitteille. Chromium-pohjainen selain vielä tarvitaan tällaisen ohjelmiston toimimiseksi.",
+  "sloth_desc": "Bash-kirjasto, joka tekee päätetyöskentelyn ystävällisemmäksi ja käytännöllisemmäksi headless-järjestelmille, kehittäjille ja innokkaille. Kehittänyt myös Psygreg."
 }

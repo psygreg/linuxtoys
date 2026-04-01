@@ -357,5 +357,6 @@
   "preempt_desc": "Aktivirajte polno prednostno klienturo jedra na Fedori in povezanih sistemih, kar je želeno za namizje in podprto s privzetim jedrom, čeprav je privzeto onemogočeno zaradi uporabe v serverskih okoljeh, kjer se odzivnost in zakasnitev ne štejeta za kritični.",
   "preemptfedora": "Polno prednostno klienturo jedra",
   "udevpass": "Omogočite spletno programsko opremino",
-  "udevpass_desc": "Omogoča vam uporabo spletne programske opreme, kot je ATK HUB za periferne naprave, ki jih imajo. Za delovanje take programske opreme je še vedno potreben Chromium-osnovni brskalnik."
+  "udevpass_desc": "Omogoča vam uporabo spletne programske opreme, kot je ATK HUB za periferne naprave, ki jih imajo. Za delovanje take programske opreme je še vedno potreben Chromium-osnovni brskalnik.",
+  "sloth_desc": "Knjižnica bash, ki naredi uporabo terminalnega vmesnika bolj prijazno in praktično za sistemske headless, razvijalce in navdušence. Razvita tudi s strani Psygreg."
 }

@@ -357,5 +357,6 @@
   "preempt_desc": "Lubage täielik kerneli eelnemine Fedoras ja sarnastes süsteemides, mis on soovitav töölaudade jaoks ja toetatud vaikeseadistusega kernelitega, kuigi see on vaikimisi keelatud kella kasutamise tõttu serverikeskkondades, kus reaktiivsus ja latentsus ei ole kriitilised.",
   "preemptfedora": "Täielik kerneli eelnemine",
   "udevpass": "Luba veebi põhine tarkvara",
-  "udevpass_desc": "Võimaldab teil kasutada veebi põhist tarkvara nagu ATK HUB perifeeriaseadmete jaoks, millel need on. Chromium-põhine brauser on endiselt vajalik sellise tarkvara tööks."
+  "udevpass_desc": "Võimaldab teil kasutada veebi põhist tarkvara nagu ATK HUB perifeeriaseadmete jaoks, millel need on. Chromium-põhine brauser on endiselt vajalik sellise tarkvara tööks.",
+  "sloth_desc": "Bash teek, mis muudab terminalikasutuse sõbralikumaks ja praktilisemaks headless-süsteemidele, arendajatele ja entusiasmiast. Arendatud ka Psygreg poolt."
 }

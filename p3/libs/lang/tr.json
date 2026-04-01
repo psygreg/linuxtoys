@@ -357,5 +357,6 @@
   "preempt_desc": "Fedora ve ilgili sistemlerde tam kernel preemption etkinleştirin, masaüstü için arzu edilen ve varsayılan kernel tarafından desteklenen, ancak sunucu ortamlarında kullanım nedeniyle varsayılan olarak devre dışı, burada yanıt verme ve gecikme kritik değildir.",
   "preemptfedora": "Tam kernel preemption",
   "udevpass": "Web tabanlı yazılımı etkinleştirin",
-  "udevpass_desc": "ATK HUB gibi web tabanlı yazılımları, sahip olduğu çevre birimleri için kullanmanıza izin verir. Böyle bir yazılımın çalışması için yine de Chromium tabanlı bir tarayıcı gereklidir."
+  "udevpass_desc": "ATK HUB gibi web tabanlı yazılımları, sahip olduğu çevre birimleri için kullanmanıza izin verir. Böyle bir yazılımın çalışması için yine de Chromium tabanlı bir tarayıcı gereklidir.",
+  "sloth_desc": "Terminal kullanımını headless sistemler, geliştiriciler ve meraklılar için daha dostça ve pratik hale getiren bir bash kütüphanesi. Psygreg tarafından da geliştirildi."
 }

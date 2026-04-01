@@ -357,5 +357,6 @@
   "preempt_desc": "Activați preemptiunea completă a nucleului pe Fedora și sistemele conexe, dorită pentru desktop și susținută de nucleul implicit, deși dezactivată implicit datorită utilizării în mediile server, unde reactivitatea și latența nu sunt critice.",
   "preemptfedora": "Preemptiunea completă a nucleului",
   "udevpass": "Activați software-ul bazat pe web",
-  "udevpass_desc": "Vă permite să utilizați software-ul bazat pe web, cum ar fi ATK HUB pentru dispozitivele periferice care le au. Un browser bazat pe Chromium este încă necesar pentru a funcționa un software de acest fel."
+  "udevpass_desc": "Vă permite să utilizați software-ul bazat pe web, cum ar fi ATK HUB pentru dispozitivele periferice care le au. Un browser bazat pe Chromium este încă necesar pentru a funcționa un software de acest fel.",
+  "sloth_desc": "O bibliotecă bash care face utilizarea terminalului mai prietenească și mai practică pentru sistemele headless, dezvoltatori și pasionați. Dezvoltat și de Psygreg."
 }

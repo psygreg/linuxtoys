@@ -359,5 +359,6 @@
   "preempt_desc": "在 Fedora 和相关系统上启用完整的内核抢占，这对桌面来说是可取的，并由默认内核支持，尽管由于在服务器环境中使用而默认禁用，在那里响应性和延迟并不重要。",
   "preemptfedora": "完整内核抢占",
   "udevpass": "启用基于Web的软件",
-  "udevpass_desc": "允许您使用基于Web的软件，如ATK HUB，用于拥有这些功能的外设。仍然需要基于Chromium的浏览器使得此类软件能够正常运行。"
+  "udevpass_desc": "允许您使用基于Web的软件，如ATK HUB，用于拥有这些功能的外设。仍然需要基于Chromium的浏览器使得此类软件能够正常运行。",
+  "sloth_desc": "一个bash库，使得与terminal的交互对headless系统、开发人员和爱好者更加友好和实用。也由Psygreg开发。"
 }

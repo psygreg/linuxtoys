@@ -356,5 +356,6 @@
   "preempt_desc": "Fedora və əlaqəli sistemlərdə tam kernel preempsiyanı aktivləşdirin, bu gözəl masaüstü sistemləri üçün arzu olunur və default kernel tərəfindən dəstəklənir, lakin server mühitində istifadə devido əsasən deaktivləşir, burada cavab və latensiya kritik deyil.",
   "preemptfedora": "Tam Kernel Preempsionu",
   "udevpass": "Web-əsaslı proqramları aktivləşdirin",
-  "udevpass_desc": "ATK HUB kimi veb-əsaslı proqramları istifadə etməyə imkan verir bu tip periferiyalar üçün. Chromium-əsaslı brauzer hələ də lazımdır ki, belə proqramlar işləsinse."
+  "udevpass_desc": "ATK HUB kimi veb-əsaslı proqramları istifadə etməyə imkan verir bu tip periferiyalar üçün. Chromium-əsaslı brauzer hələ də lazımdır ki, belə proqramlar işləsinse.",
+  "sloth_desc": "Headless sistemlər, proqramçılar və həvəskarlar üçün terminal istifadəsini daha dostu və praktiki edən bash kitabxanası. Həmçinin Psygreg tərəfindən inkişaf etdirilmiş."
 }

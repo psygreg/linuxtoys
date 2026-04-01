@@ -357,5 +357,6 @@
   "preempt_desc": "Engedélyezze a teljes kernel preemption-t a Fedorán és a kapcsolódó rendszereken, amely kívánatos az asztali számítógépek számára és az alapértelmezett kernel támogatja, bár alapértelmezetten le van tiltva a szerver környezetekben való használat miatt, ahol a válaszkészség és a késleltetés nem kritikus.",
   "preemptfedora": "Teljes kernel preemption",
   "udevpass": "Webalapú szoftver engedélyezése",
-  "udevpass_desc": "Lehetővé teszi a webalapú szoftverek, például az ATK HUB használatát az olyan perifériákon, amelyek ezeket rendelkezik. A Chromium-alapú böngésző továbbra is szükséges az ilyen szoftverek működéséhez."
+  "udevpass_desc": "Lehetővé teszi a webalapú szoftverek, például az ATK HUB használatát az olyan perifériákon, amelyek ezeket rendelkezik. A Chromium-alapú böngésző továbbra is szükséges az ilyen szoftverek működéséhez.",
+  "sloth_desc": "Egy bash könyvtár, amely a terminálhasználatot barátságosabbá és praktikusabbá teszi a fejfejetlen rendszerek, fejlesztők és rajongók számára. Psygreg is fejlesztette."
 }

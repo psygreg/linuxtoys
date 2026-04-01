@@ -357,5 +357,6 @@
   "preempt_desc": "Aktivizo pengimin e plotë të kernels në Fedora dhe sistemet lidhur, e dëshiruar për desktop dhe e mbështetur nga kernels default, edhe pse e çaktivizuar si parazgjedhje për shkak të përdorimit në mjedise serveri, ku përgjigja dhe latenca nuk janë kritike.",
   "preemptfedora": "Pengimi i plotë i kernels",
   "udevpass": "Aktivizo softuerin e bazuar në web",
-  "udevpass_desc": "Ju lejon të përdorni softuerin e bazuar në web, siç është ATK HUB për periferikë të cilat i kanë këto. Një shfletues i bazuar në Chromium është ende i nevojshëm për që softueri i tillë të funksionojë."
+  "udevpass_desc": "Ju lejon të përdorni softuerin e bazuar në web, siç është ATK HUB për periferikë të cilat i kanë këto. Një shfletues i bazuar në Chromium është ende i nevojshëm për që softueri i tillë të funksionojë.",
+  "sloth_desc": "Një bibliotekë bash që e bën përdorimin e terminalit më miqësor dhe më praktik për sistemet headless, zhvilluesit dhe entuziastët. Zhvilluar edhe nga Psygreg."
 }

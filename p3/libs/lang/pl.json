@@ -357,5 +357,6 @@
   "preempt_desc": "Włącz pełną preempcję jądra na Fedorze i powiązanych systemach, co jest pożądane dla pulpitów i obsługiwane przez domyślne jądro, choć domyślnie wyłączone ze względu na użycie w środowiskach serwerowych, gdzie responsywność i opóźnienie nie są krytyczne.",
   "preemptfedora": "Pełna preempcja jądra",
   "udevpass": "Włącz oprogramowanie oparte na sieci web",
-  "udevpass_desc": "Pozwala na użycie oprogramowania opartego na sieci web, takiego jak ATK HUB dla urządzeń peryferyjnych, które je mają. Przeglądarka oparta na Chromium jest nadal wymagana do działania takiego oprogramowania."
+  "udevpass_desc": "Pozwala na użycie oprogramowania opartego na sieci web, takiego jak ATK HUB dla urządzeń peryferyjnych, które je mają. Przeglądarka oparta na Chromium jest nadal wymagana do działania takiego oprogramowania.",
+  "sloth_desc": "Biblioteka bash, która czyni korzystanie z terminala bardziej przyjaznym i praktycznym dla systemów headless, programistów i entuzjastów. Również opracowana przez Psygreg."
 }

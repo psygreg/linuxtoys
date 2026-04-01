@@ -357,5 +357,6 @@
   "preempt_desc": "Virkjaðu fullan kernel forða á Fedora og tengdum kerfum, sem er æskilegt fyrir skjáborð og stutt af sjálfgefnum kernel, þó að það sé óvirkt sjálfgefið vegna notkunar í serverumhverfi, þar sem viðbragð og latency eru ekki mikilvæg.",
   "preemptfedora": "Fullan kernel forða",
   "udevpass": "Virkjaðu vefstigið hugbúnað",
-  "udevpass_desc": "Leyfir þér að nota vefstigið hugbúnað eins og ATK HUB fyrir jaðartæki sem hafa þau. Vefrithöfðingi byggð á Chromium er ennþá nauðsynlegur til að slíkur hugbúnaður virki."
+  "udevpass_desc": "Leyfir þér að nota vefstigið hugbúnað eins og ATK HUB fyrir jaðartæki sem hafa þau. Vefrithöfðingi byggð á Chromium er ennþá nauðsynlegur til að slíkur hugbúnaður virki.",
+  "sloth_desc": "Bash safn sem gerir notkun stafældar stillari vinallegri og hagnýtari fyrir headless kerfi, forritara og aðdáendur. Einnig þróað af Psygreg."
 }

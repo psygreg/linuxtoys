@@ -356,5 +356,6 @@
   "preempt_desc": "Fedora va tegishli tizimlarda to'liq kernel preemption-ni faollashtiring, ish stoli uchun rejalashtirilgan va standart kernel tomonidan qo'llaniladigan, garchi serveri muhitida foydalanish tufayli standart bo'yicha noaktiv, bu yerda javobgarlik va kechikish juda muhim emas.",
   "preemptfedora": "To'liq kernel preemption",
   "udevpass": "Veb-asosli dasturiy ta'minotni faollashtiring",
-  "udevpass_desc": "Siz ATK HUB kabi veb-asosli dasturiy ta'minotlarni ushbu peripherallar uchun ishlatish imkonini beradi. Bunday dasturiy ta'minot ishlaslishi uchun Chromium asosidagi brauzver hozir ham talab qilinadi."
+  "udevpass_desc": "Siz ATK HUB kabi veb-asosli dasturiy ta'minotlarni ushbu peripherallar uchun ishlatish imkonini beradi. Bunday dasturiy ta'minot ishlaslishi uchun Chromium asosidagi brauzver hozir ham talab qilinadi.",
+  "sloth_desc": "Headless sistemalar, ishlab chiquvchilar va ishtiyoqmandlar uchun terminal foydalanishni yana dostona va amaliy qiluvchi bash kitobxonasi. Shuningdek Psygreg tomonidan ishlab chiqilgan."
 }

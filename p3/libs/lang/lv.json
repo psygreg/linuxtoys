@@ -357,5 +357,6 @@
   "preempt_desc": "Ieslēdziet pilnu kodola pirmsakarību uz Fedoras un saistītajām sistēmām, kas ir vēlams darbavirsmas datoriem un atbalstīts pēc noklusējuma kodola, lai gan tas ir izslēgts pēc noklusējuma servera vidi dēļ, kur atbildes un latences nav kritiski.",
   "preemptfedora": "Pilna kodola pirmsakarība",
   "udevpass": "Iespējot uz tīklu balstītu programmatūru",
-  "udevpass_desc": "Ļauj jums izmantot uz tīklu balstītu programmatūru, piemēram, ATK HUB perifērajiem ierīcēm, kurām tie ir. Uz Chromium balstīts pārlūks joprojām ir nepieciešams, lai šāda programmatūra darbotos."
+  "udevpass_desc": "Ļauj jums izmantot uz tīklu balstītu programmatūru, piemēram, ATK HUB perifērajiem ierīcēm, kurām tie ir. Uz Chromium balstīts pārlūks joprojām ir nepieciešams, lai šāda programmatūra darbotos.",
+  "sloth_desc": "Bash bibliotēka, kas padara termināla lietošanu draudzīgāku un praktisku headless sistēmām, izstrādātājiem un entuziastiem. Arī Psygreg izstrādāja."
 }

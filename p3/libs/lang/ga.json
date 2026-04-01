@@ -357,5 +357,6 @@
   "preempt_desc": "Cumasaigh foras iomlán an chéadúsáide ar Fedora agus ar chórais ghaolmhara, atá inmhianaithe do dhraenáin agus tacaithe ag an cnuasach réamhshocraithe, cé go bhfuil sé díchumasaithe de réir réamhshocraithe mar gheall ar úsáid i timpeallachtaí freastalaí, ar nach bhfuil freagairt agus caolú ríthábhachtach.",
   "preemptfedora": "Foras iomlán an chéadúsáide",
   "udevpass": "Cumasaigh bogearraí bunaithe ar an Ghréasán",
-  "udevpass_desc": "Ligeann sé duit bogearraí bunaithe ar an Ghréasán a úsáid ar nós ATK HUB do ghréasáin dhá taobh a bhfuil siad ann. Fós ar gá agat brabhsálaí bunaithe ar Chromium mar gheall ar oibriú na rogearraí sin."
+  "udevpass_desc": "Ligeann sé duit bogearraí bunaithe ar an Ghréasán a úsáid ar nós ATK HUB do ghréasáin dhá taobh a bhfuil siad ann. Fós ar gá agat brabhsálaí bunaithe ar Chromium mar gheall ar oibriú na rogearraí sin.",
+  "sloth_desc": "Leabharlann bash a dhéanann úsáid na geall níos cairdiúla agus níos praiticiúla do chórais headless, forbróirí agus dúil-bhreithne. Forbartha go leor ag Psygreg."
 }

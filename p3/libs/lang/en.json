@@ -357,5 +357,6 @@
   "preempt_desc": "Enable full kernel preemption on Fedora and related systems, which is desirable for desktops and supported by default kernel, despite being disabled by default due to usage in server environments, where responsiveness and latency are not critical.",
   "preemptfedora": "Kernel Full Preemption",
   "udevpass": "Enable Web-based Software",
-  "udevpass_desc": "Allows you to use web-based software like ATK HUB for peripherals that have those. A Chromium-based browser is still required for such software to work as well."
+  "udevpass_desc": "Allows you to use web-based software like ATK HUB for peripherals that have those. A Chromium-based browser is still required for such software to work as well.",
+  "sloth_desc": "A bash library that makes terminal usage more friendly and practical for headless systems, developers and enthusiasts alike. Also developed by Psygreg."
 }

@@ -357,5 +357,6 @@
   "preempt_desc": "Povolte plnou preempci jádra ve Fedoře a příbuzných systémech, která je žádoucí pro stolní počítače a podporována výchozím jádrem, přestože je ve výchozím nastavení zakázána kvůli použití v serverových prostředích, kde jsou odezva a latence nekritické.",
   "preemptfedora": "Plná preemce jádra",
   "udevpass": "Povolte webový software",
-  "udevpass_desc": "Umožňuje vám použít webový software jako ATK HUB pro periferní zařízení, která je mají. Pro takový software je stále potřeba prohlížeč na bázi Chromium."
+  "udevpass_desc": "Umožňuje vám použít webový software jako ATK HUB pro periferní zařízení, která je mají. Pro takový software je stále potřeba prohlížeč na bázi Chromium.",
+  "sloth_desc": "Knihovna bash, která činí použití terminálu přívětivějším a praktičtějším pro headless systémy, vývojáře a nadšence. Vyvinul také Psygreg."
 }

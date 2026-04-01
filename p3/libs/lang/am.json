@@ -357,5 +357,6 @@
   "preempt_desc": "በ Fedora እና ተዛማጅ ስርዓቶች ላይ ሙሉ ኮርናል ቅድሚያ ሰጠት 활성화 ያስቻሉ ፣ ይህም ለデスクtops ይፈልገናል እና ከ default ኮርናል ድጋፍ ተደርጋ ቢሆንም ፣ በ server ሁኔታዎች ውስጥ ጥቅም ላይ ከሚውለው ነገር በተረፈ ብዙውን ጊዜ በ default መሆኑ አለበት ፣ ንቁነት እና ዘግየት በጣም አስፈላጊ አይደለም።",
   "preemptfedora": "ሙሉ ኮርናል ቅድሚያ ሰጣት",
   "udevpass": "ድር-ተኩስ ሶፍትዌር ፈቅድ",
-  "udevpass_desc": "ድር-ተኩስ ሶፍትዌር ATK HUB ሕጂ ለ peripherals እንደዚህ ያሉ በ ግዳጅ ይህ ለወደ Chromium ተና ብ browser ያስፈልጋል ስለዚህ."
+  "udevpass_desc": "ድር-ተኩስ ሶፍትዌር ATK HUB ሕጂ ለ peripherals እንደዚህ ያሉ በ ግዳጅ ይህ ለወደ Chromium ተና ብ browser ያስፈልጋል ስለዚህ.",
+  "sloth_desc": "ለ headless ስርዓቶች, ገንቢወርከስ እና ፅዋትሞህ የ bash ቤተ-መፃህፍት ተርሚናል አጠቃቅም ይበልጥ ወዳጅ እና ተግባራዊ ያደርገዋል. በእንደዚህ አይነት PsyGreg ዋሰው ተለያይተህ."
 }

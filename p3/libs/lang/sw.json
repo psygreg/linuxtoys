@@ -355,5 +355,6 @@
   "preempt_desc": "Amilisha ukamilamali wa kernel preemption juu ya Fedora na mifumo yenye mahusiano, inayotakiwa kwa desktop na iliyoungwa mkono na kernel-chaguo-msingi, ingawa imeamilishwa kwa default kwa sababu ya matumizi katika mazingira ya server, ambapo uhakika na kukamatia hakuna kuwa mahalisi.",
   "preemptfedora": "Ukamilamali wa kernel preemption",
   "udevpass": "Washa programu inayoongezwa kwenye wavuti",
-  "udevpass_desc": "Huruhusu kutumiwa kwa programu inayoongezwa kwenye wavuti kama ATK HUB kwa vifaa vya mahofuza. Kivinjari kinachotekeleza Chromium kiko bado kinachohitajika kwa programu ya kukamatia."
+  "udevpass_desc": "Huruhusu kutumiwa kwa programu inayoongezwa kwenye wavuti kama ATK HUB kwa vifaa vya mahofuza. Kivinjari kinachotekeleza Chromium kiko bado kinachohitajika kwa programu ya kukamatia.",
+  "sloth_desc": "Maktaba ya bash inayofanya matumizi ya terminal kuwa maalum na kufaa kwa mifumo ya headless, waendelezaji na wapenzi. Pia ilitengenezwa na Psygreg."
 }

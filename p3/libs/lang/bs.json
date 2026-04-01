@@ -356,5 +356,6 @@
   "preempt_desc": "Omogućite puno preempivanje kernela na Fedori i srodnim sistemima, što je poželjno za desktope i podržano podrazumevanom jezgrom, iako je podrazumevano onemogućeno zbog upotrebe u okruženjima servera, gde odgovznost i latencija nisu kritični.",
   "preemptfedora": "Puno preemptivanje kernela",
   "udevpass": "Omogućite programsku podršku na osnovu weba",
-  "udevpass_desc": "Omogućuje vam korišćenje veb-softvera kao što je ATK HUB za periferne uređaje koji imaju takve. Hromijum-baziran preglednik je potreban da bi takav softver radio."
+  "udevpass_desc": "Omogućuje vam korišćenje veb-softvera kao što je ATK HUB za periferne uređaje koji imaju takve. Hromijum-baziran preglednik je potreban da bi takav softver radio.",
+  "sloth_desc": "Bash biblioteka koja čini upotrebu terminala prijatnijom i praktičnijom za headless sisteme, programere i entuzijaste. Takođe razvijana od strane Psygreg-a."
 }

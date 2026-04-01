@@ -357,5 +357,6 @@
   "preempt_desc": "Aktivér fuld kernel preemption på Fedora og relaterede systemer, hvilket er ønskeligt for skriveborde og understøttet af standard kernel, på trods af at det er deaktiveret som standard på grund af brug i servermiljøer, hvor responsivitet og latency ikke er kritiske.",
   "preemptfedora": "Fuld kernel preemption",
   "udevpass": "Aktivér webbaseret software",
-  "udevpass_desc": "Tillader dig at bruge webbaseret software som ATK HUB til periferer som har disse. En Chromium-baseret browser er stadig påkrævet for at sådan software kan fungere."
+  "udevpass_desc": "Tillader dig at bruge webbaseret software som ATK HUB til periferer som har disse. En Chromium-baseret browser er stadig påkrævet for at sådan software kan fungere.",
+  "sloth_desc": "Et bash-bibliotek, der gør terminalbrugen mere venlig og praktisk til headless-systemer, udviklere og entusiaster. Udviklet også af Psygreg."
 }
