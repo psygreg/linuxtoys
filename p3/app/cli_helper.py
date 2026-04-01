@@ -374,12 +374,16 @@ def run_script(script_info):
 def run_update_check_cli(translations=None):
     """
     CLI function to check for updates.
+
+    Returns:
+        bool: True when an update is available, False otherwise.
     """
     print("LinuxToys Update Checker\n")
     
     # Run update check with verbose output and no dialog
     _check = UpdateHelper()
-    if _check._update_available():
+    update_available = _check._update_available()
+    if update_available:
         print(f"⚡️ A new version {_check._latest_ver.get('tag_name', '')} of LinuxToys is available.\n")
         print(_check._latest_ver.get('body', 'No changelog available.'), '\n')
         resp = input(">>> Do you want to update to the latest version? [y/N]: ").strip().lower()
@@ -390,6 +394,7 @@ def run_update_check_cli(translations=None):
                 print(f"✗ An error occurred during the update process.\n{str(e)}")
     else:
         print("✓ It's already on the latest available version.")
+    return update_available
 
 
 def check_ostree_deployment_cli(translations=None):

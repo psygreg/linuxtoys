@@ -9,7 +9,6 @@ if os.environ.get('EASY_CLI') != '1':
 from .lang_utils import load_translations, create_translator
 from .cli_helper import run_manifest_mode
 from .easy_cli import easy_cli_handler
-from .kernel_update_helper import run_kernel_update_check
 from .compat import is_supported_system
 from . import get_app_resource_path, get_icon_path
 
@@ -76,6 +75,8 @@ def run():
         import threading
         def async_kernel_check():
             try:
+                # Lazy import to keep EASY_CLI mode independent from GTK dependencies.
+                from .kernel_update_helper import run_kernel_update_check
                 run_kernel_update_check(show_dialog=True, verbose=False, translations=translations)
             except Exception as e:
                 print(f"Kernel update check failed: {e}")

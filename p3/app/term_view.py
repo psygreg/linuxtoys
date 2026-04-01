@@ -190,6 +190,9 @@ class TermRunScripts(Gtk.Box):
         self._self_update = current_script.get("self_update", False)
 
         script_dir = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
+        child_env = os.environ.copy()
+        child_env["SCRIPT_DIR"] = script_dir
+        child_env_list = [f"{key}={value}" for key, value in child_env.items()]
 
         shell_exec = ["/bin/bash", f"{script_path}"]
         if dev_mode.is_dev_mode_enabled():
@@ -204,7 +207,7 @@ class TermRunScripts(Gtk.Box):
             Vte.PtyFlags.DEFAULT,
             None,
             shell_exec,
-            [f"SCRIPT_DIR={script_dir}"],
+            child_env_list,
             GLib.SpawnFlags.DEFAULT,
             None,
             None,
