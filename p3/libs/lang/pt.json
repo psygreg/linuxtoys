@@ -358,5 +358,6 @@
   "preemptfedora": "Preempção completa do kernel",
   "udevpass": "Ativar software baseado na web",
   "udevpass_desc": "Permite que você use software baseado na web como ATK HUB para periféricos que os possuem. Um navegador baseado em Chromium ainda é necessário para que esse software funcione.",
-  "sloth_desc": "Uma biblioteca bash que torna o uso do terminal mais amigável e prático para sistemas headless, desenvolvedores e entusiastas. Também desenvolvido por Psygreg."
+  "sloth_desc": "Uma biblioteca bash que torna o uso do terminal mais amigável e prático para sistemas headless, desenvolvedores e entusiastas. Também desenvolvido por Psygreg.",
+  "waylume_desc": "Gerenciador minimalista de wallpapers para GNOME/Wayland. Define automaticamente wallpapers diários do Bing, Unsplash, NASA APOD e Wikimedia POTD."
 }
