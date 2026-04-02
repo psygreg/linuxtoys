@@ -358,5 +358,14 @@
   "preemptfedora": "Kernel Full Preemption",
   "udevpass": "Enable Web-based Software",
   "udevpass_desc": "Allows you to use web-based software like ATK HUB for peripherals that have those. A Chromium-based browser is still required for such software to work as well.",
-  "sloth_desc": "A bash library that makes terminal usage more friendly and practical for headless systems, developers and enthusiasts alike. Also developed by Psygreg."
+  "sloth_desc": "A bash library that makes terminal usage more friendly and practical for headless systems, developers and enthusiasts alike. Also developed by Psygreg.",
+  "term_view_remove": " Remove ",
+	"term_view_removing_label": " Removing ",
+	"term_view_removing": "Removing {current}/{total}",
+	"remove_confirm_title": "Remove Installed Components?",
+	"remove_confirm_message": "LinuxToys will attempt to remove all components installed by '{script_name}'. Do you want to continue?",
+	"remove_not_available_title": "Removal Not Available",
+	"remove_not_available_message": "No removable components were detected for this script.",
+	"remove_action_name": "Remove {name}",
+	"remove_action_desc": "Automatically removes detected components installed by this script."
 }
