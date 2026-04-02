@@ -367,5 +367,6 @@
   "remove_not_available_title": "Pašalinimas nėra prieinas",
   "remove_not_available_message": "Šiam scenarijui nebuvo aptikta jokių pašalinamų komponentų.",
   "remove_action_name": "Pašalinti {name}",
-  "remove_action_desc": "Automatiškai pašalina aptiktus komponentus, kuriuos įdiegė šis scenarijus."
+  "remove_action_desc": "Automatiškai pašalina aptiktus komponentus, kuriuos įdiegė šis scenarijus.",
+  "solseek_desc": "Naršykite, ieškokite ir tvarkykite Solus paketus, tvarkykles ir Flatpak programas iš patogios TUI."
 }

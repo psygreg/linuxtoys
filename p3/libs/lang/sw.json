@@ -365,5 +365,6 @@
   "remove_not_available_title": "Ondoa Haupatikani",
   "remove_not_available_message": "Hakuna sehemu zinazoweza kuondolewa zilizotajwa kwa hii.",
   "remove_action_name": "Ondoa {name}",
-  "remove_action_desc": "Kwa kiotomatiki ondoa sehemu zilizogundulika zilizowekwa na hii."
+  "remove_action_desc": "Kwa kiotomatiki ondoa sehemu zilizogundulika zilizowekwa na hii.",
+  "solseek_desc": "Viaeni, tafuta na dhibiti mifuko, programu na programu za Flatpak ya Solus kutoka kwa TUI inayofifia."
 }

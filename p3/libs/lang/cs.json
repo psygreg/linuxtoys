@@ -367,5 +367,6 @@
   "remove_not_available_title": "Odebrání není dostupné",
   "remove_not_available_message": "Pro tento skript nebyly zjišťovány žádné komponenty k odebrání.",
   "remove_action_name": "Odebrat {name}",
-  "remove_action_desc": "Automaticky odebira zjišťované komponenty nainstalované tímto skriptem."
+  "remove_action_desc": "Automaticky odebira zjišťované komponenty nainstalované tímto skriptem.",
+  "solseek_desc": "Procházejte, vyhledávejte a spravujte balíčky, ovladače a aplikace Flatpak pro Solus z pohodlného TUI."
 }

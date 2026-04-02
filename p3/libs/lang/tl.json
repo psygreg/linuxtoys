@@ -367,5 +367,6 @@
   "remove_not_available_title": "Alisin Walang Available",
   "remove_not_available_message": "Walang alibuing bahagi na natuklasan para sa script na ito.",
   "remove_action_name": "Alisin {name}",
-  "remove_action_desc": "Awtomatikong tinatanggal ang mga komponenteng natuklasan na naka-install ng script na ito."
+  "remove_action_desc": "Awtomatikong tinatanggal ang mga komponenteng natuklasan na naka-install ng script na ito.",
+  "solseek_desc": "Tuklasin, maghanap at pamahalaan ang mga pakete, driver at Flatpak app para sa Solus mula sa isang komportableng TUI."
 }

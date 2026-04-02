@@ -367,5 +367,6 @@
   "remove_not_available_title": "Odstranjevanje ni na voljo",
   "remove_not_available_message": "Za ta skript niso bili zaznani noben odklonjiv komponenti.",
   "remove_action_name": "Odstrani {name}",
-  "remove_action_desc": "Samodejno odstrani zaznan komponenti, ki ga je namestil ta skript."
+  "remove_action_desc": "Samodejno odstrani zaznan komponenti, ki ga je namestil ta skript.",
+  "solseek_desc": "Preglejte, iščite in upravljajte pakete, gonilnike in aplikacije Flatpak za Solus iz prijetnega vmesnika TUI."
 }

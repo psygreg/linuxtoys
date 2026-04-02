@@ -367,5 +367,6 @@
   "remove_not_available_title": "Kaldırma Kullanılamıyor",
   "remove_not_available_message": "Bu komut dosyası için hiçbir kaldırılabilir bileşen algılanmadı.",
   "remove_action_name": "Kaldır {name}",
-  "remove_action_desc": "Bu skript tarafından yüklü algılanan bileşenleri otomatik olarak kaldırır."
+  "remove_action_desc": "Bu skript tarafından yüklü algılanan bileşenleri otomatik olarak kaldırır.",
+  "solseek_desc": "Solus için paketleri, sürücüleri ve Flatpak uygulamalarını rahat bir TUI üzerinden göz atın, arayın ve yönetin."
 }

@@ -367,5 +367,6 @@
   "remove_not_available_title": "Baint gan Fhal Ar Fáil",
   "remove_not_available_message": "Níor bhraithsíodh comhpháirt inbhunaithe ar bith don script seo.",
   "remove_action_name": "Bain {name}",
-  "remove_action_desc": "Go huachógach baineann comhpháirt dhéanta agus fhuchadóireahta scripta seo."
+  "remove_action_desc": "Go huachógach baineann comhpháirt dhéanta agus fhuchadóireahta scripta seo.",
+  "solseek_desc": "Fhéach, cuardaigh agus bainistigh pacáistí, tiomántóirí agus feidhmchláir Flatpak do Solus ó TUI ábalta."
 }

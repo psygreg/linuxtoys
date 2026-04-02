@@ -367,5 +367,6 @@
   "remove_not_available_title": "Remoção Não Disponível",
   "remove_not_available_message": "Nenhum componente removível foi detectado para este script.",
   "remove_action_name": "Remover {name}",
-  "remove_action_desc": "Remove automaticamente os componentes detectados instalados por este script."
+  "remove_action_desc": "Remove automaticamente os componentes detectados instalados por este script.",
+  "solseek_desc": "Navegue, procure e gerencie pacotes, drivers e aplicativos Flatpak para Solus a partir de uma interface TUI confortável."
 }

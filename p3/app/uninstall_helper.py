@@ -29,6 +29,8 @@ def _detect_package_manager():
         return "pacman"
     if _run_ok(["bash", "-lc", "command -v zypper >/dev/null 2>&1"]):
         return "zypper"
+    if _run_ok(["bash", "-lc", "command -v eopkg >/dev/null 2>&1"]):
+        return "eopkg"
     return None
 
 
@@ -116,6 +118,8 @@ def _parse_direct_package_installs(content):
         " zypper in ",
         " zypper install ",
         " rpm-ostree install ",
+        " eopkg install ",
+        " eopkg it ",
     )
 
     for line in content.splitlines():
@@ -136,6 +140,8 @@ def _parse_direct_package_installs(content):
             idx = tokens.index("install") + 1
         elif "in" in tokens and ("dnf" in tokens or "zypper" in tokens):
             idx = tokens.index("in") + 1
+        elif "it" in tokens and "eopkg" in tokens:
+            idx = tokens.index("it") + 1
         elif "-S" in tokens and "pacman" in tokens:
             idx = tokens.index("-S") + 1
         else:
@@ -221,6 +227,8 @@ def _is_package_installed(pkg, manager):
         return _run_ok(["pacman", "-Qi", pkg])
     if manager in ("dnf", "zypper", "rpm-ostree"):
         return _run_ok(["rpm", "-q", pkg])
+    if manager == "eopkg":
+        return _run_ok(["eopkg", "list-installed", "|", "grep", "-q", pkg])
     return False
 
 
@@ -270,11 +278,12 @@ def build_uninstall_script_entry(script_info, translations=None):
 
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     manager_remove_map = {
-        "apt": "sudo apt remove -y",
+        "apt": "sudo apt autoremove -y",
         "dnf": "sudo dnf remove -y",
         "pacman": "sudo pacman -Rns --noconfirm",
         "zypper": "sudo zypper rm -y",
         "rpm-ostree": "sudo rpm-ostree uninstall",
+        "eopkg": "sudo eopkg rmf -y",
     }
     pkg_remove_cmd = manager_remove_map.get(package_manager)
 

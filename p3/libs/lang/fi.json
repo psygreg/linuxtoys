@@ -367,5 +367,6 @@
   "remove_not_available_title": "Poistaminen ei ole käytettävissä",
   "remove_not_available_message": "Tälle skriptille ei havaittu poistettavia komponentteja.",
   "remove_action_name": "Poista {name}",
-  "remove_action_desc": "Poistaa automaattisesti tämän skriptin asentamat havaitut komponentit."
+  "remove_action_desc": "Poistaa automaattisesti tämän skriptin asentamat havaitut komponentit.",
+  "solseek_desc": "Selaa, etsi ja hallitse paketteja, ajureita ja Flatpak-sovelluksia Solukselle mukavasta TUI-käyttöliittymästä."
 }

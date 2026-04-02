@@ -367,5 +367,6 @@
   "remove_not_available_title": "Heqje Jo e disponueshme",
   "remove_not_available_message": "Nuk u zbuluan komponentë të heqshme për këtë skript.",
   "remove_action_name": "Hiq {name}",
-  "remove_action_desc": "Heq automatikisht komponentën e zbuluar të instaluar nga ky skript."
+  "remove_action_desc": "Heq automatikisht komponentën e zbuluar të instaluar nga ky skript.",
+  "solseek_desc": "Shfletoni, kërkoni dhe menaxhoni paketa, drajvera dhe aplikacione Flatpak për Solus nga një ndërfaqe TUI e rehatshme."
 }

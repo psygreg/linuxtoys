@@ -367,5 +367,6 @@
   "remove_not_available_title": "Penghapusan Tidak Tersedia",
   "remove_not_available_message": "Tidak ada komponen yang dapat dihapus yang terdeteksi untuk skrip ini.",
   "remove_action_name": "Hapus {name}",
-  "remove_action_desc": "Secara otomatis menghapus komponen yang terdeteksi yang dipasang oleh skrip ini."
+  "remove_action_desc": "Secara otomatis menghapus komponen yang terdeteksi yang dipasang oleh skrip ini.",
+  "solseek_desc": "Telusuri, cari, dan kelola paket, driver, dan aplikasi Flatpak untuk Solus dari TUI yang nyaman."
 }

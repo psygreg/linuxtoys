@@ -366,5 +366,6 @@
   "remove_not_available_title": "Silmə aluşalmıyor",
   "remove_not_available_message": "Bu skript üçün heç bir silinə biləcək komponent tapılmadı.",
   "remove_action_name": "{name} Sil",
-  "remove_action_desc": "Bu skript tərəfindən quraşdırılan açıqlanmış komponentləri avtomatik silir."
+  "remove_action_desc": "Bu skript tərəfindən quraşdırılan açıqlanmış komponentləri avtomatik silir.",
+  "solseek_desc": "Solus üçün paketləri, drayverləri və Flatpak tətbiqləri rahat TUI-dən baxın, axtarın və idarə edin."
 }

@@ -367,5 +367,6 @@
   "remove_not_available_title": "Eemaldamine pole saadaval",
   "remove_not_available_message": "Selle skripti jaoks eemaldatavaid komponente ei tuvastatud.",
   "remove_action_name": "Eemaldada {name}",
-  "remove_action_desc": "Eemaldab automaatselt tuvastatud komponente, mille paigaldas see skript."
+  "remove_action_desc": "Eemaldab automaatselt tuvastatud komponente, mille paigaldas see skript.",
+  "solseek_desc": "Sirvige, otsige ja hallake Solusi pakette, draiverite ja Flatpak rakendusi mugavast TUI-st."
 }

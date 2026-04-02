@@ -367,5 +367,6 @@
   "remove_not_available_title": "Fjarlægja ekki til staðar",
   "remove_not_available_message": "Engin fjarlægjandi íhluti voru greind fyrir þetta skrift.",
   "remove_action_name": "Fjarlægja {name}",
-  "remove_action_desc": "Fjarlægir sjálfkrafa tundnir íhluti sem festir voru með þessu skrifti."
+  "remove_action_desc": "Fjarlægir sjálfkrafa tundnir íhluti sem festir voru með þessu skrifti.",
+  "solseek_desc": "Flakkaðu um, leittu og stjórnaðu pökkum, steinum og Flatpak forritum fyrir Solus frá þægilegu TUI."
 }

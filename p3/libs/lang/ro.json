@@ -367,5 +367,6 @@
   "remove_not_available_title": "Ștergere nedisponibilă",
   "remove_not_available_message": "Nu au fost detectate componente amovibile pentru acest script.",
   "remove_action_name": "Șterge {name}",
-  "remove_action_desc": "Șterge automat componentele detectate instalate de acest script."
+  "remove_action_desc": "Șterge automat componentele detectate instalate de acest script.",
+  "solseek_desc": "Răsfoiți, căutați și gestionați pachete, drivere și aplicații Flatpak pentru Solus dintr-o interfață TUI confortabilă."
 }

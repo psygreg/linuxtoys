@@ -367,5 +367,6 @@
   "remove_not_available_title": "削除利用不可",
   "remove_not_available_message": "このスクリプトに対して削除可能なコンポーネントは検出されませんでした。",
   "remove_action_name": "{name} を削除",
-  "remove_action_desc": "このスクリプトでインストールされた検出されたコンポーネントを自動的に削除します。"
+  "remove_action_desc": "このスクリプトでインストールされた検出されたコンポーネントを自動的に削除します。",
+  "solseek_desc": "Solus用のパッケージ、ドライバ、Flatpakアプリを快適なTUIから参照、検索、管理します。"
 }

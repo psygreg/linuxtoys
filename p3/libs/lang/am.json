@@ -367,5 +367,6 @@
   "remove_not_available_title": "ሰርዝ አይገኝም",
   "remove_not_available_message": "ይህ ስክሪፕት ተሸና መሆናቸው ምንም ሰናበት ክፍሎች ተገኝተውም.",
   "remove_action_name": "{name} ሰርዝ",
-  "remove_action_desc": "ይህ ስክሪፕት ተተግብሮ ያልካቸው ሁሉንም ክፍሎች ራሱ ለመሰረዝ."
+  "remove_action_desc": "ይህ ስክሪፕት ተተግብሮ ያልካቸው ሁሉንም ክፍሎች ራሱ ለመሰረዝ.",
+  "solseek_desc": "በተኒክ ተስተካካይ በርናሞ መጨናቀፍ እና ሻሽ ፓኬጅ ከSolus ይመርምር፣ ይፈልጉ ወይም ይወስዳሉ።"
 }

@@ -367,5 +367,6 @@
   "remove_not_available_title": "Noņemšana nav pieejama",
   "remove_not_available_message": "Šim skriptam nav atrasti noņemami komponenti.",
   "remove_action_name": "Noņemt {name}",
-  "remove_action_desc": "Automātiski noņem atklātus komponentus, ko uzstādīja šis skripts."
+  "remove_action_desc": "Automātiski noņem atklātus komponentus, ko uzstādīja šis skripts.",
+  "solseek_desc": "Pārlūkojiet, meklējiet un pārvaldiet Solus iepakojumus, draiverus un Flatpak lietotnes no ērtas TUI."
 }

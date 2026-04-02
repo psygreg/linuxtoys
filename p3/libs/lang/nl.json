@@ -367,5 +367,6 @@
   "remove_not_available_title": "Verwijdera niet beschikbaar",
   "remove_not_available_message": "Er werden geen verwijderbare componenten gedetecteerd voor dit script.",
   "remove_action_name": "Verwijder {name}",
-  "remove_action_desc": "Verwijdert automatisch gedetecteerde componenten die door dit script zijn geïnstalleerd."
+  "remove_action_desc": "Verwijdert automatisch gedetecteerde componenten die door dit script zijn geïnstalleerd.",
+  "solseek_desc": "Blader door, zoek en beheer pakketten, stuurprogramma's en Flatpak-apps voor Solus vanuit een comfortabele TUI."
 }

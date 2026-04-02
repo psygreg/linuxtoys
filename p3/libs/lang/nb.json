@@ -367,5 +367,6 @@
   "remove_not_available_title": "Fjerning ikke tilgjengelig",
   "remove_not_available_message": "Ingen fjernbare komponenter ble oppdaget for dette skriptet.",
   "remove_action_name": "Fjern {name}",
-  "remove_action_desc": "Fjerner automatisk komponenter som ble installert av dette skriptet."
+  "remove_action_desc": "Fjerner automatisk komponenter som ble installert av dette skriptet.",
+  "solseek_desc": "Bla gjennom, søk etter og administrer pakker, drivere og Flatpak-apper for Solus fra et behagelig TUI."
 }

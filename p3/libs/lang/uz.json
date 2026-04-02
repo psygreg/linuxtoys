@@ -366,5 +366,6 @@
   "remove_not_available_title": "O'chirish mavjud emas",
   "remove_not_available_message": "Bu skript uchun o'chirilishi mumkin bo'lgan hech qanday komponent ishlab chiqilmadi.",
   "remove_action_name": "O'chirish {name}",
-  "remove_action_desc": "Bu skript o'rnatgan aniqlangan komponentlarni avtomatik o'chiradi."
+  "remove_action_desc": "Bu skript o'rnatgan aniqlangan komponentlarni avtomatik o'chiradi.",
+  "solseek_desc": "Solus uchun paketlar, drayverlar va Flatpak ilovalarini qulay TUI interfeysi orqali koʻrib chiqing, qidiring va boshqaring."
 }

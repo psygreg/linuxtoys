@@ -367,5 +367,6 @@
 	"remove_not_available_title": "Removal Not Available",
 	"remove_not_available_message": "No removable components were detected for this script.",
 	"remove_action_name": "Remove {name}",
-	"remove_action_desc": "Automatically removes detected components installed by this script."
+	"remove_action_desc": "Automatically removes detected components installed by this script.",
+  "solseek_desc": "Browse, search, and manage packages, drivers and flatpaks for Solus from a comfortable TUI."
 }

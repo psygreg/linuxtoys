@@ -367,5 +367,6 @@
   "remove_not_available_title": "제거 불가능",
   "remove_not_available_message": "이 스크립트에 대해 제거 가능한 구성 요소가 감지되지 않았습니다.",
   "remove_action_name": "{name} 제거",
-  "remove_action_desc": "이 스크립트에 의해 설치된 감지된 구성 요소를 자동으로 제거합니다."
+  "remove_action_desc": "이 스크립트에 의해 설치된 감지된 구성 요소를 자동으로 제거합니다.",
+  "solseek_desc": "Solus용 패키지, 드라이버 및 Flatpak 앱을 편안한 TUI에서 검색, 검색 및 관리하십시오."
 }

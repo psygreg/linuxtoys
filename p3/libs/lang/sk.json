@@ -367,5 +367,6 @@
   "remove_not_available_title": "Odstranenie nie je dostupné",
   "remove_not_available_message": "Pre tento skript neboli zistené žiadne odstrániteľné komponenty.",
   "remove_action_name": "Odstrániť {name}",
-  "remove_action_desc": "Automaticky odstráni zistené komponenty nainštalované týmto skriptom."
+  "remove_action_desc": "Automaticky odstráni zistené komponenty nainštalované týmto skriptom.",
+  "solseek_desc": "Prechádzajte, vyhľadávajte a spravujte balíčky, ovladače a aplikácie Flatpak pre Solus z pohodlného rozhrania TUI."
 }

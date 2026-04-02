@@ -367,5 +367,6 @@
   "remove_not_available_title": "Entfernung nicht verfügbar",
   "remove_not_available_message": "Es wurden keine entfernbaren Komponenten für dieses Skript erkannt.",
   "remove_action_name": "Entfernen {name}",
-  "remove_action_desc": "Entfernt automatisch erkannte Komponenten, die von diesem Skript installiert wurden."
+  "remove_action_desc": "Entfernt automatisch erkannte Komponenten, die von diesem Skript installiert wurden.",
+  "solseek_desc": "Durchsuchen, suchen und verwalten Sie Pakete, Treiber und Flatpak-Anwendungen für Solus von einer komfortablen TUI aus."
 }

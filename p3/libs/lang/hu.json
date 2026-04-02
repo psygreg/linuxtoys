@@ -367,5 +367,6 @@
   "remove_not_available_title": "Eltávolítás nem érhető el",
   "remove_not_available_message": "Az ehhez a parancsfájlhoz nem voltak eltávolítható összetevők felisve. ",
   "remove_action_name": "Eltávolítás {name}",
-  "remove_action_desc": "Automatikusan eltávolítja az ezen skript által telepített felismert összetevőket."
+  "remove_action_desc": "Automatikusan eltávolítja az ezen skript által telepített felismert összetevőket.",
+  "solseek_desc": "Böngészzen, keressen és kezeljen csomagokat, illesztőprogramokat és Flatpak alkalmazásokat a Solus számára egy kényelmes TUI-ból."
 }

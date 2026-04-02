@@ -367,5 +367,6 @@
   "remove_not_available_title": "Xóa không có sẵn",
   "remove_not_available_message": "Không phát hiện bất kỳ thành phần có thể xóa nào cho tập lệnh này.",
   "remove_action_name": "Xóa {name}",
-  "remove_action_desc": "Tự động xóa các thành phần được phát hiện được cài đặt bởi tập lệnh này."
+  "remove_action_desc": "Tự động xóa các thành phần được phát hiện được cài đặt bởi tập lệnh này.",
+  "solseek_desc": "Duyệt, tìm kiếm và quản lý các gói, trình điều khiển và ứng dụng Flatpak cho Solus từ giao diện TUI thoải mái."
 }

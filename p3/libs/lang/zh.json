@@ -369,5 +369,6 @@
   "remove_not_available_title": "删除不可用",
   "remove_not_available_message": "没有检测到该脚本的可删除组件。",
   "remove_action_name": "删除 {name}",
-  "remove_action_desc": "自动删除由此脚本安装的检测到的组件。"
+  "remove_action_desc": "自动删除由此脚本安装的检测到的组件。",
+  "solseek_desc": "从舒适的TUI浏览、搜索和管理Solus的软件包、驱动程序和Flatpak应用程序。"
 }
