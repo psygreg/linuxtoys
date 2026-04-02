@@ -25,6 +25,12 @@ jdk_install () {
             packages+=(java-${jav}-openjdk java-${jav}-openjdk-devel)
         elif [[ "$ID_LIKE" == *suse* ]]; then
             packages+=(java-${jav}-openjdk java-${jav}-openjdk-devel)
+        elif is_solus; then
+            if [ "$jav" != "8" ] && [ "$jav" != "24" ]; then
+                packages+=(openjdk-${jav})
+            else
+                zenwrn "Java version ${jav} is not available in Solus repositories. Skipping."
+            fi
         fi
     done
     sudo_rq

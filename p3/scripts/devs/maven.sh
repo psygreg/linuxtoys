@@ -9,7 +9,11 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-_packages=(maven)
+if is_solus; then
+    _packages=(apache-maven)
+else
+    _packages=(maven)
+fi
 sudo_rq
 _install_
 zeninf "$msg018"
