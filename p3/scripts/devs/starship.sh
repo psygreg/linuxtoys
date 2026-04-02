@@ -12,6 +12,7 @@ _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 sudo_rq
+sudo mkdir -p /usr/local/bin # ensure the directory exists before attempting to install starship
 curl -fsSL https://starship.rs/install.sh | sudo sh -s -- -f -y && {
 	grep -q "starship init" ~/.bashrc || {
 		echo -e "\neval \"\$(starship init bash)\"" >> ~/.bashrc;

@@ -15,7 +15,7 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 if [[ $ID =~ "ubuntu" ]] || [[ $ID =~ "debian" ]] || [[ $ID_LIKE == *ubuntu* ]]; then
     _packages=(ratbagd)
-elif is_arch || is_cachy; then
+elif is_arch || is_cachy || is_solus; then
     _packages=(libratbag)
 elif is_fedora || is_ostree; then
     _packages=(libratbag-ratbagd)
