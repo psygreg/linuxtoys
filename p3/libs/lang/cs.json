@@ -358,5 +358,14 @@
   "preemptfedora": "Plná preemce jádra",
   "udevpass": "Povolte webový software",
   "udevpass_desc": "Umožňuje vám použít webový software jako ATK HUB pro periferní zařízení, která je mají. Pro takový software je stále potřeba prohlížeč na bázi Chromium.",
-  "sloth_desc": "Knihovna bash, která činí použití terminálu přívětivějším a praktičtějším pro headless systémy, vývojáře a nadšence. Vyvinul také Psygreg."
+  "sloth_desc": "Knihovna bash, která činí použití terminálu přívětivějším a praktičtějším pro headless systémy, vývojáře a nadšence. Vyvinul také Psygreg.",
+  "term_view_remove": " Odebrat ",
+  "term_view_removing_label": " Odebírání ",
+  "term_view_removing": "Odebírání {current}/{total}",
+  "remove_confirm_title": "Odebrat instalované komponenty?",
+  "remove_confirm_message": "LinuxToys se pokusí odstranit všechny komponenty nainstalované '{script_name}'. Chcete pokračovat?",
+  "remove_not_available_title": "Odebrání není dostupné",
+  "remove_not_available_message": "Pro tento skript nebyly zjišťovány žádné komponenty k odebrání.",
+  "remove_action_name": "Odebrat {name}",
+  "remove_action_desc": "Automaticky odebira zjišťované komponenty nainstalované tímto skriptem."
 }

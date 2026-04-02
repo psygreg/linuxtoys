@@ -358,5 +358,14 @@
   "preemptfedora": "전체 커널 선점",
   "udevpass": "웹 기반 소프트웨어 활성화",
   "udevpass_desc": "ATK HUB와 같은 웹 기반 소프트웨어를 이러한 주변 기기에 사용할 수 있습니다. 이러한 소프트웨어가 작동하려면 Chromium 기반 브라우저가 필요합니다.",
-  "sloth_desc": "헤드리스 시스템, 개발자 및 애호가를 위해 터미널 사용을 더 친화적이고 실용적으로 만드는 bash 라이브러리입니다. Psygreg가 개발했습니다."
+  "sloth_desc": "헤드리스 시스템, 개발자 및 애호가를 위해 터미널 사용을 더 친화적이고 실용적으로 만드는 bash 라이브러리입니다. Psygreg가 개발했습니다.",
+  "term_view_remove": " 제거 ",
+  "term_view_removing_label": " 제거 중 ",
+  "term_view_removing": "제거 중 {current}/{total}",
+  "remove_confirm_title": "설치된 구성 요소를 제거하시겠습니까?",
+  "remove_confirm_message": "LinuxToys는 '{script_name}'에 의해 설치된 모든 구성 요소를 제거하려고 시도합니다. 계속하시겠습니까?",
+  "remove_not_available_title": "제거 불가능",
+  "remove_not_available_message": "이 스크립트에 대해 제거 가능한 구성 요소가 감지되지 않았습니다.",
+  "remove_action_name": "{name} 제거",
+  "remove_action_desc": "이 스크립트에 의해 설치된 감지된 구성 요소를 자동으로 제거합니다."
 }

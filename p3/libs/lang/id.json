@@ -358,5 +358,14 @@
   "preemptfedora": "Preemption kernel penuh",
   "udevpass": "Aktifkan perangkat lunak berbasis web",
   "udevpass_desc": "Memungkinkan Anda menggunakan perangkat lunak berbasis web seperti ATK HUB untuk perangkat pinggiran yang memilikinya. Browser berbasis Chromium masih diperlukan agar perangkat lunak semacam itu berfungsi.",
-  "sloth_desc": "Perpustakaan bash yang membuat penggunaan terminal lebih ramah pengguna dan praktis untuk sistem headless, pengembang, dan penggemar. Juga dikembangkan oleh Psygreg."
+  "sloth_desc": "Perpustakaan bash yang membuat penggunaan terminal lebih ramah pengguna dan praktis untuk sistem headless, pengembang, dan penggemar. Juga dikembangkan oleh Psygreg.",
+  "term_view_remove": " Hapus ",
+  "term_view_removing_label": " Menghapus ",
+  "term_view_removing": "Menghapus {current}/{total}",
+  "remove_confirm_title": "Hapus Komponen yang Terpasang?",
+  "remove_confirm_message": "LinuxToys akan mencoba menghapus semua komponen yang dipasang oleh '{script_name}'. Apakah Anda ingin melanjutkan?",
+  "remove_not_available_title": "Penghapusan Tidak Tersedia",
+  "remove_not_available_message": "Tidak ada komponen yang dapat dihapus yang terdeteksi untuk skrip ini.",
+  "remove_action_name": "Hapus {name}",
+  "remove_action_desc": "Secara otomatis menghapus komponen yang terdeteksi yang dipasang oleh skrip ini."
 }

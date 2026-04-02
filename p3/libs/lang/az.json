@@ -357,5 +357,14 @@
   "preemptfedora": "Tam Kernel Preempsionu",
   "udevpass": "Web-əsaslı proqramları aktivləşdirin",
   "udevpass_desc": "ATK HUB kimi veb-əsaslı proqramları istifadə etməyə imkan verir bu tip periferiyalar üçün. Chromium-əsaslı brauzer hələ də lazımdır ki, belə proqramlar işləsinse.",
-  "sloth_desc": "Headless sistemlər, proqramçılar və həvəskarlar üçün terminal istifadəsini daha dostu və praktiki edən bash kitabxanası. Həmçinin Psygreg tərəfindən inkişaf etdirilmiş."
+  "sloth_desc": "Headless sistemlər, proqramçılar və həvəskarlar üçün terminal istifadəsini daha dostu və praktiki edən bash kitabxanası. Həmçinin Psygreg tərəfindən inkişaf etdirilmiş.",
+  "term_view_remove": " Sil ",
+  "term_view_removing_label": " Silinir ",
+  "term_view_removing": "Silinir {current}/{total}",
+  "remove_confirm_title": "Quraşdırılmış Komponentləri Sil?",
+  "remove_confirm_message": "LinuxToys '{script_name}' tərəfindən quraşdırılan bütün komponentləri silməyə cəhd edəcəkdir. Davam etmək istəyirsiniz?",
+  "remove_not_available_title": "Silmə aluşalmıyor",
+  "remove_not_available_message": "Bu skript üçün heç bir silinə biləcək komponent tapılmadı.",
+  "remove_action_name": "{name} Sil",
+  "remove_action_desc": "Bu skript tərəfindən quraşdırılan açıqlanmış komponentləri avtomatik silir."
 }

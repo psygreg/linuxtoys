@@ -358,5 +358,14 @@
   "preemptfedora": "Foras iomlán an chéadúsáide",
   "udevpass": "Cumasaigh bogearraí bunaithe ar an Ghréasán",
   "udevpass_desc": "Ligeann sé duit bogearraí bunaithe ar an Ghréasán a úsáid ar nós ATK HUB do ghréasáin dhá taobh a bhfuil siad ann. Fós ar gá agat brabhsálaí bunaithe ar Chromium mar gheall ar oibriú na rogearraí sin.",
-  "sloth_desc": "Leabharlann bash a dhéanann úsáid na geall níos cairdiúla agus níos praiticiúla do chórais headless, forbróirí agus dúil-bhreithne. Forbartha go leor ag Psygreg."
+  "sloth_desc": "Leabharlann bash a dhéanann úsáid na geall níos cairdiúla agus níos praiticiúla do chórais headless, forbróirí agus dúil-bhreithne. Forbartha go leor ag Psygreg.",
+  "term_view_remove": " Bain ",
+  "term_view_removing_label": " Ag Baint ",
+  "term_view_removing": "Ag Baint {current}/{total}",
+  "remove_confirm_title": "Bain Chomhpháirt Suiteáilte?",
+  "remove_confirm_message": "Déanfaidh LinuxToys iarracht na comhpháirt ar fad a chur a bhí suiteáilte ag '{script_name}' a bhaint. An bhfuil tú ag iarraidh a leanúint ar aghaidh?",
+  "remove_not_available_title": "Baint gan Fhal Ar Fáil",
+  "remove_not_available_message": "Níor bhraithsíodh comhpháirt inbhunaithe ar bith don script seo.",
+  "remove_action_name": "Bain {name}",
+  "remove_action_desc": "Go huachógach baineann comhpháirt dhéanta agus fhuchadóireahta scripta seo."
 }

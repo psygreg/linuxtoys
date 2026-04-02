@@ -360,5 +360,14 @@
   "preemptfedora": "完整内核抢占",
   "udevpass": "启用基于Web的软件",
   "udevpass_desc": "允许您使用基于Web的软件，如ATK HUB，用于拥有这些功能的外设。仍然需要基于Chromium的浏览器使得此类软件能够正常运行。",
-  "sloth_desc": "一个bash库，使得与terminal的交互对headless系统、开发人员和爱好者更加友好和实用。也由Psygreg开发。"
+  "sloth_desc": "一个bash库，使得与terminal的交互对headless系统、开发人员和爱好者更加友好和实用。也由Psygreg开发。",
+  "term_view_remove": " 删除 ",
+  "term_view_removing_label": " 正在删除 ",
+  "term_view_removing": "正在删除 {current}/{total}",
+  "remove_confirm_title": "删除已安装的组件？",
+  "remove_confirm_message": "LinuxToys 将尝试删除由 '{script_name}' 安装的所有组件。您想继续吗?",
+  "remove_not_available_title": "删除不可用",
+  "remove_not_available_message": "没有检测到该脚本的可删除组件。",
+  "remove_action_name": "删除 {name}",
+  "remove_action_desc": "自动删除由此脚本安装的检测到的组件。"
 }

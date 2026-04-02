@@ -358,5 +358,14 @@
   "preemptfedora": "Buong kernel preemption",
   "udevpass": "Paganahin ang web-based na software",
   "udevpass_desc": "Pinapayagan ka na gumamit ng web-based na software tulad ng ATK HUB para sa mga peripheral na may ito. Ang isang Chromium-based na browser ay kailangan pa rin para sa ganitong software na gumana.",
-  "sloth_desc": "Isang bash library na ginagawang mas user-friendly at praktikal ang paggamit ng terminal para sa headless systems, developers at enthusiasts. Dinevelop din ng Psygreg."
+  "sloth_desc": "Isang bash library na ginagawang mas user-friendly at praktikal ang paggamit ng terminal para sa headless systems, developers at enthusiasts. Dinevelop din ng Psygreg.",
+  "term_view_remove": " Alisin ",
+  "term_view_removing_label": " Inaalis ",
+  "term_view_removing": "Inaalis {current}/{total}",
+  "remove_confirm_title": "Alisin ang mga Naka-install na Bahagi?",
+  "remove_confirm_message": "Ang LinuxToys ay magsisikap na alisin ang lahat ng mga bahagi na naka-install ng '{script_name}'. Gusto mo bang magpatuloy?",
+  "remove_not_available_title": "Alisin Walang Available",
+  "remove_not_available_message": "Walang alibuing bahagi na natuklasan para sa script na ito.",
+  "remove_action_name": "Alisin {name}",
+  "remove_action_desc": "Awtomatikong tinatanggal ang mga komponenteng natuklasan na naka-install ng script na ito."
 }

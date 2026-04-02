@@ -358,5 +358,14 @@
   "preemptfedora": "Tam kernel preemption",
   "udevpass": "Web tabanlı yazılımı etkinleştirin",
   "udevpass_desc": "ATK HUB gibi web tabanlı yazılımları, sahip olduğu çevre birimleri için kullanmanıza izin verir. Böyle bir yazılımın çalışması için yine de Chromium tabanlı bir tarayıcı gereklidir.",
-  "sloth_desc": "Terminal kullanımını headless sistemler, geliştiriciler ve meraklılar için daha dostça ve pratik hale getiren bir bash kütüphanesi. Psygreg tarafından da geliştirildi."
+  "sloth_desc": "Terminal kullanımını headless sistemler, geliştiriciler ve meraklılar için daha dostça ve pratik hale getiren bir bash kütüphanesi. Psygreg tarafından da geliştirildi.",
+  "term_view_remove": " Kaldır ",
+  "term_view_removing_label": " Kaldırılıyor ",
+  "term_view_removing": "Kaldırılıyor {current}/{total}",
+  "remove_confirm_title": "Yüklü bileşenleri kaldırmak istiyor musunuz?",
+  "remove_confirm_message": "LinuxToys '{script_name}' tarafından yüklü tüm bileşenleri kaldırmaya çalışacaktır. Devam etmek istiyor musunuz?",
+  "remove_not_available_title": "Kaldırma Kullanılamıyor",
+  "remove_not_available_message": "Bu komut dosyası için hiçbir kaldırılabilir bileşen algılanmadı.",
+  "remove_action_name": "Kaldır {name}",
+  "remove_action_desc": "Bu skript tarafından yüklü algılanan bileşenleri otomatik olarak kaldırır."
 }

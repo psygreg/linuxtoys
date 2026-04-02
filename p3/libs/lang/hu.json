@@ -358,5 +358,14 @@
   "preemptfedora": "Teljes kernel preemption",
   "udevpass": "Webalapú szoftver engedélyezése",
   "udevpass_desc": "Lehetővé teszi a webalapú szoftverek, például az ATK HUB használatát az olyan perifériákon, amelyek ezeket rendelkezik. A Chromium-alapú böngésző továbbra is szükséges az ilyen szoftverek működéséhez.",
-  "sloth_desc": "Egy bash könyvtár, amely a terminálhasználatot barátságosabbá és praktikusabbá teszi a fejfejetlen rendszerek, fejlesztők és rajongók számára. Psygreg is fejlesztette."
+  "sloth_desc": "Egy bash könyvtár, amely a terminálhasználatot barátságosabbá és praktikusabbá teszi a fejfejetlen rendszerek, fejlesztők és rajongók számára. Psygreg is fejlesztette.",
+  "term_view_remove": " Eltávolítás ",
+  "term_view_removing_label": " Eltávolítás ",
+  "term_view_removing": "Eltávolítás {current}/{total}",
+  "remove_confirm_title": "Eltávolítsa a telepített összetevőket?",
+  "remove_confirm_message": "A LinuxToys megkísérli eltávolítani az összes '{script_name}' által telepített összetevőt. Szeretné folytatni?",
+  "remove_not_available_title": "Eltávolítás nem érhető el",
+  "remove_not_available_message": "Az ehhez a parancsfájlhoz nem voltak eltávolítható összetevők felisve. ",
+  "remove_action_name": "Eltávolítás {name}",
+  "remove_action_desc": "Automatikusan eltávolítja az ezen skript által telepített felismert összetevőket."
 }

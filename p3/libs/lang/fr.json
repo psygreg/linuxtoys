@@ -358,5 +358,14 @@
   "preemptfedora": "Préemption complète du noyau",
   "udevpass": "Activer les logiciels basés sur le Web",
   "udevpass_desc": "Vous permet d'utiliser des logiciels basés sur le Web comme ATK HUB pour les appareils périphériques qui les possèdent. Un navigateur basé sur Chromium est toujours nécessaire pour que ce logiciel fonctionne.",
-  "sloth_desc": "Une bibliothèque bash qui rend l'utilisation du terminal plus conviviale et pratique pour les systèmes sans tête, les développeurs et les enthousiastes. Également développé par Psygreg."
+  "sloth_desc": "Une bibliothèque bash qui rend l'utilisation du terminal plus conviviale et pratique pour les systèmes sans tête, les développeurs et les enthousiastes. Également développé par Psygreg.",
+  "term_view_remove": " Supprimer ",
+  "term_view_removing_label": " Suppression ",
+  "term_view_removing": "Suppression {current}/{total}",
+  "remove_confirm_title": "Supprimer les composants installés?",
+  "remove_confirm_message": "LinuxToys tentira de supprimer tous les composants installés par '{script_name}'. Voulez-vous continuer?",
+  "remove_not_available_title": "Suppression non disponible",
+  "remove_not_available_message": "Aucun composant amovible n'a été détecté pour ce script.",
+  "remove_action_name": "Supprimer {name}",
+  "remove_action_desc": "Supprime automatiquement les composants détectés installés par ce script."
 }

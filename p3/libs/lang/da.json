@@ -358,5 +358,14 @@
   "preemptfedora": "Fuld kernel preemption",
   "udevpass": "Aktivér webbaseret software",
   "udevpass_desc": "Tillader dig at bruge webbaseret software som ATK HUB til periferer som har disse. En Chromium-baseret browser er stadig påkrævet for at sådan software kan fungere.",
-  "sloth_desc": "Et bash-bibliotek, der gør terminalbrugen mere venlig og praktisk til headless-systemer, udviklere og entusiaster. Udviklet også af Psygreg."
+  "sloth_desc": "Et bash-bibliotek, der gør terminalbrugen mere venlig og praktisk til headless-systemer, udviklere og entusiaster. Udviklet også af Psygreg.",
+  "term_view_remove": " Fjern ",
+  "term_view_removing_label": " Fjerner ",
+  "term_view_removing": "Fjerner {current}/{total}",
+  "remove_confirm_title": "Fjern installerede komponenter?",
+  "remove_confirm_message": "LinuxToys vil forsøge at fjerne alle komponenter installeret af '{script_name}'. Ønsker du at fortsætte?",
+  "remove_not_available_title": "Fjernelse ikke tilgængelig",
+  "remove_not_available_message": "Der blev ikke opdaget fjernbare komponenter til dette script.",
+  "remove_action_name": "Fjern {name}",
+  "remove_action_desc": "Fjerner automatisk komponenter, der er installeret af dette script."
 }

@@ -358,5 +358,14 @@
   "preemptfedora": "Pełna preempcja jądra",
   "udevpass": "Włącz oprogramowanie oparte na sieci web",
   "udevpass_desc": "Pozwala na użycie oprogramowania opartego na sieci web, takiego jak ATK HUB dla urządzeń peryferyjnych, które je mają. Przeglądarka oparta na Chromium jest nadal wymagana do działania takiego oprogramowania.",
-  "sloth_desc": "Biblioteka bash, która czyni korzystanie z terminala bardziej przyjaznym i praktycznym dla systemów headless, programistów i entuzjastów. Również opracowana przez Psygreg."
+  "sloth_desc": "Biblioteka bash, która czyni korzystanie z terminala bardziej przyjaznym i praktycznym dla systemów headless, programistów i entuzjastów. Również opracowana przez Psygreg.",
+  "term_view_remove": " Usunąć ",
+  "term_view_removing_label": " Usuwanie ",
+  "term_view_removing": "Usuwanie {current}/{total}",
+  "remove_confirm_title": "Usunąć zainstalowane komponenty?",
+  "remove_confirm_message": "LinuxToys spróbuje usunąć wszystkie komponenty zainstalowane przez '{script_name}'. Czy chcesz kontynuować?",
+  "remove_not_available_title": "Usuwanie niedostępne",
+  "remove_not_available_message": "Nie wykryto żadnych komponentów do usunięcia dla tego skryptu.",
+  "remove_action_name": "Usunąć {name}",
+  "remove_action_desc": "Automatycznie usuwa wykryte komponenty zainstalowane przez ten skrypt."
 }

@@ -358,5 +358,14 @@
   "preemptfedora": "Pilna kodola pirmsakarība",
   "udevpass": "Iespējot uz tīklu balstītu programmatūru",
   "udevpass_desc": "Ļauj jums izmantot uz tīklu balstītu programmatūru, piemēram, ATK HUB perifērajiem ierīcēm, kurām tie ir. Uz Chromium balstīts pārlūks joprojām ir nepieciešams, lai šāda programmatūra darbotos.",
-  "sloth_desc": "Bash bibliotēka, kas padara termināla lietošanu draudzīgāku un praktisku headless sistēmām, izstrādātājiem un entuziastiem. Arī Psygreg izstrādāja."
+  "sloth_desc": "Bash bibliotēka, kas padara termināla lietošanu draudzīgāku un praktisku headless sistēmām, izstrādātājiem un entuziastiem. Arī Psygreg izstrādāja.",
+  "term_view_remove": " Noņemt ",
+  "term_view_removing_label": " Noņemšana ",
+  "term_view_removing": "Noņemšana {current}/{total}",
+  "remove_confirm_title": "Noņemt instalētos komponentus?",
+  "remove_confirm_message": "LinuxToys centīsies noņemt visus komponentus, ko '{script_name}' uzstādīja. Vai vēlaties turpināt?",
+  "remove_not_available_title": "Noņemšana nav pieejama",
+  "remove_not_available_message": "Šim skriptam nav atrasti noņemami komponenti.",
+  "remove_action_name": "Noņemt {name}",
+  "remove_action_desc": "Automātiski noņem atklātus komponentus, ko uzstādīja šis skripts."
 }

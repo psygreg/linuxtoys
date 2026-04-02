@@ -358,5 +358,14 @@
   "preemptfedora": "Täielik kerneli eelnemine",
   "udevpass": "Luba veebi põhine tarkvara",
   "udevpass_desc": "Võimaldab teil kasutada veebi põhist tarkvara nagu ATK HUB perifeeriaseadmete jaoks, millel need on. Chromium-põhine brauser on endiselt vajalik sellise tarkvara tööks.",
-  "sloth_desc": "Bash teek, mis muudab terminalikasutuse sõbralikumaks ja praktilisemaks headless-süsteemidele, arendajatele ja entusiasmiast. Arendatud ka Psygreg poolt."
+  "sloth_desc": "Bash teek, mis muudab terminalikasutuse sõbralikumaks ja praktilisemaks headless-süsteemidele, arendajatele ja entusiasmiast. Arendatud ka Psygreg poolt.",
+  "term_view_remove": " Eemaldada ",
+  "term_view_removing_label": " Eemaldamine ",
+  "term_view_removing": "Eemaldamine {current}/{total}",
+  "remove_confirm_title": "Eemaldada paigaldatud komponente?",
+  "remove_confirm_message": "LinuxToys püüab eemaldada kõik '{script_name}' poolt paigaldatud komponendid. Kas soovite jätkata?",
+  "remove_not_available_title": "Eemaldamine pole saadaval",
+  "remove_not_available_message": "Selle skripti jaoks eemaldatavaid komponente ei tuvastatud.",
+  "remove_action_name": "Eemaldada {name}",
+  "remove_action_desc": "Eemaldab automaatselt tuvastatud komponente, mille paigaldas see skript."
 }

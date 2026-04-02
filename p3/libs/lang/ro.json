@@ -358,5 +358,14 @@
   "preemptfedora": "Preemptiunea completă a nucleului",
   "udevpass": "Activați software-ul bazat pe web",
   "udevpass_desc": "Vă permite să utilizați software-ul bazat pe web, cum ar fi ATK HUB pentru dispozitivele periferice care le au. Un browser bazat pe Chromium este încă necesar pentru a funcționa un software de acest fel.",
-  "sloth_desc": "O bibliotecă bash care face utilizarea terminalului mai prietenească și mai practică pentru sistemele headless, dezvoltatori și pasionați. Dezvoltat și de Psygreg."
+  "sloth_desc": "O bibliotecă bash care face utilizarea terminalului mai prietenească și mai practică pentru sistemele headless, dezvoltatori și pasionați. Dezvoltat și de Psygreg.",
+  "term_view_remove": " Șterge ",
+  "term_view_removing_label": " Ștergere ",
+  "term_view_removing": "Ștergere {current}/{total}",
+  "remove_confirm_title": "Ștergeți componentele instalate?",
+  "remove_confirm_message": "LinuxToys va încerca să șteargă toate componentele instalate de '{script_name}'. Doriți să continuați?",
+  "remove_not_available_title": "Ștergere nedisponibilă",
+  "remove_not_available_message": "Nu au fost detectate componente amovibile pentru acest script.",
+  "remove_action_name": "Șterge {name}",
+  "remove_action_desc": "Șterge automat componentele detectate instalate de acest script."
 }

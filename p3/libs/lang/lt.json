@@ -358,5 +358,14 @@
   "preemptfedora": "Visuotinė branduolio preempcija",
   "udevpass": "Suaktyvinkite žiniatinklį pagrįstą programinę įrangą",
   "udevpass_desc": "Leidžia naudoti žiniatinklį pagrįstą programinę įrangą, tokią kaip ATK HUB periferiniam krašto. Chromium pagrįstas naršytuvas yra vis dar reikalingas tokiai programinei įrangai veikti.",
-  "sloth_desc": "Bash biblioteka, padaranti terminalų naudojimą draugiškiau ir praktiškiau headless sistemoms, programuotojams ir entuziastams. Taip pat sukūrė Psygreg."
+  "sloth_desc": "Bash biblioteka, padaranti terminalų naudojimą draugiškiau ir praktiškiau headless sistemoms, programuotojams ir entuziastams. Taip pat sukūrė Psygreg.",
+  "term_view_remove": " Pašalinti ",
+  "term_view_removing_label": " Pašalinimas ",
+  "term_view_removing": "Pašalinimas {current}/{total}",
+  "remove_confirm_title": "Pašalinti įdiegtus komponentus?",
+  "remove_confirm_message": "LinuxToys bandys pašalinti visus '{script_name}' įdiegtus komponentus. Ar norite tęsti?",
+  "remove_not_available_title": "Pašalinimas nėra prieinas",
+  "remove_not_available_message": "Šiam scenarijui nebuvo aptikta jokių pašalinamų komponentų.",
+  "remove_action_name": "Pašalinti {name}",
+  "remove_action_desc": "Automatiškai pašalina aptiktus komponentus, kuriuos įdiegė šis scenarijus."
 }

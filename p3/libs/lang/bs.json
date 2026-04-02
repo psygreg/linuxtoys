@@ -357,5 +357,14 @@
   "preemptfedora": "Puno preemptivanje kernela",
   "udevpass": "Omogućite programsku podršku na osnovu weba",
   "udevpass_desc": "Omogućuje vam korišćenje veb-softvera kao što je ATK HUB za periferne uređaje koji imaju takve. Hromijum-baziran preglednik je potreban da bi takav softver radio.",
-  "sloth_desc": "Bash biblioteka koja čini upotrebu terminala prijatnijom i praktičnijom za headless sisteme, programere i entuzijaste. Takođe razvijana od strane Psygreg-a."
+  "sloth_desc": "Bash biblioteka koja čini upotrebu terminala prijatnijom i praktičnijom za headless sisteme, programere i entuzijaste. Takođe razvijana od strane Psygreg-a.",
+  "term_view_remove": " Ukloniti ",
+  "term_view_removing_label": " Uklanjanje ",
+  "term_view_removing": "Uklanjanje {current}/{total}",
+  "remove_confirm_title": "Ukloniti installirane komponente?",
+  "remove_confirm_message": "LinuxToys će pokušati ukloniti sve komponente instalirane sa '{script_name}'. Želite li nastaviti?",
+  "remove_not_available_title": "Uklanjanje nije dostupno",
+  "remove_not_available_message": "Nisu pronađene nikakve kompijente koje se mogu ukloniti za ovaj skriptu.",
+  "remove_action_name": "Ukloniti {name}",
+  "remove_action_desc": "Automatski uklanja detektovane komponente instalirane ovim skriptom."
 }

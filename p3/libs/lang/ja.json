@@ -358,5 +358,14 @@
   "preemptfedora": "完全なカーネルプリエンプション",
   "udevpass": "ウェブベースのソフトウェアを有効にする",
   "udevpass_desc": "ATK HUBのようなウェブベースのソフトウェアを、それらを持つ周辺機器に使用することができます。このようなソフトウェアが動作するにはChromiumベースのブラウザが必要です。",
-  "sloth_desc": "ヘッドレスシステム、開発者、愛好家のためにターミナルの使用をより親切で実用的にするbashライブラリ。これもPsygregによって開発されました。"
+  "sloth_desc": "ヘッドレスシステム、開発者、愛好家のためにターミナルの使用をより親切で実用的にするbashライブラリ。これもPsygregによって開発されました。",
+  "term_view_remove": " 削除 ",
+  "term_view_removing_label": " 削除中 ",
+  "term_view_removing": "削除中 {current}/{total}",
+  "remove_confirm_title": "インストール済みコンポーネントを削除しますか？",
+  "remove_confirm_message": "LinuxToys は '{script_name}' でインストールされたすべてのコンポーネントを削除しようとします。続行しますか?",
+  "remove_not_available_title": "削除利用不可",
+  "remove_not_available_message": "このスクリプトに対して削除可能なコンポーネントは検出されませんでした。",
+  "remove_action_name": "{name} を削除",
+  "remove_action_desc": "このスクリプトでインストールされた検出されたコンポーネントを自動的に削除します。"
 }

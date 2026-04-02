@@ -358,5 +358,14 @@
   "preemptfedora": "ຍົກ​ຍ້າຍ​ໂຕ​ ລຳ​ໂຫລກ​ທີ່​ ສົມ​ບೂນ",
   "udevpass": "ເປີດໃຊ້ໂປຣແກຣມທີ່ອີງໃສ່ເວັບ",
   "udevpass_desc": "ອະນຸຍາດໃຫ້ທ່ານໃຊ້ໂຊຟສາກ ATK HUB ທີ່ອີງໃສ່ເວັບ ສໍາລັບຜູ້ກາຄວນກະ. ໂປຣແກຣມ Chromium-centered ຊາ້ທຸກວັນ້ອທີ່ຕ້ອງການສໍາລັບພະລາວາຖະ.",
-  "sloth_desc": "ຫ້ອງສະໝຸດ bash ທີ່ເຮັດໃຫ້ການໃຊ້ terminal ມີຄວາມເປັນມິດ ແລະ ປະຕິບັດຕົວຈິງສໍາລັບລະບົບ headless ນັກພັฒນາ ແລະ ຜູ້ທີ່ມີຄວາມສະຫລາດ। ພັฒນາໂດຍ Psygreg ເຊັ່ນດຽວກັນ."
+  "sloth_desc": "ຫ້ອງສະໝຸດ bash ທີ່ເຮັດໃຫ້ການໃຊ້ terminal ມີຄວາມເປັນມິດ ແລະ ປະຕິບັດຕົວຈິງສໍາລັບລະບົບ headless ນັກພັฒນາ ແລະ ຜູ້ທີ່ມີຄວາມສະຫລາດ। ພັฒນາໂດຍ Psygreg ເຊັ່ນດຽວກັນ.",
+  "term_view_remove": " ລຶບ ",
+  "term_view_removing_label": " ກຳລັງລຶບ ",
+  "term_view_removing": "ກຳລັງລຶບ {current}/{total}",
+  "remove_confirm_title": "ລຶບອົ່າງປະກອບທີ່ຕິດຕั้ງ?",
+  "remove_confirm_message": "LinuxToys ຈະພະຍາຍາມຖອນ '{script_name}' ທີ່ໄດ້ຕິດຕັ້ງ. ທ່ານຕ້ອງການທີ່ຈະສືບຕໍ່?",
+  "remove_not_available_title": "ກຳລັງລຶບບໍ່ສາມາດ",
+  "remove_not_available_message": "ມີສ່ວນປະກອບທີ່အາច볼ັ້ວສາມາດໂຍກຍ້າຍໄດ້ສໍາລັບສະຕ້តなთ້ທີ່ກາຳລັງ໋ໄທ່າີດເທື่າ.",
+  "remove_action_name": "ລຶບ {name}",
+  "remove_action_desc": "ລຶບຕາມຸບກາລະຢາ່ງອົ່າງອື່ນທີ່ປະກອບ ຕິດຕັ້ງໂດຍສະຕ້তຊີນ້ອ."
 }

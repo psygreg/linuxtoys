@@ -357,5 +357,14 @@
   "preemptfedora": "To'liq kernel preemption",
   "udevpass": "Veb-asosli dasturiy ta'minotni faollashtiring",
   "udevpass_desc": "Siz ATK HUB kabi veb-asosli dasturiy ta'minotlarni ushbu peripherallar uchun ishlatish imkonini beradi. Bunday dasturiy ta'minot ishlaslishi uchun Chromium asosidagi brauzver hozir ham talab qilinadi.",
-  "sloth_desc": "Headless sistemalar, ishlab chiquvchilar va ishtiyoqmandlar uchun terminal foydalanishni yana dostona va amaliy qiluvchi bash kitobxonasi. Shuningdek Psygreg tomonidan ishlab chiqilgan."
+  "sloth_desc": "Headless sistemalar, ishlab chiquvchilar va ishtiyoqmandlar uchun terminal foydalanishni yana dostona va amaliy qiluvchi bash kitobxonasi. Shuningdek Psygreg tomonidan ishlab chiqilgan.",
+  "term_view_remove": " O'chirish ",
+  "term_view_removing_label": " O'chirilmoqda ",
+  "term_view_removing": "O'chirilmoqda {current}/{total}",
+  "remove_confirm_title": "O'rnatilgan bileşenlerini o'chirasizmi?",
+  "remove_confirm_message": "LinuxToys '{script_name}' o'rnatgan barcha bileşenlerini o'chirishga harakat qiladi. Davom etmoqchimisiz?",
+  "remove_not_available_title": "O'chirish mavjud emas",
+  "remove_not_available_message": "Bu skript uchun o'chirilishi mumkin bo'lgan hech qanday komponent ishlab chiqilmadi.",
+  "remove_action_name": "O'chirish {name}",
+  "remove_action_desc": "Bu skript o'rnatgan aniqlangan komponentlarni avtomatik o'chiradi."
 }

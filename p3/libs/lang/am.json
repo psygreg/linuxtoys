@@ -358,5 +358,14 @@
   "preemptfedora": "ሙሉ ኮርናል ቅድሚያ ሰጣት",
   "udevpass": "ድር-ተኩስ ሶፍትዌር ፈቅድ",
   "udevpass_desc": "ድር-ተኩስ ሶፍትዌር ATK HUB ሕጂ ለ peripherals እንደዚህ ያሉ በ ግዳጅ ይህ ለወደ Chromium ተና ብ browser ያስፈልጋል ስለዚህ.",
-  "sloth_desc": "ለ headless ስርዓቶች, ገንቢወርከስ እና ፅዋትሞህ የ bash ቤተ-መፃህፍት ተርሚናል አጠቃቅም ይበልጥ ወዳጅ እና ተግባራዊ ያደርገዋል. በእንደዚህ አይነት PsyGreg ዋሰው ተለያይተህ."
+  "sloth_desc": "ለ headless ስርዓቶች, ገንቢወርከስ እና ፅዋትሞህ የ bash ቤተ-መፃህፍት ተርሚናል አጠቃቅም ይበልጥ ወዳጅ እና ተግባራዊ ያደርገዋል. በእንደዚህ አይነት PsyGreg ዋሰው ተለያይተህ.",
+  "term_view_remove": " ሰርዝ ",
+  "term_view_removing_label": " በመሰረዝ ላይ ",
+  "term_view_removing": "በመሰረዝ ላይ {current}/{total}",
+  "remove_confirm_title": "የተ安ከ ክፍሎች ሰርዝ?",
+  "remove_confirm_message": "LinuxToys በ '{script_name}' የተंየተገ ሁሉንም ክፍሎች ለመሰረዝ ሞክር ይሆናል. ቀጥል ነደደ:",
+  "remove_not_available_title": "ሰርዝ አይገኝም",
+  "remove_not_available_message": "ይህ ስክሪፕት ተሸና መሆናቸው ምንም ሰናበት ክፍሎች ተገኝተውም.",
+  "remove_action_name": "{name} ሰርዝ",
+  "remove_action_desc": "ይህ ስክሪፕት ተተግብሮ ያልካቸው ሁሉንም ክፍሎች ራሱ ለመሰረዝ."
 }

@@ -358,5 +358,14 @@
   "preemptfedora": "Full kernel preemption",
   "udevpass": "Aktivera webbaserad programvara",
   "udevpass_desc": "Ger dig möjligheten att använda webbaserad programvara som ATK HUB för kringutrustning som har dessa. En Chromium-baserad webbläsare krävs fortfarande för att sådan programvara ska fungera.",
-  "sloth_desc": "Ett bash-bibliotek som gör terminalanvändning mer vänlig och praktisk för headless-system, utvecklare och entusiaster. Även utvecklat av Psygreg."
+  "sloth_desc": "Ett bash-bibliotek som gör terminalanvändning mer vänlig och praktisk för headless-system, utvecklare och entusiaster. Även utvecklat av Psygreg.",
+  "term_view_remove": " Ta bort ",
+  "term_view_removing_label": " Tar bort ",
+  "term_view_removing": "Tar bort {current}/{total}",
+  "remove_confirm_title": "Ta bort installerade komponenter?",
+  "remove_confirm_message": "LinuxToys försöker ta bort alla komponenter installerade av '{script_name}'. Vill du fortsätta?",
+  "remove_not_available_title": "Borttagning ej tillgänglig",
+  "remove_not_available_message": "Inga borttagbara komponenter upptäcktes för detta skript.",
+  "remove_action_name": "Ta bort {name}",
+  "remove_action_desc": "Tar automatiskt bort komponenter som installerats av detta skript."
 }

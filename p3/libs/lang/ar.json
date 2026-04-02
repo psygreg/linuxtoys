@@ -358,5 +358,14 @@
   "preemptfedora": "المقطع الكامل للنواة",
   "udevpass": "تفعيل برامج قائمة على الويب",
   "udevpass_desc": "يسمح لك باستخدام برامج قائمة على الويب مثل ATK HUB للأجهزة الطرفية التي تحتوي عليها. لا تزال هناك حاجة إلى متصفح قائم على Chromium للقيام بذلك.",
-  "sloth_desc": "مكتبة bash تجعل استخدام المحطة الطرفية أكثر ودية وعملية للأنظمة headless والمطورين والمتحمسين على حد سواء. تم تطويره أيضًا بواسطة Psygreg."
+  "sloth_desc": "مكتبة bash تجعل استخدام المحطة الطرفية أكثر ودية وعملية للأنظمة headless والمطورين والمتحمسين على حد سواء. تم تطويره أيضًا بواسطة Psygreg.",
+  "term_view_remove": " إزالة ",
+  "term_view_removing_label": " يتم الحذف ",
+  "term_view_removing": "إزالة {current}/{total}",
+  "remove_confirm_title": "هل تريد إزالة المكونات المثبتة؟",
+  "remove_confirm_message": "سوف يحاول LinuxToys إزالة جميع المكونات المثبتة بواسطة '{script_name}'. هل تريد المتابعة؟",
+  "remove_not_available_title": "الإزالة غير متاحة",
+  "remove_not_available_message": "لم يتم اكتشاف أي مكونات قابلة للإزالة لهذا السكريبت.",
+  "remove_action_name": "إزالة {name}",
+  "remove_action_desc": "يزيل تلقائيًا المكونات المكتشفة المثبتة بواسطة هذا السكريبت."
 }

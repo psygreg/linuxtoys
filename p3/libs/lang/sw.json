@@ -356,5 +356,14 @@
   "preemptfedora": "Ukamilamali wa kernel preemption",
   "udevpass": "Washa programu inayoongezwa kwenye wavuti",
   "udevpass_desc": "Huruhusu kutumiwa kwa programu inayoongezwa kwenye wavuti kama ATK HUB kwa vifaa vya mahofuza. Kivinjari kinachotekeleza Chromium kiko bado kinachohitajika kwa programu ya kukamatia.",
-  "sloth_desc": "Maktaba ya bash inayofanya matumizi ya terminal kuwa maalum na kufaa kwa mifumo ya headless, waendelezaji na wapenzi. Pia ilitengenezwa na Psygreg."
+  "sloth_desc": "Maktaba ya bash inayofanya matumizi ya terminal kuwa maalum na kufaa kwa mifumo ya headless, waendelezaji na wapenzi. Pia ilitengenezwa na Psygreg.",
+  "term_view_remove": " Ondoa ",
+  "term_view_removing_label": " Kuondoa ",
+  "term_view_removing": "Kuondoa {current}/{total}",
+  "remove_confirm_title": "Ondoa sehemu zilizowekwa?",
+  "remove_confirm_message": "LinuxToys itajaribu kuondoa sehemu zote zilizowekwa na '{script_name}'. Unataka kuendelea?",
+  "remove_not_available_title": "Ondoa Haupatikani",
+  "remove_not_available_message": "Hakuna sehemu zinazoweza kuondolewa zilizotajwa kwa hii.",
+  "remove_action_name": "Ondoa {name}",
+  "remove_action_desc": "Kwa kiotomatiki ondoa sehemu zilizogundulika zilizowekwa na hii."
 }

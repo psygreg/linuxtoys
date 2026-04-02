@@ -358,5 +358,14 @@
   "preemptfedora": "Potpuno preemptivanje kernela",
   "udevpass": "Omogućite softver baziran na webu",
   "udevpass_desc": "Omogućuje vam korišćenje veb-softvera kao što je ATK HUB za periferne uređaje koji imaju takve. Pretraživač zasnovan na Chromium-u i dalje je potreban da bi takav softver radio.",
-  "sloth_desc": "Bash biblioteka koja čini korišćenje terminala prijaznijom i praktičnijom za headless sisteme, programere i entuzijaste. Također razvijen od strane Psygreg."
+  "sloth_desc": "Bash biblioteka koja čini korišćenje terminala prijaznijom i praktičnijom za headless sisteme, programere i entuzijaste. Također razvijen od strane Psygreg.",
+  "term_view_remove": " Uklonjiti ",
+  "term_view_removing_label": " Uklanjanje ",
+  "term_view_removing": "Uklanjanje {current}/{total}",
+  "remove_confirm_title": "Ukloniti instalirane komponente?",
+  "remove_confirm_message": "LinuxToys će pokušati ukloniti sve komponente instalirane sa '{script_name}'. Želite li nastaviti?",
+  "remove_not_available_title": "Uklanjanje nije dostupno",
+  "remove_not_available_message": "Nisu pronađene nikakve kompijente koje se mogu ukloniti za ovaj skriptu.",
+  "remove_action_name": "Uklonjiti {name}",
+  "remove_action_desc": "Automatski uklanja detektovane komponente instalirane ovim skriptom."
 }

@@ -358,5 +358,14 @@
   "preemptfedora": "Preemción completa del kernel",
   "udevpass": "Habilitar software basado en web",
   "udevpass_desc": "Te permite usar software basado en web como ATK HUB para periféricos que tienen estos. Aún se requiere un navegador basado en Chromium para que funcione tal software.",
-  "sloth_desc": "Una biblioteca bash que hace que el uso de terminales sea más amigable y práctico para sistemas headless, desarrolladores y entusiastas. También desarrollado por Psygreg."
+  "sloth_desc": "Una biblioteca bash que hace que el uso de terminales sea más amigable y práctico para sistemas headless, desarrolladores y entusiastas. También desarrollado por Psygreg.",
+  "term_view_remove": " Eliminar ",
+  "term_view_removing_label": " Eliminando ",
+  "term_view_removing": "Eliminando {current}/{total}",
+  "remove_confirm_title": "¿Eliminar componentes instalados?",
+  "remove_confirm_message": "LinuxToys intentará eliminar todos los componentes instalados por '{script_name}'. ¿Quieres continuar?",
+  "remove_not_available_title": "Eliminación no disponible",
+  "remove_not_available_message": "No se detectaron componentes removibles para este script.",
+  "remove_action_name": "Eliminar {name}",
+  "remove_action_desc": "Elimina automáticamente los componentes detectados instalados por este script."
 }

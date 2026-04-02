@@ -358,5 +358,14 @@
   "preemptfedora": "Polno prednostno klienturo jedra",
   "udevpass": "Omogočite spletno programsko opremino",
   "udevpass_desc": "Omogoča vam uporabo spletne programske opreme, kot je ATK HUB za periferne naprave, ki jih imajo. Za delovanje take programske opreme je še vedno potreben Chromium-osnovni brskalnik.",
-  "sloth_desc": "Knjižnica bash, ki naredi uporabo terminalnega vmesnika bolj prijazno in praktično za sistemske headless, razvijalce in navdušence. Razvita tudi s strani Psygreg."
+  "sloth_desc": "Knjižnica bash, ki naredi uporabo terminalnega vmesnika bolj prijazno in praktično za sistemske headless, razvijalce in navdušence. Razvita tudi s strani Psygreg.",
+  "term_view_remove": " Odstrani ",
+  "term_view_removing_label": " Odstranjevanje ",
+  "term_view_removing": "Odstranjevanje {current}/{total}",
+  "remove_confirm_title": "Odstraniti nameščene komponente?",
+  "remove_confirm_message": "LinuxToys bo poskusil odstraniti vse komponente, ki jih je namestil '{script_name}'. Ali želite nadaljevati?",
+  "remove_not_available_title": "Odstranjevanje ni na voljo",
+  "remove_not_available_message": "Za ta skript niso bili zaznani noben odklonjiv komponenti.",
+  "remove_action_name": "Odstrani {name}",
+  "remove_action_desc": "Samodejno odstrani zaznan komponenti, ki ga je namestil ta skript."
 }

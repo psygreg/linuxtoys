@@ -358,5 +358,14 @@
   "preemptfedora": "Khóa kernel đầy đủ",
   "udevpass": "Bật phần mềm dựa trên web",
   "udevpass_desc": "Cho phép bạn sử dụng phần mềm dựa trên web như ATK HUB cho các thiết bị ngoài địa chỉ mà bạn có. Một trình duyệt dựa trên Chromium vẫn cần thiết để phần mềm như vậy hoạt động.",
-  "sloth_desc": "Một thư viện bash giúp sử dụng terminal thân thiện và thực tế hơn cho các hệ thống headless, nhà phát triển và những người yêu thích. Cũng được phát triển bởi Psygreg."
+  "sloth_desc": "Một thư viện bash giúp sử dụng terminal thân thiện và thực tế hơn cho các hệ thống headless, nhà phát triển và những người yêu thích. Cũng được phát triển bởi Psygreg.",
+  "term_view_remove": " Xóa ",
+  "term_view_removing_label": " Đang xóa ",
+  "term_view_removing": "Đang xóa {current}/{total}",
+  "remove_confirm_title": "Xóa các thành phần đã cài đặt?",
+  "remove_confirm_message": "LinuxToys sẽ cố gắng xóa tất cả các thành phần được cài đặt bởi '{script_name}'. Bạn có muốn tiếp tục không?",
+  "remove_not_available_title": "Xóa không có sẵn",
+  "remove_not_available_message": "Không phát hiện bất kỳ thành phần có thể xóa nào cho tập lệnh này.",
+  "remove_action_name": "Xóa {name}",
+  "remove_action_desc": "Tự động xóa các thành phần được phát hiện được cài đặt bởi tập lệnh này."
 }
