@@ -48,7 +48,7 @@ docker_in () { # install docker
             sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
         fi
         _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]] || is_solus; then
         _packages=(docker docker-compose)
     elif [[ "$ID_LIKE" == *suse* ]]; then
         _packages=(docker docker-compose)

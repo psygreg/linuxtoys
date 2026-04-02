@@ -129,6 +129,7 @@ earlyoom_lib () {
     if is_solus; then
         git clone https://github.com/rfjakob/earlyoom.git
         cd earlyoom
+        sudo eopkg install -c system.devel
         sudo make install
         cd ..
         sudo rm -r earlyoom

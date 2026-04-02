@@ -33,7 +33,7 @@ sleep 1
 sudo_rq
 # check dependency for Pipewire Audio Capture plugin and xwayland
 _packages=(wireplumber)
-if is_arch || is_cachy; then
+if is_arch || is_cachy || is_solus; then
     _packages+=(xorg-xwayland)
 elif is_debian || is_ubuntu; then
     _packages+=(xwayland)

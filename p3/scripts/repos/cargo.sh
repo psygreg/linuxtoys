@@ -5,11 +5,17 @@
 # icon: cargo.svg
 # repo: https://github.com/rust-lang/cargo
 
+
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 # language
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-curl https://sh.rustup.rs -sSf | sh
+if is_solus; then
+    _packages=(rustup)
+    _install_
+else
+    curl https://sh.rustup.rs -sSf | sh
+fi
 zeninf "$msg018"

@@ -4,6 +4,7 @@
 # description: damx_desc
 # icon: damx.png
 # reboot: yes
+# compat: !solus
 # repo: https://github.com/PXDiv/Div-Acer-Manager-Max
 
 # --- Start of the script code ---

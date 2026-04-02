@@ -5,6 +5,7 @@
 # icon: flathub.svg
 # reboot: yes
 # repo: https://flathub.org
+# compat: !solus
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

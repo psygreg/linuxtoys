@@ -16,7 +16,7 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     sudo_rq
-    _packages=(waydroid)
+    _packages=(waydroid python3)
     if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
         sudo apt install -y curl ca-certificates
         curl -s https://repo.waydro.id | sudo bash

@@ -57,4 +57,11 @@ elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LI
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ] || [ "$ID" == "suse" ] || [[ "$ID_LIKE" == *suse* ]]; then
     sudo_rq
     rocm_rpm
+elif is_solus; then
+    sudo_rq
+    _packages=(ocl-icd clinfo rocm-clr rocm-hip rocm-core rocm-llvm rocm-hipify rocminfo rocm-smi rocm-opencl rocfft rocblas rccl hipblas hipsolver hipsparse hipmagma rocsolver rocsparse rocrand rocthrust rocprim)
+    _install_
+    sudo usermod -aG render,video $USER
+else
+    fatal "$msg077"
 fi

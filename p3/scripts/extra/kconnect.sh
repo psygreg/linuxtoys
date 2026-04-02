@@ -3,7 +3,7 @@
 # version: 1.0
 # description: kconnect_desc
 # icon: kconnect.svg
-# compat: !ubuntu, !zorin
+# compat: !ubuntu, !zorin, !solus
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
