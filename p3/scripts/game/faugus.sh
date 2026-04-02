@@ -11,7 +11,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-if is_debian || is_ubuntu || is_ostree || is_suse; then
+if is_debian || is_ubuntu || is_ostree || is_suse || is_solus; then
     flatpak_in_lib
     flatpak install --user --noninteractive flathub io.github.Faugus.faugus-launcher
     sudo_rq

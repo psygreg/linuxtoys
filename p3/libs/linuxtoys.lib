@@ -175,7 +175,6 @@ _lang_() {
 }
 
 # --- System Detection ---
-
 is_arch() { [[ ("$ID" =~ "arch" || "$ID" == "artix" || "$ID_LIKE" =~ "arch") && "$ID" != "cachyos" ]]; }
 is_cachy() { [[ "$ID" == "cachyos" ]]; }
 is_fedora() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && ! command -v rpm-ostree &>/dev/null; }
@@ -184,3 +183,13 @@ is_debian() { [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" =~ "debian
 is_ubuntu() { [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_suse() { [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
 is_solus() { [[ "$ID" == "solus" ]]; }
+
+# Nvidia GPU detection
+is_nvidia() {
+    nvidiaGPU=$(lspci | grep -i 'nvidia')
+    if [[ -n "$nvidiaGPU" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}

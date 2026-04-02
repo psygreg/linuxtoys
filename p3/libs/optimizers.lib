@@ -177,7 +177,6 @@ hwaccel_flat_lib () {
 # for intel and nvidia GPUs, fix GTK rendering bugs
 fix_intel_gtk () {
     intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-    nvGPU=$(lspci | grep -i 'nvidia')
     if [[ -n "$intelGPU" ]]; then
         if echo "$intelGPU" | grep -qi 'battlemage'; then
             if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
@@ -185,13 +184,12 @@ fix_intel_gtk () {
             fi
         fi
     fi
-    if [[ -n "$nvGPU" ]]; then
+    if is_nvidia; then
         if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
             echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
         fi
     fi
     unset intelGPU
-    unset nvGPU
 }
 
 # use dnsmasq as a local caching DNS resolver - works generally better than systemd-resolved and fixes download speed issues with Steam

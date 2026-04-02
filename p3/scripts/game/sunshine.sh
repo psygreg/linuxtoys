@@ -14,4 +14,12 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub dev.lizardbyte.app.Sunshine
-flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine
+sudo_rq
+if is_nvidia; then
+    _packages=(nvidia-container-toolkit)
+    if is_solus; then
+        _packages+=(nvidia-vaapi-driver)
+    fi
+    _install_
+fi
+sudo flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine
