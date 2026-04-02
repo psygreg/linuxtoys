@@ -3,7 +3,6 @@
 # version: 1.0
 # description: gsr_desc
 # icon: gsr.png
-# gpu: Amd, Nvidia
 # repo: https://git.dec05eba.com/?p=about
 
 # --- Start of the script code ---

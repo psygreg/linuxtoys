@@ -18,7 +18,7 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # system-agnostic scripts
 sysag_run () {
-    if [[ "$ID" != "cachyos" ]] || [ ! -f /usr/lib/sysctl.d/99-cachyos-settings.conf ]; then
+    if ! is_cachyos || ! is_solus || [ ! -f /usr/lib/sysctl.d/99-cachyos-settings.conf ]; then
         # systemd patches
         cachyos_sysd_lib
     fi
@@ -28,10 +28,10 @@ sysag_run () {
     dsplitm_lib
     # add earlyoom configuration
     earlyoom_lib
-    # add dnsmasq configuration -- disabled due to potential selfhosting needs
-    # dnsmasq_lib
     # change intel driver to Xe on discrete GPUs
-    intel_xe_lib
+    if ! is_solus || ! is_fedora; then
+        intel_xe_lib
+    fi
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
     fix_intel_gtk
     # set proton to run on wine-wayland mode by default
@@ -40,8 +40,6 @@ sysag_run () {
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
-    # plasma VRAM usage fix - suspended for issues on some systems
-    # plasma_mem_fix
     # vm.min_free_kbytes dynamic setup
     free_mem_fix
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
@@ -57,10 +55,6 @@ sysag_run () {
         sudo opi codecs
     fi
     _install_
-    # hardware accelerated video playback for flatpak applications - only if flatpak is already present, not enforced
-    if command -v flatpak &>/dev/null; then
-        hwaccel_flat_lib
-    fi
 }
 # consolidated installation
 optimizer () {

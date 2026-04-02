@@ -3,7 +3,7 @@
 # version: 1.0
 # description: minfreefix_desc
 # icon: preload.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy
+# compat: ubuntu, debian, fedora, suse, arch, cachy, solus
 # optimized-only: yes
 
 # --- Start of the script code ---

@@ -15,6 +15,8 @@ gamemode_in () {
     sudo_rq
     if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
         _packages=(gamemode lib32-gamemode)
+    elif is_solus; then
+        _packages=(gamemode gamemode-32bit)
     else
         _packages=(gamemode)
     fi

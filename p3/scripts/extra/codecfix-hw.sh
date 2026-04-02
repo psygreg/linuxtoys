@@ -3,7 +3,7 @@
 # version: 1.0
 # description: codecfix-hw_desc
 # icon: codec.svg
-# compat: none
+# compat: fedora
 # reboot: yes
 
 # --- Start of the script code ---
@@ -29,13 +29,8 @@ if command -v rpm-ostree &> /dev/null; then
     noopenh264 \
     --install ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld
 else
-    _rmpkgs=(ffmpeg-free libavcodec-free libavfilter-free libavformat-free libavutil-free libpostproc-free libswresample-free libswscale-free libavdevice-free noopenh264)
-    for pkg in "${_rmpkgs[@]}"; do
-        if rpm -qi "$pkg" &> /dev/null; then
-            sudo dnf remove -y "$pkg"
-        fi
-    done
-    _packages=(ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld)
-    _install_
+    if rpm -qi "$pkg" &> /dev/null; then
+        sudo dnf swap ffmpeg-free ffmpeg
+    fi
 fi
 zeninf "$msg036"

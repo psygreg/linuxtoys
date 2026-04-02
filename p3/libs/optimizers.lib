@@ -123,17 +123,6 @@ psave_lib () {
     fi
 }
 
-# patcher for debian testing
-debfixer_lib () {
-    local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
-    if [ "$ID" == "debian" ]; then
-        if ! su -c 'grep -q "^${USER} ALL=(ALL:ALL) ALL" /etc/sudoers'; then
-            su -c "sed -i '\|^root[[:space:]]\\+ALL=(ALL:ALL)[[:space:]]\\+ALL$|a ${USER} ALL=(ALL:ALL) ALL' /etc/sudoers"
-            sleep 1
-        fi
-    fi
-}
-
 # EarlyOOM - kills processes before a OOM event is triggered
 earlyoom_lib () {
     cd $HOME
@@ -296,19 +285,6 @@ EOF
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
     fi
 }
-
-# change Plasma 6 renderer to OpenGL(2) for VRAM savings
-#plasma_mem_fix () {
-#    local ENV_FILE="$HOME/.config/plasma-workspace/env/kwin_compose_fix.sh"
-#    if [[ "$XDG_CURRENT_DESKTOP" == "KDE" ]] || pgrep -x "kwin_x11" > /dev/null || pgrep -x "kwin_wayland" > /dev/null; then
-#        mkdir -p "$(dirname "$ENV_FILE")"
-#        cat <<EOF > "$ENV_FILE"
-##!/bin/sh
-#export KWIN_COMPOSE="O"
-#EOF
-#        chmod +x "$ENV_FILE"
-#    fi
-#}
 
 # set vm.min_free_kbytes dynamically as 1% of total memory size
 # done through systemd service as it can recalculate every boot, so it will work as intended even after RAM upgrades or downgrades
