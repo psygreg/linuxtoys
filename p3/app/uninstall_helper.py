@@ -239,6 +239,33 @@ def _is_flatpak_installed(app_id, scope):
     return _run_ok(["flatpak", "info", scope_flag, app_id])
 
 
+def _detect_java_uninstall_candidates(package_manager):
+    """
+    Java OpenJDK script builds package names dynamically, so static parsing misses them.
+    Return a conservative set of candidate package names by distro family.
+    """
+    if package_manager == "apt":
+        candidates = []
+        for v in (8, 11, 17, 21, 24):
+            candidates.extend([f"openjdk-{v}-jdk", f"openjdk-{v}-jre"])
+        return candidates
+
+    if package_manager in ("dnf", "rpm-ostree"):
+        candidates = ["java-1.8.0-openjdk", "java-1.8.0-openjdk-devel"]
+        for v in (11, 17, 21, 24):
+            candidates.extend([f"java-{v}-openjdk", f"java-{v}-openjdk-devel"])
+        return candidates
+
+    if package_manager == "zypper":
+        candidates = []
+        for v in (8, 11, 17, 21, 24):
+            candidates.extend([f"java-{v}-openjdk", f"java-{v}-openjdk-devel"])
+        return candidates
+
+    # solus/other fallback based on java.sh behavior
+    return ["openjdk-11", "openjdk-17", "openjdk-21"]
+
+
 def build_uninstall_script_entry(script_info, translations=None):
     """
     Build a temporary uninstall script for a given LinuxToys script.
@@ -258,6 +285,11 @@ def build_uninstall_script_entry(script_info, translations=None):
     package_candidates = set()
     package_candidates.update(_extract_bash_array(content, "_packages"))
     package_candidates.update(_parse_direct_package_installs(content))
+
+    script_basename = os.path.basename(script_path).lower()
+    if script_basename == "java.sh":
+        package_candidates.update(_detect_java_uninstall_candidates(package_manager))
+
     package_candidates = _filter_bootstrap_packages(package_candidates)
 
     installed_packages = sorted(
