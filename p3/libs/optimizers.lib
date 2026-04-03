@@ -232,6 +232,10 @@ dnsmasq_lib () {
 # enable intel Xe driver for discrete GPUs
 intel_xe_lib () {
     intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
+        if [[ ! -n "$intelGPU" ]]; then
+            echo "No Intel GPU device detected, nothing to do."
+            return 0
+        fi
         if [[ -n "$intelGPU" ]]; then
             if echo "$intelGPU" | grep -Eqi 'battlemage|alchemist'; then
                 # Extract DEVID from lspci output (e.g., e20b from [8086:e20b])
@@ -285,7 +289,6 @@ EOF
                 fi
             fi
         fi
-    unset intelGPU
     # install decoder and encoder drivers
     if is_ubuntu; then
         sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
@@ -303,6 +306,7 @@ EOF
     if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
     fi
+    unset intelGPU
 }
 
 # set vm.min_free_kbytes dynamically as 1% of total memory size

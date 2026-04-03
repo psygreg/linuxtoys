@@ -29,7 +29,7 @@ sysag_run () {
     # add earlyoom configuration
     earlyoom_lib
     # change intel driver to Xe on discrete GPUs
-    if ! is_solus || ! is_fedora; then
+    if ! is_solus && ! is_fedora; then
         intel_xe_lib
     fi
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
