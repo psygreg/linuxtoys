@@ -67,7 +67,11 @@ create_udev_rules() {
     local rule_num=50
     local rule_file
     while true; do
-        rule_file="/etc/udev/rules.d/${rule_num}-usb-${vendor_name}.rules"
+        if is_solus; then
+            rule_file="/usr/lib/udev/rules.d/${rule_num}-usb-${vendor_name}.rules"
+        else
+            rule_file="/etc/udev/rules.d/${rule_num}-usb-${vendor_name}.rules"
+        fi
         if [[ ! -f "$rule_file" ]]; then
             break
         fi
