@@ -3,7 +3,7 @@
 # version: 1.0
 # description: unoptimize_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy
+# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin, solus
 # reboot: yes
 # noconfirm: yes
 # nocontainer

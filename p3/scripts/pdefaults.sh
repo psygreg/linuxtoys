@@ -3,7 +3,7 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin
+# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin, solus
 # reboot: yes
 # noconfirm: yes
 # nocontainer
@@ -18,7 +18,7 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # system-agnostic scripts
 sysag_run () {
-    if ! is_cachy || ! is_solus || [ ! -f /usr/lib/sysctl.d/99-cachyos-settings.conf ]; then
+    if ! is_cachy; then
         # systemd patches
         cachyos_sysd_lib
     fi

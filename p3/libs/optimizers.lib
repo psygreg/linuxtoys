@@ -7,45 +7,65 @@ cachyos_sysd_lib () {
     mkdir -p sysctl-config
     sleep 1
     cd sysctl-config
-    {
-        echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
-        } > "udev.txt"
-    {
-        echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
-        echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
-        echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-        } > "tmpfiles.txt"
-    {
-        echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
-        echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
-        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
-        } > "modprobe.txt"
-    {
-        echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
-        echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
-        echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
-        } > "other.txt"
+    if is_solus; then
+        {
+            echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+            } > "modprobe.txt"
+        {
+            echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
+            } > "udev.txt"
+        {
+            echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
+            echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
+            } > "tmpfiles.txt"       
+    else
+        {
+            echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
+            } > "udev.txt"
+        {
+            echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
+            echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
+            echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
+            } > "tmpfiles.txt"
+        {
+            echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
+            echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
+            echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+            } > "modprobe.txt"
+        {
+            echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
+            echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
+            echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
+            } > "other.txt"
+    fi
     sleep 1
+    while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
     while read -r url; do wget -P udev "$url"; done < udev.txt
     while read -r url; do wget -P tmpfiles "$url"; done < tmpfiles.txt
-    while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
-    while read -r url; do wget "$url"; done < other.txt
+    if ! is_solus; then
+        while read -r url; do wget "$url"; done < other.txt
+    fi
     sleep 1
-    for dir in udev/rules.d tmpfiles.d modprobe.d sysctl.d systemd/journald.conf.d; do # ensure directories exist before copy
-        [ -d "/usr/lib/$dir" ] || sudo mkdir -p "/usr/lib/$dir"
-    done
-    [ -d "/usr/share/X11/xorg.conf.d" ] || sudo mkdir -p "/usr/share/X11/xorg.conf.d"
-    sudo cp -rf udev/* /usr/lib/udev/rules.d/
-    sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
+    if ! is_solus; then
+        for dir in udev/rules.d tmpfiles.d modprobe.d sysctl.d systemd/journald.conf.d; do # ensure directories exist before copy
+            [ -d "/usr/lib/$dir" ] || sudo mkdir -p "/usr/lib/$dir"
+        done
+    fi
     sudo cp -rf modprobe/* /usr/lib/modprobe.d/
-    sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
-    sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-    sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
+    sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
+    sudo cp -rf udev/* /usr/lib/udev/rules.d/
+    if ! is_solus; then
+        [ -d "/usr/share/X11/xorg.conf.d" ] || sudo mkdir -p "/usr/share/X11/xorg.conf.d"
+        sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
+        sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
+        sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
+    fi
     cd ..
     rm -rf sysctl-config
 }
