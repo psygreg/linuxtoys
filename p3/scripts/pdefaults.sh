@@ -41,7 +41,9 @@ sysag_run () {
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
     # vm.min_free_kbytes dynamic setup
-    free_mem_fix
+    if ! is_solus; then
+        free_mem_fix
+    fi
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
     preempt_lib
     # fix video thumbnails
