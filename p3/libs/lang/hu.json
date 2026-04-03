@@ -368,5 +368,6 @@
   "remove_not_available_message": "Az ehhez a parancsfájlhoz nem voltak eltávolítható összetevők felisve. ",
   "remove_action_name": "Eltávolítás {name}",
   "remove_action_desc": "Automatikusan eltávolítja az ezen skript által telepített felismert összetevőket.",
-  "solseek_desc": "Böngészzen, keressen és kezeljen csomagokat, illesztőprogramokat és Flatpak alkalmazásokat a Solus számára egy kényelmes TUI-ból."
+  "solseek_desc": "Böngészzen, keressen és kezeljen csomagokat, illesztőprogramokat és Flatpak alkalmazásokat a Solus számára egy kényelmes TUI-ból.",
+  "nvfixsolus_desc": "Megjavít egy problémát a Soluban, ahol a nyílt forráskódú Nouveau illesztőprogram elsőbbséget kap a tulajdonosi Nvidia illesztőprogrammal szemben, ami azt okozza, hogy nem működik megfelelően. Ezt csak a Solseek segítségével történt megfelelő illesztőprogram-telepítés után használja, amely a Repositories menüben található."
 }

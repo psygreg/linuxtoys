@@ -368,5 +368,6 @@
 	"remove_not_available_message": "No removable components were detected for this script.",
 	"remove_action_name": "Remove {name}",
 	"remove_action_desc": "Automatically removes detected components installed by this script.",
-  "solseek_desc": "Browse, search, and manage packages, drivers and flatpaks for Solus from a comfortable TUI."
+  "solseek_desc": "Browse, search, and manage packages, drivers and flatpaks for Solus from a comfortable TUI.",
+  "nvfixsolus_desc": "Fixes an issue on Solus where the open-source Nouveau driver takes precedence over the proprietary Nvidia driver, causing it not to work properly. Only use this after proper driver installation using Solseek, which can be found in the Repositories menu."
 }

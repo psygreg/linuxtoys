@@ -368,5 +368,6 @@
   "remove_not_available_message": "Šim skriptam nav atrasti noņemami komponenti.",
   "remove_action_name": "Noņemt {name}",
   "remove_action_desc": "Automātiski noņem atklātus komponentus, ko uzstādīja šis skripts.",
-  "solseek_desc": "Pārlūkojiet, meklējiet un pārvaldiet Solus iepakojumus, draiverus un Flatpak lietotnes no ērtas TUI."
+  "solseek_desc": "Pārlūkojiet, meklējiet un pārvaldiet Solus iepakojumus, draiverus un Flatpak lietotnes no ērtas TUI.",
+  "nvfixsolus_desc": "Labojo Solus problēmu, kur atvērtās pirmkodes Nouveau draiveris ir prioritārs privātajam Nvidia draivertim, kas liek tam nedarboties pareizi. Izmantojiet to tikai pēc pareiza draivera instalācijas, izmantojot Solseek, kas ir pieejams Repositories izvēlnē."
 }

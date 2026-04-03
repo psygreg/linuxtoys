@@ -368,5 +368,6 @@
   "remove_not_available_message": "Tälle skriptille ei havaittu poistettavia komponentteja.",
   "remove_action_name": "Poista {name}",
   "remove_action_desc": "Poistaa automaattisesti tämän skriptin asentamat havaitut komponentit.",
-  "solseek_desc": "Selaa, etsi ja hallitse paketteja, ajureita ja Flatpak-sovelluksia Solukselle mukavasta TUI-käyttöliittymästä."
+  "solseek_desc": "Selaa, etsi ja hallitse paketteja, ajureita ja Flatpak-sovelluksia Solukselle mukavasta TUI-käyttöliittymästä.",
+  "nvfixsolus_desc": "Korjaa Solusin ongelman, jossa avoimen lähdekoodin Nouveau-ajuri saa etusijan omistusoikeuden Nvidia-ajuriin, mikä aiheuttaa, että se ei toimi oikein. Käytä tätä vain asianmukaisen ajurin asennuksen jälkeen Solseekin avulla, joka löytyy Repositories-valikosta."
 }

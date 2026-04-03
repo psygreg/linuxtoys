@@ -368,5 +368,6 @@
   "remove_not_available_message": "לא התגלו רכיבים הסרים עבור סקריפט זה.",
   "remove_action_name": "הסר {name}",
   "remove_action_desc": "מסיר באופן אוטומטי את הרכיבים המזוהים המותקנים על ידי סקריפט זה.",
-  "solseek_desc": "עיין, חפש וניהל חבילות, נהגים ויישומי Flatpak עבור Solus מ-TUI נוח."
+  "solseek_desc": "עיין, חפש וניהל חבילות, נהגים ויישומי Flatpak עבור Solus מ-TUI נוח.",
+  "nvfixsolus_desc": "מתקן בעיה ב-Solus שבה לדרייבר Nouveau בקוד פתוח יש עדיפות על פני דרייבר Nvidia קנייני, מה שגורם לכך שהוא לא עובד כראוי. השתמש בזה רק לאחר התקנה נכונה של הדרייבר באמצעות Solseek, שניתן למצוא בתפריט Repositories."
 }

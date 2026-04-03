@@ -366,5 +366,6 @@
   "remove_not_available_message": "Hakuna sehemu zinazoweza kuondolewa zilizotajwa kwa hii.",
   "remove_action_name": "Ondoa {name}",
   "remove_action_desc": "Kwa kiotomatiki ondoa sehemu zilizogundulika zilizowekwa na hii.",
-  "solseek_desc": "Viaeni, tafuta na dhibiti mifuko, programu na programu za Flatpak ya Solus kutoka kwa TUI inayofifia."
+  "solseek_desc": "Viaeni, tafuta na dhibiti mifuko, programu na programu za Flatpak ya Solus kutoka kwa TUI inayofifia.",
+  "nvfixsolus_desc": "Inaboresha tatizo katika Solus ambapo dereva la Nouveau la chanzo wazi lina utangulizi juu ya dereva wa Nvidia wa miliki, na kusababisha si kufanya kazi sahihi. Tumia hii tu baada ya uongozaji sahihi wa dereva kwa kutumia Solseek, ambayo inaweza kupatikana katika menyu ya Repositories."
 }

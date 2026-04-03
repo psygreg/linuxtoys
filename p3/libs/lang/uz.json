@@ -367,5 +367,6 @@
   "remove_not_available_message": "Bu skript uchun o'chirilishi mumkin bo'lgan hech qanday komponent ishlab chiqilmadi.",
   "remove_action_name": "O'chirish {name}",
   "remove_action_desc": "Bu skript o'rnatgan aniqlangan komponentlarni avtomatik o'chiradi.",
-  "solseek_desc": "Solus uchun paketlar, drayverlar va Flatpak ilovalarini qulay TUI interfeysi orqali koʻrib chiqing, qidiring va boshqaring."
+  "solseek_desc": "Solus uchun paketlar, drayverlar va Flatpak ilovalarini qulay TUI interfeysi orqali koʻrib chiqing, qidiring va boshqaring.",
+  "nvfixsolus_desc": "Solus da ochiq manbali Nouveau drayveri xususiy Nvidia drayveriga ustuvor bo'lsa, bu muammoni tuzatadi va uni to'g'ri ishlashiga xalaqit beradi. Buni faqat Solseek yordamida drayverni to'g'ri o'rnatgandan keyin foydalaning, bu Repositories menyusida topiladi."
 }

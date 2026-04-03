@@ -368,5 +368,6 @@
   "remove_not_available_message": "Šiam scenarijui nebuvo aptikta jokių pašalinamų komponentų.",
   "remove_action_name": "Pašalinti {name}",
   "remove_action_desc": "Automatiškai pašalina aptiktus komponentus, kuriuos įdiegė šis scenarijus.",
-  "solseek_desc": "Naršykite, ieškokite ir tvarkykite Solus paketus, tvarkykles ir Flatpak programas iš patogios TUI."
+  "solseek_desc": "Naršykite, ieškokite ir tvarkykite Solus paketus, tvarkykles ir Flatpak programas iš patogios TUI.",
+  "nvfixsolus_desc": "Pataiso problemą Soluse, kur atviro kodo Nouveau tvarkyklė turi pirmenybę prieš nuosavybės Nvidia tvarkyklę, dėl to ji neveikia tinkamai. Naudokite tai tik po to, kai teisingai įdiegėte tvarkyklę naudodami Solseek, kurią rasite Repositories meniu."
 }

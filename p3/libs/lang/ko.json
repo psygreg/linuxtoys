@@ -368,5 +368,6 @@
   "remove_not_available_message": "이 스크립트에 대해 제거 가능한 구성 요소가 감지되지 않았습니다.",
   "remove_action_name": "{name} 제거",
   "remove_action_desc": "이 스크립트에 의해 설치된 감지된 구성 요소를 자동으로 제거합니다.",
-  "solseek_desc": "Solus용 패키지, 드라이버 및 Flatpak 앱을 편안한 TUI에서 검색, 검색 및 관리하십시오."
+  "solseek_desc": "Solus용 패키지, 드라이버 및 Flatpak 앱을 편안한 TUI에서 검색, 검색 및 관리하십시오.",
+  "nvfixsolus_desc": "Solus에서 오픈 소스 Nouveau 드라이버가 독점 Nvidia 드라이버보다 우선되는 문제를 수정하여 제대로 작동하지 않게 합니다. Solseek를 사용하여 드라이버를 올바르게 설치한 후에만 이를 사용하세요. Solseek는 Repositories 메뉴에서 찾을 수 있습니다."
 }

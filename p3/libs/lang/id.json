@@ -368,5 +368,6 @@
   "remove_not_available_message": "Tidak ada komponen yang dapat dihapus yang terdeteksi untuk skrip ini.",
   "remove_action_name": "Hapus {name}",
   "remove_action_desc": "Secara otomatis menghapus komponen yang terdeteksi yang dipasang oleh skrip ini.",
-  "solseek_desc": "Telusuri, cari, dan kelola paket, driver, dan aplikasi Flatpak untuk Solus dari TUI yang nyaman."
+  "solseek_desc": "Telusuri, cari, dan kelola paket, driver, dan aplikasi Flatpak untuk Solus dari TUI yang nyaman.",
+  "nvfixsolus_desc": "Memperbaiki masalah di Solus di mana driver Nouveau open-source memiliki prioritas atas driver Nvidia proprietary, menyebabkannya tidak berfungsi dengan baik. Gunakan ini hanya setelah instalasi driver yang tepat menggunakan Solseek, yang dapat ditemukan di menu Repositories."
 }

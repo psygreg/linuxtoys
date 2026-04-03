@@ -368,5 +368,6 @@
   "remove_not_available_message": "Inga borttagbara komponenter upptäcktes för detta skript.",
   "remove_action_name": "Ta bort {name}",
   "remove_action_desc": "Tar automatiskt bort komponenter som installerats av detta skript.",
-  "solseek_desc": "Bläddra, sök och hantera paket, drivrutiner och Flatpak-appar för Solus från ett bekvämt TUI."
+  "solseek_desc": "Bläddra, sök och hantera paket, drivrutiner och Flatpak-appar för Solus från ett bekvämt TUI.",
+  "nvfixsolus_desc": "Åtgärdar ett problem i Solus där open-source Nouveau-drivern har företräde framför den proprietära Nvidia-drivern, vilket gör att den inte fungerar korrekt. Använd detta endast efter korrekt driverinstallation med Solseek, som finns i Repositories-menyn."
 }

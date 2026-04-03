@@ -368,5 +368,6 @@
   "remove_not_available_message": "Không phát hiện bất kỳ thành phần có thể xóa nào cho tập lệnh này.",
   "remove_action_name": "Xóa {name}",
   "remove_action_desc": "Tự động xóa các thành phần được phát hiện được cài đặt bởi tập lệnh này.",
-  "solseek_desc": "Duyệt, tìm kiếm và quản lý các gói, trình điều khiển và ứng dụng Flatpak cho Solus từ giao diện TUI thoải mái."
+  "solseek_desc": "Duyệt, tìm kiếm và quản lý các gói, trình điều khiển và ứng dụng Flatpak cho Solus từ giao diện TUI thoải mái.",
+  "nvfixsolus_desc": "Sửa chữa vấn đề trong Solus nơi trình điều khiển Nouveau mã nguồn mở ưu tiên hơn trình điều khiển Nvidia tư nhân, khiến nó không hoạt động bình thường. Sử dụng cái này chỉ sau khi cài đặt trình điều khiển chính xác bằng cách sử dụng Solseek, có thể được tìm thấy trong menu Repositories."
 }

@@ -368,5 +368,6 @@
   "remove_not_available_message": "Tiada komponen yang boleh dialih ditemui untuk skrip ini.",
   "remove_action_name": "Buang {name}",
   "remove_action_desc": "Secara automatik menghapus komponen yang dikesan dipasang oleh skrip ini.",
-  "solseek_desc": "Layari, cari dan urus paket, pemacu dan aplikasi Flatpak untuk Solus daripada TUI yang selesa."
+  "solseek_desc": "Layari, cari dan urus paket, pemacu dan aplikasi Flatpak untuk Solus daripada TUI yang selesa.",
+  "nvfixsolus_desc": "Menyelesaikan masalah di Solus di mana pemandu Nouveau sumber terbuka memiliki keutamaan daripada pemandu Nvidia milik, menyebabkan ia tidak berfungsi dengan betul. Gunakan ini hanya selepas pemasangan pemandu yang tepat menggunakan Solseek, yang terdapat di menu Repositories."
 }

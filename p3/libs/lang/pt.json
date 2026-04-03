@@ -368,5 +368,6 @@
   "remove_not_available_message": "Nenhum componente removível foi detectado para este script.",
   "remove_action_name": "Remover {name}",
   "remove_action_desc": "Remove automaticamente os componentes detectados instalados por este script.",
-  "solseek_desc": "Navegue, procure e gerencie pacotes, drivers e aplicativos Flatpak para Solus a partir de uma interface TUI confortável."
+  "solseek_desc": "Navegue, procure e gerencie pacotes, drivers e aplicativos Flatpak para Solus a partir de uma interface TUI confortável.",
+  "nvfixsolus_desc": "Corrige um problema no Solus onde o driver Nouveau de código aberto tem prioridade sobre o driver Nvidia proprietário, fazendo com que não funcione corretamente. Use isso apenas após a instalação adequada do driver usando Solseek, que pode ser encontrado no menu Repositórios."
 }

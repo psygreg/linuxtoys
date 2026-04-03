@@ -44,6 +44,8 @@ sysag_run () {
     fi
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
     preempt_lib
+    # fix nvidia nouveau taking precedence over modeset on Solus; skipped in other OS
+    nvidia_solus_lib
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
     # codec fix for Fedora/OpenSUSE

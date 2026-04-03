@@ -368,5 +368,6 @@
   "remove_not_available_message": "Pre tento skript neboli zistené žiadne odstrániteľné komponenty.",
   "remove_action_name": "Odstrániť {name}",
   "remove_action_desc": "Automaticky odstráni zistené komponenty nainštalované týmto skriptom.",
-  "solseek_desc": "Prechádzajte, vyhľadávajte a spravujte balíčky, ovladače a aplikácie Flatpak pre Solus z pohodlného rozhrania TUI."
+  "solseek_desc": "Prechádzajte, vyhľadávajte a spravujte balíčky, ovladače a aplikácie Flatpak pre Solus z pohodlného rozhrania TUI.",
+  "nvfixsolus_desc": "Opravuje problém v Soluase, kde open-source ovládač Nouveau má prioritu pred vlastníckym ovládačom Nvidia, čo spôsobuje, že nefunguje správne. Môžete to použiť iba po správnej inštalácii ovládača pomocou Solseek, ktoré nájdete v ponuke Úložiská."
 }

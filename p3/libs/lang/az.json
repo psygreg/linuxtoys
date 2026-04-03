@@ -367,5 +367,6 @@
   "remove_not_available_message": "Bu skript üçün heç bir silinə biləcək komponent tapılmadı.",
   "remove_action_name": "{name} Sil",
   "remove_action_desc": "Bu skript tərəfindən quraşdırılan açıqlanmış komponentləri avtomatik silir.",
-  "solseek_desc": "Solus üçün paketləri, drayverləri və Flatpak tətbiqləri rahat TUI-dən baxın, axtarın və idarə edin."
+  "solseek_desc": "Solus üçün paketləri, drayverləri və Flatpak tətbiqləri rahat TUI-dən baxın, axtarın və idarə edin.",
+  "nvfixsolus_desc": "Solus üzərində açıq mənbə Nouveau sürücüsünün proprietary Nvidia sürücüsünə üstünlük verdiyi bir problemi düzəldir, bu da düzgün işləmədiyinə səbəb olur. Bunu yalnız Solseek istifadə edərək düzgün sürücü quraşdırıldıqdan sonra istifadə edin, bu da Anbarlar menyusunda tapılır."
 }

@@ -368,5 +368,6 @@
   "remove_not_available_message": "Nie wykryto żadnych komponentów do usunięcia dla tego skryptu.",
   "remove_action_name": "Usunąć {name}",
   "remove_action_desc": "Automatycznie usuwa wykryte komponenty zainstalowane przez ten skrypt.",
-  "solseek_desc": "Przeglądaj, wyszukuj i zarządzaj pakietami, sterownikami i aplikacjami Flatpak dla Solus z wygodnego interfejsu TUI."
+  "solseek_desc": "Przeglądaj, wyszukuj i zarządzaj pakietami, sterownikami i aplikacjami Flatpak dla Solus z wygodnego interfejsu TUI.",
+  "nvfixsolus_desc": "Naprawia problem w Solus, gdzie sterownik Nouveau typu open-source ma pierwszeństwo przed sterownikiem Nvidia firmy, powodując jego nieprawidłowe działanie. Używaj tego tylko po prawidłowej instalacji sterownika za pomocą Solseek, które znajdujesz w menu Repozytoria."
 }

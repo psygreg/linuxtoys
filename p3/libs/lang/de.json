@@ -368,5 +368,6 @@
   "remove_not_available_message": "Es wurden keine entfernbaren Komponenten für dieses Skript erkannt.",
   "remove_action_name": "Entfernen {name}",
   "remove_action_desc": "Entfernt automatisch erkannte Komponenten, die von diesem Skript installiert wurden.",
-  "solseek_desc": "Durchsuchen, suchen und verwalten Sie Pakete, Treiber und Flatpak-Anwendungen für Solus von einer komfortablen TUI aus."
+  "solseek_desc": "Durchsuchen, suchen und verwalten Sie Pakete, Treiber und Flatpak-Anwendungen für Solus von einer komfortablen TUI aus.",
+  "nvfixsolus_desc": "Behebt ein Problem in Solus, bei dem der Open-Source-Treiber Nouveau Vorrang vor dem proprietären Nvidia-Treiber hat, was dazu führt, dass er nicht richtig funktioniert. Verwenden Sie dies nur nach korrekter Treiberinstallation mit Solseek, das Sie im Menü \"Repositorys\" finden."
 }

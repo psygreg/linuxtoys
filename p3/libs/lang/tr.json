@@ -368,5 +368,6 @@
   "remove_not_available_message": "Bu komut dosyası için hiçbir kaldırılabilir bileşen algılanmadı.",
   "remove_action_name": "Kaldır {name}",
   "remove_action_desc": "Bu skript tarafından yüklü algılanan bileşenleri otomatik olarak kaldırır.",
-  "solseek_desc": "Solus için paketleri, sürücüleri ve Flatpak uygulamalarını rahat bir TUI üzerinden göz atın, arayın ve yönetin."
+  "solseek_desc": "Solus için paketleri, sürücüleri ve Flatpak uygulamalarını rahat bir TUI üzerinden göz atın, arayın ve yönetin.",
+  "nvfixsolus_desc": "Solus'ta açık kaynaklı Nouveau sürücüsünün tescilli Nvidia sürücüsünden önceliğe sahip olduğu bir sorunu düzeltir ve düzgün çalışmasını engeller. Bunu yalnızca Solseek kullanarak düzgün sürücü kurulumundan sonra kullanın, Repositories menüsünde bulunabilir."
 }

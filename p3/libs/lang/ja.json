@@ -368,5 +368,6 @@
   "remove_not_available_message": "このスクリプトに対して削除可能なコンポーネントは検出されませんでした。",
   "remove_action_name": "{name} を削除",
   "remove_action_desc": "このスクリプトでインストールされた検出されたコンポーネントを自動的に削除します。",
-  "solseek_desc": "Solus用のパッケージ、ドライバ、Flatpakアプリを快適なTUIから参照、検索、管理します。"
+  "solseek_desc": "Solus用のパッケージ、ドライバ、Flatpakアプリを快適なTUIから参照、検索、管理します。",
+  "nvfixsolus_desc": "Solus上の問題を修正します。この問題は、オープンソースのNouveauドライバが独自のNvidiaドライバよりも優先されるため、正しく機能しません。Solseekを使用した正しいドライバのインストール後にのみこれを使用してください。Solseekはリポジトリメニューにあります。"
 }

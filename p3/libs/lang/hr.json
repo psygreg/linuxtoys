@@ -368,5 +368,6 @@
   "remove_not_available_message": "Nisu pronađene nikakve kompijente koje se mogu ukloniti za ovaj skriptu.",
   "remove_action_name": "Uklonjiti {name}",
   "remove_action_desc": "Automatski uklanja detektovane komponente instalirane ovim skriptom.",
-  "solseek_desc": "Pregledajte, pretražite i upravljajte paketima, drajverima i Flatpak aplikacijama za Solus iz ugodnog TUI sučelja."
+  "solseek_desc": "Pregledajte, pretražite i upravljajte paketima, drajverima i Flatpak aplikacijama za Solus iz ugodnog TUI sučelja.",
+  "nvfixsolus_desc": "Ispravlja problem na Solusu gdje open-source Nouveau driver ima prioritet nad vlasnički Nvidia driverom, što uzrokuje da ne radi ispravno. Koristite ovo samo nakon pravilne instalacije drivera koristeći Solseek, koji se nalazi u izborniku Spremišta."
 }

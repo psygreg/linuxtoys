@@ -368,5 +368,6 @@
   "remove_not_available_message": "Er werden geen verwijderbare componenten gedetecteerd voor dit script.",
   "remove_action_name": "Verwijder {name}",
   "remove_action_desc": "Verwijdert automatisch gedetecteerde componenten die door dit script zijn geïnstalleerd.",
-  "solseek_desc": "Blader door, zoek en beheer pakketten, stuurprogramma's en Flatpak-apps voor Solus vanuit een comfortabele TUI."
+  "solseek_desc": "Blader door, zoek en beheer pakketten, stuurprogramma's en Flatpak-apps voor Solus vanuit een comfortabele TUI.",
+  "nvfixsolus_desc": "Verhelpt een probleem in Solus waar de open-source Nouveau-stuurprogramma voorrang krijgt boven de eigendom Nvidia-stuurprogramma, waardoor het niet correct werkt. Gebruik dit alleen na juiste installatie van het stuurprogramma met Solseek, dat u kunt vinden in het menu Opslagplaatsen."
 }

@@ -368,5 +368,6 @@
   "remove_not_available_message": "Za ta skript niso bili zaznani noben odklonjiv komponenti.",
   "remove_action_name": "Odstrani {name}",
   "remove_action_desc": "Samodejno odstrani zaznan komponenti, ki ga je namestil ta skript.",
-  "solseek_desc": "Preglejte, iščite in upravljajte pakete, gonilnike in aplikacije Flatpak za Solus iz prijetnega vmesnika TUI."
+  "solseek_desc": "Preglejte, iščite in upravljajte pakete, gonilnike in aplikacije Flatpak za Solus iz prijetnega vmesnika TUI.",
+  "nvfixsolus_desc": "Rešuje problem v Solusu, kjer ima driver Nouveau odprtega koda prednost pred lastniško pogonalom Nvidia, kar povzroči, da ne deluje pravilno. To uporabite samo po pravilni namestitvi gonilnika z uporabo Solseeka, ki ga najdete v meniju Skladištan."
 }

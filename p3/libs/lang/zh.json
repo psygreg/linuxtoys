@@ -370,5 +370,6 @@
   "remove_not_available_message": "没有检测到该脚本的可删除组件。",
   "remove_action_name": "删除 {name}",
   "remove_action_desc": "自动删除由此脚本安装的检测到的组件。",
-  "solseek_desc": "从舒适的TUI浏览、搜索和管理Solus的软件包、驱动程序和Flatpak应用程序。"
+  "solseek_desc": "从舒适的TUI浏览、搜索和管理Solus的软件包、驱动程序和Flatpak应用程序。",
+  "nvfixsolus_desc": "修复 Solus 中的一个问题，其中开源 Nouveau 驱动程序优先于专有 Nvidia 驱动程序，导致它无法正常工作。仅在使用 Solseek 进行正确的驱动程序安装后才使用此功能，该功能可在 Repositories 菜单中找到。"
 }
