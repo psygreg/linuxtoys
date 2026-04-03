@@ -228,7 +228,7 @@ def _is_package_installed(pkg, manager):
     if manager in ("dnf", "zypper", "rpm-ostree"):
         return _run_ok(["rpm", "-q", pkg])
     if manager == "eopkg":
-        return _run_ok(["eopkg", "list-installed", "|", "grep", "-q", pkg])
+        return _run_ok(["bash", "-lc", f"eopkg list-installed | grep -q -- {shlex.quote(pkg)}"])
     return False
 
 
@@ -266,6 +266,30 @@ def _detect_java_uninstall_candidates(package_manager):
     return ["openjdk-11", "openjdk-17", "openjdk-21"]
 
 
+def _detect_script_package_candidates(script_basename, package_manager):
+    if script_basename == "java.sh":
+        return _detect_java_uninstall_candidates(package_manager)
+    if script_basename == "positron.sh":
+        return ["positron"]
+    if script_basename == "rstudio.sh":
+        return ["rstudio"]
+    return []
+
+
+def _detect_desktop_cleanup_candidates(script_basename):
+    desktop_map = {
+        "positron.sh": [
+            "~/.local/share/applications/positron.desktop",
+            "/usr/share/applications/positron.desktop",
+        ],
+        "rstudio.sh": [
+            "~/.local/share/applications/rstudio.desktop",
+            "/usr/share/applications/rstudio.desktop",
+        ],
+    }
+    return desktop_map.get(script_basename, [])
+
+
 def build_uninstall_script_entry(script_info, translations=None):
     """
     Build a temporary uninstall script for a given LinuxToys script.
@@ -287,8 +311,9 @@ def build_uninstall_script_entry(script_info, translations=None):
     package_candidates.update(_parse_direct_package_installs(content))
 
     script_basename = os.path.basename(script_path).lower()
-    if script_basename == "java.sh":
-        package_candidates.update(_detect_java_uninstall_candidates(package_manager))
+    package_candidates.update(
+        _detect_script_package_candidates(script_basename, package_manager)
+    )
 
     package_candidates = _filter_bootstrap_packages(package_candidates)
 
@@ -304,8 +329,17 @@ def build_uninstall_script_entry(script_info, translations=None):
         if _is_flatpak_installed(app_id, scope)
     )
     flatpak_match_patterns = _build_flatpak_match_patterns(script_info)
+    desktop_cleanup_candidates = _detect_desktop_cleanup_candidates(script_basename)
+    existing_desktop_entries = [
+        desktop for desktop in desktop_cleanup_candidates if os.path.exists(os.path.expanduser(desktop))
+    ]
 
-    if not installed_packages and not installed_flatpaks and not has_bundle_install:
+    if (
+        not installed_packages
+        and not installed_flatpaks
+        and not has_bundle_install
+        and not existing_desktop_entries
+    ):
         return None
 
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -329,6 +363,9 @@ def build_uninstall_script_entry(script_info, translations=None):
 
     needs_sudo = bool(installed_packages) or any(
         scope == "system" for _, scope in installed_flatpaks
+    )
+    needs_sudo = needs_sudo or any(
+        os.path.expanduser(path).startswith("/usr/") for path in existing_desktop_entries
     )
     if needs_sudo:
         lines.append("sudo_rq")
@@ -387,6 +424,34 @@ def build_uninstall_script_entry(script_info, translations=None):
             quoted_pattern = shlex.quote(pattern)
             lines.append(f"remove_flatpak_matches {quoted_pattern} user || true")
             lines.append(f"remove_flatpak_matches {quoted_pattern} system || true")
+
+    user_desktop_entries = [
+        os.path.expanduser(path)
+        for path in existing_desktop_entries
+        if not os.path.expanduser(path).startswith("/usr/")
+    ]
+    system_desktop_entries = [
+        os.path.expanduser(path)
+        for path in existing_desktop_entries
+        if os.path.expanduser(path).startswith("/usr/")
+    ]
+
+    if user_desktop_entries:
+        quoted = " ".join(shlex.quote(path) for path in user_desktop_entries)
+        lines.extend(
+            [
+                f'echo "Removing desktop entries: {quoted}"',
+                f"rm -f {quoted} || true",
+            ]
+        )
+    if system_desktop_entries:
+        quoted = " ".join(shlex.quote(path) for path in system_desktop_entries)
+        lines.extend(
+            [
+                f'echo "Removing system desktop entries: {quoted}"',
+                f"sudo rm -f {quoted} || true",
+            ]
+        )
 
     lines.append('echo "Removal completed."')
 
