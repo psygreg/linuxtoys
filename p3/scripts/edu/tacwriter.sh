@@ -36,7 +36,7 @@ if ! command -v flatpak >/dev/null 2>&1; then
     command -v flatpak >/dev/null 2>&1 || fatal "Flatpak command not found after installation attempt."
 fi
 # Ensure Flathub remotes exist so required runtimes can be resolved
-flatpak_in_lib || fatal "Failed to configure Flatpak/Flathub required for Tac Writer runtime dependencies."
+_flatpak_ || fatal "Failed to configure Flatpak/Flathub required for Tac Writer runtime dependencies."
 # Resolve latest .flatpak bundle and version tag from GitHub releases
 GITHUB_JSON=$(curl -fsSL "$GITHUB_API")
 LATEST_BUNDLE_URL=$(echo "$GITHUB_JSON" | grep 'browser_download_url' | grep '\.flatpak"' | head -1 | cut -d'"' -f4)

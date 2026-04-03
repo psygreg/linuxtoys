@@ -14,6 +14,11 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
 _packages=(mangohud) && _install_
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.valvesoftware.Steam.VulkanLayer.MangoHud/x86_64/stable org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
-flatpak install --or-update --user --noninteractive flathub io.github.radiolamp.mangojuice
+_flatpaks=(
+    com.valvesoftware.Steam.VulkanLayer.MangoHud
+    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 # lutris
+    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
+    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08
+    io.github.radiolamp.mangojuice
+)
+_flatpak_

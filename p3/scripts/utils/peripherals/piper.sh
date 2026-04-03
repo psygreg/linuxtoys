@@ -23,6 +23,8 @@ elif is_suse; then
     _packages=(libratbag-tools)
 fi
 _install_
-flatpak_in_lib
-flatpak install -y --system --noninteractive flathub org.freedesktop.Piper
+_flatpaks=(
+    org.freedesktop.Piper
+)
+_flatpak_
 zeninf "$finishmsg"

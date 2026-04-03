@@ -12,7 +12,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-flatpak_in_lib
+_flatpak_
 flatpak install --or-update --user --noninteractive flathub org.freedesktop.Sdk//24.08
 flatpak remote-add --user --if-not-exists GeForceNOW https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo
 flatpak install --or-update --user --noninteractive GeForceNOW com.nvidia.geforcenow

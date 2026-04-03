@@ -154,9 +154,18 @@ _install_() {
 }
 
 _flatpak_() {
+    if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+        sudo_rq
+        flatpak_in_lib
+    fi
     [[ -z "$_flatpaks" ]] && return 0
+    local flatpak_scope="--user"
+    if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
+       ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+        flatpak_scope="--system"
+    fi
     for flat in "${_flatpaks[@]}"; do
-        flatpak install --or-update --user --noninteractive flathub "$flat"
+        flatpak install --or-update "$flatpak_scope" --noninteractive flathub "$flat"
     done
     unset _flatpaks
 }

@@ -63,6 +63,8 @@ if is_arch || is_cachy; then
 else    
     sudo gpasswd -a $USER plugdev
 fi
-flatpak_in_lib
-flatpak install -y --system --noninteractive flathub app.polychromatic.controller
+_flatpaks=(
+    app.polychromatic.controller
+)
+_flatpak_
 zeninf "$msg036"

@@ -11,5 +11,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub io.github.mhogomchungu.sirikali
+_flatpaks=(
+    io.github.mhogomchungu.sirikali
+)
+_flatpak_

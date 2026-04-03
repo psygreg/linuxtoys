@@ -11,5 +11,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # request sudo, EasyEffects needs to be installed on system level
 sudo_rq
-flatpak_in_lib
-flatpak install --or-update --system --noninteractive flathub com.github.wwmm.easyeffects
+_flatpaks=(
+    com.github.wwmm.easyeffects
+)
+_flatpak_

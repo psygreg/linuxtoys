@@ -11,8 +11,10 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.openrgb.OpenRGB
+_flatpaks=(
+    org.openrgb.OpenRGB
+)
+_flatpak_
 if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
     sudo_rq
     rpmfusion_chk

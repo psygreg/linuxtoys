@@ -148,8 +148,10 @@ if [ -e /dev/kvm ]; then
             # stage 1: docker
             docker_in
             # stage 2: freeRDP
-            flatpak_in_lib
-            flatpak install -y --user --noninteractive flathub com.freerdp.FreeRDP
+            _flatpaks=(
+                com.freerdp.FreeRDP
+            )
+            _flatpak_
             # enable iptables kernel module
             echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
             # get latest winboat release

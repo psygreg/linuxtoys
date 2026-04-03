@@ -12,8 +12,10 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub dev.lizardbyte.app.Sunshine
+_flatpaks=(
+    dev.lizardbyte.app.Sunshine
+)
+_flatpak_
 sudo_rq
 if is_nvidia; then
     _packages=(nvidia-container-toolkit)

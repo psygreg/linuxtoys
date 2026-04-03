@@ -12,8 +12,10 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub org.gimp.GIMP
+_flatpaks=(
+    org.gimp.GIMP
+)
+_flatpak_
 if zenity --question --text "$msg253" --width 360 --height 300; then
     zeninf "$msg254"
     flatpak run org.gimp.GIMP --batch-interpreter=plug-in-script-fu-eval -b "(gimp-quit 0)" && {

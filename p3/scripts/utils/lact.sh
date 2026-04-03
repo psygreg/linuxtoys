@@ -11,5 +11,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # request sudo - LACT requires system level installation
 sudo_rq
-flatpak_in_lib
-flatpak install --or-update --system --noninteractive flathub io.github.ilya_zlobintsev.LACT
+_flatpaks=(
+    io.github.ilya_zlobintsev.LACT
+)
+_flatpak_

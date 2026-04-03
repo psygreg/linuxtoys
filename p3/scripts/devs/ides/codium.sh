@@ -49,8 +49,10 @@ elif is_arch || is_cachy; then
     _install_
 else
     source "$SCRIPT_DIR/libs/helpers.lib"
-    flatpak_in_lib
-    flatpak install --user --or-update --noninteractive flathub com.vscodium.codium
+    _flatpaks=(
+        com.vscodium.codium
+    )
+    _flatpak_
     flatcodium="1"
 fi
 # patch for extensions

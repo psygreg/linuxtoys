@@ -14,6 +14,5 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-sudo_rq
-flatpak_in_lib
+_flatpak_
 zeninf "$msg018"
