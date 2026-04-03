@@ -33,8 +33,19 @@ jdk_install () {
             fi
         fi
     done
+
+    if [ ${#packages[@]} -eq 0 ]; then
+        fatal "No valid Java packages were selected."
+    fi
+
+    _packages=("${packages[@]}")
     sudo_rq
     _install_
+
+    if ! command -v java >/dev/null 2>&1; then
+        fatal "Java installation finished but 'java' command is not available."
+    fi
+
     zeninf "$msg018"
 }
 java_in () {
@@ -67,6 +78,11 @@ java_in () {
         fi
 
         IFS='|' read -ra javas <<< "$chosen_javas"
+
+        if [ -z "$chosen_javas" ]; then
+            zenwrn "Please select at least one Java version."
+            continue
+        fi
 
         for jav in "${search_java[@]}"; do
             for chosen_jav in "${javas[@]}"; do
