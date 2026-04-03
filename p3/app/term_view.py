@@ -2,6 +2,8 @@ import os
 import sys
 
 from . import dev_mode, get_icon_path, reboot_helper
+from .antenna import antenna
+from requests.exceptions import ConnectionError, Timeout
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
 from .uninstall_helper import build_uninstall_script_entry
 from .updater.update_dialog import DialogRestart
@@ -55,10 +57,10 @@ class InfosHead(Gtk.Box):
         )
         self.button_remove.set_halign(Gtk.Align.START)
         self.button_remove.set_size_request(125, 35)
-        copy_label = self.translations.get("term_view_copy", " Copy Output ")
-        self.button_copy = Gtk.Button(label=copy_label)
+        report_label = self.translations.get("term_view_report_bug", " Report Bug ")
+        self.button_copy = Gtk.Button(label=report_label)
         self.button_copy.set_image(
-            Gtk.Image.new_from_icon_name("edit-copy-symbolic", Gtk.IconSize.BUTTON)
+            Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.BUTTON)
         )
         self.button_copy.set_halign(Gtk.Align.START)
         self.button_copy.set_size_request(150, 35)
@@ -334,7 +336,112 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
 
+    def _get_terminal_text(self) -> str:
+        """Extract all text from the terminal."""
+        try:
+            if hasattr(self.terminal, "select_all"):
+                self.terminal.select_all()
+            
+            # Create a temporary string buffer to capture terminal content
+            lines = []
+            for i in range(self.terminal.get_row_count()):
+                line = self.terminal.get_text_range(
+                    i, 0, i + 1, 0, None, None, None
+                )
+                if line:
+                    lines.append(line)
+            
+            if hasattr(self.terminal, "unselect_all"):
+                self.terminal.unselect_all()
+            
+            return "".join(lines) if lines else ""
+        except Exception:
+            # Fallback: try to get visible text
+            return ""
+
+    def _show_bug_report_confirmation_dialog(self):
+        """Show confirmation dialog before sending bug report."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get(
+                "bug_report_confirm_title", "Send Bug Report?"
+            ),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "bug_report_confirm_message",
+                "Your terminal output will be sent to the remote server to help us fix issues. Do you want to continue?",
+            )
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
+        )
+        dialog.add_button(
+            self.translations.get("send_btn_label", "Send"), Gtk.ResponseType.YES
+        )
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.YES
+
+    def _show_bug_report_result_dialog(self, success: bool, issue_data: dict = None):
+        """Show result dialog after bug report submission."""
+        if success and issue_data:
+            dialog = Gtk.MessageDialog(
+                transient_for=self.get_toplevel(),
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get(
+                    "bug_report_success_title", "Bug Report Submitted"
+                ),
+            )
+            issue_url = issue_data.get("issue_url", "")
+            issue_number = issue_data.get("issue_number", "")
+            dialog.format_secondary_text(
+                self.translations.get(
+                    "bug_report_success_message",
+                    "Thank you! Your bug report has been submitted.\n"
+                    "Issue #{issue_number}: {issue_url}",
+                ).format(issue_number=issue_number, issue_url=issue_url)
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                transient_for=self.get_toplevel(),
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get(
+                    "bug_report_failed_title", "Bug Report Failed"
+                ),
+            )
+            dialog.format_secondary_text(
+                self.translations.get(
+                    "bug_report_failed_message",
+                    "Could not submit the bug report. Please try again later.",
+                )
+            )
+        dialog.run()
+        dialog.destroy()
+
+    def _show_bug_report_network_error_dialog(self, title: str, message: str):
+        """Show network-specific error dialog."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=title,
+        )
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+
     def _copy_terminal_text(self, copy_all=False):
+        """Copy terminal text to clipboard."""
         if copy_all and hasattr(self.terminal, "select_all"):
             self.terminal.select_all()
 
@@ -347,12 +454,64 @@ class TermRunScripts(Gtk.Box):
             self.terminal.unselect_all()
 
     def on_copy_clicked(self, button):
-        has_selection = (
-            self.terminal.get_has_selection()
-            if hasattr(self.terminal, "get_has_selection")
-            else False
-        )
-        self._copy_terminal_text(copy_all=not has_selection)
+        """Handle bug report button click."""
+        if not self._show_bug_report_confirmation_dialog():
+            return
+        
+        try:
+            # Get terminal logs
+            logs = self._get_terminal_text()
+            
+            # Get information about the current script if available
+            context = ""
+            if self.script_queue or self.scripts_executed > 0:
+                context = f"Scripts executed: {self.scripts_executed}/{self.total_scripts}"
+            
+            # Submit the issue using antenna
+            title = self.translations.get(
+                "bug_report_title", "Bug Report from LinuxToys"
+            )
+            result = antenna.submit_issue(title=title, logs=logs, context=context)
+            
+            # Show result dialog
+            self._show_bug_report_result_dialog(result is not None, result or {})
+        except ConnectionError:
+            self._show_bug_report_network_error_dialog(
+                self.translations.get(
+                    "bug_report_no_connection",
+                    "No Internet Connection",
+                ),
+                self.translations.get(
+                    "bug_report_no_connection_message",
+                    "Unable to send bug report: No internet connection detected. Please check your network and try again.",
+                )
+            )
+        except Timeout:
+            self._show_bug_report_network_error_dialog(
+                self.translations.get(
+                    "bug_report_timeout",
+                    "Connection Timeout",
+                ),
+                self.translations.get(
+                    "bug_report_timeout_message",
+                    "Unable to send bug report: Server connection timed out. Please try again later.",
+                )
+            )
+        except Exception as e:
+            if "500" in str(e) or "502" in str(e) or "503" in str(e):
+                self._show_bug_report_network_error_dialog(
+                    self.translations.get(
+                        "bug_report_server_error",
+                        "Server Error",
+                    ),
+                    self.translations.get(
+                        "bug_report_server_error_message",
+                        "Unable to send bug report: The server encountered an error. Please try again later.",
+                    )
+                )
+            else:
+                print(f"Error submitting bug report: {e}", file=sys.stderr)
+                self._show_bug_report_result_dialog(False)
 
     def _on_terminal_key_press(self, widget, event):
         state = event.state
