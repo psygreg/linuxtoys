@@ -29,6 +29,7 @@ obs_pipe () {
 }
 flatpak_in_lib
 flatpak install --or-update --user --noninteractive flathub com.obsproject.Studio
+flatpak install --or-update --user --noninteractive flathub com.obsproject.Studio.Plugin.WaylandHotkeys # hotkeys for OBS controls on wayland
 sleep 1
 sudo_rq
 # check dependency for Pipewire Audio Capture plugin and xwayland
