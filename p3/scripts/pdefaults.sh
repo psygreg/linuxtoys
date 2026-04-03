@@ -9,10 +9,8 @@
 # nocontainer
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
-# language
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -62,10 +60,6 @@ sysag_run () {
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         cd $HOME
-        #if [ "$ID" == "debian" ]; then
-            #debfixer_lib
-        #fi
-        # system-agnostic optimizations
         sysag_run
         touch $HOME/.local/.autopatch.state
         zeninf "$msg036"
@@ -77,10 +71,10 @@ optimizer () {
 while true; do
     CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \
         --column "Options" \
+        "Install without Power Profile" \
         "Desktop" \
         "Laptop" \
         "Cancel" \
-        "Install without Power Profile" \
         --width 360 --height 360 )
 
     if [ $? -ne 0 ]; then
@@ -88,9 +82,9 @@ while true; do
     fi
 
     case $CHOICE in
+    "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
     "Desktop") sudo_rq && pp_ondemand && optimizer && exit 0;;
     "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
-    "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
