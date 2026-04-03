@@ -6,6 +6,7 @@
 # compat: solus
 # reboot: yes
 # nocontainer
+# gpu: Nvidia
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
