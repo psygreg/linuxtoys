@@ -355,7 +355,7 @@ nvidia_solus_lib () {
     is_solus || return 0
     is_nvidia || return 0
     if ! eopkg list-installed | grep nvidia | grep -v "linux-firmware-nvidia" > /dev/null 2>&1; then
-        zeninf "No NVIDIA drivers found on Solus system."
+        zeninf "No NVIDIA drivers found on Solus system. Install them first using Solseek."
         return 0
     fi
     echo "rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1" | sudo tee /etc/kernel/cmdline.d/nvidia.conf
