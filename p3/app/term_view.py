@@ -339,24 +339,20 @@ class TermRunScripts(Gtk.Box):
     def _get_terminal_text(self) -> str:
         """Extract all text from the terminal."""
         try:
-            if hasattr(self.terminal, "select_all"):
-                self.terminal.select_all()
+            # Use antenna's built-in log capture which tees stdout/stderr
+            logs = antenna.log_capture.get_logs()
+            if logs:
+                return logs
             
-            # Create a temporary string buffer to capture terminal content
-            lines = []
-            for i in range(self.terminal.get_row_count()):
-                line = self.terminal.get_text_range(
-                    i, 0, i + 1, 0, None, None, None
-                )
-                if line:
-                    lines.append(line)
+            # Fallback: try to extract from the terminal widget
+            # VTE's get_text_range is async, so we need a different approach
+            if hasattr(self.terminal, "get_text"):
+                # Try the synchronous text getter if available
+                return self.terminal.get_text() or ""
             
-            if hasattr(self.terminal, "unselect_all"):
-                self.terminal.unselect_all()
-            
-            return "".join(lines) if lines else ""
+            return ""
         except Exception:
-            # Fallback: try to get visible text
+            # If all else fails, return empty string but don't crash
             return ""
 
     def _show_bug_report_confirmation_dialog(self):
