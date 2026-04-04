@@ -14,6 +14,7 @@ _REPORT_URL = "https://bug.linux.toys"
 # Cache directory for storing the generated secret (in user's config dir)
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
+_HISTORY_FILE = _CACHE_DIR / "history.json"
 
 # --- System Info Helpers ---
 
@@ -72,7 +73,56 @@ def get_system_context() -> str:
     
     return " | ".join(context_parts)
 
-# --- Log capture ---
+# --- Script History Management ---
+def _load_history() -> list:
+    """Load script execution history from file."""
+    if not _HISTORY_FILE.exists():
+        return []
+    try:
+        with open(_HISTORY_FILE, "r") as f:
+            data = json.load(f)
+        return data.get("history", [])
+    except Exception:
+        return []
+
+def _save_history(history: list) -> None:
+    """Save script execution history to file."""
+    try:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        _HISTORY_FILE.parent.chmod(0o700)
+        with open(_HISTORY_FILE, "w") as f:
+            json.dump({"history": history}, f)
+        _HISTORY_FILE.chmod(0o600)
+    except Exception:
+        pass  # Fail silently to avoid breaking bug reports
+
+def add_script_to_history(script_name: str) -> None:
+    """Add a script execution to history (keep last 10)."""
+    try:
+        history = _load_history()
+        # Add new entry with timestamp
+        history.append({
+            "name": script_name,
+            "timestamp": time.time()
+        })
+        # Keep only last 10
+        history = history[-10:]
+        _save_history(history)
+    except Exception:
+        pass  # Fail silently
+
+def get_history_context() -> str:
+    """Get formatted script execution history for bug reports."""
+    try:
+        history = _load_history()
+        if not history:
+            return ""
+        
+        # Format as "Script1, Script2, ..." (last first)
+        script_names = [h.get("name", "unknown") for h in reversed(history)]
+        return "Recent scripts: " + " → ".join(script_names[:10])
+    except Exception:
+        return ""
 class LogCapture:
     """Tees stdout/stderr into an in-memory buffer AND the real terminal."""
     def __init__(self):
@@ -106,7 +156,6 @@ log_capture = LogCapture()
 _antenna_initialized = False
 
 # --- Token management ---
-
 _NON_PRINTABLE = re.compile(r"[^\x20-\x7E\n\r\t]")
 
 _jwt_token: str | None = None

@@ -298,6 +298,10 @@ class TermRunScripts(Gtk.Box):
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
 
+        # Add script to execution history
+        script_name = current_script.get("name", "unknown")
+        antenna.add_script_to_history(script_name)
+
         script_path = current_script.get("path", "true")
         if current_script.get("reboot") == "yes":
             self.parent.reboot_required = True
@@ -480,6 +484,11 @@ class TermRunScripts(Gtk.Box):
             system_context = antenna.get_system_context()
             if system_context:
                 context_parts.append(system_context)
+            
+            # Add script execution history
+            history_context = antenna.get_history_context()
+            if history_context:
+                context_parts.append(history_context)
             
             context = " | ".join(context_parts)
             
