@@ -391,5 +391,6 @@
   "bug_report_empty": "Gefðu skýringu á vandamálinu.",
   "bug_report_submitted": "Takk! Villugrein þinn hefur verið sent.",
   "bug_report_failed": "Bilun við að senda villugrein: ",
-  "new_spec_key": "nýtt"
+  "new_spec_key": "nýtt",
+  "auto_error_reports": "Sjálfvirkar villuskýrslur"
 }

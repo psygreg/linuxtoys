@@ -391,5 +391,6 @@
   "bug_report_empty": "Kérjük, adja meg a probléma leírását.",
   "bug_report_submitted": "Köszönöm! A hibajelentésed beküldve van.",
   "bug_report_failed": "A hibajelentés küldése sikertelen: ",
-  "new_spec_key": "új"
+  "new_spec_key": "új",
+  "auto_error_reports": "Automatikus hibajelentések"
 }

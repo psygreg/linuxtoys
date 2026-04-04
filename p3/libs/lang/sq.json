@@ -391,5 +391,6 @@
   "bug_report_empty": "Ju lutemi jepni një përshkrim të problemit.",
   "bug_report_submitted": "Faleminderit! Raporti juaj i gabimit ka qenë i dorëzuar.",
   "bug_report_failed": "Dështimi i dërgimit të raportit të gabimit: ",
-  "new_spec_key": "i ri"
+  "new_spec_key": "i ri",
+  "auto_error_reports": "Raportimet automatike të gabimeve"
 }

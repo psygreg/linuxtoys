@@ -391,5 +391,6 @@
   "bug_report_empty": "कृपया समस्याको विवरण प्रदान गर्नुहोस्।",
   "bug_report_submitted": "धन्यवाद! तपाइँको बग रिपोर्ट पेश गरियो।",
   "bug_report_failed": "बग रिपोर्ट पठाउन असफल: ",
-  "new_spec_key": "नयाँ"
+  "new_spec_key": "नयाँ",
+  "auto_error_reports": "स्वचालित त्रुटि रिपोर्ट"
 }

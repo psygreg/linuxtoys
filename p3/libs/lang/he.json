@@ -391,5 +391,6 @@
   "bug_report_empty": "אנא תן תיאור של הבעיה.",
   "bug_report_submitted": "תודה! דוח הבאג שלך הוגש.",
   "bug_report_failed": "כישלון בשליחת דוח הבאג: ",
-  "new_spec_key": "חדש"
+  "new_spec_key": "חדש",
+  "auto_error_reports": "דוחות שגיאות אוטומטיים"
 }

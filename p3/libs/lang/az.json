@@ -390,5 +390,6 @@
   "bug_report_empty": "Zəhmət olmasa problemin təsviri ilə qayıtın.",
   "bug_report_submitted": "Təşəkkür edirik! Sizin xəta hesabatı təqdim edilmişdir.",
   "bug_report_failed": "Xəta hesabatını göndərmə uğursuz oldu: ",
-  "new_spec_key": "yeni"
+  "new_spec_key": "yeni",
+  "auto_error_reports": "Avtomatik Xəta Hesabatları"
 }

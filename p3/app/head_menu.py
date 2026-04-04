@@ -141,10 +141,18 @@ class MenuButton(Gtk.MenuButton):
 		
 		self.about_item.set_image(about_icon)
 		self.about_item.connect("clicked", self.__on_about)
+		# Add separator
+		separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+		# Add auto error reports checkbox
+		self.auto_error_reports = Gtk.CheckButton(label=_("auto_error_reports"))
+		self.auto_error_reports.set_active(False)  # Disabled by default
+		self.auto_error_reports.connect("toggled", self.__on_auto_error_reports_toggled)
 
 		vbox.pack_start(self.load_manifest, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
+		vbox.pack_start(separator, False, False, 0)
+		vbox.pack_start(self.auto_error_reports, False, False, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
@@ -157,6 +165,14 @@ class MenuButton(Gtk.MenuButton):
 		self.load_manifest.set_label(_("load_manifest"))
 		self.language_select.set_label(_("select_language"))
 		self.about_item.set_label(_("about_title"))
+		self.auto_error_reports.set_label(_("auto_error_reports"))
+
+	def __on_auto_error_reports_toggled(self, widget):
+		"""Handle auto error reports checkbox toggle"""
+		is_enabled = widget.get_active()
+		# Store the preference on parent window
+		if self.parent_window:
+			self.parent_window.auto_error_reports_enabled = is_enabled
 
 	def __on_language_select(self, widget):
 		"""Handle language selection menu item click"""

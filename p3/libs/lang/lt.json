@@ -391,5 +391,6 @@
   "bug_report_empty": "Pateikite problemos aprašymą.",
   "bug_report_submitted": "Ačiū! Jūsų klaidos ataskaita buvo pateikta.",
   "bug_report_failed": "Nepavyko nusiųsti klaidų ataskaitos: ",
-  "new_spec_key": "naujas"
+  "new_spec_key": "naujas",
+  "auto_error_reports": "Automatinės klaidų ataskaitos"
 }

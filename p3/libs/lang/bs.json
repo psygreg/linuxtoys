@@ -390,5 +390,6 @@
   "bug_report_empty": "Molimo vas da unesete opis problema.",
   "bug_report_submitted": "Hvala! Vaš izveštaj o greški je poslat.",
   "bug_report_failed": "Slanje izveštaja o grešci nije uspelo: ",
-  "new_spec_key": "novo"
+  "new_spec_key": "novo",
+  "auto_error_reports": "Automatski izvještaji o greškama"
 }

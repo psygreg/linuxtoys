@@ -391,5 +391,6 @@
   "bug_report_empty": "Vennligst gi en beskrivelse av problemet.",
   "bug_report_submitted": "Takk! Din feilrapport er sendt.",
   "bug_report_failed": "Feil ved sending av feilrapport: ",
-  "new_spec_key": "ny"
+  "new_spec_key": "ny",
+  "auto_error_reports": "Automatiske feilrapporter"
 }

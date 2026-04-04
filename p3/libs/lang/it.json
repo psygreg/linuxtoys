@@ -391,5 +391,6 @@
   "bug_report_empty": "Si prega di fornire una descrizione del problema.",
   "bug_report_submitted": "Grazie! La tua segnalazione di bug è stata inviata.",
   "bug_report_failed": "Errore nell'invio della segnalazione di bug: ",
-  "new_spec_key": "nuovo"
+  "new_spec_key": "nuovo",
+  "auto_error_reports": "Rapporti errori automatici"
 }

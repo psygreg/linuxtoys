@@ -131,6 +131,12 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.button_copy.connect("clicked", self.on_copy_clicked)
         self.vbox_main.button_remove.set_sensitive(bool(self.removable_script_info))
         self._set_remove_button_visibility()
+        
+        # Hide bug report button if auto error reports are enabled
+        auto_reports_enabled = getattr(parent, 'auto_error_reports_enabled', False)
+        if auto_reports_enabled:
+            self.vbox_main.button_copy.hide()
+        
         # Use translatable waiting text
         waiting_text = self.translations.get(
             "term_view_waiting", "Waiting {current}/{total}"
@@ -249,6 +255,64 @@ class TermRunScripts(Gtk.Box):
         self.terminal.set_can_focus(True)
         self._run_next_script()
 
+    def _is_error_exit_code(self, status):
+        """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
+        # Extract the actual exit code from status
+        if os.WIFEXITED(status):
+            exit_code = os.WEXITSTATUS(status)
+            # 0 = success, 100 = user cancelled
+            return exit_code not in (0, 100)
+        # If terminated by signal (e.g., keyboard interrupt), it's not an error to report
+        # Signals are expected user interactions (Ctrl+C = SIGINT)
+        return False
+
+    def _auto_submit_bug_report_on_error(self):
+        """Automatically submit a bug report when a script exits with an error code."""
+        # Check if auto error reports are enabled
+        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
+        if not auto_reports_enabled:
+            return
+        
+        try:
+            # Get terminal logs
+            logs = self._get_terminal_text()
+            
+            # Gather system information
+            context_parts = []
+            
+            # Add script execution info
+            if self.script_queue or self.scripts_executed > 0:
+                context_parts.append(f"Scripts executed: {self.scripts_executed}/{self.total_scripts}")
+            
+            # Add system info (OS, GPU)
+            system_context = antenna.get_system_context()
+            if system_context:
+                context_parts.append(system_context)
+            
+            # Add script execution history
+            history_context = antenna.get_history_context()
+            if history_context:
+                context_parts.append(history_context)
+            
+            context = " | ".join(context_parts)
+            
+            # Submit the issue using antenna (silently, without showing confirmation dialog)
+            title = self.translations.get(
+                "bug_report_title", "Bug Report from LinuxToys"
+            )
+            result = antenna.submit_issue(title=title, logs=logs, context=context)
+            
+            # Optionally show result, but don't block the user
+            if result:
+                # Silent submission - just log it
+                pass
+        except (ConnectionError, Timeout):
+            # Network errors - silently skip, user can report manually
+            pass
+        except Exception:
+            # Any other errors - silently skip
+            pass
+
     def on_child_exit(self, term, status):
         if getattr(self, "_cleanup_script_path", None):
             try:
@@ -260,6 +324,11 @@ class TermRunScripts(Gtk.Box):
 
         if self._self_update:
             DialogRestart(parent=self.get_toplevel()).show()
+
+        # Check for error exit codes and auto-submit bug report
+        if self._is_error_exit_code(status) and not self._current_action_is_removal:
+            # Only auto-submit for regular scripts, not removal operations
+            self._auto_submit_bug_report_on_error()
 
         self.scripts_executed += 1
         progress = self.scripts_executed / self.total_scripts

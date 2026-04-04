@@ -389,5 +389,6 @@
   "bug_report_empty": "Tafadhali toa maelezo ya tatizo.",
   "bug_report_submitted": "Asante! Ripoti ya kosa lako imewasilishwa.",
   "bug_report_failed": "Kushindwa kutuma ripoti ya kosa: ",
-  "new_spec_key": "mpya"
+  "new_spec_key": "mpya",
+  "auto_error_reports": "Ripoti za hitilafu za kiotomatiki"
 }

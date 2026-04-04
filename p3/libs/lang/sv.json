@@ -391,5 +391,6 @@
   "bug_report_empty": "Ge en beskrivning av problemet.",
   "bug_report_submitted": "Tack! Din felrapport har skickats.",
   "bug_report_failed": "Misslyckades att skicka felrapport: ",
-  "new_spec_key": "ny"
+  "new_spec_key": "ny",
+  "auto_error_reports": "Automatiska felrapporter"
 }

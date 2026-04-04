@@ -391,5 +391,6 @@
   "bug_report_empty": "Lūdzu sniedziet problēmas aprakstu.",
   "bug_report_submitted": "Paldies! Jūsu kļūdu ziņojums ir iesniegts.",
   "bug_report_failed": "Kļūdu ziņojuma nosūtīšana neizdevās: ",
-  "new_spec_key": "jauns"
+  "new_spec_key": "jauns",
+  "auto_error_reports": "Automātiskas kļūdu atskaites"
 }

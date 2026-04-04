@@ -391,5 +391,6 @@
   "bug_report_empty": "لطفا توضیح مسئله را ارائه دهید.",
   "bug_report_submitted": "متشکرم! گزارش اشکال خود را ارسال کردید.",
   "bug_report_failed": "ارسال گزارش خرابی ناموفق بود: ",
-  "new_spec_key": "جدید"
+  "new_spec_key": "جدید",
+  "auto_error_reports": "گزارش های خطای خودکار"
 }

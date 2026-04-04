@@ -391,5 +391,6 @@
   "bug_report_empty": "Mangyaring magbigay ng paglalarawan ng problema.",
   "bug_report_submitted": "Salamat! Ang iyong ulat ng bug ay naipasa na.",
   "bug_report_failed": "Nabigo ang pagpapadala ng ulat ng bug: ",
-  "new_spec_key": "bago"
+  "new_spec_key": "bago",
+  "auto_error_reports": "Mga awtomatikong ulat ng pagkakamali"
 }

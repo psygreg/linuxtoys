@@ -391,5 +391,6 @@
   "bug_report_empty": "Anna kuvaus ongelmasta.",
   "bug_report_submitted": "Kiitos! Virheraporttisi on lähetetty.",
   "bug_report_failed": "Virheraportin lähettäminen epäonnistui: ",
-  "new_spec_key": "uusi"
+  "new_spec_key": "uusi",
+  "auto_error_reports": "Automaattiset virheraporttunukset"
 }

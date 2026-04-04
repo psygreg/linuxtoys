@@ -391,5 +391,6 @@
   "bug_report_empty": "ይህ ስክሪፕት ተተግብሮ ያልካቸው ሁሉንም ክፍሎች ራሱ ለመሰረዝ.",
   "bug_report_submitted": "አመሰግናለሁ! የባグ ሪፖርትዎ ተልኩ ተል።",
   "bug_report_failed": "ባግ ሪፖርት ለላክ አልተቻለም: ",
-  "new_spec_key": "ጤዛ"
+  "new_spec_key": "ጤዛ",
+  "auto_error_reports": "ራስ ሰር ስህተት ሪፖርቶች"
 }

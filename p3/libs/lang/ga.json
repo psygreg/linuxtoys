@@ -391,5 +391,6 @@
   "bug_report_empty": "Tabhair cur síos ar an fhadhb le do thoil.",
   "bug_report_submitted": "Go raibh míle maith agat! Tugadh isteach do thuarascáil docharadh.",
   "bug_report_failed": "Theip ar sheoladh an tuarascáil docharadh: ",
-  "new_spec_key": "nua"
+  "new_spec_key": "nua",
+  "auto_error_reports": "Tuairiscí earráide uathoibríoch"
 }

@@ -391,5 +391,6 @@
   "bug_report_empty": "Palun andke probleemi kirjeldus.",
   "bug_report_submitted": "Tänu! Teie veaauandlus on esitatud.",
   "bug_report_failed": "Veasea saatmine ebaõnnestus: ",
-  "new_spec_key": "uus"
+  "new_spec_key": "uus",
+  "auto_error_reports": "Automaatsed vigade aruanded"
 }
