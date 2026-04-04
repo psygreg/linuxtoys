@@ -35,8 +35,9 @@ def _detect_package_manager():
 
 
 def _extract_bash_array(content, array_name):
+    # Match both = (initial assignment) and += (augmentation)
     matches = re.findall(
-        rf"{re.escape(array_name)}\s*=\s*\((.*?)\)",
+        rf"{re.escape(array_name)}\s*(?:=|\+=)\s*\((.*?)\)",
         content,
         flags=re.DOTALL,
     )
@@ -57,9 +58,13 @@ def _parse_flatpak_installs(content):
     flatpaks = set()
 
     # Preferred path: explicit array declarations used with _flatpak_
+    # Note: _flatpak_() library function determines scope at runtime,
+    # so we need to check both scopes for each app_id
     for app_id in _extract_bash_array(content, "_flatpaks"):
         if "." in app_id and "/" not in app_id:
+            # Mark for both scopes since we'll filter by actual installation later
             flatpaks.add((app_id, "user"))
+            flatpaks.add((app_id, "system"))
 
     for line in content.splitlines():
         stripped = line.strip()
@@ -160,7 +165,8 @@ def _parse_direct_package_installs(content):
 
 
 def _filter_bootstrap_packages(packages):
-    # Avoid removing basic tools often installed only as prerequisites.
+    # Avoid removing basic tools often installed only as prerequisites,
+    # and system packages that are foundational infrastructure.
     bootstrap = {
         "bash",
         "curl",
@@ -183,6 +189,26 @@ def _filter_bootstrap_packages(packages):
         "unzip",
         "dbus",
         "xdg-utils",
+        "fuse",
+        "fuse2",
+        # Audio/multimedia infrastructure (core system services)
+        "wireplumber",
+        "pipewire",
+        "pulseaudio",
+        # X11/Wayland display infrastructure (needed for many apps)
+        "xwayland",
+        "xorg-xwayland",
+        "xorg-x11-server-xwayland",
+        "wayland",
+        # Xorg display server and related (legacy but may cause cascading removal)
+        "xorg",
+        "xorg-server",
+        "xorg-apps",
+        "xorg-fonts",
+        "xorg-xinit",
+        "xorg-xserver",
+        "x11-common",
+        "x11-utils",
     }
     return {pkg for pkg in packages if pkg not in bootstrap}
 
@@ -237,6 +263,104 @@ def _is_flatpak_installed(app_id, scope):
         return False
     scope_flag = "--system" if scope == "system" else "--user"
     return _run_ok(["flatpak", "info", scope_flag, app_id])
+
+
+def _check_bootstrap_collateral(packages_to_remove, manager):
+    """
+    Check if removing packages would cause bootstrap packages to be removed as dependencies.
+    Returns a set of bootstrap packages that would be affected, or empty set if safe.
+    """
+    bootstrap = {
+        "bash", "curl", "flatpak", "zenity", "sudo", "wget", "git",
+        "ca-certificates", "gnupg", "gpg", "lsb-release",
+        "software-properties-common", "coreutils", "grep", "sed", "tar",
+        "gzip", "xz", "unzip", "dbus", "xdg-utils", "fuse", "fuse2",
+        "wireplumber", "pipewire", "pulseaudio", "xwayland",
+        "xorg-xwayland", "xorg-x11-server-xwayland", "wayland",
+        "xorg", "xorg-server", "xorg-apps", "xorg-fonts", "xorg-xinit",
+        "xorg-xserver", "x11-common", "x11-utils",
+    }
+    
+    if not packages_to_remove or not manager:
+        return set()
+    
+    # Dry-run commands for different package managers
+    if manager == "apt":
+        cmd = ["sudo", "apt", "autoremove", "-s"] + packages_to_remove
+        try:
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=10,
+            )
+            # Check if bootstrap packages appear in removal output
+            affected = set()
+            for pkg in bootstrap:
+                if f"Removing {pkg} " in result.stdout or f"Remv {pkg} " in result.stdout:
+                    affected.add(pkg)
+            return affected
+        except Exception:
+            return set()
+    
+    elif manager == "pacman":
+        cmd = ["pacman", "-Rns", "--dry-run"] + packages_to_remove
+        try:
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=10,
+            )
+            affected = set()
+            for pkg in bootstrap:
+                if f"remove {pkg}" in result.stdout:
+                    affected.add(pkg)
+            return affected
+        except Exception:
+            return set()
+    
+    elif manager in ("dnf", "zypper"):
+        # These are aggressive about dependencies; safer to check explicitly
+        cmd = [manager, "remove", "-y", "--setopt=clean_requirements_on_remove=true", "--dry-run"] + packages_to_remove
+        try:
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=10,
+            )
+            affected = set()
+            for pkg in bootstrap:
+                if pkg in result.stdout:
+                    affected.add(pkg)
+            return affected
+        except Exception:
+            return set()
+    
+    elif manager == "eopkg":
+        cmd = ["sudo", "eopkg", "remove", "-n"] + packages_to_remove
+        try:
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=10,
+            )
+            affected = set()
+            for pkg in bootstrap:
+                if pkg in result.stdout:
+                    affected.add(pkg)
+            return affected
+        except Exception:
+            return set()
+    
+    # For other managers, return empty (no check available)
+    return set()
 
 
 def _detect_java_uninstall_candidates(package_manager):
@@ -371,13 +495,26 @@ def build_uninstall_script_entry(script_info, translations=None):
         lines.append("sudo_rq")
 
     if installed_packages and pkg_remove_cmd:
-        quoted = " ".join(shlex.quote(pkg) for pkg in installed_packages)
-        lines.extend(
-            [
-                f'echo "Removing packages: {quoted}"',
-                f"{pkg_remove_cmd} {quoted} || true",
-            ]
-        )
+        # Check if removing these packages would cause bootstrap packages to be removed
+        affected_bootstrap = _check_bootstrap_collateral(installed_packages, package_manager)
+        if affected_bootstrap:
+            # Skip package removal if it would affect bootstrap packages
+            quoted_affected = ", ".join(sorted(affected_bootstrap))
+            lines.extend(
+                [
+                    f'echo "Warning: Removing these packages would also remove critical system packages: {quoted_affected}"',
+                    f'echo "Skipping package removal to protect system stability."',
+                ]
+            )
+        else:
+            # Safe to remove - no bootstrap packages affected
+            quoted = " ".join(shlex.quote(pkg) for pkg in installed_packages)
+            lines.extend(
+                [
+                    f'echo "Removing packages: {quoted}"',
+                    f"{pkg_remove_cmd} {quoted} || true",
+                ]
+            )
 
     user_flatpaks = [app for app, scope in installed_flatpaks if scope == "user"]
     system_flatpaks = [app for app, scope in installed_flatpaks if scope == "system"]
