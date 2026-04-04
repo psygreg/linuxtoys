@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Nuk mund të dërgohej Raporti i Gabimit: Kohë Lidhje e Shërbimit. Ju lutemi sprovoni më vonë.",
   "bug_report_server_error": "Gabim i Serverit",
   "bug_report_server_error_message": "Nuk mund të dërgohej Raporti i Gabimit: Gabim i Serverit. Ju lutemi sprovoni më vonë.",
-  "send_btn_label": "Dërgoj"
+  "send_btn_label": "Dërgoj",
+  "bug_report_desc": "Ju lutemi përshkruani problemin që keni përballur:",
+  "system_info": "Informacionet e Sistemit",
+  "error_label": "Gabim",
+  "success_label": "Sukses",
+  "bug_report_empty": "Ju lutemi jepni një përshkrim të problemit.",
+  "bug_report_submitted": "Faleminderit! Raporti juaj i gabimit ka qenë i dorëzuar.",
+  "bug_report_failed": "Dështimi i dërgimit të raportit të gabimit: "
 }

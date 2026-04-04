@@ -381,5 +381,12 @@
   "bug_report_timeout_message": "Haiwezekani kutuma Ripoti ya Hitilafu: Muda wa Muunganisho wa Huduma. Tafadhali jaribu baadaye.",
   "bug_report_server_error": "Hitilafu ya Server",
   "bug_report_server_error_message": "Haiwezekani kutuma Ripoti ya Hitilafu: Hitilafu ya Server. Tafadhali jaribu baadaye.",
-  "send_btn_label": "Tuma"
+  "send_btn_label": "Tuma",
+  "bug_report_desc": "Tafadhali eleza tatizo unalokabiliwa:",
+  "system_info": "Taarifa ya Mfumo",
+  "error_label": "Kosa",
+  "success_label": "Mafanikio",
+  "bug_report_empty": "Tafadhali toa maelezo ya tatizo.",
+  "bug_report_submitted": "Asante! Ripoti ya kosa lako imewasilishwa.",
+  "bug_report_failed": "Kushindwa kutuma ripoti ya kosa: "
 }

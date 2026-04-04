@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "बग रिपोर्ट पठाउन सकिएन: सर्भर जडान Timeout। कृपया पछि पुनः प्रयास गर्नुहोस्।",
   "bug_report_server_error": "सर्भर त्रुटि",
   "bug_report_server_error_message": "बग रिपोर्ट पठाउन सकिएन: सर्भर त्रुटि। कृपया पछि पुनः प्रयास गर्नुहोस्।",
-  "send_btn_label": "पठाउनुहोस्"
+  "send_btn_label": "पठाउनुहोस्",
+  "bug_report_desc": "कृपया आपको सामना गरेको समस्याको वर्णन गर्नुहोस्:",
+  "system_info": "सिस्टम जानकारी",
+  "error_label": "त्रुटि",
+  "success_label": "सफलता",
+  "bug_report_empty": "कृपया समस्याको विवरण प्रदान गर्नुहोस्।",
+  "bug_report_submitted": "धन्यवाद! तपाइँको बग रिपोर्ट पेश गरियो।",
+  "bug_report_failed": "बग रिपोर्ट पठाउन असफल: "
 }

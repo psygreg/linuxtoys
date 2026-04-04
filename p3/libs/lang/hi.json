@@ -363,5 +363,12 @@
   "bug_report_timeout_message": "बग रिपोर्ट भेजना मुश्किल: सर्वर कनेक्शन Timeout। कृपया बाद में फिर से कोशिश करें।",
   "bug_report_server_error": "सर्वर त्रुटि",
   "bug_report_server_error_message": "बग रिपोर्ट भेजना मुश्किल: सर्वर त्रुटि। कृपया बाद में फिर से कोशिश करें।",
-  "send_btn_label": "भेजें"
+  "send_btn_label": "भेजें",
+  "bug_report_desc": "कृपया आपके द्वारा सामना की गई समस्या का वर्णन करें:",
+  "system_info": "सिस्टम जानकारी",
+  "error_label": "त्रुटि",
+  "success_label": "सफलता",
+  "bug_report_empty": "कृपया समस्या का विवरण प्रदान करें।",
+  "bug_report_submitted": "धन्यवाद! आपकी बग रिपोर्ट जमा की गई है।",
+  "bug_report_failed": "बग रिपोर्ट भेजने में विफल: "
 }

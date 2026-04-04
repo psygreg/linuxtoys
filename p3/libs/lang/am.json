@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "ባግ ሪፖርት ላክ አልቻለ: ስርከቀ ጊዜ ሞላ. በኋላ እንደገና ሞክሩ።",
   "bug_report_server_error": "ሰርልግልግ ወጋ",
   "bug_report_server_error_message": "ባግ ሪፖርት ላክ አልቻለ: ሰርልግልግ ወጋ. በኋላ እንደገና ሞክሩ።",
-  "send_btn_label": "ለመላክ"
+  "send_btn_label": "ለመላክ",
+  "bug_report_desc": "እባክዎ ያጋጠሙዎትን ሙከራ ይግለጹ:",
+  "system_info": "የስርዓት መረጃ",
+  "error_label": "ስህተት",
+  "success_label": "ስኬት",
+  "bug_report_empty": "ይህ ስክሪፕት ተተግብሮ ያልካቸው ሁሉንም ክፍሎች ራሱ ለመሰረዝ.",
+  "bug_report_submitted": "አመሰግናለሁ! የባグ ሪፖርትዎ ተልኩ ተል።",
+  "bug_report_failed": "ባግ ሪፖርት ለላክ አልተቻለም: "
 }

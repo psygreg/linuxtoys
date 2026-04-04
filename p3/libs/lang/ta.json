@@ -381,5 +381,12 @@
   "bug_report_timeout_message": "பிழை அறிக்கையை அனுப்ப முடியவில்லை: சேவக இணைப்பு Timeout। பிறகு மீண்டும் முயற்சி செய்யவும்।",
   "bug_report_server_error": "சேவகன் பிழை",
   "bug_report_server_error_message": "பிழை அறிக்கையை அனுப்ப முடியவில்லை: சேவக பிழை। பிறகு மீண்டும் முயற்சி செய்யவும்।",
-  "send_btn_label": "அனுப்பு"
+  "send_btn_label": "அனுப்பு",
+  "bug_report_desc": "நீங்கள் சந்தித்த சிக்கலை விளக்கவும்:",
+  "system_info": "கணினி தகவல்",
+  "error_label": "பிழை",
+  "success_label": "வெற்றி",
+  "bug_report_empty": "சிக்கல் பற்றிய விளக்கம் வழங்கவும்.",
+  "bug_report_submitted": "நன்றி! உங்கள் பிழை அறிக்கை சமர்ப்பிக்கப்பட்டுள்ளது.",
+  "bug_report_failed": "பிழை அறிக்கை அனுப்ப முடியவில்லை: "
 }

@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "לא ניתן היה לשלוח את דוח הבאגים: זמן חיבור השרת תפוג. אנא נסה שוב מאוחר יותר.",
   "bug_report_server_error": "שגיאת שרת",
   "bug_report_server_error_message": "לא ניתן היה לשלוח את דוח הבאגים: שגיאת שרת. אנא נסה שוב מאוחר יותר.",
-  "send_btn_label": "שלוח"
+  "send_btn_label": "שלוח",
+  "bug_report_desc": "אנא תאר את הבעיה שהתגלתה בפניך:",
+  "system_info": "מידע מערכת",
+  "error_label": "שגיאה",
+  "success_label": "הצלחה",
+  "bug_report_empty": "אנא תן תיאור של הבעיה.",
+  "bug_report_submitted": "תודה! דוח הבאג שלך הוגש.",
+  "bug_report_failed": "כישלון בשליחת דוח הבאג: "
 }

@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Unable to send bug report: Server connection timed out. Please try again later.",
   "bug_report_server_error": "Server Error",
   "bug_report_server_error_message": "Unable to send bug report: The server encountered an error. Please try again later.",
-  "send_btn_label": "Send"
+  "send_btn_label": "Send",
+  "bug_report_desc": "Please describe the issue you encountered:",
+  "system_info": "System Info",
+  "error_label": "Error",
+  "success_label": "Success",
+  "bug_report_empty": "Please provide a description of the issue.",
+  "bug_report_submitted": "Thank you! Your bug report has been submitted.",
+  "bug_report_failed": "Failed to submit bug report: "
 }

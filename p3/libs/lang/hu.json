@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "A hibajelentést nem lehetett elküldeni: Kiszolgáló Kapcsolat Timeout. Kérjük később próbálja újra.",
   "bug_report_server_error": "Kiszolgáló Hiba",
   "bug_report_server_error_message": "A hibajelentést nem lehetett elküldeni: Kiszolgáló Hiba. Kérjük később próbálja újra.",
-  "send_btn_label": "Küld"
+  "send_btn_label": "Küld",
+  "bug_report_desc": "Kérjük, írja le a problémát, amivel találkozott:",
+  "system_info": "Rendszer információ",
+  "error_label": "Hiba",
+  "success_label": "Siker",
+  "bug_report_empty": "Kérjük, adja meg a probléma leírását.",
+  "bug_report_submitted": "Köszönöm! A hibajelentésed beküldve van.",
+  "bug_report_failed": "A hibajelentés küldése sikertelen: "
 }

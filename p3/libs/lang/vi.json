@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Không thể gửi báo cáo lỗi: Timeout Kết nối Máy chủ. Vui lòng thử lại sau.",
   "bug_report_server_error": "Lỗi Server",
   "bug_report_server_error_message": "Không thể gửi báo cáo lỗi: Lỗi Server. Vui lòng thử lại sau.",
-  "send_btn_label": "Gửi"
+  "send_btn_label": "Gửi",
+  "bug_report_desc": "Vui lòng mô tả sự cố mà bạn gặp phải:",
+  "system_info": "Thông tin hệ thống",
+  "error_label": "Lỗi",
+  "success_label": "Thành công",
+  "bug_report_empty": "Vui lòng cung cấp mô tả về sự cố.",
+  "bug_report_submitted": "Cảm ơn! Báo cáo lỗi của bạn đã được gửi.",
+  "bug_report_failed": "Không thể gửi báo cáo lỗi: "
 }

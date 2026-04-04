@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Tidak dapat mengirim Laporan Bug: Server Connection Timeout. Silakan coba lagi nanti.",
   "bug_report_server_error": "Kesalahan Server",
   "bug_report_server_error_message": "Tidak dapat mengirim Laporan Bug: Kesalahan Server. Silakan coba lagi nanti.",
-  "send_btn_label": "Kirim"
+  "send_btn_label": "Kirim",
+  "bug_report_desc": "Silakan jelaskan masalah yang Anda hadapi:",
+  "system_info": "Informasi Sistem",
+  "error_label": "Kesalahan",
+  "success_label": "Sukses",
+  "bug_report_empty": "Silakan berikan deskripsi masalah.",
+  "bug_report_submitted": "Terima kasih! Laporan bug Anda telah dikirimkan.",
+  "bug_report_failed": "Gagal mengirim laporan bug: "
 }

@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "بگ رپورٹ بھیجنے میں ناکام: سرور کنکشن Timeout۔ براہے کرم بعد میں دوبارہ کوشش کریں۔",
   "bug_report_server_error": "سرور کی خرابی",
   "bug_report_server_error_message": "بگ رپورٹ بھیجنے میں ناکام: سرور کی خرابی۔ براہے کرم بعد میں دوبارہ کوشش کریں۔",
-  "send_btn_label": "بھیجیں"
+  "send_btn_label": "بھیجیں",
+  "bug_report_desc": "براہ کرم آپ کے سامنے آنے والے مسئلہ کی تفصیل دیں:",
+  "system_info": "سسٹم کی معلومات",
+  "error_label": "خرابی",
+  "success_label": "کامیابی",
+  "bug_report_empty": "براہ کرم مسئلہ کی تفصیل فراہم کریں۔",
+  "bug_report_submitted": "شکریہ! آپ کی بگ رپورٹ جمع کی گئی ہے۔",
+  "bug_report_failed": "بگ رپورٹ بھیجنے میں ناکام: "
 }

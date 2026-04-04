@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Ekki var hægt að senda Villutilfykir: Þjónustutengingu Timeout. Prófaðu aftur síðar.",
   "bug_report_server_error": "Þjónustuvilla",
   "bug_report_server_error_message": "Ekki var hægt að senda Villutilfykir: Þjónustuvilla. Prófaðu aftur síðar.",
-  "send_btn_label": "Senda"
+  "send_btn_label": "Senda",
+  "bug_report_desc": "Lýstu þeim vandamálum sem þú lentir í:",
+  "system_info": "Kerfisupplýsingar",
+  "error_label": "Villa",
+  "success_label": "Árangur",
+  "bug_report_empty": "Gefðu skýringu á vandamálinu.",
+  "bug_report_submitted": "Takk! Villugrein þinn hefur verið sent.",
+  "bug_report_failed": "Bilun við að senda villugrein: "
 }

@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Hindi makakasend ang Bug Report: Server Connection Timeout. Mangyari ay subukan muli nang huli.",
   "bug_report_server_error": "Server Error",
   "bug_report_server_error_message": "Hindi makakasend ang Bug Report: Server Error. Mangyari ay subukan muli nang huli.",
-  "send_btn_label": "Ipadala"
+  "send_btn_label": "Ipadala",
+  "bug_report_desc": "Mangyaring ilarawan ang problema na iyong nakaharap:",
+  "system_info": "Impormasyon sa Sistema",
+  "error_label": "Kamalian",
+  "success_label": "Tagumpay",
+  "bug_report_empty": "Mangyaring magbigay ng paglalarawan ng problema.",
+  "bug_report_submitted": "Salamat! Ang iyong ulat ng bug ay naipasa na.",
+  "bug_report_failed": "Nabigo ang pagpapadala ng ulat ng bug: "
 }

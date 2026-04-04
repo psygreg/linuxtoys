@@ -382,5 +382,12 @@
   "bug_report_timeout_message": "Xəta Hesabatını göndərə bilmədi: Sərverkə Bağlanmaq Vaxtı Tamamlandı. Lütfən daha sonra yenidən cəhd edin.",
   "bug_report_server_error": "Server Xətası",
   "bug_report_server_error_message": "Xəta Hesabatını göndərə bilmədi: Server Xətası. Lütfən daha sonra yenidən cəhd edin.",
-  "send_btn_label": "Göndər"
+  "send_btn_label": "Göndər",
+  "bug_report_desc": "Lütfen yaşadığınız sorunu açıklayın:",
+  "system_info": "Sistem Məlumatı",
+  "error_label": "Xəta",
+  "success_label": "Uğur",
+  "bug_report_empty": "Zəhmət olmasa problemin təsviri ilə qayıtın.",
+  "bug_report_submitted": "Təşəkkür edirik! Sizin xəta hesabatı təqdim edilmişdir.",
+  "bug_report_failed": "Xəta hesabatını göndərmə uğursuz oldu: "
 }

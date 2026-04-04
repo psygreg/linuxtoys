@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "ไม่สามารถส่งรายงานข้อผิดพลาด: Timeout การเชื่อมต่อเซิร์ฟเวอร์ โปรดลองอีกครั้งในภายหลัง",
   "bug_report_server_error": "Server Error",
   "bug_report_server_error_message": "ไม่สามารถส่งรายงานข้อผิดพลาด: Server Error โปรดลองอีกครั้งในภายหลัง",
-  "send_btn_label": "ส่ง"
+  "send_btn_label": "ส่ง",
+  "bug_report_desc": "โปรดอธิบายปัญหาที่คุณพบ:",
+  "system_info": "ข้อมูลระบบ",
+  "error_label": "ข้อผิดพลาด",
+  "success_label": "ความสำเร็จ",
+  "bug_report_empty": "โปรดให้รายละเอียดเกี่ยวกับปัญหา",
+  "bug_report_submitted": "ขอบคุณ! รายงานข้อผิดพลาดของคุณได้ถูกส่งแล้ว",
+  "bug_report_failed": "ล้มเหลวในการส่งรายงานข้อผิดพลาด: "
 }

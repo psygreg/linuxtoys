@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Kan foutrapport niet verzenden: Server-verbinding Timeout. Probeer het later opnieuw.",
   "bug_report_server_error": "Serverfout",
   "bug_report_server_error_message": "Kan foutrapport niet verzenden: Serverfout. Probeer het later opnieuw.",
-  "send_btn_label": "Verzenden"
+  "send_btn_label": "Verzenden",
+  "bug_report_desc": "Beschrijf alstublieft het probleem dat je bent tegengekomen:",
+  "system_info": "Systeeminformatie",
+  "error_label": "Fout",
+  "success_label": "Succes",
+  "bug_report_empty": "Geef alstublieft een beschrijving van het probleem.",
+  "bug_report_submitted": "Bedankt! Je bugrapport is ingediend.",
+  "bug_report_failed": "Fout bij verzending van bugrapport: "
 }

@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Kunde inte skicka felrapport: Server Anslutning Timeout. Vänligen försök igen senare.",
   "bug_report_server_error": "Serverfel",
   "bug_report_server_error_message": "Kunde inte skicka felrapport: Serverfel. Vänligen försök igen senare.",
-  "send_btn_label": "Skicka"
+  "send_btn_label": "Skicka",
+  "bug_report_desc": "Beskriv gärna problemet du stötte på:",
+  "system_info": "Systeminformation",
+  "error_label": "Fel",
+  "success_label": "Framgång",
+  "bug_report_empty": "Ge en beskrivning av problemet.",
+  "bug_report_submitted": "Tack! Din felrapport har skickats.",
+  "bug_report_failed": "Misslyckades att skicka felrapport: "
 }

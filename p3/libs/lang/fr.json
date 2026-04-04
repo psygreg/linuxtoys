@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Impossible d'envoyer le Rapport d'erreur : Délai de Connexion au Serveur dépassé. Veuillez réessayer plus tard.",
   "bug_report_server_error": "Erreur de Serveur",
   "bug_report_server_error_message": "Impossible d'envoyer le Rapport d'erreur : Erreur de Serveur. Veuillez réessayer plus tard.",
-  "send_btn_label": "Envoyer"
+  "send_btn_label": "Envoyer",
+  "bug_report_desc": "Veuillez décrire le problème que vous avez rencontré:",
+  "system_info": "Informations système",
+  "error_label": "Erreur",
+  "success_label": "Succès",
+  "bug_report_empty": "Veuillez fournir une description du problème.",
+  "bug_report_submitted": "Merci ! Votre rapport de bogue a été soumis.",
+  "bug_report_failed": "Échec de l'envoi du rapport de bogue: "
 }

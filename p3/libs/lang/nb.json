@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Kunne ikke sende feilrapport: Serverforbindelses Timeout. Vennligst prøv igjen senere.",
   "bug_report_server_error": "Serverfeil",
   "bug_report_server_error_message": "Kunne ikke sende feilrapport: Serverfeil. Vennligst prøv igjen senere.",
-  "send_btn_label": "Send"
+  "send_btn_label": "Send",
+  "bug_report_desc": "Vennligst beskriv problemet du møtte:",
+  "system_info": "Systeminformasjon",
+  "error_label": "Feil",
+  "success_label": "Suksess",
+  "bug_report_empty": "Vennligst gi en beskrivelse av problemet.",
+  "bug_report_submitted": "Takk! Din feilrapport er sendt.",
+  "bug_report_failed": "Feil ved sending av feilrapport: "
 }

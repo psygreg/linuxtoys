@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Poročila o napaki ni bilo mogoče pošlati: Timeout Povezave Strežnika. Prosimo, poskusite ponovno kasneje.",
   "bug_report_server_error": "Napaka Strežnika",
   "bug_report_server_error_message": "Poročila o napaki ni bilo mogoče pošlati: Napaka Strežnika. Prosimo, poskusite ponovno kasneje.",
-  "send_btn_label": "Pošlji"
+  "send_btn_label": "Pošlji",
+  "bug_report_desc": "Prosimo, opišite težavo, s katero ste se srečali:",
+  "system_info": "Podatki sistema",
+  "error_label": "Napaka",
+  "success_label": "Uspeh",
+  "bug_report_empty": "Prosimo, navedite opis težave.",
+  "bug_report_submitted": "Hvala! Vaše poročilo o napaki je bilo poslano.",
+  "bug_report_failed": "Neuspešno pošiljanje poročila o napaki: "
 }

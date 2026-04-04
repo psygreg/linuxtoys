@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "تعذر إرسال تقرير الأخطاء: انتهى الوقت على اتصال الخادم. يرجى المحاولة مرة أخرى لاحقا.",
   "bug_report_server_error": "خطأ في السيرفر",
   "bug_report_server_error_message": "تعذر إرسال تقرير الأخطاء: حدث خطأ في السيرفر. يرجى المحاولة مرة أخرى لاحقا.",
-  "send_btn_label": "يرسل"
+  "send_btn_label": "يرسل",
+  "bug_report_desc": "يرجى وصف المشكلة التي واجهتها:",
+  "system_info": "معلومات النظام",
+  "error_label": "خطأ",
+  "success_label": "نجح",
+  "bug_report_empty": "يرجى تقديم وصف للمشكلة.",
+  "bug_report_submitted": "شكراً لك! تم تقديم تقرير الخطأ الخاص بك.",
+  "bug_report_failed": "فشل في إرسال تقرير الخطأ: "
 }

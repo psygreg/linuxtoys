@@ -385,5 +385,12 @@
   "bug_report_timeout_message": "无法发送错误报告：服务器连接超时。请稍后重试。",
   "bug_report_server_error": "服务器错误",
   "bug_report_server_error_message": "无法发送错误报告：服务器错误。请稍后重试。",
-  "send_btn_label": "发送"
+  "send_btn_label": "发送",
+  "bug_report_desc": "请描述您遇到的问题:",
+  "system_info": "系统信息",
+  "error_label": "错误",
+  "success_label": "成功",
+  "bug_report_empty": "请提供问题的说明。",
+  "bug_report_submitted": "谢谢！您的bug报告已提交。",
+  "bug_report_failed": "发送bug报告失败: "
 }

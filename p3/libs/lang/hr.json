@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Nije bilo moguće poslati Izvještaj o greški: Vreme Konekcije Sервera je isteklo. Molimo pokušajte ponovno.",
   "bug_report_server_error": "Greška Servera",
   "bug_report_server_error_message": "Nije bilo moguće poslati Izvještaj o greški: Greška Servera. Molimo pokušajte kasnije.",
-  "send_btn_label": "Pošalji"
+  "send_btn_label": "Pošalji",
+  "bug_report_desc": "Molimo vas da opišete problem s kojim ste se susreli:",
+  "system_info": "Informacije o sustavu",
+  "error_label": "Greška",
+  "success_label": "Uspjeh",
+  "bug_report_empty": "Molimo vas da unesete opis problema.",
+  "bug_report_submitted": "Hvala! Vaš izvještaj o grešci je poslat.",
+  "bug_report_failed": "Slanje izvještaja o grešci nije uspelo: "
 }

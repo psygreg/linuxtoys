@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Fehlerbericht konnte nicht gesendet werden: Verbindungs-Timeout des Servers. Bitte versuchen Sie es später erneut.",
   "bug_report_server_error": "Serverfehler",
   "bug_report_server_error_message": "Fehlerbericht konnte nicht gesendet werden: Serverfehler. Bitte versuchen Sie es später erneut.",
-  "send_btn_label": "Senden"
+  "send_btn_label": "Senden",
+  "bug_report_desc": "Bitte beschreiben Sie das Problem, auf das Sie gestoßen sind:",
+  "system_info": "Systeminformationen",
+  "error_label": "Fehler",
+  "success_label": "Erfolg",
+  "bug_report_empty": "Bitte geben Sie eine Beschreibung des Problems ein.",
+  "bug_report_submitted": "Danke! Ihr Fehlerbericht wurde eingereicht.",
+  "bug_report_failed": "Fehler beim Senden des Fehlerberichts: "
 }

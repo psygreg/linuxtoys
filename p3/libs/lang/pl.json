@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Nie można wysłać raportu o błędzie: Timeout Połączenia Serwera. Proszę spróbować później.",
   "bug_report_server_error": "Błąd Serwera",
   "bug_report_server_error_message": "Nie można wysłać raportu o błędzie: Błąd Serwera. Proszę spróbować później.",
-  "send_btn_label": "Wyślij"
+  "send_btn_label": "Wyślij",
+  "bug_report_desc": "Proszę opisać napotkany problem:",
+  "system_info": "Informacje systemowe",
+  "error_label": "Błąd",
+  "success_label": "Powodzenie",
+  "bug_report_empty": "Proszę podać opis problemu.",
+  "bug_report_submitted": "Dziękuję! Twój raport o błędzie został przesłany.",
+  "bug_report_failed": "Niepowodzenie wysyłania raportu o błędzie: "
 }

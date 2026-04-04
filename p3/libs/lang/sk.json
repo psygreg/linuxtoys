@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Hlásenie o chybe sa nepodarilo poslať: Timeout Pripojenia Servera. Prosím, skúste neskôr.",
   "bug_report_server_error": "Chyba Servera",
   "bug_report_server_error_message": "Hlásenie o chybe sa nepodarilo poslať: Chyba Servera. Prosím, skúste neskôr.",
-  "send_btn_label": "Poslať"
+  "send_btn_label": "Poslať",
+  "bug_report_desc": "Prosím, opíšte problém, s ktorým ste sa stretli:",
+  "system_info": "Informácie o systéme",
+  "error_label": "Chyba",
+  "success_label": "Úspech",
+  "bug_report_empty": "Prosím, zadajte popis problému.",
+  "bug_report_submitted": "Ďakujem! Vaša správa o chybe bola odoslaná.",
+  "bug_report_failed": "Odoslanie správy o chybe zlyhalo: "
 }

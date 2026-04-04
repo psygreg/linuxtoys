@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Vearaporti ei saadetud: Serveri Ühenduse Timeout. Palun proovige hiljem uuesti.",
   "bug_report_server_error": "Serveri Viga",
   "bug_report_server_error_message": "Vearaporti ei saadetud: Serveri Viga. Palun proovige hiljem uuesti.",
-  "send_btn_label": "Saada"
+  "send_btn_label": "Saada",
+  "bug_report_desc": "Palun kirjeldage probleemi, millega kokku puutusite:",
+  "system_info": "Süsteemi teave",
+  "error_label": "Tõrge",
+  "success_label": "Õnnestu",
+  "bug_report_empty": "Palun andke probleemi kirjeldus.",
+  "bug_report_submitted": "Tänu! Teie veaauandlus on esitatud.",
+  "bug_report_failed": "Veasea saatmine ebaõnnestus: "
 }

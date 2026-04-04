@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Virheilmoitusta ei voitu lähettää: Palvelimen Yhteyden Timeout. Yritä myöhemmin uudelleen.",
   "bug_report_server_error": "Palvelinvirhe",
   "bug_report_server_error_message": "Virheilmoitusta ei voitu lähettää: Palvelinvirhe. Yritä myöhemmin uudelleen.",
-  "send_btn_label": "Lähetä"
+  "send_btn_label": "Lähetä",
+  "bug_report_desc": "Kuvaile kohtaamasi ongelma:",
+  "system_info": "Järjestelmätiedot",
+  "error_label": "Virhe",
+  "success_label": "Menestys",
+  "bug_report_empty": "Anna kuvaus ongelmasta.",
+  "bug_report_submitted": "Kiitos! Virheraporttisi on lähetetty.",
+  "bug_report_failed": "Virheraportin lähettäminen epäonnistui: "
 }

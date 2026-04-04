@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "ບໍ່ສາມາດສົ່ງລາຍງານຂໍ້ຜິດພາດ: ເວລາກ່ໍາວວລະ. ກະລຸນາລອງໃຫມ່ໃນພາຍຫຼັງ.",
   "bug_report_server_error": "ໂຕກສະຫວາ",
   "bug_report_server_error_message": "ບໍ່ສາມາດສົ່ງລາຍງານຂໍ້ຜິດພາດ: ໂຕກສະຫວາ. ກະລຸນາລອງໃຫມ່ໃນພາຍຫຼັງ.",
-  "send_btn_label": "ສົ່ງ"
+  "send_btn_label": "ສົ່ງ",
+  "bug_report_desc": "ກະລຸນາອະທິບາຍບັນຫາທີ່ທ່ານຖືກປະເຊີນ:",
+  "system_info": "ຂໍ້ມູນລະບົບ",
+  "error_label": "ຄວາມຜິດພາດ",
+  "success_label": "ສຳເລັດ",
+  "bug_report_empty": "ກະລຸນາໃຫ້ຄຳອະທິບາຍກ່ຽວກັບບັນຫາ.",
+  "bug_report_submitted": "ຂອບໃຈ! ລາຍງານຂໍ້ຜິດພາດຂອງທ່ານໄດ້ຖືກສົ່ງ.",
+  "bug_report_failed": "ລົ້ມເຫລວໃນການສົ່ງລາຍງານຂໍ້ຜິດພາດ: "
 }

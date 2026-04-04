@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "نتوانست گزارش اشکال را ارسال کند: زمان اتصال سرور تمام شد. لطفا بعدا دوباره تلاش کنید.",
   "bug_report_server_error": "خطای سرور",
   "bug_report_server_error_message": "نتوانست گزارش اشکال را ارسال کند: خطای سرور. لطفا بعدا دوباره تلاش کنید.",
-  "send_btn_label": "ارسال"
+  "send_btn_label": "ارسال",
+  "bug_report_desc": "لطفا مشکلی را که با آن روبرو شدید، شرح دهید:",
+  "system_info": "اطلاعات سیستم",
+  "error_label": "خطا",
+  "success_label": "موفقیت",
+  "bug_report_empty": "لطفا توضیح مسئله را ارائه دهید.",
+  "bug_report_submitted": "متشکرم! گزارش اشکال خود را ارسال کردید.",
+  "bug_report_failed": "ارسال گزارش خرابی ناموفق بود: "
 }

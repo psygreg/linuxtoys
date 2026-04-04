@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Fejlrapport kunne ikke sendes: Serverforbindelsens Timeout udløb. Prøv igen senere.",
   "bug_report_server_error": "Serverfejl",
   "bug_report_server_error_message": "Fejlrapport kunne ikke sendes: Serverfejl. Prøv igen senere.",
-  "send_btn_label": "Send"
+  "send_btn_label": "Send",
+  "bug_report_desc": "Beskriv venligst det problem, du stødte på:",
+  "system_info": "Systeminformation",
+  "error_label": "Fejl",
+  "success_label": "Succes",
+  "bug_report_empty": "Venligst giv en beskrivelse af problemet.",
+  "bug_report_submitted": "Tak! Dit fejlrapport er indsendt.",
+  "bug_report_failed": "Fejl ved indsendelse af fejlrapport: "
 }

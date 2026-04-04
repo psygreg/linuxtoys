@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Níor bhogadh an Tuarascáil Earráid a sheoladh: Rinn Nasc Seirbheasach Thar am. Déan iarracht ar arís níos déanaí.",
   "bug_report_server_error": "Earráid Freastalaí",
   "bug_report_server_error_message": "Níor bhogadh an Tuarascáil Earráid a sheoladh: Earráid Freastalaí. Déan iarracht ar arís níos déanaí.",
-  "send_btn_label": "Seol"
+  "send_btn_label": "Seol",
+  "bug_report_desc": "Déan cur síos ar an fhadhb a bhraithis:",
+  "system_info": "Faisnéis Chórais",
+  "error_label": "Earráid",
+  "success_label": "Rath",
+  "bug_report_empty": "Tabhair cur síos ar an fhadhb le do thoil.",
+  "bug_report_submitted": "Go raibh míle maith agat! Tugadh isteach do thuarascáil docharadh.",
+  "bug_report_failed": "Theip ar sheoladh an tuarascáil docharadh: "
 }

@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Impossibile inviare la Segnalazione di errore: Timeout della Connessione del Server. Per favore riprova più tardi.",
   "bug_report_server_error": "Errore Server",
   "bug_report_server_error_message": "Impossibile inviare la Segnalazione di errore: Errore Server. Per favore riprova più tardi.",
-  "send_btn_label": "Invia"
+  "send_btn_label": "Invia",
+  "bug_report_desc": "Si prega di descrivere il problema riscontrato:",
+  "system_info": "Informazioni di sistema",
+  "error_label": "Errore",
+  "success_label": "Successo",
+  "bug_report_empty": "Si prega di fornire una descrizione del problema.",
+  "bug_report_submitted": "Grazie! La tua segnalazione di bug è stata inviata.",
+  "bug_report_failed": "Errore nell'invio della segnalazione di bug: "
 }

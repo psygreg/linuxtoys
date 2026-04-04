@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Nevarēja nosūtīt Kļūdu ziņojumu: Servera savienojuma timeout. Lūdzu, vēlāk mēģiniet vēlreiz.",
   "bug_report_server_error": "Servera Kļūda",
   "bug_report_server_error_message": "Nevarēja nosūtīt Kļūdu ziņojumu: Servera Kļūda. Lūdzu, vēlāk mēģiniet vēlreiz.",
-  "send_btn_label": "Sūtīt"
+  "send_btn_label": "Sūtīt",
+  "bug_report_desc": "Lūdzu aprakstiet problēmu, ar kuru saskārāties:",
+  "system_info": "Sistēmas informācija",
+  "error_label": "Kļūda",
+  "success_label": "Panākums",
+  "bug_report_empty": "Lūdzu sniedziet problēmas aprakstu.",
+  "bug_report_submitted": "Paldies! Jūsu kļūdu ziņojums ir iesniegts.",
+  "bug_report_failed": "Kļūdu ziņojuma nosūtīšana neizdevās: "
 }

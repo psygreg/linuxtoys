@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Zprávu o Chybě nelze poslat: Vyprašel čas Připojení k Serveru. Prosím zkuste později.",
   "bug_report_server_error": "Chyba Serveru",
   "bug_report_server_error_message": "Zprávu o Chybě nelze poslat: Chyba Serveru. Prosím zkuste později.",
-  "send_btn_label": "Poslat"
+  "send_btn_label": "Poslat",
+  "bug_report_desc": "Prosím, popište problém, se kterým jste se setkali:",
+  "system_info": "Informace o systému",
+  "error_label": "Chyba",
+  "success_label": "Úspěch",
+  "bug_report_empty": "Prosím, zadejte popis problému.",
+  "bug_report_submitted": "Děkujeme! Váš bug report byl odeslán.",
+  "bug_report_failed": "Odeslání bug reportu selhalo: "
 }

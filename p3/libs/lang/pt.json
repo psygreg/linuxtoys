@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "Não foi possível enviar o Relatório de erro: Timeout de Conexão do Servidor. Por favor, tente novamente mais tarde.",
   "bug_report_server_error": "Erro de Servidor",
   "bug_report_server_error_message": "Não foi possível enviar o Relatório de erro: Erro de Servidor. Por favor, tente novamente mais tarde.",
-  "send_btn_label": "Enviar"
+  "send_btn_label": "Enviar",
+  "bug_report_desc": "Por favor, descreva o problema que você encontrou:",
+  "system_info": "Informações do sistema",
+  "error_label": "Erro",
+  "success_label": "Sucesso",
+  "bug_report_empty": "Por favor, forneça uma descrição do problema.",
+  "bug_report_submitted": "Obrigado! Seu relatório de erro foi enviado.",
+  "bug_report_failed": "Falha ao enviar relatório de erro: "
 }

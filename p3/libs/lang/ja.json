@@ -383,5 +383,12 @@
   "bug_report_timeout_message": "バグレポートを送信できませんでした: サーバー接続タイムアウト。後でもう一度お試しください。",
   "bug_report_server_error": "サーバーエラー",
   "bug_report_server_error_message": "バグレポートを送信できませんでした: サーバーエラー。後でもう一度お試しください。",
-  "send_btn_label": "送信"
+  "send_btn_label": "送信",
+  "bug_report_desc": "遭遇した問題を説明してください:",
+  "system_info": "システム情報",
+  "error_label": "エラー",
+  "success_label": "成功",
+  "bug_report_empty": "問題の説明を提供してください。",
+  "bug_report_submitted": "ありがとうございます。バグレポートが送信されました。",
+  "bug_report_failed": "バグレポートの送信に失敗しました: "
 }
