@@ -2,6 +2,11 @@
 Search functionality for LinuxToys application.
 Provides search capabilities across script names, descriptions, and categories.
 Uses caching for improved performance during runtime.
+
+Works transparently with both git-synced and bundled scripts:
+- Scripts are sourced from parser.SCRIPTS_DIR which may be git-synced or bundled
+- Automatically filters hidden directories (e.g., .git) from git-synced repos
+- Includes local scripts from ~/.local/linuxtoys/scripts
 """
 
 import os
@@ -70,6 +75,11 @@ class ScriptCache:
         negated_scripts = parser._get_negated_scripts(directory_path, self.system_compat_keys)
         
         for item_name in os.listdir(directory_path):
+            # Skip hidden directories and files (e.g., .git, .gitignore)
+            # Important for git-synced scripts which include .git directory
+            if item_name.startswith('.'):
+                continue
+            
             item_path = os.path.join(directory_path, item_name)
             
             if item_name.endswith('.sh') and os.path.isfile(item_path):

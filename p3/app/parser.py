@@ -9,8 +9,10 @@ from .compat import (
     should_show_optimization_script
 )
 from .lang_utils import detect_system_language
+from . import git_scripts_manager
 
-SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'scripts')
+# Get scripts directory - uses git-synced scripts with fallback to bundled
+SCRIPTS_DIR = git_scripts_manager.get_scripts_dir()
 
 def _get_negated_scripts(directory_path, compat_keys):
     """
@@ -217,8 +219,12 @@ def get_categories(translations=None):
                 'is_new': header.get('is_new', False)
             })
 
-    # Add subfolders as categories
+    # Add subfolders as categories (skip hidden directories like .git)
     for category_name in os.listdir(SCRIPTS_DIR):
+        # Skip hidden directories (starting with .)
+        if category_name.startswith('.'):
+            continue
+            
         category_path = os.path.join(SCRIPTS_DIR, category_name)
         if os.path.isdir(category_path):
             info_file_path = os.path.join(category_path, 'category-info.txt')

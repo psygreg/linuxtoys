@@ -4,6 +4,14 @@ import sys
 import os # Import the 'os' module
 
 if __name__ == "__main__":
+    # --- SCRIPTS INITIALIZATION ---
+    # Initialize git-based scripts synchronization with fallback to bundled scripts
+    try:
+        from app.scripts_loader import initialize_scripts
+        initialize_scripts()
+    except ImportError:
+        pass  # scripts_loader may not be available in some environments
+    
     # --- DEVELOPER MODE BANNER ---
     try:
         from app.dev_mode import print_dev_mode_banner
