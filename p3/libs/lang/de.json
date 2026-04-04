@@ -390,5 +390,6 @@
   "success_label": "Erfolg",
   "bug_report_empty": "Bitte geben Sie eine Beschreibung des Problems ein.",
   "bug_report_submitted": "Danke! Ihr Fehlerbericht wurde eingereicht.",
-  "bug_report_failed": "Fehler beim Senden des Fehlerberichts: "
+  "bug_report_failed": "Fehler beim Senden des Fehlerberichts: ",
+  "new_spec_key": "neu"
 }

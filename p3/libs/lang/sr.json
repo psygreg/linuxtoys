@@ -390,5 +390,6 @@
   "success_label": "Успех",
   "bug_report_empty": "Молимо вас да дате опис проблема.",
   "bug_report_submitted": "Хвала! Ваша пријава грешке је послата.",
-  "bug_report_failed": "Неуспешно слање пријаве грешке: "
+  "bug_report_failed": "Неуспешно слање пријаве грешке: ",
+  "new_spec_key": "ново"
 }

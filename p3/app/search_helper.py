@@ -271,8 +271,9 @@ class SearchEngine:
         description = item_info.get('description', '').lower()
         score = 0
         
-        # Check for 'new' keyword match
-        if query == 'new' and item_info.get('is_new', False):
+        # Check for 'new' keyword match (English or translated)
+        translated_new = self.translations.get('new_spec_key', 'new').lower() 
+        if (query == 'new' or query == translated_new) and item_info.get('is_new', False):
             score += 90  # High score for exact 'new' keyword match
         
         # Exact name match gets highest score

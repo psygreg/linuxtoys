@@ -388,5 +388,6 @@
   "success_label": "Mafanikio",
   "bug_report_empty": "Tafadhali toa maelezo ya tatizo.",
   "bug_report_submitted": "Asante! Ripoti ya kosa lako imewasilishwa.",
-  "bug_report_failed": "Kushindwa kutuma ripoti ya kosa: "
+  "bug_report_failed": "Kushindwa kutuma ripoti ya kosa: ",
+  "new_spec_key": "mpya"
 }

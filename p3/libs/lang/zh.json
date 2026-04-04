@@ -392,5 +392,6 @@
   "success_label": "成功",
   "bug_report_empty": "请提供问题的说明。",
   "bug_report_submitted": "谢谢！您的bug报告已提交。",
-  "bug_report_failed": "发送bug报告失败: "
+  "bug_report_failed": "发送bug报告失败: ",
+  "new_spec_key": "新"
 }

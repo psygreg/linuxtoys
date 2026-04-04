@@ -390,5 +390,6 @@
   "success_label": "성공",
   "bug_report_empty": "문제에 대한 설명을 제공해주세요.",
   "bug_report_submitted": "감사합니다! 버그 보고서가 제출되었습니다.",
-  "bug_report_failed": "버그 보고서 전송 실패: "
+  "bug_report_failed": "버그 보고서 전송 실패: ",
+  "new_spec_key": "새로운"
 }

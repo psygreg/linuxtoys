@@ -390,5 +390,6 @@
   "success_label": "Rath",
   "bug_report_empty": "Tabhair cur síos ar an fhadhb le do thoil.",
   "bug_report_submitted": "Go raibh míle maith agat! Tugadh isteach do thuarascáil docharadh.",
-  "bug_report_failed": "Theip ar sheoladh an tuarascáil docharadh: "
+  "bug_report_failed": "Theip ar sheoladh an tuarascáil docharadh: ",
+  "new_spec_key": "nua"
 }

@@ -390,5 +390,6 @@
   "success_label": "Úspěch",
   "bug_report_empty": "Prosím, zadejte popis problému.",
   "bug_report_submitted": "Děkujeme! Váš bug report byl odeslán.",
-  "bug_report_failed": "Odeslání bug reportu selhalo: "
+  "bug_report_failed": "Odeslání bug reportu selhalo: ",
+  "new_spec_key": "nový"
 }

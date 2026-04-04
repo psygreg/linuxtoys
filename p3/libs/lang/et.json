@@ -390,5 +390,6 @@
   "success_label": "Õnnestu",
   "bug_report_empty": "Palun andke probleemi kirjeldus.",
   "bug_report_submitted": "Tänu! Teie veaauandlus on esitatud.",
-  "bug_report_failed": "Veasea saatmine ebaõnnestus: "
+  "bug_report_failed": "Veasea saatmine ebaõnnestus: ",
+  "new_spec_key": "uus"
 }

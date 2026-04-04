@@ -389,5 +389,6 @@
   "success_label": "Muvaffaqiyat",
   "bug_report_empty": "Iltimos, muammoning tavsifini bering.",
   "bug_report_submitted": "Rahmat! Sizning xato hisoboti yuborıldi.",
-  "bug_report_failed": "Xato hisobotini yuborish muvaffaq bo'lmadi: "
+  "bug_report_failed": "Xato hisobotini yuborish muvaffaq bo'lmadi: ",
+  "new_spec_key": "yangi"
 }

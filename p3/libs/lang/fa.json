@@ -390,5 +390,6 @@
   "success_label": "موفقیت",
   "bug_report_empty": "لطفا توضیح مسئله را ارائه دهید.",
   "bug_report_submitted": "متشکرم! گزارش اشکال خود را ارسال کردید.",
-  "bug_report_failed": "ارسال گزارش خرابی ناموفق بود: "
+  "bug_report_failed": "ارسال گزارش خرابی ناموفق بود: ",
+  "new_spec_key": "جدید"
 }

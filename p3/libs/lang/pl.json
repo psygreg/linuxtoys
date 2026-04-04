@@ -390,5 +390,6 @@
   "success_label": "Powodzenie",
   "bug_report_empty": "Proszę podać opis problemu.",
   "bug_report_submitted": "Dziękuję! Twój raport o błędzie został przesłany.",
-  "bug_report_failed": "Niepowodzenie wysyłania raportu o błędzie: "
+  "bug_report_failed": "Niepowodzenie wysyłania raportu o błędzie: ",
+  "new_spec_key": "nowy"
 }

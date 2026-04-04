@@ -390,5 +390,6 @@
   "success_label": "成功",
   "bug_report_empty": "問題の説明を提供してください。",
   "bug_report_submitted": "ありがとうございます。バグレポートが送信されました。",
-  "bug_report_failed": "バグレポートの送信に失敗しました: "
+  "bug_report_failed": "バグレポートの送信に失敗しました: ",
+  "new_spec_key": "新規"
 }

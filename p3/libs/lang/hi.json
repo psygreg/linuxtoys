@@ -370,5 +370,6 @@
   "success_label": "सफलता",
   "bug_report_empty": "कृपया समस्या का विवरण प्रदान करें।",
   "bug_report_submitted": "धन्यवाद! आपकी बग रिपोर्ट जमा की गई है।",
-  "bug_report_failed": "बग रिपोर्ट भेजने में विफल: "
+  "bug_report_failed": "बग रिपोर्ट भेजने में विफल: ",
+  "new_spec_key": "नया"
 }

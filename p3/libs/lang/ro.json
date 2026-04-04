@@ -390,5 +390,6 @@
   "success_label": "Succes",
   "bug_report_empty": "Vă rugăm să furnizați o descriere a problemei.",
   "bug_report_submitted": "Mulțumesc! Raportul tău de eroare a fost trimis.",
-  "bug_report_failed": "Eroare la trimiterea raportului de eroare: "
+  "bug_report_failed": "Eroare la trimiterea raportului de eroare: ",
+  "new_spec_key": "nou"
 }

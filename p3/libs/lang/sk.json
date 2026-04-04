@@ -390,5 +390,6 @@
   "success_label": "Úspech",
   "bug_report_empty": "Prosím, zadajte popis problému.",
   "bug_report_submitted": "Ďakujem! Vaša správa o chybe bola odoslaná.",
-  "bug_report_failed": "Odoslanie správy o chybe zlyhalo: "
+  "bug_report_failed": "Odoslanie správy o chybe zlyhalo: ",
+  "new_spec_key": "nový"
 }

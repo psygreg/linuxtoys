@@ -390,5 +390,6 @@
   "success_label": "Thành công",
   "bug_report_empty": "Vui lòng cung cấp mô tả về sự cố.",
   "bug_report_submitted": "Cảm ơn! Báo cáo lỗi của bạn đã được gửi.",
-  "bug_report_failed": "Không thể gửi báo cáo lỗi: "
+  "bug_report_failed": "Không thể gửi báo cáo lỗi: ",
+  "new_spec_key": "mới"
 }

@@ -390,5 +390,6 @@
   "success_label": "کامیابی",
   "bug_report_empty": "براہ کرم مسئلہ کی تفصیل فراہم کریں۔",
   "bug_report_submitted": "شکریہ! آپ کی بگ رپورٹ جمع کی گئی ہے۔",
-  "bug_report_failed": "بگ رپورٹ بھیجنے میں ناکام: "
+  "bug_report_failed": "بگ رپورٹ بھیجنے میں ناکام: ",
+  "new_spec_key": "نیا"
 }

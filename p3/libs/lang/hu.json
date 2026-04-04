@@ -390,5 +390,6 @@
   "success_label": "Siker",
   "bug_report_empty": "Kérjük, adja meg a probléma leírását.",
   "bug_report_submitted": "Köszönöm! A hibajelentésed beküldve van.",
-  "bug_report_failed": "A hibajelentés küldése sikertelen: "
+  "bug_report_failed": "A hibajelentés küldése sikertelen: ",
+  "new_spec_key": "új"
 }

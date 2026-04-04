@@ -390,5 +390,6 @@
   "success_label": "Başarı",
   "bug_report_empty": "Lütfen sorunun açıklamasını verin.",
   "bug_report_submitted": "Teşekkürler! Hata raporunuz gönderildi.",
-  "bug_report_failed": "Hata raporunu gönderme başarısız oldu: "
+  "bug_report_failed": "Hata raporunu gönderme başarısız oldu: ",
+  "new_spec_key": "yeni"
 }

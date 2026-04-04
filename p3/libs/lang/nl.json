@@ -390,5 +390,6 @@
   "success_label": "Succes",
   "bug_report_empty": "Geef alstublieft een beschrijving van het probleem.",
   "bug_report_submitted": "Bedankt! Je bugrapport is ingediend.",
-  "bug_report_failed": "Fout bij verzending van bugrapport: "
+  "bug_report_failed": "Fout bij verzending van bugrapport: ",
+  "new_spec_key": "nieuw"
 }

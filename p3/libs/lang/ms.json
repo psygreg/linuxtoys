@@ -390,5 +390,6 @@
   "success_label": "Kejayaan",
   "bug_report_empty": "Sila berikan perihal tentang masalah.",
   "bug_report_submitted": "Terima kasih! Laporan bug Anda telah dihantar.",
-  "bug_report_failed": "Gagal menghantar laporan bug: "
+  "bug_report_failed": "Gagal menghantar laporan bug: ",
+  "new_spec_key": "baru"
 }

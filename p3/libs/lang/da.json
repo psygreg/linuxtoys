@@ -390,5 +390,6 @@
   "success_label": "Succes",
   "bug_report_empty": "Venligst giv en beskrivelse af problemet.",
   "bug_report_submitted": "Tak! Dit fejlrapport er indsendt.",
-  "bug_report_failed": "Fejl ved indsendelse af fejlrapport: "
+  "bug_report_failed": "Fejl ved indsendelse af fejlrapport: ",
+  "new_spec_key": "ny"
 }

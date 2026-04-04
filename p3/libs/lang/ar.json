@@ -390,5 +390,6 @@
   "success_label": "نجح",
   "bug_report_empty": "يرجى تقديم وصف للمشكلة.",
   "bug_report_submitted": "شكراً لك! تم تقديم تقرير الخطأ الخاص بك.",
-  "bug_report_failed": "فشل في إرسال تقرير الخطأ: "
+  "bug_report_failed": "فشل في إرسال تقرير الخطأ: ",
+  "new_spec_key": "جديد"
 }
