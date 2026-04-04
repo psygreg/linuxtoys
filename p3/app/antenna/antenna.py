@@ -16,16 +16,20 @@ _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
 
 # --- System Info Helpers ---
-def _get_os_id() -> str:
-    """Get OS identifier from /etc/os-release."""
+
+def _get_os_info() -> dict:
+    """Extract OS identifier and version from /etc/os-release."""
+    os_info = {"id": "unknown", "version": ""}
     try:
         with open("/etc/os-release", "r") as f:
             for line in f:
                 if line.startswith("ID="):
-                    return line.split("=", 1)[1].strip().strip('"')
+                    os_info["id"] = line.split("=", 1)[1].strip().strip('"')
+                elif line.startswith("VERSION="):
+                    os_info["version"] = line.split("=", 1)[1].strip().strip('"')
     except Exception:
         pass
-    return "unknown"
+    return os_info
 
 def _get_gpu_info() -> dict:
     """Get GPU information - whether Nvidia is present and total GPU count."""
@@ -52,10 +56,13 @@ def _get_gpu_info() -> dict:
 
 def get_system_context() -> str:
     """Build a system info context string for bug reports."""
-    os_id = _get_os_id()
+    os_info = _get_os_info()
     gpu_info = _get_gpu_info()
     
-    context_parts = [f"OS: {os_id}"]
+    context_parts = [f"OS: {os_info['id']}"]
+    
+    if os_info["version"]:
+        context_parts[-1] += f" ({os_info['version']})"
     
     if gpu_info["has_nvidia"]:
         context_parts.append("GPU: Nvidia detected")
