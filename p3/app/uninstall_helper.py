@@ -209,6 +209,14 @@ def _filter_bootstrap_packages(packages):
         "xorg-xserver",
         "x11-common",
         "x11-utils",
+        "plasma-session",
+        "cinnamon-session",
+        "gnome-session",
+        "gdm",
+        "sddm",
+        "lightdm",
+        "kwin",
+        "mutter",
     }
     return {pkg for pkg in packages if pkg not in bootstrap}
 
@@ -278,7 +286,9 @@ def _check_bootstrap_collateral(packages_to_remove, manager):
         "wireplumber", "pipewire", "pulseaudio", "xwayland",
         "xorg-xwayland", "xorg-x11-server-xwayland", "wayland",
         "xorg", "xorg-server", "xorg-apps", "xorg-fonts", "xorg-xinit",
-        "xorg-xserver", "x11-common", "x11-utils",
+        "xorg-xserver", "x11-common", "x11-utils", "plasma-session",
+        "cinnamon-session", "gnome-session", "gdm", "sddm", "lightdm", 
+        "kwin", "mutter",
     }
     
     if not packages_to_remove or not manager:
