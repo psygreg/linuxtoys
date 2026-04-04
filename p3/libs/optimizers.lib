@@ -72,26 +72,59 @@ cachyos_sysd_lib () {
 
 # shader booster
 sboost_lib () {
-    cd $HOME
-    local _tag=$(curl -s https://api.github.com/repos/psygreg/shader-booster/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')
-    if [ -z "$_tag" ]; then
-        _tag=$(curl -s https://api.github.com/repos/psygreg/shader-booster/releases | grep -oP '"tag_name":\s*"\K[^"]+' | head -n 1)
-    fi
+    GITHUB_BASE="https://raw.githubusercontent.com/psygreg/shader-booster/main"
+    GITEA_BASE="https://git.linux.toys/psygreg/shader-booster/raw/branch/main"
+    fetch_with_fallback () {
+        local filename="$1"
+        local output_file="$2"
+        if wget -q -O "$output_file" "${GITHUB_BASE}/${filename}" 2>/dev/null; then
+            return 0
+        fi
+        if wget -q -O "$output_file" "${GITEA_BASE}/${filename}" 2>/dev/null; then
+            return 0
+        fi
 
-    if [ "$ID" == "cachyos" ]; then
-        fetch_from_mirror "patcher-cachy.fish" \
-            "https://github.com/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish" \
-            "https://git.linux.toys/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish"
-        chmod +x patcher-cachy.fish
-        fish ./patcher-cachy.fish
-        rm patcher-cachy.fish
-    else
-        fetch_from_mirror "patcher.sh" \
-            "https://github.com/psygreg/shader-booster/releases/download/${_tag}/patcher.sh" \
-            "https://git.linux.toys/psygreg/shader-booster/releases/download/${_tag}/patcher.sh"
-        chmod +x patcher.sh
-        ./patcher.sh
-        rm patcher.sh
+        return 1
+    }
+    # patch for Nvidia GPUs
+    patch_nv () {
+        cd $HOME
+        if fetch_with_fallback "patch-nvidia" "${HOME}/patch-nvidia"; then
+            echo -e "\n$(cat ${HOME}/patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            rm ${HOME}/patch-nvidia
+        else
+            fatal "Failed to fetch patch-nvidia."
+        fi
+    }
+    # patch for Mesa-driven GPUs
+    patch_mesa () {
+        cd $HOME
+        if fetch_with_fallback "patch-mesa" "${HOME}/patch-mesa"; then
+            echo -e "\n$(cat ${HOME}/patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            rm ${HOME}/patch-mesa
+        else
+            fatal "Failed to fetch patch-mesa."
+        fi
+    }
+    HAS_NVIDIA=$(lspci | grep -i 'nvidia')
+    HAS_MESA=$(lspci | grep -Ei '(vga|3d)' | grep -vi nvidia)
+    PATCH_APPLIED=0
+    if [ ! -f ${HOME}/.booster ]; then
+        DEST_FILE="/etc/environment"
+        if [[ -n "$HAS_NVIDIA" ]]; then
+            patch_nv
+            PATCH_APPLIED=1
+        fi
+        if [[ -n "$HAS_MESA" ]]; then
+            patch_mesa
+            PATCH_APPLIED=1
+        fi
+
+        if [ $PATCH_APPLIED -eq 1 ]; then
+            zeninf "Success! Reboot to apply."
+            echo "1" > "${HOME}/.booster"
+            exit 0
+        fi
     fi
 }
 
