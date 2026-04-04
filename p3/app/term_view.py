@@ -337,23 +337,34 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.button_remove.set_sensitive(False)
 
     def _get_terminal_text(self) -> str:
-        """Extract all text from the terminal."""
+        """Extract all text from the terminal by copying to clipboard and reading back."""
         try:
-            # Use antenna's built-in log capture which tees stdout/stderr
-            logs = antenna.log_capture.get_logs()
-            if logs:
-                return logs
+            # Select all terminal content
+            if hasattr(self.terminal, "select_all"):
+                self.terminal.select_all()
             
-            # Fallback: try to extract from the terminal widget
-            # VTE's get_text_range is async, so we need a different approach
-            if hasattr(self.terminal, "get_text"):
-                # Try the synchronous text getter if available
-                return self.terminal.get_text() or ""
+            # Copy to clipboard
+            if hasattr(self.terminal, "copy_clipboard_format"):
+                self.terminal.copy_clipboard_format(Vte.Format.TEXT)
+            else:
+                self.terminal.copy_clipboard()
             
-            return ""
+            # Read from clipboard
+            clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+            text = clipboard.wait_for_text()
+            
+            # Unselect
+            if hasattr(self.terminal, "unselect_all"):
+                self.terminal.unselect_all()
+            
+            return text if isinstance(text, str) else ""
         except Exception:
-            # If all else fails, return empty string but don't crash
-            return ""
+            # If clipboard extraction fails, fall back to antenna logs
+            try:
+                logs = antenna.log_capture.get_logs()
+                return logs if isinstance(logs, str) else ""
+            except Exception:
+                return ""
 
     def _show_bug_report_confirmation_dialog(self):
         """Show confirmation dialog before sending bug report."""
