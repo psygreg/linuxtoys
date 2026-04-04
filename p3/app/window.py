@@ -53,6 +53,9 @@ class AppWindow(Gtk.ApplicationWindow):
         # Checklist
         self.check_buttons = []
 
+        # Auto error reporting preference
+        self.auto_error_reports_enabled = False
+
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(main_vbox)
