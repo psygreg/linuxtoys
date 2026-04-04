@@ -15,8 +15,57 @@ _REPORT_URL = "https://bug.linux.toys"
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
 
-# --- Log capture ---
+# --- System Info Helpers ---
+def _get_os_id() -> str:
+    """Get OS identifier from /etc/os-release."""
+    try:
+        with open("/etc/os-release", "r") as f:
+            for line in f:
+                if line.startswith("ID="):
+                    return line.split("=", 1)[1].strip().strip('"')
+    except Exception:
+        pass
+    return "unknown"
 
+def _get_gpu_info() -> dict:
+    """Get GPU information - whether Nvidia is present and total GPU count."""
+    try:
+        # Import compat module to use existing GPU detection
+        from .. import compat
+        gpu_keys = compat.get_gpu_compat_keys()
+        
+        has_nvidia = "gpu-nvidia" in gpu_keys
+        gpu_count = len([k for k in gpu_keys if k.startswith("gpu-")])
+        has_multiple_gpus = gpu_count >= 2
+        
+        return {
+            "has_nvidia": has_nvidia,
+            "has_multiple_gpus": has_multiple_gpus,
+            "gpu_count": gpu_count,
+        }
+    except Exception:
+        return {
+            "has_nvidia": False,
+            "has_multiple_gpus": False,
+            "gpu_count": 0,
+        }
+
+def get_system_context() -> str:
+    """Build a system info context string for bug reports."""
+    os_id = _get_os_id()
+    gpu_info = _get_gpu_info()
+    
+    context_parts = [f"OS: {os_id}"]
+    
+    if gpu_info["has_nvidia"]:
+        context_parts.append("GPU: Nvidia detected")
+    
+    if gpu_info["has_multiple_gpus"]:
+        context_parts.append(f"Multiple GPUs: {gpu_info['gpu_count']} detected")
+    
+    return " | ".join(context_parts)
+
+# --- Log capture ---
 class LogCapture:
     """Tees stdout/stderr into an in-memory buffer AND the real terminal."""
     def __init__(self):

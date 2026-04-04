@@ -469,10 +469,19 @@ class TermRunScripts(Gtk.Box):
             # Get terminal logs
             logs = self._get_terminal_text()
             
-            # Get information about the current script if available
-            context = ""
+            # Gather system information
+            context_parts = []
+            
+            # Add script execution info
             if self.script_queue or self.scripts_executed > 0:
-                context = f"Scripts executed: {self.scripts_executed}/{self.total_scripts}"
+                context_parts.append(f"Scripts executed: {self.scripts_executed}/{self.total_scripts}")
+            
+            # Add system info (OS, GPU)
+            system_context = antenna.get_system_context()
+            if system_context:
+                context_parts.append(system_context)
+            
+            context = " | ".join(context_parts)
             
             # Submit the issue using antenna
             title = self.translations.get(
