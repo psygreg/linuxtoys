@@ -5,19 +5,17 @@ import traceback
 import requests
 from requests.exceptions import ConnectionError, Timeout
 import json
-import os
 from io import StringIO
 from pathlib import Path
-
+ 
 _REPORT_URL = "https://bug.linux.toys"
-
+ 
 # Cache directory for storing the generated secret (in user's config dir)
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
 _HISTORY_FILE = _CACHE_DIR / "history.json"
-
+ 
 # --- System Info Helpers ---
-
 def _get_os_info() -> dict:
     """Extract OS identifier and version from /etc/os-release."""
     os_info = {"id": "unknown", "version": ""}
@@ -31,7 +29,7 @@ def _get_os_info() -> dict:
     except Exception:
         pass
     return os_info
-
+ 
 def _get_gpu_info() -> dict:
     """Get GPU information - whether Nvidia is present and total GPU count."""
     try:
@@ -54,7 +52,7 @@ def _get_gpu_info() -> dict:
             "has_multiple_gpus": False,
             "gpu_count": 0,
         }
-
+ 
 def get_system_context() -> str:
     """Build a system info context string for bug reports."""
     os_info = _get_os_info()
@@ -72,7 +70,7 @@ def get_system_context() -> str:
         context_parts.append(f"Multiple GPUs: {gpu_info['gpu_count']} detected")
     
     return " | ".join(context_parts)
-
+ 
 # --- Script History Management ---
 def _load_history() -> list:
     """Load script execution history from file."""
@@ -84,7 +82,7 @@ def _load_history() -> list:
         return data.get("history", [])
     except Exception:
         return []
-
+ 
 def _save_history(history: list) -> None:
     """Save script execution history to file."""
     try:
@@ -95,7 +93,7 @@ def _save_history(history: list) -> None:
         _HISTORY_FILE.chmod(0o600)
     except Exception:
         pass  # Fail silently to avoid breaking bug reports
-
+ 
 def add_script_to_history(script_name: str) -> None:
     """Add a script execution to history (keep last 10)."""
     try:
@@ -110,7 +108,7 @@ def add_script_to_history(script_name: str) -> None:
         _save_history(history)
     except Exception:
         pass  # Fail silently
-
+ 
 def get_history_context() -> str:
     """Get formatted script execution history for bug reports."""
     try:
@@ -129,40 +127,37 @@ class LogCapture:
         self._buffer = StringIO()
         self._stdout = sys.stdout
         self._stderr = sys.stderr
-
+ 
     def start(self):
         sys.stdout = self
         sys.stderr = self
-
+ 
     def stop(self):
         sys.stdout = self._stdout
         sys.stderr = self._stderr
-
+ 
     def write(self, msg: str):
         self._buffer.write(msg)
         self._stdout.write(msg)
-
+ 
     def flush(self):
         self._stdout.flush()
-
+ 
     def get_logs(self) -> str:
         return self._buffer.getvalue()
-
+ 
     def clear(self):
         self._buffer = StringIO()
-
-
+ 
 log_capture = LogCapture()
 _antenna_initialized = False
-
+ 
 # --- Token management ---
 _NON_PRINTABLE = re.compile(r"[^\x20-\x7E\n\r\t]")
-
 _jwt_token: str | None = None
 _jwt_expires_at: float = 0
 _app_token: str | None = None
-
-
+ 
 def _get_cached_app_token() -> str | None:
     """Load the app token from cache if it exists and is valid."""
     if not _SECRET_CACHE.exists():
@@ -177,8 +172,7 @@ def _get_cached_app_token() -> str | None:
         return data.get("token")
     except Exception:
         return None
-
-
+ 
 def _cache_app_token(token: str) -> None:
     """Save the app token to cache."""
     try:
@@ -193,8 +187,7 @@ def _cache_app_token(token: str) -> None:
         _SECRET_CACHE.chmod(0o600)
     except Exception as e:
         print(f"[IssueReporter] Warning: Could not cache bootstrap token: {e}", file=sys.stderr)
-
-
+ 
 def _bootstrap_app_token() -> str:
     """
     Fetch the app token from the server without needing a pre-shared secret.
@@ -231,18 +224,47 @@ def _bootstrap_app_token() -> str:
     except Exception as e:
         print(f"[IssueReporter] Bootstrap failed: {e}", file=sys.stderr)
         raise
-
-
+ 
+ 
 def _get_machine_id() -> str:
-    """Generate a unique machine identifier."""
-    import hashlib
-    # You can customize this - combine hostname, distro info, etc.
-    hostname = os.environ.get("HOSTNAME", "unknown")
-    user = os.environ.get("USER", "unknown")
-    machine_sig = f"{hostname}:{user}".encode()
-    return hashlib.sha256(machine_sig).hexdigest()[:16]
-
-
+    """
+    Return a stable, random machine identifier for this installation.
+    Generated once on first bootstrap and persisted in the cache file
+    alongside the app token — no env vars, no collisions.
+    """
+    import uuid
+    # Try to load an existing machine ID from the cache file
+    if _SECRET_CACHE.exists():
+        try:
+            with open(_SECRET_CACHE, "r") as f:
+                data = json.load(f)
+            mid = data.get("machine_id")
+            if mid and re.match(r"^[a-f0-9]{32}$", mid):
+                return mid
+        except Exception:
+            pass
+ 
+    # Generate a new random UUID (no host/user info)
+    mid = uuid.uuid4().hex  # 32 lowercase hex chars
+    try:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        _SECRET_CACHE.parent.chmod(0o700)
+        # Merge into existing cache data if present, else start fresh
+        existing: dict = {}
+        if _SECRET_CACHE.exists():
+            try:
+                with open(_SECRET_CACHE, "r") as f:
+                    existing = json.load(f)
+            except Exception:
+                pass
+        existing["machine_id"] = mid
+        with open(_SECRET_CACHE, "w") as f:
+            json.dump(existing, f)
+        _SECRET_CACHE.chmod(0o600)
+    except Exception:
+        pass  # Non-fatal — caller will still get a valid (ephemeral) ID
+    return mid
+ 
 def _authenticate() -> tuple[str, float]:
     global _app_token
     
@@ -269,17 +291,15 @@ def _authenticate() -> tuple[str, float]:
     except requests.exceptions.HTTPError as e:
         print(f"[IssueReporter] Authentication failed: Server error ({e.response.status_code})", file=sys.stderr)
         raise
-
-
+ 
 def _get_token() -> str:
     global _jwt_token, _jwt_expires_at
     if _jwt_token is None or time.time() >= _jwt_expires_at:
         _jwt_token, _jwt_expires_at = _authenticate()
         # Token is in memory only — cleared on process exit
     return _jwt_token
-
+ 
 # --- Initialization ---
-
 def _initialize_antenna() -> None:
     """Initialize antenna logging and exception hooks."""
     global _antenna_initialized
@@ -289,9 +309,8 @@ def _initialize_antenna() -> None:
     log_capture.start()
     sys.excepthook = _exception_hook
     _antenna_initialized = True
-
+ 
 # --- Issue submission ---
-
 def submit_issue(title: str, logs: str = "", context: str = "") -> dict | None:
     """Submit a GitHub issue. Logs default to current captured output."""
     # Initialize antenna on first bug report submission
@@ -299,12 +318,11 @@ def submit_issue(title: str, logs: str = "", context: str = "") -> dict | None:
     
     if not logs:
         logs = log_capture.get_logs()
-
     # Strip non-printable characters client-side before sending
     logs    = _NON_PRINTABLE.sub("", logs)
     title   = _NON_PRINTABLE.sub("", title).strip()
     context = _NON_PRINTABLE.sub("", context).strip()
-
+ 
     try:
         resp = requests.post(
             f"{_REPORT_URL}/report-issue",
@@ -331,9 +349,8 @@ def submit_issue(title: str, logs: str = "", context: str = "") -> dict | None:
     except Exception as e:
         print(f"[IssueReporter] Could not file issue: {e}", file=sys.stderr)
         raise
-
+ 
 # --- Auto-submit on unhandled exceptions ---
-
 def _exception_hook(exc_type, exc_value, exc_tb):
     tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
     print(tb_str)
