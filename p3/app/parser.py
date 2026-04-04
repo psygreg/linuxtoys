@@ -100,7 +100,13 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                 if file_path.endswith('.sh'):
                     prefix = '# '
                 if line.startswith(prefix):
-                    line_content = line[len(prefix):]
+                    line_content = line[len(prefix):].strip()
+                    
+                    # Handle flag headers like '# new' (no colon or value needed)
+                    if line_content == 'new':
+                        metadata['is_new'] = True
+                        continue
+                    
                     parts = line_content.split(':', 1)
                     if len(parts) == 2:
                         key = parts[0].strip().lower()
@@ -187,7 +193,8 @@ def get_categories(translations=None):
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'noconfirm': 'no',
-                'repo': ''
+                'repo': '',
+                'is_new': False
             }
             header = _parse_metadata_file(file_path, defaults, translations)
             # Filter by compatibility and locale
@@ -206,7 +213,8 @@ def get_categories(translations=None):
                 'path': file_path,
                 'icon': header.get('icon', 'application-x-executable'),
                 'description': header.get('description', ''),
-                'is_script': True
+                'is_script': True,
+                'is_new': header.get('is_new', False)
             })
 
     # Add subfolders as categories
@@ -319,7 +327,8 @@ def get_scripts_for_category(category_path, translations=None):
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'noconfirm': 'no',
-                'repo': ''
+                'repo': '',
+                'is_new': False
             }
             script_info = _parse_metadata_file(file_path, defaults, translations)
             
@@ -379,7 +388,8 @@ def get_all_scripts_recursive(directory_path, translations=None):
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'noconfirm': 'no',
-                'repo': ''
+                'repo': '',
+                'is_new': False
             }
             script_info = _parse_metadata_file(item_path, defaults, translations)
             

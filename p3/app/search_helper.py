@@ -98,7 +98,8 @@ class ScriptCache:
                     'icon': 'application-x-executable',
                     'reboot': 'no',
                     'noconfirm': 'no',
-                    'repo': ''
+                    'repo': '',
+                    'is_new': False
                 }
                 script_info = parser._parse_metadata_file(item_path, defaults, translations)
                 
@@ -269,6 +270,10 @@ class SearchEngine:
         name = item_info.get('name', '').lower()
         description = item_info.get('description', '').lower()
         score = 0
+        
+        # Check for 'new' keyword match
+        if query == 'new' and item_info.get('is_new', False):
+            score += 90  # High score for exact 'new' keyword match
         
         # Exact name match gets highest score
         if query == name:

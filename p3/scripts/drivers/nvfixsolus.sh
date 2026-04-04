@@ -7,6 +7,7 @@
 # reboot: yes
 # nocontainer
 # gpu: Nvidia
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"

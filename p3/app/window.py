@@ -544,7 +544,12 @@ class AppWindow(Gtk.ApplicationWindow):
         left_pad.set_size_request(10, 1)
         box.pack_start(left_pad, False, False, 0)
 
-        label = Gtk.Label(label=item_info["name"])
+        # Add emoji prefix for new items
+        display_name = item_info["name"]
+        if item_info.get("is_new", False):
+            display_name = f"❗ {display_name}"
+
+        label = Gtk.Label(label=display_name)
         label.set_line_wrap(True)
         label.set_justify(Gtk.Justification.CENTER)
         label.set_halign(Gtk.Align.CENTER)
@@ -576,7 +581,7 @@ class AppWindow(Gtk.ApplicationWindow):
             # Escape HTML characters to prevent markup issues
             import html
 
-            escaped_name = html.escape(item_info["name"])
+            escaped_name = html.escape(display_name)
             label.set_markup(f"<b>{escaped_name}</b>")
         box.pack_start(label, True, True, 0)
 

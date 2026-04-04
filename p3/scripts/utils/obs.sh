@@ -5,6 +5,7 @@
 # icon: obs.svg
 # repo: https://github.com/dimtpap/obs-pipewire-audio-capture
 # reboot: ostree
+# new
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
