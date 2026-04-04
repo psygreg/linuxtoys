@@ -135,6 +135,7 @@ class TermRunScripts(Gtk.Box):
         # Hide bug report button if auto error reports are enabled
         auto_reports_enabled = getattr(parent, 'auto_error_reports_enabled', False)
         if auto_reports_enabled:
+            self.vbox_main.button_copy.set_no_show_all(True)
             self.vbox_main.button_copy.hide()
         
         # Use translatable waiting text
