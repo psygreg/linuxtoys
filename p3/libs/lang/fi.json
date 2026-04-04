@@ -369,5 +369,19 @@
   "remove_action_name": "Poista {name}",
   "remove_action_desc": "Poistaa automaattisesti tämän skriptin asentamat havaitut komponentit.",
   "solseek_desc": "Selaa, etsi ja hallitse paketteja, ajureita ja Flatpak-sovelluksia Solukselle mukavasta TUI-käyttöliittymästä.",
-  "nvfixsolus_desc": "Korjaa Solusin ongelman, jossa avoimen lähdekoodin Nouveau-ajuri saa etusijan omistusoikeuden Nvidia-ajuriin, mikä aiheuttaa, että se ei toimi oikein. Käytä tätä vain asianmukaisen ajurin asennuksen jälkeen Solseekin avulla, joka löytyy Repositories-valikosta."
+  "nvfixsolus_desc": "Korjaa Solusin ongelman, jossa avoimen lähdekoodin Nouveau-ajuri saa etusijan omistusoikeuden Nvidia-ajuriin, mikä aiheuttaa, että se ei toimi oikein. Käytä tätä vain asianmukaisen ajurin asennuksen jälkeen Solseekin avulla, joka löytyy Repositories-valikosta.",
+  "bug_report_title": "Virheilmoitus LinuxToys-sta",
+  "bug_report_confirm_title": "Lähetä virheilmoitus?",
+  "bug_report_confirm_message": "Päätteesi lähtö lähetetään etäpalvelimelle auttamaan meitä korjaamaan ongelmia. Haluatko jatkaa?",
+  "bug_report_success_title": "Virheilmoitus lähetetty",
+  "bug_report_success_message": "Kiitos! Virheilmoituksesi on lähetetty.\nOngelma #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Virheilmoitus epäonnistui",
+  "bug_report_failed_message": "Virheilmoitusta ei voitu lähettää. Yritä myöhemmin uudelleen.",
+  "bug_report_no_connection": "Ei Internet-yhteyttä",
+  "bug_report_no_connection_message": "Virheilmoitusta ei voitu lähettää: Internetyhteyttä ei löytynyt. Tarkista verkkosi ja yritä uudelleen.",
+  "bug_report_timeout": "Yhteyden Timeout",
+  "bug_report_timeout_message": "Virheilmoitusta ei voitu lähettää: Palvelimen Yhteyden Timeout. Yritä myöhemmin uudelleen.",
+  "bug_report_server_error": "Palvelinvirhe",
+  "bug_report_server_error_message": "Virheilmoitusta ei voitu lähettää: Palvelinvirhe. Yritä myöhemmin uudelleen.",
+  "send_btn_label": "Lähetä"
 }

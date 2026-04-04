@@ -369,5 +369,19 @@
   "remove_action_name": "Fjern {name}",
   "remove_action_desc": "Fjerner automatisk komponenter som ble installert av dette skriptet.",
   "solseek_desc": "Bla gjennom, søk etter og administrer pakker, drivere og Flatpak-apper for Solus fra et behagelig TUI.",
-  "nvfixsolus_desc": "Fikser et problem i Solus der open-source Nouveau-driveren har forrang over den proprietære Nvidia-driveren, noe som forhindrer den fra å fungere ordentlig. Bruk dette bare etter korrekt driverinstallasjon ved hjelp av Solseek, som du finner i Repositories-menyen."
+  "nvfixsolus_desc": "Fikser et problem i Solus der open-source Nouveau-driveren har forrang over den proprietære Nvidia-driveren, noe som forhindrer den fra å fungere ordentlig. Bruk dette bare etter korrekt driverinstallasjon ved hjelp av Solseek, som du finner i Repositories-menyen.",
+  "bug_report_title": "Feilrapport fra LinuxToys",
+  "bug_report_confirm_title": "Send feilrapport?",
+  "bug_report_confirm_message": "Terminalutgangen din vil bli sendt til fjernserveren for å hjelpe oss med å løse problemer. Vil du fortsette?",
+  "bug_report_success_title": "Feilrapport innsendt",
+  "bug_report_success_message": "Takk! Feilrapporten din er sendt.\nProblema #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Feilrapport mislyktes",
+  "bug_report_failed_message": "Kunne ikke sende feilrapport. Vennligst prøv igjen senere.",
+  "bug_report_no_connection": "Ingen Internetforbindelse",
+  "bug_report_no_connection_message": "Kunne ikke sende feilrapport: Ingen Internetforbindelse oppdaget. Vennligst sjekk Nettverket ditt og prøv igjen.",
+  "bug_report_timeout": "Forbindelsestimeout",
+  "bug_report_timeout_message": "Kunne ikke sende feilrapport: Serverforbindelses Timeout. Vennligst prøv igjen senere.",
+  "bug_report_server_error": "Serverfeil",
+  "bug_report_server_error_message": "Kunne ikke sende feilrapport: Serverfeil. Vennligst prøv igjen senere.",
+  "send_btn_label": "Send"
 }

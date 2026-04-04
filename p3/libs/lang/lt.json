@@ -369,5 +369,19 @@
   "remove_action_name": "Pašalinti {name}",
   "remove_action_desc": "Automatiškai pašalina aptiktus komponentus, kuriuos įdiegė šis scenarijus.",
   "solseek_desc": "Naršykite, ieškokite ir tvarkykite Solus paketus, tvarkykles ir Flatpak programas iš patogios TUI.",
-  "nvfixsolus_desc": "Pataiso problemą Soluse, kur atviro kodo Nouveau tvarkyklė turi pirmenybę prieš nuosavybės Nvidia tvarkyklę, dėl to ji neveikia tinkamai. Naudokite tai tik po to, kai teisingai įdiegėte tvarkyklę naudodami Solseek, kurią rasite Repositories meniu."
+  "nvfixsolus_desc": "Pataiso problemą Soluse, kur atviro kodo Nouveau tvarkyklė turi pirmenybę prieš nuosavybės Nvidia tvarkyklę, dėl to ji neveikia tinkamai. Naudokite tai tik po to, kai teisingai įdiegėte tvarkyklę naudodami Solseek, kurią rasite Repositories meniu.",
+  "bug_report_title": "Klaidos ataskaita iš LinuxToys",
+  "bug_report_confirm_title": "Siųsti klaidos ataskaitą?",
+  "bug_report_confirm_message": "Jūsų terminalo output bus siunčiami į nuotolinį serverį, kad padėtų mums išspręsti problemas. Ar norite tęsti?",
+  "bug_report_success_title": "Klaidos ataskaita pateikta",
+  "bug_report_success_message": "Ačiū! Jūsų Klaidos ataskaita pateikta.\nProblemą #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Klaidos ataskaita nepavyko",
+  "bug_report_failed_message": "Nepavyko nusiųsti Klaidos ataskaitos. Bandykite vėliau.",
+  "bug_report_no_connection": "Nėra Interneto Ryšio",
+  "bug_report_no_connection_message": "Nepavyko nusiųsti Klaidos ataskaitos: Nėra Internet Ryšio. Patikrinkite savo Tinklą ir bandykite iš naujo.",
+  "bug_report_timeout": "Ryšio Timeout",
+  "bug_report_timeout_message": "Nepavyko nusiųsti Klaidos ataskaitos: Serverio Ryšio Timeout. Bandykite vėliau.",
+  "bug_report_server_error": "Serverio Klaida",
+  "bug_report_server_error_message": "Nepavyko nusiųsti Klaidos ataskaitos: Serverio Klaida. Bandykite vėliau.",
+  "send_btn_label": "Siųsti"
 }

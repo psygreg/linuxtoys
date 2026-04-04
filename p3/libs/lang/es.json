@@ -369,5 +369,19 @@
   "remove_action_name": "Eliminar {name}",
   "remove_action_desc": "Elimina automáticamente los componentes detectados instalados por este script.",
   "solseek_desc": "Examina, busca y gestiona paquetes, controladores y aplicaciones Flatpak para Solus desde una interfaz TUI cómoda.",
-  "nvfixsolus_desc": "Corrige un problema en Solus donde el controlador Nouveau de código abierto tiene prioridad sobre el controlador Nvidia propietario, lo que hace que no funcione correctamente. Usa esto solo después de la instalación adecuada del controlador usando Solseek, que se encuentra en el menú Repositorios."
+  "nvfixsolus_desc": "Corrige un problema en Solus donde el controlador Nouveau de código abierto tiene prioridad sobre el controlador Nvidia propietario, lo que hace que no funcione correctamente. Usa esto solo después de la instalación adecuada del controlador usando Solseek, que se encuentra en el menú Repositorios.",
+  "bug_report_title": "Informe de Error de LinuxToys",
+  "bug_report_confirm_title": "¿Enviar Informe de Error?",
+  "bug_report_confirm_message": "Su salida de terminal se enviará al servidor remoto para ayudarnos a solucionar problemas. ¿Deseas continuar?",
+  "bug_report_success_title": "Informe de error enviado",
+  "bug_report_success_message": "¡Gracias! Se ha enviado tu Informe de error.\nProblema #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Informe de error fallido",
+  "bug_report_failed_message": "No se pudo enviar el Informe de error. Por favor, inténtelo más tarde.",
+  "bug_report_no_connection": "Sin Conexión a Internet",
+  "bug_report_no_connection_message": "No se pudo enviar el Informe de error: Sin Conexión a Internet detectada. Por favor, verifique su Red e intente de nuevo.",
+  "bug_report_timeout": "Tiempo de Conexión",
+  "bug_report_timeout_message": "No se pudo enviar el Informe de error: Timeout de Conexión del Servidor. Por favor, inténtelo más tarde.",
+  "bug_report_server_error": "Error del Servidor",
+  "bug_report_server_error_message": "No se pudo enviar el Informe de error: Error del Servidor. Por favor, inténtelo más tarde.",
+  "send_btn_label": "Enviar"
 }

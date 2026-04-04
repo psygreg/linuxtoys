@@ -369,5 +369,19 @@
   "remove_action_name": "Verwijder {name}",
   "remove_action_desc": "Verwijdert automatisch gedetecteerde componenten die door dit script zijn geïnstalleerd.",
   "solseek_desc": "Blader door, zoek en beheer pakketten, stuurprogramma's en Flatpak-apps voor Solus vanuit een comfortabele TUI.",
-  "nvfixsolus_desc": "Verhelpt een probleem in Solus waar de open-source Nouveau-stuurprogramma voorrang krijgt boven de eigendom Nvidia-stuurprogramma, waardoor het niet correct werkt. Gebruik dit alleen na juiste installatie van het stuurprogramma met Solseek, dat u kunt vinden in het menu Opslagplaatsen."
+  "nvfixsolus_desc": "Verhelpt een probleem in Solus waar de open-source Nouveau-stuurprogramma voorrang krijgt boven de eigendom Nvidia-stuurprogramma, waardoor het niet correct werkt. Gebruik dit alleen na juiste installatie van het stuurprogramma met Solseek, dat u kunt vinden in het menu Opslagplaatsen.",
+  "bug_report_title": "Foutrapport van LinuxToys",
+  "bug_report_confirm_title": "Foutrapport verzenden?",
+  "bug_report_confirm_message": "Uw terminaloutput wordt naar de externe server verzonden om ons te helpen problemen op te lossen. Wil je verdergaan?",
+  "bug_report_success_title": "Foutrapport ingediend",
+  "bug_report_success_message": "Dank je! Foutrapport is ingediend.\nProbleem #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Foutrapport mislukt",
+  "bug_report_failed_message": "Kan foutrapport niet verzenden. Probeer het later opnieuw.",
+  "bug_report_no_connection": "Geen Internetverbinding",
+  "bug_report_no_connection_message": "Kan foutrapport niet verzenden: Geen Internetverbinding gedetecteerd. Controleer uw Netwerk en probeer het opnieuw.",
+  "bug_report_timeout": "Verbindingstimeout",
+  "bug_report_timeout_message": "Kan foutrapport niet verzenden: Server-verbinding Timeout. Probeer het later opnieuw.",
+  "bug_report_server_error": "Serverfout",
+  "bug_report_server_error_message": "Kan foutrapport niet verzenden: Serverfout. Probeer het later opnieuw.",
+  "send_btn_label": "Verzenden"
 }

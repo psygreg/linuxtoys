@@ -369,5 +369,19 @@
   "remove_action_name": "Remover {name}",
   "remove_action_desc": "Remove automaticamente os componentes detectados instalados por este script.",
   "solseek_desc": "Navegue, procure e gerencie pacotes, drivers e aplicativos Flatpak para Solus a partir de uma interface TUI confortável.",
-  "nvfixsolus_desc": "Corrige um problema no Solus onde o driver Nouveau de código aberto tem prioridade sobre o driver Nvidia proprietário, fazendo com que não funcione corretamente. Use isso apenas após a instalação adequada do driver usando Solseek, que pode ser encontrado no menu Repositórios."
+  "nvfixsolus_desc": "Corrige um problema no Solus onde o driver Nouveau de código aberto tem prioridade sobre o driver Nvidia proprietário, fazendo com que não funcione corretamente. Use isso apenas após a instalação adequada do driver usando Solseek, que pode ser encontrado no menu Repositórios.",
+  "bug_report_title": "Relatório de erro do LinuxToys",
+  "bug_report_confirm_title": "Enviar relatório de erro?",
+  "bug_report_confirm_message": "Sua saída de terminal será enviada para o servidor remoto para nos ajudar a corrigir problemas. Deseja continuar?",
+  "bug_report_success_title": "Relatório de erro enviado",
+  "bug_report_success_message": "Obrigado! Seu Relatório de erro foi enviado.\nProblema #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Relatório de erro falhou",
+  "bug_report_failed_message": "Não foi possível enviar o Relatório de erro. Por favor, tente novamente mais tarde.",
+  "bug_report_no_connection": "Sem Conexão à Internet",
+  "bug_report_no_connection_message": "Não foi possível enviar o Relatório de erro: Sem Conexão à Internet detectada. Por favor, verifique sua Rede e tente novamente.",
+  "bug_report_timeout": "Timeout de Conexão",
+  "bug_report_timeout_message": "Não foi possível enviar o Relatório de erro: Timeout de Conexão do Servidor. Por favor, tente novamente mais tarde.",
+  "bug_report_server_error": "Erro de Servidor",
+  "bug_report_server_error_message": "Não foi possível enviar o Relatório de erro: Erro de Servidor. Por favor, tente novamente mais tarde.",
+  "send_btn_label": "Enviar"
 }

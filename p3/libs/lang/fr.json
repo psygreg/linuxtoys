@@ -369,5 +369,19 @@
   "remove_action_name": "Supprimer {name}",
   "remove_action_desc": "Supprime automatiquement les composants détectés installés par ce script.",
   "solseek_desc": "Parcourez, recherchez et gérez les paquets, pilotes et applications Flatpak pour Solus à partir d'une interface TUI confortable.",
-  "nvfixsolus_desc": "Corrige un problème dans Solus où le pilote Nouveau open-source a la priorité sur le pilote Nvidia propriétaire, ce qui le rend non fonctionnel. Utilisez ceci uniquement après une installation correcte du pilote à l'aide de Solseek, qui se trouve dans le menu Repositorys."
+  "nvfixsolus_desc": "Corrige un problème dans Solus où le pilote Nouveau open-source a la priorité sur le pilote Nvidia propriétaire, ce qui le rend non fonctionnel. Utilisez ceci uniquement après une installation correcte du pilote à l'aide de Solseek, qui se trouve dans le menu Repositorys.",
+  "bug_report_title": "Rapport d'erreur de LinuxToys",
+  "bug_report_confirm_title": "Envoyer le rapport d'erreur ?",
+  "bug_report_confirm_message": "Votre résultat de terminal sera envoyé au serveur distant pour nous aider à corriger les problèmes. Voulez-vous continuer?",
+  "bug_report_success_title": "Rapport d'erreur soumis",
+  "bug_report_success_message": "Merci! Votre Rapport d'erreur a été soumis.\nProblème #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Rapport d'erreur échoué",
+  "bug_report_failed_message": "Impossible d'envoyer le Rapport d'erreur. Veuillez réessayer plus tard.",
+  "bug_report_no_connection": "Pas de Connexion Internet",
+  "bug_report_no_connection_message": "Impossible d'envoyer le Rapport d'erreur : Aucune Connexion Internet détectée. Veuillez vérifier votre Réseau et réessayer.",
+  "bug_report_timeout": "Délai de Connexion",
+  "bug_report_timeout_message": "Impossible d'envoyer le Rapport d'erreur : Délai de Connexion au Serveur dépassé. Veuillez réessayer plus tard.",
+  "bug_report_server_error": "Erreur de Serveur",
+  "bug_report_server_error_message": "Impossible d'envoyer le Rapport d'erreur : Erreur de Serveur. Veuillez réessayer plus tard.",
+  "send_btn_label": "Envoyer"
 }

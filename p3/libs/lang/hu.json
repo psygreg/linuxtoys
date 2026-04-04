@@ -369,5 +369,19 @@
   "remove_action_name": "Eltávolítás {name}",
   "remove_action_desc": "Automatikusan eltávolítja az ezen skript által telepített felismert összetevőket.",
   "solseek_desc": "Böngészzen, keressen és kezeljen csomagokat, illesztőprogramokat és Flatpak alkalmazásokat a Solus számára egy kényelmes TUI-ból.",
-  "nvfixsolus_desc": "Megjavít egy problémát a Soluban, ahol a nyílt forráskódú Nouveau illesztőprogram elsőbbséget kap a tulajdonosi Nvidia illesztőprogrammal szemben, ami azt okozza, hogy nem működik megfelelően. Ezt csak a Solseek segítségével történt megfelelő illesztőprogram-telepítés után használja, amely a Repositories menüben található."
+  "nvfixsolus_desc": "Megjavít egy problémát a Soluban, ahol a nyílt forráskódú Nouveau illesztőprogram elsőbbséget kap a tulajdonosi Nvidia illesztőprogrammal szemben, ami azt okozza, hogy nem működik megfelelően. Ezt csak a Solseek segítségével történt megfelelő illesztőprogram-telepítés után használja, amely a Repositories menüben található.",
+  "bug_report_title": "Hibajelentés LinuxToys-tól",
+  "bug_report_confirm_title": "Küldj hibajelentést?",
+  "bug_report_confirm_message": "A termináli kimenetet el kell küldeni a távoli kiszolgálónak, hogy segítsen a problémák megoldásában. Szeretnél folytatni?",
+  "bug_report_success_title": "Hibajelentés benyújtva",
+  "bug_report_success_message": "Köszönöm! Hibajelentésed benyújtva.\nProbléma #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Hibajelentés sikertelen",
+  "bug_report_failed_message": "A hibajelentést nem lehetett elküldeni. Kérjük később próbálja újra.",
+  "bug_report_no_connection": "Nincs Internet-kapcsolat",
+  "bug_report_no_connection_message": "A hibajelentést nem lehetett elküldeni: Nincs Internet-kapcsolat. Kérjük ellenőrizze a hálózatát és próbálja újra.",
+  "bug_report_timeout": "Kapcsolat Timeout",
+  "bug_report_timeout_message": "A hibajelentést nem lehetett elküldeni: Kiszolgáló Kapcsolat Timeout. Kérjük később próbálja újra.",
+  "bug_report_server_error": "Kiszolgáló Hiba",
+  "bug_report_server_error_message": "A hibajelentést nem lehetett elküldeni: Kiszolgáló Hiba. Kérjük később próbálja újra.",
+  "send_btn_label": "Küld"
 }

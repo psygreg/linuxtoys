@@ -369,5 +369,19 @@
   "remove_action_name": "Xóa {name}",
   "remove_action_desc": "Tự động xóa các thành phần được phát hiện được cài đặt bởi tập lệnh này.",
   "solseek_desc": "Duyệt, tìm kiếm và quản lý các gói, trình điều khiển và ứng dụng Flatpak cho Solus từ giao diện TUI thoải mái.",
-  "nvfixsolus_desc": "Sửa chữa vấn đề trong Solus nơi trình điều khiển Nouveau mã nguồn mở ưu tiên hơn trình điều khiển Nvidia tư nhân, khiến nó không hoạt động bình thường. Sử dụng cái này chỉ sau khi cài đặt trình điều khiển chính xác bằng cách sử dụng Solseek, có thể được tìm thấy trong menu Repositories."
+  "nvfixsolus_desc": "Sửa chữa vấn đề trong Solus nơi trình điều khiển Nouveau mã nguồn mở ưu tiên hơn trình điều khiển Nvidia tư nhân, khiến nó không hoạt động bình thường. Sử dụng cái này chỉ sau khi cài đặt trình điều khiển chính xác bằng cách sử dụng Solseek, có thể được tìm thấy trong menu Repositories.",
+  "bug_report_title": "Báo cáo lỗi từ LinuxToys",
+  "bug_report_confirm_title": "Gửi báo cáo lỗi?",
+  "bug_report_confirm_message": "Đầu ra đầu cuối của bạn sẽ được gửi đến máy chủ từ xa để giúp chúng tôi khắc phục sự cố. Bạn có muốn tiếp tục không?",
+  "bug_report_success_title": "Báo cáo lỗi đã gửi",
+  "bug_report_success_message": "Cảm ơn! Báo cáo lỗi của bạn đã được gửi.\nVấn đề #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Báo cáo lỗi thất bại",
+  "bug_report_failed_message": "Không thể gửi báo cáo lỗi. Vui lòng thử lại sau.",
+  "bug_report_no_connection": "Không có kết nối Internet",
+  "bug_report_no_connection_message": "Không thể gửi báo cáo lỗi: Không phát hiện kết nối Internet. Vui lòng kiểm tra mạng của bạn và thử lại.",
+  "bug_report_timeout": "Timeout Kết nối",
+  "bug_report_timeout_message": "Không thể gửi báo cáo lỗi: Timeout Kết nối Máy chủ. Vui lòng thử lại sau.",
+  "bug_report_server_error": "Lỗi Server",
+  "bug_report_server_error_message": "Không thể gửi báo cáo lỗi: Lỗi Server. Vui lòng thử lại sau.",
+  "send_btn_label": "Gửi"
 }

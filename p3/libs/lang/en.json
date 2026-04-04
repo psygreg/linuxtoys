@@ -369,5 +369,19 @@
 	"remove_action_name": "Remove {name}",
 	"remove_action_desc": "Automatically removes detected components installed by this script.",
   "solseek_desc": "Browse, search, and manage packages, drivers and flatpaks for Solus from a comfortable TUI.",
-  "nvfixsolus_desc": "Fixes an issue on Solus where the open-source Nouveau driver takes precedence over the proprietary Nvidia driver, causing it not to work properly. Only use this after proper driver installation using Solseek, which can be found in the Repositories menu."
+  "nvfixsolus_desc": "Fixes an issue on Solus where the open-source Nouveau driver takes precedence over the proprietary Nvidia driver, causing it not to work properly. Only use this after proper driver installation using Solseek, which can be found in the Repositories menu.",
+  "bug_report_title": "Bug Report from LinuxToys",
+  "bug_report_confirm_title": "Send Bug Report?",
+  "bug_report_confirm_message": "Your terminal output will be sent to the remote server to help us fix issues. Do you want to continue?",
+  "bug_report_success_title": "Bug Report Submitted",
+  "bug_report_success_message": "Thank you! Your bug report has been submitted.\nIssue #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Bug Report Failed",
+  "bug_report_failed_message": "Could not submit the bug report. Please try again later.",
+  "bug_report_no_connection": "No Internet Connection",
+  "bug_report_no_connection_message": "Unable to send bug report: No internet connection detected. Please check your network and try again.",
+  "bug_report_timeout": "Connection Timeout",
+  "bug_report_timeout_message": "Unable to send bug report: Server connection timed out. Please try again later.",
+  "bug_report_server_error": "Server Error",
+  "bug_report_server_error_message": "Unable to send bug report: The server encountered an error. Please try again later.",
+  "send_btn_label": "Send"
 }

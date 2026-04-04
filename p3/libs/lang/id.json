@@ -369,5 +369,19 @@
   "remove_action_name": "Hapus {name}",
   "remove_action_desc": "Secara otomatis menghapus komponen yang terdeteksi yang dipasang oleh skrip ini.",
   "solseek_desc": "Telusuri, cari, dan kelola paket, driver, dan aplikasi Flatpak untuk Solus dari TUI yang nyaman.",
-  "nvfixsolus_desc": "Memperbaiki masalah di Solus di mana driver Nouveau open-source memiliki prioritas atas driver Nvidia proprietary, menyebabkannya tidak berfungsi dengan baik. Gunakan ini hanya setelah instalasi driver yang tepat menggunakan Solseek, yang dapat ditemukan di menu Repositories."
+  "nvfixsolus_desc": "Memperbaiki masalah di Solus di mana driver Nouveau open-source memiliki prioritas atas driver Nvidia proprietary, menyebabkannya tidak berfungsi dengan baik. Gunakan ini hanya setelah instalasi driver yang tepat menggunakan Solseek, yang dapat ditemukan di menu Repositories.",
+  "bug_report_title": "Laporan Bug dari LinuxToys",
+  "bug_report_confirm_title": "Kirim Laporan Bug?",
+  "bug_report_confirm_message": "Output terminal Anda akan dikirim ke server jarak jauh untuk membantu kami memperbaiki masalah. Apakah Anda ingin melanjutkan?",
+  "bug_report_success_title": "Laporan Bug Disubmit",
+  "bug_report_success_message": "Terima kasih! Laporan Bug Anda telah disubmit.\nMasalah #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Laporan Bug Gagal",
+  "bug_report_failed_message": "Tidak dapat mengirim Laporan Bug. Silakan coba lagi nanti.",
+  "bug_report_no_connection": "Tidak Ada Koneksi Internet",
+  "bug_report_no_connection_message": "Tidak dapat mengirim Laporan Bug: Tidak Ada Koneksi Internet yang terdeteksi. Silakan periksa Jaringan Anda dan coba lagi.",
+  "bug_report_timeout": "Koneksi Timeout",
+  "bug_report_timeout_message": "Tidak dapat mengirim Laporan Bug: Server Connection Timeout. Silakan coba lagi nanti.",
+  "bug_report_server_error": "Kesalahan Server",
+  "bug_report_server_error_message": "Tidak dapat mengirim Laporan Bug: Kesalahan Server. Silakan coba lagi nanti.",
+  "send_btn_label": "Kirim"
 }

@@ -369,5 +369,19 @@
   "remove_action_name": "Hiq {name}",
   "remove_action_desc": "Heq automatikisht komponentën e zbuluar të instaluar nga ky skript.",
   "solseek_desc": "Shfletoni, kërkoni dhe menaxhoni paketa, drajvera dhe aplikacione Flatpak për Solus nga një ndërfaqe TUI e rehatshme.",
-  "nvfixsolus_desc": "Rregullon një problem në Solus ku drejtuesii i kodit të hapur Nouveau ka përparësi mbi drejtuesi i Nvidia me pronësi, duke bërë që të mos funksionojë siç duhet. Përdorni këtë vetëm pas instalimit të duhur të drejtuesi duke përdorur Solseek, i cili gjendet në menunë e Depozito."
+  "nvfixsolus_desc": "Rregullon një problem në Solus ku drejtuesii i kodit të hapur Nouveau ka përparësi mbi drejtuesi i Nvidia me pronësi, duke bërë që të mos funksionojë siç duhet. Përdorni këtë vetëm pas instalimit të duhur të drejtuesi duke përdorur Solseek, i cili gjendet në menunë e Depozito.",
+  "bug_report_title": "Raport i Gabimit nga LinuxToys",
+  "bug_report_confirm_title": "Dërgoni Raport të Gabimit?",
+  "bug_report_confirm_message": "Rezultati i terminalit tuaj do të dërgohet në serverë në distancë për të na ndihmuar të riparoj probleme. Dëshiron të vazhdosh?",
+  "bug_report_success_title": "Raporti i gabimit i Dërguar",
+  "bug_report_success_message": "Faleminderit! Raportí i Gabimit Tuaj Është Dërguar.\nProblemi #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Raport i gabimit i dështuar",
+  "bug_report_failed_message": "Nuk mund të dërgohej Raporti i Gabimit. Ju lutemi sprovoni më vonë.",
+  "bug_report_no_connection": "Nuk ka Lidhje Interneti",
+  "bug_report_no_connection_message": "Nuk mund të dërgohej Raporti i Gabimit: Nuk ka Lidhje Interneti. Ju lutemi kontrolloni Rrjetin tuaj dhe provoni përsëri.",
+  "bug_report_timeout": "Kohë Lidhje",
+  "bug_report_timeout_message": "Nuk mund të dërgohej Raporti i Gabimit: Kohë Lidhje e Shërbimit. Ju lutemi sprovoni më vonë.",
+  "bug_report_server_error": "Gabim i Serverit",
+  "bug_report_server_error_message": "Nuk mund të dërgohej Raporti i Gabimit: Gabim i Serverit. Ju lutemi sprovoni më vonë.",
+  "send_btn_label": "Dërgoj"
 }

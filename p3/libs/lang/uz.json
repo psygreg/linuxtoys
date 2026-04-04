@@ -368,5 +368,19 @@
   "remove_action_name": "O'chirish {name}",
   "remove_action_desc": "Bu skript o'rnatgan aniqlangan komponentlarni avtomatik o'chiradi.",
   "solseek_desc": "Solus uchun paketlar, drayverlar va Flatpak ilovalarini qulay TUI interfeysi orqali koʻrib chiqing, qidiring va boshqaring.",
-  "nvfixsolus_desc": "Solus da ochiq manbali Nouveau drayveri xususiy Nvidia drayveriga ustuvor bo'lsa, bu muammoni tuzatadi va uni to'g'ri ishlashiga xalaqit beradi. Buni faqat Solseek yordamida drayverni to'g'ri o'rnatgandan keyin foydalaning, bu Repositories menyusida topiladi."
+  "nvfixsolus_desc": "Solus da ochiq manbali Nouveau drayveri xususiy Nvidia drayveriga ustuvor bo'lsa, bu muammoni tuzatadi va uni to'g'ri ishlashiga xalaqit beradi. Buni faqat Solseek yordamida drayverni to'g'ri o'rnatgandan keyin foydalaning, bu Repositories menyusida topiladi.",
+  "bug_report_title": "LinuxToys dan xato hisoboti",
+  "bug_report_confirm_title": "Xato hisobotini yuboring?",
+  "bug_report_confirm_message": "Terminal chiqishingiz muammolarni hal qilishga yordam berish uchun masofaviy serverga yuboriladi. Davom etmoqchisiz?",
+  "bug_report_success_title": "Xato hisoboti topshirildi",
+  "bug_report_success_message": "Rahmat! Xato hisobotingiz topshirildi.\nMuammo #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Xato hisoboti muvaffaq bo'lmadi",
+  "bug_report_failed_message": "Xato hisobotini yuborish foydasizoq. Iltimos, keyinroq yana urinib ko'ring.",
+  "bug_report_no_connection": "Internet bog'lanishi yo'q",
+  "bug_report_no_connection_message": "Xato hisobotini yuborish foydasizoq: Internet bog'lanishi topilmadi. Iltimos, o'z Tarmoqingizni tekshiring va yana urinib ko'ring.",
+  "bug_report_timeout": "Bog'lanish Timeout",
+  "bug_report_timeout_message": "Xato hisobotini yuborish foydasizoq: Server Bog'lanish Timeout. Iltimos, keyinroq yana urinib ko'ring.",
+  "bug_report_server_error": "Server Xatosi",
+  "bug_report_server_error_message": "Xato hisobotini yuborish foydasizoq: Server Xatosi. Iltimos, keyinroq yana urinib ko'ring.",
+  "send_btn_label": "Yuborish"
 }

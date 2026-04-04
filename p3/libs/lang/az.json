@@ -368,5 +368,19 @@
   "remove_action_name": "{name} Sil",
   "remove_action_desc": "Bu skript tərəfindən quraşdırılan açıqlanmış komponentləri avtomatik silir.",
   "solseek_desc": "Solus üçün paketləri, drayverləri və Flatpak tətbiqləri rahat TUI-dən baxın, axtarın və idarə edin.",
-  "nvfixsolus_desc": "Solus üzərində açıq mənbə Nouveau sürücüsünün proprietary Nvidia sürücüsünə üstünlük verdiyi bir problemi düzəldir, bu da düzgün işləmədiyinə səbəb olur. Bunu yalnız Solseek istifadə edərək düzgün sürücü quraşdırıldıqdan sonra istifadə edin, bu da Anbarlar menyusunda tapılır."
+  "nvfixsolus_desc": "Solus üzərində açıq mənbə Nouveau sürücüsünün proprietary Nvidia sürücüsünə üstünlük verdiyi bir problemi düzəldir, bu da düzgün işləmədiyinə səbəb olur. Bunu yalnız Solseek istifadə edərək düzgün sürücü quraşdırıldıqdan sonra istifadə edin, bu da Anbarlar menyusunda tapılır.",
+  "bug_report_title": "LinuxToys-dan Xəta Hesabatı",
+  "bug_report_confirm_title": "Xəta Hesabatı Göndərən?",
+  "bug_report_confirm_message": "Terminal outputunuz problemlərin həllində bizə kömək etmək üçün uzaq serverə göndəriləcəkdir. Davam etmək istəyirsiniz?",
+  "bug_report_success_title": "Xəta Hesabatı Göndərildi",
+  "bug_report_success_message": "Təşəkkür! Xəta Hesabatınız Göndərilib.\nMəsələ #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Xəta Hesabatı Uğursuz",
+  "bug_report_failed_message": "Xəta Hesabatını göndərə bilmədi. Lütfən daha sonra yenidən cəhd edin.",
+  "bug_report_no_connection": "İnternet Bağlantısı Yoxdur",
+  "bug_report_no_connection_message": "Xəta Hesabatını göndərə bilmədi: Heç bir İnternet Bağlantısı tapılmadı. Lütfən Şəbəkəni yoxlayın və yenidən cəhd edin.",
+  "bug_report_timeout": "Bağlantı Vaxtı Tamamlandı",
+  "bug_report_timeout_message": "Xəta Hesabatını göndərə bilmədi: Sərverkə Bağlanmaq Vaxtı Tamamlandı. Lütfən daha sonra yenidən cəhd edin.",
+  "bug_report_server_error": "Server Xətası",
+  "bug_report_server_error_message": "Xəta Hesabatını göndərə bilmədi: Server Xətası. Lütfən daha sonra yenidən cəhd edin.",
+  "send_btn_label": "Göndər"
 }

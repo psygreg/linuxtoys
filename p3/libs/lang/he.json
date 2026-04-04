@@ -369,5 +369,19 @@
   "remove_action_name": "הסר {name}",
   "remove_action_desc": "מסיר באופן אוטומטי את הרכיבים המזוהים המותקנים על ידי סקריפט זה.",
   "solseek_desc": "עיין, חפש וניהל חבילות, נהגים ויישומי Flatpak עבור Solus מ-TUI נוח.",
-  "nvfixsolus_desc": "מתקן בעיה ב-Solus שבה לדרייבר Nouveau בקוד פתוח יש עדיפות על פני דרייבר Nvidia קנייני, מה שגורם לכך שהוא לא עובד כראוי. השתמש בזה רק לאחר התקנה נכונה של הדרייבר באמצעות Solseek, שניתן למצוא בתפריט Repositories."
+  "nvfixsolus_desc": "מתקן בעיה ב-Solus שבה לדרייבר Nouveau בקוד פתוח יש עדיפות על פני דרייבר Nvidia קנייני, מה שגורם לכך שהוא לא עובד כראוי. השתמש בזה רק לאחר התקנה נכונה של הדרייבר באמצעות Solseek, שניתן למצוא בתפריט Repositories.",
+  "bug_report_title": "דוח באגים מ-LinuxToys",
+  "bug_report_confirm_title": "שלוח דוח באגים?",
+  "bug_report_confirm_message": "פלט הטרמינל שלך יישלח לשרת מרוחק כדי לעזור לנו לתקן בעיות. האם אתה רוצה להמשיך?",
+  "bug_report_success_title": "דוח הבאגים הוגש",
+  "bug_report_success_message": "תודה! דוח הבאגים שלך הוגש.\nבעיה #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "דוח באגים נכשל",
+  "bug_report_failed_message": "לא ניתן היה לשלוח את דוח הבאגים. אנא נסה שוב מאוחר יותר.",
+  "bug_report_no_connection": "אין חיבור לאינטרנט",
+  "bug_report_no_connection_message": "לא ניתן היה לשלוח את דוח הבאגים: לא נמצאה חיבור לאינטרנט. אנא בדוק את הרשת שלך ותנסה שוב.",
+  "bug_report_timeout": "זמן תפוג הקשר",
+  "bug_report_timeout_message": "לא ניתן היה לשלוח את דוח הבאגים: זמן חיבור השרת תפוג. אנא נסה שוב מאוחר יותר.",
+  "bug_report_server_error": "שגיאת שרת",
+  "bug_report_server_error_message": "לא ניתן היה לשלוח את דוח הבאגים: שגיאת שרת. אנא נסה שוב מאוחר יותר.",
+  "send_btn_label": "שלוח"
 }

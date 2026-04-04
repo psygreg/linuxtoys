@@ -369,5 +369,19 @@
   "remove_action_name": "{name} ሰርዝ",
   "remove_action_desc": "ይህ ስክሪፕት ተተግብሮ ያልካቸው ሁሉንም ክፍሎች ራሱ ለመሰረዝ.",
   "solseek_desc": "በተኒክ ተስተካካይ በርናሞ መጨናቀፍ እና ሻሽ ፓኬጅ ከSolus ይመርምር፣ ይፈልጉ ወይም ይወስዳሉ።",
-  "nvfixsolus_desc": "ሶሉስ ላይ ክፍት ምንጭ Nouveau ሾፌር በእንግሊዝ Nvidia ሾፌር ላይ ቅድሚያ የሚሰጥ ችግርን ያስተካክላል፣ ይህም በትክክል ሊሰራ አይደለም። ይህንን የ Solseek ሬፖዝิቶሪ ማውጫ ውስጥ ሊገኘው ይችላል በኋላ ብቻ ይጠቀሙ።"
+  "nvfixsolus_desc": "ሶሉስ ላይ ክፍት ምንጭ Nouveau ሾፌር በእንግሊዝ Nvidia ሾፌር ላይ ቅድሚያ የሚሰጥ ችግርን ያስተካክላል፣ ይህም በትክክል ሊሰራ አይደለም። ይህንን የ Solseek ሬፖዝิቶሪ ማውጫ ውስጥ ሊገኘው ይችላል በኋላ ብቻ ይጠቀሙ።",
+  "bug_report_title": "ከ LinuxToys የባグ ሪፖርት",
+  "bug_report_confirm_title": "ባግ ሪፖርት ዋልታለችሁ?",
+  "bug_report_confirm_message": "የእርስዎ ተርሚናል ውጤት ለርቀት አገልግሎት ለመገboris ችግር ያስተካክሉ። ብትቀጥሉ ይወዳደሩ?",
+  "bug_report_success_title": "ባግ ሪፖርት ታስተላልፈዋል",
+  "bug_report_success_message": "ምስጋና! ስሌተ ያህል ሪፖርት ታስተላልፈዋል።\nProblem #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "ባግ ሪፖርት ተጠናክር",
+  "bug_report_failed_message": "ባግ ሪፖርት ማቅረብ ተስተካክር። በኋላ እንደገና ሞክሩ።",
+  "bug_report_no_connection": "ምንም የበይነመረብ ግንኙነት",
+  "bug_report_no_connection_message": "ባግ ሪፖርት ላክ አልቻለ: ምንም የበይነመረብ ግንኙነት አግኝተሁ. ኔትወርክዎን ያረጋግጡ እና እንደገና ሞክሩ።",
+  "bug_report_timeout": "ግንኙነት ጊዜ ሞላ",
+  "bug_report_timeout_message": "ባግ ሪፖርት ላክ አልቻለ: ስርከቀ ጊዜ ሞላ. በኋላ እንደገና ሞክሩ።",
+  "bug_report_server_error": "ሰርልግልግ ወጋ",
+  "bug_report_server_error_message": "ባግ ሪፖርት ላክ አልቻለ: ሰርልግልግ ወጋ. በኋላ እንደገና ሞክሩ።",
+  "send_btn_label": "ለመላክ"
 }

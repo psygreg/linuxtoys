@@ -369,5 +369,19 @@
   "remove_action_name": "Alisin {name}",
   "remove_action_desc": "Awtomatikong tinatanggal ang mga komponenteng natuklasan na naka-install ng script na ito.",
   "solseek_desc": "Tuklasin, maghanap at pamahalaan ang mga pakete, driver at Flatpak app para sa Solus mula sa isang komportableng TUI.",
-  "nvfixsolus_desc": "Nag-ayos ng problema sa Solus kung saan ang open-source Nouveau driver ay may kawalan sa proprietary Nvidia driver, na nagdudulot na hindi ito gumagana nang tama. Gamitin ito lamang pagkatapos ng tamang driver installation gamit ang Solseek, na matatagpuan sa Repositories menu."
+  "nvfixsolus_desc": "Nag-ayos ng problema sa Solus kung saan ang open-source Nouveau driver ay may kawalan sa proprietary Nvidia driver, na nagdudulot na hindi ito gumagana nang tama. Gamitin ito lamang pagkatapos ng tamang driver installation gamit ang Solseek, na matatagpuan sa Repositories menu.",
+  "bug_report_title": "Bug Report mula sa LinuxToys",
+  "bug_report_confirm_title": "Magpadala ng Bug Report?",
+  "bug_report_confirm_message": "Ang iyong terminal output ay ipapadala sa remote server upang tumulong sa amin na ayusin ang mga problema. Nais mo bang magpatuloy?",
+  "bug_report_success_title": "Bug Report Submitted",
+  "bug_report_success_message": "Salamat! Ang iyong Bug Report ay isinumite.\nProblem #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Bug Report Failed",
+  "bug_report_failed_message": "Hindi makakasend ang Bug Report. Mangyari ay subukan muli nang huli.",
+  "bug_report_no_connection": "Walang Internet Connection",
+  "bug_report_no_connection_message": "Hindi makakasend ang Bug Report: Walang Internet Connection na natuklasan. Mangyari ay suriin ang iyong Network at subukan muli.",
+  "bug_report_timeout": "Connection Timeout",
+  "bug_report_timeout_message": "Hindi makakasend ang Bug Report: Server Connection Timeout. Mangyari ay subukan muli nang huli.",
+  "bug_report_server_error": "Server Error",
+  "bug_report_server_error_message": "Hindi makakasend ang Bug Report: Server Error. Mangyari ay subukan muli nang huli.",
+  "send_btn_label": "Ipadala"
 }

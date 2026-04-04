@@ -369,5 +369,19 @@
   "remove_action_name": "Kaldır {name}",
   "remove_action_desc": "Bu skript tarafından yüklü algılanan bileşenleri otomatik olarak kaldırır.",
   "solseek_desc": "Solus için paketleri, sürücüleri ve Flatpak uygulamalarını rahat bir TUI üzerinden göz atın, arayın ve yönetin.",
-  "nvfixsolus_desc": "Solus'ta açık kaynaklı Nouveau sürücüsünün tescilli Nvidia sürücüsünden önceliğe sahip olduğu bir sorunu düzeltir ve düzgün çalışmasını engeller. Bunu yalnızca Solseek kullanarak düzgün sürücü kurulumundan sonra kullanın, Repositories menüsünde bulunabilir."
+  "nvfixsolus_desc": "Solus'ta açık kaynaklı Nouveau sürücüsünün tescilli Nvidia sürücüsünden önceliğe sahip olduğu bir sorunu düzeltir ve düzgün çalışmasını engeller. Bunu yalnızca Solseek kullanarak düzgün sürücü kurulumundan sonra kullanın, Repositories menüsünde bulunabilir.",
+  "bug_report_title": "LinuxToys'dan Hata Raporu",
+  "bug_report_confirm_title": "Hata Raportu Gönder?",
+  "bug_report_confirm_message": "Terminal çıktınız sorunları çözmemize yardımcı olmak için uzak sunucuya gönderilecektir. Devam etmek ister misiniz?",
+  "bug_report_success_title": "Hata Raporu Gönderildi",
+  "bug_report_success_message": "Teşekkür! Hata Raportu Gönderildi.\nSorun #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Hata Raporu başarısız oldu",
+  "bug_report_failed_message": "Hata Raporu gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+  "bug_report_no_connection": "İnternet Bağlantısı Yok",
+  "bug_report_no_connection_message": "Hata Raporu gönderilemedi: İnternet Bağlantısı Yok. Lütfen Ağınızı kontrol edin ve tekrar deneyin.",
+  "bug_report_timeout": "Bağlantı Timeout",
+  "bug_report_timeout_message": "Hata Raporu gönderilemedi: Sunucu Bağlantısı Timeout. Lütfen daha sonra tekrar deneyin.",
+  "bug_report_server_error": "Sunucu Hatası",
+  "bug_report_server_error_message": "Hata Raporu gönderilemedi: Sunucu Hatası. Lütfen daha sonra tekrar deneyin.",
+  "send_btn_label": "Gönder"
 }

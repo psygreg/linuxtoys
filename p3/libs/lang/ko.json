@@ -369,5 +369,19 @@
   "remove_action_name": "{name} 제거",
   "remove_action_desc": "이 스크립트에 의해 설치된 감지된 구성 요소를 자동으로 제거합니다.",
   "solseek_desc": "Solus용 패키지, 드라이버 및 Flatpak 앱을 편안한 TUI에서 검색, 검색 및 관리하십시오.",
-  "nvfixsolus_desc": "Solus에서 오픈 소스 Nouveau 드라이버가 독점 Nvidia 드라이버보다 우선되는 문제를 수정하여 제대로 작동하지 않게 합니다. Solseek를 사용하여 드라이버를 올바르게 설치한 후에만 이를 사용하세요. Solseek는 Repositories 메뉴에서 찾을 수 있습니다."
+  "nvfixsolus_desc": "Solus에서 오픈 소스 Nouveau 드라이버가 독점 Nvidia 드라이버보다 우선되는 문제를 수정하여 제대로 작동하지 않게 합니다. Solseek를 사용하여 드라이버를 올바르게 설치한 후에만 이를 사용하세요. Solseek는 Repositories 메뉴에서 찾을 수 있습니다.",
+  "bug_report_title": "LinuxToys의 버그 보고서",
+  "bug_report_confirm_title": "버그 보고서를 보내시겠습니까?",
+  "bug_report_confirm_message": "터미널 출력이 문제 해결을 위해 원격 서버로 전송됩니다. 계속하시겠습니까?",
+  "bug_report_success_title": "버그 보고서가 제출되었습니다",
+  "bug_report_success_message": "감사합니다! 버그 보고서가 제출되었습니다.\n문제 #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "버그 보고서 실패됨",
+  "bug_report_failed_message": "버그 보고서를 보낼 수 없습니다. 나중에 다시 시도해주세요.",
+  "bug_report_no_connection": "인터넷 연결 없음",
+  "bug_report_no_connection_message": "버그 보고서를 보낼 수 없음: 감지된 인터넷 연결 없음. 네트워크를 확인하고 다시 시도하십시오.",
+  "bug_report_timeout": "연결 타임아웃",
+  "bug_report_timeout_message": "버그 보고서를 보낼 수 없음: 서버 연결 타임아웃. 나중에 다시 시도해주세요.",
+  "bug_report_server_error": "서버 오류",
+  "bug_report_server_error_message": "버그 보고서를 보낼 수 없음: 서버 오류. 나중에 다시 시도해주세요.",
+  "send_btn_label": "보내기"
 }

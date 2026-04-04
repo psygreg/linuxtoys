@@ -369,5 +369,19 @@
   "remove_action_name": "Uklonjiti {name}",
   "remove_action_desc": "Automatski uklanja detektovane komponente instalirane ovim skriptom.",
   "solseek_desc": "Pregledajte, pretražite i upravljajte paketima, drajverima i Flatpak aplikacijama za Solus iz ugodnog TUI sučelja.",
-  "nvfixsolus_desc": "Ispravlja problem na Solusu gdje open-source Nouveau driver ima prioritet nad vlasnički Nvidia driverom, što uzrokuje da ne radi ispravno. Koristite ovo samo nakon pravilne instalacije drivera koristeći Solseek, koji se nalazi u izborniku Spremišta."
+  "nvfixsolus_desc": "Ispravlja problem na Solusu gdje open-source Nouveau driver ima prioritet nad vlasnički Nvidia driverom, što uzrokuje da ne radi ispravno. Koristite ovo samo nakon pravilne instalacije drivera koristeći Solseek, koji se nalazi u izborniku Spremišta.",
+  "bug_report_title": "Izvještaj o grešci iz LinuxToys",
+  "bug_report_confirm_title": "Poslati Izvještaj o grešci?",
+  "bug_report_confirm_message": "Vaš izlaz terminala biće poslan na udaljeni server da nam pomogne da riješimo probleme. Želite li da nastavite?",
+  "bug_report_success_title": "Izvještaj o grešci poslana",
+  "bug_report_success_message": "Hvala! Vaš Izvještaj o grešci je poslan.\nProblema #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Izvještaj o grešci neuspešan",
+  "bug_report_failed_message": "Nije bilo moguće poslati Izvještaj o grešci. Molimo pokušajte kasnije.",
+  "bug_report_no_connection": "Nema Internet Konekcije",
+  "bug_report_no_connection_message": "Nije bilo moguće poslati Izvještaj o grešci: Nema pronađene Internet Konekcije. Molimo proverite Mrežu i pokušajte ponovo.",
+  "bug_report_timeout": "Vreme Konekcije Isteklo",
+  "bug_report_timeout_message": "Nije bilo moguće poslati Izvještaj o greški: Vreme Konekcije Sервera je isteklo. Molimo pokušajte ponovno.",
+  "bug_report_server_error": "Greška Servera",
+  "bug_report_server_error_message": "Nije bilo moguće poslati Izvještaj o greški: Greška Servera. Molimo pokušajte kasnije.",
+  "send_btn_label": "Pošalji"
 }

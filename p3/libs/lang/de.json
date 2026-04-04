@@ -369,5 +369,19 @@
   "remove_action_name": "Entfernen {name}",
   "remove_action_desc": "Entfernt automatisch erkannte Komponenten, die von diesem Skript installiert wurden.",
   "solseek_desc": "Durchsuchen, suchen und verwalten Sie Pakete, Treiber und Flatpak-Anwendungen für Solus von einer komfortablen TUI aus.",
-  "nvfixsolus_desc": "Behebt ein Problem in Solus, bei dem der Open-Source-Treiber Nouveau Vorrang vor dem proprietären Nvidia-Treiber hat, was dazu führt, dass er nicht richtig funktioniert. Verwenden Sie dies nur nach korrekter Treiberinstallation mit Solseek, das Sie im Menü \"Repositorys\" finden."
+  "nvfixsolus_desc": "Behebt ein Problem in Solus, bei dem der Open-Source-Treiber Nouveau Vorrang vor dem proprietären Nvidia-Treiber hat, was dazu führt, dass er nicht richtig funktioniert. Verwenden Sie dies nur nach korrekter Treiberinstallation mit Solseek, das Sie im Menü \"Repositorys\" finden.",
+  "bug_report_title": "Fehlerbericht von LinuxToys",
+  "bug_report_confirm_title": "Fehlerbericht senden?",
+  "bug_report_confirm_message": "Ihre Terminalausgabe wird an den Remote-Server gesendet, um uns bei der Behebung von Problemen zu helfen. Möchten Sie fortfahren?",
+  "bug_report_success_title": "Fehlerbericht eingereicht",
+  "bug_report_success_message": "Danke! Ihr Fehlerbericht wurde eingereicht.\nFehler #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Fehlerbericht fehlgeschlagen",
+  "bug_report_failed_message": "Fehlerbericht konnte nicht eingereicht werden. Bitte versuchen Sie es später erneut.",
+  "bug_report_no_connection": "Keine Internetverbindung",
+  "bug_report_no_connection_message": "Fehlerbericht konnte nicht gesendet werden: Keine Internetverbindung gefunden. Bitte überprüfen Sie Ihr Netzwerk und versuchen Sie es erneut.",
+  "bug_report_timeout": "Verbindungs Timeout",
+  "bug_report_timeout_message": "Fehlerbericht konnte nicht gesendet werden: Verbindungs-Timeout des Servers. Bitte versuchen Sie es später erneut.",
+  "bug_report_server_error": "Serverfehler",
+  "bug_report_server_error_message": "Fehlerbericht konnte nicht gesendet werden: Serverfehler. Bitte versuchen Sie es später erneut.",
+  "send_btn_label": "Senden"
 }

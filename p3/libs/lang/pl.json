@@ -369,5 +369,19 @@
   "remove_action_name": "Usunąć {name}",
   "remove_action_desc": "Automatycznie usuwa wykryte komponenty zainstalowane przez ten skrypt.",
   "solseek_desc": "Przeglądaj, wyszukuj i zarządzaj pakietami, sterownikami i aplikacjami Flatpak dla Solus z wygodnego interfejsu TUI.",
-  "nvfixsolus_desc": "Naprawia problem w Solus, gdzie sterownik Nouveau typu open-source ma pierwszeństwo przed sterownikiem Nvidia firmy, powodując jego nieprawidłowe działanie. Używaj tego tylko po prawidłowej instalacji sterownika za pomocą Solseek, które znajdujesz w menu Repozytoria."
+  "nvfixsolus_desc": "Naprawia problem w Solus, gdzie sterownik Nouveau typu open-source ma pierwszeństwo przed sterownikiem Nvidia firmy, powodując jego nieprawidłowe działanie. Używaj tego tylko po prawidłowej instalacji sterownika za pomocą Solseek, które znajdujesz w menu Repozytoria.",
+  "bug_report_title": "Raport o błędzie z LinuxToys",
+  "bug_report_confirm_title": "Wysłać raport o błędzie?",
+  "bug_report_confirm_message": "Twoje dane wyjścia terminala zostaną wysłane na serwer zdalny, aby pomóc nam w rozwiązywaniu problemów. Czy chcesz kontynuować?",
+  "bug_report_success_title": "Raport o błędzie przesłany",
+  "bug_report_success_message": "Dziękuję! Twój Raport o błędzie został przesłany.\nProblem #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Raport o błędzie nieudany",
+  "bug_report_failed_message": "Nie można wysłać raportu o błędzie. Proszę spróbować później.",
+  "bug_report_no_connection": "Brak Połączenia Internetowego",
+  "bug_report_no_connection_message": "Nie można wysłać raportu o błędzie: Brak Połączenia Internetowego. Proszę sprawdzić Sieć i spróbować ponownie.",
+  "bug_report_timeout": "Timeout Połączenia",
+  "bug_report_timeout_message": "Nie można wysłać raportu o błędzie: Timeout Połączenia Serwera. Proszę spróbować później.",
+  "bug_report_server_error": "Błąd Serwera",
+  "bug_report_server_error_message": "Nie można wysłać raportu o błędzie: Błąd Serwera. Proszę spróbować później.",
+  "send_btn_label": "Wyślij"
 }

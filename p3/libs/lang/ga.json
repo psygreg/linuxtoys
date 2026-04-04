@@ -369,5 +369,19 @@
   "remove_action_name": "Bain {name}",
   "remove_action_desc": "Go huachógach baineann comhpháirt dhéanta agus fhuchadóireahta scripta seo.",
   "solseek_desc": "Fhéach, cuardaigh agus bainistigh pacáistí, tiomántóirí agus feidhmchláir Flatpak do Solus ó TUI ábalta.",
-  "nvfixsolus_desc": "Deisithe fadhb i Solus áit a bhfuil an tSocrú Nouveau foinse oscailte tosaigh ar an tiomántóir Nvidia pronaitéiseachtúil, rud a fhágann nach n-oibríonn sé i gceart. Ní úsáid seo ach tar éis suiteáil dhroichead an tiomáinteoira ag baint úsáide as Solseek, arb ionann agus atá i mhénu an Stórásachta."
+  "nvfixsolus_desc": "Deisithe fadhb i Solus áit a bhfuil an tSocrú Nouveau foinse oscailte tosaigh ar an tiomántóir Nvidia pronaitéiseachtúil, rud a fhágann nach n-oibríonn sé i gceart. Ní úsáid seo ach tar éis suiteáil dhroichead an tiomáinteoira ag baint úsáide as Solseek, arb ionann agus atá i mhénu an Stórásachta.",
+  "bug_report_title": "Tuarascáil Earráid ó LinuxToys",
+  "bug_report_confirm_title": "Seol Tuarascáil Earráid?",
+  "bug_report_confirm_message": "Seolfar do aschuir dhíonláire chuig an freastalaí i bhfad i gcéin chun cuidiú linne na fadhbanna a fhíorú. Ar theastaigh ort dul ar aghaidh?",
+  "bug_report_success_title": "Tuarascáil Earráid Curtha Níos Faide",
+  "bug_report_success_message": "Go raibh maith agat! Cuireadh do Thuarascáil Earráid.\nFadhb #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Tuarascáil Earráid Theipthe",
+  "bug_report_failed_message": "Níor bhogadh an Tuarascáil Earráid a sheoladh. Déan iarracht arís níos déanaí.",
+  "bug_report_no_connection": "Gan Nasc Idirlín",
+  "bug_report_no_connection_message": "Níor bhogadh an Tuarascáil Earráid a sheoladh: Gan Nasc Idirlín a aimsítear. Déan iarracht orthú iad na Líonra agus déan iarracht arís.",
+  "bug_report_timeout": "Rinn Nasc Thar am",
+  "bug_report_timeout_message": "Níor bhogadh an Tuarascáil Earráid a sheoladh: Rinn Nasc Seirbheasach Thar am. Déan iarracht ar arís níos déanaí.",
+  "bug_report_server_error": "Earráid Freastalaí",
+  "bug_report_server_error_message": "Níor bhogadh an Tuarascáil Earráid a sheoladh: Earráid Freastalaí. Déan iarracht ar arís níos déanaí.",
+  "send_btn_label": "Seol"
 }

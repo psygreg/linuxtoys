@@ -369,5 +369,19 @@
   "remove_action_name": "Noņemt {name}",
   "remove_action_desc": "Automātiski noņem atklātus komponentus, ko uzstādīja šis skripts.",
   "solseek_desc": "Pārlūkojiet, meklējiet un pārvaldiet Solus iepakojumus, draiverus un Flatpak lietotnes no ērtas TUI.",
-  "nvfixsolus_desc": "Labojo Solus problēmu, kur atvērtās pirmkodes Nouveau draiveris ir prioritārs privātajam Nvidia draivertim, kas liek tam nedarboties pareizi. Izmantojiet to tikai pēc pareiza draivera instalācijas, izmantojot Solseek, kas ir pieejams Repositories izvēlnē."
+  "nvfixsolus_desc": "Labojo Solus problēmu, kur atvērtās pirmkodes Nouveau draiveris ir prioritārs privātajam Nvidia draivertim, kas liek tam nedarboties pareizi. Izmantojiet to tikai pēc pareiza draivera instalācijas, izmantojot Solseek, kas ir pieejams Repositories izvēlnē.",
+  "bug_report_title": "Kļūdu ziņojums no LinuxToys",
+  "bug_report_confirm_title": "Sūtīt kļūdu ziņojumu?",
+  "bug_report_confirm_message": "Jūsu termināļa izeja tiks nosūtīta uz attālo serveri, lai palīdzētu mums atrisināt problēmas. Vai vēlaties turpināt?",
+  "bug_report_success_title": "Kļūdu ziņojums iesniegts",
+  "bug_report_success_message": "Paldies! Jūsu Kļūdu ziņojums iesniegts.\nProblēma #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Kļūdu ziņojums neizdevās",
+  "bug_report_failed_message": "Nevarēja nosūtīt Kļūdu ziņojumu. Lūdzu, vēlāk mēģiniet vēlreiz.",
+  "bug_report_no_connection": "Nav Interneta savienojuma",
+  "bug_report_no_connection_message": "Nevarēja nosūtīt Kļūdu ziņojumu: nav atrasts Interneta savienojums. Lūdzu, pārbaudiet savu Tīklu un mēģiniet vēlreiz.",
+  "bug_report_timeout": "Savienojuma Timeout",
+  "bug_report_timeout_message": "Nevarēja nosūtīt Kļūdu ziņojumu: Servera savienojuma timeout. Lūdzu, vēlāk mēģiniet vēlreiz.",
+  "bug_report_server_error": "Servera Kļūda",
+  "bug_report_server_error_message": "Nevarēja nosūtīt Kļūdu ziņojumu: Servera Kļūda. Lūdzu, vēlāk mēģiniet vēlreiz.",
+  "send_btn_label": "Sūtīt"
 }

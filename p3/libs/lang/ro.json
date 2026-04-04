@@ -369,5 +369,19 @@
   "remove_action_name": "Șterge {name}",
   "remove_action_desc": "Șterge automat componentele detectate instalate de acest script.",
   "solseek_desc": "Răsfoiți, căutați și gestionați pachete, drivere și aplicații Flatpak pentru Solus dintr-o interfață TUI confortabilă.",
-  "nvfixsolus_desc": "Remediază o problemă în Solus în care driverul Nouveau cu sursă deschisă are prioritate față de driverul Nvidia proprietar, determinând-o să nu funcționeze corect. Folosă aceasta numai după instalarea corectă a driverului folosind Solseek, care se găsește în meniul Depozite."
+  "nvfixsolus_desc": "Remediază o problemă în Solus în care driverul Nouveau cu sursă deschisă are prioritate față de driverul Nvidia proprietar, determinând-o să nu funcționeze corect. Folosă aceasta numai după instalarea corectă a driverului folosind Solseek, care se găsește în meniul Depozite.",
+  "bug_report_title": "Raport de eroare de la LinuxToys",
+  "bug_report_confirm_title": "Trimiteți raport de eroare?",
+  "bug_report_confirm_message": "Rezultatul dvs. de terminal va fi trimis pe serverul de la distanță pentru a ne ajuta să reparăm probleme. Doriți să continuați?",
+  "bug_report_success_title": "Raport de eroare trimis",
+  "bug_report_success_message": "Mulțumesc! Raportul dvs. de eroare a fost trimis.\nProblemă #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Raport de eroare eșuat",
+  "bug_report_failed_message": "Nu s-a putut trimite raportul de eroare. Vă rugăm să încercați din nou mai târziu.",
+  "bug_report_no_connection": "Fără Conexiune Internet",
+  "bug_report_no_connection_message": "Nu s-a putut trimite raportul de eroare: Niciun Conexiune Internet detectată. Vă rugăm să vă verificați Rețeaua și să încercați din nou.",
+  "bug_report_timeout": "Timeout Conexiune",
+  "bug_report_timeout_message": "Nu s-a putut trimite raportul de eroare: Timeout Conexiune Server. Vă rugăm să încercați din nou mai târziu.",
+  "bug_report_server_error": "Eroare Server",
+  "bug_report_server_error_message": "Nu s-a putut trimite raportul de eroare: Eroare Server. Vă rugăm să încercați din nou mai târziu.",
+  "send_btn_label": "Trimite"
 }

@@ -369,5 +369,19 @@
   "remove_action_name": "Fjarlægja {name}",
   "remove_action_desc": "Fjarlægir sjálfkrafa tundnir íhluti sem festir voru með þessu skrifti.",
   "solseek_desc": "Flakkaðu um, leittu og stjórnaðu pökkum, steinum og Flatpak forritum fyrir Solus frá þægilegu TUI.",
-  "nvfixsolus_desc": "Stillir vandamáli í Solus þar sem Nouveau stýrieining með opnum kóða hefur forgang fram yfir Nvidia stýrieininguna, sem veldur því að hún virkar ekki rétt. Notaðu þetta aðeins eftir rétta stýrieiningauppsetningu með Solseek, sem er að finna í Repositories valinu."
+  "nvfixsolus_desc": "Stillir vandamáli í Solus þar sem Nouveau stýrieining með opnum kóða hefur forgang fram yfir Nvidia stýrieininguna, sem veldur því að hún virkar ekki rétt. Notaðu þetta aðeins eftir rétta stýrieiningauppsetningu með Solseek, sem er að finna í Repositories valinu.",
+  "bug_report_title": "Villutilfykir frá LinuxToys",
+  "bug_report_confirm_title": "Senda Villutilfykir?",
+  "bug_report_confirm_message": "Terminalúttak þitt verður sent til fjarlægra þjóns til að hjálpa okkur að laga vandamál. Viltu halda áfram?",
+  "bug_report_success_title": "Villutilfykir Sent",
+  "bug_report_success_message": "Takk! Villutilfykir þinn hefur verið sendur.\nVandamál #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Villutilfykir Mislykkaðist",
+  "bug_report_failed_message": "Ekki var hægt að senda Villutilfykir. Prófaðu aftur síðar.",
+  "bug_report_no_connection": "Engin Internettenging",
+  "bug_report_no_connection_message": "Ekki var hægt að senda Villutilfykir: Engin Internettenging fannst. Athugaðu Netið þitt og reyndu aftur.",
+  "bug_report_timeout": "Tenging Timeout",
+  "bug_report_timeout_message": "Ekki var hægt að senda Villutilfykir: Þjónustutengingu Timeout. Prófaðu aftur síðar.",
+  "bug_report_server_error": "Þjónustuvilla",
+  "bug_report_server_error_message": "Ekki var hægt að senda Villutilfykir: Þjónustuvilla. Prófaðu aftur síðar.",
+  "send_btn_label": "Senda"
 }

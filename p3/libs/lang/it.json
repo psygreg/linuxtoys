@@ -369,5 +369,19 @@
   "remove_action_name": "Rimuovi {name}",
   "remove_action_desc": "Rimuove automaticamente i componenti rilevati installati da questo script.",
   "solseek_desc": "Sfoglia, cerca e gestisci pacchetti, driver e applicazioni Flatpak per Solus da una comoda interfaccia TUI.",
-  "nvfixsolus_desc": "Risolve un problema in Solus in cui il driver Nouveau open-source ha la priorità sul driver Nvidia proprietario, causandone il malfunzionamento. Usalo solo dopo una corretta installazione del driver usando Solseek, che si trova nel menu Repository."
+  "nvfixsolus_desc": "Risolve un problema in Solus in cui il driver Nouveau open-source ha la priorità sul driver Nvidia proprietario, causandone il malfunzionamento. Usalo solo dopo una corretta installazione del driver usando Solseek, che si trova nel menu Repository.",
+  "bug_report_title": "Segnalazione di errore da LinuxToys",
+  "bug_report_confirm_title": "Invia Segnalazione di errore?",
+  "bug_report_confirm_message": "L'output del terminale verrà inviato al server remoto per aiutarci a risolvere i problemi. Vuoi continuare?",
+  "bug_report_success_title": "Segnalazione di errore inviata",
+  "bug_report_success_message": "Grazie! La tua Segnalazione di errore è stata inviata.\nProblema #{issue_number}: {issue_url}",
+  "bug_report_failed_title": "Segnalazione di errore non riuscita",
+  "bug_report_failed_message": "Impossibile inviare la Segnalazione di errore. Per favore riprova più tardi.",
+  "bug_report_no_connection": "Nessuna Connessione Internet",
+  "bug_report_no_connection_message": "Impossibile inviare la Segnalazione di errore: Nessuna Connessione Internet rilevata. Per favore controlla la tua Rete e riprova.",
+  "bug_report_timeout": "Timeout della Connessione",
+  "bug_report_timeout_message": "Impossibile inviare la Segnalazione di errore: Timeout della Connessione del Server. Per favore riprova più tardi.",
+  "bug_report_server_error": "Errore Server",
+  "bug_report_server_error_message": "Impossibile inviare la Segnalazione di errore: Errore Server. Per favore riprova più tardi.",
+  "send_btn_label": "Invia"
 }
