@@ -7,36 +7,31 @@ cachyos_sysd_lib () {
     mkdir -p sysctl-config
     sleep 1
     cd sysctl-config
-    if is_solus; then
-        {
-            echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
-            } > "modprobe.txt"
-        {
-            echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
-            } > "udev.txt"
-        {
-            echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
-            echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-            } > "tmpfiles.txt"       
-    else
+    {
+        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+        } > "modprobe.txt"
+    {
+        echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
+        } > "udev.txt"
+    {
+        echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
+        echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
+        } > "tmpfiles.txt"       
+    if ! is_solus; then
         {
             echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
             echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
             echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
             echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
             echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
-            echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
-            } > "udev.txt"
+            } >> "udev.txt"
         {
             echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
-            echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
-            echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-            } > "tmpfiles.txt"
+            } >> "tmpfiles.txt"
         {
             echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
             echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
-            echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
-            } > "modprobe.txt"
+            } >> "modprobe.txt"
         {
             echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
             echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
