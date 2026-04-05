@@ -2,7 +2,10 @@ import os
 import sys
 
 from . import dev_mode, get_icon_path, reboot_helper
+from .antenna import antenna
+from requests.exceptions import ConnectionError, Timeout
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
+from .uninstall_helper import build_uninstall_script_entry
 from .updater.update_dialog import DialogRestart
 
 
@@ -47,10 +50,17 @@ class InfosHead(Gtk.Box):
         )
         self.button_run.set_halign(Gtk.Align.START)
         self.button_run.set_size_request(125, 35)
-        copy_label = self.translations.get("term_view_copy", " Copy Output ")
-        self.button_copy = Gtk.Button(label=copy_label)
+        remove_label = self.translations.get("term_view_remove", " Remove ")
+        self.button_remove = Gtk.Button(label=remove_label)
+        self.button_remove.set_image(
+            Gtk.Image.new_from_icon_name("edit-delete-symbolic", Gtk.IconSize.BUTTON)
+        )
+        self.button_remove.set_halign(Gtk.Align.START)
+        self.button_remove.set_size_request(125, 35)
+        report_label = self.translations.get("term_view_report_bug", " Report Bug ")
+        self.button_copy = Gtk.Button(label=report_label)
         self.button_copy.set_image(
-            Gtk.Image.new_from_icon_name("edit-copy-symbolic", Gtk.IconSize.BUTTON)
+            Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.BUTTON)
         )
         self.button_copy.set_halign(Gtk.Align.START)
         self.button_copy.set_size_request(150, 35)
@@ -60,6 +70,7 @@ class InfosHead(Gtk.Box):
         self.progress_bar.set_fraction(0.0)
 
         hbox_controls.pack_start(self.button_run, False, False, 0)
+        hbox_controls.pack_start(self.button_remove, False, False, 0)
         hbox_controls.pack_start(self.button_copy, False, False, 0)
         hbox_controls.pack_start(self.progress_bar, True, True, 0)
 
@@ -96,11 +107,14 @@ class InfosHead(Gtk.Box):
 
 
 class TermRunScripts(Gtk.Box):
-    def __init__(self, scripts_infos: list, parent, translations=None):
+    def __init__(
+        self, scripts_infos: list, parent, translations=None, removable_script_info=None
+    ):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.parent = parent
         self.translations = translations or {}
         self.script_queue = scripts_infos.copy()
+        self.removable_script_info = removable_script_info
         self.total_scripts = len(scripts_infos)
         self.scripts_executed = 0
 
@@ -113,7 +127,17 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main = InfosHead(translations)
 
         self.vbox_main.button_run.connect("clicked", self.on_button_run_clicked)
+        self.vbox_main.button_remove.connect("clicked", self.on_button_remove_clicked)
         self.vbox_main.button_copy.connect("clicked", self.on_copy_clicked)
+        self.vbox_main.button_remove.set_sensitive(bool(self.removable_script_info))
+        self._set_remove_button_visibility()
+        
+        # Hide bug report button if auto error reports are enabled
+        auto_reports_enabled = getattr(parent, 'auto_error_reports_enabled', False)
+        if auto_reports_enabled:
+            self.vbox_main.button_copy.set_no_show_all(True)
+            self.vbox_main.button_copy.hide()
+        
         # Use translatable waiting text
         waiting_text = self.translations.get(
             "term_view_waiting", "Waiting {current}/{total}"
@@ -133,30 +157,191 @@ class TermRunScripts(Gtk.Box):
         if self.script_queue:
             self.vbox_main._update_header_labels(self.script_queue[0])
 
+    def _set_remove_button_visibility(self):
+        if self.removable_script_info and self.total_scripts == 1:
+            self.vbox_main.button_remove.show()
+        else:
+            self.vbox_main.button_remove.hide()
+
+    def _show_remove_confirmation_dialog(self, script_name):
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get(
+                "remove_confirm_title", "Remove Installed Components?"
+            ),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "remove_confirm_message",
+                "LinuxToys will attempt to remove all components installed by '{script_name}'. Do you want to continue?",
+            ).format(script_name=script_name)
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
+        )
+        dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.YES
+
+    def _show_remove_not_available_dialog(self):
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text=self.translations.get(
+                "remove_not_available_title", "Removal Not Available"
+            ),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "remove_not_available_message",
+                "No removable components were detected for this script.",
+            )
+        )
+        dialog.run()
+        dialog.destroy()
+
+    def on_button_remove_clicked(self, widget):
+        if not self.removable_script_info or self.parent._script_running:
+            return
+
+        script_name = self.removable_script_info.get("name", "Script")
+        if not self._show_remove_confirmation_dialog(script_name):
+            return
+
+        remove_script_entry = build_uninstall_script_entry(
+            self.removable_script_info, self.translations
+        )
+        if not remove_script_entry:
+            self._show_remove_not_available_dialog()
+            return
+
+        self.script_queue = [remove_script_entry]
+        self.total_scripts = 1
+        self.scripts_executed = 0
+        self.vbox_main.progress_bar.set_fraction(0.0)
+        self.vbox_main._update_header_labels(remove_script_entry)
+        waiting_text = self.translations.get(
+            "term_view_waiting", "Waiting {current}/{total}"
+        )
+        self.vbox_main.progress_bar.set_text(waiting_text.format(current=0, total=1))
+        self.vbox_main.button_remove.set_sensitive(False)
+        self.on_button_run_clicked(self.vbox_main.button_run)
+
     def on_button_run_clicked(self, widget):
         # Use translatable running text
+        is_removal = bool(self.script_queue and self.script_queue[0].get("cleanup_path"))
         running_text = self.translations.get(
             "term_view_running", "Running {current}/{total}"
         )
+        if is_removal:
+            running_text = self.translations.get(
+                "term_view_removing", "Removing {current}/{total}"
+            )
         self.vbox_main.progress_bar.set_text(
             running_text.format(current=self.scripts_executed, total=self.total_scripts)
         )
         running_label = self.translations.get("term_view_running_label", " Running ")
+        if is_removal:
+            running_label = self.translations.get(
+                "term_view_removing_label", " Removing "
+            )
         self.vbox_main.button_run.set_label(running_label)
         self.terminal.set_can_focus(True)
         self._run_next_script()
 
+    def _is_error_exit_code(self, status):
+        """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
+        # Extract the actual exit code from status
+        if os.WIFEXITED(status):
+            exit_code = os.WEXITSTATUS(status)
+            # 0 = success, 100 = user cancelled
+            return exit_code not in (0, 100)
+        # If terminated by signal (e.g., keyboard interrupt), it's not an error to report
+        # Signals are expected user interactions (Ctrl+C = SIGINT)
+        return False
+
+    def _auto_submit_bug_report_on_error(self):
+        """Automatically submit a bug report when a script exits with an error code."""
+        # Check if auto error reports are enabled
+        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
+        if not auto_reports_enabled:
+            return
+        
+        try:
+            # Get terminal logs
+            logs = self._get_terminal_text()
+            
+            # Gather system information
+            context_parts = []
+            
+            # Add script execution info
+            if self.script_queue or self.scripts_executed > 0:
+                context_parts.append(f"Scripts executed: {self.scripts_executed}/{self.total_scripts}")
+            
+            # Add system info (OS, GPU)
+            system_context = antenna.get_system_context()
+            if system_context:
+                context_parts.append(system_context)
+            
+            # Add script execution history
+            history_context = antenna.get_history_context()
+            if history_context:
+                context_parts.append(history_context)
+            
+            context = " | ".join(context_parts)
+            
+            # Submit the issue using antenna (silently, without showing confirmation dialog)
+            title = self.translations.get(
+                "bug_report_title", "Bug Report from LinuxToys"
+            )
+            result = antenna.submit_issue(title=title, logs=logs, context=context)
+            
+            # Optionally show result, but don't block the user
+            if result:
+                # Silent submission - just log it
+                pass
+        except (ConnectionError, Timeout):
+            # Network errors - silently skip, user can report manually
+            pass
+        except Exception:
+            # Any other errors - silently skip
+            pass
+
     def on_child_exit(self, term, status):
+        if getattr(self, "_cleanup_script_path", None):
+            try:
+                if os.path.exists(self._cleanup_script_path):
+                    os.remove(self._cleanup_script_path)
+            except Exception:
+                pass
+            self._cleanup_script_path = None
+
         if self._self_update:
             DialogRestart(parent=self.get_toplevel()).show()
+
+        # Check for error exit codes and auto-submit bug report
+        if self._is_error_exit_code(status) and not self._current_action_is_removal:
+            # Only auto-submit for regular scripts, not removal operations
+            self._auto_submit_bug_report_on_error()
 
         self.scripts_executed += 1
         progress = self.scripts_executed / self.total_scripts
         self.vbox_main.progress_bar.set_fraction(progress)
-        # Use translatable running text
+        # Use translatable running/removing text
         running_text = self.translations.get(
             "term_view_running", "Running {current}/{total}"
         )
+        if getattr(self, "_current_action_is_removal", False):
+            running_text = self.translations.get(
+                "term_view_removing", "Removing {current}/{total}"
+            )
         self.vbox_main.progress_bar.set_text(
             running_text.format(current=self.scripts_executed, total=self.total_scripts)
         )
@@ -183,11 +368,17 @@ class TermRunScripts(Gtk.Box):
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
 
+        # Add script to execution history
+        script_name = current_script.get("name", "unknown")
+        antenna.add_script_to_history(script_name)
+
         script_path = current_script.get("path", "true")
         if current_script.get("reboot") == "yes":
             self.parent.reboot_required = True
 
         self._self_update = current_script.get("self_update", False)
+        self._cleanup_script_path = current_script.get("cleanup_path")
+        self._current_action_is_removal = bool(self._cleanup_script_path)
 
         script_dir = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
         child_env = os.environ.copy()
@@ -217,8 +408,121 @@ class TermRunScripts(Gtk.Box):
         )
 
         self.vbox_main.button_run.set_sensitive(False)
+        self.vbox_main.button_remove.set_sensitive(False)
+
+    def _get_terminal_text(self) -> str:
+        """Extract all text from the terminal by copying to clipboard and reading back."""
+        try:
+            # Select all terminal content
+            if hasattr(self.terminal, "select_all"):
+                self.terminal.select_all()
+            
+            # Copy to clipboard
+            if hasattr(self.terminal, "copy_clipboard_format"):
+                self.terminal.copy_clipboard_format(Vte.Format.TEXT)
+            else:
+                self.terminal.copy_clipboard()
+            
+            # Read from clipboard
+            clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+            text = clipboard.wait_for_text()
+            
+            # Unselect
+            if hasattr(self.terminal, "unselect_all"):
+                self.terminal.unselect_all()
+            
+            return text if isinstance(text, str) else ""
+        except Exception:
+            # If clipboard extraction fails, fall back to antenna logs
+            try:
+                logs = antenna.log_capture.get_logs()
+                return logs if isinstance(logs, str) else ""
+            except Exception:
+                return ""
+
+    def _show_bug_report_confirmation_dialog(self):
+        """Show confirmation dialog before sending bug report."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get(
+                "bug_report_confirm_title", "Send Bug Report?"
+            ),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "bug_report_confirm_message",
+                "Your terminal output will be sent to the remote server to help us fix issues. Do you want to continue?",
+            )
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
+        )
+        dialog.add_button(
+            self.translations.get("send_btn_label", "Send"), Gtk.ResponseType.YES
+        )
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.YES
+
+    def _show_bug_report_result_dialog(self, success: bool, issue_data: dict = None):
+        """Show result dialog after bug report submission."""
+        if success and issue_data:
+            dialog = Gtk.MessageDialog(
+                transient_for=self.get_toplevel(),
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get(
+                    "bug_report_success_title", "Bug Report Submitted"
+                ),
+            )
+            issue_url = issue_data.get("issue_url", "")
+            issue_number = issue_data.get("issue_number", "")
+            dialog.format_secondary_text(
+                self.translations.get(
+                    "bug_report_success_message",
+                    "Thank you! Your bug report has been submitted.\n"
+                    "Issue #{issue_number}: {issue_url}",
+                ).format(issue_number=issue_number, issue_url=issue_url)
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                transient_for=self.get_toplevel(),
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get(
+                    "bug_report_failed_title", "Bug Report Failed"
+                ),
+            )
+            dialog.format_secondary_text(
+                self.translations.get(
+                    "bug_report_failed_message",
+                    "Could not submit the bug report. Please try again later.",
+                )
+            )
+        dialog.run()
+        dialog.destroy()
+
+    def _show_bug_report_network_error_dialog(self, title: str, message: str):
+        """Show network-specific error dialog."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=title,
+        )
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
 
     def _copy_terminal_text(self, copy_all=False):
+        """Copy terminal text to clipboard."""
         if copy_all and hasattr(self.terminal, "select_all"):
             self.terminal.select_all()
 
@@ -231,12 +535,78 @@ class TermRunScripts(Gtk.Box):
             self.terminal.unselect_all()
 
     def on_copy_clicked(self, button):
-        has_selection = (
-            self.terminal.get_has_selection()
-            if hasattr(self.terminal, "get_has_selection")
-            else False
-        )
-        self._copy_terminal_text(copy_all=not has_selection)
+        """Handle bug report button click."""
+        if not self._show_bug_report_confirmation_dialog():
+            return
+        
+        try:
+            # Get terminal logs
+            logs = self._get_terminal_text()
+            
+            # Gather system information
+            context_parts = []
+            
+            # Add script execution info
+            if self.script_queue or self.scripts_executed > 0:
+                context_parts.append(f"Scripts executed: {self.scripts_executed}/{self.total_scripts}")
+            
+            # Add system info (OS, GPU)
+            system_context = antenna.get_system_context()
+            if system_context:
+                context_parts.append(system_context)
+            
+            # Add script execution history
+            history_context = antenna.get_history_context()
+            if history_context:
+                context_parts.append(history_context)
+            
+            context = " | ".join(context_parts)
+            
+            # Submit the issue using antenna
+            title = self.translations.get(
+                "bug_report_title", "Bug Report from LinuxToys"
+            )
+            result = antenna.submit_issue(title=title, logs=logs, context=context)
+            
+            # Show result dialog
+            self._show_bug_report_result_dialog(result is not None, result or {})
+        except ConnectionError:
+            self._show_bug_report_network_error_dialog(
+                self.translations.get(
+                    "bug_report_no_connection",
+                    "No Internet Connection",
+                ),
+                self.translations.get(
+                    "bug_report_no_connection_message",
+                    "Unable to send bug report: No internet connection detected. Please check your network and try again.",
+                )
+            )
+        except Timeout:
+            self._show_bug_report_network_error_dialog(
+                self.translations.get(
+                    "bug_report_timeout",
+                    "Connection Timeout",
+                ),
+                self.translations.get(
+                    "bug_report_timeout_message",
+                    "Unable to send bug report: Server connection timed out. Please try again later.",
+                )
+            )
+        except Exception as e:
+            if "500" in str(e) or "502" in str(e) or "503" in str(e):
+                self._show_bug_report_network_error_dialog(
+                    self.translations.get(
+                        "bug_report_server_error",
+                        "Server Error",
+                    ),
+                    self.translations.get(
+                        "bug_report_server_error_message",
+                        "Unable to send bug report: The server encountered an error. Please try again later.",
+                    )
+                )
+            else:
+                print(f"Error submitting bug report: {e}", file=sys.stderr)
+                self._show_bug_report_result_dialog(False)
 
     def _on_terminal_key_press(self, widget, event):
         state = event.state

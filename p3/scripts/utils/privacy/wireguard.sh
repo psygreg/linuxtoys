@@ -16,10 +16,7 @@ sudo_rq
 if [[ "$ID_LIKE" =~ (ubuntu|debian) ]];then
 	_packages=(wireguard)
 	_install_
-elif [[ "$ID_LIKE" =~ (suse|rhel|fedora) ]];then
-	_packages=(wireguard-tools)
-	_install_
-elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+elif is_arch || is_cachy || is_solus || is_fedora || is_suse; then
 	_packages=(wireguard-tools)
 	_install_
 else

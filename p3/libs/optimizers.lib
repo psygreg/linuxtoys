@@ -7,71 +7,124 @@ cachyos_sysd_lib () {
     mkdir -p sysctl-config
     sleep 1
     cd sysctl-config
-    {
-        echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
-        } > "udev.txt"
-    {
-        echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
-        echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
-        echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-        } > "tmpfiles.txt"
-    {
-        echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
-        echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
-        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
-        } > "modprobe.txt"
-    {
-        echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
-        echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
-        echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
-        } > "other.txt"
+    if is_solus; then
+        {
+            echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+            } > "modprobe.txt"
+        {
+            echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
+            } > "udev.txt"
+        {
+            echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
+            echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
+            } > "tmpfiles.txt"       
+    else
+        {
+            echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
+            echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
+            } > "udev.txt"
+        {
+            echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
+            echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
+            echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
+            } > "tmpfiles.txt"
+        {
+            echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
+            echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
+            echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+            } > "modprobe.txt"
+        {
+            echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
+            echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
+            echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
+            } > "other.txt"
+    fi
     sleep 1
+    while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
     while read -r url; do wget -P udev "$url"; done < udev.txt
     while read -r url; do wget -P tmpfiles "$url"; done < tmpfiles.txt
-    while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
-    while read -r url; do wget "$url"; done < other.txt
+    if ! is_solus; then
+        while read -r url; do wget "$url"; done < other.txt
+    fi
     sleep 1
-    for dir in udev/rules.d tmpfiles.d modprobe.d sysctl.d systemd/journald.conf.d; do # ensure directories exist before copy
-        [ -d "/usr/lib/$dir" ] || sudo mkdir -p "/usr/lib/$dir"
-    done
-    [ -d "/usr/share/X11/xorg.conf.d" ] || sudo mkdir -p "/usr/share/X11/xorg.conf.d"
-    sudo cp -rf udev/* /usr/lib/udev/rules.d/
-    sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
+    if ! is_solus; then
+        for dir in udev/rules.d tmpfiles.d modprobe.d sysctl.d systemd/journald.conf.d; do # ensure directories exist before copy
+            [ -d "/usr/lib/$dir" ] || sudo mkdir -p "/usr/lib/$dir"
+        done
+    fi
     sudo cp -rf modprobe/* /usr/lib/modprobe.d/
-    sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
-    sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-    sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
+    sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
+    sudo cp -rf udev/* /usr/lib/udev/rules.d/
+    if ! is_solus; then
+        [ -d "/usr/share/X11/xorg.conf.d" ] || sudo mkdir -p "/usr/share/X11/xorg.conf.d"
+        sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
+        sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
+        sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
+    fi
     cd ..
     rm -rf sysctl-config
 }
 
 # shader booster
 sboost_lib () {
-    cd $HOME
-    local _tag=$(curl -s https://api.github.com/repos/psygreg/shader-booster/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')
-    if [ -z "$_tag" ]; then
-        _tag=$(curl -s https://api.github.com/repos/psygreg/shader-booster/releases | grep -oP '"tag_name":\s*"\K[^"]+' | head -n 1)
-    fi
+    GITHUB_BASE="https://raw.githubusercontent.com/psygreg/shader-booster/main"
+    GITEA_BASE="https://git.linux.toys/psygreg/shader-booster/raw/branch/main"
+    fetch_with_fallback () {
+        local filename="$1"
+        local output_file="$2"
+        if wget -q -O "$output_file" "${GITHUB_BASE}/${filename}" 2>/dev/null; then
+            return 0
+        fi
+        if wget -q -O "$output_file" "${GITEA_BASE}/${filename}" 2>/dev/null; then
+            return 0
+        fi
 
-    if [ "$ID" == "cachyos" ]; then
-        fetch_from_mirror "patcher-cachy.fish" \
-            "https://github.com/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish" \
-            "https://git.linux.toys/psygreg/shader-booster/releases/download/${_tag}/patcher-cachy.fish"
-        chmod +x patcher-cachy.fish
-        fish ./patcher-cachy.fish
-        rm patcher-cachy.fish
-    else
-        fetch_from_mirror "patcher.sh" \
-            "https://github.com/psygreg/shader-booster/releases/download/${_tag}/patcher.sh" \
-            "https://git.linux.toys/psygreg/shader-booster/releases/download/${_tag}/patcher.sh"
-        chmod +x patcher.sh
-        ./patcher.sh
-        rm patcher.sh
+        return 1
+    }
+    # patch for Nvidia GPUs
+    patch_nv () {
+        cd $HOME
+        if fetch_with_fallback "patch-nvidia" "${HOME}/patch-nvidia"; then
+            echo -e "\n$(cat ${HOME}/patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            rm ${HOME}/patch-nvidia
+        else
+            fatal "Failed to fetch patch-nvidia."
+        fi
+    }
+    # patch for Mesa-driven GPUs
+    patch_mesa () {
+        cd $HOME
+        if fetch_with_fallback "patch-mesa" "${HOME}/patch-mesa"; then
+            echo -e "\n$(cat ${HOME}/patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            rm ${HOME}/patch-mesa
+        else
+            fatal "Failed to fetch patch-mesa."
+        fi
+    }
+    HAS_NVIDIA=$(lspci | grep -i 'nvidia')
+    HAS_MESA=$(lspci | grep -Ei '(vga|3d)' | grep -vi nvidia)
+    PATCH_APPLIED=0
+    if [ ! -f ${HOME}/.booster ]; then
+        DEST_FILE="/etc/environment"
+        if [[ -n "$HAS_NVIDIA" ]]; then
+            patch_nv
+            PATCH_APPLIED=1
+        fi
+        if [[ -n "$HAS_MESA" ]]; then
+            patch_mesa
+            PATCH_APPLIED=1
+        fi
+
+        if [ $PATCH_APPLIED -eq 1 ]; then
+            zeninf "Success! Reboot to apply."
+            echo "1" > "${HOME}/.booster"
+            exit 0
+        fi
     fi
 }
 
@@ -123,23 +176,13 @@ psave_lib () {
     fi
 }
 
-# patcher for debian testing
-debfixer_lib () {
-    local codename=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2)
-    if [ "$ID" == "debian" ]; then
-        if ! su -c 'grep -q "^${USER} ALL=(ALL:ALL) ALL" /etc/sudoers'; then
-            su -c "sed -i '\|^root[[:space:]]\\+ALL=(ALL:ALL)[[:space:]]\\+ALL$|a ${USER} ALL=(ALL:ALL) ALL' /etc/sudoers"
-            sleep 1
-        fi
-    fi
-}
-
 # EarlyOOM - kills processes before a OOM event is triggered
 earlyoom_lib () {
     cd $HOME
     if is_solus; then
         git clone https://github.com/rfjakob/earlyoom.git
         cd earlyoom
+        sudo eopkg install -c system.devel
         sudo make install
         cd ..
         sudo rm -r earlyoom
@@ -188,7 +231,6 @@ hwaccel_flat_lib () {
 # for intel and nvidia GPUs, fix GTK rendering bugs
 fix_intel_gtk () {
     intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-    nvGPU=$(lspci | grep -i 'nvidia')
     if [[ -n "$intelGPU" ]]; then
         if echo "$intelGPU" | grep -qi 'battlemage'; then
             if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
@@ -196,13 +238,12 @@ fix_intel_gtk () {
             fi
         fi
     fi
-    if [[ -n "$nvGPU" ]]; then
+    if is_nvidia; then
         if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
             echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
         fi
     fi
     unset intelGPU
-    unset nvGPU
 }
 
 # use dnsmasq as a local caching DNS resolver - works generally better than systemd-resolved and fixes download speed issues with Steam
@@ -224,6 +265,10 @@ dnsmasq_lib () {
 # enable intel Xe driver for discrete GPUs
 intel_xe_lib () {
     intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
+        if [[ ! -n "$intelGPU" ]]; then
+            echo "No Intel GPU device detected, nothing to do."
+            return 0
+        fi
         if [[ -n "$intelGPU" ]]; then
             if echo "$intelGPU" | grep -Eqi 'battlemage|alchemist'; then
                 # Extract DEVID from lspci output (e.g., e20b from [8086:e20b])
@@ -277,7 +322,6 @@ EOF
                 fi
             fi
         fi
-    unset intelGPU
     # install decoder and encoder drivers
     if is_ubuntu; then
         sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
@@ -295,20 +339,8 @@ EOF
     if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
     fi
+    unset intelGPU
 }
-
-# change Plasma 6 renderer to OpenGL(2) for VRAM savings
-#plasma_mem_fix () {
-#    local ENV_FILE="$HOME/.config/plasma-workspace/env/kwin_compose_fix.sh"
-#    if [[ "$XDG_CURRENT_DESKTOP" == "KDE" ]] || pgrep -x "kwin_x11" > /dev/null || pgrep -x "kwin_wayland" > /dev/null; then
-#        mkdir -p "$(dirname "$ENV_FILE")"
-#        cat <<EOF > "$ENV_FILE"
-##!/bin/sh
-#export KWIN_COMPOSE="O"
-#EOF
-#        chmod +x "$ENV_FILE"
-#    fi
-#}
 
 # set vm.min_free_kbytes dynamically as 1% of total memory size
 # done through systemd service as it can recalculate every boot, so it will work as intended even after RAM upgrades or downgrades
@@ -350,4 +382,15 @@ preempt_lib () {
     elif is_ostree; then
         sudo rpm-ostree kargs --append='preempt=full'
     fi
+}
+
+nvidia_solus_lib () {
+    is_solus || return 0
+    is_nvidia || return 0
+    if ! eopkg list-installed | grep nvidia | grep -v "linux-firmware-nvidia" > /dev/null 2>&1; then
+        zeninf "No NVIDIA drivers found on Solus system. Install them first using Solseek."
+        return 0
+    fi
+    echo "rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1" | sudo tee /etc/kernel/cmdline.d/nvidia.conf
+    sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg
 }

@@ -4,7 +4,7 @@
 # description: steam_desc
 # icon: steam.svg
 # repo: https://store.steampowered.com/
-# nocontainer: ubuntu, debian, suse
+# nocontainer: ubuntu, debian, suse, solus
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -26,8 +26,10 @@ elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]
 else
     # use flatpak for all others, since native install usually only works well on Fedora and Arch
     sudo_rq
-    flatpak_in_lib
-    flatpak install --or-update --user --noninteractive flathub com.valvesoftware.Steam
+    _flatpaks=(
+        com.valvesoftware.Steam
+    )
+    _flatpak_
     _packages=(steam-devices)
     _install_
 fi

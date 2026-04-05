@@ -54,8 +54,10 @@ elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]
     _install_
     zeninf "$msg281" 
 else
-    flatpak_in_lib
-    flatpak install --or-update --user --noninteractive flathub com.heroicgameslauncher.hgl
+    _flatpaks=(
+        com.heroicgameslauncher.hgl
+    )
+    _flatpak_
 fi
 unset tag
 unset ver

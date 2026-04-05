@@ -25,6 +25,8 @@ elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]
     _install_
 else
     # use flatpak for all others, since native install usually only works well on Fedora and Arch
-    flatpak_in_lib
-    flatpak install --or-update --user --noninteractive flathub net.lutris.Lutris
+    _flatpaks=(
+        net.lutris.Lutris
+    )
+    _flatpak_
 fi

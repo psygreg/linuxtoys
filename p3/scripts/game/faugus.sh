@@ -11,9 +11,11 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-if is_debian || is_ubuntu || is_ostree || is_suse; then
-    flatpak_in_lib
-    flatpak install --user --noninteractive flathub io.github.Faugus.faugus-launcher
+if is_debian || is_ubuntu || is_ostree || is_suse || is_solus; then
+    _flatpaks=(
+        io.github.Faugus.faugus-launcher
+    )
+    _flatpak_
     sudo_rq
     # apply overrides for Steam compatibility
     sudo flatpak override io.github.Faugus.faugus-launcher --filesystem=~/.var/app/com.valvesoftware.Steam/.steam/steam/userdata/

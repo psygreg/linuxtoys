@@ -3,7 +3,7 @@
 # version: 1.0
 # description: lg_desc
 # icon: lucidglyph.svg
-# compat: ubuntu, debian, arch, fedora, suse, cachy, !zorin
+# compat: ubuntu, debian, arch, fedora, suse, cachy, !zorin, !solus
 # nocontainer
 # desktop: other
 # repo: https://github.com/maximilionus/lucidglyph/tree/v0.11.0

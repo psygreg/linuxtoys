@@ -3,9 +3,9 @@
 # version: 1.0
 # description: obs_desc
 # icon: obs.svg
-# gpu: Amd, Nvidia
 # repo: https://github.com/dimtpap/obs-pipewire-audio-capture
 # reboot: ostree
+# new
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -28,13 +28,16 @@ obs_pipe () {
     cd ..
     rm -rf obspipe
 }
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.obsproject.Studio
+_flatpaks=(
+    com.obsproject.Studio
+    com.obsproject.Studio.Plugin.WaylandHotkeys
+)
+_flatpak_
 sleep 1
 sudo_rq
 # check dependency for Pipewire Audio Capture plugin and xwayland
 _packages=(wireplumber)
-if is_arch || is_cachy; then
+if is_arch || is_cachy || is_solus; then
     _packages+=(xorg-xwayland)
 elif is_debian || is_ubuntu; then
     _packages+=(xwayland)

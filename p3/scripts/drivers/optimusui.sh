@@ -6,7 +6,7 @@
 # reboot: yes
 # nocontainer
 # gpu: nvidia
-# compat: arch, ubuntu, suse
+# compat: arch, ubuntu, suse, solus
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -19,8 +19,12 @@ if is_arch || is_ubuntu; then
     _packages=(bbswitch nvidia-prime)
 elif is_suse; then
     _packages=(bbswitch suse-prime)
+elif is_solus; then
+    _packages=(bbswitch bbswitch-current)
 fi
 _install_
-flatpak_in_lib
-flatpak install --or-update --system --noninteractive de.z_ray.OptimusUI
+_flatpaks=(
+    de.z_ray.OptimusUI
+)
+_flatpak_
 zeninf "$msg018"

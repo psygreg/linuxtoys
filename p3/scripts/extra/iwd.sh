@@ -5,6 +5,7 @@
 # icon: iwd.svg
 # reboot: yes
 # noconfirm: yes
+# compat
 # nocontainer
 
 # --- Start of the script code ---
@@ -39,16 +40,25 @@ iwd_in () {
             return 0
         else
             _packages=(iwd)
+            if is_solus; then
+                _packages+=(network-manager-iwd)
+            fi
             _install_
             # enforce iwd backend for networkmanager
-            wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/iwd.conf
-            sudo mv iwd.conf /etc/NetworkManager/conf.d/
-            # restart networkmanager with wpasupplicant disabled
-            sudo systemctl disable wpa_supplicant
-            sudo systemctl stop NetworkManager
-            sleep 1
-            sudo systemctl restart NetworkManager
-            sudo systemctl enable iwd
+            if is_solus; then
+                sudo systemctl disable wpa_supplicant
+                sudo systemctl stop wpa_supplicant
+                sudo systemctl enable --now iwd
+            else
+                wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/iwd.conf
+                sudo mv iwd.conf /etc/NetworkManager/conf.d/
+                # restart networkmanager with wpasupplicant disabled
+                sudo systemctl disable wpa_supplicant
+                sudo systemctl stop NetworkManager
+                sleep 1
+                sudo systemctl restart NetworkManager
+                sudo systemctl enable iwd
+            fi
             return 0
         fi
     else

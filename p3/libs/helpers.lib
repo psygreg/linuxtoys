@@ -148,17 +148,13 @@ pip_lib() {
 # --- CLInfo Test ---
 
 clinfo_chk () {
-    # Install clinfo if not present
     if ! command -v clinfo &>/dev/null; then
         _msg info "clinfo not found, installing..."
         sudo_rq
-
         _packages=(clinfo)
         _install_
-    fi
-
+    fi\
     # Check if OpenCL acceleration is available
-    # Parse the first line of clinfo output which shows "Number of platforms: X"
     local platform_count
     platform_count=$(clinfo 2>&1 | grep -m1 "Number of platforms" | grep -oE "[0-9]+$")
 

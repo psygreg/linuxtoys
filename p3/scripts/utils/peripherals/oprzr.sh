@@ -54,12 +54,17 @@ elif [[ "$ID_LIKE" == *suse* ]]; then
 elif is_arch || is_cachy; then
     chaotic_aur_lib
     _install_
+elif is_solus; then
+    _packages=(openrazer openrazer-current)
+    _install_
 fi
 if is_arch || is_cachy; then
     sudo gpasswd -a $USER openrazer
 else    
     sudo gpasswd -a $USER plugdev
 fi
-flatpak_in_lib
-flatpak install -y --system --noninteractive flathub app.polychromatic.controller
+_flatpaks=(
+    app.polychromatic.controller
+)
+_flatpak_
 zeninf "$msg036"

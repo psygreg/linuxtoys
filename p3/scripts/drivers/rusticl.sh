@@ -22,6 +22,8 @@ rusticl_in () {
         _packages=(Mesa-libRusticlOpenCL clinfo)
     elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
         _packages=(opencl-mesa clinfo)
+    elif is_solus; then
+        _packages=(ocl-icd clinfo)
     fi
     _install_
 }

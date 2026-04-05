@@ -3,6 +3,7 @@
 # version: 4
 # description: sublime_desc
 # icon: sublime.png
+# compat: !solus
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

@@ -12,5 +12,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.github.IsmaelMartinez.teams_for_linux
+_flatpaks=(
+    com.github.IsmaelMartinez.teams_for_linux
+)
+_flatpak_

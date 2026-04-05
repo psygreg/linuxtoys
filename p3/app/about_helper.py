@@ -3,6 +3,7 @@ import os
 import requests
 import threading
 import json
+import random
 from . import get_app_resource_path, get_icon_path
 from .updater import __version__
 from .lang_utils import escape_for_markup
@@ -13,6 +14,28 @@ class AboutDialog:
         self.translations = translations
         self.contributors = []
         self.app_version = __version__
+
+    def _get_random_icon(self):
+        """Returns path to a random icon (easter egg)"""
+        icon_options = ["linuxtoys.svg"]
+        
+        # Try to add icons from the old folder
+        try:
+            old_icons_path = get_app_resource_path("../app/icons/old")
+            if os.path.isdir(old_icons_path):
+                old_icons = [f for f in os.listdir(old_icons_path) if f.endswith(('.svg', '.png'))]
+                icon_options.extend(old_icons)
+        except Exception:
+            pass
+        
+        # Randomly select an icon filename
+        selected_icon = random.choice(icon_options)
+        
+        # If it's from the old folder, adjust the path
+        if selected_icon in ["linuxtoys_256x256.png", "linuxtoys_legacy.png", "linuxtoys_toolbox.svg"]:
+            return get_icon_path(f"old/{selected_icon}")
+        else:
+            return get_icon_path(selected_icon)
 
     def show_about_dialog(self):
         """Creates and shows the About dialog"""
@@ -107,10 +130,10 @@ class AboutDialog:
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         header_box.set_halign(Gtk.Align.CENTER)
         
-        # App icon
+        # App icon (randomly selected - easter egg!)
         try:
-            icon_path = get_icon_path("linuxtoys.svg")
-            if icon_path:
+            icon_path = self._get_random_icon()
+            if icon_path and os.path.exists(icon_path):
                 # For SVG files, load as pixbuf with specific size
                 try:
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
@@ -118,11 +141,11 @@ class AboutDialog:
                     )
                     app_icon = Gtk.Image.new_from_pixbuf(pixbuf)
                 except Exception:
-                    # Fallback if SVG loading fails
+                    # Fallback if icon loading fails
                     app_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
                     app_icon.set_pixel_size(64)
             else:
-                raise FileNotFoundError("linuxtoys.svg not found")
+                raise FileNotFoundError("Icon not found")
         except Exception:
             app_icon = Gtk.Image.new_from_icon_name("applications-utilities", Gtk.IconSize.DIALOG)
             app_icon.set_pixel_size(64)

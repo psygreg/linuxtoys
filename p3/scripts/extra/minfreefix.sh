@@ -13,4 +13,4 @@ source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
 sudo_rq
 free_mem_fix
-zeninf "$rebootmsg" # while immediate rebooting is not necessary, so I won
+zeninf "$rebootmsg" # while immediate rebooting is not necessary it is ideal

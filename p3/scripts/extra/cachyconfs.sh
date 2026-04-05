@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cachyconfs_desc
 # icon: cachyos.svg
-# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue
+# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, solus
 # reboot: yes
 # nocontainer
 # repo: https://github.com/CachyOS/CachyOS-Settings
@@ -42,7 +42,9 @@ if command -v rpm-ostree &>/dev/null; then
         zenity --info --text "$msg281" --height=300 --width=300
     fi
 else
-    if [ ! -f /usr/lib/sysctl.d/70-cachyos-settings.conf ]; then
+    if ! is_solus && [ ! -f /usr/lib/sysctl.d/70-cachyos-settings.conf ]; then
+        cachyos_sysd_lib
+    elif is_solus && [ ! -f /usr/lib/udev/rules.d/60-ioschedulers.rules ]; then
         cachyos_sysd_lib
     else
         zenity --info --text "$msg281" --height=300 --width=300

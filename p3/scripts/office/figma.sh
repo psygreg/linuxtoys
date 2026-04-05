@@ -2,7 +2,7 @@
 # name: Figma
 # version: 1.0
 # description: figma_desc
-# compat: ubuntu, debian, fedora, suse, cachy, arch
+# compat: none
 # icon: figma.svg
 
 # --- Start of the script code ---

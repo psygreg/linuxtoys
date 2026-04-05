@@ -16,5 +16,7 @@ if is_ubuntu; then
 fi
 _packages=(podman distrobox)
 _install_
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf
+_flatpaks=(
+    com.ranfdev.DistroShelf
+)
+_flatpak_

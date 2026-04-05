@@ -48,7 +48,7 @@ docker_in () { # install docker
             sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
         fi
         _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]] || is_solus; then
         _packages=(docker docker-compose)
     elif [[ "$ID_LIKE" == *suse* ]]; then
         _packages=(docker docker-compose)
@@ -148,8 +148,10 @@ if [ -e /dev/kvm ]; then
             # stage 1: docker
             docker_in
             # stage 2: freeRDP
-            flatpak_in_lib
-            flatpak install -y --user --noninteractive flathub com.freerdp.FreeRDP
+            _flatpaks=(
+                com.freerdp.FreeRDP
+            )
+            _flatpak_
             # enable iptables kernel module
             echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
             # get latest winboat release

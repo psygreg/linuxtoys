@@ -47,13 +47,10 @@ docker_in () { # install docker
         if command -v rpm-ostree &> /dev/null; then
             _packages+=(podman-compose) # podman-compose is needed for rootless mode with ostree. the reasons for this are unknown, but without this it won't work at all.
         fi
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        _packages=(docker docker-compose)
-    elif [[ "$ID_LIKE" == *suse* ]]; then
+    elif is_arch || is_cachy || is_suse || is_solus; then
         _packages=(docker docker-compose)
     fi
     _install_
-    # fix for ostree
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'

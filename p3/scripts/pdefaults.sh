@@ -3,22 +3,20 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin
+# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin, solus
 # reboot: yes
 # noconfirm: yes
 # nocontainer
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
-# language
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 # system-agnostic scripts
 sysag_run () {
-    if [[ "$ID" != "cachyos" ]] || [ ! -f /usr/lib/sysctl.d/99-cachyos-settings.conf ]; then
+    if ! is_cachy; then
         # systemd patches
         cachyos_sysd_lib
     fi
@@ -28,10 +26,10 @@ sysag_run () {
     dsplitm_lib
     # add earlyoom configuration
     earlyoom_lib
-    # add dnsmasq configuration -- disabled due to potential selfhosting needs
-    # dnsmasq_lib
     # change intel driver to Xe on discrete GPUs
-    intel_xe_lib
+    if ! is_solus && ! is_fedora; then
+        intel_xe_lib
+    fi
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
     fix_intel_gtk
     # set proton to run on wine-wayland mode by default
@@ -40,12 +38,14 @@ sysag_run () {
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
-    # plasma VRAM usage fix - suspended for issues on some systems
-    # plasma_mem_fix
     # vm.min_free_kbytes dynamic setup
-    free_mem_fix
+    if ! is_solus; then
+        free_mem_fix
+    fi
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
     preempt_lib
+    # fix nvidia nouveau taking precedence over modeset on Solus; skipped in other OS
+    nvidia_solus_lib
     # fix video thumbnails
     _packages=(ffmpegthumbnailer)
     # codec fix for Fedora/OpenSUSE
@@ -57,19 +57,11 @@ sysag_run () {
         sudo opi codecs
     fi
     _install_
-    # hardware accelerated video playback for flatpak applications - only if flatpak is already present, not enforced
-    if command -v flatpak &>/dev/null; then
-        hwaccel_flat_lib
-    fi
 }
 # consolidated installation
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         cd $HOME
-        #if [ "$ID" == "debian" ]; then
-            #debfixer_lib
-        #fi
-        # system-agnostic optimizations
         sysag_run
         touch $HOME/.local/.autopatch.state
         zeninf "$msg036"
@@ -81,10 +73,10 @@ optimizer () {
 while true; do
     CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \
         --column "Options" \
+        "Install without Power Profile" \
         "Desktop" \
         "Laptop" \
         "Cancel" \
-        "Install without Power Profile" \
         --width 360 --height 360 )
 
     if [ $? -ne 0 ]; then
@@ -92,9 +84,9 @@ while true; do
     fi
 
     case $CHOICE in
+    "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
     "Desktop") sudo_rq && pp_ondemand && optimizer && exit 0;;
     "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
-    "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac

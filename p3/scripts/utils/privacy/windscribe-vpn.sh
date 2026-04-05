@@ -4,6 +4,7 @@
 # description: Windscribe VPN
 # icon: windscribe.svg
 # repo: https://windscribe.com
+# compat: !solus
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"

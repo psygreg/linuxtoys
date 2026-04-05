@@ -3,7 +3,7 @@
 # version: 1.0
 # description: Um software disponibilizado gratuitamente pelo Conselho Nacional de Justiça (CNJ) do Brasil para acesso ao PJE via certificado digital e assinatura eletrônica de documentos.
 # icon: pjeoffice-pro.png
-# compat: debian, ubuntu
+# compat: none
 # localize: pt
 # repo: https://github.com/psygreg/pje-installer
 

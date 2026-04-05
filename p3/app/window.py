@@ -53,6 +53,9 @@ class AppWindow(Gtk.ApplicationWindow):
         # Checklist
         self.check_buttons = []
 
+        # Auto error reporting preference
+        self.auto_error_reports_enabled = False
+
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(main_vbox)
@@ -544,7 +547,12 @@ class AppWindow(Gtk.ApplicationWindow):
         left_pad.set_size_request(10, 1)
         box.pack_start(left_pad, False, False, 0)
 
-        label = Gtk.Label(label=item_info["name"])
+        # Add emoji prefix for new items
+        display_name = item_info["name"]
+        if item_info.get("is_new", False):
+            display_name = f"❗ {display_name}"
+
+        label = Gtk.Label(label=display_name)
         label.set_line_wrap(True)
         label.set_justify(Gtk.Justification.CENTER)
         label.set_halign(Gtk.Align.CENTER)
@@ -576,7 +584,7 @@ class AppWindow(Gtk.ApplicationWindow):
             # Escape HTML characters to prevent markup issues
             import html
 
-            escaped_name = html.escape(item_info["name"])
+            escaped_name = html.escape(display_name)
             label.set_markup(f"<b>{escaped_name}</b>")
         box.pack_start(label, True, True, 0)
 
@@ -778,7 +786,7 @@ class AppWindow(Gtk.ApplicationWindow):
         # If this is a root script (shown as a category), execute it directly
         if info.get("is_script"):
             # Use VTE-based term_view for execution
-            self.open_term_view([info])
+            self.open_term_view([info], removable_script_info=info)
         else:
             # This is a category or subcategory - navigate to show its contents
             # Create a new view for the subcategory to enable proper animation
@@ -809,8 +817,10 @@ class AppWindow(Gtk.ApplicationWindow):
             # Show the new view with animation
             self.show_scripts_view(info)
 
-    def open_term_view(self, infos):
-        run_box = term_view.TermRunScripts(infos, self, self.translations)
+    def open_term_view(self, infos, removable_script_info=None):
+        run_box = term_view.TermRunScripts(
+            infos, self, self.translations, removable_script_info=removable_script_info
+        )
 
         self.header_widget.hide()
         self.reveal.set_reveal_child(False)
@@ -876,7 +886,8 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # Only open terminal if user didn't cancel the needed requirements dialog
         if deps:
-            self.open_term_view(deps)
+            removable = info if len(deps) == 1 else None
+            self.open_term_view(deps, removable_script_info=removable)
 
     def _handle_create_new_script(self):
         """Handle the creation of a new local script."""
@@ -1796,7 +1807,7 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             return
 
         # Use VTE-based term_view for execution
-        self.open_term_view([item_info])
+        self.open_term_view([item_info], removable_script_info=item_info)
 
     def _clear_search_results(self):
         """Clear search results and return to previous view."""

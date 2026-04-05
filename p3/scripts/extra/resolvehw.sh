@@ -6,7 +6,7 @@
 # repo: https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
 # compat: ubuntu, debian, fedora, arch, cachy
 
-# --- Start of the script code ---
+# --- Start of the script code --- ## TODO for DaVinciBox
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
