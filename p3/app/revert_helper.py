@@ -40,6 +40,33 @@ def _detect_package_manager():
     return None
 
 
+def _load_from_transmap(transmap_path):
+    """
+    Load operations from a transmap file created during script execution.
+    
+    Returns a list of operation strings in the order they appear in the file.
+    Returns empty list if file doesn't exist or cannot be read.
+    """
+    if not os.path.exists(transmap_path):
+        return []
+    
+    try:
+        with open(transmap_path, "r") as f:
+            content = f.read()
+    except Exception:
+        return []
+    
+    operations = []
+    
+    # Parse operation lines (format: "operation_type operand1 operand2 ...")
+    for line in content.split("\n"):
+        line = line.strip()
+        if line and not line.startswith("#"):  # Skip empty lines and comments
+            operations.append(line)
+    
+    return operations
+
+
 def _load_last_execution(script_name):
     """
     Load the last execution record from the registry for the given script.
@@ -300,6 +327,100 @@ def build_uninstall_script_entry(script_info, translations=None):
         )
         if translations
         else "Automatically removes components installed by this script using the registry.",
+        "repo": script_info.get("repo", ""),
+        "path": temp_path,
+        "is_script": True,
+        "cleanup_path": temp_path,
+    }
+
+
+def build_auto_revert_script_entry(script_info, transmap_path, translations=None):
+    """
+    Build a temporary auto-revert script for a script that exited with an error.
+    
+    Reads the transmap file created during script execution and generates
+    reverse operations to undo the changes made before the error occurred.
+    
+    Returns a script_info-like dict or None when no reversible operations were found.
+    """
+    if not os.path.exists(transmap_path):
+        return None
+    
+    # Load operations from the transmap file
+    operations = _load_from_transmap(transmap_path)
+    
+    if not operations:
+        # No operations found in transmap
+        return None
+    
+    package_manager = _detect_package_manager()
+    
+    # Generate reverse commands (in reverse order - undo most recent first)
+    reverse_commands = []
+    for op_line in reversed(operations):
+        cmd = _reverse_operation(op_line, package_manager)
+        if cmd:
+            reverse_commands.append(cmd)
+    
+    if not reverse_commands:
+        # No reversible operations found
+        return None
+    
+    script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    
+    lines = [
+        "#!/bin/bash",
+        "set -eo pipefail",
+        f'SCRIPT_DIR="{script_dir}"',
+        'source "$SCRIPT_DIR/libs/linuxtoys.lib"',
+        'source "$SCRIPT_DIR/libs/helpers.lib"',
+    ]
+    
+    # Check if we need sudo
+    needs_sudo = any(
+        cmd.strip().startswith("sudo ") for cmd in reverse_commands
+    )
+    
+    if needs_sudo:
+        lines.append("")
+        lines.append("# Request sudo authorization")
+        lines.append("sudo_rq")
+    
+    lines.append("")
+    lines.append("# Reverse operations from failed script execution (in reverse order)")
+    lines.extend(reverse_commands)
+    lines.append("")
+    lines.append('echo "Automatic reversion completed."')
+    
+    # Write temporary script
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", prefix="linuxtoys-auto-revert-", suffix=".sh", delete=False
+        ) as temp_script:
+            temp_script.write("\n".join(lines) + "\n")
+            temp_path = temp_script.name
+    except Exception:
+        return None
+    
+    os.chmod(temp_path, 0o700)
+    
+    # Prepare return entry
+    script_name_display = script_info.get("name", "Script")
+    revert_name = (
+        translations.get("auto_revert_action_name", "Auto-revert {name}")
+        if translations
+        else "Auto-revert {name}"
+    ).format(name=script_name_display)
+    
+    return {
+        "icon": script_info.get("icon", "application-x-executable"),
+        "name": revert_name,
+        "description": translations.get(
+            "auto_revert_action_desc",
+            "Automatically reverts components installed by this script before it failed.",
+        )
+        if translations
+        else "Automatically reverts components installed by this script before it failed.",
         "repo": script_info.get("repo", ""),
         "path": temp_path,
         "is_script": True,

@@ -121,6 +121,59 @@ def get_history_context() -> str:
         return "Recent scripts: " + " → ".join(script_names[:10])
     except Exception:
         return ""
+
+
+def _get_last_n_lines(text: str, n: int = 20) -> str:
+    """Extract the last n lines from a text block."""
+    lines = text.strip().split("\n")
+    if len(lines) <= n:
+        return text
+    return "\n".join(lines[-n:])
+
+
+def _get_transmap_content() -> str:
+    """Load and format transmap file content for the report."""
+    transmap_path = "/tmp/linuxtoys/transmap"
+    try:
+        if not Path(transmap_path).exists():
+            return ""
+        with open(transmap_path, "r") as f:
+            content = f.read().strip()
+        if not content:
+            return ""
+        return f"=== TRANSMAP (Operations Log) ===\n{content}\n"
+    except Exception:
+        return ""
+
+
+def _get_last_registry_entries(n: int = 2) -> str:
+    """Extract the last n script entries from the registry file."""
+    registry_path = Path.home() / ".cache" / "linuxtoys" / "registry"
+    try:
+        if not registry_path.exists():
+            return ""
+        
+        with open(registry_path, "r") as f:
+            content = f.read()
+        
+        if not content.strip():
+            return ""
+        
+        # Split by "---\n" to get individual entries
+        entries = content.split("---\n")
+        # Reverse and take the last n non-empty entries
+        entries = [e.strip() for e in entries if e.strip()]
+        entries = entries[-n:]
+        
+        if not entries:
+            return ""
+        
+        formatted = "=== RECENT REGISTRY (Last Script Executions) ===\n"
+        formatted += "\n---\n".join(entries)
+        formatted += "\n"
+        return formatted
+    except Exception:
+        return ""
 class LogCapture:
     """Tees stdout/stderr into an in-memory buffer AND the real terminal."""
     def __init__(self):
@@ -311,13 +364,35 @@ def _initialize_antenna() -> None:
     _antenna_initialized = True
  
 # --- Issue submission ---
-def submit_issue(title: str, logs: str = "", context: str = "") -> dict | None:
-    """Submit a GitHub issue. Logs default to current captured output."""
+def submit_issue(title: str, logs: str = "", context: str = "", is_footer_triggered: bool = False) -> dict | None:
+    """Submit a GitHub issue. Logs default to current captured output (last 20 lines).
+    
+    Args:
+        title: Issue title
+        logs: Issue logs (defaults to captured output)
+        context: System context
+        is_footer_triggered: If True, include recent registry entries (for manual reports from footer)
+    """
     # Initialize antenna on first bug report submission
     _initialize_antenna()
     
     if not logs:
         logs = log_capture.get_logs()
+    
+    # Extract only last 20 lines of logs
+    logs = _get_last_n_lines(logs, n=20)
+    
+    # Append transmap content if available
+    transmap_content = _get_transmap_content()
+    if transmap_content:
+        logs = logs + "\n" + transmap_content
+    
+    # Append recent registry entries only if footer-triggered (useful for manual reports from footer link)
+    if is_footer_triggered:
+        registry_content = _get_last_registry_entries(n=2)
+        if registry_content:
+            logs = logs + "\n" + registry_content
+    
     # Strip non-printable characters client-side before sending
     logs    = _NON_PRINTABLE.sub("", logs)
     title   = _NON_PRINTABLE.sub("", title).strip()

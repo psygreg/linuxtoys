@@ -177,6 +177,7 @@ class SupportFooter(Gtk.Box):
                     title="User Report: Bug from GUI",
                     logs=comment,
                     context=system_context,
+                    is_footer_triggered=True,
                 )
                 
                 # Show success message on main thread

@@ -4,6 +4,7 @@ import os
 import sys
 import tempfile
 import asyncio
+import subprocess
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
 from .manifest_helper import (
@@ -12,6 +13,7 @@ from .manifest_helper import (
     check_flatpaks_async, install_flatpaks_async
 )
 from .dev_mode import is_dev_mode_enabled
+from .revert_helper import build_auto_revert_script_entry
 
 def resolve_script_dir():
     """
@@ -104,9 +106,91 @@ def create_temp_file(script_path):
     return temp_file_path
 
 
+def _is_error_exit_code(exit_code):
+    """
+    Check if an exit code indicates an error (not success, not user cancellation, not signal termination).
+    
+    Exit codes:
+    - 0: success
+    - 100: user cancellation (script-specific)
+    - 130: SIGINT (Ctrl+C / user interrupt)
+    - 143: SIGTERM (user-forced abort)
+    - 128-192: Generally signal terminations (not real errors)
+    """
+    # 0 = success, 100 = user cancelled
+    if exit_code in (0, 100):
+        return False
+    
+    # Exit codes 128-192 represent signal terminations (not errors to report)
+    # Specifically: SIGINT=130, SIGTERM=143, etc.
+    if 128 <= exit_code <= 192:
+        return False
+    
+    return True
+
+
+def _try_execute_auto_revert(script_info, transmap_path):
+    """
+    Attempt to build and execute an auto-revert script from transmap operations.
+    
+    Returns True if auto-revert was successful, False otherwise.
+    The transmap file is NOT wiped here - that's handled by the caller
+    after auto-report has been submitted (if enabled).
+    """
+    if not os.path.exists(transmap_path):
+        return False
+    
+    try:
+        # Build the auto-revert script
+        auto_revert_entry = build_auto_revert_script_entry(
+            script_info, transmap_path, translations=None
+        )
+        
+        if not auto_revert_entry:
+            return False
+        
+        # Execute the auto-revert script
+        revert_script_path = auto_revert_entry.get("path")
+        if not revert_script_path:
+            return False
+        
+        print("\n⚠️  Script failed. Attempting automatic reversion...")
+        print("=" * 60)
+        
+        # Run the revert script
+        result = subprocess.run(
+            ["/bin/bash", revert_script_path],
+            capture_output=True,
+            text=True
+        )
+        
+        if result.returncode == 0:
+            print("✅ Automatic reversion completed successfully.")
+            return True
+        else:
+            print(f"✗ Automatic reversion failed with exit code {result.returncode}")
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+            return False
+    
+    except Exception as e:
+        print(f"✗ Error during automatic reversion: {e}")
+        return False
+    finally:
+        # Clean up the auto-revert script
+        try:
+            if auto_revert_entry and "cleanup_path" in auto_revert_entry:
+                cleanup_path = auto_revert_entry.get("cleanup_path")
+                if cleanup_path and os.path.exists(cleanup_path):
+                    os.remove(cleanup_path)
+        except Exception:
+            pass
+
+
 def easy_cli_run_script(script_info):
     """
     Run a LinuxToys script in EASY_CLI mode while preventing any xdg-open calls.
+    Supports automatic reversion if the script fails.
     """
 
     # Check if dev mode is enabled and run the script
@@ -144,8 +228,42 @@ def easy_cli_run_script(script_info):
             except (IOError, OSError):
                 pass  # Silently ignore if transmap cannot be removed
 
-        if code != 0:
-            return 1
+        # Handle errors with auto-revert capability
+        if _is_error_exit_code(code):
+            transmap_path = "/tmp/linuxtoys/transmap"
+            auto_reports_enabled = False  # CLI mode doesn't have auto-reporting (yet)
+            
+            # Try to auto-revert if there are operations in the transmap
+            script_info_for_revert = {
+                "name": script_name,
+                "icon": "application-x-executable",
+                "repo": "",
+            }
+            
+            if _try_execute_auto_revert(script_info_for_revert, transmap_path):
+                # Auto-revert was successful
+                print(f"\n✔ Script '{script_name}' failed but changes were automatically reverted.")
+                # Wipe transmap after successful auto-revert if auto-reporting was enabled
+                if auto_reports_enabled:
+                    try:
+                        if os.path.exists(transmap_path):
+                            os.remove(transmap_path)
+                    except (IOError, OSError):
+                        pass
+                # Otherwise preserve transmap for potential manual reporting
+            else:
+                # No auto-revert possible or failed
+                print(f"\n✗ Script '{script_name}' failed with exit code {code}")
+                # Wipe transmap if auto-reporting was enabled (we've already reported)
+                if auto_reports_enabled:
+                    try:
+                        if os.path.exists(transmap_path):
+                            os.remove(transmap_path)
+                    except (IOError, OSError):
+                        pass
+                # Otherwise preserve transmap for potential manual reporting
+            
+            return code
         
     except KeyboardInterrupt:
         # Stop execution if the user presses Ctrl+C

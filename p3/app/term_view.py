@@ -5,7 +5,7 @@ from . import dev_mode, get_icon_path, reboot_helper
 from .antenna import antenna
 from requests.exceptions import ConnectionError, Timeout
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
-from .uninstall_helper import build_uninstall_script_entry
+from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry
 from .updater.update_dialog import DialogRestart
 
 
@@ -293,6 +293,35 @@ class TermRunScripts(Gtk.Box):
         except Exception:
             pass  # Silently ignore registry errors
 
+    def _try_auto_revert(self, transmap_path):
+        """
+        Attempt to build an auto-revert script from transmap operations.
+        
+        Returns a script_info-like dict if revertible operations exist, None otherwise.
+        """
+        if not os.path.exists(transmap_path):
+            return None
+        
+        # Get the current script info to pass to the auto-revert builder
+        current_script = None
+        if hasattr(self, "_current_script_name"):
+            current_script = {
+                "name": self._current_script_name,
+                "icon": "application-x-executable",
+                "repo": "",
+            }
+        
+        if not current_script:
+            return None
+        
+        try:
+            auto_revert_entry = build_auto_revert_script_entry(
+                current_script, transmap_path, self.translations
+            )
+            return auto_revert_entry
+        except Exception:
+            return None
+
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
         # Extract the actual exit code from status
@@ -378,10 +407,42 @@ class TermRunScripts(Gtk.Box):
                 except (IOError, OSError):
                     pass  # Silently ignore if transmap cannot be removed
 
-        # Check for error exit codes and auto-submit bug report
+        # Check for error exit codes and handle auto-reversion or bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
-            # Only auto-submit for regular scripts, not removal operations
-            self._auto_submit_bug_report_on_error()
+            # Only auto-handle for regular scripts, not removal operations
+            transmap_path = "/tmp/linuxtoys/transmap"
+            auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
+            
+            # Submit bug report first if enabled (before auto-revert consumes transmap)
+            if auto_reports_enabled:
+                self._auto_submit_bug_report_on_error()
+            
+            # Try to auto-revert if there are operations in the transmap
+            auto_revert_entry = self._try_auto_revert(transmap_path)
+            
+            if auto_revert_entry:
+                # Auto-revert was successful, execute the reversion script
+                self.script_queue = [auto_revert_entry]
+                self.total_scripts = 1
+                self.scripts_executed = 0
+                self.vbox_main.progress_bar.set_fraction(0.0)
+                self.vbox_main._update_header_labels(auto_revert_entry)
+                waiting_text = self.translations.get(
+                    "term_view_waiting", "Waiting {current}/{total}"
+                )
+                self.vbox_main.progress_bar.set_text(waiting_text.format(current=0, total=1))
+                self.vbox_main.button_remove.set_sensitive(False)
+                self.on_button_run_clicked(self.vbox_main.button_run)
+                return  # Skip further processing
+            else:
+                # No auto-revert possible, wipe transmap only if auto-reporting was enabled
+                if auto_reports_enabled:
+                    try:
+                        if os.path.exists(transmap_path):
+                            os.remove(transmap_path)
+                    except (IOError, OSError):
+                        pass
+                # If auto-reporting is disabled, preserve transmap for user to potentially report manually
 
         self.scripts_executed += 1
         progress = self.scripts_executed / self.total_scripts
