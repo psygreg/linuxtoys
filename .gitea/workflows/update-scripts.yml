@@ -1,0 +1,35 @@
+name: Update Scripts
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'p3/app/updater/__init__.py'
+
+jobs:
+  update-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and sync scripts
+        run: |
+          # Clone the scripts repository
+          git clone --depth 1 https://git.linux.toys/psygreg/scripts.git /tmp/scripts_repo
+
+          # Sync files from the scripts repo to p3/scripts, excluding specified items
+          rsync -av --delete \
+            --exclude='.git' \
+            --exclude='LICENSE' \
+            --exclude='README.md' \
+            --exclude='.gitignore' \
+            /tmp/scripts_repo/ p3/scripts/
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "Script Update Bot"
+          git config user.email "bot@linux.toys"
+          git add p3/scripts/
+          git commit -m "chore: Update scripts from upstream repository" || echo "No changes to commit"
+          git push
