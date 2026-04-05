@@ -1,9 +1,4 @@
-## linuxtoys function library
-source /etc/os-release
-source "$SCRIPT_DIR/libs/helpers.lib"
-export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
-
-# --- UI & Logging ---
+## LinuxToys base shell library
 
 # Unified message handler
 _msg() {
@@ -23,23 +18,32 @@ _msg() {
         *)       echo "$text" ;;
     esac
 }
-
 zeninf() { _msg info "$1"; }
 zenwrn() { _msg warning "$1"; }
-
 fatal() {
     _msg error "$1" "Fatal Error"
     exit 1
 }
-
 nonfatal() {
     _msg error "$1" "Error"
     return 1
 }
 
-# --- Sudo Handling ---
+# sourcing
+sysdetect() {
+    source /etc/os-release || fatal "Failed to fetch OS information"
+}
+summon_helpers() {
+    source "$SCRIPT_DIR/libs/helpers.lib" || fatal "Helpers library not found"
+}
+summon_optimizers() {
+    source "$SCRIPT_DIR/libs/optimizers.lib" || fatal "Optimizers library not found"
+}
 
+# sudo handler
 sudo_rq() {
+    [ -f "$SCRIPT_DIR/libs/zpass.sh" ] || fatal "Unable to set askpass"
+    export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
     # Check if already authorized
     if sudo -n true 2>/dev/null || [ -f /tmp/linuxtoys_sudo_validated ]; then
         [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
@@ -80,9 +84,9 @@ sudo_rq() {
     fi
 }
 
-# --- Package Management ---
-
+# Package Management
 _install_() {
+    sysdetect
     [[ -z "$_packages" ]] && return 0
 
     # OSTree handling
@@ -119,7 +123,6 @@ _install_() {
                             if pacman -Ss paru | grep -q paru; then
                                 sudo pacman -S --noconfirm paru
                             else
-                                # chaotic_aur_lib
                                 sudo pacman -S --needed base-devel
                                 cd $HOME
                                 git clone https://aur.archlinux.org/paru.git
@@ -155,6 +158,7 @@ _install_() {
 
 _flatpak_() {
     if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+        summon_helpers
         sudo_rq
         flatpak_in_lib
     fi
@@ -171,7 +175,6 @@ _flatpak_() {
 }
 
 # --- Utils ---
-
 _lang_() {
     local lang="${LANG:0:2}"
     local available=" am ar bn cs de el en es fa fi fr he hi id it ja ko ms nl pl pt ru sv sw ta th tl tr uk ur vi zh bg bs da hr hu is no sk sl sr nb az lv ga ne my sq tg uz hy ka km lo mn ro et lt "
@@ -181,37 +184,81 @@ _lang_() {
     else
         langfile="en"
     fi
+    source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 }
 
 # --- System Detection ---
-is_arch() { [[ ("$ID" =~ "arch" || "$ID" == "artix" || "$ID_LIKE" =~ "arch") && "$ID" != "cachyos" ]]; }
-is_cachy() { [[ "$ID" == "cachyos" ]]; }
-is_fedora() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && ! command -v rpm-ostree &>/dev/null; }
-is_ostree() { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null; }
-is_debian() { [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" =~ "debian" || "$ID_LIKE" =~ "ubuntu" ]]; }
-is_ubuntu() { [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
-is_suse() { [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
-is_solus() { [[ "$ID" == "solus" ]]; }
+is_arch() sysdetect && { [[ ("$ID" =~ "arch" || "$ID" == "artix" || "$ID_LIKE" =~ "arch") && "$ID" != "cachyos" ]]; }
+is_cachy() sysdetect && { [[ "$ID" == "cachyos" ]]; }
+is_fedora() sysdetect && { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && ! command -v rpm-ostree &>/dev/null; }
+is_ostree() sysdetect && { [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null; }
+is_debian() sysdetect && { [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIKE" =~ "debian" || "$ID_LIKE" =~ "ubuntu" ]]; }
+is_ubuntu() sysdetect && { [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
+is_suse() sysdetect && { [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
+is_solus() sysdetect && { [[ "$ID" == "solus" ]]; }
 
-# Nvidia GPU detection
+# GPU detection
 is_nvidia() {
-    nvidiaGPU=$(lspci | grep -i 'nvidia')
+    local nvidiaGPU=$(lspci | grep -i 'nvidia')
     if [[ -n "$nvidiaGPU" ]]; then
         return 0
     else
         return 1
     fi
 }
+is_intel() {
+    local intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
+    if [[ -n "$intelGPU" ]]; then
+        if echo "$intelGPU" | grep -Eqi 'battlemage|alchemist'; then
+            intel_arc="yes"
+        fi
+        return 0
+    else
+        return 1
+    fi
+}
 
-# file prep
+# file preparations
 prep_edit() {
-    { cp "$1" "$1".bak || sudo cp "$1" "$1".bak; } || fatal "Failed to create backup file: $1"
+    for target in "$@"; do
+        { cp -r "$target" "$target".bak || sudo cp -r "$target" "$target".bak; } || fatal "Failed to create backup: $target"
+    done
 }
 prep_create() {
-    { mkdir -p "$(dirname "$1")" && touch "$1"; } \
-    || { sudo mkdir -p "$(dirname "$1")" && sudo touch "$1"; } \
-    || fatal "Failed to create file: $1"
+    for target in "$@"; do
+        { mkdir -p "$(dirname "$target")" && touch "$target"; } \
+        || { sudo mkdir -p "$(dirname "$target")" && sudo touch "$target"; } \
+        || fatal "Failed to create: $target"
+    done
 }
 prep_rm() {
-    { mv "$1" "$1".bak || sudo mv "$1" "$1".bak; } || fatal "Failed to create backup before removal: $1"
+    for target in "$@"; do
+        { mv "$target" "$target".bak || sudo mv "$target" "$target".bak; } || fatal "Failed to create backup: $target"
+    done
+}
+prep_tmp() {
+    { mkdir -p /tmp/linuxtoys && cd /tmp/linuxtoys; } || fatal "Failed to create tempdir"
+    LT_TEMPDIR="/tmp/linuxtoys"
+}
+prep_dir() {
+    for dir in "$@"; do
+        mkdir -p "$dir" || fatal "Failed to create $dir"
+    done
+}
+
+# bootloader update
+bootloader_upd() {
+    if ! is_ostree; then
+        if is_fedora || is_suse; then
+            sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
+        elif is_arch || is_cachy; then
+            sudo grub-mkconfig -o /boot/grub/grub.cfg || fatal "Unable to update bootloader"
+        elif is_debian || is_ubuntu; then
+            sudo update-grub || fatal "Unable to update bootloader"
+        elif is_solus; then
+            { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader"
+        fi
+    else
+        return 0
+    fi
 }

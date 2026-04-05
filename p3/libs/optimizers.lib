@@ -1,12 +1,10 @@
-## linuxtoys optimizers lib -- scripts need to source linuxtoys.lib BEFORE calling this lib
+## LinuxToys optimizers library
+source "$SCRIPT_DIR/libs/helpers.lib"
 
 # cachyos safe systemd configs
 cachyos_sysd_lib () {
+    prep_tmp
     local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
-    cd $HOME
-    mkdir -p sysctl-config
-    sleep 1
-    cd sysctl-config
     {
         echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
         } > "modprobe.txt"
@@ -38,34 +36,28 @@ cachyos_sysd_lib () {
             echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
             } > "other.txt"
     fi
-    sleep 1
-    while read -r url; do wget -P modprobe "$url"; done < modprobe.txt
-    while read -r url; do wget -P udev "$url"; done < udev.txt
-    while read -r url; do wget -P tmpfiles "$url"; done < tmpfiles.txt
+    prep_dir modprobe.d udev/rules.d tmpfiles.d
+    while read -r url; do wget -P modprobe.d "$url"; done < modprobe.txt
+    while read -r url; do wget -P udev/rules.d "$url"; done < udev.txt
+    while read -r url; do wget -P tmpfiles.d "$url"; done < tmpfiles.txt
     if ! is_solus; then
         while read -r url; do wget "$url"; done < other.txt
     fi
-    sleep 1
+    for file in modprobe.d/* udev/rules.d/* tmpfiles.d/*; do
+        prep_create "/usr/lib/$file"
+        sudo cp -f "$file" "/usr/lib/$file"
+    done
     if ! is_solus; then
-        for dir in udev/rules.d tmpfiles.d modprobe.d sysctl.d systemd/journald.conf.d; do # ensure directories exist before copy
-            [ -d "/usr/lib/$dir" ] || sudo mkdir -p "/usr/lib/$dir"
-        done
+        [ -d "/usr/share/X11/xorg.conf.d" ] || prep_dir /usr/share/X11/xorg.conf.d
+        prep_create /usr/lib/sysctl.d/70-cachyos-settings.conf && sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
+        prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
+        prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
     fi
-    sudo cp -rf modprobe/* /usr/lib/modprobe.d/
-    sudo cp -rf tmpfiles/* /usr/lib/tmpfiles.d/
-    sudo cp -rf udev/* /usr/lib/udev/rules.d/
-    if ! is_solus; then
-        [ -d "/usr/share/X11/xorg.conf.d" ] || sudo mkdir -p "/usr/share/X11/xorg.conf.d"
-        sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
-        sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-        sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
-    fi
-    cd ..
-    rm -rf sysctl-config
 }
 
 # shader booster
 sboost_lib () {
+    prep_tmp
     GITHUB_BASE="https://raw.githubusercontent.com/psygreg/shader-booster/main"
     GITEA_BASE="https://git.linux.toys/psygreg/shader-booster/raw/branch/main"
     fetch_with_fallback () {
@@ -82,34 +74,28 @@ sboost_lib () {
     }
     # patch for Nvidia GPUs
     patch_nv () {
-        cd $HOME
-        if fetch_with_fallback "patch-nvidia" "${HOME}/patch-nvidia"; then
-            echo -e "\n$(cat ${HOME}/patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
-            rm ${HOME}/patch-nvidia
+        if fetch_with_fallback "patch-nvidia" "${LT_TEMPDIR}/patch-nvidia"; then
+            echo -e "\n$(cat ${LT_TEMPDIR}/patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
         else
             fatal "Failed to fetch patch-nvidia."
         fi
     }
     # patch for Mesa-driven GPUs
     patch_mesa () {
-        cd $HOME
-        if fetch_with_fallback "patch-mesa" "${HOME}/patch-mesa"; then
-            echo -e "\n$(cat ${HOME}/patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
-            rm ${HOME}/patch-mesa
+        if fetch_with_fallback "patch-mesa" "${LT_TEMPDIR}/patch-mesa"; then
+            echo -e "\n$(cat ${LT_TEMPDIR}/patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
         else
             fatal "Failed to fetch patch-mesa."
         fi
     }
-    HAS_NVIDIA=$(lspci | grep -i 'nvidia')
-    HAS_MESA=$(lspci | grep -Ei '(vga|3d)' | grep -vi nvidia)
     PATCH_APPLIED=0
     if [ ! -f ${HOME}/.booster ]; then
         DEST_FILE="/etc/environment"
-        if [[ -n "$HAS_NVIDIA" ]]; then
+        prep_edit /etc/environment
+        if is_nvidia; then
             patch_nv
             PATCH_APPLIED=1
-        fi
-        if [[ -n "$HAS_MESA" ]]; then
+        else
             patch_mesa
             PATCH_APPLIED=1
         fi
@@ -124,30 +110,37 @@ sboost_lib () {
 
 # split lock mitigation disabler
 dsplitm_lib () {
-    if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
-        echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-        zeninf "$msg022"
+    if is_solus; then
+        if [ ! -f /usr/lib/sysctl.d/99-splitlock.conf ]; then
+            prep_create /usr/lib/sysctl.d/99-splitlock.conf
+            echo 'kernel.split_lock_mitigate=0' | sudo tee /usr/lib/sysctl.d/99-splitlock.conf >/dev/null
+            zeninf "$msg022"
+        fi
     else
-        zeninf "$msg043"
+        if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
+            prep_create /etc/sysctl.d/99-splitlock.conf
+            echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
+            zeninf "$msg022"
+        fi
     fi
 }
 
 # power optimizer for laptops
 psave_lib () {
-    if [[ "$ID" != "cachyos" ]]; then
+    if ! is_cachy; then
+        prep_tmp
         sudo_rq
         if command -v rpm-ostree &>/dev/null; then
             wget https://copr.fedorainfracloud.org/coprs/leo/power-options/repo/fedora-$(rpm -E %fedora)/leo-power-options-fedora-$(rpm -E %fedora).repo
             sudo install -o 0 -g 0 leo-power-options-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/leo-power-options-fedora-$(rpm -E %fedora).repo
             rpm-ostree refresh-md
-            rm leo-power-options-fedora-$(rpm -E %fedora).repo
             sudo rpm-ostree install power-options
         else
-            if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
+            if is_debian || is_ubuntu; then
                 _packages=(libgtk4-dev libadwaita-1-dev)
-            elif [[ "$ID" =~ "arch" ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+            elif is_arch; then
                 _packages=(gtk4 libadwaita)
-            elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [[ "$ID" == *suse* ]]; then
+            elif is_fedora || is_suse; then
                 _packages=(gtk4-devel libadwaita-devel)
             elif is_solus; then
                 _packages=(libgtk4-devel libadwaita-devel)
@@ -172,14 +165,12 @@ psave_lib () {
 
 # EarlyOOM - kills processes before a OOM event is triggered
 earlyoom_lib () {
-    cd $HOME
+    prep_tmp
     if is_solus; then
         git clone https://github.com/rfjakob/earlyoom.git
         cd earlyoom
         sudo eopkg install -c system.devel
         sudo make install
-        cd ..
-        sudo rm -r earlyoom
     else
         _packages=(earlyoom)
         _install_
@@ -187,8 +178,12 @@ earlyoom_lib () {
     fetch_from_mirror "earlyoom" \
         "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/earlyoom" \
         "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/resources/earlyoom"
+    if [ -f /etc/default/earlyoom ]; then
+        prep_edit /etc/default/earlyoom
+    else
+        prep_create /etc/default/earlyoom
+    fi
     sudo cp -f earlyoom /etc/default/
-    rm earlyoom
     sudo systemctl enable --now earlyoom
     unset _packages
 }
@@ -198,6 +193,7 @@ pp_ondemand () {
     if [[ "$ID" != "cachyos" ]]; then
         # for AMD CPUs (Zen 2 and newer)
         if grep -q amd-pstate-epp /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver 2>/dev/null; then
+            prep_create /etc/systemd/system/set-ondemand-governor.service
             sudo tee /etc/systemd/system/set-ondemand-governor.service > /dev/null << 'EOF'
 [Unit]
 Description=Set CPU governor to ondemand
@@ -219,20 +215,18 @@ EOF
 
 # for intel and nvidia GPUs, fix GTK rendering bugs
 fix_intel_gtk () {
-    intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-    if [[ -n "$intelGPU" ]]; then
-        if echo "$intelGPU" | grep -qi 'battlemage'; then
-            if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
-                echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
-            fi
+    if is_intel && [ -n "$intel_arc" ]; then
+        if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
+            prep_edit /etc/environment
+            echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
         fi
     fi
     if is_nvidia; then
         if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
+            prep_edit /etc/environment
             echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
         fi
     fi
-    unset intelGPU
 }
 
 # use dnsmasq as a local caching DNS resolver - works generally better than systemd-resolved and fixes download speed issues with Steam
@@ -244,6 +238,7 @@ dnsmasq_lib () {
     _install_
     # Uncomment lines in dnsmasq.conf for optimal setup
     if [ -f /etc/dnsmasq.conf ]; then
+        prep_edit /etc/dnsmasq.conf
         sudo sed -i 's/^#\s*domain-needed/domain-needed/' /etc/dnsmasq.conf
         sudo sed -i 's/^#\s*bogus-priv/bogus-priv/' /etc/dnsmasq.conf
         sudo sed -i 's/^#\s*bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
@@ -253,32 +248,26 @@ dnsmasq_lib () {
 
 # enable intel Xe driver for discrete GPUs
 intel_xe_lib () {
-    intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-        if [[ ! -n "$intelGPU" ]]; then
-            echo "No Intel GPU device detected, nothing to do."
-            return 0
+    if is_intel && [ -n "$intel_arc" ]; then
+        # Extract DEVID from lspci output (e.g., e20b from [8086:e20b])
+        DEVID=$(lspci -nnd ::03xx | grep -Ei 'battlemage|alchemist' | sed -n 's/.*\[8086:\([0-9a-f]\+\)\].*/\1/p')
+
+        if [[ -z "$DEVID" ]]; then
+            echo "Error: Could not detect Intel GPU device ID"
+            return 1
         fi
-        if [[ -n "$intelGPU" ]]; then
-            if echo "$intelGPU" | grep -Eqi 'battlemage|alchemist'; then
-                # Extract DEVID from lspci output (e.g., e20b from [8086:e20b])
-                DEVID=$(lspci -nnd ::03xx | grep -Ei 'battlemage|alchemist' | sed -n 's/.*\[8086:\([0-9a-f]\+\)\].*/\1/p')
 
-                if [[ -z "$DEVID" ]]; then
-                    echo "Error: Could not detect Intel GPU device ID"
-                    return 1
-                fi
+        echo "Detected Intel GPU device ID: $DEVID"
+        if is_ostree; then
+            sudo rpm-ostree kargs --append='i915.force_probe=!'"$DEVID" --append="xe.force_probe=$DEVID"
+        else
+            # Create kernel cmdline drop-in file for systemd-based systems
+            prep_create /etc/kernel/cmdline.d/10-intel-xe-enable.conf
+            echo "i915.force_probe=!${DEVID} xe.force_probe=${DEVID}" | sudo tee /etc/kernel/cmdline.d/10-intel-xe-enable.conf >/dev/null
 
-                echo "Detected Intel GPU device ID: $DEVID"
-                if is_ostree; then
-                    sudo rpm-ostree kargs --append='i915.force_probe=!'"$DEVID" --append="xe.force_probe=$DEVID"
-                else
-                    # Create kernel cmdline drop-in file for systemd-based systems
-                    sudo mkdir -p /etc/kernel/cmdline.d
-                    echo "i915.force_probe=!${DEVID} xe.force_probe=${DEVID}" | sudo tee /etc/kernel/cmdline.d/10-intel-xe-enable.conf >/dev/null
-
-                    # Also create GRUB drop-in config for GRUB-based systems
-                    sudo mkdir -p /etc/default/grub.d
-                    sudo tee /etc/default/grub.d/10-intel-xe-enable.cfg > /dev/null << EOF
+            # Also create GRUB drop-in config for GRUB-based systems
+            prep_create /etc/default/grub.d/10-intel-xe-enable.cfg
+            sudo tee /etc/default/grub.d/10-intel-xe-enable.cfg > /dev/null << EOF
 # Enable intel Xe driver for discrete GPUs
 # Generated by LinuxToys intel Xe optimizer
 # Device ID: $DEVID
@@ -286,31 +275,16 @@ intel_xe_lib () {
 GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} i915.force_probe=!${DEVID} xe.force_probe=${DEVID}"
 EOF
 
-                    echo "Created kernel parameter configuration:"
-                    echo "  - systemd: /etc/kernel/cmdline.d/10-intel-xe-enable.conf"
-                    echo "  - GRUB: /etc/default/grub.d/10-intel-xe-enable.cfg"
+            echo "Created kernel parameter configuration:"
+            echo "  - systemd: /etc/kernel/cmdline.d/10-intel-xe-enable.conf"
+            echo "  - GRUB: /etc/default/grub.d/10-intel-xe-enable.cfg"
 
-                    # Update boot configuration
-                    if ! is_ostree; then
-                        if is_fedora || is_suse; then
-                            sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-                            echo "GRUB configuration updated. Reboot required to enable Xe driver."
-                        elif is_arch || is_cachy; then
-                            sudo grub-mkconfig -o /boot/grub/grub.cfg
-                            echo "GRUB configuration updated. Reboot required to enable Xe driver."
-                        elif is_debian || is_ubuntu; then
-                            sudo update-grub
-                            echo "GRUB configuration updated. Reboot required to enable Xe driver."
-                        fi
-                    fi
-
-                    echo "To remove this configuration later:"
-                    echo "  sudo rm /etc/kernel/cmdline.d/10-intel-xe-enable.conf"
-                    echo "  sudo rm /etc/default/grub.d/10-intel-xe-enable.cfg"
-                    echo "  sudo update-grub (or equivalent for your distro)"
-                fi
-            fi
+            bootloader_upd
         fi
+    else
+        echo "No Intel Arc GPU device detected, nothing to do."
+        return 0
+    fi
     # install decoder and encoder drivers
     if is_ubuntu; then
         sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
@@ -326,9 +300,9 @@ EOF
     fi
     _install_
     if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
+        prep_edit /etc/environment
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
     fi
-    unset intelGPU
 }
 
 # set vm.min_free_kbytes dynamically as 1% of total memory size
@@ -380,6 +354,7 @@ nvidia_solus_lib () {
         zeninf "No NVIDIA drivers found on Solus system. Install them first using Solseek."
         return 0
     fi
+    prep_create /etc/kernel/cmdline.d/nvidia.conf
     echo "rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1" | sudo tee /etc/kernel/cmdline.d/nvidia.conf
-    { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader with modeset kernel cmdline"
+    bootloader_upd
 }

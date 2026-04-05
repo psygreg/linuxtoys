@@ -1,4 +1,5 @@
 # library of helpers and repository checkers
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
 
 # Helper function to fetch from multiple sources with fallback
 fetch_from_mirror () {
@@ -16,8 +17,8 @@ fetch_from_mirror () {
 }
 
 # --- Flatpak ---
-
 flatpak_in_lib() {
+    sysdetect
     sudo_rq
     [ -f /tmp/linuxtoys_flatpak_done ] && return 0
 
@@ -49,7 +50,6 @@ flatpak_in_lib() {
 }
 
 # --- Multilib ---
-
 multilib_chk() {
     pacman -Slq multilib &>/dev/null && return 0;
 
@@ -64,10 +64,9 @@ multilib_chk() {
 }
 
 # --- Chaotic AUR ---
-
 chaotic_aur_lib() {
-    if [[ ! "$ID" =~ ^(arch|artix|cachyos)$ ]] && [[ ! "$ID_LIKE" =~ (arch|archlinux) ]]; then
-        fatal "$msg077" # Assuming msg077 is defined elsewhere or should be replaced with text
+    if ! is_arch; then
+        fatal "$msg077"
     fi
 
     pacman -Slq chaotic-aur &>/dev/null && return 0
@@ -99,7 +98,6 @@ chaotic_aur_lib() {
 }
 
 # --- RPMFusion ---
-
 rpmfusion_chk() {
     local fedora_version
     if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
@@ -133,9 +131,8 @@ rpmfusion_chk() {
 }
 
 # --- PyPI ---
-
 pip_lib() {
-    if [[ "$ID" =~ ^(arch|artix|cachyos)$ ]] || [[ "$ID_LIKE" =~ (arch|archlinux) ]]; then
+    if is_arch || is_cachy; then
         _packages=(python-pip python-pipx)
     elif is_solus; then
         _packages=(pip pipx)
@@ -146,7 +143,6 @@ pip_lib() {
 }
 
 # --- CLInfo Test ---
-
 clinfo_chk () {
     if ! command -v clinfo &>/dev/null; then
         _msg info "clinfo not found, installing..."
