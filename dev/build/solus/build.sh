@@ -83,11 +83,11 @@ cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
 # Initialize solbuild if needed (creates base images)
 if ! solbuild list-profiles >/dev/null 2>&1; then
     _msg info "Initializing solbuild (first run, this may take a while)..."
-    solbuild init -u -p main-x86_64 || _msg warn "solbuild init may have issues, continuing..."
+    sudo solbuild init -u -p main-x86_64 || _msg warn "solbuild init may have issues, continuing..."
 fi
 
 # Run the actual build
-if solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"; then
+if sudo solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"; then
     _msg success "solbuild completed successfully"
 else
     _msg error "solbuild failed. Check $OUTPUT_PATH/build.log for details."

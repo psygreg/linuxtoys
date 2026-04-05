@@ -2,7 +2,7 @@ name       : linuxtoys
 version    : 5.7
 release    : 1
 source     :
-    - https://github.com/psygreg/linuxtoys/archive/refs/tags/v5.7.tar.gz : bb3147cb840a76c1abba11a5ecf9b77156c3f8f429f769b2da9113ed6f26ee89
+    - https://github.com/psygreg/linuxtoys/archive/refs/tags/5.7.tar.gz : bb3147cb840a76c1abba11a5ecf9b77156c3f8f429f769b2da9113ed6f26ee89
 license    : GPL-3.0-only
 summary    : A set of tools for Linux presented in a user-friendly way
 description: |
@@ -14,21 +14,19 @@ component  : system.desktop
 
 # Build dependencies required
 builddeps  :
-    - python3-gobject-devel
-    - gtk3-devel
     - desktop-file-utils
 
 # Runtime dependencies
 rundeps    :
     - python3
-    - python3-gobject
-    - gtk3
-    - python3-requests
+    - python-gobject
+    - python-requests
     - curl
     - wget
     - zenity
     - bash
     - git
+    - libvte
 
 setup      : |
     # No special setup needed for Python application
@@ -45,13 +43,18 @@ install    : |
     install -dm 755 $installdir/usr/share/icons/hicolor/scalable/apps
     install -dm 755 $installdir/usr/share/applications
 
-    # Find and install the linuxtoys wrapper script
-    if [ -f files/linuxtoys ]; then
-        install -m 755 files/linuxtoys $installdir/usr/bin/
-    else
-        # Alternative location (from archive root)
-        install -m 755 linuxtoys $installdir/usr/bin/
-    fi
+    # Create the main executable wrapper script
+    printf '%s\n' '#!/bin/bash' \
+        '# Set process name for better desktop integration' \
+        'export LINUXTOYS_PROCESS_NAME="linuxtoys"' \
+        '# Enable CLI mode if arguments are provided' \
+        'if [ $# -gt 0 ]; then' \
+        '    export EASY_CLI=1' \
+        'fi' \
+        'cd /usr/share/linuxtoys' \
+        'exec /usr/bin/python3 run.py "$@"' \
+        > "$installdir/usr/bin/linuxtoys"
+    chmod 0755 "$installdir/usr/bin/linuxtoys"
 
     # Install Python application - support multiple source locations
     if [ -d "files/app" ]; then
@@ -75,19 +78,9 @@ install    : |
     find $installdir/usr/share/linuxtoys/ -name "*.pyc" -delete
     find $installdir/usr/share/linuxtoys/ -name ".git*" -delete 2>/dev/null || true
 
-    # Install desktop file
-    if [ -f "files/LinuxToys.desktop" ]; then
-        install -m 644 files/LinuxToys.desktop $installdir/usr/share/applications/
-    else
-        install -m 644 LinuxToys.desktop $installdir/usr/share/applications/
-    fi
-
-    # Install icon
-    if [ -f "files/linuxtoys.svg" ]; then
-        install -m 644 files/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
-    else
-        install -m 644 linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
-    fi
+    # Install desktop file and icon from src/
+    install -m 644 $workdir/src/LinuxToys.desktop $installdir/usr/share/applications/
+    install -m 644 $workdir/src/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
 
     # Fix permissions on Python scripts
     chmod 755 $installdir/usr/share/linuxtoys/run.py 2>/dev/null || true
