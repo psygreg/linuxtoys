@@ -256,6 +256,43 @@ class TermRunScripts(Gtk.Box):
         self.terminal.set_can_focus(True)
         self._run_next_script()
 
+    def _save_to_registry(self, script_name, transmap_path):
+        """Save script execution record to registry."""
+        try:
+            import datetime
+            registry_dir = os.path.expanduser("~/.cache/linuxtoys")
+            registry_file = os.path.join(registry_dir, "registry")
+            
+            # Create directory if it doesn't exist
+            os.makedirs(registry_dir, exist_ok=True)
+            
+            # Read transmap contents
+            transmap_contents = ""
+            if os.path.exists(transmap_path):
+                try:
+                    with open(transmap_path, "r") as f:
+                        transmap_contents = f.read().strip()
+                except (IOError, OSError):
+                    pass
+            
+            # Format entry with timestamp
+            timestamp = datetime.datetime.now().isoformat()
+            entry = f"[{timestamp}] Script: {script_name}\n"
+            if transmap_contents:
+                entry += f"Changes:\n"
+                for line in transmap_contents.split("\n"):
+                    if line.strip():
+                        entry += f"  - {line}\n"
+            else:
+                entry += "Changes: (none)\n"
+            entry += "---\n\n"
+            
+            # Append to registry file
+            with open(registry_file, "a") as f:
+                f.write(entry)
+        except Exception:
+            pass  # Silently ignore registry errors
+
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
         # Extract the actual exit code from status
@@ -326,6 +363,21 @@ class TermRunScripts(Gtk.Box):
         if self._self_update:
             DialogRestart(parent=self.get_toplevel()).show()
 
+        # Save to registry and wipe transmap file if script executed successfully
+        if os.WIFEXITED(status):
+            exit_code = os.WEXITSTATUS(status)
+            if exit_code == 0:
+                transmap_path = "/tmp/linuxtoys/transmap"
+                # Get current script name for registry
+                script_name = getattr(self, "_current_script_name", "unknown")
+                # Save to registry before wiping
+                self._save_to_registry(script_name, transmap_path)
+                try:
+                    if os.path.exists(transmap_path):
+                        os.remove(transmap_path)
+                except (IOError, OSError):
+                    pass  # Silently ignore if transmap cannot be removed
+
         # Check for error exit codes and auto-submit bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
             # Only auto-submit for regular scripts, not removal operations
@@ -370,7 +422,16 @@ class TermRunScripts(Gtk.Box):
 
         # Add script to execution history
         script_name = current_script.get("name", "unknown")
+        self._current_script_name = script_name  # Store for registry
         antenna.add_script_to_history(script_name)
+        
+        # Clear transmap file for new script execution
+        try:
+            transmap_path = "/tmp/linuxtoys/transmap"
+            with open(transmap_path, "w") as f:
+                pass  # Truncate/clear the file
+        except (IOError, OSError):
+            pass  # Silently ignore if transmap cannot be cleared
 
         script_path = current_script.get("path", "true")
         if current_script.get("reboot") == "yes":

@@ -35,6 +35,43 @@ def resolve_script_dir():
 
     raise FileNotFoundError(f"'libs' folder not found relative to {__file__}")
 
+def _save_script_to_registry(script_name, transmap_path):
+    """Save script execution record to registry."""
+    try:
+        import datetime
+        registry_dir = os.path.expanduser("~/.cache/linuxtoys")
+        registry_file = os.path.join(registry_dir, "registry")
+        
+        # Create directory if it doesn't exist
+        os.makedirs(registry_dir, exist_ok=True)
+        
+        # Read transmap contents
+        transmap_contents = ""
+        if os.path.exists(transmap_path):
+            try:
+                with open(transmap_path, "r") as f:
+                    transmap_contents = f.read().strip()
+            except (IOError, OSError):
+                pass
+        
+        # Format entry with timestamp
+        timestamp = datetime.datetime.now().isoformat()
+        entry = f"[{timestamp}] Script: {script_name}\n"
+        if transmap_contents:
+            entry += f"Changes:\n"
+            for line in transmap_contents.split("\n"):
+                if line.strip():
+                    entry += f"  - {line}\n"
+        else:
+            entry += "Changes: (none)\n"
+        entry += "---\n\n"
+        
+        # Append to registry file
+        with open(registry_file, "a") as f:
+            f.write(entry)
+    except Exception:
+        pass  # Silently ignore registry errors
+
 def create_temp_file(script_path):
     """
     Create a temporary script file by filtering out xdg-open calls.
@@ -80,14 +117,32 @@ def easy_cli_run_script(script_info):
     os.environ['DISABLE_ZENITY'] = '1'
 
     script_path = script_info['path']
+    script_name = script_info.get('name', 'unknown')
 
     # Create a temporary script file
     temp_file_path = create_temp_file(script_path)
 
+    # Clear transmap file for new script execution
+    try:
+        transmap_path = "/tmp/linuxtoys/transmap"
+        with open(transmap_path, "w") as f:
+            pass  # Truncate/clear the file
+    except (IOError, OSError):
+        pass  # Silently ignore if transmap cannot be cleared
 
     try:
         # Execute the script using run_script
         code = run_script({"name": script_info["name"], "path": temp_file_path})
+
+        # Save to registry and wipe transmap file if script executed successfully
+        if code == 0:
+            transmap_path = "/tmp/linuxtoys/transmap"
+            _save_script_to_registry(script_name, transmap_path)
+            try:
+                if os.path.exists(transmap_path):
+                    os.remove(transmap_path)
+            except (IOError, OSError):
+                pass  # Silently ignore if transmap cannot be removed
 
         if code != 0:
             return 1

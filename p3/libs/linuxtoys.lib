@@ -108,7 +108,10 @@ _install_() {
     case "${ID_LIKE:-$ID}" in
         *debian*|*ubuntu*)
             for pak in "${_packages[@]}"; do
-                dpkg -s "$pak" &>/dev/null || sudo apt install -y "$pak"
+                if ! dpkg -s "$pak" &>/dev/null; then
+                    sudo apt install -y "$pak"
+                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
+                fi
             done
             ;;
         *arch*|*artix*|*archlinux*|*cachyos*)
@@ -117,6 +120,7 @@ _install_() {
 
                 if pacman -Ss "$pak" | grep -q "$pak"; then
                     sudo pacman -S --noconfirm "$pak"
+                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
                 else
                     if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
                         if ! command -v paru &>/dev/null; then
@@ -131,6 +135,7 @@ _install_() {
                             fi
                         fi
                         paru -S -a --noconfirm --skipreview "$pak"
+                        echo "pkg $pak" >> /tmp/linuxtoys/transmap
                     else
                         return 1
                     fi
@@ -139,17 +144,26 @@ _install_() {
             ;;
         *rhel*|*fedora*|*centos*)
              for pak in "${_packages[@]}"; do
-                rpm -qi "$pak" &>/dev/null || sudo dnf in -y "$pak"
+                if ! rpm -qi "$pak" &>/dev/null; then
+                    sudo dnf in -y "$pak"
+                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
+                fi
             done
             ;;
         *suse*)
             for pak in "${_packages[@]}"; do
-                rpm -qi "$pak" &>/dev/null || sudo zypper in -y "$pak"
+                if ! rpm -qi "$pak" &>/dev/null; then
+                    sudo zypper in -y "$pak"
+                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
+                fi
             done
             ;;
         *solus*)
             for pak in "${_packages[@]}"; do
-                [ $(eopkg list-installed | grep -q "$pak" &>/dev/null) ] || sudo eopkg install -y "$pak"
+                if ! { eopkg list-installed | grep -q "$pak"; }; then
+                    sudo eopkg install -y "$pak"
+                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
+                fi
             done
             ;;
     esac
@@ -170,6 +184,7 @@ _flatpak_() {
     fi
     for flat in "${_flatpaks[@]}"; do
         flatpak install --or-update "$flatpak_scope" --noninteractive flathub "$flat"
+        echo "flatpak $flat" >> /tmp/linuxtoys/transmap
     done
     unset _flatpaks
 }
@@ -222,6 +237,7 @@ is_intel() {
 prep_edit() {
     for target in "$@"; do
         { cp -r "$target" "$target".bak || sudo cp -r "$target" "$target".bak; } || fatal "Failed to create backup: $target"
+        echo "edited $target" >> /tmp/linuxtoys/transmap
     done
 }
 prep_create() {
@@ -229,11 +245,13 @@ prep_create() {
         { mkdir -p "$(dirname "$target")" && touch "$target"; } \
         || { sudo mkdir -p "$(dirname "$target")" && sudo touch "$target"; } \
         || fatal "Failed to create: $target"
+        echo "created $target" >> /tmp/linuxtoys/transmap
     done
 }
 prep_rm() {
     for target in "$@"; do
         { mv "$target" "$target".bak || sudo mv "$target" "$target".bak; } || fatal "Failed to create backup: $target"
+        echo "removed $target" >> /tmp/linuxtoys/transmap
     done
 }
 prep_tmp() {
@@ -243,6 +261,7 @@ prep_tmp() {
 prep_dir() {
     for dir in "$@"; do
         mkdir -p "$dir" || fatal "Failed to create $dir"
+        echo "created $dir" >> /tmp/linuxtoys/transmap
     done
 }
 
@@ -251,12 +270,16 @@ bootloader_upd() {
     if ! is_ostree; then
         if is_fedora || is_suse; then
             sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
+            echo "updated bootloader" >> /tmp/linuxtoys/transmap
         elif is_arch || is_cachy; then
             sudo grub-mkconfig -o /boot/grub/grub.cfg || fatal "Unable to update bootloader"
+            echo "updated bootloader" >> /tmp/linuxtoys/transmap
         elif is_debian || is_ubuntu; then
             sudo update-grub || fatal "Unable to update bootloader"
+            echo "updated bootloader" >> /tmp/linuxtoys/transmap
         elif is_solus; then
             { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader"
+            echo "updated bootloader" >> /tmp/linuxtoys/transmap
         fi
     else
         return 0
