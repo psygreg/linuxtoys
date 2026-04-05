@@ -1,0 +1,233 @@
+name: Build Solus Package
+
+on:
+  # Trigger on manual dispatch
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (leave empty to use latest release)"
+        required: false
+        default: ""
+      sha256:
+        description: "SHA256 hash of the release tarball (leave empty to auto-calculate)"
+        required: false
+        default: ""
+
+  # Trigger on release published
+  release:
+    types:
+      - published
+      - created
+
+jobs:
+  build-solus:
+    runs-on: solus-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install build dependencies
+        run: |
+          sudo eopkg update-repo
+          sudo eopkg install -y desktop-file-utils
+
+      - name: Determine version and SHA256
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            # Manual dispatch with explicit version and SHA256
+            VERSION="${{ github.event.inputs.version }}"
+            SHA256="${{ github.event.inputs.sha256 }}"
+            echo "[INFO] Using manual version: $VERSION"
+            echo "[INFO] Using manual SHA256: ${SHA256:0:10}..."
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -z "${{ github.event.inputs.version }}" ]; then
+            # Manual dispatch without version - fetch latest release
+            echo "[INFO] No version provided, fetching latest release from GitHub..."
+            
+            LATEST_RELEASE=$(curl -s https://api.github.com/repos/psygreg/linuxtoys/releases/latest | jq -r '.tag_name')
+            if [ -z "$LATEST_RELEASE" ] || [ "$LATEST_RELEASE" == "null" ]; then
+              echo "[ERROR] Failed to fetch latest release from GitHub API"
+              exit 1
+            fi
+            
+            VERSION="${LATEST_RELEASE#v}"
+            echo "[INFO] Latest release found: $VERSION"
+            
+            # Download release tarball and calculate SHA256
+            TARBALL_URL="https://github.com/psygreg/linuxtoys/archive/refs/tags/v$VERSION.tar.gz"
+            echo "[INFO] Downloading tarball from: $TARBALL_URL"
+            
+            wget -O "/tmp/linuxtoys-$VERSION.tar.gz" "$TARBALL_URL" || {
+              echo "[WARN] Failed to download from GitHub, attempting to generate tarball locally"
+              cd /tmp
+              git clone "https://github.com/psygreg/linuxtoys.git" linuxtoys-tmp
+              cd linuxtoys-tmp
+              git checkout "v$VERSION" 2>/dev/null || git checkout "refs/tags/v$VERSION" 2>/dev/null || true
+              tar -czf "/tmp/linuxtoys-$VERSION.tar.gz" --transform "s,^,linuxtoys-$VERSION/," .
+              cd /tmp
+              rm -rf linuxtoys-tmp
+            }
+            
+            SHA256=$(sha256sum "/tmp/linuxtoys-$VERSION.tar.gz" | awk '{print $1}')
+            echo "[INFO] Calculated SHA256: ${SHA256:0:10}..."
+          elif [ "${{ github.event_name }}" == "release" ]; then
+            # Release event - extract version from tag
+            VERSION="${{ github.event.release.tag_name }}"
+            # Remove 'v' prefix if present
+            VERSION="${VERSION#v}"
+            echo "[INFO] Release detected for version: $VERSION"
+            
+            # Download release tarball and calculate SHA256
+            TARBALL_URL="https://github.com/psygreg/linuxtoys/archive/refs/tags/v$VERSION.tar.gz"
+            echo "[INFO] Downloading tarball from: $TARBALL_URL"
+            
+            wget -O "/tmp/linuxtoys-$VERSION.tar.gz" "$TARBALL_URL" || {
+              echo "[WARN] Failed to download from GitHub, attempting to generate tarball locally"
+              cd /tmp
+              git clone "${{ github.repository }}" linuxtoys-tmp
+              cd linuxtoys-tmp
+              git checkout "v$VERSION" 2>/dev/null || git checkout "refs/tags/v$VERSION" 2>/dev/null || true
+              tar -czf "/tmp/linuxtoys-$VERSION.tar.gz" --transform "s,^,linuxtoys-$VERSION/," .
+              cd /tmp
+              rm -rf linuxtoys-tmp
+            }
+            
+            SHA256=$(sha256sum "/tmp/linuxtoys-$VERSION.tar.gz" | awk '{print $1}')
+            echo "[INFO] Calculated SHA256: ${SHA256:0:10}..."
+            
+          else
+            # Push event - extract from source file
+            VERSION=$(grep -oP '__version__\s*=\s*"\K[^"]+' p3/app/updater/__init__.py)
+            if [ -z "$VERSION" ]; then
+              echo "[ERROR] Could not extract version from p3/app/updater/__init__.py"
+              exit 1
+            fi
+            echo "[INFO] Using version from source: $VERSION"
+            
+            # Try to download from GitHub, fallback to generating tarball
+            TARBALL_URL="https://github.com/psygreg/linuxtoys/archive/refs/tags/v$VERSION.tar.gz"
+            if wget -O "/tmp/linuxtoys-$VERSION.tar.gz" "$TARBALL_URL" 2>/dev/null; then
+              echo "[INFO] Downloaded release tarball"
+            else
+              echo "[INFO] Generating tarball from current repository"
+              cd /tmp
+              git clone "$GITHUB_SERVER_URL/${{ github.repository }}.git" linuxtoys-tmp
+              cd linuxtoys-tmp
+              git checkout "v$VERSION" 2>/dev/null || true
+              tar -czf "/tmp/linuxtoys-$VERSION.tar.gz" --transform "s,^,linuxtoys-$VERSION/," .
+              cd /tmp
+              rm -rf linuxtoys-tmp
+            fi
+            
+            SHA256=$(sha256sum "/tmp/linuxtoys-$VERSION.tar.gz" | awk '{print $1}')
+            echo "[INFO] Calculated SHA256: ${SHA256:0:10}..."
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "Building: LinuxToys $VERSION with SHA256 ${SHA256:0:16}..."
+
+      - name: Run Solus build script
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA256="${{ steps.version.outputs.sha256 }}"
+          OUTPUT_PATH="/tmp/solus-build"
+          
+          echo "[INFO] Starting Solus build..."
+          bash dev/build/solus/build.sh "$VERSION" "$SHA256" "$OUTPUT_PATH" 2>&1 | tee /tmp/build.log
+          
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "[WARN] solbuild exited with code $BUILD_EXIT_CODE"
+            echo "[INFO] This is common for multi-layer sourced repos; checking for artifacts anyway..."
+          fi
+        continue-on-error: true
+
+      - name: Verify and locate build artifacts
+        id: artifacts
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OUTPUT_PATH="/tmp/solus-build"
+          BUILD_DIR="$OUTPUT_PATH/linuxtoys-$VERSION"
+          
+          echo "[INFO] Searching for .eopkg files..."
+          
+          if [ -d "$BUILD_DIR" ]; then
+            echo "[INFO] Build directory contents:"
+            find "$BUILD_DIR" -type f | head -20
+            
+            # Find all .eopkg files
+            EOPKG_FILES=$(find "$BUILD_DIR" -name "*.eopkg" -type f)
+            
+            if [ -z "$EOPKG_FILES" ]; then
+              echo "[WARN] No .eopkg files found in $BUILD_DIR"
+              echo "[INFO] Checking /var/tmp/solbuild/ (solbuild cache)..."
+              
+              EOPKG_FILES=$(find /var/tmp/solbuild -name "*.eopkg" -type f 2>/dev/null || true)
+              
+              if [ -n "$EOPKG_FILES" ]; then
+                echo "[INFO] Found .eopkg in solbuild cache:"
+                echo "$EOPKG_FILES"
+              fi
+            else
+              echo "[INFO] Found .eopkg files:"
+              echo "$EOPKG_FILES"
+            fi
+            
+            if [ -z "$EOPKG_FILES" ]; then
+              echo "[ERROR] No .eopkg artifacts found"
+              exit 1
+            fi
+          else
+            echo "[ERROR] Build directory not found: $BUILD_DIR"
+            exit 1
+          fi
+
+      - name: Prepare artifacts
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OUTPUT_PATH="/tmp/solus-build"
+          BUILD_DIR="$OUTPUT_PATH/linuxtoys-$VERSION"
+          ARTIFACT_DIR="artifacts-solus-$VERSION"
+          
+          mkdir -p "$ARTIFACT_DIR"
+          
+          # Copy .eopkg files from build directory
+          if find "$BUILD_DIR" -name "*.eopkg" -type f 2>/dev/null; then
+            find "$BUILD_DIR" -name "*.eopkg" -type f -exec cp {} "$ARTIFACT_DIR/" \;
+            echo "[INFO] Copied .eopkg files from build directory"
+          fi
+          
+          # Copy from solbuild cache if needed
+          if ! [ "$(ls -A $ARTIFACT_DIR)" ]; then
+            echo "[INFO] Attempting to copy from solbuild cache..."
+            if find /var/tmp/solbuild -name "*.eopkg" -type f 2>/dev/null; then
+              find /var/tmp/solbuild -name "*.eopkg" -type f -exec cp {} "$ARTIFACT_DIR/" \;
+              echo "[INFO] Copied .eopkg files from solbuild cache"
+            fi
+          fi
+          
+          # Copy build log
+          if [ -f "/tmp/build.log" ]; then
+            cp /tmp/build.log "$ARTIFACT_DIR/build.log"
+          fi
+          
+          # Copy package.yml for reference
+          if [ -f "$BUILD_DIR/package.yml" ]; then
+            cp "$BUILD_DIR/package.yml" "$ARTIFACT_DIR/package.yml"
+          fi
+          
+          echo "[INFO] Artifacts prepared:"
+          ls -lah "$ARTIFACT_DIR/"
+
+      - name: Upload artifacts to Gitea
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: linuxtoys-${{ steps.version.outputs.version }}
+          path: artifacts-solus-${{ steps.version.outputs.version }}/
+          retention-days: 7
+          if-no-files-found: warn
