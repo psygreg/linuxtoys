@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo eopkg update-repo
-          sudo eopkg install -y nodejs desktop-file-utils
+          sudo eopkg install -y nodejs desktop-file-utils jq
 
       - name: Checkout code
         uses: actions/checkout@v4
