@@ -386,5 +386,5 @@ nvidia_solus_lib () {
         return 0
     fi
     echo "rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1" | sudo tee /etc/kernel/cmdline.d/nvidia.conf
-    sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg
+    { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader with modeset kernel cmdline"
 }
