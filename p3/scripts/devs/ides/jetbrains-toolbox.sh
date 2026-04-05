@@ -19,7 +19,7 @@ if [ ! -d "${HOME}/.local/jetbrains-toolbox" ]; then
 		(
 			## .desktop file
 			sed -i "/^Exec=/s|^.*$|Exec=${HOME}/.local/${PKG_NAM}/${PKG_NAM}|" "${HOME}/.local/${PKG_NAM}/${PKG_NAM}.desktop";
-
+	
 			# GNOME may show a generic package icon when Icon= is not resolvable.
 			# Force desktop entry to use an absolute icon path from the extracted app files.
 			JB_ICON="$(
@@ -45,4 +45,3 @@ else
 	fi
 	exit 100
 fi
-
