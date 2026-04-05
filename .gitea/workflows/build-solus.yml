@@ -134,59 +134,20 @@ jobs:
           echo "sha256=$SHA256" >> $GITHUB_OUTPUT
           echo "Building version: $VERSION with SHA256: $SHA256"
 
-      - name: Prepare build directory
+      - name: Prepare build workspace
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           SHA256="${{ steps.version.outputs.sha256 }}"
-          BUILD_DIR="/root/linuxtoys-$VERSION"
-
-          # Create the build root directory
-          mkdir -p "$BUILD_DIR"
-
-          # Copy package.yml to the build directory and update it
-          cp dev/build/solus/package.yml "$BUILD_DIR/"
-
-          # Update version in package.yml
-          sed -i "s/^version    : .*/version    : $VERSION/" "$BUILD_DIR/package.yml"
-
-          # Update SHA256 in package.yml
-          sed -i "s/: [a-f0-9]\{64\}$/: $SHA256/" "$BUILD_DIR/package.yml"
-
-          # Update version in source URL
-          sed -i "s|/v[0-9.]\+\.tar\.gz|/v$VERSION.tar.gz|g" "$BUILD_DIR/package.yml"
-
-          # Update repository URL in homepage and source (if using GitHub)
-          REPO_URL="https://github.com/${{ github.repository }}"
-          sed -i "s|homepage   : .*|homepage   : $REPO_URL|" "$BUILD_DIR/package.yml"
-          sed -i "s|https://github.com/[^/]*/[^ ]*|$REPO_URL|g" "$BUILD_DIR/package.yml"
-
-          echo "[INFO] Updated package.yml with version=$VERSION and SHA256=$SHA256"
-
-          # Create files directory for install sources
-          mkdir -p "$BUILD_DIR/files"
-
-          # Copy Python app, desktop file, and icon
-          cp -r p3/* "$BUILD_DIR/files/"
-          cp src/LinuxToys.desktop "$BUILD_DIR/files/"
-          cp src/linuxtoys.svg "$BUILD_DIR/files/"
-
-          # Create the main executable wrapper script
-          cat >"$BUILD_DIR/files/linuxtoys" <<'WRAPPER'
-#!/bin/bash
-export LINUXTOYS_PROCESS_NAME="linuxtoys"
-if [ $# -gt 0 ]; then
-    export EASY_CLI=1
-fi
-cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
-WRAPPER
-          chmod +x "$BUILD_DIR/files/linuxtoys"
-
-          # Clean up Python cache
+          
+          # Run the build.sh script to assemble the package files
+          bash dev/build/solus/build.sh "$VERSION" "$SHA256" "/root"
+          
+          # Clean up Python cache from the assembled files
+          BUILD_DIR="/root/build_output/$VERSION/linuxtoys-$VERSION"
           find "$BUILD_DIR/files" -name "__pycache__" -type d -delete
           find "$BUILD_DIR/files" -name "*.pyc" -delete
-
-          echo "[INFO] Build directory prepared at: $BUILD_DIR"
+          
+          echo "[INFO] Build workspace prepared at: $BUILD_DIR"
 
       - name: Initialize solbuild
         run: |
@@ -196,7 +157,7 @@ WRAPPER
       - name: Build Solus package with solbuild
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          BUILD_DIR="/root/linuxtoys-$VERSION"
+          BUILD_DIR="/root/build_output/$VERSION/linuxtoys-$VERSION"
 
           # Navigate to build directory and build
           cd "$BUILD_DIR"
@@ -241,7 +202,7 @@ WRAPPER
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           ARTIFACT_PATH="artifacts-$VERSION"
-          BUILD_DIR="/root/linuxtoys-$VERSION"
+          BUILD_DIR="/root/build_output/$VERSION/linuxtoys-$VERSION"
 
           # Create artifact directory
           mkdir -p "$ARTIFACT_PATH"
