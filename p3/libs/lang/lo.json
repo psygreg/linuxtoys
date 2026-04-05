@@ -392,5 +392,6 @@
   "bug_report_submitted": "ຂອບໃຈ! ລາຍງານຂໍ້ຜິດພາດຂອງທ່ານໄດ້ຖືກສົ່ງ.",
   "bug_report_failed": "ລົ້ມເຫລວໃນການສົ່ງລາຍງານຂໍ້ຜິດພາດ: ",
   "new_spec_key": "ໃໝ່",
-  "auto_error_reports": "ລາຍງານຂໍ້ຜິດພາດອັດຕະໂນມັດ"
+  "auto_error_reports": "ລາຍງານຂໍ້ຜິດພາດອັດຕະໂນມັດ",
+  "waylume_desc": "ຜູ້ຈັດການພື້ນຫຼັງລະດູນ້ອຍສຳລັບ GNOME/Wayland. ກຳນົດພື້ນຫຼັງປະຈຳວັນຢ່າງອັດຕະໂນມັດຈາກ Bing, Unsplash, NASA APOD ແລະ Wikimedia POTD."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "תודה! דוח הבאג שלך הוגש.",
   "bug_report_failed": "כישלון בשליחת דוח הבאג: ",
   "new_spec_key": "חדש",
-  "auto_error_reports": "דוחות שגיאות אוטומטיים"
+  "auto_error_reports": "דוחות שגיאות אוטומטיים",
+  "waylume_desc": "מנהל טפטים מינימליסטי עבור GNOME/Wayland. מגדיר באופן אוטומטי טפטים יומיים מ-Bing, Unsplash, NASA APOD ו-Wikimedia POTD."
 }

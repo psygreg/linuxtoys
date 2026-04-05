@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="5" y="5" width="90" height="90" rx="15" ry="15" fill="none" stroke="#ff0000" stroke-width="6"/>
+  <text 
+    x="10" y="60" 
+    font-family="Arial, Helvetica, sans-serif" 
+    font-size="60" 
+    font-weight="bold" 
+    fill="#007bff"
+    stroke="#fc0404"
+    stroke-width="1.5"
+    paint-order="stroke fill"
+    stroke-linejoin="round">W</text>
+  <text 
+    x="47" y="85"
+    font-family="Arial, Helvetica, sans-serif" 
+    font-size="70" 
+    font-weight="bold" 
+    fill="#007bff"
+    stroke="#fc0404"
+    stroke-width="1.5"
+    paint-order="stroke fill"
+    stroke-linejoin="round">L</text>
+</svg>

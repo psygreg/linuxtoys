@@ -392,5 +392,6 @@
   "bug_report_submitted": "Kiitos! Virheraporttisi on lähetetty.",
   "bug_report_failed": "Virheraportin lähettäminen epäonnistui: ",
   "new_spec_key": "uusi",
-  "auto_error_reports": "Automaattiset virheraporttunukset"
+  "auto_error_reports": "Automaattiset virheraporttunukset",
+  "waylume_desc": "Minimalistinen taustakuvan hallinta GNOME/Waylandille. Asettaa automaattisesti päivittäiset taustakuvat Bingistä, Unsplashista, NASA APOD:sta ja Wikimedia POTD:stä."
 }

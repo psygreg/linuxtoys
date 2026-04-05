@@ -391,5 +391,6 @@
   "bug_report_submitted": "Rahmat! Sizning xato hisoboti yuborıldi.",
   "bug_report_failed": "Xato hisobotini yuborish muvaffaq bo'lmadi: ",
   "new_spec_key": "yangi",
-  "auto_error_reports": "Avtomatik xato hisobotlari"
+  "auto_error_reports": "Avtomatik xato hisobotlari",
+  "waylume_desc": "GNOME/Wayland uchun minimal fon menedjeri. Bing, Unsplash, NASA APOD va Wikimedia POTD dan kundalik fon rasimlarini avtomatik ravishda o'rnatilib."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "Takk! Din feilrapport er sendt.",
   "bug_report_failed": "Feil ved sending av feilrapport: ",
   "new_spec_key": "ny",
-  "auto_error_reports": "Automatiske feilrapporter"
+  "auto_error_reports": "Automatiske feilrapporter",
+  "waylume_desc": "Minimalistisk bakgrunnsbehandler for GNOME/Wayland. Setter automatisk daglige bakgrunner fra Bing, Unsplash, NASA APOD og Wikimedia POTD."
 }

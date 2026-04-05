@@ -392,5 +392,6 @@
   "bug_report_submitted": "감사합니다! 버그 보고서가 제출되었습니다.",
   "bug_report_failed": "버그 보고서 전송 실패: ",
   "new_spec_key": "새로운",
-  "auto_error_reports": "자동 오류 보고"
+  "auto_error_reports": "자동 오류 보고",
+  "waylume_desc": "GNOME/Wayland용 미니말리스트 배경화면 관리자. Bing, Unsplash, NASA APOD 및 Wikimedia POTD에서 자동으로 일일 배경화면을 설정합니다."
 }

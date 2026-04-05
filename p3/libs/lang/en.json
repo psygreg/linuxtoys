@@ -392,5 +392,6 @@
   "bug_report_submitted": "Thank you! Your bug report has been submitted.",
   "bug_report_failed": "Failed to submit bug report: ",
   "new_spec_key": "new",
-  "auto_error_reports": "Automatic Error Reports"
+  "auto_error_reports": "Automatic Error Reports",
+  "waylume_desc": "Minimalist wallpaper manager for GNOME/Wayland. Automatically sets daily wallpapers from Bing, Unsplash, NASA APOD and Wikimedia POTD."
 }

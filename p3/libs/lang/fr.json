@@ -392,5 +392,6 @@
   "bug_report_submitted": "Merci ! Votre rapport de bogue a été soumis.",
   "bug_report_failed": "Échec de l'envoi du rapport de bogue: ",
   "new_spec_key": "nouveau",
-  "auto_error_reports": "Rapports d'erreurs automatiques"
+  "auto_error_reports": "Rapports d'erreurs automatiques",
+  "waylume_desc": "Gestionnaire de fond d'écran minimaliste pour GNOME/Wayland. Configure automatiquement les fonds d'écran quotidiens de Bing, Unsplash, NASA APOD et Wikimedia POTD."
 }

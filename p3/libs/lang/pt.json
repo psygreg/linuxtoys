@@ -392,5 +392,6 @@
   "bug_report_submitted": "Obrigado! Seu relatório de erro foi enviado.",
   "bug_report_failed": "Falha ao enviar relatório de erro: ",
   "new_spec_key": "novo",
-  "auto_error_reports": "Relatórios automáticos de erros"
+  "auto_error_reports": "Relatórios automáticos de erros",
+  "waylume_desc": "Gerenciador de papéis de parede minimalista para GNOME/Wayland. Define automaticamente papéis de parede diários do Bing, Unsplash, NASA APOD e Wikimedia POTD."
 }

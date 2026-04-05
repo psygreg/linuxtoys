@@ -392,5 +392,6 @@
   "bug_report_submitted": "متشکرم! گزارش اشکال خود را ارسال کردید.",
   "bug_report_failed": "ارسال گزارش خرابی ناموفق بود: ",
   "new_spec_key": "جدید",
-  "auto_error_reports": "گزارش های خطای خودکار"
+  "auto_error_reports": "گزارش های خطای خودکار",
+  "waylume_desc": "مدیر پس‌زمینه‌ی ساده برای GNOME/Wayland. بطور خودکار پس‌زمینه‌های روزانه را از Bing، Unsplash، NASA APOD و Wikimedia POTD تنظیم می‌کند."
 }

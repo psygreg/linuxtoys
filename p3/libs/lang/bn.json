@@ -391,5 +391,6 @@
   "bug_report_submitted": "ধন্যবাদ! আপনার বাগ রিপোর্ট জমা দেওয়া হয়েছে।",
   "bug_report_failed": "বাগ রিপোর্ট পাঠাতে ব্যর্থ: ",
   "new_spec_key": "নতুন",
-  "auto_error_reports": "স্বয়ংক্রিয় ত্রুটি রিপোর্ট"
+  "auto_error_reports": "স্বয়ংক্রিয় ত্রুটি রিপোর্ট",
+  "waylume_desc": "GNOME/Wayland এর জন্য ন্যূনতম ওয়ালপেপার ম্যানেজার। স্বয়ংক্রিয়ভাবে Bing, Unsplash, NASA APOD এবং Wikimedia POTD থেকে দৈনিক ওয়ালপেপার সেট করে।"
 }

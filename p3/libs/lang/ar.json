@@ -392,5 +392,6 @@
   "bug_report_submitted": "شكراً لك! تم تقديم تقرير الخطأ الخاص بك.",
   "bug_report_failed": "فشل في إرسال تقرير الخطأ: ",
   "new_spec_key": "جديد",
-  "auto_error_reports": "تقارير الأخطاء التلقائية"
+  "auto_error_reports": "تقارير الأخطاء التلقائية",
+  "waylume_desc": "مدير خلفيات بسيط لـ GNOME/Wayland. يقوم تلقائياً بتعيين خلفيات يومية من Bing و Unsplash و NASA APOD و Wikimedia POTD."
 }

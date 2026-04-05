@@ -390,5 +390,6 @@
   "bug_report_submitted": "Asante! Ripoti ya kosa lako imewasilishwa.",
   "bug_report_failed": "Kushindwa kutuma ripoti ya kosa: ",
   "new_spec_key": "mpya",
-  "auto_error_reports": "Ripoti za hitilafu za kiotomatiki"
+  "auto_error_reports": "Ripoti za hitilafu za kiotomatiki",
+  "waylume_desc": "Msimamizi wa minimalist wa mandhari ya GNOME/Wayland. Kuamua mandhari ya kila siku kiotomatiki kutoka kwa Bing, Unsplash, NASA APOD na Wikimedia POTD."
 }

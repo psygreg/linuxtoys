@@ -392,5 +392,6 @@
   "bug_report_submitted": "Faleminderit! Raporti juaj i gabimit ka qenë i dorëzuar.",
   "bug_report_failed": "Dështimi i dërgimit të raportit të gabimit: ",
   "new_spec_key": "i ri",
-  "auto_error_reports": "Raportimet automatike të gabimeve"
+  "auto_error_reports": "Raportimet automatike të gabimeve",
+  "waylume_desc": "Menaxher minimal i sfondit për GNOME/Wayland. Vendos automatikisht sfondet e përditshme nga Bing, Unsplash, NASA APOD dhe Wikimedia POTD."
 }

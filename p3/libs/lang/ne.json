@@ -392,5 +392,6 @@
   "bug_report_submitted": "धन्यवाद! तपाइँको बग रिपोर्ट पेश गरियो।",
   "bug_report_failed": "बग रिपोर्ट पठाउन असफल: ",
   "new_spec_key": "नयाँ",
-  "auto_error_reports": "स्वचालित त्रुटि रिपोर्ट"
+  "auto_error_reports": "स्वचालित त्रुटि रिपोर्ट",
+  "waylume_desc": "GNOME/Wayland को लागि न्यूनतम वालपेपर प्रबन्धक। Bing, Unsplash, NASA APOD र Wikimedia POTD बाट स्वचालित रूपले दैनिक वालपेपर सेट गर्दछ।"
 }

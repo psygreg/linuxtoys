@@ -392,5 +392,6 @@
   "bug_report_submitted": "Danke! Ihr Fehlerbericht wurde eingereicht.",
   "bug_report_failed": "Fehler beim Senden des Fehlerberichts: ",
   "new_spec_key": "neu",
-  "auto_error_reports": "Automatische Fehlerberichte"
+  "auto_error_reports": "Automatische Fehlerberichte",
+  "waylume_desc": "Minimalistischer Hintergrund-Manager für GNOME/Wayland. Setzt automatisch tägliche Hintergründe von Bing, Unsplash, NASA APOD und Wikimedia POTD."
 }

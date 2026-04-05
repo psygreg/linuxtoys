@@ -392,5 +392,6 @@
   "bug_report_submitted": "Salamat! Ang iyong ulat ng bug ay naipasa na.",
   "bug_report_failed": "Nabigo ang pagpapadala ng ulat ng bug: ",
   "new_spec_key": "bago",
-  "auto_error_reports": "Mga awtomatikong ulat ng pagkakamali"
+  "auto_error_reports": "Mga awtomatikong ulat ng pagkakamali",
+  "waylume_desc": "Minimalistang tagapamahala ng wallpaper para sa GNOME/Wayland. Awtomatikong nagtatatag ng araw-araw na wallpaper mula sa Bing, Unsplash, NASA APOD at Wikimedia POTD."
 }

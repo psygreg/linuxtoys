@@ -392,5 +392,6 @@
   "bug_report_submitted": "Paldies! Jūsu kļūdu ziņojums ir iesniegts.",
   "bug_report_failed": "Kļūdu ziņojuma nosūtīšana neizdevās: ",
   "new_spec_key": "jauns",
-  "auto_error_reports": "Automātiskas kļūdu atskaites"
+  "auto_error_reports": "Automātiskas kļūdu atskaites",
+  "waylume_desc": "Minimālistisks fona pārvaldnieks GNOME/Wayland. Automātiski iestata ikdienas fonus no Bing, Unsplash, NASA APOD un Wikimedia POTD."
 }

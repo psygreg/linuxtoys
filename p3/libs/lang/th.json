@@ -392,5 +392,6 @@
   "bug_report_submitted": "ขอบคุณ! รายงานข้อผิดพลาดของคุณได้ถูกส่งแล้ว",
   "bug_report_failed": "ล้มเหลวในการส่งรายงานข้อผิดพลาด: ",
   "new_spec_key": "ใหม่",
-  "auto_error_reports": "รายงานข้อผิดพลาดอัตโนมัติ"
+  "auto_error_reports": "รายงานข้อผิดพลาดอัตโนมัติ",
+  "waylume_desc": "ตัวจัดการวอลเปเปอร์ขั้นต่ำสำหรับ GNOME/Wayland ตั้งค่าวอลเปเปอร์ประจำวันโดยอัตโนมัติจาก Bing, Unsplash, NASA APOD และ Wikimedia POTD"
 }

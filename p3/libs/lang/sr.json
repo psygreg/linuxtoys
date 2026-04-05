@@ -392,5 +392,6 @@
   "bug_report_submitted": "Хвала! Ваша пријава грешке је послата.",
   "bug_report_failed": "Неуспешно слање пријаве грешке: ",
   "new_spec_key": "ново",
-  "auto_error_reports": "Аутоматски извештаји о грешкама"
+  "auto_error_reports": "Аутоматски извештаји о грешкама",
+  "waylume_desc": "Минимални управник позадина за GNOME/Wayland. Аутоматски postavlja дневне позадине са Bing-а, Unsplash-а, NASA APOD-а и Wikimedia POTD-а."
 }

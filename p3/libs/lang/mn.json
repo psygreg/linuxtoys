@@ -391,5 +391,6 @@
   "bug_report_submitted": "Баярлалаа! Таны алдаа тайлан илгээсэн болно.",
   "bug_report_failed": "Алдаа тайлан илгээхэд амжилтгүй: ",
   "new_spec_key": "шинэ",
-  "auto_error_reports": "Автоматаар алдаа мэдээлэх"
+  "auto_error_reports": "Автоматаар алдаа мэдээлэх",
+  "waylume_desc": "GNOME/Wayland-ийн хамгийн бага ханын цаас менежер. Bing, Unsplash, NASA APOD болон Wikimedia POTD-ээс өдөр тутмын ханын цаасыг автоматаар тохируулдаг."
 }

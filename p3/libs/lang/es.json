@@ -392,5 +392,6 @@
   "bug_report_submitted": "¡Gracias! Tu informe de error ha sido enviado.",
   "bug_report_failed": "Error al enviar el informe de error: ",
   "new_spec_key": "nuevo",
-  "auto_error_reports": "Reportes automáticos de errores"
+  "auto_error_reports": "Reportes automáticos de errores",
+  "waylume_desc": "Gestor minimalista de fondos de pantalla para GNOME/Wayland. Establece automáticamente fondos de pantalla diarios de Bing, Unsplash, NASA APOD y Wikimedia POTD."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "Teşekkürler! Hata raporunuz gönderildi.",
   "bug_report_failed": "Hata raporunu gönderme başarısız oldu: ",
   "new_spec_key": "yeni",
-  "auto_error_reports": "Otomatik Hata Raporları"
+  "auto_error_reports": "Otomatik Hata Raporları",
+  "waylume_desc": "GNOME/Wayland için minimalist duvar kağıdı yöneticisi. Bing, Unsplash, NASA APOD ve Wikimedia POTD'den otomatik olarak günlük duvar kağıtlarını ayarlar."
 }

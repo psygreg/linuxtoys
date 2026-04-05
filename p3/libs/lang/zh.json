@@ -394,5 +394,6 @@
   "bug_report_submitted": "谢谢！您的bug报告已提交。",
   "bug_report_failed": "发送bug报告失败: ",
   "new_spec_key": "新",
-  "auto_error_reports": "自动错误报告"
+  "auto_error_reports": "自动错误报告",
+  "waylume_desc": "GNOME/Wayland的简约壁纸管理器。自动设置来自Bing、Unsplash、NASA APOD和Wikimedia POTD的每日壁纸。"
 }

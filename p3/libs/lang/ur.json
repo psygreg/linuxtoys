@@ -392,5 +392,6 @@
   "bug_report_submitted": "شکریہ! آپ کی بگ رپورٹ جمع کی گئی ہے۔",
   "bug_report_failed": "بگ رپورٹ بھیجنے میں ناکام: ",
   "new_spec_key": "نیا",
-  "auto_error_reports": "خودکار غلطی کی رپورٹسز"
+  "auto_error_reports": "خودکار غلطی کی رپورٹسز",
+  "waylume_desc": "GNOME/Wayland کے لیے منتقی دیوار کاغذ کا منیجر۔ Bing، Unsplash، NASA APOD اور Wikimedia POTD سے خود بخود روزانہ دیوار کاغذ مقرر کرتا ہے۔"
 }

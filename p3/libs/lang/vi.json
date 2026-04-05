@@ -392,5 +392,6 @@
   "bug_report_submitted": "Cảm ơn! Báo cáo lỗi của bạn đã được gửi.",
   "bug_report_failed": "Không thể gửi báo cáo lỗi: ",
   "new_spec_key": "mới",
-  "auto_error_reports": "Báo cáo lỗi tự động"
+  "auto_error_reports": "Báo cáo lỗi tự động",
+  "waylume_desc": "Trình quản lý hình nền tối giản cho GNOME/Wayland. Tự động đặt hình nền hàng ngày từ Bing, Unsplash, NASA APOD và Wikimedia POTD."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "Ačiū! Jūsų klaidos ataskaita buvo pateikta.",
   "bug_report_failed": "Nepavyko nusiųsti klaidų ataskaitos: ",
   "new_spec_key": "naujas",
-  "auto_error_reports": "Automatinės klaidų ataskaitos"
+  "auto_error_reports": "Automatinės klaidų ataskaitos",
+  "waylume_desc": "Minimalus pagrindo vadybininkas GNOME/Wayland. Automatiškai nustato kasdienius pagrindus iš Bing, Unsplash, NASA APOD ir Wikimedia POTD."
 }

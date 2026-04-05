@@ -392,5 +392,6 @@
   "bug_report_submitted": "Köszönöm! A hibajelentésed beküldve van.",
   "bug_report_failed": "A hibajelentés küldése sikertelen: ",
   "new_spec_key": "új",
-  "auto_error_reports": "Automatikus hibajelentések"
+  "auto_error_reports": "Automatikus hibajelentések",
+  "waylume_desc": "Minimaliszt háttérkép kezelő GNOME/Wayland-hez. Automatikusan állítja be a napi háttérképeket a Bing, Unsplash, NASA APOD és Wikimedia POTD forrásokból."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "Tänu! Teie veaauandlus on esitatud.",
   "bug_report_failed": "Veasea saatmine ebaõnnestus: ",
   "new_spec_key": "uus",
-  "auto_error_reports": "Automaatsed vigade aruanded"
+  "auto_error_reports": "Automaatsed vigade aruanded",
+  "waylume_desc": "Minimalistlik ja taust haldur GNOME/Wayland jaoks. Määrab automaatselt päevaseid taustpilte Bing-ist, Unsplash-ist, NASA APOD-st ja Wikimedia POTD-st."
 }

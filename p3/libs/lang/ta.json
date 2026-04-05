@@ -390,5 +390,6 @@
   "bug_report_submitted": "நன்றி! உங்கள் பிழை அறிக்கை சமர்ப்பிக்கப்பட்டுள்ளது.",
   "bug_report_failed": "பிழை அறிக்கை அனுப்ப முடியவில்லை: ",
   "new_spec_key": "புதிய",
-  "auto_error_reports": "தானியங்கி பிழை அறிக்கைகள்"
+  "auto_error_reports": "தானியங்கி பிழை அறிக்கைகள்",
+  "waylume_desc": "GNOME/Wayland க்கான குறைந்தபட்ச விதைப்பு மேலாளர். Bing, Unsplash, NASA APOD மற்றும் Wikimedia POTD இலிருந்து தானாக நாளாந்த விதைப்புகளை அமைக்கிறது."
 }

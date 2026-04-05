@@ -392,5 +392,6 @@
   "bug_report_submitted": "Շնորհակալություն! Ձեր բագ հաղորդումը ներկայացվել է:",
   "bug_report_failed": "Բագ հաղորդման ուղարկումը ձախողվել է: ",
   "new_spec_key": "նոր",
-  "auto_error_reports": "Ինքնաշխատ սխալ հաշվետվություններ"
+  "auto_error_reports": "Ինքնաշխատ սխալ հաշվետվություններ",
+  "waylume_desc": "Նվազագույն պաստառի կառավարիչ GNOME/Wayland-ի համար: Ինքնաշխատ կերպով սահմանում է օրական պաստառներ Bing-ից, Unsplash-ից, NASA APOD-ից և Wikimedia POTD-ից:"
 }

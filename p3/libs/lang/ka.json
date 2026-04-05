@@ -392,5 +392,6 @@
   "bug_report_submitted": "გმადლობთ! თქვენი ბაგის ანგარიში წარმოდგენილია.",
   "bug_report_failed": "ბაგის ანგარიშის გაგზავნა ვერ მოხერხდა: ",
   "new_spec_key": "ახალი",
-  "auto_error_reports": "ავტომატური შეცდომის ანგარიშები"
+  "auto_error_reports": "ავტომატური შეცდომის ანგარიშები",
+  "waylume_desc": "მინიმალიστური ფონის მენეჯერი GNOME/Wayland-ისთვის. ავტომატურად ადგენს ყოველდღიური ფონებს Bing-დან, Unsplash-დან, NASA APOD-დან და Wikimedia POTD-დან."
 }

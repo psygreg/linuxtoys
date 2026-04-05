@@ -392,5 +392,6 @@
   "bug_report_submitted": "Dziękuję! Twój raport o błędzie został przesłany.",
   "bug_report_failed": "Niepowodzenie wysyłania raportu o błędzie: ",
   "new_spec_key": "nowy",
-  "auto_error_reports": "Automatyczne raporty błędów"
+  "auto_error_reports": "Automatyczne raporty błędów",
+  "waylume_desc": "Minimalistyczny menedżer tapet dla GNOME/Wayland. Automatycznie ustawia codzienne tapety z Bing, Unsplash, NASA APOD i Wikimedia POTD."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "Ευχαριστώ! Η αναφορά σφάλματος σας έχει υποβληθεί.",
   "bug_report_failed": "Αποτυχία αποστολής αναφοράς σφάλματος: ",
   "new_spec_key": "νέο",
-  "auto_error_reports": "Αυτόματες Αναφορές Σφαλμάτων"
+  "auto_error_reports": "Αυτόματες Αναφορές Σφαλμάτων",
+  "waylume_desc": "Ελάχιστος διαχειριστής ταπετσαρίας για GNOME/Wayland. Ορίζει αυτόματα καθημερινές ταπετσαρίες από Bing, Unsplash, NASA APOD και Wikimedia POTD."
 }

@@ -392,5 +392,6 @@
   "bug_report_submitted": "ありがとうございます。バグレポートが送信されました。",
   "bug_report_failed": "バグレポートの送信に失敗しました: ",
   "new_spec_key": "新規",
-  "auto_error_reports": "自動エラーレポート"
+  "auto_error_reports": "自動エラーレポート",
+  "waylume_desc": "GNOME/Wayland 用のミニマリスト壁紙マネージャー。Bing、Unsplash、NASA APOD、Wikimedia POTD から自動的に毎日の壁紙を設定します。"
 }

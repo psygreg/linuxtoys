@@ -392,5 +392,6 @@
   "bug_report_submitted": "Go raibh míle maith agat! Tugadh isteach do thuarascáil docharadh.",
   "bug_report_failed": "Theip ar sheoladh an tuarascáil docharadh: ",
   "new_spec_key": "nua",
-  "auto_error_reports": "Tuairiscí earráide uathoibríoch"
+  "auto_error_reports": "Tuairiscí earráide uathoibríoch",
+  "waylume_desc": "Bainisteoir spréachta minimalist do GNOME/Wayland. Socrú spréachtaí laethúla ó Bing, Unsplash, NASA APOD agus Wikimedia POTD go huathoibríoch."
 }
