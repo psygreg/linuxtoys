@@ -104,6 +104,22 @@ osarch() {
 	fi
 }
 
+ossolus() {
+	if curl -fsSL "${_eopkg}" -o "/tmp/${_eopkg_name}"; then
+		if command -v eopkg >/dev/null 2>&1; then
+			if sudo eopkg install -y "/tmp/${_eopkg_name}"; then
+				info "LinuxToys installed or updated!"
+			else
+				error "Installation failed (eopkg)."
+			fi
+		else
+			error "eopkg command not found on Solus system."
+		fi
+	else
+		error "Failed to download: ${_eopkg_name}"
+	fi
+}
+
 installer() {
 	# Try GitHub first as primary source
 	printf "\e[0;36m[INFO]\e[m Fetching latest release from GitHub...\n"
@@ -130,6 +146,9 @@ installer() {
 	_pkg_name=$(basename "${_pkg}")
 	# _pkg_tarball_name=$(basename "${_pkg_tarball}")
 
+	_eopkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.eopkg')
+	_eopkg_name=$(basename "${_eopkg}")
+
 	ostree
 
 	if [ -r /etc/os-release ]; then
@@ -144,6 +163,7 @@ installer() {
 		fedora|rhel|centos|rocky|almalinux) osrpm ;;
 		suse|opensuse) ossuse ;;
 		arch|cachyos) osarch ;;
+		solus) ossolus ;;
 	esac
 
 	case "${ID_LIKE:-}" in
