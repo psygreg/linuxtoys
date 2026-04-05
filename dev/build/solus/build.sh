@@ -75,4 +75,46 @@ EOF
 chmod +x "$OUTPUT_PATH/linuxtoys-$LT_VERSION/files/linuxtoys"
 
 _msg info "Build structure created at: $OUTPUT_PATH/linuxtoys-$LT_VERSION"
-_msg info "Ready for solbuild: cd $OUTPUT_PATH/linuxtoys-$LT_VERSION && solbuild build"
+
+# Build with solbuild
+_msg info "Starting solbuild build process..."
+cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
+
+# Initialize solbuild if needed (creates base images)
+if ! solbuild list-profiles >/dev/null 2>&1; then
+    _msg info "Initializing solbuild (first run, this may take a while)..."
+    solbuild init -u -p main-x86_64 || _msg warn "solbuild init may have issues, continuing..."
+fi
+
+# Run the actual build
+if solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"; then
+    _msg success "solbuild completed successfully"
+else
+    _msg error "solbuild failed. Check $OUTPUT_PATH/build.log for details."
+    exit 1
+fi
+
+# Collect built artifacts
+_msg info "Collecting .eopkg artifacts..."
+ARTIFACTS_DIR="$OUTPUT_PATH/artifacts"
+mkdir -p "$ARTIFACTS_DIR"
+
+# Search for .eopkg files in solbuild cache
+if [ -d "/var/lib/solbuild" ]; then
+    find /var/lib/solbuild -name "*.eopkg" -type f -exec cp {} "$ARTIFACTS_DIR/" \; 2>/dev/null && \
+        _msg info "Found artifacts in /var/lib/solbuild"
+fi
+
+if [ -d "$HOME/.cache/solbuild" ]; then
+    find "$HOME/.cache/solbuild" -name "*.eopkg" -type f -exec cp {} "$ARTIFACTS_DIR/" \; 2>/dev/null && \
+        _msg info "Found artifacts in $HOME/.cache/solbuild"
+fi
+
+# Verify artifacts were created
+if [ "$(ls -A "$ARTIFACTS_DIR")" ]; then
+    _msg success "Build complete! Artifacts located at: $ARTIFACTS_DIR"
+    ls -lh "$ARTIFACTS_DIR"
+else
+    _msg warn "No .eopkg artifacts found. Check $OUTPUT_PATH/build.log for build errors."
+    exit 1
+fi
