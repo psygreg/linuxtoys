@@ -202,3 +202,16 @@ is_nvidia() {
         return 1
     fi
 }
+
+# file prep
+prep_edit() {
+    { cp "$1" "$1".bak || sudo cp "$1" "$1".bak; } || fatal "Failed to create backup file: $1"
+}
+prep_create() {
+    { mkdir -p "$(dirname "$1")" && touch "$1"; } \
+    || { sudo mkdir -p "$(dirname "$1")" && sudo touch "$1"; } \
+    || fatal "Failed to create file: $1"
+}
+prep_rm() {
+    { mv "$1" "$1".bak || sudo mv "$1" "$1".bak; } || fatal "Failed to create backup before removal: $1"
+}
