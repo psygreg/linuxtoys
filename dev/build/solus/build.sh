@@ -50,30 +50,6 @@ sed -i "s|/v[0-9.]\+\.tar\.gz|/v$LT_VERSION.tar.gz|g" "$OUTPUT_PATH/linuxtoys-$L
 
 _msg info "Updated package.yml with version $LT_VERSION and SHA256 hash"
 
-# Create files directory (Solus packages store sources in a files/ directory)
-mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION/files"
-
-# Copy the Python app from p3 directory
-cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys-$LT_VERSION/files/"
-
-# Copy desktop file and icon
-cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/files/"
-cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/files/"
-
-# Create the main executable script
-cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/files/linuxtoys" <<'EOF'
-#!/bin/bash
-# Set process name for better desktop integration
-export LINUXTOYS_PROCESS_NAME="linuxtoys"
-# Enable CLI mode if arguments are provided
-if [ $# -gt 0 ]; then
-    export EASY_CLI=1
-fi
-cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
-EOF
-chmod +x "$OUTPUT_PATH/linuxtoys-$LT_VERSION/files/linuxtoys"
-
 _msg info "Build structure created at: $OUTPUT_PATH/linuxtoys-$LT_VERSION"
 
 # Build with solbuild
