@@ -285,3 +285,29 @@ bootloader_upd() {
         return 0
     fi
 }
+
+# systemd service operations
+sysd_enable() {
+    for svc in "$@"; do
+        sudo systemctl enable "$svc" || fatal "Failed to enable service $svc"
+        echo "sysd enabled $svc" >> /tmp/linuxtoys/transmap
+    done
+}
+sysd_disable() {
+    for svc in "$@"; do
+        sudo systemctl disable "$svc" || fatal "Failed to disable service $svc"
+        echo "sysd disabled $svc" >> /tmp/linuxtoys/transmap
+    done
+}
+sysd_start() {
+    for svc in "$@"; do
+        sudo systemctl start "$svc" || fatal "Failed to start service $svc"
+        echo "sysd started $svc" >> /tmp/linuxtoys/transmap
+    done
+}
+sysd_stop() {
+    for svc in "$@"; do
+        sudo systemctl stop "$svc" || fatal "Failed to stop service $svc"
+        echo "sysd stopped $svc" >> /tmp/linuxtoys/transmap
+    done
+}

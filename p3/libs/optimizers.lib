@@ -184,7 +184,7 @@ earlyoom_lib () {
         prep_create /etc/default/earlyoom
     fi
     sudo cp -f earlyoom /etc/default/
-    sudo systemctl enable --now earlyoom
+    sysd_enable earlyoom
     unset _packages
 }
 
@@ -207,7 +207,7 @@ RemainAfterExit=yes
 [Install]
 WantedBy=multi-user.target
 EOF
-            sudo systemctl enable set-ondemand-governor.service
+            sysd_enable set-ondemand-governor.service
             echo "Created systemd service to set ondemand governor on boot."
         fi
     fi
@@ -243,7 +243,7 @@ dnsmasq_lib () {
         sudo sed -i 's/^#\s*bogus-priv/bogus-priv/' /etc/dnsmasq.conf
         sudo sed -i 's/^#\s*bind-interfaces/bind-interfaces/' /etc/dnsmasq.conf
     fi
-    sudo systemctl enable dnsmasq
+    sysd_enable dnsmasq
 }
 
 # enable intel Xe driver for discrete GPUs
@@ -324,7 +324,7 @@ WantedBy=sysinit.target
 EOF
     sudo chmod 644 "/etc/systemd/system/set-min-free-mem.service"
     sudo systemctl daemon-reload
-    sudo systemctl enable set-min-free-mem.service
+    sysd_enable set-min-free-mem.service
 }
 
 # make Proton run in wine-wayland mode by default
