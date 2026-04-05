@@ -24,15 +24,15 @@ jobs:
     runs-on: solus-latest
     
     steps:
+      - name: Install dependencies
+        run: |
+          sudo eopkg update-repo
+          sudo eopkg install -y nodejs desktop-file-utils
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Install build dependencies
-        run: |
-          sudo eopkg update-repo
-          sudo eopkg install -y desktop-file-utils
 
       - name: Determine version and SHA256
         id: version
