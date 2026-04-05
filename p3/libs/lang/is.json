@@ -392,6 +392,6 @@
   "bug_report_submitted": "Takk! Villugrein þinn hefur verið sent.",
   "bug_report_failed": "Bilun við að senda villugrein: ",
   "new_spec_key": "nýtt",
-  "auto_error_reports": "Sjálfvirkar villuskýrslur",
+  "auto_error_reports": "Sjálfvirkar Villuskýrslur",
   "waylume_desc": "Lágmarks bakgrunnskerfið fyrir GNOME/Wayland. Stillir sjálfkrafa dagleg bakgrunn frá Bing, Unsplash, NASA APOD og Wikimedia POTD."
 }

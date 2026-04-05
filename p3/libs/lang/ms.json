@@ -392,6 +392,6 @@
   "bug_report_submitted": "Terima kasih! Laporan bug Anda telah dihantar.",
   "bug_report_failed": "Gagal menghantar laporan bug: ",
   "new_spec_key": "baru",
-  "auto_error_reports": "Laporan kesalahan otomatis",
+  "auto_error_reports": "Laporan Kesalahan Otomatis",
   "waylume_desc": "Pengurus kertas dinding minimalis untuk GNOME/Wayland. Secara automatik menetapkan kertas dinding harian dari Bing, Unsplash, NASA APOD dan Wikimedia POTD."
 }

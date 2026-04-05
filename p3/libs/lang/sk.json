@@ -392,6 +392,6 @@
   "bug_report_submitted": "Ďakujem! Vaša správa o chybe bola odoslaná.",
   "bug_report_failed": "Odoslanie správy o chybe zlyhalo: ",
   "new_spec_key": "nový",
-  "auto_error_reports": "Automatické hlásenie chýb",
+  "auto_error_reports": "Automatické Hlásenie Chýb",
   "waylume_desc": "Minimalistický spravovateľ tapiet pre GNOME/Wayland. Automaticky nastavuje denné tapety z Bing, Unsplash, NASA APOD a Wikimedia POTD."
 }

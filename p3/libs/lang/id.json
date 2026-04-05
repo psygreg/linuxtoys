@@ -392,6 +392,6 @@
   "bug_report_submitted": "Terima kasih! Laporan bug Anda telah dikirimkan.",
   "bug_report_failed": "Gagal mengirim laporan bug: ",
   "new_spec_key": "baru",
-  "auto_error_reports": "Laporan kesalahan otomatis",
+  "auto_error_reports": "Laporan Kesalahan Otomatis",
   "waylume_desc": "Pengelola wallpaper minimalis untuk GNOME/Wayland. Secara otomatis mengatur wallpaper harian dari Bing, Unsplash, NASA APOD, dan Wikimedia POTD."
 }

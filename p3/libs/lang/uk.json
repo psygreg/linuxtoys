@@ -392,6 +392,6 @@
   "bug_report_submitted": "Дякую! Ваше повідомлення про помилку було відправлено.",
   "bug_report_failed": "Не вдалося відправити повідомлення про помилку: ",
   "new_spec_key": "новий",
-  "auto_error_reports": "Автоматичні звіти про помилки",
+  "auto_error_reports": "Автоматичні Звіти про Помилки",
   "waylume_desc": "Мінімалістичний менеджер шпалер для GNOME/Wayland. Автоматично встановлює щоденні шпалери з Bing, Unsplash, NASA APOD та Wikimedia POTD."
 }

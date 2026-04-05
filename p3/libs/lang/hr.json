@@ -392,6 +392,6 @@
   "bug_report_submitted": "Hvala! Vaš izvještaj o grešci je poslat.",
   "bug_report_failed": "Slanje izvještaja o grešci nije uspelo: ",
   "new_spec_key": "novo",
-  "auto_error_reports": "Automatski izvještaji o greškama",
+  "auto_error_reports": "Automatski Izvještaji o Greškama",
   "waylume_desc": "Minimalistički upravljač pozadina za GNOME/Wayland. Automatski postavlja dnevne pozadine sa Binga, Unsplasha, NASA APOD-a i Wikimedia POTD-a."
 }

@@ -392,6 +392,6 @@
   "bug_report_submitted": "Tak! Dit fejlrapport er indsendt.",
   "bug_report_failed": "Fejl ved indsendelse af fejlrapport: ",
   "new_spec_key": "ny",
-  "auto_error_reports": "Automatiske fejlrapporter",
+  "auto_error_reports": "Automatiske Fejlrapporter",
   "waylume_desc": "Minimalistisk tapetkontrolør til GNOME/Wayland. Indstiller automatisk daglige tapet fra Bing, Unsplash, NASA APOD og Wikimedia POTD."
 }

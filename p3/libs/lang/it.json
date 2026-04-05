@@ -392,6 +392,6 @@
   "bug_report_submitted": "Grazie! La tua segnalazione di bug è stata inviata.",
   "bug_report_failed": "Errore nell'invio della segnalazione di bug: ",
   "new_spec_key": "nuovo",
-  "auto_error_reports": "Rapporti errori automatici",
+  "auto_error_reports": "Rapporti Errori Automatici",
   "waylume_desc": "Gestore di sfondi minimalista per GNOME/Wayland. Imposta automaticamente gli sfondi quotidiani da Bing, Unsplash, NASA APOD e Wikimedia POTD."
 }
