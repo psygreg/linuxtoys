@@ -61,6 +61,6 @@ pkgs.mkShell rec {
     export LD_LIBRARY_PATH="${pkgs.gtk3}/lib:${pkgs.pango}/lib:${pkgs.gdk-pixbuf}/lib:${pkgs.vte}/lib:${pkgs.glib}/lib:${pkgs.libhandy}/lib:${pkgs.librsvg}/lib:${pkgs.libxml2}/lib:$LD_LIBRARY_PATH"
     
     echo "✓ LinuxToys development environment loaded"
-    echo "  Run 'python3 p3/run.py' to start the application"
+    echo "  Run 'python3 p3/linuxtoys.py' to start the application"
   '';
 }

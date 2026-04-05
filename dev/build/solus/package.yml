@@ -52,7 +52,7 @@ install    : |
         '    export EASY_CLI=1' \
         'fi' \
         'cd /usr/share/linuxtoys' \
-        'exec /usr/bin/python3 run.py "$@"' \
+        'exec /usr/bin/python3 linuxtoys.py "$@"' \
         > "$installdir/usr/bin/linuxtoys"
     chmod 0755 "$installdir/usr/bin/linuxtoys"
 
@@ -63,7 +63,7 @@ install    : |
         cp -r --preserve=mode files/libs $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -r --preserve=mode files/scripts $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -r --preserve=mode files/helpers $installdir/usr/share/linuxtoys/ 2>/dev/null || true
-        cp -f --preserve=mode files/run.py $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+        cp -f --preserve=mode files/linuxtoys.py $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -f --preserve=mode files/requirements.txt $installdir/usr/share/linuxtoys/ 2>/dev/null || true
     elif [ -d "p3" ]; then
         # Remote source extraction
@@ -83,4 +83,4 @@ install    : |
     install -m 644 $workdir/src/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
 
     # Fix permissions on Python scripts
-    chmod 755 $installdir/usr/share/linuxtoys/run.py 2>/dev/null || true
+    chmod 755 $installdir/usr/share/linuxtoys/linuxtoys.py 2>/dev/null || true

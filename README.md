@@ -129,7 +129,7 @@ cd linuxtoys
 
 **Run the application:**
 ```bash
-p3/run.py
+p3/linuxtoys.py
 ```
 
 **Update the application:**

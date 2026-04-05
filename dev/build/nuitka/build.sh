@@ -131,7 +131,7 @@ $NUITKA --onefile --follow-imports --output-dir="$OUTPUT_PATH" \
     --include-data-file="$ROOT_DIR/p3/update_version.py=update_version.py" \
     --enable-plugin=gi \
     --enable-plugin=no-qt \
-    "$ROOT_DIR/p3/run.py"
+    "$ROOT_DIR/p3/linuxtoys.py"
 
 if [ $? -eq 0 ]; then
     _msg info "Nuitka build successful! Artifacts are in $OUTPUT_PATH"

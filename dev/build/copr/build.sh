@@ -46,14 +46,14 @@ if [ $# -gt 0 ]; then
     export EASY_CLI=1
 fi
 cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
+exec /usr/bin/python3 linuxtoys.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
 find "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
-chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/run.py"
+chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/linuxtoys.py"
 
 # tarball source for COPR
 tar -cJf "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION.tar.xz" -C "$OUTPUT_PATH/SOURCES" "linuxtoys-$LT_VERSION"

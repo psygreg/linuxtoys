@@ -49,14 +49,14 @@ if [ $# -gt 0 ]; then
     export EASY_CLI=1
 fi
 cd /usr/share/linuxtoys
-exec /usr/bin/python3 run.py "$@"
+exec /usr/bin/python3 linuxtoys.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
-chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/run.py"
+chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/linuxtoys.py"
 
 # Create orig tarball
 tar -C "$OUTPUT_PATH" -cJf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig.tar.xz" "linuxtoys_$LT_VERSION.orig/"
@@ -101,7 +101,7 @@ override_dh_install:
 	dh_install
 	# Set proper permissions for executable files after they are installed
 	chmod +x debian/linuxtoys/usr/bin/linuxtoys
-	chmod +x debian/linuxtoys/usr/share/linuxtoys/run.py
+	chmod +x debian/linuxtoys/usr/share/linuxtoys/linuxtoys.py
 	find debian/linuxtoys/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 	find debian/linuxtoys/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 EOF

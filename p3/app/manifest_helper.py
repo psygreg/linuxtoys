@@ -445,7 +445,7 @@ def print_cli_usage():
     """
     print("LinuxToys CLI Usage:")
     print("=" * 40)
-    print("LT_MANIFEST=1 python3 run.py [options]")
+    print("LT_MANIFEST=1 python3 linuxtoys.py [options]")
     print()
     print("Options:")
     print("  <no arguments>           - Use default 'manifest.txt' in current directory")
@@ -462,9 +462,9 @@ def print_cli_usage():
     print("  - Empty lines are ignored")
     print()
     print("Examples:")
-    print("  LT_MANIFEST=1 python3 run.py")
-    print("  LT_MANIFEST=1 python3 run.py /path/to/my-manifest.txt")
-    print("  LT_MANIFEST=1 python3 run.py check-updates")
+    print("  LT_MANIFEST=1 python3 linuxtoys.py")
+    print("  LT_MANIFEST=1 python3 linuxtoys.py /path/to/my-manifest.txt")
+    print("  LT_MANIFEST=1 python3 linuxtoys.py check-updates")
 
 
 def run_manifest_mode(translations=None):

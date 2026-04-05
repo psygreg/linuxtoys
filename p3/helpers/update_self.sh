@@ -49,7 +49,7 @@ if [[ ! -z "$UPDATE_AVAILABLE" ]]; then
         # 8. Restart the application.
         # 'exec' replaces the current script process with the new one.
         echo "Restarting application..."
-        exec python3 run.py
+        exec python3 linuxtoys.py
         
     else
         # If "No", just print a message and continue.

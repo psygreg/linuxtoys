@@ -25,7 +25,7 @@ make[1]: Entering directory '/mnt/hdd1/dev/linuxtoys/src/buildfiles/deb/linuxtoy
 dh_install
 # Set proper permissions for executable files after they are installed
 chmod +x debian/linuxtoys/usr/bin/linuxtoys
-chmod +x debian/linuxtoys/usr/share/linuxtoys/run.py
+chmod +x debian/linuxtoys/usr/share/linuxtoys/linuxtoys.py
 find debian/linuxtoys/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 find debian/linuxtoys/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 make[1]: Leaving directory '/mnt/hdd1/dev/linuxtoys/src/buildfiles/deb/linuxtoys-5.6.2'

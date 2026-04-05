@@ -31,7 +31,7 @@ install -m 755 usr/bin/linuxtoys %{buildroot}/usr/bin/
 cp -rf usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
 
 # Set proper permissions for executable files
-chmod +x %{buildroot}/usr/share/linuxtoys/run.py
+chmod +x %{buildroot}/usr/share/linuxtoys/linuxtoys.py
 find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
 find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 

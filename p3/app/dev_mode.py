@@ -18,12 +18,12 @@ Features:
 - Dry-run script validation (checks parsing and library sourcing)
 
 Usage:
-    DEV_MODE=1 python3 run.py                                 # Show all scripts, ignore all checks
-    DEV_MODE=1 COMPAT=fedora python3 run.py                   # Simulate Fedora system
-    DEV_MODE=1 CONTAINER=1 python3 run.py                     # Simulate container environment
-    DEV_MODE=1 OPTIMIZER=1 python3 run.py                     # Simulate optimized system
-    DEV_MODE=1 OPTIMIZER=0 python3 run.py                     # Simulate unoptimized system
-    DEV_MODE=1 COMPAT=arch CONTAINER=1 OPTIMIZER=1 python3 run.py # Full simulation
+    DEV_MODE=1 python3 linuxtoys.py                           # Show all scripts, ignore all checks
+    DEV_MODE=1 COMPAT=fedora python3 linuxtoys.py             # Simulate Fedora system
+    DEV_MODE=1 CONTAINER=1 python3 linuxtoys.py               # Simulate container environment
+    DEV_MODE=1 OPTIMIZER=1 python3 linuxtoys.py               # Simulate optimized system
+    DEV_MODE=1 OPTIMIZER=0 python3 linuxtoys.py               # Simulate unoptimized system
+    DEV_MODE=1 COMPAT=arch CONTAINER=1 OPTIMIZER=1 python3 linuxtoys.py # Full simulation
 """
 
 import os

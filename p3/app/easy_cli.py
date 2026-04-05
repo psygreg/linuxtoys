@@ -714,7 +714,7 @@ def easy_cli_help_message():
     print("\nUsage:")
     print("  linuxtoys --install [Option] <item1> <item2> ...")
     print("  linuxtoys --install <item1> <item2> ...  (smart mode)")
-    # print("  EASY_CLI=1 python3 run.py --install [option] <item1> <item2> ...")
+    # print("  EASY_CLI=1 python3 linuxtoys.py --install [option] <item1> <item2> ...")
     print()
     print("Functions:")
     print("  -i, --install      Install selected options (scripts, packages)")
@@ -739,7 +739,7 @@ def easy_cli_help_message():
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
     print("  update, upgrade    Check for updates and upgrade LinuxToys")
-    # print("  -D, --DEV_MODE     Enable developer mode (for scripts debugging)\n    Usage: EASY_CLI=1 python3 run.py -D -i -s <script1>")
+    # print("  -D, --DEV_MODE     Enable developer mode (for scripts debugging)\n    Usage: EASY_CLI=1 python3 linuxtoys.py -D -i -s <script1>")
     print()
 
 

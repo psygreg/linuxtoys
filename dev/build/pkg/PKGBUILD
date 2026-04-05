@@ -15,7 +15,7 @@ package() {
 
     # Set proper permissions for executable files
     chmod +x "${pkgdir}/usr/bin/linuxtoys"
-    chmod +x "${pkgdir}/usr/share/linuxtoys/run.py"
+    chmod +x "${pkgdir}/usr/share/linuxtoys/linuxtoys.py"
     find "${pkgdir}/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
     find "${pkgdir}/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
 }
