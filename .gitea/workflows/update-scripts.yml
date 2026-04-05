@@ -3,6 +3,8 @@ name: Update Scripts
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
     paths:
       - 'p3/app/updater/__init__.py'
 

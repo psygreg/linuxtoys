@@ -14,15 +14,15 @@ on:
         type: boolean
         default: true
 
-  # Trigger on push to main branch (automatically upload to PPA on version change)
-  push:
-    branches:
-      - master
-    paths:
-      - "p3/app/updater/__init__.py"
+  # Trigger when update-scripts workflow completes successfully
+  workflow_run:
+    workflows: ["Update Scripts"]
+    types: [completed]
+    branches: [master]
 
 jobs:
   build-and-upload:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
