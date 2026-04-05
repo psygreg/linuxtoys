@@ -13,6 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install -y rsync
+          
       - name: Fetch and sync scripts
         run: |
           # Clone the scripts repository
