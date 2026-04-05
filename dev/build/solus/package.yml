@@ -1,0 +1,93 @@
+name       : linuxtoys
+version    : 5.7
+release    : 1
+source     :
+    - https://github.com/psygreg/linuxtoys/archive/refs/tags/v5.7.tar.gz : bb3147cb840a76c1abba11a5ecf9b77156c3f8f429f769b2da9113ed6f26ee89
+license    : GPL-3.0-only
+summary    : A set of tools for Linux presented in a user-friendly way
+description: |
+    LinuxToys is a menu-driven application that provides various handy tools for
+    Linux gaming, system optimization, and other useful tweaks. It presents these
+    tools in a user-friendly graphical interface.
+homepage   : https://git.linux.toys/psygreg/linuxtoys
+component  : system.desktop
+
+# Build dependencies required
+builddeps  :
+    - python3-gobject-devel
+    - gtk3-devel
+    - desktop-file-utils
+
+# Runtime dependencies
+rundeps    :
+    - python3
+    - python3-gobject
+    - gtk3
+    - python3-requests
+    - curl
+    - wget
+    - zenity
+    - bash
+    - git
+
+setup      : |
+    # No special setup needed for Python application
+    true
+
+build      : |
+    # No compilation needed for Python application
+    true
+
+install    : |
+    # Create directory structure
+    install -dm 755 $installdir/usr/bin
+    install -dm 755 $installdir/usr/share/linuxtoys
+    install -dm 755 $installdir/usr/share/icons/hicolor/scalable/apps
+    install -dm 755 $installdir/usr/share/applications
+
+    # Find and install the linuxtoys wrapper script
+    if [ -f files/linuxtoys ]; then
+        install -m 755 files/linuxtoys $installdir/usr/bin/
+    else
+        # Alternative location (from archive root)
+        install -m 755 linuxtoys $installdir/usr/bin/
+    fi
+
+    # Install Python application - support multiple source locations
+    if [ -d "files/app" ]; then
+        # CI build structure: files contain app/, libs/, scripts/, etc.
+        cp -r --preserve=mode files/app $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+        cp -r --preserve=mode files/libs $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+        cp -r --preserve=mode files/scripts $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+        cp -r --preserve=mode files/helpers $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+        cp -f --preserve=mode files/run.py $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+        cp -f --preserve=mode files/requirements.txt $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+    elif [ -d "p3" ]; then
+        # Remote source extraction
+        cp -r --preserve=mode p3/* $installdir/usr/share/linuxtoys/
+    elif [ -d "files" ]; then
+        # Generic files directory (fallback)
+        cp -r --preserve=mode files/[^L]* $installdir/usr/share/linuxtoys/ 2>/dev/null || true
+    fi
+
+    # Clean up Python cache files
+    find $installdir/usr/share/linuxtoys/ -name "__pycache__" -type d -delete
+    find $installdir/usr/share/linuxtoys/ -name "*.pyc" -delete
+    find $installdir/usr/share/linuxtoys/ -name ".git*" -delete 2>/dev/null || true
+
+    # Install desktop file
+    if [ -f "files/LinuxToys.desktop" ]; then
+        install -m 644 files/LinuxToys.desktop $installdir/usr/share/applications/
+    else
+        install -m 644 LinuxToys.desktop $installdir/usr/share/applications/
+    fi
+
+    # Install icon
+    if [ -f "files/linuxtoys.svg" ]; then
+        install -m 644 files/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
+    else
+        install -m 644 linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
+    fi
+
+    # Fix permissions on Python scripts
+    chmod 755 $installdir/usr/share/linuxtoys/run.py 2>/dev/null || true
