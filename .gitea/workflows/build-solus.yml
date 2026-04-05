@@ -28,9 +28,7 @@ on:
 
 jobs:
   build-solus:
-    runs-on: ubuntu-latest
-    container:
-      image: docker.io/solkeh/solus:solbuild
+    runs-on: solus-latest
 
     steps:
       - name: Install build dependencies
