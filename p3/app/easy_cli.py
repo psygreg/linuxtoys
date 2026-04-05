@@ -6,7 +6,7 @@ import tempfile
 import asyncio
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
-from .cli_helper import (
+from .manifest_helper import (
     run_manifest_mode, run_update_check_cli, find_script_by_name, 
     run_script, check_package_exists, install_package, 
     check_flatpaks_async, install_flatpaks_async

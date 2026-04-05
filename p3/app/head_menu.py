@@ -1,5 +1,5 @@
 from .gtk_common import Gtk, GLib
-from . import cli_helper
+from . import manifest_helper
 from . import language_selector
 from . import about_helper
 from . import get_icon_path
@@ -230,7 +230,7 @@ class MenuButton(Gtk.MenuButton):
 		if response == Gtk.ResponseType.OK:
 			self.dlg = WaitDialog(self.get_toplevel(), _("loading_manifest_message"))
 			self.dlg.start()
-			scripts_name = cli_helper.load_manifest(dialog.get_filename())
+			scripts_name = manifest_helper.load_manifest(dialog.get_filename())
 		dialog.destroy()
 
 		return scripts_name
@@ -243,7 +243,7 @@ class MenuButton(Gtk.MenuButton):
 		items_to_check = []
 
 		for script_name in scripts_name:
-			script_info = cli_helper.find_script_by_name(script_name)
+			script_info = manifest_helper.find_script_by_name(script_name)
 			if script_info is not None:
 				self.results.append(script_info)
 			else:
@@ -255,18 +255,18 @@ class MenuButton(Gtk.MenuButton):
 
 		# Check flatpaks asynchronously
 		if potential_flatpaks:
-			exists_results = asyncio.run(cli_helper.check_flatpaks_async(potential_flatpaks))
+			exists_results = asyncio.run(manifest_helper.check_flatpaks_async(potential_flatpaks))
 			for name, exists in zip(potential_flatpaks, exists_results):
 				if exists:
 					flatpaks_to_install.append(name)
 				else:
 					# If not a flatpak, check if it's a package
-					if cli_helper.check_package_exists(name):
+					if manifest_helper.check_package_exists(name):
 						packages_to_install.append(name)
 
 		# Check other items for packages
 		for name in items_to_check:
-			if cli_helper.check_package_exists(name):
+			if manifest_helper.check_package_exists(name):
 				packages_to_install.append(name)
 
 		if packages_to_install or flatpaks_to_install:

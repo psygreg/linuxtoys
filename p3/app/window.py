@@ -7,7 +7,7 @@ import threading
 from gi.repository import GdkPixbuf
 
 from . import (
-    cli_helper,
+    manifest_helper,
     compat,
     get_icon_path,
     head_menu,
@@ -845,7 +845,7 @@ class AppWindow(Gtk.ApplicationWindow):
         for info in script_infos:
             if has_depends := info.get("needed"):
                 tasks = [
-                    cli_helper.find_script_by_name_async(_d, self.translations)
+                    manifest_helper.find_script_by_name_async(_d, self.translations)
                     for _d in has_depends
                 ]
                 res = await asyncio.gather(*tasks)

@@ -1,42 +1,9 @@
 #!/usr/bin/env python3
 """
-LinuxToys CLI Helper Module
+LinuxToys Manifest Helper Module
 
-This module provides command-line interface functionality for LinuxToys, allowing IT staff 
-and technicians to automate installations using manifest files.
-
-Key Features:
-- Automatic detection and installation of system packages
-- Automatic detection and installation of flatpaks
-- Execution of LinuxToys scripts
-- Custom manifest file support with validation
-- Cross-platform package manager support (apt, dnf, pacman, zypper, rpm-ostree)
-
-CLI Usage:
-    LT_MANIFEST=1 python3 run.py [options]
-
-Options:
-    <no arguments>          - Use default 'manifest.txt' in current directory
-    <manifest_path>         - Use specified manifest file
-    check-updates           - Check for LinuxToys updates
-    --help, -h              - Show usage information
-
-Manifest File Format:
-    - First line must be: # LinuxToys Manifest File
-    - List items one per line (scripts, packages, or flatpaks)
-    - Lines starting with # are comments
-    - Empty lines are ignored
-    - Priority: Scripts > Packages > Flatpaks
-
-Example Manifest:
-    # LinuxToys Manifest File
-    # Install system packages
-    vim
-    htop
-    # Install flatpaks
-    org.mozilla.firefox
-    # Run LinuxToys scripts
-    script-name
+This module provides manifest file functionality for LinuxToys, allowing IT staff 
+and technicians to automate installations using manifest files, and should be interacted with through CLI.
 """
 
 import os
