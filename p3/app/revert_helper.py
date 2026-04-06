@@ -230,6 +230,7 @@ def _reverse_package_fromfile(file_paths):
     Attempts to extract package name from file path and remove it.
     For .deb files, extracts name before first underscore.
     For .pkg.tar.zst files, similar approach.
+    For .flatpak bundles, extracts app ID using flatpak info.
     
     Args:
         file_paths: list of file paths or single file path string
@@ -245,9 +246,34 @@ def _reverse_package_fromfile(file_paths):
         return []
     
     packages_to_remove = []
+    flatpak_app_ids = []
+    
     for file_path in file_paths:
         basename = os.path.basename(file_path)
-        # Extract package name from filename
+        
+        # Handle flatpak bundles specially
+        if basename.endswith('.flatpak'):
+            # Try to extract app ID from the flatpak bundle using flatpak info
+            try:
+                result = subprocess.run(
+                    ["flatpak", "info", file_path],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    text=True,
+                    check=False,
+                )
+                if result.returncode == 0:
+                    # Parse output to find ID= line
+                    for line in result.stdout.split('\n'):
+                        if line.startswith('ID='):
+                            app_id = line.split('=', 1)[1].strip()
+                            flatpak_app_ids.append(app_id)
+                            break
+            except Exception:
+                pass
+            continue
+        
+        # Extract package name from filename for other package types
         if basename.endswith('.deb'):
             # For deb files: package_1.0-1_amd64.deb -> package
             pkg_name = basename.split('_')[0]
@@ -261,12 +287,24 @@ def _reverse_package_fromfile(file_paths):
             pkg_name = basename.replace('.rpm', '').rsplit('-', 2)[0]
             packages_to_remove.append(pkg_name)
     
-    if not packages_to_remove:
-        return []
+    # Build reversal commands
+    reversal_commands = []
     
-    # Use pkg_remove library function to safely remove the packages
-    pkg_args = " ".join(packages_to_remove)
-    return [f"pkg_remove {pkg_args}"]
+    if packages_to_remove:
+        # Use pkg_remove library function to safely remove the packages
+        pkg_args = " ".join(packages_to_remove)
+        reversal_commands.append(f"pkg_remove {pkg_args}")
+    
+    if flatpak_app_ids:
+        # Use flatpak uninstall for extracted app IDs
+        for app_id in flatpak_app_ids:
+            cmd = (
+                f"flatpak uninstall --user --noninteractive {app_id} 2>/dev/null || true ; "
+                f"sudo flatpak uninstall --system --noninteractive {app_id} 2>/dev/null || true"
+            )
+            reversal_commands.append(cmd)
+    
+    return reversal_commands
 
 
 def _reverse_file_restoration(file_path):

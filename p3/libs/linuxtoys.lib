@@ -277,6 +277,19 @@ pkg_flat() {
     echo "flatpak $@" >> /tmp/linuxtoys/transmap
 }
 pkg_fromfile () {
+    if [[ "$1" == *.flatpak ]]; then
+        local flatpak_file="$1"
+        local flatpak_scope="--user"
+        if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
+           ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+            flatpak_scope="--system"
+        fi
+        flatpak install "$flatpak_scope" --noninteractive "$flatpak_file" 2>/dev/null || \
+        fatal "Failed to install flatpak from file: $flatpak_file"
+        echo "pkg file $flatpak_file" >> /tmp/linuxtoys/transmap
+        return 0
+    fi
+    
     if is_debian || is_ubuntu; then
         { sudo apt install -y "$@" || sudo dpkg -i "$@"; } || fatal "Failed to install $@"
         echo "pkg file $@" >> /tmp/linuxtoys/transmap
