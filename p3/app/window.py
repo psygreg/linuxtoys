@@ -1020,7 +1020,16 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         return response == Gtk.ResponseType.YES
 
     def _close_application(self):
-        """Closes the application gracefully."""
+        """Closes the application gracefully and performs cleanup."""
+        # Clean up temporary directory
+        tmp_linuxtoys_path = "/tmp/linuxtoys"
+        try:
+            if os.path.exists(tmp_linuxtoys_path):
+                shutil.rmtree(tmp_linuxtoys_path)
+                print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
+        except Exception as e:
+            print(f"Warning: Could not clean up temporary directory {tmp_linuxtoys_path}: {e}")
+        
         self.get_application().quit()
 
     def on_language_changed(self, new_language_code):
