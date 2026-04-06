@@ -352,7 +352,7 @@ bootloader_upd() {
             sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
             echo "updated bootloader" >> /tmp/linuxtoys/transmap
         elif is_arch || is_cachy; then
-            sudo grub-mkconfig -o /boot/grub/grub.cfg || fatal "Unable to update bootloader"
+            { sudo grub-mkconfig -o /boot/grub/grub.cfg || sudo bootctl update; } || fatal "Unable to update bootloader"
             echo "updated bootloader" >> /tmp/linuxtoys/transmap
         elif is_debian || is_ubuntu; then
             sudo update-grub || fatal "Unable to update bootloader"
