@@ -393,5 +393,16 @@
   "bug_report_failed": "فشل في إرسال تقرير الخطأ: ",
   "new_spec_key": "جديد",
   "auto_error_reports": "تقارير الأخطاء التلقائية",
-  "waylume_desc": "مدير خلفيات بسيط لـ GNOME/Wayland. يقوم تلقائياً بتعيين خلفيات يومية من Bing و Unsplash و NASA APOD و Wikimedia POTD."
+  "waylume_desc": "مدير خلفيات بسيط لـ GNOME/Wayland. يقوم تلقائياً بتعيين خلفيات يومية من Bing و Unsplash و NASA APOD و Wikimedia POTD.",
+  "scripts_init_title": "تهيئة LinuxToys",
+  "scripts_init_fetching": "جلب مستودع السكريبتات...",
+  "scripts_init_preparing": "تحضير دليل السكريبتات...",
+  "scripts_init_cloning_github": "استنساخ السكريبتات من GitHub...",
+  "scripts_init_success": "تم تهيئة السكريبتات بنجاح!",
+  "scripts_init_cloning_linux_toys": "استنساخ السكريبتات من git.linux.toys...",
+  "scripts_init_failed": "فشل استنساخ السكريبتات، باستخدام السكريبتات المدمجة",
+  "scripts_init_not_found": "لم يتم العثور على السكريبتات، استنساخ...",
+  "scripts_init_updating": "تحديث مستودع السكريبتات...",
+  "scripts_init_update_success": "تم تحديث مستودع السكريبتات بنجاح!",
+  "scripts_init_first_run": "التشغيل الأول: تهيئة مستودع السكريبتات..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "Не вдалося відправити повідомлення про помилку: ",
   "new_spec_key": "новий",
   "auto_error_reports": "Автоматичні Звіти про Помилки",
-  "waylume_desc": "Мінімалістичний менеджер шпалер для GNOME/Wayland. Автоматично встановлює щоденні шпалери з Bing, Unsplash, NASA APOD та Wikimedia POTD."
+  "waylume_desc": "Мінімалістичний менеджер шпалер для GNOME/Wayland. Автоматично встановлює щоденні шпалери з Bing, Unsplash, NASA APOD та Wikimedia POTD.",
+  "scripts_init_title": "Ініціалізація LinuxToys",
+  "scripts_init_fetching": "Отримання сховища скриптів...",
+  "scripts_init_preparing": "Підготовка каталогу скриптів...",
+  "scripts_init_cloning_github": "Клонування скриптів з GitHub...",
+  "scripts_init_success": "Скрипти успішно інітіалізовано!",
+  "scripts_init_cloning_linux_toys": "Клонування скриптів з git.linux.toys...",
+  "scripts_init_failed": "Невдача клонування скриптів, використання вбудованих скриптів",
+  "scripts_init_not_found": "Скрипти не знайдено, клонування...",
+  "scripts_init_updating": "Оновлення сховища скриптів...",
+  "scripts_init_update_success": "Сховище скриптів успішно оновлено!",
+  "scripts_init_first_run": "Перший запуск: ініціалізація сховища скриптів..."
 }

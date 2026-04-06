@@ -393,5 +393,16 @@
   "bug_report_failed": "버그 보고서 전송 실패: ",
   "new_spec_key": "새로운",
   "auto_error_reports": "자동 오류 보고",
-  "waylume_desc": "GNOME/Wayland용 미니말리스트 배경화면 관리자. Bing, Unsplash, NASA APOD 및 Wikimedia POTD에서 자동으로 일일 배경화면을 설정합니다."
+  "waylume_desc": "GNOME/Wayland용 미니말리스트 배경화면 관리자. Bing, Unsplash, NASA APOD 및 Wikimedia POTD에서 자동으로 일일 배경화면을 설정합니다.",
+  "scripts_init_title": "LinuxToys 초기화 중",
+  "scripts_init_fetching": "스크립트 저장소 가져오는 중...",
+  "scripts_init_preparing": "스크립트 디렉토리 준비 중...",
+  "scripts_init_cloning_github": "GitHub에서 스크립트 복제 중...",
+  "scripts_init_success": "스크립트가 성공적으로 초기화되었습니다!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys에서 스크립트 복제 중...",
+  "scripts_init_failed": "스크립트 복제 실패, 번들된 스크립트 사용",
+  "scripts_init_not_found": "스크립트를 찾을 수 없음, 복제 중...",
+  "scripts_init_updating": "스크립트 저장소 업데이트 중...",
+  "scripts_init_update_success": "스크립트 저장소가 성공적으로 업데이트되었습니다!",
+  "scripts_init_first_run": "첫 실행: 스크립트 저장소 초기화 중..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "Dështimi i dërgimit të raportit të gabimit: ",
   "new_spec_key": "i ri",
   "auto_error_reports": "Raportimet Automatike të Gabimeve",
-  "waylume_desc": "Menaxher minimal i sfondit për GNOME/Wayland. Vendos automatikisht sfondet e përditshme nga Bing, Unsplash, NASA APOD dhe Wikimedia POTD."
+  "waylume_desc": "Menaxher minimal i sfondit për GNOME/Wayland. Vendos automatikisht sfondet e përditshme nga Bing, Unsplash, NASA APOD dhe Wikimedia POTD.",
+  "scripts_init_title": "Inicializimi i LinuxToys",
+  "scripts_init_fetching": "Marrja e depozitit të skriptave...",
+  "scripts_init_preparing": "Përgatitja e direktorit të skriptave...",
+  "scripts_init_cloning_github": "Klonimi i skriptave nga GitHub...",
+  "scripts_init_success": "Skriptat janë inicializuar me sukses!",
+  "scripts_init_cloning_linux_toys": "Klonimi i skriptave nga git.linux.toys...",
+  "scripts_init_failed": "Klonimin i skriptave dështoi, përdorimi i skriptave të përfshira",
+  "scripts_init_not_found": "Skriptat nuk u gjetën, klonimit...",
+  "scripts_init_updating": "Përditësimi i depozitit të skriptave...",
+  "scripts_init_update_success": "Depo i skriptave u përditësua me sukses!",
+  "scripts_init_first_run": "Para e parë: inicializimi i depozitit të skriptave..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "Fehler beim Senden des Fehlerberichts: ",
   "new_spec_key": "neu",
   "auto_error_reports": "Automatische Fehlerberichte",
-  "waylume_desc": "Minimalistischer Hintergrund-Manager für GNOME/Wayland. Setzt automatisch tägliche Hintergründe von Bing, Unsplash, NASA APOD und Wikimedia POTD."
+  "waylume_desc": "Minimalistischer Hintergrund-Manager für GNOME/Wayland. Setzt automatisch tägliche Hintergründe von Bing, Unsplash, NASA APOD und Wikimedia POTD.",
+  "scripts_init_title": "LinuxToys wird initialisiert",
+  "scripts_init_fetching": "Skript-Repository wird abgerufen...",
+  "scripts_init_preparing": "Skript-Verzeichnis wird vorbereitet...",
+  "scripts_init_cloning_github": "Skripte werden von GitHub geklont...",
+  "scripts_init_success": "Skripte wurden erfolgreich initialisiert!",
+  "scripts_init_cloning_linux_toys": "Skripte werden von git.linux.toys geklont...",
+  "scripts_init_failed": "Klonen von Skripten fehlgeschlagen, verwende gebündelte Skripte",
+  "scripts_init_not_found": "Skripte nicht gefunden, klone...",
+  "scripts_init_updating": "Skript-Repository wird aktualisiert...",
+  "scripts_init_update_success": "Skript-Repository wurde erfolgreich aktualisiert!",
+  "scripts_init_first_run": "Erste Ausführung: Skript-Repository wird initialisiert..."
 }

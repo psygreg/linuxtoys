@@ -393,5 +393,16 @@
   "bug_report_failed": "כישלון בשליחת דוח הבאג: ",
   "new_spec_key": "חדש",
   "auto_error_reports": "דוחות שגיאות אוטומטיים",
-  "waylume_desc": "מנהל טפטים מינימליסטי עבור GNOME/Wayland. מגדיר באופן אוטומטי טפטים יומיים מ-Bing, Unsplash, NASA APOD ו-Wikimedia POTD."
+  "waylume_desc": "מנהל טפטים מינימליסטי עבור GNOME/Wayland. מגדיר באופן אוטומטי טפטים יומיים מ-Bing, Unsplash, NASA APOD ו-Wikimedia POTD.",
+  "scripts_init_title": "אתחול LinuxToys",
+  "scripts_init_fetching": "מביאים מאגר סקריפטים...",
+  "scripts_init_preparing": "הכנת ספריית סקריפטים...",
+  "scripts_init_cloning_github": "שיבוט סקריפטים מ- GitHub...",
+  "scripts_init_success": "סקריפטים הוצאו בהצלחה!",
+  "scripts_init_cloning_linux_toys": "שיבוט סקריפטים מ- git.linux.toys...",
+  "scripts_init_failed": "שיבוט סקריפטים נכשל, שימוש בסקריפטים מובנים",
+  "scripts_init_not_found": "סקריפטים לא נמצאו, שיבוט...",
+  "scripts_init_updating": "עדכון מאגר סקריפטים...",
+  "scripts_init_update_success": "מאגר סקריפטים עודכן בהצלחה!",
+  "scripts_init_first_run": "הרצה ראשונה: אתחול מאגר סקריפטים..."
 }

@@ -373,5 +373,16 @@
   "bug_report_failed": "बग रिपोर्ट भेजने में विफल: ",
   "new_spec_key": "नया",
   "auto_error_reports": "स्वचालित त्रुटि रिपोर्ट",
-  "waylume_desc": "GNOME/Wayland के लिए न्यूनतम वॉलपेपर प्रबंधक। Bing, Unsplash, NASA APOD और Wikimedia POTD से स्वचालित रूप से दैनिक वॉलपेपर सेट करता है।"
+  "waylume_desc": "GNOME/Wayland के लिए न्यूनतम वॉलपेपर प्रबंधक। Bing, Unsplash, NASA APOD और Wikimedia POTD से स्वचालित रूप से दैनिक वॉलपेपर सेट करता है।",
+  "scripts_init_title": "LinuxToys शुरू हो रहा है",
+  "scripts_init_fetching": "स्क्रिप्ट रिपोजिटरी प्राप्त की जा रही है...",
+  "scripts_init_preparing": "स्क्रिप्ट निर्देशिका तैयार की जा रही है...",
+  "scripts_init_cloning_github": "GitHub से स्क्रिप्ट क्लोन किए जा रहे हैं...",
+  "scripts_init_success": "स्क्रिप्ट्स सफलतापूर्वक शुरू हो गई हैं!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys से स्क्रिप्ट क्लोन किए जा रहे हैं...",
+  "scripts_init_failed": "स्क्रिप्ट क्लोन विफल, बंडल की गई स्क्रिप्ट का उपयोग कर रहे हैं",
+  "scripts_init_not_found": "स्क्रिप्ट नहीं मिले, क्लोन किए जा रहे हैं...",
+  "scripts_init_updating": "स्क्रिप्ट रिपोजिटरी अपडेट की जा रही है...",
+  "scripts_init_update_success": "स्क्रिप्ट रिपोजिटरी सफलतापूर्वक अपडेट की गई!",
+  "scripts_init_first_run": "पहली रन: स्क्रिप्ट रिपोजिटरी शुरू की जा रही है..."
 }

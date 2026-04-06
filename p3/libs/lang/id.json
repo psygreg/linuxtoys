@@ -393,5 +393,16 @@
   "bug_report_failed": "Gagal mengirim laporan bug: ",
   "new_spec_key": "baru",
   "auto_error_reports": "Laporan Kesalahan Otomatis",
-  "waylume_desc": "Pengelola wallpaper minimalis untuk GNOME/Wayland. Secara otomatis mengatur wallpaper harian dari Bing, Unsplash, NASA APOD, dan Wikimedia POTD."
+  "waylume_desc": "Pengelola wallpaper minimalis untuk GNOME/Wayland. Secara otomatis mengatur wallpaper harian dari Bing, Unsplash, NASA APOD, dan Wikimedia POTD.",
+  "scripts_init_title": "Menginisialisasi LinuxToys",
+  "scripts_init_fetching": "Mengambil repositori skrip...",
+  "scripts_init_preparing": "Menyiapkan direktori skrip...",
+  "scripts_init_cloning_github": "Mengkloning skrip dari GitHub...",
+  "scripts_init_success": "Skrip berhasil diinisialisasi!",
+  "scripts_init_cloning_linux_toys": "Mengkloning skrip dari git.linux.toys...",
+  "scripts_init_failed": "Gagal mengkloning skrip, menggunakan skrip bawaan",
+  "scripts_init_not_found": "Skrip tidak ditemukan, mengkloning...",
+  "scripts_init_updating": "Memperbarui repositori skrip...",
+  "scripts_init_update_success": "Repositori skrip berhasil diperbarui!",
+  "scripts_init_first_run": "Pertama kali dijalankan: inisialisasi repositori skrip..."
 }

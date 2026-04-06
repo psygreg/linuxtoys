@@ -393,5 +393,16 @@
   "bug_report_failed": "بگ رپورٹ بھیجنے میں ناکام: ",
   "new_spec_key": "نیا",
   "auto_error_reports": "خودکار غلطی کی رپورٹسز",
-  "waylume_desc": "GNOME/Wayland کے لیے منتقی دیوار کاغذ کا منیجر۔ Bing، Unsplash، NASA APOD اور Wikimedia POTD سے خود بخود روزانہ دیوار کاغذ مقرر کرتا ہے۔"
+  "waylume_desc": "GNOME/Wayland کے لیے منتقی دیوار کاغذ کا منیجر۔ Bing، Unsplash، NASA APOD اور Wikimedia POTD سے خود بخود روزانہ دیوار کاغذ مقرر کرتا ہے۔",
+  "scripts_init_title": "LinuxToys شروع ہو رہا ہے",
+  "scripts_init_fetching": "اسکرپٹ ذخیرہ حاصل کر رہے ہیں...",
+  "scripts_init_preparing": "اسکرپٹ ڈائریکٹری تیار کری جا رہی ہے...",
+  "scripts_init_cloning_github": "GitHub سے اسکرپٹس کی نقل کی جا رہی ہے...",
+  "scripts_init_success": "اسکرپٹس کامیابی سے شروع ہو گئے!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys سے اسکرپٹس کی نقل کی جا رہی ہے...",
+  "scripts_init_failed": "اسکرپٹ کی نقل ناکام، بنیادی اسکرپٹ استعمال کریں",
+  "scripts_init_not_found": "اسکرپٹس نہیں مل رہے ہیں، نقل...",
+  "scripts_init_updating": "اسکرپٹ ذخیرہ اپڈیٹ کریں...",
+  "scripts_init_update_success": "اسکرپٹ ذخیرہ کامیابی کے ساتھ اپڈیٹ کیا گیا!",
+  "scripts_init_first_run": "پہلی رن: اسکرپٹ ذخیرہ شروع ہو رہا ہے..."
 }

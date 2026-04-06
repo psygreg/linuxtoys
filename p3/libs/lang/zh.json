@@ -395,5 +395,16 @@
   "bug_report_failed": "发送bug报告失败: ",
   "new_spec_key": "新",
   "auto_error_reports": "自动错误报告",
-  "waylume_desc": "GNOME/Wayland的简约壁纸管理器。自动设置来自Bing、Unsplash、NASA APOD和Wikimedia POTD的每日壁纸。"
+  "waylume_desc": "GNOME/Wayland的简约壁纸管理器。自动设置来自Bing、Unsplash、NASA APOD和Wikimedia POTD的每日壁纸。",
+  "scripts_init_title": "正在初始化 LinuxToys",
+  "scripts_init_fetching": "正在获取脚本仓库...",
+  "scripts_init_preparing": "正在准备脚本目录...",
+  "scripts_init_cloning_github": "正在从 GitHub 克隆脚本...",
+  "scripts_init_success": "脚本初始化成功!",
+  "scripts_init_cloning_linux_toys": "正在从 git.linux.toys 克隆脚本...",
+  "scripts_init_failed": "脚本克隆失败，使用捆绑的脚本",
+  "scripts_init_not_found": "未找到脚本，克隆中...",
+  "scripts_init_updating": "正在更新脚本仓库...",
+  "scripts_init_update_success": "脚本仓库更新成功!",
+  "scripts_init_first_run": "首次运行：正在初始化脚本存储库..."
 }

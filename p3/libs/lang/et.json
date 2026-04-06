@@ -393,5 +393,16 @@
   "bug_report_failed": "Veasea saatmine ebaõnnestus: ",
   "new_spec_key": "uus",
   "auto_error_reports": "Automaatsed Vigade Aruanded",
-  "waylume_desc": "Minimalistlik ja taust haldur GNOME/Wayland jaoks. Määrab automaatselt päevaseid taustpilte Bing-ist, Unsplash-ist, NASA APOD-st ja Wikimedia POTD-st."
+  "waylume_desc": "Minimalistlik ja taust haldur GNOME/Wayland jaoks. Määrab automaatselt päevaseid taustpilte Bing-ist, Unsplash-ist, NASA APOD-st ja Wikimedia POTD-st.",
+  "scripts_init_title": "LinuxToys initialiseerimine",
+  "scripts_init_fetching": "Skriptide hoidla tõmbamine...",
+  "scripts_init_preparing": "Skriptide kausta täpsustamine...",
+  "scripts_init_cloning_github": "Skriptide kloneerimine GitHubist...",
+  "scripts_init_success": "Skriptid alustati edukalt!",
+  "scripts_init_cloning_linux_toys": "Skriptide kloneerimine git.linux.toys-ist...",
+  "scripts_init_failed": "Skriptide kloneerimine ebaõnnestus, kasutades kaasasolevaid skripte",
+  "scripts_init_not_found": "Skripte ei leitud, kloneeritakse...",
+  "scripts_init_updating": "Skriptide hoidla uuendamine...",
+  "scripts_init_update_success": "Skriptide hoidla uuendati edukalt!",
+  "scripts_init_first_run": "Esimene käivitus: skriptide hoidla initialiseerimine..."
 }

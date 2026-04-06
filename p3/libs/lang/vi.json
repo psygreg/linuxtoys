@@ -393,5 +393,16 @@
   "bug_report_failed": "Không thể gửi báo cáo lỗi: ",
   "new_spec_key": "mới",
   "auto_error_reports": "Báo Cáo Lỗi Tự Động",
-  "waylume_desc": "Trình quản lý hình nền tối giản cho GNOME/Wayland. Tự động đặt hình nền hàng ngày từ Bing, Unsplash, NASA APOD và Wikimedia POTD."
+  "waylume_desc": "Trình quản lý hình nền tối giản cho GNOME/Wayland. Tự động đặt hình nền hàng ngày từ Bing, Unsplash, NASA APOD và Wikimedia POTD.",
+  "scripts_init_title": "Đang khởi tạo LinuxToys",
+  "scripts_init_fetching": "Đang lấy kho lưu trữ tập lệnh...",
+  "scripts_init_preparing": "Đang chuẩn bị thư mục tập lệnh...",
+  "scripts_init_cloning_github": "Đang sao chép tập lệnh từ GitHub...",
+  "scripts_init_success": "Tập lệnh được khởi tạo thành công!",
+  "scripts_init_cloning_linux_toys": "Đang sao chép tập lệnh từ git.linux.toys...",
+  "scripts_init_failed": "Sao chép tập lệnh không thành công, sử dụng các tập lệnh đi kèm",
+  "scripts_init_not_found": "Không tìm thấy tập lệnh, sao chép...",
+  "scripts_init_updating": "Đang cập nhật kho lưu trữ tập lệnh...",
+  "scripts_init_update_success": "Kho lưu trữ tập lệnh được cập nhật thành công!",
+  "scripts_init_first_run": "Lần chạy đầu tiên: khởi tạo kho lưu trữ tập lệnh..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "Αποτυχία αποστολής αναφοράς σφάλματος: ",
   "new_spec_key": "νέο",
   "auto_error_reports": "Αυτόματες Αναφορές Σφαλμάτων",
-  "waylume_desc": "Ελάχιστος διαχειριστής ταπετσαρίας για GNOME/Wayland. Ορίζει αυτόματα καθημερινές ταπετσαρίες από Bing, Unsplash, NASA APOD και Wikimedia POTD."
+  "waylume_desc": "Ελάχιστος διαχειριστής ταπετσαρίας για GNOME/Wayland. Ορίζει αυτόματα καθημερινές ταπετσαρίες από Bing, Unsplash, NASA APOD και Wikimedia POTD.",
+  "scripts_init_title": "Αρχικοποίηση LinuxToys",
+  "scripts_init_fetching": "Ανάκτηση αποθηκευτηρίου σεναρίων...",
+  "scripts_init_preparing": "Προετοιμασία καταλόγου σεναρίων...",
+  "scripts_init_cloning_github": "Κλωνοποίηση σεναρίων από το GitHub...",
+  "scripts_init_success": "Τα σενάρια αρχικοποιήθηκαν με επιτυχία!",
+  "scripts_init_cloning_linux_toys": "Κλωνοποίηση σεναρίων από το git.linux.toys...",
+  "scripts_init_failed": "Αποτυχία κλωνοποίησης σεναρίων, χρήση ενσωματωμένων σεναρίων",
+  "scripts_init_not_found": "Σενάρια δεν βρέθηκαν, κλωνοποίηση...",
+  "scripts_init_updating": "Ενημέρωση αποθηκευτηρίου σεναρίων...",
+  "scripts_init_update_success": "Το αποθηκευτήριο σεναρίων ενημερώθηκε με επιτυχία!",
+  "scripts_init_first_run": "Πρώτη εκτέλεση: αρχικοποίηση αποθηκευτηρίου σεναρίων..."
 }

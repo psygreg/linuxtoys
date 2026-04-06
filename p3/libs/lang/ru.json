@@ -393,5 +393,16 @@
   "bug_report_failed": "Не удалось отправить отчет об ошибке: ",
   "new_spec_key": "новый",
   "auto_error_reports": "Автоматические Oтчеты об Oшибках",
-  "waylume_desc": "Минималистический менеджер обоев для GNOME/Wayland. Автоматически устанавливает ежедневные обои из Bing, Unsplash, NASA APOD и Wikimedia POTD."
+  "waylume_desc": "Минималистический менеджер обоев для GNOME/Wayland. Автоматически устанавливает ежедневные обои из Bing, Unsplash, NASA APOD и Wikimedia POTD.",
+  "scripts_init_title": "Инициализация LinuxToys",
+  "scripts_init_fetching": "Получение репозитория скриптов...",
+  "scripts_init_preparing": "Подготовка каталога скриптов...",
+  "scripts_init_cloning_github": "Клонирование скриптов из GitHub...",
+  "scripts_init_success": "Скрипты успешно инициализированы!",
+  "scripts_init_cloning_linux_toys": "Клонирование скриптов из git.linux.toys...",
+  "scripts_init_failed": "Ошибка клонирования скриптов, использование встроенных скриптов",
+  "scripts_init_not_found": "Скрипты не найдены, клонирование...",
+  "scripts_init_updating": "Обновление репозитория скриптов...",
+  "scripts_init_update_success": "Репозиторий скриптов успешно обновлен!",
+  "scripts_init_first_run": "Первый запуск: инициализация репозитория скриптов..."
 }

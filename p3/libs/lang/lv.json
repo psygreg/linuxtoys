@@ -393,5 +393,16 @@
   "bug_report_failed": "Kļūdu ziņojuma nosūtīšana neizdevās: ",
   "new_spec_key": "jauns",
   "auto_error_reports": "Automātiskas Kļūdu Atskaites",
-  "waylume_desc": "Minimālistisks fona pārvaldnieks GNOME/Wayland. Automātiski iestata ikdienas fonus no Bing, Unsplash, NASA APOD un Wikimedia POTD."
+  "waylume_desc": "Minimālistisks fona pārvaldnieks GNOME/Wayland. Automātiski iestata ikdienas fonus no Bing, Unsplash, NASA APOD un Wikimedia POTD.",
+  "scripts_init_title": "LinuxToys inicializācija",
+  "scripts_init_fetching": "Iegūst skriptu repozitoriju...",
+  "scripts_init_preparing": "Skriptu direktorijas sagatavošana...",
+  "scripts_init_cloning_github": "Skriptu klonēšana no GitHub...",
+  "scripts_init_success": "Skripti sekmīgi inicializēti!",
+  "scripts_init_cloning_linux_toys": "Skriptu klonēšana no git.linux.toys...",
+  "scripts_init_failed": "Skriptu klonēšana neizdevās, izmanto iebūvētus skriptus",
+  "scripts_init_not_found": "Skripti nav atrasti, klonējums...",
+  "scripts_init_updating": "Skriptu repozitorija atjaunošana...",
+  "scripts_init_update_success": "Skriptu repozitorijs sekmīgi atjaunots!",
+  "scripts_init_first_run": "Pirmais palaišanas: skriptu repozitorijas inicializācija..."
 }

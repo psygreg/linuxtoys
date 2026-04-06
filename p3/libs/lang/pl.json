@@ -393,5 +393,16 @@
   "bug_report_failed": "Niepowodzenie wysyłania raportu o błędzie: ",
   "new_spec_key": "nowy",
   "auto_error_reports": "Automatyczne Raporty Błędów",
-  "waylume_desc": "Minimalistyczny menedżer tapet dla GNOME/Wayland. Automatycznie ustawia codzienne tapety z Bing, Unsplash, NASA APOD i Wikimedia POTD."
+  "waylume_desc": "Minimalistyczny menedżer tapet dla GNOME/Wayland. Automatycznie ustawia codzienne tapety z Bing, Unsplash, NASA APOD i Wikimedia POTD.",
+  "scripts_init_title": "Inicjowanie LinuxToys",
+  "scripts_init_fetching": "Pobieranie repozytorium skryptów...",
+  "scripts_init_preparing": "Przygotowywanie katalogu skryptów...",
+  "scripts_init_cloning_github": "Klonowanie skryptów z GitHub...",
+  "scripts_init_success": "Skrypty zainicjowane pomyślnie!",
+  "scripts_init_cloning_linux_toys": "Klonowanie skryptów z git.linux.toys...",
+  "scripts_init_failed": "Klonowanie skryptów nie powiodło się, używanie skryptów dołączonych",
+  "scripts_init_not_found": "Skrypty nie znalezione, klonowanie...",
+  "scripts_init_updating": "Aktualizowanie repozytorium skryptów...",
+  "scripts_init_update_success": "Repozytorium skryptów zostało pomyślnie zaktualizowane!",
+  "scripts_init_first_run": "Pierwszym uruchomieniu: inicjowanie repozytorium skryptów..."
 }

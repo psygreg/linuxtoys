@@ -393,5 +393,16 @@
   "bug_report_failed": "ባግ ሪፖርት ለላክ አልተቻለም: ",
   "new_spec_key": "ጤዛ",
   "auto_error_reports": "ራስ ሰር ስህተት ሪፖርቶች",
-  "waylume_desc": "ለኖም/Wayland አነስተኛ ጭቅ ስታይል ሙጃሚ። በራስ ሰር ከBing፣ Unsplash፣ NASA APOD እና Wikimedia POTD ስታይሎችን ያስተካክላል።"
+  "waylume_desc": "ለኖም/Wayland አነስተኛ ጭቅ ስታይል ሙጃሚ። በራስ ሰር ከBing፣ Unsplash፣ NASA APOD እና Wikimedia POTD ስታይሎችን ያስተካክላል።",
+  "scripts_init_title": "LinuxToys እየ መጀመር",
+  "scripts_init_fetching": "የስክሪፕቶችን ማከማቻ ስልስል ይመድቡ...",
+  "scripts_init_preparing": "የስክሪፕቶች ማውጫ ይዘጋጁ...",
+  "scripts_init_cloning_github": "ስክሪፕቶችን ከ GitHub ይክሉ...",
+  "scripts_init_success": "ስክሪፕቶች በተሳካ ሁኔታ ተጀምሩ!",
+  "scripts_init_cloning_linux_toys": "ስክሪፕቶችን ከ git.linux.toys ይክሉ...",
+  "scripts_init_failed": "ስክሪፕቶች ክሊኒላ ወርደዋል, የተያያዑ ስክሪፕቶች ያገለግሉ",
+  "scripts_init_not_found": "ስክሪፕቶች አላገኙም, ይክሊኑ...",
+  "scripts_init_updating": "የስክሪፕቶች ማከማቻ እየታደሰ...",
+  "scripts_init_update_success": "ስክሪፕቶች ማከማቻ በተሳካ ሁኔታ ታደሰ!",
+  "scripts_init_first_run": "መጀመሪያ ሙስጥር: የስክሪፕቶች ማከማቻ ይጀምራል..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "Failed to submit bug report: ",
   "new_spec_key": "new",
   "auto_error_reports": "Automatic Error Reports",
-  "waylume_desc": "Minimalist wallpaper manager for GNOME/Wayland. Automatically sets daily wallpapers from Bing, Unsplash, NASA APOD and Wikimedia POTD."
+  "waylume_desc": "Minimalist wallpaper manager for GNOME/Wayland. Automatically sets daily wallpapers from Bing, Unsplash, NASA APOD and Wikimedia POTD.",
+  "scripts_init_title": "Initializing LinuxToys",
+  "scripts_init_fetching": "Fetching scripts repository...",
+  "scripts_init_preparing": "Preparing scripts directory...",
+  "scripts_init_cloning_github": "Cloning scripts from GitHub...",
+  "scripts_init_success": "Scripts initialized successfully!",
+  "scripts_init_cloning_linux_toys": "Cloning scripts from git.linux.toys...",
+  "scripts_init_failed": "Failed to clone scripts, using bundled scripts",
+  "scripts_init_not_found": "Scripts not found, cloning...",
+  "scripts_init_updating": "Updating scripts repository...",
+  "scripts_init_update_success": "Scripts updated successfully!",
+  "scripts_init_first_run": "First run: initializing scripts repository..."
 }

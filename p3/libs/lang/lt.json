@@ -393,5 +393,16 @@
   "bug_report_failed": "Nepavyko nusiųsti klaidų ataskaitos: ",
   "new_spec_key": "naujas",
   "auto_error_reports": "Automatinės Klaidų Ataskaitos",
-  "waylume_desc": "Minimalus pagrindo vadybininkas GNOME/Wayland. Automatiškai nustato kasdienius pagrindus iš Bing, Unsplash, NASA APOD ir Wikimedia POTD."
+  "waylume_desc": "Minimalus pagrindo vadybininkas GNOME/Wayland. Automatiškai nustato kasdienius pagrindus iš Bing, Unsplash, NASA APOD ir Wikimedia POTD.",
+  "scripts_init_title": "LinuxToys inicijalizacija",
+  "scripts_init_fetching": "Ankas skriptų saugykla...",
+  "scripts_init_preparing": "Skriptų katalogo paruošimas...",
+  "scripts_init_cloning_github": "Skriptų duplika iš GitHub...",
+  "scripts_init_success": "Skriptai sėkmingai inicijalizuoti!",
+  "scripts_init_cloning_linux_toys": "Skriptų duplika iš git.linux.toys...",
+  "scripts_init_failed": "Skriptų klonų klaida, naudojama sumeista skriptai",
+  "scripts_init_not_found": "Skriptai nerasiti, klonuojama...",
+  "scripts_init_updating": "Script saugyklos atnaujinimas...",
+  "scripts_init_update_success": "Skriptų saugykla buvo sėkmingai atnaujinta!",
+  "scripts_init_first_run": "Pirmas paleidimas: skriptų saugyklos inicijalizacija..."
 }

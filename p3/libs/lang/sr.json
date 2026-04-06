@@ -393,5 +393,16 @@
   "bug_report_failed": "Неуспешно слање пријаве грешке: ",
   "new_spec_key": "ново",
   "auto_error_reports": "Аутоматски Извештаји о Грешкама",
-  "waylume_desc": "Минимални управник позадина за GNOME/Wayland. Аутоматски postavlja дневне позадине са Bing-а, Unsplash-а, NASA APOD-а и Wikimedia POTD-а."
+  "waylume_desc": "Минимални управник позадина за GNOME/Wayland. Аутоматски postavlja дневне позадине са Bing-а, Unsplash-а, NASA APOD-а и Wikimedia POTD-а.",
+  "scripts_init_title": "Иницијализација LinuxToys",
+  "scripts_init_fetching": "Преузимање складишта скрипти...",
+  "scripts_init_preparing": "Припрема директоријума скрипти...",
+  "scripts_init_cloning_github": "Клонирање скрипти са GitHub-а...",
+  "scripts_init_success": "Скрипти су успешно иницијализовани!",
+  "scripts_init_cloning_linux_toys": "Клонирање скрипти са git.linux.toys...",
+  "scripts_init_failed": "Клонирање скрипти није успело, коришћење уграђених скрипти",
+  "scripts_init_not_found": "Скрипти нису пронађени, клонирање...",
+  "scripts_init_updating": "Ажурирање складишта скрипти...",
+  "scripts_init_update_success": "Складиште скрипти успешно ажурирано!",
+  "scripts_init_first_run": "Прво покретање: иницијализација складишта скрипти..."
 }

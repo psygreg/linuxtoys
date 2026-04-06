@@ -110,7 +110,7 @@ def _clone_scripts_repo(progress_callback=None):
     if os.path.exists(GIT_SCRIPTS_CACHE_DIR):
         try:
             if progress_callback:
-                progress_callback("Preparing scripts directory...")
+                progress_callback("scripts_init_preparing")
             shutil.rmtree(GIT_SCRIPTS_CACHE_DIR)
         except Exception as e:
             logger.error(f"Failed to remove existing scripts directory: {e}")
@@ -118,7 +118,7 @@ def _clone_scripts_repo(progress_callback=None):
     
     # Try cloning from GitHub first
     if progress_callback:
-        progress_callback("Cloning scripts from GitHub...")
+        progress_callback("scripts_init_cloning_github")
     logger.info(f"Attempting to clone scripts from {GITHUB_REPO_URL}")
     success, output, error = _run_git_command(
         ["clone", "--depth=1", GITHUB_REPO_URL, GIT_SCRIPTS_CACHE_DIR]
@@ -127,14 +127,14 @@ def _clone_scripts_repo(progress_callback=None):
     if success:
         logger.info("Successfully cloned scripts from GitHub")
         if progress_callback:
-            progress_callback("Scripts initialized successfully!")
+            progress_callback("scripts_init_success")
         return True
     
     logger.warning(f"GitHub clone failed: {error}")
     
     # Try fallback URL
     if progress_callback:
-        progress_callback("Cloning scripts from git.linux.toys...")
+        progress_callback("scripts_init_cloning_linux_toys")
     logger.info(f"Attempting to clone scripts from {GITLINUXTOYS_REPO_URL}")
     success, output, error = _run_git_command(
         ["clone", "--depth=1", GITLINUXTOYS_REPO_URL, GIT_SCRIPTS_CACHE_DIR]
@@ -143,12 +143,12 @@ def _clone_scripts_repo(progress_callback=None):
     if success:
         logger.info("Successfully cloned scripts from git.linux.toys")
         if progress_callback:
-            progress_callback("Scripts initialized successfully!")
+            progress_callback("scripts_init_success")
         return True
     
     logger.error(f"git.linux.toys clone failed: {error}")
     if progress_callback:
-        progress_callback("Failed to clone scripts, using bundled scripts")
+        progress_callback("scripts_init_failed")
     return False
 
 
@@ -165,11 +165,11 @@ def _pull_scripts_repo(progress_callback=None):
     if not _git_repo_exists():
         logger.warning("Scripts repository not found in cache, cloning instead")
         if progress_callback:
-            progress_callback("Scripts not found, cloning...")
+            progress_callback("scripts_init_not_found")
         return _clone_scripts_repo(progress_callback)
     
     if progress_callback:
-        progress_callback("Updating scripts repository...")
+        progress_callback("scripts_init_updating")
     logger.info("Pulling updates for scripts repository")
     success, output, error = _run_git_command(
         ["pull", "--ff-only"],
@@ -179,7 +179,7 @@ def _pull_scripts_repo(progress_callback=None):
     if success:
         logger.info("Successfully pulled scripts updates")
         if progress_callback:
-            progress_callback("Scripts updated successfully!")
+            progress_callback("scripts_init_update_success")
         return True
     
     logger.warning(f"Failed to pull updates: {error}")
@@ -213,7 +213,7 @@ def get_scripts_dir(progress_callback=None):
     else:
         # Repository doesn't exist, try to clone it (first run scenario)
         if progress_callback:
-            progress_callback("First run: initializing scripts repository...")
+            progress_callback("scripts_init_first_run")
         if _clone_scripts_repo(progress_callback):
             logger.info(f"Using git-synced scripts from {GIT_SCRIPTS_CACHE_DIR}")
             return GIT_SCRIPTS_CACHE_DIR

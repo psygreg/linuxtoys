@@ -393,5 +393,16 @@
   "bug_report_failed": "Hata raporunu gönderme başarısız oldu: ",
   "new_spec_key": "yeni",
   "auto_error_reports": "Otomatik Hata Raporları",
-  "waylume_desc": "GNOME/Wayland için minimalist duvar kağıdı yöneticisi. Bing, Unsplash, NASA APOD ve Wikimedia POTD'den otomatik olarak günlük duvar kağıtlarını ayarlar."
+  "waylume_desc": "GNOME/Wayland için minimalist duvar kağıdı yöneticisi. Bing, Unsplash, NASA APOD ve Wikimedia POTD'den otomatik olarak günlük duvar kağıtlarını ayarlar.",
+  "scripts_init_title": "LinuxToys Başlatılıyor",
+  "scripts_init_fetching": "Komut dosyası depositoriyumu alıyor...",
+  "scripts_init_preparing": "Komut dosyası dizini hazırlanıyor...",
+  "scripts_init_cloning_github": "GitHub'dan Komut dosyaları klonlanıyor...",
+  "scripts_init_success": "Komut dosyaları başarıyla başlatıldı!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys'dan Komut dosyaları klonlanıyor...",
+  "scripts_init_failed": "Komut dosyalarının klonlaması başarısız oldu, paketlenmiş komut dosyaları kullanılıyor",
+  "scripts_init_not_found": "Komut dosyaları bulunamadığında, klonlaması...",
+  "scripts_init_updating": "Komut dosyası depositoriyumu güncelleniyor...",
+  "scripts_init_update_success": "Komut dosyası depositoriyumu başarıyla güncellendi!",
+  "scripts_init_first_run": "İlk Çalışma: Komut dosyası depositoriyumu başlatılıyor..."
 }

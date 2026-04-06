@@ -393,5 +393,16 @@
   "bug_report_failed": "Odoslanie správy o chybe zlyhalo: ",
   "new_spec_key": "nový",
   "auto_error_reports": "Automatické Hlásenie Chýb",
-  "waylume_desc": "Minimalistický spravovateľ tapiet pre GNOME/Wayland. Automaticky nastavuje denné tapety z Bing, Unsplash, NASA APOD a Wikimedia POTD."
+  "waylume_desc": "Minimalistický spravovateľ tapiet pre GNOME/Wayland. Automaticky nastavuje denné tapety z Bing, Unsplash, NASA APOD a Wikimedia POTD.",
+  "scripts_init_title": "Inicializácia LinuxToys",
+  "scripts_init_fetching": "Načítanie úložiska skriptov...",
+  "scripts_init_preparing": "Príprava adresára skriptov...",
+  "scripts_init_cloning_github": "Klonovanie skriptov z GitHub...",
+  "scripts_init_success": "Skripty boli úspešne inicializované!",
+  "scripts_init_cloning_linux_toys": "Klonovanie skriptov z git.linux.toys...",
+  "scripts_init_failed": "Klonování skriptov zlyhalo, Používanie zabudovaných skriptov",
+  "scripts_init_not_found": "Skripty sa nenašli, klonuing...",
+  "scripts_init_updating": "Aktualizácia úložiska skriptov...",
+  "scripts_init_update_success": "Úložisko skriptov bolo úspešne aktualizované!",
+  "scripts_init_first_run": "Prvý beh: inicializácia úložiska skriptov..."
 }

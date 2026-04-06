@@ -393,5 +393,16 @@
   "bug_report_failed": "Theip ar sheoladh an tuarascáil docharadh: ",
   "new_spec_key": "nua",
   "auto_error_reports": "Tuairiscí Earráide Uathoibríoch",
-  "waylume_desc": "Bainisteoir spréachta minimalist do GNOME/Wayland. Socrú spréachtaí laethúla ó Bing, Unsplash, NASA APOD agus Wikimedia POTD go huathoibríoch."
+  "waylume_desc": "Bainisteoir spréachta minimalist do GNOME/Wayland. Socrú spréachtaí laethúla ó Bing, Unsplash, NASA APOD agus Wikimedia POTD go huathoibríoch.",
+  "scripts_init_title": "Tús a chur ar LinuxToys",
+  "scripts_init_fetching": "Á fháil ar stór na script...",
+  "scripts_init_preparing": "Ullmhú an tsliste script...",
+  "scripts_init_cloning_github": "Clónáil script ó GitHub...",
+  "scripts_init_success": "Dhein tús ar an script go rathúil!",
+  "scripts_init_cloning_linux_toys": "Clónáil script ó git.linux.toys...",
+  "scripts_init_failed": "Teip a chloábháil scéimí, ag baint úsáid as scéimí iarchurtha",
+  "scripts_init_not_found": "Ní bhfuarthas script, clónáil...",
+  "scripts_init_updating": "Nuashonrú stór na script...",
+  "scripts_init_update_success": "Nuashonrú stór na script go rathúil!",
+  "scripts_init_first_run": "Ar dtús Ar dtús: tús a chur ar stór na script..."
 }

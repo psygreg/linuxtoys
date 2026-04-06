@@ -391,5 +391,16 @@
   "bug_report_failed": "Kushindwa kutuma ripoti ya kosa: ",
   "new_spec_key": "mpya",
   "auto_error_reports": "Ripoti za Hitilafu za Kiotomatiki",
-  "waylume_desc": "Msimamizi wa minimalist wa mandhari ya GNOME/Wayland. Kuamua mandhari ya kila siku kiotomatiki kutoka kwa Bing, Unsplash, NASA APOD na Wikimedia POTD."
+  "waylume_desc": "Msimamizi wa minimalist wa mandhari ya GNOME/Wayland. Kuamua mandhari ya kila siku kiotomatiki kutoka kwa Bing, Unsplash, NASA APOD na Wikimedia POTD.",
+  "scripts_init_title": "Kuanza LinuxToys",
+  "scripts_init_fetching": "Kunukuu jamii ya hati...",
+  "scripts_init_preparing": "Kuandaa saraka la hati...",
+  "scripts_init_cloning_github": "Kuiga hati kutoka GitHub...",
+  "scripts_init_success": "Hati zilianzishwa kwa mafanikio!",
+  "scripts_init_cloning_linux_toys": "Kuiga hati kutoka git.linux.toys...",
+  "scripts_init_failed": "Kuiga hati kumefailika, kumia hati iliyojumuishwa",
+  "scripts_init_not_found": "Hati haikupatikana, kuiga...",
+  "scripts_init_updating": "Sasisimua jamii ya hati...",
+  "scripts_init_update_success": "Hati jamii ilikuwa na mafanikio sisisua!",
+  "scripts_init_first_run": "Kwanza kabisa: ujani wa hati jamii..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "बग रिपोर्ट पठाउन असफल: ",
   "new_spec_key": "नयाँ",
   "auto_error_reports": "स्वचालित त्रुटि रिपोर्ट",
-  "waylume_desc": "GNOME/Wayland को लागि न्यूनतम वालपेपर प्रबन्धक। Bing, Unsplash, NASA APOD र Wikimedia POTD बाट स्वचालित रूपले दैनिक वालपेपर सेट गर्दछ।"
+  "waylume_desc": "GNOME/Wayland को लागि न्यूनतम वालपेपर प्रबन्धक। Bing, Unsplash, NASA APOD र Wikimedia POTD बाट स्वचालित रूपले दैनिक वालपेपर सेट गर्दछ।",
+  "scripts_init_title": "LinuxToys शुरू गरिँदै छ",
+  "scripts_init_fetching": "स्क्रिप्ट भण्डार प्राप्त गरिँदै छ...",
+  "scripts_init_preparing": "स्क्रिप्ट निर्देशिका तयार गरिँदै छ...",
+  "scripts_init_cloning_github": "GitHub बाट स्क्रिप्ट क्लोन गरिँदै छ...",
+  "scripts_init_success": "स्क्रिप्टहरु सफलतापूर्वक शुरू गरिएको छ!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys बाट स्क्रिप्ट क्लोन गरिँदै छ...",
+  "scripts_init_failed": "स्क्रिप्ट क्लोन असफल, बान्डल गरिएको स्क्रिप्ट प्रयोग गरिँदै छ",
+  "scripts_init_not_found": "स्क्रिप्ट फेला परेन, क्लोन गरिँदै छ...",
+  "scripts_init_updating": "स्क्रिप्ट भण्डार अपडेट गरिँदै छ...",
+  "scripts_init_update_success": "स्क्रिप्ट भण्डार सफलतापूर्वक अपडेट गरिएको छ!",
+  "scripts_init_first_run": "पहिलो रन: स्क्रिप्ट भण्डार शुरू गरिँदै छ..."
 }

@@ -391,5 +391,16 @@
   "bug_report_failed": "பிழை அறிக்கை அனுப்ப முடியவில்லை: ",
   "new_spec_key": "புதிய",
   "auto_error_reports": "தானியங்கி பிழை அறிக்கைகள்",
-  "waylume_desc": "GNOME/Wayland க்கான குறைந்தபட்ச விதைப்பு மேலாளர். Bing, Unsplash, NASA APOD மற்றும் Wikimedia POTD இலிருந்து தானாக நாளாந்த விதைப்புகளை அமைக்கிறது."
+  "waylume_desc": "GNOME/Wayland க்கான குறைந்தபட்ச விதைப்பு மேலாளர். Bing, Unsplash, NASA APOD மற்றும் Wikimedia POTD இலிருந்து தானாக நாளாந்த விதைப்புகளை அமைக்கிறது.",
+  "scripts_init_title": "LinuxToys ஆரம்பிக்கப்படுகிறது",
+  "scripts_init_fetching": "நிலை ஆவணக் களஞ்சியம் பெறப்படுகிறது...",
+  "scripts_init_preparing": "நிলைக்கோப்பு சூची தயாரிக்கப்படுகிறது...",
+  "scripts_init_cloning_github": "GitHub இலிருந்து நிலைக்கு சிறிய பல...",
+  "scripts_init_success": "நிலைக்குறியீட்டு ஆசாமி அமைக்கப்பட்ட!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys இலிருந்து நிலைக்கு சிறிய பல...",
+  "scripts_init_failed": "நிலைக்குறியீட்டு இணைக்கல் கோட்டை கோட்டுக்க வேறுபட்ட அறிவுரைக்களம்",
+  "scripts_init_not_found": "நிலைக்குறியீட்ட கண்டு தெரியவில்லை...",
+  "scripts_init_updating": "நிலைக்குறியீட்டு களஞ்சியம் புதுப்பிக்க...",
+  "scripts_init_update_success": "நிலைக்குறியீட்டு களஞ்சியம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது!",
+  "scripts_init_first_run": "முதல் இயக்க: நிலைக்குறியீட்டு களஞ்சியம் ஆரம்பம்..."
 }

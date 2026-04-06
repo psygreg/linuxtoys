@@ -392,5 +392,16 @@
   "bug_report_failed": "Алдаа тайлан илгээхэд амжилтгүй: ",
   "new_spec_key": "шинэ",
   "auto_error_reports": "Автоматаар Алдаа Мэдээлэх",
-  "waylume_desc": "GNOME/Wayland-ийн хамгийн бага ханын цаас менежер. Bing, Unsplash, NASA APOD болон Wikimedia POTD-ээс өдөр тутмын ханын цаасыг автоматаар тохируулдаг."
+  "waylume_desc": "GNOME/Wayland-ийн хамгийн бага ханын цаас менежер. Bing, Unsplash, NASA APOD болон Wikimedia POTD-ээс өдөр тутмын ханын цаасыг автоматаар тохируулдаг.",
+  "scripts_init_title": "LinuxToys эхлүүлж байна",
+  "scripts_init_fetching": "Скрипт агуулахыг авч байна...",
+  "scripts_init_preparing": "Скрипт хавтас урилгалаа...",
+  "scripts_init_cloning_github": "GitHub-аас скрипт дублика...",
+  "scripts_init_success": "Скрипт амжилттай эхлүүлэгдсэн!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys-аас скрипт дублика...",
+  "scripts_init_failed": "Скрипт дублика алдаа, ирүүлсэн скриптийг ашиглана",
+  "scripts_init_not_found": "Скрипт олдсонгүй, дублика...",
+  "scripts_init_updating": "Скрипт агуулахыг шинэчилж байна...",
+  "scripts_init_update_success": "Скрипт агуулахыг амжилттай шинэчилсэн!",
+  "scripts_init_first_run": "Эхний ажиллуулалт: скрипт агуулахыг эхлүүлж байна..."
 }

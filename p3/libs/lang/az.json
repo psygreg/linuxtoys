@@ -392,5 +392,16 @@
   "bug_report_failed": "Xəta hesabatını göndərmə uğursuz oldu: ",
   "new_spec_key": "yeni",
   "auto_error_reports": "Avtomatik Xəta Hesabatları",
-  "waylume_desc": "GNOME/Wayland üçün minimalist divar kağızı meneceri. Avtomatik olaraq Bing, Unsplash, NASA APOD və Wikimedia POTD-dən gündəlik divar kağızları təyin edir."
+  "waylume_desc": "GNOME/Wayland üçün minimalist divar kağızı meneceri. Avtomatik olaraq Bing, Unsplash, NASA APOD və Wikimedia POTD-dən gündəlik divar kağızları təyin edir.",
+  "scripts_init_title": "LinuxToys Başlatılıyor",
+  "scripts_init_fetching": "Skript depositoriyası alınır...",
+  "scripts_init_preparing": "Skript qovluğu hazırlanır...",
+  "scripts_init_cloning_github": "GitHub-dan Skriptlər klonlaşdırılır...",
+  "scripts_init_success": "Skriptlər uğurla inisializə edildi!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys-dan Skriptlər klonlaşdırılır...",
+  "scripts_init_failed": "Skriptlərin klonlaşdırılması uğursuz, paketlənmiş skriptlər istifadə olunur",
+  "scripts_init_not_found": "Skriptlər tapılmadı, klonlaşdırılıyor...",
+  "scripts_init_updating": "Skript depositoriyası yenilənir...",
+  "scripts_init_update_success": "Skript depositoriyası uğurla yeniləndi!",
+  "scripts_init_first_run": "İlk çalışma: Skript depositoriyası inisializə edilir..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "Nabigo ang pagpapadala ng ulat ng bug: ",
   "new_spec_key": "bago",
   "auto_error_reports": "Mga Awtomatikong Ulat ng Pagkakamali",
-  "waylume_desc": "Minimalistang tagapamahala ng wallpaper para sa GNOME/Wayland. Awtomatikong nagtatatag ng araw-araw na wallpaper mula sa Bing, Unsplash, NASA APOD at Wikimedia POTD."
+  "waylume_desc": "Minimalistang tagapamahala ng wallpaper para sa GNOME/Wayland. Awtomatikong nagtatatag ng araw-araw na wallpaper mula sa Bing, Unsplash, NASA APOD at Wikimedia POTD.",
+  "scripts_init_title": "Sinisimulan ang LinuxToys",
+  "scripts_init_fetching": "Kinukuha ang script repository...",
+  "scripts_init_preparing": "Handa ang script directory...",
+  "scripts_init_cloning_github": "Ginagaya ang mga script mula sa GitHub...",
+  "scripts_init_success": "Ang mga script ay matagumpay na nagsimula!",
+  "scripts_init_cloning_linux_toys": "Ginagaya ang mga script mula sa git.linux.toys...",
+  "scripts_init_failed": "Ang kloning ng mga script ay nabigong gamitin ang kasamang mga script",
+  "scripts_init_not_found": "Ang mga script ay hindi nahanap, kloning...",
+  "scripts_init_updating": "Ina-update ang script repository...",
+  "scripts_init_update_success": "Ang script repository ay matagumpay na nai-update!",
+  "scripts_init_first_run": "Una kang tumatakbo: sinisimulan ang script repository..."
 }

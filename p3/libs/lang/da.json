@@ -393,5 +393,16 @@
   "bug_report_failed": "Fejl ved indsendelse af fejlrapport: ",
   "new_spec_key": "ny",
   "auto_error_reports": "Automatiske Fejlrapporter",
-  "waylume_desc": "Minimalistisk tapetkontrolør til GNOME/Wayland. Indstiller automatisk daglige tapet fra Bing, Unsplash, NASA APOD og Wikimedia POTD."
+  "waylume_desc": "Minimalistisk tapetkontrolør til GNOME/Wayland. Indstiller automatisk daglige tapet fra Bing, Unsplash, NASA APOD og Wikimedia POTD.",
+  "scripts_init_title": "Initialisering af LinuxToys",
+  "scripts_init_fetching": "Henter skriptarkiv...",
+  "scripts_init_preparing": "Forbereder skriptmappe...",
+  "scripts_init_cloning_github": "Kloner scripts fra GitHub...",
+  "scripts_init_success": "Scripts blev initialiseret med succes!",
+  "scripts_init_cloning_linux_toys": "Kloner scripts fra git.linux.toys...",
+  "scripts_init_failed": "Kloning af scripts mislykkedes, bruger inkluderede scripts",
+  "scripts_init_not_found": "Scripts ikke fundet, kloner...",
+  "scripts_init_updating": "Opdaterer skriptarkiv...",
+  "scripts_init_update_success": "Skriptarkiv blev opdateret med succes!",
+  "scripts_init_first_run": "Første kørsel: initialisering af skriptarkiv..."
 }

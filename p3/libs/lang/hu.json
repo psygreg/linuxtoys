@@ -393,5 +393,16 @@
   "bug_report_failed": "A hibajelentés küldése sikertelen: ",
   "new_spec_key": "új",
   "auto_error_reports": "Automatikus Hibajelentések",
-  "waylume_desc": "Minimaliszt háttérkép kezelő GNOME/Wayland-hez. Automatikusan állítja be a napi háttérképeket a Bing, Unsplash, NASA APOD és Wikimedia POTD forrásokból."
+  "waylume_desc": "Minimaliszt háttérkép kezelő GNOME/Wayland-hez. Automatikusan állítja be a napi háttérképeket a Bing, Unsplash, NASA APOD és Wikimedia POTD forrásokból.",
+  "scripts_init_title": "LinuxToys inicializálása",
+  "scripts_init_fetching": "Szkript adattár letöltése...",
+  "scripts_init_preparing": "Szkriptek könyvtárának előkészítése...",
+  "scripts_init_cloning_github": "Szkriptek klónozása a GitHub-ból...",
+  "scripts_init_success": "Szkriptek sikeresen inicializálva!",
+  "scripts_init_cloning_linux_toys": "Szkriptek klónozása a git.linux.toys-ról...",
+  "scripts_init_failed": "Shkriptek klónozása sikertelen, beépített szkriptek használata",
+  "scripts_init_not_found": "Shkriptek nem találhatóak, klónozás...",
+  "scripts_init_updating": "Szkript adattár frissítése...",
+  "scripts_init_update_success": "Szkript adattár sikeresen frissítve!",
+  "scripts_init_first_run": "Első futtatás: szkript adattár inicializálása..."
 }

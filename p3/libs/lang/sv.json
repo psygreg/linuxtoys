@@ -393,5 +393,16 @@
   "bug_report_failed": "Misslyckades att skicka felrapport: ",
   "new_spec_key": "ny",
   "auto_error_reports": "Automatiska Felrapporter",
-  "waylume_desc": "Minimalistisk bakgrundshanterare för GNOME/Wayland. Ställer automatiskt in dagliga bakgrunder från Bing, Unsplash, NASA APOD och Wikimedia POTD."
+  "waylume_desc": "Minimalistisk bakgrundshanterare för GNOME/Wayland. Ställer automatiskt in dagliga bakgrunder från Bing, Unsplash, NASA APOD och Wikimedia POTD.",
+  "scripts_init_title": "Initialiserar LinuxToys",
+  "scripts_init_fetching": "Hämtar skriptarkiv...",
+  "scripts_init_preparing": "Förbereder skriptmapp...",
+  "scripts_init_cloning_github": "Kloning av scripts från GitHub...",
+  "scripts_init_success": "Scripts initialiserade framgångsrikt!",
+  "scripts_init_cloning_linux_toys": "Kloning av scripts från git.linux.toys...",
+  "scripts_init_failed": "Kloning av scripts misslyckades, använder inkluderade scripts",
+  "scripts_init_not_found": "Scripts hittades inte, kloning...",
+  "scripts_init_updating": "Uppdaterar skriptarkiv...",
+  "scripts_init_update_success": "Skriptarkiv uppdaterat framgångsrikt!",
+  "scripts_init_first_run": "Första körning: initialisering av skriptarkiv..."
 }

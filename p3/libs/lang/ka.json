@@ -393,5 +393,16 @@
   "bug_report_failed": "ბაგის ანგარიშის გაგზავნა ვერ მოხერხდა: ",
   "new_spec_key": "ახალი",
   "auto_error_reports": "ავტომატური შეცდომის ანგარიშები",
-  "waylume_desc": "მინიმალიστური ფონის მენეჯერი GNOME/Wayland-ისთვის. ავტომატურად ადგენს ყოველდღიური ფონებს Bing-დან, Unsplash-დან, NASA APOD-დან და Wikimedia POTD-დან."
+  "waylume_desc": "მინიმალიστური ფონის მენეჯერი GNOME/Wayland-ისთვის. ავტომატურად ადგენს ყოველდღიური ფონებს Bing-დან, Unsplash-დან, NASA APOD-დან და Wikimedia POTD-დან.",
+  "scripts_init_title": "LinuxToys ინიციალიზაცია",
+  "scripts_init_fetching": "სკრიპტის საცავის წამოღება...",
+  "scripts_init_preparing": "სკრიპტის დირექტორიის подготовка...",
+  "scripts_init_cloning_github": "სკრიპტების კლონირება GitHub-დან...",
+  "scripts_init_success": "სკრიპტები წარმატებით ჩартეხეს!",
+  "scripts_init_cloning_linux_toys": "სკრიპტების კლონირება git.linux.toys-დან...",
+  "scripts_init_failed": "სკრიპტების კლონირება ვერ მოხერხდა, ჩართული სკრიპტების გამოყენება",
+  "scripts_init_not_found": "სკრიპტები ვერ მოიძებნა, კლონირება...",
+  "scripts_init_updating": "სკრიპტის საცავის განახლება...",
+  "scripts_init_update_success": "სკრიპტის საცავი წარმატებით განახლდა!",
+  "scripts_init_first_run": "პირველი გაშვება: სკრიპტის საცავის ინიციალიზაცია..."
 }

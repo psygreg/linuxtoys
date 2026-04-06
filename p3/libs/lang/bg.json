@@ -393,5 +393,16 @@
   "bug_report_failed": "Неуспешно отправяне на доклада за грешка: ",
   "new_spec_key": "ново",
   "auto_error_reports": "Автоматични Oтчети за Грешки",
-  "waylume_desc": "Минимален мениджър на тапети за GNOME/Wayland. Автоматично задава ежедневни тапети от Bing, Unsplash, NASA APOD и Wikimedia POTD."
+  "waylume_desc": "Минимален мениджър на тапети за GNOME/Wayland. Автоматично задава ежедневни тапети от Bing, Unsplash, NASA APOD и Wikimedia POTD.",
+  "scripts_init_title": "Инициализиране на LinuxToys",
+  "scripts_init_fetching": "Извличане на хранилище със скриптове...",
+  "scripts_init_preparing": "Подготовка на директория със скриптове...",
+  "scripts_init_cloning_github": "Клониране на скриптове от GitHub...",
+  "scripts_init_success": "Скриптовете са успешно инициализирани!",
+  "scripts_init_cloning_linux_toys": "Клониране на скриптове от git.linux.toys...",
+  "scripts_init_failed": "Неуспешно клониране на скриптове, използване на вградени скриптове",
+  "scripts_init_not_found": "Скриптовете не са намерени, клонираме...",
+  "scripts_init_updating": "Актуализиране на хранилище със скриптове...",
+  "scripts_init_update_success": "Хранилище със скриптове е успешно актуализирано!",
+  "scripts_init_first_run": "Първо стартиране: инициализиране на хранилище със скриптове..."
 }

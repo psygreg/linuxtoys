@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 
 # Import the git scripts manager
 from .git_scripts_manager import get_scripts_dir, is_using_git_scripts, get_git_scripts_status
+# Import language utilities for translations
+from .lang_utils import load_translations
 
 
 def initialize_scripts():
@@ -47,10 +49,16 @@ def initialize_scripts():
             try:
                 from .loading_dialog import show_loading_dialog_for_scripts_init
                 
+                # Load translations for the loading dialog
+                translations = load_translations()
+                
                 def init_with_progress(progress_callback):
                     return get_scripts_dir(progress_callback)
                 
-                scripts_dir = show_loading_dialog_for_scripts_init(init_with_progress)
+                scripts_dir = show_loading_dialog_for_scripts_init(
+                    init_with_progress,
+                    translations=translations
+                )
             except Exception as e:
                 logger.debug(f"Could not show loading dialog: {e}")
                 scripts_dir = get_scripts_dir()

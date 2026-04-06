@@ -393,5 +393,16 @@
   "bug_report_failed": "ລົ້ມເຫລວໃນການສົ່ງລາຍງານຂໍ້ຜິດພາດ: ",
   "new_spec_key": "ໃໝ່",
   "auto_error_reports": "ລາຍງານຂໍ້ຜິດພາດອັດຕະໂນມັດ",
-  "waylume_desc": "ຜູ້ຈັດການພື້ນຫຼັງລະດູນ້ອຍສຳລັບ GNOME/Wayland. ກຳນົດພື້ນຫຼັງປະຈຳວັນຢ່າງອັດຕະໂນມັດຈາກ Bing, Unsplash, NASA APOD ແລະ Wikimedia POTD."
+  "waylume_desc": "ຜູ້ຈັດການພື້ນຫຼັງລະດູນ້ອຍສຳລັບ GNOME/Wayland. ກຳນົດພື້ນຫຼັງປະຈຳວັນຢ່າງອັດຕະໂນມັດຈາກ Bing, Unsplash, NASA APOD ແລະ Wikimedia POTD.",
+  "scripts_init_title": "ກຳລັງເລີ່ມຕົ້ນ LinuxToys",
+  "scripts_init_fetching": "ກໍາລັງດຶງຄົງທີ່ script...",
+  "scripts_init_preparing": "ກຳລັງເກັບກໍາເສັດກະ...",
+  "scripts_init_cloning_github": "ໄຈ້ຄົນລົກສ່ວນໃຫລະ GitHub...",
+  "scripts_init_success": "ວົ່າມາទຸກ້ຽວคุნຸ້ລສະຕົ້ໃຈ!",
+  "scripts_init_cloning_linux_toys": "ໄຈ້ຄົນລົກສ່ວນໃຫລະ git.linux.toys...",
+  "scripts_init_failed": "��້ຄົນລົກສ່ວນໃຫລະລະ ໃຊ້ສາກລະ",
+  "scripts_init_not_found": "ວົ່າກັບພາບົ່ທີ່ຕົ້ນ ກຳລັງໄຈ້ຄົນລົກ...",
+  "scripts_init_updating": "ກຳລັງອັບເດດຄົງທີ່ script...",
+  "scripts_init_update_success": "ຂະນະກັບສາກລະອາບເ済ສັກເຍືອກ!",
+  "scripts_init_first_run": "ຄັ້ງທຳອິດ: ກຳລັງເລີ່ມຕົ້ນ script..."
 }

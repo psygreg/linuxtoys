@@ -393,5 +393,16 @@
   "bug_report_failed": "ล้มเหลวในการส่งรายงานข้อผิดพลาด: ",
   "new_spec_key": "ใหม่",
   "auto_error_reports": "รายงานข้อผิดพลาดอัตโนมัติ",
-  "waylume_desc": "ตัวจัดการวอลเปเปอร์ขั้นต่ำสำหรับ GNOME/Wayland ตั้งค่าวอลเปเปอร์ประจำวันโดยอัตโนมัติจาก Bing, Unsplash, NASA APOD และ Wikimedia POTD"
+  "waylume_desc": "ตัวจัดการวอลเปเปอร์ขั้นต่ำสำหรับ GNOME/Wayland ตั้งค่าวอลเปเปอร์ประจำวันโดยอัตโนมัติจาก Bing, Unsplash, NASA APOD และ Wikimedia POTD",
+  "scripts_init_title": "กำลังเริ่มต้น LinuxToys",
+  "scripts_init_fetching": "กำลังดึงที่เก็บสคริปต์...",
+  "scripts_init_preparing": "กำลังเตรียมไดเรกทอรีของสคริปต์...",
+  "scripts_init_cloning_github": "กำลังโคลนสคริปต์จาก GitHub...",
+  "scripts_init_success": "สคริปต์ถูกเริ่มต้นอย่างสำเร็จ!",
+  "scripts_init_cloning_linux_toys": "กำลังโคลนสคริปต์จาก git.linux.toys...",
+  "scripts_init_failed": "ล้มเหลวในการโคลนสคริปต์ ใช้สคริปต์ที่รวมไว้",
+  "scripts_init_not_found": "ไม่พบสคริปต์ กำลังโคลน...",
+  "scripts_init_updating": "กำลังปรับปรุงที่เก็บสคริปต์...",
+  "scripts_init_update_success": "ที่เก็บสคริปต์ถูกปรับปรุงเรียบร้อยแล้ว!",
+  "scripts_init_first_run": "ครั้งแรกที่ทำงาน: กำลังเริ่มต้นที่เก็บสคริปต์..."
 }

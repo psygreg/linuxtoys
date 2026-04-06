@@ -393,5 +393,16 @@
   "bug_report_failed": "Բագ հաղորդման ուղարկումը ձախողվել է: ",
   "new_spec_key": "նոր",
   "auto_error_reports": "Ինքնաշխատ սխալ հաշվետվություններ",
-  "waylume_desc": "Նվազագույն պաստառի կառավարիչ GNOME/Wayland-ի համար: Ինքնաշխատ կերպով սահմանում է օրական պաստառներ Bing-ից, Unsplash-ից, NASA APOD-ից և Wikimedia POTD-ից:"
+  "waylume_desc": "Նվազագույն պաստառի կառավարիչ GNOME/Wayland-ի համար: Ինքնաշխատ կերպով սահմանում է օրական պաստառներ Bing-ից, Unsplash-ից, NASA APOD-ից և Wikimedia POTD-ից:",
+  "scripts_init_title": "LinuxToys հարկացում",
+  "scripts_init_fetching": "Վերցրեք սցենար պահեստ...",
+  "scripts_init_preparing": "Պատրաստել սցենար ստուգատարար...",
+  "scripts_init_cloning_github": "Կլոնավ սցենար GitHub-ից...",
+  "scripts_init_success": "Սցենարներ հաջողությամբ սկսվել են!",
+  "scripts_init_cloning_linux_toys": "Կլոնավ սցենար git.linux.toys-ից...",
+  "scripts_init_failed": "Սցենար կլոնավորում ձախողվել, վերցված սցենարներ օգտագործում",
+  "scripts_init_not_found": "Սցենարներ չեն գտնվել, կլոնավորում...",
+  "scripts_init_updating": "Վերցրեք սցենար պահեստ կամ կներ...",
+  "scripts_init_update_success": "Սցենար պահեստ հաջողությամբ թարմացվել!",
+  "scripts_init_first_run": "Առաջին ծանուցում: սցենար պահեստ հարկացում..."
 }

@@ -393,5 +393,16 @@
   "bug_report_failed": "အမှားအယွင်းများ အစီရင်ခံစာ လွှင့်ဆောင်း ပျက်ကွက်ပါသည်: ",
   "new_spec_key": "အသစ်",
   "auto_error_reports": "အလျင်အမြန် အမှားအယွင်း အစီရင်ခံစာ",
-  "waylume_desc": "GNOME/Wayland အတွက် အနည်းနိုင်ဆန်းဆုံး ပတ်ဆက်မှုက ခြင်း ကျောင်းအုပ်စုံနှင့်။ Bing၊ Unsplash၊ NASA APOD နှင့် Wikimedia POTD မှ အလျှင်းမဲ့နေ့စဉ် ပတ်ဆက်မှုများကို သတ်မှတ်ပေးသည်။"
+  "waylume_desc": "GNOME/Wayland အတွက် အနည်းနိုင်ဆန်းဆုံး ပတ်ဆက်မှုက ခြင်း ကျောင်းအုပ်စုံနှင့်။ Bing၊ Unsplash၊ NASA APOD နှင့် Wikimedia POTD မှ အလျှင်းမဲ့နေ့စဉ် ပတ်ဆက်မှုများကို သတ်မှတ်ပေးသည်။",
+  "scripts_init_title": "LinuxToys ကို စတင်နေသည်",
+  "scripts_init_fetching": "အချုပ်အခြာ စုစည်းမှု ဆွဲယူနေသည်...",
+  "scripts_init_preparing": "စဖိုင်လ္ယောင်တွင် အလင်းအရူ စုစည်းမှု ပြင်ဆင်နေသည်...",
+  "scripts_init_cloning_github": "GitHub မှ အချုပ်အခြာ ကူးယူနေသည်...",
+  "scripts_init_success": "အချုပ်အခြာ အောင်မြင်ရှင်း စတင်ပြီးပြီ!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys မှ အချုပ်အခြာ ကူးယူနေသည်...",
+  "scripts_init_failed": "အချုပ်အခြာ ကူးယူမှု ပျက်သယ် သုံးခဲ့သည်",
+  "scripts_init_not_found": "အချုပ်အခြာ မတွေ့ရှိပါ ကူးယူလျက်",
+  "scripts_init_updating": "အချုပ်အခြာ စုစည်းမှု အဆင့်မြှင့်တင်နေသည်...",
+  "scripts_init_update_success": "အချုပ်အခြာ စုစည်းမှု အောင်မြင်ရှင်း အဆင့်မြှင့်တင်ပြီး!",
+  "scripts_init_first_run": "ပဲ့ စွမ်းအားမြှင့်တင်: အချုပ်အခြာ စုစည်းမှု စတင်နေသည်..."
 }

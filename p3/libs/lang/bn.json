@@ -392,5 +392,16 @@
   "bug_report_failed": "বাগ রিপোর্ট পাঠাতে ব্যর্থ: ",
   "new_spec_key": "নতুন",
   "auto_error_reports": "স্বয়ংক্রিয় ত্রুটি রিপোর্ট",
-  "waylume_desc": "GNOME/Wayland এর জন্য ন্যূনতম ওয়ালপেপার ম্যানেজার। স্বয়ংক্রিয়ভাবে Bing, Unsplash, NASA APOD এবং Wikimedia POTD থেকে দৈনিক ওয়ালপেপার সেট করে।"
+  "waylume_desc": "GNOME/Wayland এর জন্য ন্যূনতম ওয়ালপেপার ম্যানেজার। স্বয়ংক্রিয়ভাবে Bing, Unsplash, NASA APOD এবং Wikimedia POTD থেকে দৈনিক ওয়ালপেপার সেট করে।",
+  "scripts_init_title": "LinuxToys শুরু হচ্ছে",
+  "scripts_init_fetching": "স্ক্রিপ্ট সংরক্ষণাগার আনা হচ্ছে...",
+  "scripts_init_preparing": "স্ক্রিপ্ট ডিরেক্টরি প্রস্তুত করা হচ্ছে...",
+  "scripts_init_cloning_github": "GitHub থেকে স্ক্রিপ্ট ক্লোন করা হচ্ছে...",
+  "scripts_init_success": "স্ক্রিপ্টগুলি সফলভাবে শুরু হয়েছে!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys থেকে স্ক্রিপ্ট ক্লোন করা হচ্ছে...",
+  "scripts_init_failed": "স্ক্রিপ্ট ক্লোন করতে ব্যর্থ, বান্ডেল করা স্ক্রিপ্ট ব্যবহার করা হচ্ছে",
+  "scripts_init_not_found": "স্ক্রিপ্ট পাওয়া যায়নি, ক্লোন করা হচ্ছে...",
+  "scripts_init_updating": "স্ক্রিপ্ট সংরক্ষণাগার আপডেট করা হচ্ছে...",
+  "scripts_init_update_success": "স্ক্রিপ্ট সংরক্ষণাগার সফলভাবে আপডেট হয়েছে!",
+  "scripts_init_first_run": "প্রথম চালান: স্ক্রিপ্ট সংরক্ষণাগার শুরু হচ্ছে..."
 }

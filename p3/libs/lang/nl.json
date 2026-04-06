@@ -393,5 +393,16 @@
   "bug_report_failed": "Fout bij verzending van bugrapport: ",
   "new_spec_key": "nieuw",
   "auto_error_reports": "Automatische Foutrapporten",
-  "waylume_desc": "Minimalistische beheerder van achtergronden voor GNOME/Wayland. Stelt automatisch dagelijkse achtergronden in van Bing, Unsplash, NASA APOD en Wikimedia POTD."
+  "waylume_desc": "Minimalistische beheerder van achtergronden voor GNOME/Wayland. Stelt automatisch dagelijkse achtergronden in van Bing, Unsplash, NASA APOD en Wikimedia POTD.",
+  "scripts_init_title": "LinuxToys wordt geïnitialiseerd",
+  "scripts_init_fetching": "Scriptrepository wordt opgehaald...",
+  "scripts_init_preparing": "Scriptmap wordt voorbereidt...",
+  "scripts_init_cloning_github": "Scripts worden van GitHub gekloond...",
+  "scripts_init_success": "Scripts zijn met succes geïnitialiseerd!",
+  "scripts_init_cloning_linux_toys": "Scripts worden van git.linux.toys gekloond...",
+  "scripts_init_failed": "Klonen van scripts mislukt, gebruik van meewerkende scripts",
+  "scripts_init_not_found": "Scripts niet gevonden, klonen...",
+  "scripts_init_updating": "Scriptrepository wordt bijgewerkt...",
+  "scripts_init_update_success": "Scriptrepository is met succes bijgewerkt!",
+  "scripts_init_first_run": "Eerste uitvoering: scriptrepository wordt geïnitialiseerd..."
 }

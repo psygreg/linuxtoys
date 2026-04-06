@@ -393,5 +393,16 @@
   "bug_report_failed": "Ноорилии гузориши хатой неудача: ",
   "new_spec_key": "навъ",
   "auto_error_reports": "Гузоришҳои Xудкоршави Xатоҳо",
-  "waylume_desc": "Мудири позаминаи хӯбӣ барои GNOME/Wayland. Бе‌дунии таамул позамино‌ҳои ҳар-рӯза аз Bing, Unsplash, NASA APOD ва Wikimedia POTD ро танзим мекунад."
+  "waylume_desc": "Мудири позаминаи хӯбӣ барои GNOME/Wayland. Бе‌дунии таамул позамино‌ҳои ҳар-рӯза аз Bing, Unsplash, NASA APOD ва Wikimedia POTD ро танзим мекунад.",
+  "scripts_init_title": "Иваждкунии LinuxToys",
+  "scripts_init_fetching": "Гирифти донишкадаи скрипт...",
+  "scripts_init_preparing": "Омада кунии феҳристи скрипт...",
+  "scripts_init_cloning_github": "Клониронии скриптҳо аз GitHub...",
+  "scripts_init_success": "Скрипт бо муваффақиятӣ оғоз шуд!",
+  "scripts_init_cloning_linux_toys": "Клониронии скриптҳо аз git.linux.toys...",
+  "scripts_init_failed": "Клониронии скриптҳо қатъи ишфо, бо скриптҳои асосӣ кор мебарам",
+  "scripts_init_not_found": "Скриптҳо ёфт нашудаанд, клониринг...",
+  "scripts_init_updating": "Навсозии донишкадаи скрипт...",
+  "scripts_init_update_success": "Донишкадаи скрипт бо муваффақиятӣ навсоз шуд!",
+  "scripts_init_first_run": "Бори аввал: иваждкунии донишкадаи скрипт..."
 }

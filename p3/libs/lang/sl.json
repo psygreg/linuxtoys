@@ -393,5 +393,16 @@
   "bug_report_failed": "Neuspešno pošiljanje poročila o napaki: ",
   "new_spec_key": "novo",
   "auto_error_reports": "Samodejni Poročila o Napakah",
-  "waylume_desc": "Minimalistični upravitelj ozadij za GNOME/Wayland. Samodejno nastavi dnevna ozadja iz Bing-a, Unsplash-a, NASA APOD-a in Wikimedia POTD-a."
+  "waylume_desc": "Minimalistični upravitelj ozadij za GNOME/Wayland. Samodejno nastavi dnevna ozadja iz Bing-a, Unsplash-a, NASA APOD-a in Wikimedia POTD-a.",
+  "scripts_init_title": "Inicializacija LinuxToys",
+  "scripts_init_fetching": "Pridobivanje shrambnika skript...",
+  "scripts_init_preparing": "Priprava imenika skript...",
+  "scripts_init_cloning_github": "Kloniranje skript iz GitHub-a...",
+  "scripts_init_success": "Skripte so bile uspešno inicializirane!",
+  "scripts_init_cloning_linux_toys": "Kloniranje skript iz git.linux.toys...",
+  "scripts_init_failed": "Kloniranje skript je neuspešno, uporaba vključenih skript",
+  "scripts_init_not_found": "Skripte niso najdene, kloniranje...",
+  "scripts_init_updating": "Posodobljanje shrambnika skript...",
+  "scripts_init_update_success": "Shramba skript uspešno posodobljena!",
+  "scripts_init_first_run": "Prvo zagona: inicializacija shrambnika skript..."
 }

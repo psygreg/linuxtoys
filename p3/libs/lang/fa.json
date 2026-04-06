@@ -393,5 +393,16 @@
   "bug_report_failed": "ارسال گزارش خرابی ناموفق بود: ",
   "new_spec_key": "جدید",
   "auto_error_reports": "گزارش های خطای خودکار",
-  "waylume_desc": "مدیر پس‌زمینه‌ی ساده برای GNOME/Wayland. بطور خودکار پس‌زمینه‌های روزانه را از Bing، Unsplash، NASA APOD و Wikimedia POTD تنظیم می‌کند."
+  "waylume_desc": "مدیر پس‌زمینه‌ی ساده برای GNOME/Wayland. بطور خودکار پس‌زمینه‌های روزانه را از Bing، Unsplash، NASA APOD و Wikimedia POTD تنظیم می‌کند.",
+  "scripts_init_title": "اولیه‌سازی LinuxToys",
+  "scripts_init_fetching": "دریافت مخزن اسکریپت‌ها...",
+  "scripts_init_preparing": "آماده‌سازی دایرکتوری اسکریپت‌ها...",
+  "scripts_init_cloning_github": "شبیه‌سازی اسکریپت‌ها از GitHub...",
+  "scripts_init_success": "اسکریپت‌ها با موفقیت اولیه‌سازی شدند!",
+  "scripts_init_cloning_linux_toys": "شبیه‌سازی اسکریپت‌ها از git.linux.toys...",
+  "scripts_init_failed": "شبیه‌سازی اسکریپت‌ها ناموفق، استفاده از اسکریپت‌های تعبیه‌شده",
+  "scripts_init_not_found": "اسکریپت‌ها یافت نشدند، شبیه‌سازی...",
+  "scripts_init_updating": "بروزرسانی مخزن اسکریپت‌ها...",
+  "scripts_init_update_success": "مخزن اسکریپت‌ها با موفقیت بروزرسانی شد!",
+  "scripts_init_first_run": "اولین اجرا: اولیه‌سازی مخزن اسکریپت‌ها..."
 }

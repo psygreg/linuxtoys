@@ -393,5 +393,16 @@
   "bug_report_failed": "Bilun við að senda villugrein: ",
   "new_spec_key": "nýtt",
   "auto_error_reports": "Sjálfvirkar Villuskýrslur",
-  "waylume_desc": "Lágmarks bakgrunnskerfið fyrir GNOME/Wayland. Stillir sjálfkrafa dagleg bakgrunn frá Bing, Unsplash, NASA APOD og Wikimedia POTD."
+  "waylume_desc": "Lágmarks bakgrunnskerfið fyrir GNOME/Wayland. Stillir sjálfkrafa dagleg bakgrunn frá Bing, Unsplash, NASA APOD og Wikimedia POTD.",
+  "scripts_init_title": "Frumstilling LinuxToys",
+  "scripts_init_fetching": "Sæki skriptageymsluna...",
+  "scripts_init_preparing": "Undirbúningur skriptamöppu...",
+  "scripts_init_cloning_github": "Líka skript frá GitHub...",
+  "scripts_init_success": "Skriptar voru ræst með góðum árangri!",
+  "scripts_init_cloning_linux_toys": "Líka skript frá git.linux.toys...",
+  "scripts_init_failed": "Kloning skript mistókst, notar innbyggðar skript",
+  "scripts_init_not_found": "Skript fundu ekki, kloning...",
+  "scripts_init_updating": "Uppfærir skriptageymsluna...",
+  "scripts_init_update_success": "Skriptageymsluna var uppfærð með góðum árangri!",
+  "scripts_init_first_run": "Fyrsta keyrsla: frumstilling skriptageymslunnar..."
 }

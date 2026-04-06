@@ -22,26 +22,32 @@ class FirstRunLoadingDialog:
     Only appears in GUI mode with a display server available.
     """
     
-    def __init__(self, parent=None):
+    def __init__(self, translations=None, parent=None):
         """
         Initialize the loading dialog.
         
         Args:
+            translations: Translation dictionary (optional)
             parent: Parent window (optional)
         """
+        self.translations = translations or {}
         self.parent = parent
         self.dialog = None
         self.progress_bar = None
         self.status_label = None
         self.pulse_timeout_id = None
+    
+    def _get_text(self, key, fallback):
+        """Get translated text or use fallback."""
+        return self.translations.get(key, fallback)
         
-    def show(self, title="Initializing LinuxToys", message="Fetching scripts repository..."):
+    def show(self, title="scripts_init_title", message="scripts_init_fetching"):
         """
         Show the loading dialog.
         
         Args:
-            title: Dialog title
-            message: Initial status message
+            title: Dialog title (translation key or fallback text)
+            message: Initial status message (translation key or fallback text)
             
         Returns:
             bool: True if dialog was shown, False if not in GUI mode
@@ -51,8 +57,13 @@ class FirstRunLoadingDialog:
             return False
         
         try:
+            # Get translated title and message
+            # Fallback to key name if not found in translations
+            dialog_title = self._get_text(title, title)
+            dialog_message = self._get_text(message, message)
+            
             self.dialog = Gtk.Dialog(
-                title=title,
+                title=dialog_title,
                 parent=self.parent,
                 flags=Gtk.DialogFlags.MODAL,
                 buttons=()  # No buttons while loading
@@ -72,7 +83,7 @@ class FirstRunLoadingDialog:
             
             # Status label
             self.status_label = Gtk.Label(
-                label=message,
+                label=dialog_message,
                 xalign=0,
                 wrap=True
             )
@@ -101,11 +112,13 @@ class FirstRunLoadingDialog:
         Update the status message in the dialog.
         
         Args:
-            message: New status message
+            message: New status message (translation key or text)
         """
         if self.status_label and self.dialog:
             try:
-                GLib.idle_add(lambda: self._update_label_safe(message))
+                # Get translated message
+                translated_message = self._get_text(message, message)
+                GLib.idle_add(lambda: self._update_label_safe(translated_message))
             except Exception as e:
                 print(f"Warning: Could not update loading dialog message: {e}")
     
@@ -159,7 +172,7 @@ class FirstRunLoadingDialog:
         return True
 
 
-def show_loading_dialog_for_scripts_init(callback):
+def show_loading_dialog_for_scripts_init(callback, translations=None):
     """
     Show a loading dialog while executing a callback (typically git operations).
     
@@ -169,6 +182,7 @@ def show_loading_dialog_for_scripts_init(callback):
     Args:
         callback: Function to call while showing the loading dialog.
                  Should accept a progress_callback function as argument.
+        translations: Translation dictionary (optional)
     
     Returns:
         Any: The return value of the callback function
@@ -177,7 +191,7 @@ def show_loading_dialog_for_scripts_init(callback):
         # Not in GUI mode, just execute callback without dialog
         return callback(lambda msg: None)
     
-    dialog = FirstRunLoadingDialog()
+    dialog = FirstRunLoadingDialog(translations=translations)
     result = [None]  # Use list to capture result from thread
     exception = [None]  # Capture any exceptions
     

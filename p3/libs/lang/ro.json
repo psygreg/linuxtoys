@@ -393,5 +393,16 @@
   "bug_report_failed": "Eroare la trimiterea raportului de eroare: ",
   "new_spec_key": "nou",
   "auto_error_reports": "Rapoarte Automate de Erori",
-  "waylume_desc": "Manager de fundal minimalist pentru GNOME/Wayland. Setează automat fundaluri zilnice din Bing, Unsplash, NASA APOD și Wikimedia POTD."
+  "waylume_desc": "Manager de fundal minimalist pentru GNOME/Wayland. Setează automat fundaluri zilnice din Bing, Unsplash, NASA APOD și Wikimedia POTD.",
+  "scripts_init_title": "Inițializarea LinuxToys",
+  "scripts_init_fetching": "Preluarea depozitului de scripturi...",
+  "scripts_init_preparing": "Pregătirea directorului de scripturi...",
+  "scripts_init_cloning_github": "Clonarea scripturilor din GitHub...",
+  "scripts_init_success": "Scripturile au fost inițializate cu succes!",
+  "scripts_init_cloning_linux_toys": "Clonarea scripturilor din git.linux.toys...",
+  "scripts_init_failed": "Eșec în clonarea scripturilor, utilizarea scripturilor integrate",
+  "scripts_init_not_found": "Scripturile nu au fost găsite, clonare...",
+  "scripts_init_updating": "Actualizarea depozitului de scripturi...",
+  "scripts_init_update_success": "Depozitul de scripturi a fost actualizat cu succes!",
+  "scripts_init_first_run": "Prima rulare: inițializarea depozitului de scripturi..."
 }

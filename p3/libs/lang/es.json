@@ -393,5 +393,16 @@
   "bug_report_failed": "Error al enviar el informe de error: ",
   "new_spec_key": "nuevo",
   "auto_error_reports": "Reportes Automáticos de Errores",
-  "waylume_desc": "Gestor minimalista de fondos de pantalla para GNOME/Wayland. Establece automáticamente fondos de pantalla diarios de Bing, Unsplash, NASA APOD y Wikimedia POTD."
+  "waylume_desc": "Gestor minimalista de fondos de pantalla para GNOME/Wayland. Establece automáticamente fondos de pantalla diarios de Bing, Unsplash, NASA APOD y Wikimedia POTD.",
+  "scripts_init_title": "Inicializando LinuxToys",
+  "scripts_init_fetching": "Obteniendo repositorio de scripts...",
+  "scripts_init_preparing": "Preparando directorio de scripts...",
+  "scripts_init_cloning_github": "Clonando scripts desde GitHub...",
+  "scripts_init_success": "¡Scripts inicializados con éxito!",
+  "scripts_init_cloning_linux_toys": "Clonando scripts desde git.linux.toys...",
+  "scripts_init_failed": "Error al clonar scripts, usando scripts incluidos",
+  "scripts_init_not_found": "Scripts no encontrados, clonando...",
+  "scripts_init_updating": "Actualizando repositorio de scripts...",
+  "scripts_init_update_success": "¡Repositorio de scripts actualizado con éxito!",
+  "scripts_init_first_run": "Primera ejecución: inicializando repositorio de scripts..."
 }

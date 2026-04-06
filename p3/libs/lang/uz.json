@@ -392,5 +392,16 @@
   "bug_report_failed": "Xato hisobotini yuborish muvaffaq bo'lmadi: ",
   "new_spec_key": "yangi",
   "auto_error_reports": "Avtomatik Xato Hisobotlari",
-  "waylume_desc": "GNOME/Wayland uchun minimal fon menedjeri. Bing, Unsplash, NASA APOD va Wikimedia POTD dan kundalik fon rasimlarini avtomatik ravishda o'rnatilib."
+  "waylume_desc": "GNOME/Wayland uchun minimal fon menedjeri. Bing, Unsplash, NASA APOD va Wikimedia POTD dan kundalik fon rasimlarini avtomatik ravishda o'rnatilib.",
+  "scripts_init_title": "LinuxToys boshlanyapti",
+  "scripts_init_fetching": "Skript omboriga olinmoqda...",
+  "scripts_init_preparing": "Skript katalogi tayyorlanmoqda...",
+  "scripts_init_cloning_github": "GitHub dan skriptlarni nusxa olish...",
+  "scripts_init_success": "Skriptlar muvaffaqiyatli boshlandi!",
+  "scripts_init_cloning_linux_toys": "git.linux.toys dan skriptlarni nusxa olish...",
+  "scripts_init_failed": "Skriptlarni nusxa olish topilmadi, paketlangan skriptlar ishlatilmoqda",
+  "scripts_init_not_found": "Skriptlari topilmadi, nusxa...",
+  "scripts_init_updating": "Skript omboriga yangilanmoqda...",
+  "scripts_init_update_success": "Skript omboriga muvaffaqiyatli yangilandi!",
+  "scripts_init_first_run": "Birinchi ishga: skript omborini boshlash..."
 }
