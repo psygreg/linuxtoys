@@ -96,10 +96,10 @@ class SupportFooter(Gtk.Box):
         self.urls_labels = [
             ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg", True),
             (
-                None,
+                "",
                 self.translations.get("report_label", "Report Bug"),
                 "report.svg",
-                False,
+                True,
             ),
             (
                 "https://linux.toys/credits.html",
@@ -117,9 +117,11 @@ class SupportFooter(Gtk.Box):
 
         for i, (url, label, icon, is_link) in enumerate(self.urls_labels):
             if is_link:
-                button = Gtk.LinkButton(uri=url, label=label)
+                button = Gtk.LinkButton(uri=url if url else "#", label=label)
+                # Bug report button - use activate-link signal to prevent navigation
+                if url == "":
+                    button.connect("activate-link", self._on_bug_report_activated)
             else:
-                # Bug report button - use regular button with click handler
                 button = Gtk.Button(label=label)
                 button.connect("clicked", self._on_bug_report_clicked)
             
@@ -167,6 +169,11 @@ class SupportFooter(Gtk.Box):
                 error_dialog.destroy()
         else:
             dialog.destroy()
+    
+    def _on_bug_report_activated(self, button):
+        """Handle bug report link activation (for LinkButton activate-link signal)."""
+        self._on_bug_report_clicked(button)
+        return True  # Prevent default link navigation
     
     def _submit_bug_report(self, comment: str, parent_window):
         """Submit bug report in background thread."""
