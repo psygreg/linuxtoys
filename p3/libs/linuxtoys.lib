@@ -278,6 +278,11 @@ pkg_flat() {
 }
 pkg_fromfile () {
     if [[ "$1" == *.flatpak ]]; then
+        if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+            summon_helpers
+            sudo_rq
+            flatpak_in_lib
+        fi
         local flatpak_file="$1"
         local flatpak_scope="--user"
         if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
