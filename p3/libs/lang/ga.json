@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Ar dtús Ar dtús: tús a chur ar stór na script...",
   "action_registry": "Clár Gníomhachtaí",
   "scripts_label": "Scripteanna",
-  "registry_details_label": "Sonraí an chlár"
+  "registry_details_label": "Sonraí an chlár",
+  "internal_revert_confirm_title": "Athlíonaigh an script chun baint?",
+  "internal_revert_confirm_message": "Tá modh baint saincheaptha ag an script seo. Tabharfaidh rith arís iarracht ar a chomhpháirteanna a bhaint. Ar theastaigh uait leanúint ar aghaidh?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Første kjøring: initialisering av skriptarkiv...",
   "action_registry": "Handlingsregister",
   "scripts_label": "Skript",
-  "registry_details_label": "Registerdetaljer"
+  "registry_details_label": "Registerdetaljer",
+  "internal_revert_confirm_title": "Kjøre skriptet på nytt for fjerning?",
+  "internal_revert_confirm_message": "Dette skriptet har en tilpasset fjerningsmetode. Å kjøre det på nytt vil forsøke å fjerne komponentene. Vil du fortsette?"
 }

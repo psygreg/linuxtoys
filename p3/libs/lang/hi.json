@@ -387,5 +387,7 @@
   "scripts_init_first_run": "पहली रन: स्क्रिप्ट रिपोजिटरी शुरू की जा रही है...",
   "action_registry": "क्रिया रजिस्ट्री",
   "scripts_label": "स्क्रिप्ट्स",
-  "registry_details_label": "रजिस्ट्री विवरण"
+  "registry_details_label": "रजिस्ट्री विवरण",
+  "internal_revert_confirm_title": "हटाने के लिए स्क्रिप्ट को फिर से चलाएँ?",
+  "internal_revert_confirm_message": "इस स्क्रिप्ट की एक कस्टम हटाने की विधि है। इसे फिर से चलाने से इसके घटकों को हटाने का प्रयास किया जाएगा। क्या आप जारी रखना चाहते हैं?"
 }

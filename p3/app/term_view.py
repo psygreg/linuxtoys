@@ -2,6 +2,7 @@ import os
 import sys
 
 from . import dev_mode, get_icon_path, reboot_helper
+from .compat import should_enable_manual_revert, get_revert_capability
 from .antenna import antenna
 from requests.exceptions import ConnectionError, Timeout
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
@@ -117,6 +118,15 @@ class TermRunScripts(Gtk.Box):
         self.removable_script_info = removable_script_info
         self.total_scripts = len(scripts_infos)
         self.scripts_executed = 0
+        
+        # Store revert capability of the removable script (if available)
+        self.removable_script_revert_capability = None
+        self.removable_script_manual_revert_enabled = False
+        if self.removable_script_info:
+            script_path = self.removable_script_info.get('path')
+            if script_path:
+                self.removable_script_revert_capability = get_revert_capability(script_path)
+                self.removable_script_manual_revert_enabled = should_enable_manual_revert(script_path)
 
         self.terminal = Vte.Terminal()
         self.terminal.connect("child-exited", self.on_child_exit)
@@ -158,7 +168,13 @@ class TermRunScripts(Gtk.Box):
             self.vbox_main._update_header_labels(self.script_queue[0])
 
     def _set_remove_button_visibility(self):
-        if self.removable_script_info and self.total_scripts == 1:
+        # Button shown if:
+        # 1. There's a removable script
+        # 2. Only one script in queue
+        # 3. Manual revert is enabled (revert header is 'yes' or compatible)
+        #    OR revert capability is 'internal' (re-run workflow)
+        is_internal_revert = self.removable_script_revert_capability == "internal"
+        if self.removable_script_info and self.total_scripts == 1 and (self.removable_script_manual_revert_enabled or is_internal_revert):
             self.vbox_main.button_remove.show()
         else:
             self.vbox_main.button_remove.hide()
@@ -207,26 +223,61 @@ class TermRunScripts(Gtk.Box):
         dialog.run()
         dialog.destroy()
 
+    def _show_internal_revert_confirmation_dialog(self, script_name):
+        """Show confirmation dialog for internal revert (re-run script)."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self.get_toplevel(),
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get(
+                "internal_revert_confirm_title", "Re-run Script for Removal?"
+            ),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "internal_revert_confirm_message",
+                "This script has a custom removal method. Running it again will attempt to remove its components. Do you want to continue?",
+            ).format(script_name=script_name)
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
+        )
+        dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.YES
+
     def on_button_remove_clicked(self, widget):
         if not self.removable_script_info or self.parent._script_running:
             return
 
         script_name = self.removable_script_info.get("name", "Script")
-        if not self._show_remove_confirmation_dialog(script_name):
-            return
-
-        remove_script_entry = build_uninstall_script_entry(
-            self.removable_script_info, self.translations
-        )
-        if not remove_script_entry:
-            self._show_remove_not_available_dialog()
-            return
-
-        self.script_queue = [remove_script_entry]
+        is_internal_revert = self.removable_script_revert_capability == "internal"
+        
+        # Show appropriate confirmation dialog
+        if is_internal_revert:
+            if not self._show_internal_revert_confirmation_dialog(script_name):
+                return
+            # For internal revert, just re-queue the original script
+            self.script_queue = [self.removable_script_info]
+        else:
+            if not self._show_remove_confirmation_dialog(script_name):
+                return
+            # For normal revert, build the uninstall script
+            remove_script_entry = build_uninstall_script_entry(
+                self.removable_script_info, self.translations
+            )
+            if not remove_script_entry:
+                self._show_remove_not_available_dialog()
+                return
+            self.script_queue = [remove_script_entry]
+        
         self.total_scripts = 1
         self.scripts_executed = 0
         self.vbox_main.progress_bar.set_fraction(0.0)
-        self.vbox_main._update_header_labels(remove_script_entry)
+        self.vbox_main._update_header_labels(self.script_queue[0])
         waiting_text = self.translations.get(
             "term_view_waiting", "Waiting {current}/{total}"
         )

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "הרצה ראשונה: אתחול מאגר סקריפטים...",
   "action_registry": "רישום פעולות",
   "scripts_label": "סקריפטים",
-  "registry_details_label": "פרטי הרישום"
+  "registry_details_label": "פרטי הרישום",
+  "internal_revert_confirm_title": "הרץ את הסקריפט שוב להסרה?",
+  "internal_revert_confirm_message": "לסקריפט זה יש שיטת הסרה מותאמת. הרצתו שוב תנסה להסיר את הרכיבים שלו. האם ברצונך להמשיך?"
 }

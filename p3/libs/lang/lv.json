@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Pirmais palaišanas: skriptu repozitorijas inicializācija...",
   "action_registry": "Darbību Reģistrs",
   "scripts_label": "Skripti",
-  "registry_details_label": "Reģistra detaļas"
+  "registry_details_label": "Reģistra detaļas",
+  "internal_revert_confirm_title": "Palaist skripto no jauna dzēšanai?",
+  "internal_revert_confirm_message": "Šim skriptam ir pielāgots dzēšanas paņēmiens. Atkārtota palaišana mēģinās dzēst tā komponentes. Vai vēlaties turpināt?"
 }

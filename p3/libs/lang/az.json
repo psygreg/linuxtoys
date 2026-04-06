@@ -406,5 +406,7 @@
   "scripts_init_first_run": "İlk çalışma: Skript depositoriyası inisializə edilir...",
   "action_registry": "Əməliyyat Reyestri",
   "scripts_label": "Skriptlər",
-  "registry_details_label": "Reyestr Detalları"
+  "registry_details_label": "Reyestr Detalları",
+  "internal_revert_confirm_title": "Silmə üçün Skripti Yenidən Çalıştırılmalı?",
+  "internal_revert_confirm_message": "Bu skriptinin fərdi silmə metodu var. Bunu yenidən çalıştırmaq onun komponentlərini silməyə çalışacaq. Davam etmək istəyirsiniz?"
 }

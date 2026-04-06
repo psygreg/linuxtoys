@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Una kang tumatakbo: sinisimulan ang script repository...",
   "action_registry": "Rehistro ng Aksyon",
   "scripts_label": "Mga script",
-  "registry_details_label": "Mga detalye ng registry"
+  "registry_details_label": "Mga detalye ng registry",
+  "internal_revert_confirm_title": "Muling Ilunsad ang Script para sa Burahin?",
+  "internal_revert_confirm_message": "Ang script na ito ay may isang custom na paraan ng pagbutation. Ang muling pagsisiguro ay magsisikap na alisin ang mga bahagi nito. Nais mong magpatuloy?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Առաջին ծանուցում: սցենար պահեստ հարկացում...",
   "action_registry": "Գործողությունների ռեգիստր",
   "scripts_label": "Սկրիպտներ",
-  "registry_details_label": "Ռեգիստրի մանրամասներ"
+  "registry_details_label": "Ռեգիստրի մանրամասներ",
+  "internal_revert_confirm_title": "Վերամեկնարկել سcrипտ հեռացման համար?",
+  "internal_revert_confirm_message": "Այս սկրիպտը ունի անվճար հեռացման մեթոդ: Այն կրկին կատարելը կփորձի հեռացնել դրա բաղադրիչները: Շարունակե՞լ եք::"
 }

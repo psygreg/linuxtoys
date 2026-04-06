@@ -405,5 +405,7 @@
   "scripts_init_first_run": "Kwanza kabisa: ujani wa hati jamii...",
   "action_registry": "Rejista ya Tabia",
   "scripts_label": "Hati",
-  "registry_details_label": "Maelezo ya rejista"
+  "registry_details_label": "Maelezo ya rejista",
+  "internal_revert_confirm_title": "Endesha upya hati kwa kuondolewa?",
+  "internal_revert_confirm_message": "Hati hii ina njia ya kuondoa inayolingana. Kuendesha upya itajaribu kuondoa sehemu zake. Je, unataka kuendelea?"
 }

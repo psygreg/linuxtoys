@@ -407,5 +407,7 @@
   "scripts_init_first_run": "التشغيل الأول: تهيئة مستودع السكريبتات...",
   "action_registry": "سجل الإجراءات",
   "scripts_label": "النصوص البرمجية",
-  "registry_details_label": "تفاصيل السجل"
+  "registry_details_label": "تفاصيل السجل",
+  "internal_revert_confirm_title": "إعادة تشغيل السكريبت للحذف؟",
+  "internal_revert_confirm_message": "هذا السكريبت له طريقة إزالة مخصصة. سيؤدي تشغيله مرة أخرى إلى محاولة إزالة مكوناته. هل تريد المتابعة؟"
 }

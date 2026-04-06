@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Første kørsel: initialisering af skriptarkiv...",
   "action_registry": "Handlingsregister",
   "scripts_label": "Scripts",
-  "registry_details_label": "Registeroplysninger"
+  "registry_details_label": "Registeroplysninger",
+  "internal_revert_confirm_title": "Genstarte script til fjernelse?",
+  "internal_revert_confirm_message": "Dette script har en brugerdefineret fjernelsesmetode. Hvis du starter det igen, vil det forsøge at fjerne dets komponenter. Vil du fortsætte?"
 }

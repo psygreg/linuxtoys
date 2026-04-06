@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Prima rulare: inițializarea depozitului de scripturi...",
   "action_registry": "Registrul Acțiunilor",
   "scripts_label": "Scripturi",
-  "registry_details_label": "Detalii registru"
+  "registry_details_label": "Detalii registru",
+  "internal_revert_confirm_title": "Reexecutați scriptul pentru ștergere?",
+  "internal_revert_confirm_message": "Acest script are o metodă de ștergere personalizată. Reexecutarea lui va încerca să șteargă componentele sale. Doriți să continuați?"
 }

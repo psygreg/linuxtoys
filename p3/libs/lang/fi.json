@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Ensimmäinen käyttö: skriptisäilön alustaminen...",
   "action_registry": "Toimintorekisteri",
   "scripts_label": "Skriptit",
-  "registry_details_label": "Rekisteritiedot"
+  "registry_details_label": "Rekisteritiedot",
+  "internal_revert_confirm_title": "Suorita skripti uudelleen poistamista varten?",
+  "internal_revert_confirm_message": "Tällä skriptillä on mukautettu poistamismenetelmä. Sen uudelleen suorittaminen yrittää poistaa sen komponentit. Haluatko jatkaa?"
 }

@@ -409,5 +409,7 @@
   "scripts_init_first_run": "首次运行：正在初始化脚本存储库...",
   "action_registry": "操作注册表",
   "scripts_label": "脚本",
-  "registry_details_label": "注册表详情"
+  "registry_details_label": "注册表详情",
+  "internal_revert_confirm_title": "重新运行脚本以进行移除?",
+  "internal_revert_confirm_message": "此脚本具有自定义删除方法。重新运行它将尝试删除其组件。您想继续吗?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "First run: initializing scripts repository...",
   "action_registry": "Action Registry",
   "scripts_label": "Scripts",
-  "registry_details_label": "Registry Details"
+  "registry_details_label": "Registry Details",
+  "internal_revert_confirm_title": "Re-run Script for Removal?",
+  "internal_revert_confirm_message": "This script has a custom removal method. Running it again will attempt to remove its components. Do you want to continue?"
 }

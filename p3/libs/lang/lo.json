@@ -407,5 +407,7 @@
   "scripts_init_first_run": "ຄັ້ງທຳອິດ: ກຳລັງເລີ່ມຕົ້ນ script...",
   "action_registry": "ໂครງການລົງທະບຽນສໍາ",
   "scripts_label": "ສະຕາດ",
-  "registry_details_label": "ລາຍລະອຽດລົງທະບຽນ"
+  "registry_details_label": "ລາຍລະອຽດລົງທະບຽນ",
+  "internal_revert_confirm_title": "ລາຍຖືນີ້ໄບເຫັ່ນທັນທີ? ເພື່ອລຶບ?",
+  "internal_revert_confirm_message": "ສະຕະເມື້ອກນີ້ມີວິທີການລຶບອອກທີ່ກຳນົດເອງ. ການແລ່ນຈໍາໜ່າຍຈະພະຍາຍາມລຶບຂໍ້ມູນສະເພາະຂອງມັນ. ທ່ານຕ້ອງການທີ່ຈະສືບເນື່ອງ?"
 }

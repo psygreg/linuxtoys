@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Fyrsta keyrsla: frumstilling skriptageymslunnar...",
   "action_registry": "Aðgerðaskrá",
   "scripts_label": "Skrift",
-  "registry_details_label": "Skráarundarskoðun"
+  "registry_details_label": "Skráarundarskoðun",
+  "internal_revert_confirm_title": "Keyra skriftuna aftur til brottfjarlægingar?",
+  "internal_revert_confirm_message": "Þessi skrift hefur sérsniðna fjarlæggingaraðferð. Endurkeyrslun hennar mun reyna að fjarlægja efnisetning hennar. Viltu halda áfram?"
 }

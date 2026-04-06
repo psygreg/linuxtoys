@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Pertama kali dijalankan: inisialisasi repositori skrip...",
   "action_registry": "Registri Tindakan",
   "scripts_label": "Skrip",
-  "registry_details_label": "Detail Registri"
+  "registry_details_label": "Detail Registri",
+  "internal_revert_confirm_title": "Jalankan Ulang Skrip untuk Penghapusan?",
+  "internal_revert_confirm_message": "Skrip ini memiliki metode penghapusan khusus. Menjalankannya lagi akan mencoba menghapus komponennya. Apakah Anda ingin melanjutkan?"
 }

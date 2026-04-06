@@ -407,5 +407,7 @@
   "scripts_init_first_run": "पहिलो रन: स्क्रिप्ट भण्डार शुरू गरिँदै छ...",
   "action_registry": "कार्य रजिस्ट्री",
   "scripts_label": "स्क्रिप्ट",
-  "registry_details_label": "रजिस्ट्री विवरण"
+  "registry_details_label": "रजिस्ट्री विवरण",
+  "internal_revert_confirm_title": "हटाउनको लागि स्क्रिप्ट पुनः चलाउनुहोस्?",
+  "internal_revert_confirm_message": "यो स्क्रिप्टसँग अनुकूलित हटाउने विधि छ। यसलाई पुनः चलाउने प्रयास गर्नेछ समीपमा। के तपाई जारी राख्न चाहनुहुन्छ?"
 }

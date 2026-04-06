@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Para e parë: inicializimi i depozitit të skriptave...",
   "action_registry": "Regjistër i Veprimeve",
   "scripts_label": "Skripte",
-  "registry_details_label": "Detajet e regjistrit"
+  "registry_details_label": "Detajet e regjistrit",
+  "internal_revert_confirm_title": "Ekzekuto sërish skriptin për fshirje?",
+  "internal_revert_confirm_message": "Ky skript ka një metodë fshirjen e personalizuar. Ekzekutimi i tij përsëri do të përpiqet të fshijë komponentet e tij. Dëshironi të vazhdoni?"
 }

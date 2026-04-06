@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Esimene käivitus: skriptide hoidla initialiseerimine...",
   "action_registry": "Tegevuste Register",
   "scripts_label": "Skriptid",
-  "registry_details_label": "Registri üksikasjad"
+  "registry_details_label": "Registri üksikasjad",
+  "internal_revert_confirm_title": "Käivitage skript uuesti eemaldamiseks?",
+  "internal_revert_confirm_message": "Sellel skriptil on kohandatud eemaldamise meetod. Uuesti käivitades proovitakse selle komponente eemaldada. Kas soovite jätkata?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Erste Ausführung: Skript-Repository wird initialisiert...",
   "action_registry": "Aktionsregister",
   "scripts_label": "Skripte",
-  "registry_details_label": "Registrierungsdetails"
+  "registry_details_label": "Registrierungsdetails",
+  "internal_revert_confirm_title": "Skript zum Löschen erneut ausführen?",
+  "internal_revert_confirm_message": "Dieses Skript verfügt über eine benutzerdefinierte Entfernungsmethode. Ein erneutes Ausführen wird versuchen, die Komponenten zu entfernen. Möchten Sie fortfahren?"
 }

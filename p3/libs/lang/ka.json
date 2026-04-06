@@ -407,5 +407,7 @@
   "scripts_init_first_run": "პირველი გაშვება: სკრიპტის საცავის ინიციალიზაცია...",
   "action_registry": "ქმედების რეგისტრი",
   "scripts_label": "სკრიპტები",
-  "registry_details_label": "რეგისტრის დეტალები"
+  "registry_details_label": "რეგისტრის დეტალები",
+  "internal_revert_confirm_title": "სკრიპტის ხელახლა გაშვება წაშლისთვის?",
+  "internal_revert_confirm_message": "ამ სკრიპტს აქვს მორგებული ამოშენების მეთოდი. მის ხელახლა გაშვება ცდილობს მის კომპონენტების წაშლას. გსურთ გაგრძელება?"
 }

@@ -406,5 +406,7 @@
   "scripts_init_first_run": "প্রথম চালান: স্ক্রিপ্ট সংরক্ষণাগার শুরু হচ্ছে...",
   "action_registry": "অ্যাকশন রেজিস্ট্রি",
   "scripts_label": "স্ক্রিপ্ট",
-  "registry_details_label": "রেজিস্ট্রি বিবরণ"
+  "registry_details_label": "রেজিস্ট্রি বিবরণ",
+  "internal_revert_confirm_title": "অপসারণের জন্য স্ক্রিপ্ট পুনরায় চালান?",
+  "internal_revert_confirm_message": "এই স্ক্রিপ্টের একটি কাস্টম অপসারণ পদ্ধতি রয়েছে। এটি আবার চালানো তার উপাদান সরাতে প্রচেষ্টা করবে। আপনি চালিয়ে যেতে চান?"
 }

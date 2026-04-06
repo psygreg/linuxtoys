@@ -407,5 +407,7 @@
   "scripts_init_first_run": "ครั้งแรกที่ทำงาน: กำลังเริ่มต้นที่เก็บสคริปต์...",
   "action_registry": "ทะเบียนการดำเนิน",
   "scripts_label": "สคริปต์",
-  "registry_details_label": "รายละเอียดทะเบียน"
+  "registry_details_label": "รายละเอียดทะเบียน",
+  "internal_revert_confirm_title": "เรียกใช้สคริปต์อีกครั้งเพื่อลบ?",
+  "internal_revert_confirm_message": "สคริปต์นี้มีวิธีการลบที่กำหนดเอง การรันอีกครั้งจะพยายามลบส่วนประกอบของมัน คุณต้องการดำเนินการต่อหรือไม่?"
 }

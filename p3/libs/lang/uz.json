@@ -406,5 +406,7 @@
   "scripts_init_first_run": "Birinchi ishga: skript omborini boshlash...",
   "action_registry": "Harakatlar Registri",
   "scripts_label": "Skriptlar",
-  "registry_details_label": "Rejistr tafsilotlari"
+  "registry_details_label": "Rejistr tafsilotlari",
+  "internal_revert_confirm_title": "O'chirilsh uchun skriptni qayta ishga tushiring?",
+  "internal_revert_confirm_message": "Bu skriptning o'z o'chirilish usuli mavjud. Buni qayta ishga tushirish uning komponentlarini o'chirib tashlashga harakat qiladi. Davom etishni xohlaysizmi?"
 }

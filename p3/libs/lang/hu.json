@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Első futtatás: szkript adattár inicializálása...",
   "action_registry": "Műveleti Regiszter",
   "scripts_label": "Szkriptek",
-  "registry_details_label": "Regisztrációs adatok"
+  "registry_details_label": "Regisztrációs adatok",
+  "internal_revert_confirm_title": "A szkript újrafuttatása az eltávolításhoz?",
+  "internal_revert_confirm_message": "Ennek a szkriptnek van egy testreszabott eltávolítási módszere. Az ismételt futtatás megkísérli az összetevőinek eltávolítását. Szeretné folytatni?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "初回実行: スクリプトリポジトリを初期化中...",
   "action_registry": "アクションレジストリ",
   "scripts_label": "スクリプト",
-  "registry_details_label": "レジストリの詳細"
+  "registry_details_label": "レジストリの詳細",
+  "internal_revert_confirm_title": "削除するスクリプトを再度実行しますか?",
+  "internal_revert_confirm_message": "このスクリプトはカスタム削除方法を持っています。もう一度実行すると、そのコンポーネントを削除しようとします。続行しますか?"
 }

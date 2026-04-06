@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Eerste uitvoering: scriptrepository wordt geïnitialiseerd...",
   "action_registry": "Actieregister",
   "scripts_label": "Scripts",
-  "registry_details_label": "Registerdetails"
+  "registry_details_label": "Registerdetails",
+  "internal_revert_confirm_title": "Script opnieuw uitvoeren voor verwijdering?",
+  "internal_revert_confirm_message": "Dit script heeft een aangepaste verwijderingsmethode. Het opnieuw uitvoeren zal proberen de componenten te verwijderen. Wil je doorgaan?"
 }

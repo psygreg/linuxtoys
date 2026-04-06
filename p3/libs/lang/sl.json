@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Prvo zagona: inicializacija shrambnika skript...",
   "action_registry": "Register Dejanj",
   "scripts_label": "Skripte",
-  "registry_details_label": "Podrobnosti registra"
+  "registry_details_label": "Podrobnosti registra",
+  "internal_revert_confirm_title": "Ponovno zaganite skript za odstranitev?",
+  "internal_revert_confirm_message": "To scenarij ima prilagojeno metodo za odstranitev. Ponovno zagon bo poskušal odstraniti njegove komponente. Ali želite nadaljevati?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Primera ejecución: inicializando repositorio de scripts...",
   "action_registry": "Registro de Acciones",
   "scripts_label": "Scripts",
-  "registry_details_label": "Detalles del registro"
+  "registry_details_label": "Detalles del registro",
+  "internal_revert_confirm_title": "¿Ejecutar script nuevamente para la eliminación?",
+  "internal_revert_confirm_message": "Este script tiene un método de eliminación personalizado. Ejecutarlo de nuevo intentará eliminar sus componentes. ¿Desea continuar?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Prvo pokretanja: inicijalizacija spremišta skripti...",
   "action_registry": "Registar Akcija",
   "scripts_label": "Skripte",
-  "registry_details_label": "Detalji registra"
+  "registry_details_label": "Detalji registra",
+  "internal_revert_confirm_title": "Ponovno pokrenuti skriptu za brisanje?",
+  "internal_revert_confirm_message": "Ovaj skript ima prilagođenu metodu uklanjanja. Ponovno pokretanje će pokušati ukloniti njegove komponente. Želite li nastaviti?"
 }

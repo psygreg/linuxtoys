@@ -118,9 +118,9 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                             value = translations.get(value, value)
                         if key in metadata:
                             metadata[key] = value
-                        # Always capture 'negates' header even if not in defaults
-                        elif key == 'negates':
-                            metadata['negates'] = value
+                        # Always capture special headers even if not in defaults
+                        elif key in ['negates', 'revert']:
+                            metadata[key] = value
                         elif key == 'needed':
                             metadata['needed'] =  value.split() or None
 
@@ -195,6 +195,7 @@ def get_categories(translations=None):
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'repo': '',
+                'revert': 'yes',
                 'is_new': False
             }
             header = _parse_metadata_file(file_path, defaults, translations)
@@ -332,6 +333,7 @@ def get_scripts_for_category(category_path, translations=None):
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'repo': '',
+                'revert': 'yes',
                 'is_new': False
             }
             script_info = _parse_metadata_file(file_path, defaults, translations)

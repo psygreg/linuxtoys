@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Прво покретање: иницијализација складишта скрипти...",
   "action_registry": "Регистар Aкција",
   "scripts_label": "Скрипте",
-  "registry_details_label": "Детаљи регистра"
+  "registry_details_label": "Детаљи регистра",
+  "internal_revert_confirm_title": "Поновно покренути скрипту за уклањање?",
+  "internal_revert_confirm_message": "Овај скрипт има прилагођену методу уклањања. Поновљено извршавање ће покушати да уклони његове компоненте. Да ли желите да наставите?"
 }

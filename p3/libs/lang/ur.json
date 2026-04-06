@@ -407,5 +407,7 @@
   "scripts_init_first_run": "پہلی رن: اسکرپٹ ذخیرہ شروع ہو رہا ہے...",
   "action_registry": "کارروائی رجسٹر",
   "scripts_label": "اسکرپٹس",
-  "registry_details_label": "رجسٹری کی تفصیلات"
+  "registry_details_label": "رجسٹری کی تفصیلات",
+  "internal_revert_confirm_title": "ہٹانے کے لیے دوبارہ سکرپٹ چلائیں؟",
+  "internal_revert_confirm_message": "اس سکرپٹ کے پاس ایک اپنی مرضی ہٹانے کا طریقہ ہے۔ اسے دوبارہ چلانے سے اس کے اجزاء کو ہٹانے کی کوشش کی جائے گی۔ کیا آپ آگے بڑھنا چاہتے ہیں؟"
 }

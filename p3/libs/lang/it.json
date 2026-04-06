@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Prima esecuzione: inizializzazione del repository di script...",
   "action_registry": "Registro Azioni",
   "scripts_label": "Script",
-  "registry_details_label": "Dettagli registro"
+  "registry_details_label": "Dettagli registro",
+  "internal_revert_confirm_title": "Eseguire nuovamente lo script per la rimozione?",
+  "internal_revert_confirm_message": "Questo script ha um metodo di rimozione personalizzato. L'esecuzione nuova tentarà di rimuovere i suoi componenti. Vuoi continuare?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "İlk Çalışma: Komut dosyası depositoriyumu başlatılıyor...",
   "action_registry": "Eylem Kaydı",
   "scripts_label": "Betikler",
-  "registry_details_label": "Kayıt Ayrıntıları"
+  "registry_details_label": "Kayıt Ayrıntıları",
+  "internal_revert_confirm_title": "Kaldırma için betiği yeniden çalıştırın?",
+  "internal_revert_confirm_message": "Bu betiğin özel bir kaldırma yöntemi vardır. Yeniden çalıştırmak bileşenlerini kaldırmaya çalışacaktır. Devam etmek istiyor musunuz?"
 }

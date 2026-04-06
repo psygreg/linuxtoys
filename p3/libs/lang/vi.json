@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Lần chạy đầu tiên: khởi tạo kho lưu trữ tập lệnh...",
   "action_registry": "Thanh Ghi Hành động",
   "scripts_label": "Tập lệnh",
-  "registry_details_label": "Chi tiết đăng ký"
+  "registry_details_label": "Chi tiết đăng ký",
+  "internal_revert_confirm_title": "Chạy lại tập lệnh để xóa?",
+  "internal_revert_confirm_message": "Tập lệnh này có phương pháp xóa tùy chỉnh. Chạy lại sẽ cố gắng xóa các thành phần của nó. Bạn có muốn tiếp tục không?"
 }

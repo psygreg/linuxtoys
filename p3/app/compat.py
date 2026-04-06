@@ -635,3 +635,127 @@ def script_is_localized(script_path, current_locale):
     except Exception:
         pass
     return True  # If no localize header, show by default
+
+
+def get_revert_capability(script_path, compat_keys=None):
+    """
+    Get the revert capability for a script based on the '# revert:' header.
+    
+    Possible return values:
+    - 'yes': Reversion both automatic after error and manual through uninstall button
+    - 'no': Reversion unavailable both automatically and manually
+    - 'internal': Automatic reversion available, but manual uninstallation requires running script again
+    - 'conditional': List of compat keys for which reversion is available (whitelist/blacklist)
+    - None: No revert header found, defaults to 'yes'
+    
+    The header format supports:
+    - # revert: yes (or omitted, defaults to 'yes')
+    - # revert: no
+    - # revert: internal
+    - # revert: ubuntu, fedora (whitelist - yes for these keys only)
+    - # revert: !ubuntu, !fedora (blacklist - yes for all except these keys)
+    
+    Args:
+        script_path (str): Path to the script file
+        compat_keys (set): Set of compatibility keys for the current system (optional)
+    
+    Returns:
+        str or dict: Revert capability string ('yes', 'no', 'internal') or dict with conditional info
+    """
+    if compat_keys is None:
+        compat_keys = get_system_compat_keys()
+    
+    try:
+        with open(script_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("# revert:"):
+                    revert_line = line[len("# revert:") :].strip().lower()
+                    
+                    # Handle simple cases
+                    if revert_line == "yes" or revert_line == "":
+                        return "yes"
+                    elif revert_line == "no":
+                        return "no"
+                    elif revert_line == "internal":
+                        return "internal"
+                    else:
+                        # Parse as compatibility keys (whitelist/blacklist)
+                        key_strings = [k.strip() for k in revert_line.split(",")]
+                        include_keys = set()
+                        exclude_keys = set()
+                        
+                        for key_str in key_strings:
+                            if key_str.startswith("!"):
+                                exclude_keys.add(key_str[1:])
+                            else:
+                                include_keys.add(key_str)
+                        
+                        return {
+                            "type": "conditional",
+                            "include_keys": include_keys,
+                            "exclude_keys": exclude_keys,
+                            "compat_keys": compat_keys,
+                        }
+                
+                if not line.startswith("#"):
+                    break
+    except Exception:
+        pass
+    
+    return "yes"  # Default to 'yes' if no header found
+
+
+def should_enable_manual_revert(script_path, compat_keys=None):
+    """
+    Determine if manual uninstallation (remove button) should be available for a script.
+    
+    Returns True if:
+    - revert header is 'yes' or not set (default)
+    - revert header is conditional and script matches the compat conditions
+    
+    Returns False if:
+    - revert header is 'no'
+    - revert header is 'internal'
+    - revert header is conditional and system doesn't match the conditions
+    
+    Args:
+        script_path (str): Path to the script file
+        compat_keys (set): Set of compatibility keys for the current system (optional)
+    
+    Returns:
+        bool: True if manual revert should be enabled, False otherwise
+    """
+    if compat_keys is None:
+        compat_keys = get_system_compat_keys()
+    
+    revert_capability = get_revert_capability(script_path, compat_keys)
+    
+    if revert_capability == "yes":
+        return True
+    elif revert_capability == "no":
+        return False
+    elif revert_capability == "internal":
+        return False
+    elif isinstance(revert_capability, dict) and revert_capability.get("type") == "conditional":
+        # Check if system matches the compat conditions
+        include_keys = revert_capability.get("include_keys", set())
+        exclude_keys = revert_capability.get("exclude_keys", set())
+        script_compat_keys = revert_capability.get("compat_keys", compat_keys)
+        
+        # If include keys specified (whitelist)
+        if include_keys:
+            matches_include = bool(script_compat_keys & include_keys)
+        else:
+            # No whitelist specified
+            matches_include = True
+        
+        # If exclude keys specified (blacklist)
+        if exclude_keys:
+            matches_exclude = bool(script_compat_keys & exclude_keys)
+        else:
+            # No blacklist specified
+            matches_exclude = False
+        
+        return matches_include and not matches_exclude
+    
+    return True  # Default to True

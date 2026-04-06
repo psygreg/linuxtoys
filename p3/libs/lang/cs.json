@@ -407,5 +407,7 @@
   "scripts_init_first_run": "První spuštění: inicializace úložiště skriptů...",
   "action_registry": "Registr Akcí",
   "scripts_label": "Skripty",
-  "registry_details_label": "Podrobnosti registru"
+  "registry_details_label": "Podrobnosti registru",
+  "internal_revert_confirm_title": "Spustit skript znovu pro odstranění?",
+  "internal_revert_confirm_message": "Tento skript má vlastní metodu odstranění. Spuštění jej znovu se pokusí odstranit jeho součásti. Chcete pokračovat?"
 }

@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Pierwszym uruchomieniu: inicjowanie repozytorium skryptów...",
   "action_registry": "Rejestr Akcji",
   "scripts_label": "Skrypty",
-  "registry_details_label": "Szczegóły rejestru"
+  "registry_details_label": "Szczegóły rejestru",
+  "internal_revert_confirm_title": "Uruchomić skrypt ponownie w celu usunięcia?",
+  "internal_revert_confirm_message": "Ten skrypt ma niestandardową metodę usuwania. Ponowne uruchomienie spróbuje usunąć jego komponenty. Czy chcesz kontynuować?"
 }

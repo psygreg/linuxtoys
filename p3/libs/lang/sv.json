@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Första körning: initialisering av skriptarkiv...",
   "action_registry": "Åtgärdsregister",
   "scripts_label": "Skript",
-  "registry_details_label": "Registerdetaljer"
+  "registry_details_label": "Registerdetaljer",
+  "internal_revert_confirm_title": "Kör skriptet igen för borttagning?",
+  "internal_revert_confirm_message": "Det här skriptet har en anpassad borttagningsmetod. Att köra det igen kommer att försöka ta bort dess komponenter. Vill du fortsätta?"
 }

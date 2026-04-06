@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Prvý beh: inicializácia úložiska skriptov...",
   "action_registry": "Register Akcií",
   "scripts_label": "Skripty",
-  "registry_details_label": "Podrobnosti registra"
+  "registry_details_label": "Podrobnosti registra",
+  "internal_revert_confirm_title": "Spustiť skript znova na odstránenie?",
+  "internal_revert_confirm_message": "Tento skript má vlastnú metódu odstránenia. Spustitý znova sa pokúsi odstrániť jeho komponenty. Chcete pokračovať?"
 }

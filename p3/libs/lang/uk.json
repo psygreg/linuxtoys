@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Перший запуск: ініціалізація сховища скриптів...",
   "action_registry": "Реєстр дій",
   "scripts_label": "Скрипти",
-  "registry_details_label": "Деталі реєстру"
+  "registry_details_label": "Деталі реєстру",
+  "internal_revert_confirm_title": "Повторно запустити скрипт для видалення?",
+  "internal_revert_confirm_message": "Цей скрипт має спеціальний метод видалення. Його повторне запущення спробує видалити його компоненти. Бажаєте продовжити?"
 }

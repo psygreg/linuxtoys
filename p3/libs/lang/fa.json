@@ -407,5 +407,7 @@
   "scripts_init_first_run": "اولین اجرا: اولیه‌سازی مخزن اسکریپت‌ها...",
   "action_registry": "رجیستر اقدام",
   "scripts_label": "اسکریپت‌ها",
-  "registry_details_label": "جزئیات رجیستر"
+  "registry_details_label": "جزئیات رجیستر",
+  "internal_revert_confirm_title": "اسکریپت را دوباره برای حذف اجرا کنید؟",
+  "internal_revert_confirm_message": "این اسکریپت دارای روش حذف سفارشی است. اجرای آن دوباره سعی خواهد کرد اجزای آن را حذف کند. آیا می‌خواهید ادامه دهید؟"
 }

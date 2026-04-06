@@ -407,5 +407,7 @@
   "scripts_init_first_run": "Première exécution: initialisation du dépôt de scripts...",
   "action_registry": "Registre des Actions",
   "scripts_label": "Scripts",
-  "registry_details_label": "Détails du registre"
+  "registry_details_label": "Détails du registre",
+  "internal_revert_confirm_title": "Réexécuter le script pour la suppression?",
+  "internal_revert_confirm_message": "Ce script a une méthode de suppression personnalisée. Le réexécuter tentera de supprimer ses composants. Voulez-vous continuer?"
 }
