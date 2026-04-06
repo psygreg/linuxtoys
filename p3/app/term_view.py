@@ -58,7 +58,7 @@ class InfosHead(Gtk.Box):
         )
         self.button_remove.set_halign(Gtk.Align.START)
         self.button_remove.set_size_request(125, 35)
-        report_label = self.translations.get("term_view_report_bug", " Report Bug ")
+        report_label = self.translations.get("report_label", " Report Bug ")
         self.button_copy = Gtk.Button(label=report_label)
         self.button_copy.set_image(
             Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.BUTTON)
