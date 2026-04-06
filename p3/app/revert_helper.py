@@ -208,6 +208,28 @@ def _reverse_systemd_operation(service, action):
     return f"{reversals[action]} {service}"
 
 
+def _reverse_bootloader_update():
+    """
+    Reverse a bootloader update by triggering another bootloader update.
+    
+    Bootloader updates are idempotent, so re-running the update ensures
+    consistency and reverses any partial or corrupted state.
+    Uses the bootloader_upd function from linuxtoys.lib for proper distro handling.
+    """
+    return "bootloader_upd"
+
+
+def _reverse_initramfs_update():
+    """
+    Reverse an initramfs update by triggering another initramfs update.
+    
+    Initramfs updates are idempotent, so re-running the update ensures
+    consistency and reverses any partial or corrupted state.
+    Uses the initramfs_upd function from linuxtoys.lib for proper distro handling.
+    """
+    return "initramfs_upd"
+
+
 def _reverse_operation(op_line, package_manager):
     """
     Generate a shell command to reverse a single operation.
@@ -232,7 +254,11 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "updated" and "bootloader" in op_line:
         # Bootloader updates need to be re-run to ensure consistency
-        return None  # Bootloader updates are idempotent, no need to reverse
+        return _reverse_bootloader_update()
+    
+    elif op_type == "updated" and "initramfs" in op_line:
+        # Initramfs updates need to be re-run to ensure consistency
+        return _reverse_initramfs_update()
     
     return None
 

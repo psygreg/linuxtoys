@@ -287,6 +287,12 @@ bootloader_upd() {
         return 0
     fi
 }
+initramfs_upd() {
+    if is_debian; then
+        sudo update-initramfs -u || fatal "Failed to update initramfs"
+        echo "updated initramfs" >> /tmp/linuxtoys/transmap
+    fi
+}
 
 # systemd service operations
 sysd_enable() {
