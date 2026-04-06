@@ -107,7 +107,6 @@ class ScriptCache:
                     'description': '',
                     'icon': 'application-x-executable',
                     'reboot': 'no',
-                    'noconfirm': 'no',
                     'repo': '',
                     'is_new': False
                 }

@@ -194,7 +194,6 @@ def get_categories(translations=None):
                 'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
-                'noconfirm': 'no',
                 'repo': '',
                 'is_new': False
             }
@@ -332,7 +331,6 @@ def get_scripts_for_category(category_path, translations=None):
                 'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
-                'noconfirm': 'no',
                 'repo': '',
                 'is_new': False
             }
@@ -393,7 +391,6 @@ def get_all_scripts_recursive(directory_path, translations=None):
                 'description': '',
                 'icon': 'application-x-executable',
                 'reboot': 'no',
-                'noconfirm': 'no',
                 'repo': '',
                 'is_new': False
             }

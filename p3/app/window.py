@@ -946,7 +946,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             "description": "",
             "icon": "application-x-executable",
             "reboot": "no",
-            "noconfirm": "no",
             "repo": "",
         }
 
