@@ -19,6 +19,7 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **Arch Linux** and derivatives (Manjaro, EndeavourOS, etc.)
 *   **OpenSUSE** (Leap and Tumbleweed)
 *   **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
+*   **Solus** - directly from git tree for now (LT6 beta)
 
 Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices.
 
@@ -117,6 +118,11 @@ sudo pacman -S --noconfirm bash git curl wget zenity python python-gobject pytho
 **OpenSUSE:**
 ```bash
 sudo zypper in -y bash git curl wget zenity python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91
+```
+
+**Solus:**
+```bash
+sudo eopkg it -y git curl wget zenity python3 python-gobject python-requests libvte
 ```
 
 ### Cloning and Running
