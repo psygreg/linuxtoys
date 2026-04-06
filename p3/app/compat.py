@@ -325,16 +325,14 @@ def should_show_optimization_script(script_path):
     """
     Determine if an optimization-related script should be shown based on current state.
 
-    This function implements the toggle logic for optimization scripts:
-    - If optimizations are NOT installed: show installation scripts (pdefaults.sh, etc.)
-    - If optimizations ARE installed: show removal scripts (unoptimize.sh, etc.)
+    Hiding rules:
     - Scripts with '# optimized-only:' header are hidden when optimizations ARE installed
 
     The '# optimized-only:' header marks scripts as part of the recommended optimizations,
     so they are hidden when the system already has optimizations installed.
 
     In developer mode:
-    - Without OPTIMIZER set: override optimization checks (show both install and remove scripts)
+    - Without OPTIMIZER set: override optimization checks (show all scripts)
     - With OPTIMIZER=1 or OPTIMIZER=0: apply optimization simulation logic
 
     Args:
@@ -355,28 +353,15 @@ def should_show_optimization_script(script_path):
         # dev_mode not available, continue with normal behavior
         pass
 
-    script_name = os.path.basename(script_path)
-    optimizations_installed = are_optimizations_installed()
-
-    # Installation scripts - show only when optimizations are NOT installed
-    installation_scripts = ["pdefaults.sh", "pdefaults-ostree.sh"]
-
-    # Removal scripts - show only when optimizations ARE installed
-    removal_scripts = ["unoptimize.sh", "unoptimize-ostree.sh"]
-
     # Check for optimized-only header
+    optimizations_installed = are_optimizations_installed()
     has_optimized_only = _script_has_optimized_only_header(script_path)
 
     # If script has optimized-only header and optimizations are installed, hide it
     if has_optimized_only and optimizations_installed:
         return False
 
-    if script_name in installation_scripts:
-        return not optimizations_installed  # Show if NOT installed
-    elif script_name in removal_scripts:
-        return optimizations_installed  # Show if installed
-    else:
-        return True  # Show all other scripts normally
+    return True  # Show all other scripts normally
 
 
 def script_uses_flatpak_in_lib(script_path):

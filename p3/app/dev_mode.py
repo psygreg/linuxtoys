@@ -8,13 +8,13 @@ Environment Variables:
 - DEV_MODE=1: Enable developer mode (shows all scripts regardless of compatibility)
 - COMPAT=<key>: Simulate a specific system (e.g., COMPAT=fedora, COMPAT=arch)
 - CONTAINER=1: Simulate container environment (applies container checks)
-- OPTIMIZER=1: Simulate optimized system (show removal scripts only)
-- OPTIMIZER=0: Simulate unoptimized system (show installation scripts only)
+- OPTIMIZER=1: Simulate optimized system (affects # optimized-only: header visibility)
+- OPTIMIZER=0: Simulate unoptimized system (affects # optimized-only: header visibility)
 
 Features:
 - Compatibility override and system simulation
 - Container environment simulation and override
-- Optimizer state simulation and override
+- Optimizer state simulation (affects # optimized-only: header scripts)
 - Dry-run script validation (checks parsing and library sourcing)
 
 Usage:
@@ -155,8 +155,8 @@ def should_override_optimizer_checks():
     Check if optimizer state checks should be overridden.
     
     In developer mode:
-    - Without OPTIMIZER set: override optimizer checks (show both install and remove scripts)
-    - With OPTIMIZER=1 or OPTIMIZER=0: apply optimizer simulation logic
+    - Without OPTIMIZER set: override optimizer checks (show all scripts)
+    - With OPTIMIZER=1 or OPTIMIZER=0: apply optimizer simulation logic for # optimized-only: headers
     
     Returns:
         bool: True if optimizer checks should be overridden (ignored)
@@ -982,13 +982,13 @@ def print_dev_mode_banner():
             print("   Use CONTAINER=1 to simulate container environment")
         
         if optimizer_override == '1':
-            print("⚡ Optimizer simulation: OPTIMIZED (showing removal scripts)")
-            print("   System appears to have optimizations installed")
+            print("⚡ Optimizer simulation: OPTIMIZED")
+            print("   System appears to have optimizations installed (affects # optimized-only: scripts)")
         elif optimizer_override == '0':
-            print("⚡ Optimizer simulation: UNOPTIMIZED (showing installation scripts)")
-            print("   System appears to have no optimizations")
+            print("⚡ Optimizer simulation: UNOPTIMIZED")
+            print("   System appears to have no optimizations (affects # optimized-only: scripts)")
         else:
-            print("⚡ Optimizer simulation: DISABLED (showing all optimization scripts)")
+            print("⚡ Optimizer simulation: DISABLED (ignoring optimization state)")
             print("   Use OPTIMIZER=1 for optimized, OPTIMIZER=0 for unoptimized")
         
         print("🧪 Script execution: DRY-RUN mode (validation only)")
