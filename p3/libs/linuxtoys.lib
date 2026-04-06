@@ -260,8 +260,10 @@ prep_tmp() {
 }
 prep_dir() {
     for dir in "$@"; do
-        mkdir -p "$dir" || fatal "Failed to create $dir"
-        echo "created $dir" >> /tmp/linuxtoys/transmap
+        if [ ! -d "$dir" ]; then
+            { mkdir -p "$dir" || sudo mkdir -p "$dir"; } || fatal "Failed to create $dir"
+            echo "created $dir" >> /tmp/linuxtoys/transmap
+        fi
     done
 }
 
