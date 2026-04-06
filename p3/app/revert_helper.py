@@ -230,6 +230,18 @@ def _reverse_initramfs_update():
     return "initramfs_upd"
 
 
+def _reverse_kargs_update(karg):
+    """
+    Reverse a kernel argument update by deleting the appended karg.
+    
+    Uses rpm-ostree kargs --delete to remove the previously appended kernel argument.
+    """
+    if not karg:
+        return None
+    
+    return f"sudo rpm-ostree kargs --delete=\"{karg}\" || true"
+
+
 def _reverse_operation(op_line, package_manager):
     """
     Generate a shell command to reverse a single operation.
@@ -259,6 +271,14 @@ def _reverse_operation(op_line, package_manager):
     elif op_type == "updated" and "initramfs" in op_line:
         # Initramfs updates need to be re-run to ensure consistency
         return _reverse_initramfs_update()
+    
+    elif op_type == "updated" and "kargs" in op_line:
+        # Extract the kargs value from "updated kargs kernel-argument"
+        parts = op_line.split(None, 2)  # ["updated", "kargs", "kernel-argument"]
+        if len(parts) >= 3:
+            karg = parts[2]
+            return _reverse_kargs_update(karg)
+        return None
     
     return None
 

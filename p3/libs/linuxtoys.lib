@@ -232,6 +232,14 @@ is_intel() {
         return 1
     fi
 }
+is_amd() {
+    local amdGPU=$(lspci | grep -Ei '(amd|radeon|rx|amdgpu)')
+    if [[ -n "$amdGPU" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
 
 # file preparations
 prep_edit() {
@@ -291,7 +299,19 @@ initramfs_upd() {
     if is_debian; then
         sudo update-initramfs -u || fatal "Failed to update initramfs"
         echo "updated initramfs" >> /tmp/linuxtoys/transmap
+    elif is_arch || is_cachy; then
+        sudo mkinitcpio -P || fatal "Failed to update mkinitcpio"
+        echo "updated initramfs" >> /tmp/linuxtoys/transmap
+    elif is_fedora || is_suse; then
+        sudo dracut -f --regenerate-all || fatal "Failed to update dracut"
+        echo "updated initramfs" >> /tmp/linuxtoys/transmap
     fi
+}
+kargs_upd() {
+    for arg in "$@"; do
+        sudo rpm-ostree kargs --append="$arg" || fatal "Failed to update rpm-ostree kargs"
+        echo "updated kargs $arg" >> /tmp/linuxtoys/transmap
+    done
 }
 
 # systemd service operations
