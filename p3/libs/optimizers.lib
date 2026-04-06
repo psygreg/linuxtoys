@@ -134,18 +134,17 @@ psave_lib () {
             wget https://copr.fedorainfracloud.org/coprs/leo/power-options/repo/fedora-$(rpm -E %fedora)/leo-power-options-fedora-$(rpm -E %fedora).repo
             sudo install -o 0 -g 0 leo-power-options-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/leo-power-options-fedora-$(rpm -E %fedora).repo
             rpm-ostree refresh-md
-            sudo rpm-ostree install power-options
+            pkg_install power-options
         else
             if is_debian || is_ubuntu; then
-                _packages=(libgtk4-dev libadwaita-1-dev)
+                pkg_install libgtk4-dev libadwaita-1-dev
             elif is_arch; then
-                _packages=(gtk4 libadwaita)
+                pkg_install gtk4 libadwaita
             elif is_fedora || is_suse; then
-                _packages=(gtk4-devel libadwaita-devel)
+                pkg_install gtk4-devel libadwaita-devel
             elif is_solus; then
-                _packages=(libgtk4-devel libadwaita-devel)
+                pkg_install libadwaita-devel
             fi
-            _install_
             git clone https://github.com/TheAlexDev23/power-options/ --depth=1
             cd power-options/scripts
             chmod +x *.sh
@@ -172,8 +171,7 @@ earlyoom_lib () {
         sudo eopkg install -c system.devel
         sudo make install
     else
-        _packages=(earlyoom)
-        _install_
+        pkg_install earlyoom
     fi
     fetch_from_mirror "earlyoom" \
         "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/earlyoom" \
@@ -231,11 +229,10 @@ fix_intel_gtk () {
 
 # use dnsmasq as a local caching DNS resolver - works generally better than systemd-resolved and fixes download speed issues with Steam
 dnsmasq_lib () {
-    _packages=(dnsmasq)
+    pkg_install dnsmasq
     if is_debian; then
-        _packages+=(resolvconf)
+        pkg_install resolvconf
     fi
-    _install_
     # Uncomment lines in dnsmasq.conf for optimal setup
     if [ -f /etc/dnsmasq.conf ]; then
         prep_edit /etc/dnsmasq.conf
@@ -259,7 +256,7 @@ intel_xe_lib () {
 
         echo "Detected Intel GPU device ID: $DEVID"
         if is_ostree; then
-            sudo rpm-ostree kargs --append='i915.force_probe=!'"$DEVID" --append="xe.force_probe=$DEVID"
+            kargs_upd 'i915.force_probe=!'"$DEVID" "xe.force_probe=$DEVID"
         else
             # Create kernel cmdline drop-in file for systemd-based systems
             prep_create /etc/kernel/cmdline.d/10-intel-xe-enable.conf
@@ -286,19 +283,18 @@ EOF
         return 0
     fi
     # install decoder and encoder drivers
-    if is_ubuntu; then
-        sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
-        _packages=(libvdpau-va-gl1 intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo)
-    else
-        _packages=(libvdpau-va-gl intel-media-driver)
-    fi
-    if is_arch; then
-        _packages+=(vpl-gpu-rt)
-    fi
     if is_fedora; then
         rpmfusion_chk
     fi
-    _install_
+    if is_ubuntu; then
+        sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
+        pkg_install libvdpau-va-gl1 intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo
+    else
+        pkg_install libvdpau-va-gl intel-media-driver
+    fi
+    if is_arch; then
+        pkg_install vpl-gpu-rt
+    fi
     if ! grep -q "^VDPAU_DRIVER=" /etc/environment 2>/dev/null; then
         prep_edit /etc/environment
         echo "VDPAU_DRIVER=va_gl" | sudo tee -a /etc/environment
@@ -339,11 +335,11 @@ wayland_proton_lib () {
 preempt_lib () {
     if is_fedora; then
         if ! which grubby &> /dev/null; then
-            _packages=(grubby) && _install_
+            pkg_install grubby
         fi
         sudo grubby --args="preempt=full" --update-kernel ALL
     elif is_ostree; then
-        sudo rpm-ostree kargs --append='preempt=full'
+        kargs_upd 'preempt=full'
     fi
 }
 

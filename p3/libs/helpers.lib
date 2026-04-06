@@ -24,19 +24,7 @@ flatpak_in_lib() {
 
     # Install flatpak if missing
     if ! command -v flatpak &>/dev/null; then
-        case "${ID_LIKE:-$ID}" in
-            *debian*|*ubuntu*)
-                sudo apt install -y flatpak; flatpak_path_pending="1"|| return 1 ;;
-            *arch*|*archlinux*|*cachyos*)
-                sudo pacman -S --noconfirm flatpak; flatpak_path_pending="1" || return 1 ;;
-            *suse*)
-                sudo zypper in -y flatpak; flatpak_path_pending="1" || return 1 ;;
-            *solus*)
-                sudo eopkg install -y flatpak; flatpak_path_pending="1" || return 1 ;;
-            *)
-                _msg error "Unsupported distribution for automatic flatpak installation"; return 1 ;;
-        esac
-        sleep 2
+        pkg_install flatpak
     fi
 
     # Add Flathub remote if not exists
@@ -105,9 +93,7 @@ rpmfusion_chk() {
         return 1
     fi
 
-    local install_cmd="sudo dnf install -y"
-    command -v rpm-ostree &>/dev/null && install_cmd="sudo rpm-ostree install -yA"
-
+    local install_cmd="pkg_fromfile"
     # Free
     if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
         _msg info "Installing RPMFusion Free repository..."
@@ -133,13 +119,12 @@ rpmfusion_chk() {
 # --- PyPI ---
 pip_lib() {
     if is_arch || is_cachy; then
-        _packages=(python-pip python-pipx)
+        pkg_install python-pip python-pipx
     elif is_solus; then
-        _packages=(pip pipx)
+        pkg_install pip pipx
     else
-        _packages=(python3-pip pipx)
+        pkg_install python3-pip pipx
     fi
-    _install_
 }
 
 # --- CLInfo Test ---
@@ -147,8 +132,7 @@ clinfo_chk () {
     if ! command -v clinfo &>/dev/null; then
         _msg info "clinfo not found, installing..."
         sudo_rq
-        _packages=(clinfo)
-        _install_
+        pkg_install clinfo
     fi\
     # Check if OpenCL acceleration is available
     local platform_count
