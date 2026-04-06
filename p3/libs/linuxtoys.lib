@@ -84,111 +84,6 @@ sudo_rq() {
     fi
 }
 
-# Package Management
-_install_() {
-    sysdetect
-    [[ -z "$_packages" ]] && return 0
-
-    # OSTree handling
-    if command -v rpm-ostree &>/dev/null; then
-        local _to_install=()
-        for pkg in "${_packages[@]}"; do
-            rpm -qi "$pkg" &>/dev/null || _to_install+=("$pkg")
-        done
-        if [[ ${#_to_install[@]} -gt 0 ]]; then
-            for item in "${_to_install[@]}"; do
-                sudo rpm-ostree install -yA "$item"
-            done
-        fi
-        unset _packages
-        return 0
-    fi
-
-    # Standard Package Managers
-    case "${ID_LIKE:-$ID}" in
-        *debian*|*ubuntu*)
-            for pak in "${_packages[@]}"; do
-                if ! dpkg -s "$pak" &>/dev/null; then
-                    sudo apt install -y "$pak"
-                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
-                fi
-            done
-            ;;
-        *arch*|*artix*|*archlinux*|*cachyos*)
-            for pak in "${_packages[@]}"; do
-                pacman -Qi "$pak" &>/dev/null && continue
-
-                if pacman -Ss "$pak" | grep -q "$pak"; then
-                    sudo pacman -S --noconfirm "$pak"
-                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
-                else
-                    if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
-                        if ! command -v paru &>/dev/null; then
-                            if pacman -Ss paru | grep -q paru; then
-                                sudo pacman -S --noconfirm paru
-                            else
-                                sudo pacman -S --needed base-devel
-                                cd $HOME
-                                git clone https://aur.archlinux.org/paru.git
-                                cd paru
-                                makepkg -si
-                            fi
-                        fi
-                        paru -S -a --noconfirm --skipreview "$pak"
-                        echo "pkg $pak" >> /tmp/linuxtoys/transmap
-                    else
-                        return 1
-                    fi
-                fi
-            done
-            ;;
-        *rhel*|*fedora*|*centos*)
-             for pak in "${_packages[@]}"; do
-                if ! rpm -qi "$pak" &>/dev/null; then
-                    sudo dnf in -y "$pak"
-                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
-                fi
-            done
-            ;;
-        *suse*)
-            for pak in "${_packages[@]}"; do
-                if ! rpm -qi "$pak" &>/dev/null; then
-                    sudo zypper in -y "$pak"
-                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
-                fi
-            done
-            ;;
-        *solus*)
-            for pak in "${_packages[@]}"; do
-                if ! { eopkg list-installed | grep -q "$pak"; }; then
-                    sudo eopkg install -y "$pak"
-                    echo "pkg $pak" >> /tmp/linuxtoys/transmap
-                fi
-            done
-            ;;
-    esac
-    unset _packages
-}
-
-_flatpak_() {
-    if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
-        summon_helpers
-        sudo_rq
-        flatpak_in_lib
-    fi
-    [[ -z "$_flatpaks" ]] && return 0
-    local flatpak_scope="--user"
-    if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
-       ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
-        flatpak_scope="--system"
-    fi
-    for flat in "${_flatpaks[@]}"; do
-        flatpak install --or-update "$flatpak_scope" --noninteractive flathub "$flat"
-        echo "flatpak $flat" >> /tmp/linuxtoys/transmap
-    done
-    unset _flatpaks
-}
-
 # --- Utils ---
 _lang_() {
     local lang="${LANG:0:2}"
@@ -275,6 +170,163 @@ prep_dir() {
     done
 }
 
+# Package Management
+pkg_exists () {
+    pkg_found=()
+    pkg_notfound=()
+    
+    for pak in "$@"; do
+        if is_debian || is_ubuntu; then
+            if dpkg -s "$pak" &>/dev/null; then
+                pkg_found+=("$pak")
+            else
+                pkg_notfound+=("$pak")
+            fi
+        elif is_arch || is_cachy; then
+            if pacman -Qi "$pak" &>/dev/null; then
+                pkg_found+=("$pak")
+            else
+                pkg_notfound+=("$pak")
+            fi
+        elif is_fedora || is_ostree || is_suse; then
+            if rpm -qi "$pak" &>/dev/null; then
+                pkg_found+=("$pak")
+            else
+                pkg_notfound+=("$pak")
+            fi
+        elif is_solus; then     
+            if eopkg list-installed | grep -qw "$pak"; then
+                pkg_found+=("$pak")
+            else
+                pkg_notfound+=("$pak")
+            fi
+        fi
+    done
+}
+pkg_install () {
+    pkg_exists "$@"
+    [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
+    local to_install="${pkg_notfound[@]}"
+    if is_debian || is_ubuntu; then
+        sudo apt install -y "$to_install" || fatal "Failed to install $to_install"
+        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+    elif is_arch || is_cachy; then
+        local _pacman_pkgs=()
+        local _paru_pkgs=()
+        for pak in "${pkg_notfound[@]}"; do
+            if pacman -Ss "$pak" | grep -q "$pak"; then
+                _pacman_pkgs+=("$pak")
+            else
+                _paru_pkgs+=("$pak")
+            fi
+        done
+        local to_install_pacman="${_pacman_pkgs[@]}"
+        local to_install_paru="${_paru_pkgs[@]}"
+        if [ -n "$to_install_pacman" ]; then
+            sudo pacman -S --noconfirm "$to_install_pacman" || fatal "Failed to install $to_install_pacman"
+            echo "pkg $to_install_pacman" >> /tmp/linuxtoys/transmap
+        fi
+        if [ -n "$to_install_paru" ]; then
+            if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
+                if ! command -v paru &>/dev/null; then
+                    if pacman -Ss paru | grep -q paru; then
+                        sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
+                        echo "pkg paru" >> /tmp/linuxtoys/transmap
+                    else
+                        sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
+                        echo "pkg base-devel" >> /tmp/linuxtoys/transmap
+                        prep_tmp
+                        git clone https://aur.archlinux.org/paru.git
+                        cd paru
+                        makepkg -si
+                        echo "pkg paru" >> /tmp/linuxtoys/transmap
+                    fi
+                fi
+                paru -S -a --noconfirm --skipreview "$to_install_paru" || fatal "Failed to install $to_install_paru"
+                echo "pkg $to_install_paru" >> /tmp/linuxtoys/transmap
+            else
+                return 1
+            fi
+        fi
+    elif is_ostree; then
+        sudo rpm-ostree install "$to_install" || fatal "Failed to install $to_install"
+        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+    elif is_fedora; then
+        sudo dnf in -y "$to_install" || fatal "Failed to install $to_install"
+        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+    elif is_suse; then
+        sudo zypper in -y "$to_install" || fatal "Failed to install $to_install"
+        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+    elif is_solus; then
+        sudo eopkg it -y "$to_install" || fatal "Failed to install $to_install"
+        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+    fi
+}
+pkg_flat() {
+    if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+        summon_helpers
+        sudo_rq
+        flatpak_in_lib
+    fi
+    local flatpak_scope="--user"
+    if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
+       ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+        flatpak_scope="--system"
+    fi
+    flatpak install --or-update "$flatpak_scope" --noninteractive flathub "$@" || fatal "Failed to install flatpak packages $@"
+    echo "flatpak $@" >> /tmp/linuxtoys/transmap
+}
+pkg_fromfile () {
+    if is_debian || is_ubuntu; then
+        { sudo apt install -y "$@" || sudo dpkg -i "$@"; } || fatal "Failed to install $@"
+        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+    elif is_arch || is_cachy; then
+        if sudo pacman -U "$@"; then
+            echo "pkg file $@" >> /tmp/linuxtoys/transmap
+        else
+            if [ -f PKGBUILD ]; then
+                local pkgname=$(grep "^pkgname=" PKGBUILD | head -1 | cut -d'=' -f2 | tr -d "'" '"')
+                makepkg -si || fatal "Failed to build and install package $pkgname"
+                echo "pkg file $pkgname" >> /tmp/linuxtoys/transmap
+            else
+                fatal "Failed to install package $@"
+            fi
+        fi
+    elif is_ostree; then
+        sudo rpm-ostree install "$@" || fatal "Failed to install $@"
+        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+    elif is_fedora; then
+        sudo dnf install -y "$@" || fatal "Failed to install $@"
+        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+    elif is_suse; then
+        sudo zypper in -y "$@" || fatal "Failed to install $@"
+        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+    elif is_solus; then
+        sudo eopkg it -y "$@" || fatal "Failed to install $@"
+        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+    fi
+}
+pkg_remove () {
+    pkg_exists "$@"
+    
+    for pak in "${pkg_found[@]}"; do
+        if is_debian || is_ubuntu; then
+            sudo apt autoremove -y --allow-unauthenticated "$pak" || fatal "Failed to remove package $pak"
+        elif is_arch || is_cachy; then
+            sudo pacman -Rns --noconfirm "$pak" || fatal "Failed to remove package $pak"
+        elif is_ostree; then
+            sudo rpm-ostree uninstall "$pak" || fatal "Failed to remove package $pak"
+        elif is_fedora; then
+            sudo dnf remove -y "$pak" || fatal "Failed to remove package $pak"
+        elif is_suse; then
+            sudo zypper rm -y "$pak" || fatal "Failed to remove package $pak"
+        elif is_solus; then
+            sudo eopkg rmf -y "$pak" || fatal "Failed to remove package $pak"
+        fi
+        echo "pkg rm $pak" >> /tmp/linuxtoys/transmap
+    done
+}
+
 # bootloader update
 bootloader_upd() {
     if ! is_ostree; then
@@ -338,4 +390,10 @@ sysd_stop() {
         sudo systemctl stop "$svc" || fatal "Failed to stop service $svc"
         echo "sysd stopped $svc" >> /tmp/linuxtoys/transmap
     done
+}
+
+# shell change
+shell_change() {
+    sudo chsh -s "$@" || fatal "Failed to change shell: $@"
+    echo "chsh $@" >> /tmp/linuxtoys/transmap
 }

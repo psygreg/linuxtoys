@@ -125,11 +125,15 @@ def _parse_operation(op_line):
     Parse an operation line from the transmap.
     
     Returns a tuple of (operation_type, operands_list)
-    E.g., "pkg curl" -> ("pkg", ["curl"])
+    E.g., "pkg curl git vim" -> ("pkg install", ["curl", "git", "vim"])
+          "pkg rm curl" -> ("pkg rm", ["curl"])
+          "pkg file /path/to/pkg.deb" -> ("pkg file", ["/path/to/pkg.deb"])
           "edited /etc/config" -> ("edited", ["/etc/config"])
           "sysd enabled ssh" -> ("sysd", ["enabled", "ssh"])
+          "flatpak app1 app2" -> ("flatpak", ["app1", "app2"])
+          "chsh /bin/zsh" -> ("chsh", ["/bin/zsh"])
     """
-    parts = op_line.split(None, 1)
+    parts = op_line.split()
     if not parts:
         return None, []
     
@@ -139,37 +143,130 @@ def _parse_operation(op_line):
         # For operations with multiple parts (e.g., "sysd enabled service")
         if op_type == "sysd":
             # sysd operations have format: "sysd action service"
-            rest_parts = parts[1].split(None, 1)
-            if len(rest_parts) == 2:
-                return op_type, list(rest_parts)  # ["enabled", "ssh"]
+            if len(parts) >= 3:
+                return op_type, [parts[1], parts[2]]  # ["enabled", "ssh"]
             else:
-                return op_type, rest_parts if rest_parts else []
+                return op_type, parts[1:] if len(parts) > 1 else []
+        elif op_type == "pkg":
+            # pkg operations have different formats:
+            # "pkg rm package" -> distinguish removal
+            # "pkg file /path" -> distinguish from file
+            # "pkg package1 package2" -> regular installation
+            if len(parts) >= 2 and parts[1] == "rm":
+                # Removal: "pkg rm curl" or "pkg rm curl git"
+                return "pkg rm", parts[2:]
+            elif len(parts) >= 2 and parts[1] == "file":
+                # From file: "pkg file /path/to/file"
+                return "pkg file", parts[2:]
+            else:
+                # Installation: "pkg curl git vim"
+                return "pkg install", parts[1:]
+        elif op_type == "flatpak":
+            # flatpak can have multiple operands (e.g., "flatpak app1 app2")
+            return op_type, parts[1:]
+        elif op_type == "chsh":
+            # Shell change: "chsh /bin/zsh"
+            return op_type, parts[1:]
         else:
-            # Most operations: "type operand"
+            # Most operations: "type operand" (e.g., "edited /etc/config")
             return op_type, [parts[1]]
     
     return op_type, []
 
 
-def _reverse_package_removal(package, package_manager):
-    """Reverse a package installation by removing it."""
-    if not package_manager or not package:
-        return None
+def _reverse_package_install(packages, package_manager):
+    """Reverse a package installation by removing it(s).
     
-    manager_remove_map = {
-        "apt": "sudo apt autoremove -y --allow-unauthenticated",
-        "dnf": "sudo dnf remove -y",
-        "pacman": "sudo pacman -Rns --noconfirm",
-        "zypper": "sudo zypper rm -y",
-        "rpm-ostree": "sudo rpm-ostree uninstall",
-        "eopkg": "sudo eopkg rmf -y",
-    }
+    Args:
+        packages: list of package names or single package name string
+        package_manager: detected package manager
     
-    if package_manager not in manager_remove_map:
-        return None
+    Returns:
+        list of shell commands to reverse the package installation
+    """
+    if not package_manager:
+        return []
     
-    cmd = manager_remove_map[package_manager]
-    return f"{cmd} {package}"
+    # Normalize to list
+    if isinstance(packages, str):
+        packages = [packages]
+    
+    if not packages:
+        return []
+    
+    # Use pkg_remove library function to handle distro-specific removal
+    pkg_args = " ".join(packages)
+    return [f"pkg_remove {pkg_args}"]
+
+
+def _reverse_package_removal(packages, package_manager):
+    """Reverse a package removal by reinstalling it(s).
+    
+    Args:
+        packages: list of package names or single package name string
+        package_manager: detected package manager
+    
+    Returns:
+        list of shell commands to reverse the package removal
+    """
+    if not package_manager:
+        return []
+    
+    # Normalize to list
+    if isinstance(packages, str):
+        packages = [packages]
+    
+    if not packages:
+        return []
+    
+    # Use pkg_install library function to handle distro-specific reinstallation
+    pkg_args = " ".join(packages)
+    return [f"pkg_install {pkg_args}"]
+
+
+def _reverse_package_fromfile(file_paths):
+    """Reverse a package-from-file installation by removing it(s).
+    
+    Attempts to extract package name from file path and remove it.
+    For .deb files, extracts name before first underscore.
+    For .pkg.tar.zst files, similar approach.
+    
+    Args:
+        file_paths: list of file paths or single file path string
+    
+    Returns:
+        list of shell commands to reverse the package installation
+    """
+    # Normalize to list
+    if isinstance(file_paths, str):
+        file_paths = [file_paths]
+    
+    if not file_paths:
+        return []
+    
+    packages_to_remove = []
+    for file_path in file_paths:
+        basename = os.path.basename(file_path)
+        # Extract package name from filename
+        if basename.endswith('.deb'):
+            # For deb files: package_1.0-1_amd64.deb -> package
+            pkg_name = basename.split('_')[0]
+            packages_to_remove.append(pkg_name)
+        elif basename.endswith('.pkg.tar.zst') or basename.endswith('.pkg.tar.xz'):
+            # For arch packages: package-1.0-1-x86_64.pkg.tar.zst -> package
+            pkg_name = basename.split('-')[0]
+            packages_to_remove.append(pkg_name)
+        elif basename.endswith('.rpm'):
+            # For rpm files: package-1.0-1.fc35.x86_64.rpm -> package
+            pkg_name = basename.replace('.rpm', '').rsplit('-', 2)[0]
+            packages_to_remove.append(pkg_name)
+    
+    if not packages_to_remove:
+        return []
+    
+    # Use pkg_remove library function to safely remove the packages
+    pkg_args = " ".join(packages_to_remove)
+    return [f"pkg_remove {pkg_args}"]
 
 
 def _reverse_file_restoration(file_path):
@@ -184,13 +281,32 @@ def _reverse_file_restoration(file_path):
     return f"{{ rm -f {file_path} && mv {backup_path} {file_path}; }} || true"
 
 
-def _reverse_flatpak_removal(app_id):
-    """Reverse a flatpak installation by removing it."""
-    # Remove from both user and system scopes
-    return (
-        f"flatpak uninstall --user --noninteractive {app_id} 2>/dev/null || true ; "
-        f"sudo flatpak uninstall --system --noninteractive {app_id} 2>/dev/null || true"
-    )
+def _reverse_flatpak_removal(app_ids):
+    """Reverse flatpak installation(s) by removing it/them.
+    
+    Args:
+        app_ids: list of app IDs or single app ID string
+    
+    Returns:
+        list of shell commands to reverse the flatpak installation
+    """
+    # Normalize to list
+    if isinstance(app_ids, str):
+        app_ids = [app_ids]
+    
+    if not app_ids:
+        return []
+    
+    commands = []
+    for app_id in app_ids:
+        # Remove from both user and system scopes
+        cmd = (
+            f"flatpak uninstall --user --noninteractive {app_id} 2>/dev/null || true ; "
+            f"sudo flatpak uninstall --system --noninteractive {app_id} 2>/dev/null || true"
+        )
+        commands.append(cmd)
+    
+    return commands
 
 
 def _reverse_systemd_operation(service, action):
@@ -230,6 +346,19 @@ def _reverse_initramfs_update():
     return "initramfs_upd"
 
 
+def _reverse_shell_change(shell_path):
+    """Reverse a shell change by reverting to bash.
+    
+    Args:
+        shell_path: the shell that was changed to (ignored, always revert to bash)
+    
+    Returns:
+        list containing a single shell_change command to revert to bash
+    """
+    # Always revert to /bin/bash, the standard default shell
+    return ["shell_change /bin/bash $USER"]
+
+
 def _reverse_kargs_update(karg):
     """
     Reverse a kernel argument update by deleting the appended karg.
@@ -244,43 +373,62 @@ def _reverse_kargs_update(karg):
 
 def _reverse_operation(op_line, package_manager):
     """
-    Generate a shell command to reverse a single operation.
+    Generate shell command(s) to reverse a single operation.
     
-    Returns the command string or None if unable to reverse.
+    Returns a list of command strings or empty list if unable to reverse.
     """
     op_type, operands = _parse_operation(op_line)
     
-    if op_type == "pkg" and operands:
-        return _reverse_package_removal(operands[0], package_manager)
+    if op_type == "pkg install" and operands:
+        # Reverse package installation by removing
+        return _reverse_package_install(operands, package_manager)
+    
+    elif op_type == "pkg rm" and operands:
+        # Reverse package removal by reinstalling
+        return _reverse_package_removal(operands, package_manager)
+    
+    elif op_type == "pkg file" and operands:
+        # Reverse package-from-file installation by removing
+        return _reverse_package_fromfile(operands)
     
     elif op_type == "flatpak" and operands:
-        return _reverse_flatpak_removal(operands[0])
+        return _reverse_flatpak_removal(operands)
+    
+    elif op_type == "chsh" and operands:
+        # Reverse shell change by reverting to bash
+        return _reverse_shell_change(operands[0])
     
     elif op_type in ("edited", "created", "removed") and operands:
         # All file operations use the same restoration mechanism
-        return _reverse_file_restoration(operands[0])
+        # File operations typically have one file per operation
+        cmd = _reverse_file_restoration(operands[0])
+        return [cmd] if cmd else []
     
     elif op_type == "sysd" and len(operands) >= 2:
         action, service = operands[0], operands[1]
-        return _reverse_systemd_operation(service, action)
+        cmd = _reverse_systemd_operation(service, action)
+        return [cmd] if cmd else []
     
     elif op_type == "updated" and "bootloader" in op_line:
         # Bootloader updates need to be re-run to ensure consistency
-        return _reverse_bootloader_update()
+        cmd = _reverse_bootloader_update()
+        return [cmd] if cmd else []
     
     elif op_type == "updated" and "initramfs" in op_line:
         # Initramfs updates need to be re-run to ensure consistency
-        return _reverse_initramfs_update()
+        cmd = _reverse_initramfs_update()
+        return [cmd] if cmd else []
     
     elif op_type == "updated" and "kargs" in op_line:
         # Extract the kargs value from "updated kargs kernel-argument"
         parts = op_line.split(None, 2)  # ["updated", "kargs", "kernel-argument"]
         if len(parts) >= 3:
             karg = parts[2]
-            return _reverse_kargs_update(karg)
-        return None
+            cmd = _reverse_kargs_update(karg)
+            return [cmd] if cmd else []
+        return []
     
-    return None
+    return []
 
 
 def build_uninstall_script_entry(script_info, translations=None):
@@ -310,9 +458,9 @@ def build_uninstall_script_entry(script_info, translations=None):
     # Generate reverse commands (in reverse order)
     reverse_commands = []
     for op_line in reversed(operations):
-        cmd = _reverse_operation(op_line, package_manager)
-        if cmd:
-            reverse_commands.append(cmd)
+        cmds = _reverse_operation(op_line, package_manager)
+        if cmds:
+            reverse_commands.extend(cmds)
     
     if not reverse_commands:
         # No reversible operations found
@@ -404,9 +552,9 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     # Generate reverse commands (in reverse order - undo most recent first)
     reverse_commands = []
     for op_line in reversed(operations):
-        cmd = _reverse_operation(op_line, package_manager)
-        if cmd:
-            reverse_commands.append(cmd)
+        cmds = _reverse_operation(op_line, package_manager)
+        if cmds:
+            reverse_commands.extend(cmds)
     
     if not reverse_commands:
         # No reversible operations found
