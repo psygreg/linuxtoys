@@ -30,13 +30,34 @@ def initialize_scripts():
     It will:
     1. Synchronize scripts from git (with automatic fallback)
     2. Set up the scripts directory
-    3. Log the status
+    3. Show a loading dialog in GUI mode if this is a first run (clone operation)
+    4. Log the status
     
     Returns:
         str: Path to the scripts directory being used
     """
     try:
-        scripts_dir = get_scripts_dir()
+        # Check if this is a first run (no git scripts cache exists)
+        from .git_scripts_manager import GIT_SCRIPTS_CACHE_DIR, _git_repo_exists
+        is_first_run = not _git_repo_exists()
+        
+        # For first run in GUI mode, show loading dialog
+        scripts_dir = None
+        if is_first_run and _should_show_loading_dialog():
+            try:
+                from .loading_dialog import show_loading_dialog_for_scripts_init
+                
+                def init_with_progress(progress_callback):
+                    return get_scripts_dir(progress_callback)
+                
+                scripts_dir = show_loading_dialog_for_scripts_init(init_with_progress)
+            except Exception as e:
+                logger.debug(f"Could not show loading dialog: {e}")
+                scripts_dir = get_scripts_dir()
+        else:
+            # Not first run, or CLI mode - proceed normally
+            scripts_dir = get_scripts_dir()
+        
         status = get_git_scripts_status()
         
         if status["is_git_synced"]:
@@ -58,6 +79,25 @@ def initialize_scripts():
         )
 
 
+def _should_show_loading_dialog():
+    """
+    Check if we should show the loading dialog.
+    Only show in GUI mode with display available.
+    
+    Returns:
+        bool: True if loading dialog should be shown
+    """
+    # Don't show in CLI mode
+    if os.environ.get('EASY_CLI') == '1':
+        return False
+    
+    # Check for display server
+    if not os.environ.get('DISPLAY') and not os.environ.get('WAYLAND_DISPLAY'):
+        return False
+    
+    return True
+
+
 def get_active_scripts_dir():
     """
     Get the currently active scripts directory.
@@ -70,3 +110,4 @@ def get_active_scripts_dir():
     """
     from .git_scripts_manager import get_scripts_dir
     return get_scripts_dir()
+
