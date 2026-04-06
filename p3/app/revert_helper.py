@@ -308,15 +308,15 @@ def _reverse_package_fromfile(file_paths):
 
 
 def _reverse_file_restoration(file_path):
-    """Reverse a file change by restoring from .bak file."""
+    """Reverse a file or directory change by restoring from .bak file/directory."""
     backup_path = f"{file_path}.bak"
     
     # Check if backup exists
     if not os.path.exists(backup_path):
         return None
     
-    # Restore from backup
-    return f"{{ rm -f {file_path} && mv {backup_path} {file_path}; }} || true"
+    # Use rm -rf to handle both files and directories, moving backup back into place
+    return f"{{ rm -rf {file_path} && mv {backup_path} {file_path}; }} || true"
 
 
 def _reverse_flatpak_removal(app_ids):

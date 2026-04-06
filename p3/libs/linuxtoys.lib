@@ -169,6 +169,12 @@ prep_dir() {
         fi
     done
 }
+prep_dir_edit() {
+    for dir in "$@"; do
+        { cp -r "$dir" "$dir.bak" || sudo cp -r "$dir" "$dir.bak" } || fatal "Failed to create backup $dir"
+        echo "edited $dir" >> /tmp/linuxtoys/transmap
+    done
+}
 
 # Package Management
 pkg_exists () {
