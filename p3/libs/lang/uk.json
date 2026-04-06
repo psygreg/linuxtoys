@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Скрипти не знайдено, клонування...",
   "scripts_init_updating": "Оновлення сховища скриптів...",
   "scripts_init_update_success": "Сховище скриптів успішно оновлено!",
-  "scripts_init_first_run": "Перший запуск: ініціалізація сховища скриптів..."
+  "scripts_init_first_run": "Перший запуск: ініціалізація сховища скриптів...",
+  "action_registry": "Реєстр дій",
+  "scripts_label": "Скрипти",
+  "registry_details_label": "Деталі реєстру"
 }

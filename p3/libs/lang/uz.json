@@ -403,5 +403,8 @@
   "scripts_init_not_found": "Skriptlari topilmadi, nusxa...",
   "scripts_init_updating": "Skript omboriga yangilanmoqda...",
   "scripts_init_update_success": "Skript omboriga muvaffaqiyatli yangilandi!",
-  "scripts_init_first_run": "Birinchi ishga: skript omborini boshlash..."
+  "scripts_init_first_run": "Birinchi ishga: skript omborini boshlash...",
+  "action_registry": "Harakatlar Registri",
+  "scripts_label": "Skriptlar",
+  "registry_details_label": "Rejistr tafsilotlari"
 }

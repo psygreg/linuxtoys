@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skripte ei leitud, kloneeritakse...",
   "scripts_init_updating": "Skriptide hoidla uuendamine...",
   "scripts_init_update_success": "Skriptide hoidla uuendati edukalt!",
-  "scripts_init_first_run": "Esimene käivitus: skriptide hoidla initialiseerimine..."
+  "scripts_init_first_run": "Esimene käivitus: skriptide hoidla initialiseerimine...",
+  "action_registry": "Tegevuste Register",
+  "scripts_label": "Skriptid",
+  "registry_details_label": "Registri üksikasjad"
 }

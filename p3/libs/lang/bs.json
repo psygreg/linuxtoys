@@ -403,5 +403,8 @@
   "scripts_init_not_found": "Skripti nisu pronađeni, kloniranje...",
   "scripts_init_updating": "Ažuriranje spremišta skripti...",
   "scripts_init_update_success": "Spremište skripti uspešno ažurirano!",
-  "scripts_init_first_run": "Prva pokretanja: inicijalizacije spremišta skripti..."
+  "scripts_init_first_run": "Prva pokretanja: inicijalizacije spremišta skripti...",
+  "action_registry": "Registar Akcija",
+  "scripts_label": "Skripte",
+  "registry_details_label": "Detalji registra"
 }

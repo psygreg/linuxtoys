@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skriptat nuk u gjetën, klonimit...",
   "scripts_init_updating": "Përditësimi i depozitit të skriptave...",
   "scripts_init_update_success": "Depo i skriptave u përditësua me sukses!",
-  "scripts_init_first_run": "Para e parë: inicializimi i depozitit të skriptave..."
+  "scripts_init_first_run": "Para e parë: inicializimi i depozitit të skriptave...",
+  "action_registry": "Regjistër i Veprimeve",
+  "scripts_label": "Skripte",
+  "registry_details_label": "Detajet e regjistrit"
 }

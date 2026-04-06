@@ -403,5 +403,8 @@
   "scripts_init_not_found": "Скрипт олдсонгүй, дублика...",
   "scripts_init_updating": "Скрипт агуулахыг шинэчилж байна...",
   "scripts_init_update_success": "Скрипт агуулахыг амжилттай шинэчилсэн!",
-  "scripts_init_first_run": "Эхний ажиллуулалт: скрипт агуулахыг эхлүүлж байна..."
+  "scripts_init_first_run": "Эхний ажиллуулалт: скрипт агуулахыг эхлүүлж байна...",
+  "action_registry": "Үйл Aжиллагааны Реестр",
+  "scripts_label": "Скрипт",
+  "registry_details_label": "Реестрийн дэлгэрэнгүй"
 }

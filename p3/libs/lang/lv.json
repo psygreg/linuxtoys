@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skripti nav atrasti, klonējums...",
   "scripts_init_updating": "Skriptu repozitorija atjaunošana...",
   "scripts_init_update_success": "Skriptu repozitorijs sekmīgi atjaunots!",
-  "scripts_init_first_run": "Pirmais palaišanas: skriptu repozitorijas inicializācija..."
+  "scripts_init_first_run": "Pirmais palaišanas: skriptu repozitorijas inicializācija...",
+  "action_registry": "Darbību Reģistrs",
+  "scripts_label": "Skripti",
+  "registry_details_label": "Reģistra detaļas"
 }

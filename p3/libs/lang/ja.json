@@ -404,5 +404,8 @@
   "scripts_init_not_found": "スクリプトが見つかりません、クローン中...",
   "scripts_init_updating": "スクリプトリポジトリを更新中...",
   "scripts_init_update_success": "スクリプトリポジトリが正常に更新されました!",
-  "scripts_init_first_run": "初回実行: スクリプトリポジトリを初期化中..."
+  "scripts_init_first_run": "初回実行: スクリプトリポジトリを初期化中...",
+  "action_registry": "アクションレジストリ",
+  "scripts_label": "スクリプト",
+  "registry_details_label": "レジストリの詳細"
 }

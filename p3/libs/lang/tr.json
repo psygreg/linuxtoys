@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Komut dosyaları bulunamadığında, klonlaması...",
   "scripts_init_updating": "Komut dosyası depositoriyumu güncelleniyor...",
   "scripts_init_update_success": "Komut dosyası depositoriyumu başarıyla güncellendi!",
-  "scripts_init_first_run": "İlk Çalışma: Komut dosyası depositoriyumu başlatılıyor..."
+  "scripts_init_first_run": "İlk Çalışma: Komut dosyası depositoriyumu başlatılıyor...",
+  "action_registry": "Eylem Kaydı",
+  "scripts_label": "Betikler",
+  "registry_details_label": "Kayıt Ayrıntıları"
 }

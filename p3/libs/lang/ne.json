@@ -404,5 +404,8 @@
   "scripts_init_not_found": "स्क्रिप्ट फेला परेन, क्लोन गरिँदै छ...",
   "scripts_init_updating": "स्क्रिप्ट भण्डार अपडेट गरिँदै छ...",
   "scripts_init_update_success": "स्क्रिप्ट भण्डार सफलतापूर्वक अपडेट गरिएको छ!",
-  "scripts_init_first_run": "पहिलो रन: स्क्रिप्ट भण्डार शुरू गरिँदै छ..."
+  "scripts_init_first_run": "पहिलो रन: स्क्रिप्ट भण्डार शुरू गरिँदै छ...",
+  "action_registry": "कार्य रजिस्ट्री",
+  "scripts_label": "स्क्रिप्ट",
+  "registry_details_label": "रजिस्ट्री विवरण"
 }

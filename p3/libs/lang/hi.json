@@ -384,5 +384,8 @@
   "scripts_init_not_found": "स्क्रिप्ट नहीं मिले, क्लोन किए जा रहे हैं...",
   "scripts_init_updating": "स्क्रिप्ट रिपोजिटरी अपडेट की जा रही है...",
   "scripts_init_update_success": "स्क्रिप्ट रिपोजिटरी सफलतापूर्वक अपडेट की गई!",
-  "scripts_init_first_run": "पहली रन: स्क्रिप्ट रिपोजिटरी शुरू की जा रही है..."
+  "scripts_init_first_run": "पहली रन: स्क्रिप्ट रिपोजिटरी शुरू की जा रही है...",
+  "action_registry": "क्रिया रजिस्ट्री",
+  "scripts_label": "स्क्रिप्ट्स",
+  "registry_details_label": "रजिस्ट्री विवरण"
 }

@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Scripts not found, cloning...",
   "scripts_init_updating": "Updating scripts repository...",
   "scripts_init_update_success": "Scripts updated successfully!",
-  "scripts_init_first_run": "First run: initializing scripts repository..."
+  "scripts_init_first_run": "First run: initializing scripts repository...",
+  "action_registry": "Action Registry",
+  "scripts_label": "Scripts",
+  "registry_details_label": "Registry Details"
 }

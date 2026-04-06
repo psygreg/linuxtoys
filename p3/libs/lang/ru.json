@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Скрипты не найдены, клонирование...",
   "scripts_init_updating": "Обновление репозитория скриптов...",
   "scripts_init_update_success": "Репозиторий скриптов успешно обновлен!",
-  "scripts_init_first_run": "Первый запуск: инициализация репозитория скриптов..."
+  "scripts_init_first_run": "Первый запуск: инициализация репозитория скриптов...",
+  "action_registry": "Реестр действий",
+  "scripts_label": "Скрипты",
+  "registry_details_label": "Подробности реестра"
 }

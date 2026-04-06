@@ -404,5 +404,8 @@
   "scripts_init_not_found": "סקריפטים לא נמצאו, שיבוט...",
   "scripts_init_updating": "עדכון מאגר סקריפטים...",
   "scripts_init_update_success": "מאגר סקריפטים עודכן בהצלחה!",
-  "scripts_init_first_run": "הרצה ראשונה: אתחול מאגר סקריפטים..."
+  "scripts_init_first_run": "הרצה ראשונה: אתחול מאגר סקריפטים...",
+  "action_registry": "רישום פעולות",
+  "scripts_label": "סקריפטים",
+  "registry_details_label": "פרטי הרישום"
 }

@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Скриптҳо ёфт нашудаанд, клониринг...",
   "scripts_init_updating": "Навсозии донишкадаи скрипт...",
   "scripts_init_update_success": "Донишкадаи скрипт бо муваффақиятӣ навсоз шуд!",
-  "scripts_init_first_run": "Бори аввал: иваждкунии донишкадаи скрипт..."
+  "scripts_init_first_run": "Бори аввал: иваждкунии донишкадаи скрипт...",
+  "action_registry": "Реҷистри Aксиён",
+  "scripts_label": "Скрипт",
+  "registry_details_label": "Подробиёти рејистрї"
 }

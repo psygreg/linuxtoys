@@ -404,5 +404,8 @@
   "scripts_init_not_found": "ไม่พบสคริปต์ กำลังโคลน...",
   "scripts_init_updating": "กำลังปรับปรุงที่เก็บสคริปต์...",
   "scripts_init_update_success": "ที่เก็บสคริปต์ถูกปรับปรุงเรียบร้อยแล้ว!",
-  "scripts_init_first_run": "ครั้งแรกที่ทำงาน: กำลังเริ่มต้นที่เก็บสคริปต์..."
+  "scripts_init_first_run": "ครั้งแรกที่ทำงาน: กำลังเริ่มต้นที่เก็บสคริปต์...",
+  "action_registry": "ทะเบียนการดำเนิน",
+  "scripts_label": "สคริปต์",
+  "registry_details_label": "รายละเอียดทะเบียน"
 }

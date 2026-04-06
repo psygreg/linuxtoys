@@ -2,6 +2,7 @@ from .gtk_common import Gtk, GLib
 from . import manifest_helper
 from . import language_selector
 from . import about_helper
+from . import action_registry
 from . import get_icon_path
 from .lang_utils import create_translator
 import threading, asyncio
@@ -141,6 +142,12 @@ class MenuButton(Gtk.MenuButton):
 		
 		self.about_item.set_image(about_icon)
 		self.about_item.connect("clicked", self.__on_about)
+		
+		# Add action registry button
+		self.action_registry_item = Gtk.ModelButton(label=_("action_registry"))
+		self.action_registry_item.set_image(Gtk.Image.new_from_icon_name("document-properties", Gtk.IconSize.MENU))
+		self.action_registry_item.connect("clicked", self.__on_action_registry)
+		
 		# Add separator
 		separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
 		# Add auto error reports checkbox
@@ -151,6 +158,7 @@ class MenuButton(Gtk.MenuButton):
 		vbox.pack_start(self.load_manifest, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
+		vbox.pack_start(self.action_registry_item, True, True, 0)
 		vbox.pack_start(separator, False, False, 0)
 		vbox.pack_start(self.auto_error_reports, False, False, 0)
 		vbox.show_all()
@@ -165,6 +173,7 @@ class MenuButton(Gtk.MenuButton):
 		self.load_manifest.set_label(_("load_manifest"))
 		self.language_select.set_label(_("select_language"))
 		self.about_item.set_label(_("about_title"))
+		self.action_registry_item.set_label(_("action_registry"))
 		self.auto_error_reports.set_label(_("auto_error_reports"))
 
 	def __on_auto_error_reports_toggled(self, widget):
@@ -190,6 +199,10 @@ class MenuButton(Gtk.MenuButton):
 		"""Handle about menu item click"""
 		if self.parent_window and hasattr(self.parent_window, 'translations'):
 			about_helper.show_about_dialog(self.parent_window, self.parent_window.translations)
+
+	def __on_action_registry(self, widget):
+		"""Handle action registry menu item click"""
+		action_registry.show_action_registry_dialog(self.parent_window)
 
 	def __on_load_manifest(self, widget):
 		scripts_name = self.__file_choose()

@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Սցենարներ չեն գտնվել, կլոնավորում...",
   "scripts_init_updating": "Վերցրեք սցենար պահեստ կամ կներ...",
   "scripts_init_update_success": "Սցենար պահեստ հաջողությամբ թարմացվել!",
-  "scripts_init_first_run": "Առաջին ծանուցում: սցենար պահեստ հարկացում..."
+  "scripts_init_first_run": "Առաջին ծանուցում: սցենար պահեստ հարկացում...",
+  "action_registry": "Գործողությունների ռեգիստր",
+  "scripts_label": "Սկրիպտներ",
+  "registry_details_label": "Ռեգիստրի մանրամասներ"
 }

@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Ní bhfuarthas script, clónáil...",
   "scripts_init_updating": "Nuashonrú stór na script...",
   "scripts_init_update_success": "Nuashonrú stór na script go rathúil!",
-  "scripts_init_first_run": "Ar dtús Ar dtús: tús a chur ar stór na script..."
+  "scripts_init_first_run": "Ar dtús Ar dtús: tús a chur ar stór na script...",
+  "action_registry": "Clár Gníomhachtaí",
+  "scripts_label": "Scripteanna",
+  "registry_details_label": "Sonraí an chlár"
 }

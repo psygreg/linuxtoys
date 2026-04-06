@@ -404,5 +404,8 @@
   "scripts_init_not_found": "스크립트를 찾을 수 없음, 복제 중...",
   "scripts_init_updating": "스크립트 저장소 업데이트 중...",
   "scripts_init_update_success": "스크립트 저장소가 성공적으로 업데이트되었습니다!",
-  "scripts_init_first_run": "첫 실행: 스크립트 저장소 초기화 중..."
+  "scripts_init_first_run": "첫 실행: 스크립트 저장소 초기화 중...",
+  "action_registry": "작업 레지스트리",
+  "scripts_label": "스크립트",
+  "registry_details_label": "레지스트리 세부 정보"
 }

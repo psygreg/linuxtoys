@@ -406,5 +406,8 @@
   "scripts_init_not_found": "未找到脚本，克隆中...",
   "scripts_init_updating": "正在更新脚本仓库...",
   "scripts_init_update_success": "脚本仓库更新成功!",
-  "scripts_init_first_run": "首次运行：正在初始化脚本存储库..."
+  "scripts_init_first_run": "首次运行：正在初始化脚本存储库...",
+  "action_registry": "操作注册表",
+  "scripts_label": "脚本",
+  "registry_details_label": "注册表详情"
 }

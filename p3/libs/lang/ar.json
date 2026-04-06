@@ -404,5 +404,8 @@
   "scripts_init_not_found": "لم يتم العثور على السكريبتات، استنساخ...",
   "scripts_init_updating": "تحديث مستودع السكريبتات...",
   "scripts_init_update_success": "تم تحديث مستودع السكريبتات بنجاح!",
-  "scripts_init_first_run": "التشغيل الأول: تهيئة مستودع السكريبتات..."
+  "scripts_init_first_run": "التشغيل الأول: تهيئة مستودع السكريبتات...",
+  "action_registry": "سجل الإجراءات",
+  "scripts_label": "النصوص البرمجية",
+  "registry_details_label": "تفاصيل السجل"
 }

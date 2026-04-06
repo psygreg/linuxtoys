@@ -403,5 +403,8 @@
   "scripts_init_not_found": "স্ক্রিপ্ট পাওয়া যায়নি, ক্লোন করা হচ্ছে...",
   "scripts_init_updating": "স্ক্রিপ্ট সংরক্ষণাগার আপডেট করা হচ্ছে...",
   "scripts_init_update_success": "স্ক্রিপ্ট সংরক্ষণাগার সফলভাবে আপডেট হয়েছে!",
-  "scripts_init_first_run": "প্রথম চালান: স্ক্রিপ্ট সংরক্ষণাগার শুরু হচ্ছে..."
+  "scripts_init_first_run": "প্রথম চালান: স্ক্রিপ্ট সংরক্ষণাগার শুরু হচ্ছে...",
+  "action_registry": "অ্যাকশন রেজিস্ট্রি",
+  "scripts_label": "স্ক্রিপ্ট",
+  "registry_details_label": "রেজিস্ট্রি বিবরণ"
 }

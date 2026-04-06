@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skripty sa nenašli, klonuing...",
   "scripts_init_updating": "Aktualizácia úložiska skriptov...",
   "scripts_init_update_success": "Úložisko skriptov bolo úspešne aktualizované!",
-  "scripts_init_first_run": "Prvý beh: inicializácia úložiska skriptov..."
+  "scripts_init_first_run": "Prvý beh: inicializácia úložiska skriptov...",
+  "action_registry": "Register Akcií",
+  "scripts_label": "Skripty",
+  "registry_details_label": "Podrobnosti registra"
 }

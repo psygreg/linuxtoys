@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skripty nenalezeny, klonování...",
   "scripts_init_updating": "Aktualizace úložiště skriptů...",
   "scripts_init_update_success": "Úložiště skriptů bylo úspěšně aktualizováno!",
-  "scripts_init_first_run": "První spuštění: inicializace úložiště skriptů..."
+  "scripts_init_first_run": "První spuštění: inicializace úložiště skriptů...",
+  "action_registry": "Registr Akcí",
+  "scripts_label": "Skripty",
+  "registry_details_label": "Podrobnosti registru"
 }

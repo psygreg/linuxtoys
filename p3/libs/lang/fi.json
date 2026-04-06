@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skriptit ei löytyneet, kloonataan...",
   "scripts_init_updating": "Skriptisäilön päivittäminen...",
   "scripts_init_update_success": "Skriptisäilö päivitettiin onnistuneesti!",
-  "scripts_init_first_run": "Ensimmäinen käyttö: skriptisäilön alustaminen..."
+  "scripts_init_first_run": "Ensimmäinen käyttö: skriptisäilön alustaminen...",
+  "action_registry": "Toimintorekisteri",
+  "scripts_label": "Skriptit",
+  "registry_details_label": "Rekisteritiedot"
 }

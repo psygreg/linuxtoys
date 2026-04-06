@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Скрипти нису пронађени, клонирање...",
   "scripts_init_updating": "Ажурирање складишта скрипти...",
   "scripts_init_update_success": "Складиште скрипти успешно ажурирано!",
-  "scripts_init_first_run": "Прво покретање: иницијализација складишта скрипти..."
+  "scripts_init_first_run": "Прво покретање: иницијализација складишта скрипти...",
+  "action_registry": "Регистар Aкција",
+  "scripts_label": "Скрипте",
+  "registry_details_label": "Детаљи регистра"
 }

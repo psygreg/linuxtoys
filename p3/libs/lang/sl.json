@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skripte niso najdene, kloniranje...",
   "scripts_init_updating": "Posodobljanje shrambnika skript...",
   "scripts_init_update_success": "Shramba skript uspešno posodobljena!",
-  "scripts_init_first_run": "Prvo zagona: inicializacija shrambnika skript..."
+  "scripts_init_first_run": "Prvo zagona: inicializacija shrambnika skript...",
+  "action_registry": "Register Dejanj",
+  "scripts_label": "Skripte",
+  "registry_details_label": "Podrobnosti registra"
 }

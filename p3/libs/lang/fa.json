@@ -404,5 +404,8 @@
   "scripts_init_not_found": "اسکریپت‌ها یافت نشدند، شبیه‌سازی...",
   "scripts_init_updating": "بروزرسانی مخزن اسکریپت‌ها...",
   "scripts_init_update_success": "مخزن اسکریپت‌ها با موفقیت بروزرسانی شد!",
-  "scripts_init_first_run": "اولین اجرا: اولیه‌سازی مخزن اسکریپت‌ها..."
+  "scripts_init_first_run": "اولین اجرا: اولیه‌سازی مخزن اسکریپت‌ها...",
+  "action_registry": "رجیستر اقدام",
+  "scripts_label": "اسکریپت‌ها",
+  "registry_details_label": "جزئیات رجیستر"
 }

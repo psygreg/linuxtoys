@@ -402,5 +402,8 @@
   "scripts_init_not_found": "Hati haikupatikana, kuiga...",
   "scripts_init_updating": "Sasisimua jamii ya hati...",
   "scripts_init_update_success": "Hati jamii ilikuwa na mafanikio sisisua!",
-  "scripts_init_first_run": "Kwanza kabisa: ujani wa hati jamii..."
+  "scripts_init_first_run": "Kwanza kabisa: ujani wa hati jamii...",
+  "action_registry": "Rejista ya Tabia",
+  "scripts_label": "Hati",
+  "registry_details_label": "Maelezo ya rejista"
 }

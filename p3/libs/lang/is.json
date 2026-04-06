@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skript fundu ekki, kloning...",
   "scripts_init_updating": "Uppfærir skriptageymsluna...",
   "scripts_init_update_success": "Skriptageymsluna var uppfærð með góðum árangri!",
-  "scripts_init_first_run": "Fyrsta keyrsla: frumstilling skriptageymslunnar..."
+  "scripts_init_first_run": "Fyrsta keyrsla: frumstilling skriptageymslunnar...",
+  "action_registry": "Aðgerðaskrá",
+  "scripts_label": "Skrift",
+  "registry_details_label": "Skráarundarskoðun"
 }

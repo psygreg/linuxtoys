@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Ang mga script ay hindi nahanap, kloning...",
   "scripts_init_updating": "Ina-update ang script repository...",
   "scripts_init_update_success": "Ang script repository ay matagumpay na nai-update!",
-  "scripts_init_first_run": "Una kang tumatakbo: sinisimulan ang script repository..."
+  "scripts_init_first_run": "Una kang tumatakbo: sinisimulan ang script repository...",
+  "action_registry": "Rehistro ng Aksyon",
+  "scripts_label": "Mga script",
+  "registry_details_label": "Mga detalye ng registry"
 }

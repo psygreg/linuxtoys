@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skriptai nerasiti, klonuojama...",
   "scripts_init_updating": "Script saugyklos atnaujinimas...",
   "scripts_init_update_success": "Skriptų saugykla buvo sėkmingai atnaujinta!",
-  "scripts_init_first_run": "Pirmas paleidimas: skriptų saugyklos inicijalizacija..."
+  "scripts_init_first_run": "Pirmas paleidimas: skriptų saugyklos inicijalizacija...",
+  "action_registry": "Veiksmų Registras",
+  "scripts_label": "Scenarijai",
+  "registry_details_label": "Registro išsami informacija"
 }

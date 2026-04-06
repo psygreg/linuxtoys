@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Scripts hittades inte, kloning...",
   "scripts_init_updating": "Uppdaterar skriptarkiv...",
   "scripts_init_update_success": "Skriptarkiv uppdaterat framgångsrikt!",
-  "scripts_init_first_run": "Första körning: initialisering av skriptarkiv..."
+  "scripts_init_first_run": "Första körning: initialisering av skriptarkiv...",
+  "action_registry": "Åtgärdsregister",
+  "scripts_label": "Skript",
+  "registry_details_label": "Registerdetaljer"
 }

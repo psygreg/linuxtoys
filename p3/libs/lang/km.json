@@ -404,5 +404,8 @@
   "scripts_init_not_found": "ផ្លាកមិនបានរកឃើញ ក្លូន...",
   "scripts_init_updating": "បង្កើនភ្នាក់ងារប្រតិបត្តិការ...",
   "scripts_init_update_success": "ប្រតិបត្តិការលើខ្លួនឯងបានជោគជ័យ!",
-  "scripts_init_first_run": "ដំបូងលើក: ដំឡើងលើប្រតិបត្តិការ..."
+  "scripts_init_first_run": "ដំបូងលើក: ដំឡើងលើប្រតិបត្តិការ...",
+  "action_registry": "ការចុះឈ្មោះសកម្មភាព",
+  "scripts_label": "ស្ក្រីបទ",
+  "registry_details_label": "ព័ត៌មានលម្អិតលម្អិត"
 }

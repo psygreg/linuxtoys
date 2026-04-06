@@ -404,5 +404,8 @@
   "scripts_init_not_found": "ስክሪፕቶች አላገኙም, ይክሊኑ...",
   "scripts_init_updating": "የስክሪፕቶች ማከማቻ እየታደሰ...",
   "scripts_init_update_success": "ስክሪፕቶች ማከማቻ በተሳካ ሁኔታ ታደሰ!",
-  "scripts_init_first_run": "መጀመሪያ ሙስጥር: የስክሪፕቶች ማከማቻ ይጀምራል..."
+  "scripts_init_first_run": "መጀመሪያ ሙስጥር: የስክሪፕቶች ማከማቻ ይጀምራል...",
+  "action_registry": "የድርጊት ምዝግብ",
+  "scripts_label": "ስክሪፕቶች",
+  "registry_details_label": "የምዝግብ ዝርዝር"
 }

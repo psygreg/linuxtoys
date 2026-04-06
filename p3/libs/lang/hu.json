@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Shkriptek nem találhatóak, klónozás...",
   "scripts_init_updating": "Szkript adattár frissítése...",
   "scripts_init_update_success": "Szkript adattár sikeresen frissítve!",
-  "scripts_init_first_run": "Első futtatás: szkript adattár inicializálása..."
+  "scripts_init_first_run": "Első futtatás: szkript adattár inicializálása...",
+  "action_registry": "Műveleti Regiszter",
+  "scripts_label": "Szkriptek",
+  "registry_details_label": "Regisztrációs adatok"
 }

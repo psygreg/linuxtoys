@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skrypty nie znalezione, klonowanie...",
   "scripts_init_updating": "Aktualizowanie repozytorium skryptów...",
   "scripts_init_update_success": "Repozytorium skryptów zostało pomyślnie zaktualizowane!",
-  "scripts_init_first_run": "Pierwszym uruchomieniu: inicjowanie repozytorium skryptów..."
+  "scripts_init_first_run": "Pierwszym uruchomieniu: inicjowanie repozytorium skryptów...",
+  "action_registry": "Rejestr Akcji",
+  "scripts_label": "Skrypty",
+  "registry_details_label": "Szczegóły rejestru"
 }

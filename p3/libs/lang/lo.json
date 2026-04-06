@@ -404,5 +404,8 @@
   "scripts_init_not_found": "ວົ່າກັບພາບົ່ທີ່ຕົ້ນ ກຳລັງໄຈ້ຄົນລົກ...",
   "scripts_init_updating": "ກຳລັງອັບເດດຄົງທີ່ script...",
   "scripts_init_update_success": "ຂະນະກັບສາກລະອາບເ済ສັກເຍືອກ!",
-  "scripts_init_first_run": "ຄັ້ງທຳອິດ: ກຳລັງເລີ່ມຕົ້ນ script..."
+  "scripts_init_first_run": "ຄັ້ງທຳອິດ: ກຳລັງເລີ່ມຕົ້ນ script...",
+  "action_registry": "ໂครງການລົງທະບຽນສໍາ",
+  "scripts_label": "ສະຕາດ",
+  "registry_details_label": "ລາຍລະອຽດລົງທະບຽນ"
 }

@@ -404,5 +404,8 @@
   "scripts_init_not_found": "اسکرپٹس نہیں مل رہے ہیں، نقل...",
   "scripts_init_updating": "اسکرپٹ ذخیرہ اپڈیٹ کریں...",
   "scripts_init_update_success": "اسکرپٹ ذخیرہ کامیابی کے ساتھ اپڈیٹ کیا گیا!",
-  "scripts_init_first_run": "پہلی رن: اسکرپٹ ذخیرہ شروع ہو رہا ہے..."
+  "scripts_init_first_run": "پہلی رن: اسکرپٹ ذخیرہ شروع ہو رہا ہے...",
+  "action_registry": "کارروائی رجسٹر",
+  "scripts_label": "اسکرپٹس",
+  "registry_details_label": "رجسٹری کی تفصیلات"
 }

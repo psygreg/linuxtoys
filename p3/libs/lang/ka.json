@@ -404,5 +404,8 @@
   "scripts_init_not_found": "სკრიპტები ვერ მოიძებნა, კლონირება...",
   "scripts_init_updating": "სკრიპტის საცავის განახლება...",
   "scripts_init_update_success": "სკრიპტის საცავი წარმატებით განახლდა!",
-  "scripts_init_first_run": "პირველი გაშვება: სკრიპტის საცავის ინიციალიზაცია..."
+  "scripts_init_first_run": "პირველი გაშვება: სკრიპტის საცავის ინიციალიზაცია...",
+  "action_registry": "ქმედების რეგისტრი",
+  "scripts_label": "სკრიპტები",
+  "registry_details_label": "რეგისტრის დეტალები"
 }

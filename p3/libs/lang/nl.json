@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Scripts niet gevonden, klonen...",
   "scripts_init_updating": "Scriptrepository wordt bijgewerkt...",
   "scripts_init_update_success": "Scriptrepository is met succes bijgewerkt!",
-  "scripts_init_first_run": "Eerste uitvoering: scriptrepository wordt geïnitialiseerd..."
+  "scripts_init_first_run": "Eerste uitvoering: scriptrepository wordt geïnitialiseerd...",
+  "action_registry": "Actieregister",
+  "scripts_label": "Scripts",
+  "registry_details_label": "Registerdetails"
 }

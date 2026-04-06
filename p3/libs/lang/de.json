@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skripte nicht gefunden, klone...",
   "scripts_init_updating": "Skript-Repository wird aktualisiert...",
   "scripts_init_update_success": "Skript-Repository wurde erfolgreich aktualisiert!",
-  "scripts_init_first_run": "Erste Ausführung: Skript-Repository wird initialisiert..."
+  "scripts_init_first_run": "Erste Ausführung: Skript-Repository wird initialisiert...",
+  "action_registry": "Aktionsregister",
+  "scripts_label": "Skripte",
+  "registry_details_label": "Registrierungsdetails"
 }

@@ -403,5 +403,8 @@
   "scripts_init_not_found": "Skriptlər tapılmadı, klonlaşdırılıyor...",
   "scripts_init_updating": "Skript depositoriyası yenilənir...",
   "scripts_init_update_success": "Skript depositoriyası uğurla yeniləndi!",
-  "scripts_init_first_run": "İlk çalışma: Skript depositoriyası inisializə edilir..."
+  "scripts_init_first_run": "İlk çalışma: Skript depositoriyası inisializə edilir...",
+  "action_registry": "Əməliyyat Reyestri",
+  "scripts_label": "Skriptlər",
+  "registry_details_label": "Reyestr Detalları"
 }

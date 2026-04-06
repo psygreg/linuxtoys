@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Không tìm thấy tập lệnh, sao chép...",
   "scripts_init_updating": "Đang cập nhật kho lưu trữ tập lệnh...",
   "scripts_init_update_success": "Kho lưu trữ tập lệnh được cập nhật thành công!",
-  "scripts_init_first_run": "Lần chạy đầu tiên: khởi tạo kho lưu trữ tập lệnh..."
+  "scripts_init_first_run": "Lần chạy đầu tiên: khởi tạo kho lưu trữ tập lệnh...",
+  "action_registry": "Thanh Ghi Hành động",
+  "scripts_label": "Tập lệnh",
+  "registry_details_label": "Chi tiết đăng ký"
 }

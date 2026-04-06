@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Skrip tidak ditemukan, mengkloning...",
   "scripts_init_updating": "Memperbarui repositori skrip...",
   "scripts_init_update_success": "Repositori skrip berhasil diperbarui!",
-  "scripts_init_first_run": "Pertama kali dijalankan: inisialisasi repositori skrip..."
+  "scripts_init_first_run": "Pertama kali dijalankan: inisialisasi repositori skrip...",
+  "action_registry": "Registri Tindakan",
+  "scripts_label": "Skrip",
+  "registry_details_label": "Detail Registri"
 }

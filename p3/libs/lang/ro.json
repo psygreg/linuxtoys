@@ -404,5 +404,8 @@
   "scripts_init_not_found": "Scripturile nu au fost găsite, clonare...",
   "scripts_init_updating": "Actualizarea depozitului de scripturi...",
   "scripts_init_update_success": "Depozitul de scripturi a fost actualizat cu succes!",
-  "scripts_init_first_run": "Prima rulare: inițializarea depozitului de scripturi..."
+  "scripts_init_first_run": "Prima rulare: inițializarea depozitului de scripturi...",
+  "action_registry": "Registrul Acțiunilor",
+  "scripts_label": "Scripturi",
+  "registry_details_label": "Detalii registru"
 }
