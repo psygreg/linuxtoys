@@ -495,25 +495,46 @@ class TermRunScripts(Gtk.Box):
         if self._self_update:
             DialogRestart(parent=self.get_toplevel()).show()
 
-        # Save to registry and wipe transmap file if script executed successfully
+        # Handle transmap file based on exit status
+        transmap_path = "/tmp/linuxtoys/transmap"
+        
         if os.WIFEXITED(status):
             exit_code = os.WEXITSTATUS(status)
+            
             if exit_code == 0:
-                transmap_path = "/tmp/linuxtoys/transmap"
-                # Get current script name for registry
+                # Success - save to registry and wipe transmap
                 script_name = getattr(self, "_current_script_name", "unknown")
-                # Save to registry before wiping
                 self._save_to_registry(script_name, transmap_path)
                 try:
                     if os.path.exists(transmap_path):
                         os.remove(transmap_path)
                 except (IOError, OSError):
                     pass  # Silently ignore if transmap cannot be removed
+            
+            elif exit_code == 100:
+                # User cancelled - wipe transmap but don't save to registry
+                try:
+                    if os.path.exists(transmap_path):
+                        os.remove(transmap_path)
+                except (IOError, OSError):
+                    pass  # Silently ignore if transmap cannot be removed
+        
+        else:
+            # Signal termination (e.g., Ctrl+C) - wipe transmap
+            try:
+                if os.path.exists(transmap_path):
+                    os.remove(transmap_path)
+            except (IOError, OSError):
+                pass  # Silently ignore if transmap cannot be removed
 
         # Check for error exit codes and handle auto-reversion or bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
             # Only auto-handle for regular scripts, not removal operations
-            transmap_path = "/tmp/linuxtoys/transmap"
+            
+            # Save the error to registry before attempting auto-revert
+            script_name = getattr(self, "_current_script_name", "unknown")
+            self._save_to_registry(script_name, transmap_path)
+            
             auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
             
             # Submit bug report first if enabled (before auto-revert consumes transmap)
