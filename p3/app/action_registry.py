@@ -99,6 +99,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         # Left panel - Scripts list
         left_frame = Gtk.Frame(label=_("scripts_label"))
         left_frame.set_shadow_type(Gtk.ShadowType.IN)
+        left_frame.set_min_content_width(280)
         left_frame.set_vexpand(True)
         left_frame.set_hexpand(False)
         
