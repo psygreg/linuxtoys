@@ -1,0 +1,79 @@
+name: Sync PR to Gitea
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  sync-to-gitea:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get modified files from PR
+        id: modified-files
+        run: |
+          # Get the list of modified files in the PR
+          MODIFIED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          echo "Files modified in this PR:"
+          echo "$MODIFIED_FILES"
+          # Store for later use
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$MODIFIED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Clone Gitea repository
+        run: |
+          git clone https://${{ secrets.GITEA_OWNER }}:${{ secrets.GITEA_TOKEN }}@git.linux.toys/psygreg/linuxtoys.git gitea-repo
+        env:
+          GITEA_OWNER: ${{ secrets.GITEA_OWNER }}
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+
+      - name: Sync modified files to Gitea
+        run: |
+          cd gitea-repo
+          
+          # Add GitHub remote to fetch changes
+          git remote add github https://github.com/${{ github.repository }}.git
+          git fetch github ${{ github.event.pull_request.head.ref }}
+          
+          # Copy modified files from GitHub to Gitea repo
+          cd ..
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              echo "Syncing file: $file"
+              mkdir -p "gitea-repo/$(dirname "$file")"
+              cp "$file" "gitea-repo/$file"
+            fi
+          done <<< "${{ steps.modified-files.outputs.files }}"
+          
+          cd gitea-repo
+
+      - name: Commit and push to Gitea
+        run: |
+          cd gitea-repo
+          
+          # Check if there are changes to commit
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to push"
+            exit 0
+          fi
+          
+          git add ${{ steps.modified-files.outputs.files }}
+          git commit -m "Sync PR #${{ github.event.pull_request.number }} from GitHub: ${{ github.event.pull_request.title }}"
+          git push origin main
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
