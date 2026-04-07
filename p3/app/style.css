@@ -20,3 +20,9 @@
 flowboxchild:selected {
     border-radius: 16px;
 }
+
+paned > separator {
+    min-width: 15px;  /* For horizontal paned */
+    min-height: 15px; /* For vertical paned */
+    background-color: transparent; /* Makes it look like empty padding */
+}

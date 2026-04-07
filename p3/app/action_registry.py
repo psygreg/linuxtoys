@@ -95,7 +95,6 @@ class ActionRegistryDialog(Gtk.Dialog):
         main_paned.set_vexpand(True)
         main_paned.set_hexpand(True)
         main_paned.set_margin_bottom(15)
-        main_paned.set_property("spacing", 15)
         content_area.add(main_paned)
         
         # Left panel - Scripts list
