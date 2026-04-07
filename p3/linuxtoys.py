@@ -10,6 +10,15 @@ if __name__ == "__main__":
     linuxtoys_dir = os.path.dirname(os.path.abspath(__file__))
     os.environ['SCRIPT_DIR'] = linuxtoys_dir
     
+    # --- VERIFY LIBRARIES EXIST ---
+    # Safeguard: ensure the lib directory is present
+    libs_dir = os.path.join(linuxtoys_dir, 'libs')
+    if not os.path.isdir(libs_dir):
+        print("Error: LinuxToys library files not found.")
+        print(f"Expected path: {libs_dir}")
+        print("The installation may be corrupted or incomplete.")
+        sys.exit(1)
+    
     # --- SCRIPTS INITIALIZATION ---
     # Initialize git-based scripts synchronization with fallback to bundled scripts
     try:

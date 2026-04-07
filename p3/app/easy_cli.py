@@ -35,7 +35,10 @@ def resolve_script_dir():
             break
         current_dir = parent_dir
 
-    raise FileNotFoundError(f"'libs' folder not found relative to {__file__}")
+    print("Error: LinuxToys library files not found.")
+    print(f"Started search from: {os.path.dirname(os.path.abspath(__file__))}")
+    print("The installation may be corrupted or incomplete.")
+    sys.exit(1)
 
 def _save_script_to_registry(script_name, transmap_path):
     """Save script execution record to registry."""
