@@ -203,7 +203,6 @@ copy_() {
     for src in "${sources[@]}"; do
         [ -e "$src" ] || fatal "Source $src not found"
         { cp "${flags[@]}" "$src" "$dest" || sudo cp "${flags[@]}" "$src" "$dest"; } || fatal "Failed to copy $src to $dest"
-        _append_transmap "copied $src to $dest"
     done
 }
 move_() {
@@ -224,7 +223,6 @@ move_() {
     for src in "${sources[@]}"; do
         [ -e "$src" ] || fatal "Source $src not found"
         { mv "${flags[@]}" "$src" "$dest" || sudo mv "${flags[@]}" "$src" "$dest"; } || fatal "Failed to move $src to $dest"
-        _append_transmap "moved $src to $dest"
     done
 }
 
