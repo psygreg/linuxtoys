@@ -90,18 +90,18 @@ class ActionRegistryDialog(Gtk.Dialog):
         content_area.set_vexpand(True)
         content_area.set_hexpand(True)
         
-        # Main horizontal box for split panels
-        main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        main_hbox.set_vexpand(True)
-        main_hbox.set_hexpand(True)
-        content_area.add(main_hbox)
+        # Main paned container for split panels
+        main_paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        main_paned.set_vexpand(True)
+        main_paned.set_hexpand(True)
+        main_paned.set_margin_bottom(20)
+        content_area.add(main_paned)
         
         # Left panel - Scripts list
         left_frame = Gtk.Frame(label=_("scripts_label"))
         left_frame.set_shadow_type(Gtk.ShadowType.IN)
         left_frame.set_vexpand(True)
         left_frame.set_hexpand(False)
-        left_frame.set_size_request(280, -1)
         
         # Scrolled window for scripts list
         scrolled_left = Gtk.ScrolledWindow()
@@ -125,7 +125,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         selection.connect("changed", self.__on_script_selected)
         
         scrolled_left.add(self.scripts_treeview)
-        main_hbox.pack_start(left_frame, False, False, 0)
+        main_paned.pack1(left_frame, False, True)
         
         # Right panel - Registry details
         right_frame = Gtk.Frame(label=_("registry_details_label"))
@@ -148,7 +148,10 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.details_textview.set_monospace(True)
         scrolled_right.add(self.details_textview)
         
-        main_hbox.pack_start(right_frame, True, True, 0)
+        main_paned.pack2(right_frame, True, True)
+        
+        # Set initial position for the divider (left panel gets ~280px)
+        main_paned.set_position(280)
         
         # Load registry data
         self.registry_data = parse_registry_file()
