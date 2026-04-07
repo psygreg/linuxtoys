@@ -26,3 +26,16 @@ paned > separator {
     min-height: 15px; /* For vertical paned */
     background-color: transparent; /* Makes it look like empty padding */
 }
+
+/* Add 2px spacing between icon and text in buttons */
+button image {
+    margin-right: 2px;
+}
+
+modelbutton image {
+    margin-right: 2px;
+}
+
+checkbutton image {
+    margin-right: 2px;
+}
