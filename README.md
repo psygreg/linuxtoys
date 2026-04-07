@@ -2,9 +2,6 @@
 
 [LinuxToys](https://linux.toys) is a collection of user-friendly tools designed for Linux systems. It aims to make powerful Linux functionality accessible to all users through an intuitive interface. For a complete feature list and detailed documentation, please visit our [Wiki](https://linux.toys/knowledgebase.html).
 
-## For those on GitHub
-This is a mirror of the [official repository](https://git.linux.toys/psygreg/linuxtoys) in which this project is active. If you wish to contribute, consider heading there instead to be credited in the contributors. Your stars here are very welcome in any case!
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="src/dark-lt.png">
   <img alt="LinuxToys Screenshot" src="src/light-lt.png">
@@ -149,6 +146,8 @@ git pull
 ## Development
 
 For developers who wish to contribute, check our documentation, please refer to the [Developer Guide](dev/README.md).
+
+To collaborate with scripts within the app and not the app itself, refer to [the scripts repository.](https://github.com/psygreg/scripts)
 
 ## Contributing
 
