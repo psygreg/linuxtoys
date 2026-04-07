@@ -9,18 +9,20 @@
 
 ## Compatibility
 
-LinuxToys is compatible with the following Linux distributions, provided they are running their latest stable versions:
+LinuxToys is compatible with the following Linux distributions, provided they are running their latest stable versions, and use `systemd` as their init system:
 
-*   **Debian** and derivatives (Ubuntu, Linux Mint, etc.)
-*   **Fedora** and derivatives (RHEL, CentOS, AlmaLinux, etc.)
-*   **Arch Linux** and derivatives (Manjaro, EndeavourOS, etc.)
-*   **OpenSUSE** (Leap and Tumbleweed)
-*   **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
+*   **Debian** and derivatives (PikaOS, LMDE, etc.)
+*   **Ubuntu** and derivatives (Ubuntu flavours, Mint, Zorin, Tuxedo, etc.)
+*   **Fedora** and derivatives (Nobara, RHEL, CentOS, AlmaLinux, etc.)
+*   **Arch Linux** and derivatives (EndeavourOS, CachyOS, Artix, etc.)
+*   **Manjaro** and **Big Linux**
+*   **OpenSUSE** (Leap, Slowroll and Tumbleweed)
+*   Fedora-based **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
 *   **Solus** - directly from git tree for now (LT6 beta)
 
 Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices.
 
-## Usage without installation
+## Usage without installation for stable versions
 
 You can use LinuxToys without installing it by downloading the new AppImage made by our friends at **[pkgforge-dev](https://github.com/pkgforge-dev)** from their [releases page](https://github.com/pkgforge-dev/LinuxToys-AppImage/releases). Just download the latest release, make it executable, and run it. Issues with the AppImage can be reported at [the AppImage repository](https://github.com/pkgforge-dev/LinuxToys-AppImage), and both of us will be working together to make it the best experience possible.
 
