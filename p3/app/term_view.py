@@ -141,10 +141,13 @@ class TermRunScripts(Gtk.Box):
         
         # Track if current/first script has a registry entry for bug report visibility
         self.current_script_has_registry_entry = False
+        self._current_script_name = None  # Will be set when script runs, or from first script
         if scripts_infos:
             first_script = scripts_infos[0]
             first_script_name = first_script.get('name')
             if first_script_name:
+                # Initialize with first script name for bug reporting (even before run)
+                self._current_script_name = first_script_name
                 operations = _load_last_execution(first_script_name)
                 self.current_script_has_registry_entry = bool(operations)
 
@@ -379,7 +382,7 @@ class TermRunScripts(Gtk.Box):
             timestamp = datetime.datetime.now().isoformat()
             entry = f"[{timestamp}] Script: {script_name}\n"
             if transmap_contents:
-                entry += f"Changes:\n"
+                entry += "Changes:\n"
                 for line in transmap_contents.split("\n"):
                     if line.strip():
                         entry += f"  - {line}\n"
@@ -589,8 +592,7 @@ class TermRunScripts(Gtk.Box):
         # Clear transmap file for new script execution
         try:
             transmap_path = "/tmp/linuxtoys/transmap"
-            with open(transmap_path, "w") as f:
-                pass  # Truncate/clear the file
+            open(transmap_path, "w").close()  # Truncate/clear the file
         except (IOError, OSError):
             pass  # Silently ignore if transmap cannot be cleared
 
@@ -637,15 +639,24 @@ class TermRunScripts(Gtk.Box):
         
         Returns formatted text of the last execution, or empty string if not found.
         """
-        if not hasattr(self, "_current_script_name") or not self._current_script_name:
+        script_name = None
+        
+        # Try to use the current script name (set when script runs)
+        if hasattr(self, "_current_script_name") and self._current_script_name:
+            script_name = self._current_script_name
+        # Fallback to first script in queue if available (before script runs)
+        elif self.script_queue:
+            script_name = self.script_queue[0].get('name')
+        
+        if not script_name:
             return ""
         
         try:
             registry_data = parse_registry_file()
-            if self._current_script_name not in registry_data:
+            if script_name not in registry_data:
                 return ""
             
-            executions = registry_data[self._current_script_name]
+            executions = registry_data[script_name]
             if not executions:
                 return ""
             
@@ -653,7 +664,7 @@ class TermRunScripts(Gtk.Box):
             timestamp, operations = executions[-1]
             
             # Format the registry data nicely
-            lines = [f"Last execution of '{self._current_script_name}':\n"]
+            lines = [f"Last execution of '{script_name}':\n"]
             if timestamp:
                 lines.append(f"Timestamp: {timestamp}\n")
             
