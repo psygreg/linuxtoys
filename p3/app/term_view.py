@@ -8,6 +8,7 @@ from requests.exceptions import ConnectionError, Timeout
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
 from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry, _load_last_execution
 from .updater.update_dialog import DialogRestart
+from .action_registry import parse_registry_file
 
 
 class InfosHead(Gtk.Box):
@@ -631,6 +632,42 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
 
+    def _get_last_registry_execution(self) -> str:
+        """Get the last execution data from registry for the current script.
+        
+        Returns formatted text of the last execution, or empty string if not found.
+        """
+        if not hasattr(self, "_current_script_name") or not self._current_script_name:
+            return ""
+        
+        try:
+            registry_data = parse_registry_file()
+            if self._current_script_name not in registry_data:
+                return ""
+            
+            executions = registry_data[self._current_script_name]
+            if not executions:
+                return ""
+            
+            # Get the last execution
+            timestamp, operations = executions[-1]
+            
+            # Format the registry data nicely
+            lines = [f"Last execution of '{self._current_script_name}':\n"]
+            if timestamp:
+                lines.append(f"Timestamp: {timestamp}\n")
+            
+            if operations:
+                lines.append("\nOperations performed:")
+                for op in operations:
+                    lines.append(f"  • {op}")
+            else:
+                lines.append("\nOperations: (none)")
+            
+            return "\n".join(lines)
+        except Exception:
+            return ""
+
     def _get_terminal_text(self) -> str:
         """Extract all text from the terminal by copying to clipboard and reading back."""
         try:
@@ -763,6 +800,12 @@ class TermRunScripts(Gtk.Box):
         try:
             # Get terminal logs
             logs = self._get_terminal_text()
+            
+            # If terminal logs are empty, try to get registry data for this script
+            if not logs or logs.strip() == "":
+                registry_logs = self._get_last_registry_execution()
+                if registry_logs:
+                    logs = f"[Using registry data from last execution]\n{registry_logs}"
             
             # Gather system information
             context_parts = []
