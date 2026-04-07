@@ -196,8 +196,6 @@ copy_() {
         fi
     done
     
-    [ ${#args[@]} -lt 2 ] && fatal "copy_: insufficient arguments (usage: copy_ [flags] source... destination)"
-    
     local dest="${args[-1]}"
     local -a sources=("${args[@]:0:${#args[@]}-1}")
     for src in "${sources[@]}"; do
@@ -215,8 +213,6 @@ move_() {
             args+=("$arg")
         fi
     done
-    
-    [ ${#args[@]} -lt 2 ] && fatal "move_: insufficient arguments (usage: move_ [flags] source... destination)"
     
     local dest="${args[-1]}"
     local -a sources=("${args[@]:0:${#args[@]}-1}")
