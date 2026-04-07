@@ -6,7 +6,7 @@ from .compat import should_enable_manual_revert, get_revert_capability
 from .antenna import antenna
 from requests.exceptions import ConnectionError, Timeout
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
-from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry
+from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry, _load_last_execution
 from .updater.update_dialog import DialogRestart
 
 
@@ -122,11 +122,17 @@ class TermRunScripts(Gtk.Box):
         # Store revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
         self.removable_script_manual_revert_enabled = False
+        self.removable_script_has_registry_entry = False
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
+            script_name = self.removable_script_info.get('name')
             if script_path:
                 self.removable_script_revert_capability = get_revert_capability(script_path)
                 self.removable_script_manual_revert_enabled = should_enable_manual_revert(script_path)
+            if script_name:
+                # Check if this script has a registry entry (was previously installed)
+                operations = _load_last_execution(script_name)
+                self.removable_script_has_registry_entry = bool(operations)
 
         self.terminal = Vte.Terminal()
         self.terminal.connect("child-exited", self.on_child_exit)
@@ -171,10 +177,12 @@ class TermRunScripts(Gtk.Box):
         # Button shown if:
         # 1. There's a removable script
         # 2. Only one script in queue
-        # 3. Manual revert is enabled (revert header is 'yes' or compatible)
-        #    OR revert capability is 'internal' (re-run workflow)
+        # 3. Revert is actually available:
+        #    - Revert capability is 'internal' (re-run workflow) - no registry check needed
+        #    - OR manual revert is enabled AND there's a registry entry (script was previously installed)
         is_internal_revert = self.removable_script_revert_capability == "internal"
-        if self.removable_script_info and self.total_scripts == 1 and (self.removable_script_manual_revert_enabled or is_internal_revert):
+        revert_available = is_internal_revert or (self.removable_script_manual_revert_enabled and self.removable_script_has_registry_entry)
+        if self.removable_script_info and self.total_scripts == 1 and revert_available:
             self.vbox_main.button_remove.show()
         else:
             self.vbox_main.button_remove.hide()
