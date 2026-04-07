@@ -136,11 +136,18 @@ is_amd() {
     fi
 }
 
+# transaction map control
+_append_transmap() {
+    { [ -d /tmp/linuxtoys ] || mkdir -p /tmp/linuxtoys; } || fatal "Failed to create tempdir"
+    { [ -f /tmp/linuxtoys/transmap ] || : > /tmp/linuxtoys/transmap; } || fatal "Failed to create transaction map"
+    echo "$1" >> /tmp/linuxtoys/transmap 2>/dev/null || true
+}
+
 # file preparations
 prep_edit() {
     for target in "$@"; do
         { cp -r "$target" "$target".bak || sudo cp -r "$target" "$target".bak; } || fatal "Failed to create backup: $target"
-        echo "edited $target" >> /tmp/linuxtoys/transmap
+        _append_transmap "edited $target"
     done
 }
 prep_create() {
@@ -148,31 +155,30 @@ prep_create() {
         { mkdir -p "$(dirname "$target")" && touch "$target"; } \
         || { sudo mkdir -p "$(dirname "$target")" && sudo touch "$target"; } \
         || fatal "Failed to create: $target"
-        echo "created $target" >> /tmp/linuxtoys/transmap
+        _append_transmap "created $target"
     done
 }
 prep_rm() {
     for target in "$@"; do
         { mv "$target" "$target".bak || sudo mv "$target" "$target".bak; } || fatal "Failed to create backup: $target"
-        echo "removed $target" >> /tmp/linuxtoys/transmap
+        _append_transmap "removed $target"
     done
 }
 prep_tmp() {
     { mkdir -p /tmp/linuxtoys && cd /tmp/linuxtoys; } || fatal "Failed to create tempdir"
-    LT_TEMPDIR="/tmp/linuxtoys"
 }
 prep_dir() {
     for dir in "$@"; do
         if [ ! -d "$dir" ]; then
             { mkdir -p "$dir" || sudo mkdir -p "$dir"; } || fatal "Failed to create $dir"
-            echo "created $dir" >> /tmp/linuxtoys/transmap
+            _append_transmap "created $dir"
         fi
     done
 }
 prep_dir_edit() {
     for dir in "$@"; do
         { cp -r "$dir" "$dir.bak" || sudo cp -r "$dir" "$dir.bak"; } || fatal "Failed to create backup $dir"
-        echo "edited $dir" >> /tmp/linuxtoys/transmap
+        _append_transmap "edited $dir"
     done
 }
 
@@ -215,7 +221,7 @@ pkg_install () {
     local to_install="${pkg_notfound[@]}"
     if is_debian || is_ubuntu; then
         sudo apt install -y "$to_install" || fatal "Failed to install $to_install"
-        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg $to_install"
     elif is_arch || is_cachy; then
         local _pacman_pkgs=()
         local _paru_pkgs=()
@@ -230,42 +236,42 @@ pkg_install () {
         local to_install_paru="${_paru_pkgs[@]}"
         if [ -n "$to_install_pacman" ]; then
             sudo pacman -S --noconfirm "$to_install_pacman" || fatal "Failed to install $to_install_pacman"
-            echo "pkg $to_install_pacman" >> /tmp/linuxtoys/transmap
+            _append_transmap "pkg $to_install_pacman"
         fi
         if [ -n "$to_install_paru" ]; then
             if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
                 if ! command -v paru &>/dev/null; then
                     if pacman -Ss paru | grep -q paru; then
                         sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
-                        echo "pkg paru" >> /tmp/linuxtoys/transmap
+                        _append_transmap "pkg paru"
                     else
                         sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
-                        echo "pkg base-devel" >> /tmp/linuxtoys/transmap
+                        _append_transmap "pkg base-devel"
                         prep_tmp
                         git clone https://aur.archlinux.org/paru.git
                         cd paru
                         makepkg -si
-                        echo "pkg paru" >> /tmp/linuxtoys/transmap
+                        _append_transmap "pkg paru"
                     fi
                 fi
                 paru -S -a --noconfirm --skipreview "$to_install_paru" || fatal "Failed to install $to_install_paru"
-                echo "pkg $to_install_paru" >> /tmp/linuxtoys/transmap
+                _append_transmap "pkg $to_install_paru"
             else
                 return 1
             fi
         fi
     elif is_ostree; then
         sudo rpm-ostree install "$to_install" || fatal "Failed to install $to_install"
-        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg $to_install"
     elif is_fedora; then
         sudo dnf in -y "$to_install" || fatal "Failed to install $to_install"
-        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg $to_install"
     elif is_suse; then
         sudo zypper in -y "$to_install" || fatal "Failed to install $to_install"
-        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg $to_install"
     elif is_solus; then
         sudo eopkg it -y "$to_install" || fatal "Failed to install $to_install"
-        echo "pkg $to_install" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg $to_install"
     fi
 }
 pkg_flat() {
@@ -280,7 +286,7 @@ pkg_flat() {
         flatpak_scope="--system"
     fi
     flatpak install --or-update "$flatpak_scope" --noninteractive flathub "$@" || fatal "Failed to install flatpak packages $@"
-    echo "flatpak $@" >> /tmp/linuxtoys/transmap
+    _append_transmap "flatpak $@"
 }
 pkg_fromfile () {
     if [[ "$1" == *.flatpak ]]; then
@@ -297,37 +303,37 @@ pkg_fromfile () {
         fi
         flatpak install "$flatpak_scope" --noninteractive "$flatpak_file" 2>/dev/null || \
         fatal "Failed to install flatpak from file: $flatpak_file"
-        echo "pkg file $flatpak_file" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg file $flatpak_file"
         return 0
     fi
     
     if is_debian || is_ubuntu; then
         { sudo apt install -y "$@" || sudo dpkg -i "$@"; } || fatal "Failed to install $@"
-        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg file $@"
     elif is_arch || is_cachy; then
         if sudo pacman -U "$@"; then
-            echo "pkg file $@" >> /tmp/linuxtoys/transmap
+            _append_transmap "pkg file $@"
         else
             if [ -f PKGBUILD ]; then
                 local pkgname=$(grep "^pkgname=" PKGBUILD | head -1 | cut -d'=' -f2 | tr -d "'" '"')
                 makepkg -si || fatal "Failed to build and install package $pkgname"
-                echo "pkg file $pkgname" >> /tmp/linuxtoys/transmap
+                _append_transmap "pkg file $pkgname"
             else
                 fatal "Failed to install package $@"
             fi
         fi
     elif is_ostree; then
         sudo rpm-ostree install "$@" || fatal "Failed to install $@"
-        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg file $@"
     elif is_fedora; then
         sudo dnf install -y "$@" || fatal "Failed to install $@"
-        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg file $@"
     elif is_suse; then
         sudo zypper in -y "$@" || fatal "Failed to install $@"
-        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg file $@"
     elif is_solus; then
         sudo eopkg it -y "$@" || fatal "Failed to install $@"
-        echo "pkg file $@" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg file $@"
     fi
 }
 pkg_remove () {
@@ -347,7 +353,7 @@ pkg_remove () {
         elif is_solus; then
             sudo eopkg rmf -y "$pak" || fatal "Failed to remove package $pak"
         fi
-        echo "pkg rm $pak" >> /tmp/linuxtoys/transmap
+        _append_transmap "pkg rm $pak"
     done
 }
 
@@ -356,16 +362,16 @@ bootloader_upd() {
     if ! is_ostree; then
         if is_fedora || is_suse; then
             sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
-            echo "updated bootloader" >> /tmp/linuxtoys/transmap
+            _append_transmap "updated bootloader"
         elif is_arch || is_cachy; then
             { sudo grub-mkconfig -o /boot/grub/grub.cfg || sudo bootctl update; } || fatal "Unable to update bootloader"
-            echo "updated bootloader" >> /tmp/linuxtoys/transmap
+            _append_transmap "updated bootloader"
         elif is_debian || is_ubuntu; then
             sudo update-grub || fatal "Unable to update bootloader"
-            echo "updated bootloader" >> /tmp/linuxtoys/transmap
+            _append_transmap "updated bootloader"
         elif is_solus; then
             { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader"
-            echo "updated bootloader" >> /tmp/linuxtoys/transmap
+            _append_transmap "updated bootloader"
         fi
     else
         return 0
@@ -374,19 +380,19 @@ bootloader_upd() {
 initramfs_upd() {
     if is_debian; then
         sudo update-initramfs -u || fatal "Failed to update initramfs"
-        echo "updated initramfs" >> /tmp/linuxtoys/transmap
+        _append_transmap "updated initramfs"
     elif is_arch || is_cachy; then
         sudo mkinitcpio -P || fatal "Failed to update mkinitcpio"
-        echo "updated initramfs" >> /tmp/linuxtoys/transmap
+        _append_transmap "updated initramfs"
     elif is_fedora || is_suse; then
         sudo dracut -f --regenerate-all || fatal "Failed to update dracut"
-        echo "updated initramfs" >> /tmp/linuxtoys/transmap
+        _append_transmap "updated initramfs"
     fi
 }
 kargs_upd() {
     for arg in "$@"; do
         sudo rpm-ostree kargs --append="$arg" || fatal "Failed to update rpm-ostree kargs"
-        echo "updated kargs $arg" >> /tmp/linuxtoys/transmap
+        _append_transmap "updated kargs $arg"
     done
 }
 
@@ -394,35 +400,35 @@ kargs_upd() {
 sysd_enable() {
     for svc in "$@"; do
         sudo systemctl enable "$svc" || fatal "Failed to enable service $svc"
-        echo "sysd enabled $svc" >> /tmp/linuxtoys/transmap
+        _append_transmap "sysd enabled $svc"
     done
 }
 sysd_disable() {
     for svc in "$@"; do
         sudo systemctl disable "$svc" || fatal "Failed to disable service $svc"
-        echo "sysd disabled $svc" >> /tmp/linuxtoys/transmap
+        _append_transmap "sysd disabled $svc"
     done
 }
 sysd_start() {
     for svc in "$@"; do
         sudo systemctl start "$svc" || fatal "Failed to start service $svc"
-        echo "sysd started $svc" >> /tmp/linuxtoys/transmap
+        _append_transmap "sysd started $svc"
     done
 }
 sysd_stop() {
     for svc in "$@"; do
         sudo systemctl stop "$svc" || fatal "Failed to stop service $svc"
-        echo "sysd stopped $svc" >> /tmp/linuxtoys/transmap
+        _append_transmap "sysd stopped $svc"
     done
 }
 
 # shell change
 shell_change() {
     sudo chsh -s "$@" || fatal "Failed to change shell: $@"
-    echo "chsh $@" >> /tmp/linuxtoys/transmap
+    _append_transmap "chsh $@"
 }
 
 # distrobox container
 distrobox_created() {
-    echo "distrobox $@" >> /tmp/linuxtoys/transmap
+    _append_transmap "distrobox $@"
 }
