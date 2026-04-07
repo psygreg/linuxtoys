@@ -188,8 +188,10 @@ class TermRunScripts(Gtk.Box):
         is_internal_revert = self.removable_script_revert_capability == "internal"
         revert_available = is_internal_revert or (self.removable_script_manual_revert_enabled and self.removable_script_has_registry_entry)
         if self.removable_script_info and self.total_scripts == 1 and revert_available and not self.removable_script_revert_disabled:
+            self.vbox_main.button_remove.set_no_show_all(False)
             self.vbox_main.button_remove.show()
         else:
+            self.vbox_main.button_remove.set_no_show_all(True)
             self.vbox_main.button_remove.hide()
 
     def _show_remove_confirmation_dialog(self, script_name):
