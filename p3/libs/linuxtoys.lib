@@ -146,14 +146,14 @@ _append_transmap() {
 # file preparations
 prep_edit() {
     for target in "$@"; do
-        [ ! -f "$target" ] && prep_create "$target"
+        [ -f "$target" ] || { prep_create "$target"; continue; }
         { cp -r "$target" "$target".bak || sudo cp -r "$target" "$target".bak; } || fatal "Failed to create backup: $target"
         _append_transmap "edited $target"
     done
 }
 prep_create() {
     for target in "$@"; do
-        [ -f "$target" ] && prep_edit "$target"
+        [ ! -f "$target" ] || { prep_edit "$target"; continue; }
         { mkdir -p "$(dirname "$target")" && touch "$target"; } \
         || { sudo mkdir -p "$(dirname "$target")" && sudo touch "$target"; } \
         || fatal "Failed to create: $target"
@@ -162,6 +162,7 @@ prep_create() {
 }
 prep_rm() {
     for target in "$@"; do
+        { [ -f "$target" ] || [ -d "$target" ]; } || { _append_transmap "WARN: expected $target not found"; continue; }
         { mv "$target" "$target".bak || sudo mv "$target" "$target".bak; } || fatal "Failed to create backup: $target"
         _append_transmap "removed $target"
     done

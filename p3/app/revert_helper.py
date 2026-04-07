@@ -132,12 +132,19 @@ def _parse_operation(op_line):
           "sysd enabled ssh" -> ("sysd", ["enabled", "ssh"])
           "flatpak app1 app2" -> ("flatpak", ["app1", "app2"])
           "chsh /bin/zsh" -> ("chsh", ["/bin/zsh"])
+          "WARN: message text" -> ("warn", ["message", "text", ...])
     """
     parts = op_line.split()
     if not parts:
         return None, []
     
     op_type = parts[0]
+    
+    # Strip trailing colon from operation type if present (e.g., "WARN:" -> "warn")
+    if op_type.endswith(':'):
+        op_type = op_type[:-1].lower()
+    else:
+        op_type = op_type.lower() if op_type.lower() in ("warn",) else op_type
     
     if len(parts) > 1:
         # For operations with multiple parts (e.g., "sysd enabled service")
@@ -169,6 +176,9 @@ def _parse_operation(op_line):
             return op_type, parts[1:]
         elif op_type == "chsh":
             # Shell change: "chsh /bin/zsh"
+            return op_type, parts[1:]
+        elif op_type == "warn":
+            # Warning: "WARN: message text" -> keep all parts as operands
             return op_type, parts[1:]
         else:
             # Most operations: "type operand" (e.g., "edited /etc/config")
@@ -451,7 +461,11 @@ def _reverse_operation(op_line, package_manager):
     """
     op_type, operands = _parse_operation(op_line)
     
-    if op_type == "pkg install" and operands:
+    # WARN entries are informational only - no reversal action needed
+    if op_type == "warn":
+        return []
+    
+    elif op_type == "pkg install" and operands:
         # Reverse package installation by removing
         return _reverse_package_install(operands, package_manager)
     
