@@ -568,9 +568,9 @@ class TermRunScripts(Gtk.Box):
         self._cleanup_script_path = current_script.get("cleanup_path")
         self._current_action_is_removal = bool(self._cleanup_script_path)
 
-        script_dir = str(os.path.join(os.path.dirname(os.path.dirname(__file__))))
         child_env = os.environ.copy()
-        child_env["SCRIPT_DIR"] = script_dir
+        # SCRIPT_DIR is set by linuxtoys.py at startup relative to the entry point
+        # This ensures all scripts can find their libs at the same location
         child_env_list = [f"{key}={value}" for key, value in child_env.items()]
 
         shell_exec = ["/bin/bash", f"{script_path}"]

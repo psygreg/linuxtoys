@@ -504,7 +504,7 @@ def build_uninstall_script_entry(script_info, translations=None):
         # No reversible operations found
         return None
     
-    script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
     
     lines = [
         "#!/bin/bash",
@@ -598,7 +598,7 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         # No reversible operations found
         return None
     
-    script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
     
     lines = [
         "#!/bin/bash",

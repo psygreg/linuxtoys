@@ -4,6 +4,12 @@ import sys
 import os # Import the 'os' module
 
 if __name__ == "__main__":
+    # --- SET SCRIPT_DIR ENVIRONMENT VARIABLE ---
+    # Set SCRIPT_DIR relative to linuxtoys.py so all scripts can find libs
+    # The libs directory is always at the same location relative to this entry point
+    linuxtoys_dir = os.path.dirname(os.path.abspath(__file__))
+    os.environ['SCRIPT_DIR'] = linuxtoys_dir
+    
     # --- SCRIPTS INITIALIZATION ---
     # Initialize git-based scripts synchronization with fallback to bundled scripts
     try:
