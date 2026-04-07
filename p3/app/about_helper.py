@@ -247,10 +247,10 @@ class AboutDialog:
         return contributors_box
         
     def _load_contributors(self):
-        """Loads contributors from Gitea API in background thread"""
+        """Loads contributors from GitHub API in background thread"""
         try:
             response = requests.get(
-                "https://git.linux.toys/api/v1/repos/psygreg/linuxtoys/contributors",
+                "https://api.github.com/repos/psygreg/linuxtoys/contributors",
                 timeout=10
             )
             if response.status_code == 200:
@@ -259,7 +259,7 @@ class AboutDialog:
                 excluded_users = {'psygreg', 'script update bot', 'gitea actions'}
                 filtered_contributors = [
                     c for c in contributors_data 
-                    if c.get('username', c.get('login', '')).lower() not in excluded_users
+                    if c.get('login', '').lower() not in excluded_users
                 ]
                 # Get top 9 contributors (after filtering)
                 self.contributors = filtered_contributors[:9]
@@ -286,7 +286,7 @@ class AboutDialog:
             col = i % 3
             
             # Create contributor label
-            contributor_label = Gtk.Label(label=contributor.get('username', contributor.get('login', '')))
+            contributor_label = Gtk.Label(label=contributor.get('login', ''))
             contributor_label.set_halign(Gtk.Align.START)
             
             self.contributors_grid.attach(contributor_label, col, row, 1, 1)
