@@ -94,7 +94,8 @@ class ActionRegistryDialog(Gtk.Dialog):
         main_paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
         main_paned.set_vexpand(True)
         main_paned.set_hexpand(True)
-        main_paned.set_margin_bottom(20)
+        main_paned.set_margin_bottom(15)
+        main_paned.set_property("spacing", 15)
         content_area.add(main_paned)
         
         # Left panel - Scripts list
@@ -150,8 +151,8 @@ class ActionRegistryDialog(Gtk.Dialog):
         
         main_paned.pack2(right_frame, True, True)
         
-        # Set initial position for the divider (left panel gets ~280px)
-        main_paned.set_position(280)
+        # Set initial position for the divider (left panel gets ~200px)
+        main_paned.set_position(200)
         
         # Load registry data
         self.registry_data = parse_registry_file()
