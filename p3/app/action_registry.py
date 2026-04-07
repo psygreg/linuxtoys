@@ -87,19 +87,27 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.set_border_width(12)
         
         content_area = self.get_content_area()
+        content_area.set_vexpand(True)
+        content_area.set_hexpand(True)
         
         # Main horizontal box for split panels
         main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        main_hbox.set_vexpand(True)
+        main_hbox.set_hexpand(True)
         content_area.add(main_hbox)
         
         # Left panel - Scripts list
         left_frame = Gtk.Frame(label=_("scripts_label"))
         left_frame.set_shadow_type(Gtk.ShadowType.IN)
+        left_frame.set_vexpand(True)
+        left_frame.set_hexpand(False)
         
         # Scrolled window for scripts list
         scrolled_left = Gtk.ScrolledWindow()
         scrolled_left.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled_left.set_min_content_width(150)
+        scrolled_left.set_min_content_width(280)
+        scrolled_left.set_vexpand(True)
+        scrolled_left.set_hexpand(True)
         left_frame.add(scrolled_left)
         
         # Scripts list store and treeview
@@ -117,16 +125,20 @@ class ActionRegistryDialog(Gtk.Dialog):
         selection.connect("changed", self.__on_script_selected)
         
         scrolled_left.add(self.scripts_treeview)
-        main_hbox.pack_start(left_frame, False, False, 0)
+        main_hbox.pack_start(left_frame, False, True, 0)
         
         # Right panel - Registry details
         right_frame = Gtk.Frame(label=_("registry_details_label"))
         right_frame.set_shadow_type(Gtk.ShadowType.IN)
+        right_frame.set_vexpand(True)
+        right_frame.set_hexpand(True)
         
         # Scrolled window for details
         scrolled_right = Gtk.ScrolledWindow()
         scrolled_right.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scrolled_right.set_min_content_width(350)
+        scrolled_right.set_vexpand(True)
+        scrolled_right.set_hexpand(True)
         right_frame.add(scrolled_right)
         
         # Text view for registry details
