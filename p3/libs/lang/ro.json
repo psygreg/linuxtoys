@@ -409,5 +409,10 @@
   "scripts_label": "Scripturi",
   "registry_details_label": "Detalii registru",
   "internal_revert_confirm_title": "Reexecutați scriptul pentru ștergere?",
-  "internal_revert_confirm_message": "Acest script are o metodă de ștergere personalizată. Reexecutarea lui va încerca să șteargă componentele sale. Doriți să continuați?"
+  "internal_revert_confirm_message": "Acest script are o metodă de ștergere personalizată. Reexecutarea lui va încerca să șteargă componentele sale. Doriți să continuați?",
+  "registry_cleanup_label": "Curățare",
+  "registry_cleanup_title": "Ștergeți intrarea din registru?",
+  "registry_cleanup_success_title": "Curățarea completă",
+  "registry_cleanup_partial_title": "Curățarea completă cu avertismente",
+  "registry_cleanup_failed": "Imposibil de șters intrarea din registru"
 }

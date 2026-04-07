@@ -409,5 +409,10 @@
   "scripts_label": "스크립트",
   "registry_details_label": "레지스트리 세부 정보",
   "internal_revert_confirm_title": "삭제를 위해 스크립트를 다시 실행하시겠습니까?",
-  "internal_revert_confirm_message": "이 스크립트에는 사용자 정의 제거 방법이 있습니다. 다시 실행하면 해당 구성 요소를 제거하려고 시도합니다. 계속하시겠습니까?"
+  "internal_revert_confirm_message": "이 스크립트에는 사용자 정의 제거 방법이 있습니다. 다시 실행하면 해당 구성 요소를 제거하려고 시도합니다. 계속하시겠습니까?",
+  "registry_cleanup_label": "정리",
+  "registry_cleanup_title": "레지스트리 항목을 제거하시겠습니까?",
+  "registry_cleanup_success_title": "정리 완료",
+  "registry_cleanup_partial_title": "정리가 경고와 함께 완료됨",
+  "registry_cleanup_failed": "레지스트리 항목 제거 실패"
 }

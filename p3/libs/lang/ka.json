@@ -409,5 +409,10 @@
   "scripts_label": "სკრიპტები",
   "registry_details_label": "რეგისტრის დეტალები",
   "internal_revert_confirm_title": "სკრიპტის ხელახლა გაშვება წაშლისთვის?",
-  "internal_revert_confirm_message": "ამ სკრიპტს აქვს მორგებული ამოშენების მეთოდი. მის ხელახლა გაშვება ცდილობს მის კომპონენტების წაშლას. გსურთ გაგრძელება?"
+  "internal_revert_confirm_message": "ამ სკრიპტს აქვს მორგებული ამოშენების მეთოდი. მის ხელახლა გაშვება ცდილობს მის კომპონენტების წაშლას. გსურთ გაგრძელება?",
+  "registry_cleanup_label": "გაწმენდა",
+  "registry_cleanup_title": "რეგისტრის ჩანაწერის წაშლა?",
+  "registry_cleanup_success_title": "გაწმენდა დასრულდა",
+  "registry_cleanup_partial_title": "გაწმენდა დასრულდა გაფრთხოებებით",
+  "registry_cleanup_failed": "რეგისტრის ჩანაწერის წაშლა ვერ მოხერხდა"
 }

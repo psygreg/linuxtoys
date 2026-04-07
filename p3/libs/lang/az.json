@@ -408,5 +408,10 @@
   "scripts_label": "Skriptlər",
   "registry_details_label": "Reyestr Detalları",
   "internal_revert_confirm_title": "Silmə üçün Skripti Yenidən Çalıştırılmalı?",
-  "internal_revert_confirm_message": "Bu skriptinin fərdi silmə metodu var. Bunu yenidən çalıştırmaq onun komponentlərini silməyə çalışacaq. Davam etmək istəyirsiniz?"
+  "internal_revert_confirm_message": "Bu skriptinin fərdi silmə metodu var. Bunu yenidən çalıştırmaq onun komponentlərini silməyə çalışacaq. Davam etmək istəyirsiniz?",
+  "registry_cleanup_label": "Təmizlə",
+  "registry_cleanup_title": "Registr Girişini Silin?",
+  "registry_cleanup_success_title": "Təmizləmə Tamamlandı",
+  "registry_cleanup_partial_title": "Təmizləmə Xəbərdarlıqlarla Tamamlandı",
+  "registry_cleanup_failed": "Registr Girişi Silinərkən Uğursuzluq"
 }

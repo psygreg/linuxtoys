@@ -409,5 +409,10 @@
   "scripts_label": "Skriptit",
   "registry_details_label": "Rekisteritiedot",
   "internal_revert_confirm_title": "Suorita skripti uudelleen poistamista varten?",
-  "internal_revert_confirm_message": "Tällä skriptillä on mukautettu poistamismenetelmä. Sen uudelleen suorittaminen yrittää poistaa sen komponentit. Haluatko jatkaa?"
+  "internal_revert_confirm_message": "Tällä skriptillä on mukautettu poistamismenetelmä. Sen uudelleen suorittaminen yrittää poistaa sen komponentit. Haluatko jatkaa?",
+  "registry_cleanup_label": "Siivoa",
+  "registry_cleanup_title": "Poista rekisterimerkintä?",
+  "registry_cleanup_success_title": "Siivous valmis",
+  "registry_cleanup_partial_title": "Siivous valmis varoituksilla",
+  "registry_cleanup_failed": "Rekisterimerkinnän poistaminen epäonnistui"
 }

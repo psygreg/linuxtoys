@@ -409,5 +409,10 @@
   "scripts_label": "Script",
   "registry_details_label": "Dettagli registro",
   "internal_revert_confirm_title": "Eseguire nuovamente lo script per la rimozione?",
-  "internal_revert_confirm_message": "Questo script ha um metodo di rimozione personalizzato. L'esecuzione nuova tentarà di rimuovere i suoi componenti. Vuoi continuare?"
+  "internal_revert_confirm_message": "Questo script ha um metodo di rimozione personalizzato. L'esecuzione nuova tentarà di rimuovere i suoi componenti. Vuoi continuare?",
+  "registry_cleanup_label": "Pulisci",
+  "registry_cleanup_title": "Rimuovere voce di registro?",
+  "registry_cleanup_success_title": "Pulizia completata",
+  "registry_cleanup_partial_title": "Pulizia completata con avvertenze",
+  "registry_cleanup_failed": "Impossibile rimuovere la voce di registro"
 }

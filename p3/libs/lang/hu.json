@@ -409,5 +409,10 @@
   "scripts_label": "Szkriptek",
   "registry_details_label": "Regisztrációs adatok",
   "internal_revert_confirm_title": "A szkript újrafuttatása az eltávolításhoz?",
-  "internal_revert_confirm_message": "Ennek a szkriptnek van egy testreszabott eltávolítási módszere. Az ismételt futtatás megkísérli az összetevőinek eltávolítását. Szeretné folytatni?"
+  "internal_revert_confirm_message": "Ennek a szkriptnek van egy testreszabott eltávolítási módszere. Az ismételt futtatás megkísérli az összetevőinek eltávolítását. Szeretné folytatni?",
+  "registry_cleanup_label": "Tisztítás",
+  "registry_cleanup_title": "Távolítsa el a nyilvántartási bejegyzést?",
+  "registry_cleanup_success_title": "Tisztítás befejezve",
+  "registry_cleanup_partial_title": "Tisztítás befejezve figyelmeztetésekkel",
+  "registry_cleanup_failed": "A nyilvántartási bejegyzés eltávolítása sikertelen"
 }

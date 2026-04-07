@@ -409,5 +409,10 @@
   "scripts_label": "Scripts",
   "registry_details_label": "Registeroplysninger",
   "internal_revert_confirm_title": "Genstarte script til fjernelse?",
-  "internal_revert_confirm_message": "Dette script har en brugerdefineret fjernelsesmetode. Hvis du starter det igen, vil det forsøge at fjerne dets komponenter. Vil du fortsætte?"
+  "internal_revert_confirm_message": "Dette script har en brugerdefineret fjernelsesmetode. Hvis du starter det igen, vil det forsøge at fjerne dets komponenter. Vil du fortsætte?",
+  "registry_cleanup_label": "Rydde op",
+  "registry_cleanup_title": "Fjern registerpost?",
+  "registry_cleanup_success_title": "Rydning gennemført",
+  "registry_cleanup_partial_title": "Rydning gennemført med advarsler",
+  "registry_cleanup_failed": "Kunne ikke fjerne registerpost"
 }

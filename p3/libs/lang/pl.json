@@ -409,5 +409,10 @@
   "scripts_label": "Skrypty",
   "registry_details_label": "Szczegóły rejestru",
   "internal_revert_confirm_title": "Uruchomić skrypt ponownie w celu usunięcia?",
-  "internal_revert_confirm_message": "Ten skrypt ma niestandardową metodę usuwania. Ponowne uruchomienie spróbuje usunąć jego komponenty. Czy chcesz kontynuować?"
+  "internal_revert_confirm_message": "Ten skrypt ma niestandardową metodę usuwania. Ponowne uruchomienie spróbuje usunąć jego komponenty. Czy chcesz kontynuować?",
+  "registry_cleanup_label": "Wyczyść",
+  "registry_cleanup_title": "Usunąć wpis rejestru?",
+  "registry_cleanup_success_title": "Czyszczenie ukończone",
+  "registry_cleanup_partial_title": "Czyszczenie ukończone z ostrzeżeniami",
+  "registry_cleanup_failed": "Nie udało się usunąć wpisu rejestru"
 }

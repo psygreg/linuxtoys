@@ -409,5 +409,10 @@
   "scripts_label": "Scripts",
   "registry_details_label": "Registry Details",
   "internal_revert_confirm_title": "Re-run Script for Removal?",
-  "internal_revert_confirm_message": "This script has a custom removal method. Running it again will attempt to remove its components. Do you want to continue?"
+  "internal_revert_confirm_message": "This script has a custom removal method. Running it again will attempt to remove its components. Do you want to continue?",
+  "registry_cleanup_label": "Clean Up",
+  "registry_cleanup_title": "Remove Registry Entry?",
+  "registry_cleanup_success_title": "Cleanup Completed",
+  "registry_cleanup_partial_title": "Cleanup Completed with Warnings",
+  "registry_cleanup_failed": "Failed to remove registry entry."
 }

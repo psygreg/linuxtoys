@@ -409,5 +409,10 @@
   "scripts_label": "Scripteanna",
   "registry_details_label": "Sonraí an chlár",
   "internal_revert_confirm_title": "Athlíonaigh an script chun baint?",
-  "internal_revert_confirm_message": "Tá modh baint saincheaptha ag an script seo. Tabharfaidh rith arís iarracht ar a chomhpháirteanna a bhaint. Ar theastaigh uait leanúint ar aghaidh?"
+  "internal_revert_confirm_message": "Tá modh baint saincheaptha ag an script seo. Tabharfaidh rith arís iarracht ar a chomhpháirteanna a bhaint. Ar theastaigh uait leanúint ar aghaidh?",
+  "registry_cleanup_label": "Glan suas",
+  "registry_cleanup_title": "Bain iontráil an chláraithe?",
+  "registry_cleanup_success_title": "Tháinig an ghlanadh i gcrích",
+  "registry_cleanup_partial_title": "Tháinig an ghlanadh i gcrích le rabhaidh",
+  "registry_cleanup_failed": "Theip ar bhaint iontráil an chláraithe"
 }

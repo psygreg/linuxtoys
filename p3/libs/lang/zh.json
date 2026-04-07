@@ -411,5 +411,10 @@
   "scripts_label": "脚本",
   "registry_details_label": "注册表详情",
   "internal_revert_confirm_title": "重新运行脚本以进行移除?",
-  "internal_revert_confirm_message": "此脚本具有自定义删除方法。重新运行它将尝试删除其组件。您想继续吗?"
+  "internal_revert_confirm_message": "此脚本具有自定义删除方法。重新运行它将尝试删除其组件。您想继续吗?",
+  "registry_cleanup_label": "清理",
+  "registry_cleanup_title": "删除注册表项?",
+  "registry_cleanup_success_title": "清理完成",
+  "registry_cleanup_partial_title": "清理完成但有警告",
+  "registry_cleanup_failed": "无法删除注册表项"
 }

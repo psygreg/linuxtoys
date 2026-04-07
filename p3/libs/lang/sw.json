@@ -407,5 +407,10 @@
   "scripts_label": "Hati",
   "registry_details_label": "Maelezo ya rejista",
   "internal_revert_confirm_title": "Endesha upya hati kwa kuondolewa?",
-  "internal_revert_confirm_message": "Hati hii ina njia ya kuondoa inayolingana. Kuendesha upya itajaribu kuondoa sehemu zake. Je, unataka kuendelea?"
+  "internal_revert_confirm_message": "Hati hii ina njia ya kuondoa inayolingana. Kuendesha upya itajaribu kuondoa sehemu zake. Je, unataka kuendelea?",
+  "registry_cleanup_label": "Safi",
+  "registry_cleanup_title": "Ondoa ingizo la rejista?",
+  "registry_cleanup_success_title": "Usafi umekamilika",
+  "registry_cleanup_partial_title": "Usafi umekamilika kwa onyo",
+  "registry_cleanup_failed": "Kuomea kuondoa ingizo la rejista"
 }

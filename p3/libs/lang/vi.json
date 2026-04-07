@@ -409,5 +409,10 @@
   "scripts_label": "Tập lệnh",
   "registry_details_label": "Chi tiết đăng ký",
   "internal_revert_confirm_title": "Chạy lại tập lệnh để xóa?",
-  "internal_revert_confirm_message": "Tập lệnh này có phương pháp xóa tùy chỉnh. Chạy lại sẽ cố gắng xóa các thành phần của nó. Bạn có muốn tiếp tục không?"
+  "internal_revert_confirm_message": "Tập lệnh này có phương pháp xóa tùy chỉnh. Chạy lại sẽ cố gắng xóa các thành phần của nó. Bạn có muốn tiếp tục không?",
+  "registry_cleanup_label": "Dọn dẹp",
+  "registry_cleanup_title": "Xóa mục nhập đăng ký?",
+  "registry_cleanup_success_title": "Dọn dẹp hoàn thành",
+  "registry_cleanup_partial_title": "Dọn dẹp hoàn thành có cảnh báo",
+  "registry_cleanup_failed": "Không thể xóa mục nhập đăng ký"
 }

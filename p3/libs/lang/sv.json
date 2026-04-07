@@ -409,5 +409,10 @@
   "scripts_label": "Skript",
   "registry_details_label": "Registerdetaljer",
   "internal_revert_confirm_title": "Kör skriptet igen för borttagning?",
-  "internal_revert_confirm_message": "Det här skriptet har en anpassad borttagningsmetod. Att köra det igen kommer att försöka ta bort dess komponenter. Vill du fortsätta?"
+  "internal_revert_confirm_message": "Det här skriptet har en anpassad borttagningsmetod. Att köra det igen kommer att försöka ta bort dess komponenter. Vill du fortsätta?",
+  "registry_cleanup_label": "Rensa",
+  "registry_cleanup_title": "Ta bort registerpost?",
+  "registry_cleanup_success_title": "Rensning slutförd",
+  "registry_cleanup_partial_title": "Rensning slutförd med varningar",
+  "registry_cleanup_failed": "Kunde inte ta bort registerpost"
 }

@@ -408,5 +408,10 @@
   "scripts_label": "স্ক্রিপ্ট",
   "registry_details_label": "রেজিস্ট্রি বিবরণ",
   "internal_revert_confirm_title": "অপসারণের জন্য স্ক্রিপ্ট পুনরায় চালান?",
-  "internal_revert_confirm_message": "এই স্ক্রিপ্টের একটি কাস্টম অপসারণ পদ্ধতি রয়েছে। এটি আবার চালানো তার উপাদান সরাতে প্রচেষ্টা করবে। আপনি চালিয়ে যেতে চান?"
+  "internal_revert_confirm_message": "এই স্ক্রিপ্টের একটি কাস্টম অপসারণ পদ্ধতি রয়েছে। এটি আবার চালানো তার উপাদান সরাতে প্রচেষ্টা করবে। আপনি চালিয়ে যেতে চান?",
+  "registry_cleanup_label": "পরিষ্কার করুন",
+  "registry_cleanup_title": "রেজিস্ট্রি এন্ট্রি সরান?",
+  "registry_cleanup_success_title": "পরিষ্কার সম্পূর্ণ",
+  "registry_cleanup_partial_title": "সতর্কতা সহ পরিষ্কার সম্পূর্ণ",
+  "registry_cleanup_failed": "রেজিস্ট্রি এন্ট্রি সরাতে ব্যর্থ"
 }

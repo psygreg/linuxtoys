@@ -409,5 +409,10 @@
   "scripts_label": "Skrip",
   "registry_details_label": "Butiran Daftar",
   "internal_revert_confirm_title": "Jalankan Semula Skrip untuk Penghapusan?",
-  "internal_revert_confirm_message": "Skrip ini memiliki kaedah penghapusan tersuai. Menjalankannya semula akan mencuba untuk menghapus komponennya. Adakah anda ingin meneruskan?"
+  "internal_revert_confirm_message": "Skrip ini memiliki kaedah penghapusan tersuai. Menjalankannya semula akan mencuba untuk menghapus komponennya. Adakah anda ingin meneruskan?",
+  "registry_cleanup_label": "Bersihkan",
+  "registry_cleanup_title": "Buang Entri Pendaftaran?",
+  "registry_cleanup_success_title": "Pembersihan Selesai",
+  "registry_cleanup_partial_title": "Pembersihan Selesai dengan Amaran",
+  "registry_cleanup_failed": "Gagal menghapus entri pendaftaran"
 }

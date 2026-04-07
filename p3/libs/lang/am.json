@@ -409,5 +409,10 @@
   "scripts_label": "ስክሪፕቶች",
   "registry_details_label": "የምዝግብ ዝርዝር",
   "internal_revert_confirm_title": "ስክሪፕቱን የአስወግድ ሁኔታ እንደገና ያስኬዱ?",
-  "internal_revert_confirm_message": "ይህ ስክሪፕት ብጁ የአስወግድ ዘዴ አለበት። ጠንከር ላይ ሞድ ለማስወግድ እንደገና ሞድ ወደ ተወሰሊስ ስክሪፕቱን ሞዩ ሊሞገ ወደ ስሙ ለመሰር ወደ ልክ አጋቤት እንደገና ሞድ ለምሰሪት ሞዩ ወደ አግብ ወተ ተጫ ስክሪት ወደ ምሊሊ ላሊ ልክ ወተ ተጫ ወደ ሞዱ ወተ ተጫ ሎ ዎ ተጫ ሞውታ ወተ እንደገና ወተ ተጫ ላሊ ወ템ም?"
+  "internal_revert_confirm_message": "ይህ ስክሪፕት ብጁ የአስወግድ ዘዴ አለበት። ጠንከር ላይ ሞድ ለማስወግድ እንደገና ሞድ ወደ ተወሰሊስ ስክሪፕቱን ሞዩ ሊሞገ ወደ ስሙ ለመሰር ወደ ልክ አጋቤት እንደገና ሞድ ለምሰሪት ሞዩ ወደ አግብ ወተ ተጫ ስክሪት ወደ ምሊሊ ላሊ ልክ ወተ ተጫ ወደ ሞዱ ወተ ተጫ ሎ ዎ ተጫ ሞውታ ወተ እንደገና ወተ ተጫ ላሊ ወ템ም?",
+  "registry_cleanup_label": "አጽዳ",
+  "registry_cleanup_title": "ምዝገባ ግቤት ማስወገድ?",
+  "registry_cleanup_success_title": "ጥራዝ ሙሌት",
+  "registry_cleanup_partial_title": "ጥራዝ ሙሌት ሙሎ ማስጠንቀቂያ",
+  "registry_cleanup_failed": "ምዝገባ ግቤት ማስወገድ ወደፊት"
 }

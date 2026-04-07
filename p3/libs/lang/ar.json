@@ -409,5 +409,10 @@
   "scripts_label": "النصوص البرمجية",
   "registry_details_label": "تفاصيل السجل",
   "internal_revert_confirm_title": "إعادة تشغيل السكريبت للحذف؟",
-  "internal_revert_confirm_message": "هذا السكريبت له طريقة إزالة مخصصة. سيؤدي تشغيله مرة أخرى إلى محاولة إزالة مكوناته. هل تريد المتابعة؟"
+  "internal_revert_confirm_message": "هذا السكريبت له طريقة إزالة مخصصة. سيؤدي تشغيله مرة أخرى إلى محاولة إزالة مكوناته. هل تريد المتابعة؟",
+  "registry_cleanup_label": "تنظيف",
+  "registry_cleanup_title": "إزالة إدخال السجل؟",
+  "registry_cleanup_success_title": "تم إكمال التنظيف",
+  "registry_cleanup_partial_title": "تم إكمال التنظيف مع تحذيرات",
+  "registry_cleanup_failed": "فشل في إزالة إدخال السجل"
 }

@@ -389,5 +389,10 @@
   "scripts_label": "स्क्रिप्ट्स",
   "registry_details_label": "रजिस्ट्री विवरण",
   "internal_revert_confirm_title": "हटाने के लिए स्क्रिप्ट को फिर से चलाएँ?",
-  "internal_revert_confirm_message": "इस स्क्रिप्ट की एक कस्टम हटाने की विधि है। इसे फिर से चलाने से इसके घटकों को हटाने का प्रयास किया जाएगा। क्या आप जारी रखना चाहते हैं?"
+  "internal_revert_confirm_message": "इस स्क्रिप्ट की एक कस्टम हटाने की विधि है। इसे फिर से चलाने से इसके घटकों को हटाने का प्रयास किया जाएगा। क्या आप जारी रखना चाहते हैं?",
+  "registry_cleanup_label": "साफ करें",
+  "registry_cleanup_title": "रजिस्ट्री प्रविष्टि हटाएँ?",
+  "registry_cleanup_success_title": "सफाई पूर्ण",
+  "registry_cleanup_partial_title": "चेतावनी के साथ सफाई पूर्ण",
+  "registry_cleanup_failed": "रजिस्ट्री प्रविष्टि हटाने में विफल"
 }

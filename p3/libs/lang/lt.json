@@ -409,5 +409,10 @@
   "scripts_label": "Scenarijai",
   "registry_details_label": "Registro išsami informacija",
   "internal_revert_confirm_title": "Paleisti scenarijų iš naujo pašalinimui?",
-  "internal_revert_confirm_message": "Šis scenarijus turi pasirinktą šalinimo metodą. Jį iš naujo paleidus bus bandoma pašalinti jo komponentus. Ar norite tęsti?"
+  "internal_revert_confirm_message": "Šis scenarijus turi pasirinktą šalinimo metodą. Jį iš naujo paleidus bus bandoma pašalinti jo komponentus. Ar norite tęsti?",
+  "registry_cleanup_label": "Išvalyti",
+  "registry_cleanup_title": "Pašalinti registro įrašą?",
+  "registry_cleanup_success_title": "Valymas baigtas",
+  "registry_cleanup_partial_title": "Valymas baigtas su įspėjimais",
+  "registry_cleanup_failed": "Nepavyko pašalinti registro įrašo"
 }

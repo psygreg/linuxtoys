@@ -409,5 +409,10 @@
   "scripts_label": "スクリプト",
   "registry_details_label": "レジストリの詳細",
   "internal_revert_confirm_title": "削除するスクリプトを再度実行しますか?",
-  "internal_revert_confirm_message": "このスクリプトはカスタム削除方法を持っています。もう一度実行すると、そのコンポーネントを削除しようとします。続行しますか?"
+  "internal_revert_confirm_message": "このスクリプトはカスタム削除方法を持っています。もう一度実行すると、そのコンポーネントを削除しようとします。続行しますか?",
+  "registry_cleanup_label": "クリーンアップ",
+  "registry_cleanup_title": "レジストリエントリを削除しますか?",
+  "registry_cleanup_success_title": "クリーンアップが完了しました",
+  "registry_cleanup_partial_title": "クリーンアップが警告とともに完了しました",
+  "registry_cleanup_failed": "レジストリエントリの削除に失敗しました"
 }

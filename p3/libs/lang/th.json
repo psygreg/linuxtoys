@@ -409,5 +409,10 @@
   "scripts_label": "สคริปต์",
   "registry_details_label": "รายละเอียดทะเบียน",
   "internal_revert_confirm_title": "เรียกใช้สคริปต์อีกครั้งเพื่อลบ?",
-  "internal_revert_confirm_message": "สคริปต์นี้มีวิธีการลบที่กำหนดเอง การรันอีกครั้งจะพยายามลบส่วนประกอบของมัน คุณต้องการดำเนินการต่อหรือไม่?"
+  "internal_revert_confirm_message": "สคริปต์นี้มีวิธีการลบที่กำหนดเอง การรันอีกครั้งจะพยายามลบส่วนประกอบของมัน คุณต้องการดำเนินการต่อหรือไม่?",
+  "registry_cleanup_label": "ล้าง",
+  "registry_cleanup_title": "ลบรายการรีจิสทรี?",
+  "registry_cleanup_success_title": "ล้างเสร็จแล้ว",
+  "registry_cleanup_partial_title": "ล้างเสร็จแล้วด้วยคำเตือน",
+  "registry_cleanup_failed": "ล้มเหลวในการลบรายการรีจิสทรี"
 }

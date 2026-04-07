@@ -409,5 +409,10 @@
   "scripts_label": "Skripty",
   "registry_details_label": "Podrobnosti registru",
   "internal_revert_confirm_title": "Spustit skript znovu pro odstranění?",
-  "internal_revert_confirm_message": "Tento skript má vlastní metodu odstranění. Spuštění jej znovu se pokusí odstranit jeho součásti. Chcete pokračovat?"
+  "internal_revert_confirm_message": "Tento skript má vlastní metodu odstranění. Spuštění jej znovu se pokusí odstranit jeho součásti. Chcete pokračovat?",
+  "registry_cleanup_label": "Vyčistit",
+  "registry_cleanup_title": "Odebrat položku registru?",
+  "registry_cleanup_success_title": "Vyčištění dokončeno",
+  "registry_cleanup_partial_title": "Vyčištění dokončeno s varováními",
+  "registry_cleanup_failed": "Nepodařilo se odebrat položku registru"
 }

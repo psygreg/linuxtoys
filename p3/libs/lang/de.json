@@ -409,5 +409,10 @@
   "scripts_label": "Skripte",
   "registry_details_label": "Registrierungsdetails",
   "internal_revert_confirm_title": "Skript zum Löschen erneut ausführen?",
-  "internal_revert_confirm_message": "Dieses Skript verfügt über eine benutzerdefinierte Entfernungsmethode. Ein erneutes Ausführen wird versuchen, die Komponenten zu entfernen. Möchten Sie fortfahren?"
+  "internal_revert_confirm_message": "Dieses Skript verfügt über eine benutzerdefinierte Entfernungsmethode. Ein erneutes Ausführen wird versuchen, die Komponenten zu entfernen. Möchten Sie fortfahren?",
+  "registry_cleanup_label": "Bereinigen",
+  "registry_cleanup_title": "Registrierungseintrag entfernen?",
+  "registry_cleanup_success_title": "Bereinigung abgeschlossen",
+  "registry_cleanup_partial_title": "Bereinigung mit Warnungen abgeschlossen",
+  "registry_cleanup_failed": "Registrierungseintrag konnte nicht entfernt werden"
 }

@@ -3,7 +3,8 @@ Action Registry viewer - displays all script execution records from the registry
 """
 
 import os
-from .gtk_common import Gtk, GLib
+import shutil
+from .gtk_common import Gtk
 from .lang_utils import create_translator
 
 
@@ -74,6 +75,123 @@ def parse_registry_file():
         scripts_registry[script_name].append((timestamp, operations))
     
     return scripts_registry
+
+
+def _find_backup_files_for_script(script_name, registry_data):
+    """
+    Find all backup files (.bak) associated with a script's executions.
+    
+    Args:
+        script_name: name of the script
+        registry_data: dict of {script_name: [(timestamp, [operations]), ...]}
+    
+    Returns:
+        list of backup file paths that exist on the system
+    """
+    backup_files = []
+    
+    if script_name not in registry_data:
+        return backup_files
+    
+    executions = registry_data[script_name]
+    
+    for timestamp, operations in executions:
+        for op_line in operations:
+            parts = op_line.split()
+            if not parts:
+                continue
+            
+            op_type = parts[0]
+            
+            # File-related operations have backup files
+            if op_type in ("edited", "created", "removed") and len(parts) > 1:
+                file_path = parts[1]
+                backup_path = f"{file_path}.bak"
+                
+                # Check if backup exists and not already in list
+                if os.path.exists(backup_path) and backup_path not in backup_files:
+                    backup_files.append(backup_path)
+    
+    return backup_files
+
+
+def _remove_script_from_registry(script_name):
+    """
+    Remove all entries for a script from the registry file.
+    
+    Returns True if successful, False otherwise.
+    """
+    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    
+    if not os.path.exists(registry_file):
+        return False
+    
+    try:
+        with open(registry_file, "r") as f:
+            content = f.read()
+    except Exception:
+        return False
+    
+    # Split by registry entries
+    entries = content.split("---\n")
+    
+    # Filter out entries for the script we want to remove
+    filtered_entries = []
+    found = False
+    
+    for entry in entries:
+        entry_stripped = entry.strip()
+        if not entry_stripped:
+            continue
+        
+        lines = entry_stripped.split("\n")
+        first_line = lines[0] if lines else ""
+        
+        # Check if this entry belongs to the script we're removing
+        if f"Script: {script_name}" in first_line:
+            found = True
+            continue  # Skip this entry
+        
+        filtered_entries.append(entry_stripped)
+    
+    if not found:
+        return False
+    
+    # Reconstruct the registry file
+    new_content = "---\n".join(filtered_entries)
+    
+    try:
+        with open(registry_file, "w") as f:
+            f.write(new_content)
+        return True
+    except Exception:
+        return False
+
+
+def _remove_backup_files(backup_files):
+    """
+    Remove backup files from the system.
+    
+    Args:
+        backup_files: list of backup file paths
+    
+    Returns:
+        tuple of (successful_count, failed_paths)
+    """
+    successful_count = 0
+    failed_paths = []
+    
+    for backup_path in backup_files:
+        try:
+            if os.path.isdir(backup_path):
+                shutil.rmtree(backup_path)
+            else:
+                os.remove(backup_path)
+            successful_count += 1
+        except Exception:
+            failed_paths.append(backup_path)
+    
+    return successful_count, failed_paths
 
 
 class ActionRegistryDialog(Gtk.Dialog):
@@ -157,8 +275,18 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.registry_data = parse_registry_file()
         self.__populate_scripts_list()
         
-        # Add close button
+        # Track currently selected script for cleanup
+        self.current_script = None
+        
+        # Add buttons
+        cleanup_button = self.add_button(_("registry_cleanup_label"), Gtk.ResponseType.NONE)
+        cleanup_button.set_sensitive(False)
+        self.cleanup_button = cleanup_button
+        
         self.add_button(_("script_runner_close"), Gtk.ResponseType.CLOSE)
+        
+        # Connect cleanup button signal
+        self.cleanup_button.connect("clicked", self.__on_cleanup_clicked)
         
         self.show_all()
     
@@ -173,9 +301,13 @@ class ActionRegistryDialog(Gtk.Dialog):
         model, tree_iter = selection.get_selected()
         if tree_iter is None:
             self.details_textview.get_buffer().set_text("")
+            self.current_script = None
+            self.cleanup_button.set_sensitive(False)
             return
         
         script_name = model.get_value(tree_iter, 0)
+        self.current_script = script_name
+        self.cleanup_button.set_sensitive(True)
         self.__display_script_details(script_name)
     
     def __display_script_details(self, script_name):
@@ -208,6 +340,124 @@ class ActionRegistryDialog(Gtk.Dialog):
         
         text_buffer = self.details_textview.get_buffer()
         text_buffer.set_text("".join(lines))
+    
+    def __on_cleanup_clicked(self, button):
+        """Handle cleanup button click."""
+        if not self.current_script:
+            return
+        
+        self.__show_cleanup_confirmation()
+    
+    def __show_cleanup_confirmation(self):
+        """Show confirmation dialog for cleanup."""
+        if not self.current_script:
+            return
+        
+        _ = create_translator()
+        
+        # Find backup files that will be removed
+        backup_files = _find_backup_files_for_script(self.current_script, self.registry_data)
+        
+        # Create confirmation dialog
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=_("registry_cleanup_title"),
+        )
+        
+        backup_count = len(backup_files)
+        secondary_text = (
+            f"This will remove the registry entry for '{self.current_script}' and delete "
+            f"{backup_count} backup file(s). After removal, you will no longer be able "
+            "to undo the operations from this script using the app.\n\n"
+            "This action cannot be undone."
+        )
+        dialog.format_secondary_text(secondary_text)
+        
+        # Add buttons
+        dialog.add_buttons(
+            _("cancel_btn_label"), Gtk.ResponseType.CANCEL,
+            _("term_view_remove"), Gtk.ResponseType.OK
+        )
+        
+        # Make OK button red/destructive
+        ok_button = dialog.get_widget_for_response(Gtk.ResponseType.OK)
+        ok_button.get_style_context().add_class("destructive-action")
+        
+        response = dialog.run()
+        dialog.destroy()
+        
+        if response == Gtk.ResponseType.OK:
+            self.__perform_cleanup()
+    
+    def __perform_cleanup(self):
+        """Perform the actual cleanup."""
+        if not self.current_script:
+            return
+        
+        _ = create_translator()
+        
+        # Find backup files
+        backup_files = _find_backup_files_for_script(self.current_script, self.registry_data)
+        
+        # Remove script from registry
+        registry_removed = _remove_script_from_registry(self.current_script)
+        
+        # Remove backup files
+        success_count, failed_paths = _remove_backup_files(backup_files)
+        
+        # Show result dialog
+        if registry_removed:
+            if failed_paths:
+                # Some files couldn't be removed
+                message = (
+                    f"Registry entry removed. {success_count} backup file(s) deleted, "
+                    f"but {len(failed_paths)} could not be removed (may require elevated permissions)."
+                )
+                dialog = Gtk.MessageDialog(
+                    transient_for=self,
+                    flags=0,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_("registry_cleanup_partial_title"),
+                )
+                dialog.format_secondary_text(message)
+            else:
+                # All successful
+                message = (
+                    f"Registry entry and {len(backup_files)} backup file(s) successfully removed."
+                )
+                dialog = Gtk.MessageDialog(
+                    transient_for=self,
+                    flags=0,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_("registry_cleanup_success_title"),
+                )
+                dialog.format_secondary_text(message)
+            
+            dialog.run()
+            dialog.destroy()
+            
+            # Refresh the list
+            self.registry_data = parse_registry_file()
+            self.__populate_scripts_list()
+            self.current_script = None
+            self.cleanup_button.set_sensitive(False)
+            self.details_textview.get_buffer().set_text("")
+        else:
+            # Failed to remove from registry
+            dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=_("registry_cleanup_failed"),
+            )
+            dialog.run()
+            dialog.destroy()
 
 
 def show_action_registry_dialog(parent=None):

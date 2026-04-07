@@ -409,5 +409,10 @@
   "scripts_label": "Скрипт",
   "registry_details_label": "Подробиёти рејистрї",
   "internal_revert_confirm_title": "Сценарийро дуубора иҷро кунед сабти барои нест?",
-  "internal_revert_confirm_message": "Ин даврауди сценарийи моди бартараф кунидашавӣ дорад. Иҷрокунии он дубора кошиш мекунад компонентҳо барқ кунад. Оё шумо идома додан мехоҳед?"
+  "internal_revert_confirm_message": "Ин даврауди сценарийи моди бартараф кунидашавӣ дорад. Иҷрокунии он дубора кошиш мекунад компонентҳо барқ кунад. Оё шумо идома додан мехоҳед?",
+  "registry_cleanup_label": "Тозия",
+  "registry_cleanup_title": "Ворид рабтро нест?",
+  "registry_cleanup_success_title": "Тозия ба پайян расид",
+  "registry_cleanup_partial_title": "Тозия ба пайён расид бо огоҳӣ",
+  "registry_cleanup_failed": "Натавонистани нест кардани ворид"
 }

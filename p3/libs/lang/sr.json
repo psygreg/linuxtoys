@@ -409,5 +409,10 @@
   "scripts_label": "Скрипте",
   "registry_details_label": "Детаљи регистра",
   "internal_revert_confirm_title": "Поновно покренути скрипту за уклањање?",
-  "internal_revert_confirm_message": "Овај скрипт има прилагођену методу уклањања. Поновљено извршавање ће покушати да уклони његове компоненте. Да ли желите да наставите?"
+  "internal_revert_confirm_message": "Овај скрипт има прилагођену методу уклањања. Поновљено извршавање ће покушати да уклони његове компоненте. Да ли желите да наставите?",
+  "registry_cleanup_label": "Очистити",
+  "registry_cleanup_title": "Уклонити унос регистра?",
+  "registry_cleanup_success_title": "Очишћавање завршено",
+  "registry_cleanup_partial_title": "Очишћавање завршено са упозорењима",
+  "registry_cleanup_failed": "Неуспешно уклањање унос регистра"
 }

@@ -409,5 +409,10 @@
   "scripts_label": "Skrift",
   "registry_details_label": "Skráarundarskoðun",
   "internal_revert_confirm_title": "Keyra skriftuna aftur til brottfjarlægingar?",
-  "internal_revert_confirm_message": "Þessi skrift hefur sérsniðna fjarlæggingaraðferð. Endurkeyrslun hennar mun reyna að fjarlægja efnisetning hennar. Viltu halda áfram?"
+  "internal_revert_confirm_message": "Þessi skrift hefur sérsniðna fjarlæggingaraðferð. Endurkeyrslun hennar mun reyna að fjarlægja efnisetning hennar. Viltu halda áfram?",
+  "registry_cleanup_label": "Hreinsa",
+  "registry_cleanup_title": "Fjarlægja skrárfélaginn?",
+  "registry_cleanup_success_title": "Hreinsuninni lokið",
+  "registry_cleanup_partial_title": "Hreinsuninni lokið með viðvarunum",
+  "registry_cleanup_failed": "Tókst ekki að fjarlægja skrárfélaginn"
 }

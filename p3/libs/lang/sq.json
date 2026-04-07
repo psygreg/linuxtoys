@@ -409,5 +409,10 @@
   "scripts_label": "Skripte",
   "registry_details_label": "Detajet e regjistrit",
   "internal_revert_confirm_title": "Ekzekuto sërish skriptin për fshirje?",
-  "internal_revert_confirm_message": "Ky skript ka një metodë fshirjen e personalizuar. Ekzekutimi i tij përsëri do të përpiqet të fshijë komponentet e tij. Dëshironi të vazhdoni?"
+  "internal_revert_confirm_message": "Ky skript ka një metodë fshirjen e personalizuar. Ekzekutimi i tij përsëri do të përpiqet të fshijë komponentet e tij. Dëshironi të vazhdoni?",
+  "registry_cleanup_label": "Pastrimi",
+  "registry_cleanup_title": "Fshih hyrjen në regjistrin?",
+  "registry_cleanup_success_title": "Pastrimi përfundoi",
+  "registry_cleanup_partial_title": "Pastrimi përfundoi me paralajmërime",
+  "registry_cleanup_failed": "Dështua në fshirjen e hyrjes në regjistrin"
 }

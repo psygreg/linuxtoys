@@ -409,5 +409,10 @@
   "scripts_label": "Scripts",
   "registry_details_label": "Detalhes do registro",
   "internal_revert_confirm_title": "Executar script novamente para remoção?",
-  "internal_revert_confirm_message": "Este script tem um método de remoção personalizado. Executá-lo novamente tentará remover seus componentes. Deseja continuar?"
+  "internal_revert_confirm_message": "Este script tem um método de remoção personalizado. Executá-lo novamente tentará remover seus componentes. Deseja continuar?",
+  "registry_cleanup_label": "Limpar",
+  "registry_cleanup_title": "Remover entrada do registro?",
+  "registry_cleanup_success_title": "Limpeza concluída",
+  "registry_cleanup_partial_title": "Limpeza concluída com avisos",
+  "registry_cleanup_failed": "Falha ao remover entrada do registro"
 }

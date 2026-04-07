@@ -408,5 +408,10 @@
   "scripts_label": "Skriptlar",
   "registry_details_label": "Rejistr tafsilotlari",
   "internal_revert_confirm_title": "O'chirilsh uchun skriptni qayta ishga tushiring?",
-  "internal_revert_confirm_message": "Bu skriptning o'z o'chirilish usuli mavjud. Buni qayta ishga tushirish uning komponentlarini o'chirib tashlashga harakat qiladi. Davom etishni xohlaysizmi?"
+  "internal_revert_confirm_message": "Bu skriptning o'z o'chirilish usuli mavjud. Buni qayta ishga tushirish uning komponentlarini o'chirib tashlashga harakat qiladi. Davom etishni xohlaysizmi?",
+  "registry_cleanup_label": "Tozala",
+  "registry_cleanup_title": "Registr kiruvini olib tashlash?",
+  "registry_cleanup_success_title": "Tozalash bajarildi",
+  "registry_cleanup_partial_title": "Tozalash ogohlantirish bilan bajarildi",
+  "registry_cleanup_failed": "Registr kiruvini o'chira olmadi"
 }

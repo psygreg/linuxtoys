@@ -409,5 +409,10 @@
   "scripts_label": "Scripts",
   "registry_details_label": "Détails du registre",
   "internal_revert_confirm_title": "Réexécuter le script pour la suppression?",
-  "internal_revert_confirm_message": "Ce script a une méthode de suppression personnalisée. Le réexécuter tentera de supprimer ses composants. Voulez-vous continuer?"
+  "internal_revert_confirm_message": "Ce script a une méthode de suppression personnalisée. Le réexécuter tentera de supprimer ses composants. Voulez-vous continuer?",
+  "registry_cleanup_label": "Nettoyer",
+  "registry_cleanup_title": "Supprimer l'entrée du registre?",
+  "registry_cleanup_success_title": "Nettoyage terminé",
+  "registry_cleanup_partial_title": "Nettoyage terminé avec avertissements",
+  "registry_cleanup_failed": "Impossible de supprimer l'entrée du registre"
 }

@@ -409,5 +409,10 @@
   "scripts_label": "ສະຕາດ",
   "registry_details_label": "ລາຍລະອຽດລົງທະບຽນ",
   "internal_revert_confirm_title": "ລາຍຖືນີ້ໄບເຫັ່ນທັນທີ? ເພື່ອລຶບ?",
-  "internal_revert_confirm_message": "ສະຕະເມື້ອກນີ້ມີວິທີການລຶບອອກທີ່ກຳນົດເອງ. ການແລ່ນຈໍາໜ່າຍຈະພະຍາຍາມລຶບຂໍ້ມູນສະເພາະຂອງມັນ. ທ່ານຕ້ອງການທີ່ຈະສືບເນື່ອງ?"
+  "internal_revert_confirm_message": "ສະຕະເມື້ອກນີ້ມີວິທີການລຶບອອກທີ່ກຳນົດເອງ. ການແລ່ນຈໍາໜ່າຍຈະພະຍາຍາມລຶບຂໍ້ມູນສະເພາະຂອງມັນ. ທ່ານຕ້ອງການທີ່ຈະສືບເນື່ອງ?",
+  "registry_cleanup_label": "ທໍາລາຍ",
+  "registry_cleanup_title": "ລຶບລາຍການລົງທະບຽນ?",
+  "registry_cleanup_success_title": "ລົງທະບຽນທີ່ສຳເລັດ",
+  "registry_cleanup_partial_title": "ລາຍຫາກ່າວ ຈົບສ�າບ",
+  "registry_cleanup_failed": "ລົງທະບຽນຣາຍການທີ່ປະຕິບັດ"
 }
