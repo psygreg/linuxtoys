@@ -310,6 +310,12 @@ def _reverse_package_fromfile(file_paths):
     return reversal_commands
 
 
+def _reverse_file_deletion(file_path):
+    """Reverse file deletion by removing the created file."""
+    # For created files, we just need to delete them
+    return f"rm -rf {file_path} 2>/dev/null || true"
+
+
 def _reverse_file_restoration(file_path):
     """Reverse a file or directory change by restoring from .bak file/directory."""
     backup_path = f"{file_path}.bak"
@@ -468,8 +474,12 @@ def _reverse_operation(op_line, package_manager):
         # Reverse shell change by reverting to bash
         return _reverse_shell_change(operands[0])
     
-    elif op_type in ("edited", "created", "removed") and operands:
-        # All file operations use the same restoration mechanism
+    elif op_type == "created" and operands:
+        # Reverse created files by deleting them
+        return [_reverse_file_deletion(operands[0])]
+    
+    elif op_type in ("edited", "removed") and operands:
+        # Reverse edited/removed files by restoring from .bak backup
         # File operations typically have one file per operation
         cmd = _reverse_file_restoration(operands[0])
         return [cmd] if cmd else []
