@@ -421,3 +421,8 @@ shell_change() {
     sudo chsh -s "$@" || fatal "Failed to change shell: $@"
     echo "chsh $@" >> /tmp/linuxtoys/transmap
 }
+
+# distrobox container
+distrobox_created() {
+    echo "distrobox $@" >> /tmp/linuxtoys/transmap
+}

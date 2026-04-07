@@ -164,6 +164,9 @@ def _parse_operation(op_line):
         elif op_type == "flatpak":
             # flatpak can have multiple operands (e.g., "flatpak app1 app2")
             return op_type, parts[1:]
+        elif op_type == "distrobox":
+            # distrobox operations have format: "distrobox container_name"
+            return op_type, parts[1:]
         elif op_type == "chsh":
             # Shell change: "chsh /bin/zsh"
             return op_type, parts[1:]
@@ -347,6 +350,31 @@ def _reverse_flatpak_removal(app_ids):
     return commands
 
 
+def _reverse_distrobox_creation(container_names):
+    """Reverse distrobox container creation(s) by removing it/them.
+    
+    Args:
+        container_names: list of container names or single container name string
+    
+    Returns:
+        list of shell commands to reverse the distrobox creation
+    """
+    # Normalize to list
+    if isinstance(container_names, str):
+        container_names = [container_names]
+    
+    if not container_names:
+        return []
+    
+    commands = []
+    for container_name in container_names:
+        # Remove the distrobox container
+        cmd = f"distrobox rm --force {container_name} 2>/dev/null || true"
+        commands.append(cmd)
+    
+    return commands
+
+
 def _reverse_systemd_operation(service, action):
     """Reverse systemd operations."""
     reversals = {
@@ -431,6 +459,10 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)
+    
+    elif op_type == "distrobox" and operands:
+        # Reverse distrobox container creation by removing
+        return _reverse_distrobox_creation(operands)
     
     elif op_type == "chsh" and operands:
         # Reverse shell change by reverting to bash
