@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Премахване на запис в регистъра?",
   "registry_cleanup_success_title": "Почистването е завършено",
   "registry_cleanup_partial_title": "Почистване завършено с предупреждения",
-  "registry_cleanup_failed": "Неуспешно премахване на запис в регистъра"
+  "registry_cleanup_failed": "Неуспешно премахване на запис в регистъра",
+  "shelly_desc": "Търсете стандартни пакети, AUR и Flatpak в един кратък и модерен мениджър на пакети."
 }

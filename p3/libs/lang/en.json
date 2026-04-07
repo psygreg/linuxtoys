@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Remove Registry Entry?",
   "registry_cleanup_success_title": "Cleanup Completed",
   "registry_cleanup_partial_title": "Cleanup Completed with Warnings",
-  "registry_cleanup_failed": "Failed to remove registry entry."
+  "registry_cleanup_failed": "Failed to remove registry entry.",
+  "shelly_desc": "Search standard packages, AUR, and Flatpak in one concise and modern package manager."
 }

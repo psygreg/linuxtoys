@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Fjern registeroppføring?",
   "registry_cleanup_success_title": "Rensing fullført",
   "registry_cleanup_partial_title": "Rensing fullført med advarsler",
-  "registry_cleanup_failed": "Kunne ikke fjerne registeroppføring"
+  "registry_cleanup_failed": "Kunne ikke fjerne registeroppføring",
+  "shelly_desc": "Søk etter standardpakker, AUR og Flatpak i én kortfattet og moderne pakkehåndterer."
 }

@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Noņemt reģistra ierakstu?",
   "registry_cleanup_success_title": "Attīrīšana pabeigta",
   "registry_cleanup_partial_title": "Attīrīšana pabeigta ar brīdinājumiem",
-  "registry_cleanup_failed": "Neizdevās noņemt reģistra ierakstu"
+  "registry_cleanup_failed": "Neizdevās noņemt reģistra ierakstu",
+  "shelly_desc": "Meklējiet standarta pakotnes, AUR un Flatpak vienā kodolīgā un mūsdienīgā pakotņu pārvaldniekā."
 }

@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Հեռացնել ռեգիստրի գրառումը:",
   "registry_cleanup_success_title": "Մաքրումն ավարտված",
   "registry_cleanup_partial_title": "Մաքրումն ավարտված գուտ ավելացումներով",
-  "registry_cleanup_failed": "Ռեգիստրի գրառումը հեռացնել չստացա:"
+  "registry_cleanup_failed": "Ռեգիստրի գրառումը հեռացնել չստացա:",
+  "shelly_desc": "Փնտրեք ստանդարտ փաթեթներ, AUR և Flatpak մեկ հակիրճ և ժամանակակից փաթեթների մենեջերում:"
 }

@@ -412,5 +412,6 @@
   "registry_cleanup_title": "பதிவேட்டு உள்ளீட்டை அகற்றவா?",
   "registry_cleanup_success_title": "சுத்தபடுத்தல் முடிந்தது",
   "registry_cleanup_partial_title": "சுத்தபடுத்தல் எச்சரிக்கைகளுடன் முடிந்தது",
-  "registry_cleanup_failed": "பதிவேட்டு உள்ளீட்டை அகற்ற தவறியது"
+  "registry_cleanup_failed": "பதிவேட்டு உள்ளீட்டை அகற்ற தவறியது",
+  "shelly_desc": "நிலையான தொகுப்புகள், AUR மற்றும் Flatpak ஐ ஒரு சுருக்கமான மற்றும் நவீன தொகுப்பு மேலாளரில் தேடவும்."
 }

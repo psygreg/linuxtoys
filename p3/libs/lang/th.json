@@ -414,5 +414,6 @@
   "registry_cleanup_title": "ลบรายการรีจิสทรี?",
   "registry_cleanup_success_title": "ล้างเสร็จแล้ว",
   "registry_cleanup_partial_title": "ล้างเสร็จแล้วด้วยคำเตือน",
-  "registry_cleanup_failed": "ล้มเหลวในการลบรายการรีจิสทรี"
+  "registry_cleanup_failed": "ล้มเหลวในการลบรายการรีจิสทรี",
+  "shelly_desc": "ค้นหาแพ็คเกจมาตรฐาน AUR และ Flatpak ในตัวจัดการแพ็คเกจแบบกระชับและทันสมัย"
 }

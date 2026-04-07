@@ -413,5 +413,6 @@
   "registry_cleanup_title": "Ukloniti unos registra?",
   "registry_cleanup_success_title": "Očišćavanje je završeno",
   "registry_cleanup_partial_title": "Očišćavanje završeno s upozorenjima",
-  "registry_cleanup_failed": "Neuspješno uklanjanje unosa registra"
+  "registry_cleanup_failed": "Neuspješno uklanjanje unosa registra",
+  "shelly_desc": "Pretražite standardne pakete, AUR i Flatpak u jednom sažetom i modernom upravitelju paketa."
 }

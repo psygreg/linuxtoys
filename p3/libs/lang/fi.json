@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Poista rekisterimerkintä?",
   "registry_cleanup_success_title": "Siivous valmis",
   "registry_cleanup_partial_title": "Siivous valmis varoituksilla",
-  "registry_cleanup_failed": "Rekisterimerkinnän poistaminen epäonnistui"
+  "registry_cleanup_failed": "Rekisterimerkinnän poistaminen epäonnistui",
+  "shelly_desc": "Hae vakiopaketteja, AUR:ta ja Flatpakia yhdessä ytimekkäässä ja modernissa paketinhallinnassa."
 }

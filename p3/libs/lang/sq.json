@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Fshih hyrjen në regjistrin?",
   "registry_cleanup_success_title": "Pastrimi përfundoi",
   "registry_cleanup_partial_title": "Pastrimi përfundoi me paralajmërime",
-  "registry_cleanup_failed": "Dështua në fshirjen e hyrjes në regjistrin"
+  "registry_cleanup_failed": "Dështua në fshirjen e hyrjes në regjistrin",
+  "shelly_desc": "Kërkoni për paketat standarde, AUR dhe Flatpak në një menaxher pakete të hijezuar dhe modern."
 }

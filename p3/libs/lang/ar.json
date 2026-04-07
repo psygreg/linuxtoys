@@ -414,5 +414,6 @@
   "registry_cleanup_title": "إزالة إدخال السجل؟",
   "registry_cleanup_success_title": "تم إكمال التنظيف",
   "registry_cleanup_partial_title": "تم إكمال التنظيف مع تحذيرات",
-  "registry_cleanup_failed": "فشل في إزالة إدخال السجل"
+  "registry_cleanup_failed": "فشل في إزالة إدخال السجل",
+  "shelly_desc": "ابحث عن الحزم القياسية و AUR و Flatpak في مدير حزم موجز وحديث واحد."
 }

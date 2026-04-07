@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Xóa mục nhập đăng ký?",
   "registry_cleanup_success_title": "Dọn dẹp hoàn thành",
   "registry_cleanup_partial_title": "Dọn dẹp hoàn thành có cảnh báo",
-  "registry_cleanup_failed": "Không thể xóa mục nhập đăng ký"
+  "registry_cleanup_failed": "Không thể xóa mục nhập đăng ký",
+  "shelly_desc": "Tìm kiếm các gói tiêu chuẩn, AUR và Flatpak trong một trình quản lý gói ngắn gọn và hiện đại."
 }

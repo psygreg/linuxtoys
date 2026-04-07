@@ -414,5 +414,6 @@
   "registry_cleanup_title": "レジストリエントリを削除しますか?",
   "registry_cleanup_success_title": "クリーンアップが完了しました",
   "registry_cleanup_partial_title": "クリーンアップが警告とともに完了しました",
-  "registry_cleanup_failed": "レジストリエントリの削除に失敗しました"
+  "registry_cleanup_failed": "レジストリエントリの削除に失敗しました",
+  "shelly_desc": "標準パッケージ、AUR、Flatpakを1つの簡潔で最新のパッケージマネージャーで検索します。"
 }

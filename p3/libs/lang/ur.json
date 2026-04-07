@@ -414,5 +414,6 @@
   "registry_cleanup_title": "رجسٹری اندراج کو ہٹائیں؟",
   "registry_cleanup_success_title": "صفائی مکمل ہوگئی",
   "registry_cleanup_partial_title": "انتباہات کے ساتھ صفائی مکمل ہوگئی",
-  "registry_cleanup_failed": "رجسٹری اندراج کو ہٹانے میں ناکام"
+  "registry_cleanup_failed": "رجسٹری اندراج کو ہٹانے میں ناکام",
+  "shelly_desc": "معیاری پیکجز، AUR اور Flatpak کو ایک مختصر اور جدید پیکج مینیجر میں تلاش کریں۔"
 }

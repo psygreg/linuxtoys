@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Tanggalin ang Pagpasok sa Registry?",
   "registry_cleanup_success_title": "Pagtatapos ng paglilinis",
   "registry_cleanup_partial_title": "Pagtatapos ng paglilinis na may mga babala",
-  "registry_cleanup_failed": "Hindi makakita ng pagpasok sa registry"
+  "registry_cleanup_failed": "Hindi makakita ng pagpasok sa registry",
+  "shelly_desc": "Maghanap ng karaniwang mga pakete, AUR at Flatpak sa isang maikling at modernong package manager."
 }

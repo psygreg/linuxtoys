@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Odstrániť záznam registra?",
   "registry_cleanup_success_title": "Vyčistenie dokončené",
   "registry_cleanup_partial_title": "Vyčistenie dokončené s varovaním",
-  "registry_cleanup_failed": "Nepodarilo sa odstrániť záznam registra"
+  "registry_cleanup_failed": "Nepodarilo sa odstrániť záznam registra",
+  "shelly_desc": "Vyhľadávajte štandardné balíky, AUR a Flatpak v jednom výstižnom a modernom správcovi balíkov."
 }

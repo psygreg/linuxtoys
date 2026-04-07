@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Kayıt Defteri Girişi Kaldırılsın mı?",
   "registry_cleanup_success_title": "Temizleme Tamamlandı",
   "registry_cleanup_partial_title": "Temizleme Uyarılarla Tamamlandı",
-  "registry_cleanup_failed": "Kayıt Defteri Girişi Kaldırılamadı"
+  "registry_cleanup_failed": "Kayıt Defteri Girişi Kaldırılamadı",
+  "shelly_desc": "Standart paketleri, AUR'ı ve Flatpak'ı bir özlü ve modern paket yöneticisinde arayın."
 }

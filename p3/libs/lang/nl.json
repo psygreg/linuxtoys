@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Registerinvoer verwijderen?",
   "registry_cleanup_success_title": "Opschooning voltooid",
   "registry_cleanup_partial_title": "Opschooning voltooid met waarschuwingen",
-  "registry_cleanup_failed": "Kan registerinvoer niet verwijderen"
+  "registry_cleanup_failed": "Kan registerinvoer niet verwijderen",
+  "shelly_desc": "Zoek naar standaardpakketten, AUR en Flatpak in één beknopt en modern pakketbeheer."
 }

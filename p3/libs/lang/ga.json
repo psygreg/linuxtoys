@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Bain iontráil an chláraithe?",
   "registry_cleanup_success_title": "Tháinig an ghlanadh i gcrích",
   "registry_cleanup_partial_title": "Tháinig an ghlanadh i gcrích le rabhaidh",
-  "registry_cleanup_failed": "Theip ar bhaint iontráil an chláraithe"
+  "registry_cleanup_failed": "Theip ar bhaint iontráil an chláraithe",
+  "shelly_desc": "Cuardaigh pacáistí caighdeánacha, AUR agus Flatpak i bhainisteoirí pacáiste achomair agus nua-aimseartha."
 }

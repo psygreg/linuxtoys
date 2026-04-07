@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Buang Entri Pendaftaran?",
   "registry_cleanup_success_title": "Pembersihan Selesai",
   "registry_cleanup_partial_title": "Pembersihan Selesai dengan Amaran",
-  "registry_cleanup_failed": "Gagal menghapus entri pendaftaran"
+  "registry_cleanup_failed": "Gagal menghapus entri pendaftaran",
+  "shelly_desc": "Cari paket standard, AUR dan Flatpak dalam satu pengurus paket yang ringkas dan moden."
 }

@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Registri kirje eemaldada?",
   "registry_cleanup_success_title": "Puhastamine lõpetatud",
   "registry_cleanup_partial_title": "Puhastamine lõpetatud hoiatustega",
-  "registry_cleanup_failed": "Registri kirje eemaldamine ebaõnnestus"
+  "registry_cleanup_failed": "Registri kirje eemaldamine ebaõnnestus",
+  "shelly_desc": "Otsige standardpakette, AUR-i ja Flatpak-i ühes prägnantses ja moderses paketihalduses."
 }

@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Ștergeți intrarea din registru?",
   "registry_cleanup_success_title": "Curățarea completă",
   "registry_cleanup_partial_title": "Curățarea completă cu avertismente",
-  "registry_cleanup_failed": "Imposibil de șters intrarea din registru"
+  "registry_cleanup_failed": "Imposibil de șters intrarea din registru",
+  "shelly_desc": "Căutați pachete standard, AUR și Flatpak într-un manager de pachete concis și modern."
 }

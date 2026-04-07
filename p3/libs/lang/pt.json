@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Remover entrada do registro?",
   "registry_cleanup_success_title": "Limpeza concluída",
   "registry_cleanup_partial_title": "Limpeza concluída com avisos",
-  "registry_cleanup_failed": "Falha ao remover entrada do registro"
+  "registry_cleanup_failed": "Falha ao remover entrada do registro",
+  "shelly_desc": "Procure por pacotes padrão, AUR e Flatpak em um gerenciador de pacotes conciso e moderno."
 }

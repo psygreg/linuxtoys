@@ -414,5 +414,6 @@
   "registry_cleanup_title": "რეგისტრის ჩანაწერის წაშლა?",
   "registry_cleanup_success_title": "გაწმენდა დასრულდა",
   "registry_cleanup_partial_title": "გაწმენდა დასრულდა გაფრთხოებებით",
-  "registry_cleanup_failed": "რეგისტრის ჩანაწერის წაშლა ვერ მოხერხდა"
+  "registry_cleanup_failed": "რეგისტრის ჩანაწერის წაშლა ვერ მოხერხდა",
+  "shelly_desc": "ძებნა სტანდარტული პაკეტები, AUR და Flatpak ერთ მოკლე და თანამედროვე პაკეტის მენეჯერში."
 }

@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Odebrat položku registru?",
   "registry_cleanup_success_title": "Vyčištění dokončeno",
   "registry_cleanup_partial_title": "Vyčištění dokončeno s varováními",
-  "registry_cleanup_failed": "Nepodařilo se odebrat položku registru"
+  "registry_cleanup_failed": "Nepodařilo se odebrat položku registru",
+  "shelly_desc": "Vyhledávejte standardní balíčky, AUR a Flatpak v jednom stručném a moderním správci balíčků."
 }

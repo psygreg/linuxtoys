@@ -414,5 +414,6 @@
   "registry_cleanup_title": "တရားဥပဒေမှတ်တမ်းကို ဖျက်ပါ?",
   "registry_cleanup_success_title": "သန့်စင်ခြင်းအပြီးသတ်",
   "registry_cleanup_partial_title": "သန့်စင်ခြင်းအပြီးသတ် ခြင်းများ",
-  "registry_cleanup_failed": "တရားဥပဒေမှတ်တမ်းကို ဖျက်ရန် ပျက်ကွက်"
+  "registry_cleanup_failed": "တရားဥပဒေမှတ်တမ်းကို ဖျက်ရန် ပျက်ကွက်",
+  "shelly_desc": "စံချိန်စံညွှန်းအထည်အလျှောက်များ၊ AUR နှင့် Flatpak ကိုအဆင့်မြင့်၏ တစ်ခုတည်းသောတို့ထဲတွင်ရှာပါ။"
 }

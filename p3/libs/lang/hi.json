@@ -394,5 +394,6 @@
   "registry_cleanup_title": "रजिस्ट्री प्रविष्टि हटाएँ?",
   "registry_cleanup_success_title": "सफाई पूर्ण",
   "registry_cleanup_partial_title": "चेतावनी के साथ सफाई पूर्ण",
-  "registry_cleanup_failed": "रजिस्ट्री प्रविष्टि हटाने में विफल"
+  "registry_cleanup_failed": "रजिस्ट्री प्रविष्टि हटाने में विफल",
+  "shelly_desc": "मानक पैकेज, AUR और Flatpak को एक संक्षिप्त और आधुनिक पैकेज मैनेजर में खोजें।"
 }

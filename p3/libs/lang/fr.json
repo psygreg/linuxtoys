@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Supprimer l'entrée du registre?",
   "registry_cleanup_success_title": "Nettoyage terminé",
   "registry_cleanup_partial_title": "Nettoyage terminé avec avertissements",
-  "registry_cleanup_failed": "Impossible de supprimer l'entrée du registre"
+  "registry_cleanup_failed": "Impossible de supprimer l'entrée du registre",
+  "shelly_desc": "Recherchez les paquets standard, AUR et Flatpak dans un gestionnaire de paquets concis et moderne."
 }

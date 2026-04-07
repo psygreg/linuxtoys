@@ -414,5 +414,6 @@
   "registry_cleanup_title": "Fjern registerpost?",
   "registry_cleanup_success_title": "Rydning gennemført",
   "registry_cleanup_partial_title": "Rydning gennemført med advarsler",
-  "registry_cleanup_failed": "Kunne ikke fjerne registerpost"
+  "registry_cleanup_failed": "Kunne ikke fjerne registerpost",
+  "shelly_desc": "Søg efter standardpakker, AUR og Flatpak i én præcis og moderne pakkehåndtering."
 }
