@@ -376,16 +376,37 @@ def submit_issue(title: str, logs: str = "", context: str = "", is_footer_trigge
     # Initialize antenna on first bug report submission
     _initialize_antenna()
     
+    # Track if logs were explicitly provided (vs captured from stdout)
+    logs_explicitly_provided = bool(logs)
+    
     if not logs:
         logs = log_capture.get_logs()
     
-    # Extract only last 20 lines of logs
-    logs = _get_last_n_lines(logs, n=20)
+    # Only truncate if logs came from log capture (not explicitly provided)
+    # This preserves pre-formatted data like registry information or terminal dumps
+    if not logs_explicitly_provided:
+        logs = _get_last_n_lines(logs, n=20)
     
     # Append transmap content if available
     transmap_content = _get_transmap_content()
     if transmap_content:
         logs = logs + "\n" + transmap_content
+    
+    # Apply line limit after all content is assembled if it came from log_capture
+    # This ensures transmap is never truncated
+    if not logs_explicitly_provided and transmap_content:
+        # Only apply additional truncation if we have a lot of lines from log_capture + transmap
+        total_lines = len(logs.split("\n"))
+        if total_lines > 50:
+            # Truncate terminal lines but preserve transmap
+            lines_list = logs.split("\n")
+            transmap_start = next((i for i, l in enumerate(lines_list) if "=== TRANSMAP" in l), len(lines_list))
+            # Keep terminal output trimmed, but preserve all transmap content
+            if transmap_start > 0:
+                terminal_lines = lines_list[:transmap_start]
+                terminal_lines = terminal_lines[-15:]  # Keep last 15 lines of terminal output
+                transmap_lines = lines_list[transmap_start:]
+                logs = "\n".join(terminal_lines + transmap_lines)
     
     # Append recent registry entries only if footer-triggered (useful for manual reports from footer link)
     if is_footer_triggered:
