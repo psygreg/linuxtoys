@@ -280,7 +280,7 @@ class AboutDialog:
         for child in self.contributors_grid.get_children():
             self.contributors_grid.remove(child)
         
-        # Add contributors in two columns
+        # Add contributors in a 3-column layout
         for i, contributor in enumerate(self.contributors):
             row = i // 3
             col = i % 3
@@ -291,7 +291,9 @@ class AboutDialog:
             
             self.contributors_grid.attach(contributor_label, col, row, 1, 1)
         
-        self.contributors_grid.show_all()
+        # Only show the grid if there are contributors
+        if self.contributors:
+            self.contributors_grid.show_all()
         
     def _show_contributors_error(self):
         """Shows error message when contributors can't be loaded"""
