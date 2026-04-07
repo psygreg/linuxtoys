@@ -137,6 +137,15 @@ class TermRunScripts(Gtk.Box):
                 # Check if this script has a registry entry (was previously installed)
                 operations = _load_last_execution(script_name)
                 self.removable_script_has_registry_entry = bool(operations)
+        
+        # Track if current/first script has a registry entry for bug report visibility
+        self.current_script_has_registry_entry = False
+        if scripts_infos:
+            first_script = scripts_infos[0]
+            first_script_name = first_script.get('name')
+            if first_script_name:
+                operations = _load_last_execution(first_script_name)
+                self.current_script_has_registry_entry = bool(operations)
 
         self.terminal = Vte.Terminal()
         self.terminal.connect("child-exited", self.on_child_exit)
@@ -151,12 +160,7 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.button_copy.connect("clicked", self.on_copy_clicked)
         self.vbox_main.button_remove.set_sensitive(bool(self.removable_script_info))
         self._set_remove_button_visibility()
-        
-        # Hide bug report button if auto error reports are enabled
-        auto_reports_enabled = getattr(parent, 'auto_error_reports_enabled', False)
-        if auto_reports_enabled:
-            self.vbox_main.button_copy.set_no_show_all(True)
-            self.vbox_main.button_copy.hide()
+        self._set_bug_report_button_visibility()
         
         # Use translatable waiting text
         waiting_text = self.translations.get(
@@ -193,6 +197,27 @@ class TermRunScripts(Gtk.Box):
         else:
             self.vbox_main.button_remove.set_no_show_all(True)
             self.vbox_main.button_remove.hide()
+
+    def _set_bug_report_button_visibility(self):
+        """
+        Set bug report button visibility based on:
+        1. Auto error reporting is NOT enabled
+        2. Script has been run before (exists in registry) OR is being run now
+        """
+        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
+        
+        # Hide button if auto error reports are enabled
+        if auto_reports_enabled:
+            self.vbox_main.button_copy.set_no_show_all(True)
+            self.vbox_main.button_copy.hide()
+        # Hide button if script has never been run before (not in registry)
+        elif not self.current_script_has_registry_entry:
+            self.vbox_main.button_copy.set_no_show_all(True)
+            self.vbox_main.button_copy.hide()
+        # Show button if both conditions are met
+        else:
+            self.vbox_main.button_copy.set_no_show_all(False)
+            self.vbox_main.button_copy.show()
 
     def _show_remove_confirmation_dialog(self, script_name):
         dialog = Gtk.MessageDialog(
@@ -320,6 +345,14 @@ class TermRunScripts(Gtk.Box):
             )
         self.vbox_main.button_run.set_label(running_label)
         self.terminal.set_can_focus(True)
+        
+        # Make bug report button available once run is started (for error reporting during execution)
+        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
+        if not auto_reports_enabled and not self.current_script_has_registry_entry:
+            self.vbox_main.button_copy.set_no_show_all(False)
+            self.vbox_main.button_copy.show()
+            self.current_script_has_registry_entry = True  # Mark as available for this session
+        
         self._run_next_script()
 
     def _save_to_registry(self, script_name, transmap_path):
