@@ -101,11 +101,11 @@ class ActionRegistryDialog(Gtk.Dialog):
         left_frame.set_shadow_type(Gtk.ShadowType.IN)
         left_frame.set_vexpand(True)
         left_frame.set_hexpand(False)
+        left_frame.set_size_request(280, -1)
         
         # Scrolled window for scripts list
         scrolled_left = Gtk.ScrolledWindow()
         scrolled_left.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled_left.set_min_content_width(280)
         scrolled_left.set_vexpand(True)
         scrolled_left.set_hexpand(False)
         left_frame.add(scrolled_left)
@@ -125,7 +125,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         selection.connect("changed", self.__on_script_selected)
         
         scrolled_left.add(self.scripts_treeview)
-        main_hbox.pack_start(left_frame, False, True, 0)
+        main_hbox.pack_start(left_frame, False, False, 0)
         
         # Right panel - Registry details
         right_frame = Gtk.Frame(label=_("registry_details_label"))
