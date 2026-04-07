@@ -123,12 +123,16 @@ class TermRunScripts(Gtk.Box):
         self.removable_script_revert_capability = None
         self.removable_script_manual_revert_enabled = False
         self.removable_script_has_registry_entry = False
+        self.removable_script_revert_disabled = False
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
             script_name = self.removable_script_info.get('name')
             if script_path:
                 self.removable_script_revert_capability = get_revert_capability(script_path)
                 self.removable_script_manual_revert_enabled = should_enable_manual_revert(script_path)
+                # If revert capability is explicitly 'no', mark as disabled
+                if self.removable_script_revert_capability == "no":
+                    self.removable_script_revert_disabled = True
             if script_name:
                 # Check if this script has a registry entry (was previously installed)
                 operations = _load_last_execution(script_name)
@@ -174,15 +178,16 @@ class TermRunScripts(Gtk.Box):
             self.vbox_main._update_header_labels(self.script_queue[0])
 
     def _set_remove_button_visibility(self):
-        # Button shown if:
+        # Button shown if ALL conditions are met:
         # 1. There's a removable script
         # 2. Only one script in queue
-        # 3. Revert is actually available:
+        # 3. Revert is NOT explicitly disabled (# revert: no)
+        # 4. Revert is actually available:
         #    - Revert capability is 'internal' (re-run workflow) - no registry check needed
         #    - OR manual revert is enabled AND there's a registry entry (script was previously installed)
         is_internal_revert = self.removable_script_revert_capability == "internal"
         revert_available = is_internal_revert or (self.removable_script_manual_revert_enabled and self.removable_script_has_registry_entry)
-        if self.removable_script_info and self.total_scripts == 1 and revert_available:
+        if self.removable_script_info and self.total_scripts == 1 and revert_available and not self.removable_script_revert_disabled:
             self.vbox_main.button_remove.show()
         else:
             self.vbox_main.button_remove.hide()
