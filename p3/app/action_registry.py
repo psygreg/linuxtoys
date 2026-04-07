@@ -99,7 +99,6 @@ class ActionRegistryDialog(Gtk.Dialog):
         # Left panel - Scripts list
         left_frame = Gtk.Frame(label=_("scripts_label"))
         left_frame.set_shadow_type(Gtk.ShadowType.IN)
-        left_frame.set_min_content_width(280)
         left_frame.set_vexpand(True)
         left_frame.set_hexpand(False)
         
@@ -108,7 +107,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         scrolled_left.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scrolled_left.set_min_content_width(280)
         scrolled_left.set_vexpand(True)
-        scrolled_left.set_hexpand(True)
+        scrolled_left.set_hexpand(False)
         left_frame.add(scrolled_left)
         
         # Scripts list store and treeview
