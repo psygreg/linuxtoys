@@ -147,7 +147,7 @@ _append_transmap() {
 prep_edit() {
     for target in "$@"; do
         [ -f "$target" ] || { _append_transmap "WARN: expected $target not found"; prep_create "$target"; continue; }
-        { cp -r "$target" "$target".bak || sudo cp -r "$target" "$target".bak; } || fatal "Failed to create backup: $target"
+        copy_ -r "$target" "$target".bak
         _append_transmap "edited $target"
     done
 }
@@ -163,7 +163,7 @@ prep_create() {
 prep_rm() {
     for target in "$@"; do
         { [ -f "$target" ] || [ -d "$target" ]; } || { _append_transmap "WARN: expected $target not found"; continue; }
-        { mv "$target" "$target".bak || sudo mv "$target" "$target".bak; } || fatal "Failed to create backup: $target"
+        move_ "$target" "$target".bak
         _append_transmap "removed $target"
     done
 }
@@ -181,7 +181,7 @@ prep_dir() {
 prep_dir_edit() {
     for dir in "$@"; do
         [ ! -d "$dir" ] || { _append_transmap "WARN: unexpected $dir already exists"; prep_dir "$dir"; continue; }
-        { cp -r "$dir" "$dir.bak" || sudo cp -r "$dir" "$dir.bak"; } || fatal "Failed to create backup $dir"
+        copy_ -r "$dir" "$dir.bak"
         _append_transmap "edited $dir"
     done
 }

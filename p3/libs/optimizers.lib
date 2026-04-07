@@ -45,13 +45,14 @@ cachyos_sysd_lib () {
     fi
     for file in modprobe.d/* udev/rules.d/* tmpfiles.d/*; do
         prep_create "/usr/lib/$file"
-        sudo cp -f "$file" "/usr/lib/$file"
+        rm -f "/usr/lib/$file" # ensure no clobber
+        copy_ -f "$file" "/usr/lib/$file"
     done
     if ! is_solus; then
         [ -d "/usr/share/X11/xorg.conf.d" ] || prep_dir /usr/share/X11/xorg.conf.d
-        prep_create /usr/lib/sysctl.d/70-cachyos-settings.conf && sudo cp -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
-        prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && sudo cp -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-        prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && sudo cp -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
+        prep_create /usr/lib/sysctl.d/70-cachyos-settings.conf && copy_ -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
+        prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && copy_ -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
+        prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && copy_ -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
     fi
 }
 
@@ -181,7 +182,7 @@ earlyoom_lib () {
     else
         prep_create /etc/default/earlyoom
     fi
-    sudo cp -f earlyoom /etc/default/
+    copy_ -f earlyoom /etc/default/
     sysd_enable earlyoom
     unset _packages
 }
