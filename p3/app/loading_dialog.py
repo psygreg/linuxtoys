@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Loading Dialog for First-Run Scripts Initialization
+Loading Dialog for Scripts Initialization
 
-This module provides a GUI loading dialog that displays during the first-run
-git repository fetch. It only activates in GUI mode (not in CLI mode).
+This module provides a GUI loading dialog that displays during scripts
+initialization. It only activates in GUI mode (not in CLI mode).
 """
 
 import os
@@ -18,7 +18,7 @@ except ImportError:
 
 class FirstRunLoadingDialog:
     """
-    A loading dialog shown during first-run git repository fetch.
+    A loading dialog shown during scripts initialization.
     Only appears in GUI mode with a display server available.
     """
     
@@ -174,10 +174,11 @@ class FirstRunLoadingDialog:
 
 def show_loading_dialog_for_scripts_init(callback, translations=None):
     """
-    Show a loading dialog while executing a callback (typically git operations).
+    Show a loading dialog while executing a callback (typically git sync operations).
     
     This function handles showing the dialog and pumping GTK events while
-    the callback executes in a separate thread.
+    the callback executes in a separate thread. The dialog displays during
+    all script initialization operations, not just first-run scenarios.
     
     Args:
         callback: Function to call while showing the loading dialog.

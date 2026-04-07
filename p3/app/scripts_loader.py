@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import the git scripts manager
-from .git_scripts_manager import get_scripts_dir, is_using_git_scripts, get_git_scripts_status
+from .git_scripts_manager import get_scripts_dir, is_using_git_scripts, get_git_scripts_status, will_perform_git_operation
 # Import language utilities for translations
 from .lang_utils import load_translations
 
@@ -32,20 +32,16 @@ def initialize_scripts():
     It will:
     1. Synchronize scripts from git (with automatic fallback)
     2. Set up the scripts directory
-    3. Show a loading dialog in GUI mode if this is a first run (clone operation)
+    3. Show a loading dialog in GUI mode during initialization
     4. Log the status
     
     Returns:
         str: Path to the scripts directory being used
     """
     try:
-        # Check if this is a first run (no git scripts cache exists)
-        from .git_scripts_manager import GIT_SCRIPTS_CACHE_DIR, _git_repo_exists
-        is_first_run = not _git_repo_exists()
-        
-        # For first run in GUI mode, show loading dialog
+        # Check if we should show loading dialog and if an operation will actually be performed
         scripts_dir = None
-        if is_first_run and _should_show_loading_dialog():
+        if _should_show_loading_dialog() and will_perform_git_operation():
             try:
                 from .loading_dialog import show_loading_dialog_for_scripts_init
                 
@@ -63,7 +59,7 @@ def initialize_scripts():
                 logger.debug(f"Could not show loading dialog: {e}")
                 scripts_dir = get_scripts_dir()
         else:
-            # Not first run, or CLI mode - proceed normally
+            # Either not in GUI mode, or no git operation will be performed
             scripts_dir = get_scripts_dir()
         
         status = get_git_scripts_status()

@@ -18,6 +18,7 @@ import os
 import subprocess
 import shutil
 import logging
+import time
 from pathlib import Path
 
 # Set up logging
@@ -30,9 +31,62 @@ GITLINUXTOYS_REPO_URL = "https://git.linux.toys/psygreg/scripts.git"
 # Cache directory paths
 CACHE_DIR = os.path.expanduser("~/.cache/linuxtoys")
 GIT_SCRIPTS_CACHE_DIR = os.path.join(CACHE_DIR, "scripts")
+LAST_UPDATE_TIMESTAMP_FILE = os.path.join(CACHE_DIR, "last_update.timestamp")
 
 # Timeout for git operations (in seconds)
 GIT_TIMEOUT = 30
+
+# Update interval for script repository (6 hours)
+UPDATE_INTERVAL = 6 * 60 * 60
+
+
+def _get_last_update_timestamp():
+    """
+    Get the timestamp of the last successful git operation.
+    
+    Returns:
+        float: Unix timestamp of last update, or None if never updated
+    """
+    try:
+        if os.path.exists(LAST_UPDATE_TIMESTAMP_FILE):
+            with open(LAST_UPDATE_TIMESTAMP_FILE, 'r') as f:
+                return float(f.read().strip())
+    except (OSError, ValueError) as e:
+        logger.debug(f"Could not read last update timestamp: {e}")
+    return None
+
+
+def _write_update_timestamp():
+    """
+    Write the current timestamp as the last update time.
+    """
+    try:
+        _ensure_cache_dir()
+        with open(LAST_UPDATE_TIMESTAMP_FILE, 'w') as f:
+            f.write(str(time.time()))
+        logger.debug(f"Updated timestamp file: {LAST_UPDATE_TIMESTAMP_FILE}")
+    except OSError as e:
+        logger.error(f"Failed to write update timestamp: {e}")
+
+
+def _should_update_scripts():
+    """
+    Check if enough time has passed to update scripts.
+    
+    Returns:
+        bool: True if update interval has elapsed or this is the first run
+    """
+    last_update = _get_last_update_timestamp()
+    if last_update is None:
+        return True  # First run, should update
+    
+    elapsed = time.time() - last_update
+    if elapsed >= UPDATE_INTERVAL:
+        logger.debug(f"Update interval elapsed ({elapsed/3600:.1f} hours), allowing update")
+        return True  # 6+ hours have passed
+    
+    logger.debug(f"Scripts updated {elapsed/3600:.1f} hours ago, skipping update to avoid rate limiting")
+    return False
 
 
 def _run_git_command(args, cwd=None, timeout=GIT_TIMEOUT):
@@ -126,6 +180,7 @@ def _clone_scripts_repo(progress_callback=None):
     
     if success:
         logger.info("Successfully cloned scripts from GitHub")
+        _write_update_timestamp()
         if progress_callback:
             progress_callback("scripts_init_success")
         return True
@@ -142,6 +197,7 @@ def _clone_scripts_repo(progress_callback=None):
     
     if success:
         logger.info("Successfully cloned scripts from git.linux.toys")
+        _write_update_timestamp()
         if progress_callback:
             progress_callback("scripts_init_success")
         return True
@@ -156,17 +212,25 @@ def _pull_scripts_repo(progress_callback=None):
     """
     Pull updates from the scripts repository.
     
+    Respects the update interval to avoid rate limiting - will only pull if
+    the last update was more than 6 hours ago or this is the first run.
+    
     Args:
         progress_callback: Optional function to call with progress messages
     
     Returns:
-        bool: True if pull was successful
+        bool: True if pull was successful or skipped due to rate limiting
     """
     if not _git_repo_exists():
         logger.warning("Scripts repository not found in cache, cloning instead")
         if progress_callback:
             progress_callback("scripts_init_not_found")
         return _clone_scripts_repo(progress_callback)
+    
+    # Check if we should update based on time interval
+    if not _should_update_scripts():
+        logger.info("Skipping repository update due to rate limiting (updated < 6 hours ago)")
+        return True  # Return True since we have valid cached scripts
     
     if progress_callback:
         progress_callback("scripts_init_updating")
@@ -178,6 +242,7 @@ def _pull_scripts_repo(progress_callback=None):
     
     if success:
         logger.info("Successfully pulled scripts updates")
+        _write_update_timestamp()
         if progress_callback:
             progress_callback("scripts_init_update_success")
         return True
@@ -186,6 +251,28 @@ def _pull_scripts_repo(progress_callback=None):
     # Return True here since we already have the repo, even if pull failed
     # This ensures we use cached scripts rather than failing completely
     return True
+
+
+def will_perform_git_operation():
+    """
+    Check if a git operation (clone or pull) will actually be performed.
+    
+    This is useful to determine if a loading dialog should be shown before
+    calling get_scripts_dir().
+    
+    Returns:
+        bool: True if a git operation will be performed, False if scripts will be used from cache
+    """
+    # If repo doesn't exist, we'll try to clone
+    if not _git_repo_exists():
+        return True
+    
+    # If repo exists and update interval has passed, we'll try to pull
+    if _should_update_scripts():
+        return True
+    
+    # Otherwise, we'll just use cached scripts without any git operations
+    return False
 
 
 def get_scripts_dir(progress_callback=None):
