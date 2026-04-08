@@ -201,7 +201,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         _ = create_translator()
         super().__init__(title=_("action_registry"), transient_for=parent, modal=True)
         
-        self.set_default_size(700, 500)
+        self.set_default_size(700, 600)
         self.set_border_width(12)
         
         content_area = self.get_content_area()
@@ -268,8 +268,8 @@ class ActionRegistryDialog(Gtk.Dialog):
         
         main_paned.pack2(right_frame, True, True)
         
-        # Set initial position for the divider (left panel gets ~200px)
-        main_paned.set_position(200)
+        # Set initial position for the divider (left panel gets ~280px)
+        main_paned.set_position(280)
         
         # Load registry data
         self.registry_data = parse_registry_file()
