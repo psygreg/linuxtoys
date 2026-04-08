@@ -359,6 +359,50 @@ class TermRunScripts(Gtk.Box):
         
         self._run_next_script()
 
+    def _remove_old_script_entries_from_registry(self, script_name):
+        """
+        Remove all existing entries for a script from the registry file.
+        This ensures each script only has the most recent run in the registry.
+        
+        Returns True if entries were removed or file doesn't exist, False on error.
+        """
+        registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+        
+        if not os.path.exists(registry_file):
+            return True
+        
+        try:
+            with open(registry_file, "r") as f:
+                content = f.read()
+        except Exception:
+            return False
+        
+        # Split by registry entry separator
+        entries = content.split("---\n")
+        
+        # Filter out entries for the script we're replacing
+        filtered_entries = []
+        for entry in entries:
+            entry_stripped = entry.strip()
+            if not entry_stripped:
+                continue
+            
+            lines = entry_stripped.split("\n")
+            first_line = lines[0] if lines else ""
+            
+            # Check if this entry belongs to the script we're updating
+            if f"Script: {script_name}" not in first_line:
+                filtered_entries.append(entry_stripped)
+        
+        # Reconstruct and write back
+        try:
+            new_content = "---\n".join(filtered_entries)
+            with open(registry_file, "w") as f:
+                f.write(new_content)
+            return True
+        except Exception:
+            return False
+
     def _save_to_registry(self, script_name, transmap_path):
         """Save script execution record to registry."""
         try:
@@ -368,6 +412,9 @@ class TermRunScripts(Gtk.Box):
             
             # Create directory if it doesn't exist
             os.makedirs(registry_dir, exist_ok=True)
+            
+            # Remove old entries for this script to keep only the latest run
+            self._remove_old_script_entries_from_registry(script_name)
             
             # Read transmap contents
             transmap_contents = ""
