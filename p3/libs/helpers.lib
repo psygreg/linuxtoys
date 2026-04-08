@@ -96,22 +96,22 @@ rpmfusion_chk() {
     local install_cmd="pkg_fromfile"
     # Free
     if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-        _msg info "Installing RPMFusion Free repository..."
+        echo "Installing RPMFusion Free repository..."
         $install_cmd "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
             { _msg error "Failed to install RPMFusion Free repository"; return 1; }
-        _msg info "RPMFusion Free repository installed successfully"
+        echo "RPMFusion Free repository installed successfully"
     else
-        _msg info "RPMFusion Free repository is already installed"
+        echo "RPMFusion Free repository is already installed"
     fi
 
     # Non-Free
     if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-        _msg info "Installing RPMFusion Non-Free repository..."
+        echo "Installing RPMFusion Non-Free repository..."
         $install_cmd "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
             { _msg error "Failed to install RPMFusion Non-Free repository"; return 1; }
-        _msg info "RPMFusion Non-Free repository installed successfully"
+        echo "RPMFusion Non-Free repository installed successfully"
     else
-        _msg info "RPMFusion Non-Free repository is already installed"
+        echo "RPMFusion Non-Free repository is already installed"
     fi
     return 0
 }
