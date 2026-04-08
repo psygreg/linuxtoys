@@ -181,7 +181,7 @@ prep_dir() {
 }
 prep_dir_edit() {
     for dir in "$@"; do
-        [ ! -d "$dir" ] || { _append_transmap "WARN: unexpected $dir already exists"; prep_dir "$dir"; continue; }
+        [ -d "$dir" ] || { _append_transmap "WARN: unexpected $dir doesnt exist"; prep_dir "$dir"; continue; }
         copy_ -r "$dir" "$dir.bak"
         _append_transmap "edited $dir"
     done
