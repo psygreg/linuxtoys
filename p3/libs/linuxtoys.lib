@@ -261,7 +261,7 @@ pkg_install () {
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
     if is_debian || is_ubuntu; then
-        sudo apt install -y "$to_install" || fatal "Failed to install $to_install"
+        sudo apt install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         _append_transmap "pkg $to_install"
     elif is_arch || is_cachy; then
         local _pacman_pkgs=()
@@ -276,7 +276,7 @@ pkg_install () {
         local to_install_pacman="${_pacman_pkgs[*]}"
         local to_install_paru="${_paru_pkgs[*]}"
         if [ -n "$to_install_pacman" ]; then
-            sudo pacman -S --noconfirm "$to_install_pacman" || fatal "Failed to install $to_install_pacman"
+            sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
             _append_transmap "pkg $to_install_pacman"
         fi
         if [ -n "$to_install_paru" ]; then
@@ -295,23 +295,23 @@ pkg_install () {
                         _append_transmap "pkg paru"
                     fi
                 fi
-                paru -S -a --noconfirm --skipreview "$to_install_paru" || fatal "Failed to install $to_install_paru"
+                paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || fatal "Failed to install $to_install_paru"
                 _append_transmap "pkg $to_install_paru"
             else
                 return 1
             fi
         fi
     elif is_ostree; then
-        sudo rpm-ostree install "$to_install" || fatal "Failed to install $to_install"
+        sudo rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         _append_transmap "pkg $to_install"
     elif is_fedora; then
-        sudo dnf in -y "$to_install" || fatal "Failed to install $to_install"
+        sudo dnf in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         _append_transmap "pkg $to_install"
     elif is_suse; then
-        sudo zypper in -y "$to_install" || fatal "Failed to install $to_install"
+        sudo zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         _append_transmap "pkg $to_install"
     elif is_solus; then
-        sudo eopkg it -y "$to_install" || fatal "Failed to install $to_install"
+        sudo eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         _append_transmap "pkg $to_install"
     fi
 }
@@ -326,7 +326,7 @@ pkg_flat() {
        ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
         flatpak_scope="--system"
     fi
-    flatpak install --or-update "$flatpak_scope" --noninteractive flathub "$*" || fatal "Failed to install flatpak packages $*"
+    flatpak install --or-update "$flatpak_scope" --noninteractive flathub "${@}" || fatal "Failed to install flatpak packages $*"
     _append_transmap "flatpak $*"
 }
 pkg_fromfile () {
@@ -349,10 +349,10 @@ pkg_fromfile () {
     fi
     
     if is_debian || is_ubuntu; then
-        { sudo apt install -y "$*" || sudo dpkg -i "$*"; } || fatal "Failed to install $*"
+        { sudo apt install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_arch || is_cachy; then
-        if sudo pacman -U "$*"; then
+        if sudo pacman -U "${@}"; then
             _append_transmap "pkg file $*"
         else
             if [ -f PKGBUILD ]; then
@@ -364,16 +364,16 @@ pkg_fromfile () {
             fi
         fi
     elif is_ostree; then
-        sudo rpm-ostree install "$*" || fatal "Failed to install $*"
+        sudo rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_fedora; then
-        sudo dnf install -y "$*" || fatal "Failed to install $*"
+        sudo dnf install -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_suse; then
-        sudo zypper in -y "$*" || fatal "Failed to install $*"
+        sudo zypper in -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_solus; then
-        sudo eopkg it -y "$*" || fatal "Failed to install $*"
+        sudo eopkg it -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     fi
 }
