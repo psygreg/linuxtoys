@@ -76,7 +76,7 @@ sboost_lib () {
     # patch for Nvidia GPUs
     patch_nv () {
         if fetch_with_fallback "patch-nvidia" "patch-nvidia"; then
-            echo -e "\n$(cat ${LT_TEMPDIR}/patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            echo -e "\n$(cat patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
         else
             fatal "Failed to fetch patch-nvidia."
         fi
@@ -84,7 +84,7 @@ sboost_lib () {
     # patch for Mesa-driven GPUs
     patch_mesa () {
         if fetch_with_fallback "patch-mesa" "patch-mesa"; then
-            echo -e "\n$(cat ${LT_TEMPDIR}/patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            echo -e "\n$(cat patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
         else
             fatal "Failed to fetch patch-mesa."
         fi
