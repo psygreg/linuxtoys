@@ -257,12 +257,23 @@ pkg_exists () {
     done
 }
 pkg_install () {
-    pkg_exists "$@"
+    # Handle --ignore-appends flag
+    local _ignore_appends=0
+    local -a _filtered_args=()
+    for arg in "$@"; do
+        if [[ "$arg" == "--ignore-appends" ]]; then
+            _ignore_appends=1
+        else
+            _filtered_args+=("$arg")
+        fi
+    done
+    
+    pkg_exists "${_filtered_args[@]}"
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
     if is_debian || is_ubuntu; then
         sudo apt install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
-        _append_transmap "pkg $to_install"
+        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy; then
         local _pacman_pkgs=()
         local _paru_pkgs=()
@@ -277,42 +288,42 @@ pkg_install () {
         local to_install_paru="${_paru_pkgs[*]}"
         if [ -n "$to_install_pacman" ]; then
             sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
-            _append_transmap "pkg $to_install_pacman"
+            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
         fi
         if [ -n "$to_install_paru" ]; then
             if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
                 if ! command -v paru &>/dev/null; then
                     if pacman -Ss paru | grep -q paru; then
                         sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
-                        _append_transmap "pkg paru"
+                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
                     else
                         sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
-                        _append_transmap "pkg base-devel"
+                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg base-devel"
                         prep_tmp
                         git clone https://aur.archlinux.org/paru.git
                         cd paru || fatal "Failed to install paru"
                         makepkg -si
-                        _append_transmap "pkg paru"
+                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
                     fi
                 fi
                 paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || fatal "Failed to install $to_install_paru"
-                _append_transmap "pkg $to_install_paru"
+                [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
             else
                 return 1
             fi
         fi
     elif is_ostree; then
         sudo rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
-        _append_transmap "pkg $to_install"
+        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_fedora; then
         sudo dnf in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
-        _append_transmap "pkg $to_install"
+        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_suse; then
         sudo zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
-        _append_transmap "pkg $to_install"
+        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_solus; then
         sudo eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
-        _append_transmap "pkg $to_install"
+        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     fi
 }
 pkg_flat() {
