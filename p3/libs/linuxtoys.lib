@@ -14,7 +14,7 @@ _msg() {
     case "$type" in
         info)    zenity --info --text "$text" --width 360 --height 300 ;;
         warning) zenity --warning --text "$text" --width 360 --height 300 ;;
-        error)   zenity --error --title "$title" --text "$text" --width 360 --height 300 ;;
+        error)   echo "$text"; zenity --error --title "$title" --text "$text" --width 360 --height 300 ;;
         *)       echo "$text" ;;
     esac
 }
