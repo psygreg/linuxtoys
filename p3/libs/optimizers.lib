@@ -45,7 +45,6 @@ cachyos_sysd_lib () {
     fi
     for file in modprobe.d/* udev/rules.d/* tmpfiles.d/*; do
         prep_create "/usr/lib/$file"
-        rm -f "/usr/lib/$file" # ensure no clobber
         copy_ -f "$file" "/usr/lib/$file"
     done
     if ! is_solus; then
