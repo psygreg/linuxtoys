@@ -107,6 +107,7 @@ is_debian() { sysdetect && [[ "$ID" == "debian" || "$ID" == "ubuntu" || "$ID_LIK
 is_ubuntu() { sysdetect && [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_suse() { sysdetect && [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
 is_solus() { sysdetect && [[ "$ID" == "solus" ]]; }
+is_zorin() { sysdetect && [[ "$ID" == "zorin" ]]; }
 
 # GPU detection
 is_nvidia() {
