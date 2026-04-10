@@ -1069,6 +1069,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # Always reload categories with new translations (so they're ready when user navigates back)
         self.load_categories()
 
+        # Refresh footer translations
+        self.reveal.update_translations(self.translations)
+
         # If we're currently viewing categories, we're done since load_categories() already updated the view
         if self.main_stack.get_visible_child_name() == "categories":
             return
@@ -1097,9 +1100,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             and self.current_category_info.get("display_mode", "menu") == "checklist"
         ):
             self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
-        
-        # Refresh footer translations
-        self.reveal.update_translations(self.translations)
 
     def _get_fresh_category_info_with_translations(self):
         """Get fresh category info with updated translations"""
