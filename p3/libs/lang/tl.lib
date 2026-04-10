@@ -110,4 +110,23 @@ gdrive_guide_text="1. I-ACCESS ANG GOOGLE CLOUD CONSOLE:
    → Ang isang dialog ay nagpapakita ng iyong \"Client ID\" at \"Client Secret\"
    → Ihanda ang mga ito para sa susunod na hakbang!
 
-I-click ang \"OK\" sa lahat ng mga hakbang sa itaas upang magpatuloy.\""
+I-click ang \"OK\" sa lahat ng mga hakbang sa itaas upang magpatuloy."
+odrive_guide_text="
+MGA INSTRUCTION PARA SA ONEDRIVE PERSONAL
+
+1. Mag-register ng App Name para sa CLIENT ID
+   → Buksan ang https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview at pagkatapos sa Add menu, i-click ang App registration.
+      • Kung hindi pa kayo lumikha ng Azure account, ipapaalala sa inyo. Libre ito, ngunit kailangan ninyong magbigay ng phone number, address, at credit card para sa identity verification.
+
+   → Magpasok ng pangalan para sa inyong 'app', pumili ng account type Accounts in any organizational directory (Any Azure AD directory - Multitenant) at personal Microsoft accounts (hal. Skype, Xbox)
+   → Piliin ang Web sa Redirect URI, pagkatapos i-type (huwag kopyahin at i-paste) http://localhost:53682/ at i-click ang Register. Kopyahin at panatilihin ang Application (client) ID sa ilalim ng app name.
+
+2. Kunin ang account SECRET
+   → Sa Manage, pumili ng Certificates & secrets, i-click ang New client secret. Magpasok ng description (pwedeng kahit ano) at i-set ang Expires sa 24 months. 
+   → Kopyahin at panatilihin ang secret Value na iyon (hindi ninyo makikita ang value na ito pagkatapos).
+
+3. Final preparations
+   → Sa Manage, pumili ng API permissions, i-click ang Add a permission at pumili ng Microsoft Graph pagkatapos ay pumili ng delegated permissions.
+   → Maghanap at pumili ng mga sumusunod na permissions: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read at Sites.Read.All. Pagkatapos ng selection ay i-click ang Add permissions sa ibaba.
+
+Pagkatapos ninyong makumpleto ang mga hakbang na ito, i-click ang OK para magpatuloy."

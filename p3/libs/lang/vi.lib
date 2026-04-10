@@ -110,4 +110,23 @@ gdrive_guide_text="1. TRUY CẬP GOOGLE CLOUD CONSOLE:
    → Hộp thoại hiển thị \"ID Khách hàng\" và \"Bí mật Khách hàng\" của bạn
    → Chuẩn bị chúng cho bước tiếp theo!
 
-Nhấp vào \"OK\" trên tất cả các bước ở trên để tiếp tục.\""
+Nhấp vào \"OK\" trên tất cả các bước ở trên để tiếp tục."
+odrive_guide_text="
+HƯỚNG DẪN CHO ONEDRIVE CÁ NHÂN
+
+1. Đăng ký Tên Ứng dụng cho CLIENT ID
+   → Mở https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview, sau đó trong menu Thêm, nhấn Đăng ký ứng dụng.
+      • Nếu bạn chưa tạo tài khoản Azure, bạn sẽ được yêu cầu tạo. Đây là miễn phí, nhưng bạn cần cung cấp số điện thoại, địa chỉ và thẻ tín dụng để xác minh danh tính.
+
+   → Nhập tên cho 'ứng dụng' của bạn, chọn loại tài khoản Tài khoản trong bất kỳ thư mục tổ chức nào (Bất kỳ thư mục Azure AD - Đa người thuê) và tài khoản Microsoft cá nhân (ví dụ: Skype, Xbox)
+   → Chọn Web trong URI Chuyển hướng lại, sau đó nhập (không sao chép và dán) http://localhost:53682/ rồi nhấn Đăng ký. Sao chép và giữ ID Ứng dụng (Khách hàng) dưới tên ứng dụng.
+
+2. Lấy CHI BÍ MẬT tài khoản
+   → Dưới Quản lý, chọn Chứng chỉ và bí mật, nhấn Bí mật khách hàng mới. Nhập mô tả (có thể là bất kỳ cái gì) và đặt Hết hạn thành 24 tháng. 
+   → Sao chép và giữ giá trị bí mật này (bạn sẽ không thể thấy giá trị này sau đó).
+
+3. Chuẩn bị cuối cùng
+   → Dưới Quản lý, chọn Quyền API, nhấn Thêm quyền và chọn Microsoft Graph, sau đó chọn quyền được ủy quyền.
+   → Tìm kiếm và chọn các quyền sau: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read và Sites.Read.All. Sau khi chọn, nhấn Thêm quyền ở dưới cùng.
+
+Sau khi hoàn thành các bước này, nhấn OK để tiếp tục."

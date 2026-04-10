@@ -76,6 +76,26 @@ msg304="Włączenie Secure Boot przez 'sbctl', metodę używaną przez tę aplik
 msg305="Ta instalacja wymaga dostępności paru, pomocnika AUR. Czy chcesz go teraz zainstalować?"
 nocl="OpenCL nie znaleziono. Prosimy zainstalować ROCm, RustiCL lub Intel's Compute Runtime z menu Drivers zgodnie z Twoim modelem GPU."
 
+odrive_guide_text="
+INSTRUKCJE DLA ONEDRIVE PERSONAL
+
+1. Zarejestruj nazwę aplikacji dla CLIENT ID
+   → Otwórz https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview, a następnie w menu Dodaj kliknij Rejestracja aplikacji.
+      • Jeśli nie utworzyłeś konta Azure, zostaniesz poproszony o jego utworzenie. Jest to bezpłatne, ale musisz podać numer telefonu, adres i kartę kredytową w celu weryfikacji tożsamości.
+
+   → Wpisz nazwę swojej "aplikacji", wybierz typ konta Konta w dowolnym katalogu organizacyjnym (Dowolny katalog Azure AD - Multitenant) i osobiste konta Microsoft (np. Skype, Xbox)
+   → Wybierz Sieć Web w Redirect URI, a następnie wpisz (nie kopiuj ani nie wklejaj) http://localhost:53682/ i kliknij Zapisz. Skopiuj i zachowaj Application (client) ID pod nazwą aplikacji.
+
+2. Uzyskaj SECRET konta
+   → W sekcji Zarządzanie wybierz Certyfikaty i sekrety, kliknij Nowy sekret klienta. Wpisz opis (może być cokolwiek) i ustaw Wygasa na 24 miesiące.
+   → Skopiuj i zachowaj tę tajną wartość (później nie będziesz w stanie zobaczyć tej wartości).
+
+3. Ostatnie przygotowania
+   → W sekcji Zarządzanie wybierz Uprawnienia API, kliknij Dodaj uprawnienia i wybierz Microsoft Graph, a następnie wybierz pełnomocnictwa.
+   → Wyszukaj i wybierz następujące uprawnienia: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read i Sites.Read.All. Po wyborze kliknij Dodaj uprawnienia u dołu.
+
+Po wykonaniu tych kroków kliknij OK, aby kontynuować."
+
 gdrive_guide_text="1. DOSTĘP DO KONSOLI GOOGLE CLOUD:
    → Przejdź do witryny console.cloud.google.com i zaloguj się na konto Google
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. DOSTĘP DO KONSOLI GOOGLE CLOUD:
    → Okno wyświetli Twój \"Identyfikator klienta\" i \"Tajemnicę klienta\"
    → Przygotuj je na następny krok!
 
-Na wszystkich powyższych krokach kliknij \"OK\", aby kontynuować.\""
+Na wszystkich powyższych krokach kliknij \"OK\", aby kontynuować."

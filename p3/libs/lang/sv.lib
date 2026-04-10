@@ -76,6 +76,26 @@ msg304="Att aktivera Secure Boot genom 'sbctl', metoden som används av denna ap
 msg305="Denna installation kräver att paru, en AUR-hjälpare, är tillgänglig. Vill du installera den nu?"
 nocl="OpenCL hittades inte. Installera ROCm, RustiCL eller Intel's Compute Runtime från Drivers-menyn enligt din GPU-modell."
 
+odrive_guide_text="
+ANVISTNINGAR FÖR ONEDRIVE PERSONLIGT
+
+1. Registrera ett program namn för CLIENT ID
+   → Öppna https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview och klicka sedan på Programregistrering i menyn Lägg till.
+      • Om du inte har skapat ett Azure-konto uppmanas du att göra det. Det är gratis, men du måste ange ett telefonnummer, en adress och ett kreditkort för identitetsverifiering.
+
+   → Ange ett namn på din "app", välj kontotyp Konton i en organisationskatalog (vilken Azure AD-katalog som helst - Multitenant) och personliga Microsoft-konton (t.ex. Skype, Xbox)
+   → Välj Webb i Omdirigerings-URI, skriv sedan (kopiera inte och klistra inte in) http://localhost:53682/ och klicka Registrera. Kopiera och spara program-ID (klient) under appnamnet.
+
+2. Få kontots HEMLIGHET
+   → Välj Certifikat och hemligheter under Hantering, klicka Ny klienthemlighet. Ange en beskrivning (det kan vara vad som helst) och ställ in Upphör den på 24 månader.
+   → Kopiera och spara detta hemliga värde (du kommer inte att kunna se detta värde senare).
+
+3. Avslutande förberedelser
+   → Välj API-behörigheter under Hantering, klicka Lägg till behörighet och välj Microsoft Graph, sedan välj delegerade behörigheter.
+   → Sök och välj följande behörigheter: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read och Sites.Read.All. Klicka på Lägg till behörigheter längst ned när de är valda.
+
+När du har slutfört dessa steg klickar du OK för att fortsätta."
+
 gdrive_guide_text="1. ÅTKOMST TILL GOOGLE CLOUD-KONSOLEN:
    → Gå till console.cloud.google.com och logga in med ditt Google-konto
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. ÅTKOMST TILL GOOGLE CLOUD-KONSOLEN:
    → Ett fönster visar ditt \"Klient-ID\" och \"Klienthemlighet\"
    → Ha dem redo för nästa steg!
 
-Klicka \"OK\" på alla steg ovan för att fortsätta.\""
+Klicka \"OK\" på alla steg ovan för att fortsätta."

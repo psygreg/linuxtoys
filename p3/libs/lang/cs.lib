@@ -111,3 +111,23 @@ gdrive_guide_text="1. PŘÍSTUP KE GOOGLE CLOUD CONSOLE:
    → Připravte si je na další krok!
 
 Po dokončení těchto kroků klikněte na OK, abyste pokračovali."
+
+odrive_guide_text="
+POKYNY PRO ONEDRIVE PERSONAL
+
+1. Zaregistrujte název aplikace pro CLIENT ID
+   → Otevřete https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview a poté v nabídce Přidat klikněte na Registrace aplikace.
+      • Pokud jste si nevytvořili účet Azure, budete vyzváni, abyste to udělali. To je zdarma, ale musíte poskytnout telefonní číslo, adresu a kreditní kartu pro ověření identity.
+
+   → Zadejte název vaší aplikace, vyberte typ účtu Účty v jakémkoli adresáři organizace (jakýkoli adresář Azure AD - Víceklientský) a osobní účty Microsoft (např. Skype, Xbox)
+   → Vyberte Web v identifikátoru URI přesměrování a poté zadejte (nekopírujte a nevkládejte) http://localhost:53682/ a klikněte na Registrovat. Zkopírujte a uschovejte ID aplikace (klienta) pod názvem aplikace.
+
+2. Získejte TAJEMSTVÍ účtu
+   → V části Správa vyberte Certifikáty a tajemství, klikněte na Nové tajemství klienta. Zadejte popis (může být cokoliv) a nastavte Vypršení na 24 měsíců.
+   → Zkopírujte a uschovejte tuto hodnotu tajemství (tuto hodnotu nebudete moci vidět později).
+
+3. Závěrečné přípravy
+   → V části Správa vyberte Oprávnění rozhraní API, klikněte na Přidat oprávnění a vyberte Microsoft Graph, poté vyberte Delegovaná oprávnění.
+   → Vyhledejte a vyberte následující oprávnění: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read a Sites.Read.All. Po výběru klikněte na Přidat oprávnění v dolní části.
+
+Po dokončení těchto kroků klikněte na OK, abyste pokračovali"

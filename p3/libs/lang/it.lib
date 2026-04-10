@@ -110,3 +110,22 @@ gdrive_guide_text="1. ACCEDI ALLA CONSOLE DI GOOGLE CLOUD:
    → Tienili pronti per il passaggio successivo!
 
 In tutti i passaggi precedenti, fai clic su OK per continuare.\""
+odrive_guide_text="
+ISTRUZIONI PER ONEDRIVE PERSONAL
+
+1. Registrare un nome applicazione per CLIENT ID
+   → Apri https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview e quindi nel menu Aggiungi fai clic su Registra un'applicazione.
+      • Se non hai creato un account Azure, ti verrà chiesto di farlo. È gratuito ma dovrai fornire numero di telefono, indirizzo e carta di credito per la verifica dell'identità.
+
+   → Immetti un nome per la tua 'applicazione', seleziona il tipo di account Account in qualsiasi directory organizzativa (Qualsiasi directory Azure AD - Multi-tenant) e account personali Microsoft (ad es. Skype, Xbox)
+   → Seleziona Web nell'URI di reindirizzamento, quindi digita (non copiare e incollare) http://localhost:53682/ e fai clic su Registra. Copia e conserva l'ID applicazione (client) con il nome dell'applicazione.
+
+2. Ottieni il SECRET dell'account
+   → Sotto Gestisci seleziona Certificati e segreti, fai clic su Nuovo segreto client. Immetti una descrizione (può essere qualsiasi cosa) e imposta Scadenza a 24 mesi.
+   → Copia e conserva questo valore segreto (non potrai vedere questo valore in seguito).
+
+3. Preparativi finali
+   → Sotto Gestisci seleziona Autorizzazioni API, fai clic su Aggiungi un'autorizzazione e seleziona Microsoft Graph quindi seleziona Autorizzazioni delegate.
+   → Cerca e seleziona le seguenti autorizzazioni: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read e Sites.Read.All. Dopo la selezione fare clic su Aggiungi autorizzazioni in basso.
+
+In tutti i passaggi precedenti, fai clic su OK per continuare"

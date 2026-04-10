@@ -111,3 +111,23 @@ gdrive_guide_text="1. גש ליחידת הבקרה של Google Cloud:
    ← הכונו אותם לשלב הבא!
 
 בכל השלבים לעיל, לחץ על OK כדי להמשיך."
+
+odrive_guide_text="
+הוראות ל- ONEDRIVE PERSONAL
+
+1. הרשם שם יישום עבור CLIENT ID
+   → פתח את https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ואז בתפריט Add לחץ על App registration.
+      • אם עדיין לא יצרת חשבון Azure, תתבקש לעשות זאת. זה בחינם, אך עליך לספק מספר טלפון, כתובת וכרטיס אשראי לצורך אימות זהות.
+
+   → הזן שם עבור 'האפליקציה' שלך, בחר סוג חשבון Accounts in any organizational directory (Any Azure AD directory - Multitenant) וחשבונות אישיים של Microsoft (לדוגמה, Skype, Xbox)
+   → בחר Web ב- Redirect URI, ואז הקלד (אל תעתיק והדבק) http://localhost:53682/ ולחץ על Register. העתק והחזק על Application (client) ID תחת שם האפליקציה.
+
+2. קבל את סוד החשבון
+   → תחת Manage בחר Certificates & secrets, לחץ על New client secret. הזן תיאור (יכול להיות כל דבר) והגדר את Expires על 24 חודשים.
+   → העתק והחזק על ערך סוד זה (לא תוכל לראות ערך זה מאוחר יותר).
+
+3. הכנות סופיות
+   → תחת Manage בחר API permissions, לחץ על Add a permission ובחר Microsoft Graph ואז בחר delegated permissions.
+   → חפש ובחר את ההרשאות הבאות: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ו- Sites.Read.All. לאחר הבחירה, לחץ על Add permissions בחלק התחתון.
+
+בכל השלבים לעיל, לחץ על OK כדי להמשיך"

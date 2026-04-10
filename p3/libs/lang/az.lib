@@ -111,3 +111,23 @@ gdrive_guide_text="1. Google Cloud Konsoluna Daxil Olun:
    → Bunları Sonrakı addım üçün hazır saxlayın!
 
 Bu addımları tamamladıqdan sonra Davam Etmə üçün Razı klikləyin."
+
+odrive_guide_text="
+ONEDRIVE PERSONAL ÜÇÜN TƏLİMATLAR
+
+1. CLIENT ID üçün Tətbiq Adını Qeydiyyatdan Keçirin
+   → https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview açın və Add menusundan App registration'a klikləyin.
+      • Əgər Azure hesabı yaratmamışsınız, sizə sorulacaq. Bu pulsuz, lakin telefon nömrəsi, ünvan və kimlik doğrulaması üçün kredit kartı təqdim etməlisiniz.
+
+   → Tətbiqiniz üçün ad daxil edin, Hesab növünü seçin: Accounts in any organizational directory (Hər hansı Azure AD direktori - Çoxkiriş) və şəxsi Microsoft hesabları (məsələn Skype, Xbox)
+   → Redirect URI-də Web seçin, sonra (kopyalamayın və yapışdırmayın) http://localhost:53682/ yazın və Register'ə klikləyin. Tətbiq (client) ID'sini kopyalayın və saxlayın.
+
+2. Hesab SECRETini Alın
+   → Manage altında Certificates & secrets seçin, New client secret'ə klikləyin. Təsvir daxil edin (istənilən şey ola bilər) və Expires'ı 24 aya ayarlayın.
+   → Bu gizli dəyəri kopyalayın və saxlayın (bunu sonra görmə qabiliyyətiniz olmayacaq).
+
+3. Son Hazırlıqlar
+   → Manage altında API permissions seçin, Add a permission'ə klikləyin və Microsoft Graph seçin, sonra delegated permissions seçin.
+   → Aşağıdaki icazələri axtarın və seçin: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read və Sites.Read.All. Seçildikdən sonra aşağıdakı Add permissions'a klikləyin.
+
+Bu addımları tamamladıqdan sonra davam etmək üçün OK'yə klikləyin."

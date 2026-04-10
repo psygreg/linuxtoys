@@ -110,4 +110,24 @@ gdrive_guide_text="1. PÄÄS GOOGLE CLOUD KONSOOLI:
    → Aken näitab teie \"Kliendi ID\" ja \"Kliendi saladust\"
    → Olge järgmise sammu jaoks valmis!
 
-Kui olete need sammud lõpetanud, klõpsake OK, et jätkata."
+Kui olete need sammut lõpetanud, klõpsake OK, et jätkata."
+
+odrive_guide_text="
+ONEDRIVE PERSONAL JUHISED
+
+1. Registreerige rakenduse nimi CLIENT ID jaoks
+   → Avage https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ja seejärel menüüs Lisa klõpsake rakenduse registreerimisel.
+      • Kui te ei ole Azure'i kontot loonud, kutsutakse teid seda tegema. See on tasuta, kuid peate identiteedi kontrollimiseks sisestama telefoninumbri, aadressi ja krediitkaardi.
+
+   → Sisestage oma \"rakenduse\" nimi, valige kontotüüp Kontod mis tahes organisatsiooni kataloogis (mis tahes Azure AD kataloog - Multitenant) ja Microsoft'i isiklikud kontod (nt Skype, Xbox)
+   → Valige Redirect URI-s veebi ja sisestage seejärel (ärge kopeerige ega kleepige) http://localhost:53682/ ning klõpsake Registreeri. Kopeerige ja säilitame rakenduse (kliendi) ID rakenduse nime all.
+
+2. Hankige konto SALADUS
+   → Halda jaotises valige Sertifikaadid ja saladused, klõpsake uuel kliendi saladusel. Sisestage kirjeldus (võib olla ükskõik mis) ja määrake aegumistähtaeg 24 kuule.
+   → Kopeerige ja säilitake see salajane väärtus (te ei saa seda väärtust hiljem näha).
+
+3. Lõplikud ettevalmistused
+   → Halda jaotises valige API-load, klõpsake luba lisada ja valige Microsoft Graph, seejärel valige delegeeritud load.
+   → Otsige ja valige järgmisi lubasid: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ja Sites.Read.All. Kui need on valitud, klõpsake allosas Load lisada.
+
+Kui olete need sammut lõpetanud, klõpsake OK, et jätkata"

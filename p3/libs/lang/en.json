@@ -416,5 +416,6 @@
   "registry_cleanup_partial_title": "Cleanup Completed with Warnings",
   "registry_cleanup_failed": "Failed to remove registry entry.",
   "shelly_desc": "Search standard packages, AUR, and Flatpak in one concise and modern package manager.",
-  "rgdrive_desc": "Add your Google Drive as a mount in your home directory, synchronized with rclone, allowing you to easily access and manage your cloud files from your file manager and terminal."
+  "rgdrive_desc": "Add your Google Drive as a mount in your home directory, synchronized with rclone, allowing you to easily access and manage your cloud files from your file manager and terminal.",
+  "rodrive_desc": "Add your OneDrive as a mount in your home directory, synchronized with rclone, allowing you to easily access your cloud files from your file manager and terminal."
 }

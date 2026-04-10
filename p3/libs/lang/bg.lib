@@ -111,3 +111,23 @@ gdrive_guide_text="1. ДОСТЪaП ДО GOOGLE CLOUD CONSOLE:
    → Изчаквали от вървате улоги чии стъпите етари!
 
 След като докончите ъту листита, кликнете OK, чтобы продолжить."
+
+odrive_guide_text="
+ИНСТРУКЦИИ ЗА ONEDRIVE PERSONAL
+
+1. Регистрирайте име на приложение за CLIENT ID
+   → Отворете https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview и след това под Добавяне меню кликнете на App registration.
+      • Ако не сте създали Azure акаунт, ще бъдете приканени да го направите. Това е безплатно,但трябва да предоставите телефонен номер, адрес и кредитна карта за проверка на самоличността.
+
+   → Въведете име за вашето приложение, изберете тип акаунт Accounts in any organizational directory (Any Azure AD directory - Multitenant) и лични акаунти на Microsoft (напр. Skype, Xbox)
+   → Изберете Web в Redirect URI, след което въведете (не копирайте и залепвайте) http://localhost:53682/ и кликнете Register. Копирайте и запазете Application (client) ID под име на приложението.
+
+2. Вземете акаунта SECRET
+   → Под Manage изберете Certificates & secrets, кликнете New client secret. Въведете описание (може да бъде всичко) и настройте Expires на 24 месеца.
+   → Копирайте и запазете тази тайна стойност (няма да можете да видите тази стойност по-късно).
+
+3. Окончателни приготовления
+   → Под Manage изберете API permissions, кликнете Add a permission и изберете Microsoft Graph след това изберете delegated permissions.
+   → Потърсете и изберете следните разрешения: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read и Sites.Read.All. След като са избрани, кликнете Add permissions в дъното.
+
+След като докончите ъту листита, кликнете OK, чтобы продолжить"

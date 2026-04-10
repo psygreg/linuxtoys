@@ -416,5 +416,6 @@
   "registry_cleanup_partial_title": "ጥራዝ ሙሌት ሙሎ ማስጠንቀቂያ",
   "registry_cleanup_failed": "ምዝገባ ግቤት ማስወገድ ወደፊት",
   "shelly_desc": "ስታንዳርድ ፓኬጆች፣ AUR እና Flatpak በአንድ ማጠቃለያ እና ዘመናዊ ፓኬጅ ব్ manager ውስጥ ይፈልጉ።",
-  "rgdrive_desc": "Google Drive ን ወደ ቤትዎ ዳይሬክቶሪ ተራ ያክሉ፣ በ rclone ተመሳሳይ፣ ከ ፋይል 리ንጅርዎ እና ተርሚናል ቀላል ጋዝ ወደ ሕሙሙ ፋይሎቻውን ይ۔ገጥቱ።"
+  "rgdrive_desc": "Google Drive ን ወደ ቤትዎ ዳይሬክቶሪ ተራ ያክሉ፣ በ rclone ተመሳሳይ፣ ከ ፋይል 리ንጅርዎ እና ተርሚናል ቀላል ጋዝ ወደ ሕሙሙ ፋይሎቻውን ይ۔ገጥቱ።",
+  "rodrive_desc": "Google Drive ን ወደ ቤትዎ ዳይሬክቶሪ ተራ ያክሉ፣ በ rclone ተመሳሳይ፣ ከ ፋይል 리ንጅርዎ እና ተርሚናል ቀላል ጋዝ ወደ ሕሙሙ ፋይሎቻውን ይገጥቱ።"
 }

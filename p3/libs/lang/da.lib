@@ -111,3 +111,23 @@ gdrive_guide_text="1. FÅ ADGANG TIL GOOGLE CLOUD CONSOLE:
    → Hav dem parat til næste trin!
 
 Når du har afsluttet disse trin, skal du klikke OK for at fortsætte."
+
+odrive_guide_text="
+INSTRUKTIONER TIL ONEDRIVE PERSONAL
+
+1. Registrer et appnavn til CLIENT ID
+   → Åbn https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview og klik derefter på App registration under Tilføj-menuen.
+      • Hvis du ikke har oprettet en Azure-konto, bliver du bedt om at gøre det. Dette er gratis, men du skal give dit telefonnummer, adresse og kreditkort til identitetsbekræftelse.
+
+   → Indtast et navn til din 'app', vælg kontotype Konti i enhver organisationsmappe (Enhver Azure AD-mappe - Multitenant) og personlige Microsoft-konti (f.eks. Skype, Xbox)
+   → Vælg Web i Redirect URI og skriv derefter (kopier ikke og indsæt ikke) http://localhost:53682/ og klik på Registrer. Kopier og bevar Application (client) ID under appnavnet.
+
+2. Få kontohemmeligheden
+   → Under Administrer skal du vælge Certifikater og hemmeligheder, klikke på Ny klienthemlighed. Indtast en beskrivelse (kan være hvad som helst) og indstil Udløbet til 24 måneder.
+   → Kopier og bevar denne hemmelige værdi (du kan ikke se denne værdi senere).
+
+3. Endelige forberedelser
+   → Under Administrer skal du vælge API-tilladelser, klikke på Tilføj en tilladelse og vælge Microsoft Graph, derefter vælge Delegerede tilladelser.
+   → Søg efter og vælg følgende tilladelser: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read og Sites.Read.All. Når de er valgt, skal du klikke på Tilføj tilladelser nederst.
+
+Når du har afsluttet disse trin, skal du klikke OK for at fortsætte"

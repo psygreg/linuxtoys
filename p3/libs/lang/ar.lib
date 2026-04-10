@@ -111,3 +111,23 @@ gdrive_guide_text="1. الوصول إلى وحدة تحكم Google Cloud:
    → احتفظ بهذه جاهزة للخطوة التالية!
 
 بعد الانتهاء من هذه الخطوات، انقر فوق موافق للمتابعة."
+
+odrive_guide_text="
+تعليمات OneDrive الشخصية
+
+1. تسجيل اسم تطبيق للحصول على معرّف العميل
+   → افتح https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ثم انقر على App registration من القائمة Add.
+      • إذا لم تقم بإنشاء حساب Azure، سيُطلب منك القيام بذلك. هذا مجاني، لكن عليك تقديم رقم هاتف وعنوان وبطاقة ائتمان للتحقق من الهوية.
+
+   → أدخل اسماً لـ'التطبيق' الخاص بك، واختر نوع الحساب: Accounts in any organizational directory (أي دليل Azure AD - متعدد المستأجرين) والحسابات الشخصية لـ Microsoft (مثل Skype و Xbox)
+   → اختر Web في Redirect URI، ثم اكتب (لا تنسخ والصق) http://localhost:53682/ وانقر على Register. انسخ واحتفظ برقم معرّف تطبيق العميل تحت اسم التطبيق.
+
+2. احصل على سر الحساب
+   → ضمن Manage اختر Certificates & secrets، انقر على New client secret. أدخل وصفاً (يمكن أن يكون أي شيء) واضبط Expires على 24 شهراً.
+   → انسخ واحتفظ بقيمة السر هذه (لن تتمكن من رؤية هذه القيمة لاحقاً).
+
+3. التحضيرات النهائية
+   → ضمن Manage اختر API permissions، انقر على Add a permission واختر Microsoft Graph ثم اختر delegated permissions.
+   → ابحث واختر الأذونات التالية: Files.Read و Files.ReadWrite و Files.Read.All و Files.ReadWrite.All و offline_access و User.Read و Sites.Read.All. بعد الاختيار، انقر على Add permissions في الأسفل.
+
+بعد الانتهاء من هذه الخطوات، انقر على OK للمتابعة."

@@ -111,3 +111,23 @@ gdrive_guide_text="1. HOZZÁFÉRÉS A GOOGLE CLOUD KONZOLHOZ:
    → Tartsa őket készen a következő lépéshez!
 
 A fenti összes lépésnél kattintson az OK gombra a folytatáshoz."
+
+odrive_guide_text="
+ONEDRIVE PERSONAL UTASÍTÁSOK
+
+1. Regisztráljon egy alkalmazásnevet a CLIENT ID-hez
+   → Nyisd meg a https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview weboldalt, majd az Hozzáadás menü alatt kattintson az Alkalmazás regisztrálása lehetőségre.
+      • Ha nem hozott létre Azure-fiókot, majd felkérik ezt megtenni. Ingyenes, de meg kell adnia telefonszámát, címét és bankkártyáját az identitás-ellenőrzéshez.
+
+   → Adja meg az "alkalmazás" nevét, válassza ki a fiók típusát: Fiókok bármely szervezeti címtárban (Bármilyen Azure AD-könyvtár - Több-bérlős) és személyes Microsoft-fiókok (pl. Skype, Xbox)
+   → Válassza a Web lehetőséget az Átirányítási URI-ben, majd írja be (ne másolja és illessze be) a http://localhost:53682/ címet, és kattintson a Regisztráció gombra. Másolja és őrizze meg az alkalmazás (ügyfél) ID-jét az alkalmazásnév alatt.
+
+2. Get a fiók TITKA
+   → A Felügyelet alatt válassza ki a Tanúsítványok és titkok lehetőséget, kattintson az Új ügyfél titka lehetőségre. Adjon meg egy leírást (lehet bármi), és állítsa a Lejárat időpontját 24 hónapra.
+   → Másolja és őrizze meg ezt a titkos értéket (ezt az értéket később nem tudja megtekinteni).
+
+3. Végső előkészületek
+   → A Felügyelet alatt válassza ki az API-engedélyek lehetőséget, kattintson a Hozzáadás engedély lehetőségre, és válassza ki a Microsoft Graphot, majd válassza ki a Delegált engedélyek lehetőséget.
+   → Keresse meg és válassza ki a következő engedélyeket: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read és Sites.Read.All. Kiválasztás után kattintson az alul található Engedélyek hozzáadása lehetőségre.
+
+A fenti összes lépésnél kattintson az OK gombra a folytatáshoz"

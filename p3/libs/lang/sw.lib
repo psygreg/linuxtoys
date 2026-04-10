@@ -77,6 +77,26 @@ msg304="Kuwezesha Secure Boot kupitia 'sbctl', mbinu inayotumika na programu hii
 msg305="Usakinishaji huu unahitaji kuwa na paru, msaidizi wa AUR, inapatikana. Je, ungependa kuisakinisha sasa?"
 nocl="OpenCL haikuonekani. Tafadhali sanidi ROCm, RustiCL, au Intel's Compute Runtime kutoka kwa menyu ya Drivers kulingana na muundo wa GPU yako."
 
+odrive_guide_text="
+MASONGOZO YA ONEDRIVE BINAFSI
+
+1. Jisajili jina la programu kwa CLIENT ID
+   → Fungua https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview na kisha kwenye menyu ya Ongeza bonyeza Usajili wa Programu.
+      • Ikiwa hajautengeneza akaunti ya Azure, utaombwa kufanya hivyo. Hii ni bure, lakini unahitaji kutoa namba ya simu, anwani na kadi ya mkopo kwa uthibitisho wa utambulisho.
+
+   → Ingiza jina lisilomanikana la "programu" yako, chagua aina ya akaunti Akaunti katika saraka inayokubaliana (Saraka yoyote ya Azure AD - Multitenant) na akaunti za kibinafsi za Microsoft (mfano Skype, Xbox)
+   → Chagua Wavuti katika URI ya Kupukutia, kisha weka (usikunde na ukate) http://localhost:53682/ na ubonyeze Jisajili. Nakili na hifadhi Kitambulisho cha Programu (mteja) chini ya jina la programu.
+
+2. Kupata akaunti ya SIRI
+   → Chini ya Usimamizi, chagua Vyeti na Siri, ubonyeze Siri mpya ya mteja. Weka maelezo (inaweza kuwa kitu chochote) na usanidi Kuishia kuwa miezi 24.
+   → Nakili na hifadhi thamani hii ya siri (hautaweza kuona thamani hii baadaye).
+
+3. Maandalizi ya mwisho
+   → Chini ya Usimamizi, chagua Vibali vya API, ubonyeze Ongeza Ruhusa na chagua Microsoft Graph, kisha chagua Ruhusa za Kupangia.
+   → Tafuta na chagua Ruhusa hizi: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read na Sites.Read.All. Baada ya kukamatia, ubonyeze Ongeza Ruhusa chini.
+
+Baada ya kumaliza hatua hizi, bonyeza SAWA ili kuendelea."
+
 gdrive_guide_text="1. FADHILI KWENYE KONSOOLI YA GOOGLE CLOUD:
    → Nenda kwa console.cloud.google.com na ingia kwa akaunti ya Google
 
@@ -111,4 +131,4 @@ gdrive_guide_text="1. FADHILI KWENYE KONSOOLI YA GOOGLE CLOUD:
    → Dirisha litaonyesha \"ID ya Mteja\" yako na \"Siri ya Mteja\"
    → Zihifadhi kwa hatua inayofuata!
 
-Bonyeza \"SAWA\" kwenye hatua zote hapo juu ili kuendelea.\""
+Bonyeza \"SAWA\" kwenye hatua zote hapo juu ili kuendelea."

@@ -111,3 +111,23 @@ gdrive_guide_text="1. Google Cloud ኮንሶል ላይ ይገቡ:
    → ለሚቀጥለው ደረጃ ይህ ያዘጋጁ!
 
 እነዚህ ደረጃዎች ከጨረስን በኋላ ውጤታና ድጋግሞ ወደ ተለወጠ መቀየር ይችላሉ።"
+
+odrive_guide_text="
+ለONEDRIVE PERSONAL መመሪያ
+
+1. ለCLIENT ID የAccount ስም ይመዝግቡ
+   → https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ይክፈቱ እና በAdd ሜኑ ስር App registration ላይ ጠቅ ያድርጉ።
+      • Azure ሳ ወስ ተጠቃሚ ከላልት ስልቶች ጋር ብዙውን ጊዜ ታደርጋለህ። ይህ ነጻ ነው ፣ ግን ስልክ ቁጥር ፣ አድራሻ እና ክሬዲት ካርድ ለማጋገስ ማረጋገጥ ያስፈልግዎታል።
+
+   → ለ'app'ዎ ስም ያስገቡ ፣ የAccount ዓይነት Accounts in any organizational directory (ማንኛውም Azure AD directory - Multitenant) እና ግላዊ Microsoft ሂሳቦች (ለምሳሌ Skype, Xbox) ይምረጡ
+   → በRedirect URI ውስጥ Web ይምረጡ ፣ ከዚያ (ቅጂ እና paste አታሁ) http://localhost:53682/ ይተይቡ እና Register ላይ ጠቅ ያድርጉ። Application (client) ID ን ትግበራ ስም ስር ይቅዱ እና ያቆዩት።
+
+2. ሂሳብ SECRET ያግኙ
+   → Manage ስር Certificates & secrets ይምረጡ ፣ New client secret ላይ ጠቅ ያድርጉ። Description ያስገቡ (ማንኛውም ሊሆን ይችላል) እና Expires ን ወደ 24 ወሮች ያቀናብሩ።
+   → ያ secret Value ይቅዱ እና ያቆዩት (ከዚያ በኋላ ይህን ዋጋ ማየት አይችሉም)።
+
+3. የመጨረሻ ዝግጅቶች
+   → Manage ስር API permissions ይምረጡ ፣ Add a permission ላይ ጠቅ ያድርጉ እና Microsoft Graph ይምረጡ ከዚያ delegated permissions ይምረጡ።
+   → የሚከተሉትን ፈቃዶች ፈልግ በርታቸውስ ይምረጡ: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read እና Sites.Read.All። ተመርጡ ከሆኑ በኋላ ወደ ስር Add permissions ላይ ጠቅ ያድርጉ።
+
+እነዚህ ደረጃዎች ከጨረስን በኋላ ወደ ፊት ለመቀጠል OK ላይ ጠቅ ያድርጉ።"

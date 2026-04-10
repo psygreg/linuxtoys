@@ -416,5 +416,6 @@
   "registry_cleanup_partial_title": "Limpeza concluída com avisos",
   "registry_cleanup_failed": "Falha ao remover entrada do registro",
   "shelly_desc": "Procure por pacotes padrão, AUR e Flatpak em um gerenciador de pacotes conciso e moderno.",
-  "rgdrive_desc": "Adicione Google Drive como um ponto de montagem no seu diretório inicial, sincronizado com rclone, permitindo que você acesse facilmente seus arquivos na nuvem e os gerencie pelo gerenciador de arquivos e terminal."
+  "rgdrive_desc": "Adicione Google Drive como um ponto de montagem no seu diretório inicial, sincronizado com rclone, permitindo que você acesse facilmente seus arquivos na nuvem e os gerencie pelo gerenciador de arquivos e terminal.",
+  "rodrive_desc": "Adicione OneDrive como um ponto de montagem no seu diretório inicial, sincronizado com rclone, permitindo que você acesse facilmente seus arquivos na nuvem e os gerencie pelo gerenciador de arquivos e terminal."
 }

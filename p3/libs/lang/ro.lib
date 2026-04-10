@@ -75,7 +75,25 @@ msg303="Secure Boot este deja activat. Nu este necesară nicio acțiune."
 msg304="Activarea Secure Boot prin 'sbctl', metoda folosită de această aplicație, poate deteriora dispozitivele mai vechi. Verificați dacă există rapoarte despre probleme la utilizarea acestui instrument cu modelul plăcii de bază înainte de a continua."
 msg305="Această instalare necesită disponibilitatea paru, un asistent AUR. Doriți să-l instalați acum?"
 nocl="OpenCL nu a fost detectat. Instalați ROCm, RustiCL sau Intel's Compute Runtime din meniul Drivers în funcție de modelul GPU-ului dvs."
+odrive_guide_text="
+INSTRUCŢIUNI PENTRU ONEDRIVE PERSONAL
 
+1. Îinregistraţi un nume de aplicaţie pentru CLIENT ID
+   → Deschideţi https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview și apoi din meniul Adaugă, faceţi clic pe Îinregistrare aplicaţie.
+      • Dacă nu aţi creat un cont Azure, vă va fi solicitat. Este gratuit, dar trebuie să furnizaţi un număr de telefon, adresă și card de credit pentru verificarea identităţii.
+
+   → Introduceţi un nume pentru "aplicaţia" dumneavoastră, alegeţi tipul de cont Conturi în orice director organizațional (Orice director Azure AD - Multitenant) și conturi Microsoft personale (de exemplu, Skype, Xbox)
+   → Selectaţi Web în URI de Redirecționare, apoi tipaţi (nu copiaţi și nu lipiţi) http://localhost:53682/ și faceţi clic pe Îinregistrare. Copiaţi și păstraţi ID-ul aplicaţiei (client) sub numele aplicaţiei.
+
+2. Obțineţi SECRETUL contului
+   → Sub Gestionare, selectaţi Certificete și secrete, faceţi clic pe Nou secret de client. Introduceţi o descriere (și pot fi oriceva) și setaţi Expiră la 24 de luni.
+   → Copiaţi și păstraţi această valoare secretă (nu veţi putea vedea această valoare mai târziu).
+
+3. Pregătiri finale
+   → Sub Gestionare, selectaţi Permisiuni API, faceţi clic pe Adaugă o permisiune și selectaţi Microsoft Graph, apoi selectaţi permisiuni delegate.
+   → Căutaţi și selectaţi următoarele permisiuni: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read și Sites.Read.All. După selectare, faceţi clic pe Adaugă permisiuni în partea de jos.
+
+După completarea acestor pași, faceţi clic pe OK pentru a continua."
 gdrive_guide_text="1. ACCESARE CONSOLEI GOOGLE CLOUD:
    → Mergeți la console.cloud.google.com și conectați-vă cu contul dvs. Google
 
@@ -110,4 +128,4 @@ gdrive_guide_text="1. ACCESARE CONSOLEI GOOGLE CLOUD:
    → O fereastră va afișa \"ID client\" și \"Secret client\" dvs.
    → Țineți-le gata pentru pasul următor!
 
-La toți pașii de mai sus, faceți clic pe \"OK\" pentru a continua.\""
+La toți pașii de mai sus, faceți clic pe \"OK\" pentru a continua."

@@ -111,3 +111,23 @@ gdrive_guide_text="1. ZUGRIFF AUF DIE GOOGLE CLOUD CONSOLE:
    → Halten Sie diese für den nächsten Schritt bereit!
 
 Nachdem Sie diese Schritte abgeschlossen haben, klicken Sie auf \"OK\", um fortzufahren."
+
+odrive_guide_text="
+ANLEITUNG FUER ONEDRIVE PERSONAL
+
+1. Registrieren Sie einen App-Namen für die CLIENT ID
+   → Öffnen Sie https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview und klicken Sie dann im Menü \"Hinzufügen\" auf \"App-Registrierung\".
+      • Wenn Sie noch kein Azure-Konto erstellt haben, werden Sie aufgefordert, dies zu tun. Dies ist kostenlos, aber Sie müssen Ihre Telefonnummer, Adresse und Kreditkartendaten zur Identitätsüberprüfung angeben.
+
+   → Geben Sie einen Namen für Ihre \"App\" ein, wählen Sie den Kontotyp \"Konten in einem beliebigen Organisationsverzeichnis (Beliebiges Azure AD-Verzeichnis - Mehrinstanzenfähig)\" und persönliche Microsoft-Konten (z. B. Skype, Xbox)
+   → Wählen Sie \"Web\" unter \"Umleitungs-URI\" und geben Sie dann (nicht kopieren und einfügen) http://localhost:53682/ ein und klicken Sie auf \"Registrieren\". Kopieren Sie die Anwendungs-ID (Client-ID) und speichern Sie sie unter dem App-Namen.
+
+2. Holen Sie sich das Kontogeheimnis
+   → Wählen Sie unter \"Verwalten\" die Option \"Zertifikate & Geheimnisse\" aus und klicken Sie auf \"Neuer geheimer Clientschlüssel\". Geben Sie eine Beschreibung ein (kann beliebig sein) und setzen Sie \"Ablauf\" auf 24 Monate.
+   → Kopieren Sie diesen geheimen Wert und speichern Sie ihn (Sie können diesen Wert später nicht mehr sehen).
+
+3. Abschließende Vorbereitungen
+   → Wählen Sie unter \"Verwalten\" die Option \"API-Berechtigungen\" aus, klicken Sie auf \"Berechtigung hinzufügen\" und wählen Sie \"Microsoft Graph\" aus. Wählen Sie dann \"Delegierte Berechtigungen\".
+   → Suchen Sie nach den folgenden Berechtigungen und wählen Sie sie aus: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read und Sites.Read.All. Klicken Sie nach dem Auswählen auf \"Berechtigungen hinzufügen\" unten.
+
+Nachdem Sie diese Schritte abgeschlossen haben, klicken Sie auf \"OK\", um fortzufahren"

@@ -416,5 +416,6 @@
   "registry_cleanup_partial_title": "Curățarea completă cu avertismente",
   "registry_cleanup_failed": "Imposibil de șters intrarea din registru",
   "shelly_desc": "Căutați pachete standard, AUR și Flatpak într-un manager de pachete concis și modern.",
-  "rgdrive_desc": "Adăugați Google Drive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal."
+  "rgdrive_desc": "Adăugați Google Drive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal.",
+  "rodrive_desc": "Adăugați OneDrive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal."
 }

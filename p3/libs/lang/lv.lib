@@ -76,6 +76,26 @@ msg304="Drošās sāknēšanas iespējošana, izmantojot 'sbctl', šīs lietotne
 msg305="Šai instalācijai ir nepieciešams paru, AUR palīgs. Vai vēlaties to instalēt tūlīt?"
 nocl="OpenCL nav atrasts. Lūdzu, instalējiet ROCm, RustiCL vai Intel's Compute Runtime no Drivers izvēlnes saskaņā ar jūsu GPU modeli."
 
+odrive_guide_text="
+INSTRUKCIJAS ONEDRIVE PERSONĪGO
+
+1. Reģistrējiet lietotnes nosaukumu CLIENT ID
+   → Atveriet https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview un pēc tam izvēlnē Add noklikšķiniet uz App registration.
+      • Ja neesat izveidojis Azure kontu, jums tiks prasīts to izdarīt. Tas ir bezmaksas, taču jums jāsniedz tālruņa numurs, adrese un kredītkarte identitātes pārbaudei.
+
+   → Ievadiet jūsu lietotnes nosaukumu, atlasiet konta tipu Conti jebkurā organizācijas direktorijā (Jebkurš Azure AD katalogs - Multitenant) un personīgos Microsoft kontus (piemēram, Skype, Xbox)
+   → Atlasiet Web pāradresēšanas URI, pēc tam ierakstiet (ne kopējiet un ielīmējiet) http://localhost:53682/ un noklikšķiniet uz Register. Kopējiet un saglabājiet lietotnes (klienta) ID zem lietotnes nosaukuma.
+
+2. Iegūstiet konta NOSLĒPUMU
+   → Pārvaldībā atlasiet Sertifikāti un noslēpumi, noklikšķiniet uz Jauns klienta noslēpums. Ievadiet aprakstu (var būt jebkas) un iestatiet Beigu datums uz 24 mēnešiem.
+   → Kopējiet un saglabājiet šo noslēpuma vērtību (jūs nevarēsiet redzēt šo vērtību vēlāk).
+
+3. Pēdējie sagatavošanas
+   → Pārvaldībā atlasiet API atļaujas, noklikšķiniet uz Pievienot atļauju un atlasiet Microsoft Graph, pēc tam atlasiet deleģētās atļaujas.
+   → Meklējiet un atlasiet šādas atļaujas: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read un Sites.Read.All. Atlasot noklikšķiniet uz Pievienot atļaujas apakšā.
+
+Pabeidzot šīs darbības, noriet uz Labi, lai turpinātu."
+
 gdrive_guide_text="1. PIEKĻŪSTIET GOOGLE CLOUD KONSOLEI:
    → Dodieties uz console.cloud.google.com un pierakstieties ar savu Google kontu
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. PIEKĻŪSTIET GOOGLE CLOUD KONSOLEI:
    → Logā tiks parādīts jūsu \"Klienta ID\" un \"Klienta noslēpums\"
    → Turiet tos gatavus nākamajam solim!
 
-Visuos iepriekš minētos posmos noklikšķiniet uz \"Labi\", lai turpinātu.""
+Visuos iepriekš minētos posmos noklikšķiniet uz \"Labi\", lai turpinātu."

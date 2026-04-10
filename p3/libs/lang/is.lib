@@ -100,9 +100,9 @@ gdrive_guide_text="1. AÐGANGUR AÐ GOOGLE CLOUD STJÓRNBORÐI:
    → Í \"Prófun notenda\" skjánum: Smelltu á \"+ Bæta á notendum\" og bættu Google Drive netfanginu þínu á
    → Smelltu á \"Vista og Haltu áfram\"
 
-5. BÚÐU SKILR{EIN:
-   → Á vinstri valmyndinni skaltu smella á \"Skilr{ein\"
-   → Smelltu á \"+ Búa til skilr{ein\" og veldu \"OAuth biðlarakennara\"
+5. BÚÐU SKILREIN:
+   → Á vinstri valmyndinni skaltu smella á \"Skilrein\"
+   → Smelltu á \"+ Búa til skilrein\" og veldu \"OAuth biðlarakennara\"
    → Veldu \"Skjáforrit\" sem Tegund forrits
    → Gefðu því heiti og smelltu á \"Búa til\"
 
@@ -111,3 +111,22 @@ gdrive_guide_text="1. AÐGANGUR AÐ GOOGLE CLOUD STJÓRNBORÐI:
    → Hafðu þau tilbúin fyrir næsta skref!
 
 Á öllum skrefum fyrir ofan skaltu smella á OK til að halda áfram.\""
+odrive_guide_text="
+LEIOBEINING UM ONEDRIVE PERSONAL
+
+1. Skráðu forritnafn fyrir CLIENT ID
+   → Opnaðu https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview og smelltu síðan á Skráning forrits undir valmyndinni Bæta við.
+      • Ef þú hefur ekki búið til Azure-reikning vertu beðinn(n) um að gera það. Þetta er ókeypis en þú verður að veita símanúmer, heimilisfang og kreditkort fyrir auðkenningu auðkennis.
+
+   → Sláðu inn heiti fyrir 'forritið' þitt, veldu reikningstegund Reikningar í hvaða skipulegri möppu (Hvaða Azure AD mappa - Margir leigjendur) og persónulegir Microsoft-reikningar (td Skype, Xbox)
+   → Veldu Web í Endurbeina URI og sláðu síðan inn (ekki afrita og líma) http://localhost:53682/ og smelltu á Skrá. Afritaðu og geymdu forritakennið (biðlarinn) undir forritnafninu.
+
+2. Fáðu SECRET reikningsins
+   → Undir Stjórn veldu Skírteini og leyndarmál, smelltu á Nýtt leyndarmál biðlara. Sláðu inn lýsingu (getur verið hvað sem er) og stilltu Gildir út 24 mánuði.
+   → Afritaðu og geymdu þetta leyndarmálið (þú gætir ekki séð þetta gildi síðar).
+
+3. Lokmir undirbúningur
+   → Undir Stjórn veldu API-heimildir, smelltu á Bæta við heimild og veldu Microsoft Graph síðan veldu Úthlutaðar heimildir.
+   → Leitaðu og veldu eftirfarandi heimildir: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read og Sites.Read.All. Þegar þær eru valdar skaltu smella á Bæta við heimildir neðst.
+
+Á öllum skrefum fyrir ofan skaltu smella á OK til að halda áfram"

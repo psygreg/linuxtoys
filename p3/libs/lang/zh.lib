@@ -110,4 +110,23 @@ gdrive_guide_text="1. 访问GOOGLE CLOUD CONSOLE:
    → 对话框显示您的"客户端ID"和"客户端密钥"
    → 为下一步做好准备！
 
-点击上述所有步骤中的"确定"以继续。\""
+点击上述所有步骤中的"确定"以继续。"
+odrive_guide_text="
+ONEDRIVE 个人版说明
+
+1. 为 CLIENT ID 注册应用名称
+   → 打开 https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview，然后在添加菜单下点击应用注册。
+      • 如果您尚未创建 Azure 帐户，系统会提示您进行创建。这是免费的，但您需要提供电话号码、地址和信用卡以进行身份验证。
+
+   → 为您的"应用"输入名称，选择帐户类型"任何组织目录中的帐户（任何 Azure AD 目录 - 多租户）"和个人 Microsoft 帐户（例如 Skype、Xbox）
+   → 在重定向 URI 中选择 Web，然后键入（不要复制并粘贴）http://localhost:53682/，然后点击注册。复制并保存应用程序（客户端）ID（位于应用名称下）。
+
+2. 获取帐户密码
+   → 在管理下，选择证书和密码，点击新客户端密码。输入说明（可以是任何内容）并将有效期设置为 24 个月。 
+   → 复制并保存此密码值（之后您将无法看到此值）。
+
+3. 最后的准备
+   → 在管理下，选择 API 权限，点击添加权限并选择 Microsoft Graph，然后选择委派权限。
+   → 搜索并选择以下权限：Files.Read、Files.ReadWrite、Files.Read.All、Files.ReadWrite.All、offline_access、User.Read 和 Sites.Read.All。选择后，点击底部的添加权限。
+
+完成这些步骤后，点击确定继续。"

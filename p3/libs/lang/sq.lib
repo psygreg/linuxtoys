@@ -76,6 +76,26 @@ msg304="Aktivizimi i Secure Boot përmes 'sbctl', metoda e përdorur nga ky apli
 msg305="Ky instalim kërkon që paru, një ndihmës AUR, të jetë i disponueshëm. A dëshironi ta instaloni tani?"
 nocl="OpenCL nuk u zbulua. Ju lutemi instaloni ROCm, RustiCL ose Intel's Compute Runtime nga menyja e Drivers sipas modelit tuaj të GPU-s."
 
+odrive_guide_text="
+UDHËZIME PËR ONEDRIVE PERSONAL
+
+1. Regjistro emrin e aplikacionit për CLIENT ID
+   → Hapni https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview dhe pastaj në menynë Shto, klikoni në Regjistrim aplikacioni.
+      • Nëse nuk keni krijuar një llogari Azure, do të ju kërkohet. Është falas, por duhet të jepni një numër telefoni, adresë dhe kartë krediti për verifikimin e identitetit.
+
+   → Shkruani një emër për "aplikacionin" tuaj, zgjidhni llojin e llogarisë Llogarit në çdo direktori organizativo (Çdo drejtori Azure AD - Multitenant) dhe llogarit personal Microsoft (p.sh. Skype, Xbox)
+   → Zgjidhni Web në Redirigjo URI, pastaj shkruani (mos kopjoje dhe mos ngjite) http://localhost:53682/ dhe klikoni Regjistro. Kopjoje dhe ruaj Identifikimin e Aplikacionit (klient) nën emrin e aplikacionit.
+
+2. Merrni SEKRETIN e llogarisë
+   → Nën Menaxhim, zgjidhni Sertifikatat dhe Sekretet, klikoni Sekreti i ri i klientit. Shkruani një përshkrim (mund të jetë çdo gjë) dhe vendosni Skadimin në 24 muaj.
+   → Kopjoje dhe ruaj këtë vlerë sekrete (nuk do të jesh në gjendje ta shikosh këtë vlerë më vonë).
+
+3. Përgatitje përfundimtare
+   → Nën Menaxhim, zgjidhni Lejet e API, klikoni Shto lejen dhe zgjidhni Microsoft Graph, pastaj zgjidhni lejet e deleguara.
+   → Kërko dhe zgjidh këto leje: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read dhe Sites.Read.All. Pasi të jenë zgjedhur, klikoni Shto lejet në fund.
+
+Pas përfundimit të këtyre hapave, klikoni OK për të vazhduar."
+
 gdrive_guide_text="1. HYRJA NË KONSOLËN E GOOGLE CLOUD:
    → Shkoni në console.cloud.google.com dhe hiqni në llogari tuaj Google
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. HYRJA NË KONSOLËN E GOOGLE CLOUD:
    → Një dritare do të shfaqë \"Identifikimin e klientit\" tuaj dhe \"Client Secret\"
    → Mbajini ata gati për hapin tjetër!
 
-Në të gjithë hapat e mësipërm, klikoni \"OK\" për të vazhduar.\""
+Në të gjithë hapat e mësipërm, klikoni \"OK\" për të vazhduar."

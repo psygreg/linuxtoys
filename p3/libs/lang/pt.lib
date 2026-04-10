@@ -77,6 +77,26 @@ msg304="Ativar o Secure Boot através do 'sbctl', o método empregado por este a
 msg305="Esta instalação requer ter o paru, um auxiliar do AUR, disponível. Deseja instalá-lo agora?"
 nocl="OpenCL não detectado. Instale ROCm, RustiCL ou Intel's Compute Runtime no menu Drivers de acordo com o modelo da sua GPU."
 
+odrive_guide_text="
+INSTRUÇÕES PARA ONEDRIVE PESSOAL
+
+1. Registre um nome de aplicativo para CLIENT ID
+   → Abra https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview e então no menu Adicionar, clique em Registro de aplicativo.
+      • Se você não tiver criado uma conta Azure, será solicitado. É gratuito, mas você precisa fornecer um número de telefone, endereço e cartão de crédito para verificação de identidade.
+
+   → Digite um nome para seu 'aplicativo', escolha o tipo de conta Contas em qualquer diretório organizacional (Qualquer diretório Azure AD - Multilocador) e contas Microsoft pessoais (por exemplo, Skype, Xbox)
+   → Selecione Web em URI de Redirecionamento, em seguida, digite (não copie e cole) http://localhost:53682/ e clique em Registrar. Copie e guarde a ID do Aplicativo (cliente) sob o nome do aplicativo.
+
+2. Obtenha o SEGREDO da conta
+   → Em Gerenciar, selecione Certificados e segredos, clique em Novo segredo do cliente. Digite uma descrição (pode ser qualquer coisa) e defina Expira para 24 meses.
+   → Copie e guarde este valor secreto (você não conseguirá ver este valor depois).
+
+3. Preparações finais
+   → Em Gerenciar, selecione Permissões de API, clique em Adicionar uma permissão e selecione Microsoft Graph, em seguida, selecione permissões delegadas.
+   → Pesquise e selecione as seguintes permissões: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read e Sites.Read.All. Uma vez selecionado, clique em Adicionar permissões na parte inferior.
+
+Depois de concluir essas etapas, clique em OK para continuar."
+
 gdrive_guide_text="1. ACESSO AO CONSOLE DO GOOGLE CLOUD:
    → Vá para console.cloud.google.com e faça login com sua conta do Google
 
@@ -111,4 +131,4 @@ gdrive_guide_text="1. ACESSO AO CONSOLE DO GOOGLE CLOUD:
    → Uma janela exibirá seu \"ID do cliente\" e \"Segredo do cliente\"
    → Tenha-os prontos para a próxima etapa!
 
-Em todas as etapas acima, clique \"OK\" para continuar.\""
+Em todas as etapas acima, clique \"OK\" para continuar."

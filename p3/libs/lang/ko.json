@@ -416,5 +416,6 @@
   "registry_cleanup_partial_title": "정리가 경고와 함께 완료됨",
   "registry_cleanup_failed": "레지스트리 항목 제거 실패",
   "shelly_desc": "표준 패키지, AUR 및 Flatpak을 하나의 간결하고 현대적인 패키지 관리자에서 검색합니다.",
-  "rgdrive_desc": "Google Drive를 홈 디렉토리의 마운트 포인트로 추가하고 rclone과 동기화하여 파일 관리자와 터미널에서 클라우드 파일에 쉽게 접근하고 관리할 수 있습니다."
+  "rgdrive_desc": "Google Drive를 홈 디렉토리의 마운트 포인트로 추가하고 rclone과 동기화하여 파일 관리자와 터미널에서 클라우드 파일에 쉽게 접근하고 관리할 수 있습니다.",
+  "rodrive_desc": "OneDrive를 홈 디렉토리의 마운트 포인트로 추가하고 rclone과 동기화하여 파일 관리자와 터미널에서 클라우드 파일에 쉽게 접근하고 관리할 수 있습니다."
 }

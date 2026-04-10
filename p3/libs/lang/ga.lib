@@ -111,3 +111,23 @@ gdrive_guide_text="1. PÁIGH ISTEACH DON CHONSÓL GOOGLE CLOUD:
    → Bí ullamh don chéad ghéim eile!
 
 Ar na céimeanna thuas ar fad, cliceáil ar OK chun leanúint ar aghaidh."
+
+odrive_guide_text="
+TREORUITHE ONEDRIVE PERSONAL
+
+1. Cláraitgh ainm feidhmchláir do CLIENT ID
+   → Oscail https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview agus ansin faoin roghchlár Cuir Isteach cliceáil ar Clárú Feidhmchláir.
+      • Mura ndearna tú cuntas Azure a chruthú, iarrfar ort a dhéanamh. Tá sé saor in aisce, ach ní mór duit do theilefón, do sheoladh agus do bhileog chreidiúna a sholáthar chun deimhniú céannachta.
+
+   → Cuir isteach ainm do 'd'fheidhmchlár', roghnaigh an cineál cuntais Cuntais i gcomhad eagraíochtúil ar bith (Comhad Azure AD ar bith - Ilthenant) agus cuntais Microsoft pearsainail (e.g. Skype, Xbox)
+   → Roghnaigh Web i Redirect URI, ansin clóscríobh (ná cóipeáil agus ná greamaigh) http://localhost:53682/ agus cliceáil ar Clárú. Cóipeáil agus coimeád an ID Feidhmchláir (Cliant) faoin ainm feidhmchláir.
+
+2. Faigh RÚNDA an chuntais
+   → Faoin Bainistríochtaí roghnaigh Teastas agus Rúndacht, cliceáil ar Rúnda Nua Cliant. Cuir isteach cur síos (is féidir a bheith rud ar bith) agus socraigh Táifithe go 24 mhí.
+   → Cóipeáil agus coimeád an luach rúnda seo (ní bheidh tú ábalta an luach seo a fhiceáil níos déanaí).
+
+3. Ullmhúcháin Dheireannacha
+   → Faoin Bainistríochtaí roghnaigh Ceadanna API, cliceáil ar Cuir Isteach Cead agus roghnaigh Microsoft Graph ansin roghnaigh Ceadanna Dílsithe.
+   → Cuardaigh agus roghnaigh na ceadanna seo a leanas: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read agus Sites.Read.All. Tar éis dóibh a roghnú cliceáil ar Cuir Ceadanna Isteach thíos.
+
+Ar na céimeanna thuas ar fad, cliceáil ar OK chun leanúint ar aghaidh"

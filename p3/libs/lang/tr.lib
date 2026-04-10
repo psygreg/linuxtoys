@@ -110,4 +110,23 @@ gdrive_guide_text="1. GOOGLE CLOUD CONSOLE'A ERİŞİN:
    → Bir iletişim kutusu sizin \"İstemci Kimliği\" ve \"İstemci Gizli Dizisi\"ni gösterir
    → Bunları sonraki adım için hazırlayın!
 
-Devam etmek için yukarıdaki tüm adımlarda \"Tamam\"ı tıklayın.\""
+Devam etmek için yukarıdaki tüm adımlarda \"Tamam\"ı tıklayın."
+odrive_guide_text="
+ONEDRİVE KİŞİSEL İÇİN TALİMATLAR
+
+1. CLIENT ID İçin Uygulama Adı Kaydolun
+   → https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview adresini açın ve ardından Add menüsünün altında App registration'a tıklayın.
+      • Azure hesabı oluşturmadıysanız, sizden oluşturmanız istenecektir. Bu ücretsizdir, ancak kimlik doğrulaması için telefon numarası, adres ve kredi kartı sağlamanız gerekir.
+
+   → 'Uygulamanız' için bir ad girin, hesap türünü seçin Herhangi bir kuruluş dizinindeki hesaplar (Herhangi bir Azure AD dizini - Çok kiracılı) ve kişisel Microsoft hesapları (örn. Skype, Xbox)
+   → Yeniden Yönlendirme URI'sinde Web'i seçin, ardından http://localhost:53682/ yazın (kopyala ve yapıştırma yapmayın) ve Kaydol'u tıklayın. Uygulama (İstemci) Kimliğini uygulama adının altında kopyalayın ve tutun.
+
+2. Hesap SİFRESİNİ Alın
+   → Yönet'in altında Sertifikalar ve Sırlar'ı seçin, Yeni İstemci Sırrı'na tıklayın. Bir açıklama girin (herhangi bir şey olabilir) ve Süresi Dolsun'u 24 aya ayarlayın. 
+   → Bu Sır Değerini kopyalayın ve tutun (daha sonra bu değeri göremeyeceksiniz).
+
+3. Son Hazırlıklar
+   → Yönet'in altında API İzinleri'ni seçin, İzin Ekle'ye tıklayın ve Microsoft Graph'ı seçin ardından delegated permissions'ı seçin.
+   → Aşağıdaki izinleri arayın ve seçin: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ve Sites.Read.All. Seçildikten sonra alttaki İzin Ekle'ye tıklayın.
+
+Bu adımları tamamladıktan sonra devam etmek için Tamam'a tıklayın."

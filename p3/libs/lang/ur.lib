@@ -110,4 +110,23 @@ gdrive_guide_text="1. GOOGLE CLOUD CONSOLE تک رسائی حاصل کریں:
    → ایک ڈائیلاگ آپ کی \"Client ID\" اور \"Client Secret\" دکھاتا ہے
    → انہیں اگلے مرحلے کے لیے تیار کریں!
 
-مکمل طور پر جاری رکھنے کے لیے اوپر دیے گئے تمام مراحل میں \"OK\" پر کلک کریں۔\""
+مکمل طور پر جاری رکھنے کے لیے اوپر دیے گئے تمام مراحل میں \"OK\" پر کلک کریں۔"
+odrive_guide_text="
+ONEDRIVE PERSONAL کے لیے ہدایات
+
+1. CLIENT ID کے لیے ایپ کا نام رجسٹر کریں
+   → https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview کھولیں اور پھر Add مینو کے تحت App registration پر کلک کریں۔
+      • اگر آپ نے ابھی Azure اکاؤنٹ نہیں بنایا ہے تو آپ سے کہا جائے گا۔ یہ مفت ہے، لیکن شناخت کی تصدیق کے لیے آپ کو فون نمبر، پتہ اور کریڈٹ کارڈ فراہم کرنا ہوگا۔
+
+   → اپنی 'ایپ' کے لیے ایک نام درج کریں، اکاؤنٹ کی قسم منتخب کریں کسی بھی تنظیمی ڈائریکٹری میں اکاؤنٹ (کوئی Azure AD ڈائریکٹری - Multitenant) اور ذاتی Microsoft اکاؤنٹس (مثال کے طور پر Skype، Xbox)
+   → Redirect URI میں Web منتخب کریں، پھر ٹائپ کریں (کاپی اور پیسٹ نہ کریں) http://localhost:53682/ اور Register پر کلک کریں۔ ایپ (کلائنٹ) ID کو ایپ کے نام کے تحت کاپی کریں اور رکھیں۔
+
+2. اکاؤنٹ کا SECRET حاصل کریں
+   → Manage کے تحت Certificates & secrets منتخب کریں، New client secret پر کلک کریں۔ وضاحت درج کریں (کچھ بھی ہو سکتا ہے) اور Expires کو 24 ماہ میں سیٹ کریں۔ 
+   → اس secret value کو کاپی کریں اور رکھیں (آپ اس کے بعد یہ قدر نہیں دیکھ پائیں گے)۔
+
+3. حتمی تیاری
+   → Manage کے تحت API permissions منتخب کریں، Add a permission پر کلک کریں اور Microsoft Graph منتخب کریں پھر delegated permissions منتخب کریں۔
+   → درج ذیل اجازتوں کو تلاش کریں اور منتخب کریں: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read اور Sites.Read.All۔ منتخب کرنے کے بعد نیچے Add permissions پر کلک کریں۔
+
+ان مراحل کی تکمیل کے بعد جاری رکھنے کے لیے OK پر کلک کریں۔"

@@ -76,6 +76,26 @@ msg304="Saugaus paleidimo įjungimas per 'sbctl', šios programos naudojamą met
 msg305="Šiam diegimui reikia turėti paru, AUR pagalbininką. Ar norite jį įdiegti dabar?"
 nocl="OpenCL nerastas. Prašome diegti ROCm, RustiCL arba Intel's Compute Runtime iš Drivers meniu pagal jūsų GPU modelį."
 
+odrive_guide_text="
+DaRBOTE ONEDRIVE ASMENINEI
+
+1. Užregistruokite programos pavadinimą CLIENT ID
+   → Atidarykite https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ir tada meniu Add spustelėkite App registration.
+      • Jei dar nesukūrėte Azure paskyros, jūs turėsite tai padaryti. Tai nemokama, tačiau jums reikės pateikti telefono numerį, adresą ir kredito kortelę tapatybės patvirtinimui.
+
+   → Įveskite savo programos pavadinimą, pasirinkite paskyros tipą Accounts bet kuriame organizaciniame kataloge (Bet kuris Azure AD katalogas - Daugialypis) ir asmenines Microsoft paskyras (pvz., Skype, Xbox)
+   → Pasirinkite Web Redirect URI, tada įveskite (nekopijuokite ir neįklijuokite) http://localhost:53682/ ir spustelėkite Register. Nukopijuokite ir išsaugokite programos (kliento) ID po programos pavadinimu.
+
+2. Gaukite paskyros SLAPTĄ
+   → Valdyme pasirinkite Sertifikatai ir slaptai, spustelėkite Naujo kliento slaptą. Įveskite aprašymą (gali būti bet kas) ir nustatykite Galiojimas iki 24 mėnesių.
+   → Nukopijuokite ir išsaugokite šią slapto reikšmę (jūs negalėsite pamatyti šios reikšmės vėliau).
+
+3. Paskutiniai pasiruošimai
+   → Valdyme pasirinkite API leidimus, spustelėkite Pridėti leidimą ir pasirinkite Microsoft Graph, tada pasirinkite deleguotus leidimus.
+   → Ieškokite ir pasirinkite šiuos leidimus: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ir Sites.Read.All. Pasirinkę spustelėkite Pridėti leidimus apačioje.
+
+Pradėjus šiuos žingsnius, norėdami tęsti, spustelėkite Gerai."
+
 gdrive_guide_text="1. PRIEIGA PRIE GOOGLE CLOUD KONSOLO:
    → Eikite į console.cloud.google.com ir prisijunkite naudodami savo Google paskyrą
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. PRIEIGA PRIE GOOGLE CLOUD KONSOLO:
    → Lange bus rodomas jūsų \"Kliento ID\" ir \"Kliento slaptas\"
    → Turėkite juos paruoštus kitam žingsniui!
 
-Visuose aukščiau pateiktuose žingsniuose spustelėkite \"Gerai\" norėdami tęsti.""
+Visuose aukščiau pateiktuose žingsniuose spustelėkite \"Gerai\" norėdami tęsti."

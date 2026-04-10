@@ -112,3 +112,23 @@ gdrive_guide_text="
    → Have these ready for the next step!
 
 Once you've completed these steps, click OK to continue."
+
+odrive_guide_text="
+INSTRUCTIONS FOR ONEDRIVE PERSONAL
+
+1. Register an App Name for CLIENT ID
+   → Open https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview and then under the Add menu click App registration.
+      • If you have not created an Azure account, you will be prompted to. This is free, but you need to provide a phone number, address, and credit card for identity verification.
+
+   → Enter a name for your 'app', choose account type Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)
+   → Select Web in Redirect URI, then type (do not copy and paste) http://localhost:53682/ and click Register. Copy and keep the Application (client) ID under the app name.
+
+2. Get the account SECRET
+   → Under manage select Certificates & secrets, click New client secret. Enter a description (can be anything) and set Expires to 24 months. 
+   → Copy and keep that secret Value (you won't be able to see this value afterwards).
+
+3. Final preparations
+   → Under manage select API permissions, click Add a permission and select Microsoft Graph then select delegated permissions.
+   → Search and select the following permissions: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read and Sites.Read.All. Once selected click Add permissions at the bottom.
+
+Once you've completed these steps, click OK to continue."

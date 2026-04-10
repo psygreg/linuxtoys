@@ -76,6 +76,26 @@ msg304="Het inschakelen van Secure Boot via 'sbctl', de methode die door deze ap
 msg305="Deze installatie vereist dat paru, een AUR-helper, beschikbaar is. Wilt u het nu installeren?"
 nocl="OpenCL niet gedetecteerd. Installeer ROCm, RustiCL of Intel's Compute Runtime uit het Drivers-menu naar gelang uw GPU-model."
 
+odrive_guide_text="
+INSTRUCTIES VOOR ONEDRIVE PERSOONLIJK
+
+1. Registreer een appnaam voor CLIENT ID
+   → Open https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview en klik vervolgens onder het menu Toevoegen op App-registratie.
+      • Als u geen Azure-account hebt gemaakt, wordt u daartoe gevraagd. Dit is gratis, maar u moet een telefoonnummer, adres en creditcard opgeven voor identiteitverificatie.
+
+   → Voer een naam in voor uw 'app', kies accounttype Accounts in elke organisatorische map (Elke Azure AD-map - Multitenant) en persoonlijke Microsoft-accounts (bijv. Skype, Xbox)
+   → Selecteer Web in Redirect URI, typ vervolgens (kopiëren en plakken niet) http://localhost:53682/ en klik Registreren. Kopieer en behoud de Application (client) ID onder de app-naam.
+
+2. Get the account SECRET
+   → Selecteer onder Beheer Certificaten en geheimen, klik Nieuw clientgeheim. Voer een beschrijving in (alles kan) en stel Verloopt in op 24 maanden.
+   → Kopieer en behoud deze geheime waarde (u kunt deze waarde later niet zien).
+
+3. Definitieve voorbereidingen
+   → Selecteer onder Beheer API-machtigingen, klik Een machtiging toevoegen en selecteer Microsoft Graph, selecteer vervolgens gedelegeerde machtigingen.
+   → Zoek en selecteer de volgende machtigingen: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read en Sites.Read.All. Klik na selectie onderaan op Machtigingen toevoegen.
+
+Wanneer u deze stappen hebt voltooid, klikt u op OK om door te gaan."
+
 gdrive_guide_text="1. TOEGANG TOT GOOGLE CLOUD-CONSOLE:
    → Ga naar console.cloud.google.com en meld u aan met uw Google-account
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. TOEGANG TOT GOOGLE CLOUD-CONSOLE:
    → Een venster toont uw \"Client-ID\" en \"Client Secret\"
    → Zorg dat deze klaar zijn voor de volgende stap!
 
-Klik op alle bovenstaande stappen op \"OK\" om door te gaan.\""
+Klik op alle bovenstaande stappen op \"OK\" om door te gaan."

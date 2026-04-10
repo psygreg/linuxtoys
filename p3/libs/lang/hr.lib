@@ -111,3 +111,23 @@ gdrive_guide_text="1. PRISTUP GOOGLE CLOUD KONZOLI:
    → Imajte ih spremne za sljedeći korak!
 
 Na svim gornjim koracima, kliknite na OK za nastavak."
+
+odrive_guide_text="
+UPUTSTVA ZA ONEDRIVE PERSONAL
+
+1. Registrujte naziv aplikacije za CLIENT ID
+   → Otvorite https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview pa zatim u meniju Dodaj kliknite na Registracija aplikacije.
+      • Ako niste stvorili Azure račun, tražit će vas da to učinite. Besplatno je, ali trebate unijeti telefonski broj, adresu i kreditnu karticu za provjeru identiteta.
+
+   → Unesite naziv za vašu 'aplikaciju', odaberite vrstu računa Računi u bilo kojem organizacijskom direktoriju (Bilo koji Azure AD direktorij - Višeklijentski) i osobne Microsoft račune (npr. Skype, Xbox)
+   → Odaberite Web u Redirect URI, pa zatim upišite (nemojte kopirati i zalijepiti) http://localhost:53682/ i kliknite Registracija. Kopirajte i čuvajte ID aplikacije (klijenta) ispod naziva aplikacije.
+
+2. Dobijte tajnu računa
+   → Pod Upravljanje odaberite Certifikati i tajne, kliknite Novu tajnu klijenta. Unesite opis (može biti bilo što) i postavite isteka na 24 mjeseca.
+   → Kopirajte i čuvajte ovu tajnu vrijednost (nećete moći vidjeti ovu vrijednost kasnije).
+
+3. Finalne pripreme
+   → Pod Upravljanje odaberite API dozvole, kliknite Dodaj dozvolu i odaberite Microsoft Graph pa zatim odaberite Delegirane dozvole.
+   → Potražite i odaberite sljedeće dozvole: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read i Sites.Read.All. Nakon odabira kliknite Dodaj dozvole pri dnu.
+
+Na svim gornjim koracima, kliknite na OK za nastavak।"

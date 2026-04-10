@@ -110,4 +110,24 @@ gdrive_guide_text="1. AKSES KONSOL GOOGLE CLOUD:
    → Jendela akan menampilkan \"ID Klien\" dan \"Rahasia Klien\" Anda
    → Siapkan ini untuk langkah selanjutnya!
 
-Pada semua langkah di atas, klik OK untuk melanjutkan.""
+Pada semua langkah di atas, klik OK untuk melanjutkan."
+
+odrive_guide_text="
+PETUNJUK UNTUK ONEDRIVE PERSONAL
+
+1. Daftarkan nama aplikasi untuk CLIENT ID
+   → Buka https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview dan kemudian di bawah menu Tambahkan klik Registrasi aplikasi.
+      • Jika Anda belum membuat akun Azure, Anda akan diminta untuk melakukannya. Ini gratis, tetapi Anda perlu menyediakan nomor telepon, alamat, dan kartu kredit untuk verifikasi identitas.
+
+   → Masukkan nama untuk 'aplikasi' Anda, pilih jenis akun Akun di direktori organisasi apa pun (Direktori Azure AD apa pun - Multitenant) dan akun Microsoft pribadi (mis. Skype, Xbox)
+   → Pilih Web di Redirect URI, kemudian ketik (jangan salin dan tempel) http://localhost:53682/ dan klik Daftar. Salin dan simpan ID Aplikasi (klien) di bawah nama aplikasi.
+
+2. Dapatkan SECRET akun
+   → Di bawah Kelola pilih Sertifikat & rahasia, klik Rahasia klien baru. Masukkan deskripsi (bisa apa saja) dan atur Kedaluwarsa hingga 24 bulan.
+   → Salin dan simpan nilai rahasia ini (Anda tidak akan dapat melihat nilai ini nanti).
+
+3. Persiapan akhir
+   → Di bawah Kelola pilih Izin API, klik Tambah izin dan pilih Microsoft Graph kemudian pilih izin Delegasi.
+   → Cari dan pilih izin berikut: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read dan Sites.Read.All. Setelah dipilih klik Tambah izin di bagian bawah.
+
+Pada semua langkah di atas, klik OK untuk melanjutkan"

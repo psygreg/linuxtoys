@@ -76,6 +76,26 @@ msg304="Omogočanje Secure Boot prek 'sbctl', metode, ki jo uporablja ta aplikac
 msg305="Ta namestitev zahteva razpoložljivost paru, pomočnika AUR. Želite ga namestiti zdaj?"
 nocl="OpenCL ni bil najden. Prosim, namestite ROCm, RustiCL ali Intel's Compute Runtime iz menija Drivers v skladu z vašim modelom GPU."
 
+odrive_guide_text="
+NAVODILA ZA ONEDRIVE OSEBNO
+
+1. Registrirajte ime aplikacije za CLIENT ID
+   → Odprite https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview in nato v meniju Dodaj kliknite na Registracija aplikacije.
+      • Če niste ustvarili računa Azure, vas bo pozvano. To je brezplačno, vendar morate posredovati telefonsko številko, naslov in kreditno kartico za preverjanje identitete.
+
+   → Vnesite ime za svojo "aplikacijo", izberite vrsto računa Računi v kateremkoli organizacijskem imeniku (Kateri koli imenik Azure AD - Multitenant) in osebne račune Microsoft (npr. Skype, Xbox)
+   → Izberite Web v Preusmeri URI, nato vnesite (ne kopirajte in ne prilepite) http://localhost:53682/ in kliknite Register. Kopirajte in ohranite Application (client) ID pod imenom aplikacije.
+
+2. Pridobite geslo TAJNOST računa
+   → V razdelku Upravljanje izberite Certifikati in gesla, kliknite New client secret. Vnesite opis (lahko bi bilo kaj koli) in nastavite Iztečete na 24 mesecev.
+   → Kopirajte in ohranite to tajno vrednost (nazadnje je ne boste mogli videti).
+
+3. Končne priprave
+   → V razdelku Upravljanje izberite Dovoljenja API, kliknite Dodaj dovoljenje in izberite Microsoft Graph, nato izberite delegirana dovoljenega.
+   → Poiščite in izberite naslednja dovoljenega: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read in Sites.Read.All. Po izbiri kliknite Dodaj dovoljenega pri dnu.
+
+Po dokončanju teh korakov kliknite V redu za nadaljevanje."
+
 gdrive_guide_text="1. DOSTOP DO GOOGLE CLOUD KONZOLE:
    → Pojdite na console.cloud.google.com in se prijavite s svojim Google računom
 
@@ -110,4 +130,4 @@ gdrive_guide_text="1. DOSTOP DO GOOGLE CLOUD KONZOLE:
    → Okno bo prikazalo vaš \"ID odjemalca\" in \"Skrivnost odjemalca\"
    → Imejte jih pripravljene za naslednji korak!
 
-Na vseh zgornjih korakih kliknite \"V redu\" za nadaljevanje.\""
+Na vseh zgornjih korakih kliknite \"V redu\" za nadaljevanje."

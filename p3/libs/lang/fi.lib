@@ -111,3 +111,23 @@ gdrive_guide_text="1. PÄÄSY GOOGLE CLOUD KONSOLIIN:
    → Pidä nämä valmiina seuraavaan vaiheeseen!
 
 Napsauta kaikkien yllä olevien vaiheiden kohdalla OK jatkaaksesi."
+
+odrive_guide_text="
+ONEDRIVE PERSONAL OHJEET
+
+1. Rekisteröi sovelluksen nimi CLIENT ID:tä varten
+   → Avaa https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ja napsauta sitten Lisää-valikossa Sovelluksen rekisteröinti.
+      • Jos et ole luonut Azure-tiliä, sinua pyydetään tekemään niin. Se on ilmaista, mutta sinun on annettava puhelinnumerosi, osoitteesi ja luottokorttitietosi henkilöllisyyden vahvistamista varten.
+
+   → Kirjoita sovelluksesi nimi, valitse tilityyppi Tilit missä tahansa organisaation hakemistossa (Mikä tahansa Azure AD-hakemisto - Monivuokraus) ja henkilökohtaiset Microsoft-tilit (esim. Skype, Xbox)
+   → Valitse Redirect URI:ssa Web, kirjoita sitten (älä kopioi ja liitä) http://localhost:53682/ ja napsauta Rekisteröi. Kopioi ja säilytä Application (client) ID sovelluksen nimen alla.
+
+2. Hanki tilin SALAISUUS
+   → Hallinnasta valitse Sertifikaatit ja salaisuudet, napsauta Uusi asiakassalaisuus. Syötä kuvaus (voi olla mitä tahansa) ja aseta Voimassaolo 24 kuukauteen.
+   → Kopioi ja säilytä tämä salaisesta arvosta (et voi nähdä tätä arvoa myöhemmin).
+
+3. Lopulliset valmistelut
+   → Hallinnasta valitse API-käyttöoikeudet, napsauta Lisää käyttöoikeus ja valitse Microsoft Graph, valitse sitten delegoidut käyttöoikeudet.
+   → Etsi ja valitse seuraavat käyttöoikeudet: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ja Sites.Read.All. Kun ne on valittu, napsauta Lisää käyttöoikeudet alhaalla.
+
+Napsauta kaikkien yllä olevien vaiheiden kohdalla OK jatkaaksesi"

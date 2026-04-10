@@ -110,4 +110,23 @@ gdrive_guide_text="1. GOOGLE CLOUD CONSOLE GA KIRING:
    → Muloqot sizning \"Kliyent ID\" va \"Kliyent Sirri\" ni ko'rsatadi
    → Ularni keyingi qadam uchun tayyorlang!
 
-Davom etish uchun yuqoridagi barcha qadamlarda \"OK\" ni bosing.\""
+Davom etish uchun yuqoridagi barcha qadamlarda \"OK\" ni bosing."
+odrive_guide_text="
+ONEDRIVE SHAXSIY UCHUN KO'RSATMALAR
+
+1. CLIENT ID uchun ilova nomini ro'yxatdan o'tkazing
+   → https://portal.azure.com/?quickstart=true#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview ni oching va keyin Add menyudan App registration ni bosing.
+      • Agarda siz Azure akkauntini yaratmagan bo'lsangiz, sizdan buni talab qilinadi. Bu bepul, lekin shaxsni tasdiqlash uchun telefon raqami, manzil va kredit kartani taqdim etishingiz kerak.
+
+   → O'z 'ilova'niz uchun nom kiriting, akkaunt turini tanlang Har qanday tashkiliy katalogda akkauntlar (Har qanday Azure AD katalogi - ko'p-ijara) va shaxsiy Microsoft akkauntlari (masalan, Skype, Xbox)
+   → Qayta yo'naltirish URI da Web ni tanlang, keyin http://localhost:53682/ ni yozing (nusxalang va qo'llang), Register ni bosing. Ilova (Kliyent) ID sini ilova nomi ostida nusxalab saqlang.
+
+2. Akkaunt SIRI-ni oling
+   → Boshqaruv ostida Sertifikatlar va sirlarni tanlang, Yangi kliyent sirrini bosing. Tavsifni kiriting (har qanday bo'lishi mumkin) va Amal qilish muddatini 24 oyga o'rnating. 
+   → Ushbu sir qiymatini nusxalab saqlang (siz keyinroq ushbu qiymatni ko'rni olmasiz).
+
+3. Yakuniy tayyorgarlik
+   → Boshqaruv ostida API ruxsatnomalarini tanlang, Ruxsatnoma qo'shing ni bosing va Microsoft Graph ni tanlang, keyin delegatsiya qilingan ruxsatnomalarni tanlang.
+   → Quyidagi ruxsatnomalarni qidiring va tanlang: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read va Sites.Read.All. Tanlagandan so'ng pastdagi Ruxsatnoma qo'shing ni bosing.
+
+Ushbu bosqichlarni tugallagan so'ng, davom etish uchun OK ni bosing."
