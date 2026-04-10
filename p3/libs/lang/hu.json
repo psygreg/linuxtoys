@@ -417,6 +417,5 @@
   "registry_cleanup_failed": "A nyilvántartási bejegyzés eltávolítása sikertelen",
   "shelly_desc": "Keresse meg a szabványos csomagokat, AUR-t és Flatpak-ot egy tömör és modern csomagkezelőben.",
   "rgdrive_desc": "Adja hozzá Google Drive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból.",
-  "rodrive_desc": "Adja hozzá OneDrive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból.",
-  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
+  "rodrive_desc": "Adja hozzá OneDrive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból."
 }

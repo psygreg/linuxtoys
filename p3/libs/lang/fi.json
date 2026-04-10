@@ -417,6 +417,5 @@
   "registry_cleanup_failed": "Rekisterimerkinnän poistaminen epäonnistui",
   "shelly_desc": "Hae vakiopaketteja, AUR:ta ja Flatpakia yhdessä ytimekkäässä ja modernissa paketinhallinnassa.",
   "rgdrive_desc": "Lisää Google Drive kiinnityspisteenä kotikansioonsa, synkronoitu rclone:n kanssa, jolloin voit helposti käyttää ja hallita pilvipalvelun tiedostoja tiedostonhallinnasta ja terminalista.",
-  "rodrive_desc": "Lisää OneDrive kiinnityspisteenä kotikansioonsa, synkronoitu rclone:n kanssa, jolloin voit helposti käyttää pilvipalvelun tiedostoja tiedostonhallinnasta ja terminalista.",
-  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
+  "rodrive_desc": "Lisää OneDrive kiinnityspisteenä kotikansioonsa, synkronoitu rclone:n kanssa, jolloin voit helposti käyttää pilvipalvelun tiedostoja tiedostonhallinnasta ja terminalista."
 }

@@ -417,6 +417,5 @@
   "registry_cleanup_failed": "Dështua në fshirjen e hyrjes në regjistrin",
   "shelly_desc": "Kërkoni për paketat standarde, AUR dhe Flatpak në një menaxher pakete të hijezuar dhe modern.",
   "rgdrive_desc": "Shtoni Google Drive tuaj si një pikë montimi në direktoriumin tuaj të shtëpisë, të sinkronizuar me rclone, Duke ju lejuar të qasni lehtësisht dhe të menaxhoni skedarët tuaj në cloud nga menaxheri i skedarëve dhe terminali.",
-  "rodrive_desc": "Shtoni OneDrive tuaj si një pikë montimi në direktoriumin tuaj të shtëpisë, të sinkronizuar me rclone, Duke ju lejuar të qasni lehtësisht dhe të menaxhoni skedarët tuaj në cloud nga menaxheri i skedarëve dhe terminali.",
-  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
+  "rodrive_desc": "Shtoni OneDrive tuaj si një pikë montimi në direktoriumin tuaj të shtëpisë, të sinkronizuar me rclone, Duke ju lejuar të qasni lehtësisht dhe të menaxhoni skedarët tuaj në cloud nga menaxheri i skedarëve dhe terminali."
 }

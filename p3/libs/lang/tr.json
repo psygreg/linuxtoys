@@ -417,6 +417,5 @@
   "registry_cleanup_failed": "Kayıt Defteri Girişi Kaldırılamadı",
   "shelly_desc": "Standart paketleri, AUR'ı ve Flatpak'ı bir özlü ve modern paket yöneticisinde arayın.",
   "rgdrive_desc": "Google Drive'ınızı ana dizininizde bir montaj noktası olarak ekleyin, rclone ile senkronize edin, dosya yöneticisi ve terminalden bulut dosyalarınıza kolayca erişmenize ve yönetmenize izin verin.",
-  "rodrive_desc": "OneDrive'ınızı ana dizininizde bir montaj noktası olarak ekleyin, rclone ile senkronize edin, dosya yöneticisi ve terminalden bulut dosyalarınıza kolayca erişmenize ve yönetmenize izin verin.",
-  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
+  "rodrive_desc": "OneDrive'ınızı ana dizininizde bir montaj noktası olarak ekleyin, rclone ile senkronize edin, dosya yöneticisi ve terminalden bulut dosyalarınıza kolayca erişmenize ve yönetmenize izin verin."
 }
