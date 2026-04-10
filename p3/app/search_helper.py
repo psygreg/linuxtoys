@@ -146,6 +146,78 @@ class ScriptCache:
         self.populate(translations)
 
 
+class CategoryCache:
+    """
+    Caches all categories and their scripts for fast navigation.
+    Built on app startup to provide fast category/script loading without traversing directories.
+    
+    The cache stores:
+    - All top-level categories with their metadata
+    - All scripts for each category
+    - Subcategory information
+    - All filtered by system compatibility
+    """
+    
+    def __init__(self):
+        self.categories = []  # List of cached category info dicts
+        self.scripts_by_category = {}  # Dict mapping category path -> list of scripts
+        self.is_populated = False
+        self.system_compat_keys = get_system_compat_keys()
+        self.current_locale = detect_system_language()
+        self.is_containerized = is_containerized()
+    
+    def populate(self, translations=None):
+        """
+        Populate the cache with all categories and their scripts.
+        This should be called once on app startup.
+        
+        Args:
+            translations: Dictionary of translations for category/script names
+        """
+        if self.is_populated:
+            return  # Already populated
+        
+        self.categories = []
+        self.scripts_by_category = {}
+        
+        # Get all categories
+        self.categories = parser.get_categories(translations)
+        
+        # Pre-populate scripts for each category
+        for category in self.categories:
+            category_path = category.get('path', '')
+            if category_path:
+                scripts = parser.get_scripts_for_category(category_path, translations)
+                self.scripts_by_category[category_path] = scripts
+        
+        self.is_populated = True
+    
+    def get_categories(self):
+        """Get all cached categories."""
+        return self.categories.copy()
+    
+    def get_scripts_for_category(self, category_path):
+        """Get scripts for a specific category from cache."""
+        return self.scripts_by_category.get(category_path, []).copy()
+    
+    def invalidate(self):
+        """Invalidate the cache, forcing repopulation on next use."""
+        self.is_populated = False
+        self.categories = []
+        self.scripts_by_category = {}
+    
+    def refresh_for_translations(self, translations):
+        """
+        Invalidate and repopulate the cache with new translations.
+        Call this when language settings change.
+        
+        Args:
+            translations: Updated dictionary of translations
+        """
+        self.invalidate()
+        self.populate(translations)
+
+
 class SearchResult:
     """Represents a single search result."""
     

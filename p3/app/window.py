@@ -49,6 +49,9 @@ class AppWindow(Gtk.ApplicationWindow):
         )
         self.search_active = False
         self.search_results = []
+        
+        # Initialize category cache for faster navigation
+        self.category_cache = search_helper.CategoryCache()
 
         # Checklist
         self.check_buttons = []
@@ -152,8 +155,9 @@ class AppWindow(Gtk.ApplicationWindow):
 
         self._script_running = False
 
-        # Populate search cache asynchronously to avoid blocking the UI
+        # Populate caches asynchronously to avoid blocking the UI
         GLib.idle_add(self._populate_search_cache)
+        GLib.idle_add(self._populate_category_cache)
         GLib.idle_add(self._check_updates)
 
     def _populate_search_cache(self):
@@ -164,6 +168,18 @@ class AppWindow(Gtk.ApplicationWindow):
                 self.script_cache.populate(self.translations)
             except Exception as e:
                 print(f"Error populating search cache: {e}")
+
+        threading.Thread(target=populate_in_background, daemon=True).start()
+        return False  # Remove from idle callbacks
+
+    def _populate_category_cache(self):
+        """Populate the category cache in a background thread to avoid blocking the UI."""
+
+        def populate_in_background():
+            try:
+                self.category_cache.populate(self.translations)
+            except Exception as e:
+                print(f"Error populating category cache: {e}")
 
         threading.Thread(target=populate_in_background, daemon=True).start()
         return False  # Remove from idle callbacks
@@ -689,7 +705,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def load_categories(self):
         """Loads categories and connects their click event."""
-        categories = parser.get_categories(self.translations)
+        # Use cached categories if available, otherwise parse from filesystem
+        if self.category_cache.is_populated:
+            categories = self.category_cache.get_categories()
+        else:
+            categories = parser.get_categories(self.translations)
 
         # Store current category info and temporarily set to None for proper bold formatting
         temp_current_category = self.current_category_info
@@ -718,9 +738,12 @@ class AppWindow(Gtk.ApplicationWindow):
         for child in flowbox.get_children():
             flowbox.remove(child)
 
-        scripts = parser.get_scripts_for_category(
-            category_info["path"], self.translations
-        )
+        # Use cached scripts if available, otherwise parse from filesystem
+        category_path = category_info["path"]
+        if self.category_cache.is_populated:
+            scripts = self.category_cache.get_scripts_for_category(category_path)
+        else:
+            scripts = parser.get_scripts_for_category(category_path, self.translations)
 
         checklist_mode = category_info.get("display_mode", "menu") == "checklist"
 
@@ -1041,6 +1064,15 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
         # Update search engine translations
         self.search_engine.update_translations(self.translations)
+        
+        # Refresh category cache with new translations in background
+        def refresh_category_cache():
+            try:
+                self.category_cache.refresh_for_translations(self.translations)
+            except Exception as e:
+                print(f"Error refreshing category cache: {e}")
+        
+        threading.Thread(target=refresh_category_cache, daemon=True).start()
 
         # Update search entry placeholder text
         self.search_entry.set_placeholder_text(
