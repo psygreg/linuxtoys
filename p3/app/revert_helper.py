@@ -174,6 +174,11 @@ def _parse_operation(op_line):
         elif op_type == "distrobox":
             # distrobox operations have format: "distrobox container_name"
             return op_type, parts[1:]
+        elif op_type == "rclone":
+            # rclone operations have format: "rclone mounted /source /destination"
+            if len(parts) >= 2 and parts[1] == "mounted":
+                return "rclone mounted", parts[2:]
+            return op_type, parts[1:]
         elif op_type == "chsh":
             # Shell change: "chsh /bin/zsh"
             return op_type, parts[1:]
@@ -391,6 +396,43 @@ def _reverse_distrobox_creation(container_names):
     return commands
 
 
+def _reverse_rclone_mount(mount_paths):
+    """Reverse rclone mountpoint creation(s) by unmounting it/them.
+    
+    Args:
+        mount_paths: list of mount destination paths or single path string
+    
+    Returns:
+        list of shell commands to reverse the rclone mounting
+    """
+    # For rclone mounted operations, the operands are [source, destination]
+    # We only need to unmount the destination
+    # Normalize to list (could be single path or paired source/dest)
+    if isinstance(mount_paths, str):
+        mount_paths = [mount_paths]
+    
+    if not mount_paths:
+        return []
+    
+    commands = []
+    # If we have an even number of paths, they're pairs (source, dest)
+    # If odd, assume the last one is the destination
+    if len(mount_paths) % 2 == 0:
+        # Even: process pairs, unmount every second element (destination)
+        for i in range(1, len(mount_paths), 2):
+            destination = mount_paths[i]
+            # Try fusermount first (modern FUSE), then umount fallback
+            cmd = f"fusermount -u {destination} 2>/dev/null || sudo umount {destination} 2>/dev/null || true"
+            commands.append(cmd)
+    else:
+        # Odd: assume single destination or unpaired paths
+        for path in mount_paths:
+            cmd = f"fusermount -u {path} 2>/dev/null || sudo umount {path} 2>/dev/null || true"
+            commands.append(cmd)
+    
+    return commands
+
+
 def _reverse_systemd_operation(service, action):
     """Reverse systemd operations."""
     reversals = {
@@ -483,6 +525,10 @@ def _reverse_operation(op_line, package_manager):
     elif op_type == "distrobox" and operands:
         # Reverse distrobox container creation by removing
         return _reverse_distrobox_creation(operands)
+    
+    elif op_type == "rclone mounted" and operands:
+        # Reverse rclone mountpoint creation by unmounting
+        return _reverse_rclone_mount(operands)
     
     elif op_type == "chsh" and operands:
         # Reverse shell change by reverting to bash

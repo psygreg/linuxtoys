@@ -485,3 +485,9 @@ shell_change() {
 distrobox_created() {
     _append_transmap "distrobox $*"
 }
+
+# rclone mountpoint
+rclone_mount() {
+    rclone mount "$1" "$2" --daemon || fatal "Failed to create rclone mountpoint"
+    _append_transmap "rclone mounted $*" 
+}
