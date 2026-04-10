@@ -1097,6 +1097,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             and self.current_category_info.get("display_mode", "menu") == "checklist"
         ):
             self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+        
+        # Refresh footer translations
+        self.reveal.update_translations(self.translations)
 
     def _get_fresh_category_info_with_translations(self):
         """Get fresh category info with updated translations"""

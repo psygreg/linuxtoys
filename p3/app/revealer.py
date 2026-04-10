@@ -114,6 +114,9 @@ class SupportFooter(Gtk.Box):
                 True,
             ),
         ]
+        
+        # Store button references for later updates
+        self.buttons = []
 
         for i, (url, label, icon, is_link) in enumerate(self.urls_labels):
             if is_link:
@@ -129,11 +132,46 @@ class SupportFooter(Gtk.Box):
                 icon_img = Gtk.Image.new_from_file(icon_path)
                 button.set_image(icon_img)
             self.pack_start(button, False, False, 0)
+            self.buttons.append((button, i))
 
             if i < len(self.urls_labels) - 1:
                 separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
                 self.pack_start(separator, False, False, 0)
     
+    def update_translations(self, new_translations):
+        """Update footer with new translations when language changes"""
+        self.translations = new_translations or {}
+        
+        # Update the urls_labels with new translations
+        self.urls_labels = [
+            ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg", True),
+            (
+                "",
+                self.translations.get("report_label", "Report Bug"),
+                "report.svg",
+                True,
+            ),
+            (
+                "https://linux.toys/credits.html",
+                self.translations.get("credits_label", "Credits"),
+                "credits.svg",
+                True,
+            ),
+            (
+                "https://ko-fi.com/psygreg",
+                self.translations.get("support_footer", "Support this project"),
+                "sponsor.svg",
+                True,
+            ),
+        ]
+        
+        # Update button labels
+        for button, index in self.buttons:
+            if index < len(self.urls_labels):
+                url, label, icon, is_link = self.urls_labels[index]
+                button.set_label(label)
+    
+
     def _on_bug_report_clicked(self, button):
         """Handle bug report button click."""
         # Find the parent window
@@ -293,3 +331,19 @@ class RevealerFooter(Gtk.Revealer):
 
     def _on_cancel_clicked(self, button):
         self.parent.on_cancel_checklist(button)
+    
+    def update_translations(self, new_translations):
+        """Update footer buttons with new translations when language changes"""
+        # Update own button labels
+        self.button_next.set_label(new_translations.get("next_label", "Next"))
+        self.button_next.set_tooltip_text(
+            new_translations.get("next_label", "Next")
+        )
+        
+        self.button_cancel.set_label(new_translations.get("cancel_label", "Cancel"))
+        self.button_cancel.set_tooltip_text(
+            new_translations.get("cancel_label", "Cancel")
+        )
+        
+        # Update support footer translations
+        self.support.update_translations(new_translations)
