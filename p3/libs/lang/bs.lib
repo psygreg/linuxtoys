@@ -75,3 +75,39 @@ msg303="Secure Boot je već omogućen. Nije potrebna akcija."
 msg304="Omogućavanje Secure Boot-a kroz 'sbctl', metod koji koristi ova aplikacija, može onesposobiti starije uređaje. Provjerite postoje li izvještaji o problemima korištenja ovog alata s vašim modelom matične ploče prije nego što nastavite."
 msg305="Za ovu instalaciju potrebno je imati paru, AUR pomoćnik. Želite li ga instalirati sada?"
 nocl="OpenCL nije detektovan. Molimo instalirajte ROCm, RustiCL ili Intel's Compute Runtime iz Drivers menija prema vašem GPU modelu."
+
+gdrive_guide_text="1. PRISTUP GOOGLE CLOUD KONZOLI:
+   → Idite na console.cloud.google.com i prijavite se sa vašim Google nalogom
+
+2. KREIRAJTE NOVI PROJEKT:
+   → U gornjem levom uglu, kliknite na padajući meni projekta i izaberite \"Novi projekt\"
+   → Dajte mu naziv (npr. \"RcloneDrive\") i kliknite \"Kreiraj\"
+   → Čekajte i budite sigurni da je izabran
+
+3. OMOGUĆITE GOOGLE DRIVE API:
+   → U levoj bočnoj traci, idite na \"API-ji i usluge\" > \"Biblioteka\"
+   → Potražite \"Google Drive API\" i kliknite na njega
+   → Kliknite na plavi gumb \"Omogući\"
+
+4. KONFIGURIRA OAUTH EKRAN PRISTANKA:
+   → U levom meniju, idite na \"API-ji i usluge\" > \"OAuth ekran pristanka\"
+   → Izaberite tip korisnika: \"Eksterni\" (za @gmail.com) ili \"Interni\" (za Workspace)
+   → Popunite potrebna polja:
+     • Naziv aplikacije: \"RcloneApp\" (ili vaša preferen)
+     • Email podrške korisnika: Vaš email
+     • Kontakt programera: Vaš email
+   → Kliknite \"Sačuvaj i nastavi\" (preskoči ekran Opsega, samo kliknite ponovo)
+   → Na ekranu \"Test korisnici\": Kliknite \"+ Dodaj korisnike\" i dodajte vaš Google Drive email
+   → Kliknite \"Sačuvaj i nastavi\"
+
+5. KREIRAJTE AKREDITIVE:
+   → U levom meniju kliknite \"Akreditive\"
+   → Kliknite \"+ Kreiraj akreditive\" i izaberite \"OAuth ID klijenta\"
+   → Izaberite \"Desktop aplikaciju\" kao tip aplikacije
+   → Dajte joj naziv i kliknite \"Kreiraj\"
+
+6. SAČUVAJTE KLJuČEVE:
+   → Prozor će pokazati vašu \"ID klijenta\" i \"Tajnu klijenta\"
+   → Pripremite ih za sledeći korak!
+
+Nakon što završite ove korake, kliknite OK za nastavak."

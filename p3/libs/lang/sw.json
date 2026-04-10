@@ -413,5 +413,6 @@
   "registry_cleanup_success_title": "Usafi umekamilika",
   "registry_cleanup_partial_title": "Usafi umekamilika kwa onyo",
   "registry_cleanup_failed": "Kuomea kuondoa ingizo la rejista",
-  "shelly_desc": "Tafuta paketti za kawaida, AUR na Flatpak katika meneja wa programu moja ya mfupi na ya kisasa."
+  "shelly_desc": "Tafuta paketti za kawaida, AUR na Flatpak katika meneja wa programu moja ya mfupi na ya kisasa.",
+  "rgdrive_desc": "Ongeza Google Drive yako kama nukta ya kupambanuliwa direktivu ya nyumba yako, ilivyozamishwa na rclone, kuruhusu kufikia kwa urahisi faili zako za wingu na kuziandika kutoka kwa meneja wa faili na terminal."
 }

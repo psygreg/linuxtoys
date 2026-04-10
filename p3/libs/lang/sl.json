@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Čiščenje zaključeno",
   "registry_cleanup_partial_title": "Čiščenje zaključeno s pozivi",
   "registry_cleanup_failed": "Odstranitev vnosa registra ni uspela",
-  "shelly_desc": "Iščite standardne pakete, AUR in Flatpak v enem jedrnati in sodobnem upravljavcu paketov."
+  "shelly_desc": "Iščite standardne pakete, AUR in Flatpak v enem jedrnati in sodobnem upravljavcu paketov.",
+  "rgdrive_desc": "Dodajte Google Drive kot točko priveza v domačem direktoriju, sinhroniziran s programom rclone, kar vam omogoči enostaven dostop do datotek v oblaku in njihovo upravljanje iz upravitelja datotek in terminala."
 }

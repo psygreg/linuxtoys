@@ -75,3 +75,39 @@ msg303="Tá Tosaithe Slán cumasaithe cheana féin. Níl gá le gníomh."
 msg304="Má chumasaítear Tosaithe Slán trí 'sbctl', an modh a úsáideann an aip seo, d'fhéadfadh sé gléasanna níos sine a bhriseadh. Seiceáil an bhfuil aon tuarascálacha ar shaincheisteanna ag baint úsáide as an uirlis seo le do shamhail cláir mháthair sula leanann tú ar aghaidh."
 msg305="Teastaíonn paru, cúntóir AUR, don tsuiteáil seo. Ar mhaith leat é a shuiteáil anois?"
 nocl="Níor bhraistí OpenCL. Socrú ROCm, RustiCL nó Intel's Compute Runtime ó roghchlár an Drivers de réir do ghréine GPU."
+
+gdrive_guide_text="1. PÁIGH ISTEACH DON CHONSÓL GOOGLE CLOUD:
+   → Téigh go console.cloud.google.com agus déan síniú isteach le do chuntas Google
+
+2. CRUTHAIGH TIONSCADAL NUA:
+   → Sa chúinne barr ar chlé, cliceáil ar an roghchlár imeall an tionscadail agus roghnaigh \"Tionscadal Nua\"
+   → Tabhair ainm dó (m.sh., \"RcloneDrive\") agus cliceáil ar \"Cruthaigh\"
+   → Fan agus déan cinnte go bhfuil sé roghhnaithe
+
+3. CUMASAIGH AN API GOOGLE DRIVE:
+   → Ar an bharra taobhlíne clé, téigh go \"APIs agus Seirbhísí\" > \"Leabharlann\"
+   → Cuardaigh \"API Google Drive\" agus cliceáil air
+   → Cliceáil ar an chnaipe ghorm \"Cumasaigh\"
+
+4. CUMRAIGH AN SCÁILEÁN TOILITHE OAUTH:
+   → Sa roghchlár ar chlé, téigh go \"APIs agus Seirbhísí\" > \"Scáileán Toilithe OAuth\"
+   → Roghnaigh Cineál Úsáideora: \"Seachtrach\" (do @gmail.com) nó \"Inmheánach\" (do Workspace)
+   → Líon i na réimsí riachtanacha:
+     • Ainm an Fheidhmchláir: \"RcloneApp\" (nó do rogha)
+     • Ríomhphost Tacaíochta Úsáideora: Do ríomhphost
+     • Teagmháil an Fhorbraitheoirear: Do ríomhphost
+   → Cliceáil ar \"Sábháil agus Lean ar Aghaidh\" (léim thar an scáileán Freagrí, cliceáil arís)
+   → Ar an scáileán \"Úsáideoirí Tástála\": Cliceáil ar \"+ Cuir Úsáideoirí Leis\" agus cuir do ríomhphost Google Drive leis
+   → Cliceáil ar \"Sábháil agus Lean ar Aghaidh\"
+
+5. CRUTHAIGH DINTIÚIRÍ:
+   → Sa roghchlár ar chlé, cliceáil ar \"Dintiúirí\"
+   → Cliceáil ar \"+ Cruthaigh Dintiúirí\" agus roghnaigh \"ID Cliant OAuth\"
+   → Roghnaigh \"Feidhmchlár Deisce\" mar Chineál Feidhmchláir
+   → Tabhair ainm dó agus cliceáil ar \"Cruthaigh\"
+
+6. SÁBHÁIL NA HEOCHRACHA:
+   → Thaispeánfaidh fuinneog do \"ID Cliant\" agus do \"Rúnda Cliant\"
+   → Bí ullamh don chéad ghéim eile!
+
+Ar na céimeanna thuas ar fad, cliceáil ar OK chun leanúint ar aghaidh."

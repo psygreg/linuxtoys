@@ -75,3 +75,39 @@ msg303="Secure Boot er allerede aktivert. Ingen handling nødvendig."
 msg304="Aktivering av Secure Boot gjennom 'sbctl', metoden som brukes av denne appen, kan ødelegge eldre enheter. Sjekk om det finnes rapporter om problemer med å bruke dette verktøyet med hovedkortmodellen din før du fortsetter."
 msg305="Denne installasjonen krever at paru, en AUR-hjelper, er tilgjengelig. Ønsker du å installere den nå?"
 nocl="OpenCL ble ikke funnet. Installer ROCm, RustiCL eller Intel's Compute Runtime fra Drivers-menyen i henhold til GPU-modellen din."
+
+gdrive_guide_text="1. TILGANG TIL GOOGLE CLOUD-KONSOLLEN:
+   → Gå til console.cloud.google.com og logg inn med Google-kontoen din
+
+2. OPPRETT ET NYTT PROSJEKT:
+   → Klikk på rullegardinmenyen for prosjekter i øvre venstre hjørne og velg \"Nytt prosjekt\"
+   → Gi det et navn (f.eks. \"RcloneDrive\") og klikk \"Opprett\"
+   → Vent og bekreft at det er valgt
+
+3. AKTIVER GOOGLE DRIVE API:
+   → I den venstre sidestolpen går du til \"API-er og tjenester\" > \"Bibliotek\"
+   → Søk etter \"Google Drive API\" og klikk på den
+   → Klikk på den blå \"Aktiver\"-knappen
+
+4. KONFIGURER OAUTH-SAMTYKKESKJERMEN:
+   → I den venstre menyen går du til \"API-er og tjenester\" > \"OAuth-samtykkeskjerm\"
+   → Velg Brukertype: \"Ekstern\" (for @gmail.com) eller \"Intern\" (for Workspace)
+   → Fyll inn de obligatoriske feltene:
+     • Applikasjonsnavn: \"RcloneApp\" (eller ditt valg)
+     • E-post for brukerstøtte: Din e-post
+     • Utviklerkontakt: Din e-post
+   → Klikk \"Lagre og fortsett\" (hopp over Scopes-skjermen, bare klikk igjen)
+   → På \"Testbrukere\"-skjermen: Klikk \"+ Legg til brukere\" og legg til Google Drive-e-posten din
+   → Klikk \"Lagre og fortsett\"
+
+5. OPPRETT LEGITIMASJON:
+   → I den venstre menyen klikker du på \"Legitimasjon\"
+   → Klikk \"+ Opprett legitimasjon\" og velg \"OAuth-klient-ID\"
+   → Velg \"Desktop-app\" som programtype
+   → Gi den et navn og klikk \"Opprett\"
+
+6. LAGRE NØKLENE:
+   → Et vindu vil vise \"Klient-ID\" og \"Klient-hemmelighet\" din
+   → Ha disse klare for neste trinn!
+
+På alle trinnene ovenfor klikker du \"OK\" for å fortsette.\""

@@ -75,3 +75,39 @@ msg303="Secure Boot đã được bật. Không cần thực hiện hành độn
 msg304="Bật Secure Boot thông qua 'sbctl', phương pháp được ứng dụng này sử dụng, có thể làm hỏng các thiết bị cũ hơn. Kiểm tra xem có bất kỳ báo cáo nào về sự cố khi sử dụng công cụ này với mẫu bo mạch chủ của bạn trước khi tiếp tục."
 msg305="Cài đặt này yêu cầu có paru, một trình trợ giúp AUR. Bạn có muốn cài đặt nó ngay bây giờ không?"
 nocl="Không tìm thấy OpenCL. Vui lòng cài đặt ROCm, RustiCL hoặc Intel's Compute Runtime từ menu Drivers theo mô hình GPU của bạn."
+
+gdrive_guide_text="1. TRUY CẬP GOOGLE CLOUD CONSOLE:
+   → Đi tới console.cloud.google.com và đăng nhập bằng tài khoản Google của bạn
+
+2. TẠO DỰ ÁN MỚI:
+   → Ở góc trên bên trái, nhấp vào menu thả xuống Dự án và chọn \"Dự án mới\"
+   → Đặt cho nó một cái tên (ví dụ: \"RcloneDrive\") và nhấp vào \"Tạo\"
+   → Chờ đợi và đảm bảo nó được chọn
+
+3. BẬT API GOOGLE DRIVE:
+   → Trong thanh bên trái, hãy tới \"API và Dịch vụ\" > \"Thư viện\"
+   → Tìm kiếm \"Google Drive API\" và nhấp vào nó
+   → Nhấp vào nút \"Bật\" màu xanh lam
+
+4. CẤU HÌNH MÀN HÌNH ĐỒNG Ý OAUTH:
+   → Trong menu bên trái, hãy tới \"API và Dịch vụ\" > \"Màn hình Đồng ý OAUTH\"
+   → Chọn Loại người dùng: \"Bên ngoài\" (cho @gmail.com) hoặc \"Bên trong\" (cho Workspace)
+   → Điền các trường bắt buộc:
+     • Tên ứng dụng: \"RcloneApp\" (hoặc lựa chọn của bạn)
+     • Email hỗ trợ người dùng: Email của bạn
+     • Liên hệ của Nhà phát triển: Email của bạn
+   → Nhấp vào \"Lưu và Tiếp tục\" (Bỏ qua màn hình Phạm vi)
+   → Trên màn hình \"Người dùng Thử nghiệm\": nhấp vào \"+ Thêm Người dùng\" và thêm email Google Drive của bạn
+   → Nhấp vào \"Lưu và Tiếp tục\"
+
+5. TẠO THÔNG TIN XÁC THỰC:
+   → Trong menu bên trái, nhấp vào \"Thông tin xác thực\"
+   → Nhấp vào \"+ Tạo Thông tin xác thực\" và chọn \"ID Khách hàng OAuth\"
+   → Chọn \"Ứng dụng Desktop\" làm Loại ứng dụng
+   → Đặt cho nó một cái tên và nhấp vào \"Tạo\"
+
+6. LƯU CÁC KHÓA:
+   → Hộp thoại hiển thị \"ID Khách hàng\" và \"Bí mật Khách hàng\" của bạn
+   → Chuẩn bị chúng cho bước tiếp theo!
+
+Nhấp vào \"OK\" trên tất cả các bước ở trên để tiếp tục.\""

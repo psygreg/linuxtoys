@@ -75,3 +75,39 @@ msg303="Secure Boot je již povolen. Není nutná žádná akce."
 msg304="Povolení Secure Boot prostřednictvím 'sbctl', metody používané touto aplikací, může poškodit starší zařízení. Před pokračováním zkontrolujte, zda existují nějaké zprávy o problémech s používáním tohoto nástroje s vaším modelem základní desky."
 msg305="Tato instalace vyžaduje dostupnost paru, AUR pomocníka. Přejete si jej nyní nainstalovat?"
 nocl="OpenCL nebyl zjištěn. Prosím, nainstalujte ROCm, RustiCL nebo Intel's Compute Runtime z nabídky Drivers podle vašeho modelu GPU."
+
+gdrive_guide_text="1. PŘÍSTUP KE GOOGLE CLOUD CONSOLE:
+   → Přejděte na console.cloud.google.com a přihlaste se svým účtem Google
+
+2. VYTVOŘTE NOVÝ PROJEKT:
+   → V levém horním rohu klikněte na rozevírací nabídku projektu a vyberte \"Nový projekt\"
+   → Pojmenujte jej (např. \"RcloneDrive\") a klikněte na \"Vytvořit\"
+   → Čekejte a ujistěte se, že je vybrán
+
+3. POVOLTE ROZHRANÍ GOOGLE DRIVE API:
+   → Na levém postranním panelu přejděte na \"API a služby\" > \"Knihovna\"
+   → Vyhledejte \"Google Drive API\" a klikněte na ni
+   → Klikněte na modrý odkaz \"Povolit\"
+
+4. NAKONFIGURUJTE OBRAZOVKU SOUHLASU OAUTH:
+   → V levé nabídce přejděte na \"API a služby\" > \"Obrazovka souhlasu OAuth\"
+   → Zvolte Typ uživatele: \"Externí\" (pro @gmail.com) nebo \"Interní\" (pro Workspace)
+   → Vyplňte povinná pole:
+     • Název aplikace: \"RcloneApp\" (nebo vaše preference)
+     • Email pro podporu uživatelů: Váš e-mail
+     • Kontakt vývojáře: Váš e-mail
+   → Klikněte \"Uložit a pokračovat\" (přeskočte obrazovku Rozsahy, stačí znovu kliknout)
+   → Na obrazovce \"Testovací uživatelé\": klikněte \"+ Přidat uživatele\" a přidejte svůj e-mail Google Drive
+   → Klikněte \"Uložit a pokračovat\"
+
+5. VYTVOŘTE PŘIHLAŠOVACÍ ÚDAJE:
+   → V levé nabídce klikněte \"Přihlašovací údaje\"
+   → Klikněte na \"+ Vytvořit přihlašovací údaje\" a vyberte \"ID klienta OAuth\"
+   → Vyberte \"Desktopová aplikace\" jako typ aplikace
+   → Pojmenujte ji a klikněte \"Vytvořit\"
+
+6. ULOŽTE KLÍČE:
+   → Okno zobrazí vaše \"ID klienta\" a \"Tajný klíč klienta\"
+   → Připravte si je na další krok!
+
+Po dokončení těchto kroků klikněte na OK, abyste pokračovali."

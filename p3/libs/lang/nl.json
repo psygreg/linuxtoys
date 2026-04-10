@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Opschooning voltooid",
   "registry_cleanup_partial_title": "Opschooning voltooid met waarschuwingen",
   "registry_cleanup_failed": "Kan registerinvoer niet verwijderen",
-  "shelly_desc": "Zoek naar standaardpakketten, AUR en Flatpak in één beknopt en modern pakketbeheer."
+  "shelly_desc": "Zoek naar standaardpakketten, AUR en Flatpak in één beknopt en modern pakketbeheer.",
+  "rgdrive_desc": "Voeg Google Drive toe als een mount point in uw thuis map, gesynchroniseerd met rclone, waarmee u gemakkelijk vanuit de bestandsbeheerder en terminal toegang kunt krijgen tot uw cloud files en deze kunt beheren."
 }

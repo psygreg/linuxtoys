@@ -75,3 +75,39 @@ msg303="Secure Boot është tashmë i aktivizuar. Nuk nevojitet asnjë veprim."
 msg304="Aktivizimi i Secure Boot përmes 'sbctl', metoda e përdorur nga ky aplikacion, mund të dëmtojë pajisjet e vjetra. Kontrolloni nëse ka ndonjë raport problemesh duke përdorur këtë mjet me modelin e motherboard-it tuaj përpara se të vazhdoni."
 msg305="Ky instalim kërkon që paru, një ndihmës AUR, të jetë i disponueshëm. A dëshironi ta instaloni tani?"
 nocl="OpenCL nuk u zbulua. Ju lutemi instaloni ROCm, RustiCL ose Intel's Compute Runtime nga menyja e Drivers sipas modelit tuaj të GPU-s."
+
+gdrive_guide_text="1. HYRJA NË KONSOLËN E GOOGLE CLOUD:
+   → Shkoni në console.cloud.google.com dhe hiqni në llogari tuaj Google
+
+2. KRIJONI NJË PROJEKT TË RI:
+   → Në këndin e sipërm majtas, klikoni në menynë rënëse të Projektit dhe zgjidhni \"Projekt i ri\"
+   → Jepini një emër (psh. \"RcloneDrive\") dhe klikoni \"Krijo\"
+   → Prisni dhe sigurohuni se është zgjedhur
+
+3. AKTIVIZONI GOOGLE DRIVE API:
+   → Në shiritin anësor të majtë, shkoni në \"API-t dhe shërbimet\" > \"Biblioteka\"
+   → Kërkoni për \"Google Drive API\" dhe klikoni mbi të
+   → Klikoni butonin blu \"Aktivizo\"
+
+4. KONFIGURONI EKRANIN E MIRATIMIT OAUTH:
+   → Në menynë e majtë, shkoni në \"API-t dhe shërbimet\" > \"Ekrani i miratimit OAUTH\"
+   → Zgjidhni Lloji i përdoruesit: \"Eksternal\" (për @gmail.com) ose \"Intern\" (për Workspace)
+   → Plotësoni fushat e kërkuara:
+     • Emri i aplikacionit: \"RcloneApp\" (ose zgjedhja juaj)
+     • Email për mbështetjen e përdoruesit: Email-i juaj
+     • Kontakti i zhvilluesit: Email-i juaj
+   → Klikoni \"Ruaj dhe vazhdo\" (anashkaloni ekranin e vëllimit)
+   → Në ekranin \"Përdoruesit e testit\": klikoni \"+ Shtoni përdoruesit\" dhe shtoni email-in tuaj të Google Drive
+   → Klikoni \"Ruaj dhe vazhdo\"
+
+5. KRIJONI KREDENCIALE:
+   → Në menynë e majtë, klikoni \"Kredenciale\"
+   → Klikoni \"+ Krijo kredenciale\" dhe zgjidhni \"ID klienti OAuth\"
+   → Zgjidhni \"Aplikacioni desktop\" si lloj aplikacioni
+   → Jepini një emër dhe klikoni \"Krijo\"
+
+6. RUAJ ÇELËSAT:
+   → Një dritare do të shfaqë \"Identifikimin e klientit\" tuaj dhe \"Client Secret\"
+   → Mbajini ata gati për hapin tjetër!
+
+Në të gjithë hapat e mësipërm, klikoni \"OK\" për të vazhduar.\""

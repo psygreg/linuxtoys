@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Valymas baigtas",
   "registry_cleanup_partial_title": "Valymas baigtas su įspėjimais",
   "registry_cleanup_failed": "Nepavyko pašalinti registro įrašo",
-  "shelly_desc": "Ieškokite standartinių paketų, AUR ir Flatpak viename glaustuoje ir moderniame paketų tvarkytuve."
+  "shelly_desc": "Ieškokite standartinių paketų, AUR ir Flatpak viename glaustuoje ir moderniame paketų tvarkytuve.",
+  "rgdrive_desc": "Pridėkite savo Google Drive kaip montavimo tašką savo namų kataloge, sinchronizuotą su rclone, suteikdami jums galimybę lengvai pasiekti ir valdyti debesies failus iš failų vadiklio ir terminalo."
 }

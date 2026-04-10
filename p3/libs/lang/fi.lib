@@ -75,3 +75,39 @@ msg303="Secure Boot on jo käytössä. Toimenpiteitä ei tarvita."
 msg304="Secure Bootin käyttöönotto 'sbctl':n kautta, tämän sovelluksen käyttämä menetelmä, voi rikkoa vanhempia laitteita. Tarkista ennen jatkamista, onko raportoitu ongelmia tämän työkalun käytöstä emolevysi mallilla."
 msg305="Tämä asennus vaatii paru-nimisen AUR-apuohjelman. Haluatko asentaa sen nyt?"
 nocl="OpenCL:ää ei havaittu. Asenna ROCm, RustiCL tai Intel's Compute Runtime Drivers-valikosta GPU-mallisi mukaan."
+
+gdrive_guide_text="1. PÄÄSY GOOGLE CLOUD KONSOLIIN:
+   → Siirry osoitteeseen console.cloud.google.com ja kirjaudu Googlen tilillä
+
+2. LUO UUSI PROJEKTI:
+   → Napsauta vasemmassa yläkulmassa olevan projektin pudotusvalikkoa ja valitse \"Uusi projekti\"
+   → Anna sille nimi (esim. \"RcloneDrive\") ja napsauta \"Luo\"
+   → Odota ja varmista, että se on valittuna
+
+3. OTTA GOOGLE DRIVE API KÄYTTÖÖN:
+   → Mene vasemmalla sivupalkilla kohtaan \"API:t ja palvelut\" > \"Kirjasto\"
+   → Hae \"Google Drive API\" ja napsauta sitä
+   → Napsauta sinistä \"Ota käyttöön\" -painiketta
+
+4. MÄÄRITÄ OAUTH-SUOSTUMUSNÄYTTÖ:
+   → Siirry vasemmassa valikossa kohtaan \"API:t ja palvelut\" > \"OAuth-suostumusnäyttö\"
+   → Valitse käyttäjätyyppi: \"Ulkoinen\" (@gmail.com) tai \"Sisäinen\" (Workspace)
+   → Täytä vaaditut kentät:
+     • Sovelluksen nimi: \"RcloneApp\" (tai haluamasi)
+     • Käyttäjän tuen sähköposti: Sähköpostiosoitteesi
+     • Kehittäjän yhteystieto: Sähköpostiosoitteesi
+   → Napsauta \"Tallenna ja jatka\" (ohita vaikutusalueet-näyttö, napsauta uudelleen)
+   → Testimerkinäytöllä: Napsauta \"+ Lisää käyttäjiä\" ja lisää Google Drive -sähköpostiosoitteesi
+   → Napsauta \"Tallenna ja jatka\"
+
+5. LUO TUNNISTETIEDOT:
+   → Napsauta vasemmassa valikossa \"Tunnistetiedot\"
+   → Napsauta \"+ Luo tunnistetiedot\" ja valitse \"OAuth-asiakas-ID\"
+   → Valitse \"Pöytäsovellus\" sovellustyypiksi
+   → Anna sille nimi ja napsauta \"Luo\"
+
+6. TALLENNA AVAIMET:
+   → Ikkuna näyttää \"Asiakkaan tunnuksen\" ja \"Asiakassalaisuuden\"
+   → Pidä nämä valmiina seuraavaan vaiheeseen!
+
+Napsauta kaikkien yllä olevien vaiheiden kohdalla OK jatkaaksesi."

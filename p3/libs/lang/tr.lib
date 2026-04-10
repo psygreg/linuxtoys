@@ -75,3 +75,39 @@ msg303="Güvenli Önyükleme zaten etkin. Herhangi bir işlem gerekmez."
 msg304="Bu uygulamanın kullandığı yöntem olan 'sbctl' aracılığıyla Güvenli Önyükleme'yi etkinleştirmek eski cihazları bozabilir. Devam etmeden önce bu aracı anakart modelinizle kullanırken sorun bildirimleri olup olmadığını kontrol edin."
 msg305="Bu kurulum için paru adlı bir AUR yardımcısının mevcut olması gerekiyor. Şimdi yüklemek ister misiniz?"
 nocl="OpenCL bulunamadı. Lütfen GPU modelinize göre Drivers menüsünden ROCm, RustiCL veya Intel's Compute Runtime yükleyin."
+
+gdrive_guide_text="1. GOOGLE CLOUD CONSOLE'A ERİŞİN:
+   → console.cloud.google.com'a gidin ve Google hesabınızla oturum açın
+
+2. YENİ BİR PROJE OLUŞTURUN:
+   → Sol üst köşede, Proje açılır menüsünü tıklayın ve \"Yeni Proje\" seçin
+   → Bir ad verin (örneğin: \"RcloneDrive\") ve \"Oluştur\"u tıklayın
+   → Bekleyin ve seçilmiş olduğundan emin olun
+
+3. GOOGLE DRIVE API'Sİ ETKINLEŞTIRIN:
+   → Sol kenar çubuğunda \"API'ler ve Hizmetler\" > \"Kitaplık\"a gidin
+   → \"Google Drive API\"'ı arayın ve tıklayın
+   → Mavi \"Etkinleştir\" düğmesini tıklayın
+
+4. OAUTH ONAY EKRANINI YAPILANDIRIZ:
+   → Sol menüde \"API'ler ve Hizmetler\" > \"OAuth Onay Ekranı\"na gidin
+   → Kullanıcı Türünü seçin: \"Harici\" (@gmail.com için) veya \"İç\" (Workspace için)
+   → Gerekli alanları doldurun:
+     • Uygulama adı: \"RcloneApp\" (veya seçiminiz)
+     • Kullanıcı desteği e-postası: Sizin e-postanız
+     • Geliştirici İletişim: Sizin e-postanız
+   → \"Kaydet ve Devam Et\"i tıklayın (Kapsam ekranını atlayın)
+   → \"Test Kullanıcıları\" ekranında: \"+ Kullanıcı Ekle\"yi tıklayın ve Google Drive e-postanızı ekleyin
+   → \"Kaydet ve Devam Et\"i tıklayın
+
+5. KİMLİK BİLGİLERİ OLUŞTURUN:
+   → Sol menüde \"Kimlik Bilgileri\"ni tıklayın
+   → \"+ Kimlik Bilgisi Oluştur\"u tıklayın ve \"OAuth İstemci Kimliği\" seçin
+   → \"Masaüstü uygulaması\" olarak Uygulama Türünü seçin
+   → Bir ad verin ve \"Oluştur\"u tıklayın
+
+6. ANAHTARLARI KAYDETİN:
+   → Bir iletişim kutusu sizin \"İstemci Kimliği\" ve \"İstemci Gizli Dizisi\"ni gösterir
+   → Bunları sonraki adım için hazırlayın!
+
+Devam etmek için yukarıdaki tüm adımlarda \"Tamam\"ı tıklayın.\""

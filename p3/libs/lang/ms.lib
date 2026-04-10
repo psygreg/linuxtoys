@@ -75,3 +75,39 @@ msg303="Secure Boot sudah diaktifkan. Tiada tindakan diperlukan."
 msg304="Mengaktifkan Secure Boot melalui 'sbctl', kaedah yang digunakan oleh aplikasi ini, boleh merosakkan peranti lama. Semak sama ada terdapat sebarang laporan masalah menggunakan alat ini dengan model papan induk anda sebelum meneruskan."
 msg305="Pemasangan ini memerlukan paru, pembantu AUR, tersedia. Adakah anda ingin memasangnya sekarang?"
 nocl="OpenCL tidak dikesan. Sila pasang ROCm, RustiCL, atau Intel's Compute Runtime daripada menu Drivers mengikut model GPU anda."
+
+gdrive_guide_text="1. AKSES KONSOL GOOGLE CLOUD:
+   → Pergi ke console.cloud.google.com dan log masuk dengan akaun Google anda
+
+2. BUAT PROJEK BARU:
+   → Di sudut kanan atas, klik menu jatuh projek dan pilih \"Projek Baru\"
+   → Berikan nama (cth: \"RcloneDrive\") dan klik \"Buat\"
+   → Tunggu dan pastikan ia dipilih
+
+3. DAYAKAN API GOOGLE DRIVE:
+   → Di bar sisi kiri, pergi ke \"API dan Perkhidmatan\" > \"Perpustakaan\"
+   → Cari \"Google Drive API\" dan kliknya
+   → Klik butang biru \"Dayakan\"
+
+4. KONFIGUR SKRIN PERSETUJUAN OAUTH:
+   → Di menu sebelah kiri, pergi ke \"API dan Perkhidmatan\" > \"Skrin Persetujuan OAuth\"
+   → Pilih Jenis Pengguna: \"Luaran\" (untuk @gmail.com) atau \"Dalaman\" (untuk Workspace)
+   → Isi medan yang diperlukan:
+     • Nama Aplikasi: \"RcloneApp\" (atau pilihan anda)
+     • E-mel Sokongan Pengguna: E-mel anda
+     • Hubungan Pemaju: E-mel anda
+   → Klik \"Simpan dan Teruskan\" (lewati skrin Skop, hanya klik lagi)
+   → Pada skrin \"Pengguna Ujian\": Klik \"+ Tambah Pengguna\" dan tambahkan e-mel Google Drive anda
+   → Klik \"Simpan dan Teruskan\"
+
+5. BUAT KELAYAKAN:
+   → Di menu sebelah kiri, klik \"Kelayakan\"
+   → Klik \"+ Buat Kelayakan\" dan pilih \"ID Klien OAuth\"
+   → Pilih \"Aplikasi Desktop\" sebagai Jenis Aplikasi
+   → Berikan nama dan klik \"Buat\"
+
+6. SIMPAN KUNCI:
+   → Tetingkap akan menunjukkan \"ID Klien\" dan \"Rahsia Klien\" anda
+   → Sediakan ini untuk langkah seterusnya!
+
+Pada semua langkah di atas, klik \"OK\" untuk teruskan.""

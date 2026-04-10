@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Bereinigung abgeschlossen",
   "registry_cleanup_partial_title": "Bereinigung mit Warnungen abgeschlossen",
   "registry_cleanup_failed": "Registrierungseintrag konnte nicht entfernt werden",
-  "shelly_desc": "Suchen Sie nach Standardpaketen, AUR und Flatpak in einem prägnanten und modernen Paketmanager."
+  "shelly_desc": "Suchen Sie nach Standardpaketen, AUR und Flatpak in einem prägnanten und modernen Paketmanager.",
+  "rgdrive_desc": "Fügen Sie Google Drive als Bereitstellungspunkt in Ihr Home-Verzeichnis ein, synchronisiert mit rclone, wodurch Sie problemlos auf Ihre Cloud-Dateien zugreifen und diese über den Datei-Manager und das Terminal verwalten können."
 }

@@ -414,5 +414,6 @@
   "registry_cleanup_success_title": "Tozalash bajarildi",
   "registry_cleanup_partial_title": "Tozalash ogohlantirish bilan bajarildi",
   "registry_cleanup_failed": "Registr kiruvini o'chira olmadi",
-  "shelly_desc": "Standart paketlar, AUR va Flatpak-ni bitta qisqa va zamonaviy paket menejeridagi izlang."
+  "shelly_desc": "Standart paketlar, AUR va Flatpak-ni bitta qisqa va zamonaviy paket menejeridagi izlang.",
+  "rgdrive_desc": "Google Drive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi."
 }

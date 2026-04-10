@@ -75,3 +75,39 @@ msg303="Ang Secure Boot ay pinagana na. Walang kinakailangang aksyon."
 msg304="Ang pagpapagana ng Secure Boot sa pamamagitan ng 'sbctl', ang pamamaraang ginagamit ng app na ito, ay maaaring sirain ang mga lumang device. Suriin kung may mga ulat ng mga isyu sa paggamit ng tool na ito sa iyong modelo ng motherboard bago magpatuloy."
 msg305="Ang pag-install na ito ay nangangailangan ng paru, isang katulong ng AUR, na available. Nais mo bang i-install ito ngayon?"
 nocl="Walang OpenCL na nahanap. Mangyaring i-install ang ROCm, RustiCL o Intel's Compute Runtime mula sa Drivers menu ayon sa iyong GPU model."
+
+gdrive_guide_text="1. I-ACCESS ANG GOOGLE CLOUD CONSOLE:
+   → Pumunta sa console.cloud.google.com at mag-sign in gamit ang iyong Google account
+
+2. LUMIKHA NG BAGONG PROJECT:
+   → Sa itaas na kaliwang sulok, i-click ang Project dropdown at pumili ng \"Bagong Project\"
+   → Bigyan ito ng pangalan (hal. \"RcloneDrive\") at i-click ang \"Lumikha\"
+   → Maghintay at tiyakin na ito ay napili
+
+3. I-ENABLE ANG GOOGLE DRIVE API:
+   → Sa kaliwang sidebar, pumunta sa \"APIs and Services\" > \"Library\"
+   → Maghanap ng \"Google Drive API\" at i-click ito
+   → I-click ang asul na \"Enable\" na pindot
+
+4. I-CONFIGURE ANG OAUTH CONSENT SCREEN:
+   → Sa kaliwang menu, pumunta sa \"APIs and Services\" > \"OAuth Consent Screen\"
+   → Pumili ng User Type: \"External\" (para sa @gmail.com) o \"Internal\" (para sa Workspace)
+   → Punan ang mga kinakailangang field:
+     • Pangalan ng App: \"RcloneApp\" (o iyong pagpili)
+     • Email ng User Support: Ang iyong email
+     • Developer Contact: Ang iyong email
+   → I-click ang \"I-save at Magpatuloy\" (Lumikha ang Scope screen)
+   → Sa \"Test Users\" screen: i-click ang \"+ Magdagdag ng Users\" at idagdag ang iyong Google Drive email
+   → I-click ang \"I-save at Magpatuloy\"
+
+5. LUMIKHA NG MGA CREDENTIALS:
+   → Sa kaliwang menu, i-click ang \"Credentials\"
+   → I-click ang \"+ Lumikha ng Credentials\" at pumili ng \"OAuth Client ID\"
+   → Pumili ng \"Desktop application\" bilang Application Type
+   → Bigyan ito ng pangalan at i-click ang \"Lumikha\"
+
+6. I-SAVE ANG MGA SUSI:
+   → Ang isang dialog ay nagpapakita ng iyong \"Client ID\" at \"Client Secret\"
+   → Ihanda ang mga ito para sa susunod na hakbang!
+
+I-click ang \"OK\" sa lahat ng mga hakbang sa itaas upang magpatuloy.\""

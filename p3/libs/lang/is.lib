@@ -75,3 +75,39 @@ msg303="Secure Boot er þegar virkur. Engin aðgerð nauðsynleg."
 msg304="Að virkja Secure Boot í gegnum 'sbctl', aðferðin sem þetta forrit notar, getur eyðilagt eldri tæki. Athugaðu hvort einhverjar tilkynningar séu um vandamál við notkun þessa verkfæris með móðurborðslíkaninu þínu áður en þú heldur áfram."
 msg305="Þessi uppsetning krefst þess að paru, AUR hjálpartól, sé tiltækt. Viltu setja það upp núna?"
 nocl="OpenCL fannst ekki. Settu upp ROCm, RustiCL eða Intel's Compute Runtime frá Drivers valmyndinni í samræmi við GPU módelinn þinn."
+
+gdrive_guide_text="1. AÐGANGUR AÐ GOOGLE CLOUD STJÓRNBORÐI:
+   → Farðu á console.cloud.google.com og skrá þig inn með Google aðgangi þínum
+
+2. BÚÐU ÞÚ NÝTT VERKEFNI:
+   → Í efra vinstra horninu skaltu smella á fellivalmynd verkefnisins og velja \"Nýtt verkefni\"
+   → Gefðu því heiti (td \"RcloneDrive\") og smelltu á \"Búa til\"
+   → Bíddu og gakkaðu úr skugga um að það sé valið
+
+3. VIRKJAÐU GOOGLE DRIVE API:
+   → Á vinstri hliðastiku, farðu á \"API & Þjónustu\" > \"Safn\"
+   → Leitaðu að \"Google Drive API\" og smelltu á það
+   → Smelltu á bláa \"Virkja\" hnappinn
+
+4. STILLA SKJÁINN TIL AÐ SAMÞYKKJA OAUTH:
+   → Á vinstri valmyndinni, farðu á \"API & Þjónustu\" > \"OAuth samþykktu skátskjá\"
+   → Veldu Tegund notanda: \"Ytri\" (fyrir @gmail.com) eða \"Innri\" (fyrir Workspace)
+   → Fylltu inn í nauðsynlegum reitum:
+     • Heiti forrits: \"RcloneApp\" (eða þín val)
+     • Stjórnsunarnetfang notanda: Netfang þitt
+     • Samband forritara: Netfang þitt
+   → Smelltu á \"Vista og Haltu áfram\" (sleptu Scopes skjánum, bara smelltu aftur)
+   → Í \"Prófun notenda\" skjánum: Smelltu á \"+ Bæta á notendum\" og bættu Google Drive netfanginu þínu á
+   → Smelltu á \"Vista og Haltu áfram\"
+
+5. BÚÐU SKILR{EIN:
+   → Á vinstri valmyndinni skaltu smella á \"Skilr{ein\"
+   → Smelltu á \"+ Búa til skilr{ein\" og veldu \"OAuth biðlarakennara\"
+   → Veldu \"Skjáforrit\" sem Tegund forrits
+   → Gefðu því heiti og smelltu á \"Búa til\"
+
+6. VISTA LYKLA:
+   → Gluggi mun sýna \"Biðlarannókin\" og \"Leyniorðið biðlara\"
+   → Hafðu þau tilbúin fyrir næsta skref!
+
+Á öllum skrefum fyrir ofan skaltu smella á OK til að halda áfram.\""

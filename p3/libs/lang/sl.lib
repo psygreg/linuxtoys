@@ -75,3 +75,39 @@ msg303="Varni zagon je že omogočen. Ni potrebno nobeno dejanje."
 msg304="Omogočanje Secure Boot prek 'sbctl', metode, ki jo uporablja ta aplikacija, lahko poškoduje starejše naprave. Preverite, ali obstajajo poročila o težavah pri uporabi tega orodja z vašim modelom matične plošče, preden nadaljujete."
 msg305="Ta namestitev zahteva razpoložljivost paru, pomočnika AUR. Želite ga namestiti zdaj?"
 nocl="OpenCL ni bil najden. Prosim, namestite ROCm, RustiCL ali Intel's Compute Runtime iz menija Drivers v skladu z vašim modelom GPU."
+
+gdrive_guide_text="1. DOSTOP DO GOOGLE CLOUD KONZOLE:
+   → Pojdite na console.cloud.google.com in se prijavite s svojim Google računom
+
+2. USTVARITE NOVI PROJEKT:
+   → V zgornjem levem kotu kliknite na spustni meni Projekt in izberite \"Novi projekt\"
+   → Dajte mu ime (npr. \"RcloneDrive\") in kliknite \"Ustvari\"
+   → Počakajte in se prepričajte, da je izbran
+
+3. OMOGOČITE GOOGLE DRIVE API:
+   → V levem stranskem stolpcu pojdite na \"API-ji in storitve\" > \"Knjižnica\"
+   → Poiščite \"Google Drive API\" in nanjo kliknite
+   → Kliknite modro gumb \"Omogoči\"
+
+4. NASTAVITE ZASLON SOGLASJA OAUTH:
+   → V levem meniju pojdite na \"API-ji in storitve\" > \"Zaslon soglasja OAuth\"
+   → Izberite Vrsta uporabnika: \"Zunanji\" (za @gmail.com) ali \"Notranji\" (za Workspace)
+   → Izpolnite obvezna polja:
+     • Ime aplikacije: \"RcloneApp\" (ali vaša izbira)
+     • E-pošta za podporo uporabniku: Vaša e-pošta
+     • Stik razvijalca: Vaša e- pošta
+   → Kliknite \"Shrani in nadaljuj\" (preskoči zaslon Obsegi)
+   → Na zaslonu \"Testni uporabniki\": kliknite \"+ Dodaj uporabnike\" in dodajte svojo e-pošto Google Drive
+   → Kliknite \"Shrani in nadaljuj\"
+
+5. USTVARITE POVERILA:
+   → V levem meniju kliknite \"Poverila\"
+   → Kliknite \"+ Ustvari poverila\" in izberite \"ID odjemalca OAuth\"
+   → Izberite \"Namizna aplikacija\" kot vrsto aplikacije
+   → Dajte ji ime in kliknite \"Ustvari\"
+
+6. SHRANI KLJUČE:
+   → Okno bo prikazalo vaš \"ID odjemalca\" in \"Skrivnost odjemalca\"
+   → Imejte jih pripravljene za naslednji korak!
+
+Na vseh zgornjih korakih kliknite \"V redu\" za nadaljevanje.\""

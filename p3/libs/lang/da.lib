@@ -75,3 +75,39 @@ msg303="Secure Boot er allerede aktiveret. Ingen handling nødvendig."
 msg304="Aktivering af Secure Boot gennem 'sbctl', metoden anvendt af denne app, kan ødelægge ældre enheder. Kontroller om der er rapporter om problemer ved brug af dette værktøj med din bundkortmodel før du fortsætter."
 msg305="Denne installation kræver, at paru, en AUR-hjælper, er tilgængelig. Ønsker du at installere den nu?"
 nocl="OpenCL blev ikke registreret. Installér venligst ROCm, RustiCL eller Intel's Compute Runtime fra Drivers-menuen i henhold til din GPU-model."
+
+gdrive_guide_text="1. FÅ ADGANG TIL GOOGLE CLOUD CONSOLE:
+   → Gå til console.cloud.google.com og log ind med din Google-konto
+
+2. OPRET ET NYET PROJEKT:
+   → I øverste venstre hjørne skal du klikke på projektets dropdown og vælge \"Nyt projekt\"
+   → Navngiv det (f.eks. \"RcloneDrive\") og klik \"Opret\"
+   → Vent og sikr dig, at det er valgt
+
+3. AKTIVÉR GOOGLE DRIVE API:
+   → I venstre sidebar skal du gå til \"APIs & Services\" > \"Library\"
+   → Søg efter \"Google Drive API\" og klik på den
+   → Klik på den blå \"Enable\"-knap
+
+4. KONFIGURER OAUTH SAMTYKKESKÆRMEN:
+   → I venstre menu skal du gå til \"APIs & Services\" > \"OAuth consent screen\"
+   → Vælg brugertype: \"Ekstern\" (for @gmail.com) eller \"Intern\" (for Workspace)
+   → Udfyld de obligatoriske felter:
+     • Appnavn: \"RcloneApp\" (eller dit præference)
+     • Brugerunderstøttelse e-mail: Din e-mail
+     • Udvikler kontakt: Din e-mail
+   → Klik \"Gem og fortsæt\" (spring Scopes-skærmen over, bare klik igen)
+   → På \"Testbrugere\"-skærmen: Klik \"+ Tilføj brugere\" og tilføj din Google Drive e-mail
+   → Klik \"Gem og fortsæt\"
+
+5. OPRET LOGINOPLYSNINGER:
+   → I venstre menu klik på \"Legitim\"
+   → Klik \"+ Opret loginoplysninger\" og vælg \"OAuth client ID\"
+   → Vælg \"Desktop app\" som programtype
+   → Navngiv det og klik \"Opret\"
+
+6. GEM NØGLERNE:
+   → Et vindue viser dine \"Client ID\" og \"Client Secret\"
+   → Hav dem parat til næste trin!
+
+Når du har afsluttet disse trin, skal du klikke OK for at fortsætte."

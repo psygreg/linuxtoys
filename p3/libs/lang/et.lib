@@ -75,3 +75,39 @@ msg303="Secure Boot on juba lubatud. Toimingut pole vaja."
 msg304="Secure Boot lubamine 'sbctl' kaudu, selle rakenduse poolt kasutatav meetod, võib vanemad seadmed rikkuda. Enne jätkamist kontrollige, kas on teateid probleemidest selle tööriista kasutamisel teie emaplaadi mudeliga."
 msg305="See installatsioon nõuab paru, AUR-i abistaja olemasolu. Kas soovite selle nüüd installida?"
 nocl="OpenCL-i ei leitud. Palun installige ROCm, RustiCL või Intel's Compute Runtime menüüst Drivers vastavalt oma GPU mudelile."
+
+gdrive_guide_text="1. PÄÄS GOOGLE CLOUD KONSOOLI:
+   → Minge aadressile console.cloud.google.com ja logige sisse oma Google'i kontoga
+
+2. LOOGE UUS PROJEKT:
+   → Vasakus üllanurgas klõpsake projekti ripploendi ja valige \"Uus projekt\"
+   → Andke sellele nimi (nt \"RcloneDrive\") ja klõpsake \"Loo\"
+   → Oodake ja veenduge, et see on valitud
+
+3. LUBAGE GOOGLE DRIVE API:
+   → Vasakpoolsel külgribal minge \"API-d ja teenused\" > \"Teek\"
+   → Otsige \"Google Drive API\" ja klõpsake sellel
+   → Klõpsake sinisele nupule \"Luba\"
+
+4. KONFIGUREERI OAUTH NÕÜSOLEKUTE EKRAAN:
+   → Vasakus menüüs minge \"API-d ja teenused\" > \"OAuth nõusolekute ekraan\"
+   → Valige kasutaja tüüp: \"Väline\" (@gmail.com jaoks) või \"Sisemine\" (Workspace'i jaoks)
+   → Täitke nõutavad väljad:
+     • Rakenduse nimi: \"RcloneApp\" (või teie eelistus)
+     • Kasutaja toe e-post: Teie e-post
+     • Arendaja kontakt: Teie e-post
+   → Klõpsake \"Salvesta ja jätka\" (jätke Scopes'i ekraan vahele, klõpsake uuesti)
+   → Ekraanil \"Testikasutajad\": Klõpsake \"+ Lisa kasutajaid\" ja lisage oma Google Drivei e-post
+   → Klõpsake \"Salvesta ja jätka\"
+
+5. LOOGE MANDAADID:
+   → Vasakus menüüs klõpsake \"Mandaadid\"
+   → Klõpsake \"+ Loo mandaadid\" ja valige \"OAuth klientide ID\"
+   → Valige \"Desktop rakendus\" rakenduse tüübina
+   → Andke sellele nimi ja klõpsake \"Loo\"
+
+6. SALVESTA VÕTMED:
+   → Aken näitab teie \"Kliendi ID\" ja \"Kliendi saladust\"
+   → Olge järgmise sammu jaoks valmis!
+
+Kui olete need sammud lõpetanud, klõpsake OK, et jätkata."

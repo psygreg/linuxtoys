@@ -75,3 +75,39 @@ msg303="Secure Boot jest już włączony. Żadna akcja nie jest potrzebna."
 msg304="Włączenie Secure Boot przez 'sbctl', metodę używaną przez tę aplikację, może uszkodzić starsze urządzenia. Sprawdź, czy istnieją raporty o problemach z używaniem tego narzędzia z twoim modelem płyty głównej przed kontynuowaniem."
 msg305="Ta instalacja wymaga dostępności paru, pomocnika AUR. Czy chcesz go teraz zainstalować?"
 nocl="OpenCL nie znaleziono. Prosimy zainstalować ROCm, RustiCL lub Intel's Compute Runtime z menu Drivers zgodnie z Twoim modelem GPU."
+
+gdrive_guide_text="1. DOSTĘP DO KONSOLI GOOGLE CLOUD:
+   → Przejdź do witryny console.cloud.google.com i zaloguj się na konto Google
+
+2. UTWÓRZ NOWY PROJEKT:
+   → W górnym lewym rogu kliknij menu rozwijane Projekt i wybierz \"Nowy projekt\"
+   → Nadaj mu nazwę (np. \"RcloneDrive\") i kliknij \"Utwórz\"
+   → Czekaj i upewnij się, że jest zaznaczone
+
+3. WŁĄCZ GOOGLE DRIVE API:
+   → Na lewym pasku bocznym przejdź do \"Interfejsy API i usługi\" > \"Biblioteka\"
+   → Wyszukaj \"Google Drive API\" i kliknij ją
+   → Kliknij niebieski przycisk \"Włącz\"
+
+4. SKONFIGURUJ EKRAN ZGODY OAUTH:
+   → W lewym menu przejdź do \"Interfejsy API i usługi\" > \"Ekran zgody OAuth\"
+   → Wybierz Typ użytkownika: \"Zewnętrzny\" (dla @gmail.com) lub \"Wewnętrzny\" (dla Workspace)
+   → Wypełnij wymagane pola:
+     • Nazwa aplikacji: \"RcloneApp\" (lub Twoja preferencja)
+     • E-mail pomocy technicznej użytkownika: Twój e-mail
+     • Kontakt dla deweloperów: Twój e-mail
+   → Kliknij \"Zapisz i kontynuuj\" (pomiń ekran Zakresy, po prostu kliknij ponownie)
+   → Na ekranie \"Użytkownicy testowi\": kliknij \"+ Dodaj użytkowników\" i dodaj swój e-mail Google Drive
+   → Kliknij \"Zapisz i kontynuuj\"
+
+5. UTWÓRZ POŚWIADCZENIA:
+   → W lewym menu kliknij \"Poświadczenia\"
+   → Kliknij \"+ Utwórz poświadczenia\" i wybierz \"Identyfikator klienta OAuth\"
+   → Wybierz \"Aplikacja klasyczna\" jako typ aplikacji
+   → Nadaj jej nazwę i kliknij \"Utwórz\"
+
+6. ZAPISZ KLUCZE:
+   → Okno wyświetli Twój \"Identyfikator klienta\" i \"Tajemnicę klienta\"
+   → Przygotuj je na następny krok!
+
+Na wszystkich powyższych krokach kliknij \"OK\", aby kontynuować.\""

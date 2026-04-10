@@ -75,3 +75,39 @@ msg303="Secure Boot artıq aktivdir. Heç bir əməliyyat tələb olunmur."
 msg304="Bu tətbiq tərəfindən istifadə olunan metod olan 'sbctl' vasitəsilə Secure Boot-u aktivləşdirmək köhnə cihazları sıradan çıxara bilər. Davam etməzdən əvvəl bu alətin anakart modelinizlə istifadəsi ilə bağlı problemlər haqqında hər hansı hesabat olub-olmadığını yoxlayın."
 msg305="Bu quraşdırma üçün paru adlı AUR köməkçisinin mövcud olması tələb olunur. İndi quraşdırmaq istəyirsiniz?"
 nocl="OpenCL aşkar edilmədi. Lütfən GPU modelinizə uyğun olaraq Drivers menyusundan ROCm, RustiCL və ya Intel's Compute Runtime-ı quraşdırın."
+
+gdrive_guide_text="1. Google Cloud Konsoluna Daxil Olun:
+   → console.cloud.google.com-a keçin və Google hesabınızla daxil olun
+
+2. Yeni Layihə Yaradın:
+   → Sol üst küncdə layihə açılır menyusuna klikləyin və \"Yeni Layihə\" seçin
+   → Ona ad verin (məs., \"RcloneDrive\") və \"Yarat\"a klikləyin
+   → Gözləyin və seçildiğindən əmin olun
+
+3. Google Drive API-ni Aktivləşdirin:
+   → Sol kənar çubuğunda \"API-lər və Xidmətlər\" > \"Kitabxana\" sayfasına keçin
+   → \"Google Drive API\" axtarışı edin və üzərinə klikləyin
+   → Mavi \"Aktivləş\" düyməsinə klikləyin
+
+4. OAuth Razılaşdırma Ekranını Konfiqurasiya Edin:
+   → Sol menüdə \"API-lər və Xidmətlər\" > \"OAuth Razılaşdırma Ekranı\" sayfasına keçin
+   → İstifadəçi Tipini seçin: \"Xarici\" (@gmail.com üçün) və ya \"Daxili\" (Workspace üçün)
+   → Tələb olunan sahələri doldurun:
+     • Tətbiq Adı: \"RcloneApp\" (və ya sizin seçiminiz)
+     • İstifadəçi Dəstəyi E-poçtu: Sizin E-poçtu
+     • Tərtibatçı Kontaktı: Sizin E-poçtu
+   → \"Saxla və Davam Etmə\" klikləyin (Digər Ekranı atlayın, sadəcə yenidən klikləyin)
+   → \"Test İstifadəçiləri\" Ekranında: \"+ İstifadəçi Əlavə Etmə\" klikləyin və Google Drive E-poçtu əlavə edin
+   → \"Saxla və Davam Etmə\" klikləyin
+
+5. Authentication Yaradın:
+   → Sol menüdə \"Authentication\" klikləyin
+   → \"+ Authentication Yarat\" klikləyin və \"OAuth Client ID\" seçin
+   → \"Masaüstü Tətbiqi\" tətbiq tipi olaraq seçin
+   → Ona ad verin və \"Yarat\" klikləyin
+
+6. Açarları Saxlayın:
+   → Pəncərə \"Client ID\" və \"Client Secret\" göstərəcək
+   → Bunları Sonrakı addım üçün hazır saxlayın!
+
+Bu addımları tamamladıqdan sonra Davam Etmə üçün Razı klikləyin."

@@ -75,3 +75,39 @@ msg303="Secure Boot ist bereits aktiviert. Keine Aktion erforderlich."
 msg304="Das Aktivieren von Secure Boot über 'sbctl', die von dieser App verwendete Methode, kann ältere Geräte beschädigen. Überprüfen Sie vor dem Fortfahren, ob es Berichte über Probleme mit der Verwendung dieses Tools mit Ihrem Motherboard-Modell gibt."
 msg305="Diese Installation erfordert paru, einen AUR-Helfer. Möchten Sie ihn jetzt installieren?"
 nocl="OpenCL nicht erkannt. Bitte installieren Sie ROCm, RustiCL oder Intel's Compute Runtime aus dem Drivers-Menü gemäß Ihrem GPU-Modell."
+
+gdrive_guide_text="1. ZUGRIFF AUF DIE GOOGLE CLOUD CONSOLE:
+   → Gehen Sie zu console.cloud.google.com und melden Sie sich mit Ihrem Google-Konto an
+
+2. ERSTELLEN SIE EIN NEUES PROJEKT:
+   → Klicken Sie oben links auf das Projekt-Dropdown und wählen Sie \"Neues Projekt\"
+   → Geben Sie ihm einen Namen (z.B. \"RcloneDrive\") und klicken Sie auf \"Erstellen\"
+   → Warten Sie und stellen Sie sicher, dass es ausgewählt ist
+
+3. GOOGLE DRIVE API AKTIVIEREN:
+   → Gehen Sie in der linken Seitenleiste zu \"APIs & Dienste\" > \"Bibliothek\"
+   → Suchen Sie nach \"Google Drive API\" und klicken Sie darauf
+   → Klicken Sie auf die blaue Schaltfläche \"Aktivieren\"
+
+4. KONFIGURIEREN SIE DEN OAUTH-ZUSTIMMUNGSBILDSCHIRM:
+   → Gehen Sie im linken Menü zu \"APIs & Dienste\" > \"OAuth-Zustimmungsbildschirm\"
+   → Wählen Sie Benutzertyp: \"Extern\" (für @gmail.com) oder \"Intern\" (für Workspace)
+   → Füllen Sie die erforderlichen Felder aus:
+     • App-Name: \"RcloneApp\" (oder Ihre Voreinstellung)
+     • E-Mail des Benutzersupports: Ihre E-Mail
+     • Entwicklerkontakt: Ihre E-Mail
+   → Klicken Sie auf \"Speichern und weiter\" (Bildschirm \"Bereiche\" überspringen, einfach erneut klicken)
+   → Auf dem Bildschirm \"Testbenutzer\": Klicken Sie auf \"+ Benutzer hinzufügen\" und fügen Sie Ihre Google Drive-E-Mail hinzu
+   → Klicken Sie auf \"Speichern und weiter\"
+
+5. ERSTELLEN SIE ANMELDEINFORMATIONEN:
+   → Klicken Sie im linken Menü auf \"Anmeldeinformationen\"
+   → Klicken Sie auf \"+ Anmeldeinformationen erstellen\" und wählen Sie \"OAuth Client ID\"
+   → Wählen Sie \"Desktop-App\" als Anwendungstyp
+   → Geben Sie einen Namen ein und klicken Sie auf \"Erstellen\"
+
+6. SPEICHERN SIE DIE SCHLÜSSEL:
+   → Ein Fenster zeigt Ihre \"Client ID\" und \"Client Secret\"
+   → Halten Sie diese für den nächsten Schritt bereit!
+
+Nachdem Sie diese Schritte abgeschlossen haben, klicken Sie auf \"OK\", um fortzufahren."

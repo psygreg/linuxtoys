@@ -75,3 +75,39 @@ msg303="A Secure Boot már engedélyezve van. Nincs szükség további lépésre
 msg304="A Secure Boot engedélyezése az 'sbctl' segítségével, az alkalmazás által használt módszer, tönkreteheti a régebbi eszközöket. Folytatás előtt ellenőrizze, hogy vannak-e jelentések az eszköz használatával kapcsolatos problémákról az alaplapja modelljével kapcsolatban."
 msg305="Ez a telepítés megköveteli a paru, egy AUR segéd meglétét. Szeretné most telepíteni?"
 nocl="OpenCL nem talált. Kérem, telepítse a ROCm, RustiCL vagy Intel's Compute Runtime a Drivers menüből az Ön GPU modellje szerint."
+
+gdrive_guide_text="1. HOZZÁFÉRÉS A GOOGLE CLOUD KONZOLHOZ:
+   → Nyissa meg a console.cloud.google.com oldalt, és jelentkezzen be Google-fiókjával
+
+2. ÚJ PROJEKT LÉTREHOZÁSA:
+   → A bal felső sarokban kattintson a projekt legördülő menüjére, és válassza az \"Új projekt\" lehetőséget
+   → Adjon neki nevet (pl. \"RcloneDrive\") és kattintson a \"Létrehozás\" gombra
+   → Várjon és győződjön meg arról, hogy ki van választva
+
+3. A GOOGLE DRIVE API ENGEDÉLYEZÉSE:
+   → A bal oldalsávon nyissa meg az \"API-k és szolgáltatások\" > \"Könyvtár\" lehetőséget
+   → Keresse meg a \"Google Drive API\" lehetőséget, és kattintson rá
+   → Kattintson a kék \"Engedélyezés\" gombra
+
+4. AZ OAUTH HOZZÁJÁRULÁSI KÉPERNYŐ KONFIGURÁLÁSA:
+   → A bal oldali menüben nyissa meg az \"API-k és szolgáltatások\" > \"OAuth hozzájárulási képernyő\" lehetőséget
+   → Válassza a Felhasználó típusa lehetőséget: \"Külső\" (@gmail.com esetén) vagy \"Belső\" (Workspace esetén)
+   → Töltse ki a kötelező mezőket:
+     • Alkalmazás neve: \"RcloneApp\" (vagy az Ön preferenciája)
+     • Felhasználó támogatási e-mail: Az Ön e-mail-je
+     • Fejlesztővel való kapcsolat: Az Ön e-mail-je
+   → Kattintson a \"Mentés és folytatás\" gombra (hagyja ki a Hatókörök képernyőt, csak kattintson újra)
+   → A \"Teszt felhasználók\" képernyőn: Kattintson a \"+ Felhasználók hozzáadása\" gombra, és adja hozzá Google Drive e-mail-címét
+   → Kattintson a \"Mentés és folytatás\" gombra
+
+5. HITELESÍTŐ ADATOK LÉTREHOZÁSA:
+   → A bal oldali menüben kattintson a \"Hitelesítő adatok\" lehetőségre
+   → Kattintson a \"+ Hitelesítő adatok létrehozása\" gombra, és válassza az \"OAuth ügyfél-azonosító\" lehetőséget
+   → Válassza az \"Asztali alkalmazás\" lehetőséget az Alkalmazás típusaként
+   → Adjon neki nevet, és kattintson a \"Létrehozás\" gombra
+
+6. AZ KULCSOK MENTÉSE:
+   → Egy ablak megjeleníti az Ön \"Ügyfél-azonosítóját\" és \"Ügyfél-titkot\"
+   → Tartsa őket készen a következő lépéshez!
+
+A fenti összes lépésnél kattintson az OK gombra a folytatáshoz."

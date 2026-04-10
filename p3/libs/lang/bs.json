@@ -414,5 +414,6 @@
   "registry_cleanup_success_title": "Očišćavanje je završeno",
   "registry_cleanup_partial_title": "Očišćavanje završeno s upozorenjima",
   "registry_cleanup_failed": "Neuspješno uklanjanje unosa registra",
-  "shelly_desc": "Pretražite standardne pakete, AUR i Flatpak u jednom sažetom i modernom upravitelju paketa."
+  "shelly_desc": "Pretražite standardne pakete, AUR i Flatpak u jednom sažetom i modernom upravitelju paketa.",
+  "rgdrive_desc": "Dodajte Google Drive kao montažnu tačku u svoj domovni direktorijum, sinhronizovan sa rclone, što vam omogućava da lako pristupite i upravljate云 datotekama iz upravitelja datoteka i terminala."
 }

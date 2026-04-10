@@ -76,3 +76,39 @@ msg303="Secure Boot tayari imewezeshwa. Hakuna hatua inayohitajika."
 msg304="Kuwezesha Secure Boot kupitia 'sbctl', mbinu inayotumika na programu hii, inaweza kuharibu vifaa vya zamani. Angalia kama kuna ripoti yoyote ya matatizo ya kutumia kifaa hiki na mfano wa motherboard yako kabla ya kuendelea."
 msg305="Usakinishaji huu unahitaji kuwa na paru, msaidizi wa AUR, inapatikana. Je, ungependa kuisakinisha sasa?"
 nocl="OpenCL haikuonekani. Tafadhali sanidi ROCm, RustiCL, au Intel's Compute Runtime kutoka kwa menyu ya Drivers kulingana na muundo wa GPU yako."
+
+gdrive_guide_text="1. FADHILI KWENYE KONSOOLI YA GOOGLE CLOUD:
+   → Nenda kwa console.cloud.google.com na ingia kwa akaunti ya Google
+
+2. TENGENEZA MRADI MPYA:
+   → Katika kona ya juu kushoto, bonyeza kituo cha Mradi na chagua \"Mradi mpya\"
+   → Jipe jina (mfano: \"RcloneDrive\") na bonyeza \"Tengeneza\"
+   → Subiri na uhakikishe umechaguliwa
+
+3. WEZESHA GOOGLE DRIVE API:
+   → Kwenye upau wa upande wa kushoto, nenda kwa \"API na Huduma\" > \"Maktaba\"
+   → Tafuta \"Google Drive API\" na ibonyeze
+   → Bonyeza kitufe cha bluu cha \"Wezesha\"
+
+4. SANIDI SKRINI YA RIDHAA YA OAUTH:
+   → Katika menyu ya kushoto, nenda kwa \"API na Huduma\" > \"Skrini ya Ridhaa ya OAUTH\"
+   → Chagua Aina ya Mtumiaji: \"Nje\" (kwa @gmail.com) au \"Ndani\" (kwa Workspace)
+   → Jaza sehemu zinazohitajika:
+     • Jina la Programu: \"RcloneApp\" (au chaguo lako)
+     • Barua pepe ya Msaada wa Mtumiaji: Barua pepe yako
+     • Kuwasiliana na Fundi: Barua pepe yako
+   → Bonyeza \"Hifadhi na Endelea\" (ruka skrini ya Upeo)
+   → Kwenye skrini ya \"Watumiaji wa Jaribio\": bonyeza \"+ Ongeza Watumiaji\" na ongeza barua pepe yako ya Google Drive
+   → Bonyeza \"Hifadhi na Endelea\"
+
+5. TENGENEZA AKRAMIA:
+   → Katika menyu ya kushoto, bonyeza \"Akramia\"
+   → Bonyeza \"+ Tengeneza Akramia\" na chagua \"ID ya Mteja wa OAUTH\"
+   → Chagua \"Programu ya Desktop\" kama aina ya programu
+   → Jipe jina na bonyeza \"Tengeneza\"
+
+6. HIFADHI FUNGUO:
+   → Dirisha litaonyesha \"ID ya Mteja\" yako na \"Siri ya Mteja\"
+   → Zihifadhi kwa hatua inayofuata!
+
+Bonyeza \"SAWA\" kwenye hatua zote hapo juu ili kuendelea.\""

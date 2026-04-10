@@ -75,3 +75,39 @@ msg303="Droša sāknēšana jau ir iespējota. Nav nepieciešama darbība."
 msg304="Drošās sāknēšanas iespējošana, izmantojot 'sbctl', šīs lietotnes izmantoto metodi, var sabojāt vecākas ierīces. Pirms turpināt, pārbaudiet, vai ir ziņojumi par problēmām, izmantojot šo rīku ar jūsu mātesplates modeli."
 msg305="Šai instalācijai ir nepieciešams paru, AUR palīgs. Vai vēlaties to instalēt tūlīt?"
 nocl="OpenCL nav atrasts. Lūdzu, instalējiet ROCm, RustiCL vai Intel's Compute Runtime no Drivers izvēlnes saskaņā ar jūsu GPU modeli."
+
+gdrive_guide_text="1. PIEKĻŪSTIET GOOGLE CLOUD KONSOLEI:
+   → Dodieties uz console.cloud.google.com un pierakstieties ar savu Google kontu
+
+2. IZVEIDOJIET JAUNU PROJEKTU:
+   → Kreisajā augšējā stūrī noklikšķiniet uz projekta nolaižamā izvēlne un atlasiet \"Jauns projekts\"
+   → Norādiet nosaukumu (piem., \"RcloneDrive\") un noklikšķiniet uz \"Izveidot\"
+   → Uzgaidiet un nodrošiniet, ka tas ir atlasīts
+
+3. IESPĒJOJIET GOOGLE DRIVE API:
+   → Kreisajā sānjoslā dodieties uz \"API un pakalpojumi\" > \"Bibliotēka\"
+   → Meklējiet \"Google Drive API\" un noklikšķiniet uz tā
+   → Noklikšķiniet uz zilā pogas \"Iespējot\"
+
+4. KONFIGURĒJIET OAUTH PIEKRIŠANAS EKRĀNU:
+   → Kreisajā izvēlnē dodieties uz \"API un pakalpojumi\" > \"OAuth piekrišanas ekrāns\"
+   → Atlasiet Lietotāja tipu: \"Ārējs\" (@gmail.com gadījumā) vai \"Iekšējs\" (Workspace gadījumā)
+   → Aizpildiet nepieciešamos laukus:
+     • Lietotnes nosaukums: \"RcloneApp\" (vai jūsu izvēle)
+     • Lietotāja atbalsta e-pasts: Jūsu e-pasts
+     • Izstrādātāja kontakts: Jūsu e-pasts
+   → Noklikšķiniet uz \"Saglabāt un turpināt\" (pārlēciet Tvēruma ekrānu, vienkārši atkal noklikšķiniet)
+   → \"Testa lietotāji\" ekrānā noklikšķiniet uz \"+ Pievienot lietotājus\" un pievienojiet savu Google Drive e-pastu
+   → Noklikšķiniet uz \"Saglabāt un turpināt\"
+
+5. IZVEIDOJIET AKREDITĀCIJAS:
+   → Kreisajā izvēlnē noklikšķiniet uz \"Akreditācijas\"
+   → Noklikšķiniet uz \"+ Izveidot akreditācijas\" un atlasiet \"OAuth klienta ID\"
+   → Atlasiet \"Darbvirsmas lietotne\" kā Lietotnes tipu
+   → Norādiet nosaukumu un noklikšķiniet uz \"Izveidot\"
+
+6. SAGLABĀJIET ATSLĒGAS:
+   → Logā tiks parādīts jūsu \"Klienta ID\" un \"Klienta noslēpums\"
+   → Turiet tos gatavus nākamajam solim!
+
+Visuos iepriekš minētos posmos noklikšķiniet uz \"Labi\", lai turpinātu.""

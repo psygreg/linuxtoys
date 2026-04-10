@@ -74,3 +74,39 @@ msg303="Secure Boot è già abilitato. Nessuna azione necessaria."
 msg304="L'abilitazione di Secure Boot tramite 'sbctl', il metodo impiegato da questa app, può danneggiare dispositivi più vecchi. Verificare se esistono segnalazioni di problemi nell'utilizzo di questo strumento con il proprio modello di scheda madre prima di procedere."
 msg305="Questa installazione richiede la disponibilità di paru, un helper AUR. Desideri installarlo ora?"
 nocl="OpenCL non rilevato. Installa ROCm, RustiCL o Intel's Compute Runtime dal menu Drivers secondo il tuo modello GPU."
+
+gdrive_guide_text="1. ACCEDI ALLA CONSOLE DI GOOGLE CLOUD:
+   → Vai su console.cloud.google.com e accedi con il tuo account Google
+
+2. CREA UN NUOVO PROGETTO:
+   → Nell'angolo in alto a sinistra, fai clic sul menu a discesa del progetto e seleziona \"Nuovo progetto\"
+   → Dagli un nome (ad es. \"RcloneDrive\") e fai clic su \"Crea\"
+   → Attendi e assicurati che sia selezionato
+
+3. ABILITA L'API DI GOOGLE DRIVE:
+   → Nella barra laterale sinistra, vai a \"API e servizi\" > \"Libreria\"
+   → Cerca \"Google Drive API\" e fai clic su esso
+   → Fai clic sul pulsante blu \"Abilita\"
+
+4. CONFIGURA LA SCHERMATA DI CONSENSO OAUTH:
+   → Nel menu a sinistra, vai a \"API e servizi\" > \"Schermata di consenso OAuth\"
+   → Scegli Tipo di utente: \"Esterno\" (per @gmail.com) o \"Interno\" (per Workspace)
+   → Compila i campi obbligatori:
+     • Nome dell'applicazione: \"RcloneApp\" (o tua preferenza)
+     • Email di supporto utente: La tua email
+     • Contatto sviluppatore: La tua email
+   → Fai clic su \"Salva e continua\" (salta la schermata Ambiti, fai semplicemente di nuovo clic)
+   → Nella schermata \"Utenti test\": Fai clic su \"+ Aggiungi utenti\" e aggiungi la tua email di Google Drive
+   → Fai clic su \"Salva e continua\"
+
+5. CREA CREDENZIALI:
+   → Nel menu a sinistra, fai clic su \"Credenziali\"
+   → Fai clic su \"+ Crea credenziali\" e seleziona \"ID client OAuth\"
+   → Seleziona \"App desktop\" come Tipo di applicazione
+   → Dagli un nome e fai clic su \"Crea\"
+
+6. SALVA LE CHIAVI:
+   → Una finestra mostrerà il tuo \"ID client\" e \"Segreto client\"
+   → Tienili pronti per il passaggio successivo!
+
+In tutti i passaggi precedenti, fai clic su OK per continuare.\""

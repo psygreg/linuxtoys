@@ -76,3 +76,39 @@ msg303="O Secure Boot já está ativado. Nenhuma ação necessária."
 msg304="Ativar o Secure Boot através do 'sbctl', o método empregado por este aplicativo, pode danificar dispositivos mais antigos. Verifique se há relatos de problemas ao usar esta ferramenta com o modelo da sua placa-mãe antes de prosseguir."
 msg305="Esta instalação requer ter o paru, um auxiliar do AUR, disponível. Deseja instalá-lo agora?"
 nocl="OpenCL não detectado. Instale ROCm, RustiCL ou Intel's Compute Runtime no menu Drivers de acordo com o modelo da sua GPU."
+
+gdrive_guide_text="1. ACESSO AO CONSOLE DO GOOGLE CLOUD:
+   → Vá para console.cloud.google.com e faça login com sua conta do Google
+
+2. CRIAR UM NOVO PROJETO:
+   → No canto superior esquerdo, clique no menu suspenso Projeto e selecione \"Novo projeto\"
+   → Nomeie-o (por exemplo, \"RcloneDrive\") e clique \"Criar\"
+   → Aguarde e certifique-se de que está selecionado
+
+3. ATIVAR A API DO GOOGLE DRIVE:
+   → Na barra lateral esquerda, vá para \"APIs e Serviços\" > \"Biblioteca\"
+   → Procure pela \"API Google Drive\" e clique nela
+   → Clique no botão azul \"Ativar\"
+
+4. CONFIGURAR A TELA DE CONSENTIMENTO DO OAUTH:
+   → No menu esquerdo, vá para \"APIs e Serviços\" > \"Tela de consentimento do OAuth\"
+   → Selecione Tipo de usuário: \"Externo\" (para @gmail.com) ou \"Interno\" (para Workspace)
+   → Preencha os campos necessários:
+     • Nome do aplicativo: \"RcloneApp\" (ou sua preferência)
+     • Email de suporte ao usuário: Seu email
+     • Contato do desenvolvedor: Seu email
+   → Clique \"Salvar e continuar\" (pule a tela Escopos, apenas clique novamente)
+   → Na tela \"Usuários de teste\": clique \"+ Adicionar usuários\" e adicione seu email do Google Drive
+   → Clique \"Salvar e continuar\"
+
+5. CRIAR CREDENCIAIS:
+   → No menu esquerdo, clique \"Credenciais\"
+   → Clique \"+ Criar credenciais\" e selecione \"ID do cliente OAuth\"
+   → Selecione \"Aplicativo de desktop\" como Tipo de aplicativo
+   → Nomeie e clique \"Criar\"
+
+6. SALVAR AS CHAVES:
+   → Uma janela exibirá seu \"ID do cliente\" e \"Segredo do cliente\"
+   → Tenha-os prontos para a próxima etapa!
+
+Em todas as etapas acima, clique \"OK\" para continuar.\""

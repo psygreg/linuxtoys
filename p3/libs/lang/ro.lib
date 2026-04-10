@@ -75,3 +75,39 @@ msg303="Secure Boot este deja activat. Nu este necesară nicio acțiune."
 msg304="Activarea Secure Boot prin 'sbctl', metoda folosită de această aplicație, poate deteriora dispozitivele mai vechi. Verificați dacă există rapoarte despre probleme la utilizarea acestui instrument cu modelul plăcii de bază înainte de a continua."
 msg305="Această instalare necesită disponibilitatea paru, un asistent AUR. Doriți să-l instalați acum?"
 nocl="OpenCL nu a fost detectat. Instalați ROCm, RustiCL sau Intel's Compute Runtime din meniul Drivers în funcție de modelul GPU-ului dvs."
+
+gdrive_guide_text="1. ACCESARE CONSOLEI GOOGLE CLOUD:
+   → Mergeți la console.cloud.google.com și conectați-vă cu contul dvs. Google
+
+2. CREAȚI UN NOU PROIECT:
+   → În colțul din dreapta sus, faceți clic pe meniul Proiect și selectați \"Proiect nou\"
+   → Dați-i un nume (de ex., \"RcloneDrive\") și faceți clic pe \"Creare\"
+   → Așteptați și asigurați-vă că este selectat
+
+3. ACTIVAȚI API-UL GOOGLE DRIVE:
+   → În bara din stânga, mergeți la \"API-uri și servicii\" > \"Bibliotecă\"
+   → Căutați \"Google Drive API\" și faceți clic pe ea
+   → Faceți clic pe butonul albastru \"Activare\"
+
+4. CONFIGURAȚI ECRANUL CONSIMȚĂMÂNT OAUTH:
+   → În meniul din stânga, mergeți la \"API-uri și servicii\" > \"Ecran consimțământ OAuth\"
+   → Selectați Tip utilizator: \"Extern\" (pentru @gmail.com) sau \"Intern\" (pentru Workspace)
+   → Completați câmpurile obligatorii:
+     • Nume aplicație: \"RcloneApp\" (sau alegerea dvs.)
+     • Email suport utilizator: E-mailul dvs.
+     • Contact dezvoltator: E-mailul dvs.
+   → Faceți clic pe \"Salvare și continuare\" (omiteți ecranul Domenii)
+   → Pe ecranul \"Utilizatori de test\": faceți clic pe \"+ Adăugare utilizatori\" și adăugați e-mailul dvs. Google Drive
+   → Faceți clic pe \"Salvare și continuare\"
+
+5. CREAȚI ACREDITĂRI:
+   → În meniul din stânga, faceți clic pe \"Acreditări\"
+   → Faceți clic pe \"+ Creare acreditări\" și selectați \"ID client OAuth\"
+   → Selectați \"Aplicația desktop\" ca tip de aplicație
+   → Dați-i un nume și faceți clic pe \"Creare\"
+
+6. SALVAȚI CHEILE:
+   → O fereastră va afișa \"ID client\" și \"Secret client\" dvs.
+   → Țineți-le gata pentru pasul următor!
+
+La toți pașii de mai sus, faceți clic pe \"OK\" pentru a continua.\""

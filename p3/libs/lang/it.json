@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Pulizia completata",
   "registry_cleanup_partial_title": "Pulizia completata con avvertenze",
   "registry_cleanup_failed": "Impossibile rimuovere la voce di registro",
-  "shelly_desc": "Cerca pacchetti standard, AUR e Flatpak in un gestore di pacchetti conciso e moderno."
+  "shelly_desc": "Cerca pacchetti standard, AUR e Flatpak in un gestore di pacchetti conciso e moderno.",
+  "rgdrive_desc": "Aggiungi Google Drive come punto di montaggio nella tua home directory, sincronizzato con rclone, consentendoti di accedere facilmente ai tuoi file cloud e gestirli dal file manager e dal terminale."
 }

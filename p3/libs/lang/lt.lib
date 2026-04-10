@@ -75,3 +75,39 @@ msg303="Saugus paleidimas jau įjungtas. Jokių veiksmų nereikia."
 msg304="Saugaus paleidimo įjungimas per 'sbctl', šios programos naudojamą metodą, gali sugadinti senesnius įrenginius. Prieš tęsdami patikrinkite, ar nėra pranešimų apie problemas naudojant šį įrankį su jūsų pagrindinės plokštės modeliu."
 msg305="Šiam diegimui reikia turėti paru, AUR pagalbininką. Ar norite jį įdiegti dabar?"
 nocl="OpenCL nerastas. Prašome diegti ROCm, RustiCL arba Intel's Compute Runtime iš Drivers meniu pagal jūsų GPU modelį."
+
+gdrive_guide_text="1. PRIEIGA PRIE GOOGLE CLOUD KONSOLO:
+   → Eikite į console.cloud.google.com ir prisijunkite naudodami savo Google paskyrą
+
+2. KURKITE NAUJĄ PROJEKTĄ:
+   → Viršutiniame kairiajame kampe spustelėkite projekto išplečiamąjį meniu ir pasirinkite \"Naujas projektas\"
+   → Suteikite jam pavadinimą (pvz., \"RcloneDrive\") ir spustelėkite \"Kurti\"
+   → Palaukite ir patikrinkite, kad jis pasirinktas
+
+3. ĮGALINKITE GOOGLE DRIVE API:
+   → Kairiojoje šoninėje juostoje eikite į \"API ir paslaugos\" > \"Biblioteka\"
+   → Ieškokite \"Google Drive API\" ir spustelėkite
+   → Spustelėkite mėlyną mygtuką \"Įgalinti\"
+
+4. SUKONFIGŪRUOKITE OAUTH SUTIKIMO EKRANĄ:
+   → Kairiajame meniu eikite į \"API ir paslaugos\" > \"OAuth sutikimo ekranas\"
+   → Pasirinkite vartotojo tipą: \"Išorinis\" (@gmail.com atveju) arba \"Vidinis\" (Workspace atveju)
+   → Užpildykite reikalingus laukus:
+     • Programos pavadinimas: \"RcloneApp\" (arba jūsų pasirinkimas)
+     • Vartotojo pagalbos el. paštas: Jūsų el. paštas
+     • Kūrėjo kontaktas: Jūsų el. paštas
+   → Spustelėkite \"Išsaugoti ir tęsti\" (praleiskite \"Ambitus\" ekraną, tik spustelėkite dar kartą)
+   → Ekrane \"Bandymų vartotojai\": spustelėkite \"+ Pridėti vartotojus\" ir pridėkite savo Google Drive el. paštą
+   → Spustelėkite \"Išsaugoti ir tęsti\"
+
+5. KURKITE KREDENCIALUS:
+   → Kairiajame meniu spustelėkite \"Kredencialai\"
+   → Spustelėkite \"+ Kurti kredencialus\" ir pasirinkite \"OAuth kliento ID\"
+   → Pasirinkite \"Darbalaukio programa\" kaip programos tipą
+   → Suteikite jai pavadinimą ir spustelėkite \"Kurti\"
+
+6. IŠSAUGOKITE RAKTUS:
+   → Lange bus rodomas jūsų \"Kliento ID\" ir \"Kliento slaptas\"
+   → Turėkite juos paruoštus kitam žingsniui!
+
+Visuose aukščiau pateiktuose žingsniuose spustelėkite \"Gerai\" norėdami tęsti.""

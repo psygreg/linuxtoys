@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Puhastamine lõpetatud",
   "registry_cleanup_partial_title": "Puhastamine lõpetatud hoiatustega",
   "registry_cleanup_failed": "Registri kirje eemaldamine ebaõnnestus",
-  "shelly_desc": "Otsige standardpakette, AUR-i ja Flatpak-i ühes prägnantses ja moderses paketihalduses."
+  "shelly_desc": "Otsige standardpakette, AUR-i ja Flatpak-i ühes prägnantses ja moderses paketihalduses.",
+  "rgdrive_desc": "Lisage Google Drive oma kodutalosse monteerimispunktina, sünkroniseeritud rclone'iga, võimaldades teil hõlpsalt pääseda juurde pilveandmetele ja hallata neid failihalduri ja terminali kaudu."
 }

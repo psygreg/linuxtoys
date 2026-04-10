@@ -75,3 +75,39 @@ msg303="Secure Boot is al ingeschakeld. Geen actie nodig."
 msg304="Het inschakelen van Secure Boot via 'sbctl', de methode die door deze app wordt gebruikt, kan oudere apparaten beschadigen. Controleer of er rapporten zijn van problemen bij het gebruik van deze tool met uw moederbordmodel voordat u doorgaat."
 msg305="Deze installatie vereist dat paru, een AUR-helper, beschikbaar is. Wilt u het nu installeren?"
 nocl="OpenCL niet gedetecteerd. Installeer ROCm, RustiCL of Intel's Compute Runtime uit het Drivers-menu naar gelang uw GPU-model."
+
+gdrive_guide_text="1. TOEGANG TOT GOOGLE CLOUD-CONSOLE:
+   → Ga naar console.cloud.google.com en meld u aan met uw Google-account
+
+2. MAAK EEN NIEUW PROJECT:
+   → Klik op het vervolgkeuzemenu Project in de rechterbovenhoek en selecteer \"Nieuw project\"
+   → Geef het een naam (bijv. \"RcloneDrive\") en klik \"Maken\"
+   → Wacht en zorg ervoor dat het is geselecteerd
+
+3. SCHAKEL GOOGLE DRIVE API IN:
+   → Ga in de linker zijbalk naar \"API's en services\" > \"Bibliotheek\"
+   → Zoek naar \"Google Drive API\" en klik erop
+   → Klik op de blauwe knop \"Inschakelen\"
+
+4. CONFIGUREER HET OAUTH-INSTEMSCHERM:
+   → Ga in het linkermenu naar \"API's en services\" > \"OAuth-instemscherm\"
+   → Selecteer het gebruikerstype: \"Extern\" (voor @gmail.com) of \"Intern\" (voor Workspace)
+   → Vul de vereiste velden in:
+     • Toepassingsnaam: \"RcloneApp\" (of uw voorkeur)
+     • Ondersteuningsmail gebruiker: Uw e-mailadres
+     • Contactperson ontwikkelaar: Uw e-mailadres
+   → Klik \"Opslaan en doorgaan\" (sla het scherm Bereiken over, klik gewoon opnieuw)
+   → Klik op het scherm \"Test gebruikers\" op \"+ Gebruikers toevoegen\" en voeg uw Google Drive-e-mail toe
+   → Klik \"Opslaan en doorgaan\"
+
+5. MAAK REFERENTIES:
+   → Klik in het linkermenu op \"Referenties\"
+   → Klik op \"+ Referenties maken\" en selecteer \"OAuth-client-ID\"
+   → Selecteer \"Desktoptoepassing\" als toepassingstype
+   → Geef het een naam en klik \"Maken\"
+
+6. SLAAG DE SLEUTELS OP:
+   → Een venster toont uw \"Client-ID\" en \"Client Secret\"
+   → Zorg dat deze klaar zijn voor de volgende stap!
+
+Klik op alle bovenstaande stappen op \"OK\" om door te gaan.\""

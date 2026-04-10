@@ -415,5 +415,6 @@
   "registry_cleanup_success_title": "Pembersihan Selesai",
   "registry_cleanup_partial_title": "Pembersihan Selesai dengan Peringatan",
   "registry_cleanup_failed": "Gagal menghapus entri registri",
-  "shelly_desc": "Cari paket standar, AUR, dan Flatpak dalam satu manajer paket yang ringkas dan modern."
+  "shelly_desc": "Cari paket standar, AUR, dan Flatpak dalam satu manajer paket yang ringkas dan modern.",
+  "rgdrive_desc": "Tambahkan Google Drive Anda sebagai titik mount di direktori rumah Anda, disinkronkan dengan rclone, memungkinkan Anda untuk mudah mengakses dan mengelola file cloud Anda dari manajer file dan terminal."
 }

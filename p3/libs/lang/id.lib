@@ -75,3 +75,39 @@ msg303="Secure Boot sudah diaktifkan. Tidak ada tindakan yang diperlukan."
 msg304="Mengaktifkan Secure Boot melalui 'sbctl', metode yang digunakan oleh aplikasi ini, dapat merusak perangkat lama. Periksa apakah ada laporan masalah menggunakan alat ini dengan model motherboard Anda sebelum melanjutkan."
 msg305="Instalasi ini memerlukan paru, pembantu AUR, tersedia. Apakah Anda ingin menginstalnya sekarang?"
 nocl="OpenCL tidak terdeteksi. Harap instal ROCm, RustiCL, atau Intel's Compute Runtime dari menu Drivers sesuai dengan model GPU Anda."
+
+gdrive_guide_text="1. AKSES KONSOL GOOGLE CLOUD:
+   → Buka console.cloud.google.com dan masuk dengan akun Google Anda
+
+2. BUAT PROYEK BARU:
+   → Di sudut kanan atas, klik menu dropdown proyek dan pilih \"Proyek Baru\"
+   → Beri nama (mis., \"RcloneDrive\") dan klik \"Buat\"
+   → Tunggu dan pastikan dipilih
+
+3. AKTIFKAN GOOGLE DRIVE API:
+   → Di sidebar kiri, buka \"API & Layanan\" > \"Perpustakaan\"
+   → Cari \"Google Drive API\" dan klik
+   → Klik tombol biru \"Aktifkan\"
+
+4. KONFIGURASIKAN LAYAR PERSETUJUAN OAUTH:
+   → Di menu kiri, buka \"API & Layanan\" > \"Layar persetujuan OAuth\"
+   → Pilih Jenis Pengguna: \"Eksternal\" (untuk @gmail.com) atau \"Internal\" (untuk Workspace)
+   → Isi bidang yang diperlukan:
+     • Nama Aplikasi: \"RcloneApp\" (atau preferensi Anda)
+     • Email Dukungan Pengguna: Email Anda
+     • Kontak Pengembang: Email Anda
+   → Klik \"Simpan dan Lanjutkan\" (lewati layar Scopes, cukup klik lagi)
+   → Di layar \"Pengguna uji coba\": Klik \"+ Tambah Pengguna\" dan tambahkan email Google Drive Anda
+   → Klik \"Simpan dan Lanjutkan\"
+
+5. BUAT KREDENSIAL:
+   → Di menu kiri, klik \"Kredensial\"
+   → Klik \"+ Buat Kredensial\" dan pilih \"ID Klien OAuth\"
+   → Pilih \"Aplikasi Desktop\" sebagai Jenis Aplikasi
+   → Beri nama dan klik \"Buat\"
+
+6. SIMPAN KUNCI:
+   → Jendela akan menampilkan \"ID Klien\" dan \"Rahasia Klien\" Anda
+   → Siapkan ini untuk langkah selanjutnya!
+
+Pada semua langkah di atas, klik OK untuk melanjutkan.""

@@ -76,3 +76,39 @@ msg303="Secure Boot ya está habilitado. No se necesita ninguna acción."
 msg304="Habilitar Secure Boot a través de 'sbctl', el método empleado por esta aplicación, puede inutilizar dispositivos más antiguos. Verifique si hay informes de problemas usando esta herramienta con su modelo de placa base antes de continuar."
 msg305="Esta instalación requiere tener paru, un asistente de AUR, disponible. ¿Desea instalarlo ahora?"
 nocl="OpenCL no detectado. Instale ROCm, RustiCL o Intel's Compute Runtime desde el menú Drivers según su modelo de GPU."
+
+gdrive_guide_text="1. ACCEDA A LA CONSOLA DE GOOGLE CLOUD:
+   → Vaya a console.cloud.google.com e inicie sesión con su cuenta de Google
+
+2. CREE UN NUEVO PROYECTO:
+   → En la esquina superior izquierda, haga clic en el menú desplegable del proyecto y seleccione \"Nuevo proyecto\"
+   → Asígnele un nombre (por ejemplo, \"RcloneDrive\") y haga clic en \"Crear\"
+   → Espere y aségurese de que está seleccionado
+
+3. HABILITE LA API DE GOOGLE DRIVE:
+   → En la barra lateral izquierda, vaya a \"APIs y servicios\" > \"Biblioteca\"
+   → Busque \"API de Google Drive\" y haga clic en ella
+   → Haga clic en el botón azul \"Habilitar\"
+
+4. CONFIGURE LA PANTALLA DE CONSENTIMIENTO DE OAUTH:
+   → En el menú izquierdo, vaya a \"APIs y servicios\" > \"Pantalla de consentimiento de OAuth\"
+   → Elija Tipo de usuario: \"Externo\" (para @gmail.com) o \"Interno\" (para Workspace)
+   → Rellene los campos requeridos:
+     • Nombre de la aplicación: \"RcloneApp\" (o su preferencia)
+     • Correo electrónico de soporte del usuario: Su correo electrónico
+     • Contacto del desarrollador: Su correo electrónico
+   → Haga clic en \"Guardar y continuar\" (omita la pantalla de Alcances, solo haga clic de nuevo)
+   → En la pantalla \"Usuarios de prueba\": Haga clic en \"+ Agregar usuarios\" y agregue su correo electrónico de Google Drive
+   → Haga clic en \"Guardar y continuar\"
+
+5. CREE CREDENCIALES:
+   → En el menú izquierdo, haga clic en \"Credenciales\"
+   → Haga clic en \"+ Crear credenciales\" y seleccione \"ID de cliente de OAuth\"
+   → Seleccione \"Aplicación de escritorio\" como tipo de aplicación
+   → Asígnele un nombre y haga clic en \"Crear\"
+
+6. GUARDE LAS CLAVES:
+   → Una ventana le mostrará su \"ID de cliente\" y \"Secreto de cliente\"
+   → ¡Tenga estas listas para el siguiente paso!
+
+Una vez que haya completado estos pasos, haga clic en Aceptar para continuar."

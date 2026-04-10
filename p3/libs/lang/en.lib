@@ -75,3 +75,40 @@ msg303="Secure Boot is already enabled. No action needed."
 msg304="Enabling Secure Boot through 'sbctl', the method employed by this app, can brick older devices. Check if there are any reports of issues using this tool with your motherboard model before proceeding."
 msg305="This installation requires having paru, an AUR helper, available. Do you wish to install it now?"
 nocl="No OpenCL detected. Please install ROCm, RustiCL, or Intel's Compute Runtime from the Drivers menu according to your GPU model."
+
+gdrive_guide_text="
+1. ACCESS THE GOOGLE CLOUD CONSOLE:
+   → Go to console.cloud.google.com and log in with your Google account
+
+2. CREATE A NEW PROJECT:
+   → In the top left, click the project dropdown and select \"New Project\"
+   → Name it (e.g., \"RcloneDrive\") and click \"Create\"
+   → Wait and ensure it is selected
+
+3. ENABLE THE GOOGLE DRIVE API:
+   → In the left sidebar, go to \"APIs & Services\" > \"Library\"
+   → Search for \"Google Drive API\" and click it
+   → Click the blue \"Enable\" button
+
+4. CONFIGURE THE OAUTH CONSENT SCREEN:
+   → In the left menu, go to \"APIs & Services\" > \"OAuth consent screen\"
+   → Choose User Type: \"External\" (for @gmail.com) or \"Internal\" (for Workspace)
+   → Fill in required fields:
+     • App name: \"RcloneApp\" (or your preference)
+     • User support email: Your email
+     • Developer contact: Your email
+   → Click \"Save and Continue\" (skip Scopes screen, just click again)
+   → On \"Test users\" screen: Click \"+ Add Users\" and add your Google Drive email
+   → Click \"Save and Continue\"
+
+5. CREATE CREDENTIALS:
+   → In the left menu, click \"Credentials\"
+   → Click \"+ Create Credentials\" and select \"OAuth client ID\"
+   → Select \"Desktop app\" as Application type
+   → Give it a name and click \"Create\"
+
+6. SAVE THE KEYS:
+   → A window will show your \"Client ID\" and \"Client Secret\"
+   → Have these ready for the next step!
+
+Once you've completed these steps, click OK to continue."

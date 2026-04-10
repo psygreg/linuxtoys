@@ -75,3 +75,39 @@ msg303="Secure Boot allaqachon yoqilgan. Hech qanday harakat kerak emas."
 msg304="Ushbu ilova tomonidan qo'llaniladigan usul bo'lgan 'sbctl' orqali Secure Boot-ni yoqish eski qurilmalarni buzishi mumkin. Davom etishdan oldin ushbu vosita bilan anakart modelingiz bilan muammolar haqida xabarlar bor-yo'qligini tekshiring."
 msg305="Bu o'rnatish uchun paru, AUR yordamchisi mavjud bo'lishi kerak. Uni hozir o'rnatmoqchimisiz?"
 nocl="OpenCL topilmadi. Iltimos, GPU modelingizga muvofiq Drivers menyusidan ROCm, RustiCL yoki Intel's Compute Runtime o'rnating."
+
+gdrive_guide_text="1. GOOGLE CLOUD CONSOLE GA KIRING:
+   → console.cloud.google.com ga boring, Google hisobi bilan kirish
+
+2. YANGI LOYIHANI YARATING:
+   → Yuqori chap burchakda, Loyiha ro'yxatni bosing va \"Yangi loyiha\" ni tanlang
+   → Unga nom bering (masalan: \"RcloneDrive\") va \"Yaratish\"ni bosing
+   → Kutib turing va u tanlanganligiga ishonch hosil qiling
+
+3. GOOGLE DRIVE API NI FAOLLASHTIRING:
+   → Chap yon panelida, \"API va Xizmatlar\" > \"Kutubxona\" ga boring
+   → \"Google Drive API\" ni izlab, ustiga bosing
+   → Koʻk \"Faollashtirish\" tugmasini bosing
+
+4. OAUTH ROZILIK EKRANINI SOZLANG:
+   → Chap menyuda, \"API va Xizmatlar\" > \"OAUTH Rozilik Ekrani\" ga boring
+   → Foydalanuvchi turini tanlang: \"Tashqi\" (@gmail.com uchun) yoki \"Ichki\" (Workspace uchun)
+   → Zarur maydonlarni to'ldiring:
+     • Ilova nomi: \"RcloneApp\" (yoki sizning tanlovingiz)
+     • Foydalanuvchi qo'llab-quvvatlash elektron pochtasi: Sizning elektron pochtangiz
+     • Ishlab chiquvchi aloqasi: Sizning elektron pochtangiz
+   → \"Saqlash va Davom etish\"ni bosing (Qo'llaz ekranini o'tkazing)
+   → \"Test foydalanuvchilari\" ekranida: \"+ Foydalanuvchilar qo'shish\" ni bosing va Google Drive elektron pochtangizni qo'shing
+   → \"Saqlash va Davom etish\"ni bosing
+
+5. QUALIFIKATSIYA YARATING:
+   → Chap menyuda \"Qualifikatsiya\" ni bosing
+   → \"+ Qualifikatsiya yarating\" ni bosing va \"OAuth Kliyent ID\" ni tanlang
+   → \"Desktop dasturi\" ni qo'llash turi sifatida tanlang
+   → Unga nom bering va \"Yaratish\"ni bosing
+
+6. KALITLARNI SAQLANG:
+   → Muloqot sizning \"Kliyent ID\" va \"Kliyent Sirri\" ni ko'rsatadi
+   → Ularni keyingi qadam uchun tayyorlang!
+
+Davom etish uchun yuqoridagi barcha qadamlarda \"OK\" ni bosing.\""

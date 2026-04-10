@@ -75,3 +75,39 @@ msg303="Secure Boot je už povolený. Nie je potrebná žiadna akcia."
 msg304="Povolenie Secure Boot prostredníctvom 'sbctl', metódy používanej touto aplikáciou, môže poškodiť staršie zariadenia. Pred pokračovaním skontrolujte, či existujú hlásenia o problémoch s používaním tohto nástroja s vaším modelom základnej dosky."
 msg305="Táto inštalácia vyžaduje dostupnosť paru, AUR pomocníka. Prajete si ho teraz nainštalovať?"
 nocl="OpenCL nenájdený. Prosím, nainštalujte ROCm, RustiCL alebo Intel's Compute Runtime z ponuky Drivers podľa vášho modelu GPU."
+
+gdrive_guide_text="1. PRÍSTUP K KONZOLE GOOGLE CLOUD:
+   → Prejdite na console.cloud.google.com a prihláste sa pomocou svojho účtu Google
+
+2. VYTVORENIE NOVÉHO PROJEKTU:
+   → V ľavom hornom rohu kliknite na rozbaľovaciu ponuku Projekt a vyberte \"Nový projekt\"
+   → Dajte mu názov (napr. \"RcloneDrive\") a kliknite na \"Vytvoriť\"
+   → Počkajte a uistite sa, že je vybraný
+
+3. POVOLENIE API GOOGLE DRIVE:
+   → Na ľavej bočnej lište prejdite na \"API a služby\" > \"Knižnica\"
+   → Vyhľadajte \"Google Drive API\" a kliknite na ňu
+   → Kliknite na modrý gombík \"Povoliť\"
+
+4. KONFIGURÁCIA OBRAZOVKY SÚHLASU OAUTH:
+   → V ľavom menu prejdite na \"API a služby\" > \"Obrazovka súhlasu OAuth\"
+   → Vyberte Typ používateľa: \"Externý\" (pre @gmail.com) alebo \"Interný\" (pre Workspace)
+   → Vyplňte povinné polia:
+     • Názov aplikácie: \"RcloneApp\" (alebo vaša voľba)
+     • E-mail podpory používateľa: Váš e-mail
+     • Kontakt vývojára: Váš e-mail
+   → Kliknite na \"Uložiť a pokračovať\" (preskočte obrazovku Zámery)
+   → Na obrazovke \"Testovací používatelia\": kliknite na \"+ Pridať používateľov\" a pridajte svoj e-mail Google Drive
+   → Kliknite na \"Uložiť a pokračovať\"
+
+5. VYTVORENÚ POVERENIA:
+   → V ľavom menu kliknite na \"Poverenia\"
+   → Kliknite na \"+ Vytvoriť poverenia\" a vyberte \"Identifikátor klienta OAuth\"
+   → Vyberte \"Desktopová aplikácia\" ako typ aplikácie
+   → Dajte jej názov a kliknite na \"Vytvoriť\"
+
+6. ULOŽENIE KĽÚČOV:
+   → Okno zobrazí váš \"Identifikátor klienta\" a \"Tajný klient\"
+   → Majte ich pripravené na ďalší krok!
+
+Na všetkých vyššie uvedených krokoch kliknite na \"OK\" a pokračujte.\""
