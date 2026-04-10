@@ -416,5 +416,6 @@
   "registry_cleanup_failed": "Registr kiruvini o'chira olmadi",
   "shelly_desc": "Standart paketlar, AUR va Flatpak-ni bitta qisqa va zamonaviy paket menejeridagi izlang.",
   "rgdrive_desc": "Google Drive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi.",
-  "rodrive_desc": "OneDrive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi."
+  "rodrive_desc": "OneDrive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

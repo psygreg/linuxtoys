@@ -416,5 +416,6 @@
   "registry_cleanup_failed": "Registr Girişi Silinərkən Uğursuzluq",
   "shelly_desc": "Standart paketləri, AUR və Flatpak-ı bir konsise və müasır paket menecerində axtarın.",
   "rgdrive_desc": "Google Drive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa və idarə etməyə imkan verin.",
-  "rodrive_desc": "OneDrive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa imkan verin."
+  "rodrive_desc": "OneDrive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa imkan verin.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Neizdevās noņemt reģistra ierakstu",
   "shelly_desc": "Meklējiet standarta pakotnes, AUR un Flatpak vienā kodolīgā un mūsdienīgā pakotņu pārvaldniekā.",
   "rgdrive_desc": "Pievienojiet savu Google Drive kā montāžas punktu savā sākumā, sinhronizēts ar rclone, kas ļauj jums viegli piekļūt un pārvaldīt mākoņa failus no fails pārvaldnieka un terminäļa.",
-  "rodrive_desc": "Pievienojiet savu OneDrive kā montāžas punktu savā sākumā, sinhronizēts ar rclone, kas ļauj jums viegli piekļūt un pārvaldīt mākoņa failus no fails pārvaldnieka un terminäļa."
+  "rodrive_desc": "Pievienojiet savu OneDrive kā montāžas punktu savā sākumā, sinhronizēts ar rclone, kas ļauj jums viegli piekļūt un pārvaldīt mākoņa failus no fails pārvaldnieka un terminäļa.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

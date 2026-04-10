@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Gagal menghapus entri pendaftaran",
   "shelly_desc": "Cari paket standard, AUR dan Flatpak dalam satu pengurus paket yang ringkas dan moden.",
   "rgdrive_desc": "Tambahkan Google Drive Anda sebagai titik pemasangan di direktori rumah Anda, disealaskan dengan rclone, membenarkan Anda untuk mudah mengakses dan menguruskan fail awan Anda dari pengurus fail dan terminal.",
-  "rodrive_desc": "Tambahkan OneDrive Anda sebagai titik pemasangan di direktori rumah Anda, disealaskan dengan rclone, membenarkan Anda untuk mudah mengakses dan menguruskan fail awan Anda dari pengurus fail dan terminal."
+  "rodrive_desc": "Tambahkan OneDrive Anda sebagai titik pemasangan di direktori rumah Anda, disealaskan dengan rclone, membenarkan Anda untuk mudah mengakses dan menguruskan fail awan Anda dari pengurus fail dan terminal.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

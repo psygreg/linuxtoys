@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Impossible de supprimer l'entrée du registre",
   "shelly_desc": "Recherchez les paquets standard, AUR et Flatpak dans un gestionnaire de paquets concis et moderne.",
   "rgdrive_desc": "Ajoutez votre Google Drive comme point de montage dans votre répertoire personnel, synchronisé avec rclone, ce qui vous permet d'accéder facilement à vos fichiers cloud et de les gérer à partir du gestionnaire de fichiers et du terminal.",
-  "rodrive_desc": "Ajoutez votre OneDrive comme point de montage dans votre répertoire personnel, synchronisé avec rclone, ce qui vous permet d'accéder facilement à vos fichiers cloud et de les gérer à partir du gestionnaire de fichiers et du terminal."
+  "rodrive_desc": "Ajoutez votre OneDrive comme point de montage dans votre répertoire personnel, synchronisé avec rclone, ce qui vous permet d'accéder facilement à vos fichiers cloud et de les gérer à partir du gestionnaire de fichiers et du terminal.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

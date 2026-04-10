@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Kunde inte ta bort registerpost",
   "shelly_desc": "Sök efter standardpaket, AUR och Flatpak i en kortfattad och modern pakethanterare.",
   "rgdrive_desc": "Lägg till Google Drive som en monteringspunkt i din hemkatalog, synkroniserad med rclone, vilket gör det möjligt för dig att enkelt komma åt och hantera dina molnfiler från filhanteraren och terminalen.",
-  "rodrive_desc": "Lägg till OneDrive som en monteringspunkt i din hemkatalog, synkroniserad med rclone, vilket gör det möjligt för dig att enkelt komma åt och hantera dina molnfiler från filhanteraren och terminalen."
+  "rodrive_desc": "Lägg till OneDrive som en monteringspunkt i din hemkatalog, synkroniserad med rclone, vilket gör det möjligt för dig att enkelt komma åt och hantera dina molnfiler från filhanteraren och terminalen.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

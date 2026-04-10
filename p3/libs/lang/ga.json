@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Theip ar bhaint iontráil an chláraithe",
   "shelly_desc": "Cuardaigh pacáistí caighdeánacha, AUR agus Flatpak i bhainisteoirí pacáiste achomair agus nua-aimseartha.",
   "rgdrive_desc": "Cuir do Google Drive ar an uachtar mar phointe fhastaithe i do eolaire baile, sioncronaithe le rclone, ag ceadú duit a bheith ag teacht go héasca ar do réamhanna foinse agus iad ar an bhfear foinse agus an teirminéal.",
-  "rodrive_desc": "Cuir do OneDrive ar an uachtar mar phointe fhastaithe i do eolaire baile, sioncronaithe le rclone, ag ceadú duit a bheith ag teacht go héasca ar do réamhanna foinse agus iad ar an bhfear foinse agus an teirminéal."
+  "rodrive_desc": "Cuir do OneDrive ar an uachtar mar phointe fhastaithe i do eolaire baile, sioncronaithe le rclone, ag ceadú duit a bheith ag teacht go héasca ar do réamhanna foinse agus iad ar an bhfear foinse agus an teirminéal.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }

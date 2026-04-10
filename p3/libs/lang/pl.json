@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Nie udało się usunąć wpisu rejestru",
   "shelly_desc": "Szukaj pakietów standardowych, AUR i Flatpak w jednym zwięzłym i nowoczesnym menedżerze pakietów.",
   "rgdrive_desc": "Dodajemy Google Drive jako punkt montażu w katalogu domowym, zsynchronizowany z rclone, pozwalając na łatwy dostęp do plików w chmurze i zarządzanie nimi z menedżera plików i terminala.",
-  "rodrive_desc": "Dodajemy OneDrive jako punkt montażu w katalogu domowym, zsynchronizowany z rclone, pozwalając na łatwy dostęp do plików w chmurze i zarządzanie nimi z menedżera plików i terminala."
+  "rodrive_desc": "Dodajemy OneDrive jako punkt montażu w katalogu domowym, zsynchronizowany z rclone, pozwalając na łatwy dostęp do plików w chmurze i zarządzanie nimi z menedżera plików i terminala.",
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
 }
