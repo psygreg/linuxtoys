@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Nepodařilo se odebrat položku registru",
   "shelly_desc": "Vyhledávejte standardní balíčky, AUR a Flatpak v jednom stručném a moderním správci balíčků.",
   "rgdrive_desc": "Přidejte Google Drive jako přípojný bod v domovském adresáři, synchronizovaný s rclone, což vám umožní snadno přistupovat a spravovat vaše cloudové soubory ze správce souborů a terminálu.",
-  "rodrive_desc": "Přidejte OneDrive jako přípojný bod v domovském adresáři, synchronizovaný s rclone, což vám umožní snadno přistupovat ke svým cloudovým souborům ze správce souborů a terminálu."
+  "rodrive_desc": "Přidejte OneDrive jako přípojný bod v domovském adresáři, synchronizovaný s rclone, což vám umožní snadno přistupovat ke svým cloudovým souborům ze správce souborů a terminálu.",
+  "k6_desc": "Moderní nástroj pro testování zatížení API, služeb a webových aplikací."
 }

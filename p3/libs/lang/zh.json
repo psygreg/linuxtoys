@@ -419,5 +419,6 @@
   "registry_cleanup_failed": "无法删除注册表项",
   "shelly_desc": "在一个简洁的现代软件包管理器中搜索标准软件包、AUR 和 Flatpak。",
   "rgdrive_desc": "将您的 Google Drive 添加为主目录中的挂载点，与 rclone 同步，使您可以从文件管理器和终端轻松访问和管理您的云文件。",
-  "rodrive_desc": "将您的 OneDrive 添加为主目录中的挂载点，与 rclone 同步，使您可以从文件管理器和终端轻松访问和管理您的云文件。"
+  "rodrive_desc": "将您的 OneDrive 添加为主目录中的挂载点，与 rclone 同步，使您可以从文件管理器和终端轻松访问和管理您的云文件。",
+  "k6_desc": "用于API、服务和Web应用程序的现代负载测试工具。"
 }

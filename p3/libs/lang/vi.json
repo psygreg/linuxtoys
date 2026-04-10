@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Không thể xóa mục nhập đăng ký",
   "shelly_desc": "Tìm kiếm các gói tiêu chuẩn, AUR và Flatpak trong một trình quản lý gói ngắn gọn và hiện đại.",
   "rgdrive_desc": "Thêm Google Drive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối.",
-  "rodrive_desc": "Thêm OneDrive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối."
+  "rodrive_desc": "Thêm OneDrive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối.",
+  "k6_desc": "Một công cụ kiểm tra tải hiện đại cho API, dịch vụ và ứng dụng web."
 }

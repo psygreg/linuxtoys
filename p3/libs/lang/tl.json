@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Hindi makakita ng pagpasok sa registry",
   "shelly_desc": "Maghanap ng karaniwang mga pakete, AUR at Flatpak sa isang maikling at modernong package manager.",
   "rgdrive_desc": "Idagdag ang iyong Google Drive bilang isang punto ng paglalakbay sa iyong direktoryong tahanan, na sinabay sa rclone, na nagbibigay-daan sa iyo na madaling makuha at pamahalaan ang iyong mga cloud file mula sa file manager at terminal.",
-  "rodrive_desc": "Idagdag ang iyong OneDrive bilang isang punto ng paglalakbay sa iyong direktoryong tahanan, na sinabay sa rclone, na nagbibigay-daan sa iyo na madaling makuha at pamahalaan ang iyong mga cloud file mula sa file manager at terminal."
+  "rodrive_desc": "Idagdag ang iyong OneDrive bilang isang punto ng paglalakbay sa iyong direktoryong tahanan, na sinabay sa rclone, na nagbibigay-daan sa iyo na madaling makuha at pamahalaan ang iyong mga cloud file mula sa file manager at terminal.",
+  "k6_desc": "Isang modernong tool sa pagsubok ng load para sa API, serbisyo at web application."
 }

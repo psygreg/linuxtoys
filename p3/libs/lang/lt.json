@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Nepavyko pašalinti registro įrašo",
   "shelly_desc": "Ieškokite standartinių paketų, AUR ir Flatpak viename glaustuoje ir moderniame paketų tvarkytuve.",
   "rgdrive_desc": "Pridėkite savo Google Drive kaip montavimo tašką savo namų kataloge, sinchronizuotą su rclone, suteikdami jums galimybę lengvai pasiekti ir valdyti debesies failus iš failų vadiklio ir terminalo.",
-  "rodrive_desc": "Pridėkite savo OneDrive kaip montavimo tašką savo namų kataloge, sinchronizuotą su rclone, suteikdami jums galimybę lengvai pasiekti ir valdyti debesies failus iš failų vadiklio ir terminalo."
+  "rodrive_desc": "Pridėkite savo OneDrive kaip montavimo tašką savo namų kataloge, sinchronizuotą su rclone, suteikdami jums galimybę lengvai pasiekti ir valdyti debesies failus iš failų vadiklio ir terminalo.",
+  "k6_desc": "Šiuolaikinis apkrovos testavimo įrankis API, paslaugoms ir žiniatinklio programoms."
 }

@@ -416,5 +416,6 @@
   "registry_cleanup_failed": "Neuspješno uklanjanje unosa registra",
   "shelly_desc": "Pretražite standardne pakete, AUR i Flatpak u jednom sažetom i modernom upravitelju paketa.",
   "rgdrive_desc": "Dodajte Google Drive kao montažnu tačku u svoj domovni direktorijum, sinhronizovan sa rclone, što vam omogućava da lako pristupite i upravljate云 datotekama iz upravitelja datoteka i terminala.",
-  "rodrive_desc": "Dodajte OneDrive kao montažnu tačku u svoj domovni direktorijum, sinhronizovan sa rclone, što vam omogućava da lako pristupite datotekama u oblaku iz upravitelja datoteka i terminala."
+  "rodrive_desc": "Dodajte OneDrive kao montažnu tačku u svoj domovni direktorijum, sinhronizovan sa rclone, što vam omogućava da lako pristupite datotekama u oblaku iz upravitelja datoteka i terminala.",
+  "k6_desc": "Moderno sredstvo za testiranje opterećenja za API-je, usluge i veb aplikacije."
 }

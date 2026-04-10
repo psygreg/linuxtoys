@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Registri kirje eemaldamine ebaõnnestus",
   "shelly_desc": "Otsige standardpakette, AUR-i ja Flatpak-i ühes prägnantses ja moderses paketihalduses.",
   "rgdrive_desc": "Lisage Google Drive oma kodutalosse monteerimispunktina, sünkroniseeritud rclone'iga, võimaldades teil hõlpsalt pääseda juurde pilveandmetele ja hallata neid failihalduri ja terminali kaudu.",
-  "rodrive_desc": "Lisage oma OneDrive oma kodutalosse monteerimispunktina, sünkroniseeritud rclone'iga, võimaldades teil hõlpsalt juurde pääseda oma pilveandmetele ja hallata neid failihalduri ja terminali kaudu."
+  "rodrive_desc": "Lisage oma OneDrive oma kodutalosse monteerimispunktina, sünkroniseeritud rclone'iga, võimaldades teil hõlpsalt juurde pääseda oma pilveandmetele ja hallata neid failihalduri ja terminali kaudu.",
+  "k6_desc": "Kaasaegne koormuse testimise tööriist API-de, teenuste ja veebirakenduste jaoks."
 }

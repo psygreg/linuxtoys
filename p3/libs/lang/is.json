@@ -417,5 +417,6 @@
   "registry_cleanup_failed": "Tókst ekki að fjarlægja skrárfélaginn",
   "shelly_desc": "Leitaðu eftir stöðluðum pökkum, AUR og Flatpak í einni snjálli og nútímastærri pakkastjóra.",
   "rgdrive_desc": "Bættu Google Drive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi.",
-  "rodrive_desc": "Bættu OneDrive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi."
+  "rodrive_desc": "Bættu OneDrive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi.",
+  "k6_desc": "Nútímaleg álagspróf fyrir API, þjónustur og vefforrit."
 }
