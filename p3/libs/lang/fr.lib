@@ -131,3 +131,6 @@ INSTRUCTIONS POUR ONEDRIVE PERSONNEL
    → Recherchez et sélectionnez les autorisations suivantes: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read et Sites.Read.All. Une fois sélectionnées, cliquez sur Ajouter des autorisations en bas.
 
 À toutes les étapes ci-dessus, cliquez sur OK pour continuer"
+sysup_starting="-------- MISE À JOUR COMPLÈTE DU SYSTÈME DÉMARRÉE --------"
+sysup_completed="Nettoyage et mise à jour terminés."
+sysup_rebootreq="Nettoyage et mise à jour terminés. Un redémarrage est requis pour que la mise à jour prenne effet."

@@ -131,3 +131,6 @@ gdrive_guide_text="1. PRIEIGA PRIE GOOGLE CLOUD KONSOLO:
    → Turėkite juos paruoštus kitam žingsniui!
 
 Visuose aukščiau pateiktuose žingsniuose spustelėkite \"Gerai\" norėdami tęsti."
+sysup_starting="-------- PILNA SISTEMOS ATNAUJINIMAS PRADĖTAS --------"
+sysup_completed="Valymas ir atnaujinimas baigti."
+sysup_rebootreq="Valymas ir atnaujinimas baigti. Atnaujinimui įsigalioti reikalingas iš naujo paleistas kompiuteris."

@@ -131,3 +131,6 @@ PETUNJUK ONEDRIVE PERSONAL
    → Cari dan pilih kebenaran berikut: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read dan Sites.Read.All. Setelah dipilih klik Tambah kebenaran di bahagian bawah.
 
 Pada semua langkah di atas, klik "OK" untuk teruskan"
+sysup_starting="-------- KEMASKINI SISTEM PENUH DIMULA --------"
+sysup_completed="Pembersihan dan kemaskini selesai."
+sysup_rebootreq="Pembersihan dan kemaskini selesai. Permulaan semula diperlukan untuk kemaskini berkuat kuasa."

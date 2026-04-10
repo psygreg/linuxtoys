@@ -131,3 +131,6 @@ ONEDRIVE PERSONAL JUHISED
    → Otsige ja valige järgmisi lubasid: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ja Sites.Read.All. Kui need on valitud, klõpsake allosas Load lisada.
 
 Kui olete need sammut lõpetanud, klõpsake OK, et jätkata"
+sysup_starting="-------- TÄIELIK SÜSTEEMI VÄRSKENDUS ALUSTATUD --------"
+sysup_completed="Puhastamine ja värskendamine lõpule viidud."
+sysup_rebootreq="Puhastamine ja värskendamine lõpule viidud. Värskenduse rakendamiseks on vajalik taaskäivitamine."

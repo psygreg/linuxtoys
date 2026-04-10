@@ -418,5 +418,7 @@
   "shelly_desc": "Căutați pachete standard, AUR și Flatpak într-un manager de pachete concis și modern.",
   "rgdrive_desc": "Adăugați Google Drive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal.",
   "rodrive_desc": "Adăugați OneDrive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal.",
-  "k6_desc": "Un instrument modern de testare a încercării pentru API-uri, servicii și aplicații web."
+  "k6_desc": "Un instrument modern de testare a încercării pentru API-uri, servicii și aplicații web.",
+  "sysup": "Actualizare Sistem",
+  "sysup_desc": "Realizează curățarea pachetelor orfane și actualizare completă a sistemului pentru pachetele distribuției și Flatpaks."
 }

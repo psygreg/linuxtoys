@@ -131,3 +131,6 @@ gdrive_guide_text="1. PIEKĻŪSTIET GOOGLE CLOUD KONSOLEI:
    → Turiet tos gatavus nākamajam solim!
 
 Visuos iepriekš minētos posmos noklikšķiniet uz \"Labi\", lai turpinātu."
+sysup_starting="-------- PILNĪGS SISTĒMAS ATJAUNINĀJUMS SĀCIES --------"
+sysup_completed="Tīrīšana un atjauninājums pabeigts."
+sysup_rebootreq="Tīrīšana un atjauninājums pabeigts. Lai atjauninājums stātos spēkā, nepieciešama pārstartēšana."

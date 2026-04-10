@@ -129,3 +129,6 @@ gdrive_guide_text="1. PRÍSTUP K KONZOLE GOOGLE CLOUD:
    → Majte ich pripravené na ďalší krok!
 
 Na všetkých vyššie uvedených krokoch kliknite na \"OK\" a pokračujte."
+sysup_starting="-------- ÚPLNÁ AKTUALIZÁCIA SYSTÉMU SPUSTENÁ --------"
+sysup_completed="Čistenie a aktualizácia boli dokončené."
+sysup_rebootreq="Čistenie a aktualizácia boli dokončené. Pre vplyv aktualizácie je potrebný reštart."

@@ -131,3 +131,6 @@ UPUTSTVA ZA ONEDRIVE PERSONAL
    → Potražite i odaberite sljedeće dozvole: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read i Sites.Read.All. Nakon odabira kliknite Dodaj dozvole pri dnu.
 
 Na svim gornjim koracima, kliknite na OK za nastavak।"
+sysup_starting="-------- PUNE AŽURIRANJE SISTEMA POČETO --------"
+sysup_completed="Čišćenje i ažuriranje dovršeni."
+sysup_rebootreq="Čišćenje i ažuriranje dovršeni. Potreban je restart kako bi ažuriranje stupio na snagu."

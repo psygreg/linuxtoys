@@ -130,3 +130,6 @@ ONEDRIVE ব্যক্তিগত নির্দেশাবলী
    → নিম্নলিখিত অনুমতি অনুসন্ধান এবং নির্বাচন করুন: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read এবং Sites.Read.All। একবার নির্বাচিত হলে নিচের দিকে Add permissions ক্লিক করুন।
 
 এই ধাপগুলি সম্পন্ন করার পরে, চালিয়ে যেতে \"OK\" ক্লিক করুন।"
+sysup_starting="-------- সম্পূর্ণ সিস্টেম আপডেট শুরু হয়েছে --------"
+sysup_completed="পরিষ্কার এবং আপডেট সম্পূর্ণ।"
+sysup_rebootreq="পরিষ্কার এবং আপডেট সম্পূর্ণ। আপডেটটি কার্যকর হতে একটি পুনর্বুট প্রয়োজন।"

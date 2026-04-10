@@ -131,3 +131,6 @@ INSTRUKTIONER TIL ONEDRIVE PERSONAL
    → Søg efter og vælg følgende tilladelser: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read og Sites.Read.All. Når de er valgt, skal du klikke på Tilføj tilladelser nederst.
 
 Når du har afsluttet disse trin, skal du klikke OK for at fortsætte"
+sysup_starting="-------- FULD SYSTEMOPDATERING STARTER --------"
+sysup_completed="Rengøring og opdatering afsluttet."
+sysup_rebootreq="Rengøring og opdatering afsluttet. En genstart er påkrævet for, at opdateringen træder i kraft."

@@ -132,3 +132,6 @@ gdrive_guide_text="1. ACESSO AO CONSOLE DO GOOGLE CLOUD:
    → Tenha-os prontos para a próxima etapa!
 
 Em todas as etapas acima, clique \"OK\" para continuar."
+sysup_starting="-------- ATUALIZAÇÃO COMPLETA DO SISTEMA INICIADA --------"
+sysup_completed="Limpeza e atualização concluídas."
+sysup_rebootreq="Limpeza e atualização concluídas. Um reinício é necessário para que a atualização entre em vigor."

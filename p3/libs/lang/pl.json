@@ -418,5 +418,7 @@
   "shelly_desc": "Szukaj pakietów standardowych, AUR i Flatpak w jednym zwięzłym i nowoczesnym menedżerze pakietów.",
   "rgdrive_desc": "Dodajemy Google Drive jako punkt montażu w katalogu domowym, zsynchronizowany z rclone, pozwalając na łatwy dostęp do plików w chmurze i zarządzanie nimi z menedżera plików i terminala.",
   "rodrive_desc": "Dodajemy OneDrive jako punkt montażu w katalogu domowym, zsynchronizowany z rclone, pozwalając na łatwy dostęp do plików w chmurze i zarządzanie nimi z menedżera plików i terminala.",
-  "k6_desc": "Nowoczesne narzędzie do testowania obciążenia dla API, usług i aplikacji internetowych."
+  "k6_desc": "Nowoczesne narzędzie do testowania obciążenia dla API, usług i aplikacji internetowych.",
+  "sysup": "Zaktualizuj System",
+  "sysup_desc": "Wykonuje czyszczenie opuszczonych pakietów i pełną aktualizację systemu dla pakietów dystrybucji i Flatpaks."
 }

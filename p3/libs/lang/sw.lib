@@ -132,3 +132,6 @@ gdrive_guide_text="1. FADHILI KWENYE KONSOOLI YA GOOGLE CLOUD:
    → Zihifadhi kwa hatua inayofuata!
 
 Bonyeza \"SAWA\" kwenye hatua zote hapo juu ili kuendelea."
+sysup_starting="-------- KUSASISHA KWA KAMILI KWA MFUMO KUANZISHWA --------"
+sysup_completed="Kusafisha na kusasisha kumalizwa."
+sysup_rebootreq="Kusafisha na kusasisha kumalizwa. Uanzishaji upya unahitajika ili kusasisha kuwe na matokeo."

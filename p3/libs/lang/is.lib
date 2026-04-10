@@ -130,3 +130,6 @@ LEIOBEINING UM ONEDRIVE PERSONAL
    → Leitaðu og veldu eftirfarandi heimildir: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read og Sites.Read.All. Þegar þær eru valdar skaltu smella á Bæta við heimildir neðst.
 
 Á öllum skrefum fyrir ofan skaltu smella á OK til að halda áfram"
+sysup_starting="-------- VOLLUM KERFI UPPFÆRSLA HEFUR HAFIST --------"
+sysup_completed="Hreinsun og uppfærsla lokið."
+sysup_rebootreq="Hreinsun og uppfærsla lokið. Endurræsing er nauðsynleg til að uppfærslan taki gildi."

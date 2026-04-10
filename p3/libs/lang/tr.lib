@@ -130,3 +130,6 @@ ONEDRİVE KİŞİSEL İÇİN TALİMATLAR
    → Aşağıdaki izinleri arayın ve seçin: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ve Sites.Read.All. Seçildikten sonra alttaki İzin Ekle'ye tıklayın.
 
 Bu adımları tamamladıktan sonra devam etmek için Tamam'a tıklayın."
+sysup_starting="-------- TAM SİSTEM GÜNCELLEMESI BAŞLATILDI --------"
+sysup_completed="Temizlik ve güncelleme tamamlandı."
+sysup_rebootreq="Temizlik ve güncelleme tamamlandı. Güncellemenin etkili olması için yeniden başlatma gereklidir."

@@ -131,3 +131,6 @@ odrive_guide_text="
    → የሚከተሉትን ፈቃዶች ፈልግ በርታቸውስ ይምረጡ: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read እና Sites.Read.All። ተመርጡ ከሆኑ በኋላ ወደ ስር Add permissions ላይ ጠቅ ያድርጉ።
 
 እነዚህ ደረጃዎች ከጨረስን በኋላ ወደ ፊት ለመቀጠል OK ላይ ጠቅ ያድርጉ።"
+sysup_starting="-------- ሙሉ ሲስተም ማዘመን ጀምሮ --------"
+sysup_completed="ማስተካከል እና ማዘመን ተጠናቋል።"
+sysup_rebootreq="ማስተካከል እና ማዘመን ተጠናቋል። ማዘመኖቱ ንጽህና ውስጥ ለመግባት እንደገና ተጀምሮ ሊሆን ይችላል።"

@@ -131,3 +131,6 @@ gdrive_guide_text="1. DOSTĘP DO KONSOLI GOOGLE CLOUD:
    → Przygotuj je na następny krok!
 
 Na wszystkich powyższych krokach kliknij \"OK\", aby kontynuować."
+sysup_starting="-------- PEŁNA AKTUALIZACJA SYSTEMU ROZPOCZĘTA --------"
+sysup_completed="Czyszczenie i aktualizacja ukończone."
+sysup_rebootreq="Czyszczenie i aktualizacja ukończone. Wymagany jest restart, aby aktualizacja weszła w życie."

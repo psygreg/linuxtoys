@@ -131,3 +131,6 @@ gdrive_guide_text="1. TOEGANG TOT GOOGLE CLOUD-CONSOLE:
    → Zorg dat deze klaar zijn voor de volgende stap!
 
 Klik op alle bovenstaande stappen op \"OK\" om door te gaan."
+sysup_starting="-------- VOLLEDIGE SYSTEEMUPDATE GESTART --------"
+sysup_completed="Opschoning en update voltooid."
+sysup_rebootreq="Opschoning en update voltooid. Een herstart is vereist om de update van kracht te laten worden."

@@ -418,5 +418,7 @@
   "shelly_desc": "Iščite standardne pakete, AUR in Flatpak v enem jedrnati in sodobnem upravljavcu paketov.",
   "rgdrive_desc": "Dodajte Google Drive kot točko priveza v domačem direktoriju, sinhroniziran s programom rclone, kar vam omogoči enostaven dostop do datotek v oblaku in njihovo upravljanje iz upravitelja datotek in terminala.",
   "rodrive_desc": "Dodajte OneDrive kot točko priveza v domačem direktoriju, sinhroniziran s programom rclone, kar vam omogoči enostaven dostop do datotek v oblaku in njihovo upravljanje iz upravitelja datotek in terminala.",
-  "k6_desc": "Sodoben inštrument za testiranje obremenitve za API, storitve in spletne aplikacije."
+  "k6_desc": "Sodoben inštrument za testiranje obremenitve za API, storitve in spletne aplikacije.",
+  "sysup": "Posodobi Sistem",
+  "sysup_desc": "Izvede čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks."
 }

@@ -418,5 +418,7 @@
   "shelly_desc": "Vyhľadávajte štandardné balíky, AUR a Flatpak v jednom výstižnom a modernom správcovi balíkov.",
   "rgdrive_desc": "Pridajte Google Drive ako bod pripojenia v domovskom adresári, synchronizovaný s rclone, čím vám umožníte ľahký prístup k vašim súborom v cloude a ich správu zo správcu súborov a terminálu.",
   "rodrive_desc": "Pridajte OneDrive ako bod pripojenia v domovskom adresári, synchronizovaný s rclone, čím vám umožníte ľahký prístup k vašim súborom v cloude a ich správu zo správcu súborov a terminálu.",
-  "k6_desc": "Moderný nástroj na testovanie záťaže pre API, služby a webové aplikácie."
+  "k6_desc": "Moderný nástroj na testovanie záťaže pre API, služby a webové aplikácie.",
+  "sysup": "Aktualizovať Systém",
+  "sysup_desc": "Vykonáva vyčistenie opúšťaných balíčkov a úplnú aktualizáciu systému pre balíčky distribúcie a Flatpaks."
 }

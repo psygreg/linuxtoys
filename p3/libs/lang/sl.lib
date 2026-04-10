@@ -131,3 +131,6 @@ gdrive_guide_text="1. DOSTOP DO GOOGLE CLOUD KONZOLE:
    → Imejte jih pripravljene za naslednji korak!
 
 Na vseh zgornjih korakih kliknite \"V redu\" za nadaljevanje."
+sysup_starting="-------- POLNA POSODOBITEV SISTEMA ZAČETA --------"
+sysup_completed="Čiščenje in posodobitev sta dokončana."
+sysup_rebootreq="Čiščenje in posodobitev sta dokončana. Ponovno zagon je potreben, da se posodobitev uveljavи."

@@ -418,5 +418,7 @@
   "shelly_desc": "Keresse meg a szabványos csomagokat, AUR-t és Flatpak-ot egy tömör és modern csomagkezelőben.",
   "rgdrive_desc": "Adja hozzá Google Drive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból.",
   "rodrive_desc": "Adja hozzá OneDrive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból.",
-  "k6_desc": "Modern terheléstesztelő eszköz API-khoz, szolgáltatásokhoz és webalkalmazásokhoz."
+  "k6_desc": "Modern terheléstesztelő eszköz API-khoz, szolgáltatásokhoz és webalkalmazásokhoz.",
+  "sysup": "Frissítse a Rendszert",
+  "sysup_desc": "Elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra."
 }

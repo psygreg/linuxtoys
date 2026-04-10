@@ -131,3 +131,6 @@ odrive_guide_text="
    → Потърсете и изберете следните разрешения: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read и Sites.Read.All. След като са избрани, кликнете Add permissions в дъното.
 
 След като докончите ъту листита, кликнете OK, чтобы продолжить"
+sysup_starting="-------- ПЪЛНО СИСТЕМНО ОБНОВЯВАНЕ СТАРТИРАНО --------"
+sysup_completed="Почистване и актуализация завършени."
+sysup_rebootreq="Почистване и актуализация завършени. Необходимо е рестартиране, за да влезе обновката в сила."

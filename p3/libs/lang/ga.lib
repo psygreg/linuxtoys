@@ -131,3 +131,6 @@ TREORUITHE ONEDRIVE PERSONAL
    → Cuardaigh agus roghnaigh na ceadanna seo a leanas: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read agus Sites.Read.All. Tar éis dóibh a roghnú cliceáil ar Cuir Ceadanna Isteach thíos.
 
 Ar na céimeanna thuas ar fad, cliceáil ar OK chun leanúint ar aghaidh"
+sysup_starting="-------- NUASHONRÚ IOMLÁN CÓRAS TOSAITHE --------"
+sysup_completed="Glanúchán agus nuashonrú críochnaithe."
+sysup_rebootreq="Glanúchán agus nuashonrú críochnaithe. Tá atosú ag teastáil chun an nuashonrú a chur i bhfeidhm."

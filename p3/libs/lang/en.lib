@@ -132,3 +132,7 @@ INSTRUCTIONS FOR ONEDRIVE PERSONAL
    → Search and select the following permissions: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read and Sites.Read.All. Once selected click Add permissions at the bottom.
 
 Once you've completed these steps, click OK to continue."
+
+sysup_starting="-------- FULL SYSTEM UPDATE STARTING --------"
+sysup_completed="Cleanup and update complete."
+sysup_rebootreq="Cleanup and update done. A reboot is required for the update to take effect."

@@ -418,5 +418,7 @@
   "shelly_desc": "Busca paquetes estándar, AUR y Flatpak en un gestor de paquetes conciso y moderno.",
   "rgdrive_desc": "Agrega tu Google Drive como un punto de montaje en tu directorio de inicio, sincronizado con rclone, permitiéndote acceder fácilmente y administrar tus archivos en la nube desde el administrador de archivos y la terminal.",
   "rodrive_desc": "Agrega tu OneDrive como punto de montaje en tu directorio de inicio, sincronizado con rclone, permitiéndote acceder fácilmente a tus archivos en la nube desde el administrador de archivos y la terminal.",
-  "k6_desc": "Una herramienta moderna de prueba de carga para APIs, servicios y aplicaciones web."
+  "k6_desc": "Una herramienta moderna de prueba de carga para APIs, servicios y aplicaciones web.",
+  "sysup": "Actualizar Sistema",
+  "sysup_desc": "Realiza una limpieza de paquetes huérfanos y una actualización completa del sistema para los paquetes de tu distribución y Flatpaks."
 }

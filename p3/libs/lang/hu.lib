@@ -131,3 +131,6 @@ ONEDRIVE PERSONAL UTASÍTÁSOK
    → Keresse meg és válassza ki a következő engedélyeket: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read és Sites.Read.All. Kiválasztás után kattintson az alul található Engedélyek hozzáadása lehetőségre.
 
 A fenti összes lépésnél kattintson az OK gombra a folytatáshoz"
+sysup_starting="-------- TELJES RENDSZERFRISSÍTÉS ELINDÍTVA --------"
+sysup_completed="Megtisztítás és frissítés befejezve."
+sysup_rebootreq="Megtisztítás és frissítés befejezve. A frissítés érvénybe lépéséhez újraindítás szükséges."

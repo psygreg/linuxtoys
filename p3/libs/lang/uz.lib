@@ -130,3 +130,6 @@ ONEDRIVE SHAXSIY UCHUN KO'RSATMALAR
    → Quyidagi ruxsatnomalarni qidiring va tanlang: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read va Sites.Read.All. Tanlagandan so'ng pastdagi Ruxsatnoma qo'shing ni bosing.
 
 Ushbu bosqichlarni tugallagan so'ng, davom etish uchun OK ni bosing."
+sysup_starting="-------- TOLIQ TIZIM YANGILANISHI BOSHLAB BERILDI --------"
+sysup_completed="Tozalash va yangilash yakunlandi."
+sysup_rebootreq="Tozalash va yangilash yakunlandi. Yangilashning amal qilishi uchun qayta yuklanish kerak."

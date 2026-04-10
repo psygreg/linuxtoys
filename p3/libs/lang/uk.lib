@@ -130,3 +130,6 @@ odrive_guide_text="
    → Шукайте та виберіть такі дозволи: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read та Sites.Read.All. Після вибору натисніть Додати дозволи внизу.
 
 Після завершення цих кроків натисніть OK для продовження."
+sysup_starting="-------- ПОВНЕ ОНОВЛЕННЯ СИСТЕМИ РОЗПОЧАТО --------"
+sysup_completed="Очищення та оновлення завершені."
+sysup_rebootreq="Очищення та оновлення завершені. Для вступлення оновлення в силу вимагається перезавантаження."

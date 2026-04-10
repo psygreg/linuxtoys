@@ -131,3 +131,6 @@ ONEDRIVE PERSONAL ÜÇÜN TƏLİMATLAR
    → Aşağıdaki icazələri axtarın və seçin: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read və Sites.Read.All. Seçildikdən sonra aşağıdakı Add permissions'a klikləyin.
 
 Bu addımları tamamladıqdan sonra davam etmək üçün OK'yə klikləyin."
+sysup_starting="-------- TAM SİSTEM YENİLƏMƏSİ BAŞLADIQLARI --------"
+sysup_completed="Təmizlənmə və güncəllənmə tamamlandı."
+sysup_rebootreq="Təmizlənmə və güncəllənmə tamamlandı. Güncəllənmənin səmərəli olması üçün yenidən başladılması tələb olunur."

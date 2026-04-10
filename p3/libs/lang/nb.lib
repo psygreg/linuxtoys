@@ -131,3 +131,6 @@ gdrive_guide_text="1. TILGANG TIL GOOGLE CLOUD-KONSOLLEN:
    → Ha disse klare for neste trinn!
 
 På alle trinnene ovenfor klikker du \"OK\" for å fortsette."
+sysup_starting="-------- FULL SYSTEMOPPDATERING STARTET --------"
+sysup_completed="Opprydding og oppdatering fullført."
+sysup_rebootreq="Opprydding og oppdatering fullført. En omstart kreves for at oppdateringen skal tre i kraft."

@@ -418,5 +418,7 @@
   "shelly_desc": "Tìm kiếm các gói tiêu chuẩn, AUR và Flatpak trong một trình quản lý gói ngắn gọn và hiện đại.",
   "rgdrive_desc": "Thêm Google Drive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối.",
   "rodrive_desc": "Thêm OneDrive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối.",
-  "k6_desc": "Một công cụ kiểm tra tải hiện đại cho API, dịch vụ và ứng dụng web."
+  "k6_desc": "Một công cụ kiểm tra tải hiện đại cho API, dịch vụ và ứng dụng web.",
+  "sysup": "Cập Nhật hệ Thống",
+  "sysup_desc": "Thực hiện dọn sạch các gói bị bỏ rơi và cập nhật hệ thống đầy đủ cho cả gói phân phối và Flatpaks của bạn."
 }

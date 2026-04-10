@@ -131,3 +131,6 @@ PETUNJUK UNTUK ONEDRIVE PERSONAL
    → Cari dan pilih izin berikut: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read dan Sites.Read.All. Setelah dipilih klik Tambah izin di bagian bawah.
 
 Pada semua langkah di atas, klik OK untuk melanjutkan"
+sysup_starting="-------- PEMBARUAN SISTEM LENGKAP DIMULAI --------"
+sysup_completed="Pembersihan dan pembaruan selesai."
+sysup_rebootreq="Pembersihan dan pembaruan selesai. Diperlukan boot ulang agar pembaruan berlaku."

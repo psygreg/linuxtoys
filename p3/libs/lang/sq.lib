@@ -131,3 +131,6 @@ gdrive_guide_text="1. HYRJA NË KONSOLËN E GOOGLE CLOUD:
    → Mbajini ata gati për hapin tjetër!
 
 Në të gjithë hapat e mësipërm, klikoni \"OK\" për të vazhduar."
+sysup_starting="-------- PËRDITËSIM I PLOTË I SISTEMIT FILLUAR --------"
+sysup_completed="Pastrimi dhe përditësimi u përfunduan."
+sysup_rebootreq="Pastrimi dhe përditësimi u përfunduan. Kërkohet rilindja për të zënë fuqi përditësimi."

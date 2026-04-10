@@ -130,3 +130,6 @@ ONEDRIVE PERSONAL کے لیے ہدایات
    → درج ذیل اجازتوں کو تلاش کریں اور منتخب کریں: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read اور Sites.Read.All۔ منتخب کرنے کے بعد نیچے Add permissions پر کلک کریں۔
 
 ان مراحل کی تکمیل کے بعد جاری رکھنے کے لیے OK پر کلک کریں۔"
+sysup_starting="-------- مکمل نظام کی تازہ کاری شروع ہو گئی --------"
+sysup_completed="صفائی اور تازہ کاری مکمل ہو گئی۔"
+sysup_rebootreq="صفائی اور تازہ کاری مکمل ہو گئی۔ تازہ کاری کو نافذ کرنے کے لیے ری بوٹ ضروری ہے۔"

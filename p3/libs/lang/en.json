@@ -418,5 +418,7 @@
   "shelly_desc": "Search standard packages, AUR, and Flatpak in one concise and modern package manager.",
   "rgdrive_desc": "Add your Google Drive as a mount in your home directory, synchronized with rclone, allowing you to easily access and manage your cloud files from your file manager and terminal.",
   "rodrive_desc": "Add your OneDrive as a mount in your home directory, synchronized with rclone, allowing you to easily access your cloud files from your file manager and terminal.",
-  "k6_desc": "A modern load testing tool for APIs, services, and web applications."
+  "k6_desc": "A modern load testing tool for APIs, services, and web applications.",
+  "sysup": "Update System",
+  "sysup_desc": "Performs a cleanup of orphaned packages and a full system update for both your distribution's packages and Flatpaks."
 }

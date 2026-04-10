@@ -130,3 +130,6 @@ HƯỚNG DẪN CHO ONEDRIVE CÁ NHÂN
    → Tìm kiếm và chọn các quyền sau: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read và Sites.Read.All. Sau khi chọn, nhấn Thêm quyền ở dưới cùng.
 
 Sau khi hoàn thành các bước này, nhấn OK để tiếp tục."
+sysup_starting="-------- CẬP NHẬT TOÀN BỘ HỆ THỐNG ĐƯỢC BẮT ĐẦU --------"
+sysup_completed="Dọn dẹp và cập nhật hoàn tất."
+sysup_rebootreq="Dọn dẹp và cập nhật hoàn tất. Cần khởi động lại để cập nhật có hiệu lực."

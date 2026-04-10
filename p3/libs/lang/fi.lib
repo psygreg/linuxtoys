@@ -131,3 +131,6 @@ ONEDRIVE PERSONAL OHJEET
    → Etsi ja valitse seuraavat käyttöoikeudet: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read ja Sites.Read.All. Kun ne on valittu, napsauta Lisää käyttöoikeudet alhaalla.
 
 Napsauta kaikkien yllä olevien vaiheiden kohdalla OK jatkaaksesi"
+sysup_starting="-------- TÄYSI JÄRJESTELMÄN PÄIVITYS KÄYNNISTETTY --------"
+sysup_completed="Siivous ja päivitys valmis."
+sysup_rebootreq="Siivous ja päivitys valmis. Päivityksen voimaantuloa varten vaaditaan uudelleenkäynnistys."

@@ -418,5 +418,7 @@
   "shelly_desc": "Leitaðu eftir stöðluðum pökkum, AUR og Flatpak í einni snjálli og nútímastærri pakkastjóra.",
   "rgdrive_desc": "Bættu Google Drive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi.",
   "rodrive_desc": "Bættu OneDrive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi.",
-  "k6_desc": "Nútímaleg álagspróf fyrir API, þjónustur og vefforrit."
+  "k6_desc": "Nútímaleg álagspróf fyrir API, þjónustur og vefforrit.",
+  "sysup": "Uppfærðu Kerfi",
+  "sysup_desc": "Framkvæmir hreinsun á munaðarlausum pökkum og fullri kerfisuppfærslu fyrir dreifingarpakka og Flatpaks þína."
 }

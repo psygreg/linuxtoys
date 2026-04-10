@@ -130,3 +130,6 @@ ONEDRIVE PERSONAL 지침
    → 다음 권한을 검색하고 선택합니다: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read 및 Sites.Read.All. 선택한 후 하단의 권한 추가를 클릭합니다.
 
 위의 모든 단계에서 \"확인\"을 클릭하여 계속합니다"
+sysup_starting="-------- 전체 시스템 업데이트 시작 --------"
+sysup_completed="정리 및 업데이트 완료."
+sysup_rebootreq="정리 및 업데이트가 완료되었습니다. 업데이트를 적용하려면 재부팅이 필요합니다."

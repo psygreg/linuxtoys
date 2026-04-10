@@ -131,3 +131,6 @@ POKYNY PRO ONEDRIVE PERSONAL
    → Vyhledejte a vyberte následující oprávnění: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read a Sites.Read.All. Po výběru klikněte na Přidat oprávnění v dolní části.
 
 Po dokončení těchto kroků klikněte na OK, abyste pokračovali"
+sysup_starting="-------- SPUŠTĚNA ÚPLNÁ AKTUALIZACE SYSTÉMU --------"
+sysup_completed="Vyčištění a aktualizace dokončeny."
+sysup_rebootreq="Vyčištění a aktualizace dokončeny. Pro použití aktualizace je vyžadován restart."

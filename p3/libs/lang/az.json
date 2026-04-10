@@ -417,5 +417,7 @@
   "shelly_desc": "Standart paketləri, AUR və Flatpak-ı bir konsise və müasır paket menecerində axtarın.",
   "rgdrive_desc": "Google Drive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa və idarə etməyə imkan verin.",
   "rodrive_desc": "OneDrive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa imkan verin.",
-  "k6_desc": "API-lər, xidmətlər və veb tətbiqləri üçün müasır yüklənmə sınaq aləti."
+  "k6_desc": "API-lər, xidmətlər və veb tətbiqləri üçün müasır yüklənmə sınaq aləti.",
+  "sysup": "Sistemi Yeniləyin",
+  "sysup_desc": "Səhipa paketlərin təmizlənməsini və həm dağıtım paketlərinin həm də Flatpak-ların tam sistem yeniləməsini aparır."
 }

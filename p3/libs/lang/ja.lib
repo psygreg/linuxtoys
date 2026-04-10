@@ -131,3 +131,6 @@ ONEDRIVE PERSONAL の手順
    → 次のアクセス許可を検索して選択してください: Files.Read、Files.ReadWrite、Files.Read.All、Files.ReadWrite.All、offline_access、User.Read、および Sites.Read.All。選択したら、下部の [アクセス許可を追加] をクリックします。
 
 上記のすべてのステップで、[OK] をクリックして続行します።"
+sysup_starting="-------- システムの完全なアップデートを開始しています --------"
+sysup_completed="クリーンアップとアップデートが完了しました。"
+sysup_rebootreq="クリーンアップとアップデートが完了しました。アップデートを有効にするには再起動が必要です。"

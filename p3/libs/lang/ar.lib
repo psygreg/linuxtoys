@@ -131,3 +131,6 @@ odrive_guide_text="
    → ابحث واختر الأذونات التالية: Files.Read و Files.ReadWrite و Files.Read.All و Files.ReadWrite.All و offline_access و User.Read و Sites.Read.All. بعد الاختيار، انقر على Add permissions في الأسفل.
 
 بعد الانتهاء من هذه الخطوات، انقر على OK للمتابعة."
+sysup_starting="-------- تحديث النظام الكامل بدء --------"
+sysup_completed="التنظيف والتحديث مكتملان."
+sysup_rebootreq="التنظيف والتحديث مكتملان. إعادة تشغيل مطلوبة لتفعيل التحديث."

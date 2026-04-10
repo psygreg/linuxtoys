@@ -418,5 +418,7 @@
   "shelly_desc": "Meklējiet standarta pakotnes, AUR un Flatpak vienā kodolīgā un mūsdienīgā pakotņu pārvaldniekā.",
   "rgdrive_desc": "Pievienojiet savu Google Drive kā montāžas punktu savā sākumā, sinhronizēts ar rclone, kas ļauj jums viegli piekļūt un pārvaldīt mākoņa failus no fails pārvaldnieka un terminäļa.",
   "rodrive_desc": "Pievienojiet savu OneDrive kā montāžas punktu savā sākumā, sinhronizēts ar rclone, kas ļauj jums viegli piekļūt un pārvaldīt mākoņa failus no fails pārvaldnieka un terminäļa.",
-  "k6_desc": "Moderns slodzes pārbaudes rīks API, pakalpojumiem un tīmekļa lietotnēm."
+  "k6_desc": "Moderns slodzes pārbaudes rīks API, pakalpojumiem un tīmekļa lietotnēm.",
+  "sysup": "Atjaunināt Sistēmu",
+  "sysup_desc": "Veic neskaustu pakotņu tīrīšanu un pilnīgu sistēmas atjaunināšanu jūsu izplatīšanas paketēm un Flatpaks."
 }

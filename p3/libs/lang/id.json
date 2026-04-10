@@ -418,5 +418,7 @@
   "shelly_desc": "Cari paket standar, AUR, dan Flatpak dalam satu manajer paket yang ringkas dan modern.",
   "rgdrive_desc": "Tambahkan Google Drive Anda sebagai titik mount di direktori rumah Anda, disinkronkan dengan rclone, memungkinkan Anda untuk mudah mengakses dan mengelola file cloud Anda dari manajer file dan terminal.",
   "rodrive_desc": "Tambahkan OneDrive Anda sebagai titik mount di direktori rumah Anda, disinkronkan dengan rclone, memungkinkan Anda untuk mudah mengakses dan mengelola file cloud Anda dari manajer file dan terminal.",
-  "k6_desc": "Alat pengujian beban modern untuk API, layanan, dan aplikasi web."
+  "k6_desc": "Alat pengujian beban modern untuk API, layanan, dan aplikasi web.",
+  "sysup": "Perbarui Sistem",
+  "sysup_desc": "Melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda."
 }

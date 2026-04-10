@@ -418,5 +418,7 @@
   "shelly_desc": "Kërkoni për paketat standarde, AUR dhe Flatpak në një menaxher pakete të hijezuar dhe modern.",
   "rgdrive_desc": "Shtoni Google Drive tuaj si një pikë montimi në direktoriumin tuaj të shtëpisë, të sinkronizuar me rclone, Duke ju lejuar të qasni lehtësisht dhe të menaxhoni skedarët tuaj në cloud nga menaxheri i skedarëve dhe terminali.",
   "rodrive_desc": "Shtoni OneDrive tuaj si një pikë montimi në direktoriumin tuaj të shtëpisë, të sinkronizuar me rclone, Duke ju lejuar të qasni lehtësisht dhe të menaxhoni skedarët tuaj në cloud nga menaxheri i skedarëve dhe terminali.",
-  "k6_desc": "Një mjet modern testi i ngarkimit për API, shërbime dhe aplikacione web."
+  "k6_desc": "Një mjet modern testi i ngarkimit për API, shërbime dhe aplikacione web.",
+  "sysup": "Përditëso Sistemin",
+  "sysup_desc": "Kryen pastrimin e paketave të braktisura dhe përditësimin e plotë të sistemit për paketa të shpërndarjes dhe Flatpaks."
 }

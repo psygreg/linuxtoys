@@ -131,3 +131,6 @@ ONEDRIVE PERSONAL के लिए निर्देश
    → निम्नलिखित अनुमतियों को खोजें और चुनें: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read और Sites.Read.All। एक बार चुने जाने के बाद, नीचे अनुमतियां जोड़ें पर क्लिक करें।
 
 उपरोक्त सभी चरणों पर, जारी रखने के लिए ठीक है पर क्लिक करें।"
+sysup_starting="-------- संपूर्ण सिस्टम अपडेट शुरू --------"
+sysup_completed="सफाई और अपडेट पूर्ण।"
+sysup_rebootreq="सफाई और अपडेट पूर्ण। अपडेट लागू होने के लिए पुनः बूट की आवश्यकता है।"

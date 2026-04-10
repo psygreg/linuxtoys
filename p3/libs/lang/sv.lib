@@ -131,3 +131,6 @@ gdrive_guide_text="1. ÅTKOMST TILL GOOGLE CLOUD-KONSOLEN:
    → Ha dem redo för nästa steg!
 
 Klicka \"OK\" på alla steg ovan för att fortsätta."
+sysup_starting="-------- FULLSTÄNDIG SYSTEMUPPDATERING STARTAD --------"
+sysup_completed="Rensning och uppdatering slutförda."
+sysup_rebootreq="Rensning och uppdatering slutförda. En omstart krävs för att uppdateringen ska träda i kraft."

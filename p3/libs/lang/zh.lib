@@ -130,3 +130,6 @@ ONEDRIVE 个人版说明
    → 搜索并选择以下权限：Files.Read、Files.ReadWrite、Files.Read.All、Files.ReadWrite.All、offline_access、User.Read 和 Sites.Read.All。选择后，点击底部的添加权限。
 
 完成这些步骤后，点击确定继续。"
+sysup_starting="-------- 完整系统更新开始 --------"
+sysup_completed="清理和更新完成。"
+sysup_rebootreq="清理和更新完成。需要重新启动才能使更新生效。"

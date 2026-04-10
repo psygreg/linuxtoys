@@ -132,3 +132,6 @@ INSTRUCCIONES PARA ONEDRIVE PERSONAL
    → Busque y seleccione los siguientes permisos: Files.Read, Files.ReadWrite, Files.Read.All, Files.ReadWrite.All, offline_access, User.Read y Sites.Read.All. Una vez seleccionados, haga clic en Agregar permisos en la parte inferior.
 
 Una vez que haya completado estos pasos, haga clic en Aceptar para continuar"
+sysup_starting="-------- ACTUALIZACIÓN COMPLETA DEL SISTEMA INICIADA --------"
+sysup_completed="Limpieza y actualización completadas."
+sysup_rebootreq="Limpieza y actualización completadas. Se requiere un reinicio para que la actualización surta efecto."

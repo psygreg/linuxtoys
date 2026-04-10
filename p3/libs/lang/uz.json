@@ -417,5 +417,7 @@
   "shelly_desc": "Standart paketlar, AUR va Flatpak-ni bitta qisqa va zamonaviy paket menejeridagi izlang.",
   "rgdrive_desc": "Google Drive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi.",
   "rodrive_desc": "OneDrive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi.",
-  "k6_desc": "API, xizmatlar va veb-ilovalar uchun zamonaviy yuk sinov vositasi."
+  "k6_desc": "API, xizmatlar va veb-ilovalar uchun zamonaviy yuk sinov vositasi.",
+  "sysup": "Tizimni Yangilash",
+  "sysup_desc": "Teriqalar paketlarini tozalash va taqsimot paketlari va Flatpaks uchun to'liq sistem yangilashni bajaradi."
 }
