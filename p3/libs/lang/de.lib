@@ -134,3 +134,4 @@ Nachdem Sie diese Schritte abgeschlossen haben, klicken Sie auf \"OK\", um fortz
 sysup_starting="-------- VOLLSTÄNDIGE SYSTEMAKTUALISIERUNG GESTARTET --------"
 sysup_completed="Bereinigung und Aktualisierung abgeschlossen."
 sysup_rebootreq="Bereinigung und Aktualisierung abgeschlossen. Ein Neustart ist erforderlich, damit die Aktualisierung in Kraft tritt."
+sysup_available="Ein Release-Update ist verfügbar. Jetzt aktualisieren? (Wenn Sie nicht aktualisieren, wird nur eine normale Systemaktualisierung durchgeführt.)"

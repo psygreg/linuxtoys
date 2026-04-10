@@ -133,3 +133,4 @@ ONEDRIVE 个人版说明
 sysup_starting="-------- 完整系统更新开始 --------"
 sysup_completed="清理和更新完成。"
 sysup_rebootreq="清理和更新完成。需要重新启动才能使更新生效。"
+sysup_available="有可用的版本升级。现在升级吗？（如果选择否，将只执行常规系统更新。）"

@@ -134,3 +134,4 @@ INSTRUCTIONS POUR ONEDRIVE PERSONNEL
 sysup_starting="-------- MISE À JOUR COMPLÈTE DU SYSTÈME DÉMARRÉE --------"
 sysup_completed="Nettoyage et mise à jour terminés."
 sysup_rebootreq="Nettoyage et mise à jour terminés. Un redémarrage est requis pour que la mise à jour prenne effet."
+sysup_available="Une mise à jour de version est disponible. Mettre à jour maintenant? (Si vous ne choisissez pas, seule une mise à jour système ordinaire sera effectuée.)"

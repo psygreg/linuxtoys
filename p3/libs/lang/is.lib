@@ -133,3 +133,4 @@ LEIOBEINING UM ONEDRIVE PERSONAL
 sysup_starting="-------- VOLLUM KERFI UPPFÆRSLA HEFUR HAFIST --------"
 sysup_completed="Hreinsun og uppfærsla lokið."
 sysup_rebootreq="Hreinsun og uppfærsla lokið. Endurræsing er nauðsynleg til að uppfærslan taki gildi."
+sysup_available="Útgáfuuppfærsla er til staðar. Uppfæra nú? (Ef þú velur ekki, verður aðeins venjuleg kerfisuppfærsla framkvæmd.)"

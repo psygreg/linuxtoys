@@ -134,3 +134,4 @@ Visuose aukščiau pateiktuose žingsniuose spustelėkite \"Gerai\" norėdami t�
 sysup_starting="-------- PILNA SISTEMOS ATNAUJINIMAS PRADĖTAS --------"
 sysup_completed="Valymas ir atnaujinimas baigti."
 sysup_rebootreq="Valymas ir atnaujinimas baigti. Atnaujinimui įsigalioti reikalingas iš naujo paleistas kompiuteris."
+sysup_available="Išleidimo atnaujinimas galimas. Atnaujinti dabar? (Jei ne, bus atliktas tik paprastas sistemos atnaujinimas.)"
