@@ -1,0 +1,16 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="k6-bg" x1="40" y1="32" x2="216" y2="224" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#16C6F3"/>
+      <stop offset="1" stop-color="#0B6BFF"/>
+    </linearGradient>
+    <linearGradient id="k6-slash" x1="112" y1="36" x2="170" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#05243A"/>
+      <stop offset="1" stop-color="#0A0F1E"/>
+    </linearGradient>
+  </defs>
+  <rect x="20" y="20" width="216" height="216" rx="56" fill="url(#k6-bg)"/>
+  <path d="M156 36H192L140 126L194 220H158L104 126L156 36Z" fill="url(#k6-slash)"/>
+  <path d="M76 74V118L114 74H146L102 126L148 182H116L82 141L76 147V182H48V74H76Z" fill="white"/>
+  <path d="M170.5 138C170.5 121.155 184.155 107.5 201 107.5C217.845 107.5 231.5 121.155 231.5 138C231.5 154.845 217.845 168.5 201 168.5H188V182H160V138C160 121.155 173.655 107.5 190.5 107.5H201C183.603 107.5 170.5 119.844 170.5 138ZM201 140.5C205.142 140.5 208.5 137.142 208.5 133C208.5 128.858 205.142 125.5 201 125.5C196.858 125.5 193.5 128.858 193.5 133C193.5 137.142 196.858 140.5 201 140.5Z" fill="white"/>
+</svg>
