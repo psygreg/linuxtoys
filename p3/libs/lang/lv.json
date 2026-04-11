@@ -420,5 +420,7 @@
   "rodrive_desc": "Pievienojiet savu OneDrive kā montāžas punktu savā sākumā, sinhronizēts ar rclone, kas ļauj jums viegli piekļūt un pārvaldīt mākoņa failus no fails pārvaldnieka un terminäļa.",
   "k6_desc": "Moderns slodzes pārbaudes rīks API, pakalpojumiem un tīmekļa lietotnēm.",
   "sysup": "Atjaunināt Sistēmu",
-  "sysup_desc": "Veic neskaustu pakotņu tīrīšanu un pilnīgu sistēmas atjaunināšanu jūsu izplatīšanas paketēm un Flatpaks."
+  "sysup_desc": "Veic neskaustu pakotņu tīrīšanu un pilnīgu sistēmas atjaunināšanu jūsu izplatīšanas paketēm un Flatpaks.",
+  "autosysup": "Automātiskas Atjaunināšanas",
+  "autosysup_desc": "Ieslēdziet LinuxToys automātiskas sistēmas atjaunināšanas pakalpojumus systemd. Tas regulāri veiks neskaustu pakotņu tīrīšanu un pilnīgu sistēmas atjaunināšanu jūsu izplatīšanas paketēm un Flatpaks, bez jāuzkrāj par ko. ATGĀDINĀJUMS: tas atjauninās tikai jūsu sistēmas pašreizējo laidiens versiju, bet to neupgradē - tam jums būtu jāpalaiž pašrocīgs atjauninājums no galvenās izvēlnes, kad ir pieejama jauna laida."
 }

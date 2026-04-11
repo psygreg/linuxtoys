@@ -419,6 +419,8 @@
   "rgdrive_desc": "Přidejte Google Drive jako přípojný bod v domovském adresáři, synchronizovaný s rclone, což vám umožní snadno přistupovat a spravovat vaše cloudové soubory ze správce souborů a terminálu.",
   "rodrive_desc": "Přidejte OneDrive jako přípojný bod v domovském adresáři, synchronizovaný s rclone, což vám umožní snadno přistupovat ke svým cloudovým souborům ze správce souborů a terminálu.",
   "k6_desc": "Moderní nástroj pro testování zatížení API, služeb a webových aplikací.",
-  "sysup": "Aktualizovat Systém",
-  "sysup_desc": "Provádí čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks."
+  "sysup": "Aktualizace Systému",
+  "sysup_desc": "Provádí čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks.",
+  "autosysup": "Automatické Aktualizace",
+  "autosysup_desc": "Povolte služby automatického aktualizace systému LinuxToys pro systemd. Tím se bude pravidelně provádět čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks bez obav. PŘIPOMÍNKA: pouze aktualizuje aktuální verzi vydání vašeho systému, ale neinovuje jej - proto byste měli spustit ruční aktualizaci z hlavní nabídky, když je dostupné nové vydání."
 }

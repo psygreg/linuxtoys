@@ -420,5 +420,7 @@
   "rodrive_desc": "Voeg OneDrive toe als een mount point in uw thuis map, gesynchroniseerd met rclone, waarmee u gemakkelijk vanuit de bestandsbeheerder en terminal toegang kunt krijgen tot uw cloud files en deze kunt beheren.",
   "k6_desc": "Een modernair belastingstestprogramma voor API's, services en webapplicaties.",
   "sysup": "Systeem Bijwerken",
-  "sysup_desc": "Voert opschoning van verweesde pakketten en volledige systeemupdate uit voor uw distributiepakketten en Flatpaks."
+  "sysup_desc": "Voert opschoning van verweesde pakketten en volledige systeemupdate uit voor uw distributiepakketten en Flatpaks.",
+  "autosysup": "Automatische Systeemupdate",
+  "autosysup_desc": "Schakel de automatische systeemupdate-services van LinuxToys in voor systemd. Dit voert regelmatig reiniging van verweesde pakketten en een volledige systeemupdate uit voor zowel uw distributiepakketten als Flatpaks zonder dat u zich zorgen hoeft te maken. HERINNERING: het werkt alleen de huidige releaseversie van uw systeem bij, maar voert geen upgrade uit ervan - daarvoor moet u een handmatige update uitvoeren vanuit het hoofdmenu wanneer een nieuwe versie beschikbaar is."
 }

@@ -420,5 +420,7 @@
   "rodrive_desc": "Shtoni OneDrive tuaj si një pikë montimi në direktoriumin tuaj të shtëpisë, të sinkronizuar me rclone, Duke ju lejuar të qasni lehtësisht dhe të menaxhoni skedarët tuaj në cloud nga menaxheri i skedarëve dhe terminali.",
   "k6_desc": "Një mjet modern testi i ngarkimit për API, shërbime dhe aplikacione web.",
   "sysup": "Përditëso Sistemin",
-  "sysup_desc": "Kryen pastrimin e paketave të braktisura dhe përditësimin e plotë të sistemit për paketa të shpërndarjes dhe Flatpaks."
+  "sysup_desc": "Kryen pastrimin e paketave të braktisura dhe përditësimin e plotë të sistemit për paketa të shpërndarjes dhe Flatpaks.",
+  "autosysup": "Përditësimet Automatike",
+  "autosysup_desc": "Aktivizoni shërbimeve të përditësimit automatik të sistemit LinuxToys për systemd. Kjo do të kryejë pastrimin e paketave të braktisura dhe përditësim të plotë të sistemit për paketa të shpërndarjes dhe Flatpaks rregullisht pa u shqetësuar. PËRKUJTIM: do të përditësojë vetëm versionin aktual të lëshimit të sistemit tuaj, por nuk do ta përditësojë - për atë, duhet të drejtoni një përditësim manual nga menyja kryesore kur ka një version të re të disponueshme."
 }

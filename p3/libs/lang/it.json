@@ -420,5 +420,7 @@
   "rodrive_desc": "Aggiungi OneDrive come punto di montaggio nella tua home directory, sincronizzato con rclone, consentendoti di accedere facilmente ai tuoi file cloud e gestirli dal file manager e dal terminale.",
   "k6_desc": "Uno strumento moderno di test di carico per API, servizi e applicazioni web.",
   "sysup": "Aggiorna Sistema",
-  "sysup_desc": "Esegue una pulizia dei pacchetti orfani e un aggiornamento completo del sistema per i tuoi pacchetti di distribuzione e Flatpaks."
+  "sysup_desc": "Esegue una pulizia dei pacchetti orfani e un aggiornamento completo del sistema per i tuoi pacchetti di distribuzione e Flatpaks.",
+  "autosysup": "Aggiornamenti Automatici",
+  "autosysup_desc": "Abilita i servizi di aggiornamento automatico del sistema di LinuxToys per systemd. Ciò eseguirà una pulizia dei pacchetti orfani e un aggiornamento completo del sistema per i tuoi pacchetti di distribuzione e Flatpaks regolarmente senza dover preoccupare. PROMEMORIA: aggiornerà solo la versione di release corrente del tuo sistema, ma non lo aggiornerà - per questo, dovresti eseguire un aggiornamento manuale dal menu principale quando è disponibile una nuova versione."
 }

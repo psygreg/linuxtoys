@@ -419,6 +419,8 @@
   "rgdrive_desc": "Thêm Google Drive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối.",
   "rodrive_desc": "Thêm OneDrive của bạn dưới dạng điểm gắn kết trong thư mục nhà của bạn, đồng bộ hóa với rclone, cho phép bạn dễ dàng truy cập và quản lý các tệp đám mây của mình từ trình quản lý tệp và đầu cuối.",
   "k6_desc": "Một công cụ kiểm tra tải hiện đại cho API, dịch vụ và ứng dụng web.",
-  "sysup": "Cập Nhật hệ Thống",
-  "sysup_desc": "Thực hiện dọn sạch các gói bị bỏ rơi và cập nhật hệ thống đầy đủ cho cả gói phân phối và Flatpaks của bạn."
+  "sysup": "Cập Nhật Hệ Thống",
+  "sysup_desc": "Thực hiện dọn sạch các gói bị bỏ rơi và cập nhật hệ thống đầy đủ cho cả gói phân phối và Flatpaks của bạn.",
+  "autosysup": "Cập Nhật Tự Động",
+  "autosysup_desc": "Bật các dịch vụ cập nhật hệ thống tự động của LinuxToys cho systemd. Điều này sẽ thực hiện dọn sạch các gói bị bỏ rơi và cập nhật hệ thống đầy đủ cho cả gói phân phối và Flatpaks của bạn một cách thường xuyên mà không cần phải lo lắng. NHẮC NHỞ: nó sẽ chỉ cập nhật phiên bản phát hành hiện tại của hệ thống của bạn, nhưng sẽ không nâng cấp nó - để làm điều đó, bạn nên chạy cập nhật thủ công từ menu chính khi có phiên bản mới dostupno."
 }

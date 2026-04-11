@@ -419,6 +419,8 @@
   "rgdrive_desc": "Adăugați Google Drive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal.",
   "rodrive_desc": "Adăugați OneDrive ca punct de montare în directorul dvs. home, sincronizat cu rclone, permițandu-vă să accesați cu ușurință fișierele dvs. din cloud și să le gestionați din managerul de fișiere și terminal.",
   "k6_desc": "Un instrument modern de testare a încercării pentru API-uri, servicii și aplicații web.",
-  "sysup": "Actualizare Sistem",
-  "sysup_desc": "Realizează curățarea pachetelor orfane și actualizare completă a sistemului pentru pachetele distribuției și Flatpaks."
+  "sysup": "Actualizează Sistemul",
+  "sysup_desc": "Realizează curățarea pachetelor orfane și actualizare completă a sistemului pentru pachetele distribuției și Flatpaks.",
+  "autosysup": "Actualizări Automate",
+  "autosysup_desc": "Activați serviciile de actualizare automată a sistemului LinuxToys pentru systemd. Aceasta va efectua curățarea pachetelor orfane și actualizare completă a sistemului pentru pachetele distribuției și Flatpaks în mod regulat fără a fost necesar să vă faceți griji. REAMINTIRE: va actualiza doar versiunea de lansare curentă a sistemului dvs., dar nu o va actualiza - pentru asta, ar trebui să rulați o actualizare manuală din meniu principal atunci când o nouă versiune este disponibilă."
 }

@@ -418,6 +418,8 @@
   "rgdrive_desc": "Google Drive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa və idarə etməyə imkan verin.",
   "rodrive_desc": "OneDrive-nizi ev dizinində bir keçidi olaraq əlavə edin, rclone ilə sinxronlaşdırın, fayl meneceri və terminaldan bulut fayllarınıza asanlıqla daxil olmağa imkan verin.",
   "k6_desc": "API-lər, xidmətlər və veb tətbiqləri üçün müasır yüklənmə sınaq aləti.",
-  "sysup": "Sistemi Yeniləyin",
-  "sysup_desc": "Səhipa paketlərin təmizlənməsini və həm dağıtım paketlərinin həm də Flatpak-ların tam sistem yeniləməsini aparır."
+  "sysup": "Sistem Yenilə",
+  "sysup_desc": "Səhipa paketlərin təmizlənməsini və həm dağıtım paketlərinin həm də Flatpak-ların tam sistem yeniləməsini aparır.",
+  "autosysup": "Avtomatik Yeniləmələri",
+  "autosysup_desc": "LinuxToys üçün systemd avtomatik sistem yeniləmə xidmətlərini aktivləşdirin. Bu, yetim paketlərin təmizlənməsi və həm dağıtım paketlərinin, həm də Flatpak-ların tam sistem yeniləməsini müntəzəm olaraq icra edəcəkdir, sizi heç nə barədə narahat etməməlisiniz. XATIRLATMA: bu yalnız sistemin hazırkı buraxılış versiyasını yeniləyəcəkdir, onu yüksəltməyəcəkdir - bunun üçün, yeni buraxılış mövcud olduqda əsas menyudan manual yeniləməni işlədiniz."
 }

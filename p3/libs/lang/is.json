@@ -419,6 +419,8 @@
   "rgdrive_desc": "Bættu Google Drive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi.",
   "rodrive_desc": "Bættu OneDrive þinni sem þota fastetningu í heimaancannavisst þinni, samstillt með rclone, sem gerir þér kleift að fara auðveldlega inn á og stjórna skjaskrám þínum úr skjastjóra og endalagi.",
   "k6_desc": "Nútímaleg álagspróf fyrir API, þjónustur og vefforrit.",
-  "sysup": "Uppfærðu Kerfi",
-  "sysup_desc": "Framkvæmir hreinsun á munaðarlausum pökkum og fullri kerfisuppfærslu fyrir dreifingarpakka og Flatpaks þína."
+  "sysup": "Uppfæra Kerfi",
+  "sysup_desc": "Framkvæmir hreinsun á munaðarlausum pökkum og fullri kerfisuppfærslu fyrir dreifingarpakka og Flatpaks þína.",
+  "autosysup": "Sjálfvirk Kerfisuppfærslur",
+  "autosysup_desc": "Virkjaðu sjálfvirka kerfisuppfærslur LinuxToys fyrir systemd. Þetta mun framkvæma hreinsun ómunaðarlausra paKka og fulla kerfisuppfærslu fyrir dreifingarpakka þína og Flatpaks reglulega án þess að þurfa að hafa áhyggjur. MINNING: það mun aðeins uppfæra núverandi útgáfuútgáfu kerfisins þíns, en mun ekki uppfæra hana - fyrir það ættir þú að keyra handvirka uppfærslu frá aðalvalmyndinni þegar ný útgáfa er tiltæk."
 }

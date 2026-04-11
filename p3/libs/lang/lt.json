@@ -420,5 +420,7 @@
   "rodrive_desc": "Pridėkite savo OneDrive kaip montavimo tašką savo namų kataloge, sinchronizuotą su rclone, suteikdami jums galimybę lengvai pasiekti ir valdyti debesies failus iš failų vadiklio ir terminalo.",
   "k6_desc": "Šiuolaikinis apkrovos testavimo įrankis API, paslaugoms ir žiniatinklio programoms.",
   "sysup": "Atnaujinti Sistemą",
-  "sysup_desc": "Atliekamas siročiu paketų valymas ir visas sistemos atnaujinimas jūsų pasiskirstymo paketams ir Flatpaks."
+  "sysup_desc": "Atliekamas siročiu paketų valymas ir visas sistemos atnaujinimas jūsų pasiskirstymo paketams ir Flatpaks.",
+  "autosysup": "Automatinis Atnaujinimas",
+  "autosysup_desc": "Įjunkite LinuxToys automatinės sistemos atnaujinimo paslaugas systemd. Tai atliks siročių paketų valymą ir pilną sistemos atnaujinimą jūsų pasiskirstymo paketams ir Flatpaks reguliariai, be jokių sumetimų. ATMINTIS: ji atnaujins tik dabartinę jūsų sistemos leidimo versiją, bet jos nebus šiek tiek - tam turėtumėte paleisti rankinį atnaujinimą iš pagrindinės meniu, kai bus prieinama nauja laida."
 }

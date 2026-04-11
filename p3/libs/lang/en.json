@@ -420,5 +420,7 @@
   "rodrive_desc": "Add your OneDrive as a mount in your home directory, synchronized with rclone, allowing you to easily access your cloud files from your file manager and terminal.",
   "k6_desc": "A modern load testing tool for APIs, services, and web applications.",
   "sysup": "Update System",
-  "sysup_desc": "Performs a cleanup of orphaned packages and a full system update for both your distribution's packages and Flatpaks."
+  "sysup_desc": "Performs a cleanup of orphaned packages and a full system update for both your distribution's packages and Flatpaks.",
+  "autosysup": "Automatic Updates",
+  "autosysup_desc": "Enables the LinuxToys automatic system update services for systemd. This will perform a cleanup of orphaned packages and a full system update for both your distribution's packages and Flatpaks on a regular basis without you having to worry about it. REMINDER: it will only update the current release version of your system, but not upgrade it - for that, you should run a manual update from the main menu when there is a new release available."
 }

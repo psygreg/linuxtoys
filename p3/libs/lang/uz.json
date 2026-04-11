@@ -418,6 +418,8 @@
   "rgdrive_desc": "Google Drive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi.",
   "rodrive_desc": "OneDrive-ni uyingizdagi manzilingizda o'rnatish nuqtasi sifatida qo'shing, rclone bilan sinxronlashtiring, bu fayl meneджeri va terminaldan bulutinizdagi fayllarni osongina kirish va boshqarish imkonini beradi.",
   "k6_desc": "API, xizmatlar va veb-ilovalar uchun zamonaviy yuk sinov vositasi.",
-  "sysup": "Tizimni Yangilash",
-  "sysup_desc": "Teriqalar paketlarini tozalash va taqsimot paketlari va Flatpaks uchun to'liq sistem yangilashni bajaradi."
+  "sysup": "Sistemani Yangilash",
+  "sysup_desc": "Teriqalar paketlarini tozalash va taqsimot paketlari va Flatpaks uchun to'liq sistem yangilashni bajaradi.",
+  "autosysup": "Avtomatik Yangilashlari",
+  "autosysup_desc": "LinuxToys systemd uchun avtomatik sistem yangilash xizmatlarini yoqing. Bu yetim paketlarni tozalash va ushbu tarqalish paketlari va Flatpaks uchun to'liq sistem yangilashni muntazam ravishda o'tkazadi, shunchaki o'zingiz haqida xavotir qilishingiz kerak bo'lmaydi. ESOLAMNOMA: bu faqat sizning sistemingizning joriy chiqarish versiyasini yangilaydi, lekin uni yangilamas - buning uchun yangi chiqarish mavjud bo'lganda asosiy menyudan qo'lda yangilashni o'tkazishingiz kerak."
 }

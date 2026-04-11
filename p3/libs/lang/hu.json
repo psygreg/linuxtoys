@@ -419,6 +419,8 @@
   "rgdrive_desc": "Adja hozzá Google Drive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból.",
   "rodrive_desc": "Adja hozzá OneDrive-ját csatlakoztatási pontként a személyes könyvtárához, rclone-nal szinkronizálva, amely lehetővé teszi, hogy könnyen hozzáférhessen a felhőbeli fájlokhoz és kezelhesse azokat a fájlkezelőből és a terminálból.",
   "k6_desc": "Modern terheléstesztelő eszköz API-khoz, szolgáltatásokhoz és webalkalmazásokhoz.",
-  "sysup": "Frissítse a Rendszert",
-  "sysup_desc": "Elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra."
+  "sysup": "Rendszer Frissítése",
+  "sysup_desc": "Elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra.",
+  "autosysup": "Automatikus Rendszerfrissítések",
+  "autosysup_desc": "Engedélyezze a LinuxToys automatikus rendszerfrissítési szolgáltatásait a systemd számára. Ez rendszeresen elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra anélkül, hogy aggódni kellene. EMLÉKEZTETÕ: csak a rendszer aktuális kiadásverzióját frissíti, de nem frissíti azt - ehhez a fõmenübõl kézi frissítést kell futtatni, amikor új kiadás érhető el."
 }

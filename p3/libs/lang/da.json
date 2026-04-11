@@ -420,5 +420,7 @@
   "rodrive_desc": "Tilføj din OneDrive som et monteringspunkt i din hjemmemappe, synkroniseret med rclone, hvilket giver dig mulighed for nemt at få adgang til dine skydatafiler fra filbrowseren og terminalen.",
   "k6_desc": "Et moderne belastningstest-værktøj til API'er, services og webapplikationer.",
   "sysup": "Opdater System",
-  "sysup_desc": "Udfører rengøring af forældreløse pakker og fuldstændig systemopdatering for både dine distributionspakker og Flatpaks."
+  "sysup_desc": "Udfører rengøring af forældreløse pakker og fuldstændig systemopdatering for både dine distributionspakker og Flatpaks.",
+  "autosysup": "Automatisk Systemopdatering",
+  "autosysup_desc": "Aktiver LinuxToys automatiske systemopdateringstjenester til systemd. Dette vil udføre rengøring af forældreløse pakker og fuldstændig systemopdatering for både dine distributionspakker og Flatpaks regelmæssigt uden at skulle bekymre dig. PÅMINDELSE: det vil kun opdatere den aktuelle udgivelsesversion af dit system, ikke opgradere det - for det skal du kører en manuel opdatering fra hovedmenuen, når en ny udgivelse er tilgængelig."
 }

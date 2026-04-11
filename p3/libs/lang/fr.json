@@ -420,5 +420,7 @@
   "rodrive_desc": "Ajoutez votre OneDrive comme point de montage dans votre répertoire personnel, synchronisé avec rclone, ce qui vous permet d'accéder facilement à vos fichiers cloud et de les gérer à partir du gestionnaire de fichiers et du terminal.",
   "k6_desc": "Un outil de test de charge moderne pour les API, les services et les applications Web.",
   "sysup": "Mettre à Jour le Système",
-  "sysup_desc": "Effectue un nettoyage des paquets orphelins et une mise à jour complète du système pour les paquets de votre distribution et Flatpaks."
+  "sysup_desc": "Effectue un nettoyage des paquets orphelins et une mise à jour complète du système pour les paquets de votre distribution et Flatpaks.",
+  "autosysup": "Mises à Jour Automatiques",
+  "autosysup_desc": "Activez les services de mise à jour automatique du système de LinuxToys pour systemd. Cela effectuera un nettoyage des paquets orphelins et une mise à jour complète du système pour les paquets de votre distribution et Flatpaks régulièrement sans avoir à vous inquiéter. RAPPEL : cela mettra uniquement à jour la version de publication actuelle de votre système, mais ne la mettrait pas à niveau - pour cela, vous devriez exécuter une mise à jour manuelle à partir du menu principal lorsqu'une nouvelle version est disponible."
 }

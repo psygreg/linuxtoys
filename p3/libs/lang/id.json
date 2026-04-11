@@ -420,5 +420,7 @@
   "rodrive_desc": "Tambahkan OneDrive Anda sebagai titik mount di direktori rumah Anda, disinkronkan dengan rclone, memungkinkan Anda untuk mudah mengakses dan mengelola file cloud Anda dari manajer file dan terminal.",
   "k6_desc": "Alat pengujian beban modern untuk API, layanan, dan aplikasi web.",
   "sysup": "Perbarui Sistem",
-  "sysup_desc": "Melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda."
+  "sysup_desc": "Melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda.",
+  "autosysup": "Pembaruan Otomatis",
+  "autosysup_desc": "Aktifkan layanan pembaruan sistem otomatis LinuxToys untuk systemd. Ini akan melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda secara teratur tanpa perlu khawatir. PENGINGAT: itu hanya akan memperbarui versi rilis saat ini dari sistem Anda, tetapi tidak akan meningkatkan - untuk itu, Anda harus menjalankan pembaruan manual dari menu utama ketika rilis baru tersedia."
 }

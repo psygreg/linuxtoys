@@ -420,5 +420,7 @@
   "rodrive_desc": "Lisage oma OneDrive oma kodutalosse monteerimispunktina, sünkroniseeritud rclone'iga, võimaldades teil hõlpsalt juurde pääseda oma pilveandmetele ja hallata neid failihalduri ja terminali kaudu.",
   "k6_desc": "Kaasaegne koormuse testimise tööriist API-de, teenuste ja veebirakenduste jaoks.",
   "sysup": "Süsteemi Värskendamine",
-  "sysup_desc": "Teostab orvude paketite puhastamist ja täielikku süsteemi värskendust nii teie jaotuse paketite kui ka Flatpakide jaoks."
+  "sysup_desc": "Teostab orvude paketite puhastamist ja täielikku süsteemi värskendust nii teie jaotuse paketite kui ka Flatpakide jaoks.",
+  "autosysup": "Automaatne Süsteemiuuendus",
+  "autosysup_desc": "Lülitage sisse LinuxToys automaatsete süsteemiuuenduste teenused süsteemile. See teostab orfu paketite puhastamist ja täielikku süsteemivärskendust nii teie jaotuse pakettide kui ka Flatpakide jaoks korrapäraselt, ilma muretsemata. MÄRKUS: see värskendab ainult teie süsteemi praegust väljalaske versiooni, kuid ei uuenda seda - selle jaoks peaksite käsitsi värskendama peamenüüst, kui on saadaval uus väljalaske."
 }

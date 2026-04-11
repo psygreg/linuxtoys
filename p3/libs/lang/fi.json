@@ -420,5 +420,7 @@
   "rodrive_desc": "Lisää OneDrive kiinnityspisteenä kotikansioonsa, synkronoitu rclone:n kanssa, jolloin voit helposti käyttää pilvipalvelun tiedostoja tiedostonhallinnasta ja terminalista.",
   "k6_desc": "Moderni kuormitustestaustyökalu API-instansseja, palveluja ja verkkosovelluksia varten.",
   "sysup": "Päivitä Järjestelmä",
-  "sysup_desc": "Suorittaa orvon pakettien puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketeille että Flatpakeille."
+  "sysup_desc": "Suorittaa orvon pakettien puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketeille että Flatpakeille.",
+  "autosysup": "Automaattiset Päivitykset",
+  "autosysup_desc": "Ota käyttöön LinuxToys:n järjestelmän automaattiset päivityspalvelut systemd:lle. Tämä suorittaa orfonpaketeiden puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketteille että Flatpakeille säännöllisesti ilman huolia. MUISTUTUS: se päivittää vain järjestelmäsi nykyisen julkaisuversion, mutta ei päivitä sitä - siihen sinun tulee suorittaa manuaalinen päivitys päävalikosta, kun uusi julkaisu on saatavilla."
 }

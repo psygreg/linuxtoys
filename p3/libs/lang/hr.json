@@ -419,6 +419,8 @@
   "rgdrive_desc": "Dodajte Google Drive kao točku prihvata u svoj kućni direktorijum, sinhroniziran sa rclone-om, što vam omogućava da se jednostavno pristupite i upravljate svojim datotekama u oblaku iz upravitelja datoteka i terminala.",
   "rodrive_desc": "Dodajte OneDrive kao točku prihvata u svoj kućni direktorijum, sinhroniziran sa rclone-om, što vam omogućava da se jednostavno pristupite datotekama u oblaku iz upravitelja datoteka i terminala.",
   "k6_desc": "Moderno sredstvo za testiranje opterećenja za API-je, usluge i web aplikacije.",
-  "sysup": "Ažuriraj Sistem",
-  "sysup_desc": "Vrši čišćenje siročnih paketa i potpunu ažuriranju sustava za paket distribucije i Flatpak aplikacije."
+  "sysup": "Ažuriranje Sustava",
+  "sysup_desc": "Vrši čišćenje siročnih paketa i potpunu ažuriranju sustava za paket distribucije i Flatpak aplikacije.",
+  "autosysup": "Automatska Ažuriranja",
+  "autosysup_desc": "Omogućite usluge automatskog ažuriranja sistema LinuxToys za systemd. Ovo će izvršavati čišćenje siročnih paketa i potpunu ažuriranje sustava za paket distribucije i Flatpak aplikacije redovito bez da se brinto. PODSJETNIK: ažuriraće samo trenutnu verziju izdanja vašeg sustava, ali ga neće nadograditi - za to, trebalo bi pokrenuti ručnu ažuriranje iz glavnog izbornika kada je nova verzija dostupna."
 }

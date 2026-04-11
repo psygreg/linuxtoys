@@ -418,5 +418,7 @@
   "rodrive_desc": "Ongeza OneDrive yako kama nukta ya kupambanuliwa direktivu ya nyumba yako, ilivyozamishwa na rclone, kuruhusu kufikia kwa urahisi faili zako za wingu na kuziandika kutoka kwa meneja wa faili na terminal.",
   "k6_desc": "Zana ya kipimo cha mzigo ya hivi karibuni kwa API, huduma na matapplication ya wavuti.",
   "sysup": "Sasisha Mfumo",
-  "sysup_desc": "Inafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks."
+  "sysup_desc": "Inafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks.",
+  "autosysup": "Masasisho Otomatiki",
+  "autosysup_desc": "Wezesha huduma za kusasisha mfumo kiotomatiki ya LinuxToys kwa systemd. Hii itafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks. TADHKIRA: itasasisha tu toleo la kutolewa sasa la mfumo wako, lakini haitasasisha - kwa hilo, inapaswa kueneza kusasisha mikono kutoka katika menyu kuu wakati kutolewa mpya kupatikana."
 }

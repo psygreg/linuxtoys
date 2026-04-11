@@ -420,5 +420,7 @@
   "rodrive_desc": "Dodajte OneDrive kot točko priveza v domačem direktoriju, sinhroniziran s programom rclone, kar vam omogoči enostaven dostop do datotek v oblaku in njihovo upravljanje iz upravitelja datotek in terminala.",
   "k6_desc": "Sodoben inštrument za testiranje obremenitve za API, storitve in spletne aplikacije.",
   "sysup": "Posodobi Sistem",
-  "sysup_desc": "Izvede čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks."
+  "sysup_desc": "Izvede čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks.",
+  "autosysup": "Samodejne Posodobitve",
+  "autosysup_desc": "Omogočite storitve samodejne posodobitve sistema LinuxToys za systemd. To bo redno izvajalo čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks brez skrbi. OPOMNIK: bo posodobil samo текућу verzijo izdaje vašega sistema, ga pa ne bo nadaktualiziral - zato bi moral zagnati ročno posodobitev iz glavnega menuja, ko je nova verzija na voljo."
 }
