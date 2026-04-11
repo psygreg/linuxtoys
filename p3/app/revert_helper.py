@@ -495,6 +495,18 @@ def _reverse_kargs_update(karg):
     return f"sudo rpm-ostree kargs --delete=\"{karg}\" || true"
 
 
+def _reverse_grubbyargs_update(karg):
+    """
+    Reverse a grubby kernel argument update by removing the appended karg.
+    
+    Uses grubby --remove-args to remove the previously appended kernel argument.
+    """
+    if not karg:
+        return None
+    
+    return f"sudo grubby --remove-args=\"{karg}\" --update-kernel ALL || true"
+
+
 def _reverse_operation(op_line, package_manager):
     """
     Generate shell command(s) to reverse a single operation.
@@ -560,12 +572,24 @@ def _reverse_operation(op_line, package_manager):
         return [cmd] if cmd else []
     
     elif op_type == "updated" and "kargs" in op_line:
-        # Extract the kargs value from "updated kargs kernel-argument"
-        parts = op_line.split(None, 2)  # ["updated", "kargs", "kernel-argument"]
-        if len(parts) >= 3:
-            karg = parts[2]
-            cmd = _reverse_kargs_update(karg)
-            return [cmd] if cmd else []
+        # Check if this is grubby kargs or rpm-ostree kargs
+        # grubby kargs format: "updated grubby kargs kernel-argument"
+        # rpm-ostree kargs format: "updated kargs kernel-argument"
+        
+        if "grubby" in op_line:
+            # Extract the kargs value from "updated grubby kargs kernel-argument"
+            parts = op_line.split(None, 3)  # ["updated", "grubby", "kargs", "kernel-argument"]
+            if len(parts) >= 4:
+                karg = parts[3]
+                cmd = _reverse_grubbyargs_update(karg)
+                return [cmd] if cmd else []
+        else:
+            # Extract the kargs value from "updated kargs kernel-argument"
+            parts = op_line.split(None, 2)  # ["updated", "kargs", "kernel-argument"]
+            if len(parts) >= 3:
+                karg = parts[2]
+                cmd = _reverse_kargs_update(karg)
+                return [cmd] if cmd else []
         return []
     
     return []

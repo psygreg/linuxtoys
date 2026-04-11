@@ -335,10 +335,7 @@ wayland_proton_lib () {
 # add preempt=full kernel parameter on boot on fedora
 preempt_lib () {
     if is_fedora; then
-        if ! which grubby &> /dev/null; then
-            pkg_install grubby
-        fi
-        sudo grubby --args="preempt=full" --update-kernel ALL
+        grubbyargs_upd 'preempt=full'
     elif is_ostree; then
         kargs_upd 'preempt=full'
     fi
