@@ -4,4 +4,4 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/env UPD_SERVICE=1 linuxtoys
+ExecStart=/usr/bin/env EASY_CLI=1 UPD_SERVICE=1 linuxtoys

@@ -7,6 +7,7 @@
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
+sudo_rq
 
 needs_reboot() {
     if is_fedora; then
@@ -57,10 +58,16 @@ elif is_debian || is_ubuntu; then
         fi
     fi
 elif is_arch || is_cachy; then
-    sudo pacman -Rns $(pacman -Qdtq) --noconfirm || fatal "Failed to remove orphaned packages"
+    orphaned_packages=$(pacman -Qdtq 2>/dev/null || true)
+    if [[ -n "$orphaned_packages" ]]; then
+        sudo pacman -Rns --noconfirm $orphaned_packages || fatal "Failed to remove orphaned packages"
+    fi
     sudo pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
 elif is_suse; then
-    sudo zypper rm --clean-deps $(zypper packages --unneeded | awk '/^i/{print $5}') -y || fatal "Failed to remove orphaned packages"
+    orphaned_packages=$(zypper packages --unneeded | awk '/^i/{print $5}')
+    if [[ -n "$orphaned_packages" ]]; then
+        sudo zypper rm --clean-deps $orphaned_packages -y || fatal "Failed to remove orphaned packages"
+    fi
     sudo zypper dup -y || fatal "Failed to upgrade packages"
 elif is_solus; then
     sudo eopkg rmo -y || fatal "Failed to remove orphaned packages"
