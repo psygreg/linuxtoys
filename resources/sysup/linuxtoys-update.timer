@@ -1,0 +1,11 @@
+[Unit]
+Description=LinuxToys Update Trigger
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=3d
+Persistent=true
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target

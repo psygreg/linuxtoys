@@ -1,0 +1,7 @@
+[Unit]
+Description=LinuxToys Update Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env UPD_SERVICE=1 linuxtoys
