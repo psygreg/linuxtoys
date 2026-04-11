@@ -9,6 +9,10 @@ if __name__ == "__main__":
     # The libs directory is always at the same location relative to this entry point
     linuxtoys_dir = os.path.dirname(os.path.abspath(__file__))
     os.environ['SCRIPT_DIR'] = linuxtoys_dir
+
+    # UPD_SERVICE runs from a headless systemd unit and must follow the CLI path.
+    if os.environ.get('UPD_SERVICE') == '1':
+        os.environ['EASY_CLI'] = '1'
     
     # --- VERIFY LIBRARIES EXIST ---
     # Safeguard: ensure the lib directory is present
