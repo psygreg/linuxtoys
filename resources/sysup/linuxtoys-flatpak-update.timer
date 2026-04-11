@@ -1,0 +1,11 @@
+[Unit]
+Description=LinuxToys Flatpak Update Timer (User)
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=3d
+Persistent=true
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target

@@ -11,16 +11,25 @@ sudo_rq
 prep_tmp
 wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/sysup/linuxtoys-update.service
 wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/sysup/linuxtoys-update.timer
-wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/sysup/linuxtoys-update-user.service
+wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/sysup/linuxtoys-flatpak-update.service
+wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/sysup/linuxtoys-flatpak-update.timer
+
 prep_create /etc/systemd/system/linuxtoys-update.service
 prep_create /etc/systemd/system/linuxtoys-update.timer
-prep_create /etc/systemd/system/linuxtoys-update-user.service
-sed -i "s/@USER@/$USER/g" linuxtoys-update-user.service
 copy_ -f linuxtoys-update.service /etc/systemd/system/linuxtoys-update.service
 copy_ -f linuxtoys-update.timer /etc/systemd/system/linuxtoys-update.timer
-copy_ -f linuxtoys-update-user.service /etc/systemd/system/linuxtoys-update-user.service
 sudo systemctl daemon-reload
+
+prep_create ~/.config/systemd/user/linuxtoys-flatpak-update.service
+prep_create ~/.config/systemd/user/linuxtoys-flatpak-update.timer
+copy_ -f linuxtoys-flatpak-update.service ~/.config/systemd/user/linuxtoys-flatpak-update.service
+copy_ -f linuxtoys-flatpak-update.timer ~/.config/systemd/user/linuxtoys-flatpak-update.timer
+systemctl --user daemon-reload
+
 sysd_enable linuxtoys-update.timer
 sysd_start linuxtoys-update.timer
+
+systemctl --user enable linuxtoys-flatpak-update.timer
+systemctl --user start linuxtoys-flatpak-update.timer
 
 zeninf "$msg018"

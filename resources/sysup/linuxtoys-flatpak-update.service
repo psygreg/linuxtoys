@@ -1,0 +1,8 @@
+[Unit]
+Description=LinuxToys Flatpak Update Service (User)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env EASY_CLI=1 UPD_SERVICE=1 linuxtoys
