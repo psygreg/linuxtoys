@@ -7,8 +7,8 @@ if os.environ.get('EASY_CLI') != '1':
     from .window import AppWindow
 
 from .lang_utils import load_translations, create_translator
-from .manifest_helper import run_manifest_mode
-from .easy_cli import easy_cli_handler
+from .manifest_helper import find_script_by_name
+from .easy_cli import easy_cli_handler, easy_cli_run_script
 from .compat import is_supported_system
 from . import get_app_resource_path, get_icon_path
 
@@ -47,6 +47,24 @@ translations = load_translations()  # Auto-detect language from lang_utils
 _ = create_translator()  # Create translator function from lang_utils
 
 def run():
+
+    # Check for UPD_SERVICE mode - runs sysup.sh in CLI mode with UPD_SERVICE passed to the script
+    if os.environ.get('UPD_SERVICE') == '1':
+        # Set EASY_CLI mode for the script execution
+        os.environ['EASY_CLI'] = '1'
+        
+        try:
+            # Find and run sysup.sh script
+            script_info = find_script_by_name('sysup', translations)
+            if script_info:
+                exit_code = easy_cli_run_script(script_info)
+                sys.exit(exit_code)
+            else:
+                print("Error: sysup.sh script not found")
+                sys.exit(1)
+        except Exception as e:
+            print(f"Error running sysup.sh in UPD_SERVICE mode: {e}")
+            sys.exit(1)
 
     # Check for CLI mode 
     if os.environ.get('EASY_CLI') == '1': 
