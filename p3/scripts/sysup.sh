@@ -7,11 +7,11 @@
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-sudo_rq
+[ ! -n "$UPD_SERVICE" ] && sudo_rq
 
 needs_reboot() {
     if is_fedora; then
-        sudo dnf needs-restarting -r 
+        { [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo dnf needs-restarting -r
     elif is_debian || is_ubuntu; then
         [ -f /var/run/reboot-required ]
     elif is_arch || is_cachy; then
@@ -38,11 +38,28 @@ release_upgrade() {
 offer_release_upgrade() {
     zenity --question --text="$sysup_available" --title="Release Upgrade" || return 1
 }
+notify_logged_users() {
+    local message="$1"
+    local notified=1
+    while IFS=: read -r user _ uid _ _ home _; do
+        [[ "$uid" -ge 1000 ]] || continue
+        [[ "$uid" -eq 65534 ]] && continue
+        [[ -S "/run/user/$uid/bus" ]] || continue
+
+        if sudo -u "$user" env \
+            XDG_RUNTIME_DIR="/run/user/$uid" \
+            DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" \
+            notify-send "$message" --icon=system-reboot --urgency=critical --app-name="LinuxToys Update"; then
+            notified=0
+        fi
+    done < /etc/passwd
+    return "$notified"
+}
 
 echo "$sysup_starting"
 if is_fedora; then
-    sudo dnf autoremove -y || fatal "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && sudo dnf upgrade -y --setopt=throttle=2M; } || sudo dnf upgrade -y || fatal "Failed to upgrade packages"
+    { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y; } || sudo dnf autoremove -y || fatal "Failed to remove orphaned packages"
+    { [ "$UPD_SERVICE" = "1" ] && dnf upgrade -y --setopt=throttle=2M; } || sudo dnf upgrade -y || fatal "Failed to upgrade packages"
     if release_upgrade; then
         if offer_release_upgrade; then
             sudo dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
@@ -50,8 +67,8 @@ if is_fedora; then
         fi
     fi
 elif is_debian || is_ubuntu; then
-    sudo apt autoremove -y || fatal "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && sudo apt upgrade -y Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y || fatal "Failed to upgrade packages"
+    { [ "$UPD_SERVICE" = "1" ] && apt autoremove -y; } || fatal "Failed to remove orphaned packages"
+    { [ "$UPD_SERVICE" = "1" ] && apt upgrade -y -o Acquire::http::Dl-Limit=2048 Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
             sudo do-release-upgrade || fatal "Failed to start Ubuntu release upgrade"
@@ -78,7 +95,11 @@ if which flatpak > /dev/null; then
     flatpak update -y || fatal "Failed to update flatpak packages"
 fi
 if needs_reboot; then
-    { [ "$UPD_SERVICE" = "1" ] && notify-send "$sysup_rebootreq" --icon=system-reboot --urgency=critical --app-name="LinuxToys Update"; } || zeninf "$sysup_rebootreq"
+    if [ "$UPD_SERVICE" = "1" ]; then
+        notify_logged_users "$sysup_rebootreq" || echo "$sysup_rebootreq"
+    else
+        zeninf "$sysup_rebootreq"
+    fi
 else
     { [ "$UPD_SERVICE" = "1" ] && echo "$sysup_completed"; } || zeninf "$sysup_completed"
 fi
