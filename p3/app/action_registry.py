@@ -16,6 +16,8 @@ def parse_registry_file():
         dict: {script_name: [(timestamp, [operations]), ...], ...}
          Empty dict if registry file doesn't exist or can't be read.
     """
+    import re
+    
     registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
     
     if not os.path.exists(registry_file):
@@ -27,45 +29,45 @@ def parse_registry_file():
     except Exception:
         return {}
     
-    # Split by registry entries (format: [timestamp] Script: name\nChanges:\n  - operation)
-    entries = content.split("---\n")
+    # Use regex to find all entries by looking for the timestamp pattern
+    # This is more robust than splitting by a delimiter that might be missing
+    # Pattern: [YYYY-MM-DDTHH:MM:SS.xxxxxx] Script: name
+    entry_pattern = r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: ([^\n]+)'
     
     scripts_registry = {}
     
-    for entry in entries:
-        entry = entry.strip()
-        if not entry:
-            continue
-        
-        lines = entry.split("\n")
-        if not lines:
-            continue
-        
-        # First line should have the timestamp and script name
-        first_line = lines[0] if lines else ""
-        
-        # Parse first line: [timestamp] Script: name
-        timestamp = ""
-        script_name = ""
-        
-        if "[" in first_line and "]" in first_line:
-            bracket_end = first_line.index("]")
-            timestamp = first_line[1:bracket_end]  # Extract timestamp
-            rest = first_line[bracket_end+1:].strip()
-            if rest.startswith("Script:"):
-                script_name = rest.replace("Script:", "").strip()
-        
+    # Find all entry starting positions
+    matches = list(re.finditer(entry_pattern, content))
+    
+    for i, match in enumerate(matches):
+        script_name = match.group(1).strip()
         if not script_name:
             continue
         
-        # Parse operations
+        entry_start = match.start()
+        # Entry ends at the start of next entry or at end of file
+        entry_end = matches[i + 1].start() if i + 1 < len(matches) else len(content)
+        entry_text = content[entry_start:entry_end]
+        
+        # Extract timestamp
+        timestamp_match = re.search(r'\[([^\]]+)\]', entry_text)
+        timestamp = timestamp_match.group(1) if timestamp_match else ""
+        
+        # Parse operations: look for lines starting with "- " after "Changes:"
         operations = []
-        for line in lines[1:]:
-            line = line.strip()
-            if line.startswith("- "):
+        lines = entry_text.split("\n")
+        in_changes = False
+        
+        for line in lines:
+            line_stripped = line.strip()
+            if line_stripped.startswith("Changes:"):
+                in_changes = True
+                continue
+            
+            if in_changes and line_stripped.startswith("- "):
                 # Remove "- " prefix
-                op_line = line[2:].strip()
-                if op_line and op_line != "Changes:" and op_line != "Changes: (none)":
+                op_line = line_stripped[2:].strip()
+                if op_line and op_line != "(none)":
                     operations.append(op_line)
         
         # Add to registry

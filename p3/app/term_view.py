@@ -366,6 +366,8 @@ class TermRunScripts(Gtk.Box):
         
         Returns True if entries were removed or file doesn't exist, False on error.
         """
+        import re
+        
         registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
         
         if not os.path.exists(registry_file):
@@ -377,26 +379,33 @@ class TermRunScripts(Gtk.Box):
         except Exception:
             return False
         
-        # Split by registry entry separator
-        entries = content.split("---\n")
+        # Use regex to find all entries and filter by script name
+        entry_pattern = r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: ([^\n]+)'
+        matches = list(re.finditer(entry_pattern, content))
         
-        # Filter out entries for the script we're replacing
-        filtered_entries = []
-        for entry in entries:
-            entry_stripped = entry.strip()
-            if not entry_stripped:
+        if not matches:
+            return True  # No entries found, nothing to filter
+        
+        # Build list of ranges to keep (entries NOT matching this script)
+        ranges_to_keep = []
+        for i, match in enumerate(matches):
+            script_name_in_entry = match.group(1).strip()
+            if script_name_in_entry == script_name:
+                # Skip this entry
                 continue
             
-            lines = entry_stripped.split("\n")
-            first_line = lines[0] if lines else ""
-            
-            # Check if this entry belongs to the script we're updating
-            if f"Script: {script_name}" not in first_line:
-                filtered_entries.append(entry_stripped)
+            entry_start = match.start()
+            entry_end = matches[i + 1].start() if i + 1 < len(matches) else len(content)
+            ranges_to_keep.append((entry_start, entry_end))
         
-        # Reconstruct and write back
+        # Reconstruct file from kept ranges
         try:
-            new_content = "---\n".join(filtered_entries)
+            if not ranges_to_keep:
+                # All entries were for this script, clear the file
+                new_content = ""
+            else:
+                new_content = "".join(content[start:end] for start, end in ranges_to_keep)
+            
             with open(registry_file, "w") as f:
                 f.write(new_content)
             return True
