@@ -363,7 +363,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         # Create confirmation dialog
         dialog = Gtk.MessageDialog(
             transient_for=self,
-            flags=0,
+            flags=Gtk.DialogFlags.MODAL,
             message_type=Gtk.MessageType.WARNING,
             buttons=Gtk.ButtonsType.NONE,
             text=_("registry_cleanup_title"),
@@ -388,11 +388,14 @@ class ActionRegistryDialog(Gtk.Dialog):
         ok_button = dialog.get_widget_for_response(Gtk.ResponseType.OK)
         ok_button.get_style_context().add_class("destructive-action")
         
-        response = dialog.run()
-        dialog.destroy()
+        # Use response signal instead of dialog.run() to avoid event loop issues
+        def on_response(dialog, response_id):
+            if response_id == Gtk.ResponseType.OK:
+                self.__perform_cleanup()
+            dialog.destroy()
         
-        if response == Gtk.ResponseType.OK:
-            self.__perform_cleanup()
+        dialog.connect("response", on_response)
+        dialog.show()
     
     def __perform_cleanup(self):
         """Perform the actual cleanup."""
