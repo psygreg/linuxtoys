@@ -10,6 +10,8 @@ It should be imported as early as possible in the app startup process.
 
 import os
 import logging
+from .git_scripts_manager import get_scripts_dir, get_git_scripts_status, will_perform_git_operation
+from .lang_utils import load_translations
 
 # Configure logging
 logging.basicConfig(
@@ -17,12 +19,6 @@ logging.basicConfig(
     format='%(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-# Import the git scripts manager
-from .git_scripts_manager import get_scripts_dir, is_using_git_scripts, get_git_scripts_status, will_perform_git_operation
-# Import language utilities for translations
-from .lang_utils import load_translations
-
 
 def initialize_scripts():
     """

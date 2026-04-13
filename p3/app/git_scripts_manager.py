@@ -34,7 +34,8 @@ GIT_SCRIPTS_CACHE_DIR = os.path.join(CACHE_DIR, "scripts")
 LAST_UPDATE_TIMESTAMP_FILE = os.path.join(CACHE_DIR, "last_update.timestamp")
 
 # Timeout for git operations (in seconds)
-GIT_TIMEOUT = 30
+# Set to 10 seconds to prevent hanging on network issues
+GIT_TIMEOUT = 10
 
 # Update interval for script repository (6 hours)
 UPDATE_INTERVAL = 6 * 60 * 60
@@ -91,7 +92,7 @@ def _should_update_scripts():
 
 def _run_git_command(args, cwd=None, timeout=GIT_TIMEOUT):
     """
-    Run a git command with error handling.
+    Run a git command with error handling and timeout protection.
     
     Args:
         args (list): Arguments to pass to git command
@@ -118,7 +119,9 @@ def _run_git_command(args, cwd=None, timeout=GIT_TIMEOUT):
         return success, result.stdout, result.stderr
         
     except subprocess.TimeoutExpired:
-        return False, "", "Git command timed out"
+        error_msg = f"Git command timed out after {timeout} seconds"
+        logger.warning(error_msg)
+        return False, "", error_msg
     except FileNotFoundError:
         return False, "", "Git is not installed"
     except Exception as e:
@@ -149,6 +152,7 @@ def _clone_scripts_repo(progress_callback=None):
     """
     Attempt to clone the scripts repository.
     Tries GitHub first, then falls back to git.linux.toys.
+    Times out after 10 seconds per attempt to avoid hanging on network issues.
     
     Args:
         progress_callback: Optional function to call with progress messages
@@ -173,7 +177,7 @@ def _clone_scripts_repo(progress_callback=None):
     # Try cloning from GitHub first
     if progress_callback:
         progress_callback("scripts_init_cloning_github")
-    logger.info(f"Attempting to clone scripts from {GITHUB_REPO_URL}")
+    logger.info(f"Attempting to clone scripts from {GITHUB_REPO_URL} (timeout: {GIT_TIMEOUT}s)")
     success, output, error = _run_git_command(
         ["clone", "--depth=1", GITHUB_REPO_URL, GIT_SCRIPTS_CACHE_DIR]
     )
@@ -190,7 +194,7 @@ def _clone_scripts_repo(progress_callback=None):
     # Try fallback URL
     if progress_callback:
         progress_callback("scripts_init_cloning_linux_toys")
-    logger.info(f"Attempting to clone scripts from {GITLINUXTOYS_REPO_URL}")
+    logger.info(f"Attempting to clone scripts from {GITLINUXTOYS_REPO_URL} (timeout: {GIT_TIMEOUT}s)")
     success, output, error = _run_git_command(
         ["clone", "--depth=1", GITLINUXTOYS_REPO_URL, GIT_SCRIPTS_CACHE_DIR]
     )
@@ -203,6 +207,7 @@ def _clone_scripts_repo(progress_callback=None):
         return True
     
     logger.error(f"git.linux.toys clone failed: {error}")
+    logger.info("Will fall back to bundled scripts")
     if progress_callback:
         progress_callback("scripts_init_failed")
     return False
@@ -212,8 +217,11 @@ def _pull_scripts_repo(progress_callback=None):
     """
     Pull updates from the scripts repository.
     
+    Times out after 10 seconds to prevent hanging on network issues.
     Respects the update interval to avoid rate limiting - will only pull if
     the last update was more than 6 hours ago or this is the first run.
+    
+    If pull fails (including timeout), will use the cached repository.
     
     Args:
         progress_callback: Optional function to call with progress messages
@@ -234,7 +242,7 @@ def _pull_scripts_repo(progress_callback=None):
     
     if progress_callback:
         progress_callback("scripts_init_updating")
-    logger.info("Pulling updates for scripts repository")
+    logger.info(f"Pulling updates for scripts repository (timeout: {GIT_TIMEOUT}s)")
     success, output, error = _run_git_command(
         ["pull", "--ff-only"],
         cwd=GIT_SCRIPTS_CACHE_DIR
@@ -248,6 +256,7 @@ def _pull_scripts_repo(progress_callback=None):
         return True
     
     logger.warning(f"Failed to pull updates: {error}")
+    logger.info("Falling back to cached scripts repository")
     # Return True here since we already have the repo, even if pull failed
     # This ensures we use cached scripts rather than failing completely
     return True
