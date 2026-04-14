@@ -325,18 +325,18 @@ class ActionRegistryDialog(Gtk.Dialog):
         lines.append("=" * 60 + "\n\n")
         
         for idx, (timestamp, operations) in enumerate(executions, 1):
-            lines.append(f"Execution #{idx}")
+            lines.append(f"Execution #{idx}\n")
             if timestamp:
                 lines.append(f"Timestamp: {timestamp}\n")
             else:
                 lines.append("\n")
             
             if operations:
-                lines.append("Operations:")
+                lines.append("Operations:\n")
                 for op in operations:
-                    lines.append(f"  • {op}")
+                    lines.append(f"  • {op}\n")
             else:
-                lines.append("Operations: (none)")
+                lines.append("Operations: (none)\n")
             
             lines.append("\n" + "-" * 60 + "\n\n")
         
