@@ -1,0 +1,74 @@
+name: Update Tools Categories
+
+on:
+  # Trigger on manual dispatch
+  workflow_dispatch:
+
+  # Trigger on releases from LinuxToys repository
+  repository_dispatch:
+    types: [update-tools]
+
+  # Schedule to run weekly
+  schedule:
+    - cron: "0 3 * * 6" # Run weekly at 03:00 on Saturday
+
+jobs:
+  update-tools:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - name: Dependencies
+        run: |
+          apt-get update -qq
+          apt-get install -y nodejs npm -qq
+
+      - name: Clone LinuxToys repository
+        run: |
+          git clone --depth=1 https://github.com/psygreg/linuxtoys /tmp/linuxtoys
+
+      - name: Checkout linuxtoys-site repository
+        uses: actions/checkout@v4
+        with:
+          repository: psygreg/linuxtoys-site
+          ref: main
+          path: site
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install axios@1.14.0
+
+      - name: Copy script to working directory
+        run: |
+          cp -r /tmp/linuxtoys/.gitea/scripts .
+
+      - name: Fetch and process LinuxToys data
+        run: |
+          node scripts/update-tools.js ./site/pages/cache /tmp/linuxtoys
+
+      - name: Clean up LinuxToys clone
+        if: always()
+        run: |
+          rm -rf /tmp/linuxtoys
+
+      - name: Commit and push changes
+        working-directory: site
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "github-actions"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add pages/cache/
+            git commit -m "Update tools categories from linuxtoys master branch"
+            git push origin main
+          else
+            echo "No changes to commit"
