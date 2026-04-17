@@ -448,6 +448,25 @@ def _reverse_systemd_operation(service, action):
     return f"{reversals[action]} {service}"
 
 
+def _reverse_systemd_usermode_operation(service, action):
+    """Reverse user-level systemd operations (without sudo).
+    
+    User-level systemd operations are run by the user for their own services,
+    so they don't need sudo and use --user flag instead.
+    """
+    reversals = {
+        "enabled": "systemctl --user disable",
+        "disabled": "systemctl --user enable",
+        "started": "systemctl --user stop",
+        "stopped": "systemctl --user start",
+    }
+    
+    if action not in reversals:
+        return None
+    
+    return f"{reversals[action]} {service}"
+
+
 def _reverse_bootloader_update():
     """
     Reverse a bootloader update by triggering another bootloader update.
@@ -557,9 +576,17 @@ def _reverse_operation(op_line, package_manager):
         return [cmd] if cmd else []
     
     elif op_type == "sysd" and len(operands) >= 2:
-        action, service = operands[0], operands[1]
-        cmd = _reverse_systemd_operation(service, action)
-        return [cmd] if cmd else []
+        # Check if this is a usermode operation
+        if operands[0] == "usermode" and len(operands) >= 3:
+            # Format: "sysd usermode action service"
+            action, service = operands[1], operands[2]
+            cmd = _reverse_systemd_usermode_operation(service, action)
+            return [cmd] if cmd else []
+        else:
+            # Format: "sysd action service" (system-level)
+            action, service = operands[0], operands[1]
+            cmd = _reverse_systemd_operation(service, action)
+            return [cmd] if cmd else []
     
     elif op_type == "updated" and "bootloader" in op_line:
         # Bootloader updates need to be re-run to ensure consistency

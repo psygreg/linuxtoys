@@ -483,6 +483,26 @@ sysd_stop() {
         _append_transmap "sysd stopped $svc"
     done
 }
+sysd_enable_usr() {
+    for svc in "$@"; do
+        systemctl --user enable "$svc" || fatal "Failed to enable service $svc"
+        _append_transmap "sysd usermode enabled $svc"
+}
+sysd_disable_usr() {
+    for svc in "$@"; do
+        systemctl --user disable "$svc" || fatal "Failed to disable service $svc"
+        _append_transmap "sysd usermode disabled $svc"
+}
+sysd_start_usr() {
+    for svc in "$@"; do
+        systemctl --user start "$svc" || fatal "Failed to start service $svc"
+        _append_transmap "sysd usermode started $svc"
+}
+sysd_stop_usr() {
+    for svc in "$@"; do
+        systemctl --user stop "$svc" || fatal "Failed to stop service $svc"
+        _append_transmap "sysd usermode stopped $svc"
+}
 
 # shell change
 shell_change() {
