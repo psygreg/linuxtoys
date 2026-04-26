@@ -351,7 +351,7 @@
   "wayproton": "Proton katika hali ya Wayland",
   "wayproton_desc": "Weka Proton kuandika katika modi wine-wayland kwa chaguo-msingi. Unaweza weka utofauti wa mazingira PROTON_USE_WINE_WAYLAND=0 kwa michezo ambayo inaweza kutofautiana vizuri na modi hii katika chaguzi za kuanza katika Steam au kinara cha mchezo unaokuchagua.",
   "nv580_desc": "Madhingihari ya urithi wa Nvidia 580xx kwa Maxwell (GTX 9xx), Pascal (GTX 10xx) na baadhi ya Kepler (GTX 750/750Ti) na Turing (GTX 16xx) GPU mfululizo.",
-  "zram_desc": "Kigawanya cha RAM kilichobayishwa na zstd ambacho kinaweza kutumika kwa swap badala ya faili la swap au kigawanya cha kawaida, kinaboresha utendakazi hasa chini ya uzani wa kumbukumbu.",
+  "zram_desc": "Sanidi zana ya udhibiti wa shinikizo la RAM inayofaa kwa uwezo wa mfumo wako: ZSWAP kwa mifumo yenye 16GB au RAM ndogo, ZRAM kwa mifumo yenye zaidi ya 16GB RAM. ZSWAP inahitaji faili ya kubadilishana au kizigeu.",
   "preempt_desc": "Amilisha ukamilamali wa kernel preemption juu ya Fedora na mifumo yenye mahusiano, inayotakiwa kwa desktop na iliyoungwa mkono na kernel-chaguo-msingi, ingawa imeamilishwa kwa default kwa sababu ya matumizi katika mazingira ya server, ambapo uhakika na kukamatia hakuna kuwa mahalisi.",
   "preemptfedora": "Ukamilamali wa kernel preemption",
   "udevpass": "Washa programu inayoongezwa kwenye wavuti",

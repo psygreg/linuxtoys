@@ -353,7 +353,7 @@
   "wayproton": "Proton v režime Wayland",
   "wayproton_desc": "Nastavuje Proton na spustenie v režime wine-wayland ako predvolenie. Môžete selektívne nastaviť premennú prostredia PROTON_USE_WINE_WAYLAND=0 pre hry, ktoré nemusia fungovať správne s týmto režimom v možnostiach spúšťania v systéme Steam alebo vašom vybranom spúšťači hier.",
   "nv580_desc": "Dedičné ovládače Nvidia 580xx pre Maxwell (GTX 9xx), Pascal (GTX 10xx) a niektoré GPU série Kepler (GTX 750/750Ti) a Turing (GTX 16xx).",
-  "zram_desc": "RAM blok zariadenie komprimované pomocou zstd, ktoré možno použiť na výmenu namiesto konvenčného súboru alebo oddílu výmeny, zlepšuje výkonnosť najmä pod tlakom pamäte.",
+  "zram_desc": "Nastavte optimálny nástroj na správu tlaku RAM pre možnosti vášho systému: ZSWAP pre systémy s 16GB alebo menej RAM, ZRAM pre systémy s viac ako 16GB RAM. ZSWAP vyžaduje súbor alebo oddiel výmeny.",
   "preempt_desc": "Aktivujte úplné vytesnenie jadra na Fedore a súvisiacich systémoch, čo je žiaduce pre počítače a podporované predvoleným jadrom, hoci je v predvolenom nastavení zakázané z dôvodu použitia v serverových prostrediach, kde responsivita a latencia nie sú kritické.",
   "preemptfedora": "Úplné vytesnenie jadra",
   "udevpass": "Povolte webový softvér",

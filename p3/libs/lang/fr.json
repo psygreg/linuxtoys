@@ -353,7 +353,7 @@
   "wayproton": "Proton en mode Wayland",
   "wayproton_desc": "Configure Proton pour qu'il s'exécute en mode wine-wayland par défaut. Vous pouvez définir sélectivement la variable d'environnement PROTON_USE_WINE_WAYLAND=0 pour les jeux qui pourraient ne pas fonctionner correctement avec ce mode dans les options de lancement dans Steam ou votre lanceur de jeu préféré.",
   "nv580_desc": "Pilotes hérités Nvidia 580xx pour Maxwell (GTX 9xx), Pascal (GTX 10xx) et certaines séries Kepler (GTX 750/750Ti) et Turing (GTX 16xx) GPU.",
-  "zram_desc": "Dispositif de bloc RAM compressé avec zstd qui peut être utilisé pour l'échange au lieu d'un fichier ou d'une partition d'échange conventionnel, améliore les performances en particulier sous pression mémoire.",
+  "zram_desc": "Configurez l'outil optimal de gestion de la pression RAM pour les capacités de votre système : ZSWAP pour les systèmes avec 16 Go ou moins de RAM, ZRAM pour les systèmes avec plus de 16 Go de RAM. ZSWAP nécessite un fichier d'échange ou une partition.",
   "preempt_desc": "Activez la préemption complète du noyau sur Fedora et les systèmes connexes, souhaitable pour les postes de travail et prise en charge par le noyau par défaut, bien qu'elle soit désactivée par défaut du fait de son utilisation dans les environnements de serveur, où la réactivité et la latence ne sont pas critiques.",
   "preemptfedora": "Préemption complète du noyau",
   "udevpass": "Activer les logiciels basés sur le Web",

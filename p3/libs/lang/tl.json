@@ -353,7 +353,7 @@
   "wayproton": "Proton sa Wayland Mode",
   "wayproton_desc": "Nagtakda ng Proton upang tumakbo sa wine-wayland mode bilang default. Maaari mong selektibong itakda ang variable na kapaligiran PROTON_USE_WINE_WAYLAND=0 para sa mga larong maaaring hindi gumana nang tama sa mode na ito sa mga pagpipilian sa paglulunsad sa Steam o ang iyong piniling game launcher.",
   "nv580_desc": "Nvidia 580xx legacy drivers para sa Maxwell (GTX 9xx), Pascal (GTX 10xx) at ilang Kepler (GTX 750/750Ti) at Turing (GTX 16xx) serye GPU.",
-  "zram_desc": "RAM block device na na-compress gamit ang zstd na maaaring gamitin para sa swap sa halip ng conventional swap file o partition, pinapabuti ang performance lalo na sa ilalim ng memory pressure.",
+  "zram_desc": "I-configure ang pinakamahusay na kasangkapan sa pamamahala ng RAM pressure para sa kakayahan ng iyong sistema: ZSWAP para sa mga sistema na may 16GB o mas kaunti RAM, ZRAM para sa mga sistema na may higit sa 16GB RAM. Ang ZSWAP ay nangangailangan ng swap file o partition.",
   "preempt_desc": "Paganahin ang buong kernel preemption sa Fedora at mga kaugnay na sistema, na nais para sa desktop at sinusuportahan ng default kernel, bagaman hindi pinapagana ng default dahil sa paggamit sa server environment, kung saan ang responsiveness at latency ay hindi kritikal.",
   "preemptfedora": "Buong kernel preemption",
   "udevpass": "Paganahin ang web-based na software",

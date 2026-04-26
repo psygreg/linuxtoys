@@ -353,7 +353,7 @@
   "wayproton": "Proton Wayland-tilassa",
   "wayproton_desc": "Asettaa Proton-in oletuksena wine-wayland-tilassa käynnistymiseen. Voit valikoivasti asettaa ympäristömuuttujan PROTON_USE_WINE_WAYLAND=0 peleille, jotka eivät välttämättä toimi oikein tässä tilassa Steam-in käynnistysasetuksissa tai valitsemassasi pelilauncherissa.",
   "nv580_desc": "Nvidia 580xx vanhentuneet ajurit Maxwell (GTX 9xx), Pascal (GTX 10xx) ja joillekin Kepler (GTX 750/750Ti) ja Turing (GTX 16xx) -sarjan GPU:ille.",
-  "zram_desc": "zstd-pakattu RAM-lohkeiden laite, jota voidaan käyttää vaihtoon tavallisen vaihtotiedoston tai osion sijasta, parantaa suorituskykyä erityisesti muistin paineen alaisena.",
+  "zram_desc": "Aseta optimaalinen RAM-paineen hallintatyökalun järjestelmäsi ominaisuuksille: ZSWAP järjestelmille, joissa on 16GB tai vähemmän RAM-muistia, ZRAM järjestelmille, joissa on yli 16GB RAM-muistia. ZSWAP vaatii swap-tiedoston tai osion.",
   "preempt_desc": "Ota käyttöön täysi ytimen ennakointi Fedorassa ja niihin liittyvissä järjestelmissä, mikä on toivottavaa työpöydille ja tuetaan oletusytimellä, vaikka se on oletusarvoisesti poistettu käytöstä palvelinympäristöissä, joissa vasteen nopeudella ja latenssilla ei ole kriittistä merkitystä.",
   "preemptfedora": "Täysi ytimen ennakointi",
   "udevpass": "Ota verkkopohjainen ohjelmisto käyttöön",

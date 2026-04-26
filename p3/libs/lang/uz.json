@@ -352,7 +352,7 @@
   "wayproton": "Wayland rejimida Proton",
   "wayproton_desc": "Proton-ni wine-wayland rejimida ishga tushirish uchun standart sifatida o'rnatadi. Siz Steam yoki tanallagan o'yin ishga tushirgichida bu rejimda to'g'ri ishlashi mumkin bo'lmagan o'yinlar uchun PROTON_USE_WINE_WAYLAND=0 muhit o'zgaruvchisini tanlovchi ravishda o'rnata olasiz.",
   "nv580_desc": "Maxwell (GTX 9xx), Pascal (GTX 10xx) va ba'zi Kepler (GTX 750/750Ti) va Turing (GTX 16xx) seriya GPU uchun Nvidia 580xx meros drayverlari.",
-  "zram_desc": "zstd bilan siqilgan RAM blok qurilmasi, uning o'rniga tayyorlangan swap fayli yoki qismni o'rniga swap uchun ishlatilishi mumkin, ayniqsa xotira bosimi ostida unumni yaxshilaydi.",
+  "zram_desc": "Tizimning imkoniyatlari uchun optimal RAM bosim boshqarish vositasini o'rnatish: 16GB yoki undan kamroq RAM-ga ega tizimlar uchun ZSWAP, 16GB-dan ortiq RAM-ga ega tizimlar uchun ZRAM. ZSWAP almashtirish fayli yoki bo'limini talab qiladi.",
   "preempt_desc": "Fedora va tegishli tizimlarda to'liq kernel preemption-ni faollashtiring, ish stoli uchun rejalashtirilgan va standart kernel tomonidan qo'llaniladigan, garchi serveri muhitida foydalanish tufayli standart bo'yicha noaktiv, bu yerda javobgarlik va kechikish juda muhim emas.",
   "preemptfedora": "To'liq kernel preemption",
   "udevpass": "Veb-asosli dasturiy ta'minotni faollashtiring",

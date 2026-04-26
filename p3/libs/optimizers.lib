@@ -6,53 +6,42 @@ cachyos_sysd_lib () {
     prep_tmp
     local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
     {
-        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
-        } > "modprobe.txt"
-    {
+        echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
+        echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
         echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
         } > "udev.txt"
     {
+        echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
         echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
         echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-        } > "tmpfiles.txt"       
-    if ! is_solus; then
-        {
-            echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
-            echo "${_cfgsource}/lib/udev/rules.d/40-hpet-permissions.rules"
-            echo "${_cfgsource}/lib/udev/rules.d/50-sata.rules"
-            echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
-            echo "${_cfgsource}/lib/udev/rules.d/69-hdparm.rules"
-            } >> "udev.txt"
-        {
-            echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
-            } >> "tmpfiles.txt"
-        {
-            echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
-            echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
-            } >> "modprobe.txt"
-        {
-            echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
-            echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
-            echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
-            } > "other.txt"
-    fi
+        } > "tmpfiles.txt"
+    {
+        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
+        echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
+        echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
+        } > "modprobe.txt"
+    {
+        echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
+        echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
+        echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
+        } > "other.txt"
     prep_dir modprobe.d udev/rules.d tmpfiles.d
     while read -r url; do wget -P modprobe.d "$url"; done < modprobe.txt
     while read -r url; do wget -P udev/rules.d "$url"; done < udev.txt
     while read -r url; do wget -P tmpfiles.d "$url"; done < tmpfiles.txt
-    if ! is_solus; then
-        while read -r url; do wget "$url"; done < other.txt
-    fi
+    while read -r url; do wget "$url"; done < other.txt
     for file in modprobe.d/* udev/rules.d/* tmpfiles.d/*; do
         prep_create "/usr/lib/$file"
         copy_ -f "$file" "/usr/lib/$file"
     done
-    if ! is_solus; then
-        [ -d "/usr/share/X11/xorg.conf.d" ] || prep_dir /usr/share/X11/xorg.conf.d
+    [ -d "/usr/share/X11/xorg.conf.d" ] || prep_dir /usr/share/X11/xorg.conf.d
+    # Check if system has more than 16GB of RAM before installing 70-cachyos-settings.conf due to swap settings
+    local _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+    if [ "$_total_ram_kb" -gt 16777216 ]; then
         prep_create /usr/lib/sysctl.d/70-cachyos-settings.conf && copy_ -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
-        prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && copy_ -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-        prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && copy_ -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
     fi
+    prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && copy_ -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
+    prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && copy_ -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
 }
 
 # shader booster
@@ -110,18 +99,13 @@ sboost_lib () {
 
 # split lock mitigation disabler
 dsplitm_lib () {
-    if is_solus; then
-        if [ ! -f /usr/lib/sysctl.d/99-splitlock.conf ]; then
-            prep_create /usr/lib/sysctl.d/99-splitlock.conf
-            echo 'kernel.split_lock_mitigate=0' | sudo tee /usr/lib/sysctl.d/99-splitlock.conf >/dev/null
-            zeninf "$msg022"
-        fi
+    if is_fedora; then
+        grubbyargs_upd "split_lock_detect=off"
+    elif is_ostree; then
+        kargs_upd "split_lock_detect=off"
     else
-        if [ ! -f /etc/sysctl.d/99-splitlock.conf ]; then
-            prep_create /etc/sysctl.d/99-splitlock.conf
-            echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-            zeninf "$msg022"
-        fi
+        prep_create /etc/sysctl.d/99-splitlock.conf
+        echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
     fi
 }
 
@@ -337,14 +321,38 @@ preempt_lib () {
     fi
 }
 
-nvidia_solus_lib () {
-    is_solus || return 0
-    is_nvidia || return 0
-    if ! eopkg list-installed | grep nvidia | grep -v "linux-firmware-nvidia" > /dev/null 2>&1; then
-        zeninf "No NVIDIA drivers found on Solus system. Install them first using Solseek."
-        return 0
+# RAM optimizations for systems with 16GB RAM or below, using zswap
+zswap_lib () {
+    # disable zram if enabled first, zswap and zram are not interoperable
+    if is_fedora || is_ostree; then
+        rpm -qi "zram-generator" &>/dev/null && pkg_remove zram-generator
+    elif is_debian || is_ubuntu; then
+        dpkg -s zram-config &>/dev/null && pkg_remove zram-config
+    elif is_arch; then
+        pacman -Qi zram-generator &>/dev/null && pkg_remove zram-generator
     fi
-    prep_create /etc/kernel/cmdline.d/nvidia.conf
-    echo "rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1" | sudo tee /etc/kernel/cmdline.d/nvidia.conf
-    bootloader_upd
+    # prepare zswap
+    ZSWAP_PARAMS="zswap.enabled=1 zswap.shrinker_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=25 zswap.zpool=zsmalloc
+    if is_fedora; then
+        grubbyargs_upd "$ZSWAP_PARAMS"
+    elif is_ostree; then
+        kargs_upd "$ZSWAP_PARAMS"
+    else
+        # systemd-boot
+        prep_create /etc/kernel/cmdline.d/10-zswap.conf
+        echo "$ZSWAP_PARAMS" | sudo tee /etc/kernel/cmdline.d/10-zswap.conf >/dev/null
+        # GRUB
+        prep_create /etc/default/grub.d/10-zswap.cfg
+        sudo tee /etc/default/grub.d/10-zswap.cfg > /dev/null << EOF
+# zswap kernel parameters for RAM optimization
+# Generated by LinuxToys zswap optimizer
+# To remove, delete this file and regenerate boot config
+GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} $ZSWAP_PARAMS"
+EOF
+
+        echo "Created zswap kernel parameters:"
+        echo "  - systemd-boot: /etc/kernel/cmdline.d/10-zswap.conf"
+        echo "  - GRUB: /etc/default/grub.d/10-zswap.cfg"
+        bootloader_upd
+    fi
 }

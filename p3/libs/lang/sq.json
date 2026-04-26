@@ -353,7 +353,7 @@
   "wayproton": "Proton në modalitetin Wayland",
   "wayproton_desc": "Vendos Proton për të vëndosur në modalitetin wine-wayland si parazgjedhje. Mund të vendosni selektivisht variablin e mjedisit PROTON_USE_WINE_WAYLAND=0 për lojrat që mund të mos funksionojnë siç duhet me këtë modalitet në opsionet e lançimit në Steam ose në lançimin e lojes tuaj të preferuar.",
   "nv580_desc": "Drajverat e trashëguar Nvidia 580xx për Maxwell (GTX 9xx), Pascal (GTX 10xx) dhe disa seri Kepler (GTX 750/750Ti) dhe Turing (GTX 16xx) GPU.",
-  "zram_desc": "Pajisje blloku RAM e ngjeshur me zstd që mund të përdoret për swap në vend të skedarit ose ndarjes swap konvencional, përmirëson performancën veçanërisht nën presionin e kujtesës.",
+  "zram_desc": "Konfiguroni mjetin optimal të menaxhimit të presionit RAM për aftësitë e sistemit tuaj: ZSWAP për sisteme me 16GB ose më pak RAM, ZRAM për sisteme me më shumë se 16GB RAM. ZSWAP kërkon një dosje shkëmbimi ose ndarje.",
   "preempt_desc": "Aktivizo pengimin e plotë të kernels në Fedora dhe sistemet lidhur, e dëshiruar për desktop dhe e mbështetur nga kernels default, edhe pse e çaktivizuar si parazgjedhje për shkak të përdorimit në mjedise serveri, ku përgjigja dhe latenca nuk janë kritike.",
   "preemptfedora": "Pengimi i plotë i kernels",
   "udevpass": "Aktivizo softuerin e bazuar në web",

@@ -355,7 +355,7 @@
   "wayproton": "Wayland 模式中的 Proton",
   "wayproton_desc": "将Proton设置为默认在wine-wayland模式下运行。您可以在Steam或首选的游戏启动器中的启动选项中为可能无法正确使用此模式的游戏选择性地设置环境变量PROTON_USE_WINE_WAYLAND=0。",
   "nv580_desc": "Nvidia 580xx 旧版驱动程序，适用于Maxwell (GTX 9xx)、Pascal (GTX 10xx)以及部分Kepler (GTX 750/750Ti)和Turing (GTX 16xx)系列GPU。",
-  "zram_desc": "zstd压缩的RAM块设备，可用于交换，而不是传统的交换文件或分区，特别在内存压力下改进性能。",
+  "zram_desc": "为您的系统功能设置最佳RAM压力管理工具: 16GB或更少RAM的系统使用ZSWAP,超过16GB RAM的系统使用ZRAM。 ZSWAP需要交换文件或分区。",
   "preempt_desc": "在 Fedora 和相关系统上启用完整的内核抢占，这对桌面来说是可取的，并由默认内核支持，尽管由于在服务器环境中使用而默认禁用，在那里响应性和延迟并不重要。",
   "preemptfedora": "完整内核抢占",
   "udevpass": "启用基于Web的软件",

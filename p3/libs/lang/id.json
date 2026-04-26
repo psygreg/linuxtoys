@@ -353,7 +353,7 @@
   "wayproton": "Proton dalam Mode Wayland",
   "wayproton_desc": "Mengatur Proton untuk berjalan dalam mode wine-wayland secara default. Anda dapat secara selektif menetapkan variabel lingkungan PROTON_USE_WINE_WAYLAND=0 untuk game yang mungkin tidak berfungsi dengan baik dengan mode ini di opsi peluncuran di Steam atau peluncur game pilihan Anda.",
   "nv580_desc": "Pengemudi warisan Nvidia 580xx untuk Maxwell (GTX 9xx), Pascal (GTX 10xx) dan beberapa GPU seri Kepler (GTX 750/750Ti) dan Turing (GTX 16xx).",
-  "zram_desc": "Perangkat blok RAM yang dikompresi dengan zstd yang dapat digunakan untuk swap alih-alih file atau partisi swap konvensional, meningkatkan kinerja terutama di bawah tekanan memori.",
+  "zram_desc": "Atur alat manajemen tekanan RAM yang optimal untuk kemampuan sistem Anda: ZSWAP untuk sistem dengan 16GB atau kurang RAM, ZRAM untuk sistem dengan lebih dari 16GB RAM. ZSWAP memerlukan file swap atau partisi.",
   "preempt_desc": "Aktifkan preemption kernel penuh di Fedora dan sistem terkait, yang diinginkan untuk desktop dan didukung oleh kernel default, meskipun dinonaktifkan secara default karena penggunaan di lingkungan server, di mana responsivitas dan latensi tidak kritis.",
   "preemptfedora": "Preemption kernel penuh",
   "udevpass": "Aktifkan perangkat lunak berbasis web",

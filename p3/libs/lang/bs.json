@@ -352,7 +352,7 @@
   "wayproton": "Proton u Wayland režimu",
   "wayproton_desc": "Postavlja Proton da se pokreće u wine-wayland modu prema zadanoj vrijednosti. Varijablu okruženja PROTON_USE_WINE_WAYLAND=0 možete selektivno postaviti za igre koje možda neće raditi pravilno s ovim modom u opcijama pokretanja u Steam-u ili odabranom pokretaču igara.",
   "nv580_desc": "Nvidia 580xx naslijeđeni upravljači za Maxwell (GTX 9xx), Pascal (GTX 10xx) i neke Kepler (GTX 750/750Ti) i Turing (GTX 16xx) serije GPu.",
-  "zram_desc": "Uređaj RAM bloka kompresiran sa zstd koji se može koristiti za razmjenu umjesto standardne datoteke razmjene ili particije, poboljšavajući performanse posebno pod pritiskom memorije.",
+  "zram_desc": "Postavite optimalan alat za upravljanje RAM pritiskom za mogućnosti vaš sistem: ZSWAP za sisteme sa 16GB ili manje RAM memorije, ZRAM za sisteme sa više od 16GB RAM memorije. ZSWAP zahteva swap datoteku ili particiju.",
   "preempt_desc": "Omogućite puno preempivanje kernela na Fedori i srodnim sistemima, što je poželjno za desktope i podržano podrazumevanom jezgrom, iako je podrazumevano onemogućeno zbog upotrebe u okruženjima servera, gde odgovznost i latencija nisu kritični.",
   "preemptfedora": "Puno preemptivanje kernela",
   "udevpass": "Omogućite programsku podršku na osnovu weba",

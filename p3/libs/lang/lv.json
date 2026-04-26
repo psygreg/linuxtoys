@@ -353,7 +353,7 @@
   "wayproton": "Proton Wayland režīmā",
   "wayproton_desc": "Iestata Proton palaist wine-wayland režīmā pēc noklusējuma. Jūs varat selektīvi iestatīt vides mainīgo PROTON_USE_WINE_WAYLAND=0 spēlēm, kas darbības režīmā var nenormāli darboties Steam vai jūsu izvēlētajā spēļu palaidējā.",
   "nv580_desc": "Nvidia 580xx mantojuma draiveri Maxwell (GTX 9xx), Pascal (GTX 10xx) un dažiem Kepler (GTX 750/750Ti) un Turing (GTX 16xx) sērijas GPU.",
-  "zram_desc": "zstd saspiests RAM bloka ierīci, ko var izmantot apmaiņai parastā apmaiņas faila vai partīcijas vietā, uzlaboja veiktspēju, īpaši zem atmiņas spiediena.",
+  "zram_desc": "Iestatiet optimālo RAM spiediena pārvaldības sredstvi atbilstoši jūsu sistēmas iespējām: ZSWAP sistēmām ar 16GB vai mazāk RAM, ZRAM sistēmām ar vairāk nekā 16GB RAM. ZSWAP nepieciešams swap fails vai nodalījums.",
   "preempt_desc": "Ieslēdziet pilnu kodola pirmsakarību uz Fedoras un saistītajām sistēmām, kas ir vēlams darbavirsmas datoriem un atbalstīts pēc noklusējuma kodola, lai gan tas ir izslēgts pēc noklusējuma servera vidi dēļ, kur atbildes un latences nav kritiski.",
   "preemptfedora": "Pilna kodola pirmsakarība",
   "udevpass": "Iespējot uz tīklu balstītu programmatūru",
