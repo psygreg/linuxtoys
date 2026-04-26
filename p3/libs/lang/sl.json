@@ -423,5 +423,7 @@
   "sysup_desc": "Izvede čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks.",
   "autosysup": "Samodejne Posodobitve",
   "autosysup_desc": "Omogočite storitve samodejne posodobitve sistema LinuxToys za systemd. To bo redno izvajalo čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks brez skrbi. OPOMNIK: bo posodobil samo текућу verzijo izdaje vašega sistema, ga pa ne bo nadaktualiziral - zato bi moral zagnati ročno posodobitev iz glavnega menuja, ko je nova verzija na voljo.",
-  "cachykrn_desc": "Prilagojeno jedro CachyOS. Potrebno za uporabo ananicy-cpp in SteamOS VRAM Optimization na Fedori. Vključuje korake za njegovo podpisovanje za uporabo s Secure Boot, če je ta funkcija omogočena ali v načinu konfiguracije."
+  "cachykrn_desc": "Prilagojeno jedro CachyOS. Potrebno za uporabo ananicy-cpp in SteamOS VRAM Optimization na Fedori. Vključuje korake za njegovo podpisovanje za uporabo s Secure Boot, če je ta funkcija omogočena ali v načinu konfiguracije.",
+  "optivram": "Optimizacija SteamOS VRAM",
+  "optivram_desc": "Prvotno iz SteamOS-a, ta optimizacija bistveno izboljša zmogljivost iger, zlasti na sistemih s 6GB VRAM ali manj, s pošiljanjem hladnih VRAM strani v RAM. Zahteva CachyOS Kernel na Fedori."
 }

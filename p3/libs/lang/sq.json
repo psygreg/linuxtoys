@@ -423,5 +423,7 @@
   "sysup_desc": "Kryen pastrimin e paketave të braktisura dhe përditësimin e plotë të sistemit për paketa të shpërndarjes dhe Flatpaks.",
   "autosysup": "Përditësimet Automatike",
   "autosysup_desc": "Aktivizoni shërbimeve të përditësimit automatik të sistemit LinuxToys për systemd. Kjo do të kryejë pastrimin e paketave të braktisura dhe përditësim të plotë të sistemit për paketa të shpërndarjes dhe Flatpaks rregullisht pa u shqetësuar. PËRKUJTIM: do të përditësojë vetëm versionin aktual të lëshimit të sistemit tuaj, por nuk do ta përditësojë - për atë, duhet të drejtoni një përditësim manual nga menyja kryesore kur ka një version të re të disponueshme.",
-  "cachykrn_desc": "Bërthama e përkohësuar e CachyOS. I nevojshëm për të përdorur ananicy-cpp dhe SteamOS VRAM Optimization në Fedora. Përfshin hapa për ta nënshkruar atë për përdorim me Secure Boot nëse ajo veçori është e aktivizuar ose në mënyrën e konfigurimit."
+  "cachykrn_desc": "Bërthama e përkohësuar e CachyOS. I nevojshëm për të përdorur ananicy-cpp dhe SteamOS VRAM Optimization në Fedora. Përfshin hapa për ta nënshkruar atë për përdorim me Secure Boot nëse ajo veçori është e aktivizuar ose në mënyrën e konfigurimit.",
+  "optivram": "Optimizimi i SteamOS VRAM",
+  "optivram_desc": "Në origjinë nga SteamOS, ky optimizim përmirëson ndjeshëm performancën e lojërave, veçanërisht në sisteme me 6GB VRAM ose më pak, duke dërguar faqe VRAM të ftohta në RAM. Kërkon CachyOS Kernel në Fedora."
 }

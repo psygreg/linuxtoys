@@ -423,5 +423,7 @@
   "sysup_desc": "Framkvæmir hreinsun á munaðarlausum pökkum og fullri kerfisuppfærslu fyrir dreifingarpakka og Flatpaks þína.",
   "autosysup": "Sjálfvirk Kerfisuppfærslur",
   "autosysup_desc": "Virkjaðu sjálfvirka kerfisuppfærslur LinuxToys fyrir systemd. Þetta mun framkvæma hreinsun ómunaðarlausra paKka og fulla kerfisuppfærslu fyrir dreifingarpakka þína og Flatpaks reglulega án þess að þurfa að hafa áhyggjur. MINNING: það mun aðeins uppfæra núverandi útgáfuútgáfu kerfisins þíns, en mun ekki uppfæra hana - fyrir það ættir þú að keyra handvirka uppfærslu frá aðalvalmyndinni þegar ný útgáfa er tiltæk.",
-  "cachykrn_desc": "Sérsniðið kernel CachyOS. Nauðsynlegt til að nota ananicy-cpp og SteamOS VRAM Optimization á Fedora. Inniheldur skref til að undirrita það til notkunar með Secure Boot ef sú eiginleiki er virkjuð eða í uppsetningarham."
+  "cachykrn_desc": "Sérsniðið kernel CachyOS. Nauðsynlegt til að nota ananicy-cpp og SteamOS VRAM Optimization á Fedora. Inniheldur skref til að undirrita það til notkunar með Secure Boot ef sú eiginleiki er virkjuð eða í uppsetningarham.",
+  "optivram": "SteamOS VRAM-beitingu",
+  "optivram_desc": "Upprunalega frá SteamOS bætir þessi beiting frammistöðu í leikjum verulega, sérstaklega á kerfum með 6GB VRAM eða minna, með því að senda kold VRAM-síður til RAM. Krefst CachyOS Kernel á Fedora."
 }

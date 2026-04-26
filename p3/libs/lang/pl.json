@@ -423,5 +423,7 @@
   "sysup_desc": "Wykonuje czyszczenie opuszczonych pakietów i pełną aktualizację systemu dla pakietów dystrybucji i Flatpaks.",
   "autosysup": "Automatyczne Aktualizacje",
   "autosysup_desc": "Włącz automatyczne usługi aktualizacji systemu LinuxToys dla systemd. Spowoduje to regularne czyszczenie porzuconych pakietów i pełną aktualizację systemu dla pakietów dystrybucji i Flatpaks bez konieczności martwienia się. PRZYPOMNIENIE: zaktualizuje tylko bieżącą wersję wydania systemu, ale go nie uaktualni - w tym celu należy uruchomić ręczną aktualizację z menu głównego, gdy dostępna jest nowa wersja.",
-  "cachykrn_desc": "Dostosowany kernel CachyOS. Wymagany do używania ananicy-cpp i SteamOS VRAM Optimization na Fedorze. Zawiera kroki podpisania go do użytku z Secure Boot, jeśli ta funkcja jest włączona lub w trybie konfiguracji."
+  "cachykrn_desc": "Dostosowany kernel CachyOS. Wymagany do używania ananicy-cpp i SteamOS VRAM Optimization na Fedorze. Zawiera kroki podpisania go do użytku z Secure Boot, jeśli ta funkcja jest włączona lub w trybie konfiguracji.",
+  "optivram": "Optymalizacja SteamOS VRAM",
+  "optivram_desc": "Pierwotnie z SteamOS ta optymalizacja znacznie poprawia wydajność gier, zwłaszcza na systemach z 6GB VRAM lub mniej, poprzez wysyłanie zimnych stron VRAM do RAM. Wymaga CachyOS Kernel na Fedorze."
 }

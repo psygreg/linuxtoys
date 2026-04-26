@@ -423,5 +423,7 @@
   "sysup_desc": "Utfører opprydding av foreldreløse pakker og fullstendig systemoppdatering for både distribusjonspakker og Flatpaks.",
   "autosysup": "Automatisk Systemoppdatering",
   "autosysup_desc": "Aktivér LinuxToys automatiske systemoppdateringstjenester for systemd. Dette vil utføre opprengjøring av foreldreløse pakker og fullstendig systemoppdatering for både distribusjonspakker og Flatpaks med jevne mellomrom uten å måtte bekymre deg. PÅMINNELSE: det vil kun oppdatere gjeldende utgivelsesversjon av systemet ditt, men ikke oppgradere det - for det bør du kjøre en manuell oppdatering fra hovedmenyen når en ny utgivelse er tilgjengelig.",
-  "cachykrn_desc": "CachyOS sitt egendefinerte kjerne. Påkrevd for å bruke ananicy-cpp og SteamOS VRAM Optimization på Fedora. Inkluderer trinn for å signere det for bruk med Secure Boot hvis den funksjonen er aktivert eller i oppsettningsmodus."
+  "cachykrn_desc": "CachyOS sitt egendefinerte kjerne. Påkrevd for å bruke ananicy-cpp og SteamOS VRAM Optimization på Fedora. Inkluderer trinn for å signere det for bruk med Secure Boot hvis den funksjonen er aktivert eller i oppsettningsmodus.",
+  "optivram": "SteamOS VRAM-optimalisering",
+  "optivram_desc": "Opprinnelig fra SteamOS forbedrer denne optimaliseringen ytelsen i spill betydelig, spesielt på systemer med 6GB VRAM eller mindre, ved å sende kalde VRAM-sider til RAM. Krever CachyOS Kernel på Fedora."
 }

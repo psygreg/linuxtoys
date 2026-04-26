@@ -423,5 +423,7 @@
   "sysup_desc": "Veic neskaustu pakotņu tīrīšanu un pilnīgu sistēmas atjaunināšanu jūsu izplatīšanas paketēm un Flatpaks.",
   "autosysup": "Automātiskas Atjaunināšanas",
   "autosysup_desc": "Ieslēdziet LinuxToys automātiskas sistēmas atjaunināšanas pakalpojumus systemd. Tas regulāri veiks neskaustu pakotņu tīrīšanu un pilnīgu sistēmas atjaunināšanu jūsu izplatīšanas paketēm un Flatpaks, bez jāuzkrāj par ko. ATGĀDINĀJUMS: tas atjauninās tikai jūsu sistēmas pašreizējo laidiens versiju, bet to neupgradē - tam jums būtu jāpalaiž pašrocīgs atjauninājums no galvenās izvēlnes, kad ir pieejama jauna laida.",
-  "cachykrn_desc": "CachyOS pielāgotais kodols. Nepieciešams ananicy-cpp un SteamOS VRAM Optimization izmantošanai uz Fedora. Ietver darbības tā podpisanai izmantošanai ar Secure Boot, ja šī funkcija ir iespējota vai iestatīšanas režīmā."
+  "cachykrn_desc": "CachyOS pielāgotais kodols. Nepieciešams ananicy-cpp un SteamOS VRAM Optimization izmantošanai uz Fedora. Ietver darbības tā podpisanai izmantošanai ar Secure Boot, ja šī funkcija ir iespējota vai iestatīšanas režīmā.",
+  "optivram": "SteamOS VRAM optimizācija",
+  "optivram_desc": "Sākotnēji no SteamOS, šī optimizācija ievērojami uzlabo spēļu veiktspēju, īpaši sistēmās ar 6GB VRAM vai mazāk, sūtot aukstus VRAM lapas uz RAM. Fedorā ir nepieciešams CachyOS Kernel."
 }

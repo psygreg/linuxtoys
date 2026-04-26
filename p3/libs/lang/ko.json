@@ -423,5 +423,7 @@
   "sysup_desc": "고아 패키지의 정리와 배포판 패키지 및 Flatpaks의 전체 시스템 업데이트를 수행합니다.",
   "autosysup": "자동 시스템 업데이트",
   "autosysup_desc": "LinuxToys의 systemd용 자동 시스템 업데이트 서비스를 활성화합니다. 이것은 배포판 패키지 및 Flatpaks의 고아 패키지 정리 및 전체 시스템 업데이트를 정기적으로 수행하므로 걱정할 필요가 없습니다. 알림: 시스템의 현재 릴리스 버전만 업데이트하며 업그레이드하지는 않습니다. 새 릴리스를 사용할 수 있을 때 주 메뉴에서 수동 업데이트를 실행해야 합니다.",
-  "cachykrn_desc": "CachyOS의 커스텀 튜닝 커널. Fedora에서 ananicy-cpp 및 SteamOS VRAM 최적화를 사용하는 데 필요합니다. 해당 기능이 활성화되어 있거나 설치 모드인 경우 Secure Boot와 함께 사용하기 위해 서명하는 단계를 포함합니다."
+  "cachykrn_desc": "CachyOS의 커스텀 튜닝 커널. Fedora에서 ananicy-cpp 및 SteamOS VRAM 최적화를 사용하는 데 필요합니다. 해당 기능이 활성화되어 있거나 설치 모드인 경우 Secure Boot와 함께 사용하기 위해 서명하는 단계를 포함합니다.",
+  "optivram": "SteamOS VRAM 최적화",
+  "optivram_desc": "원래 SteamOS에서 이 최적화는 특히 6GB VRAM 이하의 시스템에서 게임 성능을 크게 향상시키며, 콜드 VRAM 페이지를 RAM으로 전송합니다. Fedora에서 CachyOS Kernel이 필요합니다."
 }

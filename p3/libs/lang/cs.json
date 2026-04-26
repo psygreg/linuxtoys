@@ -423,5 +423,7 @@
   "sysup_desc": "Provádí čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks.",
   "autosysup": "Automatické Aktualizace",
   "autosysup_desc": "Povolte služby automatického aktualizace systému LinuxToys pro systemd. Tím se bude pravidelně provádět čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks bez obav. PŘIPOMÍNKA: pouze aktualizuje aktuální verzi vydání vašeho systému, ale neinovuje jej - proto byste měli spustit ruční aktualizaci z hlavní nabídky, když je dostupné nové vydání.",
-  "cachykrn_desc": "Vlastní laděné jádro CachyOS. Vyžadováno pro používání ananicy-cpp a SteamOS VRAM optimalizace na Fedoře. Obsahuje kroky k podepsání pro použití se Secure Boot, pokud je tato funkce povolena nebo v režimu nastavení."
+  "cachykrn_desc": "Vlastní laděné jádro CachyOS. Vyžadováno pro používání ananicy-cpp a SteamOS VRAM optimalizace na Fedoře. Obsahuje kroky k podepsání pro použití se Secure Boot, pokud je tato funkce povolena nebo v režimu nastavení.",
+  "optivram": "SteamOS VRAM optimalizace",
+  "optivram_desc": "Původně od SteamOS tato optimalizace výrazně zlepšuje výkon v hrách, zejména v systémech s 6 GB VRAM nebo méně, odesláním studených stránek VRAM do RAM. Vyžaduje CachyOS Kernel na Fedoře."
 }

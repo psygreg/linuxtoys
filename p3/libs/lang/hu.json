@@ -423,5 +423,7 @@
   "sysup_desc": "Elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra.",
   "autosysup": "Automatikus Rendszerfrissítések",
   "autosysup_desc": "Engedélyezze a LinuxToys automatikus rendszerfrissítési szolgáltatásait a systemd számára. Ez rendszeresen elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra anélkül, hogy aggódni kellene. EMLÉKEZTETÕ: csak a rendszer aktuális kiadásverzióját frissíti, de nem frissíti azt - ehhez a fõmenübõl kézi frissítést kell futtatni, amikor új kiadás érhető el.",
-  "cachykrn_desc": "A CachyOS egyéni hangolt kernele. Szükséges az ananicy-cpp és SteamOS VRAM Optimization használatához Fedorán. Tartalmazza az aláírás lépéseit a Secure Boot-tal való használathoz, ha ez a funkció engedélyezve van vagy beállítási módban van."
+  "cachykrn_desc": "A CachyOS egyéni hangolt kernele. Szükséges az ananicy-cpp és SteamOS VRAM Optimization használatához Fedorán. Tartalmazza az aláírás lépéseit a Secure Boot-tal való használathoz, ha ez a funkció engedélyezve van vagy beállítási módban van.",
+  "optivram": "SteamOS VRAM optimalizálás",
+  "optivram_desc": "Eredetileg a SteamOS-ből, ez az optimalizálás jelentősen javítja a játékok teljesítményét, különösen a 6GB VRAM-mal vagy kevesebb rendszeren, hideg VRAM-oldalak RAM-ba küldésével. Szükséges CachyOS Kernel Fedorán."
 }

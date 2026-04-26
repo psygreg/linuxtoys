@@ -423,5 +423,7 @@
   "sysup_desc": "Atliekamas siročiu paketų valymas ir visas sistemos atnaujinimas jūsų pasiskirstymo paketams ir Flatpaks.",
   "autosysup": "Automatinis Atnaujinimas",
   "autosysup_desc": "Įjunkite LinuxToys automatinės sistemos atnaujinimo paslaugas systemd. Tai atliks siročių paketų valymą ir pilną sistemos atnaujinimą jūsų pasiskirstymo paketams ir Flatpaks reguliariai, be jokių sumetimų. ATMINTIS: ji atnaujins tik dabartinę jūsų sistemos leidimo versiją, bet jos nebus šiek tiek - tam turėtumėte paleisti rankinį atnaujinimą iš pagrindinės meniu, kai bus prieinama nauja laida.",
-  "cachykrn_desc": "CachyOS tinkamai suderinti branduolys. Reikalingas ananicy-cpp ir SteamOS VRAM Optimization naudojimui Fedorose. Apima žingsnius jam pasirašyti naudojimui su Secure Boot, jei ta funkcija įjungta arba sąrankos režimu."
+  "cachykrn_desc": "CachyOS tinkamai suderinti branduolys. Reikalingas ananicy-cpp ir SteamOS VRAM Optimization naudojimui Fedorose. Apima žingsnius jam pasirašyti naudojimui su Secure Boot, jei ta funkcija įjungta arba sąrankos režimu.",
+  "optivram": "SteamOS VRAM optimizavimas",
+  "optivram_desc": "Iš pradžių iš SteamOS, ši optimizacija žymiai pagerina žaidimų našumą, ypač sistemose su 6GB VRAM arba mažiau, siunčiant šaltas VRAM puslapius į RAM. Reikalingas CachyOS Kernel Fedoroje."
 }

@@ -422,5 +422,7 @@
   "sysup_desc": "Teriqalar paketlarini tozalash va taqsimot paketlari va Flatpaks uchun to'liq sistem yangilashni bajaradi.",
   "autosysup": "Avtomatik Yangilashlari",
   "autosysup_desc": "LinuxToys systemd uchun avtomatik sistem yangilash xizmatlarini yoqing. Bu yetim paketlarni tozalash va ushbu tarqalish paketlari va Flatpaks uchun to'liq sistem yangilashni muntazam ravishda o'tkazadi, shunchaki o'zingiz haqida xavotir qilishingiz kerak bo'lmaydi. ESOLAMNOMA: bu faqat sizning sistemingizning joriy chiqarish versiyasini yangilaydi, lekin uni yangilamas - buning uchun yangi chiqarish mavjud bo'lganda asosiy menyudan qo'lda yangilashni o'tkazishingiz kerak.",
-  "cachykrn_desc": "CachyOS kustomli tuning kerneli. Fedora-da ananicy-cpp va SteamOS VRAM Optimization istifoda qilish uchun talab qilinadi. Secure Boot bilan foydalanish uchun imzo qilish bosqichlarini o'z ichiga oladi, agar bu xususiyat faollashtirilgan bo'lsa yoki sozlash rejimida bo'lsa."
+  "cachykrn_desc": "CachyOS kustomli tuning kerneli. Fedora-da ananicy-cpp va SteamOS VRAM Optimization istifoda qilish uchun talab qilinadi. Secure Boot bilan foydalanish uchun imzo qilish bosqichlarini o'z ichiga oladi, agar bu xususiyat faollashtirilgan bo'lsa yoki sozlash rejimida bo'lsa.",
+  "optivram": "SteamOS VRAM optimizasiyasi",
+  "optivram_desc": "SteamOS dan kelib chiqqan bu optimizatsiya o'yinlarda samaradorlikni seziladi daraja kattalashtiradi, ayniqsa 6GB VRAM yoki undan kam bo'lgan tizimlarda, sovuq VRAM sahifalarini RAM-ga yuborish orqali. Fedora-da CachyOS Kernel talab qilinadi."
 }

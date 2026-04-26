@@ -423,5 +423,7 @@
   "sysup_desc": "Déanann glantachán ar phacáistí dílíontacha agus nuashonrú iomlán an chórais do na pacáistí dáileacháin agus Flatpaks.",
   "autosysup": "Nuashonruithe Uathoibríocha",
   "autosysup_desc": "Cumasaigh seirbhísí nuashonraithe córais uathoibríoch LinuxToys do systemd. Seo a dhéanfaidh glanadh na bpacáistí dílíontacha agus nuashonrú iomlán an chórais do na pacáistí dáileacháin agus Flatpaks go rialta gan a bheith ort a bheith buartha. MEABHRÚCHÁN: ní dhéanfaidh sé ach an leagan foilsithe reatha do do chóras a nuashonrú, ach ní dhéanfaidh sé é a fhealadh - dó sin, ba chóir duit nuashonrú láimhe a rith ó an príomh-roghchlár nuair atá leagan nua ar fáil.",
-  "cachykrn_desc": "An kernel saingearrtha de CachyOS. Riachtanach a bheith ann a bhainistiú ananicy-cpp agus SteamOS VRAM Optimization ar Fedora. Áirítear céimeanna a shíniú do úsáid le Secure Boot má bhíonn an gné sin gníomhach nó i mód socrú."
+  "cachykrn_desc": "An kernel saingearrtha de CachyOS. Riachtanach a bheith ann a bhainistiú ananicy-cpp agus SteamOS VRAM Optimization ar Fedora. Áirítear céimeanna a shíniú do úsáid le Secure Boot má bhíonn an gné sin gníomhach nó i mód socrú.",
+  "optivram": "Barrfheidhmiú SteamOS VRAM",
+  "optivram_desc": "Ar dtús ó SteamOS, feabhsaíonn an bharrfheidhmiú seo feidhmíochán i gcluichí go mór, go háirithe ar chórais le 6GB VRAM nó níos lú, trí leathanaigh VRAM fhuar a sheoladh go RAM. Teastaíonn CachyOS Kernel ar Fedora."
 }

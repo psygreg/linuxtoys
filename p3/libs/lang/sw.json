@@ -421,5 +421,7 @@
   "sysup_desc": "Inafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks.",
   "autosysup": "Masasisho Otomatiki",
   "autosysup_desc": "Wezesha huduma za kusasisha mfumo kiotomatiki ya LinuxToys kwa systemd. Hii itafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks. TADHKIRA: itasasisha tu toleo la kutolewa sasa la mfumo wako, lakini haitasasisha - kwa hilo, inapaswa kueneza kusasisha mikono kutoka katika menyu kuu wakati kutolewa mpya kupatikana.",
-  "cachykrn_desc": "Kernel iliyoboreshwa ya CachyOS. Inahitajika kwa ajili ya matumizi ya ananicy-cpp na SteamOS VRAM Optimization kwa Fedora. Inajumuisha hatua za kuifanya kuwa maadhimisho kwa ajili ya matumizi na Secure Boot ikiwa huyo utendakazi ni mtendakazi au katika mtindo wa kukamatia."
+  "cachykrn_desc": "Kernel iliyoboreshwa ya CachyOS. Inahitajika kwa ajili ya matumizi ya ananicy-cpp na SteamOS VRAM Optimization kwa Fedora. Inajumuisha hatua za kuifanya kuwa maadhimisho kwa ajili ya matumizi na Secure Boot ikiwa huyo utendakazi ni mtendakazi au katika mtindo wa kukamatia.",
+  "optivram": "Uboreshaji wa SteamOS VRAM",
+  "optivram_desc": "Asili kutoka SteamOS, uboreshaji huu unaboresha biashara ya michezo kwa kiasi kikubwa, haswa kwenye mifumo yenye 6GB VRAM au chini, kwa kupadisha kurasa za VRAM baridi kwenye RAM. Inahitaji CachyOS Kernel kwenye Fedora."
 }
