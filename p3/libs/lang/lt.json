@@ -320,7 +320,7 @@
   "astapro_desc": "Visa programinės įrangos projektavimo priemonė su UML, ERD, flowchart, DFD ir daugiau",
   "positron_desc": "Suvienija tyrinėjimų ir gamybos darbą vienoje nemokamoje AI pagalba palaikytoje aplinkoje",
   "rstudio_desc": "Įrankių rinkinys, sukurtas padėti jums būti produktyvesniam su R ir Python.",
-  "ananicy_desc": "Demonas, kuris automatiškai reguliuoja \"niceness\" veikiančių procesų remiantis jų elgesiu",
+  "ananicy_desc": "Daemon, kuris automatiškai reguliuoja veikiančių procesų 'niceness' pagal jų elgesį, kad pagerinti sistemos atsako laiką. Reikalingas CachyOS Kernel Fedoroje.",
   "kdememfix_desc": "Perjungia KDE Plasma's testavimą back-endą į OpenGL, kurie naudoja žymiai mažiau VRAM",
   "zerotier_desc": "Kuria virtualius Ethernet tinklus beveik neriboto dydžio.",
   "faugus_desc": "Naujesnė, lengvesnė ir supaprastinta programa jūsų žaidimams ir jų WINE priešdėliams tvarkyti sistemoje Linux, panašiai kaip Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Atnaujinti Sistemą",
   "sysup_desc": "Atliekamas siročiu paketų valymas ir visas sistemos atnaujinimas jūsų pasiskirstymo paketams ir Flatpaks.",
   "autosysup": "Automatinis Atnaujinimas",
-  "autosysup_desc": "Įjunkite LinuxToys automatinės sistemos atnaujinimo paslaugas systemd. Tai atliks siročių paketų valymą ir pilną sistemos atnaujinimą jūsų pasiskirstymo paketams ir Flatpaks reguliariai, be jokių sumetimų. ATMINTIS: ji atnaujins tik dabartinę jūsų sistemos leidimo versiją, bet jos nebus šiek tiek - tam turėtumėte paleisti rankinį atnaujinimą iš pagrindinės meniu, kai bus prieinama nauja laida."
+  "autosysup_desc": "Įjunkite LinuxToys automatinės sistemos atnaujinimo paslaugas systemd. Tai atliks siročių paketų valymą ir pilną sistemos atnaujinimą jūsų pasiskirstymo paketams ir Flatpaks reguliariai, be jokių sumetimų. ATMINTIS: ji atnaujins tik dabartinę jūsų sistemos leidimo versiją, bet jos nebus šiek tiek - tam turėtumėte paleisti rankinį atnaujinimą iš pagrindinės meniu, kai bus prieinama nauja laida.",
+  "cachykrn_desc": "CachyOS tinkamai suderinti branduolys. Reikalingas ananicy-cpp ir SteamOS VRAM Optimization naudojimui Fedorose. Apima žingsnius jam pasirašyti naudojimui su Secure Boot, jei ta funkcija įjungta arba sąrankos režimu."
 }

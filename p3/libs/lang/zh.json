@@ -322,7 +322,7 @@
   "astapro_desc": "具有UML、ERD、流程图、DFD等的总体软件设计工具",
   "positron_desc": "在AI辅助的免费环境中统一探索和生产工作",
   "rstudio_desc": "为帮助您使用R和Python提高工作效率而构建的工具集。",
-  "ananicy_desc": "一个守护进程，根据进程的行为自动调整正在运行的进程的\"nice\"值",
+  "ananicy_desc": "一个daemon，根据运行进程的行为自动调整其'niceness'以改善系统响应能力。 在Fedora上需要CachyOS Kernel。",
   "kdememfix_desc": "将KDE Plasma的渲染后端切换到OpenGL，其使用的VRAM明显要少得多",
   "zerotier_desc": "创建几乎无限大小的虚拟以太网网络。",
   "faugus_desc": "在Linux上管理您的游戏及其WINE前缀的一个更新、更轻量级和简化的应用程序，类似于Lutris。",
@@ -424,5 +424,6 @@
   "sysup": "更新系统",
   "sysup_desc": "清理孤立的包并为您的发行版包和 Flatpaks 执行完整的系统更新。",
   "autosysup": "自动系统更新",
-  "autosysup_desc": "为 systemd 启用 LinuxToys 的自动系统更新服务。这将定期为您的发行版包和 Flatpaks 执行孤立包清理和完整系统更新，而无需担心。提醒：它只会更新系统的当前发行版本，但不会升级 - 为此，当有新版本可用时，应从主菜单运行手动更新。"
+  "autosysup_desc": "为 systemd 启用 LinuxToys 的自动系统更新服务。这将定期为您的发行版包和 Flatpaks 执行孤立包清理和完整系统更新，而无需担心。提醒：它只会更新系统的当前发行版本，但不会升级 - 为此，当有新版本可用时，应从主菜单运行手动更新。",
+  "cachykrn_desc": "CachyOS的自定义调整内核。 在Fedora上使用ananicy-cpp和SteamOS VRAM优化所需的。 包括对其进行签名以与Secure Boot一起使用的步骤（如果启用了该功能或处于设置模式）。"
 }

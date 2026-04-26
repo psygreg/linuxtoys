@@ -318,7 +318,7 @@
   "astapro_desc": "Zana ya muundo wa programu kwa ujumla na UML, ERD, mchoro wa mtiririko, DFD na zaidi",
   "positron_desc": "Inaweka kazi ya utafiti na uzalishaji katika mazingira moja ya bure yanayoungana na AI",
   "rstudio_desc": "Seti ya zana zilizoundwa kusaidia kuwa na uzalishaji zaidi na R na Python.",
-  "ananicy_desc": "Daemon inayobadilisha \"niceness\" ya michakato inayokimbia kulingana na tabia yake",
+  "ananicy_desc": "Daemon inayobadilisha otomatiski 'niceness' ya michakato inayofanya kazi kulingana na tabia yao ili kuboresha majibu ya mfumo. Inahitaji CachyOS Kernel kwenye Fedora.",
   "kdememfix_desc": "Badilisha backend ya kuonyesha KDE Plasma kwa OpenGL inayotumiatu VRAM zaidi",
   "zerotier_desc": "Huunda mitandao ya Ethernet ya kimataifa yenye ukubwa karibu bila kikomo.",
   "faugus_desc": "Programu mpya, nyepesi na iliyoboreshwa kwa usimamizi wa michezo yako na viambishi vya WINE kwenye Linux, kama Lutris.",
@@ -420,5 +420,6 @@
   "sysup": "Sasisha Mfumo",
   "sysup_desc": "Inafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks.",
   "autosysup": "Masasisho Otomatiki",
-  "autosysup_desc": "Wezesha huduma za kusasisha mfumo kiotomatiki ya LinuxToys kwa systemd. Hii itafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks. TADHKIRA: itasasisha tu toleo la kutolewa sasa la mfumo wako, lakini haitasasisha - kwa hilo, inapaswa kueneza kusasisha mikono kutoka katika menyu kuu wakati kutolewa mpya kupatikana."
+  "autosysup_desc": "Wezesha huduma za kusasisha mfumo kiotomatiki ya LinuxToys kwa systemd. Hii itafanya usafi wa paketi za yatima na kusasisha kwa ujumla kwa mifuko ya usambazaji na Flatpaks. TADHKIRA: itasasisha tu toleo la kutolewa sasa la mfumo wako, lakini haitasasisha - kwa hilo, inapaswa kueneza kusasisha mikono kutoka katika menyu kuu wakati kutolewa mpya kupatikana.",
+  "cachykrn_desc": "Kernel iliyoboreshwa ya CachyOS. Inahitajika kwa ajili ya matumizi ya ananicy-cpp na SteamOS VRAM Optimization kwa Fedora. Inajumuisha hatua za kuifanya kuwa maadhimisho kwa ajili ya matumizi na Secure Boot ikiwa huyo utendakazi ni mtendakazi au katika mtindo wa kukamatia."
 }

@@ -320,7 +320,7 @@
   "astapro_desc": "Totaal softwaredesigntool met UML, ERD, flowchart, DFD en meer",
   "positron_desc": "Unificeert verkennings- en productiewerkzaamheden in één gratis AI-ondersteund omgeving",
   "rstudio_desc": "Een set gereedschappen ontworpen om je te helpen productiever te zijn met R en Python.",
-  "ananicy_desc": "Een daemon die automatisch de \"niceness\" van actieve processen aanpast op basis van hun gedrag",
+  "ananicy_desc": "Een daemon die automatisch de 'niceness' van actieve processen aanpast op basis van hun gedrag om de responsiviteit van het systeem te verbeteren. Vereist CachyOS Kernel op Fedora.",
   "kdememfix_desc": "Schakelt de renderingback-end van KDE Plasma over naar OpenGL die aanzienlijk minder VRAM gebruikt",
   "zerotier_desc": "Creëert virtuele Ethernet-netwerken van vrijwel onbeperkte grootte.",
   "faugus_desc": "Een nieuwere, lichtere en vereenvoudigde toepassing voor het beheren van uw games en hun WINE-voorvoegsels op Linux, vergelijkbaar met Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Systeem Bijwerken",
   "sysup_desc": "Voert opschoning van verweesde pakketten en volledige systeemupdate uit voor uw distributiepakketten en Flatpaks.",
   "autosysup": "Automatische Systeemupdate",
-  "autosysup_desc": "Schakel de automatische systeemupdate-services van LinuxToys in voor systemd. Dit voert regelmatig reiniging van verweesde pakketten en een volledige systeemupdate uit voor zowel uw distributiepakketten als Flatpaks zonder dat u zich zorgen hoeft te maken. HERINNERING: het werkt alleen de huidige releaseversie van uw systeem bij, maar voert geen upgrade uit ervan - daarvoor moet u een handmatige update uitvoeren vanuit het hoofdmenu wanneer een nieuwe versie beschikbaar is."
+  "autosysup_desc": "Schakel de automatische systeemupdate-services van LinuxToys in voor systemd. Dit voert regelmatig reiniging van verweesde pakketten en een volledige systeemupdate uit voor zowel uw distributiepakketten als Flatpaks zonder dat u zich zorgen hoeft te maken. HERINNERING: het werkt alleen de huidige releaseversie van uw systeem bij, maar voert geen upgrade uit ervan - daarvoor moet u een handmatige update uitvoeren vanuit het hoofdmenu wanneer een nieuwe versie beschikbaar is.",
+  "cachykrn_desc": "De aangepaste kernel van CachyOS. Vereist voor het gebruik van ananicy-cpp en SteamOS VRAM Optimization op Fedora. Bevat stappen om deze te ondertekenen voor gebruik met Secure Boot als die functie is ingeschakeld of in instellingenmodus."
 }

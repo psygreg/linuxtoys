@@ -320,7 +320,7 @@
   "astapro_desc": "Alat desain perangkat lunak total dengan UML, ERD, flowchart, DFD, dan banyak lagi",
   "positron_desc": "Menyatukan pekerjaan eksplorasi dan produksi dalam satu lingkungan gratis yang didukung AI",
   "rstudio_desc": "Serangkaian alat yang dirancang untuk membantu Anda lebih produktif dengan R dan Python.",
-  "ananicy_desc": "Daemon yang secara otomatis menyesuaikan \"niceness\" proses yang sedang berjalan berdasarkan perilaku mereka",
+  "ananicy_desc": "Daemon yang secara otomatis menyesuaikan 'niceness' proses yang sedang berjalan berdasarkan perilakunya untuk meningkatkan responsivitas sistem. Memerlukan CachyOS Kernel di Fedora.",
   "kdememfix_desc": "Beralih backend rendering KDE Plasma ke OpenGL yang menggunakan jauh lebih sedikit VRAM",
   "zerotier_desc": "Membuat jaringan Ethernet virtual dengan ukuran hampir tak terbatas.",
   "faugus_desc": "Aplikasi yang lebih baru, lebih ringan dan disederhanakan untuk mengelola game Anda dan prefiks WINE mereka di Linux, mirip dengan Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Perbarui Sistem",
   "sysup_desc": "Melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda.",
   "autosysup": "Pembaruan Otomatis",
-  "autosysup_desc": "Aktifkan layanan pembaruan sistem otomatis LinuxToys untuk systemd. Ini akan melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda secara teratur tanpa perlu khawatir. PENGINGAT: itu hanya akan memperbarui versi rilis saat ini dari sistem Anda, tetapi tidak akan meningkatkan - untuk itu, Anda harus menjalankan pembaruan manual dari menu utama ketika rilis baru tersedia."
+  "autosysup_desc": "Aktifkan layanan pembaruan sistem otomatis LinuxToys untuk systemd. Ini akan melakukan pembersihan paket yatim piatu dan pembaruan sistem lengkap untuk paket distribusi dan Flatpaks Anda secara teratur tanpa perlu khawatir. PENGINGAT: itu hanya akan memperbarui versi rilis saat ini dari sistem Anda, tetapi tidak akan meningkatkan - untuk itu, Anda harus menjalankan pembaruan manual dari menu utama ketika rilis baru tersedia.",
+  "cachykrn_desc": "Kernel yang disesuaikan khusus dari CachyOS. Diperlukan untuk menggunakan ananicy-cpp dan SteamOS VRAM Optimization di Fedora. Mencakup langkah-langkah untuk menandatanganinya untuk digunakan dengan Secure Boot jika fitur itu diaktifkan atau dalam mode pengaturan."
 }

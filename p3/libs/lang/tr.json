@@ -320,7 +320,7 @@
   "astapro_desc": "UML, ERD, akış şeması, DFD ve daha fazlasıyla toplam yazılım tasarım aracı",
   "positron_desc": "Keşif ve üretim çalışmasını, AI tarafından desteklenen bir ücretsiz ortamda birleştirir",
   "rstudio_desc": "R ve Python ile daha üretken olmana yardımcı olmak için tasarlanan bir araç seti.",
-  "ananicy_desc": "Çalışan işlemlerin \"niceness\" değerini otomatik olarak davranışlarına göre ayarlayan bir daemon",
+  "ananicy_desc": "Çalışan işlemlerin sistem yanıt verme yeteneğini iyileştirmek için davranışlarına göre 'niceness' değerini otomatik olarak ayarlayan bir daemon. Fedora'da CachyOS Kernel gereklidir.",
   "kdememfix_desc": "KDE Plasma'nın render backend'ini OpenGL'ye değiştirir ve önemli ölçüde daha az VRAM kullanır",
   "zerotier_desc": "Neredeyse sınırsız boyuttaki sanal Ethernet ağlarını oluşturur.",
   "faugus_desc": "Linux'ta oyunlarınız ve WINE öneklerini yönetmek için daha yeni, daha hafif ve basitleştirilmiş bir uygulama, Lutris'e benzer.",
@@ -422,5 +422,6 @@
   "sysup": "Sistemi Güncelle",
   "sysup_desc": "Yetim paketlerin temizliğini ve dağıtım paketleri ve Flatpaks'ı tam sistem güncellemesini gerçekleştirir.",
   "autosysup": "Otomatik Güncellemeleri",
-  "autosysup_desc": "LinuxToys sistem otomatik güncelleme hizmetlerini systemd için etkinleştirin. Bu, dağıtım paketleri ve Flatpaks için yetim paketlerin temizliğini ve tam sistem güncellemesini düzenli olarak yapacak, endişelenmeniz gerekmeyecektir. HATIRLATICI: sistem uyarısının yalnızca geçerli sürüm sürümünü güncelleyecek, ancak yükseltmeyecektir - bunun için, yeni bir sürüm mevcut olduğunda ana menüden el ile güncelleme yapmalısınız."
+  "autosysup_desc": "LinuxToys sistem otomatik güncelleme hizmetlerini systemd için etkinleştirin. Bu, dağıtım paketleri ve Flatpaks için yetim paketlerin temizliğini ve tam sistem güncellemesini düzenli olarak yapacak, endişelenmeniz gerekmeyecektir. HATIRLATICI: sistem uyarısının yalnızca geçerli sürüm sürümünü güncelleyecek, ancak yükseltmeyecektir - bunun için, yeni bir sürüm mevcut olduğunda ana menüden el ile güncelleme yapmalısınız.",
+  "cachykrn_desc": "CachyOS'un özel olarak ayarlanmış çekirdeği. Fedora'da ananicy-cpp ve SteamOS VRAM Optimization kullanmak için gereklidir. Bu özellik etkinse veya kurulum modundaysa Secure Boot ile kullanım için imzalamak adımlarını içerir."
 }

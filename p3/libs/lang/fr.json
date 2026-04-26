@@ -320,7 +320,7 @@
   "astapro_desc": "Outil de conception logicielle complet avec UML, ERD, diagramme de flux, DFD et plus",
   "positron_desc": "Unifie l'exploration et la production dans un environnement gratuit assisté par l'IA",
   "rstudio_desc": "Un ensemble d'outils conçus pour vous aider à être plus productif avec R et Python.",
-  "ananicy_desc": "Un démon qui ajuste automatiquement la \"niceness\" des processus en cours en fonction de leur comportement",
+  "ananicy_desc": "Un daemon qui ajuste automatiquement la 'niceness' des processus en cours d'exécution en fonction de leur comportement pour améliorer la réactivité du système. Nécessite CachyOS Kernel sur Fedora.",
   "kdememfix_desc": "Bascule le backend de rendu de KDE Plasma vers OpenGL, qui utilise beaucoup moins de VRAM",
   "zerotier_desc": "Crée des réseaux Ethernet virtuels de taille quasi illimitée.",
   "faugus_desc": "Une application plus récente, plus légère et simplifiée pour gérer vos jeux et leurs préfixes WINE sur Linux, similaire à Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Mettre à Jour le Système",
   "sysup_desc": "Effectue un nettoyage des paquets orphelins et une mise à jour complète du système pour les paquets de votre distribution et Flatpaks.",
   "autosysup": "Mises à Jour Automatiques",
-  "autosysup_desc": "Activez les services de mise à jour automatique du système de LinuxToys pour systemd. Cela effectuera un nettoyage des paquets orphelins et une mise à jour complète du système pour les paquets de votre distribution et Flatpaks régulièrement sans avoir à vous inquiéter. RAPPEL : cela mettra uniquement à jour la version de publication actuelle de votre système, mais ne la mettrait pas à niveau - pour cela, vous devriez exécuter une mise à jour manuelle à partir du menu principal lorsqu'une nouvelle version est disponible."
+  "autosysup_desc": "Activez les services de mise à jour automatique du système de LinuxToys pour systemd. Cela effectuera un nettoyage des paquets orphelins et une mise à jour complète du système pour les paquets de votre distribution et Flatpaks régulièrement sans avoir à vous inquiéter. RAPPEL : cela mettra uniquement à jour la version de publication actuelle de votre système, mais ne la mettrait pas à niveau - pour cela, vous devriez exécuter une mise à jour manuelle à partir du menu principal lorsqu'une nouvelle version est disponible.",
+  "cachykrn_desc": "Le noyau personnalisé de CachyOS. Requis pour utiliser ananicy-cpp et SteamOS VRAM Optimization sur Fedora. Comprend des étapes pour le signer pour une utilisation avec Secure Boot si cette fonctionnalité est activée ou en mode de configuration."
 }

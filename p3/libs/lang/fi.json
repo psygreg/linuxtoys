@@ -320,7 +320,7 @@
   "astapro_desc": "Kokonaisvaltainen ohjelmistosuunnittelun työkalu UML-, ERD-, vuokaavio-, DFD- ja monella muulla",
   "positron_desc": "Yhdistää tutkimis- ja tuotantotyön yhteen ilmaiseen tekoälynsä tuettuun ympäristöön",
   "rstudio_desc": "Joukko työkaluja, joiden avulla voit olla tuottavampi R:n ja Pythonin kanssa.",
-  "ananicy_desc": "Daemon, joka automaattisesti säätää käynnissä olevien prosessien \"niceness\" niiden käyttäytymisen perusteella",
+  "ananicy_desc": "Daemon, joka automaattisesti säätää käynnissä olevien prosessien 'niceness' niiden käyttäytymisen perusteella järjestelmän vasteajan parantamiseksi. Vaatii CachyOS Kernel:ia Fedorassa.",
   "kdememfix_desc": "Vaihtaa KDE Plasma'n renderöintitaustaa OpenGL:ksi, joka käyttää huomattavasti vähemmän VRAM:ia",
   "zerotier_desc": "Luo virtuaalisia Ethernet-verkkoja lähes rajoittamattoman koon kanssa.",
   "faugus_desc": "Uudempi, kevyempi ja yksinkertaistettu sovellus pelien ja niiden WINE-etuliitteiden hallintaan Linuxissa, samanlainen kuin Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Päivitä Järjestelmä",
   "sysup_desc": "Suorittaa orvon pakettien puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketeille että Flatpakeille.",
   "autosysup": "Automaattiset Päivitykset",
-  "autosysup_desc": "Ota käyttöön LinuxToys:n järjestelmän automaattiset päivityspalvelut systemd:lle. Tämä suorittaa orfonpaketeiden puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketteille että Flatpakeille säännöllisesti ilman huolia. MUISTUTUS: se päivittää vain järjestelmäsi nykyisen julkaisuversion, mutta ei päivitä sitä - siihen sinun tulee suorittaa manuaalinen päivitys päävalikosta, kun uusi julkaisu on saatavilla."
+  "autosysup_desc": "Ota käyttöön LinuxToys:n järjestelmän automaattiset päivityspalvelut systemd:lle. Tämä suorittaa orfonpaketeiden puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketteille että Flatpakeille säännöllisesti ilman huolia. MUISTUTUS: se päivittää vain järjestelmäsi nykyisen julkaisuversion, mutta ei päivitä sitä - siihen sinun tulee suorittaa manuaalinen päivitys päävalikosta, kun uusi julkaisu on saatavilla.",
+  "cachykrn_desc": "CachyOS:n mukautettu kernel. Pakollinen ananicy-cpp ja SteamOS VRAM Optimization käyttämiseen Fedoralla. Sisältää vaiheet sen allekirjoittamiselle Secure Boot -käyttöä varten, jos tämä ominaisuus on käytössä tai asennustilassa."
 }

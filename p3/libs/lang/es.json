@@ -320,7 +320,7 @@
   "astapro_desc": "Herramienta completa de diseño de software con UML, ERD, diagrama de flujo, DFD y más",
   "positron_desc": "Unifica el trabajo de exploración y producción en un entorno gratuito asistido por IA",
   "rstudio_desc": "Un conjunto de herramientas diseñadas para ayudarte a ser más productivo con R y Python.",
-  "ananicy_desc": "Un daemon que ajusta automáticamente la \"niceness\" de los procesos en ejecución según su comportamiento",
+  "ananicy_desc": "Un daemon que ajusta automáticamente la 'niceness' de los procesos en ejecución según su comportamiento para mejorar la capacidad de respuesta del sistema. Requiere CachyOS Kernel en Fedora.",
   "kdememfix_desc": "Cambia el backend de renderización de KDE Plasma a OpenGL, que usa significativamente menos VRAM",
   "zerotier_desc": "Crea redes Ethernet virtuales de tamaño casi ilimitado.",
   "faugus_desc": "Una aplicación más nueva, ligera y simplificada para administrar tus juegos y sus prefijos de WINE en Linux, de manera similar a Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Actualizar Sistema",
   "sysup_desc": "Realiza una limpieza de paquetes huérfanos y una actualización completa del sistema para los paquetes de tu distribución y Flatpaks.",
   "autosysup": "Actualizaciones Automáticas",
-  "autosysup_desc": "Habilita los servicios de actualización automática del sistema de LinuxToys para systemd. Esto realizará una limpieza de paquetes huérfanos y una actualización completa del sistema para los paquetes de tu distribución y Flatpaks de forma regular sin que tengas que preocuparte. RECORDATORIO: solo actualizará la versión de lanzamiento actual de tu sistema, pero no la actualizará - para eso, debes ejecutar una actualización manual desde el menú principal cuando haya una nueva versión disponible."
+  "autosysup_desc": "Habilita los servicios de actualización automática del sistema de LinuxToys para systemd. Esto realizará una limpieza de paquetes huérfanos y una actualización completa del sistema para los paquetes de tu distribución y Flatpaks de forma regular sin que tengas que preocuparte. RECORDATORIO: solo actualizará la versión de lanzamiento actual de tu sistema, pero no la actualizará - para eso, debes ejecutar una actualización manual desde el menú principal cuando haya una nueva versión disponible.",
+  "cachykrn_desc": "El kernel personalizado de CachyOS. Necesario para usar ananicy-cpp y SteamOS VRAM Optimization en Fedora. Incluye pasos para firmarlo para su uso con Secure Boot si esa función está habilitada o en modo de configuración."
 }

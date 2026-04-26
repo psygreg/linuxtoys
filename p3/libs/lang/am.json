@@ -320,7 +320,7 @@
   "astapro_desc": "ሙሉ ሶስትdimensional ዲዛይን መሳሪያ ከ UML, ERD, ቅንጣት እና ሌላ",
   "positron_desc": "ስሞ የመርሃ ግብር እና ምርት ስራን በአንድ ነጻ AI-supported ምግባር ያብራራል",
   "rstudio_desc": "R እና Python ሆነ ያለዎ ተጨማሪ ማሳሩ ዎሩ ሳሃ ተሰሌ ከጀማቸው ተሠሩ",
-  "ananicy_desc": "ሞገዱ በራሳቸው ስርአታቸው ላይ እንዲስተካከል አግልግሎትወ (daemon) ዘርዝር ትንኮሳ",
+  "ananicy_desc": "A daemon that automatically adjusts the 'niceness' of running processes based on their behavior to improve system responsiveness. Requires the CachyOS Kernel on Fedora.",
   "kdememfix_desc": "KDE Plasma's ገናዎን OpenGL ላይ ይቀይራል ከ VRAM ያነሰ ሞዛቲ ይጠቀማል",
   "zerotier_desc": "ሲዓል ኢተርኔት ኔትወርኮች ሁሉንም ወሰን ያላቸው መጠን ይፈጥራል።",
   "faugus_desc": "አዲስ፣ 가벼운 እና ቀላል የጨምሮ ለመምራት ጨዋታዎች እና ሊናክስ ላይ የእነሱ ወይን ቅድሚያዎች፣ ሉትሪስ ተመሳሳይ።",
@@ -422,5 +422,6 @@
   "sysup": "ስርዓት አሻሻል",
   "sysup_desc": "የተሳሪ ፓኬጆችን 청ትን ራስ करে የአሁን ስርዓት ሙሌት ሁለቱ ስርዓቶች ወደ ፍሩላክ ወደ።",
   "autosysup": "ራስ-ሰር ስርዓት ሙሌት",
-  "autosysup_desc": "ለ systemd LinuxToys ራስ-ሰር ስርዓት ሙሌት ግልጋሎቶች አስችሎ ይጠቀሙት የትዮጵያ ስርዓት ዘመናዊ ግልጋሎት እነዚህን ሙሌት ማእከላዊ ስርዓቶች ሁለት ሲ በልተብ አይሆንም የእርስዎ ስርዓት ስሌት ወደ እንስርዓት ስሌት እና ልክ ትጠቃ ባል በመጠቃት ምክር: ይህ ስርዓት ቅናሽ ስሪት ማዞሪያ ስሩ የሚስተዋወቅ ነው።"
+  "autosysup_desc": "ለ systemd LinuxToys ራስ-ሰር ስርዓት ሙሌት ግልጋሎቶች አስችሎ ይጠቀሙት የትዮጵያ ስርዓት ዘመናዊ ግልጋሎት እነዚህን ሙሌት ማእከላዊ ስርዓቶች ሁለት ሲ በልተብ አይሆንም የእርስዎ ስርዓት ስሌት ወደ እንስርዓት ስሌት እና ልክ ትጠቃ ባል በመጠቃት ምክር: ይህ ስርዓት ቅናሽ ስሪት ማዞሪያ ስሩ የሚስተዋወቅ ነው።",
+  "cachykrn_desc": "ዝርዝር ያለ ተጠቃሚ-ተስተካክል ከርነል። ananicy-cpp እና SteamOS VRAM অপ୍ଟିମାଇଜେସନ Fedora ላይ ለመጠቀም ያስፈልጋል። ያ ባህሪ ከ ተጠቃሚ ወይም ስተተንዳፍ ሁኔታ ውስጥ Secure Boot ተጠቀሙ ምልክት ለ ደረጃ ማብራሪያ ካጠቃሚ።"
 }

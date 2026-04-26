@@ -320,7 +320,7 @@
   "astapro_desc": "Nástroj pro úplný design softwaru s UML, ERD, vývojovými diagramy, DFD a dalšími",
   "positron_desc": "Sjednocuje průzkumné a produkční práce v jednom bezplatném prostředí s podporou AI",
   "rstudio_desc": "Sada nástrojů navržených tak, aby vám pomohly být produktivnější s R a Pythonem.",
-  "ananicy_desc": "Démon, který automaticky upravuje \"niceness\" spuštěné procesy na základě jejich chování",
+  "ananicy_desc": "Daemon, který automaticky upravuje 'niceness' spuštěných procesů na základě jejich chování, aby se zlepšila odezva systému. Vyžaduje CachyOS Kernel na Fedoře.",
   "kdememfix_desc": "Přepíná backend pro vykreslování KDE Plasma na OpenGL, který používá výrazně méně VRAM",
   "zerotier_desc": "Vytváří virtuální sítě Ethernet téměř neomezené velikosti.",
   "faugus_desc": "Novější, lehčí a zjednodušená aplikace pro správu vašich her a jejich WINE předpon na Linuxu, podobná Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Aktualizace Systému",
   "sysup_desc": "Provádí čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks.",
   "autosysup": "Automatické Aktualizace",
-  "autosysup_desc": "Povolte služby automatického aktualizace systému LinuxToys pro systemd. Tím se bude pravidelně provádět čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks bez obav. PŘIPOMÍNKA: pouze aktualizuje aktuální verzi vydání vašeho systému, ale neinovuje jej - proto byste měli spustit ruční aktualizaci z hlavní nabídky, když je dostupné nové vydání."
+  "autosysup_desc": "Povolte služby automatického aktualizace systému LinuxToys pro systemd. Tím se bude pravidelně provádět čištění opuštěných balíčků a úplné aktualizace systému pro balíčky vaší distribuce i Flatpaks bez obav. PŘIPOMÍNKA: pouze aktualizuje aktuální verzi vydání vašeho systému, ale neinovuje jej - proto byste měli spustit ruční aktualizaci z hlavní nabídky, když je dostupné nové vydání.",
+  "cachykrn_desc": "Vlastní laděné jádro CachyOS. Vyžadováno pro používání ananicy-cpp a SteamOS VRAM optimalizace na Fedoře. Obsahuje kroky k podepsání pro použití se Secure Boot, pokud je tato funkce povolena nebo v režimu nastavení."
 }

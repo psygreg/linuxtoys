@@ -320,7 +320,7 @@
   "astapro_desc": "Totalverktøy for programvaredesign med UML, ERD, flytskjema, DFD og mye mer",
   "positron_desc": "Forener utforsking og produksjonarbeid i ett gratis AI-støttet miljø",
   "rstudio_desc": "Et sett verktøy bygget for å hjelpe deg med å være mer produktiv med R og Python.",
-  "ananicy_desc": "En daemon som automatisk justerer \"niceness\" av kjørende prosesser basert på deres oppførsel",
+  "ananicy_desc": "En daemon som automatisk justerer 'niceness' av kjørende prosesser basert på deres atferd for å forbedre systemets respons. Krever CachyOS Kernel på Fedora.",
   "kdememfix_desc": "Bytter KDE Plasma's renderingsbackend til OpenGL som bruker betydelig mindre VRAM",
   "zerotier_desc": "Skaper virtuelle Ethernet-nettverk av nesten ubegrenset størrelse.",
   "faugus_desc": "En nyere, lettere og forenklet applikasjon for å administrere spillene dine og deres WINE-prefikser på Linux, lignende Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Oppdater System",
   "sysup_desc": "Utfører opprydding av foreldreløse pakker og fullstendig systemoppdatering for både distribusjonspakker og Flatpaks.",
   "autosysup": "Automatisk Systemoppdatering",
-  "autosysup_desc": "Aktivér LinuxToys automatiske systemoppdateringstjenester for systemd. Dette vil utføre opprengjøring av foreldreløse pakker og fullstendig systemoppdatering for både distribusjonspakker og Flatpaks med jevne mellomrom uten å måtte bekymre deg. PÅMINNELSE: det vil kun oppdatere gjeldende utgivelsesversjon av systemet ditt, men ikke oppgradere det - for det bør du kjøre en manuell oppdatering fra hovedmenyen når en ny utgivelse er tilgjengelig."
+  "autosysup_desc": "Aktivér LinuxToys automatiske systemoppdateringstjenester for systemd. Dette vil utføre opprengjøring av foreldreløse pakker og fullstendig systemoppdatering for både distribusjonspakker og Flatpaks med jevne mellomrom uten å måtte bekymre deg. PÅMINNELSE: det vil kun oppdatere gjeldende utgivelsesversjon av systemet ditt, men ikke oppgradere det - for det bør du kjøre en manuell oppdatering fra hovedmenyen når en ny utgivelse er tilgjengelig.",
+  "cachykrn_desc": "CachyOS sitt egendefinerte kjerne. Påkrevd for å bruke ananicy-cpp og SteamOS VRAM Optimization på Fedora. Inkluderer trinn for å signere det for bruk med Secure Boot hvis den funksjonen er aktivert eller i oppsettningsmodus."
 }

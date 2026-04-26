@@ -319,7 +319,7 @@
   "astapro_desc": "Alat za čitav dizajn softvera sa UML, ERD, dijagramima toka, DFD i više",
   "positron_desc": "Ujedinjava istraživački i proizvodacijski rad u jednoj besplatnoj sredini s AI potporom",
   "rstudio_desc": "Skup alata izgrađenih da vam pomognu da budete produktivniji s R i Python.",
-  "ananicy_desc": "Demon koji automatski prilagođava \"niceness\" pokrenute procese na osnovu njihovog ponašanja",
+  "ananicy_desc": "Daemon koji automatski podešava 'niceness' pokrenute procese na osnovu njihovog ponašanja da bi poboljšao odzivnost sistema. Zahtijeva CachyOS Kernel na Fedori.",
   "kdememfix_desc": "Prebacuje KDE Plasma-u backend za renderiranje na OpenGL, koji koristi značajno manje VRAM",
   "zerotier_desc": "Stvara virtuelne Ethernet mreže gotovo neograničene veličine.",
   "faugus_desc": "Novija, lakša i pojednostavljena aplikacija za upravljanje vašim igrama i njihovim WINE prefiksima na Linux-u, slično Lutris-u.",
@@ -421,5 +421,6 @@
   "sysup": "Ažuriranje Sistema",
   "sysup_desc": "Vrši čišćenje siročnih paketa i potpunu ažuriranju sistema za paket distribucije i Flatpak aplikacije.",
   "autosysup": "Automatska Ažuriranja",
-  "autosysup_desc": "Omogućite usluge automatskog ažuriranja sistema LinuxToys za systemd. Ovo će izvršavati čišćenje siročnih paketa i potpunu ažuriranju sustava za paket distribucije i Flatpak aplikacije redovito bez da se brините. PODSJETNIK: ažuriraće samo trenutnu verziju izdanja vašeg sustava, ali ga neće nadograditi - za to, trebali biste pokrenuti ručnu ažuriranju iz glavnog izbornika kada je nova verzija dostupna."
+  "autosysup_desc": "Omogućite usluge automatskog ažuriranja sistema LinuxToys za systemd. Ovo će izvršavati čišćenje siročnih paketa i potpunu ažuriranju sustava za paket distribucije i Flatpak aplikacije redovito bez da se brините. PODSJETNIK: ažuriraće samo trenutnu verziju izdanja vašeg sustava, ali ga neće nadograditi - za to, trebali biste pokrenuti ručnu ažuriranju iz glavnog izbornika kada je nova verzija dostupna.",
+  "cachykrn_desc": "Prilagođeno jezgro CachyOS-a. Obavezno za upotrebu ananicy-cpp i SteamOS VRAM optimizacije na Fedori. Uključuje korake za potpisivanje za upotrebu sa Secure Boot-om ako je ta funkcija omogućena ili u režimu postavljanja."
 }

@@ -320,7 +320,7 @@
   "astapro_desc": "Teljes szoftvartervezési eszköz UML, ERD, folyamatábra, DFD és további lehetőségekkel",
   "positron_desc": "Az feltárási és produkciós munkát egy ingyenes, AI-támogatott környezetben egyesíti",
   "rstudio_desc": "Az R és Python mellett termelékenyebb munkavégzésére tervezett eszközök készlete.",
-  "ananicy_desc": "Daemon, amely automatikusan beállítja a futó folyamatok \"niceness\" értékét viselkedésük alapján",
+  "ananicy_desc": "Egy daemon, amely automatikusan módosítja a futó folyamatok 'niceness' értékét viselkedésük alapján a rendszer válaszképességének javítása érdekében. Szükséges CachyOS Kernel Fedorán.",
   "kdememfix_desc": "KDE Plasma renderelési háttérét OpenGL-re vált, amely jelentősen kevesebb VRAM-ot használ",
   "zerotier_desc": "Szinte korlátlan méretű virtuális Ethernet-hálózatokat hoz létre.",
   "faugus_desc": "Egy újabb, könnyebb és egyszerűsített alkalmazás a játékaid és WINE előtagjaik kezeléséhez Linux-on, hasonlóan a Lutris-hoz.",
@@ -422,5 +422,6 @@
   "sysup": "Rendszer Frissítése",
   "sysup_desc": "Elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra.",
   "autosysup": "Automatikus Rendszerfrissítések",
-  "autosysup_desc": "Engedélyezze a LinuxToys automatikus rendszerfrissítési szolgáltatásait a systemd számára. Ez rendszeresen elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra anélkül, hogy aggódni kellene. EMLÉKEZTETÕ: csak a rendszer aktuális kiadásverzióját frissíti, de nem frissíti azt - ehhez a fõmenübõl kézi frissítést kell futtatni, amikor új kiadás érhető el."
+  "autosysup_desc": "Engedélyezze a LinuxToys automatikus rendszerfrissítési szolgáltatásait a systemd számára. Ez rendszeresen elvégzi az árva csomagok tisztítását és teljes rendszerfrissítést a disztribúció csomagjaira és Flatpaksra anélkül, hogy aggódni kellene. EMLÉKEZTETÕ: csak a rendszer aktuális kiadásverzióját frissíti, de nem frissíti azt - ehhez a fõmenübõl kézi frissítést kell futtatni, amikor új kiadás érhető el.",
+  "cachykrn_desc": "A CachyOS egyéni hangolt kernele. Szükséges az ananicy-cpp és SteamOS VRAM Optimization használatához Fedorán. Tartalmazza az aláírás lépéseit a Secure Boot-tal való használathoz, ha ez a funkció engedélyezve van vagy beállítási módban van."
 }

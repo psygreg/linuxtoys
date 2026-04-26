@@ -320,7 +320,7 @@
   "astapro_desc": "Celovit pripomoček za načrtovanje programske opreme z UML, ERD, blok diagramom, DFD in drugimi",
   "positron_desc": "Poenoti raziskovalno in proizvodno delo v enem brezplačnem okolju z AI-podporo",
   "rstudio_desc": "Nabor orodij, zasnovan tako, da vam pomaga biti bolj produktiven z R in Pythonom.",
-  "ananicy_desc": "Daemon, ki samodejno prilagodi \"niceness\" tekoče procese glede na njihovo vedenje",
+  "ananicy_desc": "Daemon, ki avtomatično prilagaja 'niceness' tekočih procesov na podlagi njihovega vedenja za boljšo odzivnost sistema. Zahteva CachyOS Kernel na Fedori.",
   "kdememfix_desc": "Preklopi backend za prikaz KDE Plasma na OpenGL, ki uporabljа bistveno manj VRAM",
   "zerotier_desc": "Ustvarja virtualna Ethernet omrežja skoraj neomejene velikosti.",
   "faugus_desc": "Novejša, lažja in poenostavljeno aplikacija za upravljanje vaših iger in njihovih WINE predpon v Linuxu, podobno kot Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Posodobi Sistem",
   "sysup_desc": "Izvede čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks.",
   "autosysup": "Samodejne Posodobitve",
-  "autosysup_desc": "Omogočite storitve samodejne posodobitve sistema LinuxToys za systemd. To bo redno izvajalo čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks brez skrbi. OPOMNIK: bo posodobil samo текућу verzijo izdaje vašega sistema, ga pa ne bo nadaktualiziral - zato bi moral zagnati ročno posodobitev iz glavnega menuja, ko je nova verzija na voljo."
+  "autosysup_desc": "Omogočite storitve samodejne posodobitve sistema LinuxToys za systemd. To bo redno izvajalo čiščenje sirovih paketov in polno posodobitev sistema za pakete distribucije in Flatpaks brez skrbi. OPOMNIK: bo posodobil samo текућу verzijo izdaje vašega sistema, ga pa ne bo nadaktualiziral - zato bi moral zagnati ročno posodobitev iz glavnega menuja, ko je nova verzija na voljo.",
+  "cachykrn_desc": "Prilagojeno jedro CachyOS. Potrebno za uporabo ananicy-cpp in SteamOS VRAM Optimization na Fedori. Vključuje korake za njegovo podpisovanje za uporabo s Secure Boot, če je ta funkcija omogočena ali v načinu konfiguracije."
 }

@@ -320,7 +320,7 @@
   "astapro_desc": "Całkowite narzędzie do projektowania oprogramowania z UML, ERD, diagramem przepływu, DFD i nie tylko",
   "positron_desc": "Ujednolica pracę eksploracji i produkcji w jednym bezpłatnym środowisku obsługiwanym przez sztuczną inteligencję",
   "rstudio_desc": "Zestaw narzędzi zaprojektowanych, aby pomóc ci być bardziej produktywnym z R i Pythonem.",
-  "ananicy_desc": "Demon, który automatycznie dostosowuje \"niceness\" uruchomionych procesów na podstawie ich zachowania",
+  "ananicy_desc": "Daemon, który automatycznie dostosowuje 'niceness' uruchomionych procesów na podstawie ich zachowania, aby poprawić responsywność systemu. Wymaga CachyOS Kernel na Fedorze.",
   "kdememfix_desc": "Przełącza backend renderowania KDE Plasma na OpenGL, który zużywa znacznie mniej VRAM",
   "zerotier_desc": "Tworzy wirtualne sieci Ethernet prawie nieograniczonego rozmiaru.",
   "faugus_desc": "Nowsza, lżejsza i uproszczona aplikacja do zarządzania grami i ich prefiksami WINE na Linuxie, podobnie do Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Zaktualizuj System",
   "sysup_desc": "Wykonuje czyszczenie opuszczonych pakietów i pełną aktualizację systemu dla pakietów dystrybucji i Flatpaks.",
   "autosysup": "Automatyczne Aktualizacje",
-  "autosysup_desc": "Włącz automatyczne usługi aktualizacji systemu LinuxToys dla systemd. Spowoduje to regularne czyszczenie porzuconych pakietów i pełną aktualizację systemu dla pakietów dystrybucji i Flatpaks bez konieczności martwienia się. PRZYPOMNIENIE: zaktualizuje tylko bieżącą wersję wydania systemu, ale go nie uaktualni - w tym celu należy uruchomić ręczną aktualizację z menu głównego, gdy dostępna jest nowa wersja."
+  "autosysup_desc": "Włącz automatyczne usługi aktualizacji systemu LinuxToys dla systemd. Spowoduje to regularne czyszczenie porzuconych pakietów i pełną aktualizację systemu dla pakietów dystrybucji i Flatpaks bez konieczności martwienia się. PRZYPOMNIENIE: zaktualizuje tylko bieżącą wersję wydania systemu, ale go nie uaktualni - w tym celu należy uruchomić ręczną aktualizację z menu głównego, gdy dostępna jest nowa wersja.",
+  "cachykrn_desc": "Dostosowany kernel CachyOS. Wymagany do używania ananicy-cpp i SteamOS VRAM Optimization na Fedorze. Zawiera kroki podpisania go do użytku z Secure Boot, jeśli ta funkcja jest włączona lub w trybie konfiguracji."
 }

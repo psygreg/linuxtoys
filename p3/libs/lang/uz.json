@@ -319,7 +319,7 @@
   "astapro_desc": "Umumiy dastur dizayni vositasi UML, ERD, oqim sxemasi, DFD va boshqalar bilan",
   "positron_desc": "Tadqiqot va ishlab chiqarish ishini AI-tomonida qo'llab-quvvatlangan bitta bepul muhitda birlashtiradi",
   "rstudio_desc": "R va Python bilan yanada mahsulot bo'lish uchun yordam beradigan asboblar to'plami.",
-  "ananicy_desc": "Daemon, u ishlamayotgan jarayonlarning \"niceness\"ni ularning xatti-harakatiga asoslanib avtomatik ravishda sozlaydi",
+  "ananicy_desc": "Daemon, ish proceslarining 'niceness' qiymatini ularning xatti-harakatiga asosan avtomatik ravishda sozlaydigan va sistema ianvaroqligini yaxshi korishini beradigan. Fedora-da CachyOS Kernel talab qilinadi.",
   "kdememfix_desc": "KDE Plasma's rendering back-endni OpenGL ga o'tkazadi, u KO'P VRAM dan less ishlatadi",
   "zerotier_desc": "Deyarli cheksiz o'lchamdagi virtual Ethernet tarmoqlarini yaratadi.",
   "faugus_desc": "Linux-da o'yinlaringiz va WINE prefikslari bilan ishlash uchun yangi, engil va soddalashtirgan dastur, Lutris-ga o'xshash.",
@@ -421,5 +421,6 @@
   "sysup": "Sistemani Yangilash",
   "sysup_desc": "Teriqalar paketlarini tozalash va taqsimot paketlari va Flatpaks uchun to'liq sistem yangilashni bajaradi.",
   "autosysup": "Avtomatik Yangilashlari",
-  "autosysup_desc": "LinuxToys systemd uchun avtomatik sistem yangilash xizmatlarini yoqing. Bu yetim paketlarni tozalash va ushbu tarqalish paketlari va Flatpaks uchun to'liq sistem yangilashni muntazam ravishda o'tkazadi, shunchaki o'zingiz haqida xavotir qilishingiz kerak bo'lmaydi. ESOLAMNOMA: bu faqat sizning sistemingizning joriy chiqarish versiyasini yangilaydi, lekin uni yangilamas - buning uchun yangi chiqarish mavjud bo'lganda asosiy menyudan qo'lda yangilashni o'tkazishingiz kerak."
+  "autosysup_desc": "LinuxToys systemd uchun avtomatik sistem yangilash xizmatlarini yoqing. Bu yetim paketlarni tozalash va ushbu tarqalish paketlari va Flatpaks uchun to'liq sistem yangilashni muntazam ravishda o'tkazadi, shunchaki o'zingiz haqida xavotir qilishingiz kerak bo'lmaydi. ESOLAMNOMA: bu faqat sizning sistemingizning joriy chiqarish versiyasini yangilaydi, lekin uni yangilamas - buning uchun yangi chiqarish mavjud bo'lganda asosiy menyudan qo'lda yangilashni o'tkazishingiz kerak.",
+  "cachykrn_desc": "CachyOS kustomli tuning kerneli. Fedora-da ananicy-cpp va SteamOS VRAM Optimization istifoda qilish uchun talab qilinadi. Secure Boot bilan foydalanish uchun imzo qilish bosqichlarini o'z ichiga oladi, agar bu xususiyat faollashtirilgan bo'lsa yoki sozlash rejimida bo'lsa."
 }

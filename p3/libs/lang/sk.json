@@ -320,7 +320,7 @@
   "astapro_desc": "Úplný nástroj na návrh softvéru s UML, ERD, vývojovým diagramom, DFD a ďalšími",
   "positron_desc": "Zjednocuje prieskumnú a produkčnú prácu v jednom bezplatnom prostredí s podporou AI",
   "rstudio_desc": "Sada nástrojov navrhnutá na to, aby vám pomohla byť produktívnejší s R a Pythonom.",
-  "ananicy_desc": "Daemon, ktorý automaticky nastavuje \"niceness\" spustené procesy na základe ich správania",
+  "ananicy_desc": "Daemon, ktorý automaticky upravuje 'niceness' spustených procesov na základe ich správania, aby sa zlepšila odozva systému. Vyžaduje CachyOS Kernel na Fedore.",
   "kdememfix_desc": "Prepína backend vykresľovania KDE Plasma na OpenGL, ktorý používa výrazne menej VRAM",
   "zerotier_desc": "Vytvára virtuálne siete Ethernet takmer neobmedzené veľkosti.",
   "faugus_desc": "Novšia, ľahšia a zjednodušená aplikácia na správu vašich hier a ich predpôn WINE na Linuxe, podobne ako Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Aktualizácia Systému",
   "sysup_desc": "Vykonáva vyčistenie opúšťaných balíčkov a úplnú aktualizáciu systému pre balíčky distribúcie a Flatpaks.",
   "autosysup": "Automatické Aktualizácie",
-  "autosysup_desc": "Aktivujte automatické aktualizácie systému LinuxToys pre systemd. Toto bude pravidelne vykonávať čistenie opúšťaných balíčkov a úplnú aktualizáciu systému pre balíčky distribúcie a Flatpaks bez potreby sa obávať. PRIPOMIENKA: bude aktualizovať iba aktuálnu verziu vydania vášho systému, ale neinovuje ho - na to by ste mali spustiť ručnú aktualizáciu z hlavného menu, keď je dostupná nová verzia."
+  "autosysup_desc": "Aktivujte automatické aktualizácie systému LinuxToys pre systemd. Toto bude pravidelne vykonávať čistenie opúšťaných balíčkov a úplnú aktualizáciu systému pre balíčky distribúcie a Flatpaks bez potreby sa obávať. PRIPOMIENKA: bude aktualizovať iba aktuálnu verziu vydania vášho systému, ale neinovuje ho - na to by ste mali spustiť ručnú aktualizáciu z hlavného menu, keď je dostupná nová verzia.",
+  "cachykrn_desc": "Prispôsobené jadro CachyOS. Vyžaduje sa na používanie ananicy-cpp a SteamOS VRAM Optimization na Fedore. Zahŕňa kroky na jeho podpísanie na použitie so Secure Boot, ak je táto funkcia povolená alebo v režime nastavenia."
 }

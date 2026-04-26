@@ -320,7 +320,7 @@
   "astapro_desc": "Umfassendes Software-Design-Tool mit UML, ERD, Flowchart, DFD und mehr",
   "positron_desc": "Vereinigt Erkennungs- und Produktionsarbeit in einer kostenlosen KI-gestützten Umgebung",
   "rstudio_desc": "Ein Satz von Tools, die dir helfen, produktiver mit R und Python zu sein.",
-  "ananicy_desc": "Ein Daemon, das automatisch die \"Priorität\" laufender Prozesse basierend auf deren Verhalten anpasst",
+  "ananicy_desc": "Ein Daemon, der die 'Niceness' laufender Prozesse automatisch basierend auf ihrem Verhalten anpasst, um die Reaktionsfähigkeit des Systems zu verbessern. Erfordert CachyOS Kernel unter Fedora.",
   "kdememfix_desc": "Schaltet das Rendering-Backend von KDE Plasma auf OpenGL um, das erheblich weniger VRAM nutzt",
   "zerotier_desc": "Erstellt virtuelle Ethernet-Netzwerke fast unbegrenzter Größe.",
   "faugus_desc": "Eine neuere, leichtere und vereinfachte Anwendung zur Verwaltung Ihrer Spiele und ihrer WINE-Präfixe unter Linux, ähnlich wie Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "System Aktualisieren",
   "sysup_desc": "Führt eine Bereinigung verwaister Pakete und ein vollständiges Systemupdate für Ihre Distributionspakete und Flatpaks durch.",
   "autosysup": "Automatische Systemupdates",
-  "autosysup_desc": "Aktivieren Sie die automatischen Systemupdatedienste von LinuxToys für systemd. Dies führt eine Bereinigung verwaister Pakete und ein vollständiges Systemupdate für Ihre Distributionspakete und Flatpaks regelmäßig aus, ohne sich Sorgen machen zu müssen. ERINNERUNG: Es wird nur die aktuelle Veröffentlichungsversion Ihres Systems aktualisiert, aber nicht aktualisiert - dafür sollten Sie ein manuelles Update aus dem Hauptmenü ausführen, wenn eine neue Version verfügbar ist."
+  "autosysup_desc": "Aktivieren Sie die automatischen Systemupdatedienste von LinuxToys für systemd. Dies führt eine Bereinigung verwaister Pakete und ein vollständiges Systemupdate für Ihre Distributionspakete und Flatpaks regelmäßig aus, ohne sich Sorgen machen zu müssen. ERINNERUNG: Es wird nur die aktuelle Veröffentlichungsversion Ihres Systems aktualisiert, aber nicht aktualisiert - dafür sollten Sie ein manuelles Update aus dem Hauptmenü ausführen, wenn eine neue Version verfügbar ist.",
+  "cachykrn_desc": "Der benutzerdefinierte Kernel von CachyOS. Erforderlich zur Verwendung von ananicy-cpp und SteamOS VRAM Optimization auf Fedora. Enthält Schritte zum Signieren für die Verwendung mit Secure Boot, wenn dieses Feature aktiviert ist oder sich im Setup-Modus befindet."
 }

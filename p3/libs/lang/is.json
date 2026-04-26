@@ -320,7 +320,7 @@
   "astapro_desc": "Heildstætt hugbúnaðarhönnunartæki með UML, ERD, flæðikorti, DFD og margt fleira",
   "positron_desc": "Sameinir rannsókn og framleiðsluvinnu í einu ókeypis umhverfi með AI stuðningi",
   "rstudio_desc": "Sett af verkfærum sem eru hönnuð til að hjálpa þér að vera framleiðnari með R og Python.",
-  "ananicy_desc": "Daemon sem sjálfkrafa stillir \"niceness\" keyrrandi ferla miðað við hegðun þeirra",
+  "ananicy_desc": "Daemon sem sjálfkrafa stillir 'niceness' keyrrandi ferla á grundvelli hegðunar þeirra til að bæta bringandi bætingu kerfisins. Krefst CachyOS Kernel á Fedora.",
   "kdememfix_desc": "Skiptir renderingarafgreiðslunni KDE Plasma yfir til OpenGL sem notar verulega minni VRAM",
   "zerotier_desc": "Skapar sýndar Ethernet-net af næstum ótakmörkuðum stærðum.",
   "faugus_desc": "Nýrri, léttari og einfaldari forrit til að stjórna leikjum þínum og WINE forskeytum þeirra á Linux, svipað og Lutris.",
@@ -422,5 +422,6 @@
   "sysup": "Uppfæra Kerfi",
   "sysup_desc": "Framkvæmir hreinsun á munaðarlausum pökkum og fullri kerfisuppfærslu fyrir dreifingarpakka og Flatpaks þína.",
   "autosysup": "Sjálfvirk Kerfisuppfærslur",
-  "autosysup_desc": "Virkjaðu sjálfvirka kerfisuppfærslur LinuxToys fyrir systemd. Þetta mun framkvæma hreinsun ómunaðarlausra paKka og fulla kerfisuppfærslu fyrir dreifingarpakka þína og Flatpaks reglulega án þess að þurfa að hafa áhyggjur. MINNING: það mun aðeins uppfæra núverandi útgáfuútgáfu kerfisins þíns, en mun ekki uppfæra hana - fyrir það ættir þú að keyra handvirka uppfærslu frá aðalvalmyndinni þegar ný útgáfa er tiltæk."
+  "autosysup_desc": "Virkjaðu sjálfvirka kerfisuppfærslur LinuxToys fyrir systemd. Þetta mun framkvæma hreinsun ómunaðarlausra paKka og fulla kerfisuppfærslu fyrir dreifingarpakka þína og Flatpaks reglulega án þess að þurfa að hafa áhyggjur. MINNING: það mun aðeins uppfæra núverandi útgáfuútgáfu kerfisins þíns, en mun ekki uppfæra hana - fyrir það ættir þú að keyra handvirka uppfærslu frá aðalvalmyndinni þegar ný útgáfa er tiltæk.",
+  "cachykrn_desc": "Sérsniðið kernel CachyOS. Nauðsynlegt til að nota ananicy-cpp og SteamOS VRAM Optimization á Fedora. Inniheldur skref til að undirrita það til notkunar með Secure Boot ef sú eiginleiki er virkjuð eða í uppsetningarham."
 }
