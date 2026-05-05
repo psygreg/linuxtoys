@@ -2,6 +2,7 @@
 
 import sys
 import os # Import the 'os' module
+from app.manifest_helper import run_update_check_cli
 
 if __name__ == "__main__":
     # --- SET SCRIPT_DIR ENVIRONMENT VARIABLE ---
@@ -39,13 +40,9 @@ if __name__ == "__main__":
         pass  # dev_mode not available
     
     # --- UPDATE CHECK ---
-    # Only run git-based updater in CLI mode (when EASY_CLI is set)
-    # This preserves the git-based update functionality for development/git-cloned versions
-    # when used in CLI mode, while GUI mode uses the new GitHub API-based checker
+    # Check for updates only in CLI mode (EASY_CLI=1) and display feedback in the terminal.
     if os.environ.get('EASY_CLI') == '1':
-        # In CLI mode, use the git-based updater for development versions
-        dir = os.path.dirname(os.path.realpath(__file__))
-        os.system(f'{dir}/helpers/update_self.sh')
+        run_update_check_cli()
 
     # --- DISPLAY CHECK FOR GUI MODE ---
     # Check for display server before importing GTK to prevent crashes in headless environments

@@ -356,7 +356,7 @@ def run_update_check_cli(translations=None):
         resp = input(">>> Do you want to update to the latest version? [y/N]: ").strip().lower()
         if resp == 'y':
             try:
-                subprocess.run(['sh', '-c', 'curl -fsSL https://linux.toys/install.sh | sh'], check=True)
+                subprocess.run(['sh', '-c', 'curl -fsSL https://linux.toys/install.sh | bash'], check=True)
             except Exception as e:
                 print(f"✗ An error occurred during the update process.\n{str(e)}")
     else:
