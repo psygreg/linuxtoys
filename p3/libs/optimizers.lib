@@ -21,7 +21,7 @@ cachyos_sysd_lib () {
         echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
         } > "modprobe.txt"
     {
-        echo "${_cfgsource}/lib/sysctl.d/70-cachyos-settings.conf"
+        echo "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/70-linuxtoys-settings.conf"
         echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
         echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
         } > "other.txt"
@@ -35,11 +35,7 @@ cachyos_sysd_lib () {
         copy_ -f "$file" "/usr/lib/$file"
     done
     [ -d "/usr/share/X11/xorg.conf.d" ] || prep_dir /usr/share/X11/xorg.conf.d
-    # Check if system has more than 16GB of RAM before installing 70-cachyos-settings.conf due to swap settings
-    local _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-    if [ "$_total_ram_kb" -gt 16777216 ]; then
-        prep_create /usr/lib/sysctl.d/70-cachyos-settings.conf && copy_ -f 70-cachyos-settings.conf /usr/lib/sysctl.d/
-    fi
+    prep_create /usr/lib/sysctl.d/70-linuxtoys-settings.conf && copy_ -f 70-linuxtoys-settings.conf /usr/lib/sysctl.d/
     prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && copy_ -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
     prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && copy_ -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
 }
