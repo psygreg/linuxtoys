@@ -182,6 +182,9 @@ def _parse_operation(op_line):
         elif op_type == "chsh":
             # Shell change: "chsh /bin/zsh"
             return op_type, parts[1:]
+        elif op_type == "swapfile":
+            # Swapfile operations: "swapfile btrfs /path/to/swapfile" or "swapfile regular /path/to/swapfile"
+            return op_type, parts[1:]
         elif op_type == "warn":
             # Warning: "WARN: message text" -> keep all parts as operands
             return op_type, parts[1:]
@@ -526,6 +529,45 @@ def _reverse_grubbyargs_update(karg):
     return f"sudo grubby --remove-args=\"{karg}\" --update-kernel ALL || true"
 
 
+def _reverse_swapfile_creation(swapfile_type, swapfile_path):
+    """
+    Reverse swapfile creation by disabling and removing the swapfile.
+    
+    Handles both btrfs and regular swapfile types by:
+    1. Disabling the swapfile with swapoff
+    2. Removing the swapfile entry from /etc/fstab
+    3. Deleting the swapfile
+    4. For btrfs swapfiles, updating initramfs to ensure proper kernel configuration
+    
+    Args:
+        swapfile_type: "btrfs" or "regular" indicating the swapfile type
+        swapfile_path: path to the swapfile to remove
+    
+    Returns:
+        list of shell commands to reverse the swapfile creation
+    """
+    if not swapfile_path:
+        return []
+    
+    commands = []
+    
+    # Disable the swapfile
+    commands.append(f"sudo swapoff {swapfile_path} 2>/dev/null || true")
+    
+    # Remove the swapfile entry from fstab (escape special characters in path)
+    escaped_path = swapfile_path.replace("/", "\\/")
+    commands.append(f'sudo sed -i "\\|{escaped_path}|d" /etc/fstab || true')
+    
+    # Remove the swapfile itself
+    commands.append(f"sudo rm -f {swapfile_path} || true")
+    
+    # For btrfs swapfiles, update initramfs since kernel parameters may have been set
+    if swapfile_type and swapfile_type.lower() == "btrfs":
+        commands.append("initramfs_upd")
+    
+    return commands
+
+
 def _reverse_operation(op_line, package_manager):
     """
     Generate shell command(s) to reverse a single operation.
@@ -564,6 +606,12 @@ def _reverse_operation(op_line, package_manager):
     elif op_type == "chsh" and operands:
         # Reverse shell change by reverting to bash
         return _reverse_shell_change(operands[0])
+    
+    elif op_type == "swapfile" and len(operands) >= 2:
+        # Reverse swapfile creation: format is "swapfile type path"
+        # operands[0] = type ("btrfs" or "regular")
+        # operands[1] = path to the swapfile
+        return _reverse_swapfile_creation(operands[0], operands[1])
     
     elif op_type == "created" and operands:
         # Reverse created files by deleting them
