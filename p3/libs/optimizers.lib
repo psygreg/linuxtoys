@@ -328,7 +328,7 @@ zswap_lib () {
         pacman -Qi zram-generator &>/dev/null && pkg_remove zram-generator
     fi
     # prepare zswap
-    ZSWAP_PARAMS="zswap.enabled=1 zswap.shrinker_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=25 zswap.zpool=zsmalloc
+    ZSWAP_PARAMS="zswap.enabled=1 zswap.shrinker_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=25 zswap.zpool=zsmalloc"
     if is_fedora; then
         grubbyargs_upd "$ZSWAP_PARAMS"
     elif is_ostree; then
