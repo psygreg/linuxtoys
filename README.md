@@ -18,7 +18,7 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **Manjaro** and **Big Linux**
 *   **OpenSUSE** (Leap, Slowroll and Tumbleweed)
 *   Fedora-based **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
-*   **Solus** - directly from git tree for now (LT6 beta)
+*   **Solus**
 
 Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices.
 
