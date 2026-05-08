@@ -22,7 +22,7 @@ OUTPUT_PATH_BASE="${1:-.}/build_output"
 _msg info "Fetching latest release information from GitHub..."
 
 # Fetch the latest release from GitHub API
-GITHUB_API="https://api.github.com/repos/linuxtoys/linuxtoys/releases/latest"
+GITHUB_API="https://api.github.com/repos/psygreg/linuxtoys/releases/latest"
 RELEASE_INFO=$(curl -s "$GITHUB_API")
 
 # Check if the API call was successful
@@ -31,8 +31,9 @@ if ! echo "$RELEASE_INFO" | grep -q '"tag_name"'; then
     exit 1
 fi
 
-# Extract version from tag (remove 'v' prefix if present)
-LT_VERSION=$(echo "$RELEASE_INFO" | grep '"tag_name"' | head -1 | sed 's/.*"tag_name": "\(.*\)".*/\1/' | sed 's/^v//')
+# Extract version from tag (keep original, also extract clean version)
+LT_TAG=$(echo "$RELEASE_INFO" | grep '"tag_name"' | head -1 | sed 's/.*"tag_name": "\(.*\)".*/\1/')
+LT_VERSION=$(echo "$LT_TAG" | sed 's/^v//')
 
 if [ -z "$LT_VERSION" ]; then
     _msg error "Could not extract version from GitHub release"
@@ -45,7 +46,7 @@ _msg info "Latest version: $LT_VERSION"
 _msg info "Downloading tarball and calculating SHA256..."
 
 # Get the tarball URL and download it
-TARBALL_URL="https://github.com/linuxtoys/linuxtoys/archive/refs/tags/v$LT_VERSION.tar.gz"
+TARBALL_URL="https://github.com/psygreg/linuxtoys/archive/refs/tags/$LT_TAG.tar.gz"
 TEMP_TARBALL="/tmp/linuxtoys-$LT_VERSION.tar.gz"
 
 # Download the tarball
@@ -91,12 +92,30 @@ rm -rf "$OUTPUT_PATH"
 mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
 # Copy package.yml to the output directory and update version and sha256
 cp "$ROOT_DIR/dev/build/solus/package.yml" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/package.yml"
-sed -i "s/^version    : .*/version    : $LT_VERSION/" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/package.yml"
-sed -i "s/: [a-f0-9]\{64\}$/: $LT_SHA256/" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/package.yml"
-# Also update the version in the source URL
-sed -i "s|/v[0-9.]\+\.tar\.gz|/v$LT_VERSION.tar.gz|g" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/package.yml"
+
+PACKAGE_YML="$OUTPUT_PATH/linuxtoys-$LT_VERSION/package.yml"
+
+# Update version - using more flexible regex to handle varying whitespace
+sed -i "s/^version[[:space:]]*:[[:space:]].*/version    : $LT_VERSION/" "$PACKAGE_YML"
+
+# Update the entire source block with new version and sha256
+sed -i "s|https://github.com/psygreg/linuxtoys/archive/refs/tags/[^:]*\.tar\.gz[[:space:]]*:[[:space:]]*[a-f0-9]\{64\}|https://github.com/psygreg/linuxtoys/archive/refs/tags/$LT_TAG.tar.gz : $LT_SHA256|g" "$PACKAGE_YML"
+
+# Verify the updates were applied
+if ! grep -q "version    : $LT_VERSION" "$PACKAGE_YML"; then
+    _msg error "Failed to update version in package.yml"
+    exit 1
+fi
+
+if ! grep -q "$LT_SHA256" "$PACKAGE_YML"; then
+    _msg error "Failed to update SHA256 in package.yml"
+    exit 1
+fi
+
 _msg info "Updated package.yml with version $LT_VERSION and SHA256 hash"
 _msg info "Build structure created at: $OUTPUT_PATH/linuxtoys-$LT_VERSION"
+_msg info "Package.yml preview:"
+head -5 "$PACKAGE_YML"
 
 # Build with solbuild
 _msg info "Starting solbuild build process..."
