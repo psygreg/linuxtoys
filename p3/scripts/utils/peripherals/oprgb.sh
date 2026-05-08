@@ -6,26 +6,19 @@
 # repo: https://openrgb.org
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
-_flatpaks=(
-    org.openrgb.OpenRGB
-)
-_flatpak_
-if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+_lang_
+pkg_flat org.openrgb.OpenRGB
+if is_fedora || is_ostree; then
     sudo_rq
     rpmfusion_chk
-    _packages=(openrgb-udev-rules)
-    _install_
+    pkg_install openrgb-udev-rules
 else
-    cd $HOME
+    prep_tmp
     wget https://openrgb.org/releases/release_0.9/60-openrgb.rules
     sudo_rq
-    sudo cp 60-openrgb.rules /usr/lib/udev/rules.d/
+    prep_create /usr/lib/udev/rules.d/60-openrgb.rules
+    copy_ -f 60-openrgb.rules /usr/lib/udev/rules.d/
     sudo udevadm control --reload-rules && sudo udevadm trigger
-    rm 60-openrgb.rules
 fi
 zeninf "$msg036"

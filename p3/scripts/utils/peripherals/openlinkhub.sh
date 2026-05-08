@@ -17,26 +17,24 @@ sudo_rq
 if is_ubuntu; then
     sudo add-apt-repository ppa:jurkovic-nikola/openlinkhub
     sudo apt update
-    sudo apt install -y openlinkhub
+    pkg_install openlinkhub
 elif is_debian; then
-    cd $HOME
+    prep_tmp
     wget "https://github.com/jurkovic-nikola/OpenLinkHub/releases/download/${tag}/OpenLinkHub_${tag}_amd64.deb"
-    sudo apt install -y ./OpenLinkHub_${tag}_amd64.deb
+    pkg_fromfile ./OpenLinkHub_${tag}_amd64.deb
 elif is_ostree; then
-    cd $HOME
+    prep_tmp
     wget https://copr.fedorainfracloud.org/coprs/jurkovic-nikola/OpenLinkHub/repo/fedora-$(rpm -E %fedora)/jurkovic-nikola-OpenLinkHub-fedora-$(rpm -E %fedora).repo
     sudo install -o 0 -g 0 jurkovic-nikola-OpenLinkHub-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/jurkovic-nikola-OpenLinkHub-fedora-$(rpm -E %fedora).repo
     rpm-ostree refresh-md
-    rm jurkovic-nikola-OpenLinkHub-fedora-$(rpm -E %fedora).repo
-    sudo rpm-ostree install OpenLinkHub
+    pkg_install OpenLinkHub
 elif is_fedora; then
     sudo dnf copr enable jurkovic-nikola/OpenLinkHub
-    sudo dnf install -y OpenLinkHub
+    pkg_install OpenLinkHub
 elif is_arch || is_cachy; then
-    _packages=(openlinkhub-bin)
-    _install_
+    pkg_install openlinkhub-bin
 fi
-sudo systemctl enable --now OpenLinkHub.service
+sysd_enable OpenLinkHub.service
 sleep 1
 xdg-open http://127.0.0.1:27003
 zeninf "$finishmsg"

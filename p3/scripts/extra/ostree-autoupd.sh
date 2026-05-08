@@ -8,13 +8,11 @@
 # optimized-only: yes
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
 AUTOPOLICY="stage"
-sudo cp /etc/rpm-ostreed.conf /etc/rpm-ostreed.conf.bak
+prep_edit /etc/rpm-ostreed.conf
 if grep -q "^AutomaticUpdatePolicy=" /etc/rpm-ostreed.conf; then
     sudo sed -i "s/^AutomaticUpdatePolicy=.*/AutomaticUpdatePolicy=${AUTOPOLICY}/" /etc/rpm-ostreed.conf
 else
@@ -28,6 +26,7 @@ else
     ' /etc/rpm-ostreed.conf | sudo tee /etc/rpm-ostreed.conf > /dev/null
 fi
 echo "AutomaticUpdatePolicy set to: $AUTOPOLICY"
-sudo systemctl enable rpm-ostreed-automatic.timer --now
+sysd_enable rpm-ostreed-automatic.timer
+sysd_start rpm-ostreed-automatic.timer
 unset $AUTOPOLICY
 zeninf "$msg018"

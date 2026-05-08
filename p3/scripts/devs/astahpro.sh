@@ -7,23 +7,20 @@
 # needed: adoptium-jdk
 # compat: debian, ubuntu, fedora
 
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
 
 DEB_LINK="https://members.change-vision.com/download/files/astah_professional/latest/linux_deb"
 RPM_LINK="https://members.change-vision.com/download/files/astah_professional/latest/linux_rpm"
 
 sudo_rq
-
 if is_debian;then
     _deb="$(curl -s -o /dev/null -w "%{redirect_url}\n" "${DEB_LINK}")"
     _deb_name=$(basename ${_deb})
 
     if curl -fsSL "${_deb}" -o "/tmp/${_deb_name}"; then
 		sudo apt update || true
-		if sudo apt install -y "/tmp/${_deb_name}"; then
+		if pkg_fromfile "/tmp/${_deb_name}"; then
 			zeninf "Astah Pro installed successfully!"
 		else
 			fatal "Installation failed (apt)."
@@ -37,16 +34,10 @@ elif is_fedora;then
 
     if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
 		if command -v dnf >/dev/null 2>&1; then
-			if sudo dnf install -y "/tmp/${_rpm_name}"; then
+			if pkg_fromfile "/tmp/${_rpm_name}"; then
 				zeninf "Astah Pro installed successfully!"
 			else
 				fatal "Installation failed (dnf)."
-			fi
-		else
-			if sudo yum install -y "/tmp/${_rpm_name}"; then
-				zeninf "Astah Pro installed successfully!"
-			else
-				fatal "Installation failed (yum)."
 			fi
 		fi
 	else

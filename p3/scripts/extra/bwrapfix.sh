@@ -7,10 +7,9 @@
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
+prep_create /etc/apparmor.d/bwrap
 sudo sh -c 'cat > /etc/apparmor.d/bwrap <<EOF
 # Este perfil permite tudo e só existe para dar ao
 # aplicativo um nome em vez de ter o rótulo "unconfined"
@@ -25,4 +24,6 @@ profile bwrap /usr/bin/bwrap flags=(unconfined) {
   include if exists <local/bwrap>
 }
 EOF'
-sudo systemctl restart apparmor.service
+sysd_stop apparmor.service
+sysd_start apparmor.service
+zeninf "$msg018"

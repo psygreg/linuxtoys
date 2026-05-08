@@ -5,5 +5,6 @@
 # nocontainer
 # desktop: gnome
 # repo: https://github.com/andrecavalcantebr/waylume
+# revert: no
 
 curl -fsSL https://raw.githubusercontent.com/andrecavalcantebr/waylume/main/waylume.sh | bash -s -- --install

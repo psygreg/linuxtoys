@@ -8,11 +8,8 @@
 # repo: https://thekelleys.org.uk/gitweb/?p=dnsmasq.git
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
+_lang_
 sudo_rq
 dnsmasq_lib
 zeninf "$msg036"

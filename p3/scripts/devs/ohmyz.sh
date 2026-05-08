@@ -7,17 +7,13 @@
 # repo: https://ohmyz.sh
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-
 sudo_rq
-_packages=(zsh curl git)
-_install_
-
+pkg_install zsh
+prep_edit "$HOME/.zshrc"
 (
 	sh -c "$(curl -fsSL https://install.ohmyz.sh/) --unattended" && {
-		sudo chsh -s "$(type -p zsh)" "$USER";	
+		shell_change "$(type -p zsh)" "$USER";	
 	}
 ) && { zeninf "$msg018"; } || { fatal "Unable to complete installation"; }

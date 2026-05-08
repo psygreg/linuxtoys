@@ -9,13 +9,10 @@
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 zenwrn "$msg304"
 sudo_rq
-_packages=(sbctl efibootmgr)
-_install_
+pkg_install sbctl efibootmgr
 sleep 1
 if [ "$(sbctl status | grep -i 'secure boot' | grep -i 'disabled')" ]; then
     if [ "$(sbctl status | grep -i 'setup mode' | grep -i 'enabled')" ]; then

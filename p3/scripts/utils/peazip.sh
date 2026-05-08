@@ -7,10 +7,6 @@
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-_flatpaks=(
-    io.github.peazip.PeaZip
-)
-_flatpak_
+pkg_flat io.github.peazip.PeaZip
+zeninf "$msg018"
 

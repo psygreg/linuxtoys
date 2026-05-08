@@ -6,22 +6,24 @@
 # repo: https://github.com/LizardByte/Sunshine
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-_flatpaks=(
-    dev.lizardbyte.app.Sunshine
-)
-_flatpak_
+pkg_flat dev.lizardbyte.app.Sunshine
 sudo_rq
 if is_nvidia; then
-    _packages=(nvidia-container-toolkit)
-    if is_solus; then
-        _packages+=(nvidia-vaapi-driver)
+    if is_ubuntu; then
+        pkg_install ca-certificates gnupg2
+        curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+            && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+        sudo apt update
+        pkg_install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-toolslibnvidia-container1
+    else
+        pkg_install nvidia-container-toolkit
     fi
-    _install_
+    if is_solus; then
+        pkg_install nvidia-vaapi-driver
+    fi
 fi
 sudo flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine

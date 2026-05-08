@@ -9,34 +9,28 @@
 # repo: https://github.com/tomaspinho/rtl8821ce
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-cd $HOME
+prep_tmp
 git clone https://github.com/tomaspinho/rtl8821ce.git
 sudo_rq
 # set up dependencies
-_packages=(bc module-assistant build-essential dkms)
-_install_
+pkg_install bc module-assistant build-essential dkms
 # ensure removal of older driver
-if dpkg -s rtl8821ce-dkms &>/dev/null; then
-    sudo apt remove -y rtl8821ce-dkms
-fi
+pkg_remove rtl8821ce-dkms
 cd rtl8821ce
 sudo m-a prepare
 sudo ./dkms-install.sh
 # blacklist rtw88_8821ce, which is borked
 if [ -f /etc/modprobe.d/blacklist.conf ]; then
+    prep_edit /etc/modprobe.d/blacklist.conf
     if grep -q "blacklist rtw88_8821ce" /etc/modprobe.d/blacklist.conf; then
         echo "rtw88_8821ce is already blacklisted, skipping..."
     else
         echo "blacklist rtw88_8821ce" | sudo tee -a /etc/modprobe.d/blacklist.conf
     fi
 else
+    prep_create /etc/modprobe.d/blacklist.conf
     echo "blacklist rtw88_8821ce" | sudo tee /etc/modprobe.d/blacklist.conf
 fi
-cd ..
-rm -r rtl8821ce
 zeninf "$msg036"

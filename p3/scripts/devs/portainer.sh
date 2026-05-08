@@ -3,6 +3,7 @@
 # version: 1.0
 # description: portainer_desc
 # icon: portainer.svg
+# revert: no
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

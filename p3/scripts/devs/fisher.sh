@@ -6,18 +6,13 @@
 # repo: https://github.com/jorgebucaran/fisher
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-
 sudo_rq
-_packages=(fish)
-_install_
-
+pkg_install fish
 if command -v fish >/dev/null 2>&1; then
-	sudo chsh -s "$(type -p fish)" "$USER"
-
+	shell_change "$(type -p fish)" "$USER"
+	prep_edit "$HOME/.config/fish/config.fish"
 	if fish -c "curl -sL https://git.io/fisher | source; fisher install jorgebucaran/fisher"; then
 		zeninf "$msg018"
 	else

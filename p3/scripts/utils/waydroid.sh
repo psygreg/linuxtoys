@@ -3,28 +3,25 @@
 # version: 1.0
 # description: waydroid_desc
 # icon: waydroid.svg
-# compat: fedora, ostree, debian, ubuntu, arch, cachy, ublue
+# compat: fedora, solus, ostree, debian, ubuntu, arch, cachy, ublue
 # nocontainer
 # gpu: Amd, Intel
 # repo: https://waydro.id/
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     sudo_rq
-    _packages=(waydroid python3)
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        sudo apt install -y curl ca-certificates
+    if is_debian || is_ubuntu; then
+        sudo apt install -y ca-certificates # not declaring because removal may break OS
         curl -s https://repo.waydro.id | sudo bash
         sleep 1
-        _packages+=(python3-venv)
+        pkg_install python3-venv
     fi
-    _install_
-    sudo systemctl enable --now waydroid-container
+    pkg_install waydroid python3
+    sysd_enable waydroid-container
+    sysd_start waydroid-container
     waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS
     if command -v firewall-cmd &> /dev/null; then # fedora rules for waydroid networking
         sudo firewall-cmd --zone=trusted --add-interface=waydroid0 --permanent
@@ -37,7 +34,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     if zenity --question --title="Waydroid" --text="$msg283" --width 300 --height 300; then
         waydroid session stop
         sudo waydroid container stop
-        cd $HOME
+        prep_tmp
         git clone https://github.com/casualsnek/waydroid_script
         cd waydroid_script
         pip_lib
@@ -50,8 +47,6 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         elif [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
             sudo venv/bin/python3 main.py install libndk
         fi
-        cd ..
-        sudo rm -rf waydroid_script
     fi
     zeninf "$msg284"
     xdg-open https://docs.waydro.id/faq/google-play-certification

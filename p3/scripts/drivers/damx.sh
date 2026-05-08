@@ -6,12 +6,11 @@
 # reboot: yes
 # compat: !solus
 # repo: https://github.com/PXDiv/Div-Acer-Manager-Max
+# revert: no
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 _gh_user="PXDiv"
 _gh_repo="Div-Acer-Manager-Max"
@@ -35,14 +34,13 @@ curl -fsSL "https://github.com/${_tarb}" -o- | tar -xvJf -  --strip-components=1
 	sudo_rq
 	[ "${_choice}" -eq 1 -o "${_choice}" -eq 4 ] && {
 		if [[ "$ID" =~ ^(debian|ubuntu)$ ]] || [[ "$ID_LIKE" =~ (debian|ubuntu) ]]; then
-			_packages=(make build-essential)
+			pkg_install make build-essential
 		elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" =~ (arch|archlinux) ]]; then
 			_k=($(uname -r | grep -o -E 'rt-lts|lts|zen|rt|hardened'))
-			_packages=(base-devel linux${_k:+-${_k}}-headers)
+			pkg_install base-devel linux${_k:+-${_k}}-headers
 		elif [[ "$ID" =~ ^(rhel|fedora|suse)$ ]] || [[ "$ID_LIKE" =~ (rhel|fedora|suse) ]]; then
-			_packages=(make gcc kernel-headers kernel-devel)
+			pkg_install make gcc kernel-headers kernel-devel
 		fi
-		_install_
 	}
 	cd /tmp/damx/
 	echo -e "${_choice}\nq\nq\n" | sudo bash setup.sh && { zeninf "$msg018"; } || { fatal "Acer Manager installation unsuccessful"; }

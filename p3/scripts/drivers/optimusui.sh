@@ -11,20 +11,15 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/$langfile.lib"
 sudo_rq
 if is_arch || is_ubuntu; then
     sudo add-apt-repository -y universe
     sudo apt update
-    _packages=(bbswitch nvidia-prime)
+    pkg_install bbswitch nvidia-prime
 elif is_suse; then
-    _packages=(bbswitch suse-prime)
+    pkg_install bbswitch suse-prime
 elif is_solus; then
-    _packages=(bbswitch bbswitch-current)
+    pkg_install bbswitch bbswitch-current
 fi
-_install_
-_flatpaks=(
-    de.z_ray.OptimusUI
-)
-_flatpak_
+pkg_flat de.z_ray.OptimusUI
 zeninf "$msg018"

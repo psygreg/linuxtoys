@@ -10,26 +10,21 @@
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
-_packages=(apparmor)
+pkg_install apparmor
 if is_debian; then
-    _packages+=(apparmor-utils)
+    pkg_install apparmor-utils
 fi
-_install_
 # enable and start apparmor
 if pacman -Qi grub 2>/dev/null 1>&2 || dpkg -s grub-efi 2>/dev/null 1>&2; then # grub
+    prep_create /etc/default/grub.d/99-apparmor.cfg
     echo 'GRUB_CMDLINE_LINUX_DEFAULT="${GRUB_CMDLINE_LINUX_DEFAULT} apparmor=1 security=apparmor"' | sudo tee /etc/default/grub.d/99-apparmor.cfg
-    if is_debian; then
-        sudo update-grub
-    elif is_arch || is_cachy; then
-        sudo grub-mkconfig -o /boot/grub/grub.cfg
-    fi
+    bootloader_upd
 else # systemd-boot
+    prep_create /etc/kernel/cmdline.d/99-apparmor.conf
     echo "apparmor=1 security=apparmor" | sudo tee /etc/kernel/cmdline.d/99-apparmor.conf
-    sudo bootctl update
+    bootloader_upd
 fi
-sudo systemctl enable apparmor
+sysd_enable apparmor
 zeninf "$msg018"

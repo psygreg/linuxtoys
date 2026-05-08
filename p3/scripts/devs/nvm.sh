@@ -6,16 +6,14 @@
 # repo: https://github.com/nvm-sh
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
 if command -v rpm-ostree &>/dev/null; then
     if [ ! -d "$HOME/.nvm" ]; then
     # revert to 'manual install' procedure, script doesn't work properly for atomic Fedora
-        _packages=(nodejs npm)
-        _install_
+        pkg_install nodejs npm
+        prep_dir "$HOME/.nvm"
         export NVM_DIR="$HOME/.nvm" && (
         git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
         cd "$NVM_DIR"
@@ -34,8 +32,8 @@ if command -v rpm-ostree &>/dev/null; then
         ) && \. "$NVM_DIR/nvm.sh"
     fi
 else
+    prep_tmp
     wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-    rm install.sh
 fi
 npm i --global yarn
 # basic usage instruction prompt

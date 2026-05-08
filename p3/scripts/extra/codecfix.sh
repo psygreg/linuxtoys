@@ -6,21 +6,16 @@
 # compat: suse, fedora, ostree
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
 sudo_rq
-if [[ "$ID_LIKE" == *suse* ]]; then
-    sudo zypper in -y opi
+if is_suse; then
+    pkg_install opi
     sudo opi codecs
     zeninf "$msg018"
-elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ]; then
+elif is_fedora || is_ostree; then
     rpmfusion_chk
-    _packages=(libavcodec-freeworld gstreamer1-plugins-ugly)
-    _install_
+    pkg_install libavcodec-freeworld gstreamer1-plugins-ugly
     zeninf "$msg018"
 else
     zeninf "$msg077"

@@ -10,9 +10,7 @@
 # repo: https://git.linux.toys/psygreg/linux-psycachy
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
 source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
@@ -37,17 +35,13 @@ done < <(curl -s "https://api.github.com/repos/psygreg/linux-psycachy/releases" 
 sudo_rq
 # psycachy for ubuntu lts with dkms support
 psycachy_ubuntu () {
-    cd $HOME
+    prep_tmp
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-image-psycachy_${kver_ubuntu}-3_amd64.deb"
     wget "https://github.com/psygreg/linux-psycachy/releases/download/${ubuntu_tag}/linux-libc-dev_${kver_ubuntu}-3_amd64.deb"
 
     sleep 1
-    sudo dpkg -i linux-image-psycachy_${kver_ubuntu}-3_amd64.deb linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb linux-libc-dev_${kver_ubuntu}-3_amd64.deb || exit 10
-    sleep 1
-    rm linux-image-psycachy_${kver_ubuntu}-3_amd64.deb
-    rm linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb
-    rm linux-libc-dev_${kver_ubuntu}-3_amd64.deb
+    pkg_fromfile linux-image-psycachy_${kver_ubuntu}-3_amd64.deb linux-headers-psycachy_${kver_ubuntu}-3_amd64.deb linux-libc-dev_${kver_ubuntu}-3_amd64.deb
 
     # sign kernel image for secure boot
     if sudo mokutil --sb-state | grep -qi "secureboot enabled"; then

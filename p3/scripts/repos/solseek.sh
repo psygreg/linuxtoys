@@ -7,8 +7,6 @@
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
-_packages=(solseek)
-_install_
+pkg_install solseek
 zeninf "$msg018"

@@ -6,21 +6,17 @@
 # compat: fedora, ostree, debian, ubuntu, arch, suse, ublue
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 gamemode_in () {
     sudo_rq
-    if [ "$ID" == "arch" ] || [[ "$ID_LIKE" =~ "arch" ]] || [[ "$ID_LIKE" =~ "archlinux" ]]; then
-        _packages=(gamemode lib32-gamemode)
+    if is_arch; then
+        pkg_install gamemode lib32-gamemode
     elif is_solus; then
-        _packages=(gamemode gamemode-32bit)
+        pkg_install gamemode gamemode-32bit
     else
-        _packages=(gamemode)
+        pkg_install gamemode
     fi
-    _install_
 }
 if [ -f /etc/systemd/system/set-ondemand-governor.service ]; then
     zenity --question --text "$msg295" --height=330 --width=330

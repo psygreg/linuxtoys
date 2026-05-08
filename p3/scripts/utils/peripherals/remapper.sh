@@ -3,23 +3,18 @@
 # version: 1.0
 # description: remapper_desc
 # icon: input-remapper.png
-# compat: fedora, arch, debian, ubuntu, cachy, ostree
+# compat: fedora, arch, debian, ubuntu, cachy, ostree, solus
 # nocontainer
 # reboot: ostree
 # repo: https://github.com/sezanzeb/input-remapper
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
-if [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]; then
-    chaotic_aur_lib
-    _packages=(input-remapper-git)
+if is_arch || is_cachy; then
+    pkg_install input-remapper-git
 else
-    _packages=(input-remapper)
+    pkg_install input-remapper
 fi
-_install_
 zeninf "$msg018"

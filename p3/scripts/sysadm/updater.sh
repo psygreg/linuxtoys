@@ -29,7 +29,7 @@ systemctl --user daemon-reload
 sysd_enable linuxtoys-update.timer
 sysd_start linuxtoys-update.timer
 
-systemctl --user enable linuxtoys-flatpak-update.timer
-systemctl --user start linuxtoys-flatpak-update.timer
+sysd_enable_usr linuxtoys-flatpak-update.timer
+sysd_start_usr linuxtoys-flatpak-update.timer
 
 zeninf "$msg018"

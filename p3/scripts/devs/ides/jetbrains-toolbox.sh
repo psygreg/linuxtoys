@@ -5,13 +5,10 @@
 # icon: jetbrains-toolbox.svg
 
 # --- Start of the script code ---
-LT_PROGRAM="JetBrains Toolbox"
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-
 if [ ! -d "${HOME}/.local/jetbrains-toolbox" ]; then
+	prep_dir "${HOME}/.local/jetbrains-toolbox"
 	PKG_NAM="jetbrains-toolbox"
 	PKG_URL="$(curl -fsSL 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Pio '"linux":\{"link":"\K[^"]+')"
 
@@ -34,14 +31,9 @@ if [ ! -d "${HOME}/.local/jetbrains-toolbox" ]; then
 					printf "\nIcon=%s\n" "$JB_ICON" >> "${HOME}/.local/${PKG_NAM}/${PKG_NAM}.desktop"
 				fi
 			fi
+			prep_create "${HOME}/.local/share/applications/${PKG_NAM}.desktop"
 			install -Dvm 0644 "${HOME}/.local/${PKG_NAM}/${PKG_NAM}.desktop" "${HOME}/.local/share/applications/${PKG_NAM}.desktop";
 			chmod +x "${HOME}/.local/share/applications/${PKG_NAM}.desktop";
 		) && { zeninf "$msg018"; }
 	} || { exit 1; }
-else
-	if zenity --question --text "$msg288" --width 360 height 300; then
-		rm -rf "${HOME}/.local/jetbrains-toolbox"
-		zeninf "$msg018"
-	fi
-	exit 100
 fi

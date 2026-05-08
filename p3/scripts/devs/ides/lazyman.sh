@@ -7,17 +7,14 @@
 # repo: https://lazyman.dev
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 [ -f $HOME/.config/nvim-Lazyman/lazyman.sh ] && { zeninf "${msg281}"; exit 0; }
 
 sudo_rq
-_packages=(neovim git)
-_install_
-
+pkg_install neovim
+prep_dir "$HOME/.config/nvim-Lazyman"
 git clone --depth=1 https://github.com/doctorfree/nvim-lazyman $HOME/.config/nvim-Lazyman
 $HOME/.config/nvim-Lazyman/lazyman.sh -z && {
 	_nvims=(

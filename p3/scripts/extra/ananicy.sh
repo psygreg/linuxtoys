@@ -3,16 +3,18 @@
 # version: 1.0
 # description: ananicy_desc
 # icon: optimizer.svg
-# compat: arch
+# compat: arch, fedora
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
-_packages=(ananicy-cpp cachyos-ananicy-rules-git)
-_install_
-sudo systemctl enable --now ananicy-cpp.service
+if is_arch; then
+    pkg_install ananicy-cpp cachyos-ananicy-rules-git
+    sysd_enable ananicy-cpp.service
+elif is_fedora; then
+    sudo dnf copr enable bieszczaders/kernel-cachyos-addons
+    pkg_install ananicy-cpp cachyos-ananicy-rules
+    sysd_enable ananicy-cpp.service
+fi
 zeninf "$rebootmsg" # while rebooting is not necessary, it is still recommended.

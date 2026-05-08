@@ -8,17 +8,12 @@
 # repo: https://github.com/TibixDev/winboat
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
 # functions
 docker_in () { # install docker
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ]; then
-        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
-        sudo apt install -y ca-certificates curl
+    if is_ubuntu; then
+        sudo apt install -y ca-certificates
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
         sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -27,8 +22,7 @@ docker_in () { # install docker
             $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
-    elif [ "$ID" == "debian" ]; then
-        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
+    elif is_debian; then
         sudo apt install -y ca-certificates curl
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
@@ -38,7 +32,7 @@ docker_in () { # install docker
             $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+    elif is_fedora; then
         if command -v rpm-ostree &> /dev/null; then
             if ! rpm-ostree status | grep -q "docker-ce"; then
                 fatal "$msg292"
@@ -47,21 +41,22 @@ docker_in () { # install docker
             sudo dnf -y install dnf-plugins-core
             sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
         fi
-        _packages=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]] || is_solus; then
-        _packages=(docker docker-compose)
-    elif [[ "$ID_LIKE" == *suse* ]]; then
-        _packages=(docker docker-compose)
     fi
-    _install_
+    if is_arch || is_cachy || is_suse || is_solus; then
+        pkg_install docker docker-compose
+    else
+        pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    fi
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'
         sudo_rq # request another sudo to continue as it will be lost after su
     fi
     sudo usermod -aG docker $USER
-    sudo systemctl enable --now docker
-    sudo systemctl enable --now docker.socket
+    sysd_enable docker
+    sysd_enable docker.socket
+    sysd_start docker
+    sysd_start docker.socket
     # firewalld fix for fedora
     if command -v firewalld &>/dev/null; then
         sudo firewall-cmd --zone=docker --change-interface=docker0
@@ -70,6 +65,8 @@ docker_in () { # install docker
     fi
     # fix for apparmor.d users, leave only default profiles enabled
     if [ -f /etc/apparmor.d/dockerd ]; then
+        prep_create /etc/apparmor.d/disable/dockerd
+        sudo rm -f /etc/apparmor.d/disable/dockerd # ensure no issue with symlink
         sudo ln -s /etc/apparmor.d/dockerd /etc/apparmor.d/disable/
     fi
 }
@@ -77,7 +74,7 @@ get_winboat () { # gets latest release
     local tag=$(curl -s "https://api.github.com/repos/TibixDev/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     [ -z ${tag} ] && { fatal "It was not possible to obtain the latest available version of Winboat."; exit 1;}
     local ver="${tag#v}"
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
+    if is_debian || is_ubuntu; then
         if dpkg -s "winboat" &> /dev/null; then
             local hostver="$(dpkg -s winboat | grep -i Version | awk '{print $2}')"
             if [ "$hostver" == "$ver" ]; then
@@ -86,8 +83,8 @@ get_winboat () { # gets latest release
             fi
         fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
-        sudo apt install -y "./winboat-$ver-amd64.deb"
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]] || [[ "$ID_LIKE" == *suse* ]] || [ "$ID" = "suse" ]; then
+        pkg_fromfile "./winboat-$ver-amd64.deb"
+    elif is_fedora || is_suse; then
         if rpm -qi "winboat" &> /dev/null; then
             local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"
             if [ "$hostver" == "$ver" ]; then
@@ -98,15 +95,11 @@ get_winboat () { # gets latest release
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-x86_64.rpm"
         if command -v rpm-ostree &> /dev/null; then
             if rpm -qi "winboat" &> /dev/null; then
-                sudo rpm-ostree remove winboat
+                pkg_remove winboat
             fi
-            sudo rpm-ostree install "winboat-$ver-x86_64.rpm"
-        elif command -v dnf &> /dev/null; then
-            sudo dnf install -y "winboat-$ver-x86_64.rpm"
-        elif command -v zypper &> /dev/null; then
-            sudo zypper install -y "winboat-$ver-x86_64.rpm"
         fi
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+        pkg_fromfile "winboat-$ver-x86_64.rpm"
+    elif is_arch || is_cachy; then
         if pacman -Qi "winboat-bin" &> /dev/null; then
             local hostver="$(pacman -Qi winboat-bin | grep -i Version | awk '{print $3}')"
             if [ "$hostver" == "$ver" ]; then
@@ -114,13 +107,11 @@ get_winboat () { # gets latest release
                 exit 0
             fi
         fi
-        # now pulls from AUR using paru
-        _packages=(winboat-bin)
-        _install_
+        pkg_install winboat-bin
     fi
 }
 # runtime
-cd $HOME
+prep_tmp
 sleep 1
 {
     echo "$msg209"
@@ -148,18 +139,16 @@ if [ -e /dev/kvm ]; then
             # stage 1: docker
             docker_in
             # stage 2: freeRDP
-            _flatpaks=(
-                com.freerdp.FreeRDP
-            )
-            _flatpak_
+            pkg_flat com.freerdp.FreeRDP
             # enable iptables kernel module
+            if [ -f /etc/modules-load.d/iptables.conf ]; then
+                prep_edit /etc/modules-load.d/iptables.conf
+            else
+                prep_create /etc/modules-load.d/iptables.conf
+            fi
             echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
             # get latest winboat release
             get_winboat
-            # cleanup
-            cd ..
-            rm -r lsw
-            rm txtbox
             # request reboot for iptables module to load
             zeninf "$msg036"
         else # update
@@ -167,13 +156,9 @@ if [ -e /dev/kvm ]; then
             cd lsw || exit 1
             sudo_rq
             get_winboat
-            cd ..
-            rm -r lsw
-            rm txtbox
             zeninf "$msg036"
         fi
     else
-        rm txtbox
         exit 100
     fi
 else

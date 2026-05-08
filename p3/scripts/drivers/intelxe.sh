@@ -9,11 +9,8 @@
 # nocontainer
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
+_lang_
 sudo_rq
 intel_xe_lib
 zeninf "$msg036"

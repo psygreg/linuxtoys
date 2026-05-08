@@ -7,24 +7,16 @@
 # repo: https://github.com/libratbag/piper
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-if [[ $ID =~ "ubuntu" ]] || [[ $ID =~ "debian" ]] || [[ $ID_LIKE == *ubuntu* ]]; then
-    _packages=(ratbagd)
+if is_debian || is_ubuntu; then
+    pkg_install ratbagd
 elif is_arch || is_cachy || is_solus; then
-    _packages=(libratbag)
+    pkg_install libratbag
 elif is_fedora || is_ostree; then
-    _packages=(libratbag-ratbagd)
+    pkg_install libratbag-ratbagd
 elif is_suse; then
-    _packages=(libratbag-tools)
+    pkg_install libratbag-tools
 fi
-_install_
-_flatpaks=(
-    org.freedesktop.Piper
-)
-_flatpak_
+pkg_flat org.freedesktop.Piper
 zeninf "$finishmsg"

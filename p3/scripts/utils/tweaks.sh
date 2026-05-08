@@ -9,8 +9,6 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
-_packages=(gnome-tweaks)
-_install_
+pkg_install gnome-tweaks
 zeninf "$msg018"

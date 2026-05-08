@@ -7,10 +7,7 @@
 # repo: https://missioncenter.io
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-_flatpaks=(
-    io.missioncenter.MissionCenter
-)
-_flatpak_
+_lang_
+pkg_flat io.missioncenter.MissionCenter
+zeninf "$msg018"

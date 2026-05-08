@@ -7,32 +7,36 @@
 # repo: https://github.com/pedrohqb/distrobox-adv-br
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
-if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
-    _packages=(distrobox podman pcsc-lite pcsc-lite-ccid)
-elif [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "debian" ]] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
-    if [ "$ID" == "ubuntu" ] || [[ "$ID_LIKE" =~ "ubuntu" ]]; then
+if is_fedora || is_ostree; then
+    pkg_install distrobox podman pcsc-lite pcsc-lite-ccid
+elif is_debian || is_ubuntu || is_solus; then
+    if is_ubuntu; then
         sudo add-apt-repository ppa:michel-slm/distrobox -y
         sudo apt update
     fi
-    _packages=(distrobox podman pcsc-lite ccid)
-elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]; then
-    _packages=(distrobox podman pcsclite ccid)
-elif [ "$ID" = "suse" ] || [[ "$ID" =~ "opensuse" ]] || [[ "$ID_LIKE" =~ "suse" ]]; then
-    _packages=(distrobox podman pcsc-ccid)
+    pkg_install distrobox podman pcsc-lite ccid
+elif is_arch || is_cachy; then
+    pkg_install distrobox podman pcsclite ccid
+elif is_suse || is_opensuse; then
+    pkg_install distrobox podman pcsc-ccid
 fi
-_install_ 
-sudo systemctl enable --now pcscd.service
+sysd_enable pcscd.service
+sysd_start pcscd.service
 if is_ubuntu; then
-    distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br-legado
+    if distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br-legado; then
+        distrobox_created distrobox-adv-br
+    else
+        fatal "Falha ao criar o container Distrobox-Adv."
+    fi
 else
-    distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br
+    if distrobox-assemble create --file https://raw.githubusercontent.com/pedrohqb/distrobox-adv-br/refs/heads/main/distrobox-adv-br; then
+        distrobox_created distrobox-adv-br
+    else
+        fatal "Falha ao criar o container Distrobox-Adv."
+    fi
 fi
-flatpak_in_lib
-flatpak install --or-update --user --noninteractive flathub com.ranfdev.DistroShelf
+pkg_flat com.ranfdev.DistroShelf
 zeninf "$msg018"

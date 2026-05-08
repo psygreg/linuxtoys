@@ -7,24 +7,19 @@
 # gpu: Intel
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # function
 icr_in () {
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        _packages=(intel-opencl-icd clinfo)
-    elif [[ "$ID_LIKE" == *suse* ]] || [[ "$ID_LIKE" == *opensuse* ]] || [[ "$ID" =~ "suse" ]]; then
-        _packages=(intel-opencl clinfo)
+    if is_debian || is_ubuntu; then
+        pkg_install intel-opencl-icd clinfo
+    elif is_suse; then
+        pkg_install intel-opencl clinfo
     else
-        _packages=(intel-compute-runtime clinfo)
+        pkg_install intel-compute-runtime clinfo
     fi
-    _install_
 }
-intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-if [[ -n "$intelGPU" ]]; then
+if is_intel; then
     sudo_rq
     icr_in
     zeninf "$msg036"

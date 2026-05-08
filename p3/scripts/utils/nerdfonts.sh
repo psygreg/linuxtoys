@@ -6,10 +6,8 @@
 # repo: https://www.nerdfonts.com
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 _gh_user="ryanoasis"
 _gh_repo="nerd-fonts"
@@ -34,8 +32,10 @@ _select_font=($(zenity --list \
 [ -n "${_select_font}" ] && {
 	(
 		for _font in "${_select_font[@]}"; do
-			curl -fsSL "https://github.com/${_font}" -o- | tar -xvJf - --one-top-level="${HOME}/.local/share/fonts/";
-		done;
+			prep_dir "$HOME/.local/share/fonts/$_font" # track for transmap
+			rm -rf "$HOME/.local/share/fonts/$_font" # ensure no ovewriting conflict
+			curl -fsSL "https://github.com/${_font}" -o- | tar -xvJf - --one-top-level="${HOME}/.local/share/fonts/"
+		done
 		fc-cache -fv;
 	) && { zeninf "$msg018"; } || { fatal "Nerd-Fonts installation unsuccessful"; }
 } || {

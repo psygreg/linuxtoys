@@ -4,17 +4,14 @@
 # description: cargo_desc
 # icon: cargo.svg
 # repo: https://github.com/rust-lang/cargo
+# revert: solus
 
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 if is_solus; then
-    _packages=(rustup)
-    _install_
+    pkg_install rustup
 else
     curl https://sh.rustup.rs -sSf | sh
 fi

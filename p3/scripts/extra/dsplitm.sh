@@ -9,12 +9,8 @@
 # optimized-only: yes
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
+_lang_
 sudo_rq
 if [ ! -f "$HOME/.local/.autopatch.state" ]; then
     dsplitm_lib

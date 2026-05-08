@@ -9,11 +9,8 @@
 # gpu: Nvidia
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 REPO_ALIAS="nvidia"
 # check if Tumbleweed or Leap
 case "$VERSION_ID" in
@@ -25,6 +22,6 @@ sudo_rq
 if ! zypper lr | grep -q "^${REPO_ALIAS}\s"; then
     sudo zypper ar -f "$REPO_URL" "nvidia"
 fi
-sudo zypper in -y x11-video-nvidiaG06 nvidia-computeG06
-sudo dracut -f --regenerate-all
+pkg_install x11-video-nvidiaG06 nvidia-computeG06
+initramfs_upd
 zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300

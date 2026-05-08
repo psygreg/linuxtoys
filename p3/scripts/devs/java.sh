@@ -3,13 +3,10 @@
 # version: 1.0
 # description: java_desc
 # icon: java.svg
-# noconfirm: yes
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # functions
 jdk_install () {
     local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
@@ -38,9 +35,8 @@ jdk_install () {
         fatal "No valid Java packages were selected."
     fi
 
-    _packages=("${packages[@]}")
     sudo_rq
-    _install_
+    pkg_install "${packages[@]}"
 
     if ! command -v java >/dev/null 2>&1; then
         fatal "Java installation finished but 'java' command is not available."

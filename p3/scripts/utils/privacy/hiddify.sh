@@ -16,7 +16,10 @@ desktop_file="$desktop_dir/hiddify.desktop"
 tmp_dir="$(mktemp -d)"
 archive_file="$tmp_dir/hiddify.tar.gz"
 
-mkdir -p "$app_dir" "$desktop_dir"
+prep_create "$app_file"
+rm -f "$app_file"
+prep_create "$desktop_file"
+rm -f "$desktop_file"
 
 trap 'rm -rf "$tmp_dir"' EXIT
 

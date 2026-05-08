@@ -7,14 +7,11 @@
 # nocontainer
 # desktop: other
 # repo: https://github.com/maximilionus/lucidglyph/tree/v0.11.0
+# revert: internal
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-# Function to detect LucidGlyph installation
 detect_lucidglyph() {
     # Check for system-wide installation metadata
     if [ -f "/usr/share/lucidglyph/info" ] || [ -f "/usr/share/freetype-envision/info" ]; then
@@ -61,15 +58,11 @@ fi
 tag=$(curl -s "https://api.github.com/repos/maximilionus/lucidglyph/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
 ver="${tag#v}"
 sudo_rq
-cd "$HOME" || exit 1
+prep_tmp
 [ -f "${tag}.tar.gz" ] && rm -f "${tag}.tar.gz"
 wget -O "${tag}.tar.gz" "https://github.com/maximilionus/lucidglyph/archive/refs/tags/${tag}.tar.gz"
 tar -xvzf "${tag}.tar.gz"
 cd "lucidglyph-${ver}" || exit 1
 chmod +x lucidglyph.sh
 sudo ./lucidglyph.sh install
-cd .. || exit 1
-sleep 1
-rm -rf "lucidglyph-${ver}"
-rm -f "${tag}.tar.gz"
 zeninf "$msg036"

@@ -9,19 +9,12 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 DEFAULT_CLUSTER_NAME="linuxtoys"
 CLUSTER_NAME="$DEFAULT_CLUSTER_NAME"
 INGRESS_MANIFEST_URL="https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml"
 
 sudo_rq
-
-if ! command -v curl >/dev/null 2>&1; then
-    _packages=(curl)
-    _install_
-fi
-
 # kind requires a container runtime provider.
 if ! command -v docker >/dev/null 2>&1 && \
    ! command -v podman >/dev/null 2>&1 && \
@@ -30,8 +23,7 @@ if ! command -v docker >/dev/null 2>&1 && \
 fi
 
 if is_arch || is_cachy; then
-    _packages=(kind-bin kubectl)
-    _install_
+    pkg_install kind-bin kubectl
 else
     arch="$(uname -m)"
     case "$arch" in
@@ -49,11 +41,10 @@ else
     fi
 
     chmod +x /tmp/kind
+    prep_create /usr/local/bin/kind
     if ! sudo install -Dm755 /tmp/kind /usr/local/bin/kind; then
-        rm -f /tmp/kind
         fatal "Failed to install Kind to /usr/local/bin."
     fi
-    rm -f /tmp/kind
 
     kubectl_version="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
     [ -n "$kubectl_version" ] || fatal "Failed to get latest kubectl version."
@@ -64,11 +55,10 @@ else
     fi
 
     chmod +x /tmp/kubectl
+    prep_create /usr/local/bin/kubectl
     if ! sudo install -Dm755 /tmp/kubectl /usr/local/bin/kubectl; then
-        rm -f /tmp/kubectl
         fatal "Failed to install kubectl to /usr/local/bin."
     fi
-    rm -f /tmp/kubectl
 fi
 
 if command -v kind >/dev/null 2>&1 && command -v kubectl >/dev/null 2>&1; then

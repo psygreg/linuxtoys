@@ -3,20 +3,17 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy, !zorin, solus
+# compat: ubuntu, debian, fedora, suse, arch, cachy
 # reboot: yes
 # noconfirm: yes
 # nocontainer
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 # system-agnostic scripts
 sysag_run () {
-    if ! is_cachy; then
+    if ! is_cachy && ! is_zorin; then
         # systemd patches
         cachyos_sysd_lib
     fi
@@ -24,49 +21,35 @@ sysag_run () {
     sboost_lib
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
     dsplitm_lib
-    # add earlyoom configuration
-    earlyoom_lib
+    # add earlyoom configuration, Fedora already has systemd-oomd
+    if ! is_fedora && ! is_ostree; then
+        earlyoom_lib
+    fi
     # change intel driver to Xe on discrete GPUs
-    if ! is_solus && ! is_fedora; then
+    if ! is_fedora && ! is_ubuntu; then
         intel_xe_lib
     fi
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
     fix_intel_gtk
-    # set proton to run on wine-wayland mode by default
-    wayland_proton_lib
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
-    # vm.min_free_kbytes dynamic setup
-    if ! is_solus; then
-        free_mem_fix
-    fi
+    # vm.min_free_kbytes dynamic setup - disabled for further testing
+    # free_mem_fix
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
     preempt_lib
-    # fix nvidia nouveau taking precedence over modeset on Solus; skipped in other OS
-    nvidia_solus_lib
-    # fix video thumbnails
-    _packages=(ffmpegthumbnailer)
-    # codec fix for Fedora/OpenSUSE
-    if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ "fedora" ]]; then
-        rpmfusion_chk
-        _packages+=(libavcodec-freeworld gstreamer1-plugins-ugly)
-    elif [[ "$ID_LIKE" == *suse* ]]; then
-        sudo zypper in -y opi
-        sudo opi codecs
-    fi
-    _install_
 }
 # consolidated installation
 optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
-        cd $HOME
+        prep_tmp
         sysag_run
-        touch $HOME/.local/.autopatch.state
+        touch "$HOME/.local/.autopatch.state"
         zeninf "$msg036"
     else
-        fatal "$msg234"
+        zenwrn "$msg234"
+        exit 100
     fi
 }
 # menu

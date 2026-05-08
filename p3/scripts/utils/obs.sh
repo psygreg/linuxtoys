@@ -8,44 +8,31 @@
 # new
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 # function - plugin to fix OBS mic
 obs_pipe () {
     local ver=$(curl -s "https://api.github.com/repos/dimtpap/obs-pipewire-audio-capture/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-    cd $HOME
+    prep_tmp
     mkdir obspipe
     cd obspipe
     wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
     tar xvzf linux-pipewire-audio-${ver}-flatpak-30.tar.gz
-    mkdir -p $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio
-    cp -rf linux-pipewire-audio/* $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio/
+    prep_dir "$HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio"
+    copy_ -rf linux-pipewire-audio/* $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio/
     sudo flatpak override --filesystem=xdg-run/pipewire-0 com.obsproject.Studio
-    cd ..
-    rm -rf obspipe
 }
-_flatpaks=(
-    com.obsproject.Studio
-    com.obsproject.Studio.Plugin.WaylandHotkeys
-)
-_flatpak_
-sleep 1
+pkg_flat com.obsproject.Studio com.obsproject.Studio.Plugin.WaylandHotkeys
 sudo_rq
 # check dependency for Pipewire Audio Capture plugin and xwayland
-_packages=(wireplumber)
+pkg_install wireplumber
 if is_arch || is_cachy || is_solus; then
-    _packages+=(xorg-xwayland)
+    pkg_install xorg-xwayland
 elif is_debian || is_ubuntu; then
-    _packages+=(xwayland)
+    pkg_install xwayland
 elif is_fedora || is_suse || is_ostree; then
-    _packages+=(xorg-x11-server-Xwayland)
+    pkg_install xorg-x11-server-Xwayland
 fi
-_install_
-sleep 1
 obs_pipe
 # Set QT_QPA_PLATFORM environment variable for CEF
 flatpak override --user \

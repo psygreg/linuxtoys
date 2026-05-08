@@ -3,18 +3,15 @@
 # version: 1.0
 # description: cachyconfs_desc
 # icon: cachyos.svg
-# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, solus
+# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, !zorin
 # reboot: yes
 # nocontainer
 # repo: https://github.com/CachyOS/CachyOS-Settings
 # optimized-only: yes
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/optimizers.lib"
+_lang_
 sudo_rq
 if command -v rpm-ostree &>/dev/null; then
     if [ "$ID" = "bluefin" ] || [ "$ID" = "bazzite" ] || [ "$ID" = "aurora" ]; then
@@ -28,15 +25,15 @@ if command -v rpm-ostree &>/dev/null; then
         if [ "$ID" = "bluefin" ] || [ "$ID" = "bazzite" ] || [ "$ID" = "aurora" ]; then
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/optimize-cfg-ublue/rpmbuild/RPMS/x86_64/optimize-cfg-ublue-1.0-1.x86_64.rpm
             if rpm -qi "optimize-cfg-ublue" &>/dev/null; then
-                sudo rpm-ostree remove optimize-cfg-ublue
+                pkg_remove optimize-cfg-ublue
             fi
-            sudo rpm-ostree install optimize-cfg-ublue-1.0-1.x86_64.rpm
+            pkg_fromfile optimize-cfg-ublue-1.0-1.x86_64.rpm
         else
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/optimize-cfg-ostree/rpmbuild/RPMS/x86_64/linuxtoys-cfg-atom-1.1-1.x86_64.rpm
             if rpm -qi "linuxtoys-cfg-atom" &>/dev/null; then
-                sudo rpm-ostree remove linuxtoys-cfg-atom
+                pkg_remove linuxtoys-cfg-atom
             fi
-            sudo rpm-ostree install linuxtoys-cfg-atom-1.1-1.x86_64.rpm
+            pkg_fromfile linuxtoys-cfg-atom-1.1-1.x86_64.rpm
         fi
     else
         zenity --info --text "$msg281" --height=300 --width=300
@@ -44,7 +41,7 @@ if command -v rpm-ostree &>/dev/null; then
 else
     if ! is_solus && [ ! -f /usr/lib/sysctl.d/70-cachyos-settings.conf ]; then
         cachyos_sysd_lib
-    elif is_solus && [ ! -f /usr/lib/udev/rules.d/60-ioschedulers.rules ]; then
+    elif is_solus && [ ! -f /usr/lib/udev/rules.d/99-cpu-dma-latency.rules ]; then
         cachyos_sysd_lib
     else
         zenity --info --text "$msg281" --height=300 --width=300

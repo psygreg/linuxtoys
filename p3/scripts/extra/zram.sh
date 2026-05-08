@@ -1,38 +1,56 @@
 #!/bin/bash
-# name: ZRAM-Config
+# name: ZRAM/ZSWAP
 # description: zram_desc
 # icon: preload.svg
-# compat: ubuntu, debian, arch
+# compat: ubuntu, debian, arch, fedora, ostree
 # nocontainer
+# new
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
+source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-if is_arch; then
-    _packages=(zram-generator)
-    _install_
-    sudo tee /etc/systemd/zram-generator.conf << 'EOF'
+
+setup_zram () {
+    if is_arch; then
+        pkg_install zram-generator
+        if [ -f /etc/systemd/zram-generator.conf ]; then
+            prep_edit /etc/systemd/zram-generator.conf
+        else
+            prep_create /etc/systemd/zram-generator.conf
+        fi
+        sudo tee /etc/systemd/zram-generator.conf << 'EOF'
 [zram0]
 zram-size = min(ram / 3, 16384)
 EOF
-    sudo systemctl daemon-reload
-    sudo systemctl enable --now systemd-zram-setup@zram0.service
-    zeninf "$finishmsg"
-elif is_ubuntu; then
-    _packages=(zram-config)
-    _install_
-    zeninf "$msg036"
-elif is_debian; then
-    _packages=(zram-tools)
-    _install_
-    sudo tee /etc/default/zramswap << 'EOF'
+        sudo systemctl daemon-reload
+        sysd_enable systemd-zram-setup@zram0.service
+        sysd_start systemd-zram-setup@zram0.service
+    elif is_ubuntu; then
+        pkg_install zram-config
+    elif is_debian; then
+        pkg_install zram-tools
+        if [ -f /etc/default/zramswap ]; then
+            prep_edit /etc/default/zramswap
+        else
+            prep_create /etc/default/zramswap
+        fi
+        sudo tee /etc/default/zramswap << 'EOF'
 ALGO=zstd
 PERCENT=50
 EOF
-    sudo systemctl restart zramswap
-    zeninf "$finishmsg"
+        sysd_stop zramswap
+        sysd_start zramswap
+    else
+        zenwrn "$msg234"
+        exit 100
+    fi
+}
+
+local _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+if [ "$_total_ram_kb" -gt 16777216 ]; then
+    setup_zram
 else
-    fatal "$msg077"
+    zswap_lib
+    zenwrn "$zswapmsg"
 fi
+zeninf "$finishmsg"

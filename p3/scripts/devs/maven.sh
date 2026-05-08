@@ -5,15 +5,12 @@
 # icon: maven.svg
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-if is_solus; then
-    _packages=(apache-maven)
-else
-    _packages=(maven)
-fi
 sudo_rq
-_install_
+if is_solus; then
+    pkg_install apache-maven
+else
+    pkg_install maven
+fi
 zeninf "$msg018"

@@ -6,10 +6,7 @@
 # repo: https://github.com/tchx84/Flatseal
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-_flatpaks=(
-    com.github.tchx84.Flatseal
-)
-_flatpak_
+_lang_
+pkg_flat com.github.tchx84.Flatseal
+zeninf "$msg018"

@@ -6,19 +6,12 @@
 # repo: https://github.com/radiolamp/mangojuice
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
-_packages=(mangohud) && _install_
-_flatpaks=(
-    com.valvesoftware.Steam.VulkanLayer.MangoHud
-    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 # lutris
-    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
-    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08
-    io.github.radiolamp.mangojuice
-)
-_flatpak_
+pkg_install mangohud
+pkg_flat com.valvesoftware.Steam.VulkanLayer.MangoHud \
+org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 \
+org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08 \
+org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08 \
+io.github.radiolamp.mangojuice

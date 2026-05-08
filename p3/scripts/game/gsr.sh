@@ -6,15 +6,6 @@
 # repo: https://git.dec05eba.com/?p=about
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
-# request sudo, GSR needs to be installed on system level
-sudo_rq
-_flatpaks=(
-    com.dec05eba.gpu_screen_recorder
-)
-_flatpak_
+pkg_flat com.dec05eba.gpu_screen_recorder

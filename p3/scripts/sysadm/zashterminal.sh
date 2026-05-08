@@ -5,11 +5,11 @@
 # icon: zashterminal.svg
 # compat: ubuntu, debian, fedora, suse, arch, cachy
 # repo: https://github.com/leoberbert/zashterminal
+# revert: arch, cachy
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 install_url="https://raw.githubusercontent.com/leoberbert/zashterminal/refs/heads/main/install.sh"
 tmp_installer="/tmp/zashterminal-install.sh"
@@ -54,37 +54,11 @@ open_zashterminal_now() {
     return 1
 }
 
-ensure_zenity_local() {
-    command -v zenity >/dev/null 2>&1 && return 0
-
-    if is_debian; then
-        sudo apt update || fatal "Failed to update apt package index."
-    fi
-
-    _packages=(zenity)
-    _install_
-
-    if ! command -v zenity >/dev/null 2>&1; then
-        export DISABLE_ZENITY=1
-        echo "Zenity is not available. Continuing in terminal mode."
-    fi
-}
-
 sudo_rq_local
-ensure_zenity_local
 
 if is_arch || is_cachy; then
-    _packages=(zashterminal)
-    _install_
+    pkg_install zashterminal
 else
-    if ! command -v curl >/dev/null 2>&1; then
-        if is_debian; then
-            sudo apt update || fatal "Failed to update apt package index."
-        fi
-        _packages=(curl)
-        _install_
-        command -v curl >/dev/null 2>&1 || fatal "curl command not found after installation attempt. Install curl and try again."
-    fi
     if ! curl -fsSL "$install_url" -o "$tmp_installer"; then
         fatal "Failed to download Zashterminal installer."
     fi

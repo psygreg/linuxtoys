@@ -2,23 +2,19 @@
 # name: VLC
 # description: vlc_desc
 # icon: vlc.svg
-# compat: fedora, suse, ubuntu, debian, arch, ostree, cachy
+# compat: fedora, suse, ubuntu, debian, arch, ostree, cachy, solus
 # repo: https://www.videolan.org/vlc/
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
 sudo_rq
-_packages=(vlc)
-if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
+pkg_install vlc
+if is_fedora || is_ostree; then
     rpmfusion_chk
-    _packages+=(libavcodec-freeworld)
-elif [ "$ID" = "suse" ] || [[ "$ID" =~ "opensuse" ]] || [[ "$ID_LIKE" =~ "suse" ]]; then
-    sudo zypper in -y opi
+    pkg_install libavcodec-freeworld
+elif is_suse; then
+    pkg_install opi
     sudo opi codecs
 fi
-_install_
 zeninf "$msg018"

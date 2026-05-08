@@ -5,14 +5,12 @@
 # icon: suse.svg
 # compat: suse
 # optimized-only: yes
+# revert: no
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-if [[ "$ID_LIKE" == *suse* ]]; then
+if is_suse; then
     sudo_rq
     sudo setsebool -P selinuxuser_execmod 1
     zeninf "$msg022"

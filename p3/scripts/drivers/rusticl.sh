@@ -7,38 +7,34 @@
 # gpu: Amd, Intel
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 # function
 rusticl_in () {
-    if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-        _packages=(mesa-opencl-icd clinfo)
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        _packages=(mesa-libOpenCL clinfo)
-    elif [[ "$ID_LIKE" == *suse* ]]; then
-        _packages=(Mesa-libRusticlOpenCL clinfo)
-    elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-        _packages=(opencl-mesa clinfo)
+    if is_debian || is_ubuntu; then
+        pkg_install mesa-opencl-icd clinfo
+    elif is_fedora; then
+        pkg_install mesa-libOpenCL clinfo
+    elif is_suse; then
+        pkg_install Mesa-libRusticlOpenCL clinfo
+    elif is_arch || is_cachy; then
+        pkg_install opencl-mesa clinfo
     elif is_solus; then
-        _packages=(ocl-icd clinfo)
+        pkg_install ocl-icd clinfo
     fi
-    _install_
 }
-amdGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'amd|ati|radeon|amdgpu')
-if [[ -n "$amdGPU" ]]; then
+if is_amd; then
     sudo_rq
     rusticl_in
+    prep_edit /etc/environment
     curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/rusticl-amd \
         | sudo tee -a /etc/environment > /dev/null
     zeninf "$msg036"
 else
-    intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-    if [[ -n "$intelGPU" ]]; then
+    if is_intel; then
         sudo_rq
         rusticl_in
+        prep_edit /etc/environment
         curl -sL https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/rusticl-intel \
             | sudo tee -a /etc/environment > /dev/null
         zeninf "$msg036"

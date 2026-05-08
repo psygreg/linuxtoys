@@ -9,15 +9,11 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 zenwrn "$msg294"
 sudo_rq
 
-_packages=(base-devel)
-_install_
-
+pkg_install base-devel
 git clone --branch paru-bin --single-branch https://github.com/archlinux/aur.git /tmp/paru-bin
 cd /tmp/paru-bin && makepkg -s && {
-	sudo pacman --noconfirm -U /tmp/paru-bin/paru-bin-*.tar.zst && { zeninf "$msg018"; };
+	pkg_fromfile /tmp/paru-bin/paru-bin-*.tar.zst && { zeninf "$msg018"; };
 } || { fatal "$msg077"; }

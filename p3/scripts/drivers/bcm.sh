@@ -8,21 +8,13 @@
 # nocontainer
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
-_lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 source "$SCRIPT_DIR/libs/helpers.lib"
+_lang_
 sudo_rq
-if [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
+if is_fedora || is_ostree; then
     rpmfusion_chk
-    if command -v rpm-ostree &>/dev/null; then
-        sudo rpm-ostree install akmod-wl
-    else
-        sudo dnf install akmod-wl -y
-    fi
-elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
-    sudo pacman -S --noconfirm linux-headers broadcom-wl-dkms
+    pkg_install akmod-wl
+elif is_arch || is_cachy; then
+    pkg_install linux-headers broadcom-wl-dkms
 fi
 zeninf "$msg036"

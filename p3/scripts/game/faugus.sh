@@ -7,15 +7,9 @@
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 if is_debian || is_ubuntu || is_ostree || is_suse || is_solus; then
-    _flatpaks=(
-        io.github.Faugus.faugus-launcher
-    )
-    _flatpak_
+    pkg_flat io.github.Faugus.faugus-launcher
     sudo_rq
     # apply overrides for Steam compatibility
     sudo flatpak override io.github.Faugus.faugus-launcher --filesystem=~/.var/app/com.valvesoftware.Steam/.steam/steam/userdata/
@@ -26,6 +20,5 @@ elif is_fedora || is_arch || is_cachy; then
     if is_fedora; then
         sudo dnf -y copr enable faugus/faugus-launcher
     fi
-    _packages=(faugus-launcher)
-    _install_
+    pkg_install faugus-launcher
 fi

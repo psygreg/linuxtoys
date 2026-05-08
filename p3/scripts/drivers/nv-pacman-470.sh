@@ -9,22 +9,16 @@
 # gpu: Nvidia
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
 sudo_rq
-# needs chaotic AUR
-chaotic_aur_lib
-sudo pacman -S nvidia-470xx-dkms nvidia-470xx-utils nvidia-470xx-settings
-cd $HOME
+pkg_install nvidia-470xx-dkms nvidia-470xx-utils nvidia-470xx-settings
+prep_tmp
 # set proper DRM mode on systemd
+prep_create /etc/modprobe.d/10-nvidia.conf
 wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/10-nvidia.conf
-sudo cp 10-nvidia.conf /etc/modprobe.d/
-sleep 1
-rm 10-nvidia.conf
+copy_ 10-nvidia.conf /etc/modprobe.d/
 # refresh boot image
-sudo mkinitcpio -P
+initramfs_upd
+bootloader_upd
 zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300

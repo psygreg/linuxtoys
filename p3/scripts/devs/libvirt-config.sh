@@ -9,23 +9,20 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 
 configure_libvirt() {
+    sudo_rq
     if is_ubuntu || is_debian; then
-        _packages=(qemu-kvm libvirt-daemon-system libvirt-clients virt-manager virt-viewer dnsmasq-base bridge-utils swtpm netcat-openbsd)
+        pkg_install qemu-kvm libvirt-daemon-system libvirt-clients virt-manager virt-viewer dnsmasq-base bridge-utils swtpm netcat-openbsd
     elif is_fedora || is_ostree; then
-        _packages=(qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm nmap-ncat)
+        pkg_install qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm nmap-ncat
     elif is_suse; then
-        _packages=(qemu-kvm libvirt libvirt-daemon virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm netcat-openbsd)
+        pkg_install qemu-kvm libvirt libvirt-daemon virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm netcat-openbsd
     elif is_arch || is_cachy; then
-        _packages=(qemu-full virt-manager virt-viewer dnsmasq vde2 bridge-utils swtpm openbsd-netcat)
+        pkg_install qemu-full virt-manager virt-viewer dnsmasq vde2 bridge-utils swtpm openbsd-netcat
     else
         fatal "Unsupported distribution for this script."
     fi
-
-    sudo_rq
-    _install_
 
     # Add all regular users to libvirt group
     while IFS=: read -r user _ uid _; do
@@ -35,8 +32,8 @@ configure_libvirt() {
     done < /etc/passwd
 
     # Enable/start legacy and modern libvirt daemons (first available wins)
-    sudo systemctl enable --now libvirtd.service >/dev/null 2>&1 \
-        || sudo systemctl enable --now virtqemud.service >/dev/null 2>&1 \
+    { sysd_enable libvirtd.service && sysd_start libvirtd.service >/dev/null 2>&1; } \
+        || { sysd_enable virtqemud.service && sysd_start virtqemud.service >/dev/null 2>&1; } \
         || true
 }
 

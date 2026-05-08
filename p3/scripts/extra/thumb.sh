@@ -6,15 +6,11 @@
 # nocontainer
 
 # --- Start of the script code ---
-#SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-# language
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 if [ ! -f $HOME/.local/.autopatch.state ]; then
-    _packages=(ffmpegthumbnailer)
     sudo_rq
-    _install_
+    pkg_install ffmpegthumbnailer
     zeninf "$msg018"
 else
     fatal "$msg234"

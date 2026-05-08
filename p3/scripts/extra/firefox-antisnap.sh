@@ -10,9 +10,9 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-source "$SCRIPT_DIR/libs/lang/${langfile}.lib"
 sudo_rq
 wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | gpg --dearmor | sudo tee /etc/apt/keyrings/packages.mozilla.org.gpg > /dev/null
+prep_create /etc/apt/sources.list.d/mozilla.sources
 cat << 'EOF' | sudo tee /etc/apt/sources.list.d/mozilla.sources > /dev/null
 Types: deb
 URIs: https://packages.mozilla.org/apt
@@ -20,21 +20,24 @@ Suites: mozilla
 Components: main
 Signed-By: /etc/apt/keyrings/packages.mozilla.org.gpg
 EOF
+prep_create /etc/apt/preferences.d/mozilla
 cat << 'EOF' | sudo tee /etc/apt/preferences.d/mozilla > /dev/null
 Package: firefox*
 Pin: origin packages.mozilla.org
 Pin-Priority: 1001
 EOF
+prep_create /etc/apt/apt.conf.d/51-unattended-upgrades-firefox
 cat << 'EOF' | sudo tee /etc/apt/apt.conf.d/51-unattended-upgrades-firefox > /dev/null
 Unattended-Upgrade::Origins-Pattern { "archive=mozilla"; };
 EOF
+prep_create /etc/apt/preferences.d/firefox-no-snap
 sudo tee <<EOF /etc/apt/preferences.d/firefox-no-snap >/dev/null
 Package: firefox*
 Pin: release o=Ubuntu*
 Pin-Priority: -1
 EOF
-rm -rf ~/snap/firefox
+prep_rm ~/snap/firefox
 sudo snap remove firefox
 sudo apt remove firefox # ensure it was fully removed
 sudo apt update
-sudo apt install firefox
+pkg_install firefox
