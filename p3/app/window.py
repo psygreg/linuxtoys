@@ -742,6 +742,10 @@ class AppWindow(Gtk.ApplicationWindow):
         category_path = category_info["path"]
         if self.category_cache.is_populated:
             scripts = self.category_cache.get_scripts_for_category(category_path)
+            # If cache is populated but doesn't have this specific path (e.g., nested subcategories),
+            # fall back to parsing from filesystem
+            if not scripts:
+                scripts = parser.get_scripts_for_category(category_path, self.translations)
         else:
             scripts = parser.get_scripts_for_category(category_path, self.translations)
 

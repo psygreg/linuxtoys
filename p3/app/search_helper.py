@@ -183,12 +183,20 @@ class CategoryCache:
         # Get all categories
         self.categories = parser.get_categories(translations)
         
-        # Pre-populate scripts for each category
+        # Pre-populate scripts for each category and nested subcategories
         for category in self.categories:
             category_path = category.get('path', '')
             if category_path:
                 scripts = parser.get_scripts_for_category(category_path, translations)
                 self.scripts_by_category[category_path] = scripts
+                
+                # Also pre-populate scripts for nested subcategories
+                for script in scripts:
+                    if script.get('is_subcategory'):
+                        subcategory_path = script.get('path', '')
+                        if subcategory_path:
+                            subscripts = parser.get_scripts_for_category(subcategory_path, translations)
+                            self.scripts_by_category[subcategory_path] = subscripts
         
         self.is_populated = True
     
@@ -197,7 +205,11 @@ class CategoryCache:
         return self.categories.copy()
     
     def get_scripts_for_category(self, category_path):
-        """Get scripts for a specific category from cache."""
+        """Get scripts for a specific category from cache.
+        
+        If the path is not in the cache, returns an empty list.
+        The caller should have a fallback to parser.get_scripts_for_category().
+        """
         return self.scripts_by_category.get(category_path, []).copy()
     
     def invalidate(self):
