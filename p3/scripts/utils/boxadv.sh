@@ -12,12 +12,14 @@ _lang_
 sudo_rq
 if is_fedora || is_ostree; then
     pkg_install distrobox podman pcsc-lite pcsc-lite-ccid
-elif is_debian || is_ubuntu || is_solus; then
+elif is_solus; then
+    pkg_install distrobox podman pcsc-lite ccid
+elif is_debian || is_ubuntu; then
     if is_ubuntu; then
         sudo add-apt-repository ppa:michel-slm/distrobox -y
-        sudo apt update
+        sudo apt update  
     fi
-    pkg_install distrobox podman pcsc-lite ccid
+    pkg_install distrobox podman pcscd libccid pcsc-tools
 elif is_arch || is_cachy; then
     pkg_install distrobox podman pcsclite ccid
 elif is_suse || is_opensuse; then

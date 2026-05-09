@@ -195,13 +195,15 @@ davinciboxatom () {
 	done
 }
 # if on atomic distros, go straight to davincibox
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 # warn about just installing Resolve, and still requiring a purchase from BMD to use Studio
 zenwrn "$msg034"
 cd $HOME
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
+elif is_solus; then
+    davinciboxd
 else
     # menu
     while true; do

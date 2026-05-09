@@ -69,7 +69,7 @@ while true; do
     case $CHOICE in
     "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
     "Desktop") sudo_rq && pp_ondemand && optimizer && exit 0;;
-    "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
+    "Laptop") sudo_rq && optimizer && { ! is_zorin && psave_lib; } && exit 0;;
     "Cancel") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac

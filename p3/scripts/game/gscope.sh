@@ -4,6 +4,7 @@
 # description: gscope_desc
 # icon: gaming.svg
 # repo: https://github.com/ValveSoftware/gamescope
+# compat: !debian, !ubuntu
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -16,13 +17,6 @@ elif [ "$ID" == "arch" ] || [ "$ID" == "cachyos" ] || [[ "$ID_LIKE" =~ "arch" ]]
     sudo_rq
     multilib_chk
     pkg_install gamescope
-# debian has to be updated manually :/
-elif [ "$ID" == "debian" ]; then
-    sudo_rq
-    prep_tmp
-    wget http://ftp.us.debian.org/debian/pool/contrib/g/gamescope/gamescope_3.16.14-1_amd64.deb
-    pkg_fromfile ./gamescope_3.16.14-1_amd64.deb
-    rm gamescope_3.16.14-1_amd64.deb
 else
     sudo_rq
     pkg_install gamescope

@@ -297,12 +297,7 @@ def _get_machine_id() -> str:
                 data = json.load(f)
             obfuscated_mid = data.get("machine_id_obf")
             if obfuscated_mid:
-                try:
-                    mid = _decode_machine_id(obfuscated_mid)
-                    if mid and len(mid) == 32:
-                        return mid
-                except Exception:
-                    pass
+                return obfuscated_mid
         except Exception:
             pass
 
@@ -327,7 +322,7 @@ def _get_machine_id() -> str:
         _SECRET_CACHE.chmod(0o600)
     except Exception:
         pass  # Non-fatal — caller will still get a valid (ephemeral) ID
-    return mid
+    return obfuscated_mid
 
 def _generate_obfuscated_machine_id() -> str:
     """Proprietary entropy generation."""
@@ -393,9 +388,13 @@ def _get_creation_day() -> int:
 
 def _sign_machine_id(_m: str) -> tuple[str, int]:
     """Generate HMAC signature for machine_id with day offset."""
+    try:
+        _decoded = _decode_machine_id(_m)
+    except Exception:
+        raise ValueError("Cannot sign invalid machine_id")
     _d = int(time.time() // 86400)
     _k = b"linuxtoys-antenna-v1"
-    _v = f"{_m}:{_d}".encode()
+    _v = f"{_decoded}:{_d}".encode()
     return hmac.new(_k, _v, hashlib.sha256).hexdigest(), _d
 
  

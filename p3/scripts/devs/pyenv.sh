@@ -19,7 +19,6 @@ elif is_suse; then
     pkg_install gcc automake bzip2 libbz2-devel xz xz-devel openssl-devel ncurses-devel readline-devel zlib-devel tk-devel libffi-devel sqlite3-devel gdbm-devel make findutils patch
 fi
 # pyenv installation and addition to PATH
-prep_dir "$HOME/.pyenv"
 curl -fsSL https://pyenv.run | bash
 if [[ -f "${HOME}/.bash_profile" ]]; then
     prep_edit "$HOME/.bash_profile"
