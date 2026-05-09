@@ -142,6 +142,10 @@ def get_subcategories_for_category(category_path, translations=None):
         return subcategories
 
     for item_name in os.listdir(category_path):
+        # Skip hidden directories (starting with .)
+        if item_name.startswith('.'):
+            continue
+            
         item_path = os.path.join(category_path, item_name)
         if os.path.isdir(item_path):
             info_file_path = os.path.join(item_path, 'category-info.txt')
@@ -425,6 +429,9 @@ def has_subcategories(category_path):
         return False
     
     for item_name in os.listdir(category_path):
+        # Skip hidden directories (starting with .)
+        if item_name.startswith('.'):
+            continue
         item_path = os.path.join(category_path, item_name)
         if os.path.isdir(item_path):
             return True
