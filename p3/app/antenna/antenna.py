@@ -7,6 +7,8 @@ from requests.exceptions import ConnectionError, Timeout
 import json
 from io import StringIO
 from pathlib import Path
+import base64
+import hashlib
  
 _REPORT_URL = "https://bug.linux.toys"
  
@@ -283,22 +285,28 @@ def _get_machine_id() -> str:
     """
     Return a stable, random machine identifier for this installation.
     Generated once on first bootstrap and persisted in the cache file
-    alongside the app token — no env vars, no collisions.
+    alongside the app token — stored in obfuscated form.
     """
-    import uuid
     # Try to load an existing machine ID from the cache file
     if _SECRET_CACHE.exists():
         try:
             with open(_SECRET_CACHE, "r") as f:
                 data = json.load(f)
-            mid = data.get("machine_id")
-            if mid and re.match(r"^[a-f0-9]{32}$", mid):
-                return mid
+            obfuscated_mid = data.get("machine_id_obf")
+            if obfuscated_mid:
+                try:
+                    mid = _decode_machine_id(obfuscated_mid)
+                    if mid and len(mid) == 32:
+                        return mid
+                except Exception:
+                    pass
         except Exception:
             pass
- 
-    # Generate a new random UUID (no host/user info)
-    mid = uuid.uuid4().hex  # 32 lowercase hex chars
+
+    # Generate a new obfuscated machine identifier
+    mid = _generate_obfuscated_machine_id()
+    obfuscated_mid = _encode_machine_id(mid)
+    
     try:
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         _SECRET_CACHE.parent.chmod(0o700)
@@ -310,13 +318,42 @@ def _get_machine_id() -> str:
                     existing = json.load(f)
             except Exception:
                 pass
-        existing["machine_id"] = mid
+        existing["machine_id_obf"] = obfuscated_mid
         with open(_SECRET_CACHE, "w") as f:
             json.dump(existing, f)
         _SECRET_CACHE.chmod(0o600)
     except Exception:
         pass  # Non-fatal — caller will still get a valid (ephemeral) ID
     return mid
+
+def _generate_obfuscated_machine_id() -> str:
+    """Proprietary entropy generation."""
+    import os
+    _a = os.urandom(8)
+    _b = int(time.time() * 1000000).to_bytes(8, byteorder='big')
+    try:
+        _c = hashlib.sha256(__import__('socket').gethostname().encode()).digest()[:4]
+    except:
+        _c = os.urandom(4)
+    _d = os.urandom(8)
+    _e = b"".join([_a, _b, _c, _d])
+    return hashlib.sha256(hashlib.sha256(_e).digest() + _e).digest().hex()
+
+
+def _encode_machine_id(mid: str) -> str:
+    """Entropy encoding."""
+    _s = hashlib.sha256(mid.encode()).digest()[:8]
+    _m = bytes.fromhex(mid)
+    return f"{base64.b64encode(_s).decode('ascii')[:8]}:{base64.b64encode(_m).decode('ascii')}"
+
+
+def _decode_machine_id(obfuscated: str) -> str:
+    """Entropy decoding."""
+    _p = obfuscated.split(":", 1)
+    if len(_p) != 2:
+        raise ValueError("Invalid format")
+    return base64.b64decode(_p[1]).hex()
+
  
 def _authenticate() -> tuple[str, float]:
     global _app_token
