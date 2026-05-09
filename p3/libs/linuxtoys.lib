@@ -338,7 +338,12 @@ pkg_flat() {
        ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
         flatpak_scope="--system"
     fi
-    flatpak install --or-update "$flatpak_scope" --noninteractive flathub "${@}" || fatal "Failed to install flatpak packages $*"
+    if [ flatpak_scope = "--user" ]; then
+        flatpak install --or-update "$flatpak_scope" --noninteractive flathub "${@}" || fatal "Failed to install flatpak packages $*"
+    else
+        sudo_rq
+        sudo flatpak install --or-update "$flatpak_scope" --noninteractive flathub "${@}" || fatal "Failed to install flatpak packages $*"
+    fi
     _append_transmap "flatpak $*"
 }
 pkg_fromfile () {
