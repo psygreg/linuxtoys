@@ -11,7 +11,7 @@ _lang_
 sudo_rq
 pkg_install fish
 if command -v fish >/dev/null 2>&1; then
-	shell_change "$(type -p fish)" "$USER"
+	shell_change "$(type -p fish)"
 	prep_edit "$HOME/.config/fish/config.fish"
 	if fish -c "curl -sL https://git.io/fisher | source; fisher install jorgebucaran/fisher"; then
 		zeninf "$msg018"

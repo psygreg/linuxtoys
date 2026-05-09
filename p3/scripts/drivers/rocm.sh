@@ -25,7 +25,7 @@ rocm_rpm () {
 }
 rocm_deb () {
     if is_amd; then
-        pkg_install libamd-comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas0 librocfft0 librocm-smi64-1 librocsolver0 librocsparse0 rocm-device-libs-17 rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl-icd ocl-icd-libopencl1 clinfo
+        pkg_install clinfo rocm
         sudo usermod -aG render,video $USER
     else
         nonfatal "$msg040"
@@ -41,6 +41,19 @@ rocm_arch () {
 }
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
     sudo_rq
+    sudo mkdir --parents --mode=0755 /etc/apt/keyrings
+    wget https://repo.radeon.com/rocm/rocm.gpg.key -O - | \
+        gpg --dearmor | sudo tee /etc/apt/keyrings/rocm.gpg > /dev/null
+    sudo tee /etc/apt/sources.list.d/rocm.list << EOF
+deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/7.2.3 noble main
+deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/graphics/7.2.3/ubuntu noble main
+EOF
+    sudo tee /etc/apt/preferences.d/rocm-pin-600 << EOF
+Package: *
+Pin: release o=repo.radeon.com
+Pin-Priority: 600
+EOF
+    sudo apt update
     rocm_deb
 elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
     sudo_rq

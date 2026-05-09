@@ -83,7 +83,7 @@ get_winboat () { # gets latest release
             fi
         fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
-        pkg_fromfile "./winboat-$ver-amd64.deb"
+        pkg_fromfile "winboat-$ver-amd64.deb"
     elif is_fedora || is_suse; then
         if rpm -qi "winboat" &> /dev/null; then
             local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"

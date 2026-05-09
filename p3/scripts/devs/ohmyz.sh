@@ -14,6 +14,6 @@ pkg_install zsh
 prep_edit "$HOME/.zshrc"
 (
 	sh -c "$(curl -fsSL https://install.ohmyz.sh/) --unattended" && {
-		shell_change "$(type -p zsh)" "$USER";	
+		shell_change "$(type -p zsh)";
 	}
 ) && { zeninf "$msg018"; } || { fatal "Unable to complete installation"; }

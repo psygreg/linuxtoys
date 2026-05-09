@@ -57,7 +57,7 @@ if is_fedora; then
         fi
     fi
 elif is_debian || is_ubuntu; then
-    { [ "$UPD_SERVICE" = "1" ] && apt autoremove -y; } || fatal "Failed to remove orphaned packages"
+    { [ "$UPD_SERVICE" = "1" ] && apt autoremove -y; } || sudo apt autoremove -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && apt upgrade -y -o Acquire::http::Dl-Limit=2048 Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
