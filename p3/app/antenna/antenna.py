@@ -9,6 +9,7 @@ from io import StringIO
 from pathlib import Path
 import base64
 import hashlib
+import hmac
  
 _REPORT_URL = "https://bug.linux.toys"
  
@@ -255,11 +256,13 @@ def _bootstrap_app_token() -> str:
     
     # Generate a machine identifier (can be customized)
     machine_id = _get_machine_id()
+    _cd = _get_creation_day()
+    _sig, _st = _sign_machine_id(machine_id)
     
     try:
         resp = requests.post(
             f"{_REPORT_URL}/bootstrap",
-            json={"machine_id": machine_id},
+            json={"machine_id": machine_id, "signature": _sig, "signature_time": _st, "creation_day": _cd},
             timeout=10,
         )
         resp.raise_for_status()
@@ -353,6 +356,47 @@ def _decode_machine_id(obfuscated: str) -> str:
     if len(_p) != 2:
         raise ValueError("Invalid format")
     return base64.b64decode(_p[1]).hex()
+
+
+def _get_creation_day() -> int:
+    """Get or create the installation creation day offset."""
+    if _SECRET_CACHE.exists():
+        try:
+            with open(_SECRET_CACHE, "r") as f:
+                data = json.load(f)
+            _cd = data.get("creation_day")
+            if _cd is not None and isinstance(_cd, int) and _cd >= 0:
+                return _cd
+        except Exception:
+            pass
+    
+    # Create new creation_day
+    _cd = int(time.time() // 86400)
+    try:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        _SECRET_CACHE.parent.chmod(0o700)
+        existing: dict = {}
+        if _SECRET_CACHE.exists():
+            try:
+                with open(_SECRET_CACHE, "r") as f:
+                    existing = json.load(f)
+            except Exception:
+                pass
+        existing["creation_day"] = _cd
+        with open(_SECRET_CACHE, "w") as f:
+            json.dump(existing, f)
+        _SECRET_CACHE.chmod(0o600)
+    except Exception:
+        pass
+    return _cd
+
+
+def _sign_machine_id(_m: str) -> tuple[str, int]:
+    """Generate HMAC signature for machine_id with day offset."""
+    _d = int(time.time() // 86400)
+    _k = b"linuxtoys-antenna-v1"
+    _v = f"{_m}:{_d}".encode()
+    return hmac.new(_k, _v, hashlib.sha256).hexdigest(), _d
 
  
 def _authenticate() -> tuple[str, float]:
