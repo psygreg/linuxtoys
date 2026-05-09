@@ -87,31 +87,58 @@ chaotic_aur_lib() {
 
 # --- RPMFusion ---
 rpmfusion_chk() {
-    local fedora_version
-    if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
-        fatal "Could not determine Fedora version"
-        return 1
-    fi
+    if [[ "$ID_LIKE" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "centos" ]] || [ "$ID" = "rhel" ]; then
+        local rhel_version
+        if ! rhel_version=$(rpm -E %rhel 2>/dev/null) || [ "$rhel_version" = %rhel ]; then
+            fatal "Could not determine RHEL version"
+            return 1
+        fi
+        # requirements
+        pkg_install epel-release distribution-gpg-keys
+        sudo dnf config-manager --set-enabled crb
 
-    local install_cmd="pkg_fromfile"
-    # Free
-    if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-        echo "Installing RPMFusion Free repository..."
-        $install_cmd "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
-            fatal "Failed to install RPMFusion Free repository"
-        echo "RPMFusion Free repository installed successfully"
+        if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
+            sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-el-$(rpm -E %rhel)
+            sudo dnf --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm || \
+                fatal "Failed to install RPMFusion Free repository"
+            _append_transmap "pkg file rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
+            echo "RPMFusion Free repository installed successfully"
+        else
+            echo "RPMFusion Non-Free repository is already installed"
+        fi
+        if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
+            sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-el-$(rpm -E %rhel)
+            sudo dnf --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm || \
+                fatal "Failed to install RPMFusion Non-Free repository"
+            _append_transmap "pkg file rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
+            echo "RPMFusion Non-Free repository installed successfully"
+        else
+            echo "RPMFusion Non-Free repository is already installed"
+        fi
     else
-        echo "RPMFusion Free repository is already installed"
-    fi
+        local fedora_version
+        if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
+            fatal "Could not determine Fedora version"
+            return 1
+        fi
 
-    # Non-Free
-    if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-        echo "Installing RPMFusion Non-Free repository..."
-        $install_cmd "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
-            fatal "Failed to install RPMFusion Non-Free repository"
-        echo "RPMFusion Non-Free repository installed successfully"
-    else
-        echo "RPMFusion Non-Free repository is already installed"
+        local install_cmd="pkg_fromfile"
+        if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
+            echo "Installing RPMFusion Free repository..."
+            $install_cmd "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
+                fatal "Failed to install RPMFusion Free repository"
+            echo "RPMFusion Free repository installed successfully"
+        else
+            echo "RPMFusion Free repository is already installed"
+        fi
+        if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
+            echo "Installing RPMFusion Non-Free repository..."
+            $install_cmd "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
+                fatal "Failed to install RPMFusion Non-Free repository"
+            echo "RPMFusion Non-Free repository installed successfully"
+        else
+            echo "RPMFusion Non-Free repository is already installed"
+        fi
     fi
     return 0
 }
