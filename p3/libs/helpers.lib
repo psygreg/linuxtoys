@@ -53,7 +53,7 @@ multilib_chk() {
 
 # --- Chaotic AUR ---
 chaotic_aur_lib() {
-    if ! is_arch; then
+    if ! is_arch && ! is_cachy; then
         fatal "$msg077"
     fi
 
