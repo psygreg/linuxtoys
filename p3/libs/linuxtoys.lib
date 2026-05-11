@@ -70,18 +70,15 @@ sudo_rq() {
 
     # GUI mode
     if command -v sudo-rs &>/dev/null; then
-        _pass=$(zenity --password --title="LinuxToys")
-        echo "${_pass}" | sudo-rs -Sv
+        _pass=$(zenity --password --title="LinuxToys" 2>/dev/null) || fatal "Password dialog cancelled"
+        echo "${_pass}" | sudo-rs -Sv || fatal "Wrong password or authentication failed"
     else
-        sudo -Av
+        _pass=$(zenity --password --title="LinuxToys" 2>/dev/null) || fatal "Password dialog cancelled"
+        echo "${_pass}" | sudo -S -v &>/dev/null || fatal "Wrong password or authentication failed"
     fi
 
-    if [ "$(sudo whoami)" = "root" ]; then
-        [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
-        return 0
-    else
-        fatal "Wrong password. Do you have sudo?"
-    fi
+    [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
+    return 0
 }
 
 # --- Utils ---
