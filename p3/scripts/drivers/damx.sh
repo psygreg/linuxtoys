@@ -30,7 +30,9 @@ FALSE 5 "$msg300")
 
 _vers=$(curl https://github.com/${_gh_user}/${_gh_repo}/releases/latest -sw '%{redirect_url}' | awk -F'/' '{print $NF}')
 _tarb=($(curl -fsSL https://github.com/${_gh_user}/${_gh_repo}/releases/expanded_assets/${_vers} | grep -Pio '(?<=href=")([^"]+.tar.xz)'))
-curl -fsSL "https://github.com/${_tarb}" -o- | tar -xvJf -  --strip-components=1 --one-top-level="/tmp/damx/" && {
+prep_tmp
+mkdir -p damx
+curl -fsSL "https://github.com/${_tarb}" -o- | tar -xvJf - -C damx --strip-components=1 && {
 	sudo_rq
 	[ "${_choice}" -eq 1 -o "${_choice}" -eq 4 ] && {
 		if [[ "$ID" =~ ^(debian|ubuntu)$ ]] || [[ "$ID_LIKE" =~ (debian|ubuntu) ]]; then
@@ -42,6 +44,6 @@ curl -fsSL "https://github.com/${_tarb}" -o- | tar -xvJf -  --strip-components=1
 			pkg_install make gcc kernel-headers kernel-devel
 		fi
 	}
-	cd /tmp/damx/
+	cd damx/
 	echo -e "${_choice}\nq\nq\n" | sudo bash setup.sh && { zeninf "$msg018"; } || { fatal "Acer Manager installation unsuccessful"; }
 }

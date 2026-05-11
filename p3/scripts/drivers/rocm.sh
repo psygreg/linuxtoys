@@ -33,7 +33,7 @@ rocm_deb () {
 }
 rocm_arch () {
     if is_amd; then
-        pkg_install comgr hsa-rocr rccl rocalution rocblas rocfft rocm-smi-lib rocsolver rocsparse rocm-device-libs rocm-smi-lib rocminfo hipcc hiprand hip-runtime-amd radeontop rocm-opencl-runtime ocl-icd clinfo
+        pkg_install rocminfo rocm-opencl-runtime rocm-hip-runtime ocl-icd clinfo
         sudo usermod -aG render,video $USER
     else
         nonfatal "$msg040"

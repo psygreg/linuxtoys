@@ -74,6 +74,7 @@ zsh_command_not_found_handler() {
     fi
 }
 EOF
+    chmod +x "$zsh_cnf_script"
 }
 # Set up bash integration
 setup_bash_integration() {
@@ -100,8 +101,20 @@ EOF
     fi
 }
 
+# Check if zsh is the user's default shell
+is_zsh_default_shell() {
+    local user_shell
+    user_shell=$(getent passwd "$USER" | cut -d: -f7)
+    [[ "$user_shell" == *"zsh"* ]]
+}
+
 # Set up zsh integration
 setup_zsh_integration() {
+    if ! is_zsh_default_shell; then
+        echo "Zsh is not your default shell, skipping zsh integration."
+        return 0
+    fi
+    
     prep_create /etc/zsh/zshrc.d/99-distrobox-cnf.zsh
     local zshrc_addition="/etc/zsh/zshrc.d/99-distrobox-cnf.zsh"
     sudo tee "$zshrc_addition" > /dev/null << EOF
@@ -141,7 +154,7 @@ EOF
     fi
     
     # Zsh integration for current user
-    if [ -f "$HOME/.zshrc" ]; then
+    if is_zsh_default_shell && [ -f "$HOME/.zshrc" ]; then
         if ! grep -q "distrobox-handler/zsh_command_not_found_handler" "$HOME/.zshrc"; then
             prep_edit "$HOME/.zshrc"
             tee -a "$HOME/.zshrc" > /dev/null << 'EOF'
@@ -195,6 +208,30 @@ EOF
 
     sudo chmod +x "$alias_file"
 }
+
+# Main installation function that orchestrates all setup steps
+install_cnf_handler() {
+    # Create handler scripts
+    create_cnf_handler
+    if is_zsh_default_shell; then
+        create_zsh_cnf_handler
+    fi
+    
+    # Set up integration in system shells
+    setup_bash_integration
+    setup_zsh_integration
+    
+    # Set up user-specific integration for immediate effect
+    setup_user_integration
+    
+    # Create host command aliases
+    create_host_aliases
+    
+    echo "Distrobox Command-Not-Found Handler installed successfully!"
+    echo "The handler will execute commands on the host when not found in the container."
+}
+
+# --- End of script code ---
 sudo_rq
 install_cnf_handler
 
