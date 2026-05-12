@@ -44,31 +44,20 @@ cachyos_sysd_lib () {
 sboost_lib () {
     prep_tmp
     GITHUB_BASE="https://raw.githubusercontent.com/psygreg/shader-booster/main"
-    GITEA_BASE="https://git.linux.toys/psygreg/shader-booster/raw/branch/main"
-    fetch_with_fallback () {
-        local filename="$1"
-        local output_file="$2"
-        if wget -q -O "$output_file" "${GITHUB_BASE}/${filename}" 2>/dev/null; then
-            return 0
-        fi
-        if wget -q -O "$output_file" "${GITEA_BASE}/${filename}" 2>/dev/null; then
-            return 0
-        fi
-
-        return 1
-    }
     # patch for Nvidia GPUs
     patch_nv () {
-        if fetch_with_fallback "patch-nvidia" "patch-nvidia"; then
+        if wget -q -O "patch-nvidia" "${GITHUB_BASE}/patch-nvidia"; then
             echo -e "\n$(cat patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            return 0
         else
             fatal "Failed to fetch patch-nvidia."
         fi
     }
     # patch for Mesa-driven GPUs
     patch_mesa () {
-        if fetch_with_fallback "patch-mesa" "patch-mesa"; then
+        if wget -q -O "patch-mesa" "${GITHUB_BASE}/patch-mesa"; then
             echo -e "\n$(cat patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
+            return 0
         else
             fatal "Failed to fetch patch-mesa."
         fi
@@ -78,11 +67,13 @@ sboost_lib () {
         DEST_FILE="/etc/environment"
         prep_edit /etc/environment
         if is_nvidia; then
-            patch_nv
-            PATCH_APPLIED=1
+            if patch_nv; then
+                PATCH_APPLIED=1
+            fi
         else
-            patch_mesa
-            PATCH_APPLIED=1
+            if patch_mesa; then
+                PATCH_APPLIED=1
+            fi
         fi
 
         if [ $PATCH_APPLIED -eq 1 ]; then
