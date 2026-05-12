@@ -116,8 +116,8 @@ psave_lib () {
             rpm-ostree refresh-md
             pkg_install power-options
         else
-            if is_debian || is_ubuntu; then
-                pkg_install libgtk4-dev libadwaita-1-dev
+            if is_ubuntu || is_debian; then
+                pkg_install libgtk-4-dev libadwaita-1-dev
             elif is_arch; then
                 pkg_install gtk4 libadwaita
             elif is_fedora || is_suse; then
