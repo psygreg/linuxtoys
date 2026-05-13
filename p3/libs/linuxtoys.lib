@@ -276,7 +276,7 @@ pkg_install () {
         local _pacman_pkgs=()
         local _paru_pkgs=()
         for pak in "${pkg_notfound[@]}"; do
-            if pacman -Ss "$pak" | grep -q "$pak"; then
+            if pacman -Ss "$pak" | grep -qF "$pak"; then
                 _pacman_pkgs+=("$pak")
             else
                 _paru_pkgs+=("$pak")
@@ -314,7 +314,7 @@ pkg_install () {
         sudo rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_fedora; then
-        sudo dnf in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        sudo dnf install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_suse; then
         sudo zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
