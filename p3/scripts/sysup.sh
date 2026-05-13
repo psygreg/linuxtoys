@@ -67,7 +67,7 @@ elif is_debian || is_ubuntu; then
 elif is_arch || is_cachy; then
     orphaned_packages=$(pacman -Qdtq 2>/dev/null || true)
     if [[ -n "$orphaned_packages" ]]; then
-        sudo pacman -Rns --noconfirm $orphaned_packages || fatal "Failed to remove orphaned packages"
+        sudo pacman -Rns $orphaned_packages || fatal "Failed to remove orphaned packages"
     fi
     sudo pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
 elif is_suse; then
