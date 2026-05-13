@@ -343,3 +343,17 @@ EOF
         bootloader_upd
     fi
 }
+
+nvidia_ctkpatch () {
+    local VAR_OUTPUT="/var/run/cdi/nvidia.yaml"
+    local ETC_OUTPUT="/etc/cdi/nvidia.yaml
+    prep_create "$VAR_OUTPUT"
+    prep_create "$ETC_OUTPUT"
+    # ensure files can be created cleanly after adding to transmap
+    sudo rm "$VAR_OUTPUT"
+    sudo rm "$ETC_OUTPUT"
+    sudo nvidia-ctk cdi generate --output="$VAR_OUTPUT"
+    sudo nvidia-ctk cdi generate --output="$ETC_OUTPUT"
+    sudo chmod a+r "$VAR_OUTPUT"
+    sudo chmod a+r "$ETC_OUTPUT"
+}
