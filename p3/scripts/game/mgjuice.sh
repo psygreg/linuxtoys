@@ -15,3 +15,4 @@ org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 \
 org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08 \
 org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08 \
 io.github.radiolamp.mangojuice
+zeninf "$finishmsg"

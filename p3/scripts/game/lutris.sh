@@ -17,3 +17,4 @@ else
     # use flatpak for all others, since native install usually only works well on Fedora
     pkg_flat net.lutris.Lutris
 fi
+zeninf "$finishmsg"

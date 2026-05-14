@@ -135,12 +135,10 @@ davinciboxatom () {
     dv_atom_deps () {
         pkg_install toolbox podman lshw
         if is_nvidia; then
-            pkg_install nvidia-container-toolkit
-        fi
-        sudo_rq
-        _install_
-        if [[ $? -eq 1 ]]; then
-            echo "No packages to install."
+            pkg_install curl
+			curl -s -L -k https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | \
+  				sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo
+            pkg_install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
         fi
     }
 
@@ -168,6 +166,7 @@ davinciboxatom () {
         fi
         cd $HOME
         sudo rm -rf davincibox #cleanup
+        zeninf "$finishmsg"
     }
 
 	while true; do
@@ -200,6 +199,7 @@ _lang_
 # warn about just installing Resolve, and still requiring a purchase from BMD to use Studio
 zenwrn "$msg034"
 cd $HOME
+export SCRIPT_DIR
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
 elif is_solus; then

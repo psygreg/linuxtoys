@@ -28,3 +28,4 @@ if [ -f /etc/systemd/system/set-ondemand-governor.service ]; then
 else
     gamemode_in
 fi
+zeninf "$finishmsg"

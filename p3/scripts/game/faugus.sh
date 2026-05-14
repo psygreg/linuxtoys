@@ -22,3 +22,4 @@ elif is_fedora || is_arch || is_cachy; then
     fi
     pkg_install faugus-launcher
 fi
+zeninf "$finishmsg"

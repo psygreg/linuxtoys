@@ -5,6 +5,7 @@
 # icon: lsw.svg
 # reboot: yes
 # nocontainer
+# compat: !ublue
 # repo: https://github.com/TibixDev/winboat
 
 # --- Start of the script code ---
@@ -32,7 +33,7 @@ docker_in () { # install docker
             $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
-    elif is_fedora; then
+    elif is_fedora || is_ostree; then
         if command -v rpm-ostree &> /dev/null; then
             if ! rpm-ostree status | grep -q "docker-ce"; then
                 fatal "$msg292"

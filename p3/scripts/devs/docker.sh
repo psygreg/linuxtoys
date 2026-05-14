@@ -5,6 +5,7 @@
 # icon: docker.svg
 # nocontainer
 # reboot: yes
+# compat: !ublue
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -31,7 +32,7 @@ docker_in () { # install docker
             $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
-    elif is_fedora; then
+    elif is_fedora || is_ostree; then
         if command -v rpm-ostree &> /dev/null; then
             curl -O https://download.docker.com/linux/fedora/docker-ce.repo
             sudo install -o 0 -g 0 -m644 docker-ce.repo /etc/yum.repos.d/docker-ce.repo

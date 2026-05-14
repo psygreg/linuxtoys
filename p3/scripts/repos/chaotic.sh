@@ -3,7 +3,7 @@
 # version: 1.0
 # description: chaotic_desc
 # icon: aur.svg
-# compat: arch, cachy
+# compat: arch, !cachy
 # repo: https://aur.chaotic.cx/
 
 # --- Start of the script code ---

@@ -23,3 +23,4 @@ else
     pkg_flat com.valvesoftware.Steam
     pkg_install steam-devices
 fi
+zeninf "$finishmsg"

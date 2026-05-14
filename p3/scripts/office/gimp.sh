@@ -20,3 +20,4 @@ if zenity --question --text "$msg253" --width 360 --height 300; then
         }
     }
 fi
+zeninf "$finishmsg"

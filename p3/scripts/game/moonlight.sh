@@ -9,3 +9,4 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 pkg_flat com.moonlight_stream.Moonlight
+zeninf "$finishmsg"

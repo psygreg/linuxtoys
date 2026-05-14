@@ -9,3 +9,4 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 pkg_flat com.dec05eba.gpu_screen_recorder
+zeninf "$finishmsg"

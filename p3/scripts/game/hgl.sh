@@ -49,3 +49,4 @@ else
 fi
 unset tag
 unset ver
+zeninf "$finishmsg"

@@ -25,3 +25,4 @@ fi
 if command -v flatpak >/dev/null 2>&1; then
     pkg_flat org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08 org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08 org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/25.08
 fi
+zeninf "$finishmsg"

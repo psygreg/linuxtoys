@@ -16,3 +16,4 @@ if command -v flatpak &> /dev/null; then
     org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08 \
     org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08
 fi
+zeninf "$finishmsg"

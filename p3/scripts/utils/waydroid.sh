@@ -22,7 +22,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     pkg_install waydroid python3
     sysd_enable waydroid-container
     sysd_start waydroid-container
-    waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS
+    sudo waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS
     if command -v firewall-cmd &> /dev/null; then # fedora rules for waydroid networking
         sudo firewall-cmd --zone=trusted --add-interface=waydroid0 --permanent
     elif command -v ufw &> /dev/null; then # other systems with ufw

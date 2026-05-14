@@ -27,3 +27,4 @@ if is_nvidia; then
     fi
 fi
 sudo flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine
+zeninf "$finishmsg"
