@@ -18,7 +18,13 @@ _msg() {
         *)       echo "$text" ;;
     esac
 }
-zeninf() { _msg info "$1"; }
+zeninf() { 
+    if [ -n "$CHECKLIST_RUN" ]; then
+        _msg info "$1"; 
+    else
+        echo "$1";
+    fi
+}
 zenwrn() { _msg warning "$1"; }
 fatal() {
     _msg error "$1" "Fatal Error"

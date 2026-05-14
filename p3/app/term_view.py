@@ -682,6 +682,9 @@ class TermRunScripts(Gtk.Box):
         self._current_action_is_removal = bool(self._cleanup_script_path)
 
         child_env = os.environ.copy()
+        # Export CHECKLIST_RUN when running multiple scripts in sequence
+        if self.total_scripts > 1:
+            child_env['CHECKLIST_RUN'] = '1'
         # SCRIPT_DIR is set by linuxtoys.py at startup relative to the entry point
         # This ensures all scripts can find their libs at the same location
         child_env_list = [f"{key}={value}" for key, value in child_env.items()]
