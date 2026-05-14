@@ -80,6 +80,12 @@ mount_drive() {
 _lang_
 display_guide
 pkg_install rclone
+if is_ostree; then
+   if rpm-ostree status --json | grep -q '"live-replaced": true'; then
+      zeninf "Please reboot and run this script again to complete the configuration." # TODO: add translation
+      exit 0
+   fi
+fi
 get_credentials
 configure_rclone
 mount_drive
