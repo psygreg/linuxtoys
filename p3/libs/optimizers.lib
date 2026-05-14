@@ -346,7 +346,7 @@ EOF
 
 nvidia_ctkpatch () {
     local VAR_OUTPUT="/var/run/cdi/nvidia.yaml"
-    local ETC_OUTPUT="/etc/cdi/nvidia.yaml
+    local ETC_OUTPUT="/etc/cdi/nvidia.yaml"
     prep_create "$VAR_OUTPUT"
     prep_create "$ETC_OUTPUT"
     # ensure files can be created cleanly after adding to transmap
