@@ -87,7 +87,7 @@ chaotic_aur_lib() {
 
 # --- RPMFusion ---
 rpmfusion_chk() {
-    if [[ "$ID_LIKE" =~ "rhel" ]] || [[ "$ID_LIKE" =~ "centos" ]] || [ "$ID" = "rhel" ]; then
+    if [[ "$ID_LIKE" =~ (rhel|centos) || "$ID" == "rhel" ]] && [[ "$ID" != "nobara" ]]; then
         local rhel_version
         if ! rhel_version=$(rpm -E %rhel 2>/dev/null) || [ "$rhel_version" = %rhel ]; then
             fatal "Could not determine RHEL version"
