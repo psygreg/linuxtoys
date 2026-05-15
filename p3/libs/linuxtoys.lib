@@ -282,7 +282,8 @@ pkg_install () {
         local _pacman_pkgs=()
         local _paru_pkgs=()
         for pak in "${pkg_notfound[@]}"; do
-            if pacman -Ss "$pak" | grep -qF "$pak"; then
+            # Use an exact sync-db lookup so AUR-only packages are not misclassified.
+            if pacman -Si "$pak" &>/dev/null; then
                 _pacman_pkgs+=("$pak")
             else
                 _paru_pkgs+=("$pak")
@@ -295,9 +296,9 @@ pkg_install () {
             [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
         fi
         if [ -n "$to_install_paru" ]; then
-            if zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
+            if [[ "$DISABLE_ZENITY" == "1" ]] || zenity --question --title "Installer" --text "$msg305" --height=300 --width=300; then
                 if ! command -v paru &>/dev/null; then
-                    if pacman -Ss paru | grep -q paru; then
+                    if pacman -Si paru &>/dev/null; then
                         sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
                         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
                     else
