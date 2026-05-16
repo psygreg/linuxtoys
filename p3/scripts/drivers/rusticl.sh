@@ -13,7 +13,7 @@ _lang_
 rusticl_in () {
     if is_debian || is_ubuntu; then
         pkg_install mesa-opencl-icd clinfo
-    elif is_fedora; then
+    elif is_fedora || is_rhel || is_ostree; then
         pkg_install mesa-libOpenCL clinfo
     elif is_suse; then
         pkg_install Mesa-libRusticlOpenCL clinfo

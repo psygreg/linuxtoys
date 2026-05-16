@@ -51,7 +51,7 @@ configure_rclone() {
       echo "onedrive"            # OneDrive service
       echo "$CLIENT_ID"          # Client ID
       echo "$CLIENT_SECRET"      # Client Secret
-      echo ""                    # Skip region (use default)
+      echo "global"              # Region (global for OneDrive)
       echo "n"                   # Edit advanced config: No
       echo "y"                   # Use auto config: Yes
       sleep 2

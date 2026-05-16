@@ -3,7 +3,7 @@
 # version: 1.0
 # description: unityhub_desc
 # icon: unityhub.svg
-# compat: debian, ubuntu, fedora, ostree, ublue
+# compat: debian, ubuntu, fedora, ostree, ublue, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

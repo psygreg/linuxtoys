@@ -4,7 +4,7 @@
 # description: zerotier_desc
 # icon: zerotier.png
 # repo: https://github.com/zerotier/ZeroTierOne
-# compat: fedora, ubuntu, debian, suse, arch, cachy
+# compat: fedora, ubuntu, debian, suse, arch, cachy, rhel
 # revert: arch, cachy
 
 # --- Start of the script code ---

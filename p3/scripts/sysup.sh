@@ -3,14 +3,14 @@
 # description: sysup_desc
 # icon: topgrade.svg
 # revert: no
-# compat: !ostree, !ublue, !ubuntu
+# compat: !ostree, !ublue
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 [ ! -n "$UPD_SERVICE" ] && sudo_rq
 
 needs_reboot() {
-    if is_fedora; then
+    if is_fedora || is_rhel; then
         output=$({ [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo dnf needs-restarting -r 2>&1)
         { echo "$output" | grep -q "Reboot should not be necessary" && return 1; } || return 0
     elif is_debian || is_ubuntu; then
@@ -47,7 +47,7 @@ if [ "$UPD_SERVICE" = "1" ] && [ "$USER" != "root" ]; then
 fi
 
 echo "$sysup_starting"
-if is_fedora; then
+if is_fedora || is_rhel; then
     { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y; } || sudo dnf autoremove -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && dnf upgrade -y --setopt=throttle=2M; } || sudo dnf upgrade -y || fatal "Failed to upgrade packages"
     if release_upgrade; then
@@ -57,7 +57,9 @@ if is_fedora; then
         fi
     fi
 elif is_debian || is_ubuntu; then
-    { [ "$UPD_SERVICE" = "1" ] && apt autoremove -y; } || sudo apt autoremove -y || fatal "Failed to remove orphaned packages"
+    if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
+        { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo apt-get autoremove -y || fatal "Failed to remove orphaned packages"
+    fi
     { [ "$UPD_SERVICE" = "1" ] && apt upgrade -y -o Acquire::http::Dl-Limit=2048 Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then

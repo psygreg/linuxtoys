@@ -3,7 +3,7 @@
 # version: 1.0
 # description: remapper_desc
 # icon: input-remapper.png
-# compat: fedora, arch, debian, ubuntu, cachy, ostree, solus
+# compat: fedora, arch, debian, ubuntu, cachy, ostree, solus, rhel
 # nocontainer
 # reboot: ostree
 # repo: https://github.com/sezanzeb/input-remapper

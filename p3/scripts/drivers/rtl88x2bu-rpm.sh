@@ -3,7 +3,7 @@
 # version: 1.0
 # description: External RTL88x2BU/RTL8822BU USB WiFi driver with DKMS
 # icon: rtl.png
-# compat: fedora, suse
+# compat: fedora, suse, rhel
 # reboot: yes
 # nocontainer
 # repo: https://github.com/RinCat/RTL88x2BU-Linux-Driver
@@ -12,7 +12,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
 
-if is_fedora; then
+if is_fedora || is_rhel; then
     pkg_install git dkms make kernel-devel kernel-headers
 elif is_suse; then
     pkg_install git dkms make kernel-devel kernel-source

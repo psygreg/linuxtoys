@@ -13,7 +13,7 @@ if is_debian || is_ubuntu; then
     pkg_install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 elif is_arch || is_cachy; then
     pkg_install base-devel openssl zlib xz tk
-elif is_fedora; then
+elif is_fedora || is_rhel || is_ostree; then
     pkg_install make gcc patch zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel libuuid-devel gdbm-libs libnsl2
 elif is_suse; then
     pkg_install gcc automake bzip2 libbz2-devel xz xz-devel openssl-devel ncurses-devel readline-devel zlib-devel tk-devel libffi-devel sqlite3-devel gdbm-devel make findutils patch

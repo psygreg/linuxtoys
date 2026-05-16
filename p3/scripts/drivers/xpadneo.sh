@@ -14,7 +14,7 @@ _lang_
 sudo_rq
 if is_debian || is_ubuntu; then
     pkg_install dkms linux-headers-$(uname -r)
-elif is_fedora; then
+elif is_fedora || is_rhel || is_ostree; then
     pkg_install dkms make bluez bluez-tools kernel-devel kernel-headers
 elif is_arch; then
     pkg_install dkms linux-headers bluez bluez-utils

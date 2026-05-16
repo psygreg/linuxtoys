@@ -3,7 +3,7 @@
 # version: 1.0
 # description: dotnet_desc
 # icon: dotnet.svg
-# compat: fedora, suse, ostree, debian, ubuntu, ublue, arch, cachy
+# compat: fedora, suse, ostree, debian, ubuntu, ublue, arch, cachy, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

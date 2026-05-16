@@ -19,6 +19,11 @@ if is_nvidia; then
             sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
         sudo apt update
         pkg_install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-toolslibnvidia-container1
+    elif is_fedora || is_ostree || is_rhel; then
+        pkg_install curl
+		curl -s -L -k https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | \
+  			sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo
+        pkg_install nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
     else
         pkg_install nvidia-container-toolkit
     fi

@@ -2,7 +2,7 @@
 # name: autosysup
 # description: autosysup_desc
 # icon: linuxtoys.svg
-# compat: !ubuntu, debian, fedora, solus
+# compat: ubuntu, debian, fedora, solus, rhel
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

@@ -10,7 +10,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
-if is_fedora || is_ostree; then
+if is_fedora || is_ostree || is_rhel; then
     pkg_install distrobox podman pcsc-lite pcsc-lite-ccid
 elif is_solus; then
     pkg_install distrobox podman pcsc-lite ccid

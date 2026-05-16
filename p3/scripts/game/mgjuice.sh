@@ -4,6 +4,7 @@
 # description: mgjuice_desc
 # icon: mangojuice.png
 # repo: https://github.com/radiolamp/mangojuice
+# compat: !rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

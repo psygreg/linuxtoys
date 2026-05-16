@@ -4,7 +4,7 @@
 # description: positron_desc
 # icon: positron.png
 # repo: https://positron.posit.co/
-# compat: debian, ubuntu, fedora
+# compat: debian, ubuntu, fedora, rhel
 
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
@@ -24,7 +24,7 @@ if is_debian; then
     else
         fatal "Failed to download: ${_pkg_name}"
     fi
-elif is_fedora; then
+elif is_fedora || is_rhel; then
 	_link="https://cdn.posit.co/positron/releases/rpm/x86_64/Positron-${_tag}-x64.rpm"
     _pkg_name=$(basename ${_link})
     if curl -fsSL "${_link}" -o "/tmp/${_pkg_name}"; then

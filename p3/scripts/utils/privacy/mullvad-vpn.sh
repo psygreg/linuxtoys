@@ -3,7 +3,7 @@
 # version: 1.0
 # description: Mullvad VPN
 # icon: mullvadvpn.svg
-# compat: ubuntu, debian, fedora, arch, cachy, ostree, ublue
+# compat: ubuntu, debian, fedora, arch, cachy, ostree, ublue, rhel
 # repo: https://mullvad.net/vpn
 
 # --- Start of the script code ---
@@ -14,7 +14,7 @@ if is_debian || is_ubuntu; then
 	sudo curl -fsSLo /usr/share/keyrings/mullvad-keyring.asc https://repository.mullvad.net/deb/mullvad-keyring.asc
 	echo "deb [signed-by=/usr/share/keyrings/mullvad-keyring.asc arch=$( dpkg --print-architecture )] https://repository.mullvad.net/deb/stable stable main" | sudo tee /etc/apt/sources.list.d/mullvad.list
 	sudo apt-get update
-elif is_fedora || is_ostree; then
+elif is_fedora || is_ostree || is_rhel; then
 	if command -v rpm-ostree &>/dev/null; then
 		prep_tmp
 		wget https://repository.mullvad.net/rpm/stable/mullvad.repo

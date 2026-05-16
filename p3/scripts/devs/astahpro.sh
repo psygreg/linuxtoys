@@ -5,7 +5,7 @@
 # icon: astahpro.png
 # repo: https://astah.net/products/astah-professional/
 # needed: adoptium-jdk
-# compat: debian, ubuntu, fedora
+# compat: debian, ubuntu, fedora, rhel
 
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
@@ -28,7 +28,7 @@ if is_debian;then
 	else
 		fatal "Failed to download: ${_deb_name}"
 	fi
-elif is_fedora;then
+elif is_fedora || is_rhel; then
     _rpm="$(curl -s -o /dev/null -w "%{redirect_url}\n" "${RPM_LINK}")"
     _rpm_name=$(basename ${_rpm})
 

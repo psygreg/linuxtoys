@@ -31,7 +31,7 @@ elif is_ostree; then
     rpm-ostree refresh-md
     # Install kmod-openrazer for rpm-ostree systems
     pkg_install kmod-openrazer openrazer-daemon
-elif is_fedora; then
+elif is_fedora || is_rhel; then
     pkg_install kernel-devel
     # Regular Fedora systems - use standard approach
     sudo dnf config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo

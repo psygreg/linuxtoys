@@ -13,7 +13,7 @@ if is_debian || is_ubuntu; then
     pkg_install ratbagd
 elif is_arch || is_cachy || is_solus; then
     pkg_install libratbag
-elif is_fedora || is_ostree; then
+elif is_fedora || is_ostree || is_rhel; then
     pkg_install libratbag-ratbagd
 elif is_suse; then
     pkg_install libratbag-tools

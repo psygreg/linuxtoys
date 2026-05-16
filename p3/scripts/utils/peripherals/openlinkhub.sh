@@ -4,7 +4,7 @@
 # description: openlinkhub_desc
 # icon: corsair.svg
 # repo: https://github.com/jurkovic-nikola/OpenLinkHub
-# compat: ubuntu, debian, fedora, ostree, ublue, arch, cachy
+# compat: ubuntu, debian, fedora, ostree, ublue, arch, cachy, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -28,7 +28,7 @@ elif is_ostree; then
     sudo install -o 0 -g 0 jurkovic-nikola-OpenLinkHub-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/jurkovic-nikola-OpenLinkHub-fedora-$(rpm -E %fedora).repo
     rpm-ostree refresh-md
     pkg_install OpenLinkHub
-elif is_fedora; then
+elif is_fedora || is_rhel; then
     sudo dnf copr enable jurkovic-nikola/OpenLinkHub
     pkg_install OpenLinkHub
 elif is_arch || is_cachy; then

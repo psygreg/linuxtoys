@@ -3,7 +3,7 @@
 # version: 1.0
 # description: godotsharp_desc
 # icon: godotsh.svg
-# compat: fedora, ubuntu, debian, ostree, ublue, suse, arch, cachy
+# compat: fedora, ubuntu, debian, ostree, ublue, suse, arch, cachy, rhel
 # repo: https://godotengine.org
 
 # --- Start of the script code ---

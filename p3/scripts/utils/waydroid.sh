@@ -3,7 +3,7 @@
 # version: 1.0
 # description: waydroid_desc
 # icon: waydroid.svg
-# compat: fedora, solus, ostree, debian, ubuntu, arch, cachy, ublue
+# compat: fedora, solus, ostree, debian, ubuntu, arch, cachy, ublue, rhel
 # nocontainer
 # gpu: Amd, Intel
 # repo: https://waydro.id/

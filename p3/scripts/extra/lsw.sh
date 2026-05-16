@@ -33,14 +33,18 @@ docker_in () { # install docker
             $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
-    elif is_fedora || is_ostree; then
+    elif is_fedora || is_ostree || is_rhel; then
         if command -v rpm-ostree &> /dev/null; then
             if ! rpm-ostree status | grep -q "docker-ce"; then
                 fatal "$msg292"
             fi
         else
             sudo dnf -y install dnf-plugins-core
-            sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+            if is_rhel; then
+                sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+            else
+                sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+            fi
         fi
     fi
     if is_arch || is_cachy || is_suse || is_solus; then
@@ -85,7 +89,7 @@ get_winboat () { # gets latest release
         fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
         pkg_fromfile "winboat-$ver-amd64.deb"
-    elif is_fedora || is_suse; then
+    elif is_fedora || is_suse || is_rhel; then
         if rpm -qi "winboat" &> /dev/null; then
             local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"
             if [ "$hostver" == "$ver" ]; then

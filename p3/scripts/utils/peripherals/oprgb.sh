@@ -9,7 +9,7 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 pkg_flat org.openrgb.OpenRGB
-if is_fedora || is_ostree; then
+if is_fedora || is_ostree || is_rhel; then
     sudo_rq
     rpmfusion_chk
     pkg_install openrgb-udev-rules

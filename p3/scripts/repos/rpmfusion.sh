@@ -3,7 +3,7 @@
 # version: 1.0
 # description: rpmfusion_desc
 # icon: rpmfusion.svg
-# compat: fedora, ostree
+# compat: fedora, ostree, rhel
 # repo: https://rpmfusion.org
 
 # --- Start of the script code ---

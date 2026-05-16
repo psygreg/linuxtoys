@@ -4,7 +4,7 @@
 # description: adoptium_desc
 # icon: adoptium.png
 # repo: https://adoptium.net/
-# compat: debian, ubuntu, fedora, suse
+# compat: debian, ubuntu, fedora, suse, rhel
 
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
@@ -18,7 +18,7 @@ if is_debian;then
     echo "deb https://packages.adoptium.net/artifactory/deb ${_codename} main" | sudo tee /etc/apt/sources.list.d/adoptium.list
     # Update
     sudo apt update
-elif is_fedora;then
+elif is_fedora || is_rhel; then
     # Adoptium dnf repository
     cat <<EOF | sudo tee /etc/yum.repos.d/adoptium.repo
 [Adoptium]

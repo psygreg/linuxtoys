@@ -5,7 +5,7 @@
 # icon: flathub.svg
 # reboot: yes
 # repo: https://flathub.org
-# compat: !solus
+# compat: !solus, !fedora, !ostree
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

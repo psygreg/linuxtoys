@@ -3,7 +3,7 @@
 # version: 1.0
 # description: lazyman_desc
 # icon: lazyman.png
-# compat: fedora, arch, cachy, ostree, ublue, suse
+# compat: fedora, arch, cachy, ostree, ublue, suse, rhel
 # repo: https://lazyman.dev
 
 # --- Start of the script code ---

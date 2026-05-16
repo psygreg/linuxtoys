@@ -10,7 +10,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
-if is_debian || is_ubuntu || is_suse || is_fedora; then
+if is_debian || is_ubuntu || is_suse || is_fedora || is_rhel; then
 	sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh) -p nordvpn-gui -n
 elif is_arch || is_cachyos; then
 	pkg_install nordvpn-bin

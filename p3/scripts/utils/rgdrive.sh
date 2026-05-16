@@ -51,7 +51,7 @@ configure_rclone() {
       echo "$CLIENT_ID"          # Client ID
       echo "$CLIENT_SECRET"      # Client Secret
       echo "1"                   # Scope: full access
-      echo ""                    # Skip service_account_file
+      echo "n"                   # Skip service_account_file
       echo "n"                   # Edit advanced config: No
       echo "y"                   # Use auto config: Yes
       sleep 2

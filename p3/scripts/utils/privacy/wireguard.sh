@@ -12,7 +12,7 @@ _lang_
 sudo_rq
 if is_ubuntu || is_debian; then
 	pkg_install wireguard
-elif is_arch || is_cachy || is_solus || is_fedora || is_suse; then
+elif is_arch || is_cachy || is_solus || is_fedora || is_suse || is_rhel; then
 	pkg_install wireguard-tools
 else
     fatal "$msg077"

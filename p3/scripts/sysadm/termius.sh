@@ -4,7 +4,7 @@
 # description: termius_desc
 # icon: termius.png
 # repo: https://termius.com/
-# compat: debian, ubuntu, fedora, arch, suse
+# compat: debian, ubuntu, fedora, arch, suse, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

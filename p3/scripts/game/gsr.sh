@@ -8,5 +8,5 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-pkg_flat com.dec05eba.gpu_screen_recorder
+pkg_flat --skip-user com.dec05eba.gpu_screen_recorder
 zeninf "$finishmsg"

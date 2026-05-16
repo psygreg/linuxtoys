@@ -3,7 +3,7 @@
 # version: 1.0
 # description: hiddify_desc
 # icon: hiddify.png
-# compat: ubuntu, debian, fedora, arch, cachy, suse, ostree, ublue
+# compat: ubuntu, debian, fedora, arch, cachy, suse, ostree, ublue, rhel
 # repo: https://github.com/hiddify/hiddify-app
 
 # --- Start of the script code ---

@@ -3,7 +3,7 @@
 # version: 1.0
 # description: Express VPN
 # icon: expressvpn.svg
-# compat: ubuntu, debian, fedora, arch, cachy
+# compat: ubuntu, debian, fedora, arch, cachy, rhel
 # repo: https://www.expressvpn.com
 # revert: no
 

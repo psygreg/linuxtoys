@@ -32,14 +32,18 @@ docker_in () { # install docker
             $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
-    elif is_fedora || is_ostree; then
+    elif is_fedora || is_ostree || is_rhel; then
         if command -v rpm-ostree &> /dev/null; then
             curl -O https://download.docker.com/linux/fedora/docker-ce.repo
             sudo install -o 0 -g 0 -m644 docker-ce.repo /etc/yum.repos.d/docker-ce.repo
             pkg_install podman-compose # podman-compose is needed for rootless mode with ostree. the reasons for this are unknown, but without this it won't work at all.
         else
             sudo dnf -y install dnf-plugins-core # should not be declared as its removal may break the OS
-            sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+            if is_rhel; then
+                sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+            else
+                sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+            fi
         fi
     fi
     if is_arch || is_cachy || is_suse || is_solus; then

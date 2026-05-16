@@ -4,7 +4,7 @@
 # description: rstudio_desc
 # icon: rstudio.svg
 # repo: https://posit.co/products/open-source/rstudio/
-# compat: debian, ubuntu, fedora
+# compat: debian, ubuntu, fedora, rhel
 
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
@@ -27,7 +27,7 @@ if is_debian; then
     else
         fatal "Failed to download: ${_pkg_name}"
     fi
-elif is_fedora; then
+elif is_fedora || is_rhel; then
     _pkg_name=$(basename ${_pkgs[1]})
     if curl -fsSL "${_pkgs[1]}" -o "/tmp/${_pkg_name}"; then
         sudo_rq; pkg_install R-core R-core-devel

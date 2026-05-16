@@ -3,7 +3,7 @@
 # version: 1.1
 # description: libvirt_desc
 # icon: virt-manager.png
-# compat: ubuntu, debian, fedora, suse, arch, cachy, ostree, ublue
+# compat: ubuntu, debian, fedora, suse, arch, cachy, ostree, ublue, rhel
 # nocontainer
 
 # --- Start of the script code ---
@@ -13,8 +13,8 @@ _lang_
 configure_libvirt() {
     sudo_rq
     if is_ubuntu || is_debian; then
-        pkg_install qemu-kvm libvirt-daemon-system libvirt-clients virt-manager virt-viewer dnsmasq-base bridge-utils swtpm netcat-openbsd
-    elif is_fedora || is_ostree; then
+        pkg_install qemu-system libvirt-daemon-system libvirt-clients virt-manager virt-viewer dnsmasq-base bridge-utils swtpm netcat-openbsd
+    elif is_fedora || is_ostree || is_rhel; then
         pkg_install qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm nmap-ncat
     elif is_suse; then
         pkg_install qemu-kvm libvirt libvirt-daemon virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm netcat-openbsd

@@ -4,7 +4,7 @@
 # description: steam_desc
 # icon: steam.svg
 # repo: https://store.steampowered.com/
-# nocontainer: ubuntu, debian, suse, solus
+# nocontainer: ubuntu, debian, suse, solus, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

@@ -3,7 +3,7 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy
+# compat: ubuntu, debian, fedora, suse, arch, cachy, rhel
 # reboot: yes
 # noconfirm: yes
 # nocontainer
@@ -22,11 +22,11 @@ sysag_run () {
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
     dsplitm_lib
     # add earlyoom configuration, Fedora already has systemd-oomd
-    if ! is_fedora && ! is_ostree; then
+    if ! is_fedora && ! is_ostree && ! is_rhel; then
         earlyoom_lib
     fi
     # change intel driver to Xe on discrete GPUs
-    if ! is_fedora && ! is_ubuntu; then
+    if ! is_fedora && ! is_ubuntu && ! is_rhel; then
         intel_xe_lib
     fi
     # fix GTK app rendering for Intel BMG and Nvidia GPUs

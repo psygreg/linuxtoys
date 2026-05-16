@@ -12,5 +12,10 @@
 source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
 sudo_rq
-earlyoom_lib
+if is_rhel; then
+    pkg_install systemd-oomd
+    sysd_enable systemd-oomd.service
+else
+    earlyoom_lib
+fi
 zeninf "$msg036"

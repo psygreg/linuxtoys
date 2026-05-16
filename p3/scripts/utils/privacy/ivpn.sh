@@ -3,7 +3,7 @@
 # version: 1.0
 # description: IVPN
 # icon: ivpn.svg
-# compat: ubuntu, debian, fedora, ostree, ublue
+# compat: ubuntu, debian, fedora, ostree, ublue, rhel
 # repo: https://www.ivpn.net
 
 # --- Start of the script code ---
@@ -28,7 +28,7 @@ elif is_ubuntu; then
 	sudo chown root:root /etc/apt/sources.list.d/ivpn.list && sudo chmod 644 /etc/apt/sources.list.d/ivpn.list
 	# Update APT repo info
 	sudo apt update
-elif is_fedora || is_ostree; then
+elif is_fedora || is_ostree || is_rhel; then
 	if command -v rpm-ostree &>/dev/null; then
 		prep_tmp
 		wget https://repo.ivpn.net/stable/fedora/generic/ivpn.repo

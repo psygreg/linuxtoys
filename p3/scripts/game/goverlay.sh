@@ -4,6 +4,7 @@
 # description: goverlay_desc
 # icon: goverlay.svg
 # repo: https://github.com/benjamimgois/goverlay
+# compat: !rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

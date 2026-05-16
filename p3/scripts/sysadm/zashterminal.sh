@@ -3,7 +3,7 @@
 # version: 1.0
 # description: zash_desc
 # icon: zashterminal.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy
+# compat: ubuntu, debian, fedora, suse, arch, cachy, rhel
 # repo: https://github.com/leoberbert/zashterminal
 # revert: arch, cachy
 

@@ -3,7 +3,7 @@
 # version: 1.1
 # description: webmin_desc
 # icon: webmin.png
-# compat: debian, ubuntu, fedora
+# compat: debian, ubuntu, fedora, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

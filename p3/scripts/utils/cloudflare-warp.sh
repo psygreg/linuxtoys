@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cloudflare_warp_desc
 # icon: cloudflare-warp.svg
-# compat: ubuntu, debian, fedora, ostree, ublue
+# compat: ubuntu, debian, fedora, ostree, ublue, rhel
 # nocontainer
 
 # --- Start of the script code ---
@@ -28,7 +28,7 @@ if is_ubuntu || is_debian; then
     # Add this repo to your apt repositories
     echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ ${RELEASE} main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
     sudo apt-get update
-elif is_fedora || is_ostree; then
+elif is_fedora || is_ostree || is_rhel; then
     # Add cloudflare-warp.repo to /etc/yum.repos.d/
     curl -fsSL https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo
 fi

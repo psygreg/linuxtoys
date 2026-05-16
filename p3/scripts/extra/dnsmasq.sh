@@ -6,6 +6,7 @@
 # nocontainer
 # reboot: yes
 # repo: https://thekelleys.org.uk/gitweb/?p=dnsmasq.git
+# compat: !rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"

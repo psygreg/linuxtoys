@@ -15,7 +15,7 @@ if is_ubuntu || is_debian; then
 	wget -O windscribe.deb "https://windscribe.com/install/desktop/linux_deb_x64"
 	pkg_fromfile windscribe.deb
 	sudo apt-get install -f -y
-elif is_fedora || is_ostree; then
+elif is_fedora || is_ostree || is_rhel; then
 	wget -O windscribe.rpm "https://windscribe.com/install/desktop/linux_rpm_x64"
 	pkg_fromfile windscribe.rpm
 elif is_arch || is_cachy; then
