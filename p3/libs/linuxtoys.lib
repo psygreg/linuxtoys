@@ -104,8 +104,6 @@ summon_optimizers() {
 
 # sudo handler
 sudo_rq() {
-    [ -f "$SCRIPT_DIR/libs/zpass.sh" ] || fatal "Unable to set askpass"
-    export SUDO_ASKPASS="$SCRIPT_DIR/libs/zpass.sh"
     # Check if already authorized
     if sudo -n true 2>/dev/null || [ -f /tmp/linuxtoys_sudo_validated ]; then
         [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
