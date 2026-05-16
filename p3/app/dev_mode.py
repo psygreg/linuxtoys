@@ -96,7 +96,7 @@ def get_simulated_compat_keys():
         'cachy': {'cachy'},
         'cachyos': {'cachy'},
         'fedora': {'fedora'},
-        'rhel': {'fedora'},  # RHEL is fedora-like
+        'rhel': {'rhel'},
         'suse': {'suse'},
         'opensuse': {'suse'},
         'ostree': {'ostree'},

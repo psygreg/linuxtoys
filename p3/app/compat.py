@@ -79,7 +79,7 @@ def is_supported_system():
     Check if the current system is supported by LinuxToys.
 
     A system is considered supported if it matches at least one of the
-    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, suse, ostree, ublue).
+    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue).
 
     In developer mode:
     - If COMPAT is set to simulate a specific system, that system's compatibility is checked
@@ -109,6 +109,7 @@ def is_supported_system():
         "cachy",
         "arch",
         "fedora",
+        "rhel",
         "suse",
         "ostree",
         "ublue",
@@ -129,7 +130,7 @@ def get_system_compat_keys():
 
     Returns:
         set: Set of compatibility keys for the current system
-             (OS keys: debian, ubuntu, cachy, arch, fedora, suse, ostree, ublue;
+               (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue;
               GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
               Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-other)
     """
@@ -156,6 +157,9 @@ def get_system_compat_keys():
 
     id_val = os_release.get("ID", "").lower()
     id_like = os_release.get("ID_LIKE", "").lower()
+    is_rhel_family = (
+        id_val in ["rhel", "centos", "almalinux"] or "rhel" in id_like
+    )
 
     if id_val in ["debian"]:
         keys.add("debian")
@@ -171,7 +175,9 @@ def get_system_compat_keys():
         or "archlinux" in id_like
     ) and id_val != "cachyos":
         keys.add("arch")
-    if id_val in ["rhel", "fedora"] or "rhel" in id_like or "fedora" in id_like:
+    if is_rhel_family:
+        keys.add("rhel")
+    if id_val in ["fedora"] or ("fedora" in id_like and not is_rhel_family):
         keys.add("fedora")
     if id_val in ["suse", "opensuse"] or "suse" in id_like or "opensuse" in id_like:
         keys.add("suse")
