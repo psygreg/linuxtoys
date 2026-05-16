@@ -387,22 +387,34 @@ pkg_install () {
     fi
 }
 pkg_flat() {
+    local _skip_user=0
+    local -a _flatpak_args=()
+    for arg in "$@"; do
+        if [[ "$arg" == "--skip-user" ]]; then
+            _skip_user=1
+        else
+            _flatpak_args+=("$arg")
+        fi
+    done
     if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
         summon_helpers
         sudo_rq
         flatpak_in_lib
     fi
     local flatpak_scope="--user"
-    if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
+    if [[ $_skip_user -eq 1 ]]; then
+        flatpak_scope="--system"
+    elif flatpak remote-list --system 2>/dev/null | grep -q flathub && \
        ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
         flatpak_scope="--system"
     fi
+
     if [ "$flatpak_scope" = "--user" ]; then
-        flatpak install --or-update "$flatpak_scope" -y flathub "${@}" || fatal "Failed to install flatpak packages $*"
+        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
     else
-        flatpak install --or-update "$flatpak_scope" -y flathub "${@}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${@}"; } || fatal "Failed to install flatpak packages $*"
+        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; } || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
     fi
-    _append_transmap "flatpak $*"
+    _append_transmap "flatpak ${_flatpak_args[*]}"
 }
 pkg_fromfile () {
     if [[ "$1" == *.flatpak ]]; then
