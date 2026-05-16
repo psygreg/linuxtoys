@@ -301,7 +301,7 @@ wayland_proton_lib () {
 
 # add preempt=full kernel parameter on boot on fedora
 preempt_lib () {
-    if is_fedora; then
+    if is_fedora || is_rhel; then
         grubbyargs_upd 'preempt=full'
     elif is_ostree; then
         kargs_upd 'preempt=full'
