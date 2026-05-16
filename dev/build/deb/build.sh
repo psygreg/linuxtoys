@@ -75,7 +75,7 @@ cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/control" <<'EOF'
 Source: linuxtoys
 Section: utils
 Priority: optional
-Maintainer: Victor Gregory <vicgregor@pm.me>
+Maintainer: Victor Gregory <psygreg@icloud.com>
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
@@ -114,7 +114,7 @@ Upstream-Name: linuxtoys
 Source: https://git.linux.toys/psygreg/linuxtoys
 
 Files: *
-Copyright: 2024-2025 Victor Gregory <vicgregor@pm.me>
+Copyright: 2024-2025 Victor Gregory <psygreg@icloud.com>
 License: GPL-3+
 
 License: GPL-3+
@@ -147,7 +147,7 @@ linuxtoys (5.0-1) noble; urgency=medium
   * Initial release for new Python-based structure
   * Added complete application structure with scripts, libs, and helpers
 
- -- Victor Gregory <vicgregor@pm.me>  Mon, 19 Aug 2025 03:00:47 -0300
+ -- Victor Gregory <psygreg@icloud.com>  Mon, 19 Aug 2025 03:00:47 -0300
 EOF
 
 # set changelog file
@@ -156,7 +156,7 @@ day_abbr=$(LC_TIME=C date +%a) # This will always be in English
 month=$(LC_TIME=C date +%b)
 year=$(date +%Y)
 changelog_line="linuxtoys (${LT_VERSION}-1) noble; urgency=medium"
-changelog_line2=" -- Victor Gregory <vicgregor@pm.me>  ${day_abbr}, ${day} ${month} ${year} 03:00:47 -0300"
+changelog_line2=" -- Victor Gregory <psygreg@icloud.com>  ${day_abbr}, ${day} ${month} ${year} 03:00:47 -0300"
 sed -i "1c\\$changelog_line" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
 sed -i "6c\\$changelog_line2" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
 
@@ -171,7 +171,7 @@ EOF
 # build and upload for PPA first - doesn't work if done after building the package
 (
     cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION" || exit 1
-    debuild -S -sa -kvicgregor@pm.me
+    debuild -S -sa -kpsygreg@icloud.com
     sleep 1
     dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
     sleep 1
