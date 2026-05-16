@@ -124,4 +124,4 @@ if ! solbuild list-profiles >/dev/null 2>&1; then
     _msg info "Initializing solbuild (first run, this may take a while)..."
     sudo solbuild init -u -p main-x86_64 || _msg warn "solbuild init may have issues, continuing..."
 fi
-fakeroot solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"
+sudo solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"
