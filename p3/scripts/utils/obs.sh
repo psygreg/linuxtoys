@@ -23,6 +23,7 @@ obs_pipe () {
     sudo flatpak override --filesystem=xdg-run/pipewire-0 com.obsproject.Studio
 }
 pkg_flat com.obsproject.Studio com.obsproject.Studio.Plugin.WaylandHotkeys
+is_intel && { pkg_flat org.freedesktop.Platform.VAAPI.Intel/x86_64/25.08 || fatal "Failed to install Intel VAAPI platform"; } || true
 sudo_rq
 # check dependency for Pipewire Audio Capture plugin and xwayland
 pkg_install wireplumber
