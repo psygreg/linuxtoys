@@ -96,40 +96,20 @@ dsplitm_lib () {
     fi
 }
 
-# power optimizer for laptops
+# power optimizer for laptops -- CHANGE copr version when rhel bumps up
 psave_lib () {
-    if ! is_cachy; then
-        prep_tmp
-        sudo_rq
-        if command -v rpm-ostree &>/dev/null; then
-            wget https://copr.fedorainfracloud.org/coprs/leo/power-options/repo/fedora-$(rpm -E %fedora)/leo-power-options-fedora-$(rpm -E %fedora).repo
-            sudo install -o 0 -g 0 leo-power-options-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/leo-power-options-fedora-$(rpm -E %fedora).repo
-            rpm-ostree refresh-md
-            pkg_install power-options
-        else
-            if is_ubuntu || is_debian; then
-                pkg_install libgtk-4-dev libadwaita-1-dev
-            elif is_arch; then
-                pkg_install gtk4 libadwaita
-            elif is_fedora || is_suse; then
-                pkg_install gtk4-devel libadwaita-devel
-            elif is_solus; then
-                pkg_install libadwaita-devel
-            fi
-            git clone https://github.com/TheAlexDev23/power-options/ --depth=1
-            cd power-options/scripts
-            chmod +x *.sh
-            if ! which power-options &>/dev/null; then
-                ./install-gtk.sh
-                ./install-tray.sh
-                ./setup.sh
-            else
-                ./update.sh
-            fi
-        fi
-        zeninf "$msg036"
-    else
-        zenwrn "$msg286"
+    prep_tmp
+    sudo_rq
+    if is_fedora || is_rhel; then
+        sudo dnf config-manager addrepo --from-repofile=https://files.distropack.dev/rpm_repo/TheAlexDev23/power-options
+        pkg_install power-options-gtk power-options-tray
+    elif is_arch; then
+        pkg_install power-options-gtk power-options-tray
+    elif is_ubuntu || is_debian; then
+        echo 'deb https://files.distropack.dev/download/TheAlexDev23/power-options/deb /' | sudo tee /etc/apt/sources.list.d/distropack_TheAlexDev23_power-options.list
+        curl -fsSL 'https://files.distropack.dev/pubkey?user=TheAlexDev23&project=power-options' | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/distropack_TheAlexDev23_power-options.gpg > /dev/null
+        sudo apt update
+        pkg_install power-options-gtk power-options-tray
     fi
 }
 
