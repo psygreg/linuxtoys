@@ -161,9 +161,9 @@ def get_system_compat_keys():
         id_val in ["rhel", "centos", "almalinux"] or "rhel" in id_like
     )
 
-    if id_val in ["debian"]:
+    if (id_val in ["debian"] or "debian" in id_like) and "ubuntu" not in id_like:
         keys.add("debian")
-    if id_val in ["ubuntu"] or "ubuntu" in id_like or "debian" in id_like:
+    if id_val in ["ubuntu"] or "ubuntu" in id_like:
         keys.add("ubuntu")
     if id_val in ["zorin"] or "zorin" in id_like:
         keys.add("zorin")
