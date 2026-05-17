@@ -13,7 +13,8 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 
 *   **Debian** and derivatives (PikaOS, LMDE, etc.)
 *   **Ubuntu** and derivatives (Ubuntu flavours, Mint, Zorin, Tuxedo, etc.)
-*   **Fedora** and derivatives (Nobara, RHEL, CentOS, AlmaLinux, etc.)
+*   **Fedora** and derivatives (Nobara, Ultramarine and spins)
+*   **Red Hat Enterprise Linux** and similars (CentOS Stream, AlmaLinux, etc.)
 *   **Arch Linux** and derivatives (EndeavourOS, CachyOS, etc.)
 *   **Manjaro** and **Big Linux**
 *   **OpenSUSE** (Leap, Slowroll and Tumbleweed)
