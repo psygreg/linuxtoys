@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cloudflare_warp_desc
 # icon: cloudflare-warp.svg
-# compat: ubuntu, debian, fedora, ostree, ublue, rhel
+# compat: ubuntu, debian
 # nocontainer
 
 # --- Start of the script code ---
