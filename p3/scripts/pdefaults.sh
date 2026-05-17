@@ -54,12 +54,15 @@ optimizer () {
 }
 # menu
 while true; do
+    OPTIONS=("Install without Power Profile" "High Performance")
+    if ! is_zorin && ! is_cachy && ! is_suse; then
+        OPTIONS+=("Laptop")
+    fi
+    OPTIONS+=("$msg070")
+    
     CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \
         --column "Options" \
-        "Install without Power Profile" \
-        "Desktop" \
-        "Laptop" \
-        "Cancel" \
+        "${OPTIONS[@]}" \
         --width 360 --height 360 )
 
     if [ $? -ne 0 ]; then
@@ -68,9 +71,9 @@ while true; do
 
     case $CHOICE in
     "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
-    "Desktop") sudo_rq && pp_ondemand && optimizer && exit 0;;
-    "Laptop") sudo_rq && optimizer && { ! is_zorin && psave_lib; } && exit 0;;
-    "Cancel") exit 100 ;;
+    "High Performance") sudo_rq && pp_ondemand && optimizer && exit 0;;
+    "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
+    "$msg070") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac
 done

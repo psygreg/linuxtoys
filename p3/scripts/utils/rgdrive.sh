@@ -26,43 +26,19 @@ display_guide() {
    fi
 }
 
-get_credentials() {
-   CLIENT_ID=$(zenity --entry \
-      --title="Google Drive Configuration" \
-      --text="Enter your Google Cloud Client ID:" \
-      --width=400)  
-   if [ -z "$CLIENT_ID" ]; then
-      fatal "Client ID cannot be empty"
-   fi
-    
-   CLIENT_SECRET=$(zenity --password \
-      --title="Google Drive Configuration" \
-      --text="Enter your Google Cloud Client Secret:")
-    
-   if [ -z "$CLIENT_SECRET" ]; then
-      fatal "Client Secret cannot be empty"
-   fi
-}
 configure_rclone() {
-   (
-      echo "n"                   # New remote
-      echo "$REMOTE_NAME"        # Remote name
-      echo "drive"               # Google Drive service
-      echo "$CLIENT_ID"          # Client ID
-      echo "$CLIENT_SECRET"      # Client Secret
-      echo "1"                   # Scope: full access
-      echo "n"                   # Skip service_account_file
-      echo "n"                   # Edit advanced config: No
-      echo "y"                   # Use auto config: Yes
-      sleep 2
-      echo "n"                   # Shared Drive: No
-      echo "y"                   # Confirm
-      echo "q"                   # Quit
-   ) | rclone config
+   rclone config
     
    if [ $? -eq 0 ]; then
-      zeninf "Rclone configured successfully with the provided credentials."
-      # Update REMOTE_NAME for mounting
+      zeninf "Rclone configured successfully."
+      REMOTE_NAME=$(zenity --entry \
+         --title="Remote Name" \
+         --text="What did you name your Google Drive remote?" \
+         --entry-text="GoogleDrive")
+      
+      if [ -z "$REMOTE_NAME" ]; then
+         fatal "Remote name cannot be empty"
+      fi
       REMOTE_NAME="${REMOTE_NAME}:"
    else
       fatal "Rclone configuration failed"
@@ -86,7 +62,6 @@ if is_ostree; then
       exit 0
    fi
 fi
-get_credentials
 configure_rclone
 mount_drive
 zeninf "$msg018"

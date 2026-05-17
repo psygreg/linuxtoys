@@ -84,10 +84,9 @@ while true; do
     CHOICE=$(zenity --list --title="Power Optimizer" \
         --column="$msg229" \
         "Install without Power Profile" \
-        "Desktop" \
-        "Laptop" \
+        "High Performance" \
         "$msg070" \
-        --height=360 --width=360)
+        --height=330 --width=360)
 
     if [ $? -ne 0 ]; then
         exit 100
@@ -95,8 +94,7 @@ while true; do
 
     case $CHOICE in
     "Install without Power Profile" ) sudo_rq && optimizer && end_msg && break ;;
-    "Desktop") sudo_rq && pp_ondemand && optimizer && end_msg && break ;;
-    "Laptop") sudo_rq && optimizer && psave_lib && end_msg && break ;;
+    "High Performance") sudo_rq && pp_ondemand && optimizer && end_msg && break ;;
     "$msg070") exit 100 ;;
     *) echo "Invalid Option" ;;
     esac

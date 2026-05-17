@@ -96,7 +96,7 @@ dsplitm_lib () {
     fi
 }
 
-# power optimizer for laptops -- CHANGE copr version when rhel bumps up
+# power optimizer for laptops
 psave_lib () {
     prep_tmp
     sudo_rq

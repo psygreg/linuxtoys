@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cloudflare_warp_desc
 # icon: cloudflare-warp.svg
-# compat: ubuntu, debian
+# compat: ubuntu, debian, rhel, fedora, ostree
 # nocontainer
 
 # --- Start of the script code ---
@@ -31,6 +31,11 @@ if is_ubuntu || is_debian; then
 elif is_fedora || is_ostree || is_rhel; then
     # Add cloudflare-warp.repo to /etc/yum.repos.d/
     curl -fsSL https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo
+    if is_rhel; then
+        summon_helpers
+        rpmfusion_chk
+    fi
+    sudo dnf copr enable mlampe/webkit2gtk3 rhel+epel-10-x86_64
 fi
 pkg_install cloudflare-warp
 zeninf "$msg018"
