@@ -9,7 +9,7 @@
 
 ## Compatibility
 
-LinuxToys is compatible with the following Linux distributions, provided they are running their latest stable versions, and use `systemd` as their init system:
+LinuxToys is compatible with the following Linux distributions, provided they are *running their **latest** stable versions*, and use `systemd` as their init system:
 
 *   **Debian** and derivatives (PikaOS, LMDE, etc.)
 *   **Ubuntu** and derivatives (Ubuntu flavours, Mint, Zorin, Tuxedo, etc.)
