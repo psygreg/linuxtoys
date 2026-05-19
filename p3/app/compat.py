@@ -167,6 +167,8 @@ def get_system_compat_keys():
         keys.add("ubuntu")
     if id_val in ["zorin"] or "zorin" in id_like:
         keys.add("zorin")
+    if id_val in ["biglinux", "bigcommunity", "manjaro"] or "manjaro" in id_like:
+        keys.add("manjaro")
     if id_val in ["cachyos"]:
         keys.add("cachy")
     if (
