@@ -91,30 +91,22 @@ davincinatd () {
         fi
     fi
     if is_debian || is_ubuntu; then
-        fetch_from_mirror "autoresolvedeb.sh" \
-            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvedeb.sh" \
-            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolvedeb.sh"
+        curl -L -o autoresolvedeb.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvedeb.sh"
         chmod +x autoresolvedeb.sh
         ./autoresolvedeb.sh
         rm autoresolvedeb.sh
     elif is_arch || is_cachy; then
-        fetch_from_mirror "autoresolvepkg.sh" \
-            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvepkg.sh" \
-            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolvepkg.sh"
+        curl -L -o autoresolvepkg.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvepkg.sh"
         chmod +x autoresolvepkg.sh
         ./autoresolvepkg.sh
         rm autoresolvepkg.sh
     elif is_fedora; then
-        fetch_from_mirror "autoresolverpm.sh" \
-            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh" \
-            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolverpm.sh"
+        curl -L -o autoresolverpm.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh"
         chmod +x autoresolverpm.sh
         ./autoresolverpm.sh
         rm autoresolverpm.sh
     elif is_suse; then
-        fetch_from_mirror "autoresolverpm.sh" \
-            "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh" \
-            "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autoresolverpm.sh"
+        curl -L -o autoresolverpm.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh"
         chmod +x autoresolverpm.sh
         ./autoresolverpm.sh
         rm autoresolverpm.sh
@@ -122,9 +114,7 @@ davincinatd () {
 }
 
 davinciboxd () {
-    fetch_from_mirror "autodavincibox.sh" \
-        "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autodavincibox.sh" \
-        "https://git.linux.toys/psygreg/autoresolvedeb/raw/branch/main/linuxtoys/autodavincibox.sh"
+    curl -L -o autodavincibox.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autodavincibox.sh"
     chmod +x autodavincibox.sh
     ./autodavincibox.sh
     rm autodavincibox.sh

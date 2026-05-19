@@ -3,7 +3,7 @@
 # description: sysup_desc
 # icon: topgrade.svg
 # revert: no
-# compat: !ostree, !ublue
+# compat: !ostree, !ublue, !manjaro
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

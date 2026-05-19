@@ -46,8 +46,8 @@ EOF
     fi
 }
 
-local _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-if [ "$_total_ram_kb" -gt 16777216 ]; then
+_total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+if [ "$_total_ram_kb" -gt 16777216 ] && ! is_rhel; then
     setup_zram
 else
     zswap_lib

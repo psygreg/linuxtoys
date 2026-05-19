@@ -17,7 +17,11 @@ fi
 prep_dir "${PKG_DIR}"
 PKG_URL="$(curl -fsSL 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Pio '"linux":\{"link":"\K[^"]+')"
 
-curl -fsSL "${PKG_URL}" -o- | tar -xzvf - --strip-components=2 --one-top-level="${PKG_DIR}" && {
+TEMP_EXTRACT="$(mktemp -d)" || { exit 1; }
+trap "rm -rf '$TEMP_EXTRACT'" EXIT
+
+curl -fsSL "${PKG_URL}" | tar -xzf - -C "$TEMP_EXTRACT" --strip-components=2 && \
+	cp -r "$TEMP_EXTRACT"/* "${PKG_DIR}/" && {
 	(
 		## .desktop file
 		sed -i "/^Exec=/s|^.*$|Exec=${PKG_DIR}/${PKG_NAM}|" "${PKG_DIR}/${PKG_NAM}.desktop";
