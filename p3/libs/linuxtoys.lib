@@ -396,7 +396,7 @@ pkg_flat() {
             _flatpak_args+=("$arg")
         fi
     done
-    if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+    if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
         summon_helpers
         sudo_rq
         flatpak_in_lib
