@@ -199,7 +199,7 @@ is_amd() {
 # transaction map control
 _append_transmap() {
     { [ -d /tmp/linuxtoys ] || mkdir -p /tmp/linuxtoys; } || fatal "Failed to create tempdir"
-    { [ -f /tmp/linuxtoys/transmap ] || : > /tmp/linuxtoys/transmap; } || fatal "Failed to create transaction map"
+    { [ -f /tmp/linuxtoys/transmap ] || { : > /tmp/linuxtoys/transmap && chmod 666 /tmp/linuxtoys/transmap; }; } || fatal "Failed to create transaction map"
     echo "$1" >> /tmp/linuxtoys/transmap 2>/dev/null || true
 }
 
