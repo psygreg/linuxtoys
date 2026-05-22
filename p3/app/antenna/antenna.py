@@ -55,16 +55,79 @@ def _get_gpu_info() -> dict:
             "has_multiple_gpus": False,
             "gpu_count": 0,
         }
- 
+
+
+def _get_init_system_info() -> str:
+    """Detect and return the init system being used.
+    
+    Detection order:
+    1. Check if systemd (via is_systemd())
+    2. Check ps 1 for runit or openrc
+    3. Check if /sbin/init is a symlink (readlink succeeds) vs regular file
+    4. If /sbin/init is not a symlink or readlink fails, assume sysvinit
+    
+    Returns:
+        str: Init system name ('systemd', 'sysvinit', 'runit', 'openrc', or 'unknown')
+    """
+    import os
+    import subprocess
+    
+    # Check for systemd using existing compat detection
+    try:
+        from .. import compat
+        if compat.is_systemd():
+            return "systemd"
+    except Exception:
+        pass
+    
+    # Check ps 1 for other init systems
+    try:
+        result = subprocess.run(
+            ["ps", "-p", "1", "-o", "comm="],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        init_process = result.stdout.strip().lower()
+        
+        if "runit" in init_process:
+            return "runit"
+        if "openrc" in init_process:
+            return "openrc"
+    except Exception:
+        pass
+    
+    # Check /sbin/init symlink to determine init system
+    try:
+        if os.path.islink("/sbin/init"):
+            # It's a symlink, check where it points
+            target = os.readlink("/sbin/init").lower()
+            if "openrc" in target:
+                return "openrc"
+            if "runit" in target:
+                return "runit"
+        # If /sbin/init exists and is NOT a symlink, it's likely sysvinit
+        if os.path.exists("/sbin/init"):
+            return "sysvinit"
+    except Exception:
+        pass
+    
+    return "unknown"
+
+
 def get_system_context() -> str:
     """Build a system info context string for bug reports."""
     os_info = _get_os_info()
     gpu_info = _get_gpu_info()
+    init_system = _get_init_system_info()
     
     context_parts = [f"OS: {os_info['id']}"]
     
     if os_info["version"]:
         context_parts[-1] += f" ({os_info['version']})"
+    
+    if init_system and init_system != "unknown":
+        context_parts.append(f"Init: {init_system}")
     
     if gpu_info["has_nvidia"]:
         context_parts.append("GPU: Nvidia detected")

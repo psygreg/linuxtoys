@@ -132,7 +132,8 @@ def get_system_compat_keys():
         set: Set of compatibility keys for the current system
                (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue;
               GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
-              Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-other)
+              Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-other;
+              Init keys: systemd)
     """
     # Check if developer mode override is active
     try:
@@ -203,6 +204,10 @@ def get_system_compat_keys():
     desktop_keys = get_desktop_compat_keys()
     keys.update(desktop_keys)
 
+    # Add init system compatibility keys
+    init_keys = get_init_compat_keys()
+    keys.update(init_keys)
+
     return keys
 
 
@@ -265,6 +270,70 @@ def get_desktop_compat_keys():
     if keys:
         keys.add("desktop")
 
+    return keys
+
+
+def is_systemd():
+    """
+    Detect if the system is running systemd as the init system.
+
+    Detection method:
+    1. Use 'ps 1' to get the init process name
+    2. If it contains 'systemd', system is using systemd
+    3. If it returns '/sbin/init', check if it's a symlink to systemd
+
+    Returns:
+        bool: True if systemd is the init system, False otherwise
+    """
+    import os
+    import subprocess
+
+    try:
+        # Use ps -p 1 to get the init process
+        result = subprocess.run(
+            ["ps", "-p", "1", "-o", "comm="],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        init_process = result.stdout.strip()
+
+        # Check if process is systemd
+        if "systemd" in init_process:
+            return True
+
+        # If it's /sbin/init, check if it's a symlink to systemd
+        if init_process in ["/sbin/init", "init"]:
+            try:
+                # Check if /sbin/init is a symlink to systemd
+                readlink_result = subprocess.run(
+                    ["readlink", "/sbin/init"],
+                    capture_output=True,
+                    text=True,
+                    timeout=5
+                )
+                symlink_target = readlink_result.stdout.strip()
+                if "systemd" in symlink_target:
+                    return True
+            except Exception:
+                pass
+
+    except Exception:
+        pass
+
+    return False
+
+
+def get_init_compat_keys():
+    """
+    Get the init system compatibility keys based on detected init system.
+
+    Returns:
+        set: Set of init system compatibility keys ('systemd' if systemd is running, empty set otherwise)
+    """
+    keys = set()
+    if is_systemd():
+        keys.add("systemd")
     return keys
 
 
@@ -529,6 +598,7 @@ def script_is_compatible(script_path, compat_keys):
     os_compatible = True
     gpu_compatible = True  # Default for unset GPU header
     desktop_compatible = True  # Default for unset desktop header
+    systemd_compatible = True  # Default for unset systemd header
 
     try:
         with open(script_path, "r", encoding="utf-8") as f:
@@ -599,12 +669,21 @@ def script_is_compatible(script_path, compat_keys):
                     else:
                         # Empty header, treat as general desktop
                         desktop_compatible = "desktop" in compat_keys
+                elif line.startswith("# systemd:"):
+                    # systemd header with optional value (e.g., "yes" or "no" - for flexibility)
+                    systemd_value = line[len("# systemd:") :].strip().lower()
+                    # If header exists and is explicitly "no", script requires non-systemd
+                    if systemd_value == "no":
+                        systemd_compatible = "systemd" not in compat_keys
+                    else:
+                        # Default: "yes" or empty means script requires systemd
+                        systemd_compatible = "systemd" in compat_keys
                 if not line.startswith("#"):
                     break
     except Exception:
         pass
 
-    return os_compatible and gpu_compatible and desktop_compatible
+    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible
 
 
 def script_is_localized(script_path, current_locale):
