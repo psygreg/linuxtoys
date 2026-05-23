@@ -99,6 +99,23 @@ def is_supported_system():
         # dev_mode not available, continue with normal behavior
         pass
 
+    # Explicitly block unsupported distributions
+    os_release = {}
+    try:
+        with open("/etc/os-release", "r") as f:
+            for line in f:
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    os_release[k] = v.strip('"')
+    except Exception:
+        pass
+
+    id_val = os_release.get("ID", "").lower()
+
+    # Block vanilla OS
+    if id_val == "vanilla":
+        return False
+
     # Get system compatibility keys
     compat_keys = get_system_compat_keys()
 
