@@ -111,10 +111,22 @@ def is_supported_system():
         pass
 
     id_val = os_release.get("ID", "").lower()
+    id_like = os_release.get("ID_LIKE", "").lower()
 
     # Block vanilla OS
     if id_val == "vanilla":
         return False
+
+    # Block unsupported Ubuntu versions (only noble and resolute are supported)
+    if id_val == "ubuntu":
+        version_codename = os_release.get("VERSION_CODENAME", "").lower()
+        if version_codename not in ["noble", "resolute"]:
+            return False
+    elif "ubuntu" in id_like:
+        # For Ubuntu-based distros, check UBUNTU_CODENAME for supported versions
+        ubuntu_codename = os_release.get("UBUNTU_CODENAME", "").lower()
+        if ubuntu_codename not in ["noble", "resolute"]:
+            return False
 
     # Get system compatibility keys
     compat_keys = get_system_compat_keys()
@@ -181,8 +193,16 @@ def get_system_compat_keys():
 
     if (id_val in ["debian"] or "debian" in id_like) and "ubuntu" not in id_like:
         keys.add("debian")
-    if id_val in ["ubuntu"] or "ubuntu" in id_like:
-        keys.add("ubuntu")
+    if id_val in ["ubuntu"]:
+        # Only add ubuntu compat key for supported versions (noble, resolute)
+        version_codename = os_release.get("VERSION_CODENAME", "").lower()
+        if version_codename in ["noble", "resolute"]:
+            keys.add("ubuntu")
+    elif "ubuntu" in id_like:
+        # For Ubuntu-based distros, check UBUNTU_CODENAME for supported versions
+        ubuntu_codename = os_release.get("UBUNTU_CODENAME", "").lower()
+        if ubuntu_codename in ["noble", "resolute"]:
+            keys.add("ubuntu")
     if id_val in ["zorin"] or "zorin" in id_like:
         keys.add("zorin")
     if id_val in ["biglinux", "bigcommunity", "manjaro"] or "manjaro" in id_like:
@@ -302,7 +322,6 @@ def is_systemd():
     Returns:
         bool: True if systemd is the init system, False otherwise
     """
-    import os
     import subprocess
 
     try:
@@ -435,7 +454,6 @@ def should_show_optimization_script(script_path):
     Returns:
         bool: True if the script should be shown, False if it should be hidden
     """
-    import os
 
     # Check for developer mode optimizer override
     try:
