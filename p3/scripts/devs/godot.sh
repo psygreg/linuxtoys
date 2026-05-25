@@ -24,9 +24,9 @@ if [ ! -d "$HOME/.local/godot" ]; then
     move_ "$GODOT_BIN" Godot
     mkdir -p "$HOME/.local/godot"
     copy_ Godot -f "$HOME/.local/godot"
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/godot/godot.png
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godot.png
     copy_ godot.png -f "$HOME/.local/godot"
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/godot/godot.desktop
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godot.desktop
     copy_ godot.desktop -f "$HOME/.local/share/applications/"
 else # update
     wget "$GODOT_URL" -O "$GODOT_ZIP"

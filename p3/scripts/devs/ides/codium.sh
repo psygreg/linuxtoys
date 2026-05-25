@@ -15,6 +15,7 @@ if is_ubuntu || is_debian; then
     | sudo dd of=/usr/share/keyrings/vscodium-archive-keyring.gpg
     echo -e 'Types: deb\nURIs: https://download.vscodium.com/debs\nSuites: vscodium\nComponents: main\nArchitectures: amd64 arm64\nSigned-by: /usr/share/keyrings/vscodium-archive-keyring.gpg' \
     | sudo tee /etc/apt/sources.list.d/vscodium.sources
+    sudo apt update
     pkg_install codium
 elif is_fedora || is_ostree || is_rhel; then
     sudo tee -a /etc/yum.repos.d/vscodium.repo << 'EOF'

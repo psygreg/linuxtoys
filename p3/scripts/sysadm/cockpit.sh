@@ -3,6 +3,7 @@
 # version: 1.0
 # description: cockpit_desc
 # icon: cockpit.png
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

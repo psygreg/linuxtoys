@@ -13,6 +13,7 @@ source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
 if [ ! -f ${HOME}/.booster ]; then
     sboost_lib
+    zeninf "$finishmsg"
 else
     zenwrn "System already patched."
     exit 100

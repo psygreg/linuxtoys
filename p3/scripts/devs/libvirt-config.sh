@@ -5,6 +5,7 @@
 # icon: virt-manager.png
 # compat: ubuntu, debian, fedora, suse, arch, cachy, ostree, ublue, rhel
 # nocontainer
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

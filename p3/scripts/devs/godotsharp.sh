@@ -23,9 +23,9 @@ if [ ! -d "$HOME/.local/godot" ]; then
     wget "$GODOT_MONO_URL" -O "$GODOT_MONO_ZIP"
     prep_dir "$HOME/.local/godot"
     unzip -d "$HOME/.local/godot" "$GODOT_MONO_ZIP"
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/godot/godot.png
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godot.png
     copy_ godot.png "$HOME/.local/godot"
-    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/main/resources/godot/godotsharp.desktop
+    wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godotsharp.desktop
     prep_create "$HOME/.local/share/applications/godotsharp.desktop"
     copy_ godotsharp.desktop "$HOME/.local/share/applications"
     sudo_rq

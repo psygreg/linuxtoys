@@ -7,6 +7,7 @@
 # nocontainer
 # gpu: Amd, Intel
 # repo: https://waydro.id/
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -20,6 +21,12 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         pkg_install python3-venv
     fi
     pkg_install waydroid python3
+    if command -v rpm-ostree &> /dev/null; then
+        if rpm-ostree status | grep -q "State: staged"; then
+            zenwrn "A system update is pending. Please reboot your system and run this script again to complete the installation." # TODO -- translate
+            exit 100
+        fi
+    fi
     sysd_enable waydroid-container
     sysd_start waydroid-container
     sudo waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS

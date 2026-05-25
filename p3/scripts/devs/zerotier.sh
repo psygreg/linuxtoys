@@ -6,6 +6,7 @@
 # repo: https://github.com/zerotier/ZeroTierOne
 # compat: fedora, ubuntu, debian, suse, arch, cachy, rhel
 # revert: arch, cachy
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

@@ -3,6 +3,7 @@
 # description: autosysup_desc
 # icon: linuxtoys.svg
 # compat: ubuntu, debian, fedora, solus, rhel
+# systemd: yes
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

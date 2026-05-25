@@ -6,6 +6,7 @@
 # nocontainer
 # reboot: yes
 # compat: !ublue
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -13,16 +14,19 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 docker_in () { # install docker
     prep_tmp
     if is_ubuntu; then
-        sudo apt install -y ca-certificates # should not be declared as its removal may break the OS
+        sudo apt install -y ca-certificates
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
         sudo chmod a+r /etc/apt/keyrings/docker.asc
+        { [ -n "$UBUNTU_CODENAME" ] && UBUCODENAME="$UBUNTU_CODENAME"; }
+        { ([ "$VERSION_CODENAME" = "noble" ] || [ "$VERSION_CODENAME" = "resolute" ]) && UBUCODENAME="$VERSION_CODENAME"; }
         echo \
             "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-            $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+            $(. /etc/os-release && echo "${UBUCODENAME:-noble}") stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
     elif is_debian; then
+        { [ "$VERSION_CODENAME" != "trixie" ] && [ "$VERSION_CODENAME" != "bookworm" ]; } && DEB_CODENAME="trixie" || DEB_CODENAME="$VERSION_CODENAME"
         sudo apt install -y ca-certificates # should not be declared as its removal may break the OS
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
@@ -30,7 +34,7 @@ docker_in () { # install docker
         sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/debian
-Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
+Suites: $(. /etc/os-release && echo "${DEB_CODENAME}")
 Components: stable
 Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/docker.asc

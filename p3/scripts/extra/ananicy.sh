@@ -4,6 +4,7 @@
 # description: ananicy_desc
 # icon: optimizer.svg
 # compat: arch, fedora
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

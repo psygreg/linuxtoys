@@ -6,6 +6,7 @@
 # compat: ubuntu, debian, arch, fedora, suse
 # nocontainer
 # repo: https://github.com/Antynea/grub-btrfs
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

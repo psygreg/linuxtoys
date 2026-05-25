@@ -7,6 +7,7 @@
 # reboot: ostree
 # noconfirm: yes
 # nocontainer
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"

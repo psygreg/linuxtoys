@@ -6,6 +6,7 @@
 # compat: fedora, arch, debian, ubuntu, cachy, suse, rhel
 # repo: https://github.com/NixOS/nixpkgs
 # revert: arch, cachy
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

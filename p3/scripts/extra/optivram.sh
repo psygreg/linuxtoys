@@ -5,6 +5,7 @@
 # compat: fedora, arch
 # gpu: Intel, AMD
 # new
+# systemd: yes
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

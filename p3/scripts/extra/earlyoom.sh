@@ -7,6 +7,7 @@
 # repo: https://github.com/rfjakob/earlyoom
 # optimized-only: yes
 # compat: !solus, !fedora, !ostree, !ublue
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"

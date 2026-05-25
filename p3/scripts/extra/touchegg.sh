@@ -6,6 +6,7 @@
 # compat: ubuntu, debian, fedora, suse
 # nocontainer
 # repo: https://github.com/JoseExposito/touchegg
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

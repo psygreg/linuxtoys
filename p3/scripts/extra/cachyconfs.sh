@@ -8,6 +8,7 @@
 # nocontainer
 # repo: https://github.com/CachyOS/CachyOS-Settings
 # optimized-only: yes
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"

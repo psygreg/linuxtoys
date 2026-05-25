@@ -6,6 +6,7 @@
 # compat: arch
 # nocontainer
 # repo: https://github.com/Antiz96/arch-update
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

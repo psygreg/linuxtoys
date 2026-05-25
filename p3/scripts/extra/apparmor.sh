@@ -7,6 +7,7 @@
 # compat: debian, arch, cachy
 # reboot: yes
 # nocontainer
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

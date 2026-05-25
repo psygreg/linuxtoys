@@ -5,6 +5,7 @@
 # compat: ubuntu, debian, arch, fedora, ostree, rhel
 # nocontainer
 # new
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"
