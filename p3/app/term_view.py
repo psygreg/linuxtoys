@@ -110,7 +110,7 @@ class InfosHead(Gtk.Box):
 
 class TermRunScripts(Gtk.Box):
     def __init__(
-        self, scripts_infos: list, parent, translations=None, removable_script_info=None
+        self, scripts_infos: list, parent, translations=None, removable_script_info=None, auto_run=False
     ):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.parent = parent
@@ -119,6 +119,7 @@ class TermRunScripts(Gtk.Box):
         self.removable_script_info = removable_script_info
         self.total_scripts = len(scripts_infos)
         self.scripts_executed = 0
+        self.auto_run = auto_run
         
         # Store revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
@@ -184,6 +185,10 @@ class TermRunScripts(Gtk.Box):
 
         if self.script_queue:
             self.vbox_main._update_header_labels(self.script_queue[0])
+        
+        # If auto_run is enabled, automatically start running the scripts
+        if self.auto_run:
+            GLib.idle_add(self._run_next_script)
 
     def _set_remove_button_visibility(self):
         # Button shown if ALL conditions are met:

@@ -844,9 +844,9 @@ class AppWindow(Gtk.ApplicationWindow):
             # Show the new view with animation
             self.show_scripts_view(info)
 
-    def open_term_view(self, infos, removable_script_info=None):
+    def open_term_view(self, infos, removable_script_info=None, auto_run=False):
         run_box = term_view.TermRunScripts(
-            infos, self, self.translations, removable_script_info=removable_script_info
+            infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run
         )
 
         self.header_widget.hide()
@@ -913,8 +913,14 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # Only open terminal if user didn't cancel the needed requirements dialog
         if deps:
-            removable = info if len(deps) == 1 else None
-            self.open_term_view(deps, removable_script_info=removable)
+            # Show confirmation dialog for single script with auto-run
+            confirmed = needed_helper.show_run_confirmation_dialog(
+                self, self.translations, deps
+            )
+            
+            if confirmed:
+                removable = info if len(deps) == 1 else None
+                self.open_term_view(deps, removable_script_info=removable, auto_run=True)
 
     def _handle_create_new_script(self):
         """Handle the creation of a new local script."""
