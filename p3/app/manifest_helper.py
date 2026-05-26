@@ -353,7 +353,20 @@ def run_update_check_cli(translations=None):
     if update_available:
         print(f"⚡️ A new version {_check._latest_ver.get('tag_name', '')} of LinuxToys is available.\n")
         print(_check._latest_ver.get('body', 'No changelog available.'), '\n')
-        resp = input(">>> Do you want to update to the latest version? [y/N]: ").strip().lower()
+        
+        # In headless mode (UPD_SERVICE=1), automatically accept the update
+        if os.environ.get('UPD_SERVICE') == '1':
+            print("Running in headless updater service mode. Automatically applying update...")
+            resp = 'y'
+        else:
+            # In interactive mode, prompt the user
+            try:
+                resp = input(">>> Do you want to update to the latest version? [y/N]: ").strip().lower()
+            except EOFError:
+                # If input fails (no terminal), default to 'n' to avoid errors
+                print("No terminal available. Update declined.")
+                resp = 'n'
+        
         if resp == 'y':
             try:
                 subprocess.run(['sh', '-c', 'curl -fsSL https://linux.toys/install.sh | bash'], check=True)

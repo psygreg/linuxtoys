@@ -2,6 +2,7 @@
 
 import sys
 import os # Import the 'os' module
+import subprocess
 from app.manifest_helper import run_update_check_cli
 
 if __name__ == "__main__":
@@ -43,6 +44,17 @@ if __name__ == "__main__":
     # Check for updates only in CLI mode (EASY_CLI=1) and display feedback in the terminal.
     if os.environ.get('EASY_CLI') == '1':
         run_update_check_cli()
+        # If running as UPD_SERVICE, run system update after app update completes
+        if os.environ.get('UPD_SERVICE') == '1':
+            print("\n" + "=" * 60)
+            print("Now running system update...")
+            print("=" * 60 + "\n")
+            try:
+                script_path = os.path.join(os.environ.get('SCRIPT_DIR', linuxtoys_dir), 'scripts', 'sysup.sh')
+                subprocess.run(['bash', script_path], check=False)
+            except Exception as e:
+                print(f"Error running system update: {e}")
+            sys.exit(0)
 
     # --- DISPLAY CHECK FOR GUI MODE ---
     # Check for display server before importing GTK to prevent crashes in headless environments
