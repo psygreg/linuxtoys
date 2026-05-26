@@ -329,21 +329,36 @@ def _reverse_package_fromfile(file_paths):
 
 
 def _reverse_file_deletion(file_path):
-    """Reverse file deletion by removing the created file."""
-    # For created files, we just need to delete them
-    return f"rm -rf {file_path} 2>/dev/null || true"
+    """Reverse file deletion by removing the created file.
+    
+    Attempts removal without sudo first. If permission is denied,
+    calls sudo_rq and retries with root access.
+    """
+    # Try without sudo first; if permission denied, request sudo and retry
+    return (
+        f"rm -rf {file_path} 2>/dev/null || "
+        f"{{ sudo_rq && sudo rm -rf {file_path} 2>/dev/null; }} || true"
+    )
 
 
 def _reverse_file_restoration(file_path):
-    """Reverse a file or directory change by restoring from .bak file/directory."""
+    """Reverse a file or directory change by restoring from .bak file/directory.
+    
+    Attempts restoration without sudo first. If permission is denied,
+    calls sudo_rq and retries with root access.
+    """
     backup_path = f"{file_path}.bak"
     
     # Check if backup exists
     if not os.path.exists(backup_path):
         return None
     
-    # Use rm -rf to handle both files and directories, moving backup back into place
-    return f"{{ rm -rf {file_path} && mv {backup_path} {file_path}; }} || true"
+    # Try without sudo first; if permission denied, request sudo and retry
+    # Use proper quoting to handle paths with spaces and special characters
+    return (
+        f"{{ rm -rf {file_path} && mv {backup_path} {file_path}; }} 2>/dev/null || "
+        f"{{ sudo_rq && sudo bash -c 'rm -rf \"{file_path}\" && mv \"{backup_path}\" \"{file_path}\"'; }} || true"
+    )
 
 
 def _reverse_flatpak_removal(app_ids):
