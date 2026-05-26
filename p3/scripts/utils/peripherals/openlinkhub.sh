@@ -34,7 +34,8 @@ elif is_fedora || is_rhel; then
 elif is_arch || is_cachy; then
     pkg_install openlinkhub-bin
 fi
-sysd_enable OpenLinkHub.service
+sysd_enable openlinkhub.service
+sysd_start openlinkhub.service
 sleep 1
 xdg-open http://127.0.0.1:27003
 zeninf "$finishmsg"

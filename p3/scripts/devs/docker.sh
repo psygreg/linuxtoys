@@ -59,7 +59,6 @@ EOF
     else
         pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     fi
-    _install_
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'
