@@ -96,6 +96,7 @@ rpmfusion_chk() {
         # requirements
         pkg_install epel-release distribution-gpg-keys
         sudo dnf config-manager --set-enabled crb
+        { is_rhel && [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %{rhel})-$(uname -m)-rpms" || sudo /usr/bin/crb enable
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
             sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-el-$(rpm -E %rhel)
