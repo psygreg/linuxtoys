@@ -411,8 +411,10 @@ pkg_flat() {
 
     if [ "$flatpak_scope" = "--user" ]; then
         flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
+        flatpak list "$flatpak_scope" | grep -q ${_flatpak_args[@]} || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
     else
-        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; } || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
+        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; } 
+        flatpak list "$flatpak_scope" | grep -q ${_flatpak_args[@]} || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
     fi
     _append_transmap "flatpak ${_flatpak_args[*]}"
 }
