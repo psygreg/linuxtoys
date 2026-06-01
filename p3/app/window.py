@@ -7,6 +7,7 @@ import threading
 from gi.repository import GdkPixbuf
 
 from . import (
+    action_registry,
     manifest_helper,
     compat,
     get_icon_path,
@@ -913,10 +914,19 @@ class AppWindow(Gtk.ApplicationWindow):
 
         # Only open terminal if user didn't cancel the needed requirements dialog
         if deps:
-            # Show confirmation dialog for single script with auto-run
-            confirmed = needed_helper.show_run_confirmation_dialog(
-                self, self.translations, deps
-            )
+            # Show confirmation dialog only if script hasn't been run before
+            script_name = info.get('name', '')
+            registry_data = action_registry.parse_registry_file()
+            is_first_run = script_name not in registry_data
+            
+            # Show confirmation dialog only on first run
+            if is_first_run:
+                confirmed = needed_helper.show_run_confirmation_dialog(
+                    self, self.translations, deps
+                )
+            else:
+                # Skip dialog on subsequent runs to allow easy bug reports and uninstalls
+                confirmed = True
             
             if confirmed:
                 removable = info if len(deps) == 1 else None
