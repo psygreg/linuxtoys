@@ -525,6 +525,11 @@ def submit_issue(title: str, logs: str = "", context: str = "", is_footer_trigge
     if not logs:
         logs = log_capture.get_logs()
     
+    # If logs are empty even after getting from log_capture, treat as footer-triggered
+    # to include recent registry entries (matches behavior of main menu reports)
+    if not logs.strip():
+        is_footer_triggered = True
+    
     # Only truncate if logs came from log capture (not explicitly provided)
     # This preserves pre-formatted data like registry information or terminal dumps
     if not logs_explicitly_provided:
