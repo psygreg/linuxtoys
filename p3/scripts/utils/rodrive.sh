@@ -59,7 +59,7 @@ display_guide
 pkg_install rclone
 if is_ostree; then
    if rpm-ostree status --json | grep -q '"live-replaced": true'; then
-      zeninf "Please reboot and run this script again to complete the configuration." # TODO: add translation
+      zeninf "${msgostreepending}:-Please reboot and run this script again to complete the configuration."
       exit 0
    fi
 fi

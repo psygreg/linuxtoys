@@ -3,7 +3,7 @@
 # version: 1.0
 # description: nv_desc_470
 # icon: nvidia.svg
-# compat: ostree
+# compat: none
 # reboot: ostree
 # nocontainer
 # gpu: Nvidia

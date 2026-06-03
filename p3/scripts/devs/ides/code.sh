@@ -3,6 +3,7 @@
 # version: 1.0
 # description: code_desc
 # icon: code.svg
+# compat: solus, debian, ubuntu, fedora, ostree, rhel, suse
 
 # --- Start of the script code ---
 #SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -20,10 +21,10 @@ if is_debian || is_ubuntu; then
     echo "deb [signed-by=/usr/share/keyrings/vscode-keyring.asc arch=amd64] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
     sleep 1
     sudo apt update
-elif is_arch || is_cachy; then
-    pkg_install visual-studio-code-bin
-    zeninf "$msg018"
-    exit 0
+#elif is_arch || is_cachy; then
+    #pkg_install visual-studio-code-bin
+    #zeninf "$msg018"
+    #exit 0
 elif is_fedora || is_ostree || is_rhel; then
     if command -v rpm-ostree &>/dev/null; then
         echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null

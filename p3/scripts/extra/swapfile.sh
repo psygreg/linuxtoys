@@ -26,6 +26,8 @@ fix_selinux_context () {
 # create swap at specified location
 create_swap () {
     local location=$1
+    # Remove trailing slash to avoid double slashes in paths
+    location="${location%/}"
     
     if [ "$(findmnt -n -o FSTYPE "$location")" = "btrfs" ]; then
         sudo_rq

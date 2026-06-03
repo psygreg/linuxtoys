@@ -19,7 +19,7 @@ install_nobox () {
             fi
         fi
     elif is_ubuntu || is_debian; then
-        pkg_install build-essential cmake libavcodec-dev libavformat-dev libavutil-dev libswscale-dev git make
+        pkg_install build-essential cmake libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev libavfilter-dev libswresample-dev libpostproc-dev make
         if is_intel; then
             pkg_install intel-media-driver
         fi

@@ -3,7 +3,7 @@
 # version: 1.0
 # description: nv_desc_470
 # icon: nvidia.svg
-# compat: fedora
+# compat: rhel
 # reboot: yes
 # nocontainer
 # gpu: Nvidia

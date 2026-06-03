@@ -4,6 +4,7 @@
 # description: nerdfonts_desc
 # icon: nerdfonts.svg
 # repo: https://www.nerdfonts.com
+# compat: none
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
