@@ -425,5 +425,7 @@
   "autosysup_desc": "Įjunkite LinuxToys automatinės sistemos atnaujinimo paslaugas systemd. Tai atliks siročių paketų valymą ir pilną sistemos atnaujinimą jūsų pasiskirstymo paketams ir Flatpaks reguliariai, be jokių sumetimų. ATMINTIS: ji atnaujins tik dabartinę jūsų sistemos leidimo versiją, bet jos nebus šiek tiek - tam turėtumėte paleisti rankinį atnaujinimą iš pagrindinės meniu, kai bus prieinama nauja laida.",
   "cachykrn_desc": "CachyOS tinkamai suderinti branduolys. Reikalingas ananicy-cpp ir SteamOS VRAM Optimization naudojimui Fedorose. Apima žingsnius jam pasirašyti naudojimui su Secure Boot, jei ta funkcija įjungta arba sąrankos režimu.",
   "optivram": "SteamOS VRAM optimizavimas",
-  "optivram_desc": "Iš pradžių iš SteamOS, ši optimizacija žymiai pagerina žaidimų našumą, ypač sistemose su 6GB VRAM arba mažiau, siunčiant šaltas VRAM puslapius į RAM. Reikalingas CachyOS Kernel Fedoroje."
+  "optivram_desc": "Iš pradžių iš SteamOS, ši optimizacija žymiai pagerina žaidimų našumą, ypač sistemose su 6GB VRAM arba mažiau, siunčiant šaltas VRAM puslapius į RAM. Reikalingas CachyOS Kernel Fedoroje.",
+  "ostree_info_title": "LinuxToys OSTree",
+  "ostree_info_message": "Ši sistema rpm-ostree naudoja atominiam atnaujinimui. Visi neseniai įdiegti paketai, kurie nėra flatpaks, bus diegiami ir prieinami tik po sistemos perkrovimo."
 }

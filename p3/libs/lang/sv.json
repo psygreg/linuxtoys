@@ -425,5 +425,7 @@
   "autosysup_desc": "Aktivera LinuxToys automatiska systemuppdateringstjänster för systemd. Detta kommer att utföra rengöring av föräldralösa paket och fullständig systemuppdatering för distributionspaket och Flatpaks regelbundet utan att behöva oroa dig. PÅMINNELSE: det kommer endast uppdatera den nuvarande versionen av ditt system, men inte uppgradera den - för det bör du köra en manuell uppdatering från huvudmenyn när en ny version är tillgänglig.",
   "cachykrn_desc": "CachyOS:s anpassade kernel. Krävs för att använda ananicy-cpp och SteamOS VRAM Optimization på Fedora. Innehåller steg för att signera det för användning med Secure Boot om denna funktion är aktiverad eller i inställningsläge.",
   "optivram": "SteamOS VRAM-optimering",
-  "optivram_desc": "Ursprungligen från SteamOS förbättrar denna optimering spelprestandan avsevärt, särskilt på system med 6GB VRAM eller mindre, genom att skicka kalla VRAM-sidor till RAM. Kräver CachyOS Kernel på Fedora."
+  "optivram_desc": "Ursprungligen från SteamOS förbättrar denna optimering spelprestandan avsevärt, särskilt på system med 6GB VRAM eller mindre, genom att skicka kalla VRAM-sidor till RAM. Kräver CachyOS Kernel på Fedora.",
+  "ostree_info_title": "LinuxToys på OSTree",
+  "ostree_info_message": "Det här systemet använder rpm-ostree för atomiska uppdateringar. Alla nyligen installerade paket som inte är flatpaks kommer endast att distribueras och vara tillgängliga efter en systemomstart."
 }

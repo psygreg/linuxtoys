@@ -4,7 +4,7 @@ import requests
 import threading
 import json
 import random
-from . import get_app_resource_path, get_icon_path
+from . import get_app_resource_path, get_icon_path, compat
 from .updater import __version__
 from .lang_utils import escape_for_markup
 
@@ -14,6 +14,40 @@ class AboutDialog:
         self.translations = translations
         self.contributors = []
         self.app_version = __version__
+
+    def _get_compat_display_string(self):
+        """Get a formatted string of relevant compat keys to display"""
+        compat_keys = compat.get_system_compat_keys()
+        
+        # Order of priority for display
+        os_keys = [
+            "debian", "ubuntu", "zorin", "cachy", "arch", "fedora", 
+            "rhel", "suse", "solus", "manjaro", "ostree", "ublue"
+        ]
+        desktop_keys = ["desktop-gnome", "desktop-plasma", "desktop-other"]
+        
+        # Get the primary OS key
+        primary_os = None
+        for key in os_keys:
+            if key in compat_keys:
+                primary_os = key
+                break
+        
+        # Get the desktop environment key
+        desktop_env = None
+        for key in desktop_keys:
+            if key in compat_keys:
+                desktop_env = key.replace("desktop-", "").capitalize()
+                break
+        
+        # Format the display string
+        display_parts = []
+        if primary_os:
+            display_parts.append(primary_os.capitalize())
+        if desktop_env:
+            display_parts.append(desktop_env)
+        
+        return " | ".join(display_parts) if display_parts else "Unknown"
 
     def _get_random_icon(self):
         """Returns path to a random icon (easter egg)"""
@@ -162,7 +196,8 @@ class AboutDialog:
         # App version
         version_label = Gtk.Label()
         version_text = self.translations.get('version_label', 'Versão:')
-        version_label.set_markup(f"<small>{escape_for_markup(version_text)} {self.app_version}</small>")
+        compat_display = self._get_compat_display_string()
+        version_label.set_markup(f"<small>{escape_for_markup(version_text)} {self.app_version} | {escape_for_markup(compat_display)}</small>")
         version_label.set_halign(Gtk.Align.START)
         
         # App description

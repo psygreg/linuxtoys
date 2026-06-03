@@ -425,5 +425,7 @@
   "autosysup_desc": "Lülitage sisse LinuxToys automaatsete süsteemiuuenduste teenused süsteemile. See teostab orfu paketite puhastamist ja täielikku süsteemivärskendust nii teie jaotuse pakettide kui ka Flatpakide jaoks korrapäraselt, ilma muretsemata. MÄRKUS: see värskendab ainult teie süsteemi praegust väljalaske versiooni, kuid ei uuenda seda - selle jaoks peaksite käsitsi värskendama peamenüüst, kui on saadaval uus väljalaske.",
   "cachykrn_desc": "CachyOS kohandatud kernel. Vajalik ananicy-cpp ja SteamOS VRAM Optimization kasutamiseks Fedoral. Sisaldab samme selle allkirjastamiseks Secure Booti kasutamiseks, kui see funktsioon on lubatud või seadistusrežiimis.",
   "optivram": "SteamOS VRAM optimeeriminen",
-  "optivram_desc": "Algselt SteamOS-ist, see optimeerimine parandab oluliselt jätkus suutlikkust, eriti 6GB VRAM või väiksema VRAM-ga süsteemides, külmade VRAM-lehekülgede saatmisega RAM-i. Nõuab CachyOS Kernel-i Fedoral."
+  "optivram_desc": "Algselt SteamOS-ist, see optimeerimine parandab oluliselt jätkus suutlikkust, eriti 6GB VRAM või väiksema VRAM-ga süsteemides, külmade VRAM-lehekülgede saatmisega RAM-i. Nõuab CachyOS Kernel-i Fedoral.",
+  "ostree_info_title": "LinuxToys OSTree-l",
+  "ostree_info_message": "See süsteem kasutab rpm-ostree aatomi värskenduste jaoks. Kõik äsja installitud paketid, mis ei ole flatpaks, juurutatakse ja on saadaval ainult pärast süsteemi taaskäivitamist."
 }

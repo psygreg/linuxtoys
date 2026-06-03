@@ -159,6 +159,7 @@ class AppWindow(Gtk.ApplicationWindow):
         # Populate caches asynchronously to avoid blocking the UI
         GLib.idle_add(self._populate_search_cache)
         GLib.idle_add(self._populate_category_cache)
+        GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
 
     def _populate_search_cache(self):
@@ -409,6 +410,32 @@ class AppWindow(Gtk.ApplicationWindow):
         """
         reboot_helper.handle_ostree_deployment_requirement(
             self, self.translations, self._close_application
+        )
+        return False  # Remove from idle callbacks
+
+    def _show_ostree_package_deployment_info_on_startup(self):
+        """
+        Show informational dialog about package deployment on ostree systems.
+        This dialog is shown asynchronously on startup for ostree/ublue systems
+        to inform users that packages are deployed on reboot.
+        """
+        # Get system compatibility keys
+        system_compat_keys = compat.get_system_compat_keys()
+
+        # Only show on ostree-based systems
+        if {"ostree", "ublue"} & system_compat_keys:
+            # Use GLib.idle_add to ensure the dialog shows after the window is fully initialized
+            GLib.idle_add(self._show_ostree_package_deployment_info)
+        return False  # Remove from idle callbacks
+
+    def _show_ostree_package_deployment_info(self):
+        """
+        Display the ostree package deployment info dialog.
+        Called via GLib.idle_add to ensure proper timing.
+        Non-blocking informational dialog.
+        """
+        reboot_helper.show_ostree_package_deployment_info_dialog(
+            self, self.translations
         )
         return False  # Remove from idle callbacks
 

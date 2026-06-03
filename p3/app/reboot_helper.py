@@ -214,6 +214,72 @@ def show_ostree_deployment_warning_dialog(parent_window, translations):
         return "cancelled"
 
 
+def show_ostree_package_deployment_info_dialog(parent_window, translations):
+    """
+    Shows an informational dialog explaining how package deployment works on ostree systems.
+    This is a non-intrusive info dialog that informs users that newly installed packages
+    will only be deployed after a system reboot.
+
+    Args:
+        parent_window: The parent GTK window for the dialog
+        translations: Dictionary containing translation keys
+    """
+    # Import GTK only when needed for GUI functionality
+    import gi
+
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+
+    dialog = Gtk.Dialog(
+        title=translations.get("ostree_info_title", "Package Deployment Information"),
+        transient_for=parent_window,
+        flags=0,
+    )
+    dialog.set_default_size(420, 170)
+    dialog.set_resizable(False)
+
+    # Add OK button to dismiss
+    dialog.add_button(
+        translations.get("ok_btn", "OK"), Gtk.ResponseType.OK
+    )
+
+    # Create message content
+    content_area = dialog.get_content_area()
+    content_area.set_spacing(10)
+    content_area.set_margin_start(20)
+    content_area.set_margin_end(20)
+    content_area.set_margin_top(20)
+    content_area.set_margin_bottom(10)
+
+    # Add info icon and message
+    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
+
+    # Info icon
+    icon = Gtk.Image.new_from_icon_name("dialog-information", Gtk.IconSize.DIALOG)
+    icon.set_valign(Gtk.Align.START)
+    hbox.pack_start(icon, False, False, 0)
+
+    # Message text
+    message_label = Gtk.Label()
+    message_label.set_text(
+        translations.get(
+            "ostree_info_message",
+            "This system uses ostree for atomic updates. Any newly installed packages will be deployed and available after your next system reboot.",
+        )
+    )
+    message_label.set_line_wrap(True)
+    message_label.set_max_width_chars(55)
+    message_label.set_justify(Gtk.Justification.LEFT)
+    message_label.set_valign(Gtk.Align.START)
+    hbox.pack_start(message_label, True, True, 0)
+
+    content_area.pack_start(hbox, True, True, 0)
+    dialog.show_all()
+
+    response = dialog.run()
+    dialog.destroy()
+
+
 def reboot_system(parent_window):
     """
     Initiates system reboot using systemctl.

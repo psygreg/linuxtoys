@@ -427,5 +427,7 @@
   "autosysup_desc": "为 systemd 启用 LinuxToys 的自动系统更新服务。这将定期为您的发行版包和 Flatpaks 执行孤立包清理和完整系统更新，而无需担心。提醒：它只会更新系统的当前发行版本，但不会升级 - 为此，当有新版本可用时，应从主菜单运行手动更新。",
   "cachykrn_desc": "CachyOS的自定义调整内核。 在Fedora上使用ananicy-cpp和SteamOS VRAM优化所需的。 包括对其进行签名以与Secure Boot一起使用的步骤（如果启用了该功能或处于设置模式）。",
   "optivram": "SteamOS VRAM优化",
-  "optivram_desc": "最初来自SteamOS，这个优化显著提高了游戏性能，特别是在6GB VRAM或更少的系统上，通过将冷VRAM页面发送到RAM。 在Fedora上需要CachyOS Kernel。"
+  "optivram_desc": "最初来自SteamOS，这个优化显著提高了游戏性能，特别是在6GB VRAM或更少的系统上，通过将冷VRAM页面发送到RAM。 在Fedora上需要CachyOS Kernel。",
+  "ostree_info_title": "OSTree上的LinuxToys",
+  "ostree_info_message": "此系统使用rpm-ostree进行原子更新。任何新安装的不是flatpaks的软件包只有在系统重新启动后才会部署并可用。"
 }
