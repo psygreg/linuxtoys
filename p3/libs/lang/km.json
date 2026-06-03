@@ -427,5 +427,7 @@
   "optivram": "SteamOS VRAM ការលម្អ",
   "optivram_desc": "ដើមដែលមកពី SteamOS ការលម្អនេះធ្វើឱ្យប្រសើរផលិតភាពលេងゲームយ៉ាងខ្លាំង ជាពិសេសលើប្រព័ន្ធដែលមាន 6GB VRAM ឬតិចជាង ដោយការផ្ញើទំព័រ VRAM ត្រជាក់ទៅ RAM: ត្រូវការ CachyOS Kernel នៅលើ Fedora។",
   "ostree_info_title": "LinuxToys នៅលើ OSTree",
-  "ostree_info_message": "ប្រព័ន្ធនេះប្រើ rpm-ostree សម្រាប់ការធ្វើបច្ចុប្បន្នភាពអាតូម។ 패ッケջ ដែលបានដំឡើងថ្មីក្រោយ ដែលមិនមែន flatpaks នឹងត្រូវបានផ្សព្វផ្សាយ ហើយមាន តែបន្ទាប់ពីការចាប់ផ្តើមប្រព័ន្ធឡើងវិញ។"
+  "ostree_info_message": "ប្រព័ន្ធនេះប្រើ rpm-ostree សម្រាប់ការធ្វើបច្ចុប្បន្នភាពអាតូម។ 패ッケջ ដែលបានដំឡើងថ្មីក្រោយ ដែលមិនមែន flatpaks នឹងត្រូវបានផ្សព្វផ្សាយ ហើយមាន តែបន្ទាប់ពីការចាប់ផ្តើមប្រព័ន្ធឡើងវិញ។",
+  "flatpak_installed_title": "Flatpak \u178f\u17d2\u179a\u17bc\u179c\u1794\u17b6\u1793\u178a\u17c6\u17a1\u17be\u1784",
+  "flatpak_installed_message": "\u179f\u1798\u178f\u17d2\u1790\u1797\u17b6\u1796 Flatpak \u178f\u17d2\u179a\u17bc\u179c\u1794\u17b6\u1793\u178a\u17c6\u17a1\u17be\u1784\u1791\u17b6\u1793\u17cb\u1796\u17c1\u179b\u179b\u17be\u1794\u17d2\u179a\u1796\u17d0\u1793\u17d2\u1792\u179a\u1794\u179f\u17cb\u17a2\u17d2\u1793\u1780\u17d4 \u1780\u17b6\u179a\u1785\u17b6\u1794\u17cb\u1795\u17d2\u178f\u17be\u1798\u1794\u17d2\u179a\u1796\u17d0\u1793\u17d2\u1792\u17a1\u17be\u1784\u179c\u17b7\u1789 \u178f\u17d2\u179a\u17bc\u179c\u1794\u17b6\u1793\u1782\u17c1\u1791\u17b6\u1798\u1791\u17b6\u179a\u178a\u17be\u1798\u17d2\u1794\u17b8\u17b1\u17d2\u1799\u1798\u17c9\u17ba\u1793\u17bb\u1799\u179b\u1798\u17d2\u17a2\u17b7\u178f\u1785\u17b6\u1794\u17cb\u1795\u17d2\u178f\u17be\u1798\u179a\u17bd\u1798\u1794\u1789\u17d2\u1785\u17bc\u179b flatpak \u1780\u1798\u17d2\u1798\u179c\u17b7\u1792\u17b8\u17d4"
 }

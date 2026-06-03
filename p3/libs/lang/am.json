@@ -427,5 +427,7 @@
   "optivram": "SteamOS VRAM ማመቻቸት",
   "optivram_desc": "በመነሻነት SteamOS ፣ ይህ ማመቻቸት በጌም ውስጥ አፈጻጸም በእጅጉ ያሻሽላል ፣ በተለይም በ 6GB VRAM ወይም ያነሰ ስርዓቶች ላይ ፣ ቀዝቃዛ VRAM ገፆች ወደ RAM በመላክ። ፌዶራ ላይ CachyOS Kernel ያስፈልጋል።",
   "ostree_info_title": "LinuxToys በ OSTree",
-  "ostree_info_message": "ይህ ስርዓት ለአቶሚክ ማዘመኒያዎች rpm-ostree ይጠቀማል። ስ Flatpaks ያልሆኑ ዋናFiles በስርዓት ዳግም ሲጀምር ብቻ ተዘጋጅተው ይገኛሉ።"
+  "ostree_info_message": "ይህ ስርዓት ለአቶሚክ ማዘመኒያዎች rpm-ostree ይጠቀማል። ስ Flatpaks ያልሆኑ ዋናFiles በስርዓት ዳግም ሲጀምር ብቻ ተዘጋጅተው ይገኛሉ።",
+  "flatpak_installed_title": "Flatpak ተጭኗል",
+  "flatpak_installed_message": "Flatpak ችሎታ አሁን በስርዓቱ ላይ ተጭኗል። የስርዓት ዳግም ማስጀመር ለመተግበር እና flatpak ትግበራዎችን ለማካተት ያስፈልጋል።"
 }

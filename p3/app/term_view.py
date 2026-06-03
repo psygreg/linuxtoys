@@ -121,11 +121,12 @@ class TermRunScripts(Gtk.Box):
         self.scripts_executed = 0
         self.auto_run = auto_run
         
-        # Store revert capability of the removable script (if available)
+        # Track revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
         self.removable_script_manual_revert_enabled = False
         self.removable_script_has_registry_entry = False
         self.removable_script_revert_disabled = False
+        self._flatpak_installed_detected = False  # Track if flatpak was installed during script execution
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
             script_name = self.removable_script_info.get('name')
@@ -566,6 +567,18 @@ class TermRunScripts(Gtk.Box):
                 # Success - save to registry and wipe transmap
                 script_name = getattr(self, "_current_script_name", "unknown")
                 self._save_to_registry(script_name, transmap_path)
+                
+                # Check if flatpak was installed during this script before transmap is deleted
+                if not getattr(self, "_flatpak_installed_detected", False):
+                    if os.path.exists(transmap_path):
+                        try:
+                            with open(transmap_path, "r") as f:
+                                content = f.read()
+                                if "pkg flatpak" in content or "pkg file flatpak" in content:
+                                    self._flatpak_installed_detected = True
+                        except Exception:
+                            pass
+                
                 try:
                     if os.path.exists(transmap_path):
                         os.remove(transmap_path)
@@ -660,6 +673,15 @@ class TermRunScripts(Gtk.Box):
             self.vbox_main.button_run.set_sensitive(True)
             self.terminal.set_can_focus(True)
             self.vbox_main.button_run.grab_focus()
+            
+            # Check if flatpak was installed during script execution and show info if needed
+            if getattr(self, "_flatpak_installed_detected", False):
+                reboot_helper.show_flatpak_installed_info_dialog(
+                    self.parent, self.translations
+                )
+                # Reset the flag after showing the dialog
+                self._flatpak_installed_detected = False
+            
             return
 
         self.parent._script_running = True

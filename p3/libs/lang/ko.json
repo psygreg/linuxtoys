@@ -427,5 +427,7 @@
   "optivram": "SteamOS VRAM 최적화",
   "optivram_desc": "원래 SteamOS에서 이 최적화는 특히 6GB VRAM 이하의 시스템에서 게임 성능을 크게 향상시키며, 콜드 VRAM 페이지를 RAM으로 전송합니다. Fedora에서 CachyOS Kernel이 필요합니다.",
   "ostree_info_title": "OSTree의 LinuxToys",
-  "ostree_info_message": "이 시스템은 원자적 업데이트에 rpm-ostree를 사용합니다. flatpaks가 아닌 새로 설치된 모든 패키지는 시스템 재부팅 후에만 배포되고 사용 가능합니다."
+  "ostree_info_message": "이 시스템은 원자적 업데이트에 rpm-ostree를 사용합니다. flatpaks가 아닌 새로 설치된 모든 패키지는 시스템 재부팅 후에만 배포되고 사용 가능합니다.",
+  "flatpak_installed_title": "Flatpak이 설치됨",
+  "flatpak_installed_message": "Flatpak 기능이 방금 시스템에 설치되었습니다. 앱 메뉴가 flatpak 응용 프로그램을 포함하기 시작하려면 시스템을 재부팅해야 합니다."
 }

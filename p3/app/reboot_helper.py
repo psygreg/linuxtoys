@@ -280,6 +280,71 @@ def show_ostree_package_deployment_info_dialog(parent_window, translations):
     dialog.destroy()
 
 
+def show_flatpak_installed_info_dialog(parent_window, translations):
+    """
+    Shows an informational dialog informing users that flatpak has been installed
+    and flatpak apps will appear in their app menu after a system reboot.
+
+    Args:
+        parent_window: The parent GTK window for the dialog
+        translations: Dictionary containing translation keys
+    """
+    # Import GTK only when needed for GUI functionality
+    import gi
+
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+
+    dialog = Gtk.Dialog(
+        title=translations.get("flatpak_installed_title", "Flatpak Installed"),
+        transient_for=parent_window,
+        flags=0,
+    )
+    dialog.set_default_size(420, 170)
+    dialog.set_resizable(False)
+
+    # Add OK button to dismiss
+    dialog.add_button(
+        translations.get("ok_btn", "OK"), Gtk.ResponseType.OK
+    )
+
+    # Create message content
+    content_area = dialog.get_content_area()
+    content_area.set_spacing(10)
+    content_area.set_margin_start(20)
+    content_area.set_margin_end(20)
+    content_area.set_margin_top(20)
+    content_area.set_margin_bottom(10)
+
+    # Add info icon and message
+    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
+
+    # Info icon
+    icon = Gtk.Image.new_from_icon_name("dialog-information", Gtk.IconSize.DIALOG)
+    icon.set_valign(Gtk.Align.START)
+    hbox.pack_start(icon, False, False, 0)
+
+    # Message text
+    message_label = Gtk.Label()
+    message_label.set_text(
+        translations.get(
+            "flatpak_installed_message",
+            "Flatpak has been successfully installed on your system. Flatpak applications will appear in your app menu after your next system reboot.",
+        )
+    )
+    message_label.set_line_wrap(True)
+    message_label.set_max_width_chars(55)
+    message_label.set_justify(Gtk.Justification.LEFT)
+    message_label.set_valign(Gtk.Align.START)
+    hbox.pack_start(message_label, True, True, 0)
+
+    content_area.pack_start(hbox, True, True, 0)
+    dialog.show_all()
+
+    response = dialog.run()
+    dialog.destroy()
+
+
 def reboot_system(parent_window):
     """
     Initiates system reboot using systemctl.
@@ -386,6 +451,37 @@ def handle_ostree_deployment_requirement(
         # User chose to reboot later, close the application
         close_app_callback()
     # If cancelled, do nothing and return to the application
+
+
+def show_flatpak_installed_info_if_needed(parent_window, translations, transmap_path=None):
+    """
+    Checks if flatpak was installed during script execution and shows info dialog if needed.
+    
+    Args:
+        parent_window: The parent GTK window for the dialog
+        translations: Dictionary containing translation keys
+        transmap_path: Optional path to the transmap file (for testing). If None, uses default.
+    
+    Returns:
+        bool: True if flatpak was detected and info shown, False otherwise
+    """
+    if transmap_path is None:
+        transmap_path = os.path.expanduser("~/.cache/linuxtoys/transmap")
+    
+    if not os.path.exists(transmap_path):
+        return False
+    
+    try:
+        with open(transmap_path, "r") as f:
+            content = f.read()
+            # Check if flatpak was installed (look for "pkg flatpak" or "pkg file flatpak")
+            if "pkg flatpak" in content or "pkg file flatpak" in content:
+                show_flatpak_installed_info_dialog(parent_window, translations)
+                return True
+    except Exception:
+        pass
+    
+    return False
 
 
 def check_reboot_requirement_after_checklist(

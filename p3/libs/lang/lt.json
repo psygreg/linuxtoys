@@ -427,5 +427,7 @@
   "optivram": "SteamOS VRAM optimizavimas",
   "optivram_desc": "Iš pradžių iš SteamOS, ši optimizacija žymiai pagerina žaidimų našumą, ypač sistemose su 6GB VRAM arba mažiau, siunčiant šaltas VRAM puslapius į RAM. Reikalingas CachyOS Kernel Fedoroje.",
   "ostree_info_title": "LinuxToys OSTree",
-  "ostree_info_message": "Ši sistema rpm-ostree naudoja atominiam atnaujinimui. Visi neseniai įdiegti paketai, kurie nėra flatpaks, bus diegiami ir prieinami tik po sistemos perkrovimo."
+  "ostree_info_message": "Ši sistema rpm-ostree naudoja atominiam atnaujinimui. Visi neseniai įdiegti paketai, kurie nėra flatpaks, bus diegiami ir prieinami tik po sistemos perkrovimo.",
+  "flatpak_installed_title": "Flatpak yra įdiegtas",
+  "flatpak_installed_message": "Flatpak galimybė ką tik buvo įdiegta į jūsų sistemą. Sistemos paleidimas iš naujo reikalingas tam, kad programų meniu pradėtų įtraukti flatpak programas."
 }

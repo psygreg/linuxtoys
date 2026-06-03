@@ -427,5 +427,7 @@
   "optivram": "SteamOS VRAM अनुकूलन",
   "optivram_desc": "मूलतः SteamOS बाट, यो अनुकूलनले गेमहरूमा कार्यक्षमता उल्लेखनीय रूपमा सुधार गर्छ, विशेष गरी 6GB VRAM वा त्यससँग कम प्रणालीहरूमा, चिसो VRAM पृष्ठहरू RAM मा पठाएर। Fedora मा CachyOS Kernel आवश्यक छ।",
   "ostree_info_title": "LinuxToys OSTree मा",
-  "ostree_info_message": "यो सिस्टम परमाणु अपडेटको लागि rpm-ostree प्रयोग गर्छ। सबै नयाँ स्थापित प्याकेजहरू जो flatpaks छैनन् सिस्टम रीबुट पछि मात्र तैनात र उपलब्ध हुनेछन्।"
+  "ostree_info_message": "यो सिस्टेम परमाणु अपडेटको लागि rpm-ostree प्रयोग गर्छ। सबै नयाँ स्थापित प्याकेजहरू जो flatpaks छैनन् सिस्टम रीबुट पछि मात्र तैनात र उपलब्ध हुनेछन्।",
+  "flatpak_installed_title": "Flatpak स्थापित",
+  "flatpak_installed_message": "Flatpak क्षमता अभी तपाइंको सिस्टेममा स्थापित भएको छ। एप मेनु flatpak अनुप्रयोगहरू समेट गर्न सुरु गर्नको लागि सिस्टेम रीबुट आवश्यक छ।"
 }

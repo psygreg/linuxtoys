@@ -425,5 +425,7 @@
   "optivram": "Uboreshaji wa SteamOS VRAM",
   "optivram_desc": "Asili kutoka SteamOS, uboreshaji huu unaboresha biashara ya michezo kwa kiasi kikubwa, haswa kwenye mifumo yenye 6GB VRAM au chini, kwa kupadisha kurasa za VRAM baridi kwenye RAM. Inahitaji CachyOS Kernel kwenye Fedora.",
   "ostree_info_title": "LinuxToys kwenye OSTree",
-  "ostree_info_message": "Mfumo huu unatumia rpm-ostree kwa sasisho la atomiki. Pakiti zote zilizosakinishi hivi karibuni ambazo sio flatpaks zitakuwa zimefanywa kazi na zitakuwa zinapatikana tu baada ya kusimama upya kwa mfumo."
+  "ostree_info_message": "Mfumo huu unatumia rpm-ostree kwa sasisho la atomiki. Pakiti zote zilizosakinishi hivi karibuni ambazo sio flatpaks zitakuwa zimefanywa kazi na zitakuwa zinapatikana tu baada ya kusimama upya kwa mfumo.",
+  "flatpak_installed_title": "Flatpak Iliyosakiniwa",
+  "flatpak_installed_message": "Uwezo wa Flatpak umesakinishwa tu kwenye mfumo wako. Kusimama upya kwa mfumo kinachohitajika kwa ajili ya menyu ya programu kuanza kujumuisha programu za flatpak."
 }
