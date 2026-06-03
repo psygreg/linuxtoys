@@ -136,3 +136,4 @@ sysup_completed="การทำความสะอาดและการอ
 sysup_rebootreq="การทำความสะอาดและการอัปเดตเสร็จสิ้น จำเป็นต้องรีบูตเพื่อให้การอัปเดตมีผล"
 sysup_available="การอัปเดตรีลีสพร้อมให้ใช้แล้ว อัปเดตเดี๋ยวนี้ไหม? (ถ้าคุณไม่เลือก จะมีการอัปเดตระบบแบบปกติเท่านั้น)"
 zswapmsg="ZSWAP is now enabled. Create a swap file or partition."
+msgostreepending="A system update is pending. Please reboot your system and run this script again to complete the installation."
