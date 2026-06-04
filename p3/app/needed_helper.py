@@ -6,7 +6,9 @@ Handles displaying and confirming required scripts before proceeding.
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
+
+from . import get_icon_path
 
 
 def show_needed_requirements_dialog(
@@ -84,11 +86,30 @@ def show_needed_requirements_dialog(
 
     # Add each required script to the list
     for script_info in required_scripts:
+        # Create horizontal box for icon and info
+        script_item_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+
+        # Script icon (if available)
+        icon_value = script_info.get("icon")
+        if icon_value:
+            icon_path = get_icon_path(icon_value)
+            if icon_path:
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        icon_path, 48, 48, True
+                    )
+                    icon = Gtk.Image.new_from_pixbuf(pixbuf)
+                    icon.set_valign(Gtk.Align.START)
+                    script_item_hbox.pack_start(icon, False, False, 0)
+                except Exception:
+                    pass  # Silently skip if icon loading fails
+
+        # Create vertical box for script info
         script_item_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
 
         # Script name (bold)
         name_label = Gtk.Label()
-        name_label.set_markup(f"<b>• {script_info.get('name', 'Unknown')}</b>")
+        name_label.set_markup(f"<b>{script_info.get('name', 'Unknown')}</b>")
         name_label.set_justify(Gtk.Justification.LEFT)
         name_label.set_halign(Gtk.Align.START)
         script_item_box.pack_start(name_label, False, False, 0)
@@ -97,9 +118,9 @@ def show_needed_requirements_dialog(
         description = script_info.get("description", "")
         if description:
             desc_label = Gtk.Label()
-            desc_label.set_text(f"  {description}")
+            desc_label.set_text(description)
             desc_label.set_line_wrap(True)
-            desc_label.set_max_width_chars(45)
+            desc_label.set_max_width_chars(40)
             desc_label.set_justify(Gtk.Justification.LEFT)
             desc_label.set_halign(Gtk.Align.START)
 
@@ -108,7 +129,8 @@ def show_needed_requirements_dialog(
             desc_context.add_class("dim-label")
             script_item_box.pack_start(desc_label, False, False, 0)
 
-        scripts_box.pack_start(script_item_box, False, False, 0)
+        script_item_hbox.pack_start(script_item_box, True, True, 0)
+        scripts_box.pack_start(script_item_hbox, False, False, 0)
 
     scrolled_window.add(scripts_box)
     content_area.pack_start(scrolled_window, True, True, 0)
@@ -164,7 +186,7 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
         transient_for=parent_window,
         flags=0,
     )
-    dialog.set_default_size(450, 240)
+    dialog.set_default_size(450, 300)
     dialog.set_resizable(True)
 
     # Add buttons
@@ -198,11 +220,30 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
 
     # Add each script to the list
     for script_info in scripts_to_run:
+        # Create horizontal box for icon and info
+        script_item_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+
+        # Script icon (if available)
+        icon_value = script_info.get("icon")
+        if icon_value:
+            icon_path = get_icon_path(icon_value)
+            if icon_path:
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        icon_path, 48, 48, True
+                    )
+                    icon = Gtk.Image.new_from_pixbuf(pixbuf)
+                    icon.set_valign(Gtk.Align.START)
+                    script_item_hbox.pack_start(icon, False, False, 0)
+                except Exception:
+                    pass  # Silently skip if icon loading fails
+
+        # Create vertical box for script info
         script_item_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
 
         # Script name (bold)
         name_label = Gtk.Label()
-        name_label.set_markup(f"<b>• {script_info.get('name', 'Unknown')}</b>")
+        name_label.set_markup(f"<b>{script_info.get('name', 'Unknown')}</b>")
         name_label.set_justify(Gtk.Justification.LEFT)
         name_label.set_halign(Gtk.Align.START)
         script_item_box.pack_start(name_label, False, False, 0)
@@ -211,9 +252,9 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
         description = script_info.get("description", "")
         if description:
             desc_label = Gtk.Label()
-            desc_label.set_text(f"  {description}")
+            desc_label.set_text(description)
             desc_label.set_line_wrap(True)
-            desc_label.set_max_width_chars(45)
+            desc_label.set_max_width_chars(40)
             desc_label.set_justify(Gtk.Justification.LEFT)
             desc_label.set_halign(Gtk.Align.START)
 
@@ -226,9 +267,9 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
         repo = script_info.get("repo", "")
         if repo:
             repo_label = Gtk.Label()
-            repo_label.set_markup(f"  <a href='{repo}'>{repo}</a>")
+            repo_label.set_markup(f"<a href='{repo}'>{repo}</a>")
             repo_label.set_line_wrap(True)
-            repo_label.set_max_width_chars(45)
+            repo_label.set_max_width_chars(40)
             repo_label.set_justify(Gtk.Justification.LEFT)
             repo_label.set_halign(Gtk.Align.START)
 
@@ -237,7 +278,8 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
             repo_context.add_class("dim-label")
             script_item_box.pack_start(repo_label, False, False, 0)
 
-        scripts_box.pack_start(script_item_box, False, False, 0)
+        script_item_hbox.pack_start(script_item_box, True, True, 0)
+        scripts_box.pack_start(script_item_hbox, False, False, 0)
 
     scrolled_window.add(scripts_box)
     content_area.pack_start(scrolled_window, True, True, 0)
