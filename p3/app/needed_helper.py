@@ -222,6 +222,21 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
             desc_context.add_class("dim-label")
             script_item_box.pack_start(desc_label, False, False, 0)
 
+        # Script repo (if available)
+        repo = script_info.get("repo", "")
+        if repo:
+            repo_label = Gtk.Label()
+            repo_label.set_markup(f"  <a href='{repo}'>{repo}</a>")
+            repo_label.set_line_wrap(True)
+            repo_label.set_max_width_chars(45)
+            repo_label.set_justify(Gtk.Justification.LEFT)
+            repo_label.set_halign(Gtk.Align.START)
+
+            # Make repo text slightly lighter
+            repo_context = repo_label.get_style_context()
+            repo_context.add_class("dim-label")
+            script_item_box.pack_start(repo_label, False, False, 0)
+
         scripts_box.pack_start(script_item_box, False, False, 0)
 
     scrolled_window.add(scripts_box)
