@@ -60,6 +60,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.random_scripts_refresh_timer = None  # Timer for periodic refresh
         self.random_scripts_label = None  # Label for "Featured" section
         self.featured_scripts_container = None  # Container for the featured section
+        self.should_start_random_timer = False  # Flag to start timer when scripts are ready
 
         # Checklist
         self.check_buttons = []
@@ -146,8 +147,21 @@ class AppWindow(Gtk.ApplicationWindow):
         label_style.add_class("title-2")  # Add CSS class for styling
         self.featured_scripts_container.pack_start(self.random_scripts_label, False, False, 0)
         
-        # Create flowbox for random scripts
-        self.random_scripts_flowbox = self.create_flowbox()
+        # Create flowbox for random scripts (without extra margins since container has them)
+        self.random_scripts_flowbox = Gtk.FlowBox()
+        self.random_scripts_flowbox.set_valign(Gtk.Align.START)
+        self.random_scripts_flowbox.set_max_children_per_line(5)
+        self.random_scripts_flowbox.set_activate_on_single_click(False)
+        self.random_scripts_flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+        self.random_scripts_flowbox.set_homogeneous(True)
+        # No margins here since the container already has them
+        self.random_scripts_flowbox.set_margin_left(0)
+        self.random_scripts_flowbox.set_margin_top(0)
+        self.random_scripts_flowbox.set_margin_right(0)
+        self.random_scripts_flowbox.set_margin_bottom(0)
+        self.random_scripts_flowbox.set_column_spacing(16)
+        self.random_scripts_flowbox.set_row_spacing(12)
+        
         self.featured_scripts_container.pack_start(self.random_scripts_flowbox, False, False, 0)
         
         categories_container.pack_start(self.featured_scripts_container, False, False, 0)
@@ -233,6 +247,9 @@ class AppWindow(Gtk.ApplicationWindow):
         def populate_in_background():
             try:
                 self.all_scripts = self._collect_all_scripts()
+                # Start the timer if we're on the main menu and scripts were collected
+                if self.should_start_random_timer and self.all_scripts:
+                    GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
             except Exception as e:
                 print(f"Error populating all scripts cache: {e}")
 
@@ -2206,29 +2223,33 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # Return True to keep the timer running
         return True
 
-    def _start_random_scripts_refresh_timer(self):
-        """Start the timer to refresh random scripts periodically."""
-        # First, populate all_scripts if not already done
-        if not self.all_scripts:
-            self.all_scripts = self._collect_all_scripts()
-            
-            if not self.all_scripts:
-                self.featured_scripts_container.hide()
-                return
-        
+    def _deferred_start_random_scripts_refresh_timer(self):
+        """Start the random scripts timer (called asynchronously after scripts are loaded)."""
         # Show the featured section if there are scripts
-        self.featured_scripts_container.show_all()
+        if self.featured_scripts_container and self.all_scripts:
+            self.featured_scripts_container.show_all()
+            
+            # Initial display
+            self._refresh_random_scripts_display()
+            
+            # Start periodic refresh timer (30 seconds)
+            if self.random_scripts_refresh_timer:
+                GLib.source_remove(self.random_scripts_refresh_timer)
+            
+            self.random_scripts_refresh_timer = GLib.timeout_add_seconds(
+                15, self._refresh_random_scripts_display
+            )
         
-        # Initial display
-        self._refresh_random_scripts_display()
+        return False  # Remove from idle callbacks
+
+    def _prepare_random_scripts_display(self):
+        """Prepare random scripts display on main menu (defers actual population)."""
+        # Set flag to indicate we want the timer to start when scripts are ready
+        self.should_start_random_timer = True
         
-        # Start periodic refresh timer (30 seconds)
-        if self.random_scripts_refresh_timer:
-            GLib.source_remove(self.random_scripts_refresh_timer)
-        
-        self.random_scripts_refresh_timer = GLib.timeout_add_seconds(
-            15, self._refresh_random_scripts_display
-        )
+        # If scripts are already loaded, start the timer now
+        if self.all_scripts:
+            GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
 
     def _stop_random_scripts_refresh_timer(self):
         """Stop the random scripts refresh timer."""
@@ -2251,12 +2272,13 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # Disable drag-and-drop when viewing main categories
         self._disable_drag_and_drop()
         
-        # Start random scripts refresh timer
-        self._start_random_scripts_refresh_timer()
+        # Prepare random scripts display (deferred loading)
+        self._prepare_random_scripts_display()
 
     def show_scripts_view(self, category_info):
         """Switches to the view showing scripts in a category."""
         # Stop random scripts timer when leaving main menu
+        self.should_start_random_timer = False
         self._stop_random_scripts_refresh_timer()
         
         # If we have current category info, push it to navigation stack
