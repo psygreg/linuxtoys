@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys az OSTree-ben",
   "ostree_info_message": "Ez a rendszer rpm-ostree-t használ atomfrissítésekhez. Az újonnan telepített, nem flatpak csomagok csak a rendszer újraindítása után kerülnek telepítésre és lesznek elérhetőek.",
   "flatpak_installed_title": "A Flatpak telepítve van",
-  "flatpak_installed_message": "A Flatpak képesség most telepítve lett a rendszerre. A rendszer újraindítása szükséges ahhoz, hogy az alkalmazásmenü flatpak alkalmazásokat tartalmazzon."
+  "flatpak_installed_message": "A Flatpak képesség most telepítve lett a rendszerre. A rendszer újraindítása szükséges ahhoz, hogy az alkalmazásmenü flatpak alkalmazásokat tartalmazzon.",
+  "featured_scripts": "Talán szeretnél megpróbálni..."
 }

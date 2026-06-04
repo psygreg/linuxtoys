@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys ב-OSTree",
   "ostree_info_message": "מערכת זו משתמשת ב-rpm-ostree לעדכונים אטומיים. כל החבילות שהותקנו לאחרונה שאינן flatpaks יופעלו וזמינות רק לאחר הפעלה מחדש של המערכת.",
   "flatpak_installed_title": "Flatpak מותקן",
-  "flatpak_installed_message": "יכולת Flatpak הותקנה זה עתה במערכת שלך. נדרוש הפעלה מחדש של המערכת כדי שתפריט היישומים יתחיל לכלול יישומי flatpak."
+  "flatpak_installed_message": "יכולת Flatpak הותקנה זה עתה במערכת שלך. נדרוש הפעלה מחדש של המערכת כדי שתפריט היישומים יתחיל לכלול יישומי flatpak.",
+  "featured_scripts": "אולי תרצה לנסות..."
 }

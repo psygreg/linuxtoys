@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys OSTree",
   "ostree_info_message": "Ši sistema rpm-ostree naudoja atominiam atnaujinimui. Visi neseniai įdiegti paketai, kurie nėra flatpaks, bus diegiami ir prieinami tik po sistemos perkrovimo.",
   "flatpak_installed_title": "Flatpak yra įdiegtas",
-  "flatpak_installed_message": "Flatpak galimybė ką tik buvo įdiegta į jūsų sistemą. Sistemos paleidimas iš naujo reikalingas tam, kad programų meniu pradėtų įtraukti flatpak programas."
+  "flatpak_installed_message": "Flatpak galimybė ką tik buvo įdiegta į jūsų sistemą. Sistemos paleidimas iš naujo reikalingas tam, kad programų meniu pradėtų įtraukti flatpak programas.",
+  "featured_scripts": "Jūs galbūt norėtumėte bandyti..."
 }

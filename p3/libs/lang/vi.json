@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys trên OSTree",
   "ostree_info_message": "Hệ thống này sử dụng rpm-ostree để cập nhật nguyên tử. Tất cả các gói mới được cài đặt không phải flatpaks sẽ chỉ được triển khai và có sẵn sau khi khởi động lại hệ thống.",
   "flatpak_installed_title": "Flatpak đã được cài đặt",
-  "flatpak_installed_message": "Khả năng Flatpak vừa được cài đặt trên hệ thống của bạn. Cần phải khởi động lại hệ thống để menu ứng dụng bắt đầu bao gồm các ứng dụng flatpak."
+  "flatpak_installed_message": "Khả năng Flatpak vừa được cài đặt trên hệ thống của bạn. Cần phải khởi động lại hệ thống để menu ứng dụng bắt đầu bao gồm các ứng dụng flatpak.",
+  "featured_scripts": "Bạn có thể muốn thử..."
 }

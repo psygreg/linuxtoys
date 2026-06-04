@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys OSTree:ssä",
   "ostree_info_message": "Tämä järjestelmä käyttää rpm-ostree-kansioita atomiintuotteisiin. Kaikki äskettäin asennetut paketit, jotka eivät ole flatpaks, otetaan käyttöön ja ovat saatavilla vain järjestelmän uudelleenkäynnistyksen jälkeen.",
   "flatpak_installed_title": "Flatpak on asennettu",
-  "flatpak_installed_message": "Flatpak-toiminto on juuri asennettu järjestelmääsi. Järjestelmän uudelleenkäynnistys vaaditaan, jotta sovelluskehote alkaa sisältää flatpak-sovelluksia."
+  "flatpak_installed_message": "Flatpak-toiminto on juuri asennettu järjestelmääsi. Järjestelmän uudelleenkäynnistys vaaditaan, jotta sovelluskehote alkaa sisältää flatpak-sovelluksia.",
+  "featured_scripts": "Saatat haluta kokeilla..."
 }

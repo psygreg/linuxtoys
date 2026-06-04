@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys በ OSTree",
   "ostree_info_message": "ይህ ስርዓት ለአቶሚክ ማዘመኒያዎች rpm-ostree ይጠቀማል። ስ Flatpaks ያልሆኑ ዋናFiles በስርዓት ዳግም ሲጀምር ብቻ ተዘጋጅተው ይገኛሉ።",
   "flatpak_installed_title": "Flatpak ተጭኗል",
-  "flatpak_installed_message": "Flatpak ችሎታ አሁን በስርዓቱ ላይ ተጭኗል። የስርዓት ዳግም ማስጀመር ለመተግበር እና flatpak ትግበራዎችን ለማካተት ያስፈልጋል።"
+  "flatpak_installed_message": "Flatpak ችሎታ አሁን በስርዓቱ ላይ ተጭኗል። የስርዓት ዳግም ማስጀመር ለመተግበር እና flatpak ትግበራዎችን ለማካተት ያስፈልጋል።",
+  "featured_scripts": "ለመሞከር ሊፈልጉ ይችላሉ..."
 }

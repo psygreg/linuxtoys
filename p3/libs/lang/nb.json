@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys på OSTree",
   "ostree_info_message": "Dette systemet bruker rpm-ostree for atomiske oppdateringer. Alle nylig installerte pakker som ikke er flatpaks vil kun bli implementert og tilgjengelig etter en systemomstart.",
   "flatpak_installed_title": "Flatpak er installert",
-  "flatpak_installed_message": "Flatpak-muligheten har nettopp blitt installert på systemet ditt. En systemomstart er nødvendig for at appmenyen skal begynne å inkludere flatpak-applikasjoner."
+  "flatpak_installed_message": "Flatpak-muligheten har nettopp blitt installert på systemet ditt. En systemomstart er nødvendig for at appmenyen skal begynne å inkludere flatpak-applikasjoner.",
+  "featured_scripts": "Du vil kanskje gjerne prøve..."
 }

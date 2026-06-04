@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys na OSTree",
   "ostree_info_message": "Tento systém používá rpm-ostree pro atomické aktualizace. Všechny nově nainstalované balíčky, které nejsou flatpaky, budou nasazeny a dostupné až po restartování systému.",
   "flatpak_installed_title": "Flatpak je nainstalován",
-  "flatpak_installed_message": "Schopnost Flatpak byla právě nainstalována do vašeho systému. K tomu, aby nabídka aplikací začala zahrnovat aplikace flatpak, je vyžadován restart systému."
+  "flatpak_installed_message": "Schopnost Flatpak byla právě nainstalována do vašeho systému. K tomu, aby nabídka aplikací začala zahrnovat aplikace flatpak, je vyžadován restart systému.",
+  "featured_scripts": "Možná byste chtěli vyzkoušet..."
 }

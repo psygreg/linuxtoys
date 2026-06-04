@@ -431,5 +431,6 @@
   "ostree_info_title": "OSTree上的LinuxToys",
   "ostree_info_message": "此系统使用rpm-ostree进行原子更新。任何新安装的不是flatpaks的软件包只有在系统重新启动后才会部署并可用。",
   "flatpak_installed_title": "Flatpak已安装",
-  "flatpak_installed_message": "Flatpak功能已安装在您的系统上。需要重新启动系统以使应用菜单开始包含flatpak应用程序。"
+  "flatpak_installed_message": "Flatpak功能已安装在您的系统上。需要重新启动系统以使应用菜单开始包含flatpak应用程序。",
+  "featured_scripts": "您可能想尝试..."
 }

@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys OSTree پر",
   "ostree_info_message": "یہ نظام ایٹمی اپ ڈیٹس کے لیے rpm-ostree استعمال کرتا ہے۔ تمام حال ہی میں انسٹال کردہ پیکیجز جو flatpaks نہیں ہیں صرف سسٹم ری بوٹ کے بعد ہی تعینات اور دستیاب ہوں گے۔",
   "flatpak_installed_title": "Flatpak نصب ہے",
-  "flatpak_installed_message": "Flatpak صلاحیت ابھی آپ کے سسٹم پر نصب ہوگئی ہے۔ ایپ مینو flatpak ایپلیکیشنز کو شامل کرنے کے لیے سسٹم ری بوٹ ضروری ہے۔"
+  "flatpak_installed_message": "Flatpak صلاحیت ابھی آپ کے سسٹم پر نصب ہوگئی ہے۔ ایپ مینو flatpak ایپلیکیشنز کو شامل کرنے کے لیے سسٹم ری بوٹ ضروری ہے۔",
+  "featured_scripts": "آپ کوشش کرنا چاہ سکتے ہیں..."
 }

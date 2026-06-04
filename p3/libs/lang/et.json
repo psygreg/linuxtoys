@@ -429,5 +429,6 @@
   "ostree_info_title": "LinuxToys OSTree-l",
   "ostree_info_message": "See süsteem kasutab rpm-ostree aatomi värskenduste jaoks. Kõik äsja installitud paketid, mis ei ole flatpaks, juurutatakse ja on saadaval ainult pärast süsteemi taaskäivitamist.",
   "flatpak_installed_title": "Flatpak on installitud",
-  "flatpak_installed_message": "Flatpaki võimalus just installiti teie süsteemile. Rakenduste menüü flatpaki rakenduste kaasamiseks on vajalik süsteemi taaskäivitamine."
+  "flatpak_installed_message": "Flatpaki võimalus just installiti teie süsteemile. Rakenduste menüü flatpaki rakenduste kaasamiseks on vajalik süsteemi taaskäivitamine.",
+  "featured_scripts": "Võibolla tahaksid proovida..."
 }

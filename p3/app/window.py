@@ -54,6 +54,13 @@ class AppWindow(Gtk.ApplicationWindow):
         # Initialize category cache for faster navigation
         self.category_cache = search_helper.CategoryCache()
 
+        # Random scripts display
+        self.all_scripts = []  # Cache of all available scripts from all categories
+        self.random_scripts_flowbox = None  # Flowbox for random scripts
+        self.random_scripts_refresh_timer = None  # Timer for periodic refresh
+        self.random_scripts_label = None  # Label for "Featured" section
+        self.featured_scripts_container = None  # Container for the featured section
+
         # Checklist
         self.check_buttons = []
 
@@ -111,9 +118,42 @@ class AppWindow(Gtk.ApplicationWindow):
         )  # Set a reasonable transition duration
         main_vbox.pack_start(self.main_stack, True, True, 0)
 
+        # Create categories view with random scripts section
+        categories_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        
         self.categories_flowbox = self.create_flowbox()
+        categories_container.pack_start(self.categories_flowbox, False, False, 0)
+        
+        # Create separator and featured scripts section
+        self.featured_scripts_container = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=12
+        )
+        self.featured_scripts_container.set_margin_left(32)
+        self.featured_scripts_container.set_margin_top(24)
+        self.featured_scripts_container.set_margin_right(32)
+        self.featured_scripts_container.set_margin_bottom(32)
+        
+        # Add separator
+        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        self.featured_scripts_container.pack_start(separator, False, False, 0)
+        
+        # Add label for featured scripts
+        self.random_scripts_label = Gtk.Label(
+            label=self.translations.get("featured_scripts", "Try These")
+        )
+        self.random_scripts_label.set_halign(Gtk.Align.START)
+        label_style = self.random_scripts_label.get_style_context()
+        label_style.add_class("title-2")  # Add CSS class for styling
+        self.featured_scripts_container.pack_start(self.random_scripts_label, False, False, 0)
+        
+        # Create flowbox for random scripts
+        self.random_scripts_flowbox = self.create_flowbox()
+        self.featured_scripts_container.pack_start(self.random_scripts_flowbox, False, False, 0)
+        
+        categories_container.pack_start(self.featured_scripts_container, False, False, 0)
+        
         self.categories_view = Gtk.ScrolledWindow()
-        self.categories_view.add(self.categories_flowbox)
+        self.categories_view.add(categories_container)
         self.main_stack.add_named(self.categories_view, "categories")
 
         self.scripts_flowbox = self.create_flowbox()
@@ -159,6 +199,7 @@ class AppWindow(Gtk.ApplicationWindow):
         # Populate caches asynchronously to avoid blocking the UI
         GLib.idle_add(self._populate_search_cache)
         GLib.idle_add(self._populate_category_cache)
+        GLib.idle_add(self._populate_all_scripts)
         GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
 
@@ -182,6 +223,18 @@ class AppWindow(Gtk.ApplicationWindow):
                 self.category_cache.populate(self.translations)
             except Exception as e:
                 print(f"Error populating category cache: {e}")
+
+        threading.Thread(target=populate_in_background, daemon=True).start()
+        return False  # Remove from idle callbacks
+
+    def _populate_all_scripts(self):
+        """Populate the all_scripts cache in a background thread for random scripts display."""
+
+        def populate_in_background():
+            try:
+                self.all_scripts = self._collect_all_scripts()
+            except Exception as e:
+                print(f"Error populating all scripts cache: {e}")
 
         threading.Thread(target=populate_in_background, daemon=True).start()
         return False  # Remove from idle callbacks
@@ -1119,12 +1172,26 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             except Exception as e:
                 print(f"Error refreshing category cache: {e}")
         
+        # Refresh all scripts cache for random scripts display
+        def refresh_all_scripts():
+            try:
+                self.all_scripts = self._collect_all_scripts()
+            except Exception as e:
+                print(f"Error refreshing all scripts cache: {e}")
+        
         threading.Thread(target=refresh_category_cache, daemon=True).start()
+        threading.Thread(target=refresh_all_scripts, daemon=True).start()
 
         # Update search entry placeholder text
         self.search_entry.set_placeholder_text(
             self.translations.get("search_placeholder", "Search features")
         )
+        
+        # Update random scripts label
+        if self.random_scripts_label:
+            self.random_scripts_label.set_text(
+                self.translations.get("featured_scripts", "Try These")
+            )
 
         # Refresh the UI with new translations
         self._refresh_ui_with_new_translations()
@@ -2052,6 +2119,123 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
             GLib.timeout_add(300, cleanup_scripts_view)
 
+    def _collect_all_scripts(self):
+        """Collect all scripts from all categories into a flat list."""
+        all_scripts = []
+        
+        try:
+            categories = parser.get_categories(self.translations)
+            
+            for category in categories:
+                category_path = category.get("path", "")
+                if not category_path:
+                    continue
+                
+                try:
+                    scripts = parser.get_scripts_for_category(category_path, self.translations)
+                    for script in scripts:
+                        if script.get("is_script", False) and not script.get("is_create_script", False):
+                            all_scripts.append(script)
+                except Exception:
+                    pass  # Skip categories that fail to load
+        except Exception as e:
+            print(f"Error collecting all scripts: {e}")
+        
+        return all_scripts
+
+    def _calculate_random_scripts_count(self):
+        """Calculate how many random scripts can fit without scrolling."""
+        # Get window height and calculate available space
+        window_height = self.get_allocated_height()
+        
+        # Estimate heights in pixels
+        header_height = 80
+        categories_height = 250  # Approximate height for categories section
+        separator_and_label_height = 60
+        footer_height = 100
+        
+        available_height = window_height - header_height - categories_height - separator_and_label_height - footer_height
+        
+        # Each item widget is approximately 76px (52px height + 12px row spacing)
+        # Items per line is 5, so we calculate rows needed
+        items_per_line = 5
+        item_height_with_spacing = 76
+        
+        # Calculate rows that can fit
+        available_rows = max(1, available_height // item_height_with_spacing)
+        scripts_count = available_rows * items_per_line
+        
+        # Cap at a reasonable maximum (e.g., 15 scripts)
+        return min(max(5, scripts_count), 15)
+
+    def _select_random_scripts(self):
+        """Randomly select scripts to display."""
+        if not self.all_scripts:
+            return []
+        
+        import random
+        
+        count = self._calculate_random_scripts_count()
+        return random.sample(self.all_scripts, min(count, len(self.all_scripts)))
+
+    def _refresh_random_scripts_display(self):
+        """Refresh the random scripts display with new random selection."""
+        if not self.all_scripts or self.current_category_info is not None:
+            # Don't refresh if we're not on the main menu
+            return False
+        
+        # Clear existing random scripts
+        for child in self.random_scripts_flowbox.get_children():
+            self.random_scripts_flowbox.remove(child)
+        
+        # Get new random selection
+        random_scripts = self._select_random_scripts()
+        
+        # Display them
+        for script_info in random_scripts:
+            widget = self.create_item_widget(script_info)
+            description = script_info.get("description", "")
+            if description:
+                widget.set_tooltip_text(description)
+            else:
+                widget.set_tooltip_text(None)
+            self.random_scripts_flowbox.add(widget)
+        
+        self.random_scripts_flowbox.show_all()
+        
+        # Return True to keep the timer running
+        return True
+
+    def _start_random_scripts_refresh_timer(self):
+        """Start the timer to refresh random scripts periodically."""
+        # First, populate all_scripts if not already done
+        if not self.all_scripts:
+            self.all_scripts = self._collect_all_scripts()
+            
+            if not self.all_scripts:
+                self.featured_scripts_container.hide()
+                return
+        
+        # Show the featured section if there are scripts
+        self.featured_scripts_container.show_all()
+        
+        # Initial display
+        self._refresh_random_scripts_display()
+        
+        # Start periodic refresh timer (30 seconds)
+        if self.random_scripts_refresh_timer:
+            GLib.source_remove(self.random_scripts_refresh_timer)
+        
+        self.random_scripts_refresh_timer = GLib.timeout_add_seconds(
+            15, self._refresh_random_scripts_display
+        )
+
+    def _stop_random_scripts_refresh_timer(self):
+        """Stop the random scripts refresh timer."""
+        if self.random_scripts_refresh_timer:
+            GLib.source_remove(self.random_scripts_refresh_timer)
+            self.random_scripts_refresh_timer = None
+
     def show_categories_view(self):
         """Switches to the main categories view."""
         self.current_category_info = None
@@ -2066,9 +2250,15 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
         # Disable drag-and-drop when viewing main categories
         self._disable_drag_and_drop()
+        
+        # Start random scripts refresh timer
+        self._start_random_scripts_refresh_timer()
 
     def show_scripts_view(self, category_info):
         """Switches to the view showing scripts in a category."""
+        # Stop random scripts timer when leaving main menu
+        self._stop_random_scripts_refresh_timer()
+        
         # If we have current category info, push it to navigation stack
         if self.current_category_info:
             self.navigation_stack.append(self.current_category_info)

@@ -428,6 +428,7 @@
   "optivram_desc": "Ar dtús ó SteamOS, feabhsaíonn an bharrfheidhmiú seo feidhmíochán i gcluichí go mór, go háirithe ar chórais le 6GB VRAM nó níos lú, trí leathanaigh VRAM fhuar a sheoladh go RAM. Teastaíonn CachyOS Kernel ar Fedora.",
   "ostree_info_title": "LinuxToys ar OSTree",
   "ostree_info_message": "Úsáideann an córas seo rpm-ostree do dhíolúna adamhacha. Ní bheidh aon pháicéid nua-suiteáilte nach flatpaks ann curtha i bhfeidhm agus ar fáil ach tar éis an chóras a aththosú.",
-  "flatpak_installed_title": "Flatpak Suite\u00e1ilte",
-  "flatpak_installed_message": "Bh\u00ed an cumas Flatpak d\u00edreach suite\u00e1ilte ar do ch\u00f3ras. T\u00e1 atos\u00fa an ch\u00f3rais ag teast\u00e1il ionas go dtos\u00f3idh an roghchl\u00e1r feidhmchl\u00e1r a bheith i gceist flatpak feidhmchl\u00e1ir."
+  "flatpak_installed_title": "Flatpak Suiteáilte",
+  "flatpak_installed_message": "Bhí an cumas Flatpak díreach suiteáilte ar do chóras. Tá atosú an chórais ag teastáil ionas go dtosóidh an roghchlár feidhmchlár a bheith i gceist flatpak feidhmchláir.",
+  "featured_scripts": "D'fhéadfá a bheith i gceist agat a dhéanamh..."
 }
