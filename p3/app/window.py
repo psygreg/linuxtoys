@@ -1027,7 +1027,8 @@ class AppWindow(Gtk.ApplicationWindow):
             
             if confirmed:
                 removable = info if len(deps) == 1 else None
-                self.open_term_view(deps, removable_script_info=removable, auto_run=True)
+                # Auto-run only on first run; subsequent runs show terminal with bug report/remove options
+                self.open_term_view(deps, removable_script_info=removable, auto_run=is_first_run)
 
     def _handle_create_new_script(self):
         """Handle the creation of a new local script."""
