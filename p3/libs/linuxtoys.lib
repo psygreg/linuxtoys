@@ -409,12 +409,22 @@ pkg_flat() {
         flatpak_scope="--system"
     fi
 
+    # Extract base package names (remove version/architecture specifications)
+    local -a _flatpak_basenames=()
+    for arg in "${_flatpak_args[@]}"; do
+        _flatpak_basenames+=("${arg%%/*}")
+    done
+
     if [ "$flatpak_scope" = "--user" ]; then
         flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
-        flatpak list "$flatpak_scope" | grep -q ${_flatpak_args[@]} || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
+        for basename in "${_flatpak_basenames[@]}"; do
+            flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
+        done
     else
         flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; } 
-        flatpak list "$flatpak_scope" | grep -q ${_flatpak_args[@]} || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
+        for basename in "${_flatpak_basenames[@]}"; do
+            flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
+        done
     fi
     _append_transmap "flatpak ${_flatpak_args[*]}"
 }
