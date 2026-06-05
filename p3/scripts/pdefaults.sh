@@ -23,7 +23,7 @@ sysag_run () {
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
     dsplitm_lib
     # add earlyoom configuration, Fedora already has systemd-oomd
-    if ! is_fedora && ! is_ostree && ! is_rhel; then
+    if ! is_fedora && ! is_ostree && ! is_rhel && ! is_zorin; then
         earlyoom_lib
     fi
     # change intel driver to Xe on discrete GPUs

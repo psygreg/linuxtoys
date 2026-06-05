@@ -20,6 +20,7 @@ elif is_arch || is_cachy; then
 else
     # use flatpak for all others, since native install usually only works well on Fedora and Arch
     sudo_rq
+    { is_rhel && rpmfusion_chk; }
     pkg_flat com.valvesoftware.Steam
     pkg_install steam-devices
 fi

@@ -3,7 +3,7 @@
 # version: 1.0
 # description: archupd_desc
 # icon: archup.svg
-# compat: arch
+# compat: none
 # nocontainer
 # repo: https://github.com/Antiz96/arch-update
 # systemd: yes
