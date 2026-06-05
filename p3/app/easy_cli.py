@@ -5,6 +5,8 @@ import sys
 import tempfile
 import asyncio
 import subprocess
+import re
+import shutil
 from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
 from .manifest_helper import (
@@ -39,6 +41,31 @@ def resolve_script_dir():
     print(f"Started search from: {os.path.dirname(os.path.abspath(__file__))}")
     print("The installation may be corrupted or incomplete.")
     sys.exit(1)
+
+def _cleanup_tmp_noram_dirs(transmap_path):
+    """
+    Clean up temporary directories created by prep_tmp_noram.
+    Reads transmap file for tmpdir_noram entries and removes those directories.
+    """
+    if not os.path.exists(transmap_path):
+        return
+    
+    try:
+        with open(transmap_path, 'r') as f:
+            content = f.read()
+        
+        # Find all tmpdir_noram entries
+        pattern = r'tmpdir_noram\s+(\S+)'
+        matches = re.findall(pattern, content)
+        
+        for tmpdir_path in matches:
+            if os.path.exists(tmpdir_path):
+                try:
+                    shutil.rmtree(tmpdir_path)
+                except Exception:
+                    pass  # Silently ignore cleanup errors
+    except Exception:
+        pass  # Silently ignore transmap read errors
 
 def _save_script_to_registry(script_name, transmap_path):
     """Save script execution record to registry."""
@@ -225,6 +252,8 @@ def easy_cli_run_script(script_info):
         if code == 0:
             transmap_path = "/tmp/linuxtoys/transmap"
             _save_script_to_registry(script_name, transmap_path)
+            # Clean up any temp directories created by prep_tmp_noram before removing transmap
+            _cleanup_tmp_noram_dirs(transmap_path)
             try:
                 if os.path.exists(transmap_path):
                     os.remove(transmap_path)
@@ -248,6 +277,8 @@ def easy_cli_run_script(script_info):
                 print(f"\n✔ Script '{script_name}' failed but changes were automatically reverted.")
                 # Wipe transmap after successful auto-revert if auto-reporting was enabled
                 if auto_reports_enabled:
+                    # Clean up any temp directories created by prep_tmp_noram before removing transmap
+                    _cleanup_tmp_noram_dirs(transmap_path)
                     try:
                         if os.path.exists(transmap_path):
                             os.remove(transmap_path)
@@ -259,6 +290,8 @@ def easy_cli_run_script(script_info):
                 print(f"\n✗ Script '{script_name}' failed with exit code {code}")
                 # Wipe transmap if auto-reporting was enabled (we've already reported)
                 if auto_reports_enabled:
+                    # Clean up any temp directories created by prep_tmp_noram before removing transmap
+                    _cleanup_tmp_noram_dirs(transmap_path)
                     try:
                         if os.path.exists(transmap_path):
                             os.remove(transmap_path)

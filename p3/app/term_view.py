@@ -1,5 +1,7 @@
 import os
 import sys
+import re
+import shutil
 
 from . import dev_mode, get_icon_path, reboot_helper
 from .compat import should_enable_manual_revert, get_revert_capability
@@ -9,6 +11,32 @@ from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
 from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry, _load_last_execution
 from .updater.update_dialog import DialogRestart
 from .action_registry import parse_registry_file
+
+
+def _cleanup_tmp_noram_dirs(transmap_path):
+    """
+    Clean up temporary directories created by prep_tmp_noram.
+    Reads transmap file for tmpdir_noram entries and removes those directories.
+    """
+    if not os.path.exists(transmap_path):
+        return
+    
+    try:
+        with open(transmap_path, 'r') as f:
+            content = f.read()
+        
+        # Find all tmpdir_noram entries
+        pattern = r'tmpdir_noram\s+(\S+)'
+        matches = re.findall(pattern, content)
+        
+        for tmpdir_path in matches:
+            if os.path.exists(tmpdir_path):
+                try:
+                    shutil.rmtree(tmpdir_path)
+                except Exception:
+                    pass  # Silently ignore cleanup errors
+    except Exception:
+        pass  # Silently ignore transmap read errors
 
 
 class InfosHead(Gtk.Box):
@@ -579,6 +607,9 @@ class TermRunScripts(Gtk.Box):
                         except Exception:
                             pass
                 
+                # Clean up any temp directories created by prep_tmp_noram before removing transmap
+                _cleanup_tmp_noram_dirs(transmap_path)
+                
                 try:
                     if os.path.exists(transmap_path):
                         os.remove(transmap_path)
@@ -586,7 +617,9 @@ class TermRunScripts(Gtk.Box):
                     pass  # Silently ignore if transmap cannot be removed
             
             elif exit_code == 100:
-                # User cancelled - wipe transmap but don't save to registry
+                # User cancelled - clean up and wipe transmap but don't save to registry
+                _cleanup_tmp_noram_dirs(transmap_path)
+                
                 try:
                     if os.path.exists(transmap_path):
                         os.remove(transmap_path)
@@ -594,7 +627,9 @@ class TermRunScripts(Gtk.Box):
                     pass  # Silently ignore if transmap cannot be removed
         
         else:
-            # Signal termination (e.g., Ctrl+C) - wipe transmap
+            # Signal termination (e.g., Ctrl+C) - clean up and wipe transmap
+            _cleanup_tmp_noram_dirs(transmap_path)
+            
             try:
                 if os.path.exists(transmap_path):
                     os.remove(transmap_path)
