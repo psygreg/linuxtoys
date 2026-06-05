@@ -466,6 +466,22 @@ pkg_fromfile () {
         _append_transmap "pkg file $*"
     fi
 }
+pkg_appimage () {
+    { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
+    { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
+    { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
+    pkg_flat it.mijorus.gearlever
+    local output
+    output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
+    local appimage_name
+    appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
+    _append_transmap "appimage $appimage_name"
+}
+pkg_appimage_rm () {
+    cd "$HOME/AppImages"
+    echo "y" | flatpak run it.mijorus.gearlever --remove "${@}"
+    _append_transmap "appimage rm $*"
+}
 pkg_remove () {
     pkg_exists "$@"
     

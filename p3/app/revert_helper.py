@@ -171,6 +171,9 @@ def _parse_operation(op_line):
         elif op_type == "flatpak":
             # flatpak can have multiple operands (e.g., "flatpak app1 app2")
             return op_type, parts[1:]
+        elif op_type == "appimage":
+            # appimage can have multiple operands (e.g., "appimage file1.appimage file2.appimage")
+            return op_type, parts[1:]
         elif op_type == "distrobox":
             # distrobox operations have format: "distrobox container_name"
             return op_type, parts[1:]
@@ -387,6 +390,27 @@ def _reverse_flatpak_removal(app_ids):
         commands.append(cmd)
     
     return commands
+
+
+def _reverse_appimage_removal(appimage_files):
+    """Reverse appimage installation(s) by removing it/them.
+    
+    Args:
+        appimage_files: list of appimage filenames or single filename string
+    
+    Returns:
+        list of shell commands to reverse the appimage installation
+    """
+    # Normalize to list
+    if isinstance(appimage_files, str):
+        appimage_files = [appimage_files]
+    
+    if not appimage_files:
+        return []
+    
+    # Use pkg_appimage_rm library function to handle appimage removal
+    appimage_args = " ".join(appimage_files)
+    return [f"pkg_appimage_rm {appimage_args}"]
 
 
 def _reverse_distrobox_creation(container_names):
@@ -609,6 +633,9 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)
+    
+    elif op_type == "appimage" and operands:
+        return _reverse_appimage_removal(operands)
     
     elif op_type == "distrobox" and operands:
         # Reverse distrobox container creation by removing
