@@ -12,8 +12,7 @@ _lang_
 sudo_rq
 pkg_install mangohud goverlay
 if command -v flatpak &> /dev/null; then
-    pkg_flat com.valvesoftware.Steam.VulkanLayer.MangoHud \
-    org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 \
+    pkg_flat org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08 \
     org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08 \
     org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08
 fi

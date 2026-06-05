@@ -3,7 +3,7 @@
 # description: sloth_desc
 # icon: sloth.svg
 # nocontainer
-# repo: https://git.linux.toys/psygreg/sloth-bash
+# repo: https://github.com/psygreg/sloth-bash
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 if [ -f "$HOME/.sloth-bash" ]; then

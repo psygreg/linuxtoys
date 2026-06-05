@@ -22,7 +22,7 @@ git clone https://github.com/RinCat/RTL88x2BU-Linux-Driver.git rtl88x2bu-git
 cd rtl88x2bu-git || fatal "Failed to access RTL88x2BU-Linux-Driver sources"
 
 prep_dir /usr/src
-prep_rm -rf /usr/src/rtl88x2bu-git
+prep_rm /usr/src/rtl88x2bu-git
 copy_ -rT . /usr/src/rtl88x2bu-git
 sudo sed -i 's/PACKAGE_VERSION="@PKGVER@"/PACKAGE_VERSION="git"/g' /usr/src/rtl88x2bu-git/dkms.conf
 sudo dkms remove -m rtl88x2bu -v git --all 2>/dev/null || true
