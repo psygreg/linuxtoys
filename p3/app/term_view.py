@@ -773,6 +773,10 @@ class TermRunScripts(Gtk.Box):
             None,
         )
 
+        # Shift focus to terminal to capture user keyboard input
+        # This prevents accidental cancellation when search bar or other widgets have focus
+        self.terminal.grab_focus()
+
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
 
