@@ -191,7 +191,7 @@ def get_system_compat_keys():
         id_val in ["rhel", "centos", "almalinux"] or "rhel" in id_like
     )
 
-    if (id_val in ["debian"] or "debian" in id_like) and "ubuntu" not in id_like:
+    if (id_val in ["debian"] or "debian" in id_like) and (id_val not in ["ubuntu"] and "ubuntu" not in id_like):
         keys.add("debian")
     if id_val in ["ubuntu"]:
         # Only add ubuntu compat key for supported versions (noble, resolute)
