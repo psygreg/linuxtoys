@@ -140,6 +140,7 @@ rpmfusion_chk() {
         else
             echo "RPMFusion Non-Free repository is already installed"
         fi
+        { command -v rpm-ostree &>/dev/null && rpm-ostree status | grep -q "State: staged" && zenwrn "$msgostreepending" && exit 100; } || true
     fi
     return 0
 }
