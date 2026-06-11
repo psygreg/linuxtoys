@@ -151,6 +151,7 @@ curl -fsSL https://linux.toys/install.sh | bash
                         "path": "/tmp/.self_update_lt",
                         "self_update": True,
                         "is_script": True,
+                        "auto_run": True,
                     }
                 ]
             )
