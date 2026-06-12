@@ -429,5 +429,6 @@
   "ostree_info_message": "Bu sistema atom yangartirish uchun rpm-ostree-dan foydalanadi. Yaqinda o'rnatilgan flatpaks bo'lmagan barcha paketlar sistem qayta ishga tushurilgandan keyin amalga oshiriladi va mavjud bo'ladi.",
   "flatpak_installed_title": "Flatpak o'rnatildi",
   "flatpak_installed_message": "Flatpak qobiliyati yangi o'rnatildi. Ilova menyusi flatpak dasturlarini qo'shishni boshlash uchun sistem qayta ishga tushirish kerak.",
-  "featured_scripts": "Siz sinab ko'rishni xohlashingiz mumkin..."
+  "featured_scripts": "Siz sinab ko'rishni xohlashingiz mumkin...",
+  "helium_desc": "Chromium asosidagi minimalny veb-brauzer shaxsiy hayotni ustuvor qilish va beparchasi reklama blokirovkasi bilan."
 }

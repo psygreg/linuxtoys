@@ -430,5 +430,6 @@
   "ostree_info_message": "Este sistema utiliza rpm-ostree para actualizaciones atómicas. Todos los paquetes recién instalados que no sean flatpaks se implementarán y estarán disponibles solo después de reiniciar el sistema.",
   "flatpak_installed_title": "Flatpak instalado",
   "flatpak_installed_message": "La capacidad de Flatpak se acaba de instalar en su sistema. Se requiere un reinicio del sistema para que el menú de aplicaciones comience a incluir aplicaciones flatpak.",
-  "featured_scripts": "Quizás quieras probar..."
+  "featured_scripts": "Quizás quieras probar...",
+  "helium_desc": "Navegador web minimalista basado en Chromium que adopta un enfoque centrado en la privacidad con bloqueo de anuncios imparcial."
 }

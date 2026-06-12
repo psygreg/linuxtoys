@@ -430,5 +430,6 @@
   "ostree_info_message": "이 시스템은 원자적 업데이트에 rpm-ostree를 사용합니다. flatpaks가 아닌 새로 설치된 모든 패키지는 시스템 재부팅 후에만 배포되고 사용 가능합니다.",
   "flatpak_installed_title": "Flatpak이 설치됨",
   "flatpak_installed_message": "Flatpak 기능이 방금 시스템에 설치되었습니다. 앱 메뉴가 flatpak 응용 프로그램을 포함하기 시작하려면 시스템을 재부팅해야 합니다.",
-  "featured_scripts": "시도해볼 수 있습니다..."
+  "featured_scripts": "시도해볼 수 있습니다...",
+  "helium_desc": "개인 정보 보호를 우선하는 접근 방식과 편향 없는 광고 차단이 포함된 Chromium 기반의 최소한의 웹 브라우저입니다."
 }

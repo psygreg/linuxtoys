@@ -430,5 +430,6 @@
   "ostree_info_message": "Bu sistem atomik güncellemeler için rpm-ostree kullanır. Yeni kurulan flatpaklar olmayan tüm paketler yalnızca sistem yeniden başlatıldıktan sonra dağıtılacak ve kullanılabilir olacaktır.",
   "flatpak_installed_title": "Flatpak Kurulu",
   "flatpak_installed_message": "Flatpak özelliği sisteminize yeni kurulmuştur. Uygulama menüsünün flatpak uygulamalarını içermeye başlaması için sistem yeniden başlatılması gerekir.",
-  "featured_scripts": "Denemek isteyebilirsin..."
+  "featured_scripts": "Denemek isteyebilirsin...",
+  "helium_desc": "Chromium tabanlı minimalist web tarayıcı, gizlilik öncelikli yaklaşım ve tarafsız reklam engelleme ile."
 }

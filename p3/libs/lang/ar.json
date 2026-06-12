@@ -430,5 +430,6 @@
   "ostree_info_message": "هذا النظام يستخدم rpm-ostree للتحديثات الذرية. أي حزم مثبتة حديثًا ليست flatpaks سيتم نشرها وتتوفر فقط بعد إعادة تشغيل النظام.",
   "flatpak_installed_title": "تم تثبيت Flatpak",
   "flatpak_installed_message": "تم تثبيت قدرة Flatpak على نظامك للتو. يتطلب إعادة تشغيل النظام لبدء قائمة التطبيقات تتضمن تطبيقات flatpak.",
-  "featured_scripts": "قد تود أن تجرب..."
+  "featured_scripts": "قد تود أن تجرب...",
+  "helium_desc": "متصفح ويب بسيط قائم على Chromium يتخذ نهجاً يركز على الخصوصية مع حجب إعلانات غير متحيز."
 }

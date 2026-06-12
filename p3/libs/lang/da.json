@@ -430,5 +430,6 @@
   "ostree_info_message": "Dette system bruger rpm-ostree til atomare opdateringer. Alle nyligt installerede pakker, der ikke er flatpaks, vil kun blive implementeret og tilgængelige efter en systemgenstart.",
   "flatpak_installed_title": "Flatpak er installeret",
   "flatpak_installed_message": "Flatpak-funktionen er netop blevet installeret på dit system. En systemgenstart er påkrævet for, at appmenuen begynder at inkludere flatpak-applikationer.",
-  "featured_scripts": "Du vil måske gerne prøve..."
+  "featured_scripts": "Du vil måske gerne prøve...",
+  "helium_desc": "Minimalistisk webbrowser baseret på Chromium med privacy-first tilgang og upartisk annonceblokkering."
 }

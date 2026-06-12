@@ -430,5 +430,6 @@
   "ostree_info_message": "Ang sistemang ito ay gumagamit ng rpm-ostree para sa atomic updates. Lahat ng bagong nakalunsad na pakete na hindi flatpaks ay idideployar at magiging available lamang pagkatapos ng system restart.",
   "flatpak_installed_title": "Flatpak Installed",
   "flatpak_installed_message": "Ang kakayahan ng Flatpak ay instala lamang sa iyong sistema. Kailangan ng system restart para magsimulang isama ng app menu ang mga flatpak na aplikasyon.",
-  "featured_scripts": "Maaari mong gustong subukan..."
+  "featured_scripts": "Maaari mong gustong subukan...",
+  "helium_desc": "Minimalist na web browser na batay sa Chromium na may privacy-first na diskarte at walang kinakayaang ad-blocking."
 }

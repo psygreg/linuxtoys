@@ -429,5 +429,6 @@
   "ostree_info_message": "Bu sistem atom yeniləmələr üçün rpm-ostree istifadə edir. Flatpaks olmayan heç bir yeni quraşdırılmış paket yalnız sistem yenidən başlatıldıqdan sonra yerləşdirilib mövcud olacaq.",
   "flatpak_installed_title": "Flatpak Quraşdırıldı",
   "flatpak_installed_message": "Flatpak qabiliyyəti sisteminizə yeni quraşdırıldı. Tətbiq menyusunun flatpak tətbiqləri daxil etməyə başlamağı üçün sistem yenidən başlatılması lazımdır.",
-  "featured_scripts": "Sınayıb görmək istəyə bilərsiniz..."
+  "featured_scripts": "Sınayıb görmək istəyə bilərsiniz...",
+  "helium_desc": "Chromium əsasında minimum veb brauzer, gizlilik-birinci yanaşma və qərəzsiz reklam bloklaması ilə."
 }

@@ -430,5 +430,6 @@
   "ostree_info_message": "Sistem ini menggunakan rpm-ostree untuk pembaruan atom. Semua paket yang baru dipasang yang bukan flatpaks hanya akan dikerahkan dan tersedia setelah sistem dimulai ulang.",
   "flatpak_installed_title": "Flatpak Dipasang",
   "flatpak_installed_message": "Keupayaan Flatpak baru saja dipasang pada sistem anda. Permulaanulangan sistem diperlukan untuk menu aplikasi mula memasukkan aplikasi flatpak.",
-  "featured_scripts": "Anda mungkin ingin mencuba..."
+  "featured_scripts": "Anda mungkin ingin mencuba...",
+  "helium_desc": "Penjelajah web minimalis berbasis Chromium dengan pendekatan prioritas privasi dan pemblokiran iklan yang tidak bias."
 }

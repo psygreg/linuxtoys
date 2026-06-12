@@ -430,5 +430,6 @@
   "ostree_info_message": "Ovaj sustav koristi rpm-ostree za atomske ažuriranja. Svi novougrađeni paketi koji nisu flatpaks bit će implementirani i dostupni samo nakon ponovnog pokretanja sustava.",
   "flatpak_installed_title": "Flatpak je instaliran",
   "flatpak_installed_message": "Mogućnost Flatpak je upravo instalirana na vaš sustav. Ponovno pokretanje sustava je potrebno kako bi meni aplikacija počeo sadržavati flatpak aplikacije.",
-  "featured_scripts": "Možda bi trebao pokušati..."
+  "featured_scripts": "Možda bi trebao pokušati...",
+  "helium_desc": "Minimalistički web preglednik temeljen na Chromium-u s pristupom usmjerenim na privatnost i nepristrano blokiranje oglasa."
 }

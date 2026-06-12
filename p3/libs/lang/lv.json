@@ -430,5 +430,6 @@
   "ostree_info_message": "Šī sistēma rpm-ostree izmanto atomu atjauninājumiem. Visi nesen instalētie paketi, kas nav flatpaks, tiks izvietoti un pieejami tikai pēc sistēmas restarta.",
   "flatpak_installed_title": "Flatpak ir instalēts",
   "flatpak_installed_message": "Flatpak iespēja tikko tika instalēta jūsu sistēmā. Sistēmas atkārtota palaišana ir nepieciešama, lai programmu izvēlne sāktu ietvert flatpak lietojumus.",
-  "featured_scripts": "Iespējams, vēlēsies mēģināt..."
+  "featured_scripts": "Iespējams, vēlēsies mēģināt...",
+  "helium_desc": "Minimālistisks Chromium balstīts tīmekļa pārlūkprogramma ar privātuma prioritātu pieeju un neobjektīvu reklāmu bloķēšanu."
 }

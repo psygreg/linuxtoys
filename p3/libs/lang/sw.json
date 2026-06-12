@@ -428,5 +428,6 @@
   "ostree_info_message": "Mfumo huu unatumia rpm-ostree kwa sasisho la atomiki. Pakiti zote zilizosakinishi hivi karibuni ambazo sio flatpaks zitakuwa zimefanywa kazi na zitakuwa zinapatikana tu baada ya kusimama upya kwa mfumo.",
   "flatpak_installed_title": "Flatpak Iliyosakiniwa",
   "flatpak_installed_message": "Uwezo wa Flatpak umesakinishwa tu kwenye mfumo wako. Kusimama upya kwa mfumo kinachohitajika kwa ajili ya menyu ya programu kuanza kujumuisha programu za flatpak.",
-  "featured_scripts": "Unaweza kuwa unataka kujaribu..."
+  "featured_scripts": "Unaweza kuwa unataka kujaribu...",
+  "helium_desc": "Kiweke kidogo cha wavuti kinachozingatiwa na Chromium kilichokuwa na njia ya kadhaa-kwanza ya faragha na kuzuia tangazo kwa haki."
 }

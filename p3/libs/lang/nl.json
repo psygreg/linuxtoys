@@ -430,5 +430,6 @@
   "ostree_info_message": "Dit systeem gebruikt rpm-ostree voor atomaire updates. Alle recent geïnstalleerde pakketten die geen flatpaks zijn, worden alleen na een systeemherstart geïmplementeerd en beschikbaar.",
   "flatpak_installed_title": "Flatpak geïnstalleerd",
   "flatpak_installed_message": "Flatpak-functionaliteit is zojuist op uw systeem geïnstalleerd. Een systeemherstart is nodig om het app-menu Flatpak-toepassingen te gaan opnemen.",
-  "featured_scripts": "Je zult misschien willen proberen..."
+  "featured_scripts": "Je zult misschien willen proberen...",
+  "helium_desc": "Minimalistische Chromium-gebaseerde webbrowser met privacy-first aanpak en onbevooroordeelde advertentieblokkering."
 }

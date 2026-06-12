@@ -430,5 +430,6 @@
   "ostree_info_message": "Þetta kerfi notar rpm-ostree fyrir atóma uppfærslur. Öll nýlega sett inn pakki sem eru ekki flatpaks verða aðeins sett upp og tiltæk eftir endurkomu kerfisins.",
   "flatpak_installed_title": "Flatpak er uppsett",
   "flatpak_installed_message": "Flatpak geta var rétt þessa stundina sett upp á kerfið þitt. Kroppbrotsendurjöfnun kerfisins er nauðsynleg til að appalisti byrji að innihalda flatpak-forrit.",
-  "featured_scripts": "Þú gætir viljað prófa..."
+  "featured_scripts": "Þú gætir viljað prófa...",
+  "helium_desc": "Minimalist vafri sem byggir á Chromium með alger persónuvernd í fyrirrúmi og óhlutdrægri auglýsingablokkun."
 }
