@@ -320,12 +320,15 @@ pkg_exists () {
     done
 }
 pkg_install () {
-    # Handle --ignore-appends flag
+    # Handle --ignore-appends and --ostreecheck flags
     local _ignore_appends=0
+    local _ostreecheck=0
     local -a _filtered_args=()
     for arg in "$@"; do
         if [[ "$arg" == "--ignore-appends" ]]; then
             _ignore_appends=1
+        elif [[ "$arg" == "--ostreecheck" ]]; then
+            _ostreecheck=1
         else
             _filtered_args+=("$arg")
         fi
@@ -379,6 +382,10 @@ pkg_install () {
     elif is_ostree; then
         sudo rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
+        # Perform ostree check if requested
+        if [[ $_ostreecheck -eq 1 ]]; then
+            { is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
+        fi
     elif is_fedora; then
         sudo dnf install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
@@ -433,6 +440,20 @@ pkg_flat() {
     _append_transmap "flatpak ${_flatpak_args[*]}"
 }
 pkg_fromfile () {
+    # Handle --ostreecheck flag
+    local _ostreecheck=0
+    local -a _filtered_args=()
+    for arg in "$@"; do
+        if [[ "$arg" == "--ostreecheck" ]]; then
+            _ostreecheck=1
+        else
+            _filtered_args+=("$arg")
+        fi
+    done
+    
+    # Use filtered args for the rest of the function
+    set -- "${_filtered_args[@]}"
+    
     if [[ "$1" == *.flatpak ]]; then
         if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
             summon_helpers
@@ -469,6 +490,10 @@ pkg_fromfile () {
     elif is_ostree; then
         sudo rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
+        # Perform ostree check if requested
+        if [[ $_ostreecheck -eq 1 ]]; then
+            { is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
+        fi
     elif is_fedora; then
         sudo dnf install -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
