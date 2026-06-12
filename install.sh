@@ -91,7 +91,7 @@ osarch() {
 	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
 		cd "${_pkg_dir}"
 		if makepkg -s -f; then
-			if sudo pacman -U --noconfirm linuxtoys-*.pkg.tar.zst; then
+			if sudo pacman -U --noconfirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
 				info "LinuxToys installed or updated!"
 			else
 				error "Installation failed (pacman)."
