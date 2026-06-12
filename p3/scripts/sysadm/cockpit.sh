@@ -17,7 +17,7 @@ if is_debian; then
     sudo apt install -t ${VERSION_CODENAME:-trixie}-backports cockpit || fatal "Failed to install Cockpit from debian backports repository"
     _append_transmap "pkg cockpit"
 elif is_ostree; then
-    pkg_install cockpit-system cockpit-ostree cockpit-podman cockpit-kdump cockpit-networkmanager
+    pkg_install --ostreecheck cockpit-system cockpit-ostree cockpit-podman cockpit-kdump cockpit-networkmanager
 else
     pkg_install cockpit
 fi

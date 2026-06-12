@@ -67,12 +67,7 @@ mount_drive() {
 _lang_
 display_guide
 pkg_install rclone
-if is_ostree; then
-   if rpm-ostree status --json | grep -q '"live-replaced": true'; then
-      zeninf "${msgostreepending}:-Please reboot and run this script again to complete the configuration."
-      exit 0
-   fi
-fi
+{ is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
 configure_rclone
 mount_drive
 zeninf "$msg018"

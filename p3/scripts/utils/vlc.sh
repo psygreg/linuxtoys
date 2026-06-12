@@ -10,10 +10,7 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 sudo_rq
 pkg_install vlc
-if is_fedora || is_ostree; then
-    rpmfusion_chk
-    pkg_install libavcodec-freeworld
-elif is_rhel; then
+if is_fedora || is_ostree || is_rhel; then
     rpmfusion_chk
     sudo dnf swap ffmpeg-free ffmpeg --allowerasing
     _append_transmap "pkg rm ffmpeg-free"

@@ -12,7 +12,7 @@ if [ -f $HOME/.bashrc ]; then
     prep_edit "$HOME/.bashrc"
     curl https://mise.run/bash | sh
     mise use -g usage
-    prep_dir "$HOME/.local/share/bash-completion/"
+    prep_dir "$HOME/.local/share/bash-completion/completions"
     mise completion bash --include-bash-completion-lib > ~/.local/share/bash-completion/completions/mise
 fi
 if ! command -v rpm-ostree &>/dev/null; then

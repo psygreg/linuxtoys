@@ -29,20 +29,31 @@ display_guide() {
 configure_rclone() {
    rclone config
     
-   if [ $? -eq 0 ]; then
-      zeninf "Rclone configured successfully."
-      REMOTE_NAME=$(zenity --entry \
-         --title="Remote Name" \
-         --text="What did you name your OneDrive remote?" \
-         --entry-text="OneDrive")
-      
-      if [ -z "$REMOTE_NAME" ]; then
-         fatal "Remote name cannot be empty"
-      fi
-      REMOTE_NAME="${REMOTE_NAME}:"
-   else
-      fatal "Rclone configuration failed"
+   # Get list of configured remotes
+   REMOTES=$(rclone listremotes)
+   
+   if [ -z "$REMOTES" ]; then
+      fatal "No remotes configured. Please configure a remote using 'rclone config' first."
    fi
+   
+   # Convert remotes to array for zenity
+   REMOTE_ARRAY=()
+   while IFS= read -r remote; do
+      REMOTE_ARRAY+=("$remote")
+   done <<< "$REMOTES"
+   
+   # Ask user to select the OneDrive remote
+   REMOTE_NAME=$(zenity --list \
+      --title="Select OneDrive Remote" \
+      --text="Which remote is your OneDrive?" \
+      --column="Remotes" \
+      "${REMOTE_ARRAY[@]}")
+   
+   if [ -z "$REMOTE_NAME" ]; then
+      fatal "No remote selected"
+   fi
+   
+   zeninf "Using remote: $REMOTE_NAME"
 }
 
 mount_drive() {
@@ -57,12 +68,7 @@ mount_drive() {
 _lang_
 display_guide
 pkg_install rclone
-if is_ostree; then
-   if rpm-ostree status --json | grep -q '"live-replaced": true'; then
-      zeninf "${msgostreepending}:-Please reboot and run this script again to complete the configuration."
-      exit 0
-   fi
-fi
+{ is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
 configure_rclone
 mount_drive
 zeninf "$msg018"

@@ -7,6 +7,7 @@
 # reboot: yes
 # nocontainer
 # optimized-only: yes
+# systemd: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"

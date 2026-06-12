@@ -4,7 +4,7 @@
 # icon: nvidia.svg
 # nocontainer
 # gpu: Nvidia
-# compat: debian, arch, cachy, fedora, rhel
+# compat: debian, arch, !cachy, fedora, rhel
 # reboot: yes
 
 # --- Start of the script code ---
@@ -12,10 +12,18 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
 if is_debian; then
-    debian_ver=$(lsb_release -rs 2>/dev/null)
     prep_tmp
-    pkg_install gcc lsb-release software-properties-common
-    sudo add-apt-repository contrib
+    pkg_install gcc lsb-release
+    debian_ver=$(lsb_release -rs 2>/dev/null)
+    if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+        prep_edit /etc/apt/sources.list.d/debian.sources
+        sudo sed -i 's/^Components: \(.*\)main$/Components: \1main contrib non-free/' /etc/apt/sources.list.d/debian.sources
+    else
+        prep_edit /etc/apt/sources.list
+        sudo sed -i 's/^deb http:\/\/\([^ ]*\) \([^ ]*\) main$/deb http:\/\/\1 \2 main contrib non-free/' /etc/apt/sources.list
+        sudo sed -i 's/^deb-src http:\/\/\([^ ]*\) \([^ ]*\) main$/deb-src http:\/\/\1 \2 main contrib non-free/' /etc/apt/sources.list
+    fi
+    sudo apt update
     wget "https://developer.download.nvidia.com/compute/cuda/repos/debian${debian_ver:-trixie}/x86_64/cuda-keyring_1.1-1_all.deb"
     pkg_fromfile cuda-keyring_1.1-1_all.deb
     sleep 1

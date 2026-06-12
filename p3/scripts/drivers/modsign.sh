@@ -12,6 +12,20 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
+
+rhel_check () {
+    local major minor
+    IFS="." read -r major minor <<< "${REDHAT_SUPPORT_PRODUCT_VERSION}"
+    echo "$major.$minor"
+    if (( major < 10 )) || (( major == 10 && minor < 0 )); then
+        echo "Kernel module signing not supported in this version of the OS. Please update to RHEL/AlmaLinux 10."
+        exit 100
+    else
+        return 0
+    fi
+}
+
+{ is_rhel && rhel_check; } || true
 sudo_rq
 if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
     if is_ostree; then

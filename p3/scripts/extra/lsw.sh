@@ -48,11 +48,10 @@ EOF
             fi
         else
             sudo dnf -y install dnf-plugins-core
-            if is_rhel; then
-                sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
-            else
-                sudo dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-            fi
+            # Check dnf version to use appropriate config-manager syntax
+            local dnf_version=$(rpm -qi dnf | grep "^Version" | awk '{print $3}')
+            local dnf_major=$(echo "$dnf_version" | cut -d. -f1)
+            { [ "$dnf_major" -lt 5 ]; } && sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo || sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
         fi
     fi
     if is_arch || is_cachy || is_suse || is_solus; then

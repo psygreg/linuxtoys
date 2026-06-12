@@ -1,12 +1,11 @@
 #!/bin/bash
-# name: Nvidia Drivers
-# version: 1.0
-# description: nv_desc
+# name: Nvidia Drivers (v580)
+# description: nv580_desc
 # icon: nvidia.svg
-# compat: ostree
-# reboot: ostree
 # nocontainer
 # gpu: Nvidia
+# compat: ostree
+# reboot: yes
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -27,7 +26,7 @@ if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
         pkg_fromfile --ostreecheck akmods-keys-0.0.2-8.fc$(rpm -E %fedora).noarch.rpm
     fi
 fi
-pkg_install akmod-nvidia xorg-x11-drv-nvidia-cuda
+pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda
 prep_create /etc/modprobe.d/blacklist-nouveau-nova.conf
 sudo tee /etc/modprobe.d/blacklist-nouveau-nova.conf <<EOF
 blacklist nouveau

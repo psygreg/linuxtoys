@@ -43,3 +43,4 @@ flatpak override --user \
   --env=QT_QPA_PLATFORM=xcb \
   --env=DISPLAY=$VALID_DISPLAY \
   com.obsproject.Studio
+zeninf "$finishmsg"

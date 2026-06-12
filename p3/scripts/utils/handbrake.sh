@@ -9,4 +9,5 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 pkg_flat fr.handbrake.ghb
+# is_intel && { pkg_flat fr.handbrake.ghb.Plugin.IntelMediaSDK; } || true -- currently borked
 zeninf "$msg018"

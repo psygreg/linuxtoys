@@ -50,12 +50,12 @@ echo "$sysup_starting"
 if is_fedora || is_rhel; then
     { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y; } || sudo dnf autoremove -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && dnf upgrade -y --setopt=throttle=2M; } || sudo dnf upgrade -y || fatal "Failed to upgrade packages"
-    if release_upgrade; then
-        if offer_release_upgrade; then
-            sudo dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
-            sudo dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
-        fi
-    fi
+    is_fedora && { release_upgrade && 
+            if offer_release_upgrade; then
+                sudo dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
+                sudo dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
+            fi
+    }
 elif is_debian || is_ubuntu; then
     if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
         { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo apt-get autoremove -y || fatal "Failed to remove orphaned packages"
