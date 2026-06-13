@@ -466,8 +466,9 @@ pkg_fromfile () {
            ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
             flatpak_scope="--system"
         fi
-        flatpak install "$flatpak_scope" --noninteractive "$flatpak_file" 2>/dev/null || \
-        fatal "Failed to install flatpak from file: $flatpak_file"
+        local _flatpak_stderr
+        _flatpak_stderr=$(flatpak install "$flatpak_scope" --noninteractive "$flatpak_file" 2>&1 1>/dev/null) || \
+        fatal "Failed to install flatpak from file: $flatpak_file\nDetails:\n$_flatpak_stderr"
         _append_transmap "pkg file $flatpak_file"
         return 0
     fi
