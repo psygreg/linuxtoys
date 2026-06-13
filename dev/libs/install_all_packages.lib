@@ -51,11 +51,45 @@ esac
 _msg "info" "Installer command: $INSTALLER"
 _msg "info" "Packages to install: $PACKAGES"
 
-# Install Packages
-$INSTALLER $PACKAGES
+# Verifica stale lock do pacman antes da instalação
+if [ "$PACKAGE_MANAGER" = "pacman" ]; then
+    if [ -f /var/lib/pacman/db.lck ]; then
+        PACMAN_ACTIVE=false
+        if pgrep -x pacman >/dev/null 2>&1; then
+            PACMAN_ACTIVE=true
+        elif command -v lsof >/dev/null 2>&1 && lsof /var/lib/pacman/db.lck >/dev/null 2>&1; then
+            PACMAN_ACTIVE=true
+        fi
 
-# Check Exit Status
-EXIT_CODE=$?
+        if [ "$PACMAN_ACTIVE" = true ]; then
+            _msg "error" "Another package operation is in progress (pacman is running)."
+            _msg "error" "Please wait for it to finish, or close it manually and retry."
+            exit 1
+        else
+            _msg "warn" "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
+            sudo rm -f /var/lib/pacman/db.lck || {
+                _msg "error" "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"
+                exit 1
+            }
+        fi
+    fi
+fi
+
+# Install Packages with retry
+MAX_RETRIES=1
+ATTEMPT=0
+EXIT_CODE=0
+
+while [ $ATTEMPT -le $MAX_RETRIES ]; do
+    $INSTALLER $PACKAGES && break
+    EXIT_CODE=$?
+    ATTEMPT=$((ATTEMPT + 1))
+    
+    if [ $ATTEMPT -le $MAX_RETRIES ]; then
+        _msg "warn" "Installation failed (exit $EXIT_CODE). Retrying in 3 seconds..."
+        sleep 3
+    fi
+done
 
 if [ $EXIT_CODE -ne 0 ]; then
     if [ $EXIT_CODE -eq 1 ]; then
