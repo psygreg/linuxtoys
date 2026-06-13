@@ -66,8 +66,7 @@ mount_drive() {
 
 _lang_
 display_guide
-pkg_install rclone
-{ is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
+pkg_install --ostreecheck rclone
 configure_rclone
 mount_drive
 zeninf "$msg018"

@@ -16,7 +16,7 @@ configure_libvirt() {
     if is_ubuntu || is_debian; then
         pkg_install qemu-system libvirt-daemon-system libvirt-clients virt-manager virt-viewer dnsmasq-base bridge-utils swtpm netcat-openbsd
     elif is_fedora || is_ostree || is_rhel; then
-        pkg_install qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm nmap-ncat
+        pkg_install --ostreecheck qemu-kvm libvirt virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm nmap-ncat
     elif is_suse; then
         pkg_install qemu-kvm libvirt libvirt-daemon virt-install virt-manager virt-viewer dnsmasq bridge-utils swtpm netcat-openbsd
     elif is_arch || is_cachy; then
