@@ -99,8 +99,7 @@ rpmfusion_chk() {
         { is_rhel && [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %{rhel})-$(uname -m)-rpms" || sudo /usr/bin/crb enable
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-            sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-el-$(rpm -E %rhel)
-            sudo dnf --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm || \
+            sudo dnf install --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm || \
                 fatal "Failed to install RPMFusion Free repository"
             _append_transmap "pkg file rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
             echo "RPMFusion Free repository installed successfully"
@@ -108,8 +107,7 @@ rpmfusion_chk() {
             echo "RPMFusion Non-Free repository is already installed"
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-            sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-el-$(rpm -E %rhel)
-            sudo dnf --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm || \
+            sudo dnf install --nogpgcheck https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm || \
                 fatal "Failed to install RPMFusion Non-Free repository"
             _append_transmap "pkg file rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
             echo "RPMFusion Non-Free repository installed successfully"
