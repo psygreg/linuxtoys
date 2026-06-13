@@ -354,7 +354,12 @@ pkg_install () {
         done
         local to_install_pacman="${_pacman_pkgs[*]}"
         local to_install_paru="${_paru_pkgs[*]}"
+        # check for lock
         if [ -n "$to_install_pacman" ]; then
+            [ -f /var/lib/pacman/db.lck ] && {
+                ( pgrep -x pacman >/dev/null 2>&1 && PACMAN_ACTIVE=true || command -v lsof >/dev/null 2>&1 && { lsof /var/lib/pacman/db.lck >/dev/null 2>&1 && PACMAN_ACTIVE=true; }; ) || PACMAN_ACTIVE=false
+                ( [ "$PACMAN_ACTIVE" = true ] && fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."; ) || \
+                ( zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck" && sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"; ); }
             sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
             [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
         fi
@@ -478,6 +483,10 @@ pkg_fromfile () {
         { sudo apt install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_arch || is_cachy; then
+        [ -f /var/lib/pacman/db.lck ] && {
+            ( pgrep -x pacman >/dev/null 2>&1 && PACMAN_ACTIVE=true || command -v lsof >/dev/null 2>&1 && { lsof /var/lib/pacman/db.lck >/dev/null 2>&1 && PACMAN_ACTIVE=true; }; ) || PACMAN_ACTIVE=false
+            ( [ "$PACMAN_ACTIVE" = true ] && fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."; ) || \
+            ( zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck" && sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"; ); }
         if sudo pacman -U "${@}"; then
             _append_transmap "pkg file $*"
         else
