@@ -125,16 +125,17 @@ sudo_rq() {
             ((attempts++))
             echo "❌ Wrong password. Attempts: ${attempts}/${max_attempts}."
         done
-        fatal "❌ Wrong password or sudo failed (max attempts reached)."
+        _msg error "❌ Wrong password or sudo failed (max attempts reached)." "Authentication Failed"
+        exit 100
     fi
 
     # GUI mode with CLI fallback if zenity is unavailable.
     if command -v sudo-rs &>/dev/null; then
-        _pass=$(zenpass "LinuxToys") || fatal "Password dialog cancelled"
-        echo "${_pass}" | sudo-rs -Sv || fatal "Wrong password or authentication failed"
+        _pass=$(zenpass "LinuxToys") || { _msg error "Password dialog cancelled" "Authentication Failed"; exit 100; }
+        echo "${_pass}" | sudo-rs -Sv || { _msg error "Wrong password or authentication failed" "Authentication Failed"; exit 100; }
     else
-        _pass=$(zenpass "LinuxToys") || fatal "Password dialog cancelled"
-        echo "${_pass}" | sudo -S -v &>/dev/null || fatal "Wrong password or authentication failed"
+        _pass=$(zenpass "LinuxToys") || { _msg error "Password dialog cancelled" "Authentication Failed"; exit 100; }
+        echo "${_pass}" | sudo -S -v &>/dev/null || { _msg error "Wrong password or authentication failed" "Authentication Failed"; exit 100; }
     fi
 
     [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
