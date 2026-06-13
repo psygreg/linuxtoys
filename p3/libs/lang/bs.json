@@ -430,5 +430,6 @@
   "flatpak_installed_title": "Flatpak je instaliran",
   "flatpak_installed_message": "Mogućnost Flatpak je upravo instalirana na vašem sistemu. Ponovno pokretanje sistema je potrebno da bi meni aplikacija počeo uključivati aplikacije flatpak.",
   "featured_scripts": "Možda ćeš htjeti pokušati...",
-  "helium_desc": "Minimalistički web preglednik zasnovan na Chromium-u sa pristupom fokusiranim na privatnost i nepristrasnim blokiranjem oglasa."
+  "helium_desc": "Minimalistički web preglednik zasnovan na Chromium-u sa pristupom fokusiranim na privatnost i nepristrasnim blokiranjem oglasa.",
+  "recordly_desc": "Otvoreni snimač ekrana i editor za vodiče, demonstracije, videe o proizvodima i još mnogo toga, sa ugrađenim alatima za prezentaciju vođenim kretanjem."
 }

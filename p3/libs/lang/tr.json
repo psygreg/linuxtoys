@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak Kurulu",
   "flatpak_installed_message": "Flatpak özelliği sisteminize yeni kurulmuştur. Uygulama menüsünün flatpak uygulamalarını içermeye başlaması için sistem yeniden başlatılması gerekir.",
   "featured_scripts": "Denemek isteyebilirsin...",
-  "helium_desc": "Chromium tabanlı minimalist web tarayıcı, gizlilik öncelikli yaklaşım ve tarafsız reklam engelleme ile."
+  "helium_desc": "Chromium tabanlı minimalist web tarayıcı, gizlilik öncelikli yaklaşım ve tarafsız reklam engelleme ile.",
+  "recordly_desc": "Kılavuzlar, demolar, ürün videoları ve daha fazlası için açık kaynaklı ekran kaydedici ve düzenleyici, hareket tarafından kontrol edilen sunuş araçları yerleştirilmiş."
 }

@@ -429,5 +429,6 @@
   "flatpak_installed_title": "Flatpak Iliyosakiniwa",
   "flatpak_installed_message": "Uwezo wa Flatpak umesakinishwa tu kwenye mfumo wako. Kusimama upya kwa mfumo kinachohitajika kwa ajili ya menyu ya programu kuanza kujumuisha programu za flatpak.",
   "featured_scripts": "Unaweza kuwa unataka kujaribu...",
-  "helium_desc": "Kiweke kidogo cha wavuti kinachozingatiwa na Chromium kilichokuwa na njia ya kadhaa-kwanza ya faragha na kuzuia tangazo kwa haki."
+  "helium_desc": "Kiweke kidogo cha wavuti kinachozingatiwa na Chromium kilichokuwa na njia ya kadhaa-kwanza ya faragha na kuzuia tangazo kwa haki.",
+  "recordly_desc": "Rekodi ya chanzo wazi cha skrini na hariri kwa mwongozo, maonyesho, video za bidhaa na zaidi, na zana za tahadhari iliyoongoza na harakati iliyojengewa."
 }

@@ -430,5 +430,6 @@
   "flatpak_installed_title": "Flatpak Quraşdırıldı",
   "flatpak_installed_message": "Flatpak qabiliyyəti sisteminizə yeni quraşdırıldı. Tətbiq menyusunun flatpak tətbiqləri daxil etməyə başlamağı üçün sistem yenidən başlatılması lazımdır.",
   "featured_scripts": "Sınayıb görmək istəyə bilərsiniz...",
-  "helium_desc": "Chromium əsasında minimum veb brauzer, gizlilik-birinci yanaşma və qərəzsiz reklam bloklaması ilə."
+  "helium_desc": "Chromium əsasında minimum veb brauzer, gizlilik-birinci yanaşma və qərəzsiz reklam bloklaması ilə.",
+  "recordly_desc": "Dərslik, demo, məhsul videoları və daha çoxu üçün açıq qaynaq ekran qeydiçi və redaktoru, hərəkət tərəfindən idarə olunan təqdimat alətləri ilə."
 }

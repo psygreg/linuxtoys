@@ -431,5 +431,6 @@
   "flatpak_installed_title": "A Flatpak telepítve van",
   "flatpak_installed_message": "A Flatpak képesség most telepítve lett a rendszerre. A rendszer újraindítása szükséges ahhoz, hogy az alkalmazásmenü flatpak alkalmazásokat tartalmazzon.",
   "featured_scripts": "Talán szeretnél megpróbálni...",
-  "helium_desc": "Chromium-alapú minimalista webböngésző, amely a magánszféra-elsőbbségi megközelítést és elfogultságmentes hirdetésblokkolást nyújt."
+  "helium_desc": "Chromium-alapú minimalista webböngésző, amely a magánszféra-elsőbbségi megközelítést és elfogultságmentes hirdetésblokkolást nyújt.",
+  "recordly_desc": "Nyílt forráskódú képernyő-felvevő és szerkesztő bemutatásokhoz, bemutatásokhoz, termékvideókhoz és még sok máshoz, beépített mozgásvezérelt prezentációs eszközökkel."
 }

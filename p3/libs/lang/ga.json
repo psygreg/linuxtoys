@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak Suiteáilte",
   "flatpak_installed_message": "Bhí an cumas Flatpak díreach suiteáilte ar do chóras. Tá atosú an chórais ag teastáil ionas go dtosóidh an roghchlár feidhmchlár a bheith i gceist flatpak feidhmchláir.",
   "featured_scripts": "D'fhéadfá a bheith i gceist agat a dhéanamh...",
-  "helium_desc": "Brabhsálaí gréasáin minimalist bunaithe ar Chromium le cur chuige dírithe ar phríobháideacht agus bac neamhchlaonta ar fhógraí."
+  "helium_desc": "Brabhsálaí gréasáin minimalist bunaithe ar Chromium le cur chuige dírithe ar phríobháideacht agus bac neamhchlaonta ar fhógraí.",
+  "recordly_desc": "Taifeadóir scáileáin agus eagarthóir foinse oscailte do thurlaiceacha, taispeántais, físeáin táirgí agus níos mó, le huirlisí láithreoireachta faoi threoir gluaisne ionsuite."
 }

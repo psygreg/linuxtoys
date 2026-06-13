@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak Installed",
   "flatpak_installed_message": "The Flatpak capability has just been installed on your system. A system reboot is required for the app menu to start including flatpak applications.",
   "featured_scripts": "You may want to try...",
-  "helium_desc": "Chromium-based minimalist web browser that takes a privacy-first approach with unbiased ad-blocking."
+  "helium_desc": "Chromium-based minimalist web browser that takes a privacy-first approach with unbiased ad-blocking.",
+  "recordly_desc": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in."
 }

@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak geïnstalleerd",
   "flatpak_installed_message": "Flatpak-functionaliteit is zojuist op uw systeem geïnstalleerd. Een systeemherstart is nodig om het app-menu Flatpak-toepassingen te gaan opnemen.",
   "featured_scripts": "Je zult misschien willen proberen...",
-  "helium_desc": "Minimalistische Chromium-gebaseerde webbrowser met privacy-first aanpak en onbevooroordeelde advertentieblokkering."
+  "helium_desc": "Minimalistische Chromium-gebaseerde webbrowser met privacy-first aanpak en onbevooroordeelde advertentieblokkering.",
+  "recordly_desc": "Open source schermrecorder en editor voor tutorials, demonstraties, productvideo's en meer, met ingebouwde bewegingsgestuurde presentatieprogramma's."
 }
