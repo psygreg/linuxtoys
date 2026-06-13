@@ -267,7 +267,9 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
         repo = script_info.get("repo", "")
         if repo:
             repo_label = Gtk.Label()
-            repo_label.set_markup(f"<a href='{repo}'>{repo}</a>")
+            # Strip protocol and trailing slash from display text for cleaner appearance
+            repo_display = repo.replace('https://', '').replace('http://', '').rstrip('/')
+            repo_label.set_markup(f"<a href='{repo}'>{repo_display}</a>")
             repo_label.set_line_wrap(True)
             repo_label.set_max_width_chars(40)
             repo_label.set_justify(Gtk.Justification.LEFT)

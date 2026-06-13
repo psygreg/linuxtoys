@@ -112,7 +112,9 @@ class InfosHead(Gtk.Box):
         _repo = GLib.markup_escape_text(script_info.get("repo", ""))
         self.label_name.set_markup(f"<big><big><b>{_name}</b></big></big>")
         self.label_desc.set_markup(f"{_desc}")
-        self.label_repo.set_markup(f"<a href='{_repo}'>{_repo}</a>")
+        # Strip protocol and trailing slash from display text for cleaner appearance
+        _repo_display = _repo.replace('https://', '').replace('http://', '').rstrip('/')
+        self.label_repo.set_markup(f"<a href='{_repo}'>{_repo_display}</a>")
 
         icon_value = script_info.get("icon")
         if icon_value:
