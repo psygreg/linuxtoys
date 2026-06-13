@@ -41,6 +41,11 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         pip_lib
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
+        # Patch SyntaxWarning: invalid escape sequences in regex patterns
+        # See: psygreg/linuxtoys issue #494
+        sed -i 's#re\.findall("(\[a-zA-Z0-9\]+)\\.zip"#re.findall(r"([a-zA-Z0-9]+)\\.zip"#g' stuff/houdini.py stuff/ndk.py stuff/widevine.py
+        sed -i "s|re\.search('lib(.*)\\\\.so'|re.search(r'lib(.*)\\\\.so'|" stuff/magisk.py
+        sed -i 's#ignore="\^\(e2fsck\|resize2fs\)#ignore=r"^\1#g' tools/images.py
         # Detect CPU vendor for proper ARM translation layer
         CPU_VENDOR=$(grep -m1 'vendor_id' /proc/cpuinfo | awk '{print $3}')
         if [[ "$CPU_VENDOR" == "GenuineIntel" ]]; then
