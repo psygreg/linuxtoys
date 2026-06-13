@@ -86,7 +86,7 @@ sboost_lib () {
 
 # split lock mitigation disabler
 dsplitm_lib () {
-    if is_fedora; then
+    if is_fedora || is_rhel; then
         grubbyargs_upd "split_lock_detect=off"
     elif is_ostree; then
         kargs_upd "split_lock_detect=off"
@@ -234,7 +234,7 @@ EOF
         return 0
     fi
     # install decoder and encoder drivers
-    if is_fedora; then
+    if is_fedora || is_rhel; then
         rpmfusion_chk
     fi
     if is_ubuntu; then
