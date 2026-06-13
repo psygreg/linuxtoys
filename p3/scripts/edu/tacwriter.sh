@@ -24,6 +24,9 @@ fi
 prep_tmp
 wget "$LATEST_BUNDLE_URL" -O "tac-writer-$LATEST_VERSION.flatpak" || fatal "Failed to download Tac Writer flatpak bundle."
 
+# Ensure required GNOME runtime is available before installing the bundle
+pkg_flat org.gnome.Platform//50
+
 # Install bundle for current user (silent mode; show details only on failure)
 pkg_fromfile "tac-writer-$LATEST_VERSION.flatpak"
 # Write version file so the in-app update checker can compare against GitHub tags
