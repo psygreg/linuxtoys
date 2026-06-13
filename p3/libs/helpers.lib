@@ -94,8 +94,8 @@ rpmfusion_chk() {
             return 1
         fi
         # requirements
-        { is_rhel && [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms || sudo dnf config-manager --set-enabled crb && sudo /usr/bin/crb enable
-        { is_rhel && [ "$ID" = "rhel" ]; } && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm || pkg_install epel-release distribution-gpg-keys
+        { is_rhel && [ "$ID" = "rhel" ] && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms; } || sudo dnf config-manager --set-enabled crb && sudo /usr/bin/crb enable
+        { is_rhel && [ "$ID" = "rhel" ] && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm; } || pkg_install epel-release distribution-gpg-keys
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
             sudo dnf install --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm || \
