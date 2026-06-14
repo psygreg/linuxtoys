@@ -7,7 +7,7 @@
 # repo: https://github.com/mongodb/mongo
 # revert: arch, cachy
 # systemd: yes
-# Removido updates redundates. #
+# Removido updates redundates.
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
