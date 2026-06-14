@@ -55,9 +55,13 @@ optimizer () {
 }
 # menu
 while true; do
-    OPTIONS=("Install without Power Profile" "High Performance")
+    OPTIONS=("Install without Power Profile")
     if ! is_zorin && ! is_cachy && ! is_suse; then
         OPTIONS+=("Laptop")
+    fi
+    CPU_VENDOR=$(grep -m1 'vendor_id' /proc/cpuinfo | awk '{print $3}')
+    if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
+        OPTIONS+=("High Performance")
     fi
     OPTIONS+=("$msg070")
     
