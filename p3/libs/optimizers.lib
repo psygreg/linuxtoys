@@ -110,7 +110,7 @@ psave_lib () {
         echo 'deb https://files.distropack.dev/download/TheAlexDev23/power-options/deb /' | sudo tee /etc/apt/sources.list.d/distropack_TheAlexDev23_power-options.list
         curl -fsSL 'https://files.distropack.dev/pubkey?user=TheAlexDev23&project=power-options' | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/distropack_TheAlexDev23_power-options.gpg > /dev/null
         sudo apt update
-        pkg_install power-options-gtk power-options-trayk
+        pkg_install power-options-gtk power-options-tray
     fi
 }
 
