@@ -124,12 +124,11 @@ rpmfusion_chk() {
             return 1
         fi
 
-        local install_cmd="pkg_fromfile"
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
             echo "Installing RPMFusion Free repository..."
-            { $install_cmd "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
-                $install_cmd "https://mirrors.neterra.net/rpmfusion/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
-                $install_cmd "https://mirrors.netix.net/rpmfusion/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm"; } || \
+            { sudo dnf install -y --nogpgcheck "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
+                sudo dnf install -y --nogpgcheck "https://mirrors.neterra.net/rpmfusion/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || \
+                sudo dnf install -y --nogpgcheck "https://mirrors.netix.net/rpmfusion/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm"; } || \
                 fatal "Failed to install RPMFusion Free repository"
             echo "RPMFusion Free repository installed successfully"
         else
@@ -137,9 +136,9 @@ rpmfusion_chk() {
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
             echo "Installing RPMFusion Non-Free repository..."
-            { $install_cmd "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
-                $install_cmd "http://gsl-syd.mm.fcix.net/rpmfusion/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
-                $install_cmd "https://mirrors.neterra.net/rpmfusion/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"; } || \
+            { sudo dnf install -y --nogpgcheck "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
+                sudo dnf install -y --nogpgcheck "http://gsl-syd.mm.fcix.net/rpmfusion/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || \
+                sudo dnf install -y --nogpgcheck "https://mirrors.neterra.net/rpmfusion/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"; } || \
                 fatal "Failed to install RPMFusion Non-Free repository"
             echo "RPMFusion Non-Free repository installed successfully"
         else
