@@ -14,6 +14,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 docker_in () { # install docker
     prep_tmp
     if is_ubuntu; then
+        pkg_remove docker.io docker-compose docker-compose-v2 docker-doc podman-docker
         sudo apt install -y ca-certificates
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -26,6 +27,7 @@ docker_in () { # install docker
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
     elif is_debian; then
+        pkg_remove docker.io docker-compose docker-doc podman-docker
         { [ "$VERSION_CODENAME" != "trixie" ] && [ "$VERSION_CODENAME" != "bookworm" ]; } && DEB_CODENAME="trixie" || DEB_CODENAME="$VERSION_CODENAME"
         sudo apt install -y ca-certificates # should not be declared as its removal may break the OS
         sudo install -m 0755 -d /etc/apt/keyrings
@@ -42,10 +44,12 @@ EOF
         sudo apt update
     elif is_fedora || is_ostree || is_rhel; then
         if command -v rpm-ostree &> /dev/null; then
+            pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
             curl -O https://download.docker.com/linux/fedora/docker-ce.repo
             sudo install -o 0 -g 0 -m644 docker-ce.repo /etc/yum.repos.d/docker-ce.repo
             pkg_install podman-compose # podman-compose is needed for rootless mode with ostree. the reasons for this are unknown, but without this it won't work at all.
         else
+            { is_rhel && pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine; } || pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
             sudo dnf -y install dnf-plugins-core # should not be declared as its removal may break the OS
             # Check dnf version to use appropriate config-manager syntax
             local dnf_version=$(rpm -qi dnf | grep "^Version" | awk '{print $3}')

@@ -15,6 +15,7 @@ _lang_
 # functions
 docker_in () { # install docker
     if is_ubuntu; then
+        pkg_remove docker.io docker-compose docker-compose-v2 docker-doc podman-docker
         sudo apt install -y ca-certificates
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -27,6 +28,7 @@ docker_in () { # install docker
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
     elif is_debian; then
+        pkg_remove docker.io docker-compose docker-doc podman-docker
         { [ "$VERSION_CODENAME" != "trixie" ] && [ "$VERSION_CODENAME" != "bookworm" ]; } && DEB_CODENAME="trixie" || DEB_CODENAME="$VERSION_CODENAME"
         sudo apt install -y ca-certificates # should not be declared as its removal may break the OS
         sudo install -m 0755 -d /etc/apt/keyrings
@@ -47,6 +49,7 @@ EOF
                 fatal "$msg292"
             fi
         else
+            { is_rhel && pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine; } || pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
             sudo dnf -y install dnf-plugins-core # should not be declared as its removal may break the OS
             # Check dnf version to use appropriate config-manager syntax
             local dnf_version=$(rpm -qi dnf | grep "^Version" | awk '{print $3}')
