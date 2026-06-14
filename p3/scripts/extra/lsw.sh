@@ -57,7 +57,7 @@ EOF
             { [ "$dnf_major" -lt 5 ] && sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo; } || sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
         fi
     fi
-    { is_arch || is_cachy || is_suse || is_solus && pkg_install docker docker-compose; } || pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    { ( is_arch || is_cachy || is_suse || is_solus ) && pkg_install docker docker-compose; } || pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'
