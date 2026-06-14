@@ -2,12 +2,13 @@ name: Sync Scripts Repository
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'p3/scripts/**'
   pull_request:
     paths:
       - 'p3/scripts/**'
+  workflow_dispatch:
   
 jobs:
   sync-to-psygreg:
@@ -20,7 +21,7 @@ jobs:
       - name: Clone psygreg/scripts repository
         uses: actions/checkout@v4
         with:
-          repository: psygreg/scripts.git
+          repository: psygreg/scripts
           path: sync-target
           token: ${{ secrets.SCR_TOKEN }}
 
