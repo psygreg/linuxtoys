@@ -3,7 +3,7 @@
 # version: 1.0
 # description: nvfixsolus_desc
 # icon: nvidia.svg
-# compat: solus
+# compat: none
 # reboot: yes
 # nocontainer
 # gpu: Nvidia
