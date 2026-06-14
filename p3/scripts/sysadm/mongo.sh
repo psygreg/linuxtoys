@@ -42,15 +42,12 @@ install_mongodb(){
         pkg_install mongodb
     elif is_rhel || is_fedora; then
         config_repo
-        sudo dnf makecache
         pkg_install mongodb-org
     elif is_suse; then
         config_repo
-        sudo zypper refresh
         pkg_install mongodb-org
     elif is_ubuntu || is_debian; then
         config_repo
-        sudo apt update
         pkg_install mongodb-org
     fi
 }
