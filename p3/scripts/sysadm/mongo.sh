@@ -7,7 +7,7 @@
 # repo: https://github.com/mongodb/mongo
 # revert: arch, cachy
 # systemd: yes
-# Removido updates redundates.
+# SUGESTION: CRIAR O SEGMENTO DE BANCO DE DADOS PORQUE É IMPOSTANTE PARA SYSADMINS
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
