@@ -4,6 +4,7 @@
 # icon: cachyos.svg
 # compat: fedora, rhel
 # reboot: yes
+# repo: https://github.com/CachyOS/copr-linux-cachyos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
