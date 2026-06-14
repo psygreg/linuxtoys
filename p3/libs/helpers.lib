@@ -99,7 +99,7 @@ rpmfusion_chk() {
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
             echo "Installing RPMFusion Free repository, please wait..."
-            if ! sudo dnf install --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" 2>/dev/null; then
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
                 sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
             fi
             _append_transmap "pkg file rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
@@ -109,7 +109,7 @@ rpmfusion_chk() {
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
             echo "Installing RPMFusion Non-Free repository, please wait..."
-            if ! sudo dnf install --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
                 sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
             fi
             _append_transmap "pkg file rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
@@ -126,7 +126,7 @@ rpmfusion_chk() {
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
             echo "Installing RPMFusion Free repository, please wait..."
-            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" 2>/dev/null; then
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" &>/dev/null; then
                 sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
             fi
             echo "RPMFusion Free repository installed successfully"
@@ -135,7 +135,7 @@ rpmfusion_chk() {
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
             echo "Installing RPMFusion Non-Free repository, please wait..."
-            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" 2/dev/null; then
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" &>/dev/null; then
                 sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Non-Free repository"
             fi
             echo "RPMFusion Non-Free repository installed successfully"
