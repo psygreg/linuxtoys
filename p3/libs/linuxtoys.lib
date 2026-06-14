@@ -534,23 +534,24 @@ pkg_appimage_rm () {
 }
 pkg_remove () {
     pkg_exists "$@"
+    [[ ${#pkg_found[@]} -eq 0 ]] && return 0
     
-    for pak in "${pkg_found[@]}"; do
-        if is_debian || is_ubuntu; then
-            sudo apt autoremove -y --allow-unauthenticated "$pak" || fatal "Failed to remove package $pak"
-        elif is_arch || is_cachy; then
-            sudo pacman -Rns --noconfirm "$pak" || fatal "Failed to remove package $pak"
-        elif is_ostree; then
-            sudo rpm-ostree uninstall "$pak" || fatal "Failed to remove package $pak"
-        elif is_fedora || is_rhel ; then
-            sudo dnf remove -y "$pak" || fatal "Failed to remove package $pak"
-        elif is_suse; then
-            sudo zypper rm -y "$pak" || fatal "Failed to remove package $pak"
-        elif is_solus; then
-            sudo eopkg rmf -y "$pak" || fatal "Failed to remove package $pak"
-        fi
-        _append_transmap "pkg rm $pak"
-    done
+    local to_remove="${pkg_found[*]}"
+    
+    if is_debian || is_ubuntu; then
+        sudo apt remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_arch || is_cachy; then
+        sudo pacman -Rsn --noconfirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_ostree; then
+        sudo rpm-ostree uninstall "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_fedora || is_rhel ; then
+        sudo dnf remove -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_suse; then
+        sudo zypper rm -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_solus; then
+        sudo eopkg rmf -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    fi
+    _append_transmap "pkg rm $to_remove"
 }
 
 # bootloader update
