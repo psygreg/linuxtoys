@@ -9,7 +9,7 @@
 
 ## Compatibility
 
-LinuxToys is compatible with the following Linux distributions, provided they are *running their **latest** stable versions*, and use `systemd` as their init system:
+LinuxToys is compatible with the following Linux distributions, provided they are *running their **latest** stable versions*:
 
 *   **Debian** and derivatives (PikaOS, LMDE, etc.)
 *   **Ubuntu** and derivatives (Ubuntu flavours, Mint, Zorin, Tuxedo, etc.)
@@ -21,7 +21,7 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   Fedora-based **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
 *   **Solus**
 
-Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices.
+Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices. Support for non-systemd init systems is limited, and some features of the app cannot be offered for them.
 
 ## Usage without installation for stable versions
 
@@ -63,7 +63,7 @@ sudo apt install linuxtoys
 
 #### Fedora / RHEL / OpenSUSE (COPR)
 
-Packages are available via [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/) for AlmaLinux 10, Fedora 41/42, OpenSUSE Leap/Tumbleweed, and RHEL 9/10.
+Packages are available via [Fedora COPR](https://copr.fedorainfracloud.org/coprs/psygreg/linuxtoys/) for the latest releases of AlmaLinux, Fedora and RHEL.
 
 **For Standard Systems:**
 
