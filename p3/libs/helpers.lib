@@ -140,9 +140,8 @@ rpmfusion_chk() {
         else
             echo "RPMFusion Non-Free repository is already installed"
         fi
-        { command -v rpm-ostree &>/dev/null && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
+        is_ostree && { rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
     fi
-    return 0
 }
 
 # --- PyPI ---
