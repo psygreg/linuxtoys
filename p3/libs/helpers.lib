@@ -28,10 +28,8 @@ flatpak_in_lib() {
     fi
 
     # Add Flathub remote if not exists
-    flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-    sudo flatpak remote-add --if-not-exists --system flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
+    flatpak remote-add --if-not-exists --user flathub "https://dl.flathub.org/repo/flathub.flatpakrepo"
+    sudo flatpak remote-add --if-not-exists --system flathub "https://dl.flathub.org/repo/flathub.flatpakrepo"
     touch /tmp/linuxtoys_flatpak_done
     [ -n "$flatpak_path_pending" ] && touch /tmp/flatpak_path_pending
     return 0
