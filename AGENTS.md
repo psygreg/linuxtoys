@@ -139,6 +139,51 @@ git commit -m "remove workflows that only apply to upstream repo"
 
 ---
 
+## Memória de IA
+
+**Sempre salvar tudo que é feito no projeto na memória de IA (ai-memory).** Isso garante que qualquer sessão futura tenha contexto completo sobre decisões, alterações e histórico do projeto.
+
+### O que salvar
+
+- Decisões de arquitetura e design
+- Problemas encontrados e como foram resolvidos
+- Configurações importantes do projeto
+- Alterações significativas de código
+- Notas sobre o fluxo de trabalho
+
+### Como salvar
+
+Usar a ferramenta `memory_write_page` para criar páginas na wiki do projeto:
+
+```
+# Exemplo de páginas a criar:
+notes/arquitetura.md       — Decisões de design do projeto
+notes/decisoes.md          — Registro de decisões tomadas
+concepts/flask-api.md      — Conceitos da API
+_rules/testes.md           — Regras de testes
+```
+
+### Quando salvar
+
+- **Sempre** após completar uma tarefa significativa
+- **Sempre** após resolver um conflito de merge
+- **Sempre** após tomar uma decisão de design
+- **Sempre** após implementar uma nova funcionalidade
+
+### Consultar memória
+
+Antes de começar qualquer tarefa, consultar a memória existente:
+
+```bash
+# Ver páginas recentes
+memory_recent
+
+# Buscar por tópico específico
+memory_query "merge upstream"
+```
+
+---
+
 ## Estrutura do Projeto
 
 ```
