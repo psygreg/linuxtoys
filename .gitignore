@@ -1,5 +1,8 @@
 .cache
 
+# AGENTS.md (OpenCode-specific)
+AGENTS.md
+
 # Python bytecode/cache
 __pycache__/
 *.py[cod]
