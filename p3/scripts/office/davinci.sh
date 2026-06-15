@@ -132,7 +132,7 @@ dv_rhel () {
         pkg_install gcc openssl-devel bzip2-devel libffi-devel wget tar curl
         prep_tmp_noram
         wget "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz" || fatal "unable to get dependency python2"
-        tar xzf Python-2.7.18.tgz && cd Python-2.7.18.tgz
+        tar xzf Python-2.7.18.tgz && cd Python-2.7.18
         export CFLAGS="-std=c11"
         ./configure --with-system-ffi --with-computed-gotos --enable-optimizations --enable-unicode=ucs4
         make -j$(nproc) build_all
