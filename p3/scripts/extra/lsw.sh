@@ -15,6 +15,7 @@ _lang_
 # functions
 docker_in () { # install docker
     if is_ubuntu; then
+        pkg_remove docker.io docker-compose docker-compose-v2 docker-doc podman-docker
         sudo apt install -y ca-certificates
         sudo install -m 0755 -d /etc/apt/keyrings
         sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -27,6 +28,7 @@ docker_in () { # install docker
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         sudo apt update
     elif is_debian; then
+        pkg_remove docker.io docker-compose docker-doc podman-docker
         { [ "$VERSION_CODENAME" != "trixie" ] && [ "$VERSION_CODENAME" != "bookworm" ]; } && DEB_CODENAME="trixie" || DEB_CODENAME="$VERSION_CODENAME"
         sudo apt install -y ca-certificates # should not be declared as its removal may break the OS
         sudo install -m 0755 -d /etc/apt/keyrings
@@ -47,18 +49,15 @@ EOF
                 fatal "$msg292"
             fi
         else
-            sudo dnf -y install dnf-plugins-core
+            { is_rhel && pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine; } || pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
+            sudo dnf -y install dnf-plugins-core # should not be declared as its removal may break the OS
             # Check dnf version to use appropriate config-manager syntax
             local dnf_version=$(rpm -qi dnf | grep "^Version" | awk '{print $3}')
             local dnf_major=$(echo "$dnf_version" | cut -d. -f1)
-            { [ "$dnf_major" -lt 5 ]; } && sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo || sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
+            { [ "$dnf_major" -lt 5 ] && sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo; } || sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
         fi
     fi
-    if is_arch || is_cachy || is_suse || is_solus; then
-        pkg_install docker docker-compose
-    else
-        pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    fi
+    { ( is_arch || is_cachy || is_suse || is_solus ) && pkg_install docker docker-compose; } || pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'

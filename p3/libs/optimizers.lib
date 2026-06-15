@@ -86,7 +86,7 @@ sboost_lib () {
 
 # split lock mitigation disabler
 dsplitm_lib () {
-    if is_fedora; then
+    if is_fedora || is_rhel; then
         grubbyargs_upd "split_lock_detect=off"
     elif is_ostree; then
         kargs_upd "split_lock_detect=off"
@@ -100,6 +100,7 @@ dsplitm_lib () {
 psave_lib () {
     prep_tmp
     sudo_rq
+    { ( pkg_exists tlp power-profiles-daemon && [ -n "$pkg_found" ] ) && zenwrn "OS already has TLP/power-profiles-daemon. Skipping power-options..." && return 100; } || true
     if is_fedora || is_rhel; then
         sudo dnf config-manager addrepo --from-repofile=https://files.distropack.dev/rpm_repo/TheAlexDev23/power-options
         pkg_install power-options-gtk power-options-tray
@@ -234,7 +235,7 @@ EOF
         return 0
     fi
     # install decoder and encoder drivers
-    if is_fedora; then
+    if is_fedora || is_rhel; then
         rpmfusion_chk
     fi
     if is_ubuntu; then

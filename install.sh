@@ -52,6 +52,8 @@ osdeb() {
 osrpm() {
 	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
 		if command -v dnf >/dev/null 2>&1; then
+			{ [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+			{ [[ "$ID_LIKE" = *rhel* ]] && [ "$ID" != "rhel" ]; } && sudo dnf config-manager --set-enabled crb && sudo dnf install epel-release
 			if sudo dnf install -y "/tmp/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else

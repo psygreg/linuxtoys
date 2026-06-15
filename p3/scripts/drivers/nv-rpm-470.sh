@@ -3,7 +3,7 @@
 # version: 1.0
 # description: nv_desc_470
 # icon: nvidia.svg
-# compat: rhel
+# compat: none
 # reboot: yes
 # nocontainer
 # gpu: Nvidia

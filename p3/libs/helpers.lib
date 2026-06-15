@@ -86,55 +86,32 @@ chaotic_aur_lib() {
 }
 
 # --- RPMFusion ---
-_rpmfusion_install () {
-    local url="$1"
-    local pkg_name="$2"
-    local is_rhel_path="$3"
-    local max_attempts=2
-    local delay=5
-    local fallback_url="${url/mirrors.rpmfusion.org/download1.rpmfusion.org}"
-
-    for ((i=1; i<=max_attempts; i++)); do
-        if [[ "$is_rhel_path" == "1" ]]; then
-            sudo dnf install -y --nogpgcheck --setopt=timeout=60 "$url" && return 0
-        else
-            sudo dnf install -y --setopt=timeout=60 "$url" && return 0
-        fi
-        sleep "$delay"
-        delay=$((delay * 2))
-    done
-
-    echo "Primary mirror unreachable, trying download1.rpmfusion.org..."
-    if [[ "$is_rhel_path" == "1" ]]; then
-        sudo dnf install -y --nogpgcheck --setopt=timeout=60 "$fallback_url" || \
-            fatal "Failed to install $pkg_name (both primary and fallback mirrors failed)"
-    else
-        sudo dnf install -y --setopt=timeout=60 "$fallback_url" || \
-            fatal "Failed to install $pkg_name (both primary and fallback mirrors failed)"
-    fi
-}
-
 rpmfusion_chk() {
-    if [[ "$ID_LIKE" =~ (rhel|centos) || "$ID" == "rhel" ]] && [[ "$ID" != "nobara" ]]; then
+    if is_rhel; then
         local rhel_version
         if ! rhel_version=$(rpm -E %rhel 2>/dev/null) || [ "$rhel_version" = %rhel ]; then
             fatal "Could not determine RHEL version"
             return 1
         fi
         # requirements
-        pkg_install epel-release distribution-gpg-keys
-        sudo dnf config-manager --set-enabled crb
-        { is_rhel && [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %{rhel})-$(uname -m)-rpms" || sudo /usr/bin/crb enable
+        { is_rhel && [ "$ID" = "rhel" ] && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms; } || sudo dnf config-manager --set-enabled crb && sudo /usr/bin/crb enable
+        { is_rhel && [ "$ID" = "rhel" ] && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm; } || pkg_install epel-release distribution-gpg-keys
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-            _rpmfusion_install "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" "RPMFusion Free repository" 1
+            echo "Installing RPMFusion Free repository, please wait..."
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
+                sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
+            fi
             _append_transmap "pkg file rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
             echo "RPMFusion Free repository installed successfully"
         else
-            echo "RPMFusion Non-Free repository is already installed"
+            echo "RPMFusion Free repository is already installed"
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-            _rpmfusion_install "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" "RPMFusion Non-Free repository" 1
+            echo "Installing RPMFusion Non-Free repository, please wait..."
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
+                sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
+            fi
             _append_transmap "pkg file rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
             echo "RPMFusion Non-Free repository installed successfully"
         else
@@ -148,15 +125,19 @@ rpmfusion_chk() {
         fi
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-            echo "Installing RPMFusion Free repository..."
-            _rpmfusion_install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" "RPMFusion Free repository" 0
+            echo "Installing RPMFusion Free repository, please wait..."
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" &>/dev/null; then
+                sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
+            fi
             echo "RPMFusion Free repository installed successfully"
         else
             echo "RPMFusion Free repository is already installed"
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-            echo "Installing RPMFusion Non-Free repository..."
-            _rpmfusion_install "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" "RPMFusion Non-Free repository" 0
+            echo "Installing RPMFusion Non-Free repository, please wait..."
+            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" &>/dev/null; then
+                sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Non-Free repository"
+            fi
             echo "RPMFusion Non-Free repository installed successfully"
         else
             echo "RPMFusion Non-Free repository is already installed"

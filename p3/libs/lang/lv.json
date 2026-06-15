@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak ir instalēts",
   "flatpak_installed_message": "Flatpak iespēja tikko tika instalēta jūsu sistēmā. Sistēmas atkārtota palaišana ir nepieciešama, lai programmu izvēlne sāktu ietvert flatpak lietojumus.",
   "featured_scripts": "Iespējams, vēlēsies mēģināt...",
-  "helium_desc": "Minimālistisks Chromium balstīts tīmekļa pārlūkprogramma ar privātuma prioritātu pieeju un neobjektīvu reklāmu bloķēšanu."
+  "helium_desc": "Minimālistisks Chromium balstīts tīmekļa pārlūkprogramma ar privātuma prioritātu pieeju un neobjektīvu reklāmu bloķēšanu.",
+  "recordly_desc": "Atvērtā koda ekrāna ierakstītājs un redaktors instrukcijām, demonstrējumiem, produktu video un vairāk, ar iebūvētiem kustības vadītiem prezentācijas rīkiem."
 }

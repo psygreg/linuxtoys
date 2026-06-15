@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak on installitud",
   "flatpak_installed_message": "Flatpaki võimalus just installiti teie süsteemile. Rakenduste menüü flatpaki rakenduste kaasamiseks on vajalik süsteemi taaskäivitamine.",
   "featured_scripts": "Võibolla tahaksid proovida...",
-  "helium_desc": "Chromiumil baseeritud minimalisti veebilehitseja, millel on privaatsuse eelistega lähenemine ja erapooletu reklaamide blokeerimine."
+  "helium_desc": "Chromiumil baseeritud minimalisti veebilehitseja, millel on privaatsuse eelistega lähenemine ja erapooletu reklaamide blokeerimine.",
+  "recordly_desc": "Avatud lähtekoodiga ekraani salvesti ja redaktor tutvustuste, demo, toote videote ja muude jaoks, sisseehitatud liikumisega juhitavate esitlusriistadega."
 }

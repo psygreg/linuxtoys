@@ -433,5 +433,6 @@
   "flatpak_installed_title": "Flatpak已安装",
   "flatpak_installed_message": "Flatpak功能已安装在您的系统上。需要重新启动系统以使应用菜单开始包含flatpak应用程序。",
   "featured_scripts": "您可能想尝试...",
-  "helium_desc": "基于Chromium的极简网络浏览器，采用隐私优先的方法和公正的广告拦截。"
+  "helium_desc": "基于Chromium的极简网络浏览器，采用隐私优先的方法和公正的广告拦截。",
+  "recordly_desc": "用于教程、演示、产品视频等的开源屏幕录像机和编辑器，具有内置的运动驱动演示工具。"
 }

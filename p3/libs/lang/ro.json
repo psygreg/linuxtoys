@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak instalat",
   "flatpak_installed_message": "Capabilitatea Flatpak a fost instalată pe sistemul dumneavoastră. O repornire a sistemului este necesară pentru ca meniul aplicațiilor să înceapă să includă aplicații flatpak.",
   "featured_scripts": "Ai putea dori să încerci...",
-  "helium_desc": "Browser web minimalist bazat pe Chromium cu abordare prioritizând confidențialitatea și blocare imparțială a anunțurilor."
+  "helium_desc": "Browser web minimalist bazat pe Chromium cu abordare prioritizând confidențialitatea și blocare imparțială a anunțurilor.",
+  "recordly_desc": "Înregistrator de ecran și editor cu cod deschis pentru tutorial, demonstrații, videoclipuri de produs și mai mult, cu instrumente de prezentare integrate cu direcție de mișcare."
 }

@@ -3,7 +3,7 @@
 # version: 1.0
 # description: WireGuard
 # icon: wireguard.svg
-# compat: ubuntu, debian, fedora, arch, cachy, suse, solus
+# compat: ubuntu, debian, fedora, arch, cachy, suse, solus, !zorin
 # repo: https://www.wireguard.com
 
 # --- Start of the script code ---

@@ -2,18 +2,19 @@
 # name: CachyOS Kernel
 # description: cachykrn_desc
 # icon: cachyos.svg
-# compat: fedora
+# compat: fedora, rhel
 # reboot: yes
+# repo: https://github.com/CachyOS/copr-linux-cachyos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 
 sudo_rq
 sudo dnf copr enable bieszczaders/kernel-cachyos
-pkg_install kernel-cachyos kernel-cachyos-devel-matched
+{ is_rhel && pkg_install kernel-cachyos-lts kernel-cachyos-lts-devel-matched; } || pkg_install kernel-cachyos kernel-cachyos-devel-matched
 sudo setsebool -P domain_kernel_load_modules on
 # ensure it boots with the cachyos kernel as default, remaining with the standard Fedora kernel as backup option
-pkg_install grubby
+pkg_install grubby sbsigntools
 prep_create /etc/kernel/postinst.d/99-default
 sudo tee /etc/kernel/postinst.d/99-default > /dev/null << 'EOF'
 #!/bin/sh

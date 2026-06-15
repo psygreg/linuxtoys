@@ -3,7 +3,7 @@
 # version: 1.0
 # description: nixpkgs_desc
 # icon: nix.svg
-# compat: fedora, arch, debian, ubuntu, cachy, suse, rhel
+# compat: arch, debian, ubuntu, cachy, suse
 # repo: https://github.com/NixOS/nixpkgs
 # revert: arch, cachy
 # systemd: yes

@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak është instaluar",
   "flatpak_installed_message": "Mundësia Flatpak sapo u instalua në sistemin tuaj. Një rimjete e sistemit është e nevojshme për që menu i aplikacioneve të fillojë të përfshijë aplikacione flatpak.",
   "featured_scripts": "Mund të dëshirosh të provosh...",
-  "helium_desc": "Shfletuesi i uebit minimalist i bazuar në Chromium me qasje me prioritet të privatësisë dhe bllokimin e padrejtë të reklamave."
+  "helium_desc": "Shfletuesi i uebit minimalist i bazuar në Chromium me qasje me prioritet të privatësisë dhe bllokimin e padrejtë të reklamave.",
+  "recordly_desc": "Regjistruese e ekranit dhe redaktuese me kod të hapjes për mësimet, demonstratat, videot e produkteve dhe më shumë, me vegla integrale të prezantimit të drejtuara nga lëvizja."
 }

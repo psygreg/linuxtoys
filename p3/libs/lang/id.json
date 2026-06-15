@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak Terinstal",
   "flatpak_installed_message": "Kemampuan Flatpak baru saja diinstal di sistem Anda. Diperlukan boot ulang sistem agar menu aplikasi mulai menyertakan aplikasi flatpak.",
   "featured_scripts": "Anda mungkin ingin mencoba...",
-  "helium_desc": "Penjelajah web minimalis berbasis Chromium dengan pendekatan prioritas privasi dan pemblokiran iklan yang tidak memihak."
+  "helium_desc": "Penjelajah web minimalis berbasis Chromium dengan pendekatan prioritas privasi dan pemblokiran iklan yang tidak memihak.",
+  "recordly_desc": "Perekam layar dan editor sumber terbuka untuk panduan, demo, video produk, dan banyak lagi, dengan alat presentasi bergerak yang terintegrasi."
 }

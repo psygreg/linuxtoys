@@ -5,7 +5,6 @@
 # icon: obs.svg
 # repo: https://github.com/dimtpap/obs-pipewire-audio-capture
 # reboot: ostree
-# new
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

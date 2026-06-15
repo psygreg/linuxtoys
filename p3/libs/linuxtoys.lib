@@ -125,16 +125,17 @@ sudo_rq() {
             ((attempts++))
             echo "❌ Wrong password. Attempts: ${attempts}/${max_attempts}."
         done
-        fatal "❌ Wrong password or sudo failed (max attempts reached)."
+        _msg error "❌ Wrong password or sudo failed (max attempts reached)." "Authentication Failed"
+        exit 100
     fi
 
     # GUI mode with CLI fallback if zenity is unavailable.
     if command -v sudo-rs &>/dev/null; then
-        _pass=$(zenpass "LinuxToys") || fatal "Password dialog cancelled"
-        echo "${_pass}" | sudo-rs -Sv || fatal "Wrong password or authentication failed"
+        _pass=$(zenpass "LinuxToys") || { _msg error "Password dialog cancelled" "Authentication Failed"; exit 100; }
+        echo "${_pass}" | sudo-rs -Sv || { _msg error "Wrong password or authentication failed" "Authentication Failed"; exit 100; }
     else
-        _pass=$(zenpass "LinuxToys") || fatal "Password dialog cancelled"
-        echo "${_pass}" | sudo -S -v &>/dev/null || fatal "Wrong password or authentication failed"
+        _pass=$(zenpass "LinuxToys") || { _msg error "Password dialog cancelled" "Authentication Failed"; exit 100; }
+        echo "${_pass}" | sudo -S -v &>/dev/null || { _msg error "Wrong password or authentication failed" "Authentication Failed"; exit 100; }
     fi
 
     [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
@@ -165,7 +166,7 @@ is_ubuntu() { sysdetect && [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_suse() { sysdetect && [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
 is_solus() { sysdetect && [[ "$ID" == "solus" ]]; }
 is_zorin() { sysdetect && [[ "$ID" == "zorin" ]]; }
-is_rhel() { sysdetect && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && ! command -v rpm-ostree &>/dev/null; }
+is_rhel() { sysdetect && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && ! command -v rpm-ostree &>/dev/null && [[ "$ID" != "nobara" ]]; }
 
 # GPU detection
 is_nvidia() {
@@ -304,7 +305,7 @@ pkg_exists () {
             else
                 pkg_notfound+=("$pak")
             fi
-        elif is_fedora || is_ostree || is_suse; then
+        elif is_fedora || is_ostree || is_suse || is_rhel; then
             if rpm -qi "$pak" &>/dev/null; then
                 pkg_found+=("$pak")
             else
@@ -353,7 +354,12 @@ pkg_install () {
         done
         local to_install_pacman="${_pacman_pkgs[*]}"
         local to_install_paru="${_paru_pkgs[*]}"
+        # check for lock
         if [ -n "$to_install_pacman" ]; then
+            [ -f /var/lib/pacman/db.lck ] && {
+                ( pgrep -x pacman >/dev/null 2>&1 && PACMAN_ACTIVE=true || command -v lsof >/dev/null 2>&1 && { lsof /var/lib/pacman/db.lck >/dev/null 2>&1 && PACMAN_ACTIVE=true; }; ) || PACMAN_ACTIVE=false
+                ( [ "$PACMAN_ACTIVE" = true ] && fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."; ) || \
+                ( zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck" && sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"; ); }
             sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
             [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
         fi
@@ -386,7 +392,7 @@ pkg_install () {
         if [[ $_ostreecheck -eq 1 ]]; then
             { is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
         fi
-    elif is_fedora; then
+    elif is_fedora || is_rhel; then
         sudo dnf install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_suse; then
@@ -477,6 +483,10 @@ pkg_fromfile () {
         { sudo apt install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_arch || is_cachy; then
+        [ -f /var/lib/pacman/db.lck ] && {
+            ( pgrep -x pacman >/dev/null 2>&1 && PACMAN_ACTIVE=true || command -v lsof >/dev/null 2>&1 && { lsof /var/lib/pacman/db.lck >/dev/null 2>&1 && PACMAN_ACTIVE=true; }; ) || PACMAN_ACTIVE=false
+            ( [ "$PACMAN_ACTIVE" = true ] && fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."; ) || \
+            ( zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck" && sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"; ); }
         if sudo pacman -U "${@}"; then
             _append_transmap "pkg file $*"
         else
@@ -495,7 +505,7 @@ pkg_fromfile () {
         if [[ $_ostreecheck -eq 1 ]]; then
             { is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
         fi
-    elif is_fedora; then
+    elif is_fedora || is_rhel; then
         sudo dnf install -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_suse; then
@@ -524,29 +534,30 @@ pkg_appimage_rm () {
 }
 pkg_remove () {
     pkg_exists "$@"
+    [[ ${#pkg_found[@]} -eq 0 ]] && return 0
     
-    for pak in "${pkg_found[@]}"; do
-        if is_debian || is_ubuntu; then
-            sudo apt autoremove -y --allow-unauthenticated "$pak" || fatal "Failed to remove package $pak"
-        elif is_arch || is_cachy; then
-            sudo pacman -Rns --noconfirm "$pak" || fatal "Failed to remove package $pak"
-        elif is_ostree; then
-            sudo rpm-ostree uninstall "$pak" || fatal "Failed to remove package $pak"
-        elif is_fedora; then
-            sudo dnf remove -y "$pak" || fatal "Failed to remove package $pak"
-        elif is_suse; then
-            sudo zypper rm -y "$pak" || fatal "Failed to remove package $pak"
-        elif is_solus; then
-            sudo eopkg rmf -y "$pak" || fatal "Failed to remove package $pak"
-        fi
-        _append_transmap "pkg rm $pak"
-    done
+    local to_remove="${pkg_found[*]}"
+    
+    if is_debian || is_ubuntu; then
+        sudo apt remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_arch || is_cachy; then
+        sudo pacman -Rsn --noconfirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_ostree; then
+        sudo rpm-ostree uninstall "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_fedora || is_rhel ; then
+        sudo dnf remove -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_suse; then
+        sudo zypper rm -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_solus; then
+        sudo eopkg rmf -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    fi
+    _append_transmap "pkg rm $to_remove"
 }
 
 # bootloader update
 bootloader_upd() {
     if ! is_ostree; then
-        if is_fedora || is_suse; then
+        if is_fedora || is_suse || is_rhel; then
             sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_arch || is_cachy; then
@@ -570,7 +581,7 @@ initramfs_upd() {
     elif is_arch || is_cachy; then
         sudo mkinitcpio -P || fatal "Failed to update mkinitcpio"
         _append_transmap "updated initramfs"
-    elif is_fedora || is_suse; then
+    elif is_fedora || is_suse || is_rhel ; then
         sudo dracut -f --regenerate-all || fatal "Failed to update dracut"
         _append_transmap "updated initramfs"
     fi

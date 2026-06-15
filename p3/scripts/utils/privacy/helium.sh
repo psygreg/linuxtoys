@@ -4,6 +4,7 @@
 # description: helium_desc
 # icon: helium.png
 # repo: https://helium.computer
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

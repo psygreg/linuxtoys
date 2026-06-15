@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak Installed",
   "flatpak_installed_message": "Ang kakayahan ng Flatpak ay instala lamang sa iyong sistema. Kailangan ng system restart para magsimulang isama ng app menu ang mga flatpak na aplikasyon.",
   "featured_scripts": "Maaari mong gustong subukan...",
-  "helium_desc": "Minimalist na web browser na batay sa Chromium na may privacy-first na diskarte at walang kinakayaang ad-blocking."
+  "helium_desc": "Minimalist na web browser na batay sa Chromium na may privacy-first na diskarte at walang kinakayaang ad-blocking.",
+  "recordly_desc": "Bukas na font screen recorder at editor para sa mga tutorial, demo, product video, at marami pang iba, na may built-in na motion-driven na tool sa pagtatanghal."
 }

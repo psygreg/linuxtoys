@@ -12,8 +12,14 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 sudo_rq
-# check rpmfusion
 rpmfusion_chk
-pkg_install akmod-nvidia xorg-x11-drv-nvidia-cuda
+if is_rhel && [ "$(rpm -E %rhel)" = "10" ]; then
+    pkg_install kernel-devel-matched kernel-headers
+    sudo dnf config-manager --add-repo "https://developer.download.nvidia.com/compute/cuda/repos/rhel$(rpm -E %rhel)/$(arch)/cuda-rhel$(rpm -E %rhel).repo"
+    sudo dnf clean expire-cache
+    pkg_install nvidia-open cuda-drivers nvidia-container-toolkit
+else
+    pkg_install akmod-nvidia xorg-x11-drv-nvidia-cuda
+fi
 initramfs_upd
 zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300

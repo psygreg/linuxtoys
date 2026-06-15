@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak on asennettu",
   "flatpak_installed_message": "Flatpak-toiminto on juuri asennettu järjestelmääsi. Järjestelmän uudelleenkäynnistys vaaditaan, jotta sovelluskehote alkaa sisältää flatpak-sovelluksia.",
   "featured_scripts": "Saatat haluta kokeilla...",
-  "helium_desc": "Minimalistinen Chromium-pohjainen verkkoselain, joka noudattaa yksityisyyttä prioritisoivaa lähestymistapaa ja puolueettomaa mainosten estämistä."
+  "helium_desc": "Minimalistinen Chromium-pohjainen verkkoselain, joka noudattaa yksityisyyttä prioritisoivaa lähestymistapaa ja puolueettomaa mainosten estämistä.",
+  "recordly_desc": "Avoin lähdekoodiin perustuva näytön tallennin ja muokkain oppaita, esityksiä, tuotevideoita ja muuta varten, sisäänrakennetuilla liikkeen ohjaamilla esitystyökaluilla."
 }

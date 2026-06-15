@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak installato",
   "flatpak_installed_message": "La capacità Flatpak è appena stata installata sul tuo sistema. È necessario riavviare il sistema affinché il menu dell'app inizi a includere le applicazioni flatpak.",
   "featured_scripts": "Potresti voler provare...",
-  "helium_desc": "Browser web minimalista basato su Chromium con un approccio incentrato sulla privacy e blocco imparziale degli annunci."
+  "helium_desc": "Browser web minimalista basato su Chromium con un approccio incentrato sulla privacy e blocco imparziale degli annunci.",
+  "recordly_desc": "Registratore dello schermo e editor open source per tutorial, dimostrazioni, video di prodotto e altro, con strumenti di presentazione azionati dal movimento integrati."
 }

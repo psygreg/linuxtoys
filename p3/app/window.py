@@ -943,6 +943,10 @@ class AppWindow(Gtk.ApplicationWindow):
             self.show_scripts_view(info)
 
     def open_term_view(self, infos, removable_script_info=None, auto_run=False):
+        # Check if any script has auto_run flag set in its info dict
+        if not auto_run and infos:
+            auto_run = any(script.get("auto_run", False) for script in infos)
+        
         run_box = term_view.TermRunScripts(
             infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run
         )

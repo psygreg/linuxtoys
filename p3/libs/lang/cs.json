@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak je nainstalován",
   "flatpak_installed_message": "Schopnost Flatpak byla právě nainstalována do vašeho systému. K tomu, aby nabídka aplikací začala zahrnovat aplikace flatpak, je vyžadován restart systému.",
   "featured_scripts": "Možná byste chtěli vyzkoušet...",
-  "helium_desc": "Minimalistický webový prohlížeč založený na Chromium s přístupem zaměřeným na soukromí a nezaujatým blokováním reklam."
+  "helium_desc": "Minimalistický webový prohlížeč založený na Chromium s přístupem zaměřeným na soukromí a nezaujatým blokováním reklam.",
+  "recordly_desc": "Otevřený snímač obrazovky a editor pro návody, ukázky, videa produktů a další, s vestavěnými nástroji pro prezentaci řízené pohybem."
 }

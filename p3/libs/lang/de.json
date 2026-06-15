@@ -431,5 +431,6 @@
   "flatpak_installed_title": "Flatpak installiert",
   "flatpak_installed_message": "Die Flatpak-Funktionalität wurde gerade auf Ihrem System installiert. Ein Systemneustart ist erforderlich, damit das App-Menü Flatpak-Anwendungen einzuschließen beginnt.",
   "featured_scripts": "Möglicherweise möchten Sie versuchen...",
-  "helium_desc": "Minimalistischer auf Chromium basierender Webbrowser mit Privacy-First-Ansatz und unvoreingenommener Werbeblocker."
+  "helium_desc": "Minimalistischer auf Chromium basierender Webbrowser mit Privacy-First-Ansatz und unvoreingenommener Werbeblocker.",
+  "recordly_desc": "Open-Source-Bildschirmrecorder und Editor für Anleitungen, Demonstrationen, Produktvideos und mehr mit integrierten bewegungsgesteuerten Präsentationswerkzeugen."
 }
