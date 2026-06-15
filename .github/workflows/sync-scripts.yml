@@ -27,10 +27,11 @@ jobs:
 
       - name: Sync files from local scripts to remote repository
         run: |
-          # Remove all synced files except .git, LICENSE and README.md (preserves the git repo itself)
-          rm -rf ./sync-target/!(.git|LICENSE|README.md)* || true
-          
-          # Copy scripts, excluding node_modules and .git
+          find ./sync-target -mindepth 1 -maxdepth 1 \
+            ! -name '.git' \
+            ! -name 'LICENSE' \
+            ! -name 'README.md' \
+            -exec rm -rf {} +
           cp -r ./p3/scripts/* ./sync-target/ || true
           
       - name: Commit and push changes
