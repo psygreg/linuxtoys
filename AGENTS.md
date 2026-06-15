@@ -1,202 +1,141 @@
-# AGENTS.md — Regras para Contribuição no LinuxToys
+# AGENTS.md — LinuxToys
 
-## Sobre o Projeto
+## Project Overview
 
-LinuxToys é uma coleção de ferramentas amigáveis para Linux. O repositório original fica em `psygreg/linuxtoys`. Nosso fork está em `pdl-clay/linuxtoys`.
+LinuxToys is a Python/Tkinter GUI app that installs Linux tools via bash scripts. Original repo: `psygreg/linuxtoys`. Our fork: `pdl-clay/linuxtoys`.
 
----
-
-## Regras de Contribuição
-
-### Prioridades de Desenvolvimento (ordem de importância)
-
-1. **Segurança e Privacidade primeiro** — Nunca implementar funcionalidades que comprometam dados ou segurança do usuário. Validar todos os inputs.
-2. **Usabilidade e Acessibilidade** — Projetar para o usuário médio. Interfaces claras, descrições úteis, linguagem simples.
-3. **Confiabilidade e Autossuficiência** — Tudo deve funcionar sem workarounds. Tratar casos extremos, mensagens de erro claras.
-4. **Restrições CLI** — Interfaces de linha de comando só para menus de Desenvolvimento e Administração de Sistema.
-
-### Fluxo de Trabalho
-
-1. Sempre criar uma **feature branch** a partir de `master` atualizado
-2. Seguir o estilo de código existente
-3. Documentar novas funcionalidades ou mudanças significativas
-4. Testar em container isolado (veja abaixo)
-5. Enviar Pull Request com descrição clara das alterações
-
-### Referências
-
-- [Knowledge Base](https://github.com/psygreg/linuxtoys/wiki/Knowledge-Base)
-- [CONTRIBUTING.md](CONTRIBUTING.md)
-- [dev/README.md](dev/README.md)
-- [dev/build/README.md](dev/build/README.md)
-- [dev/libs/README.md](dev/libs/README.md)
-
----
-
-## Testes em Container Isolado
-
-**NUNCA teste scripts diretamente no sistema host.** Sempre usar container isolado.
-
-### Pré-requisitos
+## Run from Source
 
 ```bash
-# Docker
-sudo apt install docker.io
-
-# ou Podman
-sudo apt install podman
+p3/linuxtoys.py          # GUI mode (requires display server)
+EASY_CLI=1 p3/linuxtoys.py  # CLI mode
 ```
 
-### Testar scripts bash isoladamente
+System deps (Fedora): `python3 python3-gobject python3-requests gtk3 vte291 zenity`
 
-```bash
-# Fedora (mais próximo do target principal)
-docker run --rm -it -v "$(pwd)":/workspace fedora:44 bash -c "cd /workspace && bash p3/scripts/SEU_SCRIPT.sh"
+## Architecture
 
-# ou com Podman
-podman run --rm -it -v "$(pwd)":/workspace fedora:44 bash -c "cd /workspace && bash p3/scripts/SEU_SCRIPT.sh"
+```
+p3/
+├── linuxtoys.py          # Entry point — sets SCRIPT_DIR env, checks display, launches GUI
+├── app/                  # Python GUI (GTK/Tkinter)
+│   ├── main.py           # App launch
+│   ├── window.py         # Main window
+│   ├── term_view.py      # Terminal emulator widget
+│   └── updater/          # Auto-update logic
+├── libs/                 # Bash libraries sourced by scripts
+│   ├── helpers.lib       # Core helper functions
+│   ├── optimizers.lib    # System optimization libs
+│   └── lang/             # Translation JSON files
+├── scripts/              # Bash install scripts organized by category
+│   ├── devs/             # Development tools (docker, IDEs, SDKs)
+│   ├── drivers/          # GPU drivers (Nvidia, etc.)
+│   ├── office/           # Office/creative apps
+│   ├── repos/            # Package repos (RPMFusion, AUR helpers, etc.)
+│   ├── sysadm/           # System admin tools
+│   ├── extra/            # Misc tools and fixes
+│   ├── game/             # Gaming tools
+│   ├── edu/              # Education
+│   └── chat/             # Chat/communication
+├── helpers/              # Helper scripts (update_self.sh)
+└── requirements.txt      # Python deps
+dev/
+├── libs/
+│   ├── utils.lib         # _msg() logging function — source this in all scripts
+│   └── install_all_packages.lib  # Dep installer (TEST MODE — unstable)
+├── build/                # Package build scripts
+│   ├── build_all.sh      # Builds all formats (needs 3 distrobox containers)
+│   ├── copr/build.sh     # RPM/COPR
+│   ├── deb/build.sh      # DEB
+│   ├── pkg/build.sh      # Arch PKGBUILD
+│   ├── nuitka/build.sh   # Standalone binary
+│   └── solus/build.sh    # Solus .eopkg
 ```
 
-### Testar a instalação completa
+## Critical Conventions
+
+### Bash Scripts
+
+- **Always use `ROOT_DIR`** — never `cd ./` or `../`. The build system and utils.lib depend on it.
+- **Log with `_msg`** — `source "$ROOT_DIR/dev/libs/utils.lib"` then `_msg info "message"` / `_msg error "message"`.
+- **Script headers** are structured metadata parsed by the app:
+  ```bash
+  #!/bin/bash
+  # name: scriptname
+  # version: 1.0
+  # description: description_key
+  # icon: icon.svg
+  # compat: ubuntu, fedora, arch, ...
+  # reboot: yes/no
+  # noconfirm: yes/no
+  # nocontainer          # optional: skip container testing
+  # systemd: yes/no
+  ```
+- Script source libs from `p3/libs/` via `$SCRIPT_DIR` env var (set by `linuxtoys.py`).
+
+### Python Code
+
+- Entry point: `p3/linuxtoys.py`
+- GUI code lives in `p3/app/`
+- Uses GTK3 via PyGObject
+
+## Fork Maintenance
+
+When syncing with upstream (`psygreg/linuxtoys`):
 
 ```bash
-# Criar container Fedora e rodar install.sh
-docker run --rm -it -v "$(pwd)":/workspace fedora:44 bash -c "
-  cd /workspace &&
-  chmod +x install.sh &&
-  ./install.sh
-"
-```
-
-### Testar em múltiplas distros
-
-```bash
-# Fedora
-docker run --rm -it -v "$(pwd)":/workspace fedora:44 bash -c "cd /workspace && bash install.sh"
-
-# Ubuntu
-docker run --rm -it -v "$(pwd)":/workspace ubuntu:24.04 bash -c "cd /workspace && bash install.sh"
-
-# Arch Linux
-docker run --rm -it -v "$(pwd)":/workspace archlinux:latest bash -c "cd /workspace && bash install.sh"
-```
-
-### Verificar sintaxe de scripts
-
-```bash
-# Bash syntax check
-bash -n p3/scripts/SEU_SCRIPT.sh
-```
-
----
-
-## Atualizar o Fork com o Repositório Original
-
-Quando o usuário pedir para "fazer merge" ou "atualizar o fork", seguir este procedimento:
-
-### Procedimento
-
-```bash
-# 1. Garantir que estamos no diretório do projeto
-cd /home/pdl/Documentos/linuxtoys
-
-# 2. Buscar alterações do upstream
 git fetch upstream
-
-# 3. Merge com upstream/master
 git checkout master
 git merge upstream/master
-
-# 4. Resolver conflitos (se houver)
-#    - Verificar arquivos conflitantes com: git status
-#    - Editar arquivos e remover marcadores de conflito
-#    - git add ARQUIVO_CONFLITANTE
-#    - git commit -m "resolve merge conflict"
-
-# 5. Push para o fork
 git push origin master
 ```
 
-### Regras importantes
+**Always remove upstream-only workflows** from fork:
+- `.github/workflows/sync-scripts.yml` — uses `SCR_TOKEN`
+- `.github/workflows/update-tools.yml` — uses `PAT_TOKEN`
 
-- **Sempre usar `upstream/master`** como branch de origem
-- Se houver conflito, aceitar a versão do upstream (repositório original) como padrão, a menos que o usuário especifique o contrário
-- **Remover workflows do upstream** que não se aplicam ao fork (arquivos em `.github/workflows/` que usem secrets como `SCR_TOKEN` ou `PAT_TOKEN`)
-- Após o push, informar ao usuário se houve conflitos e como foram resolvidos
+If merge conflicts occur, prefer upstream version unless user specifies otherwise.
 
-### Workflows a remover ao sincronizar
+## Testing
 
-Estes workflows são específicos do repositório original e não devem existir no fork:
-
-- `.github/workflows/sync-scripts.yml` — Sincroniza com `psygreg/scripts`
-- `.github/workflows/update-tools.yml` — Atualiza `psygreg/linuxtoys-site`
-
-Para remover:
-```bash
-git rm .github/workflows/sync-scripts.yml .github/workflows/update-tools.yml
-git commit -m "remove workflows that only apply to upstream repo"
-```
-
----
-
-## Memória de IA
-
-**Sempre salvar tudo que é feito no projeto na memória de IA (ai-memory).** Isso garante que qualquer sessão futura tenha contexto completo sobre decisões, alterações e histórico do projeto.
-
-### O que salvar
-
-- Decisões de arquitetura e design
-- Problemas encontrados e como foram resolvidos
-- Configurações importantes do projeto
-- Alterações significativas de código
-- Notas sobre o fluxo de trabalho
-
-### Como salvar
-
-Usar a ferramenta `memory_write_page` para criar páginas na wiki do projeto:
-
-```
-# Exemplo de páginas a criar:
-notes/arquitetura.md       — Decisões de design do projeto
-notes/decisoes.md          — Registro de decisões tomadas
-concepts/flask-api.md      — Conceitos da API
-_rules/testes.md           — Regras de testes
-```
-
-### Quando salvar
-
-- **Sempre** após completar uma tarefa significativa
-- **Sempre** após resolver um conflito de merge
-- **Sempre** após tomar uma decisão de design
-- **Sempre** após implementar uma nova funcionalidade
-
-### Consultar memória
-
-Antes de começar qualquer tarefa, consultar a memória existente:
+**NEVER test scripts on the host system.** Use containers.
 
 ```bash
-# Ver páginas recentes
-memory_recent
+# Single script
+docker run --rm -it -v "$(pwd)":/workspace fedora:44 bash -c \
+  "cd /workspace && bash p3/scripts/SCRIPTNAME.sh"
 
-# Buscar por tópico específico
-memory_query "merge upstream"
+# Full install
+docker run --rm -it -v "$(pwd)":/workspace fedora:44 bash -c \
+  "cd /workspace && chmod +x install.sh && ./install.sh"
+
+# Syntax check
+bash -n p3/scripts/SCRIPTNAME.sh
 ```
 
----
+Multi-distro: `fedora:44`, `ubuntu:24.04`, `archlinux:latest`
 
-## Estrutura do Projeto
+## Build
 
+Build requires **3 Distrobox containers** (Arch, Debian, Fedora):
+
+```bash
+cd dev/build
+./build_all.sh              # All formats
+./copr/build.sh <ver> <out> # RPM only
 ```
-linuxtoys/
-├── .github/workflows/    # CI/CD (manter apenas workflows relevantes ao fork)
-├── dev/                  # Código de desenvolvimento e build
-├── p3/                   # Código principal da aplicação
-│   ├── app/              # Interface (Python/Tkinter)
-│   ├── libs/             # Bibliotecas compartilhadas
-│   └── scripts/          # Scripts de instalação de ferramentas
-├── resources/            # Ícones e recursos
-├── src/                  # Scripts de compilação
-├── install.sh            # Instalador principal
-├── flake.nix             # Nix flake
-└── shell.nix             # Shell Nix para desenvolvimento
-```
+
+## Development Priorities (from CONTRIBUTING.md)
+
+1. Safety & Privacy first
+2. User friendliness & accessibility
+3. Reliability & self-sufficiency
+4. CLI restricted to dev/sysadmin menus
+
+## Reference Docs
+
+- `dev/README.md` — Developer setup and build instructions
+- `dev/libs/README.md` — Library conventions
+- `dev/build/README.md` — Build system details
+- `CONTRIBUTING.md` — Contribution guidelines
+- [Knowledge Base](https://github.com/psygreg/linuxtoys/wiki/Knowledge-Base)
