@@ -154,6 +154,7 @@ dv_rhel () {
         export SKIP_PACKAGE_CHECK=1
         ./${_archive_run_name}.run || fatal "Failed to install Resolve"
         # libs patch
+        sudo_rq
         sudo mkdir -p /opt/resolve/libs/disabled
         move_ /opt/resolve/libs/libglib* /opt/resolve/libs/disabled/
         move_ /opt/resolve/libs/libgio* /opt/resolve/libs/disabled/
