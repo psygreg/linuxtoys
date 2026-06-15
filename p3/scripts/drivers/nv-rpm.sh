@@ -17,7 +17,7 @@ if is_rhel && [ "$(rpm -E %rhel)" = "10" ]; then
     pkg_install kernel-devel-matched kernel-headers
     sudo dnf config-manager --add-repo "https://developer.download.nvidia.com/compute/cuda/repos/rhel$(rpm -E %rhel)/$(arch)/cuda-rhel$(rpm -E %rhel).repo"
     sudo dnf clean expire-cache
-    pkg_install nvidia-open cuda-drivers nvidia-container-toolkit
+    { lspci | grep -i "nvidia.*rtx" && pkg_install nvidia-open nvidia-container-toolkit; } || pkg_install cuda-drivers nvidia-container-toolkit
 else
     pkg_install akmod-nvidia xorg-x11-drv-nvidia-cuda
 fi
