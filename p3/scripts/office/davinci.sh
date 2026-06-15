@@ -144,7 +144,7 @@ dv_rhel () {
         pkg_install qt5-qtbase-gui libxcb glib2 apr-util mesa-libGLU libxcrypt-compat zlib-ng zlib-ng-compat
         { is_amd && pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo && sudo usermod -aG render,video "$USER"; } || true
         { is_intel && pkg_install intel-compute-runtime; } || true
-        {( is_nvidia && ( rpm -qi "cuda" &>/dev/null && rpm -qi "cuda-drivers" &>/dev/null )) || fatal "Missing cuda drivers. Please install them from the Drivers menu according to your GPU."; } || true
+        {( is_nvidia && ( rpm -qi "cuda" &>/dev/null || rpm -qi "cuda-drivers" &>/dev/null )) || fatal "Missing cuda drivers. Please install them from the Drivers menu according to your GPU."; } || true
 
         # install resolve
         getresolve
