@@ -26,7 +26,7 @@ if _zenity_can_run; then
 		: # User selected versions
 	else
 		zenwrn "No version selected"
-		exit 0
+		exit 100
 	fi
 else
     _selected_ver=(10 9 8)

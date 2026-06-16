@@ -61,28 +61,25 @@ install_dvbox() {
         distrobox enter davincibox -- sudo dnf install intel-media-driver intel-vpl-gpu-rt -y || fatal "Failed to install Intel media drivers in DaVinciBox."
     fi
 }
-if is_rhel; then
-    install_dvbox && exit 0
-else
-    while true; do
-        CHOICE=$(zenity --list --title "DaVinci Resolve FFMPEG Plugin" --text "$msg229" \
-            --column "Options" \
-            "DaVinciBox" \
-            "Local Installation" \
-            "Cancel" \
-            --width 360 --height 360 )
 
-        if [ $? -ne 0 ]; then
-            exit 100
-        fi
+while true; do
+    CHOICE=$(zenity --list --title "DaVinci Resolve FFMPEG Plugin" --text "$msg229" \
+        --column "Options" \
+        "DaVinciBox" \
+        "Local Installation" \
+        "Cancel" \
+        --width 360 --height 360 )
 
-        case $CHOICE in
+    if [ $? -ne 0 ]; then
+        exit 100
+    fi
+
+    case $CHOICE in
         "DaVinciBox" ) install_dvbox && break;;
         "Local Installation") install_nobox && break;;
         "Cancel") exit 100 ;;
         *) echo "Invalid Option" ;;
-        esac
-    done
-fi
+    esac
+done
 
 zeninf "DaVinci Resolve FFmpeg Plugin installed successfully!"
