@@ -167,6 +167,7 @@ is_suse() { sysdetect && [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE"
 is_solus() { sysdetect && [[ "$ID" == "solus" ]]; }
 is_zorin() { sysdetect && [[ "$ID" == "zorin" ]]; }
 is_rhel() { sysdetect && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && ! command -v rpm-ostree &>/dev/null && [[ "$ID" != "nobara" ]]; }
+is_systemd() { [[ $(ps -p 1 -o comm= || readlink /sbin/init) =~ "systemd" ]] }
 
 # GPU detection
 is_nvidia() {

@@ -606,6 +606,38 @@ def script_is_container_compatible(script_path):
     return True  # If no restrictions, allow by default
 
 
+def _script_requires_systemd_functions(script_path):
+    """
+    Check if a script uses systemd-specific functions that require systemd.
+
+    Functions checked:
+    - pkg_flat: Package flatpak function
+    - sysd_*: Any systemd-specific function (e.g., sysd_enable, sysd_start, etc.)
+
+    Args:
+        script_path (str): Path to the script file
+
+    Returns:
+        bool: True if script uses systemd functions, False otherwise
+    """
+    try:
+        with open(script_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+            # Check for pkg_flat function calls
+            if "pkg_flat" in content:
+                return True
+
+            # Check for sysd_* function calls (e.g., sysd_enable, sysd_start, etc.)
+            import re
+            if re.search(r'\bsysd_\w+', content):
+                return True
+    except Exception:
+        pass
+
+    return False
+
+
 def script_is_compatible(script_path, compat_keys):
     """
     Check if a script is compatible with the given compatibility keys.
@@ -634,6 +666,7 @@ def script_is_compatible(script_path, compat_keys):
     gpu_compatible = True  # Default for unset GPU header
     desktop_compatible = True  # Default for unset desktop header
     systemd_compatible = True  # Default for unset systemd header
+    has_explicit_systemd_header = False  # Track if systemd header was explicitly set
 
     try:
         with open(script_path, "r", encoding="utf-8") as f:
@@ -705,6 +738,7 @@ def script_is_compatible(script_path, compat_keys):
                         # Empty header, treat as general desktop
                         desktop_compatible = "desktop" in compat_keys
                 elif line.startswith("# systemd:"):
+                    has_explicit_systemd_header = True
                     # systemd header with optional value (e.g., "yes" or "no" - for flexibility)
                     systemd_value = line[len("# systemd:") :].strip().lower()
                     # If header exists and is explicitly "no", script requires non-systemd
@@ -717,6 +751,11 @@ def script_is_compatible(script_path, compat_keys):
                     break
     except Exception:
         pass
+
+    # If no explicit systemd header was found, check for implicit systemd requirements
+    # via function calls (pkg_flat or sysd_*)
+    if not has_explicit_systemd_header and _script_requires_systemd_functions(script_path):
+        systemd_compatible = "systemd" in compat_keys
 
     return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible
 
