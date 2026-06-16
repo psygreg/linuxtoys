@@ -10,8 +10,6 @@
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-zenwrn "$ai_agent_warning"
-zenask "Do you want to continue with the installation?" || exit 0
 sudo_rq
 prep_tmp
 
