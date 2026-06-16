@@ -115,6 +115,35 @@ bash -n p3/scripts/SCRIPTNAME.sh
 
 Multi-distro: `fedora:44`, `ubuntu:24.04`, `archlinux:latest`
 
+### Consistency Testing Methodology
+
+Quando o usuário pedir "teste tudo" ou "teste em várias distros", seguir esta metodologia obrigatoriamente:
+
+1. **Criar script de teste unificado** (`/tmp/test_multidistro.sh` ou similar) que rode em qualquer distro sem modificação
+2. **Testar SEM `DEV_MODE=1` primeiro** (regressão) para garantir que alterações não quebram o funcionamento normal:
+   - `SCRIPTS_DIR` deve apontar para `~/.cache/linuxtoys/scripts` (cache git)
+   - `is_using_git_scripts()` deve retornar `True`
+   - Scripts novos da fork **não devem aparecer** (pois não estão no repo oficial)
+3. **Testar COM `DEV_MODE=1` depois** (nova funcionalidade):
+   - `SCRIPTS_DIR` deve apontar para `p3/scripts/` (bundled local)
+   - `is_using_git_scripts()` deve retornar `False`
+   - Scripts novos da fork **devem aparecer**
+4. **Testar em 3 containers em paralelo:** `fedora:44`, `ubuntu:24.04`, `archlinux:latest`
+5. **Verificações obrigatórias em cada distro:**
+   - Sintaxe bash (`bash -n`)
+   - Ícone existe e é carregado (`get_icon_path()`)
+   - Traduções carregam corretamente (sem chaves cruas na UI)
+   - `is_containerized()` + `script_is_container_compatible()` funcionam
+   - Categorias e subcategorias são descobertas corretamente
+6. **Committar correções antes de prosseguir** — não deixar testes falhando
+7. **Documentar resultados na memória** (`notes/`) antes de abrir PR
+
+```bash
+# Template de execução por container
+docker run --rm -v "$(pwd)":/workspace:ro <distro> bash -c \
+  "apt-get/pacman/dnf install -y python3 git && bash /workspace/test_multidistro.sh"
+```
+
 ## Build
 
 Build requires **3 Distrobox containers** (Arch, Debian, Fedora):
