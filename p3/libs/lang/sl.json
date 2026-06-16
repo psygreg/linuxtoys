@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Zmožnost Flatpak je pravkar nameščena na vaš sistem. Za to, da menu aplikacij začne vključevati aplikacije flatpak, je potreben ponoven zagon sistema.",
   "featured_scripts": "Mogoče bi rad poskusil...",
   "helium_desc": "Minimalistični spletni brskalnik na podlagi Chromium s pristopom, ki daje prednost zasebnosti, in nepristranskim blokiranjem oglasov.",
-  "recordly_desc": "Odprtokodni zaslonski snemalnik in urejevalnik za navodila, demonstracije, videe o proizvodih in še več, z vgrajenimi orodji za predstavitev, vodeni z gibanjem."
+  "recordly_desc": "Odprtokodni zaslonski snemalnik in urejevalnik za navodila, demonstracije, videe o proizvodih in še več, z vgrajenimi orodji za predstavitev, vodeni z gibanjem.",
+  "ai_agents": "AI Agenti",
+  "ai_agents_desc": "AI asistenti za kodiranje in agenti za razvoj.",
+  "claude_code_desc": "Claude Code je AI agent za kodiranje od Anthropica. Zahteva plačan Claude načrt (Pro, Max, Team ali Enterprise).\n\n⚠️ Opozorilo: Nismo odgovorni za kakršno koli škodo na sistemu, ki jo povzroči zloraba tega AI agenta. Uporabljajte na lastno odgovornost.",
+  "opencode_desc": "Agent za kodiranje AI z odprtim kodom. Prosti modeli vključeni ali povežite kateri koli model od katerega koli ponudnika.\n\n⚠️ Opozorilo: Nismo odgovorni za kakršno koli škodo na sistemu, ki jo povzroči zloraba tega AI agenta. Uporabljajte na lastno odgovornost.",
+  "codex_desc": "Agent za kodiranje AI od OpenAI. Avtomatizira naloge za kodiranje v terminalu.\n\n⚠️ Opozorilo: Nismo odgovorni za kakršno koli škodo na sistemu, ki jo povzroči zloraba tega AI agenta. Uporabljajte na lastno odgovornost.",
+  "pi_desc": "Agent za kodiranje AI. Lahek in hiter asistent za kodiranje v terminalu.\n\n⚠️ Opozorilo: Nismo odgovorni za kakršno koli škodo na sistemu, ki jo povzroči zloraba tega AI agenta. Uporabljajte na lastno odgovornost.",
+  "omp_desc": "Veja Pi z več orodji in večmodelsko podporo. Agent za kodiranje AI za vašo terminal.\n\n⚠️ Opozorilo: Nismo odgovorni za kakršno koli škodo na sistemu, ki jo povzroči zloraba tega AI agenta. Uporabljajte na lastno odgovornost."
 }

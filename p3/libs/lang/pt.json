@@ -53,13 +53,6 @@
   "utils_desc": "Ferramentas e recursos para administração, manutenção do sistema e outros.",
   "devs": "Desenvolvedores",
   "devs_desc": "Ferramentas e recursos para desenvolvedores de software.",
-  "ai_agents": "Agentes de IA",
-  "ai_agents_desc": "Assistentes de codificação IA e agentes para desenvolvimento.",
-  "claude_code_desc": "Claude Code é um agente de codificação IA da Anthropic. Requer um plano Claude pago (Pro, Max, Team ou Enterprise).\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
-  "opencode_desc": "Agente de codificação IA de código aberto. Modelos grátis incluídos ou conecte qualquer modelo de qualquer provedor.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
-  "codex_desc": "Agente de codificação IA da OpenAI. Automatiza tarefas de codificação no seu terminal.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
-  "pi_desc": "Agente de codificação IA. Assistente de codificação leve e rápido para o seu terminal.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
-  "omp_desc": "Fork do Pi com mais ferramentas e suporte multimodelo. Agente de codificação IA para o seu terminal.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
   "drivers": "Drivers",
   "drivers_desc": "Drivers para diversos propósitos e dispositivos.",
   "privacy": "Privacidade",
@@ -439,5 +432,12 @@
   "flatpak_installed_message": "A capacidade Flatpak foi instalada no seu sistema. Uma reinicialização do sistema é necessária para que o menu de aplicativos comece a incluir aplicativos flatpak.",
   "featured_scripts": "Você pode querer tentar...",
   "helium_desc": "Navegador web minimalista baseado em Chromium que adota uma abordagem centrada na privacidade com bloqueio de anúncios imparcial.",
-  "recordly_desc": "Gravador de tela e editor de código aberto para tutoriais, demonstrações, vídeos de produtos e muito mais, com ferramentas de apresentação orientadas por movimento integradas."
+  "recordly_desc": "Gravador de tela e editor de código aberto para tutoriais, demonstrações, vídeos de produtos e muito mais, com ferramentas de apresentação orientadas por movimento integradas.",
+  "ai_agents": "Agentes de IA",
+  "ai_agents_desc": "Assistentes de codificação IA e agentes para desenvolvimento.",
+  "claude_code_desc": "Claude Code é um agente de codificação IA da Anthropic. Requer um plano Claude pago (Pro, Max, Team ou Enterprise).\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
+  "opencode_desc": "Agente de codificação IA de código aberto. Modelos grátis incluídos ou conecte qualquer modelo de qualquer provedor.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
+  "codex_desc": "Agente de codificação IA da OpenAI. Automatiza tarefas de codificação no seu terminal.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
+  "pi_desc": "Agente de codificação IA. Assistente de codificação leve e rápido para o seu terminal.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco.",
+  "omp_desc": "Fork do Pi com mais ferramentas e suporte multimodelo. Agente de codificação IA para o seu terminal.\n\n⚠️ Aviso: Não nos responsabilizamos por danos ao sistema resultantes do mau uso deste agente de IA. Use por sua conta e risco."
 }

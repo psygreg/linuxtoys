@@ -52,13 +52,6 @@
   "utils_desc": "System management, maintenance, monitoring and other tools.",
   "devs": "Developers",
   "devs_desc": "Tools and resources for software developers.",
-  "ai_agents": "AI Agents",
-  "ai_agents_desc": "AI coding assistants and agents for development.",
-  "claude_code_desc": "Claude Code is an AI coding agent by Anthropic. Requires a paid Claude plan (Pro, Max, Team, or Enterprise).\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
-  "opencode_desc": "Open source AI coding agent. Free models included or connect any model from any provider.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
-  "codex_desc": "AI coding agent by OpenAI. Automates coding tasks in your terminal.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
-  "pi_desc": "AI coding agent. Lightweight and fast coding assistant for your terminal.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
-  "omp_desc": "Fork of Pi with more tools and multi-model support. AI coding agent for your terminal.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
   "privacy": "Privacy",
   "privacy_desc": "Tools and resources for privacy on Linux.",
   "drivers": "Drivers",
@@ -439,5 +432,12 @@
   "flatpak_installed_message": "The Flatpak capability has just been installed on your system. A system reboot is required for the app menu to start including flatpak applications.",
   "featured_scripts": "You may want to try...",
   "helium_desc": "Chromium-based minimalist web browser that takes a privacy-first approach with unbiased ad-blocking.",
-  "recordly_desc": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in."
+  "recordly_desc": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in.",
+  "ai_agents": "AI Agents",
+  "ai_agents_desc": "AI coding assistants and agents for development.",
+  "claude_code_desc": "Claude Code is an AI coding agent by Anthropic. Requires a paid Claude plan (Pro, Max, Team, or Enterprise).\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
+  "opencode_desc": "Open source AI coding agent. Free models included or connect any model from any provider.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
+  "codex_desc": "AI coding agent by OpenAI. Automates coding tasks in your terminal.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
+  "pi_desc": "AI coding agent. Lightweight and fast coding assistant for your terminal.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk.",
+  "omp_desc": "Fork of Pi with more tools and multi-model support. AI coding agent for your terminal.\n\n⚠️ Disclaimer: We are not responsible for any system damage caused by misuse of this AI agent. Use at your own risk."
 }

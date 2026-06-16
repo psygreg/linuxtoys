@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Bhí an cumas Flatpak díreach suiteáilte ar do chóras. Tá atosú an chórais ag teastáil ionas go dtosóidh an roghchlár feidhmchlár a bheith i gceist flatpak feidhmchláir.",
   "featured_scripts": "D'fhéadfá a bheith i gceist agat a dhéanamh...",
   "helium_desc": "Brabhsálaí gréasáin minimalist bunaithe ar Chromium le cur chuige dírithe ar phríobháideacht agus bac neamhchlaonta ar fhógraí.",
-  "recordly_desc": "Taifeadóir scáileáin agus eagarthóir foinse oscailte do thurlaiceacha, taispeántais, físeáin táirgí agus níos mó, le huirlisí láithreoireachta faoi threoir gluaisne ionsuite."
+  "recordly_desc": "Taifeadóir scáileáin agus eagarthóir foinse oscailte do thurlaiceacha, taispeántais, físeáin táirgí agus níos mó, le huirlisí láithreoireachta faoi threoir gluaisne ionsuite.",
+  "ai_agents": "Gníomhairí AI",
+  "ai_agents_desc": "Cúntóirí códaithe AI agus gníomhairí do fhorbairt.",
+  "claude_code_desc": "Is gníomhaire códaithe AI ó Anthropic a bhí i Claude Code. Éilíonn sé plean Claude íoctha (Pro, Max, Team nó Enterprise).\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
+  "opencode_desc": "Gníomhaire códaithe AI oscailte. Modélacha saor in aisce san áireamh nó ceangail aon mhúnla ó aon soláthraí.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
+  "codex_desc": "Gníomhaire códaithe AI ó OpenAI. Uathoibríonn sé tasc códaithe i do dheilbhín.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
+  "pi_desc": "Gníomhaire códaithe AI. Cúntóir códaithe éadrom agus tapa do do dheilbhín.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
+  "omp_desc": "Fhorchuir de Pi le níos mó uirlisí agus tacaíochta ilmhúnla. Gníomhaire códaithe AI do do dheilbhín.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin."
 }

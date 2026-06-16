@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Flatpak-functionaliteit is zojuist op uw systeem geïnstalleerd. Een systeemherstart is nodig om het app-menu Flatpak-toepassingen te gaan opnemen.",
   "featured_scripts": "Je zult misschien willen proberen...",
   "helium_desc": "Minimalistische Chromium-gebaseerde webbrowser met privacy-first aanpak en onbevooroordeelde advertentieblokkering.",
-  "recordly_desc": "Open source schermrecorder en editor voor tutorials, demonstraties, productvideo's en meer, met ingebouwde bewegingsgestuurde presentatieprogramma's."
+  "recordly_desc": "Open source schermrecorder en editor voor tutorials, demonstraties, productvideo's en meer, met ingebouwde bewegingsgestuurde presentatieprogramma's.",
+  "ai_agents": "AI-agenten",
+  "ai_agents_desc": "AI-coderingsassistenten en agenten voor ontwikkeling.",
+  "claude_code_desc": "Claude Code is een AI-coderingsagent van Anthropic. Vereist een betaald Claude-plan (Pro, Max, Team of Enterprise).\n\n⚠️ Disclaimer: We zijn niet verantwoordelijk voor enige systeemschade die wordt veroorzaakt door misbruik van deze AI-agent. Gebruik op uw eigen risico.",
+  "opencode_desc": "Open source AI-coderingsagent. Gratis modellen inbegrepen of verbind een willekeurig model van een willekeurige provider.\n\n⚠️ Disclaimer: We zijn niet verantwoordelijk voor enige systeemschade die wordt veroorzaakt door misbruik van deze AI-agent. Gebruik op uw eigen risico.",
+  "codex_desc": "AI-coderingsagent van OpenAI. Automatiseert codeertaken in uw terminal.\n\n⚠️ Disclaimer: We zijn niet verantwoordelijk voor enige systeemschade die wordt veroorzaakt door misbruik van deze AI-agent. Gebruik op uw eigen risico.",
+  "pi_desc": "AI-coderingsagent. Lichte en snelle coderingsassistent voor uw terminal.\n\n⚠️ Disclaimer: We zijn niet verantwoordelijk voor enige systeemschade die wordt veroorzaakt door misbruik van deze AI-agent. Gebruik op uw eigen risico.",
+  "omp_desc": "Fork van Pi met meer tools en multi-model ondersteuning. AI-coderingsagent voor uw terminal.\n\n⚠️ Disclaimer: We zijn niet verantwoordelijk voor enige systeemschade die wordt veroorzaakt door misbruik van deze AI-agent. Gebruik op uw eigen risico."
 }

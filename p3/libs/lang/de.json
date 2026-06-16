@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Die Flatpak-Funktionalität wurde gerade auf Ihrem System installiert. Ein Systemneustart ist erforderlich, damit das App-Menü Flatpak-Anwendungen einzuschließen beginnt.",
   "featured_scripts": "Möglicherweise möchten Sie versuchen...",
   "helium_desc": "Minimalistischer auf Chromium basierender Webbrowser mit Privacy-First-Ansatz und unvoreingenommener Werbeblocker.",
-  "recordly_desc": "Open-Source-Bildschirmrecorder und Editor für Anleitungen, Demonstrationen, Produktvideos und mehr mit integrierten bewegungsgesteuerten Präsentationswerkzeugen."
+  "recordly_desc": "Open-Source-Bildschirmrecorder und Editor für Anleitungen, Demonstrationen, Produktvideos und mehr mit integrierten bewegungsgesteuerten Präsentationswerkzeugen.",
+  "ai_agents": "KI-Agenten",
+  "ai_agents_desc": "KI-Codierungsassistenten und Agenten für die Entwicklung.",
+  "claude_code_desc": "Claude Code ist ein KI-Codierungsagent von Anthropic. Erfordert einen bezahlten Claude-Plan (Pro, Max, Team oder Enterprise).\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
+  "opencode_desc": "KI-Codierungsagent mit offener Quelle. Kostenlose Modelle enthalten oder verbinden Sie jedes Modell von jedem Anbieter.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
+  "codex_desc": "KI-Codierungsagent von OpenAI. Automatisiert Codierungsaufgaben in Ihrem Terminal.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
+  "pi_desc": "KI-Codierungsagent. Leichter und schneller Codierungsassistent für Ihren Terminal.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
+  "omp_desc": "Abzweigung von Pi mit mehr Werkzeugen und Unterstützung für mehrere Modelle. KI-Codierungsagent für Ihr Terminal.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko."
 }

@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Flatpak iespēja tikko tika instalēta jūsu sistēmā. Sistēmas atkārtota palaišana ir nepieciešama, lai programmu izvēlne sāktu ietvert flatpak lietojumus.",
   "featured_scripts": "Iespējams, vēlēsies mēģināt...",
   "helium_desc": "Minimālistisks Chromium balstīts tīmekļa pārlūkprogramma ar privātuma prioritātu pieeju un neobjektīvu reklāmu bloķēšanu.",
-  "recordly_desc": "Atvērtā koda ekrāna ierakstītājs un redaktors instrukcijām, demonstrējumiem, produktu video un vairāk, ar iebūvētiem kustības vadītiem prezentācijas rīkiem."
+  "recordly_desc": "Atvērtā koda ekrāna ierakstītājs un redaktors instrukcijām, demonstrējumiem, produktu video un vairāk, ar iebūvētiem kustības vadītiem prezentācijas rīkiem.",
+  "ai_agents": "AI Aģenti",
+  "ai_agents_desc": "AI kodēšanas asistenti un agenti izstrādei.",
+  "claude_code_desc": "Claude Code ir Anthropic AI kodēšanas aģents. Nepieciešams maksas Claude plāns (Pro, Max, Team vai Enterprise).\n\n⚠️ Atbildības ierobežojums: Mēs nenesam atbildību par jebkādu sistēmas kaitējumu, kas radies šī AI aģenta ļaunprātīgas izmantošanas dēļ. Lietojiet uz savu riska.",
+  "opencode_desc": "Atvērtā koda AI kodēšanas aģents. Iekļauti bezmaksas modeļi vai izveidojiet savienojumu ar jebkuru modeli no jebkura nodrošinātāja.\n\n⚠️ Atbildības ierobežojums: Mēs nenesam atbildību par jebkādu sistēmas kaitējumu, kas radies šī AI aģenta ļaunprātīgas izmantošanas dēļ. Lietojiet uz savu riska.",
+  "codex_desc": "AI kodēšanas aģents no OpenAI. Automatizē kodēšanas uzdevumus jūsu terminālī.\n\n⚠️ Atbildības ierobežojums: Mēs nenesam atbildību par jebkādu sistēmas kaitējumu, kas radies šī AI aģenta ļaunprātīgas izmantošanas dēļ. Lietojiet uz savu riska.",
+  "pi_desc": "AI kodēšanas aģents. Viegls un ātrs kodēšanas asistents jūsu terminālī.\n\n⚠️ Atbildības ierobežojums: Mēs nenesam atbildību par jebkādu sistēmas kaitējumu, kas radies šī AI aģenta ļaunprātīgas izmantošanas dēļ. Lietojiet uz savu riska.",
+  "omp_desc": "Pi filiāle ar vairāk rīkiem un multi-modeļu atbalstu. AI kodēšanas aģents jūsu terminālam.\n\n⚠️ Atbildības ierobežojums: Mēs nenesam atbildību par jebkādu sistēmas kaitējumu, kas radies šī AI aģenta ļaunprātīgas izmantošanas dēļ. Lietojiet uz savu riska."
 }

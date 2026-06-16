@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Flatpak galimybė ką tik buvo įdiegta į jūsų sistemą. Sistemos paleidimas iš naujo reikalingas tam, kad programų meniu pradėtų įtraukti flatpak programas.",
   "featured_scripts": "Jūs galbūt norėtumėte bandyti...",
   "helium_desc": "Chromium pagrindinis minimalus žiniatinklio naršyklė su privatumo pirmenybe ir nešališku skelbimų blokavimo.",
-  "recordly_desc": "Atviros šaltinio srauto įrašytuvas ir redaktorius vadovams, demonstracijoms, produkto vaizdo įrašams ir daugiau, su integruotais judesiu valdytais pristatymo įrankiais."
+  "recordly_desc": "Atviros šaltinio srauto įrašytuvas ir redaktorius vadovams, demonstracijoms, produkto vaizdo įrašams ir daugiau, su integruotais judesiu valdytais pristatymo įrankiais.",
+  "ai_agents": "AI Agentai",
+  "ai_agents_desc": "AI kodavimo asistentai ir agentai kūrimui.",
+  "claude_code_desc": "Claude Code yra Anthropic AI kodavimo agentas. Reikalinga mokama Claude sąskaita (Pro, Max, Team arba Enterprise).\n\n⚠️ Atsakomybės atsisakymas: Mes neatssakome už jokią sistemos žalą, atsirandančią dėl šio AI agento piktnaudžiavimo. Naudokite savo rizika.",
+  "opencode_desc": "Atvirojo kodo AI kodavimo agentas. Įtraukti nemokami modeliai arba prijunkite bet kurį modelį iš bet kurio teikėjo.\n\n⚠️ Atsakomybės atsisakymas: Mes neatssakome už jokią sistemos žalą, atsirandančią dėl šio AI agento piktnaudžiavimo. Naudokite savo rizika.",
+  "codex_desc": "AI kodavimo agentas iš OpenAI. Automatizuoja kodavimo užduotis jūsų terminale.\n\n⚠️ Atsakomybės atsisakymas: Mes neatssakome už jokią sistemos žalą, atsirandančią dėl šio AI agento piktnaudžiavimo. Naudokite savo rizika.",
+  "pi_desc": "AI kodavimo agentas. Lengvas ir greitas kodavimo asistentas jūsų terminale.\n\n⚠️ Atsakomybės atsisakymas: Mes neatssakome už jokią sistemos žalą, atsirandančią dėl šio AI agento piktnaudžiavimo. Naudokite savo rizika.",
+  "omp_desc": "Pi šaka su daugiau įrankių ir daugybės modelių palaikymu. AI kodavimo agentas jūsų terminalui.\n\n⚠️ Atsakomybės atsisakymas: Mes neatssakome už jokią sistemos žalą, atsirandančią dėl šio AI agento piktnaudžiavimo. Naudokite savo rizika."
 }

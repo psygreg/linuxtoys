@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Kemampuan Flatpak baru saja diinstal di sistem Anda. Diperlukan boot ulang sistem agar menu aplikasi mulai menyertakan aplikasi flatpak.",
   "featured_scripts": "Anda mungkin ingin mencoba...",
   "helium_desc": "Penjelajah web minimalis berbasis Chromium dengan pendekatan prioritas privasi dan pemblokiran iklan yang tidak memihak.",
-  "recordly_desc": "Perekam layar dan editor sumber terbuka untuk panduan, demo, video produk, dan banyak lagi, dengan alat presentasi bergerak yang terintegrasi."
+  "recordly_desc": "Perekam layar dan editor sumber terbuka untuk panduan, demo, video produk, dan banyak lagi, dengan alat presentasi bergerak yang terintegrasi.",
+  "ai_agents": "Agen AI",
+  "ai_agents_desc": "Asisten pengkodean AI dan agen untuk pengembangan.",
+  "claude_code_desc": "Claude Code adalah agen pengkodean AI dari Anthropic. Memerlukan paket Claude berbayar (Pro, Max, Team, atau Enterprise).\n\n⚠️ Penafian: Kami tidak bertanggung jawab atas kerusakan sistem apa pun yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan dengan risiko Anda sendiri.",
+  "opencode_desc": "Agen pengkodean AI sumber terbuka. Model gratis disertakan atau hubungkan model apa pun dari penyedia apa pun.\n\n⚠️ Penafian: Kami tidak bertanggung jawab atas kerusakan sistem apa pun yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan dengan risiko Anda sendiri.",
+  "codex_desc": "Agen pengkodean AI dari OpenAI. Mengotomatiskan tugas pengkodean di terminal Anda.\n\n⚠️ Penafian: Kami tidak bertanggung jawab atas kerusakan sistem apa pun yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan dengan risiko Anda sendiri.",
+  "pi_desc": "Agen pengkodean AI. Asisten pengkodean ringan dan cepat untuk terminal Anda.\n\n⚠️ Penafian: Kami tidak bertanggung jawab atas kerusakan sistem apa pun yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan dengan risiko Anda sendiri.",
+  "omp_desc": "Fork dari Pi dengan lebih banyak alat dan dukungan multi-model. Agen pengkodean AI untuk terminal Anda.\n\n⚠️ Penafian: Kami tidak bertanggung jawab atas kerusakan sistem apa pun yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan dengan risiko Anda sendiri."
 }

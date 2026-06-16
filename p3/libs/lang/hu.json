@@ -432,5 +432,12 @@
   "flatpak_installed_message": "A Flatpak képesség most telepítve lett a rendszerre. A rendszer újraindítása szükséges ahhoz, hogy az alkalmazásmenü flatpak alkalmazásokat tartalmazzon.",
   "featured_scripts": "Talán szeretnél megpróbálni...",
   "helium_desc": "Chromium-alapú minimalista webböngésző, amely a magánszféra-elsőbbségi megközelítést és elfogultságmentes hirdetésblokkolást nyújt.",
-  "recordly_desc": "Nyílt forráskódú képernyő-felvevő és szerkesztő bemutatásokhoz, bemutatásokhoz, termékvideókhoz és még sok máshoz, beépített mozgásvezérelt prezentációs eszközökkel."
+  "recordly_desc": "Nyílt forráskódú képernyő-felvevő és szerkesztő bemutatásokhoz, bemutatásokhoz, termékvideókhoz és még sok máshoz, beépített mozgásvezérelt prezentációs eszközökkel.",
+  "ai_agents": "AI Ügynökök",
+  "ai_agents_desc": "AI kódolási asszisztensek és fejlesztési ügynökök.",
+  "claude_code_desc": "A Claude Code az Anthropic AI kódolási ügynöke. Fizetős Claude tervet igényel (Pro, Max, Team vagy Enterprise).\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
+  "opencode_desc": "Nyílt forráskódú AI kódolási ügynök. Ingyenes modellek mellékelve vagy csatlakoztathat bármilyen modellt bármely szolgáltatótól.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
+  "codex_desc": "AI kódolási ügynök az OpenAI-tól. Automatizálja a kódolási feladatokat a terminálban.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
+  "pi_desc": "AI kódolási ügynök. Könnyű és gyors kódolási asszisztens a terminálban.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
+  "omp_desc": "Pi elágazása több eszközzel és több modell támogatással. AI kódolási ügynök a termináljához.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd."
 }

@@ -517,22 +517,6 @@ pkg_fromfile () {
         _append_transmap "pkg file $*"
     fi
 }
-pkg_appimage () {
-    { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
-    { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
-    { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
-    pkg_flat it.mijorus.gearlever
-    local output
-    output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
-    local appimage_name
-    appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
-    _append_transmap "appimage $appimage_name"
-}
-pkg_appimage_rm () {
-    cd "$HOME/AppImages"
-    echo "y" | flatpak run it.mijorus.gearlever --remove "${@}"
-    _append_transmap "appimage rm $*"
-}
 pkg_remove () {
     pkg_exists "$@"
     [[ ${#pkg_found[@]} -eq 0 ]] && return 0
@@ -553,6 +537,34 @@ pkg_remove () {
         sudo eopkg rmf -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     fi
     _append_transmap "pkg rm $to_remove"
+}
+pkg_appimage () {
+    { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
+    { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
+    { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
+    pkg_flat it.mijorus.gearlever
+    local output
+    output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
+    local appimage_name
+    appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
+    _append_transmap "appimage $appimage_name"
+}
+pkg_appimage_rm () {
+    cd "$HOME/AppImages"
+    echo "y" | flatpak run it.mijorus.gearlever --remove "${@}"
+    _append_transmap "appimage rm $*"
+}
+pkg_npm () {
+    { ( is_ubuntu || is_debian ) && pkg_install npm; }
+    { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
+    { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
+    { ( is_arch || is_cachy ) && pkg_install npm; }
+    for pkg in "$@"; do
+        if ! npm list -g "$pkg" &>/dev/null; then
+            npm install -g "$pkg" || fatal "Failed to install npm package $pkg"
+            _append_transmap "npm $pkg"
+        fi
+    done
 }
 
 # bootloader update

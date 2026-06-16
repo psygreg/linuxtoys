@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Ang kakayahan ng Flatpak ay instala lamang sa iyong sistema. Kailangan ng system restart para magsimulang isama ng app menu ang mga flatpak na aplikasyon.",
   "featured_scripts": "Maaari mong gustong subukan...",
   "helium_desc": "Minimalist na web browser na batay sa Chromium na may privacy-first na diskarte at walang kinakayaang ad-blocking.",
-  "recordly_desc": "Bukas na font screen recorder at editor para sa mga tutorial, demo, product video, at marami pang iba, na may built-in na motion-driven na tool sa pagtatanghal."
+  "recordly_desc": "Bukas na font screen recorder at editor para sa mga tutorial, demo, product video, at marami pang iba, na may built-in na motion-driven na tool sa pagtatanghal.",
+  "ai_agents": "Mga Ahente ng AI",
+  "ai_agents_desc": "Mga assistant sa kodigo ng AI at mga ahente para sa pag-unlad.",
+  "claude_code_desc": "Ang Claude Code ay isang AI coding agent mula sa Anthropic. Nangangailangan ng isang bayad na Claude plan (Pro, Max, Team o Enterprise).\n\n⚠️ Disclaimer: Hindi kami responsable sa anumang pinsala sa sistema na sanhi ng maling paggamit ng AI agent na ito. Gamitin sa iyong sariling panganib.",
+  "opencode_desc": "Open source AI coding agent. Libre models kasama o kumonekta ng anumang modelo mula sa anumang provider.\n\n⚠️ Disclaimer: Hindi kami responsable sa anumang pinsala sa sistema na sanhi ng maling paggamit ng AI agent na ito. Gamitin sa iyong sariling panganib.",
+  "codex_desc": "AI coding agent mula sa OpenAI. Awtomatiko ang mga coding task sa iyong terminal.\n\n⚠️ Disclaimer: Hindi kami responsable sa anumang pinsala sa sistema na sanhi ng maling paggamit ng AI agent na ito. Gamitin sa iyong sariling panganib.",
+  "pi_desc": "AI coding agent. Magaan at mabilis na coding assistant para sa iyong terminal.\n\n⚠️ Disclaimer: Hindi kami responsable sa anumang pinsala sa sistema na sanhi ng maling paggamit ng AI agent na ito. Gamitin sa iyong sariling panganib.",
+  "omp_desc": "Fork ng Pi na may higit pang mga tool at multi-model support. AI coding agent para sa iyong terminal.\n\n⚠️ Disclaimer: Hindi kami responsable sa anumang pinsala sa sistema na sanhi ng maling paggamit ng AI agent na ito. Gamitin sa iyong sariling panganib."
 }

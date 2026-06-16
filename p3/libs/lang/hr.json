@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Mogućnost Flatpak je upravo instalirana na vaš sustav. Ponovno pokretanje sustava je potrebno kako bi meni aplikacija počeo sadržavati flatpak aplikacije.",
   "featured_scripts": "Možda bi trebao pokušati...",
   "helium_desc": "Minimalistički web preglednik temeljen na Chromium-u s pristupom usmjerenim na privatnost i nepristrano blokiranje oglasa.",
-  "recordly_desc": "Snimač ekrana i uređivač otvorenog koda za vodiče, demonstracije, videozapise o proizvodima i još mnogo toga, sa ugrađenim alatima za prezentaciju vođenim kretanjem."
+  "recordly_desc": "Snimač ekrana i uređivač otvorenog koda za vodiče, demonstracije, videozapise o proizvodima i još mnogo toga, sa ugrađenim alatima za prezentaciju vođenim kretanjem.",
+  "ai_agents": "AI Agenti",
+  "ai_agents_desc": "AI asistenti za kodiranje i agenti za razvoj.",
+  "claude_code_desc": "Claude Code je AI agen za kodiranje od Anthropica. Zahteva plaćeni Claude plan (Pro, Max, Team ili Enterprise).\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
+  "opencode_desc": "AI agen za kodiranje otvorenog koda. Besplatni modeli uključeni ili povežite bilo koji model od bilo kog dobavljača.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
+  "codex_desc": "AI agen za kodiranje od OpenAI-a. Automatizira zadatke kodiranja u vašem terminalu.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
+  "pi_desc": "AI agen za kodiranje. Lagani i brzi pomoćnik za kodiranje u vašem terminalu.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
+  "omp_desc": "Nastavak Pi-a s više alata i podrškom za više modela. AI agen za kodiranje za vaš terminal.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost."
 }

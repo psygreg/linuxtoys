@@ -432,5 +432,12 @@
   "flatpak_installed_message": "La capacité Flatpak vient d'être installée sur votre système. Un redémarrage du système est nécessaire pour que le menu des applications commence à inclure les applications flatpak.",
   "featured_scripts": "Vous voudrez peut-être essayer...",
   "helium_desc": "Navigateur web minimaliste basé sur Chromium avec une approche axée sur la confidentialité et un blocage impartial des publicités.",
-  "recordly_desc": "Enregistreur d'écran et éditeur open source pour les tutoriels, démonstrations, vidéos de produits et bien plus encore, avec des outils de présentation pilotés par le mouvement intégrés."
+  "recordly_desc": "Enregistreur d'écran et éditeur open source pour les tutoriels, démonstrations, vidéos de produits et bien plus encore, avec des outils de présentation pilotés par le mouvement intégrés.",
+  "ai_agents": "Agents IA",
+  "ai_agents_desc": "Assistants de codage IA et agents pour le développement.",
+  "claude_code_desc": "Claude Code est un agent de codage IA d'Anthropic. Nécessite un plan Claude payant (Pro, Max, Team ou Enterprise).\n\n⚠️ Avertissement : Nous ne sommes pas responsables des dommages au système causés par une mauvaise utilisation de cet agent IA. À utiliser à vos propres risques.",
+  "opencode_desc": "Agent de codage IA open source. Modèles gratuits inclus ou connectez n'importe quel modèle à partir de n'importe quel fournisseur.\n\n⚠️ Avertissement : Nous ne sommes pas responsables des dommages au système causés par une mauvaise utilisation de cet agent IA. À utiliser à vos propres risques.",
+  "codex_desc": "Agent de codage IA d'OpenAI. Automatise les tâches de codage dans votre terminal.\n\n⚠️ Avertissement : Nous ne sommes pas responsables des dommages au système causés par une mauvaise utilisation de cet agent IA. À utiliser à vos propres risques.",
+  "pi_desc": "Agent de codage IA. Assistant de codage léger et rapide pour votre terminal.\n\n⚠️ Avertissement : Nous ne sommes pas responsables des dommages au système causés par une mauvaise utilisation de cet agent IA. À utiliser à vos propres risques.",
+  "omp_desc": "Fork de Pi avec plus d'outils et support multi-modèle. Agent de codage IA pour votre terminal.\n\n⚠️ Avertissement : Nous ne sommes pas responsables des dommages au système causés par une mauvaise utilisation de cet agent IA. À utiliser à vos propres risques."
 }

@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Flatpak-muligheten har nettopp blitt installert på systemet ditt. En systemomstart er nødvendig for at appmenyen skal begynne å inkludere flatpak-applikasjoner.",
   "featured_scripts": "Du vil kanskje gjerne prøve...",
   "helium_desc": "Minimalistisk nettleser basert på Chromium med personvernfokusert tilnærming og upartisk annonseblokkering.",
-  "recordly_desc": "Åpen kildekode skjermbilde opptak og redigering for veiledninger, demonstrasjoner, produktvideoer og mer, med innebygde bevegelsesdrevne presentasjonsverktøy."
+  "recordly_desc": "Åpen kildekode skjermbilde opptak og redigering for veiledninger, demonstrasjoner, produktvideoer og mer, med innebygde bevegelsesdrevne presentasjonsverktøy.",
+  "ai_agents": "AI-agenter",
+  "ai_agents_desc": "AI-kodingsassistenter og agenter for utvikling.",
+  "claude_code_desc": "Claude Code er en AI-kodingsagent fra Anthropic. Krever en betalt Claude-plan (Pro, Max, Team eller Enterprise).\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for skader på systemet forårsaket av misbruk av denne AI-agenten. Bruk på eget ansvar.",
+  "opencode_desc": "Åpen kilde AI-kodingsagent. Gratis modeller inkludert eller koble til en hvilken som helst modell fra en hvilken som helst leverandør.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for skader på systemet forårsaket av misbruk av denne AI-agenten. Bruk på eget ansvar.",
+  "codex_desc": "AI-kodingsagent fra OpenAI. Automatiserer kodingsoppgaver i terminalen din.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for skader på systemet forårsaket av misbruk av denne AI-agenten. Bruk på eget ansvar.",
+  "pi_desc": "AI-kodingsagent. Lettvekt og rask kodingsassistent i terminalen din.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for skader på systemet forårsaket av misbruk av denne AI-agenten. Bruk på eget ansvar.",
+  "omp_desc": "Gaffel av Pi med flere verktøy og multi-modell-støtte. AI-kodingsagent for terminalen din.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for skader på systemet forårsaket av misbruk av denne AI-agenten. Bruk på eget ansvar."
 }

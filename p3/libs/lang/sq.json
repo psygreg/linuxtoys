@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Mundësia Flatpak sapo u instalua në sistemin tuaj. Një rimjete e sistemit është e nevojshme për që menu i aplikacioneve të fillojë të përfshijë aplikacione flatpak.",
   "featured_scripts": "Mund të dëshirosh të provosh...",
   "helium_desc": "Shfletuesi i uebit minimalist i bazuar në Chromium me qasje me prioritet të privatësisë dhe bllokimin e padrejtë të reklamave.",
-  "recordly_desc": "Regjistruese e ekranit dhe redaktuese me kod të hapjes për mësimet, demonstratat, videot e produkteve dhe më shumë, me vegla integrale të prezantimit të drejtuara nga lëvizja."
+  "recordly_desc": "Regjistruese e ekranit dhe redaktuese me kod të hapjes për mësimet, demonstratat, videot e produkteve dhe më shumë, me vegla integrale të prezantimit të drejtuara nga lëvizja.",
+  "ai_agents": "Agjentë AI",
+  "ai_agents_desc": "Ndihmësa kodimi AI dhe agjentë për zhvillim.",
+  "claude_code_desc": "Claude Code është agjent kodimi AI nga Anthropic. Kërkon një plan Claude të paguar (Pro, Max, Team ose Enterprise).\n\n⚠️ Shfaqje: Ne nuk jemi përgjegjës për ndonjë dëm sistemi të shkaktuar nga keqpërdorimi i këtij agenti AI. Përdoreni me përgjegjësinë tuaj.",
+  "opencode_desc": "Agjent kodimi AI me kod të hapur. Modelet falas të përfshira ose lidhni çdo model nga çdo ofrues.\n\n⚠️ Shfaqje: Ne nuk jemi përgjegjës për ndonjë dëm sistemi të shkaktuar nga keqpërdorimi i këtij agenti AI. Përdoreni me përgjegjësinë tuaj.",
+  "codex_desc": "Agjent kodimi AI nga OpenAI. Automatizaon detyrat e kodimit në terminalin tuaj.\n\n⚠️ Shfaqje: Ne nuk jemi përgjegjës për ndonjë dëm sistemi të shkaktuar nga keqpërdorimi i këtij agenti AI. Përdoreni me përgjegjësinë tuaj.",
+  "pi_desc": "Agjent kodimi AI. Asistent kodimi i lehtë dhe i shpejtë për terminalin tuaj.\n\n⚠️ Shfaqje: Ne nuk jemi përgjegjës për ndonjë dëm sistemi të shkaktuar nga keqpërdorimi i këtij agenti AI. Përdoreni me përgjegjësinë tuaj.",
+  "omp_desc": "Degë e Pi me më shumë mjete dhe mbështetje shumë-modelesh. Agjent kodimi AI për terminalin tuaj.\n\n⚠️ Shfaqje: Ne nuk jemi përgjegjës për ndonjë dëm sistemi të shkaktuar nga keqpërdorimi i këtij agenti AI. Përdoreni me përgjegjësinë tuaj."
 }

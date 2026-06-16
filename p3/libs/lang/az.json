@@ -431,5 +431,12 @@
   "flatpak_installed_message": "Flatpak qabiliyyəti sisteminizə yeni quraşdırıldı. Tətbiq menyusunun flatpak tətbiqləri daxil etməyə başlamağı üçün sistem yenidən başlatılması lazımdır.",
   "featured_scripts": "Sınayıb görmək istəyə bilərsiniz...",
   "helium_desc": "Chromium əsasında minimum veb brauzer, gizlilik-birinci yanaşma və qərəzsiz reklam bloklaması ilə.",
-  "recordly_desc": "Dərslik, demo, məhsul videoları və daha çoxu üçün açıq qaynaq ekran qeydiçi və redaktoru, hərəkət tərəfindən idarə olunan təqdimat alətləri ilə."
+  "recordly_desc": "Dərslik, demo, məhsul videoları və daha çoxu üçün açıq qaynaq ekran qeydiçi və redaktoru, hərəkət tərəfindən idarə olunan təqdimat alətləri ilə.",
+  "ai_agents": "AI Agentləri",
+  "ai_agents_desc": "Kodlaşdırma üçün AI köməkçiləri və geliştirmə agentləri.",
+  "claude_code_desc": "Claude Code Anthropic tərəfindən hazırlanmış AI kodlama agentidir. Ödənilən Claude planı (Pro, Max, Team və ya Enterprise) tələb olunur.\n\n⚠️ Fərqlilik: Bu AI agentin sui-istifadəsi nəticəsində sisteminə heç bir zərər görmədiyinə görə biz məsul deyilik. Öz riski ilə istifadə edin.",
+  "opencode_desc": "Açıq mənbəli AI kodlama agenti. Buraya daxil olan pulsuz modellər və ya istənilən sağlayıcıdan hər hansı bir modellə birləşin.\n\n⚠️ Fərqlilik: Bu AI agentin sui-istifadəsi nəticəsində sisteminə heç bir zərər görmədiyinə görə biz məsul deyilik. Öz riski ilə istifadə edin.",
+  "codex_desc": "OpenAI-dən AI kodlama agenti. Terminal terminalinizdə kodlama tapşırıqlarını avtomatlaşdırır.\n\n⚠️ Fərqlilik: Bu AI agentin sui-istifadəsi nəticəsində sisteminə heç bir zərər görmədiyinə görə biz məsul deyilik. Öz riski ilə istifadə edin.",
+  "pi_desc": "AI kodlama agenti. Terminal terminalinizdə yüngül və tez kodlama asistanı.\n\n⚠️ Fərqlilik: Bu AI agentin sui-istifadəsi nəticəsində sisteminə heç bir zərər görmədiyinə görə biz məsul deyilik. Öz riski ilə istifadə edin.",
+  "omp_desc": "Pi-nin çatalı daha çox alətlər və çoxlu model dəstəyi ilə. Terminal terminalinizdə AI kodlama agenti.\n\n⚠️ Fərqlilik: Bu AI agentin sui-istifadəsi nəticəsində sisteminə heç bir zərər görmədiyinə görə biz məsul deyilik. Öz riski ilə istifadə edin."
 }

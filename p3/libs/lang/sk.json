@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Možnosť Flatpak bola práve nainštalovaná do vášho systému. Reštart systému je potrebný, aby ponuka aplikácií začala zahŕňať aplikácie flatpak.",
   "featured_scripts": "Možno by ste chceli skúsiť...",
   "helium_desc": "Minimalistický webový prehliadač založený na Chromium s prístupom zameraným na ochranu súkromia a nestranne blokovaniu reklám.",
-  "recordly_desc": "Open source snímač obrazovky a editor pre návody, ukážky, videá produktov a ďalšie, s vstavanými nástrojmi na prezentáciu riadenými pohybom."
+  "recordly_desc": "Open source snímač obrazovky a editor pre návody, ukážky, videá produktov a ďalšie, s vstavanými nástrojmi na prezentáciu riadenými pohybom.",
+  "ai_agents": "AI Agenti",
+  "ai_agents_desc": "AI asistenti na kódovanie a agenti pre vývoj.",
+  "claude_code_desc": "Claude Code je AI agent na kódovanie od Anthropicu. Vyžaduje platený plán Claude (Pro, Max, Team alebo Enterprise).\n\n⚠️ Vyhlásenie: Nezodpovedáme za žiadnu škodu na systéme spôsobenú zneužitím tohto AI agenta. Používajte na vlastné riziko.",
+  "opencode_desc": "Agent na kódovanie AI s otvoreným zdrojom. Bezplatné modely zahrnuté alebo pripojte akýkoľvek model od ktoréhokoľvek poskytovateľa.\n\n⚠️ Vyhlásenie: Nezodpovedáme za žiadnu škodu na systéme spôsobenú zneužitím tohto AI agenta. Používajte na vlastné riziko.",
+  "codex_desc": "Agent na kódovanie AI od OpenAI. Automatizuje úlohy kódovania v termináli.\n\n⚠️ Vyhlásenie: Nezodpovedáme za žiadnu škodu na systéme spôsobenú zneužitím tohto AI agenta. Používajte na vlastné riziko.",
+  "pi_desc": "Agent na kódovanie AI. Ľahký a rýchly asistent na kódovanie v termináli.\n\n⚠️ Vyhlásenie: Nezodpovedáme za žiadnu škodu na systéme spôsobenú zneužitím tohto AI agenta. Používajte na vlastné riziko.",
+  "omp_desc": "Vetva Pi s viacerými nástrojmi a podporou viacerých modelov. Agent na kódovanie AI pre vašu terminal.\n\n⚠️ Vyhlásenie: Nezodpovedáme za žiadnu škodu na systéme spôsobenú zneužitím tohto AI agenta. Používajte na vlastné riziko."
 }

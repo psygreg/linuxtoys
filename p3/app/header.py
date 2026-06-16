@@ -133,11 +133,21 @@ def _create_icon_widget(category_info):
             icon_path = icon_value if os.path.exists(icon_value) else None
             
         if icon_path and os.path.exists(icon_path):
-            icon_widget = Gtk.Image.new_from_file(icon_path)
+            try:
+                # Load image files as pixbuf with proper scaling, especially for SVG
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    icon_path, 64, 64, True
+                )
+                icon_widget = Gtk.Image.new_from_pixbuf(pixbuf)
+            except Exception:
+                # Fallback if loading fails
+                icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)
+                icon_widget.set_pixel_size(64)
         else:
             icon_widget = Gtk.Image.new_from_icon_name('application-x-executable', Gtk.IconSize.DIALOG)
+            icon_widget.set_pixel_size(64)
     else:
         icon_widget = Gtk.Image.new_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
+        icon_widget.set_pixel_size(64)
     
-    icon_widget.set_pixel_size(64)
     return icon_widget

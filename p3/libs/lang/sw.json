@@ -430,5 +430,12 @@
   "flatpak_installed_message": "Uwezo wa Flatpak umesakinishwa tu kwenye mfumo wako. Kusimama upya kwa mfumo kinachohitajika kwa ajili ya menyu ya programu kuanza kujumuisha programu za flatpak.",
   "featured_scripts": "Unaweza kuwa unataka kujaribu...",
   "helium_desc": "Kiweke kidogo cha wavuti kinachozingatiwa na Chromium kilichokuwa na njia ya kadhaa-kwanza ya faragha na kuzuia tangazo kwa haki.",
-  "recordly_desc": "Rekodi ya chanzo wazi cha skrini na hariri kwa mwongozo, maonyesho, video za bidhaa na zaidi, na zana za tahadhari iliyoongoza na harakati iliyojengewa."
+  "recordly_desc": "Rekodi ya chanzo wazi cha skrini na hariri kwa mwongozo, maonyesho, video za bidhaa na zaidi, na zana za tahadhari iliyoongoza na harakati iliyojengewa.",
+  "ai_agents": "Wakili wa AI",
+  "ai_agents_desc": "Watumiaji msaada wa AI na wakili wa maendeleo.",
+  "claude_code_desc": "Claude Code ni wakili wa AI kodini kutoka kwa Anthropic. Inahitaji mpango wa Claude ulipiliwa (Pro, Max, Team au Enterprise).\n\n⚠️ Kataa wajibu: Hatuna wajibu wa uharibifu wowote wa mfumo unaosababishwa na matumizi mabaya ya wakili wa AI huu. Tumia kwa hatari yako mwenyewe.",
+  "opencode_desc": "Wakili wa AI kodini ya open source. Modeli za bure zilizojumuishwa au kuunganisha mfano wowote kutoka kwa mhusika yoyote.\n\n⚠️ Kataa wajibu: Hatuna wajibu wa uharibifu wowote wa mfumo unaosababishwa na matumizi mabaya ya wakili wa AI huu. Tumia kwa hatari yako mwenyewe.",
+  "codex_desc": "Wakili wa AI kodini kutoka kwa OpenAI. Inajisambuta kazi za kodini katika terminal yako.\n\n⚠️ Kataa wajibu: Hatuna wajibu wa uharibifu wowote wa mfumo unaosababishwa na matumizi mabaya ya wakili wa AI huu. Tumia kwa hatari yako mwenyewe.",
+  "pi_desc": "Wakili wa AI kodini. Msaada wa kodini mwelfu na haraka kwa terminal yako.\n\n⚠️ Kataa wajibu: Hatuna wajibu wa uharibifu wowote wa mfumo unaosababishwa na matumizi mabaya ya wakili wa AI huu. Tumia kwa hatari yako mwenyewe.",
+  "omp_desc": "Fork ya Pi na zana nyingi na usaidizi wa multi-model. Wakili wa AI kodini kwa terminal yako.\n\n⚠️ Kataa wajibu: Hatuna wajibu wa uharibifu wowote wa mfumo unaosababishwa na matumizi mabaya ya wakili wa AI huu. Tumia kwa hatari yako mwenyewe."
 }

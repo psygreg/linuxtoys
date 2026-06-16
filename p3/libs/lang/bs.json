@@ -431,5 +431,12 @@
   "flatpak_installed_message": "Mogućnost Flatpak je upravo instalirana na vašem sistemu. Ponovno pokretanje sistema je potrebno da bi meni aplikacija počeo uključivati aplikacije flatpak.",
   "featured_scripts": "Možda ćeš htjeti pokušati...",
   "helium_desc": "Minimalistički web preglednik zasnovan na Chromium-u sa pristupom fokusiranim na privatnost i nepristrasnim blokiranjem oglasa.",
-  "recordly_desc": "Otvoreni snimač ekrana i editor za vodiče, demonstracije, videe o proizvodima i još mnogo toga, sa ugrađenim alatima za prezentaciju vođenim kretanjem."
+  "recordly_desc": "Otvoreni snimač ekrana i editor za vodiče, demonstracije, videe o proizvodima i još mnogo toga, sa ugrađenim alatima za prezentaciju vođenim kretanjem.",
+  "ai_agents": "AI Agenti",
+  "ai_agents_desc": "AI pomoćnici za kodiranje i agenti za razvoj.",
+  "claude_code_desc": "Claude Code je AI agen za kodiranje od Anthropica. Zahteva plaćeni Claude plan (Pro, Max, Team ili Enterprise).\n\n⚠️ Odricanje: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na vlastitu odgovornost.",
+  "opencode_desc": "AI agen za kodiranje otvorenog koda. Besplatni modeli uključeni ili povežite bilo koji model od bilo kog dobavljača.\n\n⚠️ Odricanje: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na vlastitu odgovornost.",
+  "codex_desc": "AI agen za kodiranje od OpenAI. Automatizira zadatke kodiranja u vašem terminalu.\n\n⚠️ Odricanje: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na vlastitu odgovornost.",
+  "pi_desc": "AI agen za kodiranje. Lagan i brz pomoćnik za kodiranje u vašem terminalu.\n\n⚠️ Odricanje: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na vlastitu odgovornost.",
+  "omp_desc": "Nastavak od Pi sa više alata i podrškom za više modela. AI agen za kodiranje za vašu terminal.\n\n⚠️ Odricanje: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na vlastitu odgovornost."
 }

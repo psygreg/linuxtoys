@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Flatpak özelliği sisteminize yeni kurulmuştur. Uygulama menüsünün flatpak uygulamalarını içermeye başlaması için sistem yeniden başlatılması gerekir.",
   "featured_scripts": "Denemek isteyebilirsin...",
   "helium_desc": "Chromium tabanlı minimalist web tarayıcı, gizlilik öncelikli yaklaşım ve tarafsız reklam engelleme ile.",
-  "recordly_desc": "Kılavuzlar, demolar, ürün videoları ve daha fazlası için açık kaynaklı ekran kaydedici ve düzenleyici, hareket tarafından kontrol edilen sunuş araçları yerleştirilmiş."
+  "recordly_desc": "Kılavuzlar, demolar, ürün videoları ve daha fazlası için açık kaynaklı ekran kaydedici ve düzenleyici, hareket tarafından kontrol edilen sunuş araçları yerleştirilmiş.",
+  "ai_agents": "AI Ajanları",
+  "ai_agents_desc": "Geliştirme için AI kodlama asistanları ve ajanları.",
+  "claude_code_desc": "Claude Code, Anthropic tarafından sağlanan bir AI kodlama aracısıdır. Ücretli bir Claude planı (Pro, Max, Team veya Enterprise) gerekir.\n\n⚠️ Sorumluluk Reddi: Bu AI aracısının kötüye kullanılması nedeniyle herhangi bir sistem hasarı için sorumlu değiliz. Kendi riskiniz altında kullanın.",
+  "opencode_desc": "Açık kaynaklı AI kodlama aracısı. Ücretsiz modeller dahil veya herhangi bir sağlayıcıdan herhangi bir modeli bağlayın.\n\n⚠️ Sorumluluk Reddi: Bu AI aracısının kötüye kullanılması nedeniyle herhangi bir sistem hasarı için sorumlu değiliz. Kendi riskiniz altında kullanın.",
+  "codex_desc": "OpenAI'dan AI kodlama aracısı. Terminalinizdeki kodlama görevlerini otomatikleştirir.\n\n⚠️ Sorumluluk Reddi: Bu AI aracısının kötüye kullanılması nedeniyle herhangi bir sistem hasarı için sorumlu değiliz. Kendi riskiniz altında kullanın.",
+  "pi_desc": "AI kodlama aracısı. Terminal için hafif ve hızlı kodlama asistanı.\n\n⚠️ Sorumluluk Reddi: Bu AI aracısının kötüye kullanılması nedeniyle herhangi bir sistem hasarı için sorumlu değiliz. Kendi riskiniz altında kullanın.",
+  "omp_desc": "Daha fazla araç ve multi-model desteğiyle Pi'nin bir çatallı. Terminal için AI kodlama aracısı.\n\n⚠️ Sorumluluk Reddi: Bu AI aracısının kötüye kullanılması nedeniyle herhangi bir sistem hasarı için sorumlu değiliz. Kendi riskiniz altında kullanın."
 }

@@ -432,5 +432,12 @@
   "flatpak_installed_message": "Capabilitatea Flatpak a fost instalată pe sistemul dumneavoastră. O repornire a sistemului este necesară pentru ca meniul aplicațiilor să înceapă să includă aplicații flatpak.",
   "featured_scripts": "Ai putea dori să încerci...",
   "helium_desc": "Browser web minimalist bazat pe Chromium cu abordare prioritizând confidențialitatea și blocare imparțială a anunțurilor.",
-  "recordly_desc": "Înregistrator de ecran și editor cu cod deschis pentru tutorial, demonstrații, videoclipuri de produs și mai mult, cu instrumente de prezentare integrate cu direcție de mișcare."
+  "recordly_desc": "Înregistrator de ecran și editor cu cod deschis pentru tutorial, demonstrații, videoclipuri de produs și mai mult, cu instrumente de prezentare integrate cu direcție de mișcare.",
+  "ai_agents": "Agenți AI",
+  "ai_agents_desc": "Asistenți de codificare AI și agenți pentru dezvoltare.",
+  "claude_code_desc": "Claude Code este un agent de codare IA de la Anthropic. Necesită un plan Claude plătit (Pro, Max, Team sau Enterprise).\n\n⚠️ Exonerare de răspundere: Nu suntem răspunzători pentru nicio pagubă a sistemului cauzată de abuz de utilizare a acestui agent IA. Utilizați pe propria dvs. răspundere.",
+  "opencode_desc": "Agent de codare IA open source. Modele gratuite incluse sau conectați orice model de la orice furnizor.\n\n⚠️ Exonerare de răspundere: Nu suntem răspunzători pentru nicio pagubă a sistemului cauzată de abuz de utilizare a acestui agent IA. Utilizați pe propria dvs. răspundere.",
+  "codex_desc": "Agent de codare IA de la OpenAI. Automatizează sarcinile de codare în terminalul dvs.\n\n⚠️ Exonerare de răspundere: Nu suntem răspunzători pentru nicio pagubă a sistemului cauzată de abuz de utilizare a acestui agent IA. Utilizați pe propria dvs. răspundere.",
+  "pi_desc": "Agent de codare IA. Asistent de codare ușor și rapid pentru terminalul dvs.\n\n⚠️ Exonerare de răspundere: Nu suntem răspunzători pentru nicio pagubă a sistemului cauzată de abuz de utilizare a acestui agent IA. Utilizați pe propria dvs. răspundere.",
+  "omp_desc": "Ramificație a Pi cu mai multe unelte și suport multi-model. Agent de codare IA pentru terminalul dvs.\n\n⚠️ Exonerare de răspundere: Nu suntem răspunzători pentru nicio pagubă a sistemului cauzată de abuz de utilizare a acestui agent IA. Utilizați pe propria dvs. răspundere."
 }
