@@ -339,9 +339,13 @@ def is_using_git_scripts():
     """
     Check if the app is currently using git-synced scripts.
     
+    In developer mode, always returns False since bundled scripts are used.
+    
     Returns:
-        bool: True if using git-synced scripts, False if using bundled scripts
+        bool: False if using bundled scripts (including in dev mode), True if using git-synced
     """
+    if is_dev_mode_enabled():
+        return False
     return os.path.exists(GIT_SCRIPTS_CACHE_DIR) and _git_repo_exists()
 
 
