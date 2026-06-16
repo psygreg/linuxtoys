@@ -1,6 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="64" height="64" viewBox="0 0 16.933 16.933" xmlns="http://www.w3.org/2000/svg">
-  <rect width="16.933" height="16.933" rx="2.65" fill="#D97757"/>
-  <path d="M5.86 12.18v-3.5l4.27-2.48v-3.45L4.36 6.4v3.5l4.27 2.48v3.45" fill="none" stroke="#fff" stroke-width="1.06" stroke-linejoin="round"/>
-  <circle cx="8.43" cy="8.47" r="1.06" fill="#fff"/>
-</svg>
+<svg height="1em" style="flex:none;line-height:1" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><title>Claude Code</title><path clip-rule="evenodd" d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949zM6 10.949h1.488V8.102H6v2.847zm10.51 0H18V8.102h-1.49v2.847z" fill="#D97757" fill-rule="evenodd"></path></svg>
