@@ -84,6 +84,8 @@ getresolve () {
 }
 
 davincinatd () {
+    { is_rhel && dv_rhel; } || true
+
     # opencl check for AMD/Intel GPUs
     if is_intel || is_amd; then
         if ! clinfo_chk; then
@@ -118,6 +120,72 @@ davinciboxd () {
     chmod +x autodavincibox.sh
     ./autodavincibox.sh
     rm autodavincibox.sh
+}
+
+dv_rhel () {
+    dv_rhel_in () {
+        sudo_rq
+        rpmfusion_chk # needs EPEL
+
+        # dependencies -- compile python2
+        sudo dnf groupinstall -y "Development Tools"
+        pkg_install gcc openssl-devel bzip2-devel libffi-devel wget tar curl
+        prep_tmp_noram
+        wget "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz" || fatal "unable to get dependency python2"
+        tar xzf Python-2.7.18.tgz && cd Python-2.7.18
+        export CFLAGS="-std=c11"
+        ./configure --with-system-ffi --with-computed-gotos --enable-optimizations --enable-unicode=ucs4
+        make -j$(nproc) build_all
+        sudo make altinstall
+        sudo ln -s /usr/local/bin/python2.7 /usr/local/bin/python2
+        { which python2 &>/dev/null && echo "Python2 installation successful. Proceeding to Resolve installation."; } || fatal "Dependency python2 installation failed."
+
+        # resolve dependencies
+        pkg_install qt5-qtbase-gui libxcb glib2 apr-util mesa-libGLU libxcrypt-compat zlib-ng zlib-ng-compat
+        { is_amd && pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo && sudo usermod -aG render,video "$USER"; } || true
+        { is_intel && pkg_install intel-compute-runtime; } || true
+        {( is_nvidia && ( rpm -qi "cuda" &>/dev/null || rpm -qi "cuda-drivers" &>/dev/null )) || fatal "Missing cuda drivers. Please install them from the Drivers menu according to your GPU."; } || true
+
+        # install resolve
+        getresolve
+        unzip "$_archive_name.zip"
+        prep_dir /opt/resolve
+        chmod +x ${_archive_run_name}.run
+        export SKIP_PACKAGE_CHECK=1
+        ./${_archive_run_name}.run || fatal "Failed to install Resolve"
+        # libs patch
+        sudo_rq
+        sudo mkdir -p /opt/resolve/libs/disabled
+        move_ /opt/resolve/libs/libglib* /opt/resolve/libs/disabled/
+        move_ /opt/resolve/libs/libgio* /opt/resolve/libs/disabled/
+        move_ /opt/resolve/libs/libgmodule* /opt/resolve/libs/disabled/
+
+        zeninf "$finishmsg"
+    }
+
+    while true; do
+		CHOICE=$(zenity --list --title="DaVinci Resolve installer for RHEL" \
+        	--column="Which version do you want to install?" \
+			"Free" \
+			"Studio" \
+			"$msg070" \
+			--height=300 --width=300)
+
+		if [ $? -ne 0 ]; then
+        	break
+   		fi
+
+		case $CHOICE in
+			"Free") _upkgname='davinci-resolve'
+    			dv_rhel_in
+				break ;;
+			"Studio") _upkgname='davinci-resolve-studio'
+	  			dv_rhel_in
+    			break ;;
+			"$msg070") break && return 100;;
+			*) echo "Invalid Option" ;;
+		esac
+	done
 }
 
 davinciboxatom () {
@@ -192,7 +260,7 @@ cd $HOME
 export SCRIPT_DIR
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
-elif is_solus || is_rhel; then
+elif is_solus; then
     davinciboxd
 else
     # menu

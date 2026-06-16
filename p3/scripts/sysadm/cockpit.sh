@@ -11,10 +11,11 @@ _lang_
 sudo_rq
 if is_debian; then
     prep_create /etc/apt/sources.list.d/backports.list
-    sudo bash -c 'echo "deb http://deb.debian.org/debian ${VERSION_CODENAME:-trixie}-backports main" > \
+    { ( is_debian && [ "$ID" = "debian" ] ) && repo_codename="$VERSION_CODENAME"; } || repo_codename="trixie"
+    sudo bash -c 'echo "deb http://deb.debian.org/debian ${repo_codename}-backports main" > \
     /etc/apt/sources.list.d/backports.list'
     sudo apt update
-    sudo apt install -t ${VERSION_CODENAME:-trixie}-backports cockpit || fatal "Failed to install Cockpit from debian backports repository"
+    sudo apt install -t ${repo_codename}-backports cockpit || fatal "Failed to install Cockpit from debian backports repository"
     _append_transmap "pkg cockpit"
 elif is_ostree; then
     pkg_install --ostreecheck cockpit-system cockpit-ostree cockpit-podman cockpit-kdump cockpit-networkmanager
