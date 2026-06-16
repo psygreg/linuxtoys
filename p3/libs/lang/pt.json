@@ -57,6 +57,7 @@
   "ai_agents_desc": "Assistentes de codificação IA e agentes para desenvolvimento.",
   "claude_code_desc": "Claude Code é um agente de codificação IA da Anthropic. Requer um plano Claude pago (Pro, Max, Team ou Enterprise).",
   "opencode_desc": "Agente de codificação IA de código aberto. Modelos grátis incluídos ou conecte qualquer modelo de qualquer provedor.",
+  "codex_desc": "Agente de codificação IA da OpenAI. Automatiza tarefas de codificação no seu terminal.",
   "drivers": "Drivers",
   "drivers_desc": "Drivers para diversos propósitos e dispositivos.",
   "privacy": "Privacidade",
