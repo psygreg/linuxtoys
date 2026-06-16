@@ -55,6 +55,7 @@
   "ai_agents": "AI Agents",
   "ai_agents_desc": "AI coding assistants and agents for development.",
   "claude_code_desc": "Claude Code is an AI coding agent by Anthropic. Requires a paid Claude plan (Pro, Max, Team, or Enterprise).",
+  "opencode_desc": "Open source AI coding agent. Free models included or connect any model from any provider.",
   "privacy": "Privacy",
   "privacy_desc": "Tools and resources for privacy on Linux.",
   "drivers": "Drivers",
