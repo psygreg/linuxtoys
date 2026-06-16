@@ -1,0 +1,3 @@
+ICON: terminal.svg
+name: ai_agents
+description: ai_agents_desc

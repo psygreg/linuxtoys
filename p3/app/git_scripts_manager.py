@@ -21,6 +21,8 @@ import logging
 import time
 from pathlib import Path
 
+from .dev_mode import is_dev_mode_enabled
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -288,11 +290,14 @@ def get_scripts_dir(progress_callback=None):
     """
     Get the scripts directory, attempting git sync with fallback to bundled scripts.
     
-    This is the main entry point for the scripts manager.
+    In developer mode (DEV_MODE=1), always uses the bundled scripts directory
+    to allow local script development and testing.
+    
     It will:
-    1. Try to sync scripts from git (clone if needed, pull if exists)
-    2. Return the git-synced directory if successful
-    3. Fall back to bundled scripts if git operations fail or git is unavailable
+    1. If DEV_MODE=1: skip git sync entirely, return bundled scripts immediately
+    2. Otherwise, try to sync scripts from git (clone if needed, pull if exists)
+    3. Return the git-synced directory if successful
+    4. Fall back to bundled scripts if git operations fail or git is unavailable
     
     Args:
         progress_callback: Optional function to call with progress messages
@@ -300,6 +305,14 @@ def get_scripts_dir(progress_callback=None):
     Returns:
         str: Absolute path to the scripts directory (either git-synced or bundled)
     """
+    bundled_scripts_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), '..', 'scripts'
+    )
+    
+    if is_dev_mode_enabled():
+        logger.info(f"Developer mode active - using bundled scripts from {bundled_scripts_dir}")
+        return bundled_scripts_dir
+    
     # First, try to sync from git
     if _git_repo_exists():
         # Repository exists, try to pull updates
