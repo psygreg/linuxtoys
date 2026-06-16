@@ -59,6 +59,7 @@
   "opencode_desc": "Agente de codificação IA de código aberto. Modelos grátis incluídos ou conecte qualquer modelo de qualquer provedor.",
   "codex_desc": "Agente de codificação IA da OpenAI. Automatiza tarefas de codificação no seu terminal.",
   "pi_desc": "Agente de codificação IA. Assistente de codificação leve e rápido para o seu terminal.",
+  "omp_desc": "Fork do Pi com mais ferramentas e suporte multimodelo. Agente de codificação IA para o seu terminal.",
   "drivers": "Drivers",
   "drivers_desc": "Drivers para diversos propósitos e dispositivos.",
   "privacy": "Privacidade",
