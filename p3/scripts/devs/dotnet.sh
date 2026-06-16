@@ -3,28 +3,51 @@
 # version: 1.0
 # description: dotnet_desc
 # icon: dotnet.svg
-# compat: fedora, suse, ostree, debian, ubuntu, ublue, arch, cachy, rhel
+# compat: fedora, ostree, debian, ubuntu, ublue, rhel
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 prep_tmp
 sudo_rq
+
+if _zenity_can_run; then
+	if mapfile -t _selected_ver < <(zenity --list \
+		--title=".NET SDK" \
+		--width=420 --height=320 \
+		--column="Selected" --column="Version" --column="Link" \
+		--hide-column=3 \
+		--print-column=2 \
+		--separator=$'\n' \
+		--checklist --multiple \
+		FALSE "10" "https://dotnet.microsoft.com/download/dotnet/10.0" \
+		FALSE "9" "https://dotnet.microsoft.com/download/dotnet/9.0" \
+		FALSE "8" "https://dotnet.microsoft.com/download/dotnet/8.0"); then
+		: # User selected versions
+	else
+		zenwrn "No version selected"
+		exit 0
+	fi
+else
+    _selected_ver=(10 9 8)
+fi
+
 if is_debian; then
-    wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    wget https://packages.microsoft.com/config/debian/13/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
     sudo apt update
-elif [[ "$NAME" =~ "openSUSE Leap" ]]; then
-    pkg_install libicu
-    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    wget https://packages.microsoft.com/config/opensuse/15/prod.repo
-    move_ prod.repo /etc/zypp/repos.d/microsoft-prod.repo
-    sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo
 fi
-if is_arch || is_cachy; then
-    pkg_install dotnet-sdk-9.0-bin
-else
-    pkg_install dotnet-sdk-9.0
-fi
-zeninf "$msg018"
+
+for version in "${_selected_ver[@]}"; do
+    if [ "$version" = "9" ] && is_ubuntu; then
+        sudo add-apt-repository ppa:dotnet/backports
+        sudo apt update
+    fi
+    case "$version" in
+        "8") pkg_install dotnet-sdk-8.0 ;;
+        "9") pkg_install dotnet-sdk-9.0 ;;
+        "10") pkg_install dotnet-sdk-10.0 ;;
+    esac
+done
+zeninf "$finishmsg"
