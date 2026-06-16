@@ -117,7 +117,7 @@ rpmfusion_chk() {
         fi
     else
         local _package_manager_cmd
-        is_ostree && { _package_manager_cmd="sudo rpm-ostree install" } || _package_manager_cmd="sudo dnf install -y --setopt=timeout=5"
+        is_ostree && { _package_manager_cmd="sudo rpm-ostree install"; } || _package_manager_cmd="sudo dnf install -y --setopt=timeout=5"
         local fedora_version
         if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
             fatal "Could not determine Fedora version"
