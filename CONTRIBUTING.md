@@ -123,10 +123,10 @@ All the following functions parse the arguments that follow them and have error 
 - `sysd_disable`: disables a system-level service for next boot.
 - `sysd_stop`: stops a system-level service.
 
-- `sysd_enable_usr`: enables a user-level service for next boot.
-- `sysd_start_usr`: starts a user-level service.
-- `sysd_disable_usr`: disables a user-level service for next boot.
-- `sysd_stop_usr`: stops a user-level service.
+- `sysd_enable_usr`: enables an user-level service for next boot.
+- `sysd_start_usr`: starts an user-level service.
+- `sysd_disable_usr`: disables an user-level service for next boot.
+- `sysd_stop_usr`: stops an user-level service.
 
 #### Boot-related Operations
 All the following functions have error handling calling `fatal`.
@@ -137,7 +137,7 @@ All the following functions have error handling calling `fatal`.
 - `grubbyargs_upd`: adds arguments to the kernel CMDLINE in `is_fedora` and `is_rhel` systems through `grubby`. Parses multiple arguments.
 
 #### Miscellaneous
-- `shell_change`: changes the user's default shell. Should only be called for shell installations, as it is presume the user wishes to utilize their new shell of choice.
+- `shell_change`: changes the user's default shell. Should only be called for shell installations, as it is presumed the user wishes to utilize their new shell of choice.
 - `distrobox_created`: registers a distrobox name and its creation event to the transaction map.
 - `rclone_mount`: creates a `rclone` mountpoint from a remote to a target through its daemon, registering this to the transaction map.
 

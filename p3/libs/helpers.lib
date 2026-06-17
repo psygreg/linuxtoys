@@ -126,8 +126,8 @@ rpmfusion_chk() {
 
         if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
             echo "Installing RPMFusion Free repository, please wait..."
-            if ! "$_package_manager_cmd" "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" &>/dev/null; then
-                "$_package_manager_cmd" "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
+            if ! eval "$_package_manager_cmd" "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" &>/dev/null; then
+                eval "$_package_manager_cmd" "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
             fi
             echo "RPMFusion Free repository installed successfully"
         else
@@ -135,8 +135,8 @@ rpmfusion_chk() {
         fi
         if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
             echo "Installing RPMFusion Non-Free repository, please wait..."
-            if ! "$_package_manager_cmd" "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" &>/dev/null; then
-                "$_package_manager_cmd" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Non-Free repository"
+            if ! eval "$_package_manager_cmd" "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" &>/dev/null; then
+                eval "$_package_manager_cmd" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Non-Free repository"
             fi
             echo "RPMFusion Non-Free repository installed successfully"
         else
