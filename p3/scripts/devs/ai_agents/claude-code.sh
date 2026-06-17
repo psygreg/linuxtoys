@@ -45,9 +45,7 @@ if curl -fsSL https://claude.ai/install.sh | bash; then
         zeninf "$finishmsg"
     else
         fatal "Installation completed but the 'claude' binary was not found in PATH."
-        exit 1
     fi
 else
     fatal "Failed to install Claude Code."
-    exit 1
 fi

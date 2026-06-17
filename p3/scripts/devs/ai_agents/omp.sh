@@ -44,9 +44,7 @@ if curl -fsSL https://omp.sh/install | sh; then
         zeninf "$finishmsg"
     else
         fatal "Installation completed but the 'omp' binary was not found in PATH."
-        exit 1
     fi
 else
     fatal "Failed to install OMP."
-    exit 1
 fi

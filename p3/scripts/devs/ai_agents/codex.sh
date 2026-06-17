@@ -45,9 +45,7 @@ if curl -fsSL https://chatgpt.com/codex/install.sh | sh; then
         zeninf "$finishmsg"
     else
         fatal "Installation completed but the 'codex' binary was not found in PATH."
-        exit 1
     fi
 else
     fatal "Failed to install Codex."
-    exit 1
 fi

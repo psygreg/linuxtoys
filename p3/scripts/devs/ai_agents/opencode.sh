@@ -14,7 +14,7 @@ _lang_
 
 if command -v opencode &>/dev/null; then
     LT_PROGRAM="OpenCode"
-    if zenity --question --title="OpenCode" --text="$rmmsg" --width=300 --height=300; then
+    if zenask "OpenCode" "$rmmsg"; then
         sudo_rq
         opencode uninstall
     else
@@ -50,9 +50,7 @@ if curl -fsSL https://opencode.ai/install | bash; then
         zeninf "$finishmsg"
     else
         fatal "Installation completed but the 'opencode' binary was not found in PATH."
-        exit 1
     fi
 else
     fatal "Failed to install OpenCode."
-    exit 1
 fi

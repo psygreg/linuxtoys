@@ -45,9 +45,7 @@ if curl -fsSL https://pi.dev/install.sh | sh; then
         zeninf "$finishmsg"
     else
         fatal "Installation completed but the 'pi' binary was not found in PATH."
-        exit 1
     fi
 else
     fatal "Failed to install Pi."
-    exit 1
 fi
