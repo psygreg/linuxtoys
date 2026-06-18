@@ -30,7 +30,7 @@ if (( _cram > 12 )); then
                 sudo dnf copr enable elxreno/preload -y
             fi
         fi
-        pkg_install preload
+        pkg_install --ostreecheck preload
         sysd_enable preload
         sysd_start preload
         zeninf "$msg036"
