@@ -555,13 +555,47 @@ pkg_appimage_rm () {
     _append_transmap "appimage rm $*"
 }
 pkg_npm () {
+    sudo_rq
     { ( is_ubuntu || is_debian ) && pkg_install npm; }
     { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
     { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
     { ( is_arch || is_cachy ) && pkg_install npm; }
-    for pkg in "$@"; do
+    # PATH config
+    for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+        if [ -f "$rc" ]; then
+            # Check if PATH modification for .npm-global/bin already exists in the file
+            if ! grep -E 'PATH=.*/home/user/.npm-global/bin|/home/user/\.npm-global/bin' "$rc" > /dev/null 2>&1; then
+                prep_edit "$rc"
+                echo "export PATH=\"/home/user/.npm-global/bin:\$PATH\"" >> "$rc"
+                export PATH="/home/user/.npm-global/bin:$PATH" # handle current term viewer only in case it's not already in PATH
+            fi
+        fi
+    done
+    # for fish shells
+    fish_config="$HOME/.config/fish/config.fish"
+    if [ -f "$fish_config" ]; then
+        if ! grep -E 'set.*PATH.*/home/user/.npm-global/bin|/home/user/\.npm-global/bin' "$fish_config" > /dev/null 2>&1; then
+            prep_edit "$fish_config"
+            echo "set -gx PATH /home/user/.npm-global/bin \$PATH" >> "$fish_config"
+            export PATH="/home/user/.npm-global/bin:$PATH"
+        fi
+    fi  
+
+    local -a flags=()
+    local -a packages=()
+    # Separate flags from package names, filtering out -g flag
+    for arg in "$@"; do
+        if [[ "$arg" == -* ]]; then
+            if [[ "$arg" != "-g" && "$arg" != "--global" ]]; then
+                flags+=("$arg")
+            fi
+        else
+            packages+=("$arg")
+        fi
+    done
+    for pkg in "${packages[@]}"; do
         if ! npm list -g "$pkg" &>/dev/null; then
-            npm install -g "$pkg" || fatal "Failed to install npm package $pkg"
+            npm install -g "${flags[@]}" "$pkg" || fatal "Failed to install npm package $pkg"
             _append_transmap "npm $pkg"
         fi
     done
