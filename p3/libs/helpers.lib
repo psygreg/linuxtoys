@@ -25,14 +25,19 @@ flatpak_in_lib() {
     # Install flatpak if missing
     if ! command -v flatpak &>/dev/null; then
         pkg_install flatpak
+        sysd_start flatpak-system-helper.service
     fi
 
     # Add Flathub remote if not exists
-    flatpak remote-add --if-not-exists --user flathub "https://dl.flathub.org/repo/flathub.flatpakrepo"
-    sudo flatpak remote-add --if-not-exists --system flathub "https://dl.flathub.org/repo/flathub.flatpakrepo"
-    touch /tmp/linuxtoys_flatpak_done
-    [ -n "$flatpak_path_pending" ] && touch /tmp/flatpak_path_pending
-    return 0
+    flatpak remote-add --if-not-exists --user flathub "https://dl.flathub.org/repo/flathub.flatpakrepo" || fatal "Failed to add Flathub userlevel remote"
+    sudo flatpak remote-add --if-not-exists --system flathub "https://dl.flathub.org/repo/flathub.flatpakrepo" || fatal "Failed to add Flathub systemlevel remote"
+    if flatpak remotes | grep -q flathub; then
+        touch /tmp/linuxtoys_flatpak_done
+        [ -n "$flatpak_path_pending" ] && touch /tmp/flatpak_path_pending
+        return 0
+    else
+        fatal "Failed to add Flathub remotes"
+    fi
 }
 
 # --- Multilib ---
