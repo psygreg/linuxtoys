@@ -770,3 +770,23 @@ rclone_mount() {
 swapfile_created () {
     _append_transmap "swapfile $*"
 }
+
+# script calling -- used for scripts to call other scripts from the app.
+call_script () {
+    local script_name="$1"
+    [[ -z "$script_name" ]] && fatal "call_script: script name not provided"
+    [[ -z "$CACHE_DIR" ]] && fatal "call_script: CACHE_DIR environment variable not set"
+    script_name="${script_name%.sh}"
+    local script_file="${script_name}.sh"
+    [[ ! -d "$CACHE_DIR" ]] && fatal "call_script: Scripts directory not found at $CACHE_DIR"
+
+    local found_script
+    found_script=$(find "$CACHE_DIR" -maxdepth 3 -type f -name "$script_file" 2>/dev/null | head -1)
+    if [[ -n "$found_script" && -f "$found_script" ]]; then
+        shift  # Remove script_name to pass remaining arguments
+        bash "$found_script" "$@"
+        return $?
+    fi
+    
+    fatal "call_script: Script '$script_name' not found in $CACHE_DIR"
+}

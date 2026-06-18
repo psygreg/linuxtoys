@@ -28,8 +28,9 @@ def initialize_scripts():
     It will:
     1. Synchronize scripts from git (with automatic fallback)
     2. Set up the scripts directory
-    3. Show a loading dialog in GUI mode during initialization
-    4. Log the status
+    3. Set CACHE_DIR environment variable for launched scripts
+    4. Show a loading dialog in GUI mode during initialization
+    5. Log the status
     
     Returns:
         str: Path to the scripts directory being used
@@ -58,6 +59,9 @@ def initialize_scripts():
             # Either not in GUI mode, or no git operation will be performed
             scripts_dir = get_scripts_dir()
         
+        # Set CACHE_DIR environment variable for scripts to use
+        os.environ['CACHE_DIR'] = scripts_dir
+        
         status = get_git_scripts_status()
         
         if status["is_git_synced"]:
@@ -74,9 +78,11 @@ def initialize_scripts():
     except Exception as e:
         logger.error(f"Error initializing scripts: {e}")
         # Still return a scripts directory for fallback
-        return os.path.join(
+        fallback_scripts_dir = os.path.join(
             os.path.dirname(__file__), '..', 'scripts'
         )
+        os.environ['CACHE_DIR'] = fallback_scripts_dir
+        return fallback_scripts_dir
 
 
 def _should_show_loading_dialog():
