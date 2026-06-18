@@ -566,6 +566,37 @@ pkg_npm () {
         fi
     done
 }
+pkg_bun () {
+    if ! command -v bun &>/dev/null; then
+        sudo_rq
+        { curl -fsSL https://bun.sh/install | bash; } || fatal "Failed to install bun"
+    fi
+    for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+        if [ -f "$rc" ]; then
+            # Check if PATH modification for .bun/bin already exists in the file
+            if ! grep -E 'PATH=.*\/home\/user/.bun/bin|/home/user/.bun/bin' "$rc" > /dev/null 2>&1; then
+                prep_edit "$rc"
+                echo "export PATH=\"/home/user/.bun/bin:\$PATH\"" >> "$rc"
+                export PATH="/home/user/.bun/bin:$PATH" # handle current term viewer only in case it's not already in PATH
+            fi
+        fi
+    done
+    # for fish shells
+    fish_config="$HOME/.config/fish/config.fish"
+    if [ -f "$fish_config" ]; then
+        if ! grep -E 'set.*PATH.*/home/user/.bun/bin|/home/user/.bun/bin' "$fish_config" > /dev/null 2>&1; then
+            prep_edit "$fish_config"
+            echo "set -gx PATH /home/user/.bun/bin \$PATH" >> "$fish_config"
+            export PATH="/home/user/.bun/bin:$PATH"
+        fi
+    fi
+    for pkg in "$@"; do
+        if ! bun list -g "$pkg" &>/dev/null; then
+            bun install -g "$pkg" || fatal "Failed to install bun package $pkg"
+            _append_transmap "bun $pkg"
+        fi
+    done
+}
 
 # bootloader update
 bootloader_upd() {

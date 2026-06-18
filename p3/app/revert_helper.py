@@ -177,6 +177,9 @@ def _parse_operation(op_line):
         elif op_type == "npm":
             # npm operations have format: "npm package" or "npm pkg1 pkg2" (multiple packages)
             return op_type, parts[1:]
+        elif op_type == "bun":
+            # bun operations have format: "bun package" or "bun pkg1 pkg2" (multiple packages)
+            return op_type, parts[1:]
         elif op_type == "distrobox":
             # distrobox operations have format: "distrobox container_name"
             return op_type, parts[1:]
@@ -441,6 +444,31 @@ def _reverse_npm_installation(packages):
     return commands
 
 
+def _reverse_bun_installation(packages):
+    """Reverse bun package installation(s) by removing them globally.
+    
+    Args:
+        packages: list of package names or single package name string
+    
+    Returns:
+        list of shell commands to reverse the bun package installation
+    """
+    # Normalize to list
+    if isinstance(packages, str):
+        packages = [packages]
+    
+    if not packages:
+        return []
+    
+    commands = []
+    for package in packages:
+        # Uninstall globally using bun remove -g
+        cmd = f"bun remove -g {package} 2>/dev/null || true"
+        commands.append(cmd)
+    
+    return commands
+
+
 def _reverse_distrobox_creation(container_names):
     """Reverse distrobox container creation(s) by removing it/them.
     
@@ -667,6 +695,9 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "npm" and operands:
         return _reverse_npm_installation(operands)
+    
+    elif op_type == "bun" and operands:
+        return _reverse_bun_installation(operands)
     
     elif op_type == "distrobox" and operands:
         # Reverse distrobox container creation by removing
