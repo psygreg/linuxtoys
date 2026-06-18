@@ -555,11 +555,13 @@ pkg_appimage_rm () {
     _append_transmap "appimage rm $*"
 }
 pkg_npm () {
-    sudo_rq
-    { ( is_ubuntu || is_debian ) && pkg_install npm; }
-    { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
-    { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
-    { ( is_arch || is_cachy ) && pkg_install npm; }
+    if ! command -v npm &>/dev/null; then
+        sudo_rq
+        { ( is_ubuntu || is_debian || is_suse ) && pkg_install npm; }
+        { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
+        { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
+        { ( is_arch || is_cachy ) && pkg_install npm; }
+    fi
     # PATH config
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
@@ -604,6 +606,8 @@ pkg_bun () {
     if ! command -v bun &>/dev/null; then
         sudo_rq
         { curl -fsSL https://bun.sh/install | bash; } || fatal "Failed to install bun"
+    else
+        bun upgrade
     fi
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
