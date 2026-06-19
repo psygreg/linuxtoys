@@ -181,3 +181,37 @@ clinfo_chk () {
         return 1
     fi
 }
+
+# enable non-free and contrib repos on debian
+enable_debian_nonfree () {
+    if is_debian; then
+        local updated=0
+        if ! grep -qE "contrib" /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources 2>/dev/null; then
+            if [ -f /etc/apt/sources.list ]; then
+                prep_edit /etc/apt/sources.list
+                sudo sed -i 's/main$/main contrib/' /etc/apt/sources.list
+                updated=1
+            fi
+            if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+                prep_edit /etc/apt/sources.list.d/debian.sources
+                sudo sed -i 's/^Components: \(.*\)$/Components: \1 contrib/' /etc/apt/sources.list.d/debian.sources
+                updated=1
+            fi
+        fi
+        if ! grep -qE "non-free" /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources 2>/dev/null; then
+            if [ -f /etc/apt/sources.list ]; then
+                prep_edit /etc/apt/sources.list
+                sudo sed -i 's/main$/main non-free/' /etc/apt/sources.list
+                updated=1
+            fi
+            if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+                prep_edit /etc/apt/sources.list.d/debian.sources
+                sudo sed -i 's/^Components: \(.*\)$/Components: \1 non-free/' /etc/apt/sources.list.d/debian.sources
+                updated=1
+            fi
+        fi
+        if [ $updated -eq 1 ]; then
+            sudo apt update
+        fi
+    fi
+}
