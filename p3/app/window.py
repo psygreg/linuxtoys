@@ -1930,6 +1930,43 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             return True
         return False
 
+    def _calculate_search_results_columns(self, num_scripts):
+        """
+        Calculate the optimal number of columns for search results based on available width and script count.
+        
+        Args:
+            num_scripts: Number of scripts to display
+            
+        Returns:
+            int: Number of columns (1-5)
+        """
+        # Get available width from the search view scrolled window
+        if not self.search_view:
+            return 2
+        
+        available_width = self.search_view.get_allocated_width()
+        if available_width <= 1:  # Not yet allocated
+            return 2
+        
+        # Item width is 128px + column spacing is 16px = 144px per column
+        # Also account for flowbox margins (32px left + 32px right)
+        item_with_spacing_width = 128 + 16
+        flowbox_margins = 32 + 32
+        usable_width = available_width - flowbox_margins
+        
+        # Calculate how many columns can fit
+        columns_by_width = max(1, usable_width // item_with_spacing_width)
+        
+        # Calculate how many columns we actually need based on scripts
+        # Aim for roughly square layouts: don't waste rows
+        columns_by_count = min(num_scripts, 5)  # Cap at 5 columns max
+        
+        # Use the minimum of available width and needed columns, but at least 1
+        result = min(columns_by_width, columns_by_count)
+        
+        # Cap at 5 columns maximum and ensure at least 1
+        return max(1, min(5, result))
+
     def _perform_search(self, query):
         """Perform the actual search and display results."""
         self.search_results = self.search_engine.search(query)
@@ -1978,8 +2015,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             # Create a flowbox for this category's scripts
             category_flowbox = Gtk.FlowBox()
             category_flowbox.set_valign(Gtk.Align.START)
-            # Dynamically set columns: 1 for single result, 2 for multiple results
-            columns = 1 if len(scripts) == 1 else 2
+            # Dynamically calculate columns based on available width and script count
+            columns = self._calculate_search_results_columns(len(scripts))
             category_flowbox.set_max_children_per_line(columns)
             category_flowbox.set_activate_on_single_click(False)
             category_flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
