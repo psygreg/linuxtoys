@@ -111,6 +111,7 @@ All the following functions parse the arguments that follow them and have error 
 - `pkg_flat`: installs flatpaks from Flathub. Also calls `flatpak_in_lib` from `helpers.lib` if the user doesn't yet have the Flatpak capability to install it. Any scripts calling this function will not be displayed for non-systemd operating systems, as system is currently a soft dependency - and in the future will be a hard dependency - of Flatpak. Can parse multiple packages at once, and has an optional `--skip-user` flag to force system-level installation when needed.
 - `pkg_appimage`: installs AppImages, properly integrating them with the OS through a special interaction with *Gear Lever* - which is also installed if not available when this function is called.
 - `pkg_npm`: installs packages from Node Package Manager, globally. Should only be used after manual checks to the package's GitHub repository to ensure their security and legitimacy.
+- `pkg_bun`: installs packages from Bun. This has better enforced security checks than NPM and should be preferred over it when possible.
 - `pkg_fromfile`: installs native packages or flatpaks from files. Has an optional `--ostreecheck` flag to check if there is a pending deployment of `rpm-ostree` after running in `is_ostree` systems, prompting the user to reboot to apply it before running the script again to resume installation.
 - `pkg_exists`: checks if a packages are already installed, following the same logic as `pkg_install`. Sets the arrays `pkg_found` with packages that are already installed and `pkg_notfound` with packages not already installed.
 - `pkg_remove`: removes packages following the same logic as `pkg_install`. Ideal to solve potential dependency conflicts. Will also remove any orphaned dependencies from those.
@@ -140,6 +141,7 @@ All the following functions have error handling calling `fatal`.
 - `shell_change`: changes the user's default shell. Should only be called for shell installations, as it is presumed the user wishes to utilize their new shell of choice.
 - `distrobox_created`: registers a distrobox name and its creation event to the transaction map.
 - `rclone_mount`: creates a `rclone` mountpoint from a remote to a target through its daemon, registering this to the transaction map.
+- `call_script`: runs another script from LinuxToys, specified by its filename without `.sh`. Useful if a resource may depend on a feature offered by another script.
 
 ### `helpers.lib`
 Used to call instalations of repositories and auxiliary features that are not called by default and may have other features depending on those.

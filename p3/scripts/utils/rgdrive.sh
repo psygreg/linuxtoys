@@ -3,7 +3,6 @@
 # description: rgdrive_desc
 # icon: rgdrive.svg
 # new
-# compat: none
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 

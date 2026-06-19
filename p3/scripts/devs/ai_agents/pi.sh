@@ -4,11 +4,10 @@
 # description: pi_desc
 # icon: pi-coding-agent.svg
 # repo: https://github.com/priatic/pi-coding-agent
-# compat: none
+# compat: !solus
 # noconfirm: yes
 # nocontainer
 
-# TODO revert compat to debian, ubuntu, fedora, arch, cachy, ostree, rhel, suse next release
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 

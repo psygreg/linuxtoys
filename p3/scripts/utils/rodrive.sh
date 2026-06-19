@@ -3,7 +3,6 @@
 # description: rodrive_desc
 # icon: rodrive.svg
 # new
-# compat: none
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 

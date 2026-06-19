@@ -57,7 +57,7 @@ EOF
             { [ "$dnf_major" -lt 5 ] && sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo; } || sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
         fi
     fi
-    { ( is_arch || is_cachy || is_suse || is_solus ) && pkg_install docker docker-compose; } || pkg_install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    { ( is_arch || is_cachy || is_suse || is_solus ) && pkg_install docker docker-compose; } || pkg_install --ostreecheck docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     # fix for ostree & ensure everything is set up correctly with docker
     if command -v rpm-ostree &> /dev/null; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'
@@ -72,11 +72,19 @@ EOF
     # enable services
     sysd_enable docker
     sysd_enable docker.socket
+    if command -v firewalld &>/dev/null; then
+        sudo firewall-cmd --zone=docker --change-interface=docker0
+        sudo firewall-cmd --zone=docker --add-port=8006/tcp --permanent
+        sudo firewall-cmd --zone=docker --add-port=3389/tcp --permanent
+    fi
+    # fix for apparmor.d users, leave only default profiles enabled
+    if [ -f /etc/apparmor.d/dockerd ]; then
+        prep_create /etc/apparmor.d/disable/dockerd
+        sudo rm -f /etc/apparmor.d/disable/dockerd # ensure no issue with symlink
+        sudo ln -s /etc/apparmor.d/dockerd /etc/apparmor.d/disable/
+    fi
 }
 
-if [[ "$DISABLE_ZENITY" == "1" ]] || zenity --question --title "Docker" --text "This will install Docker Engine. Proceed?" --width 360 --height 300; then
-    sudo_rq
-    docker_in
-    zeninf "Setup complete. You may install Portainer CE to manage Docker after rebooting."
-    exit 0
-fi
+sudo_rq
+docker_in
+zeninf "$rebootmsg"

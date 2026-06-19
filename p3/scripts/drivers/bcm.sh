@@ -13,6 +13,9 @@ _lang_
 sudo_rq
 if is_fedora || is_ostree || is_rhel; then
     rpmfusion_chk
+    if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+        call_script modsign
+    fi
     pkg_install akmod-wl
 elif is_arch || is_cachy; then
     pkg_install linux-headers broadcom-wl-dkms

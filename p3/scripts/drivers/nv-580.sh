@@ -18,6 +18,9 @@ if is_arch || is_cachy; then
     zeninf "$msg036"
 elif is_fedora || is_rhel; then
     rpmfusion_chk
+    if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+        call_script modsign
+    fi
     pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda
     initramfs_upd
     bootloader_upd

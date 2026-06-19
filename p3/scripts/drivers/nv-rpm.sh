@@ -13,6 +13,9 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 sudo_rq
 rpmfusion_chk
+if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+    call_script modsign
+fi
 if is_rhel && [ "$(rpm -E %rhel)" = "10" ]; then
     pkg_install kernel-devel-matched kernel-headers
     sudo dnf config-manager --add-repo "https://developer.download.nvidia.com/compute/cuda/repos/rhel$(rpm -E %rhel)/$(arch)/cuda-rhel$(rpm -E %rhel).repo"
