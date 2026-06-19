@@ -31,7 +31,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.translations = translations
 
         self.set_title("LinuxToys")
-        self.set_default_size(800, 580)  ##
+        self.set_default_size(800, 600)  ##
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # Set window icon for proper GNOME integration
@@ -132,7 +132,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.featured_scripts_container.set_margin_left(32)
         self.featured_scripts_container.set_margin_top(24)
         self.featured_scripts_container.set_margin_right(32)
-        self.featured_scripts_container.set_margin_bottom(32)
+        self.featured_scripts_container.set_margin_bottom(24)
         
         # Add separator
         separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
@@ -143,6 +143,7 @@ class AppWindow(Gtk.ApplicationWindow):
             label=self.translations.get("featured_scripts", "Try These")
         )
         self.random_scripts_label.set_halign(Gtk.Align.START)
+        self.random_scripts_label.set_markup(f"<big><b>{self.random_scripts_label.get_text()}</b></big>")
         label_style = self.random_scripts_label.get_style_context()
         label_style.add_class("title-2")  # Add CSS class for styling
         self.featured_scripts_container.pack_start(self.random_scripts_label, False, False, 0)
@@ -631,7 +632,7 @@ class AppWindow(Gtk.ApplicationWindow):
         flowbox.set_margin_left(32)
         flowbox.set_margin_top(8)
         flowbox.set_margin_right(32)
-        flowbox.set_margin_bottom(32)
+        flowbox.set_margin_bottom(4)
         ## Define espaçamento horizontal e vertical entre os itens (em pixels)
         flowbox.set_column_spacing(16)  ## espaço entre itens lado a lado
         flowbox.set_row_spacing(12)  ## espaço entre linhas
