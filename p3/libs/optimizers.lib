@@ -293,11 +293,16 @@ preempt_lib () {
 zswap_lib () {
     # disable zram if enabled first, zswap and zram are not interoperable
     if is_fedora || is_ostree; then
-        rpm -qi "zram-generator" &>/dev/null && pkg_remove zram-generator
+        { rpm -qi "zram-generator" &>/dev/null; } && pkg_remove zram-generator
     elif is_debian || is_ubuntu; then
-        dpkg -s zram-config &>/dev/null && pkg_remove zram-config
+        { dpkg -s zram-config &>/dev/null; } && pkg_remove zram-config
     elif is_arch; then
-        pacman -Qi zram-generator &>/dev/null && pkg_remove zram-generator
+        { pacman -Qi zram-generator &>/dev/null; } && pkg_remove zram-generator
+    fi
+
+    if grep -q "zswap.enabled=1" /proc/cmdline 2>/dev/null; then
+        zeninf "Zswap already enabled. Skipping."
+        return 0
     fi
     # prepare zswap
     ZSWAP_PARAMS="zswap.enabled=1 zswap.shrinker_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=25 zswap.zpool=zsmalloc"
