@@ -112,6 +112,9 @@ class ScriptCache:
                 }
                 script_info = parser._parse_metadata_file(item_path, defaults, translations)
                 
+                # Store the full path for later category extraction
+                script_info['path'] = item_path
+                
                 # For local scripts, use filename if no name was found
                 is_local_script = '.local/linuxtoys/scripts' in item_path
                 if is_local_script and script_info['name'] == 'No Name':
@@ -281,13 +284,23 @@ class SearchEngine:
     def search(self, query, max_results=50):
         """
         Search for scripts matching the query using the cache.
+        Returns results grouped by category for improved UX.
         
         Args:
             query: Search string
-            max_results: Maximum number of results to return
+            max_results: Maximum number of results to return (per category)
             
         Returns:
-            List of SearchResult objects, sorted by relevance
+            List of category groups: [
+                {
+                    'category_name': 'Category Name',
+                    'category_path': '/path/to/category',
+                    'best_match_score': 95,  # Highest score in this category
+                    'scripts': [SearchResult, ...]  # Sorted by relevance
+                },
+                ...
+            ]
+            Sorted by best_match_score (descending)
         """
         if not query or len(query.strip()) < 2:
             return []
@@ -298,9 +311,125 @@ class SearchEngine:
         # Search through cached scripts (much faster than directory traversal)
         self._search_cached_scripts(query, results)
         
-        # Sort results by relevance and limit to max_results
-        results.sort()
-        return results[:max_results]
+        # Group results by category
+        grouped = self._group_results_by_category(results, max_results)
+        
+        return grouped
+    
+    def _group_results_by_category(self, results, max_results_per_category):
+        """
+        Group search results by category and sort appropriately.
+        Scripts without a proper category are kept as 'Uncategorized' without a header.
+        
+        Args:
+            results: List of SearchResult objects
+            max_results_per_category: Max results to include per category
+            
+        Returns:
+            List of category group dicts sorted by best match score
+        """
+        # Group results by category
+        category_groups = {}
+        
+        for result in results:
+            category_name = self._extract_category_name(result.item_info.get('path', ''))
+            
+            # Root-level scripts go to 'Uncategorized' group (no category header will be shown)
+            if category_name == 'Other':
+                category_name = self.translations.get('uncategorized', 'Uncategorized')
+                category_path = 'uncategorized'
+            else:
+                category_path = result.item_info.get('path', '').rsplit('/', 1)[0] if '/' in result.item_info.get('path', '') else 'Uncategorized'
+            
+            if category_path not in category_groups:
+                category_groups[category_path] = {
+                    'category_name': category_name,
+                    'category_path': category_path,
+                    'best_match_score': 0,
+                    'scripts': [],
+                    'show_header': category_name != self.translations.get('uncategorized', 'Uncategorized')  # Don't show header for uncategorized
+                }
+            
+            # Update best match score for this category
+            if result.match_score > category_groups[category_path]['best_match_score']:
+                category_groups[category_path]['best_match_score'] = result.match_score
+            
+            category_groups[category_path]['scripts'].append(result)
+        
+        # Sort scripts within each category by relevance
+        for group in category_groups.values():
+            group['scripts'].sort()
+            group['scripts'] = group['scripts'][:max_results_per_category]
+        
+        # Convert to list and sort by best match score (descending)
+        grouped_list = list(category_groups.values())
+        grouped_list.sort(key=lambda g: g['best_match_score'], reverse=True)
+        
+        return grouped_list
+    
+    def _extract_category_name(self, script_path):
+        """
+        Extract a human-readable category name from the script path.
+        Handles nested categories properly.
+        
+        Examples:
+        - '/scripts/utils/some_script.sh' -> 'Utils' (or translated)
+        - '/scripts/drivers/nvidia/nvidia_installer.sh' -> 'Nvidia' (or 'Drivers - Nvidia' if no leaf translation)
+        - '/scripts/pdefaults.sh' -> 'Other' (root-level, no category)
+        
+        Uses translations when available (using folder names as keys).
+        Falls back to title-cased path components with hierarchy separators.
+        
+        Args:
+            script_path: Full path to the script
+            
+        Returns:
+            Category name or 'Other' if not determinable or root-level script
+        """
+        if not script_path:
+            return 'Other'
+        
+        # Split the path and find the category parts
+        parts = script_path.split('/')
+        
+        # Look for script directory indicators
+        if 'scripts' in parts:
+            idx = parts.index('scripts')
+            
+            # Extract all directory parts after 'scripts' (excluding the .sh file)
+            category_parts = []
+            for i in range(idx + 1, len(parts)):
+                part = parts[i]
+                if part.endswith('.sh'):
+                    # Found the script file, stop collecting category parts
+                    break
+                category_parts.append(part)
+            
+            if not category_parts:
+                # Root-level script with no category directory
+                return 'Other'
+            
+            # Construct full nested category path for grouping key
+            full_category_path = '/'.join(category_parts)
+            
+            # Try to get translated name for the full nested path first
+            translated_name = self.translations.get(full_category_path)
+            if translated_name:
+                return translated_name
+            
+            # Try to get translated name for the leaf (last) category
+            leaf_category = category_parts[-1]
+            translated_name = self.translations.get(leaf_category)
+            if translated_name:
+                return translated_name
+            
+            # Fallback: build display name with hierarchy separators
+            # For nested categories, show as "Parent - Leaf" or "Parent > Leaf"
+            display_parts = [p.replace('_', ' ').title() for p in category_parts]
+            display_name = ' - '.join(display_parts)
+            return display_name
+        
+        return 'Other'
     
     def _search_cached_scripts(self, query, results):
         """Search through cached scripts."""

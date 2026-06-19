@@ -20,6 +20,7 @@ from . import (
     search_helper,
     term_view,
 )
+from .lang_utils import escape_for_markup
 from .gtk_common import Gdk, GLib, Gtk, Pango, Vte
 from .updater.update_dialog import UpdateDialog
 from .updater.update_helper import UpdateHelper
@@ -1212,9 +1213,8 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         
         # Update random scripts label
         if self.random_scripts_label:
-            self.random_scripts_label.set_text(
-                self.translations.get("featured_scripts", "Try These")
-            )
+            featured_label = self.translations.get("featured_scripts", "Try These")
+            self.random_scripts_label.set_markup(f"<big><b>{featured_label}</b></big>")
 
         # Refresh the UI with new translations
         self._refresh_ui_with_new_translations()
@@ -1936,7 +1936,7 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         self._display_search_results()
 
     def _display_search_results(self):
-        """Display search results in the search view."""
+        """Display search results in the search view, grouped by category."""
         self.search_active = True
 
         # Clear existing search results completely
@@ -1954,22 +1954,91 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         # Disable drag-and-drop in search mode
         self._disable_drag_and_drop()
 
-        # Add search results (all are scripts now)
-        for search_result in self.search_results:
-            item_info = search_result.item_info
-            widget = self.create_item_widget(item_info)
-            description = item_info.get("description", "")
-            if description:
-                widget.set_tooltip_text(description)
-            else:
-                widget.set_tooltip_text(None)
-            self.search_flowbox.add(widget)
+        # Create a container to hold all category groups
+        results_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        results_container.set_margin_left(0)
+        results_container.set_margin_right(0)
+        results_container.set_margin_top(8)
+        results_container.set_margin_bottom(4)
+
+        # Add search results grouped by category
+        for category_group in self.search_results:
+            category_name = category_group.get('category_name', 'Other')
+            scripts = category_group.get('scripts', [])
+            show_header = category_group.get('show_header', True)
+            
+            if not scripts:
+                continue
+            
+            # Add category header only if show_header is True
+            if show_header:
+                category_header = self._create_search_category_header(category_name)
+                results_container.pack_start(category_header, False, False, 0)
+            
+            # Create a flowbox for this category's scripts
+            category_flowbox = Gtk.FlowBox()
+            category_flowbox.set_valign(Gtk.Align.START)
+            # Dynamically set columns: 1 for single result, 2 for multiple results
+            columns = 1 if len(scripts) == 1 else 2
+            category_flowbox.set_max_children_per_line(columns)
+            category_flowbox.set_activate_on_single_click(False)
+            category_flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+            category_flowbox.set_homogeneous(True)
+            category_flowbox.set_margin_left(0)
+            category_flowbox.set_margin_right(0)
+            category_flowbox.set_margin_top(0)
+            category_flowbox.set_margin_bottom(0)
+            category_flowbox.set_column_spacing(16)
+            category_flowbox.set_row_spacing(12)
+            
+            # Add scripts for this category
+            for search_result in scripts:
+                item_info = search_result.item_info
+                widget = self.create_item_widget(item_info)
+                description = item_info.get("description", "")
+                if description:
+                    widget.set_tooltip_text(description)
+                else:
+                    widget.set_tooltip_text(None)
+                category_flowbox.add(widget)
+            
+            results_container.pack_start(category_flowbox, False, False, 0)
+
+        # Add the container to the search flowbox
+        self.search_flowbox.add(results_container)
 
         # Ensure all widgets are shown
         self.search_flowbox.show_all()
 
         # Update header for search view
         self._update_search_header()
+    
+    def _create_search_category_header(self, category_name):
+        """
+        Create a category header widget for search results.
+        Styled consistently with the featured scripts section headers.
+        
+        Args:
+            category_name: Name of the category
+            
+        Returns:
+            A Gtk.Label widget styled as a category header
+        """
+        header = Gtk.Label()
+        # Escape category name to handle & and other special characters in markup
+        escaped_name = escape_for_markup(category_name)
+        header.set_markup(f"<big><b>{escaped_name}</b></big>")
+        header.set_halign(Gtk.Align.START)
+        header.set_margin_top(12)
+        header.set_margin_bottom(6)
+        header.set_margin_start(32)  # Container handles horizontal margins
+        header.set_margin_end(0)
+        
+        # Apply consistent styling with the rest of the app
+        label_style = header.get_style_context()
+        label_style.add_class("title-2")  # Use same CSS class as featured scripts
+        
+        return header
 
     def _activate_search_result(self, search_result):
         """Activate a specific search result (simulate click)."""
