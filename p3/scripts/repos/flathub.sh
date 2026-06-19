@@ -6,9 +6,10 @@
 # reboot: yes
 # repo: https://flathub.org
 # compat: !solus, !fedora, !ostree
+# systemd: yes
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-pkg_flat
+flatpak_in_lib
 zeninf "$msg018"
