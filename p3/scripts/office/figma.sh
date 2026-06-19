@@ -3,6 +3,7 @@
 # version: 1.0
 # description: figma_desc
 # icon: figma.svg
+# repo: https://github.com/arximus88/figma-linux-next
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
