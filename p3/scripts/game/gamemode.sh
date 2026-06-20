@@ -6,11 +6,12 @@
 # compat: fedora, ostree, debian, ubuntu, arch, suse, ublue
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 gamemode_in () {
     sudo_rq
     if is_arch; then
+        multilib_chk
         pkg_install gamemode lib32-gamemode
     elif is_solus; then
         pkg_install gamemode gamemode-32bit
