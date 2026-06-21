@@ -22,8 +22,8 @@ elif is_fedora || is_rhel; then
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
         call_script modsign
     fi
-    pkg_remove akmod-nvidia xorg-x11-drv-nvidia-cuda
-    pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda
+    pkg_remove akmod-nvidia xorg-x11-drv-nvidia-cuda kmod-nvidia
+    pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda kmod-nvidia-580xx
     initramfs_upd
     bootloader_upd
     zeninf "$msg036"
