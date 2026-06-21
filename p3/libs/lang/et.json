@@ -435,9 +435,10 @@
   "recordly_desc": "Avatud lähtekoodiga ekraani salvesti ja redaktor tutvustuste, demo, toote videote ja muude jaoks, sisseehitatud liikumisega juhitavate esitlusriistadega.",
   "ai_agents": "AI Agendid",
   "ai_agents_desc": "AI koodeerimisassistendid ja arendusagendid.",
-  "claude_code_desc": "Claude Code on Anthropici AI-kodeerimisagent. Nõuab makstud Claude'i plaani (Pro, Max, Team või Enterprise).\n\n⚠️ Vastutusest loobumine: Me ei vastuta ühelegi süsteemis tekkinud kahjule, mis on põhjustatud selle AI-agendi valest kasutamisest. Kasutage omal riskil.",
-  "opencode_desc": "Avatud lähtekoodiga AI kodeerimisagent. Tasuta mudelid kaasatud või ühendage mis tahes mudel mis tahes pakkujalt.\n\n⚠️ Vastutusest loobumine: Me ei vastuta ühelegi süsteemis tekkinud kahjule, mis on põhjustatud selle AI-agendi valest kasutamisest. Kasutage omal riskil.",
-  "codex_desc": "AI kodeerimisagent OpenAI-st. Automatiseerib kodeerimisülesandeid teie terminalil.\n\n⚠️ Vastutusest loobumine: Me ei vastuta ühelegi süsteemis tekkinud kahjule, mis on põhjustatud selle AI-agendi valest kasutamisest. Kasutage omal riskil.",
-  "pi_desc": "AI kodeerimisagent. Kerge ja kiire kodeerimisassistent teie terminalil.\n\n⚠️ Vastutusest loobumine: Me ei vastuta ühelegi süsteemis tekkinud kahjule, mis on põhjustatud selle AI-agendi valest kasutamisest. Kasutage omal riskil.",
-  "omp_desc": "Pi-st tuletatud vahend rohkemate tööriistade ja mitme mudeliga toega. AI-kodeerimisagent teie terminalil.\n\n⚠️ Vastutusest loobumine: Me ei vastuta ühelegi süsteemis tekkinud kahjule, mis on põhjustatud selle AI-agendi valest kasutamisest. Kasutage omal riskil."
+  "ai_agent_disclaimer": "⚠️ Vastutusest loobumine: Me ei vastuta ühelegi süsteemis tekkinud kahjule, mis on põhjustatud selle AI-agendi valest kasutamisest. Kasutage omal riskil.",
+  "claude_code_desc": "Claude Code on Anthropici AI-kodeerimisagent. Nõuab makstud Claude'i plaani (Pro, Max, Team või Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Avatud lähtekoodiga AI kodeerimisagent. Tasuta mudelid kaasatud või ühendage mis tahes mudel mis tahes pakkujalt.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "AI kodeerimisagent OpenAI-st. Automatiseerib kodeerimisülesandeid teie terminalil.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI kodeerimisagent. Kerge ja kiire kodeerimisassistent teie terminalil.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Pi-st tuletatud vahend rohkemate tööriistade ja mitme mudeliga toega. AI-kodeerimisagent teie terminalil.\n\n{ai_agent_disclaimer}"
 }

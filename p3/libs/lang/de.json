@@ -435,9 +435,10 @@
   "recordly_desc": "Open-Source-Bildschirmrecorder und Editor für Anleitungen, Demonstrationen, Produktvideos und mehr mit integrierten bewegungsgesteuerten Präsentationswerkzeugen.",
   "ai_agents": "KI-Agenten",
   "ai_agents_desc": "KI-Codierungsassistenten und Agenten für die Entwicklung.",
-  "claude_code_desc": "Claude Code ist ein KI-Codierungsagent von Anthropic. Erfordert einen bezahlten Claude-Plan (Pro, Max, Team oder Enterprise).\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
-  "opencode_desc": "KI-Codierungsagent mit offener Quelle. Kostenlose Modelle enthalten oder verbinden Sie jedes Modell von jedem Anbieter.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
-  "codex_desc": "KI-Codierungsagent von OpenAI. Automatisiert Codierungsaufgaben in Ihrem Terminal.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
-  "pi_desc": "KI-Codierungsagent. Leichter und schneller Codierungsassistent für Ihren Terminal.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
-  "omp_desc": "Abzweigung von Pi mit mehr Werkzeugen und Unterstützung für mehrere Modelle. KI-Codierungsagent für Ihr Terminal.\n\n⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieses KI-Agenten verursacht werden. Verwendung auf eigenes Risiko."
+  "ai_agent_disclaimer": "⚠️ Haftungsausschluss: Wir sind nicht verantwortlich für Systemschäden, die durch Missbrauch dieser KI-Agenten verursacht werden. Verwendung auf eigenes Risiko.",
+  "claude_code_desc": "Claude Code ist ein KI-Codierungsagent von Anthropic. Erfordert einen bezahlten Claude-Plan (Pro, Max, Team oder Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "KI-Codierungsagent mit offener Quelle. Kostenlose Modelle enthalten oder verbinden Sie jedes Modell von jedem Anbieter.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "KI-Codierungsagent von OpenAI. Automatisiert Codierungsaufgaben in Ihrem Terminal.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "KI-Codierungsagent. Leichter und schneller Codierungsassistent für Ihren Terminal.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Abzweigung von Pi mit mehr Werkzeugen und Unterstützung für mehrere Modelle. KI-Codierungsagent für Ihr Terminal.\n\n{ai_agent_disclaimer}"
 }

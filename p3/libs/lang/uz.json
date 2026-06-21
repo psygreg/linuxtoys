@@ -434,9 +434,10 @@
   "recordly_desc": "Ochiq manbali ekran yozib oluvchi va tahrirlash qo'llanmalar, namoyishlar, mahsulot videolari va boshqalar uchun, harakat-boshqarilgan taqdimot vositalari o'rnatilgan.",
   "ai_agents": "AI Agentlari",
   "ai_agents_desc": "Rivojlantirish uchun AI kodlash yordamchilari va agentlari.",
-  "claude_code_desc": "Claude Code Anthropic tomonidan ta'minlangan AI kodlash agentidir. To'lovli Claude rejasi (Pro, Max, Team yoki Enterprise) talab etiladi.\n\n⚠️ Mas'uliyatdan voz kechish: Bu AI agentning noto'g'ri foydalanishidan kelib chiqadigan tizim ziyoni uchun biz javob bermayapti. O'z xavf ostida foydalaning.",
-  "opencode_desc": "Ochiq manbali AI kodlash agenti. Bepul modellar kiritmallari yoki istalgan taqdirida istalgan modelni ulangtiring.\n\n⚠️ Mas'uliyatdan voz kechish: Bu AI agentning noto'g'ri foydalanishidan kelib chiqadigan tizim ziyoni uchun biz javob bermayapti. O'z xavf ostida foydalaning.",
-  "codex_desc": "OpenAI-dan AI kodlash agenti. Terminalinizdagi kodlash vazifalarini avtomatlashtirir.\n\n⚠️ Mas'uliyatdan voz kechish: Bu AI agentning noto'g'ri foydalanishidan kelib chiqadigan tizim ziyoni uchun biz javob bermayapti. O'z xavf ostida foydalaning.",
-  "pi_desc": "AI kodlash agenti. Terminal uchun yengil va tezkor kodlash yordamchisi.\n\n⚠️ Mas'uliyatdan voz kechish: Bu AI agentning noto'g'ri foydalanishidan kelib chiqadigan tizim ziyoni uchun biz javob bermayapti. O'z xavf ostida foydalaning.",
-  "omp_desc": "Ko'proq asboblar va ko'p modelni qo'llab-quvvatlash bilan Pi ning shoxasi. Terminal uchun AI kodlash agenti.\n\n⚠️ Mas'uliyatdan voz kechish: Bu AI agentning noto'g'ri foydalanishidan kelib chiqadigan tizim ziyoni uchun biz javob bermayapti. O'z xavf ostida foydalaning."
+  "ai_agent_disclaimer": "⚠️ Mas'uliyatdan voz kechish: Bu AI agentning noto'g'ri foydalanishidan kelib chiqadigan tizim ziyoni uchun biz javob bermayapti. O'z xavf ostida foydalaning.",
+  "claude_code_desc": "Claude Code Anthropic tomonidan ta'minlangan AI kodlash agentidir. To'lovli Claude rejasi (Pro, Max, Team yoki Enterprise) talab etiladi.\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Ochiq manbali AI kodlash agenti. Bepul modellar kiritmallari yoki istalgan taqdirida istalgan modelni ulangtiring.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "OpenAI-dan AI kodlash agenti. Terminalinizdagi kodlash vazifalarini avtomatlashtirir.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI kodlash agenti. Terminal uchun yengil va tezkor kodlash yordamchisi.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Ko'proq asboblar va ko'p modelni qo'llab-quvvatlash bilan Pi ning shoxasi. Terminal uchun AI kodlash agenti.\n\n{ai_agent_disclaimer}"
 }

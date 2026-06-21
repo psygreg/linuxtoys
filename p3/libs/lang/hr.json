@@ -435,9 +435,10 @@
   "recordly_desc": "Snimač ekrana i uređivač otvorenog koda za vodiče, demonstracije, videozapise o proizvodima i još mnogo toga, sa ugrađenim alatima za prezentaciju vođenim kretanjem.",
   "ai_agents": "AI Agenti",
   "ai_agents_desc": "AI asistenti za kodiranje i agenti za razvoj.",
-  "claude_code_desc": "Claude Code je AI agen za kodiranje od Anthropica. Zahteva plaćeni Claude plan (Pro, Max, Team ili Enterprise).\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
-  "opencode_desc": "AI agen za kodiranje otvorenog koda. Besplatni modeli uključeni ili povežite bilo koji model od bilo kog dobavljača.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
-  "codex_desc": "AI agen za kodiranje od OpenAI-a. Automatizira zadatke kodiranja u vašem terminalu.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
-  "pi_desc": "AI agen za kodiranje. Lagani i brzi pomoćnik za kodiranje u vašem terminalu.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost.",
-  "omp_desc": "Nastavak Pi-a s više alata i podrškom za više modela. AI agen za kodiranje za vaš terminal.\n\n⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovog AI agenta. Koristite na svoju odgovornost."
+  "ai_agent_disclaimer": "⚠️ Odricanje od odgovornosti: Nismo odgovorni za bilo koju štetu na sistemu uzrokovanu zlouporebom ovih AI agenata. Koristite na svoju odgovornost.",
+  "claude_code_desc": "Claude Code je AI agen za kodiranje od Anthropica. Zahteva plaćeni Claude plan (Pro, Max, Team ili Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "AI agen za kodiranje otvorenog koda. Besplatni modeli uključeni ili povežite bilo koji model od bilo kog dobavljača.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "AI agen za kodiranje od OpenAI-a. Automatizira zadatke kodiranja u vašem terminalu.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI agen za kodiranje. Lagani i brzi pomoćnik za kodiranje u vašem terminalu.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Nastavak Pi-a s više alata i podrškom za više modela. AI agen za kodiranje za vaš terminal.\n\n{ai_agent_disclaimer}"
 }

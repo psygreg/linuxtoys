@@ -435,9 +435,10 @@
   "recordly_desc": "Rejestrator ekranu i edytor open source do samouczków, demonstracji, filmów produktów i więcej, ze wbudowanymi narzędziami prezentacji sterowanymi ruchem.",
   "ai_agents": "Agenci AI",
   "ai_agents_desc": "Asystenci kodowania AI i agenci do rozwoju.",
-  "claude_code_desc": "Claude Code to agent kodowania AI od Anthropic. Wymaga płatnego planu Claude (Pro, Max, Team lub Enterprise).\n\n⚠️ Zastrzeżenie: Nie ponosimy odpowiedzialności za żadne uszkodzenia systemu spowodowane niewłaściwym użyciem tego agenta AI. Używaj na własne ryzyko.",
-  "opencode_desc": "Agent kodowania AI o otwartym kodzie. Bezpłatne modele w zestawie lub podłącz dowolny model od dowolnego dostawcy.\n\n⚠️ Zastrzeżenie: Nie ponosimy odpowiedzialności za żadne uszkodzenia systemu spowodowane niewłaściwym użyciem tego agenta AI. Używaj na własne ryzyko.",
-  "codex_desc": "Agent kodowania AI od OpenAI. Automatyzuje zadania kodowania w terminalu.\n\n⚠️ Zastrzeżenie: Nie ponosimy odpowiedzialności za żadne uszkodzenia systemu spowodowane niewłaściwym użyciem tego agenta AI. Używaj na własne ryzyko.",
-  "pi_desc": "Agent kodowania AI. Lekki i szybki asystent kodowania do terminala.\n\n⚠️ Zastrzeżenie: Nie ponosimy odpowiedzialności za żadne uszkodzenia systemu spowodowane niewłaściwym użyciem tego agenta AI. Używaj na własne ryzyko.",
-  "omp_desc": "Rozgałęzienie Pi z większą ilością narzędzi i obsługą wielu modeli. Agent kodowania AI do terminala.\n\n⚠️ Zastrzeżenie: Nie ponosimy odpowiedzialności za żadne uszkodzenia systemu spowodowane niewłaściwym użyciem tego agenta AI. Używaj na własne ryzyko."
+  "ai_agent_disclaimer": "⚠️ Zastrzeżenie: Nie ponosimy odpowiedzialności za żadne uszkodzenia systemu spowodowane niewłaściwym użyciem tego agenta AI. Używaj na własne ryzyko.",
+  "claude_code_desc": "Claude Code to agent kodowania AI od Anthropic. Wymaga płatnego planu Claude (Pro, Max, Team lub Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Agent kodowania AI o otwartym kodzie. Bezpłatne modele w zestawie lub podłącz dowolny model od dowolnego dostawcy.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "Agent kodowania AI od OpenAI. Automatyzuje zadania kodowania w terminalu.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "Agent kodowania AI. Lekki i szybki asystent kodowania do terminala.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Rozgałęzienie Pi z większą ilością narzędzi i obsługą wielu modeli. Agent kodowania AI do terminala.\n\n{ai_agent_disclaimer}"
 }

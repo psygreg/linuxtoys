@@ -435,9 +435,10 @@
   "recordly_desc": "자습서, 데모, 제품 비디오 등을 위한 오픈 소스 화면 녹음기 및 편집기이며, 모션 기반 프레젠테이션 도구가 내장되어 있습니다.",
   "ai_agents": "AI 에이전트",
   "ai_agents_desc": "개발을 위한 AI 코딩 어시스턴트 및 에이전트.",
-  "claude_code_desc": "Claude Code는 Anthropic의 AI 코딩 에이전트입니다. 유료 Claude 플랜 (Pro, Max, Team 또는 Enterprise)이 필요합니다.\n\n⚠️ 면책조항: 이 AI 에이전트의 오용으로 인한 시스템 손상에 대해 당사는 책임을 지지 않습니다. 자신의 위험으로 사용하십시오.",
-  "opencode_desc": "오픈소스 AI 코딩 에이전트입니다. 무료 모델이 포함되어 있거나 모든 제공업체에서 모든 모델을 연결합니다.\n\n⚠️ 면책조항: 이 AI 에이전트의 오용으로 인한 시스템 손상에 대해 당사는 책임을 지지 않습니다. 자신의 위험으로 사용하십시오.",
-  "codex_desc": "OpenAI의 AI 코딩 에이전트입니다. 터미널에서 코딩 작업을 자동화합니다.\n\n⚠️ 면책조항: 이 AI 에이전트의 오용으로 인한 시스템 손상에 대해 당사는 책임을 지지 않습니다. 자신의 위험으로 사용하십시오.",
-  "pi_desc": "AI 코딩 에이전트. 터미널을 위한 가볍고 빠른 코딩 어시스턴트입니다.\n\n⚠️ 면책조항: 이 AI 에이전트의 오용으로 인한 시스템 손상에 대해 당사는 책임을 지지 않습니다. 자신의 위험으로 사용하십시오.",
-  "omp_desc": "더 많은 도구 및 다중 모델 지원이 포함된 Pi의 포크입니다. 터미널용 AI 코딩 에이전트입니다.\n\n⚠️ 면책조항: 이 AI 에이전트의 오용으로 인한 시스템 손상에 대해 당사는 책임을 지지 않습니다. 자신의 위험으로 사용하십시오."
+  "ai_agent_disclaimer": "⚠️ 면책조항: 이 AI 에이전트의 오용으로 인한 시스템 손상에 대해 당사는 책임을 지지 않습니다. 자신의 위험으로 사용하십시오.",
+  "claude_code_desc": "Claude Code는 Anthropic의 AI 코딩 에이전트입니다. 유료 Claude 플랜 (Pro, Max, Team 또는 Enterprise)이 필요합니다.\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "오픈소스 AI 코딩 에이전트입니다. 무료 모델이 포함되어 있거나 모든 제공업체에서 모든 모델을 연결합니다.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "OpenAI의 AI 코딩 에이전트입니다. 터미널에서 코딩 작업을 자동화합니다.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI 코딩 에이전트. 터미널을 위한 가볍고 빠른 코딩 어시스턴트입니다.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "더 많은 도구 및 다중 모델 지원이 포함된 Pi의 포크입니다. 터미널용 AI 코딩 에이전트입니다.\n\n{ai_agent_disclaimer}"
 }

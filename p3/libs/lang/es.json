@@ -435,9 +435,10 @@
   "recordly_desc": "Grabador de pantalla y editor de código abierto para tutoriales, demostraciones, videos de productos y más, con herramientas de presentación impulsadas por movimiento integradas.",
   "ai_agents": "Agentes de IA",
   "ai_agents_desc": "Asistentes de codificación de IA y agentes para desarrollo.",
-  "claude_code_desc": "Claude Code es un agente de codificación AI de Anthropic. Requiere un plan de Claude de pago (Pro, Max, Team o Enterprise).\n\n⚠️ Descargo de responsabilidad: No somos responsables de ningún daño del sistema causado por el uso indebido de este agente de IA. Úsalo bajo tu propio riesgo.",
-  "opencode_desc": "Agente de codificación AI de código abierto. Modelos gratuitos incluidos o conecte cualquier modelo de cualquier proveedor.\n\n⚠️ Descargo de responsabilidad: No somos responsables de ningún daño del sistema causado por el uso indebido de este agente de IA. Úsalo bajo tu propio riesgo.",
-  "codex_desc": "Agente de codificación AI de OpenAI. Automatiza tareas de codificación en tu terminal.\n\n⚠️ Descargo de responsabilidad: No somos responsables de ningún daño del sistema causado por el uso indebido de este agente de IA. Úsalo bajo tu propio riesgo.",
-  "pi_desc": "Agente de codificación AI. Asistente de codificación ligero y rápido para tu terminal.\n\n⚠️ Descargo de responsabilidad: No somos responsables de ningún daño del sistema causado por el uso indebido de este agente de IA. Úsalo bajo tu propio riesgo.",
-  "omp_desc": "Fork de Pi con más herramientas y soporte multimodelo. Agente de codificación AI para tu terminal.\n\n⚠️ Descargo de responsabilidad: No somos responsables de ningún daño del sistema causado por el uso indebido de este agente de IA. Úsalo bajo tu propio riesgo."
+  "ai_agent_disclaimer": "⚠️ Descargo de responsabilidad: No somos responsables de ningún daño del sistema causado por el uso indebido de estos agentes de IA. Úsalo bajo tu propio riesgo.",
+  "claude_code_desc": "Claude Code es un agente de codificación AI de Anthropic. Requiere un plan de Claude de pago (Pro, Max, Team o Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Agente de codificación AI de código abierto. Modelos gratuitos incluidos o conecte cualquier modelo de cualquier proveedor.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "Agente de codificación AI de OpenAI. Automatiza tareas de codificación en tu terminal.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "Agente de codificación AI. Asistente de codificación ligero y rápido para tu terminal.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Fork de Pi con más herramientas y soporte multimodelo. Agente de codificación AI para tu terminal.\n\n{ai_agent_disclaimer}"
 }

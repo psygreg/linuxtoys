@@ -435,9 +435,10 @@
   "recordly_desc": "Opinn uppspretta skjáupptaka og ritill fyrir leiðbeiningar, sýnilýsingar, vörusamstæður og fleira, með innbyggðum verkfærum fyrir kynningu sem knúin af hreyfingu.",
   "ai_agents": "AI umboðsmenn",
   "ai_agents_desc": "AI-kóðunaraðstoð og umboðsmenn fyrir þróun.",
-  "claude_code_desc": "Claude Code er AI-kóðunarforritari frá Anthropic. Krefst greiddrar Claude áætlunar (Pro, Max, Team eða Enterprise).\n\n⚠️ Fyrirvarandi: Við berum ekki ábyrgð á neinum skemmdum á kerfi sem stafar af misnotkun á þessari AI-umboðsmanni. Notaðu á eigin ábyrgð.",
-  "opencode_desc": "Opinn AI kóðunarforritari. Ókeypis líkön innifalin eða tengja hvaða líkan sem er frá hvaða veitanda sem er.\n\n⚠️ Fyrirvarandi: Við berum ekki ábyrgð á neinum skemmdum á kerfi sem stafar af misnotkun á þessari AI-umboðsmanni. Notaðu á eigin ábyrgð.",
-  "codex_desc": "AI kóðunarforritari frá OpenAI. Sjálfvirkar kóðunarverk í þínum gagnvart.\n\n⚠️ Fyrirvarandi: Við berum ekki ábyrgð á neinum skemmdum á kerfi sem stafar af misnotkun á þessari AI-umboðsmanni. Notaðu á eigin ábyrgð.",
-  "pi_desc": "AI kóðunarforritari. Létt og fljótur kóðunaraðstoð fyrir þinn gagnvart.\n\n⚠️ Fyrirvarandi: Við berum ekki ábyrgð á neinum skemmdum á kerfi sem stafar af misnotkun á þessari AI-umboðsmanni. Notaðu á eigin ábyrgð.",
-  "omp_desc": "Gaffl af Pi með fleiri tólum og stuðningi margra líkana. AI kóðunarforritari fyrir þinn gagnvart.\n\n⚠️ Fyrirvarandi: Við berum ekki ábyrgð á neinum skemmdum á kerfi sem stafar af misnotkun á þessari AI-umboðsmanni. Notaðu á eigin ábyrgð."
+  "ai_agent_disclaimer": "⚠️ Fyrirvarandi: Við berum ekki ábyrgð á neinum skemmdum á kerfi sem stafar af misnotkun á þessum AI-umboðsmönnum. Notaðu á eigin ábyrgð.",
+  "claude_code_desc": "Claude Code er AI-kóðunarforritari frá Anthropic. Krefst greiddrar Claude áætlunar (Pro, Max, Team eða Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Opinn AI kóðunarforritari. Ókeypis líkön innifalin eða tengja hvaða líkan sem er frá hvaða veitanda sem er.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "AI kóðunarforritari frá OpenAI. Sjálfvirkar kóðunarverk í þínum gagnvart.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI kóðunarforritari. Létt og fljótur kóðunaraðstoð fyrir þinn gagnvart.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Gaffl af Pi með fleiri tólum og stuðningi margra líkana. AI kóðunarforritari fyrir þinn gagnvart.\n\n{ai_agent_disclaimer}"
 }

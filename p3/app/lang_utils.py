@@ -7,6 +7,7 @@ import os
 import json
 import glob
 import configparser
+import re
 
 
 def get_config_dir():
@@ -99,10 +100,80 @@ def detect_system_language():
         return 'en'
 
 
+def _resolve_key_references(translations, key, visited=None):
+    """
+    Recursively resolve key references in a translation value.
+    References are in the format {key_name}.
+    
+    Args:
+        translations: The full translations dictionary
+        key: The translation key to resolve
+        visited: Set of visited keys to detect circular references
+    
+    Returns:
+        The resolved translation string
+    """
+    if visited is None:
+        visited = set()
+    
+    # Get the value
+    value = translations.get(key, "")
+    
+    # Check for circular reference
+    if key in visited:
+        print(f"Warning: Circular reference detected for key '{key}'")
+        return value
+    
+    # If value is not a string, return as-is
+    if not isinstance(value, str):
+        return value
+    
+    # Add current key to visited set
+    visited_copy = visited.copy()
+    visited_copy.add(key)
+    
+    # Find all references in the format {key_name}
+    pattern = r'\{(\w+)\}'
+    
+    def replace_ref(match):
+        ref_key = match.group(1)
+        if ref_key in visited_copy:
+            print(f"Warning: Circular reference detected: {key} -> {ref_key}")
+            return match.group(0)  # Return original text
+        
+        # Recursively resolve the referenced key
+        resolved = _resolve_key_references(translations, ref_key, visited_copy)
+        return resolved
+    
+    # Replace all references
+    resolved_value = re.sub(pattern, replace_ref, value)
+    return resolved_value
+
+
+def _resolve_all_references(translations):
+    """
+    Resolve all key references in the entire translations dictionary.
+    Modifies the dictionary in-place.
+    
+    Args:
+        translations: The translations dictionary to process
+    
+    Returns:
+        The same dictionary with all references resolved
+    """
+    resolved = {}
+    for key, value in translations.items():
+        if isinstance(value, str):
+            resolved[key] = _resolve_key_references(translations, key)
+        else:
+            resolved[key] = value
+    return resolved
+
+
 def load_translations(lang_code=None):
     """
     Load translations for specified language code, or auto-detect if None
-    Returns dictionary of translations
+    Returns dictionary of translations with all key references resolved
     """
     if lang_code is None:
         lang_code = detect_system_language()
@@ -112,13 +183,15 @@ def load_translations(lang_code=None):
     try:
         lang_file = os.path.join(lang_dir, f'{lang_code}.json')
         with open(lang_file, 'r', encoding='utf-8') as f:
-            return json.load(f)
+            translations = json.load(f)
+            return _resolve_all_references(translations)
     except FileNotFoundError:
         # Fall back to English if specified language file doesn't exist
         try:
             en_file = os.path.join(lang_dir, 'en.json')
             with open(en_file, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                translations = json.load(f)
+                return _resolve_all_references(translations)
         except FileNotFoundError:
             # If no translation files exist, return empty dict
             print(f"Warning: No translation files found in {lang_dir}")

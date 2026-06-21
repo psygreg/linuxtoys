@@ -435,9 +435,10 @@
   "recordly_desc": "Taifeadóir scáileáin agus eagarthóir foinse oscailte do thurlaiceacha, taispeántais, físeáin táirgí agus níos mó, le huirlisí láithreoireachta faoi threoir gluaisne ionsuite.",
   "ai_agents": "Gníomhairí AI",
   "ai_agents_desc": "Cúntóirí códaithe AI agus gníomhairí do fhorbairt.",
-  "claude_code_desc": "Is gníomhaire códaithe AI ó Anthropic a bhí i Claude Code. Éilíonn sé plean Claude íoctha (Pro, Max, Team nó Enterprise).\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
-  "opencode_desc": "Gníomhaire códaithe AI oscailte. Modélacha saor in aisce san áireamh nó ceangail aon mhúnla ó aon soláthraí.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
-  "codex_desc": "Gníomhaire códaithe AI ó OpenAI. Uathoibríonn sé tasc códaithe i do dheilbhín.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
-  "pi_desc": "Gníomhaire códaithe AI. Cúntóir códaithe éadrom agus tapa do do dheilbhín.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
-  "omp_desc": "Fhorchuir de Pi le níos mó uirlisí agus tacaíochta ilmhúnla. Gníomhaire códaithe AI do do dheilbhín.\n\n⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid an ghníomhaire AI seo. Úsáid ar do chontúirt féin."
+  "ai_agent_disclaimer": "⚠️ Séanadh: Ní bhímid freagrach as aon damáiste ar an gcóras de bharr mhí-úsáid aon ghníomhaire AI seo. Úsáid ar do chontúirt féin.",
+  "claude_code_desc": "Is gníomhaire códaithe AI ó Anthropic a bhí i Claude Code. Éilíonn sé plean Claude íoctha (Pro, Max, Team nó Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Gníomhaire códaithe AI oscailte. Modélacha saor in aisce san áireamh nó ceangail aon mhúnla ó aon soláthraí.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "Gníomhaire códaithe AI ó OpenAI. Uathoibríonn sé tasc códaithe i do dheilbhín.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "Gníomhaire códaithe AI. Cúntóir códaithe éadrom agus tapa do do dheilbhín.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Fhorchuir de Pi le níos mó uirlisí agus tacaíochta ilmhúnla. Gníomhaire códaithe AI do do dheilbhín.\n\n{ai_agent_disclaimer}"
 }

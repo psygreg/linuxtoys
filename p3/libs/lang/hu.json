@@ -435,9 +435,10 @@
   "recordly_desc": "Nyílt forráskódú képernyő-felvevő és szerkesztő bemutatásokhoz, bemutatásokhoz, termékvideókhoz és még sok máshoz, beépített mozgásvezérelt prezentációs eszközökkel.",
   "ai_agents": "AI Ügynökök",
   "ai_agents_desc": "AI kódolási asszisztensek és fejlesztési ügynökök.",
-  "claude_code_desc": "A Claude Code az Anthropic AI kódolási ügynöke. Fizetős Claude tervet igényel (Pro, Max, Team vagy Enterprise).\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
-  "opencode_desc": "Nyílt forráskódú AI kódolási ügynök. Ingyenes modellek mellékelve vagy csatlakoztathat bármilyen modellt bármely szolgáltatótól.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
-  "codex_desc": "AI kódolási ügynök az OpenAI-tól. Automatizálja a kódolási feladatokat a terminálban.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
-  "pi_desc": "AI kódolási ügynök. Könnyű és gyors kódolási asszisztens a terminálban.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
-  "omp_desc": "Pi elágazása több eszközzel és több modell támogatással. AI kódolási ügynök a termináljához.\n\n⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd."
+  "ai_agent_disclaimer": "⚠️ Felelősség kizárása: Nem vagyunk felelősek e AI ügynök visszaélésből eredő rendszerkárokért. A saját felelősségedre használd.",
+  "claude_code_desc": "A Claude Code az Anthropic AI kódolási ügynöke. Fizetős Claude tervet igényel (Pro, Max, Team vagy Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Nyílt forráskódú AI kódolási ügynök. Ingyenes modellek mellékelve vagy csatlakoztathat bármilyen modellt bármely szolgáltatótól.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "AI kódolási ügynök az OpenAI-tól. Automatizálja a kódolási feladatokat a terminálban.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI kódolási ügynök. Könnyű és gyors kódolási asszisztens a terminálban.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Pi elágazása több eszközzel és több modell támogatással. AI kódolási ügynök a termináljához.\n\n{ai_agent_disclaimer}"
 }

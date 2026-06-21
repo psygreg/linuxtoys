@@ -435,9 +435,10 @@
   "recordly_desc": "Trình ghi hình màn hình và trình chỉnh sửa mã nguồn mở cho hướng dẫn, bản trình diễn, video sản phẩm và hơn thế nữa, với các công cụ trình bày được điều khiển bằng chuyển động được tích hợp.",
   "ai_agents": "Các Tác Nhân AI",
   "ai_agents_desc": "Các trợ tá mã hóa AI và các tác nhân để phát triển.",
-  "claude_code_desc": "Claude Code là một tác nhân mã hóa AI từ Anthropic. Cần có một kế hoạch Claude trả tiền (Pro, Max, Team hoặc Enterprise).\n\n⚠️ Tuyên bố miễn trừ trách nhiệm: Chúng tôi không chịu trách nhiệm về bất kỳ thiệt hại hệ thống nào gây ra bởi việc sử dụng không đúng tác nhân AI này. Sử dụng có rủi ro riêng của bạn.",
-  "opencode_desc": "Tác nhân mã hóa AI nguồn mở. Các mô hình miễn phí được bao gồm hoặc kết nối bất kỳ mô hình nào từ bất kỳ nhà cung cấp nào.\n\n⚠️ Tuyên bố miễn trừ trách nhiệm: Chúng tôi không chịu trách nhiệm về bất kỳ thiệt hại hệ thống nào gây ra bởi việc sử dụng không đúng tác nhân AI này. Sử dụng có rủi ro riêng của bạn.",
-  "codex_desc": "Tác nhân mã hóa AI từ OpenAI. Tự động hóa các tác vụ mã hóa trong terminal của bạn.\n\n⚠️ Tuyên bố miễn trừ trách nhiệm: Chúng tôi không chịu trách nhiệm về bất kỳ thiệt hại hệ thống nào gây ra bởi việc sử dụng không đúng tác nhân AI này. Sử dụng có rủi ro riêng của bạn.",
-  "pi_desc": "Tác nhân mã hóa AI. Trợ tá mã hóa nhẹ và nhanh cho terminal của bạn.\n\n⚠️ Tuyên bố miễn trừ trách nhiệm: Chúng tôi không chịu trách nhiệm về bất kỳ thiệt hại hệ thống nào gây ra bởi việc sử dụng không đúng tác nhân AI này. Sử dụng có rủi ro riêng của bạn.",
-  "omp_desc": "Fork của Pi với nhiều công cụ hơn và hỗ trợ đa mô hình. Tác nhân mã hóa AI cho terminal của bạn.\n\n⚠️ Tuyên bố miễn trừ trách nhiệm: Chúng tôi không chịu trách nhiệm về bất kỳ thiệt hại hệ thống nào gây ra bởi việc sử dụng không đúng tác nhân AI này. Sử dụng có rủi ro riêng của bạn."
+  "ai_agent_disclaimer": "⚠️ Tuyên bố miễn trừ trách nhiệm: Chúng tôi không chịu trách nhiệm về bất kỳ thiệt hại hệ thống nào gây ra bởi việc sử dụng không đúng tác nhân AI này. Sử dụng có rủi ro riêng của bạn.",
+  "claude_code_desc": "Claude Code là một tác nhân mã hóa AI từ Anthropic. Cần có một kế hoạch Claude trả tiền (Pro, Max, Team hoặc Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Tác nhân mã hóa AI nguồn mở. Các mô hình miễn phí được bao gồm hoặc kết nối bất kỳ mô hình nào từ bất kỳ nhà cung cấp nào.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "Tác nhân mã hóa AI từ OpenAI. Tự động hóa các tác vụ mã hóa trong terminal của bạn.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "Tác nhân mã hóa AI. Trợ tá mã hóa nhẹ và nhanh cho terminal của bạn.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Fork của Pi với nhiều công cụ hơn và hỗ trợ đa mô hình. Tác nhân mã hóa AI cho terminal của bạn.\n\n{ai_agent_disclaimer}"
 }

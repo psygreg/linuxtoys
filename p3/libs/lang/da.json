@@ -435,9 +435,10 @@
   "recordly_desc": "Open source skærmbilledoptager og editor til instruktioner, demonstrationer, produktvideoer og mere, med indbyggede værktøjer til bevægelsesstyreret præsentation.",
   "ai_agents": "AI-agenter",
   "ai_agents_desc": "AI-kodningsassistenter og agenter til udvikling.",
-  "claude_code_desc": "Claude Code er en AI-kodningsagent fra Anthropic. Kræver en betalt Claude-plan (Pro, Max, Team eller Enterprise).\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for nogen systemskade forårsaget af misbrug af denne AI-agent. Brug på eget risiko.",
-  "opencode_desc": "Open source AI-kodningsagent. Gratis modeller inkluderet eller forbind en hvilken som helst model fra en hvilken som helst udbyder.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for nogen systemskade forårsaget af misbrug af denne AI-agent. Brug på eget risiko.",
-  "codex_desc": "AI-kodningsagent fra OpenAI. Automatiserer kodningsopgaver i din terminal.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for nogen systemskade forårsaget af misbrug af denne AI-agent. Brug på eget risiko.",
-  "pi_desc": "AI-kodningsagent. Lettvægt og hurtig kodningsassistent i din terminal.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for nogen systemskade forårsaget af misbrug af denne AI-agent. Brug på eget risiko.",
-  "omp_desc": "Fork af Pi med flere værktøjer og support for flere modeller. AI-kodningsagent til din terminal.\n\n⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for nogen systemskade forårsaget af misbrug af denne AI-agent. Brug på eget risiko."
+  "ai_agent_disclaimer": "⚠️ Ansvarsfraskrivelse: Vi er ikke ansvarlige for nogen systemskade forårsaget af misbrug af disse AI-agenter. Brug på eget risiko.",
+  "claude_code_desc": "Claude Code er en AI-kodningsagent fra Anthropic. Kræver en betalt Claude-plan (Pro, Max, Team eller Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Open source AI-kodningsagent. Gratis modeller inkluderet eller forbind en hvilken som helst model fra en hvilken som helst udbyder.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "AI-kodningsagent fra OpenAI. Automatiserer kodningsopgaver i din terminal.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "AI-kodningsagent. Lettvægt og hurtig kodningsassistent i din terminal.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Fork af Pi med flere værktøjer og support for flere modeller. AI-kodningsagent til din terminal.\n\n{ai_agent_disclaimer}"
 }

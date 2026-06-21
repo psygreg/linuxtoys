@@ -435,9 +435,10 @@
   "recordly_desc": "Perakam layar dan penyunting sumber terbuka untuk panduan, demo, video produk, dan banyak lagi, dengan alat presentasi yang didorong gerakan terintegrasi.",
   "ai_agents": "Agen AI",
   "ai_agents_desc": "Asisten pengekodan AI dan agen untuk pengembangan.",
-  "claude_code_desc": "Claude Code ialah agen pengkodan AI dari Anthropic. Memerlukan pelan Claude berbayar (Pro, Max, Team, atau Enterprise).\n\n⚠️ Penafian: Kami tidak bertanggungjawab atas sebarang kerosakan sistem yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan atas risiko anda sendiri.",
-  "opencode_desc": "Agen pengkodan AI sumber terbuka. Model percuma disertakan atau sambungkan model apa pun dari penyedia apa pun.\n\n⚠️ Penafian: Kami tidak bertanggungjawab atas sebarang kerosakan sistem yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan atas risiko anda sendiri.",
-  "codex_desc": "Agen pengkodan AI daripada OpenAI. Mengotomatikkan tugas pengkodan di terminal anda.\n\n⚠️ Penafian: Kami tidak bertanggungjawab atas sebarang kerosakan sistem yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan atas risiko anda sendiri.",
-  "pi_desc": "Agen pengkodan AI. Asisten pengkodan ringan dan cepat untuk terminal anda.\n\n⚠️ Penafian: Kami tidak bertanggungjawab atas sebarang kerosakan sistem yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan atas risiko anda sendiri.",
-  "omp_desc": "Percabangan Pi dengan lebih banyak alat dan sokongan multi-model. Agen pengkodan AI untuk terminal anda.\n\n⚠️ Penafian: Kami tidak bertanggungjawab atas sebarang kerosakan sistem yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan atas risiko anda sendiri."
+  "ai_agent_disclaimer": "⚠️ Penafian: Kami tidak bertanggungjawab atas sebarang kerosakan sistem yang disebabkan oleh penyalahgunaan agen AI ini. Gunakan atas risiko anda sendiri.",
+  "claude_code_desc": "Claude Code ialah agen pengkodan AI dari Anthropic. Memerlukan pelan Claude berbayar (Pro, Max, Team, atau Enterprise).\n\n{ai_agent_disclaimer}",
+  "opencode_desc": "Agen pengkodan AI sumber terbuka. Model percuma disertakan atau sambungkan model apa pun dari penyedia apa pun.\n\n{ai_agent_disclaimer}",
+  "codex_desc": "Agen pengkodan AI daripada OpenAI. Mengotomatikkan tugas pengkodan di terminal anda.\n\n{ai_agent_disclaimer}",
+  "pi_desc": "Agen pengkodan AI. Asisten pengkodan ringan dan cepat untuk terminal anda.\n\n{ai_agent_disclaimer}",
+  "omp_desc": "Percabangan Pi dengan lebih banyak alat dan sokongan multi-model. Agen pengkodan AI untuk terminal anda.\n\n{ai_agent_disclaimer}"
 }
