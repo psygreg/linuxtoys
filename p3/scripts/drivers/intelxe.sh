@@ -5,7 +5,7 @@
 # icon: intel.png
 # reboot: yes
 # gpu: Intel
-# compat: !fedora, !solus, !rhel
+# compat: !fedora, !solus, !rhel, !pika
 # nocontainer
 
 # --- Start of the script code ---

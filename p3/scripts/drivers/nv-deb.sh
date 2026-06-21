@@ -3,7 +3,7 @@
 # version: 1.0
 # description: nv_desc
 # icon: nvidia.svg
-# compat: debian
+# compat: debian, !pika
 # reboot: yes
 # nocontainer
 # gpu: Nvidia
