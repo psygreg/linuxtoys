@@ -260,7 +260,7 @@ cd $HOME
 export SCRIPT_DIR
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
-elif is_solus; then
+elif is_solus || is_arch; then
     davinciboxd
 else
     # menu
