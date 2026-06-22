@@ -97,11 +97,11 @@ davincinatd () {
         chmod +x autoresolvedeb.sh
         ./autoresolvedeb.sh
         rm autoresolvedeb.sh
-    elif is_arch || is_cachy; then
-        curl -L -o autoresolvepkg.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvepkg.sh"
-        chmod +x autoresolvepkg.sh
-        ./autoresolvepkg.sh
-        rm autoresolvepkg.sh
+#    elif is_arch || is_cachy; then
+#        curl -L -o autoresolvepkg.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolvepkg.sh"
+#        chmod +x autoresolvepkg.sh
+#        ./autoresolvepkg.sh
+#        rm autoresolvepkg.sh
     elif is_fedora; then
         curl -L -o autoresolverpm.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autoresolverpm.sh"
         chmod +x autoresolverpm.sh
@@ -260,7 +260,7 @@ cd $HOME
 export SCRIPT_DIR
 if command -v rpm-ostree >/dev/null 2>&1; then
     davinciboxatom
-elif is_solus || is_arch; then
+elif is_solus || is_arch || is_ubuntu; then
     davinciboxd
 else
     # menu
