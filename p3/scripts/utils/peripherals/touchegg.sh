@@ -7,6 +7,7 @@
 # nocontainer
 # repo: https://github.com/JoseExposito/touchegg
 # systemd: yes
+# wayland: no
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

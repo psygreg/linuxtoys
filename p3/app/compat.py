@@ -163,7 +163,8 @@ def get_system_compat_keys():
                (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue;
               GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
               Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-other;
-              Init keys: systemd)
+              Init keys: systemd;
+              Session keys: x11, wayland)
     """
     # Check if developer mode override is active
     try:
@@ -247,6 +248,10 @@ def get_system_compat_keys():
     # Add init system compatibility keys
     init_keys = get_init_compat_keys()
     keys.update(init_keys)
+
+    # Add session type compatibility keys
+    session_keys = get_current_session_type()
+    keys.update(session_keys)
 
     return keys
 
@@ -375,6 +380,23 @@ def get_init_compat_keys():
         keys.add("systemd")
     return keys
 
+def get_current_session_type():
+    """
+    Get the current session type (X11 or Wayland).
+
+    Returns:
+        set: Set of session type keys ('wayland' if running in a Wayland session, 'x11' if running in an X11/Xlibre session)
+    """
+    import os
+    keys = set()
+
+    # Check for Wayland session
+    wayland_display = os.environ.get("WAYLAND_DISPLAY")
+    if wayland_display:
+        keys.add("wayland")
+    else:
+        keys.add("x11")
+    return keys
 
 def are_optimizations_installed():
     """
@@ -669,6 +691,7 @@ def script_is_compatible(script_path, compat_keys):
     gpu_compatible = True  # Default for unset GPU header
     desktop_compatible = True  # Default for unset desktop header
     systemd_compatible = True  # Default for unset systemd header
+    wayland_compatible = True  # Default for unset wayland header (presume neutrality)
     has_explicit_systemd_header = False  # Track if systemd header was explicitly set
 
     try:
@@ -750,6 +773,12 @@ def script_is_compatible(script_path, compat_keys):
                     else:
                         # Default: "yes" or empty means script requires systemd
                         systemd_compatible = "systemd" in compat_keys
+                elif line.startswith("# wayland:"):
+                    wayland_value = line[len("# wayland:") :].strip().lower()
+                    if wayland_value in ["yes", "true"]:
+                        wayland_compatible = "wayland" in compat_keys
+                    elif wayland_value in ["no", "false"]:
+                        wayland_compatible = "x11" in compat_keys
                 if not line.startswith("#"):
                     break
     except Exception:
@@ -760,7 +789,10 @@ def script_is_compatible(script_path, compat_keys):
     if not has_explicit_systemd_header and _script_requires_systemd_functions(script_path):
         systemd_compatible = "systemd" in compat_keys
 
-    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible
+    # If no explicit wayland header, presume neutrality (script works on both X11 and Wayland)
+    # wayland_compatible remains True by default
+
+    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible
 
 
 def script_is_localized(script_path, current_locale):
@@ -784,7 +816,6 @@ def script_is_localized(script_path, current_locale):
     except Exception:
         pass
     return True  # If no localize header, show by default
-
 
 def get_revert_capability(script_path, compat_keys=None):
     """
