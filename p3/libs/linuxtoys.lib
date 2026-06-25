@@ -401,9 +401,10 @@ pkg_install () {
     elif is_ostree; then
         sudo rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
-        # Perform ostree check if requested
-        if [[ $_ostreecheck -eq 1 ]]; then
-            { is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
+        # Perform ostree check if requested and packages were actually installed
+        if [[ $_ostreecheck -eq 1 && ${#pkg_notfound[@]} -gt 0 ]]; then
+            zenwrn "$msgostreepending"
+            exit 100
         fi
     elif is_fedora || is_rhel; then
         sudo dnf install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
@@ -516,7 +517,8 @@ pkg_fromfile () {
         _append_transmap "pkg file $*"
         # Perform ostree check if requested
         if [[ $_ostreecheck -eq 1 ]]; then
-            { is_ostree && rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
+            zenwrn "$msgostreepending"
+            exit 100
         fi
     elif is_fedora || is_rhel; then
         sudo dnf install -y "${@}" || fatal "Failed to install $*"
