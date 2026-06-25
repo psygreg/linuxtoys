@@ -556,17 +556,73 @@ pkg_appimage () {
     { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
     { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
     { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
-    pkg_flat it.mijorus.gearlever
-    local output
-    output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
-    local appimage_name
-    appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
-    _append_transmap "appimage $appimage_name"
+    
+    prep_dir "$HOME/AppImages"
+    
+    if is_systemd; then
+        # Use Gear Lever for systemd systems
+        pkg_flat it.mijorus.gearlever
+        local output
+        output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
+        local appimage_name
+        appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
+        _append_transmap "appimage $appimage_name"
+    else
+        # Manual integration for non-systemd systems
+        for appimage_file in "$@"; do
+            [[ -f "$appimage_file" ]] || fatal "AppImage file not found: $appimage_file"
+            local appimage_basename=$(basename "$appimage_file")
+            prep_create "$HOME/AppImages/$appimage_basename"
+            cp -f "$appimage_file" "$HOME/AppImages/$appimage_basename"
+            chmod +x "$HOME/AppImages/$appimage_basename"
+            
+            prep_tmp_noram
+            local extract_dir
+            extract_dir="$HOME/.cache/linuxtoys/tmp" || fatal "Failed to create temp directory for extraction"
+            cd "$extract_dir" || fatal "Failed to change to temp directory"
+            "$HOME/AppImages/$appimage_basename" --appimage-extract >/dev/null 2>&1 || \
+                { nonfatal "Failed to extract AppImage: $appimage_basename"; rm -rf "$extract_dir"; continue; }
+            local desktop_file
+            desktop_file=$(find squashfs-root -name "*.desktop" -type f 2>/dev/null | head -1)
+            if [[ -n "$desktop_file" && -f "$desktop_file" ]]; then
+                prep_dir "$HOME/.local/share/applications"
+                local desktop_basename=$(basename "$desktop_file")
+                prep_create "$HOME/.local/share/applications/$desktop_basename"
+                cp -f "$desktop_file" "$HOME/.local/share/applications/$desktop_basename" || \
+                    fatal "Failed to copy desktop file"
+            fi
+            local icon_file
+            icon_file=$(find squashfs-root \( -name "*.png" -o -name "*.svg" -o -name "*.xpm" \) -type f 2>/dev/null | head -1)
+            if [[ -n "$icon_file" && -f "$icon_file" ]]; then
+                prep_dir "$HOME/.local/share/icons"
+                local icon_basename=$(basename "$icon_file")
+                prep_create "$HOME/.local/share/icons/$icon_basename"
+                cp -f "$icon_file" "$HOME/.local/share/icons/$icon_basename" || \
+                    nonfatal "Failed to copy icon file"
+            fi
+            _append_transmap "appimage $appimage_basename"
+        done
+    fi
 }
 pkg_appimage_rm () {
-    cd "$HOME/AppImages"
-    echo "y" | flatpak run it.mijorus.gearlever --remove "${@}"
-    _append_transmap "appimage rm $*"
+    if is_systemd; then
+        # Use Gear Lever for removal on systemd systems
+        cd "$HOME/AppImages"
+        echo "y" | flatpak run it.mijorus.gearlever --remove "${@}"
+        _append_transmap "appimage rm $*"
+    else
+        # Manual removal for non-systemd systems
+        for appimage_file in "$@"; do
+            local appimage_basename=$(basename "$appimage_file")
+            local appimage_name_without_ext="${appimage_basename%.*}"
+            
+            # Remove from AppImages directory
+            if [[ -f "$HOME/AppImages/$appimage_basename" ]]; then
+                rm -f "$HOME/AppImages/$appimage_basename"
+                _append_transmap "appimage rm $appimage_basename"
+            fi
+        done
+    fi
 }
 pkg_npm () {
     if ! command -v npm &>/dev/null; then
