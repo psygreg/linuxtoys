@@ -19,11 +19,21 @@ from .revert_helper import build_auto_revert_script_entry
 
 def resolve_script_dir():
     """
-    Ensure SCRIPT_DIR exists based on the current file's location.
-    Searches parent directories until one containing 'libs' is found.
-    Sets SCRIPT_DIR to that absolute path.
+    Get the SCRIPT_DIR from environment variable or search for it.
+    The environment variable should be set by linuxtoys.py at startup.
+    Falls back to searching if not set.
+    
+    Sets SCRIPT_DIR to the absolute path containing 'libs' directory.
     Raises FileNotFoundError if no 'libs' directory is found.
     """
+    # First, check if SCRIPT_DIR is already set as an environment variable
+    if 'SCRIPT_DIR' in os.environ:
+        script_dir = os.environ['SCRIPT_DIR']
+        libs_path = os.path.join(script_dir, 'libs')
+        if os.path.isdir(libs_path):
+            return script_dir
+
+    # Fall back to searching if environment variable isn't set
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     while True:
@@ -227,6 +237,11 @@ def easy_cli_run_script(script_info):
     if is_dev_mode_enabled():
         return run_script(script_info)
     
+    # Ensure SCRIPT_DIR and CACHE_DIR are set in environment
+    resolve_script_dir()
+    if 'CACHE_DIR' not in os.environ:
+        os.environ['CACHE_DIR'] = os.environ.get('SCRIPT_DIR', '') + '/scripts'
+    
     # Disable zenity to avoid GUI prompts during EASY_CLI execution
     os.environ['DISABLE_ZENITY'] = '1'
 
@@ -420,8 +435,10 @@ def install_packages_with_feedback(packages_found):
     current_item = 0
     total_items = len(packages_found)
 
-    # Ensure SCRIPT_DIR is set correctly
+    # Ensure SCRIPT_DIR and CACHE_DIR are set correctly
     resolve_script_dir()
+    if 'CACHE_DIR' not in os.environ:
+        os.environ['CACHE_DIR'] = os.environ.get('SCRIPT_DIR', '') + '/scripts'
 
     # Install packages first
     for package in packages_found:
@@ -795,6 +812,11 @@ def easy_cli_handler(translations=None):
     It also supports developer mode (-D, --DEV_MODE) and optional automatic 
     confirmation flags (-y, --yes) to skip prompts.
     """
+    
+    # Ensure SCRIPT_DIR and CACHE_DIR are set early
+    resolve_script_dir()
+    if 'CACHE_DIR' not in os.environ:
+        os.environ['CACHE_DIR'] = os.environ.get('SCRIPT_DIR', '') + '/scripts'
 
     # --- Developer Mode ---
     def dev_check(args):

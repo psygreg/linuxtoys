@@ -6,11 +6,15 @@ import subprocess
 from app.manifest_helper import run_update_check_cli
 
 if __name__ == "__main__":
-    # --- SET SCRIPT_DIR ENVIRONMENT VARIABLE ---
+    # --- SET SCRIPT_DIR AND CACHE_DIR ENVIRONMENT VARIABLES ---
     # Set SCRIPT_DIR relative to linuxtoys.py so all scripts can find libs
     # The libs directory is always at the same location relative to this entry point
     linuxtoys_dir = os.path.dirname(os.path.abspath(__file__))
     os.environ['SCRIPT_DIR'] = linuxtoys_dir
+    
+    # Set CACHE_DIR to bundled scripts as default fallback
+    # This will be overridden by initialize_scripts() if git sync is available
+    os.environ['CACHE_DIR'] = os.path.join(linuxtoys_dir, 'scripts')
 
     # UPD_SERVICE runs from a headless systemd unit and must follow the CLI path.
     if os.environ.get('UPD_SERVICE') == '1':

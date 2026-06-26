@@ -25,7 +25,7 @@ get_winboat () { # gets latest release
             fi
         fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
-        pkg_fromfile "winboat-$ver-amd64.deb"
+        pkg_fromfile "./winboat-$ver-amd64.deb"
     elif is_fedora || is_suse || is_rhel; then
         if rpm -qi "winboat" &> /dev/null; then
             local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"
@@ -40,7 +40,7 @@ get_winboat () { # gets latest release
                 pkg_remove winboat
             fi
         fi
-        pkg_fromfile "winboat-$ver-x86_64.rpm"
+        pkg_fromfile "./winboat-$ver-x86_64.rpm"
     elif is_arch || is_cachy; then
         if pacman -Qi "winboat-bin" &> /dev/null; then
             local hostver="$(pacman -Qi winboat-bin | grep -i Version | awk '{print $3}')"
@@ -75,6 +75,7 @@ zenity --text-info \
 if [ -e /dev/kvm ]; then
     if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
         if ! which winboat &> /dev/null; then
+            export CACHE_DIR="$(dirname "$SCRIPT_DIR")"
             mkdir -p lsw
             cd lsw || exit 1
             sudo_rq
