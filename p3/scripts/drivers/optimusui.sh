@@ -6,16 +6,18 @@
 # reboot: yes
 # nocontainer
 # gpu: nvidia
-# compat: arch, ubuntu, suse, solus
+# compat: arch, ubuntu, suse, solus, debian
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
-if is_arch || is_ubuntu; then
+if is_arch; then
+    pkg_install bbswitch nvidia-prime
+elif is_ubuntu || is_debian; then
     sudo add-apt-repository -y universe
     sudo apt update
-    pkg_install bbswitch nvidia-prime
+    pkg_install bumblebee-nvidia
 elif is_suse; then
     pkg_install bbswitch suse-prime
 elif is_solus; then
