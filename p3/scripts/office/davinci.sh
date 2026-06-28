@@ -83,6 +83,40 @@ getresolve () {
 	curl -L -o "${_archive_name}.zip" "$_srcurl"
 }
 
+# check if sufficient disk space is available
+check_disk_space () {
+	local pkgname="$1"
+	local required_space_gb=0
+	local product_name=""
+
+	# set required space based on package type
+	if [ "$pkgname" == "davinci-resolve" ]; then
+		required_space_gb=12
+		product_name="DaVinci Resolve (Free)"
+	elif [ "$pkgname" == "davinci-resolve-studio" ]; then
+		required_space_gb=28
+		product_name="DaVinci Resolve Studio"
+	else
+		fatal "Unknown package: $pkgname"
+	fi
+
+	local required_space_kb=$((required_space_gb * 1024 * 1024))
+	local home_available_kb=$(df "$HOME" | awk 'NR==2 {print $4}')
+	local root_available_kb=$(df / | awk 'NR==2 {print $4}')
+
+	# check home directory
+	if [ "$home_available_kb" -lt "$required_space_kb" ]; then
+		local available_gb=$((home_available_kb / 1024 / 1024))
+		fatal "$product_name requires ${required_space_gb}GB in \$HOME, but only ${available_gb}GB available."
+	fi
+
+	# check root filesystem
+	if [ "$root_available_kb" -lt "$required_space_kb" ]; then
+		local available_gb=$((root_available_kb / 1024 / 1024))
+		fatal "$product_name requires ${required_space_gb}GB in /, but only ${available_gb}GB available."
+	fi
+}
+
 davincinatd () {
     { is_rhel && dv_rhel; } || true
 
@@ -115,7 +149,7 @@ davincinatd () {
     fi
 }
 
-davinciboxd () {
+davinciboxd () {    
     curl -L -o autodavincibox.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autodavincibox.sh"
     chmod +x autodavincibox.sh
     ./autodavincibox.sh
@@ -124,6 +158,7 @@ davinciboxd () {
 
 dv_rhel () {
     dv_rhel_in () {
+        check_disk_space "$_upkgname"
         sudo_rq
         rpmfusion_chk # needs EPEL
 
@@ -202,7 +237,8 @@ davinciboxatom () {
 
     # installation
     dv_atom_in () {
-        sudo_rq
+        check_disk_space "$_upkgname"
+        sudo_rq  
         dv_atom_deps
         git clone https://github.com/zelikos/davincibox.git
         sleep 1
