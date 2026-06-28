@@ -75,7 +75,6 @@ zenity --text-info \
 if [ -e /dev/kvm ]; then
     if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
         if ! which winboat &> /dev/null; then
-            export CACHE_DIR="$(dirname "$SCRIPT_DIR")"
             mkdir -p lsw
             cd lsw || exit 1
             sudo_rq
