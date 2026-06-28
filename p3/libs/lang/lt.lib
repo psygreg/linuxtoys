@@ -137,3 +137,4 @@ sysup_rebootreq="Valymas ir atnaujinimas baigti. Atnaujinimui įsigalioti reikal
 sysup_available="Išleidimo atnaujinimas galimas. Atnaujinti dabar? (Jei ne, bus atliktas tik paprastas sistemos atnaujinimas.)"
 zswapmsg="ZSWAP dabar yra įjungtas. Turite sukurti keičiamąjį failą ar skaidinį."
 msgostreepending="Sistemos atnaujinimas laukia. Prašome perkrāskite savo sistemą ir iš naujo ėkite šį skriptą, kad užbaigčiumėte diegimą."
+outofspace="Nepakankama turima vieta saugymui operacijai."

@@ -137,3 +137,4 @@ sysup_rebootreq="Rengøring og opdatering afsluttet. En genstart er påkrævet f
 sysup_available="En udgivelsesopgradering er tilgængelig. Opgradér nu? (Hvis du vælger fra, udfører du blot en sædvanlig systemopdatering.)"
 zswapmsg="ZSWAP er nu aktiveret. Du skal oprette en swap-fil eller partition."
 msgostreepending="En systemopdatering afventer. Genstart venligst dit system og kør dette script igen for at fuldføre installationen."
+outofspace="Utilstrekkelig ledig lagerplads til operationen."

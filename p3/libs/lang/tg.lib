@@ -136,3 +136,4 @@ sysup_rebootreq="Тоза кардан ва нави кардан ба охир 
 sysup_available="Нави кардани išdor дастрас аст. Акнун нави кунанд? (Агар ихтиёр накунед, танхо нави кардани муассари система анжом дода мешавад.)"
 zswapmsg="ZSWAP is now enabled. Create a swap file or partition."
 msgostreepending="A system update is pending. Please reboot your system and run this script again to complete the installation."
+outofspace="Insufficient available storage space for operation."

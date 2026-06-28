@@ -137,3 +137,4 @@ sysup_rebootreq="Megtisztítás és frissítés befejezve. A frissítés érvén
 sysup_available="Közzététel-frissítés érhető el. Frissítés most? (Ha nem választsz, csak egy szokásos rendszerfrissítés történik majd.)"
 zswapmsg="A ZSWAP most engedélyezett. Létre kell hoznia egy swap-fájlt vagy partíciót."
 msgostreepending="A rendszerfrissítés függőben van. Indítsa újra a rendszert, és futtassa újra ezt a parancsfájlt a telepítés befejezéséhez."
+outofspace="Nincs elég rendelkezésre álló tárolóhely a műveletre."

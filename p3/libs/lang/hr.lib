@@ -137,3 +137,4 @@ sysup_rebootreq="Čišćenje i ažuriranje dovršeni. Potreban je restart kako b
 sysup_available="Dostupna je nadogradnja izdanja. Nadograditi sada? (Ako ne odaberete, provest će se samo obična ažuriranja sustava.)"
 zswapmsg="ZSWAP je sada omogućen. Morate kreirati datoteku ili particiju razmjene."
 msgostreepending="Ažuriranje sistema čeka. Molim vas, ponovno pokrenite sustav i ponovno pokrenite ovaj skript kako biste dovršili instalaciju."
+outofspace="Nedovoljna dostupna prostora pohrane za operaciju."

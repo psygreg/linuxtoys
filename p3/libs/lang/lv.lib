@@ -137,3 +137,4 @@ sysup_rebootreq="Tīrīšana un atjauninājums pabeigts. Lai atjauninājums stā
 sysup_available="Laidienā pieejama atjauninājuma versija. Atjaunināt tagad? (Ja neizmantojat, tiks veikts tikai parastu sistēmas atjauninājums.)"
 zswapmsg="ZSWAP ir tagad iespējots. Jums jārada swap fails vai nodalījums."
 msgostreepending="Sistēmas atjauninājums gaida. Lūdzu pārstartējiet savu sistēmu un pārstartējiet šo skriptu, lai pabeigtuo instalāciju."
+outofspace="Nepietiekama pieejamā krātuves vieta operācijai."

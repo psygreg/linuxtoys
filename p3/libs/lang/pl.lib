@@ -137,3 +137,4 @@ sysup_rebootreq="Czyszczenie i aktualizacja ukończone. Wymagany jest restart, a
 sysup_available="Aktualizacja wydania jest dostępna. Zaktualizować teraz? (Jeśli nie wybierzesz, zostanie wykonana tylko zwykła aktualizacja systemu.)"
 zswapmsg="ZSWAP jest teraz włączony. Musisz utworzyć plik wymiany lub partycję."
 msgostreepending="Aktualizacja systemu oczekuje. Proszę ponownie uruchomić system i uruchomić ten skrypt ponownie, aby ukończyć instalację."
+outofspace="Niewystarczająco dostępnej przestrzeni dyskowej do operacji."

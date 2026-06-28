@@ -137,3 +137,4 @@ sysup_rebootreq="Vyčištění a aktualizace dokončeny. Pro použití aktualiza
 sysup_available="Je k dispozici upgrade verze. Chcete upgradovat nyní? (Pokud se nerozhodnete, bude provedena pouze obvyklá aktualizace systému.)"
 zswapmsg="ZSWAP je nyní povolen. Musíte vytvořit soubor podkačky nebo oddíl."
 msgostreepending="Čeká se na aktualizaci systému. Restartujte prosím svůj systém a spusťte znovu tento skript, abyste dokončili instalaci."
+outofspace="Nedostatek dostupného místa pro ukládání operace."

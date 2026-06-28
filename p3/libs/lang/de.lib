@@ -137,3 +137,4 @@ sysup_rebootreq="Bereinigung und Aktualisierung abgeschlossen. Ein Neustart ist 
 sysup_available="Ein Release-Update ist verfügbar. Jetzt aktualisieren? (Wenn Sie nicht aktualisieren, wird nur eine normale Systemaktualisierung durchgeführt.)"
 zswapmsg="ZSWAP ist nun aktiviert. Sie müssen eine Auslagerungsdatei oder Partition erstellen."
 msgostreepending="Eine Systemaktualisierung ist ausstehend. Bitte starten Sie Ihr System neu und führen Sie dieses Skript erneut aus, um die Installation abzuschließen."
+outofspace="Unzureichend verfügbarer Speicherplatz für die Operation."

@@ -137,3 +137,4 @@ sysup_rebootreq="Pastrimi dhe përditësimi u përfunduan. Kërkohet rilindja p�
 sysup_available="Përditësim i lëshimit është i disponueshëm. Përditëso tani? (Nëse nuk zgjidhni, do të kryhet vetëm një përditësim i zakonshëm i sistemit.)"
 zswapmsg="ZSWAP është tani i aktivizuar. Duhet të krijoni një skedar ose ndarje shkëmbimi."
 msgostreepending="Përditësimi i sistemit është në pritje. Ju lutemi ristartuani sistemin tuaj dhe ekzekutoni këtë skript përsëri për të përfunduar instalimin."
+outofspace="Hapësirë ruajtjeje e disponueshme e pamjaftueshme për operacionin."

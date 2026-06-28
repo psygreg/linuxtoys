@@ -137,3 +137,4 @@ sysup_rebootreq="Glanúchán agus nuashonrú críochnaithe. Tá atosú ag teast�
 sysup_available="Tá nuashonrú scaoilte ar fáil. Nuashonruithe anois? (Mura roghnaionn tú, ní a bhéas ann ach gnath-nuashonrú córas a dhubhacháin.)"
 zswapmsg="Tá ZSWAP gníomhachtaithe anois. Ní mór duit comhad babhtála a chruthú."
 msgostreepending="Tá nuashonrú córais i bhfeidhm. Atosaigh do chóras le do thoil agus rith an script seo arís chun an fhéadachas a bhaint amach."
+outofspace="Spás stórála ar fáil ná leor don oibríochta."

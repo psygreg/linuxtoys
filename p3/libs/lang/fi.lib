@@ -137,3 +137,4 @@ sysup_rebootreq="Siivous ja päivitys valmis. Päivityksen voimaantuloa varten v
 sysup_available="Julkaisupäivitys on saatavilla. Päivitä nyt? (Jos et valitse, suoritetaan vain tavallinen järjestelmän päivitys.)"
 zswapmsg="ZSWAP on nyt otettu käyttöön. Sinun on luotava swap-tiedosto tai osio."
 msgostreepending="Järjestelmäpäivitys on vireillä. Käynnistä järjestelmä uudelleen ja suorita tämä skripti uudelleen asennuksen loppuunsaattamiseksi."
+outofspace="Riittämätön käytettävissä oleva tallennustila toiminnolle."

@@ -15,119 +15,136 @@ TRANSLATIONS = {
         'sysup_completed': 'sysup_completed="ማስተካከል እና ማዘመን ተጠናቋል።"',
         'sysup_rebootreq': 'sysup_rebootreq="ማስተካከል እና ማዘመን ተጠናቋል። ማዘመኖቱ ንጽህና ውስጥ ለመግባት እንደገና ተጀምሮ ሊሆን ይችላል።"',
         'zswapmsg': 'zswapmsg="ZSWAP ሁን ነው ነው ታቅዷል።"',
-        'msgostreepending': 'msgostreepending="የስርዓት ማስተካከል በመጠባበቅ ላይ ነው። እባክዎ ስርዓትዎን እንደገና ያስጀምሩ እና ተከታታይ ስክሪፕትን ለማጠናቀቅ ይህን ስክሪፕት ወደገና ያስሮታል።"'
+        'msgostreepending': 'msgostreepending="የስርዓት ማስተካከል በመጠባበቅ ላይ ነው። እባክዎ ስርዓትዎን እንደገና ያስጀምሩ እና ተከታታይ ስክሪፕትን ለማጠናቀቅ ይህን ስክሪፕት ወደገና ያስሮታል።"',
+        'outofspace': 'outofspace="በቂ ምንጭ ስ�ር አለ።"'
     },
     'ar.lib': {
         'sysup_starting': 'sysup_starting="-------- تحديث النظام الكامل بدء --------"',
         'sysup_completed': 'sysup_completed="التنظيف والتحديث مكتملان."',
         'sysup_rebootreq': 'sysup_rebootreq="التنظيف والتحديث مكتملان. إعادة تشغيل مطلوبة لتفعيل التحديث."',
         'zswapmsg': 'zswapmsg="تم تمكين ZSWAP الآن. لاستخدامه، يجب عليك إنشاء ملف مبادلة أو قسم."',
-        'msgostreepending': 'msgostreepending="تحديث نظام معلق. يرجى إعادة تشغيل نظامك وتشغيل هذا السكريبت مرة أخرى لإكمال التثبيت."'
+        'msgostreepending': 'msgostreepending="تحديث نظام معلق. يرجى إعادة تشغيل نظامك وتشغيل هذا السكريبت مرة أخرى لإكمال التثبيت."',
+        'outofspace': 'outofspace="مساحة تخزين متاحة غير كافية للعملية."'
     },
     'az.lib': {
         'sysup_starting': 'sysup_starting="-------- TAM SİSTEM YENİLƏMƏSİ BAŞLADIQLARI --------"',
         'sysup_completed': 'sysup_completed="Təmizlənmə və güncəllənmə tamamlandı."',
         'sysup_rebootreq': 'sysup_rebootreq="Təmizlənmə və güncəllənmə tamamlandı. Güncəllənmənin səmərəli olması üçün yenidən başladılması tələb olunur."',
         'zswapmsg': 'zswapmsg="ZSWAP indi aktivdir. Bunu istifadə etmək üçün swap faylı yaratmalısınız."',
-        'msgostreepending': 'msgostreepending="Sistem yeniləməsi gözləyişdədir. Sistemin yenidən başladılması istəyindən sonra yükləməni tamamlamaq üçün bu skripti yenidən çalıştırın."'
+        'msgostreepending': 'msgostreepending="Sistem yeniləməsi gözləyişdədir. Sistemin yenidən başladılması istəyindən sonra yükləməni tamamlamaq üçün bu skripti yenidən çalıştırın."',
+        'outofspace': 'outofspace="Əməliyyat üçün yetərli boş yaddaş yeri yoxdur."'
     },
     'bg.lib': {
         'sysup_starting': 'sysup_starting="-------- ПЪЛНО СИСТЕМНО ОБНОВЯВАНЕ СТАРТИРАНО --------"',
         'sysup_completed': 'sysup_completed="Почистване и актуализация завършени."',
         'sysup_rebootreq': 'sysup_rebootreq="Почистване и актуализация завършени. Необходимо е рестартиране, за да влезе обновката в сила."',
         'zswapmsg': 'zswapmsg="ZSWAP е сега активиран. Трябва да създадете swap файл или дял."',
-        'msgostreepending': 'msgostreepending="Системното актуализиране чака. Моля, рестартирайте системата си и стартирайте този скрипт отново, за да завършите инсталацията."'
+        'msgostreepending': 'msgostreepending="Системното актуализиране чака. Моля, рестартирайте системата си и стартирайте този скрипт отново, за да завършите инсталацията."',
+        'outofspace': 'outofspace="Недостатъчно налично място за съхранение за операцията."'
     },
     'bn.lib': {
         'sysup_starting': 'sysup_starting="-------- সম্পূর্ণ সিস্টেম আপডেট শুরু হয়েছে --------"',
         'sysup_completed': 'sysup_completed="পরিষ্কার এবং আপডেট সম্পূর্ণ।"',
         'sysup_rebootreq': 'sysup_rebootreq="পরিষ্কার এবং আপডেট সম্পূর্ণ। আপডেটটি কার্যকর হতে একটি পুনর্বুট প্রয়োজন।"',
         'zswapmsg': 'zswapmsg="ZSWAP এখন সক্ষম করা হয়েছে। আপনার একটি স্বাপ ফাইল বা বিভাজন তৈরি করতে হবে।"',
-        'msgostreepending': 'msgostreepending="একটি সিস্টেম আপডেট অপেক্ষা করছে। অনুগ্রহ করে আপনার সিস্টেম পুনরায় চালু করুন এবং ইনস্টলেশন সম্পূর্ণ করতে এই স্ক্রিপটি আবার চালান।"'
+        'msgostreepending': 'msgostreepending="একটি সিস্টেম আপডেট অপেক্ষা করছে। অনুগ্রহ করে আপনার সিস্টেম পুনরায় চালু করুন এবং ইনস্টলেশন সম্পূর্ণ করতে এই স্ক্রিপটি আবার চালান।"',
+        'outofspace': 'outofspace="অপারেশনের জন্য অপর্যাপ্ত উপলব্ধ স্টোরেজ স্থান।"'
     },
     'bs.lib': {
         'sysup_starting': 'sysup_starting="-------- PUNO AŽURIRANJE SISTEMA ZAPOČETO --------"',
         'sysup_completed': 'sysup_completed="Čišćenje i ažuriranje dovršeni."',
         'sysup_rebootreq': 'sysup_rebootreq="Čišćenje i ažuriranje dovršeni. Potreban je restart kako bi ažuriranje stupio na snagu."',
         'zswapmsg': 'zswapmsg="ZSWAP je sada omogućen. Morate kreirati datoteku razmjene ili particiju."',
-        'msgostreepending': 'msgostreepending="Ažuriranje sistema je u čekanju. Molimo, ponovno pokrenite sistem i ponovo pokrenite ovaj skript da biste dovršili instalaciju."'
+        'msgostreepending': 'msgostreepending="Ažuriranje sistema je u čekanju. Molimo, ponovno pokrenite sistem i ponovo pokrenite ovaj skript da biste dovršili instalaciju."',
+        'outofspace': 'outofspace="Nedovoljna dostupna prostor za pohranu za operaciju."'
     },
     'cs.lib': {
         'sysup_starting': 'sysup_starting="-------- SPUŠTĚNA ÚPLNÁ AKTUALIZACE SYSTÉMU --------"',
         'sysup_completed': 'sysup_completed="Vyčištění a aktualizace dokončeny."',
         'sysup_rebootreq': 'sysup_rebootreq="Vyčištění a aktualizace dokončeny. Pro použití aktualizace je vyžadován restart."',
         'zswapmsg': 'zswapmsg="ZSWAP je nyní povolen. Musíte vytvořit soubor podkačky nebo oddíl."',
-        'msgostreepending': 'msgostreepending="Čeká se na aktualizaci systému. Restartujte prosím svůj systém a spusťte znovu tento skript, abyste dokončili instalaci."'
+        'msgostreepending': 'msgostreepending="Čeká se na aktualizaci systému. Restartujte prosím svůj systém a spusťte znovu tento skript, abyste dokončili instalaci."',
+        'outofspace': 'outofspace="Nedostatek dostupného místa pro ukládání operace."'
     },
     'da.lib': {
         'sysup_starting': 'sysup_starting="-------- FULD SYSTEMOPDATERING STARTER --------"',
         'sysup_completed': 'sysup_completed="Rengøring og opdatering afsluttet."',
         'sysup_rebootreq': 'sysup_rebootreq="Rengøring og opdatering afsluttet. En genstart er påkrævet for, at opdateringen træder i kraft."',
         'zswapmsg': 'zswapmsg="ZSWAP er nu aktiveret. Du skal oprette en swap-fil eller partition."',
-        'msgostreepending': 'msgostreepending="En systemopdatering afventer. Genstart venligst dit system og kør dette script igen for at fuldføre installationen."'
+        'msgostreepending': 'msgostreepending="En systemopdatering afventer. Genstart venligst dit system og kør dette script igen for at fuldføre installationen."',
+        'outofspace': 'outofspace="Utilstrækkelig ledig lagerplads til operationen."'
     },
     'de.lib': {
         'sysup_starting': 'sysup_starting="-------- VOLLSTÄNDIGE SYSTEMAKTUALISIERUNG GESTARTET --------"',
         'sysup_completed': 'sysup_completed="Bereinigung und Aktualisierung abgeschlossen."',
         'sysup_rebootreq': 'sysup_rebootreq="Bereinigung und Aktualisierung abgeschlossen. Ein Neustart ist erforderlich, damit die Aktualisierung in Kraft tritt."',
         'zswapmsg': 'zswapmsg="ZSWAP ist nun aktiviert. Sie müssen eine Auslagerungsdatei oder Partition erstellen."',
-        'msgostreepending': 'msgostreepending="Eine Systemaktualisierung ist ausstehend. Bitte starten Sie Ihr System neu und führen Sie dieses Skript erneut aus, um die Installation abzuschließen."'
+        'msgostreepending': 'msgostreepending="Eine Systemaktualisierung ist ausstehend. Bitte starten Sie Ihr System neu und führen Sie dieses Skript erneut aus, um die Installation abzuschließen."',
+        'outofspace': 'outofspace="Unzureichend verfügbarer Speicherplatz für die Operation."'
     },
     'el.lib': {
         'sysup_starting': 'sysup_starting="-------- ΠΛΉΡΗΣ ΕΝΗΜΈΡΩΣΗ ΣΥΣΤΉΜΑΤΟΣ ΞΕΚΙΝΆ --------"',
         'sysup_completed': 'sysup_completed="Ο καθαρισμός και η ενημέρωση ολοκληρώθηκαν."',
         'sysup_rebootreq': 'sysup_rebootreq="Ο καθαρισμός και η ενημέρωση ολοκληρώθηκαν. Απαιτείται επανεκκίνηση για να ισχύσει η ενημέρωση."',
         'zswapmsg': 'zswapmsg="Το ZSWAP είναι τώρα ενεργοποιημένο. Πρέπει να δημιουργήσετε ένα αρχείο ή διαμέρισμα ανταλλαγής."',
-        'msgostreepending': 'msgostreepending="Μια ενημέρωση συστήματος εκκρεμεί. Παρακαλώ επανεκκινήστε το σύστημά σας και εκτελέστε ξανά αυτό το σενάριο για να ολοκληρώσετε την εγκατάσταση."'
+        'msgostreepending': 'msgostreepending="Μια ενημέρωση συστήματος εκκρεμεί. Παρακαλώ επανεκκινήστε το σύστημά σας και εκτελέστε ξανά αυτό το σενάριο για να ολοκληρώσετε την εγκατάσταση."',
+        'outofspace': 'outofspace="Ανεπαρκής διαθέσιμος χώρος αποθήκευσης για την λειτουργία."'
     },
     'es.lib': {
         'sysup_starting': 'sysup_starting="-------- ACTUALIZACIÓN COMPLETA DEL SISTEMA INICIADA --------"',
         'sysup_completed': 'sysup_completed="Limpieza y actualización completadas."',
         'sysup_rebootreq': 'sysup_rebootreq="Limpieza y actualización completadas. Se requiere un reinicio para que la actualización surta efecto."',
         'zswapmsg': 'zswapmsg="ZSWAP está ahora habilitado. Debes crear un archivo o partición de intercambio."',
-        'msgostreepending': 'msgostreepending="Una actualización del sistema está pendiente. Por favor, reinicia tu sistema y ejecuta este script nuevamente para completar la instalación."'
+        'msgostreepending': 'msgostreepending="Una actualización del sistema está pendiente. Por favor, reinicia tu sistema y ejecuta este script nuevamente para completar la instalación."',
+        'outofspace': 'outofspace="Espacio de almacenamiento disponible insuficiente para la operación."'
     },
     'et.lib': {
         'sysup_starting': 'sysup_starting="-------- TÄIELIK SÜSTEEMI VÄRSKENDUS ALUSTATUD --------"',
         'sysup_completed': 'sysup_completed="Puhastamine ja värskendamine lõpule viidud."',
         'sysup_rebootreq': 'sysup_rebootreq="Puhastamine ja värskendamine lõpule viidud. Värskenduse rakendamiseks on vajalik taaskäivitamine."',
         'zswapmsg': 'zswapmsg="ZSWAP on nüüd lubatud. Peate looma swap-faili või jaotuse."',
-        'msgostreepending': 'msgostreepending="Süsteemi uuendamine ootel. Palun taaskäivitage oma süsteem ja käivitage see skript uuesti, et paigaldamine lõpule viia."'
+        'msgostreepending': 'msgostreepending="Süsteemi uuendamine ootel. Palun taaskäivitage oma süsteem ja käivitage see skript uuesti, et paigaldamine lõpule viia."',
+        'outofspace': 'outofspace="Ebapiisav saadaolev salvestusruum operatsioonile."'
     },
     'fa.lib': {
         'sysup_starting': 'sysup_starting="-------- بروزرسانی کامل سیستم آغاز شد --------"',
         'sysup_completed': 'sysup_completed="تمیز کردن و بروزرسانی کامل شد."',
         'sysup_rebootreq': 'sysup_rebootreq="تمیز کردن و بروزرسانی کامل شد. برای اعمال بروزرسانی نیاز به راه اندازی مجدد است."',
         'zswapmsg': 'zswapmsg="ZSWAP اکنون فعال شده است. شما باید یک فایل یا پارتیشن سوئپ ایجاد کنید."',
-        'msgostreepending': 'msgostreepending="یک بروزرسانی سیستم در انتظار است. لطفاً سیستم خود را مجدداً راه اندازی کنید و این اسکریپت را دوباره اجرا کنید تا نصب کامل شود."'
+        'msgostreepending': 'msgostreepending="یک بروزرسانی سیستم در انتظار است. لطفا سیستم خود را مجددا راه اندازی کنید و این اسكریپت را دوباره اجرا کنید تا نصب کامل شود."',
+        'outofspace': 'outofspace="فضای ذخیره‌سازی در دسترس برای عملیات ناکافی است."'
     },
     'fi.lib': {
         'sysup_starting': 'sysup_starting="-------- TÄYSI JÄRJESTELMÄN PÄIVITYS KÄYNNISTETTY --------"',
         'sysup_completed': 'sysup_completed="Siivous ja päivitys valmis."',
         'sysup_rebootreq': 'sysup_rebootreq="Siivous ja päivitys valmis. Päivityksen voimaantuloa varten vaaditaan uudelleenkäynnistys."',
         'zswapmsg': 'zswapmsg="ZSWAP on nyt otettu käyttöön. Sinun on luotava swap-tiedosto tai osio."',
-        'msgostreepending': 'msgostreepending="Järjestelmäpäivitys on vireillä. Käynnistä järjestelmä uudelleen ja suorita tämä skripti uudelleen asennuksen loppuunsaattamiseksi."'
+        'msgostreepending': 'msgostreepending="Järjestelmäpäivitys on vireillä. Käynnistä järjestelmä uudelleen ja suorita tämä skripti uudelleen asennuksen loppuunsaattamiseksi."',
+        'outofspace': 'outofspace="Riittämätön käytettävissä oleva tallennustila toiminnolle."'
     },
     'fr.lib': {
         'sysup_starting': 'sysup_starting="-------- MISE À JOUR COMPLÈTE DU SYSTÈME DÉMARRÉE --------"',
         'sysup_completed': 'sysup_completed="Nettoyage et mise à jour terminés."',
         'sysup_rebootreq': 'sysup_rebootreq="Nettoyage et mise à jour terminés. Un redémarrage est requis pour que la mise à jour prenne effet."',
         'zswapmsg': 'zswapmsg="ZSWAP est maintenant activé. Vous devez créer un fichier ou une partition d\'échange."',
-        'msgostreepending': 'msgostreepending="Une mise à jour système est en attente. Veuillez redémarrer votre système et relancer ce script pour terminer l\'installation."'
+        'msgostreepending': 'msgostreepending="Une mise à jour système est en attente. Veuillez redémarrer votre système et relancer ce script pour terminer l\'installation."',
+        'outofspace': 'outofspace="Espace de stockage disponible insuffisant pour l\'opération."'
     },
     'ga.lib': {
         'sysup_starting': 'sysup_starting="-------- NUASHONRÚ IOMLÁN CÓRAS TOSAITHE --------"',
         'sysup_completed': 'sysup_completed="Glanúchán agus nuashonrú críochnaithe."',
         'sysup_rebootreq': 'sysup_rebootreq="Glanúchán agus nuashonrú críochnaithe. Tá atosú ag teastáil chun an nuashonrú a chur i bhfeidhm."',
         'zswapmsg': 'zswapmsg="Tá ZSWAP gníomhachtaithe anois. Ní mór duit comhad babhtála a chruthú."',
-        'msgostreepending': 'msgostreepending="Tá nuashonrú córais i bhfeidhm. Atosaigh do chóras le do thoil agus rith an script seo arís chun an fhéadachas a bhaint amach."'
+        'msgostreepending': 'msgostreepending="Tá nuahsónrú córais i bhfeidhm. Atosaigh do chóras le do thoil agus rith an script seo arís chun an fhéadachas a bhaint amach."',
+        'outofspace': 'outofspace="Spás stórála ar fáil ná leor don oibríochta."'
     },
     'he.lib': {
         'sysup_starting': 'sysup_starting="-------- עדכון מערכת מלא החל --------"',
         'sysup_completed': 'sysup_completed="ניקוי ועדכון הושלמו."',
         'sysup_rebootreq': 'sysup_rebootreq="ניקוי ועדכון הושלמו. נדרש אתחול מחדש כדי שהעדכון יכנס לתוקף."',
         'zswapmsg': 'zswapmsg="ZSWAP מופעל כעת. עליך ליצור קובץ החלפה או מחיצה."',
-        'msgostreepending': 'msgostreepending="עדכון מערכת ממתין. אנא הפעל מחדש את המערכת שלך והפעל את הסקריפט הזה שוב כדי להשלים את ההתקנה."'
+        'msgostreepending': 'msgostreepending="עדכון מערכת ממתין. אנא הפעל מחדש את המערכת שלך והפעל את הסקריפט הזה שוב כדי להשלים את ההתקנה."',
+        'outofspace': 'outofspace="אין מספיק מקום אחסון זמין לפעולה."'
     },
     'hi.lib': {
         'sysup_starting': 'sysup_starting="-------- संपूर्ण सिस्टम अपडेट शुरू --------"',

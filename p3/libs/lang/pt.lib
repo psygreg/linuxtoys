@@ -138,3 +138,4 @@ sysup_rebootreq="Limpeza e atualização concluídas. Um reinício é necessári
 sysup_available="Uma atualização de versão está disponível. Atualizar agora? (Se você não escolher, apenas uma atualização do sistema normal será realizada.)"
 zswapmsg="ZSWAP está agora habilitado. Você deve criar um arquivo ou partição de troca."
 msgostreepending="Uma atualização de sistema está pendente. Reinicie seu sistema e execute este script novamente para concluir a instalação."
+outofspace="Espaço de armazenamento disponível insuficiente para a operação."

@@ -137,3 +137,4 @@ sysup_rebootreq="Təmizlənmə və güncəllənmə tamamlandı. Güncəllənmən
 sysup_available="Buraxılış yeniləmə əlçatan. İndi yeniləmək istəyirsiz? (Seçməməsiniz adi sistem yeniləməsini həyata keçirəcəkdir.)"
 zswapmsg="ZSWAP indi aktivdir. Bunu istifadə etmək üçün swap faylı yaratmalısınız."
 msgostreepending="Sistem yeniləməsi gözləyişdədir. Sistemin yenidən başladılması istəyindən sonra yükləməni tamamlamaq üçün bu skripti yenidən çalıştırın."
+outofspace="Əməliyyat üçün yetərli boş yaddaş yeri yoxdur."
