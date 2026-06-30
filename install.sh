@@ -89,6 +89,9 @@ ossuse() {
 
 osarch() {
 	_pkg_dir="/tmp/linuxtoys/"
+	if pacman -Qi linuxtoys-bin &>/dev/null; then
+		sudo pacman -R --noconfirm linuxtoys-bin || error "Failed to remove existing linuxtoys-bin package."
+	fi
 	mkdir -p ${_pkg_dir}
 	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
 		cd "${_pkg_dir}"
