@@ -157,6 +157,7 @@ class TermRunScripts(Gtk.Box):
         self.removable_script_has_registry_entry = False
         self.removable_script_revert_disabled = False
         self._flatpak_installed_detected = False  # Track if flatpak was installed during script execution
+        self._destroyed = False  # Track widget destruction to prevent use-after-free
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
             script_name = self.removable_script_info.get('name')
@@ -221,6 +222,17 @@ class TermRunScripts(Gtk.Box):
         if self.auto_run:
             GLib.idle_add(self._run_next_script)
 
+    def do_destroy(self):
+        if getattr(self, '_destroyed', False):
+            return
+        self._destroyed = True
+        if hasattr(self, 'terminal') and hasattr(self, 'on_child_exit'):
+            try:
+                self.terminal.disconnect_by_func(self.on_child_exit)
+            except Exception:
+                pass
+        Gtk.Box.do_destroy(self)
+
     def _set_remove_button_visibility(self):
         # Button shown if ALL conditions are met:
         # 1. There's a removable script
@@ -260,15 +272,26 @@ class TermRunScripts(Gtk.Box):
             self.vbox_main.button_copy.show()
 
     def _show_remove_confirmation_dialog(self, script_name):
-        dialog = Gtk.MessageDialog(
-            transient_for=self.get_toplevel(),
-            flags=0,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
-                "remove_confirm_title", "Remove Installed Components?"
-            ),
-        )
+        toplevel = self.get_toplevel()
+        if toplevel and toplevel.get_parent():
+            dialog = Gtk.MessageDialog(
+                transient_for=toplevel,
+                flags=0,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get(
+                    "remove_confirm_title", "Remove Installed Components?"
+                ),
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                flags=0,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get(
+                    "remove_confirm_title", "Remove Installed Components?"
+                ),
+            )
         dialog.format_secondary_text(
             self.translations.get(
                 "remove_confirm_message",
@@ -285,15 +308,26 @@ class TermRunScripts(Gtk.Box):
         return response == Gtk.ResponseType.YES
 
     def _show_remove_not_available_dialog(self):
-        dialog = Gtk.MessageDialog(
-            transient_for=self.get_toplevel(),
-            flags=0,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get(
-                "remove_not_available_title", "Removal Not Available"
-            ),
-        )
+        toplevel = self.get_toplevel()
+        if toplevel and toplevel.get_parent():
+            dialog = Gtk.MessageDialog(
+                transient_for=toplevel,
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get(
+                    "remove_not_available_title", "Removal Not Available"
+                ),
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get(
+                    "remove_not_available_title", "Removal Not Available"
+                ),
+            )
         dialog.format_secondary_text(
             self.translations.get(
                 "remove_not_available_message",
@@ -305,15 +339,26 @@ class TermRunScripts(Gtk.Box):
 
     def _show_internal_revert_confirmation_dialog(self, script_name):
         """Show confirmation dialog for internal revert (re-run script)."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self.get_toplevel(),
-            flags=0,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
-                "internal_revert_confirm_title", "Re-run Script for Removal?"
-            ),
-        )
+        toplevel = self.get_toplevel()
+        if toplevel and toplevel.get_parent():
+            dialog = Gtk.MessageDialog(
+                transient_for=toplevel,
+                flags=0,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get(
+                    "internal_revert_confirm_title", "Re-run Script for Removal?"
+                ),
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                flags=0,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get(
+                    "internal_revert_confirm_title", "Re-run Script for Removal?"
+                ),
+            )
         dialog.format_secondary_text(
             self.translations.get(
                 "internal_revert_confirm_message",
@@ -585,7 +630,9 @@ class TermRunScripts(Gtk.Box):
             self._cleanup_script_path = None
 
         if self._self_update:
-            DialogRestart(parent=self.get_toplevel()).show()
+            toplevel = self.get_toplevel()
+            if toplevel and toplevel.get_parent():
+                DialogRestart(parent=toplevel).show()
 
         # Handle transmap file based on exit status
         transmap_path = "/tmp/linuxtoys/transmap"
@@ -641,6 +688,10 @@ class TermRunScripts(Gtk.Box):
         # Check for error exit codes and handle auto-reversion or bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
             # Only auto-handle for regular scripts, not removal operations
+            if getattr(self, '_destroyed', False):
+                return
+            if not getattr(self, 'vbox_main', None) or not self.vbox_main.get_parent():
+                return
             
             # Save the error to registry before attempting auto-revert
             script_name = getattr(self, "_current_script_name", "unknown")
@@ -680,6 +731,10 @@ class TermRunScripts(Gtk.Box):
                 # If auto-reporting is disabled, preserve transmap for user to potentially report manually
 
         self.scripts_executed += 1
+        if getattr(self, '_destroyed', False):
+            return
+        if not getattr(self, 'vbox_main', None) or not self.vbox_main.get_parent():
+            return
         progress = self.scripts_executed / self.total_scripts
         self.vbox_main.progress_bar.set_fraction(progress)
         # Use translatable running/removing text
@@ -696,6 +751,13 @@ class TermRunScripts(Gtk.Box):
         self._run_next_script()
 
     def _run_next_script(self):
+        if getattr(self, '_destroyed', False):
+            return
+        if not getattr(self, 'vbox_main', None) or not self.vbox_main.get_parent():
+            return
+        if not getattr(self, 'parent', None) or not self.parent.get_parent():
+            return
+
         if not self.script_queue:
             # Use translatable done text
             done_label = self.translations.get("term_view_done", " Done ")
@@ -859,15 +921,26 @@ class TermRunScripts(Gtk.Box):
 
     def _show_bug_report_confirmation_dialog(self):
         """Show confirmation dialog before sending bug report."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self.get_toplevel(),
-            flags=0,
-            message_type=Gtk.MessageType.QUESTION,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
-                "bug_report_confirm_title", "Send Bug Report?"
-            ),
-        )
+        toplevel = self.get_toplevel()
+        if toplevel and toplevel.get_parent():
+            dialog = Gtk.MessageDialog(
+                transient_for=toplevel,
+                flags=0,
+                message_type=Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get(
+                    "bug_report_confirm_title", "Send Bug Report?"
+                ),
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                flags=0,
+                message_type=Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get(
+                    "bug_report_confirm_title", "Send Bug Report?"
+                ),
+            )
         dialog.format_secondary_text(
             self.translations.get(
                 "bug_report_confirm_message",
@@ -887,16 +960,28 @@ class TermRunScripts(Gtk.Box):
 
     def _show_bug_report_result_dialog(self, success: bool, issue_data: dict = None):
         """Show result dialog after bug report submission."""
+        toplevel = self.get_toplevel()
+        has_toplevel = toplevel and toplevel.get_parent()
         if success and issue_data:
-            dialog = Gtk.MessageDialog(
-                transient_for=self.get_toplevel(),
-                flags=0,
-                message_type=Gtk.MessageType.INFO,
-                buttons=Gtk.ButtonsType.OK,
-                text=self.translations.get(
-                    "bug_report_success_title", "Bug Report Submitted"
-                ),
-            )
+            if has_toplevel:
+                dialog = Gtk.MessageDialog(
+                    transient_for=toplevel,
+                    flags=0,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=self.translations.get(
+                        "bug_report_success_title", "Bug Report Submitted"
+                    ),
+                )
+            else:
+                dialog = Gtk.MessageDialog(
+                    flags=0,
+                    message_type=Gtk.MessageType.INFO,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=self.translations.get(
+                        "bug_report_success_title", "Bug Report Submitted"
+                    ),
+                )
             issue_url = issue_data.get("issue_url", "")
             issue_number = issue_data.get("issue_number", "")
             dialog.format_secondary_text(
@@ -907,15 +992,25 @@ class TermRunScripts(Gtk.Box):
                 ).format(issue_number=issue_number, issue_url=issue_url)
             )
         else:
-            dialog = Gtk.MessageDialog(
-                transient_for=self.get_toplevel(),
-                flags=0,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text=self.translations.get(
-                    "bug_report_failed_title", "Bug Report Failed"
-                ),
-            )
+            if has_toplevel:
+                dialog = Gtk.MessageDialog(
+                    transient_for=toplevel,
+                    flags=0,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=self.translations.get(
+                        "bug_report_failed_title", "Bug Report Failed"
+                    ),
+                )
+            else:
+                dialog = Gtk.MessageDialog(
+                    flags=0,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=self.translations.get(
+                        "bug_report_failed_title", "Bug Report Failed"
+                    ),
+                )
             dialog.format_secondary_text(
                 self.translations.get(
                     "bug_report_failed_message",
@@ -927,13 +1022,22 @@ class TermRunScripts(Gtk.Box):
 
     def _show_bug_report_network_error_dialog(self, title: str, message: str):
         """Show network-specific error dialog."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self.get_toplevel(),
-            flags=0,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=title,
-        )
+        toplevel = self.get_toplevel()
+        if toplevel and toplevel.get_parent():
+            dialog = Gtk.MessageDialog(
+                transient_for=toplevel,
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=title,
+            )
+        else:
+            dialog = Gtk.MessageDialog(
+                flags=0,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=title,
+            )
         dialog.format_secondary_text(message)
         dialog.run()
         dialog.destroy()
@@ -1049,6 +1153,10 @@ class TermRunScripts(Gtk.Box):
     def _on_key_press(self, widget, event):
         """Handle key press events - specifically Escape to go back."""
         if event.keyval == Gdk.KEY_Escape:
+            if getattr(self, '_destroyed', False):
+                return False
+            if not getattr(self, 'parent', None) or not self.parent.get_parent():
+                return False
             # Check if a script is currently running
             if self.parent._script_running:
                 # Show the warning dialog before cancelling
@@ -1065,6 +1173,11 @@ class TermRunScripts(Gtk.Box):
         return False
 
     def on_done_clicked(self, button):
+        if getattr(self, '_destroyed', False):
+            return
+        if not getattr(self, 'parent', None) or not self.parent.get_parent():
+            return
+
         self.parent.set_focus(None)
 
         # Check for reboot requirements after checklist completion
