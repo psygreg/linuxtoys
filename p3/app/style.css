@@ -22,6 +22,14 @@
     margin-bottom: 0px;
     padding: 4px;
 }
+
+button.installed-card-remove:hover {
+    border-radius: 0 16px 16px 0;
+}
+
+button.installed-card-remove:active {
+    border-radius: 0 16px 16px 0;
+}
 .item-subcategory {
     background-image: url('icons/jigsaw.svg');
     background-size: 80px;
