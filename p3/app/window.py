@@ -4,20 +4,23 @@ import shutil
 import subprocess
 import threading
 
-from gi.repository import GdkPixbuf
+from gi.repository import GdkPixbuf, GLib
 
 from . import (
     action_registry,
-    manifest_helper,
     compat,
+    dev_mode,
+    file_watcher,
     get_icon_path,
     head_menu,
     header,
+    manifest_helper,
     needed_helper,
     parser,
     reboot_helper,
     revealer,
     search_helper,
+    skills_view,
     term_view,
 )
 from .lang_utils import escape_for_markup
@@ -218,6 +221,7 @@ class AppWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self._populate_all_scripts)
         GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
+        GLib.idle_add(self._start_file_watcher)
 
     def _populate_search_cache(self):
         """Populate the search cache in a background thread to avoid blocking the UI."""
@@ -257,6 +261,28 @@ class AppWindow(Gtk.ApplicationWindow):
 
         threading.Thread(target=populate_in_background, daemon=True).start()
         return False  # Remove from idle callbacks
+
+    def _start_file_watcher(self):
+        """Start the file watcher (only active in DEV_MODE)."""
+        if not dev_mode.is_dev_mode_enabled():
+            return False
+        file_watcher.start(self)
+        return False
+
+    def _on_files_changed(self, changed_files):
+        """Handle file change notification from the watcher."""
+        self.script_cache.invalidate()
+        self.category_cache.invalidate()
+        self.all_scripts = []
+        self.load_categories()
+        if self.current_category_info is not None:
+            self.load_scripts(self.current_category_info)
+
+        py_changed = any(f.endswith('.py') for f in changed_files)
+        if py_changed:
+            import os, sys
+            python = sys.executable
+            os.execv(python, [python] + sys.argv)
 
     def _check_updates(self):
         threading.Thread(target=self._show_dialog_and_update, daemon=True).start()
@@ -574,6 +600,23 @@ class AppWindow(Gtk.ApplicationWindow):
 
         threading.Thread(target=load_icon_async, daemon=True).start()
 
+    def _set_window_icon_from_file(self, icon_path):
+        """Set window icon from file with fallback to theme icon on error."""
+        def _apply():
+            try:
+                if not hasattr(self, 'get_window') or not self.get_window():
+                    return
+                if icon_path and os.path.exists(icon_path):
+                    self.set_icon_from_file(icon_path)
+                else:
+                    self.set_icon_name("application-x-executable")
+            except Exception:
+                try:
+                    self.set_icon_name("application-x-executable")
+                except Exception:
+                    pass
+        GLib.idle_add(_apply)
+
     def _set_tooltips_enabled(self, enabled):
         # Categories
         for flowbox_child in self.categories_flowbox.get_children():
@@ -614,6 +657,7 @@ class AppWindow(Gtk.ApplicationWindow):
             self.translations.get("search_placeholder", "Search features")
         )
         self.search_entry.set_size_request(250, -1)  # Set minimum width
+        self._search_timer_id = None
         self.search_entry.connect("search-changed", self._on_search_changed)
         self.search_entry.connect("activate", self._on_search_activate)
         self.search_entry.connect("key-press-event", self._on_search_key_press)
@@ -961,6 +1005,7 @@ class AppWindow(Gtk.ApplicationWindow):
         child = self.main_stack.get_child_by_name("running_scripts")
         if child is not None:
             self.main_stack.remove(child)
+            child.destroy()
 
         self.main_stack.add_named(run_box, "running_scripts")
 
@@ -970,6 +1015,51 @@ class AppWindow(Gtk.ApplicationWindow):
             self.navigation_stack.append(self.current_category_info)
 
         self.main_stack.set_visible_child_name("running_scripts")
+
+    def open_skills_seeker_view(self):
+        self.search_entry.set_text("")
+        self._search_entry_prev_placeholder = self.search_entry.get_placeholder_text()
+        self.search_entry.set_placeholder_text(
+            self.translations.get("skills_search_placeholder", "Search skills...")
+        )
+        self._clear_search_results()
+        self.header_widget.hide()
+        self.reveal.set_reveal_child(False)
+        self.check_buttons.clear()
+        self.back_button.show()
+
+        prev = {
+            "scripts_view": self.scripts_view,
+            "scripts_flowbox": self.scripts_flowbox,
+            "category_info": self.current_category_info,
+        }
+        self._skills_prev = prev
+
+        skills_view_widget = skills_view.SkillsSeekerView(
+            self.translations, on_install_callback=self._install_skill_from_seeker
+        )
+
+        child = self.main_stack.get_child_by_name("skills_seeker")
+        if child is not None:
+            self.main_stack.remove(child)
+        self.main_stack.add_named(skills_view_widget, "skills_seeker")
+
+        if self.current_category_info and not self.search_active:
+            self.navigation_stack.append(self.current_category_info)
+
+        self.scripts_view = skills_view_widget
+        self.scripts_flowbox = skills_view_widget.get_flowbox()
+
+        self.header_bar.props.title = self.translations.get(
+            "skills_seeker_desc", "Skills"
+        )
+
+        icon_path = get_icon_path("skill.svg")
+        self._set_window_icon_from_file(icon_path)
+
+        skills_view_widget.show_all()
+        self.header_widget.hide()
+        self.main_stack.set_visible_child_name("skills_seeker")
 
     async def _process_needed_scripts(self, script_infos):
         deps = []
@@ -1011,6 +1101,11 @@ class AppWindow(Gtk.ApplicationWindow):
         # Check if this is the "Create New Script" option
         if info.get("is_create_script"):
             self._handle_create_new_script()
+            return
+
+        script_path = info.get("path", "")
+        if script_path.endswith("skills-seeker.sh") or info.get("name") == "Skills Seeker":
+            self.open_skills_seeker_view()
             return
 
         deps = asyncio.run(self._process_needed_scripts([info]))
@@ -1118,6 +1213,31 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                 self.scripts_flowbox, self.current_category_info
             )
             self.scripts_flowbox.show_all()
+
+    def _install_skill_from_seeker(self, source, slug, agent):
+        tmp_dir = "/tmp/linuxtoys"
+        os.makedirs(tmp_dir, exist_ok=True)
+        safe_source = source.replace("/", "_")
+        tmp_script = os.path.join(tmp_dir, f"skill_install_{safe_source}_{slug}.sh")
+        script_content = f"""#!/bin/bash
+# name: Install Skill {slug}
+# description: Install skill {source} for agent {agent}
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
+_lang_
+pkg_npm npm
+npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
+"""
+        with open(tmp_script, "w") as f:
+            f.write(script_content)
+        os.chmod(tmp_script, 0o755)
+
+        script_info = {
+            "name": f"Install {slug}",
+            "path": tmp_script,
+            "icon": "emblem-system-symbolic",
+            "description": f"Install skill {source}/{slug} for {agent}",
+        }
+        self.open_term_view([script_info], removable_script_info=script_info, auto_run=True)
 
     def _show_reboot_warning_dialog(self):
         """Shows a dialog warning that a reboot is required before continuing."""
@@ -1240,6 +1360,34 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
         # Refresh footer translations
         self.reveal.update_translations(self.translations)
+
+        # If the Skills Seeker is active, recreate it with the new translations
+        if self.main_stack.get_visible_child_name() == "skills_seeker":
+            existing = self.main_stack.get_child_by_name("skills_seeker")
+            if existing is not None:
+                new_view = skills_view.SkillsSeekerView(
+                    self.translations,
+                    on_install_callback=self._install_skill_from_seeker,
+                )
+                self.main_stack.remove(existing)
+                self.main_stack.add_named(new_view, "skills_seeker")
+                self.scripts_view = new_view
+                self.scripts_flowbox = new_view.get_flowbox()
+                self.header_bar.props.title = self.translations.get(
+                    "skills_seeker_desc", "Skills"
+                )
+                icon_path = get_icon_path("skill.svg")
+                self._set_window_icon_from_file(icon_path)
+                self.search_entry.set_placeholder_text(
+                    self.translations.get("skills_search_placeholder", "Search skills...")
+                )
+                self._search_entry_prev_placeholder = self.translations.get(
+                    "search_placeholder", "Search features"
+                )
+                new_view.show_all()
+                self.header_widget.hide()
+                self.main_stack.set_visible_child_name("skills_seeker")
+            return
 
         # If we're currently viewing categories, we're done since load_categories() already updated the view
         if self.main_stack.get_visible_child_name() == "categories":
@@ -1863,13 +2011,27 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         """Handle search text changes."""
         query = search_entry.get_text().strip()
 
+        if self.main_stack.get_visible_child_name() == "skills_seeker":
+            if hasattr(self, "scripts_view") and hasattr(self.scripts_view, "do_search"):
+                if self._search_timer_id:
+                    GLib.source_remove(self._search_timer_id)
+                    self._search_timer_id = None
+                if not query:
+                    self.scripts_view.do_search(query)
+                    if self.search_active:
+                        self._clear_search_results()
+                    return
+                self._search_timer_id = GLib.timeout_add(
+                    300, self._do_delayed_skills_search, search_entry
+                )
+                return
+
         if len(query) >= 2:
             self._perform_search(query)
         elif len(query) == 0 and self.search_active:
             # If search is completely emptied, return to normal mode and remove focus
             self._clear_search_results()
             # Deselect the search entry (remove focus) using GLib.idle_add for deferred execution
-            from gi.repository import GLib
 
             def remove_focus():
                 # Try to focus on the current visible child or the main container
@@ -1891,6 +2053,13 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                 self._update_header()  # Reset to default header
                 self.header_bar.props.title = "LinuxToys"
 
+    def _do_delayed_skills_search(self, search_entry):
+        self._search_timer_id = None
+        query = search_entry.get_text().strip()
+        if hasattr(self, "scripts_view") and hasattr(self.scripts_view, "do_search"):
+            self.scripts_view.do_search(query)
+        return False
+
     def _on_search_activate(self, search_entry):
         """Handle search entry activation (Enter key)."""
         # If there are search results, activate the first one
@@ -1904,7 +2073,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             # Clear search on Escape
             widget.set_text("")
             # Deselect the search entry (remove focus) using GLib.idle_add for deferred execution
-            from gi.repository import GLib
 
             def remove_focus():
                 # Try to focus on the current visible child or the main container
@@ -2152,6 +2320,77 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self._clear_search_results()
             return
 
+        # Check if we're in skills seeker view
+        if self.main_stack.get_visible_child_name() == "skills_seeker":
+            if self._search_timer_id:
+                GLib.source_remove(self._search_timer_id)
+                self._search_timer_id = None
+            prev = getattr(self, "_skills_prev", None)
+            if prev:
+                self.scripts_view = prev["scripts_view"]
+                self.scripts_flowbox = prev["scripts_flowbox"]
+                self.current_category_info = prev["category_info"]
+
+            prev_placeholder = getattr(self, "_search_entry_prev_placeholder", None)
+            if prev_placeholder:
+                self.search_entry.set_placeholder_text(prev_placeholder)
+                self._search_entry_prev_placeholder = None
+
+            child = self.main_stack.get_child_by_name("skills_seeker")
+            if child is not None:
+                self.main_stack.remove(child)
+
+            self.header_widget.show()
+            self._update_header(self.current_category_info)
+            if self.current_category_info:
+                self.header_bar.props.title = (
+                    f"LinuxToys: {self.current_category_info.get('name', 'LinuxToys')}"
+                )
+                self.main_stack.set_visible_child(self.scripts_view)
+                self.back_button.show()
+                if self._is_local_scripts_category(self.current_category_info):
+                    self._enable_drag_and_drop()
+                else:
+                    self._disable_drag_and_drop()
+                if self.current_category_info.get("display_mode", "menu") == "checklist":
+                    self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+                else:
+                    self.reveal.set_reveal_child(False)
+            else:
+                self.show_categories_view()
+
+            if self.navigation_stack:
+                self.navigation_stack.pop()
+            return
+
+        # Check if we're in running scripts view
+        if self.main_stack.get_visible_child_name() == "running_scripts":
+            child = self.main_stack.get_child_by_name("running_scripts")
+            if child is not None:
+                self.main_stack.remove(child)
+                child.destroy()
+            if self.navigation_stack:
+                previous_category = self.navigation_stack.pop()
+                self.current_category_info = previous_category
+                self.header_widget.show()
+                self._update_header(previous_category)
+                if previous_category:
+                    self.header_bar.props.title = (
+                        f"LinuxToys: {previous_category.get('name', 'LinuxToys')}"
+                    )
+                if self._is_local_scripts_category(previous_category):
+                    self._enable_drag_and_drop()
+                else:
+                    self._disable_drag_and_drop()
+                if previous_category.get("display_mode", "menu") == "checklist":
+                    self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+                else:
+                    self.reveal.set_reveal_child(False)
+                self.main_stack.set_visible_child(self.scripts_view)
+            else:
+                self.show_categories_view()
+            return
+
         # Check if a script is currently running
         if self._script_running:
             # Show warning dialog before cancelling the running script
@@ -2310,12 +2549,12 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
     def _refresh_random_scripts_display(self):
         """Refresh the random scripts display with new random selection."""
         if not self.all_scripts or self.current_category_info is not None:
-            # Don't refresh if we're not on the main menu
+            self.random_scripts_refresh_timer = None
             return False
         
         # Clear existing random scripts
         for child in self.random_scripts_flowbox.get_children():
-            self.random_scripts_flowbox.remove(child)
+            child.destroy()
         
         # Get new random selection
         random_scripts = self._select_random_scripts()
