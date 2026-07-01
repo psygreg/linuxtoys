@@ -1051,7 +1051,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.scripts_flowbox = skills_view_widget.get_flowbox()
 
         self.header_bar.props.title = self.translations.get(
-            "skills_seeker_desc", "Skills"
+            "notranslate", "LinuxToys: Skills Seeker"
         )
 
         icon_path = get_icon_path("skill.svg")
