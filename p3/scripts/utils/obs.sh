@@ -30,8 +30,10 @@ if is_arch || is_cachy || is_solus; then
     pkg_install xorg-xwayland
 elif is_debian || is_ubuntu; then
     pkg_install xwayland
-elif is_fedora || is_suse || is_ostree; then
+elif is_fedora || is_ostree; then
     pkg_install xorg-x11-server-Xwayland
+elif is_suse; then
+    pkg_install xwayland
 fi
 obs_pipe
 # Set QT_QPA_PLATFORM environment variable for CEF
