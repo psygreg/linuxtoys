@@ -494,6 +494,7 @@ pkg_fromfile () {
     fi
     
     if is_debian || is_ubuntu; then
+        sudo chmod 644 "${@}" || fatal "Failed to fix permissions for apt_"
         { sudo apt install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_arch || is_cachy; then

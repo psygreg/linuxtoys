@@ -13,6 +13,7 @@ prep_tmp_noram
 anydesk_ver="8.0.3-1" # needs routine update checks
 if is_ubuntu || is_debian; then
     wget "https://download.anydesk.com/linux/anydesk_${anydesk_ver}_amd64.deb"
+    sudo chmod 644 "anydesk_${anydesk_ver}_amd64.deb" # TODO -- REMOVE: temporary fix
     pkg_fromfile "./anydesk_${anydesk_ver}_amd64.deb"
 else
     wget "https://download.anydesk.com/linux/anydesk_${anydesk_ver}_x86_64.rpm"
