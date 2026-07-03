@@ -13,6 +13,8 @@ _lang_
 sudo_rq
 if is_solus; then
     pkg_install tailscale
+    sysd_enable tailscaled
+    sysd_start tailscaled
     sudo tailscale up # prompts user to login to their Tailscale account and connect to the network
 else
     curl -fsSL https://tailscale.com/install.sh | bash
