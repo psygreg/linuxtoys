@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import shutil
 import subprocess
@@ -9,6 +10,7 @@ from gi.repository import GdkPixbuf, GLib
 from . import (
     action_registry,
     compat,
+    deepin_immutable_helper,
     dev_mode,
     file_watcher,
     get_icon_path,
@@ -27,6 +29,8 @@ from .lang_utils import escape_for_markup
 from .gtk_common import Gdk, GLib, Gtk, Pango, Vte
 from .updater.update_dialog import UpdateDialog
 from .updater.update_helper import UpdateHelper
+
+logger = logging.getLogger(__name__)
 
 
 class AppWindow(Gtk.ApplicationWindow):
@@ -222,6 +226,7 @@ class AppWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
         GLib.idle_add(self._start_file_watcher)
+        GLib.idle_add(self._check_deepin_immutability_on_startup)
 
     def _populate_search_cache(self):
         """Populate the search cache in a background thread to avoid blocking the UI."""
@@ -535,6 +540,22 @@ class AppWindow(Gtk.ApplicationWindow):
         reboot_helper.show_ostree_package_deployment_info_dialog(
             self, self.translations
         )
+        return False  # Remove from idle callbacks
+
+    def _check_deepin_immutability_on_startup(self):
+        """
+        Check if Deepin immutability permission needs to be requested on first run.
+        This is called asynchronously during startup via GLib.idle_add.
+        """
+        try:
+            reboot_required = deepin_immutable_helper.check_and_handle_deepin_immutability(
+                self, self.translations
+            )
+            if reboot_required:
+                logger.info("Deepin immutability was enabled, marking reboot as required")
+                self.reboot_required = True
+        except Exception as e:
+            logger.error(f"Error checking Deepin immutability: {e}")
         return False  # Remove from idle callbacks
 
     def _set_window_icon(self):

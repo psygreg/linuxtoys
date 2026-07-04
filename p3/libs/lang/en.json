@@ -492,5 +492,9 @@
   "skills_removing": "Removing...",
   "skills_tab_discover": "Discover",
   "skills_tab_installed": "Installed",
-  "skills_searching": "Searching..."
+  "skills_searching": "Searching...",
+  "deepin_immutable_error_message": "An error occurred while enabling writable mode:\n{error_message}",
+  "deepin_immutable_script_name": "Enable Writable Mode",
+  "deepin_immutable_script_description": "Disable system immutability on Deepin Linux.",
+  "deepin_immutable_message": "LinuxToys requires permission to disable system immutability so it can perform system optimization and configuration tasks.\n\nWould you like to enable writable mode on this Deepin system?"
 }

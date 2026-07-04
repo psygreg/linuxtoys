@@ -144,7 +144,8 @@ def is_supported_system():
         "ublue",
         "zorin",
         "solus",
-        "pika"
+        "pika",
+        "deepin"
     }
 
     # Check if any OS compatibility key matches
@@ -193,7 +194,7 @@ def get_system_compat_keys():
         id_val in ["rhel", "centos", "almalinux"] or "rhel" in id_like
     )
 
-    if (id_val in ["debian"] or "debian" in id_like) and (id_val not in ["ubuntu"] and "ubuntu" not in id_like):
+    if (id_val in ["debian"] or id_val in ["deepin"] or "debian" in id_like) and (id_val not in ["ubuntu"] and "ubuntu" not in id_like):
         keys.add("debian")
     if id_val in ["ubuntu"]:
         # Only add ubuntu compat key for supported versions (noble, resolute)
@@ -209,6 +210,8 @@ def get_system_compat_keys():
         keys.add("zorin")
     if id_val in ["pika"]:
         keys.add("pika")
+    if id_val in ["deepin"]:
+        keys.add("deepin")
     if id_val in ["biglinux", "bigcommunity", "manjaro"] or "manjaro" in id_like:
         keys.add("manjaro")
     if id_val in ["cachyos"]:

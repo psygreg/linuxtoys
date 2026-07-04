@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cachyconfs_desc
 # icon: cachyos.svg
-# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, !zorin, rhel
+# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, !zorin, rhel, !deepin
 # reboot: yes
 # nocontainer
 # repo: https://github.com/CachyOS/CachyOS-Settings
