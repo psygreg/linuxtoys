@@ -30,8 +30,6 @@ FONT_FILES=(
 
 for file in "${FONT_FILES[@]}"; do
     echo "  Baixando $file..."
-    # --fail faz o curl retornar erro se o link quebrar (404)
-    # -sS esconde a tabela do curl, mas mostra se der erro critico
     if ! curl -L -f -sS -O "$GITHUB_URL/$file"; then
         echo "Erro ao baixar o arquivo $file. Verifique sua conexao."
         exit 1
@@ -42,31 +40,20 @@ done
 echo "Instalando fontes em: $FONT_DIR"
 cp *.ttf "$FONT_DIR/"
 
-# 4. Atualiza o cache do sistema de forma silenciosa
+# 4. Atualiza o cache focado apenas na pasta do usuário (silencioso)
 echo "Atualizando cache de fontes do sistema..."
-fc-cache -f
+fc-cache -f "$HOME/.local/share/fonts" 2>/dev/null
 
-# 5. Aplica as fontes no GNOME automaticamente
+# 5. Aplica as fontes no GNOME com segurança
 echo "Aplicando novas configuracoes no GNOME Ajustes..."
 
-# Forca a saida de qualquer ambiente virtual ativo apenas dentro deste script
-if [ -n "$CONDA_DEFAULT_ENV" ]; then
-    conda deactivate 2>/dev/null
-fi
+safe_gsettings() {
+    env -u PYTHONHOME -u PYTHONPATH PATH="/usr/bin:/bin:$PATH" XDG_DATA_DIRS="/usr/share:/usr/local/share" gsettings "$@"
+}
 
-if [ -n "$VIRTUAL_ENV" ]; then
-    deactivate 2>/dev/null
-fi
-
-# Define 'Atkinson Hyperlegible' tamanho 12 para a Interface (Menus, paineis, etc.)
-gsettings set org.gnome.desktop.interface font-name "Atkinson Hyperlegible 12"
-
-# Define 'Atkinson Hyperlegible' tamanho 12 para os Documentos (Leitores de texto, notas, etc.)
-gsettings set org.gnome.desktop.interface document-font-name "Atkinson Hyperlegible 12"
-
-# Garante que o terminal continue legivel usando a fonte mono padrao do Ubuntu
-gsettings set org.gnome.desktop.interface monospace-font-name "Ubuntu Sans Mono 12"
-
+safe_gsettings set org.gnome.desktop.interface font-name "Atkinson Hyperlegible 12"
+safe_gsettings set org.gnome.desktop.interface document-font-name "Atkinson Hyperlegible 12"
+safe_gsettings set org.gnome.desktop.interface monospace-font-name "Ubuntu Sans Mono 12"
 
 echo "=================================================="
 echo " Sucesso! Fonte instalada e aplicada no sistema!"
