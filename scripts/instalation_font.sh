@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Define caminhos e URLs estruturadas
+DOWNLOAD_DIR="$HOME/Downloads/Atkinson_Hyperlegible"
+FONT_DIR="$HOME/.local/share/fonts/truetype/atkinson_hyperlegible"
+GITHUB_URL="https://raw.githubusercontent.com/google/fonts/main/ofl/atkinsonhyperlegible"
+
+echo "=================================================="
+echo "   Instalador da Fonte Atkinson Hyperlegible      "
+echo "=================================================="
+
+# 1. Cria e limpa o diretório de downloads temporários
+echo "Preparando diretorios..."
+mkdir -p "$DOWNLOAD_DIR"
+mkdir -p "$FONT_DIR"
+cd "$DOWNLOAD_DIR" || exit 1
+
+# Limpa instalações parciais anteriores na pasta de download
+rm -f *.ttf OFL.txt
+
+# 2. Baixa as fontes diretamente do GitHub oficial
+echo "Baixando arquivos de fonte (.ttf)..."
+FONT_FILES=(
+    "AtkinsonHyperlegible-Regular.ttf"
+    "AtkinsonHyperlegible-Italic.ttf"
+    "AtkinsonHyperlegible-Bold.ttf"
+    "AtkinsonHyperlegible-BoldItalic.ttf"
+    "OFL.txt"
+)
+
+for file in "${FONT_FILES[@]}"; do
+    echo "  Baixando $file..."
+    # --fail faz o curl retornar erro se o link quebrar (404)
+    # -sS esconde a tabela do curl, mas mostra se der erro critico
+    if ! curl -L -f -sS -O "$GITHUB_URL/$file"; then
+        echo "Erro ao baixar o arquivo $file. Verifique sua conexao."
+        exit 1
+    fi
+done
+
+# 3. Instala no sistema
+echo "Instalando fontes em: $FONT_DIR"
+cp *.ttf "$FONT_DIR/"
+
+# 4. Atualiza o cache do sistema de forma silenciosa
+echo "Atualizando cache de fontes do sistema..."
+fc-cache -f
+
+# 5. Aplica as fontes no GNOME automaticamente
+echo "Aplicando novas configuracoes no GNOME Ajustes..."
+
+# Forca a saida de qualquer ambiente virtual ativo apenas dentro deste script
+if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    conda deactivate 2>/dev/null
+fi
+
+if [ -n "$VIRTUAL_ENV" ]; then
+    deactivate 2>/dev/null
+fi
+
+# Define 'Atkinson Hyperlegible' tamanho 12 para a Interface (Menus, paineis, etc.)
+gsettings set org.gnome.desktop.interface font-name "Atkinson Hyperlegible 12"
+
+# Define 'Atkinson Hyperlegible' tamanho 12 para os Documentos (Leitores de texto, notas, etc.)
+gsettings set org.gnome.desktop.interface document-font-name "Atkinson Hyperlegible 12"
+
+# Garante que o terminal continue legivel usando a fonte mono padrao do Ubuntu
+gsettings set org.gnome.desktop.interface monospace-font-name "Ubuntu Sans Mono 12"
+
+
+echo "=================================================="
+echo " Sucesso! Fonte instalada e aplicada no sistema!"
+echo " Seus menus e documentos ja mudaram automaticamente."
+echo " Pasta de backup: $DOWNLOAD_DIR"
+echo "=================================================="
