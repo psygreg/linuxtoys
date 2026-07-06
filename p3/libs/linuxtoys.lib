@@ -553,7 +553,7 @@ pkg_remove () {
     fi
     _append_transmap "pkg rm $to_remove"
 }
-pkg_rm () { pkg_remove "$@" }
+pkg_rm () { pkg_remove "$@"; }
 pkg_appimage () {
     { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
     { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
@@ -638,20 +638,20 @@ pkg_npm () {
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .npm-global/bin already exists in the file
-            if ! grep -E 'PATH=.*/home/user/.npm-global/bin|/home/user/\.npm-global/bin' "$rc" > /dev/null 2>&1; then
+            if ! grep -E 'PATH=.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin' "$rc" > /dev/null 2>&1; then
                 prep_edit "$rc"
-                echo "export PATH=\"/home/user/.npm-global/bin:\$PATH\"" >> "$rc"
-                export PATH="/home/user/.npm-global/bin:$PATH" # handle current term viewer only in case it's not already in PATH
+                echo "export PATH=\"/home/$USER/.npm-global/bin:\$PATH\"" >> "$rc"
+                export PATH="/home/$USER/.npm-global/bin:$PATH" # handle current term viewer only in case it's not already in PATH
             fi
         fi
     done
     # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
-        if ! grep -E 'set.*PATH.*/home/user/.npm-global/bin|/home/user/\.npm-global/bin' "$fish_config" > /dev/null 2>&1; then
+        if ! grep -E 'set.*PATH.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin' "$fish_config" > /dev/null 2>&1; then
             prep_edit "$fish_config"
-            echo "set -gx PATH /home/user/.npm-global/bin \$PATH" >> "$fish_config"
-            export PATH="/home/user/.npm-global/bin:$PATH"
+            echo "set -gx PATH /home/$USER/.npm-global/bin \$PATH" >> "$fish_config"
+            export PATH="/home/$USER/.npm-global/bin:$PATH"
         fi
     fi  
 
@@ -669,7 +669,7 @@ pkg_npm () {
     done
     for pkg in "${packages[@]}"; do
         if ! npm list -g "$pkg" &>/dev/null; then
-            npm install -g "${flags[@]}" "$pkg" || fatal "Failed to install npm package $pkg"
+            { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || ( sudo_rq && sudo npm install -g "${flags[@]}" "$pkg" ) } || fatal "Failed to install npm package $pkg"
             _append_transmap "npm $pkg"
         fi
     done
@@ -684,7 +684,7 @@ pkg_bun () {
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .bun/bin already exists in the file
-            if ! grep -E 'PATH=.*\/home\/user/.bun/bin|/home/user/.bun/bin' "$rc" > /dev/null 2>&1; then
+            if ! grep -E "PATH=.*\/home\/user/.bun/bin|/home/user/.bun/bin" "$rc" > /dev/null 2>&1; then
                 prep_edit "$rc"
                 echo "export PATH=\"/home/user/.bun/bin:\$PATH\"" >> "$rc"
                 export PATH="/home/user/.bun/bin:$PATH" # handle current term viewer only in case it's not already in PATH
@@ -694,7 +694,7 @@ pkg_bun () {
     # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
-        if ! grep -E 'set.*PATH.*/home/user/.bun/bin|/home/user/.bun/bin' "$fish_config" > /dev/null 2>&1; then
+        if ! grep -E "set.*PATH.*/home/user/.bun/bin|/home/user/.bun/bin" "$fish_config" > /dev/null 2>&1; then
             prep_edit "$fish_config"
             echo "set -gx PATH /home/user/.bun/bin \$PATH" >> "$fish_config"
             export PATH="/home/user/.bun/bin:$PATH"
