@@ -9,6 +9,35 @@ echo "=================================================="
 echo "   Instalador da Fonte Atkinson Hyperlegible      "
 echo "=================================================="
 
+# --- VERIFICAÇÃO E AUTO-INSTALAÇÃO DE DEPENDÊNCIAS ---
+echo "Verificando dependencias no Ubuntu..."
+
+# Valida se os utilitários básicos do ecossistema Ubuntu/GNOME estão presentes
+for cmd in "fc-cache" "gsettings"; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "[ERRO] Ambiente incompativel. Ferramenta essencial '$cmd' nao encontrada."
+        exit 1
+    fi
+done
+
+# Verifica se o curl está faltando e instala automaticamente usando o APT
+if ! command -v curl &> /dev/null; then
+    echo "[AVISO] 'curl' nao encontrado. Instalando automaticamente via APT..."
+    echo "Sera necessario digitar sua senha de administrador (sudo):"
+
+    sudo apt update -qq && sudo apt install -y curl
+
+    # Valida se a instalação realmente funcionou
+    if ! command -v curl &> /dev/null; then
+        echo "[ERRO] Falha ao instalar o 'curl'. Por favor, instale-o manualmente antes de continuar."
+        exit 1
+    fi
+    echo "'curl' instalado com sucesso!"
+fi
+
+echo "Tudo certo! Iniciando instalacao..."
+echo "--------------------------------------------------"
+
 # 1. Cria e limpa o diretório de downloads temporários
 echo "Preparando diretorios..."
 mkdir -p "$DOWNLOAD_DIR"

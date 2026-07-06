@@ -4,6 +4,17 @@ echo "=================================================="
 echo "    Restaurador de Fontes Padrao do Sistema        "
 echo "=================================================="
 
+# --- VERIFICAÇÃO DE DEPENDÊNCIAS ---
+echo "Verificando dependencias no Ubuntu..."
+for cmd in "fc-cache" "gsettings"; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "[ERRO] Ambiente incompativel. Ferramenta essencial '$cmd' nao encontrada."
+        exit 1
+    fi
+done
+
+echo "Tudo certo! Iniciando a restauracao..."
+echo "--------------------------------------------------"
 echo "Resetando configuracoes para o padrao de fabrica..."
 
 safe_gsettings() {
