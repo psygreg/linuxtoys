@@ -553,6 +553,7 @@ pkg_remove () {
     fi
     _append_transmap "pkg rm $to_remove"
 }
+pkg_rm () { pkg_remove "$@" }
 pkg_appimage () {
     { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
     { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
