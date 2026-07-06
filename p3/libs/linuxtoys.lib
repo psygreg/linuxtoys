@@ -638,9 +638,9 @@ pkg_npm () {
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .npm-global/bin already exists in the file
-            if ! grep -E 'PATH=.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin' "$rc" > /dev/null 2>&1; then
+            if ! grep -E "PATH=.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin" "$rc" > /dev/null 2>&1; then
                 prep_edit "$rc"
-                echo "export PATH=\"/home/$USER/.npm-global/bin:\$PATH\"" >> "$rc"
+                echo "export PATH=\"/home/$USER/.npm-global/bin:\$PATH\" >> "$rc"
                 export PATH="/home/$USER/.npm-global/bin:$PATH" # handle current term viewer only in case it's not already in PATH
             fi
         fi
@@ -648,7 +648,7 @@ pkg_npm () {
     # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
-        if ! grep -E 'set.*PATH.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin' "$fish_config" > /dev/null 2>&1; then
+        if ! grep -E "set.*PATH.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin" "$fish_config" > /dev/null 2>&1; then
             prep_edit "$fish_config"
             echo "set -gx PATH /home/$USER/.npm-global/bin \$PATH" >> "$fish_config"
             export PATH="/home/$USER/.npm-global/bin:$PATH"
@@ -684,20 +684,20 @@ pkg_bun () {
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .bun/bin already exists in the file
-            if ! grep -E "PATH=.*\/home\/user/.bun/bin|/home/user/.bun/bin" "$rc" > /dev/null 2>&1; then
+            if ! grep -E "PATH=.*\/home\/$USER/.bun/bin|/home/$USER/.bun/bin" "$rc" > /dev/null 2>&1; then
                 prep_edit "$rc"
-                echo "export PATH=\"/home/user/.bun/bin:\$PATH\"" >> "$rc"
-                export PATH="/home/user/.bun/bin:$PATH" # handle current term viewer only in case it's not already in PATH
+                echo "export PATH=\"/home/$USER/.bun/bin:\$PATH\" >> "$rc"
+                export PATH="/home/$USER/.bun/bin:$PATH" # handle current term viewer only in case it's not already in PATH
             fi
         fi
     done
     # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
-        if ! grep -E "set.*PATH.*/home/user/.bun/bin|/home/user/.bun/bin" "$fish_config" > /dev/null 2>&1; then
+        if ! grep -E "set.*PATH.*/home/$USER/.bun/bin|/home/$USER/.bun/bin" "$fish_config" > /dev/null 2>&1; then
             prep_edit "$fish_config"
-            echo "set -gx PATH /home/user/.bun/bin \$PATH" >> "$fish_config"
-            export PATH="/home/user/.bun/bin:$PATH"
+            echo "set -gx PATH /home/$USER/.bun/bin \$PATH" >> "$fish_config"
+            export PATH="/home/$USER/.bun/bin:$PATH"
         fi
     fi
     for pkg in "$@"; do
