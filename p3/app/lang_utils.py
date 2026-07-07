@@ -364,6 +364,9 @@ def create_translator(lang_code=None):
     translations = load_translations(lang_code)
     
     def translate(key):
+        # Fall back to English if no translation is available
+        if key not in translations:
+            return load_translations('en').get(key, key)
         return translations.get(key, key)
     
     return translate
