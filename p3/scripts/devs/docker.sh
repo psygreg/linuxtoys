@@ -52,9 +52,7 @@ EOF
             { is_rhel && pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine; } || pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
             sudo dnf -y install dnf-plugins-core # should not be declared as its removal may break the OS
             # Check dnf version to use appropriate config-manager syntax
-            local dnf_version=$(rpm -qi dnf | grep "^Version" | awk '{print $3}')
-            local dnf_major=$(echo "$dnf_version" | cut -d. -f1)
-            { [ "$dnf_major" -lt 5 ] && sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo; } || sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
+            { command -v "dnf5" &>/dev/null && sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo; } || sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
         fi
     fi
     { ( is_arch || is_cachy || is_suse || is_solus ) && pkg_install docker docker-compose; } || pkg_install --ostreecheck docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
