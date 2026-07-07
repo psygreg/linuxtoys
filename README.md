@@ -11,8 +11,8 @@
 
 LinuxToys is compatible with the following Linux distributions, provided they are *running their **latest** stable versions*:
 
-*   **Debian** and derivatives (PikaOS, LMDE, etc.)
-*   **Ubuntu** and derivatives (Ubuntu flavours, Mint, Zorin, Tuxedo, etc.)
+*   **Debian** and derivatives (PikaOS, LMDE, Tuxedo, etc.)
+*   **Ubuntu** and derivatives (Ubuntu flavours, Mint, Zorin, etc.)
 *   **Fedora** and derivatives (Nobara, Ultramarine and spins)
 *   **Red Hat Enterprise Linux** and similars (CentOS Stream, AlmaLinux, etc.)
 *   **Arch Linux** and derivatives (EndeavourOS, CachyOS, etc.)
@@ -20,6 +20,7 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **OpenSUSE** (Leap, Slowroll and Tumbleweed)
 *   Fedora-based **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
 *   **Solus**
+*   **Deepin**
 
 Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices. Support for non-systemd init systems is limited, and some features of the app cannot be offered for them.
 
