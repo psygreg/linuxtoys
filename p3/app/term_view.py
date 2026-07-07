@@ -2,7 +2,7 @@ import os
 import sys
 import re
 import shutil
-
+ 
 from . import dev_mode, get_icon_path, reboot_helper
 from .compat import should_enable_manual_revert, get_revert_capability
 from .antenna import antenna
@@ -11,8 +11,8 @@ from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
 from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry, _load_last_execution
 from .updater.update_dialog import DialogRestart
 from .action_registry import parse_registry_file
-
-
+ 
+ 
 def _cleanup_tmp_noram_dirs(transmap_path):
     """
     Clean up temporary directories created by prep_tmp_noram.
@@ -37,14 +37,14 @@ def _cleanup_tmp_noram_dirs(transmap_path):
                     pass  # Silently ignore cleanup errors
     except Exception:
         pass  # Silently ignore transmap read errors
-
-
+ 
+ 
 class InfosHead(Gtk.Box):
     def __init__(self, translations=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         self.translations = translations or {}
         vbox_infos = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-
+ 
         self.label_name = Gtk.Label()
         self.label_name.set_halign(Gtk.Align.START)
         self.label_desc = Gtk.Label()
@@ -53,25 +53,25 @@ class InfosHead(Gtk.Box):
         self.label_desc.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_repo = Gtk.Label()
         self.label_repo.set_halign(Gtk.Align.START)
-
+ 
         self.hbox_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         self.hbox_header.set_margin_left(32)
         self.hbox_header.set_margin_top(12)
         self.hbox_header.set_margin_right(32)
         self.hbox_header.set_margin_bottom(5)
-
+ 
         self.icon_head = Gtk.Image()
         self.hbox_header.pack_start(self.icon_head, False, False, 0)
-
+ 
         vbox_infos.pack_start(self.label_name, False, False, 0)
         vbox_infos.pack_start(self.label_desc, False, False, 0)
         vbox_infos.pack_start(self.label_repo, False, False, 0)
-
+ 
         self.hbox_header.pack_start(vbox_infos, True, True, 0)
         self.pack_start(self.hbox_header, False, False, 0)
-
+ 
         hbox_controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-
+ 
         # Use translatable button label
         execute_label = self.translations.get("term_view_execute", " Execute ")
         self.button_run = Gtk.Button(label=execute_label)
@@ -94,18 +94,18 @@ class InfosHead(Gtk.Box):
         )
         self.button_copy.set_halign(Gtk.Align.START)
         self.button_copy.set_size_request(150, 35)
-
+ 
         self.progress_bar = Gtk.ProgressBar()
         self.progress_bar.set_show_text(True)
         self.progress_bar.set_fraction(0.0)
-
+ 
         hbox_controls.pack_start(self.button_run, False, False, 0)
         hbox_controls.pack_start(self.button_remove, False, False, 0)
         hbox_controls.pack_start(self.button_copy, False, False, 0)
         hbox_controls.pack_start(self.progress_bar, True, True, 0)
-
+ 
         vbox_infos.pack_start(hbox_controls, False, False, 10)
-
+ 
     def _update_header_labels(self, script_info: list):
         _name = GLib.markup_escape_text(script_info.get("name", ""))
         _desc = GLib.markup_escape_text(script_info.get("description", ""))
@@ -115,7 +115,7 @@ class InfosHead(Gtk.Box):
         # Strip protocol and trailing slash from display text for cleaner appearance
         _repo_display = _repo.replace('https://', '').replace('http://', '').rstrip('/')
         self.label_repo.set_markup(f"<a href='{_repo}'>{_repo_display}</a>")
-
+ 
         icon_value = script_info.get("icon")
         if icon_value:
             icon_path = get_icon_path(icon_value)
@@ -136,8 +136,8 @@ class InfosHead(Gtk.Box):
                 default_path, 100, 100, True
             )
             self.icon_head.set_from_pixbuf(pixbuf)
-
-
+ 
+ 
 class TermRunScripts(Gtk.Box):
     def __init__(
         self, scripts_infos: list, parent, translations=None, removable_script_info=None, auto_run=False
@@ -157,7 +157,6 @@ class TermRunScripts(Gtk.Box):
         self.removable_script_has_registry_entry = False
         self.removable_script_revert_disabled = False
         self._flatpak_installed_detected = False  # Track if flatpak was installed during script execution
-        self._destroyed = False  # Track widget destruction to prevent use-after-free
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
             script_name = self.removable_script_info.get('name')
@@ -183,15 +182,15 @@ class TermRunScripts(Gtk.Box):
                 self._current_script_name = first_script_name
                 operations = _load_last_execution(first_script_name)
                 self.current_script_has_registry_entry = bool(operations)
-
+ 
         self.terminal = Vte.Terminal()
         self.terminal.connect("child-exited", self.on_child_exit)
         self.terminal.connect("key-press-event", self._on_terminal_key_press)
         self.terminal.set_vexpand(True)
         self.terminal.set_can_focus(True)
-
+ 
         self.vbox_main = InfosHead(translations)
-
+ 
         self.vbox_main.button_run.connect("clicked", self.on_button_run_clicked)
         self.vbox_main.button_remove.connect("clicked", self.on_button_remove_clicked)
         self.vbox_main.button_copy.connect("clicked", self.on_copy_clicked)
@@ -206,33 +205,22 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.progress_bar.set_text(
             waiting_text.format(current=self.scripts_executed, total=self.total_scripts)
         )
-
+ 
         self.vbox_main.pack_start(self.terminal, True, True, 0)
-
+ 
         self.set_border_width(12)
         self.add(self.vbox_main)
-
+ 
         # Connect key press event to handle Escape
         self.connect("key-press-event", self._on_key_press)
-
+ 
         if self.script_queue:
             self.vbox_main._update_header_labels(self.script_queue[0])
         
         # If auto_run is enabled, automatically start running the scripts
         if self.auto_run:
             GLib.idle_add(self._run_next_script)
-
-    def do_destroy(self):
-        if getattr(self, '_destroyed', False):
-            return
-        self._destroyed = True
-        if hasattr(self, 'terminal') and hasattr(self, 'on_child_exit'):
-            try:
-                self.terminal.disconnect_by_func(self.on_child_exit)
-            except Exception:
-                pass
-        Gtk.Box.do_destroy(self)
-
+ 
     def _set_remove_button_visibility(self):
         # Button shown if ALL conditions are met:
         # 1. There's a removable script
@@ -249,7 +237,7 @@ class TermRunScripts(Gtk.Box):
         else:
             self.vbox_main.button_remove.set_no_show_all(True)
             self.vbox_main.button_remove.hide()
-
+ 
     def _set_bug_report_button_visibility(self):
         """
         Set bug report button visibility based on:
@@ -270,7 +258,7 @@ class TermRunScripts(Gtk.Box):
         else:
             self.vbox_main.button_copy.set_no_show_all(False)
             self.vbox_main.button_copy.show()
-
+ 
     def _show_remove_confirmation_dialog(self, script_name):
         toplevel = self.get_toplevel()
         if toplevel and toplevel.get_parent():
@@ -306,7 +294,7 @@ class TermRunScripts(Gtk.Box):
         response = dialog.run()
         dialog.destroy()
         return response == Gtk.ResponseType.YES
-
+ 
     def _show_remove_not_available_dialog(self):
         toplevel = self.get_toplevel()
         if toplevel and toplevel.get_parent():
@@ -336,7 +324,7 @@ class TermRunScripts(Gtk.Box):
         )
         dialog.run()
         dialog.destroy()
-
+ 
     def _show_internal_revert_confirmation_dialog(self, script_name):
         """Show confirmation dialog for internal revert (re-run script)."""
         toplevel = self.get_toplevel()
@@ -373,11 +361,11 @@ class TermRunScripts(Gtk.Box):
         response = dialog.run()
         dialog.destroy()
         return response == Gtk.ResponseType.YES
-
+ 
     def on_button_remove_clicked(self, widget):
         if not self.removable_script_info or self.parent._script_running:
             return
-
+ 
         script_name = self.removable_script_info.get("name", "Script")
         is_internal_revert = self.removable_script_revert_capability == "internal"
         
@@ -409,7 +397,7 @@ class TermRunScripts(Gtk.Box):
         self.vbox_main.progress_bar.set_text(waiting_text.format(current=0, total=1))
         self.vbox_main.button_remove.set_sensitive(False)
         self.on_button_run_clicked(self.vbox_main.button_run)
-
+ 
     def on_button_run_clicked(self, widget):
         # Use translatable running text
         is_removal = bool(self.script_queue and self.script_queue[0].get("cleanup_path"))
@@ -439,7 +427,7 @@ class TermRunScripts(Gtk.Box):
             self.current_script_has_registry_entry = True  # Mark as available for this session
         
         self._run_next_script()
-
+ 
     def _remove_old_script_entries_from_registry(self, script_name):
         """
         Remove all existing entries for a script from the registry file.
@@ -492,7 +480,7 @@ class TermRunScripts(Gtk.Box):
             return True
         except Exception:
             return False
-
+ 
     def _save_to_registry(self, script_name, transmap_path):
         """Save script execution record to registry."""
         try:
@@ -532,7 +520,7 @@ class TermRunScripts(Gtk.Box):
                 f.write(entry)
         except Exception:
             pass  # Silently ignore registry errors
-
+ 
     def _try_auto_revert(self, transmap_path):
         """
         Attempt to build an auto-revert script from transmap operations.
@@ -561,7 +549,7 @@ class TermRunScripts(Gtk.Box):
             return auto_revert_entry
         except Exception:
             return None
-
+ 
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
         # Extract the actual exit code from status
@@ -572,7 +560,7 @@ class TermRunScripts(Gtk.Box):
         # If terminated by signal (e.g., keyboard interrupt), it's not an error to report
         # Signals are expected user interactions (Ctrl+C = SIGINT)
         return False
-
+ 
     def _auto_submit_bug_report_on_error(self):
         """Automatically submit a bug report when a script exits with an error code."""
         # Check if auto error reports are enabled
@@ -619,7 +607,7 @@ class TermRunScripts(Gtk.Box):
         except Exception:
             # Any other errors - silently skip
             pass
-
+ 
     def on_child_exit(self, term, status):
         if getattr(self, "_cleanup_script_path", None):
             try:
@@ -628,12 +616,12 @@ class TermRunScripts(Gtk.Box):
             except Exception:
                 pass
             self._cleanup_script_path = None
-
+ 
         if self._self_update:
             toplevel = self.get_toplevel()
             if toplevel and toplevel.get_parent():
                 DialogRestart(parent=toplevel).show()
-
+ 
         # Handle transmap file based on exit status
         transmap_path = "/tmp/linuxtoys/transmap"
         
@@ -684,15 +672,10 @@ class TermRunScripts(Gtk.Box):
                     os.remove(transmap_path)
             except (IOError, OSError):
                 pass  # Silently ignore if transmap cannot be removed
-
+ 
         # Check for error exit codes and handle auto-reversion or bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
             # Only auto-handle for regular scripts, not removal operations
-            if getattr(self, '_destroyed', False):
-                return
-            if not getattr(self, 'vbox_main', None) or not self.vbox_main.get_parent():
-                return
-            
             # Save the error to registry before attempting auto-revert
             script_name = getattr(self, "_current_script_name", "unknown")
             self._save_to_registry(script_name, transmap_path)
@@ -729,12 +712,8 @@ class TermRunScripts(Gtk.Box):
                     except (IOError, OSError):
                         pass
                 # If auto-reporting is disabled, preserve transmap for user to potentially report manually
-
+ 
         self.scripts_executed += 1
-        if getattr(self, '_destroyed', False):
-            return
-        if not getattr(self, 'vbox_main', None) or not self.vbox_main.get_parent():
-            return
         progress = self.scripts_executed / self.total_scripts
         self.vbox_main.progress_bar.set_fraction(progress)
         # Use translatable running/removing text
@@ -749,15 +728,8 @@ class TermRunScripts(Gtk.Box):
             running_text.format(current=self.scripts_executed, total=self.total_scripts)
         )
         self._run_next_script()
-
+ 
     def _run_next_script(self):
-        if getattr(self, '_destroyed', False):
-            return
-        if not getattr(self, 'vbox_main', None) or not self.vbox_main.get_parent():
-            return
-        if not getattr(self, 'parent', None) or not self.parent.get_parent():
-            return
-
         if not self.script_queue:
             # Use translatable done text
             done_label = self.translations.get("term_view_done", " Done ")
@@ -782,11 +754,11 @@ class TermRunScripts(Gtk.Box):
                 self._flatpak_installed_detected = False
             
             return
-
+ 
         self.parent._script_running = True
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
-
+ 
         # Add script to execution history
         script_name = current_script.get("name", "unknown")
         self._current_script_name = script_name  # Store for registry
@@ -798,15 +770,15 @@ class TermRunScripts(Gtk.Box):
             open(transmap_path, "w").close()  # Truncate/clear the file
         except (IOError, OSError):
             pass  # Silently ignore if transmap cannot be cleared
-
+ 
         script_path = current_script.get("path", "true")
         if current_script.get("reboot") == "yes":
             self.parent.reboot_required = True
-
+ 
         self._self_update = current_script.get("self_update", False)
         self._cleanup_script_path = current_script.get("cleanup_path")
         self._current_action_is_removal = bool(self._cleanup_script_path)
-
+ 
         child_env = os.environ.copy()
         # Export CHECKLIST_RUN when running multiple scripts in sequence
         if self.total_scripts > 1:
@@ -814,7 +786,7 @@ class TermRunScripts(Gtk.Box):
         # SCRIPT_DIR is set by linuxtoys.py at startup relative to the entry point
         # This ensures all scripts can find their libs at the same location
         child_env_list = [f"{key}={value}" for key, value in child_env.items()]
-
+ 
         shell_exec = ["/bin/bash", f"{script_path}"]
         if dev_mode.is_dev_mode_enabled():
             lib_path = os.path.dirname(__file__)
@@ -823,7 +795,7 @@ class TermRunScripts(Gtk.Box):
                 "-c",
                 f'import sys; sys.path.append("{lib_path}"); import dev_mode; dev_mode.dry_run_script("{script_path}")',
             ]
-
+ 
         self.terminal.spawn_async(
             Vte.PtyFlags.DEFAULT,
             None,
@@ -836,14 +808,14 @@ class TermRunScripts(Gtk.Box):
             None,
             None,
         )
-
+ 
         # Shift focus to terminal to capture user keyboard input
         # This prevents accidental cancellation when search bar or other widgets have focus
         self.terminal.grab_focus()
-
+ 
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
-
+ 
     def _get_last_registry_execution(self) -> str:
         """Get the last execution data from registry for the current script.
         
@@ -888,7 +860,7 @@ class TermRunScripts(Gtk.Box):
             return "\n".join(lines)
         except Exception:
             return ""
-
+ 
     def _get_terminal_text(self) -> str:
         """Extract all text from the terminal by copying to clipboard and reading back."""
         try:
@@ -918,7 +890,7 @@ class TermRunScripts(Gtk.Box):
                 return logs if isinstance(logs, str) else ""
             except Exception:
                 return ""
-
+ 
     def _show_bug_report_confirmation_dialog(self):
         """Show confirmation dialog before sending bug report."""
         toplevel = self.get_toplevel()
@@ -957,7 +929,7 @@ class TermRunScripts(Gtk.Box):
         response = dialog.run()
         dialog.destroy()
         return response == Gtk.ResponseType.YES
-
+ 
     def _show_bug_report_result_dialog(self, success: bool, issue_data: dict = None):
         """Show result dialog after bug report submission."""
         toplevel = self.get_toplevel()
@@ -1019,7 +991,7 @@ class TermRunScripts(Gtk.Box):
             )
         dialog.run()
         dialog.destroy()
-
+ 
     def _show_bug_report_network_error_dialog(self, title: str, message: str):
         """Show network-specific error dialog."""
         toplevel = self.get_toplevel()
@@ -1041,20 +1013,20 @@ class TermRunScripts(Gtk.Box):
         dialog.format_secondary_text(message)
         dialog.run()
         dialog.destroy()
-
+ 
     def _copy_terminal_text(self, copy_all=False):
         """Copy terminal text to clipboard."""
         if copy_all and hasattr(self.terminal, "select_all"):
             self.terminal.select_all()
-
+ 
         if hasattr(self.terminal, "copy_clipboard_format"):
             self.terminal.copy_clipboard_format(Vte.Format.TEXT)
         else:
             self.terminal.copy_clipboard()
-
+ 
         if copy_all and hasattr(self.terminal, "unselect_all"):
             self.terminal.unselect_all()
-
+ 
     def on_copy_clicked(self, button):
         """Handle bug report button click."""
         if not self._show_bug_report_confirmation_dialog():
@@ -1134,7 +1106,7 @@ class TermRunScripts(Gtk.Box):
             else:
                 print(f"Error submitting bug report: {e}", file=sys.stderr)
                 self._show_bug_report_result_dialog(False)
-
+ 
     def _on_terminal_key_press(self, widget, event):
         state = event.state
         ctrl_shift = (state & Gdk.ModifierType.CONTROL_MASK) and (
@@ -1149,14 +1121,10 @@ class TermRunScripts(Gtk.Box):
             self._copy_terminal_text(copy_all=not has_selection)
             return True
         return False
-
+ 
     def _on_key_press(self, widget, event):
         """Handle key press events - specifically Escape to go back."""
         if event.keyval == Gdk.KEY_Escape:
-            if getattr(self, '_destroyed', False):
-                return False
-            if not getattr(self, 'parent', None) or not self.parent.get_parent():
-                return False
             # Check if a script is currently running
             if self.parent._script_running:
                 # Show the warning dialog before cancelling
@@ -1169,20 +1137,15 @@ class TermRunScripts(Gtk.Box):
                 # No script running, just go back
                 self.on_done_clicked(None)
                 return True
-
+ 
         return False
-
+ 
     def on_done_clicked(self, button):
-        if getattr(self, '_destroyed', False):
-            return
-        if not getattr(self, 'parent', None) or not self.parent.get_parent():
-            return
-
         self.parent.set_focus(None)
-
+ 
         # Check for reboot requirements after checklist completion
         reboot_helper.check_reboot_requirement_after_checklist(
             self.parent, self.translations, self.parent._close_application
         )
-
+ 
         self.parent.on_back_button_clicked(None)
