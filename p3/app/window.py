@@ -869,6 +869,11 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def _is_script_removable(self, item_info):
         """Check if a script item is installed and can be removed."""
+        # Use the search cache's pre-computed removable state whenever possible
+        if self.script_cache.is_populated:
+            return self.script_cache.is_script_removable(item_info)
+
+        # Fallback to direct computation if the cache is not ready yet
         if not item_info.get("is_script"):
             return False
         script_path = item_info.get("path", "")
@@ -1279,7 +1284,10 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             f"{local_sh_dir}{filename}.sh", defaults, self.translations
         )
 
+        _local_data['is_script'] = True
+        _local_data['is_subcategory'] = False
         self.script_cache.scripts.append(_local_data)
+        self.script_cache.update_removable_for_script(_local_data)
 
         local_script_path = os.path.abspath(f"{local_sh_dir}{filename}.sh")
         if shutil.which("xdg-open"):
@@ -1832,6 +1840,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                 self.script_cache.scripts[:] = filter(
                     lambda s: s.get("path") != script_path, self.script_cache.scripts
                 )
+                self.script_cache._removable_cache.pop(script_path, None)
                 # Refresh the current view to remove the deleted script
                 self._refresh_current_local_scripts_view()
             except Exception as e:
@@ -1911,6 +1920,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                             lambda s: s.get("path") != script_path,
                             self.script_cache.scripts,
                         )
+                        self.script_cache._removable_cache.pop(script_path, None)
                         deleted_count += 1
                     except Exception as e:
                         print(f"Failed to delete {script_path}: {e}")

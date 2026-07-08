@@ -150,6 +150,7 @@ class TermRunScripts(Gtk.Box):
         self.total_scripts = len(scripts_infos)
         self.scripts_executed = 0
         self.auto_run = auto_run
+        self.executed_scripts = []  # Track scripts that actually ran for cache updates
         
         # Track revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
@@ -762,6 +763,7 @@ class TermRunScripts(Gtk.Box):
         # Add script to execution history
         script_name = current_script.get("name", "unknown")
         self._current_script_name = script_name  # Store for registry
+        self.executed_scripts.append(current_script)
         antenna.add_script_to_history(script_name)
         
         # Clear transmap file for new script execution
@@ -1147,5 +1149,11 @@ class TermRunScripts(Gtk.Box):
         reboot_helper.check_reboot_requirement_after_checklist(
             self.parent, self.translations, self.parent._close_application
         )
+
+        # Refresh cached removable state for any scripts that were just executed
+        # so the remove buttons appear/disappear correctly when returning to the UI
+        if hasattr(self.parent, 'script_cache') and self.parent.script_cache.is_populated:
+            for script_info in getattr(self, 'executed_scripts', []):
+                self.parent.script_cache.update_removable_for_script(script_info)
  
         self.parent.on_back_button_clicked(None)

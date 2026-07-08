@@ -18,9 +18,12 @@ from .compat import (
     script_is_localized, 
     is_containerized, 
     script_is_container_compatible,
-    should_show_optimization_script
+    should_show_optimization_script,
+    get_revert_capability,
+    should_enable_manual_revert,
 )
 from .lang_utils import detect_system_language
+from .revert_helper import _get_executed_script_names
 
 
 class ScriptCache:
@@ -33,6 +36,7 @@ class ScriptCache:
     - Locale-specific scripts
     - Container compatibility
     - Optimization script visibility state
+    - Removable state (whether the script can currently be uninstalled)
     """
     
     def __init__(self):
@@ -41,6 +45,7 @@ class ScriptCache:
         self.system_compat_keys = get_system_compat_keys()
         self.current_locale = detect_system_language()
         self.is_containerized = is_containerized()
+        self._removable_cache = {}  # script_path -> bool
     
     def populate(self, translations=None):
         """
@@ -54,6 +59,7 @@ class ScriptCache:
             return  # Already populated
         
         self.scripts = []
+        self._removable_cache = {}
         scripts_dir = parser.SCRIPTS_DIR
         
         # Get all scripts from main directory recursively
@@ -63,6 +69,9 @@ class ScriptCache:
         local_scripts_dir = f'{os.environ.get("HOME", "")}/.local/linuxtoys/scripts'
         if os.path.isdir(local_scripts_dir):
             self._collect_scripts_from_directory(local_scripts_dir, translations)
+        
+        # Pre-compute removable state for all cached scripts in one pass
+        self._populate_removable_cache()
         
         self.is_populated = True
     
@@ -132,10 +141,89 @@ class ScriptCache:
         """Get all cached scripts."""
         return self.scripts.copy()
     
+    def _populate_removable_cache(self):
+        """
+        Pre-compute the removable state for every cached script.
+        
+        This avoids repeatedly opening the registry file and re-reading each
+        script's revert header while browsing categories or search results.
+        """
+        executed_names = _get_executed_script_names()
+        
+        for script_info in self.scripts:
+            script_path = script_info.get('path', '')
+            if not script_path or not os.path.isfile(script_path):
+                self._removable_cache[script_path] = False
+                continue
+            
+            script_name = script_info.get('name', '')
+            if not script_name:
+                self._removable_cache[script_path] = False
+                continue
+            
+            revert_capability = get_revert_capability(script_path, self.system_compat_keys)
+            if revert_capability == 'no':
+                self._removable_cache[script_path] = False
+                continue
+            
+            if revert_capability == 'internal':
+                self._removable_cache[script_path] = script_name in executed_names
+                continue
+            
+            if not should_enable_manual_revert(script_path, self.system_compat_keys):
+                self._removable_cache[script_path] = False
+                continue
+            
+            self._removable_cache[script_path] = script_name in executed_names
+    
+    def is_script_removable(self, script_info):
+        """
+        Return the cached removable state for a script.
+        
+        Falls back to a direct (slower) computation if the script is not in the
+        cache, which is useful for scripts created after the cache was built.
+        """
+        script_path = script_info.get('path', '')
+        if script_path in self._removable_cache:
+            return self._removable_cache[script_path]
+        
+        # Fallback for scripts not yet in cache (e.g. newly created local scripts)
+        if not script_info.get('is_script') or not script_path or not os.path.isfile(script_path):
+            return False
+        
+        script_name = script_info.get('name', '')
+        if not script_name:
+            return False
+        
+        revert_capability = get_revert_capability(script_path, self.system_compat_keys)
+        if revert_capability == 'no':
+            return False
+        
+        executed_names = _get_executed_script_names()
+        if revert_capability == 'internal':
+            return script_name in executed_names
+        
+        if not should_enable_manual_revert(script_path, self.system_compat_keys):
+            return False
+        
+        return script_name in executed_names
+    
+    def update_removable_for_script(self, script_info):
+        """
+        Update the cached removable state for a single script.
+        Call this after a script is run or removed so the UI reflects the new
+        state without rebuilding the entire cache.
+        """
+        script_path = script_info.get('path', '')
+        if not script_path:
+            return
+        self._removable_cache[script_path] = self.is_script_removable(script_info)
+    
     def invalidate(self):
         """Invalidate the cache, forcing repopulation on next use."""
         self.is_populated = False
         self.scripts = []
+        self._removable_cache = {}
     
     def refresh_for_translations(self, translations):
         """

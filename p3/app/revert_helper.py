@@ -120,6 +120,61 @@ def _load_last_execution(script_name):
     return []
 
 
+def _get_executed_script_names():
+    """
+    Return a set of script names that have non-empty execution records.
+
+    This is a faster alternative to calling _load_last_execution for every
+    script when only the presence of a record is needed (e.g. caching the
+    removable state of many scripts at once).
+    """
+    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    executed = set()
+
+    if not os.path.exists(registry_file):
+        return executed
+
+    try:
+        with open(registry_file, "r") as f:
+            content = f.read()
+    except Exception:
+        return executed
+
+    entries = content.split("---\n")
+
+    for entry in entries:
+        entry = entry.strip()
+        if not entry:
+            continue
+
+        lines = entry.split("\n")
+        if not lines:
+            continue
+
+        first_line = lines[0]
+        if "Script: " not in first_line:
+            continue
+
+        script_name = first_line.split("Script: ", 1)[1].strip()
+        if not script_name:
+            continue
+
+        # Only count entries that actually recorded changes
+        has_operations = False
+        for line in lines[1:]:
+            line = line.strip()
+            if line.startswith("- "):
+                op_line = line[2:].strip()
+                if op_line and op_line not in ("Changes:", "Changes: (none)"):
+                    has_operations = True
+                    break
+
+        if has_operations:
+            executed.add(script_name)
+
+    return executed
+
+
 def _parse_operation(op_line):
     """
     Parse an operation line from the transmap.
