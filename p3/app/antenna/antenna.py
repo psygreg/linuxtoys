@@ -125,9 +125,9 @@ def get_system_context() -> str:
     context_parts = [f"OS: {os_info['id']}"]
     
     if os_info["version"]:
-        context_parts[-1] += f" ({os_info['version']})"
+        context_parts[-1] += f" {os_info['version']}"
     
-    context_parts.append(f"Version: {__version__}")
+    context_parts.append(f"linuxtoys {__version__}")
 
     if init_system and init_system != "unknown":
         context_parts.append(f"Init: {init_system}")
