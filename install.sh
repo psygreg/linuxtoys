@@ -164,7 +164,7 @@ installer() {
 	fi
 
 	case "${ID:-}" in
-		debian|ubuntu) osdeb ;;
+		debian|ubuntu|deepin) osdeb ;;
 		fedora|rhel|centos|rocky|almalinux) osrpm ;;
 		suse|opensuse) ossuse ;;
 		arch|cachyos) osarch ;;
