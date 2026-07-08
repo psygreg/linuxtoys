@@ -4,6 +4,7 @@
 # version: 1.0
 # icon: qdiskinfo.svg
 # repo: https://github.com/edisionnano/QDiskInfo
+# new
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

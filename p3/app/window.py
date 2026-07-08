@@ -21,6 +21,7 @@ from . import (
     parser,
     reboot_helper,
     revealer,
+    revert_helper,
     search_helper,
     skills_view,
     term_view,
@@ -724,14 +725,30 @@ class AppWindow(Gtk.ApplicationWindow):
         box.set_hexpand(False)
         box.set_halign(Gtk.Align.FILL)
 
-        left_pad = Gtk.Label()
-        left_pad.set_size_request(10, 1)
-        box.pack_start(left_pad, False, False, 0)
+        # Show a remove button on the left for scripts that are already installed
+        is_removable_script = self._is_script_removable(item_info) and not checklist
+        if is_removable_script:
+            remove_btn = Gtk.Button.new_from_icon_name(
+                "edit-delete-symbolic", Gtk.IconSize.MENU
+            )
+            remove_btn.set_size_request(24, 24)
+            remove_btn.set_margin_left(4)
+            remove_btn.set_tooltip_text(
+                self.translations.get(
+                    "term_view_remove", "Remove installed components"
+                )
+            )
+            remove_btn.set_relief(Gtk.ReliefStyle.NONE)
+            remove_btn.set_can_focus(False)
+            remove_btn.get_style_context().add_class("destructive-action")
+            remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
+            box.pack_start(remove_btn, False, False, 0)
+        else:
+            left_pad = Gtk.Label()
+            left_pad.set_size_request(10, 1)
+            box.pack_start(left_pad, False, False, 0)
 
-        # Add emoji prefix for new items
         display_name = item_info["name"]
-        if item_info.get("is_new", False):
-            display_name = f"❗ {display_name}"
 
         label = Gtk.Label(label=display_name)
         label.set_line_wrap(True)
@@ -819,6 +836,8 @@ class AppWindow(Gtk.ApplicationWindow):
         event_box = Gtk.EventBox()
         event_box.add(box)
         event_box.get_style_context().add_class("script-item")
+        if item_info.get("is_new", False):
+            event_box.get_style_context().add_class("script-item-new")
         event_box.info = item_info
         # Store reference to checkbox for easy access in keyboard handlers
         if checklist:
@@ -847,6 +866,49 @@ class AppWindow(Gtk.ApplicationWindow):
         event_box.connect("drag-end", self.on_drag_end)
 
         return event_box
+
+    def _is_script_removable(self, item_info):
+        """Check if a script item is installed and can be removed."""
+        if not item_info.get("is_script"):
+            return False
+        script_path = item_info.get("path", "")
+        if not script_path or not os.path.isfile(script_path):
+            return False
+        script_name = item_info.get("name", "")
+        if not script_name:
+            return False
+
+        revert_capability = compat.get_revert_capability(script_path)
+        if revert_capability == "no":
+            return False
+
+        # Internal revert re-runs the script itself for removal
+        if revert_capability == "internal":
+            return bool(revert_helper._load_last_execution(script_name))
+
+        # Manual revert requires a registry entry and enabled manual revert
+        if not compat.should_enable_manual_revert(script_path):
+            return False
+
+        return bool(revert_helper._load_last_execution(script_name))
+
+    def _on_item_remove_clicked(self, button, item_info):
+        """Handle remove button click on a script item."""
+        # Check if reboot is required before proceeding
+        if self.reboot_required:
+            self._show_reboot_warning_dialog()
+            return
+
+        # Use a copy without auto_run so the term view waits for the removal flow
+        script_copy = dict(item_info)
+        script_copy.pop("auto_run", None)
+
+        # Open the term view for the script and trigger the existing removal flow
+        run_box = self.open_term_view(
+            [script_copy], removable_script_info=item_info, auto_run=False
+        )
+        if run_box:
+            run_box.on_button_remove_clicked(None)
 
     def on_drag_end(self, widget, drag_context):
         self.scripts_flowbox.unselect_all()
@@ -1036,6 +1098,7 @@ class AppWindow(Gtk.ApplicationWindow):
             self.navigation_stack.append(self.current_category_info)
 
         self.main_stack.set_visible_child_name("running_scripts")
+        return run_box
 
     def open_skills_seeker_view(self):
         self.search_entry.set_text("")

@@ -3,6 +3,13 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
 }
+.script-item-new {
+    border: 1px solid rgba(255, 215, 0, 0.9);
+}
+.script-item-new.script-item-hover {
+    border: 1px solid rgba(255, 235, 80, 1.0);
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
 .script-item-hover {
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.9);
