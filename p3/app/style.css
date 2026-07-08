@@ -30,8 +30,12 @@
     padding: 4px;
 }
 
+button.installed-card-remove {
+    border-right: 1px solid rgba(255,255,255,0.30);
+}
 button.installed-card-remove:hover {
     border-radius: 0 16px 16px 0;
+    border-right: 1px solid rgba(234, 178, 178, 0.535);
 }
 
 button.installed-card-remove:active {
