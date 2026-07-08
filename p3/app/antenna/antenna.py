@@ -10,6 +10,7 @@ from pathlib import Path
 import base64
 import hashlib
 import hmac
+from ..updater import __version__
  
 _REPORT_URL = "https://bug.linux.toys"
  
@@ -126,6 +127,8 @@ def get_system_context() -> str:
     if os_info["version"]:
         context_parts[-1] += f" ({os_info['version']})"
     
+    context_parts.append(f"Version: {__version__}")
+
     if init_system and init_system != "unknown":
         context_parts.append(f"Init: {init_system}")
     
