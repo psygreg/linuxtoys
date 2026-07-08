@@ -296,7 +296,7 @@ class RevealerFooter(Gtk.Revealer):
         )
         self.button_next.set_always_show_image(True)
         self.button_next.set_tooltip_text(
-            self.parent.translations.get("next_label", "Next")
+            self.parent.translations.get("install_btn_label", "Install")
         )
         self.button_next.set_size_request(125, 35)
         self.button_next.connect("clicked", self._on_next_clicked)

@@ -726,7 +726,7 @@ class AppWindow(Gtk.ApplicationWindow):
         box.set_halign(Gtk.Align.FILL)
 
         # Show a remove button on the left for scripts that are already installed
-        is_removable_script = self._is_script_removable(item_info) and not checklist
+        is_removable_script = self._is_script_removable(item_info)
         if is_removable_script:
             box.get_style_context().add_class("installed-card")
             remove_btn = Gtk.Button.new_from_icon_name(
