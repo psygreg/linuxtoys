@@ -244,6 +244,10 @@ def get_system_compat_keys():
     gpu_keys = get_gpu_compat_keys()
     keys.update(gpu_keys)
 
+    # Add CPU compat keys
+    cpu_keys = get_cpu_compat_keys()
+    keys.update(cpu_keys)
+
     # Add desktop compatibility keys
     desktop_keys = get_desktop_compat_keys()
     keys.update(desktop_keys)
@@ -295,6 +299,29 @@ def get_gpu_compat_keys():
         pass
     return keys
 
+def get_cpu_compat_keys():
+    """
+    Get the CPU compatibility keys based on detected CPU vendor.
+
+    Returns:
+        Single compatibility key 'intel' or 'amd', generic 'cpu' placeholder for default (no header, compatible with any CPU) scripts
+    """
+    keys = {"cpu"}
+    try:
+        vendor_id = None
+        with open("/proc/cpuinfo") as f:
+            for line in f:
+                if line.startswith("vendor_id"):
+                    vendor_id = line.split(":", 1)[1].strip()                    
+                    if "GenuineIntel" in vendor_id:
+                        keys.add("cpu-intel")
+                    if "AuthenticAMD" in vendor_id:
+                        keys.add("cpu-amd")
+                    break
+
+    except Exception:
+        pass
+    return keys
 
 def get_desktop_compat_keys():
     """
@@ -695,6 +722,7 @@ def script_is_compatible(script_path, compat_keys):
     desktop_compatible = True  # Default for unset desktop header
     systemd_compatible = True  # Default for unset systemd header
     wayland_compatible = True  # Default for unset wayland header (presume neutrality)
+    cpu_compatible = True # Default for unset cpu header
     has_explicit_systemd_header = False  # Track if systemd header was explicitly set
 
     try:
@@ -782,6 +810,23 @@ def script_is_compatible(script_path, compat_keys):
                         wayland_compatible = "wayland" in compat_keys
                     elif wayland_value in ["no", "false"]:
                         wayland_compatible = "x11" in compat_keys
+                elif line.startswith("# cpu:"):
+                    cpu_val = line[len("# cpu:") :].strip()
+                    cpu_vals = [v.strip() for v in cpu_val.split(",") if v.strip()]
+                    cpu_script_keys = set()
+                    for v in cpu_vals:
+                        v_lower = v.lower()
+                        if v_lower == "amd":
+                            cpu_script_keys.add("cpu-amd")
+                        elif v_lower == "intel":
+                            cpu_script_keys.add("cpu-intel")
+                        else:
+                            cpu_script_keys.add("cpu")
+                    if cpu_script_keys:
+                        cpu_compatible = bool(compat_keys & cpu_script_keys)
+                    else:
+                        # Empty header, treat as general GPU
+                        cpu_compatible = "cpu" in compat_keys
                 if not line.startswith("#"):
                     break
     except Exception:
@@ -795,7 +840,7 @@ def script_is_compatible(script_path, compat_keys):
     # If no explicit wayland header, presume neutrality (script works on both X11 and Wayland)
     # wayland_compatible remains True by default
 
-    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible
+    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible and cpu_compatible
 
 
 def script_is_localized(script_path, current_locale):

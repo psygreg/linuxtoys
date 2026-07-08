@@ -8,6 +8,7 @@
 # nocontainer
 # optimized-only: yes
 # systemd: yes
+# cpu: amd
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"
