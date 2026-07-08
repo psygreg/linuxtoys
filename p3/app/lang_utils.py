@@ -132,8 +132,8 @@ def _resolve_key_references(translations, key, visited=None):
     visited_copy = visited.copy()
     visited_copy.add(key)
     
-    # Find all references in the format {key_name}
-    pattern = r'\{(\w+)\}'
+    # Find all references in the format @{key_name}
+    pattern = r'@\{(\w+)\}'
     
     def replace_ref(match):
         ref_key = match.group(1)
