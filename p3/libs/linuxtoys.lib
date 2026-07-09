@@ -555,7 +555,13 @@ pkg_remove () {
 }
 pkg_rm () { pkg_remove "$@"; }
 pkg_appimage () {
-    { ( is_ubuntu || is_debian ) && pkg_install libfuse2t64; }
+    ( is_ubuntu || is_debian ) && {
+        if [ "$VERSION_CODENAME" = "bookworm" ]; then 
+            pkg_install libfuse2  # workaround for debian 12
+        else
+            pkg_install libfuse2t64; 
+        fi
+    }
     { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
     { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
     
