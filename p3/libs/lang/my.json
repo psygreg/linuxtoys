@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "ရေးသားနိုင်သော မုဒ်ကို ဖွင့်ပါ",
   "deepin_immutable_script_description": "Deepin Linux ပေါ်ရှိ စနစ်၏ ပြောင်းလဲမရနိုင်မှုကို ပိတ်ပါ။",
   "deepin_immutable_message": "LinuxToys သည် စနစ်ပိုမိုကောင်းမွန်စေရေးနှင့် ဖွဲ့စည်းပုံလုပ်ငန်းများကို လုပ်ဆောင်နိုင်ရန် စနစ်၏ ပြောင်းလဲမရနိုင်မှုကို ပိတ်ရန် ခွင့်ပြုချက် လိုအပ်သည်။\n\nဤ Deepin စနစ်တွင် ရေးသားနိုင်သော မုဒ်ကို ဖွင့်လိုပါသလား?",
-  "qdi_desc": "ခေတ်မီ hard disk နှင့် solid state drive များ၏ SMART ဒေတာကို ပြသသည့် smartctl အတွက် frontend။ CrystalDiskInfo နှင့်ဆင်တူသော အသုံးပြုသူအတွေ့အကြုံကို ပေးစွမ်းသည်။"
+  "qdi_desc": "ခေတ်မီ hard disk နှင့် solid state drive များ၏ SMART ဒေတာကို ပြသသည့် smartctl အတွက် frontend။ CrystalDiskInfo နှင့်ဆင်တူသော အသုံးပြုသူအတွေ့အကြုံကို ပေးစွမ်းသည်။",
+  "occt_desc": "တည်ငြိမ်မှုစမ်းသပ်ခြင်းနှင့် စွမ်းဆောင်ရည်တိုင်းတာခြင်း ကိရိယာ။"
 }

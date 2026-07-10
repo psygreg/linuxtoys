@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Cumasaigh Modh Inscríofa",
   "deepin_immutable_script_description": "Díchumasaigh dochorraitheacht an chórais ar Deepin Linux.",
   "deepin_immutable_message": "Teastaíonn cead ó LinuxToys chun dochorraitheacht an chórais a dhíchumasú ionas gur féidir leis tascanna optamaithe agus cumraíochta córais a dhéanamh.\n\nAr mhaith leat modh inscríofa a chumasú ar an gcóras Deepin seo?",
-  "qdi_desc": "Comhéadan tosaigh do smartctl a thaispeánann sonraí SMART diosca crua nua-aimseartha agus tiomántáin stáit sholadaigh. Soláthraíonn sé taithí úsáideora cosúil le CrystalDiskInfo."
+  "qdi_desc": "Comhéadan tosaigh do smartctl a thaispeánann sonraí SMART diosca crua nua-aimseartha agus tiomántáin stáit sholadaigh. Soláthraíonn sé taithí úsáideora cosúil le CrystalDiskInfo.",
+  "occt_desc": "Uirlis tástála cobhsaíochta agus tagarmharcála."
 }

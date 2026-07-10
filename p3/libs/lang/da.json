@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Aktiver skrivbar tilstand",
   "deepin_immutable_script_description": "Deaktiver systemets uforanderlighed på Deepin Linux.",
   "deepin_immutable_message": "LinuxToys kræver tilladelse til at deaktivere systemets uforanderlighed, så det kan udføre systemoptimerings- og konfigurationsopgaver.\n\nVil du aktivere skrivbar tilstand på dette Deepin-system?",
-  "qdi_desc": "En frontend til smartctl, der viser SMART-data for moderne harddiske og SSD'er. Giver en brugeroplevelse, der ligner CrystalDiskInfo."
+  "qdi_desc": "En frontend til smartctl, der viser SMART-data for moderne harddiske og SSD'er. Giver en brugeroplevelse, der ligner CrystalDiskInfo.",
+  "occt_desc": "Værktøj til stabilitetstest og benchmark."
 }

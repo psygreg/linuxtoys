@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Bật chế độ có thể ghi",
   "deepin_immutable_script_description": "Vô hiệu hóa tính bất biến của hệ thống trên Deepin Linux.",
   "deepin_immutable_message": "LinuxToys yêu cầu quyền vô hiệu hóa tính bất biến của hệ thống để có thể thực hiện các tác vụ tối ưu hóa và cấu hình hệ thống.\n\nBạn có muốn bật chế độ có thể ghi trên hệ thống Deepin này không?",
-  "qdi_desc": "Giao diện cho smartctl hiển thị dữ liệu SMART của ổ cứng và ổ đĩa thể rắn hiện đại. Cung cấp trải nghiệm người dùng tương tự CrystalDiskInfo."
+  "qdi_desc": "Giao diện cho smartctl hiển thị dữ liệu SMART của ổ cứng và ổ đĩa thể rắn hiện đại. Cung cấp trải nghiệm người dùng tương tự CrystalDiskInfo.",
+  "occt_desc": "Công cụ kiểm tra độ ổn định và đo hiệu năng."
 }

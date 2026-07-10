@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "書き込み可能モードを有効にする",
   "deepin_immutable_script_description": "Deepin Linuxでシステムの不変性を無効にします。",
   "deepin_immutable_message": "LinuxToysはシステムの最適化と構成タスクを実行するために、システムの不変性を無効にする許可が必要です。\n\nこのDeepinシステムで書き込み可能モードを有効にしますか?",
-  "qdi_desc": "最新のハードディスクおよびソリッドステートドライブのSMARTデータを表示するsmartctlのフロントエンド。CrystalDiskInfoに似たユーザー体験を提供します。"
+  "qdi_desc": "最新のハードディスクおよびソリッドステートドライブのSMARTデータを表示するsmartctlのフロントエンド。CrystalDiskInfoに似たユーザー体験を提供します。",
+  "occt_desc": "安定性テストおよびベンチマークツール。"
 }

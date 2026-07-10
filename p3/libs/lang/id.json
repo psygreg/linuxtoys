@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Aktifkan Mode Dapat Ditulis",
   "deepin_immutable_script_description": "Nonaktifkan imutabilitas sistem pada Deepin Linux.",
   "deepin_immutable_message": "LinuxToys memerlukan izin untuk menonaktifkan imutabilitas sistem agar dapat melakukan tugas pengoptimalan dan konfigurasi sistem.\n\nApakah Anda ingin mengaktifkan mode dapat ditulis pada sistem Deepin ini?",
-  "qdi_desc": "Frontend untuk smartctl yang menampilkan data SMART dari hard disk modern dan solid state drive. Memberikan pengalaman pengguna yang mirip dengan CrystalDiskInfo."
+  "qdi_desc": "Frontend untuk smartctl yang menampilkan data SMART dari hard disk modern dan solid state drive. Memberikan pengalaman pengguna yang mirip dengan CrystalDiskInfo.",
+  "occt_desc": "Alat pengujian stabilitas dan benchmark."
 }

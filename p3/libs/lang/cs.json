@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Povolit zapisovatelný režim",
   "deepin_immutable_script_description": "Zakázat neměnnost systému na Deepin Linuxu.",
   "deepin_immutable_message": "LinuxToys vyžaduje oprávnění zakázat neměnnost systému, aby mohl provádět úlohy optimalizace a konfigurace systému.\n\nChcete povolit zapisovatelný režim na tomto systému Deepin?",
-  "qdi_desc": "Frontend pro smartctl, který zobrazuje SMART data moderních pevných disků a SSD disků. Poskytuje uživatelský zážitek podobný CrystalDiskInfo."
+  "qdi_desc": "Frontend pro smartctl, který zobrazuje SMART data moderních pevných disků a SSD disků. Poskytuje uživatelský zážitek podobný CrystalDiskInfo.",
+  "occt_desc": "Nástroj pro testování stability a měření výkonu."
 }

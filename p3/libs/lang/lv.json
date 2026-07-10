@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Iespējot rakstāmo režīmu",
   "deepin_immutable_script_description": "Atspējot sistēmas nemainīgumu Deepin Linux.",
   "deepin_immutable_message": "LinuxToys nepieciešama atļauja atspējot sistēmas nemainīgumu, lai varētu veikt sistēmas optimizācijas un konfigurācijas uzdevumus.\n\nVai vēlaties iespējot rakstāmo režīmu šajā Deepin sistēmā?",
-  "qdi_desc": "Saskarne smartctl, kas parāda mūsdienu cieto disku un SSD disku SMART datus. Nodrošina lietotāja pieredzi, kas līdzīga CrystalDiskInfo."
+  "qdi_desc": "Saskarne smartctl, kas parāda mūsdienu cieto disku un SSD disku SMART datus. Nodrošina lietotāja pieredzi, kas līdzīga CrystalDiskInfo.",
+  "occt_desc": "Stabilitātes testēšanas un veiktspējas mērīšanas rīks."
 }

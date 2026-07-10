@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Beschreibbaren Modus aktivieren",
   "deepin_immutable_script_description": "Deaktiviert die Systemunveränderlichkeit auf Deepin Linux.",
   "deepin_immutable_message": "LinuxToys benötigt die Berechtigung, die Systemunveränderlichkeit zu deaktivieren, um Systemoptimierungs- und Konfigurationsaufgaben durchführen zu können.\n\nMöchten Sie den beschreibbaren Modus auf diesem Deepin-System aktivieren?",
-  "qdi_desc": "Ein Frontend für smartctl, das die SMART-Daten moderner Festplatten und SSDs anzeigt. Bietet eine Benutzererfahrung ähnlich wie CrystalDiskInfo."
+  "qdi_desc": "Ein Frontend für smartctl, das die SMART-Daten moderner Festplatten und SSDs anzeigt. Bietet eine Benutzererfahrung ähnlich wie CrystalDiskInfo.",
+  "occt_desc": "Werkzeug zum Testen der Stabilität und Benchmarken."
 }

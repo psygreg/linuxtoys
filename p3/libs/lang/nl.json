@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Schrijfbare modus inschakelen",
   "deepin_immutable_script_description": "Schakel systeemonveranderlijkheid uit op Deepin Linux.",
   "deepin_immutable_message": "LinuxToys heeft toestemming nodig om de systeemonveranderlijkheid uit te schakelen zodat het systeemoptimalisatie- en configuratietaken kan uitvoeren.\n\nWil je de schrijfbare modus op dit Deepin-systeem inschakelen?",
-  "qdi_desc": "Een frontend voor smartctl die de SMART-gegevens van moderne harde schijven en solid-state drives toont. Biedt een gebruikerservaring vergelijkbaar met CrystalDiskInfo."
+  "qdi_desc": "Een frontend voor smartctl die de SMART-gegevens van moderne harde schijven en solid-state drives toont. Biedt een gebruikerservaring vergelijkbaar met CrystalDiskInfo.",
+  "occt_desc": "Hulpmiddel voor stabiliteitstests en benchmarks."
 }

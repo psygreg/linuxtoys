@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Activați modul inscriptibil",
   "deepin_immutable_script_description": "Dezactivează imutabilitatea sistemului pe Deepin Linux.",
   "deepin_immutable_message": "LinuxToys necesită permisiunea de a dezactiva imutabilitatea sistemului pentru a putea efectua sarcini de optimizare și configurare a sistemului.\n\nDoriți să activați modul inscriptibil pe acest sistem Deepin?",
-  "qdi_desc": "O interfață pentru smartctl care afișează datele SMART ale hard diskurilor moderne și ale unităților solid-state. Oferă o experiență de utilizare similară cu CrystalDiskInfo."
+  "qdi_desc": "O interfață pentru smartctl care afișează datele SMART ale hard diskurilor moderne și ale unităților solid-state. Oferă o experiență de utilizare similară cu CrystalDiskInfo.",
+  "occt_desc": "Instrument pentru testarea stabilității și măsurarea performanței."
 }

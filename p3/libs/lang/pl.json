@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Włącz tryb zapisywalny",
   "deepin_immutable_script_description": "Wyłącz niezmienność systemu w Deepin Linux.",
   "deepin_immutable_message": "LinuxToys wymaga uprawnień do wyłączenia niezmienności systemu, aby móc wykonywać zadania optymalizacji i konfiguracji systemu.\n\nCzy chcesz włączyć tryb zapisywalny w tym systemie Deepin?",
-  "qdi_desc": "Interfejs dla smartctl, który wyświetla dane SMART nowoczesnych dysków twardych i dysków SSD. Zapewnia wrażenia użytkownika podobne do CrystalDiskInfo."
+  "qdi_desc": "Interfejs dla smartctl, który wyświetla dane SMART nowoczesnych dysków twardych i dysków SSD. Zapewnia wrażenia użytkownika podobne do CrystalDiskInfo.",
+  "occt_desc": "Narzędzie do testowania stabilności i wydajności."
 }

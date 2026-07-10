@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Ota käyttöön kirjoitettava tila",
   "deepin_immutable_script_description": "Poista järjestelmän muuttumattomuus käytöstä Deepin Linuxissa.",
   "deepin_immutable_message": "LinuxToys tarvitsee luvan poistaa järjestelmän muuttumattomuus käytöstä, jotta se voi suorittaa järjestelmän optimointi- ja määritystehtäviä.\n\nHaluatko ottaa käyttöön kirjoitettavan tilan tässä Deepin-järjestelmässä?",
-  "qdi_desc": "Käyttöliittymä smartctl:lle, joka näyttää nykyaikaisten kiintolevyjen ja SSD-levyjen SMART-tiedot. Tarjoaa CrystalDiskInfo:n kaltaisen käyttökokemuksen."
+  "qdi_desc": "Käyttöliittymä smartctl:lle, joka näyttää nykyaikaisten kiintolevyjen ja SSD-levyjen SMART-tiedot. Tarjoaa CrystalDiskInfo:n kaltaisen käyttökokemuksen.",
+  "occt_desc": "Vakavuustestaus- ja suorituskyvyn vertailutyökalu."
 }

@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Omogoči pisljiv način",
   "deepin_immutable_script_description": "Onemogoči nespremenljivost sistema na Deepin Linuxu.",
   "deepin_immutable_message": "LinuxToys potrebuje dovoljenje za onemogočanje nespremenljivosti sistema, da lahko izvaja naloge optimizacije in konfiguracije sistema.\n\nAli želite omogočiti pisljiv način na tem sistemu Deepin?",
-  "qdi_desc": "Vmesnik za smartctl, ki prikazuje podatke SMART sodobnih trdih diskov in diskov SSD. Ponuja uporabniško izkušnjo, podobno CrystalDiskInfo."
+  "qdi_desc": "Vmesnik za smartctl, ki prikazuje podatke SMART sodobnih trdih diskov in diskov SSD. Ponuja uporabniško izkušnjo, podobno CrystalDiskInfo.",
+  "occt_desc": "Orodje za testiranje stabilnosti in merjenje zmogljivosti."
 }

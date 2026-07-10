@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Activer le mode inscriptible",
   "deepin_immutable_script_description": "Désactive l'immuabilité du système sur Deepin Linux.",
   "deepin_immutable_message": "LinuxToys nécessite une autorisation pour désactiver l'immuabilité du système afin de pouvoir effectuer des tâches d'optimisation et de configuration système.\n\nSouhaitez-vous activer le mode inscriptible sur ce système Deepin ?",
-  "qdi_desc": "Une interface pour smartctl qui affiche les données SMART des disques durs modernes et des SSD. Offre une expérience utilisateur similaire à CrystalDiskInfo."
+  "qdi_desc": "Une interface pour smartctl qui affiche les données SMART des disques durs modernes et des SSD. Offre une expérience utilisateur similaire à CrystalDiskInfo.",
+  "occt_desc": "Outil de test de stabilité et de benchmark."
 }

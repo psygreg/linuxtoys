@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Ativar modo gravável",
   "deepin_immutable_script_description": "Desativa a imutabilidade do sistema no Deepin Linux.",
   "deepin_immutable_message": "O LinuxToys requer permissão para desativar a imutabilidade do sistema para que possa realizar tarefas de otimização e configuração do sistema.\n\nVocê gostaria de ativar o modo gravável neste sistema Deepin?",
-  "qdi_desc": "Uma interface para o smartctl que exibe os dados SMART de discos rígidos modernos e unidades de estado sólido. Oferece uma experiência de usuário semelhante ao CrystalDiskInfo."
+  "qdi_desc": "Uma interface para o smartctl que exibe os dados SMART de discos rígidos modernos e unidades de estado sólido. Oferece uma experiência de usuário semelhante ao CrystalDiskInfo.",
+  "occt_desc": "Ferramenta de teste de estabilidade e benchmark."
 }

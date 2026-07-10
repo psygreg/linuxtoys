@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Írható mód engedélyezése",
   "deepin_immutable_script_description": "A rendszer megváltoztathatatlanságának letiltása Deepin Linuxon.",
   "deepin_immutable_message": "A LinuxToys engedélyt igényel a rendszer megváltoztathatatlanságának letiltásához, hogy elvégezhesse a rendszeroptimalizálási és konfigurációs feladatokat.\n\nSzeretné engedélyezni az írható módot ezen a Deepin rendszeren?",
-  "qdi_desc": "A smartctl felhasználói felülete, amely megjeleníti a modern merevlemezek és SSD-k SMART adatait. A CrystalDiskInfo-hoz hasonló felhasználói élményt nyújt."
+  "qdi_desc": "A smartctl felhasználói felülete, amely megjeleníti a modern merevlemezek és SSD-k SMART adatait. A CrystalDiskInfo-hoz hasonló felhasználói élményt nyújt.",
+  "occt_desc": "Stabilitástesztelő és teljesítménymérő eszköz."
 }

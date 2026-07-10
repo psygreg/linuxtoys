@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "ሊጻፍ የሚችል ሁነታን አንቃ",
   "deepin_immutable_script_description": "በዲፒን ሊኑክስ ላይ የስርዓት አለመለወጥን አሰናክል።",
   "deepin_immutable_message": "LinuxToys የስርዓት ማመቻቸት እና ውቅር ስራዎችን ለማከናወን የስርዓት አለመለወጥን ለማሰናከል ፍቃድ ይፈልጋል።\n\nበዚህ ዲፒን ስርዓት ላይ ሊጻፍ የሚችል ሁነታን ማንቃት ይፈልጋሉ?",
-  "qdi_desc": "ዘመናዊ ሃርድ ዲስክ እና ሶሊድ ስቴት ድራይቮች የ SMART ውሂብን የሚያሳይ ለ smartctl ፊት-ለፊት። ከ CrystalDiskInfo ጋር የሚመሳሰል የተጠቃሚ ተሞክሮ ያቀርባል።"
+  "qdi_desc": "ዘመናዊ ሃርድ ዲስክ እና ሶሊድ ስቴት ድራይቮች የ SMART ውሂብን የሚያሳይ ለ smartctl ፊት-ለፊት። ከ CrystalDiskInfo ጋር የሚመሳሰል የተጠቃሚ ተሞክሮ ያቀርባል።",
+  "occt_desc": "የመረጋጋት ሙከራ እና የአፈጻጸም መለኪያ መሣሪያ።"
 }

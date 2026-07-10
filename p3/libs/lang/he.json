@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "הפעל מצב הניתן לכתיבה",
   "deepin_immutable_script_description": "השבת את חוסר השינוי של המערכת ב-Deepin Linux.",
   "deepin_immutable_message": "LinuxToys דורש הרשאה להשבית את חוסר השינוי של המערכת כדי שיוכל לבצע משימות אופטימיזציה ותצורה של המערכת.\n\nהאם ברצונך להפעיל מצב הניתן לכתיבה במערכת Deepin זו?",
-  "qdi_desc": "ממשק קדמי עבור smartctl המציג נתוני SMART של דיסקים קשיחים מודרניים וכונני מצב מוצק. מספק חוויית משתמש דומה ל-CrystalDiskInfo."
+  "qdi_desc": "ממשק קדמי עבור smartctl המציג נתוני SMART של דיסקים קשיחים מודרניים וכונני מצב מוצק. מספק חוויית משתמש דומה ל-CrystalDiskInfo.",
+  "occt_desc": "כלי לבדיקת יציבות וביצועים."
 }

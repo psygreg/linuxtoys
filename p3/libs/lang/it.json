@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Abilita modalità scrivibile",
   "deepin_immutable_script_description": "Disabilita l'immutabilità del sistema su Deepin Linux.",
   "deepin_immutable_message": "LinuxToys richiede il permesso di disabilitare l'immutabilità del sistema in modo da poter eseguire attività di ottimizzazione e configurazione del sistema.\n\nVuoi abilitare la modalità scrivibile su questo sistema Deepin?",
-  "qdi_desc": "Un frontend per smartctl che mostra i dati SMART di hard disk moderni e unità a stato solido. Offre un'esperienza utente simile a CrystalDiskInfo."
+  "qdi_desc": "Un frontend per smartctl che mostra i dati SMART di hard disk moderni e unità a stato solido. Offre un'esperienza utente simile a CrystalDiskInfo.",
+  "occt_desc": "Strumento per test di stabilità e benchmark."
 }

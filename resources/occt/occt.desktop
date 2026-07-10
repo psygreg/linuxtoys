@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OCCT
+Comment=OCCT Stability Testing and Benchmark Tool
+Exec=/home/psygreg/.local/bin/linuxtoys/occt/OCCT
+Icon=/home/psygreg/.local/bin/linuxtoys/occt/occt.png
+Terminal=false
+Categories=System;Utility;
+StartupNotify=true

@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "I-enable ang Writable Mode",
   "deepin_immutable_script_description": "I-disable ang immutability ng system sa Deepin Linux.",
   "deepin_immutable_message": "Kailangan ng LinuxToys ng pahintulot na i-disable ang immutability ng system upang maisagawa ang mga gawain sa pag-optimize at pag-configure ng system.\n\nGusto mo bang i-enable ang writable mode sa Deepin system na ito?",
-  "qdi_desc": "Isang frontend para sa smartctl na nagpapakita ng SMART data ng mga modernong hard disk at solid state drive. Nagbibigay ng karanasan ng gumagamit na katulad ng CrystalDiskInfo."
+  "qdi_desc": "Isang frontend para sa smartctl na nagpapakita ng SMART data ng mga modernong hard disk at solid state drive. Nagbibigay ng karanasan ng gumagamit na katulad ng CrystalDiskInfo.",
+  "occt_desc": "Kasangkapan para sa pagsubok ng katatagan at pag-benchmark."
 }

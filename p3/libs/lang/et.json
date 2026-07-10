@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Luba kirjutatav režiim",
   "deepin_immutable_script_description": "Keela süsteemi muutumatus Deepin Linuxis.",
   "deepin_immutable_message": "LinuxToys vajab luba süsteemi muutumatuse keelamiseks, et saaks teostada süsteemi optimeerimise ja konfigureerimise ülesandeid.\n\nKas soovite lubada kirjutatava režiimi selles Deepini süsteemis?",
-  "qdi_desc": "Smartctl kasutajaliides, mis kuvab kaasaegsete kõvaketaste ja SSD-ketaste SMART-andmeid. Pakub kasutajakogemust, mis sarnaneb CrystalDiskInfo-ga."
+  "qdi_desc": "Smartctl kasutajaliides, mis kuvab kaasaegsete kõvaketaste ja SSD-ketaste SMART-andmeid. Pakub kasutajakogemust, mis sarnaneb CrystalDiskInfo-ga.",
+  "occt_desc": "Stabiilsuse testimise ja jõudluse võrdlemise tööriist."
 }

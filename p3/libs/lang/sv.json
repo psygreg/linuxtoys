@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "Aktivera skrivbart läge",
   "deepin_immutable_script_description": "Inaktivera systemets oföränderlighet på Deepin Linux.",
   "deepin_immutable_message": "LinuxToys behöver behörighet att inaktivera systemets oföränderlighet för att kunna utföra systemoptimerings- och konfigurationsuppgifter.\n\nVill du aktivera skrivbart läge på detta Deepin-system?",
-  "qdi_desc": "Ett gränssnitt för smartctl som visar SMART-data för moderna hårddiskar och SSD-enheter. Ger en användarupplevelse som liknar CrystalDiskInfo."
+  "qdi_desc": "Ett gränssnitt för smartctl som visar SMART-data för moderna hårddiskar och SSD-enheter. Ger en användarupplevelse som liknar CrystalDiskInfo.",
+  "occt_desc": "Verktyg för stabilitetstestning och prestandamätning."
 }

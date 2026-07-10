@@ -497,5 +497,6 @@
   "deepin_immutable_script_name": "ເປີດໃຊ້ໂໝດຂຽນໄດ້",
   "deepin_immutable_script_description": "ປິດການປ່ຽນແປງບໍ່ໄດ້ຂອງລະບົບໃນ Deepin Linux.",
   "deepin_immutable_message": "LinuxToys ຕ້ອງການສິດອະນຸຍາດເພື່ອປິດການປ່ຽນແປງບໍ່ໄດ້ຂອງລະບົບ ເພື່ອໃຫ້ສາມາດປະຕິບັດວຽກງານປັບປຸງແລະຕັ້ງຄ່າລະບົບໄດ້.\n\nທ່ານຕ້ອງການເປີດໃຊ້ໂໝດຂຽນໄດ້ໃນລະບົບ Deepin ນີ້ບໍ?",
-  "qdi_desc": "ສ່ວນໜ້າສໍາລັບ smartctl ທີ່ສະແດງຂໍ້ມູນ SMART ຂອງຮາດດິສທັນສະໄໝ ແລະ ໄດຣຟ solid state. ໃຫ້ປະສົບການຜູ້ໃຊ້ທີ່ຄ້າຍຄືກັບ CrystalDiskInfo."
+  "qdi_desc": "ສ່ວນໜ້າສໍາລັບ smartctl ທີ່ສະແດງຂໍ້ມູນ SMART ຂອງຮາດດິສທັນສະໄໝ ແລະ ໄດຣຟ solid state. ໃຫ້ປະສົບການຜູ້ໃຊ້ທີ່ຄ້າຍຄືກັບ CrystalDiskInfo.",
+  "occt_desc": "ເຄື່ອງມືທົດສອບຄວາມສະຖຽນ ແລະ ວັດປະສິດທິພາບ."
 }
