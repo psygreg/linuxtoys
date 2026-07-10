@@ -13,6 +13,7 @@ wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/occt/o
 mkdir -p "$HOME/.local/bin/linuxtoys"
 prep_dir "$HOME/.local/bin/linuxtoys/occt"
 copy_ OCCT "$HOME/.local/bin/linuxtoys/occt/"
+chmod +x "$HOME/.local/bin/linuxtoys/occt/OCCT"
 copy_ occt.png "$HOME/.local/bin/linuxtoys/occt/"
 prep_create "$HOME/.local/share/applications/occt.desktop"
 copy_ -f occt.desktop "$HOME/.local/share/applications/"
