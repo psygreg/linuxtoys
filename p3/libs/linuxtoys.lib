@@ -726,8 +726,11 @@ bootloader_upd() {
         elif is_arch || is_cachy; then
             { sudo grub-mkconfig -o /boot/grub/grub.cfg || sudo bootctl update; } || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
-        elif is_debian || is_ubuntu; then
+        elif is_ubuntu; then
             sudo update-grub || fatal "Unable to update bootloader"
+            _append_transmap "updated bootloader"
+        elif is_debian; then 
+            { sudo update-grub || sudo bootctl update; } || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_solus; then
             { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader"
