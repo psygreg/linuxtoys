@@ -4,6 +4,7 @@
 # description: dch_desc
 # icon: cnfh.svg
 # nocontainer: invert
+# compat: none
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
