@@ -720,17 +720,38 @@ pkg_bun () {
 # bootloader update
 bootloader_upd() {
     if ! is_ostree; then
+        local exit_status
         if is_fedora || is_suse || is_rhel; then
             sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_arch || is_cachy; then
-            { sudo grub-mkconfig -o /boot/grub/grub.cfg || sudo bootctl update; } || fatal "Unable to update bootloader"
+            {
+                sudo grub-mkconfig -o /boot/grub/grub.cfg && exit_status=0 || {
+                    if bootctl is-installed >/dev/null 2>&1; then
+                        sudo bootctl update
+                        exit_status=0
+                    else
+                        exit_status=1
+                    fi
+                }
+            } 
+            [ "$exit_status" -eq 0 ] || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_ubuntu; then
             sudo update-grub || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_debian; then 
-            { sudo update-grub || sudo bootctl update; } || fatal "Unable to update bootloader"
+            {
+                sudo update-grub && exit_status=0 || {
+                    if bootctl is-installed >/dev/null 2>&1; then
+                        sudo bootctl update
+                        exit_status=0
+                    else
+                        exit_status=1
+                    fi
+                }
+            } 
+            [ "$exit_status" -eq 0 ] || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_solus; then
             { sudo clr-boot-manager update || sudo grub-mkconfig -o /boot/grub/grub.cfg; } || fatal "Unable to update bootloader"
