@@ -10,6 +10,7 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 install_nobox () {
+    ls /opt/resolve &>/dev/null || fatal "DaVinci Resolve is not currently installed in this computer."
     # Install build dependencies
     if is_fedora || is_ostree || is_rhel; then
         if rpmfusion_chk; then
@@ -31,7 +32,7 @@ install_nobox () {
     fi
 
     # Clone and build
-    prep_tmp
+    prep_tmp_noram
     if [ -d "ffmpeg_encoder_plugin" ]; then
         rm -rf ffmpeg_encoder_plugin
     fi
@@ -50,7 +51,8 @@ install_nobox () {
     copy_ ffmpeg_encoder_plugin.dvcp "$PLUGIN_DIR/"
 }
 install_dvbox() {
-    prep_tmp
+    distrobox enter davincibox -- ls /opt/resolve &>/dev/null || fatal "DaVinci Resolve is not currently installed in this computer."
+    prep_tmp_noram
     wget https://github.com/EdvinNilsson/ffmpeg_encoder_plugin/releases/latest/download/ffmpeg_encoder_plugin.dvcp.bundle.zip || fatal "Failed to download plugin bundle."
     distrobox enter davincibox -- mkdir -p /opt/resolve/IOPlugins/ || fatal "Failed to create IOPlugins directory in DaVinciBox."
     distrobox enter davincibox -- unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle into DaVinciBox."
