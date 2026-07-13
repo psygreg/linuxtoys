@@ -9,3 +9,4 @@
 source "$SCRIPT_DIR/libs/optimizers.lib"
 sudo_rq
 wayland_proton_lib
+zeninf "$finishmsg"
