@@ -53,7 +53,7 @@ get_winboat () { # gets latest release
     fi
 }
 # runtime
-prep_tmp
+prep_tmp_noram
 sleep 1
 {
     echo "$msg209"
