@@ -12,6 +12,6 @@ if is_ubuntu; then
     sudo add-apt-repository ppa:michel-slm/distrobox -y
     sudo apt update
 fi
-pkg_install podman distrobox
+pkg_install --ostreecheck podman distrobox
 pkg_flat com.ranfdev.DistroShelf
 zeninf "$msg018"
