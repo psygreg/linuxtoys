@@ -500,5 +500,7 @@
   "deepin_immutable_script_description": "在 Deepin Linux 上禁用系统不可变性。",
   "deepin_immutable_message": "LinuxToys 需要权限来禁用系统不可变性,以便执行系统优化和配置任务。\n\n您是否希望在此 Deepin 系统上启用可写模式?",
   "qdi_desc": "smartctl 的前端,显示现代硬盘和固态硬盘的 SMART 数据。提供类似于 CrystalDiskInfo 的用户体验。",
-  "occt_desc": "稳定性测试和性能基准测试工具。"
+  "occt_desc": "稳定性测试和性能基准测试工具。",
+  "lmstudio_desc": "通过图形化控制面板、聊天界面和可编程API,在您的计算机上体验LLM。",
+  "mt5_desc": "强大便捷的外汇、股票、期货及其他工具交易平台。"
 }

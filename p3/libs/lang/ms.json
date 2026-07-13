@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Lumpuhkan kestabilan sistem pada Deepin Linux.",
   "deepin_immutable_message": "LinuxToys memerlukan kebenaran untuk melumpuhkan kestabilan sistem supaya dapat melaksanakan tugas pengoptimuman dan konfigurasi sistem.\n\nAdakah anda ingin mendayakan mod boleh tulis pada sistem Deepin ini?",
   "qdi_desc": "Frontend untuk smartctl yang memaparkan data SMART cakera keras moden dan pemacu solid state. Menyediakan pengalaman pengguna yang serupa dengan CrystalDiskInfo.",
-  "occt_desc": "Alat ujian kestabilan dan penanda aras prestasi."
+  "occt_desc": "Alat ujian kestabilan dan penanda aras prestasi.",
+  "lmstudio_desc": "Bereksperimen dengan LLM pada komputer anda dengan panel kawalan GUI, antara muka sembang dan API yang boleh diprogram.",
+  "mt5_desc": "Platform yang berkuasa dan mudah untuk berdagang Forex, saham, niaga hadapan dan instrumen lain."
 }

@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Slökktu á óbreytanleika kerfisins á Deepin Linux.",
   "deepin_immutable_message": "LinuxToys þarf heimild til að slökkva á óbreytanleika kerfisins svo það geti framkvæmt kerfisbestun og stillingarverkefni.\n\nViltu virkja skrifanlega stillingu á þessu Deepin kerfi?",
   "qdi_desc": "Framendi fyrir smartctl sem sýnir SMART gögn nútíma harða diska og SSD diska. Veitir notendaupplifun svipaða CrystalDiskInfo.",
-  "occt_desc": "Verkfæri fyrir stöðugleikaprófanir og afkastamælingar."
+  "occt_desc": "Verkfæri fyrir stöðugleikaprófanir og afkastamælingar.",
+  "lmstudio_desc": "Gerðu tilraunir með LLM á tölvunni þinni með myndrænu stjórnborði, spjallviðmóti og forritanlegu API.",
+  "mt5_desc": "Öflugur og þægilegur vettvangur til að eiga viðskipti með Forex, hlutabréf, framvirka samninga og önnur fjármálagerninga."
 }

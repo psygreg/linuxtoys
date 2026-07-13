@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Deaktiver systemets uforanderlighet på Deepin Linux.",
   "deepin_immutable_message": "LinuxToys krever tillatelse til å deaktivere systemets uforanderlighet slik at det kan utføre systemoptimalisering og konfigurasjonsoppgaver.\n\nVil du aktivere skrivbar modus på dette Deepin-systemet?",
   "qdi_desc": "Et frontend for smartctl som viser SMART-data for moderne harddisker og SSD-er. Gir en brukeropplevelse som ligner CrystalDiskInfo.",
-  "occt_desc": "Verktøy for stabilitetstesting og ytelsesmåling."
+  "occt_desc": "Verktøy for stabilitetstesting og ytelsesmåling.",
+  "lmstudio_desc": "Eksperimenter med LLM-er på datamaskinen din med et grafisk kontrollpanel, chattegrensesnitt og programmerbart API.",
+  "mt5_desc": "Kraftfull og praktisk plattform for handel med Forex, aksjer, futures og andre instrumenter."
 }

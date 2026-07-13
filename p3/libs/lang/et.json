@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Keela süsteemi muutumatus Deepin Linuxis.",
   "deepin_immutable_message": "LinuxToys vajab luba süsteemi muutumatuse keelamiseks, et saaks teostada süsteemi optimeerimise ja konfigureerimise ülesandeid.\n\nKas soovite lubada kirjutatava režiimi selles Deepini süsteemis?",
   "qdi_desc": "Smartctl kasutajaliides, mis kuvab kaasaegsete kõvaketaste ja SSD-ketaste SMART-andmeid. Pakub kasutajakogemust, mis sarnaneb CrystalDiskInfo-ga.",
-  "occt_desc": "Stabiilsuse testimise ja jõudluse võrdlemise tööriist."
+  "occt_desc": "Stabiilsuse testimise ja jõudluse võrdlemise tööriist.",
+  "lmstudio_desc": "Katseta LLM-e oma arvutis graafilise juhtpaneeli, vestlusliidese ja programmeeritava API abil.",
+  "mt5_desc": "Võimas ja mugav platvorm Forexi, aktsiate, futuuride ja teiste instrumentidega kauplemiseks."
 }

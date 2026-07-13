@@ -496,5 +496,7 @@
   "deepin_immutable_script_description": "Zima kutobadilika kwa mfumo kwenye Deepin Linux.",
   "deepin_immutable_message": "LinuxToys inahitaji ruhusa ya kuzima kutobadilika kwa mfumo ili iweze kufanya kazi za uboreshaji na usanidi wa mfumo.\n\nUngependa kuwezesha hali ya kuandika kwenye mfumo huu wa Deepin?",
   "qdi_desc": "Kiolesura cha smartctl kinachoonyesha data ya SMART ya diski ngumu za kisasa na anatoa za solid state. Hutoa uzoefu wa mtumiaji unaofanana na CrystalDiskInfo.",
-  "occt_desc": "Zana ya kupima uthabiti na utendaji."
+  "occt_desc": "Zana ya kupima uthabiti na utendaji.",
+  "lmstudio_desc": "Jaribu LLM kwenye kompyuta yako kwa kutumia paneli ya udhibiti ya GUI, kiolesura cha mazungumzo, na API inayoweza kupangwa.",
+  "mt5_desc": "Jukwaa lenye nguvu na rahisi kwa kufanya biashara ya Forex, hisa, futures na vyombo vingine."
 }

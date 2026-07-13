@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Onemogući nepromjenjivost sustava na Deepin Linuxu.",
   "deepin_immutable_message": "LinuxToys zahtijeva dopuštenje za onemogućavanje nepromjenjivosti sustava kako bi mogao izvršiti zadatke optimizacije i konfiguracije sustava.\n\nŽelite li omogućiti način pisanja na ovom Deepin sustavu?",
   "qdi_desc": "Frontend za smartctl koji prikazuje SMART podatke modernih tvrdih diskova i SSD uređaja. Pruža korisničko iskustvo slično CrystalDiskInfo-u.",
-  "occt_desc": "Alat za testiranje stabilnosti i mjerenje performansi."
+  "occt_desc": "Alat za testiranje stabilnosti i mjerenje performansi.",
+  "lmstudio_desc": "Eksperimentirajte s LLM-ovima na svom računalu pomoću grafičke upravljačke ploče, chat sučelja i programibilnog API-ja.",
+  "mt5_desc": "Snažna i praktična platforma za trgovanje Forexom, dionicama, ročnicama i drugim instrumentima."
 }

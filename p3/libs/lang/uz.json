@@ -497,5 +497,7 @@
   "deepin_immutable_script_description": "Deepin Linux-da tizim o'zgarmasligini o'chirish.",
   "deepin_immutable_message": "LinuxToys tizimni optimallashtirish va sozlash vazifalarini bajarish uchun tizim o'zgarmasligini o'chirish ruxsatiga muhtoj.\n\nUshbu Deepin tizimida yozish rejimini yoqishni xohlaysizmi?",
   "qdi_desc": "Zamonaviy qattiq disklar va solid state drayvlarning SMART ma'lumotlarini ko'rsatadigan smartctl uchun interfeys. CrystalDiskInfo-ga o'xshash foydalanuvchi tajribasini taqdim etadi.",
-  "occt_desc": "Barqarorlikni sinash va unumdorlikni o‘lchash vositasi."
+  "occt_desc": "Barqarorlikni sinash va unumdorlikni o‘lchash vositasi.",
+  "lmstudio_desc": "GUI boshqaruv paneli, chat interfeysi va dasturlash mumkin bo'lgan API yordamida kompyuteringizda LLM'lar bilan tajriba o'tkazing.",
+  "mt5_desc": "Forex, aksiyalar, fyucherslar va boshqa vositalar bilan savdo qilish uchun kuchli va qulay platforma."
 }

@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "A rendszer megváltoztathatatlanságának letiltása Deepin Linuxon.",
   "deepin_immutable_message": "A LinuxToys engedélyt igényel a rendszer megváltoztathatatlanságának letiltásához, hogy elvégezhesse a rendszeroptimalizálási és konfigurációs feladatokat.\n\nSzeretné engedélyezni az írható módot ezen a Deepin rendszeren?",
   "qdi_desc": "A smartctl felhasználói felülete, amely megjeleníti a modern merevlemezek és SSD-k SMART adatait. A CrystalDiskInfo-hoz hasonló felhasználói élményt nyújt.",
-  "occt_desc": "Stabilitástesztelő és teljesítménymérő eszköz."
+  "occt_desc": "Stabilitástesztelő és teljesítménymérő eszköz.",
+  "lmstudio_desc": "Kísérletezzen LLM-ekkel a számítógépén grafikus vezérlőpanel, chat felület és programozható API segítségével.",
+  "mt5_desc": "Erőteljes és kényelmes platform Forex, részvények, határidős ügyletek és más eszközök kereskedésére."
 }

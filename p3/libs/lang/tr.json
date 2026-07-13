@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Deepin Linux'ta sistem değişmezliğini devre dışı bırakır.",
   "deepin_immutable_message": "LinuxToys, sistem optimizasyonu ve yapılandırma görevlerini gerçekleştirebilmesi için sistem değişmezliğini devre dışı bırakma izni gerektirir.\n\nBu Deepin sisteminde yazılabilir modu etkinleştirmek ister misiniz?",
   "qdi_desc": "Modern sabit disklerin ve katı hal sürücülerinin SMART verilerini gösteren smartctl için bir ön yüz. CrystalDiskInfo'ya benzer bir kullanıcı deneyimi sunar.",
-  "occt_desc": "Kararlılık testi ve performans ölçüm aracı."
+  "occt_desc": "Kararlılık testi ve performans ölçüm aracı.",
+  "lmstudio_desc": "GUI kontrol paneli, sohbet arayüzü ve programlanabilir API ile bilgisayarınızda LLM'ler üzerinde deneyler yapın.",
+  "mt5_desc": "Forex, hisse senedi, vadeli işlemler ve diğer araçlarda işlem yapmak için güçlü ve kullanışlı platform."
 }

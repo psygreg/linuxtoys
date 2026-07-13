@@ -19,7 +19,8 @@ if distrobox create --name metatrader5 --image docker.io/library/ubuntu:24.04; t
     chmod +x mt5linux.sh
     distrobox enter metatrader5 -- sudo apt update
     distrobox enter metatrader5 -- sudo apt upgrade
-    distrobox enter metatrader5 -- ./mt5linux.sh 
+    distrobox enter metatrader5 -- ./mt5linux.sh
+    _append_transmap "created $HOME/.mt5"
     copy_ "$SCRIPT_DIR/app/icons/mt5.png" "$HOME/.mt5/drive_c/Program Files/MetaTrader 5/"
     prep_create "$HOME/.local/share/applications/mt5.desktop"
     cat > ~/.local/share/applications/metatrader5-distrobox.desktop << EOF

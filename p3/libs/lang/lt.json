@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Išjungti sistemos nekintamumą Deepin Linux sistemoje.",
   "deepin_immutable_message": "LinuxToys reikalauja leidimo išjungti sistemos nekintamumą, kad galėtų atlikti sistemos optimizavimo ir konfigūravimo užduotis.\n\nAr norite įjungti rašomą režimą šioje Deepin sistemoje?",
   "qdi_desc": "Sąsaja smartctl, rodanti šiuolaikinių standžiųjų diskų ir SSD diskų SMART duomenis. Suteikia panašią naudotojo patirtį kaip CrystalDiskInfo.",
-  "occt_desc": "Stabilumo testavimo ir našumo matavimo įrankis."
+  "occt_desc": "Stabilumo testavimo ir našumo matavimo įrankis.",
+  "lmstudio_desc": "Eksperimentuokite su LLM savo kompiuteryje naudodami grafinį valdymo skydelį, pokalbių sąsają ir programuojamą API.",
+  "mt5_desc": "Galinga ir patogi platforma prekiauti Forex, akcijomis, ateities sandoriais ir kitomis priemonėmis."
 }

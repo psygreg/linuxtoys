@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Disable system immutability on Deepin Linux.",
   "deepin_immutable_message": "LinuxToys requires permission to disable system immutability so it can perform system optimization and configuration tasks.\n\nWould you like to enable writable mode on this Deepin system?",
   "qdi_desc": "A frontend for smartctl that shows the SMART data of modern hard disk and solid state drives. Provides a user experience similar to CrystalDiskInfo.",
-  "occt_desc": "Stability testing and benchmark tool."
+  "occt_desc": "Stability testing and benchmark tool.",
+  "lmstudio_desc": "Experiment with LLMs on your computer with a GUI control panel, chat interface and programmable API.",
+  "mt5_desc": "Powerful and convenient platform for trading Forex, stocks, futures and other instruments."
 }

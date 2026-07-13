@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Çaktivizo pandryshueshmërinë e sistemit në Deepin Linux.",
   "deepin_immutable_message": "LinuxToys kërkon leje për të çaktivizuar pandryshueshmërinë e sistemit në mënyrë që të kryejë detyra optimizimi dhe konfigurimi të sistemit.\n\nDo të dëshironit të aktivizoni modalitetin e shkrueshëm në këtë sistem Deepin?",
   "qdi_desc": "Një ndërfaqe për smartctl që shfaq të dhënat SMART të disqeve të ngurta moderne dhe disqeve solid state. Ofron një përvojë përdoruesi të ngjashme me CrystalDiskInfo.",
-  "occt_desc": "Mjet për testimin e stabilitetit dhe matjen e performancës."
+  "occt_desc": "Mjet për testimin e stabilitetit dhe matjen e performancës.",
+  "lmstudio_desc": "Eksperimentoni me LLM në kompjuterin tuaj me një panel kontrolli grafik, ndërfaqe bisede dhe API të programueshme.",
+  "mt5_desc": "Platformë e fuqishme dhe e përshtatshme për tregtimin e Forex, aksioneve, futures dhe instrumenteve të tjera."
 }

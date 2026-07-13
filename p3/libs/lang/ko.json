@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Deepin Linux에서 시스템 불변성을 비활성화합니다.",
   "deepin_immutable_message": "LinuxToys는 시스템 최적화 및 구성 작업을 수행하기 위해 시스템 불변성을 비활성화할 권한이 필요합니다.\n\n이 Deepin 시스템에서 쓰기 가능 모드를 활성화하시겠습니까?",
   "qdi_desc": "최신 하드 디스크 및 솔리드 스테이트 드라이브의 SMART 데이터를 표시하는 smartctl용 프론트엔드입니다. CrystalDiskInfo와 유사한 사용자 경험을 제공합니다.",
-  "occt_desc": "안정성 테스트 및 벤치마크 도구."
+  "occt_desc": "안정성 테스트 및 벤치마크 도구.",
+  "lmstudio_desc": "GUI 제어판, 채팅 인터페이스 및 프로그래밍 가능한 API로 컴퓨터에서 LLM을 실험해 보세요.",
+  "mt5_desc": "외환(Forex), 주식, 선물 및 기타 상품을 거래하기 위한 강력하고 편리한 플랫폼."
 }

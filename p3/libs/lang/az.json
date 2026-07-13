@@ -497,5 +497,7 @@
   "deepin_immutable_script_description": "Deepin Linux-da sistemin dəyişməzliyini deaktiv edin.",
   "deepin_immutable_message": "LinuxToys sistem optimallaşdırma və konfiqurasiya tapşırıqlarını yerinə yetirə bilməsi üçün sistemin dəyişməzliyini deaktiv etmək icazəsi tələb edir.\n\nBu Deepin sistemində yazıla bilən rejimi aktivləşdirmək istəyirsiniz?",
   "qdi_desc": "Müasir sərt disklərin və bərk vəziyyət disklərinin SMART məlumatlarını göstərən smartctl üçün frontend. CrystalDiskInfo-ya bənzər istifadəçi təcrübəsi təqdim edir.",
-  "occt_desc": "Sabitlik testi və performans ölçmə aləti."
+  "occt_desc": "Sabitlik testi və performans ölçmə aləti.",
+  "lmstudio_desc": "GUI idarəetmə paneli, söhbət interfeysi və proqramlaşdırıla bilən API ilə kompüterinizdə LLM-lərlə eksperiment edin.",
+  "mt5_desc": "Forex, səhmlər, fyuçerslər və digər alətlərlə ticarət üçün güclü və rahat platforma."
 }

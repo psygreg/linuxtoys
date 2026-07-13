@@ -498,5 +498,7 @@
   "deepin_immutable_script_description": "Deshabilita la inmutabilidad del sistema en Deepin Linux.",
   "deepin_immutable_message": "LinuxToys requiere permiso para deshabilitar la inmutabilidad del sistema para poder realizar tareas de optimización y configuración del sistema.\n\n¿Deseas habilitar el modo de escritura en este sistema Deepin?",
   "qdi_desc": "Una interfaz para smartctl que muestra los datos SMART de discos duros modernos y unidades de estado sólido. Ofrece una experiencia de usuario similar a CrystalDiskInfo.",
-  "occt_desc": "Herramienta de pruebas de estabilidad y rendimiento."
+  "occt_desc": "Herramienta de pruebas de estabilidad y rendimiento.",
+  "lmstudio_desc": "Experimenta con LLM en tu computadora con un panel de control gráfico, interfaz de chat y API programable.",
+  "mt5_desc": "Plataforma potente y conveniente para operar con Forex, acciones, futuros y otros instrumentos."
 }
