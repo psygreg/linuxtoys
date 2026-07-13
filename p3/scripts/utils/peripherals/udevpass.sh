@@ -105,6 +105,8 @@ main_menu() {
             --text="You selected:\n\n$selected_device\n\nBus:Device: $bus_device" \
             --height=300 --width=500
         create_udev_rules "$selected_device"
+        sudo usermod -aG plugdev,input $USER
+        sudo udevadm control --reload-rules && sudo udevadm trigger
         
         break
     done
