@@ -2409,9 +2409,62 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
-        # Check if we're in search view
+
+        # Handle leaving the terminal before normal search navigation.
+        if self.main_stack.get_visible_child_name() == "running_scripts":
+            returning_to_search = self.search_active
+            search_query = self.search_entry.get_text().strip()
+
+            child = self.main_stack.get_child_by_name("running_scripts")
+            if child is not None:
+                self.main_stack.remove(child)
+                child.destroy()
+
+            # Installation/removal may have changed the action registry.
+            self._refresh_removable_scripts()
+
+            # When launched from search, rerun the same search so its cards
+            # are recreated using the refreshed removable-state cache.
+            if returning_to_search and search_query:
+                self.search_results = self.search_engine.search(search_query)
+                self._display_search_results()
+                return
+
+            if self.navigation_stack:
+                previous_category = self.navigation_stack.pop()
+                self.current_category_info = previous_category
+                self.header_widget.show()
+                self._update_header(previous_category)
+
+                self.header_bar.props.title = (
+                    f"LinuxToys: {previous_category.get('name', 'LinuxToys')}"
+                )
+
+                if self._is_local_scripts_category(previous_category):
+                    self._enable_drag_and_drop()
+                else:
+                    self._disable_drag_and_drop()
+
+                self._load_scripts_into_flowbox(
+                    self.scripts_flowbox,
+                    previous_category,
+                )
+                self.scripts_flowbox.show_all()
+
+                if previous_category.get("display_mode", "menu") == "checklist":
+                    self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+                else:
+                    self.reveal.set_reveal_child(False)
+
+                self.main_stack.set_visible_child(self.scripts_view)
+            else:
+                self.load_categories()
+                self.show_categories_view()
+
+            return
+
+        # This now applies only when Back is pressed directly from search results.
         if self.search_active:
-            # Clear the search bar when returning from search mode
             self.search_entry.set_text("")
             self._clear_search_results()
             return
@@ -2457,52 +2510,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
             if self.navigation_stack:
                 self.navigation_stack.pop()
-            return
-
-        # Check if we're in running scripts view
-        if self.main_stack.get_visible_child_name() == "running_scripts":
-            child = self.main_stack.get_child_by_name("running_scripts")
-            if child is not None:
-                self.main_stack.remove(child)
-                child.destroy()
-
-            # The installation or removal may have changed the registry.
-            self._refresh_removable_scripts()
-
-            if self.navigation_stack:
-                previous_category = self.navigation_stack.pop()
-                self.current_category_info = previous_category
-                self.header_widget.show()
-                self._update_header(previous_category)
-
-                if previous_category:
-                    self.header_bar.props.title = (
-                        f"LinuxToys: {previous_category.get('name', 'LinuxToys')}"
-                    )
-
-                if self._is_local_scripts_category(previous_category):
-                    self._enable_drag_and_drop()
-                else:
-                    self._disable_drag_and_drop()
-
-                # Rebuild the previous category now that current_category_info
-                # and scripts_flowbox point to the correct view.
-                self._load_scripts_into_flowbox(
-                    self.scripts_flowbox,
-                    previous_category,
-                )
-                self.scripts_flowbox.show_all()
-
-                if previous_category.get("display_mode", "menu") == "checklist":
-                    self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
-                else:
-                    self.reveal.set_reveal_child(False)
-
-                self.main_stack.set_visible_child(self.scripts_view)
-            else:
-                self.load_categories()
-                self.show_categories_view()
-
             return
 
         # Check if a script is currently running
