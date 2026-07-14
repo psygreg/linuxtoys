@@ -2465,26 +2465,44 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             if child is not None:
                 self.main_stack.remove(child)
                 child.destroy()
+
+            # The installation or removal may have changed the registry.
+            self._refresh_removable_scripts()
+
             if self.navigation_stack:
                 previous_category = self.navigation_stack.pop()
                 self.current_category_info = previous_category
                 self.header_widget.show()
                 self._update_header(previous_category)
+
                 if previous_category:
                     self.header_bar.props.title = (
                         f"LinuxToys: {previous_category.get('name', 'LinuxToys')}"
                     )
+
                 if self._is_local_scripts_category(previous_category):
                     self._enable_drag_and_drop()
                 else:
                     self._disable_drag_and_drop()
+
+                # Rebuild the previous category now that current_category_info
+                # and scripts_flowbox point to the correct view.
+                self._load_scripts_into_flowbox(
+                    self.scripts_flowbox,
+                    previous_category,
+                )
+                self.scripts_flowbox.show_all()
+
                 if previous_category.get("display_mode", "menu") == "checklist":
                     self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
                 else:
                     self.reveal.set_reveal_child(False)
+
                 self.main_stack.set_visible_child(self.scripts_view)
             else:
+                self.load_categories()
                 self.show_categories_view()
+
             return
 
         # Check if a script is currently running
@@ -2762,3 +2780,25 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
         else:
             self.reveal.set_reveal_child(False)
+
+    def _refresh_removable_scripts(self):
+        """
+        Refresh removable-script state and rebuild the currently visible cards.
+
+        The removal button is created inside create_item_widget(), so refreshing
+        only the boolean cache is insufficient: the displayed widgets must also
+        be recreated.
+        """
+        if self.script_cache.is_populated:
+            self.script_cache.refresh_removable_cache()
+
+        # Refresh the current category/subcategory view.
+        if self.current_category_info is not None:
+            self._load_scripts_into_flowbox(
+                self.scripts_flowbox,
+                self.current_category_info,
+            )
+            self.scripts_flowbox.show_all()
+        else:
+            # Root-level scripts can also be removable.
+            self.load_categories()

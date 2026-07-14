@@ -176,6 +176,16 @@ class ScriptCache:
             
             self._removable_cache[script_path] = script_name in executed_names
     
+    def refresh_removable_cache(self):
+        """
+        Refresh only the removable state of cached scripts.
+
+        This re-reads the action registry without rebuilding script metadata,
+        compatibility information, translations, or categories.
+        """
+        self._removable_cache.clear()
+        self._populate_removable_cache()
+    
     def is_script_removable(self, script_info):
         """
         Return the cached removable state for a script.
@@ -210,13 +220,15 @@ class ScriptCache:
     
     def update_removable_for_script(self, script_info):
         """
-        Update the cached removable state for a single script.
-        Call this after a script is run or removed so the UI reflects the new
-        state without rebuilding the entire cache.
+        Recompute the removable state for a single script.
         """
-        script_path = script_info.get('path', '')
+        script_path = script_info.get("path", "")
         if not script_path:
             return
+
+        # Remove the previous value so is_script_removable() performs
+        # a direct registry-based computation instead of returning stale data.
+        self._removable_cache.pop(script_path, None)
         self._removable_cache[script_path] = self.is_script_removable(script_info)
     
     def invalidate(self):
