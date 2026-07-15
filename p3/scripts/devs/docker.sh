@@ -43,7 +43,7 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
         sudo apt update
     elif is_fedora || is_ostree || is_rhel; then
-        if command -v rpm-ostree &> /dev/null; then
+        if is_ostree; then
             pkg_remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
             curl -O https://download.docker.com/linux/fedora/docker-ce.repo
             sudo install -o 0 -g 0 -m644 docker-ce.repo /etc/yum.repos.d/docker-ce.repo
@@ -57,7 +57,7 @@ EOF
     fi
     { ( is_arch || is_cachy || is_suse || is_solus ) && pkg_install docker docker-compose; } || pkg_install --ostreecheck docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     # fix for ostree & ensure everything is set up correctly with docker
-    if command -v rpm-ostree &> /dev/null; then
+    if is_ostree; then
         sudo su -c 'echo "$(getent group docker)" >> /etc/group'
         sudo_rq # request another sudo to continue as it will be lost after su
     fi

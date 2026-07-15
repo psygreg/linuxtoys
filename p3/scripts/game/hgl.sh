@@ -15,7 +15,7 @@ if is_fedora || is_ostree; then
     sudo_rq
     prep_tmp
     if ! rpm -qi "heroic" 2>/dev/null; then
-        if command -v rpm-ostree >/dev/null 2>&1; then
+        if is_ostree; then
             wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
             pkg_fromfile ./Heroic-${ver}-linux-x86_64.rpm
         else
@@ -26,7 +26,7 @@ if is_fedora || is_ostree; then
         # update if already installed
         hostver=$(rpm -qi "heroic" 2>/dev/null | grep "^Version" | awk '{print $3}')
         if [[ "$hostver" != "$ver" ]]; then
-            if command -v rpm-ostree >/dev/null 2>&1; then
+            if is_ostree; then
                 wget "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/${tag}/Heroic-${ver}-linux-x86_64.rpm"
                 sudo rpm-ostree remove heroic
                 pkg_fromfile ./Heroic-${ver}-linux-x86_64.rpm

@@ -15,7 +15,7 @@ if [ -f $HOME/.bashrc ]; then
     prep_dir "$HOME/.local/share/bash-completion/completions"
     mise completion bash --include-bash-completion-lib > ~/.local/share/bash-completion/completions/mise
 fi
-if ! command -v rpm-ostree &>/dev/null; then
+if ! is_ostree; then
     # mise is not compatible with ZSH on ostree distros
     if [ -f $HOME/.zshrc ]; then
         prep_edit "$HOME/.zshrc"

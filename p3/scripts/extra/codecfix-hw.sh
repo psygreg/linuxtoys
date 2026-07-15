@@ -12,7 +12,7 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 sudo_rq
 if rpmfusion_chk; then
-    if command -v rpm-ostree &> /dev/null; then
+    if is_ostree; then
         sudo rpm-ostree override remove \
         ffmpeg-free \
         libavcodec-free \

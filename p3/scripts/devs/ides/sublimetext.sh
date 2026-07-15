@@ -18,7 +18,7 @@ if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "d
 # Instalação para Fedora e derivados
 elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
     sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
-    if command -v rpm-ostree &>/dev/null; then
+    if is_ostree; then
         {
             echo "[sublime-text]"
             echo "name=Sublime Text - Stable"

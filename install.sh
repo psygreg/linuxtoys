@@ -17,7 +17,7 @@ info() { printf "\e[0;32m[INFO]\e[m %s\n" "${1}"; exit 0; }
 error() { printf "\e[0;31m[ERROR]\e[m %s\n" "${1}"; exit 1; }
 
 ostree() {
-	if command -v rpm-ostree >/dev/null 2>&1; then
+	if command -v rpm-ostree >/dev/null 2>&1 && [ -f /run/ostree-booted ]; then
 		if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
 			if rpm -qi linuxtoys >/dev/null 2>&1; then
 				if ! sudo rpm-ostree remove linuxtoys; then

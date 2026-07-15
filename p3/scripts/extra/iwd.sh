@@ -30,8 +30,8 @@ iwd_in () {
             # use their iwd installation script for ublue distros
             ujust iwd
             return 0
-        elif command -v rpm-ostree &>/dev/null; then
-            pkg_install iwd
+        elif is_ostree; then
+            pkg_install --ostreecheck iwd
             # enforce iwd backend for networkmanager
             prep_create /etc/NetworkManager/conf.d/iwd.conf
             wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/iwd.conf

@@ -21,7 +21,7 @@ if (( _cram > 12 )); then
     if zenity --question --text "$msg208" --width 360 --height 300; then
         sudo_rq
         if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
-            if command -v rpm-ostree &>/dev/null; then
+            if is_ostree; then
                 prep_tmp
                 wget https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-$(rpm -E %fedora)/elxreno-preload-fedora-$(rpm -E %fedora).repo
                 sudo install -o 0 -g 0 elxreno-preload-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/elxreno-preload-fedora-$(rpm -E %fedora).repo

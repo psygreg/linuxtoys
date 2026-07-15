@@ -15,7 +15,7 @@ if is_debian || is_ubuntu; then
 	echo "deb [signed-by=/usr/share/keyrings/mullvad-keyring.asc arch=$( dpkg --print-architecture )] https://repository.mullvad.net/deb/stable stable main" | sudo tee /etc/apt/sources.list.d/mullvad.list
 	sudo apt-get update
 elif is_fedora || is_ostree || is_rhel; then
-	if command -v rpm-ostree &>/dev/null; then
+	if is_ostree; then
 		prep_tmp
 		wget https://repository.mullvad.net/rpm/stable/mullvad.repo
 		sudo install -o root -g root -m 644 mullvad.repo /etc/yum.repos.d/

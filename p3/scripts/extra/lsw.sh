@@ -35,7 +35,7 @@ get_winboat () { # gets latest release
             fi
         fi
         wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-x86_64.rpm"
-        if command -v rpm-ostree &> /dev/null; then
+        if is_ostree; then
             if rpm -qi "winboat" &> /dev/null; then
                 pkg_remove winboat
             fi

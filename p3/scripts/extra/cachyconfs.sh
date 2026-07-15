@@ -3,7 +3,7 @@
 # version: 1.0
 # description: cachyconfs_desc
 # icon: cachyos.svg
-# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, !zorin, rhel, !deepin
+# compat: ubuntu, debian, fedora, suse, arch, ostree, !ublue, !zorin, rhel, !deepin
 # reboot: yes
 # nocontainer
 # repo: https://github.com/CachyOS/CachyOS-Settings
@@ -14,7 +14,7 @@
 source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
 sudo_rq
-if command -v rpm-ostree &>/dev/null; then
+if is_ostree; then
     if [ "$ID" = "bluefin" ] || [ "$ID" = "bazzite" ] || [ "$ID" = "aurora" ]; then
         cfg_host=$(rpm -qi "optimize-cfg-ublue" 2>/dev/null | grep "^Version" | awk '{print $3}')
         cfg_server="1.0"

@@ -9,7 +9,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
-if command -v rpm-ostree &>/dev/null; then
+if is_ostree; then
     if [ ! -d "$HOME/.nvm" ]; then
     # revert to 'manual install' procedure, script doesn't work properly for atomic Fedora
         pkg_install nodejs npm

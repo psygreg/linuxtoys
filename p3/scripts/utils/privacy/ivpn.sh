@@ -29,7 +29,7 @@ elif is_ubuntu; then
 	# Update APT repo info
 	sudo apt update
 elif is_fedora || is_ostree || is_rhel; then
-	if command -v rpm-ostree &>/dev/null; then
+	if is_ostree; then
 		prep_tmp
 		wget https://repo.ivpn.net/stable/fedora/generic/ivpn.repo
 		sudo install -o root -g root -m 644 ivpn.repo /etc/yum.repos.d/

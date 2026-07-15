@@ -287,7 +287,7 @@ _lang_
 zenwrn "$msg034"
 cd $HOME
 export SCRIPT_DIR
-if command -v rpm-ostree >/dev/null 2>&1; then
+if is_ostree; then
     davinciboxatom
 elif is_solus || is_arch || is_cachy || is_ubuntu; then
     davinciboxd

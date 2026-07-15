@@ -9,7 +9,7 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-if command -v rpm-ostree >/dev/null 2>&1 || [ "$ID" == "fedora" ] || [[ "$ID_LIKE" =~ "fedora" ]]; then
+if is_fedora || is_ostree; then
     sudo_rq
     rpmfusion_chk
     if ! rpm -qi terra-gamescope &>/dev/null; then
