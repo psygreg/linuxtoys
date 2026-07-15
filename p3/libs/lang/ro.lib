@@ -136,3 +136,4 @@ sysup_available="O actualizare de lansare este disponibilă. Actualizați acum? 
 zswapmsg="ZSWAP este acum activat. Trebuie să creați un fișier sau o partiție de schimb."
 msgostreepending="O actualizare de sistem este în așteptare. Vă rugăm să reporniți sistemul și să executați din nou acest script pentru a finaliza instalarea."
 outofspace="Spațiu de stocare disponibil insuficient pentru operație."
+websoftwarewarning="După aplicarea acestui patch este în continuare necesar un browser web bazat pe Chromium, care nu este Flatpak, pentru a gestiona setările dispozitivului."

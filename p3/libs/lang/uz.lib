@@ -137,3 +137,4 @@ sysup_available="Chiqarilganlik yangilanishi mavjud. Hozir yangilanish? (Agar ta
 zswapmsg="ZSWAP endi faollashtirildi. Swap faylini yoki boʻlimni yaratishingiz kerak."
 msgostreepending="Tizim yangilanishi kutmoqda. Iltimos tizimni qayta yoqing va o'rnatishni tugatish uchun ushbu skriptni yana ishga tushiring."
 outofspace="Operatsiya uchun yetarli bo'sh saqlash joy yo'q."
+websoftwarewarning="Ushbu yamadan so‘ng ham qurilma sozlamalarini boshqarish uchun Flatpak bo‘lmagan Chromium asosidagi veb-brauzer talab qilinadi."

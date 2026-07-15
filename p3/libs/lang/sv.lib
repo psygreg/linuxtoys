@@ -138,3 +138,4 @@ sysup_available="En utgåvuppdatering är tillgänglig. Uppdatera nu? (Om du int
 zswapmsg="ZSWAP är nu aktiverat. Du måste skapa en swap-fil eller partition."
 msgostreepending="En systemuppdatering väntar. Starta om systemet och kör detta skript igen för att slutföra installationen."
 outofspace="Otillräckligt tillgängligt lagringsutrymme för operationen."
+websoftwarewarning="Efter denna uppdatering krävs fortfarande en Chromium-baserad webbläsare som inte är en Flatpak för att hantera enhetsinställningar."

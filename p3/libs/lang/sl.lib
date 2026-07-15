@@ -138,3 +138,4 @@ sysup_available="Na voljo je posodobitev izdaje. Posodobiti zdaj? (Če se ne odl
 zswapmsg="ZSWAP je sedaj omogočen. Ustvariti morate datoteko ali particijo za zamenjavo."
 msgostreepending="Posodobitev sistema je v teku. Prosim ponovno zaženite sistem in znova zaženite ta skript, da dokončate namestitev."
 outofspace="Nezadostno razpoložljivo prostora za hranjenje za operacijo."
+websoftwarewarning="Po tem popravku je za upravljanje nastavitev naprave še vedno potreben spletni brskalnik, ki temelji na Chromiumu in ni Flatpak."

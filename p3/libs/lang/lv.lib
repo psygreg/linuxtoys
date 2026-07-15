@@ -138,3 +138,4 @@ sysup_available="Laidienā pieejama atjauninājuma versija. Atjaunināt tagad? (
 zswapmsg="ZSWAP ir tagad iespējots. Jums jārada swap fails vai nodalījums."
 msgostreepending="Sistēmas atjauninājums gaida. Lūdzu pārstartējiet savu sistēmu un pārstartējiet šo skriptu, lai pabeigtuo instalāciju."
 outofspace="Nepietiekama pieejamā krātuves vieta operācijai."
+websoftwarewarning="Pēc šī ielāpa ierīces iestatījumu pārvaldībai joprojām ir nepieciešama uz Chromium balstīta tīmekļa pārlūkprogramma, kas nav Flatpak."

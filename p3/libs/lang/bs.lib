@@ -138,3 +138,4 @@ sysup_available="Dostupna je nadogradnja izdanja. Nadograditi sada? (Ako ne odab
 zswapmsg="ZSWAP je sada omogućen. Morate kreirati datoteku razmjene ili particiju."
 msgostreepending="Ažuriranje sistema je u čekanju. Molimo, ponovno pokrenite sistem i ponovo pokrenite ovaj skript da biste dovršili instalaciju."
 outofspace="Nedovoljna dostupna prostor za pohranu za operaciju."
+websoftwarewarning="Nakon ove zakrpe i dalje je potreban web preglednik zasnovan na Chromiumu koji nije Flatpak za upravljanje postavkama uređaja."

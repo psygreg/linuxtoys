@@ -137,3 +137,4 @@ sysup_available="Útgáfuuppfærsla er til staðar. Uppfæra nú? (Ef þú velur
 zswapmsg="ZSWAP er nú virkt. Þú verður að búa til skiptiskrá eða sundurskipti."
 msgostreepending="Kerfiuppfærsla á bjóð. Endurkkæstir útómátinn þían og kéyrstir þssa skripta aftur til að löka uppsetningunni."
 outofspace="Ófullnægjandi geymslurými fyrir aðgerð."
+websoftwarewarning="Eftir þessa lagfæringu er enn þörf á Chromium-vafra sem ekki er Flatpak til að stjórna stillingum tækisins."

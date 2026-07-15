@@ -139,3 +139,4 @@ sysup_available="Hay disponible una actualización de versión. ¿Actualizar aho
 zswapmsg="ZSWAP está ahora habilitado. Debes crear un archivo o partición de intercambio."
 msgostreepending="Una actualización del sistema está pendiente. Por favor, reinicia tu sistema y ejecuta este script nuevamente para completar la instalación."
 outofspace="Espacio de almacenamiento disponible insuficiente para la operación."
+websoftwarewarning="Después de este parche, aún se requiere un navegador web basado en Chromium que no sea Flatpak para administrar la configuración del dispositivo."

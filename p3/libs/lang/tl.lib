@@ -137,3 +137,4 @@ sysup_available="Ang pag-update ng release ay available. I-update na ngayon? (Ku
 zswapmsg="ZSWAP is now enabled. Create a swap file or partition."
 msgostreepending="A system update is pending. Please reboot your system and run this script again to complete the installation."
 outofspace="Insufficient available storage space for operation."
+websoftwarewarning="Pagkatapos ng patch na ito, kailangan pa rin ang isang Chromium-based na web browser na hindi Flatpak upang pamahalaan ang mga setting ng device."

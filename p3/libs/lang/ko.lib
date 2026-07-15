@@ -137,3 +137,4 @@ sysup_available="완전한 시스템 업그레이드가 사용 가능합니다. 
 zswapmsg="ZSWAP이 이제 활성화되었습니다. 스왑 파일 또는 파티션을 만들어야 합니다."
 msgostreepending="시스템 업데이트가 대기 중입니다. 시스템을 다시 부팅하고 설치를 완료하려면 이 스크립트를 다시 실행하세요."
 outofspace="작업에 충분한 저장 공간이 없습니다."
+websoftwarewarning="이 패치 후에도 장치 설정을 관리하려면 Flatpak이 아닌 Chromium 기반 웹 브라우저가 필요합니다."

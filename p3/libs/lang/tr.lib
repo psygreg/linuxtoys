@@ -137,3 +137,4 @@ sysup_available="Sürüm güncelemesi mevcuttur. Şimdi güncellensin mi? (Seçm
 zswapmsg="ZSWAP artık etkinleştirildi. Bir swap dosyası veya bölümü oluşturmalısınız."
 msgostreepending="Bir sistem güncellemesi bekleniyor. Sisteminizi yeniden başlatın ve yüklemeyi tamamlamak için bu betiği tekrar çalıştırın."
 outofspace="İşlem için yeterli boş depolama alanı yok."
+websoftwarewarning="Bu yamadan sonra, cihaz ayarlarını yönetmek için hâlâ Flatpak olmayan Chromium tabanlı bir web tarayıcısı gereklidir."

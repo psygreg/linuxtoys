@@ -137,3 +137,4 @@ sysup_available="Cập nhật phiên bản có sẵn. Cập nhật ngay? (Nếu 
 zswapmsg="ZSWAP hiện được bật. Bạn phải tạo tệp hoán đổi hoặc phân vùng."
 msgostreepending="Một bản cập nhật hệ thống đang chờ. Vui lòng khởi động lại hệ thống của bạn và chạy lại tập lệnh này để hoàn tất cài đặt."
 outofspace="Dung lượng lưu trữ có sẵn không đủ cho hoạt động."
+websoftwarewarning="Sau bản vá này, vẫn cần một trình duyệt web dựa trên Chromium không phải Flatpak để quản lý cài đặt thiết bị."

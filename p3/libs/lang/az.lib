@@ -138,3 +138,4 @@ sysup_available="Buraxılış yeniləmə əlçatan. İndi yeniləmək istəyirsi
 zswapmsg="ZSWAP indi aktivdir. Bunu istifadə etmək üçün swap faylı yaratmalısınız."
 msgostreepending="Sistem yeniləməsi gözləyişdədir. Sistemin yenidən başladılması istəyindən sonra yükləməni tamamlamaq üçün bu skripti yenidən çalıştırın."
 outofspace="Əməliyyat üçün yetərli boş yaddaş yeri yoxdur."
+websoftwarewarning="Bu yamaqdan sonra cihaz parametrlərini idarə etmək üçün hələ də Flatpak olmayan Chromium əsaslı veb brauzer tələb olunur."

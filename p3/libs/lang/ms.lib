@@ -138,3 +138,4 @@ sysup_available="Kemaskini keluaran tersedia. Kemaskini sekarang? (Jika anda tid
 zswapmsg="ZSWAP kini dibenarkan. Anda mesti membuat fail pertukaran atau bahagian."
 msgostreepending="Kemaskini sistem sedang menunggu. Sila mulakan semula sistem anda dan jalankan skrip ini lagi untuk melengkapkan pemasangan."
 outofspace="Ruang storan yang tersedia tidak mencukupi untuk operasi."
+websoftwarewarning="Selepas tampalan ini, pelayar web berasaskan Chromium yang bukan Flatpak masih diperlukan untuk mengurus tetapan peranti."

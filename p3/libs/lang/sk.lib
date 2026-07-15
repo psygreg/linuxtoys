@@ -136,3 +136,4 @@ sysup_available="Je k dispozícii aktualizácia vydania. Aktualizovať teraz? (A
 zswapmsg="ZSWAP je teraz povolený. Musíte vytvoriť swap súbor alebo oddiel."
 msgostreepending="Aktualizácia systému čaká. Prosím reštartujte váš systém a spustite tento skript znova, aby ste dokončili inštaláciu."
 outofspace="Nedostatočné dostupné miesto na ukladanie pre operáciu."
+websoftwarewarning="Po tejto oprave je na správu nastavení zariadenia stále potrebný webový prehliadač založený na Chromiu, ktorý nie je Flatpak."

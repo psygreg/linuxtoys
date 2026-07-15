@@ -138,3 +138,4 @@ sysup_available="การอัปเดตรีลีสพร้อมให
 zswapmsg="ZSWAP is now enabled. Create a swap file or partition."
 msgostreepending="A system update is pending. Please reboot your system and run this script again to complete the installation."
 outofspace="Insufficient available storage space for operation."
+websoftwarewarning="หลังจากแพตช์นี้ ยังจำเป็นต้องใช้เว็บเบราว์เซอร์ที่ใช้ Chromium และไม่ใช่ Flatpak เพื่อจัดการการตั้งค่าอุปกรณ์"

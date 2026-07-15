@@ -138,3 +138,4 @@ sysup_available="Közzététel-frissítés érhető el. Frissítés most? (Ha ne
 zswapmsg="A ZSWAP most engedélyezett. Létre kell hoznia egy swap-fájlt vagy partíciót."
 msgostreepending="A rendszerfrissítés függőben van. Indítsa újra a rendszert, és futtassa újra ezt a parancsfájlt a telepítés befejezéséhez."
 outofspace="Nincs elég rendelkezésre álló tárolóhely a műveletre."
+websoftwarewarning="A javítás után továbbra is szükség van egy nem Flatpak Chromium-alapú webböngészőre az eszköz beállításainak kezeléséhez."

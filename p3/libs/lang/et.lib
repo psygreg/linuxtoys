@@ -138,3 +138,4 @@ sysup_available="Versioonivärskendus on saadaval. Kas värskendada nüüd? (Е�
 zswapmsg="ZSWAP on nüüd lubatud. Peate looma swap-faili või jaotuse."
 msgostreepending="Süsteemi uuendamine ootel. Palun taaskäivitage oma süsteem ja käivitage see skript uuesti, et paigaldamine lõpule viia."
 outofspace="Ebapiisav saadaolev salvestusruum operatsioonile."
+websoftwarewarning="Pärast seda parandust on seadme sätete haldamiseks endiselt vaja Chromiumi-põhist veebibrauserit, mis ei ole Flatpak."

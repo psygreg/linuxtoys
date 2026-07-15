@@ -138,3 +138,4 @@ sysup_available="En udgivelsesopgradering er tilgængelig. Opgradér nu? (Hvis d
 zswapmsg="ZSWAP er nu aktiveret. Du skal oprette en swap-fil eller partition."
 msgostreepending="En systemopdatering afventer. Genstart venligst dit system og kør dette script igen for at fuldføre installationen."
 outofspace="Utilstrekkelig ledig lagerplads til operationen."
+websoftwarewarning="Efter denne rettelse kræves der stadig en Chromium-baseret webbrowser, som ikke er en Flatpak, for at administrere enhedsindstillinger."

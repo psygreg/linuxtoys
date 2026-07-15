@@ -138,3 +138,4 @@ sysup_available="Tá nuashonrú scaoilte ar fáil. Nuashonruithe anois? (Mura ro
 zswapmsg="Tá ZSWAP gníomhachtaithe anois. Ní mór duit comhad babhtála a chruthú."
 msgostreepending="Tá nuashonrú córais i bhfeidhm. Atosaigh do chóras le do thoil agus rith an script seo arís chun an fhéadachas a bhaint amach."
 outofspace="Spás stórála ar fáil ná leor don oibríochta."
+websoftwarewarning="Tar éis an paiste seo, beidh brabhsálaí gréasáin bunaithe ar Chromium nach Flatpak é fós ag teastáil chun socruithe an ghléis a bhainistiú."

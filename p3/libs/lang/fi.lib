@@ -138,3 +138,4 @@ sysup_available="Julkaisupäivitys on saatavilla. Päivitä nyt? (Jos et valitse
 zswapmsg="ZSWAP on nyt otettu käyttöön. Sinun on luotava swap-tiedosto tai osio."
 msgostreepending="Järjestelmäpäivitys on vireillä. Käynnistä järjestelmä uudelleen ja suorita tämä skripti uudelleen asennuksen loppuunsaattamiseksi."
 outofspace="Riittämätön käytettävissä oleva tallennustila toiminnolle."
+websoftwarewarning="Tämän korjauksen jälkeen laitteen asetusten hallintaan tarvitaan edelleen Chromium-pohjainen selain, joka ei ole Flatpak."

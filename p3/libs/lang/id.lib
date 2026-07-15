@@ -138,3 +138,4 @@ sysup_available="Pembaruan rilis tersedia. Perbarui sekarang? (Jika tidak memili
 zswapmsg="ZSWAP sekarang diaktifkan. Anda harus membuat file swap atau partisi."
 msgostreepending="Pembaruan sistem sedang menunggu. Silakan boot ulang sistem Anda dan jalankan skrip ini lagi untuk menyelesaikan instalasi."
 outofspace="Ruang penyimpanan yang tersedia tidak mencukupi untuk operasi."
+websoftwarewarning="Setelah patch ini, browser web berbasis Chromium yang bukan Flatpak masih diperlukan untuk mengelola pengaturan perangkat."

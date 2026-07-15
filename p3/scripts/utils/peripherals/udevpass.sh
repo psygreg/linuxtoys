@@ -62,6 +62,7 @@ create_udev_rules() {
 }
 
 # Menu
+zenwrn "$websoftwarewarning"
 main_menu() {
     local selection
     local vendor_id
