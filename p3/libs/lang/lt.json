@@ -502,5 +502,6 @@
   "lmstudio_desc": "Eksperimentuokite su LLM savo kompiuteryje naudodami grafinį valdymo skydelį, pokalbių sąsają ir programuojamą API.",
   "mt5_desc": "Galinga ir patogi platforma prekiauti Forex, akcijomis, ateities sandoriais ir kitomis priemonėmis.",
   "medicat_desc": "Naujausių kompiuterio diagnostikos ir atkūrimo įrankių rinkinys patogiame Live USB pakete.",
-  "umipp_desc": "Išjungia CPU UMIP naudodamas branduolio parametrą. Gali būti reikalinga kai kurioms Windows programoms paleisti per WINE/Proton."
+  "umipp_desc": "Išjungia CPU UMIP naudodamas branduolio parametrą. Gali būti reikalinga kai kurioms Windows programoms paleisti per WINE/Proton.",
+  "qtscrcpy_desc": "Atvaizduokite ir valdykite Android įrenginius per USB arba WiFi tinklą."
 }

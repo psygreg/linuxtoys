@@ -502,5 +502,6 @@
   "lmstudio_desc": "Experimentera med LLM:er på din dator med en grafisk kontrollpanel, chattgränssnitt och programmerbart API.",
   "mt5_desc": "Kraftfull och bekväm plattform för handel med Forex, aktier, terminer och andra instrument.",
   "medicat_desc": "Ett urval av de senaste verktygen för datordiagnostik och återställning, samlade i ett lättanvänt Live USB-verktygspaket.",
-  "umipp_desc": "Inaktiverar CPU UMIP via en kärnparameter. Kan behövas för att köra vissa Windows-program genom WINE/Proton."
+  "umipp_desc": "Inaktiverar CPU UMIP via en kärnparameter. Kan behövas för att köra vissa Windows-program genom WINE/Proton.",
+  "qtscrcpy_desc": "Spegla och styr Android-enheter via USB eller WiFi-nätverk."
 }

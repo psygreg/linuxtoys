@@ -502,5 +502,6 @@
   "lmstudio_desc": "Mag-eksperimento sa mga LLM sa iyong computer gamit ang GUI control panel, chat interface, at programmable API.",
   "mt5_desc": "Makapangyarihan at maginhawang platform para sa pangangalakal ng Forex, stocks, futures, at iba pang instrumento.",
   "medicat_desc": "Isang koleksyon ng pinakabagong mga kasangkapan para sa pagsusuri at pag-recover ng computer na pinagsama sa isang madaling gamitin na Live USB toolkit.",
-  "umipp_desc": "Hindi pinapagana ang CPU UMIP sa pamamagitan ng kernel parameter. Maaaring kailanganin upang mapatakbo ang ilang Windows application gamit ang WINE/Proton."
+  "umipp_desc": "Hindi pinapagana ang CPU UMIP sa pamamagitan ng kernel parameter. Maaaring kailanganin upang mapatakbo ang ilang Windows application gamit ang WINE/Proton.",
+  "qtscrcpy_desc": "I-mirror at kontrolin ang mga Android device sa pamamagitan ng USB o WiFi network."
 }

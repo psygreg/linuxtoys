@@ -502,5 +502,6 @@
   "lmstudio_desc": "Eksperimentirajte s LLM-ovima na svom računalu pomoću grafičke upravljačke ploče, chat sučelja i programibilnog API-ja.",
   "mt5_desc": "Snažna i praktična platforma za trgovanje Forexom, dionicama, ročnicama i drugim instrumentima.",
   "medicat_desc": "Odabir najnovijih alata za dijagnostiku i oporavak računala, objedinjenih u jednostavan Live USB paket.",
-  "umipp_desc": "Onemogućuje CPU UMIP putem parametra jezgre. Može biti potrebno za pokretanje određenih Windows aplikacija putem WINE/Proton."
+  "umipp_desc": "Onemogućuje CPU UMIP putem parametra jezgre. Može biti potrebno za pokretanje određenih Windows aplikacija putem WINE/Proton.",
+  "qtscrcpy_desc": "Zrcalite i upravljajte Android uređajima putem USB-a ili WiFi mreže."
 }

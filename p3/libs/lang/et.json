@@ -502,5 +502,6 @@
   "lmstudio_desc": "Katseta LLM-e oma arvutis graafilise juhtpaneeli, vestlusliidese ja programmeeritava API abil.",
   "mt5_desc": "Võimas ja mugav platvorm Forexi, aktsiate, futuuride ja teiste instrumentidega kauplemiseks.",
   "medicat_desc": "Valik uusimaid arvuti diagnostika- ja taastetööriistu, koondatud hõlpsasti kasutatavasse Live USB tööriistakomplekti.",
-  "umipp_desc": "Keelab CPU UMIP-i kerneli parameetri abil. Võib olla vajalik mõne Windowsi rakenduse käivitamiseks WINE/Protoni kaudu."
+  "umipp_desc": "Keelab CPU UMIP-i kerneli parameetri abil. Võib olla vajalik mõne Windowsi rakenduse käivitamiseks WINE/Protoni kaudu.",
+  "qtscrcpy_desc": "Peegelda ja juhi Android-seadmeid USB või WiFi-võrgu kaudu."
 }

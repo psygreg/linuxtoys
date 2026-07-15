@@ -500,5 +500,6 @@
   "lmstudio_desc": "Jaribu LLM kwenye kompyuta yako kwa kutumia paneli ya udhibiti ya GUI, kiolesura cha mazungumzo, na API inayoweza kupangwa.",
   "mt5_desc": "Jukwaa lenye nguvu na rahisi kwa kufanya biashara ya Forex, hisa, futures na vyombo vingine.",
   "medicat_desc": "Mkusanyiko wa zana za hivi karibuni za uchunguzi na urejeshaji wa kompyuta katika kifurushi rahisi kutumia cha Live USB.",
-  "umipp_desc": "Huzima CPU UMIP kupitia kigezo cha kernel. Huenda ikahitajika ili kuendesha baadhi ya programu za Windows kupitia WINE/Proton."
+  "umipp_desc": "Huzima CPU UMIP kupitia kigezo cha kernel. Huenda ikahitajika ili kuendesha baadhi ya programu za Windows kupitia WINE/Proton.",
+  "qtscrcpy_desc": "Onyesha na udhibiti vifaa vya Android kupitia USB au mtandao wa WiFi."
 }

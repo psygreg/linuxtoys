@@ -502,5 +502,6 @@
   "lmstudio_desc": "Experimente LLMs no seu computador com um painel de controle gráfico, interface de chat e API programável.",
   "mt5_desc": "Plataforma poderosa e conveniente para negociar Forex, ações, futuros e outros instrumentos.",
   "medicat_desc": "Uma seleção das mais recentes ferramentas de diagnóstico e recuperação de computadores reunidas em um kit Live USB fácil de usar.",
-  "umipp_desc": "Desativa o UMIP da CPU por meio de um parâmetro do kernel. Pode ser necessário para executar alguns aplicativos específicos do Windows através do WINE/Proton."
+  "umipp_desc": "Desativa o UMIP da CPU por meio de um parâmetro do kernel. Pode ser necessário para executar alguns aplicativos específicos do Windows através do WINE/Proton.",
+  "qtscrcpy_desc": "Espelhe e controle dispositivos Android via USB ou rede WiFi."
 }

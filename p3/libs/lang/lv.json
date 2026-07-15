@@ -502,5 +502,6 @@
   "lmstudio_desc": "Eksperimentējiet ar LLM savā datorā, izmantojot grafisko vadības paneli, tērzēšanas saskarni un programmējamu API.",
   "mt5_desc": "Jaudīga un ērta platforma tirdzniecībai ar Forex, akcijām, nākotnes darījumiem un citiem instrumentiem.",
   "medicat_desc": "Jaunāko datora diagnostikas un atkopšanas rīku izlase, apkopota viegli lietojamā Live USB rīkkopā.",
-  "umipp_desc": "Atspējo CPU UMIP, izmantojot kodola parametru. Tas var būt nepieciešams dažu Windows lietotņu palaišanai ar WINE/Proton."
+  "umipp_desc": "Atspējo CPU UMIP, izmantojot kodola parametru. Tas var būt nepieciešams dažu Windows lietotņu palaišanai ar WINE/Proton.",
+  "qtscrcpy_desc": "Atspoguļojiet un vadiet Android ierīces, izmantojot USB vai WiFi tīklu."
 }

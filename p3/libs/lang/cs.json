@@ -502,5 +502,6 @@
   "lmstudio_desc": "Experimentujte s LLM na svém počítači pomocí grafického ovládacího panelu, chatovacího rozhraní a programovatelného API.",
   "mt5_desc": "Výkonná a pohodlná platforma pro obchodování s Forexem, akciemi, futures a dalšími nástroji.",
   "medicat_desc": "Výběr nejnovějších nástrojů pro diagnostiku a obnovu počítače v snadno použitelném Live USB balíčku.",
-  "umipp_desc": "Zakáže CPU UMIP pomocí parametru jádra. Může být potřeba pro spuštění některých aplikací Windows přes WINE/Proton."
+  "umipp_desc": "Zakáže CPU UMIP pomocí parametru jádra. Může být potřeba pro spuštění některých aplikací Windows přes WINE/Proton.",
+  "qtscrcpy_desc": "Zrcadlete a ovládejte zařízení Android přes USB nebo síť WiFi."
 }

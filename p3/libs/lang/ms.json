@@ -502,5 +502,6 @@
   "lmstudio_desc": "Bereksperimen dengan LLM pada komputer anda dengan panel kawalan GUI, antara muka sembang dan API yang boleh diprogram.",
   "mt5_desc": "Platform yang berkuasa dan mudah untuk berdagang Forex, saham, niaga hadapan dan instrumen lain.",
   "medicat_desc": "Pilihan alat diagnostik dan pemulihan komputer terkini yang dihimpunkan dalam toolkit Live USB yang mudah digunakan.",
-  "umipp_desc": "Melumpuhkan CPU UMIP melalui parameter kernel. Mungkin diperlukan untuk menjalankan aplikasi Windows tertentu melalui WINE/Proton."
+  "umipp_desc": "Melumpuhkan CPU UMIP melalui parameter kernel. Mungkin diperlukan untuk menjalankan aplikasi Windows tertentu melalui WINE/Proton.",
+  "qtscrcpy_desc": "Cerminkan dan kawal peranti Android melalui USB atau rangkaian WiFi."
 }
