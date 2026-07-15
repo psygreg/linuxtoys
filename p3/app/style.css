@@ -18,7 +18,7 @@
     transition: all 200ms ease-in-out;
 }
 .installed-card {
-    border-radius: 0 16px 16px 16px;
+    border-radius: 16px;
 }
 .installed-card-hover {
     border-radius: 0 16px 16px 0;
@@ -30,17 +30,12 @@
     padding: 4px;
 }
 
-button.installed-card-remove {
-    border-right: 1px solid rgba(255,255,255,0.30);
-}
-button.installed-card-remove:hover {
-    border-radius: 0 16px 16px 0;
-    border-right: 1px solid rgba(234, 178, 178, 0.535);
-}
-
+button.installed-card-remove,
+button.installed-card-remove:hover,
 button.installed-card-remove:active {
     border-radius: 0 16px 16px 0;
 }
+
 .item-subcategory {
     background-image: url('icons/jigsaw.svg');
     background-size: 80px;
@@ -69,4 +64,19 @@ modelbutton image {
 
 checkbutton image {
     margin-right: 3px;
+}
+
+button.installed-card-remove-left,
+button.installed-card-remove-left:hover,
+button.installed-card-remove-left:active {
+    border-radius: 16px 0 0 16px;
+}
+
+button.installed-card-remove-left {
+    border-radius: 16px 0 0 16px;
+    border-right: 1px solid rgba(255,255,255,0.30);
+}
+
+button.installed-card-remove-left:hover {
+    border-left-color: rgba(234, 178, 178, 0.535);
 }

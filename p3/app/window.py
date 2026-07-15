@@ -732,7 +732,7 @@ class AppWindow(Gtk.ApplicationWindow):
             remove_btn = Gtk.Button.new_from_icon_name(
                 "edit-delete-symbolic", Gtk.IconSize.MENU
             )
-            remove_btn.get_style_context().add_class("installed-card-remove")
+            remove_btn.get_style_context().add_class("installed-card-remove-left")
             remove_btn.set_size_request(24, 24)
             remove_btn.set_margin_left(4)
             remove_btn.set_tooltip_text(
