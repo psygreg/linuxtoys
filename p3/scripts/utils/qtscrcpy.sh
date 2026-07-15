@@ -3,6 +3,7 @@
 # description: qtscrcpy_desc
 # icon: qtscrcpy.png
 # repo: https://github.com/barry-ran/QtScrcpy
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
