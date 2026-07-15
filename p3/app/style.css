@@ -3,13 +3,6 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
 }
-.script-item-new {
-    border: 1px solid rgba(255, 215, 0, 0.9);
-}
-.script-item-new.script-item-hover {
-    border: 1px solid rgba(255, 235, 80, 1.0);
-    box-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
-}
 .script-item-hover {
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.9);
@@ -17,6 +10,12 @@
     box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
     transition: all 200ms ease-in-out;
 }
+
+.script-item-new {
+    border: 1px solid rgba(255, 215, 0, 0.9);
+    border-radius: 16px;
+}
+
 .installed-card {
     border-radius: 16px;
 }
@@ -71,12 +70,10 @@ button.installed-card-remove-left:hover,
 button.installed-card-remove-left:active {
     border-radius: 16px 0 0 16px;
 }
-
 button.installed-card-remove-left {
     border-radius: 16px 0 0 16px;
     border-right: 1px solid rgba(255,255,255,0.30);
 }
-
 button.installed-card-remove-left:hover {
     border-left-color: rgba(234, 178, 178, 0.535);
 }
