@@ -500,5 +500,7 @@
   "qdi_desc": "Modern sabit disklerin ve katı hal sürücülerinin SMART verilerini gösteren smartctl için bir ön yüz. CrystalDiskInfo'ya benzer bir kullanıcı deneyimi sunar.",
   "occt_desc": "Kararlılık testi ve performans ölçüm aracı.",
   "lmstudio_desc": "GUI kontrol paneli, sohbet arayüzü ve programlanabilir API ile bilgisayarınızda LLM'ler üzerinde deneyler yapın.",
-  "mt5_desc": "Forex, hisse senedi, vadeli işlemler ve diğer araçlarda işlem yapmak için güçlü ve kullanışlı platform."
+  "mt5_desc": "Forex, hisse senedi, vadeli işlemler ve diğer araçlarda işlem yapmak için güçlü ve kullanışlı platform.",
+  "medicat_desc": "Kullanımı kolay bir Live USB araç setinde bir araya getirilmiş en güncel bilgisayar tanılama ve kurtarma araçlarından oluşan seçki.",
+  "umipp_desc": "Bir çekirdek parametresi aracılığıyla CPU UMIP'yi devre dışı bırakır. Bazı Windows uygulamalarını WINE/Proton üzerinden çalıştırmak için gerekebilir."
 }

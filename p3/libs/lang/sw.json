@@ -498,5 +498,7 @@
   "qdi_desc": "Kiolesura cha smartctl kinachoonyesha data ya SMART ya diski ngumu za kisasa na anatoa za solid state. Hutoa uzoefu wa mtumiaji unaofanana na CrystalDiskInfo.",
   "occt_desc": "Zana ya kupima uthabiti na utendaji.",
   "lmstudio_desc": "Jaribu LLM kwenye kompyuta yako kwa kutumia paneli ya udhibiti ya GUI, kiolesura cha mazungumzo, na API inayoweza kupangwa.",
-  "mt5_desc": "Jukwaa lenye nguvu na rahisi kwa kufanya biashara ya Forex, hisa, futures na vyombo vingine."
+  "mt5_desc": "Jukwaa lenye nguvu na rahisi kwa kufanya biashara ya Forex, hisa, futures na vyombo vingine.",
+  "medicat_desc": "Mkusanyiko wa zana za hivi karibuni za uchunguzi na urejeshaji wa kompyuta katika kifurushi rahisi kutumia cha Live USB.",
+  "umipp_desc": "Huzima CPU UMIP kupitia kigezo cha kernel. Huenda ikahitajika ili kuendesha baadhi ya programu za Windows kupitia WINE/Proton."
 }

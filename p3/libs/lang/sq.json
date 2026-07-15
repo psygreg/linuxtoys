@@ -500,5 +500,7 @@
   "qdi_desc": "Një ndërfaqe për smartctl që shfaq të dhënat SMART të disqeve të ngurta moderne dhe disqeve solid state. Ofron një përvojë përdoruesi të ngjashme me CrystalDiskInfo.",
   "occt_desc": "Mjet për testimin e stabilitetit dhe matjen e performancës.",
   "lmstudio_desc": "Eksperimentoni me LLM në kompjuterin tuaj me një panel kontrolli grafik, ndërfaqe bisede dhe API të programueshme.",
-  "mt5_desc": "Platformë e fuqishme dhe e përshtatshme për tregtimin e Forex, aksioneve, futures dhe instrumenteve të tjera."
+  "mt5_desc": "Platformë e fuqishme dhe e përshtatshme për tregtimin e Forex, aksioneve, futures dhe instrumenteve të tjera.",
+  "medicat_desc": "Përzgjedhje e mjeteve më të fundit për diagnostikimin dhe rikuperimin e kompjuterëve, të përmbledhura në një paketë Live USB të lehtë për përdorim.",
+  "umipp_desc": "Çaktivizon CPU UMIP përmes një parametri të kernelit. Mund të nevojitet për të ekzekutuar disa aplikacione Windows përmes WINE/Proton."
 }

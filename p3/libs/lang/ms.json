@@ -500,5 +500,7 @@
   "qdi_desc": "Frontend untuk smartctl yang memaparkan data SMART cakera keras moden dan pemacu solid state. Menyediakan pengalaman pengguna yang serupa dengan CrystalDiskInfo.",
   "occt_desc": "Alat ujian kestabilan dan penanda aras prestasi.",
   "lmstudio_desc": "Bereksperimen dengan LLM pada komputer anda dengan panel kawalan GUI, antara muka sembang dan API yang boleh diprogram.",
-  "mt5_desc": "Platform yang berkuasa dan mudah untuk berdagang Forex, saham, niaga hadapan dan instrumen lain."
+  "mt5_desc": "Platform yang berkuasa dan mudah untuk berdagang Forex, saham, niaga hadapan dan instrumen lain.",
+  "medicat_desc": "Pilihan alat diagnostik dan pemulihan komputer terkini yang dihimpunkan dalam toolkit Live USB yang mudah digunakan.",
+  "umipp_desc": "Melumpuhkan CPU UMIP melalui parameter kernel. Mungkin diperlukan untuk menjalankan aplikasi Windows tertentu melalui WINE/Proton."
 }

@@ -3,6 +3,7 @@
 # description: occt_desc
 # icon: occt.png
 # repo: https://www.ocbase.com
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

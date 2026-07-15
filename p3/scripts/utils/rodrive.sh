@@ -2,7 +2,6 @@
 # name: RClone OneDrive
 # description: rodrive_desc
 # icon: rodrive.svg
-# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 

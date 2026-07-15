@@ -500,5 +500,7 @@
   "qdi_desc": "Giao diện cho smartctl hiển thị dữ liệu SMART của ổ cứng và ổ đĩa thể rắn hiện đại. Cung cấp trải nghiệm người dùng tương tự CrystalDiskInfo.",
   "occt_desc": "Công cụ kiểm tra độ ổn định và đo hiệu năng.",
   "lmstudio_desc": "Thử nghiệm với LLM trên máy tính của bạn với bảng điều khiển GUI, giao diện trò chuyện và API có thể lập trình.",
-  "mt5_desc": "Nền tảng mạnh mẽ và tiện lợi để giao dịch Forex, cổ phiếu, hợp đồng tương lai và các công cụ khác."
+  "mt5_desc": "Nền tảng mạnh mẽ và tiện lợi để giao dịch Forex, cổ phiếu, hợp đồng tương lai và các công cụ khác.",
+  "medicat_desc": "Tuyển chọn các công cụ chẩn đoán và khôi phục máy tính mới nhất, được tích hợp trong một bộ công cụ Live USB dễ sử dụng.",
+  "umipp_desc": "Vô hiệu hóa CPU UMIP thông qua một tham số của nhân. Có thể cần thiết để chạy một số ứng dụng Windows bằng WINE/Proton."
 }

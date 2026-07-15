@@ -502,5 +502,7 @@
   "qdi_desc": "smartctl 的前端,显示现代硬盘和固态硬盘的 SMART 数据。提供类似于 CrystalDiskInfo 的用户体验。",
   "occt_desc": "稳定性测试和性能基准测试工具。",
   "lmstudio_desc": "通过图形化控制面板、聊天界面和可编程API,在您的计算机上体验LLM。",
-  "mt5_desc": "强大便捷的外汇、股票、期货及其他工具交易平台。"
+  "mt5_desc": "强大便捷的外汇、股票、期货及其他工具交易平台。",
+  "medicat_desc": "精选最新的计算机诊断和恢复工具，整合到一个易于使用的 Live USB 工具包中。",
+  "umipp_desc": "通过内核参数禁用 CPU UMIP。运行某些 Windows 应用程序（通过 WINE/Proton）时可能需要此选项。"
 }

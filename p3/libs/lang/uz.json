@@ -499,5 +499,7 @@
   "qdi_desc": "Zamonaviy qattiq disklar va solid state drayvlarning SMART ma'lumotlarini ko'rsatadigan smartctl uchun interfeys. CrystalDiskInfo-ga o'xshash foydalanuvchi tajribasini taqdim etadi.",
   "occt_desc": "Barqarorlikni sinash va unumdorlikni o‘lchash vositasi.",
   "lmstudio_desc": "GUI boshqaruv paneli, chat interfeysi va dasturlash mumkin bo'lgan API yordamida kompyuteringizda LLM'lar bilan tajriba o'tkazing.",
-  "mt5_desc": "Forex, aksiyalar, fyucherslar va boshqa vositalar bilan savdo qilish uchun kuchli va qulay platforma."
+  "mt5_desc": "Forex, aksiyalar, fyucherslar va boshqa vositalar bilan savdo qilish uchun kuchli va qulay platforma.",
+  "medicat_desc": "Foydalanish oson Live USB to‘plamiga jamlangan eng so‘nggi kompyuter diagnostikasi va tiklash vositalari.",
+  "umipp_desc": "Yadro parametri orqali CPU UMIP funksiyasini o‘chiradi. Ayrim Windows dasturlarini WINE/Proton orqali ishga tushirish uchun kerak bo‘lishi mumkin."
 }

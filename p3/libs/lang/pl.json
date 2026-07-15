@@ -500,5 +500,7 @@
   "qdi_desc": "Interfejs dla smartctl, który wyświetla dane SMART nowoczesnych dysków twardych i dysków SSD. Zapewnia wrażenia użytkownika podobne do CrystalDiskInfo.",
   "occt_desc": "Narzędzie do testowania stabilności i wydajności.",
   "lmstudio_desc": "Eksperymentuj z LLM na swoim komputerze za pomocą graficznego panelu sterowania, interfejsu czatu i programowalnego API.",
-  "mt5_desc": "Zaawansowana i wygodna platforma do handlu Forex, akcjami, kontraktami futures i innymi instrumentami."
+  "mt5_desc": "Zaawansowana i wygodna platforma do handlu Forex, akcjami, kontraktami futures i innymi instrumentami.",
+  "medicat_desc": "Zestaw najnowszych narzędzi do diagnostyki i odzyskiwania komputerów, zebranych w łatwym w użyciu pakiecie Live USB.",
+  "umipp_desc": "Wyłącza funkcję UMIP procesora za pomocą parametru jądra. Może być wymagane do uruchamiania niektórych aplikacji Windows przez WINE/Proton."
 }

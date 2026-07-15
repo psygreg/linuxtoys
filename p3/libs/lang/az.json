@@ -499,5 +499,7 @@
   "qdi_desc": "Müasir sərt disklərin və bərk vəziyyət disklərinin SMART məlumatlarını göstərən smartctl üçün frontend. CrystalDiskInfo-ya bənzər istifadəçi təcrübəsi təqdim edir.",
   "occt_desc": "Sabitlik testi və performans ölçmə aləti.",
   "lmstudio_desc": "GUI idarəetmə paneli, söhbət interfeysi və proqramlaşdırıla bilən API ilə kompüterinizdə LLM-lərlə eksperiment edin.",
-  "mt5_desc": "Forex, səhmlər, fyuçerslər və digər alətlərlə ticarət üçün güclü və rahat platforma."
+  "mt5_desc": "Forex, səhmlər, fyuçerslər və digər alətlərlə ticarət üçün güclü və rahat platforma.",
+  "medicat_desc": "İstifadəsi asan canlı USB alət dəstində toplanmış ən son kompüter diaqnostika və bərpa vasitələrinin seçimi.",
+  "umipp_desc": "Nüvə parametrindən istifadə edərək CPU UMIP funksiyasını söndürür. Bəzi Windows tətbiqlərini WINE/Proton vasitəsilə işlətmək üçün lazım ola bilər."
 }

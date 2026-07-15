@@ -500,5 +500,7 @@
   "qdi_desc": "Saskarne smartctl, kas parāda mūsdienu cieto disku un SSD disku SMART datus. Nodrošina lietotāja pieredzi, kas līdzīga CrystalDiskInfo.",
   "occt_desc": "Stabilitātes testēšanas un veiktspējas mērīšanas rīks.",
   "lmstudio_desc": "Eksperimentējiet ar LLM savā datorā, izmantojot grafisko vadības paneli, tērzēšanas saskarni un programmējamu API.",
-  "mt5_desc": "Jaudīga un ērta platforma tirdzniecībai ar Forex, akcijām, nākotnes darījumiem un citiem instrumentiem."
+  "mt5_desc": "Jaudīga un ērta platforma tirdzniecībai ar Forex, akcijām, nākotnes darījumiem un citiem instrumentiem.",
+  "medicat_desc": "Jaunāko datora diagnostikas un atkopšanas rīku izlase, apkopota viegli lietojamā Live USB rīkkopā.",
+  "umipp_desc": "Atspējo CPU UMIP, izmantojot kodola parametru. Tas var būt nepieciešams dažu Windows lietotņu palaišanai ar WINE/Proton."
 }

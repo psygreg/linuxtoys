@@ -500,5 +500,7 @@
   "qdi_desc": "Vmesnik za smartctl, ki prikazuje podatke SMART sodobnih trdih diskov in diskov SSD. Ponuja uporabniško izkušnjo, podobno CrystalDiskInfo.",
   "occt_desc": "Orodje za testiranje stabilnosti in merjenje zmogljivosti.",
   "lmstudio_desc": "Eksperimentirajte z LLM na svojem računalniku z grafično nadzorno ploščo, klepetalnim vmesnikom in programirljivim API-jem.",
-  "mt5_desc": "Zmogljiva in priročna platforma za trgovanje s Forexom, delnicami, terminskimi pogodbami in drugimi instrumenti."
+  "mt5_desc": "Zmogljiva in priročna platforma za trgovanje s Forexom, delnicami, terminskimi pogodbami in drugimi instrumenti.",
+  "medicat_desc": "Izbor najnovejših orodij za diagnostiko in obnovitev računalnika, združenih v enostaven Live USB komplet.",
+  "umipp_desc": "Onemogoči CPU UMIP prek parametra jedra. Morda bo potrebno za zagon nekaterih programov Windows prek WINE/Proton."
 }

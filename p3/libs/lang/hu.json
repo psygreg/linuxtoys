@@ -500,5 +500,7 @@
   "qdi_desc": "A smartctl felhasználói felülete, amely megjeleníti a modern merevlemezek és SSD-k SMART adatait. A CrystalDiskInfo-hoz hasonló felhasználói élményt nyújt.",
   "occt_desc": "Stabilitástesztelő és teljesítménymérő eszköz.",
   "lmstudio_desc": "Kísérletezzen LLM-ekkel a számítógépén grafikus vezérlőpanel, chat felület és programozható API segítségével.",
-  "mt5_desc": "Erőteljes és kényelmes platform Forex, részvények, határidős ügyletek és más eszközök kereskedésére."
+  "mt5_desc": "Erőteljes és kényelmes platform Forex, részvények, határidős ügyletek és más eszközök kereskedésére.",
+  "medicat_desc": "A legújabb számítógép-diagnosztikai és helyreállító eszközök gyűjteménye egy könnyen használható Live USB csomagban.",
+  "umipp_desc": "Letiltja a CPU UMIP funkcióját egy kernelparaméter segítségével. Szükséges lehet egyes Windows-alkalmazások futtatásához WINE/Proton alatt."
 }

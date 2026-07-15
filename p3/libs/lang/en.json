@@ -501,5 +501,6 @@
   "occt_desc": "Stability testing and benchmark tool.",
   "lmstudio_desc": "Experiment with LLMs on your computer with a GUI control panel, chat interface and programmable API.",
   "mt5_desc": "Powerful and convenient platform for trading Forex, stocks, futures and other instruments.",
-  "medicat_desc": "A selection of the latest computer diagnostic and recovery tools compiled into an easy to use, live USB toolkit."
+  "medicat_desc": "A selection of the latest computer diagnostic and recovery tools compiled into an easy to use, live USB toolkit.",
+  "umipp_desc": "Disables CPU UMIP through a kernel parameter. May be needed to run some specific Windows applications through WINE/Proton."
 }

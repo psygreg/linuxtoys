@@ -4,6 +4,7 @@
 # icon: mt5.png
 # repo: https://www.metatrader5.com
 # nocontainer
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

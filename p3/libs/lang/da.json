@@ -500,5 +500,7 @@
   "qdi_desc": "En frontend til smartctl, der viser SMART-data for moderne harddiske og SSD'er. Giver en brugeroplevelse, der ligner CrystalDiskInfo.",
   "occt_desc": "Værktøj til stabilitetstest og benchmark.",
   "lmstudio_desc": "Eksperimenter med LLM'er på din computer med et GUI-kontrolpanel, chatgrænseflade og programmerbart API.",
-  "mt5_desc": "Kraftfuld og bekvem platform til handel med Forex, aktier, futures og andre instrumenter."
+  "mt5_desc": "Kraftfuld og bekvem platform til handel med Forex, aktier, futures og andre instrumenter.",
+  "medicat_desc": "Et udvalg af de nyeste værktøjer til computerdiagnostik og gendannelse samlet i et brugervenligt Live USB-værktøjssæt.",
+  "umipp_desc": "Deaktiverer CPU UMIP via en kerneparameter. Kan være nødvendigt for at køre visse Windows-programmer gennem WINE/Proton."
 }

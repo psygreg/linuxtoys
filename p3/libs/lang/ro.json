@@ -500,5 +500,7 @@
   "qdi_desc": "O interfață pentru smartctl care afișează datele SMART ale hard diskurilor moderne și ale unităților solid-state. Oferă o experiență de utilizare similară cu CrystalDiskInfo.",
   "occt_desc": "Instrument pentru testarea stabilității și măsurarea performanței.",
   "lmstudio_desc": "Experimentează cu LLM-uri pe computerul tău cu un panou de control grafic, o interfață de chat și un API programabil.",
-  "mt5_desc": "Platformă puternică și convenabilă pentru tranzacționarea Forex, acțiunilor, futures și altor instrumente."
+  "mt5_desc": "Platformă puternică și convenabilă pentru tranzacționarea Forex, acțiunilor, futures și altor instrumente.",
+  "medicat_desc": "O selecție a celor mai noi instrumente de diagnosticare și recuperare a computerelor, reunite într-un pachet Live USB ușor de utilizat.",
+  "umipp_desc": "Dezactivează UMIP al procesorului printr-un parametru al nucleului. Poate fi necesar pentru rularea unor aplicații Windows prin WINE/Proton."
 }

@@ -4,6 +4,7 @@
 # icon: lmstudio.png
 # repo: https://lmstudio.ai
 # nocontainer
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
