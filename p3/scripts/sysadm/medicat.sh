@@ -4,6 +4,7 @@
 # icon: medicat.png
 # repo: https://medicatusb.com
 # nocontainer
+# new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
