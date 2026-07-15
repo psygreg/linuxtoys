@@ -1020,7 +1020,7 @@ class AppWindow(Gtk.ApplicationWindow):
 
         deps = asyncio.run(self._process_needed_scripts(selected_scripts))
 
-        self.open_term_view(deps)
+        self.open_term_view(deps, auto_run=True)
 
     def on_cancel_checklist(self, button):
         """Uncheck all boxes, remove checklist buttons from footer, and return to previous view."""
@@ -1047,7 +1047,7 @@ class AppWindow(Gtk.ApplicationWindow):
         # If this is a root script (shown as a category), execute it directly
         if info.get("is_script"):
             # Use VTE-based term_view for execution
-            self.open_term_view([info], removable_script_info=info)
+            self.open_term_view([info], removable_script_info=info, auto_run=True)
         else:
             # This is a category or subcategory - navigate to show its contents
             # Create a new view for the subcategory to enable proper animation
@@ -1078,7 +1078,7 @@ class AppWindow(Gtk.ApplicationWindow):
             # Show the new view with animation
             self.show_scripts_view(info)
 
-    def open_term_view(self, infos, removable_script_info=None, auto_run=False):
+    def open_term_view(self, infos, removable_script_info=None, auto_run=True):
         # Check if any script has auto_run flag set in its info dict
         if not auto_run and infos:
             auto_run = any(script.get("auto_run", False) for script in infos)
@@ -1219,8 +1219,8 @@ class AppWindow(Gtk.ApplicationWindow):
             
             if confirmed:
                 removable = info if len(deps) == 1 else None
-                # Auto-run only on first run; subsequent runs show terminal with bug report/remove options
-                self.open_term_view(deps, removable_script_info=removable, auto_run=is_first_run)
+                # Entering the terminal view always starts the selected scripts immediately.
+                self.open_term_view(deps, removable_script_info=removable, auto_run=True)
 
     def _handle_create_new_script(self):
         """Handle the creation of a new local script."""
@@ -2357,7 +2357,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             return
 
         # Use VTE-based term_view for execution
-        self.open_term_view([item_info], removable_script_info=item_info)
+        self.open_term_view([item_info], removable_script_info=item_info, auto_run=True)
 
     def _clear_search_results(self):
         """Clear search results and return to previous view."""

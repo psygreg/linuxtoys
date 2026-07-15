@@ -220,7 +220,7 @@ class TermRunScripts(Gtk.Box):
         
         # If auto_run is enabled, automatically start running the scripts
         if self.auto_run:
-            GLib.idle_add(self._run_next_script)
+            GLib.idle_add(self.on_button_run_clicked, None)
  
     def _set_remove_button_visibility(self):
         # Button shown if ALL conditions are met:
@@ -400,6 +400,12 @@ class TermRunScripts(Gtk.Box):
         self.on_button_run_clicked(self.vbox_main.button_run)
  
     def on_button_run_clicked(self, widget):
+        # Ignore repeated clicks or duplicate idle callbacks while a script is active.
+        if self.parent._script_running:
+            return False
+
+        self.vbox_main.button_run.set_sensitive(False)
+
         # Use translatable running text
         is_removal = bool(self.script_queue and self.script_queue[0].get("cleanup_path"))
         running_text = self.translations.get(
@@ -428,6 +434,7 @@ class TermRunScripts(Gtk.Box):
             self.current_script_has_registry_entry = True  # Mark as available for this session
         
         self._run_next_script()
+        return False
  
     def _remove_old_script_entries_from_registry(self, script_name):
         """
