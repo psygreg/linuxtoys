@@ -51,8 +51,8 @@ class DialogRestart(DialogBase):
 
     def _on_response(self, dialog, response_id):
         if response_id == Gtk.ResponseType.OK:
-            self.close()
-            os.execv(sys.executable, ["python"] + sys.argv)
+            self.destroy()
+            os.execv(sys.executable, [sys.executable, *sys.argv])
         elif response_id == Gtk.ResponseType.CANCEL:
             self.destroy()
 
@@ -130,16 +130,38 @@ class UpdateDialog(Gtk.Dialog):
         self.connect("response", self._on_response)
         self.show_all()
 
+    def _restart_after_update(self):
+        marker = "/tmp/.self_update_lt_complete"
+        if not os.path.exists(marker):
+            return True
+
+        try:
+            os.remove(marker)
+        except OSError:
+            pass
+
+        os.execv(sys.executable, [sys.executable, *sys.argv])
+        return False
+
     def _run_process(self):
         self.destroy()
         try:
+            marker = "/tmp/.self_update_lt_complete"
+            try:
+                os.remove(marker)
+            except FileNotFoundError:
+                pass
+
             with open("/tmp/.self_update_lt", "w") as f:
-                script_content = """#!/bin/bash
+                script_content = f"""#!/bin/bash
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 sudo_rq
-curl -fsSL https://linux.toys/install.sh | bash
+curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
 """
                 f.write(script_content)
+
+            os.chmod("/tmp/.self_update_lt", 0o700)
+            GLib.timeout_add(500, self._restart_after_update)
 
             self.parent.open_term_view(
                 [
