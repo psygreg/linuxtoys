@@ -316,15 +316,12 @@ class AppWindow(Gtk.ApplicationWindow):
             self._delete_local_scripts(selected_children)
 
         elif (event.state & Gdk.ModifierType.CONTROL_MASK) and keyval == Gdk.KEY_a:
-            if (
-                self.current_category_info
-                and f"{self.current_category_info.get('path')}/" == self.local_sh_dir
-            ):
-                [
+            if self._is_local_scripts_category(self.current_category_info):
+                for child in self.scripts_flowbox.get_children():
                     self.scripts_flowbox.select_child(child)
-                    for child in self.scripts_flowbox.get_children()[1:]
-                ]
                 return True
+
+            return False
 
         elif keyval == Gdk.KEY_space:
             # In checklist mode, Space toggles the checkbox of the currently selected item
@@ -688,21 +685,21 @@ class AppWindow(Gtk.ApplicationWindow):
         self.header_bar.pack_start(self.search_entry)
 
     def create_flowbox(self):
-        """Uses SelectionMode.NONE to disable selection highlight."""
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
-        flowbox.set_max_children_per_line(5)  ## items per line
+        flowbox.set_max_children_per_line(5)
         flowbox.set_activate_on_single_click(False)
-        flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
-        flowbox.set_homogeneous(True)  # Make all children the same size
-        ## Adiciona margem de 32 px em todos os lados
+
+        # Selection is enabled dynamically only for Local Scripts.
+        flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+
+        flowbox.set_homogeneous(True)
         flowbox.set_margin_left(32)
         flowbox.set_margin_top(8)
         flowbox.set_margin_right(32)
         flowbox.set_margin_bottom(4)
-        ## Define espaçamento horizontal e vertical entre os itens (em pixels)
-        flowbox.set_column_spacing(16)  ## espaço entre itens lado a lado
-        flowbox.set_row_spacing(12)  ## espaço entre linhas
+        flowbox.set_column_spacing(16)
+        flowbox.set_row_spacing(12)
         return flowbox
 
     def _on_toggled_check(self, button):
@@ -717,7 +714,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.reveal.support.hide()
         self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
-    def create_item_widget(self, item_info, checklist: bool = False):
+    def create_item_widget(self, item_info, checklist: bool = False, allow_drag: bool = False,):
         import os
 
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
@@ -855,17 +852,18 @@ class AppWindow(Gtk.ApplicationWindow):
         )
 
         # Connect hover events only (click events are connected separately)
-        event_box.drag_source_set(
-            Gdk.ModifierType.BUTTON1_MASK,
-            [Gtk.TargetEntry.new("text/uri-list", 0, 0)],
-            Gdk.DragAction.COPY,
-        )
+        if allow_drag:
+            event_box.drag_source_set(
+                Gdk.ModifierType.BUTTON1_MASK,
+                [Gtk.TargetEntry.new("text/uri-list", 0, 0)],
+                Gdk.DragAction.COPY,
+            )
+            event_box.connect("drag-data-get", self.on_drag_data_get)
+            event_box.connect("drag-end", self.on_drag_end)
 
         event_box.connect("enter-notify-event", self.on_item_enter)
         event_box.connect("leave-notify-event", self.on_item_leave)
         event_box.connect("button-press-event", self.on_item_button_press)
-        event_box.connect("drag-data-get", self.on_drag_data_get)
-        event_box.connect("drag-end", self.on_drag_end)
 
         return event_box
 
@@ -967,32 +965,36 @@ class AppWindow(Gtk.ApplicationWindow):
         self.categories_flowbox.show_all()
 
     def _load_scripts_into_flowbox(self, flowbox, category_info):
-        """Helper method to load scripts into a specific flowbox."""
-        # Clear the flowbox first
         for child in flowbox.get_children():
             flowbox.remove(child)
 
-        # Use cached scripts if available, otherwise parse from filesystem
         category_path = category_info["path"]
+
         if self.category_cache.is_populated:
             scripts = self.category_cache.get_scripts_for_category(category_path)
-            # If cache is populated but doesn't have this specific path (e.g., nested subcategories),
-            # fall back to parsing from filesystem
             if not scripts:
-                scripts = parser.get_scripts_for_category(category_path, self.translations)
+                scripts = parser.get_scripts_for_category(
+                    category_path, self.translations
+                )
         else:
-            scripts = parser.get_scripts_for_category(category_path, self.translations)
+            scripts = parser.get_scripts_for_category(
+                category_path, self.translations
+            )
 
         checklist_mode = category_info.get("display_mode", "menu") == "checklist"
 
         for script_info in scripts:
-            widget = self.create_item_widget(script_info, checklist=checklist_mode)
+            widget = self.create_item_widget(
+                script_info,
+                checklist=checklist_mode,
+                allow_drag=self._is_local_scripts_category(category_info),
+            )
+
             description = script_info.get("description", "")
-            if description:
-                widget.set_tooltip_text(description)
-            else:
-                widget.set_tooltip_text(None)
+            widget.set_tooltip_text(description or None)
             flowbox.add(widget)
+
+        self._configure_local_scripts_interaction(flowbox, category_info)
 
         if checklist_mode:
             self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
@@ -2809,3 +2811,14 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         else:
             # Root-level scripts can also be removable.
             self.load_categories()
+    
+    def _configure_local_scripts_interaction(self, flowbox, category_info):
+        is_local = self._is_local_scripts_category(category_info)
+
+        if is_local:
+            flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+            self._enable_drag_and_drop()
+        else:
+            flowbox.unselect_all()
+            flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+            self._disable_drag_and_drop()
