@@ -24,6 +24,7 @@ else
 fi
 sudo apt update
 debian_ver=$(lsb_release -rs 2>/dev/null)
+[[ "$debian_ver" == "14" ]] && debian_ver="13" # workaround for testing users
 wget "https://developer.download.nvidia.com/compute/cuda/repos/debian$debian_ver/x86_64/cuda-keyring_1.1-1_all.deb"
 pkg_fromfile cuda-keyring_1.1-1_all.deb
 sleep 1
