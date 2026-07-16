@@ -25,11 +25,13 @@ if [[ -f "${HOME}/.bash_profile" ]]; then
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
     echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
     echo 'eval "$(pyenv init - bash)"' >> ~/.bash_profile
+    source "$HOME/.bash_profile"
 elif [[ -f "$HOME/.profile" ]]; then
     prep_edit "$HOME/.profile"
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
     echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
     echo 'eval "$(pyenv init - bash)"' >> ~/.profile
+    source "$HOME/.profile"
 fi
 if [[ -f "$HOME/.zshrc" ]]; then
     prep_edit "$HOME/.zshrc"
