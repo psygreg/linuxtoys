@@ -22,4 +22,5 @@ if ! zypper lr | grep -q "^nvidia\s"; then
 fi
 pkg_install nvidia-open-driver-G07-signed-kmp-default nvidia-userspace-meta-G07
 initramfs_upd
+bootloader_upd
 zeninf "$msg036"
