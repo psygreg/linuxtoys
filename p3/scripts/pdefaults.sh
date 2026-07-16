@@ -55,30 +55,61 @@ optimizer () {
 }
 # menu
 while true; do
-    OPTIONS=("Install without Power Profile")
+    OPTIONS=(
+        "standard" "Install without Power Profile"
+    )
     if ! is_zorin && ! is_cachy && ! is_suse; then
-        OPTIONS+=("Laptop")
+        OPTIONS+=(
+            "laptop" "Laptop"
+        )
     fi
-    CPU_VENDOR=$(grep -m1 'vendor_id' /proc/cpuinfo | awk '{print $3}')
+    CPU_VENDOR=$(awk -F ': *' '/^vendor_id/ { print $2; exit }' /proc/cpuinfo)
     if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
-        OPTIONS+=("High Performance")
+        OPTIONS+=(
+            "performance" "High Performance"
+        )
     fi
-    OPTIONS+=("$msg070")
-    
-    CHOICE=$(zenity --list --title "Power Optimizer" --text "$msg229" \
-        --column "Options" \
-        "${OPTIONS[@]}" \
-        --width 360 --height 360 )
+    OPTIONS+=(
+        "cancel" "$msg070"
+    )
 
-    if [ $? -ne 0 ]; then
+    CHOICE=$(
+        zenity --list \
+            --title="Power Optimizer" \
+            --text="$msg229" \
+            --column="ID" \
+            --column="Options" \
+            --hide-column=1 \
+            --print-column=1 \
+            "${OPTIONS[@]}" \
+            --width=360 \
+            --height=360
+    )
+    status=$?
+
+    if (( status != 0 )); then
         exit 100
     fi
 
-    case $CHOICE in
-    "Install without Power Profile" ) sudo_rq && optimizer && exit 0;;
-    "High Performance") sudo_rq && pp_ondemand && optimizer && exit 0;;
-    "Laptop") sudo_rq && optimizer && psave_lib && exit 0;;
-    "$msg070") exit 100 ;;
-    *) echo "Invalid Option" ;;
+    case "$CHOICE" in
+        standard)
+            sudo_rq && optimizer
+            exit $?
+            ;;
+        performance)
+            sudo_rq && pp_ondemand && optimizer
+            exit $?
+            ;;
+        laptop)
+            sudo_rq && optimizer && psave_lib
+            exit $?
+            ;;
+        cancel)
+            exit 100
+            ;;
+        *)
+            printf 'Unexpected option returned by Zenity: %q\n' "$CHOICE" >&2
+            exit 1
+            ;;
     esac
 done
