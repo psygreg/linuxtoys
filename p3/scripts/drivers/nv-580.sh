@@ -4,7 +4,7 @@
 # icon: nvidia.svg
 # nocontainer
 # gpu: Nvidia
-# compat: arch, !cachy, fedora, rhel
+# compat: arch, !cachy, fedora, rhel, suse
 # reboot: yes
 
 # --- Start of the script code ---
@@ -16,7 +16,6 @@ if is_arch || is_cachy; then
     pkg_install nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings
     initramfs_upd
     bootloader_upd
-    zeninf "$msg036"
 elif is_fedora || is_rhel; then
     rpmfusion_chk
     if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
@@ -26,7 +25,20 @@ elif is_fedora || is_rhel; then
     pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda kmod-nvidia-580xx
     initramfs_upd
     bootloader_upd
-    zeninf "$msg036"
+elif is_suse; then
+    case "$VERSION_ID" in
+        *Tumbleweed* | *Slowroll*) REPO_URL="https://download.nvidia.com/opensuse/tumbleweed" ;;
+        15.*) REPO_URL="https://download.nvidia.com/opensuse/leap/$VERSION_ID" ;;
+        *) fatal "Unsupported OpenSUSE version." ;;
+    esac
+    sudo_rq
+    if ! zypper lr | grep -q "^nvidia\s"; then
+        sudo zypper ar -f "$REPO_URL" "nvidia"
+    fi
+    pkg_install x11-video-nvidiaG06 nvidia-computeG06
+    initramfs_upd
+    bootloader_upd
 else
     fatal "$msg077"
 fi
+zeninf "$msg036"

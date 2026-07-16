@@ -11,17 +11,15 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-REPO_ALIAS="nvidia"
-# check if Tumbleweed or Leap
 case "$VERSION_ID" in
     *Tumbleweed* | *Slowroll*) REPO_URL="https://download.nvidia.com/opensuse/tumbleweed" ;;
     15.*) REPO_URL="https://download.nvidia.com/opensuse/leap/$VERSION_ID" ;;
     *) fatal "Unsupported OpenSUSE version." ;;
 esac
 sudo_rq
-if ! zypper lr | grep -q "^${REPO_ALIAS}\s"; then
+if ! zypper lr | grep -q "^nvidia\s"; then
     sudo zypper ar -f "$REPO_URL" "nvidia"
 fi
-pkg_install x11-video-nvidiaG06 nvidia-computeG06
+pkg_install nvidia-open-driver-G07-signed-kmp-default nvidia-userspace-meta-G07
 initramfs_upd
-zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300
+zeninf "$msg036"
