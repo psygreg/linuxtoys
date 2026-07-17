@@ -3,7 +3,7 @@ import re
 import sys
 import webbrowser
 
-from gtk_common import Gdk, GLib, Gtk, Pango
+from ..gtk_common import Gdk, GLib, Gtk, Pango
 
 from . import __version__
 
