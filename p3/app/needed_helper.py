@@ -2,14 +2,9 @@
 Prerequisites requirement dialog helper module.
 Handles displaying and confirming required scripts before proceeding.
 """
-
-import gi
-
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf
+from .gtk_common import Gtk, GdkPixbuf
 
 from . import get_icon_path
-
 
 def show_needed_requirements_dialog(
     parent_window, translations, script_name, required_scripts

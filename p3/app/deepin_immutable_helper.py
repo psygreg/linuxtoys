@@ -1,11 +1,7 @@
-import gi
-
-gi.require_version("Gtk", "3.0")
-
 import logging
 import os
 
-from gi.repository import Gtk
+from .gtk_common import Gtk
 
 from .compat import get_system_compat_keys
 

@@ -7,12 +7,7 @@ import subprocess
 import urllib.error
 import urllib.request
 
-import gi
-
-gi.require_version("Gtk", "3.0")
-gi.require_version("GLib", "2.0")
-from gi.repository import GLib, Gtk
-
+from .gtk_common import GLib, Gtk
 
 def get_current_kernel():
     """

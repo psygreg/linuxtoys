@@ -2,7 +2,6 @@ from .gtk_common import Gtk, GdkPixbuf, GLib
 import os
 import requests
 import threading
-import json
 import random
 from . import get_app_resource_path, get_icon_path, compat
 from .updater import __version__

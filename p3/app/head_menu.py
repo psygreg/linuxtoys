@@ -5,7 +5,8 @@ from . import about_helper
 from . import action_registry
 from . import get_icon_path
 from .lang_utils import create_translator
-import threading, asyncio
+import threading
+import asyncio
 import os
 
 

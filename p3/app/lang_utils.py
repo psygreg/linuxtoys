@@ -9,7 +9,6 @@ import glob
 import configparser
 import re
 
-
 def get_config_dir():
     """
     Get the configuration directory for LinuxToys

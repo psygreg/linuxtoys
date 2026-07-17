@@ -1,5 +1,4 @@
 from .gtk_common import GLib
-from .window_items import ItemWidgetFactory
 from . import parser
 
 class FeaturedCtl:

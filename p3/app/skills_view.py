@@ -2,11 +2,7 @@ import os
 import subprocess
 import threading
 
-import gi
-gi.require_version("Gtk", "3.0")
-gi.require_version("GdkPixbuf", "2.0")
-from gi.repository import GdkPixbuf, GLib, Gdk, Gtk, Pango
-
+from .gtk_common import GdkPixbuf, GLib, Gdk, Gtk, Pango
 from . import get_icon_path
 
 
