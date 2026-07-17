@@ -1,15 +1,9 @@
-import gi
-
-gi.require_version("Gtk", "3.0")
-import json
 import os
 import re
-import subprocess
 import sys
-import threading
 import webbrowser
 
-from gi.repository import Gdk, GLib, Gtk, Pango
+from gtk_common import Gdk, GLib, Gtk, Pango
 
 from . import __version__
 

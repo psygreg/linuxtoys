@@ -1,6 +1,5 @@
 import json
 import os
-import re
 import subprocess
 import urllib.error
 import urllib.request
