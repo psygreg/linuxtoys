@@ -7,6 +7,13 @@ import os
 import subprocess
 
 
+# Reboot warnings acknowledged for the current application session.
+# These deliberately remain in memory only, so a new app session will warn again
+# if the underlying reboot requirement still exists.
+_reboot_warning_acknowledged = False
+_ostree_warning_acknowledged = False
+
+
 def check_flatpak_path_pending():
     """
     Check if flatpak installation has set the path pending flag.
@@ -415,6 +422,8 @@ def handle_reboot_requirement(parent_window, translations, close_app_callback):
         translations: Dictionary containing translation keys
         close_app_callback: Function to call if the application should be closed
     """
+    global _reboot_warning_acknowledged
+
     response = show_reboot_warning_dialog(parent_window, translations)
 
     if response == "reboot_now":
@@ -423,8 +432,9 @@ def handle_reboot_requirement(parent_window, translations, close_app_callback):
             # If reboot failed, close the application as fallback
             close_app_callback()
     elif response == "reboot_later":
-        # User chose to reboot later, close the application
-        close_app_callback()
+        # Keep the app open and suppress this warning for the rest of this session.
+        _reboot_warning_acknowledged = True
+        return
     # If cancelled, do nothing and return to the application
 
 
@@ -440,6 +450,8 @@ def handle_ostree_deployment_requirement(
         translations: Dictionary containing translation keys
         close_app_callback: Function to call if the application should be closed
     """
+    global _ostree_warning_acknowledged
+
     response = show_ostree_deployment_warning_dialog(parent_window, translations)
 
     if response == "reboot_now":
@@ -448,8 +460,9 @@ def handle_ostree_deployment_requirement(
             # If reboot failed, close the application as fallback
             close_app_callback()
     elif response == "reboot_later":
-        # User chose to reboot later, close the application
-        close_app_callback()
+        # Keep the app open and suppress this warning for the rest of this session.
+        _ostree_warning_acknowledged = True
+        return
     # If cancelled, do nothing and return to the application
 
 
@@ -505,13 +518,13 @@ def check_reboot_requirement_after_checklist(
     Returns:
         bool: True if a reboot is required and was handled, False otherwise
     """
-    # Check for flatpak path pending flag
-    if check_flatpak_path_pending():
+    # Check for flatpak path pending flag unless already acknowledged this session.
+    if not _reboot_warning_acknowledged and check_flatpak_path_pending():
         handle_reboot_requirement(parent_window, translations, close_app_callback)
         return True
 
-    # Check for pending ostree deployments
-    if check_ostree_pending_deployments():
+    # Check for pending ostree deployments unless already acknowledged this session.
+    if not _ostree_warning_acknowledged and check_ostree_pending_deployments():
         handle_ostree_deployment_requirement(
             parent_window, translations, close_app_callback
         )
