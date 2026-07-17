@@ -5,8 +5,6 @@ import shutil
 import subprocess
 import threading
 
-from gi.repository import GdkPixbuf, GLib
-
 from . import (
     action_registry,
     compat,
@@ -27,7 +25,7 @@ from . import (
     term_view,
 )
 from .lang_utils import escape_for_markup
-from .gtk_common import Gdk, GLib, Gtk, Pango, Vte
+from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf, Pango, Vte
 from .updater.update_dialog import UpdateDialog
 from .updater.update_helper import UpdateHelper
 

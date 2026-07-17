@@ -1,144 +1,13 @@
-import os
-import sys
-import re
-import shutil
- 
-from . import dev_mode, get_icon_path, reboot_helper
+from . import reboot_helper
 from .compat import should_enable_manual_revert, get_revert_capability
-from .antenna import antenna
-from requests.exceptions import ConnectionError, Timeout
-from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, Pango, Vte
-from .revert_helper import build_uninstall_script_entry, build_auto_revert_script_entry, _load_last_execution
-from .updater.update_dialog import DialogRestart
-from .action_registry import parse_registry_file
+from .gtk_common import Gdk, GLib, Gtk, Vte
+from .gtk_dialogs import run_message_dialog
+from .term_header import InfosHead
+from .term_reporting import BugReporting
+from .term_runner import TerminalRunner
+from .revert_helper import build_uninstall_script_entry, _load_last_execution
  
- 
-def _cleanup_tmp_noram_dirs(transmap_path):
-    """
-    Clean up temporary directories created by prep_tmp_noram.
-    Reads transmap file for tmpdir_noram entries and removes those directories.
-    """
-    if not os.path.exists(transmap_path):
-        return
-    
-    try:
-        with open(transmap_path, 'r') as f:
-            content = f.read()
-        
-        # Find all tmpdir_noram entries
-        pattern = r'tmpdir_noram\s+(\S+)'
-        matches = re.findall(pattern, content)
-        
-        for tmpdir_path in matches:
-            if os.path.exists(tmpdir_path):
-                try:
-                    shutil.rmtree(tmpdir_path)
-                except Exception:
-                    pass  # Silently ignore cleanup errors
-    except Exception:
-        pass  # Silently ignore transmap read errors
- 
- 
-class InfosHead(Gtk.Box):
-    def __init__(self, translations=None):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        self.translations = translations or {}
-        vbox_infos = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
- 
-        self.label_name = Gtk.Label()
-        self.label_name.set_halign(Gtk.Align.START)
-        self.label_desc = Gtk.Label()
-        self.label_desc.set_halign(Gtk.Align.START)
-        self.label_desc.set_line_wrap(True)
-        self.label_desc.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.label_repo = Gtk.Label()
-        self.label_repo.set_halign(Gtk.Align.START)
- 
-        self.hbox_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        self.hbox_header.set_margin_left(32)
-        self.hbox_header.set_margin_top(12)
-        self.hbox_header.set_margin_right(32)
-        self.hbox_header.set_margin_bottom(5)
- 
-        self.icon_head = Gtk.Image()
-        self.hbox_header.pack_start(self.icon_head, False, False, 0)
- 
-        vbox_infos.pack_start(self.label_name, False, False, 0)
-        vbox_infos.pack_start(self.label_desc, False, False, 0)
-        vbox_infos.pack_start(self.label_repo, False, False, 0)
- 
-        self.hbox_header.pack_start(vbox_infos, True, True, 0)
-        self.pack_start(self.hbox_header, False, False, 0)
- 
-        hbox_controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
- 
-        # Use translatable button label
-        execute_label = self.translations.get("term_view_execute", " Execute ")
-        self.button_run = Gtk.Button(label=execute_label)
-        self.button_run.set_image(
-            Gtk.Image.new_from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON)
-        )
-        self.button_run.set_halign(Gtk.Align.START)
-        self.button_run.set_size_request(125, 35)
-        remove_label = self.translations.get("term_view_remove", " Remove ")
-        self.button_remove = Gtk.Button(label=remove_label)
-        self.button_remove.set_image(
-            Gtk.Image.new_from_icon_name("edit-delete-symbolic", Gtk.IconSize.BUTTON)
-        )
-        self.button_remove.set_halign(Gtk.Align.START)
-        self.button_remove.set_size_request(125, 35)
-        report_label = self.translations.get("report_label", " Report Bug ")
-        self.button_copy = Gtk.Button(label=report_label)
-        self.button_copy.set_image(
-            Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.BUTTON)
-        )
-        self.button_copy.set_halign(Gtk.Align.START)
-        self.button_copy.set_size_request(150, 35)
- 
-        self.progress_bar = Gtk.ProgressBar()
-        self.progress_bar.set_show_text(True)
-        self.progress_bar.set_fraction(0.0)
- 
-        hbox_controls.pack_start(self.button_run, False, False, 0)
-        hbox_controls.pack_start(self.button_remove, False, False, 0)
-        hbox_controls.pack_start(self.button_copy, False, False, 0)
-        hbox_controls.pack_start(self.progress_bar, True, True, 0)
- 
-        vbox_infos.pack_start(hbox_controls, False, False, 10)
- 
-    def _update_header_labels(self, script_info: list):
-        _name = GLib.markup_escape_text(script_info.get("name", ""))
-        _desc = GLib.markup_escape_text(script_info.get("description", ""))
-        _repo = GLib.markup_escape_text(script_info.get("repo", ""))
-        self.label_name.set_markup(f"<big><big><b>{_name}</b></big></big>")
-        self.label_desc.set_markup(f"{_desc}")
-        # Strip protocol and trailing slash from display text for cleaner appearance
-        _repo_display = _repo.replace('https://', '').replace('http://', '').rstrip('/')
-        self.label_repo.set_markup(f"<a href='{_repo}'>{_repo_display}</a>")
- 
-        icon_value = script_info.get("icon")
-        if icon_value:
-            icon_path = get_icon_path(icon_value)
-            if icon_path:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                    icon_path, 100, 100, True
-                )
-                self.icon_head.set_from_pixbuf(pixbuf)
-            else:
-                default_path = get_icon_path("local-script.svg")
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                    default_path, 100, 100, True
-                )
-                self.icon_head.set_from_pixbuf(pixbuf)
-        else:
-            default_path = get_icon_path("local-script.svg")
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                default_path, 100, 100, True
-            )
-            self.icon_head.set_from_pixbuf(pixbuf)
- 
- 
-class TermRunScripts(Gtk.Box):
+class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
     def __init__(
         self, scripts_infos: list, parent, translations=None, removable_script_info=None, auto_run=False
     ):
@@ -158,6 +27,9 @@ class TermRunScripts(Gtk.Box):
         self.removable_script_has_registry_entry = False
         self.removable_script_revert_disabled = False
         self._flatpak_installed_detected = False  # Track if flatpak was installed during script execution
+        self._self_update = False
+        self._cleanup_script_path = None
+        self._current_action_is_removal = False
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
             script_name = self.removable_script_info.get('name')
@@ -192,7 +64,9 @@ class TermRunScripts(Gtk.Box):
  
         self.vbox_main = InfosHead(translations)
  
-        self.vbox_main.button_run.connect("clicked", self.on_button_run_clicked)
+        self._run_button_handler_id = self.vbox_main.button_run.connect(
+            "clicked", self.on_button_run_clicked
+        )
         self.vbox_main.button_remove.connect("clicked", self.on_button_remove_clicked)
         self.vbox_main.button_copy.connect("clicked", self.on_copy_clicked)
         self.vbox_main.button_remove.set_sensitive(bool(self.removable_script_info))
@@ -261,106 +135,74 @@ class TermRunScripts(Gtk.Box):
             self.vbox_main.button_copy.show()
  
     def _show_remove_confirmation_dialog(self, script_name):
-        toplevel = self.get_toplevel()
-        if toplevel and toplevel.get_parent():
-            dialog = Gtk.MessageDialog(
-                transient_for=toplevel,
-                flags=0,
-                message_type=Gtk.MessageType.WARNING,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get(
-                    "remove_confirm_title", "Remove Installed Components?"
-                ),
-            )
-        else:
-            dialog = Gtk.MessageDialog(
-                flags=0,
-                message_type=Gtk.MessageType.WARNING,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get(
-                    "remove_confirm_title", "Remove Installed Components?"
-                ),
-            )
-        dialog.format_secondary_text(
-            self.translations.get(
+        response = run_message_dialog(
+            self,
+            title=self.translations.get(
+                "remove_confirm_title",
+                "Remove Installed Components?",
+            ),
+            secondary_text=self.translations.get(
                 "remove_confirm_message",
-                "LinuxToys will attempt to remove all components installed by '{script_name}'. Do you want to continue?",
-            ).format(script_name=script_name)
+                "LinuxToys will attempt to remove all components installed by "
+                "'{script_name}'. Do you want to continue?",
+            ).format(script_name=script_name),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (
+                    self.translations.get("cancel_btn_label", "Cancel"),
+                    Gtk.ResponseType.CANCEL,
+                ),
+                (
+                    self.translations.get("yes", "Yes"),
+                    Gtk.ResponseType.YES,
+                ),
+            ],
+            default_response=Gtk.ResponseType.CANCEL,
         )
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
-        )
-        dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
-        dialog.set_default_response(Gtk.ResponseType.CANCEL)
-        response = dialog.run()
-        dialog.destroy()
         return response == Gtk.ResponseType.YES
  
     def _show_remove_not_available_dialog(self):
-        toplevel = self.get_toplevel()
-        if toplevel and toplevel.get_parent():
-            dialog = Gtk.MessageDialog(
-                transient_for=toplevel,
-                flags=0,
-                message_type=Gtk.MessageType.INFO,
-                buttons=Gtk.ButtonsType.OK,
-                text=self.translations.get(
-                    "remove_not_available_title", "Removal Not Available"
-                ),
-            )
-        else:
-            dialog = Gtk.MessageDialog(
-                flags=0,
-                message_type=Gtk.MessageType.INFO,
-                buttons=Gtk.ButtonsType.OK,
-                text=self.translations.get(
-                    "remove_not_available_title", "Removal Not Available"
-                ),
-            )
-        dialog.format_secondary_text(
-            self.translations.get(
+        response = run_message_dialog(
+            self,
+            title=self.translations.get(
+                "remove_not_available_title",
+                "Removal Not Available",
+            ),
+            secondary_text=self.translations.get(
                 "remove_not_available_message",
-                "No removable components were detected for this script.",
-            )
+                "No removable components were detected for this script."
+            ),
+            message_type=Gtk.MessageType.INFO,
+            buttons=[
+                ("OK", Gtk.ResponseType.OK),
+            ],
         )
-        dialog.run()
-        dialog.destroy()
+        return response == Gtk.ResponseType.OK
  
     def _show_internal_revert_confirmation_dialog(self, script_name):
-        """Show confirmation dialog for internal revert (re-run script)."""
-        toplevel = self.get_toplevel()
-        if toplevel and toplevel.get_parent():
-            dialog = Gtk.MessageDialog(
-                transient_for=toplevel,
-                flags=0,
-                message_type=Gtk.MessageType.WARNING,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get(
-                    "internal_revert_confirm_title", "Re-run Script for Removal?"
-                ),
-            )
-        else:
-            dialog = Gtk.MessageDialog(
-                flags=0,
-                message_type=Gtk.MessageType.WARNING,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get(
-                    "internal_revert_confirm_title", "Re-run Script for Removal?"
-                ),
-            )
-        dialog.format_secondary_text(
-            self.translations.get(
+        response = run_message_dialog(
+            self,
+            title=self.translations.get(
+                "internal_revert_confirm_title",
+                "Re-run Script for Removal?",
+            ),
+            secondary_text=self.translations.get(
                 "internal_revert_confirm_message",
-                "This script has a custom removal method. Running it again will attempt to remove its components. Do you want to continue?",
-            ).format(script_name=script_name)
+                "This script has a custom removal method. Running it again will attempt to remove its components. Do you want to continue?"
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (
+                    self.translations.get("cancel_btn_label", "Cancel"),
+                    Gtk.ResponseType.CANCEL,
+                ),
+                (
+                    self.translations.get("yes", "Yes"),
+                    Gtk.ResponseType.YES,
+                ),
+            ],
+            default_response=Gtk.ResponseType.CANCEL,
         )
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
-        )
-        dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
-        dialog.set_default_response(Gtk.ResponseType.CANCEL)
-        response = dialog.run()
-        dialog.destroy()
         return response == Gtk.ResponseType.YES
  
     def on_button_remove_clicked(self, widget):
@@ -435,686 +277,6 @@ class TermRunScripts(Gtk.Box):
         
         self._run_next_script()
         return False
- 
-    def _remove_old_script_entries_from_registry(self, script_name):
-        """
-        Remove all existing entries for a script from the registry file.
-        This ensures each script only has the most recent run in the registry.
-        
-        Returns True if entries were removed or file doesn't exist, False on error.
-        """
-        import re
-        
-        registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
-        
-        if not os.path.exists(registry_file):
-            return True
-        
-        try:
-            with open(registry_file, "r") as f:
-                content = f.read()
-        except Exception:
-            return False
-        
-        # Use regex to find all entries and filter by script name
-        entry_pattern = r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: ([^\n]+)'
-        matches = list(re.finditer(entry_pattern, content))
-        
-        if not matches:
-            return True  # No entries found, nothing to filter
-        
-        # Build list of ranges to keep (entries NOT matching this script)
-        ranges_to_keep = []
-        for i, match in enumerate(matches):
-            script_name_in_entry = match.group(1).strip()
-            if script_name_in_entry == script_name:
-                # Skip this entry
-                continue
-            
-            entry_start = match.start()
-            entry_end = matches[i + 1].start() if i + 1 < len(matches) else len(content)
-            ranges_to_keep.append((entry_start, entry_end))
-        
-        # Reconstruct file from kept ranges
-        try:
-            if not ranges_to_keep:
-                # All entries were for this script, clear the file
-                new_content = ""
-            else:
-                new_content = "".join(content[start:end] for start, end in ranges_to_keep)
-            
-            with open(registry_file, "w") as f:
-                f.write(new_content)
-            return True
-        except Exception:
-            return False
- 
-    def _save_to_registry(self, script_name, transmap_path):
-        """Save script execution record to registry."""
-        try:
-            import datetime
-            registry_dir = os.path.expanduser("~/.cache/linuxtoys")
-            registry_file = os.path.join(registry_dir, "registry")
-            
-            # Create directory if it doesn't exist
-            os.makedirs(registry_dir, exist_ok=True)
-            
-            # Remove old entries for this script to keep only the latest run
-            self._remove_old_script_entries_from_registry(script_name)
-            
-            # Read transmap contents
-            transmap_contents = ""
-            if os.path.exists(transmap_path):
-                try:
-                    with open(transmap_path, "r") as f:
-                        transmap_contents = f.read().strip()
-                except (IOError, OSError):
-                    pass
-            
-            # Format entry with timestamp
-            timestamp = datetime.datetime.now().isoformat()
-            entry = f"[{timestamp}] Script: {script_name}\n"
-            if transmap_contents:
-                entry += "Changes:\n"
-                for line in transmap_contents.split("\n"):
-                    if line.strip():
-                        entry += f"  - {line}\n"
-            else:
-                entry += "Changes: (none)\n"
-            entry += "---\n\n"
-            
-            # Append to registry file
-            with open(registry_file, "a") as f:
-                f.write(entry)
-        except Exception:
-            pass  # Silently ignore registry errors
- 
-    def _try_auto_revert(self, transmap_path):
-        """
-        Attempt to build an auto-revert script from transmap operations.
-        
-        Returns a script_info-like dict if revertible operations exist, None otherwise.
-        """
-        if not os.path.exists(transmap_path):
-            return None
-        
-        # Get the current script info to pass to the auto-revert builder
-        current_script = None
-        if hasattr(self, "_current_script_name"):
-            current_script = {
-                "name": self._current_script_name,
-                "icon": "application-x-executable",
-                "repo": "",
-            }
-        
-        if not current_script:
-            return None
-        
-        try:
-            auto_revert_entry = build_auto_revert_script_entry(
-                current_script, transmap_path, self.translations
-            )
-            return auto_revert_entry
-        except Exception:
-            return None
- 
-    def _is_error_exit_code(self, status):
-        """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
-        # Extract the actual exit code from status
-        if os.WIFEXITED(status):
-            exit_code = os.WEXITSTATUS(status)
-            # 0 = success, 100 = user cancelled
-            return exit_code not in (0, 100)
-        # If terminated by signal (e.g., keyboard interrupt), it's not an error to report
-        # Signals are expected user interactions (Ctrl+C = SIGINT)
-        return False
- 
-    def _auto_submit_bug_report_on_error(self):
-        """Automatically submit a bug report when a script exits with an error code."""
-        # Check if auto error reports are enabled
-        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-        if not auto_reports_enabled:
-            return
-        
-        try:
-            # Get terminal logs
-            logs = self._get_terminal_text()
-            
-            # Gather system information
-            context_parts = []
-            
-            # Add script execution info
-            if self.script_queue or self.scripts_executed > 0:
-                context_parts.append(f"Scripts executed: {self.scripts_executed}/{self.total_scripts}")
-            
-            # Add system info (OS, GPU)
-            system_context = antenna.get_system_context()
-            if system_context:
-                context_parts.append(system_context)
-            
-            # Add script execution history
-            history_context = antenna.get_history_context()
-            if history_context:
-                context_parts.append(history_context)
-            
-            context = " | ".join(context_parts)
-            
-            # Submit the issue using antenna (silently, without showing confirmation dialog)
-            title = self.translations.get(
-                "bug_report_title", "Bug Report from LinuxToys"
-            )
-            result = antenna.submit_issue(title=title, logs=logs, context=context)
-            
-            # Optionally show result, but don't block the user
-            if result:
-                # Silent submission - just log it
-                pass
-        except (ConnectionError, Timeout):
-            # Network errors - silently skip, user can report manually
-            pass
-        except Exception:
-            # Any other errors - silently skip
-            pass
- 
-    def on_child_exit(self, term, status):
-        if getattr(self, "_cleanup_script_path", None):
-            try:
-                if os.path.exists(self._cleanup_script_path):
-                    os.remove(self._cleanup_script_path)
-            except Exception:
-                pass
-            self._cleanup_script_path = None
- 
-        if self._self_update:
-            toplevel = self.get_toplevel()
-            if toplevel and toplevel.get_parent():
-                DialogRestart(parent=toplevel).show()
- 
-        # Handle transmap file based on exit status
-        transmap_path = "/tmp/linuxtoys/transmap"
-        
-        if os.WIFEXITED(status):
-            exit_code = os.WEXITSTATUS(status)
-            
-            if exit_code == 0:
-                # Success - save to registry and wipe transmap
-                script_name = getattr(self, "_current_script_name", "unknown")
-                self._save_to_registry(script_name, transmap_path)
-                
-                # Check if flatpak was installed during this script before transmap is deleted
-                if not getattr(self, "_flatpak_installed_detected", False):
-                    if os.path.exists(transmap_path):
-                        try:
-                            with open(transmap_path, "r") as f:
-                                content = f.read()
-                                if "pkg flatpak" in content or "pkg file flatpak" in content:
-                                    self._flatpak_installed_detected = True
-                        except Exception:
-                            pass
-                
-                # Clean up any temp directories created by prep_tmp_noram before removing transmap
-                _cleanup_tmp_noram_dirs(transmap_path)
-                
-                try:
-                    if os.path.exists(transmap_path):
-                        os.remove(transmap_path)
-                except (IOError, OSError):
-                    pass  # Silently ignore if transmap cannot be removed
-            
-            elif exit_code == 100:
-                # User cancelled - clean up and wipe transmap but don't save to registry
-                _cleanup_tmp_noram_dirs(transmap_path)
-                
-                try:
-                    if os.path.exists(transmap_path):
-                        os.remove(transmap_path)
-                except (IOError, OSError):
-                    pass  # Silently ignore if transmap cannot be removed
-        
-        else:
-            # Signal termination (e.g., Ctrl+C) - clean up and wipe transmap
-            _cleanup_tmp_noram_dirs(transmap_path)
-            
-            try:
-                if os.path.exists(transmap_path):
-                    os.remove(transmap_path)
-            except (IOError, OSError):
-                pass  # Silently ignore if transmap cannot be removed
- 
-        # Check for error exit codes and handle auto-reversion or bug report
-        if self._is_error_exit_code(status) and not self._current_action_is_removal:
-            # Only auto-handle for regular scripts, not removal operations
-            # Save the error to registry before attempting auto-revert
-            script_name = getattr(self, "_current_script_name", "unknown")
-            self._save_to_registry(script_name, transmap_path)
-            
-            auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-            
-            # Submit bug report first if enabled (before auto-revert consumes transmap)
-            if auto_reports_enabled:
-                self._auto_submit_bug_report_on_error()
-            
-            # Try to auto-revert if there are operations in the transmap
-            auto_revert_entry = self._try_auto_revert(transmap_path)
-            
-            if auto_revert_entry:
-                # Auto-revert was successful, execute the reversion script
-                self.script_queue = [auto_revert_entry]
-                self.total_scripts = 1
-                self.scripts_executed = 0
-                self.vbox_main.progress_bar.set_fraction(0.0)
-                self.vbox_main._update_header_labels(auto_revert_entry)
-                waiting_text = self.translations.get(
-                    "term_view_waiting", "Waiting {current}/{total}"
-                )
-                self.vbox_main.progress_bar.set_text(waiting_text.format(current=0, total=1))
-                self.vbox_main.button_remove.set_sensitive(False)
-                self.on_button_run_clicked(self.vbox_main.button_run)
-                return  # Skip further processing
-            else:
-                # No auto-revert possible, wipe transmap only if auto-reporting was enabled
-                if auto_reports_enabled:
-                    try:
-                        if os.path.exists(transmap_path):
-                            os.remove(transmap_path)
-                    except (IOError, OSError):
-                        pass
-                # If auto-reporting is disabled, preserve transmap for user to potentially report manually
- 
-        self.scripts_executed += 1
-        progress = self.scripts_executed / self.total_scripts
-        self.vbox_main.progress_bar.set_fraction(progress)
-        # Use translatable running/removing text
-        running_text = self.translations.get(
-            "term_view_running", "Running {current}/{total}"
-        )
-        if getattr(self, "_current_action_is_removal", False):
-            running_text = self.translations.get(
-                "term_view_removing", "Removing {current}/{total}"
-            )
-        self.vbox_main.progress_bar.set_text(
-            running_text.format(current=self.scripts_executed, total=self.total_scripts)
-        )
-        self._run_next_script()
- 
-    def _run_next_script(self):
-        if not self.script_queue:
-            # Use translatable done text
-            done_label = self.translations.get("term_view_done", " Done ")
-            done_text = self.translations.get("term_view_done_text", "Done")
-            self.vbox_main.button_run.set_label(done_label)
-            self.vbox_main.button_run.set_image(
-                Gtk.Image.new_from_icon_name("emblem-ok-symbolic", Gtk.IconSize.BUTTON)
-            )
-            self.vbox_main.progress_bar.set_text(done_text)
-            self.vbox_main.button_run.connect("clicked", self.on_done_clicked)
-            self.parent._script_running = False
-            self.vbox_main.button_run.set_sensitive(True)
-            self.terminal.set_can_focus(True)
-            self.vbox_main.button_run.grab_focus()
-            
-            # Check if flatpak was installed during script execution and show info if needed
-            if getattr(self, "_flatpak_installed_detected", False):
-                reboot_helper.show_flatpak_installed_info_dialog(
-                    self.parent, self.translations
-                )
-                # Reset the flag after showing the dialog
-                self._flatpak_installed_detected = False
-            
-            return
- 
-        self.parent._script_running = True
-        current_script = self.script_queue.pop(0)
-        self.vbox_main._update_header_labels(current_script)
- 
-        # Add script to execution history
-        script_name = current_script.get("name", "unknown")
-        self._current_script_name = script_name  # Store for registry
-        self.executed_scripts.append(current_script)
-        antenna.add_script_to_history(script_name)
-        
-        # Clear transmap file for new script execution
-        try:
-            transmap_path = "/tmp/linuxtoys/transmap"
-            open(transmap_path, "w").close()  # Truncate/clear the file
-        except (IOError, OSError):
-            pass  # Silently ignore if transmap cannot be cleared
- 
-        script_path = current_script.get("path", "true")
-        if current_script.get("reboot") == "yes":
-            self.parent.reboot_required = True
- 
-        self._self_update = current_script.get("self_update", False)
-        self._cleanup_script_path = current_script.get("cleanup_path")
-        self._current_action_is_removal = bool(self._cleanup_script_path)
- 
-        child_env = os.environ.copy()
-        # Export CHECKLIST_RUN when running multiple scripts in sequence
-        if self.total_scripts > 1:
-            child_env['CHECKLIST_RUN'] = '1'
-        # SCRIPT_DIR is set by linuxtoys.py at startup relative to the entry point
-        # This ensures all scripts can find their libs at the same location
-        child_env_list = [f"{key}={value}" for key, value in child_env.items()]
- 
-        shell_exec = ["/bin/bash", f"{script_path}"]
-        if dev_mode.is_dev_mode_enabled():
-            lib_path = os.path.dirname(__file__)
-            shell_exec = [
-                sys.executable,
-                "-c",
-                f'import sys; sys.path.append("{lib_path}"); import dev_mode; dev_mode.dry_run_script("{script_path}")',
-            ]
- 
-        self.terminal.spawn_async(
-            Vte.PtyFlags.DEFAULT,
-            None,
-            shell_exec,
-            child_env_list,
-            GLib.SpawnFlags.DEFAULT,
-            None,
-            None,
-            -1,
-            None,
-            None,
-        )
- 
-        # Shift focus to terminal to capture user keyboard input
-        # This prevents accidental cancellation when search bar or other widgets have focus
-        self.terminal.grab_focus()
- 
-        self.vbox_main.button_run.set_sensitive(False)
-        self.vbox_main.button_remove.set_sensitive(False)
- 
-    def _get_last_registry_execution(self) -> str:
-        """Get the last execution data from registry for the current script.
-        
-        Returns formatted text of the last execution, or empty string if not found.
-        """
-        script_name = None
-        
-        # Try to use the current script name (set when script runs)
-        if hasattr(self, "_current_script_name") and self._current_script_name:
-            script_name = self._current_script_name
-        # Fallback to first script in queue if available (before script runs)
-        elif self.script_queue:
-            script_name = self.script_queue[0].get('name')
-        
-        if not script_name:
-            return ""
-        
-        try:
-            registry_data = parse_registry_file()
-            if script_name not in registry_data:
-                return ""
-            
-            executions = registry_data[script_name]
-            if not executions:
-                return ""
-            
-            # Get the last execution
-            timestamp, operations = executions[-1]
-            
-            # Format the registry data nicely
-            lines = [f"Last execution of '{script_name}':\n"]
-            if timestamp:
-                lines.append(f"Timestamp: {timestamp}\n")
-            
-            if operations:
-                lines.append("\nOperations performed:")
-                for op in operations:
-                    lines.append(f"  • {op}")
-            else:
-                lines.append("\nOperations: (none)")
-            
-            return "\n".join(lines)
-        except Exception:
-            return ""
- 
-    def _get_terminal_text(self) -> str:
-        """Extract all text from the terminal by copying to clipboard and reading back."""
-        try:
-            # Select all terminal content
-            if hasattr(self.terminal, "select_all"):
-                self.terminal.select_all()
-            
-            # Copy to clipboard
-            if hasattr(self.terminal, "copy_clipboard_format"):
-                self.terminal.copy_clipboard_format(Vte.Format.TEXT)
-            else:
-                self.terminal.copy_clipboard()
-            
-            # Read from clipboard
-            clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-            text = clipboard.wait_for_text()
-            
-            # Unselect
-            if hasattr(self.terminal, "unselect_all"):
-                self.terminal.unselect_all()
-            
-            return text if isinstance(text, str) else ""
-        except Exception:
-            # If clipboard extraction fails, fall back to antenna logs
-            try:
-                logs = antenna.log_capture.get_logs()
-                return logs if isinstance(logs, str) else ""
-            except Exception:
-                return ""
- 
-    def _show_bug_report_confirmation_dialog(self):
-        """Show confirmation dialog before sending bug report."""
-        toplevel = self.get_toplevel()
-        if toplevel and toplevel.get_parent():
-            dialog = Gtk.MessageDialog(
-                transient_for=toplevel,
-                flags=0,
-                message_type=Gtk.MessageType.QUESTION,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get(
-                    "bug_report_confirm_title", "Send Bug Report?"
-                ),
-            )
-        else:
-            dialog = Gtk.MessageDialog(
-                flags=0,
-                message_type=Gtk.MessageType.QUESTION,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get(
-                    "bug_report_confirm_title", "Send Bug Report?"
-                ),
-            )
-        dialog.format_secondary_text(
-            self.translations.get(
-                "bug_report_confirm_message",
-                "Your terminal output will be sent to the remote server to help us fix issues. Do you want to continue?",
-            )
-        )
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
-        )
-        dialog.add_button(
-            self.translations.get("send_btn_label", "Send"), Gtk.ResponseType.YES
-        )
-        dialog.set_default_response(Gtk.ResponseType.CANCEL)
-        response = dialog.run()
-        dialog.destroy()
-        return response == Gtk.ResponseType.YES
- 
-    def _show_bug_report_result_dialog(self, success: bool, issue_data: dict = None):
-        """Show result dialog after bug report submission."""
-        toplevel = self.get_toplevel()
-        has_toplevel = toplevel and toplevel.get_parent()
-        if success and issue_data:
-            if has_toplevel:
-                dialog = Gtk.MessageDialog(
-                    transient_for=toplevel,
-                    flags=0,
-                    message_type=Gtk.MessageType.INFO,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get(
-                        "bug_report_success_title", "Bug Report Submitted"
-                    ),
-                )
-            else:
-                dialog = Gtk.MessageDialog(
-                    flags=0,
-                    message_type=Gtk.MessageType.INFO,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get(
-                        "bug_report_success_title", "Bug Report Submitted"
-                    ),
-                )
-            issue_url = issue_data.get("issue_url", "")
-            issue_number = issue_data.get("issue_number", "")
-            dialog.format_secondary_text(
-                self.translations.get(
-                    "bug_report_success_message",
-                    "Thank you! Your bug report has been submitted.\n"
-                    "Issue #{issue_number}: {issue_url}",
-                ).format(issue_number=issue_number, issue_url=issue_url)
-            )
-        else:
-            if has_toplevel:
-                dialog = Gtk.MessageDialog(
-                    transient_for=toplevel,
-                    flags=0,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get(
-                        "bug_report_failed_title", "Bug Report Failed"
-                    ),
-                )
-            else:
-                dialog = Gtk.MessageDialog(
-                    flags=0,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get(
-                        "bug_report_failed_title", "Bug Report Failed"
-                    ),
-                )
-            dialog.format_secondary_text(
-                self.translations.get(
-                    "bug_report_failed_message",
-                    "Could not submit the bug report. Please try again later.",
-                )
-            )
-        dialog.run()
-        dialog.destroy()
- 
-    def _show_bug_report_network_error_dialog(self, title: str, message: str):
-        """Show network-specific error dialog."""
-        toplevel = self.get_toplevel()
-        if toplevel and toplevel.get_parent():
-            dialog = Gtk.MessageDialog(
-                transient_for=toplevel,
-                flags=0,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text=title,
-            )
-        else:
-            dialog = Gtk.MessageDialog(
-                flags=0,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text=title,
-            )
-        dialog.format_secondary_text(message)
-        dialog.run()
-        dialog.destroy()
- 
-    def _copy_terminal_text(self, copy_all=False):
-        """Copy terminal text to clipboard."""
-        if copy_all and hasattr(self.terminal, "select_all"):
-            self.terminal.select_all()
- 
-        if hasattr(self.terminal, "copy_clipboard_format"):
-            self.terminal.copy_clipboard_format(Vte.Format.TEXT)
-        else:
-            self.terminal.copy_clipboard()
- 
-        if copy_all and hasattr(self.terminal, "unselect_all"):
-            self.terminal.unselect_all()
- 
-    def on_copy_clicked(self, button):
-        """Handle bug report button click."""
-        if not self._show_bug_report_confirmation_dialog():
-            return
-        
-        try:
-            # Get terminal logs
-            logs = self._get_terminal_text()
-            
-            # If terminal logs are empty, try to get registry data for this script
-            if not logs or logs.strip() == "":
-                registry_logs = self._get_last_registry_execution()
-                if registry_logs:
-                    logs = f"[Using registry data from last execution]\n{registry_logs}"
-            
-            # Gather system information
-            context_parts = []
-            
-            # Add script execution info
-            if self.script_queue or self.scripts_executed > 0:
-                context_parts.append(f"Scripts executed: {self.scripts_executed}/{self.total_scripts}")
-            
-            # Add system info (OS, GPU)
-            system_context = antenna.get_system_context()
-            if system_context:
-                context_parts.append(system_context)
-            
-            # Add script execution history
-            history_context = antenna.get_history_context()
-            if history_context:
-                context_parts.append(history_context)
-            
-            context = " | ".join(context_parts)
-            
-            # Submit the issue using antenna
-            title = self.translations.get(
-                "bug_report_title", "Bug Report from LinuxToys"
-            )
-            result = antenna.submit_issue(title=title, logs=logs, context=context)
-            
-            # Show result dialog
-            self._show_bug_report_result_dialog(result is not None, result or {})
-        except ConnectionError:
-            self._show_bug_report_network_error_dialog(
-                self.translations.get(
-                    "bug_report_no_connection",
-                    "No Internet Connection",
-                ),
-                self.translations.get(
-                    "bug_report_no_connection_message",
-                    "Unable to send bug report: No internet connection detected. Please check your network and try again.",
-                )
-            )
-        except Timeout:
-            self._show_bug_report_network_error_dialog(
-                self.translations.get(
-                    "bug_report_timeout",
-                    "Connection Timeout",
-                ),
-                self.translations.get(
-                    "bug_report_timeout_message",
-                    "Unable to send bug report: Server connection timed out. Please try again later.",
-                )
-            )
-        except Exception as e:
-            if "500" in str(e) or "502" in str(e) or "503" in str(e):
-                self._show_bug_report_network_error_dialog(
-                    self.translations.get(
-                        "bug_report_server_error",
-                        "Server Error",
-                    ),
-                    self.translations.get(
-                        "bug_report_server_error_message",
-                        "Unable to send bug report: The server encountered an error. Please try again later.",
-                    )
-                )
-            else:
-                print(f"Error submitting bug report: {e}", file=sys.stderr)
-                self._show_bug_report_result_dialog(False)
  
     def _on_terminal_key_press(self, widget, event):
         state = event.state
