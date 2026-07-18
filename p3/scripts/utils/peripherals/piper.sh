@@ -10,7 +10,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 if is_debian || is_ubuntu; then
-    if [[ "$VERSION_ID" =~ "24" ]]; then
+    if [[ ${UBUNTU_CODENAME:-} == noble ]]; then
         pkg_exists cmake libudev-dev libevdev-dev libsystemd-dev libglib2.0-dev libjson-glib-dev libunistring-dev check valgrind swig ninja-build python3-dev
         build_deps=("${pkg_notfound[@]}")
         pkg_install "${build_deps[@]}"
