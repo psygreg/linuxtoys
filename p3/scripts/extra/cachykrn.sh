@@ -11,7 +11,11 @@ _lang_
 
 sudo_rq
 sudo dnf copr enable bieszczaders/kernel-cachyos
-{ is_rhel && pkg_install kernel-cachyos-lts kernel-cachyos-lts-devel-matched; } || pkg_install kernel-cachyos kernel-cachyos-devel-matched
+if is_rhel; then
+    pkg_install kernel-cachyos-lts kernel-cachyos-lts-devel-matched
+else
+    pkg_install kernel-cachyos kernel-cachyos-devel-matched
+fi
 sudo setsebool -P domain_kernel_load_modules on
 # ensure it boots with the cachyos kernel as default, remaining with the standard Fedora kernel as backup option
 pkg_install grubby sbsigntools
