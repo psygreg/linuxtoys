@@ -12,13 +12,14 @@ _lang_
 if is_debian || is_ubuntu; then
     if [[ "$VERSION_ID" =~ "24" ]]; then
         pkg_exists cmake libudev-dev libevdev-dev libsystemd-dev libglib2.0-dev libjson-glib-dev libunistring-dev check valgrind swig ninja-build python3-dev
-        pkg_install "${pkg_notfound[@]}"
+        build_deps=("${pkg_notfound[@]}")
+        pkg_install "${build_deps[@]}"
         prep_tmp_noram
         git clone https://github.com/libratbag/libratbag.git && cd libratbag
         meson builddir --prefix=/usr
         ninja -C builddir
         sudo ninja -C builddir install
-        pkg_rm "${pkg_notfound[@]}"
+        pkg_rm "${build_deps[@]}"
     else
         pkg_install ratbagd
     fi
