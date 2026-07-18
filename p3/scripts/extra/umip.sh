@@ -20,7 +20,7 @@ else
     echo "clearcpuid=umip" | sudo tee /etc/kernel/cmdline.d/10-umip-patch.conf >/dev/null
     # for GRUB
     prep_create /etc/default/grub.d/10-umip-patch.cfg
-    sudo tee etc/default/grub.d/10-umip-patch.cfg << EOF
+    sudo tee /etc/default/grub.d/10-umip-patch.cfg << EOF
 GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} clearcpuid=umip"
 EOF
 
