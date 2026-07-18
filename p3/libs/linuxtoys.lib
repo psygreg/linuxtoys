@@ -727,7 +727,7 @@ bootloader_upd() {
         elif is_arch || is_cachy; then
             {
                 sudo grub-mkconfig -o /boot/grub/grub.cfg && exit_status=0 || {
-                    if bootctl is-installed >/dev/null 2>&1; then
+                    if sudo bootctl is-installed >/dev/null 2>&1; then
                         sudo bootctl update
                         exit_status=0
                     else
@@ -743,7 +743,7 @@ bootloader_upd() {
         elif is_debian; then 
             {
                 sudo update-grub && exit_status=0 || {
-                    if bootctl is-installed >/dev/null 2>&1; then
+                    if sudo bootctl is-installed >/dev/null 2>&1; then
                         sudo bootctl update
                         exit_status=0
                     else
