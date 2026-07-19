@@ -37,6 +37,7 @@ else
 fi
 # Configure npm to install global packages in user directory to avoid permission issues
 prep_dir "$HOME/.npm-global"
+pkg_install npm
 npm config set prefix "$HOME/.npm-global"
 # Add npm-global to shell config files
 NPM_PATH_CONFIG='
