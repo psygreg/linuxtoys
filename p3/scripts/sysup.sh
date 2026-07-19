@@ -60,7 +60,7 @@ elif is_debian || is_ubuntu; then
     if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
         { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo apt-get autoremove -y || fatal "Failed to remove orphaned packages"
     fi
-    { [ "$UPD_SERVICE" = "1" ] && apt upgrade -y -o Acquire::http::Dl-Limit=2048 Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y || fatal "Failed to upgrade packages"
+    { [ "$UPD_SERVICE" = "1" ] && apt upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
             sudo do-release-upgrade || fatal "Failed to start Ubuntu release upgrade"
