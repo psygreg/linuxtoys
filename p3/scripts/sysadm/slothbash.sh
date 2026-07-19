@@ -21,5 +21,5 @@ if [ -f "$HOME/.config/starship.toml" ]; then
 else
     prep_create "$HOME/.config/starship.toml"
 fi
-export $SCRIPT_DIR
+export SCRIPT_DIR
 curl -fsSL https://raw.githubusercontent.com/psygreg/sloth-bash/main/install.sh | bash -s -- --from-app
