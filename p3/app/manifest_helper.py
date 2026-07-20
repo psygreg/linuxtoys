@@ -3,7 +3,7 @@
 LinuxToys Manifest Helper Module
 
 This module provides manifest file functionality for LinuxToys, allowing IT staff 
-and technicians to automate installations using manifest files, and should be interacted with through CLI.
+and technicians to automate installations using manifest files.
 """
 
 import os
@@ -11,208 +11,169 @@ import sys
 import subprocess
 import shutil
 import asyncio
+import argparse
+import re
 from .parser import get_categories, get_all_scripts_recursive
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .reboot_helper import check_ostree_pending_deployments
 from .updater.update_helper import UpdateHelper
 
 
-def get_os_info():
-    """
-    Parse /etc/os-release to get distribution information.
-    Returns a dict with ID, ID_LIKE, and other OS information.
-    """
-    os_info = {}
-    try:
-        with open('/etc/os-release', 'r') as f:
-            for line in f:
-                if '=' in line:
-                    key, value = line.strip().split('=', 1)
-                    # Remove quotes if present
-                    value = value.strip('"\'')
-                    os_info[key] = value
-    except FileNotFoundError:
-        # Fallback for systems without /etc/os-release
-        pass
-    return os_info
+PACKAGE_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9+_.:@-]*$")
+MANIFEST_ITEM_MAX_LENGTH = 256
+CONTROL_CHARACTER_RE = re.compile(r"[\x00-\x1f\x7f]")
+ALLOWED_LIBRARY_FUNCTIONS = frozenset({'pkg_install', 'pkg_flat'})
+FLATPAK_ID_RE = re.compile(
+    r"^[A-Za-z][A-Za-z0-9_-]*(?:\.[A-Za-z0-9][A-Za-z0-9_-]*){2,}(?:/[A-Za-z0-9_.-]+){0,2}$"
+)
+
+
+def _validate_script_dir():
+    """Validate the SCRIPT_DIR inherited from the LinuxToys entry point."""
+    script_dir = os.environ.get("SCRIPT_DIR")
+    if not script_dir:
+        raise RuntimeError(
+            "SCRIPT_DIR is not set. Run the manifest helper through linuxtoys.py."
+        )
+
+    lib_path = os.path.join(script_dir, "libs", "linuxtoys.lib")
+    if not os.path.isfile(lib_path):
+        raise RuntimeError(f"LinuxToys library not found at: {lib_path}")
+
+    return script_dir
+
+
+def _run_library_function(function_name, arguments):
+    """Invoke an approved linuxtoys.lib function without shell-parsing manifest data."""
+    if function_name not in ALLOWED_LIBRARY_FUNCTIONS:
+        raise ValueError(f"disallowed library function: {function_name}")
+
+    _validate_script_dir()
+
+    # The function name comes only from the internal allowlist. Manifest values
+    # are positional parameters and are never inserted into shell code.
+    script_content = f'''set -e
+set -o pipefail
+: "${{SCRIPT_DIR:?SCRIPT_DIR is not set}}"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
+{function_name} "$@"
+'''
+    interactive = os.environ.get("EASY_CLI") == "1"
+    return subprocess.run(
+        ['bash', '-c', script_content, 'manifest-helper', *arguments],
+        stdin=sys.stdin if interactive else None,
+        stdout=sys.stdout if interactive else subprocess.PIPE,
+        stderr=sys.stderr if interactive else subprocess.PIPE,
+        text=True,
+        env=os.environ.copy(),
+    )
+
+
+
+def valid_manifest_value(value):
+    """Reject values that should never be interpreted as manifest identifiers."""
+    return (
+        bool(value)
+        and len(value) <= MANIFEST_ITEM_MAX_LENGTH
+        and value == value.strip()
+        and not value.startswith('-')
+        and not CONTROL_CHARACTER_RE.search(value)
+    )
+
+
+def valid_package_name(package_name):
+    """Reject malformed package names before querying a package manager."""
+    return valid_manifest_value(package_name) and bool(PACKAGE_NAME_RE.fullmatch(package_name))
+
+
+def valid_flatpak_id(flatpak_name):
+    """Validate a Flatpak application ID, optionally including branch/architecture."""
+    return valid_manifest_value(flatpak_name) and bool(FLATPAK_ID_RE.fullmatch(flatpak_name))
 
 
 def check_package_exists(package_name):
-    """
-    Check if a package exists in the system's package repositories.
-    Returns True if package exists, False otherwise.
-    """
-    os_info = get_os_info()
-    id_val = os_info.get('ID', '')
-    id_like = os_info.get('ID_LIKE', '')
-    
+    """Use LinuxToys distro detection to validate repository availability."""
+    if not valid_package_name(package_name):
+        return False
+
+    _validate_script_dir()
+
+    checks = r''': "${SCRIPT_DIR:?SCRIPT_DIR is not set}"
+source "$SCRIPT_DIR/libs/linuxtoys.lib"
+sysdetect
+package="$1"
+if is_debian || is_ubuntu; then
+    apt-cache show -- "$package" >/dev/null 2>&1
+elif is_arch || is_cachy; then
+    pacman -Si -- "$package" >/dev/null 2>&1 || { command -v paru >/dev/null && paru -Si -- "$package" >/dev/null 2>&1; }
+elif is_ostree || is_fedora || is_rhel; then
+    dnf -q repoquery --available -- "$package" >/dev/null 2>&1 || dnf -q list --available "$package" >/dev/null 2>&1
+elif is_suse; then
+    zypper --non-interactive search --match-exact --type package -- "$package" 2>/dev/null | grep -Eq "^i? \\|[[:space:]]*$package[[:space:]]*\\|"
+elif is_solus; then
+    eopkg list-available 2>/dev/null | awk '{print $1}' | grep -Fxq -- "$package"
+else
+    exit 2
+fi
+'''
     try:
-        # Check for rpm-ostree systems first
-        if shutil.which('rpm-ostree'):
-            # Use dnf to search since rpm-ostree uses DNF repos
-            result = subprocess.run(['dnf', 'search', '--quiet', package_name], 
-                                  capture_output=True, text=True, timeout=30)
-            return result.returncode == 0 and package_name in result.stdout
-            
-        # Debian/Ubuntu systems
-        elif (('debian' in id_like or 'ubuntu' in id_like or 
-               id_val in ['debian', 'ubuntu']) and 
-              shutil.which('apt-cache')):
-            result = subprocess.run(['apt-cache', 'search', '--names-only', f'^{package_name}$'], 
-                                  capture_output=True, text=True, timeout=30)
-            return result.returncode == 0 and result.stdout.strip() != ""
-            
-        # Arch-based systems
-        elif ((id_val in ['arch', 'cachyos'] or 
-               'arch' in id_like or 'archlinux' in id_like) and 
-              shutil.which('pacman')):
-            result = subprocess.run(['pacman', '-Ss', f'^{package_name}$'], 
-                                  capture_output=True, text=True, timeout=30)
-            return result.returncode == 0 and result.stdout.strip() != ""
-            
-        # Fedora/RHEL systems
-        elif (('rhel' in id_like or 'fedora' in id_like or 
-               'fedora' in id_val) and 
-              shutil.which('dnf')):
-            result = subprocess.run(['dnf', 'search', '--quiet', package_name], 
-                                  capture_output=True, text=True, timeout=30)
-            return result.returncode == 0 and package_name in result.stdout
-            
-        # openSUSE systems
-        elif (('suse' in id_like or 'suse' in id_val) and shutil.which('zypper')):
-            result = subprocess.run(['zypper', 'search', '--exact-match', package_name], 
-                                  capture_output=True, text=True, timeout=30)
-            return result.returncode == 0 and result.stdout.strip() != ""
-            
-    except (subprocess.TimeoutExpired, subprocess.CalledProcessError, Exception):
-        pass
-        
-    return False
-
-
+        result = subprocess.run(
+            ['bash', '-c', checks, 'manifest-helper', package_name],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=45,
+            env=os.environ.copy(),
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
+        return False
 
 
 async def check_flatpak_exists_async(flatpak_name):
-    """
-    Check if a flatpak exists in available repositories asynchronously.
-    Returns True if flatpak exists, False otherwise.
-    """
-    if not shutil.which('flatpak'):
+    """Check for an exact Flatpak application ID in configured remotes."""
+    if not valid_flatpak_id(flatpak_name) or not shutil.which('flatpak'):
         return False
-        
+
+    base_id = flatpak_name.split('/', 1)[0]
     try:
         process = await asyncio.create_subprocess_exec(
-            'flatpak', 'search', '--columns=application', flatpak_name,
+            'flatpak', 'remote-info', 'flathub', base_id,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+        await asyncio.wait_for(process.communicate(), timeout=30)
+        if process.returncode == 0:
+            return True
+
+        process = await asyncio.create_subprocess_exec(
+            'flatpak', 'search', '--columns=application', base_id,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.DEVNULL,
         )
         stdout, _ = await asyncio.wait_for(process.communicate(), timeout=30)
-        
-        if process.returncode == 0:
-            stdout_str = stdout.decode().strip()
-            # Check if flatpak_name exactly matches any of the application IDs
-            for line in stdout_str.split('\n'):
-                if line.strip() == flatpak_name:
-                    return True
-    except (asyncio.TimeoutError, Exception):
-        pass
-        
-    return False
+        return process.returncode == 0 and base_id in stdout.decode().splitlines()
+    except (asyncio.TimeoutError, OSError):
+        return False
 
 
 async def check_flatpaks_async(flatpak_names):
-    """
-    Check multiple flatpaks exists in available repositories asynchronously.
-    Returns a list of booleans.
-    """
-    tasks = [check_flatpak_exists_async(name) for name in flatpak_names]
-    return await asyncio.gather(*tasks)
+    return await asyncio.gather(*(check_flatpak_exists_async(name) for name in flatpak_names))
 
 
-def install_package(package_name):
-    """
-    Install a package using the system's package manager.
-    Returns True if successful, False otherwise.
-    """
-    try:
-        # Create a temporary script to install the package using linuxtoys.lib functions
-        lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
-        
-        script_content = f'''#!/bin/bash
-source "{lib_path}"
-_packages=("{package_name}")
-_install_
-'''
-        
-        # Check if EASY_CLI mode is enabled
-        if os.environ.get("EASY_CLI") == "1":
-            result = subprocess.run(
-                ['bash', '-c', script_content],
-                stdin=sys.stdin,
-                stdout=sys.stdout,
-                stderr=sys.stderr
-            )
-        else:
-        # Execute the installation script
-            result = subprocess.run(['bash', '-c', script_content], 
-                                capture_output=True, text=True)
-        
-        if result.returncode == 0:
-            print(f"✓ Successfully installed package: {package_name}")
-            return True
-        else:
-            print(f"✗ Failed to install package: {package_name}")
-            if result.stderr:
-                print(f"Error: {result.stderr}")
-            return False
-            
-    except Exception as e:
-        print(f"✗ Error installing package {package_name}: {e}")
-        return False
+def install_packages(package_names):
+    """Install packages in one pkg_install call through linuxtoys.lib."""
+    result = _run_library_function('pkg_install', package_names)
+    if result.returncode != 0 and result.stderr:
+        print(result.stderr.strip())
+    return result.returncode == 0
 
 
-
-
-async def install_flatpak_async(flatpak_name):
-    """
-    Install a flatpak asynchronously using the linuxtoys.lib _flatpak_ function.
-    Returns (True, None) if successful, (False, error_message) otherwise.
-    """
-    try:
-        # Create a temporary script to install the flatpak using linuxtoys.lib functions
-        lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
-        
-        script_content = f'''#!/bin/bash
-source "{lib_path}"
-_flatpaks=("{flatpak_name}")
-_flatpak_
-'''
-        # Execute the installation script asynchronously
-        process = await asyncio.create_subprocess_exec(
-            'bash', '-c', script_content,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        
-        stdout, stderr = await process.communicate()
-        
-        if process.returncode == 0:
-            return True, None
-        else:
-            err_msg = stderr.decode().strip() if stderr else "Unknown error"
-            return False, err_msg
-            
-    except Exception as e:
-        return False, str(e)
-
-
-async def install_flatpaks_async(flatpak_names):
-    """
-    Install multiple flatpaks asynchronously.
-    Returns a list of (success, error_message) tuples.
-    """
-    tasks = [install_flatpak_async(name) for name in flatpak_names]
-    return await asyncio.gather(*tasks)
+def install_flatpaks(flatpak_names):
+    """Install Flatpaks in one pkg_flat call through linuxtoys.lib."""
+    result = _run_library_function('pkg_flat', flatpak_names)
+    if result.returncode != 0 and result.stderr:
+        print(result.stderr.strip())
+    return result.returncode == 0
 
 
 def find_script_by_name(script_name, translations=None):
@@ -281,6 +242,9 @@ def load_manifest(manifest_path='manifest.txt'):
                 line = line.strip()
                 # Skip empty lines and comments
                 if line and not line.startswith('#'):
+                    if not valid_manifest_value(line):
+                        print(f"Error: unsafe or malformed manifest entry on line {line_num}: {line!r}")
+                        return []
                     script_names.append(line)
                     
     except Exception as e:
@@ -452,6 +416,22 @@ def check_ostree_deployment_cli(translations=None):
 
 
 
+def parse_manifest_arguments(argv=None):
+    """Parse manifest-mode CLI arguments."""
+    parser = argparse.ArgumentParser(add_help=False, prog='linuxtoys')
+    parser.add_argument('manifest_path', nargs='?', default='manifest.txt')
+    parser.add_argument('--check-updates', action='store_true')
+    parser.add_argument('--yes', '-y', action='store_true')
+    parser.add_argument('--help', '-h', action='store_true')
+    args, unknown = parser.parse_known_args(argv)
+    if args.manifest_path in {'check-updates', 'update-check'}:
+        args.check_updates = True
+        args.manifest_path = 'manifest.txt'
+    if unknown:
+        raise ValueError(f"unrecognized argument(s): {' '.join(unknown)}")
+    return args
+
+
 def print_cli_usage():
     """
     Print usage information for CLI mode.
@@ -466,6 +446,7 @@ def print_cli_usage():
     print("  check-updates            - Check for LinuxToys updates")
     print("  update-check             - Check for LinuxToys updates")
     print("  --check-updates          - Check for LinuxToys updates")
+    print("  --yes, -y                - Skip confirmation")
     print("  --help, -h               - Show this help message")
     print()
     print("Manifest File Format:")
@@ -491,26 +472,21 @@ def run_manifest_mode(translations=None):
     - --help/-h: shows usage information
     - <manifest_path>: uses specified manifest file path
     """
-    # Parse command-line arguments
-    manifest_path = 'manifest.txt'  # Default manifest path
-    
-    if len(sys.argv) > 2:
-        arg = sys.argv[2]
-        
-        # Check for help request
-        if arg in ['--help', '-h', 'help']:
-            print_cli_usage()
-            return 0
-        
-        # Check if user wants to run update check
-        elif arg in ['check-updates', 'update-check', '--check-updates']:
-            return 1 if run_update_check_cli(translations) else 0
-        
-        # Otherwise, treat the argument as a manifest file path
-        else:
-            manifest_path = arg
-    
-    
+    try:
+        args = parse_manifest_arguments(sys.argv[1:])
+    except ValueError as exc:
+        print(f"Error: {exc}")
+        print_cli_usage()
+        return 2
+
+    if args.help:
+        print_cli_usage()
+        return 0
+    if args.check_updates:
+        return 1 if run_update_check_cli(translations) else 0
+
+    manifest_path = args.manifest_path
+
     print("LinuxToys CLI Manifest Mode")
     print("=" * 40)
     
@@ -546,26 +522,58 @@ def run_manifest_mode(translations=None):
     scripts_to_run = []
     packages_to_install = []
     flatpaks_to_install = []
+    invalid_items = []
     
-    # Identify scripts, packages, and potential flatpaks
+    # Explicit prefixes avoid ambiguity; unprefixed entries retain auto-detection.
     potential_flatpaks = []
+    explicit_packages = []
+    explicit_scripts = []
     other_items = []
-    for name in script_names:
-        if name.count('.') >= 2:
-            potential_flatpaks.append(name)
+    for raw_name in script_names:
+        prefix, separator, value = raw_name.partition(':')
+        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak'}:
+            name = value.strip()
+            if not name:
+                print(f"Error: empty manifest entry '{raw_name}'.")
+                invalid_items.append(raw_name)
+            elif prefix.lower() == 'script':
+                explicit_scripts.append(name)
+            elif prefix.lower() in {'package', 'pkg'}:
+                explicit_packages.append(name)
+            else:
+                potential_flatpaks.append(name)
+        elif valid_flatpak_id(raw_name):
+            potential_flatpaks.append(raw_name)
         else:
-            other_items.append(name)
+            other_items.append(raw_name)
+
+    for package_name in explicit_packages:
+        if not valid_package_name(package_name):
+            print(f"Error: invalid package name '{package_name}'.")
+            invalid_items.append(package_name)
+        elif check_package_exists(package_name):
+            print(f"✓ Found package: {package_name}")
+            packages_to_install.append(package_name)
+        else:
+            print(f"Error: package '{package_name}' was not found in available repositories.")
+            invalid_items.append(package_name)
+
+    other_items = explicit_scripts + other_items
 
     # Check flatpaks asynchronously
     if potential_flatpaks:
         print(f"Checking {len(potential_flatpaks)} potential flatpak(s) asynchronously...")
         flatpak_exists_results = asyncio.run(check_flatpaks_async(potential_flatpaks))
         for name, exists in zip(potential_flatpaks, flatpak_exists_results):
-            if exists:
+            if not valid_flatpak_id(name):
+                print(f"Error: invalid Flatpak ID '{name}'.")
+                invalid_items.append(name)
+            elif exists:
                 print(f"✓ Found flatpak: {name}")
                 flatpaks_to_install.append(name)
             else:
-                print(f"Warning: '{name}' follows flatpak naming but not found in remotes. Skipping.")
+                print(f"Error: Flatpak '{name}' was not found in configured remotes.")
+                invalid_items.append(name)
 
     # Check other items (scripts and packages)
     for script_name in other_items:
@@ -573,14 +581,19 @@ def run_manifest_mode(translations=None):
         script_info = find_script_by_name(script_name, translations)
         
         if script_info is None:
-            # Not a script, check if it's a system package
+            # Not a script, validate and check it as a system package.
+            if not valid_package_name(script_name):
+                print(f"Error: unsafe or malformed manifest item '{script_name}'.")
+                invalid_items.append(script_name)
+                continue
             if check_package_exists(script_name):
                 print(f"✓ Found package: {script_name}")
                 packages_to_install.append(script_name)
                 continue
             
             # Neither script nor package found
-            print(f"Warning: '{script_name}' not found as script or package. Skipping.")
+            print(f"Error: '{script_name}' is not a LinuxToys script or an available package.")
+            invalid_items.append(script_name)
             continue
             
         # Check compatibility for scripts
@@ -594,6 +607,13 @@ def run_manifest_mode(translations=None):
             continue
             
         scripts_to_run.append(script_info)
+
+    if invalid_items:
+        print("\nManifest validation failed. Nothing will be executed or installed.")
+        print("Rejected item(s):")
+        for item in invalid_items:
+            print(f"  - {item}")
+        return 2
 
     total_items = len(scripts_to_run) + len(packages_to_install) + len(flatpaks_to_install)
     
@@ -610,71 +630,47 @@ def run_manifest_mode(translations=None):
         print(f"  - [FLATPAK] {flatpak}")
     print()
 
-    # Ask for confirmation
-    try:
-        response = input("Continue? [y/N]: ").strip().lower()
-        if response not in ['y', 'yes']:
-            print("Operation cancelled.")
+    # Ask for confirmation unless --yes was supplied.
+    if not args.yes:
+        try:
+            response = input("Continue? [y/N]: ").strip().lower()
+            if response not in ['y', 'yes']:
+                print("Operation cancelled.")
+                return 0
+        except (KeyboardInterrupt, EOFError):
+            print("\nOperation cancelled.")
             return 0
-    except KeyboardInterrupt:
-        print("\nOperation cancelled.")
-        return 0
 
     # Execute scripts and install packages/flatpaks sequentially
     failed_items = []
     current_item = 0
     
-    # Install packages first
-    for package in packages_to_install:
-        current_item += 1
-        print(f"\n[{current_item}/{total_items}] Installing package: {package}")
+    # Install packages first in one library call.
+    if packages_to_install:
+        current_item += len(packages_to_install)
+        print(f"\nInstalling {len(packages_to_install)} package(s)...")
         print("=" * 60)
-        
-        success = install_package(package)
-        
-        if not success:
-            failed_items.append(('PACKAGE', package, 1))
-            print(f"Package '{package}' installation failed")
-            
-            # Ask if user wants to continue on failure
-            try:
-                response = input("Continue with remaining items? [y/N]: ").strip().lower()
-                if response not in ['y', 'yes']:
-                    print("Execution stopped.")
-                    break
-            except KeyboardInterrupt:
-                print("\nExecution stopped.")
-                break
-    
-    # Install flatpaks second
+        if install_packages(packages_to_install):
+            for package in packages_to_install:
+                print(f"✓ Successfully installed package: {package}")
+        else:
+            for package in packages_to_install:
+                failed_items.append(('PACKAGE', package, 1))
+            print("✗ Package installation failed")
+
+    # Avoid concurrent Flatpak/sudo operations by using one pkg_flat call.
     if flatpaks_to_install:
-        print(f"\nInstalling {len(flatpaks_to_install)} flatpak(s) asynchronously...")
+        current_item += len(flatpaks_to_install)
+        print(f"\nInstalling {len(flatpaks_to_install)} Flatpak(s)...")
         print("=" * 60)
-        
-        flatpak_results = asyncio.run(install_flatpaks_async(flatpaks_to_install))
-        
-        for flatpak, (success, err_msg) in zip(flatpaks_to_install, flatpak_results):
-            current_item += 1
-            if success:
+        if install_flatpaks(flatpaks_to_install):
+            for flatpak in flatpaks_to_install:
                 print(f"✓ Successfully installed flatpak: {flatpak}")
-            else:
+        else:
+            for flatpak in flatpaks_to_install:
                 failed_items.append(('FLATPAK', flatpak, 1))
-                print(f"✗ Failed to install flatpak: {flatpak}")
-                if err_msg:
-                    print(f"Error: {err_msg}")
-        
-        # If any failed, ask if user wants to continue (if not already at end of flatpaks)
-        any_failed = any(not r[0] for r in flatpak_results)
-        if any_failed and current_item < total_items:
-             try:
-                response = input("Continue with remaining items? [y/N]: ").strip().lower()
-                if response not in ['y', 'yes']:
-                    print("Execution stopped.")
-                    # return summary? or just break. The original code had a break within the loop.
-                    # Since we did these in parallel, we already finished the flatpaks group.
-             except KeyboardInterrupt:
-                print("\nExecution stopped.")
-    
+            print("✗ Flatpak installation failed")
+
     # Execute scripts last
     for script_info in scripts_to_run:
         current_item += 1
