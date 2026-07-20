@@ -11,8 +11,8 @@ from .parser import get_categories, get_all_scripts_recursive
 from .updater import __version__
 from .manifest_helper import (
     run_manifest_mode, run_update_check_cli, find_script_by_name, 
-    run_script, check_package_exists, install_package, 
-    check_flatpaks_async, install_flatpaks_async
+    run_script, check_package_exists, install_packages, 
+    check_flatpaks_async, install_flatpaks
 )
 from .dev_mode import is_dev_mode_enabled
 from .revert_helper import build_auto_revert_script_entry
@@ -447,7 +447,7 @@ def install_packages_with_feedback(packages_found):
         print("=" * 60)
 
         try:
-            success = install_package(package)
+            success = install_packages(package)
         except KeyboardInterrupt:
             # Stop execution if the user presses Ctrl+C
             return print("\n⚠️  Execution interrupted by the user.")
@@ -533,7 +533,7 @@ def install_flatpaks_with_feedback(flatpaks_found):
 
     try:
         # Run asynchronous installation
-        results = asyncio.run(install_flatpaks_async(flatpaks_found))
+        results = asyncio.run(install_flatpaks(flatpaks_found))
         
         for flatpak, (success, err_msg) in zip(flatpaks_found, results):
             if success:
