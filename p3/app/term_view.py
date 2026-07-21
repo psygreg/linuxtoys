@@ -296,18 +296,10 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
     def _on_key_press(self, widget, event):
         """Handle key press events - specifically Escape to go back."""
         if event.keyval == Gdk.KEY_Escape:
-            # Check if a script is currently running
-            if self.parent._script_running:
-                # Show the warning dialog before cancelling
-                if self.parent._show_cancel_script_warning_dialog():
-                    # User confirmed to cancel
-                    self.on_done_clicked(None)
-                # Otherwise, continue running (user chose not to cancel)
-                return True
-            else:
-                # No script running, just go back
-                self.on_done_clicked(None)
-                return True
+            # Keep all terminal-exit confirmation and cancellation handling in
+            # NavCtl.on_back_button_clicked(), which is also used by the header button.
+            self.on_done_clicked(None)
+            return True
  
         return False
  

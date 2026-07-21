@@ -133,10 +133,27 @@ class NavCtl:
 
         # Handle leaving the terminal before normal search navigation.
         if self.main_stack.get_visible_child_name() == "running_scripts":
+            child = self.main_stack.get_child_by_name("running_scripts")
+
+            # This branch returns before the generic running-script check below,
+            # so cancellation must be confirmed here before destroying the VTE view.
+            if self._script_running:
+                if not self._show_cancel_script_warning_dialog():
+                    return
+
+                # Send Ctrl+C to the foreground process before removing the terminal.
+                # Destroying the VTE alone is not a reliable cancellation mechanism.
+                if child is not None and hasattr(child, "terminal"):
+                    try:
+                        child.terminal.feed_child(b"\x03")
+                    except (TypeError, AttributeError):
+                        pass
+
+                self._script_running = False
+
             returning_to_search = self.search_active
             search_query = self.search_entry.get_text().strip()
 
-            child = self.main_stack.get_child_by_name("running_scripts")
             if child is not None:
                 self.main_stack.remove(child)
                 child.destroy()
