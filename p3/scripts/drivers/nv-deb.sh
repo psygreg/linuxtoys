@@ -23,8 +23,18 @@ else
     sudo sed -i 's/^deb-src http:\/\/\([^ ]*\) \([^ ]*\) main$/deb-src http:\/\/\1 \2 main contrib non-free/' /etc/apt/sources.list
 fi
 sudo apt update
-debian_ver=$(lsb_release -rs 2>/dev/null)
-[[ "$debian_ver" == "14" ]] && debian_ver="13" # workaround for testing users
+
+debian_ver=$(lsb_release -rs 2>/dev/null || true)
+debian_ver=${debian_ver%%.*}
+case "$debian_ver" in
+    12|13)
+        ;;
+    *)
+        # workaround for testing/sid users
+        debian_ver="13"
+        ;;
+esac
+
 wget "https://developer.download.nvidia.com/compute/cuda/repos/debian$debian_ver/x86_64/cuda-keyring_1.1-1_all.deb"
 pkg_fromfile cuda-keyring_1.1-1_all.deb
 sleep 1
