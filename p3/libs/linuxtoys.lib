@@ -242,7 +242,7 @@ prep_rm() {
     done
 }
 prep_tmp() {
-    { mkdir -p /tmp/linuxtoys && cd /tmp/linuxtoys; } || fatal "Failed to create tempdir"
+    { mkdir -p /tmp/linuxtoys && cd /tmp/linuxtoys; } || prep_tmp_noram
 }
 prep_tmp_noram () {
     { mkdir -p "$HOME/.cache/linuxtoys/tmp" && cd "$HOME/.cache/linuxtoys/tmp"; } || fatal "Failed to create tempdir"
