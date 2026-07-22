@@ -28,7 +28,7 @@ jdk_install () {
             else
                 zenwrn "Java version ${jav} is not available in Solus repositories. Skipping."
             fi
-        elif is_arch; then
+        elif is_arch || is_cachy; then
             case "$jav" in
                 8)  packages+=(jdk8-openjdk jre8-openjdk) ;;
                 11) packages+=(jdk11-openjdk jre11-openjdk) ;;
