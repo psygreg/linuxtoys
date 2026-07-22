@@ -70,7 +70,7 @@ Replace `linuxtoys.lib` with `helpers.lib` if you need a function from it. `help
 - `warn "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
 - `error "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and returning code 1.
 - `die "$message"`: fatal error dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and terminating the script with code 1, triggering an automatic reversion of any changes made.
-- `askpass`: requests privilege elevation, after which all commands called with `sudo` will properly authenticate. This should only be used when this is needed, and `sudo` should only be called in commands that need it. Has error handling calling `fatal`.
+- `askpass`: requests privilege elevation, after which all commands called with `sudo` will properly authenticate. This should only be used when this is needed, and `sudo` should only be called in commands that need it. Has error handling calling `die`.
 
 #### System and Hardware Detection
 All the following functions return 0 when positive or 1 when negative.

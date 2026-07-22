@@ -29,7 +29,7 @@ elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
         } | sudo tee /etc/yum.repos.d/sublime-text.repo > /dev/null
         rpm-ostree refresh-md
     else
-        sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+        { command -v "dnf5" &>/dev/null && sudo dnf config-manager addrepo --from-repofile=https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo; } || sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
     fi
     pkg_install sublime-text
 # Instalação para Arch Linux e derivados
