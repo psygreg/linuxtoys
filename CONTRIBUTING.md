@@ -65,17 +65,17 @@ Replace `linuxtoys.lib` with `helpers.lib` if you need a function from it. `help
 ### `linuxtoys.lib`
 
 #### Dialogs 
-- `zeninf "$message"`: informational dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
-- `zenask "$title" "$message"`: question dialog, displaying a message and requiring a *Yes/No* user response with zenity if in GUI mode or `read` on terminal. Returns 0 if response is *Yes* or 1 if response is *No*.
-- `zenwrn "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
-- `nonfatal "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and returning code 1.
-- `fatal "$message"`: fatal error dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and terminating the script with code 1, triggering an automatic reversion of any changes made.
-- `sudo_rq`: requests privilege elevation, after which all commands called with `sudo` will properly authenticate. This should only be used when this is needed, and `sudo` should only be called in commands that need it. Has error handling calling `fatal`.
+- `info "$message"`: informational dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
+- `question "$title" "$message"`: question dialog, displaying a message and requiring a *Yes/No* user response with zenity if in GUI mode or `read` on terminal. Returns 0 if response is *Yes* or 1 if response is *No*.
+- `warn "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
+- `error "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and returning code 1.
+- `die "$message"`: fatal error dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and terminating the script with code 1, triggering an automatic reversion of any changes made.
+- `askpass`: requests privilege elevation, after which all commands called with `sudo` will properly authenticate. This should only be used when this is needed, and `sudo` should only be called in commands that need it. Has error handling calling `fatal`.
 
 #### System and Hardware Detection
 All the following functions return 0 when positive or 1 when negative.
 
-- `is_debian`: detects *Debian* and its derivatives that are not related to *Ubuntu*. 
+- `is_debian`: detects *Debian* and its derivatives that are not related to *Ubuntu*. Includes *Deepin*.
 - `is_ubuntu`: detects *Ubuntu* and its derivatives.
 - `is_zorin`: detects *ZorinOS*. Created due to this distro often demanding workarounds not applicable to upstream *Ubuntu*.
 - `is_arch`: detects *Arch Linux* and its derivatives, except for *CachyOS*.
@@ -84,6 +84,7 @@ All the following functions return 0 when positive or 1 when negative.
 - `is_ostree`: detects **atomic** *Fedora* and its derivatives.
 - `is_rhel`: detects *Red Hat Enterprise Linux* and similars.
 - `is_solus`: detects *Solus*.
+- `is_deepin`: detects *Deepin*.
 
 - `is_systemd`: detects if the host OS init system is *SystemD*. Created due to some features not being applicable to systems with other init systems.
 
