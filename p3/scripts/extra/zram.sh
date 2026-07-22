@@ -2,7 +2,7 @@
 # name: ZRAM/ZSWAP
 # description: zram_desc
 # icon: preload.svg
-# compat: ubuntu, debian, arch, fedora, ostree, rhel
+# compat: ubuntu, debian, arch, fedora, ostree, rhel, cachy
 # nocontainer
 # new
 # systemd: yes
@@ -48,7 +48,7 @@ EOF
 }
 
 _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-if [ "$_total_ram_kb" -gt 16777216 ] && ! is_rhel; then
+if [ "$_total_ram_kb" -gt 16777216 ] && ! is_rhel && ! is_cachy; then
     setup_zram
 else
     zswap_lib
