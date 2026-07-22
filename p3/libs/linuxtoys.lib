@@ -15,38 +15,123 @@ _zenity_run() {
 zenity() {
     _zenity_run "$@"
 }
-zenask() {
-    local title="$1"
-    local text="$2"
-    local width="${3:-360}"
-    local height="${4:-300}"
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        return 0
-    fi
-    if _zenity_run --question --title "$title" --text "$text" --width "$width" --height "$height"; then
-        return 0
-    fi
-    if [[ -t 0 ]]; then
-        local _reply
-        read -r -p "$text [y/N] " _reply
-        [[ "$_reply" =~ ^[Yy]$ ]]
-        return $?
-    fi
-    return 1
-}
-zenpass() {
+
+# privilege escalation
+askpass() {
+    local mode="${1:-sudo}"
+    shift || true
+
     local title="${1:-LinuxToys}"
     local _pass=""
-    if _zenity_can_run; then
-        _pass="$(_zenity_run --password --title="$title")" || return 1
-    elif [[ -t 0 ]]; then
-        read -rsp "Password: " _pass
-        echo
-    else
-        return 1
-    fi
-    [[ -n "$_pass" ]] || return 1
-    printf "%s" "$_pass"
+    local max_attempts=3
+    local attempts=0
+    local marker="${TMPDIR:-/tmp}/linuxtoys_sudo_validated-${UID}"
+
+    case "$mode" in
+        password)
+            # Explicit CLI mode.
+            if [[ ${DISABLE_ZENITY:-0} == "1" ]]; then
+                [[ -t 0 ]] || return 1
+
+                read -rsp "Password: " _pass || return 1
+                printf '\n' >&2
+            else
+                # GUI mode must use Zenity. Do not silently redirect password
+                # input to the terminal viewer.
+                _zenity_can_run || return 1
+
+                _pass=$(
+                    _zenity_run \
+                        --password \
+                        --title="$title"
+                ) || return 1
+            fi
+
+            [[ -n "$_pass" ]] || return 1
+            printf '%s' "$_pass"
+            ;;
+
+        sudo)
+            # Only sudo itself can confirm whether the current authorization
+            # is still valid. The marker must not bypass this check.
+            if sudo -n true 2>/dev/null; then
+                return 0
+            fi
+
+            # Remove a stale informational marker.
+            rm -f "$marker"
+
+            if [[ ${DISABLE_ZENITY:-0} == "1" ]]; then
+                while (( attempts < max_attempts )); do
+                    _pass=$(askpass password "$title") || return 1
+
+                    if printf '%s\n' "$_pass" |
+                        sudo -S -p '' -v >/dev/null 2>&1; then
+                        unset _pass
+
+                        if [[ -n ${LINUXTOYS_CHECKLIST:-} ]]; then
+                            touch "$marker"
+                        fi
+
+                        return 0
+                    fi
+
+                    unset _pass
+                    ((attempts++))
+
+                    printf '❌ Wrong password. Attempts: %d/%d.\n' \
+                        "$attempts" "$max_attempts" >&2
+                done
+
+                _msg error \
+                    "❌ Wrong password or sudo failed (max attempts reached)." \
+                    "Authentication Failed"
+                exit 100
+            fi
+
+            _pass=$(askpass password "$title") || {
+                _msg error \
+                    "Password dialog cancelled or could not be displayed." \
+                    "Authentication Failed"
+                exit 100
+            }
+
+            if command -v sudo-rs >/dev/null 2>&1; then
+                if ! printf '%s\n' "$_pass" |
+                    sudo-rs -Sv >/dev/null 2>&1; then
+                    unset _pass
+
+                    _msg error \
+                        "Wrong password or authentication failed." \
+                        "Authentication Failed"
+                    exit 100
+                fi
+            else
+                if ! printf '%s\n' "$_pass" |
+                    sudo -S -p '' -v >/dev/null 2>&1; then
+                    unset _pass
+
+                    _msg error \
+                        "Wrong password or authentication failed." \
+                        "Authentication Failed"
+                    exit 100
+                fi
+            fi
+
+            unset _pass
+
+            if [[ -n ${LINUXTOYS_CHECKLIST:-} ]]; then
+                touch "$marker"
+            fi
+
+            return 0
+            ;;
+
+        *)
+            printf 'askpass: unknown mode: %s\n' "$mode" >&2
+            return 2
+            ;;
+    esac
 }
 
 # Unified message handler
@@ -74,7 +159,28 @@ _msg() {
         *)       echo "$text" ;;
     esac
 }
-zeninf() { 
+
+# message presets
+question() {
+    local title="$1"
+    local text="$2"
+    local width="${3:-360}"
+    local height="${4:-300}"
+    if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        return 0
+    fi
+    if _zenity_run --question --title "$title" --text "$text" --width "$width" --height "$height"; then
+        return 0
+    fi
+    if [[ -t 0 ]]; then
+        local _reply
+        read -r -p "$text [y/N] " _reply
+        [[ "$_reply" =~ ^[Yy]$ ]]
+        return $?
+    fi
+    return 1
+}
+info() { 
     { ( [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; } ) && return 0; } || true
     _zenity_can_run || { echo "$1" && return 0; }
     if [ -n "$CHECKLIST_RUN" ]; then
@@ -83,7 +189,7 @@ zeninf() {
         _msg info "$1";
     fi
 }
-zenwrn() { 
+warn() { 
     _zenity_can_run || { echo "$1" && return 0; }
     if [ -n "$CHECKLIST_RUN" ]; then
         echo "WARN: $1"; 
@@ -91,16 +197,25 @@ zenwrn() {
         _msg warning "$1";
     fi
 }
-fatal() {
-    _zenity_can_run || { echo "$1" && exit 1; }
-    _msg error "$1" "Fatal Error"
-    exit 1
-}
-nonfatal() {
+error() {
     _zenity_can_run || { echo "$1" && return 1; }
     _msg error "$1" "Error"
     return 1
 }
+die() {
+    _zenity_can_run || { echo "$1" && exit 1; }
+    _msg error "$1" "Fatal Error"
+    exit 1
+}
+
+# legacy function calls
+zenpass() { askpass password "$@"; }
+sudo_rq() { askpass sudo "$@"; }
+zenask() { question "$@"; }
+zenwrn() { warn "$@"; }
+zeninf() { info "$@"; }
+nonfatal() { error "$@"; }
+fatal() { die "$@"; }
 
 # sourcing
 sysdetect() {
@@ -111,46 +226,6 @@ summon_helpers() {
 }
 summon_optimizers() {
     source "$SCRIPT_DIR/libs/optimizers.lib" || fatal "Optimizers library not found"
-}
-
-# sudo handler
-sudo_rq() {
-    # Check if already authorized
-    if sudo -n true 2>/dev/null || [ -f /tmp/linuxtoys_sudo_validated ]; then
-        [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
-        return 0
-    fi
-
-    # CLI mode
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        local max_attempts=3
-        local attempts=0
-
-        while (( attempts < max_attempts )); do
-            read -rsp "Password: " _pass
-            echo
-            if echo "${_pass}" | sudo -S -v &>/dev/null; then
-                [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
-                return 0
-            fi
-            ((attempts++))
-            echo "❌ Wrong password. Attempts: ${attempts}/${max_attempts}."
-        done
-        _msg error "❌ Wrong password or sudo failed (max attempts reached)." "Authentication Failed"
-        exit 100
-    fi
-
-    # GUI mode with CLI fallback if zenity is unavailable.
-    if command -v sudo-rs &>/dev/null; then
-        _pass=$(zenpass "LinuxToys") || { _msg error "Password dialog cancelled" "Authentication Failed"; exit 100; }
-        echo "${_pass}" | sudo-rs -Sv || { _msg error "Wrong password or authentication failed" "Authentication Failed"; exit 100; }
-    else
-        _pass=$(zenpass "LinuxToys") || { _msg error "Password dialog cancelled" "Authentication Failed"; exit 100; }
-        echo "${_pass}" | sudo -S -v &>/dev/null || { _msg error "Wrong password or authentication failed" "Authentication Failed"; exit 100; }
-    fi
-
-    [ -n "$LINUXTOYS_CHECKLIST" ] && touch /tmp/linuxtoys_sudo_validated
-    return 0
 }
 
 # --- Utils ---
@@ -179,6 +254,7 @@ is_suse() { sysdetect_once && [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_
 is_solus() { sysdetect_once && [[ "$ID" == "solus" ]]; }
 is_zorin() { sysdetect_once && [[ "$ID" == "zorin" ]]; }
 is_rhel() { sysdetect_once && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && [ ! -f /run/ostree-booted ] && [[ "$ID" != "nobara" ]]; }
+is_deepin() { sysdetect_once && [[ "$ID" == "deepin" ]]; }
 is_systemd() { [[ $(ps -p 1 -o comm= || readlink /sbin/init) =~ "systemd" ]] }
 
 # GPU detection
