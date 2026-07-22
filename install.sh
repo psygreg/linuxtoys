@@ -92,6 +92,8 @@ osarch() {
 	if pacman -Qi linuxtoys-bin &>/dev/null; then
 		sudo pacman -R --noconfirm linuxtoys-bin || error "Failed to remove existing linuxtoys-bin package."
 	fi
+	{ pacman -Qi debugedit &>/dev/null || sudo pacman -S debugedit; } || error "Failed to install makepkg dependency debugedit"
+	{ pacman -Qi fakeroot &>/dev/null || sudo pacman -S fakeroot; } || error "Failed to install makepkg dependency fakeroot"
 	mkdir -p ${_pkg_dir}
 	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
 		cd "${_pkg_dir}"
