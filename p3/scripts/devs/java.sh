@@ -28,6 +28,14 @@ jdk_install () {
             else
                 zenwrn "Java version ${jav} is not available in Solus repositories. Skipping."
             fi
+        elif is_arch; then
+            case "$jav" in
+                8)  packages+=(jdk8-openjdk jre8-openjdk) ;;
+                11) packages+=(jdk11-openjdk jre11-openjdk) ;;
+                17) packages+=(jdk17-openjdk jre17-openjdk) ;;
+                21) packages+=(jdk21-openjdk jre21-openjdk) ;;
+                24) packages+=(jdk-openjdk jre-openjdk) ;;
+            esac
         fi
     done
 
@@ -65,7 +73,7 @@ java_in () {
             "Java 11 LTS"
             "Java 17 LTS"
             "Java 21 LTS"
-            "Java 24 Latest"
+            "Java Latest"
         )
     fi
 
@@ -85,7 +93,7 @@ java_in () {
                 FALSE "Java 11 LTS" \
                 FALSE "Java 17 LTS" \
                 FALSE "Java 21 LTS" \
-                FALSE "Java 24 Latest" \
+                FALSE "Java Latest" \
                 --height=410 --width=300 --separator="|")
         fi
 
@@ -106,7 +114,7 @@ java_in () {
                         "Java 11 LTS") _jdk11="11" ;;
                         "Java 17 LTS") _jdk17="17" ;;
                         "Java 21 LTS") _jdk21="21" ;;
-                        "Java 24 Latest") if [ "$is_fedora_rhel" -eq 1 ]; then
+                        "Java Latest") if [ "$is_fedora_rhel" -eq 1 ]; then
                                 _jdk24="latest"
                             else
                                 _jdk24="24" 
