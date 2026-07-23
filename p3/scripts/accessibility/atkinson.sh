@@ -1,6 +1,6 @@
 #!/bin/bash
 # name: Atkinson Hyperlegible
-# desc: atkinson_desc
+# description: atkinson_desc
 # repo: https://github.com/google/fonts
 # icon: lucidglyph.svg
 
