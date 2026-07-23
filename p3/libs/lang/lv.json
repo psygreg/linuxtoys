@@ -507,5 +507,6 @@
   "accessibility": "Pieejamība",
   "accessibility_desc": "Pielāgojiet sistēmu savām vajadzībām neatkarīgi no tā, vai tās ir īpašas.",
   "od_desc": "Atvērtā pirmkoda fonts, kas izveidots, lai uzlabotu teksta lasāmību cilvēkiem ar disleksiju.",
-  "itb_desc": "Ievades metode ar vārdu pabeigšanu, kas paātrina rakstīšanu un palīdz cilvēkiem ar pareizrakstības grūtībām."
+  "itb_desc": "Ievades metode ar vārdu pabeigšanu, kas paātrina rakstīšanu un palīdz cilvēkiem ar pareizrakstības grūtībām.",
+  "atkinson_desc": "Fonts, kas izstrādāts, lai uzlabotu salasāmību cilvēkiem ar vāju redzi."
 }

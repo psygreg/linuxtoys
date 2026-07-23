@@ -507,5 +507,6 @@
   "accessibility": "Ligipääsetavus",
   "accessibility_desc": "Kohanda oma süsteem vajadustele vastavaks, olgu need erivajadused või mitte.",
   "od_desc": "Avatud lähtekoodiga kirjatüüp, mis on loodud düsleksiaga lugejate loetavuse parandamiseks.",
-  "itb_desc": "Sõnade lõpetamisega sisestusmeetod, mis kiirendab kirjutamist ja aitab õigekirjaraskustega inimesi."
+  "itb_desc": "Sõnade lõpetamisega sisestusmeetod, mis kiirendab kirjutamist ja aitab õigekirjaraskustega inimesi.",
+  "atkinson_desc": "Kirjatüüp, mis on loodud parandama loetavust ja lugemismugavust vaegnägijatele."
 }

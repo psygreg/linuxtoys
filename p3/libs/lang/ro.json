@@ -507,5 +507,6 @@
   "accessibility": "Accesibilitate",
   "accessibility_desc": "Adaptați sistemul nevoilor dumneavoastră, speciale sau nu.",
   "od_desc": "Un font cu sursă deschisă creat pentru a îmbunătăți lizibilitatea pentru persoanele cu dislexie.",
-  "itb_desc": "O metodă de introducere cu completarea cuvintelor, care accelerează tastarea și ajută persoanele cu dificultăți de ortografie."
+  "itb_desc": "O metodă de introducere cu completarea cuvintelor, care accelerează tastarea și ajută persoanele cu dificultăți de ortografie.",
+  "atkinson_desc": "Un font conceput pentru a îmbunătăți lizibilitatea pentru persoanele cu vedere redusă."
 }

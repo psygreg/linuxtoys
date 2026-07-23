@@ -507,5 +507,6 @@
   "accessibility": "Erişilebilirlik",
   "accessibility_desc": "Özel olsun ya da olmasın, sisteminizi ihtiyaçlarınıza göre ayarlayın.",
   "od_desc": "Disleksisi olan kişilerin metinleri daha kolay okuyabilmesi için geliştirilmiş açık kaynaklı bir yazı tipi.",
-  "itb_desc": "Yazmayı hızlandırmak ve kelimelerin yazımında güçlük çeken kişilere yardımcı olmak için sözcük tamamlama özellikli bir giriş yöntemi."
+  "itb_desc": "Yazmayı hızlandırmak ve kelimelerin yazımında güçlük çeken kişilere yardımcı olmak için sözcük tamamlama özellikli bir giriş yöntemi.",
+  "atkinson_desc": "Az gören kişilerin metinleri daha rahat okuyabilmesi için tasarlanmış bir yazı tipi."
 }

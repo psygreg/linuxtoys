@@ -507,5 +507,6 @@
   "accessibility": "Dostopnost",
   "accessibility_desc": "Prilagodite sistem svojim potrebam, posebnim ali ne.",
   "od_desc": "Odprtokodna pisava, ustvarjena za izboljšanje berljivosti pri ljudeh z disleksijo.",
-  "itb_desc": "Način vnosa z dopolnjevanjem besed, ki pospeši tipkanje in pomaga ljudem s težavami pri črkovanju."
+  "itb_desc": "Način vnosa z dopolnjevanjem besed, ki pospeši tipkanje in pomaga ljudem s težavami pri črkovanju.",
+  "atkinson_desc": "Pisava, zasnovana za izboljšanje berljivosti za ljudi s slabšim vidom."
 }

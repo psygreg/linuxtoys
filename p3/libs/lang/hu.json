@@ -507,5 +507,6 @@
   "accessibility": "Akadálymentesítés",
   "accessibility_desc": "Igazítsa rendszerét az igényeihez, legyenek azok speciálisak vagy sem.",
   "od_desc": "Nyílt forráskódú betűtípus, amelyet a diszlexiás olvasók számára a könnyebb olvashatóság érdekében hoztak létre.",
-  "itb_desc": "Szókiegészítést használó beviteli mód, amely gyorsítja a gépelést és segíti a helyesírási nehézségekkel küzdőket."
+  "itb_desc": "Szókiegészítést használó beviteli mód, amely gyorsítja a gépelést és segíti a helyesírási nehézségekkel küzdőket.",
+  "atkinson_desc": "Betűtípus, amelyet a gyengénlátók számára a jobb olvashatóság érdekében terveztek."
 }

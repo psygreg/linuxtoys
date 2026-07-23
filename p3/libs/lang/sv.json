@@ -507,5 +507,6 @@
   "accessibility": "Tillgänglighet",
   "accessibility_desc": "Anpassa systemet efter dina behov, särskilda eller inte.",
   "od_desc": "Ett typsnitt med öppen källkod som skapats för att förbättra läsbarheten för personer med dyslexi.",
-  "itb_desc": "En inmatningsmetod med ordkomplettering som gör skrivandet snabbare och hjälper personer med stavningssvårigheter."
+  "itb_desc": "En inmatningsmetod med ordkomplettering som gör skrivandet snabbare och hjälper personer med stavningssvårigheter.",
+  "atkinson_desc": "Ett typsnitt utformat för att förbättra läsbarheten för personer med nedsatt syn."
 }

@@ -507,5 +507,6 @@
   "accessibility": "Inrochtaineacht",
   "accessibility_desc": "Cuir do chóras in oiriúint do do riachtanais, bíodh siad speisialta nó ná bíodh.",
   "od_desc": "Cló foinse oscailte a cruthaíodh chun inléiteacht a fheabhsú do léitheoirí a bhfuil disléicse orthu.",
-  "itb_desc": "Modh ionchuir le comhlánú focal chun clóscríobh a bhrostú agus cabhrú le daoine a bhfuil deacrachtaí litrithe acu."
+  "itb_desc": "Modh ionchuir le comhlánú focal chun clóscríobh a bhrostú agus cabhrú le daoine a bhfuil deacrachtaí litrithe acu.",
+  "atkinson_desc": "Cló deartha chun inléiteacht agus soiléireacht a fheabhsú do dhaoine lagamhairc."
 }

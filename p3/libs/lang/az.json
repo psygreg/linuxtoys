@@ -506,5 +506,6 @@
   "accessibility": "Əlçatanlıq",
   "accessibility_desc": "Xüsusi olub-olmamasından asılı olmayaraq, sisteminizi ehtiyaclarınıza uyğunlaşdırın.",
   "od_desc": "Disleksiyası olan oxucular üçün oxunaqlılığı artırmağa kömək etmək məqsədilə yaradılmış açıq mənbəli şrift.",
-  "itb_desc": "Yazmağı sürətləndirmək və sözlərin yazılışında çətinlik çəkən insanlara kömək etmək üçün tamamlamalı daxiletmə üsulu."
+  "itb_desc": "Yazmağı sürətləndirmək və sözlərin yazılışında çətinlik çəkən insanlara kömək etmək üçün tamamlamalı daxiletmə üsulu.",
+  "atkinson_desc": "Görmə qabiliyyəti zəif olan oxucular üçün mətnin aydınlığını və oxunaqlılığını artırmaq məqsədilə hazırlanmış şrift."
 }

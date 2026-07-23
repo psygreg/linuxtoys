@@ -506,5 +506,6 @@
   "accessibility": "Maxsus imkoniyatlar",
   "accessibility_desc": "Maxsus bo‘lishidan qat’i nazar, tizimingizni ehtiyojlaringizga moslang.",
   "od_desc": "Disleksiyasi bor o‘quvchilar uchun matnning o‘qilishini yaxshilash maqsadida yaratilgan ochiq kodli shrift.",
-  "itb_desc": "Yozishni tezlashtirish va so‘zlarni to‘g‘ri yozishda qiynaladigan odamlarga yordam beruvchi so‘zlarni to‘ldirish kiritish usuli."
+  "itb_desc": "Yozishni tezlashtirish va so‘zlarni to‘g‘ri yozishda qiynaladigan odamlarga yordam beruvchi so‘zlarni to‘ldirish kiritish usuli.",
+  "atkinson_desc": "Ko‘rish qobiliyati zaif o‘quvchilar uchun matnning o‘qilishini yaxshilash maqsadida ishlab chiqilgan shrift."
 }

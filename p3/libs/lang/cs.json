@@ -507,5 +507,6 @@
   "accessibility": "Zpřístupnění",
   "accessibility_desc": "Přizpůsobte systém svým potřebám, ať už jsou speciální, nebo ne.",
   "od_desc": "Písmo s otevřeným zdrojovým kódem vytvořené pro zlepšení čitelnosti lidem s dyslexií.",
-  "itb_desc": "Metoda zadávání s dokončováním slov, která urychluje psaní a pomáhá lidem s obtížemi při pravopisu."
+  "itb_desc": "Metoda zadávání s dokončováním slov, která urychluje psaní a pomáhá lidem s obtížemi při pravopisu.",
+  "atkinson_desc": "Písmo navržené pro lepší čitelnost a srozumitelnost pro čtenáře se zhoršeným zrakem."
 }

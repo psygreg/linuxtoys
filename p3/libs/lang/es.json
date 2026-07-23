@@ -507,5 +507,6 @@
   "accessibility": "Accesibilidad",
   "accessibility_desc": "Adapta tu sistema a tus necesidades, sean especiales o no.",
   "od_desc": "Una fuente de código abierto creada para mejorar la legibilidad de las personas con dislexia.",
-  "itb_desc": "Un método de entrada con completado de palabras que acelera la escritura y ayuda a personas con dificultades ortográficas."
+  "itb_desc": "Un método de entrada con completado de palabras que acelera la escritura y ayuda a personas con dificultades ortográficas.",
+  "atkinson_desc": "Una tipografía diseñada para mejorar la legibilidad y la facilidad de lectura de personas con baja visión."
 }

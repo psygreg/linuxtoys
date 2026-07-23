@@ -507,5 +507,6 @@
   "accessibility": "Pristupačnost",
   "accessibility_desc": "Prilagodite sustav svojim potrebama, bile one posebne ili ne.",
   "od_desc": "Font otvorenog koda izrađen radi poboljšanja čitljivosti osobama s disleksijom.",
-  "itb_desc": "Metoda unosa s dovršavanjem riječi koja ubrzava tipkanje i pomaže osobama koje imaju poteškoća s pravopisom."
+  "itb_desc": "Metoda unosa s dovršavanjem riječi koja ubrzava tipkanje i pomaže osobama koje imaju poteškoća s pravopisom.",
+  "atkinson_desc": "Font dizajniran za poboljšanje čitljivosti osobama sa slabijim vidom."
 }

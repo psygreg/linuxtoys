@@ -507,5 +507,6 @@
   "accessibility": "Prieinamumas",
   "accessibility_desc": "Pritaikykite sistemą savo poreikiams, nesvarbu, ar jie specialūs, ar ne.",
   "od_desc": "Atvirojo kodo šriftas, sukurtas pagerinti teksto įskaitomumą disleksiją turintiems skaitytojams.",
-  "itb_desc": "Įvesties metodas su žodžių užbaigimu, skirtas paspartinti rašymą ir padėti žmonėms, kuriems sunku taisyklingai rašyti žodžius."
+  "itb_desc": "Įvesties metodas su žodžių užbaigimu, skirtas paspartinti rašymą ir padėti žmonėms, kuriems sunku taisyklingai rašyti žodžius.",
+  "atkinson_desc": "Šriftas, sukurtas pagerinti teksto įskaitomumą ir skaitomumą silpnaregiams."
 }

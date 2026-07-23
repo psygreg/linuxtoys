@@ -507,5 +507,6 @@
   "accessibility": "Accessibilità",
   "accessibility_desc": "Adatta il sistema alle tue esigenze, speciali o meno.",
   "od_desc": "Un carattere open source creato per migliorare la leggibilità per le persone con dislessia.",
-  "itb_desc": "Un metodo di inserimento con completamento delle parole che velocizza la digitazione e aiuta chi ha difficoltà ortografiche."
+  "itb_desc": "Un metodo di inserimento con completamento delle parole che velocizza la digitazione e aiuta chi ha difficoltà ortografiche.",
+  "atkinson_desc": "Un carattere progettato per migliorare la leggibilità per le persone con problemi di vista."
 }

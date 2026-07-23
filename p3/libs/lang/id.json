@@ -507,5 +507,6 @@
   "accessibility": "Aksesibilitas",
   "accessibility_desc": "Sesuaikan sistem dengan kebutuhan Anda, khusus maupun tidak.",
   "od_desc": "Font sumber terbuka yang dibuat untuk membantu meningkatkan keterbacaan bagi pembaca dengan disleksia.",
-  "itb_desc": "Metode input dengan pelengkapan kata untuk mempercepat pengetikan dan membantu orang yang mengalami kesulitan mengeja."
+  "itb_desc": "Metode input dengan pelengkapan kata untuk mempercepat pengetikan dan membantu orang yang mengalami kesulitan mengeja.",
+  "atkinson_desc": "Font yang dirancang untuk meningkatkan keterbacaan bagi pembaca dengan gangguan penglihatan."
 }

@@ -507,5 +507,6 @@
   "accessibility": "Aksesueshmëria",
   "accessibility_desc": "Përshtateni sistemin sipas nevojave tuaja, të veçanta ose jo.",
   "od_desc": "Një font me burim të hapur i krijuar për të përmirësuar lexueshmërinë për personat me disleksi.",
-  "itb_desc": "Një metodë hyrjeje me plotësim fjalësh për të përshpejtuar shkrimin dhe për të ndihmuar personat me vështirësi drejtshkrimore."
+  "itb_desc": "Një metodë hyrjeje me plotësim fjalësh për të përshpejtuar shkrimin dhe për të ndihmuar personat me vështirësi drejtshkrimore.",
+  "atkinson_desc": "Një font i projektuar për të përmirësuar lexueshmërinë për personat me shikim të dobët."
 }

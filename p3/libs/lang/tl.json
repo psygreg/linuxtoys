@@ -507,5 +507,6 @@
   "accessibility": "Accessibility",
   "accessibility_desc": "Iangkop ang iyong system sa iyong mga pangangailangan, espesyal man o hindi.",
   "od_desc": "Isang open source na font na ginawa upang mapahusay ang pagiging madaling basahin para sa mga taong may dyslexia.",
-  "itb_desc": "Paraan ng pag-input na may word completion upang mapabilis ang pag-type at matulungan ang mga taong nahihirapan sa pagbaybay."
+  "itb_desc": "Paraan ng pag-input na may word completion upang mapabilis ang pag-type at matulungan ang mga taong nahihirapan sa pagbaybay.",
+  "atkinson_desc": "Isang typeface na idinisenyo upang mapabuti ang pagiging madaling basahin para sa mga taong may mahinang paningin."
 }

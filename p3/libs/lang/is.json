@@ -507,5 +507,6 @@
   "accessibility": "Aðgengi",
   "accessibility_desc": "Lagaðu kerfið að þínum þörfum, hvort sem þær eru sérstakar eða ekki.",
   "od_desc": "Opinn leturgerð sem var búin til til að bæta læsileika fyrir fólk með lesblindu.",
-  "itb_desc": "Innsláttaraðferð með orðaklárun sem flýtir fyrir vélritun og hjálpar fólki sem á erfitt með stafsetningu."
+  "itb_desc": "Innsláttaraðferð með orðaklárun sem flýtir fyrir vélritun og hjálpar fólki sem á erfitt með stafsetningu.",
+  "atkinson_desc": "Leturgerð hönnuð til að bæta læsileika fyrir fólk með skerta sjón."
 }

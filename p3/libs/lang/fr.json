@@ -507,5 +507,6 @@
   "accessibility": "Accessibilité",
   "accessibility_desc": "Adaptez votre système à vos besoins, particuliers ou non.",
   "od_desc": "Une police open source conçue pour améliorer la lisibilité chez les personnes dyslexiques.",
-  "itb_desc": "Une méthode de saisie avec complétion des mots pour accélérer la frappe et aider les personnes ayant des difficultés d'orthographe."
+  "itb_desc": "Une méthode de saisie avec complétion des mots pour accélérer la frappe et aider les personnes ayant des difficultés d'orthographe.",
+  "atkinson_desc": "Une police conçue pour améliorer la lisibilité des personnes malvoyantes."
 }

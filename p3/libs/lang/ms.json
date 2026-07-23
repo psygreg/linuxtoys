@@ -507,5 +507,6 @@
   "accessibility": "Kebolehcapaian",
   "accessibility_desc": "Sesuaikan sistem anda mengikut keperluan, sama ada keperluan khas atau tidak.",
   "od_desc": "Fon sumber terbuka yang dicipta untuk membantu meningkatkan kebolehbacaan bagi pembaca yang mengalami disleksia.",
-  "itb_desc": "Kaedah input dengan pelengkapan perkataan untuk mempercepatkan penaipan dan membantu mereka yang menghadapi kesukaran mengeja."
+  "itb_desc": "Kaedah input dengan pelengkapan perkataan untuk mempercepatkan penaipan dan membantu mereka yang menghadapi kesukaran mengeja.",
+  "atkinson_desc": "Fon yang direka untuk meningkatkan kebolehbacaan bagi pembaca yang mempunyai masalah penglihatan."
 }

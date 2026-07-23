@@ -507,5 +507,6 @@
   "accessibility": "Ułatwienia dostępu",
   "accessibility_desc": "Dostosuj system do swoich potrzeb, specjalnych lub nie.",
   "od_desc": "Czcionka open source stworzona w celu poprawy czytelności dla osób z dysleksją.",
-  "itb_desc": "Metoda wprowadzania z uzupełnianiem słów, która przyspiesza pisanie i pomaga osobom mającym trudności z pisownią."
+  "itb_desc": "Metoda wprowadzania z uzupełnianiem słów, która przyspiesza pisanie i pomaga osobom mającym trudności z pisownią.",
+  "atkinson_desc": "Krój pisma zaprojektowany w celu poprawy czytelności dla osób słabowidzących."
 }

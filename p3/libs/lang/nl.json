@@ -507,5 +507,6 @@
   "accessibility": "Toegankelijkheid",
   "accessibility_desc": "Pas je systeem aan je behoeften aan, speciaal of niet.",
   "od_desc": "Een opensourcelettertype dat is ontworpen om de leesbaarheid voor mensen met dyslexie te verbeteren.",
-  "itb_desc": "Een invoermethode met woordaanvulling om sneller te typen en mensen met spellingsproblemen te helpen."
+  "itb_desc": "Een invoermethode met woordaanvulling om sneller te typen en mensen met spellingsproblemen te helpen.",
+  "atkinson_desc": "Een lettertype dat is ontworpen om de leesbaarheid voor mensen met een verminderd gezichtsvermogen te verbeteren."
 }

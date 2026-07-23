@@ -1,5 +1,5 @@
 #!/bin/bash
-# name: OpenDyslexic Font
+# name: OpenDyslexic
 # description: od_desc
 # repo: https://opendyslexic.org/
 # icon: lucidglyph.svg

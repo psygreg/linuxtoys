@@ -507,5 +507,6 @@
   "accessibility": "Tilgængelighed",
   "accessibility_desc": "Tilpas dit system til dine behov, særlige eller ej.",
   "od_desc": "En open source-skrifttype udviklet til at forbedre læsbarheden for personer med ordblindhed.",
-  "itb_desc": "En inputmetode med ordfuldførelse, der gør indtastning hurtigere og hjælper personer med stavevanskeligheder."
+  "itb_desc": "En inputmetode med ordfuldførelse, der gør indtastning hurtigere og hjælper personer med stavevanskeligheder.",
+  "atkinson_desc": "En skrifttype designet til at forbedre læsbarhed og tydelighed for personer med nedsat syn."
 }

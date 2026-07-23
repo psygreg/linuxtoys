@@ -507,5 +507,6 @@
   "accessibility": "Barrierefreiheit",
   "accessibility_desc": "Passen Sie Ihr System an Ihre Bedürfnisse an – ob speziell oder nicht.",
   "od_desc": "Eine quelloffene Schriftart, die die Lesbarkeit für Menschen mit Legasthenie verbessern soll.",
-  "itb_desc": "Eine Eingabemethode mit Wortvervollständigung, die das Tippen beschleunigt und Menschen mit Rechtschreibschwierigkeiten unterstützt."
+  "itb_desc": "Eine Eingabemethode mit Wortvervollständigung, die das Tippen beschleunigt und Menschen mit Rechtschreibschwierigkeiten unterstützt.",
+  "atkinson_desc": "Eine Schriftart, die entwickelt wurde, um Lesbarkeit und Erkennbarkeit für Menschen mit Sehbehinderung zu verbessern."
 }
