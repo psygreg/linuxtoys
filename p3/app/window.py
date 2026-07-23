@@ -76,6 +76,8 @@ class AppWindow(
         self.random_scripts_label = None  # Label for "Featured" section
         self.featured_scripts_container = None  # Container for the featured section
         self.should_start_random_timer = False  # Flag to start timer when scripts are ready
+        self._featured_resize_timer = None
+        self._featured_last_count = None
 
         # Checklist
         self.check_buttons = []
@@ -181,6 +183,7 @@ class AppWindow(
         self.featured_scripts_container.pack_start(self.random_scripts_flowbox, False, False, 0)
         
         categories_container.pack_start(self.featured_scripts_container, False, False, 0)
+        self.featured_scripts_container.hide()
         
         self.categories_view = Gtk.ScrolledWindow()
         self.categories_view.add(categories_container)
@@ -217,6 +220,11 @@ class AppWindow(
         self.connect("focus-out-event", self._on_focus_out)
 
         self.connect("key-press-event", self._on_key_press)
+
+        self.categories_view.connect(
+            "size-allocate",
+            self._on_featured_size_allocate,
+        )
 
         # Local scripts
         self.local_sh_dir = f"{os.environ['HOME']}/.local/linuxtoys/scripts/"
