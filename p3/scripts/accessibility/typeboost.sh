@@ -9,6 +9,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 
 info "$ibtinput"
+askpass
 if is_fedora; then
     pkg_install ibus-typing-booster emoji-picker
 else
