@@ -503,5 +503,7 @@
   "umipp_desc": "Huzima CPU UMIP kupitia kigezo cha kernel. Huenda ikahitajika ili kuendesha baadhi ya programu za Windows kupitia WINE/Proton.",
   "qtscrcpy_desc": "Onyesha na udhibiti vifaa vya Android kupitia USB au mtandao wa WiFi.",
   "accessibility": "Ufikivu",
-  "accessibility_desc": "Rekebisha mfumo wako kulingana na mahitaji yako, yawe maalum au la."
+  "accessibility_desc": "Rekebisha mfumo wako kulingana na mahitaji yako, yawe maalum au la.",
+  "od_desc": "Fonti ya chanzo huria iliyoundwa kusaidia kuboresha usomaji kwa watu wenye dyslexia.",
+  "itb_desc": "Mbinu ya kuingiza maandishi yenye ukamilishaji wa maneno ili kuharakisha kuandika na kusaidia watu wenye matatizo ya tahajia."
 }

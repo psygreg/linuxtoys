@@ -139,3 +139,4 @@ zswapmsg="ZSWAP je nyní povolen. Musíte vytvořit soubor podkačky nebo oddíl
 msgostreepending="Čeká se na aktualizaci systému. Restartujte prosím svůj systém a spusťte znovu tento skript, abyste dokončili instalaci."
 outofspace="Nedostatek dostupného místa pro ukládání operace."
 websoftwarewarning="Po této opravě je stále vyžadován webový prohlížeč založený na Chromiu, který není Flatpak, pro správu nastavení zařízení."
+itbinput="Chcete-li používat ibus-typing-booster, přidejte jej do metod zadávání v nastavení systému GNOME nebo pomocí ibus-setup."

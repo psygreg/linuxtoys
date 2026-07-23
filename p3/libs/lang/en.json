@@ -505,5 +505,7 @@
   "umipp_desc": "Disables CPU UMIP through a kernel parameter. May be needed to run some specific Windows applications through WINE/Proton.",
   "qtscrcpy_desc": "Mirror and control Android devices via USB or WiFi network.",
   "accessibility": "Accessibility",
-  "accessibility_desc": "Adjust your system to your needs - special or not."
+  "accessibility_desc": "Adjust your system to your needs - special or not.",
+  "od_desc": "An open source font created to help increase readability for readers with dyslexia.",
+  "itb_desc": "A completion input method to speed up typing and help people with word spelling difficulties."
 }

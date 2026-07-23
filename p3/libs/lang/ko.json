@@ -505,5 +505,7 @@
   "umipp_desc": "커널 매개변수를 통해 CPU UMIP를 비활성화합니다. 일부 Windows 프로그램을 WINE/Proton으로 실행하는 데 필요할 수 있습니다.",
   "qtscrcpy_desc": "USB 또는 WiFi 네트워크를 통해 Android 기기를 미러링하고 제어합니다.",
   "accessibility": "접근성",
-  "accessibility_desc": "특별한 요구 사항이든 아니든 필요에 맞게 시스템을 조정하세요."
+  "accessibility_desc": "특별한 요구 사항이든 아니든 필요에 맞게 시스템을 조정하세요.",
+  "od_desc": "난독증이 있는 사용자의 가독성을 높이기 위해 제작된 오픈 소스 글꼴입니다.",
+  "itb_desc": "입력 속도를 높이고 단어 철자에 어려움을 겪는 사용자를 돕는 단어 자동 완성 입력 방식입니다."
 }

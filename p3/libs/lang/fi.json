@@ -505,5 +505,7 @@
   "umipp_desc": "Poistaa CPU:n UMIP-toiminnon käytöstä ytimen parametrilla. Saattaa olla tarpeen joidenkin Windows-sovellusten suorittamiseen WINE/Protonin kautta.",
   "qtscrcpy_desc": "Peilaa ja hallitse Android-laitteita USB:n tai WiFi-verkon kautta.",
   "accessibility": "Esteettömyys",
-  "accessibility_desc": "Mukauta järjestelmä tarpeisiisi, olivatpa ne erityisiä tai eivät."
+  "accessibility_desc": "Mukauta järjestelmä tarpeisiisi, olivatpa ne erityisiä tai eivät.",
+  "od_desc": "Avoimen lähdekoodin kirjasin, joka on suunniteltu parantamaan tekstin luettavuutta lukihäiriöisille.",
+  "itb_desc": "Sanoja täydentävä syöttötapa, joka nopeuttaa kirjoittamista ja auttaa henkilöitä, joilla on vaikeuksia sanojen oikeinkirjoituksessa."
 }

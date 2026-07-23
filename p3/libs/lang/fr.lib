@@ -139,3 +139,4 @@ zswapmsg="ZSWAP est maintenant activé. Vous devez créer un fichier ou une part
 msgostreepending="Une mise à jour système est en attente. Veuillez redémarrer votre système et relancer ce script pour terminer l'installation."
 outofspace="Espace de stockage disponible insuffisant pour l'opération."
 websoftwarewarning="Après ce correctif, un navigateur Web basé sur Chromium non installé via Flatpak est toujours nécessaire pour gérer les paramètres de l’appareil."
+itbinput="Pour utiliser ibus-typing-booster, ajoutez-le à vos méthodes de saisie dans les paramètres système de GNOME ou via ibus-setup."

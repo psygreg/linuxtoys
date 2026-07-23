@@ -505,5 +505,7 @@
   "umipp_desc": "Onemogoči CPU UMIP prek parametra jedra. Morda bo potrebno za zagon nekaterih programov Windows prek WINE/Proton.",
   "qtscrcpy_desc": "Zrcalite in upravljajte naprave Android prek USB-ja ali omrežja WiFi.",
   "accessibility": "Dostopnost",
-  "accessibility_desc": "Prilagodite sistem svojim potrebam, posebnim ali ne."
+  "accessibility_desc": "Prilagodite sistem svojim potrebam, posebnim ali ne.",
+  "od_desc": "Odprtokodna pisava, ustvarjena za izboljšanje berljivosti pri ljudeh z disleksijo.",
+  "itb_desc": "Način vnosa z dopolnjevanjem besed, ki pospeši tipkanje in pomaga ljudem s težavami pri črkovanju."
 }

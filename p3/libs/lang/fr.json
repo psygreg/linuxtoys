@@ -505,5 +505,7 @@
   "umipp_desc": "Désactive UMIP du processeur via un paramètre du noyau. Peut être nécessaire pour exécuter certaines applications Windows avec WINE/Proton.",
   "qtscrcpy_desc": "Mettez en miroir et contrôlez des appareils Android via USB ou un réseau WiFi.",
   "accessibility": "Accessibilité",
-  "accessibility_desc": "Adaptez votre système à vos besoins, particuliers ou non."
+  "accessibility_desc": "Adaptez votre système à vos besoins, particuliers ou non.",
+  "od_desc": "Une police open source conçue pour améliorer la lisibilité chez les personnes dyslexiques.",
+  "itb_desc": "Une méthode de saisie avec complétion des mots pour accélérer la frappe et aider les personnes ayant des difficultés d'orthographe."
 }

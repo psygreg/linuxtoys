@@ -505,5 +505,7 @@
   "umipp_desc": "Deaktiverer CPU UMIP via en kjerneparameter. Kan være nødvendig for å kjøre enkelte Windows-programmer gjennom WINE/Proton.",
   "qtscrcpy_desc": "Speil og styr Android-enheter via USB eller WiFi-nettverk.",
   "accessibility": "Tilgjengelighet",
-  "accessibility_desc": "Tilpass systemet til dine behov, enten de er spesielle eller ikke."
+  "accessibility_desc": "Tilpass systemet til dine behov, enten de er spesielle eller ikke.",
+  "od_desc": "En åpen kildekode-skrifttype laget for å forbedre lesbarheten for personer med dysleksi.",
+  "itb_desc": "En inndatametode med ordfullføring som gjør skriving raskere og hjelper personer med stavevansker."
 }

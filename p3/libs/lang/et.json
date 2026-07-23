@@ -505,5 +505,7 @@
   "umipp_desc": "Keelab CPU UMIP-i kerneli parameetri abil. Võib olla vajalik mõne Windowsi rakenduse käivitamiseks WINE/Protoni kaudu.",
   "qtscrcpy_desc": "Peegelda ja juhi Android-seadmeid USB või WiFi-võrgu kaudu.",
   "accessibility": "Ligipääsetavus",
-  "accessibility_desc": "Kohanda oma süsteem vajadustele vastavaks, olgu need erivajadused või mitte."
+  "accessibility_desc": "Kohanda oma süsteem vajadustele vastavaks, olgu need erivajadused või mitte.",
+  "od_desc": "Avatud lähtekoodiga kirjatüüp, mis on loodud düsleksiaga lugejate loetavuse parandamiseks.",
+  "itb_desc": "Sõnade lõpetamisega sisestusmeetod, mis kiirendab kirjutamist ja aitab õigekirjaraskustega inimesi."
 }

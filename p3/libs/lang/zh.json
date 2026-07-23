@@ -507,5 +507,7 @@
   "umipp_desc": "通过内核参数禁用 CPU UMIP。运行某些 Windows 应用程序（通过 WINE/Proton）时可能需要此选项。",
   "qtscrcpy_desc": "通过 USB 或 WiFi 网络镜像并控制 Android 设备。",
   "accessibility": "无障碍功能",
-  "accessibility_desc": "根据您的需求调整系统，无论是否属于特殊需求。"
+  "accessibility_desc": "根据您的需求调整系统，无论是否属于特殊需求。",
+  "od_desc": "一种开源字体，旨在提高有阅读障碍人士的文字可读性。",
+  "itb_desc": "一种带有词语补全功能的输入法，可提高打字速度，并帮助有拼写困难的人。"
 }

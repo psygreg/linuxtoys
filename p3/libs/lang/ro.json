@@ -505,5 +505,7 @@
   "umipp_desc": "Dezactivează UMIP al procesorului printr-un parametru al nucleului. Poate fi necesar pentru rularea unor aplicații Windows prin WINE/Proton.",
   "qtscrcpy_desc": "Oglindește și controlează dispozitive Android prin USB sau rețea WiFi.",
   "accessibility": "Accesibilitate",
-  "accessibility_desc": "Adaptați sistemul nevoilor dumneavoastră, speciale sau nu."
+  "accessibility_desc": "Adaptați sistemul nevoilor dumneavoastră, speciale sau nu.",
+  "od_desc": "Un font cu sursă deschisă creat pentru a îmbunătăți lizibilitatea pentru persoanele cu dislexie.",
+  "itb_desc": "O metodă de introducere cu completarea cuvintelor, care accelerează tastarea și ajută persoanele cu dificultăți de ortografie."
 }

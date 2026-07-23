@@ -11,166 +11,166 @@ LANG_DIR = "../p3/libs/lang"
 # Translations for all messages across all supported languages
 TRANSLATIONS = {
     'am.lib': {
-        'websoftwarewarning': 'websoftwarewarning="ከዚህ ጥገና በኋላ የመሣሪያ ቅንብሮችን ለማስተዳደር Flatpak ያልሆነ Chromium-መሠረት ያለው ድር አሳሽ አሁንም ያስፈልጋል።"'
+        'itbinput': 'itbinput="ibus-typing-boosterን ለመጠቀም GNOME ውስጥ ባለው የስርዓት ቅንብሮች ውስጥ ወደ የግቤት ዘዴዎችዎ ያክሉት ወይም ibus-setup ይጠቀሙ።"'
     },
     'ar.lib': {
-        'websoftwarewarning': 'websoftwarewarning="بعد تطبيق هذا التصحيح، سيظل متصفح ويب يعتمد على Chromium وغير مثبت عبر Flatpak مطلوبًا لإدارة إعدادات الجهاز."'
+        'itbinput': 'itbinput="لاستخدام ibus-typing-booster، أضفه إلى طرق الإدخال في إعدادات النظام في GNOME أو من خلال ibus-setup."'
     },
     'az.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Bu yamaqdan sonra cihaz parametrlərini idarə etmək üçün hələ də Flatpak olmayan Chromium əsaslı veb brauzer tələb olunur."'
-        },
+        'itbinput': 'itbinput="ibus-typing-booster istifadə etmək üçün onu GNOME sistem ayarlarında giriş metodlarına əlavə edin və ya ibus-setup vasitəsilə əlavə edin."'
+    },
     'bg.lib': {
-        'websoftwarewarning': 'websoftwarewarning="След този пач все още е необходим уеб браузър, базиран на Chromium и който не е Flatpak, за да управлявате настройките на устройството."'
+        'itbinput': 'itbinput="За да използвате ibus-typing-booster, добавете го към методите за въвеждане в системните настройки на GNOME или чрез ibus-setup."'
     },
     'bn.lib': {
-        'websoftwarewarning': 'websoftwarewarning="এই প্যাচের পরেও ডিভাইসের সেটিংস পরিচালনার জন্য একটি নন-ফ্ল্যাটপ্যাক Chromium-ভিত্তিক ওয়েব ব্রাউজার প্রয়োজন হবে।"'
+        'itbinput': 'itbinput="ibus-typing-booster ব্যবহার করতে, GNOME-এর সিস্টেম সেটিংসে ইনপুট পদ্ধতিতে এটি যোগ করুন অথবা ibus-setup ব্যবহার করুন।"'
     },
     'bs.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Nakon ove zakrpe i dalje je potreban web preglednik zasnovan na Chromiumu koji nije Flatpak za upravljanje postavkama uređaja."'
+        'itbinput': 'itbinput="Da biste koristili ibus-typing-booster, dodajte ga u svoje metode unosa u sistemskim postavkama GNOME-a ili putem ibus-setup."'
     },
     'cs.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Po této opravě je stále vyžadován webový prohlížeč založený na Chromiu, který není Flatpak, pro správu nastavení zařízení."'
+        'itbinput': 'itbinput="Chcete-li používat ibus-typing-booster, přidejte jej do metod zadávání v nastavení systému GNOME nebo pomocí ibus-setup."'
     },
     'da.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Efter denne rettelse kræves der stadig en Chromium-baseret webbrowser, som ikke er en Flatpak, for at administrere enhedsindstillinger."'
+        'itbinput': 'itbinput="For at bruge ibus-typing-booster skal du tilføje det til dine inputmetoder i GNOME\'s systemindstillinger eller via ibus-setup."'
     },
     'de.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Nach diesem Patch wird weiterhin ein Chromium-basierter Webbrowser (nicht als Flatpak) benötigt, um die Geräteeinstellungen zu verwalten."'
+        'itbinput': 'itbinput="Um ibus-typing-booster zu verwenden, fügen Sie ihn in den Systemeinstellungen von GNOME zu Ihren Eingabemethoden hinzu oder verwenden Sie ibus-setup."'
     },
     'el.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Μετά από αυτήν την ενημέρωση εξακολουθεί να απαιτείται πρόγραμμα περιήγησης βασισμένο στο Chromium που δεν είναι Flatpak για τη διαχείριση των ρυθμίσεων της συσκευής."'
+        'itbinput': 'itbinput="Για να χρησιμοποιήσετε το ibus-typing-booster, προσθέστε το στις μεθόδους εισαγωγής στις ρυθμίσεις συστήματος του GNOME ή μέσω του ibus-setup."'
     },
     'es.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Después de este parche, aún se requiere un navegador web basado en Chromium que no sea Flatpak para administrar la configuración del dispositivo."'
+        'itbinput': 'itbinput="Para usar ibus-typing-booster, agréguelo a sus métodos de entrada en la configuración del sistema de GNOME o mediante ibus-setup."'
     },
     'et.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Pärast seda parandust on seadme sätete haldamiseks endiselt vaja Chromiumi-põhist veebibrauserit, mis ei ole Flatpak."'
+        'itbinput': 'itbinput="ibus-typing-boosteri kasutamiseks lisage see GNOME süsteemiseadetes sisestusmeetodite hulka või kasutage ibus-setupi."'
     },
     'fa.lib': {
-        'websoftwarewarning': 'websoftwarewarning="پس از اعمال این وصله، همچنان برای مدیریت تنظیمات دستگاه به یک مرورگر وب مبتنی بر Chromium که Flatpak نباشد نیاز است."'
+        'itbinput': 'itbinput="برای استفاده از ibus-typing-booster، آن را در تنظیمات سیستم GNOME به روش‌های ورودی خود اضافه کنید یا از ibus-setup استفاده کنید."'
     },
     'fi.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Tämän korjauksen jälkeen laitteen asetusten hallintaan tarvitaan edelleen Chromium-pohjainen selain, joka ei ole Flatpak."'
+        'itbinput': 'itbinput="Käyttääksesi ibus-typing-boosteria lisää se syöttötapoihin GNOMEn järjestelmäasetuksissa tai käytä ibus-setupia."'
     },
     'fr.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Après ce correctif, un navigateur Web basé sur Chromium non installé via Flatpak est toujours nécessaire pour gérer les paramètres de l’appareil."'
+        'itbinput': 'itbinput="Pour utiliser ibus-typing-booster, ajoutez-le à vos méthodes de saisie dans les paramètres système de GNOME ou via ibus-setup."'
     },
     'ga.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Tar éis an paiste seo, beidh brabhsálaí gréasáin bunaithe ar Chromium nach Flatpak é fós ag teastáil chun socruithe an ghléis a bhainistiú."'
+        'itbinput': 'itbinput="Chun ibus-typing-booster a úsáid, cuir le do mhodhanna ionchuir é i socruithe córais GNOME nó trí ibus-setup."'
     },
     'he.lib': {
-        'websoftwarewarning': 'websoftwarewarning="לאחר תיקון זה עדיין נדרש דפדפן מבוסס Chromium שאינו Flatpak כדי לנהל את הגדרות ההתקן."'
+        'itbinput': 'itbinput="כדי להשתמש ב-ibus-typing-booster, הוסף אותו לשיטות הקלט שלך בהגדרות המערכת של GNOME או באמצעות ibus-setup."'
     },
     'hi.lib': {
-        'websoftwarewarning': 'websoftwarewarning="इस पैच के बाद भी डिवाइस सेटिंग्स प्रबंधित करने के लिए एक गैर-Flatpak Chromium-आधारित वेब ब्राउज़र आवश्यक रहेगा।"'
+        'itbinput': 'itbinput="ibus-typing-booster का उपयोग करने के लिए, इसे GNOME की सिस्टम सेटिंग्स में अपनी इनपुट विधियों में जोड़ें या ibus-setup का उपयोग करें।"'
     },
     'hr.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Nakon ove zakrpe i dalje je potreban web preglednik temeljen na Chromiumu koji nije Flatpak za upravljanje postavkama uređaja."'
+        'itbinput': 'itbinput="Za korištenje ibus-typing-boostera dodajte ga među metode unosa u postavkama sustava GNOME ili putem ibus-setup."'
     },
     'hu.lib': {
-        'websoftwarewarning': 'websoftwarewarning="A javítás után továbbra is szükség van egy nem Flatpak Chromium-alapú webböngészőre az eszköz beállításainak kezeléséhez."'
+        'itbinput': 'itbinput="Az ibus-typing-booster használatához adja hozzá a beviteli módokhoz a GNOME rendszerbeállításaiban vagy az ibus-setup segítségével."'
     },
     'hy.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Այս թարմացումից հետո սարքի կարգավորումները կառավարելու համար դեռևս պահանջվում է Chromium-ի վրա հիմնված, ոչ Flatpak վեբ զննարկիչ։"'
+        'itbinput': 'itbinput="ibus-typing-booster-ն օգտագործելու համար այն ավելացրեք մուտքագրման մեթոդներին GNOME-ի համակարգի կարգավորումներում կամ ibus-setup-ի միջոցով։"'
     },
     'id.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Setelah patch ini, browser web berbasis Chromium yang bukan Flatpak masih diperlukan untuk mengelola pengaturan perangkat."'
+        'itbinput': 'itbinput="Untuk menggunakan ibus-typing-booster, tambahkan ke metode masukan Anda di pengaturan sistem GNOME atau melalui ibus-setup."'
     },
     'is.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Eftir þessa lagfæringu er enn þörf á Chromium-vafra sem ekki er Flatpak til að stjórna stillingum tækisins."'
+        'itbinput': 'itbinput="Til að nota ibus-typing-booster skaltu bæta því við innsláttaraðferðir í kerfisstillingum GNOME eða með ibus-setup."'
     },
     'it.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Dopo questa patch, è ancora necessario un browser Web basato su Chromium non Flatpak per gestire le impostazioni del dispositivo."'
+    'itbinput': 'itbinput="Per utilizzare ibus-typing-booster, aggiungilo ai metodi di input nelle impostazioni di sistema di GNOME oppure tramite ibus-setup."'
     },
     'ja.lib': {
-        'websoftwarewarning': 'websoftwarewarning="このパッチ適用後も、デバイス設定を管理するには、Flatpak版ではないChromiumベースのWebブラウザーが必要です。"'
+        'itbinput': 'itbinput="ibus-typing-booster を使用するには、GNOME のシステム設定の入力方式に追加するか、ibus-setup を使用してください。"' 
     },
     'ka.lib': {
-        'websoftwarewarning': 'websoftwarewarning="ამ პატჩის შემდეგ მოწყობილობის პარამეტრების სამართავად კვლავ საჭიროა Chromium-ზე დაფუძნებული, არა-Flatpak ვებ-ბრაუზერი."'
+        'itbinput': 'itbinput="ibus-typing-booster-ის გამოსაყენებლად დაამატეთ ის შეყვანის მეთოდებში GNOME-ის სისტემურ პარამეტრებში ან გამოიყენეთ ibus-setup."'
     },
     'km.lib': {
-        'websoftwarewarning': 'websoftwarewarning="បន្ទាប់ពីការកែប្រែនេះ នៅតែត្រូវការកម្មវិធីរុករកបណ្ដាញផ្អែកលើ Chromium ដែលមិនមែនជា Flatpak ដើម្បីគ្រប់គ្រងការកំណត់ឧបករណ៍។"'
+        'itbinput': 'itbinput="ដើម្បីប្រើ ibus-typing-booster សូមបន្ថែមវាទៅវិធីសាស្ត្របញ្ចូលក្នុងការកំណត់ប្រព័ន្ធ GNOME ឬតាមរយៈ ibus-setup។"'
     },
     'ko.lib': {
-        'websoftwarewarning': 'websoftwarewarning="이 패치 후에도 장치 설정을 관리하려면 Flatpak이 아닌 Chromium 기반 웹 브라우저가 필요합니다."'
+        'itbinput': 'itbinput="ibus-typing-booster를 사용하려면 GNOME 시스템 설정의 입력 방식에 추가하거나 ibus-setup을 사용하십시오."'
     },
     'lo.lib': {
-        'websoftwarewarning': 'websoftwarewarning="ຫຼັງຈາກແພັດນີ້ ຍັງຈຳເປັນຕ້ອງໃຊ້ເວັບບຣາວເຊີທີ່ອີງໃສ່ Chromium ແລະບໍ່ແມ່ນ Flatpak ເພື່ອຈັດການການຕັ້ງຄ່າອຸປະກອນ."'
+        'itbinput': 'itbinput="ເພື່ອໃຊ້ ibus-typing-booster ໃຫ້ເພີ່ມມັນເຂົ້າໃນວິທີປ້ອນຂໍ້ມູນໃນການຕັ້ງຄ່າລະບົບຂອງ GNOME ຫຼືຜ່ານ ibus-setup."'
     },
     'lt.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Po šio pataisymo įrenginio nustatymams tvarkyti vis dar reikalinga Chromium pagrindu sukurta naršyklė, kuri nėra Flatpak."'
+        'itbinput': 'itbinput="Norėdami naudoti ibus-typing-booster, pridėkite jį prie įvesties metodų GNOME sistemos nustatymuose arba naudokite ibus-setup."'
     },
     'lv.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Pēc šī ielāpa ierīces iestatījumu pārvaldībai joprojām ir nepieciešama uz Chromium balstīta tīmekļa pārlūkprogramma, kas nav Flatpak."'
+        'itbinput': 'itbinput="Lai izmantotu ibus-typing-booster, pievienojiet to ievades metodēm GNOME sistēmas iestatījumos vai izmantojot ibus-setup."'
     },
     'ms.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Selepas tampalan ini, pelayar web berasaskan Chromium yang bukan Flatpak masih diperlukan untuk mengurus tetapan peranti."'
+        'itbinput': 'itbinput="Untuk menggunakan ibus-typing-booster, tambahkannya pada kaedah input dalam tetapan sistem GNOME atau melalui ibus-setup."'
     },
     'nb.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Etter denne oppdateringen kreves det fortsatt en Chromium-basert nettleser som ikke er en Flatpak for å administrere enhetsinnstillinger."'
+        'itbinput': 'itbinput="For å bruke ibus-typing-booster, legg det til i inndatametodene dine i GNOMEs systeminnstillinger eller via ibus-setup."'
     },
     'nl.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Na deze patch is nog steeds een niet-Flatpak Chromium-gebaseerde webbrowser vereist om de apparaatinstellingen te beheren."'
+        'itbinput': 'itbinput="Om ibus-typing-booster te gebruiken, voegt u deze toe aan uw invoermethoden in de systeeminstellingen van GNOME of via ibus-setup."'
     },
     'pl.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Po zastosowaniu tej poprawki nadal wymagane jest korzystanie z przeglądarki internetowej opartej na Chromium, która nie jest zainstalowana jako Flatpak, aby zarządzać ustawieniami urządzenia."'
+        'itbinput': 'itbinput="Aby używać ibus-typing-booster, dodaj go do metod wprowadzania w ustawieniach systemowych GNOME lub za pomocą ibus-setup."'
     },
     'pt.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Após este patch, ainda é necessário um navegador baseado em Chromium que não seja Flatpak para gerenciar as configurações do dispositivo."'
+        'itbinput': 'itbinput="Para usar o ibus-typing-booster, adicione-o aos seus métodos de entrada nas configurações do sistema do GNOME ou através do ibus-setup."'
     },
     'ro.lib': {
-        'websoftwarewarning': 'websoftwarewarning="După aplicarea acestui patch este în continuare necesar un browser web bazat pe Chromium, care nu este Flatpak, pentru a gestiona setările dispozitivului."'
+        'itbinput': 'itbinput="Pentru a utiliza ibus-typing-booster, adăugați-l la metodele de introducere din setările de sistem GNOME sau prin ibus-setup."'
     },
     'ru.lib': {
-        'websoftwarewarning': 'websoftwarewarning="После применения этого патча для управления настройками устройства по-прежнему требуется веб-браузер на базе Chromium, установленный не через Flatpak."'
+        'itbinput': 'itbinput="Чтобы использовать ibus-typing-booster, добавьте его в методы ввода в настройках системы GNOME или с помощью ibus-setup."'
     },
     'sk.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Po tejto oprave je na správu nastavení zariadenia stále potrebný webový prehliadač založený na Chromiu, ktorý nie je Flatpak."'
+        'itbinput': 'itbinput="Ak chcete používať ibus-typing-booster, pridajte ho medzi metódy vstupu v systémových nastaveniach GNOME alebo pomocou ibus-setup."'
     },
     'sl.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Po tem popravku je za upravljanje nastavitev naprave še vedno potreben spletni brskalnik, ki temelji na Chromiumu in ni Flatpak."'
+        'itbinput': 'itbinput="Za uporabo ibus-typing-booster ga dodajte med načine vnosa v sistemskih nastavitvah GNOME ali prek ibus-setup."'
     },
     'sq.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Pas këtij përditësimi kërkohet ende një shfletues uebi i bazuar në Chromium që nuk është Flatpak për të menaxhuar cilësimet e pajisjes."'
+        'itbinput': 'itbinput="Për të përdorur ibus-typing-booster, shtojeni te metodat e hyrjes në cilësimet e sistemit të GNOME ose përmes ibus-setup."'
     },
     'sr.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Након ове исправке и даље је потребан веб-прегледач заснован на Chromium-у који није Flatpak за управљање подешавањима уређаја."'
+        'itbinput': 'itbinput="Да бисте користили ibus-typing-booster, додајте га у методе уноса у системским подешавањима GNOME-а или путем ibus-setup."'
     },
     'sv.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Efter denna uppdatering krävs fortfarande en Chromium-baserad webbläsare som inte är en Flatpak för att hantera enhetsinställningar."'
+        'itbinput': 'itbinput="För att använda ibus-typing-booster, lägg till det bland dina inmatningsmetoder i GNOME:s systeminställningar eller via ibus-setup."'
     },
     'sw.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Baada ya kiraka hiki, kivinjari cha wavuti kinachotegemea Chromium ambacho si Flatpak bado kinahitajika ili kudhibiti mipangilio ya kifaa."'
+        'itbinput': 'itbinput="Ili kutumia ibus-typing-booster, iongeze kwenye mbinu zako za kuingiza katika mipangilio ya mfumo ya GNOME au kupitia ibus-setup."'
     },
     'ta.lib': {
-        'websoftwarewarning': 'websoftwarewarning="இந்த திருத்தத்திற்குப் பிறகும் சாதன அமைப்புகளை நிர்வகிக்க Flatpak அல்லாத Chromium அடிப்படையிலான இணைய உலாவி இன்னும் தேவைப்படுகிறது."'
+        'itbinput': 'itbinput="ibus-typing-booster-ஐ பயன்படுத்த, அதை GNOME அமைப்பின் உள்ளீட்டு முறைகளில் சேர்க்கவும் அல்லது ibus-setup மூலம் சேர்க்கவும்."'
     },
     'tg.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Пас аз ин ислоҳ барои идоракунии танзимоти дастгоҳ ҳанӯз ҳам браузери веби асосёфта ба Chromium, ки Flatpak нест, лозим аст."'
+        'itbinput': 'itbinput="Барои истифодаи ibus-typing-booster онро ба усулҳои воридкунии худ дар танзимоти системаи GNOME ё тавассути ibus-setup илова кунед."'
     },
     'th.lib': {
-        'websoftwarewarning': 'websoftwarewarning="หลังจากแพตช์นี้ ยังจำเป็นต้องใช้เว็บเบราว์เซอร์ที่ใช้ Chromium และไม่ใช่ Flatpak เพื่อจัดการการตั้งค่าอุปกรณ์"'
+        'itbinput': 'itbinput="หากต้องการใช้ ibus-typing-booster ให้เพิ่มลงในวิธีป้อนข้อมูลในตั้งค่าระบบของ GNOME หรือผ่าน ibus-setup"'
     },
     'tl.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Pagkatapos ng patch na ito, kailangan pa rin ang isang Chromium-based na web browser na hindi Flatpak upang pamahalaan ang mga setting ng device."'
+        'itbinput': 'itbinput="Upang gamitin ang ibus-typing-booster, idagdag ito sa iyong mga paraan ng pag-input sa mga setting ng system ng GNOME o sa pamamagitan ng ibus-setup."'
     },
     'tr.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Bu yamadan sonra, cihaz ayarlarını yönetmek için hâlâ Flatpak olmayan Chromium tabanlı bir web tarayıcısı gereklidir."'
+        'itbinput': 'itbinput="ibus-typing-booster kullanmak için GNOME sistem ayarlarında giriş yöntemlerinize ekleyin veya ibus-setup aracılığıyla ekleyin."'
     },
     'uk.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Після застосування цього патча для керування налаштуваннями пристрою, як і раніше, потрібен веббраузер на базі Chromium, встановлений не через Flatpak."'
+        'itbinput': 'itbinput="Щоб використовувати ibus-typing-booster, додайте його до методів введення в системних налаштуваннях GNOME або за допомогою ibus-setup."'
     },
     'ur.lib': {
-        'websoftwarewarning': 'websoftwarewarning="اس پیچ کے بعد بھی ڈیوائس کی ترتیبات کا انتظام کرنے کے لیے ایک ایسا Chromium پر مبنی ویب براؤزر درکار ہے جو Flatpak نہ ہو۔"'
+        'itbinput': 'itbinput="ibus-typing-booster استعمال کرنے کے لیے اسے GNOME کی نظامی ترتیبات میں اپنے ان پٹ طریقوں میں شامل کریں یا ibus-setup استعمال کریں۔"'
     },
     'uz.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Ushbu yamadan so‘ng ham qurilma sozlamalarini boshqarish uchun Flatpak bo‘lmagan Chromium asosidagi veb-brauzer talab qilinadi."'
+        'itbinput': 'itbinput="ibus-typing-booster-dan foydalanish uchun uni GNOME tizim sozlamalaridagi kiritish usullariga qo‘shing yoki ibus-setup orqali qo‘shing."'
     },
     'vi.lib': {
-        'websoftwarewarning': 'websoftwarewarning="Sau bản vá này, vẫn cần một trình duyệt web dựa trên Chromium không phải Flatpak để quản lý cài đặt thiết bị."'
+        'itbinput': 'itbinput="Để sử dụng ibus-typing-booster, hãy thêm nó vào các phương thức nhập trong cài đặt hệ thống của GNOME hoặc thông qua ibus-setup."'
     },
     'zh.lib': {
-        'websoftwarewarning': 'websoftwarewarning="应用此补丁后，仍然需要一个非 Flatpak 的 Chromium 内核网页浏览器来管理设备设置。"'
+        'itbinput': 'itbinput="要使用 ibus-typing-booster，请在 GNOME 的系统设置中将其添加到输入法，或通过 ibus-setup 进行配置。"' 
     }
 }
 

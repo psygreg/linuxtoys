@@ -505,5 +505,7 @@
   "umipp_desc": "Çaktivizon CPU UMIP përmes një parametri të kernelit. Mund të nevojitet për të ekzekutuar disa aplikacione Windows përmes WINE/Proton.",
   "qtscrcpy_desc": "Pasqyroni dhe kontrolloni pajisjet Android përmes USB-së ose rrjetit WiFi.",
   "accessibility": "Aksesueshmëria",
-  "accessibility_desc": "Përshtateni sistemin sipas nevojave tuaja, të veçanta ose jo."
+  "accessibility_desc": "Përshtateni sistemin sipas nevojave tuaja, të veçanta ose jo.",
+  "od_desc": "Një font me burim të hapur i krijuar për të përmirësuar lexueshmërinë për personat me disleksi.",
+  "itb_desc": "Një metodë hyrjeje me plotësim fjalësh për të përshpejtuar shkrimin dhe për të ndihmuar personat me vështirësi drejtshkrimore."
 }

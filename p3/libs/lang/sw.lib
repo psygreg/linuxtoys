@@ -140,3 +140,4 @@ zswapmsg="ZSWAP sasa imefungwa. Lazima uunde faili au kizigeu cha kubadilishana.
 msgostreepending="Kusasisha kwa mfumo kunakaa. Tafadhali anzisha tena mfumo wako na utekeleze hati hii upya kumalizia uongozaji."
 outofspace="Hakuna nafasi ya kuhifadhi inayopatikana kwa ajili ya operesheni."
 websoftwarewarning="Baada ya kiraka hiki, kivinjari cha wavuti kinachotegemea Chromium ambacho si Flatpak bado kinahitajika ili kudhibiti mipangilio ya kifaa."
+itbinput="Ili kutumia ibus-typing-booster, iongeze kwenye mbinu zako za kuingiza katika mipangilio ya mfumo ya GNOME au kupitia ibus-setup."

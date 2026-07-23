@@ -505,5 +505,7 @@
   "umipp_desc": "Deaktiviert CPU-UMIP über einen Kernel-Parameter. Kann erforderlich sein, um bestimmte Windows-Anwendungen über WINE/Proton auszuführen.",
   "qtscrcpy_desc": "Android-Geräte über USB oder WLAN spiegeln und steuern.",
   "accessibility": "Barrierefreiheit",
-  "accessibility_desc": "Passen Sie Ihr System an Ihre Bedürfnisse an – ob speziell oder nicht."
+  "accessibility_desc": "Passen Sie Ihr System an Ihre Bedürfnisse an – ob speziell oder nicht.",
+  "od_desc": "Eine quelloffene Schriftart, die die Lesbarkeit für Menschen mit Legasthenie verbessern soll.",
+  "itb_desc": "Eine Eingabemethode mit Wortvervollständigung, die das Tippen beschleunigt und Menschen mit Rechtschreibschwierigkeiten unterstützt."
 }

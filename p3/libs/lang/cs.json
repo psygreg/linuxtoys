@@ -505,5 +505,7 @@
   "umipp_desc": "Zakáže CPU UMIP pomocí parametru jádra. Může být potřeba pro spuštění některých aplikací Windows přes WINE/Proton.",
   "qtscrcpy_desc": "Zrcadlete a ovládejte zařízení Android přes USB nebo síť WiFi.",
   "accessibility": "Zpřístupnění",
-  "accessibility_desc": "Přizpůsobte systém svým potřebám, ať už jsou speciální, nebo ne."
+  "accessibility_desc": "Přizpůsobte systém svým potřebám, ať už jsou speciální, nebo ne.",
+  "od_desc": "Písmo s otevřeným zdrojovým kódem vytvořené pro zlepšení čitelnosti lidem s dyslexií.",
+  "itb_desc": "Metoda zadávání s dokončováním slov, která urychluje psaní a pomáhá lidem s obtížemi při pravopisu."
 }

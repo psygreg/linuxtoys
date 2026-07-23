@@ -505,5 +505,7 @@
   "umipp_desc": "Letiltja a CPU UMIP funkcióját egy kernelparaméter segítségével. Szükséges lehet egyes Windows-alkalmazások futtatásához WINE/Proton alatt.",
   "qtscrcpy_desc": "Android-eszközök tükrözése és vezérlése USB-n vagy WiFi hálózaton keresztül.",
   "accessibility": "Akadálymentesítés",
-  "accessibility_desc": "Igazítsa rendszerét az igényeihez, legyenek azok speciálisak vagy sem."
+  "accessibility_desc": "Igazítsa rendszerét az igényeihez, legyenek azok speciálisak vagy sem.",
+  "od_desc": "Nyílt forráskódú betűtípus, amelyet a diszlexiás olvasók számára a könnyebb olvashatóság érdekében hoztak létre.",
+  "itb_desc": "Szókiegészítést használó beviteli mód, amely gyorsítja a gépelést és segíti a helyesírási nehézségekkel küzdőket."
 }

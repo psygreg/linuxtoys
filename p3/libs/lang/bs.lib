@@ -139,3 +139,4 @@ zswapmsg="ZSWAP je sada omogućen. Morate kreirati datoteku razmjene ili partici
 msgostreepending="Ažuriranje sistema je u čekanju. Molimo, ponovno pokrenite sistem i ponovo pokrenite ovaj skript da biste dovršili instalaciju."
 outofspace="Nedovoljna dostupna prostor za pohranu za operaciju."
 websoftwarewarning="Nakon ove zakrpe i dalje je potreban web preglednik zasnovan na Chromiumu koji nije Flatpak za upravljanje postavkama uređaja."
+itbinput="Da biste koristili ibus-typing-booster, dodajte ga u svoje metode unosa u sistemskim postavkama GNOME-a ili putem ibus-setup."

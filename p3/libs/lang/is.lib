@@ -138,3 +138,4 @@ zswapmsg="ZSWAP er nú virkt. Þú verður að búa til skiptiskrá eða sundurs
 msgostreepending="Kerfiuppfærsla á bjóð. Endurkkæstir útómátinn þían og kéyrstir þssa skripta aftur til að löka uppsetningunni."
 outofspace="Ófullnægjandi geymslurými fyrir aðgerð."
 websoftwarewarning="Eftir þessa lagfæringu er enn þörf á Chromium-vafra sem ekki er Flatpak til að stjórna stillingum tækisins."
+itbinput="Til að nota ibus-typing-booster skaltu bæta því við innsláttaraðferðir í kerfisstillingum GNOME eða með ibus-setup."

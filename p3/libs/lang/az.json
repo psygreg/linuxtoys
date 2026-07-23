@@ -504,5 +504,7 @@
   "umipp_desc": "Nüvə parametrindən istifadə edərək CPU UMIP funksiyasını söndürür. Bəzi Windows tətbiqlərini WINE/Proton vasitəsilə işlətmək üçün lazım ola bilər.",
   "qtscrcpy_desc": "Android cihazlarını USB və ya WiFi şəbəkəsi vasitəsilə əks etdirin və idarə edin.",
   "accessibility": "Əlçatanlıq",
-  "accessibility_desc": "Xüsusi olub-olmamasından asılı olmayaraq, sisteminizi ehtiyaclarınıza uyğunlaşdırın."
+  "accessibility_desc": "Xüsusi olub-olmamasından asılı olmayaraq, sisteminizi ehtiyaclarınıza uyğunlaşdırın.",
+  "od_desc": "Disleksiyası olan oxucular üçün oxunaqlılığı artırmağa kömək etmək məqsədilə yaradılmış açıq mənbəli şrift.",
+  "itb_desc": "Yazmağı sürətləndirmək və sözlərin yazılışında çətinlik çəkən insanlara kömək etmək üçün tamamlamalı daxiletmə üsulu."
 }

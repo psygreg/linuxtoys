@@ -139,3 +139,4 @@ zswapmsg="ZSWAP je sedaj omogočen. Ustvariti morate datoteko ali particijo za z
 msgostreepending="Posodobitev sistema je v teku. Prosim ponovno zaženite sistem in znova zaženite ta skript, da dokončate namestitev."
 outofspace="Nezadostno razpoložljivo prostora za hranjenje za operacijo."
 websoftwarewarning="Po tem popravku je za upravljanje nastavitev naprave še vedno potreben spletni brskalnik, ki temelji na Chromiumu in ni Flatpak."
+itbinput="Za uporabo ibus-typing-booster ga dodajte med načine vnosa v sistemskih nastavitvah GNOME ali prek ibus-setup."

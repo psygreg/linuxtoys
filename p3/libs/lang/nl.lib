@@ -139,3 +139,4 @@ zswapmsg="ZSWAP is nu ingeschakeld. U moet een swap-bestand of partitie aanmaken
 msgostreepending="Een systeemupdate wacht. Start alstublieft uw systeem opnieuw op en voer dit script opnieuw uit om de installatie te voltooien."
 outofspace="Onvoldoende beschikbare opslagruimte voor de bewerking."
 websoftwarewarning="Na deze patch is nog steeds een niet-Flatpak Chromium-gebaseerde webbrowser vereist om de apparaatinstellingen te beheren."
+itbinput="Om ibus-typing-booster te gebruiken, voegt u deze toe aan uw invoermethoden in de systeeminstellingen van GNOME of via ibus-setup."

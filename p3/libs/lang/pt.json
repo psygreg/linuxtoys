@@ -505,5 +505,7 @@
   "umipp_desc": "Desativa o UMIP da CPU por meio de um parâmetro do kernel. Pode ser necessário para executar alguns aplicativos específicos do Windows através do WINE/Proton.",
   "qtscrcpy_desc": "Espelhe e controle dispositivos Android via USB ou rede WiFi.",
   "accessibility": "Acessibilidade",
-  "accessibility_desc": "Ajuste o sistema às suas necessidades, especiais ou não."
+  "accessibility_desc": "Ajuste o sistema às suas necessidades, especiais ou não.",
+  "od_desc": "Uma fonte de código aberto criada para ajudar a melhorar a legibilidade para pessoas com dislexia.",
+  "itb_desc": "Um método de entrada com preenchimento de palavras para acelerar a digitação e ajudar pessoas com dificuldades de ortografia."
 }

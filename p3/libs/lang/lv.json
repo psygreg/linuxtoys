@@ -505,5 +505,7 @@
   "umipp_desc": "Atspējo CPU UMIP, izmantojot kodola parametru. Tas var būt nepieciešams dažu Windows lietotņu palaišanai ar WINE/Proton.",
   "qtscrcpy_desc": "Atspoguļojiet un vadiet Android ierīces, izmantojot USB vai WiFi tīklu.",
   "accessibility": "Pieejamība",
-  "accessibility_desc": "Pielāgojiet sistēmu savām vajadzībām neatkarīgi no tā, vai tās ir īpašas."
+  "accessibility_desc": "Pielāgojiet sistēmu savām vajadzībām neatkarīgi no tā, vai tās ir īpašas.",
+  "od_desc": "Atvērtā pirmkoda fonts, kas izveidots, lai uzlabotu teksta lasāmību cilvēkiem ar disleksiju.",
+  "itb_desc": "Ievades metode ar vārdu pabeigšanu, kas paātrina rakstīšanu un palīdz cilvēkiem ar pareizrakstības grūtībām."
 }

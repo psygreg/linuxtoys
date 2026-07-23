@@ -139,3 +139,4 @@ zswapmsg="ZSWAP on nyt otettu käyttöön. Sinun on luotava swap-tiedosto tai os
 msgostreepending="Järjestelmäpäivitys on vireillä. Käynnistä järjestelmä uudelleen ja suorita tämä skripti uudelleen asennuksen loppuunsaattamiseksi."
 outofspace="Riittämätön käytettävissä oleva tallennustila toiminnolle."
 websoftwarewarning="Tämän korjauksen jälkeen laitteen asetusten hallintaan tarvitaan edelleen Chromium-pohjainen selain, joka ei ole Flatpak."
+itbinput="Käyttääksesi ibus-typing-boosteria lisää se syöttötapoihin GNOMEn järjestelmäasetuksissa tai käytä ibus-setupia."

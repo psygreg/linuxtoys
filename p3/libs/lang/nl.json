@@ -505,5 +505,7 @@
   "umipp_desc": "Schakelt CPU UMIP uit via een kernelparameter. Kan nodig zijn om bepaalde Windows-toepassingen via WINE/Proton uit te voeren.",
   "qtscrcpy_desc": "Android-apparaten spiegelen en bedienen via USB of een WiFi-netwerk.",
   "accessibility": "Toegankelijkheid",
-  "accessibility_desc": "Pas je systeem aan je behoeften aan, speciaal of niet."
+  "accessibility_desc": "Pas je systeem aan je behoeften aan, speciaal of niet.",
+  "od_desc": "Een opensourcelettertype dat is ontworpen om de leesbaarheid voor mensen met dyslexie te verbeteren.",
+  "itb_desc": "Een invoermethode met woordaanvulling om sneller te typen en mensen met spellingsproblemen te helpen."
 }

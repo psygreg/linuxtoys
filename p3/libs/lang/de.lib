@@ -139,3 +139,4 @@ zswapmsg="ZSWAP ist nun aktiviert. Sie müssen eine Auslagerungsdatei oder Parti
 msgostreepending="Eine Systemaktualisierung ist ausstehend. Bitte starten Sie Ihr System neu und führen Sie dieses Skript erneut aus, um die Installation abzuschließen."
 outofspace="Unzureichend verfügbarer Speicherplatz für die Operation."
 websoftwarewarning="Nach diesem Patch wird weiterhin ein Chromium-basierter Webbrowser (nicht als Flatpak) benötigt, um die Geräteeinstellungen zu verwalten."
+itbinput="Um ibus-typing-booster zu verwenden, fügen Sie ihn in den Systemeinstellungen von GNOME zu Ihren Eingabemethoden hinzu oder verwenden Sie ibus-setup."

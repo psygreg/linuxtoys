@@ -505,5 +505,7 @@
   "umipp_desc": "Gerir CPU UMIP óvirkt með kjarnabreytu. Getur verið nauðsynlegt til að keyra ákveðin Windows-forrit í gegnum WINE/Proton.",
   "qtscrcpy_desc": "Speglaðu og stjórnaðu Android-tækjum í gegnum USB eða WiFi-net.",
   "accessibility": "Aðgengi",
-  "accessibility_desc": "Lagaðu kerfið að þínum þörfum, hvort sem þær eru sérstakar eða ekki."
+  "accessibility_desc": "Lagaðu kerfið að þínum þörfum, hvort sem þær eru sérstakar eða ekki.",
+  "od_desc": "Opinn leturgerð sem var búin til til að bæta læsileika fyrir fólk með lesblindu.",
+  "itb_desc": "Innsláttaraðferð með orðaklárun sem flýtir fyrir vélritun og hjálpar fólki sem á erfitt með stafsetningu."
 }

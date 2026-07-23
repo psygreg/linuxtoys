@@ -505,5 +505,7 @@
   "umipp_desc": "Wyłącza funkcję UMIP procesora za pomocą parametru jądra. Może być wymagane do uruchamiania niektórych aplikacji Windows przez WINE/Proton.",
   "qtscrcpy_desc": "Wyświetlaj ekran i steruj urządzeniami z Androidem przez USB lub sieć WiFi.",
   "accessibility": "Ułatwienia dostępu",
-  "accessibility_desc": "Dostosuj system do swoich potrzeb, specjalnych lub nie."
+  "accessibility_desc": "Dostosuj system do swoich potrzeb, specjalnych lub nie.",
+  "od_desc": "Czcionka open source stworzona w celu poprawy czytelności dla osób z dysleksją.",
+  "itb_desc": "Metoda wprowadzania z uzupełnianiem słów, która przyspiesza pisanie i pomaga osobom mającym trudności z pisownią."
 }

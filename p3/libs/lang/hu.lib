@@ -139,3 +139,4 @@ zswapmsg="A ZSWAP most engedélyezett. Létre kell hoznia egy swap-fájlt vagy p
 msgostreepending="A rendszerfrissítés függőben van. Indítsa újra a rendszert, és futtassa újra ezt a parancsfájlt a telepítés befejezéséhez."
 outofspace="Nincs elég rendelkezésre álló tárolóhely a műveletre."
 websoftwarewarning="A javítás után továbbra is szükség van egy nem Flatpak Chromium-alapú webböngészőre az eszköz beállításainak kezeléséhez."
+itbinput="Az ibus-typing-booster használatához adja hozzá a beviteli módokhoz a GNOME rendszerbeállításaiban vagy az ibus-setup segítségével."

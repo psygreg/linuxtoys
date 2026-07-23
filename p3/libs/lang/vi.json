@@ -505,5 +505,7 @@
   "umipp_desc": "Vô hiệu hóa CPU UMIP thông qua một tham số của nhân. Có thể cần thiết để chạy một số ứng dụng Windows bằng WINE/Proton.",
   "qtscrcpy_desc": "Phản chiếu và điều khiển thiết bị Android qua USB hoặc mạng WiFi.",
   "accessibility": "Khả năng tiếp cận",
-  "accessibility_desc": "Điều chỉnh hệ thống theo nhu cầu của bạn, dù có đặc biệt hay không."
+  "accessibility_desc": "Điều chỉnh hệ thống theo nhu cầu của bạn, dù có đặc biệt hay không.",
+  "od_desc": "Phông chữ mã nguồn mở được tạo ra để giúp cải thiện khả năng đọc cho những người mắc chứng khó đọc.",
+  "itb_desc": "Phương thức nhập liệu có tính năng hoàn thành từ để tăng tốc độ gõ và hỗ trợ những người gặp khó khăn về chính tả."
 }

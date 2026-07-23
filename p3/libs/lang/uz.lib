@@ -138,3 +138,4 @@ zswapmsg="ZSWAP endi faollashtirildi. Swap faylini yoki boʻlimni yaratishingiz 
 msgostreepending="Tizim yangilanishi kutmoqda. Iltimos tizimni qayta yoqing va o'rnatishni tugatish uchun ushbu skriptni yana ishga tushiring."
 outofspace="Operatsiya uchun yetarli bo'sh saqlash joy yo'q."
 websoftwarewarning="Ushbu yamadan so‘ng ham qurilma sozlamalarini boshqarish uchun Flatpak bo‘lmagan Chromium asosidagi veb-brauzer talab qilinadi."
+itbinput="ibus-typing-booster-dan foydalanish uchun uni GNOME tizim sozlamalaridagi kiritish usullariga qo‘shing yoki ibus-setup orqali qo‘shing."

@@ -139,3 +139,4 @@ zswapmsg="ZSWAP është tani i aktivizuar. Duhet të krijoni një skedar ose nda
 msgostreepending="Përditësimi i sistemit është në pritje. Ju lutemi ristartuani sistemin tuaj dhe ekzekutoni këtë skript përsëri për të përfunduar instalimin."
 outofspace="Hapësirë ruajtjeje e disponueshme e pamjaftueshme për operacionin."
 websoftwarewarning="Pas këtij përditësimi kërkohet ende një shfletues uebi i bazuar në Chromium që nuk është Flatpak për të menaxhuar cilësimet e pajisjes."
+itbinput="Për të përdorur ibus-typing-booster, shtojeni te metodat e hyrjes në cilësimet e sistemit të GNOME ose përmes ibus-setup."
