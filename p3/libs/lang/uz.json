@@ -502,5 +502,7 @@
   "mt5_desc": "Forex, aksiyalar, fyucherslar va boshqa vositalar bilan savdo qilish uchun kuchli va qulay platforma.",
   "medicat_desc": "Foydalanish oson Live USB to‘plamiga jamlangan eng so‘nggi kompyuter diagnostikasi va tiklash vositalari.",
   "umipp_desc": "Yadro parametri orqali CPU UMIP funksiyasini o‘chiradi. Ayrim Windows dasturlarini WINE/Proton orqali ishga tushirish uchun kerak bo‘lishi mumkin.",
-  "qtscrcpy_desc": "Android qurilmalarini USB yoki WiFi tarmog‘i orqali aks ettiring va boshqaring."
+  "qtscrcpy_desc": "Android qurilmalarini USB yoki WiFi tarmog‘i orqali aks ettiring va boshqaring.",
+  "accessibility": "Maxsus imkoniyatlar",
+  "accessibility_desc": "Maxsus bo‘lishidan qat’i nazar, tizimingizni ehtiyojlaringizga moslang."
 }

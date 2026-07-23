@@ -503,5 +503,7 @@
   "mt5_desc": "Platform yang berkuasa dan mudah untuk berdagang Forex, saham, niaga hadapan dan instrumen lain.",
   "medicat_desc": "Pilihan alat diagnostik dan pemulihan komputer terkini yang dihimpunkan dalam toolkit Live USB yang mudah digunakan.",
   "umipp_desc": "Melumpuhkan CPU UMIP melalui parameter kernel. Mungkin diperlukan untuk menjalankan aplikasi Windows tertentu melalui WINE/Proton.",
-  "qtscrcpy_desc": "Cerminkan dan kawal peranti Android melalui USB atau rangkaian WiFi."
+  "qtscrcpy_desc": "Cerminkan dan kawal peranti Android melalui USB atau rangkaian WiFi.",
+  "accessibility": "Kebolehcapaian",
+  "accessibility_desc": "Sesuaikan sistem anda mengikut keperluan, sama ada keperluan khas atau tidak."
 }

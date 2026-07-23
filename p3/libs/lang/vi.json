@@ -503,5 +503,7 @@
   "mt5_desc": "Nền tảng mạnh mẽ và tiện lợi để giao dịch Forex, cổ phiếu, hợp đồng tương lai và các công cụ khác.",
   "medicat_desc": "Tuyển chọn các công cụ chẩn đoán và khôi phục máy tính mới nhất, được tích hợp trong một bộ công cụ Live USB dễ sử dụng.",
   "umipp_desc": "Vô hiệu hóa CPU UMIP thông qua một tham số của nhân. Có thể cần thiết để chạy một số ứng dụng Windows bằng WINE/Proton.",
-  "qtscrcpy_desc": "Phản chiếu và điều khiển thiết bị Android qua USB hoặc mạng WiFi."
+  "qtscrcpy_desc": "Phản chiếu và điều khiển thiết bị Android qua USB hoặc mạng WiFi.",
+  "accessibility": "Khả năng tiếp cận",
+  "accessibility_desc": "Điều chỉnh hệ thống theo nhu cầu của bạn, dù có đặc biệt hay không."
 }

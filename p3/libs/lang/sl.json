@@ -503,5 +503,7 @@
   "mt5_desc": "Zmogljiva in priročna platforma za trgovanje s Forexom, delnicami, terminskimi pogodbami in drugimi instrumenti.",
   "medicat_desc": "Izbor najnovejših orodij za diagnostiko in obnovitev računalnika, združenih v enostaven Live USB komplet.",
   "umipp_desc": "Onemogoči CPU UMIP prek parametra jedra. Morda bo potrebno za zagon nekaterih programov Windows prek WINE/Proton.",
-  "qtscrcpy_desc": "Zrcalite in upravljajte naprave Android prek USB-ja ali omrežja WiFi."
+  "qtscrcpy_desc": "Zrcalite in upravljajte naprave Android prek USB-ja ali omrežja WiFi.",
+  "accessibility": "Dostopnost",
+  "accessibility_desc": "Prilagodite sistem svojim potrebam, posebnim ali ne."
 }

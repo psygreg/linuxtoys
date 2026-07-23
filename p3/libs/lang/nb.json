@@ -503,5 +503,7 @@
   "mt5_desc": "Kraftfull og praktisk plattform for handel med Forex, aksjer, futures og andre instrumenter.",
   "medicat_desc": "Et utvalg av de nyeste verktøyene for datamaskindiagnostikk og gjenoppretting samlet i et brukervennlig Live USB-verktøysett.",
   "umipp_desc": "Deaktiverer CPU UMIP via en kjerneparameter. Kan være nødvendig for å kjøre enkelte Windows-programmer gjennom WINE/Proton.",
-  "qtscrcpy_desc": "Speil og styr Android-enheter via USB eller WiFi-nettverk."
+  "qtscrcpy_desc": "Speil og styr Android-enheter via USB eller WiFi-nettverk.",
+  "accessibility": "Tilgjengelighet",
+  "accessibility_desc": "Tilpass systemet til dine behov, enten de er spesielle eller ikke."
 }

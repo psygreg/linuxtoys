@@ -503,5 +503,7 @@
   "mt5_desc": "Plateforme puissante et pratique pour trader le Forex, les actions, les contrats à terme et d'autres instruments.",
   "medicat_desc": "Une sélection des derniers outils de diagnostic et de récupération pour ordinateur, regroupés dans une boîte à outils Live USB facile à utiliser.",
   "umipp_desc": "Désactive UMIP du processeur via un paramètre du noyau. Peut être nécessaire pour exécuter certaines applications Windows avec WINE/Proton.",
-  "qtscrcpy_desc": "Mettez en miroir et contrôlez des appareils Android via USB ou un réseau WiFi."
+  "qtscrcpy_desc": "Mettez en miroir et contrôlez des appareils Android via USB ou un réseau WiFi.",
+  "accessibility": "Accessibilité",
+  "accessibility_desc": "Adaptez votre système à vos besoins, particuliers ou non."
 }

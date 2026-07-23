@@ -503,5 +503,7 @@
   "mt5_desc": "外国為替(Forex)、株式、先物、その他の商品を取引するための強力で便利なプラットフォーム。",
   "medicat_desc": "最新のコンピューター診断および復旧ツールを、使いやすい Live USB ツールキットとしてまとめたものです。",
   "umipp_desc": "カーネルパラメータを使用して CPU の UMIP を無効化します。WINE/Proton 経由で一部の Windows アプリケーションを実行するために必要な場合があります。",
-  "qtscrcpy_desc": "USB または WiFi ネットワーク経由で Android デバイスをミラーリングして操作します。"
+  "qtscrcpy_desc": "USB または WiFi ネットワーク経由で Android デバイスをミラーリングして操作します。",
+  "accessibility": "アクセシビリティ",
+  "accessibility_desc": "特別なものかどうかを問わず、ニーズに合わせてシステムを調整します。"
 }

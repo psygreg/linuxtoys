@@ -503,5 +503,7 @@
   "mt5_desc": "Ardán cumhachtach agus áisiúil chun trádáil a dhéanamh in Forex, stoic, todhchaíochtaí agus ionstraimí eile.",
   "medicat_desc": "Rogha de na huirlisí diagnóise agus aisghabhála ríomhaire is déanaí, curtha le chéile i bhfoireann Live USB atá éasca le húsáid.",
   "umipp_desc": "Díchumasaíonn sé UMIP an LAP trí pharaiméadar eithne. D'fhéadfadh sé a bheith riachtanach chun roinnt feidhmchlár Windows a rith trí WINE/Proton.",
-  "qtscrcpy_desc": "Scáthánaigh agus rialaigh gléasanna Android trí USB nó líonra WiFi."
+  "qtscrcpy_desc": "Scáthánaigh agus rialaigh gléasanna Android trí USB nó líonra WiFi.",
+  "accessibility": "Inrochtaineacht",
+  "accessibility_desc": "Cuir do chóras in oiriúint do do riachtanais, bíodh siad speisialta nó ná bíodh."
 }

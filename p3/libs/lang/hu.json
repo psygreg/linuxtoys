@@ -503,5 +503,7 @@
   "mt5_desc": "Erőteljes és kényelmes platform Forex, részvények, határidős ügyletek és más eszközök kereskedésére.",
   "medicat_desc": "A legújabb számítógép-diagnosztikai és helyreállító eszközök gyűjteménye egy könnyen használható Live USB csomagban.",
   "umipp_desc": "Letiltja a CPU UMIP funkcióját egy kernelparaméter segítségével. Szükséges lehet egyes Windows-alkalmazások futtatásához WINE/Proton alatt.",
-  "qtscrcpy_desc": "Android-eszközök tükrözése és vezérlése USB-n vagy WiFi hálózaton keresztül."
+  "qtscrcpy_desc": "Android-eszközök tükrözése és vezérlése USB-n vagy WiFi hálózaton keresztül.",
+  "accessibility": "Akadálymentesítés",
+  "accessibility_desc": "Igazítsa rendszerét az igényeihez, legyenek azok speciálisak vagy sem."
 }

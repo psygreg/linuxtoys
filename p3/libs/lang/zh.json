@@ -505,5 +505,7 @@
   "mt5_desc": "强大便捷的外汇、股票、期货及其他工具交易平台。",
   "medicat_desc": "精选最新的计算机诊断和恢复工具，整合到一个易于使用的 Live USB 工具包中。",
   "umipp_desc": "通过内核参数禁用 CPU UMIP。运行某些 Windows 应用程序（通过 WINE/Proton）时可能需要此选项。",
-  "qtscrcpy_desc": "通过 USB 或 WiFi 网络镜像并控制 Android 设备。"
+  "qtscrcpy_desc": "通过 USB 或 WiFi 网络镜像并控制 Android 设备。",
+  "accessibility": "无障碍功能",
+  "accessibility_desc": "根据您的需求调整系统，无论是否属于特殊需求。"
 }

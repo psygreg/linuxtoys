@@ -503,5 +503,7 @@
   "mt5_desc": "Forex, hisse senedi, vadeli işlemler ve diğer araçlarda işlem yapmak için güçlü ve kullanışlı platform.",
   "medicat_desc": "Kullanımı kolay bir Live USB araç setinde bir araya getirilmiş en güncel bilgisayar tanılama ve kurtarma araçlarından oluşan seçki.",
   "umipp_desc": "Bir çekirdek parametresi aracılığıyla CPU UMIP'yi devre dışı bırakır. Bazı Windows uygulamalarını WINE/Proton üzerinden çalıştırmak için gerekebilir.",
-  "qtscrcpy_desc": "Android cihazlarını USB veya WiFi ağı üzerinden yansıtın ve kontrol edin."
+  "qtscrcpy_desc": "Android cihazlarını USB veya WiFi ağı üzerinden yansıtın ve kontrol edin.",
+  "accessibility": "Erişilebilirlik",
+  "accessibility_desc": "Özel olsun ya da olmasın, sisteminizi ihtiyaçlarınıza göre ayarlayın."
 }

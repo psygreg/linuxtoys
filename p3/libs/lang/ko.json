@@ -503,5 +503,7 @@
   "mt5_desc": "외환(Forex), 주식, 선물 및 기타 상품을 거래하기 위한 강력하고 편리한 플랫폼.",
   "medicat_desc": "최신 컴퓨터 진단 및 복구 도구를 사용하기 쉬운 Live USB 툴킷으로 모아 놓았습니다.",
   "umipp_desc": "커널 매개변수를 통해 CPU UMIP를 비활성화합니다. 일부 Windows 프로그램을 WINE/Proton으로 실행하는 데 필요할 수 있습니다.",
-  "qtscrcpy_desc": "USB 또는 WiFi 네트워크를 통해 Android 기기를 미러링하고 제어합니다."
+  "qtscrcpy_desc": "USB 또는 WiFi 네트워크를 통해 Android 기기를 미러링하고 제어합니다.",
+  "accessibility": "접근성",
+  "accessibility_desc": "특별한 요구 사항이든 아니든 필요에 맞게 시스템을 조정하세요."
 }

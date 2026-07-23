@@ -503,5 +503,7 @@
   "mt5_desc": "Leistungsstarke und komfortable Plattform für den Handel mit Forex, Aktien, Futures und anderen Instrumenten.",
   "medicat_desc": "Eine Auswahl der neuesten Diagnose- und Wiederherstellungstools für Computer, zusammengestellt in einem benutzerfreundlichen Live-USB-Toolkit.",
   "umipp_desc": "Deaktiviert CPU-UMIP über einen Kernel-Parameter. Kann erforderlich sein, um bestimmte Windows-Anwendungen über WINE/Proton auszuführen.",
-  "qtscrcpy_desc": "Android-Geräte über USB oder WLAN spiegeln und steuern."
+  "qtscrcpy_desc": "Android-Geräte über USB oder WLAN spiegeln und steuern.",
+  "accessibility": "Barrierefreiheit",
+  "accessibility_desc": "Passen Sie Ihr System an Ihre Bedürfnisse an – ob speziell oder nicht."
 }

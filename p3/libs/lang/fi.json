@@ -503,5 +503,7 @@
   "mt5_desc": "Tehokas ja kätevä alusta Forexin, osakkeiden, futuurien ja muiden instrumenttien kaupankäyntiin.",
   "medicat_desc": "Valikoima uusimpia tietokoneen diagnostiikka- ja palautustyökaluja helppokäyttöisessä Live USB -työkalupaketissa.",
   "umipp_desc": "Poistaa CPU:n UMIP-toiminnon käytöstä ytimen parametrilla. Saattaa olla tarpeen joidenkin Windows-sovellusten suorittamiseen WINE/Protonin kautta.",
-  "qtscrcpy_desc": "Peilaa ja hallitse Android-laitteita USB:n tai WiFi-verkon kautta."
+  "qtscrcpy_desc": "Peilaa ja hallitse Android-laitteita USB:n tai WiFi-verkon kautta.",
+  "accessibility": "Esteettömyys",
+  "accessibility_desc": "Mukauta järjestelmä tarpeisiisi, olivatpa ne erityisiä tai eivät."
 }

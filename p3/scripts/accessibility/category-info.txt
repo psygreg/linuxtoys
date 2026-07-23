@@ -1,0 +1,2 @@
+ICON: accessibility.svg
+description: accessibility_desc

@@ -503,5 +503,7 @@
   "mt5_desc": "Öflugur og þægilegur vettvangur til að eiga viðskipti með Forex, hlutabréf, framvirka samninga og önnur fjármálagerninga.",
   "medicat_desc": "Úrval nýjustu greiningar- og endurheimtartækja fyrir tölvur, safnað saman í auðvelt Live USB verkfærasett.",
   "umipp_desc": "Gerir CPU UMIP óvirkt með kjarnabreytu. Getur verið nauðsynlegt til að keyra ákveðin Windows-forrit í gegnum WINE/Proton.",
-  "qtscrcpy_desc": "Speglaðu og stjórnaðu Android-tækjum í gegnum USB eða WiFi-net."
+  "qtscrcpy_desc": "Speglaðu og stjórnaðu Android-tækjum í gegnum USB eða WiFi-net.",
+  "accessibility": "Aðgengi",
+  "accessibility_desc": "Lagaðu kerfið að þínum þörfum, hvort sem þær eru sérstakar eða ekki."
 }

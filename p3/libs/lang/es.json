@@ -503,5 +503,7 @@
   "mt5_desc": "Plataforma potente y conveniente para operar con Forex, acciones, futuros y otros instrumentos.",
   "medicat_desc": "Una selección de las herramientas más recientes de diagnóstico y recuperación para equipos, reunidas en un práctico kit Live USB.",
   "umipp_desc": "Desactiva UMIP de la CPU mediante un parámetro del kernel. Puede ser necesario para ejecutar determinadas aplicaciones de Windows mediante WINE/Proton.",
-  "qtscrcpy_desc": "Duplica y controla dispositivos Android mediante USB o una red WiFi."
+  "qtscrcpy_desc": "Duplica y controla dispositivos Android mediante USB o una red WiFi.",
+  "accessibility": "Accesibilidad",
+  "accessibility_desc": "Adapta tu sistema a tus necesidades, sean especiales o no."
 }

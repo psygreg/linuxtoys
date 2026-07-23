@@ -501,5 +501,7 @@
   "mt5_desc": "Jukwaa lenye nguvu na rahisi kwa kufanya biashara ya Forex, hisa, futures na vyombo vingine.",
   "medicat_desc": "Mkusanyiko wa zana za hivi karibuni za uchunguzi na urejeshaji wa kompyuta katika kifurushi rahisi kutumia cha Live USB.",
   "umipp_desc": "Huzima CPU UMIP kupitia kigezo cha kernel. Huenda ikahitajika ili kuendesha baadhi ya programu za Windows kupitia WINE/Proton.",
-  "qtscrcpy_desc": "Onyesha na udhibiti vifaa vya Android kupitia USB au mtandao wa WiFi."
+  "qtscrcpy_desc": "Onyesha na udhibiti vifaa vya Android kupitia USB au mtandao wa WiFi.",
+  "accessibility": "Ufikivu",
+  "accessibility_desc": "Rekebisha mfumo wako kulingana na mahitaji yako, yawe maalum au la."
 }

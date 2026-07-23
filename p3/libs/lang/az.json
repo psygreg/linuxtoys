@@ -502,5 +502,7 @@
   "mt5_desc": "Forex, səhmlər, fyuçerslər və digər alətlərlə ticarət üçün güclü və rahat platforma.",
   "medicat_desc": "İstifadəsi asan canlı USB alət dəstində toplanmış ən son kompüter diaqnostika və bərpa vasitələrinin seçimi.",
   "umipp_desc": "Nüvə parametrindən istifadə edərək CPU UMIP funksiyasını söndürür. Bəzi Windows tətbiqlərini WINE/Proton vasitəsilə işlətmək üçün lazım ola bilər.",
-  "qtscrcpy_desc": "Android cihazlarını USB və ya WiFi şəbəkəsi vasitəsilə əks etdirin və idarə edin."
+  "qtscrcpy_desc": "Android cihazlarını USB və ya WiFi şəbəkəsi vasitəsilə əks etdirin və idarə edin.",
+  "accessibility": "Əlçatanlıq",
+  "accessibility_desc": "Xüsusi olub-olmamasından asılı olmayaraq, sisteminizi ehtiyaclarınıza uyğunlaşdırın."
 }
