@@ -40,7 +40,7 @@ pkg_fromfile cuda-keyring_1.1-1_all.deb
 sleep 1
 sudo apt update
 sleep 1
-pkg_install cuda-drivers
+pkg_install nvidia-open
 sleep 1
 initramfs_upd
 bootloader_upd
