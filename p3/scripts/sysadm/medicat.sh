@@ -4,6 +4,7 @@
 # icon: medicat.png
 # repo: https://medicatusb.com
 # nocontainer
+# revert: no
 # new
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
@@ -11,8 +12,7 @@ _lang_
 
 pkg_install --ostreecheck dos2unix
 prep_tmp_noram
-wget -O medicat.sh https://url.medicatusb.com/installerlinux
-sed -i 's|^if $(YesNo "Device partition layout defaults to MBR\.  Would you like to use GPT instead? (Y/N)"); then|if false; then|' medicat.sh
+wget -O medicat.sh https://raw.githubusercontent.com/mon5termatt/medicat_installer/refs/heads/main/Medicat_Installer.sh
 dos2unix medicat.sh
 chmod +x medicat.sh
 ./medicat.sh
