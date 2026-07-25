@@ -54,10 +54,10 @@ class TerminalRunner:
         
         # Clear transmap file for new script execution
         try:
-            transmap_path = "/tmp/linuxtoys/transmap"
-            open(transmap_path, "w").close()  # Truncate/clear the file
-        except (IOError, OSError):
-            pass  # Silently ignore if transmap cannot be cleared
+            self._transmap_path = self._select_transmap_path()
+        except RuntimeError as error:
+            print(f"Failed to initialize transaction map: {error}", file=sys.stderr)
+            self._transmap_path = ""
  
         script_path = current_script.get("path", "true")
         if current_script.get("reboot") == "yes":
@@ -68,6 +68,10 @@ class TerminalRunner:
         self._current_action_is_removal = bool(self._cleanup_script_path)
  
         child_env = os.environ.copy()
+        if self._transmap_path:
+            child_env["TRANSMAP_PATH"] = self._transmap_path
+        else:
+            child_env.pop("TRANSMAP_PATH", None)
         # Export CHECKLIST_RUN when running multiple scripts in sequence
         if self.total_scripts > 1:
             child_env['CHECKLIST_RUN'] = '1'
@@ -119,7 +123,7 @@ class TerminalRunner:
                 DialogRestart(parent=toplevel).show()
  
         # Handle transmap file based on exit status
-        transmap_path = "/tmp/linuxtoys/transmap"
+        transmap_path = getattr(self, "_transmap_path", "")
         
         if os.WIFEXITED(status):
             exit_code = os.WEXITSTATUS(status)
@@ -143,31 +147,19 @@ class TerminalRunner:
                 # Clean up any temp directories created by prep_tmp_noram before removing transmap
                 ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
                 
-                try:
-                    if os.path.exists(transmap_path):
-                        os.remove(transmap_path)
-                except (IOError, OSError):
-                    pass  # Silently ignore if transmap cannot be removed
+                self._remove_transmap(transmap_path)
             
             elif exit_code == 100:
                 # User cancelled - clean up and wipe transmap but don't save to registry
                 ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
                 
-                try:
-                    if os.path.exists(transmap_path):
-                        os.remove(transmap_path)
-                except (IOError, OSError):
-                    pass  # Silently ignore if transmap cannot be removed
+                self._remove_transmap(transmap_path)
         
         else:
             # Signal termination (e.g., Ctrl+C) - clean up and wipe transmap
             ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
             
-            try:
-                if os.path.exists(transmap_path):
-                    os.remove(transmap_path)
-            except (IOError, OSError):
-                pass  # Silently ignore if transmap cannot be removed
+            self._remove_transmap(transmap_path)
  
         # Check for error exit codes and handle auto-reversion or bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
@@ -206,11 +198,7 @@ class TerminalRunner:
             else:
                 # No auto-revert possible, wipe transmap only if auto-reporting was enabled
                 if auto_reports_enabled:
-                    try:
-                        if os.path.exists(transmap_path):
-                            os.remove(transmap_path)
-                    except (IOError, OSError):
-                        pass
+                    self._remove_transmap(transmap_path)
                 # If auto-reporting is disabled, preserve transmap for user to potentially report manually
  
         self.scripts_executed += 1
@@ -239,3 +227,47 @@ class TerminalRunner:
         # If terminated by signal (e.g., keyboard interrupt), it's not an error to report
         # Signals are expected user interactions (Ctrl+C = SIGINT)
         return False
+    
+    @staticmethod
+    def _select_transmap_path() -> str:
+        """Select and prepare a writable transaction-map location."""
+        candidates = (
+            "/tmp/linuxtoys",
+            os.path.expanduser("~/.cache/linuxtoys/tmp"),
+        )
+
+        for directory in candidates:
+            try:
+                os.makedirs(directory, mode=0o700, exist_ok=True)
+
+                if not os.path.isdir(directory):
+                    continue
+
+                transmap_path = os.path.join(directory, "transmap")
+
+                # Opening it verifies that the directory and file are writable.
+                with open(transmap_path, "w", encoding="utf-8"):
+                    pass
+
+                try:
+                    os.chmod(transmap_path, 0o600)
+                except OSError:
+                    pass
+
+                return transmap_path
+            except OSError:
+                continue
+
+        raise RuntimeError("Could not create a writable transaction map")
+
+    @staticmethod
+    def _remove_transmap(transmap_path: str) -> None:
+        if not transmap_path:
+            return
+
+        try:
+            os.remove(transmap_path)
+        except FileNotFoundError:
+            pass
+        except OSError:
+            pass

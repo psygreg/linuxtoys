@@ -287,10 +287,18 @@ is_amd() {
 }
 
 # transaction map control
+init_transmap() {
+    [ -n "$TRANSMAP_PATH" ] && return 0
+    TRANSMAP_CALL="1" && prep_tmp
+    unset TRANSMAP_CALL
+    { [ -d "$TEMPDIR" ] && { 
+        { [ -n "$TRANSMAP_PATH" ] || TRANSMAP_PATH="$TEMPDIR/transmap"; }
+        { [ -f "$TRANSMAP_PATH" ] || { : > "$TRANSMAP_PATH" && chmod 600 "$TRANSMAP_PATH"; } }
+    } } || die "Failed to create transaction map"
+}
 _append_transmap() {
-    { [ -d /tmp/linuxtoys ] || mkdir -p /tmp/linuxtoys; } || fatal "Failed to create tempdir"
-    { [ -f /tmp/linuxtoys/transmap ] || { : > /tmp/linuxtoys/transmap && chmod 666 /tmp/linuxtoys/transmap; }; } || fatal "Failed to create transaction map"
-    echo "$1" >> /tmp/linuxtoys/transmap 2>/dev/null || true
+    init_transmap
+    echo "$1" >> "$TRANSMAP_PATH" 2>/dev/null
 }
 
 # file preparations
@@ -318,11 +326,13 @@ prep_rm() {
     done
 }
 prep_tmp() {
-    { mkdir -p /tmp/linuxtoys && cd /tmp/linuxtoys; } || prep_tmp_noram
+    [ -d "$TEMPDIR" ] && [ -w "$TEMPDIR" ] && cd "$TEMPDIR" || \
+        { mkdir -p /tmp/linuxtoys && [ -w /tmp/linuxtoys ] && cd /tmp/linuxtoys && TEMPDIR="/tmp/linuxtoys"; } || \
+        { TEMPDIR="$HOME/.cache/linuxtoys/tmp" && { [ -n "$TRANSMAP_PATH" ] || TRANSMAP_PATH="$TEMPDIR/transmap"; } && prep_tmp_noram; }
 }
 prep_tmp_noram () {
     { mkdir -p "$HOME/.cache/linuxtoys/tmp" && cd "$HOME/.cache/linuxtoys/tmp"; } || fatal "Failed to create tempdir"
-    _append_transmap "tmpdir_noram $HOME/.cache/linuxtoys/tmp"
+    [ -z "$TRANSMAP_CALL" ] && _append_transmap "tmpdir_noram $HOME/.cache/linuxtoys/tmp"
 }
 prep_dir() {
     for dir in "$@"; do
