@@ -169,10 +169,7 @@ class NavCtl:
                 return
 
             if getattr(self, "_skills_prev", None) is not None:
-                prev = self._skills_prev
-                self.scripts_view = prev["scripts_view"]
-                self.scripts_flowbox = prev["scripts_flowbox"]
-                self.current_category_info = prev["category_info"]
+                self.current_category_info = self._skills_prev["category_info"]
 
                 prev_placeholder = getattr(self, "_search_entry_prev_placeholder", None)
                 if prev_placeholder:
@@ -185,7 +182,7 @@ class NavCtl:
                     self.header_bar.props.title = (
                         f"LinuxToys: {self.current_category_info.get('name', 'LinuxToys')}"
                     )
-                    self.main_stack.set_visible_child(self.scripts_view)
+                    self.main_stack.set_visible_child_name("skills_seeker")
                     self.back_button.show()
                     if self._is_local_scripts_category(self.current_category_info):
                         self._enable_drag_and_drop()
