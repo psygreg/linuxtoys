@@ -168,6 +168,41 @@ class NavCtl:
                 self._display_search_results()
                 return
 
+            if getattr(self, "_skills_prev", None) is not None:
+                prev = self._skills_prev
+                self.scripts_view = prev["scripts_view"]
+                self.scripts_flowbox = prev["scripts_flowbox"]
+                self.current_category_info = prev["category_info"]
+
+                prev_placeholder = getattr(self, "_search_entry_prev_placeholder", None)
+                if prev_placeholder:
+                    self.search_entry.set_placeholder_text(prev_placeholder)
+                    self._search_entry_prev_placeholder = None
+
+                self.header_widget.show()
+                self._update_header(self.current_category_info)
+                if self.current_category_info:
+                    self.header_bar.props.title = (
+                        f"LinuxToys: {self.current_category_info.get('name', 'LinuxToys')}"
+                    )
+                    self.main_stack.set_visible_child(self.scripts_view)
+                    self.back_button.show()
+                    if self._is_local_scripts_category(self.current_category_info):
+                        self._enable_drag_and_drop()
+                    else:
+                        self._disable_drag_and_drop()
+                    if self.current_category_info.get("display_mode", "menu") == "checklist":
+                        self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+                    else:
+                        self.reveal.set_reveal_child(False)
+                else:
+                    self.show_categories_view()
+
+                if self.navigation_stack:
+                    self.navigation_stack.pop()
+                self._skills_prev = None
+                return
+
             if self.navigation_stack:
                 previous_category = self.navigation_stack.pop()
                 self.current_category_info = previous_category
