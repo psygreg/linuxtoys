@@ -39,6 +39,7 @@ if command -v claude &>/dev/null; then
 fi
 
 if curl -fsSL https://claude.ai/install.sh | bash; then
+    hash -r
     if command -v claude &>/dev/null; then
         _append_transmap "created $HOME/.local/bin/claude" # track to transmap
         _append_transmap "created $HOME/.claude"
