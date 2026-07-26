@@ -438,7 +438,7 @@ pkg_install () {
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
     if is_debian || is_ubuntu; then
-        sudo apt install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        sudo apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy; then
         local _pacman_pkgs=()
@@ -584,7 +584,7 @@ pkg_fromfile () {
     
     if is_debian || is_ubuntu; then
         sudo chmod 644 "${@}" || fatal "Failed to fix permissions for apt_"
-        { sudo apt install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
+        { sudo apt-get install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_arch || is_cachy; then
         [ -f /var/lib/pacman/db.lck ] && {
@@ -628,7 +628,7 @@ pkg_remove () {
     local to_remove="${pkg_found[*]}"
     
     if is_debian || is_ubuntu; then
-        sudo apt remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        sudo apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif is_arch || is_cachy; then
         sudo pacman -Rsn --noconfirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then
