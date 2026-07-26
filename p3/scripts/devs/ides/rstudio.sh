@@ -15,7 +15,7 @@ _req=$(curl -fsSL "${_api_stable}" | \
 
 readarray -t _pkgs < <(sort -u <<< ${_req})
 
-if is_debian; then
+if is_debian || is_ubuntu; then
     _pkg_name=$(basename ${_pkgs[0]})
     if curl -fsSL "${_pkgs[0]}" -o "/tmp/${_pkg_name}"; then
         sudo_rq; pkg_install r-base r-base-dev
