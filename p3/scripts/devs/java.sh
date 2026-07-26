@@ -7,126 +7,186 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
+
 # functions
-jdk_install () {
-    local javas=($_jdk8 $_jdk11 $_jdk17 $_jdk21 $_jdk24)
-    local packages=()
+jdk_install() {
+    local -a javas=(
+        "$_jdk8"
+        "$_jdk11"
+        "$_jdk17"
+        "$_jdk21"
+        "$_jdk25"
+        "$_jdk_latest"
+    )
+    local -a packages=()
+    local jav
     for jav in "${javas[@]}"; do
-        if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
-            packages+=(openjdk-${jav}-jdk openjdk-${jav}-jre)
-        elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-            if [ $jav == "8" ]; then
-                packages+=(java-1.8.0-openjdk java-1.8.0-openjdk-devel)
-                continue
-            fi
-            packages+=(java-${jav}-openjdk java-${jav}-openjdk-devel)
-        elif [[ "$ID_LIKE" == *suse* ]]; then
-            packages+=(java-${jav}-openjdk java-${jav}-openjdk-devel)
+        [[ -n "$jav" ]] || continue
+
+        if is_debian || is_ubuntu; then
+            packages+=(
+                "openjdk-${jav}-jdk"
+                "openjdk-${jav}-jre"
+            )
+
+        elif is_fedora || is_rhel; then
+            case "$jav" in
+                21|25)
+                    packages+=(
+                        "java-${jav}-openjdk"
+                        "java-${jav}-openjdk-devel"
+                    )
+                    ;;
+                latest)
+                    packages+=(
+                        java-latest-openjdk
+                        java-latest-openjdk-devel
+                    )
+                    ;;
+                *)
+                    warn "Java version ${jav} is not available in Fedora/RHEL repositories. Skipping."
+                    ;;
+            esac
+
+        elif is_suse; then
+            packages+=(
+                "java-${jav}-openjdk"
+                "java-${jav}-openjdk-devel"
+            )
+
         elif is_solus; then
-            if [ "$jav" != "8" ] && [ "$jav" != "24" ]; then
-                packages+=(openjdk-${jav})
-            else
-                zenwrn "Java version ${jav} is not available in Solus repositories. Skipping."
-            fi
+            case "$jav" in
+                21|25)
+                    packages+=("openjdk-${jav}")
+                    ;;
+                *)
+                    warn "Java version ${jav} is not available in Solus repositories. Skipping."
+                    ;;
+            esac
+
         elif is_arch || is_cachy; then
             case "$jav" in
-                8)  packages+=(jdk8-openjdk jre8-openjdk) ;;
-                11) packages+=(jdk11-openjdk jre11-openjdk) ;;
-                17) packages+=(jdk17-openjdk jre17-openjdk) ;;
-                21) packages+=(jdk21-openjdk jre21-openjdk) ;;
-                24) packages+=(jdk-openjdk jre-openjdk) ;;
+                8)
+                    packages+=(jdk8-openjdk jre8-openjdk)
+                    ;;
+                11)
+                    packages+=(jdk11-openjdk jre11-openjdk)
+                    ;;
+                17)
+                    packages+=(jdk17-openjdk jre17-openjdk)
+                    ;;
+                21)
+                    packages+=(jdk21-openjdk jre21-openjdk)
+                    ;;
+                24)
+                    packages+=(jdk-openjdk jre-openjdk)
+                    ;;
             esac
         fi
     done
 
-    if [ ${#packages[@]} -eq 0 ]; then
-        fatal "No valid Java packages were selected."
+    if (( ${#packages[@]} == 0 )); then
+        die "No valid Java packages were selected."
     fi
 
-    sudo_rq
+    askpass
     pkg_install "${packages[@]}"
-
-    if ! command -v java >/dev/null 2>&1; then
-        fatal "Java installation finished but 'java' command is not available."
-    fi
-
-    zeninf "$msg018"
+    info "$finishmsg"
 }
-java_in () {
-    local search_java
-    local jav
+
+java_in() {
     local chosen_javas
     local chosen_jav
-    local javas
-    local is_fedora_rhel
-    is_fedora_rhel=0
-    { is_fedora || is_rhel; } && is_fedora_rhel=1
+    local -a javas=()
+    local distro_group="other"
 
-    if [ "$is_fedora_rhel" -eq 1 ]; then
-        declare -a search_java=(
-            "Java 21 LTS"
-            "Java 24 Latest"
-        )
-    else
-        declare -a search_java=(
-            "Java 8 LTS"
-            "Java 11 LTS"
-            "Java 17 LTS"
-            "Java 21 LTS"
-            "Java Latest"
-        )
+    if is_fedora || is_rhel; then
+        distro_group="fedora_rhel"
+    elif is_solus; then
+        distro_group="solus"
     fi
 
     while true; do
-        if [ "$is_fedora_rhel" -eq 1 ]; then
-            chosen_javas=$(zenity --list --checklist --title="Java JDK" \
-                --column="" \
-                --column="$msg277" \
-                FALSE "Java 21 LTS" \
-                FALSE "Java 24 Latest" \
-                --height=410 --width=300 --separator="|")
-        else
-            chosen_javas=$(zenity --list --checklist --title="Java JDK" \
-                --column="" \
-                --column="$msg277" \
-                FALSE "Java 8 LTS" \
-                FALSE "Java 11 LTS" \
-                FALSE "Java 17 LTS" \
-                FALSE "Java 21 LTS" \
-                FALSE "Java Latest" \
-                --height=410 --width=300 --separator="|")
-        fi
+        case "$distro_group" in
+            fedora_rhel)
+                chosen_javas=$(zenity --list --checklist \
+                    --title="Java JDK" \
+                    --column="" \
+                    --column="$msg277" \
+                    FALSE "Java 21 LTS" \
+                    FALSE "Java 25 LTS" \
+                    FALSE "Java Latest" \
+                    --height=410 \
+                    --width=300 \
+                    --separator="|")
+                ;;
 
-        if [ $? -ne 0 ]; then
+            solus)
+                chosen_javas=$(zenity --list --checklist \
+                    --title="Java JDK" \
+                    --column="" \
+                    --column="$msg277" \
+                    FALSE "Java 21 LTS" \
+                    FALSE "Java 25 LTS" \
+                    --height=410 \
+                    --width=300 \
+                    --separator="|")
+                ;;
+
+            *)
+                chosen_javas=$(zenity --list --checklist \
+                    --title="Java JDK" \
+                    --column="" \
+                    --column="$msg277" \
+                    FALSE "Java 8 LTS" \
+                    FALSE "Java 11 LTS" \
+                    FALSE "Java 17 LTS" \
+                    FALSE "Java 21 LTS" \
+                    FALSE "Java Latest" \
+                    --height=410 \
+                    --width=300 \
+                    --separator="|")
+                ;;
+        esac
+
+        if (( $? != 0 )); then
             exit 100
         fi
-
-        IFS='|' read -ra javas <<< "$chosen_javas"
-        if [ -z "$chosen_javas" ]; then
-            zenwrn "Please select at least one Java version."
+        if [[ -z "$chosen_javas" ]]; then
+            warn "Please select at least one Java version."
             continue
         fi
-        for jav in "${search_java[@]}"; do
-            for chosen_jav in "${javas[@]}"; do
-                if [[ "$chosen_jav" == "$jav" ]]; then
-                    case $jav in
-                        "Java 8 LTS") _jdk8="8" ;;
-                        "Java 11 LTS") _jdk11="11" ;;
-                        "Java 17 LTS") _jdk17="17" ;;
-                        "Java 21 LTS") _jdk21="21" ;;
-                        "Java Latest") if [ "$is_fedora_rhel" -eq 1 ]; then
-                                _jdk24="latest"
-                            else
-                                _jdk24="24" 
-                            fi
-                        ;;
-                    esac
-                fi
-            done
-        done
+        IFS='|' read -ra javas <<< "$chosen_javas"
 
+        for chosen_jav in "${javas[@]}"; do
+            case "$chosen_jav" in
+                "Java 8 LTS")
+                    _jdk8="8"
+                    ;;
+                "Java 11 LTS")
+                    _jdk11="11"
+                    ;;
+                "Java 17 LTS")
+                    _jdk17="17"
+                    ;;
+                "Java 21 LTS")
+                    _jdk21="21"
+                    ;;
+                "Java 25 LTS")
+                    _jdk25="25"
+                    ;;
+                "Java Latest")
+                    if [[ "$distro_group" == "fedora_rhel" ]]; then
+                        _jdk_latest="latest"
+                    else
+                        _jdk25="25"
+                    fi
+                    ;;
+            esac
+        done
         jdk_install
         break
     done
 }
+
 java_in
