@@ -14,10 +14,14 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-    sudo_rq
+    askpass
     if is_debian || is_ubuntu; then
         sudo apt install -y ca-certificates # not declaring because removal may break OS
-        curl -s https://repo.waydro.id | sudo bash
+        if [[ "$UBUNTU_CODENAME" =~ ^(noble|resolute)$ ]] || [[ "$VERSION_CODENAME" =~ ^(bookworm|bullseye)$ ]]; then
+            curl -s https://repo.waydro.id | sudo bash
+        elif [ "$VERSION_CODENAME" = "trixie" ]; then
+            enable_debian_backports
+        fi
         sleep 1
         pkg_install python3-venv
     fi

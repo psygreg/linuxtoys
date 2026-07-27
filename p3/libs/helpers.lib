@@ -215,3 +215,47 @@ enable_debian_nonfree () {
         fi
     fi
 }
+
+# enable backports repos on debian
+enable_debian_backports() {
+    is_debian || return 1
+
+    local codename="${VERSION_CODENAME:-}"
+    case "$codename" in
+    trixie|forky|bookworm|bullseye)
+        ;;
+    sid|unstable|testing)
+        echo "Debian Backports is not applicable to the '$codename' suite." >&2
+        return 1
+        ;;
+    *)
+        codename="trixie"
+        ;;
+    esac
+
+    # Do nothing when the correct Backports repository is already configured.
+    if grep -RqsE \
+        "^(Suites:[[:space:]]*|deb[[:space:]]+.*[[:space:]])${codename}-backports([[:space:]]|$)" \
+        /etc/apt/sources.list \
+        /etc/apt/sources.list.d/*.list \
+        /etc/apt/sources.list.d/*.sources 2>/dev/null
+    then
+        return 0
+    fi
+
+    local source_file="/etc/apt/sources.list.d/debian-backports.sources"
+    if [[ -e "$source_file" ]]; then
+        prep_edit "$source_file"
+    else
+        prep_create "$source_file"
+    fi
+    sudo tee "$source_file" >/dev/null <<EOF
+Types: deb
+URIs: https://deb.debian.org/debian
+Suites: ${codename}-backports
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+
+    sudo apt update
+}
