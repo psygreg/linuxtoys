@@ -289,7 +289,7 @@ cd $HOME
 export SCRIPT_DIR
 if is_ostree; then
     davinciboxatom
-elif is_solus || is_arch || is_cachy || is_ubuntu; then
+elif is_solus || is_arch || is_cachy; then
     davinciboxd
 else
     # menu
