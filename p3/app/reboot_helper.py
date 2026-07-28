@@ -12,7 +12,49 @@ import subprocess
 # if the underlying reboot requirement still exists.
 _reboot_warning_acknowledged = False
 _ostree_warning_acknowledged = False
+REBOOT_STATE_DIR = os.path.expanduser("~/.cache/linuxtoys/reboot-state")
+FLATPAK_ACK_PATH = os.path.join(REBOOT_STATE_DIR, "flatpak-warning-ack")
+OSTREE_ACK_PATH = os.path.join(REBOOT_STATE_DIR, "ostree-warning-ack")
 
+
+def _get_boot_id():
+    """Return the ID of the currently running system boot."""
+    try:
+        with open("/proc/sys/kernel/random/boot_id", "r", encoding="utf-8") as file:
+            return file.read().strip()
+    except (OSError, ValueError):
+        return None
+
+
+def _warning_acknowledged_this_boot(path):
+    """Check whether a warning was acknowledged during the current boot."""
+    boot_id = _get_boot_id()
+
+    if not boot_id:
+        return False
+
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read().strip() == boot_id
+    except OSError:
+        return False
+
+
+def _acknowledge_warning_this_boot(path):
+    """Persist a warning acknowledgement until the next system boot."""
+    boot_id = _get_boot_id()
+
+    if not boot_id:
+        return
+
+    try:
+        os.makedirs(REBOOT_STATE_DIR, exist_ok=True)
+
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(boot_id)
+    except OSError:
+        # The in-memory acknowledgement still works for this app session.
+        pass
 
 def check_flatpak_path_pending():
     """
@@ -414,56 +456,60 @@ def _show_reboot_error_dialog(parent_window, title, message):
 
 def handle_reboot_requirement(parent_window, translations, close_app_callback):
     """
-    Handles the complete reboot requirement flow.
-    Shows dialog, handles user choice, and executes appropriate action.
+    Handle the reboot requirement.
 
-    Args:
-        parent_window: The parent GTK window for dialogs
-        translations: Dictionary containing translation keys
-        close_app_callback: Function to call if the application should be closed
+    Returns:
+        bool: True when script execution should remain blocked.
+              False when the user chose to continue without rebooting.
     """
     global _reboot_warning_acknowledged
 
     response = show_reboot_warning_dialog(parent_window, translations)
 
     if response == "reboot_now":
-        # Attempt to reboot the system
         if not reboot_system(parent_window):
-            # If reboot failed, close the application as fallback
             close_app_callback()
-    elif response == "reboot_later":
-        # Keep the app open and suppress this warning for the rest of this session.
+
+        return True
+
+    if response == "reboot_later":
         _reboot_warning_acknowledged = True
-        return
-    # If cancelled, do nothing and return to the application
+        _acknowledge_warning_this_boot(FLATPAK_ACK_PATH)
+        return False
+
+    # Closing or cancelling the dialog should not bypass the requirement.
+    return True
 
 
 def handle_ostree_deployment_requirement(
     parent_window, translations, close_app_callback
 ):
     """
-    Handles the complete ostree deployment requirement flow.
-    Shows dialog, handles user choice, and executes appropriate action.
+    Handle the pending OSTree deployment requirement.
 
-    Args:
-        parent_window: The parent GTK window for dialogs
-        translations: Dictionary containing translation keys
-        close_app_callback: Function to call if the application should be closed
+    Returns:
+        bool: True when script execution should remain blocked.
+              False when the user chose to continue without rebooting.
     """
     global _ostree_warning_acknowledged
 
-    response = show_ostree_deployment_warning_dialog(parent_window, translations)
+    response = show_ostree_deployment_warning_dialog(
+        parent_window,
+        translations,
+    )
 
     if response == "reboot_now":
-        # Attempt to reboot the system
         if not reboot_system(parent_window):
-            # If reboot failed, close the application as fallback
             close_app_callback()
-    elif response == "reboot_later":
-        # Keep the app open and suppress this warning for the rest of this session.
+
+        return True
+
+    if response == "reboot_later":
         _ostree_warning_acknowledged = True
-        return
-    # If cancelled, do nothing and return to the application
+        _acknowledge_warning_this_boot(OSTREE_ACK_PATH)
+        return False
+
+    return True
 
 
 def show_flatpak_installed_info_if_needed(parent_window, translations, transmap_path=None):
@@ -501,33 +547,34 @@ def check_reboot_requirement_after_checklist(
     parent_window, translations, close_app_callback
 ):
     """
-    Checks if any reboot requirements exist after a complete checklist/task list.
-    This function should be called AFTER the entire checklist is completed.
-    Unlike check_reboot_requirement_after_script, this defers the check until
-    all tasks in the checklist are finished, preventing interruptions between tasks.
-
-    Checks for:
-    1. Flatpak path pending flag (from flatpak installation)
-    2. Pending rpm-ostree deployments
-
-    Args:
-        parent_window: The parent GTK window for dialogs
-        translations: Dictionary containing translation keys
-        close_app_callback: Function to call if the application should be closed
+    Check reboot requirements after a completed checklist.
 
     Returns:
-        bool: True if a reboot is required and was handled, False otherwise
+        bool: True when further script execution should be blocked.
+              False when execution may continue.
     """
-    # Check for flatpak path pending flag unless already acknowledged this session.
-    if not _reboot_warning_acknowledged and check_flatpak_path_pending():
-        handle_reboot_requirement(parent_window, translations, close_app_callback)
-        return True
+    flatpak_acknowledged = (
+        _reboot_warning_acknowledged
+        or _warning_acknowledged_this_boot(FLATPAK_ACK_PATH)
+    )
 
-    # Check for pending ostree deployments unless already acknowledged this session.
-    if not _ostree_warning_acknowledged and check_ostree_pending_deployments():
-        handle_ostree_deployment_requirement(
-            parent_window, translations, close_app_callback
+    if not flatpak_acknowledged and check_flatpak_path_pending():
+        return handle_reboot_requirement(
+            parent_window,
+            translations,
+            close_app_callback,
         )
-        return True
+
+    ostree_acknowledged = (
+        _ostree_warning_acknowledged
+        or _warning_acknowledged_this_boot(OSTREE_ACK_PATH)
+    )
+
+    if not ostree_acknowledged and check_ostree_pending_deployments():
+        return handle_ostree_deployment_requirement(
+            parent_window,
+            translations,
+            close_app_callback,
+        )
 
     return False
