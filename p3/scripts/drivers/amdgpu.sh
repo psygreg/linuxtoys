@@ -13,7 +13,8 @@ _lang_
 BASE="https://repo.radeon.com/amdgpu-install"
 prep_tmp_noram
 OUTDIR="${1:-./amdgpu-install-downloads}"
- 
+mkdir -p "$OUTDIR" 
+
 list_dir() {
     local url="$1"
     curl -fsSL "$url" | grep -oP '(?<=href=")[^"?]+(?=")' | grep -v '^\.\./\?$' || true
