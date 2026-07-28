@@ -508,5 +508,11 @@
   "accessibility_desc": "Iangkop ang iyong system sa iyong mga pangangailangan, espesyal man o hindi.",
   "od_desc": "Isang open source na font na ginawa upang mapahusay ang pagiging madaling basahin para sa mga taong may dyslexia.",
   "itb_desc": "Paraan ng pag-input na may word completion upang mapabilis ang pag-type at matulungan ang mga taong nahihirapan sa pagbaybay.",
-  "atkinson_desc": "Isang typeface na idinisenyo upang mapabuti ang pagiging madaling basahin para sa mga taong may mahinang paningin."
+  "atkinson_desc": "Isang typeface na idinisenyo upang mapabuti ang pagiging madaling basahin para sa mga taong may mahinang paningin.",
+  "flattheme": "Paganahin ang mga tema ng Flatpak",
+  "flattheme_desc": "Pinapagana ang suporta sa mga tema ng Flatpak para sa mga GTK3 at GTK4 application, upang magamit ng mga ito ang tema at mga setting ng hitsura ng system.",
+  "theming": "Mga tema",
+  "theming_desc": "Mga kasangkapang tutulong sa iyong iangkop ang hitsura ng iyong system at mga application ayon sa gusto mo.",
+  "rewaita_desc": "Baguhin nang walang abala ang hitsura ng GNOME Shell at ng mga GTK4 at GTK3 application. Maraming color scheme ang mapagpipilian, at maaari ka ring gumawa ng sarili mo!",
+  "amdgpu_desc": "I-install ang pinakabagong AMD Radeon graphics driver sa Ubuntu LTS at Red Hat Enterprise Linux."
 }

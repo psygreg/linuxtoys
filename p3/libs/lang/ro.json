@@ -508,5 +508,11 @@
   "accessibility_desc": "Adaptați sistemul nevoilor dumneavoastră, speciale sau nu.",
   "od_desc": "Un font cu sursă deschisă creat pentru a îmbunătăți lizibilitatea pentru persoanele cu dislexie.",
   "itb_desc": "O metodă de introducere cu completarea cuvintelor, care accelerează tastarea și ajută persoanele cu dificultăți de ortografie.",
-  "atkinson_desc": "Un font conceput pentru a îmbunătăți lizibilitatea pentru persoanele cu vedere redusă."
+  "atkinson_desc": "Un font conceput pentru a îmbunătăți lizibilitatea pentru persoanele cu vedere redusă.",
+  "flattheme": "Activează temele pentru Flatpak",
+  "flattheme_desc": "Activează suportul pentru temele Flatpak în aplicațiile GTK3 și GTK4, permițându-le să utilizeze tema și setările de aspect ale sistemului.",
+  "theming": "Teme",
+  "theming_desc": "Instrumente care vă ajută să adaptați aspectul sistemului și al aplicațiilor după preferințele dumneavoastră.",
+  "rewaita_desc": "Schimbați cu ușurință aspectul interfeței GNOME Shell și al aplicațiilor GTK4 și GTK3. Puteți alege dintre mai multe scheme de culori sau chiar să vă creați propria schemă!",
+  "amdgpu_desc": "Instalați cele mai recente drivere grafice AMD Radeon pe Ubuntu LTS și Red Hat Enterprise Linux."
 }

@@ -508,5 +508,11 @@
   "accessibility_desc": "Igazítsa rendszerét az igényeihez, legyenek azok speciálisak vagy sem.",
   "od_desc": "Nyílt forráskódú betűtípus, amelyet a diszlexiás olvasók számára a könnyebb olvashatóság érdekében hoztak létre.",
   "itb_desc": "Szókiegészítést használó beviteli mód, amely gyorsítja a gépelést és segíti a helyesírási nehézségekkel küzdőket.",
-  "atkinson_desc": "Betűtípus, amelyet a gyengénlátók számára a jobb olvashatóság érdekében terveztek."
+  "atkinson_desc": "Betűtípus, amelyet a gyengénlátók számára a jobb olvashatóság érdekében terveztek.",
+  "flattheme": "Flatpak-témák engedélyezése",
+  "flattheme_desc": "Engedélyezi a Flatpak-témák támogatását a GTK3- és GTK4-alkalmazások számára, így azok használhatják a rendszer témáját és megjelenési beállításait.",
+  "theming": "Témák",
+  "theming_desc": "Eszközök a rendszer és az alkalmazások megjelenésének ízlés szerinti testreszabásához.",
+  "rewaita_desc": "Módosítsa egyszerűen a GNOME Shell, valamint a GTK4- és GTK3-alkalmazások megjelenését. Több színséma közül választhat, sőt akár sajátot is létrehozhat!",
+  "amdgpu_desc": "Telepítse a legújabb AMD Radeon grafikus illesztőprogramokat Ubuntu LTS és Red Hat Enterprise Linux rendszerekre."
 }

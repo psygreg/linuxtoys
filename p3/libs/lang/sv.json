@@ -508,5 +508,11 @@
   "accessibility_desc": "Anpassa systemet efter dina behov, särskilda eller inte.",
   "od_desc": "Ett typsnitt med öppen källkod som skapats för att förbättra läsbarheten för personer med dyslexi.",
   "itb_desc": "En inmatningsmetod med ordkomplettering som gör skrivandet snabbare och hjälper personer med stavningssvårigheter.",
-  "atkinson_desc": "Ett typsnitt utformat för att förbättra läsbarheten för personer med nedsatt syn."
+  "atkinson_desc": "Ett typsnitt utformat för att förbättra läsbarheten för personer med nedsatt syn.",
+  "flattheme": "Aktivera Flatpak-teman",
+  "flattheme_desc": "Aktiverar stöd för Flatpak-teman i GTK3- och GTK4-program, så att de kan använda systemets tema och utseendeinställningar.",
+  "theming": "Teman",
+  "theming_desc": "Verktyg som hjälper dig att anpassa systemets och programmens utseende efter din smak.",
+  "rewaita_desc": "Ändra enkelt utseendet på GNOME Shell samt GTK4- och GTK3-program. Välj mellan flera färgscheman eller skapa till och med ett eget!",
+  "amdgpu_desc": "Installera de senaste AMD Radeon-grafikdrivrutinerna på Ubuntu LTS och Red Hat Enterprise Linux."
 }

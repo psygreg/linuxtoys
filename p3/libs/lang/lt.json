@@ -508,5 +508,11 @@
   "accessibility_desc": "Pritaikykite sistemą savo poreikiams, nesvarbu, ar jie specialūs, ar ne.",
   "od_desc": "Atvirojo kodo šriftas, sukurtas pagerinti teksto įskaitomumą disleksiją turintiems skaitytojams.",
   "itb_desc": "Įvesties metodas su žodžių užbaigimu, skirtas paspartinti rašymą ir padėti žmonėms, kuriems sunku taisyklingai rašyti žodžius.",
-  "atkinson_desc": "Šriftas, sukurtas pagerinti teksto įskaitomumą ir skaitomumą silpnaregiams."
+  "atkinson_desc": "Šriftas, sukurtas pagerinti teksto įskaitomumą ir skaitomumą silpnaregiams.",
+  "flattheme": "Įjungti Flatpak temas",
+  "flattheme_desc": "Įjungia Flatpak temų palaikymą GTK3 ir GTK4 programoms, kad jos galėtų naudoti sistemos temą ir išvaizdos nustatymus.",
+  "theming": "Temos",
+  "theming_desc": "Įrankiai, padedantys pritaikyti sistemos ir programų išvaizdą pagal savo skonį.",
+  "rewaita_desc": "Lengvai pakeiskite GNOME Shell bei GTK4 ir GTK3 programų išvaizdą. Galite rinktis iš kelių spalvų schemų arba net susikurti savo!",
+  "amdgpu_desc": "Įdiekite naujausias AMD Radeon grafikos tvarkykles Ubuntu LTS ir Red Hat Enterprise Linux sistemose."
 }

@@ -508,5 +508,11 @@
   "accessibility_desc": "Adaptez votre système à vos besoins, particuliers ou non.",
   "od_desc": "Une police open source conçue pour améliorer la lisibilité chez les personnes dyslexiques.",
   "itb_desc": "Une méthode de saisie avec complétion des mots pour accélérer la frappe et aider les personnes ayant des difficultés d'orthographe.",
-  "atkinson_desc": "Une police conçue pour améliorer la lisibilité des personnes malvoyantes."
+  "atkinson_desc": "Une police conçue pour améliorer la lisibilité des personnes malvoyantes.",
+  "flattheme": "Activer les thèmes Flatpak",
+  "flattheme_desc": "Active la prise en charge des thèmes Flatpak pour les applications GTK3 et GTK4, leur permettant d'utiliser le thème et les paramètres d'apparence du système.",
+  "theming": "Thèmes",
+  "theming_desc": "Des outils pour personnaliser l'apparence de votre système et de vos applications selon vos préférences.",
+  "rewaita_desc": "Modifiez facilement l’apparence de GNOME Shell ainsi que des applications GTK4 et GTK3. Plusieurs palettes de couleurs sont proposées, et vous pouvez même créer la vôtre !",
+  "amdgpu_desc": "Installez les derniers pilotes graphiques AMD Radeon sur Ubuntu LTS et Red Hat Enterprise Linux."
 }

@@ -508,5 +508,11 @@
   "accessibility_desc": "Sesuaikan sistem dengan kebutuhan Anda, khusus maupun tidak.",
   "od_desc": "Font sumber terbuka yang dibuat untuk membantu meningkatkan keterbacaan bagi pembaca dengan disleksia.",
   "itb_desc": "Metode input dengan pelengkapan kata untuk mempercepat pengetikan dan membantu orang yang mengalami kesulitan mengeja.",
-  "atkinson_desc": "Font yang dirancang untuk meningkatkan keterbacaan bagi pembaca dengan gangguan penglihatan."
+  "atkinson_desc": "Font yang dirancang untuk meningkatkan keterbacaan bagi pembaca dengan gangguan penglihatan.",
+  "flattheme": "Aktifkan tema Flatpak",
+  "flattheme_desc": "Mengaktifkan dukungan tema Flatpak untuk aplikasi GTK3 dan GTK4, sehingga aplikasi dapat menggunakan tema dan pengaturan tampilan sistem.",
+  "theming": "Tema",
+  "theming_desc": "Alat untuk membantu menyesuaikan tampilan sistem dan aplikasi sesuai selera Anda.",
+  "rewaita_desc": "Ubah tampilan GNOME Shell serta aplikasi GTK4 dan GTK3 tanpa repot. Tersedia beberapa skema warna untuk dipilih, dan Anda bahkan dapat membuat skema sendiri!",
+  "amdgpu_desc": "Instal driver grafis AMD Radeon terbaru di Ubuntu LTS dan Red Hat Enterprise Linux."
 }

@@ -507,5 +507,11 @@
   "accessibility_desc": "Xüsusi olub-olmamasından asılı olmayaraq, sisteminizi ehtiyaclarınıza uyğunlaşdırın.",
   "od_desc": "Disleksiyası olan oxucular üçün oxunaqlılığı artırmağa kömək etmək məqsədilə yaradılmış açıq mənbəli şrift.",
   "itb_desc": "Yazmağı sürətləndirmək və sözlərin yazılışında çətinlik çəkən insanlara kömək etmək üçün tamamlamalı daxiletmə üsulu.",
-  "atkinson_desc": "Görmə qabiliyyəti zəif olan oxucular üçün mətnin aydınlığını və oxunaqlılığını artırmaq məqsədilə hazırlanmış şrift."
+  "atkinson_desc": "Görmə qabiliyyəti zəif olan oxucular üçün mətnin aydınlığını və oxunaqlılığını artırmaq məqsədilə hazırlanmış şrift.",
+  "flattheme": "Flatpak mövzularını aktivləşdir",
+  "flattheme_desc": "GTK3 və GTK4 tətbiqləri üçün Flatpak mövzu dəstəyini aktivləşdirərək onların sistem mövzusundan və görünüş parametrlərindən istifadə etməsinə imkan verir.",
+  "theming": "Mövzular",
+  "theming_desc": "Sisteminizin və tətbiqlərinizin görünüşünü zövqünüzə uyğunlaşdırmağa kömək edən alətlər.",
+  "rewaita_desc": "GNOME qabığının, GTK4 və GTK3 tətbiqlərinin görünüşünü asanlıqla dəyişdirin. Seçmək üçün bir neçə rəng sxemi var və hətta öz sxeminizi yarada bilərsiniz!",
+  "amdgpu_desc": "Ubuntu LTS və Red Hat Enterprise Linux sistemlərində ən son AMD Radeon qrafika sürücülərini quraşdırın."
 }

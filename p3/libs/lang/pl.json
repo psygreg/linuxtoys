@@ -508,5 +508,11 @@
   "accessibility_desc": "Dostosuj system do swoich potrzeb, specjalnych lub nie.",
   "od_desc": "Czcionka open source stworzona w celu poprawy czytelności dla osób z dysleksją.",
   "itb_desc": "Metoda wprowadzania z uzupełnianiem słów, która przyspiesza pisanie i pomaga osobom mającym trudności z pisownią.",
-  "atkinson_desc": "Krój pisma zaprojektowany w celu poprawy czytelności dla osób słabowidzących."
+  "atkinson_desc": "Krój pisma zaprojektowany w celu poprawy czytelności dla osób słabowidzących.",
+  "flattheme": "Włącz motywy dla Flatpak",
+  "flattheme_desc": "Włącza obsługę motywów Flatpak dla aplikacji GTK3 i GTK4, umożliwiając im korzystanie z motywu systemowego oraz ustawień wyglądu.",
+  "theming": "Motywy",
+  "theming_desc": "Narzędzia pomagające dostosować wygląd systemu i aplikacji do własnych upodobań.",
+  "rewaita_desc": "Zmieniaj wygląd powłoki GNOME oraz aplikacji GTK4 i GTK3 bez zbędnych komplikacji. Możesz wybierać spośród kilku schematów kolorów, a nawet utworzyć własny!",
+  "amdgpu_desc": "Zainstaluj najnowsze sterowniki graficzne AMD Radeon w systemach Ubuntu LTS i Red Hat Enterprise Linux."
 }
