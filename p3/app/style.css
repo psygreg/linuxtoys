@@ -20,10 +20,10 @@
     border-radius: 10px;
 }
 .installed-card-hover {
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 10px 10px 0;
 }
 .installed-card-remove {
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 10px 10px 0;
     margin-top: 0px;
     margin-bottom: 0px;
     padding: 0px;
@@ -32,7 +32,7 @@
 button.installed-card-remove,
 button.installed-card-remove:hover,
 button.installed-card-remove:active {
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 10px 10px 0;
 }
 
 .item-subcategory {
@@ -63,10 +63,10 @@ checkbutton image {
 button.installed-card-remove-left,
 button.installed-card-remove-left:hover,
 button.installed-card-remove-left:active {
-    border-radius: 16px 0 0 16px;
+    border-radius: 10px 0 0 10px;
 }
 button.installed-card-remove-left {
-    border-radius: 16px 0 0 16px;
+    border-radius: 10px 0 0 10px;
     border-right: 1px solid rgba(255,255,255,0.30);
 }
 button.installed-card-remove-left:hover {

@@ -85,4 +85,4 @@ EOF
 
 sudo_rq
 docker_in
-zeninf "$rebootmsg"
+info "$rebootmsg"
