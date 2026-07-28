@@ -342,6 +342,8 @@ nvidia_ctkpatch () {
     sudo rm "$ETC_OUTPUT"
     sudo nvidia-ctk cdi generate --output="$VAR_OUTPUT"
     sudo nvidia-ctk cdi generate --output="$ETC_OUTPUT"
+    sysd_enable nvidia-cdi-refresh.path nvidia-cdi-refresh.service
+    sysd_start nvidia-cdi-refresh.path nvidia-cdi-refresh.service
     sudo chmod a+r "$VAR_OUTPUT"
     sudo chmod a+r "$ETC_OUTPUT"
 }
