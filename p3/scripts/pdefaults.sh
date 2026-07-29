@@ -56,52 +56,53 @@ optimizer () {
 # menu
 while true; do
     OPTIONS=(
-        "standard" "Install without Power Profile"
+        TRUE  "standard"    "Install without Power Profile"
     )
     if ! is_zorin && ! is_cachy && ! is_suse; then
         OPTIONS+=(
-            "laptop" "Laptop"
+            FALSE "laptop" "Laptop"
         )
     fi
     CPU_VENDOR=$(awk -F ': *' '/^vendor_id/ { print $2; exit }' /proc/cpuinfo)
     if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
         OPTIONS+=(
-            "performance" "High Performance"
+            FALSE "performance" "High Performance"
         )
     fi
     OPTIONS+=(
-        "cancel" "$msg070"
+        FALSE "cancel" "$msg070"
     )
 
     CHOICE=$(
         zenity --list \
+            --radiolist \
             --title="Power Optimizer" \
             --text="$msg229" \
+            --column="Select" \
             --column="ID" \
             --column="Options" \
-            --hide-column=1 \
-            --print-column=1 \
+            --hide-column=2 \
+            --print-column=2 \
             "${OPTIONS[@]}" \
             --width=360 \
             --height=360
     )
     status=$?
 
-    if (( status != 0 )); then
+    if (( status != 0 )) || [[ -z "$CHOICE" ]]; then
         exit 100
     fi
-
     case "$CHOICE" in
         standard)
-            sudo_rq && optimizer
+            askpass && optimizer
             exit $?
             ;;
         performance)
-            sudo_rq && pp_ondemand && optimizer
+            askpass && pp_ondemand && optimizer
             exit $?
             ;;
         laptop)
-            sudo_rq && optimizer && psave_lib
+            askpass && optimizer && psave_lib
             exit $?
             ;;
         cancel)
