@@ -70,10 +70,15 @@ EOF
     # enable services
     sysd_enable docker
     sysd_enable docker.socket
-    if command -v firewalld &>/dev/null; then
-        sudo firewall-cmd --zone=docker --change-interface=docker0
-        sudo firewall-cmd --zone=docker --add-port=8006/tcp --permanent
-        sudo firewall-cmd --zone=docker --add-port=3389/tcp --permanent
+    if command -v firewall-cmd &>/dev/null && sudo firewall-cmd --state &>/dev/null; then
+        if ! sudo firewall-cmd --permanent --get-zones | tr ' ' '\n' | grep -qx 'docker'; then
+            sudo firewall-cmd --permanent --new-zone=docker
+            sudo firewall-cmd --reload
+        fi
+        sudo firewall-cmd --permanent --zone=docker --change-interface=docker0
+        sudo firewall-cmd --permanent --zone=docker --add-port=8006/tcp
+        sudo firewall-cmd --permanent --zone=docker --add-port=3389/tcp
+        sudo firewall-cmd --reload
     fi
     # fix for apparmor.d users, leave only default profiles enabled
     if [ -f /etc/apparmor.d/dockerd ]; then
