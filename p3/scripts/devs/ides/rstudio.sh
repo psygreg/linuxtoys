@@ -4,8 +4,9 @@
 # description: rstudio_desc
 # icon: rstudio.svg
 # repo: https://posit.co/products/open-source/rstudio/
-# compat: debian, ubuntu, fedora, rhel
+# compat: none
 
+# reinstate it when API gets back online: debian, ubuntu, fedora, rhel
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 _api_stable="https://www.rstudio.com/wp-content/downloads.json"
