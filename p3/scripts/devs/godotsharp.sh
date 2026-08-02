@@ -25,9 +25,14 @@ if [ ! -d "$HOME/.local/godot" ]; then
     unzip -d "$HOME/.local/godot" "$GODOT_MONO_ZIP"
     wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godot.png
     copy_ godot.png "$HOME/.local/godot"
+    godot_binary=$(find "$HOME/.local/godot" -maxdepth 1 -type f -name 'Godot_v*-stable_mono_linux.x86_64' -print -quit)
+    [ -n "$godot_binary" ] || die "Could not find the extracted Godot executable."
+    chmod +x "$godot_binary"
+    ln -sfn "$godot_binary" "$HOME/.local/godot/godot-mono"
     wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godotsharp.desktop
     prep_create "$HOME/.local/share/applications/godotsharp.desktop"
     copy_ godotsharp.desktop "$HOME/.local/share/applications"
+    sed -i "s|\$HOME|$HOME|g" "$HOME/.local/share/applications/godotsharp.desktop"
     call_script dotnet
 else # update
     wget "$GODOT_MONO_URL" -O "$GODOT_MONO_ZIP"
