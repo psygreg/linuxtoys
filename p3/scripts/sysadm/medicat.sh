@@ -18,8 +18,8 @@ API_URL="https://api.github.com/repos/${REPO}/releases/latest"
 LATEST_TAG=$(curl -fsSL -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$API_URL" | sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)
 [ -n "$LATEST_TAG" ] || fatal "Could not determine the latest MediCat Installer release."
 INSTALLER_URL="https://raw.githubusercontent.com/${REPO}/${LATEST_TAG}/Medicat_Installer.sh"
-log "Latest MediCat Installer release: $LATEST_TAG"
-log "Downloading: $INSTALLER_URL"
+echo "Latest MediCat Installer release: $LATEST_TAG"
+echo "Downloading: $INSTALLER_URL"
 if ! wget -O medicat.sh "$INSTALLER_URL"; then
     fatal "Failed to download MediCat Installer release $LATEST_TAG."
 fi
