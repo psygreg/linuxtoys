@@ -340,8 +340,10 @@ nvidia_ctkpatch () {
     # ensure files can be created cleanly after adding to transmap
     sudo rm "$VAR_OUTPUT"
     sudo rm "$ETC_OUTPUT"
-    sudo nvidia-ctk cdi generate --output="$VAR_OUTPUT"
-    sudo nvidia-ctk cdi generate --output="$ETC_OUTPUT"
+    if systemctl list-unit-files | grep -q nvidia-cdi; then
+        sudo nvidia-ctk cdi generate --output="$VAR_OUTPUT"
+        sudo nvidia-ctk cdi generate --output="$ETC_OUTPUT"
+    fi
     sysd_enable nvidia-cdi-refresh.path nvidia-cdi-refresh.service
     sysd_start nvidia-cdi-refresh.path nvidia-cdi-refresh.service
     sudo chmod a+r "$VAR_OUTPUT"
