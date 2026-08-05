@@ -514,5 +514,7 @@
   "theming": "ערכות נושא",
   "theming_desc": "כלים שיעזרו לך להתאים את מראה המערכת והיישומים לטעמך.",
   "rewaita_desc": "שנו בקלות את המראה של מעטפת GNOME ושל יישומי GTK4 ו-GTK3. ניתן לבחור מבין כמה ערכות צבעים, ואפילו ליצור ערכה משלכם!",
-  "amdgpu_desc": "התקינו את מנהלי ההתקן הגרפיים העדכניים ביותר של AMD Radeon ב-Ubuntu LTS וב-Red Hat Enterprise Linux."
+  "amdgpu_desc": "התקינו את מנהלי ההתקן הגרפיים העדכניים ביותר של AMD Radeon ב-Ubuntu LTS וב-Red Hat Enterprise Linux.",
+  "ubuntuv3": "הפעל חבילות x86-64v3",
+  "ubuntuv3_desc": "מגדיר את Ubuntu להעדיף חבילות המותאמות למעבדי x86-64v3, מה שעשוי להביא לשיפור קטן בביצועים."
 }

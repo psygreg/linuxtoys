@@ -140,3 +140,4 @@ msgostreepending="Sistem yeniləməsi gözləyişdədir. Sistemin yenidən başl
 outofspace="Əməliyyat üçün yetərli boş yaddaş yeri yoxdur."
 websoftwarewarning="Bu yamaqdan sonra cihaz parametrlərini idarə etmək üçün hələ də Flatpak olmayan Chromium əsaslı veb brauzer tələb olunur."
 itbinput="ibus-typing-booster istifadə etmək üçün onu GNOME sistem ayarlarında giriş metodlarına əlavə edin və ya ibus-setup vasitəsilə əlavə edin."
+hwincompat="Avadanlığınız bu funksiya ilə uyğun deyil. Əməliyyat ləğv edildi."

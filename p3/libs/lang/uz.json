@@ -513,5 +513,7 @@
   "theming": "Mavzular",
   "theming_desc": "Tizim va ilovalaringizning ko‘rinishini didingizga moslashtirishga yordam beruvchi vositalar.",
   "rewaita_desc": "GNOME Shell hamda GTK4 va GTK3 ilovalarining ko‘rinishini osonlik bilan o‘zgartiring. Tanlash uchun bir nechta rang sxemalari mavjud, hatto o‘zingiznikini ham yaratishingiz mumkin!",
-  "amdgpu_desc": "Ubuntu LTS va Red Hat Enterprise Linux tizimlariga eng so‘nggi AMD Radeon grafik drayverlarini o‘rnating."
+  "amdgpu_desc": "Ubuntu LTS va Red Hat Enterprise Linux tizimlariga eng so‘nggi AMD Radeon grafik drayverlarini o‘rnating.",
+  "ubuntuv3": "x86-64v3 paketlarini yoqish",
+  "ubuntuv3_desc": "Ubuntu'ni x86-64v3 protsessorlari uchun optimallashtirilgan paketlarni afzal ko‘radigan qilib sozlaydi, bu esa unumdorlikni biroz oshirishi mumkin."
 }

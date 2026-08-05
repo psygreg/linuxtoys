@@ -514,5 +514,7 @@
   "theming": "Motīvi",
   "theming_desc": "Rīki sistēmas un lietotņu izskata pielāgošanai pēc jūsu vēlmēm.",
   "rewaita_desc": "Viegli mainiet GNOME čaulas, kā arī GTK4 un GTK3 lietotņu izskatu. Izvēlieties kādu no vairākām krāsu shēmām vai pat izveidojiet savu!",
-  "amdgpu_desc": "Instalējiet jaunākos AMD Radeon grafikas draiverus Ubuntu LTS un Red Hat Enterprise Linux sistēmās."
+  "amdgpu_desc": "Instalējiet jaunākos AMD Radeon grafikas draiverus Ubuntu LTS un Red Hat Enterprise Linux sistēmās.",
+  "ubuntuv3": "Iespējot x86-64v3 pakotnes",
+  "ubuntuv3_desc": "Iestata Ubuntu dot priekšroku x86-64v3 procesoriem optimizētām pakotnēm, kas var sniegt nelielus veiktspējas uzlabojumus."
 }

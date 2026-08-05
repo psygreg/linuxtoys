@@ -140,3 +140,4 @@ msgostreepending="עדכון מערכת ממתין. אנא הפעל מחדש א�
 outofspace="אין מספיק מקום אחסון זמין לפעולה."
 websoftwarewarning="לאחר תיקון זה עדיין נדרש דפדפן מבוסס Chromium שאינו Flatpak כדי לנהל את הגדרות ההתקן."
 itbinput="כדי להשתמש ב-ibus-typing-booster, הוסף אותו לשיטות הקלט שלך בהגדרות המערכת של GNOME או באמצעות ibus-setup."
+hwincompat="החומרה שלך אינה תואמת לתכונה זו. הפעולה בוטלה."

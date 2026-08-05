@@ -514,5 +514,7 @@
   "theming": "Þemu",
   "theming_desc": "Verkfæri til að laga útlit kerfisins og forrita að þínum smekk.",
   "rewaita_desc": "Breyttu útliti GNOME-skeljarinnar og GTK4- og GTK3-forrita án fyrirhafnar. Hægt er að velja úr nokkrum litasamsetningum og jafnvel búa til þína eigin!",
-  "amdgpu_desc": "Settu upp nýjustu AMD Radeon-skjákortareklana á Ubuntu LTS og Red Hat Enterprise Linux."
+  "amdgpu_desc": "Settu upp nýjustu AMD Radeon-skjákortareklana á Ubuntu LTS og Red Hat Enterprise Linux.",
+  "ubuntuv3": "Virkja x86-64v3 pakka",
+  "ubuntuv3_desc": "Stillir Ubuntu til að forgangsraða bjartsýnum pökkum fyrir x86-64v3 örgjörva, sem getur skilað lítilsháttar afkastabótum."
 }

@@ -140,3 +140,4 @@ msgostreepending="Sistemos atnaujinimas laukia. Prašome perkrāskite savo siste
 outofspace="Nepakankama turima vieta saugymui operacijai."
 websoftwarewarning="Po šio pataisymo įrenginio nustatymams tvarkyti vis dar reikalinga Chromium pagrindu sukurta naršyklė, kuri nėra Flatpak."
 itbinput="Norėdami naudoti ibus-typing-booster, pridėkite jį prie įvesties metodų GNOME sistemos nustatymuose arba naudokite ibus-setup."
+hwincompat="Jūsų aparatinė įranga nesuderinama su šia funkcija. Veiksmas atšauktas."

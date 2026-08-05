@@ -514,5 +514,7 @@
   "theming": "Témák",
   "theming_desc": "Eszközök a rendszer és az alkalmazások megjelenésének ízlés szerinti testreszabásához.",
   "rewaita_desc": "Módosítsa egyszerűen a GNOME Shell, valamint a GTK4- és GTK3-alkalmazások megjelenését. Több színséma közül választhat, sőt akár sajátot is létrehozhat!",
-  "amdgpu_desc": "Telepítse a legújabb AMD Radeon grafikus illesztőprogramokat Ubuntu LTS és Red Hat Enterprise Linux rendszerekre."
+  "amdgpu_desc": "Telepítse a legújabb AMD Radeon grafikus illesztőprogramokat Ubuntu LTS és Red Hat Enterprise Linux rendszerekre.",
+  "ubuntuv3": "x86-64v3 csomagok engedélyezése",
+  "ubuntuv3_desc": "Úgy állítja be az Ubuntut, hogy előnyben részesítse az x86-64v3 processzorokra optimalizált csomagokat, ami kisebb teljesítménynövekedést eredményezhet."
 }

@@ -140,3 +140,4 @@ msgostreepending="Eine Systemaktualisierung ist ausstehend. Bitte starten Sie Ih
 outofspace="Unzureichend verfügbarer Speicherplatz für die Operation."
 websoftwarewarning="Nach diesem Patch wird weiterhin ein Chromium-basierter Webbrowser (nicht als Flatpak) benötigt, um die Geräteeinstellungen zu verwalten."
 itbinput="Um ibus-typing-booster zu verwenden, fügen Sie ihn in den Systemeinstellungen von GNOME zu Ihren Eingabemethoden hinzu oder verwenden Sie ibus-setup."
+hwincompat="Ihre Hardware ist mit dieser Funktion nicht kompatibel. Der Vorgang wurde abgebrochen."

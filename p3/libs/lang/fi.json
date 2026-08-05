@@ -514,5 +514,7 @@
   "theming": "Teemat",
   "theming_desc": "Työkaluja järjestelmän ja sovellusten ulkoasun mukauttamiseen mieleiseksesi.",
   "rewaita_desc": "Muuta GNOME Shellin sekä GTK4- ja GTK3-sovellusten ulkoasua vaivattomasti. Valittavana on useita väriteemoja, ja voit jopa luoda oman!",
-  "amdgpu_desc": "Asenna uusimmat AMD Radeon -näytönohjaimet Ubuntu LTS:ään ja Red Hat Enterprise Linuxiin."
+  "amdgpu_desc": "Asenna uusimmat AMD Radeon -näytönohjaimet Ubuntu LTS:ään ja Red Hat Enterprise Linuxiin.",
+  "ubuntuv3": "Ota käyttöön x86-64v3-paketit",
+  "ubuntuv3_desc": "Asettaa Ubuntun suosimaan x86-64v3-suorittimille optimoituja pakette, mikä voi tuoda pieniä suorituskykyparannuksia."
 }

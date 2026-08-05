@@ -140,3 +140,4 @@ msgostreepending="Kemaskini sistem sedang menunggu. Sila mulakan semula sistem a
 outofspace="Ruang storan yang tersedia tidak mencukupi untuk operasi."
 websoftwarewarning="Selepas tampalan ini, pelayar web berasaskan Chromium yang bukan Flatpak masih diperlukan untuk mengurus tetapan peranti."
 itbinput="Untuk menggunakan ibus-typing-booster, tambahkannya pada kaedah input dalam tetapan sistem GNOME atau melalui ibus-setup."
+hwincompat="Perkakasan anda tidak serasi dengan ciri ini. Operasi dibatalkan."

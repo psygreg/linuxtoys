@@ -140,3 +140,4 @@ msgostreepending="A rendszerfrissítés függőben van. Indítsa újra a rendsze
 outofspace="Nincs elég rendelkezésre álló tárolóhely a műveletre."
 websoftwarewarning="A javítás után továbbra is szükség van egy nem Flatpak Chromium-alapú webböngészőre az eszköz beállításainak kezeléséhez."
 itbinput="Az ibus-typing-booster használatához adja hozzá a beviteli módokhoz a GNOME rendszerbeállításaiban vagy az ibus-setup segítségével."
+hwincompat="A hardvere nem kompatibilis ezzel a funkcióval. A művelet megszakítva."

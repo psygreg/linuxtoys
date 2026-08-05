@@ -514,5 +514,7 @@
   "theming": "Motywy",
   "theming_desc": "Narzędzia pomagające dostosować wygląd systemu i aplikacji do własnych upodobań.",
   "rewaita_desc": "Zmieniaj wygląd powłoki GNOME oraz aplikacji GTK4 i GTK3 bez zbędnych komplikacji. Możesz wybierać spośród kilku schematów kolorów, a nawet utworzyć własny!",
-  "amdgpu_desc": "Zainstaluj najnowsze sterowniki graficzne AMD Radeon w systemach Ubuntu LTS i Red Hat Enterprise Linux."
+  "amdgpu_desc": "Zainstaluj najnowsze sterowniki graficzne AMD Radeon w systemach Ubuntu LTS i Red Hat Enterprise Linux.",
+  "ubuntuv3": "Włącz pakiety x86-64v3",
+  "ubuntuv3_desc": "Konfiguruje Ubuntu tak, aby preferował pakiety zoptymalizowane dla procesorów x86-64v3, co może przynieść niewielką poprawę wydajności."
 }

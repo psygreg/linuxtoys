@@ -138,3 +138,4 @@ msgostreepending="Aktualizácia systému čaká. Prosím reštartujte váš syst
 outofspace="Nedostatočné dostupné miesto na ukladanie pre operáciu."
 websoftwarewarning="Po tejto oprave je na správu nastavení zariadenia stále potrebný webový prehliadač založený na Chromiu, ktorý nie je Flatpak."
 itbinput="Ak chcete používať ibus-typing-booster, pridajte ho medzi metódy vstupu v systémových nastaveniach GNOME alebo pomocou ibus-setup."
+hwincompat="Váš hardvér nie je kompatibilný s touto funkciou. Operácia bola zrušená."

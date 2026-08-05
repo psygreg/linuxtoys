@@ -514,5 +514,7 @@
   "theming": "테마",
   "theming_desc": "시스템과 애플리케이션의 모양을 원하는 대로 꾸밀 수 있도록 도와주는 도구입니다.",
   "rewaita_desc": "번거로운 과정 없이 GNOME 셸과 GTK4 및 GTK3 앱의 모양을 바꿔 보세요. 다양한 색상 구성을 선택하거나 직접 만들 수도 있습니다!",
-  "amdgpu_desc": "Ubuntu LTS 및 Red Hat Enterprise Linux에 최신 AMD Radeon 그래픽 드라이버를 설치합니다."
+  "amdgpu_desc": "Ubuntu LTS 및 Red Hat Enterprise Linux에 최신 AMD Radeon 그래픽 드라이버를 설치합니다.",
+  "ubuntuv3": "x86-64v3 패키지 활성화",
+  "ubuntuv3_desc": "Ubuntu에서 x86-64v3 프로세서에 최적화된 패키지를 우선 사용하도록 설정하여 약간의 성능 향상을 얻을 수 있습니다."
 }

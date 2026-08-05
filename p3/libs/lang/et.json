@@ -514,5 +514,7 @@
   "theming": "Teemad",
   "theming_desc": "Tööriistad süsteemi ja rakenduste välimuse kohandamiseks vastavalt teie eelistustele.",
   "rewaita_desc": "Muutke GNOME Shelli ning GTK4 ja GTK3 rakenduste välimust ilma vaevata. Valida saab mitme värviskeemi vahel ning saate luua ka enda oma!",
-  "amdgpu_desc": "Paigaldage uusimad AMD Radeoni graafikadraiverid Ubuntu LTS-i ja Red Hat Enterprise Linuxi."
+  "amdgpu_desc": "Paigaldage uusimad AMD Radeoni graafikadraiverid Ubuntu LTS-i ja Red Hat Enterprise Linuxi.",
+  "ubuntuv3": "Luba x86-64v3 paketid",
+  "ubuntuv3_desc": "Seadistab Ubuntu eelistama x86-64v3 protsessoritele optimeeritud pakette, mis võivad pakkuda väikest jõudluse paranemist."
 }

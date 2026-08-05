@@ -514,5 +514,7 @@
   "theming": "Motivy",
   "theming_desc": "Nástroje, které vám pomohou přizpůsobit vzhled systému i aplikací podle vašich představ.",
   "rewaita_desc": "Snadno změňte vzhled prostředí GNOME Shell a aplikací GTK4 i GTK3. Můžete si vybrat z několika barevných schémat, nebo si dokonce vytvořit vlastní!",
-  "amdgpu_desc": "Nainstalujte nejnovější grafické ovladače AMD Radeon v Ubuntu LTS a Red Hat Enterprise Linux."
+  "amdgpu_desc": "Nainstalujte nejnovější grafické ovladače AMD Radeon v Ubuntu LTS a Red Hat Enterprise Linux.",
+  "ubuntuv3": "Povolit balíčky x86-64v3",
+  "ubuntuv3_desc": "Nastaví Ubuntu tak, aby upřednostňoval optimalizované balíčky pro procesory x86-64v3, což může přinést malé zlepšení výkonu."
 }

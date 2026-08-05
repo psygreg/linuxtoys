@@ -514,5 +514,7 @@
   "theming": "Thema's",
   "theming_desc": "Hulpmiddelen om het uiterlijk van je systeem en toepassingen naar wens aan te passen.",
   "rewaita_desc": "Verander moeiteloos het uiterlijk van GNOME Shell en GTK4- en GTK3-toepassingen. Kies uit verschillende kleurenschema's of maak zelfs je eigen schema!",
-  "amdgpu_desc": "Installeer de nieuwste AMD Radeon-grafische stuurprogramma's op Ubuntu LTS en Red Hat Enterprise Linux."
+  "amdgpu_desc": "Installeer de nieuwste AMD Radeon-grafische stuurprogramma's op Ubuntu LTS en Red Hat Enterprise Linux.",
+  "ubuntuv3": "x86-64v3-pakketten inschakelen",
+  "ubuntuv3_desc": "Stelt Ubuntu in om geoptimaliseerde pakketten voor x86-64v3-processors te verkiezen, wat kleine prestatieverbeteringen kan opleveren."
 }

@@ -514,5 +514,7 @@
   "theming": "Temos",
   "theming_desc": "Įrankiai, padedantys pritaikyti sistemos ir programų išvaizdą pagal savo skonį.",
   "rewaita_desc": "Lengvai pakeiskite GNOME Shell bei GTK4 ir GTK3 programų išvaizdą. Galite rinktis iš kelių spalvų schemų arba net susikurti savo!",
-  "amdgpu_desc": "Įdiekite naujausias AMD Radeon grafikos tvarkykles Ubuntu LTS ir Red Hat Enterprise Linux sistemose."
+  "amdgpu_desc": "Įdiekite naujausias AMD Radeon grafikos tvarkykles Ubuntu LTS ir Red Hat Enterprise Linux sistemose.",
+  "ubuntuv3": "Įjungti x86-64v3 paketus",
+  "ubuntuv3_desc": "Nustato Ubuntu teikti pirmenybę x86-64v3 procesoriams optimizuotiems paketams, kurie gali šiek tiek pagerinti našumą."
 }

@@ -514,5 +514,7 @@
   "theming": "Temalar",
   "theming_desc": "Sisteminizin ve uygulamalarınızın görünümünü istediğiniz gibi ayarlamanıza yardımcı olan araçlar.",
   "rewaita_desc": "GNOME Shell ile GTK4 ve GTK3 uygulamalarının görünümünü zahmetsizce değiştirin. Aralarından seçim yapabileceğiniz çeşitli renk şemaları bulunur, hatta kendi şemanızı bile oluşturabilirsiniz!",
-  "amdgpu_desc": "Ubuntu LTS ve Red Hat Enterprise Linux üzerine en yeni AMD Radeon grafik sürücülerini yükleyin."
+  "amdgpu_desc": "Ubuntu LTS ve Red Hat Enterprise Linux üzerine en yeni AMD Radeon grafik sürücülerini yükleyin.",
+  "ubuntuv3": "x86-64v3 paketlerini etkinleştir",
+  "ubuntuv3_desc": "Ubuntu'yu x86-64v3 işlemciler için optimize edilmiş paketleri tercih edecek şekilde yapılandırır; bu da küçük performans artışları sağlayabilir."
 }

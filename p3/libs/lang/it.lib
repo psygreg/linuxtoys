@@ -138,3 +138,4 @@ msgostreepending="Un aggiornamento di sistema è in sospeso. Si prega di riavvia
 outofspace="Spazio di archiviazione disponibile insufficiente per l'operazione."
 websoftwarewarning="Dopo questa patch, è ancora necessario un browser Web basato su Chromium non Flatpak per gestire le impostazioni del dispositivo."
 itbinput="Per utilizzare ibus-typing-booster, aggiungilo ai metodi di input nelle impostazioni di sistema di GNOME oppure tramite ibus-setup."
+hwincompat="Il tuo hardware non è compatibile con questa funzionalità. Operazione annullata."

@@ -514,5 +514,7 @@
   "theming": "テーマ",
   "theming_desc": "システムやアプリケーションの外観を好みに合わせて調整するためのツールです。",
   "rewaita_desc": "GNOME Shell、GTK4、GTK3アプリの外観を手軽に変更できます。複数の配色から選べるほか、独自の配色を作成することもできます！",
-  "amdgpu_desc": "Ubuntu LTSおよびRed Hat Enterprise Linuxに最新のAMD Radeonグラフィックスドライバーをインストールします。"
+  "amdgpu_desc": "Ubuntu LTSおよびRed Hat Enterprise Linuxに最新のAMD Radeonグラフィックスドライバーをインストールします。",
+  "ubuntuv3": "x86-64v3 パッケージを有効化",
+  "ubuntuv3_desc": "Ubuntuでx86-64v3プロセッサ向けに最適化されたパッケージを優先するよう設定し、わずかな性能向上が期待できます。"
 }

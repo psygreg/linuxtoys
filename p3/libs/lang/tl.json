@@ -514,5 +514,7 @@
   "theming": "Mga tema",
   "theming_desc": "Mga kasangkapang tutulong sa iyong iangkop ang hitsura ng iyong system at mga application ayon sa gusto mo.",
   "rewaita_desc": "Baguhin nang walang abala ang hitsura ng GNOME Shell at ng mga GTK4 at GTK3 application. Maraming color scheme ang mapagpipilian, at maaari ka ring gumawa ng sarili mo!",
-  "amdgpu_desc": "I-install ang pinakabagong AMD Radeon graphics driver sa Ubuntu LTS at Red Hat Enterprise Linux."
+  "amdgpu_desc": "I-install ang pinakabagong AMD Radeon graphics driver sa Ubuntu LTS at Red Hat Enterprise Linux.",
+  "ubuntuv3": "Paganahin ang mga paketeng x86-64v3",
+  "ubuntuv3_desc": "Itinatakda ang Ubuntu na unahin ang mga paketeng na-optimize para sa mga x86-64v3 processor, na maaaring magbigay ng kaunting pagbuti sa pagganap."
 }

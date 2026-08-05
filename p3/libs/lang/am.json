@@ -514,5 +514,7 @@
   "theming": "ገጽታዎች",
   "theming_desc": "የስርዓትዎን እና የመተግበሪያዎችዎን ገጽታ እንደፍላጎትዎ ለማስተካከል የሚረዱ መሳሪያዎች።",
   "rewaita_desc": "የGNOME Shell፣ GTK4 እና GTK3 መተግበሪያዎችን ገጽታ ያለምንም ችግር ይቀይሩ። ከበርካታ የቀለም ጥምረቶች መምረጥ ይችላሉ፣ የራስዎንም መፍጠር ይችላሉ!",
-  "amdgpu_desc": "በUbuntu LTS እና Red Hat Enterprise Linux ላይ የቅርብ ጊዜዎቹን የAMD Radeon ግራፊክስ ነጂዎች ይጫኑ።"
+  "amdgpu_desc": "በUbuntu LTS እና Red Hat Enterprise Linux ላይ የቅርብ ጊዜዎቹን የAMD Radeon ግራፊክስ ነጂዎች ይጫኑ።",
+  "ubuntuv3": "የx86-64v3 ጥቅሎችን አንቃ",
+  "ubuntuv3_desc": "በUbuntu ላይ ለx86-64v3 ፕሮሰሰሮች የተሻሻሉ ጥቅሎችን እንዲመረጡ ያዘጋጃል፣ ይህም ትንሽ የአፈጻጸም መሻሻል ሊያመጣ ይችላል።"
 }

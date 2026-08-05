@@ -514,5 +514,7 @@
   "theming": "Tema",
   "theming_desc": "Alat untuk membantu menyesuaikan tampilan sistem dan aplikasi sesuai selera Anda.",
   "rewaita_desc": "Ubah tampilan GNOME Shell serta aplikasi GTK4 dan GTK3 tanpa repot. Tersedia beberapa skema warna untuk dipilih, dan Anda bahkan dapat membuat skema sendiri!",
-  "amdgpu_desc": "Instal driver grafis AMD Radeon terbaru di Ubuntu LTS dan Red Hat Enterprise Linux."
+  "amdgpu_desc": "Instal driver grafis AMD Radeon terbaru di Ubuntu LTS dan Red Hat Enterprise Linux.",
+  "ubuntuv3": "Aktifkan paket x86-64v3",
+  "ubuntuv3_desc": "Mengatur Ubuntu agar mengutamakan paket yang dioptimalkan untuk prosesor x86-64v3, yang dapat memberikan sedikit peningkatan kinerja."
 }

@@ -140,3 +140,4 @@ msgostreepending="Süsteemi uuendamine ootel. Palun taaskäivitage oma süsteem 
 outofspace="Ebapiisav saadaolev salvestusruum operatsioonile."
 websoftwarewarning="Pärast seda parandust on seadme sätete haldamiseks endiselt vaja Chromiumi-põhist veebibrauserit, mis ei ole Flatpak."
 itbinput="ibus-typing-boosteri kasutamiseks lisage see GNOME süsteemiseadetes sisestusmeetodite hulka või kasutage ibus-setupi."
+hwincompat="Teie riistvara ei ühildu selle funktsiooniga. Toiming tühistati."
