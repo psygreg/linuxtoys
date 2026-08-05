@@ -11,6 +11,6 @@ prep_tmp_noram
 wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/od.zip
 unzip od.zip
 prep_dir "$HOME/.local/share/fonts/OpenDyslexic"
-_copy -f OpenDyslexic-* "$HOME/.local/share/fonts/OpenDyslexic/"
+copy_ -f OpenDyslexic-* "$HOME/.local/share/fonts/OpenDyslexic/"
 info "$finishmsg"
 
