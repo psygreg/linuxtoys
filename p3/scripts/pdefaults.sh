@@ -46,7 +46,7 @@ optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         prep_tmp
         sysag_run
-        touch "$HOME/.local/.autopatch.state"
+        prep_create "$HOME/.local/.autopatch.state"
         zeninf "$msg036"
     else
         zenwrn "$msg234"
