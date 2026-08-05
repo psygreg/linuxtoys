@@ -40,7 +40,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     if zenity --question --title="Waydroid" --text="$msg283" --width 300 --height 300; then
         waydroid session stop
         sudo waydroid container stop
-        prep_tmp
+        prep_tmp_noram
         git clone https://github.com/casualsnek/waydroid_script
         cd waydroid_script
         pip_lib
