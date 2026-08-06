@@ -508,5 +508,13 @@
   "accessibility_desc": "Passen Sie Ihr System an Ihre Bedürfnisse an – ob speziell oder nicht.",
   "od_desc": "Eine quelloffene Schriftart, die die Lesbarkeit für Menschen mit Legasthenie verbessern soll.",
   "itb_desc": "Eine Eingabemethode mit Wortvervollständigung, die das Tippen beschleunigt und Menschen mit Rechtschreibschwierigkeiten unterstützt.",
-  "atkinson_desc": "Eine Schriftart, die entwickelt wurde, um Lesbarkeit und Erkennbarkeit für Menschen mit Sehbehinderung zu verbessern."
+  "atkinson_desc": "Eine Schriftart, die entwickelt wurde, um Lesbarkeit und Erkennbarkeit für Menschen mit Sehbehinderung zu verbessern.",
+  "flattheme": "Flatpak-Designintegration aktivieren",
+  "flattheme_desc": "Aktiviert die Flatpak-Designintegration für GTK3- und GTK4-Anwendungen, sodass diese das Systemdesign und dessen Darstellungseinstellungen verwenden können.",
+  "theming": "Themes",
+  "theming_desc": "Werkzeuge, mit denen Sie das Erscheinungsbild Ihres Systems und Ihrer Anwendungen nach Ihren Wünschen anpassen können.",
+  "rewaita_desc": "Ändern Sie unkompliziert das Aussehen der GNOME Shell sowie von GTK4- und GTK3-Anwendungen. Es stehen mehrere Farbschemata zur Auswahl, und Sie können sogar ein eigenes erstellen!",
+  "amdgpu_desc": "Installieren Sie die neuesten AMD-Radeon-Grafiktreiber unter Ubuntu LTS und Red Hat Enterprise Linux.",
+  "ubuntuv3": "x86-64v3-Pakete aktivieren",
+  "ubuntuv3_desc": "Richtet Ubuntu so ein, dass optimierte Pakete für x86-64v3-Prozessoren bevorzugt werden, was zu kleinen Leistungsverbesserungen führen kann."
 }

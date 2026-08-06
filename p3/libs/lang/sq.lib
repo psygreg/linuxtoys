@@ -140,3 +140,4 @@ msgostreepending="Përditësimi i sistemit është në pritje. Ju lutemi ristart
 outofspace="Hapësirë ruajtjeje e disponueshme e pamjaftueshme për operacionin."
 websoftwarewarning="Pas këtij përditësimi kërkohet ende një shfletues uebi i bazuar në Chromium që nuk është Flatpak për të menaxhuar cilësimet e pajisjes."
 itbinput="Për të përdorur ibus-typing-booster, shtojeni te metodat e hyrjes në cilësimet e sistemit të GNOME ose përmes ibus-setup."
+hwincompat="Pajisja juaj nuk është e përputhshme me këtë veçori. Veprimi u anulua."

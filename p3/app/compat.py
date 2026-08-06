@@ -333,11 +333,10 @@ def get_desktop_compat_keys():
     keys = set()
     import os
 
-    desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").upper()
-
-    if desktop == "GNOME":
+    desktop_parts = os.environ.get("XDG_CURRENT_DESKTOP", "").upper().split(":")
+    if "GNOME" in desktop_parts:
         keys.add("desktop-gnome")
-    elif desktop == "KDE":
+    elif "KDE" in desktop_parts:
         keys.add("desktop-plasma")
     else:
         keys.add("desktop-other")

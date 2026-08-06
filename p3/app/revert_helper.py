@@ -187,6 +187,7 @@ def _parse_operation(op_line):
           "sysd enabled ssh" -> ("sysd", ["enabled", "ssh"])
           "flatpak app1 app2" -> ("flatpak", ["app1", "app2"])
           "chsh /bin/zsh" -> ("chsh", ["/bin/zsh"])
+          "exec amdgpu-install" -> ("exec", ["amdgpu-install"])
           "WARN: message text" -> ("warn", ["message", "text", ...])
     """
     parts = op_line.split()
@@ -248,6 +249,9 @@ def _parse_operation(op_line):
             return op_type, parts[1:]
         elif op_type == "swapfile":
             # Swapfile operations: "swapfile btrfs /path/to/swapfile" or "swapfile regular /path/to/swapfile"
+            return op_type, parts[1:]
+        elif op_type == "exec":
+            # Executed installer operations: "exec command [args ...]"
             return op_type, parts[1:]
         elif op_type == "warn":
             # Warning: "WARN: message text" -> keep all parts as operands
@@ -718,6 +722,18 @@ def _reverse_swapfile_creation(swapfile_type, swapfile_path):
     return commands
 
 
+def _reverse_exec_operation(command_parts):
+    """Reverse supported installer commands recorded as ``exec ...`` operations."""
+    if not command_parts:
+        return []
+
+    # AMD's packaged installer provides its own complete uninstall operation.
+    if command_parts[0] == "amdgpu-install":
+        return ["sudo amdgpu-install --uninstall"]
+
+    return []
+
+
 def _reverse_operation(op_line, package_manager):
     """
     Generate shell command(s) to reverse a single operation.
@@ -766,6 +782,10 @@ def _reverse_operation(op_line, package_manager):
         # Reverse shell change by reverting to bash
         return _reverse_shell_change(operands[0])
     
+    elif op_type == "exec" and operands:
+        # Reverse specially supported external installer operations.
+        return _reverse_exec_operation(operands)
+
     elif op_type == "swapfile" and len(operands) >= 2:
         # Reverse swapfile creation: format is "swapfile type path"
         # operands[0] = type ("btrfs" or "regular")

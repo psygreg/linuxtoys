@@ -23,7 +23,7 @@ sysag_run () {
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
     dsplitm_lib
     # add earlyoom configuration, Fedora already has systemd-oomd
-    if ! is_fedora && ! is_ostree && ! is_rhel && ! is_zorin; then
+    if is_suse || is_debian || is_arch || is_cachy || is_solus; then
         earlyoom_lib
     fi
     # change intel driver to Xe on discrete GPUs
@@ -46,7 +46,7 @@ optimizer () {
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         prep_tmp
         sysag_run
-        touch "$HOME/.local/.autopatch.state"
+        prep_create "$HOME/.local/.autopatch.state"
         zeninf "$msg036"
     else
         zenwrn "$msg234"
@@ -56,52 +56,53 @@ optimizer () {
 # menu
 while true; do
     OPTIONS=(
-        "standard" "Install without Power Profile"
+        TRUE  "standard"    "Install without Power Profile"
     )
     if ! is_zorin && ! is_cachy && ! is_suse; then
         OPTIONS+=(
-            "laptop" "Laptop"
+            FALSE "laptop" "Laptop"
         )
     fi
     CPU_VENDOR=$(awk -F ': *' '/^vendor_id/ { print $2; exit }' /proc/cpuinfo)
     if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
         OPTIONS+=(
-            "performance" "High Performance"
+            FALSE "performance" "High Performance"
         )
     fi
     OPTIONS+=(
-        "cancel" "$msg070"
+        FALSE "cancel" "$msg070"
     )
 
     CHOICE=$(
         zenity --list \
+            --radiolist \
             --title="Power Optimizer" \
             --text="$msg229" \
+            --column="Select" \
             --column="ID" \
             --column="Options" \
-            --hide-column=1 \
-            --print-column=1 \
+            --hide-column=2 \
+            --print-column=2 \
             "${OPTIONS[@]}" \
             --width=360 \
             --height=360
     )
     status=$?
 
-    if (( status != 0 )); then
+    if (( status != 0 )) || [[ -z "$CHOICE" ]]; then
         exit 100
     fi
-
     case "$CHOICE" in
         standard)
-            sudo_rq && optimizer
+            askpass && optimizer
             exit $?
             ;;
         performance)
-            sudo_rq && pp_ondemand && optimizer
+            askpass && pp_ondemand && optimizer
             exit $?
             ;;
         laptop)
-            sudo_rq && optimizer && psave_lib
+            askpass && optimizer && psave_lib
             exit $?
             ;;
         cancel)

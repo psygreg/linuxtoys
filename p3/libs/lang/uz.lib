@@ -139,3 +139,4 @@ msgostreepending="Tizim yangilanishi kutmoqda. Iltimos tizimni qayta yoqing va o
 outofspace="Operatsiya uchun yetarli bo'sh saqlash joy yo'q."
 websoftwarewarning="Ushbu yamadan so‘ng ham qurilma sozlamalarini boshqarish uchun Flatpak bo‘lmagan Chromium asosidagi veb-brauzer talab qilinadi."
 itbinput="ibus-typing-booster-dan foydalanish uchun uni GNOME tizim sozlamalaridagi kiritish usullariga qo‘shing yoki ibus-setup orqali qo‘shing."
+hwincompat="Qurilmangiz ushbu imkoniyat bilan mos emas. Amal bekor qilindi."

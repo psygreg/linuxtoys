@@ -497,10 +497,9 @@ def run_manifest_mode(translations=None):
     
     # Check for pending ostree deployments on compatible systems
     system_compat_keys = get_system_compat_keys()
-    if {'ostree', 'ublue'} & system_compat_keys:
-        if not check_ostree_deployment_cli(translations):
-            # User chose to exit or reboot
-            return 0
+    if {'ostree', 'ublue'} & system_compat_keys and not check_ostree_deployment_cli(translations):
+        # User chose to exit or reboot
+        return 0
     
     # Load script names from manifest
     script_names = load_manifest(manifest_path)

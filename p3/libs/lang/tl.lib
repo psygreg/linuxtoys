@@ -139,3 +139,4 @@ msgostreepending="A system update is pending. Please reboot your system and run 
 outofspace="Insufficient available storage space for operation."
 websoftwarewarning="Pagkatapos ng patch na ito, kailangan pa rin ang isang Chromium-based na web browser na hindi Flatpak upang pamahalaan ang mga setting ng device."
 itbinput="Upang gamitin ang ibus-typing-booster, idagdag ito sa iyong mga paraan ng pag-input sa mga setting ng system ng GNOME o sa pamamagitan ng ibus-setup."
+hwincompat="Hindi tugma ang iyong hardware sa feature na ito. Kinansela ang operasyon."

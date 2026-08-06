@@ -508,5 +508,13 @@
   "accessibility_desc": "Tilpas dit system til dine behov, særlige eller ej.",
   "od_desc": "En open source-skrifttype udviklet til at forbedre læsbarheden for personer med ordblindhed.",
   "itb_desc": "En inputmetode med ordfuldførelse, der gør indtastning hurtigere og hjælper personer med stavevanskeligheder.",
-  "atkinson_desc": "En skrifttype designet til at forbedre læsbarhed og tydelighed for personer med nedsat syn."
+  "atkinson_desc": "En skrifttype designet til at forbedre læsbarhed og tydelighed for personer med nedsat syn.",
+  "flattheme": "Aktivér Flatpak-temaer",
+  "flattheme_desc": "Aktiverer understøttelse af Flatpak-temaer for GTK3- og GTK4-programmer, så de kan bruge systemets tema og indstillinger for udseende.",
+  "theming": "Temaer",
+  "theming_desc": "Værktøjer, der hjælper dig med at tilpasse systemets og programmernes udseende efter din smag.",
+  "rewaita_desc": "Skift udseendet på GNOME Shell samt GTK4- og GTK3-programmer uden besvær. Vælg mellem flere farveskemaer, eller opret dit helt eget!",
+  "amdgpu_desc": "Installér de nyeste AMD Radeon-grafikdrivere på Ubuntu LTS og Red Hat Enterprise Linux.",
+  "ubuntuv3": "Aktivér x86-64v3-pakker",
+  "ubuntuv3_desc": "Indstiller Ubuntu til at foretrække optimerede pakker til x86-64v3-processorer, hvilket kan give en mindre ydelsesforbedring."
 }

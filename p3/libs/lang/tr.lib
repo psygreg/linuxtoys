@@ -139,3 +139,4 @@ msgostreepending="Bir sistem güncellemesi bekleniyor. Sisteminizi yeniden başl
 outofspace="İşlem için yeterli boş depolama alanı yok."
 websoftwarewarning="Bu yamadan sonra, cihaz ayarlarını yönetmek için hâlâ Flatpak olmayan Chromium tabanlı bir web tarayıcısı gereklidir."
 itbinput="ibus-typing-booster kullanmak için GNOME sistem ayarlarında giriş yöntemlerinize ekleyin veya ibus-setup aracılığıyla ekleyin."
+hwincompat="Donanımınız bu özellikle uyumlu değil. İşlem iptal edildi."

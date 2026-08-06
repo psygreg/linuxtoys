@@ -6,7 +6,7 @@
 # reboot: yes
 # nocontainer
 # gpu: nvidia
-# compat: arch, ubuntu, suse, solus, debian
+# compat: arch, ubuntu, suse, solus, debian, !manjaro
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

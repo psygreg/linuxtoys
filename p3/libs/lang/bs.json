@@ -507,5 +507,13 @@
   "accessibility_desc": "Prilagodite sistem svojim potrebama, bile one posebne ili ne.",
   "od_desc": "Font otvorenog koda napravljen radi poboljšanja čitljivosti osobama s disleksijom.",
   "itb_desc": "Metoda unosa s dovršavanjem riječi koja ubrzava tipkanje i pomaže osobama koje imaju poteškoća s pravopisom.",
-  "atkinson_desc": "Font dizajniran za poboljšanje čitljivosti i preglednosti osobama sa slabijim vidom."
+  "atkinson_desc": "Font dizajniran za poboljšanje čitljivosti i preglednosti osobama sa slabijim vidom.",
+  "flattheme": "Omogući Flatpak teme",
+  "flattheme_desc": "Omogućava podršku za Flatpak teme u GTK3 i GTK4 aplikacijama, dopuštajući im da koriste temu sistema i postavke izgleda.",
+  "theming": "Teme",
+  "theming_desc": "Alati koji vam pomažu da prilagodite izgled sistema i aplikacija prema svom ukusu.",
+  "rewaita_desc": "Promijenite izgled GNOME ljuske te GTK4 i GTK3 aplikacija bez gnjavaže. Dostupno je nekoliko shema boja, a možete napraviti i vlastitu!",
+  "amdgpu_desc": "Instalirajte najnovije AMD Radeon grafičke upravljačke programe na Ubuntu LTS i Red Hat Enterprise Linux.",
+  "ubuntuv3": "Omogući x86-64v3 pakete",
+  "ubuntuv3_desc": "Postavlja Ubuntu da daje prednost optimiziranim paketima za x86-64v3 procesore, što može donijeti mala poboljšanja performansi."
 }

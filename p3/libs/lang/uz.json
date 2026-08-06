@@ -507,5 +507,13 @@
   "accessibility_desc": "Maxsus bo‘lishidan qat’i nazar, tizimingizni ehtiyojlaringizga moslang.",
   "od_desc": "Disleksiyasi bor o‘quvchilar uchun matnning o‘qilishini yaxshilash maqsadida yaratilgan ochiq kodli shrift.",
   "itb_desc": "Yozishni tezlashtirish va so‘zlarni to‘g‘ri yozishda qiynaladigan odamlarga yordam beruvchi so‘zlarni to‘ldirish kiritish usuli.",
-  "atkinson_desc": "Ko‘rish qobiliyati zaif o‘quvchilar uchun matnning o‘qilishini yaxshilash maqsadida ishlab chiqilgan shrift."
+  "atkinson_desc": "Ko‘rish qobiliyati zaif o‘quvchilar uchun matnning o‘qilishini yaxshilash maqsadida ishlab chiqilgan shrift.",
+  "flattheme": "Flatpak mavzularini yoqish",
+  "flattheme_desc": "GTK3 va GTK4 ilovalari uchun Flatpak mavzulari qo‘llab-quvvatlanishini yoqib, ularga tizim mavzusi va tashqi ko‘rinish sozlamalaridan foydalanish imkonini beradi.",
+  "theming": "Mavzular",
+  "theming_desc": "Tizim va ilovalaringizning ko‘rinishini didingizga moslashtirishga yordam beruvchi vositalar.",
+  "rewaita_desc": "GNOME Shell hamda GTK4 va GTK3 ilovalarining ko‘rinishini osonlik bilan o‘zgartiring. Tanlash uchun bir nechta rang sxemalari mavjud, hatto o‘zingiznikini ham yaratishingiz mumkin!",
+  "amdgpu_desc": "Ubuntu LTS va Red Hat Enterprise Linux tizimlariga eng so‘nggi AMD Radeon grafik drayverlarini o‘rnating.",
+  "ubuntuv3": "x86-64v3 paketlarini yoqish",
+  "ubuntuv3_desc": "Ubuntu'ni x86-64v3 protsessorlari uchun optimallashtirilgan paketlarni afzal ko‘radigan qilib sozlaydi, bu esa unumdorlikni biroz oshirishi mumkin."
 }

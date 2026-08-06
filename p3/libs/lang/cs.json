@@ -508,5 +508,13 @@
   "accessibility_desc": "Přizpůsobte systém svým potřebám, ať už jsou speciální, nebo ne.",
   "od_desc": "Písmo s otevřeným zdrojovým kódem vytvořené pro zlepšení čitelnosti lidem s dyslexií.",
   "itb_desc": "Metoda zadávání s dokončováním slov, která urychluje psaní a pomáhá lidem s obtížemi při pravopisu.",
-  "atkinson_desc": "Písmo navržené pro lepší čitelnost a srozumitelnost pro čtenáře se zhoršeným zrakem."
+  "atkinson_desc": "Písmo navržené pro lepší čitelnost a srozumitelnost pro čtenáře se zhoršeným zrakem.",
+  "flattheme": "Povolit motivy pro Flatpak",
+  "flattheme_desc": "Povolí podporu motivů Flatpak pro aplikace GTK3 a GTK4, takže mohou používat systémový motiv a nastavení vzhledu.",
+  "theming": "Motivy",
+  "theming_desc": "Nástroje, které vám pomohou přizpůsobit vzhled systému i aplikací podle vašich představ.",
+  "rewaita_desc": "Snadno změňte vzhled prostředí GNOME Shell a aplikací GTK4 i GTK3. Můžete si vybrat z několika barevných schémat, nebo si dokonce vytvořit vlastní!",
+  "amdgpu_desc": "Nainstalujte nejnovější grafické ovladače AMD Radeon v Ubuntu LTS a Red Hat Enterprise Linux.",
+  "ubuntuv3": "Povolit balíčky x86-64v3",
+  "ubuntuv3_desc": "Nastaví Ubuntu tak, aby upřednostňoval optimalizované balíčky pro procesory x86-64v3, což může přinést malé zlepšení výkonu."
 }

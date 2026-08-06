@@ -6,16 +6,17 @@
 # repo: https://posit.co/products/open-source/rstudio/
 # compat: debian, ubuntu, fedora, rhel
 
+# reinstate it when API gets back online: debian, ubuntu, fedora, rhel
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-_api_stable="https://www.rstudio.com/wp-content/downloads.json"
+_api_stable="https://cdn.posit.co/downloads.json"
 
 _req=$(curl -fsSL "${_api_stable}" | \
     grep -oP '"url": "\K.*download1.*rstudio-[0-9]{4}[^"]*\.(deb|rpm)(?=")')
 
 readarray -t _pkgs < <(sort -u <<< ${_req})
 
-if is_debian; then
+if is_debian || is_ubuntu; then
     _pkg_name=$(basename ${_pkgs[0]})
     if curl -fsSL "${_pkgs[0]}" -o "/tmp/${_pkg_name}"; then
         sudo_rq; pkg_install r-base r-base-dev

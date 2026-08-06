@@ -4,7 +4,7 @@
 # icon: nvidia.svg
 # nocontainer
 # gpu: Nvidia
-# compat: arch, !cachy, fedora, rhel, suse
+# compat: arch, !cachy, fedora, rhel, suse, ubuntu
 # reboot: yes
 
 # --- Start of the script code ---
@@ -25,6 +25,9 @@ elif is_fedora || is_rhel; then
     pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda kmod-nvidia-580xx
     initramfs_upd
     bootloader_upd
+elif is_ubuntu; then
+    sudo apt update
+    pkg_install nvidia-driver-580
 elif is_suse; then
     case "$VERSION_ID" in
         *Tumbleweed* | *Slowroll*) REPO_URL="https://download.nvidia.com/opensuse/tumbleweed" ;;

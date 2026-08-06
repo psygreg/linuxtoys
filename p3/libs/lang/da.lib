@@ -140,3 +140,4 @@ msgostreepending="En systemopdatering afventer. Genstart venligst dit system og 
 outofspace="Utilstrekkelig ledig lagerplads til operationen."
 websoftwarewarning="Efter denne rettelse kræves der stadig en Chromium-baseret webbrowser, som ikke er en Flatpak, for at administrere enhedsindstillinger."
 itbinput="For at bruge ibus-typing-booster skal du tilføje det til dine inputmetoder i GNOME's systemindstillinger eller via ibus-setup."
+hwincompat="Din hardware er ikke kompatibel med denne funktion. Handlingen blev annulleret."

@@ -140,3 +140,4 @@ msgostreepending="Aktualizacja systemu oczekuje. Proszę ponownie uruchomić sys
 outofspace="Niewystarczająco dostępnej przestrzeni dyskowej do operacji."
 websoftwarewarning="Po zastosowaniu tej poprawki nadal wymagane jest korzystanie z przeglądarki internetowej opartej na Chromium, która nie jest zainstalowana jako Flatpak, aby zarządzać ustawieniami urządzenia."
 itbinput="Aby używać ibus-typing-booster, dodaj go do metod wprowadzania w ustawieniach systemowych GNOME lub za pomocą ibus-setup."
+hwincompat="Twój sprzęt nie jest zgodny z tą funkcją. Operacja została anulowana."

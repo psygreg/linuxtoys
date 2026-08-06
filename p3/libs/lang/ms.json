@@ -508,5 +508,13 @@
   "accessibility_desc": "Sesuaikan sistem anda mengikut keperluan, sama ada keperluan khas atau tidak.",
   "od_desc": "Fon sumber terbuka yang dicipta untuk membantu meningkatkan kebolehbacaan bagi pembaca yang mengalami disleksia.",
   "itb_desc": "Kaedah input dengan pelengkapan perkataan untuk mempercepatkan penaipan dan membantu mereka yang menghadapi kesukaran mengeja.",
-  "atkinson_desc": "Fon yang direka untuk meningkatkan kebolehbacaan bagi pembaca yang mempunyai masalah penglihatan."
+  "atkinson_desc": "Fon yang direka untuk meningkatkan kebolehbacaan bagi pembaca yang mempunyai masalah penglihatan.",
+  "flattheme": "Dayakan tema Flatpak",
+  "flattheme_desc": "Mendayakan sokongan tema Flatpak untuk aplikasi GTK3 dan GTK4, membolehkannya menggunakan tema dan tetapan penampilan sistem.",
+  "theming": "Tema",
+  "theming_desc": "Alat untuk membantu anda melaraskan penampilan sistem dan aplikasi mengikut cita rasa anda.",
+  "rewaita_desc": "Ubah penampilan GNOME Shell serta aplikasi GTK4 dan GTK3 tanpa sebarang kerumitan. Terdapat beberapa skema warna untuk dipilih, malah anda boleh mencipta skema anda sendiri!",
+  "amdgpu_desc": "Pasang pemacu grafik AMD Radeon terkini pada Ubuntu LTS dan Red Hat Enterprise Linux.",
+  "ubuntuv3": "Dayakan pakej x86-64v3",
+  "ubuntuv3_desc": "Menetapkan Ubuntu supaya mengutamakan pakej yang dioptimumkan untuk pemproses x86-64v3, yang boleh memberikan sedikit peningkatan prestasi."
 }

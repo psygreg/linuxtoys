@@ -508,5 +508,13 @@
   "accessibility_desc": "Cuir do chóras in oiriúint do do riachtanais, bíodh siad speisialta nó ná bíodh.",
   "od_desc": "Cló foinse oscailte a cruthaíodh chun inléiteacht a fheabhsú do léitheoirí a bhfuil disléicse orthu.",
   "itb_desc": "Modh ionchuir le comhlánú focal chun clóscríobh a bhrostú agus cabhrú le daoine a bhfuil deacrachtaí litrithe acu.",
-  "atkinson_desc": "Cló deartha chun inléiteacht agus soiléireacht a fheabhsú do dhaoine lagamhairc."
+  "atkinson_desc": "Cló deartha chun inléiteacht agus soiléireacht a fheabhsú do dhaoine lagamhairc.",
+  "flattheme": "Cumasaigh téamaí Flatpak",
+  "flattheme_desc": "Cumasaíonn sé tacaíocht do théamaí Flatpak in feidhmchláir GTK3 agus GTK4, rud a ligeann dóibh téama agus socruithe cuma an chórais a úsáid.",
+  "theming": "Téamaí",
+  "theming_desc": "Uirlisí chun cuma do chórais agus do chuid feidhmchlár a chur in oiriúint do do rogha.",
+  "rewaita_desc": "Athraigh cuma bhlaosc GNOME agus aipeanna GTK4 agus GTK3 gan stró. Tá roinnt scéimeanna dathanna ar fáil, agus is féidir leat do cheann féin a chruthú fiú!",
+  "amdgpu_desc": "Suiteáil na tiománaithe grafaice AMD Radeon is déanaí ar Ubuntu LTS agus Red Hat Enterprise Linux.",
+  "ubuntuv3": "Cumasaigh pacáistí x86-64v3",
+  "ubuntuv3_desc": "Cumraíonn sé Ubuntu chun tosaíocht a thabhairt do phacáistí optamaithe do phróiseálaithe x86-64v3, rud a d'fhéadfadh feabhsuithe beaga feidhmíochta a thabhairt."
 }

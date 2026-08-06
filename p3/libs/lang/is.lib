@@ -139,3 +139,4 @@ msgostreepending="Kerfiuppfærsla á bjóð. Endurkkæstir útómátinn þían o
 outofspace="Ófullnægjandi geymslurými fyrir aðgerð."
 websoftwarewarning="Eftir þessa lagfæringu er enn þörf á Chromium-vafra sem ekki er Flatpak til að stjórna stillingum tækisins."
 itbinput="Til að nota ibus-typing-booster skaltu bæta því við innsláttaraðferðir í kerfisstillingum GNOME eða með ibus-setup."
+hwincompat="Vélbúnaðurinn þinn er ekki samhæfur þessum eiginleika. Aðgerð hætt við."

@@ -140,3 +140,4 @@ msgostreepending="Ažuriranje sistema je u čekanju. Molimo, ponovno pokrenite s
 outofspace="Nedovoljna dostupna prostor za pohranu za operaciju."
 websoftwarewarning="Nakon ove zakrpe i dalje je potreban web preglednik zasnovan na Chromiumu koji nije Flatpak za upravljanje postavkama uređaja."
 itbinput="Da biste koristili ibus-typing-booster, dodajte ga u svoje metode unosa u sistemskim postavkama GNOME-a ili putem ibus-setup."
+hwincompat="Vaš hardver nije kompatibilan s ovom funkcijom. Operacija je otkazana."

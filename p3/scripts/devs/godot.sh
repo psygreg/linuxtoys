@@ -28,6 +28,7 @@ if [ ! -d "$HOME/.local/godot" ]; then
     copy_ godot.png -f "$HOME/.local/godot"
     wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godot.desktop
     copy_ godot.desktop -f "$HOME/.local/share/applications/"
+    sed -i "s|\$HOME|$HOME|g" "$HOME/.local/share/applications/godot.desktop"
 else # update
     wget "$GODOT_URL" -O "$GODOT_ZIP"
     unzip "$GODOT_ZIP"

@@ -140,3 +140,4 @@ msgostreepending="Järjestelmäpäivitys on vireillä. Käynnistä järjestelmä
 outofspace="Riittämätön käytettävissä oleva tallennustila toiminnolle."
 websoftwarewarning="Tämän korjauksen jälkeen laitteen asetusten hallintaan tarvitaan edelleen Chromium-pohjainen selain, joka ei ole Flatpak."
 itbinput="Käyttääksesi ibus-typing-boosteria lisää se syöttötapoihin GNOMEn järjestelmäasetuksissa tai käytä ibus-setupia."
+hwincompat="Laitteistosi ei ole yhteensopiva tämän ominaisuuden kanssa. Toiminto peruutettiin."

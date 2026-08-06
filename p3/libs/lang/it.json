@@ -508,5 +508,13 @@
   "accessibility_desc": "Adatta il sistema alle tue esigenze, speciali o meno.",
   "od_desc": "Un carattere open source creato per migliorare la leggibilità per le persone con dislessia.",
   "itb_desc": "Un metodo di inserimento con completamento delle parole che velocizza la digitazione e aiuta chi ha difficoltà ortografiche.",
-  "atkinson_desc": "Un carattere progettato per migliorare la leggibilità per le persone con problemi di vista."
+  "atkinson_desc": "Un carattere progettato per migliorare la leggibilità per le persone con problemi di vista.",
+  "flattheme": "Abilita i temi per Flatpak",
+  "flattheme_desc": "Abilita il supporto dei temi Flatpak per le applicazioni GTK3 e GTK4, consentendo loro di utilizzare il tema e le impostazioni dell'aspetto del sistema.",
+  "theming": "Temi",
+  "theming_desc": "Strumenti per personalizzare l'aspetto del sistema e delle applicazioni secondo le tue preferenze.",
+  "rewaita_desc": "Cambia facilmente l’aspetto della shell di GNOME e delle applicazioni GTK4 e GTK3. Puoi scegliere tra diverse combinazioni di colori o persino crearne una personalizzata!",
+  "amdgpu_desc": "Installa i driver grafici AMD Radeon più recenti su Ubuntu LTS e Red Hat Enterprise Linux.",
+  "ubuntuv3": "Abilita i pacchetti x86-64v3",
+  "ubuntuv3_desc": "Configura Ubuntu per dare priorità ai pacchetti ottimizzati per processori x86-64v3, con possibili piccoli miglioramenti delle prestazioni."
 }

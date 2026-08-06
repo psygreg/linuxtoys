@@ -140,3 +140,4 @@ msgostreepending="En systemoppdatering venter. Vennligst start systemet på nytt
 outofspace="Utilstrekkelig tilgjengelig lagringsplass til operasjonen."
 websoftwarewarning="Etter denne oppdateringen kreves det fortsatt en Chromium-basert nettleser som ikke er en Flatpak for å administrere enhetsinnstillinger."
 itbinput="For å bruke ibus-typing-booster, legg det til i inndatametodene dine i GNOMEs systeminnstillinger eller via ibus-setup."
+hwincompat="Maskinvaren din er ikke kompatibel med denne funksjonen. Handlingen ble avbrutt."

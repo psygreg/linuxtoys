@@ -140,3 +140,4 @@ msgostreepending="የስርዓት ማስተካከል በመጠባበቅ ላይ �
 outofspace="በቂ ምንጭ ስ ር አለ።"
 websoftwarewarning="ከዚህ ጥገና በኋላ የመሣሪያ ቅንብሮችን ለማስተዳደር Flatpak ያልሆነ Chromium-መሠረት ያለው ድር አሳሽ አሁንም ያስፈልጋል።"
 itbinput="ibus-typing-boosterን ለመጠቀም GNOME ውስጥ ባለው የስርዓት ቅንብሮች ውስጥ ወደ የግቤት ዘዴዎችዎ ያክሉት ወይም ibus-setup ይጠቀሙ።"
+hwincompat="የእርስዎ ሃርድዌር ከዚህ ባህሪ ጋር ተኳሃኝ አይደለም። ክዋኔው ተሰርዟል።"

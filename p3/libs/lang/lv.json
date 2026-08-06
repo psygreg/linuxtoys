@@ -508,5 +508,13 @@
   "accessibility_desc": "Pielāgojiet sistēmu savām vajadzībām neatkarīgi no tā, vai tās ir īpašas.",
   "od_desc": "Atvērtā pirmkoda fonts, kas izveidots, lai uzlabotu teksta lasāmību cilvēkiem ar disleksiju.",
   "itb_desc": "Ievades metode ar vārdu pabeigšanu, kas paātrina rakstīšanu un palīdz cilvēkiem ar pareizrakstības grūtībām.",
-  "atkinson_desc": "Fonts, kas izstrādāts, lai uzlabotu salasāmību cilvēkiem ar vāju redzi."
+  "atkinson_desc": "Fonts, kas izstrādāts, lai uzlabotu salasāmību cilvēkiem ar vāju redzi.",
+  "flattheme": "Iespējot Flatpak motīvus",
+  "flattheme_desc": "Iespējo Flatpak motīvu atbalstu GTK3 un GTK4 lietotnēm, ļaujot tām izmantot sistēmas motīvu un izskata iestatījumus.",
+  "theming": "Motīvi",
+  "theming_desc": "Rīki sistēmas un lietotņu izskata pielāgošanai pēc jūsu vēlmēm.",
+  "rewaita_desc": "Viegli mainiet GNOME čaulas, kā arī GTK4 un GTK3 lietotņu izskatu. Izvēlieties kādu no vairākām krāsu shēmām vai pat izveidojiet savu!",
+  "amdgpu_desc": "Instalējiet jaunākos AMD Radeon grafikas draiverus Ubuntu LTS un Red Hat Enterprise Linux sistēmās.",
+  "ubuntuv3": "Iespējot x86-64v3 pakotnes",
+  "ubuntuv3_desc": "Iestata Ubuntu dot priekšroku x86-64v3 procesoriem optimizētām pakotnēm, kas var sniegt nelielus veiktspējas uzlabojumus."
 }

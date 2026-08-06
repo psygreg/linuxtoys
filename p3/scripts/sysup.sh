@@ -11,8 +11,11 @@ _lang_
 
 needs_reboot() {
     if is_fedora || is_rhel; then
-        output=$({ [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo dnf needs-restarting -r 2>&1)
-        { echo "$output" | grep -q "Reboot should not be necessary" && return 1; } || return 0
+        if ! { [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo dnf needs-restarting -r 2>&1; then
+            return 1
+        else
+            return 0
+        fi
     elif is_debian || is_ubuntu; then
         [ -f /var/run/reboot-required ]
     elif is_arch || is_cachy; then
@@ -60,7 +63,7 @@ elif is_debian || is_ubuntu; then
     if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
         { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo apt-get autoremove -y || fatal "Failed to remove orphaned packages"
     fi
-    { [ "$UPD_SERVICE" = "1" ] && apt upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 Acquire::https::Dl-Limit=2048; } || sudo apt upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
+    { [ "$UPD_SERVICE" = "1" ] && apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048; } || sudo apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
             sudo do-release-upgrade || fatal "Failed to start Ubuntu release upgrade"
@@ -82,7 +85,7 @@ elif is_solus; then
     { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo eopkg rmo -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo eopkg up -y || fatal "Failed to upgrade packages"
 fi
-if which flatpak &> /dev/null; then
+if command -v flatpak >/dev/null 2>&1; then
     { [ "$UPD_SERVICE" = "1" ] && flatpak uninstall --system --unused --delete-data -y; } || flatpak uninstall --unused --delete-data -y || fatal "Failed to remove orphaned flatpak packages"
     { [ "$UPD_SERVICE" = "1" ] && flatpak update --system -y; } || flatpak update -y || fatal "Failed to upgrade flatpak packages"
 fi
