@@ -2,7 +2,7 @@
 # name: LazyDocker
 # version: 1.0
 # description: lazydocker_desc
-# icon: lazydocker.png
+# icon: lazydocker.svg
 # nocontainer
 
 # --- Start of the script code ---
