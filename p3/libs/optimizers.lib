@@ -342,9 +342,9 @@ nvidia_ctkpatch () {
     sudo rm "$ETC_OUTPUT"
     sudo nvidia-ctk cdi generate --output="$VAR_OUTPUT"
     sudo nvidia-ctk cdi generate --output="$ETC_OUTPUT"
-    if systemctl list-unit-files | grep -q nvidia-cdi; then
-        sysd_enable nvidia-cdi-refresh.path nvidia-cdi-refresh.service
-        sysd_start nvidia-cdi-refresh.path nvidia-cdi-refresh.service
+    if systemctl list-unit-files 'nvidia-cdi*' &>/dev/null; then
+        sysd_enable_soft nvidia-cdi-refresh.path nvidia-cdi-refresh.service
+        sysd_start_soft nvidia-cdi-refresh.path nvidia-cdi-refresh.service
     fi
     sudo chmod a+r "$VAR_OUTPUT"
     sudo chmod a+r "$ETC_OUTPUT"

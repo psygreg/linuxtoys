@@ -130,6 +130,9 @@ All the following functions parse the arguments that follow them and have error 
 - `sysd_disable_usr`: disables an user-level service for next boot.
 - `sysd_stop_usr`: stops an user-level service.
 
+- `sysd_enable_soft`: enables a system-level service without calling `fatal` when the unit does not exist (warns and continues).
+- `sysd_start_soft`: starts a system-level service without calling `fatal` when the unit does not exist (warns and continues).
+
 #### Boot-related Operations
 All the following functions have error handling calling `fatal`.
 

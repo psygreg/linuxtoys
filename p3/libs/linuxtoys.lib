@@ -924,6 +924,27 @@ sysd_stop_usr() {
         _append_transmap "sysd usermode stopped $svc"
     done
 }
+# non-fatal variants — the unit may not exist on some distros/packages
+sysd_enable_soft() {
+    for svc in "$@"; do
+        if systemctl list-unit-files "$svc" &>/dev/null; then
+            sudo systemctl enable "$svc" &>/dev/null || zenwrn "Failed to enable service $svc (continuing)"
+        else
+            zenwrn "Service $svc not found, skipping"
+        fi
+        _append_transmap "sysd enabled $svc"
+    done
+}
+sysd_start_soft() {
+    for svc in "$@"; do
+        if systemctl list-unit-files "$svc" &>/dev/null; then
+            sudo systemctl start "$svc" &>/dev/null || zenwrn "Failed to start service $svc (continuing)"
+        else
+            zenwrn "Service $svc not found, skipping"
+        fi
+        _append_transmap "sysd started $svc"
+    done
+}
 
 # shell change
 shell_change() {
