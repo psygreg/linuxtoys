@@ -13,7 +13,7 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 get_winboat () { # gets latest release
-    local tag=$(curl -s "https://api.github.com/repos/TibixDev/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+    local tag=$(curl -s "https://api.github.com/repos/winboat-org/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
     [ -z ${tag} ] && { fatal "It was not possible to obtain the latest available version of Winboat."; exit 1;}
     local ver="${tag#v}"
     if is_debian || is_ubuntu; then
@@ -24,7 +24,7 @@ get_winboat () { # gets latest release
                 exit 0
             fi
         fi
-        wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
+        wget "https://github.com/winboat-org/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
         pkg_fromfile "./winboat-$ver-amd64.deb"
     elif is_fedora || is_suse || is_rhel; then
         if rpm -qi "winboat" &> /dev/null; then
@@ -34,7 +34,7 @@ get_winboat () { # gets latest release
                 exit 0
             fi
         fi
-        wget "https://github.com/TibixDev/winboat/releases/download/$tag/winboat-$ver-x86_64.rpm"
+        wget "https://github.com/winboat-org/winboat/releases/download/$tag/winboat-$ver-x86_64.rpm"
         if is_ostree; then
             if rpm -qi "winboat" &> /dev/null; then
                 pkg_remove winboat
