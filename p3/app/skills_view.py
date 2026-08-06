@@ -260,6 +260,8 @@ class SkillsSeekerView(Gtk.Box):
 
         self.scrolled = Gtk.ScrolledWindow()
         self.scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        # Reserve space for the scrollbar instead of drawing it over the cards.
+        self.scrolled.set_overlay_scrolling(False)
         self.scrolled.set_margin_start(32)
         self.scrolled.set_margin_end(32)
         self.scrolled.set_margin_bottom(16)
@@ -324,6 +326,8 @@ class SkillsSeekerView(Gtk.Box):
 
         installed_scrolled = Gtk.ScrolledWindow()
         installed_scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        # Keep the scrollbar outside the FlowBox content allocation.
+        installed_scrolled.set_overlay_scrolling(False)
         installed_scrolled.set_margin_start(32)
         installed_scrolled.set_margin_end(32)
         installed_scrolled.set_margin_bottom(16)
