@@ -441,6 +441,11 @@ pkg_install () {
         sudo apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy; then
+        if ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then 
+            prep_edit /etc/pacman.conf
+            printf '\n[extra]\nInclude = /etc/pacman.d/mirrorlist\n' |
+                sudo tee -a /etc/pacman.conf >/dev/null
+        fi
         local _pacman_pkgs=()
         local _paru_pkgs=()
         for pak in "${pkg_notfound[@]}"; do
