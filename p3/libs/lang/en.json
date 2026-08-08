@@ -183,6 +183,7 @@
   "piper_desc": "A GTK application to configure gaming mice using libratbag. Commonly used for Logitech, Roccat, Asus and Glorious mice.",
   "glever_desc": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
   "docker_desc": "The Docker Engine container service provider and basic tools for it, like docker-compose.",
+  "lazydocker_desc": "LazyDocker is a terminal user interface for Docker that allows developers to manage containers, images, volumes, networks and logs from an interactive interface, without memorizing long Docker commands.",
   "mise_desc": "Like asdf (or nvm or pyenv but for any language) it manages dev tools like node, python, cmake, terraform, and hundreds more. Replaces PyEnv, NVM, and the Java JDK and Maven installers from this section.",
   "nvm_desc": "A version manager for Node.js, allowing you to easily switch between different versions. Includes Node.js, NPM and Yarn. Not needed if using Mise.",
   "pyenv_desc": "A Python version management tool. Not needed if using Mise.",
