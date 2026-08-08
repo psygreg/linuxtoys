@@ -516,5 +516,6 @@
   "rewaita_desc": "Athraigh cuma bhlaosc GNOME agus aipeanna GTK4 agus GTK3 gan stró. Tá roinnt scéimeanna dathanna ar fáil, agus is féidir leat do cheann féin a chruthú fiú!",
   "amdgpu_desc": "Suiteáil na tiománaithe grafaice AMD Radeon is déanaí ar Ubuntu LTS agus Red Hat Enterprise Linux.",
   "ubuntuv3": "Cumasaigh pacáistí x86-64v3",
-  "ubuntuv3_desc": "Cumraíonn sé Ubuntu chun tosaíocht a thabhairt do phacáistí optamaithe do phróiseálaithe x86-64v3, rud a d'fhéadfadh feabhsuithe beaga feidhmíochta a thabhairt."
+  "ubuntuv3_desc": "Cumraíonn sé Ubuntu chun tosaíocht a thabhairt do phacáistí optamaithe do phróiseálaithe x86-64v3, rud a d'fhéadfadh feabhsuithe beaga feidhmíochta a thabhairt.",
+  "lazydocker_desc": "TUI do Docker a ligeann d'fhorbróirí coimeádáin, íomhánna, imleabhair, líonraí agus logaí a bhainistiú ó chomhéadan idirghníomhach, gan orduithe fada Docker a chur de ghlanmheabhair."
 }
