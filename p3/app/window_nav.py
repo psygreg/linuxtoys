@@ -10,8 +10,8 @@ class NavCtl:
         """Handles category click, subcategory click, or root script click."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         info = widget.info
 
