@@ -208,8 +208,8 @@ class ItemWidgetFactory:
         """Handle remove button click on a script item."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         # Use a copy without auto_run so the term view waits for the removal flow
         script_copy = dict(item_info)

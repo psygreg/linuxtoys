@@ -269,8 +269,8 @@ class SearchCtl:
 
         # Handle regular scripts
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         # Use VTE-based term_view for execution
         self.open_term_view([item_info], removable_script_info=item_info, auto_run=True)

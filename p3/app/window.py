@@ -710,8 +710,8 @@ class AppWindow(
         """Run checked scripts sequentially."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         selected_scripts = [
             sh.script_info for sh in self.check_buttons if sh.get_active()
@@ -766,8 +766,8 @@ class AppWindow(
         """Handles script click by creating the dialog and starting the thread."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         info = widget.info
 
@@ -830,10 +830,19 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self.open_term_view([script_info], removable_script_info=script_info, auto_run=True)
 
     def _show_reboot_warning_dialog(self):
-        """Shows a dialog warning that a reboot is required before continuing."""
-        reboot_helper.handle_reboot_requirement(
+        """Shows a dialog warning that a reboot is required before continuing.
+
+        Returns:
+            bool: True if the action may proceed (user chose to continue
+                  without rebooting), False if it should remain blocked.
+        """
+        proceed = not reboot_helper.handle_reboot_requirement(
             self, self.translations, self._close_application
         )
+        if proceed:
+            # User opted to continue without rebooting; no longer block this session
+            self.reboot_required = False
+        return proceed
 
     def _show_cancel_script_warning_dialog(self):
         """
