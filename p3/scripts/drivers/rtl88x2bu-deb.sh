@@ -11,7 +11,12 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
-pkg_install bc git dkms module-assistant build-essential linux-headers-$(uname -r)
+NATIVE_ARCH="$(dpkg --print-architecture)"
+# Remove build-essential:i386 residual que conflita com a instalação amd64 (issue #1003)
+if [ "$NATIVE_ARCH" != "i386" ]; then
+    sudo apt-get remove -y "build-essential:i386" 2>/dev/null || true
+fi
+pkg_install bc git dkms module-assistant "build-essential:${NATIVE_ARCH}" "linux-headers-$(uname -r)"
 
 prep_tmp
 if command -v m-a &>/dev/null; then
