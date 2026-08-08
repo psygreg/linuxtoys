@@ -13,18 +13,24 @@ _lang_
 # so we avoid requesting elevation entirely (least privilege).
 
 lazydocker_in () {
-    command -v docker &>/dev/null || fatal "$lazydocker_nodocker"
-
+    local tempfile
+    command -v docker &>/dev/null || die "No docker installation found. Aborting."
     prep_tmp # the upstream installer downloads/extracts into cwd, so pin it to /tmp/linuxtoys
-
-    tmp=$(mktemp)
+    if [ ! -f "$HOME/.local/bin/lazydocker" ]; then
+        prep_create "$HOME/.local/bin/lazydocker"
+        rm -f "$HOME/.local/bin/lazydocker"
+    else
+        info "$notdomsg"
+    fi
+    
+    tempfile=$(mktemp)
     curl -fsSL \
         https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh \
-        -o "$tmp" \
-        || fatal "$lazydocker_downloadfail"
-    bash "$tmp" \
-        || fatal "$lazydocker_installfail"
-    rm -f "$tmp"
+        -o "$tempfile" \
+        || die "Failed to download installer"
+    bash "$tempfile" \
+        || die "Failed to install LazyDocker"
+    rm -f "$tempfile"
 
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ] && ! grep -q '\.local/bin' "$rc"; then
@@ -38,10 +44,8 @@ lazydocker_in () {
         echo 'set -gx PATH $HOME/.local/bin $PATH' >> "$fish_config"
     fi
     export PATH="$HOME/.local/bin:$PATH"
-
-    _append_transmap "lazydocker installed via official install script"
 }
 
 lazydocker_in
-zeninf "$lazydocker_done"
+info "$finishmsg"
 
