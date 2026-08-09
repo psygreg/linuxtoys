@@ -47,10 +47,16 @@ flatpak_in_lib() {
         sysd_start flatpak-system-helper.service
     fi
 
-    repair_flathub_remote --user \
-        || fatal "Failed to configure Flathub userlevel remote"
-    repair_flathub_remote --system \
-        || fatal "Failed to configure Flathub systemlevel remote"
+    # Prefer a user-level Flathub remote, but fall back to system-level.
+    if ! repair_flathub_remote --user; then
+        if ! repair_flathub_remote --system; then
+            fatal "Failed to configure Flathub remote"
+        fi
+    else
+        # Also configure the system remote when possible, but don't make
+        # its failure fatal since the user remote is already usable.
+        repair_flathub_remote --system || true
+    fi
 
     touch /tmp/linuxtoys_flatpak_done
     [ -n "$flatpak_path_pending" ] && touch /tmp/flatpak_path_pending
