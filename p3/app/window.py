@@ -319,11 +319,27 @@ class AppWindow(
         UpdateDialog(latest_ver, self).show()
         return False
 
+    def _is_menu_flowbox_focused(self):
+        """Return whether keyboard focus is on a menu FlowBox, not a child button."""
+        focused_widget = self.get_focus()
+        if isinstance(focused_widget, Gtk.Button):
+            return False
+
+        while focused_widget is not None:
+            if isinstance(focused_widget, Gtk.FlowBox):
+                return True
+            focused_widget = focused_widget.get_parent()
+        return False
+
     def _on_key_press(self, widget, event):
         keyval = event.keyval
 
         if self.main_stack.get_visible_child_name() == "running_scripts":
             return False
+
+        if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
+            if not self._is_menu_flowbox_focused():
+                return False
 
         if keyval == Gdk.KEY_Delete:
             selected_children = [
