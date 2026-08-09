@@ -27,6 +27,11 @@ class ItemWidgetFactory:
         if event.keyval not in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
             return False
 
+        # Let focused controls inside a card, such as the removal button,
+        # handle their own activation instead of running the selected item.
+        if self.get_focus() is not flowbox:
+            return False
+
         selected_children = flowbox.get_selected_children()
         if not selected_children:
             return False
