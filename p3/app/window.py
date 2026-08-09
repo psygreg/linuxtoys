@@ -171,6 +171,9 @@ class AppWindow(
         self.random_scripts_flowbox.set_max_children_per_line(5)
         self.random_scripts_flowbox.set_activate_on_single_click(False)
         self.random_scripts_flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+        self.random_scripts_flowbox.connect(
+            "key-press-event", self._on_flowbox_key_press
+        )
         self.random_scripts_flowbox.set_homogeneous(True)
         # No margins here since the container already has them
         self.random_scripts_flowbox.set_margin_left(0)
@@ -195,7 +198,7 @@ class AppWindow(
         self.main_stack.add_named(self.scripts_view, "scripts")
 
         # Create search results view
-        self.search_flowbox = self.create_flowbox()
+        self.search_flowbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.search_view = Gtk.ScrolledWindow()
         self.search_view.add(self.search_flowbox)
         self.main_stack.add_named(self.search_view, "search")
@@ -362,10 +365,11 @@ class AppWindow(
             current_view = self.main_stack.get_visible_child_name()
             flowbox_to_check = None
 
-            if current_view == "categories":
+            if current_view == "search":
+                if self._clear_search_result_selections():
+                    return True
+            elif current_view == "categories":
                 flowbox_to_check = self.categories_flowbox
-            elif current_view == "search":
-                flowbox_to_check = self.search_flowbox
             else:  # scripts view
                 flowbox_to_check = self.scripts_flowbox
 
@@ -402,30 +406,19 @@ class AppWindow(
                     # If nothing is checked, run only the currently selected item
                     selected_children = self.scripts_flowbox.get_selected_children()
                     if selected_children:
-                        # Simulate a click on the selected item
-                        sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-                        sim_event.button = 1
-                        selected_children[0].get_child().emit(
-                            "button-press-event", sim_event
-                        )
+                        self._activate_item(selected_children[0].get_child(), event)
                         return True
             else:
                 # Normal menu behavior: activate the selected item
-                screens = {
-                    "categories": self.categories_flowbox.get_selected_children(),
-                    "search": self.search_flowbox.get_selected_children(),
-                }
-
-                selected_widget = screens.get(
-                    self.main_stack.get_visible_child_name(),
-                    self.scripts_flowbox.get_selected_children(),
-                )
-
-                sim_event = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-                sim_event.button = 1
+                if self.main_stack.get_visible_child_name() == "search":
+                    selected_widget = self._get_selected_search_result_children()
+                elif self.main_stack.get_visible_child_name() == "categories":
+                    selected_widget = self.categories_flowbox.get_selected_children()
+                else:
+                    selected_widget = self.scripts_flowbox.get_selected_children()
 
                 if selected_widget:
-                    selected_widget[0].get_child().emit("button-press-event", sim_event)
+                    self._activate_item(selected_widget[0].get_child(), event)
                 return True
 
         # Quick search: if typing letters without modifiers, focus search entry and type there

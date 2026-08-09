@@ -152,9 +152,34 @@ class SearchCtl:
         self.search_results = self.search_engine.search(query)
         self._display_search_results()
 
+    def _get_selected_search_result_children(self):
+        """Return selected children from the nested search-result FlowBoxes."""
+        return [
+            child
+            for flowbox in self._search_result_flowboxes
+            for child in flowbox.get_selected_children()
+        ]
+
+    def _clear_search_result_selections(self):
+        """Clear selected search results and report whether anything changed."""
+        selected_children = self._get_selected_search_result_children()
+        for flowbox in self._search_result_flowboxes:
+            flowbox.unselect_all()
+        return bool(selected_children)
+
+    def _on_search_result_selection_changed(self, selected_flowbox):
+        """Ensure only the active category group keeps a visible selection."""
+        if not selected_flowbox.get_selected_children():
+            return
+
+        for flowbox in self._search_result_flowboxes:
+            if flowbox is not selected_flowbox:
+                flowbox.unselect_all()
+
     def _display_search_results(self):
         """Display search results in the search view, grouped by category."""
         self.search_active = True
+        self._search_result_flowboxes = []
 
         # Clear existing search results completely
         for child in self.search_flowbox.get_children():
@@ -199,12 +224,17 @@ class SearchCtl:
             columns = self._calculate_search_results_columns(len(scripts))
             category_flowbox.set_max_children_per_line(columns)
             category_flowbox.set_activate_on_single_click(False)
-            category_flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
+            category_flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+            category_flowbox.connect("key-press-event", self._on_flowbox_key_press)
+            category_flowbox.connect(
+                "selected-children-changed",
+                self._on_search_result_selection_changed,
+            )
             category_flowbox.set_homogeneous(True)
-            category_flowbox.set_margin_left(0)
-            category_flowbox.set_margin_right(0)
-            category_flowbox.set_margin_top(0)
-            category_flowbox.set_margin_bottom(0)
+            category_flowbox.set_margin_left(32)
+            category_flowbox.set_margin_right(32)
+            category_flowbox.set_margin_top(8)
+            category_flowbox.set_margin_bottom(4)
             category_flowbox.set_column_spacing(16)
             category_flowbox.set_row_spacing(12)
             
@@ -219,6 +249,7 @@ class SearchCtl:
                     widget.set_tooltip_text(None)
                 category_flowbox.add(widget)
             
+            self._search_result_flowboxes.append(category_flowbox)
             results_container.pack_start(category_flowbox, False, False, 0)
 
         # Add the container to the search flowbox
