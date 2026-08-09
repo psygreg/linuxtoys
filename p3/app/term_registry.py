@@ -1,9 +1,16 @@
 import re
 import shutil
+import sys
 import os
 
-from .revert_helper import build_auto_revert_script_entry
-from .action_registry import parse_registry_file
+if __package__:
+    from .revert_helper import build_auto_revert_script_entry
+    from .registry_utils import parse_registry_file
+else:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+    from registry_utils import parse_registry_file
+    build_auto_revert_script_entry = None
 
 class ExecutionRegistry:
     @staticmethod
@@ -127,6 +134,23 @@ class ExecutionRegistry:
             pass  # Silently ignore registry errors
 
     @staticmethod
+    def save_called_script_transaction(script_name, transmap_path):
+        if not script_name or not transmap_path:
+            return False
+
+        if not os.path.isfile(transmap_path):
+            return False
+
+        try:
+            ExecutionRegistry._save_to_registry(
+                script_name,
+                transmap_path,
+            )
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
     def _get_last_registry_execution(script_name) -> str:
         if not script_name:
             return ""
@@ -188,3 +212,15 @@ class ExecutionRegistry:
             )
         except Exception:
             return None
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) == 4 and sys.argv[1] == "save":
+        success = ExecutionRegistry.save_called_script_transaction(
+            sys.argv[2],
+            sys.argv[3],
+        )
+        sys.exit(0 if success else 1)
+
+    sys.exit(2)

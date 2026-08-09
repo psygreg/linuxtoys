@@ -552,7 +552,13 @@ pkg_flat() {
     # Extract base package names (remove version/architecture specifications)
     local -a _flatpak_basenames=()
     for arg in "${_flatpak_args[@]}"; do
-        _flatpak_basenames+=("${arg%%/*}")
+        local basename="${arg%%/*}"
+        _flatpak_basenames+=("$basename")
+
+        # Only mark applications that weren't already installed
+        if ! flatpak info "$flatpak_scope" "$arg" &>/dev/null; then
+            _flatpak_new+=("$arg")
+        fi
     done
 
     if [ "$flatpak_scope" = "--user" ]; then
@@ -566,7 +572,9 @@ pkg_flat() {
             flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
         done
     fi
-    _append_transmap "flatpak ${_flatpak_args[*]}"
+    if [[ ${#_flatpak_new[@]} -gt 0 ]]; then
+        _append_transmap "flatpak ${_flatpak_new[*]}"
+    fi
 }
 pkg_fromfile () {
     # Handle --ostreecheck flag
@@ -681,12 +689,24 @@ pkg_appimage () {
     
     if is_systemd; then
         # Use Gear Lever for systemd systems
-        pkg_flat it.mijorus.gearlever
+        call_script gearlever
         local output
-        output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
+        output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1) || {
+            echo "$output"
+            fatal "Failed to integrate AppImage."
+        }
         local appimage_name
-        appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
-        _append_transmap "appimage $appimage_name"
+        appimage_name=$(
+            find "$HOME/AppImages" -maxdepth 1 -type f -printf '%T@ %f\n' 2>/dev/null |
+                sort -nr |
+                head -n1 |
+                cut -d' ' -f2-
+        )
+        if [[ -n "$appimage_name" ]]; then
+            _append_transmap "appimage $appimage_name"
+        else
+            nonfatal "Could not determine integrated AppImage filename."
+        fi
     else
         # Manual integration for non-systemd systems
         for appimage_file in "$@"; do
@@ -978,22 +998,68 @@ swapfile_created () {
 # script calling -- used for scripts to call other scripts from the app.
 call_script () {
     local script_name="$1"
-    [[ -z "$script_name" ]] && fatal "call_script: script name not provided"
-    [[ -z "$CACHE_DIR" ]] && fatal "call_script: CACHE_DIR environment variable not set"
+    [[ -z "$script_name" ]] && die "call_script: script name not provided"
+    [[ -z "$CACHE_DIR" ]] && die "call_script: CACHE_DIR environment variable not set"
+
     script_name="${script_name%.sh}"
     local script_file="${script_name}.sh"
-    [[ ! -d "$CACHE_DIR" ]] && fatal "call_script: Scripts directory not found at $CACHE_DIR"
 
     local found_script
-    found_script=$(find "$CACHE_DIR" -maxdepth 3 -type f -name "$script_file" 2>/dev/null | head -1)
-    if [[ -n "$found_script" && -f "$found_script" ]]; then
-        shift  # Remove script_name to pass remaining arguments
-        (
-            export CALLED_SCRIPT="1"
-            bash "$found_script" "$@"
-        )
-        return $?
+    found_script=$(find "$CACHE_DIR" -maxdepth 3 -type f \
+        -name "$script_file" 2>/dev/null | head -n1)
+
+    [[ -n "$found_script" && -f "$found_script" ]] ||
+        die "call_script: Script '$script_name' not found in $CACHE_DIR"
+
+    shift
+    # Get the script's registry/display name.
+    local script_display_name
+    script_display_name=$(
+        sed -n 's/^# name:[[:space:]]*//p' "$found_script" |
+        head -n1
+    )
+    [[ -n "$script_display_name" ]] ||
+        script_display_name="$script_name"
+
+    # Keep track of the caller's transaction.
+    local parent_transmap="$TRANSMAP_PATH"
+
+    # Create an independent transaction for the called script.
+    local child_transmap
+    child_transmap=$(mktemp "/tmp/linuxtoys-called-XXXXXX.transmap") ||
+        die "call_script: Failed to create child transmap"
+
+    (
+        export CALLED_SCRIPT=1
+        export TRANSMAP_PATH="$child_transmap"
+
+        bash "$found_script" "$@"
+    )
+    local status=$?
+
+    if [[ $status -eq 0 ]]; then
+        # Commit the called script's transaction independently.
+        if [[ -s "$child_transmap" ]]; then
+            python3 "$SCRIPT_DIR/app/term_registry.py" \
+                save "$script_display_name" "$child_transmap" ||
+                die "Failed to save transaction for $script_display_name"
+        fi
+
+        rm -f "$child_transmap"
+        return 0
     fi
-    
-    fatal "call_script: Script '$script_name' not found in $CACHE_DIR"
+
+    # Failed child: merge its changes into the caller's transaction,
+    # allowing the normal top-level auto-revert to undo them.
+    if [[ -s "$child_transmap" ]]; then
+        if [[ -n "$parent_transmap" ]]; then
+            cat "$child_transmap" >> "$parent_transmap"
+        else
+            init_transmap
+            cat "$child_transmap" >> "$TRANSMAP_PATH"
+        fi
+    fi
+
+    rm -f "$child_transmap"
+    return "$status"
 }
