@@ -86,8 +86,8 @@ elif is_solus; then
     { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo eopkg up -y || fatal "Failed to upgrade packages"
 fi
 if command -v flatpak >/dev/null 2>&1; then
-    { [ "$UPD_SERVICE" = "1" ] && flatpak uninstall --system --unused --delete-data -y; } || flatpak uninstall --unused --delete-data -y || fatal "Failed to remove orphaned flatpak packages"
-    { [ "$UPD_SERVICE" = "1" ] && flatpak update --system -y; } || flatpak update -y || fatal "Failed to upgrade flatpak packages"
+    { [ "$UPD_SERVICE" = "1" ] && flatpak uninstall --system --unused --delete-data -y; } || flatpak uninstall --unused --delete-data -y || warn "Failed to remove orphaned flatpak packages"
+    { [ "$UPD_SERVICE" = "1" ] && flatpak update --system -y; } || flatpak update -y || warn "Failed to upgrade flatpak packages"
 fi
 if needs_reboot; then
     if [ "$UPD_SERVICE" = "1" ]; then
