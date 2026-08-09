@@ -43,7 +43,7 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         prep_tmp_noram
         git clone https://github.com/casualsnek/waydroid_script
         cd waydroid_script
-        pip_lib
+        call_script pip
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
         # Patch SyntaxWarning: invalid escape sequences in regex patterns
