@@ -142,7 +142,7 @@ All the following functions have error handling calling `fatal`.
 - `shell_change`: changes the user's default shell. Should only be called for shell installations, as it is presumed the user wishes to utilize their new shell of choice.
 - `distrobox_created`: registers a distrobox name and its creation event to the transaction map.
 - `rclone_mount`: creates a `rclone` mountpoint from a remote to a target through its daemon, registering this to the transaction map.
-- `call_script`: runs another script from LinuxToys, specified by its filename without `.sh`. Useful if a resource may depend on a feature offered by another script.
+- `call_script`: runs another script from LinuxToys, specified by its filename without `.sh`. Useful if a resource may depend on a feature offered by another script. The transactions from the child script are tracked separately, as is its removal.
 
 ### `helpers.lib`
 Used to call instalations of repositories and auxiliary features that are not called by default and may have other features depending on those.
