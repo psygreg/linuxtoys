@@ -33,24 +33,6 @@ class DialogBase(Gtk.MessageDialog):
         raise NotImplementedError("Response Not Implemented")
 
 
-class DialogRestart(DialogBase):
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            "Update complete!",
-            "<b>Restart the app to access the newest features and improvements.</b>",
-            [("Restart", Gtk.ResponseType.OK), ("Cancel", Gtk.ResponseType.CANCEL)],
-            Gtk.MessageType.OTHER,
-        )
-
-    def _on_response(self, dialog, response_id):
-        if response_id == Gtk.ResponseType.OK:
-            self.destroy()
-            os.execv(sys.executable, [sys.executable, *sys.argv])
-        elif response_id == Gtk.ResponseType.CANCEL:
-            self.destroy()
-
-
 class DialogError(DialogBase):
     def __init__(self, parent, error_message):
         super().__init__(
