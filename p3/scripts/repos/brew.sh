@@ -9,6 +9,6 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-sudo_rq
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
-zeninf "$msg018"
+askpass
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+info "$finishmsg"

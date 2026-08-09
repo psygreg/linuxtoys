@@ -8,7 +8,7 @@
 
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-sudo_rq
+askpass
 if is_debian || is_ubuntu; then
     pkg_install apt-transport-https gpg
     wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null
