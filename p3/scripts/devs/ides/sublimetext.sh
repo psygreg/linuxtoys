@@ -8,7 +8,8 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-sudo_rq
+askpass
+prep_tmp
 # Instalação para Debian e Ubuntu
 if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
