@@ -46,6 +46,14 @@ class ItemWidgetFactory:
 
         self._activate_item(selected_children[0].get_child(), event)
         return True
+
+    def _on_item_remove_focus_in(self, button, event, event_box):
+        """Keep the selected card aligned with its focused removal button."""
+        flowbox_child = event_box.get_parent()
+        flowbox = flowbox_child.get_parent()
+        if isinstance(flowbox, Gtk.FlowBox):
+            flowbox.select_child(flowbox_child)
+        return False
     
     def create_item_widget(self, item_info, checklist: bool = False, allow_drag: bool = False,):
         import os
@@ -70,7 +78,7 @@ class ItemWidgetFactory:
                 )
             )
             remove_btn.set_relief(Gtk.ReliefStyle.NONE)
-            remove_btn.set_can_focus(False)
+            remove_btn.set_can_focus(True)
             remove_btn.get_style_context().add_class("destructive-action")
             remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
             box.pack_start(remove_btn, False, False, 0)
@@ -173,6 +181,11 @@ class ItemWidgetFactory:
         # Store reference to checkbox for easy access in keyboard handlers
         if checklist:
             event_box.checkbox = check
+
+        if is_removable_script:
+            remove_btn.connect(
+                "focus-in-event", self._on_item_remove_focus_in, event_box
+            )
 
         # Enable mouse events for hover effects and right-click
         event_box.set_events(
