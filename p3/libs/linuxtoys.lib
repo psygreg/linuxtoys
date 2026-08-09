@@ -537,9 +537,7 @@ pkg_flat() {
         fi
     done
     if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
-        summon_helpers
-        sudo_rq
-        flatpak_in_lib
+        call_script flathub
     fi
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then

@@ -49,13 +49,12 @@ flatpak_in_lib() {
 
     # Prefer a user-level Flathub remote, but fall back to system-level.
     if ! repair_flathub_remote --user; then
+        warn "Failed to configure Flathub userlevel remote"
         if ! repair_flathub_remote --system; then
-            fatal "Failed to configure Flathub remote"
+            die "Failed to configure Flathub remotes"
         fi
     else
-        # Also configure the system remote when possible, but don't make
-        # its failure fatal since the user remote is already usable.
-        repair_flathub_remote --system || true
+        repair_flathub_remote --system || die "Failed to configure Flathub systemlevel remote"
     fi
 
     touch /tmp/linuxtoys_flatpak_done
