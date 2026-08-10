@@ -2,7 +2,7 @@
 # name: autosysup
 # description: autosysup_desc
 # icon: linuxtoys.svg
-# compat: ubuntu, debian, fedora, solus, rhel
+# compat: ubuntu, debian, fedora, solus, rhel, manjaro
 # systemd: yes
 # nocontainer
 # new

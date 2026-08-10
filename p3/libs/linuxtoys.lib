@@ -255,6 +255,7 @@ is_solus() { sysdetect_once && [[ "$ID" == "solus" ]]; }
 is_zorin() { sysdetect_once && [[ "$ID" == "zorin" ]]; }
 is_rhel() { sysdetect_once && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && [ ! -f /run/ostree-booted ] && [[ "$ID" != "nobara" ]]; }
 is_deepin() { sysdetect_once && [[ "$ID" == "deepin" ]]; }
+is_manjaro() { sysdetect_once && [[ "$ID" == "manjaro" || "$ID_LIKE" =~ "manjaro" ]]; }
 is_systemd() { [[ $(ps -p 1 -o comm= || readlink /sbin/init) =~ "systemd" ]] }
 
 # GPU detection
@@ -419,7 +420,7 @@ pkg_exists () {
             else
                 pkg_notfound+=("$pak")
             fi
-        elif is_arch || is_cachy; then
+        elif is_arch || is_cachy || is_manjaro; then
             if pacman -Qi "$pak" &>/dev/null; then
                 pkg_found+=("$pak")
             else
@@ -461,11 +462,13 @@ pkg_install () {
     if is_debian || is_ubuntu; then
         sudo apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
-    elif is_arch || is_cachy; then
-        if ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then 
-            prep_edit /etc/pacman.conf
-            printf '\n[extra]\nInclude = /etc/pacman.d/mirrorlist\n' |
-                sudo tee -a /etc/pacman.conf >/dev/null
+    elif is_arch || is_cachy || is_manjaro; then
+        if ! is_manjaro; then
+            if ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then 
+                prep_edit /etc/pacman.conf
+                printf '\n[extra]\nInclude = /etc/pacman.d/mirrorlist\n' |
+                    sudo tee -a /etc/pacman.conf >/dev/null
+            fi
         fi
         local _pacman_pkgs=()
         local _paru_pkgs=()
@@ -481,30 +484,39 @@ pkg_install () {
         local to_install_paru="${_paru_pkgs[*]}"
         # check for lock before installing
         if [ -n "$to_install_pacman" ]; then
-            pacman_lock_guard
-            sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
-            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
+            if is_manjaro; then
+                pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
+            else
+                pacman_lock_guard
+                sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
+            fi
         fi
         if [ -n "$to_install_paru" ]; then
-            if zenask "Installer" "$msg305" 300 300; then
+            if is_manjaro; then
+                pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+            else
                 if ! command -v paru &>/dev/null; then
-                    if pacman -Si paru &>/dev/null; then
-                        sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
-                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                    if question "Installer" "$msg305" 300 300; then
+                        if pacman -Si paru &>/dev/null; then
+                            sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
+                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                        else
+                            sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
+                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg base-devel"
+                            prep_tmp
+                            git clone https://aur.archlinux.org/paru.git
+                            cd paru || fatal "Failed to install paru"
+                            makepkg -si
+                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                        fi
                     else
-                        sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
-                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg base-devel"
-                        prep_tmp
-                        git clone https://aur.archlinux.org/paru.git
-                        cd paru || fatal "Failed to install paru"
-                        makepkg -si
-                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                        die "User cancelled installation of paru"
                     fi
                 fi
-                paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || fatal "Failed to install $to_install_paru"
+                paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
-            else
-                return 1
             fi
         fi
     elif is_ostree; then
@@ -614,7 +626,7 @@ pkg_fromfile () {
     if is_debian || is_ubuntu; then
         { sudo apt-get -o APT::Sandbox::User=root install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
-    elif is_arch || is_cachy; then
+    elif { is_arch || is_cachy; } && ! is_manjaro; then
         # check for lock before installing local package
         pacman_lock_guard
         if sudo pacman -U "${@}"; then
@@ -628,6 +640,8 @@ pkg_fromfile () {
                 fatal "Failed to install package $*"
             fi
         fi
+    elif is_manjaro; then
+        { pamac install --no-confirm "./${@}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
     elif is_ostree; then
         sudo rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
@@ -655,10 +669,12 @@ pkg_remove () {
     
     if is_debian || is_ubuntu; then
         sudo apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
-    elif is_arch || is_cachy; then
+    elif { is_arch || is_cachy; } && ! is_manjaro; then
         # check for lock before removing (stale lock otherwise aborts pacman -Rsn)
         pacman_lock_guard
         sudo pacman -Rsn --noconfirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_manjaro; then
+        pamac remove --no-confirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then
         sudo rpm-ostree uninstall "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif is_fedora || is_rhel ; then
