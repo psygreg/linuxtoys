@@ -145,7 +145,8 @@ def is_supported_system():
         "zorin",
         "solus",
         "pika",
-        "deepin"
+        "deepin",
+        "manjaro"
     }
 
     # Check if any OS compatibility key matches
