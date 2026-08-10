@@ -198,7 +198,7 @@ installer() {
 		fedora|rhel|centos|rocky|almalinux) osrpm ;;
 		suse|opensuse) ossuse ;;
 		manjaro) manjaro;;
-		arch|cachyos) osarch ;;
+		arch|cachyos|artix) osarch ;;
 		solus) ossolus ;;
 	esac
 
