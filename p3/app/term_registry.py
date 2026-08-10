@@ -103,9 +103,6 @@ class ExecutionRegistry:
             # Create directory if it doesn't exist
             os.makedirs(registry_dir, exist_ok=True)
             
-            # Remove old entries for this script to keep only the latest run
-            ExecutionRegistry._remove_old_script_entries_from_registry(script_name)
-            
             # Read transmap contents
             transmap_contents = ""
             if os.path.exists(transmap_path):
@@ -114,6 +111,13 @@ class ExecutionRegistry:
                         transmap_contents = f.read().strip()
                 except (IOError, OSError):
                     pass
+
+            # Preserve the latest useful run if this execution made no changes.
+            if not transmap_contents:
+                return
+
+            # Keep only the latest execution that performed operations.
+            ExecutionRegistry._remove_old_script_entries_from_registry(script_name)
             
             # Format entry with timestamp
             timestamp = datetime.datetime.now().isoformat()
