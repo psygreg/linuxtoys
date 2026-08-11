@@ -11,44 +11,28 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 install_nobox () {
     ls /opt/resolve &>/dev/null || fatal "DaVinci Resolve is not currently installed in this computer."
-    # Install build dependencies
-    if is_fedora || is_ostree || is_rhel; then
-        if rpmfusion_chk; then
-            pkg_install cmake gcc-c++ ffmpeg-devel git make
-            if is_intel; then
-                pkg_install intel-media-driver intel-vpl-gpu-rt
-            fi
+    prep_tmp_noram
+    wget https://github.com/EdvinNilsson/ffmpeg_encoder_plugin/releases/latest/download/ffmpeg_encoder_plugin.dvcp.bundle.zip || fatal "Failed to download plugin bundle."
+    prep_create /opt/resolve/IOPlugins/
+    unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle."
+    if is_fedora || is_rhel; then
+        rpmfusion_chk
+        sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y || fatal "Failed to swap ffmpeg packages."
+        if is_intel; then
+            pkg_install intel-media-driver intel-vpl-gpu-rt -y || fatal "Failed to install Intel media drivers."
         fi
     elif is_ubuntu || is_debian; then
-        pkg_install build-essential cmake libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev libavfilter-dev libswresample-dev libpostproc-dev make
+        pkg_install ffmpeg
         if is_intel; then
-            pkg_install intel-media-driver
+            { is_debian && enable_debian_nonfree; } || true
+            pkg_install intel-media-va-driver-non-free libmfx-gen1.2
         fi
-    elif is_arch || is_cachy; then
-        pkg_install cmake ffmpeg git make base-devel
+    elif is_arch || is_cachy || is_manjaro; then
+        pkg_install ffmpeg davinci-ffmpeg-encoder-plugin
         if is_intel; then
             pkg_install intel-media-driver vpl-gpu-rt
         fi
     fi
-
-    # Clone and build
-    prep_tmp_noram
-    if [ -d "ffmpeg_encoder_plugin" ]; then
-        rm -rf ffmpeg_encoder_plugin
-    fi
-    git clone https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
-    cd ffmpeg_encoder_plugin
-    mkdir build
-    cd build
-    cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-    make
-
-    # Install
-    # Directory structure for Linux-x86-64
-    prep_dir "/opt/resolve/IOPlugins/ffmpeg_encoder_plugin.dvcp.bundle/Contents/Linux-x86-64"
-    PLUGIN_DIR="/opt/resolve/IOPlugins/ffmpeg_encoder_plugin.dvcp.bundle/Contents/Linux-x86-64"
-    sudo_rq
-    copy_ ffmpeg_encoder_plugin.dvcp "$PLUGIN_DIR/"
 }
 install_dvbox() {
     distrobox enter davincibox -- ls /opt/resolve &>/dev/null || fatal "DaVinci Resolve is not currently installed in this computer."
