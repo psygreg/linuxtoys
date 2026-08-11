@@ -8,7 +8,11 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-pkg_install avahi
+if is_ubuntu || is_debian; then
+    pkg_install avahi-daemon
+else
+    pkg_install avahi
+fi
 if is_fedora || is_ostree; then
     pkg_install wivrn
 elif is_arch || is_cachy; then
