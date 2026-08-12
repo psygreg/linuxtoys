@@ -3,7 +3,7 @@
 # version: 4
 # description: sublime_desc
 # icon: sublime.png
-# compat: !solus
+# compat: !solus, !arch, !cachy
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -37,7 +37,7 @@ elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
 elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
     curl -O https://download.sublimetext.com/sublimehq-pub.gpg && sudo pacman-key --add sublimehq-pub.gpg && sudo pacman-key --lsign-key 8A8F901A && rm sublimehq-pub.gpg
     echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | sudo tee -a /etc/pacman.conf
-    sudo pacman -Syu
+    sudo pacman -Sy
     pkg_install sublime-text
 elif [ "$ID" == "suse" ] || [ "$ID" == "opensuse" ] || [[ "$ID_LIKE" =~ "suse" ]]; then
     sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
