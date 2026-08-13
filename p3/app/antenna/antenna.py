@@ -1,4 +1,3 @@
-import re
 import sys
 import time
 import traceback
@@ -10,6 +9,7 @@ from pathlib import Path
 import base64
 import hashlib
 import hmac
+import unicodedata
 from ..updater import __version__
  
 _REPORT_URL = "https://bug.linux.toys"
@@ -275,7 +275,14 @@ log_capture = LogCapture()
 _antenna_initialized = False
  
 # --- Token management ---
-_NON_PRINTABLE = re.compile(r"[^\x20-\x7E\n\r\t]")
+def _strip_control_characters(value: str) -> str:
+    """Preserve Unicode text while removing non-printing control characters."""
+    return "".join(
+        char for char in unicodedata.normalize("NFC", value)
+        if char in "\n\r\t" or unicodedata.category(char) not in {"Cc", "Cs"}
+    )
+
+
 _jwt_token: str | None = None
 _jwt_expires_at: float = 0
 _app_token: str | None = None
@@ -565,10 +572,10 @@ def submit_issue(title: str, logs: str = "", context: str = "", is_footer_trigge
         if registry_content:
             logs = logs + "\n" + registry_content
     
-    # Strip non-printable characters client-side before sending
-    logs    = _NON_PRINTABLE.sub("", logs)
-    title   = _NON_PRINTABLE.sub("", title).strip()
-    context = _NON_PRINTABLE.sub("", context).strip()
+    # Preserve user language characters while dropping terminal control sequences.
+    logs    = _strip_control_characters(logs)
+    title   = _strip_control_characters(title).strip()
+    context = _strip_control_characters(context).strip()
  
     try:
         resp = requests.post(

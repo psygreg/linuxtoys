@@ -2,9 +2,8 @@ import sys
 import os
 
 from . import dev_mode, reboot_helper
-from .gtk_common import GLib, Gtk, Vte, get_toplevel_window
+from .gtk_common import GLib, Gtk, Vte
 from .term_registry import ExecutionRegistry
-from .updater.update_dialog import DialogRestart
 from .antenna import antenna
 
 class TerminalRunner:
@@ -116,11 +115,6 @@ class TerminalRunner:
             except Exception:
                 pass
             self._cleanup_script_path = None
- 
-        if self._self_update:
-            toplevel = get_toplevel_window(self)
-            if toplevel is not None:
-                DialogRestart(parent=toplevel).show()
  
         # Handle transmap file based on exit status
         transmap_path = getattr(self, "_transmap_path", "")

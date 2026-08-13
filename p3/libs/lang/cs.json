@@ -516,5 +516,6 @@
   "rewaita_desc": "Snadno změňte vzhled prostředí GNOME Shell a aplikací GTK4 i GTK3. Můžete si vybrat z několika barevných schémat, nebo si dokonce vytvořit vlastní!",
   "amdgpu_desc": "Nainstalujte nejnovější grafické ovladače AMD Radeon v Ubuntu LTS a Red Hat Enterprise Linux.",
   "ubuntuv3": "Povolit balíčky x86-64v3",
-  "ubuntuv3_desc": "Nastaví Ubuntu tak, aby upřednostňoval optimalizované balíčky pro procesory x86-64v3, což může přinést malé zlepšení výkonu."
+  "ubuntuv3_desc": "Nastaví Ubuntu tak, aby upřednostňoval optimalizované balíčky pro procesory x86-64v3, což může přinést malé zlepšení výkonu.",
+  "lazydocker_desc": "TUI pro Docker, které vývojářům umožňuje spravovat kontejnery, obrazy, svazky, sítě a protokoly z interaktivního rozhraní bez nutnosti pamatovat si dlouhé příkazy Dockeru."
 }

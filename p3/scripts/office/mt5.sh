@@ -28,7 +28,7 @@ if distrobox create --name metatrader5 --image docker.io/library/ubuntu:24.04; t
 [Desktop Entry]
 Name=MetaTrader 5 (distrobox)
 Comment=MetaTrader 5 Trading Terminal (running in distrobox container)
-Exec=$(command -v distrobox-enter) -n metatrader -- bash -c 'WINEPREFIX="$HOME/.mt5" wine "$HOME/.mt5/drive_c/Program Files/MetaTrader 5/terminal64.exe"'
+Exec=$(command -v distrobox-enter) -n metatrader5 -- bash -c 'WINEPREFIX="$HOME/.mt5" wine "$HOME/.mt5/drive_c/Program Files/MetaTrader 5/terminal64.exe"'
 Icon=$HOME/.mt5/drive_c/Program Files/MetaTrader 5/mt5.png
 Terminal=false
 Type=Application

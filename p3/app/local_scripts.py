@@ -508,5 +508,5 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             self._enable_drag_and_drop()
         else:
             flowbox.unselect_all()
-            flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+            flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
             self._disable_drag_and_drop()

@@ -10,8 +10,8 @@ class ItemWidgetFactory:
         flowbox.set_max_children_per_line(5)
         flowbox.set_activate_on_single_click(False)
 
-        # Selection is enabled dynamically only for Local Scripts.
-        flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        flowbox.connect("key-press-event", self._on_flowbox_key_press)
 
         flowbox.set_homogeneous(True)
         flowbox.set_margin_left(32)
@@ -21,6 +21,44 @@ class ItemWidgetFactory:
         flowbox.set_column_spacing(16)
         flowbox.set_row_spacing(12)
         return flowbox
+
+    def _on_flowbox_key_press(self, flowbox, event):
+        """Activate the selected item when Enter is pressed in a FlowBox."""
+        if event.keyval not in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
+            return False
+
+        # Let focused controls inside a card, such as the removal button,
+        # handle their own activation instead of running the selected item.
+        if self.get_focus() is not flowbox:
+            return False
+
+        selected_children = flowbox.get_selected_children()
+        if not selected_children:
+            return False
+
+        if (
+            self.current_category_info
+            and self.current_category_info.get("display_mode", "menu") == "checklist"
+        ):
+            checked_scripts = [
+                check.script_info
+                for check in self.check_buttons
+                if check.get_active()
+            ]
+            if checked_scripts:
+                self.on_install_checklist(None)
+                return True
+
+        self._activate_item(selected_children[0].get_child(), event)
+        return True
+
+    def _on_item_remove_focus_in(self, button, event, event_box):
+        """Keep the selected card aligned with its focused removal button."""
+        flowbox_child = event_box.get_parent()
+        flowbox = flowbox_child.get_parent()
+        if isinstance(flowbox, Gtk.FlowBox):
+            flowbox.select_child(flowbox_child)
+        return False
     
     def create_item_widget(self, item_info, checklist: bool = False, allow_drag: bool = False,):
         import os
@@ -45,7 +83,7 @@ class ItemWidgetFactory:
                 )
             )
             remove_btn.set_relief(Gtk.ReliefStyle.NONE)
-            remove_btn.set_can_focus(False)
+            remove_btn.set_can_focus(True)
             remove_btn.get_style_context().add_class("destructive-action")
             remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
             box.pack_start(remove_btn, False, False, 0)
@@ -149,6 +187,11 @@ class ItemWidgetFactory:
         if checklist:
             event_box.checkbox = check
 
+        if is_removable_script:
+            remove_btn.connect(
+                "focus-in-event", self._on_item_remove_focus_in, event_box
+            )
+
         # Enable mouse events for hover effects and right-click
         event_box.set_events(
             event_box.get_events()
@@ -208,8 +251,8 @@ class ItemWidgetFactory:
         """Handle remove button click on a script item."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         # Use a copy without auto_run so the term view waits for the removal flow
         script_copy = dict(item_info)
@@ -261,17 +304,7 @@ class ItemWidgetFactory:
                 if event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
                     self._edit_local_script(widget.info)
                 return False
-            # If this is a search result, use script click handler
-            if self.search_active:
-                self.on_script_clicked(widget, event)
-                return True
-
-            # If this is a subcategory or category, use category click handler
-            if info.get("is_subcategory", False) or (not info.get("is_script", False)):
-                self.on_category_clicked(widget, event)
-            else:
-                # This is a script, use script click handler
-                self.on_script_clicked(widget, event)
+            self._activate_item(widget, event)
             return True
 
         elif event.button == 3:  # Right click
@@ -279,6 +312,14 @@ class ItemWidgetFactory:
             return True
 
         return False
+
+    def _activate_item(self, widget, event):
+        """Route keyboard and pointer activation through the same handlers."""
+        info = widget.info
+        if self.search_active or info.get("is_script", False):
+            self.on_script_clicked(widget, event)
+        else:
+            self.on_category_clicked(widget, event)
 
     def _show_context_menu(self, widget, event):
         """Show context menu for right-click on items."""

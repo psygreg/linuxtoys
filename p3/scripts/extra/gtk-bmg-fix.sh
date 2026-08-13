@@ -11,6 +11,6 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
-sudo_rq
+askpass
 fix_intel_gtk
-zeninf "$msg036"
+info "$rebootmsg"

@@ -516,5 +516,6 @@
   "rewaita_desc": "Baguhin nang walang abala ang hitsura ng GNOME Shell at ng mga GTK4 at GTK3 application. Maraming color scheme ang mapagpipilian, at maaari ka ring gumawa ng sarili mo!",
   "amdgpu_desc": "I-install ang pinakabagong AMD Radeon graphics driver sa Ubuntu LTS at Red Hat Enterprise Linux.",
   "ubuntuv3": "Paganahin ang mga paketeng x86-64v3",
-  "ubuntuv3_desc": "Itinatakda ang Ubuntu na unahin ang mga paketeng na-optimize para sa mga x86-64v3 processor, na maaaring magbigay ng kaunting pagbuti sa pagganap."
+  "ubuntuv3_desc": "Itinatakda ang Ubuntu na unahin ang mga paketeng na-optimize para sa mga x86-64v3 processor, na maaaring magbigay ng kaunting pagbuti sa pagganap.",
+  "lazydocker_desc": "Isang TUI para sa Docker na nagbibigay-daan sa mga developer na pamahalaan ang mga container, image, volume, network, at log mula sa isang interactive na interface nang hindi kailangang kabisaduhin ang mahahabang Docker command."
 }

@@ -515,5 +515,6 @@
   "rewaita_desc": "GNOME qabığının, GTK4 və GTK3 tətbiqlərinin görünüşünü asanlıqla dəyişdirin. Seçmək üçün bir neçə rəng sxemi var və hətta öz sxeminizi yarada bilərsiniz!",
   "amdgpu_desc": "Ubuntu LTS və Red Hat Enterprise Linux sistemlərində ən son AMD Radeon qrafika sürücülərini quraşdırın.",
   "ubuntuv3": "x86-64v3 paketlərini aktivləşdir",
-  "ubuntuv3_desc": "Ubuntu-da x86-64v3 prosessorları üçün optimallaşdırılmış paketlərə üstünlük verir ki, bu da kiçik performans artımı təmin edə bilər."
+  "ubuntuv3_desc": "Ubuntu-da x86-64v3 prosessorları üçün optimallaşdırılmış paketlərə üstünlük verir ki, bu da kiçik performans artımı təmin edə bilər.",
+  "lazydocker_desc": "Tərtibatçılara uzun Docker əmrlərini yadda saxlamağa ehtiyac olmadan interaktiv interfeysdən konteynerləri, obrazları, həcmləri, şəbəkələri və jurnalları idarə etməyə imkan verən Docker üçün TUI."
 }

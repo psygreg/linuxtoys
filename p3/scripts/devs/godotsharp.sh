@@ -22,9 +22,15 @@ GODOT_MONO_ZIP="Godot_latest_mono_linux.x86_64.zip"
 if [ ! -d "$HOME/.local/godot" ]; then
     wget "$GODOT_MONO_URL" -O "$GODOT_MONO_ZIP"
     prep_dir "$HOME/.local/godot"
-    unzip -d "$HOME/.local/godot" "$GODOT_MONO_ZIP"
+    extract_dir="$(mktemp -d)"
+    unzip -q "$GODOT_MONO_ZIP" -d "$extract_dir"
+    godot_root=$(find "$extract_dir" -mindepth 1 -maxdepth 1 -type d -print -quit)
+    [ -n "$godot_root" ] || die "Could not find extracted Godot directory."
+    cp -a "$godot_root"/. "$HOME/.local/godot/"
+    rm -rf "$extract_dir"
     wget https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/resources/godot/godot.png
     copy_ godot.png "$HOME/.local/godot"
+    
     godot_binary=$(find "$HOME/.local/godot" -maxdepth 1 -type f -name 'Godot_v*-stable_mono_linux.x86_64' -print -quit)
     [ -n "$godot_binary" ] || die "Could not find the extracted Godot executable."
     chmod +x "$godot_binary"

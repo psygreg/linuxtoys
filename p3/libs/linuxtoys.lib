@@ -255,6 +255,7 @@ is_solus() { sysdetect_once && [[ "$ID" == "solus" ]]; }
 is_zorin() { sysdetect_once && [[ "$ID" == "zorin" ]]; }
 is_rhel() { sysdetect_once && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && [ ! -f /run/ostree-booted ] && [[ "$ID" != "nobara" ]]; }
 is_deepin() { sysdetect_once && [[ "$ID" == "deepin" ]]; }
+is_manjaro() { sysdetect_once && [[ "$ID" == "manjaro" || "$ID_LIKE" =~ "manjaro" ]]; }
 is_systemd() { [[ $(ps -p 1 -o comm= || readlink /sbin/init) =~ "systemd" ]] }
 
 # GPU detection
@@ -387,6 +388,27 @@ move_() {
 }
 
 # Package Management
+
+# Guard against pacman database lock (/var/lib/pacman/db.lck).
+# If pacman is actively running, abort with a clear message. If the lock is
+# stale (no pacman process holding it), remove it and continue.
+pacman_lock_guard () {
+    local PACMAN_ACTIVE=false
+    if [ -f /var/lib/pacman/db.lck ]; then
+        if pgrep -x pacman >/dev/null 2>&1; then
+            PACMAN_ACTIVE=true
+        elif command -v lsof >/dev/null 2>&1 && lsof /var/lib/pacman/db.lck >/dev/null 2>&1; then
+            PACMAN_ACTIVE=true
+        fi
+        if [ "$PACMAN_ACTIVE" = true ]; then
+            fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."
+        else
+            zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
+            sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"
+        fi
+    fi
+}
+
 pkg_exists () {
     pkg_found=()
     pkg_notfound=()
@@ -398,7 +420,7 @@ pkg_exists () {
             else
                 pkg_notfound+=("$pak")
             fi
-        elif is_arch || is_cachy; then
+        elif is_arch || is_cachy || is_manjaro; then
             if pacman -Qi "$pak" &>/dev/null; then
                 pkg_found+=("$pak")
             else
@@ -440,7 +462,14 @@ pkg_install () {
     if is_debian || is_ubuntu; then
         sudo apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
-    elif is_arch || is_cachy; then
+    elif is_arch || is_cachy || is_manjaro; then
+        if ! is_manjaro; then
+            if ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then 
+                prep_edit /etc/pacman.conf
+                printf '\n[extra]\nInclude = /etc/pacman.d/mirrorlist\n' |
+                    sudo tee -a /etc/pacman.conf >/dev/null
+            fi
+        fi
         local _pacman_pkgs=()
         local _paru_pkgs=()
         for pak in "${pkg_notfound[@]}"; do
@@ -453,35 +482,41 @@ pkg_install () {
         done
         local to_install_pacman="${_pacman_pkgs[*]}"
         local to_install_paru="${_paru_pkgs[*]}"
-        # check for lock
+        # check for lock before installing
         if [ -n "$to_install_pacman" ]; then
-            [ -f /var/lib/pacman/db.lck ] && {
-                ( pgrep -x pacman >/dev/null 2>&1 && PACMAN_ACTIVE=true || command -v lsof >/dev/null 2>&1 && { lsof /var/lib/pacman/db.lck >/dev/null 2>&1 && PACMAN_ACTIVE=true; }; ) || PACMAN_ACTIVE=false
-                ( [ "$PACMAN_ACTIVE" = true ] && fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."; ) || \
-                ( zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck" && sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"; ); }
-            sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
-            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
+            if is_manjaro; then
+                pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
+            else
+                pacman_lock_guard
+                sudo pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
+            fi
         fi
         if [ -n "$to_install_paru" ]; then
-            if zenask "Installer" "$msg305" 300 300; then
+            if is_manjaro; then
+                pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+            else
                 if ! command -v paru &>/dev/null; then
-                    if pacman -Si paru &>/dev/null; then
-                        sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
-                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                    if question "Installer" "$msg305" 300 300; then
+                        if pacman -Si paru &>/dev/null; then
+                            sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
+                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                        else
+                            sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
+                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg base-devel"
+                            prep_tmp
+                            git clone https://aur.archlinux.org/paru.git
+                            cd paru || fatal "Failed to install paru"
+                            makepkg -si
+                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                        fi
                     else
-                        sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
-                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg base-devel"
-                        prep_tmp
-                        git clone https://aur.archlinux.org/paru.git
-                        cd paru || fatal "Failed to install paru"
-                        makepkg -si
-                        [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                        die "User cancelled installation of paru"
                     fi
                 fi
-                paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || fatal "Failed to install $to_install_paru"
+                paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
-            else
-                return 1
             fi
         fi
     elif is_ostree; then
@@ -514,9 +549,7 @@ pkg_flat() {
         fi
     done
     if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
-        summon_helpers
-        sudo_rq
-        flatpak_in_lib
+        call_script flathub
     fi
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
@@ -529,7 +562,13 @@ pkg_flat() {
     # Extract base package names (remove version/architecture specifications)
     local -a _flatpak_basenames=()
     for arg in "${_flatpak_args[@]}"; do
-        _flatpak_basenames+=("${arg%%/*}")
+        local basename="${arg%%/*}"
+        _flatpak_basenames+=("$basename")
+
+        # Only mark applications that weren't already installed
+        if ! flatpak info "$flatpak_scope" "$arg" &>/dev/null; then
+            _flatpak_new+=("$arg")
+        fi
     done
 
     if [ "$flatpak_scope" = "--user" ]; then
@@ -543,7 +582,9 @@ pkg_flat() {
             flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
         done
     fi
-    _append_transmap "flatpak ${_flatpak_args[*]}"
+    if [[ ${#_flatpak_new[@]} -gt 0 ]]; then
+        _append_transmap "flatpak ${_flatpak_new[*]}"
+    fi
 }
 pkg_fromfile () {
     # Handle --ostreecheck flag
@@ -583,14 +624,11 @@ pkg_fromfile () {
     fi
     
     if is_debian || is_ubuntu; then
-        sudo chmod 644 "${@}" || fatal "Failed to fix permissions for apt_"
-        { sudo apt-get install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
+        { sudo apt-get -o APT::Sandbox::User=root install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
-    elif is_arch || is_cachy; then
-        [ -f /var/lib/pacman/db.lck ] && {
-            ( pgrep -x pacman >/dev/null 2>&1 && PACMAN_ACTIVE=true || command -v lsof >/dev/null 2>&1 && { lsof /var/lib/pacman/db.lck >/dev/null 2>&1 && PACMAN_ACTIVE=true; }; ) || PACMAN_ACTIVE=false
-            ( [ "$PACMAN_ACTIVE" = true ] && fatal "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."; ) || \
-            ( zenwrn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck" && sudo rm -f /var/lib/pacman/db.lck || fatal "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"; ); }
+    elif { is_arch || is_cachy; } && ! is_manjaro; then
+        # check for lock before installing local package
+        pacman_lock_guard
         if sudo pacman -U "${@}"; then
             _append_transmap "pkg file $*"
         else
@@ -602,6 +640,8 @@ pkg_fromfile () {
                 fatal "Failed to install package $*"
             fi
         fi
+    elif is_manjaro; then
+        { pamac install --no-confirm "./${@}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
     elif is_ostree; then
         sudo rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
@@ -629,8 +669,12 @@ pkg_remove () {
     
     if is_debian || is_ubuntu; then
         sudo apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
-    elif is_arch || is_cachy; then
+    elif { is_arch || is_cachy; } && ! is_manjaro; then
+        # check for lock before removing (stale lock otherwise aborts pacman -Rsn)
+        pacman_lock_guard
         sudo pacman -Rsn --noconfirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+    elif is_manjaro; then
+        pamac remove --no-confirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then
         sudo rpm-ostree uninstall "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif is_fedora || is_rhel ; then
@@ -658,12 +702,24 @@ pkg_appimage () {
     
     if is_systemd; then
         # Use Gear Lever for systemd systems
-        pkg_flat it.mijorus.gearlever
+        call_script gearlever
         local output
-        output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${@}" 2>&1)
+        output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1) || {
+            echo "$output"
+            fatal "Failed to integrate AppImage."
+        }
         local appimage_name
-        appimage_name=$(echo "$output" | grep "was integrated successfully" | grep -oE '[^/]+\.appimage')
-        _append_transmap "appimage $appimage_name"
+        appimage_name=$(
+            find "$HOME/AppImages" -maxdepth 1 -type f -printf '%T@ %f\n' 2>/dev/null |
+                sort -nr |
+                head -n1 |
+                cut -d' ' -f2-
+        )
+        if [[ -n "$appimage_name" ]]; then
+            _append_transmap "appimage $appimage_name"
+        else
+            nonfatal "Could not determine integrated AppImage filename."
+        fi
     else
         # Manual integration for non-systemd systems
         for appimage_file in "$@"; do
@@ -976,22 +1032,68 @@ swapfile_created () {
 # script calling -- used for scripts to call other scripts from the app.
 call_script () {
     local script_name="$1"
-    [[ -z "$script_name" ]] && fatal "call_script: script name not provided"
-    [[ -z "$CACHE_DIR" ]] && fatal "call_script: CACHE_DIR environment variable not set"
+    [[ -z "$script_name" ]] && die "call_script: script name not provided"
+    [[ -z "$CACHE_DIR" ]] && die "call_script: CACHE_DIR environment variable not set"
+
     script_name="${script_name%.sh}"
     local script_file="${script_name}.sh"
-    [[ ! -d "$CACHE_DIR" ]] && fatal "call_script: Scripts directory not found at $CACHE_DIR"
 
     local found_script
-    found_script=$(find "$CACHE_DIR" -maxdepth 3 -type f -name "$script_file" 2>/dev/null | head -1)
-    if [[ -n "$found_script" && -f "$found_script" ]]; then
-        shift  # Remove script_name to pass remaining arguments
-        (
-            export CALLED_SCRIPT="1"
-            bash "$found_script" "$@"
-        )
-        return $?
+    found_script=$(find "$CACHE_DIR" -maxdepth 3 -type f \
+        -name "$script_file" 2>/dev/null | head -n1)
+
+    [[ -n "$found_script" && -f "$found_script" ]] ||
+        die "call_script: Script '$script_name' not found in $CACHE_DIR"
+
+    shift
+    # Get the script's registry/display name.
+    local script_display_name
+    script_display_name=$(
+        sed -n 's/^# name:[[:space:]]*//p' "$found_script" |
+        head -n1
+    )
+    [[ -n "$script_display_name" ]] ||
+        script_display_name="$script_name"
+
+    # Keep track of the caller's transaction.
+    local parent_transmap="$TRANSMAP_PATH"
+
+    # Create an independent transaction for the called script.
+    local child_transmap
+    child_transmap=$(mktemp "/tmp/linuxtoys-called-XXXXXX.transmap") ||
+        die "call_script: Failed to create child transmap"
+
+    (
+        export CALLED_SCRIPT=1
+        export TRANSMAP_PATH="$child_transmap"
+
+        bash "$found_script" "$@"
+    )
+    local status=$?
+
+    if [[ $status -eq 0 ]]; then
+        # Commit the called script's transaction independently.
+        if [[ -s "$child_transmap" ]]; then
+            python3 "$SCRIPT_DIR/app/term_registry.py" \
+                save "$script_display_name" "$child_transmap" ||
+                die "Failed to save transaction for $script_display_name"
+        fi
+
+        rm -f "$child_transmap"
+        return 0
     fi
-    
-    fatal "call_script: Script '$script_name' not found in $CACHE_DIR"
+
+    # Failed child: merge its changes into the caller's transaction,
+    # allowing the normal top-level auto-revert to undo them.
+    if [[ -s "$child_transmap" ]]; then
+        if [[ -n "$parent_transmap" ]]; then
+            cat "$child_transmap" >> "$parent_transmap"
+        else
+            init_transmap
+            cat "$child_transmap" >> "$TRANSMAP_PATH"
+        fi
+    fi
+
+    rm -f "$child_transmap"
+    return "$status"
 }

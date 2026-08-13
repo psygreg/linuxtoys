@@ -8,36 +8,40 @@
 
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-sudo_rq
-if is_debian;then
+askpass
+if is_debian || is_ubuntu; then
     pkg_install apt-transport-https gpg
-    # Eclipse Adoptium GPG key
-    curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null
-    # Adoptium apt repository
-    _codename=$(awk -F= '(/^VERSION_CODENAME/ || /^UBUNTU_CODENAME/) && !found {print $2; found=1}' /etc/os-release)
+    wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null
+    if is_debian; then
+        _codename=$VERSION_CODENAME
+        if [[ "$_codename" != @(trixie|bookworm) ]]; then
+            _codename="trixie"
+        fi
+    else
+        _codename=$UBUNTU_CODENAME
+    fi
     echo "deb https://packages.adoptium.net/artifactory/deb ${_codename} main" | sudo tee /etc/apt/sources.list.d/adoptium.list
-    # Update
     sudo apt update
 elif is_fedora || is_rhel; then
-    # Adoptium dnf repository
-    cat <<EOF | sudo tee /etc/yum.repos.d/adoptium.repo
+    if is_rhel && [[ "$ID" != "rhel" ]]; then
+        DISTRIBUTION_NAME="rhel"
+    fi
+    sudo tee /etc/yum.repos.d/adoptium.repo > /dev/null <<EOF
 [Adoptium]
 name=Adoptium
-baseurl=https://packages.adoptium.net/artifactory/rpm/$ID/\$releasever/\$basearch
+baseurl=https://packages.adoptium.net/artifactory/rpm/${DISTRIBUTION_NAME:-$(. /etc/os-release; echo $ID)}/\$releasever/\$basearch
 enabled=1
 gpgcheck=1
 gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public
 EOF
 elif is_suse;then
     if [[ "$ID" =~ (tumbleweed) ]];then
-        fatal "OpenSUSE Tumbleweed without support"
+        die "OpenSUSE Tumbleweed without support"
     fi
-    # Adoptium zypper repository
-    sudo zypper ar -f "https://packages.adoptium.net/artifactory/rpm/opensuse/$VERSION_ID/$(uname -m)" adoptium
+    sudo zypper ar -f https://packages.adoptium.net/artifactory/rpm/opensuse/$(. /etc/os-release; echo $VERSION_ID)/$(uname -m) adoptium
 else
-    fatal "Unsupported distribution"
+    die "Unsupported distribution"
 fi
 
-pkg_install temurin-21-jdk
-
-zeninf "Adoptium Temurin® JDK installed successfully!"
+pkg_install temurin-25-jdk
+info "$finishmsg"

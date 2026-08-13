@@ -516,5 +516,6 @@
   "rewaita_desc": "Thay đổi giao diện của GNOME Shell cùng các ứng dụng GTK4 và GTK3 một cách dễ dàng. Có nhiều bảng màu để lựa chọn và bạn thậm chí có thể tự tạo bảng màu riêng!",
   "amdgpu_desc": "Cài đặt trình điều khiển đồ họa AMD Radeon mới nhất trên Ubuntu LTS và Red Hat Enterprise Linux.",
   "ubuntuv3": "Bật gói x86-64v3",
-  "ubuntuv3_desc": "Thiết lập Ubuntu ưu tiên các gói được tối ưu hóa cho bộ xử lý x86-64v3, có thể mang lại một số cải thiện nhỏ về hiệu năng."
+  "ubuntuv3_desc": "Thiết lập Ubuntu ưu tiên các gói được tối ưu hóa cho bộ xử lý x86-64v3, có thể mang lại một số cải thiện nhỏ về hiệu năng.",
+  "lazydocker_desc": "TUI dành cho Docker, cho phép các nhà phát triển quản lý container, image, volume, mạng và nhật ký từ giao diện tương tác mà không cần ghi nhớ các lệnh Docker dài."
 }

@@ -43,9 +43,27 @@ tar -xzf "$K6_ARCHIVE" -C "$K6_TMP_DIR" || fatal "Failed to extract k6 archive."
 K6_BIN="$(find "$K6_TMP_DIR" -type f -name k6 | head -1)"
 [ -n "$K6_BIN" ] || fatal "k6 executable not found after extraction."
 
+# Versão latest do GitHub (tag já baixada no JSON acima)
+K6_LATEST_TAG="$(echo "$K6_JSON" | grep '"tag_name"' | head -1 | sed -E 's/.*"tag_name"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')"
+
+# Versão instalada (se houver)
+K6_INSTALLED_VERSION="$(k6 version 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)"
+K6_LATEST_VERSION="$(echo "$K6_LATEST_TAG" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)"
+
 sudo_rq
-prep_create /usr/local/bin/k6
-sudo install -Dm755 "$K6_BIN" /usr/local/bin/k6 || fatal "Failed to install k6 to /usr/local/bin."
+if [ -f /usr/local/bin/k6 ] && [ -n "$K6_INSTALLED_VERSION" ] && [ -n "$K6_LATEST_VERSION" ] && [ "$K6_INSTALLED_VERSION" = "$K6_LATEST_VERSION" ]; then
+    # k6 já instalado e atualizado — valida o binário e sai limpo (idempotente, sem WARN no transmap)
+    command -v k6 >/dev/null 2>&1 || fatal "k6 command was not found after installation."
+    exit 0
+elif [ -f /usr/local/bin/k6 ]; then
+    # k6 instalado mas desatualizado — atualiza com backup do binário anterior
+    prep_edit /usr/local/bin/k6
+    sudo install -Dm755 "$K6_BIN" /usr/local/bin/k6 || fatal "Failed to install k6 to /usr/local/bin."
+else
+    # instalação limpa (1ª vez)
+    prep_create /usr/local/bin/k6
+    sudo install -Dm755 "$K6_BIN" /usr/local/bin/k6 || fatal "Failed to install k6 to /usr/local/bin."
+fi
 
 command -v k6 >/dev/null 2>&1 || fatal "k6 command was not found after installation."
 zeninf "$msg018"

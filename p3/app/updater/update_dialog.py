@@ -33,24 +33,6 @@ class DialogBase(Gtk.MessageDialog):
         raise NotImplementedError("Response Not Implemented")
 
 
-class DialogRestart(DialogBase):
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            "Update complete!",
-            "<b>Restart the app to access the newest features and improvements.</b>",
-            [("Restart", Gtk.ResponseType.OK), ("Cancel", Gtk.ResponseType.CANCEL)],
-            Gtk.MessageType.OTHER,
-        )
-
-    def _on_response(self, dialog, response_id):
-        if response_id == Gtk.ResponseType.OK:
-            self.destroy()
-            os.execv(sys.executable, [sys.executable, *sys.argv])
-        elif response_id == Gtk.ResponseType.CANCEL:
-            self.destroy()
-
-
 class DialogError(DialogBase):
     def __init__(self, parent, error_message):
         super().__init__(
@@ -72,7 +54,7 @@ class UpdateDialog(Gtk.Dialog):
         self.set_decorated(True)
         self.set_property("skip-taskbar-hint", True)
         self.link_tags = {}
-        self.changelog = changelog or "{'tag_name': '', 'body': ''}"
+        self.changelog = changelog or {"tag_name": "", "body": ""}
         self.parent = parent
 
         self.add_button(
@@ -80,7 +62,11 @@ class UpdateDialog(Gtk.Dialog):
         ).get_style_context().add_class("suggested-action")
         self.add_button("Ignore", Gtk.ResponseType.NO)
 
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        vbox.set_margin_start(18)
+        vbox.set_margin_end(18)
+        vbox.set_margin_top(14)
+        vbox.set_margin_bottom(12)
 
         self._labels = [
             f"<b>A new version {self.changelog.get('tag_name', '0.0.0')} of LinuxToys is available.</b>",
@@ -105,8 +91,13 @@ class UpdateDialog(Gtk.Dialog):
         self.textview = Gtk.TextView()
         self.textview.set_editable(False)
         self.textview.set_cursor_visible(False)
-        self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
-        self.textview.set_border_width(5)
+        self.textview.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        self.textview.set_left_margin(12)
+        self.textview.set_right_margin(12)
+        self.textview.set_top_margin(10)
+        self.textview.set_bottom_margin(10)
+        self.textview.set_pixels_above_lines(2)
+        self.textview.set_pixels_below_lines(2)
 
         self.textview.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK)
         self.textview.connect("button-release-event", self._on_event_after)
@@ -225,74 +216,115 @@ curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
         self.textview.set_buffer(buff)
 
     def _markdown_to_textbuffer(self, md_text):
-        """
-        Convert simplified Markdown to Gtk.TextBuffer with tags.
-        Supports:
-        - **bold**
-        - _italic_
-        - - lists
-        - [link](url) -> clickable
+        """Render common GitHub release-note Markdown in a Gtk.TextBuffer.
+
+        This deliberately stays dependency-free. It supports headings, bold,
+        italics, inline code, links, unordered and ordered lists, blockquotes,
+        and horizontal rules. Unsupported Markdown remains readable as text.
         """
         buffer = Gtk.TextBuffer()
+        self.link_tags.clear()
 
-        # Create tags
         tag_bold = buffer.create_tag("bold", weight=Pango.Weight.BOLD)
         tag_italic = buffer.create_tag("italic", style=Pango.Style.ITALIC)
-        links_counter = 0
+        tag_code = buffer.create_tag(
+            "code",
+            family="monospace",
+        )
+        tag_quote = buffer.create_tag(
+            "quote",
+            style=Pango.Style.ITALIC,
+            left_margin=18,
+            foreground="#808080",
+        )
+        tag_list = buffer.create_tag("list", left_margin=18, indent=-12)
+        tag_rule = buffer.create_tag("rule", foreground="#808080")
 
-        def insert_with_tag(text, tag=None):
+        heading_tags = {
+            level: buffer.create_tag(
+                f"heading-{level}",
+                weight=Pango.Weight.BOLD,
+                scale=max(1.0, 1.55 - ((level - 1) * 0.1)),
+                pixels_above_lines=8 if level <= 2 else 5,
+                pixels_below_lines=3,
+            )
+            for level in range(1, 7)
+        }
+
+        inline_pattern = re.compile(
+            r"(`[^`]+`)"
+            r"|(\[([^\]]+)\]\(([^)\s]+)(?:\s+[\"'][^\"']*[\"'])?\))"
+            r"|(\*\*([^*]+)\*\*)"
+            r"|(__([^_]+)__)"
+            r"|(\*([^*\n]+)\*)"
+            r"|(?<!\w)_([^_\n]+)_(?!\w)"
+        )
+
+        def insert(text, *tags):
+            if not text:
+                return
             end_iter = buffer.get_end_iter()
-            if tag:
-                buffer.insert_with_tags(end_iter, text, tag)
+            if tags:
+                buffer.insert_with_tags(end_iter, text, *tags)
             else:
                 buffer.insert(end_iter, text)
 
-        # Split by lines
-        for line in md_text.splitlines():
-            # Convert lists
-            line = re.sub(r"^\s*[-*]\s+", "• ", line)
-
+        def insert_inline(text, base_tags=()):
             pos = 0
-            while pos < len(line):
-                # Search for bold, italic, link
-                m_bold = re.search(r"\*\*(.+?)\*\*", line[pos:])
-                m_italic = re.search(r"_(.+?)_", line[pos:])
-                m_link = re.search(r"\[([^\]]+)\]\(([^)]+)\)", line[pos:])
-                m_title = re.search(r"^(#{1,6})\s*(.+)", line[pos:])
+            for match in inline_pattern.finditer(text):
+                insert(text[pos:match.start()], *base_tags)
 
-                matches = [m for m in [m_bold, m_italic, m_link, m_title] if m]
-
-                if not matches:
-                    insert_with_tag(line[pos:])
-                    break
-
-                m_first = min(matches, key=lambda x: x.start())
-                start, end = m_first.span()
-                insert_with_tag(line[pos : pos + start])
-
-                if m_first == m_title:
-                    tag_title = buffer.create_tag(
-                        None,
-                        weight=Pango.Weight.BOLD,
-                        scale=float(2.0 - (len(m_title.group(1)) - 1) * 0.2),
-                    )
-                    insert_with_tag(m_title.group(2), tag_title)
-                elif m_first == m_bold:
-                    insert_with_tag(m_first.group(1), tag_bold)
-                elif m_first == m_italic:
-                    insert_with_tag(m_first.group(1), tag_italic)
-                elif m_first == m_link:
-                    links_counter += 1
+                if match.group(1):
+                    insert(match.group(1)[1:-1], *base_tags, tag_code)
+                elif match.group(2):
+                    label = match.group(3)
+                    url = match.group(4)
                     tag_link = buffer.create_tag(
-                        f"link-{links_counter}",
+                        f"link-{len(self.link_tags) + 1}",
                         foreground="#4169E1",
                         underline=Pango.Underline.SINGLE,
                     )
-                    self.link_tags[tag_link] = m_first.group(2)
-                    insert_with_tag(m_first.group(1), tag_link)
+                    self.link_tags[tag_link] = url
+                    insert(label, *base_tags, tag_link)
+                elif match.group(5):
+                    insert(match.group(6), *base_tags, tag_bold)
+                elif match.group(7):
+                    insert(match.group(8), *base_tags, tag_bold)
+                elif match.group(9):
+                    insert(match.group(10), *base_tags, tag_italic)
+                else:
+                    insert(match.group(11), *base_tags, tag_italic)
 
-                pos += end
+                pos = match.end()
 
-            insert_with_tag("\n")
+            insert(text[pos:], *base_tags)
+
+        for raw_line in str(md_text or "No changelog available.").splitlines():
+            line = raw_line.rstrip()
+
+            heading = re.match(r"^\s*(#{1,6})\s+(.+?)\s*#*\s*$", line)
+            unordered = re.match(r"^(\s*)[-+*]\s+(.+)$", line)
+            ordered = re.match(r"^(\s*)(\d+)[.)]\s+(.+)$", line)
+            quote = re.match(r"^\s*>\s?(.*)$", line)
+
+            if re.match(r"^\s{0,3}([-*_])(?:\s*\1){2,}\s*$", line):
+                insert("────────────────────────", tag_rule)
+            elif heading:
+                level = len(heading.group(1))
+                insert_inline(heading.group(2), (heading_tags[level],))
+            elif unordered:
+                depth = min(len(unordered.group(1).expandtabs(4)) // 2, 4)
+                insert(f"{'    ' * depth}• ", tag_list)
+                insert_inline(unordered.group(2), (tag_list,))
+            elif ordered:
+                depth = min(len(ordered.group(1).expandtabs(4)) // 2, 4)
+                insert(f"{'    ' * depth}{ordered.group(2)}. ", tag_list)
+                insert_inline(ordered.group(3), (tag_list,))
+            elif quote:
+                insert_inline(quote.group(1), (tag_quote,))
+            else:
+                insert_inline(line)
+
+            insert("\n")
 
         return buffer

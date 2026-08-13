@@ -10,8 +10,8 @@ class NavCtl:
         """Handles category click, subcategory click, or root script click."""
         # Check if reboot is required before proceeding
         if self.reboot_required:
-            self._show_reboot_warning_dialog()
-            return
+            if not self._show_reboot_warning_dialog():
+                return
 
         info = widget.info
 
@@ -166,6 +166,38 @@ class NavCtl:
             if returning_to_search and search_query:
                 self.search_results = self.search_engine.search(search_query)
                 self._display_search_results()
+                return
+        
+            if getattr(self, "_skills_prev", None) is not None:
+                self.current_category_info = self._skills_prev["category_info"]
+
+                prev_placeholder = getattr(self, "_search_entry_prev_placeholder", None)
+                if prev_placeholder:
+                    self.search_entry.set_placeholder_text(prev_placeholder)
+                    self._search_entry_prev_placeholder = None
+
+                self.header_widget.show()
+                self._update_header(self.current_category_info)
+                if self.current_category_info:
+                    self.header_bar.props.title = (
+                        f"LinuxToys: {self.current_category_info.get('name', 'LinuxToys')}"
+                    )
+                    self.main_stack.set_visible_child_name("skills_seeker")
+                    self.back_button.show()
+                    if self._is_local_scripts_category(self.current_category_info):
+                        self._enable_drag_and_drop()
+                    else:
+                        self._disable_drag_and_drop()
+                    if self.current_category_info.get("display_mode", "menu") == "checklist":
+                        self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+                    else:
+                        self.reveal.set_reveal_child(False)
+                else:
+                    self.show_categories_view()
+
+                if self.navigation_stack:
+                    self.navigation_stack.pop()
+                self._skills_prev = None
                 return
 
             if getattr(self, "_skills_prev", None) is not None:

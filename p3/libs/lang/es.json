@@ -516,5 +516,6 @@
   "rewaita_desc": "Cambia fácilmente el aspecto de GNOME Shell y de las aplicaciones GTK4 y GTK3. Hay varios esquemas de colores para elegir, ¡e incluso puedes crear el tuyo!",
   "amdgpu_desc": "Instala los controladores gráficos AMD Radeon más recientes en Ubuntu LTS y Red Hat Enterprise Linux.",
   "ubuntuv3": "Habilitar paquetes x86-64v3",
-  "ubuntuv3_desc": "Configura Ubuntu para dar prioridad a los paquetes optimizados para procesadores x86-64v3, lo que puede aportar pequeñas mejoras de rendimiento."
+  "ubuntuv3_desc": "Configura Ubuntu para dar prioridad a los paquetes optimizados para procesadores x86-64v3, lo que puede aportar pequeñas mejoras de rendimiento.",
+  "lazydocker_desc": "Una TUI para Docker que permite a los desarrolladores gestionar contenedores, imágenes, volúmenes, redes y registros desde una interfaz interactiva, sin tener que memorizar largos comandos de Docker."
 }
