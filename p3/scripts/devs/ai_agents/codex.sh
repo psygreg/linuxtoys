@@ -19,7 +19,6 @@ for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if ! grep -E 'PATH=.*\$HOME/.local/bin|\$HOME/\.local/bin' "$rc" > /dev/null 2>&1; then
             prep_edit "$rc"
             echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$rc"
-            export PATH="$HOME/.local/bin:$PATH" # handle current term viewer only in case it's not already in PATH
         fi
     fi
 done
@@ -29,17 +28,17 @@ if [ -f "$fish_config" ]; then
     if ! grep -E 'set.*PATH.*\$HOME/.local/bin|\$HOME/\.local/bin' "$fish_config" > /dev/null 2>&1; then
         prep_edit "$fish_config"
         echo "set -gx PATH \$HOME/.local/bin \$PATH" >> "$fish_config"
-        export PATH="$HOME/.local/bin:$PATH"
     fi
 fi
+export PATH="$HOME/.local/bin:$PATH"
 
-if command -v codex &>/dev/null; then
+if [ -x "$HOME/.local/bin/codex" ] || command -v codex &>/dev/null; then
     zeninf "$msg281"
     exit 100
 fi
 
 if curl -fsSL https://chatgpt.com/codex/install.sh | sh; then
-    if command -v codex &>/dev/null; then
+    if [ -x "$HOME/.local/bin/codex" ] || command -v codex &>/dev/null; then
         _append_transmap "created $HOME/.local/bin/codex" # track to transmap
         _append_transmap "created $HOME/.codex"
         zeninf "$finishmsg"
