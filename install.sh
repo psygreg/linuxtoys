@@ -197,7 +197,7 @@ installer() {
 		debian|ubuntu|deepin) osdeb ;;
 		fedora|rhel|centos|rocky|almalinux) osrpm ;;
 		suse|opensuse) ossuse ;;
-		manjaro) manjaro;;
+		manjaro|biglinux|bigcommunity) manjaro;;
 		arch|cachyos|artix) osarch ;;
 		solus) ossolus ;;
 	esac
