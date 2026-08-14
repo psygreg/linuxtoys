@@ -123,8 +123,8 @@ class LocalScriptsCtl:
 # icon: local-scripts.svg
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-source "$SCRIPT_DIR/libs/helpers.lib"
+source "$SCRIPT_DIR/libs/linuxtoys.bash"
+source "$SCRIPT_DIR/libs/helpers.bash"
 _lang_
 source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 

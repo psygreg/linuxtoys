@@ -36,7 +36,7 @@ def _validate_script_dir():
             "SCRIPT_DIR is not set. Run the manifest helper through linuxtoys.py."
         )
 
-    lib_path = os.path.join(script_dir, "libs", "linuxtoys.lib")
+    lib_path = os.path.join(script_dir, "libs", "linuxtoys.bash")
     if not os.path.isfile(lib_path):
         raise RuntimeError(f"LinuxToys library not found at: {lib_path}")
 
@@ -55,7 +55,7 @@ def _run_library_function(function_name, arguments):
     script_content = f'''set -e
 set -o pipefail
 : "${{SCRIPT_DIR:?SCRIPT_DIR is not set}}"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/linuxtoys.bash"
 {function_name} "$@"
 '''
     interactive = os.environ.get("EASY_CLI") == "1"
@@ -99,7 +99,7 @@ def check_package_exists(package_name):
     _validate_script_dir()
 
     checks = r''': "${SCRIPT_DIR:?SCRIPT_DIR is not set}"
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/linuxtoys.bash"
 sysdetect
 package="$1"
 if is_debian || is_ubuntu; then

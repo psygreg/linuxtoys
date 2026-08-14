@@ -890,8 +890,8 @@ def build_uninstall_script_entry(script_info, translations=None):
         "#!/bin/bash",
         "set -eo pipefail",
         f'SCRIPT_DIR="{script_dir}"',
-        'source "$SCRIPT_DIR/libs/linuxtoys.lib"',
-        'source "$SCRIPT_DIR/libs/helpers.lib"',
+        'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
+        'source "$SCRIPT_DIR/libs/helpers.bash"',
     ]
     
     # Check if we need sudo

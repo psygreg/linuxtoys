@@ -139,7 +139,7 @@ class UpdateDialog(Gtk.Dialog):
 
             with open("/tmp/.self_update_lt", "w") as f:
                 script_content = f"""#!/bin/bash
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/linuxtoys.bash"
 sudo_rq
 curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
 """

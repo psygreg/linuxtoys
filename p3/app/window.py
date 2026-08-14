@@ -821,7 +821,7 @@ class AppWindow(
         script_content = f"""#!/bin/bash
 # name: Install Skill {slug}
 # description: Install skill {source} for agent {agent}
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
+source "$SCRIPT_DIR/libs/linuxtoys.bash"
 _lang_
 pkg_npm npm
 npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"

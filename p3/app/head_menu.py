@@ -301,7 +301,7 @@ class MenuButton(Gtk.MenuButton):
 			self.parent_window.open_term_view(deps)
 
 	def __temp_script(self, packages, flatpaks):
-		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.lib')
+		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.bash')
 
 		script_content = '''#!/bin/bash
 source "''' + lib_path + '''"
