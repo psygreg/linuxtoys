@@ -92,27 +92,31 @@ ossuse() {
 }
 
 osarch() {
-	_pkg_dir="/tmp/linuxtoys/"
-	if pacman -Qi linuxtoys-bin &>/dev/null; then
-		sudo pacman -R --noconfirm linuxtoys-bin || error "Failed to remove existing linuxtoys-bin package."
-	fi
-	{ pacman -Qi debugedit &>/dev/null || sudo pacman -S debugedit; } || error "Failed to install makepkg dependency debugedit"
-	{ pacman -Qi fakeroot &>/dev/null || sudo pacman -S fakeroot; } || error "Failed to install makepkg dependency fakeroot"
-	mkdir -p ${_pkg_dir}
-	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
-		cd "${_pkg_dir}"
-		if makepkg -s -f; then
-			if sudo pacman -U --noconfirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
-				info "LinuxToys installed or updated!"
-			else
-				error "Installation failed (pacman)."
-			fi
-		else
-			error "Build failed (makepkg)."
-		fi
-	else
-		error "Failed to download: ${_pkg_name}"
-	fi
+    _pkg_dir="/tmp/linuxtoys/"
+    if pacman -Qi linuxtoys-bin &>/dev/null; then
+        sudo pacman -R --noconfirm linuxtoys-bin || error "Failed to remove existing linuxtoys-bin package."
+    fi
+    { pacman -Qi debugedit &>/dev/null || sudo pacman -S --noconfirm debugedit; } ||
+        error "Failed to install makepkg dependency debugedit"
+    { pacman -Qi fakeroot &>/dev/null || sudo pacman -S --noconfirm fakeroot; } ||
+        error "Failed to install makepkg dependency fakeroot"
+    rm -rf "${_pkg_dir}" # fix file permanence on /tmp on some arch distros
+    mkdir -p "${_pkg_dir}"
+
+    if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
+        cd "${_pkg_dir}" || error "Failed to enter build directory."
+        if makepkg -s -f; then
+            if sudo pacman -U --noconfirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
+                info "LinuxToys installed or updated!"
+            else
+                error "Installation failed (pacman)."
+            fi
+        else
+            error "Build failed (makepkg)."
+        fi
+    else
+        error "Failed to download: ${_pkg_name}"
+    fi
 }
 
 ossolus() {
