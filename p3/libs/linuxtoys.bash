@@ -460,6 +460,11 @@ pkg_install () {
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
     if is_debian || is_ubuntu; then
+        if [ -n "$(dpkg --audit 2>/dev/null)" ]; then
+            info "An interrupted package operation was detected. Attempting recovery..."
+            sudo dpkg --configure -a || die "Failed to recover interrupted dpkg operation. Manual user intervention required."
+            sudo apt --fix-broken install -y || die "Failed to fix broken packages. Manual user intervention required."
+        fi
         sudo apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy || is_manjaro; then
