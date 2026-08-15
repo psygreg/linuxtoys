@@ -9,8 +9,9 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 
-if ! command -v distrobox &>/dev/null; then
-    call_script distroshelf
+if ! distrobox --version &>/dev/null; then
+    call_script distroshelf || fatal "Failed to install Distrobox."
+    distrobox --version &>/dev/null || fatal "Distrobox is unavailable after installation."
 fi
 
 if distrobox create --name metatrader5 --image docker.io/library/ubuntu:24.04; then
