@@ -4,7 +4,7 @@
 # icon: nvidia.svg
 # nocontainer
 # gpu: Nvidia
-# compat: arch, !cachy, fedora, rhel, suse, ubuntu
+# compat: arch, !cachy, fedora, rhel, suse, ubuntu, solus
 # reboot: yes
 
 # --- Start of the script code ---
@@ -40,6 +40,9 @@ elif is_suse; then
     fi
     pkg_install x11-video-nvidiaG06 nvidia-computeG06
     initramfs_upd
+    bootloader_upd
+elif is_solus; then
+    pkg_install nvidia-580-glx-driver-32bit nvidia-580-glx-driver nvidia-580-glx-driver-common nvidia-580-glx-driver-current nvidia-580-glx-driver-modaliases
     bootloader_upd
 else
     fatal "$msg077"
