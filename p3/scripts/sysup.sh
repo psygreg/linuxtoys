@@ -51,8 +51,9 @@ fi
 
 echo "$sysup_starting"
 if is_fedora || is_rhel; then
-    { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y; } || sudo dnf autoremove -y || fatal "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && dnf upgrade -y --setopt=throttle=2M; } || sudo dnf upgrade -y || fatal "Failed to upgrade packages"
+    { { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y && dnf clean all && dnf -y makecache --refresh; } || \
+        { sudo dnf autoremove -y && sudo dnf clean all && sudo dnf -y makecache --refresh; }; } || die "Failed to remove orphaned packages"
+    { [ "$UPD_SERVICE" = "1" ] && dnf --refresh upgrade -y --setopt=throttle=2M; } || sudo dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
     is_fedora && { release_upgrade && 
             if offer_release_upgrade; then
                 sudo dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
