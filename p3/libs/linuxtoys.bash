@@ -869,20 +869,21 @@ bootloader_upd() {
     if ! is_ostree; then
         local exit_status
         if is_fedora || is_suse || is_rhel; then
-            sudo grub2-mkconfig -o /boot/grub2/grub.cfg || fatal "Unable to update bootloader"
+            sudo grub2-mkconfig -o /boot/grub2/grub.cfg || die "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_arch || is_cachy; then
-            {
-                sudo grub-mkconfig -o /boot/grub/grub.cfg && exit_status=0 || {
-                    if sudo bootctl is-installed >/dev/null 2>&1; then
-                        sudo bootctl update
-                        exit_status=0
-                    else
-                        exit_status=1
-                    fi
-                }
-            } 
-            [ "$exit_status" -eq 0 ] || fatal "Unable to update bootloader"
+            if command -v limine-mkinitcpio >/dev/null 2>&1; then
+                sudo limine-mkinitcpio || die "Unable to update bootloader"
+            elif command -v sdboot-manage >/dev/null 2>&1 &&
+                bootctl is-installed >/dev/null 2>&1; then
+                sudo sdboot-manage gen || die "Unable to update bootloader"
+            elif command -v grub-mkconfig >/dev/null 2>&1; then
+                sudo grub-mkconfig -o /boot/grub/grub.cfg || die "Unable to update bootloader"
+            elif command -v bootctl >/dev/null 2>&1 && bootctl is-installed >/dev/null 2>&1; then
+                sudo bootctl update || die "Unable to update bootloader"
+            else
+                die "Unable to determine installed bootloader"
+            fi
             _append_transmap "updated bootloader"
         elif is_ubuntu; then
             sudo update-grub || fatal "Unable to update bootloader"

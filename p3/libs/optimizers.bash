@@ -246,7 +246,7 @@ EOF
         enable_debian_nonfree
         pkg_install intel-media-driver
     fi
-    if is_arch; then
+    if is_arch || is_cachy; then
         pkg_install vpl-gpu-rt
     fi
 }
