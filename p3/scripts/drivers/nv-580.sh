@@ -42,7 +42,7 @@ elif is_suse; then
     initramfs_upd
     bootloader_upd
 elif is_solus; then
-    pkg_install nvidia-580-glx-driver-32bit nvidia-580-glx-driver nvidia-580-glx-driver-common nvidia-580-glx-driver-current nvidia-580-glx-driver-modaliases
+    pkg_install nvidia-580-glx-driver-current
     bootloader_upd
 else
     fatal "$msg077"
