@@ -198,8 +198,9 @@ dnsmasq_lib () {
 # enable intel Xe driver for discrete GPUs
 intel_xe_lib () {
     if is_intel && [ -n "$intel_arc" ]; then
-        # Extract DEVID from lspci output (e.g., e20b from [8086:e20b])
-        DEVID=$(lspci -nnd ::03xx | grep -Ei 'battlemage|alchemist' | sed -n 's/.*\[8086:\([0-9a-f]\+\)\].*/\1/p')
+        # Extract DEVID from the Xe-compatible PCI device found by is_intel
+        DEVID=$(<"$INTEL_XE_SYSFS/device")
+        DEVID="${DEVID#0x}"
 
         if [[ -z "$DEVID" ]]; then
             echo "Error: Could not detect Intel GPU device ID"

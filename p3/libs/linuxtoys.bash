@@ -268,15 +268,21 @@ is_nvidia() {
     fi
 }
 is_intel() {
-    local intelGPU=$(lspci | grep -Ei 'vga|3d' | grep -Ei 'intel')
-    if [[ -n "$intelGPU" ]]; then
-        if echo "$intelGPU" | grep -Eqi 'battlemage|alchemist'; then
+    local dev modalias
+    unset intel_arc INTEL_XE_SYSFS
+    for dev in /sys/bus/pci/devices/*; do
+        [[ -r "$dev/vendor" && -r "$dev/class" && -r "$dev/modalias" ]] || continue
+        [[ "$(<"$dev/vendor")" == "0x8086" ]] || continue
+        [[ "$(<"$dev/class")" == 0x03* ]] || continue
+        intelGPU="yes"
+        modalias=$(<"$dev/modalias")
+        # Check whether the currently installed kernel's xe module explicitly supports this PCI device, fixes #1069
+        if modprobe -R "$modalias" 2>/dev/null | grep -qx 'xe'; then
             intel_arc="yes"
+            INTEL_XE_SYSFS="$dev"
         fi
-        return 0
-    else
-        return 1
-    fi
+    done
+    [[ -n "$intelGPU" ]]
 }
 is_amd() {
     local amdGPU=$(lspci | grep -Ei '(amd|radeon|rx|amdgpu)')
