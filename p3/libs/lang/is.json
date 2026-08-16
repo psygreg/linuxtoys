@@ -517,5 +517,6 @@
   "amdgpu_desc": "Settu upp nýjustu AMD Radeon-skjákortareklana á Ubuntu LTS og Red Hat Enterprise Linux.",
   "ubuntuv3": "Virkja x86-64v3 pakka",
   "ubuntuv3_desc": "Stillir Ubuntu til að forgangsraða bjartsýnum pökkum fyrir x86-64v3 örgjörva, sem getur skilað lítilsháttar afkastabótum.",
-  "lazydocker_desc": "TUI fyrir Docker sem gerir forriturum kleift að stjórna gámum, diskmyndum, gagnasöfnum, netkerfum og annálum í gagnvirku viðmóti án þess að þurfa að muna langar Docker-skipanir."
+  "lazydocker_desc": "TUI fyrir Docker sem gerir forriturum kleift að stjórna gámum, diskmyndum, gagnasöfnum, netkerfum og annálum í gagnvirku viðmóti án þess að þurfa að muna langar Docker-skipanir.",
+  "scripts_resync": "Samstilla skriftur"
 }

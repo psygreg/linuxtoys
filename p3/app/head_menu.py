@@ -4,6 +4,7 @@ from . import language_selector
 from . import about_helper
 from . import action_registry
 from . import get_icon_path
+from . import git_scripts_manager
 from .lang_utils import create_translator
 import threading
 import asyncio
@@ -148,6 +149,10 @@ class MenuButton(Gtk.MenuButton):
 		self.action_registry_item = Gtk.ModelButton(label=_("action_registry"))
 		self.action_registry_item.set_image(Gtk.Image.new_from_icon_name("document-properties", Gtk.IconSize.MENU))
 		self.action_registry_item.connect("clicked", self.__on_action_registry)
+
+		self.update_scripts_item = Gtk.ModelButton(label=_("scripts_resync"))
+		self.update_scripts_item.set_image(Gtk.Image.new_from_icon_name("view-refresh", Gtk.IconSize.MENU))
+		self.update_scripts_item.connect("clicked", self.__on_update_scripts)
 		
 		# Add separator
 		separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
@@ -160,6 +165,7 @@ class MenuButton(Gtk.MenuButton):
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
 		vbox.pack_start(self.action_registry_item, True, True, 0)
+		vbox.pack_start(self.update_scripts_item, True, True, 0)
 		vbox.pack_start(separator, False, False, 0)
 		vbox.pack_start(self.auto_error_reports, False, False, 0)
 		vbox.show_all()
@@ -175,6 +181,7 @@ class MenuButton(Gtk.MenuButton):
 		self.language_select.set_label(_("select_language"))
 		self.about_item.set_label(_("about_title"))
 		self.action_registry_item.set_label(_("action_registry"))
+		self.update_scripts_item.set_label(_("scripts_resync"))
 		self.auto_error_reports.set_label(_("auto_error_reports"))
 
 	def __on_auto_error_reports_toggled(self, widget):
@@ -204,6 +211,23 @@ class MenuButton(Gtk.MenuButton):
 	def __on_action_registry(self, widget):
 		"""Handle action registry menu item click"""
 		action_registry.show_action_registry_dialog(self.parent_window)
+
+	def __on_update_scripts(self, widget):
+		"""Force an immediate update of the cached scripts repository."""
+		_ = create_translator()
+		self.update_scripts_item.set_sensitive(False)
+		self.dlg = WaitDialog(self.get_toplevel(), _("scripts_init_updating"))
+		self.dlg.start()
+		threading.Thread(target=self.__update_scripts_thread, daemon=True).start()
+
+	def __update_scripts_thread(self):
+		git_scripts_manager.force_update_scripts()
+		GLib.idle_add(self.__close_wait_dialog)
+
+	def __close_wait_dialog(self):
+		if self.dlg is not None:
+			self.dlg.stop()
+			self.dlg = None
 
 	def __on_load_manifest(self, widget):
 		scripts_name = self.__file_choose()

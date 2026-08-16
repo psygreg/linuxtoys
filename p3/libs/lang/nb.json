@@ -517,5 +517,6 @@
   "amdgpu_desc": "Installer de nyeste AMD Radeon-grafikkdriverne på Ubuntu LTS og Red Hat Enterprise Linux.",
   "ubuntuv3": "Aktiver x86-64v3-pakker",
   "ubuntuv3_desc": "Setter opp Ubuntu til å foretrekke optimaliserte pakker for x86-64v3-prosessorer, noe som kan gi en liten ytelsesforbedring.",
-  "lazydocker_desc": "Et TUI for Docker som lar utviklere administrere containere, avbildninger, volumer, nettverk og logger fra et interaktivt grensesnitt uten å måtte huske lange Docker-kommandoer."
+  "lazydocker_desc": "Et TUI for Docker som lar utviklere administrere containere, avbildninger, volumer, nettverk og logger fra et interaktivt grensesnitt uten å måtte huske lange Docker-kommandoer.",
+  "scripts_resync": "Synkroniser skript"
 }

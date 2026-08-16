@@ -517,5 +517,6 @@
   "amdgpu_desc": "Installeer de nieuwste AMD Radeon-grafische stuurprogramma's op Ubuntu LTS en Red Hat Enterprise Linux.",
   "ubuntuv3": "x86-64v3-pakketten inschakelen",
   "ubuntuv3_desc": "Stelt Ubuntu in om geoptimaliseerde pakketten voor x86-64v3-processors te verkiezen, wat kleine prestatieverbeteringen kan opleveren.",
-  "lazydocker_desc": "Een TUI voor Docker waarmee ontwikkelaars containers, images, volumes, netwerken en logboeken vanuit een interactieve interface kunnen beheren, zonder lange Docker-opdrachten te hoeven onthouden."
+  "lazydocker_desc": "Een TUI voor Docker waarmee ontwikkelaars containers, images, volumes, netwerken en logboeken vanuit een interactieve interface kunnen beheren, zonder lange Docker-opdrachten te hoeven onthouden.",
+  "scripts_resync": "Scripts synchroniseren"
 }

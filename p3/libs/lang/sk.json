@@ -517,5 +517,6 @@
   "amdgpu_desc": "Nainštalujte najnovšie grafické ovládače AMD Radeon v systémoch Ubuntu LTS a Red Hat Enterprise Linux.",
   "ubuntuv3": "Povoliť balíky x86-64v3",
   "ubuntuv3_desc": "Nastaví Ubuntu tak, aby uprednostňoval optimalizované balíky pre procesory x86-64v3, čo môže priniesť malé zvýšenie výkonu.",
-  "lazydocker_desc": "TUI pre Docker, ktoré umožňuje vývojárom spravovať kontajnery, obrazy, zväzky, siete a protokoly z interaktívneho rozhrania bez nutnosti pamätať si dlhé príkazy Dockeru."
+  "lazydocker_desc": "TUI pre Docker, ktoré umožňuje vývojárom spravovať kontajnery, obrazy, zväzky, siete a protokoly z interaktívneho rozhrania bez nutnosti pamätať si dlhé príkazy Dockeru.",
+  "scripts_resync": "Synchronizovať skripty"
 }

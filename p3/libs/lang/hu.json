@@ -517,5 +517,6 @@
   "amdgpu_desc": "Telepítse a legújabb AMD Radeon grafikus illesztőprogramokat Ubuntu LTS és Red Hat Enterprise Linux rendszerekre.",
   "ubuntuv3": "x86-64v3 csomagok engedélyezése",
   "ubuntuv3_desc": "Úgy állítja be az Ubuntut, hogy előnyben részesítse az x86-64v3 processzorokra optimalizált csomagokat, ami kisebb teljesítménynövekedést eredményezhet.",
-  "lazydocker_desc": "Egy TUI a Dockerhez, amellyel a fejlesztők interaktív felületen kezelhetik a konténereket, lemezképeket, köteteket, hálózatokat és naplókat anélkül, hogy hosszú Docker-parancsokat kellene megjegyezniük."
+  "lazydocker_desc": "Egy TUI a Dockerhez, amellyel a fejlesztők interaktív felületen kezelhetik a konténereket, lemezképeket, köteteket, hálózatokat és naplókat anélkül, hogy hosszú Docker-parancsokat kellene megjegyezniük.",
+  "scripts_resync": "Szkriptek szinkronizálása"
 }

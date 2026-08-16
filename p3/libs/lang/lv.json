@@ -517,5 +517,6 @@
   "amdgpu_desc": "Instalējiet jaunākos AMD Radeon grafikas draiverus Ubuntu LTS un Red Hat Enterprise Linux sistēmās.",
   "ubuntuv3": "Iespējot x86-64v3 pakotnes",
   "ubuntuv3_desc": "Iestata Ubuntu dot priekšroku x86-64v3 procesoriem optimizētām pakotnēm, kas var sniegt nelielus veiktspējas uzlabojumus.",
-  "lazydocker_desc": "Docker TUI, kas ļauj izstrādātājiem interaktīvā saskarnē pārvaldīt konteinerus, attēlus, sējumus, tīklus un žurnālus, neiegaumējot garas Docker komandas."
+  "lazydocker_desc": "Docker TUI, kas ļauj izstrādātājiem interaktīvā saskarnē pārvaldīt konteinerus, attēlus, sējumus, tīklus un žurnālus, neiegaumējot garas Docker komandas.",
+  "scripts_resync": "Sinhronizēt skriptus"
 }

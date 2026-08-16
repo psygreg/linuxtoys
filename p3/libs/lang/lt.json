@@ -517,5 +517,6 @@
   "amdgpu_desc": "Įdiekite naujausias AMD Radeon grafikos tvarkykles Ubuntu LTS ir Red Hat Enterprise Linux sistemose.",
   "ubuntuv3": "Įjungti x86-64v3 paketus",
   "ubuntuv3_desc": "Nustato Ubuntu teikti pirmenybę x86-64v3 procesoriams optimizuotiems paketams, kurie gali šiek tiek pagerinti našumą.",
-  "lazydocker_desc": "„Docker“ skirta TUI, leidžianti kūrėjams interaktyvioje sąsajoje valdyti konteinerius, atvaizdus, tomus, tinklus ir žurnalus, neįsimenant ilgų „Docker“ komandų."
+  "lazydocker_desc": "„Docker“ skirta TUI, leidžianti kūrėjams interaktyvioje sąsajoje valdyti konteinerius, atvaizdus, tomus, tinklus ir žurnalus, neįsimenant ilgų „Docker“ komandų.",
+  "scripts_resync": "Sinchronizuoti scenarijus"
 }

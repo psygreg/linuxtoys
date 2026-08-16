@@ -517,5 +517,6 @@
   "amdgpu_desc": "Namestite najnovejše grafične gonilnike AMD Radeon v Ubuntu LTS in Red Hat Enterprise Linux.",
   "ubuntuv3": "Omogoči pakete x86-64v3",
   "ubuntuv3_desc": "Nastavi Ubuntu tako, da daje prednost paketom, optimiziranim za procesorje x86-64v3, kar lahko prinese manjše izboljšanje zmogljivosti.",
-  "lazydocker_desc": "TUI za Docker, ki razvijalcem omogoča upravljanje vsebnikov, slik, nosilcev, omrežij in dnevnikov prek interaktivnega vmesnika, ne da bi si morali zapomniti dolge ukaze Docker."
+  "lazydocker_desc": "TUI za Docker, ki razvijalcem omogoča upravljanje vsebnikov, slik, nosilcev, omrežij in dnevnikov prek interaktivnega vmesnika, ne da bi si morali zapomniti dolge ukaze Docker.",
+  "scripts_resync": "Sinhroniziraj skripte"
 }

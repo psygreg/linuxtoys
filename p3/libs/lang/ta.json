@@ -515,5 +515,6 @@
   "amdgpu_desc": "Ubuntu LTS மற்றும் Red Hat Enterprise Linux-இல் சமீபத்திய AMD Radeon வரைகலை இயக்கிகளை நிறுவுங்கள்.",
   "ubuntuv3": "x86-64v3 தொகுப்புகளை இயக்கு",
   "ubuntuv3_desc": "Ubuntu-வில் x86-64v3 செயலிகளுக்காக மேம்படுத்தப்பட்ட தொகுப்புகளுக்கு முன்னுரிமை அளிக்க அமைக்கிறது; இது சிறிய செயல்திறன் மேம்பாடுகளை வழங்கலாம்.",
-  "lazydocker_desc": "நீண்ட Docker கட்டளைகளை மனப்பாடம் செய்யாமல், ஊடாடும் இடைமுகத்திலிருந்து containers, images, volumes, networks மற்றும் logs ஆகியவற்றை developers நிர்வகிக்க உதவும் Docker-க்கான TUI."
+  "lazydocker_desc": "நீண்ட Docker கட்டளைகளை மனப்பாடம் செய்யாமல், ஊடாடும் இடைமுகத்திலிருந்து containers, images, volumes, networks மற்றும் logs ஆகியவற்றை developers நிர்வகிக்க உதவும் Docker-க்கான TUI.",
+  "scripts_resync": "ஸ்கிரிப்ட்களை ஒத்திசை"
 }

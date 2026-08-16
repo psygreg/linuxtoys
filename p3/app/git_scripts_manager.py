@@ -215,18 +215,18 @@ def _clone_scripts_repo(progress_callback=None):
     return False
 
 
-def _pull_scripts_repo(progress_callback=None):
+def _pull_scripts_repo(progress_callback=None, force=False):
     """
     Pull updates from the scripts repository.
     
     Times out after 10 seconds to prevent hanging on network issues.
-    Respects the update interval to avoid rate limiting - will only pull if
-    the last update was more than 6 hours ago or this is the first run.
+    Respects the update interval to avoid rate limiting unless force is True.
     
     If pull fails (including timeout), will use the cached repository.
     
     Args:
         progress_callback: Optional function to call with progress messages
+        force: Whether to bypass the update interval
     
     Returns:
         bool: True if pull was successful or skipped due to rate limiting
@@ -237,8 +237,8 @@ def _pull_scripts_repo(progress_callback=None):
             progress_callback("scripts_init_not_found")
         return _clone_scripts_repo(progress_callback)
     
-    # Check if we should update based on time interval
-    if not _should_update_scripts():
+    # Check if we should update based on time interval unless explicitly forced.
+    if not force and not _should_update_scripts():
         logger.info("Skipping repository update due to rate limiting (updated < 6 hours ago)")
         return True  # Return True since we have valid cached scripts
     
@@ -262,6 +262,19 @@ def _pull_scripts_repo(progress_callback=None):
     # Return True here since we already have the repo, even if pull failed
     # This ensures we use cached scripts rather than failing completely
     return True
+
+
+def force_update_scripts(progress_callback=None):
+    """Update the script cache immediately, bypassing the update interval.
+
+    Returns:
+        bool: True when a cached or newly cloned repository is available
+    """
+    if is_dev_mode_enabled():
+        logger.info("Developer mode active - skipping forced script cache update")
+        return False
+
+    return _pull_scripts_repo(progress_callback, force=True)
 
 
 def will_perform_git_operation():

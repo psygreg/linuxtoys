@@ -517,5 +517,6 @@
   "rewaita_desc": "Mude a aparência do shell do GNOME e dos aplicativos GTK4 e GTK3 sem complicações. Há vários esquemas de cores para escolher, e você pode até criar o seu próprio!",
   "amdgpu_desc": "Instale os drivers gráficos AMD Radeon mais recentes no Ubuntu LTS e no Red Hat Enterprise Linux.",
   "ubuntuv3": "Ativar pacotes x86-64v3",
-  "ubuntuv3_desc": "Configura o Ubuntu para dar preferência a pacotes otimizados para processadores x86-64v3, o que pode trazer pequenos ganhos de desempenho."
+  "ubuntuv3_desc": "Configura o Ubuntu para dar preferência a pacotes otimizados para processadores x86-64v3, o que pode trazer pequenos ganhos de desempenho.",
+  "scripts_resync": "Sincronizar scripts"
 }

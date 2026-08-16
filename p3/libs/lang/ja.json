@@ -517,5 +517,6 @@
   "amdgpu_desc": "Ubuntu LTSおよびRed Hat Enterprise Linuxに最新のAMD Radeonグラフィックスドライバーをインストールします。",
   "ubuntuv3": "x86-64v3 パッケージを有効化",
   "ubuntuv3_desc": "Ubuntuでx86-64v3プロセッサ向けに最適化されたパッケージを優先するよう設定し、わずかな性能向上が期待できます。",
-  "lazydocker_desc": "長い Docker コマンドを覚えることなく、開発者がインタラクティブなインターフェースからコンテナ、イメージ、ボリューム、ネットワーク、ログを管理できる Docker 用 TUI です。"
+  "lazydocker_desc": "長い Docker コマンドを覚えることなく、開発者がインタラクティブなインターフェースからコンテナ、イメージ、ボリューム、ネットワーク、ログを管理できる Docker 用 TUI です。",
+  "scripts_resync": "スクリプトを同期"
 }

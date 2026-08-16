@@ -517,5 +517,6 @@
   "amdgpu_desc": "Ubuntu LTS နှင့် Red Hat Enterprise Linux တွင် နောက်ဆုံးပေါ် AMD Radeon ဂရပ်ဖစ်ဒရိုင်ဘာများကို ထည့်သွင်းပါ။",
   "ubuntuv3": "x86-64v3 ပက်ကေ့ဂျ်များကို ဖွင့်ပါ",
   "ubuntuv3_desc": "Ubuntu တွင် x86-64v3 ပရိုဆက်ဆာများအတွက် အကောင်းဆုံးပြင်ဆင်ထားသော ပက်ကေ့ဂျ်များကို ဦးစားပေးအသုံးပြုရန် သတ်မှတ်ပေးပြီး စွမ်းဆောင်ရည် အနည်းငယ်တိုးတက်လာနိုင်သည်။",
-  "lazydocker_desc": "ရှည်လျားသော Docker command များကို မှတ်သားစရာမလိုဘဲ developer များက interactive interface မှ container၊ image၊ volume၊ network နှင့် log များကို စီမံနိုင်စေသော Docker အတွက် TUI တစ်ခု။"
+  "lazydocker_desc": "ရှည်လျားသော Docker command များကို မှတ်သားစရာမလိုဘဲ developer များက interactive interface မှ container၊ image၊ volume၊ network နှင့် log များကို စီမံနိုင်စေသော Docker အတွက် TUI တစ်ခု။",
+  "scripts_resync": "စခရစ်များကို စင့်ခ်လုပ်ရန်"
 }

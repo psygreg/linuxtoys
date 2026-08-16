@@ -517,5 +517,6 @@
   "amdgpu_desc": "Asenna uusimmat AMD Radeon -näytönohjaimet Ubuntu LTS:ään ja Red Hat Enterprise Linuxiin.",
   "ubuntuv3": "Ota käyttöön x86-64v3-paketit",
   "ubuntuv3_desc": "Asettaa Ubuntun suosimaan x86-64v3-suorittimille optimoituja pakette, mikä voi tuoda pieniä suorituskykyparannuksia.",
-  "lazydocker_desc": "Dockerin TUI, jonka avulla kehittäjät voivat hallita kontteja, levykuvia, taltioita, verkkoja ja lokeja vuorovaikutteisen käyttöliittymän kautta ilman pitkien Docker-komentojen muistamista."
+  "lazydocker_desc": "Dockerin TUI, jonka avulla kehittäjät voivat hallita kontteja, levykuvia, taltioita, verkkoja ja lokeja vuorovaikutteisen käyttöliittymän kautta ilman pitkien Docker-komentojen muistamista.",
+  "scripts_resync": "Synkronoi skriptit"
 }

@@ -515,5 +515,6 @@
   "amdgpu_desc": "Sakinisha viendeshi vya hivi karibuni vya michoro ya AMD Radeon kwenye Ubuntu LTS na Red Hat Enterprise Linux.",
   "ubuntuv3": "Washa vifurushi vya x86-64v3",
   "ubuntuv3_desc": "Husanidi Ubuntu ili kupendelea vifurushi vilivyoboreshwa kwa vichakataji vya x86-64v3, jambo ambalo linaweza kuleta maboresho madogo ya utendaji.",
-  "lazydocker_desc": "TUI ya Docker inayowaruhusu wasanidi kudhibiti kontena, picha, volumu, mitandao na kumbukumbu kupitia kiolesura shirikishi bila kukariri amri ndefu za Docker."
+  "lazydocker_desc": "TUI ya Docker inayowaruhusu wasanidi kudhibiti kontena, picha, volumu, mitandao na kumbukumbu kupitia kiolesura shirikishi bila kukariri amri ndefu za Docker.",
+  "scripts_resync": "Sawazisha skripti"
 }
