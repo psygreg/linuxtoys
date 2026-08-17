@@ -61,6 +61,7 @@ if is_fedora || is_rhel; then
             fi
     }
 elif is_debian || is_ubuntu; then
+    interrupted_apt_guard
     if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
         { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo apt-get autoremove -y || fatal "Failed to remove orphaned packages"
     fi
@@ -71,6 +72,7 @@ elif is_debian || is_ubuntu; then
         fi
     fi
 elif { is_arch || is_cachy; } && ! is_manjaro; then
+    pacman_lock_guard
     orphaned_packages=$(pacman -Qdtq 2>/dev/null || true)
     if [[ -n "$orphaned_packages" ]]; then
         sudo pacman -Rns $orphaned_packages || fatal "Failed to remove orphaned packages"
