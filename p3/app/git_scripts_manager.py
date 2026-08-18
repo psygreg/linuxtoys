@@ -141,14 +141,18 @@ def _ensure_cache_dir():
 
 
 def _git_repo_exists():
-    """Check if the git repository already exists in cache."""
     if not os.path.isdir(GIT_SCRIPTS_CACHE_DIR):
         return False
-    
-    # Check if it's a valid git repository
-    git_dir = os.path.join(GIT_SCRIPTS_CACHE_DIR, ".git")
-    return os.path.isdir(git_dir)
 
+    git_dir = os.path.join(GIT_SCRIPTS_CACHE_DIR, ".git")
+    if not os.path.isdir(git_dir):
+        return False
+
+    success, _, _ = _run_git_command(
+        ["rev-parse", "--is-inside-work-tree"],
+        cwd=GIT_SCRIPTS_CACHE_DIR,
+    )
+    return success
 
 def _clone_scripts_repo(progress_callback=None):
     """
