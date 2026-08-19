@@ -142,11 +142,12 @@ manjaro() {
 	fi
 	{ pacman -Qi debugedit &>/dev/null || pamac install --no-confirm debugedit; } || error "Failed to install makepkg dependency debugedit"
 	{ pacman -Qi fakeroot &>/dev/null || pamac install --no-confirm fakeroot; } || error "Failed to install makepkg dependency fakeroot"
+	rm -rf "${_pkg_dir}"
 	mkdir -p ${_pkg_dir}
 	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
 		cd "${_pkg_dir}"
 		if makepkg -s -f; then
-			if pamac install --no-confirm ".${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
+			if pamac install --no-confirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
 				info "LinuxToys installed or updated!"
 			else
 				error "Installation failed (pamac)."
