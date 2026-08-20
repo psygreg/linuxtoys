@@ -14,7 +14,15 @@ rocm_rpm () {
     if is_amd; then
         _packages=()
         if [[ "$ID_LIKE" == *suse* ]]; then
-            pkg_install libamd_comgr2 libhsa-runtime64-1 librccl1 librocalution0 librocblas4 librocfft0 librocm_smi64_1 librocsolver0 librocsparse1 rocm-device-libs rocm-smi rocminfo hipcc libhiprand1 libhiprtc-builtins5 radeontop rocm-opencl ocl-icd clinfo
+            if [ "$ID" = "opensuse-leap" ] || [[ "$VERSION_ID" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                sudo zypper --non-interactive addrepo https://download.opensuse.org/repositories/devel:/languages:/perl/$releasever/
+                sudo zypper --non-interactive addrepo https://repo.radeon.com/rocm/zyp/latest/main/
+                sudo rpm --import https://repo.radeon.com/rocm/rocm.gpg.key
+                sudo zypper refresh
+                pkg_install rocm clinfo
+            else
+                pkg_install rocm clinfo
+            fi
         else
             pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo
         fi
