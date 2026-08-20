@@ -6,6 +6,7 @@
 # reboot: yes
 # nocontainer
 # gpu: nvidia
+# hybridgpu: only
 # compat: arch, ubuntu, suse, solus, debian, !manjaro
 
 # --- Start of the script code ---

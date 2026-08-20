@@ -520,5 +520,6 @@
   "ubuntuv3": "启用 x86-64v3 软件包",
   "ubuntuv3_desc": "将 Ubuntu 配置为优先使用针对 x86-64v3 处理器优化的软件包，可能带来一定的性能提升。",
   "lazydocker_desc": "一个用于 Docker 的 TUI，让开发者无需记忆冗长的 Docker 命令，即可通过交互式界面管理容器、镜像、卷、网络和日志。",
-  "scripts_resync": "同步脚本"
+  "scripts_resync": "同步脚本",
+  "vbox_desc": "强大的开源通用全虚拟化解决方案，适用于个人和企业用途。"
 }

@@ -47,4 +47,5 @@ elif is_ubuntu; then
     drv_ver=$(apt-cache search '^nvidia-driver-[0-9]+-open$' | grep -oP 'nvidia-driver-\K[0-9]+(?=-open)' | sort -n | tail -1)
     pkg_install "nvidia-driver-$drv_ver-open"
 fi
+secureboot_check
 zeninf "$msg036"

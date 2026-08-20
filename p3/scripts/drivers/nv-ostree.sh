@@ -14,9 +14,7 @@ _lang_
 # check for rpmfusion repos before proceeding
 sudo_rq
 rpmfusion_chk
-if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-    call_script modsign
-fi
+secureboot_check
 pkg_install akmod-nvidia xorg-x11-drv-nvidia-cuda
 prep_create /etc/modprobe.d/blacklist-nouveau-nova.conf
 sudo tee /etc/modprobe.d/blacklist-nouveau-nova.conf <<EOF

@@ -518,5 +518,6 @@
   "ubuntuv3": "Cumasaigh pacáistí x86-64v3",
   "ubuntuv3_desc": "Cumraíonn sé Ubuntu chun tosaíocht a thabhairt do phacáistí optamaithe do phróiseálaithe x86-64v3, rud a d'fhéadfadh feabhsuithe beaga feidhmíochta a thabhairt.",
   "lazydocker_desc": "TUI do Docker a ligeann d'fhorbróirí coimeádáin, íomhánna, imleabhair, líonraí agus logaí a bhainistiú ó chomhéadan idirghníomhach, gan orduithe fada Docker a chur de ghlanmheabhair.",
-  "scripts_resync": "Sioncronaigh scripteanna"
+  "scripts_resync": "Sioncronaigh scripteanna",
+  "vbox_desc": "Réiteach cumhachtach foinse oscailte le haghaidh fíorúlú iomlán ilchuspóireach, d'úsáid phearsanta agus fiontraíochta."
 }

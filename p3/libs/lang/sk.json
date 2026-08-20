@@ -518,5 +518,6 @@
   "ubuntuv3": "Povoliť balíky x86-64v3",
   "ubuntuv3_desc": "Nastaví Ubuntu tak, aby uprednostňoval optimalizované balíky pre procesory x86-64v3, čo môže priniesť malé zvýšenie výkonu.",
   "lazydocker_desc": "TUI pre Docker, ktoré umožňuje vývojárom spravovať kontajnery, obrazy, zväzky, siete a protokoly z interaktívneho rozhrania bez nutnosti pamätať si dlhé príkazy Dockeru.",
-  "scripts_resync": "Synchronizovať skripty"
+  "scripts_resync": "Synchronizovať skripty",
+  "vbox_desc": "Výkonné open source riešenie na úplnú virtualizáciu na všeobecné použitie pre osobné aj podnikové nasadenie."
 }

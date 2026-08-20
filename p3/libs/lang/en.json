@@ -518,5 +518,6 @@
   "amdgpu_desc": "Install the latest AMD Radeon graphics drivers on Ubuntu LTS and Red Hat Enterprise Linux.",
   "ubuntuv3": "Enable x86-64v3 Packages",
   "ubuntuv3_desc": "Sets up preference for optimized packages for x86-64v3 processors on Ubuntu, which can bring small performance improvements.",
-  "scripts_resync": "Sync scripts"
+  "scripts_resync": "Sync scripts",
+  "vbox_desc": "Powerful open source general-purpose full virtualization for personal and enterprise use."
 }

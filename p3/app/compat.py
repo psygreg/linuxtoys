@@ -269,7 +269,7 @@ def get_gpu_compat_keys():
     Get the GPU compatibility keys based on detected GPUs.
 
     Returns:
-        set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel', 'gpu-nvidia')
+        set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel', 'gpu-nvidia', 'hybridgpu')
     """
     keys = set()
     try:
@@ -296,6 +296,8 @@ def get_gpu_compat_keys():
             keys.add("gpu-intel")
         if has_nvidia:
             keys.add("gpu-nvidia")
+        if has_nvidia and (has_amd or has_intel):
+            keys.add("hybridgpu")
     except Exception:
         pass
     return keys
@@ -723,6 +725,7 @@ def script_is_compatible(script_path, compat_keys):
     systemd_compatible = True  # Default for unset systemd header
     wayland_compatible = True  # Default for unset wayland header (presume neutrality)
     cpu_compatible = True # Default for unset cpu header
+    hybridgpu_compatible = True  # Default for unset hybridgpu header
     has_explicit_systemd_header = False  # Track if systemd header was explicitly set
 
     try:
@@ -827,6 +830,20 @@ def script_is_compatible(script_path, compat_keys):
                     else:
                         # Empty header, treat as general GPU
                         cpu_compatible = "cpu" in compat_keys
+                elif line.startswith("# hybridgpu:"):
+                    hybridgpu_value = line[len("# hybridgpu:") :].strip().lower()
+                    if hybridgpu_value == "only":
+                        hybridgpu_compatible = "hybridgpu" in compat_keys
+                    elif "hybridgpu" in compat_keys:
+                        if hybridgpu_value == "no":
+                            hybridgpu_compatible = False
+                        elif hybridgpu_value not in ("", "yes"):
+                            if hybridgpu_value.startswith("!"):
+                                hybridgpu_compatible = (
+                                    hybridgpu_value[1:] not in compat_keys
+                                )
+                            else:
+                                hybridgpu_compatible = hybridgpu_value in compat_keys
                 if not line.startswith("#"):
                     break
     except Exception:
@@ -840,7 +857,7 @@ def script_is_compatible(script_path, compat_keys):
     # If no explicit wayland header, presume neutrality (script works on both X11 and Wayland)
     # wayland_compatible remains True by default
 
-    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible and cpu_compatible
+    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible
 
 
 def script_is_localized(script_path, current_locale):

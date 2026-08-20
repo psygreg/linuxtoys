@@ -13,9 +13,7 @@ _lang_
 # check for rpmfusion repos before proceeding
 sudo_rq
 rpmfusion_chk
-if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-    call_script modsign
-fi
+secureboot_check
 rpm-ostree refresh-md
 pkg_remove akmod-nvidia xorg-x11-drv-nvidia-cuda
 pkg_install xorg-x11-drv-nvidia-580xx akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda

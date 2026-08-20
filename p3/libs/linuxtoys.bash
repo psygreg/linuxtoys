@@ -292,6 +292,13 @@ is_amd() {
         return 1
     fi
 }
+is_hybridgpu() {
+    if is_nvidia && ( is_intel || is_amd ); then
+        return 0
+    else
+        return 1
+    fi
+}
 
 # transaction map control
 init_transmap() {
@@ -1090,4 +1097,30 @@ call_script () {
 
     rm -f "$child_transmap"
     return "$status"
+}
+
+secureboot_check() {
+    local _ubuntumok=0
+    for arg in "$@"; do
+        if [[ "$arg" == "--ubuntumok" ]]; then
+            _ubuntumok=1
+        fi
+    done
+    sudo mokutil --sb-state | grep -q "SecureBoot enabled" || return 0
+    if is_fedora || is_rhel || is_ostree; then
+        call_script modsign
+    elif is_ubuntu; then
+        { sudo mokutil --test-key /var/lib/shim-signed/mok/MOK.der | grep -q "not enrolled" && \
+            { sudo update-secureboot-policy --enroll-key || die "Failed to update secure boot policy"; }; } || true
+    elif is_debian; then
+        if [ "$_ubuntumok" -eq 1 ] && [ ! -f /var/lib/shim-signed/mok/MOK.der ]; then
+            prep_dir /var/lib/shim-signed/mok/
+            openssl req -nodes -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -days 36500 -subj "/CN=LinuxToys/"
+            openssl x509 -inform der -in MOK.der -out MOK.pem
+            sudo mokutil --import /var/lib/shim-signed/mok/MOK.der || die "Failed to create ubuntu-like key"
+        else
+            { sudo mokutil --test-key /var/lib/dkms/mok.pub | grep -q "not enrolled" && \
+                { sudo mokutil --import /var/lib/dkms/mok.pub || die "Failed to update secure boot policy"; }; } || true
+        fi
+    fi
 }

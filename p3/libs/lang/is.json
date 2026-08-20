@@ -518,5 +518,6 @@
   "ubuntuv3": "Virkja x86-64v3 pakka",
   "ubuntuv3_desc": "Stillir Ubuntu til að forgangsraða bjartsýnum pökkum fyrir x86-64v3 örgjörva, sem getur skilað lítilsháttar afkastabótum.",
   "lazydocker_desc": "TUI fyrir Docker sem gerir forriturum kleift að stjórna gámum, diskmyndum, gagnasöfnum, netkerfum og annálum í gagnvirku viðmóti án þess að þurfa að muna langar Docker-skipanir.",
-  "scripts_resync": "Samstilla skriftur"
+  "scripts_resync": "Samstilla skriftur",
+  "vbox_desc": "Öflug og opin full sýndarvæðingarlausn til almennra nota, bæði fyrir einstaklinga og fyrirtæki."
 }

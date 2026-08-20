@@ -30,12 +30,11 @@ if is_arch || is_cachy || is_solus; then
     pkg_install xorg-xwayland v4l2loopback-dkms
 elif is_debian || is_ubuntu; then
     pkg_install xwayland v4l2loopback-dkms
+    secureboot_check
 elif is_fedora || is_rhel || is_ostree; then
     summon_helpers
     rpmfusion_chk
-    if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        call_script modsign
-    fi
+    secureboot_check
     pkg_install xorg-x11-server-Xwayland v4l2loopback
 elif is_suse; then
     pkg_install xwayland v4l2loopback-autoload v4l2loopback-kmp-default v4l2loopback-utils

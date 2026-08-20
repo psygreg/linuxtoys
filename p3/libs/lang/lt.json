@@ -518,5 +518,6 @@
   "ubuntuv3": "Įjungti x86-64v3 paketus",
   "ubuntuv3_desc": "Nustato Ubuntu teikti pirmenybę x86-64v3 procesoriams optimizuotiems paketams, kurie gali šiek tiek pagerinti našumą.",
   "lazydocker_desc": "„Docker“ skirta TUI, leidžianti kūrėjams interaktyvioje sąsajoje valdyti konteinerius, atvaizdus, tomus, tinklus ir žurnalus, neįsimenant ilgų „Docker“ komandų.",
-  "scripts_resync": "Sinchronizuoti scenarijus"
+  "scripts_resync": "Sinchronizuoti scenarijus",
+  "vbox_desc": "Galingas atvirojo kodo bendrosios paskirties visiškos virtualizacijos sprendimas asmeniniam ir verslo naudojimui."
 }

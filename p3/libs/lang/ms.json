@@ -518,5 +518,6 @@
   "ubuntuv3": "Dayakan pakej x86-64v3",
   "ubuntuv3_desc": "Menetapkan Ubuntu supaya mengutamakan pakej yang dioptimumkan untuk pemproses x86-64v3, yang boleh memberikan sedikit peningkatan prestasi.",
   "lazydocker_desc": "TUI untuk Docker yang membolehkan pembangun mengurus bekas, imej, volum, rangkaian dan log melalui antara muka interaktif tanpa perlu menghafal arahan Docker yang panjang.",
-  "scripts_resync": "Segerakkan skrip"
+  "scripts_resync": "Segerakkan skrip",
+  "vbox_desc": "Penyelesaian virtualisasi penuh sumber terbuka yang berkuasa dan serba guna untuk kegunaan peribadi serta perusahaan."
 }

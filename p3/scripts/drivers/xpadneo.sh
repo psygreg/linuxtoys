@@ -25,4 +25,7 @@ prep_tmp
 git clone https://github.com/atar-axis/xpadneo.git
 cd xpadneo
 sudo ./install.sh
+if is_ubuntu || is_debian || is_fedora || is_ostree; then
+    secureboot_check
+fi
 zeninf "$msg036"

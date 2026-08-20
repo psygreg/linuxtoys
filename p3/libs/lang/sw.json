@@ -516,5 +516,6 @@
   "ubuntuv3": "Washa vifurushi vya x86-64v3",
   "ubuntuv3_desc": "Husanidi Ubuntu ili kupendelea vifurushi vilivyoboreshwa kwa vichakataji vya x86-64v3, jambo ambalo linaweza kuleta maboresho madogo ya utendaji.",
   "lazydocker_desc": "TUI ya Docker inayowaruhusu wasanidi kudhibiti kontena, picha, volumu, mitandao na kumbukumbu kupitia kiolesura shirikishi bila kukariri amri ndefu za Docker.",
-  "scripts_resync": "Sawazisha skripti"
+  "scripts_resync": "Sawazisha skripti",
+  "vbox_desc": "Suluhisho thabiti la chanzo huria la uboreshaji kamili wa mazingira pepe kwa matumizi ya jumla, binafsi na ya biashara."
 }

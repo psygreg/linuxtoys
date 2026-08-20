@@ -518,5 +518,6 @@
   "ubuntuv3": "x86-64v3-Pakete aktivieren",
   "ubuntuv3_desc": "Richtet Ubuntu so ein, dass optimierte Pakete für x86-64v3-Prozessoren bevorzugt werden, was zu kleinen Leistungsverbesserungen führen kann.",
   "lazydocker_desc": "Eine TUI für Docker, mit der Entwickler Container, Images, Volumes, Netzwerke und Protokolle über eine interaktive Oberfläche verwalten können, ohne sich lange Docker-Befehle merken zu müssen.",
-  "scripts_resync": "Skripte synchronisieren"
+  "scripts_resync": "Skripte synchronisieren",
+  "vbox_desc": "Leistungsstarke quelloffene Komplettvirtualisierung für allgemeine Zwecke, sowohl für den privaten als auch den Unternehmenseinsatz."
 }

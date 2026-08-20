@@ -518,5 +518,6 @@
   "ubuntuv3": "Iespējot x86-64v3 pakotnes",
   "ubuntuv3_desc": "Iestata Ubuntu dot priekšroku x86-64v3 procesoriem optimizētām pakotnēm, kas var sniegt nelielus veiktspējas uzlabojumus.",
   "lazydocker_desc": "Docker TUI, kas ļauj izstrādātājiem interaktīvā saskarnē pārvaldīt konteinerus, attēlus, sējumus, tīklus un žurnālus, neiegaumējot garas Docker komandas.",
-  "scripts_resync": "Sinhronizēt skriptus"
+  "scripts_resync": "Sinhronizēt skriptus",
+  "vbox_desc": "Jaudīgs atvērtā pirmkoda vispārējas nozīmes pilnas virtualizācijas risinājums personīgai un uzņēmumu lietošanai."
 }

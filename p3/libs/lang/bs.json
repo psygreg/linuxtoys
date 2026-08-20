@@ -517,5 +517,6 @@
   "ubuntuv3": "Omogući x86-64v3 pakete",
   "ubuntuv3_desc": "Postavlja Ubuntu da daje prednost optimiziranim paketima za x86-64v3 procesore, što može donijeti mala poboljšanja performansi.",
   "lazydocker_desc": "TUI za Docker koji omogućava programerima da upravljaju kontejnerima, slikama, volumenima, mrežama i zapisnicima iz interaktivnog sučelja, bez pamćenja dugih Docker naredbi.",
-  "scripts_resync": "Sinhronizuj skripte"
+  "scripts_resync": "Sinhronizuj skripte",
+  "vbox_desc": "Moćno rješenje otvorenog koda za potpunu virtualizaciju opće namjene, za ličnu i poslovnu upotrebu."
 }

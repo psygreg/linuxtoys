@@ -518,5 +518,6 @@
   "ubuntuv3": "Paganahin ang mga paketeng x86-64v3",
   "ubuntuv3_desc": "Itinatakda ang Ubuntu na unahin ang mga paketeng na-optimize para sa mga x86-64v3 processor, na maaaring magbigay ng kaunting pagbuti sa pagganap.",
   "lazydocker_desc": "Isang TUI para sa Docker na nagbibigay-daan sa mga developer na pamahalaan ang mga container, image, volume, network, at log mula sa isang interactive na interface nang hindi kailangang kabisaduhin ang mahahabang Docker command.",
-  "scripts_resync": "I-sync ang mga script"
+  "scripts_resync": "I-sync ang mga script",
+  "vbox_desc": "Isang makapangyarihang open source na full virtualization solution para sa pangkalahatang gamit, personal man o pang-enterprise."
 }

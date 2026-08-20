@@ -10,6 +10,8 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 
+secureboot_check
+
 BASE="https://repo.radeon.com/amdgpu-install"
 prep_tmp_noram
 OUTDIR="${1:-./amdgpu-install-downloads}"

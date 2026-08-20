@@ -33,4 +33,5 @@ else
     prep_create /etc/modprobe.d/blacklist.conf
     echo "blacklist rtw88_8821ce" | sudo tee /etc/modprobe.d/blacklist.conf
 fi
+secureboot_check
 zeninf "$msg036"

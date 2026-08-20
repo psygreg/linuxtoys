@@ -518,5 +518,6 @@
   "ubuntuv3": "x86-64v3 paketlerini etkinleştir",
   "ubuntuv3_desc": "Ubuntu'yu x86-64v3 işlemciler için optimize edilmiş paketleri tercih edecek şekilde yapılandırır; bu da küçük performans artışları sağlayabilir.",
   "lazydocker_desc": "Geliştiricilerin uzun Docker komutlarını ezberlemeden etkileşimli bir arayüz üzerinden konteynerleri, imajları, birimleri, ağları ve günlükleri yönetmesini sağlayan bir Docker TUI'si.",
-  "scripts_resync": "Betikleri eşitle"
+  "scripts_resync": "Betikleri eşitle",
+  "vbox_desc": "Kişisel ve kurumsal kullanım için güçlü, açık kaynaklı, genel amaçlı tam sanallaştırma çözümü."
 }

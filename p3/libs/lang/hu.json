@@ -518,5 +518,6 @@
   "ubuntuv3": "x86-64v3 csomagok engedélyezése",
   "ubuntuv3_desc": "Úgy állítja be az Ubuntut, hogy előnyben részesítse az x86-64v3 processzorokra optimalizált csomagokat, ami kisebb teljesítménynövekedést eredményezhet.",
   "lazydocker_desc": "Egy TUI a Dockerhez, amellyel a fejlesztők interaktív felületen kezelhetik a konténereket, lemezképeket, köteteket, hálózatokat és naplókat anélkül, hogy hosszú Docker-parancsokat kellene megjegyezniük.",
-  "scripts_resync": "Szkriptek szinkronizálása"
+  "scripts_resync": "Szkriptek szinkronizálása",
+  "vbox_desc": "Nagy teljesítményű, nyílt forráskódú, általános célú teljes virtualizációs megoldás személyes és vállalati használatra."
 }

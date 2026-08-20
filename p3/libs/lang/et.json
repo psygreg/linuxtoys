@@ -518,5 +518,6 @@
   "ubuntuv3": "Luba x86-64v3 paketid",
   "ubuntuv3_desc": "Seadistab Ubuntu eelistama x86-64v3 protsessoritele optimeeritud pakette, mis võivad pakkuda väikest jõudluse paranemist.",
   "lazydocker_desc": "Dockeri TUI, mis võimaldab arendajatel hallata konteinereid, tõmmiseid, köiteid, võrke ja logisid interaktiivse liidese kaudu ilma pikki Dockeri käske meelde jätmata.",
-  "scripts_resync": "Sünkrooni skriptid"
+  "scripts_resync": "Sünkrooni skriptid",
+  "vbox_desc": "Võimas avatud lähtekoodiga üldotstarbeline täisvirtualiseerimise lahendus isiklikuks ja ettevõtetes kasutamiseks."
 }

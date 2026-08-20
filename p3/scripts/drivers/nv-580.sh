@@ -18,9 +18,7 @@ if is_arch || is_cachy; then
     bootloader_upd
 elif is_fedora || is_rhel; then
     rpmfusion_chk
-    if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
-        call_script modsign
-    fi
+    secureboot_check
     pkg_remove akmod-nvidia xorg-x11-drv-nvidia-cuda kmod-nvidia
     pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda kmod-nvidia-580xx
     initramfs_upd
@@ -28,6 +26,7 @@ elif is_fedora || is_rhel; then
 elif is_ubuntu; then
     sudo apt update
     pkg_install nvidia-driver-580
+    secureboot_check
 elif is_suse; then
     case "$VERSION_ID" in
         *Tumbleweed* | *Slowroll*) REPO_URL="https://download.nvidia.com/opensuse/tumbleweed" ;;

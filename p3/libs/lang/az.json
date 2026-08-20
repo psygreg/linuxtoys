@@ -517,5 +517,6 @@
   "ubuntuv3": "x86-64v3 paketlərini aktivləşdir",
   "ubuntuv3_desc": "Ubuntu-da x86-64v3 prosessorları üçün optimallaşdırılmış paketlərə üstünlük verir ki, bu da kiçik performans artımı təmin edə bilər.",
   "lazydocker_desc": "Tərtibatçılara uzun Docker əmrlərini yadda saxlamağa ehtiyac olmadan interaktiv interfeysdən konteynerləri, obrazları, həcmləri, şəbəkələri və jurnalları idarə etməyə imkan verən Docker üçün TUI.",
-  "scripts_resync": "Skriptləri sinxronlaşdır"
+  "scripts_resync": "Skriptləri sinxronlaşdır",
+  "vbox_desc": "Şəxsi və korporativ istifadə üçün güclü, açıq mənbəli, ümumi təyinatlı tam virtuallaşdırma həlli."
 }

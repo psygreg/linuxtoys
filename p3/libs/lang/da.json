@@ -518,5 +518,6 @@
   "ubuntuv3": "Aktivér x86-64v3-pakker",
   "ubuntuv3_desc": "Indstiller Ubuntu til at foretrække optimerede pakker til x86-64v3-processorer, hvilket kan give en mindre ydelsesforbedring.",
   "lazydocker_desc": "En TUI til Docker, der lader udviklere administrere containere, images, volumes, netværk og logfiler fra en interaktiv brugerflade uden at skulle huske lange Docker-kommandoer.",
-  "scripts_resync": "Synkroniser scripts"
+  "scripts_resync": "Synkroniser scripts",
+  "vbox_desc": "Kraftfuld open source-løsning til komplet virtualisering til generelle formål, både til personlig brug og virksomheder."
 }

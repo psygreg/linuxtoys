@@ -518,5 +518,6 @@
   "ubuntuv3": "Activează pachetele x86-64v3",
   "ubuntuv3_desc": "Configurează Ubuntu să prefere pachetele optimizate pentru procesoarele x86-64v3, ceea ce poate aduce mici îmbunătățiri de performanță.",
   "lazydocker_desc": "O interfață TUI pentru Docker care permite dezvoltatorilor să gestioneze containere, imagini, volume, rețele și jurnale dintr-o interfață interactivă, fără a memora comenzi Docker lungi.",
-  "scripts_resync": "Sincronizează scripturile"
+  "scripts_resync": "Sincronizează scripturile",
+  "vbox_desc": "O soluție puternică, open source, de virtualizare completă pentru uz general, destinată utilizării personale și în mediul enterprise."
 }

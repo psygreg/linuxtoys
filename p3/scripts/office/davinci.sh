@@ -3,6 +3,7 @@
 # version: 1.0
 # description: davinci_desc
 # icon: resolve.svg
+# hybridgpu: !cachy, !arch, !ostree, !solus
 
 # functions
 #create JSON, user agent and download Resolve
@@ -288,9 +289,11 @@ zenwrn "$msg034"
 cd $HOME
 export SCRIPT_DIR
 if is_ostree; then
-    davinciboxatom
+    { ! is_hybridgpu && davinciboxatom; } || die "$incompatmsg"
 elif is_solus || is_arch || is_cachy; then
-    davinciboxd
+    { ! is_hybridgpu && davinciboxd; } || die "$incompatmsg"
+elif is_hybridgpu; then
+    davincinatd
 else
     # menu
     while true; do
