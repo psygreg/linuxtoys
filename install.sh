@@ -136,28 +136,32 @@ ossolus() {
 }
 
 manjaro() {
-	_pkg_dir="/tmp/linuxtoys/"
-	if pacman -Qi linuxtoys-bin &>/dev/null; then
-		pamac remove --no-confirm linuxtoys-bin || error "Failed to remove existing linuxtoys-bin package."
-	fi
-	{ pacman -Qi debugedit &>/dev/null || pamac install --no-confirm debugedit; } || error "Failed to install makepkg dependency debugedit"
-	{ pacman -Qi fakeroot &>/dev/null || pamac install --no-confirm fakeroot; } || error "Failed to install makepkg dependency fakeroot"
-	rm -rf "${_pkg_dir}"
-	mkdir -p ${_pkg_dir}
-	if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
-		cd "${_pkg_dir}"
-		if makepkg -s -f; then
-			if pamac install --no-confirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
-				info "LinuxToys installed or updated!"
-			else
-				error "Installation failed (pamac)."
-			fi
-		else
-			error "Build failed (makepkg)."
-		fi
-	else
-		error "Failed to download: ${_pkg_name}"
-	fi
+    _pkg_dir="/tmp/linuxtoys/"
+    if pacman -Qi linuxtoys-bin &>/dev/null; then
+        pamac remove --no-confirm linuxtoys-bin ||
+            error "Failed to remove existing linuxtoys-bin package."
+    fi
+    { pacman -Qi debugedit &>/dev/null || pamac install --no-confirm debugedit; } ||
+        error "Failed to install makepkg dependency debugedit"
+    { pacman -Qi fakeroot &>/dev/null || pamac install --no-confirm fakeroot; } ||
+        error "Failed to install makepkg dependency fakeroot"
+    rm -rf "${_pkg_dir}"
+    mkdir -p "${_pkg_dir}"
+
+    if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
+        cd "${_pkg_dir}" || error "Failed to enter build directory."
+        if makepkg -s -f; then
+            if sudo pacman -U --noconfirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
+                info "LinuxToys installed or updated!"
+            else
+                error "Installation failed (pacman)."
+            fi
+        else
+            error "Build failed (makepkg)."
+        fi
+    else
+        error "Failed to download: ${_pkg_name}"
+    fi
 }
 
 installer() {
