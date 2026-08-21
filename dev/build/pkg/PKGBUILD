@@ -12,6 +12,8 @@ sha256sums=('b45db155c7ee6b0e78e7ef1126267882929df672af53c5b16000de44d6e614e8')
 package() {
     mkdir -p ${pkgdir}/usr
     cp -rf ${srcdir}/linuxtoys-${pkgver}/usr/* ${pkgdir}/usr/
+    find "${pkgdir}/usr/share/linuxtoys" -type d -name '__pycache__' -prune -exec rm -rf {} +
+    find "${pkgdir}/usr/share/linuxtoys" -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete
 
     # Set proper permissions for executable files
     chmod +x "${pkgdir}/usr/bin/linuxtoys"
