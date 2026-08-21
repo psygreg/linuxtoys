@@ -250,7 +250,16 @@ is_fedora() { sysdetect_once && [[ "$ID" == "fedora" || ("$ID_LIKE" =~ "fedora" 
 is_ostree() { sysdetect_once && [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null && [ -f /run/ostree-booted ]; }
 is_debian() { sysdetect_once && [[ ("$ID" == "debian" || "$ID" == "deepin" || "$ID_LIKE" =~ debian) && ! ($ID == ubuntu || $ID_LIKE =~ ubuntu) ]]; }
 is_ubuntu() { sysdetect_once && [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
-is_suse() { sysdetect_once && [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; }
+is_suse() {
+    suse_leap=""
+    sysdetect_once 
+    if [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; then
+        { [ "$ID" = "opensuse-leap" ] || [[ "$VERSION_ID" =~ ^[0-9]+\.[0-9]+$ ]]; } && suse_leap="1"
+        return 0
+    else
+        return 1
+    fi
+}
 is_solus() { sysdetect_once && [[ "$ID" == "solus" ]]; }
 is_zorin() { sysdetect_once && [[ "$ID" == "zorin" ]]; }
 is_rhel() { sysdetect_once && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && [ ! -f /run/ostree-booted ] && [[ "$ID" != "nobara" ]]; }
@@ -285,12 +294,9 @@ is_intel() {
     [[ -n "$intelGPU" ]]
 }
 is_amd() {
-    local amdGPU=$(lspci | grep -Ei '(amd|radeon|rx|amdgpu)')
-    if [[ -n "$amdGPU" ]]; then
-        return 0
-    else
-        return 1
-    fi
+    local amdGPU
+    amdGPU=$(lspci | grep -Ei 'vga|3d|display' | grep -Ei 'amd|radeon')
+    [[ -n "$amdGPU" ]]
 }
 is_hybridgpu() {
     if is_nvidia && ( is_intel || is_amd ); then
