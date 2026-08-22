@@ -73,11 +73,13 @@ class SearchCtl:
         return False
 
     def _on_search_activate(self, search_entry):
-        """Handle search entry activation (Enter key)."""
-        # If there are search results, activate the first one
-        if self.search_results:
-            first_result = self.search_results[0]
-            self._activate_search_result(first_result)
+    # Search results are grouped by category, so find the first
+    # actual SearchResult object from the first non-empty group.
+        for category_group in self.search_results:
+            scripts = category_group.get("scripts", [])
+            if scripts:
+                self._activate_search_result(scripts[0])
+                return
 
     def _on_search_key_press(self, widget, event):
         """Handle key presses in search entry."""
