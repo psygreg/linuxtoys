@@ -56,10 +56,10 @@ if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "d
 deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/7.2.3 noble main
 deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/graphics/7.2.3/ubuntu noble main
 EOF
-    sudo tee /etc/apt/preferences.d/rocm-pin-600 << EOF
+    sudo tee /etc/apt/preferences.d/rocm-pin-1001 << EOF
 Package: *
 Pin: release o=repo.radeon.com
-Pin-Priority: 600
+Pin-Priority: 1001
 EOF
     sudo apt update
     rocm_deb
