@@ -7,41 +7,45 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
+
 PKG_NAM="jetbrains-toolbox"
 PKG_DIR="${HOME}/.local/${PKG_NAM}"
+TOOLBOX_DATA="${HOME}/.local/share/JetBrains/Toolbox"
+DESKTOP_FILE="${HOME}/.local/share/applications/${PKG_NAM}.desktop"
 
 if [ -d "${PKG_DIR}" ]; then
-	rm -rf "${PKG_DIR}" || { exit 1; }
+	info "$notdomsg" && exit 100
+fi
+prep_dir "${PKG_DIR}"
+
+PKG_URL="$(
+	curl -fsSL \
+		'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' |
+		grep -Pio '"linux":\{"link":"\K[^"]+'
+)" || exit 1
+[ -n "$PKG_URL" ] || exit 1
+curl -fsSL "${PKG_URL}" |
+	tar -xzf - -C "${PKG_DIR}" || exit 1
+
+TOOLBOX_BIN="$(
+	find "${PKG_DIR}" \
+		-type f \
+		-path "*/bin/${PKG_NAM}" \
+		-print -quit
+)"
+[ -n "$TOOLBOX_BIN" ] || exit 1
+prep_dir "${TOOLBOX_DATA}"
+"${TOOLBOX_BIN}" &
+TOOLBOX_PID=$!
+sleep 10
+if kill -0 "$TOOLBOX_PID" 2>/dev/null; then
+	kill "$TOOLBOX_PID" 2>/dev/null
+fi
+wait "$TOOLBOX_PID" 2>/dev/null || true
+if [ -f "${DESKTOP_FILE}" ]; then
+	_append_transmap "created $DESKTOP_FILE"
+else
+	exit 1
 fi
 
-prep_dir "${PKG_DIR}"
-PKG_URL="$(curl -fsSL 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Pio '"linux":\{"link":"\K[^"]+')"
-
-TEMP_EXTRACT="$(mktemp -d)" || { exit 1; }
-trap "rm -rf '$TEMP_EXTRACT'" EXIT
-
-curl -fsSL "${PKG_URL}" | tar -xzf - -C "$TEMP_EXTRACT" --strip-components=2 && \
-	cp -r "$TEMP_EXTRACT"/* "${PKG_DIR}/" && {
-	(
-		## .desktop file
-		sed -i "/^Exec=/s|^.*$|Exec=${PKG_DIR}/${PKG_NAM}|" "${PKG_DIR}/${PKG_NAM}.desktop";
-
-		# GNOME may show a generic package icon when Icon= is not resolvable.
-		# Force desktop entry to use an absolute icon path from the extracted app files.
-		JB_ICON="$(
-			find "${PKG_DIR}" -maxdepth 2 -type f \
-				\( -iname "*toolbox*.png" -o -iname "*toolbox*.svg" \) \
-				| head -n 1
-		)"
-		if [ -n "$JB_ICON" ]; then
-			if grep -q "^Icon=" "${PKG_DIR}/${PKG_NAM}.desktop"; then
-				sed -i "/^Icon=/s|^.*$|Icon=${JB_ICON}|" "${PKG_DIR}/${PKG_NAM}.desktop"
-			else
-				printf "\nIcon=%s\n" "$JB_ICON" >> "${PKG_DIR}/${PKG_NAM}.desktop"
-			fi
-		fi
-		prep_create "${HOME}/.local/share/applications/${PKG_NAM}.desktop"
-		install -Dvm 0644 "${PKG_DIR}/${PKG_NAM}.desktop" "${HOME}/.local/share/applications/${PKG_NAM}.desktop";
-		chmod +x "${HOME}/.local/share/applications/${PKG_NAM}.desktop";
-	) && { zeninf "$msg018"; }
-} || { exit 1; }
+info "$finishmsg"
