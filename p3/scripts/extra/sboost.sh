@@ -6,7 +6,6 @@
 # reboot: yes
 # nocontainer
 # optimized-only: yes
-# compat: !solus
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"
