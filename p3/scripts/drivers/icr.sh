@@ -19,11 +19,10 @@ icr_in () {
         pkg_install intel-compute-runtime clinfo
     fi
 }
-if is_intel; then
-    sudo_rq
+if is_intel && [ "$intel_arc" = "yes" ]; then
+    askpass
     icr_in
-    zeninf "$msg036"
+    info "$rebootmsg"
 else
-    nonfatal "$msg077"
-    exit 1
+    die "$hwincompat"
 fi
