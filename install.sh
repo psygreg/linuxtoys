@@ -105,8 +105,8 @@ osarch() {
 
     if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
         cd "${_pkg_dir}" || error "Failed to enter build directory."
-        if makepkg -s -f; then
-            if sudo pacman -U --noconfirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
+		if makepkg -s -f; then
+			if sudo pacman -U --noconfirm "${_pkg_dir}linuxtoys-${_tag_name}-1-$(uname -m).pkg.tar.zst"; then
                 info "LinuxToys installed or updated!"
             else
                 error "Installation failed (pacman)."
@@ -150,8 +150,8 @@ manjaro() {
 
     if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
         cd "${_pkg_dir}" || error "Failed to enter build directory."
-        if makepkg -s -f; then
-            if sudo pacman -U --noconfirm "${_pkg_dir}"linuxtoys-*.pkg.tar.zst; then
+		if makepkg -s -f; then
+			if sudo pacman -U --noconfirm "${_pkg_dir}linuxtoys-${_tag_name}-1-$(uname -m).pkg.tar.zst"; then
                 info "LinuxToys installed or updated!"
             else
                 error "Installation failed (pacman)."
@@ -178,6 +178,8 @@ installer() {
 	if [ -z "${_api}" ]; then
 		error "Failed to fetch release information from GitHub and git.linux.toys"
 	fi
+
+	_tag_name=$(echo "${_api}" | grep -Pio '"tag_name":\s*"\K[^"]+')
 
 	_rpm=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.rpm')
 	_rpm_name=$(basename "${_rpm}")
