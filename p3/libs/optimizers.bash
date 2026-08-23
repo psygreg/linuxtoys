@@ -50,7 +50,7 @@ sboost_lib () {
             echo -e "\n$(cat patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
             return 0
         else
-            fatal "Failed to fetch patch-nvidia."
+            die "Failed to fetch patch-nvidia."
         fi
     }
     # patch for Mesa-driven GPUs
@@ -59,7 +59,7 @@ sboost_lib () {
             echo -e "\n$(cat patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
             return 0
         else
-            fatal "Failed to fetch patch-mesa."
+            die "Failed to fetch patch-mesa."
         fi
     }
     PATCH_APPLIED=0
@@ -67,18 +67,30 @@ sboost_lib () {
         DEST_FILE="/etc/environment"
         prep_edit /etc/environment
         if is_nvidia; then
-            if patch_nv; then
-                PATCH_APPLIED=1
+            if grep -q "^GL_SHADER_DISK_CACHE_SIZE=" "$DEST_FILE"; then
+                sudo sed -i \
+                "s/^GL_SHADER_DISK_CACHE_SIZE=.*/GL_SHADER_DISK_CACHE_SIZE=10000000000/" \
+                "$DEST_FILE"
+            else
+                if patch_nv; then
+                    PATCH_APPLIED=1
+                fi
             fi
         else
-            if patch_mesa; then
-                PATCH_APPLIED=1
+            if grep -q "^MESA_SHADER_CACHE_MAX_SIZE=" "$DEST_FILE"; then
+                sudo sed -i \
+                "s/^MESA_SHADER_CACHE_MAX_SIZE=.*/MESA_SHADER_CACHE_MAX_SIZE=10000000000/" \
+                "$DEST_FILE"
+            else
+                if patch_mesa; then
+                    PATCH_APPLIED=1
+                fi
             fi
         fi
 
         if [ $PATCH_APPLIED -eq 1 ]; then
-            zeninf "Success! Reboot to apply."
-            echo "1" > "${HOME}/.booster"
+            info "Success! Reboot to apply."
+            prep_create "${HOME}/.booster"
             exit 0
         fi
     fi
