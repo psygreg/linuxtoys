@@ -3,7 +3,8 @@
 # version: 1.0
 # description: davinci_desc
 # icon: resolve.svg
-# hybridgpu: !cachy, !arch, !ostree, !solus
+# hybridgpu: !ostree, !solus
+# gpu: nvidia, rocm, xe
 
 # functions
 #create JSON, user agent and download Resolve

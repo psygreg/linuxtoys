@@ -4,7 +4,7 @@
 # description: rocm_desc
 # icon: amd.png
 # reboot: yes
-# gpu: AMD
+# gpu: ROCm
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

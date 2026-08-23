@@ -4,7 +4,7 @@
 # description: icr_desc
 # icon: intel.png
 # reboot: yes
-# gpu: Intel
+# gpu: Xe
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -269,7 +269,8 @@ def get_gpu_compat_keys():
     Get the GPU compatibility keys based on detected GPUs.
 
     Returns:
-        set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel', 'gpu-nvidia', 'hybridgpu')
+           set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel',
+               'gpu-nvidia', 'gpu-rocm', 'gpu-xe', 'hybridgpu')
     """
     keys = set()
     try:
@@ -296,11 +297,80 @@ def get_gpu_compat_keys():
             keys.add("gpu-intel")
         if has_nvidia:
             keys.add("gpu-nvidia")
+        if _is_rocm_capable():
+            keys.add("gpu-rocm")
+        if _is_icr_capable():
+            keys.add("gpu-xe")
         if has_nvidia and (has_amd or has_intel):
             keys.add("hybridgpu")
     except Exception:
         pass
     return keys
+
+
+def _is_rocm_capable():
+    """Mirror is_rocm_capable from the shell library."""
+    import glob
+    import re
+
+    for device in glob.glob("/sys/bus/pci/devices/*"):
+        try:
+            with open(f"{device}/vendor", encoding="utf-8") as f:
+                vendor = f.read().strip()
+            with open(f"{device}/class", encoding="utf-8") as f:
+                device_class = f.read().strip()
+            if vendor != "0x1002" or not device_class.startswith("0x03"):
+                continue
+            for vram_file in glob.glob(f"{device}/drm/card*/device/mem_info_vram_total"):
+                with open(vram_file, encoding="utf-8") as f:
+                    if int(f.read().strip()) >= 2073741824:
+                        return True
+        except (OSError, ValueError):
+            continue
+
+    try:
+        with open("/proc/cpuinfo", encoding="utf-8") as f:
+            cpu_model = next(
+                (line.split(":", 1)[1].strip() for line in f if line.startswith("model name")),
+                "",
+            )
+        if "AMD Ryzen" not in cpu_model:
+            return False
+        if "Ryzen AI " in cpu_model:
+            return True
+        match = re.search(r"Ryzen\s+.*(\d{4})", cpu_model)
+        return bool(match and int(match.group(1)) >= 8000 and ("U" in cpu_model or "H" in cpu_model))
+    except OSError:
+        return False
+
+
+def _is_icr_capable():
+    """Mirror is_icr_capable from the shell library."""
+    import glob
+    import subprocess
+
+    for device in glob.glob("/sys/bus/pci/devices/*"):
+        try:
+            with open(f"{device}/vendor", encoding="utf-8") as f:
+                vendor = f.read().strip()
+            with open(f"{device}/class", encoding="utf-8") as f:
+                device_class = f.read().strip()
+            if vendor != "0x8086" or not device_class.startswith("0x03"):
+                continue
+            with open(f"{device}/modalias", encoding="utf-8") as f:
+                modalias = f.read().strip()
+            result = subprocess.run(
+                ["modprobe", "-R", modalias],
+                capture_output=True,
+                check=False,
+                text=True,
+                timeout=5,
+            )
+            if "xe" in result.stdout.splitlines():
+                return True
+        except (OSError, subprocess.SubprocessError):
+            continue
+    return False
 
 def get_cpu_compat_keys():
     """
@@ -768,6 +838,10 @@ def script_is_compatible(script_path, compat_keys):
                             gpu_script_keys.add("gpu-intel")
                         elif v_lower == "nvidia":
                             gpu_script_keys.add("gpu-nvidia")
+                        elif v_lower == "rocm":
+                            gpu_script_keys.add("gpu-rocm")
+                        elif v_lower == "xe":
+                            gpu_script_keys.add("gpu-xe")
                         else:
                             # Unknown value, treat as general GPU
                             gpu_script_keys.add("gpu")
@@ -838,12 +912,23 @@ def script_is_compatible(script_path, compat_keys):
                         if hybridgpu_value == "no":
                             hybridgpu_compatible = False
                         elif hybridgpu_value not in ("", "yes"):
-                            if hybridgpu_value.startswith("!"):
-                                hybridgpu_compatible = (
-                                    hybridgpu_value[1:] not in compat_keys
-                                )
-                            else:
-                                hybridgpu_compatible = hybridgpu_value in compat_keys
+                            hybridgpu_values = [
+                                value.strip()
+                                for value in hybridgpu_value.split(",")
+                                if value.strip()
+                            ]
+                            include_keys = {
+                                value for value in hybridgpu_values if not value.startswith("!")
+                            }
+                            exclude_keys = {
+                                value[1:]
+                                for value in hybridgpu_values
+                                if value.startswith("!") and len(value) > 1
+                            }
+                            hybridgpu_compatible = (
+                                (not include_keys or bool(compat_keys & include_keys))
+                                and not bool(compat_keys & exclude_keys)
+                            )
                 if not line.startswith("#"):
                     break
     except Exception:
