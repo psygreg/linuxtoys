@@ -13,8 +13,8 @@ install_nobox () {
     ls /opt/resolve &>/dev/null || fatal "DaVinci Resolve is not currently installed in this computer."
     prep_tmp_noram
     wget https://github.com/EdvinNilsson/ffmpeg_encoder_plugin/releases/latest/download/ffmpeg_encoder_plugin.dvcp.bundle.zip || fatal "Failed to download plugin bundle."
-    prep_create /opt/resolve/IOPlugins/
-    unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle."
+    prep_dir /opt/resolve/IOPlugins/
+    sudo unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle."
     if is_fedora || is_rhel; then
         rpmfusion_chk
         sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y || fatal "Failed to swap ffmpeg packages."
@@ -39,7 +39,7 @@ install_dvbox() {
     prep_tmp_noram
     wget https://github.com/EdvinNilsson/ffmpeg_encoder_plugin/releases/latest/download/ffmpeg_encoder_plugin.dvcp.bundle.zip || fatal "Failed to download plugin bundle."
     distrobox enter davincibox -- mkdir -p /opt/resolve/IOPlugins/ || fatal "Failed to create IOPlugins directory in DaVinciBox."
-    distrobox enter davincibox -- unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle into DaVinciBox."
+    distrobox enter davincibox -- sudo unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle into DaVinciBox."
     distrobox enter davincibox -- sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(distrobox enter davincibox -- rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(distrobox enter davincibox -- rpm -E %fedora).noarch.rpm || fatal "Failed to add RPMFusion repositories in DaVinciBox."
     distrobox enter davincibox -- sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y || fatal "Failed to swap ffmpeg packages in DaVinciBox."
