@@ -9,6 +9,9 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
+if is_ubuntu; then
+    { [ "$UBUNTU_CODENAME" = "noble" ] && die "$incompatmsg"; } || true
+fi
 if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
     sudo_rq
     pkg_install btrfs-assistant snapper
