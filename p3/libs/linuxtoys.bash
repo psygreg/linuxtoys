@@ -1011,6 +1011,10 @@ grubbyargs_upd () {
 
 # systemd service operations
 sysd_enable() {
+    if [ ! -n "$daemon_reloaded" ]; then
+        sudo systemctl daemon-reload || fatal "Failed to reload systemd daemon"
+        daemon_reloaded="1"
+    fi
     for svc in "$@"; do
         sudo systemctl enable "$svc" || fatal "Failed to enable service $svc"
         _append_transmap "sysd enabled $svc"
@@ -1023,6 +1027,10 @@ sysd_disable() {
     done
 }
 sysd_start() {
+    if [ ! -n "$daemon_reloaded" ]; then
+        sudo systemctl daemon-reload || fatal "Failed to reload systemd daemon"
+        daemon_reloaded="1"
+    fi
     for svc in "$@"; do
         sudo systemctl start "$svc" || fatal "Failed to start service $svc"
         _append_transmap "sysd started $svc"
@@ -1035,6 +1043,10 @@ sysd_stop() {
     done
 }
 sysd_enable_usr() {
+    if [ ! -n "$daemon_reloaded" ]; then
+        sudo systemctl daemon-reload || fatal "Failed to reload systemd daemon"
+        daemon_reloaded="1"
+    fi
     for svc in "$@"; do
         systemctl --user enable "$svc" || fatal "Failed to enable service $svc"
         _append_transmap "sysd usermode enabled $svc"
@@ -1047,6 +1059,10 @@ sysd_disable_usr() {
     done
 }
 sysd_start_usr() {
+    if [ ! -n "$daemon_reloaded" ]; then
+        sudo systemctl daemon-reload || fatal "Failed to reload systemd daemon"
+        daemon_reloaded="1"
+    fi
     for svc in "$@"; do
         systemctl --user start "$svc" || fatal "Failed to start service $svc"
         _append_transmap "sysd usermode started $svc"

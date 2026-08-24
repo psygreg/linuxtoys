@@ -26,6 +26,7 @@ elif is_arch || is_cachy; then
 elif is_suse || is_opensuse; then
     pkg_install distrobox podman pcsc-ccid
 fi
+sudo systemctl daemon-reload # remove on next release
 sysd_enable pcscd.service
 sysd_start pcscd.service
 if is_ubuntu; then
