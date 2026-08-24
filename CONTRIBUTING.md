@@ -77,23 +77,27 @@ All the following functions return 0 when positive or 1 when negative.
 
 - `is_debian`: detects *Debian* and its derivatives that are not related to *Ubuntu*. Includes *Deepin*.
 - `is_ubuntu`: detects *Ubuntu* and its derivatives.
-- `is_zorin`: detects *ZorinOS*. Created due to this distro often demanding workarounds not applicable to upstream *Ubuntu*.
+- `is_zorin`: detects *ZorinOS*. May be used when workarounds on top of usual *Ubuntu* procedures are necessary.
 - `is_arch`: detects *Arch Linux* and its derivatives, except for *CachyOS*.
 - `is_cachy`: detects *CachyOS*. Created due to this distro often not demanding as many steps to certain tasks as *Arch Linux* would.
+- `is_manjaro` detects *Manjaro* and its derivatives. May be used when workarounds on top of usual *Arch Linux* procedures are necessary.
 - `is_fedora`: detects **non-atomic** *Fedora* and its derivatives.
 - `is_ostree`: detects **atomic** *Fedora* and its derivatives.
 - `is_rhel`: detects *Red Hat Enterprise Linux* and similars.
 - `is_solus`: detects *Solus*.
-- `is_deepin`: detects *Deepin*.
+- `is_deepin`: detects *Deepin*. May be used when workarounds on top of usual *Debian* procedures are necessary.
+- `is_suse`: detects *OpenSUSE*. Also sets the variable `suse_leap` for *OpenSUSE Leap* or `suse_tumbleweed` for *OpenSUSE Tumbleweed*, setting no variable for *Slowroll*.
 
 - `is_systemd`: detects if the host OS init system is *SystemD*. Created due to some features not being applicable to systems with other init systems.
 
 - `is_amd`: detects *AMD* graphics cards. Will also detect iGPUs.
+- `is_rocm_capable`: detects *ROCm* computing-capable AMD cards.
 - `is_intel`: detects *Intel* graphics cards. Will also detect iGPUs, and sets the `intel_arc` variable if any of the GPUs detected is *Alchemist* or *Battlemage*-series.
+- `is_icr_capable`: detects *Intel Compute Runtime* computing-capable Intel cards.
 - `is_nvidia`: detects *Nvidia* graphics cards. Will also detect iGPUs.
 
 #### File and Directory Operations
-All the following functions have error handling calling `fatal`.
+All the following functions have error handling calling `die`.
 
 - `prep_create`: creates a placeholder file on target. Should be used before any new files that will be created to register the file creation to the transaction map, and parses multiple arguments.
 - `prep_edit`: copies the target to be edited to a `.bak` file. Should be used before any modifications to files to register the occurrence to the transaction map, and parses multiple arguments.
@@ -106,7 +110,7 @@ All the following functions have error handling calling `fatal`.
 - `move_`: equivalent to `mv`, and admits its flags. Will attempt to perform its task with elevated privileges if failed in user mode.
 
 #### Package Management
-All the following functions parse the arguments that follow them and have error handling calling `fatal`.
+All the following functions parse the arguments that follow them and have error handling calling `die`.
 
 - `pkg_install`: installs native packages from the distribution repositories, engaging each distribution's package manager accordingly. The package names still vary distribution-wise. Can source packages from the AUR in Arch Linux, but packages from that source must be verified manually to ensure their security and legitimacy. Can parse multiple packages at once, and has an optional `--ostreecheck` flag to check if there is a pending deployment of `rpm-ostree` after running in `is_ostree` systems, prompting the user to reboot to apply it before running the script again to resume installation.
 - `pkg_flat`: installs flatpaks from Flathub. Also calls `flatpak_in_lib` from `helpers.lib` if the user doesn't yet have the Flatpak capability to install it. Any scripts calling this function will not be displayed for non-systemd operating systems, as system is currently a soft dependency - and in the future will be a hard dependency - of Flatpak. Can parse multiple packages at once, and has an optional `--skip-user` flag to force system-level installation when needed.
@@ -118,7 +122,7 @@ All the following functions parse the arguments that follow them and have error 
 - `pkg_remove`: removes packages following the same logic as `pkg_install`. Ideal to solve potential dependency conflicts. Will also remove any orphaned dependencies from those.
 
 #### SystemD Service Operations
-All the following functions parse the arguments that follow them and have error handling calling `fatal`.
+All the following functions parse the arguments that follow them and have error handling calling `die`. Service enablement and startup functions also trigger a `systemctl daemon-reload` when needed.
 
 - `sysd_enable`: enables a system-level service for next boot.
 - `sysd_start`: starts a system-level service.
@@ -131,12 +135,13 @@ All the following functions parse the arguments that follow them and have error 
 - `sysd_stop_usr`: stops an user-level service.
 
 #### Boot-related Operations
-All the following functions have error handling calling `fatal`.
+All the following functions have error handling calling `die`.
 
-- `bootloader_upd`: updates GRUB settings.
-- `initramfs_upd`: updates initramfs settings - useful for driver module installations.
+- `bootloader_upd`: updates bootloader settings according to host distro. Currently supported: `grub`, `systemd-boot`.
+- `initramfs_upd`: updates initramfs settings - useful for driver module installations. Currently supported: `update-initramfs`, `mkinitcpio`, `dracut`.
 - `kargs_upd`: adds arguments to the kernel CMDLINE in `is_ostree` systems through `rpm-ostree kargs`. Parses multiple arguments.
 - `grubbyargs_upd`: adds arguments to the kernel CMDLINE in `is_fedora` and `is_rhel` systems through `grubby`. Parses multiple arguments.
+- `secureboot_check`: checks if Secure Boot is enabled and triggers kernel module signing if needed accordingly. Not required for *Arch Linux* as it has a specific `pacman`-`sbctl` hook.
 
 #### Miscellaneous
 - `shell_change`: changes the user's default shell. Should only be called for shell installations, as it is presumed the user wishes to utilize their new shell of choice.
