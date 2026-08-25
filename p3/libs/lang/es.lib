@@ -142,3 +142,4 @@ outofspace="Espacio de almacenamiento disponible insuficiente para la operación
 websoftwarewarning="Después de este parche, aún se requiere un navegador web basado en Chromium que no sea Flatpak para administrar la configuración del dispositivo."
 itbinput="Para usar ibus-typing-booster, agréguelo a sus métodos de entrada en la configuración del sistema de GNOME o mediante ibus-setup."
 hwincompat="Su hardware no es compatible con esta función. Operación cancelada."
+requirerebar="\"Resize BAR\" y \"Above 4G Decoding\" son necesarios para instalar los controladores de GPU AMD. Habilítelos en la BIOS e inténtelo de nuevo."

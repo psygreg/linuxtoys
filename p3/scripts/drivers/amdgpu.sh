@@ -10,6 +10,8 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 
+askpass
+has_rebar || die "$requirerebar"
 secureboot_check
 
 BASE="https://repo.radeon.com/amdgpu-install"

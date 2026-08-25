@@ -23,85 +23,46 @@ logger = logging.getLogger(__name__)
 def initialize_scripts():
     """
     Initialize scripts repository synchronization.
-    
+
     This function should be called at app startup.
+
     It will:
     1. Synchronize scripts from git (with automatic fallback)
     2. Set up the scripts directory
     3. Set CACHE_DIR environment variable for launched scripts
-    4. Show a loading dialog in GUI mode during initialization
-    5. Log the status
-    
+    4. Log the status
+
     Returns:
         str: Path to the scripts directory being used
     """
     try:
-        # Check if we should show loading dialog and if an operation will actually be performed
-        scripts_dir = None
-        if _should_show_loading_dialog() and will_perform_git_operation():
-            try:
-                from .loading_dialog import show_loading_dialog_for_scripts_init
-                
-                # Load translations for the loading dialog
-                translations = load_translations()
-                
-                def init_with_progress(progress_callback):
-                    return get_scripts_dir(progress_callback)
-                
-                scripts_dir = show_loading_dialog_for_scripts_init(
-                    init_with_progress,
-                    translations=translations
-                )
-            except Exception as e:
-                logger.debug(f"Could not show loading dialog: {e}")
-                scripts_dir = get_scripts_dir()
-        else:
-            # Either not in GUI mode, or no git operation will be performed
-            scripts_dir = get_scripts_dir()
-        
+        scripts_dir = get_scripts_dir()
+
         # Set CACHE_DIR environment variable for scripts to use
         os.environ['CACHE_DIR'] = scripts_dir
-        
+
         status = get_git_scripts_status()
-        
+
         if status["is_git_synced"]:
             logger.info("✓ Scripts synchronized from git repository")
             if status["last_commit"]:
                 logger.debug(f"  Latest commit: {status['last_commit']}")
         else:
             logger.info("⊠ Using bundled scripts (git sync not available)")
-        
+
         logger.debug(f"  Scripts directory: {scripts_dir}")
-        
+
         return scripts_dir
-        
+
     except Exception as e:
         logger.error(f"Error initializing scripts: {e}")
-        # Still return a scripts directory for fallback
+
         fallback_scripts_dir = os.path.join(
             os.path.dirname(__file__), '..', 'scripts'
         )
+
         os.environ['CACHE_DIR'] = fallback_scripts_dir
         return fallback_scripts_dir
-
-
-def _should_show_loading_dialog():
-    """
-    Check if we should show the loading dialog.
-    Only show in GUI mode with display available.
-    
-    Returns:
-        bool: True if loading dialog should be shown
-    """
-    # Don't show in CLI mode
-    if os.environ.get('EASY_CLI') == '1':
-        return False
-    
-    # Check for display server
-    if not os.environ.get('DISPLAY') and not os.environ.get('WAYLAND_DISPLAY'):
-        return False
-    
-    return True
 
 
 def get_active_scripts_dir():

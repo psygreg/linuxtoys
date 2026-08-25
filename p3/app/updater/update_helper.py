@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import urllib.error
 import urllib.request
@@ -7,9 +8,27 @@ import urllib.request
 from . import __version__
 
 
+def get_current_version():
+    """Read the installed version from the LinuxToys CLI when available."""
+    try:
+        result = subprocess.run(
+            ["linuxtoys", "--version"],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10,
+        )
+        version = result.stdout.strip()
+        if re.fullmatch(r"\d+(?:\.\d+){1,2}", version):
+            return version
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        pass
+
+    return __version__
+
 class UpdateHelper:
     def __init__(self):
-        self._current_ver = __version__
+        self._current_ver = get_current_version()
         self._latest_ver = {}
 
     def _update_available(self) -> bool:

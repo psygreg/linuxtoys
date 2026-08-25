@@ -11,175 +11,175 @@ LANG_DIR = "../p3/libs/lang"
 # Translations for all messages across all supported languages
 TRANSLATIONS = {
 'am.lib': {
-    'hwincompat': 'hwincompat="የእርስዎ ሃርድዌር ከዚህ ባህሪ ጋር ተኳሃኝ አይደለም። ክዋኔው ተሰርዟል።"'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" እና \\"Above 4G Decoding\\" የAMD GPU ነጂዎችን ለመጫን ያስፈልጋሉ። እባክዎ እነዚህን በBIOS ውስጥ ያንቁ እና እንደገና ይሞክሩ።"'
 },
 'ar.lib': {
-    'hwincompat': 'hwincompat="جهازك غير متوافق مع هذه الميزة. تم إلغاء العملية."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" و\\"Above 4G Decoding\\" مطلوبان لتثبيت برامج تشغيل AMD GPU. يرجى تمكينهما في BIOS ثم المحاولة مرة أخرى."'
 },
 'az.lib': {
-    'hwincompat': 'hwincompat="Avadanlığınız bu funksiya ilə uyğun deyil. Əməliyyat ləğv edildi."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" və \\"Above 4G Decoding\\" AMD GPU sürücülərini quraşdırmaq üçün tələb olunur. Zəhmət olmasa onları BIOS-da aktivləşdirin və yenidən cəhd edin."'
 },
 'bg.lib': {
-    'hwincompat': 'hwincompat="Вашият хардуер не е съвместим с тази функция. Операцията е отменена."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" и \\"Above 4G Decoding\\" са необходими за инсталиране на драйверите за AMD GPU. Моля, активирайте ги в BIOS и опитайте отново."'
 },
 'bn.lib': {
-    'hwincompat': 'hwincompat="আপনার হার্ডওয়্যার এই বৈশিষ্ট্যের সঙ্গে সামঞ্জস্যপূর্ণ নয়। কার্যক্রম বাতিল করা হয়েছে।"'
+    'requirerebar': 'requirerebar="AMD GPU ড্রাইভার ইনস্টল করতে \\"Resize BAR\\" এবং \\"Above 4G Decoding\\" প্রয়োজন। অনুগ্রহ করে BIOS-এ এগুলো সক্রিয় করুন এবং আবার চেষ্টা করুন।"'
 },
 'bs.lib': {
-    'hwincompat': 'hwincompat="Vaš hardver nije kompatibilan s ovom funkcijom. Operacija je otkazana."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" i \\"Above 4G Decoding\\" su potrebni za instalaciju AMD GPU upravljačkih programa. Omogućite ih u BIOS-u i pokušajte ponovo."'
 },
 'cs.lib': {
-    'hwincompat': 'hwincompat="Váš hardware není s touto funkcí kompatibilní. Operace byla zrušena."'
+    'requirerebar': 'requirerebar="Pro instalaci ovladačů AMD GPU jsou vyžadovány \\"Resize BAR\\" a \\"Above 4G Decoding\\". Povolte je v BIOSu a zkuste to znovu."'
 },
 'da.lib': {
-    'hwincompat': 'hwincompat="Din hardware er ikke kompatibel med denne funktion. Handlingen blev annulleret."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" og \\"Above 4G Decoding\\" er påkrævet for at installere AMD GPU-drivere. Aktivér dem i BIOS, og prøv igen."'
 },
 'de.lib': {
-    'hwincompat': 'hwincompat="Ihre Hardware ist mit dieser Funktion nicht kompatibel. Der Vorgang wurde abgebrochen."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" und \\"Above 4G Decoding\\" sind erforderlich, um AMD-GPU-Treiber zu installieren. Bitte aktivieren Sie beide Optionen im BIOS und versuchen Sie es erneut."'
 },
 'el.lib': {
-    'hwincompat': 'hwincompat="Το υλικό σας δεν είναι συμβατό με αυτήν τη λειτουργία. Η διαδικασία ακυρώθηκε."'
+    'requirerebar': 'requirerebar="Τα \\"Resize BAR\\" και \\"Above 4G Decoding\\" απαιτούνται για την εγκατάσταση προγραμμάτων οδήγησης AMD GPU. Ενεργοποιήστε τα στο BIOS και δοκιμάστε ξανά."'
 },
 'es.lib': {
-    'hwincompat': 'hwincompat="Su hardware no es compatible con esta función. Operación cancelada."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" y \\"Above 4G Decoding\\" son necesarios para instalar los controladores de GPU AMD. Habilítelos en la BIOS e inténtelo de nuevo."'
 },
 'et.lib': {
-    'hwincompat': 'hwincompat="Teie riistvara ei ühildu selle funktsiooniga. Toiming tühistati."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" ja \\"Above 4G Decoding\\" on AMD GPU draiverite installimiseks vajalikud. Lubage need BIOS-is ja proovige uuesti."'
 },
 'fa.lib': {
-    'hwincompat': 'hwincompat="سخت‌افزار شما با این قابلیت سازگار نیست. عملیات لغو شد."'
+    'requirerebar': 'requirerebar="برای نصب درایورهای AMD GPU، گزینه‌های \\"Resize BAR\\" و \\"Above 4G Decoding\\" لازم هستند. لطفاً آن‌ها را در BIOS فعال کرده و دوباره تلاش کنید."'
 },
 'fi.lib': {
-    'hwincompat': 'hwincompat="Laitteistosi ei ole yhteensopiva tämän ominaisuuden kanssa. Toiminto peruutettiin."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" ja \\"Above 4G Decoding\\" vaaditaan AMD GPU -ajureiden asentamiseen. Ota ne käyttöön BIOSissa ja yritä uudelleen."'
 },
 'fr.lib': {
-    'hwincompat': 'hwincompat="Votre matériel n’est pas compatible avec cette fonctionnalité. Opération annulée."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" et \\"Above 4G Decoding\\" sont requis pour installer les pilotes GPU AMD. Veuillez les activer dans le BIOS et réessayer."'
 },
 'ga.lib': {
-    'hwincompat': 'hwincompat="Níl do chrua-earraí comhoiriúnach leis an ngné seo. Cuireadh an oibríocht ar ceal."'
+    'requirerebar': 'requirerebar="Tá \\"Resize BAR\\" agus \\"Above 4G Decoding\\" riachtanach chun tiománaithe AMD GPU a shuiteáil. Cumasaigh iad sa BIOS agus bain triail eile as."'
 },
 'he.lib': {
-    'hwincompat': 'hwincompat="החומרה שלך אינה תואמת לתכונה זו. הפעולה בוטלה."'
+    'requirerebar': 'requirerebar="יש צורך ב-\\"Resize BAR\\" וב-\\"Above 4G Decoding\\" כדי להתקין מנהלי התקנים של AMD GPU. יש להפעיל אותם ב-BIOS ולנסות שוב."'
 },
 'hi.lib': {
-    'hwincompat': 'hwincompat="आपका हार्डवेयर इस सुविधा के अनुकूल नहीं है। कार्रवाई रद्द कर दी गई।"'
+    'requirerebar': 'requirerebar="AMD GPU ड्राइवर इंस्टॉल करने के लिए \\"Resize BAR\\" और \\"Above 4G Decoding\\" आवश्यक हैं। कृपया इन्हें BIOS में सक्षम करें और फिर से प्रयास करें।"'
 },
 'hr.lib': {
-    'hwincompat': 'hwincompat="Vaš hardver nije kompatibilan s ovom značajkom. Radnja je otkazana."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" i \\"Above 4G Decoding\\" potrebni su za instalaciju AMD GPU upravljačkih programa. Omogućite ih u BIOS-u i pokušajte ponovno."'
 },
 'hu.lib': {
-    'hwincompat': 'hwincompat="A hardvere nem kompatibilis ezzel a funkcióval. A művelet megszakítva."'
+    'requirerebar': 'requirerebar="Az AMD GPU-illesztőprogramok telepítéséhez szükséges a \\"Resize BAR\\" és az \\"Above 4G Decoding\\". Engedélyezze ezeket a BIOS-ban, majd próbálja újra."'
 },
 'hy.lib': {
-    'hwincompat': 'hwincompat="Ձեր սարքավորումը համատեղելի չէ այս գործառույթի հետ։ Գործողությունը չեղարկվեց։"'
+    'requirerebar': 'requirerebar="AMD GPU-ի դրայվերները տեղադրելու համար անհրաժեշտ են \\"Resize BAR\\" և \\"Above 4G Decoding\\" տարբերակները։ Միացրեք դրանք BIOS-ում և կրկին փորձեք։"'
 },
 'id.lib': {
-    'hwincompat': 'hwincompat="Perangkat keras Anda tidak kompatibel dengan fitur ini. Operasi dibatalkan."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" dan \\"Above 4G Decoding\\" diperlukan untuk memasang driver GPU AMD. Aktifkan keduanya di BIOS lalu coba lagi."'
 },
 'is.lib': {
-    'hwincompat': 'hwincompat="Vélbúnaðurinn þinn er ekki samhæfur þessum eiginleika. Aðgerð hætt við."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" og \\"Above 4G Decoding\\" eru nauðsynleg til að setja upp AMD GPU-rekla. Virkjaðu þau í BIOS og reyndu aftur."'
 },
 'it.lib': {
-    'hwincompat': 'hwincompat="Il tuo hardware non è compatibile con questa funzionalità. Operazione annullata."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" e \\"Above 4G Decoding\\" sono necessari per installare i driver GPU AMD. Abilitali nel BIOS e riprova."'
 },
 'ja.lib': {
-    'hwincompat': 'hwincompat="お使いのハードウェアはこの機能に対応していません。操作をキャンセルしました。"'
+    'requirerebar': 'requirerebar="AMD GPU ドライバーをインストールするには、\\"Resize BAR\\" と \\"Above 4G Decoding\\" が必要です。BIOS でこれらを有効にして、もう一度お試しください。"'
 },
 'ka.lib': {
-    'hwincompat': 'hwincompat="თქვენი აპარატურა ამ ფუნქციასთან თავსებადი არ არის. ოპერაცია გაუქმდა."'
+    'requirerebar': 'requirerebar="AMD GPU-ის დრაივერების დასაყენებლად საჭიროა \\"Resize BAR\\" და \\"Above 4G Decoding\\". ჩართეთ ისინი BIOS-ში და სცადეთ ხელახლა."'
 },
 'km.lib': {
-    'hwincompat': 'hwincompat="ផ្នែករឹងរបស់អ្នកមិនត្រូវគ្នាជាមួយមុខងារនេះទេ។ ប្រតិបត្តិការត្រូវបានបោះបង់។"'
+    'requirerebar': 'requirerebar="ត្រូវការ \\"Resize BAR\\" និង \\"Above 4G Decoding\\" ដើម្បីដំឡើងកម្មវិធីបញ្ជា AMD GPU។ សូមបើកពួកវានៅក្នុង BIOS ហើយសាកល្បងម្តងទៀត។"'
 },
 'ko.lib': {
-    'hwincompat': 'hwincompat="하드웨어가 이 기능과 호환되지 않습니다. 작업이 취소되었습니다."'
+    'requirerebar': 'requirerebar="AMD GPU 드라이버를 설치하려면 \\"Resize BAR\\" 및 \\"Above 4G Decoding\\"이 필요합니다. BIOS에서 해당 옵션을 활성화한 후 다시 시도하십시오."'
 },
 'lo.lib': {
-    'hwincompat': 'hwincompat="ຮາດແວຂອງທ່ານບໍ່ຮອງຮັບຄຸນສົມບັດນີ້. ການດຳເນີນງານຖືກຍົກເລີກ."'
+    'requirerebar': 'requirerebar="ຈຳເປັນຕ້ອງເປີດ \\"Resize BAR\\" ແລະ \\"Above 4G Decoding\\" ເພື່ອຕິດຕັ້ງໄດຣເວີ AMD GPU. ກະລຸນາເປີດໃຊ້ງານພວກມັນໃນ BIOS ແລ້ວລອງໃໝ່."'
 },
 'lt.lib': {
-    'hwincompat': 'hwincompat="Jūsų aparatinė įranga nesuderinama su šia funkcija. Veiksmas atšauktas."'
+    'requirerebar': 'requirerebar="Norint įdiegti AMD GPU tvarkykles, reikalingi \\"Resize BAR\\" ir \\"Above 4G Decoding\\". Įjunkite juos BIOS ir bandykite dar kartą."'
 },
 'lv.lib': {
-    'hwincompat': 'hwincompat="Jūsu aparatūra nav saderīga ar šo funkciju. Darbība atcelta."'
+    'requirerebar': 'requirerebar="Lai instalētu AMD GPU draiverus, ir nepieciešami \\"Resize BAR\\" un \\"Above 4G Decoding\\". Iespējojiet tos BIOS un mēģiniet vēlreiz."'
 },
 'mn.lib': {
-    'hwincompat': 'hwincompat="Таны техник хангамж энэ боломжтой нийцэхгүй байна. Үйлдлийг цуцаллаа."'
+    'requirerebar': 'requirerebar="AMD GPU драйвер суулгахын тулд \\"Resize BAR\\" болон \\"Above 4G Decoding\\" шаардлагатай. Эдгээрийг BIOS-д идэвхжүүлээд дахин оролдоно уу."'
 },
 'ms.lib': {
-    'hwincompat': 'hwincompat="Perkakasan anda tidak serasi dengan ciri ini. Operasi dibatalkan."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" dan \\"Above 4G Decoding\\" diperlukan untuk memasang pemacu AMD GPU. Sila dayakannya dalam BIOS dan cuba lagi."'
 },
 'my.lib': {
-    'hwincompat': 'hwincompat="သင့်ဟာ့ဒ်ဝဲသည် ဤအင်္ဂါရပ်နှင့် ကိုက်ညီမှုမရှိပါ။ လုပ်ဆောင်ချက်ကို ပယ်ဖျက်လိုက်သည်။"'
+    'requirerebar': 'requirerebar="AMD GPU ဒရိုင်ဘာများ ထည့်သွင်းရန် \\"Resize BAR\\" နှင့် \\"Above 4G Decoding\\" လိုအပ်ပါသည်။ ၎င်းတို့ကို BIOS တွင် ဖွင့်ပြီး ထပ်မံကြိုးစားပါ။"'
 },
 'nb.lib': {
-    'hwincompat': 'hwincompat="Maskinvaren din er ikke kompatibel med denne funksjonen. Handlingen ble avbrutt."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" og \\"Above 4G Decoding\\" kreves for å installere AMD GPU-drivere. Aktiver dem i BIOS og prøv igjen."'
 },
 'ne.lib': {
-    'hwincompat': 'hwincompat="तपाईंको हार्डवेयर यो सुविधासँग उपयुक्त छैन। कार्य रद्द गरियो।"'
+    'requirerebar': 'requirerebar="AMD GPU ड्राइभर स्थापना गर्न \\"Resize BAR\\" र \\"Above 4G Decoding\\" आवश्यक छन्। कृपया तिनीहरूलाई BIOS मा सक्षम गर्नुहोस् र फेरि प्रयास गर्नुहोस्।"'
 },
 'nl.lib': {
-    'hwincompat': 'hwincompat="Uw hardware is niet compatibel met deze functie. De bewerking is geannuleerd."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" en \\"Above 4G Decoding\\" zijn vereist om AMD GPU-stuurprogramma’s te installeren. Schakel deze opties in het BIOS in en probeer het opnieuw."'
 },
 'pl.lib': {
-    'hwincompat': 'hwincompat="Twój sprzęt nie jest zgodny z tą funkcją. Operacja została anulowana."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" i \\"Above 4G Decoding\\" są wymagane do zainstalowania sterowników GPU AMD. Włącz je w BIOS-ie i spróbuj ponownie."'
 },
 'pt.lib': {
-    'hwincompat': 'hwincompat="Seu hardware não é compatível com este recurso. Operação cancelada."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" e \\"Above 4G Decoding\\" são necessários para instalar os drivers de GPU da AMD. Ative essas opções na BIOS e tente novamente."'
 },
 'ro.lib': {
-    'hwincompat': 'hwincompat="Hardware-ul dumneavoastră nu este compatibil cu această funcție. Operațiunea a fost anulată."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" și \\"Above 4G Decoding\\" sunt necesare pentru instalarea driverelor GPU AMD. Activați-le în BIOS și încercați din nou."'
 },
 'ru.lib': {
-    'hwincompat': 'hwincompat="Ваше оборудование несовместимо с этой функцией. Операция отменена."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" и \\"Above 4G Decoding\\" необходимы для установки драйверов AMD GPU. Включите эти параметры в BIOS и повторите попытку."'
 },
 'sk.lib': {
-    'hwincompat': 'hwincompat="Váš hardvér nie je kompatibilný s touto funkciou. Operácia bola zrušená."'
+    'requirerebar': 'requirerebar="Na inštaláciu ovládačov AMD GPU sú potrebné \\"Resize BAR\\" a \\"Above 4G Decoding\\". Povoľte ich v systéme BIOS a skúste to znova."'
 },
 'sl.lib': {
-    'hwincompat': 'hwincompat="Vaša strojna oprema ni združljiva s to funkcijo. Postopek je bil preklican."'
+    'requirerebar': 'requirerebar="Za namestitev gonilnikov AMD GPU sta potrebna \\"Resize BAR\\" in \\"Above 4G Decoding\\". Omogočite ju v BIOS-u in poskusite znova."'
 },
 'sq.lib': {
-    'hwincompat': 'hwincompat="Pajisja juaj nuk është e përputhshme me këtë veçori. Veprimi u anulua."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" dhe \\"Above 4G Decoding\\" kërkohen për të instaluar drejtuesit e AMD GPU. Aktivizojini në BIOS dhe provoni përsëri."'
 },
 'sr.lib': {
-    'hwincompat': 'hwincompat="Ваш хардвер није компатибилан са овом функцијом. Операција је отказана."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" и \\"Above 4G Decoding\\" су неопходни за инсталацију AMD GPU драјвера. Омогућите их у BIOS-у и покушајте поново."'
 },
 'sv.lib': {
-    'hwincompat': 'hwincompat="Din maskinvara är inte kompatibel med den här funktionen. Åtgärden avbröts."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" och \\"Above 4G Decoding\\" krävs för att installera AMD GPU-drivrutiner. Aktivera dem i BIOS och försök igen."'
 },
 'sw.lib': {
-    'hwincompat': 'hwincompat="Maunzi yako hayaoani na kipengele hiki. Operesheni imeghairiwa."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" na \\"Above 4G Decoding\\" zinahitajika ili kusakinisha viendeshaji vya AMD GPU. Viwashe kwenye BIOS kisha ujaribu tena."'
 },
 'ta.lib': {
-    'hwincompat': 'hwincompat="உங்கள் வன்பொருள் இந்த அம்சத்துடன் இணக்கமாக இல்லை. செயல்பாடு ரத்துசெய்யப்பட்டது."'
+    'requirerebar': 'requirerebar="AMD GPU இயக்கிகளை நிறுவ \\"Resize BAR\\" மற்றும் \\"Above 4G Decoding\\" தேவை. அவற்றை BIOS-இல் இயக்கி மீண்டும் முயற்சிக்கவும்."'
 },
 'tg.lib': {
-    'hwincompat': 'hwincompat="Сахтафзори шумо бо ин хусусият мувофиқ нест. Амалиёт бекор карда шуд."'
+    'requirerebar': 'requirerebar="Барои насб кардани драйверҳои AMD GPU, \\"Resize BAR\\" ва \\"Above 4G Decoding\\" лозиманд. Онҳоро дар BIOS фаъол кунед ва дубора кӯшиш кунед."'
 },
 'th.lib': {
-    'hwincompat': 'hwincompat="ฮาร์ดแวร์ของคุณไม่รองรับคุณสมบัตินี้ ยกเลิกการดำเนินการแล้ว"'
+    'requirerebar': 'requirerebar="จำเป็นต้องเปิดใช้ \\"Resize BAR\\" และ \\"Above 4G Decoding\\" เพื่อติดตั้งไดรเวอร์ AMD GPU โปรดเปิดใช้ตัวเลือกเหล่านี้ใน BIOS แล้วลองอีกครั้ง"'
 },
 'tl.lib': {
-    'hwincompat': 'hwincompat="Hindi tugma ang iyong hardware sa feature na ito. Kinansela ang operasyon."'
+    'requirerebar': 'requirerebar="Kinakailangan ang \\"Resize BAR\\" at \\"Above 4G Decoding\\" upang mai-install ang mga driver ng AMD GPU. Paganahin ang mga ito sa BIOS at subukang muli."'
 },
 'tr.lib': {
-    'hwincompat': 'hwincompat="Donanımınız bu özellikle uyumlu değil. İşlem iptal edildi."'
+    'requirerebar': 'requirerebar="AMD GPU sürücülerini yüklemek için \\"Resize BAR\\" ve \\"Above 4G Decoding\\" gereklidir. Bunları BIOS üzerinden etkinleştirip tekrar deneyin."'
 },
 'uk.lib': {
-    'hwincompat': 'hwincompat="Ваше обладнання несумісне з цією функцією. Операцію скасовано."'
+    'requirerebar': 'requirerebar="\\"Resize BAR\\" і \\"Above 4G Decoding\\" необхідні для встановлення драйверів AMD GPU. Увімкніть ці параметри в BIOS і повторіть спробу."'
 },
 'ur.lib': {
-    'hwincompat': 'hwincompat="آپ کا ہارڈویئر اس خصوصیت کے ساتھ مطابقت نہیں رکھتا۔ کارروائی منسوخ کر دی گئی۔"'
+    'requirerebar': 'requirerebar="AMD GPU ڈرائیور انسٹال کرنے کے لیے \\"Resize BAR\\" اور \\"Above 4G Decoding\\" ضروری ہیں۔ براہ کرم انہیں BIOS میں فعال کریں اور دوبارہ کوشش کریں۔"'
 },
 'uz.lib': {
-    'hwincompat': 'hwincompat="Qurilmangiz ushbu imkoniyat bilan mos emas. Amal bekor qilindi."'
+    'requirerebar': 'requirerebar="AMD GPU drayverlarini o‘rnatish uchun \\"Resize BAR\\" va \\"Above 4G Decoding\\" talab qilinadi. Ularni BIOS’da yoqing va qayta urinib ko‘ring."'
 },
 'vi.lib': {
-    'hwincompat': 'hwincompat="Phần cứng của bạn không tương thích với tính năng này. Thao tác đã bị hủy."'
+    'requirerebar': 'requirerebar="Cần bật \\"Resize BAR\\" và \\"Above 4G Decoding\\" để cài đặt trình điều khiển GPU AMD. Hãy bật các tùy chọn này trong BIOS rồi thử lại."'
 },
 'zh.lib': {
-    'hwincompat': 'hwincompat="您的硬件与此功能不兼容。操作已取消。"'
+    'requirerebar': 'requirerebar="安装 AMD GPU 驱动程序需要启用 \\"Resize BAR\\" 和 \\"Above 4G Decoding\\"。请在 BIOS 中启用这些选项，然后重试。"'
 }
 }
 

@@ -228,7 +228,7 @@ grubtrfs_in () {
             's|^GRUB_BTRFS_SCRIPT_CHECK=.*|GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check|' \
             /etc/default/grub-btrfs/config
     fi
-    setup_snapshot_overlay || exit 1
+    setup_snapshot_overlay
     bootloader_upd
     sysd_enable grub-btrfsd
     sysd_start grub-btrfsd

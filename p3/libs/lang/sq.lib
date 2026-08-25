@@ -141,3 +141,4 @@ outofspace="Hapësirë ruajtjeje e disponueshme e pamjaftueshme për operacionin
 websoftwarewarning="Pas këtij përditësimi kërkohet ende një shfletues uebi i bazuar në Chromium që nuk është Flatpak për të menaxhuar cilësimet e pajisjes."
 itbinput="Për të përdorur ibus-typing-booster, shtojeni te metodat e hyrjes në cilësimet e sistemit të GNOME ose përmes ibus-setup."
 hwincompat="Pajisja juaj nuk është e përputhshme me këtë veçori. Veprimi u anulua."
+requirerebar="\"Resize BAR\" dhe \"Above 4G Decoding\" kërkohen për të instaluar drejtuesit e AMD GPU. Aktivizojini në BIOS dhe provoni përsëri."

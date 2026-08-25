@@ -1,11 +1,50 @@
 #!/usr/bin/env python3
 
-import sys
-import os # Import the 'os' module
+import os
+import shutil
 import subprocess
-from app.manifest_helper import run_update_check_cli
+import sys
+
+
+def get_installed_version():
+    """Return the installed LinuxToys package version, when available."""
+    version_commands = (
+        ("dpkg-query", ["dpkg-query", "-W", "-f=${Version}", "linuxtoys"]),
+        ("rpm", ["rpm", "-q", "--qf", "%{VERSION}-%{RELEASE}", "linuxtoys"]),
+        ("pacman", ["pacman", "-Q", "linuxtoys"]),
+    )
+
+    for command_name, command in version_commands:
+        if not shutil.which(command_name):
+            continue
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=False)
+        except OSError:
+            continue
+        output = result.stdout.strip()
+        if result.returncode == 0 and output:
+            if command_name == "pacman":
+                _, separator, output = output.partition(" ")
+                if not separator:
+                    continue
+            return output.split("-", maxsplit=1)[0]
+
+    return None
+
+
+def print_version():
+    """Print the package version, falling back to the bundled version."""
+    version = get_installed_version()
+    if version is None:
+        from app.updater import __version__
+        version = __version__
+    print(f"{version}")
 
 if __name__ == "__main__":
+    if len(sys.argv) == 2 and sys.argv[1] in ("-v", "--version"):
+        print_version()
+        sys.exit(0)
+
     # --- SET SCRIPT_DIR AND CACHE_DIR ENVIRONMENT VARIABLES ---
     # Set SCRIPT_DIR relative to linuxtoys.py so all scripts can find libs
     # The libs directory is always at the same location relative to this entry point
@@ -28,15 +67,7 @@ if __name__ == "__main__":
         print(f"Expected path: {libs_dir}")
         print("The installation may be corrupted or incomplete.")
         sys.exit(1)
-    
-    # --- SCRIPTS INITIALIZATION ---
-    # Initialize git-based scripts synchronization with fallback to bundled scripts
-    try:
-        from app.scripts_loader import initialize_scripts
-        initialize_scripts()
-    except ImportError:
-        pass  # scripts_loader may not be available in some environments
-    
+     
     # --- DEVELOPER MODE BANNER ---
     try:
         from app.dev_mode import print_dev_mode_banner
@@ -47,6 +78,7 @@ if __name__ == "__main__":
     # --- UPDATE CHECK ---
     # Check for updates only in CLI mode (EASY_CLI=1) and display feedback in the terminal.
     if os.environ.get('EASY_CLI') == '1':
+        from app.manifest_helper import run_update_check_cli
         run_update_check_cli()
         # If running as UPD_SERVICE, run system update after app update completes
         if os.environ.get('UPD_SERVICE') == '1':
@@ -59,14 +91,71 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"Error running system update: {e}")
             sys.exit(0)
-
+        
+    cli_mode = os.environ.get('EASY_CLI') == '1'
     # --- DISPLAY CHECK FOR GUI MODE ---
-    # Check for display server before importing GTK to prevent crashes in headless environments
-    if os.environ.get('EASY_CLI') != '1':
+    if not cli_mode:
         if not os.environ.get('DISPLAY') and not os.environ.get('WAYLAND_DISPLAY'):
             print("Error: No display server detected. Please run in a graphical environment.")
             print("For CLI mode, set EASY_CLI=1 and run with appropriate arguments.")
             sys.exit(1)
+
+    # --- SCRIPTS INITIALIZATION ---
+    try:
+        from app.scripts_loader import initialize_scripts
+
+        # CLI synchronization must remain completely non-GUI.
+        if cli_mode:
+            initialize_scripts()
+
+        else:
+            from app import git_scripts_manager
+
+            # Only show the dialog if clone/pull will actually occur.
+            if git_scripts_manager.will_perform_git_operation():
+                import threading
+
+                from app.gtk_common import GLib
+                from app.gtk_dialogs import WaitDialog
+                from app.lang_utils import create_translator
+
+                _ = create_translator()
+
+                dialog = WaitDialog(None, _("scripts_init_updating"))
+                dialog.start()
+
+                # The normal application GTK loop has not started yet, so run
+                # a temporary loop while the repository sync occurs.
+                loop = GLib.MainLoop()
+                sync_error = []
+
+                def initialize_scripts_thread():
+                    try:
+                        initialize_scripts()
+                    except Exception as exc:
+                        sync_error.append(exc)
+                    finally:
+                        GLib.idle_add(loop.quit)
+
+                threading.Thread(
+                    target=initialize_scripts_thread,
+                    daemon=True,
+                ).start()
+
+                loop.run()
+                dialog.stop()
+
+                if sync_error:
+                    raise sync_error[0]
+
+            else:
+                # Timestamp is still valid. initialize_scripts() is still
+                # required so CACHE_DIR is configured correctly, but it will
+                # use the cached repository without doing network I/O.
+                initialize_scripts()
+
+    except ImportError:
+        pass
 
     from app import main
 

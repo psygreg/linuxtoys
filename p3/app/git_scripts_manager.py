@@ -284,22 +284,22 @@ def force_update_scripts(progress_callback=None):
 def will_perform_git_operation():
     """
     Check if a git operation (clone or pull) will actually be performed.
-    
-    This is useful to determine if a loading dialog should be shown before
-    calling get_scripts_dir().
-    
+
     Returns:
-        bool: True if a git operation will be performed, False if scripts will be used from cache
+        bool: True if a git operation will be performed, False otherwise
     """
+    if is_dev_mode_enabled():
+        return False
+
     # If repo doesn't exist, we'll try to clone
     if not _git_repo_exists():
         return True
-    
+
     # If repo exists and update interval has passed, we'll try to pull
     if _should_update_scripts():
         return True
-    
-    # Otherwise, we'll just use cached scripts without any git operations
+
+    # Valid cached repository and timestamp
     return False
 
 

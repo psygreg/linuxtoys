@@ -346,6 +346,29 @@ is_rocm_capable() {
     { amd_dgpu || rocm_apu; } || return 1
 }
 
+# other features and quirks
+has_rebar() {
+    local pci size unit
+    while read -r pci; do
+        while read -r size unit; do
+            case "$unit" in
+                GB)
+                    return 0
+                    ;;
+                MB)
+                    (( size > 256 )) && return 0
+                    ;;
+            esac
+        done < <(
+            sudo lspci -vv -s "$pci" 2>/dev/null |
+            sed -nE 's/.*current size: ([0-9]+)(MB|GB).*/\1 \2/p'
+        )
+    done < <(
+        lspci -D |
+        awk '/VGA compatible controller|3D controller/ {print $1}'
+    )
+    return 1
+}
 is_hybridgpu() {
     if is_nvidia && ( is_intel || is_amd ); then
         return 0

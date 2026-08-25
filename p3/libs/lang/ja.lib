@@ -141,3 +141,4 @@ outofspace="操作に必要な利用可能なストレージスペースが不�
 websoftwarewarning="このパッチ適用後も、デバイス設定を管理するには、Flatpak版ではないChromiumベースのWebブラウザーが必要です。"
 itbinput="ibus-typing-booster を使用するには、GNOME のシステム設定の入力方式に追加するか、ibus-setup を使用してください。"
 hwincompat="お使いのハードウェアはこの機能に対応していません。操作をキャンセルしました。"
+requirerebar="AMD GPU ドライバーをインストールするには、\"Resize BAR\" と \"Above 4G Decoding\" が必要です。BIOS でこれらを有効にして、もう一度お試しください。"
