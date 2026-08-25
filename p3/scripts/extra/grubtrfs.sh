@@ -35,8 +35,7 @@ dep_check () {
         fi
     fi
     if [ "$grub_found" = false ]; then
-        nonfatal "No GRUB found."
-        exit 1
+        die "No GRUB found."
     fi
     if is_fedora || is_suse; then
         pkg_install gawk inotify-tools make
@@ -241,5 +240,5 @@ if [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ]; then
     grubtrfs_in
     info "$rebootmsg"
 else
-    nonfatal "$msg031"
+    die "$msg031"
 fi
