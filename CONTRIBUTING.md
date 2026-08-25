@@ -95,6 +95,8 @@ All the following functions return 0 when positive or 1 when negative.
 - `is_intel`: detects *Intel* graphics cards. Will also detect iGPUs, and sets the `intel_arc` variable if any of the GPUs detected is *Alchemist* or *Battlemage*-series.
 - `is_icr_capable`: detects *Intel Compute Runtime* computing-capable Intel cards.
 - `is_nvidia`: detects *Nvidia* graphics cards. Will also detect iGPUs.
+- `is_hybridgpu`: detects if a host has GPUs from different vendors.
+- `has_rebar`: detects if *Resize BAR* is currently enabled.
 
 #### File and Directory Operations
 All the following functions have error handling calling `die`.
@@ -138,7 +140,7 @@ All the following functions parse the arguments that follow them and have error 
 All the following functions have error handling calling `die`.
 
 - `bootloader_upd`: updates bootloader settings according to host distro. Currently supported: `grub`, `systemd-boot`.
-- `initramfs_upd`: updates initramfs settings - useful for driver module installations. Currently supported: `update-initramfs`, `mkinitcpio`, `dracut`.
+- `initramfs_upd`: updates initramfs settings - useful for driver module installations. Currently supported: `initramfs-tools`, `mkinitcpio`, `dracut`.
 - `kargs_upd`: adds arguments to the kernel CMDLINE in `is_ostree` systems through `rpm-ostree kargs`. Parses multiple arguments.
 - `grubbyargs_upd`: adds arguments to the kernel CMDLINE in `is_fedora` and `is_rhel` systems through `grubby`. Parses multiple arguments.
 - `secureboot_check`: checks if Secure Boot is enabled and triggers kernel module signing if needed accordingly. Not required for *Arch Linux* as it has a specific `pacman`-`sbctl` hook.
