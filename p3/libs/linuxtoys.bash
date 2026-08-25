@@ -980,8 +980,8 @@ bootloader_upd() {
     fi
 }
 initramfs_upd() {
-    if is_debian; then
-        sudo update-initramfs -u || die "Failed to update initramfs"
+    if is_debian || is_ubuntu; then
+        sudo update-initramfs -u -k all || die "Failed to update initramfs"
     elif is_arch || is_cachy; then
         if command -v dracut &> /dev/null; then
             sudo dracut -f --regenerate-all || die "Failed to update dracut"
