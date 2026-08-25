@@ -202,6 +202,12 @@ setup_snapper () {
 }
 
 install_grub_btrfs () {
+    is_fedora && { 
+        [ -e /boot/grub ] || \
+            sudo ln -s /boot/grub2 /boot/grub || die "Failed to create symlink for /boot/grub2"
+        [ -e /usr/bin/grub-script-check ] || \
+            sudo ln -s /usr/bin/grub2-script-check /usr/bin/grub-script-check || die "Failed to create symlink for /usr/bin/grub2-script-check"
+    } || true
     if is_arch; then
         pkg_install grub-btrfs
     else
