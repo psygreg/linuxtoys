@@ -136,7 +136,8 @@ ossolus() {
 }
 
 manjaro() {
-    _pkg_dir="/tmp/linuxtoys/"
+    _pkg_dir="$HOME/.cache/linuxtoys/install/"
+	trap 'rm -rf -- "${_pkg_dir}"' EXIT
     if pacman -Qi linuxtoys-bin &>/dev/null; then
         pamac remove --no-confirm linuxtoys-bin ||
             error "Failed to remove existing linuxtoys-bin package."
