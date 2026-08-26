@@ -542,12 +542,15 @@ pkg_install () {
     # Handle --ignore-appends and --ostreecheck flags
     local _ignore_appends=0
     local _ostreecheck=0
+    local _allowerasing=0
     local -a _filtered_args=()
     for arg in "$@"; do
         if [[ "$arg" == "--ignore-appends" ]]; then
             _ignore_appends=1
         elif [[ "$arg" == "--ostreecheck" ]]; then
             _ostreecheck=1
+        elif [[ "$arg" == "--allowerasing" ]]; then
+            _allowerasing=1
         else
             _filtered_args+=("$arg")
         fi
@@ -626,7 +629,11 @@ pkg_install () {
             exit 100
         fi
     elif is_fedora || is_rhel; then
-        sudo dnf install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        if [[ $_allowerasing -eq 1 ]]; then
+            sudo dnf install -y --allowerasing "${pkg_notfound[@]}" || die "Failed to install $to_install"
+        else
+            sudo dnf install -y "${pkg_notfound[@]}" || die "Failed to install $to_install"
+        fi
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_suse; then
         sudo zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
