@@ -75,7 +75,7 @@ for _font in "${_selected_fonts[@]}"; do
 	find "${_extract_dir}" -type f \( -name "*.ttf" -o -name "*.otf" \) -exec cp -f {} "${_font_path}/" \; || fatal "Failed to install ${_font}"
 done
 
-fc-cache -fv && {
+fc-cache -f "${_fonts_dir}" && {
 	zeninf "$msg018"
 } || {
 	fatal "Nerd Fonts installation unsuccessful"
