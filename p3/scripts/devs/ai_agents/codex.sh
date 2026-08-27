@@ -37,7 +37,7 @@ if [ -x "$HOME/.local/bin/codex" ] || command -v codex &>/dev/null; then
     exit 100
 fi
 
-if curl -fsSL https://chatgpt.com/codex/install.sh | sh; then
+if curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh; then
     if [ -x "$HOME/.local/bin/codex" ] || command -v codex &>/dev/null; then
         _append_transmap "created $HOME/.local/bin/codex" # track to transmap
         _append_transmap "created $HOME/.codex"
