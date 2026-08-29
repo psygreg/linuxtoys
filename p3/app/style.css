@@ -63,12 +63,16 @@ checkbutton image {
 button.installed-card-remove-left,
 button.installed-card-remove-left:hover,
 button.installed-card-remove-left:active {
-    border-radius: 10px 0 0 10px;
+    border-radius: 9px 0 0 9px;
+    margin-left: 1px;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
+
 button.installed-card-remove-left {
-    border-radius: 10px 0 0 10px;
     border-right: 1px solid rgba(255,255,255,0.30);
 }
+
 button.installed-card-remove-left:hover {
     border-left-color: rgba(234, 178, 178, 0.535);
 }
