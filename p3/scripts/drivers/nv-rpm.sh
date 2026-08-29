@@ -21,7 +21,7 @@ if is_rhel && [ "$(rpm -E %rhel)" = "10" ]; then
     sudo dnf makecache
     { lspci | grep -i "nvidia.*rtx" && pkg_install nvidia-open nvidia-container-toolkit; } || pkg_install cuda-drivers nvidia-container-toolkit
 else
-    pkg_install akmod-nvidia xorg-x11-drv-nvidia-cuda
+    pkg_install --allowerasing akmod-nvidia xorg-x11-drv-nvidia-cuda
 fi
 initramfs_upd
-zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300
+info "$rebootmsg"

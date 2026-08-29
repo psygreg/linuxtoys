@@ -17,6 +17,14 @@ from .manifest_helper import (
 from .dev_mode import is_dev_mode_enabled
 from .revert_helper import build_auto_revert_script_entry
 
+CLI_OPTIONS = frozenset({
+    "-D", "--DEV_MODE", "--devmode", "--debug",
+    "-h", "--help", "-i", "--install", "-l", "--list",
+    "-m", "--manifest", "-p", "--package", "--packages",
+    "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks",
+    "-v", "--version", "-y", "--yes", "--check-updates",
+})
+
 def resolve_script_dir():
     """
     Get the SCRIPT_DIR from environment variable or search for it.
@@ -767,7 +775,6 @@ def easy_cli_help_message():
     print("\nUsage:")
     print("  linuxtoys --install [Option] <item1> <item2> ...")
     print("  linuxtoys --install <item1> <item2> ...  (smart mode)")
-    # print("  EASY_CLI=1 python3 linuxtoys.py --install [option] <item1> <item2> ...")
     print()
     print("Functions:")
     print("  -i, --install      Install selected options (scripts, packages)")
@@ -783,7 +790,6 @@ def easy_cli_help_message():
     print("  linuxtoys --install --package <package1> <package2>")
     print("  linuxtoys --install --flatpak <flatpak1> <flatpak2>")
     print("  linuxtoys --install <item1> <item2>  (smart mode)")
-    # print("  EASY_CLI=1 linuxtoys --install -f <flatpak1> <flatpak2>")
     print()
     print("Other functions:")
     print("  -h, --help         Show this help message")
@@ -791,10 +797,44 @@ def easy_cli_help_message():
     print("  -m, --manifest     Enable manifest mode features")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
+    print("  --devmode          Enable developer mode, that will only check scripts for errors without executing them")
+    print("  --debug            Show debug messages")
     print("  update, upgrade    Check for updates and upgrade LinuxToys")
-    # print("  -D, --DEV_MODE     Enable developer mode (for scripts debugging)\n    Usage: EASY_CLI=1 python3 linuxtoys.py -D -i -s <script1>")
     print()
 
+def get_installed_version():
+    """Return the installed LinuxToys package version, when available."""
+    version_commands = (
+        ("dpkg-query", ["dpkg-query", "-W", "-f=${Version}", "linuxtoys"]),
+        ("rpm", ["rpm", "-q", "--qf", "%{VERSION}-%{RELEASE}", "linuxtoys"]),
+        ("pacman", ["pacman", "-Q", "linuxtoys"]),
+    )
+
+    for command_name, command in version_commands:
+        if not shutil.which(command_name):
+            continue
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=False)
+        except OSError:
+            continue
+        output = result.stdout.strip()
+        if result.returncode == 0 and output:
+            if command_name == "pacman":
+                _, separator, output = output.partition(" ")
+                if not separator:
+                    continue
+            return output.split("-", maxsplit=1)[0]
+
+    return None
+
+
+def print_version():
+    """Print the package version, falling back to the bundled version."""
+    version = get_installed_version()
+    if version is None:
+        from app.updater import __version__
+        version = __version__
+    print(f"{version}")
 
 # --- MAIN EASY CLI HANDLER ---
 def easy_cli_handler(translations=None):
@@ -809,7 +849,7 @@ def easy_cli_handler(translations=None):
     - Displaying version (-v, --version)
     - Displaying help (-h, --help)
 
-    It also supports developer mode (-D, --DEV_MODE) and optional automatic 
+    It also supports developer mode (-D, --DEV_MODE, --devmode) that will only check scripts for errors without executing them, and optional automatic 
     confirmation flags (-y, --yes) to skip prompts.
     """
     
@@ -920,7 +960,7 @@ def easy_cli_handler(translations=None):
         return run_manifest_mode(translations)
     
     elif args[0] in ("-v", "--version"):
-        print(f"LinuxToys {__version__}")
+        print_version()
         return 0
     
     else:

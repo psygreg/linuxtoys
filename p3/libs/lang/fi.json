@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Asettaa Ubuntun suosimaan x86-64v3-suorittimille optimoituja pakette, mikä voi tuoda pieniä suorituskykyparannuksia.",
   "lazydocker_desc": "Dockerin TUI, jonka avulla kehittäjät voivat hallita kontteja, levykuvia, taltioita, verkkoja ja lokeja vuorovaikutteisen käyttöliittymän kautta ilman pitkien Docker-komentojen muistamista.",
   "scripts_resync": "Synkronoi skriptit",
-  "vbox_desc": "Tehokas avoimen lähdekoodin yleiskäyttöinen täysvirtualisointiratkaisu henkilökohtaiseen ja yrityskäyttöön."
+  "vbox_desc": "Tehokas avoimen lähdekoodin yleiskäyttöinen täysvirtualisointiratkaisu henkilökohtaiseen ja yrityskäyttöön.",
+  "leshade_desc": "ReShade-hallintaohjelma Linuxille, jolla voit helposti asentaa shadereita WINE/Protonin kautta toimiville peleille niiden omiin prefikseihin.",
+  "ax900_desc": "Ajuri AIC8800D80-yhdistelmä-WiFi/Bluetooth-piirisarjalle, jota käytetään useissa USB-sovittimissa."
 }

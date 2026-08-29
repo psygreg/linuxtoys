@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Thiết lập Ubuntu ưu tiên các gói được tối ưu hóa cho bộ xử lý x86-64v3, có thể mang lại một số cải thiện nhỏ về hiệu năng.",
   "lazydocker_desc": "TUI dành cho Docker, cho phép các nhà phát triển quản lý container, image, volume, mạng và nhật ký từ giao diện tương tác mà không cần ghi nhớ các lệnh Docker dài.",
   "scripts_resync": "Đồng bộ tập lệnh",
-  "vbox_desc": "Giải pháp ảo hóa toàn phần mã nguồn mở mạnh mẽ, đa dụng, dành cho cả mục đích cá nhân và doanh nghiệp."
+  "vbox_desc": "Giải pháp ảo hóa toàn phần mã nguồn mở mạnh mẽ, đa dụng, dành cho cả mục đích cá nhân và doanh nghiệp.",
+  "leshade_desc": "Trình quản lý ReShade cho Linux, cho phép bạn dễ dàng cài đặt shader cho các trò chơi chạy qua WINE/Proton vào prefix tương ứng của chúng.",
+  "ax900_desc": "Trình điều khiển cho chipset WiFi/Bluetooth kết hợp AIC8800D80, được sử dụng trong nhiều bộ chuyển đổi USB."
 }

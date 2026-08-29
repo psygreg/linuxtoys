@@ -765,6 +765,30 @@ def _script_requires_systemd_functions(script_path):
     return False
 
 
+def get_host_device_ids():
+    """Get normalized vendor, product, and vendor:product IDs from PCI and USB."""
+    import glob
+
+    device_ids = set()
+    device_buses = (
+        ("/sys/bus/pci/devices/*", "vendor", "device"),
+        ("/sys/bus/usb/devices/*", "idVendor", "idProduct"),
+    )
+
+    for device_glob, vendor_file, product_file in device_buses:
+        for device_path in glob.glob(device_glob):
+            try:
+                with open(f"{device_path}/{vendor_file}", encoding="utf-8") as f:
+                    vendor_id = f.read().strip().lower().removeprefix("0x")
+                with open(f"{device_path}/{product_file}", encoding="utf-8") as f:
+                    product_id = f.read().strip().lower().removeprefix("0x")
+                device_ids.update({vendor_id, product_id, f"{vendor_id}:{product_id}"})
+            except OSError:
+                continue
+
+    return device_ids
+
+
 def script_is_compatible(script_path, compat_keys):
     """
     Check if a script is compatible with the given compatibility keys.
@@ -796,6 +820,7 @@ def script_is_compatible(script_path, compat_keys):
     wayland_compatible = True  # Default for unset wayland header (presume neutrality)
     cpu_compatible = True # Default for unset cpu header
     hybridgpu_compatible = True  # Default for unset hybridgpu header
+    device_compatible = True  # Default for an unset deviceids header
     has_explicit_systemd_header = False  # Track if systemd header was explicitly set
 
     try:
@@ -929,6 +954,13 @@ def script_is_compatible(script_path, compat_keys):
                                 (not include_keys or bool(compat_keys & include_keys))
                                 and not bool(compat_keys & exclude_keys)
                             )
+                elif line.startswith("# deviceids:"):
+                    device_ids = {
+                        device_id.strip().lower().removeprefix("0x")
+                        for device_id in line[len("# deviceids:") :].split(",")
+                        if device_id.strip()
+                    }
+                    device_compatible = bool(device_ids & get_host_device_ids())
                 if not line.startswith("#"):
                     break
     except Exception:
@@ -942,7 +974,7 @@ def script_is_compatible(script_path, compat_keys):
     # If no explicit wayland header, presume neutrality (script works on both X11 and Wayland)
     # wayland_compatible remains True by default
 
-    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible
+    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible and device_compatible
 
 
 def script_is_localized(script_path, current_locale):

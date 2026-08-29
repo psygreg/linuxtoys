@@ -1,49 +1,46 @@
 #!/usr/bin/env python3
 
 import os
-import shutil
 import subprocess
 import sys
 
 
-def get_installed_version():
-    """Return the installed LinuxToys package version, when available."""
-    version_commands = (
-        ("dpkg-query", ["dpkg-query", "-W", "-f=${Version}", "linuxtoys"]),
-        ("rpm", ["rpm", "-q", "--qf", "%{VERSION}-%{RELEASE}", "linuxtoys"]),
-        ("pacman", ["pacman", "-Q", "linuxtoys"]),
-    )
+def configure_launch_flags():
+    """Apply global flags before initializing the application."""
+    launch_flags = {
+        "--devmode": "DEV_MODE",
+        "--debug": "LT_DEBUG",
+    }
+    remaining_args = [sys.argv[0]]
 
-    for command_name, command in version_commands:
-        if not shutil.which(command_name):
-            continue
-        try:
-            result = subprocess.run(command, capture_output=True, text=True, check=False)
-        except OSError:
-            continue
-        output = result.stdout.strip()
-        if result.returncode == 0 and output:
-            if command_name == "pacman":
-                _, separator, output = output.partition(" ")
-                if not separator:
-                    continue
-            return output.split("-", maxsplit=1)[0]
+    for argument in sys.argv[1:]:
+        environment_variable = launch_flags.get(argument)
+        if environment_variable:
+            os.environ[environment_variable] = "1"
+        else:
+            remaining_args.append(argument)
 
-    return None
-
-
-def print_version():
-    """Print the package version, falling back to the bundled version."""
-    version = get_installed_version()
-    if version is None:
-        from app.updater import __version__
-        version = __version__
-    print(f"{version}")
+    sys.argv = remaining_args
 
 if __name__ == "__main__":
-    if len(sys.argv) == 2 and sys.argv[1] in ("-v", "--version"):
-        print_version()
+    configure_launch_flags()
+
+    if len(sys.argv) == 2 and sys.argv[1] in ("-v", "--version", "-h", "--help", "help"):
+        from app.easy_cli import easy_cli_help_message, print_version
+
+        if sys.argv[1] in ("-v", "--version"):
+            print_version()
+        else:
+            easy_cli_help_message()
         sys.exit(0)
+
+    if len(sys.argv) == 2 and sys.argv[1].startswith("-"):
+        from app.easy_cli import CLI_OPTIONS, easy_cli_help_message
+
+        if sys.argv[1] not in CLI_OPTIONS:
+            print(f"Unknown option: {sys.argv[1]}\n")
+            easy_cli_help_message()
+            sys.exit(2)
 
     # --- SET SCRIPT_DIR AND CACHE_DIR ENVIRONMENT VARIABLES ---
     # Set SCRIPT_DIR relative to linuxtoys.py so all scripts can find libs

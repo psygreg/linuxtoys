@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Mengatur Ubuntu agar mengutamakan paket yang dioptimalkan untuk prosesor x86-64v3, yang dapat memberikan sedikit peningkatan kinerja.",
   "lazydocker_desc": "TUI untuk Docker yang memungkinkan pengembang mengelola container, image, volume, jaringan, dan log melalui antarmuka interaktif tanpa perlu menghafal perintah Docker yang panjang.",
   "scripts_resync": "Sinkronkan skrip",
-  "vbox_desc": "Solusi virtualisasi penuh serbaguna yang kuat dan bersumber terbuka untuk penggunaan pribadi maupun perusahaan."
+  "vbox_desc": "Solusi virtualisasi penuh serbaguna yang kuat dan bersumber terbuka untuk penggunaan pribadi maupun perusahaan.",
+  "leshade_desc": "Pengelola ReShade untuk Linux yang memungkinkan Anda memasang shader dengan mudah untuk game yang berjalan melalui WINE/Proton di prefix masing-masing.",
+  "ax900_desc": "Driver untuk chipset kombo WiFi/Bluetooth AIC8800D80 yang ditemukan di berbagai adaptor USB."
 }

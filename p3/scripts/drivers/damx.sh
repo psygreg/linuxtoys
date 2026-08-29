@@ -33,11 +33,9 @@ curl -fsSL "https://github.com/${_tarb}" -o- |
 
 if is_debian || is_ubuntu; then
     pkg_install make build-essential
-
 elif is_arch || is_cachy; then
     _k="$(uname -r | grep -o -E 'rt-lts|lts|zen|rt|hardened' | head -n1)"
     pkg_install base-devel "linux${_k:+-${_k}}-headers"
-
 elif is_fedora || is_rhel || is_suse; then
     pkg_install make gcc kernel-headers kernel-devel
 fi
@@ -51,7 +49,7 @@ askpass
 sudo bash setup.sh
 _damx_status=$?
 case "${_damx_status}" in
-    0|2) info "$msg018" ;;
+    0|2) info "$rebootmsg" ;;
     100) exit 100 ;;
     *) die "Acer Manager installation unsuccessful" ;;
 esac

@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Configura Ubuntu para dar prioridad a los paquetes optimizados para procesadores x86-64v3, lo que puede aportar pequeñas mejoras de rendimiento.",
   "lazydocker_desc": "Una TUI para Docker que permite a los desarrolladores gestionar contenedores, imágenes, volúmenes, redes y registros desde una interfaz interactiva, sin tener que memorizar largos comandos de Docker.",
   "scripts_resync": "Sincronizar scripts",
-  "vbox_desc": "Potente solución de código abierto para virtualización completa de propósito general, destinada al uso personal y empresarial."
+  "vbox_desc": "Potente solución de código abierto para virtualización completa de propósito general, destinada al uso personal y empresarial.",
+  "leshade_desc": "Un gestor de ReShade para Linux que permite instalar fácilmente shaders para juegos ejecutados mediante WINE/Proton en sus respectivos prefijos.",
+  "ax900_desc": "Controlador para el chipset combinado WiFi/Bluetooth AIC8800D80, presente en varios adaptadores USB."
 }

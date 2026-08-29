@@ -19,8 +19,7 @@ if is_arch || is_cachy; then
 elif is_fedora || is_rhel; then
     rpmfusion_chk
     secureboot_check
-    pkg_remove akmod-nvidia xorg-x11-drv-nvidia-cuda kmod-nvidia
-    pkg_install akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda kmod-nvidia-580xx
+    pkg_install --allowerasing akmod-nvidia-580xx xorg-x11-drv-nvidia-580xx-cuda
     initramfs_upd
     bootloader_upd
 elif is_ubuntu; then

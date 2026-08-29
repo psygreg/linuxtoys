@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Ubuntu တွင် x86-64v3 ပရိုဆက်ဆာများအတွက် အကောင်းဆုံးပြင်ဆင်ထားသော ပက်ကေ့ဂျ်များကို ဦးစားပေးအသုံးပြုရန် သတ်မှတ်ပေးပြီး စွမ်းဆောင်ရည် အနည်းငယ်တိုးတက်လာနိုင်သည်။",
   "lazydocker_desc": "ရှည်လျားသော Docker command များကို မှတ်သားစရာမလိုဘဲ developer များက interactive interface မှ container၊ image၊ volume၊ network နှင့် log များကို စီမံနိုင်စေသော Docker အတွက် TUI တစ်ခု။",
   "scripts_resync": "စခရစ်များကို စင့်ခ်လုပ်ရန်",
-  "vbox_desc": "ကိုယ်ပိုင်နှင့် လုပ်ငန်းသုံးအတွက် အားကောင်းသော၊ open source ဖြစ်သည့်၊ ယေဘုယျရည်ရွယ်ချက်သုံး full virtualization ဖြေရှင်းချက်။"
+  "vbox_desc": "ကိုယ်ပိုင်နှင့် လုပ်ငန်းသုံးအတွက် အားကောင်းသော၊ open source ဖြစ်သည့်၊ ယေဘုယျရည်ရွယ်ချက်သုံး full virtualization ဖြေရှင်းချက်။",
+  "leshade_desc": "WINE/Proton မှတစ်ဆင့် လည်ပတ်သည့် ဂိမ်းများ၏ သက်ဆိုင်ရာ prefix များတွင် shader များကို လွယ်ကူစွာ ထည့်သွင်းနိုင်စေသည့် Linux အတွက် ReShade manager။",
+  "ax900_desc": "USB adapter အမျိုးမျိုးတွင် တွေ့ရသော AIC8800D80 ပေါင်းစပ် WiFi/Bluetooth chipset အတွက် driver။"
 }

@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Konfiguron Ubuntu-n që të preferojë paketat e optimizuara për procesorët x86-64v3, gjë që mund të sjellë përmirësime të vogla në performancë.",
   "lazydocker_desc": "Një TUI për Docker që u lejon zhvilluesve të menaxhojnë kontejnerët, imazhet, vëllimet, rrjetet dhe regjistrat nga një ndërfaqe interaktive, pa pasur nevojë të mbajnë mend komanda të gjata Docker.",
   "scripts_resync": "Sinkronizo skriptet",
-  "vbox_desc": "Zgjidhje e fuqishme me burim të hapur për virtualizim të plotë dhe përdorim të përgjithshëm, si personal ashtu edhe në ndërmarrje."
+  "vbox_desc": "Zgjidhje e fuqishme me burim të hapur për virtualizim të plotë dhe përdorim të përgjithshëm, si personal ashtu edhe në ndërmarrje.",
+  "leshade_desc": "Një menaxher ReShade për Linux që ju lejon të instaloni lehtësisht shader-a për lojërat që ekzekutohen përmes WINE/Proton në prefikset e tyre përkatëse.",
+  "ax900_desc": "Drejtues për chipset-in e kombinuar WiFi/Bluetooth AIC8800D80, që gjendet në disa përshtatës USB."
 }

@@ -21,4 +21,4 @@ copy_ 10-nvidia.conf /etc/modprobe.d/
 # refresh boot image
 initramfs_upd
 bootloader_upd
-zenity --info --title "Nvidia Drivers" --text "$msg036" --width 300 --height 300
+info "$rebootmsg"

@@ -6,6 +6,7 @@ different system environments for development and testing purposes.
 
 Environment Variables:
 - DEV_MODE=1: Enable developer mode (shows all scripts regardless of compatibility)
+- LT_DEBUG=1: Show git scripts repository synchronization messages
 - COMPAT=<key>: Simulate a specific system (e.g., COMPAT=fedora, COMPAT=arch)
 - CONTAINER=1: Simulate container environment (applies container checks)
 - OPTIMIZER=1: Simulate optimized system (affects # optimized-only: header visibility)
@@ -18,6 +19,8 @@ Features:
 - Dry-run script validation (checks parsing and library sourcing)
 
 Usage:
+    python3 linuxtoys.py --devmode                              # Enable developer mode
+    python3 linuxtoys.py --debug                                # Show git synchronization messages
     DEV_MODE=1 python3 linuxtoys.py                           # Show all scripts, ignore all checks
     DEV_MODE=1 COMPAT=fedora python3 linuxtoys.py             # Simulate Fedora system
     DEV_MODE=1 CONTAINER=1 python3 linuxtoys.py               # Simulate container environment

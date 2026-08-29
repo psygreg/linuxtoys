@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Setter opp Ubuntu til å foretrekke optimaliserte pakker for x86-64v3-prosessorer, noe som kan gi en liten ytelsesforbedring.",
   "lazydocker_desc": "Et TUI for Docker som lar utviklere administrere containere, avbildninger, volumer, nettverk og logger fra et interaktivt grensesnitt uten å måtte huske lange Docker-kommandoer.",
   "scripts_resync": "Synkroniser skript",
-  "vbox_desc": "Kraftig åpen kildekode-løsning for full virtualisering til generell bruk, både for privatpersoner og bedrifter."
+  "vbox_desc": "Kraftig åpen kildekode-løsning for full virtualisering til generell bruk, både for privatpersoner og bedrifter.",
+  "leshade_desc": "En ReShade-behandler for Linux som lar deg enkelt installere shadere for spill som kjører gjennom WINE/Proton, i deres respektive prefikser.",
+  "ax900_desc": "Driver for AIC8800D80 kombinert WiFi/Bluetooth-brikkesett, som finnes i flere USB-adaptere."
 }

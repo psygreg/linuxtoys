@@ -519,5 +519,7 @@
   "ubuntuv3": "Ativar pacotes x86-64v3",
   "ubuntuv3_desc": "Configura o Ubuntu para dar preferência a pacotes otimizados para processadores x86-64v3, o que pode trazer pequenos ganhos de desempenho.",
   "scripts_resync": "Sincronizar scripts",
-  "vbox_desc": "Uma poderosa solução de código aberto para virtualização completa de uso geral, tanto pessoal quanto empresarial."
+  "vbox_desc": "Uma poderosa solução de código aberto para virtualização completa de uso geral, tanto pessoal quanto empresarial.",
+  "leshade_desc": "Um gerenciador de ReShade para Linux que permite instalar shaders facilmente para jogos executados através do WINE/Proton em seus respectivos prefixos.",
+  "ax900_desc": "Driver para o chipset combinado WiFi/Bluetooth AIC8800D80, encontrado em diversos adaptadores USB."
 }

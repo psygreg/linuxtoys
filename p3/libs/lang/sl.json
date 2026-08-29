@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Nastavi Ubuntu tako, da daje prednost paketom, optimiziranim za procesorje x86-64v3, kar lahko prinese manjše izboljšanje zmogljivosti.",
   "lazydocker_desc": "TUI za Docker, ki razvijalcem omogoča upravljanje vsebnikov, slik, nosilcev, omrežij in dnevnikov prek interaktivnega vmesnika, ne da bi si morali zapomniti dolge ukaze Docker.",
   "scripts_resync": "Sinhroniziraj skripte",
-  "vbox_desc": "Zmogljiva odprtokodna rešitev za popolno virtualizacijo za splošno, osebno in poslovno uporabo."
+  "vbox_desc": "Zmogljiva odprtokodna rešitev za popolno virtualizacijo za splošno, osebno in poslovno uporabo.",
+  "leshade_desc": "Upravljalnik ReShade za Linux, ki omogoča preprosto nameščanje senčil za igre, ki se izvajajo prek WINE/Proton, v njihove ustrezne predpone.",
+  "ax900_desc": "Gonilnik za kombinirani nabor čipov WiFi/Bluetooth AIC8800D80, ki ga najdemo v različnih USB-vmesnikih."
 }

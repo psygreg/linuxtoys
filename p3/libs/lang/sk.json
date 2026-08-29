@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Nastaví Ubuntu tak, aby uprednostňoval optimalizované balíky pre procesory x86-64v3, čo môže priniesť malé zvýšenie výkonu.",
   "lazydocker_desc": "TUI pre Docker, ktoré umožňuje vývojárom spravovať kontajnery, obrazy, zväzky, siete a protokoly z interaktívneho rozhrania bez nutnosti pamätať si dlhé príkazy Dockeru.",
   "scripts_resync": "Synchronizovať skripty",
-  "vbox_desc": "Výkonné open source riešenie na úplnú virtualizáciu na všeobecné použitie pre osobné aj podnikové nasadenie."
+  "vbox_desc": "Výkonné open source riešenie na úplnú virtualizáciu na všeobecné použitie pre osobné aj podnikové nasadenie.",
+  "leshade_desc": "Správca ReShade pre Linux, ktorý umožňuje jednoducho inštalovať shadery pre hry spúšťané cez WINE/Proton do ich príslušných prefixov.",
+  "ax900_desc": "Ovládač pre kombinovaný čipset WiFi/Bluetooth AIC8800D80, ktorý sa nachádza v rôznych USB adaptéroch."
 }

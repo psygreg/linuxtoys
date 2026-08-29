@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Konfiguruje Ubuntu tak, aby preferował pakiety zoptymalizowane dla procesorów x86-64v3, co może przynieść niewielką poprawę wydajności.",
   "lazydocker_desc": "TUI dla Dockera, które pozwala programistom zarządzać kontenerami, obrazami, woluminami, sieciami i logami z interaktywnego interfejsu, bez konieczności zapamiętywania długich poleceń Dockera.",
   "scripts_resync": "Synchronizuj skrypty",
-  "vbox_desc": "Potężne rozwiązanie open source do pełnej wirtualizacji ogólnego przeznaczenia, do użytku osobistego i firmowego."
+  "vbox_desc": "Potężne rozwiązanie open source do pełnej wirtualizacji ogólnego przeznaczenia, do użytku osobistego i firmowego.",
+  "leshade_desc": "Menedżer ReShade dla Linuksa, który umożliwia łatwą instalację shaderów dla gier uruchamianych przez WINE/Proton w ich odpowiednich prefiksach.",
+  "ax900_desc": "Sterownik dla układu AIC8800D80 łączącego WiFi i Bluetooth, stosowanego w różnych adapterach USB."
 }

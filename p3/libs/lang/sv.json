@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Ställer in Ubuntu att föredra optimerade paket för x86-64v3-processorer, vilket kan ge mindre prestandaförbättringar.",
   "lazydocker_desc": "Ett TUI för Docker som låter utvecklare hantera containrar, avbildningar, volymer, nätverk och loggar från ett interaktivt gränssnitt utan att behöva memorera långa Docker-kommandon.",
   "scripts_resync": "Synkronisera skript",
-  "vbox_desc": "Kraftfull lösning med öppen källkod för fullständig virtualisering för allmänna ändamål, för både privat- och företagsbruk."
+  "vbox_desc": "Kraftfull lösning med öppen källkod för fullständig virtualisering för allmänna ändamål, för både privat- och företagsbruk.",
+  "leshade_desc": "En ReShade-hanterare för Linux som gör det enkelt att installera shaders för spel som körs genom WINE/Proton i deras respektive prefix.",
+  "ax900_desc": "Drivrutin för det kombinerade WiFi/Bluetooth-chipsetet AIC8800D80, som finns i flera USB-adaptrar."
 }

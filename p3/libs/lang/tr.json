@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Ubuntu'yu x86-64v3 işlemciler için optimize edilmiş paketleri tercih edecek şekilde yapılandırır; bu da küçük performans artışları sağlayabilir.",
   "lazydocker_desc": "Geliştiricilerin uzun Docker komutlarını ezberlemeden etkileşimli bir arayüz üzerinden konteynerleri, imajları, birimleri, ağları ve günlükleri yönetmesini sağlayan bir Docker TUI'si.",
   "scripts_resync": "Betikleri eşitle",
-  "vbox_desc": "Kişisel ve kurumsal kullanım için güçlü, açık kaynaklı, genel amaçlı tam sanallaştırma çözümü."
+  "vbox_desc": "Kişisel ve kurumsal kullanım için güçlü, açık kaynaklı, genel amaçlı tam sanallaştırma çözümü.",
+  "leshade_desc": "WINE/Proton üzerinden çalışan oyunların ilgili prefix'lerine shader'ları kolayca yüklemenizi sağlayan Linux için bir ReShade yöneticisi.",
+  "ax900_desc": "Çeşitli USB adaptörlerinde bulunan AIC8800D80 birleşik WiFi/Bluetooth yonga seti için sürücü."
 }

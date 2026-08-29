@@ -230,7 +230,6 @@ summon_optimizers() {
 
 # --- Utils ---
 _lang_() {
-    sysdetect
     local lang="${LANG:0:2}"
     local available=" am ar bn cs de el en es fa fi fr he hi id it ja ko ms nl pl pt ru sv sw ta th tl tr uk ur vi zh bg bs da hr hu is no sk sl sr nb az lv ga ne my sq tg uz hy ka km lo mn ro et lt "
 
@@ -241,6 +240,7 @@ _lang_() {
     fi
     source "$SCRIPT_DIR/libs/lang/$langfile.lib"
 }
+_lang_
 
 # --- System Detection ---
 sysdetect_once() { [[ -n ${ID:-} ]] || sysdetect; }

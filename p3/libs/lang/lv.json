@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Iestata Ubuntu dot priekšroku x86-64v3 procesoriem optimizētām pakotnēm, kas var sniegt nelielus veiktspējas uzlabojumus.",
   "lazydocker_desc": "Docker TUI, kas ļauj izstrādātājiem interaktīvā saskarnē pārvaldīt konteinerus, attēlus, sējumus, tīklus un žurnālus, neiegaumējot garas Docker komandas.",
   "scripts_resync": "Sinhronizēt skriptus",
-  "vbox_desc": "Jaudīgs atvērtā pirmkoda vispārējas nozīmes pilnas virtualizācijas risinājums personīgai un uzņēmumu lietošanai."
+  "vbox_desc": "Jaudīgs atvērtā pirmkoda vispārējas nozīmes pilnas virtualizācijas risinājums personīgai un uzņēmumu lietošanai.",
+  "leshade_desc": "ReShade pārvaldnieks Linux sistēmai, kas ļauj viegli instalēt ēnotājus spēlēm, kuras darbojas ar WINE/Proton, to attiecīgajos prefiksos.",
+  "ax900_desc": "Draiveris AIC8800D80 kombinētajam WiFi/Bluetooth mikroshēmojumam, kas atrodams dažādos USB adapteros."
 }

@@ -20,6 +20,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+class _GitSyncLogFilter(logging.Filter):
+    """Allow repository synchronization output only when explicitly requested."""
+
+    def filter(self, record):
+        return "LT_DEBUG" in os.environ
+
+
+_git_sync_log_filter = _GitSyncLogFilter()
+logger.addFilter(_git_sync_log_filter)
+logging.getLogger("app.git_scripts_manager").addFilter(_git_sync_log_filter)
+
 def initialize_scripts():
     """
     Initialize scripts repository synchronization.

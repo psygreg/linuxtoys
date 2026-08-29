@@ -521,5 +521,7 @@
   "ubuntuv3_desc": "将 Ubuntu 配置为优先使用针对 x86-64v3 处理器优化的软件包，可能带来一定的性能提升。",
   "lazydocker_desc": "一个用于 Docker 的 TUI，让开发者无需记忆冗长的 Docker 命令，即可通过交互式界面管理容器、镜像、卷、网络和日志。",
   "scripts_resync": "同步脚本",
-  "vbox_desc": "强大的开源通用全虚拟化解决方案，适用于个人和企业用途。"
+  "vbox_desc": "强大的开源通用全虚拟化解决方案，适用于个人和企业用途。",
+  "leshade_desc": "Linux 上的 ReShade 管理器，可让您轻松地为通过 WINE/Proton 运行的游戏将着色器安装到各自对应的 prefix 中。",
+  "ax900_desc": "适用于 AIC8800D80 WiFi/蓝牙组合芯片组的驱动程序，该芯片组常见于多种 USB 适配器中。"
 }

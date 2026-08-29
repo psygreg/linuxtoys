@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Ubuntu에서 x86-64v3 프로세서에 최적화된 패키지를 우선 사용하도록 설정하여 약간의 성능 향상을 얻을 수 있습니다.",
   "lazydocker_desc": "개발자가 긴 Docker 명령어를 외울 필요 없이 대화형 인터페이스에서 컨테이너, 이미지, 볼륨, 네트워크 및 로그를 관리할 수 있게 해주는 Docker용 TUI입니다.",
   "scripts_resync": "스크립트 동기화",
-  "vbox_desc": "개인 및 기업용으로 사용할 수 있는 강력한 오픈 소스 범용 완전 가상화 솔루션입니다."
+  "vbox_desc": "개인 및 기업용으로 사용할 수 있는 강력한 오픈 소스 범용 완전 가상화 솔루션입니다.",
+  "leshade_desc": "WINE/Proton을 통해 실행되는 게임의 각 prefix에 셰이더를 쉽게 설치할 수 있는 Linux용 ReShade 관리자입니다.",
+  "ax900_desc": "여러 USB 어댑터에 탑재된 AIC8800D80 WiFi/Bluetooth 콤보 칩셋용 드라이버입니다."
 }

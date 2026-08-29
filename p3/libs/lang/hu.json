@@ -519,5 +519,7 @@
   "ubuntuv3_desc": "Úgy állítja be az Ubuntut, hogy előnyben részesítse az x86-64v3 processzorokra optimalizált csomagokat, ami kisebb teljesítménynövekedést eredményezhet.",
   "lazydocker_desc": "Egy TUI a Dockerhez, amellyel a fejlesztők interaktív felületen kezelhetik a konténereket, lemezképeket, köteteket, hálózatokat és naplókat anélkül, hogy hosszú Docker-parancsokat kellene megjegyezniük.",
   "scripts_resync": "Szkriptek szinkronizálása",
-  "vbox_desc": "Nagy teljesítményű, nyílt forráskódú, általános célú teljes virtualizációs megoldás személyes és vállalati használatra."
+  "vbox_desc": "Nagy teljesítményű, nyílt forráskódú, általános célú teljes virtualizációs megoldás személyes és vállalati használatra.",
+  "leshade_desc": "ReShade-kezelő Linuxhoz, amellyel egyszerűen telepíthetők shaderek a WINE/Protonon keresztül futó játékok megfelelő prefixeibe.",
+  "ax900_desc": "Illesztőprogram a többféle USB-adapterben megtalálható AIC8800D80 kombinált WiFi/Bluetooth lapkakészlethez."
 }

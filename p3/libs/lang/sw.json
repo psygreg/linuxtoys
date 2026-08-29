@@ -517,5 +517,7 @@
   "ubuntuv3_desc": "Husanidi Ubuntu ili kupendelea vifurushi vilivyoboreshwa kwa vichakataji vya x86-64v3, jambo ambalo linaweza kuleta maboresho madogo ya utendaji.",
   "lazydocker_desc": "TUI ya Docker inayowaruhusu wasanidi kudhibiti kontena, picha, volumu, mitandao na kumbukumbu kupitia kiolesura shirikishi bila kukariri amri ndefu za Docker.",
   "scripts_resync": "Sawazisha skripti",
-  "vbox_desc": "Suluhisho thabiti la chanzo huria la uboreshaji kamili wa mazingira pepe kwa matumizi ya jumla, binafsi na ya biashara."
+  "vbox_desc": "Suluhisho thabiti la chanzo huria la uboreshaji kamili wa mazingira pepe kwa matumizi ya jumla, binafsi na ya biashara.",
+  "leshade_desc": "Kidhibiti cha ReShade kwa Linux kinachokuruhusu kusakinisha shaders kwa urahisi kwa michezo inayoendeshwa kupitia WINE/Proton katika prefix zake husika.",
+  "ax900_desc": "Kiendeshi cha chipset ya pamoja ya WiFi/Bluetooth AIC8800D80, inayopatikana katika adapta mbalimbali za USB."
 }
