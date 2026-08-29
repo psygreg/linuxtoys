@@ -139,12 +139,12 @@ manjaro() {
     _pkg_dir="$HOME/.cache/linuxtoys/install/"
 	trap 'rm -rf -- "${_pkg_dir}"' EXIT
     if pacman -Qi linuxtoys-bin &>/dev/null; then
-        pamac remove --no-confirm linuxtoys-bin ||
+        sudo pamac remove --no-confirm linuxtoys-bin ||
             error "Failed to remove existing linuxtoys-bin package."
     fi
-    { pacman -Qi debugedit &>/dev/null || pamac install --no-confirm debugedit; } ||
+    { pacman -Qi debugedit &>/dev/null || sudo pamac install --no-confirm debugedit; } ||
         error "Failed to install makepkg dependency debugedit"
-    { pacman -Qi fakeroot &>/dev/null || pamac install --no-confirm fakeroot; } ||
+    { pacman -Qi fakeroot &>/dev/null || sudo pamac install --no-confirm fakeroot; } ||
         error "Failed to install makepkg dependency fakeroot"
     rm -rf "${_pkg_dir}"
     mkdir -p "${_pkg_dir}"
