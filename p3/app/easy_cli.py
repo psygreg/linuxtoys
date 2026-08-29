@@ -15,11 +15,11 @@ from .manifest_helper import (
     check_flatpaks_async, install_flatpaks
 )
 from .dev_mode import is_dev_mode_enabled
-from .revert_helper import build_auto_revert_script_entry
+from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
 
 CLI_OPTIONS = frozenset({
     "-D", "--DEV_MODE", "--devmode", "--debug",
-    "-h", "--help", "-i", "--install", "-l", "--list",
+    "-h", "--help", "-i", "--install", "-u", "--uninstall", "-l", "--list",
     "-m", "--manifest", "-p", "--package", "--packages",
     "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks",
     "-v", "--version", "-y", "--yes", "--check-updates",
@@ -436,6 +436,187 @@ def scripts_install(args: list, skip_confirmation, translations):
     if skip_confirmation or confirm_action("Confirm script execution?"):
         execute_scripts_with_feedback(scripts_found_list)
 
+
+def _run_uninstall_entry(script_info, translations):
+    """Build and execute the registry-based uninstall entry for one script."""
+    uninstall_entry = build_uninstall_script_entry(script_info, translations)
+    if not uninstall_entry:
+        print(f"✗ No removable registry entry found for '{script_info.get('name', 'unknown')}'.")
+        return 1
+
+    uninstall_path = uninstall_entry.get("path")
+    cleanup_path = uninstall_entry.get("cleanup_path")
+
+    try:
+        result = subprocess.run(["/bin/bash", uninstall_path], check=False)
+        return result.returncode
+    except KeyboardInterrupt:
+        return 130
+    except Exception as e:
+        print(f"✗ Error while removing '{script_info.get('name', 'unknown')}': {e}")
+        return 1
+    finally:
+        if cleanup_path:
+            try:
+                if os.path.exists(cleanup_path):
+                    os.remove(cleanup_path)
+            except OSError:
+                pass
+
+
+def execute_uninstalls_with_feedback(scripts_found, translations):
+    total = len(scripts_found)
+
+    for index, script_info in enumerate(scripts_found, 1):
+        name = script_info.get("name", os.path.basename(script_info["path"]))
+        print(f"\n[{index}/{total}] 🗑️ Removing: {name}")
+        print("=" * 60)
+
+        exit_code = _run_uninstall_entry(script_info, translations)
+
+        if exit_code == 0:
+            print(f"✓ {name} removed successfully.")
+        elif exit_code == 130:
+            print("\n⚠️  Removal interrupted by the user.")
+            break
+        else:
+            print(f"✗ {name} removal failed with exit code: {exit_code}.")
+            if not confirm_action("Do you want to continue with the remaining removals?"):
+                print("❌ Operation cancelled.")
+                break
+
+
+def scripts_uninstall(args: list, skip_confirmation, translations):
+    uninstall_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+    if not uninstall_list:
+        print("\n✗ No scripts specified for removal.\n")
+        easy_cli_help_message()
+        return 0
+
+    scripts_found = []
+    scripts_missing = []
+
+    for script_name in uninstall_list:
+        script_info = find_script_by_name(script_name, translations)
+        if script_info:
+            scripts_found.append(script_info)
+        else:
+            scripts_missing.append(script_name)
+
+    if scripts_missing:
+        print("⚠️  Scripts not found:")
+        for name in scripts_missing:
+            print(f" - {name}")
+        print()
+
+    if not scripts_found:
+        print("✗ No valid scripts found. Aborting.")
+        return 1
+
+    print("🧰 EASY CLI UNINSTALL MODE")
+    print("=" * 60)
+    for script_info in scripts_found:
+        print(f" - {script_info['name']}")
+    print()
+
+    if skip_confirmation or confirm_action("Confirm script removal?"):
+        execute_uninstalls_with_feedback(scripts_found, translations)
+    return 0
+
+
+def _remove_package(package):
+    script_dir = resolve_script_dir()
+    shell = (
+        'source "$1/libs/linuxtoys.bash"\n'
+        'source "$1/libs/helpers.bash"\n'
+        'pkg_remove "$2"\n'
+    )
+
+    env = os.environ.copy()
+    env["DISABLE_ZENITY"] = "1"
+
+    result = subprocess.run(
+        ["/bin/bash", "-c", shell, "linuxtoys-cli-remove", script_dir, package],
+        env=env,
+        check=False,
+    )
+    return result.returncode
+
+
+def remove_packages_with_feedback(packages):
+    total = len(packages)
+
+    for index, package in enumerate(packages, 1):
+        print(f"\n[{index}/{total}] Removing package: {package}")
+        print("=" * 60)
+
+        try:
+            exit_code = _remove_package(package)
+        except KeyboardInterrupt:
+            print("\n⚠️  Removal interrupted by the user.")
+            break
+        except Exception as e:
+            print(f"✗ Error while removing package '{package}': {e}")
+            exit_code = 1
+
+        if exit_code == 0:
+            print(f"✓ Package '{package}' removed successfully.")
+        else:
+            print(f"✗ Package '{package}' removal failed with exit code: {exit_code}.")
+            if not confirm_action("Do you want to continue with the remaining removals?"):
+                print("❌ Operation cancelled.")
+                break
+
+
+def packages_uninstall(args: list, skip_confirmation, translations):
+    uninstall_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+    if not uninstall_list:
+        print("\n✗ No packages specified for removal.\n")
+        easy_cli_help_message()
+        return 0
+
+    print("🧰 EASY CLI UNINSTALL MODE")
+    print("=" * 60)
+    print(f"📦 Packages to remove: {', '.join(uninstall_list)}\n")
+
+    if skip_confirmation or confirm_action("Confirm package removal?"):
+        remove_packages_with_feedback(uninstall_list)
+    return 0
+
+
+def smart_uninstall(args: list, skip_confirmation, translations):
+    uninstall_list = [arg for arg in args if arg not in ("-y", "--yes")]
+
+    if not uninstall_list:
+        print("\n✗ No items specified for removal.\n")
+        easy_cli_help_message()
+        return 0
+
+    scripts_found = []
+    packages_to_remove = []
+
+    for item_name in uninstall_list:
+        script_info = find_script_by_name(item_name, translations)
+        if script_info:
+            scripts_found.append(script_info)
+            print(f"✓ Found LinuxToys script: {item_name}")
+        else:
+            packages_to_remove.append(item_name)
+            print(f"→ Treating as package: {item_name}")
+
+    print()
+
+    if skip_confirmation or confirm_action("Confirm removal?"):
+        if packages_to_remove:
+            remove_packages_with_feedback(packages_to_remove)
+        if scripts_found:
+            execute_uninstalls_with_feedback(scripts_found, translations)
+
+    return 0
+
+
 def install_packages_with_feedback(packages_found):
     """Install each package sequentially and provide CLI feedback."""
     
@@ -775,9 +956,12 @@ def easy_cli_help_message():
     print("\nUsage:")
     print("  linuxtoys --install [Option] <item1> <item2> ...")
     print("  linuxtoys --install <item1> <item2> ...  (smart mode)")
+    print("  linuxtoys --uninstall [Option] <item1> <item2> ...")
+    print("  linuxtoys --uninstall <item1> <item2> ...  (smart mode)")
     print()
     print("Functions:")
     print("  -i, --install      Install selected options (scripts, packages)")
+    print("  -u, --uninstall    Remove selected options (scripts, packages)")
     print()
     print("Options:")
     print("  -s, --script       Install specified LinuxToys scripts")
@@ -790,6 +974,9 @@ def easy_cli_help_message():
     print("  linuxtoys --install --package <package1> <package2>")
     print("  linuxtoys --install --flatpak <flatpak1> <flatpak2>")
     print("  linuxtoys --install <item1> <item2>  (smart mode)")
+    print("  linuxtoys --uninstall --script <script1> <script2>")
+    print("  linuxtoys --uninstall --package <package1> <package2>")
+    print("  linuxtoys --uninstall <item1> <item2>  (smart mode)")
     print()
     print("Other functions:")
     print("  -h, --help         Show this help message")
@@ -910,7 +1097,7 @@ def easy_cli_handler(translations=None):
                            "update-check", "--check-updates")
     
     # If first argument is not an incompatible option and not --install, prepend --install
-    if args[0] not in ("-i", "--install") and args[0] not in incompatible_options:
+    if args[0] not in ("-i", "--install", "-u", "--uninstall") and args[0] not in incompatible_options:
         args = ["--install"] + args
 
     if args[0] in ("-i", "--install"):
@@ -945,6 +1132,24 @@ def easy_cli_handler(translations=None):
             smart_install(args[1:], skip_confirmation(args), translations)
             return 0
         
+    elif args[0] in ("-u", "--uninstall"):
+        if len(args) < 2:
+            print("✗ Missing parameter after '-u' | '--uninstall'.\n")
+            print("Use:")
+            print("  [-s | --script]    for LinuxToys scripts")
+            print("  [-p | --package]   for packages")
+            print("  [item names]       smart mode (scripts first, otherwise packages)")
+            return 0
+
+        if args[1] in ("-s", "--script", "--scripts"):
+            return scripts_uninstall(args[2:], skip_confirmation(args), translations)
+
+        elif args[1] in ("-p", "--package", "--packages"):
+            return packages_uninstall(args[2:], skip_confirmation(args), translations)
+
+        else:
+            return smart_uninstall(args[1:], skip_confirmation(args), translations)
+
     elif args[0] in ("-l", "--list"):
         print_script_list(translations)
         return 0
