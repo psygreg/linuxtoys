@@ -8,7 +8,7 @@
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-pkg_flat dev.lizardbyte.app.Sunshine
+pkg_flat --skip-user dev.lizardbyte.app.Sunshine
 sudo_rq
 if is_nvidia; then
     if is_ubuntu; then
