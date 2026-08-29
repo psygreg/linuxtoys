@@ -59,3 +59,59 @@ def parse_registry_file():
         )
 
     return scripts_registry
+
+def search_registry_entries(registry_data, query):
+    """
+    Search registry entries by script name, timestamp, or operation text.
+
+    Args:
+        registry_data:
+            Dict in the form:
+            {
+                script_name: [
+                    (timestamp, [operations]),
+                    ...
+                ]
+            }
+
+        query:
+            Search string.
+
+    Returns:
+        A filtered registry dict using the same structure as registry_data.
+
+        If the script name matches, all executions for that script are
+        returned. Otherwise, only executions containing a matching timestamp
+        or operation are returned.
+    """
+    query = query.strip().casefold()
+
+    if not query:
+        return dict(registry_data)
+
+    results = {}
+
+    for script_name, executions in registry_data.items():
+        # A script-name match includes all executions.
+        if query in script_name.casefold():
+            results[script_name] = executions
+            continue
+
+        matching_executions = []
+
+        for timestamp, operations in executions:
+            timestamp_text = str(timestamp or "")
+
+            timestamp_matches = query in timestamp_text.casefold()
+            operation_matches = any(
+                query in str(operation).casefold()
+                for operation in operations
+            )
+
+            if timestamp_matches or operation_matches:
+                matching_executions.append((timestamp, operations))
+
+        if matching_executions:
+            results[script_name] = matching_executions
+
+    return results

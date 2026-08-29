@@ -7,7 +7,7 @@ import shutil
 from gi.repository import GLib
 from .gtk_common import Gtk
 from .lang_utils import create_translator
-from .registry_utils import parse_registry_file
+from .registry_utils import parse_registry_file, search_registry_entries
 
 
 def _find_backup_files_for_script(script_name, registry_data):
@@ -140,19 +140,35 @@ class ActionRegistryDialog(Gtk.Dialog):
         content_area = self.get_content_area()
         content_area.set_vexpand(True)
         content_area.set_hexpand(True)
+
+        # Registry search
+        self.search_entry = Gtk.SearchEntry()
+        self.search_entry.set_placeholder_text(_("search"))
+        self.search_entry.set_margin_bottom(10)
+        self.search_entry.connect("search-changed", self.__on_search_changed)
+        content_area.pack_start(self.search_entry, False, False, 0)
         
-        # Main paned container for split panels
-        main_paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
-        main_paned.set_vexpand(True)
-        main_paned.set_hexpand(True)
-        main_paned.set_margin_bottom(15)
-        content_area.add(main_paned)
+       # Main container for split panels
+        main_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=12
+        )
+        main_box.set_vexpand(True)
+        main_box.set_hexpand(True)
+        main_box.set_margin_bottom(15)
+        content_area.add(main_box)
         
         # Left panel - Scripts list
-        left_frame = Gtk.Frame(label=_("scripts_label"))
+        left_frame = Gtk.Frame()
+        left_label = Gtk.Label()
+        left_label.set_markup(f"<b>{GLib.markup_escape_text(_('scripts_label'))}</b>")
+        left_frame.set_label_widget(left_label)
         left_frame.set_shadow_type(Gtk.ShadowType.IN)
         left_frame.set_vexpand(True)
         left_frame.set_hexpand(False)
+        left_frame.set_margin_end(6)
+        left_frame.set_size_request(280, -1)
+        left_frame.set_label_align(0.5, 0.5)
         
         # Scrolled window for scripts list
         scrolled_left = Gtk.ScrolledWindow()
@@ -176,13 +192,18 @@ class ActionRegistryDialog(Gtk.Dialog):
         selection.connect("changed", self.__on_script_selected)
         
         scrolled_left.add(self.scripts_treeview)
-        main_paned.pack1(left_frame, False, True)
+        main_box.pack_start(left_frame, False, False, 0)
         
         # Right panel - Registry details
-        right_frame = Gtk.Frame(label=_("registry_details_label"))
+        right_frame = Gtk.Frame()
+        right_label = Gtk.Label()
+        right_label.set_markup(f"<b>{GLib.markup_escape_text(_('registry_details_label'))}</b>")
+        right_frame.set_label_widget(right_label)
         right_frame.set_shadow_type(Gtk.ShadowType.IN)
         right_frame.set_vexpand(True)
         right_frame.set_hexpand(True)
+        right_frame.set_margin_start(6)
+        right_frame.set_label_align(0.5, 0.5)
         
         # Scrolled window for details
         scrolled_right = Gtk.ScrolledWindow()
@@ -199,13 +220,12 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.details_textview.set_monospace(True)
         scrolled_right.add(self.details_textview)
         
-        main_paned.pack2(right_frame, True, True)
-        
-        # Set initial position for the divider (left panel gets ~280px)
-        main_paned.set_position(280)
+        main_box.pack_start(right_frame, True, True, 0)
         
         # Load registry data
         self.registry_data = parse_registry_file()
+        # Registry data currently visible after searching
+        self.filtered_registry_data = dict(self.registry_data)
         self.__populate_scripts_list()
         
         # Track currently selected script for cleanup
@@ -226,7 +246,7 @@ class ActionRegistryDialog(Gtk.Dialog):
     def __populate_scripts_list(self):
         """Populate the scripts list from registry data."""
         self.scripts_store.clear()
-        for script_name in sorted(self.registry_data.keys()):
+        for script_name in sorted(self.filtered_registry_data.keys()):
             self.scripts_store.append([script_name])
     
     def __on_script_selected(self, selection):
@@ -245,11 +265,11 @@ class ActionRegistryDialog(Gtk.Dialog):
     
     def __display_script_details(self, script_name):
         """Display registry details for the selected script."""
-        if script_name not in self.registry_data:
+        if script_name not in self.filtered_registry_data:
             self.details_textview.get_buffer().set_text("")
             return
-        
-        executions = self.registry_data[script_name]
+
+        executions = self.filtered_registry_data[script_name]
         
         # Build detailed text
         lines = [f"Script: {script_name}\n"]
@@ -381,6 +401,11 @@ class ActionRegistryDialog(Gtk.Dialog):
             
             # Refresh the list
             self.registry_data = parse_registry_file()
+            self.filtered_registry_data = search_registry_entries(
+                self.registry_data,
+                self.search_entry.get_text()
+            )
+
             self.__populate_scripts_list()
             self.current_script = None
             self.cleanup_button.set_sensitive(False)
@@ -396,6 +421,22 @@ class ActionRegistryDialog(Gtk.Dialog):
             )
             dialog.run()
             dialog.destroy()
+
+    def __on_search_changed(self, search_entry):
+        """Filter registry entries as the user types."""
+        query = search_entry.get_text()
+
+        self.filtered_registry_data = search_registry_entries(
+            self.registry_data,
+            query
+        )
+
+        self.__populate_scripts_list()
+
+        # Clear stale selection/details after the result set changes.
+        self.current_script = None
+        self.cleanup_button.set_sensitive(False)
+        self.details_textview.get_buffer().set_text("")
 
 
 def show_action_registry_dialog(parent=None):
