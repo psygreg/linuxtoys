@@ -18,12 +18,12 @@ install_nobox () {
     if is_fedora || is_rhel; then
         rpmfusion_chk
         sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y || fatal "Failed to swap ffmpeg packages."
-        if is_intel; then
+        if is_icr_capable; then
             pkg_install intel-media-driver intel-vpl-gpu-rt -y || fatal "Failed to install Intel media drivers."
         fi
     elif is_ubuntu || is_debian; then
         pkg_install ffmpeg
-        if is_intel; then
+        if is_icr_capable; then
             { is_debian && enable_debian_nonfree; } || true
             if is_ubuntu; then
                 sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
@@ -34,7 +34,7 @@ install_nobox () {
         fi
     elif is_arch || is_cachy || is_manjaro; then
         pkg_install ffmpeg davinci-ffmpeg-encoder-plugin
-        if is_intel; then
+        if is_icr_capable; then
             pkg_install intel-media-driver vpl-gpu-rt
         fi
     fi

@@ -181,7 +181,7 @@ question() {
     return 1
 }
 info() { 
-    { ( [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; } ) && return 0; } || true
+    { { [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; }; } && return 0; } || true
     _zenity_can_run || { echo "$1" && return 0; }
     if [ -n "$CHECKLIST_RUN" ]; then
         echo "$1"; 
