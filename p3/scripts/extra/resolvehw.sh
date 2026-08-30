@@ -25,7 +25,11 @@ install_nobox () {
         pkg_install ffmpeg
         if is_intel; then
             { is_debian && enable_debian_nonfree; } || true
-            pkg_install intel-media-va-driver-non-free libmfx-gen1.2
+            if is_ubuntu; then
+                pkg_install intel-media-va-driver-non-free libmfx-gen1.2
+            else
+                pkg_install intel-media-va-driver-non-free libmfx-gen1
+            fi
         fi
     elif is_arch || is_cachy || is_manjaro; then
         pkg_install ffmpeg davinci-ffmpeg-encoder-plugin

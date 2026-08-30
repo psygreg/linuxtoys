@@ -250,20 +250,17 @@ EOF
         echo "No Intel Arc GPU device detected, nothing to do."
         return 0
     fi
-    # install decoder and encoder drivers
-    if is_fedora || is_rhel; then
-        rpmfusion_chk
-    fi
     if is_ubuntu; then
         sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
         pkg_install intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo
-        return 0
-    else
-        enable_debian_nonfree
+    elif is_fedora || is_rhel; then
+        rpmfusion_chk
         pkg_install intel-media-driver
-    fi
-    if is_arch || is_cachy; then
-        pkg_install vpl-gpu-rt
+    elif is_debian; then
+        enable_debian_nonfree
+        pkg_install intel-media-va-driver-non-free libmfx-gen1
+    elif is_arch || is_cachy; then
+        pkg_install intel-media-driver vpl-gpu-rt
     fi
 }
 
