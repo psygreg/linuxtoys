@@ -16,7 +16,7 @@ sudo_rq
 if is_arch; then
     pkg_install bbswitch nvidia-prime
 elif is_ubuntu || is_debian; then
-    sudo add-apt-repository -y universe
+    { is_ubuntu && sudo add-apt-repository -y universe; } || true
     sudo apt update
     pkg_install bumblebee-nvidia
 elif is_suse; then
