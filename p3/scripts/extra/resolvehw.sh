@@ -26,7 +26,8 @@ install_nobox () {
         if is_intel; then
             { is_debian && enable_debian_nonfree; } || true
             if is_ubuntu; then
-                pkg_install intel-media-va-driver-non-free libmfx-gen1.2
+                sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
+                pkg_install intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo
             else
                 pkg_install intel-media-va-driver-non-free libmfx-gen1
             fi
