@@ -50,6 +50,6 @@ sudo bash setup.sh
 _damx_status=$?
 case "${_damx_status}" in
     0|2) info "$rebootmsg" ;;
-    100) exit 100 ;;
+    100) info "$abortmsg" && exit 100 ;;
     *) die "Acer Manager installation unsuccessful" ;;
 esac
