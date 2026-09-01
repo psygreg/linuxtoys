@@ -119,6 +119,66 @@ def _load_last_execution(script_name):
     
     return []
 
+def _load_registry_entries():
+    """Load registry transactions in chronological order."""
+    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+
+    if not os.path.exists(registry_file):
+        return []
+
+    try:
+        with open(registry_file, "r") as f:
+            content = f.read()
+    except Exception:
+        return []
+
+    entries = []
+
+    for raw_entry in content.split("---\n"):
+        raw_entry = raw_entry.strip()
+        if not raw_entry:
+            continue
+
+        lines = raw_entry.splitlines()
+        if not lines or "Script: " not in lines[0]:
+            continue
+
+        script_name = lines[0].split("Script: ", 1)[1].strip()
+        operations = []
+
+        for line in lines[1:]:
+            line = line.strip()
+            if line.startswith("- "):
+                op_line = line[2:].strip()
+                if op_line and op_line not in (
+                    "Changes:",
+                    "Changes: (none)",
+                ):
+                    operations.append(op_line)
+
+        entries.append({
+            "name": script_name,
+            "operations": operations,
+        })
+
+    return entries
+
+
+def _find_registry_execution(entries, script_name, before_index=None):
+    """
+    Find the newest transaction for script_name before before_index.
+
+    This lets a parent resolve the exact child transaction that preceded it,
+    instead of blindly selecting the child's latest registry transaction.
+    """
+    if before_index is None:
+        before_index = len(entries)
+
+    for index in range(before_index - 1, -1, -1):
+        if entries[index]["name"] == script_name:
+            return index, entries[index]
+
+    return None, None
 
 def _get_executed_script_names():
     """
@@ -256,6 +316,9 @@ def _parse_operation(op_line):
         elif op_type == "warn":
             # Warning: "WARN: message text" -> keep all parts as operands
             return op_type, parts[1:]
+        elif op_type == "called":
+            # Script display names may contain spaces.
+            return op_type, [" ".join(parts[1:])]
         else:
             # Most operations: "type operand" (e.g., "edited /etc/config")
             return op_type, [parts[1]]
@@ -864,25 +927,30 @@ def build_uninstall_script_entry(script_info, translations=None):
     
     script_name = script_info.get("name", "unknown")
     
-    # Load the last execution from registry
-    operations = _load_last_execution(script_name)
-    
-    if not operations:
-        # No registry entry found for this script
+    registry_entries = _load_registry_entries()
+
+    parent_index, parent_entry = _find_registry_execution(
+        registry_entries,
+        script_name,
+    )
+
+    if parent_entry is None or not parent_entry["operations"]:
         return None
-    
+
     package_manager = _detect_package_manager()
-    
-    # Generate reverse commands (in reverse order)
-    reverse_commands = []
-    for op_line in reversed(operations):
-        cmds = _reverse_operation(op_line, package_manager)
-        if cmds:
-            reverse_commands.extend(cmds)
-    
+
+    reverse_commands, child_indices = _build_reverse_commands(
+        parent_entry["operations"],
+        package_manager,
+        registry_entries,
+        parent_index,
+    )
+
     if not reverse_commands:
-        # No reversible operations found
         return None
+
+    reverted_registry_indices = {parent_index}
+    reverted_registry_indices.update(child_indices)
     
     script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
     
@@ -909,33 +977,45 @@ def build_uninstall_script_entry(script_info, translations=None):
     lines.extend(reverse_commands)
     lines.append("")
     lines.append("")
-    lines.append("# Remove script from action registry upon successful completion")
-    lines.append("python3 -c '")
-    lines.append("import os, re")
-    lines.append("reg = os.path.expanduser(\"~/.cache/linuxtoys/registry\")")
+    lines.append("# Remove reverted transactions from action registry")
+    reverted_indices_repr = repr(sorted(reverted_registry_indices))
+
+    lines.append("python3 - <<'PY'")
+    lines.append("import os")
+    lines.append("reg = os.path.expanduser('~/.cache/linuxtoys/registry')")
+    lines.append(f"remove_indices = set({reverted_indices_repr})")
+    lines.append("")
     lines.append("if os.path.exists(reg):")
-    lines.append("    with open(reg, \"r\") as f: content = f.read()")
-    lines.append("    # Regex to capture individual blocks starting from a timestamp to the next timestamp or EOF")
-    lines.append("    pattern = r\"(\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[^\\]]*\\] Script: [^\\n]+\\n(?:(?!\\n\\[\\d{4}).)*)\"")
-    lines.append("    blocks = re.findall(pattern, content, re.DOTALL)")
-    lines.append("    filtered_blocks = []")
-    lines.append("    for block in blocks:")
-    lines.append("        # Extract the header line to check the script name accurately")
-    # Escape quotes inside the dynamically generated script name
-    escaped_script_name = script_name.replace("'", "'\"'\"'")
-    lines.append(f"        if \"Script: {escaped_script_name}\" in block.split(\"\\n\")[0]: continue")
-    lines.append("        filtered_blocks.append(block)")
-    lines.append("    if filtered_blocks:")
-    lines.append("        # Clean separators layout back down to file")
-    lines.append("        cleaned_content = \"\"")
-    lines.append("        for b in filtered_blocks:")
-    lines.append("            b_clean = b.strip()")
-    lines.append("            if not b_clean.endswith(\"---\"): b_clean += \"\\n---\"")
-    lines.append("            cleaned_content += b_clean + \"\\n\\n\"")
-    lines.append("        with open(reg, \"w\") as f: f.write(cleaned_content)")
+    lines.append("    with open(reg, 'r') as f:")
+    lines.append("        content = f.read()")
+    lines.append("")
+    lines.append("    raw_entries = content.split('---\\n')")
+    lines.append("    kept_entries = []")
+    lines.append("    registry_index = 0")
+    lines.append("")
+    lines.append("    for raw_entry in raw_entries:")
+    lines.append("        entry = raw_entry.strip()")
+    lines.append("        if not entry:")
+    lines.append("            continue")
+    lines.append("")
+    lines.append("        entry_lines = entry.splitlines()")
+    lines.append("")
+    lines.append("        # Keep indexing consistent with _load_registry_entries().")
+    lines.append("        if entry_lines and 'Script: ' in entry_lines[0]:")
+    lines.append("            if registry_index not in remove_indices:")
+    lines.append("                kept_entries.append(entry)")
+    lines.append("            registry_index += 1")
+    lines.append("        else:")
+    lines.append("            # Preserve anything that is not a normal registry block.")
+    lines.append("            kept_entries.append(entry)")
+    lines.append("")
+    lines.append("    if kept_entries:")
+    lines.append("        cleaned_content = '\\n---\\n'.join(kept_entries) + '\\n---\\n'")
+    lines.append("        with open(reg, 'w') as f:")
+    lines.append("            f.write(cleaned_content)")
     lines.append("    else:")
-    lines.append("        if os.path.exists(reg): os.remove(reg)")
-    lines.append("'")
+    lines.append("        os.remove(reg)")
+    lines.append("PY")
     lines.append("")
     lines.append('echo "Removal completed."')
     
@@ -995,17 +1075,19 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         return None
     
     package_manager = _detect_package_manager()
-    
-    # Generate reverse commands (in reverse order - undo most recent first)
-    reverse_commands = []
-    for op_line in reversed(operations):
-        cmds = _reverse_operation(op_line, package_manager)
-        if cmds:
-            reverse_commands.extend(cmds)
-    
+    registry_entries = _load_registry_entries()
+
+    reverse_commands, child_indices = _build_reverse_commands(
+        operations,
+        package_manager,
+        registry_entries,
+        len(registry_entries),
+    )
+
     if not reverse_commands:
-        # No reversible operations found
         return None
+
+    reverted_registry_indices = child_indices
     
     script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
     
@@ -1013,8 +1095,8 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         "#!/bin/bash",
         "set -eo pipefail",
         f'SCRIPT_DIR="{script_dir}"',
-        'source "$SCRIPT_DIR/libs/linuxtoys.lib"',
-        'source "$SCRIPT_DIR/libs/helpers.lib"',
+        'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
+        'source "$SCRIPT_DIR/libs/helpers.bash"',
     ]
     
     # Check if we need sudo
@@ -1030,6 +1112,44 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     lines.append("")
     lines.append("# Reverse operations from failed script execution (in reverse order)")
     lines.extend(reverse_commands)
+    lines.append("")
+    lines.append("# Remove reverted child transactions from action registry")
+    reverted_indices_repr = repr(sorted(reverted_registry_indices))
+
+    lines.append("python3 - <<'PY'")
+    lines.append("import os")
+    lines.append("reg = os.path.expanduser('~/.cache/linuxtoys/registry')")
+    lines.append(f"remove_indices = set({reverted_indices_repr})")
+    lines.append("")
+    lines.append("if remove_indices and os.path.exists(reg):")
+    lines.append("    with open(reg, 'r') as f:")
+    lines.append("        content = f.read()")
+    lines.append("")
+    lines.append("    raw_entries = content.split('---\\n')")
+    lines.append("    kept_entries = []")
+    lines.append("    registry_index = 0")
+    lines.append("")
+    lines.append("    for raw_entry in raw_entries:")
+    lines.append("        entry = raw_entry.strip()")
+    lines.append("        if not entry:")
+    lines.append("            continue")
+    lines.append("")
+    lines.append("        entry_lines = entry.splitlines()")
+    lines.append("")
+    lines.append("        if entry_lines and 'Script: ' in entry_lines[0]:")
+    lines.append("            if registry_index not in remove_indices:")
+    lines.append("                kept_entries.append(entry)")
+    lines.append("            registry_index += 1")
+    lines.append("        else:")
+    lines.append("            kept_entries.append(entry)")
+    lines.append("")
+    lines.append("    if kept_entries:")
+    lines.append("        cleaned_content = '\\n---\\n'.join(kept_entries) + '\\n---\\n'")
+    lines.append("        with open(reg, 'w') as f:")
+    lines.append("            f.write(cleaned_content)")
+    lines.append("    else:")
+    lines.append("        os.remove(reg)")
+    lines.append("PY")
     lines.append("")
     lines.append('echo "Automatic reversion completed."')
     
@@ -1067,3 +1187,59 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         "is_script": True,
         "cleanup_path": temp_path,
     }
+
+def _build_reverse_commands(
+    operations,
+    package_manager,
+    registry_entries,
+    before_index,
+):
+    """
+    Generate reversal commands, recursively expanding called-script
+    transactions.
+
+    Returns:
+        (commands, consumed_registry_indices)
+    """
+    reverse_commands = []
+    consumed = set()
+
+    # Child transactions always precede their parent in the registry.
+    cursor = before_index
+
+    for op_line in reversed(operations):
+        op_type, operands = _parse_operation(op_line)
+
+        if op_type == "called" and operands:
+            child_name = operands[0]
+
+            child_index, child_entry = _find_registry_execution(
+                registry_entries,
+                child_name,
+                cursor,
+            )
+
+            if child_entry is None:
+                # The child may already have been reverted independently.
+                continue
+
+            child_commands, child_consumed = _build_reverse_commands(
+                child_entry["operations"],
+                package_manager,
+                registry_entries,
+                child_index,
+            )
+
+            reverse_commands.extend(child_commands)
+            consumed.add(child_index)
+            consumed.update(child_consumed)
+
+            # Anything processed next happened before this child call.
+            cursor = child_index
+            continue
+
+        cmds = _reverse_operation(op_line, package_manager)
+        if cmds:
+            reverse_commands.extend(cmds)
+
+    return reverse_commands, consumed

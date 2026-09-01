@@ -1177,8 +1177,8 @@ call_script () {
             python3 "$SCRIPT_DIR/app/term_registry.py" \
                 save "$script_display_name" "$child_transmap" ||
                 die "Failed to save transaction for $script_display_name"
+            _append_transmap "called $script_display_name"
         fi
-
         rm -f "$child_transmap"
         return 0
     fi
