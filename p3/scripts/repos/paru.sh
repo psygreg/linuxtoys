@@ -10,7 +10,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 zenwrn "$msg294"
-sudo_rq
+askpass
 
 pkg_install base-devel
 git clone --branch paru-bin --single-branch https://github.com/archlinux/aur.git /tmp/paru-bin

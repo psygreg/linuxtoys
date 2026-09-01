@@ -601,16 +601,9 @@ pkg_install () {
                 if ! command -v paru &>/dev/null; then
                     if question "Installer" "$msg305" 300 300; then
                         if pacman -Si paru &>/dev/null; then
-                            sudo pacman -S --noconfirm paru || fatal "Failed to install paru"
-                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                            pkg_install paru || fatal "Failed to install paru"
                         else
-                            sudo pacman -S --needed base-devel || fatal "Failed to install base-devel"
-                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg base-devel"
-                            prep_tmp
-                            git clone https://aur.archlinux.org/paru.git
-                            cd paru || fatal "Failed to install paru"
-                            makepkg -si
-                            [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg paru"
+                            call_script paru
                         fi
                     else
                         die "User cancelled installation of paru"
