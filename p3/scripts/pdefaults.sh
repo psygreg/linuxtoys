@@ -27,7 +27,7 @@ sysag_run () {
         earlyoom_lib
     fi
     # change intel driver to Xe on discrete GPUs
-    if ! is_fedora && ! is_ubuntu && ! is_rhel; then
+    if ! is_fedora && ! is_ubuntu && ! is_rhel && ! is_hybridgpu; then
         intel_xe_lib
     fi
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
@@ -102,6 +102,7 @@ while true; do
             exit $?
             ;;
         laptop)
+            laptop_mode=1
             askpass && optimizer && psave_lib
             exit $?
             ;;

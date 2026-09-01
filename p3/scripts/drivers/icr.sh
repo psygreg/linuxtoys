@@ -5,6 +5,7 @@
 # icon: intel.png
 # reboot: yes
 # gpu: Xe
+# hybridgpu: no
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

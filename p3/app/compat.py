@@ -200,12 +200,12 @@ def get_system_compat_keys():
     if id_val in ["ubuntu"]:
         # Only add ubuntu compat key for supported versions (noble, resolute)
         version_codename = os_release.get("VERSION_CODENAME", "").lower()
-        if version_codename in ["noble", "resolute"]:
+        if version_codename in ["noble", "resolute", "stonking"]:
             keys.add("ubuntu")
     elif "ubuntu" in id_like:
         # For Ubuntu-based distros, check UBUNTU_CODENAME for supported versions
         ubuntu_codename = os_release.get("UBUNTU_CODENAME", "").lower()
-        if ubuntu_codename in ["noble", "resolute"]:
+        if ubuntu_codename in ["noble", "resolute", "stonking"]:
             keys.add("ubuntu")
     if id_val in ["zorin"] or "zorin" in id_like:
         keys.add("zorin")
@@ -1121,3 +1121,16 @@ def should_enable_manual_revert(script_path, compat_keys=None):
         return matches_include and not matches_exclude
     
     return True  # Default to True
+
+def is_script_compatible_with_host(script_path):
+    return script_is_compatible(script_path, get_system_compat_keys())
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) == 3 and sys.argv[1] == "--check-script":
+        sys.exit(
+            0 if is_script_compatible_with_host(sys.argv[2]) else 1
+        )
+
+    sys.exit(2)

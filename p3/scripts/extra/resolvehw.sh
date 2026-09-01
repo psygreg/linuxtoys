@@ -16,27 +16,14 @@ install_nobox () {
     prep_dir /opt/resolve/IOPlugins/
     sudo unzip ffmpeg_encoder_plugin.dvcp.bundle.zip -d /opt/resolve/IOPlugins/ || fatal "Failed to unzip plugin bundle."
     if is_fedora || is_rhel; then
-        rpmfusion_chk
-        sudo dnf swap ffmpeg-free ffmpeg --allowerasing -y || fatal "Failed to swap ffmpeg packages."
-        if is_icr_capable; then
-            pkg_install intel-media-driver intel-vpl-gpu-rt -y || fatal "Failed to install Intel media drivers."
-        fi
+        call_script codecfix
     elif is_ubuntu || is_debian; then
         pkg_install ffmpeg
-        if is_icr_capable; then
-            { is_debian && enable_debian_nonfree; } || true
-            if is_ubuntu; then
-                sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
-                pkg_install intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo
-            else
-                pkg_install intel-media-va-driver-non-free libmfx-gen1
-            fi
-        fi
     elif is_arch || is_cachy || is_manjaro; then
         pkg_install ffmpeg davinci-ffmpeg-encoder-plugin
-        if is_icr_capable; then
-            pkg_install intel-media-driver vpl-gpu-rt
-        fi
+    fi
+    if is_icr_capable && ! is_hybridgpu; then
+        call_script intelxe
     fi
 }
 install_dvbox() {

@@ -1140,6 +1140,10 @@ call_script () {
 
     [[ -n "$found_script" && -f "$found_script" ]] ||
         die "call_script: Script '$script_name' not found in $CACHE_DIR"
+    python3 "$SCRIPT_DIR/app/compat.py" --check-script "$found_script" || { 
+        echo "W: call_script: Script '$script_name' is not compatible with this host, skipping."
+        return 2
+    }
 
     shift
     # Get the script's registry/display name.

@@ -7,6 +7,6 @@
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
-sudo_rq
-pkg_flat io.github.ilya_zlobintsev.LACT
-zeninf "$msg018"
+askpass
+pkg_flat --skip-user io.github.ilya_zlobintsev.LACT
+info "$finishmsg"

@@ -16,10 +16,12 @@ cachyos_sysd_lib () {
         echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
         } > "tmpfiles.txt"
     {
-        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf"
         echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
         echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
         } > "modprobe.txt"
+    if [ -z "$laptop_mode" ]; then
+        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf" >> "modprobe.txt"
+    fi
     {
         echo "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/70-linuxtoys-settings.conf"
         echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"

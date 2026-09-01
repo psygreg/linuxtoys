@@ -7,10 +7,11 @@
 # gpu: Intel
 # compat: !fedora, !solus, !rhel, !pika
 # nocontainer
+# hybridgpu: no
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
-sudo_rq
+askpass
 intel_xe_lib
-zeninf "$msg036"
+info "$rebootmsg"
