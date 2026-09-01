@@ -27,9 +27,7 @@ sysag_run () {
         earlyoom_lib
     fi
     # change intel driver to Xe on discrete GPUs
-    if ! is_fedora && ! is_ubuntu && ! is_rhel && ! is_hybridgpu; then
-        intel_xe_lib
-    fi
+    call_script intelxe
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
     fix_intel_gtk
     # add alive timeout fix for Gnome

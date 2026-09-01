@@ -5,7 +5,7 @@
 # icon: intel.png
 # reboot: yes
 # gpu: Intel
-# compat: !fedora, !solus, !rhel, !pika
+# compat: !fedora, !solus, !rhel, !pika, !ubuntu
 # nocontainer
 # hybridgpu: no
 
