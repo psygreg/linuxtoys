@@ -67,6 +67,7 @@ class TerminalRunner:
         self._current_action_is_removal = bool(self._cleanup_script_path)
  
         child_env = os.environ.copy()
+        child_env["LINUXTOYS_SCRIPT_NAME"] = script_name
         if self._transmap_path:
             child_env["TRANSMAP_PATH"] = self._transmap_path
         else:

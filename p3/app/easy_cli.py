@@ -235,6 +235,19 @@ def _try_execute_auto_revert(script_info, transmap_path):
             pass
 
 
+def _run_script_with_registry_name(script_info):
+    """Expose this invocation's registry identity without leaking it to the next."""
+    previous = os.environ.get("LINUXTOYS_SCRIPT_NAME")
+    os.environ["LINUXTOYS_SCRIPT_NAME"] = script_info.get("name", "unknown")
+    try:
+        return run_script(script_info)
+    finally:
+        if previous is None:
+            os.environ.pop("LINUXTOYS_SCRIPT_NAME", None)
+        else:
+            os.environ["LINUXTOYS_SCRIPT_NAME"] = previous
+
+
 def easy_cli_run_script(script_info):
     """
     Run a LinuxToys script in EASY_CLI mode while preventing any xdg-open calls.
@@ -243,7 +256,7 @@ def easy_cli_run_script(script_info):
 
     # Check if dev mode is enabled and run the script
     if is_dev_mode_enabled():
-        return run_script(script_info)
+        return _run_script_with_registry_name(script_info)
     
     # Ensure SCRIPT_DIR and CACHE_DIR are set in environment
     resolve_script_dir()
@@ -269,7 +282,7 @@ def easy_cli_run_script(script_info):
 
     try:
         # Execute the script using run_script
-        code = run_script({"name": script_info["name"], "path": temp_file_path})
+        code = _run_script_with_registry_name({"name": script_info["name"], "path": temp_file_path})
 
         # Save to registry and wipe transmap file if script executed successfully
         if code == 0:
