@@ -129,6 +129,9 @@ pkg_install () {
                         die "User cancelled installation of paru"
                     fi
                 fi
+                if ! paru --version >/dev/null 2>&1; then # handle broken paru compiled against different libs, fix #1196
+                    call_script paru
+                fi
                 paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
             fi
