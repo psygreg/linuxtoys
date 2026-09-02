@@ -14,6 +14,7 @@ from .manifest_helper import (
     run_script, check_package_exists, install_packages, 
     check_flatpaks_async, install_flatpaks
 )
+from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
 
@@ -148,6 +149,7 @@ def create_temp_file(script_path):
         filtered_lines.append(line)
 
     tmp_file = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
+    tmp_file.write(script_preamble("".join(filtered_lines), script_dir))
     tmp_file.writelines(filtered_lines)
     tmp_file.close()
     temp_file_path = tmp_file.name
@@ -207,7 +209,7 @@ def _try_execute_auto_revert(script_info, transmap_path):
         
         # Run the revert script
         result = subprocess.run(
-            ["/bin/bash", revert_script_path],
+            script_command(revert_script_path, resolve_script_dir()),
             capture_output=True,
             text=True
         )
@@ -461,7 +463,9 @@ def _run_uninstall_entry(script_info, translations):
     cleanup_path = uninstall_entry.get("cleanup_path")
 
     try:
-        result = subprocess.run(["/bin/bash", uninstall_path], check=False)
+        result = subprocess.run(
+            script_command(uninstall_path, resolve_script_dir()), check=False
+        )
         return result.returncode
     except KeyboardInterrupt:
         return 130
@@ -541,9 +545,8 @@ def scripts_uninstall(args: list, skip_confirmation, translations):
 def _remove_package(package):
     script_dir = resolve_script_dir()
     shell = (
-        'source "$1/libs/linuxtoys.bash"\n'
-        'source "$1/libs/helpers.bash"\n'
-        'pkg_remove "$2"\n'
+        script_preamble('pkg_remove "$2"\n', script_dir)
+        + 'pkg_remove "$2"\n'
     )
 
     env = os.environ.copy()

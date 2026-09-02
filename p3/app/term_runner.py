@@ -5,6 +5,7 @@ from . import dev_mode, reboot_helper
 from .gtk_common import GLib, Gtk, Vte
 from .term_registry import ExecutionRegistry
 from .antenna import antenna
+from .library_loader import script_command
 
 class TerminalRunner:
     def _run_next_script(self):
@@ -79,7 +80,6 @@ class TerminalRunner:
         # This ensures all scripts can find their libs at the same location
         child_env_list = [f"{key}={value}" for key, value in child_env.items()]
  
-        shell_exec = ["/bin/bash", f"{script_path}"]
         if dev_mode.is_dev_mode_enabled():
             lib_path = os.path.dirname(__file__)
             shell_exec = [
@@ -88,6 +88,9 @@ class TerminalRunner:
                 f'import sys; sys.path.append("{lib_path}"); import dev_mode; dev_mode.dry_run_script("{script_path}")',
             ]
  
+        else:
+            shell_exec = script_command(script_path, child_env["SCRIPT_DIR"])
+
         self.terminal.spawn_async(
             Vte.PtyFlags.DEFAULT,
             None,

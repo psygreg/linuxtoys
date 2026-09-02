@@ -2,13 +2,11 @@
 # core modules automatically sourced
 
 source "$SCRIPT_DIR/libs/sysinfo.bash"
-source "$SCRIPT_DIR/libs/fsops.bash"
-source "$SCRIPT_DIR/libs/packages.bash"
-source "$SCRIPT_DIR/libs/boot.bash"
-source "$SCRIPT_DIR/libs/misc.bash"
-if is_systemd; then
-    source "$SCRIPT_DIR/libs/sysd.bash"
-fi
+[ -n "$FS_OPS" ] && source "$SCRIPT_DIR/libs/fsops.bash"
+[ -n "$PACKAGE_OPS" ] && source "$SCRIPT_DIR/libs/packages.bash"
+[ -n "$BOOT_OPS" ] && source "$SCRIPT_DIR/libs/boot.bash"
+[ -n "$MISC_OPS" ] && source "$SCRIPT_DIR/libs/misc.bash"
+{ is_systemd && [ -n "$SYSD_OPS" ]; } && source "$SCRIPT_DIR/libs/sysd.bash"
 
 # sourcing
 summon_helpers() {
@@ -306,7 +304,7 @@ call_script () {
         export CALLED_SCRIPT=1
         export TRANSMAP_PATH="$child_transmap"
 
-        bash "$found_script" "$@"
+        python3 "$SCRIPT_DIR/app/library_loader.py" "$found_script" "$@"
     )
     local status=$?
 
