@@ -35,27 +35,31 @@ def _get_os_info() -> dict:
     return os_info
  
 def _get_gpu_info() -> dict:
-    """Get GPU information - whether Nvidia is present and total GPU count."""
-    try:
-        # Import compat module to use existing GPU detection
-        from .. import compat
-        gpu_keys = compat.get_gpu_compat_keys()
-        
-        has_nvidia = "gpu-nvidia" in gpu_keys
-        gpu_count = len([k for k in gpu_keys if k.startswith("gpu-")])
-        has_multiple_gpus = gpu_count >= 2
-        
-        return {
-            "has_nvidia": has_nvidia,
-            "has_multiple_gpus": has_multiple_gpus,
-            "gpu_count": gpu_count,
-        }
-    except Exception:
-        return {
-            "has_nvidia": False,
-            "has_multiple_gpus": False,
-            "gpu_count": 0,
-        }
+    """Count PCI display devices, independently of compatibility capabilities."""
+    gpu_count = 0
+    has_nvidia = False
+    for device in Path("/sys/bus/pci/devices").glob("*"):
+        try:
+            device_class = int((device / "class").read_text(encoding="utf-8").strip(), 16)
+        except (OSError, ValueError):
+            continue
+        # Display class includes VGA, 3D and other display controllers. Audio
+        # functions and PCI bridges belonging to a graphics card do not count.
+        if device_class >> 16 != 0x03:
+            continue
+        gpu_count += 1
+        try:
+            vendor = int((device / "vendor").read_text(encoding="utf-8").strip(), 16)
+        except (OSError, ValueError):
+            continue  # The device still counts even if its vendor is unreadable.
+        if vendor == 0x10DE:
+            has_nvidia = True
+
+    return {
+        "has_nvidia": has_nvidia,
+        "has_multiple_gpus": gpu_count >= 2,
+        "gpu_count": gpu_count,
+    }
 
 
 def _get_init_system_info() -> str:
