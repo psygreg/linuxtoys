@@ -67,7 +67,7 @@ sed -i "s/sha256sums=('[^']*')/sha256sums=('$hash')/" "$OUTPUT_PATH/PKGBUILD"
 
 (
     cd "$OUTPUT_PATH"
-    makepkg
+    makepkg -d
 )
 
 # Clean up build artifacts but keep the tarball for Arch packaging
