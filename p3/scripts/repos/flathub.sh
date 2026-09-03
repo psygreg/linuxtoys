@@ -5,7 +5,7 @@
 # icon: flathub.svg
 # reboot: yes
 # repo: https://flathub.org
-# compat: !solus, !fedora, !ostree
+# compat: !solus, !ostree
 # systemd: yes
 
 # --- Start of the script code ---
