@@ -1,8 +1,58 @@
-{
-    "name": "Recordly",
-    "description": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in.",
-    "description_tag": "recordly_desc",
-    "repo": "https://github.com/webadderallorg/Recordly",
-    "category": "office",
-    "icon": "recordly.png"
-}
+[   
+    {
+        "name": "Recordly",
+        "description": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in.",
+        "description_tag": "recordly_desc",
+        "repo": "https://github.com/webadderallorg/Recordly",
+        "category": "office",
+        "icon": "recordly.png"
+    },
+    {
+        "name": "Figma",
+        "description": "A web-based UI/UX design application.",
+        "description_tag": "figma_desc",
+        "repo": "https://github.com/arximus88/figma-linux-next",
+        "category": "office",
+        "icon": "figma.svg"
+    },
+    {
+        "name": "Prism Launcher",
+        "description": "A custom launcher for Minecraft Java Edition with support for mods and shaders.",
+        "description_tag": "prism_desc",
+        "repo": "https://prismlauncher.org",
+        "category": "game",
+        "icon": "prism.svg",
+        "type": "flathub",
+        "package-name": "org.prismlauncher.PrismLauncher"
+    },
+    {
+        "name": "ProtonPlus",
+        "description": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
+        "description_tag": "pp_desc",
+        "repo": "https://github.com/Vysp3r/ProtonPlus",
+        "category": "game",
+        "icon": "protonplus.svg",
+        "type": "flathub",
+        "package-name": "com.vysp3r.ProtonPlus"
+    },
+    {
+        "name": "Vinegar",
+        "description": "A community wrapper for Roblox Studio, for Roblox game creators.",
+        "description_tag": "vinegar_desc",
+        "repo": "https://vinegarhq.org",
+        "category": "game",
+        "icon": "vinegar.png",
+        "type": "flathub",
+        "package-name": "org.vinegarhq.Vinegar"
+    },
+    {
+        "name": "Sober",
+        "description": "Roblox community port for Linux, based on the Android version of the game.",
+        "description_tag": "sober_desc",
+        "repo": "https://sober.vinegarhq.org",
+        "category": "game",
+        "icon": "sober.png",
+        "type": "flathub",
+        "package-name": "org.vinegarhq.Sober"
+    }
+]
