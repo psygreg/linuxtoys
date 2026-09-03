@@ -6,7 +6,12 @@
 # gpu: intel, amd
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/optimizers.lib"
-sudo_rq
-wayland_proton_lib
-zeninf "$finishmsg"
+askpass
+
+{ [[ "$XDG_SESSION_TYPE" =~ "wayland" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; } || die "Not running Wayland display protocol."
+if ! grep -q "^PROTON_ENABLE_WAYLAND=1" /etc/environment 2>/dev/null; then
+    prep_edit /etc/environment
+    echo "PROTON_ENABLE_WAYLAND=1" | sudo tee -a /etc/environment
+fi
+
+info "$finishmsg"

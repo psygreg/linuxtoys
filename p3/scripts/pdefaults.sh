@@ -3,7 +3,7 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy, rhel, !zorin, !deepin
+# compat: ubuntu, debian, fedora, suse, arch, cachy, rhel, !zorin, !deepin, ostree
 # reboot: yes
 # noconfirm: yes
 # nocontainer
@@ -14,30 +14,23 @@ source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
 # system-agnostic scripts
 sysag_run () {
-    if ! is_cachy && ! is_zorin; then
-        # systemd patches
-        cachyos_sysd_lib
-    fi
+    call_script cachyconfs
     # shader booster
-    sboost_lib
+    call_script sboost
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
-    dsplitm_lib
+    call_script dsplitm
     # add earlyoom configuration, Fedora already has systemd-oomd
-    if is_suse || is_debian || is_arch || is_cachy || is_solus; then
-        earlyoom_lib
-    fi
+    call_script earlyoom
     # change intel driver to Xe on discrete GPUs
     call_script intelxe
     # fix GTK app rendering for Intel BMG and Nvidia GPUs
-    fix_intel_gtk
+    call_script gtk-bmg-fix
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
         sudo gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
-    # vm.min_free_kbytes dynamic setup - disabled for further testing
-    # free_mem_fix
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
-    preempt_lib
+    call_script preemptfedora
 }
 # consolidated installation
 optimizer () {
@@ -96,12 +89,12 @@ while true; do
             exit $?
             ;;
         performance)
-            askpass && pp_ondemand && optimizer
+            askpass && call_script ondemand && optimizer
             exit $?
             ;;
         laptop)
             laptop_mode=1
-            askpass && optimizer && psave_lib
+            askpass && optimizer && call_script psaver
             exit $?
             ;;
         cancel)

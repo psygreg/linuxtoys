@@ -62,17 +62,17 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 ```
 Replace `linuxtoys.lib` with `helpers.lib` if you need a function from it. `helpers.lib` automatically sources `linuxtoys.lib`.
 
-### `linuxtoys.lib`
+### Core LinuxToys libraries - `linuxtoys.lib`
 
-#### Dialogs 
 - `info "$message"`: informational dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
 - `question "$title" "$message"`: question dialog, displaying a message and requiring a *Yes/No* user response with zenity if in GUI mode or `read` on terminal. Returns 0 if response is *Yes* or 1 if response is *No*.
 - `warn "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal.
 - `error "$message"`: warning dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and returning code 1.
 - `die "$message"`: fatal error dialog, displaying a message to the user through zenity if in GUI mode or echoing on terminal and terminating the script with code 1, triggering an automatic reversion of any changes made.
 - `askpass`: requests privilege elevation, after which all commands called with `sudo` will properly authenticate. This should only be used when this is needed, and `sudo` should only be called in commands that need it. Has error handling calling `die`.
+- `call_script`: runs another script from LinuxToys, specified by its filename without `.sh`. Useful if a resource may depend on a feature offered by another script. The transactions from the child script are tracked separately, as is its removal. Removal of the parent script will also remove its children.
 
-#### System and Hardware Detection
+#### System and Hardware Detection - `sysinfo.bash`
 All the following functions return 0 when positive or 1 when negative.
 
 - `is_debian`: detects *Debian* and its derivatives that are not related to *Ubuntu*. Includes *Deepin*.
@@ -98,7 +98,7 @@ All the following functions return 0 when positive or 1 when negative.
 - `is_hybridgpu`: detects if a host has GPUs from different vendors.
 - `has_rebar`: detects if *Resize BAR* is currently enabled.
 
-#### File and Directory Operations
+#### File and Directory Operations - `fsops.bash`
 All the following functions have error handling calling `die`.
 
 - `prep_create`: creates a placeholder file on target. Should be used before any new files that will be created to register the file creation to the transaction map, and parses multiple arguments.
@@ -111,7 +111,7 @@ All the following functions have error handling calling `die`.
 - `copy_`: equivalent to `cp`, and admits its flags. Will attempt to perform its task with elevated privileges if failed in user mode.
 - `move_`: equivalent to `mv`, and admits its flags. Will attempt to perform its task with elevated privileges if failed in user mode.
 
-#### Package Management
+#### Package Management - `packages.bash`
 All the following functions parse the arguments that follow them and have error handling calling `die`.
 
 - `pkg_install`: installs native packages from the distribution repositories, engaging each distribution's package manager accordingly. The package names still vary distribution-wise. Can source packages from the AUR in Arch Linux, but packages from that source must be verified manually to ensure their security and legitimacy. Can parse multiple packages at once, and has an optional `--ostreecheck` flag to check if there is a pending deployment of `rpm-ostree` after running in `is_ostree` systems, prompting the user to reboot to apply it before running the script again to resume installation.
@@ -120,10 +120,12 @@ All the following functions parse the arguments that follow them and have error 
 - `pkg_npm`: installs packages from Node Package Manager, globally. Should only be used after manual checks to the package's GitHub repository to ensure their security and legitimacy.
 - `pkg_bun`: installs packages from Bun. This has better enforced security checks than NPM and should be preferred over it when possible.
 - `pkg_fromfile`: installs native packages or flatpaks from files. Has an optional `--ostreecheck` flag to check if there is a pending deployment of `rpm-ostree` after running in `is_ostree` systems, prompting the user to reboot to apply it before running the script again to resume installation.
+- `pkg_fromurl`: installs a package, flatpak or appimage from a given URL (directly to the file).
+- `pkg_fromrelease`: installs the best-fit package available from a *GitHub* or *Codeberg* repository's latest release, the only argument needed being the repository URL. Package type priority is **AppImage > Flatpak > distro-specific packaging**. You can optionally set a glob with the preferred file extension after the repository URL.
 - `pkg_exists`: checks if a packages are already installed, following the same logic as `pkg_install`. Sets the arrays `pkg_found` with packages that are already installed and `pkg_notfound` with packages not already installed.
 - `pkg_remove`: removes packages following the same logic as `pkg_install`. Ideal to solve potential dependency conflicts. Will also remove any orphaned dependencies from those.
 
-#### SystemD Service Operations
+#### SystemD Service Operations - `sysd.bash`
 All the following functions parse the arguments that follow them and have error handling calling `die`. Service enablement and startup functions also trigger a `systemctl daemon-reload` when needed.
 
 - `sysd_enable`: enables a system-level service for next boot.
@@ -136,7 +138,7 @@ All the following functions parse the arguments that follow them and have error 
 - `sysd_disable_usr`: disables an user-level service for next boot.
 - `sysd_stop_usr`: stops an user-level service.
 
-#### Boot-related Operations
+#### Boot-related Operations - `boot.bash`
 All the following functions have error handling calling `die`.
 
 - `bootloader_upd`: updates bootloader settings according to host distro. Currently supported: `grub`, `systemd-boot`.
@@ -145,11 +147,10 @@ All the following functions have error handling calling `die`.
 - `grubbyargs_upd`: adds arguments to the kernel CMDLINE in `is_fedora` and `is_rhel` systems through `grubby`. Parses multiple arguments.
 - `secureboot_check`: checks if Secure Boot is enabled and triggers kernel module signing if needed accordingly. Not required for *Arch Linux* as it has a specific `pacman`-`sbctl` hook.
 
-#### Miscellaneous
+#### Miscellaneous - `misc.bash`
 - `shell_change`: changes the user's default shell. Should only be called for shell installations, as it is presumed the user wishes to utilize their new shell of choice.
 - `distrobox_created`: registers a distrobox name and its creation event to the transaction map.
 - `rclone_mount`: creates a `rclone` mountpoint from a remote to a target through its daemon, registering this to the transaction map.
-- `call_script`: runs another script from LinuxToys, specified by its filename without `.sh`. Useful if a resource may depend on a feature offered by another script. The transactions from the child script are tracked separately, as is its removal.
 
 ### `helpers.lib`
 Used to call instalations of repositories and auxiliary features that are not called by default and may have other features depending on those.

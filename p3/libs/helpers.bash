@@ -16,51 +16,6 @@ fetch_from_mirror () {
     return 1
 }
 
-# --- Flatpak ---
-repair_flathub_remote() {
-    local scope="$1"
-    local sudo_cmd=()
-    [ "$scope" = "--system" ] && sudo_cmd=(sudo)
-
-    if "${sudo_cmd[@]}" flatpak "$scope" remotes --columns=name 2>/dev/null \
-        | grep -qx flathub; then
-
-        if ! "${sudo_cmd[@]}" flatpak "$scope" remote-ls flathub &>/dev/null; then
-            "${sudo_cmd[@]}" flatpak "$scope" remote-delete --force flathub || return 1
-            "${sudo_cmd[@]}" flatpak "$scope" remote-add \
-                flathub \
-                "https://dl.flathub.org/repo/flathub.flatpakrepo" || return 1
-        fi
-    else
-        "${sudo_cmd[@]}" flatpak "$scope" remote-add \
-            flathub \
-            "https://dl.flathub.org/repo/flathub.flatpakrepo" || return 1
-    fi
-}
-flatpak_in_lib() {
-    sysdetect
-    askpass
-    [ -f /tmp/linuxtoys_flatpak_done ] && return 0
-
-    if ! command -v flatpak &>/dev/null; then
-        pkg_install flatpak
-        sysd_start flatpak-system-helper.service
-    fi
-
-    # Prefer a user-level Flathub remote, but fall back to system-level.
-    if ! repair_flathub_remote --user; then
-        warn "Failed to configure Flathub userlevel remote"
-        if ! repair_flathub_remote --system; then
-            die "Failed to configure Flathub remotes"
-        fi
-    else
-        repair_flathub_remote --system || die "Failed to configure Flathub systemlevel remote"
-    fi
-
-    touch /tmp/linuxtoys_flatpak_done
-    [ -n "$flatpak_path_pending" ] && touch /tmp/flatpak_path_pending
-}
-
 # --- Multilib ---
 multilib_chk() {
     pacman -Slq multilib &>/dev/null && return 0;
@@ -75,121 +30,13 @@ multilib_chk() {
     fi
 }
 
-# --- Chaotic AUR ---
-chaotic_aur_lib() {
-    if ! is_arch && ! is_cachy; then
-        fatal "$msg077"
-    fi
-
-    pacman -Slq chaotic-aur &>/dev/null && return 0
-
-    # Clean previous
-    sudo sed -i '/\[chaotic-aur\]/,/Include = \/etc\/pacman.d\/chaotic-mirrorlist/ d' /etc/pacman.conf
-
-    # Keys
-    if ! sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com || \
-       ! sudo pacman-key --lsign-key 3056513887B78AEB; then
-        fatal "Failed to add keys to keyring"
-    fi
-
-    # Keyring & Mirrorlist
-    if ! sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-         'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'; then
-        fatal "Failed to install chaotic-keyring and chaotic-mirrorlist"
-    fi
-
-    # Enable Repo
-    printf "\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist\n" | sudo tee -a /etc/pacman.conf >/dev/null
-
-    # Verify
-    if sudo pacman -Syy && pacman -Slq chaotic-aur &>/dev/null; then
-        zeninf "$msg024" # Assuming msg024 is defined
-    else
-        fatal "Failed to setup chaotic-aur on your system"
-    fi
-}
-
-# --- RPMFusion ---
-rpmfusion_chk() {
-    if is_rhel; then
-        local rhel_version
-        if ! rhel_version=$(rpm -E %rhel 2>/dev/null) || [ "$rhel_version" = %rhel ]; then
-            fatal "Could not determine RHEL version"
-            return 1
-        fi
-        # requirements
-        { is_rhel && [ "$ID" = "rhel" ] && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms; } || sudo dnf config-manager --set-enabled crb && sudo /usr/bin/crb enable
-        { is_rhel && [ "$ID" = "rhel" ] && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm; } || pkg_install epel-release distribution-gpg-keys
-
-        if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-            echo "Installing RPMFusion Free repository, please wait..."
-            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
-                sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
-            fi
-            _append_transmap "pkg file rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
-            echo "RPMFusion Free repository installed successfully"
-        else
-            echo "RPMFusion Free repository is already installed"
-        fi
-        if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-            echo "Installing RPMFusion Non-Free repository, please wait..."
-            if ! sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" &>/dev/null; then
-                sudo dnf install -y --nogpgcheck --setopt=timeout=5 "https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
-            fi
-            _append_transmap "pkg file rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
-            echo "RPMFusion Non-Free repository installed successfully"
-        else
-            echo "RPMFusion Non-Free repository is already installed"
-        fi
-    else
-        local _package_manager_cmd
-        is_ostree && { _package_manager_cmd="sudo rpm-ostree install"; } || _package_manager_cmd="sudo dnf install -y --setopt=timeout=5"
-        local fedora_version
-        if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
-            fatal "Could not determine Fedora version"
-            return 1
-        fi
-
-        if ! rpm -qi "rpmfusion-free-release" &>/dev/null; then
-            echo "Installing RPMFusion Free repository, please wait..."
-            if ! eval "$_package_manager_cmd" "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" &>/dev/null; then
-                eval "$_package_manager_cmd" "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Free repository"
-            fi
-            echo "RPMFusion Free repository installed successfully"
-        else
-            echo "RPMFusion Free repository is already installed"
-        fi
-        if ! rpm -qi "rpmfusion-nonfree-release" &>/dev/null; then
-            echo "Installing RPMFusion Non-Free repository, please wait..."
-            if ! eval "$_package_manager_cmd" "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" &>/dev/null; then
-                eval "$_package_manager_cmd" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm" || fatal "Failed to install RPMFusion Non-Free repository"
-            fi
-            echo "RPMFusion Non-Free repository installed successfully"
-        else
-            echo "RPMFusion Non-Free repository is already installed"
-        fi
-        is_ostree && { rpm-ostree status --json | grep -q '"state":"staged"' && zenwrn "$msgostreepending" && exit 100; } || true
-    fi
-}
-
-# --- PyPI ---
-pip_lib() {
-    if is_arch || is_cachy; then
-        pkg_install python-pip python-pipx
-    elif is_solus; then
-        pkg_install pip pipx
-    else
-        pkg_install python3-pip pipx
-    fi
-}
-
 # --- CLInfo Test ---
 clinfo_chk () {
     if ! command -v clinfo &>/dev/null; then
         _msg info "clinfo not found, installing..."
         sudo_rq
         pkg_install clinfo
-    fi\
+    fi
     # Check if OpenCL acceleration is available
     local platform_count
     platform_count=$(clinfo 2>&1 | grep -m1 "Number of platforms" | grep -oE "[0-9]+$")
@@ -279,4 +126,22 @@ Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
 
     sudo apt update
+}
+
+# legacy function call support - kept here so older code and local user scripts won't break
+
+chaotic_aur_lib() {
+    call_script chaotic
+}
+
+rpmfusion_chk() {
+    call_script rpmfusion
+}
+
+pip_lib() {
+    call_script pip
+}
+
+flatpak_in_lib() {
+    call_script flathub
 }

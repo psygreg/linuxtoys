@@ -175,7 +175,39 @@ class ItemWidgetFactory:
         icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
 
-        box.pack_start(icon_widget, False, False, 20)
+        icon_container = Gtk.Overlay()
+        icon_container.set_size_request(icon_size, icon_size)
+        icon_container.set_halign(Gtk.Align.END)
+        icon_container.set_valign(Gtk.Align.CENTER)
+        icon_container.add(icon_widget)
+
+        if item_info.get("is_verified", False):
+            verified_path = get_icon_path("verified.svg")
+
+            if verified_path and os.path.exists(verified_path):
+                try:
+                    badge_size = 16
+                    badge_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                        verified_path,
+                        badge_size,
+                        badge_size,
+                        True,
+                )
+                    verified_badge = Gtk.Image.new_from_pixbuf(badge_pixbuf)
+                    verified_badge.set_halign(Gtk.Align.END)
+                    verified_badge.set_valign(Gtk.Align.START)
+                    verified_badge.set_tooltip_text(
+                        self.translations.get(
+                            "verified_badge",
+                            "First-party LinuxToys support",
+                    )
+                )
+
+                    icon_container.add_overlay(verified_badge)
+                except Exception:
+                    pass
+
+        box.pack_start(icon_container, False, False, 20)
 
         event_box = Gtk.EventBox()
         event_box.add(box)
@@ -224,6 +256,12 @@ class ItemWidgetFactory:
             return self.script_cache.is_script_removable(item_info)
 
         # Fallback to direct computation if the cache is not ready yet
+        if item_info.get("is_repo_entry"):
+            return bool(
+                revert_helper._load_last_execution(
+                    item_info.get("name", "")
+                )
+            )
         if not item_info.get("is_script"):
             return False
         script_path = item_info.get("path", "")

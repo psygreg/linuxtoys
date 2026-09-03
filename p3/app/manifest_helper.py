@@ -13,9 +13,10 @@ import shutil
 import asyncio
 import argparse
 import re
-from .parser import get_categories, get_all_scripts_recursive
+from .parser import get_categories, get_all_scripts_recursive, get_repo_entries
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .reboot_helper import check_ostree_pending_deployments
+from .repo_parser import materialize_repo_script
 from .updater.update_helper import UpdateHelper
 
 
@@ -201,6 +202,12 @@ def find_script_by_name(script_name, translations=None):
                 if (script['name'].lower() == script_name.lower() or 
                     filename_without_ext.lower() == script_name.lower()):
                     return script
+
+    # Dynamic repos.json entries behave as scripts too. Keep their repo://
+    # path here and materialize only when execution begins.
+    for script in get_repo_entries(translations):
+        if script.get("name", "").lower() == script_name.lower():
+            return script
 
     return None
 
@@ -595,16 +602,26 @@ def run_manifest_mode(translations=None):
             invalid_items.append(script_name)
             continue
             
-        # Check compatibility for scripts
-        if not script_is_compatible(script_info['path'], compat_keys):
-            print(f"Warning: Script '{script_name}' is not compatible with this system. Skipping.")
-            continue
-            
-        # Check container compatibility
-        if is_containerized() and not script_is_container_compatible(script_info['path']):
-            print(f"Warning: Script '{script_name}' is not compatible with containerized systems. Skipping.")
-            continue
-            
+        if script_info.get("is_repo_entry"):
+            # repo_parser already applied the entry's os/hardware compatibility.
+            # Its repo:// path must become a real file before execution.
+            try:
+                script_info = materialize_repo_script(script_info)
+            except (ValueError, NotImplementedError, OSError) as exc:
+                print(f"Error: Could not prepare repository entry '{script_name}': {exc}")
+                invalid_items.append(script_name)
+                continue
+        else:
+            # Physical scripts retain their normal metadata compatibility checks.
+            if not script_is_compatible(script_info['path'], compat_keys):
+                print(f"Warning: Script '{script_name}' is not compatible with this system. Skipping.")
+                continue
+
+            # Check container compatibility
+            if is_containerized() and not script_is_container_compatible(script_info['path']):
+                print(f"Warning: Script '{script_name}' is not compatible with containerized systems. Skipping.")
+                continue
+
         scripts_to_run.append(script_info)
 
     if invalid_items:

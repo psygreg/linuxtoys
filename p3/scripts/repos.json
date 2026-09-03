@@ -1,0 +1,8 @@
+{
+    "name": "Recordly",
+    "description": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in.",
+    "description_tag": "recordly_desc",
+    "repo": "https://github.com/webadderallorg/Recordly",
+    "category": "office",
+    "icon": "recordly.png"
+}

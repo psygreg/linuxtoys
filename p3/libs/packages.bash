@@ -77,6 +77,7 @@ pkg_install () {
     done
     
     pkg_exists "${_filtered_args[@]}"
+    [[ ${#pkg_found[@]} -gt 0 ]] && echo "Packages ${pkg_found[*]} already installed, skipping."
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
     if is_debian || is_ubuntu; then

@@ -17,6 +17,25 @@ if is_rhel; then
     pkg_install systemd-oomd
     sysd_enable systemd-oomd.service
 else
-    earlyoom_lib
+    prep_tmp_noram
+    if is_solus; then
+        git clone https://github.com/rfjakob/earlyoom.git
+        cd earlyoom
+        sudo eopkg install -c system.devel
+        sudo make install
+    else
+        pkg_install earlyoom
+    fi
+    fetch_from_mirror "earlyoom" \
+        "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/earlyoom" \
+        "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/resources/earlyoom"
+    if [ -f /etc/default/earlyoom ]; then
+        prep_edit /etc/default/earlyoom
+    else
+        prep_create /etc/default/earlyoom
+    fi
+    copy_ -f earlyoom /etc/default/
+    sysd_enable earlyoom
+    unset _packages
 fi
 zeninf "$msg036"

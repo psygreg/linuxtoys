@@ -20,6 +20,7 @@ from . import (
     revealer,
     search_helper,
     skills_view,
+    repo_parser
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
 from .window_items import ItemWidgetFactory
@@ -486,6 +487,9 @@ class AppWindow(
         This dialog is shown asynchronously on startup for ostree/ublue systems
         to inform users that packages are deployed on reboot.
         """
+        if dev_mode.is_dev_mode_enabled():
+            return False
+    
         # Get system compatibility keys
         system_compat_keys = compat.get_system_compat_keys()
 
@@ -511,6 +515,9 @@ class AppWindow(
         Check if Deepin immutability permission needs to be requested on first run.
         This is called asynchronously during startup via GLib.idle_add.
         """
+        if dev_mode.is_dev_mode_enabled():
+            return False
+    
         try:
             reboot_required = deepin_immutable_helper.check_and_handle_deepin_immutability(
                 self, self.translations
@@ -765,7 +772,13 @@ class AppWindow(
                     if not confirmed:
                         return []
 
-                deps.extend(required_scripts)
+            for required in required_scripts:
+                if required.get("is_repo_entry"):
+                    required = repo_parser.materialize_repo_script(required)
+                deps.append(required)
+
+            if info.get("is_repo_entry"):
+                info = repo_parser.materialize_repo_script(info)
 
             deps.append(info)
 

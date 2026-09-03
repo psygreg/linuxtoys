@@ -1,354 +1,6 @@
 ## LinuxToys optimizers library
 source "$SCRIPT_DIR/libs/helpers.lib"
 
-# cachyos safe systemd configs
-cachyos_sysd_lib () {
-    prep_tmp
-    local _cfgsource="https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr"
-    {
-        echo "${_cfgsource}/lib/udev/rules.d/20-audio-pm.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/60-ioschedulers.rules"
-        echo "${_cfgsource}/lib/udev/rules.d/99-cpu-dma-latency.rules"
-        } > "udev.txt"
-    {
-        echo "${_cfgsource}/lib/tmpfiles.d/coredump.conf"
-        echo "${_cfgsource}/lib/tmpfiles.d/thp-shrinker.conf"
-        echo "${_cfgsource}/lib/tmpfiles.d/thp.conf"
-        } > "tmpfiles.txt"
-    {
-        echo "${_cfgsource}/lib/modprobe.d/amdgpu.conf"
-        echo "${_cfgsource}/lib/modprobe.d/blacklist.conf"
-        } > "modprobe.txt"
-    if [ -z "$laptop_mode" ]; then
-        echo "${_cfgsource}/lib/modprobe.d/nvidia.conf" >> "modprobe.txt"
-    fi
-    {
-        echo "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/70-linuxtoys-settings.conf"
-        echo "${_cfgsource}/lib/systemd/journald.conf.d/00-journal-size.conf"
-        echo "${_cfgsource}/share/X11/xorg.conf.d/20-touchpad.conf"
-        } > "other.txt"
-    prep_dir modprobe.d udev/rules.d tmpfiles.d
-    while read -r url; do wget -P modprobe.d "$url"; done < modprobe.txt
-    while read -r url; do wget -P udev/rules.d "$url"; done < udev.txt
-    while read -r url; do wget -P tmpfiles.d "$url"; done < tmpfiles.txt
-    while read -r url; do wget "$url"; done < other.txt
-    for file in modprobe.d/* udev/rules.d/* tmpfiles.d/*; do
-        prep_create "/usr/lib/$file"
-        copy_ -f "$file" "/usr/lib/$file"
-    done
-    [ -d "/usr/share/X11/xorg.conf.d" ] || prep_dir /usr/share/X11/xorg.conf.d
-    prep_create /usr/lib/sysctl.d/70-linuxtoys-settings.conf && copy_ -f 70-linuxtoys-settings.conf /usr/lib/sysctl.d/
-    prep_create /usr/lib/systemd/journald.conf.d/00-journal-size.conf && copy_ -f 00-journal-size.conf /usr/lib/systemd/journald.conf.d/
-    prep_create /usr/share/X11/xorg.conf.d/20-touchpad.conf && copy_ -f 20-touchpad.conf /usr/share/X11/xorg.conf.d/
-}
-
-# shader booster
-sboost_lib () {
-    prep_tmp
-    GITHUB_BASE="https://raw.githubusercontent.com/psygreg/shader-booster/main"
-    # patch for Nvidia GPUs
-    patch_nv () {
-        if wget -q -O "patch-nvidia" "${GITHUB_BASE}/patch-nvidia"; then
-            echo -e "\n$(cat patch-nvidia)" | sudo tee -a "${DEST_FILE}" > /dev/null
-            return 0
-        else
-            die "Failed to fetch patch-nvidia."
-        fi
-    }
-    # patch for Mesa-driven GPUs
-    patch_mesa () {
-        if wget -q -O "patch-mesa" "${GITHUB_BASE}/patch-mesa"; then
-            echo -e "\n$(cat patch-mesa)" | sudo tee -a "${DEST_FILE}" > /dev/null
-            return 0
-        else
-            die "Failed to fetch patch-mesa."
-        fi
-    }
-    PATCH_APPLIED=0
-    if [ ! -f ${HOME}/.booster ]; then
-        DEST_FILE="/etc/environment"
-        prep_edit /etc/environment
-        if is_nvidia; then
-            if grep -q "^GL_SHADER_DISK_CACHE_SIZE=" "$DEST_FILE"; then
-                sudo sed -i \
-                "s/^GL_SHADER_DISK_CACHE_SIZE=.*/GL_SHADER_DISK_CACHE_SIZE=10000000000/" \
-                "$DEST_FILE"
-            else
-                if patch_nv; then
-                    PATCH_APPLIED=1
-                fi
-            fi
-        else
-            if grep -q "^MESA_SHADER_CACHE_MAX_SIZE=" "$DEST_FILE"; then
-                sudo sed -i \
-                "s/^MESA_SHADER_CACHE_MAX_SIZE=.*/MESA_SHADER_CACHE_MAX_SIZE=10000000000/" \
-                "$DEST_FILE"
-            else
-                if patch_mesa; then
-                    PATCH_APPLIED=1
-                fi
-            fi
-        fi
-
-        if [ $PATCH_APPLIED -eq 1 ]; then
-            info "Success! Reboot to apply."
-            prep_create "${HOME}/.booster"
-            exit 0
-        fi
-    fi
-}
-
-# split lock mitigation disabler
-dsplitm_lib () {
-    if is_fedora || is_rhel; then
-        grubbyargs_upd "split_lock_detect=off"
-    elif is_ostree; then
-        kargs_upd "split_lock_detect=off"
-    else
-        prep_create /etc/sysctl.d/99-splitlock.conf
-        echo 'kernel.split_lock_mitigate=0' | sudo tee /etc/sysctl.d/99-splitlock.conf >/dev/null
-    fi
-}
-
-# power optimizer for laptops
-psave_lib () {
-    prep_tmp
-    sudo_rq
-    { ( pkg_exists tlp power-profiles-daemon && [ -n "$pkg_found" ] ) && zenwrn "OS already has TLP/power-profiles-daemon. Skipping power-options..." && return 100; } || true
-    if is_fedora || is_rhel; then
-        sudo dnf config-manager addrepo --from-repofile=https://files.distropack.dev/rpm_repo/TheAlexDev23/power-options
-        pkg_install power-options-gtk power-options-tray
-    elif is_arch; then
-        pkg_install power-options-gtk power-options-tray
-    elif is_ubuntu || is_debian; then
-        echo 'deb https://files.distropack.dev/download/TheAlexDev23/power-options/deb /' | sudo tee /etc/apt/sources.list.d/distropack_TheAlexDev23_power-options.list
-        curl -fsSL 'https://files.distropack.dev/pubkey?user=TheAlexDev23&project=power-options' | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/distropack_TheAlexDev23_power-options.gpg > /dev/null
-        sudo apt update
-        pkg_install power-options-gtk power-options-tray
-    fi
-}
-
-# EarlyOOM - kills processes before a OOM event is triggered
-earlyoom_lib () {
-    prep_tmp
-    if is_solus; then
-        git clone https://github.com/rfjakob/earlyoom.git
-        cd earlyoom
-        sudo eopkg install -c system.devel
-        sudo make install
-    else
-        pkg_install earlyoom
-    fi
-    fetch_from_mirror "earlyoom" \
-        "https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/earlyoom" \
-        "https://git.linux.toys/psygreg/linuxtoys/raw/branch/master/resources/earlyoom"
-    if [ -f /etc/default/earlyoom ]; then
-        prep_edit /etc/default/earlyoom
-    else
-        prep_create /etc/default/earlyoom
-    fi
-    copy_ -f earlyoom /etc/default/
-    sysd_enable earlyoom
-    unset _packages
-}
-
-# Powerprofiler - set default profile to 'ondemand'
-pp_ondemand () {
-    if [[ "$ID" != "cachyos" ]]; then
-        # for AMD CPUs (Zen 2 and newer)
-        if grep -q amd-pstate-epp /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver 2>/dev/null; then
-            prep_create /etc/systemd/system/set-ondemand-governor.service
-            sudo tee /etc/systemd/system/set-ondemand-governor.service > /dev/null << 'EOF'
-[Unit]
-Description=Set CPU governor to ondemand
-After=multi-user.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash -c 'for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do echo balance_performance > "$cpu" 2>/dev/null || true; done'
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-EOF
-            sysd_enable set-ondemand-governor.service
-            echo "Created systemd service to set ondemand governor on boot."
-        fi
-    fi
-}
-
-# for intel and nvidia GPUs, fix GTK rendering bugs
-fix_intel_gtk () {
-    if is_intel && [ -n "$intel_arc" ]; then
-        if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
-            prep_edit /etc/environment
-            echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
-        fi
-    fi
-    if is_nvidia; then
-        if ! grep -q "^GSK_RENDERER=" /etc/environment 2>/dev/null; then
-            prep_edit /etc/environment
-            echo "GSK_RENDERER=gl" | sudo tee -a /etc/environment
-        fi
-    fi
-}
-
-# use dnsmasq as a local caching DNS resolver - works generally better than systemd-resolved and fixes download speed issues with Steam
-dnsmasq_lib () {
-    pkg_install dnsmasq
-    if is_debian; then
-        pkg_install resolvconf
-    fi
-    if [ -f /etc/dnsmasq.conf ]; then
-        prep_edit /etc/dnsmasq.conf
-        sudo sed -i 's/^#\s*domain-needed/domain-needed/' /etc/dnsmasq.conf
-        sudo sed -i 's/^#\s*bogus-priv/bogus-priv/' /etc/dnsmasq.conf
-        if grep -Eq '^[#[:space:]]*cache-size=' /etc/dnsmasq.conf; then
-            sudo sed -i 's/^[#[:space:]]*cache-size=.*/cache-size=10000/' /etc/dnsmasq.conf
-        else
-            echo 'cache-size=10000' | sudo tee -a /etc/dnsmasq.conf >/dev/null
-        fi
-    fi
-    sysd_enable dnsmasq
-}
-
-# enable intel Xe driver for discrete GPUs
-intel_xe_lib () {
-    if is_intel && [ -n "$intel_arc" ]; then
-        # Extract DEVID from the Xe-compatible PCI device found by is_intel
-        DEVID=$(<"$INTEL_XE_SYSFS/device")
-        DEVID="${DEVID#0x}"
-
-        if [[ -z "$DEVID" ]]; then
-            echo "Error: Could not detect Intel GPU device ID"
-            return 1
-        fi
-
-        echo "Detected Intel GPU device ID: $DEVID"
-        if is_ostree; then
-            kargs_upd 'i915.force_probe=!'"$DEVID" "xe.force_probe=$DEVID"
-        else
-            [ -f /etc/kernel/cmdline.d/10-intel-xe-enable.conf ] || { 
-                # Create kernel cmdline drop-in file for systemd-based systems
-                prep_create /etc/kernel/cmdline.d/10-intel-xe-enable.conf
-                echo "i915.force_probe=!${DEVID} xe.force_probe=${DEVID}" | sudo tee /etc/kernel/cmdline.d/10-intel-xe-enable.conf >/dev/null
-
-                # Also create GRUB drop-in config for GRUB-based systems
-                prep_create /etc/default/grub.d/10-intel-xe-enable.cfg
-                sudo tee /etc/default/grub.d/10-intel-xe-enable.cfg > /dev/null << EOF
-# Enable intel Xe driver for discrete GPUs
-# Generated by LinuxToys intel Xe optimizer
-# Device ID: $DEVID
-# To remove, delete this file and regenerate boot config
-GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} i915.force_probe=!${DEVID} xe.force_probe=${DEVID}"
-EOF
-
-                echo "Created kernel parameter configuration:"
-                echo "  - systemd: /etc/kernel/cmdline.d/10-intel-xe-enable.conf"
-                echo "  - GRUB: /etc/default/grub.d/10-intel-xe-enable.cfg"
-
-                bootloader_upd
-            }
-        fi
-    else
-        echo "No Intel Arc GPU device detected."
-        return 0
-    fi
-    if is_ubuntu; then
-        sudo add-apt-repository -y ppa:kobuk-team/intel-graphics
-        pkg_install intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo
-    elif is_fedora || is_rhel; then
-        rpmfusion_chk
-        pkg_install intel-media-driver
-    elif is_debian; then
-        enable_debian_nonfree
-        pkg_install intel-media-va-driver-non-free libmfx-gen1
-    elif is_arch || is_cachy; then
-        pkg_install intel-media-driver vpl-gpu-rt
-    fi
-}
-
-# set vm.min_free_kbytes dynamically as 1% of total memory size
-# done through systemd service as it can recalculate every boot, so it will work as intended even after RAM upgrades or downgrades
-free_mem_fix () {
-    cat << 'EOF' | sudo tee "/etc/systemd/system/set-min-free-mem.service" > /dev/null
-[Unit]
-Description=Set vm.min_free_kbytes dynamically
-DefaultDependencies=no
-After=local-fs.target
-Before=sysinit.target
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c "sysctl -w vm.min_free_kbytes=$(awk '/MemTotal/ {printf \"%.0f\", $2 * 0.01}' /proc/meminfo)"
-
-[Install]
-WantedBy=sysinit.target
-EOF
-    sudo chmod 644 "/etc/systemd/system/set-min-free-mem.service"
-    sudo systemctl daemon-reload
-    sysd_enable set-min-free-mem.service
-}
-
-# make Proton run in wine-wayland mode by default
-wayland_proton_lib () {
-    { [[ "$XDG_SESSION_TYPE" =~ "wayland" ]] || [[ -n "$WAYLAND_DISPLAY" ]]; } || nonfatal "Not running Wayland display protocol."
-    if ! grep -q "^PROTON_ENABLE_WAYLAND=1" /etc/environment 2>/dev/null; then
-        prep_edit /etc/environment
-        echo "PROTON_ENABLE_WAYLAND=1" | sudo tee -a /etc/environment
-    fi
-}
-
-# add preempt=full kernel parameter on boot on fedora
-preempt_lib () {
-    if is_fedora || is_rhel; then
-        grubbyargs_upd 'preempt=full'
-    elif is_ostree; then
-        kargs_upd 'preempt=full'
-    fi
-}
-
-# RAM optimizations for systems with 16GB RAM or below, using zswap
-zswap_lib () {
-    # disable zram if enabled first, zswap and zram are not interoperable
-    if is_fedora || is_ostree; then
-        { rpm -qi "zram-generator" &>/dev/null; } && pkg_remove zram-generator
-    elif is_debian || is_ubuntu; then
-        { dpkg -s zram-config &>/dev/null; } && pkg_remove zram-config
-    elif is_arch; then
-        { pacman -Qi zram-generator &>/dev/null; } && pkg_remove zram-generator
-    fi
-
-    if grep -q "zswap.enabled=1" /proc/cmdline 2>/dev/null; then
-        zeninf "Zswap already enabled. Skipping."
-        return 0
-    fi
-    # prepare zswap
-    ZSWAP_PARAMS="zswap.enabled=1 zswap.shrinker_enabled=1 zswap.compressor=zstd zswap.max_pool_percent=25 zswap.zpool=zsmalloc"
-    if is_fedora; then
-        grubbyargs_upd "$ZSWAP_PARAMS"
-    elif is_ostree; then
-        kargs_upd "$ZSWAP_PARAMS"
-    else
-        # systemd-boot
-        prep_create /etc/kernel/cmdline.d/10-zswap.conf
-        echo "$ZSWAP_PARAMS" | sudo tee /etc/kernel/cmdline.d/10-zswap.conf >/dev/null
-        # GRUB
-        prep_create /etc/default/grub.d/10-zswap.cfg
-        sudo tee /etc/default/grub.d/10-zswap.cfg > /dev/null << EOF
-# zswap kernel parameters for RAM optimization
-# Generated by LinuxToys zswap optimizer
-# To remove, delete this file and regenerate boot config
-GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} $ZSWAP_PARAMS"
-EOF
-
-        echo "Created zswap kernel parameters:"
-        echo "  - systemd-boot: /etc/kernel/cmdline.d/10-zswap.conf"
-        echo "  - GRUB: /etc/default/grub.d/10-zswap.cfg"
-        bootloader_upd
-    fi
-}
-
 nvidia_ctkpatch () {
     if ! nvidia-smi >/dev/null 2>&1; then
         die "NVIDIA GPU is unavailable to the NVIDIA driver."
@@ -371,4 +23,58 @@ nvidia_ctkpatch () {
     if ! nvidia-ctk cdi list 2>/dev/null | grep -q '^nvidia.com/gpu=all$'; then
         die "NVIDIA CDI device nvidia.com/gpu=all is unavailable."
     fi
+}
+
+# legacy function call support - kept here so older code and local user scripts won't break
+
+cachyos_sysd_lib () {
+    call_script cachyconfs
+}
+
+sboost_lib () {
+    call_script sboost
+}
+
+preempt_lib () {
+    call_script preemptfedora
+}
+
+dsplitm_lib () {
+    call_script dsplitm
+}
+
+psave_lib () {
+    call_script psaver
+}
+
+earlyoom_lib () {
+    call_script earlyoom
+}
+
+zswap_lib () {
+    call_script zram
+}
+
+wayland_proton_lib () {
+    call_script wayproton
+}
+
+intel_xe_lib () {
+    call_script intelxe
+}
+
+free_mem_fix () {
+    call_script minfreefix
+}
+
+dnsmasq_lib () {
+    call_script dnsmasq
+}
+
+fix_intel_gtk () {
+    call_script gtk-bmg-fix
+}
+
+pp_ondemand () {
+    call_script ondemand
 }

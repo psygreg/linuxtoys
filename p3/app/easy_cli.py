@@ -17,6 +17,7 @@ from .manifest_helper import (
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
+from .repo_parser import materialize_repo_script
 
 CLI_OPTIONS = frozenset({
     "-D", "--DEV_MODE", "--devmode", "--debug",
@@ -255,6 +256,13 @@ def easy_cli_run_script(script_info):
     Run a LinuxToys script in EASY_CLI mode while preventing any xdg-open calls.
     Supports automatic reversion if the script fails.
     """
+
+    if script_info.get("is_repo_entry"):
+        try:
+            script_info = materialize_repo_script(script_info)
+        except (ValueError, NotImplementedError, OSError) as exc:
+            print(f"✗ Could not prepare repository entry '{script_info.get('name', 'unknown')}': {exc}")
+            return 1
 
     # Check if dev mode is enabled and run the script
     if is_dev_mode_enabled():

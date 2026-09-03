@@ -9,10 +9,15 @@ from .compat import (
     should_show_optimization_script
 )
 from .lang_utils import detect_system_language
-from . import git_scripts_manager
+from . import git_scripts_manager, official_index, repo_parser
+
 
 # Get scripts directory - uses git-synced scripts with fallback to bundled
 SCRIPTS_DIR = git_scripts_manager.get_scripts_dir()
+
+RESERVED_DIRECTORIES = {
+    "lists",
+}
 
 def _get_negated_scripts(directory_path, compat_keys):
     """
@@ -127,6 +132,10 @@ def _parse_metadata_file(file_path, default_values, translations=None):
     except Exception as e:
         print(f"Error reading metadata from {file_path}: {e}")
 
+    if file_path.endswith(".sh"):
+        metadata["is_verified"] = official_index.is_verified_script(file_path)
+    else:
+        metadata["is_verified"] = False
     return metadata
 
 def get_subcategories_for_category(category_path, translations=None):
@@ -145,7 +154,10 @@ def get_subcategories_for_category(category_path, translations=None):
         # Skip hidden directories (starting with .)
         if item_name.startswith('.'):
             continue
-            
+        # Skip lists - just as a precaution for edge cases
+        if _should_skip_directory(item_name):
+            continue
+
         item_path = os.path.join(category_path, item_name)
         if os.path.isdir(item_path):
             info_file_path = os.path.join(item_path, 'category-info.txt')
@@ -220,13 +232,17 @@ def get_categories(translations=None):
                 'icon': header.get('icon', 'application-x-executable'),
                 'description': header.get('description', ''),
                 'is_script': True,
-                'is_new': header.get('is_new', False)
+                'is_new': header.get('is_new', False),
+                'is_verified': header.get('is_verified', False)
             })
 
     # Add subfolders as categories (skip hidden directories like .git)
     for category_name in os.listdir(SCRIPTS_DIR):
         # Skip hidden directories (starting with .)
         if category_name.startswith('.'):
+            continue
+        # Skip repository lists directory
+        if _should_skip_directory(category_name):
             continue
             
         category_path = os.path.join(SCRIPTS_DIR, category_name)
@@ -249,6 +265,9 @@ def get_categories(translations=None):
 
     return sorted(categories, key=lambda cat: cat['name'])
 
+def get_repo_entries(translations=None):
+    """Return all valid dynamic repository entries from scripts/repos.json."""
+    return repo_parser.load_repo_entries(SCRIPTS_DIR, translations)
 
 def get_scripts_for_category(category_path, translations=None):
     """
@@ -351,8 +370,22 @@ def get_scripts_for_category(category_path, translations=None):
             script_info['is_subcategory'] = False
             items.append(script_info)
 
+    items.extend(
+        repo_parser.get_entries_for_category(
+            SCRIPTS_DIR,
+            category_path,
+            translations,
+        )
+    )
 
-    return sorted(items, key=lambda s: (not s.get('is_create_script', False), not s.get('is_subcategory', False), s['name']))
+    return sorted(
+        items,
+        key=lambda s: (
+            not s.get("is_create_script", False),
+            not s.get("is_subcategory", False),
+            s["name"],
+        ),
+    )
 
 
 def get_all_scripts_recursive(directory_path, translations=None):
@@ -415,6 +448,8 @@ def get_all_scripts_recursive(directory_path, translations=None):
             scripts.append(script_info)
             
         elif os.path.isdir(item_path):
+            if _should_skip_directory(item_name):
+                continue
             # Recursively get scripts from subdirectories
             scripts.extend(get_all_scripts_recursive(item_path, translations))
 
@@ -431,6 +466,9 @@ def has_subcategories(category_path):
     for item_name in os.listdir(category_path):
         # Skip hidden directories (starting with .)
         if item_name.startswith('.'):
+            continue
+        # skip lists
+        if _should_skip_directory(item_name):
             continue
         item_path = os.path.join(category_path, item_name)
         if os.path.isdir(item_path):
@@ -532,3 +570,6 @@ def is_nested_category(category_path):
     
     rel_path = os.path.relpath(category_abs_path, scripts_path)
     return os.sep in rel_path
+
+def _should_skip_directory(name):
+    return name.startswith(".") or name in RESERVED_DIRECTORIES

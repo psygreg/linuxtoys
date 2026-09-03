@@ -11,6 +11,7 @@ import hashlib
 import hmac
 import unicodedata
 from ..updater import __version__
+from urllib.parse import urlparse
  
 _REPORT_URL = "https://bug.linux.toys"
  
@@ -143,7 +144,59 @@ def get_system_context() -> str:
         context_parts.append(f"Multiple GPUs: {gpu_info['gpu_count']} detected")
     
     return " | ".join(context_parts)
- 
+
+def _get_repo_owner_mention() -> str:
+    """
+    Return a GitHub @owner mention when the most recently executed script
+    originated from repos.json and its repo points to GitHub.
+    """
+    try:
+        history = _load_history()
+        if not history:
+            return ""
+
+        script_name = history[-1].get("name", "").strip()
+        if not script_name:
+            return ""
+
+        from .. import parser
+
+        for entry in parser.get_repo_entries():
+            if entry.get("name", "").strip() != script_name:
+                continue
+
+            repo = entry.get("repo", "").strip()
+            if not repo:
+                return ""
+
+            parsed = urlparse(repo)
+
+            if parsed.scheme not in ("http", "https"):
+                return ""
+
+            if parsed.hostname not in ("github.com", "www.github.com"):
+                return ""
+
+            parts = [part for part in parsed.path.split("/") if part]
+            if len(parts) < 2:
+                return ""
+
+            owner = parts[0]
+
+            # GitHub usernames/organization names may only contain
+            # alphanumeric characters and hyphens.
+            if not owner or not all(
+                char.isalnum() or char == "-"
+                for char in owner
+            ):
+                return ""
+
+            return f"@{owner}"
+
+    except Exception:
+        # Bug reporting must never fail just because attribution failed.
+        return ""
+    
 # --- Script History Management ---
 def _load_history() -> list:
     """Load script execution history from file."""
@@ -575,7 +628,15 @@ def submit_issue(title: str, logs: str = "", context: str = "", is_footer_trigge
         registry_content = _get_last_registry_entries(n=2)
         if registry_content:
             logs = logs + "\n" + registry_content
-    
+
+    repo_owner = _get_repo_owner_mention()
+
+    if repo_owner:
+        context = (
+            f"{context}\n\n"
+            f"Upstream repository maintainer: {repo_owner}"
+        ).strip()
+        
     # Preserve user language characters while dropping terminal control sequences.
     logs    = _strip_control_characters(logs)
     title   = _strip_control_characters(title).strip()

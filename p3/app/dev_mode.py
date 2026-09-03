@@ -103,7 +103,12 @@ def get_simulated_compat_keys():
         'suse': {'suse'},
         'opensuse': {'suse'},
         'ostree': {'ostree'},
-        'ublue': {'ublue'}
+        'ublue': {'ublue'},
+        'zorin': {'zorin', 'ubuntu', 'debian'},
+        'pika': {'pika', 'ubuntu', 'debian'},
+        'deepin': {'deepin', 'debian'},
+        'manjaro': {'manjaro', 'arch'},
+        'solus': {'solus'},
     }
     
     key = compat_override.lower()
@@ -228,8 +233,33 @@ def get_effective_compat_keys():
         # Developer mode without simulation - show all scripts
         # Return a superset of all possible compatibility keys
         return {
-            'debian', 'ubuntu', 'arch', 'cachy', 'fedora', 
-            'rhel', 'suse', 'opensuse', 'ostree', 'ublue'
+            # Operating systems
+            'debian',
+            'ubuntu',
+            'arch',
+            'cachy',
+            'fedora',
+            'rhel',
+            'suse',
+            'opensuse',
+            'ostree',
+            'ublue',
+            'zorin',
+            'solus',
+            'pika',
+            'deepin',
+            'manjaro',
+
+            # CPU compatibility
+            'cpu-amd',
+            'cpu-intel',
+
+            # GPU compatibility
+            'gpu-amd',
+            'gpu-intel',
+            'gpu-nvidia',
+            'gpu-rocm',
+            'gpu-xe',
         }
 
 

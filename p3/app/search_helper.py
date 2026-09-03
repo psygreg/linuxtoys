@@ -64,6 +64,9 @@ class ScriptCache:
         
         # Get all scripts from main directory recursively
         self._collect_scripts_from_directory(scripts_dir, translations)
+
+        for repo_item in parser.get_repo_entries(translations):
+            self.scripts.append(repo_item)
         
         # Also get local scripts directory
         local_scripts_dir = f'{os.environ.get("HOME", "")}/.local/linuxtoys/scripts'
@@ -151,7 +154,15 @@ class ScriptCache:
         executed_names = _get_executed_script_names()
         
         for script_info in self.scripts:
-            script_path = script_info.get('path', '')
+            script_path = script_info.get("path", "")
+            script_name = script_info.get("name", "")
+
+            if script_info.get("is_repo_entry"):
+                self._removable_cache[script_path] = (
+                    script_name in executed_names
+                )
+                continue
+            
             if not script_path or not os.path.isfile(script_path):
                 self._removable_cache[script_path] = False
                 continue
@@ -187,36 +198,56 @@ class ScriptCache:
         self._populate_removable_cache()
     
     def is_script_removable(self, script_info):
-        """
-        Return the cached removable state for a script.
-        
-        Falls back to a direct (slower) computation if the script is not in the
-        cache, which is useful for scripts created after the cache was built.
-        """
-        script_path = script_info.get('path', '')
+        script_path = script_info.get("path", "")
+
         if script_path in self._removable_cache:
             return self._removable_cache[script_path]
-        
-        # Fallback for scripts not yet in cache (e.g. newly created local scripts)
-        if not script_info.get('is_script') or not script_path or not os.path.isfile(script_path):
+
+        if script_info.get("is_repo_entry"):
+            executed_names = _get_executed_script_names()
+            return self._repo_entry_is_removable(
+                script_info,
+                executed_names,
+            )
+
+        # Normal physical-script fallback
+        if (
+            not script_info.get("is_script")
+            or not script_path
+            or not os.path.isfile(script_path)
+        ):
             return False
-        
-        script_name = script_info.get('name', '')
+
+        script_name = script_info.get("name", "")
         if not script_name:
             return False
-        
-        revert_capability = get_revert_capability(script_path, self.system_compat_keys)
-        if revert_capability == 'no':
+
+        revert_capability = get_revert_capability(
+            script_path,
+            self.system_compat_keys,
+        )
+
+        if revert_capability == "no":
             return False
-        
+
         executed_names = _get_executed_script_names()
-        if revert_capability == 'internal':
+
+        if revert_capability == "internal":
             return script_name in executed_names
-        
-        if not should_enable_manual_revert(script_path, self.system_compat_keys):
+
+        if not should_enable_manual_revert(
+            script_path,
+            self.system_compat_keys,
+        ):
             return False
-        
+
         return script_name in executed_names
+
+    def _repo_entry_is_removable(self, script_info, executed_names):
+        return (
+            script_info.get("is_repo_entry", False)
+            and script_info.get("name") in executed_names
+        )
     
     def update_removable_for_script(self, script_info):
         """
@@ -432,29 +463,56 @@ class SearchEngine:
         category_groups = {}
         
         for result in results:
-            category_name = self._extract_category_name(result.item_info.get('path', ''))
-            
-            # Root-level scripts go to 'Uncategorized' group (no category header will be shown)
-            if category_name == 'Other':
-                category_name = self.translations.get('uncategorized', 'Uncategorized')
-                category_path = 'uncategorized'
+            item_info = result.item_info
+
+            if item_info.get("is_repo_entry"):
+                category_key = item_info.get("category", "")
+                category_name = self.translations.get(
+                    category_key,
+                    category_key.replace("_", " ").title(),
+                )
+                category_path = os.path.join(
+                    parser.SCRIPTS_DIR,
+                    category_key,
+                )
             else:
-                category_path = result.item_info.get('path', '').rsplit('/', 1)[0] if '/' in result.item_info.get('path', '') else 'Uncategorized'
-            
+                category_name = self._extract_category_name(
+                    item_info.get("path", "")
+                )
+
+                if category_name == "Other":
+                    category_name = self.translations.get(
+                        "uncategorized",
+                        "Uncategorized",
+                    )
+                    category_path = "uncategorized"
+                else:
+                    path = item_info.get("path", "")
+                    category_path = (
+                        path.rsplit("/", 1)[0]
+                        if "/" in path
+                        else "Uncategorized"
+                    )
+
             if category_path not in category_groups:
                 category_groups[category_path] = {
-                    'category_name': category_name,
-                    'category_path': category_path,
-                    'best_match_score': 0,
-                    'scripts': [],
-                    'show_header': category_name != self.translations.get('uncategorized', 'Uncategorized')  # Don't show header for uncategorized
+                    "category_name": category_name,
+                    "category_path": category_path,
+                    "best_match_score": 0,
+                    "scripts": [],
+                    "show_header": (
+                        category_name
+                        != self.translations.get(
+                            "uncategorized",
+                            "Uncategorized",
+                        )
+                    ),
                 }
-            
-            # Update best match score for this category
-            if result.match_score > category_groups[category_path]['best_match_score']:
-                category_groups[category_path]['best_match_score'] = result.match_score
-            
-            category_groups[category_path]['scripts'].append(result)
+
+            if result.match_score > category_groups[category_path]["best_match_score"]:
+                category_groups[category_path]["best_match_score"] = result.match_score
+
+            category_groups[category_path]["scripts"].append(result)
         
         # Sort scripts within each category by relevance
         for group in category_groups.values():

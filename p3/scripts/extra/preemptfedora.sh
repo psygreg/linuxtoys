@@ -6,7 +6,10 @@
 # nocontainer
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/optimizers.lib"
-_lang_
-preempt_lib
+if is_fedora || is_rhel; then
+    grubbyargs_upd 'preempt=full'
+elif is_ostree; then
+    kargs_upd 'preempt=full'
+fi
+
 zeninf "$finishmsg"

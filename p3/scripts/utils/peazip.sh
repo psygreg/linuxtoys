@@ -8,5 +8,5 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 pkg_flat io.github.peazip.PeaZip
-zeninf "$msg018"
+info "$finishmsg"
 

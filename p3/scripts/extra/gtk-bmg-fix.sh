@@ -9,8 +9,13 @@
 # compat: !solus
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/optimizers.lib"
-_lang_
 askpass
-fix_intel_gtk
+
+if ( is_intel && [[ -n $intel_arc ]] ) || is_nvidia; then
+    if ! grep -q '^GSK_RENDERER=' /etc/environment 2>/dev/null; then
+        prep_edit /etc/environment
+        echo 'GSK_RENDERER=gl' | sudo tee -a /etc/environment
+    fi
+fi
+
 info "$rebootmsg"
