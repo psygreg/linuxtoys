@@ -54,5 +54,65 @@
         "icon": "sober.png",
         "type": "flathub",
         "package-name": "org.vinegarhq.Sober"
+    },
+    {
+        "name": "ProtonUp",
+        "description": "A Qt-based tool to easily obtain community runners for gaming on Linux.",
+        "description_tag": "pup_desc",
+        "repo": "https://davidotek.github.io/protonup-qt",
+        "category": "game",
+        "icon": "pupgui.png",
+        "type": "flathub",
+        "package-name": "net.davidotek.pupgui2"
+    },
+    {
+        "name": "Protontricks",
+        "description": "Proton configuration tool, akin to Winetricks. Useful in very specific cases.",
+        "description_tag": "ptricks_desc",
+        "repo": "https://github.com/Matoking/protontricks",
+        "category": "game",
+        "icon": "proton.svg",
+        "type": "flathub",
+        "package-name": "com.github.Matoking.protontricks"
+    },
+    {
+        "name": "Osu!",
+        "description": "A community-made wrapper for the rhythm game with a large community and many user-created beatmaps.",
+        "description_tag": "osu_desc",
+        "repo": "https://osu.ppy.sh",
+        "category": "game",
+        "icon": "osu.png",
+        "type": "flathub",
+        "package-name": "sh.ppy.osu"
+    },
+    {
+        "name": "Greenlight",
+        "description": "A community-made client for Xbox's XCloud.",
+        "description_tag": "glight_desc",
+        "repo": "https://github.com/unknownskl/greenlight",
+        "category": "game",
+        "icon": "greenlight.png",
+        "type": "flathub",
+        "package-name": "io.github.unknownskl.greenlight"
+    },
+    {
+        "name": "Minecraft Bedrock Launcher",
+        "description": "A community port of Minecraft Bedrock Edition for Linux.",
+        "description_tag": "mcbe_desc",
+        "repo": "https://minecraft-linux.github.io",
+        "category": "game",
+        "icon": "minecraft.svg",
+        "type": "flathub",
+        "package-name": "io.mrarm.mcpelauncher"
+    },
+    {
+        "name": "Moonlight",
+        "description": "Open source PC client for NVIDIA GameStream and Sunshine.",
+        "description_tag": "mlight_desc",
+        "repo": "https://github.com/moonlight-stream/moonlight-qt",
+        "category": "game",
+        "icon": "moonlight.svg",
+        "type": "flathub",
+        "package-name": "com.moonlight_stream.Moonlight"
     }
 ]
