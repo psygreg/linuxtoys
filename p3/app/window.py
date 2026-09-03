@@ -753,6 +753,8 @@ class AppWindow(
     async def _process_needed_scripts(self, script_infos):
         deps = []
         for info in script_infos:
+            required_scripts = []
+
             if has_depends := info.get("needed"):
                 tasks = [
                     manifest_helper.find_script_by_name_async(_d, self.translations)
@@ -768,7 +770,6 @@ class AppWindow(
                         self, self.translations, script_name, required_scripts
                     )
 
-                    # If user cancelled, don't proceed
                     if not confirmed:
                         return []
 
