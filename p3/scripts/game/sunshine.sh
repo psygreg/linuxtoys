@@ -31,5 +31,5 @@ if is_nvidia; then
         pkg_install nvidia-vaapi-driver
     fi
 fi
-sudo flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine
+sudo -i sh -c 'flatpak run --command=additional-install.sh dev.lizardbyte.app.Sunshine'
 zeninf "$finishmsg"
