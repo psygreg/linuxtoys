@@ -114,5 +114,65 @@
         "icon": "moonlight.svg",
         "type": "flathub",
         "package-name": "com.moonlight_stream.Moonlight"
+    },
+    {
+        "name": "Endless Key",
+        "description": "Curated learning anytime, anywhere.",
+        "description_tag": "endlesskey_desc",
+        "repo": "https://support.endlessos.org/en/endless-key/linux",
+        "category": "edu",
+        "icon": "endlesskey.png",
+        "type": "flathub",
+        "package-name": "org.endlessos.Key"
+    },
+    {
+        "name": "GCompris",
+        "description": "Educational game for children.",
+        "description_tag": "gcompris_desc",
+        "repo": "https://www.gcompris.net",
+        "category": "edu",
+        "icon": "gcompris.png",
+        "type": "flathub",
+        "package-name": "org.kde.gcompris"
+    },
+    {
+        "name": "GeoGebra",
+        "description": "Dynamic mathematics software.",
+        "description_tag": "geogebra_desc",
+        "repo": "https://www.geogebra.org",
+        "category": "edu",
+        "icon": "geogebra.png",
+        "type": "flathub",
+        "package-name": "org.geogebra.GeoGebra"
+    },
+    {
+        "name": "Kalzium",
+        "description": "Periodic Table of Elements.",
+        "description_tag": "kalzium_desc",
+        "repo": "https://apps.kde.org/kalzium",
+        "category": "edu",
+        "icon": "kalzium.png",
+        "type": "flathub",
+        "package-name": "org.kde.kalzium"
+    },
+    {
+        "name": "Kolibri",
+        "description": "Offline learning platform.",
+        "description_tag": "kolibri_desc",
+        "repo": "https://learningequality.org/kolibri",
+        "category": "edu",
+        "icon": "kolibri.png",
+        "type": "flathub",
+        "package-name": "org.learningequality.Kolibri"
+    },
+    {
+        "name": "Stellarium",
+        "description": "A Planetarium in your computer.",
+        "description_tag": "stellarium_desc",
+        "repo": "https://stellarium.org",
+        "category": "edu",
+        "icon": "stellarium.png",
+        "type": "flathub",
+        "package-name": "org.stellarium.Stellarium"
     }
 ]

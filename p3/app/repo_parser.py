@@ -77,6 +77,11 @@ def _normalize_hardware_key(kind, value):
 
 
 def _entry_is_compatible(entry, compat_keys):
+
+    from .dev_mode import get_dev_compat_override, is_dev_mode_enabled
+    if is_dev_mode_enabled() and not get_dev_compat_override():
+        return True
+    
     # OS compatibility
     os_value = entry.get("os")
 

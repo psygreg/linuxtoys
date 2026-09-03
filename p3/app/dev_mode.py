@@ -222,12 +222,14 @@ def get_effective_compat_keys():
     
     compat_override = get_dev_compat_override()
     if compat_override:
-        # Developer mode with specific system simulation
-        # Include simulated OS keys plus GPU and desktop keys
-        from .compat import get_gpu_compat_keys, get_desktop_compat_keys
+        # Developer mode with specific system simulation:
+        # simulated OS + actual hardware/session/init properties.
+        from .compat import get_gpu_compat_keys, get_desktop_compat_keys, get_init_compat_keys
+
         keys = get_simulated_compat_keys()
         keys.update(get_gpu_compat_keys())
         keys.update(get_desktop_compat_keys())
+        keys.update(get_init_compat_keys())
         return keys
     else:
         # Developer mode without simulation - show all scripts
@@ -249,6 +251,9 @@ def get_effective_compat_keys():
             'pika',
             'deepin',
             'manjaro',
+
+            # Init systems
+            'systemd',
 
             # CPU compatibility
             'cpu-amd',
