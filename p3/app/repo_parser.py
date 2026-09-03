@@ -137,6 +137,9 @@ def _entry_is_compatible(entry, compat_keys):
             if required and not (required & compat_keys):
                 return False
 
+    if not _dependencies_are_compatible(entry, compat_keys):
+        return False
+    
     return True
 
 
@@ -249,9 +252,11 @@ def load_repo_entries(scripts_dir, translations=None):
         if not _validate_type(entry):
             continue
 
-        if not _entry_is_compatible(entry, compat_keys):
+        if not _validate_dependencies(entry):
             continue
 
+        if not _entry_is_compatible(entry, compat_keys):
+            continue
         # Script names are also used as registry identities and virtual paths,
         # so duplicate names from separate list files would be ambiguous.
         normalized_name = entry["name"].strip().casefold()
@@ -420,6 +425,11 @@ def create_install_script(entry):
     repo_metadata = _metadata_line(repo)
     icon = _metadata_line(entry.get("icon", "application-x-executable"))
 
+    compat_keys = get_system_compat_keys()
+    dependency_commands = _create_dependency_commands(
+        entry,
+        compat_keys,
+    )
     command = None
 
     if install_type == "git":
@@ -464,6 +474,9 @@ def create_install_script(entry):
     else:
         raise ValueError(f"Unknown repository entry type: {install_type}")
 
+    commands = dependency_commands + [command]
+    command_block = "\n".join(commands)
+
     contents = f"""#!/usr/bin/env bash
 # name: {name}
 # description: {description}
@@ -474,7 +487,7 @@ def create_install_script(entry):
 PACKAGE_OPS=1
 source "$SCRIPT_DIR/libs/linuxtoys.bash"
 
-{command}
+{command_block}
 
 info "$finishmsg"
 """
@@ -546,3 +559,88 @@ def _systemd_requirement_matches(entry, compat_keys):
         return "systemd" not in compat_keys
 
     return False
+
+def _validate_dependencies(entry):
+    dependencies = entry.get("dependencies", [])
+
+    if dependencies is None:
+        return True
+
+    if not isinstance(dependencies, list):
+        return False
+
+    for dependency in dependencies:
+        if not isinstance(dependency, dict):
+            return False
+
+        dependency_type = dependency.get("type")
+
+        if dependency_type not in {"native", "flathub"}:
+            return False
+
+        package = dependency.get("package-name")
+
+        if dependency_type == "flathub":
+            if not isinstance(package, str) or not package.strip():
+                return False
+
+        elif dependency_type == "native":
+            if isinstance(package, str):
+                if not package.strip():
+                    return False
+            elif isinstance(package, dict):
+                if not package:
+                    return False
+            else:
+                return False
+
+    return True
+
+def _dependencies_are_compatible(entry, compat_keys):
+    dependencies = entry.get("dependencies", [])
+
+    if not dependencies:
+        return True
+
+    for dependency in dependencies:
+        dependency_type = dependency.get("type")
+
+        if dependency_type == "flathub":
+            if "systemd" not in compat_keys:
+                return False
+
+        elif dependency_type == "native":
+            if not _resolve_native_package(dependency, compat_keys):
+                return False
+
+    return True
+
+def _create_dependency_commands(entry, compat_keys):
+    commands = []
+
+    for dependency in entry.get("dependencies", []):
+        dependency_type = dependency["type"]
+
+        if dependency_type == "native":
+            package = _resolve_native_package(
+                dependency,
+                compat_keys,
+            )
+
+            if not package:
+                raise ValueError(
+                    "No native package matches a declared dependency"
+                )
+
+            commands.append(
+                f"pkg_install {shlex.quote(package)}"
+            )
+
+        elif dependency_type == "flathub":
+            package = dependency["package-name"].strip()
+
+            commands.append(
+                f"pkg_flat {shlex.quote(package)}"
+            )
+
+    return commands
