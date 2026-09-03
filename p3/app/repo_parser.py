@@ -83,11 +83,32 @@ def _entry_is_compatible(entry, compat_keys):
     if os_value:
         requested = set(_as_list(os_value))
 
-        # Ignore hardware/desktop/etc. keys here; only OS keys are valid.
         if not requested or not requested <= OS_KEYS:
             return False
 
         if not requested & compat_keys:
+            return False
+
+    # Optional init-system compatibility.
+    if not _systemd_requirement_matches(entry, compat_keys):
+        return False
+
+    install_type = entry.get("type", "git")
+
+    # Flatpak installations implicitly require systemd.
+    if install_type == "flathub":
+        if "systemd" not in compat_keys:
+            return False
+
+    elif install_type == "url":
+        resolved = _resolve_url_package(entry, compat_keys)
+
+        if not resolved:
+            return False
+
+        package_type, _ = resolved
+
+        if package_type == "flatpak" and "systemd" not in compat_keys:
             return False
 
     # Hardware compatibility
@@ -226,10 +247,6 @@ def load_repo_entries(scripts_dir, translations=None):
         if not _entry_is_compatible(entry, compat_keys):
             continue
 
-        if entry.get("type") == "url":
-            if not _resolve_url_package(entry, compat_keys):
-                continue
-
         # Script names are also used as registry identities and virtual paths,
         # so duplicate names from separate list files would be ambiguous.
         normalized_name = entry["name"].strip().casefold()
@@ -325,10 +342,11 @@ def _valid_package_url(value):
 
 def _resolve_url_package(entry, compat_keys):
     """
-    Resolve the best downloadable package URL for the current system.
+    Resolve the best downloadable package for the current system.
 
-    Native package formats are preferred. AppImage and Flatpak act as
-    portable fallbacks when no native package is provided.
+    Returns:
+        tuple[str, str] | None:
+            (package_type, url)
     """
     urls = entry.get("urls")
 
@@ -362,18 +380,19 @@ def _resolve_url_package(entry, compat_keys):
     }:
         native_keys.extend(("pkg.tar.zst", "pacman"))
 
-    # Prefer a package native to the current operating system.
+    # Prefer a native package.
     for key in native_keys:
         value = urls.get(key)
-        if _valid_package_url(value):
-            return value.strip()
 
-    # Portable fallbacks, including systems such as Solus for which the
-    # URL format currently has no native package type.
+        if _valid_package_url(value):
+            return key, value.strip()
+
+    # Portable fallbacks.
     for key in ("appimage", "flatpak"):
         value = urls.get(key)
+
         if _valid_package_url(value):
-            return value.strip()
+            return key, value.strip()
 
     return None
 
@@ -421,12 +440,14 @@ def create_install_script(entry):
 
     elif install_type == "url":
         compat_keys = get_system_compat_keys()
-        package_url = _resolve_url_package(entry, compat_keys)
+        resolved = _resolve_url_package(entry, compat_keys)
 
-        if not package_url:
+        if not resolved:
             raise ValueError(
                 "No downloadable package URL matches this operating system"
             )
+
+        _, package_url = resolved
 
         command = f"pkg_fromurl {shlex.quote(package_url)}"
 
@@ -488,3 +509,35 @@ def materialize_repo_script(script_info):
     materialized["virtual_path"] = script_info.get("path")
     materialized["path"] = create_install_script(script_info)
     return materialized
+
+def _systemd_requirement_matches(entry, compat_keys):
+    """
+    Check an entry's optional systemd requirement.
+
+    systemd:
+      omitted / "" -> neutral
+      "yes"        -> requires systemd
+      "no"         -> requires non-systemd
+
+    Invalid values make the entry incompatible.
+    """
+    value = entry.get("systemd", "")
+
+    if value is None:
+        value = ""
+
+    if not isinstance(value, str):
+        return False
+
+    value = value.strip().lower()
+
+    if not value:
+        return True
+
+    if value == "yes":
+        return "systemd" in compat_keys
+
+    if value == "no":
+        return "systemd" not in compat_keys
+
+    return False

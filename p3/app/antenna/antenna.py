@@ -148,7 +148,8 @@ def get_system_context() -> str:
 def _get_repo_owner_mention() -> str:
     """
     Return a GitHub @owner mention when the most recently executed script
-    originated from repos.json and its repo points to GitHub.
+    originated from a repository list, is officially supported by LinuxToys,
+    and its repo points to GitHub.
     """
     try:
         history = _load_history()
@@ -159,10 +160,16 @@ def _get_repo_owner_mention() -> str:
         if not script_name:
             return ""
 
-        from .. import parser
+        from .. import parser, official_index
+
+        # Only first-party-supported entries should notify upstream.
+        if not official_index.is_verified_name(script_name):
+            return ""
+
+        normalized_name = script_name.casefold()
 
         for entry in parser.get_repo_entries():
-            if entry.get("name", "").strip() != script_name:
+            if entry.get("name", "").strip().casefold() != normalized_name:
                 continue
 
             repo = entry.get("repo", "").strip()
@@ -183,8 +190,6 @@ def _get_repo_owner_mention() -> str:
 
             owner = parts[0]
 
-            # GitHub usernames/organization names may only contain
-            # alphanumeric characters and hyphens.
             if not owner or not all(
                 char.isalnum() or char == "-"
                 for char in owner
@@ -196,6 +201,8 @@ def _get_repo_owner_mention() -> str:
     except Exception:
         # Bug reporting must never fail just because attribution failed.
         return ""
+
+    return ""
     
 # --- Script History Management ---
 def _load_history() -> list:
