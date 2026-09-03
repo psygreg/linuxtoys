@@ -19,8 +19,8 @@ dep_check () {
         if dpkg -l | grep -qE 'grub-efi|grub-pc'; then
             grub_found=true
         fi
-    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [[ "$ID" =~ (fedora) ]]; then
-        if rpm -qa | grep -qE 'grub2-efi|grub2-pc'; then
+    elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" = "fedora" ]; then
+        if command -v grub2-mkconfig &>/dev/null; then
             grub_found=true
         fi
     elif [[ "$ID_LIKE" == *suse* ]]; then
