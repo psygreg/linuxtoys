@@ -266,11 +266,13 @@ def _parse_operation(op_line):
     if len(parts) > 1:
         # For operations with multiple parts (e.g., "sysd enabled service")
         if op_type == "sysd":
-            # sysd operations have format: "sysd action service"
+            # User mode
+            if len(parts) >= 4 and parts[1] == "usermode":
+                return op_type, [parts[1], parts[2], parts[3]]
+            # System mode
             if len(parts) >= 3:
-                return op_type, [parts[1], parts[2]]  # ["enabled", "ssh"]
-            else:
-                return op_type, parts[1:] if len(parts) > 1 else []
+                return op_type, [parts[1], parts[2]]
+            return op_type, parts[1:]
         elif op_type == "pkg":
             # pkg operations have different formats:
             # "pkg rm package" -> distinguish removal

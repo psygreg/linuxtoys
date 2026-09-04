@@ -54,6 +54,20 @@ NATIVE_PACKAGE_KEY_PRIORITY = (
     "arch",
 )
 
+SYSTEMD_UNIT_SUFFIXES = {
+    ".service",
+    ".socket",
+    ".timer",
+    ".path",
+    ".mount",
+    ".automount",
+    ".target",
+    ".slice",
+    ".scope",
+    ".device",
+    ".swap",
+}
+
 def _as_list(value):
     if value is None:
         return []
@@ -96,6 +110,9 @@ def _entry_is_compatible(entry, compat_keys):
 
     # Optional init-system compatibility.
     if not _systemd_requirement_matches(entry, compat_keys):
+        return False
+
+    if entry.get("services") is not None and "systemd" not in compat_keys:
         return False
 
     install_type = entry.get("type", "git")
@@ -256,6 +273,9 @@ def load_repo_entries(scripts_dir, translations=None):
             continue
 
         if not _validate_overrides(entry):
+            continue
+
+        if not _validate_services(entry):
             continue
 
         if not _entry_is_compatible(entry, compat_keys):
@@ -478,8 +498,15 @@ def create_install_script(entry):
         raise ValueError(f"Unknown repository entry type: {install_type}")
 
     override_commands = _create_override_commands(entry)
-    commands = dependency_commands + [command] + override_commands
-    
+    service_commands = _create_service_commands(entry)
+
+    commands = (
+        dependency_commands
+        + [command]
+        + override_commands
+        + service_commands
+    )
+
     command_block = "\n".join(commands)
 
     contents = f"""#!/usr/bin/env bash
@@ -719,5 +746,114 @@ def _create_override_commands(entry):
             f"{shlex.quote(override['setting'].strip())} "
             f"{shlex.quote(override['target'].strip())}"
         )
+
+    return commands
+
+def _normalize_service_name(value):
+    if not isinstance(value, str):
+        return None
+
+    value = value.strip()
+
+    if not value:
+        return None
+
+    if not any(value.endswith(suffix) for suffix in SYSTEMD_UNIT_SUFFIXES):
+        value += ".service"
+
+    return value
+
+def _normalize_services(entry):
+    """
+    Normalize the services field to:
+
+        {
+            "system": [...],
+            "user": [...]
+        }
+
+    Direct strings/lists default to system scope.
+    """
+    services = entry.get("services")
+
+    if services is None:
+        return {
+            "system": [],
+            "user": [],
+        }
+
+    if isinstance(services, str):
+        services = {
+            "system": [services],
+        }
+
+    elif isinstance(services, list):
+        services = {
+            "system": services,
+        }
+
+    elif isinstance(services, dict):
+        # Only supported scopes.
+        if set(services) - {"system", "user"}:
+            return None
+
+    else:
+        return None
+
+    normalized = {
+        "system": [],
+        "user": [],
+    }
+
+    for scope in ("system", "user"):
+        values = services.get(scope, [])
+
+        if isinstance(values, str):
+            values = [values]
+
+        if not isinstance(values, list):
+            return None
+
+        for value in values:
+            service = _normalize_service_name(value)
+
+            if not service:
+                return None
+
+            normalized[scope].append(service)
+
+    return normalized
+
+def _validate_services(entry):
+    return _normalize_services(entry) is not None
+
+def _create_service_commands(entry):
+    services = _normalize_services(entry)
+
+    if not services:
+        return []
+
+    commands = []
+
+    if services["system"]:
+        commands.append("askpass")
+
+        for service in services["system"]:
+            quoted = shlex.quote(service)
+
+            commands.extend([
+                f"sudo systemctl enable --now {quoted}",
+                f'_append_transmap "sysd enabled {service}"',
+                f'_append_transmap "sysd started {service}"',
+            ])
+
+    for service in services["user"]:
+        quoted = shlex.quote(service)
+
+        commands.extend([
+            f"systemctl --user enable --now {quoted}",
+            f'_append_transmap "sysd usermode enabled {service}"',
+            f'_append_transmap "sysd usermode started {service}"',
+        ])
 
     return commands
