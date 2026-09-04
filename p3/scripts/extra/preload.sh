@@ -3,7 +3,7 @@
 # version: 1.0
 # description: preload_desc
 # icon: preload.svg
-# compat: ubuntu, debian, fedora, ostree, ublue, cachy, arch
+# compat: ubuntu, debian, cachy, arch
 # reboot: ostree
 # noconfirm: yes
 # nocontainer
