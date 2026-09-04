@@ -9,7 +9,7 @@ from .compat import (
     should_show_optimization_script
 )
 from .lang_utils import detect_system_language
-from . import git_scripts_manager, official_index, repo_parser
+from . import git_scripts_manager, new_index, official_index, repo_parser
 
 
 # Get scripts directory - uses git-synced scripts with fallback to bundled
@@ -109,11 +109,6 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                 if line.startswith(prefix):
                     line_content = line[len(prefix):].strip()
                     
-                    # Handle flag headers like '# new' (no colon or value needed)
-                    if line_content == 'new':
-                        metadata['is_new'] = True
-                        continue
-                    
                     parts = line_content.split(':', 1)
                     if len(parts) == 2:
                         key = parts[0].strip().lower()
@@ -133,8 +128,10 @@ def _parse_metadata_file(file_path, default_values, translations=None):
         print(f"Error reading metadata from {file_path}: {e}")
 
     if file_path.endswith(".sh"):
+        metadata["is_new"] = new_index.is_new_script(file_path)
         metadata["is_verified"] = official_index.is_verified_script(file_path)
     else:
+        metadata["is_new"] = False
         metadata["is_verified"] = False
     return metadata
 
@@ -212,7 +209,6 @@ def get_categories(translations=None):
                 'reboot': 'no',
                 'repo': '',
                 'revert': 'yes',
-                'is_new': False
             }
             header = _parse_metadata_file(file_path, defaults, translations)
             # Filter by compatibility and locale
@@ -357,7 +353,6 @@ def get_scripts_for_category(category_path, translations=None):
                 'reboot': 'no',
                 'repo': '',
                 'revert': 'yes',
-                'is_new': False
             }
             script_info = _parse_metadata_file(file_path, defaults, translations)
             
@@ -431,7 +426,6 @@ def get_all_scripts_recursive(directory_path, translations=None):
                 'icon': 'application-x-executable',
                 'reboot': 'no',
                 'repo': '',
-                'is_new': False
             }
             script_info = _parse_metadata_file(item_path, defaults, translations)
             

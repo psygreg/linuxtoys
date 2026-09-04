@@ -121,7 +121,6 @@ class ScriptCache:
                     'icon': 'application-x-executable',
                     'reboot': 'no',
                     'repo': '',
-                    'is_new': False
                 }
                 script_info = parser._parse_metadata_file(item_path, defaults, translations)
                 

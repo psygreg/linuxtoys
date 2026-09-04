@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 from .compat import get_system_compat_keys, is_containerized
 from .dev_mode import get_effective_compat_keys
-from . import official_index
+from . import official_index, new_index
 
 OS_KEYS = {
     "debian",
@@ -373,7 +373,10 @@ def load_repo_entries(scripts_dir, translations=None):
             "is_repo_entry": True,
             "revert": "yes",
             "reboot": "no",
-            "is_new": False,
+            
+            "is_new": new_index.is_new_name(
+                entry["name"]
+            ),
 
             # Virtual identity, NOT an actual shell script.
             "path": f"repo://{entry['name']}",
