@@ -522,5 +522,8 @@
   "vbox_desc": "Uma poderosa solução de código aberto para virtualização completa de uso geral, tanto pessoal quanto empresarial.",
   "leshade_desc": "Um gerenciador de ReShade para Linux que permite instalar shaders facilmente para jogos executados através do WINE/Proton em seus respectivos prefixos.",
   "ax900_desc": "Driver para o chipset combinado WiFi/Bluetooth AIC8800D80, encontrado em diversos adaptadores USB.",
-  "official_spec_key": "oficial"
+  "official_spec_key": "oficial",
+  "select_official_app_title": "Selecionar aplicativo",
+  "select_official_app_message": "Selecione o aplicativo ao qual este relatório se refere:",
+  "bug_report_app": "Aplicativo (opcional):"
 }

@@ -522,5 +522,8 @@
   "vbox_desc": "Výkonné open source riešenie na úplnú virtualizáciu na všeobecné použitie pre osobné aj podnikové nasadenie.",
   "leshade_desc": "Správca ReShade pre Linux, ktorý umožňuje jednoducho inštalovať shadery pre hry spúšťané cez WINE/Proton do ich príslušných prefixov.",
   "ax900_desc": "Ovládač pre kombinovaný čipset WiFi/Bluetooth AIC8800D80, ktorý sa nachádza v rôznych USB adaptéroch.",
-  "official_spec_key": "oficiálne"
+  "official_spec_key": "oficiálne",
+  "select_official_app_title": "Vyberte aplikáciu",
+  "select_official_app_message": "Vyberte aplikáciu, ktorej sa toto hlásenie týka:",
+  "bug_report_app": "Aplikácia (voliteľné):"
 }

@@ -522,5 +522,8 @@
   "vbox_desc": "פתרון רב-עוצמה ובקוד פתוח לווירטואליזציה מלאה לשימוש כללי, לשימוש אישי וארגוני.",
   "leshade_desc": "מנהל ReShade עבור Linux, המאפשר להתקין בקלות shaders למשחקים הפועלים דרך WINE/Proton בתוך ה-prefix המתאים לכל משחק.",
   "ax900_desc": "מנהל התקן עבור ערכת השבבים המשולבת WiFi/Bluetooth AIC8800D80, הנמצאת במספר מתאמי USB.",
-  "official_spec_key": "רשמי"
+  "official_spec_key": "רשמי",
+  "select_official_app_title": "בחר יישום",
+  "select_official_app_message": "בחר את היישום שאליו מתייחס דוח זה:",
+  "bug_report_app": "יישום (אופציונלי):"
 }

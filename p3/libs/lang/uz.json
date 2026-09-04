@@ -521,5 +521,8 @@
   "vbox_desc": "Shaxsiy va korporativ foydalanish uchun kuchli, ochiq kodli, umumiy maqsadli to‘liq virtualizatsiya yechimi.",
   "leshade_desc": "Linux uchun ReShade menejeri bo‘lib, WINE/Proton orqali ishlaydigan o‘yinlarning tegishli prefixlariga shaderlarni osongina o‘rnatish imkonini beradi.",
   "ax900_desc": "Turli USB adapterlarida uchraydigan AIC8800D80 kombinatsiyalangan WiFi/Bluetooth chipseti uchun drayver.",
-  "official_spec_key": "rasmiy"
+  "official_spec_key": "rasmiy",
+  "select_official_app_title": "Ilovani tanlang",
+  "select_official_app_message": "Ushbu hisobot tegishli bo‘lgan ilovani tanlang:",
+  "bug_report_app": "Ilova (ixtiyoriy):"
 }

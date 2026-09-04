@@ -522,5 +522,8 @@
   "vbox_desc": "Réiteach cumhachtach foinse oscailte le haghaidh fíorúlú iomlán ilchuspóireach, d'úsáid phearsanta agus fiontraíochta.",
   "leshade_desc": "Bainisteoir ReShade do Linux a ligeann duit shaders a shuiteáil go héasca do chluichí a ritheann trí WINE/Proton ina réimíreanna faoi seach.",
   "ax900_desc": "Tiománaí don chipset teaglama WiFi/Bluetooth AIC8800D80, atá le fáil i roinnt cuibheoirí USB.",
-  "official_spec_key": "oifigiúil"
+  "official_spec_key": "oifigiúil",
+  "select_official_app_title": "Roghnaigh feidhmchlár",
+  "select_official_app_message": "Roghnaigh an feidhmchlár lena mbaineann an tuairisc seo:",
+  "bug_report_app": "Feidhmchlár (roghnach):"
 }

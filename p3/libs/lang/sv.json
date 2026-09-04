@@ -522,5 +522,8 @@
   "vbox_desc": "Kraftfull lösning med öppen källkod för fullständig virtualisering för allmänna ändamål, för både privat- och företagsbruk.",
   "leshade_desc": "En ReShade-hanterare för Linux som gör det enkelt att installera shaders för spel som körs genom WINE/Proton i deras respektive prefix.",
   "ax900_desc": "Drivrutin för det kombinerade WiFi/Bluetooth-chipsetet AIC8800D80, som finns i flera USB-adaptrar.",
-  "official_spec_key": "officiell"
+  "official_spec_key": "officiell",
+  "select_official_app_title": "Välj program",
+  "select_official_app_message": "Välj programmet som den här rapporten gäller:",
+  "bug_report_app": "Program (valfritt):"
 }

@@ -521,5 +521,8 @@
   "vbox_desc": "Moćno rješenje otvorenog koda za potpunu virtualizaciju opće namjene, za ličnu i poslovnu upotrebu.",
   "leshade_desc": "ReShade upravitelj za Linux koji omogućava jednostavnu instalaciju shadera za igre pokrenute putem WINE/Protona u njihove odgovarajuće prefikse.",
   "ax900_desc": "Upravljački program za AIC8800D80 kombinovani WiFi/Bluetooth čipset, koji se nalazi u raznim USB adapterima.",
-  "official_spec_key": "službeno"
+  "official_spec_key": "službeno",
+  "select_official_app_title": "Odaberite aplikaciju",
+  "select_official_app_message": "Odaberite aplikaciju na koju se ovaj izvještaj odnosi:",
+  "bug_report_app": "Aplikacija (opcionalno):"
 }

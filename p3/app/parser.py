@@ -265,6 +265,61 @@ def get_repo_entries(translations=None):
     """Return all valid dynamic repository entries from scripts/repos.json."""
     return repo_parser.load_repo_entries(SCRIPTS_DIR, translations)
 
+def get_display_name(name, translations=None):
+    """
+    Resolve an internal script/repository name to the same user-facing name
+    used by the LinuxToys UI.
+
+    Falls back to the original name if no matching entry can be found.
+    """
+    if not name:
+        return name
+
+    normalized_name = str(name).strip().casefold()
+
+    # Repository-list entries already have their names resolved by repo_parser.
+    for entry in get_repo_entries(translations):
+        entry_name = str(entry.get("name", "")).strip()
+
+        # The repository parser may preserve an internal identifier separately.
+        entry_id = str(
+            entry.get("id")
+            or entry.get("script")
+            or entry_name
+        ).strip()
+
+        if entry_id.casefold() == normalized_name:
+            return entry_name or name
+
+    # Normal scripts: locate by filename, then resolve the name header through
+    # the exact same metadata parser used by the normal LinuxToys UI.
+    for root, dirs, files in os.walk(SCRIPTS_DIR):
+        dirs[:] = [
+            directory
+            for directory in dirs
+            if not _should_skip_directory(directory)
+        ]
+
+        for file_name in files:
+            if not file_name.endswith(".sh"):
+                continue
+
+            script_id = os.path.splitext(file_name)[0]
+            if script_id.casefold() != normalized_name:
+                continue
+
+            file_path = os.path.join(root, file_name)
+
+            metadata = _parse_metadata_file(
+                file_path,
+                {"name": script_id},
+                translations,
+            )
+
+            return metadata.get("name", script_id)
+
+    return name
+
 def get_scripts_for_category(category_path, translations=None):
     """
     Returns a list of scripts and subcategories for a given category.

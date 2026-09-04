@@ -522,5 +522,8 @@
   "vbox_desc": "Zgjidhje e fuqishme me burim të hapur për virtualizim të plotë dhe përdorim të përgjithshëm, si personal ashtu edhe në ndërmarrje.",
   "leshade_desc": "Një menaxher ReShade për Linux që ju lejon të instaloni lehtësisht shader-a për lojërat që ekzekutohen përmes WINE/Proton në prefikset e tyre përkatëse.",
   "ax900_desc": "Drejtues për chipset-in e kombinuar WiFi/Bluetooth AIC8800D80, që gjendet në disa përshtatës USB.",
-  "official_spec_key": "zyrtare"
+  "official_spec_key": "zyrtare",
+  "select_official_app_title": "Zgjidhni aplikacionin",
+  "select_official_app_message": "Zgjidhni aplikacionin të cilit i referohet ky raport:",
+  "bug_report_app": "Aplikacioni (opsional):"
 }

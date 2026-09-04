@@ -522,5 +522,8 @@
   "vbox_desc": "ကိုယ်ပိုင်နှင့် လုပ်ငန်းသုံးအတွက် အားကောင်းသော၊ open source ဖြစ်သည့်၊ ယေဘုယျရည်ရွယ်ချက်သုံး full virtualization ဖြေရှင်းချက်။",
   "leshade_desc": "WINE/Proton မှတစ်ဆင့် လည်ပတ်သည့် ဂိမ်းများ၏ သက်ဆိုင်ရာ prefix များတွင် shader များကို လွယ်ကူစွာ ထည့်သွင်းနိုင်စေသည့် Linux အတွက် ReShade manager။",
   "ax900_desc": "USB adapter အမျိုးမျိုးတွင် တွေ့ရသော AIC8800D80 ပေါင်းစပ် WiFi/Bluetooth chipset အတွက် driver။",
-  "official_spec_key": "တရားဝင်"
+  "official_spec_key": "တရားဝင်",
+  "select_official_app_title": "အပလီကေးရှင်းကို ရွေးချယ်ပါ",
+  "select_official_app_message": "ဤအစီရင်ခံစာနှင့် သက်ဆိုင်သည့် အပလီကေးရှင်းကို ရွေးချယ်ပါ:",
+  "bug_report_app": "အပလီကေးရှင်း (ရွေးချယ်နိုင်သည်):"
 }

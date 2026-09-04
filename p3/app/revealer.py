@@ -5,6 +5,9 @@ from .antenna import antenna
 
 
 class BugReportDialog(Gtk.Dialog):
+
+    from .official_app_selector import OfficialAppSelector
+
     """Dialog for collecting bug report information from the user."""
     
     def __init__(self, parent, translations):
@@ -30,15 +33,40 @@ class BugReportDialog(Gtk.Dialog):
         content_area.set_margin_end(10)
         content_area.set_margin_top(10)
         content_area.set_margin_bottom(10)
-        
-        # Title label
-        title_label = Gtk.Label(
-            label="<b>" + translations.get("report_label", "Report Bug") + "</b>",
-            use_markup=True,
-            xalign=0
+
+        self.selected_app = None
+
+        app_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=10,
         )
-        content_area.pack_start(title_label, False, False, 0)
-        
+
+        app_label = Gtk.Label(
+            label=translations.get(
+                "bug_report_app",
+                "Application (optional):",
+            ),
+        )
+        app_label.set_halign(Gtk.Align.START)
+
+        self.app_button = Gtk.Button(
+            label=translations.get(
+                "bug_report_general",
+                "LinuxToys",
+            )
+        )
+        self.app_button.set_hexpand(True)
+        self.app_button.set_halign(Gtk.Align.FILL)
+        self.app_button.connect(
+            "clicked",
+            self._on_select_app,
+        )
+
+        app_box.pack_start(app_label, False, False, 0)
+        app_box.pack_start(self.app_button, True, True, 0)
+
+        content_area.pack_start(app_box, False, False, 0)
+
         # Description
         desc_label = Gtk.Label(
             label=translations.get(
@@ -83,6 +111,32 @@ class BugReportDialog(Gtk.Dialog):
             False
         ).strip()
 
+    def _on_select_app(self, button):
+        selector = self.OfficialAppSelector(
+            self,
+            self.translations,
+            current_app=self.selected_app,
+        )
+
+        self.selected_app = selector.show()
+
+        if self.selected_app:
+            self.app_button.set_label(
+                self.translations.get(
+                    self.selected_app,
+                    self.selected_app,
+                )
+            )
+        else:
+            self.app_button.set_label(
+                self.translations.get(
+                    "bug_report_general",
+                    "LinuxToys",
+                )
+            )
+
+    def get_selected_app(self):
+        return self.selected_app
 
 class SupportFooter(Gtk.Box):
     def __init__(self, translations, parent_window=None):
@@ -184,10 +238,15 @@ class SupportFooter(Gtk.Box):
         
         if response == Gtk.ResponseType.OK:
             comment = dialog.get_user_comment()
+            selected_app = dialog.get_selected_app()
             dialog.destroy()
-            
+
             if comment:
-                self._submit_bug_report(comment, parent)
+                self._submit_bug_report(
+                    comment,
+                    parent,
+                    selected_app,
+                )
             else:
                 # Show error if no comment provided
                 error_dialog = Gtk.MessageDialog(
@@ -213,7 +272,7 @@ class SupportFooter(Gtk.Box):
         self._on_bug_report_clicked(button)
         return True  # Prevent default link navigation
     
-    def _submit_bug_report(self, comment: str, parent_window):
+    def _submit_bug_report(self, comment: str, parent_window, selected_app=None):
         """Submit bug report in background thread."""
         def submit():
             try:
@@ -223,6 +282,8 @@ class SupportFooter(Gtk.Box):
                     logs=comment,
                     context=system_context,
                     is_footer_triggered=True,
+                    related_app=selected_app,
+                    infer_related_app=False,
                 )
                 
                 # Show success message on main thread

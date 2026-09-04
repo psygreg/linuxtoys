@@ -522,5 +522,8 @@
   "vbox_desc": "Galingas atvirojo kodo bendrosios paskirties visiškos virtualizacijos sprendimas asmeniniam ir verslo naudojimui.",
   "leshade_desc": "„ReShade“ tvarkyklė, skirta „Linux“, leidžianti lengvai įdiegti shaderius žaidimams, veikiantiems per WINE/Proton, į atitinkamus jų prefiksus.",
   "ax900_desc": "Tvarkyklė AIC8800D80 kombinuotam WiFi/Bluetooth lustų rinkiniui, naudojamam įvairiuose USB adapteriuose.",
-  "official_spec_key": "oficialus"
+  "official_spec_key": "oficialus",
+  "select_official_app_title": "Pasirinkite programą",
+  "select_official_app_message": "Pasirinkite programą, su kuria susijęs šis pranešimas:",
+  "bug_report_app": "Programa (neprivaloma):"
 }

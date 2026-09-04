@@ -522,5 +522,8 @@
   "vbox_desc": "Nagy teljesítményű, nyílt forráskódú, általános célú teljes virtualizációs megoldás személyes és vállalati használatra.",
   "leshade_desc": "ReShade-kezelő Linuxhoz, amellyel egyszerűen telepíthetők shaderek a WINE/Protonon keresztül futó játékok megfelelő prefixeibe.",
   "ax900_desc": "Illesztőprogram a többféle USB-adapterben megtalálható AIC8800D80 kombinált WiFi/Bluetooth lapkakészlethez.",
-  "official_spec_key": "hivatalos"
+  "official_spec_key": "hivatalos",
+  "select_official_app_title": "Alkalmazás kiválasztása",
+  "select_official_app_message": "Válassza ki az alkalmazást, amelyre ez a jelentés vonatkozik:",
+  "bug_report_app": "Alkalmazás (opcionális):"
 }

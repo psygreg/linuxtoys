@@ -522,5 +522,8 @@
   "vbox_desc": "Penyelesaian virtualisasi penuh sumber terbuka yang berkuasa dan serba guna untuk kegunaan peribadi serta perusahaan.",
   "leshade_desc": "Pengurus ReShade untuk Linux yang membolehkan anda memasang shader dengan mudah untuk permainan yang dijalankan melalui WINE/Proton dalam prefix masing-masing.",
   "ax900_desc": "Pemacu untuk cipset kombo WiFi/Bluetooth AIC8800D80 yang terdapat dalam pelbagai penyesuai USB.",
-  "official_spec_key": "rasmi"
+  "official_spec_key": "rasmi",
+  "select_official_app_title": "Pilih aplikasi",
+  "select_official_app_message": "Pilih aplikasi yang berkaitan dengan laporan ini:",
+  "bug_report_app": "Aplikasi (pilihan):"
 }

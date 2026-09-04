@@ -522,5 +522,8 @@
   "vbox_desc": "Tehokas avoimen lähdekoodin yleiskäyttöinen täysvirtualisointiratkaisu henkilökohtaiseen ja yrityskäyttöön.",
   "leshade_desc": "ReShade-hallintaohjelma Linuxille, jolla voit helposti asentaa shadereita WINE/Protonin kautta toimiville peleille niiden omiin prefikseihin.",
   "ax900_desc": "Ajuri AIC8800D80-yhdistelmä-WiFi/Bluetooth-piirisarjalle, jota käytetään useissa USB-sovittimissa.",
-  "official_spec_key": "virallinen"
+  "official_spec_key": "virallinen",
+  "select_official_app_title": "Valitse sovellus",
+  "select_official_app_message": "Valitse sovellus, jota tämä raportti koskee:",
+  "bug_report_app": "Sovellus (valinnainen):"
 }

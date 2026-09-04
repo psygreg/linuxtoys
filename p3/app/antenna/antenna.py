@@ -145,31 +145,36 @@ def get_system_context() -> str:
     
     return " | ".join(context_parts)
 
-def _get_repo_owner_mention() -> str:
+def _get_repo_owner_mention(script_name: str | None = None) -> str:
     """
-    Return a GitHub @owner mention when the most recently executed script
-    originated from a repository list, is officially supported by LinuxToys,
-    and its repo points to GitHub.
+    Return a GitHub @owner mention for an officially supported
+    repository-list application.
+
+    If script_name is omitted, infer it from execution history.
     """
     try:
-        history = _load_history()
-        if not history:
-            return ""
+        if script_name is None:
+            history = _load_history()
+            if not history:
+                return ""
 
-        script_name = history[-1].get("name", "").strip()
+            script_name = history[-1].get("name", "").strip()
+
         if not script_name:
             return ""
 
         from .. import parser, official_index
 
-        # Only first-party-supported entries should notify upstream.
         if not official_index.is_verified_name(script_name):
             return ""
 
         normalized_name = script_name.casefold()
 
         for entry in parser.get_repo_entries():
-            if entry.get("name", "").strip().casefold() != normalized_name:
+            if (
+                entry.get("name", "").strip().casefold()
+                != normalized_name
+            ):
                 continue
 
             repo = entry.get("repo", "").strip()
@@ -181,10 +186,18 @@ def _get_repo_owner_mention() -> str:
             if parsed.scheme not in ("http", "https"):
                 return ""
 
-            if parsed.hostname not in ("github.com", "www.github.com"):
+            if parsed.hostname not in (
+                "github.com",
+                "www.github.com",
+            ):
                 return ""
 
-            parts = [part for part in parsed.path.split("/") if part]
+            parts = [
+                part
+                for part in parsed.path.split("/")
+                if part
+            ]
+
             if len(parts) < 2:
                 return ""
 
@@ -199,7 +212,6 @@ def _get_repo_owner_mention() -> str:
             return f"@{owner}"
 
     except Exception:
-        # Bug reporting must never fail just because attribution failed.
         return ""
 
     return ""
@@ -581,7 +593,14 @@ def _initialize_antenna() -> None:
     _antenna_initialized = True
  
 # --- Issue submission ---
-def submit_issue(title: str, logs: str = "", context: str = "", is_footer_triggered: bool = False) -> dict | None:
+def submit_issue(
+    title: str,
+    logs: str = "",
+    context: str = "",
+    is_footer_triggered: bool = False,
+    related_app: str | None = None,
+    infer_related_app: bool = True,
+) -> dict | None:
     """Submit a GitHub issue. Logs default to current captured output (last 20 lines).
     
     Args:
@@ -636,11 +655,30 @@ def submit_issue(title: str, logs: str = "", context: str = "", is_footer_trigge
         if registry_content:
             logs = logs + "\n" + registry_content
 
-    repo_owner = _get_repo_owner_mention()
+    # Handle upstream developer tagging
+    validated_app = None
+    if related_app:
+        try:
+            from .. import official_index
 
-    if repo_owner:
+            if official_index.is_verified_name(related_app):
+                validated_app = related_app
+        except Exception:
+            pass
+    if validated_app:
         context = (
             f"{context}\n\n"
+            f"Official application: {validated_app}"
+        ).strip()
+
+        repo_owner = _get_repo_owner_mention(validated_app)
+    elif infer_related_app:
+        repo_owner = _get_repo_owner_mention()
+    else:
+        repo_owner = ""
+    if repo_owner:
+        context = (
+            f"{context}\n"
             f"Upstream repository maintainer: {repo_owner}"
         ).strip()
         

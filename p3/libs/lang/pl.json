@@ -522,5 +522,8 @@
   "vbox_desc": "Potężne rozwiązanie open source do pełnej wirtualizacji ogólnego przeznaczenia, do użytku osobistego i firmowego.",
   "leshade_desc": "Menedżer ReShade dla Linuksa, który umożliwia łatwą instalację shaderów dla gier uruchamianych przez WINE/Proton w ich odpowiednich prefiksach.",
   "ax900_desc": "Sterownik dla układu AIC8800D80 łączącego WiFi i Bluetooth, stosowanego w różnych adapterach USB.",
-  "official_spec_key": "oficjalne"
+  "official_spec_key": "oficjalne",
+  "select_official_app_title": "Wybierz aplikację",
+  "select_official_app_message": "Wybierz aplikację, której dotyczy to zgłoszenie:",
+  "bug_report_app": "Aplikacja (opcjonalnie):"
 }
