@@ -34,32 +34,103 @@ def _get_os_info() -> dict:
     except Exception:
         pass
     return os_info
- 
+
+def _get_cpu_model() -> str:
+    """Return the host CPU model name."""
+    try:
+        with open("/proc/cpuinfo", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("model name"):
+                    return line.split(":", 1)[1].strip()
+
+                # Useful fallback for some ARM systems.
+                if line.startswith("Processor"):
+                    return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+
+    return "unknown"
+
 def _get_gpu_info() -> dict:
-    """Count PCI display devices, independently of compatibility capabilities."""
-    gpu_count = 0
+    """Detect PCI display devices and return their human-readable names."""
+    import subprocess
+
+    devices = []
     has_nvidia = False
+
     for device in Path("/sys/bus/pci/devices").glob("*"):
         try:
-            device_class = int((device / "class").read_text(encoding="utf-8").strip(), 16)
+            device_class = int(
+                (device / "class").read_text(encoding="utf-8").strip(),
+                16,
+            )
         except (OSError, ValueError):
             continue
-        # Display class includes VGA, 3D and other display controllers. Audio
-        # functions and PCI bridges belonging to a graphics card do not count.
+
+        # VGA, 3D and other display controllers.
         if device_class >> 16 != 0x03:
             continue
-        gpu_count += 1
+
         try:
-            vendor = int((device / "vendor").read_text(encoding="utf-8").strip(), 16)
+            vendor = int(
+                (device / "vendor").read_text(encoding="utf-8").strip(),
+                16,
+            )
         except (OSError, ValueError):
-            continue  # The device still counts even if its vendor is unreadable.
+            vendor = None
+
         if vendor == 0x10DE:
             has_nvidia = True
 
+        gpu_name = ""
+
+        # Prefer lspci because it resolves PCI IDs to useful product names.
+        try:
+            result = subprocess.run(
+                ["lspci", "-s", device.name],
+                capture_output=True,
+                text=True,
+                timeout=2,
+                check=False,
+            )
+
+            output = result.stdout.strip()
+
+            if output:
+                # Example:
+                # 03:00.0 VGA compatible controller: Intel Corporation ...
+                if ": " in output:
+                    gpu_name = output.split(": ", 1)[1]
+
+                    # Remove the controller class prefix.
+                    if ": " in gpu_name:
+                        gpu_name = gpu_name.split(": ", 1)[1]
+
+        except (OSError, subprocess.SubprocessError):
+            pass
+
+        # Fall back to raw PCI IDs if lspci is unavailable.
+        if not gpu_name:
+            try:
+                device_id = int(
+                    (device / "device").read_text(encoding="utf-8").strip(),
+                    16,
+                )
+            except (OSError, ValueError):
+                device_id = None
+
+            if vendor is not None and device_id is not None:
+                gpu_name = f"PCI {vendor:04x}:{device_id:04x}"
+            else:
+                gpu_name = device.name
+
+        devices.append(gpu_name)
+
     return {
         "has_nvidia": has_nvidia,
-        "has_multiple_gpus": gpu_count >= 2,
-        "gpu_count": gpu_count,
+        "has_multiple_gpus": len(devices) >= 2,
+        "gpu_count": len(devices),
+        "devices": devices,
     }
 
 
@@ -121,28 +192,113 @@ def _get_init_system_info() -> str:
     return "unknown"
 
 
+def _get_desktop_info() -> dict:
+    """Detect the current desktop environment and window manager/compositor."""
+    import os
+    import subprocess
+
+    desktop = ""
+    wm = ""
+
+    # Standard desktop/session variables.
+    desktop = (
+        os.environ.get("XDG_CURRENT_DESKTOP")
+        or os.environ.get("XDG_SESSION_DESKTOP")
+        or os.environ.get("DESKTOP_SESSION")
+        or ""
+    ).strip()
+
+    # Normalize common multi-component values such as:
+    # XDG_CURRENT_DESKTOP=KDE
+    # XDG_CURRENT_DESKTOP=GNOME
+    # XDG_CURRENT_DESKTOP=Unity:Unity7
+    if desktop:
+        desktop = desktop.replace(":", "/")
+
+    # Detect common window managers/compositors from running processes.
+    known_wms = (
+        ("kwin_wayland", "KWin (Wayland)"),
+        ("kwin_x11", "KWin (X11)"),
+        ("gnome-shell", "Mutter"),
+        ("mutter", "Mutter"),
+        ("sway", "Sway"),
+        ("hyprland", "Hyprland"),
+        ("Hyprland", "Hyprland"),
+        ("weston", "Weston"),
+        ("xfwm4", "Xfwm4"),
+        ("openbox", "Openbox"),
+        ("i3", "i3"),
+        ("bspwm", "bspwm"),
+        ("awesome", "Awesome"),
+        ("marco", "Marco"),
+        ("cinnamon", "Muffin"),
+        ("muffin", "Muffin"),
+    )
+
+    try:
+        result = subprocess.run(
+            ["ps", "-eo", "comm="],
+            capture_output=True,
+            text=True,
+            timeout=2,
+            check=False,
+        )
+
+        processes = {
+            process.strip()
+            for process in result.stdout.splitlines()
+            if process.strip()
+        }
+
+        for process, display_name in known_wms:
+            if process in processes:
+                wm = display_name
+                break
+
+    except (OSError, subprocess.SubprocessError):
+        pass
+
+    return {
+        "desktop": desktop or "unknown",
+        "wm": wm or "unknown",
+    }
+
+
 def get_system_context() -> str:
     """Build a system info context string for bug reports."""
     os_info = _get_os_info()
+    cpu_model = _get_cpu_model()
     gpu_info = _get_gpu_info()
     init_system = _get_init_system_info()
-    
+    desktop_info = _get_desktop_info()
+
     context_parts = [f"OS: {os_info['id']}"]
-    
+
     if os_info["version"]:
         context_parts[-1] += f" {os_info['version']}"
-    
+
     context_parts.append(f"linuxtoys {__version__}")
 
     if init_system and init_system != "unknown":
         context_parts.append(f"Init: {init_system}")
+
+    if cpu_model != "unknown":
+        context_parts.append(f"CPU: {cpu_model}")
+
+    for index, gpu in enumerate(gpu_info["devices"], start=1):
+        if gpu_info["gpu_count"] == 1:
+            context_parts.append(f"GPU: {gpu}")
+        else:
+            context_parts.append(f"GPU {index}: {gpu}")
     
-    if gpu_info["has_nvidia"]:
-        context_parts.append("GPU: Nvidia detected")
-    
-    if gpu_info["has_multiple_gpus"]:
-        context_parts.append(f"Multiple GPUs: {gpu_info['gpu_count']} detected")
-    
+    if desktop_info["desktop"] != "unknown":
+        context_parts.append(f"Desktop: {desktop_info['desktop']}")
+        if desktop_info["wm"] != "unknown":
+                context_parts.append(f"Compositor: {desktop_info['wm']}")
+    else:
+        if desktop_info["wm"] != "unknown":
+            context_parts.append(f"WM: {desktop_info['wm']}")
+
     return " | ".join(context_parts)
 
 def _get_repo_owner_mention(script_name: str | None = None) -> str:
@@ -694,7 +850,12 @@ def submit_issue(
                 "Authorization": f"Bearer {_get_token()}",
                 "Content-Type": "application/json",
             },
-            json={"title": title, "logs": logs, "context": context},
+            json={
+                "title": title,
+                "logs": logs,
+                "context": context,
+                "upstream_notified": bool(repo_owner),
+            },
             timeout=10,
         )
         resp.raise_for_status()
