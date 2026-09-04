@@ -24,6 +24,36 @@ def _words(text):
     # name library functions too. This intentionally errs toward loading more.
     return set(_WORD.findall(re.sub(r"(?m)^\s*#.*$", "", text)))
 
+def _list_hook_paths(script_text, script_dir):
+    """Return statically referenced run_list_hook scripts."""
+    paths = []
+    base_paths = []
+
+    cache_dir = os.environ.get("CACHE_DIR")
+    if cache_dir:
+        base_paths.append(Path(cache_dir) / "scripts" / "lists")
+
+    base_paths.append(Path(script_dir) / "scripts" / "lists")
+
+    for line in script_text.splitlines():
+        try:
+            words = shlex.split(line, comments=True)
+        except ValueError:
+            continue
+
+        if len(words) != 2 or words[0] != "run_list_hook":
+            continue
+
+        hook = words[1]
+
+        for base in base_paths:
+            path = base / hook
+
+            if path.is_file():
+                paths.append(path)
+                break
+
+    return paths
 
 def library_flags(script_text, script_dir):
     """Return flags for direct references and transitive library dependencies.
@@ -40,6 +70,14 @@ def library_flags(script_text, script_dir):
         for name, text in texts.items()
     }
     required = _words(script_text)
+
+    for hook_path in _list_hook_paths(script_text, script_dir):
+        try:
+            required.update(
+                _words(hook_path.read_text(encoding="utf-8"))
+            )
+        except OSError:
+            pass
     # Core functions (notably init_transmap -> prep_tmp) need dependencies too.
     for name in ("linuxtoys.bash", "sysinfo.bash"):
         required.update(_words((libs / name).read_text(encoding="utf-8")))

@@ -334,3 +334,19 @@ call_script () {
     rm -f "$child_transmap"
     return "$status"
 }
+
+run_list_hook() {
+    local hook="$1"
+    local path=""
+
+    if [ -n "${CACHE_DIR:-}" ] &&
+       [ -f "$CACHE_DIR/scripts/lists/$hook" ]; then
+        path="$CACHE_DIR/scripts/lists/$hook"
+    elif [ -f "$SCRIPT_DIR/scripts/lists/$hook" ]; then
+        path="$SCRIPT_DIR/scripts/lists/$hook"
+    else
+        die "Repository hook script not found: $hook"
+    fi
+
+    source "$path"
+}

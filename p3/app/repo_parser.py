@@ -497,6 +497,9 @@ def create_install_script(entry):
     else:
         raise ValueError(f"Unknown repository entry type: {install_type}")
 
+    pre_override = _create_hook_command(entry, "pre")
+    post_override = _create_hook_command(entry, "post")
+
     override_commands = _create_override_commands(entry)
     service_commands = _create_service_commands(entry)
 
@@ -516,10 +519,11 @@ def create_install_script(entry):
 # repo: {repo_metadata}
 # revert: yes
 
-PACKAGE_OPS=1
-source "$SCRIPT_DIR/libs/linuxtoys.bash"
+{pre_override}
 
 {command_block}
+
+{post_override}
 
 info "$finishmsg"
 """
@@ -677,6 +681,35 @@ def _create_dependency_commands(entry, compat_keys):
 
     return commands
 
+
+def _validate_hook(value):
+    if isinstance(value, str):
+        return bool(value.strip())
+
+    if not isinstance(value, dict):
+        return False
+
+    if set(value) != {"script"}:
+        return False
+
+    script = value.get("script")
+
+    if not isinstance(script, str) or not script.strip():
+        return False
+
+    script = script.strip()
+
+    # Paths must stay below scripts/lists.
+    if os.path.isabs(script):
+        return False
+
+    normalized = os.path.normpath(script)
+
+    if normalized == ".." or normalized.startswith("../"):
+        return False
+
+    return True
+
 def _validate_overrides(entry):
     overrides = entry.get("overrides")
 
@@ -686,6 +719,18 @@ def _validate_overrides(entry):
     if not isinstance(overrides, dict):
         return False
 
+    # Only supported override types.
+    if set(overrides) - {"flatpak", "pre", "post"}:
+        return False
+
+    # Validate pre/post hooks.
+    for key in ("pre", "post"):
+        value = overrides.get(key)
+
+        if value is not None and not _validate_hook(value):
+            return False
+
+    # Validate Flatpak overrides.
     flatpak = overrides.get("flatpak")
 
     if flatpak is None:
@@ -720,13 +765,10 @@ def _validate_overrides(entry):
 
         if scope not in valid_scopes:
             return False
-
         if override_type not in valid_types:
             return False
-
         if not isinstance(setting, str) or not setting.strip():
             return False
-
         if not isinstance(target, str) or not target.strip():
             return False
 
@@ -748,6 +790,34 @@ def _create_override_commands(entry):
         )
 
     return commands
+
+def _create_hook_command(entry, key):
+    overrides = entry.get("overrides", {})
+
+    if not isinstance(overrides, dict):
+        return ""
+
+    value = overrides.get(key)
+
+    if value is None:
+        return ""
+
+    # Inline shell.
+    if isinstance(value, str):
+        return value.strip()
+
+    # Script shipped under scripts/lists.
+    if isinstance(value, dict):
+        script = value.get("script", "").strip()
+
+        if not script:
+            return ""
+
+        quoted = shlex.quote(script)
+
+        return f'run_list_hook {quoted}'
+
+    return ""
 
 def _normalize_service_name(value):
     if not isinstance(value, str):
