@@ -521,5 +521,6 @@
   "scripts_resync": "Szkriptek szinkronizálása",
   "vbox_desc": "Nagy teljesítményű, nyílt forráskódú, általános célú teljes virtualizációs megoldás személyes és vállalati használatra.",
   "leshade_desc": "ReShade-kezelő Linuxhoz, amellyel egyszerűen telepíthetők shaderek a WINE/Protonon keresztül futó játékok megfelelő prefixeibe.",
-  "ax900_desc": "Illesztőprogram a többféle USB-adapterben megtalálható AIC8800D80 kombinált WiFi/Bluetooth lapkakészlethez."
+  "ax900_desc": "Illesztőprogram a többféle USB-adapterben megtalálható AIC8800D80 kombinált WiFi/Bluetooth lapkakészlethez.",
+  "official_spec_key": "hivatalos"
 }

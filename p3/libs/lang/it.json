@@ -521,5 +521,6 @@
   "scripts_resync": "Sincronizza script",
   "vbox_desc": "Una potente soluzione open source di virtualizzazione completa per uso generico, destinata all'uso personale e aziendale.",
   "leshade_desc": "Un gestore di ReShade per Linux che consente di installare facilmente shader per i giochi eseguiti tramite WINE/Proton nei rispettivi prefissi.",
-  "ax900_desc": "Driver per il chipset combinato WiFi/Bluetooth AIC8800D80, presente in diversi adattatori USB."
+  "ax900_desc": "Driver per il chipset combinato WiFi/Bluetooth AIC8800D80, presente in diversi adattatori USB.",
+  "official_spec_key": "ufficiale"
 }

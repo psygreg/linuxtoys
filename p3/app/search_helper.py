@@ -24,6 +24,7 @@ from .compat import (
 )
 from .lang_utils import detect_system_language
 from .revert_helper import _get_executed_script_names
+from .official_index import is_verified_script, is_verified_name
 
 
 class ScriptCache:
@@ -655,6 +656,21 @@ class SearchEngine:
         translated_new = self.translations.get('new_spec_key', 'new').lower() 
         if (query == 'new' or query == translated_new) and item_info.get('is_new', False):
             score += 90  # High score for exact 'new' keyword match
+
+        # Check for 'official' keyword match (English or translated)
+        translated_official = self.translations.get(
+            'official_spec_key',
+            'official'
+        ).lower()
+
+        if query == 'official' or query == translated_official:
+            if item_info.get('is_repo_entry'):
+                is_official = is_verified_name(item_info.get('name', ''))
+            else:
+                is_official = is_verified_script(item_info.get('path', ''))
+
+            if is_official:
+                score += 90
         
         # Exact name match gets highest score
         if query == name:

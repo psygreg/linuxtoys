@@ -521,5 +521,6 @@
   "scripts_resync": "Đồng bộ tập lệnh",
   "vbox_desc": "Giải pháp ảo hóa toàn phần mã nguồn mở mạnh mẽ, đa dụng, dành cho cả mục đích cá nhân và doanh nghiệp.",
   "leshade_desc": "Trình quản lý ReShade cho Linux, cho phép bạn dễ dàng cài đặt shader cho các trò chơi chạy qua WINE/Proton vào prefix tương ứng của chúng.",
-  "ax900_desc": "Trình điều khiển cho chipset WiFi/Bluetooth kết hợp AIC8800D80, được sử dụng trong nhiều bộ chuyển đổi USB."
+  "ax900_desc": "Trình điều khiển cho chipset WiFi/Bluetooth kết hợp AIC8800D80, được sử dụng trong nhiều bộ chuyển đổi USB.",
+  "official_spec_key": "chính thức"
 }

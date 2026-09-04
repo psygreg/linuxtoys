@@ -521,5 +521,6 @@
   "scripts_resync": "Sync scripts",
   "vbox_desc": "Powerful open source general-purpose full virtualization for personal and enterprise use.",
   "leshade_desc": "A ReShade manager for Linux, allowing you to easily install shaders for games running through WINE/Proton in their respective prefixes.",
-  "ax900_desc": "Driver for the AIC8800D80 combo WiFi/Bluetooth chipset, found in several USB adapters."
+  "ax900_desc": "Driver for the AIC8800D80 combo WiFi/Bluetooth chipset, found in several USB adapters.",
+  "official_spec_key": "official"
 }

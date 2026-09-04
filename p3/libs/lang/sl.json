@@ -521,5 +521,6 @@
   "scripts_resync": "Sinhroniziraj skripte",
   "vbox_desc": "Zmogljiva odprtokodna rešitev za popolno virtualizacijo za splošno, osebno in poslovno uporabo.",
   "leshade_desc": "Upravljalnik ReShade za Linux, ki omogoča preprosto nameščanje senčil za igre, ki se izvajajo prek WINE/Proton, v njihove ustrezne predpone.",
-  "ax900_desc": "Gonilnik za kombinirani nabor čipov WiFi/Bluetooth AIC8800D80, ki ga najdemo v različnih USB-vmesnikih."
+  "ax900_desc": "Gonilnik za kombinirani nabor čipov WiFi/Bluetooth AIC8800D80, ki ga najdemo v različnih USB-vmesnikih.",
+  "official_spec_key": "uradno"
 }

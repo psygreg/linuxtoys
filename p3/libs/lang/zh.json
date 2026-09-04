@@ -523,5 +523,6 @@
   "scripts_resync": "同步脚本",
   "vbox_desc": "强大的开源通用全虚拟化解决方案，适用于个人和企业用途。",
   "leshade_desc": "Linux 上的 ReShade 管理器，可让您轻松地为通过 WINE/Proton 运行的游戏将着色器安装到各自对应的 prefix 中。",
-  "ax900_desc": "适用于 AIC8800D80 WiFi/蓝牙组合芯片组的驱动程序，该芯片组常见于多种 USB 适配器中。"
+  "ax900_desc": "适用于 AIC8800D80 WiFi/蓝牙组合芯片组的驱动程序，该芯片组常见于多种 USB 适配器中。",
+  "official_spec_key": "官方"
 }

@@ -521,5 +521,6 @@
   "scripts_resync": "スクリプトを同期",
   "vbox_desc": "個人利用から企業利用まで対応する、強力なオープンソースの汎用フル仮想化ソリューションです。",
   "leshade_desc": "WINE/Proton 経由で動作するゲームの各 prefix にシェーダーを簡単にインストールできる、Linux 向け ReShade マネージャーです。",
-  "ax900_desc": "さまざまな USB アダプターに搭載されている AIC8800D80 WiFi/Bluetooth コンボチップセット用ドライバーです。"
+  "ax900_desc": "さまざまな USB アダプターに搭載されている AIC8800D80 WiFi/Bluetooth コンボチップセット用ドライバーです。",
+  "official_spec_key": "公式"
 }

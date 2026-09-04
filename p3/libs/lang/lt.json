@@ -521,5 +521,6 @@
   "scripts_resync": "Sinchronizuoti scenarijus",
   "vbox_desc": "Galingas atvirojo kodo bendrosios paskirties visiškos virtualizacijos sprendimas asmeniniam ir verslo naudojimui.",
   "leshade_desc": "„ReShade“ tvarkyklė, skirta „Linux“, leidžianti lengvai įdiegti shaderius žaidimams, veikiantiems per WINE/Proton, į atitinkamus jų prefiksus.",
-  "ax900_desc": "Tvarkyklė AIC8800D80 kombinuotam WiFi/Bluetooth lustų rinkiniui, naudojamam įvairiuose USB adapteriuose."
+  "ax900_desc": "Tvarkyklė AIC8800D80 kombinuotam WiFi/Bluetooth lustų rinkiniui, naudojamam įvairiuose USB adapteriuose.",
+  "official_spec_key": "oficialus"
 }

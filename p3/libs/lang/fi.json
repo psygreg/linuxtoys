@@ -521,5 +521,6 @@
   "scripts_resync": "Synkronoi skriptit",
   "vbox_desc": "Tehokas avoimen lähdekoodin yleiskäyttöinen täysvirtualisointiratkaisu henkilökohtaiseen ja yrityskäyttöön.",
   "leshade_desc": "ReShade-hallintaohjelma Linuxille, jolla voit helposti asentaa shadereita WINE/Protonin kautta toimiville peleille niiden omiin prefikseihin.",
-  "ax900_desc": "Ajuri AIC8800D80-yhdistelmä-WiFi/Bluetooth-piirisarjalle, jota käytetään useissa USB-sovittimissa."
+  "ax900_desc": "Ajuri AIC8800D80-yhdistelmä-WiFi/Bluetooth-piirisarjalle, jota käytetään useissa USB-sovittimissa.",
+  "official_spec_key": "virallinen"
 }

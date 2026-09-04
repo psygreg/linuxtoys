@@ -521,5 +521,6 @@
   "scripts_resync": "Betikleri eşitle",
   "vbox_desc": "Kişisel ve kurumsal kullanım için güçlü, açık kaynaklı, genel amaçlı tam sanallaştırma çözümü.",
   "leshade_desc": "WINE/Proton üzerinden çalışan oyunların ilgili prefix'lerine shader'ları kolayca yüklemenizi sağlayan Linux için bir ReShade yöneticisi.",
-  "ax900_desc": "Çeşitli USB adaptörlerinde bulunan AIC8800D80 birleşik WiFi/Bluetooth yonga seti için sürücü."
+  "ax900_desc": "Çeşitli USB adaptörlerinde bulunan AIC8800D80 birleşik WiFi/Bluetooth yonga seti için sürücü.",
+  "official_spec_key": "resmî"
 }

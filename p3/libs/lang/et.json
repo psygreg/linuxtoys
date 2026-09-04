@@ -521,5 +521,6 @@
   "scripts_resync": "Sünkrooni skriptid",
   "vbox_desc": "Võimas avatud lähtekoodiga üldotstarbeline täisvirtualiseerimise lahendus isiklikuks ja ettevõtetes kasutamiseks.",
   "leshade_desc": "ReShade'i haldur Linuxile, mis võimaldab hõlpsalt paigaldada shadereid WINE/Protoni kaudu töötavate mängude vastavatesse prefiksitesse.",
-  "ax900_desc": "Draiver AIC8800D80 kombineeritud WiFi/Bluetooth-kiibistikule, mida leidub mitmes USB-adapteris."
+  "ax900_desc": "Draiver AIC8800D80 kombineeritud WiFi/Bluetooth-kiibistikule, mida leidub mitmes USB-adapteris.",
+  "official_spec_key": "ametlik"
 }

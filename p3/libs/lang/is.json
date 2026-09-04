@@ -521,5 +521,6 @@
   "scripts_resync": "Samstilla skriftur",
   "vbox_desc": "Öflug og opin full sýndarvæðingarlausn til almennra nota, bæði fyrir einstaklinga og fyrirtæki.",
   "leshade_desc": "ReShade-stjóri fyrir Linux sem gerir þér kleift að setja shaders auðveldlega upp fyrir leiki sem keyra í gegnum WINE/Proton í viðeigandi prefixum þeirra.",
-  "ax900_desc": "Rekill fyrir AIC8800D80 samsetta WiFi/Bluetooth-flísasettið sem er að finna í ýmsum USB-millistykkjum."
+  "ax900_desc": "Rekill fyrir AIC8800D80 samsetta WiFi/Bluetooth-flísasettið sem er að finna í ýmsum USB-millistykkjum.",
+  "official_spec_key": "opinbert"
 }

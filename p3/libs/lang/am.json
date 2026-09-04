@@ -521,5 +521,6 @@
   "scripts_resync": "ስክሪፕቶችን አስማማ",
   "vbox_desc": "ለግል እና ለድርጅት አጠቃቀም የተዘጋጀ ኃይለኛ፣ ክፍት ምንጭ፣ አጠቃላይ ዓላማ ያለው ሙሉ ቨርቹዋላይዜሽን መፍትሔ።",
   "leshade_desc": "ለLinux የReShade አስተዳዳሪ፣ በWINE/Proton በኩል ለሚሰሩ ጨዋታዎች በየprefixዎቻቸው shaders በቀላሉ እንዲጭኑ ያስችልዎታል።",
-  "ax900_desc": "በተለያዩ የUSB አዳፕተሮች ውስጥ ለሚገኘው AIC8800D80 የWiFi/Bluetooth ጥምር chipset ነጂ።"
+  "ax900_desc": "በተለያዩ የUSB አዳፕተሮች ውስጥ ለሚገኘው AIC8800D80 የWiFi/Bluetooth ጥምር chipset ነጂ።",
+  "official_spec_key": "ይፋዊ"
 }

@@ -521,5 +521,6 @@
   "scripts_resync": "Synkronisera skript",
   "vbox_desc": "Kraftfull lösning med öppen källkod för fullständig virtualisering för allmänna ändamål, för både privat- och företagsbruk.",
   "leshade_desc": "En ReShade-hanterare för Linux som gör det enkelt att installera shaders för spel som körs genom WINE/Proton i deras respektive prefix.",
-  "ax900_desc": "Drivrutin för det kombinerade WiFi/Bluetooth-chipsetet AIC8800D80, som finns i flera USB-adaptrar."
+  "ax900_desc": "Drivrutin för det kombinerade WiFi/Bluetooth-chipsetet AIC8800D80, som finns i flera USB-adaptrar.",
+  "official_spec_key": "officiell"
 }

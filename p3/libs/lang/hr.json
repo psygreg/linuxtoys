@@ -521,5 +521,6 @@
   "scripts_resync": "Sinkroniziraj skripte",
   "vbox_desc": "Moćno rješenje otvorenog koda za potpunu virtualizaciju opće namjene, za osobnu i poslovnu upotrebu.",
   "leshade_desc": "ReShade upravitelj za Linux koji omogućuje jednostavnu instalaciju shadera za igre pokrenute putem WINE/Protona u njihove odgovarajuće prefikse.",
-  "ax900_desc": "Upravljački program za AIC8800D80 kombinirani WiFi/Bluetooth čipset, koji se nalazi u raznim USB adapterima."
+  "ax900_desc": "Upravljački program za AIC8800D80 kombinirani WiFi/Bluetooth čipset, koji se nalazi u raznim USB adapterima.",
+  "official_spec_key": "službeno"
 }
