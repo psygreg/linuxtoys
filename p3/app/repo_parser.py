@@ -255,6 +255,9 @@ def load_repo_entries(scripts_dir, translations=None):
         if not _validate_dependencies(entry):
             continue
 
+        if not _validate_overrides(entry):
+            continue
+
         if not _entry_is_compatible(entry, compat_keys):
             continue
         # Script names are also used as registry identities and virtual paths,
@@ -474,7 +477,9 @@ def create_install_script(entry):
     else:
         raise ValueError(f"Unknown repository entry type: {install_type}")
 
-    commands = dependency_commands + [command]
+    override_commands = _create_override_commands(entry)
+    commands = dependency_commands + [command] + override_commands
+    
     command_block = "\n".join(commands)
 
     contents = f"""#!/usr/bin/env bash
@@ -642,5 +647,77 @@ def _create_dependency_commands(entry, compat_keys):
             commands.append(
                 f"pkg_flat {shlex.quote(package)}"
             )
+
+    return commands
+
+def _validate_overrides(entry):
+    overrides = entry.get("overrides")
+
+    if overrides is None:
+        return True
+
+    if not isinstance(overrides, dict):
+        return False
+
+    flatpak = overrides.get("flatpak")
+
+    if flatpak is None:
+        return True
+
+    if not isinstance(flatpak, list):
+        return False
+
+    valid_scopes = {"user", "system"}
+    valid_types = {
+        "fs",
+        "name",
+        "dbus",
+        "share",
+        "env",
+        "runtime",
+        "device",
+        "socket",
+        "filesystem",
+        "talk-name",
+        "talk-dbus",
+    }
+
+    for override in flatpak:
+        if not isinstance(override, dict):
+            return False
+
+        scope = override.get("scope")
+        override_type = override.get("type")
+        setting = override.get("setting")
+        target = override.get("target")
+
+        if scope not in valid_scopes:
+            return False
+
+        if override_type not in valid_types:
+            return False
+
+        if not isinstance(setting, str) or not setting.strip():
+            return False
+
+        if not isinstance(target, str) or not target.strip():
+            return False
+
+    return True
+
+def _create_override_commands(entry):
+    commands = []
+
+    overrides = entry.get("overrides", {})
+    flatpak_overrides = overrides.get("flatpak", [])
+
+    for override in flatpak_overrides:
+        commands.append(
+            "flatpak_override "
+            f"{shlex.quote(override['scope'].strip())} "
+            f"{shlex.quote(override['type'].strip())} "
+            f"{shlex.quote(override['setting'].strip())} "
+            f"{shlex.quote(override['target'].strip())}"
+        )
 
     return commands

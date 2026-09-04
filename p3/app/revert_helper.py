@@ -8,6 +8,7 @@ Each operation is reversed, with file restorations from .bak files and package r
 import os
 import tempfile
 import subprocess
+import shlex
 
 
 def _run_ok(cmd):
@@ -286,6 +287,9 @@ def _parse_operation(op_line):
                 return "pkg install", parts[1:]
         elif op_type == "flatpak":
             # flatpak can have multiple operands (e.g., "flatpak app1 app2")
+            return op_type, parts[1:]
+        elif op_type == "override":
+            # override scope type setting target
             return op_type, parts[1:]
         elif op_type == "appimage":
             # appimage can have multiple operands (e.g., "appimage file1.appimage file2.appimage")
@@ -823,6 +827,9 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)
+
+    elif op_type == "override" and operands:
+        return _reverse_flatpak_override(operands)
     
     elif op_type == "appimage" and operands:
         return _reverse_appimage_removal(operands)
@@ -1243,3 +1250,24 @@ def _build_reverse_commands(
             reverse_commands.extend(cmds)
 
     return reverse_commands, consumed
+
+def _reverse_flatpak_override(operands):
+    """Reset Flatpak overrides previously applied by LinuxToys."""
+
+    if len(operands) < 4:
+        return []
+
+    scope = operands[0]
+    target = operands[3]
+
+    if scope == "user":
+        return [
+            f"flatpak override --user --reset {shlex.quote(target)}"
+        ]
+
+    if scope == "system":
+        return [
+            f"sudo flatpak override --system --reset {shlex.quote(target)}"
+        ]
+
+    return []
