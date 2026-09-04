@@ -266,13 +266,24 @@ def _load_json_entries(path):
         return []
 
     if isinstance(data, dict):
-        return [data]
+        entries = [data]
+    elif isinstance(data, list):
+        entries = data
+    else:
+        return []
 
-    if isinstance(data, list):
-        return data
+    result = []
 
-    return []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            result.append(entry)
+            continue
 
+        entry = dict(entry)
+        entry["_list_source"] = path
+        result.append(entry)
+
+    return result
 
 def _get_repo_list_paths(scripts_dir):
     """
@@ -305,6 +316,64 @@ def _get_repo_list_paths(scripts_dir):
         paths.extend(discovered)
 
     return paths
+
+def _resolve_list_icon(entry, scripts_dir):
+    """
+    Resolve repository-list icons.
+
+    Plain filenames keep using the normal app/icons resolver.
+
+    Relative paths such as:
+        ./icon.svg
+        assets/icon.png
+
+    are resolved relative to the JSON file containing the entry, and must
+    remain somewhere below scripts/lists/.
+    """
+    icon = entry.get("icon", "application-x-executable")
+
+    if not isinstance(icon, str) or not icon.strip():
+        return "application-x-executable"
+
+    icon = icon.strip()
+
+    # GTK icon names, or legacy app/icons filenames.
+    if "/" not in icon and not icon.startswith("."):
+        return icon
+
+    # Repository-list icons must be relative.
+    if os.path.isabs(icon):
+        return "application-x-executable"
+
+    source = entry.get("_list_source")
+
+    if not source:
+        return "application-x-executable"
+
+    lists_dir = os.path.realpath(
+        os.path.join(scripts_dir, "lists")
+    )
+    source_dir = os.path.realpath(
+        os.path.dirname(source)
+    )
+    icon_path = os.path.realpath(
+        os.path.join(source_dir, icon)
+    )
+
+    # Never allow a repository entry to escape scripts/lists/.
+    try:
+        if os.path.commonpath((lists_dir, icon_path)) != lists_dir:
+            return "application-x-executable"
+    except ValueError:
+        return "application-x-executable"
+
+    if not os.path.isfile(icon_path):
+        return "application-x-executable"
+
+    if not icon_path.lower().endswith((".svg", ".png")):
+        return "application-x-executable"
+
+    return icon_path
 
 def load_repo_entries(scripts_dir, translations=None):
     data = []
@@ -360,11 +429,12 @@ def load_repo_entries(scripts_dir, translations=None):
             description = translations[description_tag]
 
         item = dict(entry)
+        item.pop("_list_source", None)
 
         item.update({
             "description": description,
             "description_tag": description_tag,
-            "icon": entry.get("icon", "application-x-executable"),
+            "icon": _resolve_list_icon(entry, scripts_dir),
             "type": entry.get("type", "git"),
 
             # Make it behave exactly like a script in the UI.
@@ -373,7 +443,7 @@ def load_repo_entries(scripts_dir, translations=None):
             "is_repo_entry": True,
             "revert": "yes",
             "reboot": "no",
-            
+
             "is_new": new_index.is_new_name(
                 entry["name"]
             ),
