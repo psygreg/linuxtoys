@@ -174,5 +174,13 @@
         "icon": "stellarium.png",
         "type": "flathub",
         "package-name": "org.stellarium.Stellarium"
+    },
+    {
+        "name": "Audacity",
+        "description": "A free, open source, cross-platform audio software.",
+        "description_tag": "audacity_desc",
+        "repo": "https://github.com/audacity/audacity",
+        "category": "office",
+        "icon": "audacity.svg"
     }
 ]
