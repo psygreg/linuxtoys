@@ -604,21 +604,34 @@ def should_show_optimization_script(script_path):
 
 
 def script_uses_flatpak_in_lib(script_path):
-    """
-    Check if a script uses the flatpak_in_lib function.
-
-    Args:
-        script_path (str): Path to the script file
-
-    Returns:
-        bool: True if the script contains a call to flatpak_in_lib
-    """
+    """Check if a script uses the flatpak_in_lib function."""
     try:
         with open(script_path, "r", encoding="utf-8") as f:
-            content = f.read()
-            return "flatpak_in_lib" in content
+            return "flatpak_in_lib" in f.read()
     except Exception:
-        pass
+        return False
+
+
+def _script_installs_container_incompatible_package(content):
+    """Detect Flatpak/AppImage installation helpers in a script."""
+    import re
+
+    # These package types are sandboxed/desktop-oriented and must not be
+    # installed from inside a container. Keep this automatic restriction
+    # separate from the optional # nocontainer metadata so it acts as a
+    # hard guardrail.
+    if re.search(r"\b(?:flatpak_in_lib|pkg_flat|pkg_appimage)\b", content):
+        return True
+
+    # pkg_fromurl can also be used for portable packages. Catch the cases
+    # that are statically identifiable from the command/URL itself.
+    for line in content.splitlines():
+        if not re.search(r"\bpkg_fromurl\b", line):
+            continue
+        lowered = line.lower()
+        if any(marker in lowered for marker in (".appimage", ".flatpak", ".flatpakref")):
+            return True
+
     return False
 
 
@@ -631,7 +644,7 @@ def script_is_container_compatible(script_path):
     - If CONTAINER=1: apply normal container compatibility logic
 
     Scripts are considered incompatible with containers if:
-    1. They use flatpak_in_lib function (automatic exclusion)
+    1. They install Flatpak/AppImage packages (automatic hard exclusion)
     2. They have a '# nocontainer' header (with optional system keys)
 
     The nocontainer header supports several formats:
@@ -643,11 +656,9 @@ def script_is_container_compatible(script_path):
     - '# nocontainer: invert, debian' - show only in debian containers
 
     Priority rules:
-    - If nocontainer header is present, it takes precedence over flatpak_in_lib
-    - If nocontainer specifies keys that don't match current system, script is shown
-      even if it contains flatpak_in_lib
-    - If no nocontainer header, flatpak_in_lib causes automatic exclusion
-    - 'invert' keyword reverses the container logic
+    - Flatpak/AppImage installation is always blocked in containers
+    - The nocontainer header controls all other container compatibility cases
+    - 'invert' keyword reverses the explicit nocontainer logic
 
     Args:
         script_path (str): Path to the script file
@@ -669,7 +680,7 @@ def script_is_container_compatible(script_path):
         with open(script_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-            has_flatpak_in_lib = "flatpak_in_lib" in content
+            installs_sandboxed_package = _script_installs_container_incompatible_package(content)
             nocontainer_keys = None
             has_invert = False
 
@@ -697,7 +708,11 @@ def script_is_container_compatible(script_path):
             # Check if we're actually in a container
             is_in_container = is_containerized()
 
-            # If nocontainer header is present, it takes precedence
+            # Flatpak/AppImage installers are never container-compatible.
+            if installs_sandboxed_package and is_in_container:
+                return False
+
+            # Apply explicit nocontainer metadata for all other cases.
             if nocontainer_keys is not None:
                 if has_invert:
                     # Invert logic: show only in containers
@@ -723,10 +738,6 @@ def script_is_container_compatible(script_path):
                         # Hide only in containers that match the specified keys
                         current_compat_keys = get_system_compat_keys()
                         return not bool(current_compat_keys & nocontainer_keys)
-
-            # If no nocontainer header, fall back to flatpak_in_lib check
-            if has_flatpak_in_lib and is_in_container:
-                return False
 
     except Exception:
         pass

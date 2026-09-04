@@ -5,7 +5,7 @@ import shlex
 import hashlib
 from urllib.parse import urlparse
 
-from .compat import get_system_compat_keys
+from .compat import get_system_compat_keys, is_containerized
 from .dev_mode import get_effective_compat_keys
 from . import official_index
 
@@ -90,11 +90,56 @@ def _normalize_hardware_key(kind, value):
     return f"{kind}-{value}"
 
 
+def _entry_installs_sandboxed_package(entry, compat_keys):
+    """Return True when the entry would install Flatpak or AppImage content."""
+    install_type = entry.get("type", "git")
+
+    if install_type == "flathub":
+        return True
+
+    if install_type == "url":
+        resolved = _resolve_url_package(entry, compat_keys)
+        if resolved and resolved[0] in {"flatpak", "appimage"}:
+            return True
+
+    for dependency in entry.get("dependencies", []):
+        if dependency.get("type") == "flathub":
+            return True
+
+    return False
+
+
+def _container_requirement_matches(entry, compat_keys):
+    """Check explicit and implicit repository-list container compatibility."""
+    try:
+        from .dev_mode import should_override_container_checks
+
+        if should_override_container_checks():
+            return True
+    except ImportError:
+        pass
+
+    if not is_containerized():
+        return True
+
+    # Flatpak and AppImage installs are never supported inside containers,
+    # regardless of an explicit "container: allow" setting.
+    if _entry_installs_sandboxed_package(entry, compat_keys):
+        return False
+
+    return entry.get("container", "allow").strip().lower() == "allow"
+
+
 def _entry_is_compatible(entry, compat_keys):
 
     from .dev_mode import get_dev_compat_override, is_dev_mode_enabled
     if is_dev_mode_enabled() and not get_dev_compat_override():
-        return True
+        # COMPAT-less developer mode still skips normal compatibility checks,
+        # but CONTAINER simulation must remain effective.
+        return _container_requirement_matches(entry, compat_keys)
+
+    if not _container_requirement_matches(entry, compat_keys):
+        return False
     
     # OS compatibility
     os_value = entry.get("os")
@@ -158,6 +203,18 @@ def _entry_is_compatible(entry, compat_keys):
         return False
     
     return True
+
+
+def _validate_container(entry):
+    value = entry.get("container", "allow")
+
+    if value is None:
+        value = "allow"
+
+    return (
+        isinstance(value, str)
+        and value.strip().lower() in {"allow", "deny"}
+    )
 
 
 def _required_fields_present(entry):
@@ -267,6 +324,9 @@ def load_repo_entries(scripts_dir, translations=None):
             continue
 
         if not _validate_type(entry):
+            continue
+
+        if not _validate_container(entry):
             continue
 
         if not _validate_dependencies(entry):
