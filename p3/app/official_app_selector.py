@@ -124,7 +124,7 @@ class OfficialAppSelector:
             ),
         )
 
-        for app_name, display_name in official_index.get_verified_entries(
+        for app_name, display_name in official_index.get_bug_report_entries(
             self.translations
         ):
             add_row(app_name, display_name)

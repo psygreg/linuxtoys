@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 
 # Script filenames without the .sh extension.
 #
@@ -9,6 +10,24 @@ VERIFIED_SCRIPTS = {
     "slothbash"
 }
 
+def is_github_repo(repo):
+    """Return True if repo points to a GitHub repository."""
+    if not isinstance(repo, str) or not repo.strip():
+        return False
+
+    try:
+        parsed = urlparse(repo.strip())
+    except ValueError:
+        return False
+
+    return (
+        parsed.scheme in ("http", "https")
+        and parsed.hostname is not None
+        and parsed.hostname.casefold() in {
+            "github.com",
+            "www.github.com",
+        }
+    )
 
 def is_verified_script(script_path):
     if not script_path:
@@ -58,6 +77,35 @@ def get_verified_entries(translations=None):
         )
         for name in VERIFIED_SCRIPTS
     ]
+
+    return sorted(
+        entries,
+        key=lambda item: item[1].casefold(),
+    )
+
+def get_bug_report_entries(translations=None):
+    """
+    Return officially supported applications eligible for upstream
+    GitHub bug reporting.
+    """
+    from . import parser
+
+    repositories = parser.get_repository_map()
+
+    entries = []
+
+    for name in VERIFIED_SCRIPTS:
+        repo = repositories.get(name.casefold())
+
+        if not is_github_repo(repo):
+            continue
+
+        entries.append(
+            (
+                name,
+                parser.get_display_name(name, translations),
+            )
+        )
 
     return sorted(
         entries,

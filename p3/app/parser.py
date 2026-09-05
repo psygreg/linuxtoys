@@ -265,6 +265,78 @@ def get_repo_entries(translations=None):
     """Return all valid dynamic repository entries from scripts/repos.json."""
     return repo_parser.load_repo_entries(SCRIPTS_DIR, translations)
 
+def get_repository_map():
+    """
+    Return a mapping of internal software names to their upstream repository.
+
+    Repository-list entries take precedence over normal scripts when both use
+    the same internal identity.
+    """
+    repositories = {}
+
+    # Repository-list applications.
+    for entry in get_repo_entries():
+        entry_name = str(entry.get("name", "")).strip()
+
+        entry_id = str(
+            entry.get("id")
+            or entry.get("script")
+            or entry_name
+        ).strip()
+
+        repo = entry.get("repo")
+
+        if (
+            entry_id
+            and isinstance(repo, str)
+            and repo.strip()
+        ):
+            repositories[entry_id.casefold()] = repo.strip()
+
+    # Normal shell scripts.
+    for root, dirs, files in os.walk(SCRIPTS_DIR):
+        dirs[:] = [
+            directory
+            for directory in dirs
+            if not _should_skip_directory(directory)
+        ]
+
+        for file_name in files:
+            if not file_name.endswith(".sh"):
+                continue
+
+            script_id = os.path.splitext(file_name)[0]
+            normalized_id = script_id.casefold()
+
+            # Keep repository-list precedence consistent with
+            # get_display_name().
+            if normalized_id in repositories:
+                continue
+
+            file_path = os.path.join(root, file_name)
+
+            metadata = _parse_metadata_file(
+                file_path,
+                {"repo": ""},
+            )
+
+            repo = metadata.get("repo")
+
+            if isinstance(repo, str) and repo.strip():
+                repositories[normalized_id] = repo.strip()
+
+    return repositories
+
+
+def get_repository(name):
+    """Return the upstream repository for a script/repository-list entry."""
+    if not name:
+        return None
+
+    return get_repository_map().get(
+        str(name).strip().casefold()
+    )
+
 def get_display_name(name, translations=None):
     """
     Resolve an internal script/repository name to the same user-facing name
