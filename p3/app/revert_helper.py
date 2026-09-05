@@ -725,7 +725,7 @@ def _reverse_shell_change(shell_path):
         list containing a single shell_change command to revert to bash
     """
     # Always revert to /bin/bash, the standard default shell
-    return ["shell_change /bin/bash $USER"]
+    return ["shell_change /bin/bash"]
 
 
 def _reverse_kargs_update(karg):
