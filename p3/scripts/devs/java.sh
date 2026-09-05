@@ -29,7 +29,7 @@ jdk_install() {
                 "openjdk-${jav}-jre"
             )
 
-        elif is_fedora || is_rhel; then
+        elif is_fedora || is_rhel || is_ostree; then
             case "$jav" in
                 21|25)
                     packages+=(
