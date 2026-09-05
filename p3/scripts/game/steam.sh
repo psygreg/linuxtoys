@@ -4,12 +4,12 @@
 # description: steam_desc
 # icon: steam.svg
 # repo: https://store.steampowered.com/
-# nocontainer: ubuntu, debian, suse, solus, rhel
+# nocontainer
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
-if is_fedora || is_ostree; then
+if is_fedora; then
     sudo_rq
     rpmfusion_chk
     pkg_install steam steam-devices
