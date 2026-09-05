@@ -100,7 +100,7 @@ java_in() {
     local -a javas=()
     local distro_group="other"
 
-    if is_fedora || is_rhel; then
+    if is_fedora || is_rhel || is_ostree; then
         distro_group="fedora_rhel"
     elif is_solus; then
         distro_group="solus"
