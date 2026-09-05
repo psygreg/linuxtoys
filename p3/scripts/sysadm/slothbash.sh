@@ -4,6 +4,7 @@
 # icon: sloth.svg
 # nocontainer
 # repo: https://github.com/psygreg/sloth-bash
+# compat: !cachy
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 if [ -f "$HOME/.sloth-bash" ]; then
