@@ -525,5 +525,9 @@
   "official_spec_key": "oifigiúil",
   "select_official_app_title": "Roghnaigh feidhmchlár",
   "select_official_app_message": "Roghnaigh an feidhmchlár lena mbaineann an tuairisc seo:",
-  "bug_report_app": "Feidhmchlár (roghnach):"
+  "bug_report_app": "Feidhmchlár (roghnach):",
+  "marmalade_desc": "Ligeann sé d'fheidhmchláir VTuber atá ag rith ar Linux, amhail VBridger agus VSeeFace, MediaPipe a úsáid go seachtrach.",
+  "rogcc_desc": "Uirlis rialaithe córais do Linux atá deartha go príomha do ríomhairí glúine ASUS, le feidhmiúlacht theoranta ar fáil do chrua-earraí nach ASUS iad.",
+  "addwater_desc": "Uirlis chun téama Firefox GNOME a shuiteáil go huathoibríoch agus é a choinneáil cothrom le dáta, chomh maith leis an téama a chumrú go héasca de réir do rogha féin.",
+  "openlogi_desc": "Rogha dúchasach ar Logitech Options+ a thugann tús áite d'oibriú áitiúil, scríofa in Rust."
 }

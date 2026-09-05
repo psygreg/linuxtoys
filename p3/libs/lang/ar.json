@@ -525,5 +525,9 @@
   "official_spec_key": "رسمي",
   "select_official_app_title": "اختر التطبيق",
   "select_official_app_message": "اختر التطبيق الذي يتعلق به هذا التقرير:",
-  "bug_report_app": "التطبيق (اختياري):"
+  "bug_report_app": "التطبيق (اختياري):",
+  "marmalade_desc": "يتيح لتطبيقات VTuber التي تعمل على Linux، مثل VBridger وVSeeFace، استخدام MediaPipe خارجيًا.",
+  "rogcc_desc": "أداة للتحكم بالنظام على Linux، مصممة أساسًا لأجهزة ASUS المحمولة، مع وظائف محدودة متاحة للأجهزة غير التابعة لـ ASUS.",
+  "addwater_desc": "أداة لتثبيت سمة Firefox GNOME تلقائيًا وإبقائها محدّثة، بالإضافة إلى تسهيل تخصيص السمة حسب رغبتك.",
+  "openlogi_desc": "بديل أصلي يركز على التشغيل المحلي لـ Logitech Options+، مكتوب بلغة Rust."
 }

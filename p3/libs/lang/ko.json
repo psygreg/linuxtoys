@@ -525,5 +525,9 @@
   "official_spec_key": "공식",
   "select_official_app_title": "애플리케이션 선택",
   "select_official_app_message": "이 보고서와 관련된 애플리케이션을 선택하세요:",
-  "bug_report_app": "애플리케이션 (선택 사항):"
+  "bug_report_app": "애플리케이션 (선택 사항):",
+  "marmalade_desc": "VBridger 및 VSeeFace와 같이 Linux에서 실행되는 VTuber 애플리케이션이 MediaPipe를 외부에서 사용할 수 있도록 합니다.",
+  "rogcc_desc": "주로 ASUS 노트북용으로 설계된 Linux 시스템 제어 유틸리티로, ASUS가 아닌 하드웨어에서도 제한된 기능을 사용할 수 있습니다.",
+  "addwater_desc": "Firefox GNOME 테마를 자동으로 설치하고 최신 상태로 유지하며, 원하는 대로 테마를 쉽게 설정할 수 있게 해주는 유틸리티입니다.",
+  "openlogi_desc": "Rust로 작성된 Logitech Options+의 네이티브 로컬 우선 대안입니다."
 }

@@ -525,5 +525,9 @@
   "official_spec_key": "chính thức",
   "select_official_app_title": "Chọn ứng dụng",
   "select_official_app_message": "Chọn ứng dụng mà báo cáo này đề cập đến:",
-  "bug_report_app": "Ứng dụng (tùy chọn):"
+  "bug_report_app": "Ứng dụng (tùy chọn):",
+  "marmalade_desc": "Cho phép các ứng dụng VTuber chạy trên Linux, chẳng hạn như VBridger và VSeeFace, sử dụng MediaPipe từ bên ngoài.",
+  "rogcc_desc": "Tiện ích điều khiển hệ thống dành cho Linux, được thiết kế chủ yếu cho laptop ASUS, với chức năng hạn chế trên phần cứng không phải ASUS.",
+  "addwater_desc": "Tiện ích tự động cài đặt giao diện Firefox GNOME và duy trì phiên bản mới nhất, đồng thời cho phép dễ dàng tùy chỉnh giao diện theo sở thích của bạn.",
+  "openlogi_desc": "Một giải pháp thay thế native, ưu tiên hoạt động cục bộ cho Logitech Options+, được viết bằng Rust."
 }

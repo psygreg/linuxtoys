@@ -525,5 +525,9 @@
   "official_spec_key": "רשמי",
   "select_official_app_title": "בחר יישום",
   "select_official_app_message": "בחר את היישום שאליו מתייחס דוח זה:",
-  "bug_report_app": "יישום (אופציונלי):"
+  "bug_report_app": "יישום (אופציונלי):",
+  "marmalade_desc": "מאפשר ליישומי VTuber הפועלים על Linux, כגון VBridger ו-VSeeFace, להשתמש ב-MediaPipe באופן חיצוני.",
+  "rogcc_desc": "כלי לשליטה במערכת עבור Linux, המיועד בעיקר למחשבים ניידים של ASUS, עם פונקציונליות מצומצמת הזמינה גם בחומרה שאינה של ASUS.",
+  "addwater_desc": "כלי שמתקין אוטומטית את ערכת הנושא Firefox GNOME ושומר עליה מעודכנת, וכן מאפשר להתאים אותה בקלות לפי העדפותיך.",
+  "openlogi_desc": "חלופה טבעית ל-Logitech Options+ המתמקדת בעבודה מקומית, ונכתבה ב-Rust."
 }

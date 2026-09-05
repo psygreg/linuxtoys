@@ -525,5 +525,9 @@
   "official_spec_key": "ທາງການ",
   "select_official_app_title": "ເລືອກແອັບພລິເຄຊັນ",
   "select_official_app_message": "ເລືອກແອັບພລິເຄຊັນທີ່ລາຍງານນີ້ກ່ຽວຂ້ອງ:",
-  "bug_report_app": "ແອັບພລິເຄຊັນ (ທາງເລືອກ):"
+  "bug_report_app": "ແອັບພລິເຄຊັນ (ທາງເລືອກ):",
+  "marmalade_desc": "ຊ່ວຍໃຫ້ແອັບ VTuber ທີ່ເຮັດວຽກເທິງ Linux ເຊັ່ນ VBridger ແລະ VSeeFace ສາມາດໃຊ້ MediaPipe ຈາກພາຍນອກໄດ້.",
+  "rogcc_desc": "ເຄື່ອງມືຄວບຄຸມລະບົບສຳລັບ Linux ທີ່ອອກແບບມາຫຼັກໆສຳລັບແລັບທັອບ ASUS ໂດຍມີຟັງຊັນທີ່ຈຳກັດສຳລັບຮາດແວທີ່ບໍ່ແມ່ນ ASUS.",
+  "addwater_desc": "ເຄື່ອງມືທີ່ຕິດຕັ້ງ Firefox GNOME theme ແບບອັດຕະໂນມັດ ແລະ ຮັກສາໃຫ້ເປັນລຸ້ນລ່າສຸດ ພ້ອມທັງໃຫ້ທ່ານປັບແຕ່ງ theme ໄດ້ຢ່າງງ່າຍດາຍຕາມຄວາມຕ້ອງການ.",
+  "openlogi_desc": "ທາງເລືອກແບບ native ສຳລັບ Logitech Options+ ທີ່ເນັ້ນການເຮັດວຽກແບບ local-first ແລະ ຂຽນດ້ວຍ Rust."
 }

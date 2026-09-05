@@ -525,5 +525,9 @@
   "official_spec_key": "resmî",
   "select_official_app_title": "Uygulama seçin",
   "select_official_app_message": "Bu raporun ilgili olduğu uygulamayı seçin:",
-  "bug_report_app": "Uygulama (isteğe bağlı):"
+  "bug_report_app": "Uygulama (isteğe bağlı):",
+  "marmalade_desc": "Linux üzerinde çalışan VBridger ve VSeeFace gibi VTuber uygulamalarının MediaPipe'ı harici olarak kullanmasını sağlar.",
+  "rogcc_desc": "Öncelikli olarak ASUS dizüstü bilgisayarlar için tasarlanmış Linux sistem kontrol aracı; ASUS dışı donanımlarda sınırlı işlevsellik sunar.",
+  "addwater_desc": "Firefox GNOME temasını otomatik olarak yükleyip güncel tutan ve temayı zevkinize göre kolayca yapılandırmanızı sağlayan bir araç.",
+  "openlogi_desc": "Logitech Options+ için Rust ile yazılmış, yerel çalışmaya öncelik veren yerel bir alternatif."
 }

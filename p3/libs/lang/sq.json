@@ -525,5 +525,9 @@
   "official_spec_key": "zyrtare",
   "select_official_app_title": "Zgjidhni aplikacionin",
   "select_official_app_message": "Zgjidhni aplikacionin të cilit i referohet ky raport:",
-  "bug_report_app": "Aplikacioni (opsional):"
+  "bug_report_app": "Aplikacioni (opsional):",
+  "marmalade_desc": "U mundëson aplikacioneve VTuber që ekzekutohen në Linux, si VBridger dhe VSeeFace, të përdorin MediaPipe nga jashtë.",
+  "rogcc_desc": "Mjet për kontrollin e sistemit në Linux, i projektuar kryesisht për laptopët ASUS, me funksionalitet të kufizuar të disponueshëm për pajisje jo-ASUS.",
+  "addwater_desc": "Mjet që instalon automatikisht temën Firefox GNOME dhe e mban të përditësuar, si dhe ju lejon ta konfiguroni lehtësisht temën sipas dëshirës.",
+  "openlogi_desc": "Një alternativë native për Logitech Options+ që i jep përparësi funksionimit lokal, e shkruar në Rust."
 }

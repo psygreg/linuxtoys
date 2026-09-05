@@ -527,5 +527,9 @@
   "official_spec_key": "官方",
   "select_official_app_title": "选择应用程序",
   "select_official_app_message": "选择此报告所涉及的应用程序：",
-  "bug_report_app": "应用程序（可选）："
+  "bug_report_app": "应用程序（可选）：",
+  "marmalade_desc": "允许在 Linux 上运行的 VTuber 应用程序（如 VBridger 和 VSeeFace）从外部使用 MediaPipe。",
+  "rogcc_desc": "主要为 ASUS 笔记本电脑设计的 Linux 系统控制工具，在非 ASUS 硬件上也可使用部分受限功能。",
+  "addwater_desc": "用于自动安装 Firefox GNOME 主题并保持其更新的工具，同时还可轻松根据个人喜好配置主题。",
+  "openlogi_desc": "一个以本地运行为优先、使用 Rust 编写的 Logitech Options+ 原生替代方案。"
 }

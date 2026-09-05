@@ -525,5 +525,9 @@
   "official_spec_key": "公式",
   "select_official_app_title": "アプリケーションを選択",
   "select_official_app_message": "このレポートの対象となるアプリケーションを選択してください:",
-  "bug_report_app": "アプリケーション（任意）:"
+  "bug_report_app": "アプリケーション（任意）:",
+  "marmalade_desc": "VBridger や VSeeFace など、Linux 上で動作する VTuber アプリケーションが MediaPipe を外部から利用できるようにします。",
+  "rogcc_desc": "主に ASUS ノートPC向けに設計された Linux 用システム制御ユーティリティで、ASUS 以外のハードウェアでも一部の機能を利用できます。",
+  "addwater_desc": "Firefox GNOME テーマを自動的にインストールして最新の状態に保ち、さらに好みに合わせてテーマを簡単に設定できるユーティリティです。",
+  "openlogi_desc": "Rust で書かれた、ローカル動作を重視する Logitech Options+ のネイティブな代替ソフトウェアです。"
 }

@@ -525,5 +525,9 @@
   "official_spec_key": "officieel",
   "select_official_app_title": "Applicatie selecteren",
   "select_official_app_message": "Selecteer de applicatie waarop dit rapport betrekking heeft:",
-  "bug_report_app": "Applicatie (optioneel):"
+  "bug_report_app": "Applicatie (optioneel):",
+  "marmalade_desc": "Stelt VTuber-applicaties die op Linux draaien, zoals VBridger en VSeeFace, in staat om MediaPipe extern te gebruiken.",
+  "rogcc_desc": "Hulpprogramma voor systeembeheer op Linux, voornamelijk ontworpen voor ASUS-laptops, met beperkte functionaliteit voor hardware van andere fabrikanten.",
+  "addwater_desc": "Hulpprogramma dat het Firefox GNOME-thema automatisch installeert en up-to-date houdt, en waarmee je het thema eenvoudig naar wens kunt configureren.",
+  "openlogi_desc": "Een native, lokaal gerichte alternatief voor Logitech Options+, geschreven in Rust."
 }

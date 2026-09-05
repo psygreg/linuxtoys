@@ -524,5 +524,9 @@
   "official_spec_key": "rasmiy",
   "select_official_app_title": "Ilovani tanlang",
   "select_official_app_message": "Ushbu hisobot tegishli bo‘lgan ilovani tanlang:",
-  "bug_report_app": "Ilova (ixtiyoriy):"
+  "bug_report_app": "Ilova (ixtiyoriy):",
+  "marmalade_desc": "Linux'da ishlaydigan VBridger va VSeeFace kabi VTuber ilovalariga MediaPipe'dan tashqi tarzda foydalanish imkonini beradi.",
+  "rogcc_desc": "Asosan ASUS noutbuklari uchun ishlab chiqilgan Linux tizimini boshqarish vositasi, ASUS bo‘lmagan qurilmalarda esa cheklangan funksiyalar mavjud.",
+  "addwater_desc": "Firefox GNOME mavzusini avtomatik o‘rnatib, uni yangilangan holatda saqlaydigan hamda mavzuni o‘z didingizga mos ravishda osongina sozlash imkonini beruvchi vosita.",
+  "openlogi_desc": "Logitech Options+ uchun Rust tilida yozilgan, mahalliy ishlashga ustuvorlik beruvchi nativ muqobil."
 }

@@ -182,5 +182,24 @@
         "repo": "https://github.com/audacity/audacity",
         "category": "office",
         "icon": "audacity.svg"
+    },
+    {
+        "name": "Add Water",
+        "description": "Utility to automatically install the Firefox GNOME theme and keep it up to date automatically, as well as easily configure the theme to your liking.",
+        "description_tag": "addwater_desc",
+        "repo": "https://github.com/largestgithubuseronearth/addwater",
+        "category": "theming",
+        "icon": "addwater.svg",
+        "type": "flathub",
+        "package-name": "dev.qwery.AddWater"
+    },
+    {
+        "name": "OpenLogi",
+        "description": "A native, local-first alternative to Logitech Options+, written in Rust.",
+        "description_tag": "openlogi_desc",
+        "repo": "https://github.com/AprilNEA/OpenLogi",
+        "category": "peripherals",
+        "icon": "openlogi.png",
+        "os": [ "fedora", "rhel", "arch", "cachy", "ubuntu", "debian" ]
     }
 ]

@@ -525,5 +525,9 @@
   "official_spec_key": "opinbert",
   "select_official_app_title": "Veldu forrit",
   "select_official_app_message": "Veldu forritið sem þessi skýrsla fjallar um:",
-  "bug_report_app": "Forrit (valfrjálst):"
+  "bug_report_app": "Forrit (valfrjálst):",
+  "marmalade_desc": "Gerir VTuber-forritum sem keyra á Linux, eins og VBridger og VSeeFace, kleift að nota MediaPipe utanaðkomandi.",
+  "rogcc_desc": "Kerfisstýringartól fyrir Linux sem er fyrst og fremst hannað fyrir ASUS-fartölvur, með takmarkaðri virkni í boði fyrir vélbúnað frá öðrum framleiðendum.",
+  "addwater_desc": "Tól sem setur Firefox GNOME-þemað sjálfkrafa upp og heldur því uppfærðu, auk þess að auðvelda þér að stilla þemað að þínum smekk.",
+  "openlogi_desc": "Innfæddur valkostur við Logitech Options+ sem leggur áherslu á staðbundna vinnslu, skrifaður í Rust."
 }

@@ -525,5 +525,9 @@
   "official_spec_key": "oficiálne",
   "select_official_app_title": "Vyberte aplikáciu",
   "select_official_app_message": "Vyberte aplikáciu, ktorej sa toto hlásenie týka:",
-  "bug_report_app": "Aplikácia (voliteľné):"
+  "bug_report_app": "Aplikácia (voliteľné):",
+  "marmalade_desc": "Umožňuje VTuber aplikáciám bežiacim na Linuxe, ako sú VBridger a VSeeFace, používať MediaPipe externe.",
+  "rogcc_desc": "Nástroj na ovládanie systému v Linuxe určený predovšetkým pre notebooky ASUS, s obmedzenými funkciami dostupnými aj pre hardvér iných výrobcov.",
+  "addwater_desc": "Nástroj na automatickú inštaláciu a aktualizáciu témy Firefox GNOME, ktorý tiež umožňuje jednoducho prispôsobiť tému podľa vašich predstáv.",
+  "openlogi_desc": "Natívna alternatíva k Logitech Options+ zameraná na lokálne fungovanie, napísaná v Ruste."
 }

@@ -525,5 +525,9 @@
   "official_spec_key": "ይፋዊ",
   "select_official_app_title": "መተግበሪያ ይምረጡ",
   "select_official_app_message": "ይህ ሪፖርት ስለሚመለከተው መተግበሪያ ይምረጡ፦",
-  "bug_report_app": "መተግበሪያ (አማራጭ)፦"
+  "bug_report_app": "መተግበሪያ (አማራጭ)፦",
+  "marmalade_desc": "በLinux ላይ የሚሰሩ እንደ VBridger እና VSeeFace ያሉ የVTuber መተግበሪያዎች MediaPipeን በውጫዊ መንገድ እንዲጠቀሙ ያስችላቸዋል።",
+  "rogcc_desc": "በዋናነት ለASUS ላፕቶፖች የተነደፈ የLinux ስርዓት መቆጣጠሪያ መሣሪያ፣ ASUS ላልሆኑ መሣሪያዎችም የተወሰነ ተግባር ይሰጣል።",
+  "addwater_desc": "የFirefox GNOME ገጽታን በራስ-ሰር የሚጭንና የዘመነ እንዲሆን የሚያደርግ፣ እንዲሁም ገጽታውን እንደ ፍላጎትዎ በቀላሉ እንዲያዋቅሩ የሚያስችል መገልገያ።",
+  "openlogi_desc": "በRust የተጻፈ፣ ለLogitech Options+ ቤተኛ እና በአካባቢያዊ አሠራር ላይ ያተኮረ አማራጭ።"
 }

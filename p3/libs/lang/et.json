@@ -525,5 +525,9 @@
   "official_spec_key": "ametlik",
   "select_official_app_title": "Vali rakendus",
   "select_official_app_message": "Vali rakendus, mille kohta see aruanne käib:",
-  "bug_report_app": "Rakendus (valikuline):"
+  "bug_report_app": "Rakendus (valikuline):",
+  "marmalade_desc": "Võimaldab Linuxis töötavatel VTuberi rakendustel, nagu VBridger ja VSeeFace, kasutada MediaPipe'i väliselt.",
+  "rogcc_desc": "Linuxi süsteemi juhtimise utiliit, mis on loodud peamiselt ASUS-e sülearvutitele ning pakub teiste tootjate riistvaral piiratud funktsionaalsust.",
+  "addwater_desc": "Tööriist, mis paigaldab Firefox GNOME'i teema automaatselt ja hoiab selle ajakohasena ning võimaldab teemat hõlpsalt oma maitse järgi seadistada.",
+  "openlogi_desc": "Logitech Options+ natiivne ja kohalikule töötlusele keskenduv alternatiiv, mis on kirjutatud Rustis."
 }

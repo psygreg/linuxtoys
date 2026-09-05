@@ -525,5 +525,9 @@
   "official_spec_key": "oficialus",
   "select_official_app_title": "Pasirinkite programą",
   "select_official_app_message": "Pasirinkite programą, su kuria susijęs šis pranešimas:",
-  "bug_report_app": "Programa (neprivaloma):"
+  "bug_report_app": "Programa (neprivaloma):",
+  "marmalade_desc": "Leidžia „Linux“ veikiančioms VTuber programoms, tokioms kaip „VBridger“ ir „VSeeFace“, išoriškai naudoti „MediaPipe“.",
+  "rogcc_desc": "„Linux“ sistemos valdymo priemonė, pirmiausia skirta ASUS nešiojamiesiems kompiuteriams, su ribotomis funkcijomis kitų gamintojų aparatinėje įrangoje.",
+  "addwater_desc": "Priemonė, kuri automatiškai įdiegia „Firefox GNOME“ temą ir nuolat ją atnaujina, taip pat leidžia lengvai pritaikyti temą pagal savo poreikius.",
+  "openlogi_desc": "Natūrali, vietiniam veikimui pirmenybę teikianti „Logitech Options+“ alternatyva, parašyta „Rust“."
 }

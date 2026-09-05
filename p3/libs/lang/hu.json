@@ -525,5 +525,9 @@
   "official_spec_key": "hivatalos",
   "select_official_app_title": "Alkalmazás kiválasztása",
   "select_official_app_message": "Válassza ki az alkalmazást, amelyre ez a jelentés vonatkozik:",
-  "bug_report_app": "Alkalmazás (opcionális):"
+  "bug_report_app": "Alkalmazás (opcionális):",
+  "marmalade_desc": "Lehetővé teszi a Linuxon futó VTuber-alkalmazások, például a VBridger és a VSeeFace számára a MediaPipe külső használatát.",
+  "rogcc_desc": "Linuxos rendszervezérlő segédprogram, amelyet elsősorban ASUS laptopokhoz terveztek, de más gyártók hardverein korlátozott funkcionalitást is biztosít.",
+  "addwater_desc": "Segédprogram, amely automatikusan telepíti és naprakészen tartja a Firefox GNOME témát, valamint lehetővé teszi a téma egyszerű, tetszés szerinti beállítását.",
+  "openlogi_desc": "A Logitech Options+ natív, helyi működést előtérbe helyező alternatívája, Rust nyelven írva."
 }

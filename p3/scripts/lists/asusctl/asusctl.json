@@ -1,0 +1,20 @@
+[
+    {
+        "name": "ROG Control Center",
+        "description": "System control utility for Linux designed primarily for ASUS laptops, with reduced functionality available for non-ASUS hardware.",
+        "description_tag": "rogcc_desc",
+        "repo": "https://github.com/OpenGamingCollective/asusctl",
+        "category": "drivers",
+        "icon": "./rogcc.svg",
+        "type": "native",
+        "os": [ "fedora", "rhel", "solus", "arch", "cachy" ],
+        "package-name": {
+            "solus": "asusctl",
+            "all": [ "asusctl", "rog-control-center" ]  
+        },
+        "overrides": {
+            "pre": "./asusctl-pre.sh"
+        },
+        "services": [ "asusd", "asus-shutdown" ]
+    }
+]

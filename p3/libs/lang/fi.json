@@ -525,5 +525,9 @@
   "official_spec_key": "virallinen",
   "select_official_app_title": "Valitse sovellus",
   "select_official_app_message": "Valitse sovellus, jota tämä raportti koskee:",
-  "bug_report_app": "Sovellus (valinnainen):"
+  "bug_report_app": "Sovellus (valinnainen):",
+  "marmalade_desc": "Mahdollistaa Linuxissa toimivien VTuber-sovellusten, kuten VBridgerin ja VSeeFacen, käyttää MediaPipea ulkoisesti.",
+  "rogcc_desc": "Linuxin järjestelmänhallintatyökalu, joka on suunniteltu ensisijaisesti ASUS-kannettaville ja tarjoaa rajoitetut toiminnot myös muiden valmistajien laitteille.",
+  "addwater_desc": "Työkalu, joka asentaa Firefox GNOME -teeman automaattisesti ja pitää sen ajan tasalla sekä mahdollistaa teeman helpon mukauttamisen mieleiseksesi.",
+  "openlogi_desc": "Natiivi ja paikallista käyttöä painottava vaihtoehto Logitech Options+:lle, kirjoitettu Rustilla."
 }

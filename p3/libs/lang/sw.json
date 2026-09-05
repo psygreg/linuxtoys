@@ -523,5 +523,9 @@
   "official_spec_key": "rasmi",
   "select_official_app_title": "Chagua programu",
   "select_official_app_message": "Chagua programu ambayo ripoti hii inahusu:",
-  "bug_report_app": "Programu (si lazima):"
+  "bug_report_app": "Programu (si lazima):",
+  "marmalade_desc": "Huruhusu programu za VTuber zinazoendeshwa kwenye Linux, kama vile VBridger na VSeeFace, kutumia MediaPipe kutoka nje.",
+  "rogcc_desc": "Zana ya kudhibiti mfumo kwa Linux iliyoundwa hasa kwa kompyuta mpakato za ASUS, huku utendaji mdogo ukipatikana kwa maunzi yasiyo ya ASUS.",
+  "addwater_desc": "Zana inayosakinisha mandhari ya Firefox GNOME kiotomatiki na kuiweka ikiwa imesasishwa, huku pia ikikuruhusu kusanidi mandhari kwa urahisi kulingana na upendeleo wako.",
+  "openlogi_desc": "Mbadala asilia wa Logitech Options+ unaotanguliza utendaji wa ndani, ulioandikwa kwa Rust."
 }

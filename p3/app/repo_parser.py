@@ -9,6 +9,12 @@ from .compat import get_system_compat_keys, is_containerized
 from .dev_mode import get_effective_compat_keys
 from . import official_index, new_index
 
+DESKTOP_KEYS = {
+    "gnome": "desktop-gnome",
+    "plasma": "desktop-plasma",
+    "other": "desktop-other",
+}
+
 OS_KEYS = {
     "debian",
     "ubuntu",
@@ -130,6 +136,36 @@ def _container_requirement_matches(entry, compat_keys):
     return entry.get("container", "allow").strip().lower() == "allow"
 
 
+def _validate_desktop(entry):
+    """Validate the optional desktop compatibility field."""
+    value = entry.get("desktop")
+
+    if value is None:
+        return True
+
+    values = _as_list(value)
+
+    return bool(values) and all(
+        isinstance(desktop, str)
+        and desktop.strip().lower() in DESKTOP_KEYS
+        for desktop in values
+    )
+
+def _desktop_requirement_matches(entry, compat_keys):
+    """Return True when the current desktop matches an entry's desktop field."""
+    value = entry.get("desktop")
+
+    if value is None:
+        return True
+
+    requested = {
+        DESKTOP_KEYS[desktop.strip().lower()]
+        for desktop in _as_list(value)
+    }
+
+    return bool(requested & compat_keys)
+
+
 def _entry_is_compatible(entry, compat_keys):
 
     from .dev_mode import get_dev_compat_override, is_dev_mode_enabled
@@ -152,6 +188,10 @@ def _entry_is_compatible(entry, compat_keys):
 
         if not requested & compat_keys:
             return False
+
+    # Optional desktop-environment compatibility.
+    if not _desktop_requirement_matches(entry, compat_keys):
+        return False
 
     # Optional init-system compatibility.
     if not _systemd_requirement_matches(entry, compat_keys):
@@ -224,6 +264,39 @@ def _required_fields_present(entry):
     )
 
 
+def _normalize_package_names(value):
+    """Normalize a package-name string/list to a non-empty list of names."""
+    if isinstance(value, str):
+        value = value.strip()
+        return [value] if value else None
+
+    if isinstance(value, list):
+        packages = []
+
+        for package in value:
+            if not isinstance(package, str) or not package.strip():
+                return None
+            packages.append(package.strip())
+
+        return packages or None
+
+    return None
+
+
+def _validate_native_package_spec(value):
+    """Validate native package-name, including per-OS mappings."""
+    if _normalize_package_names(value):
+        return True
+
+    if not isinstance(value, dict) or not value:
+        return False
+
+    return all(
+        _normalize_package_names(packages)
+        for packages in value.values()
+    )
+
+
 def _validate_type(entry):
     install_type = entry.get("type", "git")
 
@@ -231,10 +304,10 @@ def _validate_type(entry):
         return False
 
     if install_type == "flathub":
-        return bool(entry.get("package-name"))
+        return bool(_normalize_package_names(entry.get("package-name")))
 
     if install_type == "native":
-        return bool(entry.get("package-name"))
+        return _validate_native_package_spec(entry.get("package-name"))
 
     if install_type == "url":
         urls = entry.get("urls")
@@ -398,6 +471,9 @@ def load_repo_entries(scripts_dir, translations=None):
         if not _validate_container(entry):
             continue
 
+        if not _validate_desktop(entry):
+            continue
+
         if not _validate_dependencies(entry):
             continue
 
@@ -474,8 +550,9 @@ def get_entries_for_category(scripts_dir, category_path, translations=None):
 def _resolve_native_package(entry, compat_keys):
     package = entry.get("package-name")
 
-    if isinstance(package, str):
-        return package.strip() or None
+    direct = _normalize_package_names(package)
+    if direct:
+        return direct
 
     if not isinstance(package, dict):
         return None
@@ -484,15 +561,11 @@ def _resolve_native_package(entry, compat_keys):
         if key not in compat_keys:
             continue
 
-        value = package.get(key)
-        if isinstance(value, str) and value.strip():
-            return value.strip()
+        packages = _normalize_package_names(package.get(key))
+        if packages:
+            return packages
 
-    value = package.get("all")
-    if isinstance(value, str) and value.strip():
-        return value.strip()
-
-    return None
+    return _normalize_package_names(package.get("all"))
 
 def _valid_package_url(value):
     if not isinstance(value, str) or not value.strip():
@@ -592,22 +665,28 @@ def create_install_script(entry):
         command = f"pkg_fromrelease {shlex.quote(repo)}"
 
     elif install_type == "flathub":
-        package = entry.get("package-name")
-        if not isinstance(package, str) or not package.strip():
+        packages = _normalize_package_names(entry.get("package-name"))
+        if not packages:
             raise ValueError("Flathub entry has no package-name")
 
-        command = f"pkg_flat {shlex.quote(package.strip())}"
+        command = "\n".join(
+            f"pkg_flat {shlex.quote(package)}"
+            for package in packages
+        )
 
     elif install_type == "native":
         compat_keys = get_system_compat_keys()
-        package = _resolve_native_package(entry, compat_keys)
+        packages = _resolve_native_package(entry, compat_keys)
 
-        if not package:
+        if not packages:
             raise ValueError(
                 "No native package name matches this operating system"
             )
 
-        command = f"pkg_install {shlex.quote(package)}"
+        command = "\n".join(
+            f"pkg_install {shlex.quote(package)}"
+            for package in packages
+        )
 
     elif install_type == "url":
         compat_keys = get_system_compat_keys()
@@ -750,17 +829,11 @@ def _validate_dependencies(entry):
         package = dependency.get("package-name")
 
         if dependency_type == "flathub":
-            if not isinstance(package, str) or not package.strip():
+            if not _normalize_package_names(package):
                 return False
 
         elif dependency_type == "native":
-            if isinstance(package, str):
-                if not package.strip():
-                    return False
-            elif isinstance(package, dict):
-                if not package:
-                    return False
-            else:
+            if not _validate_native_package_spec(package):
                 return False
 
     return True
@@ -791,25 +864,34 @@ def _create_dependency_commands(entry, compat_keys):
         dependency_type = dependency["type"]
 
         if dependency_type == "native":
-            package = _resolve_native_package(
+            packages = _resolve_native_package(
                 dependency,
                 compat_keys,
             )
 
-            if not package:
+            if not packages:
                 raise ValueError(
                     "No native package matches a declared dependency"
                 )
 
-            commands.append(
+            commands.extend(
                 f"pkg_install {shlex.quote(package)}"
+                for package in packages
             )
 
         elif dependency_type == "flathub":
-            package = dependency["package-name"].strip()
+            packages = _normalize_package_names(
+                dependency["package-name"]
+            )
 
-            commands.append(
+            if not packages:
+                raise ValueError(
+                    "Flathub dependency has no package-name"
+                )
+
+            commands.extend(
                 f"pkg_flat {shlex.quote(package)}"
+                for package in packages
             )
 
     return commands

@@ -525,5 +525,9 @@
   "official_spec_key": "službeno",
   "select_official_app_title": "Odaberite aplikaciju",
   "select_official_app_message": "Odaberite aplikaciju na koju se ovo izvješće odnosi:",
-  "bug_report_app": "Aplikacija (neobavezno):"
+  "bug_report_app": "Aplikacija (neobavezno):",
+  "marmalade_desc": "Omogućuje VTuber aplikacijama koje rade na Linuxu, kao što su VBridger i VSeeFace, da koriste MediaPipe izvana.",
+  "rogcc_desc": "Alat za upravljanje sustavom na Linuxu, prvenstveno namijenjen ASUS prijenosnicima, s ograničenim funkcijama dostupnim na hardveru koji nije ASUS.",
+  "addwater_desc": "Alat za automatsku instalaciju i ažuriranje Firefox GNOME teme, kao i jednostavno podešavanje teme prema vašim željama.",
+  "openlogi_desc": "Izvorna alternativa za Logitech Options+ usmjerena na lokalni rad, napisana u Rustu."
 }

@@ -525,5 +525,9 @@
   "official_spec_key": "oficial",
   "select_official_app_title": "Selecionar aplicativo",
   "select_official_app_message": "Selecione o aplicativo ao qual este relatório se refere:",
-  "bug_report_app": "Aplicativo (opcional):"
+  "bug_report_app": "Aplicativo (opcional):",
+  "marmalade_desc": "Permite que aplicativos de VTuber executados no Linux, como VBridger e VSeeFace, utilizem o MediaPipe externamente.",
+  "rogcc_desc": "Utilitário de controle do sistema para Linux, projetado principalmente para notebooks ASUS, com funcionalidades reduzidas disponíveis em hardware de outros fabricantes.",
+  "addwater_desc": "Utilitário que instala automaticamente o tema Firefox GNOME e o mantém atualizado, além de permitir configurar facilmente o tema ao seu gosto.",
+  "openlogi_desc": "Uma alternativa nativa e focada em funcionamento local ao Logitech Options+, escrita em Rust."
 }

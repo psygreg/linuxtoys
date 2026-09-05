@@ -525,5 +525,9 @@
   "official_spec_key": "တရားဝင်",
   "select_official_app_title": "အပလီကေးရှင်းကို ရွေးချယ်ပါ",
   "select_official_app_message": "ဤအစီရင်ခံစာနှင့် သက်ဆိုင်သည့် အပလီကေးရှင်းကို ရွေးချယ်ပါ:",
-  "bug_report_app": "အပလီကေးရှင်း (ရွေးချယ်နိုင်သည်):"
+  "bug_report_app": "အပလီကေးရှင်း (ရွေးချယ်နိုင်သည်):",
+  "marmalade_desc": "Linux ပေါ်တွင် လည်ပတ်သည့် VBridger နှင့် VSeeFace ကဲ့သို့သော VTuber အပလီကေးရှင်းများအား MediaPipe ကို ပြင်ပမှ အသုံးပြုနိုင်စေသည်။",
+  "rogcc_desc": "ASUS laptop များအတွက် အဓိက ဒီဇိုင်းပြုလုပ်ထားသော Linux system control utility ဖြစ်ပြီး ASUS မဟုတ်သော hardware များတွင် လုပ်ဆောင်ချက်အချို့ကိုသာ အသုံးပြုနိုင်သည်။",
+  "addwater_desc": "Firefox GNOME theme ကို အလိုအလျောက် ထည့်သွင်းပြီး နောက်ဆုံးဗားရှင်းဖြစ်အောင် ထိန်းသိမ်းပေးသည့်အပြင် theme ကို မိမိစိတ်ကြိုက် အလွယ်တကူ ပြင်ဆင်နိုင်စေသော utility။",
+  "openlogi_desc": "Rust ဖြင့် ရေးသားထားသော Logitech Options+ အတွက် native နှင့် local-first အစားထိုးရွေးချယ်စရာ။"
 }

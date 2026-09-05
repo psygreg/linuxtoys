@@ -525,5 +525,9 @@
   "official_spec_key": "oficiāls",
   "select_official_app_title": "Atlasiet lietotni",
   "select_official_app_message": "Atlasiet lietotni, uz kuru attiecas šis ziņojums:",
-  "bug_report_app": "Lietotne (neobligāti):"
+  "bug_report_app": "Lietotne (neobligāti):",
+  "marmalade_desc": "Ļauj VTuber lietotnēm, kas darbojas Linux vidē, piemēram, VBridger un VSeeFace, ārēji izmantot MediaPipe.",
+  "rogcc_desc": "Linux sistēmas vadības utilīta, kas galvenokārt paredzēta ASUS klēpjdatoriem, ar ierobežotu funkcionalitāti citu ražotāju aparatūrai.",
+  "addwater_desc": "Utilīta, kas automātiski instalē Firefox GNOME motīvu un uztur to atjauninātu, kā arī ļauj viegli pielāgot motīvu savām vēlmēm.",
+  "openlogi_desc": "Natīva Logitech Options+ alternatīva, kas dod priekšroku lokālai darbībai un ir rakstīta Rust valodā."
 }
