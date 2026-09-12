@@ -18,10 +18,16 @@ fi
 pkg_install xdg-utils pciutils
 
 ASSETS=("marmalade.zip" "kalidokit.zip")
-FFMPEG_VER=$(ffmpeg -version | awk '/^ffmpeg version/ {print $3}' | cut -d'.' -f1)
+FFMPEG_VER=$(ffmpeg -version | sed -nE '1{s/^ffmpeg version [^0-9]*([0-9]+).*/\1/p}')
+FFMPEG_PLUGIN=""
 case $FFMPEG_VER in
-    4|5|6|7|8) ASSETS+=(ffmpeg"$FFMPEG_VER"_plugin.so) ;;
-    *) warn "Unsupported ffmpeg version. Marmalade may not work with webcams that use certain video codec outputs." ;;
+    4|5|6|7|8)
+        FFMPEG_PLUGIN="ffmpeg${FFMPEG_VER}_plugin.so"
+        ASSETS+=("$FFMPEG_PLUGIN")
+        ;;
+    *)
+        warn "Unsupported ffmpeg version. Marmalade may not work with webcams that use certain video codec outputs."
+        ;;
 esac
 DEST="$HOME/.local/linuxtoys/marmalade"
 TAG=$(curl -sL "https://api.github.com/repos/RanAwaySuccessfully/marmalade/releases/latest" | grep -Po '"tag_name":\s*"\K[^"]+')
@@ -41,7 +47,7 @@ prep_dir "$DEST"
 prep_dir "$DEST/tasks"
 unzip -d "$DEST" marmalade.zip
 unzip -d "$DEST" kalidokit.zip
-move_ "ffmpeg${FFMPEG_VER}_plugin.so" "$DEST"
+[[ -n $FFMPEG_PLUGIN ]] && move_ "$FFMPEG_PLUGIN" "$DEST"
 move_ face_landmarker.task "$DEST/tasks"
 move_ pose_landmarker_lite.task "$DEST/tasks"
 chmod +x "$DEST/marmalade"
