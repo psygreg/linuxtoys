@@ -12,7 +12,7 @@
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
-_lang_
+
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     askpass
     if is_debian || is_ubuntu; then
@@ -26,15 +26,14 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         pkg_install python3-venv
     fi
     pkg_install --ostreecheck waydroid python3
-    sysd_enable waydroid-container
-    sysd_start waydroid-container
     sudo waydroid init -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor -s GAPPS
+    sysd_enable waydroid-container
     if command -v firewall-cmd &> /dev/null; then # fedora rules for waydroid networking
         sudo firewall-cmd --zone=trusted --add-interface=waydroid0 --permanent
     elif command -v ufw &> /dev/null; then # other systems with ufw
         sudo ufw allow 53
         sudo ufw allow 67
-        sudo ufw default allow FORWARD     
+        sudo ufw default allow FORWARD
     fi
     sudo iptables -P FORWARD ACCEPT # forward policy accept for iptables
     if zenity --question --title="Waydroid" --text="$msg283" --width 300 --height 300; then
@@ -63,5 +62,4 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     xdg-open https://docs.waydro.id/faq/google-play-certification
 else
     fatal "$msg219"
-    exit 1
 fi
