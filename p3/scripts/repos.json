@@ -773,14 +773,6 @@
         "package-name": "io.github.ungoogled_software.ungoogled_chromium"
     },
     {
-        "name": "Rclone UI",
-        "description": "A GUI for rclone-based configuration and synchronization that supports most cloud providers like Google Drive, OneDrive, Proton Drive and Dropbox.",
-        "description_tag": "rcloneui_desc",
-        "repo": "https://github.com/rclone-ui/rclone-ui",
-        "category": "utils",
-        "icon": "rcloneui.png"
-    },
-    {
         "name": "Warehouse",
         "description": "A feature-rich tool for managing Flatpak applications and repositories tailored towards more technical users.",
         "description_tag": "wrhs_desc",

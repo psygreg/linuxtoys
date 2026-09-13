@@ -526,7 +526,7 @@ def _entry_is_compatible(entry, compat_keys, scripts_dir=None):
 
     if scripts_dir is not None and not _git_db_requirement_matches(entry, compat_keys, scripts_dir):
         return False
-    
+
     # OS compatibility
     os_value = entry.get("os")
 
@@ -594,7 +594,7 @@ def _entry_is_compatible(entry, compat_keys, scripts_dir=None):
 
     if not _dependencies_are_compatible(entry, compat_keys):
         return False
-    
+
     return True
 
 
@@ -669,6 +669,21 @@ def _validate_native_package_spec(value):
     """Backward-compatible alias for native package-name validation."""
     return _validate_package_spec(value)
 
+def _validate_release_asset_selector(value):
+    """Validate an optional pkg_fromrelease asset name/glob."""
+    if value is None:
+        return True
+
+    if not isinstance(value, str):
+        return False
+
+    value = value.strip()
+    return bool(
+        value
+        and value not in {".", ".."}
+        and "/" not in value
+        and "\\" not in value
+    )
 
 def _validate_type(entry, compat_keys):
     install_type = _resolve_install_type(entry, compat_keys)
@@ -678,6 +693,9 @@ def _validate_type(entry, compat_keys):
 
     if install_type in {"flathub", "native"}:
         return _validate_package_spec(entry.get("package-name"))
+
+    if install_type in {"git", "tar"}:
+        return _validate_release_asset_selector(entry.get("package-name"))
 
     if install_type == "bin":
         asset_name = entry.get("package-name")
@@ -701,8 +719,6 @@ def _validate_type(entry, compat_keys):
             for key, value in urls.items()
         )
 
-    # Placeholder entries shouldn't currently be displayed because
-    # they cannot yet be installed correctly.
     if install_type == "repository":
         return False
 
@@ -1814,10 +1830,16 @@ def create_install_script(entry):
     command = None
 
     if install_type == "git":
+        asset_selector = entry.get("package-name")
         command = f"pkg_fromrelease {shlex.quote(repo)}"
+        if isinstance(asset_selector, str) and asset_selector.strip():
+            command += f" {shlex.quote(asset_selector.strip())}"
 
     elif install_type == "tar":
+        asset_selector = entry.get("package-name")
         command = f"pkg_fromrelease --tar {shlex.quote(repo)}"
+        if isinstance(asset_selector, str) and asset_selector.strip():
+            command += f" {shlex.quote(asset_selector.strip())}"
 
     elif install_type == "bin":
         asset_name = entry.get("package-name", "").strip()
