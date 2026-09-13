@@ -163,6 +163,22 @@ class ExecutionRegistry:
             registry_data = parse_registry_file()
 
             executions = registry_data.get(script_name, [])
+
+            if not executions:
+                try:
+                    from .lang_utils import load_translations
+                    from .parser import get_display_name
+
+                    translations = load_translations()
+                    target = str(script_name).strip().casefold()
+                    for registry_name, candidate_executions in registry_data.items():
+                        display_name = get_display_name(registry_name, translations)
+                        if str(display_name).strip().casefold() == target:
+                            executions = candidate_executions
+                            break
+                except Exception:
+                    pass
+
             if not executions:
                 return ""
 

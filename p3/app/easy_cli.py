@@ -242,7 +242,9 @@ def _try_execute_auto_revert(script_info, transmap_path):
 def _run_script_with_registry_name(script_info):
     """Expose this invocation's registry identity without leaking it to the next."""
     previous = os.environ.get("LINUXTOYS_SCRIPT_NAME")
-    os.environ["LINUXTOYS_SCRIPT_NAME"] = script_info.get("name", "unknown")
+    os.environ["LINUXTOYS_SCRIPT_NAME"] = script_info.get(
+        "registry_name", script_info.get("name", "unknown")
+    )
     try:
         return run_script(script_info)
     finally:
@@ -279,6 +281,7 @@ def easy_cli_run_script(script_info):
 
     script_path = script_info['path']
     script_name = script_info.get('name', 'unknown')
+    registry_name = script_info.get('registry_name', script_name)
 
     # Create a temporary script file
     temp_file_path = create_temp_file(script_path)
@@ -301,7 +304,7 @@ def easy_cli_run_script(script_info):
         # Save to registry and wipe transmap file if script executed successfully
         if code == 0:
             transmap_path = "/tmp/linuxtoys/transmap"
-            _save_script_to_registry(script_name, transmap_path)
+            _save_script_to_registry(registry_name, transmap_path)
             # Clean up any temp directories created by prep_tmp_noram before removing transmap
             _cleanup_tmp_noram_dirs(transmap_path)
             try:
@@ -318,6 +321,7 @@ def easy_cli_run_script(script_info):
             # Try to auto-revert if there are operations in the transmap
             script_info_for_revert = {
                 "name": script_name,
+                "registry_name": registry_name,
                 "icon": "application-x-executable",
                 "repo": "",
             }

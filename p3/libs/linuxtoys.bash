@@ -282,6 +282,7 @@ call_script () {
     local script_file="${script_name}.sh"
     local found_script=""
     local script_display_name=""
+    local script_registry_name=""
     local repo_app_id=""
     local repo_url=""
 
@@ -299,6 +300,23 @@ call_script () {
             head -n1
         )
         [[ -n "$script_display_name" ]] || script_display_name="$script_name"
+
+        # Preserve pretty names for ordinary scripts, but use the internal file ID
+        # when the # name header is a localization key.
+        if python3 - "$script_display_name" <<'PY' >/dev/null 2>&1
+import os
+import sys
+sys.path.insert(0, os.environ["SCRIPT_DIR"])
+from app.lang_utils import load_translations
+key = sys.argv[1]
+translations = load_translations()
+sys.exit(0 if translations.get(key, key) != key else 1)
+PY
+        then
+            script_registry_name="$script_name"
+        else
+            script_registry_name="$script_display_name"
+        fi
     else
         # Physical script not found: resolve a compatible repository-list entry
         # through its normalized repo_app_id (e.g. PRISM_LAUNCHER).
@@ -316,7 +334,10 @@ call_script () {
         script_display_name="${repo_selection[1]}"
         repo_url="${repo_selection[2]}"
         repo_app_id="${script_name^^}"
+        script_registry_name="$script_display_name"
     fi
+
+    [[ -n "$script_registry_name" ]] || script_registry_name="$script_display_name"
 
     shift
 
@@ -344,9 +365,9 @@ call_script () {
         # Commit the called script's transaction independently.
         if [[ -s "$child_transmap" ]]; then
             python3 "$SCRIPT_DIR/app/term_registry.py" \
-                save "$script_display_name" "$child_transmap" ||
+                save "$script_registry_name" "$child_transmap" ||
                 die "Failed to save transaction for $script_display_name"
-            _append_transmap "called $script_display_name"
+            _append_transmap "called $script_registry_name"
         fi
         rm -f "$child_transmap"
         return 0

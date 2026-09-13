@@ -283,7 +283,10 @@ def _parse_metadata_file(file_path, default_values, translations=None):
             for key, raw_value in headers.items():
                 value = raw_value
                 if translations and key in ("name", "description"):
-                    value = translations.get(value, value)
+                    translated_value = translations.get(value, value)
+                    if key == "name" and translated_value != value:
+                        metadata["_name_is_translated"] = True
+                    value = translated_value
 
                 if key in metadata:
                     metadata[key] = value
@@ -302,7 +305,10 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                     key = parts[0].strip().lower()
                     value = parts[1].strip()
                     if translations and key in ("name", "description"):
-                        value = translations.get(value, value)
+                        translated_value = translations.get(value, value)
+                        if key == "name" and translated_value != value:
+                            metadata["_name_is_translated"] = True
+                        value = translated_value
 
                     if key in metadata:
                         metadata[key] = value
@@ -392,7 +398,7 @@ def get_categories(translations=None):
         if not should_show_optimization_script(file_path):
             continue
 
-        categories.append({
+        category_entry = {
             'name': header.get('name', file_name),
             'path': file_path,
             'icon': header.get('icon', 'application-x-executable'),
@@ -400,7 +406,10 @@ def get_categories(translations=None):
             'is_script': True,
             'is_new': header.get('is_new', False),
             'is_verified': header.get('is_verified', False)
-        })
+        }
+        if header.get("_name_is_translated"):
+            category_entry["registry_name"] = script_name_without_ext
+        categories.append(category_entry)
 
     for category_name in _subcategory_names_in(SCRIPTS_DIR):
         category_path = os.path.join(SCRIPTS_DIR, category_name)
@@ -563,6 +572,8 @@ def get_scripts_for_category(category_path, translations=None):
         script_info = _parse_metadata_file(file_path, defaults, translations)
         if is_local_script and script_info['name'] == 'No Name':
             script_info['name'] = os.path.splitext(file_name)[0]
+        if script_info.pop("_name_is_translated", False):
+            script_info["registry_name"] = script_name_without_ext
         script_info['is_script'] = True
         script_info['is_subcategory'] = False
         items.append(script_info)
@@ -623,6 +634,8 @@ def get_all_scripts_recursive(directory_path, translations=None):
         script_info = _parse_metadata_file(item_path, defaults, translations)
         if '.local/linuxtoys/scripts' in item_path and script_info['name'] == 'No Name':
             script_info['name'] = os.path.splitext(item_name)[0]
+        if script_info.pop("_name_is_translated", False):
+            script_info["registry_name"] = script_name_without_ext
         script_info['is_script'] = True
         script_info['is_subcategory'] = False
         scripts.append(script_info)

@@ -48,7 +48,9 @@ class TerminalRunner:
  
         # Add script to execution history
         script_name = current_script.get("name", "unknown")
-        self._current_script_name = script_name  # Store for registry
+        registry_name = current_script.get("registry_name", script_name)
+        self._current_script_name = registry_name  # Stable identity used by the registry
+        self._current_script_display_name = script_name
         self.executed_scripts.append(current_script)
         antenna.add_script_to_history(script_name)
         
@@ -174,7 +176,7 @@ class TerminalRunner:
             # Try to auto-revert if there are operations in the transmap
             auto_revert_entry = ExecutionRegistry._try_auto_revert(
                 transmap_path,
-                script_name,
+                getattr(self, "_current_script_display_name", script_name),
                 self.translations,
             )
             

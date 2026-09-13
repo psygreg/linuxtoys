@@ -6,8 +6,9 @@ import os
 import shutil
 from gi.repository import GLib
 from .gtk_common import Gtk
-from .lang_utils import create_translator
+from .lang_utils import create_translator, load_translations
 from .registry_utils import parse_registry_file, search_registry_entries
+from .parser import get_display_name
 
 
 def _find_backup_files_for_script(script_name, registry_data):
@@ -132,6 +133,7 @@ class ActionRegistryDialog(Gtk.Dialog):
     
     def __init__(self, parent=None):
         _ = create_translator()
+        self.translations = load_translations()
         super().__init__(title=_("action_registry"), transient_for=parent, modal=True)
         
         self.set_default_size(700, 600)
@@ -178,7 +180,8 @@ class ActionRegistryDialog(Gtk.Dialog):
         left_frame.add(scrolled_left)
         
         # Scripts list store and treeview
-        self.scripts_store = Gtk.ListStore(str)  # script name
+        # display name, stable registry identity
+        self.scripts_store = Gtk.ListStore(str, str)
         self.scripts_treeview = Gtk.TreeView(model=self.scripts_store)
         self.scripts_treeview.set_headers_visible(False)
         
@@ -230,6 +233,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         
         # Track currently selected script for cleanup
         self.current_script = None
+        self.current_script_display = None
         
         # Add buttons
         cleanup_button = self.add_button(_("registry_cleanup_label"), Gtk.ResponseType.NONE)
@@ -246,8 +250,15 @@ class ActionRegistryDialog(Gtk.Dialog):
     def __populate_scripts_list(self):
         """Populate the scripts list from registry data."""
         self.scripts_store.clear()
-        for script_name in sorted(self.filtered_registry_data.keys()):
-            self.scripts_store.append([script_name])
+        entries = []
+        for registry_name in self.filtered_registry_data.keys():
+            display_name = get_display_name(registry_name, self.translations)
+            entries.append((display_name, registry_name))
+
+        for display_name, registry_name in sorted(
+            entries, key=lambda item: item[0].casefold()
+        ):
+            self.scripts_store.append([display_name, registry_name])
     
     def __on_script_selected(self, selection):
         """Handle script selection from the list."""
@@ -255,13 +266,16 @@ class ActionRegistryDialog(Gtk.Dialog):
         if tree_iter is None:
             self.details_textview.get_buffer().set_text("")
             self.current_script = None
+            self.current_script_display = None
             self.cleanup_button.set_sensitive(False)
             return
         
-        script_name = model.get_value(tree_iter, 0)
-        self.current_script = script_name
+        display_name = model.get_value(tree_iter, 0)
+        registry_name = model.get_value(tree_iter, 1)
+        self.current_script = registry_name
+        self.current_script_display = display_name
         self.cleanup_button.set_sensitive(True)
-        self.__display_script_details(script_name)
+        self.__display_script_details(registry_name)
     
     def __display_script_details(self, script_name):
         """Display registry details for the selected script."""
@@ -271,8 +285,10 @@ class ActionRegistryDialog(Gtk.Dialog):
 
         executions = self.filtered_registry_data[script_name]
         
-        # Build detailed text
-        lines = [f"Script: {script_name}\n"]
+        # Build detailed text using the current localized display name while all
+        # registry lookups continue using the stable stored identity.
+        display_name = get_display_name(script_name, self.translations)
+        lines = [f"Script: {display_name}\n"]
         lines.append("=" * 60 + "\n\n")
         
         for idx, (timestamp, operations) in enumerate(executions, 1):
@@ -322,7 +338,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         
         backup_count = len(backup_files)
         secondary_text = (
-            f"This will remove the registry entry for '{self.current_script}' and delete "
+            f"This will remove the registry entry for '{getattr(self, 'current_script_display', self.current_script)}' and delete "
             f"{backup_count} backup file(s). After removal, you will no longer be able "
             "to undo the operations from this script using the app.\n\n"
             "This action cannot be undone."
@@ -408,6 +424,7 @@ class ActionRegistryDialog(Gtk.Dialog):
 
             self.__populate_scripts_list()
             self.current_script = None
+            self.current_script_display = None
             self.cleanup_button.set_sensitive(False)
             self.details_textview.get_buffer().set_text("")
         else:
@@ -431,10 +448,20 @@ class ActionRegistryDialog(Gtk.Dialog):
             query
         )
 
+        # The registry stores stable IDs for localized feature names, but search
+        # should still behave as users expect against the translated display name.
+        normalized_query = query.strip().casefold()
+        if normalized_query:
+            for registry_name, executions in self.registry_data.items():
+                display_name = get_display_name(registry_name, self.translations)
+                if normalized_query in str(display_name).casefold():
+                    self.filtered_registry_data[registry_name] = executions
+
         self.__populate_scripts_list()
 
         # Clear stale selection/details after the result set changes.
         self.current_script = None
+        self.current_script_display = None
         self.cleanup_button.set_sensitive(False)
         self.details_textview.get_buffer().set_text("")
 

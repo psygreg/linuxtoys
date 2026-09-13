@@ -70,55 +70,66 @@ def _load_from_transmap(transmap_path):
 
 def _load_last_execution(script_name):
     """
-    Load the last execution record from the registry for the given script.
-    
-    Returns a list of operations (operation_type, operands) or empty list if not found.
-    Operations are in the order they appear in registry (original execution order).
+    Load the last execution record for a stable registry identity or UI display name.
+
+    Stable IDs are preferred. The display-name fallback keeps older callers (such
+    as terminal remove-button availability checks) working without making the
+    registry itself language-dependent.
     """
     registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
-    
+
     if not os.path.exists(registry_file):
         return []
-    
+
     try:
         with open(registry_file, "r") as f:
             content = f.read()
     except Exception:
         return []
-    
-    # Split by registry entries (format: [timestamp] Script: name\nChanges:\n  - operation)
+
     entries = content.split("---\n")
-    entries.reverse()  # Start from most recent
-    
+    entries.reverse()
+
+    def extract_operations(entry):
+        operations = []
+        for line in entry.split("\n")[1:]:
+            line = line.strip()
+            if line.startswith("- "):
+                op_line = line[2:].strip()
+                if op_line and op_line not in ("Changes:", "Changes: (none)"):
+                    operations.append(op_line)
+        return operations
+
+    parsed_entries = []
     for entry in entries:
         entry = entry.strip()
         if not entry:
             continue
-        
         lines = entry.split("\n")
-        if not lines:
+        if not lines or "Script: " not in lines[0]:
             continue
-        
-        # First line should have the script name
-        first_line = lines[0] if lines else ""
-        if f"Script: {script_name}" not in first_line:
-            continue
-        
-        # Found the matching script execution
-        operations = []
-        
-        # Parse operation lines (those starting with "  - ")
-        for line in lines[1:]:
-            line = line.strip()
-            if line.startswith("- "):
-                # Remove "- " prefix and parse operation
-                op_line = line[2:].strip()
-                if op_line and op_line != "Changes:" and op_line != "Changes: (none)":
-                    operations.append(op_line)
-        
-        return operations
-    
+        stored_name = lines[0].split("Script: ", 1)[1].strip()
+        parsed_entries.append((stored_name, entry))
+        if stored_name == script_name:
+            return extract_operations(entry)
+
+    # A caller may still pass the localized pretty name. Resolve stored stable IDs
+    # to their current display names only for lookup; never rewrite registry data.
+    try:
+        from .lang_utils import load_translations
+        from .parser import get_display_name
+
+        translations = load_translations()
+        target = str(script_name).strip().casefold()
+        for stored_name, entry in parsed_entries:
+            display_name = get_display_name(stored_name, translations)
+            if str(display_name).strip().casefold() == target:
+                return extract_operations(entry)
+    except Exception:
+        pass
+
     return []
+
 
 def _load_registry_entries():
     """Load registry transactions in chronological order."""
@@ -971,13 +982,26 @@ def build_uninstall_script_entry(script_info, translations=None):
     script_name = script_info.get("name")
     if not script_name:
         return None
+
+    # Localized feature names are presentation-only. Their parser metadata carries
+    # a stable registry_name (the internal script ID), while ordinary applications
+    # continue using their pretty name as the registry identity.
+    registry_name = script_info.get("registry_name", script_name)
     
     registry_entries = _load_registry_entries()
 
     parent_index, parent_entry = _find_registry_execution(
         registry_entries,
-        script_name,
+        registry_name,
     )
+
+    # Backward compatibility for transactions written before stable localized IDs
+    # were introduced. This keeps same-language existing entries removable.
+    if parent_entry is None and registry_name != script_name:
+        parent_index, parent_entry = _find_registry_execution(
+            registry_entries,
+            script_name,
+        )
 
     if parent_entry is None or not parent_entry["operations"]:
         return None
