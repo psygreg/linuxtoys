@@ -1407,6 +1407,40 @@ def _resolve_app_page_metadata(
     }
 
 
+def _resolve_hook_paths(entry, scripts_dir):
+    """
+    Normalize repository-local hook scripts to paths relative to scripts/lists/.
+
+    Hook declarations are resolved relative to the JSON file that declared the
+    entry, then reduced to a stable lists-relative path for run_list_hook. This
+    keeps generated scripts independent from the current CACHE_DIR location.
+    """
+    overrides = entry.get("overrides")
+
+    if not isinstance(overrides, dict):
+        return overrides
+
+    resolved_overrides = dict(overrides)
+    lists_dir = os.path.realpath(os.path.join(scripts_dir, "lists"))
+
+    for key in ("pre", "post"):
+        value = overrides.get(key)
+
+        if not isinstance(value, dict):
+            continue
+
+        script = value.get("script")
+        path = _safe_list_relative_path(entry, scripts_dir, script)
+
+        if not path or not os.path.isfile(path):
+            return None
+
+        relative = os.path.relpath(path, lists_dir)
+        resolved_overrides[key] = {"script": relative}
+
+    return resolved_overrides
+
+
 def _resolve_list_icon(entry, scripts_dir):
     """
     Resolve repository-list icons.
@@ -1540,7 +1574,14 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         if not description:
             continue
 
+        resolved_overrides = _resolve_hook_paths(entry, scripts_dir)
+        if entry.get("overrides") is not None and resolved_overrides is None:
+            continue
+
         item = dict(entry)
+        if resolved_overrides is not None:
+            item["overrides"] = resolved_overrides
+
         app_page_metadata = _resolve_app_page_metadata(
             entry,
             scripts_dir,

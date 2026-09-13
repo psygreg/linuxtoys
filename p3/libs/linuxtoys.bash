@@ -372,8 +372,8 @@ run_list_hook() {
     local path=""
 
     if [ -n "${CACHE_DIR:-}" ] &&
-       [ -f "$CACHE_DIR/scripts/lists/$hook" ]; then
-        path="$CACHE_DIR/scripts/lists/$hook"
+       [ -f "$CACHE_DIR/lists/$hook" ]; then
+        path="$CACHE_DIR/lists/$hook"
     elif [ -f "$SCRIPT_DIR/scripts/lists/$hook" ]; then
         path="$SCRIPT_DIR/scripts/lists/$hook"
     else
