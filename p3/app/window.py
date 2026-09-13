@@ -1046,7 +1046,14 @@ class AppWindow(
             categories = parser.get_categories(self.translations)
         self._render_categories(categories)
 
-    def _load_scripts_into_flowbox(self, flowbox, category_info, defer_initial=False):
+    def _load_scripts_into_flowbox(
+        self,
+        flowbox,
+        category_info,
+        defer_initial=False,
+        pause_after_initial_ms=0,
+        animate_initial=True,
+    ):
         """
         Populate a category without blocking navigation on every card.
 
@@ -1071,6 +1078,8 @@ class AppWindow(
                     flowbox,
                     category_info,
                     defer_initial=False,
+                    pause_after_initial_ms=pause_after_initial_ms,
+                    animate_initial=animate_initial,
                 )
                 return False
 
@@ -1171,22 +1180,62 @@ class AppWindow(
                 widget.show_all()
                 initial_widgets.append(widget)
 
-            self.animate_item_batch(
-                initial_widgets,
-                duration_ms=120,
-                stagger_ms=8,
-            )
+            if animate_initial:
+                self.animate_item_batch(
+                    initial_widgets,
+                    duration_ms=120,
+                    stagger_ms=8,
+                )
+            else:
+                # Terminal-return refreshes happen behind the still-visible VTE.
+                # Make the first screenful fully ready immediately so no per-card
+                # fade animation competes with the Gtk.Stack reverse transition.
+                for widget in initial_widgets:
+                    widget.set_opacity(1.0)
 
             self._configure_local_scripts_interaction(flowbox, category_info)
             if checklist_mode:
                 self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
             if initial_count < len(scripts):
-                GLib.timeout_add(
-                    frame_interval_ms,
-                    populate_timed_batch,
-                    priority=GLib.PRIORITY_LOW,
-                )
+                pause_ms = int(pause_after_initial_ms)
+                if pause_ms > frame_interval_ms:
+                    # The terminal-return pause is only a one-shot hold before
+                    # progressive population resumes.  Do not use it as the
+                    # repeating timeout interval: populate_timed_batch() returns
+                    # True while work remains, so GLib would otherwise repeat
+                    # every ~stack-transition duration instead of every frame.
+                    def resume_timed_population():
+                        if (
+                            getattr(
+                                flowbox,
+                                "_linuxtoys_population_generation",
+                                None,
+                            )
+                            != generation
+                        ):
+                            return False
+
+                        has_more = populate_timed_batch()
+                        if has_more:
+                            GLib.timeout_add(
+                                frame_interval_ms,
+                                populate_timed_batch,
+                                priority=GLib.PRIORITY_LOW,
+                            )
+                        return False
+
+                    GLib.timeout_add(
+                        pause_ms,
+                        resume_timed_population,
+                        priority=GLib.PRIORITY_LOW,
+                    )
+                else:
+                    GLib.timeout_add(
+                        frame_interval_ms,
+                        populate_timed_batch,
+                        priority=GLib.PRIORITY_LOW,
+                    )
             return False
 
         populate_initial_batch()
@@ -1703,13 +1752,19 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                                 self.navigation_stack[i] = subcategory
                                 break
 
-    def _refresh_removable_scripts(self):
+    def _refresh_removable_scripts(
+        self, pause_after_initial_ms=0, animate_initial=True
+    ):
         """
         Refresh removable-script state and rebuild the currently visible cards.
 
         The removal button is created inside create_item_widget(), so refreshing
         only the boolean cache is insufficient: the displayed widgets must also
         be recreated.
+
+        ``pause_after_initial_ms`` is used by terminal Back navigation: the first
+        screenful is rebuilt synchronously while the terminal is still visible,
+        then later progressive batches are held until the stack transition ends.
         """
         if self.script_cache.is_populated:
             self.script_cache.refresh_removable_cache()
@@ -1719,6 +1774,8 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             self._load_scripts_into_flowbox(
                 self.scripts_flowbox,
                 self.current_category_info,
+                pause_after_initial_ms=pause_after_initial_ms,
+                animate_initial=animate_initial,
             )
             self.scripts_flowbox.show_all()
         else:

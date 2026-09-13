@@ -140,6 +140,7 @@ class NavCtl:
             "header_visible": self.header_widget.get_visible(),
             "title": self.header_bar.props.title,
             "footer_revealed": self.reveal.get_reveal_child(),
+            "back_visible": self.back_button.get_visible(),
         }
 
         page = app_page.AppPageView(
@@ -159,6 +160,11 @@ class NavCtl:
 
     def close_app_page_for_install(self):
         """Remove the app page immediately before entering the terminal flow."""
+        # The app page already remembers the exact GTK child it was opened from.
+        # Preserve that state for the terminal so Back can return to the same
+        # already-built menu/category instead of reconstructing it.
+        self._term_prev_override = getattr(self, "_app_page_prev", None)
+
         child = self.main_stack.get_child_by_name("app_page")
         if child is not None:
             self.main_stack.remove(child)
@@ -174,6 +180,32 @@ class NavCtl:
             infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run
         )
 
+        # Keep the exact previous view alive, just like app-page/category
+        # navigation does. App-page installs provide an override pointing to the
+        # page's own parent because the app page itself is destroyed before the
+        # terminal is opened.
+        prev = getattr(self, "_term_prev_override", None)
+        self._term_prev_override = None
+        if prev is None:
+            prev = {
+                "child": self.main_stack.get_visible_child(),
+                "header_visible": self.header_widget.get_visible(),
+                "title": self.header_bar.props.title,
+                "footer_revealed": self.reveal.get_reveal_child(),
+            }
+        else:
+            prev = dict(prev)
+
+        prev.update(
+            {
+                "scripts_view": self.scripts_view,
+                "scripts_flowbox": self.scripts_flowbox,
+                "category_info": self.current_category_info,
+            }
+        )
+        prev.setdefault("back_visible", self.back_button.get_visible())
+        self._term_prev = prev
+
         self.header_widget.hide()
         self.reveal.set_reveal_child(False)
         self.check_buttons.clear()
@@ -187,9 +219,6 @@ class NavCtl:
         self.main_stack.add_named(run_box, "running_scripts")
 
         run_box.show_all()
-
-        if self.current_category_info and not self.search_active:
-            self.navigation_stack.append(self.current_category_info)
 
         self.main_stack.set_visible_child_name("running_scripts")
         return run_box
@@ -290,84 +319,92 @@ class NavCtl:
 
             returning_to_search = self.search_active
             search_query = self.search_entry.get_text().strip()
+            prev = getattr(self, "_term_prev", None)
 
-            if child is not None:
-                self.main_stack.remove(child)
-                child.destroy()
+            transition_delay = max(
+                1, int(self.main_stack.get_transition_duration())
+            )
 
-            # Installation/removal may have changed the action registry.
-            self._refresh_removable_scripts()
+            # Installation/removal may have changed the action registry. Rebuild
+            # only the first screenful while the terminal is still visible. The
+            # remaining progressive batches are deliberately held until after the
+            # reverse Gtk.Stack transition, so FlowBox layout cannot steal frames
+            # from the slide. The initial cards are also made fully opaque at once
+            # because their fade would otherwise overlap the stack animation.
+            self._refresh_removable_scripts(
+                pause_after_initial_ms=transition_delay + 16,
+                animate_initial=False,
+            )
 
-            # When launched from search, rerun the same search so its cards
-            # are recreated using the refreshed removable-state cache.
+            def cleanup_terminal_view():
+                # Keep the source child alive for the whole reverse transition,
+                # matching normal category Back navigation.
+                if child is not None:
+                    try:
+                        if child.get_parent() is self.main_stack:
+                            self.main_stack.remove(child)
+                    except (AttributeError, TypeError):
+                        pass
+                    try:
+                        child.destroy()
+                    except (AttributeError, TypeError):
+                        pass
+                return False
+
+            # Search results are generated views whose removable buttons also need
+            # refreshing, so preserve their existing dedicated refresh path. Keep
+            # the terminal child attached until that transition has completed too.
             if returning_to_search and search_query:
                 self.search_results = self.search_engine.search(search_query)
                 self._display_search_results()
-                return
-        
-            if getattr(self, "_skills_prev", None) is not None:
-                self.current_category_info = self._skills_prev["category_info"]
-
-                prev_placeholder = getattr(self, "_search_entry_prev_placeholder", None)
-                if prev_placeholder:
-                    self.search_entry.set_placeholder_text(prev_placeholder)
-                    self._search_entry_prev_placeholder = None
-
-                self.header_widget.show()
-                self._update_header(self.current_category_info)
-                if self.current_category_info:
-                    self.header_bar.props.title = (
-                        f"LinuxToys: {self.current_category_info.get('name', 'LinuxToys')}"
-                    )
-                    self.main_stack.set_visible_child_name("skills_seeker")
-                    self.back_button.show()
-                    if self._is_local_scripts_category(self.current_category_info):
-                        self._enable_drag_and_drop()
-                    else:
-                        self._disable_drag_and_drop()
-                    if self.current_category_info.get("display_mode", "menu") == "checklist":
-                        self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
-                    else:
-                        self.reveal.set_reveal_child(False)
-                else:
-                    self.show_categories_view()
-
-                if self.navigation_stack:
-                    self.navigation_stack.pop()
-                self._skills_prev = None
+                GLib.timeout_add(transition_delay, cleanup_terminal_view)
+                self._term_prev = None
                 return
 
-            if self.navigation_stack:
-                previous_category = self.navigation_stack.pop()
-                self.current_category_info = previous_category
-                self.header_widget.show()
-                self._update_header(previous_category)
+            if prev and prev.get("child") is not None:
+                self.scripts_view = prev.get("scripts_view", self.scripts_view)
+                self.scripts_flowbox = prev.get("scripts_flowbox", self.scripts_flowbox)
+                self.current_category_info = prev.get("category_info")
 
-                self.header_bar.props.title = (
-                    f"LinuxToys: {previous_category.get('name', 'LinuxToys')}"
+                self.main_stack.set_transition_type(
+                    Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
                 )
+                self.main_stack.set_visible_child(prev["child"])
+                self.header_bar.props.title = prev.get("title") or "LinuxToys"
 
-                if self._is_local_scripts_category(previous_category):
+                if prev.get("header_visible"):
+                    self.header_widget.show()
+                else:
+                    self.header_widget.hide()
+                self.reveal.set_reveal_child(bool(prev.get("footer_revealed")))
+
+                if prev.get("back_visible"):
+                    self.back_button.show()
+                else:
+                    self.back_button.hide()
+
+                if self.current_category_info and self._is_local_scripts_category(
+                    self.current_category_info
+                ):
                     self._enable_drag_and_drop()
                 else:
                     self._disable_drag_and_drop()
 
-                self._load_scripts_into_flowbox(
-                    self.scripts_flowbox,
-                    previous_category,
-                )
-                self.scripts_flowbox.show_all()
+                GLib.timeout_add(transition_delay, cleanup_terminal_view)
+                self._term_prev = None
+                return
 
-                if previous_category.get("display_mode", "menu") == "checklist":
-                    self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
-                else:
-                    self.reveal.set_reveal_child(False)
-
+            # Defensive fallback for older/invalid state. This should only be
+            # reached if the original child disappeared while the terminal was open.
+            self._term_prev = None
+            if self.current_category_info:
+                self.header_widget.show()
+                self._update_header(self.current_category_info)
                 self.main_stack.set_visible_child(self.scripts_view)
+                self.back_button.show()
             else:
-                self.load_categories()
                 self.show_categories_view()
-
+            GLib.timeout_add(transition_delay, cleanup_terminal_view)
             return
 
         # This now applies only when Back is pressed directly from search results.
