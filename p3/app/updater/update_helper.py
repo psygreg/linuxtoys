@@ -217,7 +217,15 @@ def run_background_update():
             "#!/usr/bin/env bash\n"
             f"source {shlex.quote(library_path)}\n"
             "sudo_rq\n"
-            "curl -fsSL https://linux.toys/install.sh | bash\n"
+            "\n"
+            # Keep install.sh in the same shell that ran sudo_rq. In the\n"
+            # background updater there is no controlling TTY, so spawning a\n"
+            # separate `bash` via a pipe can make sudo's cached authorization\n"
+            # unavailable to the installer.\n"
+            "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
+            "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
+            "curl -fsSL https://linux.toys/install.sh -o \"$_lt_installer\" || exit 1\n"
+            "source \"$_lt_installer\"\n"
         )
 
     script_path = None
