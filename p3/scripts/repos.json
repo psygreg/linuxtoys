@@ -213,16 +213,6 @@
         }
     },
     {
-        "name": "Hardinfo2",
-        "description": "Advanced system information and basic benchmarks.",
-        "description_tag": "hardinfo_desc",
-        "repo": "https://hardinfo2.org/",
-        "category": "sysadm",
-        "icon": "hardinfo2.svg",
-        "type": "native",
-        "package-name": "hardinfo2"
-    },
-    {
         "name": "ZenNotes",
         "description": "Free, open source note taking app with KaTeX integration and Obsidian portability.",
         "description_tag": "zennotes_desc",
