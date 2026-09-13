@@ -148,7 +148,7 @@ class SupportFooter(Gtk.Box):
         self.set_halign(Gtk.Align.CENTER)
 
         self.urls_labels = [
-            ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg", True),
+            ("https://linux.toys/documentation.html", "Wiki", "wiki.svg", True),
             (
                 "",
                 self.translations.get("report_label", "Report Bug"),
@@ -156,8 +156,8 @@ class SupportFooter(Gtk.Box):
                 True,
             ),
             (
-                "https://linux.toys/credits.html",
-                self.translations.get("credits_label", "Credits"),
+                "https://dev.linux.toys",
+                self.translations.get("devportal_label", "Credits"),
                 "credits.svg",
                 True,
             ),

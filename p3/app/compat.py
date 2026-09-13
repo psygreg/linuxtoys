@@ -1,36 +1,108 @@
-def is_containerized():
-    """
-    Detect if the system is running inside a container.
+import os
+import threading
 
-    This function checks multiple indicators to determine if the system
-    is running in a containerized environment such as Docker, Podman, LXC, etc.
 
-    In developer mode:
-    - If CONTAINER=1 is set, simulate being in a container (return True)
-    - If CONTAINER is not set, use actual container detection
+_SCRIPT_FILE_CACHE_LOCK = threading.RLock()
+_SCRIPT_FILE_CACHE = {}
+_SCRIPT_FILE_PATH_LOCKS = {}
+_HOST_COMPAT_CACHE_LOCK = threading.RLock()
+_HOST_COMPAT_CACHE = {}
 
-    Detection methods:
-    1. Environment variables (container, CONTAINER_ID, DOCKER_CONTAINER, PODMAN_CONTAINER)
-    2. Container-specific files (/.dockerenv, /run/.containerenv)
-    3. cgroup analysis for container indicators
-    4. systemd-detect-virt utility (if available)
 
-    Returns:
-        bool: True if containerized, False otherwise.
-    """
-    import os
-
-    # Check for developer mode container simulation
+def _script_file_signature(path):
+    """Return a cheap signature suitable for invalidating cached script data."""
     try:
-        from .dev_mode import should_simulate_container
+        stat = os.stat(path)
+    except OSError:
+        return None
+    return (stat.st_mtime_ns, stat.st_size)
 
-        if should_simulate_container():
-            return True  # Simulate being in a container when CONTAINER=1
-    except ImportError:
-        # dev_mode not available, continue with normal behavior
-        pass
 
-    # Check for container environment variables
+def clear_script_file_cache():
+    """Discard cached script headers/content and per-path synchronization state."""
+    with _SCRIPT_FILE_CACHE_LOCK:
+        _SCRIPT_FILE_CACHE.clear()
+        _SCRIPT_FILE_PATH_LOCKS.clear()
+
+
+def clear_host_compat_cache():
+    """Discard cached host probes used to build compatibility context."""
+    with _HOST_COMPAT_CACHE_LOCK:
+        _HOST_COMPAT_CACHE.clear()
+
+
+def clear_runtime_caches():
+    """Discard all compatibility-layer runtime caches."""
+    clear_script_file_cache()
+    clear_host_compat_cache()
+
+
+def _cached_host_value(key, builder):
+    """Compute a host property once per process and reuse it safely."""
+    with _HOST_COMPAT_CACHE_LOCK:
+        if key not in _HOST_COMPAT_CACHE:
+            _HOST_COMPAT_CACHE[key] = builder()
+        return _HOST_COMPAT_CACHE[key]
+
+
+def get_script_file_data(script_path):
+    """Read and parse a shell script once, allowing unrelated files in parallel.
+
+    A short global lock protects cache/lock dictionaries only. Each physical script
+    gets its own lock so concurrent category workers can read different files at the
+    same time while callers racing on the same file still coalesce to one read.
+    """
+    path = os.path.realpath(script_path)
+    signature = _script_file_signature(path)
+    if signature is None:
+        return {"content": "", "header_lines": (), "headers": {}}
+
+    with _SCRIPT_FILE_CACHE_LOCK:
+        cached = _SCRIPT_FILE_CACHE.get(path)
+        if cached is not None and cached[0] == signature:
+            return cached[1]
+        path_lock = _SCRIPT_FILE_PATH_LOCKS.setdefault(path, threading.RLock())
+
+    # Serialize only callers targeting this same file. Other script paths can perform
+    # their disk reads and header parsing concurrently.
+    with path_lock:
+        # Another worker may have populated the entry while this caller waited.
+        with _SCRIPT_FILE_CACHE_LOCK:
+            cached = _SCRIPT_FILE_CACHE.get(path)
+            if cached is not None and cached[0] == signature:
+                return cached[1]
+
+        try:
+            with open(path, "r", encoding="utf-8") as script_file:
+                content = script_file.read()
+        except (OSError, UnicodeError):
+            content = ""
+
+        header_lines = []
+        headers = {}
+        for line in content.splitlines():
+            if not line.startswith("#"):
+                break
+            header_lines.append(line)
+            if line.startswith("# "):
+                line_content = line[2:].strip()
+                key, separator, value = line_content.partition(":")
+                if separator:
+                    headers[key.strip().lower()] = value.strip()
+
+        data = {
+            "content": content,
+            "header_lines": tuple(header_lines),
+            "headers": headers,
+        }
+
+        with _SCRIPT_FILE_CACHE_LOCK:
+            _SCRIPT_FILE_CACHE[path] = (signature, data)
+        return data
+
+
+def _detect_containerized():
+    """Perform the actual host container probe without developer overrides."""
     container_env_vars = [
         "container",
         "CONTAINER_ID",
@@ -42,37 +114,57 @@ def is_containerized():
         if os.environ.get(var):
             return True
 
-    # Check for container-specific files
-    container_files = ["/.dockerenv", "/run/.containerenv"]
-
-    for file_path in container_files:
+    for file_path in ("/.dockerenv", "/run/.containerenv"):
         if os.path.exists(file_path):
             return True
 
-    # Check cgroup for container indicators
     try:
         with open("/proc/1/cgroup", "r") as f:
             cgroup_content = f.read()
-            container_indicators = ["docker", "lxc", "containerd", "podman"]
-            for indicator in container_indicators:
-                if indicator in cgroup_content:
-                    return True
+        if any(indicator in cgroup_content for indicator in ("docker", "lxc", "containerd", "podman")):
+            return True
     except Exception:
         pass
 
-    # Check for systemd-detect-virt (if available)
     try:
-        result = os.system("command -v systemd-detect-virt >/dev/null 2>&1")
-        if result == 0:
-            # Run systemd-detect-virt --container
-            exit_code = os.system("systemd-detect-virt --container >/dev/null 2>&1")
-            if exit_code == 0:  # Returns 0 if in container
-                return True
+        if os.system("command -v systemd-detect-virt >/dev/null 2>&1") == 0:
+            return os.system("systemd-detect-virt --container >/dev/null 2>&1") == 0
     except Exception:
         pass
 
     return False
 
+
+def is_containerized():
+    """Return container state, honoring developer simulation and caching host detection."""
+    try:
+        from .dev_mode import should_simulate_container
+
+        if should_simulate_container():
+            return True
+    except ImportError:
+        pass
+
+    return bool(_cached_host_value("containerized", _detect_containerized))
+
+def _detect_wsl():
+    try:
+        with open("/proc/sys/kernel/osrelease", "r", encoding="utf-8") as f:
+            if "microsoft" in f.read().lower():
+                return True
+    except OSError:
+        pass
+
+    try:
+        with open("/proc/version", "r", encoding="utf-8") as f:
+            return "microsoft" in f.read().lower()
+    except OSError:
+        return False
+
+
+def is_wsl():
+    """Return True when Linux is running under WSL, probing the host once."""
+    return bool(_cached_host_value("wsl", _detect_wsl))
 
 def is_supported_system():
     """
@@ -137,6 +229,7 @@ def is_supported_system():
         "ubuntu",
         "cachy",
         "arch",
+        "steamos",
         "fedora",
         "rhel",
         "suse",
@@ -178,6 +271,11 @@ def get_system_compat_keys():
         # dev_mode not available, continue with normal behavior
         pass
 
+    with _HOST_COMPAT_CACHE_LOCK:
+        cached_keys = _HOST_COMPAT_CACHE.get("system_compat_keys")
+        if cached_keys is not None:
+            return set(cached_keys)
+
     keys = set()
     os_release = {}
     try:
@@ -217,11 +315,13 @@ def get_system_compat_keys():
         keys.add("manjaro")
     if id_val in ["cachyos"]:
         keys.add("cachy")
+    if id_val == "steamos":
+        keys.add("steamos")
     if (
         id_val in ["arch", "archlinux", "artix"]
         or "arch" in id_like
         or "archlinux" in id_like
-    ) and id_val != "cachyos":
+    ) and id_val not in {"cachyos", "steamos"}:
         keys.add("arch")
     if is_rhel_family:
         keys.add("rhel")
@@ -261,7 +361,9 @@ def get_system_compat_keys():
     session_keys = get_current_session_type()
     keys.update(session_keys)
 
-    return keys
+    with _HOST_COMPAT_CACHE_LOCK:
+        _HOST_COMPAT_CACHE["system_compat_keys"] = frozenset(keys)
+    return set(keys)
 
 
 def get_gpu_compat_keys():
@@ -536,30 +638,10 @@ def are_optimizations_installed():
     return os.path.exists(autopatch_state_file)
 
 
+
 def _script_has_optimized_only_header(script_path):
-    """
-    Check if a script has the optimized-only header.
-
-    The '# optimized-only:' header marks scripts as part of the recommended
-    optimizations that should be hidden when optimizations are already installed.
-
-    Args:
-        script_path (str): Path to the script file
-
-    Returns:
-        bool: True if the script has the optimized-only header, False otherwise
-    """
-    try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            for line in f:
-                if line.startswith("# optimized-only:"):
-                    return True
-                if not line.startswith("#"):
-                    break
-    except Exception:
-        pass
-    return False
-
+    """Check whether the cached script header contains optimized-only metadata."""
+    return "optimized-only" in get_script_file_data(script_path)["headers"]
 
 def should_show_optimization_script(script_path):
     """
@@ -603,14 +685,10 @@ def should_show_optimization_script(script_path):
     return True  # Show all other scripts normally
 
 
+
 def script_uses_flatpak_in_lib(script_path):
     """Check if a script uses the flatpak_in_lib function."""
-    try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            return "flatpak_in_lib" in f.read()
-    except Exception:
-        return False
-
+    return "flatpak_in_lib" in get_script_file_data(script_path)["content"]
 
 def _script_installs_container_incompatible_package(content):
     """Detect Flatpak/AppImage installation helpers in a script."""
@@ -635,149 +713,79 @@ def _script_installs_container_incompatible_package(content):
     return False
 
 
+
 def script_is_container_compatible(script_path):
     """
     Check if a script should be shown in containerized environments.
 
-    In developer mode:
-    - If CONTAINER is not set (default): override container checks (always return True)
-    - If CONTAINER=1: apply normal container compatibility logic
-
-    Scripts are considered incompatible with containers if:
-    1. They install Flatpak/AppImage packages (automatic hard exclusion)
-    2. They have a '# nocontainer' header (with optional system keys)
-
-    The nocontainer header supports several formats:
-    - '# nocontainer' - hide in all containers
-    - '# nocontainer:' - hide in all containers (empty value)
-    - '# nocontainer: debian, ubuntu' - hide only in debian/ubuntu containers
-    - '# nocontainer: fedora' - hide only in fedora containers
-    - '# nocontainer: invert' - show ONLY in containers (hide on host)
-    - '# nocontainer: invert, debian' - show only in debian containers
-
-    Priority rules:
-    - Flatpak/AppImage installation is always blocked in containers
-    - The nocontainer header controls all other container compatibility cases
-    - 'invert' keyword reverses the explicit nocontainer logic
-
-    Args:
-        script_path (str): Path to the script file
-
-    Returns:
-        bool: False if script should be hidden in containers, True otherwise
+    Scripts are incompatible when they install sandboxed packages in a
+    container, or when their nocontainer metadata excludes the current host.
     """
-    # Check for developer mode container override
     try:
         from .dev_mode import should_override_container_checks
 
         if should_override_container_checks():
-            return True  # Override: always show scripts regardless of container compatibility
+            return True
     except ImportError:
-        # dev_mode not available, continue with normal behavior
         pass
+
+    data = get_script_file_data(script_path)
+    content = data["content"]
 
     try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            content = f.read()
+        installs_sandboxed_package = _script_installs_container_incompatible_package(content)
+        nocontainer_keys = None
+        has_invert = False
 
-            installs_sandboxed_package = _script_installs_container_incompatible_package(content)
-            nocontainer_keys = None
-            has_invert = False
-
-            # Check for nocontainer header
-            for line in content.split("\n"):
-                if line.startswith("# nocontainer"):
-                    if ":" in line:
-                        # nocontainer with specific keys
-                        nocontainer_line = line[line.index(":") + 1 :].strip()
-                        if nocontainer_line:
-                            keys = [k.strip() for k in nocontainer_line.split(",")]
-                            has_invert = "invert" in keys
-                            # Remove 'invert' from the keys list to process other keys normally
-                            nocontainer_keys = set([k for k in keys if k != "invert"])
-                        else:
-                            # Empty after colon means hide in all containers
-                            nocontainer_keys = set()
+        for line in data["header_lines"]:
+            if line.startswith("# nocontainer"):
+                if ":" in line:
+                    nocontainer_line = line[line.index(":") + 1 :].strip()
+                    if nocontainer_line:
+                        keys = [k.strip() for k in nocontainer_line.split(",")]
+                        has_invert = "invert" in keys
+                        nocontainer_keys = {k for k in keys if k != "invert"}
                     else:
-                        # Plain nocontainer means hide in all containers
                         nocontainer_keys = set()
-                    break
-                if not line.startswith("#"):
-                    break
-
-            # Check if we're actually in a container
-            is_in_container = is_containerized()
-
-            # Flatpak/AppImage installers are never container-compatible.
-            if installs_sandboxed_package and is_in_container:
-                return False
-
-            # Apply explicit nocontainer metadata for all other cases.
-            if nocontainer_keys is not None:
-                if has_invert:
-                    # Invert logic: show only in containers
-                    if not is_in_container:
-                        return False  # Hide on host when invert is specified
-
-                    # If we're in a container and have other keys, check compatibility
-                    if len(nocontainer_keys) > 0:
-                        current_compat_keys = get_system_compat_keys()
-                        return bool(current_compat_keys & nocontainer_keys)
-                    else:
-                        # Only 'invert' specified, show in any container
-                        return True
                 else:
-                    # Normal logic: hide in containers
-                    if not is_in_container:
-                        return True  # Always show on host when no invert
+                    nocontainer_keys = set()
+                break
 
-                    if len(nocontainer_keys) == 0:
-                        # Hide in all containers
-                        return False
-                    else:
-                        # Hide only in containers that match the specified keys
-                        current_compat_keys = get_system_compat_keys()
-                        return not bool(current_compat_keys & nocontainer_keys)
+        is_in_container = is_containerized()
 
+        if installs_sandboxed_package and is_in_container:
+            return False
+
+        if nocontainer_keys is not None:
+            if has_invert:
+                if not is_in_container:
+                    return False
+                if nocontainer_keys:
+                    return bool(get_system_compat_keys() & nocontainer_keys)
+                return True
+
+            if not is_in_container:
+                return True
+            if not nocontainer_keys:
+                return False
+            return not bool(get_system_compat_keys() & nocontainer_keys)
     except Exception:
         pass
-    return True  # If no restrictions, allow by default
+
+    return True
 
 
 def _script_requires_systemd_functions(script_path):
-    """
-    Check if a script uses systemd-specific functions that require systemd.
+    """Check cached script content for implicit systemd-only helper usage."""
+    content = get_script_file_data(script_path)["content"]
+    if "pkg_flat" in content:
+        return True
 
-    Functions checked:
-    - pkg_flat: Package flatpak function
-    - sysd_*: Any systemd-specific function (e.g., sysd_enable, sysd_start, etc.)
+    import re
+    return bool(re.search(r"\bsysd_\w+", content))
 
-    Args:
-        script_path (str): Path to the script file
-
-    Returns:
-        bool: True if script uses systemd functions, False otherwise
-    """
-    try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-            # Check for pkg_flat function calls
-            if "pkg_flat" in content:
-                return True
-
-            # Check for sysd_* function calls (e.g., sysd_enable, sysd_start, etc.)
-            import re
-            if re.search(r'\bsysd_\w+', content):
-                return True
-    except Exception:
-        pass
-
-    return False
-
-
-def get_host_device_ids():
-    """Get normalized vendor, product, and vendor:product IDs from PCI and USB."""
+def _detect_host_device_ids():
+    """Scan PCI/USB IDs once for device-specific compatibility headers."""
     import glob
 
     device_ids = set()
@@ -797,8 +805,12 @@ def get_host_device_ids():
             except OSError:
                 continue
 
-    return device_ids
+    return frozenset(device_ids)
 
+
+def get_host_device_ids():
+    """Return cached normalized PCI/USB IDs as a fresh set for callers."""
+    return set(_cached_host_value("host_device_ids", _detect_host_device_ids))
 
 def script_is_compatible(script_path, compat_keys):
     """
@@ -828,6 +840,7 @@ def script_is_compatible(script_path, compat_keys):
     gpu_compatible = True  # Default for unset GPU header
     desktop_compatible = True  # Default for unset desktop header
     systemd_compatible = True  # Default for unset systemd header
+    wsl_compatible = True  # Default for unset WSL header (works on WSL and non-WSL)
     wayland_compatible = True  # Default for unset wayland header (presume neutrality)
     cpu_compatible = True # Default for unset cpu header
     hybridgpu_compatible = True  # Default for unset hybridgpu header
@@ -835,8 +848,7 @@ def script_is_compatible(script_path, compat_keys):
     has_explicit_systemd_header = False  # Track if systemd header was explicitly set
 
     try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            for line in f:
+        for line in get_script_file_data(script_path)["header_lines"]:
                 if line.startswith("# compat:"):
                     compat_line = line[len("# compat:") :].strip()
                     key_strings = [k.strip() for k in compat_line.split(",")]
@@ -917,6 +929,16 @@ def script_is_compatible(script_path, compat_keys):
                     else:
                         # Default: "yes" or empty means script requires systemd
                         systemd_compatible = "systemd" in compat_keys
+                elif line.startswith("# wsl:"):
+                    wsl_value = line[len("# wsl:") :].strip().lower()
+                    if wsl_value == "yes":
+                        wsl_compatible = is_wsl()
+                    elif wsl_value == "no":
+                        wsl_compatible = not is_wsl()
+                    else:
+                        # Invalid explicit values fail closed instead of silently
+                        # making a script available in the wrong environment.
+                        wsl_compatible = False
                 elif line.startswith("# wayland:"):
                     wayland_value = line[len("# wayland:") :].strip().lower()
                     if wayland_value in ["yes", "true"]:
@@ -985,98 +1007,58 @@ def script_is_compatible(script_path, compat_keys):
     # If no explicit wayland header, presume neutrality (script works on both X11 and Wayland)
     # wayland_compatible remains True by default
 
-    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible and device_compatible
+    return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wsl_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible and device_compatible
+
 
 
 def script_is_localized(script_path, current_locale):
     """
     Check if a script should be shown for the current locale.
-    Returns True if:
-    - No 'localize' header is present (show by default)
-    - 'localize' header contains the current locale
+    No localize header means visible by default.
     """
-    try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            for line in f:
-                if line.startswith("# localize:"):
-                    localize_line = line[len("# localize:") :].strip()
-                    localize_keys = set(
-                        [k.strip().lower() for k in localize_line.split(",")]
-                    )
-                    return current_locale.lower() in localize_keys
-                if not line.startswith("#"):
-                    break
-    except Exception:
-        pass
-    return True  # If no localize header, show by default
+    localize_line = get_script_file_data(script_path)["headers"].get("localize")
+    if localize_line is None:
+        return True
+    localize_keys = {
+        key.strip().lower()
+        for key in localize_line.split(",")
+        if key.strip()
+    }
+    return current_locale.lower() in localize_keys
+
 
 def get_revert_capability(script_path, compat_keys=None):
-    """
-    Get the revert capability for a script based on the '# revert:' header.
-    
-    Possible return values:
-    - 'yes': Reversion both automatic after error and manual through uninstall button
-    - 'no': Reversion unavailable both automatically and manually
-    - 'internal': Automatic reversion available, but manual uninstallation requires running script again
-    - 'conditional': List of compat keys for which reversion is available (whitelist/blacklist)
-    - None: No revert header found, defaults to 'yes'
-    
-    The header format supports:
-    - # revert: yes (or omitted, defaults to 'yes')
-    - # revert: no
-    - # revert: internal
-    - # revert: ubuntu, fedora (whitelist - yes for these keys only)
-    - # revert: !ubuntu, !fedora (blacklist - yes for all except these keys)
-    
-    Args:
-        script_path (str): Path to the script file
-        compat_keys (set): Set of compatibility keys for the current system (optional)
-    
-    Returns:
-        str or dict: Revert capability string ('yes', 'no', 'internal') or dict with conditional info
-    """
+    """Return the script's cached revert capability metadata."""
     if compat_keys is None:
         compat_keys = get_system_compat_keys()
-    
-    try:
-        with open(script_path, "r", encoding="utf-8") as f:
-            for line in f:
-                if line.startswith("# revert:"):
-                    revert_line = line[len("# revert:") :].strip().lower()
-                    
-                    # Handle simple cases
-                    if revert_line == "yes" or revert_line == "":
-                        return "yes"
-                    elif revert_line == "no":
-                        return "no"
-                    elif revert_line == "internal":
-                        return "internal"
-                    else:
-                        # Parse as compatibility keys (whitelist/blacklist)
-                        key_strings = [k.strip() for k in revert_line.split(",")]
-                        include_keys = set()
-                        exclude_keys = set()
-                        
-                        for key_str in key_strings:
-                            if key_str.startswith("!"):
-                                exclude_keys.add(key_str[1:])
-                            else:
-                                include_keys.add(key_str)
-                        
-                        return {
-                            "type": "conditional",
-                            "include_keys": include_keys,
-                            "exclude_keys": exclude_keys,
-                            "compat_keys": compat_keys,
-                        }
-                
-                if not line.startswith("#"):
-                    break
-    except Exception:
-        pass
-    
-    return "yes"  # Default to 'yes' if no header found
 
+    revert_line = get_script_file_data(script_path)["headers"].get("revert")
+    if revert_line is None:
+        return "yes"
+
+    revert_line = revert_line.strip().lower()
+    if revert_line in ("", "yes"):
+        return "yes"
+    if revert_line == "no":
+        return "no"
+    if revert_line == "internal":
+        return "internal"
+
+    key_strings = [key.strip() for key in revert_line.split(",")]
+    include_keys = set()
+    exclude_keys = set()
+    for key_string in key_strings:
+        if key_string.startswith("!"):
+            exclude_keys.add(key_string[1:])
+        else:
+            include_keys.add(key_string)
+
+    return {
+        "type": "conditional",
+        "include_keys": include_keys,
+        "exclude_keys": exclude_keys,
+        "compat_keys": compat_keys,
+    }
 
 def should_enable_manual_revert(script_path, compat_keys=None):
     """

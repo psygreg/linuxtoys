@@ -35,6 +35,24 @@ def _get_os_info() -> dict:
         pass
     return os_info
 
+def _get_wsl_info() -> str | None:
+    """Return the WSL version when running under Windows Subsystem for Linux."""
+    try:
+        osrelease = Path("/proc/sys/kernel/osrelease").read_text(
+            encoding="utf-8"
+        ).strip().lower()
+
+        if "microsoft" not in osrelease:
+            return None
+
+        # WSL2 uses Microsoft's Linux kernel.
+        if "microsoft-standard" in osrelease or "wsl2" in osrelease:
+            return "WSL2"
+
+        return "WSL1"
+    except OSError:
+        return None
+
 def _get_cpu_model() -> str:
     """Return the host CPU model name."""
     try:
@@ -267,6 +285,7 @@ def _get_desktop_info() -> dict:
 def get_system_context() -> str:
     """Build a system info context string for bug reports."""
     os_info = _get_os_info()
+    wsl_info = _get_wsl_info()
     cpu_model = _get_cpu_model()
     gpu_info = _get_gpu_info()
     init_system = _get_init_system_info()
@@ -276,6 +295,9 @@ def get_system_context() -> str:
 
     if os_info["version"]:
         context_parts[-1] += f" {os_info['version']}"
+
+    if wsl_info:
+        context_parts.append(f"Environment: {wsl_info}")
 
     context_parts.append(f"linuxtoys {__version__}")
 

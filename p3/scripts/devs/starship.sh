@@ -4,6 +4,7 @@
 # description: starship_desc
 # icon: starship.png
 # repo: https://starship.rs
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

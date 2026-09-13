@@ -3,7 +3,8 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
 }
-.script-item-hover {
+.script-item-hover,
+.script-item:hover {
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 10px;
@@ -75,4 +76,14 @@ button.installed-card-remove-left {
 
 button.installed-card-remove-left:hover {
     border-left-color: rgba(234, 178, 178, 0.535);
+}
+
+/* Automatic update indicator in the titlebar. */
+button.update-indicator {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+button.update-restart-ready {
+    font-weight: bold;
 }

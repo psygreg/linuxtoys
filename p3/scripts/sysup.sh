@@ -3,7 +3,7 @@
 # description: sysup_desc
 # icon: topgrade.svg
 # revert: no
-# compat: !ostree, !ublue
+# compat: !ostree, !ublue, !steamos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
@@ -95,6 +95,29 @@ if command -v flatpak >/dev/null 2>&1; then
     { [ "$UPD_SERVICE" = "1" ] && flatpak uninstall --system --unused --delete-data -y; } || flatpak uninstall --unused --delete-data -y || warn "Failed to remove orphaned flatpak packages"
     { [ "$UPD_SERVICE" = "1" ] && flatpak update --system -y; } || flatpak update -y || warn "Failed to upgrade flatpak packages"
 fi
+
+# Update applications installed directly from GitHub/Codeberg releases through
+# repository-list pkg_fromrelease transactions. A changed stable tag is enough;
+# release tags are not assumed to follow semantic-version ordering.
+if [[ "$UPD_SERVICE" != "1" ]] && git_app_versions; then
+    for app in "${GIT_APPS[@]}"; do
+        version_var="GIT_${app}_VERSION"
+        repo_var="GIT_${app}_REPO"
+        installed_version="${!version_var}"
+        release_repo="${!repo_var}"
+
+        latest_version=$(latest_release_version "$release_repo") || {
+            warn "Failed to check release updates for $app"
+            continue
+        }
+
+        if [[ "$latest_version" != "$installed_version" ]]; then
+            echo "Updating $app: $installed_version -> $latest_version"
+            call_script "$app" || warn "Failed to update $app"
+        fi
+    done
+fi
+
 if needs_reboot; then
     if [ "$UPD_SERVICE" = "1" ]; then
         echo "$sysup_rebootreq"

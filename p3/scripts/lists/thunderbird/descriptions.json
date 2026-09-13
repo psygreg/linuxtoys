@@ -1,0 +1,12 @@
+{
+    "long-description": "md/en.md",
+    "description_long_tag": "thunderbird_long",
+
+    "en": {
+        "thunderbird_long": "md/en.md"
+    },
+
+    "pt": {
+        "thunderbird_long": "md/pt.md"
+    }
+}

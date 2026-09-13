@@ -55,6 +55,39 @@ def save_language(lang_code):
         return False
 
 
+
+def get_automatic_updates():
+    """Return whether background self-updates are enabled (default: True)."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    if not os.path.exists(config_file):
+        return True
+
+    try:
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        return config.getboolean("updates", "automatic", fallback=True)
+    except Exception:
+        return True
+
+
+def save_automatic_updates(enabled):
+    """Persist the automatic background update preference."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    config = configparser.ConfigParser()
+
+    try:
+        if os.path.exists(config_file):
+            config.read(config_file)
+        if not config.has_section("updates"):
+            config.add_section("updates")
+        config.set("updates", "automatic", "true" if enabled else "false")
+        with open(config_file, "w") as f:
+            config.write(f)
+        return True
+    except Exception as e:
+        print(f"Error saving automatic update preference: {e}")
+        return False
+
 def detect_system_language():
     """
     Detect language using saved preference first, then system language

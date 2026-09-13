@@ -5,7 +5,7 @@ from . import dev_mode, reboot_helper
 from .gtk_common import GLib, Gtk, Vte
 from .term_registry import ExecutionRegistry
 from .antenna import antenna
-from .library_loader import script_command
+from .library_loader import script_command, script_environment
 
 class TerminalRunner:
     def _run_next_script(self):
@@ -67,8 +67,7 @@ class TerminalRunner:
         self._cleanup_script_path = current_script.get("cleanup_path")
         self._current_action_is_removal = bool(self._cleanup_script_path)
  
-        child_env = os.environ.copy()
-        child_env["LINUXTOYS_SCRIPT_NAME"] = script_name
+        child_env = script_environment(current_script, os.environ.copy())
         if self._transmap_path:
             child_env["TRANSMAP_PATH"] = self._transmap_path
         else:

@@ -6,7 +6,7 @@
 # nocontainer
 # reboot: yes
 # repo: https://thekelleys.org.uk/gitweb/?p=dnsmasq.git
-# compat: !rhel
+# compat: !rhel, !steamos
 
 askpass
 

@@ -4,6 +4,7 @@
 # description: portainer_desc
 # icon: portainer.svg
 # revert: no
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

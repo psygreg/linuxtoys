@@ -1,0 +1,12 @@
+{
+    "long-description": "md/en.md",
+    "description_long_tag": "droidstd_long",
+
+    "en": {
+        "droidstd_long": "md/en.md"
+    },
+
+    "pt": {
+        "droidstd_long": "md/pt.md"
+    }
+}

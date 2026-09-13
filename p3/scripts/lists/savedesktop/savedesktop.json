@@ -1,0 +1,15 @@
+[  
+    {
+        "name": "Save Desktop",
+        "developer": "vikdevelop",
+        "description": "A cross-desktop tool to back up, restore and sync your entire Linux desktop setup.",
+        "description_tag": "savedesktop_desc",
+        "repo": "https://github.com/vikdevelop/SaveDesktop",
+        "category": "theming",
+        "icon": "./savedesktop.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "flathub",
+        "package-name": "io.github.vikdevelop.SaveDesktop"
+    }
+]

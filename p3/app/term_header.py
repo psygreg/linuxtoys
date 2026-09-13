@@ -2,15 +2,16 @@ from .gtk_common import Gtk, Pango, escape_markup, load_scaled_pixbuf
 from . import get_icon_path
 
 class InfosHead(Gtk.Box):
-    def __init__(self, translations=None):
+    def __init__(self, translations=None, show_terminal_controls=True):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         self.translations = translations or {}
-        vbox_infos = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        self.vbox_infos = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
  
         self.label_name = Gtk.Label()
         self.label_name.set_halign(Gtk.Align.START)
         self.label_desc = Gtk.Label()
         self.label_desc.set_halign(Gtk.Align.START)
+        self.label_desc.set_xalign(0.0)
         self.label_desc.set_line_wrap(True)
         self.label_desc.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         self.label_repo = Gtk.Label()
@@ -23,16 +24,17 @@ class InfosHead(Gtk.Box):
         self.hbox_header.set_margin_bottom(5)
  
         self.icon_head = Gtk.Image()
+        self.icon_head.set_margin_right(20)
         self.hbox_header.pack_start(self.icon_head, False, False, 0)
  
-        vbox_infos.pack_start(self.label_name, False, False, 0)
-        vbox_infos.pack_start(self.label_desc, False, False, 0)
-        vbox_infos.pack_start(self.label_repo, False, False, 0)
+        self.vbox_infos.pack_start(self.label_name, False, False, 0)
+        self.vbox_infos.pack_start(self.label_desc, False, False, 0)
+        self.vbox_infos.pack_start(self.label_repo, False, False, 0)
  
-        self.hbox_header.pack_start(vbox_infos, True, True, 0)
+        self.hbox_header.pack_start(self.vbox_infos, True, True, 0)
         self.pack_start(self.hbox_header, False, False, 0)
  
-        hbox_controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        self.hbox_controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
  
         # Use translatable button label
         execute_label = self.translations.get("term_view_execute", " Execute ")
@@ -61,12 +63,13 @@ class InfosHead(Gtk.Box):
         self.progress_bar.set_show_text(True)
         self.progress_bar.set_fraction(0.0)
  
-        hbox_controls.pack_start(self.button_run, False, False, 0)
-        hbox_controls.pack_start(self.button_remove, False, False, 0)
-        hbox_controls.pack_start(self.button_copy, False, False, 0)
-        hbox_controls.pack_start(self.progress_bar, True, True, 0)
+        self.hbox_controls.pack_start(self.button_run, False, False, 0)
+        self.hbox_controls.pack_start(self.button_remove, False, False, 0)
+        self.hbox_controls.pack_start(self.button_copy, False, False, 0)
+        self.hbox_controls.pack_start(self.progress_bar, True, True, 0)
  
-        vbox_infos.pack_start(hbox_controls, False, False, 10)
+        if show_terminal_controls:
+            self.vbox_infos.pack_start(self.hbox_controls, False, False, 10)
  
     def _update_header_labels(self, script_info: dict):
         name = escape_markup(script_info.get("name", ""))

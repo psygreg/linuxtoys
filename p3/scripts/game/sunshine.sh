@@ -4,6 +4,7 @@
 # description: sunshine_desc
 # icon: sunshine.png
 # repo: https://github.com/LizardByte/Sunshine
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

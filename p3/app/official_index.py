@@ -7,8 +7,9 @@ from urllib.parse import urlparse
 # should be included here.
 VERIFIED_SCRIPTS = {
     "rstudio",
-    "slothbash"
+    "Sloth-Bash"
 }
+_VERIFIED_SCRIPT_NAMES = frozenset(item.casefold() for item in VERIFIED_SCRIPTS)
 
 def is_github_repo(repo):
     """Return True if repo points to a GitHub repository."""
@@ -28,6 +29,20 @@ def is_github_repo(repo):
             "www.github.com",
         }
     )
+
+def get_github_owner(repo):
+    """Return the GitHub repository owner/user, or an empty string."""
+    if not is_github_repo(repo):
+        return ""
+
+    try:
+        parsed = urlparse(repo.strip())
+    except ValueError:
+        return ""
+
+    parts = [part for part in parsed.path.split("/") if part]
+    return parts[0] if len(parts) >= 2 else ""
+
 
 def is_verified_script(script_path):
     if not script_path:
@@ -57,8 +72,8 @@ def is_verified_name(name):
     if not name:
         return False
 
-    normalized = str(name).strip().lower()
-    return normalized in {item.lower() for item in VERIFIED_SCRIPTS}
+    normalized = str(name).strip().casefold()
+    return normalized in _VERIFIED_SCRIPT_NAMES
 
 def get_verified_names():
     """Return first-party-supported software names in display-friendly order."""

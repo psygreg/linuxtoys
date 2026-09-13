@@ -5,6 +5,7 @@
 # icon: pnpm.svg
 # repo: https://pnpm.io
 # revert: internal
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

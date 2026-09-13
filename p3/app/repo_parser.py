@@ -1,13 +1,50 @@
 import json
+import locale
 import os
 import re
 import shlex
+import unicodedata
 import hashlib
-from urllib.parse import urlparse
+import threading
+from urllib.parse import unquote, urlparse
 
-from .compat import get_system_compat_keys, is_containerized
-from .dev_mode import get_effective_compat_keys
+from .compat import get_system_compat_keys, is_containerized, is_wsl
+from .dev_mode import get_effective_compat_keys, get_dev_compat_override, is_dev_mode_enabled
 from . import official_index, new_index
+from .lang_utils import detect_system_language
+
+
+# Repository metadata is consumed by several startup caches in parallel.  Keep
+# immutable file-backed inputs and the fully resolved entry list memoized so
+# those consumers do not repeatedly walk and decode the same repository tree.
+_REPO_CACHE_LOCK = threading.RLock()
+_JSON_ENTRIES_CACHE = {}
+_DESCRIPTION_CATALOG_CACHE = {}
+_GIT_DB_CACHE = {}
+_REPO_ENTRIES_CACHE = {}
+_MARKDOWN_TEXT_CACHE = {}
+_MONETARY_LOCALE_CACHE = None
+
+
+def _file_signature(path):
+    """Return a cheap signature that changes whenever a regular file changes."""
+    try:
+        stat = os.stat(path)
+    except OSError:
+        return None
+    return (stat.st_mtime_ns, stat.st_size)
+
+
+def clear_runtime_caches():
+    """Drop parser memoization after an in-process repository/source refresh."""
+    with _REPO_CACHE_LOCK:
+        _JSON_ENTRIES_CACHE.clear()
+        _DESCRIPTION_CATALOG_CACHE.clear()
+        _GIT_DB_CACHE.clear()
+        _REPO_ENTRIES_CACHE.clear()
+        _MARKDOWN_TEXT_CACHE.clear()
+        global _MONETARY_LOCALE_CACHE
+        _MONETARY_LOCALE_CACHE = None
 
 DESKTOP_KEYS = {
     "gnome": "desktop-gnome",
@@ -20,6 +57,7 @@ OS_KEYS = {
     "ubuntu",
     "cachy",
     "arch",
+    "steamos",
     "fedora",
     "rhel",
     "suse",
@@ -32,7 +70,7 @@ OS_KEYS = {
     "manjaro",
 }
 
-VALID_TYPES = {"git", "flathub", "native", "repository", "url"}
+VALID_TYPES = {"git", "tar", "bin", "flathub", "native", "repository", "url"}
 
 URL_PACKAGE_KEYS = {
     "deb",
@@ -41,10 +79,13 @@ URL_PACKAGE_KEYS = {
     "pkg.tar.zst",
     "flatpak",
     "appimage",
+    "tar",
+    "bin",
 }
 
 NATIVE_PACKAGE_KEY_PRIORITY = (
     "ublue",
+    "steamos",
     "deepin",
     "zorin",
     "pika",
@@ -60,6 +101,9 @@ NATIVE_PACKAGE_KEY_PRIORITY = (
     "arch",
 )
 
+# Use the same specificity ordering for per-OS install-type mappings.
+TYPE_KEY_PRIORITY = NATIVE_PACKAGE_KEY_PRIORITY
+
 SYSTEMD_UNIT_SUFFIXES = {
     ".service",
     ".socket",
@@ -73,6 +117,177 @@ SYSTEMD_UNIT_SUFFIXES = {
     ".device",
     ".swap",
 }
+
+_GIT_ARCH_ALIASES = {
+    "x86_64": ("x86_64", "amd64", "x64"),
+    "aarch64": ("aarch64", "arm64"),
+    "i686": ("i386", "i486", "i586", "i686", "ia32", "x86"),
+    "armv7l": ("armv7l", "armv7", "armhf"),
+    "armv6l": ("armv6l", "armv6", "armel"),
+    "riscv64": ("riscv64",),
+    "ppc64le": ("ppc64le", "ppc64el"),
+    "ppc64": ("ppc64",),
+    "s390x": ("s390x",),
+    "loongarch64": ("loongarch64",),
+}
+
+_GIT_NATIVE_COMPAT = {
+    "pacman": {"arch", "cachy"},
+    "rpm": {"fedora", "rhel", "ostree", "ublue"},
+    "deb": {"debian", "ubuntu"},
+    "eopkg": {"solus"},
+}
+
+
+def _normalize_git_repo_url(value):
+    """Return the canonical supported git project URL used by git-db.json."""
+    if not isinstance(value, str) or not value.strip():
+        return None
+
+    try:
+        parsed = urlparse(value.strip())
+    except ValueError:
+        return None
+
+    if (
+        parsed.scheme != "https"
+        or parsed.query
+        or parsed.fragment
+        or parsed.username
+        or parsed.password
+        or parsed.port
+    ):
+        return None
+
+    host = (parsed.hostname or "").lower()
+    path = unquote(parsed.path).strip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    parts = path.split("/") if path else []
+
+    if any(not part or part in (".", "..") for part in parts):
+        return None
+
+    if host in ("github.com", "codeberg.org"):
+        if len(parts) != 2:
+            return None
+    elif host == "gitlab.com":
+        if len(parts) < 2:
+            return None
+    else:
+        return None
+
+    return f"https://{host}/{'/'.join(parts)}"
+
+
+def _load_git_db(scripts_dir):
+    """Load git-db.json once per file revision."""
+    path = os.path.join(os.path.realpath(scripts_dir), "git-db.json")
+    signature = _file_signature(path)
+    cache_key = (path, signature)
+
+    with _REPO_CACHE_LOCK:
+        cached = _GIT_DB_CACHE.get(cache_key)
+        if cached is not None:
+            return cached
+
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, ValueError):
+        repositories = {}
+    else:
+        repositories = data.get("repositories", {}) if isinstance(data, dict) else {}
+        if not isinstance(repositories, dict):
+            repositories = {}
+
+    with _REPO_CACHE_LOCK:
+        # Keep only the current revision for this path.
+        for key in tuple(_GIT_DB_CACHE):
+            if key[0] == path and key != cache_key:
+                _GIT_DB_CACHE.pop(key, None)
+        _GIT_DB_CACHE[cache_key] = repositories
+
+    return repositories
+
+
+def _git_asset_matches_machine(asset, machine):
+    """Mirror pkg_fromrelease architecture matching for one indexed release asset."""
+    canonical = next(
+        (arch for arch, aliases in _GIT_ARCH_ALIASES.items() if machine in aliases),
+        None,
+    )
+    if canonical is None:
+        return False
+
+    architectures = asset.get("architectures", [])
+    if not isinstance(architectures, list) or not architectures:
+        return True
+
+    detected = {value for value in architectures if value in _GIT_ARCH_ALIASES}
+    if canonical in detected:
+        return True
+
+    # pkg_fromrelease permits 32-bit x86 as a fallback on x86_64 hosts.
+    return canonical == "x86_64" and "i686" in detected
+
+
+def _git_db_requirement_matches(entry, compat_keys, scripts_dir):
+    """
+    Infer compatibility for git installs without an explicit ``os`` header.
+
+    The generated database records the latest release assets. Explicit ``os``
+    metadata remains authoritative when present. Missing/failed database records
+    fail closed so repository compatibility never silently falls back to a guess.
+    """
+    if entry.get("os") is not None:
+        return True
+
+    if _resolve_install_type(entry, compat_keys) != "git":
+        return True
+
+    repo = _normalize_git_repo_url(entry.get("repo"))
+    if not repo:
+        return False
+
+    record = _load_git_db(scripts_dir).get(repo)
+    if not isinstance(record, dict) or record.get("error"):
+        return False
+
+    assets = record.get("assets")
+    if not isinstance(assets, list):
+        return False
+
+    try:
+        machine = os.uname().machine.lower()
+    except AttributeError:
+        return False
+
+    for asset in assets:
+        if not isinstance(asset, dict) or not _git_asset_matches_machine(asset, machine):
+            continue
+
+        kind = asset.get("kind")
+        if kind == "appimage":
+            return True
+        if kind == "flatpak" and "systemd" in compat_keys:
+            return True
+        if kind in _GIT_NATIVE_COMPAT and (_GIT_NATIVE_COMPAT[kind] & compat_keys):
+            return True
+
+    return False
+
+
+def _repo_app_id(name):
+    """Return a shell-safe stable ID derived from a repository entry display name."""
+    ascii_name = unicodedata.normalize("NFKD", str(name)).encode("ascii", "ignore").decode("ascii")
+    app_id = re.sub(r"[^A-Za-z0-9]+", "_", ascii_name).strip("_").upper()
+    if not app_id:
+        return None
+    if app_id[0].isdigit():
+        app_id = f"APP_{app_id}"
+    return app_id
+
 
 def _as_list(value):
     if value is None:
@@ -96,9 +311,50 @@ def _normalize_hardware_key(kind, value):
     return f"{kind}-{value}"
 
 
+def _resolve_install_type(entry, compat_keys):
+    """Resolve an entry's install type, including optional per-OS mappings."""
+    value = entry.get("type", "git")
+
+    if isinstance(value, str):
+        value = value.strip().lower()
+        return value if value in VALID_TYPES else None
+
+    if not isinstance(value, dict) or not value:
+        return None
+
+    # Reject unknown mapping keys or invalid type values up front.
+    if set(value) - (OS_KEYS | {"all"}):
+        return None
+
+    normalized = {}
+    for key, install_type in value.items():
+        if not isinstance(install_type, str):
+            return None
+        install_type = install_type.strip().lower()
+        if install_type not in VALID_TYPES:
+            return None
+        normalized[key] = install_type
+
+    # Plain developer mode deliberately exposes a superset of every OS key.
+    # That set cannot be used to choose a meaningful OS-specific branch:
+    # whichever key appears first in TYPE_KEY_PRIORITY would win arbitrarily.
+    #
+    # When no COMPAT= simulation is active, prefer the generic fallback.
+    # Explicit simulations (e.g. DEV_MODE=1 COMPAT=arch) still resolve the
+    # distro-specific branch exactly like a real system would.
+    if is_dev_mode_enabled() and not get_dev_compat_override():
+        return normalized.get("all") or next(iter(normalized.values()), None)
+
+    for key in TYPE_KEY_PRIORITY:
+        if key in compat_keys and key in normalized:
+            return normalized[key]
+
+    return normalized.get("all")
+
+
 def _entry_installs_sandboxed_package(entry, compat_keys):
     """Return True when the entry would install Flatpak or AppImage content."""
-    install_type = entry.get("type", "git")
+    install_type = _resolve_install_type(entry, compat_keys)
 
     if install_type == "flathub":
         return True
@@ -136,6 +392,27 @@ def _container_requirement_matches(entry, compat_keys):
     return entry.get("container", "allow").strip().lower() == "allow"
 
 
+def _validate_wsl(entry):
+    """Validate the optional WSL compatibility field."""
+    value = entry.get("wsl")
+
+    if value is None:
+        return True
+
+    return isinstance(value, str) and value.strip().lower() in {"yes", "no"}
+
+
+def _wsl_requirement_matches(entry):
+    """Check an entry's optional WSL-only/non-WSL-only restriction."""
+    value = entry.get("wsl")
+
+    if value is None:
+        return True
+
+    requires_wsl = value.strip().lower() == "yes"
+    return is_wsl() if requires_wsl else not is_wsl()
+
+
 def _validate_desktop(entry):
     """Validate the optional desktop compatibility field."""
     value = entry.get("desktop")
@@ -166,7 +443,71 @@ def _desktop_requirement_matches(entry, compat_keys):
     return bool(requested & compat_keys)
 
 
-def _entry_is_compatible(entry, compat_keys):
+def _steamos_entry_is_compatible(entry, compat_keys):
+    """
+    Restrict SteamOS entries to portable installs that do not require native packages.
+
+    Native package declarations for other operating systems are harmless here. For
+    example, an entry may use a native package on Arch while falling back to Flathub
+    on SteamOS. Direct URL installs may resolve to Flatpak, AppImage, tarball, or
+    single-binary payloads, while generic git release entries defer asset selection
+    to pkg_fromrelease. In all cases, a native package dependency makes the entry
+    incompatible.
+    """
+    if "steamos" not in compat_keys:
+        return True
+
+    install_type = _resolve_install_type(entry, compat_keys)
+
+    if install_type in {"git", "flathub", "tar", "bin"}:
+        # Git release installs are resolved by pkg_fromrelease. On SteamOS it
+        # permits AppImage/Flatpak assets, plus explicitly requested tarballs
+        # and single binaries, all of which are installed at user level.
+        pass
+    elif install_type == "url":
+        resolved = _resolve_url_package(entry, compat_keys)
+        if not resolved or resolved[0] not in {"flatpak", "appimage", "tar", "bin"}:
+            return False
+    else:
+        # Native packages and third-party repository installs modify the base
+        # system and are therefore not compatible with SteamOS.
+        return False
+
+    # A native dependency makes the portable application depend on modifications
+    # to the SteamOS base system, so the whole entry becomes incompatible.
+    # Native package alternatives for other distro branches do NOT trigger this.
+    for dependency in entry.get("dependencies", []):
+        if (
+            isinstance(dependency, dict)
+            and dependency.get("type") == "native"
+        ):
+            return False
+
+    # Pre-install hooks remain disallowed because they can prepare or modify the
+    # host before the portable payload is installed. Tarball entries are the one
+    # exception for post hooks: LinuxToys requires one to integrate the extracted
+    # user-level application (desktop entry, launcher, etc.).
+    overrides = entry.get("overrides")
+    if isinstance(overrides, dict):
+        if overrides.get("pre") is not None:
+            return False
+        if overrides.get("post") is not None and install_type != "tar":
+            if install_type != "url":
+                return False
+            resolved = _resolve_url_package(entry, compat_keys)
+            if not resolved or resolved[0] != "tar":
+                return False
+
+    # Service enablement is also a host-level integration, so require explicit
+    # script support instead of allowing it through the automatic repo path.
+    services = _normalize_services(entry)
+    if services is None or services["system"] or services["user"]:
+        return False
+
+    return True
+
+
+def _entry_is_compatible(entry, compat_keys, scripts_dir=None):
 
     from .dev_mode import get_dev_compat_override, is_dev_mode_enabled
     if is_dev_mode_enabled() and not get_dev_compat_override():
@@ -175,6 +516,15 @@ def _entry_is_compatible(entry, compat_keys):
         return _container_requirement_matches(entry, compat_keys)
 
     if not _container_requirement_matches(entry, compat_keys):
+        return False
+
+    if not _wsl_requirement_matches(entry):
+        return False
+
+    if not _steamos_entry_is_compatible(entry, compat_keys):
+        return False
+
+    if scripts_dir is not None and not _git_db_requirement_matches(entry, compat_keys, scripts_dir):
         return False
     
     # OS compatibility
@@ -200,7 +550,10 @@ def _entry_is_compatible(entry, compat_keys):
     if entry.get("services") is not None and "systemd" not in compat_keys:
         return False
 
-    install_type = entry.get("type", "git")
+    install_type = _resolve_install_type(entry, compat_keys)
+
+    if not install_type:
+        return False
 
     # Flatpak installations implicitly require systemd.
     if install_type == "flathub":
@@ -213,7 +566,7 @@ def _entry_is_compatible(entry, compat_keys):
         if not resolved:
             return False
 
-        package_type, _ = resolved
+        package_type, _, _ = resolved
 
         if package_type == "flatpak" and "systemd" not in compat_keys:
             return False
@@ -258,10 +611,22 @@ def _validate_container(entry):
 
 
 def _required_fields_present(entry):
-    return all(
+    required = all(
         isinstance(entry.get(field), str) and entry[field].strip()
-        for field in ("name", "repo", "description", "category")
+        for field in ("name", "repo", "category")
     )
+
+    if not required:
+        return False
+
+    description = entry.get("description")
+    if isinstance(description, str) and description.strip():
+        return True
+
+    # A repository-local description catalog may replace the normal inline
+    # description/description_tag pair.
+    description_file = entry.get("descriptions", entry.get("description-file"))
+    return isinstance(description_file, str) and bool(description_file.strip())
 
 
 def _normalize_package_names(value):
@@ -283,12 +648,15 @@ def _normalize_package_names(value):
     return None
 
 
-def _validate_native_package_spec(value):
-    """Validate native package-name, including per-OS mappings."""
+def _validate_package_spec(value):
+    """Validate package-name, including optional per-OS mappings."""
     if _normalize_package_names(value):
         return True
 
     if not isinstance(value, dict) or not value:
+        return False
+
+    if set(value) - (OS_KEYS | {"all"}):
         return False
 
     return all(
@@ -297,24 +665,39 @@ def _validate_native_package_spec(value):
     )
 
 
-def _validate_type(entry):
-    install_type = entry.get("type", "git")
+def _validate_native_package_spec(value):
+    """Backward-compatible alias for native package-name validation."""
+    return _validate_package_spec(value)
 
-    if install_type not in VALID_TYPES:
+
+def _validate_type(entry, compat_keys):
+    install_type = _resolve_install_type(entry, compat_keys)
+
+    if not install_type:
         return False
 
-    if install_type == "flathub":
-        return bool(_normalize_package_names(entry.get("package-name")))
+    if install_type in {"flathub", "native"}:
+        return _validate_package_spec(entry.get("package-name"))
 
-    if install_type == "native":
-        return _validate_native_package_spec(entry.get("package-name"))
+    if install_type == "bin":
+        asset_name = entry.get("package-name")
+        if not isinstance(asset_name, str):
+            return False
+        asset_name = asset_name.strip()
+        return bool(
+            asset_name
+            and asset_name not in {".", ".."}
+            and "/" not in asset_name
+            and "\\" not in asset_name
+            and not any(char in asset_name for char in "*?[")
+        )
 
     if install_type == "url":
         urls = entry.get("urls")
         if not isinstance(urls, dict) or not urls:
             return False
         return any(
-            key in URL_PACKAGE_KEYS and _valid_package_url(value)
+            key in URL_PACKAGE_KEYS and _valid_url_spec(value, entry)
             for key, value in urls.items()
         )
 
@@ -326,69 +709,675 @@ def _validate_type(entry):
     return True
 
 def _load_json_entries(path):
-    """
-    Load repository entries from one JSON file.
+    """Load one repository JSON file once per file revision."""
+    signature = _file_signature(path)
+    cache_key = (path, signature)
 
-    A file may contain either one entry object or a list of entries.
-    Invalid/unreadable files are ignored independently.
-    """
+    with _REPO_CACHE_LOCK:
+        cached = _JSON_ENTRIES_CACHE.get(cache_key)
+        if cached is not None:
+            return [dict(entry) if isinstance(entry, dict) else entry for entry in cached]
+
     try:
         with open(path, "r", encoding="utf-8") as file:
             data = json.load(file)
     except (OSError, ValueError):
-        return []
-
-    if isinstance(data, dict):
-        entries = [data]
-    elif isinstance(data, list):
-        entries = data
+        result = []
     else:
-        return []
+        if isinstance(data, dict):
+            entries = [data]
+        elif isinstance(data, list):
+            entries = data
+        else:
+            entries = []
 
-    result = []
+        result = []
+        for entry in entries:
+            if not isinstance(entry, dict):
+                result.append(entry)
+                continue
+            copied = dict(entry)
+            copied["_list_source"] = path
+            result.append(copied)
 
-    for entry in entries:
-        if not isinstance(entry, dict):
-            result.append(entry)
-            continue
+    with _REPO_CACHE_LOCK:
+        for key in tuple(_JSON_ENTRIES_CACHE):
+            if key[0] == path and key != cache_key:
+                _JSON_ENTRIES_CACHE.pop(key, None)
+        _JSON_ENTRIES_CACHE[cache_key] = result
 
-        entry = dict(entry)
-        entry["_list_source"] = path
-        result.append(entry)
+    return [dict(entry) if isinstance(entry, dict) else entry for entry in result]
 
-    return result
-
-def _get_repo_list_paths(scripts_dir):
-    """
-    Return all repository-list JSON files in deterministic order.
-
-    repos.json is loaded first for backwards compatibility, followed by
-    every .json file found recursively under scripts/lists/.
-    """
-    paths = []
+def _scan_repo_tree(scripts_dir):
+    """Collect repository JSON/Markdown files and signatures in one tree walk."""
+    scripts_dir = os.path.realpath(scripts_dir)
+    json_paths = []
+    markdown_paths = []
 
     main_path = os.path.join(scripts_dir, "repos.json")
     if os.path.isfile(main_path):
-        paths.append(main_path)
+        json_paths.append(main_path)
 
     lists_dir = os.path.join(scripts_dir, "lists")
-
     if os.path.isdir(lists_dir):
-        discovered = []
-
+        discovered_json = []
+        discovered_markdown = []
         for root, dirs, files in os.walk(lists_dir):
-            # Make traversal deterministic.
             dirs.sort()
-
             for filename in sorted(files):
-                if filename.lower().endswith(".json"):
-                    discovered.append(
-                        os.path.join(root, filename)
-                    )
+                path = os.path.join(root, filename)
+                lowered = filename.lower()
+                if lowered.endswith(".json"):
+                    discovered_json.append(path)
+                elif lowered.endswith(".md"):
+                    discovered_markdown.append(path)
 
-        paths.extend(discovered)
+        json_paths.extend(discovered_json)
+        markdown_paths.extend(discovered_markdown)
 
-    return paths
+    signatures = tuple(
+        (path, _file_signature(path))
+        for path in (*json_paths, *markdown_paths)
+    )
+    return tuple(json_paths), tuple(markdown_paths), signatures
+
+
+def _get_repo_list_paths(scripts_dir):
+    """Return all repository-list JSON files in deterministic order."""
+    json_paths, _, _ = _scan_repo_tree(scripts_dir)
+    return list(json_paths)
+
+
+DESCRIPTION_FILE_KEYS = ("descriptions", "description-file")
+
+
+def _resolve_description_file_path(entry):
+    """
+    Resolve an optional repository-local description catalog.
+
+    The file must live in the exact same directory as the repository-list JSON.
+    This deliberately does not allow ../ or nested paths.
+    """
+    value = None
+    for key in DESCRIPTION_FILE_KEYS:
+        candidate = entry.get(key)
+        if candidate is not None:
+            value = candidate
+            break
+
+    if not isinstance(value, str) or not value.strip():
+        return None
+
+    value = value.strip()
+    if os.path.isabs(value) or os.path.basename(value) != value:
+        return None
+
+    if not value.lower().endswith(".json"):
+        return None
+
+    source = entry.get("_list_source")
+    if not source:
+        return None
+
+    source_dir = os.path.realpath(os.path.dirname(source))
+    resolved = os.path.realpath(os.path.join(source_dir, value))
+
+    if os.path.dirname(resolved) != source_dir or not os.path.isfile(resolved):
+        return None
+
+    return resolved
+
+
+def _load_description_catalog(entry):
+    """Load a sibling description catalog once per file revision."""
+    path = _resolve_description_file_path(entry)
+    if not path:
+        return {}
+
+    signature = _file_signature(path)
+    cache_key = (path, signature)
+    with _REPO_CACHE_LOCK:
+        cached = _DESCRIPTION_CATALOG_CACHE.get(cache_key)
+        if cached is not None:
+            return cached
+
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, ValueError):
+        catalog = {}
+    else:
+        catalog = data if isinstance(data, dict) else {}
+
+    with _REPO_CACHE_LOCK:
+        for key in tuple(_DESCRIPTION_CATALOG_CACHE):
+            if key[0] == path and key != cache_key:
+                _DESCRIPTION_CATALOG_CACHE.pop(key, None)
+        _DESCRIPTION_CATALOG_CACHE[cache_key] = catalog
+    return catalog
+
+
+def _catalog_translation(catalog, language, tag):
+    """Resolve a catalog tag for language, falling back to English."""
+    if not isinstance(tag, str) or not tag.strip():
+        return ""
+
+    tag = tag.strip()
+    language = str(language or "en").strip().replace("_", "-")
+    candidates = [language]
+
+    base_language = language.split("-", 1)[0]
+    if base_language not in candidates:
+        candidates.append(base_language)
+
+    if "en" not in candidates:
+        candidates.append("en")
+
+    for language_key in candidates:
+        strings = catalog.get(language_key)
+        if not isinstance(strings, dict):
+            continue
+
+        value = strings.get(tag)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    return ""
+
+
+def _load_markdown_text(path):
+    """Load a repository-local Markdown file once per file revision."""
+    path = os.path.realpath(path)
+    signature = _file_signature(path)
+    cache_key = (path, signature)
+
+    with _REPO_CACHE_LOCK:
+        cached = _MARKDOWN_TEXT_CACHE.get(cache_key)
+        if cached is not None:
+            return cached
+
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                content = file.read().strip()
+        except OSError:
+            content = ""
+
+        for key in tuple(_MARKDOWN_TEXT_CACHE):
+            if key[0] == path and key != cache_key:
+                _MARKDOWN_TEXT_CACHE.pop(key, None)
+        _MARKDOWN_TEXT_CACHE[cache_key] = content
+        return content
+
+
+def _resolve_long_description_content(entry, value):
+    """
+    Resolve the final long-description value.
+
+    Plain strings remain plain text. A value ending in .md is treated as a
+    repository-local Markdown file, resolved relative to the JSON file that
+    declared the entry. Markdown files may live in that directory or one of
+    its subdirectories, but may never escape it.
+
+    Returns:
+        tuple[str, str]: (description_text, format)
+    """
+    if not isinstance(value, str):
+        return "", "plain"
+
+    value = value.strip()
+    if not value:
+        return "", "plain"
+
+    if not value.lower().endswith(".md"):
+        return value, "plain"
+
+    if os.path.isabs(value):
+        return "", "markdown"
+
+    source = entry.get("_list_source")
+    if not source:
+        return "", "markdown"
+
+    source_dir = os.path.realpath(os.path.dirname(source))
+    resolved = os.path.realpath(os.path.join(source_dir, value))
+
+    try:
+        if os.path.commonpath((source_dir, resolved)) != source_dir:
+            return "", "markdown"
+    except ValueError:
+        return "", "markdown"
+
+    if not os.path.isfile(resolved):
+        return "", "markdown"
+
+    return _load_markdown_text(resolved), "markdown"
+
+
+def _resolve_entry_descriptions(entry, translations=None):
+    """
+    Resolve the short and long descriptions.
+
+    The existing long-description / long-description_tag interface is used for
+    both plain text and Markdown. After localization has selected the final
+    long-description value, values ending in .md are loaded as repository-local
+    Markdown files. This also lets each language map the same long-description
+    tag to a different Markdown file.
+    """
+    description = entry.get("description", "")
+    if not isinstance(description, str):
+        description = ""
+    description = description.strip()
+
+    description_tag = entry.get("description_tag", "")
+    if not isinstance(description_tag, str):
+        description_tag = ""
+    description_tag = description_tag.strip()
+
+    if description_tag and translations and description_tag in translations:
+        translated = translations[description_tag]
+        if isinstance(translated, str) and translated.strip():
+            description = translated.strip()
+
+    long_description = entry.get(
+        "long-description", entry.get("long_description", "")
+    )
+    if not isinstance(long_description, str):
+        long_description = ""
+    long_description = long_description.strip()
+
+    long_tag = entry.get(
+        "long-description_tag", entry.get("long_description_tag", "")
+    )
+    if not isinstance(long_tag, str):
+        long_tag = ""
+    long_tag = long_tag.strip()
+
+    if long_tag and translations and long_tag in translations:
+        translated = translations[long_tag]
+        if isinstance(translated, str) and translated.strip():
+            long_description = translated.strip()
+
+    catalog = _load_description_catalog(entry)
+    if catalog:
+        catalog_short_tag = catalog.get("description_tag", "")
+        catalog_long_tag = catalog.get("description_long_tag", "")
+
+        if isinstance(catalog_short_tag, str) and catalog_short_tag.strip():
+            description_tag = catalog_short_tag.strip()
+
+        if isinstance(catalog_long_tag, str) and catalog_long_tag.strip():
+            long_tag = catalog_long_tag.strip()
+
+        language = detect_system_language()
+
+        catalog_short = _catalog_translation(catalog, language, description_tag)
+        if catalog_short:
+            description = catalog_short
+
+        catalog_long = _catalog_translation(catalog, language, long_tag)
+        if catalog_long:
+            long_description = catalog_long
+
+    long_description, long_description_format = _resolve_long_description_content(
+        entry, long_description
+    )
+
+    return (
+        description,
+        description_tag,
+        long_description,
+        long_tag,
+        long_description_format,
+    )
+
+
+SCREENSHOT_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".svg")
+
+
+def _safe_list_relative_path(entry, scripts_dir, value):
+    """Resolve a repository-list-relative path without escaping scripts/lists/."""
+    if not isinstance(value, str) or not value.strip() or os.path.isabs(value):
+        return None
+
+    source = entry.get("_list_source")
+    if not source:
+        return None
+
+    lists_dir = os.path.realpath(os.path.join(scripts_dir, "lists"))
+    source_dir = os.path.realpath(os.path.dirname(source))
+    resolved = os.path.realpath(os.path.join(source_dir, value.strip()))
+
+    try:
+        if os.path.commonpath((lists_dir, resolved)) != lists_dir:
+            return None
+    except ValueError:
+        return None
+
+    return resolved
+
+
+def _resolve_list_screenshots(entry, scripts_dir):
+    """Resolve screenshot files/directories relative to the repository list."""
+    value = entry.get("screenshots")
+    if value is None:
+        return []
+
+    values = [value] if isinstance(value, str) else value if isinstance(value, list) else []
+    resolved = []
+
+    for candidate in values:
+        path = _safe_list_relative_path(entry, scripts_dir, candidate)
+        if not path:
+            continue
+
+        if os.path.isdir(path):
+            for filename in sorted(os.listdir(path), key=str.casefold):
+                image_path = os.path.join(path, filename)
+                if (
+                    os.path.isfile(image_path)
+                    and filename.lower().endswith(SCREENSHOT_EXTENSIONS)
+                ):
+                    resolved.append(image_path)
+        elif os.path.isfile(path) and path.lower().endswith(SCREENSHOT_EXTENSIONS):
+            resolved.append(path)
+
+    # Preserve configured/directory order while removing duplicates.
+    return list(dict.fromkeys(resolved))
+
+
+def _system_monetary_locale():
+    """Return the process' monetary locale once; it is invariant during a cache build."""
+    global _MONETARY_LOCALE_CACHE
+
+    with _REPO_CACHE_LOCK:
+        if _MONETARY_LOCALE_CACHE is not None:
+            return _MONETARY_LOCALE_CACHE
+
+        previous = None
+        try:
+            previous = locale.setlocale(locale.LC_MONETARY)
+            locale.setlocale(locale.LC_MONETARY, "")
+            conventions = locale.localeconv()
+        except (locale.Error, ValueError):
+            conventions = {}
+        finally:
+            if previous is not None:
+                try:
+                    locale.setlocale(locale.LC_MONETARY, previous)
+                except locale.Error:
+                    pass
+
+        currency_code = str(conventions.get("int_curr_symbol") or "").strip().upper()
+        currency_symbol = str(conventions.get("currency_symbol") or "").strip()
+        _MONETARY_LOCALE_CACHE = (currency_code, currency_symbol)
+        return _MONETARY_LOCALE_CACHE
+
+
+def _resolve_purchase_price(purchase, price_key="price", prices_key="prices"):
+    """Resolve a purchase/subscription price using LC_MONETARY, falling back to base USD."""
+    if not isinstance(purchase, dict):
+        return None, ""
+
+    base_price = purchase.get(price_key)
+    if not (
+        isinstance(base_price, (int, float))
+        and not isinstance(base_price, bool)
+        and base_price >= 0
+    ):
+        return None, ""
+
+    price = float(base_price)
+    symbol = "$"
+
+    localized_prices = purchase.get(prices_key, {})
+    if not isinstance(localized_prices, dict):
+        localized_prices = {}
+
+    normalized_prices = {
+        str(code).strip().upper(): value
+        for code, value in localized_prices.items()
+        if isinstance(code, str) and code.strip()
+    }
+
+    currency_code, currency_symbol = _system_monetary_locale()
+    localized_price = normalized_prices.get(currency_code)
+
+    if (
+        currency_code
+        and currency_code != "USD"
+        and isinstance(localized_price, (int, float))
+        and not isinstance(localized_price, bool)
+        and localized_price >= 0
+    ):
+        price = float(localized_price)
+        symbol = currency_symbol or currency_code
+
+    return price, symbol
+
+
+def _valid_commerce_url(value, fallback=""):
+    """Return an explicit valid HTTPS URL, otherwise a validated fallback."""
+    if _valid_package_url(value):
+        return value.strip()
+    return fallback if _valid_package_url(fallback) else ""
+
+
+def _resolve_purchase_options(purchase, purchase_url):
+    """Normalize legacy or tiered one-time purchases for the app-page UI."""
+    tiers = purchase.get("tiers")
+    options = []
+
+    if isinstance(tiers, list) and tiers:
+        for tier in tiers:
+            if not isinstance(tier, dict):
+                continue
+            name = str(tier.get("name") or "").strip()
+            price, symbol = _resolve_purchase_price(tier)
+            url = _valid_commerce_url(tier.get("url"), purchase_url)
+            if name and price is not None and url:
+                options.append({
+                    "name": name,
+                    "price": price,
+                    "currency_symbol": symbol,
+                    "url": url,
+                })
+        return options
+
+    price, symbol = _resolve_purchase_price(purchase)
+    if price is not None and purchase_url:
+        options.append({
+            "name": "",
+            "price": price,
+            "currency_symbol": symbol,
+            "url": purchase_url,
+        })
+    return options
+
+
+def _resolve_subscription_options(purchase, purchase_url):
+    """Normalize legacy, time-framed, and tiered subscription choices."""
+    options = []
+    sub_tiers = purchase.get("sub_tiers")
+
+    def add_periods(periods, tier_name="", tier_url=""):
+        if not isinstance(periods, list):
+            return
+        for period in periods:
+            if not isinstance(period, dict):
+                continue
+            months = period.get("months")
+            if not (
+                isinstance(months, int)
+                and not isinstance(months, bool)
+                and months > 0
+            ):
+                continue
+            price, symbol = _resolve_purchase_price(period)
+            url = _valid_commerce_url(period.get("url"), tier_url or purchase_url)
+            if price is None or not url:
+                continue
+            options.append({
+                "name": tier_name,
+                "months": months,
+                "price": price,
+                "currency_symbol": symbol,
+                "url": url,
+            })
+
+    if isinstance(sub_tiers, list) and sub_tiers:
+        for tier in sub_tiers:
+            if not isinstance(tier, dict):
+                continue
+            name = str(tier.get("name") or "").strip()
+            if not name:
+                continue
+            tier_url = _valid_commerce_url(tier.get("url"), purchase_url)
+            periods = tier.get("periods")
+            if isinstance(periods, list) and periods:
+                add_periods(periods, name, tier_url)
+                continue
+
+            price, symbol = _resolve_purchase_price(tier)
+            if price is not None and tier_url:
+                months = tier.get("months", 1)
+                if not (isinstance(months, int) and not isinstance(months, bool) and months > 0):
+                    months = 1
+                options.append({
+                    "name": name,
+                    "months": months,
+                    "price": price,
+                    "currency_symbol": symbol,
+                    "url": tier_url,
+                })
+        return options
+
+    sub_periods = purchase.get("sub_periods")
+    if isinstance(sub_periods, list) and sub_periods:
+        add_periods(sub_periods)
+        return options
+
+    price, symbol = _resolve_purchase_price(purchase, "sub_price", "sub_prices")
+    if price is not None and purchase_url:
+        options.append({
+            "name": "",
+            "months": 1,
+            "price": price,
+            "currency_symbol": symbol,
+            "url": purchase_url,
+        })
+    return options
+
+
+def _resolve_developer_name(entry):
+    """Resolve the developer/company name, falling back to the repository namespace."""
+    developer = entry.get("developer")
+    if isinstance(developer, str) and developer.strip():
+        return developer.strip()
+
+    repo = entry.get("repo", "")
+    github_owner = official_index.get_github_owner(repo)
+    if github_owner:
+        return github_owner
+
+    if isinstance(repo, str):
+        try:
+            parsed = urlparse(repo.strip())
+        except ValueError:
+            return ""
+
+        if parsed.scheme == "https" and parsed.hostname == "gitlab.com":
+            path = parsed.path.strip("/")
+            if path.endswith(".git"):
+                path = path[:-4]
+            parts = path.split("/") if path else []
+            if len(parts) >= 2 and all(part not in ("", ".", "..") for part in parts):
+                return "/".join(parts[:-1])
+
+    return ""
+
+
+def _resolve_app_page_metadata(
+    entry,
+    scripts_dir,
+    translations=None,
+    resolved_long_description=None,
+    resolved_long_tag=None,
+    resolved_long_format=None,
+):
+    """Return normalized optional app-page metadata for a repository entry."""
+    if resolved_long_description is None or resolved_long_tag is None:
+        (
+            _,
+            _,
+            long_description,
+            long_tag,
+            long_description_format,
+        ) = _resolve_entry_descriptions(entry, translations)
+    else:
+        long_description = resolved_long_description
+        long_tag = resolved_long_tag
+        long_description_format = resolved_long_format or "plain"
+
+    screenshots = _resolve_list_screenshots(entry, scripts_dir)
+
+    purchase_url = ""
+    purchase_price = None
+    purchase_currency_symbol = ""
+    subscription_price = None
+    subscription_currency_symbol = ""
+    purchase_options = []
+    subscription_options = []
+    purchase = entry.get("purchase")
+    if isinstance(purchase, dict):
+        url = purchase.get("url")
+        if _valid_package_url(url):
+            purchase_url = url.strip()
+
+        purchase_options = _resolve_purchase_options(purchase, purchase_url)
+        subscription_options = _resolve_subscription_options(purchase, purchase_url)
+
+        # Preserve the old scalar metadata for callers that still consume it.
+        # For multi-option commerce these expose the lowest currently resolved price.
+        if purchase_options:
+            lowest = min(purchase_options, key=lambda option: option["price"])
+            purchase_price = lowest["price"]
+            purchase_currency_symbol = lowest["currency_symbol"]
+        if subscription_options:
+            lowest = min(subscription_options, key=lambda option: option["price"])
+            subscription_price = lowest["price"]
+            subscription_currency_symbol = lowest["currency_symbol"]
+
+    donate_url = ""
+    donate = entry.get("donate")
+    if isinstance(donate, str) and _valid_package_url(donate):
+        donate_url = donate.strip()
+    elif isinstance(donate, dict) and _valid_package_url(donate.get("url")):
+        donate_url = donate["url"].strip()
+
+    return {
+        "developer": _resolve_developer_name(entry),
+        "long_description": long_description,
+        "long_description_tag": long_tag,
+        "long_description_format": long_description_format,
+        "screenshots": screenshots,
+        "purchase_url": purchase_url,
+        "purchase_price": purchase_price,
+        "purchase_currency_symbol": purchase_currency_symbol,
+        "purchase_options": purchase_options,
+        "subscription_price": subscription_price,
+        "subscription_currency_symbol": subscription_currency_symbol,
+        "subscription_options": subscription_options,
+        "donate_url": donate_url,
+        "has_app_page": bool(
+            long_description
+            or screenshots
+            or purchase_url
+            or purchase_options
+            or subscription_options
+            or donate_url
+        ),
+    }
+
 
 def _resolve_list_icon(entry, scripts_dir):
     """
@@ -448,15 +1437,20 @@ def _resolve_list_icon(entry, scripts_dir):
 
     return icon_path
 
-def load_repo_entries(scripts_dir, translations=None):
+def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_keys=None):
     data = []
 
-    for path in _get_repo_list_paths(scripts_dir):
+    if list_paths is None:
+        list_paths = _get_repo_list_paths(scripts_dir)
+
+    for path in list_paths:
         data.extend(_load_json_entries(path))
 
-    compat_keys = get_effective_compat_keys()
+    if compat_keys is None:
+        compat_keys = get_effective_compat_keys()
     result = []
     seen_names = set()
+    seen_repo_app_ids = set()
 
     for entry in data:
         if not isinstance(entry, dict):
@@ -465,10 +1459,13 @@ def load_repo_entries(scripts_dir, translations=None):
         if not _required_fields_present(entry):
             continue
 
-        if not _validate_type(entry):
+        if not _validate_type(entry, compat_keys):
             continue
 
         if not _validate_container(entry):
+            continue
+
+        if not _validate_wsl(entry):
             continue
 
         if not _validate_desktop(entry):
@@ -480,43 +1477,66 @@ def load_repo_entries(scripts_dir, translations=None):
         if not _validate_overrides(entry):
             continue
 
+        if not _validate_tarball_post_requirement(entry, compat_keys):
+            continue
+
         if not _validate_services(entry):
             continue
 
-        if not _entry_is_compatible(entry, compat_keys):
+        if not _entry_is_compatible(entry, compat_keys, scripts_dir):
             continue
         # Script names are also used as registry identities and virtual paths,
         # so duplicate names from separate list files would be ambiguous.
         normalized_name = entry["name"].strip().casefold()
+        repo_app_id = _repo_app_id(entry["name"])
 
-        if normalized_name in seen_names:
+        if not repo_app_id:
+            continue
+
+        if normalized_name in seen_names or repo_app_id in seen_repo_app_ids:
             continue
 
         seen_names.add(normalized_name)
+        seen_repo_app_ids.add(repo_app_id)
 
-        description = entry["description"]
-        description_tag = entry.get("description_tag", "")
+        (
+            description,
+            description_tag,
+            long_description,
+            long_description_tag,
+            long_description_format,
+        ) = _resolve_entry_descriptions(entry, translations)
 
-        if (
-            description_tag
-            and translations
-            and description_tag in translations
-        ):
-            description = translations[description_tag]
+        # A usable short description is still mandatory. If a referenced
+        # catalog is missing/invalid and no inline fallback exists, skip it.
+        if not description:
+            continue
 
         item = dict(entry)
+        app_page_metadata = _resolve_app_page_metadata(
+            entry,
+            scripts_dir,
+            translations,
+            resolved_long_description=long_description,
+            resolved_long_tag=long_description_tag,
+            resolved_long_format=long_description_format,
+        )
         item.pop("_list_source", None)
+
+        install_type = _resolve_install_type(entry, compat_keys)
 
         item.update({
             "description": description,
             "description_tag": description_tag,
             "icon": _resolve_list_icon(entry, scripts_dir),
-            "type": entry.get("type", "git"),
+            "type": install_type,
+            **app_page_metadata,
 
             # Make it behave exactly like a script in the UI.
             "is_script": True,
             "is_subcategory": False,
             "is_repo_entry": True,
+            "repo_app_id": repo_app_id,
             "revert": "yes",
             "reboot": "no",
 
@@ -537,6 +1557,59 @@ def load_repo_entries(scripts_dir, translations=None):
     return result
 
 
+def load_repo_entries(scripts_dir, translations=None):
+    """Return resolved repository entries, memoized for the active source/locale."""
+    scripts_dir = os.path.realpath(scripts_dir)
+    compat_keys = get_effective_compat_keys()
+    compat_key = tuple(sorted(compat_keys))
+    language = detect_system_language()
+    dev_mode = is_dev_mode_enabled()
+    runtime_key = (
+        scripts_dir,
+        id(translations),
+        language,
+        compat_key,
+        is_containerized(),
+        is_wsl(),
+        os.environ.get("DEV_MODE", ""),
+    )
+
+    # Normal runtime source changes flow through parser.set_scripts_dir(), which
+    # calls clear_runtime_caches(). Avoid walking scripts/lists merely to prove
+    # that an already-cached source has not changed on every category lookup.
+    # Developer mode keeps revision signatures so direct edits remain visible.
+    if not dev_mode:
+        with _REPO_CACHE_LOCK:
+            cached = _REPO_ENTRIES_CACHE.get(runtime_key)
+            if cached is not None:
+                return [dict(entry) for entry in cached]
+
+    list_paths, _, source_signature = _scan_repo_tree(scripts_dir)
+
+    git_db_path = os.path.join(scripts_dir, "git-db.json")
+    source_signature = source_signature + (
+        (git_db_path, _file_signature(git_db_path)),
+    )
+
+    cache_key = runtime_key + (source_signature,) if dev_mode else runtime_key
+
+    # A single lock deliberately coalesces simultaneous startup consumers.
+    # The first builds the list; search/category/featured consumers reuse it.
+    with _REPO_CACHE_LOCK:
+        cached = _REPO_ENTRIES_CACHE.get(cache_key)
+        if cached is None:
+            cached = _build_repo_entries(
+                scripts_dir,
+                translations,
+                list_paths=list_paths,
+                compat_keys=compat_keys,
+            )
+            _REPO_ENTRIES_CACHE.clear()
+            _REPO_ENTRIES_CACHE[cache_key] = cached
+
+        return [dict(entry) for entry in cached]
+
+
 def get_entries_for_category(scripts_dir, category_path, translations=None):
     category = os.path.basename(os.path.normpath(category_path))
 
@@ -547,7 +1620,8 @@ def get_entries_for_category(scripts_dir, category_path, translations=None):
     ]
 
 
-def _resolve_native_package(entry, compat_keys):
+def _resolve_package_names(entry, compat_keys):
+    """Resolve package-name, including optional per-OS mappings."""
     package = entry.get("package-name")
 
     direct = _normalize_package_names(package)
@@ -567,6 +1641,65 @@ def _resolve_native_package(entry, compat_keys):
 
     return _normalize_package_names(package.get("all"))
 
+
+def _resolve_native_package(entry, compat_keys):
+    """Backward-compatible alias for native package-name resolution."""
+    return _resolve_package_names(entry, compat_keys)
+
+
+_ENV_VAR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _normalize_dynamic_url(value):
+    """
+    Normalize an explicit dynamic URL declaration.
+
+    Supported form:
+        {"env": "URL"}
+
+    Returns the environment-variable name or None.
+    """
+    if not isinstance(value, dict) or set(value) != {"env"}:
+        return None
+
+    env_name = value.get("env")
+    if not isinstance(env_name, str):
+        return None
+
+    env_name = env_name.strip()
+    if not _ENV_VAR_RE.fullmatch(env_name):
+        return None
+
+    return env_name
+
+
+def _has_pre_hook(entry):
+    """Return True when the entry declares a valid pre-install hook."""
+    overrides = entry.get("overrides")
+    if not isinstance(overrides, dict):
+        return False
+
+    pre = overrides.get("pre")
+    return pre is not None and _validate_hook(pre)
+
+
+def _valid_url_spec(value, entry=None):
+    """
+    Validate either a normal HTTP(S) URL or an explicit dynamic URL spec.
+
+    Dynamic URLs are only valid when a pre-install hook exists, because that
+    hook is responsible for exporting the referenced environment variable.
+    """
+    if _valid_package_url(value):
+        return True
+
+    env_name = _normalize_dynamic_url(value)
+    if not env_name:
+        return False
+
+    return bool(entry and _has_pre_hook(entry))
+
+
 def _valid_package_url(value):
     if not isinstance(value, str) or not value.strip():
         return False
@@ -584,8 +1717,11 @@ def _resolve_url_package(entry, compat_keys):
     Resolve the best downloadable package for the current system.
 
     Returns:
-        tuple[str, str] | None:
-            (package_type, url)
+        tuple[str, str, bool] | None:
+            (package_type, value, is_environment_variable)
+
+    For dynamic declarations such as {"env": "URL"}, value is the validated
+    environment-variable name and is_environment_variable is True.
     """
     urls = entry.get("urls")
 
@@ -619,19 +1755,29 @@ def _resolve_url_package(entry, compat_keys):
     }:
         native_keys.extend(("pkg.tar.zst", "pacman"))
 
+    def resolve_value(package_type):
+        value = urls.get(package_type)
+
+        if _valid_package_url(value):
+            return package_type, value.strip(), False
+
+        env_name = _normalize_dynamic_url(value)
+        if env_name and _has_pre_hook(entry):
+            return package_type, env_name, True
+
+        return None
+
     # Prefer a native package.
     for key in native_keys:
-        value = urls.get(key)
-
-        if _valid_package_url(value):
-            return key, value.strip()
+        resolved = resolve_value(key)
+        if resolved:
+            return resolved
 
     # Portable fallbacks.
-    for key in ("appimage", "flatpak"):
-        value = urls.get(key)
-
-        if _valid_package_url(value):
-            return key, value.strip()
+    for key in ("appimage", "flatpak", "tar", "bin"):
+        resolved = resolve_value(key)
+        if resolved:
+            return resolved
 
     return None
 
@@ -655,6 +1801,12 @@ def create_install_script(entry):
     icon = _metadata_line(entry.get("icon", "application-x-executable"))
 
     compat_keys = get_system_compat_keys()
+
+    if not _validate_tarball_post_requirement(entry, compat_keys):
+        raise ValueError(
+            "Tarball repository entries require an overrides.post hook"
+        )
+
     dependency_commands = _create_dependency_commands(
         entry,
         compat_keys,
@@ -664,19 +1816,31 @@ def create_install_script(entry):
     if install_type == "git":
         command = f"pkg_fromrelease {shlex.quote(repo)}"
 
-    elif install_type == "flathub":
-        packages = _normalize_package_names(entry.get("package-name"))
-        if not packages:
-            raise ValueError("Flathub entry has no package-name")
+    elif install_type == "tar":
+        command = f"pkg_fromrelease --tar {shlex.quote(repo)}"
 
+    elif install_type == "bin":
+        asset_name = entry.get("package-name", "").strip()
+        command = (
+            f"pkg_fromrelease --bin {shlex.quote(repo)} "
+            f"{shlex.quote(asset_name)}"
+        )
+
+    elif install_type == "flathub":
+        compat_keys = get_system_compat_keys()
+        packages = _resolve_package_names(entry, compat_keys)
+        if not packages:
+            raise ValueError("No Flathub package name matches this operating system")
+
+        skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
         command = "\n".join(
-            f"pkg_flat {shlex.quote(package)}"
+            f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
             for package in packages
         )
 
     elif install_type == "native":
         compat_keys = get_system_compat_keys()
-        packages = _resolve_native_package(entry, compat_keys)
+        packages = _resolve_package_names(entry, compat_keys)
 
         if not packages:
             raise ValueError(
@@ -697,9 +1861,23 @@ def create_install_script(entry):
                 "No downloadable package URL matches this operating system"
             )
 
-        _, package_url = resolved
+        package_type, package_value, is_environment_variable = resolved
 
-        command = f"pkg_fromurl {shlex.quote(package_url)}"
+        mode_flag = {
+            "tar": " --tar",
+            "bin": " --bin",
+        }.get(package_type, "")
+
+        if is_environment_variable:
+            # The variable name has already been strictly validated by
+            # _normalize_dynamic_url(). Use ${...} so the shell expands the
+            # value exported by the pre hook while preserving it as one arg.
+            package_arg = f'"${{{package_value}}}"'
+        else:
+            package_arg = shlex.quote(package_value)
+
+        skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
+        command = f"pkg_fromurl{mode_flag}{skip_user_flag} {package_arg}"
 
     elif install_type == "repository":
         raise NotImplementedError(
@@ -889,8 +2067,9 @@ def _create_dependency_commands(entry, compat_keys):
                     "Flathub dependency has no package-name"
                 )
 
+            skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
             commands.extend(
-                f"pkg_flat {shlex.quote(package)}"
+                f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
                 for package in packages
             )
 
@@ -925,6 +2104,37 @@ def _validate_hook(value):
 
     return True
 
+def _entry_uses_tarball(entry, compat_keys):
+    """Return True when this entry resolves to a tarball installation."""
+    install_type = _resolve_install_type(entry, compat_keys)
+
+    if install_type == "tar":
+        return True
+
+    if install_type != "url":
+        return False
+
+    resolved = _resolve_url_package(entry, compat_keys)
+    return bool(resolved and resolved[0] == "tar")
+
+
+def _validate_tarball_post_requirement(entry, compat_keys):
+    """
+    Tarballs only unpack application files. Require a valid post-install hook
+    so repository-list authors explicitly perform any integration needed by
+    the extracted application (desktop entry, launcher, symlinks, etc.).
+    """
+    if not _entry_uses_tarball(entry, compat_keys):
+        return True
+
+    overrides = entry.get("overrides")
+    if not isinstance(overrides, dict):
+        return False
+
+    post = overrides.get("post")
+    return post is not None and _validate_hook(post)
+
+
 def _validate_overrides(entry):
     overrides = entry.get("overrides")
 
@@ -935,7 +2145,11 @@ def _validate_overrides(entry):
         return False
 
     # Only supported override types.
-    if set(overrides) - {"flatpak", "pre", "post"}:
+    if set(overrides) - {"flatpak", "pre", "post", "skip-user"}:
+        return False
+
+    skip_user = overrides.get("skip-user")
+    if skip_user is not None and not isinstance(skip_user, bool):
         return False
 
     # Validate pre/post hooks.
@@ -988,6 +2202,12 @@ def _validate_overrides(entry):
             return False
 
     return True
+
+def _skip_user_override(entry):
+    """Return whether Flatpak installs for this entry must avoid user scope."""
+    overrides = entry.get("overrides", {})
+    return isinstance(overrides, dict) and overrides.get("skip-user") is True
+
 
 def _create_override_commands(entry):
     commands = []

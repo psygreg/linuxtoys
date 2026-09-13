@@ -3,7 +3,7 @@
 # description: itb_desc
 # repo: https://mike-fabian.github.io/ibus-typing-booster/
 # icon: itb.svg
-# compat: !solus
+# compat: !solus, !steamos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

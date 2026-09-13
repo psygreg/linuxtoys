@@ -6,7 +6,7 @@
 # reboot: yes
 # gpu: Intel, Nvidia
 # nocontainer
-# compat: !solus
+# compat: !solus, !steamos
 
 # --- Start of the script code ---
 askpass

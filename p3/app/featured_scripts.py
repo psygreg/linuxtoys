@@ -1,42 +1,69 @@
 import random
 
-from .gtk_common import GLib
+from .gtk_common import Gdk, GLib
 from . import parser
 
 
 class FeaturedCtl:
-    FEATURED_REFRESH_SECONDS = 15
+    FEATURED_REFRESH_MIN_SECONDS = 8
+    FEATURED_REFRESH_MAX_SECONDS = 15
+    FEATURED_REFRESH_MIN_ITEMS = 10
+    FEATURED_REFRESH_MAX_ITEMS = 25
     FEATURED_MAX_ROWS = 10
-    FEATURED_MAX_COLUMNS = 15
     FEATURED_RESIZE_DEBOUNCE_MS = 150
+    FEATURED_SWAP_ANIMATION_MS = 180
 
     def _collect_all_scripts(self):
-        """Collect all scripts from all categories into a flat list."""
+        """Collect direct top-level scripts, preferring already parsed cache data."""
         all_scripts = []
+        seen = set()
+
+        def add_scripts(scripts):
+            for script in scripts:
+                if (
+                    not script.get("is_script", False)
+                    or script.get("is_create_script", False)
+                ):
+                    continue
+                key = script.get("path") or (
+                    script.get("name", ""),
+                    script.get("repo", ""),
+                )
+                if key in seen:
+                    continue
+                seen.add(key)
+                all_scripts.append(script)
 
         try:
-            categories = parser.get_categories(self.translations)
+            category_cache = getattr(self, "category_cache", None)
+            if category_cache is not None and category_cache.scripts_by_category:
+                categories = category_cache.get_categories()
+                for category in categories:
+                    if category.get("is_script"):
+                        continue
+                    category_path = category.get("path", "")
+                    if category_path:
+                        add_scripts(
+                            category_cache.get_scripts_for_category(category_path)
+                        )
+                return all_scripts
 
+            # Compatibility fallback for callers that do not own a CategoryCache.
+            categories = parser.get_categories(self.translations)
             for category in categories:
+                if category.get("is_script"):
+                    continue
                 category_path = category.get("path", "")
                 if not category_path:
                     continue
-
                 try:
-                    scripts = parser.get_scripts_for_category(
-                        category_path,
-                        self.translations,
+                    add_scripts(
+                        parser.get_scripts_for_category(
+                            category_path,
+                            self.translations,
+                        )
                     )
-
-                    for script in scripts:
-                        if (
-                            script.get("is_script", False)
-                            and not script.get("is_create_script", False)
-                        ):
-                            all_scripts.append(script)
                 except Exception:
-                    # A broken category should not prevent featured scripts
-                    # from being collected from the remaining categories.
                     continue
 
         except Exception as error:
@@ -97,30 +124,43 @@ class FeaturedCtl:
         return max(1, card_width or 120), max(1, card_height or 64)
 
     def _calculate_featured_columns(self):
-        """Calculate how many cards fit horizontally, up to the FlowBox limit."""
-        flowbox_width = self.random_scripts_flowbox.get_allocated_width()
+        """Mirror the main menu's *actual* currently allocated column count."""
+        category_children = self.categories_flowbox.get_children()
+        columns = 0
 
-        if flowbox_width <= 1:
-            viewport_width = self.categories_view.get_allocated_width()
-            horizontal_margins = (
-                self.featured_scripts_container.get_margin_left()
-                + self.featured_scripts_container.get_margin_right()
-            )
-            flowbox_width = max(0, viewport_width - horizontal_margins)
+        # FlowBox does not expose its current effective column count directly.
+        # Once allocated, however, every child in the same row has the same Y
+        # coordinate. Count the fullest allocated row so this follows GTK's real
+        # layout decision instead of trying to reproduce it from preferred widths.
+        row_counts = {}
+        for child in category_children:
+            allocation = child.get_allocation()
+            if allocation.width <= 1 or allocation.height <= 1:
+                continue
+            row_counts[allocation.y] = row_counts.get(allocation.y, 0) + 1
 
-        card_width, _card_height = self._get_featured_card_size()
-        column_spacing = self.random_scripts_flowbox.get_column_spacing()
+        if row_counts:
+            columns = max(row_counts.values())
 
-        # n cards require:
-        # n * card_width + (n - 1) * spacing
-        columns = (flowbox_width + column_spacing) // (
-            card_width + column_spacing
-        )
+        # During the first allocation cycle there may not be usable child geometry
+        # yet. Be conservative; the size-allocate callback will recalculate this as
+        # soon as GTK has laid out the main menu. This avoids ever over-populating
+        # the featured section during startup.
+        if columns <= 0:
+            columns = 1
 
-        return max(
-            1,
-            min(self.FEATURED_MAX_COLUMNS, int(columns)),
-        )
+        main_max_columns = self.categories_flowbox.get_max_children_per_line()
+        if main_max_columns > 0:
+            columns = min(columns, main_max_columns)
+
+        columns = max(1, int(columns))
+
+        # Make the featured FlowBox use exactly the same number of columns. Using
+        # both min and max prevents shorter featured labels from creating an extra
+        # column that the main menu itself does not currently have.
+        self.random_scripts_flowbox.set_min_children_per_line(columns)
+        self.random_scripts_flowbox.set_max_children_per_line(columns)
+        return columns
 
     def _calculate_random_scripts_count(self):
         """
@@ -210,11 +250,69 @@ class FeaturedCtl:
         for child in self.random_scripts_flowbox.get_children():
             child.destroy()
 
+    def _hide_featured_section(self, discard=False):
+        """Hide Featured Scripts without losing its current state by default."""
+        if getattr(self, "_featured_swap_timer", None):
+            GLib.source_remove(self._featured_swap_timer)
+            self._featured_swap_timer = None
+
+        self.random_scripts_revealer.set_reveal_child(False)
+        self.featured_scripts_revealer.set_reveal_child(False)
+
+        if discard:
+            self._clear_random_scripts()
+            self._featured_last_count = 0
+
+    def _invalidate_featured_scripts(self):
+        """Discard Featured state when its backing script data becomes stale."""
+        self._stop_random_scripts_refresh_timer()
+        self._hide_featured_section(discard=True)
+
+    def _populate_random_scripts(self, scripts, count):
+        """Replace hidden featured cards, then animate the new set in."""
+        self._featured_swap_timer = None
+
+        on_categories_view = (
+            self.current_category_info is None
+            and self.main_stack.get_visible_child_name() == "categories"
+        )
+        if not self.all_scripts or not on_categories_view or count <= 0:
+            # A delayed swap may fire after navigation. Do not destroy the cards;
+            # the main-menu state must survive while its stack page is hidden.
+            return False
+
+        self._clear_random_scripts()
+
+        for script_info in scripts:
+            widget = self.create_item_widget(script_info)
+            description = script_info.get("description", "")
+            widget.set_tooltip_text(description or None)
+
+            # Keep a Featured card stable while the user is hovering it, so its
+            # tooltip/short description cannot disappear during the periodic swap.
+            widget.add_events(
+                Gdk.EventMask.ENTER_NOTIFY_MASK
+                | Gdk.EventMask.LEAVE_NOTIFY_MASK
+            )
+            widget.connect("enter-notify-event", self._on_featured_card_enter)
+            widget.connect("leave-notify-event", self._on_featured_card_leave)
+
+            self.random_scripts_flowbox.add(widget)
+
+        self._featured_last_count = count
+
+        # Realize the new cards while the revealer is still closed, then animate in.
+        self.featured_scripts_revealer.show_all()
+        self.featured_scripts_revealer.set_reveal_child(True)
+        self.random_scripts_revealer.set_reveal_child(True)
+        return False
+
     def _refresh_random_scripts_display(self, force=False):
         """
         Recalculate and refresh the featured section.
 
-        Returns True while the periodic timer should continue running.
+        The first set reveals the whole section. Later replacements fade the cards
+        out, swap them while hidden, then fade the replacement set in.
         """
         on_categories_view = (
             self.current_category_info is None
@@ -222,45 +320,58 @@ class FeaturedCtl:
         )
 
         if not self.all_scripts or not on_categories_view:
-            self._clear_random_scripts()
-            self.featured_scripts_container.hide()
-            self._featured_last_count = 0
+            # Navigation is not an invalidation event. A queued timer/resize callback
+            # can arrive just after the stack changes, so simply stop here and keep
+            # the existing cards intact for the next visit to the main menu.
             return False
 
         count = self._calculate_random_scripts_count()
 
         if count <= 0:
-            self._clear_random_scripts()
-            self.featured_scripts_container.hide()
-            self._featured_last_count = 0
+            # Temporarily hide when no complete row fits, but retain the chosen cards.
+            self._hide_featured_section(discard=False)
             return True
 
-        # A resize that does not change the number of fitting cards should not
-        # randomly replace all cards. The periodic timer can still refresh them.
+        current_children = self.random_scripts_flowbox.get_children()
+
         if (
             not force
             and count == getattr(self, "_featured_last_count", None)
-            and self.random_scripts_flowbox.get_children()
+            and current_children
         ):
-            self.featured_scripts_container.show_all()
+            self.featured_scripts_revealer.show_all()
+            self.featured_scripts_revealer.set_reveal_child(True)
+            self.random_scripts_revealer.set_reveal_child(True)
             return True
 
-        self._clear_random_scripts()
+        scripts = self._select_random_scripts(count)
 
-        for script_info in self._select_random_scripts(count):
-            widget = self.create_item_widget(script_info)
-            description = script_info.get("description", "")
-            widget.set_tooltip_text(description or None)
-            self.random_scripts_flowbox.add(widget)
+        if getattr(self, "_featured_swap_timer", None):
+            GLib.source_remove(self._featured_swap_timer)
+            self._featured_swap_timer = None
 
-        self._featured_last_count = count
-        self.featured_scripts_container.show_all()
+        if current_children:
+            self.random_scripts_revealer.set_reveal_child(False)
+            self._featured_swap_timer = GLib.timeout_add(
+                self.FEATURED_SWAP_ANIMATION_MS,
+                self._populate_random_scripts,
+                scripts,
+                count,
+            )
+        else:
+            self._populate_random_scripts(scripts, count)
 
         return True
 
     def _on_featured_size_allocate(self, _widget, _allocation):
         """
         Debounce resize events and update the featured layout after allocation.
+
+        Returning to the main menu deliberately waits for this signal instead of
+        measuring geometry from an idle callback. Gtk.Stack transitions can leave
+        the categories view reporting its previous allocation for a short time;
+        using that stale size caused a wrong Featured set to flash before the real
+        allocation arrived.
         """
         if self.main_stack.get_visible_child_name() != "categories":
             return
@@ -274,31 +385,138 @@ class FeaturedCtl:
         )
 
     def _apply_featured_resize(self):
-        """Apply the resize-triggered featured-section update."""
+        """Apply the resize-triggered featured-section update using settled geometry."""
         self._featured_resize_timer = None
 
-        if (
+        if not (
             self.should_start_random_timer
             and self.all_scripts
             and self.main_stack.get_visible_child_name() == "categories"
         ):
-            self._refresh_random_scripts_display(force=False)
+            return False
+
+        self._refresh_random_scripts_display(force=False)
+
+        # A navigation return is complete only after a fresh allocation has been
+        # observed. Start the periodic rotation from this settled state rather than
+        # from the stale geometry that may still exist immediately after switching
+        # Gtk.Stack children.
+        if getattr(self, "_featured_waiting_for_allocation", False):
+            self._featured_waiting_for_allocation = False
+            self._restart_random_scripts_refresh_timer()
 
         return False
 
+    def _on_featured_card_enter(self, _widget, _event):
+        """Pause Featured rotation while the pointer is over a card."""
+        self._featured_hovered = True
+
+        if self.random_scripts_refresh_timer:
+            GLib.source_remove(self.random_scripts_refresh_timer)
+            self.random_scripts_refresh_timer = None
+
+        # If the timeout fired just before the pointer entered, cancel the pending
+        # post-fade replacement and keep the cards the user is currently reading.
+        if getattr(self, "_featured_swap_timer", None):
+            GLib.source_remove(self._featured_swap_timer)
+            self._featured_swap_timer = None
+            self.random_scripts_revealer.set_reveal_child(True)
+
+        return False
+
+    def _on_featured_card_leave(self, _widget, _event):
+        """Resume Featured rotation with a fresh interval after hover ends."""
+        self._featured_hovered = False
+
+        if (
+            self.should_start_random_timer
+            and self.all_scripts
+            and self.current_category_info is None
+            and self.main_stack.get_visible_child_name() == "categories"
+            and not getattr(self, "_featured_waiting_for_allocation", False)
+        ):
+            self._restart_random_scripts_refresh_timer()
+
+        return False
+
+    def _get_featured_refresh_seconds(self):
+        """Scale Featured rotation from 8s at <=10 cards to 15s at >=25 cards."""
+        count = self._calculate_random_scripts_count()
+
+        if count <= self.FEATURED_REFRESH_MIN_ITEMS:
+            return self.FEATURED_REFRESH_MIN_SECONDS
+
+        if count >= self.FEATURED_REFRESH_MAX_ITEMS:
+            return self.FEATURED_REFRESH_MAX_SECONDS
+
+        item_span = (
+            self.FEATURED_REFRESH_MAX_ITEMS
+            - self.FEATURED_REFRESH_MIN_ITEMS
+        )
+        time_span = (
+            self.FEATURED_REFRESH_MAX_SECONDS
+            - self.FEATURED_REFRESH_MIN_SECONDS
+        )
+        progress = (
+            count - self.FEATURED_REFRESH_MIN_ITEMS
+        ) / item_span
+
+        return round(
+            self.FEATURED_REFRESH_MIN_SECONDS
+            + progress * time_span
+        )
+
     def _periodic_random_scripts_refresh(self):
-        """Periodic callback that deliberately selects a new random set."""
-        return self._refresh_random_scripts_display(force=True)
+        """Rotate Featured once, then schedule the next dynamic interval."""
+        self.random_scripts_refresh_timer = None
+        self._refresh_random_scripts_display(force=True)
+
+        if (
+            self.should_start_random_timer
+            and self.all_scripts
+            and self.current_category_info is None
+            and self.main_stack.get_visible_child_name() == "categories"
+            and not getattr(self, "_featured_hovered", False)
+            and not getattr(self, "_featured_waiting_for_allocation", False)
+        ):
+            self._restart_random_scripts_refresh_timer()
+
+        # This timeout is intentionally one-shot. Recreating it after every
+        # rotation lets the interval follow the current Featured item count.
+        return False
+
+    def _restart_random_scripts_refresh_timer(self):
+        """Restart Featured rotation using the interval for the current card count."""
+        if self.random_scripts_refresh_timer:
+            GLib.source_remove(self.random_scripts_refresh_timer)
+            self.random_scripts_refresh_timer = None
+
+        # Hover owns the pause. The leave handler will start a completely fresh
+        # interval, giving the user the full reading time after moving away.
+        if getattr(self, "_featured_hovered", False):
+            return
+
+        refresh_seconds = self._get_featured_refresh_seconds()
+
+        self.random_scripts_refresh_timer = GLib.timeout_add_seconds(
+            refresh_seconds,
+            self._periodic_random_scripts_refresh,
+        )
 
     def _deferred_start_random_scripts_refresh_timer(self):
-        """Start or restart the featured scripts timer."""
+        """Populate Featured on initial startup once usable geometry exists."""
         if not self.featured_scripts_container or not self.all_scripts:
             return False
 
         if self.main_stack.get_visible_child_name() != "categories":
             return False
 
-        # Wait until GTK has allocated the category viewport before measuring it.
+        # This path is for initial startup/data publication only. Navigation back to
+        # the main menu is handled by _prepare_random_scripts_display(), which waits
+        # for a fresh size-allocate signal before measuring anything.
+        if getattr(self, "_featured_waiting_for_allocation", False):
+            return False
+
         if (
             self.categories_view.get_allocated_height() <= 1
             or self.categories_flowbox.get_allocated_height() <= 1
@@ -309,31 +527,34 @@ class FeaturedCtl:
             )
             return False
 
-        self._refresh_random_scripts_display(force=True)
-
-        if self.random_scripts_refresh_timer:
-            GLib.source_remove(self.random_scripts_refresh_timer)
-
-        self.random_scripts_refresh_timer = GLib.timeout_add_seconds(
-            self.FEATURED_REFRESH_SECONDS,
-            self._periodic_random_scripts_refresh,
-        )
-
+        has_existing_cards = bool(self.random_scripts_flowbox.get_children())
+        self._refresh_random_scripts_display(force=not has_existing_cards)
+        self._restart_random_scripts_refresh_timer()
         return False
 
     def _prepare_random_scripts_display(self):
-        """Prepare featured scripts when returning to the main menu."""
+        """Resume Featured after navigation using the next real GTK allocation."""
         self.should_start_random_timer = True
 
-        if self.all_scripts:
-            GLib.idle_add(
-                self._deferred_start_random_scripts_refresh_timer
-            )
-        else:
-            self.featured_scripts_container.hide()
+        if not self.all_scripts:
+            self.featured_scripts_revealer.set_reveal_child(False)
+            return
+
+        # Keep the previous cards alive, but do not reveal or recalculate them yet.
+        # Gtk.Stack can briefly expose stale allocation values immediately after the
+        # visible child changes. The next size-allocate callback is the first safe
+        # point at which to calculate rows/columns for the returned main menu.
+        self._featured_waiting_for_allocation = True
+        self.random_scripts_revealer.set_reveal_child(False)
+        self.featured_scripts_revealer.set_reveal_child(False)
+
+        # Ensure GTK schedules a fresh allocation even when the window itself did
+        # not change size while the category view was hidden in the stack.
+        self.categories_view.queue_resize()
+        self.categories_flowbox.queue_resize()
 
     def _stop_random_scripts_refresh_timer(self):
-        """Stop featured-script refresh and resize callbacks."""
+        """Stop featured-script refresh, resize and animation callbacks."""
         if self.random_scripts_refresh_timer:
             GLib.source_remove(self.random_scripts_refresh_timer)
             self.random_scripts_refresh_timer = None
@@ -341,3 +562,7 @@ class FeaturedCtl:
         if getattr(self, "_featured_resize_timer", None):
             GLib.source_remove(self._featured_resize_timer)
             self._featured_resize_timer = None
+
+        if getattr(self, "_featured_swap_timer", None):
+            GLib.source_remove(self._featured_swap_timer)
+            self._featured_swap_timer = None

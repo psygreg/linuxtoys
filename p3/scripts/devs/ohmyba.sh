@@ -5,7 +5,7 @@
 # icon: ohmybash.png
 # repo: https://ohmybash.nntoan.com
 # revert: internal
-# compat: !cachy
+# compat: !cachy, !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -6,6 +6,7 @@
 # reboot: yes
 # nocontainer
 # optimized-only: yes
+# compat: !steamos
 
 # --- Start of the script code ---
 if [ ! -f ${HOME}/.booster ]; then

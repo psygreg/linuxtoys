@@ -3,6 +3,7 @@
 # version: 1.0
 # description: java_desc
 # icon: java.svg
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

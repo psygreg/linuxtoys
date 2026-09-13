@@ -5,7 +5,7 @@
 # icon: iwd.svg
 # reboot: yes
 # noconfirm: yes
-# compat: !cachy, !rhel, !zorin
+# compat: !cachy, !rhel, !zorin, !steamos
 # nocontainer
 # systemd: yes
 

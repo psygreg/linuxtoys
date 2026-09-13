@@ -1,0 +1,12 @@
+Blender is the free and open source 3D creation suite. It supports the entirety of the 3D pipeline—modeling, rigging, animation, simulation, rendering, compositing and motion tracking, even video editing and game asset creation. Advanced users employ Blender’s API for Python scripting to customize the application and write specialized tools; often these are included in Blender’s future releases. Blender is well suited to individuals and small studios who benefit from its unified pipeline and responsive development process.
+- **Rendering:** create jaw-dropping renders thanks to Cycles, high-end production path tracer.
+- **Modeling:** sculpting, retopology, modeling, curves. Blender's modeling toolset is extensive.
+- **Sculpting:** digital sculpting tools provide the power and flexibility required in several stages of the digital production pipeline. 
+- **Animation & Rigging:** designed for animation, Blender is being used for award-winning shorts and feature films.
+- **Story Artist:** push the boundaries of Story Art by drawing in a 3D environment.
+- **VFX**: from camera and object motion tracking to masking and compositing, you can *"fix it in post"*. 
+- **Simulation**: featuring industry-standard libraries like Bullet and MantaFlow, Blender offers powerful simulation tools.
+- **Pipeline:** integration with multiple pipeline tools is pivotal in many productions.
+- **Video editing:** the video editor offers a range of basic yet very efficient tools.
+- **Scripting:** featuring an extensive Python API, every tool is available for scripting and customization.
+- **Interface:** because of its custom architecture, Blender's UI, window layout and shortcuts can be fully customized.

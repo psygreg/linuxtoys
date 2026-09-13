@@ -3,9 +3,74 @@ from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
-from . import term_view, skills_view, get_icon_path, header
+from . import app_page, term_view, skills_view, get_icon_path, header
 
 class NavCtl:
+    @staticmethod
+    def _category_view_key(category_info):
+        """Return a stable key for a parser-backed category view."""
+        if not category_info:
+            return None
+        path = category_info.get("path")
+        if not path:
+            return None
+        import os
+        return os.path.abspath(path)
+
+    def _retain_current_category_view(self):
+        """Keep the current category view alive for zero-rebuild Back navigation."""
+        key = self._category_view_key(self.current_category_info)
+        if not key or not getattr(self, "scripts_view", None):
+            return
+
+        cache = getattr(self, "_category_view_cache", None)
+        if cache is None:
+            cache = {}
+            self._category_view_cache = cache
+
+        cache[key] = {
+            "view": self.scripts_view,
+            "flowbox": self.scripts_flowbox,
+        }
+
+    def _pop_retained_category_view(self, category_info):
+        """Take a retained parent view out of the cache as it becomes current again."""
+        key = self._category_view_key(category_info)
+        if not key:
+            return None
+        cache = getattr(self, "_category_view_cache", None)
+        if not cache:
+            return None
+        return cache.pop(key, None)
+
+    def _discard_retained_category_views(self):
+        """Remove hidden retained views after parser/UI data becomes stale."""
+        cache = getattr(self, "_category_view_cache", None)
+        if not cache:
+            self._category_view_cache = {}
+            return
+
+        current_view = getattr(self, "scripts_view", None)
+        for retained in tuple(cache.values()):
+            view = retained.get("view")
+            if view is None or view is current_view:
+                continue
+            try:
+                if view.get_parent() is self.main_stack:
+                    self.main_stack.remove(view)
+            except (AttributeError, TypeError):
+                pass
+        cache.clear()
+
+    def _forget_retained_view(self, view):
+        """Drop any cache entry that still points at a view being destroyed."""
+        cache = getattr(self, "_category_view_cache", None)
+        if not cache or view is None:
+            return
+        for key, retained in tuple(cache.items()):
+            if retained.get("view") is view:
+                cache.pop(key, None)
+
     def on_category_clicked(self, widget, event):
         """Handles category click, subcategory click, or root script click."""
         # Check if reboot is required before proceeding
@@ -22,10 +87,17 @@ class NavCtl:
 
         # If this is a root script (shown as a category), execute it directly
         if info.get("is_script"):
-            # Use VTE-based term_view for execution
-            self.open_term_view([info], removable_script_info=info, auto_run=True)
+            if info.get("is_repo_entry") and info.get("has_app_page"):
+                self.open_app_page(info)
+            else:
+                # Preserve the existing root-script execution behavior.
+                self.open_term_view([info], removable_script_info=info, auto_run=True)
         else:
-            # This is a category or subcategory - navigate to show its contents
+            # This is a category or subcategory - navigate to show its contents.
+            # Keep the fully-built parent view alive so Back can return to it
+            # immediately without reparsing or rebuilding its cards.
+            self._retain_current_category_view()
+
             # Create a new view for the subcategory to enable proper animation
             self.view_counter += 1
             new_view_name = f"scripts_{self.view_counter}"
@@ -35,24 +107,63 @@ class NavCtl:
             new_scrolled_view = Gtk.ScrolledWindow()
             new_scrolled_view.add(new_flowbox)
 
-            # Load content into the new view
-            self._load_scripts_into_flowbox(new_flowbox, info)
-
-            # Add the new view to the stack
+            # Attach and show the empty destination first so Gtk.Stack can begin
+            # its slide immediately. Card construction is intentionally deferred
+            # until the transition finishes; otherwise the first 10-card layout
+            # pass can stall the animation on larger categories.
             self.main_stack.add_named(new_scrolled_view, new_view_name)
             new_scrolled_view.show_all()
 
-            # Set transition for forward navigation
             self.main_stack.set_transition_type(
                 Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
             )
 
-            # Update the scripts references
             self.scripts_flowbox = new_flowbox
             self.scripts_view = new_scrolled_view
-
-            # Show the new view with animation
             self.show_scripts_view(info)
+
+            self._load_scripts_into_flowbox(
+                new_flowbox,
+                info,
+                defer_initial=True,
+            )
+
+    def open_app_page(self, info):
+        """Open a repository entry's optional details page without altering checklist state."""
+        old_page = self.main_stack.get_child_by_name("app_page")
+        if old_page is not None:
+            self.main_stack.remove(old_page)
+            old_page.destroy()
+
+        self._app_page_prev = {
+            "child": self.main_stack.get_visible_child(),
+            "header_visible": self.header_widget.get_visible(),
+            "title": self.header_bar.props.title,
+            "footer_revealed": self.reveal.get_reveal_child(),
+        }
+
+        page = app_page.AppPageView(
+            info,
+            self,
+            self.translations,
+            on_install_callback=self._install_from_app_page,
+        )
+        self.main_stack.add_named(page, "app_page")
+        page.show_all()
+
+        self.header_widget.hide()
+        self.reveal.set_reveal_child(False)
+        self.back_button.show()
+        self.header_bar.props.title = f"LinuxToys: {info.get('name', 'App')}"
+        self.main_stack.set_visible_child_name("app_page")
+
+    def close_app_page_for_install(self):
+        """Remove the app page immediately before entering the terminal flow."""
+        child = self.main_stack.get_child_by_name("app_page")
+        if child is not None:
+            self.main_stack.remove(child)
+            child.destroy()
+        self._app_page_prev = None
 
     def open_term_view(self, infos, removable_script_info=None, auto_run=True):
         # Check if any script has auto_run flag set in its info dict
@@ -130,6 +241,32 @@ class NavCtl:
 
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
+
+        if self.main_stack.get_visible_child_name() == "app_page":
+            child = self.main_stack.get_child_by_name("app_page")
+            prev = getattr(self, "_app_page_prev", None)
+
+            if child is not None:
+                self.main_stack.remove(child)
+                child.destroy()
+
+            if prev and prev.get("child") is not None:
+                self.main_stack.set_visible_child(prev["child"])
+                self.header_bar.props.title = prev.get("title") or "LinuxToys"
+                if prev.get("header_visible"):
+                    self.header_widget.show()
+                else:
+                    self.header_widget.hide()
+                self.reveal.set_reveal_child(bool(prev.get("footer_revealed")))
+            elif self.current_category_info:
+                self.main_stack.set_visible_child(self.scripts_view)
+                self.header_widget.show()
+                self._update_header(self.current_category_info)
+            else:
+                self.show_categories_view()
+
+            self._app_page_prev = None
+            return
 
         # Handle leaving the terminal before normal search navigation.
         if self.main_stack.get_visible_child_name() == "running_scripts":
@@ -291,95 +428,96 @@ class NavCtl:
         self.check_buttons.clear()
 
         if self.navigation_stack:
-            # Store current view for cleanup
             current_view = self.scripts_view
 
-            # Go back to the previous category/subcategory
+            # Go back to the previous category/subcategory. Prefer its retained,
+            # already-built GTK view; reconstruct only when the cache was
+            # deliberately invalidated (language/source/data refresh) or absent.
             previous_category = self.navigation_stack.pop()
             self.current_category_info = previous_category
+            retained = self._pop_retained_category_view(previous_category)
 
-            # Create a new view for the previous category
-            self.view_counter += 1
-            new_view_name = f"scripts_{self.view_counter}"
-
-            new_flowbox = self.create_flowbox()
-            new_scrolled_view = Gtk.ScrolledWindow()
-            new_scrolled_view.add(new_flowbox)
-
-            # Load content into the new view
-            self._load_scripts_into_flowbox(new_flowbox, previous_category)
-
-            # Add the new view to the stack
-            self.main_stack.add_named(new_scrolled_view, new_view_name)
-            new_scrolled_view.show_all()
-
-            # Set transition direction for going back
             self.main_stack.set_transition_type(
                 Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
             )
 
-            # Update references
-            self.scripts_flowbox = new_flowbox
-            self.scripts_view = new_scrolled_view
+            if retained is not None:
+                previous_view = retained["view"]
+                previous_flowbox = retained["flowbox"]
+                self.scripts_view = previous_view
+                self.scripts_flowbox = previous_flowbox
+                self.main_stack.set_visible_child(previous_view)
+            else:
+                # Safe fallback for invalidated/missing retained views. Keep the
+                # transition-first behavior so reconstruction cannot stall it.
+                self.view_counter += 1
+                new_view_name = f"scripts_{self.view_counter}"
 
-            # Switch to the new view
-            self.main_stack.set_visible_child(new_scrolled_view)
+                new_flowbox = self.create_flowbox()
+                new_scrolled_view = Gtk.ScrolledWindow()
+                new_scrolled_view.add(new_flowbox)
+                self.main_stack.add_named(new_scrolled_view, new_view_name)
+                new_scrolled_view.show_all()
 
-            # Update UI
+                self.scripts_flowbox = new_flowbox
+                self.scripts_view = new_scrolled_view
+                self.main_stack.set_visible_child(new_scrolled_view)
+
+                self._load_scripts_into_flowbox(
+                    new_flowbox,
+                    previous_category,
+                    defer_initial=True,
+                )
+
             category_name = previous_category.get("name", "Unknown")
             self.header_bar.props.title = f"LinuxToys: {category_name}"
             self._update_header(previous_category)
 
-            # Update drag-and-drop state based on the category we're navigating to
             if self._is_local_scripts_category(previous_category):
                 self._enable_drag_and_drop()
             else:
                 self._disable_drag_and_drop()
 
-            # Show footer only if checklist mode
             if previous_category.get("display_mode", "menu") == "checklist":
                 self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
             else:
                 self.reveal.set_reveal_child(False)
 
-            # Clean up the old view after transition
+            # The child we are leaving is no longer part of history. Remove it
+            # after the animation; parent views deeper in history remain cached.
             def cleanup_old_view():
+                self._forget_retained_view(current_view)
                 try:
                     self.main_stack.remove(current_view)
                 except Exception:
-                    pass  # View may already be removed
-                # Restore normal transition direction
-                self.main_stack.set_transition_type(
-                    Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
-                )
+                    pass
                 return False
 
             GLib.timeout_add(300, cleanup_old_view)
 
         else:
-            # No more items in stack, go to main categories view
+            # No more items in stack, go to main categories view.
             current_view = self.scripts_view
             self.main_stack.set_transition_type(
                 Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
             )
             self.show_categories_view()
 
-            # Clean up the scripts view after transition
             def cleanup_scripts_view():
+                self._forget_retained_view(current_view)
                 try:
                     self.main_stack.remove(current_view)
                 except Exception:
                     pass
-                # Restore normal transition direction
-                self.main_stack.set_transition_type(
-                    Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
-                )
                 return False
 
             GLib.timeout_add(300, cleanup_scripts_view)
 
     def show_categories_view(self):
         """Switches to the main categories view."""
+        # Any retained category views are only useful while their history is
+        # reachable. Returning to the root discards that history and its widgets.
+        self._discard_retained_category_views()
         self.current_category_info = None
         self.navigation_stack.clear()  # Clear navigation history
         self.main_stack.set_visible_child_name("categories")

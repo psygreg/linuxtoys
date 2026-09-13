@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Zotero",
+        "description": "Free, easy-to-use tool to help you collect, organize, annotate, cite, and share research.",
+        "description_tag": "zotero_desc",
+        "repo": "https://www.zotero.org",
+        "category": "edu",
+        "icon": "./zotero.png",
+        "type": "url",
+        "urls": {
+            "tar": "https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64"
+        },
+        "overrides": {
+            "post": "./zotero-post.sh"
+        }
+    }
+]

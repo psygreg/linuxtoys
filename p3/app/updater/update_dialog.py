@@ -6,6 +6,7 @@ import webbrowser
 from ..gtk_common import Gdk, GLib, Gtk, Pango
 
 from . import __version__
+from ..lang_utils import _
 
 
 class DialogBase(Gtk.MessageDialog):
@@ -69,8 +70,8 @@ class UpdateDialog(Gtk.Dialog):
         vbox.set_margin_bottom(12)
 
         self._labels = [
-            f"<b>A new version {self.changelog.get('tag_name', '0.0.0')} of LinuxToys is available.</b>",
-            f"Current version: <b>{__version__}</b>",
+            f"<b>{_('update_available_message').replace('${version}', self.changelog.get('tag_name', '0.0.0'))}</b>",
+            _('update_current_version').replace('${version}', f"<b>{__version__}</b>"),
         ]
 
         for _l in self._labels:
@@ -125,6 +126,10 @@ class UpdateDialog(Gtk.Dialog):
         except OSError:
             pass
 
+        appimage = os.environ.get("APPIMAGE")
+        if appimage and os.path.isfile(appimage) and os.access(appimage, os.X_OK):
+            os.execv(appimage, [appimage, *sys.argv[1:]])
+
         os.execv(sys.executable, [sys.executable, *sys.argv])
         return False
 
@@ -139,8 +144,15 @@ class UpdateDialog(Gtk.Dialog):
 
             with open("/tmp/.self_update_lt", "w") as f:
                 script_content = f"""#!/bin/bash
-source "$SCRIPT_DIR/libs/linuxtoys.bash"
-sudo_rq
+if [ -r /etc/os-release ]; then
+    . /etc/os-release
+fi
+
+if [ "${{ID:-}}" != "steamos" ]; then
+    source "$SCRIPT_DIR/libs/linuxtoys.bash"
+    sudo_rq
+fi
+
 curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
 """
                 f.write(script_content)

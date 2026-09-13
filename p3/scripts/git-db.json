@@ -1,0 +1,1397 @@
+{
+  "generated_at": "2026-09-13T03:32:53Z",
+  "repositories": {
+    "https://github.com/AprilNEA/OpenLogi": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "openlogi-v0.8.3-linux-amd64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "openlogi-v0.8.3-linux-amd64.deb.minisig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "pacman",
+          "name": "openlogi-v0.8.3-linux-amd64.pkg.tar.zst"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "openlogi-v0.8.3-linux-amd64.pkg.tar.zst.minisig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "openlogi-v0.8.3-linux-amd64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "openlogi-v0.8.3-linux-amd64.rpm.minisig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "openlogi-v0.8.3-linux-arm64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "openlogi-v0.8.3-linux-arm64.deb.minisig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "pacman",
+          "name": "openlogi-v0.8.3-linux-arm64.pkg.tar.zst"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "openlogi-v0.8.3-linux-arm64.pkg.tar.zst.minisig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "openlogi-v0.8.3-linux-arm64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "openlogi-v0.8.3-linux-arm64.rpm.minisig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-macos-arm64.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-macos-arm64.dmg.minisig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-macos-x86_64.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-macos-x86_64.dmg.minisig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-arm64.msi.minisig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-arm64.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-arm64.zip.minisig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-x86_64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-x86_64.msi.minisig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-x86_64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OpenLogi-v0.8.3-windows-x86_64.zip.minisig"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:38Z",
+      "names": [
+        "OpenLogi"
+      ]
+    },
+    "https://github.com/ChrisDKN/Amethyst-Mod-Manager": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "AmethystModManager-2.4.3-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "AmethystModManager-2.4.3-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [],
+          "kind": "flatpak",
+          "name": "AmethystModManager.flatpak"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:38Z",
+      "names": [
+        "Amethyst Mod Manager"
+      ]
+    },
+    "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "Heroic-2.22.1-linux-amd64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "pacman",
+          "name": "Heroic-2.22.1-linux-x64.pacman"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "Heroic-2.22.1-linux-x64.tar.xz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "Heroic-2.22.1-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "Heroic-2.22.1-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-arm64.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-arm64.dmg.blockmap"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-arm64.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-arm64.zip.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-x64.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-x64.dmg.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-macOS-x64.zip.blockmap"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Portable-arm64.exe"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Portable-x64.exe"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Setup-arm64.exe"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Setup-arm64.exe.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Setup-x64.exe"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Setup-x64.exe.blockmap"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "Heroic-2.22.1-Setup.exe.blockmap"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-linux.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-mac.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest.yml"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:39Z",
+      "names": [
+        "Heroic Games Launcher"
+      ]
+    },
+    "https://github.com/Ishidawg/LeShade": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "LeShade-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "LeShade-x86_64.flatpak"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:39Z",
+      "names": [
+        "LeShade"
+      ]
+    },
+    "https://github.com/OpenBoardView/OpenBoardView": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "flatpak",
+          "name": "evince-48.1.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "openboardview-10.0.0-1.x86_64.rpm"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "OpenBoardView-10.0.0-Darwin.dmg"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "openboardview-10.0.0-win32.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "openboardview_10.0.0-1_amd64.deb"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:39Z",
+      "names": [
+        "OpenBoardView"
+      ]
+    },
+    "https://github.com/Wyze3306/BedrockOnLinux": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "bedrock-on-linux-2.2.5-1.x86_64.rpm"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "bedrock-on-linux-2.2.5.pyz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "bedrock-on-linux_2.2.5_amd64.deb"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "BedrockOnLinux-2.2.5-inputs.sha256"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "BedrockOnLinux-2.2.5-SHA256SUMS"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "BedrockOnLinux-2.2.5-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "BedrockOnLinux-2.2.5-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "BedrockOnLinux-2.2.5-x86_64.flatpak"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:40Z",
+      "names": [
+        "BedrockOnLinux"
+      ]
+    },
+    "https://github.com/ZenNotes/zennotes": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "latest-linux-arm64.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-linux.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-mac.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest.yml"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "pacman",
+          "name": "ZenNotes-2.47.0-linux-aarch64.pacman"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "ZenNotes-2.47.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "ZenNotes-2.47.0-linux-amd64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "ZenNotes-2.47.0-linux-arm64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "ZenNotes-2.47.0-linux-arm64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "ZenNotes-2.47.0-linux-arm64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "pacman",
+          "name": "ZenNotes-2.47.0-linux-x64.pacman"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "ZenNotes-2.47.0-linux-x64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "ZenNotes-2.47.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "ZenNotes-2.47.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-arm64.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-arm64.dmg.blockmap"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-arm64.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-arm64.zip.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-x64.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-x64.dmg.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-mac-x64.zip.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-win-x64.exe"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-win-x64.exe.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "ZenNotes-2.47.0-win-x64.zip"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:40Z",
+      "names": [
+        "ZenNotes"
+      ]
+    },
+    "https://github.com/arximus88/figma-linux-next": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "figma-linux-next_0.20.1_linux_aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "figma-linux-next_0.20.1_linux_amd64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "figma-linux-next_0.20.1_linux_arm64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "figma-linux-next_0.20.1_linux_arm64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "figma-linux-next_0.20.1_linux_arm64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "figma-linux-next_0.20.1_linux_x64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "pacman",
+          "name": "figma-linux-next_0.20.1_linux_x64.pacman"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "figma-linux-next_0.20.1_linux_x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "figma-linux-next_0.20.1_linux_x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "figma-linux-next_0.20.1_linux_x86_64.rpm"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:40Z",
+      "names": [
+        "Figma"
+      ]
+    },
+    "https://github.com/audacity/audacity": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "audacity-linux-4.0.0-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "audacity-linux-4.0.0-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "audacity-macOS-4.0.0-arm64.dmg"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "audacity-macOS-4.0.0-universal.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "audacity-macOS-4.0.0-x86_64.dmg"
+        },
+        {
+          "architectures": [],
+          "kind": "tar",
+          "name": "audacity-sources-4.0.0.tar.xz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "audacity-win-4.0.0-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "audacity-win-4.0.0-x86_64.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "CHECKSUMS.txt"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:41Z",
+      "names": [
+        "Audacity"
+      ]
+    },
+    "https://github.com/barry-ran/QtScrcpy": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "QtScrcpy-mac-arm64-Qt6.5.3-v4.1.1.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "QtScrcpy-mac-x64-Qt5.15.2-v4.1.1.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "QtScrcpy-ubuntu-x64-v4.1.1.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "QtScrcpy-win-x64-v4.1.1.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "QtScrcpy-win-x86-v4.1.1.zip"
+        }
+      ],
+      "checked_at": "2026-09-11T21:42:43Z",
+      "names": [
+        "QtScrcpy"
+      ]
+    },
+    "https://github.com/edisionnano/QDiskInfo": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "QDiskInfo-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "QDiskInfo-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "QDiskInfo_arm64"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "QDiskInfo_X86_64"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "QDiskInfo_X86_64_QT5"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:41Z",
+      "names": [
+        "QDiskInfo"
+      ]
+    },
+    "https://github.com/feralinteractive/gamemode": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "tar",
+          "name": "gamemode-1.8.2.tar.xz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "gamemode-1.8.2.tar.xz.asc"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "sha256sums.txt"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:41Z",
+      "names": [
+        "Gamemode"
+      ]
+    },
+    "https://github.com/httpie/desktop": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0-arm64-mac.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0-arm64-mac.zip.blockmap"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "HTTPie-2025.2.0-arm64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0-arm64.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0-arm64.dmg.blockmap"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0-mac.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0-mac.zip.blockmap"
+        },
+        {
+          "architectures": [],
+          "kind": "appimage",
+          "name": "HTTPie-2025.2.0.AppImage"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0.dmg"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "HTTPie-2025.2.0.dmg.blockmap"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "HTTPie-Setup-2025.2.0.exe"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "HTTPie-Setup-2025.2.0.exe.blockmap"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "latest-linux-arm64.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-linux.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-mac.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest.yml"
+        }
+      ],
+      "checked_at": "2026-09-11T22:50:04Z",
+      "names": [
+        "HTTPie"
+      ]
+    },
+    "https://github.com/imputnet/helium-linux": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "helium-0.16.6.1-arm64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "helium-0.16.6.1-arm64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "helium-0.16.6.1-arm64_linux.tar.xz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "helium-0.16.6.1-arm64_linux.tar.xz.asc"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "helium-0.16.6.1-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "helium-0.16.6.1-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "helium-0.16.6.1-x86_64_linux.tar.xz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "helium-0.16.6.1-x86_64_linux.tar.xz.asc"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "helium-bin_0.16.6.1-1_amd64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "helium-bin_0.16.6.1-1_arm64.deb"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:41Z",
+      "names": [
+        "Helium Browser"
+      ]
+    },
+    "https://github.com/rclone-ui/rclone-ui": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest.json"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "Rclone.UI_aarch64.app.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_aarch64.app.tar.gz.sig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "Rclone.UI_aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_aarch64.AppImage.sig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_aarch64.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "Rclone.UI_aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_aarch64.rpm.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "Rclone.UI_amd64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_amd64.AppImage.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "Rclone.UI_amd64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_amd64.deb.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "Rclone.UI_amd64_ALTERNATE.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "Rclone.UI_amd64_ALTERNATE.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "Rclone.UI_arm64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_arm64.deb.sig"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_arm64.exe"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_arm64.exe.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "Rclone.UI_x64.app.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_x64.app.tar.gz.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_x64.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_x64.exe"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_x64.exe.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "Rclone.UI_x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Rclone.UI_x86_64.rpm.sig"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "Rclone.UI_x86_64_ALTERNATE.rpm"
+        }
+      ],
+      "checked_at": "2026-09-11T21:17:43Z",
+      "names": [
+        "Rclone UI"
+      ]
+    },
+    "https://github.com/webadderallorg/Recordly": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-linux.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest-mac.yml"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "latest.yml"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Recordly-arm64.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Recordly-arm64.dmg.blockmap"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Recordly-arm64.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Recordly-arm64.zip.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "Recordly-linux-x64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Recordly-windows-x64.exe"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Recordly-windows-x64.exe.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Recordly-x64.dmg"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Recordly-x64.dmg.blockmap"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Recordly-x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Recordly-x64.zip.blockmap"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-09-11T02:29:42Z",
+      "names": [
+        "Recordly"
+      ]
+    }
+  },
+  "version": 1
+}

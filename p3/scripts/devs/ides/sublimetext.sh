@@ -3,7 +3,7 @@
 # version: 4
 # description: sublime_desc
 # icon: sublime.png
-# compat: !solus, !arch, !cachy
+# compat: !solus, !arch, !cachy, !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

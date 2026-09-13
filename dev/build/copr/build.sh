@@ -52,7 +52,6 @@ chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
-find "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/linuxtoys.py"
 
 # tarball source for COPR
@@ -67,7 +66,7 @@ year=$(date +%Y)
 specfile_line="Version:        ${LT_VERSION}"
 specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${LT_VERSION}"
 sed -i "2c\\$specfile_line" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
-sed -i "53c\\$specfile_line2" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
+sed -i "52c\\$specfile_line2" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
 # build
 # rm -r $HOME/rpmbuild # ensure there's no leftover build artifacts previous to building
 # cp -r rpmbuild $HOME # only works with this setup on Silverblue, which is what I use

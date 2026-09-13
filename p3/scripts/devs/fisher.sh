@@ -4,6 +4,7 @@
 # description: fisher_desc
 # icon: fish.svg
 # repo: https://github.com/jorgebucaran/fisher
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

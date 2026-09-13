@@ -16,6 +16,7 @@ from .manifest_helper import (
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
+from .compat import get_system_compat_keys
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
 from .repo_parser import materialize_repo_script
 
@@ -291,8 +292,11 @@ def easy_cli_run_script(script_info):
         pass  # Silently ignore if transmap cannot be cleared
 
     try:
-        # Execute the script using run_script
-        code = _run_script_with_registry_name({"name": script_info["name"], "path": temp_file_path})
+        # Preserve the original app metadata while executing the filtered temp script.
+        run_info = dict(script_info)
+        run_info["virtual_path"] = script_info.get("virtual_path", script_path)
+        run_info["path"] = temp_file_path
+        code = _run_script_with_registry_name(run_info)
 
         # Save to registry and wipe transmap file if script executed successfully
         if code == 0:
@@ -594,6 +598,10 @@ def remove_packages_with_feedback(packages):
 
 
 def packages_uninstall(args: list, skip_confirmation, translations):
+    if "steamos" in get_system_compat_keys():
+        print("✗ Native package removal is not supported on SteamOS.")
+        return 1
+
     uninstall_list = [arg for arg in args if arg not in ("-y", "--yes")]
 
     if not uninstall_list:
@@ -679,6 +687,10 @@ def install_packages_with_feedback(packages_found):
 
 def packages_install(args: list, skip_confirmation, translations):
     """Handle package installation in EASY_CLI mode."""
+
+    if "steamos" in get_system_compat_keys():
+        print("✗ Native package installation is not supported on SteamOS. Use Flatpak/AppImage applications instead.")
+        return 1
 
     # Filter out confirmation flags from the install list
     install_to_list = [arg for arg in args if arg not in ("-y", "--yes")]

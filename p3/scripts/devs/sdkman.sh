@@ -5,6 +5,7 @@
 # icon: sdkman.png
 # repo: https://sdkman.io
 # revert: internal
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

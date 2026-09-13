@@ -13,7 +13,9 @@
             "all": [ "asusctl", "rog-control-center" ]  
         },
         "overrides": {
-            "pre": "./asusctl-pre.sh"
+            "pre": {
+                "script": "./asusctl-pre.sh"
+            }
         },
         "services": [ "asusd", "asus-shutdown" ]
     }

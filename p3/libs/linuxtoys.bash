@@ -262,6 +262,16 @@ _append_transmap() {
     echo "$1" >> "$TRANSMAP_PATH" 2>/dev/null
 }
 
+# Expose pkg_fromrelease-managed repository applications from the Action Registry.
+git_app_versions() {
+    local exports
+    exports=$(python3 "$SCRIPT_DIR/app/registry_utils.py" --export-git-releases) || {
+        GIT_APPS=()
+        return 1
+    }
+    eval "$exports"
+}
+
 # script calling -- used for scripts to call other scripts from the app.
 call_script () {
     local script_name="$1"
@@ -270,27 +280,45 @@ call_script () {
 
     script_name="${script_name%.sh}"
     local script_file="${script_name}.sh"
+    local found_script=""
+    local script_display_name=""
+    local repo_app_id=""
+    local repo_url=""
 
-    local found_script
     found_script=$(find "$CACHE_DIR" -maxdepth 3 -type f \
         -name "$script_file" 2>/dev/null | head -n1)
 
-    [[ -n "$found_script" && -f "$found_script" ]] ||
-        die "call_script: Script '$script_name' not found in $CACHE_DIR"
-    python3 "$SCRIPT_DIR/app/compat.py" --check-script "$found_script" || { 
-        echo "W: call_script: Script '$script_name' is not compatible with this host, skipping."
-        return 2
-    }
+    if [[ -n "$found_script" && -f "$found_script" ]]; then
+        python3 "$SCRIPT_DIR/app/compat.py" --check-script "$found_script" || {
+            echo "W: call_script: Script '$script_name' is not compatible with this host, skipping."
+            return 2
+        }
+
+        script_display_name=$(
+            sed -n 's/^# name:[[:space:]]*//p' "$found_script" |
+            head -n1
+        )
+        [[ -n "$script_display_name" ]] || script_display_name="$script_name"
+    else
+        # Physical script not found: resolve a compatible repository-list entry
+        # through its normalized repo_app_id (e.g. PRISM_LAUNCHER).
+        local -a repo_selection=()
+        mapfile -t repo_selection < <(
+            python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-repo "$script_name"
+        )
+        local resolve_status=${PIPESTATUS[0]}
+
+        if [[ $resolve_status -ne 0 || ${#repo_selection[@]} -ne 3 ]]; then
+            die "call_script: Script or repository app '$script_name' not found"
+        fi
+
+        found_script="${repo_selection[0]}"
+        script_display_name="${repo_selection[1]}"
+        repo_url="${repo_selection[2]}"
+        repo_app_id="${script_name^^}"
+    fi
 
     shift
-    # Get the script's registry/display name.
-    local script_display_name
-    script_display_name=$(
-        sed -n 's/^# name:[[:space:]]*//p' "$found_script" |
-        head -n1
-    )
-    [[ -n "$script_display_name" ]] ||
-        script_display_name="$script_name"
 
     # Keep track of the caller's transaction.
     local parent_transmap="$TRANSMAP_PATH"
@@ -303,6 +331,10 @@ call_script () {
     (
         export CALLED_SCRIPT=1
         export TRANSMAP_PATH="$child_transmap"
+        if [[ -n "$repo_app_id" ]]; then
+            export LINUXTOYS_REPO_APP_ID="$repo_app_id"
+            export LINUXTOYS_REPO_URL="$repo_url"
+        fi
 
         python3 "$SCRIPT_DIR/app/library_loader.py" "$found_script" "$@"
     )

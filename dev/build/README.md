@@ -23,7 +23,7 @@ bash build.sh (version) (path)
 - **copr/**: Build RPM packages for Fedora/COPR (requires Fedora distrobox container)
 - **deb/**: Build DEB packages for Debian/Ubuntu (requires Debian distrobox container)
 - **pkg/**: Build AUR packages for Arch Linux (requires Arch distrobox container)
-- **solus/**: Build .eopkg packages for Solus OS (uses Docker/solbuild)
+- **solus/**: Build .eopkg packages for Solus OS (uses solbuild)
 - **nuitka/**: Build standalone executable using Nuitka
 
 ## Solus Package Building

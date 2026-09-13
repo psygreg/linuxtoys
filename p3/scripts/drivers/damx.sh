@@ -4,7 +4,7 @@
 # description: damx_desc
 # icon: damx.png
 # reboot: yes
-# compat: !solus, !ostree
+# compat: !solus, !ostree, !steamos
 # repo: https://github.com/PXDiv/Div-Acer-Manager-Max
 # revert: internal
 

@@ -51,7 +51,6 @@ chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys"
 
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
-find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/helpers/" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/linuxtoys.py"
 
 # Create tarball (this will be kept for Arch packaging)

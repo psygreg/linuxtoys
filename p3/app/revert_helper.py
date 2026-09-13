@@ -296,6 +296,9 @@ def _parse_operation(op_line):
         elif op_type == "appimage":
             # appimage can have multiple operands (e.g., "appimage file1.appimage file2.appimage")
             return op_type, parts[1:]
+        elif op_type == "tarball":
+            # tarball operations record installed application directory names.
+            return op_type, parts[1:]
         elif op_type == "npm":
             # npm operations have format: "npm package" or "npm pkg1 pkg2" (multiple packages)
             return op_type, parts[1:]
@@ -325,6 +328,9 @@ def _parse_operation(op_line):
         elif op_type == "called":
             # Script display names may contain spaces.
             return op_type, [" ".join(parts[1:])]
+        elif op_type == "git-release":
+            # Informational release metadata: app_id, version, repository URL.
+            return op_type, parts[1:]
         else:
             # Most operations: "type operand" (e.g., "edited /etc/config")
             return op_type, [parts[1]]
@@ -454,11 +460,15 @@ def _reverse_package_fromfile(file_paths):
         reversal_commands.append(f"pkg_remove {pkg_args}")
     
     if flatpak_app_ids:
-        # Use flatpak uninstall for extracted app IDs
         for app_id in flatpak_app_ids:
+            app_id = shlex.quote(app_id)
+
             cmd = (
-                f"flatpak uninstall --user --noninteractive {app_id} 2>/dev/null || true ; "
-                f"sudo flatpak uninstall --system --noninteractive {app_id} 2>/dev/null || true"
+                f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
+                f"flatpak uninstall --user --noninteractive {app_id}; "
+                f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
+                f"sudo_rq && sudo flatpak uninstall --system --noninteractive {app_id}; "
+                f"fi"
             )
             reversal_commands.append(cmd)
     
@@ -497,34 +507,29 @@ def _reverse_file_restoration(file_path):
         f"{{ sudo_rq && sudo bash -c 'rm -rf \"{file_path}\" && mv \"{backup_path}\" \"{file_path}\"'; }} || true"
     )
 
-
 def _reverse_flatpak_removal(app_ids):
-    """Reverse flatpak installation(s) by removing it/them.
-    
-    Args:
-        app_ids: list of app IDs or single app ID string
-    
-    Returns:
-        list of shell commands to reverse the flatpak installation
-    """
-    # Normalize to list
+    """Reverse Flatpak installation(s) by removing them from their installed scope."""
     if isinstance(app_ids, str):
         app_ids = [app_ids]
-    
+
     if not app_ids:
         return []
-    
+
     commands = []
+
     for app_id in app_ids:
-        # Remove from both user and system scopes
+        app_id = shlex.quote(app_id)
+
         cmd = (
-            f"flatpak uninstall --user --noninteractive {app_id} 2>/dev/null || true ; "
-            f"sudo flatpak uninstall --system --noninteractive {app_id} 2>/dev/null || true"
+            f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
+            f"flatpak uninstall --user --noninteractive {app_id}; "
+            f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
+            f"sudo_rq && sudo flatpak uninstall --system --noninteractive {app_id}; "
+            f"fi"
         )
         commands.append(cmd)
-    
-    return commands
 
+    return commands
 
 def _reverse_appimage_removal(appimage_files):
     """Reverse appimage installation(s) by removing it/them.
@@ -545,6 +550,35 @@ def _reverse_appimage_removal(appimage_files):
     # Use pkg_appimage_rm library function to handle appimage removal
     appimage_args = " ".join(appimage_files)
     return [f"pkg_appimage_rm {appimage_args}"]
+
+
+def _reverse_tarball_installation(app_names):
+    """Reverse tarball installation(s) by removing their application directories."""
+    if isinstance(app_names, str):
+        app_names = [app_names]
+
+    if not app_names:
+        return []
+
+    apps_dir = os.path.expanduser("~/.local/linuxtoys/apps")
+    commands = []
+
+    for app_name in app_names:
+        # Transactions produced by pkg_tarball contain a directory basename, not a path.
+        # Refuse anything that could escape the dedicated applications directory.
+        if (
+            not app_name
+            or app_name in (".", "..")
+            or os.path.basename(app_name) != app_name
+            or "/" in app_name
+            or "\\" in app_name
+        ):
+            continue
+
+        target = os.path.join(apps_dir, app_name)
+        commands.append(f"rm -rf -- {shlex.quote(target)}")
+
+    return commands
 
 
 def _reverse_npm_installation(packages):
@@ -812,7 +846,8 @@ def _reverse_operation(op_line, package_manager):
     op_type, operands = _parse_operation(op_line)
     
     # WARN entries are informational only - no reversal action needed
-    if op_type == "warn":
+    if op_type in ("warn", "git-release"):
+        # Informational registry entries are deliberately non-reversible.
         return []
     
     elif op_type == "pkg install" and operands:
@@ -835,6 +870,9 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "appimage" and operands:
         return _reverse_appimage_removal(operands)
+
+    elif op_type == "tarball" and operands:
+        return _reverse_tarball_installation(operands)
     
     elif op_type == "npm" and operands:
         return _reverse_npm_installation(operands)
@@ -930,11 +968,9 @@ def build_uninstall_script_entry(script_info, translations=None):
     
     Returns a script_info-like dict or None when no removable components were found.
     """
-    script_path = script_info.get("path")
-    if not script_path or not os.path.isfile(script_path):
+    script_name = script_info.get("name")
+    if not script_name:
         return None
-    
-    script_name = script_info.get("name", "unknown")
     
     registry_entries = _load_registry_entries()
 

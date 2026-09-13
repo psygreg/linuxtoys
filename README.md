@@ -1,10 +1,10 @@
 # LinuxToys
 
-[LinuxToys](https://linux.toys) is a collection of user-friendly tools designed for Linux systems. It aims to make powerful Linux functionality accessible to all users through an intuitive interface. For a complete feature list and detailed documentation, please visit our [Wiki](https://linux.toys/knowledgebase.html).
+[LinuxToys](https://linux.toys) is a collection of user-friendly tools and software distribution platform for Linux systems. It aims to make powerful Linux functionality simple and accessible to all users through an intuitive interface, and enable developers to ship their apps consistently and reliably by giving them control over the installation process of their apps.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="src/dark-lt.png">
-  <img alt="LinuxToys Screenshot" src="src/light-lt.png">
+  <source media="(prefers-color-scheme: dark)" srcset="src/screenshot-dark.webp">
+  <img alt="LinuxToys Screenshot" src="src/screenshot-light.webp">
 </picture>
 
 ## Compatibility
@@ -24,10 +24,6 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 
 Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices. Support for non-systemd init systems is limited, and some features of the app cannot be offered for them.
 
-## Usage without installation for stable versions
-
-You can use LinuxToys without installing it by downloading the new AppImage made by our friends at **[pkgforge-dev](https://github.com/pkgforge-dev)** from their [releases page](https://github.com/pkgforge-dev/LinuxToys-AppImage/releases). Just download the latest release, make it executable, and run it. Issues with the AppImage can be reported at [the AppImage repository](https://github.com/pkgforge-dev/LinuxToys-AppImage), and both of us will be working together to make it the best experience possible.
-
 ## Installation
 
 ### Automatic Installation
@@ -38,6 +34,8 @@ The simplest way to install LinuxToys is by using the automated installation scr
 curl -fsSL https://linux.toys/install.sh | bash
 ```
 
+This will automatically pick the correct package option for your distribution and install it.
+
 ### Manual Installation
 
 If you prefer to review the script before running it, you can download and execute it manually:
@@ -47,6 +45,8 @@ curl -fsSLJO https://linux.toys/install.sh
 chmod +x install.sh
 ./install.sh
 ```
+
+You may also pick the package that suits your system best yourself.
 
 ### Official Repositories
 
@@ -90,10 +90,14 @@ cd linuxtoys-bin
 makepkg -si
 ```
 
+## SteamOS and usage without installation
+
+You may use the AppImage available at the latest release to use LinuxToys without requiring installation. For SteamOS, the automatic installer will integrate this AppImage using *Gear Lever*.
+
 ## From source [GIT](https://github.com/psygreg/linuxtoys/)
 
 > [!WARNING]
-> This version is under constant development, therefore it may have instability as well as new features not yet available in the stable versions.
+> This version is under constant development, therefore it may have instability as well as new features not yet available in the stable versions. Usage of this is only intended for developers.
 
 Running the application from source, please follow these steps.
 
@@ -147,16 +151,8 @@ p3/linuxtoys.py
 git pull
 ```
 
-## Development
+## Developers
 
-For developers who wish to contribute, check our documentation, please refer to the [Developer Guide](dev/README.md).
+For developers who wish to contribute, check our documentation, please refer to the [Contribution Guidelines](CONTRIBUTING.md).
 
-To collaborate with scripts within the app and not the app itself, refer to [the scripts repository.](https://github.com/psygreg/scripts)
-
-## Contributing
-
-We welcome contributions! If you are interested in helping improve LinuxToys, please review our [Contribution Guidelines](CONTRIBUTING.md).
-
-## Credits
-
-This project is made possible by the community. For a full list of contributors, please visit our [Credits Page](https://linux.toys/credits.html).
+To distribute your app through LinuxToys, check out the [Developer Portal](https://dev.linux.toys).

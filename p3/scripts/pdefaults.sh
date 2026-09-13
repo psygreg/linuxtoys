@@ -31,9 +31,12 @@ sysag_run () {
     fi
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
     call_script preemptfedora
+    # enable x86_64v3 repositories on ubuntu
+    call_script ubuntuv3
 }
 # consolidated installation
 optimizer () {
+    export OPTIMIZER_RUN=1
     if [ ! -f $HOME/.local/.autopatch.state ]; then
         prep_tmp
         sysag_run

@@ -4,7 +4,7 @@
 # description: gscope_desc
 # icon: gaming.svg
 # repo: https://github.com/ValveSoftware/gamescope
-# compat: !debian, !ubuntu, !rhel
+# compat: !debian, !ubuntu, !rhel, !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

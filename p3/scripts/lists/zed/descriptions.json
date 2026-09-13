@@ -1,0 +1,12 @@
+{
+    "long-description": "md/en.md",
+    "description_long_tag": "zed_long",
+
+    "en": {
+        "zed_long": "md/en.md"
+    },
+
+    "pt": {
+        "zed_long": "md/pt.md"
+    }
+}

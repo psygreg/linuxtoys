@@ -5,6 +5,7 @@
 # icon: solaar.svg
 # nocontainer
 # repo: https://github.com/pwr-Solaar/Solaar
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

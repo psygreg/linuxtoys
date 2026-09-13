@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        6.9
+Version:        7.0
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -33,7 +33,6 @@ cp -rf usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
 # Set proper permissions for executable files
 chmod +x %{buildroot}/usr/share/linuxtoys/linuxtoys.py
 find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
-find %{buildroot}/usr/share/linuxtoys/helpers/ -name "*.sh" -exec chmod +x {} \;
 
 # Install icon and desktop file
 install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
@@ -50,7 +49,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Fri Sep 04 2026 Victor Gregory <psygreg@pm.me> - 6.9
-- Updated to current app structure with full Python application
+* Sun Sep 13 2026 Victor Gregory <psygreg@pm.me> - 7.0
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements

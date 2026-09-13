@@ -4,7 +4,7 @@
         "description": "Open-source screen recorder and editor for walkthroughs, demos, product videos, and more, with motion-driven presentation tools built in.",
         "description_tag": "recordly_desc",
         "repo": "https://github.com/webadderallorg/Recordly",
-        "category": "office",
+        "category": "media",
         "icon": "recordly.png"
     },
     {
@@ -96,16 +96,6 @@
         "package-name": "io.github.unknownskl.greenlight"
     },
     {
-        "name": "Minecraft Bedrock Launcher",
-        "description": "A community port of Minecraft Bedrock Edition for Linux.",
-        "description_tag": "mcbe_desc",
-        "repo": "https://minecraft-linux.github.io",
-        "category": "game",
-        "icon": "minecraft.svg",
-        "type": "flathub",
-        "package-name": "io.mrarm.mcpelauncher"
-    },
-    {
         "name": "Moonlight",
         "description": "Open source PC client for NVIDIA GameStream and Sunshine.",
         "description_tag": "mlight_desc",
@@ -180,7 +170,7 @@
         "description": "A free, open source, cross-platform audio software.",
         "description_tag": "audacity_desc",
         "repo": "https://github.com/audacity/audacity",
-        "category": "office",
+        "category": "media",
         "icon": "audacity.svg"
     },
     {
@@ -199,7 +189,902 @@
         "description_tag": "openlogi_desc",
         "repo": "https://github.com/AprilNEA/OpenLogi",
         "category": "peripherals",
-        "icon": "openlogi.png",
-        "os": [ "fedora", "rhel", "arch", "cachy", "ubuntu", "debian" ]
+        "icon": "openlogi.png"
+    },
+    {
+        "name": "Amethyst Mod Manager",
+        "description": "Fully featured NexusMods-driven mod manager for Linux.",
+        "description_tag": "amethyst_desc",
+        "repo": "https://github.com/ChrisDKN/Amethyst-Mod-Manager",
+        "category": "game",
+        "icon": "amethyst.png"
+    },
+    {
+        "name": "OpenBoardView",
+        "description": "SDL/ImGui edition software for viewing .brd files, intended as a drop-in replacement for the 'Test_Link' software and 'Landrex'.",
+        "description_tag": "openboardview_desc",
+        "repo": "https://github.com/OpenBoardView/OpenBoardView",
+        "category": "office",
+        "icon": "openboardview.svg",
+        "type": {
+            "arch": "native",
+            "cachy": "native",
+            "all": "git"
+        }
+    },
+    {
+        "name": "Hardinfo2",
+        "description": "Advanced system information and basic benchmarks.",
+        "description_tag": "hardinfo_desc",
+        "repo": "https://hardinfo2.org/",
+        "category": "sysadm",
+        "icon": "hardinfo2.svg",
+        "type": "native",
+        "package-name": "hardinfo2"
+    },
+    {
+        "name": "ZenNotes",
+        "description": "Free, open source note taking app with KaTeX integration and Obsidian portability.",
+        "description_tag": "zennotes_desc",
+        "repo": "https://github.com/ZenNotes/zennotes",
+        "category": "edu",
+        "icon": "zennotes.png"
+    },
+    {
+        "name": "Texmaker",
+        "description": "A clean, powerful and highly configurable LaTeX editor.",
+        "description_tag": "texmaker_desc",
+        "repo": "https://www.xm1math.net/texmaker/",
+        "category": "edu",
+        "icon": "texmaker.svg",
+        "type": "flathub",
+        "package-name": "net.xm1math.Texmaker"
+    },
+    {
+        "name": "Discord",
+        "description": "A popular communication platform for gamers and communities.",
+        "description_tag": "discord_desc",
+        "repo": "https://discord.com",
+        "category": "chat",
+        "icon": "discord.svg",
+        "type": "flathub",
+        "package-name": "com.discordapp.Discord"
+    },
+    {
+        "name": "Microsoft Teams",
+        "description": "A collaboration platform for remote work.",
+        "description_tag": "msteams_desc",
+        "repo": "https://github.com/IsmaelMartinez/teams-for-linux",
+        "category": "chat",
+        "icon": "teams.svg",
+        "type": "flathub",
+        "package-name": "com.github.IsmaelMartinez.teams_for_linux"
+    },
+    {
+        "name": "Signal",
+        "description": "Private messenger with end-to-end encryption and no user IDs.",
+        "description_tag": "signal_desc",
+        "repo": "https://discord.com",
+        "category": "chat",
+        "icon": "signal.png",
+        "type": "flathub",
+        "package-name": "org.signal.Signal"
+    },
+    {
+        "name": "Slack",
+        "description": "Team collaboration and messaging platform.",
+        "description_tag": "slack_desc",
+        "repo": "https://slack.com",
+        "category": "chat",
+        "icon": "slack.svg",
+        "type": "flathub",
+        "package-name": "com.slack.Slack"
+    },
+    {
+        "name": "Telegram",
+        "description": "Messaging app with better social features and bigger group limits.",
+        "description_tag": "telegram_desc",
+        "repo": "https://desktop.telegram.org",
+        "category": "chat",
+        "icon": "telegram.png",
+        "type": "flathub",
+        "package-name": "org.telegram.desktop"
+    },
+    {
+        "name": "ZapZap",
+        "description": "An electron wrapper for WhatsApp Web.",
+        "description_tag": "zap_desc",
+        "repo": "https://github.com/rafatosta/zapzap",
+        "category": "chat",
+        "icon": "zapzap.png",
+        "type": "flathub",
+        "package-name": "com.rtosta.zapzap"
+    },
+    {
+        "name": "Gamemode",
+        "description": "A daemon for optimizing game performance on Linux.",
+        "description_tag": "gamemode_desc",
+        "repo": "https://github.com/feralinteractive/gamemode",
+        "category": "game",
+        "icon": "gaming.svg",
+        "os": [ "fedora", "arch", "ubuntu", "debian", "suse", "ostree", "solus" ]
+    },
+    {
+        "name": "LeShade",
+        "description": "A ReShade manager for Linux, allowing you to easily install shaders for games running through WINE/Proton in their respective prefixes.",
+        "description_tag": "leshade_desc",
+        "repo": "https://github.com/Ishidawg/LeShade",
+        "dependencies": [
+            {
+                "type": "native",
+                "package-name": [
+                    "wine",
+                    "winetricks"
+                ]
+            }
+        ],
+        "category": "game",
+        "icon": "leshade.png"
+    },
+    {
+        "name": "Google Chrome",
+        "description": "A popular web browser from Google.",
+        "description_tag": "chrome_desc",
+        "repo": "https://chrome.google.com",
+        "category": "office",
+        "icon": "chrome.svg",
+        "type": "flathub",
+        "package-name": "com.google.Chrome"
+    },
+    {
+        "name": "Cohesion",
+        "description": "A community port of Notion for Linux.",
+        "description_tag": "cohesion_desc",
+        "repo": "https://github.com/brunofin/cohesion",
+        "category": "office",
+        "icon": "cohesion.svg",
+        "type": "flathub",
+        "package-name": "io.github.brunofin.Cohesion"
+    },
+    {
+        "name": "Darktable",
+        "description": "A free and open-source photography workflow application.",
+        "description_tag": "darktable_desc",
+        "repo": "https://www.darktable.org",
+        "category": "office",
+        "icon": "dartkable.svg",
+        "type": "flathub",
+        "package-name": "org.darktable.Darktable"
+    },
+    {
+        "name": "Foliate",
+        "description": "An eBook reader designed for simplicity and ease of use.",
+        "description_tag": "foliate_desc",
+        "repo": "https://johnfactotum.github.io/foliate",
+        "category": "media",
+        "icon": "foliate.svg",
+        "type": "flathub",
+        "package-name": "com.github.johnfactotum.Foliate"
+    },
+    {
+        "name": "FreeCAD",
+        "description": "A free and open-source parametric 3D CAD modeler.",
+        "description_tag": "freecad_desc",
+        "repo": "https://www.freecad.org",
+        "category": "office",
+        "icon": "freecad.svg",
+        "type": "flathub",
+        "package-name": "org.freecad.FreeCAD"
+    },
+    {
+        "name": "Inkscape",
+        "description": "A professional free and open-source vector graphics editor.",
+        "description_tag": "inkscape_desc",
+        "repo": "https://inkscape.org",
+        "category": "office",
+        "icon": "inkscape.svg",
+        "type": "flathub",
+        "package-name": "org.inkscape.Inkscape"
+    },
+    {
+        "name": "KiCad",
+        "description": "A free and open-source PCB design tool.",
+        "description_tag": "kicad_desc",
+        "repo": "https://www.kicad.org",
+        "category": "office",
+        "icon": "kicad.svg",
+        "type": "flathub",
+        "package-name": "org.kicad.KiCad"
+    },
+    {
+        "name": "Krita",
+        "description": "A professional free and open-source painting program.",
+        "description_tag": "krita_desc",
+        "repo": "https://apps.kde.org/krita",
+        "category": "office",
+        "icon": "krita.svg",
+        "type": "flathub",
+        "package-name": "org.kde.krita"
+    },
+    {
+        "name": "LibreOffice",
+        "description": "A powerful office suite.",
+        "description_tag": "libreoffice_desc",
+        "repo": "https://libreoffice.org",
+        "category": "office",
+        "icon": "libreoffice.svg",
+        "type": "flathub",
+        "package-name": "org.libreoffice.LibreOffice"
+    },
+    {
+        "name": "Obsidian",
+        "description": "A free, flexible app for your thoughts, notes, and organization.",
+        "description_tag": "obsidian_desc",
+        "repo": "https://obsidian.md",
+        "category": "office",
+        "icon": "obsidian.svg",
+        "type": "flathub",
+        "package-name": "md.obsidian.Obsidian"
+    },
+    {
+        "name": "OnlyOffice",
+        "description": "A suite with better compatibility to Microsoft Office files.",
+        "description_tag": "onlyoffice_desc",
+        "repo": "https://onlyoffice.com",
+        "category": "office",
+        "icon": "onlyoffice.svg",
+        "type": "flathub",
+        "package-name": "org.onlyoffice.desktopeditors"
+    },
+    {
+        "name": "Pinta",
+        "description": "A free painting program very similar to Paint.",
+        "description_tag": "pinta_desc",
+        "repo": "https://www.pinta-project.com",
+        "category": "office",
+        "icon": "pinta.svg",
+        "type": "flathub",
+        "package-name": "com.github.PintaProject.Pinta"
+    },
+    {
+        "name": "Zen Browser",
+        "description": "A minimalist web browser designed for distraction-free browsing.",
+        "description_tag": "zen_desc",
+        "repo": "https://zen-browser.app",
+        "category": "office",
+        "icon": "zen.svg",
+        "type": "flathub",
+        "package-name": "app.zen_browser.zen"
+    },
+    {
+        "name": "Lutris",
+        "description": "A gaming platform for Linux that allows you to install and manage games from various sources, including emulators.",
+        "description_tag": "lutris_desc",
+        "repo": "https://lutris.net",
+        "category": "game",
+        "icon": "lutris.svg",
+        "type": {
+            "fedora": "native",
+            "arch": "native",
+            "cachy": "native",
+            "all": "flathub"
+        },
+        "package-name": {
+            "fedora": "lutris",
+            "arch": "lutris",
+            "cachy": "lutris",
+            "all": "net.lutris.Lutris"
+        },
+        "overrides": {
+            "pre": "{ is_fedora && call_script rpmfusion; } || true"
+        }
+    },
+    {
+        "name": "GPU Screen Recorder",
+        "description": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
+        "description_tag": "gsr_desc",
+        "repo": "https://git.dec05eba.com/?p=about",
+        "category": "media",
+        "icon": "gsr.png",
+        "type": "flathub",
+        "package-name": "com.dec05eba.gpu_screen_recorder",
+        "overrides": {
+            "post": "{ is_intel && pkg_flat --skip-user org.freedesktop.Platform.VAAPI.Intel/x86_64/24.08; } || true",
+            "skip-user": true
+        }
+    },
+    {
+        "name": "Steam",
+        "description": "The most popular PC gaming platform and store.",
+        "description_tag": "steam_desc",
+        "repo": "https://store.steampowered.com",
+        "category": "game",
+        "icon": "steam.svg",
+        "type": {
+            "fedora": "native",
+            "arch": "native",
+            "cachy": "native",
+            "all": "flathub"
+        },
+        "package-name": {
+            "fedora": "steam",
+            "arch": "steam",
+            "cachy": "steam",
+            "all": "com.valvesoftware.Steam"
+        },
+        "dependencies": [
+            {
+                "type": "native",
+                "package-name": "steam-devices"
+            }
+        ],
+        "overrides": {
+            "pre": "{ { is_rhel || is_fedora; } && call_script rpmfusion; } || { is_arch && multilib_chk; }; } || true"
+        }
+    },
+    {
+        "name": "Heroic Games Launcher",
+        "description": "Launcher and manager for Epic Games Store, Amazon and GOG Galaxy.",
+        "description_tag": "hgl_desc",
+        "repo": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher",
+        "category": "game",
+        "icon": "heroic.svg"
+    },
+    {
+        "name": "MangoJuice",
+        "description": "A GTK-based tool to configure MangoHud, an overlay for monitoring FPS and other performance metrics. Also installs MangoHud.",
+        "description_tag": "mgjuice_desc",
+        "repo": "https://github.com/radiolamp/mangojuice",
+        "category": "game",
+        "icon": "mangojuice.png",
+        "type": "flathub",
+        "package-name": "io.github.radiolamp.mangojuice",
+        "dependencies": [
+            {
+                "type": "native",
+                "package-name": "mangohud"
+            },
+            {
+                "type": "flathub",
+                "package-name": [
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08",
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08"
+                ]
+            }
+        ],
+        "os": [ "fedora", "ostree", "arch", "cachy", "ubuntu", "debian", "suse", "solus" ]
+    },
+    {
+        "name": "Faugus Launcher",
+        "description": "A newer, lightweight and simplified application to manage your games and their WINE prefixes on Linux, similarly to Lutris.",
+        "description_tag": "faugus_desc",
+        "repo": "https://github.com/Faugus/faugus-launcher",
+        "category": "game",
+        "icon": "faugus-launcher.png",
+        "type": {
+            "fedora": "native",
+            "arch": "native",
+            "cachy": "native",
+            "all": "flathub"
+        },
+        "package-name": {
+            "fedora": "faugus-launcher",
+            "arch": "faugus-launcher",
+            "cachy": "faugus-launcher",
+            "all": "io.github.Faugus.faugus-launcher"
+        },
+        "overrides": {
+            "pre": "{ is_fedora && sudo dnf -y copr enable faugus/faugus-launcher; } || true",
+            "flatpak": [
+                {
+                    "scope": "user",
+                    "type": "filesystem",
+                    "setting": "~/.var/app/com.valvesoftware.Steam/.steam/steam/userdata/",
+                    "target": "io.github.Faugus.faugus-launcher"
+                },
+                {
+                    "scope": "user",
+                    "type": "name",
+                    "setting": "org.freedesktop.Flatpak",
+                    "target": "com.valvesoftware.Steam"
+                },
+                {
+                    "scope": "user",
+                    "type": "filesystem",
+                    "setting": "~/.var/app/io.github.Faugus.faugus-launcher/config/faugus-launcher/",
+                    "target": "com.valvesoftware.Steam"
+                }                
+            ]
+        }
+    },
+    {
+        "name": "GOverlay",
+        "description": "A Qt-based tool to configure MangoHud, an overlay for monitoring FPS and other performance metrics. Also installs MangoHud.",
+        "description_tag": "goverlay_desc",
+        "repo": "https://github.com/benjamimgois/goverlay",
+        "category": "game",
+        "icon": "goverlay.svg",
+        "type": "native",
+        "package-name": "goverlay",
+        "dependencies": [
+            {
+                "type": "native",
+                "package-name": "mangohud"
+            },
+            {
+                "type": "flathub",
+                "package-name": [
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08",
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08"
+                ]
+            }
+        ],
+        "os": [ "fedora", "ostree", "arch", "cachy", "ubuntu", "debian", "suse", "solus" ]
+    },
+    {
+        "name": "CPU-X",
+        "description": "Gathers information on CPU, motherboard and more.",
+        "description_tag": "cpux_desc",
+        "repo": "https://thetumultuousunicornofdarkness.github.io/CPU-X/",
+        "category": "sysadm",
+        "icon": "cpu-x.png",
+        "type": "flathub",
+        "package-name": "io.github.thetumultuousunicornofdarkness.cpu-x"
+    },
+    {
+        "name": "QDiskInfo",
+        "description": "A frontend for smartctl that shows the SMART data of modern hard disk and solid state drives. Provides a user experience similar to CrystalDiskInfo.",
+        "description_tag": "qdi_desc",
+        "repo": "https://github.com/edisionnano/QDiskInfo",
+        "category": "sysadm",
+        "icon": "qdiskinfo.svg"
+    },
+    {
+        "name": "Termius",
+        "description": "Modern SSH client for Linux with intuitive graphical interface and advanced connection management features.",
+        "description_tag": "termius_desc",
+        "repo": "https://termius.com",
+        "category": "sysadm",
+        "icon": "termius.png",
+        "type": "flathub",
+        "package-name": "com.termius.Termius"
+    },
+    {
+        "name": "Cockpit Client",
+        "description": "A web-based interface for managing Linux servers (client).",
+        "description_tag": "cockpitclient_desc",
+        "repo": "https://cockpit-project.org",
+        "category": "sysadm",
+        "icon": "cockpit.png",
+        "type": "flathub",
+        "package-name": "org.cockpit_project.CockpitClient"
+    },
+    {
+        "name": "Bitwarden",
+        "description": "A secure and free password manager for all of your devices.",
+        "description_tag": "bitwarden_desc",
+        "repo": "https://www.bitwarden.com",
+        "category": "privacy",
+        "icon": "bitwarden.png",
+        "type": "flathub",
+        "package-name": "com.bitwarden.desktop"
+    },
+    {
+        "name": "Brave Browser",
+        "description": "A privacy-focused web browser with built-in ad blocking.",
+        "description_tag": "brave_desc",
+        "repo": "https://brave.com",
+        "category": "privacy",
+        "icon": "brave.svg",
+        "type": "flathub",
+        "package-name": "com.brave.Browser"
+    },
+    {
+        "name": "Cryptomator",
+        "description": "Encryption for your cloud made easy.",
+        "description_tag": "cryptomator_desc",
+        "repo": "https://cryptomator.org",
+        "category": "privacy",
+        "icon": "cryptomator.png",
+        "type": "flathub",
+        "package-name": "org.cryptomator.Cryptomator"
+    },
+    {
+        "name": "Helium Browser",
+        "description": "Chromium-based minimalist web browser that takes a privacy-first approach with unbiased ad-blocking.",
+        "description_tag": "helium_desc",
+        "repo": "https://github.com/imputnet/helium-linux",
+        "category": "privacy",
+        "icon": "helium.png"
+    },
+    {
+        "name": "KeePassXC",
+        "description": "Secure and Full-featured Password Manager.",
+        "description_tag": "keepassxc_desc",
+        "repo": "https://keepassxc.org",
+        "category": "privacy",
+        "icon": "keepassxc.png",
+        "type": "flathub",
+        "package-name": "org.keepassxc.KeePassXC"
+    },
+    {
+        "name": "LibreWolf",
+        "description": "LibreWolf browser.",
+        "repo": "https://librewolf.net",
+        "category": "privacy",
+        "icon": "librewolf.svg",
+        "type": "flathub",
+        "package-name": "io.gitlab.librewolf-community"
+    },
+    {
+        "name": "LogSEQ",
+        "description": "A privacy-first, open-source knowledge base. Alternative to Obsidian.",
+        "description_tag": "logseq_desc",
+        "repo": "https://logseq.com",
+        "category": "privacy",
+        "icon": "logseq.svg",
+        "type": "flathub",
+        "package-name": "com.logseq.Logseq"
+    },
+    {
+        "name": "Mullvad Browser",
+        "description": "Mullvad VPN browser.",
+        "repo": "https://mullvad.net/browser",
+        "category": "privacy",
+        "icon": "mullvad_browser.svg",
+        "type": "flathub",
+        "package-name": "net.mullvad.MullvadBrowser"
+    },
+    {
+        "name": "Proton VPN",
+        "description": "Proton VPN.",
+        "repo": "https://protonvpn.com",
+        "category": "privacy",
+        "icon": "protonvpn.svg",
+        "type": "flathub",
+        "package-name": "com.protonvpn.www"
+    },
+    {
+        "name": "SiriKali",
+        "description": "A GUI to Gocryptfs, Securefs and Cryfs.",
+        "description_tag": "sirikali_desc",
+        "repo": "https://mhogomchungu.github.io/sirikali",
+        "category": "privacy",
+        "icon": "sirikali.png",
+        "type": "flathub",
+        "package-name": "io.github.mhogomchungu.sirikali"
+    },
+    {
+        "name": "Surfshark VPN",
+        "description": "Surfshark VPN.",
+        "repo": "https://surfshark.com",
+        "category": "privacy",
+        "icon": "surfsharkvpn.svg",
+        "type": "flathub",
+        "package-name": "com.surfshark.Surfshark"
+    },
+    {
+        "name": "Ungoogled Chromium",
+        "description": "Ungoogled Chromium browser.",
+        "repo": "https://github.com/ungoogled-software/ungoogled-chromium",
+        "category": "privacy",
+        "icon": "ungoogled_chromium.png",
+        "type": "flathub",
+        "package-name": "io.github.ungoogled_software.ungoogled_chromium"
+    },
+    {
+        "name": "Rclone UI",
+        "description": "A GUI for rclone-based configuration and synchronization that supports most cloud providers like Google Drive, OneDrive, Proton Drive and Dropbox.",
+        "description_tag": "rcloneui_desc",
+        "repo": "https://github.com/rclone-ui/rclone-ui",
+        "category": "utils",
+        "icon": "rcloneui.png"
+    },
+    {
+        "name": "Warehouse",
+        "description": "A feature-rich tool for managing Flatpak applications and repositories tailored towards more technical users.",
+        "description_tag": "wrhs_desc",
+        "repo": "https://github.com/flattool/warehouse",
+        "category": "utils",
+        "icon": "warehouse.svg",
+        "type": "flathub",
+        "package-name": "io.github.flattool.Warehouse"
+    },
+    {
+        "name": "VLC",
+        "description": "Open source, fully-featured media player. Includes codecs for proprietary media formats for Fedora and OpenSUSE.",
+        "description_tag": "vlc_desc",
+        "repo": "https://lutris.net",
+        "category": "media",
+        "icon": "vlc.svg",
+        "type": "native",
+        "package-name": "vlc",
+        "overrides": {
+            "pre": "{ { is_fedora || is_rhel || is_ostree || is_suse; } && call_script codecfix; } || true"
+        }
+    },
+    {
+        "name": "Thumbnailer",
+        "description": "Installs ffmpegthumbnailer to generate thumbnails for video files in file managers.",
+        "description_tag": "thumb_desc",
+        "repo": "https://github.com/dirkvdb/ffmpegthumbnailer",
+        "category": "media",
+        "icon": "media.svg",
+        "type": "native",
+        "package-name": "ffmpegthumbnailer"
+    },
+    {
+        "name": "QtScrcpy",
+        "description": "Mirror and control Android devices via USB or WiFi network.",
+        "description_tag": "qtscrcpy_desc",
+        "repo": "https://github.com/barry-ran/QtScrcpy",
+        "category": "media",
+        "icon": "qtscrcpy.png"
+    },
+    {
+        "name": "QPWGraph",
+        "description": "A graphical tool for managing PipeWire audio connections.",
+        "description_tag": "qpw_desc",
+        "repo": "https://github.com/rncbc/qpwgraph",
+        "category": "media",
+        "icon": "qpwgraph.svg",
+        "type": "flathub",
+        "package-name": "org.rncbc.qpwgraph"
+    },
+    {
+        "name": "HandBrake",
+        "description": "An open-source video converter with support for many formats and codecs.",
+        "description_tag": "hndbrk_desc",
+        "repo": "https://handbrake.fr",
+        "category": "media",
+        "icon": "handbrake.svg",
+        "type": "flathub",
+        "package-name": "fr.handbrake.ghb"
+    },
+    {
+        "name": "EasyEffects",
+        "description": "A powerful audio processing tool for Pipewire that offers from noise filtering to spatial audio.",
+        "description_tag": "efx_desc",
+        "repo": "https://github.com/wwmm/easyeffects",
+        "category": "media",
+        "icon": "efx.svg",
+        "type": "flathub",
+        "package-name": "com.github.wwmm.easyeffects"
+    },
+    {
+        "name": "S3Drive",
+        "description": "Convert S3, SFTP, WebDAV or Rclone back-end into your encrypted storage.",
+        "description_tag": "s3d_desc",
+        "repo": "https://s3drive.app",
+        "category": "privacy",
+        "icon": "s3drive.png",
+        "type": "flathub",
+        "package-name": "io.kapsa.drive"
+    },
+    {
+        "name": "Pika Backup",
+        "description": "A simple and space-efficient backup application based on BorgBackup.",
+        "description_tag": "pika_desc",
+        "repo": "https://apps.gnome.org/PikaBackup",
+        "category": "utils",
+        "icon": "pika.svg",
+        "type": "flathub",
+        "package-name": "org.gnome.World.PikaBackup"
+    },
+    {
+        "name": "Peazip",
+        "description": "Free file archiver utility supporting many formats.",
+        "description_tag": "peazip_desc",
+        "repo": "https://peazip.github.io",
+        "category": "utils",
+        "icon": "peazip.png",
+        "type": "flathub",
+        "package-name": "io.github.peazip.PeaZip"
+    },
+    {
+        "name": "Mission Center",
+        "description": "A system monitor for Linux very similar to Windows Task Manager, based on GTK4.",
+        "description_tag": "mctl_desc",
+        "repo": "https://missioncenter.io",
+        "category": "utils",
+        "icon": "mctl.svg",
+        "type": "flathub",
+        "package-name": "io.missioncenter.MissionCenter"
+    },
+    {
+        "name": "LACT",
+        "description": "GPU fan control and overlocking tool. Use with caution!",
+        "description_tag": "lact_desc",
+        "repo": "https://github.com/ilya-zlobintsev/LACT",
+        "category": "utils",
+        "icon": "device.svg",
+        "type": "flathub",
+        "package-name": "io.github.ilya_zlobintsev.LACT",
+        "overrides": {
+            "skip-user": true
+        }
+    },
+    {
+        "name": "Haguichi",
+        "description": "Facilitates the use of Hamachi on Linux with an intuitive graphical interface that covers all its features.",
+        "description_tag": "haguichi_desc",
+        "repo": "https://github.com/ztefn/haguichi",
+        "category": "utils",
+        "icon": "haguichi.svg",
+        "type": "flathub",
+        "package-name": "com.github.ztefn.haguichi"
+    },
+    {
+        "name": "Gear Lever",
+        "description": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
+        "description_tag": "glever_desc",
+        "repo": "https://github.com/mijorus/gearlever",
+        "category": "utils",
+        "icon": "gearlever.png",
+        "type": "flathub",
+        "package-name": "it.mijorus.gearlever"
+    },
+    {
+        "name": "Flatseal",
+        "description": "A graphical interface to manage Flatpak permissions.",
+        "description_tag": "fseal_desc",
+        "repo": "https://github.com/tchx84/Flatseal",
+        "category": "utils",
+        "icon": "flatseal.svg",
+        "type": "flathub",
+        "package-name": "com.github.tchx84.Flatseal"
+    },
+    {
+        "name": "F3 (Fight Flash Fraud)",
+        "description": "A tool to check for fake USB drives and correct them to their real capacity.",
+        "description_tag": "f3_desc",
+        "repo": "https://github.com/AltraMayor/f3",
+        "category": "utils",
+        "icon": "utils.svg",
+        "type": "native",
+        "package-name": "f3",
+        "overrides": {
+            "post": "info \"$msg287\" && xdg-open https://fight-flash-fraud.readthedocs.io/en/latest/introduction.html#examples-1 || true"
+        }
+    },
+    {
+        "name": "Bottles",
+        "description": "A tool for managing Windows applications on Linux using Wine.",
+        "description_tag": "bottles_desc",
+        "repo": "https://usebottles.com",
+        "category": "utils",
+        "icon": "bottles.svg",
+        "type": "flathub",
+        "package-name": "com.usebottles.bottles"
+    },
+    {
+        "name": "Bazaar",
+        "description": "A new app store with a focus on discovering and installing applications and add-ons from Flatpak remotes, and supporting the developers who make the Linux desktop possible.",
+        "description_tag": "bazaar_desc",
+        "repo": "https://github.com/kolunmi/bazaar",
+        "category": "utils",
+        "icon": "bazaar.svg",
+        "type": "flathub",
+        "package-name": "io.github.kolunmi.Bazaar"
+    },
+    {
+        "name": "Extension Manager",
+        "description": "Search, download and manage GNOME extensions easily.",
+        "description_tag": "extman_desc",
+        "repo": "https://github.com/mjakeman/extension-manager",
+        "category": "theming",
+        "icon": "extensions.svg",
+        "type": "flathub",
+        "package-name": "com.mattjakeman.ExtensionManager"
+    },
+    {
+        "name": "Rewaita",
+        "description": "Change the look of GNOME's shell, GTK4 and GTK3 apps without the hassle. Several color schemes to pick from, and you can even create your own!",
+        "description_tag": "rewaita_desc",
+        "repo": "https://github.com/swordpuffin/Rewaita",
+        "category": "theming",
+        "icon": "rewaita.svg",
+        "type": "flathub",
+        "package-name": "io.github.swordpuffin.rewaita"
+    },
+    {
+        "name": "Gnome Tweaks",
+        "description": "Change settings related to GTK3 apps and GNOME Shell from themes to font rendering.",
+        "description_tag": "tweaks_desc",
+        "repo": "https://github.com/GNOME/gnome-tweaks",
+        "category": "theming",
+        "icon": "tweaks.svg",
+        "type": "native",
+        "package-name": "gnome-tweaks",
+        "desktop": "gnome"
+    },
+    {
+        "name": "StreamController",
+        "description": "A tool for setting up Stream Decks and similar devices.",
+        "description_tag": "sc_desc",
+        "repo": "https://github.com/StreamController/StreamController",
+        "category": "peripherals",
+        "icon": "streamcontroller.svg",
+        "type": "flathub",
+        "package-name": "com.core447.StreamController"
+    },
+    {
+        "name": "Insomnia",
+        "description": "A powerful REST API client with a sleek interface.",
+        "description_tag": "insomnia_desc",
+        "repo": "https://insomnia.rest",
+        "category": "devs",
+        "icon": "insomnia.svg",
+        "type": "flathub",
+        "package-name": "rest.insomnia.Insomnia"
+    },
+    {
+        "name": "Nala",
+        "description": "An interface for libapt-pkg with better output formatting and parallel download support.",
+        "description_tag": "nala_desc",
+        "repo": "https://gitlab.com/volian/nala",
+        "category": "utils",
+        "icon": "terminal.svg",
+        "type": "native",
+        "package-name": "nala",
+        "os": [ "ubuntu", "debian" ]
+    },
+    {
+        "name": "HTTPie",
+        "description": "A user-friendly command-line HTTP client.",
+        "description_tag": "httpie_desc",
+        "repo": "https://github.com/httpie/desktop",
+        "category": "devs",
+        "icon": "httpie.svg"
+    },
+    {
+        "name": "Maven",
+        "description": "A build automation tool used primarily for Java projects.",
+        "description_tag": "mvn_desc",
+        "repo": "https://maven.apache.org",
+        "category": "devs",
+        "icon": "maven.svg",
+        "type": "native",
+        "package-name": {
+            "solus": "apache-maven",
+            "all": "maven"
+        }
+    },
+    {
+        "name": "Postman",
+        "description": "A powerful API testing tool.",
+        "description_tag": "postman_desc",
+        "repo": "https://www.postman.com",
+        "category": "devs",
+        "icon": "postman.svg",
+        "type": "url",
+        "urls": {
+            "tar": "https://dl.pstmn.io/download/latest/linux64"
+        },
+        "overrides": {
+            "post": "desktop_shortcut \"$LINUXTOYS_TARBALL_DIR/Postman\" && path_link \"$LINUXTOYS_TARBALL_DIR/Postman\" --useappid"
+        }
+    },
+    {
+        "name": "NeoVim",
+        "description": "A powerful CLI-based text editor for developers.",
+        "description_tag": "nvim_desc",
+        "repo": "https://neovim.io",
+        "category": "ides",
+        "icon": "neovim.svg",
+        "type": "native",
+        "package-name": "neovim"
+    },
+    {
+        "name": "LM Studio",
+        "description": "Experiment with LLMs on your computer with a GUI control panel, chat interface and programmable API.",
+        "description_tag": "lmstudio_desc",
+        "repo": "https://lmstudio.ai",
+        "category": "ai_agents",
+        "icon": "lmstudio.png",
+        "type": "url",
+        "urls": {
+            "appimage": "https://lmstudio.ai/download/latest/linux/x64?format=AppImage"
+        }
     }
 ]

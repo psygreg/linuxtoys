@@ -49,7 +49,7 @@ if __name__ == "__main__":
     os.environ['SCRIPT_DIR'] = linuxtoys_dir
     
     # Set CACHE_DIR to bundled scripts as default fallback
-    # This will be overridden by initialize_scripts() if git sync is available
+    # GUI startup replaces this immediately with the last cache when available
     os.environ['CACHE_DIR'] = os.path.join(linuxtoys_dir, 'scripts')
 
     # UPD_SERVICE runs from a headless systemd unit and must follow the CLI path.
@@ -99,57 +99,15 @@ if __name__ == "__main__":
 
     # --- SCRIPTS INITIALIZATION ---
     try:
-        from app.scripts_loader import initialize_scripts
+        from app.scripts_loader import initialize_scripts, prepare_scripts
 
-        # CLI synchronization must remain completely non-GUI.
         if cli_mode:
+            # CLI/headless mode keeps synchronous synchronization semantics.
             initialize_scripts()
-
         else:
-            from app import git_scripts_manager
-
-            # Only show the dialog if clone/pull will actually occur.
-            if git_scripts_manager.will_perform_git_operation():
-                import threading
-
-                from app.gtk_common import GLib
-                from app.gtk_dialogs import WaitDialog
-                from app.lang_utils import create_translator
-
-                _ = create_translator()
-
-                dialog = WaitDialog(None, _("scripts_init_updating"))
-                dialog.start()
-
-                # The normal application GTK loop has not started yet, so run
-                # a temporary loop while the repository sync occurs.
-                loop = GLib.MainLoop()
-                sync_error = []
-
-                def initialize_scripts_thread():
-                    try:
-                        initialize_scripts()
-                    except Exception as exc:
-                        sync_error.append(exc)
-                    finally:
-                        GLib.idle_add(loop.quit)
-
-                threading.Thread(
-                    target=initialize_scripts_thread,
-                    daemon=True,
-                ).start()
-
-                loop.run()
-                dialog.stop()
-
-                if sync_error:
-                    raise sync_error[0]
-
-            else:
-                # Timestamp is still valid. initialize_scripts() is still
-                # required so CACHE_DIR is configured correctly, but it will
-                # use the cached repository without doing network I/O.
-                initialize_scripts()
+            # GUI startup must never wait for network or git. AppWindow starts
+            # repository synchronization after the GTK application is running.
+            prepare_scripts()
 
     except ImportError:
         pass

@@ -4,6 +4,7 @@
 # description: tacw_desc
 # icon: tacwriter.svg
 # repo: https://github.com/narayanls/tac-writer
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

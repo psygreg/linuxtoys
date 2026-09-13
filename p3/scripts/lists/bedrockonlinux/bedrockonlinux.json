@@ -1,0 +1,12 @@
+[  
+    {
+        "name": "BedrockOnLinux",
+        "description": "Minecraft Bedrock for Windows, running on Linux, with real Xbox sign-in, Friends, servers and Realms.",
+        "description_tag": "mcbe_desc",
+        "repo": "https://github.com/Wyze3306/BedrockOnLinux",
+        "category": "game",
+        "icon": "minecraft.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/"
+    }
+]

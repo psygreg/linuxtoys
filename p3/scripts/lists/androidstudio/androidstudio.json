@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Android Studio",
+        "description": "IDE and toolkit for Android development.",
+        "developer": "Google",
+        "description_tag": "droidstd_desc",
+        "repo": "https://developer.android.com/studio",
+        "category": "ides",
+        "icon": "android-studio.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "url", 
+        "urls": {
+            "tar": {
+                "env": "URL"
+            }
+        },
+        "overrides": {
+            "pre": {
+                "script": "./android-pre.sh"
+            },
+            "post": "desktop_shortcut \"$LINUXTOYS_TARBALL_DIR/bin/studio\" && path_link \"$LINUXTOYS_TARBALL_DIR/bin/studio\" --useappid"
+        },
+        "os": [ "arch", "cachy", "fedora", "ostree", "rhel", "ubuntu", "debian" ]
+    }
+]

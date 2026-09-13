@@ -5,7 +5,8 @@ sysdetect() {
 }
 sysdetect_once() { [[ -n ${ID:-} ]] || sysdetect; }
 
-is_arch() { sysdetect_once && [[ ("$ID" =~ arch || "$ID" == "artix" || "$ID_LIKE" =~ arch) && "$ID" != "cachyos" ]]; }
+is_steamos() { sysdetect_once && [[ "$ID" == "steamos" ]]; }
+is_arch() { sysdetect_once && [[ ("$ID" =~ arch || "$ID" == "artix" || "$ID_LIKE" =~ arch) && "$ID" != "cachyos" && "$ID" != "steamos" ]]; }
 is_cachy() { sysdetect_once && [[ "$ID" == "cachyos" ]]; }
 is_fedora() { sysdetect_once && [[ "$ID" == "fedora" || ("$ID_LIKE" =~ "fedora" && "$ID" != "almalinux") ]] && [ ! -f /run/ostree-booted ]; }
 is_ostree() { sysdetect_once && [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null && [ -f /run/ostree-booted ]; }

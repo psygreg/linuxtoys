@@ -5,6 +5,7 @@
 # icon: brew.png
 # repo: https://brew.sh/
 # revert: no
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

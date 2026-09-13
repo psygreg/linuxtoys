@@ -6,7 +6,7 @@
 # nocontainer
 # repo: https://github.com/rfjakob/earlyoom
 # optimized-only: yes
-# compat: !solus, !fedora, !ostree, !ublue, !ubuntu
+# compat: !solus, !fedora, !ostree, !ublue, !ubuntu, !steamos
 # systemd: yes
 
 # --- Start of the script code ---

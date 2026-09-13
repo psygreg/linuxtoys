@@ -6,8 +6,16 @@ import os
 # Include features here while they should display the "New" marker.
 # Supports both normal LinuxToys scripts and repository-list entries.
 NEW_FEATURES = {
-    # "example",
+    "Amethyst Mod Manager",
+    "OpenBoardView",
+    "Hardinfo2",
+    "Zotero",
+    "Texmaker",
+    "ZenNotes",
+    "Save Desktop",
+    "Thunderbird"
 }
+_NEW_FEATURE_NAMES = frozenset(item.casefold() for item in NEW_FEATURES)
 
 
 def is_new_script(script_path):
@@ -41,7 +49,4 @@ def is_new_name(name):
         return False
 
     normalized = str(name).strip().casefold()
-    return normalized in {
-        item.casefold()
-        for item in NEW_FEATURES
-    }
+    return normalized in _NEW_FEATURE_NAMES

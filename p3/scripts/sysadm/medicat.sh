@@ -6,6 +6,7 @@
 # nocontainer
 # revert: no
 # new
+# compat: !steamos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

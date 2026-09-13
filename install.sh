@@ -119,6 +119,82 @@ osarch() {
     fi
 }
 
+ossteamos() {
+	local _appimage_dir _appimage_file _flatpak_scope _output
+
+	[ -n "${_appimage:-}" ] || error "No AppImage was found in the latest LinuxToys release."
+	[ -n "${_appimage_name:-}" ] || error "Could not determine the LinuxToys AppImage filename."
+
+	if ! command -v flatpak >/dev/null 2>&1; then
+		error "Flatpak is required to install LinuxToys on SteamOS."
+	fi
+
+	# Prefer the user's existing Flathub setup. If Flathub exists only system-wide,
+	# use that scope instead, matching LinuxToys' normal Flatpak behavior.
+	_flatpak_scope="--user"
+	if flatpak remote-list --user --columns=name 2>/dev/null | grep -qx flathub; then
+		:
+	elif flatpak remote-list --system --columns=name 2>/dev/null | grep -qx flathub; then
+		_flatpak_scope="--system"
+	else
+		flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo ||
+			error "Failed to configure Flathub."
+	fi
+
+	if ! flatpak info "${_flatpak_scope}" it.mijorus.gearlever >/dev/null 2>&1; then
+		if [ "${_flatpak_scope}" = "--system" ]; then
+			sudo flatpak install --system -y flathub it.mijorus.gearlever ||
+				error "Failed to install Gear Lever."
+		else
+			flatpak install --user -y flathub it.mijorus.gearlever ||
+				error "Failed to install Gear Lever."
+		fi
+	fi
+
+	_appimage_dir=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-appimage.XXXXXX") ||
+		error "Failed to create temporary AppImage directory."
+	trap 'rm -rf -- "${_appimage_dir}"' EXIT
+	_appimage_file="${_appimage_dir}/${_appimage_name}"
+
+	printf "\e[0;36m[INFO]\e[m Downloading LinuxToys AppImage...\n"
+	curl -fL --retry 3 "${_appimage}" -o "${_appimage_file}" ||
+		error "Failed to download: ${_appimage_name}"
+	chmod +x "${_appimage_file}" || error "Failed to make the AppImage executable."
+	mkdir -p "${HOME}/AppImages" || error "Failed to create ${HOME}/AppImages."
+
+	# Gear Lever's update/replace flow has proven unreliable for LinuxToys.
+	# Remove an existing integrated LinuxToys AppImage first, mirroring
+	# pkg_appimage_rm's systemd behavior, then perform a clean integration.
+	local -a _installed_appimages=()
+	local _installed_appimage
+	while IFS= read -r _installed_appimage; do
+		[ -n "${_installed_appimage}" ] && _installed_appimages+=("${_installed_appimage}")
+	done < <(find "${HOME}/AppImages" -maxdepth 1 -type f -iname 'linuxtoys*.AppImage' -printf '%f\n' 2>/dev/null)
+
+	if [ "${#_installed_appimages[@]}" -gt 1 ]; then
+		error "Multiple LinuxToys AppImages were found in ${HOME}/AppImages; refusing to choose one automatically."
+	elif [ "${#_installed_appimages[@]}" -eq 1 ]; then
+		_installed_appimage="${_installed_appimages[0]}"
+		printf "\e[0;36m[INFO]\e[m Removing existing LinuxToys AppImage...\n"
+		(
+			cd "${HOME}/AppImages" || exit 1
+			echo "y" | flatpak run it.mijorus.gearlever --remove "${_installed_appimage}"
+		) || error "Failed to remove existing LinuxToys AppImage: ${_installed_appimage}"
+
+		if [ -e "${HOME}/AppImages/${_installed_appimage}" ] || [ -L "${HOME}/AppImages/${_installed_appimage}" ]; then
+			error "Existing LinuxToys AppImage is still present after Gear Lever removal."
+		fi
+	fi
+
+	printf "\e[0;36m[INFO]\e[m Integrating LinuxToys with Gear Lever...\n"
+	_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${_appimage_file}" 2>&1) || {
+		printf '%s\n' "${_output}"
+		error "Failed to integrate LinuxToys AppImage with Gear Lever."
+	}
+
+	info "LinuxToys installed or updated!"
+}
+
 ossolus() {
 	if curl -fsSL "${_eopkg}" -o "/tmp/${_eopkg_name}"; then
 		if command -v eopkg >/dev/null 2>&1; then
@@ -136,33 +212,7 @@ ossolus() {
 }
 
 manjaro() {
-    _pkg_dir="$HOME/.cache/linuxtoys/install/"
-	trap 'rm -rf -- "${_pkg_dir}"' EXIT
-    if pacman -Qi linuxtoys-bin &>/dev/null; then
-        sudo pamac remove --no-confirm linuxtoys-bin ||
-            error "Failed to remove existing linuxtoys-bin package."
-    fi
-    { pacman -Qi debugedit &>/dev/null || sudo pamac install --no-confirm debugedit; } ||
-        error "Failed to install makepkg dependency debugedit"
-    { pacman -Qi fakeroot &>/dev/null || sudo pamac install --no-confirm fakeroot; } ||
-        error "Failed to install makepkg dependency fakeroot"
-    rm -rf "${_pkg_dir}"
-    mkdir -p "${_pkg_dir}"
-
-    if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
-        cd "${_pkg_dir}" || error "Failed to enter build directory."
-		if makepkg -s -f; then
-			if sudo pacman -U --noconfirm "${_pkg_dir}linuxtoys-${_tag_name}-1-$(uname -m).pkg.tar.zst"; then
-                info "LinuxToys installed or updated!"
-            else
-                error "Installation failed (pacman)."
-            fi
-        else
-            error "Build failed (makepkg)."
-        fi
-    else
-        error "Failed to download: ${_pkg_name}"
-    fi
+    { pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
 }
 
 installer() {
@@ -181,6 +231,9 @@ installer() {
 	fi
 
 	_tag_name=$(echo "${_api}" | grep -Pio '"tag_name":\s*"\K[^"]+')
+
+	_appimage=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.AppImage' | head -n1)
+	_appimage_name=$(basename "${_appimage}")
 
 	_rpm=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.rpm')
 	_rpm_name=$(basename "${_rpm}")
@@ -210,6 +263,7 @@ installer() {
 		fedora|rhel|centos|rocky|almalinux) osrpm ;;
 		suse|opensuse) ossuse ;;
 		manjaro|biglinux|bigcommunity) manjaro;;
+		steamos) ossteamos ;;
 		arch|cachyos|artix) osarch ;;
 		solus) ossolus ;;
 	esac
@@ -219,7 +273,13 @@ installer() {
 		*rhel*|*fedora*) osrpm ;;
 		*manjaro*) manjaro ;;
 		*suse*) ossuse ;;
-		*arch*) osarch;;
+		*arch*)
+			if [ "${ID:-}" = "steamos" ]; then
+				ossteamos
+			else
+				osarch
+			fi
+			;;
 	esac
 
 	error "Unsupported operating system."

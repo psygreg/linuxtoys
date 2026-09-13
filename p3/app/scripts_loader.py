@@ -1,29 +1,20 @@
 #!/usr/bin/env python3
-"""
-Scripts Loader Module
+"""Scripts source initialization helpers."""
 
-This module is called during app initialization to handle script repository
-synchronization via git with automatic fallback to bundled scripts.
-
-It should be imported as early as possible in the app startup process.
-"""
-
-import os
 import logging
-from .git_scripts_manager import get_scripts_dir, get_git_scripts_status, will_perform_git_operation
-from .lang_utils import load_translations
+import os
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(name)s - %(levelname)s - %(message)s'
+from .git_scripts_manager import (
+    get_available_scripts_dir,
+    get_git_scripts_status,
+    get_scripts_dir,
 )
+
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
 class _GitSyncLogFilter(logging.Filter):
-    """Allow repository synchronization output only when explicitly requested."""
-
     def filter(self, record):
         return "LT_DEBUG" in os.environ
 
@@ -32,61 +23,30 @@ _git_sync_log_filter = _GitSyncLogFilter()
 logger.addFilter(_git_sync_log_filter)
 logging.getLogger("app.git_scripts_manager").addFilter(_git_sync_log_filter)
 
+
+def prepare_scripts():
+    """Select the best immediately available source without synchronizing."""
+    scripts_dir = get_available_scripts_dir()
+    os.environ["CACHE_DIR"] = scripts_dir
+    return scripts_dir
+
+
 def initialize_scripts():
-    """
-    Initialize scripts repository synchronization.
-
-    This function should be called at app startup.
-
-    It will:
-    1. Synchronize scripts from git (with automatic fallback)
-    2. Set up the scripts directory
-    3. Set CACHE_DIR environment variable for launched scripts
-    4. Log the status
-
-    Returns:
-        str: Path to the scripts directory being used
-    """
+    """Synchronize scripts synchronously (used by CLI/headless modes)."""
     try:
         scripts_dir = get_scripts_dir()
-
-        # Set CACHE_DIR environment variable for scripts to use
-        os.environ['CACHE_DIR'] = scripts_dir
-
-        status = get_git_scripts_status()
-
+        os.environ["CACHE_DIR"] = scripts_dir
+        status = get_git_scripts_status(scripts_dir)
         if status["is_git_synced"]:
             logger.info("✓ Scripts synchronized from git repository")
-            if status["last_commit"]:
-                logger.debug(f"  Latest commit: {status['last_commit']}")
         else:
             logger.info("⊠ Using bundled scripts (git sync not available)")
-
-        logger.debug(f"  Scripts directory: {scripts_dir}")
-
         return scripts_dir
-
     except Exception as e:
         logger.error(f"Error initializing scripts: {e}")
-
-        fallback_scripts_dir = os.path.join(
-            os.path.dirname(__file__), '..', 'scripts'
-        )
-
-        os.environ['CACHE_DIR'] = fallback_scripts_dir
-        return fallback_scripts_dir
+        return prepare_scripts()
 
 
 def get_active_scripts_dir():
-    """
-    Get the currently active scripts directory.
-    
-    This can be called after initialization to determine which scripts
-    directory is being used (git-synced or bundled).
-    
-    Returns:
-        str: Path to the active scripts directory
-    """
-    from .git_scripts_manager import get_scripts_dir
-    return get_scripts_dir()
-
+    """Return the currently selected source without network/subprocess work."""
+    return get_available_scripts_dir()

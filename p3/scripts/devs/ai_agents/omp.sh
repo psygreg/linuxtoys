@@ -6,6 +6,7 @@
 # repo: https://github.com/can1357/oh-my-pi
 # noconfirm: yes
 # nocontainer
+# compat: !steamos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

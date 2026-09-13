@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Zed",
+        "description": "A minimal code editor crafted for speed and collaboration with humans and AI.",
+        "developer": "Zed Industries",
+        "description_tag": "zed_desc",
+        "repo": "https://github.com/zed-industries/zed",
+        "category": "ides",
+        "icon": "zed.png",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "tar",
+        "overrides": {
+            "post": "desktop_shortcut --class \"dev.zed.Zed\" \"$LINUXTOYS_TARBALL_DIR/bin/zed\" && path_link \"$LINUXTOYS_TARBALL_DIR/bin/zed\""
+        }
+    }
+]

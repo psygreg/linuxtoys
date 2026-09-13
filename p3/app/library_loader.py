@@ -113,6 +113,56 @@ def script_preamble(script_text, script_dir):
     return "\n".join(lines) + "\n"
 
 
+
+def script_environment(script_info, base_env=None):
+    """Return a child environment enriched with invocation-local app metadata."""
+    env = dict(os.environ if base_env is None else base_env)
+
+    name = str(script_info.get("name") or "unknown")
+    description = str(script_info.get("description") or "")
+    icon = str(script_info.get("icon") or "application-x-executable")
+
+    # Plain icon filenames always refer to LinuxToys' bundled app/icons directory.
+    # Repository-local icons are already resolved to absolute paths by repo_parser.
+    if (
+        icon != "application-x-executable"
+        and not os.path.isabs(icon)
+        and "/" not in icon
+    ):
+        icon_path = Path(env["SCRIPT_DIR"]) / "app" / "icons" / icon
+        if icon_path.is_file():
+            icon = str(icon_path.resolve())
+
+    identity = script_info.get("id") or script_info.get("script")
+    identity_path = str(
+        script_info.get("virtual_path")
+        or script_info.get("path")
+        or ""
+    )
+
+    if not identity and identity_path.startswith("repo://"):
+        identity = identity_path[len("repo://"):]
+    elif not identity and identity_path:
+        identity = Path(identity_path).stem
+
+    identity = str(identity or name).strip() or "application"
+
+    env["LINUXTOYS_SCRIPT_NAME"] = name
+    env["LINUXTOYS_APP_ID"] = identity
+    env["LINUXTOYS_APP_NAME"] = name
+    env["LINUXTOYS_APP_DESCRIPTION"] = description
+    env["LINUXTOYS_APP_ICON"] = icon
+
+    repo_app_id = script_info.get("repo_app_id")
+    if script_info.get("is_repo_entry") and repo_app_id:
+        env["LINUXTOYS_REPO_APP_ID"] = str(repo_app_id)
+        env["LINUXTOYS_REPO_URL"] = str(script_info.get("repo") or "")
+    else:
+        env.pop("LINUXTOYS_REPO_APP_ID", None)
+        env.pop("LINUXTOYS_REPO_URL", None)
+
+    return env
+
 def script_command(script_path, script_dir):
     """Build argv without interpolating the script path into shell code.
 
@@ -125,12 +175,43 @@ def script_command(script_path, script_dir):
             + 'source "$0" "$@"\n', script_path]
 
 
+def materialize_repo_by_app_id(app_id, script_dir):
+    """Resolve a compatible repository-list entry by repo_app_id."""
+    import sys
+
+    script_dir = os.path.abspath(script_dir)
+    if script_dir not in sys.path:
+        sys.path.insert(0, script_dir)
+
+    from app.repo_parser import load_repo_entries, materialize_repo_script
+
+    target = str(app_id or "").strip().upper()
+    if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", target):
+        return None
+
+    entries = load_repo_entries(os.path.join(script_dir, "scripts"), translations=None)
+    matches = [entry for entry in entries if entry.get("repo_app_id") == target]
+    if len(matches) != 1:
+        return None
+
+    return materialize_repo_script(matches[0])
+
+
 if __name__ == "__main__":
     # call_script uses this entry point for nested scripts. exec preserves the
     # child's exit status and lets the existing Bash caller manage transactions.
     import sys
 
+    if len(sys.argv) >= 3 and sys.argv[1] == "--materialize-repo":
+        entry = materialize_repo_by_app_id(sys.argv[2], os.environ["SCRIPT_DIR"])
+        if not entry:
+            sys.exit(3)
+        print(entry["path"])
+        print(entry.get("name", sys.argv[2]))
+        print(entry.get("repo", ""))
+        sys.exit(0)
+
     if len(sys.argv) < 2:
-        sys.exit("Usage: script_libraries.py SCRIPT [ARG ...]")
+        sys.exit("Usage: library_loader.py SCRIPT [ARG ...]")
     command = script_command(sys.argv[1], os.environ["SCRIPT_DIR"])
     os.execv(command[0], command + sys.argv[2:])

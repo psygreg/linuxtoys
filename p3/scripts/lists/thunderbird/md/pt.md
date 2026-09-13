@@ -1,0 +1,3 @@
+**Thunderbird** é um cliente gratuito e de código‑aberto para e‑mail, feed de notícias, chat e calendário, que é fácil de configurar e personalizar. 
+
+Um dos princípios fundamentais do *Thunderbird* é a utilização e promoção de padrões abertos — essa ênfase representa uma rejeição ao nosso mundo de plataformas fechadas e serviços que não conseguem se comunicar entre si. Queremos que nossos usuários tenham liberdade e escolha na forma como se comunicam.

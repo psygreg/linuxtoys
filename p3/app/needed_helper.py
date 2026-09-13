@@ -155,7 +155,7 @@ def show_needed_requirements_dialog(
     return response == Gtk.ResponseType.OK
 
 
-def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
+def show_run_confirmation_dialog(parent_window, translations, scripts_to_run, external_request=False):
     """
     Shows a confirmation dialog for running one or more scripts.
     
@@ -170,11 +170,18 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
     # Format title with script name if there's a single script
     if len(scripts_to_run) == 1:
         script_name = scripts_to_run[0].get('name', 'Script')
-        title = translations.get(
-            "script_runner_title", "Run {script_name}"
-        ).format(script_name=script_name)
+        if external_request:
+            title = translations.get(
+                "uri_install_title", "Install {script_name}"
+            ).format(script_name=script_name)
+        else:
+            title = translations.get(
+                "script_runner_title", "Run {script_name}"
+            ).format(script_name=script_name)
     else:
-        title = translations.get("script_runner_title", "Run Scripts")
+        title = translations.get(
+            "uri_install_title_multi", "Install requested features"
+        ) if external_request else translations.get("script_runner_title", "Run Scripts")
     
     dialog = Gtk.Dialog(
         title=title,
@@ -189,7 +196,10 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
         translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
     )
     dialog.add_button(
-        translations.get("term_view_execute", "Execute"), Gtk.ResponseType.OK
+        translations.get("uri_install_btn", "Install")
+        if external_request
+        else translations.get("term_view_execute", "Execute"),
+        Gtk.ResponseType.OK,
     )
 
     # Set focus to the "Execute" button
@@ -202,6 +212,20 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run):
     content_area.set_margin_end(20)
     content_area.set_margin_top(20)
     content_area.set_margin_bottom(20)
+
+    if external_request:
+        request_label = Gtk.Label()
+        request_label.set_text(
+            translations.get(
+                "uri_install_request_message",
+                "A website requested that LinuxToys install this feature. Review it before continuing.",
+            )
+        )
+        request_label.set_line_wrap(True)
+        request_label.set_max_width_chars(50)
+        request_label.set_halign(Gtk.Align.START)
+        request_label.set_justify(Gtk.Justification.LEFT)
+        content_area.pack_start(request_label, False, False, 0)
 
     # Create scrolled window for scripts list
     scrolled_window = Gtk.ScrolledWindow()

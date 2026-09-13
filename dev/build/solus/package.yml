@@ -62,7 +62,6 @@ install    : |
         cp -r --preserve=mode files/app $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -r --preserve=mode files/libs $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -r --preserve=mode files/scripts $installdir/usr/share/linuxtoys/ 2>/dev/null || true
-        cp -r --preserve=mode files/helpers $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -f --preserve=mode files/linuxtoys.py $installdir/usr/share/linuxtoys/ 2>/dev/null || true
         cp -f --preserve=mode files/requirements.txt $installdir/usr/share/linuxtoys/ 2>/dev/null || true
     elif [ -d "p3" ]; then

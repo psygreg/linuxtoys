@@ -6,6 +6,7 @@
 # localize: pt
 # repo: https://github.com/pedrohqb/distrobox-adv-br
 # systemd: yes
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

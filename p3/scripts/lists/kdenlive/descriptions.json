@@ -1,0 +1,11 @@
+{
+    "description_long_tag": "kdenlive_long",
+
+    "en": {
+        "kdenlive_long": "Kdenlive is a community project which aims to deliver a free and open source video editing software application to allow everybody to produce high quality content in order to increase the democratization of the media. The application has a graphical user interface written in C++ with Qt and uses KDE libraries for the MLT framework written by Dan Dennedy, which relies on FFmpeg to decode and encode almost all the video and audio formats that are available today, and which hosts effects libraries like Frei0r and Movit for video, and LADSPA and SOX for audio."
+    },
+
+    "pt": {
+        "kdenlive_long": "O Kdenlive é um projeto comunitário que visa fornecer um aplicativo de edição de vídeo gratuito e de código aberto para permitir que todos produzam conteúdo de alta qualidade, a fim de aumentar a democratização da mídia. O aplicativo possui uma interface gráfica de usuário escrita em C++ com Qt e utiliza bibliotecas do KDE para o framework MLT escrito por Dan Dennedy, que utiliza o FFmpeg para decodificar e codificar quase todos os formatos de vídeo e áudio disponíveis atualmente e hospeda bibliotecas de efeitos como Frei0r e Movit para vídeo, e LADSPA e SOX para áudio."
+    }
+}

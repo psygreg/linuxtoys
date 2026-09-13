@@ -4,6 +4,7 @@
 # description: oprgb_desc
 # icon: openrgb.svg
 # repo: https://openrgb.org
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

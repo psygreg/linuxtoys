@@ -1,6 +1,6 @@
 import os
 
-from .gtk_common import Gdk, Gtk, GdkPixbuf
+from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
 from . import get_icon_path, compat, revert_helper
 
 class ItemWidgetFactory:
@@ -59,7 +59,71 @@ class ItemWidgetFactory:
         if isinstance(flowbox, Gtk.FlowBox):
             flowbox.select_child(flowbox_child)
         return False
-    
+
+    def animate_item_batch(
+        self,
+        widgets,
+        *,
+        duration_ms: int = 120,
+        stagger_ms: int = 9,
+        delay_ms: int = 0,
+    ):
+        """Fade cards through one shared frame-paced animation scheduler.
+
+        New batches join the same 16 ms GTK timeout instead of creating an
+        overlapping timeout for every population batch. This keeps animation
+        work bounded even while a large category is still being populated.
+        """
+        widgets = [widget for widget in widgets if widget is not None]
+        if not widgets:
+            return
+
+        duration_us = max(1, int(duration_ms)) * 1000
+        stagger_us = max(0, int(stagger_ms)) * 1000
+        start_us = GLib.get_monotonic_time() + max(0, int(delay_ms)) * 1000
+
+        animations = getattr(self, "_item_fade_animations", None)
+        if animations is None:
+            animations = []
+            self._item_fade_animations = animations
+
+        for index, widget in enumerate(widgets):
+            try:
+                widget.set_opacity(0.0)
+            except (RuntimeError, AttributeError):
+                continue
+            animations.append(
+                [widget, start_us + index * stagger_us, duration_us]
+            )
+
+        if not animations or getattr(self, "_item_fade_timer_id", None):
+            return
+
+        def tick():
+            now_us = GLib.get_monotonic_time()
+            active = []
+
+            for widget, widget_start_us, widget_duration_us in animations:
+                progress = (now_us - widget_start_us) / widget_duration_us
+                progress = max(0.0, min(1.0, progress))
+                opacity = 1.0 - (1.0 - progress) ** 3
+                try:
+                    widget.set_opacity(opacity)
+                except (RuntimeError, AttributeError):
+                    continue
+
+                if progress < 1.0:
+                    active.append([widget, widget_start_us, widget_duration_us])
+
+            animations[:] = active
+            if animations:
+                return True
+
+            self._item_fade_timer_id = None
+            return False
+
+        self._item_fade_timer_id = GLib.timeout_add(16, tick)
+
     def create_item_widget(self, item_info, checklist: bool = False, allow_drag: bool = False,):
         import os
 
@@ -87,14 +151,15 @@ class ItemWidgetFactory:
             remove_btn.get_style_context().add_class("destructive-action")
             remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
             box.pack_start(remove_btn, False, False, 0)
-        else:
-            left_pad = Gtk.Label()
-            left_pad.set_size_request(10, 1)
-            box.pack_start(left_pad, False, False, 0)
-
         display_name = item_info["name"]
 
         label = Gtk.Label(label=display_name)
+        if not is_removable_script and not checklist:
+            # Preserve the old spacer + box-spacing offset without allocating
+            # a throwaway Gtk.Label for normal non-checklist cards. In checklist
+            # mode the offset belongs on the checkbox, which is the first visible
+            # child after the omitted spacer.
+            label.set_margin_start(22)
         label.set_line_wrap(True)
         label.set_justify(Gtk.Justification.CENTER)
         label.set_halign(Gtk.Align.CENTER)
@@ -115,6 +180,11 @@ class ItemWidgetFactory:
             check.script_info = item_info
             # Make checkbox non-focusable so it doesn't interfere with keyboard navigation
             check.set_can_focus(False)
+            if not is_removable_script:
+                # The original layout had a 10 px spacer widget before the checkbox
+                # plus the Gtk.Box's 12 px spacing. Preserve that geometry without
+                # allocating a dummy widget for every normal checklist card.
+                check.set_margin_start(22)
             box.pack_start(check, False, False, 0)
 
         if (
@@ -149,13 +219,13 @@ class ItemWidgetFactory:
             if icon_path and os.path.exists(icon_path):
                 if icon_path.endswith(".svg") or icon_path.endswith(".png"):
                     # For SVG files, load as pixbuf with specific size
-                    try:
-                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                            icon_path, icon_size, icon_size, True
-                        )
+                    pixbuf = load_scaled_pixbuf(
+                        icon_path, icon_size, icon_size, True
+                    )
+                    if pixbuf is not None:
                         icon_widget = Gtk.Image.new_from_pixbuf(pixbuf)
-                    except Exception:
-                        # Fallback to default icon if SVG loading fails
+                    else:
+                        # Fallback to default icon if file loading fails.
                         icon_widget = Gtk.Image.new_from_icon_name(
                             "application-x-executable", Gtk.IconSize.DIALOG
                         )
@@ -175,24 +245,25 @@ class ItemWidgetFactory:
         icon_widget.set_halign(Gtk.Align.END)
         icon_widget.set_valign(Gtk.Align.CENTER)
 
-        icon_container = Gtk.Overlay()
-        icon_container.set_size_request(icon_size, icon_size)
-        icon_container.set_halign(Gtk.Align.END)
-        icon_container.set_valign(Gtk.Align.CENTER)
-        icon_container.add(icon_widget)
-
         if item_info.get("is_verified", False):
-            verified_path = get_icon_path("verified.svg")
+            # Only verified cards need an overlay; normal cards can pack their
+            # icon directly and avoid one GTK container per item.
+            icon_container = Gtk.Overlay()
+            icon_container.set_size_request(icon_size, icon_size)
+            icon_container.set_halign(Gtk.Align.END)
+            icon_container.set_valign(Gtk.Align.CENTER)
+            icon_container.add(icon_widget)
 
-            if verified_path and os.path.exists(verified_path):
-                try:
-                    badge_size = 16
-                    badge_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                        verified_path,
-                        badge_size,
-                        badge_size,
-                        True,
+            verified_path = get_icon_path("verified.svg")
+            if verified_path:
+                badge_size = 16
+                badge_pixbuf = load_scaled_pixbuf(
+                    verified_path,
+                    badge_size,
+                    badge_size,
+                    True,
                 )
+                if badge_pixbuf is not None:
                     verified_badge = Gtk.Image.new_from_pixbuf(badge_pixbuf)
                     verified_badge.set_halign(Gtk.Align.END)
                     verified_badge.set_valign(Gtk.Align.START)
@@ -200,14 +271,13 @@ class ItemWidgetFactory:
                         self.translations.get(
                             "verified_badge",
                             "First-party LinuxToys support",
+                        )
                     )
-                )
-
                     icon_container.add_overlay(verified_badge)
-                except Exception:
-                    pass
 
-        box.pack_start(icon_container, False, False, 20)
+            box.pack_start(icon_container, False, False, 20)
+        else:
+            box.pack_start(icon_widget, False, False, 20)
 
         event_box = Gtk.EventBox()
         event_box.add(box)
@@ -243,6 +313,10 @@ class ItemWidgetFactory:
             event_box.connect("drag-data-get", self.on_drag_data_get)
             event_box.connect("drag-end", self.on_drag_end)
 
+        # Gtk.EventBox does not reliably expose :hover state to GTK3 CSS, so
+        # keep the lightweight explicit class toggle used by the original UI.
+        # This restores the standard card hover effect without affecting the
+        # removal button's own hover styling.
         event_box.connect("enter-notify-event", self.on_item_enter)
         event_box.connect("leave-notify-event", self.on_item_leave)
         event_box.connect("button-press-event", self.on_item_button_press)

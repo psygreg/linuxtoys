@@ -1,0 +1,20 @@
+[  
+    {
+        "name": "Sloth-Bash",
+        "description": "A bash library that makes terminal usage more friendly and practical for headless systems, developers and enthusiasts alike.",
+        "description_tag": "sloth_desc",
+        "repo": "https://github.com/psygreg/sloth-bash",
+        "category": "sysadm",
+        "icon": "sloth.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "native",
+        "package-name": "fzf",
+        "overrides": {
+            "pre": {
+                "script": "./slothbash-pre.sh"
+            }
+        },
+        "donate": "https://ko-fi.com/psygreg"
+    }
+]

@@ -4,6 +4,7 @@
 # description: pyenv_desc
 # icon: python.svg
 # repo: https://github.com/pyenv
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

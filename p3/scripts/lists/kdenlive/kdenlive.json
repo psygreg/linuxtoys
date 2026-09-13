@@ -1,0 +1,24 @@
+[
+    {
+        "name": "Kdenlive",
+        "developer": "KDE Project",
+        "description_tag": "kdenlive_desc",
+        "repo": "https://kdenlive.org",
+        "category": "office",
+        "icon": "kdenlive.svg",
+        "type": "url",
+        "urls": {
+            "appimage": {
+                "env": "URL"
+            }
+        },
+        "overrides": {
+            "pre": {
+                "script": "./kdenlive-pre.sh"
+            }
+        },
+        "descriptions": "descriptions.json",
+        "donate": "https://kdenlive.org/fund",
+        "screenshots": "screenshots/"
+    }
+]

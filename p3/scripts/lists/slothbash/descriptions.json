@@ -1,0 +1,12 @@
+{
+    "long-description": "md/en.md",
+    "description_long_tag": "sloth_long",
+
+    "en": {
+        "sloth_long": "md/en.md"
+    },
+
+    "pt": {
+        "sloth_long": "md/pt.md"
+    }
+}

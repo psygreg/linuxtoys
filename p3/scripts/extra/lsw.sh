@@ -5,17 +5,20 @@
 # icon: lsw.svg
 # reboot: yes
 # nocontainer
-# compat: !ublue
+# compat: !ublue, !steamos
 # repo: https://github.com/TibixDev/winboat
 # systemd: yes
+# wsl: no
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 get_winboat () { # gets latest release
-    local tag=$(curl -s "https://api.github.com/repos/winboat-org/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-    [ -z ${tag} ] && { fatal "It was not possible to obtain the latest available version of Winboat."; exit 1;}
-    local ver="${tag#v}"
+    { is_arch || is_cachy; } || {
+        local tag=$(curl -s "https://api.github.com/repos/winboat-org/winboat/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
+        [ -z ${tag} ] && { fatal "It was not possible to obtain the latest available version of Winboat."; exit 1;}
+        local ver="${tag#v}"
+    }
     if is_debian || is_ubuntu; then
         if dpkg -s "winboat" &> /dev/null; then
             local hostver="$(dpkg -s winboat | grep -i Version | awk '{print $2}')"
@@ -52,32 +55,30 @@ get_winboat () { # gets latest release
         pkg_install winboat-bin
     fi
 }
-# runtime
-prep_tmp_noram
-sleep 1
-{
-    echo "$msg209"
-    echo "$msg210"
-    echo "$msg211"
-    echo "$msg212"
-    echo "$msg213"
-    echo "$msg214"
-    echo "$msg215"
-    echo "$msg216"
-} > txtbox
 
-zenity --text-info \
-    --title="LSW" \
-    --filename=txtbox \
-    --checkbox="$msg276" \
-    --width=400 --height=360
-    
 if [ -e /dev/kvm ]; then
-    if zenity --question --title "LSW" --text "$msg217" --height=300 --width=300; then
+    # warning box
+    prep_tmp_noram
+    {
+        echo "$msg209"
+        echo "$msg210"
+        echo "$msg211"
+        echo "$msg212"
+        echo "$msg213"
+        echo "$msg214"
+        echo "$msg215"
+        echo "$msg216"
+    } > txtbox
+
+    zenity --text-info \
+        --title="LSW" \
+        --filename=txtbox \
+        --checkbox="$msg276" \
+        --width=400 --height=360
+
+    if question "LSW" "$msg217"; then
         if ! which winboat &> /dev/null; then
-            mkdir -p lsw
-            cd lsw || exit 1
-            sudo_rq
+            askpass
             # stage 1: docker
             call_script docker
             # stage 2: freeRDP
@@ -92,17 +93,15 @@ if [ -e /dev/kvm ]; then
             # get latest winboat release
             get_winboat
             # request reboot for iptables module to load
-            zeninf "$msg036"
+            info "$msg036"
         else # update
-            mkdir -p lsw
-            cd lsw || exit 1
-            sudo_rq
+            askpass
             get_winboat
-            zeninf "$msg036"
+            info "$msg036"
         fi
     else
         exit 100
     fi
 else
-    fatal "$msg293"
+    die "$msg293"
 fi

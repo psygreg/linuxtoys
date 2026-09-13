@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import threading
+import sys
 
 from . import (
     action_registry,
@@ -20,7 +21,8 @@ from . import (
     revealer,
     search_helper,
     skills_view,
-    repo_parser
+    repo_parser,
+    git_scripts_manager
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
 from .window_items import ItemWidgetFactory
@@ -29,7 +31,8 @@ from .window_nav import NavCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
 from .updater.update_dialog import UpdateDialog
-from .updater.update_helper import UpdateHelper
+from .updater.update_helper import UpdateHelper, run_background_update
+from .lang_utils import get_automatic_updates, create_translator
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +50,7 @@ class AppWindow(
         self.translations = translations
 
         self.set_title("LinuxToys")
-        self.set_default_size(800, 600)  ##
+        self.set_default_size(920, 800)  ##
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # Set window icon for proper GNOME integration
@@ -57,7 +60,11 @@ class AppWindow(
         self.reboot_required = False  # Track if a reboot is required
         self.current_category_info = None  # Track current category for header updates
         self.navigation_stack = []  # Stack to track navigation history for proper back button behavior
+        # Fully-built parent category views retained while navigating deeper.
+        # NavCtl consumes these on Back instead of reconstructing FlowBoxes.
+        self._category_view_cache = {}
         self.view_counter = 0  # Counter for unique view names
+        self._scripts_sync_started = False
 
         # Initialize search functionality with cache
         self.script_cache = search_helper.ScriptCache()
@@ -79,12 +86,21 @@ class AppWindow(
         self.should_start_random_timer = False  # Flag to start timer when scripts are ready
         self._featured_resize_timer = None
         self._featured_last_count = None
+        self._featured_swap_timer = None
+        self._featured_hovered = False
+        self.featured_scripts_revealer = None
+        self.random_scripts_revealer = None
 
         # Checklist
         self.check_buttons = []
 
         # Auto error reporting preference
         self.auto_error_reports_enabled = False
+
+        # Automatic self-update state. Missing preferences intentionally default on.
+        self.automatic_updates_enabled = get_automatic_updates()
+        self._background_update_started = False
+        self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -130,6 +146,15 @@ class AppWindow(
         )
         self.header_bar.pack_end(self.menu_button)
 
+        # Automatic update status indicator, shown only while automatic updates
+        # are enabled (or while an installed update is waiting for restart).
+        self.update_indicator = Gtk.Button()
+        self.update_indicator.set_relief(Gtk.ReliefStyle.NONE)
+        self.update_indicator.get_style_context().add_class("update-indicator")
+        self.update_indicator.connect("clicked", self._on_update_indicator_clicked)
+        self.header_bar.pack_end(self.update_indicator)
+        self._set_update_state(self._update_state)
+
         self.main_stack = Gtk.Stack()
         self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
         self.main_stack.set_transition_duration(
@@ -143,7 +168,15 @@ class AppWindow(
         self.categories_flowbox = self.create_flowbox()
         categories_container.pack_start(self.categories_flowbox, False, False, 0)
         
-        # Create separator and featured scripts section
+        # Create separator and featured scripts section. The outer revealer animates
+        # the section's first appearance; the inner revealer cross-fades card swaps.
+        self.featured_scripts_revealer = Gtk.Revealer()
+        self.featured_scripts_revealer.set_transition_type(
+            Gtk.RevealerTransitionType.SLIDE_DOWN
+        )
+        self.featured_scripts_revealer.set_transition_duration(220)
+        self.featured_scripts_revealer.set_reveal_child(False)
+
         self.featured_scripts_container = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL, spacing=12
         )
@@ -184,10 +217,21 @@ class AppWindow(
         self.random_scripts_flowbox.set_column_spacing(16)
         self.random_scripts_flowbox.set_row_spacing(12)
         
-        self.featured_scripts_container.pack_start(self.random_scripts_flowbox, False, False, 0)
-        
-        categories_container.pack_start(self.featured_scripts_container, False, False, 0)
-        self.featured_scripts_container.hide()
+        self.random_scripts_revealer = Gtk.Revealer()
+        self.random_scripts_revealer.set_transition_type(
+            Gtk.RevealerTransitionType.CROSSFADE
+        )
+        self.random_scripts_revealer.set_transition_duration(180)
+        self.random_scripts_revealer.set_reveal_child(False)
+        self.random_scripts_revealer.add(self.random_scripts_flowbox)
+        self.featured_scripts_container.pack_start(
+            self.random_scripts_revealer, False, False, 0
+        )
+
+        self.featured_scripts_revealer.add(self.featured_scripts_container)
+        categories_container.pack_start(
+            self.featured_scripts_revealer, False, False, 0
+        )
         
         self.categories_view = Gtk.ScrolledWindow()
         self.categories_view.add(categories_container)
@@ -208,8 +252,8 @@ class AppWindow(
         main_vbox.pack_start(self.reveal, False, False, 0)
 
         # --- Load Data and Connect Signals ---
-        self.load_categories()
-
+        # Categories are published by the progressive parser worker below. Avoid
+        # a synchronous parser.get_categories() pass on the GTK startup thread.
         self.back_button.connect("clicked", self.on_back_button_clicked)
 
         # --- Check for pending ostree deployments ---
@@ -238,14 +282,116 @@ class AppWindow(
 
         self._script_running = False
 
-        # Populate caches asynchronously to avoid blocking the UI
-        GLib.idle_add(self._populate_search_cache)
-        GLib.idle_add(self._populate_category_cache)
-        GLib.idle_add(self._populate_all_scripts)
+        # Build all parser-backed caches in one background pass.  Running three
+        # independent walkers here used to make them contend for the GIL and disk
+        # cache while parsing the same files repeatedly.
+        # Prioritize parser-backed startup data. Git synchronization begins as
+        # soon as top-level scripts (and therefore Featured Scripts) are ready.
+        GLib.idle_add(self._populate_runtime_caches)
         GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
+
+    def _populate_runtime_caches(self):
+        """Build parser caches while progressively publishing startup-ready data."""
+
+        category_cache = self.category_cache
+        script_cache = self.script_cache
+        translations = self.translations
+        git_sync_scheduled = False
+
+        def schedule_git_sync():
+            nonlocal git_sync_scheduled
+            if git_sync_scheduled:
+                return
+            git_sync_scheduled = True
+            GLib.idle_add(self._start_scripts_synchronization)
+
+        def collect_featured(categories, scripts_by_category):
+            featured = []
+            seen = set()
+            for category in categories:
+                if category.get("is_script"):
+                    continue
+                category_path = category.get("path", "")
+                if not category_path:
+                    continue
+                for item in scripts_by_category.get(os.path.abspath(category_path), ()):
+                    if not item.get("is_script") or item.get("is_create_script"):
+                        continue
+                    key = item.get("path") or (
+                        item.get("name", ""),
+                        item.get("repo", ""),
+                    )
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    featured.append(item)
+            return featured
+
+        def publish_bootstrap(categories, featured):
+            # GTK-side publication. Cache identity is our generation guard for
+            # script synchronization and language changes that replace the caches.
+            if self.category_cache is not category_cache:
+                return False
+
+            self._render_categories(categories)
+            self.all_scripts = featured
+            if self.should_start_random_timer and featured:
+                self._deferred_start_random_scripts_refresh_timer()
+            return False
+
+        def top_level_ready(categories, scripts_by_category):
+            # Runs in the parser worker. Only prepare immutable-ish Python snapshots
+            # here; all GTK work is handed back to the main loop.
+            if self.category_cache is not category_cache:
+                return
+
+            featured = collect_featured(categories, scripts_by_category)
+            GLib.idle_add(publish_bootstrap, categories, featured)
+
+            # Network/git work is lower startup priority than getting the first
+            # usable Featured pool ready, but need not wait for recursive caches.
+            schedule_git_sync()
+
+        def publish_full_featured(featured):
+            if self.category_cache is not category_cache:
+                return False
+            self.all_scripts = featured
+            if self.should_start_random_timer and featured:
+                self._deferred_start_random_scripts_refresh_timer()
+            return False
+
+        def populate_in_background():
+            try:
+                category_cache.populate(
+                    translations,
+                    top_level_ready=top_level_ready,
+                    top_level_ready_min_scripts=10,
+                )
+
+                # A scripts sync/language change may have swapped cache objects while
+                # this worker was parsing the previous source. Never publish stale data.
+                if self.category_cache is not category_cache:
+                    return
+
+                full_featured = collect_featured(
+                    category_cache.get_categories(),
+                    category_cache.scripts_by_category,
+                )
+                GLib.idle_add(publish_full_featured, full_featured)
+
+                script_cache.populate_from_category_cache(category_cache)
+            except Exception as e:
+                print(f"Error populating runtime caches: {e}")
+            finally:
+                # Do not suppress synchronization merely because one parser entry
+                # was malformed. _scripts_sync_started keeps this idempotent.
+                schedule_git_sync()
+
+        threading.Thread(target=populate_in_background, daemon=True).start()
+        return False
 
     def _populate_search_cache(self):
         """Populate the search cache in a background thread to avoid blocking the UI."""
@@ -286,6 +432,122 @@ class AppWindow(
         threading.Thread(target=populate_in_background, daemon=True).start()
         return False  # Remove from idle callbacks
 
+    def _start_scripts_synchronization(self):
+        """Synchronize remote scripts after the GTK window has started."""
+        if self._scripts_sync_started or dev_mode.is_dev_mode_enabled():
+            return False
+
+        self._scripts_sync_started = True
+
+        def synchronize_in_background():
+            try:
+                result = git_scripts_manager.synchronize_scripts()
+            except Exception as e:
+                logger.warning("Background scripts synchronization failed: %s", e)
+                return
+
+            new_root = result.get("path")
+            if not result.get("success") or not new_root or not os.path.isdir(new_root):
+                return
+
+            old_root = os.path.abspath(parser.SCRIPTS_DIR)
+            new_root = os.path.abspath(new_root)
+            source_changed = old_root != new_root
+
+            if source_changed or result.get("changed"):
+                GLib.idle_add(
+                    self._apply_synchronized_scripts,
+                    old_root,
+                    new_root,
+                )
+
+        threading.Thread(target=synchronize_in_background, daemon=True).start()
+        return False
+
+    @staticmethod
+    def _rebase_scripts_path(path, old_root, new_root):
+        """Move a scripts-tree path to the same relative location in a new root."""
+        if not path:
+            return path
+
+        try:
+            absolute_path = os.path.abspath(path)
+            if os.path.commonpath((absolute_path, old_root)) != old_root:
+                return path
+            relative = os.path.relpath(absolute_path, old_root)
+            return os.path.normpath(os.path.join(new_root, relative))
+        except (OSError, ValueError):
+            return path
+
+    def _rebase_category_info(self, category_info, old_root, new_root):
+        if not category_info:
+            return category_info
+        updated = dict(category_info)
+        updated["path"] = self._rebase_scripts_path(
+            updated.get("path", ""), old_root, new_root
+        )
+        return updated
+
+    def _apply_synchronized_scripts(self, old_root, new_root):
+        """Switch parser/cache/UI state to a successfully synchronized scripts tree."""
+        if self._script_running or self.main_stack.get_visible_child_name() == "app_page":
+            # Keep already-open execution/app-page objects tied to the source they
+            # were created from. Apply the new tree as soon as that view is idle.
+            GLib.timeout_add(500, self._apply_synchronized_scripts, old_root, new_root)
+            return False
+
+        source_changed = old_root != new_root
+
+        if source_changed:
+            self.current_category_info = self._rebase_category_info(
+                self.current_category_info, old_root, new_root
+            )
+            self.navigation_stack = [
+                self._rebase_category_info(item, old_root, new_root)
+                for item in self.navigation_stack
+            ]
+
+        # Retained GTK views reflect the old parser/cache state. Never carry
+        # them across a synchronized scripts-tree update.
+        self._discard_retained_category_views()
+
+        parser.set_scripts_dir(new_root)
+        os.environ["CACHE_DIR"] = new_root
+
+        # Replace cache instances instead of invalidating them in place. Any initial
+        # startup-population thread can then finish harmlessly on the old objects.
+        self.script_cache = search_helper.ScriptCache()
+        self.category_cache = search_helper.CategoryCache()
+        self.search_engine.set_cache(self.script_cache)
+        self.all_scripts = []
+
+        # Immediately rebuild the visible view directly from the new filesystem.
+        self.load_categories()
+        if self.current_category_info is not None:
+            fresh_info = self._get_fresh_category_info_with_translations()
+            if fresh_info:
+                self.current_category_info = fresh_info
+            self.load_scripts(self.current_category_info)
+            self._update_header(self.current_category_info)
+
+        # Repopulate all acceleration caches from the new source in one pass.
+        self._populate_runtime_caches()
+
+        # If a search is visible, rerun the query once the new search cache is ready.
+        if self.main_stack.get_visible_child_name() == "search":
+            query = self.search_entry.get_text()
+
+            def refresh_search_when_ready():
+                if not self.script_cache.is_populated:
+                    return True
+                if query and self.search_entry.get_text() == query:
+                    self.search_entry.emit("changed")
+                return False
+
+            GLib.timeout_add(100, refresh_search_when_ready)
+
+        return False
+
     def _start_file_watcher(self):
         """Start the file watcher (only active in DEV_MODE)."""
         if not dev_mode.is_dev_mode_enabled():
@@ -295,6 +557,11 @@ class AppWindow(
 
     def _on_files_changed(self, changed_files):
         """Handle file change notification from the watcher."""
+        # DEV_MODE may add/remove/rename scripts or categories in-place. Drop the
+        # structural parser index before rebuilding UI/search caches so those
+        # changes are visible immediately.
+        parser.clear_script_tree_cache()
+        self._discard_retained_category_views()
         self.script_cache.invalidate()
         self.category_cache.invalidate()
         self.all_scripts = []
@@ -308,13 +575,101 @@ class AppWindow(
             python = sys.executable
             os.execv(python, [python] + sys.argv)
 
+    def _tr_update(self, key, fallback):
+        """Translate an update UI string while translation catalogs catch up."""
+        value = create_translator()(key)
+        return fallback if value == key else value
+
+    def _set_update_state(self, state):
+        """Update the header indicator. Must only be called on the GTK thread."""
+        self._update_state = state
+        if not hasattr(self, "update_indicator"):
+            return False
+
+        context = self.update_indicator.get_style_context()
+        context.remove_class("suggested-action")
+        context.remove_class("update-restart-ready")
+        self.update_indicator.set_sensitive(False)
+
+        if state == "disabled":
+            self.update_indicator.hide()
+            return False
+
+        self.update_indicator.show()
+        if state == "checking":
+            image = Gtk.Image.new_from_icon_name("view-refresh-symbolic", Gtk.IconSize.BUTTON)
+            tooltip = self._tr_update("update_status_checking", "Checking for updates…")
+        elif state == "up-to-date":
+            image = Gtk.Image.new_from_icon_name("emblem-ok-symbolic", Gtk.IconSize.BUTTON)
+            tooltip = self._tr_update("update_status_up_to_date", "LinuxToys is up to date.")
+        elif state == "updating":
+            spinner = Gtk.Spinner()
+            spinner.start()
+            image = spinner
+            tooltip = self._tr_update("update_status_updating", "Updating LinuxToys…")
+        elif state == "restart-ready":
+            image = Gtk.Image.new_from_icon_name("software-update-available-symbolic", Gtk.IconSize.BUTTON)
+            tooltip = self._tr_update("update_status_restart", "Update installed. Restart LinuxToys.")
+            self.update_indicator.set_sensitive(True)
+            context.add_class("suggested-action")
+            context.add_class("update-restart-ready")
+        else:
+            image = Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.BUTTON)
+            tooltip = self._tr_update("update_status_failed", "Automatic update failed.")
+
+        self.update_indicator.set_image(image)
+        self.update_indicator.set_tooltip_text(tooltip)
+        self.update_indicator.show_all()
+        return False
+
+    def set_automatic_updates_enabled(self, enabled):
+        self.automatic_updates_enabled = bool(enabled)
+        if not enabled:
+            # Do not discard a completed update's restart affordance.
+            if self._update_state != "restart-ready":
+                self._set_update_state("disabled")
+            return
+
+        if self._update_state in ("disabled", "error"):
+            self._set_update_state("checking")
+            self._check_updates()
+
+    def _on_update_indicator_clicked(self, _button):
+        if self._update_state != "restart-ready":
+            return
+        os.execv(sys.executable, [sys.executable, *sys.argv])
+
     def _check_updates(self):
+        if self.automatic_updates_enabled:
+            self._set_update_state("checking")
         threading.Thread(target=self._show_dialog_and_update, daemon=True).start()
+        return False
 
     def _show_dialog_and_update(self):
         self._check = UpdateHelper()
-        if self._check._update_available():
+        available = self._check._update_available()
+
+        if not available:
+            if self.automatic_updates_enabled:
+                GLib.idle_add(self._set_update_state, "up-to-date")
+            return
+
+        if not self.automatic_updates_enabled:
             GLib.idle_add(self._open_update_dialog, self._check._latest_ver)
+            return
+
+        if self._background_update_started:
+            return
+        self._background_update_started = True
+        GLib.idle_add(self._set_update_state, "updating")
+        success, error = run_background_update()
+        if success:
+            GLib.idle_add(self._set_update_state, "restart-ready")
+        else:
+            self._background_update_started = False
+            if error:
+                logger.warning("Automatic LinuxToys update failed: %s", error)
+            GLib.idle_add(self._set_update_state, "error")
 
     def _open_update_dialog(self, latest_ver):
         UpdateDialog(latest_ver, self).show()
@@ -335,7 +690,18 @@ class AppWindow(
     def _on_key_press(self, widget, event):
         keyval = event.keyval
 
-        if self.main_stack.get_visible_child_name() == "running_scripts":
+        current_view = self.main_stack.get_visible_child_name()
+        if current_view == "app_page":
+            page = self.main_stack.get_child_by_name("app_page")
+            if keyval == Gdk.KEY_Escape:
+                self.on_back_button_clicked(None)
+                return True
+            if page is not None and keyval in (Gdk.KEY_Left, Gdk.KEY_Right):
+                page.cycle_screenshot(-1 if keyval == Gdk.KEY_Left else 1)
+                return True
+            return False
+
+        if current_view == "running_scripts":
             return False
 
         if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
@@ -653,15 +1019,9 @@ class AppWindow(
         self.reveal.support.hide()
         self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
-    def load_categories(self):
-        """Loads categories and connects their click event."""
-        # Use cached categories if available, otherwise parse from filesystem
-        if self.category_cache.is_populated:
-            categories = self.category_cache.get_categories()
-        else:
-            categories = parser.get_categories(self.translations)
-
-        # Store current category info and temporarily set to None for proper bold formatting
+    def _render_categories(self, categories):
+        """Render an already parsed category snapshot on the GTK thread."""
+        # Store current category info and temporarily set to None for proper bold formatting.
         temp_current_category = self.current_category_info
         self.current_category_info = None
 
@@ -671,20 +1031,61 @@ class AppWindow(
         for cat in categories:
             widget = self.create_item_widget(cat)
             description = cat.get("description", "")
-            if description:
-                widget.set_tooltip_text(description)
-            else:
-                widget.set_tooltip_text(None)
+            widget.set_tooltip_text(description or None)
             self.categories_flowbox.add(widget)
 
-        # Restore the current category info
         self.current_category_info = temp_current_category
-
         self.categories_flowbox.show_all()
 
-    def _load_scripts_into_flowbox(self, flowbox, category_info):
+    def load_categories(self):
+        """Load categories synchronously for explicit refresh/fallback paths."""
+        # A progressive population may already have parsed the root category list
+        # even though the recursive cache is not complete yet. Reuse it when present.
+        categories = self.category_cache.get_categories()
+        if not categories:
+            categories = parser.get_categories(self.translations)
+        self._render_categories(categories)
+
+    def _load_scripts_into_flowbox(self, flowbox, category_info, defer_initial=False):
+        """
+        Populate a category without blocking navigation on every card.
+
+        Navigation may defer the entire lookup/construction pass until after the
+        Gtk.Stack slide completes. This is important for cache misses and nested
+        categories too: even parser work should not compete with the transition.
+        """
+        if defer_initial:
+            scheduled_generation = (
+                getattr(flowbox, "_linuxtoys_population_generation", 0) + 1
+            )
+            flowbox._linuxtoys_population_generation = scheduled_generation
+            transition_delay = max(1, int(self.main_stack.get_transition_duration()))
+
+            def populate_after_transition():
+                if (
+                    getattr(flowbox, "_linuxtoys_population_generation", None)
+                    != scheduled_generation
+                ):
+                    return False
+                self._load_scripts_into_flowbox(
+                    flowbox,
+                    category_info,
+                    defer_initial=False,
+                )
+                return False
+
+            GLib.timeout_add(
+                transition_delay,
+                populate_after_transition,
+                priority=GLib.PRIORITY_LOW,
+            )
+            return
         for child in flowbox.get_children():
             flowbox.remove(child)
+
+        # Invalidate an older deferred population targeting this same FlowBox.
+        generation = getattr(flowbox, "_linuxtoys_population_generation", 0) + 1
+        flowbox._linuxtoys_population_generation = generation
 
         category_path = category_info["path"]
 
@@ -700,22 +1101,95 @@ class AppWindow(
             )
 
         checklist_mode = category_info.get("display_mode", "menu") == "checklist"
+        allow_drag = self._is_local_scripts_category(category_info)
 
-        for script_info in scripts:
+        # Around three rows at the normal five-column layout. This bounds the
+        # click-to-first-frame work independently of category size.
+        initial_batch_size = 10
+        # Keep FlowBox mutation frame-sized after the first screenful. Two cards
+        # per frame avoids the ten-widget layout bursts that made large categories
+        # visibly hitch while still filling them at roughly 120 cards/second.
+        frame_batch_size = 2
+
+        def add_card(script_info):
             widget = self.create_item_widget(
                 script_info,
                 checklist=checklist_mode,
-                allow_drag=self._is_local_scripts_category(category_info),
+                allow_drag=allow_drag,
             )
-
             description = script_info.get("description", "")
             widget.set_tooltip_text(description or None)
+            # Opacity must be zero before the widget becomes visible; otherwise
+            # GTK may paint one fully-opaque frame before the fade scheduler runs.
+            widget.set_opacity(0.0)
             flowbox.add(widget)
+            return widget
 
-        self._configure_local_scripts_interaction(flowbox, category_info)
+        initial_count = min(len(scripts), initial_batch_size)
+        remaining = iter(scripts[initial_count:])
+        frame_interval_ms = 16
 
-        if checklist_mode:
-            self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+        def populate_timed_batch():
+            if (
+                getattr(flowbox, "_linuxtoys_population_generation", None)
+                != generation
+            ):
+                return False
+
+            added = 0
+            batch_widgets = []
+            exhausted = False
+            while added < frame_batch_size:
+                try:
+                    script_info = next(remaining)
+                except StopIteration:
+                    exhausted = True
+                    break
+
+                widget = add_card(script_info)
+                widget.show_all()
+                batch_widgets.append(widget)
+                added += 1
+
+            self.animate_item_batch(
+                batch_widgets,
+                duration_ms=110,
+                stagger_ms=5,
+            )
+            return not exhausted
+
+        def populate_initial_batch():
+            if (
+                getattr(flowbox, "_linuxtoys_population_generation", None)
+                != generation
+            ):
+                return False
+
+            initial_widgets = []
+            for script_info in scripts[:initial_count]:
+                widget = add_card(script_info)
+                widget.show_all()
+                initial_widgets.append(widget)
+
+            self.animate_item_batch(
+                initial_widgets,
+                duration_ms=120,
+                stagger_ms=8,
+            )
+
+            self._configure_local_scripts_interaction(flowbox, category_info)
+            if checklist_mode:
+                self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
+
+            if initial_count < len(scripts):
+                GLib.timeout_add(
+                    frame_interval_ms,
+                    populate_timed_batch,
+                    priority=GLib.PRIORITY_LOW,
+                )
+            return False
+
+        populate_initial_batch()
 
     def load_scripts(self, category_info):
         """Loads scripts for a category and connects their click event. Supports checklist mode."""
@@ -785,16 +1259,107 @@ class AppWindow(
 
         return deps
 
+    def show_external_install_error(self, message):
+        """Show a safe user-facing error for an external URI request."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=self.translations.get(
+                "uri_install_error_title", "Unable to open LinuxToys link"
+            ),
+        )
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+
+    def handle_external_install_request(self, target_id):
+        """Resolve a browser-requested installation by stable ID.
+
+        Repository entries that expose an app page follow the same individual-
+        activation flow as an in-app click. Entries without an app page retain
+        the explicit external-request confirmation before execution.
+        """
+        if self.reboot_required and not self._show_reboot_warning_dialog():
+            return
+
+        script_info = manifest_helper.find_script_by_id(target_id, self.translations)
+        if script_info is None:
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_install_not_found",
+                    "The requested feature was not found or is not compatible with this system.",
+                )
+            )
+            return
+
+        # URI activation represents an individual app activation, so repository
+        # entries with app-page metadata must show that page first. The page's
+        # Install button then continues through the normal app-page install flow.
+        if script_info.get("is_repo_entry") and script_info.get("has_app_page"):
+            self.open_app_page(script_info)
+            return
+
+        deps = asyncio.run(self._process_needed_scripts([script_info]))
+        if not deps:
+            return
+
+        # External requests without an app page always require explicit in-app
+        # confirmation, even when the feature was previously executed.
+        if not needed_helper.show_run_confirmation_dialog(
+            self, self.translations, deps, external_request=True
+        ):
+            return
+
+        removable = script_info if len(deps) == 1 else None
+        self.open_term_view(
+            deps,
+            removable_script_info=removable,
+            auto_run=True,
+        )
+
+    def _run_single_script_install(self, info, close_app_page=False):
+        """Run the normal single-entry confirmation and terminal-view flow."""
+        deps = asyncio.run(self._process_needed_scripts([info]))
+        if not deps:
+            return
+
+        script_name = info.get("name", "")
+        registry_data = action_registry.parse_registry_file()
+        is_first_run = script_name not in registry_data
+
+        if is_first_run:
+            confirmed = needed_helper.show_run_confirmation_dialog(
+                self, self.translations, deps
+            )
+        else:
+            # Preserve the existing easy re-run/report/uninstall behavior.
+            confirmed = True
+
+        if not confirmed:
+            return
+
+        if close_app_page:
+            self.close_app_page_for_install()
+
+        removable = info if len(deps) == 1 else None
+        self.open_term_view(deps, removable_script_info=removable, auto_run=True)
+
+    def _install_from_app_page(self, info):
+        """Install an entry after the user chooses Install on its app page."""
+        if self.reboot_required and not self._show_reboot_warning_dialog():
+            return
+        self._run_single_script_install(info, close_app_page=True)
+
     def on_script_clicked(self, widget, event):
-        """Handles script click by creating the dialog and starting the thread."""
-        # Check if reboot is required before proceeding
+        """Handle an individual script/app activation."""
         if self.reboot_required:
             if not self._show_reboot_warning_dialog():
                 return
 
         info = widget.info
 
-        # Check if this is the "Create New Script" option
         if info.get("is_create_script"):
             self._handle_create_new_script()
             return
@@ -804,28 +1369,13 @@ class AppWindow(
             self.open_skills_seeker_view()
             return
 
-        deps = asyncio.run(self._process_needed_scripts([info]))
+        # App pages apply only to individual activation. Checklist batch execution
+        # continues to use on_install_checklist() and therefore bypasses this branch.
+        if info.get("is_repo_entry") and info.get("has_app_page"):
+            self.open_app_page(info)
+            return
 
-        # Only open terminal if user didn't cancel the needed requirements dialog
-        if deps:
-            # Show confirmation dialog only if script hasn't been run before
-            script_name = info.get('name', '')
-            registry_data = action_registry.parse_registry_file()
-            is_first_run = script_name not in registry_data
-            
-            # Show confirmation dialog only on first run
-            if is_first_run:
-                confirmed = needed_helper.show_run_confirmation_dialog(
-                    self, self.translations, deps
-                )
-            else:
-                # Skip dialog on subsequent runs to allow easy bug reports and uninstalls
-                confirmed = True
-            
-            if confirmed:
-                removable = info if len(deps) == 1 else None
-                # Entering the terminal view always starts the selected scripts immediately.
-                self.open_term_view(deps, removable_script_info=removable, auto_run=True)
+        self._run_single_script_install(info)
 
     def _install_skill_from_seeker(self, source, slug, agent):
         tmp_dir = "/tmp/linuxtoys"
@@ -928,25 +1478,15 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # Load new translations
         self.translations = lang_utils.load_translations(new_language_code)
 
-        # Update search engine translations
-        self.search_engine.update_translations(self.translations)
-        
-        # Refresh category cache with new translations in background
-        def refresh_category_cache():
-            try:
-                self.category_cache.refresh_for_translations(self.translations)
-            except Exception as e:
-                print(f"Error refreshing category cache: {e}")
-        
-        # Refresh all scripts cache for random scripts display
-        def refresh_all_scripts():
-            try:
-                self.all_scripts = self._collect_all_scripts()
-            except Exception as e:
-                print(f"Error refreshing all scripts cache: {e}")
-        
-        threading.Thread(target=refresh_category_cache, daemon=True).start()
-        threading.Thread(target=refresh_all_scripts, daemon=True).start()
+        # Swap in fresh parser-backed caches and rebuild them together.  Avoid
+        # SearchEngine.update_translations() here because it starts its own full
+        # filesystem scan, duplicating the category/featured refresh.
+        self.search_engine.translations = self.translations
+        self.script_cache = search_helper.ScriptCache()
+        self.category_cache = search_helper.CategoryCache()
+        self.search_engine.set_cache(self.script_cache)
+        self.all_scripts = []
+        self._populate_runtime_caches()
 
         # Update search entry placeholder text
         self.search_entry.set_placeholder_text(
@@ -963,6 +1503,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
     def _refresh_ui_with_new_translations(self):
         """Refresh all UI elements with new translations"""
+        # Hidden retained category views contain already-rendered translated
+        # labels/tooltips. Drop them so Back never resurrects the old locale.
+        self._discard_retained_category_views()
+
         # Update header
         self._update_header(self.current_category_info)
 

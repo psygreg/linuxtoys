@@ -11,6 +11,7 @@ Works transparently with both git-synced and bundled scripts:
 
 import os
 import re
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from . import parser
 from .compat import (
     get_system_compat_keys, 
@@ -25,6 +26,16 @@ from .compat import (
 from .lang_utils import detect_system_language
 from .revert_helper import _get_executed_script_names
 from .official_index import is_verified_script, is_verified_name
+
+
+def _iter_completed_futures(future_map):
+    """Yield futures as they finish without importing another public iterator."""
+    pending = set(future_map)
+    while pending:
+        done, pending = wait(pending, return_when=FIRST_COMPLETED)
+        yield from done
+
+
 
 
 class ScriptCache:
@@ -79,6 +90,40 @@ class ScriptCache:
         
         self.is_populated = True
     
+    def populate_from_category_cache(self, category_cache):
+        """Build the search cache from already parsed category data.
+
+        This avoids a second recursive filesystem walk during startup. Repository
+        entries and normal scripts are deduplicated by their stable path/virtual path.
+        """
+        if self.is_populated:
+            return
+
+        self.scripts = []
+        self._removable_cache = {}
+        seen = set()
+
+        def add_item(item):
+            if not item.get("is_script"):
+                return
+            key = item.get("path") or (
+                "repo-name", item.get("name", "").casefold()
+            )
+            if key in seen:
+                return
+            seen.add(key)
+            self.scripts.append(item)
+
+        for category in category_cache.get_categories():
+            add_item(category)
+
+        for scripts in category_cache.scripts_by_category.values():
+            for item in scripts:
+                add_item(item)
+
+        self._populate_removable_cache()
+        self.is_populated = True
+
     def _collect_scripts_from_directory(self, directory_path, translations=None):
         """Recursively collect scripts from a directory."""
         if not os.path.isdir(directory_path):
@@ -300,40 +345,153 @@ class CategoryCache:
         self.current_locale = detect_system_language()
         self.is_containerized = is_containerized()
     
-    def populate(self, translations=None):
-        """
-        Populate the cache with all categories and their scripts.
-        This should be called once on app startup.
-        
-        Args:
-            translations: Dictionary of translations for category/script names
+    def populate(
+        self,
+        translations=None,
+        top_level_ready=None,
+        top_level_ready_min_scripts=0,
+        max_workers=4,
+    ):
+        """Populate category data with bounded parallel filesystem parsing.
+
+        The scripts-tree structure is built once before workers start. Top-level
+        categories are then parsed concurrently, followed by dynamically discovered
+        nested categories using the same bounded executor. Only this coordinator
+        thread mutates ``scripts_by_category`` so readers never race worker writes.
+
+        ``top_level_ready`` retains the progressive startup contract: it receives a
+        stable snapshot as soon as enough top-level normal scripts are available, or
+        once all top-level work finishes for small trees.
         """
         if self.is_populated:
-            return  # Already populated
-        
+            return
+
         self.categories = []
         self.scripts_by_category = {}
-        
-        # Get all categories
+
+        # Build shared structural state before the pool starts. Without this, several
+        # workers could all arrive at the tree-cache initialization lock together and
+        # gain no useful parallelism during their first category lookup.
+        parser.prepare_script_tree_index()
         self.categories = parser.get_categories(translations)
-        
-        # Pre-populate scripts for each category and nested subcategories
+
+        # Warm repository-list parsing once before category workers fan out. Every
+        # category consults this shared dataset; doing the first load here avoids
+        # several workers redundantly scanning scripts/lists on the same cold miss.
+        parser.get_repo_entries(translations)
+
+        top_level_paths = []
+        seen_top_level = set()
         for category in self.categories:
+            if category.get('is_script'):
+                continue
             category_path = category.get('path', '')
-            if category_path:
-                scripts = parser.get_scripts_for_category(category_path, translations)
+            if not category_path:
+                continue
+            category_path = os.path.abspath(category_path)
+            if category_path in seen_top_level or not os.path.isdir(category_path):
+                continue
+            seen_top_level.add(category_path)
+            top_level_paths.append(category_path)
+
+        minimum_scripts = max(0, int(top_level_ready_min_scripts or 0))
+        worker_count = max(1, min(int(max_workers or 1), len(top_level_paths) or 1))
+        top_level_published = False
+        top_level_script_count = 0
+        completed_top_level = set()
+        nested_paths = []
+
+        def publish_top_level(force=False):
+            nonlocal top_level_published
+            if top_level_published or top_level_ready is None:
+                return
+            if not force and minimum_scripts > 0 and top_level_script_count < minimum_scripts:
+                return
+
+            categories_snapshot = self.categories.copy()
+            scripts_snapshot = {
+                path: items.copy()
+                for path, items in self.scripts_by_category.items()
+            }
+            top_level_published = True
+            top_level_ready(categories_snapshot, scripts_snapshot)
+
+        def parse_category(category_path):
+            return category_path, parser.get_scripts_for_category(
+                category_path, translations
+            )
+
+        # Phase 1: top-level categories. Completion order is intentionally allowed to
+        # differ from source order for latency, while consumers still iterate the
+        # original category list and therefore retain stable display ordering.
+        with ThreadPoolExecutor(
+            max_workers=worker_count,
+            thread_name_prefix="linuxtoys-category",
+        ) as executor:
+            futures = {
+                executor.submit(parse_category, path): path
+                for path in top_level_paths
+            }
+
+            for future in _iter_completed_futures(futures):
+                category_path = futures[future]
+                try:
+                    _, scripts = future.result()
+                except Exception as error:
+                    print(f"Error parsing category {category_path}: {error}")
+                    scripts = []
+
                 self.scripts_by_category[category_path] = scripts
-                
-                # Also pre-populate scripts for nested subcategories
-                for script in scripts:
-                    if script.get('is_subcategory'):
-                        subcategory_path = script.get('path', '')
+                completed_top_level.add(category_path)
+
+                for item in scripts:
+                    if item.get('is_subcategory'):
+                        subcategory_path = item.get('path', '')
                         if subcategory_path:
-                            subscripts = parser.get_scripts_for_category(subcategory_path, translations)
-                            self.scripts_by_category[subcategory_path] = subscripts
-        
+                            nested_paths.append(os.path.abspath(subcategory_path))
+                    elif item.get('is_script') and not item.get('is_create_script'):
+                        top_level_script_count += 1
+
+                if minimum_scripts > 0:
+                    publish_top_level()
+
+            publish_top_level(force=True)
+
+            # Phase 2: nested categories. Use a dynamic queue because parsing one
+            # category reveals its children. The coordinator alone owns ``visited``
+            # and cache mutation; workers only return plain parsed data.
+            visited = set(completed_top_level)
+            pending = {}
+
+            def submit_nested(path):
+                path = os.path.abspath(path)
+                if path in visited or path in pending.values() or not os.path.isdir(path):
+                    return
+                visited.add(path)
+                pending[executor.submit(parse_category, path)] = path
+
+            for path in nested_paths:
+                submit_nested(path)
+
+            while pending:
+                done, _ = wait(tuple(pending), return_when=FIRST_COMPLETED)
+                for future in done:
+                    category_path = pending.pop(future)
+                    try:
+                        _, scripts = future.result()
+                    except Exception as error:
+                        print(f"Error parsing category {category_path}: {error}")
+                        scripts = []
+
+                    self.scripts_by_category[category_path] = scripts
+                    for item in scripts:
+                        if item.get('is_subcategory'):
+                            subcategory_path = item.get('path', '')
+                            if subcategory_path:
+                                submit_nested(subcategory_path)
+
         self.is_populated = True
-    
+
     def get_categories(self):
         """Get all cached categories."""
         return self.categories.copy()

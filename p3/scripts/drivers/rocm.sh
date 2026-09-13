@@ -5,6 +5,7 @@
 # icon: amd.png
 # reboot: yes
 # gpu: ROCm
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

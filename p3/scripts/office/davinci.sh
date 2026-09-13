@@ -5,6 +5,7 @@
 # icon: resolve.svg
 # hybridgpu: !ostree, !solus
 # gpu: nvidia, rocm, xe
+# compat: !steamos
 
 # functions
 #create JSON, user agent and download Resolve

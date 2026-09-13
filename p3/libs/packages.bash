@@ -28,7 +28,7 @@ interrupted_apt_guard () {
 pkg_exists () {
     pkg_found=()
     pkg_notfound=()
-    
+
     for pak in "$@"; do
         if is_debian || is_ubuntu; then
             if dpkg -s "$pak" &>/dev/null; then
@@ -48,7 +48,7 @@ pkg_exists () {
             else
                 pkg_notfound+=("$pak")
             fi
-        elif is_solus; then     
+        elif is_solus; then
             if eopkg list-installed | grep -qw "$pak"; then
                 pkg_found+=("$pak")
             else
@@ -75,7 +75,7 @@ pkg_install () {
             _filtered_args+=("$arg")
         fi
     done
-    
+
     pkg_exists "${_filtered_args[@]}"
     [[ ${#pkg_found[@]} -gt 0 ]] && echo "Packages ${pkg_found[*]} already installed, skipping."
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
@@ -86,10 +86,15 @@ pkg_install () {
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy || is_manjaro; then
         if ! is_manjaro; then
-            if ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then 
+            if ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then
                 prep_edit /etc/pacman.conf
                 printf '\n[extra]\nInclude = /etc/pacman.d/mirrorlist\n' |
                     sudo tee -a /etc/pacman.conf >/dev/null
+            fi
+            # fix #1255
+            if [[ ! -e /var/lib/pacman/sync/extra.db ]]; then
+                pacman_lock_guard
+                sudo pacman -Sy --noconfirm || die "Failed to synchronize package databases"
             fi
         fi
         local _pacman_pkgs=()
@@ -131,7 +136,8 @@ pkg_install () {
                     fi
                 fi
                 if ! paru --version >/dev/null 2>&1; then # handle broken paru compiled against different libs, fix #1196
-                    call_script paru
+                    call_script paru || die "Failed to repair paru"
+                    paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
                 fi
                 paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
@@ -200,7 +206,7 @@ pkg_flat() {
             flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
         done
     else
-        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; } 
+        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; }
         for basename in "${_flatpak_basenames[@]}"; do
             flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
         done
@@ -211,20 +217,23 @@ pkg_flat() {
 }
 
 pkg_fromfile () {
-    # Handle --ostreecheck flag
+    # Handle flags that should not be passed to native package managers.
     local _ostreecheck=0
+    local _skip_user=0
     local -a _filtered_args=()
     for arg in "$@"; do
         if [[ "$arg" == "--ostreecheck" ]]; then
             _ostreecheck=1
+        elif [[ "$arg" == "--skip-user" ]]; then
+            _skip_user=1
         else
             _filtered_args+=("$arg")
         fi
     done
-    
+
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
-    
+
     if [[ "$1" == *.flatpak ]]; then
         if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
             summon_helpers
@@ -233,8 +242,10 @@ pkg_fromfile () {
         fi
         local flatpak_file="$1"
         local flatpak_scope="--user"
-        if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
-           ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+        if [[ $_skip_user -eq 1 ]]; then
+            flatpak_scope="--system"
+        elif flatpak remote-list --system 2>/dev/null | grep -q flathub && \
+             ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
             flatpak_scope="--system"
         fi
         local _flatpak_stderr
@@ -246,7 +257,7 @@ pkg_fromfile () {
         _append_transmap "pkg file $flatpak_file"
         return 0
     fi
-    
+
     if is_debian || is_ubuntu; then
         { sudo apt-get -o APT::Sandbox::User=root install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
@@ -258,7 +269,7 @@ pkg_fromfile () {
         else
             if [ -f PKGBUILD ]; then
                 local pkgname=$(grep "^pkgname=" PKGBUILD | head -1 | cut -d'=' -f2 | tr -d "'" '"')
-                makepkg -si || fatal "Failed to build and install package $pkgname"
+                makepkg -si || die "Failed to build and install package $pkgname"
                 _append_transmap "pkg file $pkgname"
             else
                 fatal "Failed to install package $*"
@@ -286,48 +297,341 @@ pkg_fromfile () {
     fi
 }
 
+pkg_tarball () {
+    [[ $# -gt 0 ]] || die "No tarball files provided"
+
+    # Avoid exposing a stale path if a later tarball operation fails before
+    # completing successfully.
+    unset LINUXTOYS_TARBALL_DIR
+
+    local archive archive_name app_name apps_dir staging_dir source_path target_path
+    local member normalized first_component common_root has_nested
+    local -a members=()
+
+    apps_dir="$HOME/.local/linuxtoys/apps"
+    mkdir -p -- "$apps_dir" || die "Failed to create application directory: $apps_dir"
+
+    for archive in "$@"; do
+        [[ -f "$archive" ]] || die "Tarball file not found: $archive"
+
+        archive="$(realpath -- "$archive")" || die "Failed to resolve tarball path: $archive"
+        archive_name="$(basename -- "$archive")"
+
+        case "${archive_name,,}" in
+            *.tar.gz)
+                app_name="${archive_name:0:${#archive_name}-7}"
+                ;;
+            *.tar.xz)
+                app_name="${archive_name:0:${#archive_name}-7}"
+                ;;
+            *)
+                die "Unsupported tarball format: $archive_name"
+                ;;
+        esac
+
+        [[ -n "$app_name" && "$app_name" != "." && "$app_name" != ".." ]] || \
+            die "Could not derive application name from tarball: $archive_name"
+
+        mapfile -t members < <(tar -tf "$archive") || \
+            die "Failed to inspect tarball: $archive_name"
+        [[ ${#members[@]} -gt 0 ]] || die "Tarball is empty: $archive_name"
+
+        # Reject absolute paths and parent traversal before extracting.
+        for member in "${members[@]}"; do
+            normalized="${member#./}"
+            [[ -n "$normalized" ]] || continue
+            if [[ "$normalized" == /* || "$normalized" == ".." || \
+                  "$normalized" == ../* || "$normalized" == */../* || \
+                  "$normalized" == */.. ]]; then
+                die "Unsafe path in tarball $archive_name: $member"
+            fi
+        done
+
+        # If everything already lives below one top-level directory, preserve it
+        # instead of adding another directory around it.
+        common_root=""
+        has_nested=0
+        for member in "${members[@]}"; do
+            normalized="${member#./}"
+            normalized="${normalized%/}"
+            [[ -n "$normalized" ]] || continue
+
+            first_component="${normalized%%/*}"
+            if [[ -z "$common_root" ]]; then
+                common_root="$first_component"
+            elif [[ "$first_component" != "$common_root" ]]; then
+                common_root=""
+                break
+            fi
+
+            [[ "$normalized" == */* ]] && has_nested=1
+        done
+
+        staging_dir=$(mktemp -d "$apps_dir/.tarball.XXXXXX") || \
+            die "Failed to create tarball staging directory"
+
+        tar --no-same-owner --no-same-permissions -xf "$archive" -C "$staging_dir" || {
+            rm -rf -- "$staging_dir"
+            die "Failed to extract tarball: $archive_name"
+        }
+
+        if [[ -n "$common_root" && $has_nested -eq 1 && -d "$staging_dir/$common_root" ]]; then
+            app_name="$common_root"
+            source_path="$staging_dir/$common_root"
+        else
+            source_path="$staging_dir"
+        fi
+
+        case "$app_name" in
+            ''|.|..|*/*|*\\*)
+                rm -rf -- "$staging_dir"
+                die "Unsafe application directory name derived from tarball: $app_name"
+                ;;
+        esac
+
+        target_path="$apps_dir/$app_name"
+
+        # A rerun is an update: replace the previous tree completely so files
+        # removed upstream do not linger after upgrading.
+        rm -rf -- "$target_path" || {
+            rm -rf -- "$staging_dir"
+            die "Failed to replace previous application directory: $target_path"
+        }
+
+        if [[ "$source_path" == "$staging_dir" ]]; then
+            mv -- "$staging_dir" "$target_path" || {
+                rm -rf -- "$staging_dir"
+                die "Failed to install tarball application: $app_name"
+            }
+        else
+            mv -- "$source_path" "$target_path" || {
+                rm -rf -- "$staging_dir"
+                die "Failed to install tarball application: $app_name"
+            }
+            rm -rf -- "$staging_dir"
+        fi
+
+        # Expose the final installation directory to any post-install hook
+        # running later in the same LinuxToys script.
+        export LINUXTOYS_TARBALL_DIR="$target_path"
+
+        _append_transmap "tarball $app_name"
+    done
+}
+
+pkg_binary () {
+    [ "$#" -eq 1 ] || die "Usage: pkg_binary BINARY_FILE"
+
+    # Avoid exposing a stale path if a later binary operation fails before
+    # completing successfully.
+    unset LINUXTOYS_BIN_DIR
+
+    local binary="$1"
+    local app_name="${LINUXTOYS_APP_NAME:-}"
+    local apps_dir="$HOME/.local/linuxtoys/apps"
+    local target_dir target_file
+
+    [ -f "$binary" ] || die "Binary file not found: $binary"
+    [ -n "$app_name" ] || die "LinuxToys app name is unavailable"
+
+    # The display name is also the single-binary installation directory name.
+    # Reject path components rather than allowing app metadata to escape apps_dir.
+    case "$app_name" in
+        ''|.|..|*/*|*\\*) die "Unsafe LinuxToys app name for binary installation: $app_name" ;;
+    esac
+
+    binary=$(realpath -- "$binary") || die "Failed to resolve binary path: $binary"
+    target_dir="$apps_dir/$app_name"
+    target_file="$target_dir/$(basename -- "$binary")"
+
+    mkdir -p -- "$apps_dir" || die "Failed to create application directory: $apps_dir"
+
+    # Preserve update reversibility just like other filesystem operations.
+    if [ -d "$target_dir" ]; then
+        prep_dir_edit "$target_dir"
+        rm -rf -- "$target_dir" || die "Failed to replace previous binary application directory: $target_dir"
+        mkdir -p -- "$target_dir" || die "Failed to recreate binary application directory: $target_dir"
+    else
+        prep_dir "$target_dir"
+    fi
+
+    cp -- "$binary" "$target_file" || die "Failed to install binary: $binary"
+    chmod +x -- "$target_file" || die "Failed to make binary executable: $target_file"
+
+    # Expose the final installation directory to any post-install hook
+    # running later in the same LinuxToys script.
+    export LINUXTOYS_BIN_DIR="$target_dir"
+
+    desktop_shortcut "\"$target_file\""
+}
+
 pkg_fromurl () {
     [[ $# -gt 0 ]] || die "No package URLs provided"
 
-    local url filename download_dir package_file
+    local _tarball=0 _binary=0 _skip_user=0 arg
+    local -a urls=()
+    for arg in "$@"; do
+        case "$arg" in
+            --tar|--tarball)
+                _tarball=1
+                ;;
+            --bin|--binary)
+                _binary=1
+                ;;
+            --skip-user)
+                _skip_user=1
+                ;;
+            *)
+                urls+=("$arg")
+                ;;
+        esac
+    done
+    [[ ${#urls[@]} -gt 0 ]] || die "No package URLs provided"
+    [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
+    [[ $_binary -eq 0 || ${#urls[@]} -eq 1 ]] || die "pkg_fromurl --bin expects exactly one URL"
+
+    local url filename download_dir package_dir package_file
+    local effective_url content_disposition metadata_file temp_file
     local -a package_files=()
+
     prep_tmp_noram
     download_dir=$(mktemp -d ./pkg_fromurl.XXXXXX) || {
         die "Failed to create package download directory"
     }
 
-    for url in "$@"; do
-        filename="${url%%[?#]*}"
-        filename="${filename##*/}"
+    for url in "${urls[@]}"; do
+        temp_file="$download_dir/${#package_files[@]}.download"
+        metadata_file="$download_dir/${#package_files[@]}.metadata"
+
+        curl -fL --retry 3 \
+            --output "$temp_file" \
+            --write-out '%{url_effective}\n%header{content-disposition}\n' \
+            -- "$url" > "$metadata_file" || {
+                rm -f -- "$temp_file" "$metadata_file"
+                die "Failed to download package: $url"
+            }
+
+        effective_url=$(sed -n '1p' "$metadata_file")
+        content_disposition=$(sed -n '2p' "$metadata_file")
+        rm -f -- "$metadata_file"
+
+        # Prefer a filename supplied explicitly by the server.
+        filename=""
+        if [[ "$content_disposition" =~ filename=\"([^\"]+)\" ]]; then
+            filename="${BASH_REMATCH[1]}"
+        elif [[ "$content_disposition" =~ filename=([^;\ ]+) ]]; then
+            filename="${BASH_REMATCH[1]}"
+        fi
+
+        # Otherwise derive it from the final URL after redirects.
+        if [[ -z "$filename" ]]; then
+            filename="${effective_url%%[?#]*}"
+            filename="${filename##*/}"
+        fi
+
+        # Fall back to the original URL if the redirect target also lacks a name.
+        if [[ -z "$filename" || "$filename" == "." || "$filename" == ".." ]]; then
+            filename="${url%%[?#]*}"
+            filename="${filename##*/}"
+        fi
+
         case "$filename" in
-            ''|.|..)
+            ''|.|..|*/*|*\\*)
+                rm -f -- "$temp_file"
                 die "Package URL has no valid filename: $url"
                 ;;
         esac
-        package_file="$download_dir/${#package_files[@]}-$filename"
-        curl -fL --retry 3 --output "$package_file" -- "$url" || {
-            rm -f -- "$package_file"
-            die "Failed to download package: $url"
+
+        if [[ $_tarball -eq 1 ]]; then
+            case "${filename,,}" in
+                *.tar.gz|*.tar.xz) ;;
+                *)
+                    rm -f -- "$temp_file"
+                    die "Tarball URL did not resolve to a .tar.gz or .tar.xz file: $url"
+                    ;;
+            esac
+        fi
+
+        # SteamOS must never hand a native package to pkg_fromfile. Explicit
+        # --tar/--bin modes are user-level installs and are allowed; otherwise
+        # the resolved download must be an AppImage or Flatpak file.
+        if is_steamos && [[ $_tarball -eq 0 && $_binary -eq 0 ]]; then
+            case "${filename,,}" in
+                *.appimage|*.flatpak) ;;
+                *)
+                    rm -f -- "$temp_file"
+                    die "SteamOS only supports AppImage, Flatpak, tarball, or single-binary installs from URLs: $filename"
+                    ;;
+            esac
+        fi
+
+        # Keep the server-provided basename intact. A per-download subdirectory
+        # avoids collisions when more than one URL resolves to the same name.
+        package_dir="$download_dir/${#package_files[@]}"
+        mkdir -p -- "$package_dir" || die "Failed to prepare package download directory"
+        package_file="$package_dir/$filename"
+
+        mv -- "$temp_file" "$package_file" || {
+            rm -f -- "$temp_file"
+            die "Failed to prepare downloaded package: $filename"
         }
+
         package_files+=("$package_file")
     done
 
     for package_file in "${package_files[@]}"; do
+        if [[ $_binary -eq 1 ]]; then
+            pkg_binary "$package_file"
+            continue
+        fi
+
+        if [[ $_tarball -eq 1 ]]; then
+            pkg_tarball "$package_file"
+            continue
+        fi
+
         case "${package_file,,}" in
             *.appimage)
                 pkg_appimage "$package_file"
                 ;;
             *)
-                pkg_fromfile "$package_file"
+                if [[ $_skip_user -eq 1 ]]; then
+                    pkg_fromfile --skip-user "$package_file"
+                else
+                    pkg_fromfile "$package_file"
+                fi
                 ;;
         esac
     done
 }
 
 pkg_fromrelease () {
-    [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_fromrelease REPOSITORY_URL [ASSET_GLOB]"
+    local _tarball=0 _binary=0 arg
+    local -a release_args=()
+    for arg in "$@"; do
+        case "$arg" in
+            --tar|--tarball)
+                _tarball=1
+                ;;
+            --bin|--binary)
+                _binary=1
+                ;;
+            *)
+                release_args+=("$arg")
+                ;;
+        esac
+    done
+    set -- "${release_args[@]}"
+
+    [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_fromrelease [--tar|--bin] REPOSITORY_URL [ASSET_NAME_OR_GLOB]"
+    [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
+    [[ $_binary -eq 0 || $# -eq 2 ]] || die "pkg_fromrelease --bin requires the exact release asset name"
+
     local native_type="" package_url
-    if is_arch || is_cachy; then
+    local -a release_selection
+    if is_steamos; then
+        native_type=""
+    elif is_arch || is_cachy; then
         native_type=arch
     elif is_fedora || is_rhel || is_ostree; then
         native_type=rpm
@@ -337,13 +641,13 @@ pkg_fromrelease () {
         native_type=eopkg
     fi
 
-    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(uname -m)" <<'PY'
+    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(uname -m)" "$_tarball" "$_binary" <<'PY'
 import fnmatch
 import json
 import re
 import subprocess
 import sys
-from urllib.parse import urlsplit
+from urllib.parse import quote, unquote, urlsplit
 
 
 def fail(message):
@@ -351,29 +655,87 @@ def fail(message):
     sys.exit(1)
 
 
-repository, pattern, native, machine = sys.argv[1:]
-match = re.fullmatch(r"https://(github\.com|codeberg\.org)/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/?", repository)
-if not match:
-    fail("Expected https://github.com/OWNER/REPO or https://codeberg.org/OWNER/REPO")
-host, owner, repo = match.groups()
-repo = repo.removesuffix(".git")
-if not repo or owner in (".", "..") or repo in (".", ".."):
-    fail("Invalid repository name")
-base = "https://api.github.com" if host == "github.com" else "https://codeberg.org/api/v1"
-api = f"{base}/repos/{owner}/{repo}/releases/latest"
+def repository_api(repository):
+    try:
+        parsed = urlsplit(repository)
+    except ValueError:
+        fail("Invalid repository URL")
+
+    if parsed.scheme != "https" or parsed.query or parsed.fragment or parsed.username or parsed.password or parsed.port:
+        fail("Repository URL must be a plain HTTPS GitHub, Codeberg, or GitLab project URL")
+
+    host = (parsed.hostname or "").lower()
+    path = unquote(parsed.path).strip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    parts = path.split("/") if path else []
+
+    if any(not part or part in (".", "..") for part in parts):
+        fail("Invalid repository name")
+
+    if host in ("github.com", "codeberg.org"):
+        if len(parts) != 2:
+            fail(f"Expected https://{host}/OWNER/REPO")
+        owner, repo = parts
+        base = "https://api.github.com" if host == "github.com" else "https://codeberg.org/api/v1"
+        return host, f"{base}/repos/{quote(owner, safe='')}/{quote(repo, safe='')}/releases/latest"
+
+    if host == "gitlab.com":
+        if len(parts) < 2:
+            fail("Expected https://gitlab.com/NAMESPACE/PROJECT")
+        project = quote("/".join(parts), safe="")
+        return host, f"https://gitlab.com/api/v4/projects/{project}/releases/permalink/latest"
+
+    fail("Expected a github.com, codeberg.org, or gitlab.com repository URL")
+
+
+def normalize_release(host, release):
+    if not isinstance(release, dict):
+        fail("Release API returned invalid data")
+
+    if host != "gitlab.com":
+        if not isinstance(release.get("assets"), list):
+            fail("Release API returned no asset list")
+        if release.get("draft") or release.get("prerelease"):
+            fail("Latest release is not a stable published release")
+        return release
+
+    gitlab_assets = release.get("assets", {})
+    links = gitlab_assets.get("links", []) if isinstance(gitlab_assets, dict) else []
+    if not isinstance(links, list):
+        fail("Release API returned no asset list")
+
+    assets = []
+    for link in links:
+        if not isinstance(link, dict):
+            continue
+        name = link.get("name", "")
+        url = link.get("direct_asset_url") or link.get("url", "")
+        if isinstance(name, str) and isinstance(url, str):
+            assets.append({"name": name, "browser_download_url": url})
+
+    normalized = dict(release)
+    normalized["assets"] = assets
+    return normalized
+
+
+repository, pattern, native, machine, tarball_mode, binary_mode = sys.argv[1:]
+tarball_mode = tarball_mode == "1"
+binary_mode = binary_mode == "1"
+host, api = repository_api(repository)
 try:
     response = subprocess.run(
         ["curl", "-fsSL", "--retry", "3", "--connect-timeout", "15",
          "--max-time", "60", "-H", "Accept: application/json", "--", api],
         check=True, capture_output=True, text=True,
     )
-    release = json.loads(response.stdout)
+    release = normalize_release(host, json.loads(response.stdout))
 except (OSError, subprocess.CalledProcessError, ValueError) as error:
     fail(f"Failed to fetch latest release from {repository}: {error}")
-if not isinstance(release, dict) or not isinstance(release.get("assets"), list):
-    fail("Release API returned no asset list")
-if release.get("draft") or release.get("prerelease"):
-    fail("Latest release is not a stable published release")
+version = release.get("tag_name", "")
+if not isinstance(version, str) or not version:
+    fail("Latest release has no tag name")
+pattern = pattern.replace("$APP_GIT_VERSION", version)
 
 aliases = {
     "x86_64": ("x86_64", "amd64", "x64"),
@@ -395,20 +757,33 @@ labels = sorted((label for values in aliases.values() for label in values), key=
 arch_re = re.compile(r"(?<![a-z0-9])(" + "|".join(map(re.escape, labels)) + r")(?![a-z0-9])")
 native_extensions = {"arch": (".pacman", ".pkg.tar.zst"), "rpm": (".rpm",),
                      "deb": (".deb",), "eopkg": (".eopkg",)}
-formats = [(".appimage",), (".flatpak",), native_extensions.get(native, ())]
+if binary_mode:
+    formats = None
+elif tarball_mode:
+    formats = [(".tar.gz", ".tar.xz")]
+else:
+    formats = [(".appimage",), (".flatpak",), native_extensions.get(native, ())]
 candidates = []
 for asset in release["assets"]:
     name, url = asset.get("name", ""), asset.get("browser_download_url", "")
     if not isinstance(name, str) or not isinstance(url, str):
         continue
     lower = name.lower()
-    if not fnmatch.fnmatchcase(lower, pattern.lower()) or urlsplit(url).scheme != "https":
+    if urlsplit(url).scheme != "https":
+        continue
+    if binary_mode:
+        if name != pattern:
+            continue
+    elif not fnmatch.fnmatchcase(lower, pattern.lower()):
         continue
     if re.search(r"(?:^|[._-])(?:debug|debuginfo|debugsource|devel|source|src)(?:[._-]|$)", lower):
         continue
-    kind = next((i for i, extensions in enumerate(formats) if lower.endswith(extensions)), None)
-    if kind is None:
-        continue
+    if binary_mode:
+        kind = 0
+    else:
+        kind = next((i for i, extensions in enumerate(formats) if lower.endswith(extensions)), None)
+        if kind is None:
+            continue
     detected = set(arch_re.findall(lower))
     x86_fallback = False
     if detected and not detected.intersection(aliases[architecture]):
@@ -427,20 +802,101 @@ best = [item for item in candidates if item[0] == best_rank]
 if len(best) != 1:
     fail("Multiple matching packages; pass an ASSET_GLOB to choose one:\n" +
          "\n".join(item[1] for item in best))
-print(f"Selected {best[0][1]} from {release.get('tag_name', 'latest release')}", file=sys.stderr)
+print(f"Selected {best[0][1]} from {version}", file=sys.stderr)
+print(version)
 print(best[0][2])
 PY
     ) || die "Failed to select a release package"
 
-    pkg_fromurl "$package_url"
+    mapfile -t release_selection <<< "$package_url"
+    [[ ${#release_selection[@]} -eq 2 ]] || die "Failed to read release selection"
+    export APP_GIT_VERSION="${release_selection[0]}"
+    package_url="${release_selection[1]}"
+
+    if [[ $_binary -eq 1 ]]; then
+        pkg_fromurl --bin "$package_url"
+    elif [[ $_tarball -eq 1 ]]; then
+        pkg_fromurl --tar "$package_url"
+    else
+        pkg_fromurl "$package_url"
+    fi
+
+    # Repository-list release metadata is informational registry state. Record it
+    # only after the selected asset was installed successfully.
+    if [[ -n "${LINUXTOYS_REPO_APP_ID:-}" ]]; then
+        _append_transmap "git-release ${LINUXTOYS_REPO_APP_ID} ${APP_GIT_VERSION} $1"
+    fi
+}
+
+latest_release_version () {
+    [[ $# -eq 1 ]] || { echo "Usage: latest_release_version REPOSITORY_URL" >&2; return 2; }
+
+    python3 - "$1" <<'PY'
+import json
+import subprocess
+import sys
+from urllib.parse import quote, unquote, urlsplit
+
+repository = sys.argv[1]
+try:
+    parsed = urlsplit(repository)
+except ValueError:
+    sys.exit(2)
+
+if parsed.scheme != "https" or parsed.query or parsed.fragment or parsed.username or parsed.password or parsed.port:
+    sys.exit(2)
+
+host = (parsed.hostname or "").lower()
+path = unquote(parsed.path).strip("/")
+if path.endswith(".git"):
+    path = path[:-4]
+parts = path.split("/") if path else []
+if any(not part or part in (".", "..") for part in parts):
+    sys.exit(2)
+
+if host in ("github.com", "codeberg.org"):
+    if len(parts) != 2:
+        sys.exit(2)
+    owner, repo = parts
+    base = "https://api.github.com" if host == "github.com" else "https://codeberg.org/api/v1"
+    api = f"{base}/repos/{quote(owner, safe='')}/{quote(repo, safe='')}/releases/latest"
+elif host == "gitlab.com":
+    if len(parts) < 2:
+        sys.exit(2)
+    project = quote("/".join(parts), safe="")
+    api = f"https://gitlab.com/api/v4/projects/{project}/releases/permalink/latest"
+else:
+    sys.exit(2)
+
+try:
+    response = subprocess.run(
+        ["curl", "-fsSL", "--retry", "3", "--connect-timeout", "15",
+         "--max-time", "60", "-H", "Accept: application/json", "--", api],
+        check=True, capture_output=True, text=True,
+    )
+    release = json.loads(response.stdout)
+except (OSError, subprocess.CalledProcessError, ValueError):
+    sys.exit(1)
+
+if not isinstance(release, dict):
+    sys.exit(1)
+if host != "gitlab.com" and (release.get("draft") or release.get("prerelease")):
+    sys.exit(1)
+
+version = release.get("tag_name", "")
+if not isinstance(version, str) or not version:
+    sys.exit(1)
+
+print(version)
+PY
 }
 
 pkg_remove () {
     pkg_exists "$@"
     [[ ${#pkg_found[@]} -eq 0 ]] && return 0
-    
+
     local to_remove="${pkg_found[*]}"
-    
+
     if is_debian || is_ubuntu; then
         sudo apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
     elif { is_arch || is_cachy; } && ! is_manjaro; then
@@ -515,7 +971,9 @@ pkg_appimage () {
     # Integration helpers may change directories; resolve inputs before that.
     for appimage_input in "$@"; do
         [[ -f "$appimage_input" ]] || die "AppImage file not found: $appimage_input"
-        appimage_inputs+=("$(realpath -- "$appimage_input")")
+        appimage_input="$(realpath -- "$appimage_input")" || die "Failed to resolve AppImage path: $appimage_input"
+        chmod +x -- "$appimage_input" || die "Failed to make AppImage executable: $appimage_input"
+        appimage_inputs+=("$appimage_input")
     done
     set -- "${appimage_inputs[@]}"
     previous_appimage=$(_pkg_appimage_previous) || die "Failed to identify installed AppImage"
@@ -526,10 +984,24 @@ pkg_appimage () {
     fi
 
     ( is_ubuntu || is_debian ) && {
-        if [ "$VERSION_CODENAME" = "bookworm" ]; then 
+        if [ "$VERSION_CODENAME" = "bookworm" ]; then
             pkg_install libfuse2  # workaround for debian 12
         else
-            pkg_install libfuse2t64; 
+            if ! apt-cache --no-all-versions show libfuse2t64 >/dev/null 2>&1; then # probably forky/testing
+                sudo mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d # ensure directories exist
+                prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
+                echo 'deb https://deb.debian.org/debian trixie main' | sudo tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
+                sudo tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
+Package: *
+Pin: release n=trixie
+Pin-Priority: -1
+
+Package: libfuse2t64
+Pin: release n=trixie
+Pin-Priority: 990
+EOF
+            fi
+            pkg_install libfuse2t64;
         fi
     }
     { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
@@ -537,7 +1009,7 @@ pkg_appimage () {
     prep_dir "$HOME/AppImages"
     if is_systemd; then
         # Use Gear Lever for systemd systems
-        call_script gearlever
+        call_script GEAR_LEVER
         local output
         output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1) || {
             echo "$output"
@@ -563,7 +1035,7 @@ pkg_appimage () {
             prep_create "$HOME/AppImages/$appimage_basename"
             cp -f "$appimage_file" "$HOME/AppImages/$appimage_basename"
             chmod +x "$HOME/AppImages/$appimage_basename"
-            
+
             prep_tmp_noram
             local extract_dir
             extract_dir="$HOME/.cache/linuxtoys/tmp" || fatal "Failed to create temp directory for extraction"
@@ -618,7 +1090,7 @@ pkg_appimage_rm () {
         for appimage_file in "$@"; do
             local appimage_basename=$(basename "$appimage_file")
             local appimage_name_without_ext="${appimage_basename%.*}"
-            
+
             # Remove from AppImages directory
             if [[ -f "$HOME/AppImages/$appimage_basename" ]]; then
                 rm -f -- "$HOME/AppImages/$appimage_basename" || return $?
@@ -656,7 +1128,7 @@ pkg_npm () {
             echo "set -gx PATH /home/$USER/.npm-global/bin \$PATH" >> "$fish_config"
             export PATH="/home/$USER/.npm-global/bin:$PATH"
         fi
-    fi  
+    fi
 
     local -a flags=()
     local -a packages=()

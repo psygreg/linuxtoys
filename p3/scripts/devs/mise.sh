@@ -4,6 +4,7 @@
 # description: mise_desc
 # icon: mise.svg
 # repo: https://github.com/jdx/mise
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

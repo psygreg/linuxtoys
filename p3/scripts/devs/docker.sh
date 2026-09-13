@@ -5,7 +5,7 @@
 # icon: docker.svg
 # nocontainer
 # reboot: yes
-# compat: !ublue
+# compat: !ublue, !steamos
 # systemd: yes
 
 # --- Start of the script code ---

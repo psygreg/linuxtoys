@@ -4,6 +4,7 @@
 # description: cockpit_desc
 # icon: cockpit.png
 # systemd: yes
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

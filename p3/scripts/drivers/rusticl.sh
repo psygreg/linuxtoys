@@ -5,6 +5,7 @@
 # icon: device.svg
 # reboot: yes
 # gpu: Amd, Intel
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

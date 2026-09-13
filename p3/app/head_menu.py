@@ -5,7 +5,7 @@ from . import about_helper
 from . import action_registry
 from . import get_icon_path
 from . import git_scripts_manager
-from .lang_utils import create_translator
+from .lang_utils import create_translator, get_automatic_updates, save_automatic_updates
 from .gtk_dialogs import WaitDialog
 import threading
 import asyncio
@@ -129,6 +129,14 @@ class MenuButton(Gtk.MenuButton):
 		self.auto_error_reports.set_active(False)  # Disabled by default
 		self.auto_error_reports.connect("toggled", self.__on_auto_error_reports_toggled)
 
+		# Translators: automatic_updates = "Automatic updates"
+		auto_updates_label = _("autosysup")
+		if auto_updates_label == "autosysup":
+			auto_updates_label = "Automatic updates"
+		self.auto_updates = Gtk.CheckButton(label=auto_updates_label)
+		self.auto_updates.set_active(get_automatic_updates())
+		self.auto_updates.connect("toggled", self.__on_auto_updates_toggled)
+
 		vbox.pack_start(self.load_manifest, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
@@ -136,6 +144,7 @@ class MenuButton(Gtk.MenuButton):
 		vbox.pack_start(self.update_scripts_item, True, True, 0)
 		vbox.pack_start(separator, False, False, 0)
 		vbox.pack_start(self.auto_error_reports, False, False, 0)
+		vbox.pack_start(self.auto_updates, False, False, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
@@ -151,6 +160,8 @@ class MenuButton(Gtk.MenuButton):
 		self.action_registry_item.set_label(_("action_registry"))
 		self.update_scripts_item.set_label(_("scripts_resync"))
 		self.auto_error_reports.set_label(_("auto_error_reports"))
+		auto_updates_label = _("autosysup")
+		self.auto_updates.set_label("Automatic updates" if auto_updates_label == "autosysup" else auto_updates_label)
 
 	def __on_auto_error_reports_toggled(self, widget):
 		"""Handle auto error reports checkbox toggle"""
@@ -158,6 +169,13 @@ class MenuButton(Gtk.MenuButton):
 		# Store the preference on parent window
 		if self.parent_window:
 			self.parent_window.auto_error_reports_enabled = is_enabled
+
+	def __on_auto_updates_toggled(self, widget):
+		"""Persist automatic updates and notify the main window."""
+		is_enabled = widget.get_active()
+		save_automatic_updates(is_enabled)
+		if self.parent_window:
+			self.parent_window.set_automatic_updates_enabled(is_enabled)
 
 	def __on_language_select(self, widget):
 		"""Handle language selection menu item click"""

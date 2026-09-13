@@ -2,7 +2,7 @@
 # name: AIC8800/AX900 WiFi
 # description: ax900_desc
 # icon: wifi.svg
-# compat: !ostree
+# compat: !ostree, !steamos
 # reboot: yes
 # nocontainer
 # revert: no

@@ -1,0 +1,16 @@
+[  
+    {
+        "name": "Thunderbird",
+        "developer": "Mozilla",
+        "description": "Free and open source email, newsfeed, chat, and calendaring client.",
+        "description_tag": "thunderbird_desc",
+        "repo": "https://www.thunderbird.net",
+        "category": "office",
+        "icon": "./thunderbird.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "flathub",
+        "package-name": "org.mozilla.thunderbird",
+        "donate": "https://www.thunderbird.net/donate"
+    }
+]

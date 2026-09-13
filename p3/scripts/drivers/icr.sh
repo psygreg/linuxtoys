@@ -6,6 +6,7 @@
 # reboot: yes
 # gpu: Xe
 # hybridgpu: no
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

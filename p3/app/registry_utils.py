@@ -115,3 +115,56 @@ def search_registry_entries(registry_data, query):
             results[script_name] = matching_executions
 
     return results
+
+def get_git_release_apps(registry_data=None):
+    """Return latest registered pkg_fromrelease metadata keyed by repo_app_id."""
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    apps = {}
+    app_id_re = re.compile(r"^[A-Z_][A-Z0-9_]*$")
+    repo_re = re.compile(r"^https://(?:github\.com|codeberg\.org)/[^/]+/[^/]+/?$")
+
+    for _script_name, executions in registry_data.items():
+        for timestamp, operations in executions:
+            for operation in operations:
+                if not operation.startswith("git-release "):
+                    continue
+                parts = operation.split(None, 3)
+                if len(parts) != 4:
+                    continue
+                _kind, app_id, version, repo = parts
+                if not app_id_re.fullmatch(app_id) or not version or not repo_re.fullmatch(repo):
+                    continue
+                previous = apps.get(app_id)
+                if previous is None or str(timestamp or "") >= previous["timestamp"]:
+                    apps[app_id] = {
+                        "version": version,
+                        "repo": repo,
+                        "timestamp": str(timestamp or ""),
+                    }
+
+    return apps
+
+
+def shell_git_release_exports(registry_data=None):
+    """Render safe Bash assignments for registered release applications."""
+    import shlex
+
+    apps = get_git_release_apps(registry_data)
+    app_ids = sorted(apps)
+    lines = ["GIT_APPS=(" + " ".join(shlex.quote(app_id) for app_id in app_ids) + ")"]
+    for app_id in app_ids:
+        data = apps[app_id]
+        lines.append(f"export GIT_{app_id}_VERSION={shlex.quote(data['version'])}")
+        lines.append(f"export GIT_{app_id}_REPO={shlex.quote(data['repo'])}")
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) == 2 and sys.argv[1] == "--export-git-releases":
+        print(shell_git_release_exports())
+        sys.exit(0)
+    sys.exit(2)

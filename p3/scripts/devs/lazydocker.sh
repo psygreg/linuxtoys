@@ -4,6 +4,7 @@
 # description: lazydocker_desc
 # icon: docker.svg
 # nocontainer
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

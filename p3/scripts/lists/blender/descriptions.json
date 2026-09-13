@@ -1,0 +1,12 @@
+{
+    "long-description": "md/en.md",
+    "description_long_tag": "blender_long",
+
+    "en": {
+        "blender_long": "md/en.md"
+    },
+
+    "pt": {
+        "blender_long": "md/pt.md"
+    }
+}

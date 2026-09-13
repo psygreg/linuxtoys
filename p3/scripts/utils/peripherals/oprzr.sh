@@ -3,7 +3,7 @@
 # version: 1.0
 # description: oprzr_desc
 # icon: gaming.svg
-# compat: !ublue
+# compat: !ublue, !steamos
 # nocontainer
 # repo: https://openrazer.github.io
 

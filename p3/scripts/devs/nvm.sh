@@ -4,6 +4,7 @@
 # description: nvm_desc
 # icon: nvm.svg
 # repo: https://github.com/nvm-sh
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

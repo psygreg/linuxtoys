@@ -4,6 +4,7 @@
 # description: oversteer_desc
 # icon: oversteer.png
 # repo: https://github.com/berarma/oversteer
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

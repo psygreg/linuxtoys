@@ -38,8 +38,18 @@ class SearchCtl:
                 )
                 return
             
+        # Normal searches can change on every keystroke. Rebuilding grouped GTK
+        # results immediately for each character repeatedly cancels/restarts the
+        # progressive population animation and makes typing feel like a monolithic
+        # redraw. Debounce the regular search path just like Skills Seeker.
+        if self._search_timer_id:
+            GLib.source_remove(self._search_timer_id)
+            self._search_timer_id = None
+
         if len(query) >= 2:
-            self._perform_search(query)
+            self._search_timer_id = GLib.timeout_add(
+                140, self._do_delayed_search, search_entry
+            )
         elif len(query) == 0 and self.search_active:
             # If search is completely emptied, return to normal mode and remove focus
             self._clear_search_results()
@@ -70,6 +80,14 @@ class SearchCtl:
         query = search_entry.get_text().strip()
         if hasattr(self, "scripts_view") and hasattr(self.scripts_view, "do_search"):
             self.scripts_view.do_search(query)
+        return False
+
+    def _do_delayed_search(self, search_entry):
+        """Run a normal search once typing has briefly settled."""
+        self._search_timer_id = None
+        query = search_entry.get_text().strip()
+        if len(query) >= 2:
+            self._perform_search(query)
         return False
 
     def _on_search_activate(self, search_entry):
@@ -179,90 +197,186 @@ class SearchCtl:
                 flowbox.unselect_all()
 
     def _display_search_results(self):
-        """Display search results in the search view, grouped by category."""
+        """Display search results incrementally, grouped by category."""
         self.search_active = True
         self._search_result_flowboxes = []
 
-        # Clear existing search results completely
+        # Each query invalidates population work from the previous result set.
+        generation = getattr(self, "_search_population_generation", 0) + 1
+        self._search_population_generation = generation
+
+        # Clear existing search results completely.
         for child in self.search_flowbox.get_children():
             self.search_flowbox.remove(child)
 
-        # Force switch to search view first to ensure we're in the right context
+        # Only the first entry into the search page has a Gtk.Stack transition.
+        # Starting the population timer during that transition hides most or all
+        # of the gradient because cards are created behind the sliding page.
+        entering_search = self.main_stack.get_visible_child_name() != "search"
         self.main_stack.set_visible_child_name("search")
-
-        # Ensure the back button is visible when in search mode
         self.back_button.show()
-
         self.reveal.set_reveal_child(False)
-
-        # Disable drag-and-drop in search mode
         self._disable_drag_and_drop()
+        self._update_search_header()
 
-        # Create a container to hold all category groups
-        results_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        results_container.set_margin_left(0)
-        results_container.set_margin_right(0)
-        results_container.set_margin_top(8)
-        results_container.set_margin_bottom(4)
+        def begin_population():
+            # The query may have changed while waiting for the stack transition.
+            if getattr(self, "_search_population_generation", None) != generation:
+                return False
 
-        # Add search results grouped by category
-        for category_group in self.search_results:
-            category_name = category_group.get('category_name', 'Other')
-            scripts = category_group.get('scripts', [])
-            show_header = category_group.get('show_header', True)
-            
-            if not scripts:
-                continue
-            
-            # Add category header only if show_header is True
-            if show_header:
-                category_header = self._create_search_category_header(category_name)
-                results_container.pack_start(category_header, False, False, 0)
-            
-            # Create a flowbox for this category's scripts
-            category_flowbox = Gtk.FlowBox()
-            category_flowbox.set_valign(Gtk.Align.START)
-            # Dynamically calculate columns based on available width and script count
-            columns = self._calculate_search_results_columns(len(scripts))
-            category_flowbox.set_max_children_per_line(columns)
-            category_flowbox.set_activate_on_single_click(False)
-            category_flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
-            category_flowbox.connect("key-press-event", self._on_flowbox_key_press)
-            category_flowbox.connect(
-                "selected-children-changed",
-                self._on_search_result_selection_changed,
+            results_container = Gtk.Box(
+                orientation=Gtk.Orientation.VERTICAL,
+                spacing=0,
             )
-            category_flowbox.set_homogeneous(True)
-            category_flowbox.set_margin_left(32)
-            category_flowbox.set_margin_right(32)
-            category_flowbox.set_margin_top(8)
-            category_flowbox.set_margin_bottom(4)
-            category_flowbox.set_column_spacing(16)
-            category_flowbox.set_row_spacing(12)
-            
-            # Add scripts for this category
-            for search_result in scripts:
+            results_container.set_margin_left(0)
+            results_container.set_margin_right(0)
+            results_container.set_margin_top(8)
+            results_container.set_margin_bottom(4)
+
+            # Search result sets are commonly <= 10 items. Keeping the old initial
+            # batch of 10 therefore bypassed progressive rendering for most queries.
+            # Start with one frame-sized batch so even small searches visibly flow in.
+            initial_batch_size = 2
+            frame_batch_size = 2
+            initial_widgets = []
+
+            # Flatten the grouped search result model into one ordered population
+            # stream. Category UI is created only when the first result belonging to
+            # that group reaches the stream.
+            population_queue = []
+            for category_group in self.search_results:
+                for search_result in category_group.get("scripts", []):
+                    population_queue.append((category_group, search_result))
+
+            group_flowboxes = {}
+
+            def ensure_group(category_group):
+                group_key = id(category_group)
+                existing = group_flowboxes.get(group_key)
+                if existing is not None:
+                    return existing
+
+                category_name = category_group.get("category_name", "Other")
+                scripts = category_group.get("scripts", [])
+                show_header = category_group.get("show_header", True)
+
+                if show_header:
+                    category_header = self._create_search_category_header(category_name)
+                    results_container.pack_start(category_header, False, False, 0)
+                    category_header.show()
+
+                category_flowbox = Gtk.FlowBox()
+                category_flowbox.set_valign(Gtk.Align.START)
+                columns = self._calculate_search_results_columns(len(scripts))
+                category_flowbox.set_max_children_per_line(columns)
+                category_flowbox.set_activate_on_single_click(False)
+                category_flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
+                category_flowbox.connect("key-press-event", self._on_flowbox_key_press)
+                category_flowbox.connect(
+                    "selected-children-changed",
+                    self._on_search_result_selection_changed,
+                )
+                category_flowbox.set_homogeneous(True)
+                category_flowbox.set_margin_left(32)
+                category_flowbox.set_margin_right(32)
+                category_flowbox.set_margin_top(8)
+                category_flowbox.set_margin_bottom(4)
+                category_flowbox.set_column_spacing(16)
+                category_flowbox.set_row_spacing(12)
+
+                self._search_result_flowboxes.append(category_flowbox)
+                results_container.pack_start(category_flowbox, False, False, 0)
+                category_flowbox.show()
+                group_flowboxes[group_key] = category_flowbox
+                return category_flowbox
+
+            def add_result_card(category_group, search_result, *, show_now=False):
+                flowbox = ensure_group(category_group)
                 item_info = search_result.item_info
                 widget = self.create_item_widget(item_info)
-                description = item_info.get("description", "")
-                if description:
-                    widget.set_tooltip_text(description)
-                else:
-                    widget.set_tooltip_text(None)
-                category_flowbox.add(widget)
-            
-            self._search_result_flowboxes.append(category_flowbox)
-            results_container.pack_start(category_flowbox, False, False, 0)
+                widget.set_tooltip_text(item_info.get("description", "") or None)
 
-        # Add the container to the search flowbox
-        self.search_flowbox.add(results_container)
+                # Hide before insertion/showing so no fully-opaque frame can leak
+                # through before the shared fade scheduler handles the card.
+                widget.set_opacity(0.0)
+                flowbox.add(widget)
+                if show_now:
+                    widget.show_all()
+                return widget
 
-        # Ensure all widgets are shown
-        self.search_flowbox.show_all()
+            initial_count = min(initial_batch_size, len(population_queue))
+            for category_group, search_result in population_queue[:initial_count]:
+                initial_widgets.append(
+                    add_result_card(category_group, search_result)
+                )
 
-        # Update header for search view
-        self._update_search_header()
-    
+            self.search_flowbox.add(results_container)
+            self.search_flowbox.show_all()
+            self.animate_item_batch(
+                initial_widgets,
+                duration_ms=120,
+                stagger_ms=8,
+                delay_ms=16,
+            )
+
+            if initial_count >= len(population_queue):
+                return False
+
+            next_index = initial_count
+            frame_interval_ms = 16
+
+            def populate_search_batch():
+                nonlocal next_index
+
+                if getattr(self, "_search_population_generation", None) != generation:
+                    return False
+
+                end_index = min(
+                    next_index + frame_batch_size,
+                    len(population_queue),
+                )
+                batch_widgets = []
+                for category_group, search_result in population_queue[
+                    next_index:end_index
+                ]:
+                    batch_widgets.append(
+                        add_result_card(
+                            category_group,
+                            search_result,
+                            show_now=True,
+                        )
+                    )
+
+                next_index = end_index
+                self.animate_item_batch(
+                    batch_widgets,
+                    duration_ms=110,
+                    stagger_ms=5,
+                )
+                return next_index < len(population_queue)
+
+            GLib.timeout_add(
+                frame_interval_ms,
+                populate_search_batch,
+                priority=GLib.PRIORITY_LOW,
+            )
+            return False
+
+        if entering_search:
+            transition_delay = max(
+                1,
+                int(self.main_stack.get_transition_duration()),
+            )
+            GLib.timeout_add(
+                transition_delay,
+                begin_population,
+                priority=GLib.PRIORITY_LOW,
+            )
+        else:
+            # Already on the search page: there is no stack transition to wait for.
+            # Build the first tiny batch now, then continue frame-paced.
+            begin_population()
+
     def _create_search_category_header(self, category_name):
         """
         Create a category header widget for search results.
@@ -310,6 +424,11 @@ class SearchCtl:
 
     def _clear_search_results(self):
         """Clear search results and return to previous view."""
+        # Cancel any low-priority card population still targeting the previous
+        # result set before its FlowBoxes are detached.
+        self._search_population_generation = (
+            getattr(self, "_search_population_generation", 0) + 1
+        )
         self.search_active = False
         self.search_results = []
 

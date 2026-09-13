@@ -17,6 +17,10 @@ DEFAULT_ICON_NAME = "application-x-executable"
 DEFAULT_FLOWBOX_COLUMNS = 5
 DEFAULT_ICON_SIZE = 38
 
+# File-backed card icons are reused across category, search and Featured views.
+# Cache decoded/scaled pixbufs for the current file revision.
+_PIXBUF_CACHE = {}
+
 def get_toplevel_window(widget: Gtk.Widget) -> Optional[Gtk.Window]:
     """Return the widget's top-level GTK window when available."""
     toplevel = widget.get_toplevel()
@@ -56,25 +60,61 @@ def create_flowbox(
 
     return flowbox
 
+def _pixbuf_file_signature(path: str):
+    try:
+        stat = os.stat(path)
+    except OSError:
+        return None
+    return (stat.st_mtime_ns, stat.st_size)
+
+
+def clear_pixbuf_cache() -> None:
+    """Discard decoded file-backed GTK images."""
+    _PIXBUF_CACHE.clear()
+
+
 def load_scaled_pixbuf(
     path: str,
     width: int,
     height: int,
     preserve_aspect_ratio: bool = True,
 ) -> Optional[GdkPixbuf.Pixbuf]:
-    """Load an image at a requested size, returning None on failure."""
-    if not path or not os.path.isfile(path):
+    """Load and memoize a scaled image for the current file revision."""
+    if not path:
         return None
 
+    real_path = os.path.realpath(path)
+    signature = _pixbuf_file_signature(real_path)
+    if signature is None:
+        return None
+
+    cache_key = (
+        real_path,
+        signature,
+        int(width),
+        int(height),
+        bool(preserve_aspect_ratio),
+    )
+    cached = _PIXBUF_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
     try:
-        return GdkPixbuf.Pixbuf.new_from_file_at_scale(
-            path,
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+            real_path,
             width,
             height,
             preserve_aspect_ratio,
         )
     except GLib.Error:
         return None
+
+    for key in tuple(_PIXBUF_CACHE):
+        if key[0] == real_path and key[2:] == cache_key[2:] and key != cache_key:
+            _PIXBUF_CACHE.pop(key, None)
+
+    _PIXBUF_CACHE[cache_key] = pixbuf
+    return pixbuf
 
 def create_icon_image(
     icon_name: str = DEFAULT_ICON_NAME,
@@ -106,6 +146,7 @@ __all__ = [
     "DEFAULT_FLOWBOX_COLUMNS",
     "DEFAULT_ICON_SIZE",
     "clear_container",
+    "clear_pixbuf_cache",
     "create_flowbox",
     "create_icon_image",
     "escape_markup",

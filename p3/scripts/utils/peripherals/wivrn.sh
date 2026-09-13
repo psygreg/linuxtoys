@@ -4,6 +4,7 @@
 # description: wivrn_desc
 # icon: wivrn.png
 # repo: https://github.com/WiVRn
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

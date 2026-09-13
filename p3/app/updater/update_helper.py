@@ -2,8 +2,10 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 import urllib.error
 import urllib.request
+import shlex
 
 from . import __version__
 
@@ -41,12 +43,9 @@ class UpdateHelper:
     def _check_for_updates(self) -> bool:
         self._latest_ver = self._get_latest_version()
 
-        if self._compare_versions(
+        return self._compare_versions(
             self._current_ver, self._latest_ver.get("tag_name", "")
-        ):
-            return True
-        else:
-            return False
+        ) == 1
 
     def _compare_versions(self, current, latest) -> int:
         """
@@ -178,3 +177,88 @@ class UpdateHelper:
             or self.__is_from_copr()
             or self.__is_from_git(os.path.dirname(__file__))
         )
+
+
+def run_background_update():
+    """Install the latest LinuxToys release without opening the VTE viewer.
+
+    Keep LinuxToys' normal sudo_rq pre-authentication on systems that may need
+    native package operations, but bypass it on SteamOS where install.sh uses
+    the user-level AppImage/Gear Lever update path. Returns
+    (success, error_message).
+    """
+    script_dir = os.environ.get("SCRIPT_DIR")
+
+    is_steamos = False
+    try:
+        with open("/etc/os-release", "r", encoding="utf-8") as os_release:
+            for line in os_release:
+                if line.startswith("ID="):
+                    os_id = line.split("=", 1)[1].strip().strip('\"\'')
+                    is_steamos = os_id == "steamos"
+                    break
+    except OSError:
+        pass
+
+    if is_steamos:
+        script = (
+            "#!/usr/bin/env bash\n"
+            "curl -fsSL https://linux.toys/install.sh | bash\n"
+        )
+    else:
+        if not script_dir:
+            return False, "SCRIPT_DIR environment variable is not set."
+
+        library_path = os.path.join(script_dir, "libs", "linuxtoys.bash")
+        if not os.path.isfile(library_path):
+            return False, f"LinuxToys shell library was not found: {library_path}"
+
+        script = (
+            "#!/usr/bin/env bash\n"
+            f"source {shlex.quote(library_path)}\n"
+            "sudo_rq\n"
+            "curl -fsSL https://linux.toys/install.sh | bash\n"
+        )
+
+    script_path = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            prefix="linuxtoys-background-update-",
+            suffix=".sh",
+            delete=False,
+            encoding="utf-8",
+        ) as tmp:
+            tmp.write(script)
+            script_path = tmp.name
+
+        os.chmod(script_path, 0o700)
+
+        result = subprocess.run(
+            ["bash", script_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=os.environ.copy(),
+        )
+
+        if result.returncode == 0:
+            return True, ""
+
+        if result.returncode == 100:
+            return False, "Update authentication was cancelled."
+
+        error = (result.stderr or result.stdout or "").strip()
+        if not error:
+            error = f"Background updater exited with status {result.returncode}."
+        return False, error
+
+    except Exception as exc:
+        return False, str(exc)
+    finally:
+        if script_path:
+            try:
+                os.remove(script_path)
+            except OSError:
+                pass
+

@@ -5,6 +5,7 @@
 # icon: cargo.svg
 # repo: https://github.com/rust-lang/cargo
 # revert: solus
+# compat: !steamos
 
 
 # --- Start of the script code ---

@@ -1,0 +1,12 @@
+{
+    "long-description": "md/en.md",
+    "description_long_tag": "mcbe_long",
+
+    "en": {
+        "mcbe_long": "md/en.md"
+    },
+
+    "pt": {
+        "mcbe_long": "md/pt.md"
+    }
+}

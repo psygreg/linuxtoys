@@ -1,8 +1,11 @@
 import sys
 import os
+import re
+from urllib.parse import unquote, urlparse
 
 # Only import GTK-related modules if not in CLI mode
 if os.environ.get('EASY_CLI') != '1':
+    from gi.repository import Gio
     from .gtk_common import Gtk, Gdk
     from .window import AppWindow
 
@@ -16,18 +19,77 @@ from . import get_app_resource_path, get_icon_path
 if os.environ.get('EASY_CLI') != '1':
     class Application(Gtk.Application):
         def __init__(self, translations, *args, **kwargs):
+            kwargs.setdefault("flags", Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
             super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)
             self.window = None
             self.translations = translations
-            
+
             # Set application properties for better desktop integration
             self.set_application_id("com.linuxtoys.app")
+
+        @staticmethod
+        def _parse_install_uri(argument):
+            """Return a stable LinuxToys target ID from a supported URI."""
+            try:
+                parsed = urlparse(argument)
+            except (TypeError, ValueError):
+                return None
+
+            if parsed.scheme.casefold() != "linuxtoys":
+                return None
+            if parsed.netloc.casefold() != "install":
+                return None
+            if parsed.query or parsed.fragment or parsed.params:
+                return None
+
+            target = unquote(parsed.path.lstrip("/"))
+
+            # Repository-list entry names may contain spaces (for example,
+            # "Amethyst Mod Manager"). Percent-decode the path first, then
+            # accept spaces while retaining a conservative character set.
+            # Leading/trailing whitespace and encoded separators/control
+            # characters remain invalid.
+            if target != target.strip():
+                return None
+            if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9 ._+-]{0,127}", target):
+                return None
+            return target
 
         def do_activate(self):
             if not self.window:
                 self.window = AppWindow(self, self.translations)
                 self.load_css()
             self.window.present()
+
+        def do_command_line(self, command_line):
+            """Handle normal launches and browser-triggered LinuxToys URIs."""
+            arguments = [str(arg) for arg in command_line.get_arguments()]
+            extra_args = arguments[1:]
+
+            self.activate()
+
+            if not extra_args:
+                return 0
+
+            if len(extra_args) != 1:
+                print("Error: LinuxToys accepts only one URI request at a time.")
+                return 2
+
+            target = self._parse_install_uri(extra_args[0])
+            if target is None:
+                print(f"Error: Unsupported LinuxToys URI: {extra_args[0]}")
+                if self.window:
+                    self.window.show_external_install_error(
+                        self.translations.get(
+                            "uri_invalid_message",
+                            "The requested LinuxToys link is invalid or unsupported.",
+                        )
+                    )
+                return 2
+
+            if self.window:
+                self.window.handle_external_install_request(target)
+            return 0
 
         def load_css(self):
             try:

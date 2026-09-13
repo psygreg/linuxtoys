@@ -1,0 +1,16 @@
+[  
+    {
+        "name": "Blender",
+        "developer": "Blender",
+        "description": "A free and open-source 3D creation suite.",
+        "description_tag": "blender_desc",
+        "repo": "https://www.blender.org",
+        "category": "office",
+        "icon": "blender.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "flathub",
+        "package-name": "org.blender.Blender",
+        "donate": "https://fund.blender.org"
+    }
+]

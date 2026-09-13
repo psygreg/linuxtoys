@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if is_fedora && [[ ! $ID =~ ^(ultramarine|nobara)$ ]]; then
     call_script terra

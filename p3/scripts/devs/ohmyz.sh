@@ -5,6 +5,7 @@
 # icon: zsh.png
 # compat: arch, debian, fedora, ubuntu, !cachy, suse, ostree, rhel
 # repo: https://ohmyz.sh
+# compat: !steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -17,6 +17,7 @@ from .parser import get_categories, get_all_scripts_recursive, get_repo_entries
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .reboot_helper import check_ostree_pending_deployments
 from .repo_parser import materialize_repo_script
+from .library_loader import script_command, script_environment
 from .updater.update_helper import UpdateHelper
 
 
@@ -94,6 +95,9 @@ def valid_flatpak_id(flatpak_name):
 
 def check_package_exists(package_name):
     """Use LinuxToys distro detection to validate repository availability."""
+    if "steamos" in get_system_compat_keys():
+        return False
+
     if not valid_package_name(package_name):
         return False
 
@@ -163,6 +167,9 @@ async def check_flatpaks_async(flatpak_names):
 
 def install_packages(package_names):
     """Install packages in one pkg_install call through linuxtoys.lib."""
+    if "steamos" in get_system_compat_keys():
+        return False
+
     result = _run_library_function('pkg_install', package_names)
     if result.returncode != 0 and result.stderr:
         print(result.stderr.strip())
@@ -215,6 +222,52 @@ def find_script_by_name(script_name, translations=None):
 async def find_script_by_name_async(script_name, translations=None):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, find_script_by_name, script_name, translations)
+
+
+def find_script_by_id(script_id, translations=None):
+    """
+    Resolve only stable internal LinuxToys identifiers.
+
+    Unlike find_script_by_name(), this deliberately does not accept translated
+    or display names, making it suitable for external/browser-facing requests.
+    Only entries exposed by the normal compatibility-filtered parser are returned.
+    """
+    if not isinstance(script_id, str):
+        return None
+
+    target = script_id.strip().casefold()
+    if not target:
+        return None
+
+    categories = get_categories(translations)
+
+    for category in categories:
+        if category.get('is_script'):
+            filename_without_ext = os.path.splitext(os.path.basename(category['path']))[0]
+            if filename_without_ext.casefold() == target:
+                return category
+
+    for category in categories:
+        if category.get('is_script'):
+            continue
+        for script in get_all_scripts_recursive(category['path'], translations):
+            filename_without_ext = os.path.splitext(os.path.basename(script['path']))[0]
+            if filename_without_ext.casefold() == target:
+                return script
+
+    for script in get_repo_entries(translations):
+        repo_path = str(script.get("path", ""))
+        path_id = repo_path[len("repo://"):] if repo_path.startswith("repo://") else ""
+        stable_id = str(
+            script.get("id")
+            or script.get("script")
+            or path_id
+            or script.get("name", "")
+        ).strip()
+        if stable_id.casefold() == target:
+            return script
+
+    return None
 
 
 def load_manifest(manifest_path='manifest.txt'):
@@ -282,20 +335,25 @@ def run_script(script_info):
     print("-" * 50)
     
     try:
+        child_env = script_environment(script_info, os.environ.copy())
+        command = script_command(script_info['path'], _validate_script_dir())
+
         # Check if EASY_CLI mode is enabled
         if os.environ.get("EASY_CLI") == "1":
-            result = subprocess.run(['bash', script_info['path']],
+            result = subprocess.run(command,
                                     stdin=sys.stdin,
                                     stdout=sys.stdout,
                                     stderr=sys.stderr,
-                                    check=True)
+                                    check=True,
+                                    env=child_env)
 
         else:
-            # Execute the script with bash, similar to how the GUI does it
-            result = subprocess.run(['bash', script_info['path']], 
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.STDOUT, 
-                                universal_newlines=True)
+            # Execute through the same library-aware preamble used by the GUI.
+            result = subprocess.run(command,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                universal_newlines=True,
+                                env=child_env)
         
         # Print the output
         if result.stdout:
