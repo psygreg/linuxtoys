@@ -31,6 +31,7 @@ askpass
 # handle secureboot check on our side
 secureboot_check
 sed -i '/^[[:space:]]*check_secure_boot[[:space:]]*$/d' install.sh
+sed -i 's/((fw_count++))/fw_count=$((fw_count + 1))/g' install.sh
 
 sudo ./install.sh
 status=$?
