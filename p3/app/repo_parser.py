@@ -311,6 +311,41 @@ def _normalize_hardware_key(kind, value):
     return f"{kind}-{value}"
 
 
+def _normalize_os_spec(value):
+    """Normalize an ``os`` declaration into included and excluded OS keys."""
+    if value is None:
+        return set(), set()
+
+    values = _as_list(value)
+    if not values:
+        return None
+
+    included = set()
+    excluded = set()
+
+    for item in values:
+        if not isinstance(item, str):
+            return None
+
+        item = item.strip().lower()
+        if not item:
+            return None
+
+        is_exclusion = item.startswith("!")
+        key = item[1:] if is_exclusion else item
+
+        if not key or key not in OS_KEYS:
+            return None
+
+        (excluded if is_exclusion else included).add(key)
+
+    # Contradictory declarations are invalid rather than order-dependent.
+    if included & excluded:
+        return None
+
+    return included, excluded
+
+
 def _resolve_install_type(entry, compat_keys):
     """Resolve an entry's install type, including optional per-OS mappings."""
     value = entry.get("type", "git")
@@ -527,16 +562,21 @@ def _entry_is_compatible(entry, compat_keys, scripts_dir=None):
     if scripts_dir is not None and not _git_db_requirement_matches(entry, compat_keys, scripts_dir):
         return False
 
-    # OS compatibility
+    # OS compatibility. Positive tags are an allow-list; !tags are exclusions
+    # that always take precedence. An exclusion-only list means "all except".
     os_value = entry.get("os")
 
-    if os_value:
-        requested = set(_as_list(os_value))
-
-        if not requested or not requested <= OS_KEYS:
+    if os_value is not None:
+        os_spec = _normalize_os_spec(os_value)
+        if os_spec is None:
             return False
 
-        if not requested & compat_keys:
+        included, excluded = os_spec
+
+        if excluded & compat_keys:
+            return False
+
+        if included and not (included & compat_keys):
             return False
 
     # Optional desktop-environment compatibility.
