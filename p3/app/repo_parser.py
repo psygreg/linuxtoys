@@ -670,20 +670,32 @@ def _validate_native_package_spec(value):
     return _validate_package_spec(value)
 
 def _validate_release_asset_selector(value):
-    """Validate an optional pkg_fromrelease asset name/glob."""
+    """Validate an optional pkg_fromrelease asset name/glob or per-OS mapping."""
     if value is None:
         return True
 
-    if not isinstance(value, str):
+    def valid_selector(selector):
+        if not isinstance(selector, str):
+            return False
+        selector = selector.strip()
+        return bool(
+            selector
+            and selector not in {".", ".."}
+            and "/" not in selector
+            and "\\" not in selector
+        )
+
+    if isinstance(value, str):
+        return valid_selector(value)
+
+    if not isinstance(value, dict) or not value:
         return False
 
-    value = value.strip()
-    return bool(
-        value
-        and value not in {".", ".."}
-        and "/" not in value
-        and "\\" not in value
-    )
+    if set(value) - (OS_KEYS | {"all"}):
+        return False
+
+    return all(valid_selector(selector) for selector in value.values())
+
 
 def _validate_type(entry, compat_keys):
     install_type = _resolve_install_type(entry, compat_keys)
@@ -1830,16 +1842,16 @@ def create_install_script(entry):
     command = None
 
     if install_type == "git":
-        asset_selector = entry.get("package-name")
+        asset_selectors = _resolve_package_names(entry, compat_keys)
         command = f"pkg_fromrelease {shlex.quote(repo)}"
-        if isinstance(asset_selector, str) and asset_selector.strip():
-            command += f" {shlex.quote(asset_selector.strip())}"
+        if asset_selectors:
+            command += f" {shlex.quote(asset_selectors[0])}"
 
     elif install_type == "tar":
-        asset_selector = entry.get("package-name")
+        asset_selectors = _resolve_package_names(entry, compat_keys)
         command = f"pkg_fromrelease --tar {shlex.quote(repo)}"
-        if isinstance(asset_selector, str) and asset_selector.strip():
-            command += f" {shlex.quote(asset_selector.strip())}"
+        if asset_selectors:
+            command += f" {shlex.quote(asset_selectors[0])}"
 
     elif install_type == "bin":
         asset_name = entry.get("package-name", "").strip()
