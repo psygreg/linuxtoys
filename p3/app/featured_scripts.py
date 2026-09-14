@@ -214,11 +214,21 @@ class FeaturedCtl:
             self._featured_layout_metrics = None
             return 0
 
-        # One three-row card at 3-5 rows, two at 6-8, three at 9+. A large
-        # card occupies three normal grid cells, so every one reduces the number
-        # of distinct apps that fit by two while preserving exactly the same
-        # overall Featured height and column count.
-        large_count = min(3, rows // 3, eligible_count)
+        # One three-row card at 3-5 rows, two at 6-8, and three at 9+.
+        # Once the maximum-height layout is available (9+ rows), scale the large
+        # card allowance with width as well: keep the base three, then add one
+        # more for every column beyond three (4 columns -> 4 large cards,
+        # 5 columns -> 5 large cards, and so on).
+        #
+        # A large card occupies three normal grid cells, so every one reduces the
+        # number of distinct apps that fit by two while preserving exactly the
+        # same overall Featured height and column count.
+        if rows >= 9:
+            max_large_cards = max(3, columns)
+        else:
+            max_large_cards = min(3, rows // 3)
+
+        large_count = min(max_large_cards, eligible_count)
         slot_count = rows * columns
         item_capacity = max(0, slot_count - (2 * large_count))
         item_count = min(eligible_count, item_capacity)
