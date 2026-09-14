@@ -186,33 +186,98 @@ question() {
     local text="$2"
     local width="${3:-360}"
     local height="${4:-300}"
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        return 0
-    fi
-    if _zenity_run --question --title "$title" --text "$text" --width "$width" --height "$height"; then
-        return 0
-    fi
-    if [[ -t 0 ]]; then
-        local _reply
-        read -r -p "$text [y/N] " _reply
-        [[ "$_reply" =~ ^[Yy]$ ]]
+    local _reply
+
+    if _zenity_can_run; then
+        _zenity_run --question --title "$title" --text "$text" \
+            --width "$width" --height "$height"
         return $?
     fi
-    return 1
+
+    read -r -p "$text [y/N] " _reply || return 1
+    [[ "$_reply" =~ ^[Yy]$ ]]
 }
-info() { 
+
+_cli_select() {
+    local mode="$1"
+    shift
+    local -a options=("$@")
+    local reply token index
+    local -a selected=()
+
+    (( ${#options[@]} > 0 )) || return 1
+
+    printf '%s\n' "Select an option:" >&2
+    for index in "${!options[@]}"; do
+        printf '  %d) %s\n' "$((index + 1))" "${options[index]}" >&2
+    done
+
+    if [[ "$mode" == "radio" ]]; then
+        read -r -p "Selection [1]: " reply || return 1
+        reply="${reply:-1}"
+        [[ "$reply" =~ ^[0-9]+$ ]] || return 1
+        (( reply >= 1 && reply <= ${#options[@]} )) || return 1
+        printf '%s\n' "${options[reply - 1]}"
+        return 0
+    fi
+
+    read -r -p "Selections (space/comma separated): " reply || return 1
+    [[ -n "$reply" ]] || return 1
+    reply="${reply//,/ }"
+
+    for token in $reply; do
+        [[ "$token" =~ ^[0-9]+$ ]] || return 1
+        (( token >= 1 && token <= ${#options[@]} )) || return 1
+        selected+=("${options[token - 1]}")
+    done
+
+    (( ${#selected[@]} > 0 )) || return 1
+    printf '%s\n' "${selected[@]}"
+}
+
+radioselect() {
+    (( $# > 0 )) || return 1
+
+    if _zenity_can_run; then
+        local -a rows=()
+        local option state="TRUE"
+        for option in "$@"; do
+            rows+=("$state" "$option")
+            state="FALSE"
+        done
+        _zenity_run --list --radiolist --title="LinuxToys" \
+            --column="" --column="Option" "${rows[@]}"
+        return $?
+    fi
+
+    _cli_select radio "$@"
+}
+
+listselect() {
+    (( $# > 0 )) || return 1
+
+    if _zenity_can_run; then
+        _zenity_run --list --multiple --title="LinuxToys" \
+            --column="Option" --separator=$'\n' "$@"
+        return $?
+    fi
+
+    _cli_select list "$@"
+}
+
+info() {
     { { [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; }; } && return 0; } || true
     _zenity_can_run || { echo "$1" && return 0; }
     if [ -n "$CHECKLIST_RUN" ]; then
-        echo "$1"; 
+        echo "$1";
     else
         _msg info "$1";
     fi
 }
-warn() { 
+warn() {
     _zenity_can_run || { echo "$1" && return 0; }
     if [ -n "$CHECKLIST_RUN" ]; then
-        echo "WARN: $1"; 
+        echo "WARN: $1";
     else
         _msg warning "$1";
     fi
@@ -256,7 +321,7 @@ init_transmap() {
     [ -n "$TRANSMAP_PATH" ] && return 0
     TRANSMAP_CALL="1" && prep_tmp
     unset TRANSMAP_CALL
-    { [ -d "$TEMPDIR" ] && { 
+    { [ -d "$TEMPDIR" ] && {
         { [ -n "$TRANSMAP_PATH" ] || TRANSMAP_PATH="$TEMPDIR/transmap"; }
         { [ -f "$TRANSMAP_PATH" ] || { : > "$TRANSMAP_PATH" && chmod 600 "$TRANSMAP_PATH"; } }
     } } || die "Failed to create transaction map"
