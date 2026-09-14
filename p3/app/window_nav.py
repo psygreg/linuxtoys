@@ -390,6 +390,12 @@ class NavCtl:
                 else:
                     self._disable_drag_and_drop()
 
+                # Installation/removal may have changed which scripts are eligible
+                # for Featured. Returning to the root must therefore recalculate the
+                # set immediately instead of waiting for the next periodic rotation.
+                if self.current_category_info is None:
+                    self._prepare_random_scripts_display()
+
                 GLib.timeout_add(transition_delay, cleanup_terminal_view)
                 self._term_prev = None
                 return

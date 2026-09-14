@@ -232,18 +232,64 @@ class FeaturedCtl:
 
         return min(
             rows * columns,
-            len(self.all_scripts),
+            len(self._eligible_featured_scripts()),
         )
 
+    @staticmethod
+    def _featured_script_key(script):
+        """Return a stable identity for Featured history/exclusion checks."""
+        return script.get("path") or (
+            script.get("name", ""),
+            script.get("repo", ""),
+        )
+
+    def _eligible_featured_scripts(self):
+        """Return scripts that may currently appear in Featured."""
+        return [
+            script
+            for script in self.all_scripts
+            if not self._is_script_removable(script)
+        ]
+
+    @staticmethod
+    def _featured_history_limit(count):
+        """How many previous Featured sets must remain excluded."""
+        if count < 10:
+            return 3
+        if count < 20:
+            return 2
+        return 1
+
     def _select_random_scripts(self, count):
-        """Randomly select exactly the requested number of scripts."""
+        """Select a fresh Featured set while avoiding recently displayed cards."""
         if not self.all_scripts or count <= 0:
             return []
 
-        return random.sample(
-            self.all_scripts,
-            min(count, len(self.all_scripts)),
-        )
+        eligible = self._eligible_featured_scripts()
+        if not eligible:
+            return []
+
+        count = min(count, len(eligible))
+        history = list(getattr(self, "_featured_history", ()))
+        history_limit = self._featured_history_limit(count)
+        history = history[-history_limit:]
+
+        # Prefer excluding every retained set. If that would leave too few cards to
+        # fill the current layout, forget the oldest set(s) one at a time. This keeps
+        # the strongest possible no-repeat window without shrinking Featured.
+        while True:
+            excluded = set().union(*history) if history else set()
+            candidates = [
+                script
+                for script in eligible
+                if self._featured_script_key(script) not in excluded
+            ]
+            if len(candidates) >= count or not history:
+                break
+            history.pop(0)
+
+        self._featured_history = history
+        return random.sample(candidates, min(count, len(candidates)))
 
     def _clear_random_scripts(self):
         """Remove every currently displayed featured card."""
@@ -262,6 +308,7 @@ class FeaturedCtl:
         if discard:
             self._clear_random_scripts()
             self._featured_last_count = 0
+            self._featured_history = []
 
     def _invalidate_featured_scripts(self):
         """Discard Featured state when its backing script data becomes stale."""
@@ -300,6 +347,15 @@ class FeaturedCtl:
             self.random_scripts_flowbox.add(widget)
 
         self._featured_last_count = count
+
+        displayed_keys = {
+            self._featured_script_key(script_info)
+            for script_info in scripts
+        }
+        history_limit = self._featured_history_limit(count)
+        history = list(getattr(self, "_featured_history", ()))
+        history.append(displayed_keys)
+        self._featured_history = history[-history_limit:]
 
         # Realize the new cards while the revealer is still closed, then animate in.
         self.featured_scripts_revealer.show_all()

@@ -88,6 +88,7 @@ class AppWindow(
         self._featured_last_count = None
         self._featured_swap_timer = None
         self._featured_hovered = False
+        self._featured_history = []
         self.featured_scripts_revealer = None
         self.random_scripts_revealer = None
 
