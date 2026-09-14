@@ -268,7 +268,7 @@ pkg_fromfile () {
             _append_transmap "pkg file $*"
         else
             if [ -f PKGBUILD ]; then
-                local pkgname=$(grep "^pkgname=" PKGBUILD | head -1 | cut -d'=' -f2 | tr -d "'" '"')
+                local pkgname=$(grep "^pkgname=" PKGBUILD | head -1 | cut -d'=' -f2 | tr -d "'\"")
                 makepkg -si || die "Failed to build and install package $pkgname"
                 _append_transmap "pkg file $pkgname"
             else
