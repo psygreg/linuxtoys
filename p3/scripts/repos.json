@@ -509,7 +509,7 @@
             }
         ],
         "overrides": {
-            "pre": "{ { { is_rhel || is_fedora; } && call_script rpmfusion; } || { is_arch && multilib_chk; }; } || true"
+            "pre": "{ { { is_rhel || is_fedora; } && call_script rpmfusion; } || { { is_arch && summon_helpers; } && multilib_chk; }; } || true"
         }
     },
     {
