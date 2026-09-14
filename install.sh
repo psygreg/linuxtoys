@@ -212,7 +212,7 @@ ossolus() {
 }
 
 manjaro() {
-    { pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
+    { sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
 }
 
 installer() {
