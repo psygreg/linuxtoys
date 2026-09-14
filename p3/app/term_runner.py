@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 
 from . import dev_mode, reboot_helper
 from .gtk_common import GLib, Gtk, Vte
@@ -8,7 +9,26 @@ from .antenna import antenna
 from .library_loader import script_command, script_environment
 
 class TerminalRunner:
+    @staticmethod
+    def _has_flatpak_apps():
+        """Return whether at least one Flatpak application is currently installed."""
+        try:
+            result = subprocess.run(
+                ["flatpak", "list", "--app"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                text=True,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return False
+
+        return result.returncode == 0 and bool(result.stdout.strip())
+
     def _run_next_script(self):
+        if self.script_queue and not hasattr(self, "_flatpak_apps_present_before_run"):
+            self._flatpak_apps_present_before_run = self._has_flatpak_apps()
+
         if not self.script_queue:
             # Use translatable done text
             done_label = self.translations.get("term_view_done", " Done ")
@@ -32,14 +52,23 @@ class TerminalRunner:
             self.terminal.set_can_focus(True)
             self.vbox_main.button_run.grab_focus()
             
-            # Check if flatpak was installed during script execution and show info if needed
-            if getattr(self, "_flatpak_installed_detected", False):
+            # Show the Flatpak session-path notice when Flatpak itself was installed
+            # during this run, or when this run installed the system's first Flatpak app.
+            flatpak_was_installed = getattr(self, "_flatpak_installed_detected", False)
+            had_flatpak_apps = getattr(self, "_flatpak_apps_present_before_run", True)
+            first_flatpak_app_installed = (
+                not had_flatpak_apps and self._has_flatpak_apps()
+            )
+
+            if flatpak_was_installed or first_flatpak_app_installed:
                 reboot_helper.show_flatpak_installed_info_dialog(
                     self.parent, self.translations
                 )
-                # Reset the flag after showing the dialog
-                self._flatpak_installed_detected = False
-            
+
+            self._flatpak_installed_detected = False
+            if hasattr(self, "_flatpak_apps_present_before_run"):
+                del self._flatpak_apps_present_before_run
+
             return
  
         self.parent._script_running = True
