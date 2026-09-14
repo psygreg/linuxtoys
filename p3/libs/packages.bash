@@ -18,10 +18,23 @@ pacman_lock_guard () {
     fi
 }
 interrupted_apt_guard () {
+    local needs_repair=0
+
     if [ -n "$(dpkg --audit 2>/dev/null)" ]; then
         info "An interrupted package operation was detected. Attempting recovery..."
-        { { [ "$UPD_SERVICE" = "1" ] && dpkg --configure -a; } || sudo dpkg --configure -a; } || die "Failed to recover interrupted dpkg operation. Manual user intervention required."
-        { { [ "$UPD_SERVICE" = "1" ] && apt --fix-broken install -y; } || sudo apt --fix-broken install -y; } || die "Failed to fix broken packages. Manual user intervention required."
+        { { [ "$UPD_SERVICE" = "1" ] && dpkg --configure -a; } || sudo dpkg --configure -a; } || \
+            die "Failed to recover interrupted dpkg operation. Manual user intervention required."
+        needs_repair=1
+    fi
+    if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo apt-get check; } >/dev/null 2>&1; then
+        info "Broken package dependencies were detected. Attempting recovery..."
+        needs_repair=1
+    fi
+
+    if [ "$needs_repair" -eq 1 ]; then
+        { { [ "$UPD_SERVICE" = "1" ] && apt-get --fix-broken install -y; } ||
+            sudo apt-get --fix-broken install -y; } || die "Failed to fix broken packages. Manual user intervention required."
+        apt-get check >/dev/null 2>&1 || die "Package dependencies remain broken. Manual user intervention required."
     fi
 }
 
