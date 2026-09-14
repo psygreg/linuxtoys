@@ -297,7 +297,12 @@
         "repo": "https://github.com/feralinteractive/gamemode",
         "category": "game",
         "icon": "gaming.svg",
-        "os": [ "fedora", "arch", "ubuntu", "debian", "suse", "ostree", "solus" ]
+        "type": "native",
+        "os": [ "fedora", "arch", "ubuntu", "debian", "suse", "ostree", "solus" ],
+        "package-name": "gamemode",
+        "overrides": {
+          "pre": "{ { is_arch && summon_helpers; } && multilib_chk; } || true"
+        }
     },
     {
         "name": "LeShade",
