@@ -14,7 +14,7 @@ source "$SCRIPT_DIR/libs/optimizers.lib"
 _lang_
 # system-agnostic scripts
 sysag_run () {
-    call_script cachyconfs
+    # call_script cachyconfs
     # shader booster
     call_script sboost
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
