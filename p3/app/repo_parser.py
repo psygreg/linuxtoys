@@ -638,6 +638,16 @@ def _entry_is_compatible(entry, compat_keys, scripts_dir=None):
     return True
 
 
+def _validate_license(entry):
+    """Validate the optional short license identifier shown on app pages."""
+    value = entry.get("license")
+
+    if value is None:
+        return True
+
+    return isinstance(value, str) and bool(value.strip()) and len(value.strip()) <= 20
+
+
 def _validate_container(entry):
     value = entry.get("container", "allow")
 
@@ -1567,6 +1577,9 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         if not _validate_container(entry):
             continue
 
+        if not _validate_license(entry):
+            continue
+
         if not _validate_wsl(entry):
             continue
 
@@ -1619,6 +1632,8 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
             continue
 
         item = dict(entry)
+        if "license" in item:
+            item["license"] = item["license"].strip()
         if resolved_overrides is not None:
             item["overrides"] = resolved_overrides
 

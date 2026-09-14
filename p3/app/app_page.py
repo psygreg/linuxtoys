@@ -24,6 +24,7 @@ class AppPageView(Gtk.Box):
 
         self.header = InfosHead(self.translations, show_terminal_controls=False)
         self.header._update_header_labels(script_info)
+        self._build_name_line()
         self._build_developer_line()
         self._build_actions()
         self.pack_start(self.header, False, False, 0)
@@ -270,6 +271,18 @@ class AppPageView(Gtk.Box):
                 return True
 
         return False
+
+    def _build_name_line(self):
+        license_name = str(self.script_info.get("license", "") or "").strip()
+        if not license_name:
+            return
+
+        name = GLib.markup_escape_text(str(self.script_info.get("name", "") or ""))
+        license_markup = GLib.markup_escape_text(license_name)
+        self.header.label_name.set_markup(
+            f'<big><big><b>{name}</b></big></big>  <span size="small">{license_markup}</span>'
+        )
+
 
     def _build_developer_line(self):
         developer = str(self.script_info.get("developer", "") or "").strip()
