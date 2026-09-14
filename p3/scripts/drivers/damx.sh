@@ -41,6 +41,19 @@ elif is_fedora || is_rhel || is_suse; then
 fi
 
 cd damx || die "Failed to enter DAMX directory"
+
+# compatibility with kernel 6.8+ from upstream PR #134
+if printf '%s\n%s\n' "6.8" "$(uname -r | cut -d- -f1)" | sort -V -C; then
+    _linuwu_src="Linuwu-Sense/src/linuwu_sense.c"
+    if [ -f "$_linuwu_src" ]; then
+        # Add the kernel string helpers header if upstream hasn't already.
+        grep -q '^#include <linux/string\.h>' "$_linuwu_src" ||
+            sed -i '/#include <linux\/unaligned\.h>/a #include <linux/string.h>' "$_linuwu_src"
+        # Linux 7.2+ no longer exposes strncpy() for kernel code.
+        sed -i 's/\bstrncpy(/memcpy(/g' "$_linuwu_src"
+    fi
+fi
+# handle exit codes through linuxtoys standards
 sed -i \
     '/Exiting installer\. Goodbye!/{n;s/^[[:space:]]*exit 0[[:space:]]*$/        exit 100 # LinuxToys cancellation/;}' \
     setup.sh
