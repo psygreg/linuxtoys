@@ -73,7 +73,7 @@ class AppWindow(
         )
         self.search_active = False
         self.search_results = []
-        
+
         # Initialize category cache for faster navigation
         self.category_cache = search_helper.CategoryCache()
 
@@ -164,10 +164,10 @@ class AppWindow(
 
         # Create categories view with random scripts section
         categories_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        
+
         self.categories_flowbox = self.create_flowbox()
         categories_container.pack_start(self.categories_flowbox, False, False, 0)
-        
+
         # Create separator and featured scripts section. The outer revealer animates
         # the section's first appearance; the inner revealer cross-fades card swaps.
         self.featured_scripts_revealer = Gtk.Revealer()
@@ -184,11 +184,11 @@ class AppWindow(
         self.featured_scripts_container.set_margin_top(24)
         self.featured_scripts_container.set_margin_right(32)
         self.featured_scripts_container.set_margin_bottom(24)
-        
+
         # Add separator
         separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         self.featured_scripts_container.pack_start(separator, False, False, 0)
-        
+
         # Add label for featured scripts
         self.random_scripts_label = Gtk.Label(
             label=self.translations.get("featured_scripts", "Try These")
@@ -198,7 +198,7 @@ class AppWindow(
         label_style = self.random_scripts_label.get_style_context()
         label_style.add_class("title-2")  # Add CSS class for styling
         self.featured_scripts_container.pack_start(self.random_scripts_label, False, False, 0)
-        
+
         # Create flowbox for random scripts (without extra margins since container has them)
         self.random_scripts_flowbox = Gtk.FlowBox()
         self.random_scripts_flowbox.set_valign(Gtk.Align.START)
@@ -216,7 +216,7 @@ class AppWindow(
         self.random_scripts_flowbox.set_margin_bottom(0)
         self.random_scripts_flowbox.set_column_spacing(16)
         self.random_scripts_flowbox.set_row_spacing(12)
-        
+
         self.random_scripts_revealer = Gtk.Revealer()
         self.random_scripts_revealer.set_transition_type(
             Gtk.RevealerTransitionType.CROSSFADE
@@ -232,7 +232,7 @@ class AppWindow(
         categories_container.pack_start(
             self.featured_scripts_revealer, False, False, 0
         )
-        
+
         self.categories_view = Gtk.ScrolledWindow()
         self.categories_view.add(categories_container)
         self.main_stack.add_named(self.categories_view, "categories")
@@ -855,7 +855,7 @@ class AppWindow(
         """
         if dev_mode.is_dev_mode_enabled():
             return False
-    
+
         # Get system compatibility keys
         system_compat_keys = compat.get_system_compat_keys()
 
@@ -883,7 +883,7 @@ class AppWindow(
         """
         if dev_mode.is_dev_mode_enabled():
             return False
-    
+
         try:
             reboot_required = deepin_immutable_helper.check_and_handle_deepin_immutability(
                 self, self.translations
@@ -1136,7 +1136,7 @@ class AppWindow(
 
         initial_count = min(len(scripts), initial_batch_size)
         remaining = iter(scripts[initial_count:])
-        frame_interval_ms = 16
+        frame_interval_ms = 20
 
         def populate_timed_batch():
             if (
@@ -1517,7 +1517,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                 print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
         except Exception as e:
             print(f"Warning: Could not clean up temporary directory {tmp_linuxtoys_path}: {e}")
-        
+
         self.get_application().quit()
 
     def on_language_changed(self, new_language_code):
@@ -1541,7 +1541,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self.search_entry.set_placeholder_text(
             self.translations.get("search_placeholder", "Search features")
         )
-        
+
         # Update random scripts label
         if self.random_scripts_label:
             featured_label = self.translations.get("featured_scripts", "Try These")

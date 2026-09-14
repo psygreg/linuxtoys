@@ -4,9 +4,9 @@
 # description: amdgpu_desc
 # icon: amd.png
 # reboot: yes
-# gpu: AMD
+# gpu: rocm
 # compat: ubuntu, rhel
- 
+
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 
@@ -17,7 +17,7 @@ secureboot_check
 BASE="https://repo.radeon.com/amdgpu-install"
 prep_tmp_noram
 OUTDIR="${1:-./amdgpu-install-downloads}"
-mkdir -p "$OUTDIR" 
+mkdir -p "$OUTDIR"
 
 list_dir() {
     local url="$1"
@@ -35,7 +35,7 @@ if [ -z "$VERSION_DIRS" ]; then
 fi
 LATEST_VERSION=$(echo "$VERSION_DIRS" | latest_version_dir)
 echo "Latest amdgpu-install version: $LATEST_VERSION"
- 
+
 find_latest_point() {
     local parent_url="$1"
     local major="$2"
@@ -53,7 +53,7 @@ download_file() {
         die "  Failed to download $url"
     fi
 }
- 
+
 # RHEL
 if is_rhel; then
     MAJOR="$(rpm -E %rhel)"
@@ -75,7 +75,7 @@ if is_rhel; then
     askpass
     pkg_fromfile "./$OUTDIR/$RPM"
 fi
- 
+
 # Ubuntu
 if is_ubuntu; then
     if [ -z "$UBUNTU_CODENAME" ]; then

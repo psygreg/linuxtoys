@@ -70,7 +70,7 @@ class ItemWidgetFactory:
     ):
         """Fade cards through one shared frame-paced animation scheduler.
 
-        New batches join the same 16 ms GTK timeout instead of creating an
+        New batches join the same 20 ms GTK timeout instead of creating an
         overlapping timeout for every population batch. This keeps animation
         work bounded even while a large category is still being populated.
         """
@@ -122,7 +122,7 @@ class ItemWidgetFactory:
             self._item_fade_timer_id = None
             return False
 
-        self._item_fade_timer_id = GLib.timeout_add(16, tick)
+        self._item_fade_timer_id = GLib.timeout_add(20, tick)
 
     def create_item_widget(self, item_info, checklist: bool = False, allow_drag: bool = False,):
         import os
@@ -358,7 +358,7 @@ class ItemWidgetFactory:
             return False
 
         return bool(revert_helper._load_last_execution(script_name))
-    
+
     def _on_item_remove_clicked(self, button, item_info):
         """Handle remove button click on a script item."""
         # Check if reboot is required before proceeding
