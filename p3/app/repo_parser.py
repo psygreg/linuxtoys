@@ -70,7 +70,7 @@ OS_KEYS = {
     "manjaro",
 }
 
-VALID_TYPES = {"git", "tar", "bin", "flathub", "native", "repository", "url"}
+VALID_TYPES = {"git", "tar", "bin", "flathub", "native", "repository", "url", "external"}
 
 URL_PACKAGE_KEYS = {
     "deb",
@@ -494,7 +494,7 @@ def _steamos_entry_is_compatible(entry, compat_keys):
 
     install_type = _resolve_install_type(entry, compat_keys)
 
-    if install_type in {"git", "flathub", "tar", "bin"}:
+    if install_type in {"git", "flathub", "tar", "bin", "external"}:
         # Git release installs are resolved by pkg_fromrelease. On SteamOS it
         # permits AppImage/Flatpak assets, plus explicitly requested tarballs
         # and single binaries, all of which are installed at user level.
@@ -780,6 +780,21 @@ def _validate_type(entry, compat_keys):
             key in URL_PACKAGE_KEYS and _valid_url_spec(value, entry)
             for key, value in urls.items()
         )
+
+    if install_type == "external":
+        script = entry.get("script")
+        if not isinstance(script, str) or not script.strip():
+            return False
+
+        script = script.strip()
+        if _valid_package_url(script):
+            return True
+
+        if os.path.isabs(script):
+            return False
+
+        normalized = os.path.normpath(script)
+        return normalized != ".." and not normalized.startswith("../")
 
     if install_type == "repository":
         return False
@@ -1457,6 +1472,25 @@ def _resolve_app_page_metadata(
     }
 
 
+def _resolve_external_script(entry, scripts_dir):
+    """Normalize an external installer URL or repository-local script path."""
+    script = entry.get("script")
+
+    if not isinstance(script, str) or not script.strip():
+        return None
+
+    script = script.strip()
+    if _valid_package_url(script):
+        return script
+
+    path = _safe_list_relative_path(entry, scripts_dir, script)
+    if not path or not os.path.isfile(path):
+        return None
+
+    lists_dir = os.path.realpath(os.path.join(scripts_dir, "lists"))
+    return os.path.relpath(path, lists_dir)
+
+
 def _resolve_hook_paths(entry, scripts_dir):
     """
     Normalize repository-local hook scripts to paths relative to scripts/lists/.
@@ -1631,11 +1665,20 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         if entry.get("overrides") is not None and resolved_overrides is None:
             continue
 
+        install_type = _resolve_install_type(entry, compat_keys)
+        resolved_external_script = None
+        if install_type == "external":
+            resolved_external_script = _resolve_external_script(entry, scripts_dir)
+            if resolved_external_script is None:
+                continue
+
         item = dict(entry)
         if "license" in item:
             item["license"] = item["license"].strip()
         if resolved_overrides is not None:
             item["overrides"] = resolved_overrides
+        if resolved_external_script is not None:
+            item["script"] = resolved_external_script
 
         app_page_metadata = _resolve_app_page_metadata(
             entry,
@@ -1646,8 +1689,6 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
             resolved_long_format=long_description_format,
         )
         item.pop("_list_source", None)
-
-        install_type = _resolve_install_type(entry, compat_keys)
 
         item.update({
             "description": description,
@@ -2008,6 +2049,35 @@ def create_install_script(entry):
 
         skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
         command = f"pkg_fromurl{mode_flag}{skip_user_flag} {package_arg}"
+
+    elif install_type == "external":
+        script = entry.get("script", "").strip()
+
+        if _valid_package_url(script):
+            script_arg = shlex.quote(script)
+            command = f"""
+_external_script=$(mktemp /tmp/linuxtoys-external.XXXXXX.sh) || die "Failed to create temporary external installer"
+trap 'rm -f "$_external_script"' EXIT
+curl -fL --retry 3 --proto '=https' --tlsv1.2 {script_arg} -o "$_external_script" || die "Failed to download external installer"
+chmod 600 "$_external_script" || die "Failed to prepare external installer"
+python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
+rm -f "$_external_script"
+trap - EXIT
+""".strip()
+        else:
+            relative = shlex.quote(script)
+            command = f"""
+_external_relative={relative}
+_external_script=""
+if [ -n "${{CACHE_DIR:-}}" ] && [ -f "$CACHE_DIR/lists/$_external_relative" ]; then
+    _external_script="$CACHE_DIR/lists/$_external_relative"
+elif [ -f "$SCRIPT_DIR/scripts/lists/$_external_relative" ]; then
+    _external_script="$SCRIPT_DIR/scripts/lists/$_external_relative"
+else
+    die "External installer script not found: $_external_relative"
+fi
+python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
+""".strip()
 
     elif install_type == "repository":
         raise NotImplementedError(
