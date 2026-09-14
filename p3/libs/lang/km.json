@@ -553,5 +553,9 @@
   "app_page_month": "ខែ",
   "app_page_months": "ខែ",
   "media": "មេឌៀ និងការផ្សាយផ្ទាល់",
-  "media_desc": "កម្មវិធីចាក់មេឌៀ ឧបករណ៍ កូឌិក និងកម្មវិធីសម្រាប់ការផ្សាយផ្ទាល់។"
+  "media_desc": "កម្មវិធីចាក់មេឌៀ ឧបករណ៍ កូឌិក និងកម្មវិធីសម្រាប់ការផ្សាយផ្ទាល់។",
+  "registry_export_tooltip": "នាំចេញប្រតិបត្តិការដែលបានចុះបញ្ជីទាំងអស់ជាឯកសារ manifest",
+  "registry_export_error_title": "ការនាំចេញ manifest បានបរាជ័យ",
+  "registry_export_success_title": "បាននាំចេញ manifest",
+  "registry_export_success_message": "បាននាំចេញប្រតិបត្តិការដែលបានចុះបញ្ជីចំនួន {count} ទៅកាន់៖\n{path}"
 }

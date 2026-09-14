@@ -553,5 +553,9 @@
   "app_page_month": "месец",
   "app_page_months": "месеца",
   "media": "Медия и стрийминг",
-  "media_desc": "Медийни плейъри, инструменти, кодеци и помощни програми за стрийминг."
+  "media_desc": "Медийни плейъри, инструменти, кодеци и помощни програми за стрийминг.",
+  "registry_export_tooltip": "Експортиране на всички регистрирани операции като manifest файл",
+  "registry_export_error_title": "Експортирането на manifest не бе успешно",
+  "registry_export_success_title": "Manifest е експортиран",
+  "registry_export_success_message": "Експортирани са {count} регистрирани операции в:\n{path}"
 }

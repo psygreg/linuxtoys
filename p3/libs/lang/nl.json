@@ -553,5 +553,9 @@
   "app_page_month": "maand",
   "app_page_months": "maanden",
   "media": "Media en streaming",
-  "media_desc": "Mediaspelers, hulpmiddelen, codecs en streamingtools."
+  "media_desc": "Mediaspelers, hulpmiddelen, codecs en streamingtools.",
+  "registry_export_tooltip": "Alle geregistreerde bewerkingen exporteren als manifestbestand",
+  "registry_export_error_title": "Exporteren van manifest mislukt",
+  "registry_export_success_title": "Manifest geëxporteerd",
+  "registry_export_success_message": "{count} geregistreerde bewerkingen geëxporteerd naar:\n{path}"
 }

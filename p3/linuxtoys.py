@@ -25,6 +25,11 @@ def configure_launch_flags():
 if __name__ == "__main__":
     configure_launch_flags()
 
+    # Commands that are intrinsically headless should enter the CLI path even
+    # when LinuxToys was launched directly rather than through a CLI wrapper.
+    if len(sys.argv) == 2 and sys.argv[1] in ("export-manifest", "--export-manifest"):
+        os.environ["EASY_CLI"] = "1"
+
     if len(sys.argv) == 2 and sys.argv[1] in ("-v", "--version", "-h", "--help", "help"):
         from app.easy_cli import easy_cli_help_message, print_version
 

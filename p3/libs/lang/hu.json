@@ -553,5 +553,9 @@
   "app_page_month": "hónap",
   "app_page_months": "hónap",
   "media": "Média és streamelés",
-  "media_desc": "Médialejátszók, eszközök, kodekek és streamelési segédprogramok."
+  "media_desc": "Médialejátszók, eszközök, kodekek és streamelési segédprogramok.",
+  "registry_export_tooltip": "Az összes regisztrált művelet exportálása manifestfájlként",
+  "registry_export_error_title": "A manifest exportálása sikertelen",
+  "registry_export_success_title": "Manifest exportálva",
+  "registry_export_success_message": "{count} regisztrált művelet exportálva ide:\n{path}"
 }

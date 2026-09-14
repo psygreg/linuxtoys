@@ -553,5 +553,9 @@
   "app_page_month": "ወር",
   "app_page_months": "ወራት",
   "media": "ሚዲያ እና ስትሪሚንግ",
-  "media_desc": "የሚዲያ ማጫወቻዎች፣ መሣሪያዎች፣ ኮዴኮች እና የስትሪሚንግ መገልገያዎች።"
+  "media_desc": "የሚዲያ ማጫወቻዎች፣ መሣሪያዎች፣ ኮዴኮች እና የስትሪሚንግ መገልገያዎች።",
+  "registry_export_tooltip": "ሁሉንም የተመዘገቡ ክዋኔዎች እንደ manifest ፋይል ላክ",
+  "registry_export_error_title": "Manifest መላክ አልተሳካም",
+  "registry_export_success_title": "Manifest ተልኳል",
+  "registry_export_success_message": "{count} የተመዘገቡ ክዋኔዎች ወደዚህ ተልከዋል፦\n{path}"
 }

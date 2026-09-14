@@ -553,5 +553,9 @@
   "app_page_month": "muaj",
   "app_page_months": "muaj",
   "media": "Media dhe transmetim",
-  "media_desc": "Luajtës media, mjete, kodekë dhe programe ndihmëse për transmetim."
+  "media_desc": "Luajtës media, mjete, kodekë dhe programe ndihmëse për transmetim.",
+  "registry_export_tooltip": "Eksporto të gjitha veprimet e regjistruara si skedar manifest",
+  "registry_export_error_title": "Eksportimi i manifestit dështoi",
+  "registry_export_success_title": "Manifesti u eksportua",
+  "registry_export_success_message": "U eksportuan {count} veprime të regjistruara në:\n{path}"
 }

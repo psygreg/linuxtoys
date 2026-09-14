@@ -12,7 +12,7 @@ from .updater import __version__
 from .manifest_helper import (
     run_manifest_mode, run_update_check_cli, find_script_by_name, 
     run_script, check_package_exists, install_packages, 
-    check_flatpaks_async, install_flatpaks
+    check_flatpaks_async, install_flatpaks, export_registered_manifest
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
@@ -25,7 +25,7 @@ CLI_OPTIONS = frozenset({
     "-h", "--help", "-i", "--install", "-u", "--uninstall", "-l", "--list",
     "-m", "--manifest", "-p", "--package", "--packages",
     "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks",
-    "-v", "--version", "-y", "--yes", "--check-updates",
+    "-v", "--version", "-y", "--yes", "--check-updates", "--export-manifest",
 })
 
 def resolve_script_dir():
@@ -1022,6 +1022,7 @@ def easy_cli_help_message():
     print("  -h, --help         Show this help message")
     print("  -l, --list         List all available scripts")
     print("  -m, --manifest     Enable manifest mode features")
+    print("  export-manifest    Export registered operations to ~/linuxtoys-manifest.txt")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
     print("  --devmode          Enable developer mode, that will only check scripts for errors without executing them")
@@ -1134,7 +1135,7 @@ def easy_cli_handler(translations=None):
     # Check if first argument is incompatible with default --install mode
     incompatible_options = ("-h", "--help", "help", "-l", "--list", "-m", "--manifest",
                            "-v", "--version", "update", "upgrade", "check-updates",
-                           "update-check", "--check-updates")
+                           "update-check", "--check-updates", "export-manifest", "--export-manifest")
     
     # If first argument is not an incompatible option and not --install, prepend --install
     if args[0] not in ("-i", "--install", "-u", "--uninstall") and args[0] not in incompatible_options:
@@ -1203,6 +1204,15 @@ def easy_cli_handler(translations=None):
     
     elif args[0] in ("--manifest", "-m"):
         return run_manifest_mode(translations)
+
+    elif args[0] in ("export-manifest", "--export-manifest"):
+        try:
+            manifest_path, entry_count = export_registered_manifest(translations=translations)
+        except OSError as exc:
+            print(f"✗ Could not export manifest: {exc}")
+            return 1
+        print(f"✓ Exported {entry_count} registered operation(s) to: {manifest_path}")
+        return 0
     
     elif args[0] in ("-v", "--version"):
         print_version()

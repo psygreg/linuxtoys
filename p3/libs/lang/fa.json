@@ -553,5 +553,9 @@
   "app_page_month": "ماه",
   "app_page_months": "ماه",
   "media": "رسانه و پخش جریانی",
-  "media_desc": "پخش‌کننده‌های رسانه، ابزارها، کدک‌ها و برنامه‌های کاربردی پخش جریانی."
+  "media_desc": "پخش‌کننده‌های رسانه، ابزارها، کدک‌ها و برنامه‌های کاربردی پخش جریانی.",
+  "registry_export_tooltip": "خروجی گرفتن از همه عملیات ثبت‌شده به‌صورت فایل manifest",
+  "registry_export_error_title": "خروجی گرفتن از manifest ناموفق بود",
+  "registry_export_success_title": "Manifest صادر شد",
+  "registry_export_success_message": "{count} عملیات ثبت‌شده به این مسیر صادر شد:\n{path}"
 }

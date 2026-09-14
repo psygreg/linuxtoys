@@ -553,5 +553,9 @@
   "app_page_month": "mesiac",
   "app_page_months": "mesiace",
   "media": "Médiá a streamovanie",
-  "media_desc": "Prehrávače médií, nástroje, kodeky a pomôcky na streamovanie."
+  "media_desc": "Prehrávače médií, nástroje, kodeky a pomôcky na streamovanie.",
+  "registry_export_tooltip": "Exportovať všetky registrované operácie ako súbor manifestu",
+  "registry_export_error_title": "Export manifestu zlyhal",
+  "registry_export_success_title": "Manifest exportovaný",
+  "registry_export_success_message": "Exportovaných {count} registrovaných operácií do:\n{path}"
 }

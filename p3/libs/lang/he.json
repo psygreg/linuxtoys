@@ -553,5 +553,9 @@
   "app_page_month": "חודש",
   "app_page_months": "חודשים",
   "media": "מדיה והזרמה",
-  "media_desc": "נגני מדיה, כלים, קודקים ותוכנות שירות להזרמה."
+  "media_desc": "נגני מדיה, כלים, קודקים ותוכנות שירות להזרמה.",
+  "registry_export_tooltip": "ייצוא כל הפעולות הרשומות כקובץ manifest",
+  "registry_export_error_title": "ייצוא ה-manifest נכשל",
+  "registry_export_success_title": "ה-manifest יוצא",
+  "registry_export_success_message": "יוצאו {count} פעולות רשומות אל:\n{path}"
 }

@@ -552,5 +552,9 @@
   "app_page_month": "сар",
   "app_page_months": "сар",
   "media": "Медиа ба стриминг",
-  "media_desc": "Медиа тоглуулагч, хэрэгслүүд, кодекууд болон стримингийн утилитууд."
+  "media_desc": "Медиа тоглуулагч, хэрэгслүүд, кодекууд болон стримингийн утилитууд.",
+  "registry_export_tooltip": "Бүртгэгдсэн бүх үйлдлийг manifest файл болгон экспортлох",
+  "registry_export_error_title": "Manifest экспорт амжилтгүй боллоо",
+  "registry_export_success_title": "Manifest экспортлогдлоо",
+  "registry_export_success_message": "{count} бүртгэгдсэн үйлдлийг дараах байршилд экспортлов:\n{path}"
 }

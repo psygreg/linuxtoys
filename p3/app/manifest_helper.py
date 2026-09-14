@@ -19,6 +19,7 @@ from .reboot_helper import check_ostree_pending_deployments
 from .repo_parser import materialize_repo_script
 from .library_loader import script_command, script_environment
 from .updater.update_helper import UpdateHelper
+from .registry_utils import parse_registry_file
 
 
 PACKAGE_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9+_.:@-]*$")
@@ -269,6 +270,152 @@ def find_script_by_id(script_id, translations=None):
 
     return None
 
+
+
+def _is_system_update_registry_entry(script_name, translations=None):
+    """Return True when a registry identity resolves to the system updater."""
+    normalized = str(script_name or "").strip().casefold()
+    if normalized in {"sysup", "system update", "system updates"}:
+        return True
+
+    script_info = find_script_by_name(str(script_name or ""), translations)
+    if not script_info:
+        return False
+
+    candidate_ids = {
+        str(script_info.get("id") or "").strip().casefold(),
+        str(script_info.get("script") or "").strip().casefold(),
+    }
+    for path_key in ("virtual_path", "path"):
+        path = str(script_info.get(path_key) or "")
+        if path and not path.startswith("repo://"):
+            candidate_ids.add(os.path.splitext(os.path.basename(path))[0].casefold())
+
+    return "sysup" in candidate_ids
+
+
+def _is_removal_registry_entry(script_name, translations=None):
+    """Return True for temporary registry-driven removal transactions."""
+    name = str(script_name or "").strip()
+    if not name:
+        return False
+
+    templates = {"Remove {name}", "Remover {name}"}
+    if translations:
+        template = str(translations.get("remove_action_name", "") or "").strip()
+        if template:
+            templates.add(template)
+
+    folded_name = name.casefold()
+    for template in templates:
+        if "{name}" not in template:
+            continue
+        prefix, suffix = template.split("{name}", 1)
+        prefix = prefix.strip().casefold()
+        suffix = suffix.strip().casefold()
+
+        if prefix and not folded_name.startswith(prefix):
+            continue
+        if suffix and not folded_name.endswith(suffix):
+            continue
+
+        start = len(prefix)
+        end = len(folded_name) - len(suffix) if suffix else len(folded_name)
+        if folded_name[start:end].strip():
+            return True
+
+    return False
+
+
+def build_registered_manifest_entries(registry_data=None, translations=None):
+    """Build explicit script entries from the current Action Registry.
+
+    System-update and registry-generated removal records are excluded. Scripts
+    that appear as successful ``call_script`` children of another registered script are also excluded,
+    because replaying the parent will invoke them again.
+    """
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    candidates = []
+    seen = set()
+    for raw_name in registry_data.keys():
+        name = str(raw_name or "").strip()
+        key = name.casefold()
+        if not name or key in seen or not valid_manifest_value(name):
+            continue
+        if _is_system_update_registry_entry(name, translations):
+            continue
+        if _is_removal_registry_entry(name, translations):
+            continue
+        seen.add(key)
+        candidates.append(name)
+
+    candidate_keys = {name.casefold(): name for name in candidates}
+    called_children = set()
+
+    # The registry records successful call_script invocations as
+    # "called <registry identity>" in the caller transaction. Looking at
+    # every retained caller also handles transitive chains (A -> B -> C).
+    for caller in candidates:
+        for _timestamp, operations in registry_data.get(caller, []):
+            for operation in operations:
+                operation = str(operation or "").strip()
+                prefix = "called "
+                if not operation.casefold().startswith(prefix):
+                    continue
+                child = operation[len(prefix):].strip()
+                child_key = child.casefold()
+                if child_key in candidate_keys:
+                    called_children.add(child_key)
+
+    return [
+        f"script:{name}"
+        for name in sorted(candidates, key=str.casefold)
+        if name.casefold() not in called_children
+    ]
+
+
+def export_registered_manifest(output_path=None, registry_data=None, translations=None):
+    """Export registered LinuxToys operations to a ready-to-run manifest.
+
+    The default destination is ``~/linuxtoys-manifest.txt``. The write is
+    atomic so an interrupted export cannot leave a partially written manifest.
+    Returns ``(path, entry_count)``.
+    """
+    destination = os.path.abspath(os.path.expanduser(
+        output_path or "~/linuxtoys-manifest.txt"
+    ))
+    home = os.path.abspath(os.path.expanduser("~"))
+
+    # The UI/CLI quick exporter is intentionally home-scoped by default. A
+    # custom path remains available to callers/tests of this helper.
+    os.makedirs(os.path.dirname(destination) or home, exist_ok=True)
+
+    entries = build_registered_manifest_entries(registry_data, translations)
+    lines = [
+        "# LinuxToys Manifest File",
+        "# Generated from the LinuxToys Action Registry",
+        "",
+        *entries,
+        "",
+    ]
+
+    temp_path = f"{destination}.tmp-{os.getpid()}"
+    try:
+        with open(temp_path, "w", encoding="utf-8") as manifest_file:
+            manifest_file.write("\n".join(lines))
+            manifest_file.flush()
+            os.fsync(manifest_file.fileno())
+        os.replace(temp_path, destination)
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except OSError:
+            pass
+
+    return destination, len(entries)
 
 def load_manifest(manifest_path='manifest.txt'):
     """

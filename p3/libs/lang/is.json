@@ -553,5 +553,9 @@
   "app_page_month": "mánuður",
   "app_page_months": "mánuðir",
   "media": "Miðlar og streymi",
-  "media_desc": "Miðlaspilarar, verkfæri, merkjamál og streymisforrit."
+  "media_desc": "Miðlaspilarar, verkfæri, merkjamál og streymisforrit.",
+  "registry_export_tooltip": "Flytja allar skráðar aðgerðir út sem manifest-skrá",
+  "registry_export_error_title": "Útflutningur manifests mistókst",
+  "registry_export_success_title": "Manifest flutt út",
+  "registry_export_success_message": "{count} skráðar aðgerðir voru fluttar út í:\n{path}"
 }

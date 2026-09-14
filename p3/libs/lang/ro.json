@@ -553,5 +553,9 @@
   "app_page_month": "lună",
   "app_page_months": "luni",
   "media": "Media și streaming",
-  "media_desc": "Playere media, instrumente, codecuri și utilitare pentru streaming."
+  "media_desc": "Playere media, instrumente, codecuri și utilitare pentru streaming.",
+  "registry_export_tooltip": "Exportă toate operațiile înregistrate ca fișier manifest",
+  "registry_export_error_title": "Exportarea manifestului a eșuat",
+  "registry_export_success_title": "Manifest exportat",
+  "registry_export_success_message": "S-au exportat {count} operații înregistrate în:\n{path}"
 }

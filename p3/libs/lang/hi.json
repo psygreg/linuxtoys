@@ -533,5 +533,9 @@
   "app_page_month": "महीना",
   "app_page_months": "महीने",
   "media": "मीडिया और स्ट्रीमिंग",
-  "media_desc": "मीडिया प्लेयर, टूल, कोडेक और स्ट्रीमिंग यूटिलिटी।"
+  "media_desc": "मीडिया प्लेयर, टूल, कोडेक और स्ट्रीमिंग यूटिलिटी।",
+  "registry_export_tooltip": "सभी पंजीकृत ऑपरेशनों को manifest फ़ाइल के रूप में एक्सपोर्ट करें",
+  "registry_export_error_title": "Manifest एक्सपोर्ट विफल रहा",
+  "registry_export_success_title": "Manifest एक्सपोर्ट किया गया",
+  "registry_export_success_message": "{count} पंजीकृत ऑपरेशन यहाँ एक्सपोर्ट किए गए:\n{path}"
 }

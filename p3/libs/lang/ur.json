@@ -553,5 +553,9 @@
   "app_page_month": "مہینہ",
   "app_page_months": "مہینے",
   "media": "میڈیا اور اسٹریمنگ",
-  "media_desc": "میڈیا پلیئرز، ٹولز، کوڈیکس اور اسٹریمنگ یوٹیلیٹیز۔"
+  "media_desc": "میڈیا پلیئرز، ٹولز، کوڈیکس اور اسٹریمنگ یوٹیلیٹیز۔",
+  "registry_export_tooltip": "تمام رجسٹرڈ کارروائیوں کو manifest فائل کے طور پر ایکسپورٹ کریں",
+  "registry_export_error_title": "Manifest ایکسپورٹ ناکام ہو گئی",
+  "registry_export_success_title": "Manifest ایکسپورٹ ہو گیا",
+  "registry_export_success_message": "{count} رجسٹرڈ کارروائیاں یہاں ایکسپورٹ کی گئیں:\n{path}"
 }

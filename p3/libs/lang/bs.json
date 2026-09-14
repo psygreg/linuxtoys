@@ -552,5 +552,9 @@
   "app_page_month": "mjesec",
   "app_page_months": "mjeseci",
   "media": "Mediji i streaming",
-  "media_desc": "Medijski playeri, alati, kodeci i uslužni programi za streaming."
+  "media_desc": "Medijski playeri, alati, kodeci i uslužni programi za streaming.",
+  "registry_export_tooltip": "Izvezi sve registrovane operacije kao manifest datoteku",
+  "registry_export_error_title": "Izvoz manifesta nije uspio",
+  "registry_export_success_title": "Manifest je izvezen",
+  "registry_export_success_message": "Izvezeno je {count} registrovanih operacija u:\n{path}"
 }

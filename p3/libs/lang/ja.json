@@ -553,5 +553,9 @@
   "app_page_month": "か月",
   "app_page_months": "か月",
   "media": "メディアとストリーミング",
-  "media_desc": "メディアプレーヤー、関連ツール、コーデック、ストリーミングユーティリティ。"
+  "media_desc": "メディアプレーヤー、関連ツール、コーデック、ストリーミングユーティリティ。",
+  "registry_export_tooltip": "登録されているすべての操作をマニフェストファイルとしてエクスポート",
+  "registry_export_error_title": "マニフェストのエクスポートに失敗しました",
+  "registry_export_success_title": "マニフェストをエクスポートしました",
+  "registry_export_success_message": "{count} 件の登録済み操作を次の場所にエクスポートしました:\n{path}"
 }

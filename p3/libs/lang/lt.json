@@ -553,5 +553,9 @@
   "app_page_month": "mėnuo",
   "app_page_months": "mėnesiai",
   "media": "Medija ir transliavimas",
-  "media_desc": "Medijos leistuvai, įrankiai, kodekai ir transliavimo priemonės."
+  "media_desc": "Medijos leistuvai, įrankiai, kodekai ir transliavimo priemonės.",
+  "registry_export_tooltip": "Eksportuoti visas užregistruotas operacijas kaip manifesto failą",
+  "registry_export_error_title": "Nepavyko eksportuoti manifesto",
+  "registry_export_success_title": "Manifestas eksportuotas",
+  "registry_export_success_message": "Eksportuota {count} užregistruotų operacijų į:\n{path}"
 }

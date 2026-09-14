@@ -552,5 +552,9 @@
   "app_page_month": "মাস",
   "app_page_months": "মাস",
   "media": "মিডিয়া ও স্ট্রিমিং",
-  "media_desc": "মিডিয়া প্লেয়ার, টুল, কোডেক এবং স্ট্রিমিং ইউটিলিটি।"
+  "media_desc": "মিডিয়া প্লেয়ার, টুল, কোডেক এবং স্ট্রিমিং ইউটিলিটি।",
+  "registry_export_tooltip": "সমস্ত নিবন্ধিত অপারেশন একটি manifest ফাইল হিসেবে এক্সপোর্ট করুন",
+  "registry_export_error_title": "Manifest এক্সপোর্ট ব্যর্থ হয়েছে",
+  "registry_export_success_title": "Manifest এক্সপোর্ট হয়েছে",
+  "registry_export_success_message": "{count}টি নিবন্ধিত অপারেশন এখানে এক্সপোর্ট করা হয়েছে:\n{path}"
 }

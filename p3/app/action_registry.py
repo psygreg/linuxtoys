@@ -6,94 +6,96 @@ import os
 import shutil
 from gi.repository import GLib
 from .gtk_common import Gtk
+from .gtk_dialogs import run_message_dialog
 from .lang_utils import create_translator, load_translations
 from .registry_utils import parse_registry_file, search_registry_entries
+from .manifest_helper import export_registered_manifest
 from .parser import get_display_name
 
 
 def _find_backup_files_for_script(script_name, registry_data):
     """
     Find all backup files (.bak) associated with a script's executions.
-    
+
     Args:
         script_name: name of the script
         registry_data: dict of {script_name: [(timestamp, [operations]), ...]}
-    
+
     Returns:
         list of backup file paths that exist on the system
     """
     backup_files = []
-    
+
     if script_name not in registry_data:
         return backup_files
-    
+
     executions = registry_data[script_name]
-    
+
     for timestamp, operations in executions:
         for op_line in operations:
             parts = op_line.split()
             if not parts:
                 continue
-            
+
             op_type = parts[0]
-            
+
             # File-related operations have backup files
             if op_type in ("edited", "created", "removed") and len(parts) > 1:
                 file_path = parts[1]
                 backup_path = f"{file_path}.bak"
-                
+
                 # Check if backup exists and not already in list
                 if os.path.exists(backup_path) and backup_path not in backup_files:
                     backup_files.append(backup_path)
-    
+
     return backup_files
 
 
 def _remove_script_from_registry(script_name):
     """
     Remove all entries for a script from the registry file.
-    
+
     Returns True if successful, False otherwise.
     """
     registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
-    
+
     if not os.path.exists(registry_file):
         return False
-    
+
     try:
         with open(registry_file, "r") as f:
             content = f.read()
     except Exception:
         return False
-    
+
     # Split by registry entries
     entries = content.split("---\n")
-    
+
     # Filter out entries for the script we want to remove
     filtered_entries = []
     found = False
-    
+
     for entry in entries:
         entry_stripped = entry.strip()
         if not entry_stripped:
             continue
-        
+
         lines = entry_stripped.split("\n")
         first_line = lines[0] if lines else ""
-        
+
         # Check if this entry belongs to the script we're removing
         if f"Script: {script_name}" in first_line:
             found = True
             continue  # Skip this entry
-        
+
         filtered_entries.append(entry_stripped)
-    
+
     if not found:
         return False
-    
+
     # Reconstruct the registry file
     new_content = "---\n".join(filtered_entries)
-    
+
     try:
         with open(registry_file, "w") as f:
             f.write(new_content)
@@ -105,16 +107,16 @@ def _remove_script_from_registry(script_name):
 def _remove_backup_files(backup_files):
     """
     Remove backup files from the system.
-    
+
     Args:
         backup_files: list of backup file paths
-    
+
     Returns:
         tuple of (successful_count, failed_paths)
     """
     successful_count = 0
     failed_paths = []
-    
+
     for backup_path in backup_files:
         try:
             if os.path.isdir(backup_path):
@@ -124,21 +126,21 @@ def _remove_backup_files(backup_files):
             successful_count += 1
         except Exception:
             failed_paths.append(backup_path)
-    
+
     return successful_count, failed_paths
 
 
 class ActionRegistryDialog(Gtk.Dialog):
     """Dialog displaying script execution records from the registry file."""
-    
+
     def __init__(self, parent=None):
         _ = create_translator()
         self.translations = load_translations()
         super().__init__(title=_("action_registry"), transient_for=parent, modal=True)
-        
+
         self.set_default_size(700, 600)
         self.set_border_width(12)
-        
+
         content_area = self.get_content_area()
         content_area.set_vexpand(True)
         content_area.set_hexpand(True)
@@ -149,7 +151,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.search_entry.set_margin_bottom(10)
         self.search_entry.connect("search-changed", self.__on_search_changed)
         content_area.pack_start(self.search_entry, False, False, 0)
-        
+
        # Main container for split panels
         main_box = Gtk.Box(
             orientation=Gtk.Orientation.HORIZONTAL,
@@ -159,7 +161,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         main_box.set_hexpand(True)
         main_box.set_margin_bottom(15)
         content_area.add(main_box)
-        
+
         # Left panel - Scripts list
         left_frame = Gtk.Frame()
         left_label = Gtk.Label()
@@ -171,32 +173,32 @@ class ActionRegistryDialog(Gtk.Dialog):
         left_frame.set_margin_end(6)
         left_frame.set_size_request(280, -1)
         left_frame.set_label_align(0.5, 0.5)
-        
+
         # Scrolled window for scripts list
         scrolled_left = Gtk.ScrolledWindow()
         scrolled_left.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scrolled_left.set_vexpand(True)
         scrolled_left.set_hexpand(False)
         left_frame.add(scrolled_left)
-        
+
         # Scripts list store and treeview
         # display name, stable registry identity
         self.scripts_store = Gtk.ListStore(str, str)
         self.scripts_treeview = Gtk.TreeView(model=self.scripts_store)
         self.scripts_treeview.set_headers_visible(False)
-        
+
         # Column for script names
         cell_renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("Script", cell_renderer, text=0)
         self.scripts_treeview.append_column(column)
-        
+
         # Selection changed callback
         selection = self.scripts_treeview.get_selection()
         selection.connect("changed", self.__on_script_selected)
-        
+
         scrolled_left.add(self.scripts_treeview)
         main_box.pack_start(left_frame, False, False, 0)
-        
+
         # Right panel - Registry details
         right_frame = Gtk.Frame()
         right_label = Gtk.Label()
@@ -207,7 +209,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         right_frame.set_hexpand(True)
         right_frame.set_margin_start(6)
         right_frame.set_label_align(0.5, 0.5)
-        
+
         # Scrolled window for details
         scrolled_right = Gtk.ScrolledWindow()
         scrolled_right.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -215,38 +217,80 @@ class ActionRegistryDialog(Gtk.Dialog):
         scrolled_right.set_vexpand(True)
         scrolled_right.set_hexpand(True)
         right_frame.add(scrolled_right)
-        
+
         # Text view for registry details
         self.details_textview = Gtk.TextView()
         self.details_textview.set_editable(False)
         self.details_textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.details_textview.set_monospace(True)
         scrolled_right.add(self.details_textview)
-        
+
         main_box.pack_start(right_frame, True, True, 0)
-        
+
         # Load registry data
         self.registry_data = parse_registry_file()
         # Registry data currently visible after searching
         self.filtered_registry_data = dict(self.registry_data)
         self.__populate_scripts_list()
-        
+
         # Track currently selected script for cleanup
         self.current_script = None
         self.current_script_display = None
-        
-        # Add buttons
-        cleanup_button = self.add_button(_("registry_cleanup_label"), Gtk.ResponseType.NONE)
-        cleanup_button.set_sensitive(False)
-        self.cleanup_button = cleanup_button
-        
+
+        # Add action controls. Export and Cleanup are ordinary Gtk.Buttons rather
+        # than Gtk.Dialog response buttons: clicking them must not make the outer
+        # dialog.run() return and close the Action Registry.
+        action_area = self.get_action_area()
+
+        self.export_button = Gtk.Button()
+
+        # Build the button contents ourselves instead of relying on Gtk.Button's
+        # internal image+label layout. This makes the icon/text spacing explicit
+        # and keeps it stable when the icon is changed for success feedback.
+        self.export_button_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=4,
+        )
+        # Keep the icon + label group centered as a single unit inside the button.
+        self.export_button_box.set_halign(Gtk.Align.CENTER)
+        self.export_button_box.set_valign(Gtk.Align.CENTER)
+        self.export_button_icon = Gtk.Image.new_from_icon_name(
+            "document-save-symbolic", Gtk.IconSize.BUTTON
+        )
+        self.export_button_label = Gtk.Label(
+            label=self.translations.get("export", "Export")
+        )
+        self.export_button_box.pack_start(
+            self.export_button_icon, False, False, 0
+        )
+        self.export_button_box.pack_start(
+            self.export_button_label, False, False, 0
+        )
+        self.export_button.add(self.export_button_box)
+
+        # Export is a primary action while it is available.
+        self.export_button.get_style_context().add_class("suggested-action")
+        self.export_button.set_tooltip_text(
+            self.translations.get(
+                "registry_export_tooltip",
+                "Export all registered operations as a manifest file",
+            )
+        )
+        action_area.pack_start(self.export_button, False, False, 0)
+
+        self.cleanup_button = Gtk.Button(label=_("registry_cleanup_label"))
+        self.cleanup_button.set_sensitive(False)
+        action_area.pack_start(self.cleanup_button, False, False, 0)
+
+        # Close is the only actual dialog response button here.
         self.add_button(_("script_runner_close"), Gtk.ResponseType.CLOSE)
-        
-        # Connect cleanup button signal
+
+        # Connect action signals.
+        self.export_button.connect("clicked", self.__on_export_clicked)
         self.cleanup_button.connect("clicked", self.__on_cleanup_clicked)
-        
+
         self.show_all()
-    
+
     def __populate_scripts_list(self):
         """Populate the scripts list from registry data."""
         self.scripts_store.clear()
@@ -259,7 +303,7 @@ class ActionRegistryDialog(Gtk.Dialog):
             entries, key=lambda item: item[0].casefold()
         ):
             self.scripts_store.append([display_name, registry_name])
-    
+
     def __on_script_selected(self, selection):
         """Handle script selection from the list."""
         model, tree_iter = selection.get_selected()
@@ -269,14 +313,14 @@ class ActionRegistryDialog(Gtk.Dialog):
             self.current_script_display = None
             self.cleanup_button.set_sensitive(False)
             return
-        
+
         display_name = model.get_value(tree_iter, 0)
         registry_name = model.get_value(tree_iter, 1)
         self.current_script = registry_name
         self.current_script_display = display_name
         self.cleanup_button.set_sensitive(True)
         self.__display_script_details(registry_name)
-    
+
     def __display_script_details(self, script_name):
         """Display registry details for the selected script."""
         if script_name not in self.filtered_registry_data:
@@ -284,49 +328,112 @@ class ActionRegistryDialog(Gtk.Dialog):
             return
 
         executions = self.filtered_registry_data[script_name]
-        
+
         # Build detailed text using the current localized display name while all
         # registry lookups continue using the stable stored identity.
         display_name = get_display_name(script_name, self.translations)
         lines = [f"Script: {display_name}\n"]
         lines.append("=" * 60 + "\n\n")
-        
+
         for idx, (timestamp, operations) in enumerate(executions, 1):
             lines.append(f"Execution #{idx}\n")
             if timestamp:
                 lines.append(f"Timestamp: {timestamp}\n")
             else:
                 lines.append("\n")
-            
+
             if operations:
                 lines.append("Operations:\n")
                 for op in operations:
                     lines.append(f"  • {op}\n")
             else:
                 lines.append("Operations: (none)\n")
-            
+
             lines.append("\n" + "-" * 60 + "\n\n")
-        
+
         text_buffer = self.details_textview.get_buffer()
         text_buffer.set_text("".join(lines))
-    
+
+    def __on_export_clicked(self, button):
+        """Export all registered operations to a manifest in the user's home."""
+        try:
+            manifest_path, entry_count = export_registered_manifest(
+                registry_data=self.registry_data,
+                translations=self.translations,
+            )
+        except OSError as exc:
+            run_message_dialog(
+                self,
+                title=self.translations.get(
+                    "registry_export_error_title",
+                    "Manifest export failed",
+                ),
+                secondary_text=str(exc),
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[("OK", Gtk.ResponseType.OK)],
+                default_response=Gtk.ResponseType.OK,
+            )
+            return
+
+        if os.environ.get("LT_DEBUG") == "1":
+            print(
+                self.translations.get(
+                    "registry_export_success_message",
+                    "Exported {count} registered operation(s) to:\n{path}",
+                ).format(count=entry_count, path=manifest_path)
+            )
+
+        self.__show_export_success(button)
+
+    def __show_export_success(self, button):
+        """Briefly switch the Export button into a successful state."""
+        source_id = getattr(self, "_export_success_timeout_id", None)
+        if source_id is not None:
+            GLib.source_remove(source_id)
+            self._export_success_timeout_id = None
+
+        style_context = button.get_style_context()
+        button.set_sensitive(False)
+        self.export_button_icon.set_from_icon_name(
+            "emblem-ok-symbolic", Gtk.IconSize.BUTTON
+        )
+        style_context.add_class("suggested-action")
+        button.show_all()
+
+        def restore_button():
+            # The dialog may have been closed normally while this acknowledgement
+            # was visible. Avoid touching a destroyed widget in that case.
+            if button.get_parent() is not None:
+                self.export_button_icon.set_from_icon_name(
+                    "document-save-symbolic", Gtk.IconSize.BUTTON
+                )
+                button.set_sensitive(True)
+                # Keep the normal clickable Export state highlighted.
+                style_context.add_class("suggested-action")
+                button.show_all()
+
+            self._export_success_timeout_id = None
+            return False
+
+        self._export_success_timeout_id = GLib.timeout_add(1200, restore_button)
+
     def __on_cleanup_clicked(self, button):
         """Handle cleanup button click."""
         if not self.current_script:
             return
-        
+
         self.__show_cleanup_confirmation()
-    
+
     def __show_cleanup_confirmation(self):
         """Show confirmation dialog for cleanup."""
         if not self.current_script:
             return
-        
+
         _ = create_translator()
-        
+
         # Find backup files that will be removed
         backup_files = _find_backup_files_for_script(self.current_script, self.registry_data)
-        
+
         # Create confirmation dialog
         dialog = Gtk.MessageDialog(
             transient_for=self,
@@ -335,7 +442,7 @@ class ActionRegistryDialog(Gtk.Dialog):
             buttons=Gtk.ButtonsType.NONE,
             text=_("registry_cleanup_title"),
         )
-        
+
         backup_count = len(backup_files)
         secondary_text = (
             f"This will remove the registry entry for '{getattr(self, 'current_script_display', self.current_script)}' and delete "
@@ -344,17 +451,17 @@ class ActionRegistryDialog(Gtk.Dialog):
             "This action cannot be undone."
         )
         dialog.format_secondary_text(secondary_text)
-        
+
         # Add buttons
         dialog.add_buttons(
             _("cancel_btn_label"), Gtk.ResponseType.CANCEL,
             _("term_view_remove"), Gtk.ResponseType.OK
         )
-        
+
         # Make OK button red/destructive
         ok_button = dialog.get_widget_for_response(Gtk.ResponseType.OK)
         ok_button.get_style_context().add_class("destructive-action")
-        
+
         # Use response signal instead of dialog.run() to avoid event loop issues
         def on_response(dialog, response_id):
             should_cleanup = response_id == Gtk.ResponseType.OK
@@ -362,26 +469,26 @@ class ActionRegistryDialog(Gtk.Dialog):
 
             if should_cleanup:
                 GLib.idle_add(self.__perform_cleanup)
-        
+
         dialog.connect("response", on_response)
         dialog.show()
-    
+
     def __perform_cleanup(self):
         """Perform the actual cleanup."""
         if not self.current_script:
             return
-        
+
         _ = create_translator()
-        
+
         # Find backup files
         backup_files = _find_backup_files_for_script(self.current_script, self.registry_data)
-        
+
         # Remove script from registry
         registry_removed = _remove_script_from_registry(self.current_script)
-        
+
         # Remove backup files
         success_count, failed_paths = _remove_backup_files(backup_files)
-        
+
         # Show result dialog
         if registry_removed:
             if failed_paths:
@@ -411,10 +518,10 @@ class ActionRegistryDialog(Gtk.Dialog):
                     text=_("registry_cleanup_success_title"),
                 )
                 dialog.format_secondary_text(message)
-            
+
             dialog.run()
             dialog.destroy()
-            
+
             # Refresh the list
             self.registry_data = parse_registry_file()
             self.filtered_registry_data = search_registry_entries(

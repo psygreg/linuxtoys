@@ -553,5 +553,9 @@
   "app_page_month": "miesiąc",
   "app_page_months": "miesiące",
   "media": "Multimedia i streaming",
-  "media_desc": "Odtwarzacze multimediów, narzędzia, kodeki i programy do streamingu."
+  "media_desc": "Odtwarzacze multimediów, narzędzia, kodeki i programy do streamingu.",
+  "registry_export_tooltip": "Eksportuj wszystkie zarejestrowane operacje jako plik manifestu",
+  "registry_export_error_title": "Eksport manifestu nie powiódł się",
+  "registry_export_success_title": "Manifest wyeksportowany",
+  "registry_export_success_message": "Wyeksportowano {count} zarejestrowanych operacji do:\n{path}"
 }

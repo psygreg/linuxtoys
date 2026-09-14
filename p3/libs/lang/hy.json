@@ -553,5 +553,9 @@
   "app_page_month": "ամիս",
   "app_page_months": "ամիսներ",
   "media": "Մեդիա և հոսքային հեռարձակում",
-  "media_desc": "Մեդիա նվագարկիչներ, գործիքներ, կոդեկներ և հոսքային հեռարձակման օգտակար ծրագրեր։"
+  "media_desc": "Մեդիա նվագարկիչներ, գործիքներ, կոդեկներ և հոսքային հեռարձակման օգտակար ծրագրեր։",
+  "registry_export_tooltip": "Արտահանել բոլոր գրանցված գործողությունները որպես manifest ֆայլ",
+  "registry_export_error_title": "Manifest-ի արտահանումը ձախողվեց",
+  "registry_export_success_title": "Manifest-ն արտահանված է",
+  "registry_export_success_message": "{count} գրանցված գործողություն արտահանվեց այստեղ՝\n{path}"
 }

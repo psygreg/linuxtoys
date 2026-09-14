@@ -552,5 +552,9 @@
   "app_page_month": "ay",
   "app_page_months": "ay",
   "media": "Media və yayım",
-  "media_desc": "Media pleyerləri, alətlər, kodeklər və yayım utilitləri."
+  "media_desc": "Media pleyerləri, alətlər, kodeklər və yayım utilitləri.",
+  "registry_export_tooltip": "Bütün qeydə alınmış əməliyyatları manifest faylı kimi ixrac et",
+  "registry_export_error_title": "Manifest ixracı uğursuz oldu",
+  "registry_export_success_title": "Manifest ixrac edildi",
+  "registry_export_success_message": "{count} qeydə alınmış əməliyyat buraya ixrac edildi:\n{path}"
 }

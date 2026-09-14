@@ -553,5 +553,9 @@
   "app_page_month": "شهر",
   "app_page_months": "أشهر",
   "media": "الوسائط والبث",
-  "media_desc": "مشغلات الوسائط والأدوات وبرامج الترميز وأدوات البث."
+  "media_desc": "مشغلات الوسائط والأدوات وبرامج الترميز وأدوات البث.",
+  "registry_export_tooltip": "تصدير جميع العمليات المسجلة كملف manifest",
+  "registry_export_error_title": "فشل تصدير ملف manifest",
+  "registry_export_success_title": "تم تصدير ملف manifest",
+  "registry_export_success_message": "تم تصدير {count} من العمليات المسجلة إلى:\n{path}"
 }

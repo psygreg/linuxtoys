@@ -553,5 +553,9 @@
   "app_page_month": "mí",
   "app_page_months": "míonna",
   "media": "Meáin & Sruthú",
-  "media_desc": "Seinnteoirí meán, uirlisí, codecanna agus fóntais sruthaithe."
+  "media_desc": "Seinnteoirí meán, uirlisí, codecanna agus fóntais sruthaithe.",
+  "registry_export_tooltip": "Easpórtáil gach oibríocht chláraithe mar chomhad manifest",
+  "registry_export_error_title": "Theip ar easpórtáil an manifest",
+  "registry_export_success_title": "Manifest easpórtáilte",
+  "registry_export_success_message": "Easpórtáladh {count} oibríocht chláraithe chuig:\n{path}"
 }

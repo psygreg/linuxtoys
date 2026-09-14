@@ -553,5 +553,9 @@
   "app_page_month": "ເດືອນ",
   "app_page_months": "ເດືອນ",
   "media": "ມີເດຍ ແລະ ສະຕຣີມມິງ",
-  "media_desc": "ໂປຣແກຣມຫຼິ້ນມີເດຍ, ເຄື່ອງມື, ໂຄເດັກ ແລະ ຢູທິລິຕີສຳລັບສະຕຣີມມິງ."
+  "media_desc": "ໂປຣແກຣມຫຼິ້ນມີເດຍ, ເຄື່ອງມື, ໂຄເດັກ ແລະ ຢູທິລິຕີສຳລັບສະຕຣີມມິງ.",
+  "registry_export_tooltip": "ສົ່ງອອກການດຳເນີນງານທີ່ລົງທະບຽນທັງໝົດເປັນໄຟລ໌ manifest",
+  "registry_export_error_title": "ການສົ່ງອອກ manifest ລົ້ມເຫຼວ",
+  "registry_export_success_title": "ສົ່ງອອກ manifest ແລ້ວ",
+  "registry_export_success_message": "ສົ່ງອອກ {count} ການດຳເນີນງານທີ່ລົງທະບຽນໄປທີ່:\n{path}"
 }

@@ -553,5 +553,9 @@
   "app_page_month": "თვე",
   "app_page_months": "თვე",
   "media": "მედია და სტრიმინგი",
-  "media_desc": "მედია დამკვრელები, ხელსაწყოები, კოდეკები და სტრიმინგის უტილიტები."
+  "media_desc": "მედია დამკვრელები, ხელსაწყოები, კოდეკები და სტრიმინგის უტილიტები.",
+  "registry_export_tooltip": "ყველა რეგისტრირებული ოპერაციის manifest ფაილად ექსპორტი",
+  "registry_export_error_title": "Manifest-ის ექსპორტი ვერ მოხერხდა",
+  "registry_export_success_title": "Manifest ექსპორტირებულია",
+  "registry_export_success_message": "{count} რეგისტრირებული ოპერაცია ექსპორტირებულია მისამართზე:\n{path}"
 }

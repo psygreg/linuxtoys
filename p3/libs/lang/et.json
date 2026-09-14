@@ -553,5 +553,9 @@
   "app_page_month": "kuu",
   "app_page_months": "kuud",
   "media": "Meedia ja voogedastus",
-  "media_desc": "Meediumipleierid, tööriistad, koodekid ja voogedastuse utiliidid."
+  "media_desc": "Meediumipleierid, tööriistad, koodekid ja voogedastuse utiliidid.",
+  "registry_export_tooltip": "Ekspordi kõik registreeritud toimingud manifestifailina",
+  "registry_export_error_title": "Manifesti eksportimine ebaõnnestus",
+  "registry_export_success_title": "Manifest eksporditud",
+  "registry_export_success_message": "Eksporditi {count} registreeritud toimingut asukohta:\n{path}"
 }

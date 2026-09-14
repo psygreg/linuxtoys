@@ -551,5 +551,9 @@
   "app_page_month": "mwezi",
   "app_page_months": "miezi",
   "media": "Midia na Utiririshaji",
-  "media_desc": "Vichezaji vya midia, zana, kodeki na programu za utiririshaji."
+  "media_desc": "Vichezaji vya midia, zana, kodeki na programu za utiririshaji.",
+  "registry_export_tooltip": "Hamisha shughuli zote zilizosajiliwa kama faili ya manifest",
+  "registry_export_error_title": "Uhamishaji wa manifest umeshindwa",
+  "registry_export_success_title": "Manifest imehamishwa",
+  "registry_export_success_message": "Shughuli {count} zilizosajiliwa zimehamishwa kwenda:\n{path}"
 }

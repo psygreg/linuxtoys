@@ -553,5 +553,9 @@
   "app_page_month": "महिना",
   "app_page_months": "महिना",
   "media": "मिडिया र स्ट्रिमिङ",
-  "media_desc": "मिडिया प्लेयर, उपकरण, कोडेक र स्ट्रिमिङ उपयोगिताहरू।"
+  "media_desc": "मिडिया प्लेयर, उपकरण, कोडेक र स्ट्रिमिङ उपयोगिताहरू।",
+  "registry_export_tooltip": "सबै दर्ता गरिएका कार्यहरूलाई manifest फाइलको रूपमा निर्यात गर्नुहोस्",
+  "registry_export_error_title": "Manifest निर्यात असफल भयो",
+  "registry_export_success_title": "Manifest निर्यात गरियो",
+  "registry_export_success_message": "{count} दर्ता गरिएका कार्यहरू यहाँ निर्यात गरियो:\n{path}"
 }

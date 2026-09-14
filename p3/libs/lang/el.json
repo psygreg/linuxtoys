@@ -553,5 +553,9 @@
   "app_page_month": "μήνας",
   "app_page_months": "μήνες",
   "media": "Πολυμέσα & streaming",
-  "media_desc": "Προγράμματα αναπαραγωγής πολυμέσων, εργαλεία, codecs και βοηθητικά προγράμματα streaming."
+  "media_desc": "Προγράμματα αναπαραγωγής πολυμέσων, εργαλεία, codecs και βοηθητικά προγράμματα streaming.",
+  "registry_export_tooltip": "Εξαγωγή όλων των καταχωρημένων λειτουργιών ως αρχείο manifest",
+  "registry_export_error_title": "Η εξαγωγή του manifest απέτυχε",
+  "registry_export_success_title": "Το manifest εξήχθη",
+  "registry_export_success_message": "Εξήχθησαν {count} καταχωρημένες λειτουργίες στο:\n{path}"
 }

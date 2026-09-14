@@ -553,5 +553,9 @@
   "app_page_month": "tháng",
   "app_page_months": "tháng",
   "media": "Đa phương tiện & phát trực tuyến",
-  "media_desc": "Trình phát đa phương tiện, công cụ, codec và tiện ích phát trực tuyến."
+  "media_desc": "Trình phát đa phương tiện, công cụ, codec và tiện ích phát trực tuyến.",
+  "registry_export_tooltip": "Xuất tất cả thao tác đã đăng ký thành tệp manifest",
+  "registry_export_error_title": "Xuất manifest thất bại",
+  "registry_export_success_title": "Đã xuất manifest",
+  "registry_export_success_message": "Đã xuất {count} thao tác đã đăng ký tới:\n{path}"
 }

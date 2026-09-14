@@ -553,5 +553,9 @@
   "app_page_month": "mes",
   "app_page_months": "meses",
   "media": "Multimedia y streaming",
-  "media_desc": "Reproductores multimedia, herramientas, códecs y utilidades de streaming."
+  "media_desc": "Reproductores multimedia, herramientas, códecs y utilidades de streaming.",
+  "registry_export_tooltip": "Exportar todas las operaciones registradas como un archivo de manifiesto",
+  "registry_export_error_title": "Error al exportar el manifiesto",
+  "registry_export_success_title": "Manifiesto exportado",
+  "registry_export_success_message": "Se exportaron {count} operaciones registradas a:\n{path}"
 }

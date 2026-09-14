@@ -551,5 +551,9 @@
   "app_page_month": "மாதம்",
   "app_page_months": "மாதங்கள்",
   "media": "ஊடகம் மற்றும் ஸ்ட்ரீமிங்",
-  "media_desc": "ஊடக இயக்கிகள், கருவிகள், கோடெக்குகள் மற்றும் ஸ்ட்ரீமிங் பயன்பாடுகள்."
+  "media_desc": "ஊடக இயக்கிகள், கருவிகள், கோடெக்குகள் மற்றும் ஸ்ட்ரீமிங் பயன்பாடுகள்.",
+  "registry_export_tooltip": "பதிவுசெய்யப்பட்ட அனைத்து செயல்பாடுகளையும் manifest கோப்பாக ஏற்றுமதி செய்",
+  "registry_export_error_title": "Manifest ஏற்றுமதி தோல்வியடைந்தது",
+  "registry_export_success_title": "Manifest ஏற்றுமதி செய்யப்பட்டது",
+  "registry_export_success_message": "{count} பதிவுசெய்யப்பட்ட செயல்பாடுகள் இங்கு ஏற்றுமதி செய்யப்பட்டன:\n{path}"
 }

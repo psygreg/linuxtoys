@@ -553,5 +553,9 @@
   "app_page_month": "mese",
   "app_page_months": "mesi",
   "media": "Multimedia e streaming",
-  "media_desc": "Lettori multimediali, strumenti, codec e utilità per lo streaming."
+  "media_desc": "Lettori multimediali, strumenti, codec e utilità per lo streaming.",
+  "registry_export_tooltip": "Esporta tutte le operazioni registrate come file manifest",
+  "registry_export_error_title": "Esportazione del manifest non riuscita",
+  "registry_export_success_title": "Manifest esportato",
+  "registry_export_success_message": "Esportate {count} operazioni registrate in:\n{path}"
 }

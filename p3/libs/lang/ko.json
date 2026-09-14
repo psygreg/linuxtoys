@@ -553,5 +553,9 @@
   "app_page_month": "개월",
   "app_page_months": "개월",
   "media": "미디어 및 스트리밍",
-  "media_desc": "미디어 플레이어, 도구, 코덱 및 스트리밍 유틸리티."
+  "media_desc": "미디어 플레이어, 도구, 코덱 및 스트리밍 유틸리티.",
+  "registry_export_tooltip": "등록된 모든 작업을 manifest 파일로 내보내기",
+  "registry_export_error_title": "Manifest 내보내기 실패",
+  "registry_export_success_title": "Manifest 내보내기 완료",
+  "registry_export_success_message": "등록된 작업 {count}개를 다음 위치로 내보냈습니다:\n{path}"
 }

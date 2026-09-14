@@ -553,5 +553,9 @@
   "app_page_month": "bulan",
   "app_page_months": "bulan",
   "media": "Media & Penstriman",
-  "media_desc": "Pemain media, alatan, codec dan utiliti penstriman."
+  "media_desc": "Pemain media, alatan, codec dan utiliti penstriman.",
+  "registry_export_tooltip": "Eksport semua operasi berdaftar sebagai fail manifest",
+  "registry_export_error_title": "Eksport manifest gagal",
+  "registry_export_success_title": "Manifest dieksport",
+  "registry_export_success_message": "{count} operasi berdaftar dieksport ke:\n{path}"
 }

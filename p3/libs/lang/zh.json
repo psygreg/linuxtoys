@@ -555,5 +555,9 @@
   "app_page_month": "个月",
   "app_page_months": "个月",
   "media": "媒体与流媒体",
-  "media_desc": "媒体播放器、相关工具、编解码器和流媒体实用程序。"
+  "media_desc": "媒体播放器、相关工具、编解码器和流媒体实用程序。",
+  "registry_export_tooltip": "将所有已注册的操作导出为清单文件",
+  "registry_export_error_title": "清单导出失败",
+  "registry_export_success_title": "清单已导出",
+  "registry_export_success_message": "已将 {count} 个已注册操作导出到：\n{path}"
 }

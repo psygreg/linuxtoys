@@ -553,5 +553,9 @@
   "app_page_month": "měsíc",
   "app_page_months": "měsíce",
   "media": "Média a streamování",
-  "media_desc": "Přehrávače médií, nástroje, kodeky a pomůcky pro streamování."
+  "media_desc": "Přehrávače médií, nástroje, kodeky a pomůcky pro streamování.",
+  "registry_export_tooltip": "Exportovat všechny registrované operace jako soubor manifestu",
+  "registry_export_error_title": "Export manifestu se nezdařil",
+  "registry_export_success_title": "Manifest byl exportován",
+  "registry_export_success_message": "Exportováno {count} registrovaných operací do:\n{path}"
 }

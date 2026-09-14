@@ -552,5 +552,9 @@
   "app_page_month": "oy",
   "app_page_months": "oy",
   "media": "Media va striming",
-  "media_desc": "Media pleyerlar, vositalar, kodeklar va striming utilitalari."
+  "media_desc": "Media pleyerlar, vositalar, kodeklar va striming utilitalari.",
+  "registry_export_tooltip": "Barcha ro‘yxatdan o‘tgan amallarni manifest fayli sifatida eksport qilish",
+  "registry_export_error_title": "Manifest eksporti amalga oshmadi",
+  "registry_export_success_title": "Manifest eksport qilindi",
+  "registry_export_success_message": "{count} ta ro‘yxatdan o‘tgan amal quyidagi manzilga eksport qilindi:\n{path}"
 }

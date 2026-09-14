@@ -553,5 +553,9 @@
   "app_page_month": "моҳ",
   "app_page_months": "моҳ",
   "media": "Медиа ва пахши ҷараёнӣ",
-  "media_desc": "Плеерҳои медиа, абзорҳо, кодекҳо ва барномаҳои ёрирасон барои пахши ҷараёнӣ."
+  "media_desc": "Плеерҳои медиа, абзорҳо, кодекҳо ва барномаҳои ёрирасон барои пахши ҷараёнӣ.",
+  "registry_export_tooltip": "Содир кардани ҳамаи амалиёти сабтшуда ҳамчун файли manifest",
+  "registry_export_error_title": "Содироти manifest ноком шуд",
+  "registry_export_success_title": "Manifest содир шуд",
+  "registry_export_success_message": "{count} амалиёти сабтшуда ба ин ҷо содир карда шуд:\n{path}"
 }

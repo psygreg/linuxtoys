@@ -553,5 +553,9 @@
   "app_page_month": "buwan",
   "app_page_months": "mga buwan",
   "media": "Media at Streaming",
-  "media_desc": "Mga media player, tool, codec, at utility para sa streaming."
+  "media_desc": "Mga media player, tool, codec, at utility para sa streaming.",
+  "registry_export_tooltip": "I-export ang lahat ng nakarehistrong operasyon bilang manifest file",
+  "registry_export_error_title": "Nabigo ang pag-export ng manifest",
+  "registry_export_success_title": "Na-export ang manifest",
+  "registry_export_success_message": "Na-export ang {count} nakarehistrong operasyon sa:\n{path}"
 }

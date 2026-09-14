@@ -553,5 +553,9 @@
   "app_page_month": "mēnesis",
   "app_page_months": "mēneši",
   "media": "Multivide un straumēšana",
-  "media_desc": "Multivides atskaņotāji, rīki, kodeki un straumēšanas utilītas."
+  "media_desc": "Multivides atskaņotāji, rīki, kodeki un straumēšanas utilītas.",
+  "registry_export_tooltip": "Eksportēt visas reģistrētās darbības kā manifesta failu",
+  "registry_export_error_title": "Manifesta eksportēšana neizdevās",
+  "registry_export_success_title": "Manifests eksportēts",
+  "registry_export_success_message": "Eksportētas {count} reģistrētas darbības uz:\n{path}"
 }

@@ -553,5 +553,9 @@
   "app_page_month": "måned",
   "app_page_months": "måneder",
   "media": "Medier og strømming",
-  "media_desc": "Mediespillere, verktøy, kodeker og strømmeverktøy."
+  "media_desc": "Mediespillere, verktøy, kodeker og strømmeverktøy.",
+  "registry_export_tooltip": "Eksporter alle registrerte operasjoner som en manifestfil",
+  "registry_export_error_title": "Eksport av manifest mislyktes",
+  "registry_export_success_title": "Manifest eksportert",
+  "registry_export_success_message": "Eksporterte {count} registrerte operasjoner til:\n{path}"
 }

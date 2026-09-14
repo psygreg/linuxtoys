@@ -553,5 +553,9 @@
   "app_page_month": "mesec",
   "app_page_months": "mesecev",
   "media": "Predstavnost in pretakanje",
-  "media_desc": "Predvajalniki predstavnosti, orodja, kodeki in pripomočki za pretakanje."
+  "media_desc": "Predvajalniki predstavnosti, orodja, kodeki in pripomočki za pretakanje.",
+  "registry_export_tooltip": "Izvozi vse registrirane operacije kot datoteko manifesta",
+  "registry_export_error_title": "Izvoz manifesta ni uspel",
+  "registry_export_success_title": "Manifest izvožen",
+  "registry_export_success_message": "Izvoženih {count} registriranih operacij v:\n{path}"
 }
