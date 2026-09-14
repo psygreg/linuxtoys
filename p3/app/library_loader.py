@@ -11,6 +11,13 @@ LIBRARY_FLAGS = {
     "boot.bash": "BOOT_OPS",
     "misc.bash": "MISC_OPS",
     "sysd.bash": "SYSD_OPS",
+    "helpers.bash": "HELPERS_OPS",
+    "optimizers.bash": "OPTIMIZER_OPS",
+}
+
+LEGACY_SUMMONS = {
+    "summon_helpers": "helpers.bash",
+    "summon_optimizers": "optimizers.bash",
 }
 _FUNCTION = re.compile(
     r"^\s*(?:function\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(\s*\))?"
@@ -82,13 +89,14 @@ def library_flags(script_text, script_dir):
     for name in ("linuxtoys.bash", "sysinfo.bash"):
         required.update(_words((libs / name).read_text(encoding="utf-8")))
 
-    # These explicitly summoned libraries may also call the split modules.
-    for function, filename in (("summon_helpers", "helpers.lib"),
-                               ("summon_optimizers", "optimizers.lib")):
-        if function in _words(script_text) and (libs / filename).is_file():
-            required.update(_words((libs / filename).read_text(encoding="utf-8")))
-
-    selected = set()
+    # Preserve legacy summon_* calls while treating those libraries as first-class
+    # dynamic modules. Seeding the selection here also lets their dependencies
+    # participate in the normal transitive dependency walk below.
+    script_words = _words(script_text)
+    selected = {filename for function, filename in LEGACY_SUMMONS.items()
+                if function in script_words}
+    for name in selected:
+        required.update(_words(texts[name]))
     while True:
         added = {name for name in texts if name not in selected
                  and functions[name] & required}
