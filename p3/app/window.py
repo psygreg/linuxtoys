@@ -88,6 +88,8 @@ class AppWindow(
         self._featured_last_count = None
         self._featured_swap_timer = None
         self._featured_hovered = False
+        self._featured_last_layout = None
+        self._featured_large_positions = set()
         self._featured_history = []
         self.featured_scripts_revealer = None
         self.random_scripts_revealer = None
@@ -201,22 +203,24 @@ class AppWindow(
         self.featured_scripts_container.pack_start(self.random_scripts_label, False, False, 0)
 
         # Create flowbox for random scripts (without extra margins since container has them)
-        self.random_scripts_flowbox = Gtk.FlowBox()
+        # Featured needs true row-spanning cards, which Gtk.FlowBox cannot provide.
+        # Keep the historical attribute name for compatibility with the Featured
+        # controller, but back it with a homogeneous Gtk.Grid.
+        self.random_scripts_flowbox = Gtk.Grid()
         self.random_scripts_flowbox.set_valign(Gtk.Align.START)
-        self.random_scripts_flowbox.set_max_children_per_line(5)
-        self.random_scripts_flowbox.set_activate_on_single_click(False)
-        self.random_scripts_flowbox.set_selection_mode(Gtk.SelectionMode.MULTIPLE)
-        self.random_scripts_flowbox.connect(
-            "key-press-event", self._on_flowbox_key_press
-        )
-        self.random_scripts_flowbox.set_homogeneous(True)
-        # No margins here since the container already has them
+        self.random_scripts_flowbox.set_column_homogeneous(True)
+        self.random_scripts_flowbox.set_row_homogeneous(True)
+        # No margins here since the container already has them.
         self.random_scripts_flowbox.set_margin_left(0)
         self.random_scripts_flowbox.set_margin_top(0)
         self.random_scripts_flowbox.set_margin_right(0)
         self.random_scripts_flowbox.set_margin_bottom(0)
-        self.random_scripts_flowbox.set_column_spacing(16)
-        self.random_scripts_flowbox.set_row_spacing(12)
+        # Gtk.FlowBox adds a small amount of visual breathing room around its
+        # children through the FlowBoxChild wrapper. Featured uses Gtk.Grid so
+        # cards can span rows, therefore compensate for that wrapper here to
+        # make the *visible* card-to-card gaps match the main-menu FlowBoxes.
+        self.random_scripts_flowbox.set_column_spacing(20)
+        self.random_scripts_flowbox.set_row_spacing(18)
 
         self.random_scripts_revealer = Gtk.Revealer()
         self.random_scripts_revealer.set_transition_type(

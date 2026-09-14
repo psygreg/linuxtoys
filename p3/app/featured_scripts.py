@@ -155,39 +155,28 @@ class FeaturedCtl:
 
         columns = max(1, int(columns))
 
-        # Make the featured FlowBox use exactly the same number of columns. Using
-        # both min and max prevents shorter featured labels from creating an extra
-        # column that the main menu itself does not currently have.
-        self.random_scripts_flowbox.set_min_children_per_line(columns)
-        self.random_scripts_flowbox.set_max_children_per_line(columns)
         return columns
 
     def _calculate_random_scripts_count(self):
-        """
-        Calculate how many featured scripts fit in the unused viewport space.
-
-        Zero means the complete featured section cannot fit and must stay hidden.
-        Only complete rows are displayed.
-        """
+        """Calculate Featured geometry and the number of actual app cards shown."""
         if (
             not self.all_scripts
             or self.current_category_info is not None
             or self.main_stack.get_visible_child_name() != "categories"
         ):
+            self._featured_layout_metrics = None
             return 0
 
         viewport_height = self.categories_view.get_allocated_height()
         categories_height = self.categories_flowbox.get_allocated_height()
 
         if viewport_height <= 1 or categories_height <= 1:
-            # GTK has not completed its first meaningful allocation yet.
+            self._featured_layout_metrics = None
             return 0
 
         container = self.featured_scripts_container
-
         vertical_margins = (
-            container.get_margin_top()
-            + container.get_margin_bottom()
+            container.get_margin_top() + container.get_margin_bottom()
         )
 
         separator = None
@@ -197,43 +186,58 @@ class FeaturedCtl:
 
         separator_height = self._preferred_height(separator)
         label_height = self._preferred_height(self.random_scripts_label)
-
-        # The featured container contains separator, label and FlowBox:
-        # therefore there are two spacing gaps.
         section_spacing = container.get_spacing() * 2
-
         fixed_featured_height = (
             vertical_margins
             + separator_height
             + label_height
             + section_spacing
         )
-
         available_rows_height = (
-            viewport_height
-            - categories_height
-            - fixed_featured_height
+            viewport_height - categories_height - fixed_featured_height
         )
 
         _card_width, card_height = self._get_featured_card_size()
         row_spacing = self.random_scripts_flowbox.get_row_spacing()
-
         if available_rows_height < card_height:
+            self._featured_layout_metrics = None
             return 0
 
-        # The first row needs only card_height. Each additional row also needs
-        # one row-spacing gap.
         rows = 1 + (
             available_rows_height - card_height
         ) // (card_height + row_spacing)
-
         rows = min(self.FEATURED_MAX_ROWS, int(rows))
         columns = self._calculate_featured_columns()
 
-        return min(
-            rows * columns,
-            len(self._eligible_featured_scripts()),
-        )
+        eligible_count = len(self._eligible_featured_scripts())
+        if eligible_count <= 0:
+            self._featured_layout_metrics = None
+            return 0
+
+        # One three-row card at 3-5 rows, two at 6-8, three at 9+. A large
+        # card occupies three normal grid cells, so every one reduces the number
+        # of distinct apps that fit by two while preserving exactly the same
+        # overall Featured height and column count.
+        large_count = min(3, rows // 3, eligible_count)
+        slot_count = rows * columns
+        item_capacity = max(0, slot_count - (2 * large_count))
+        item_count = min(eligible_count, item_capacity)
+        large_count = min(large_count, item_count)
+
+        # If a very small eligible pool forced large_count down, reclaim the slots
+        # that no longer need to be reserved by a three-row card.
+        item_capacity = max(0, slot_count - (2 * large_count))
+        item_count = min(eligible_count, item_capacity)
+
+        self._featured_layout_metrics = {
+            "rows": rows,
+            "columns": columns,
+            "card_height": card_height,
+            "row_spacing": row_spacing,
+            "large_count": large_count,
+            "item_count": item_count,
+        }
+        return item_count
 
     @staticmethod
     def _featured_script_key(script):
@@ -291,6 +295,62 @@ class FeaturedCtl:
         self._featured_history = history
         return random.sample(candidates, min(count, len(candidates)))
 
+    def _choose_featured_large_positions(self, rows, columns, count):
+        """Pick non-overlapping three-row spans, avoiding last positions if possible."""
+        if count <= 0 or rows < 3 or columns <= 0:
+            self._featured_large_positions = set()
+            return []
+
+        previous = set(getattr(self, "_featured_large_positions", set()))
+        all_positions = [
+            (column, row)
+            for column in range(columns)
+            for row in range(rows - 2)
+        ]
+
+        def find_layout(candidates):
+            candidates = list(candidates)
+            random.shuffle(candidates)
+
+            def overlaps(position, chosen):
+                column, row = position
+                for other_column, other_row in chosen:
+                    if column != other_column:
+                        continue
+                    if not (row + 2 < other_row or other_row + 2 < row):
+                        return True
+                return False
+
+            def search(index, chosen):
+                if len(chosen) == count:
+                    return list(chosen)
+                if len(candidates) - index < count - len(chosen):
+                    return None
+                for candidate_index in range(index, len(candidates)):
+                    candidate = candidates[candidate_index]
+                    if overlaps(candidate, chosen):
+                        continue
+                    result = search(candidate_index + 1, chosen + [candidate])
+                    if result is not None:
+                        return result
+                return None
+
+            return search(0, [])
+
+        # Strong preference: none of the large cards uses the exact same top-left
+        # slot as the previous rotation. If current geometry makes that impossible
+        # (for example one column with exactly six rows and two large cards), fall
+        # back to the best valid non-overlapping layout instead of dropping cards.
+        fresh_positions = [pos for pos in all_positions if pos not in previous]
+        chosen = find_layout(fresh_positions) or find_layout(all_positions) or []
+        self._featured_large_positions = set(chosen)
+        return chosen
+
+    @staticmethod
+    def _featured_occupied_cells(position):
+        column, row = position
+        return {(column, row + offset) for offset in range(3)}
+
     def _clear_random_scripts(self):
         """Remove every currently displayed featured card."""
         for child in self.random_scripts_flowbox.get_children():
@@ -308,45 +368,91 @@ class FeaturedCtl:
         if discard:
             self._clear_random_scripts()
             self._featured_last_count = 0
+            self._featured_last_layout = None
             self._featured_history = []
+            self._featured_large_positions = set()
 
     def _invalidate_featured_scripts(self):
         """Discard Featured state when its backing script data becomes stale."""
         self._stop_random_scripts_refresh_timer()
         self._hide_featured_section(discard=True)
 
-    def _populate_random_scripts(self, scripts, count):
-        """Replace hidden featured cards, then animate the new set in."""
+    def _populate_random_scripts(self, scripts, count, layout):
+        """Replace hidden Featured cards, including true three-row variants."""
         self._featured_swap_timer = None
+        self._featured_swap_required_by_layout = False
 
         on_categories_view = (
             self.current_category_info is None
             and self.main_stack.get_visible_child_name() == "categories"
         )
         if not self.all_scripts or not on_categories_view or count <= 0:
-            # A delayed swap may fire after navigation. Do not destroy the cards;
-            # the main-menu state must survive while its stack page is hidden.
+            return False
+
+        rows = int(layout.get("rows", 0))
+        columns = int(layout.get("columns", 0))
+        large_count = min(int(layout.get("large_count", 0)), len(scripts))
+        card_height = int(layout.get("card_height", 52))
+        row_spacing = int(layout.get("row_spacing", 12))
+        if rows <= 0 or columns <= 0:
             return False
 
         self._clear_random_scripts()
 
-        for script_info in scripts:
-            widget = self.create_item_widget(script_info)
+        large_positions = self._choose_featured_large_positions(
+            rows, columns, large_count
+        )
+        large_count = min(large_count, len(large_positions))
+
+        # Choose which apps get the richer presentation independently from where
+        # those cards land. This keeps both the content and placement randomized.
+        shuffled_scripts = list(scripts)
+        random.shuffle(shuffled_scripts)
+        large_scripts = shuffled_scripts[:large_count]
+        normal_scripts = shuffled_scripts[large_count:]
+        random.shuffle(large_positions)
+
+        occupied = set()
+        large_height = (3 * card_height) + (2 * row_spacing)
+
+        def prepare_widget(script_info, *, large=False):
+            widget = self.create_item_widget(
+                script_info,
+                featured_large=large,
+                featured_height=large_height if large else 0,
+            )
             description = script_info.get("description", "")
             widget.set_tooltip_text(description or None)
-
-            # Keep a Featured card stable while the user is hovering it, so its
-            # tooltip/short description cannot disappear during the periodic swap.
+            widget.set_can_focus(True)
+            widget.connect("key-press-event", self._on_featured_card_key_press)
             widget.add_events(
                 Gdk.EventMask.ENTER_NOTIFY_MASK
                 | Gdk.EventMask.LEAVE_NOTIFY_MASK
             )
             widget.connect("enter-notify-event", self._on_featured_card_enter)
             widget.connect("leave-notify-event", self._on_featured_card_leave)
+            return widget
 
-            self.random_scripts_flowbox.add(widget)
+        for script_info, position in zip(large_scripts, large_positions):
+            column, row = position
+            occupied.update(self._featured_occupied_cells(position))
+            widget = prepare_widget(script_info, large=True)
+            self.random_scripts_flowbox.attach(widget, column, row, 1, 3)
+
+        free_cells = [
+            (column, row)
+            for row in range(rows)
+            for column in range(columns)
+            if (column, row) not in occupied
+        ]
+        for script_info, (column, row) in zip(normal_scripts, free_cells):
+            widget = prepare_widget(script_info, large=False)
+            self.random_scripts_flowbox.attach(widget, column, row, 1, 1)
 
         self._featured_last_count = count
+        self._featured_last_layout = (
+            rows, columns, large_count, count
+        )
 
         displayed_keys = {
             self._featured_script_key(script_info)
@@ -357,7 +463,6 @@ class FeaturedCtl:
         history.append(displayed_keys)
         self._featured_history = history[-history_limit:]
 
-        # Realize the new cards while the revealer is still closed, then animate in.
         self.featured_scripts_revealer.show_all()
         self.featured_scripts_revealer.set_reveal_child(True)
         self.random_scripts_revealer.set_reveal_child(True)
@@ -389,10 +494,20 @@ class FeaturedCtl:
             return True
 
         current_children = self.random_scripts_flowbox.get_children()
+        layout = dict(getattr(self, "_featured_layout_metrics", {}) or {})
+        layout_signature = (
+            int(layout.get("rows", 0)),
+            int(layout.get("columns", 0)),
+            int(layout.get("large_count", 0)),
+            count,
+        )
+        layout_changed = (
+            layout_signature != getattr(self, "_featured_last_layout", None)
+        )
 
         if (
             not force
-            and count == getattr(self, "_featured_last_count", None)
+            and not layout_changed
             and current_children
         ):
             self.featured_scripts_revealer.show_all()
@@ -407,15 +522,21 @@ class FeaturedCtl:
             self._featured_swap_timer = None
 
         if current_children:
+            # Hover is allowed to cancel a cosmetic timed rotation, but a resize
+            # that changes the grid geometry must complete. Window maximization can
+            # synthesize pointer enter events while GTK reallocates the cards.
+            self._featured_swap_required_by_layout = layout_changed
             self.random_scripts_revealer.set_reveal_child(False)
             self._featured_swap_timer = GLib.timeout_add(
                 self.FEATURED_SWAP_ANIMATION_MS,
                 self._populate_random_scripts,
                 scripts,
                 count,
+                layout,
             )
         else:
-            self._populate_random_scripts(scripts, count)
+            self._featured_swap_required_by_layout = False
+            self._populate_random_scripts(scripts, count, layout)
 
         return True
 
@@ -463,6 +584,13 @@ class FeaturedCtl:
 
         return False
 
+    def _on_featured_card_key_press(self, widget, event):
+        """Keep keyboard activation available after moving Featured to Gtk.Grid."""
+        if event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_space):
+            self._activate_item(widget, event)
+            return True
+        return False
+
     def _on_featured_card_enter(self, _widget, _event):
         """Pause Featured rotation while the pointer is over a card."""
         self._featured_hovered = True
@@ -471,11 +599,18 @@ class FeaturedCtl:
             GLib.source_remove(self.random_scripts_refresh_timer)
             self.random_scripts_refresh_timer = None
 
-        # If the timeout fired just before the pointer entered, cancel the pending
-        # post-fade replacement and keep the cards the user is currently reading.
-        if getattr(self, "_featured_swap_timer", None):
+        # If the periodic timeout fired just before the pointer entered, cancel
+        # that cosmetic replacement and keep the cards the user is reading. A
+        # resize-driven swap is different: it is required to make the cards match
+        # the newly available rows/columns, and maximizing/restoring the window can
+        # itself generate enter events during GTK reallocation. Never cancel those.
+        if (
+            getattr(self, "_featured_swap_timer", None)
+            and not getattr(self, "_featured_swap_required_by_layout", False)
+        ):
             GLib.source_remove(self._featured_swap_timer)
             self._featured_swap_timer = None
+            self._featured_swap_required_by_layout = False
             self.random_scripts_revealer.set_reveal_child(True)
 
         return False
@@ -622,3 +757,4 @@ class FeaturedCtl:
         if getattr(self, "_featured_swap_timer", None):
             GLib.source_remove(self._featured_swap_timer)
             self._featured_swap_timer = None
+        self._featured_swap_required_by_layout = False

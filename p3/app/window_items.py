@@ -1,6 +1,7 @@
 import os
 
 from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
+from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper
 
 class ItemWidgetFactory:
@@ -124,8 +125,20 @@ class ItemWidgetFactory:
 
         self._item_fade_timer_id = GLib.timeout_add(20, tick)
 
-    def create_item_widget(self, item_info, checklist: bool = False, allow_drag: bool = False,):
+    def create_item_widget(
+        self,
+        item_info,
+        checklist: bool = False,
+        allow_drag: bool = False,
+        featured_large: bool = False,
+        featured_height: int = 0,
+    ):
         import os
+
+        if featured_large:
+            return self._create_featured_large_item_widget(
+                item_info, featured_height=featured_height
+            )
 
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         box.set_size_request(128, 52)  # Fixed width for all items
@@ -321,6 +334,120 @@ class ItemWidgetFactory:
         event_box.connect("leave-notify-event", self.on_item_leave)
         event_box.connect("button-press-event", self.on_item_button_press)
 
+        return event_box
+
+
+    def _create_featured_large_item_widget(self, item_info, featured_height: int = 0):
+        """Create the three-row Featured variant without changing normal cards."""
+        import html
+
+        # Start from the regular card so icon resolution, verified badges, activation,
+        # hover behavior and script metadata remain exactly the same everywhere.
+        event_box = self.create_item_widget(item_info)
+        base_box = event_box.get_child()
+
+        # The large card has its own more spacious presentation. Keep all padding
+        # inside the existing card boundary so its outer size still matches exactly
+        # three normal Featured rows.
+        base_box.set_margin_top(16)
+        base_box.set_margin_bottom(16)
+        base_box.set_margin_start(16)
+        base_box.set_margin_end(16)
+
+        # Preserve the regular card's horizontal name/icon row, but normalize the
+        # normal-card spacer/padding before moving the widgets. The large card's
+        # 10 px side margins now provide the intended edge padding themselves.
+        # Keep the app name and icon as one centered visual group. The normal
+        # card expands the name across the row and pushes the icon to the edge;
+        # the large Featured card instead keeps exactly 16 px between them.
+        top_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
+        top_row.set_hexpand(True)
+        top_row.set_halign(Gtk.Align.CENTER)
+
+        for child in tuple(base_box.get_children()):
+            expand, fill, _padding, pack_type = base_box.query_child_packing(child)
+            base_box.remove(child)
+
+            if isinstance(child, Gtk.Label):
+                child.set_margin_start(0)
+                child.set_margin_end(0)
+                child.set_hexpand(False)
+                child.set_markup(
+                    f"<span size=\"x-large\"><b>{html.escape(item_info.get('name', ''))}</b></span>"
+                )
+
+            # The large card does not preserve the regular card's expand/pack-end
+            # geometry: name and icon are deliberately adjacent and centered.
+            top_row.pack_start(child, False, False, 0)
+
+        # Increase the application icon from the regular 38 px presentation to
+        # 48 px. File-backed icons need their pixbuf reloaded at the new size;
+        # themed icons only need a larger pixel-size request.
+        large_icon_size = 48
+        icon_value = item_info.get("icon", "application-x-executable")
+        icon_holder = top_row.get_children()[-1] if top_row.get_children() else None
+        icon_widget = None
+
+        if isinstance(icon_holder, Gtk.Overlay):
+            icon_holder.set_size_request(large_icon_size, large_icon_size)
+            icon_widget = icon_holder.get_child()
+        elif isinstance(icon_holder, Gtk.Image):
+            icon_widget = icon_holder
+
+        if isinstance(icon_widget, Gtk.Image):
+            if icon_value.endswith(".png") or icon_value.endswith(".svg"):
+                if not os.path.isabs(icon_value) and "/" not in icon_value:
+                    icon_path = get_icon_path(
+                        "local-script.svg"
+                        if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
+                        else icon_value
+                    )
+                else:
+                    icon_path = icon_value if os.path.exists(icon_value) else None
+
+                if icon_path and os.path.exists(icon_path):
+                    pixbuf = load_scaled_pixbuf(
+                        icon_path, large_icon_size, large_icon_size, True
+                    )
+                    if pixbuf is not None:
+                        icon_widget.set_from_pixbuf(pixbuf)
+                    else:
+                        icon_widget.set_from_icon_name(
+                            "application-x-executable", Gtk.IconSize.DIALOG
+                        )
+                        icon_widget.set_pixel_size(large_icon_size)
+            else:
+                icon_widget.set_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
+                icon_widget.set_pixel_size(large_icon_size)
+
+        base_box.set_orientation(Gtk.Orientation.VERTICAL)
+        base_box.set_spacing(10)
+        base_box.pack_start(top_row, False, False, 0)
+
+        description = Gtk.Label(label=item_info.get("description", ""))
+        description.set_markup(
+            f"<span size=\"large\">{html.escape(item_info.get('description', ''))}</span>"
+        )
+        description.set_line_wrap(True)
+        description.set_ellipsize(Pango.EllipsizeMode.END)
+        description.set_lines(4)
+        description.set_justify(Gtk.Justification.CENTER)
+        description.set_halign(Gtk.Align.FILL)
+        description.set_valign(Gtk.Align.CENTER)
+        description.set_hexpand(True)
+        description.set_vexpand(True)
+        description.get_style_context().add_class("dim-label")
+        base_box.pack_start(description, True, True, 0)
+
+        # Widget margins contribute to preferred size, so subtract the vertical
+        # 14+14 px internal padding from the requested content height. The EventBox
+        # therefore continues to fit the exact three-row span calculated by Featured.
+        outer_height = int(featured_height) if featured_height > 0 else 180
+        content_height = max(1, outer_height - 28)
+        base_box.set_size_request(108, content_height)
+        event_box.set_size_request(128, outer_height)
+
+        base_box.show_all()
         return event_box
 
     def _is_script_removable(self, item_info):
