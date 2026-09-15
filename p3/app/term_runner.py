@@ -48,6 +48,7 @@ class TerminalRunner:
                 "clicked", self.on_done_clicked
             )
             self.parent._script_running = False
+            self._clear_runner_lock()
             self.vbox_main.button_run.set_sensitive(True)
             self.terminal.set_can_focus(True)
             self.vbox_main.button_run.grab_focus()
@@ -99,6 +100,11 @@ class TerminalRunner:
         self._current_action_is_removal = bool(self._cleanup_script_path)
  
         child_env = script_environment(current_script, os.environ.copy())
+        self._prepare_runner_state()
+        if self._runner_state_path:
+            child_env["LINUXTOYS_RUNNER_STATE"] = self._runner_state_path
+        else:
+            child_env.pop("LINUXTOYS_RUNNER_STATE", None)
         if self._transmap_path:
             child_env["TRANSMAP_PATH"] = self._transmap_path
         else:
@@ -142,6 +148,9 @@ class TerminalRunner:
         self.vbox_main.button_remove.set_sensitive(False)
 
     def on_child_exit(self, term, status):
+        # A dying child must never leave navigation locked, including fatal/exit 100 paths.
+        self._clear_runner_lock()
+
         if getattr(self, "_cleanup_script_path", None):
             try:
                 if os.path.exists(self._cleanup_script_path):
@@ -244,6 +253,76 @@ class TerminalRunner:
             running_text.format(current=self.scripts_executed, total=self.total_scripts)
         )
         self._run_next_script()
+
+    def _prepare_runner_state(self):
+        """Create/reset the shell-to-runner state channel and start watching it."""
+        if not getattr(self, "_runner_state_path", ""):
+            try:
+                directory = "/tmp/linuxtoys"
+                os.makedirs(directory, mode=0o700, exist_ok=True)
+                self._runner_state_path = os.path.join(
+                    directory, f"runner-state-{os.getpid()}-{id(self)}"
+                )
+            except OSError:
+                self._runner_state_path = ""
+
+        if not self._runner_state_path:
+            return
+
+        try:
+            with open(self._runner_state_path, "w", encoding="utf-8"):
+                pass
+            os.chmod(self._runner_state_path, 0o600)
+        except OSError:
+            self._runner_state_path = ""
+            return
+
+        self._set_runner_locked(False)
+        if not getattr(self, "_runner_state_watch_id", None):
+            self._runner_state_watch_id = GLib.timeout_add(
+                100, self._poll_runner_state
+            )
+
+    def _poll_runner_state(self):
+        path = getattr(self, "_runner_state_path", "")
+        if not path:
+            self._runner_state_watch_id = None
+            return False
+
+        try:
+            with open(path, "r", encoding="utf-8") as state_file:
+                locked = bool(state_file.read().strip())
+        except OSError:
+            locked = False
+
+        self._set_runner_locked(locked)
+        return True
+
+    def _set_runner_locked(self, locked):
+        locked = bool(locked)
+        self._runner_navigation_locked = locked
+        self.parent._runner_navigation_locked = locked
+
+        # A package transaction is intentionally non-interruptible from the UI.
+        # Keep terminal output visible, but prevent keyboard input (including
+        # Ctrl+C) from reaching the foreground process while the lock is active.
+        terminal = getattr(self, "terminal", None)
+        if terminal is not None:
+            terminal.set_input_enabled(not locked)
+
+        back_button = getattr(self.parent, "back_button", None)
+        if back_button is not None:
+            back_button.set_sensitive(not locked)
+
+    def _clear_runner_lock(self):
+        self._set_runner_locked(False)
+        path = getattr(self, "_runner_state_path", "")
+        if path:
+            try:
+                with open(path, "w", encoding="utf-8"):
+                    pass
+            except OSError:
+                pass
 
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""

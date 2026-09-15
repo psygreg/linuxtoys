@@ -93,6 +93,7 @@ pkg_install () {
     [[ ${#pkg_found[@]} -gt 0 ]] && echo "Packages ${pkg_found[*]} already installed, skipping."
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
+    runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
         interrupted_apt_guard
         sudo apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
@@ -178,6 +179,7 @@ pkg_install () {
         sudo eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     fi
+    runner_unlock
 }
 
 pkg_flat() {
@@ -246,6 +248,7 @@ pkg_fromfile () {
 
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
+    runner_lock "package-transaction"
 
     if [[ "$1" == *.flatpak ]]; then
         if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
@@ -268,6 +271,7 @@ pkg_fromfile () {
             ) || fatal "Failed to install flatpak from file: $flatpak_file due to: $_flatpak_stderr"
         fi
         _append_transmap "pkg file $flatpak_file"
+        runner_unlock
         return 0
     fi
 
@@ -308,6 +312,7 @@ pkg_fromfile () {
         sudo eopkg it -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     fi
+    runner_unlock
 }
 
 pkg_tarball () {

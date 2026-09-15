@@ -316,6 +316,36 @@ _lang_() {
 }
 _lang_
 
+# runner navigation lock control
+# The terminal runner exports LINUXTOYS_RUNNER_STATE when it can honor locks.
+# Locks are reference-counted so nested package helpers cannot unlock each other.
+runner_lock() {
+    local reason="${1:-operation}"
+    [[ -n "${LINUXTOYS_RUNNER_STATE:-}" ]] || return 0
+
+    LINUXTOYS_RUNNER_LOCK_DEPTH=$(( ${LINUXTOYS_RUNNER_LOCK_DEPTH:-0} + 1 ))
+    export LINUXTOYS_RUNNER_LOCK_DEPTH
+
+    if (( LINUXTOYS_RUNNER_LOCK_DEPTH == 1 )); then
+        printf '%s\n' "$reason" > "$LINUXTOYS_RUNNER_STATE" 2>/dev/null || true
+        echo "Starting package transaction..."
+    fi
+}
+
+runner_unlock() {
+    [[ -n "${LINUXTOYS_RUNNER_STATE:-}" ]] || return 0
+
+    local depth=${LINUXTOYS_RUNNER_LOCK_DEPTH:-0}
+    (( depth > 0 )) || return 0
+    depth=$(( depth - 1 ))
+    LINUXTOYS_RUNNER_LOCK_DEPTH=$depth
+    export LINUXTOYS_RUNNER_LOCK_DEPTH
+
+    if (( depth == 0 )); then
+        : > "$LINUXTOYS_RUNNER_STATE" 2>/dev/null || true
+    fi
+}
+
 # transaction map control
 init_transmap() {
     [ -n "$TRANSMAP_PATH" ] && return 0

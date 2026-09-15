@@ -299,6 +299,11 @@ class NavCtl:
 
         # Handle leaving the terminal before normal search navigation.
         if self.main_stack.get_visible_child_name() == "running_scripts":
+            # Package transactions explicitly lock navigation because interrupting a
+            # native package manager can leave the system package database inconsistent.
+            if getattr(self, "_runner_navigation_locked", False):
+                return
+
             child = self.main_stack.get_child_by_name("running_scripts")
 
             # This branch returns before the generic running-script check below,
