@@ -1020,62 +1020,52 @@ EOF
     { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
     { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
     prep_dir "$HOME/AppImages"
+
+    # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
+    # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
     if is_systemd; then
-        # Use Gear Lever for systemd systems
         call_script GEAR_LEVER
         local output
-        output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1) || {
-            echo "$output"
-            fatal "Failed to integrate AppImage."
-        }
-        local appimage_name
-        appimage_name=$(
-            find "$HOME/AppImages" -maxdepth 1 -type f -printf '%T@ %f\n' 2>/dev/null |
-                sort -nr |
-                head -n1 |
-                cut -d' ' -f2-
-        )
-        if [[ -n "$appimage_name" ]]; then
-            _append_transmap "appimage $appimage_name"
-        else
-            nonfatal "Could not determine integrated AppImage filename."
+        if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then
+            local appimage_name
+            appimage_name=$(
+                find "$HOME/AppImages" -maxdepth 1 -type f -printf '%T@ %f\n' 2>/dev/null |
+                    sort -nr |
+                    head -n1 |
+                    cut -d' ' -f2-
+            )
+            if [[ -n "$appimage_name" ]]; then
+                _append_transmap "appimage $appimage_name"
+            else
+                nonfatal "Could not determine integrated AppImage filename."
+            fi
+            return 0
         fi
-    else
-        # Manual integration for non-systemd systems
-        for appimage_file in "$@"; do
-            [[ -f "$appimage_file" ]] || fatal "AppImage file not found: $appimage_file"
-            local appimage_basename=$(basename "$appimage_file")
-            prep_create "$HOME/AppImages/$appimage_basename"
-            cp -f "$appimage_file" "$HOME/AppImages/$appimage_basename"
-            chmod +x "$HOME/AppImages/$appimage_basename"
 
-            prep_tmp_noram
-            local extract_dir
-            extract_dir="$HOME/.cache/linuxtoys/tmp" || fatal "Failed to create temp directory for extraction"
-            cd "$extract_dir" || fatal "Failed to change to temp directory"
-            "$HOME/AppImages/$appimage_basename" --appimage-extract >/dev/null 2>&1 || \
-                { nonfatal "Failed to extract AppImage: $appimage_basename"; rm -rf "$extract_dir"; continue; }
-            local desktop_file
-            desktop_file=$(find squashfs-root -name "*.desktop" -type f 2>/dev/null | head -1)
-            if [[ -n "$desktop_file" && -f "$desktop_file" ]]; then
-                prep_dir "$HOME/.local/share/applications"
-                local desktop_basename=$(basename "$desktop_file")
-                prep_create "$HOME/.local/share/applications/$desktop_basename"
-                cp -f "$desktop_file" "$HOME/.local/share/applications/$desktop_basename" || \
-                    fatal "Failed to copy desktop file"
-            fi
-            local icon_file
-            icon_file=$(find squashfs-root \( -name "*.png" -o -name "*.svg" -o -name "*.xpm" \) -type f 2>/dev/null | head -1)
-            if [[ -n "$icon_file" && -f "$icon_file" ]]; then
-                prep_dir "$HOME/.local/share/icons"
-                local icon_basename=$(basename "$icon_file")
-                prep_create "$HOME/.local/share/icons/$icon_basename"
-                cp -f "$icon_file" "$HOME/.local/share/icons/$icon_basename" || \
-                    nonfatal "Failed to copy icon file"
-            fi
-            _append_transmap "appimage $appimage_basename"
-        done
+        echo "$output"
+        nonfatal "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
     fi
+
+    # Minimal fallback/non-systemd integration. Repository metadata already
+    # supplies the application name, description and icon, so desktop_shortcut
+    # can create a consistent launcher without extracting AppImage metadata.
+    for appimage_file in "$@"; do
+        [[ -f "$appimage_file" ]] || fatal "AppImage file not found: $appimage_file"
+
+        local appimage_basename target_appimage
+        appimage_basename="$(basename -- "$appimage_file")"
+        target_appimage="$HOME/AppImages/$appimage_basename"
+
+        prep_create "$target_appimage"
+        cp -f -- "$appimage_file" "$target_appimage" || fatal "Failed to copy AppImage: $appimage_basename"
+        chmod +x -- "$target_appimage" || fatal "Failed to make AppImage executable: $appimage_basename"
+
+        # Keep the desktop launcher bound to the AppImage's absolute path, while
+        # exposing a stable LinuxToys app-ID command through ~/.local/bin.
+        path_link --useappid "$target_appimage"
+        desktop_shortcut "\"$target_appimage\""
+        _append_transmap "appimage $appimage_basename"
+    done
 }
 
 pkg_appimage_rm () {
