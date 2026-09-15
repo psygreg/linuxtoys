@@ -29,7 +29,23 @@ _zenity_can_run() {
 }
 _zenity_run() {
     _zenity_can_run || return 1
-    GTK_A11Y=none NO_AT_BRIDGE=1 command zenity "$@" 2>/dev/null
+
+    local status
+    GTK_A11Y=none \
+    NO_AT_BRIDGE=1 \
+    G_DEBUG="" \
+    command zenity "$@" 2>/dev/null
+    status=$?
+
+    # Expected statuses:
+    #   0   = accepted/success
+    #   1   = cancelled/closed
+    #   100 = LinuxToys cancellation
+    # Anything else above 1 indicates an abnormal failure.
+    if (( status > 1 && status != 100 )); then
+        printf 'W: zenity exited abnormally (status %d).\n' "$status" >&2
+    fi
+    return "$status"
 }
 # Wrapper for scripts that call zenity directly after sourcing this library.
 zenity() {

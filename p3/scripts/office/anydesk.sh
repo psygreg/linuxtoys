@@ -4,20 +4,34 @@
 # DESCRIPTION: anydesk_desc
 # icon: anydesk.svg
 # repo: https://www.anydesk.com
-# compat: fedora, ostree, rhel, debian, ubuntu
+# compat: fedora, ostree, rhel, debian, ubuntu, suse
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-_lang_
 prep_tmp_noram
-anydesk_ver="8.0.3-1" # needs routine update checks
-sudo_rq
+askpass
+
 if is_ubuntu || is_debian; then
-    wget "https://download.anydesk.com/linux/anydesk_${anydesk_ver}_amd64.deb"
-    sudo chmod 644 "anydesk_${anydesk_ver}_amd64.deb" # TODO -- REMOVE: temporary fix
-    pkg_fromfile "./anydesk_${anydesk_ver}_amd64.deb"
+    sudo apt install ca-certificates curl apt-transport-https # uninstalling those can cause problems, so better left unregistered
+    sudo install -m 0755 -d /etc/apt/keyrings
+    prep_create /etc/apt/keyrings/keys.anydesk.com.asc
+    sudo curl -fsSL https://keys.anydesk.com/repos/DEB-GPG-KEY -o /etc/apt/keyrings/keys.anydesk.com.asc
+    sudo chmod a+r /etc/apt/keyrings/keys.anydesk.com.asc
+
+    prep_create /etc/apt/sources.list.d/anydesk-stable.list
+    echo "deb [signed-by=/etc/apt/keyrings/keys.anydesk.com.asc] https://deb.anydesk.com all main" | sudo tee /etc/apt/sources.list.d/anydesk-stable.list > /dev/null
+    sudo apt update
 else
-    wget "https://download.anydesk.com/linux/anydesk_${anydesk_ver}_x86_64.rpm"
-    pkg_fromfile "./anydesk_${anydesk_ver}_x86_64.rpm"
+    prep_create /etc/yum.repos.d/AnyDesk-RPM.repo
+    sudo tee /etc/yum.repos.d/AnyDesk-RPM.repo > /dev/null << "EOF"
+[anydesk]
+name=AnyDesk - stable
+baseurl=http://rpm.anydesk.com/$basearch/
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://keys.anydesk.com/repos/RPM-GPG-KEY
+EOF
 fi
-zeninf "$finishmsg"
+
+pkg_install anydesk
+
+info "$finishmsg"
