@@ -228,6 +228,12 @@ class FeaturedCtl:
         else:
             max_large_cards = min(3, rows // 3)
 
+        # With more than six rows available, use the extra vertical room to
+        # scale the richer cards further with width: add one large card for
+        # every two columns, on top of the existing row/column allowance.
+        if rows > 6:
+            max_large_cards += columns // 2
+
         large_count = min(max_large_cards, eligible_count)
         slot_count = rows * columns
         item_capacity = max(0, slot_count - (2 * large_count))
