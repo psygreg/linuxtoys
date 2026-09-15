@@ -422,7 +422,7 @@
   "sysup": "Päivitä Järjestelmä",
   "sysup_desc": "Suorittaa orvon pakettien puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketeille että Flatpakeille.",
   "autosysup": "Automaattiset Päivitykset",
-  "autosysup_desc": "Ota käyttöön LinuxToys:n järjestelmän automaattiset päivityspalvelut systemd:lle. Tämä suorittaa orfonpaketeiden puhdistuksen ja täyden järjestelmäpäivityksen sekä jakelupaketteille että Flatpakeille säännöllisesti ilman huolia. MUISTUTUS: se päivittää vain järjestelmäsi nykyisen julkaisuversion, mutta ei päivitä sitä - siihen sinun tulee suorittaa manuaalinen päivitys päävalikosta, kun uusi julkaisu on saatavilla.",
+  "autosysup_desc": "Ottaa käyttöön LinuxToysin automaattiset järjestelmäpäivityspalvelut systemd:lle. Ne poistavat säännöllisesti orvoksi jääneet paketit ja suorittavat täydellisen järjestelmäpäivityksen sekä jakelusi paketeille että Flatpakeille ilman, että sinun tarvitsee huolehtia siitä. MUISTUTUS: tämä ei päivitä jakelua uuteen julkaisuversioon — sitä varten sinun tulee suorittaa manuaalinen päivitys päävalikosta, kun uusi julkaisu on saatavilla.",
   "cachykrn_desc": "CachyOS:n mukautettu kernel. Pakollinen ananicy-cpp ja SteamOS VRAM Optimization käyttämiseen Fedoralla. Sisältää vaiheet sen allekirjoittamiselle Secure Boot -käyttöä varten, jos tämä ominaisuus on käytössä tai asennustilassa.",
   "optivram": "SteamOS VRAM-optimointi",
   "optivram_desc": "Alun perin SteamOS:stä, tämä optimointi parantaa huomattavasti pelaamisuoritusta, erityisesti järjestelmissä, joissa on 6GB VRAM tai vähemmän, lähettämällä kylmiä VRAM-sivuja RAM:iin. Vaatii CachyOS Kernel:ia Fedorassa.",
