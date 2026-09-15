@@ -556,5 +556,7 @@
   "registry_export_tooltip": "Izvezi sve registrovane operacije kao manifest datoteku",
   "registry_export_error_title": "Izvoz manifesta nije uspio",
   "registry_export_success_title": "Manifest je izvezen",
-  "registry_export_success_message": "Izvezeno je {count} registrovanih operacija u:\n{path}"
+  "registry_export_success_message": "Izvezeno je {count} registrovanih operacija u:\n{path}",
+  "bug_report_outdated_title": "Prijava greške nije dostupna",
+  "bug_report_outdated_message": "Koristite LinuxToys ${current}, ali trenutna verzija je ${latest}. Ažurirajte LinuxToys prije slanja prijave greške."
 }

@@ -556,5 +556,7 @@
   "registry_export_tooltip": "সমস্ত নিবন্ধিত অপারেশন একটি manifest ফাইল হিসেবে এক্সপোর্ট করুন",
   "registry_export_error_title": "Manifest এক্সপোর্ট ব্যর্থ হয়েছে",
   "registry_export_success_title": "Manifest এক্সপোর্ট হয়েছে",
-  "registry_export_success_message": "{count}টি নিবন্ধিত অপারেশন এখানে এক্সপোর্ট করা হয়েছে:\n{path}"
+  "registry_export_success_message": "{count}টি নিবন্ধিত অপারেশন এখানে এক্সপোর্ট করা হয়েছে:\n{path}",
+  "bug_report_outdated_title": "বাগ রিপোর্ট উপলব্ধ নয়",
+  "bug_report_outdated_message": "আপনি LinuxToys ${current} ব্যবহার করছেন, কিন্তু বর্তমান সংস্করণ হলো ${latest}। বাগ রিপোর্ট জমা দেওয়ার আগে অনুগ্রহ করে LinuxToys আপডেট করুন।"
 }

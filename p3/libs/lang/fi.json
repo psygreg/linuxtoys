@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Vie kaikki rekisteröidyt toiminnot manifestitiedostoksi",
   "registry_export_error_title": "Manifestin vienti epäonnistui",
   "registry_export_success_title": "Manifesti viety",
-  "registry_export_success_message": "Vietiin {count} rekisteröityä toimintoa kohteeseen:\n{path}"
+  "registry_export_success_message": "Vietiin {count} rekisteröityä toimintoa kohteeseen:\n{path}",
+  "bug_report_outdated_title": "Virheraportointi ei ole käytettävissä",
+  "bug_report_outdated_message": "Käytössäsi on LinuxToys ${current}, mutta nykyinen versio on ${latest}. Päivitä LinuxToys ennen virheraportin lähettämistä."
 }

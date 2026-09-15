@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Xuất tất cả thao tác đã đăng ký thành tệp manifest",
   "registry_export_error_title": "Xuất manifest thất bại",
   "registry_export_success_title": "Đã xuất manifest",
-  "registry_export_success_message": "Đã xuất {count} thao tác đã đăng ký tới:\n{path}"
+  "registry_export_success_message": "Đã xuất {count} thao tác đã đăng ký tới:\n{path}",
+  "bug_report_outdated_title": "Không thể báo cáo lỗi",
+  "bug_report_outdated_message": "Bạn đang chạy LinuxToys ${current}, nhưng phiên bản hiện tại là ${latest}. Vui lòng cập nhật LinuxToys trước khi gửi báo cáo lỗi."
 }

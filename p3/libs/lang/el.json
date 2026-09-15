@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Εξαγωγή όλων των καταχωρημένων λειτουργιών ως αρχείο manifest",
   "registry_export_error_title": "Η εξαγωγή του manifest απέτυχε",
   "registry_export_success_title": "Το manifest εξήχθη",
-  "registry_export_success_message": "Εξήχθησαν {count} καταχωρημένες λειτουργίες στο:\n{path}"
+  "registry_export_success_message": "Εξήχθησαν {count} καταχωρημένες λειτουργίες στο:\n{path}",
+  "bug_report_outdated_title": "Η αναφορά σφάλματος δεν είναι διαθέσιμη",
+  "bug_report_outdated_message": "Χρησιμοποιείτε το LinuxToys ${current}, αλλά η τρέχουσα έκδοση είναι η ${latest}. Ενημερώστε το LinuxToys πριν υποβάλετε αναφορά σφάλματος."
 }

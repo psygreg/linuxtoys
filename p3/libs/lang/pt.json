@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Exportar todas as operações registradas como um arquivo de manifesto",
   "registry_export_error_title": "Falha ao exportar manifesto",
   "registry_export_success_title": "Manifesto exportado",
-  "registry_export_success_message": "{count} operações registradas foram exportadas para:\n{path}"
+  "registry_export_success_message": "{count} operações registradas foram exportadas para:\n{path}",
+  "bug_report_outdated_title": "Relatório de erro indisponível",
+  "bug_report_outdated_message": "Você está usando o LinuxToys ${current}, mas a versão atual é ${latest}. Atualize o LinuxToys antes de enviar um relatório de erro."
 }

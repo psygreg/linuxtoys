@@ -555,5 +555,7 @@
   "registry_export_tooltip": "பதிவுசெய்யப்பட்ட அனைத்து செயல்பாடுகளையும் manifest கோப்பாக ஏற்றுமதி செய்",
   "registry_export_error_title": "Manifest ஏற்றுமதி தோல்வியடைந்தது",
   "registry_export_success_title": "Manifest ஏற்றுமதி செய்யப்பட்டது",
-  "registry_export_success_message": "{count} பதிவுசெய்யப்பட்ட செயல்பாடுகள் இங்கு ஏற்றுமதி செய்யப்பட்டன:\n{path}"
+  "registry_export_success_message": "{count} பதிவுசெய்யப்பட்ட செயல்பாடுகள் இங்கு ஏற்றுமதி செய்யப்பட்டன:\n{path}",
+  "bug_report_outdated_title": "பிழை அறிக்கை கிடைக்கவில்லை",
+  "bug_report_outdated_message": "நீங்கள் LinuxToys ${current} பதிப்பைப் பயன்படுத்துகிறீர்கள், ஆனால் தற்போதைய பதிப்பு ${latest}. பிழை அறிக்கையைச் சமர்ப்பிக்கும் முன் LinuxToys-ஐப் புதுப்பிக்கவும்."
 }

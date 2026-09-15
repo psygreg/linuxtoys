@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Exportovať všetky registrované operácie ako súbor manifestu",
   "registry_export_error_title": "Export manifestu zlyhal",
   "registry_export_success_title": "Manifest exportovaný",
-  "registry_export_success_message": "Exportovaných {count} registrovaných operácií do:\n{path}"
+  "registry_export_success_message": "Exportovaných {count} registrovaných operácií do:\n{path}",
+  "bug_report_outdated_title": "Hlásenie chyby nie je dostupné",
+  "bug_report_outdated_message": "Používate LinuxToys ${current}, ale aktuálna verzia je ${latest}. Pred odoslaním hlásenia chyby aktualizujte LinuxToys."
 }

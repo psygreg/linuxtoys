@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Exportera alla registrerade åtgärder som en manifestfil",
   "registry_export_error_title": "Export av manifest misslyckades",
   "registry_export_success_title": "Manifest exporterat",
-  "registry_export_success_message": "Exporterade {count} registrerade åtgärder till:\n{path}"
+  "registry_export_success_message": "Exporterade {count} registrerade åtgärder till:\n{path}",
+  "bug_report_outdated_title": "Felrapportering är inte tillgänglig",
+  "bug_report_outdated_message": "Du kör LinuxToys ${current}, men den aktuella versionen är ${latest}. Uppdatera LinuxToys innan du skickar in en felrapport."
 }

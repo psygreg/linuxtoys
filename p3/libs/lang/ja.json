@@ -557,5 +557,7 @@
   "registry_export_tooltip": "登録されているすべての操作をマニフェストファイルとしてエクスポート",
   "registry_export_error_title": "マニフェストのエクスポートに失敗しました",
   "registry_export_success_title": "マニフェストをエクスポートしました",
-  "registry_export_success_message": "{count} 件の登録済み操作を次の場所にエクスポートしました:\n{path}"
+  "registry_export_success_message": "{count} 件の登録済み操作を次の場所にエクスポートしました:\n{path}",
+  "bug_report_outdated_title": "バグ報告は利用できません",
+  "bug_report_outdated_message": "LinuxToys ${current} を実行していますが、現在のバージョンは ${latest} です。バグ報告を送信する前に LinuxToys を更新してください。"
 }

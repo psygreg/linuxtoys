@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Содир кардани ҳамаи амалиёти сабтшуда ҳамчун файли manifest",
   "registry_export_error_title": "Содироти manifest ноком шуд",
   "registry_export_success_title": "Manifest содир шуд",
-  "registry_export_success_message": "{count} амалиёти сабтшуда ба ин ҷо содир карда шуд:\n{path}"
+  "registry_export_success_message": "{count} амалиёти сабтшуда ба ин ҷо содир карда шуд:\n{path}",
+  "bug_report_outdated_title": "Гузориши хато дастрас нест",
+  "bug_report_outdated_message": "Шумо LinuxToys ${current}-ро истифода мебаред, аммо версияи ҷорӣ ${latest} аст. Пеш аз фиристодани гузориши хато LinuxToys-ро навсозӣ кунед."
 }

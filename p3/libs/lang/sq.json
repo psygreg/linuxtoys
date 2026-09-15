@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Eksporto të gjitha veprimet e regjistruara si skedar manifest",
   "registry_export_error_title": "Eksportimi i manifestit dështoi",
   "registry_export_success_title": "Manifesti u eksportua",
-  "registry_export_success_message": "U eksportuan {count} veprime të regjistruara në:\n{path}"
+  "registry_export_success_message": "U eksportuan {count} veprime të regjistruara në:\n{path}",
+  "bug_report_outdated_title": "Raportimi i gabimeve nuk është i disponueshëm",
+  "bug_report_outdated_message": "Po përdorni LinuxToys ${current}, por versioni aktual është ${latest}. Përditësoni LinuxToys përpara se të dërgoni një raport gabimi."
 }

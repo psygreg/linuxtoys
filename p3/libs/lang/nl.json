@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Alle geregistreerde bewerkingen exporteren als manifestbestand",
   "registry_export_error_title": "Exporteren van manifest mislukt",
   "registry_export_success_title": "Manifest geëxporteerd",
-  "registry_export_success_message": "{count} geregistreerde bewerkingen geëxporteerd naar:\n{path}"
+  "registry_export_success_message": "{count} geregistreerde bewerkingen geëxporteerd naar:\n{path}",
+  "bug_report_outdated_title": "Bugrapportage niet beschikbaar",
+  "bug_report_outdated_message": "Je gebruikt LinuxToys ${current}, maar de huidige versie is ${latest}. Werk LinuxToys bij voordat je een bugrapport indient."
 }

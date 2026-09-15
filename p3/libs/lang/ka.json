@@ -557,5 +557,7 @@
   "registry_export_tooltip": "ყველა რეგისტრირებული ოპერაციის manifest ფაილად ექსპორტი",
   "registry_export_error_title": "Manifest-ის ექსპორტი ვერ მოხერხდა",
   "registry_export_success_title": "Manifest ექსპორტირებულია",
-  "registry_export_success_message": "{count} რეგისტრირებული ოპერაცია ექსპორტირებულია მისამართზე:\n{path}"
+  "registry_export_success_message": "{count} რეგისტრირებული ოპერაცია ექსპორტირებულია მისამართზე:\n{path}",
+  "bug_report_outdated_title": "შეცდომის ანგარიში მიუწვდომელია",
+  "bug_report_outdated_message": "თქვენ იყენებთ LinuxToys ${current}-ს, მაგრამ მიმდინარე ვერსიაა ${latest}. შეცდომის ანგარიშის გაგზავნამდე გთხოვთ განაახლოთ LinuxToys."
 }

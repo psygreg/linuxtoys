@@ -557,5 +557,7 @@
   "registry_export_tooltip": "ส่งออกการดำเนินการที่ลงทะเบียนทั้งหมดเป็นไฟล์ manifest",
   "registry_export_error_title": "การส่งออก manifest ล้มเหลว",
   "registry_export_success_title": "ส่งออก manifest แล้ว",
-  "registry_export_success_message": "ส่งออกการดำเนินการที่ลงทะเบียน {count} รายการไปยัง:\n{path}"
+  "registry_export_success_message": "ส่งออกการดำเนินการที่ลงทะเบียน {count} รายการไปยัง:\n{path}",
+  "bug_report_outdated_title": "ไม่สามารถรายงานข้อบกพร่องได้",
+  "bug_report_outdated_message": "คุณกำลังใช้ LinuxToys ${current} แต่เวอร์ชันปัจจุบันคือ ${latest} โปรดอัปเดต LinuxToys ก่อนส่งรายงานข้อบกพร่อง"
 }

@@ -557,5 +557,7 @@
   "registry_export_tooltip": "នាំចេញប្រតិបត្តិការដែលបានចុះបញ្ជីទាំងអស់ជាឯកសារ manifest",
   "registry_export_error_title": "ការនាំចេញ manifest បានបរាជ័យ",
   "registry_export_success_title": "បាននាំចេញ manifest",
-  "registry_export_success_message": "បាននាំចេញប្រតិបត្តិការដែលបានចុះបញ្ជីចំនួន {count} ទៅកាន់៖\n{path}"
+  "registry_export_success_message": "បាននាំចេញប្រតិបត្តិការដែលបានចុះបញ្ជីចំនួន {count} ទៅកាន់៖\n{path}",
+  "bug_report_outdated_title": "ការរាយការណ៍កំហុសមិនអាចប្រើបាន",
+  "bug_report_outdated_message": "អ្នកកំពុងប្រើ LinuxToys ${current} ប៉ុន្តែកំណែបច្ចុប្បន្នគឺ ${latest}។ សូមធ្វើបច្ចុប្បន្នភាព LinuxToys មុនពេលដាក់ស្នើរបាយការណ៍កំហុស។"
 }

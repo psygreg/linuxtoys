@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Արտահանել բոլոր գրանցված գործողությունները որպես manifest ֆայլ",
   "registry_export_error_title": "Manifest-ի արտահանումը ձախողվեց",
   "registry_export_success_title": "Manifest-ն արտահանված է",
-  "registry_export_success_message": "{count} գրանցված գործողություն արտահանվեց այստեղ՝\n{path}"
+  "registry_export_success_message": "{count} գրանցված գործողություն արտահանվեց այստեղ՝\n{path}",
+  "bug_report_outdated_title": "Սխալի զեկույցն անհասանելի է",
+  "bug_report_outdated_message": "Դուք օգտագործում եք LinuxToys ${current}, սակայն ընթացիկ տարբերակը ${latest} է։ Խնդրում ենք թարմացնել LinuxToys-ը՝ նախքան սխալի զեկույց ուղարկելը։"
 }

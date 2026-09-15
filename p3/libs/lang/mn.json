@@ -556,5 +556,7 @@
   "registry_export_tooltip": "Бүртгэгдсэн бүх үйлдлийг manifest файл болгон экспортлох",
   "registry_export_error_title": "Manifest экспорт амжилтгүй боллоо",
   "registry_export_success_title": "Manifest экспортлогдлоо",
-  "registry_export_success_message": "{count} бүртгэгдсэн үйлдлийг дараах байршилд экспортлов:\n{path}"
+  "registry_export_success_message": "{count} бүртгэгдсэн үйлдлийг дараах байршилд экспортлов:\n{path}",
+  "bug_report_outdated_title": "Алдааны тайлан илгээх боломжгүй",
+  "bug_report_outdated_message": "Та LinuxToys ${current} хувилбарыг ашиглаж байна, харин одоогийн хувилбар нь ${latest}. Алдааны тайлан илгээхээсээ өмнө LinuxToys-ийг шинэчилнэ үү."
 }

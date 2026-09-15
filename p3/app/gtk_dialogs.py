@@ -17,11 +17,20 @@ def run_message_dialog(
     """Create, run, and destroy a standard application message dialog."""
     parent_window = get_toplevel_window(parent) if parent else None
 
+    # Dialogs triggered from non-widget helpers (such as Antenna) may not
+    # receive a parent explicitly. Tie them to the application's active
+    # window instead of creating an unowned top-level window.
+    if parent_window is None:
+        application = Gtk.Application.get_default()
+        if application is not None:
+            parent_window = application.get_active_window()
+
     kwargs = {
         "flags": 0,
         "message_type": message_type,
         "buttons": Gtk.ButtonsType.NONE,
         "text": title,
+        "modal": True,
     }
 
     if parent_window is not None:

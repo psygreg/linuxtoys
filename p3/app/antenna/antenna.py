@@ -10,7 +10,8 @@ import base64
 import hashlib
 import hmac
 import unicodedata
-from ..updater import __version__
+from ..updater.update_helper import get_current_version
+from ..lang_utils import _
 from urllib.parse import urlparse
  
 _REPORT_URL = "https://bug.linux.toys"
@@ -299,7 +300,7 @@ def get_system_context() -> str:
     if wsl_info:
         context_parts.append(f"Environment: {wsl_info}")
 
-    context_parts.append(f"linuxtoys {__version__}")
+    context_parts.append(f"linuxtoys {get_current_version()}")
 
     if init_system and init_system != "unknown":
         context_parts.append(f"Init: {init_system}")
@@ -787,6 +788,32 @@ def submit_issue(
         context: System context
         is_footer_triggered: If True, include recent registry entries (for manual reports from footer)
     """
+    # Reject reports from outdated releases. Development builds bypass this
+    # guard, and version-check failures fail open so reporting still works if
+    # the release service is temporarily unavailable.
+    from ..updater.update_helper import is_current_version
+
+    current_version = get_current_version()
+    is_current, latest_version = is_current_version(current_version)
+    if not is_current:
+        from ..gtk_common import Gtk
+        from ..gtk_dialogs import run_message_dialog
+        outdated_message = (
+            _("bug_report_outdated_message")
+            .replace("${current}", current_version)
+            .replace("${latest}", latest_version)
+        )
+
+        run_message_dialog(
+            None,
+            title=_("bug_report_outdated_title"),
+            secondary_text=outdated_message,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+        return None
+
     # Initialize antenna on first bug report submission
     _initialize_antenna()
     

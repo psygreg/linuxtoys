@@ -916,26 +916,36 @@ PY
 pkg_remove () {
     pkg_exists "$@"
     [[ ${#pkg_found[@]} -eq 0 ]] && return 0
-
     local to_remove="${pkg_found[*]}"
 
+    runner_lock "package-transaction"
+
     if is_debian || is_ubuntu; then
-        sudo apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        sudo apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
     elif { is_arch || is_cachy; } && ! is_manjaro; then
-        # check for lock before removing (stale lock otherwise aborts pacman -Rsn)
         pacman_lock_guard
-        sudo pacman -Rsn --noconfirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        sudo pacman -Rsn --noconfirm "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
     elif is_manjaro; then
-        pamac remove --no-confirm "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        pamac remove --no-confirm "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then
-        sudo rpm-ostree uninstall "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
-    elif is_fedora || is_rhel ; then
-        sudo dnf remove -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        sudo rpm-ostree uninstall "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
+    elif is_fedora || is_rhel; then
+        sudo dnf remove -y "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
     elif is_suse; then
-        sudo zypper rm -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        sudo zypper rm -y "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
     elif is_solus; then
-        sudo eopkg rmf -y "${pkg_found[@]}" || fatal "Failed to remove packages: $to_remove"
+        sudo eopkg rmf -y "${pkg_found[@]}" \
+            || fatal "Failed to remove packages: $to_remove"
     fi
+
+    runner_unlock
+
     _append_transmap "pkg rm $to_remove"
 }
 pkg_rm () { pkg_remove "$@"; }

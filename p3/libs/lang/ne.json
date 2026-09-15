@@ -557,5 +557,7 @@
   "registry_export_tooltip": "सबै दर्ता गरिएका कार्यहरूलाई manifest फाइलको रूपमा निर्यात गर्नुहोस्",
   "registry_export_error_title": "Manifest निर्यात असफल भयो",
   "registry_export_success_title": "Manifest निर्यात गरियो",
-  "registry_export_success_message": "{count} दर्ता गरिएका कार्यहरू यहाँ निर्यात गरियो:\n{path}"
+  "registry_export_success_message": "{count} दर्ता गरिएका कार्यहरू यहाँ निर्यात गरियो:\n{path}",
+  "bug_report_outdated_title": "बग रिपोर्ट उपलब्ध छैन",
+  "bug_report_outdated_message": "तपाईं LinuxToys ${current} चलाउँदै हुनुहुन्छ, तर हालको संस्करण ${latest} हो। बग रिपोर्ट पेश गर्नुअघि कृपया LinuxToys अद्यावधिक गर्नुहोस्।"
 }

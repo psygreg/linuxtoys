@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Eksportér alle registrerede handlinger som en manifestfil",
   "registry_export_error_title": "Eksport af manifest mislykkedes",
   "registry_export_success_title": "Manifest eksporteret",
-  "registry_export_success_message": "Eksporterede {count} registrerede handlinger til:\n{path}"
+  "registry_export_success_message": "Eksporterede {count} registrerede handlinger til:\n{path}",
+  "bug_report_outdated_title": "Fejlrapportering er ikke tilgængelig",
+  "bug_report_outdated_message": "Du kører LinuxToys ${current}, men den aktuelle version er ${latest}. Opdater venligst LinuxToys, før du indsender en fejlrapport."
 }

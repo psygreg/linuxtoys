@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Flytja allar skráðar aðgerðir út sem manifest-skrá",
   "registry_export_error_title": "Útflutningur manifests mistókst",
   "registry_export_success_title": "Manifest flutt út",
-  "registry_export_success_message": "{count} skráðar aðgerðir voru fluttar út í:\n{path}"
+  "registry_export_success_message": "{count} skráðar aðgerðir voru fluttar út í:\n{path}",
+  "bug_report_outdated_title": "Villutilkynning er ekki í boði",
+  "bug_report_outdated_message": "Þú ert að keyra LinuxToys ${current}, en núverandi útgáfa er ${latest}. Uppfærðu LinuxToys áður en þú sendir inn villutilkynningu."
 }

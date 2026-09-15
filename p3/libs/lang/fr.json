@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Exporter toutes les opérations enregistrées dans un fichier manifeste",
   "registry_export_error_title": "Échec de l'exportation du manifeste",
   "registry_export_success_title": "Manifeste exporté",
-  "registry_export_success_message": "{count} opérations enregistrées ont été exportées vers :\n{path}"
+  "registry_export_success_message": "{count} opérations enregistrées ont été exportées vers :\n{path}",
+  "bug_report_outdated_title": "Rapport de bug indisponible",
+  "bug_report_outdated_message": "Vous utilisez LinuxToys ${current}, mais la version actuelle est ${latest}. Veuillez mettre à jour LinuxToys avant d'envoyer un rapport de bug."
 }

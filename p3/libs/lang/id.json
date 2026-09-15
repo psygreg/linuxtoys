@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Ekspor semua operasi terdaftar sebagai berkas manifest",
   "registry_export_error_title": "Ekspor manifest gagal",
   "registry_export_success_title": "Manifest diekspor",
-  "registry_export_success_message": "{count} operasi terdaftar diekspor ke:\n{path}"
+  "registry_export_success_message": "{count} operasi terdaftar diekspor ke:\n{path}",
+  "bug_report_outdated_title": "Laporan bug tidak tersedia",
+  "bug_report_outdated_message": "Anda menjalankan LinuxToys ${current}, tetapi versi saat ini adalah ${latest}. Harap perbarui LinuxToys sebelum mengirim laporan bug."
 }

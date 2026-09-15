@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Kayıtlı tüm işlemleri manifest dosyası olarak dışa aktar",
   "registry_export_error_title": "Manifest dışa aktarılamadı",
   "registry_export_success_title": "Manifest dışa aktarıldı",
-  "registry_export_success_message": "{count} kayıtlı işlem şuraya dışa aktarıldı:\n{path}"
+  "registry_export_success_message": "{count} kayıtlı işlem şuraya dışa aktarıldı:\n{path}",
+  "bug_report_outdated_title": "Hata bildirimi kullanılamıyor",
+  "bug_report_outdated_message": "LinuxToys ${current} sürümünü kullanıyorsunuz, ancak güncel sürüm ${latest}. Hata bildirimi göndermeden önce lütfen LinuxToys'u güncelleyin."
 }

@@ -559,5 +559,7 @@
   "registry_export_tooltip": "将所有已注册的操作导出为清单文件",
   "registry_export_error_title": "清单导出失败",
   "registry_export_success_title": "清单已导出",
-  "registry_export_success_message": "已将 {count} 个已注册操作导出到：\n{path}"
+  "registry_export_success_message": "已将 {count} 个已注册操作导出到：\n{path}",
+  "bug_report_outdated_title": "无法提交错误报告",
+  "bug_report_outdated_message": "您正在运行 LinuxToys ${current}，但当前版本为 ${latest}。请先更新 LinuxToys，再提交错误报告。"
 }

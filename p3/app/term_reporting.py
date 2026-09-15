@@ -172,9 +172,16 @@ class BugReporting:
                 "bug_report_title", "Bug Report from LinuxToys"
             )
             result = antenna.submit_issue(title=title, logs=logs, context=context)
-            
+
+            # A None result means submission was intentionally blocked/cancelled
+            # by Antenna (for example, because this LinuxToys version is outdated).
+            # Antenna has already shown the appropriate explanation, so do not
+            # follow it with the generic submission-failed dialog.
+            if result is None:
+                return
+
             # Show result dialog
-            self._show_bug_report_result_dialog(result is not None, result or {})
+            self._show_bug_report_result_dialog(True, result)
         except ConnectionError:
             self._show_bug_report_network_error_dialog(
                 self.translations.get(

@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Eksportēt visas reģistrētās darbības kā manifesta failu",
   "registry_export_error_title": "Manifesta eksportēšana neizdevās",
   "registry_export_success_title": "Manifests eksportēts",
-  "registry_export_success_message": "Eksportētas {count} reģistrētas darbības uz:\n{path}"
+  "registry_export_success_message": "Eksportētas {count} reģistrētas darbības uz:\n{path}",
+  "bug_report_outdated_title": "Kļūdas ziņojums nav pieejams",
+  "bug_report_outdated_message": "Jūs izmantojat LinuxToys ${current}, bet pašreizējā versija ir ${latest}. Pirms kļūdas ziņojuma iesniegšanas, lūdzu, atjauniniet LinuxToys."
 }

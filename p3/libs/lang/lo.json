@@ -557,5 +557,7 @@
   "registry_export_tooltip": "ສົ່ງອອກການດຳເນີນງານທີ່ລົງທະບຽນທັງໝົດເປັນໄຟລ໌ manifest",
   "registry_export_error_title": "ການສົ່ງອອກ manifest ລົ້ມເຫຼວ",
   "registry_export_success_title": "ສົ່ງອອກ manifest ແລ້ວ",
-  "registry_export_success_message": "ສົ່ງອອກ {count} ການດຳເນີນງານທີ່ລົງທະບຽນໄປທີ່:\n{path}"
+  "registry_export_success_message": "ສົ່ງອອກ {count} ການດຳເນີນງານທີ່ລົງທະບຽນໄປທີ່:\n{path}",
+  "bug_report_outdated_title": "ບໍ່ສາມາດລາຍງານບັກໄດ້",
+  "bug_report_outdated_message": "ທ່ານກຳລັງໃຊ້ LinuxToys ${current}, ແຕ່ເວີຊັນປັດຈຸບັນແມ່ນ ${latest}. ກະລຸນາອັບເດດ LinuxToys ກ່ອນສົ່ງລາຍງານບັກ."
 }

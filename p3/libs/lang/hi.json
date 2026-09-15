@@ -537,5 +537,7 @@
   "registry_export_tooltip": "सभी पंजीकृत ऑपरेशनों को manifest फ़ाइल के रूप में एक्सपोर्ट करें",
   "registry_export_error_title": "Manifest एक्सपोर्ट विफल रहा",
   "registry_export_success_title": "Manifest एक्सपोर्ट किया गया",
-  "registry_export_success_message": "{count} पंजीकृत ऑपरेशन यहाँ एक्सपोर्ट किए गए:\n{path}"
+  "registry_export_success_message": "{count} पंजीकृत ऑपरेशन यहाँ एक्सपोर्ट किए गए:\n{path}",
+  "bug_report_outdated_title": "बग रिपोर्ट उपलब्ध नहीं है",
+  "bug_report_outdated_message": "आप LinuxToys ${current} चला रहे हैं, लेकिन वर्तमान संस्करण ${latest} है। बग रिपोर्ट सबमिट करने से पहले कृपया LinuxToys को अपडेट करें।"
 }

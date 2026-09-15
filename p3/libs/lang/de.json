@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Alle registrierten Vorgänge als Manifestdatei exportieren",
   "registry_export_error_title": "Manifest-Export fehlgeschlagen",
   "registry_export_success_title": "Manifest exportiert",
-  "registry_export_success_message": "{count} registrierte Vorgänge exportiert nach:\n{path}"
+  "registry_export_success_message": "{count} registrierte Vorgänge exportiert nach:\n{path}",
+  "bug_report_outdated_title": "Fehlerbericht nicht verfügbar",
+  "bug_report_outdated_message": "Sie verwenden LinuxToys ${current}, die aktuelle Version ist jedoch ${latest}. Bitte aktualisieren Sie LinuxToys, bevor Sie einen Fehlerbericht einreichen."
 }

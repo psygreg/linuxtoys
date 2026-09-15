@@ -557,5 +557,7 @@
   "registry_export_tooltip": "ሁሉንም የተመዘገቡ ክዋኔዎች እንደ manifest ፋይል ላክ",
   "registry_export_error_title": "Manifest መላክ አልተሳካም",
   "registry_export_success_title": "Manifest ተልኳል",
-  "registry_export_success_message": "{count} የተመዘገቡ ክዋኔዎች ወደዚህ ተልከዋል፦\n{path}"
+  "registry_export_success_message": "{count} የተመዘገቡ ክዋኔዎች ወደዚህ ተልከዋል፦\n{path}",
+  "bug_report_outdated_title": "የሳንካ ሪፖርት አይገኝም",
+  "bug_report_outdated_message": "LinuxToys ${current} እየተጠቀሙ ነው፣ ነገር ግን የአሁኑ ስሪት ${latest} ነው። የሳንካ ሪፖርት ከማስገባትዎ በፊት LinuxToysን እባክዎ ያዘምኑ።"
 }

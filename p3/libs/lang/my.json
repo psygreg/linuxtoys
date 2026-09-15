@@ -557,5 +557,7 @@
   "registry_export_tooltip": "မှတ်ပုံတင်ထားသော လုပ်ဆောင်ချက်အားလုံးကို manifest ဖိုင်အဖြစ် export လုပ်ရန်",
   "registry_export_error_title": "Manifest export မအောင်မြင်ပါ",
   "registry_export_success_title": "Manifest ကို export လုပ်ပြီးပါပြီ",
-  "registry_export_success_message": "မှတ်ပုံတင်ထားသော လုပ်ဆောင်ချက် {count} ခုကို ဤနေရာသို့ export လုပ်ပြီးပါပြီ:\n{path}"
+  "registry_export_success_message": "မှတ်ပုံတင်ထားသော လုပ်ဆောင်ချက် {count} ခုကို ဤနေရာသို့ export လုပ်ပြီးပါပြီ:\n{path}",
+  "bug_report_outdated_title": "Bug report ကို အသုံးမပြုနိုင်ပါ",
+  "bug_report_outdated_message": "သင်သည် LinuxToys ${current} ကို အသုံးပြုနေသော်လည်း လက်ရှိဗားရှင်းမှာ ${latest} ဖြစ်သည်။ Bug report မတင်မီ LinuxToys ကို update လုပ်ပါ။"
 }

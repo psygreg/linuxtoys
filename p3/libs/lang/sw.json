@@ -555,5 +555,7 @@
   "registry_export_tooltip": "Hamisha shughuli zote zilizosajiliwa kama faili ya manifest",
   "registry_export_error_title": "Uhamishaji wa manifest umeshindwa",
   "registry_export_success_title": "Manifest imehamishwa",
-  "registry_export_success_message": "Shughuli {count} zilizosajiliwa zimehamishwa kwenda:\n{path}"
+  "registry_export_success_message": "Shughuli {count} zilizosajiliwa zimehamishwa kwenda:\n{path}",
+  "bug_report_outdated_title": "Ripoti ya hitilafu haipatikani",
+  "bug_report_outdated_message": "Unatumia LinuxToys ${current}, lakini toleo la sasa ni ${latest}. Tafadhali sasisha LinuxToys kabla ya kuwasilisha ripoti ya hitilafu."
 }

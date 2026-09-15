@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Eksportuoti visas užregistruotas operacijas kaip manifesto failą",
   "registry_export_error_title": "Nepavyko eksportuoti manifesto",
   "registry_export_success_title": "Manifestas eksportuotas",
-  "registry_export_success_message": "Eksportuota {count} užregistruotų operacijų į:\n{path}"
+  "registry_export_success_message": "Eksportuota {count} užregistruotų operacijų į:\n{path}",
+  "bug_report_outdated_title": "Pranešimas apie klaidą nepasiekiamas",
+  "bug_report_outdated_message": "Naudojate LinuxToys ${current}, tačiau dabartinė versija yra ${latest}. Prieš pateikdami pranešimą apie klaidą, atnaujinkite LinuxToys."
 }

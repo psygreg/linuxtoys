@@ -557,5 +557,7 @@
   "registry_export_tooltip": "Экспортировать все зарегистрированные операции в файл манифеста",
   "registry_export_error_title": "Не удалось экспортировать манифест",
   "registry_export_success_title": "Манифест экспортирован",
-  "registry_export_success_message": "Экспортировано зарегистрированных операций: {count}\nПуть: {path}"
+  "registry_export_success_message": "Экспортировано зарегистрированных операций: {count}\nПуть: {path}",
+  "bug_report_outdated_title": "Отчёт об ошибке недоступен",
+  "bug_report_outdated_message": "Вы используете LinuxToys ${current}, но текущая версия — ${latest}. Обновите LinuxToys перед отправкой отчёта об ошибке."
 }
