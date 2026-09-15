@@ -1031,9 +1031,11 @@ def build_uninstall_script_entry(script_info, translations=None):
         'source "$SCRIPT_DIR/libs/helpers.bash"',
     ]
     
-    # Check if we need sudo
+    # Pre-authorize privileged package operations before the terminal can be locked.
+    # Keep the existing direct-sudo detection for other unconditional reversals.
     needs_sudo = any(
-        cmd.strip().startswith("sudo ") for cmd in reverse_commands
+        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
+        for cmd in reverse_commands
     )
     
     if needs_sudo:
@@ -1168,9 +1170,11 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         'source "$SCRIPT_DIR/libs/helpers.bash"',
     ]
     
-    # Check if we need sudo
+    # Pre-authorize privileged package operations before the terminal can be locked.
+    # Keep the existing direct-sudo detection for other unconditional reversals.
     needs_sudo = any(
-        cmd.strip().startswith("sudo ") for cmd in reverse_commands
+        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
+        for cmd in reverse_commands
     )
     
     if needs_sudo:

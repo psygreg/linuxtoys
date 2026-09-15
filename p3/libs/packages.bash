@@ -248,6 +248,10 @@ pkg_fromfile () {
 
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
+
+    # Native package files require elevation. Authenticate before engaging the
+    # runner lock, otherwise the terminal input lock can block the sudo prompt.
+    [[ "$1" != *.flatpak ]] && askpass
     runner_lock "package-transaction"
 
     if [[ "$1" == *.flatpak ]]; then

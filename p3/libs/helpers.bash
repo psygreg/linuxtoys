@@ -1,6 +1,5 @@
 # library of helpers and repository checkers
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-
+#
 # Helper function to fetch from multiple sources with fallback
 fetch_from_mirror () {
     local filename="$1"

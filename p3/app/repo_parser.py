@@ -1976,6 +1976,10 @@ def create_install_script(entry):
         entry,
         compat_keys,
     )
+    needs_askpass = any(
+        cmd.startswith("pkg_install ")
+        for cmd in dependency_commands
+    )
     command = None
 
     if install_type == "git":
@@ -2022,6 +2026,7 @@ def create_install_script(entry):
             f"pkg_install {shlex.quote(package)}"
             for package in packages
         )
+        needs_askpass = True
 
     elif install_type == "url":
         compat_keys = get_system_compat_keys()
@@ -2093,8 +2098,19 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
     override_commands = _create_override_commands(entry)
     service_commands = _create_service_commands(entry)
 
+    # Authenticate before any generated pkg_install can engage the runner lock.
+    # Keep this at script level so multiple native packages/dependencies share one
+    # authentication request. pkg_fromfile handles downloaded native packages itself.
+    auth_commands = ["askpass"] if needs_askpass else []
+
+    # A system service also requires authentication, but avoid emitting a second
+    # askpass when the package installation already requested it above.
+    if needs_askpass and service_commands and service_commands[0] == "askpass":
+        service_commands = service_commands[1:]
+
     commands = (
-        dependency_commands
+        auth_commands
+        + dependency_commands
         + [command]
         + override_commands
         + service_commands
