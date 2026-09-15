@@ -57,6 +57,8 @@ fi
 sed -i \
     '/Exiting installer\. Goodbye!/{n;s/^[[:space:]]*exit 0[[:space:]]*$/        exit 100 # LinuxToys cancellation/;}' \
     setup.sh
+# remove upstream post-install service status and pause
+sed -i '/^[[:space:]]*# Show service status$/,+4d' setup.sh
 
 askpass
 sudo bash setup.sh
