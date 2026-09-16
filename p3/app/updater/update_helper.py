@@ -249,7 +249,7 @@ def run_background_update():
             # unavailable to the installer.\n"
             "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
             "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
-            "curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/install.sh -o \"$_lt_installer\" || exit 1\n"
+            "curl -fsSL https://linux.toys/install.sh -o \"$_lt_installer\" || exit 1\n"
             "source \"$_lt_installer\"\n"
         )
 
