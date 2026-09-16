@@ -212,7 +212,9 @@ def run_background_update():
     the user-level AppImage/Gear Lever update path. Returns
     (success, error_message).
     """
+    env = os.environ.copy()
     script_dir = os.environ.get("SCRIPT_DIR")
+    env["LINUXTOYS_NONINTERACTIVE"] = "1"
 
     is_steamos = False
     try:
@@ -267,15 +269,18 @@ def run_background_update():
 
         os.chmod(script_path, 0o700)
 
-        with open(os.devnull, "r") as devnull:
-            result = subprocess.run(
-                ["bash", script_path],
-                stdin=devnull,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                env=os.environ.copy(),
-            )
+        result = subprocess.run(
+            [
+                "script",
+                "-qefc",
+                f"bash {shlex.quote(script_path)}",
+                "/dev/null",
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env,
+        )
 
         if result.returncode == 0:
             return True, ""
