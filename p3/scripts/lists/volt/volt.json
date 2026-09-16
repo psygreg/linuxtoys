@@ -5,7 +5,7 @@
         "developer": "pythonlover02",
         "repo": "https://github.com/pythonlover02/volt-gui",
         "category": "game",
-        "icon": "device.svg",
+        "icon": "./volt.png",
         "license": "GPLv3",
         "descriptions": "descriptions.json",
         "screenshots": "screenshots/",
