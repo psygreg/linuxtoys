@@ -70,7 +70,7 @@ OS_KEYS = {
     "manjaro",
 }
 
-VALID_TYPES = {"git", "tar", "bin", "flathub", "native", "repository", "url", "external"}
+VALID_TYPES = {"git", "tar", "bin", "make", "flathub", "native", "repository", "url", "external"}
 
 URL_PACKAGE_KEYS = {
     "deb",
@@ -758,6 +758,24 @@ def _validate_type(entry, compat_keys):
 
     if install_type in {"git", "tar"}:
         return _validate_release_asset_selector(entry.get("package-name"))
+
+    if install_type == "make":
+        make_source = entry.get("make-source", "git")
+        if not isinstance(make_source, str) or make_source.strip().lower() not in {"git", "tar"}:
+            return False
+
+        make_command = entry.get("make-command")
+        if make_command is not None:
+            if not isinstance(make_command, str) or not make_command.strip():
+                return False
+            # Reversion derives the uninstall flow by replacing the first
+            # install target: install -> uninstall, install-user -> uninstall-user.
+            if not re.search(r"(?<![A-Za-z0-9_])install(?=$|[-_]|[^A-Za-z0-9_])", make_command):
+                return False
+
+        if make_source.strip().lower() == "tar":
+            return _validate_release_asset_selector(entry.get("package-name"))
+        return entry.get("package-name") is None
 
     if install_type == "bin":
         asset_name = entry.get("package-name")
@@ -1993,6 +2011,20 @@ def create_install_script(entry):
         command = f"pkg_fromrelease --tar {shlex.quote(repo)}"
         if asset_selectors:
             command += f" {shlex.quote(asset_selectors[0])}"
+
+    elif install_type == "make":
+        make_source = entry.get("make-source", "git").strip().lower()
+        make_command = entry.get("make-command")
+        command = "pkg_make"
+        if make_command is not None:
+            command += f" --command {shlex.quote(make_command.strip())}"
+        if make_source == "tar":
+            asset_selectors = _resolve_package_names(entry, compat_keys)
+            command += f" --tar {shlex.quote(repo)}"
+            if asset_selectors:
+                command += f" {shlex.quote(asset_selectors[0])}"
+        else:
+            command += f" {shlex.quote(repo)}"
 
     elif install_type == "bin":
         asset_name = entry.get("package-name", "").strip()

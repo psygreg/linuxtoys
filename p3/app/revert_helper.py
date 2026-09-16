@@ -5,6 +5,7 @@ Uses the execution registry to track and reverse operations performed during scr
 Each operation is reversed, with file restorations from .bak files and package removals executed.
 """
 
+import base64
 import os
 import tempfile
 import subprocess
@@ -292,6 +293,9 @@ def _parse_operation(op_line):
             if len(parts) >= 2 and parts[1] == "rm":
                 # Removal: "pkg rm curl" or "pkg rm curl git"
                 return "pkg rm", parts[2:]
+            elif len(parts) >= 2 and parts[1] == "make":
+                # Makefile install: "pkg make SOURCE_URL"
+                return "pkg make", parts[2:]
             elif len(parts) >= 2 and parts[1] == "file":
                 # From file: "pkg file /path/to/file"
                 return "pkg file", parts[2:]
@@ -484,6 +488,31 @@ def _reverse_package_fromfile(file_paths):
             reversal_commands.append(cmd)
     
     return reversal_commands
+
+
+def _reverse_make_installation(operands):
+    """Reacquire a make source and run the matching uninstall flow."""
+    if isinstance(operands, str):
+        operands = [operands]
+    if not operands:
+        return []
+
+    source = operands[0]
+    if not source:
+        return []
+
+    command = None
+    if len(operands) >= 2 and operands[1].startswith("cmd64:"):
+        try:
+            command = base64.b64decode(operands[1][6:], validate=True).decode("utf-8")
+        except (ValueError, UnicodeDecodeError):
+            return []
+
+    result = "pkg_make"
+    if command is not None:
+        result += f" --command {shlex.quote(command)}"
+    result += f" --uninstall {shlex.quote(source)}"
+    return [result]
 
 
 def _reverse_file_deletion(file_path):
@@ -872,6 +901,9 @@ def _reverse_operation(op_line, package_manager):
     elif op_type == "pkg file" and operands:
         # Reverse package-from-file installation by removing
         return _reverse_package_fromfile(operands)
+
+    elif op_type == "pkg make" and operands:
+        return _reverse_make_installation(operands)
     
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)

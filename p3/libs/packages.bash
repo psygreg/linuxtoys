@@ -627,26 +627,220 @@ pkg_fromurl () {
     done
 }
 
+pkg_make () {
+    [[ $# -gt 0 ]] || die "Usage: pkg_make [--command INSTALL_COMMAND] [--tar REPOSITORY_URL [ASSET_GLOB] | --url TARBALL_URL | --uninstall SOURCE_URL | REPOSITORY_URL]"
+
+    unset LINUXTOYS_MAKE_DIR
+
+    local mode="git" uninstall=0 source="" selector="" install_command="sudo make install"
+    local arg
+    local -a args=()
+
+    # A custom command is kept as one argument and executed from the directory
+    # containing the Makefile. The uninstall path derives the matching command
+    # by replacing the install target with its uninstall counterpart.
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --command)
+                shift
+                [[ $# -gt 0 ]] || die "pkg_make --command requires an install command"
+                install_command="$1"
+                ;;
+            *)
+                args+=("$1")
+                ;;
+        esac
+        shift
+    done
+    set -- "${args[@]}"
+    [[ $# -gt 0 ]] || die "pkg_make requires a source"
+    [[ -n "${install_command//[[:space:]]/}" ]] || die "pkg_make install command cannot be empty"
+
+    case "$1" in
+        --tar|--tarball)
+            mode="release-tar"
+            shift
+            [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_make [--command INSTALL_COMMAND] --tar REPOSITORY_URL [ASSET_GLOB]"
+            source="$1"
+            selector="${2:-*}"
+            ;;
+        --url)
+            mode="tar-url"
+            shift
+            [[ $# -eq 1 ]] || die "Usage: pkg_make [--command INSTALL_COMMAND] --url TARBALL_URL"
+            source="$1"
+            ;;
+        --uninstall)
+            uninstall=1
+            shift
+            [[ $# -eq 1 ]] || die "Usage: pkg_make [--command INSTALL_COMMAND] --uninstall SOURCE_URL"
+            source="$1"
+            case "${source%%[?#]*}" in
+                *.tar.gz|*.tar.xz) mode="tar-url" ;;
+                *) mode="git" ;;
+            esac
+            ;;
+        *)
+            [[ $# -eq 1 ]] || die "Usage: pkg_make [--command INSTALL_COMMAND] REPOSITORY_URL"
+            source="$1"
+            ;;
+    esac
+
+    # Release tarball selection deliberately reuses pkg_fromrelease so make
+    # installs follow exactly the same stable-release, architecture and asset
+    # selection rules as every other LinuxToys release install.
+    if [[ "$mode" == "release-tar" ]]; then
+        pkg_fromrelease --make --make-command "$install_command" "$source" "$selector"
+        return $?
+    fi
+
+    [[ "$source" == https://* ]] || die "pkg_make only accepts HTTPS sources"
+    command -v make >/dev/null 2>&1 || die "make is required for pkg_make installs"
+
+    local workdir source_dir archive make_dir run_command="$install_command"
+    local -a makefiles=()
+    prep_tmp_noram
+    workdir=$(mktemp -d ./pkg_make.XXXXXX) || die "Failed to create make build directory"
+
+    if [[ "$mode" == "git" ]]; then
+        command -v git >/dev/null 2>&1 || die "git is required for pkg_make repository installs"
+        git clone --depth 1 -- "$source" "$workdir/source" || {
+            rm -rf -- "$workdir"
+            die "Failed to clone make source: $source"
+        }
+        source_dir="$workdir/source"
+    else
+        archive="$workdir/source.tar"
+        curl -fL --retry 3 --proto '=https' --tlsv1.2 -- "$source" -o "$archive" || {
+            rm -rf -- "$workdir"
+            die "Failed to download make source: $source"
+        }
+
+        # Reject archive path traversal before extraction.
+        local member normalized
+        while IFS= read -r member; do
+            normalized="${member#./}"
+            [[ -n "$normalized" ]] || continue
+            if [[ "$normalized" == /* || "$normalized" == ".." || \
+                  "$normalized" == ../* || "$normalized" == */../* || \
+                  "$normalized" == */.. ]]; then
+                rm -rf -- "$workdir"
+                die "Unsafe path in make tarball: $member"
+            fi
+        done < <(tar -tf "$archive") || {
+            rm -rf -- "$workdir"
+            die "Failed to inspect make tarball: $source"
+        }
+
+        source_dir="$workdir/source"
+        mkdir -p -- "$source_dir" || die "Failed to create make extraction directory"
+        tar --no-same-owner --no-same-permissions -xf "$archive" -C "$source_dir" || {
+            rm -rf -- "$workdir"
+            die "Failed to extract make tarball: $source"
+        }
+    fi
+
+    # Prefer a top-level makefile. If there is none, accept exactly one makefile
+    # in the fetched tree rather than guessing between unrelated subprojects.
+    if [[ -f "$source_dir/Makefile" || -f "$source_dir/makefile" || -f "$source_dir/GNUmakefile" ]]; then
+        make_dir="$source_dir"
+    else
+        mapfile -t makefiles < <(find "$source_dir" -type f \
+            \( -iname 'Makefile' -o -iname 'GNUmakefile' \) -print 2>/dev/null)
+        [[ ${#makefiles[@]} -gt 0 ]] || {
+            rm -rf -- "$workdir"
+            die "No Makefile found in make source: $source"
+        }
+        [[ ${#makefiles[@]} -eq 1 ]] || {
+            rm -rf -- "$workdir"
+            die "Multiple Makefiles found in make source; unable to choose safely"
+        }
+        make_dir="$(dirname -- "${makefiles[0]}")"
+    fi
+
+    export LINUXTOYS_MAKE_DIR="$make_dir"
+
+    if (( uninstall )); then
+        # Keep the install flow intact and only turn the Make install target into
+        # its uninstall equivalent: install -> uninstall, install-user -> uninstall-user.
+        run_command=$(python3 - "$install_command" <<'PY2'
+import re
+import sys
+
+command = sys.argv[1]
+updated, count = re.subn(r'(?<![A-Za-z0-9_])install(?=$|[-_]|[^A-Za-z0-9_])', 'uninstall', command, count=1)
+if count != 1:
+    sys.exit(1)
+print(updated)
+PY2
+        ) || {
+            rm -rf -- "$workdir"
+            die "Unable to derive make uninstall command from: $install_command"
+        }
+    fi
+
+    if (( ! uninstall )); then
+        make -C "$make_dir" || {
+            die "Failed to build make source: $source"
+        }
+    fi
+
+    # Only prompt for authentication when this flow actually invokes sudo.
+    if [[ "$run_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
+        askpass
+    fi
+    runner_lock "package-transaction"
+
+    ( cd -- "$make_dir" && bash -c "$run_command" ) || {
+        runner_unlock
+        rm -rf -- "$workdir"
+        if (( uninstall )); then
+            die "Failed to uninstall make source: $source"
+        else
+            die "Failed to install make source: $source"
+        fi
+    }
+
+    if (( ! uninstall )); then
+        local encoded_command
+        encoded_command=$(printf '%s' "$install_command" | base64 -w 0) || die "Failed to encode make install command"
+        _append_transmap "pkg make $source cmd64:$encoded_command"
+    fi
+
+    runner_unlock
+}
+
 pkg_fromrelease () {
-    local _tarball=0 _binary=0 arg
+    local _tarball=0 _binary=0 _make=0 arg make_command="sudo make install"
     local -a release_args=()
-    for arg in "$@"; do
-        case "$arg" in
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
             --tar|--tarball)
                 _tarball=1
                 ;;
             --bin|--binary)
                 _binary=1
                 ;;
+            --make)
+                _make=1
+                _tarball=1
+                ;;
+            --make-command)
+                shift
+                [[ $# -gt 0 ]] || die "pkg_fromrelease --make-command requires a command"
+                make_command="$1"
+                ;;
             *)
-                release_args+=("$arg")
+                release_args+=("$1")
                 ;;
         esac
+        shift
     done
     set -- "${release_args[@]}"
 
-    [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_fromrelease [--tar|--bin] REPOSITORY_URL [ASSET_NAME_OR_GLOB]"
+    [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_fromrelease [--tar|--bin|--make] REPOSITORY_URL [ASSET_NAME_OR_GLOB]"
     [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
+    [[ $_make -eq 0 || $_binary -eq 0 ]] || die "--make and --bin cannot be used together"
     [[ $_binary -eq 0 || $# -eq 2 ]] || die "pkg_fromrelease --bin requires the exact release asset name"
 
     local native_type="" package_url
@@ -835,7 +1029,9 @@ PY
     export APP_GIT_VERSION="${release_selection[0]}"
     package_url="${release_selection[1]}"
 
-    if [[ $_binary -eq 1 ]]; then
+    if [[ $_make -eq 1 ]]; then
+        pkg_make --command "$make_command" --url "$package_url"
+    elif [[ $_binary -eq 1 ]]; then
         pkg_fromurl --bin "$package_url"
     elif [[ $_tarball -eq 1 ]]; then
         pkg_fromurl --tar "$package_url"
