@@ -285,7 +285,10 @@ installer() {
 	error "Unsupported operating system."
 }
 
-if [ -t 0 ]; then
+if [ "${LINUXTOYS_NONINTERACTIVE:-0}" = "1" ]; then
+    header
+    installer
+elif [ -t 0 ]; then
 	header
 	printf 'Do you wish to install or update LinuxToys? (y/n): '
 	read -r _answer < /dev/tty
