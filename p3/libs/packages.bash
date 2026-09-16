@@ -152,11 +152,15 @@ pkg_install () {
                     fi
                 fi
                 if ! paru --version >/dev/null 2>&1; then # handle broken paru compiled against different libs, fix #1196
+                    runner_unlock
                     call_script paru || die "Failed to repair paru"
                     paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
+                    runner_lock "package-transaction"
                 fi
+                runner_unlock
                 paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
+                runner_lock "package-transaction"
             fi
         fi
     elif is_ostree; then
