@@ -111,6 +111,18 @@ class AppPageView(Gtk.Box):
         tag_bold = buffer.create_tag("md-bold", weight=Pango.Weight.BOLD)
         tag_italic = buffer.create_tag("md-italic", style=Pango.Style.ITALIC)
         tag_code = buffer.create_tag("md-code", family="monospace")
+        tag_code_block = buffer.create_tag(
+            "md-code-block",
+            family="monospace",
+            left_margin=14,
+            right_margin=14,
+            pixels_above_lines=3,
+            pixels_below_lines=3,
+        )
+        tag_table_header = buffer.create_tag(
+            "md-table-header", family="monospace", weight=Pango.Weight.BOLD
+        )
+        tag_table = buffer.create_tag("md-table", family="monospace")
         tag_strike = buffer.create_tag("md-strike", strikethrough=True)
         tag_heading = buffer.create_tag(
             "md-heading",
@@ -180,9 +192,143 @@ class AppPageView(Gtk.Box):
 
             insert(value[pos:], *base_tags)
 
+        def split_table_row(value):
+            """Split a simple GFM pipe row while preserving escaped pipes."""
+            value = value.strip()
+            if value.startswith("|"):
+                value = value[1:]
+            if value.endswith("|") and not value.endswith(r"\|"):
+                value = value[:-1]
+
+            cells = []
+            current = []
+            escaped = False
+            for char in value:
+                if escaped:
+                    current.append(char)
+                    escaped = False
+                elif char == "\\":
+                    escaped = True
+                    current.append(char)
+                elif char == "|":
+                    cells.append("".join(current).strip())
+                    current = []
+                else:
+                    current.append(char)
+            cells.append("".join(current).strip())
+            return cells
+
+        def table_separator(value):
+            cells = split_table_row(value)
+            if not cells:
+                return None
+            aligns = []
+            for cell in cells:
+                compact = cell.replace(" ", "")
+                if not re.fullmatch(r":?-{3,}:?", compact):
+                    return None
+                if compact.startswith(":") and compact.endswith(":"):
+                    aligns.append("center")
+                elif compact.endswith(":"):
+                    aligns.append("right")
+                else:
+                    aligns.append("left")
+            return aligns
+
+        def render_table(rows, aligns):
+            # TextBuffer cannot host a real Gtk.Grid inline, so render tables as
+            # a compact monospace grid. Column widths are derived from source
+            # text and capped so pathological cells do not explode page width.
+            column_count = max(len(row) for row in rows)
+            normalized = [row + [""] * (column_count - len(row)) for row in rows]
+            widths = []
+            for col in range(column_count):
+                widths.append(min(40, max(len(row[col]) for row in normalized)))
+
+            for row_index, row in enumerate(normalized):
+                pieces = []
+                for col, cell in enumerate(row):
+                    width = widths[col]
+                    align = aligns[col] if col < len(aligns) else "left"
+                    plain = re.sub(r"[`*_~]", "", cell)
+                    if len(plain) > width:
+                        plain = plain[:max(1, width - 1)] + "…"
+                    if align == "right":
+                        pieces.append(plain.rjust(width))
+                    elif align == "center":
+                        pieces.append(plain.center(width))
+                    else:
+                        pieces.append(plain.ljust(width))
+                insert(" | ".join(pieces), tag_table_header if row_index == 0 else tag_table)
+
+                # Keep the header visually separated from the body. Because both
+                # header and body use the same monospace metrics, the columns stay
+                # aligned even though the header is bold.
+                if row_index == 0:
+                    insert("\n", tag_table)
+                    separators = []
+                    for col, width in enumerate(widths):
+                        align = aligns[col] if col < len(aligns) else "left"
+                        if align == "center" and width >= 2:
+                            separators.append(":" + "-" * (width - 2) + ":")
+                        elif align == "right" and width >= 1:
+                            separators.append("-" * (width - 1) + ":")
+                        elif align == "left" and col < len(aligns) and aligns[col] == "left" and width >= 1:
+                            separators.append("-" * width)
+                        else:
+                            separators.append("-" * width)
+                    insert("-+-".join(separators), tag_table)
+
+                if row_index < len(normalized) - 1:
+                    insert("\n")
+
         lines = str(md_text or "").splitlines()
-        for index, raw_line in enumerate(lines):
+        index = 0
+        in_fence = False
+        fence_char = ""
+        fence_len = 0
+        code_lines = []
+
+        while index < len(lines):
+            raw_line = lines[index]
             line = raw_line.rstrip()
+
+            fence = re.match(r"^\s{0,3}(`{3,}|~{3,})(.*)$", line)
+            if in_fence:
+                closing = re.match(r"^\s{0,3}([`~]{3,})\s*$", line)
+                if closing and closing.group(1)[0] == fence_char and len(closing.group(1)) >= fence_len:
+                    insert("\n".join(code_lines), tag_code_block)
+                    code_lines = []
+                    in_fence = False
+                    if index < len(lines) - 1:
+                        insert("\n")
+                else:
+                    code_lines.append(raw_line)
+                index += 1
+                continue
+
+            if fence:
+                in_fence = True
+                fence_char = fence.group(1)[0]
+                fence_len = len(fence.group(1))
+                code_lines = []
+                index += 1
+                continue
+
+            # A GFM table starts with a normal row followed immediately by a
+            # delimiter row such as | --- | :---: | ---: |.
+            if "|" in line and index + 1 < len(lines):
+                aligns = table_separator(lines[index + 1])
+                if aligns is not None:
+                    rows = [split_table_row(line)]
+                    index += 2
+                    while index < len(lines) and "|" in lines[index] and lines[index].strip():
+                        rows.append(split_table_row(lines[index]))
+                        index += 1
+                    render_table(rows, aligns)
+                    if index < len(lines):
+                        insert("\n")
+                    continue
 
             heading = re.match(r"^\s*(#{1,6})\s+(.+?)\s*#*\s*$", line)
             unordered = re.match(r"^(\s*)[-+*]\s+(.+)$", line)
@@ -208,10 +354,13 @@ class AppPageView(Gtk.Box):
             else:
                 insert_inline(line)
 
-            # Preserve the Markdown source's actual line structure exactly,
-            # without adding a synthetic trailing empty line to the TextView.
             if index < len(lines) - 1:
                 insert("\n")
+            index += 1
+
+        # Unclosed fences remain useful/readable rather than disappearing.
+        if in_fence:
+            insert("\n".join(code_lines), tag_code_block)
 
         return buffer
 
