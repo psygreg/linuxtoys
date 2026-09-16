@@ -337,7 +337,7 @@ def get_system_compat_keys():
 
     if os.system("command -v rpm-ostree >/dev/null 2>&1") == 0:
         if id_val in ["bazzite"] or id_val in ["bluefin"] or id_val in ["aurora"]:
-            keys = {"ublue"}
+            keys = {"ublue", "ostree"}
         else:
             keys = {"ostree"}  # Override all other keys
 
@@ -487,7 +487,7 @@ def get_cpu_compat_keys():
         with open("/proc/cpuinfo") as f:
             for line in f:
                 if line.startswith("vendor_id"):
-                    vendor_id = line.split(":", 1)[1].strip()                    
+                    vendor_id = line.split(":", 1)[1].strip()
                     if "GenuineIntel" in vendor_id:
                         keys.add("cpu-intel")
                     if "AuthenticAMD" in vendor_id:
@@ -1063,28 +1063,28 @@ def get_revert_capability(script_path, compat_keys=None):
 def should_enable_manual_revert(script_path, compat_keys=None):
     """
     Determine if manual uninstallation (remove button) should be available for a script.
-    
+
     Returns True if:
     - revert header is 'yes' or not set (default)
     - revert header is conditional and script matches the compat conditions
-    
+
     Returns False if:
     - revert header is 'no'
     - revert header is 'internal'
     - revert header is conditional and system doesn't match the conditions
-    
+
     Args:
         script_path (str): Path to the script file
         compat_keys (set): Set of compatibility keys for the current system (optional)
-    
+
     Returns:
         bool: True if manual revert should be enabled, False otherwise
     """
     if compat_keys is None:
         compat_keys = get_system_compat_keys()
-    
+
     revert_capability = get_revert_capability(script_path, compat_keys)
-    
+
     if revert_capability == "yes":
         return True
     elif revert_capability == "no":
@@ -1096,23 +1096,23 @@ def should_enable_manual_revert(script_path, compat_keys=None):
         include_keys = revert_capability.get("include_keys", set())
         exclude_keys = revert_capability.get("exclude_keys", set())
         script_compat_keys = revert_capability.get("compat_keys", compat_keys)
-        
+
         # If include keys specified (whitelist)
         if include_keys:
             matches_include = bool(script_compat_keys & include_keys)
         else:
             # No whitelist specified
             matches_include = True
-        
+
         # If exclude keys specified (blacklist)
         if exclude_keys:
             matches_exclude = bool(script_compat_keys & exclude_keys)
         else:
             # No blacklist specified
             matches_exclude = False
-        
+
         return matches_include and not matches_exclude
-    
+
     return True  # Default to True
 
 def is_script_compatible_with_host(script_path):
