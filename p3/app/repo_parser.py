@@ -478,50 +478,58 @@ def _desktop_requirement_matches(entry, compat_keys):
     return bool(requested & compat_keys)
 
 
-def _steamos_entry_is_compatible(entry, compat_keys):
-    """
-    Restrict SteamOS entries to portable installs that do not require native packages.
+def _make_command_uses_sudo(entry):
+    """Return whether a make entry's effective install command requires sudo."""
+    command = entry.get("make-command")
+    if command is None:
+        command = "sudo make install"
+    if not isinstance(command, str) or not command.strip():
+        return True
+    return bool(re.search(r"(?:^|[\s;|&()])sudo(?:\s|$)", command))
 
-    Native package declarations for other operating systems are harmless here. For
-    example, an entry may use a native package on Arch while falling back to Flathub
-    on SteamOS. Direct URL installs may resolve to Flatpak, AppImage, tarball, or
-    single-binary payloads, while generic git release entries defer asset selection
-    to pkg_fromrelease. In all cases, a native package dependency makes the entry
-    incompatible.
-    """
+
+def _steamos_user_make(entry, compat_keys):
+    return (
+        "steamos" in compat_keys
+        and _resolve_install_type(entry, compat_keys) == "make"
+        and not _make_command_uses_sudo(entry)
+    )
+
+
+def _steamos_entry_is_compatible(entry, compat_keys):
+    """Restrict SteamOS entries to user-level installation flows."""
     if "steamos" not in compat_keys:
         return True
 
     install_type = _resolve_install_type(entry, compat_keys)
+    user_make = _steamos_user_make(entry, compat_keys)
 
     if install_type in {"git", "flathub", "tar", "bin", "external"}:
-        # Git release installs are resolved by pkg_fromrelease. On SteamOS it
-        # permits AppImage/Flatpak assets, plus explicitly requested tarballs
-        # and single binaries, all of which are installed at user level.
         pass
+    elif install_type == "make":
+        # Make installs are supported only when the application itself installs
+        # at user level. LinuxToys may temporarily unlock SteamOS later to install
+        # build-only Arch dependencies and base-devel.
+        if not user_make:
+            return False
     elif install_type == "url":
         resolved = _resolve_url_package(entry, compat_keys)
         if not resolved or resolved[0] not in {"flatpak", "appimage", "tar", "bin"}:
             return False
     else:
-        # Native packages and third-party repository installs modify the base
-        # system and are therefore not compatible with SteamOS.
         return False
 
-    # A native dependency makes the portable application depend on modifications
-    # to the SteamOS base system, so the whole entry becomes incompatible.
-    # Native package alternatives for other distro branches do NOT trigger this.
-    for dependency in entry.get("dependencies", []):
-        if (
-            isinstance(dependency, dict)
-            and dependency.get("type") == "native"
-        ):
-            return False
+    # Native dependencies remain disallowed for normal portable SteamOS entries.
+    # A user-level make entry is the exception: they are treated as build-only
+    # dependencies and resolved using the Arch package declaration.
+    if not user_make:
+        for dependency in entry.get("dependencies", []):
+            if (
+                isinstance(dependency, dict)
+                and dependency.get("type") == "native"
+            ):
+                return False
 
-    # Pre-install hooks remain disallowed because they can prepare or modify the
-    # host before the portable payload is installed. Tarball entries are the one
-    # exception for post hooks: LinuxToys requires one to integrate the extracted
-    # user-level application (desktop entry, launcher, etc.).
     overrides = entry.get("overrides")
     if isinstance(overrides, dict):
         if overrides.get("pre") is not None:
@@ -533,8 +541,6 @@ def _steamos_entry_is_compatible(entry, compat_keys):
             if not resolved or resolved[0] != "tar":
                 return False
 
-    # Service enablement is also a host-level integration, so require explicit
-    # script support instead of allowing it through the automatic repo path.
     services = _normalize_services(entry)
     if services is None or services["system"] or services["user"]:
         return False
@@ -1994,6 +2000,17 @@ def create_install_script(entry):
         entry,
         compat_keys,
     )
+    steamos_user_make = _steamos_user_make(entry, compat_keys)
+    make_build_dependencies = []
+    if steamos_user_make:
+        make_build_dependencies = [
+            cmd[len("pkg_install "):]
+            for cmd in dependency_commands
+            if cmd.startswith("pkg_install ")
+        ]
+        dependency_commands = [
+            cmd for cmd in dependency_commands if not cmd.startswith("pkg_install ")
+        ]
     needs_askpass = any(
         cmd.startswith("pkg_install ")
         for cmd in dependency_commands
@@ -2018,6 +2035,8 @@ def create_install_script(entry):
         command = "pkg_make"
         if make_command is not None:
             command += f" --command {shlex.quote(make_command.strip())}"
+        for dependency in make_build_dependencies:
+            command += f" --dependency {dependency}"
         if make_source == "tar":
             asset_selectors = _resolve_package_names(entry, compat_keys)
             command += f" --tar {shlex.quote(repo)}"
@@ -2278,7 +2297,8 @@ def _dependencies_are_compatible(entry, compat_keys):
                 return False
 
         elif dependency_type == "native":
-            if not _resolve_native_package(dependency, compat_keys):
+            dependency_compat = {"arch"} if _steamos_user_make(entry, compat_keys) else compat_keys
+            if not _resolve_native_package(dependency, dependency_compat):
                 return False
 
     return True
@@ -2290,9 +2310,10 @@ def _create_dependency_commands(entry, compat_keys):
         dependency_type = dependency["type"]
 
         if dependency_type == "native":
+            dependency_compat = {"arch"} if _steamos_user_make(entry, compat_keys) else compat_keys
             packages = _resolve_native_package(
                 dependency,
-                compat_keys,
+                dependency_compat,
             )
 
             if not packages:

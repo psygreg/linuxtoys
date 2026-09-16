@@ -634,7 +634,7 @@ pkg_make () {
 
     local mode="git" uninstall=0 source="" selector="" install_command="sudo make install"
     local arg
-    local -a args=()
+    local -a args=() build_dependencies=()
 
     # A custom command is kept as one argument and executed from the directory
     # containing the Makefile. The uninstall path derives the matching command
@@ -645,6 +645,11 @@ pkg_make () {
                 shift
                 [[ $# -gt 0 ]] || die "pkg_make --command requires an install command"
                 install_command="$1"
+                ;;
+            --dependency)
+                shift
+                [[ $# -gt 0 ]] || die "pkg_make --dependency requires a package name"
+                build_dependencies+=("$1")
                 ;;
             *)
                 args+=("$1")
@@ -690,12 +695,61 @@ pkg_make () {
     # installs follow exactly the same stable-release, architecture and asset
     # selection rules as every other LinuxToys release install.
     if [[ "$mode" == "release-tar" ]]; then
-        pkg_fromrelease --make --make-command "$install_command" "$source" "$selector"
+        local -a release_make_args=(--make --make-command "$install_command")
+        for arg in "${build_dependencies[@]}"; do
+            release_make_args+=(--make-dependency "$arg")
+        done
+        pkg_fromrelease "${release_make_args[@]}" "$source" "$selector"
         return $?
     fi
 
     [[ "$source" == https://* ]] || die "pkg_make only accepts HTTPS sources"
-    command -v make >/dev/null 2>&1 || die "make is required for pkg_make installs"
+
+    local user_level_make=0 steamos_readonly_toggled=0
+    if [[ ! "$install_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
+        user_level_make=1
+    fi
+
+    if is_steamos && (( user_level_make )); then
+        # User-level Make applications are SteamOS-compatible. Their declared
+        # native dependencies are treated as build-only Arch packages. Temporarily
+        # unlock the system image only while installing the build toolchain.
+        local -a steamos_build_packages=(base-devel)
+        if (( ! uninstall )); then
+            steamos_build_packages+=("${build_dependencies[@]}")
+        fi
+
+        askpass
+        command -v steamos-readonly >/dev/null 2>&1 || \
+            die "steamos-readonly is required for pkg_make on SteamOS"
+
+        if steamos-readonly status 2>/dev/null | grep -qi 'enabled'; then
+            sudo steamos-readonly disable || die "Failed to disable SteamOS read-only mode"
+            steamos_readonly_toggled=1
+        fi
+
+        pacman_lock_guard
+        if ! sudo pacman -S --needed --noconfirm "${steamos_build_packages[@]}"; then
+            if (( steamos_readonly_toggled )); then
+                sudo steamos-readonly enable || warn "Failed to restore SteamOS read-only mode after package installation failure"
+            fi
+            die "Failed to install SteamOS make build dependencies"
+        fi
+
+        if (( steamos_readonly_toggled )); then
+            sudo steamos-readonly enable || die "Failed to restore SteamOS read-only mode"
+            steamos_readonly_toggled=0
+        fi
+    else
+        if ! command -v make >/dev/null 2>&1; then
+            askpass
+            pkg_install make
+        fi
+        if (( ! uninstall && ${#build_dependencies[@]} > 0 )); then
+            askpass
+            pkg_install --ignore-appends "${build_dependencies[@]}"
+        fi
+    fi
 
     local workdir source_dir archive make_dir run_command="$install_command"
     local -a makefiles=()
@@ -812,7 +866,7 @@ PY2
 
 pkg_fromrelease () {
     local _tarball=0 _binary=0 _make=0 arg make_command="sudo make install"
-    local -a release_args=()
+    local -a release_args=() make_dependencies=()
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --tar|--tarball)
@@ -829,6 +883,11 @@ pkg_fromrelease () {
                 shift
                 [[ $# -gt 0 ]] || die "pkg_fromrelease --make-command requires a command"
                 make_command="$1"
+                ;;
+            --make-dependency)
+                shift
+                [[ $# -gt 0 ]] || die "pkg_fromrelease --make-dependency requires a package name"
+                make_dependencies+=("$1")
                 ;;
             *)
                 release_args+=("$1")
@@ -1030,7 +1089,11 @@ PY
     package_url="${release_selection[1]}"
 
     if [[ $_make -eq 1 ]]; then
-        pkg_make --command "$make_command" --url "$package_url"
+        local -a make_args=(--command "$make_command")
+        for arg in "${make_dependencies[@]}"; do
+            make_args+=(--dependency "$arg")
+        done
+        pkg_make "${make_args[@]}" --url "$package_url"
     elif [[ $_binary -eq 1 ]]; then
         pkg_fromurl --bin "$package_url"
     elif [[ $_tarball -eq 1 ]]; then
