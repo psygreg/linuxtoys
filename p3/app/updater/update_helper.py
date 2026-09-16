@@ -249,7 +249,7 @@ def run_background_update():
             # unavailable to the installer.\n"
             "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
             "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
-            "curl -fsSL https://linux.toys/install.sh -o \"$_lt_installer\" || exit 1\n"
+            "curl -fsSL https://raw.githubusercontent.com/psygreg/linuxtoys/refs/heads/master/install.sh -o \"$_lt_installer\" || exit 1\n"
             "source \"$_lt_installer\"\n"
         )
 
@@ -267,13 +267,15 @@ def run_background_update():
 
         os.chmod(script_path, 0o700)
 
-        result = subprocess.run(
-            ["bash", script_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            env=os.environ.copy(),
-        )
+        with open(os.devnull, "r") as devnull:
+            result = subprocess.run(
+                ["bash", script_path],
+                stdin=devnull,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ.copy(),
+            )
 
         if result.returncode == 0:
             return True, ""
@@ -294,4 +296,3 @@ def run_background_update():
                 os.remove(script_path)
             except OSError:
                 pass
-
