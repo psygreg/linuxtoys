@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifesti viety",
   "registry_export_success_message": "Vietiin {count} rekisteröityä toimintoa kohteeseen:\n{path}",
   "bug_report_outdated_title": "Virheraportointi ei ole käytettävissä",
-  "bug_report_outdated_message": "Käytössäsi on LinuxToys ${current}, mutta nykyinen versio on ${latest}. Päivitä LinuxToys ennen virheraportin lähettämistä."
+  "bug_report_outdated_message": "Käytössäsi on LinuxToys ${current}, mutta nykyinen versio on ${latest}. Päivitä LinuxToys ennen virheraportin lähettämistä.",
+  "quarto_desc": "Avoimen lähdekoodin järjestelmä tieteelliseen ja tekniseen julkaisemiseen.",
+  "rbase_desc": "Vapaa ohjelmistoympäristö tilastolliseen laskentaan ja grafiikkaan."
 }

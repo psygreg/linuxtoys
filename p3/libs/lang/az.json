@@ -558,5 +558,7 @@
   "registry_export_success_title": "Manifest ixrac edildi",
   "registry_export_success_message": "{count} qeydə alınmış əməliyyat buraya ixrac edildi:\n{path}",
   "bug_report_outdated_title": "Xəta hesabatı əlçatan deyil",
-  "bug_report_outdated_message": "Siz LinuxToys ${current} istifadə edirsiniz, lakin cari versiya ${latest}-dir. Xəta hesabatı göndərməzdən əvvəl LinuxToys-u yeniləyin."
+  "bug_report_outdated_message": "Siz LinuxToys ${current} istifadə edirsiniz, lakin cari versiya ${latest}-dir. Xəta hesabatı göndərməzdən əvvəl LinuxToys-u yeniləyin.",
+  "quarto_desc": "Açıq mənbəli elmi və texniki nəşr sistemi.",
+  "rbase_desc": "Statistik hesablamalar və qrafika üçün pulsuz proqram təminatı mühiti."
 }

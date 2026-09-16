@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest ကို export လုပ်ပြီးပါပြီ",
   "registry_export_success_message": "မှတ်ပုံတင်ထားသော လုပ်ဆောင်ချက် {count} ခုကို ဤနေရာသို့ export လုပ်ပြီးပါပြီ:\n{path}",
   "bug_report_outdated_title": "Bug report ကို အသုံးမပြုနိုင်ပါ",
-  "bug_report_outdated_message": "သင်သည် LinuxToys ${current} ကို အသုံးပြုနေသော်လည်း လက်ရှိဗားရှင်းမှာ ${latest} ဖြစ်သည်။ Bug report မတင်မီ LinuxToys ကို update လုပ်ပါ။"
+  "bug_report_outdated_message": "သင်သည် LinuxToys ${current} ကို အသုံးပြုနေသော်လည်း လက်ရှိဗားရှင်းမှာ ${latest} ဖြစ်သည်။ Bug report မတင်မီ LinuxToys ကို update လုပ်ပါ။",
+  "quarto_desc": "သိပ္ပံနှင့် နည်းပညာဆိုင်ရာ ထုတ်ဝေမှုများအတွက် open source စနစ်။",
+  "rbase_desc": "စာရင်းအင်းတွက်ချက်မှုနှင့် ဂရပ်ဖစ်များအတွက် အခမဲ့နှင့် လွတ်လပ်သော software environment။"
 }

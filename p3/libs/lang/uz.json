@@ -558,5 +558,7 @@
   "registry_export_success_title": "Manifest eksport qilindi",
   "registry_export_success_message": "{count} ta ro‘yxatdan o‘tgan amal quyidagi manzilga eksport qilindi:\n{path}",
   "bug_report_outdated_title": "Xatolik hisoboti mavjud emas",
-  "bug_report_outdated_message": "Siz LinuxToys ${current} versiyasidan foydalanmoqdasiz, ammo joriy versiya ${latest}. Xatolik hisobotini yuborishdan oldin LinuxToys-ni yangilang."
+  "bug_report_outdated_message": "Siz LinuxToys ${current} versiyasidan foydalanmoqdasiz, ammo joriy versiya ${latest}. Xatolik hisobotini yuborishdan oldin LinuxToys-ni yangilang.",
+  "quarto_desc": "Ilmiy va texnik nashrlar uchun ochiq kodli tizim.",
+  "rbase_desc": "Statistik hisoblash va grafika uchun erkin dasturiy ta'minot muhiti."
 }

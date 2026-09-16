@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest eksporditud",
   "registry_export_success_message": "Eksporditi {count} registreeritud toimingut asukohta:\n{path}",
   "bug_report_outdated_title": "Veateade pole saadaval",
-  "bug_report_outdated_message": "Kasutate LinuxToysi versiooni ${current}, kuid praegune versioon on ${latest}. Enne veateate esitamist uuendage LinuxToys."
+  "bug_report_outdated_message": "Kasutate LinuxToysi versiooni ${current}, kuid praegune versioon on ${latest}. Enne veateate esitamist uuendage LinuxToys.",
+  "quarto_desc": "Avatud lähtekoodiga teadusliku ja tehnilise avaldamise süsteem.",
+  "rbase_desc": "Vaba tarkvarakeskkond statistilisteks arvutusteks ja graafikaks."
 }

@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifests eksportēts",
   "registry_export_success_message": "Eksportētas {count} reģistrētas darbības uz:\n{path}",
   "bug_report_outdated_title": "Kļūdas ziņojums nav pieejams",
-  "bug_report_outdated_message": "Jūs izmantojat LinuxToys ${current}, bet pašreizējā versija ir ${latest}. Pirms kļūdas ziņojuma iesniegšanas, lūdzu, atjauniniet LinuxToys."
+  "bug_report_outdated_message": "Jūs izmantojat LinuxToys ${current}, bet pašreizējā versija ir ${latest}. Pirms kļūdas ziņojuma iesniegšanas, lūdzu, atjauniniet LinuxToys.",
+  "quarto_desc": "Atvērtā pirmkoda sistēma zinātniskai un tehniskai publicēšanai.",
+  "rbase_desc": "Brīvās programmatūras vide statistiskajiem aprēķiniem un grafikai."
 }

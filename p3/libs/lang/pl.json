@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest wyeksportowany",
   "registry_export_success_message": "Wyeksportowano {count} zarejestrowanych operacji do:\n{path}",
   "bug_report_outdated_title": "Zgłaszanie błędów jest niedostępne",
-  "bug_report_outdated_message": "Używasz LinuxToys ${current}, ale aktualna wersja to ${latest}. Zaktualizuj LinuxToys przed wysłaniem zgłoszenia błędu."
+  "bug_report_outdated_message": "Używasz LinuxToys ${current}, ale aktualna wersja to ${latest}. Zaktualizuj LinuxToys przed wysłaniem zgłoszenia błędu.",
+  "quarto_desc": "System open source do publikacji naukowych i technicznych.",
+  "rbase_desc": "Wolne środowisko programistyczne do obliczeń statystycznych i grafiki."
 }

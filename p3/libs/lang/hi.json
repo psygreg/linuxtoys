@@ -539,5 +539,7 @@
   "registry_export_success_title": "Manifest एक्सपोर्ट किया गया",
   "registry_export_success_message": "{count} पंजीकृत ऑपरेशन यहाँ एक्सपोर्ट किए गए:\n{path}",
   "bug_report_outdated_title": "बग रिपोर्ट उपलब्ध नहीं है",
-  "bug_report_outdated_message": "आप LinuxToys ${current} चला रहे हैं, लेकिन वर्तमान संस्करण ${latest} है। बग रिपोर्ट सबमिट करने से पहले कृपया LinuxToys को अपडेट करें।"
+  "bug_report_outdated_message": "आप LinuxToys ${current} चला रहे हैं, लेकिन वर्तमान संस्करण ${latest} है। बग रिपोर्ट सबमिट करने से पहले कृपया LinuxToys को अपडेट करें।",
+  "quarto_desc": "वैज्ञानिक और तकनीकी प्रकाशन के लिए एक ओपन सोर्स सिस्टम।",
+  "rbase_desc": "सांख्यिकीय कंप्यूटिंग और ग्राफ़िक्स के लिए एक मुक्त सॉफ़्टवेयर वातावरण।"
 }

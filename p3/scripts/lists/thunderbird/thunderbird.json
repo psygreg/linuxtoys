@@ -1,4 +1,4 @@
-[  
+[
     {
         "name": "Thunderbird",
         "developer": "Mozilla",
@@ -7,6 +7,7 @@
         "repo": "https://www.thunderbird.net",
         "category": "office",
         "icon": "./thunderbird.svg",
+        "license": "MPL",
         "descriptions": "descriptions.json",
         "screenshots": "screenshots/",
         "type": "flathub",

@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifiesto exportado",
   "registry_export_success_message": "Se exportaron {count} operaciones registradas a:\n{path}",
   "bug_report_outdated_title": "Informe de errores no disponible",
-  "bug_report_outdated_message": "Estás ejecutando LinuxToys ${current}, pero la versión actual es ${latest}. Actualiza LinuxToys antes de enviar un informe de errores."
+  "bug_report_outdated_message": "Estás ejecutando LinuxToys ${current}, pero la versión actual es ${latest}. Actualiza LinuxToys antes de enviar un informe de errores.",
+  "quarto_desc": "Un sistema de código abierto para publicaciones científicas y técnicas.",
+  "rbase_desc": "Un entorno de software libre para computación estadística y gráficos."
 }

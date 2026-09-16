@@ -559,5 +559,7 @@
   "registry_export_success_title": "Na-export ang manifest",
   "registry_export_success_message": "Na-export ang {count} nakarehistrong operasyon sa:\n{path}",
   "bug_report_outdated_title": "Hindi available ang pag-report ng bug",
-  "bug_report_outdated_message": "Gumagamit ka ng LinuxToys ${current}, ngunit ang kasalukuyang bersyon ay ${latest}. Paki-update ang LinuxToys bago magsumite ng bug report."
+  "bug_report_outdated_message": "Gumagamit ka ng LinuxToys ${current}, ngunit ang kasalukuyang bersyon ay ${latest}. Paki-update ang LinuxToys bago magsumite ng bug report.",
+  "quarto_desc": "Isang open source na sistema para sa siyentipiko at teknikal na paglalathala.",
+  "rbase_desc": "Isang malayang software environment para sa statistical computing at graphics."
 }

@@ -558,5 +558,7 @@
   "registry_export_success_title": "Manifest je izvezen",
   "registry_export_success_message": "Izvezeno je {count} registrovanih operacija u:\n{path}",
   "bug_report_outdated_title": "Prijava greške nije dostupna",
-  "bug_report_outdated_message": "Koristite LinuxToys ${current}, ali trenutna verzija je ${latest}. Ažurirajte LinuxToys prije slanja prijave greške."
+  "bug_report_outdated_message": "Koristite LinuxToys ${current}, ali trenutna verzija je ${latest}. Ažurirajte LinuxToys prije slanja prijave greške.",
+  "quarto_desc": "Sistem otvorenog koda za naučno i tehničko objavljivanje.",
+  "rbase_desc": "Slobodno softversko okruženje za statističko računanje i grafiku."
 }

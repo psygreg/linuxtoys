@@ -1,4 +1,4 @@
-[  
+[
     {
         "name": "BedrockOnLinux",
         "description": "Minecraft Bedrock for Windows, running on Linux, with real Xbox sign-in, Friends, servers and Realms.",
@@ -6,6 +6,7 @@
         "repo": "https://github.com/Wyze3306/BedrockOnLinux",
         "category": "game",
         "icon": "minecraft.svg",
+        "license": "MIT",
         "descriptions": "descriptions.json",
         "screenshots": "screenshots/"
     }

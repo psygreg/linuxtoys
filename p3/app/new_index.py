@@ -13,7 +13,10 @@ NEW_FEATURES = {
     "Texmaker",
     "ZenNotes",
     "Save Desktop",
-    "Thunderbird"
+    "Thunderbird",
+    "Volt",
+    "R",
+    "Quarto"
 }
 _NEW_FEATURE_NAMES = frozenset(item.casefold() for item in NEW_FEATURES)
 

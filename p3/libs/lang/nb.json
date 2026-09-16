@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest eksportert",
   "registry_export_success_message": "Eksporterte {count} registrerte operasjoner til:\n{path}",
   "bug_report_outdated_title": "Feilrapportering er ikke tilgjengelig",
-  "bug_report_outdated_message": "Du kjører LinuxToys ${current}, men gjeldende versjon er ${latest}. Oppdater LinuxToys før du sender inn en feilrapport."
+  "bug_report_outdated_message": "Du kjører LinuxToys ${current}, men gjeldende versjon er ${latest}. Oppdater LinuxToys før du sender inn en feilrapport.",
+  "quarto_desc": "Et system med åpen kildekode for vitenskapelig og teknisk publisering.",
+  "rbase_desc": "Et fritt programvaremiljø for statistiske beregninger og grafikk."
 }

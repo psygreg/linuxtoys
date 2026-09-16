@@ -558,5 +558,7 @@
   "registry_export_success_title": "Manifest экспортлогдлоо",
   "registry_export_success_message": "{count} бүртгэгдсэн үйлдлийг дараах байршилд экспортлов:\n{path}",
   "bug_report_outdated_title": "Алдааны тайлан илгээх боломжгүй",
-  "bug_report_outdated_message": "Та LinuxToys ${current} хувилбарыг ашиглаж байна, харин одоогийн хувилбар нь ${latest}. Алдааны тайлан илгээхээсээ өмнө LinuxToys-ийг шинэчилнэ үү."
+  "bug_report_outdated_message": "Та LinuxToys ${current} хувилбарыг ашиглаж байна, харин одоогийн хувилбар нь ${latest}. Алдааны тайлан илгээхээсээ өмнө LinuxToys-ийг шинэчилнэ үү.",
+  "quarto_desc": "Шинжлэх ухаан, техникийн нийтлэл хэвлэн нийтлэх нээлттэй эхийн систем.",
+  "rbase_desc": "Статистик тооцоолол болон графикт зориулсан чөлөөт програм хангамжийн орчин."
 }

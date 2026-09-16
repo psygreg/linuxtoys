@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest geëxporteerd",
   "registry_export_success_message": "{count} geregistreerde bewerkingen geëxporteerd naar:\n{path}",
   "bug_report_outdated_title": "Bugrapportage niet beschikbaar",
-  "bug_report_outdated_message": "Je gebruikt LinuxToys ${current}, maar de huidige versie is ${latest}. Werk LinuxToys bij voordat je een bugrapport indient."
+  "bug_report_outdated_message": "Je gebruikt LinuxToys ${current}, maar de huidige versie is ${latest}. Werk LinuxToys bij voordat je een bugrapport indient.",
+  "quarto_desc": "Een opensourcesysteem voor wetenschappelijke en technische publicaties.",
+  "rbase_desc": "Een vrije softwareomgeving voor statistische berekeningen en grafieken."
 }

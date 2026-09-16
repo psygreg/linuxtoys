@@ -559,5 +559,7 @@
   "registry_export_success_title": "تم تصدير ملف manifest",
   "registry_export_success_message": "تم تصدير {count} من العمليات المسجلة إلى:\n{path}",
   "bug_report_outdated_title": "الإبلاغ عن الأخطاء غير متاح",
-  "bug_report_outdated_message": "أنت تستخدم LinuxToys ${current}، لكن الإصدار الحالي هو ${latest}. يرجى تحديث LinuxToys قبل إرسال تقرير عن خطأ."
+  "bug_report_outdated_message": "أنت تستخدم LinuxToys ${current}، لكن الإصدار الحالي هو ${latest}. يرجى تحديث LinuxToys قبل إرسال تقرير عن خطأ.",
+  "quarto_desc": "نظام مفتوح المصدر للنشر العلمي والتقني.",
+  "rbase_desc": "بيئة برمجية حرة للحوسبة الإحصائية والرسوميات."
 }

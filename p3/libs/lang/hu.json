@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest exportálva",
   "registry_export_success_message": "{count} regisztrált művelet exportálva ide:\n{path}",
   "bug_report_outdated_title": "A hibajelentés nem érhető el",
-  "bug_report_outdated_message": "A LinuxToys ${current} verzióját használja, de a jelenlegi verzió ${latest}. Hibajelentés beküldése előtt frissítse a LinuxToyst."
+  "bug_report_outdated_message": "A LinuxToys ${current} verzióját használja, de a jelenlegi verzió ${latest}. Hibajelentés beküldése előtt frissítse a LinuxToyst.",
+  "quarto_desc": "Nyílt forráskódú rendszer tudományos és műszaki publikáláshoz.",
+  "rbase_desc": "Szabad szoftverkörnyezet statisztikai számításokhoz és grafikákhoz."
 }

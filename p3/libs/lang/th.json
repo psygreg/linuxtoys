@@ -559,5 +559,7 @@
   "registry_export_success_title": "ส่งออก manifest แล้ว",
   "registry_export_success_message": "ส่งออกการดำเนินการที่ลงทะเบียน {count} รายการไปยัง:\n{path}",
   "bug_report_outdated_title": "ไม่สามารถรายงานข้อบกพร่องได้",
-  "bug_report_outdated_message": "คุณกำลังใช้ LinuxToys ${current} แต่เวอร์ชันปัจจุบันคือ ${latest} โปรดอัปเดต LinuxToys ก่อนส่งรายงานข้อบกพร่อง"
+  "bug_report_outdated_message": "คุณกำลังใช้ LinuxToys ${current} แต่เวอร์ชันปัจจุบันคือ ${latest} โปรดอัปเดต LinuxToys ก่อนส่งรายงานข้อบกพร่อง",
+  "quarto_desc": "ระบบโอเพนซอร์สสำหรับการเผยแพร่ผลงานทางวิทยาศาสตร์และเทคนิค",
+  "rbase_desc": "สภาพแวดล้อมซอฟต์แวร์เสรีสำหรับการคำนวณทางสถิติและกราฟิก"
 }

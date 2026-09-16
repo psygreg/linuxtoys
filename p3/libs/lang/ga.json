@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest easpórtáilte",
   "registry_export_success_message": "Easpórtáladh {count} oibríocht chláraithe chuig:\n{path}",
   "bug_report_outdated_title": "Níl tuairisciú fabhtanna ar fáil",
-  "bug_report_outdated_message": "Tá LinuxToys ${current} á rith agat, ach is é ${latest} an leagan reatha. Nuashonraigh LinuxToys sula gcuireann tú tuairisc fabhtanna isteach."
+  "bug_report_outdated_message": "Tá LinuxToys ${current} á rith agat, ach is é ${latest} an leagan reatha. Nuashonraigh LinuxToys sula gcuireann tú tuairisc fabhtanna isteach.",
+  "quarto_desc": "Córas foinse oscailte le haghaidh foilsiú eolaíoch agus teicniúil.",
+  "rbase_desc": "Timpeallacht bogearraí saor in aisce le haghaidh ríomhaireacht staitistiúil agus grafaicí."
 }

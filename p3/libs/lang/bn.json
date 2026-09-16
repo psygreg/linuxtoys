@@ -558,5 +558,7 @@
   "registry_export_success_title": "Manifest এক্সপোর্ট হয়েছে",
   "registry_export_success_message": "{count}টি নিবন্ধিত অপারেশন এখানে এক্সপোর্ট করা হয়েছে:\n{path}",
   "bug_report_outdated_title": "বাগ রিপোর্ট উপলব্ধ নয়",
-  "bug_report_outdated_message": "আপনি LinuxToys ${current} ব্যবহার করছেন, কিন্তু বর্তমান সংস্করণ হলো ${latest}। বাগ রিপোর্ট জমা দেওয়ার আগে অনুগ্রহ করে LinuxToys আপডেট করুন।"
+  "bug_report_outdated_message": "আপনি LinuxToys ${current} ব্যবহার করছেন, কিন্তু বর্তমান সংস্করণ হলো ${latest}। বাগ রিপোর্ট জমা দেওয়ার আগে অনুগ্রহ করে LinuxToys আপডেট করুন।",
+  "quarto_desc": "বৈজ্ঞানিক ও প্রযুক্তিগত প্রকাশনার জন্য একটি ওপেন সোর্স সিস্টেম।",
+  "rbase_desc": "পরিসংখ্যানগত গণনা ও গ্রাফিক্সের জন্য একটি মুক্ত সফটওয়্যার পরিবেশ।"
 }

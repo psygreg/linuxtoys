@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest diekspor",
   "registry_export_success_message": "{count} operasi terdaftar diekspor ke:\n{path}",
   "bug_report_outdated_title": "Laporan bug tidak tersedia",
-  "bug_report_outdated_message": "Anda menjalankan LinuxToys ${current}, tetapi versi saat ini adalah ${latest}. Harap perbarui LinuxToys sebelum mengirim laporan bug."
+  "bug_report_outdated_message": "Anda menjalankan LinuxToys ${current}, tetapi versi saat ini adalah ${latest}. Harap perbarui LinuxToys sebelum mengirim laporan bug.",
+  "quarto_desc": "Sistem sumber terbuka untuk penerbitan ilmiah dan teknis.",
+  "rbase_desc": "Lingkungan perangkat lunak bebas untuk komputasi statistik dan grafis."
 }

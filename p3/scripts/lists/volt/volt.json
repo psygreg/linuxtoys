@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Volt",
+        "description": "Control panel for Vulkan games on Linux, an AMD Adrenaline and NVIDIA Settings Linux alternative.",
+        "developer": "pythonlover02",
+        "repo": "https://github.com/pythonlover02/volt-gui",
+        "category": "game",
+        "icon": "device.svg",
+        "license": "GPLv3",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "type": "make",
+        "make-source": "tar",
+        "make-command": "make install-user",
+        "donate": "https://ko-fi.com/pythonlover02",
+        "overrides": {
+            "post": "./volt-post.sh"
+        }
+    }
+]

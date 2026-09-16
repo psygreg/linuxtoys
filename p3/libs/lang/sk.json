@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest exportovaný",
   "registry_export_success_message": "Exportovaných {count} registrovaných operácií do:\n{path}",
   "bug_report_outdated_title": "Hlásenie chyby nie je dostupné",
-  "bug_report_outdated_message": "Používate LinuxToys ${current}, ale aktuálna verzia je ${latest}. Pred odoslaním hlásenia chyby aktualizujte LinuxToys."
+  "bug_report_outdated_message": "Používate LinuxToys ${current}, ale aktuálna verzia je ${latest}. Pred odoslaním hlásenia chyby aktualizujte LinuxToys.",
+  "quarto_desc": "Open source systém na vedecké a technické publikovanie.",
+  "rbase_desc": "Slobodné softvérové prostredie na štatistické výpočty a grafiku."
 }

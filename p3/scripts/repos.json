@@ -1082,5 +1082,35 @@
         "category": "utils",
         "icon": "rcloneui.png",
         "package-name": "Rclone.UI_amd64.AppImage"
+    },
+    {
+        "name": "Quarto",
+        "description": "An open-source scientific and technical publishing system.",
+        "description_tag": "quarto_desc",
+        "repo": "https://github.com/quarto-dev/quarto-cli",
+        "category": "edu",
+        "icon": "quarto.png",
+        "type": "tar",
+        "overrides": {
+            "post": "path_link \"$LINUXTOYS_TARBALL_DIR/bin/quarto\""
+        }
+    },
+    {
+        "name": "R",
+        "description": "A free software environment for statistical computing and graphics.",
+        "description_tag": "rbase_desc",
+        "repo": "https://www.r-project.org/",
+        "category": "devs",
+        "icon": "rbase.svg",
+        "type": "native",
+        "package-name": {
+            "solus": "r",
+            "arch": "r",
+            "cachy": "r",
+            "fedora": "R-base",
+            "suse": "R-base",
+            "ubuntu": "r-base",
+            "debian": "r-base"
+        }
     }
 ]

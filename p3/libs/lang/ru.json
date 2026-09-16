@@ -559,5 +559,7 @@
   "registry_export_success_title": "Манифест экспортирован",
   "registry_export_success_message": "Экспортировано зарегистрированных операций: {count}\nПуть: {path}",
   "bug_report_outdated_title": "Отчёт об ошибке недоступен",
-  "bug_report_outdated_message": "Вы используете LinuxToys ${current}, но текущая версия — ${latest}. Обновите LinuxToys перед отправкой отчёта об ошибке."
+  "bug_report_outdated_message": "Вы используете LinuxToys ${current}, но текущая версия — ${latest}. Обновите LinuxToys перед отправкой отчёта об ошибке.",
+  "quarto_desc": "Система с открытым исходным кодом для научных и технических публикаций.",
+  "rbase_desc": "Свободная программная среда для статистических вычислений и графики."
 }

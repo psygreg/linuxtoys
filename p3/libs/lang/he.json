@@ -559,5 +559,7 @@
   "registry_export_success_title": "ה-manifest יוצא",
   "registry_export_success_message": "יוצאו {count} פעולות רשומות אל:\n{path}",
   "bug_report_outdated_title": "דיווח על באג אינו זמין",
-  "bug_report_outdated_message": "אתה משתמש ב-LinuxToys ${current}, אך הגרסה הנוכחית היא ${latest}. יש לעדכן את LinuxToys לפני שליחת דיווח על באג."
+  "bug_report_outdated_message": "אתה משתמש ב-LinuxToys ${current}, אך הגרסה הנוכחית היא ${latest}. יש לעדכן את LinuxToys לפני שליחת דיווח על באג.",
+  "quarto_desc": "מערכת בקוד פתוח לפרסום מדעי וטכני.",
+  "rbase_desc": "סביבת תוכנה חופשית לחישובים סטטיסטיים ולגרפיקה."
 }

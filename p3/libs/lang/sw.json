@@ -557,5 +557,7 @@
   "registry_export_success_title": "Manifest imehamishwa",
   "registry_export_success_message": "Shughuli {count} zilizosajiliwa zimehamishwa kwenda:\n{path}",
   "bug_report_outdated_title": "Ripoti ya hitilafu haipatikani",
-  "bug_report_outdated_message": "Unatumia LinuxToys ${current}, lakini toleo la sasa ni ${latest}. Tafadhali sasisha LinuxToys kabla ya kuwasilisha ripoti ya hitilafu."
+  "bug_report_outdated_message": "Unatumia LinuxToys ${current}, lakini toleo la sasa ni ${latest}. Tafadhali sasisha LinuxToys kabla ya kuwasilisha ripoti ya hitilafu.",
+  "quarto_desc": "Mfumo wa chanzo huria kwa uchapishaji wa kisayansi na kiufundi.",
+  "rbase_desc": "Mazingira ya programu huru kwa ukokotoaji wa takwimu na michoro."
 }

@@ -559,5 +559,7 @@
   "registry_export_success_title": "Το manifest εξήχθη",
   "registry_export_success_message": "Εξήχθησαν {count} καταχωρημένες λειτουργίες στο:\n{path}",
   "bug_report_outdated_title": "Η αναφορά σφάλματος δεν είναι διαθέσιμη",
-  "bug_report_outdated_message": "Χρησιμοποιείτε το LinuxToys ${current}, αλλά η τρέχουσα έκδοση είναι η ${latest}. Ενημερώστε το LinuxToys πριν υποβάλετε αναφορά σφάλματος."
+  "bug_report_outdated_message": "Χρησιμοποιείτε το LinuxToys ${current}, αλλά η τρέχουσα έκδοση είναι η ${latest}. Ενημερώστε το LinuxToys πριν υποβάλετε αναφορά σφάλματος.",
+  "quarto_desc": "Ένα σύστημα ανοιχτού κώδικα για επιστημονικές και τεχνικές δημοσιεύσεις.",
+  "rbase_desc": "Ένα περιβάλλον ελεύθερου λογισμικού για στατιστικούς υπολογισμούς και γραφικά."
 }

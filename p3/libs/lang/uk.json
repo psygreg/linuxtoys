@@ -559,5 +559,7 @@
   "registry_export_success_title": "Маніфест експортовано",
   "registry_export_success_message": "Експортовано зареєстрованих операцій: {count}\nШлях: {path}",
   "bug_report_outdated_title": "Звіт про помилку недоступний",
-  "bug_report_outdated_message": "Ви використовуєте LinuxToys ${current}, але поточна версія — ${latest}. Оновіть LinuxToys перед надсиланням звіту про помилку."
+  "bug_report_outdated_message": "Ви використовуєте LinuxToys ${current}, але поточна версія — ${latest}. Оновіть LinuxToys перед надсиланням звіту про помилку.",
+  "quarto_desc": "Система з відкритим кодом для наукових і технічних публікацій.",
+  "rbase_desc": "Вільне програмне середовище для статистичних обчислень і графіки."
 }

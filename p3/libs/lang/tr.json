@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest dışa aktarıldı",
   "registry_export_success_message": "{count} kayıtlı işlem şuraya dışa aktarıldı:\n{path}",
   "bug_report_outdated_title": "Hata bildirimi kullanılamıyor",
-  "bug_report_outdated_message": "LinuxToys ${current} sürümünü kullanıyorsunuz, ancak güncel sürüm ${latest}. Hata bildirimi göndermeden önce lütfen LinuxToys'u güncelleyin."
+  "bug_report_outdated_message": "LinuxToys ${current} sürümünü kullanıyorsunuz, ancak güncel sürüm ${latest}. Hata bildirimi göndermeden önce lütfen LinuxToys'u güncelleyin.",
+  "quarto_desc": "Bilimsel ve teknik yayıncılık için açık kaynaklı bir sistem.",
+  "rbase_desc": "İstatistiksel hesaplama ve grafikler için özgür bir yazılım ortamı."
 }

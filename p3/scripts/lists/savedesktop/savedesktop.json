@@ -1,4 +1,4 @@
-[  
+[
     {
         "name": "Save Desktop",
         "developer": "vikdevelop",
@@ -7,6 +7,7 @@
         "repo": "https://github.com/vikdevelop/SaveDesktop",
         "category": "theming",
         "icon": "./savedesktop.svg",
+        "license": "GPLv3",
         "descriptions": "descriptions.json",
         "screenshots": "screenshots/",
         "type": "flathub",

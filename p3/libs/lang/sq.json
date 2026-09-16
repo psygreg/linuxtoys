@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifesti u eksportua",
   "registry_export_success_message": "U eksportuan {count} veprime të regjistruara në:\n{path}",
   "bug_report_outdated_title": "Raportimi i gabimeve nuk është i disponueshëm",
-  "bug_report_outdated_message": "Po përdorni LinuxToys ${current}, por versioni aktual është ${latest}. Përditësoni LinuxToys përpara se të dërgoni një raport gabimi."
+  "bug_report_outdated_message": "Po përdorni LinuxToys ${current}, por versioni aktual është ${latest}. Përditësoni LinuxToys përpara se të dërgoni një raport gabimi.",
+  "quarto_desc": "Një sistem me burim të hapur për publikime shkencore dhe teknike.",
+  "rbase_desc": "Një mjedis softuerësh të lirë për llogaritje statistikore dhe grafikë."
 }

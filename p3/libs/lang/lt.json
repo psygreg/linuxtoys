@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifestas eksportuotas",
   "registry_export_success_message": "Eksportuota {count} užregistruotų operacijų į:\n{path}",
   "bug_report_outdated_title": "Pranešimas apie klaidą nepasiekiamas",
-  "bug_report_outdated_message": "Naudojate LinuxToys ${current}, tačiau dabartinė versija yra ${latest}. Prieš pateikdami pranešimą apie klaidą, atnaujinkite LinuxToys."
+  "bug_report_outdated_message": "Naudojate LinuxToys ${current}, tačiau dabartinė versija yra ${latest}. Prieš pateikdami pranešimą apie klaidą, atnaujinkite LinuxToys.",
+  "quarto_desc": "Atvirojo kodo sistema mokslinėms ir techninėms publikacijoms.",
+  "rbase_desc": "Laisvosios programinės įrangos aplinka statistiniams skaičiavimams ir grafikai."
 }

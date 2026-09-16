@@ -7,6 +7,7 @@
         "repo": "https://github.com/zed-industries/zed",
         "category": "ides",
         "icon": "zed.png",
+        "license": "GPLv3",
         "descriptions": "descriptions.json",
         "screenshots": "screenshots/",
         "type": "tar",

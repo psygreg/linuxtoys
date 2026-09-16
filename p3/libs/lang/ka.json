@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest ექსპორტირებულია",
   "registry_export_success_message": "{count} რეგისტრირებული ოპერაცია ექსპორტირებულია მისამართზე:\n{path}",
   "bug_report_outdated_title": "შეცდომის ანგარიში მიუწვდომელია",
-  "bug_report_outdated_message": "თქვენ იყენებთ LinuxToys ${current}-ს, მაგრამ მიმდინარე ვერსიაა ${latest}. შეცდომის ანგარიშის გაგზავნამდე გთხოვთ განაახლოთ LinuxToys."
+  "bug_report_outdated_message": "თქვენ იყენებთ LinuxToys ${current}-ს, მაგრამ მიმდინარე ვერსიაა ${latest}. შეცდომის ანგარიშის გაგზავნამდე გთხოვთ განაახლოთ LinuxToys.",
+  "quarto_desc": "ღია კოდის სისტემა სამეცნიერო და ტექნიკური პუბლიკაციებისთვის.",
+  "rbase_desc": "თავისუფალი პროგრამული გარემო სტატისტიკური გამოთვლებისა და გრაფიკისთვის."
 }

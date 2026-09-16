@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest exportat",
   "registry_export_success_message": "S-au exportat {count} operații înregistrate în:\n{path}",
   "bug_report_outdated_title": "Raportarea erorilor nu este disponibilă",
-  "bug_report_outdated_message": "Folosiți LinuxToys ${current}, dar versiunea actuală este ${latest}. Actualizați LinuxToys înainte de a trimite un raport de eroare."
+  "bug_report_outdated_message": "Folosiți LinuxToys ${current}, dar versiunea actuală este ${latest}. Actualizați LinuxToys înainte de a trimite un raport de eroare.",
+  "quarto_desc": "Un sistem open source pentru publicare științifică și tehnică.",
+  "rbase_desc": "Un mediu software liber pentru calcule statistice și grafică."
 }

@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest 내보내기 완료",
   "registry_export_success_message": "등록된 작업 {count}개를 다음 위치로 내보냈습니다:\n{path}",
   "bug_report_outdated_title": "버그 보고를 사용할 수 없음",
-  "bug_report_outdated_message": "LinuxToys ${current}을(를) 실행 중이지만 현재 버전은 ${latest}입니다. 버그 보고서를 제출하기 전에 LinuxToys를 업데이트해 주세요."
+  "bug_report_outdated_message": "LinuxToys ${current}을(를) 실행 중이지만 현재 버전은 ${latest}입니다. 버그 보고서를 제출하기 전에 LinuxToys를 업데이트해 주세요.",
+  "quarto_desc": "과학 및 기술 출판을 위한 오픈 소스 시스템입니다.",
+  "rbase_desc": "통계 계산 및 그래픽을 위한 자유 소프트웨어 환경입니다."
 }

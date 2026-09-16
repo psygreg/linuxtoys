@@ -6,6 +6,7 @@
         "repo": "https://kdenlive.org",
         "category": "office",
         "icon": "kdenlive.svg",
+        "license": "GPLv3",
         "type": "url",
         "urls": {
             "appimage": {

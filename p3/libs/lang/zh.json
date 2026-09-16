@@ -561,5 +561,7 @@
   "registry_export_success_title": "清单已导出",
   "registry_export_success_message": "已将 {count} 个已注册操作导出到：\n{path}",
   "bug_report_outdated_title": "无法提交错误报告",
-  "bug_report_outdated_message": "您正在运行 LinuxToys ${current}，但当前版本为 ${latest}。请先更新 LinuxToys，再提交错误报告。"
+  "bug_report_outdated_message": "您正在运行 LinuxToys ${current}，但当前版本为 ${latest}。请先更新 LinuxToys，再提交错误报告。",
+  "quarto_desc": "一个用于科学和技术出版的开源系统。",
+  "rbase_desc": "用于统计计算和图形处理的自由软件环境。"
 }

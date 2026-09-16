@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest निर्यात गरियो",
   "registry_export_success_message": "{count} दर्ता गरिएका कार्यहरू यहाँ निर्यात गरियो:\n{path}",
   "bug_report_outdated_title": "बग रिपोर्ट उपलब्ध छैन",
-  "bug_report_outdated_message": "तपाईं LinuxToys ${current} चलाउँदै हुनुहुन्छ, तर हालको संस्करण ${latest} हो। बग रिपोर्ट पेश गर्नुअघि कृपया LinuxToys अद्यावधिक गर्नुहोस्।"
+  "bug_report_outdated_message": "तपाईं LinuxToys ${current} चलाउँदै हुनुहुन्छ, तर हालको संस्करण ${latest} हो। बग रिपोर्ट पेश गर्नुअघि कृपया LinuxToys अद्यावधिक गर्नुहोस्।",
+  "quarto_desc": "वैज्ञानिक तथा प्राविधिक प्रकाशनका लागि खुला स्रोत प्रणाली।",
+  "rbase_desc": "सांख्यिकीय गणना र ग्राफिक्सका लागि स्वतन्त्र सफ्टवेयर वातावरण।"
 }

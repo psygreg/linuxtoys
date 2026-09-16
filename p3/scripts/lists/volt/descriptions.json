@@ -1,0 +1,181 @@
+{
+  "description_tag": "vkvolt_desc",
+  "long-description": "md/en.md",
+  "description_long_tag": "vkvolt_long",
+  "en": {
+    "vkvolt_long": "md/en.md",
+    "vkvolt_desc": "Control panel for Vulkan games on Linux, an AMD Adrenaline and NVIDIA Settings Linux alternative."
+  },
+  "pt": {
+    "vkvolt_long": "md/pt.md",
+    "vkvolt_desc": "Painel de controle para jogos Vulkan no Linux, uma alternativa ao AMD Adrenalin e NVIDIA Settings para Linux."
+  },
+  "am": {
+    "vkvolt_desc": "በLinux ላይ ለVulkan ጨዋታዎች የመቆጣጠሪያ ፓነል፣ ከAMD Adrenalin እና NVIDIA Settings የLinux አማራጭ።"
+  },
+  "ar": {
+    "vkvolt_desc": "لوحة تحكم لألعاب Vulkan على Linux، بديل لنظام Linux عن AMD Adrenalin وNVIDIA Settings."
+  },
+  "az": {
+    "vkvolt_desc": "Linux-da Vulkan oyunları üçün idarəetmə paneli, AMD Adrenalin və NVIDIA Settings-ə Linux alternativi."
+  },
+  "bg": {
+    "vkvolt_desc": "Контролен панел за Vulkan игри под Linux, Linux алтернатива на AMD Adrenalin и NVIDIA Settings."
+  },
+  "bn": {
+    "vkvolt_desc": "Linux-এ Vulkan গেমের জন্য একটি কন্ট্রোল প্যানেল, AMD Adrenalin এবং NVIDIA Settings-এর Linux বিকল্প।"
+  },
+  "bs": {
+    "vkvolt_desc": "Kontrolna ploča za Vulkan igre na Linuxu, Linux alternativa za AMD Adrenalin i NVIDIA Settings."
+  },
+  "cs": {
+    "vkvolt_desc": "Ovládací panel pro hry využívající Vulkan na Linuxu, linuxová alternativa k AMD Adrenalin a NVIDIA Settings."
+  },
+  "da": {
+    "vkvolt_desc": "Kontrolpanel til Vulkan-spil på Linux, et Linux-alternativ til AMD Adrenalin og NVIDIA Settings."
+  },
+  "de": {
+    "vkvolt_desc": "Systemsteuerung für Vulkan-Spiele unter Linux, eine Linux-Alternative zu AMD Adrenalin und NVIDIA Settings."
+  },
+  "el": {
+    "vkvolt_desc": "Πίνακας ελέγχου για παιχνίδια Vulkan στο Linux, μια εναλλακτική λύση για Linux στα AMD Adrenalin και NVIDIA Settings."
+  },
+  "es": {
+    "vkvolt_desc": "Panel de control para juegos Vulkan en Linux, una alternativa para Linux a AMD Adrenalin y NVIDIA Settings."
+  },
+  "et": {
+    "vkvolt_desc": "Linuxi Vulkani mängude juhtpaneel, Linuxi alternatiiv AMD Adrenalinile ja NVIDIA Settingsile."
+  },
+  "fa": {
+    "vkvolt_desc": "پنل کنترل بازی‌های Vulkan در Linux، جایگزینی لینوکسی برای AMD Adrenalin و NVIDIA Settings."
+  },
+  "fi": {
+    "vkvolt_desc": "Ohjauspaneeli Vulkan-peleille Linuxissa, Linux-vaihtoehto AMD Adrenalinille ja NVIDIA Settingsille."
+  },
+  "fr": {
+    "vkvolt_desc": "Panneau de contrôle pour les jeux Vulkan sous Linux, une alternative Linux à AMD Adrenalin et NVIDIA Settings."
+  },
+  "ga": {
+    "vkvolt_desc": "Painéal rialaithe do chluichí Vulkan ar Linux, rogha Linux ar AMD Adrenalin agus NVIDIA Settings."
+  },
+  "he": {
+    "vkvolt_desc": "לוח בקרה למשחקי Vulkan ב-Linux, חלופה ל-Linux עבור AMD Adrenalin ו-NVIDIA Settings."
+  },
+  "hi": {
+    "vkvolt_desc": "Linux पर Vulkan गेम के लिए कंट्रोल पैनल, AMD Adrenalin और NVIDIA Settings का Linux विकल्प।"
+  },
+  "hr": {
+    "vkvolt_desc": "Upravljačka ploča za Vulkan igre na Linuxu, Linux alternativa za AMD Adrenalin i NVIDIA Settings."
+  },
+  "hu": {
+    "vkvolt_desc": "Vezérlőpult Vulkan-játékokhoz Linuxon, az AMD Adrenalin és az NVIDIA Settings linuxos alternatívája."
+  },
+  "hy": {
+    "vkvolt_desc": "Linux-ում Vulkan խաղերի կառավարման վահանակ՝ AMD Adrenalin-ի և NVIDIA Settings-ի Linux այլընտրանք։"
+  },
+  "id": {
+    "vkvolt_desc": "Panel kontrol untuk game Vulkan di Linux, alternatif Linux untuk AMD Adrenalin dan NVIDIA Settings."
+  },
+  "is": {
+    "vkvolt_desc": "Stjórnborð fyrir Vulkan-leiki á Linux, Linux-valkostur við AMD Adrenalin og NVIDIA Settings."
+  },
+  "it": {
+    "vkvolt_desc": "Pannello di controllo per i giochi Vulkan su Linux, un'alternativa Linux ad AMD Adrenalin e NVIDIA Settings."
+  },
+  "ja": {
+    "vkvolt_desc": "Linux 上の Vulkan ゲーム向けコントロールパネル。AMD Adrenalin と NVIDIA Settings の Linux 向け代替ツールです。"
+  },
+  "ka": {
+    "vkvolt_desc": "Linux-ზე Vulkan თამაშების მართვის პანელი, AMD Adrenalin-ისა და NVIDIA Settings-ის Linux ალტერნატივა."
+  },
+  "km": {
+    "vkvolt_desc": "ផ្ទាំងបញ្ជាសម្រាប់ហ្គេម Vulkan លើ Linux ដែលជាជម្រើសសម្រាប់ Linux ជំនួស AMD Adrenalin និង NVIDIA Settings។"
+  },
+  "ko": {
+    "vkvolt_desc": "Linux의 Vulkan 게임을 위한 제어판으로, AMD Adrenalin 및 NVIDIA Settings의 Linux 대안입니다."
+  },
+  "lo": {
+    "vkvolt_desc": "ແຜງຄວບຄຸມສຳລັບເກມ Vulkan ເທິງ Linux, ເປັນທາງເລືອກສຳລັບ Linux ແທນ AMD Adrenalin ແລະ NVIDIA Settings."
+  },
+  "lt": {
+    "vkvolt_desc": "„Vulkan“ žaidimų valdymo skydelis sistemoje „Linux“, „AMD Adrenalin“ ir „NVIDIA Settings“ alternatyva „Linux“ sistemai."
+  },
+  "lv": {
+    "vkvolt_desc": "Vulkan spēļu vadības panelis operētājsistēmā Linux, Linux alternatīva AMD Adrenalin un NVIDIA Settings."
+  },
+  "mn": {
+    "vkvolt_desc": "Linux дээрх Vulkan тоглоомуудад зориулсан удирдлагын самбар, AMD Adrenalin болон NVIDIA Settings-ийн Linux хувилбар."
+  },
+  "ms": {
+    "vkvolt_desc": "Panel kawalan untuk permainan Vulkan di Linux, alternatif Linux kepada AMD Adrenalin dan NVIDIA Settings."
+  },
+  "my": {
+    "vkvolt_desc": "Linux ပေါ်ရှိ Vulkan ဂိမ်းများအတွက် ထိန်းချုပ်မှု panel၊ AMD Adrenalin နှင့် NVIDIA Settings တို့၏ Linux အစားထိုးရွေးချယ်စရာ။"
+  },
+  "nb": {
+    "vkvolt_desc": "Kontrollpanel for Vulkan-spill på Linux, et Linux-alternativ til AMD Adrenalin og NVIDIA Settings."
+  },
+  "ne": {
+    "vkvolt_desc": "Linux मा Vulkan खेलहरूका लागि नियन्त्रण प्यानल, AMD Adrenalin र NVIDIA Settings को Linux विकल्प।"
+  },
+  "nl": {
+    "vkvolt_desc": "Configuratiescherm voor Vulkan-games op Linux, een Linux-alternatief voor AMD Adrenalin en NVIDIA Settings."
+  },
+  "pl": {
+    "vkvolt_desc": "Panel sterowania dla gier Vulkan w systemie Linux, linuksowa alternatywa dla AMD Adrenalin i NVIDIA Settings."
+  },
+  "ro": {
+    "vkvolt_desc": "Panou de control pentru jocuri Vulkan pe Linux, o alternativă Linux la AMD Adrenalin și NVIDIA Settings."
+  },
+  "ru": {
+    "vkvolt_desc": "Панель управления для Vulkan-игр в Linux, Linux-альтернатива AMD Adrenalin и NVIDIA Settings."
+  },
+  "sk": {
+    "vkvolt_desc": "Ovládací panel pre hry využívajúce Vulkan v Linuxe, linuxová alternatíva k AMD Adrenalin a NVIDIA Settings."
+  },
+  "sl": {
+    "vkvolt_desc": "Nadzorna plošča za igre Vulkan v Linuxu, alternativa za Linux programoma AMD Adrenalin in NVIDIA Settings."
+  },
+  "sq": {
+    "vkvolt_desc": "Panel kontrolli për lojërat Vulkan në Linux, një alternativë Linux ndaj AMD Adrenalin dhe NVIDIA Settings."
+  },
+  "sr": {
+    "vkvolt_desc": "Контролна табла за Vulkan игре на Linux-у, Linux алтернатива за AMD Adrenalin и NVIDIA Settings."
+  },
+  "sv": {
+    "vkvolt_desc": "Kontrollpanel för Vulkan-spel på Linux, ett Linux-alternativ till AMD Adrenalin och NVIDIA Settings."
+  },
+  "sw": {
+    "vkvolt_desc": "Paneli ya kudhibiti michezo ya Vulkan kwenye Linux, mbadala wa Linux kwa AMD Adrenalin na NVIDIA Settings."
+  },
+  "ta": {
+    "vkvolt_desc": "Linux-இல் Vulkan விளையாட்டுகளுக்கான கட்டுப்பாட்டுப் பலகம், AMD Adrenalin மற்றும் NVIDIA Settings-க்கான Linux மாற்று."
+  },
+  "tg": {
+    "vkvolt_desc": "Лавҳаи идоракунӣ барои бозиҳои Vulkan дар Linux, алтернативаи Linux ба AMD Adrenalin ва NVIDIA Settings."
+  },
+  "th": {
+    "vkvolt_desc": "แผงควบคุมสำหรับเกม Vulkan บน Linux ทางเลือกบน Linux สำหรับ AMD Adrenalin และ NVIDIA Settings"
+  },
+  "tl": {
+    "vkvolt_desc": "Control panel para sa mga larong Vulkan sa Linux, isang alternatibo sa Linux para sa AMD Adrenalin at NVIDIA Settings."
+  },
+  "tr": {
+    "vkvolt_desc": "Linux'ta Vulkan oyunları için kontrol paneli, AMD Adrenalin ve NVIDIA Settings'e Linux alternatifi."
+  },
+  "uk": {
+    "vkvolt_desc": "Панель керування для Vulkan-ігор у Linux, Linux-альтернатива AMD Adrenalin і NVIDIA Settings."
+  },
+  "ur": {
+    "vkvolt_desc": "Linux پر Vulkan گیمز کے لیے کنٹرول پینل، AMD Adrenalin اور NVIDIA Settings کا Linux متبادل۔"
+  },
+  "uz": {
+    "vkvolt_desc": "Linux'dagi Vulkan o'yinlari uchun boshqaruv paneli, AMD Adrenalin va NVIDIA Settings'ga Linux muqobili."
+  },
+  "vi": {
+    "vkvolt_desc": "Bảng điều khiển cho trò chơi Vulkan trên Linux, một giải pháp thay thế AMD Adrenalin và NVIDIA Settings dành cho Linux."
+  },
+  "zh": {
+    "vkvolt_desc": "Linux 上的 Vulkan 游戏控制面板，是 AMD Adrenalin 和 NVIDIA Settings 的 Linux 替代方案。"
+  }
+}

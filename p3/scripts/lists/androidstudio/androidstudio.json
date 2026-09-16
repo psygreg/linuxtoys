@@ -7,9 +7,10 @@
         "repo": "https://developer.android.com/studio",
         "category": "ides",
         "icon": "android-studio.svg",
+        "license": "Apache",
         "descriptions": "descriptions.json",
         "screenshots": "screenshots/",
-        "type": "url", 
+        "type": "url",
         "urls": {
             "tar": {
                 "env": "URL"

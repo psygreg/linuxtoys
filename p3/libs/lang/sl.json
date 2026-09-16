@@ -559,5 +559,7 @@
   "registry_export_success_title": "Manifest izvožen",
   "registry_export_success_message": "Izvoženih {count} registriranih operacij v:\n{path}",
   "bug_report_outdated_title": "Poročanje o napaki ni na voljo",
-  "bug_report_outdated_message": "Uporabljate LinuxToys ${current}, vendar je trenutna različica ${latest}. Pred oddajo poročila o napaki posodobite LinuxToys."
+  "bug_report_outdated_message": "Uporabljate LinuxToys ${current}, vendar je trenutna različica ${latest}. Pred oddajo poročila o napaki posodobite LinuxToys.",
+  "quarto_desc": "Odprtokodni sistem za znanstveno in tehnično objavljanje.",
+  "rbase_desc": "Prosto programsko okolje za statistično računanje in grafiko."
 }
