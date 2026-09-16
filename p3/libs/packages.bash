@@ -182,6 +182,22 @@ pkg_install () {
     runner_unlock
 }
 
+# List installed Freedesktop runtime-extension refs in a stable, registry-friendly form.
+# Runtime extensions may exist for several branches at once, so callers can use
+# snapshots of this list to record what a single Flatpak transaction actually added.
+_flatpak_runtime_extension_refs() {
+    local scope="$1"
+    flatpak list "$scope" --runtime --columns=application,arch,branch 2>/dev/null | \
+        awk '$1 ~ /^org\.freedesktop\.Platform\./ { print $1 "/" $2 "/" $3 }' | \
+        sort -u
+}
+
+_flatpak_runtime_extension_delta() {
+    local before_file="$1"
+    local scope="$2"
+    comm -13 "$before_file" <(_flatpak_runtime_extension_refs "$scope")
+}
+
 pkg_flat() {
     local _skip_user=0
     local -a _flatpak_args=()
@@ -203,31 +219,66 @@ pkg_flat() {
         flatpak_scope="--system"
     fi
 
-    # Extract base package names (remove version/architecture specifications)
-    local -a _flatpak_basenames=()
-    for arg in "${_flatpak_args[@]}"; do
-        local basename="${arg%%/*}"
-        _flatpak_basenames+=("$basename")
+    local -a _flatpak_normal=()
+    local -a _flatpak_new=()
+    local arg basename
 
-        # Only mark applications that weren't already installed
-        if ! flatpak info "$flatpak_scope" "$arg" &>/dev/null; then
-            _flatpak_new+=("$arg")
+    # Runtime extensions are transactional: install each requested ref separately
+    # and register the exact branch(es) that appeared as a result of that transaction.
+    for arg in "${_flatpak_args[@]}"; do
+        basename="${arg%%/*}"
+        if [[ "$basename" == org.freedesktop.Platform.* ]]; then
+            local _runtime_before
+            _runtime_before=$(mktemp)
+            _flatpak_runtime_extension_refs "$flatpak_scope" > "$_runtime_before"
+
+            if [[ "$flatpak_scope" == "--user" ]]; then
+                flatpak install --or-update "$flatpak_scope" -y flathub "$arg" || {
+                    rm -f "$_runtime_before"
+                    fatal "Failed to install flatpak package $arg"
+                }
+            else
+                flatpak install --or-update "$flatpak_scope" -y flathub "$arg" 2>/dev/null || {
+                    sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "$arg"
+                } || {
+                    rm -f "$_runtime_before"
+                    fatal "Failed to install flatpak package $arg"
+                }
+            fi
+
+            local -a _runtime_new=()
+            mapfile -t _runtime_new < <(_flatpak_runtime_extension_delta "$_runtime_before" "$flatpak_scope")
+            rm -f "$_runtime_before"
+            if [[ ${#_runtime_new[@]} -gt 0 ]]; then
+                _append_transmap "flatpak ${_runtime_new[*]}"
+            fi
+        else
+            _flatpak_normal+=("$arg")
+            if ! flatpak info "$flatpak_scope" "$arg" &>/dev/null; then
+                _flatpak_new+=("$arg")
+            fi
         fi
     done
 
-    if [ "$flatpak_scope" = "--user" ]; then
-        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" || fatal "Failed to install flatpak packages ${_flatpak_args[*]}"
-        for basename in "${_flatpak_basenames[@]}"; do
-            flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
+    # Keep the existing batched path for ordinary applications/runtimes.
+    if [[ ${#_flatpak_normal[@]} -gt 0 ]]; then
+        if [[ "$flatpak_scope" == "--user" ]]; then
+            flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}" || \
+                fatal "Failed to install flatpak packages ${_flatpak_normal[*]}"
+        else
+            flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}" 2>/dev/null || \
+                { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}"; } || \
+                fatal "Failed to install flatpak packages ${_flatpak_normal[*]}"
+        fi
+
+        for arg in "${_flatpak_normal[@]}"; do
+            basename="${arg%%/*}"
+            flatpak list "$flatpak_scope" --columns=application | grep -Fxq "$basename" || \
+                fatal "Failed to install flatpak package $basename"
         done
-    else
-        flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}" 2>/dev/null || { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_args[@]}"; }
-        for basename in "${_flatpak_basenames[@]}"; do
-            flatpak list "$flatpak_scope" | grep -q "$basename" || fatal "Failed to install flatpak package $basename"
-        done
-    fi
-    if [[ ${#_flatpak_new[@]} -gt 0 ]]; then
-        _append_transmap "flatpak ${_flatpak_new[*]}"
+        if [[ ${#_flatpak_new[@]} -gt 0 ]]; then
+            _append_transmap "flatpak ${_flatpak_new[*]}"
+        fi
     fi
 }
 
@@ -255,7 +306,7 @@ pkg_fromfile () {
     runner_lock "package-transaction"
 
     if [[ "$1" == *.flatpak ]]; then
-        if ! which flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
             summon_helpers
             sudo_rq
             flatpak_in_lib
@@ -268,13 +319,61 @@ pkg_fromfile () {
              ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
             flatpak_scope="--system"
         fi
-        local _flatpak_stderr
-        if ! flatpak install "$flatpak_scope" --noninteractive "$flatpak_file" &>/dev/null; then  # force --system install
-            _flatpak_stderr=$(
-                sudo flatpak install --system --noninteractive "$flatpak_file" 2>&1 >/dev/null
-            ) || fatal "Failed to install flatpak from file: $flatpak_file due to: $_flatpak_stderr"
+
+        # Runtime-extension bundles commonly share one application ID across many
+        # runtime branches. Snapshot the exact installed refs for each transaction.
+        local _is_runtime_extension=0
+        local _runtime_before=""
+        local _runtime_before_system=""
+        if [[ "$(basename "$flatpak_file")" == org.freedesktop.Platform.* ]]; then
+            _is_runtime_extension=1
+            _runtime_before=$(mktemp)
+            _flatpak_runtime_extension_refs "$flatpak_scope" > "$_runtime_before"
+            # A user-scope failure may legitimately fall back to system. Capture that
+            # scope before the first attempt as well so its delta remains attributable.
+            if [[ "$flatpak_scope" != "--system" ]]; then
+                _runtime_before_system=$(mktemp)
+                _flatpak_runtime_extension_refs --system > "$_runtime_before_system"
+            fi
         fi
-        _append_transmap "pkg file $flatpak_file"
+
+        # --or-update makes an already-installed bundle a successful no-op/update
+        # instead of treating it as a reason to escalate to a system installation.
+        local _flatpak_stderr
+        if ! _flatpak_stderr=$(flatpak install --or-update "$flatpak_scope" --noninteractive "$flatpak_file" 2>&1 >/dev/null); then
+            # A genuine fallback needs sudo. Authenticate while terminal input is
+            # unlocked, then restore the package-transaction lock before continuing.
+            runner_unlock
+            askpass
+            runner_lock "package-transaction"
+            _flatpak_stderr=$(
+                sudo flatpak install --or-update --system --noninteractive "$flatpak_file" 2>&1 >/dev/null
+            ) || {
+                [[ -n "$_runtime_before" ]] && rm -f "$_runtime_before"
+                [[ -n "$_runtime_before_system" ]] && rm -f "$_runtime_before_system"
+                fatal "Failed to install flatpak from file: $flatpak_file due to: $_flatpak_stderr"
+            }
+            # The successful fallback changed the effective scope. Use the system
+            # snapshot captured before either attempt so the delta stays exact.
+            if [[ $_is_runtime_extension -eq 1 && "$flatpak_scope" != "--system" ]]; then
+                rm -f "$_runtime_before"
+                _runtime_before="$_runtime_before_system"
+                _runtime_before_system=""
+            fi
+            flatpak_scope="--system"
+        fi
+
+        if [[ $_is_runtime_extension -eq 1 ]]; then
+            local -a _runtime_new=()
+            mapfile -t _runtime_new < <(_flatpak_runtime_extension_delta "$_runtime_before" "$flatpak_scope")
+            rm -f "$_runtime_before"
+            [[ -n "$_runtime_before_system" ]] && rm -f "$_runtime_before_system"
+            if [[ ${#_runtime_new[@]} -gt 0 ]]; then
+                _append_transmap "flatpak ${_runtime_new[*]}"
+            fi
+        else
+            _append_transmap "pkg file $flatpak_file"
+        fi
         runner_unlock
         return 0
     fi
