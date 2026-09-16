@@ -1112,5 +1112,16 @@
             "ubuntu": "r-base",
             "debian": "r-base"
         }
+    },
+    {
+        "name": "Hardinfo2",
+        "description": "Advanced system information and basic benchmarks.",
+        "description_tag": "hardinfo_desc",
+        "repo": "https://hardinfo2.org/",
+        "category": "sysadm",
+        "icon": "hardinfo2.svg",
+        "type": "native",
+        "package-name": "hardinfo2",
+        "os": [ "!zorin" ]
     }
 ]
