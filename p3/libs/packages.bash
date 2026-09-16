@@ -126,7 +126,7 @@ pkg_install () {
         # check for lock before installing
         if [ -n "$to_install_pacman" ]; then
             if is_manjaro; then
-                pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                sudo pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
             else
                 pacman_lock_guard
@@ -136,7 +136,9 @@ pkg_install () {
         fi
         if [ -n "$to_install_paru" ]; then
             if is_manjaro; then
+                runner_unlock
                 pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+                runner_lock "package-transaction"
             else
                 if ! command -v paru &>/dev/null; then
                     if question "Installer" "$msg305" 300 300; then
