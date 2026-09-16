@@ -1557,19 +1557,28 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
     def _refresh_ui_with_new_translations(self):
         """Refresh all UI elements with new translations"""
+        current_view = self.main_stack.get_visible_child_name()
+        app_page_info = None
+        if current_view == "app_page":
+            current_page = self.main_stack.get_child_by_name("app_page")
+            if current_page is not None:
+                app_page_info = current_page.script_info
+
         # Hidden retained category views contain already-rendered translated
         # labels/tooltips. Drop them so Back never resurrects the old locale.
         self._discard_retained_category_views()
 
-        # Update header
-        self._update_header(self.current_category_info)
+        # App pages own their own InfosHead. Rebuilding the normal category header
+        # while one is visible both exposes that header and corrupts the page state.
+        if current_view != "app_page":
+            self._update_header(self.current_category_info)
 
-        # Update title bar
-        if self.current_category_info:
-            category_name = self.current_category_info.get("name", "Unknown")
-            self.header_bar.props.title = f"LinuxToys: {category_name}"
-        else:
-            self.header_bar.props.title = "LinuxToys"
+            # Update title bar
+            if self.current_category_info:
+                category_name = self.current_category_info.get("name", "Unknown")
+                self.header_bar.props.title = f"LinuxToys: {category_name}"
+            else:
+                self.header_bar.props.title = "LinuxToys"
 
         # Refresh the dropdown menu with new translations
         if hasattr(self, "menu_button"):
@@ -1580,6 +1589,21 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
         # Refresh footer translations
         self.reveal.update_translations(self.translations)
+
+        # App pages are snapshots of translated repository metadata, so recreate
+        # the active page from freshly parsed metadata while preserving the exact
+        # view it should return to on Back.
+        if current_view == "app_page":
+            fresh_info = None
+            if app_page_info:
+                script_name = app_page_info.get("name")
+                if script_name:
+                    fresh_info = manifest_helper.find_script_by_name(
+                        script_name, self.translations
+                    )
+
+            self.refresh_app_page_with_fade(fresh_info or app_page_info)
+            return
 
         # If the Skills Seeker is active, recreate it with the new translations
         if self.main_stack.get_visible_child_name() == "skills_seeker":
