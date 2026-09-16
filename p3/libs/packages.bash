@@ -390,7 +390,7 @@ pkg_fromfile () {
     elif { is_arch || is_cachy; } && ! is_manjaro; then
         # check for lock before installing local package
         pacman_lock_guard
-        if sudo pacman -U "${@}"; then
+        if sudo pacman -U --noconfirm "${@}"; then
             _append_transmap "pkg file $*"
         else
             if [ -f PKGBUILD ]; then
@@ -402,7 +402,7 @@ pkg_fromfile () {
             fi
         fi
     elif is_manjaro; then
-        { pamac install --no-confirm "./${*}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
+        { sudo pamac install --no-confirm "./${*}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
     elif is_ostree; then
         sudo rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
