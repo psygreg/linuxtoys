@@ -52,7 +52,7 @@ UPDATE_INTERVAL = 6 * 60 * 60
 def _get_last_update_timestamp():
     """
     Get the timestamp of the last successful git operation.
-    
+
     Returns:
         float: Unix timestamp of last update, or None if never updated
     """
@@ -81,19 +81,19 @@ def _write_update_timestamp():
 def _should_update_scripts():
     """
     Check if enough time has passed to update scripts.
-    
+
     Returns:
         bool: True if update interval has elapsed or this is the first run
     """
     last_update = _get_last_update_timestamp()
     if last_update is None:
         return True  # First run, should update
-    
+
     elapsed = time.time() - last_update
     if elapsed >= UPDATE_INTERVAL:
         logger.debug(f"Update interval elapsed ({elapsed/3600:.1f} hours), allowing update")
         return True  # 6+ hours have passed
-    
+
     logger.debug(f"Scripts updated {elapsed/3600:.1f} hours ago, skipping update to avoid rate limiting")
     return False
 
@@ -101,12 +101,12 @@ def _should_update_scripts():
 def _run_git_command(args, cwd=None, timeout=GIT_TIMEOUT):
     """
     Run a git command with error handling and timeout protection.
-    
+
     Args:
         args (list): Arguments to pass to git command
         cwd (str): Working directory for the command
         timeout (int): Command timeout in seconds
-        
+
     Returns:
         tuple: (success, output, error) - success is bool, output and error are strings
     """
@@ -122,10 +122,10 @@ def _run_git_command(args, cwd=None, timeout=GIT_TIMEOUT):
             timeout=timeout,
             check=False
         )
-        
+
         success = result.returncode == 0
         return success, result.stdout, result.stderr
-        
+
     except subprocess.TimeoutExpired:
         error_msg = f"Git command timed out after {timeout} seconds"
         logger.warning(error_msg)
@@ -283,16 +283,16 @@ def _clone_scripts_repo(progress_callback=None):
 def _pull_scripts_repo(progress_callback=None, force=False):
     """
     Pull updates from the scripts repository.
-    
+
     Times out after 10 seconds to prevent hanging on network issues.
     Respects the update interval to avoid rate limiting unless force is True.
-    
+
     If pull fails (including timeout), will use the cached repository.
-    
+
     Args:
         progress_callback: Optional function to call with progress messages
         force: Whether to bypass the update interval
-    
+
     Returns:
         bool: True if pull was successful or skipped due to rate limiting
     """
@@ -301,12 +301,12 @@ def _pull_scripts_repo(progress_callback=None, force=False):
         if progress_callback:
             progress_callback("scripts_init_not_found")
         return _clone_scripts_repo(progress_callback)
-    
+
     # Check if we should update based on time interval unless explicitly forced.
     if not force and not _should_update_scripts():
         logger.info("Skipping repository update due to rate limiting (updated < 6 hours ago)")
         return True  # Return True since we have valid cached scripts
-    
+
     if progress_callback:
         progress_callback("scripts_init_updating")
     logger.info(f"Pulling updates for scripts repository (timeout: {GIT_TIMEOUT}s)")
@@ -314,18 +314,38 @@ def _pull_scripts_repo(progress_callback=None, force=False):
         ["pull", "--ff-only"],
         cwd=GIT_SCRIPTS_CACHE_DIR
     )
-    
+
     if success:
-        logger.info("Successfully pulled scripts updates")
+        # Restore the managed cache to exactly the checked-out revision.
+        reset_success, _, reset_error = _run_git_command(
+            ["reset", "--hard", "HEAD"],
+            cwd=GIT_SCRIPTS_CACHE_DIR
+        )
+
+        if not reset_success:
+            logger.warning(
+                f"Failed to restore scripts working tree: {reset_error}"
+            )
+            return False
+
+        logger.info(
+            "Successfully pulled scripts updates and restored working tree"
+        )
         _write_update_timestamp()
         if progress_callback:
             progress_callback("scripts_init_update_success")
         return True
-    
+
     logger.warning(f"Failed to pull updates: {error}")
+
+    if force:
+        logger.info(
+            "Forced scripts update failed to pull; attempting a clean clone"
+        )
+        return _clone_scripts_repo(progress_callback)
+
     logger.info("Keeping the cached scripts repository unchanged")
     return False
-
 
 def force_update_scripts(progress_callback=None):
     """Update the script cache immediately, bypassing the update interval."""
@@ -481,4 +501,3 @@ def get_git_scripts_status(active_path=None):
             pass
 
     return status
-
