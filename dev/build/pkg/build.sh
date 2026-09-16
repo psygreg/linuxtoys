@@ -41,7 +41,9 @@ cat >"$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys" <<'EOF'
 # Set process name for better desktop integration
 export LINUXTOYS_PROCESS_NAME="linuxtoys"
 # Enable CLI mode if arguments are provided
-if [ $# -gt 0 ]; then
+if [ "$#" -eq 1 ] && [[ "$1" == linuxtoys://* ]]; then
+    unset EASY_CLI
+elif [ "$#" -gt 0 ]; then
     export EASY_CLI=1
 fi
 cd /usr/share/linuxtoys

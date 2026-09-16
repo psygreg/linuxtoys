@@ -25,6 +25,13 @@ def configure_launch_flags():
 if __name__ == "__main__":
     configure_launch_flags()
 
+    # LinuxToys URIs are graphical activation requests, never CLI install targets.
+    if (
+        len(sys.argv) == 2
+        and sys.argv[1].casefold().startswith("linuxtoys://")
+    ):
+        os.environ.pop("EASY_CLI", None)
+
     # Commands that are intrinsically headless should enter the CLI path even
     # when LinuxToys was launched directly rather than through a CLI wrapper.
     if len(sys.argv) == 2 and sys.argv[1] in ("export-manifest", "--export-manifest"):
@@ -52,7 +59,7 @@ if __name__ == "__main__":
     # The libs directory is always at the same location relative to this entry point
     linuxtoys_dir = os.path.dirname(os.path.abspath(__file__))
     os.environ['SCRIPT_DIR'] = linuxtoys_dir
-    
+
     # Set CACHE_DIR to bundled scripts as default fallback
     # GUI startup replaces this immediately with the last cache when available
     os.environ['CACHE_DIR'] = os.path.join(linuxtoys_dir, 'scripts')
@@ -60,7 +67,7 @@ if __name__ == "__main__":
     # UPD_SERVICE runs from a headless systemd unit and must follow the CLI path.
     if os.environ.get('UPD_SERVICE') == '1':
         os.environ['EASY_CLI'] = '1'
-    
+
     # --- VERIFY LIBRARIES EXIST ---
     # Safeguard: ensure the lib directory is present
     libs_dir = os.path.join(linuxtoys_dir, 'libs')
@@ -69,14 +76,14 @@ if __name__ == "__main__":
         print(f"Expected path: {libs_dir}")
         print("The installation may be corrupted or incomplete.")
         sys.exit(1)
-     
+
     # --- DEVELOPER MODE BANNER ---
     try:
         from app.dev_mode import print_dev_mode_banner
         print_dev_mode_banner()
     except ImportError:
         pass  # dev_mode not available
-    
+
     # --- UPDATE CHECK ---
     # Check for updates only in CLI mode (EASY_CLI=1) and display feedback in the terminal.
     if os.environ.get('EASY_CLI') == '1':
@@ -93,7 +100,7 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"Error running system update: {e}")
             sys.exit(0)
-        
+
     cli_mode = os.environ.get('EASY_CLI') == '1'
     # --- DISPLAY CHECK FOR GUI MODE ---
     if not cli_mode:

@@ -183,7 +183,16 @@ export LINUXTOYS_PROCESS_NAME=linuxtoys
 export LINUXTOYS_APPIMAGE=1
 export LINUXTOYS_APPIMAGE_DIR="$APPDIR"
 
-if [ "$#" -gt 0 ]; then
+if [ "$#" -eq 1 ]; then
+    case "$1" in
+        linuxtoys://*)
+            unset EASY_CLI
+            ;;
+        *)
+            export EASY_CLI=1
+            ;;
+    esac
+elif [ "$#" -gt 0 ]; then
     export EASY_CLI=1
 fi
 
