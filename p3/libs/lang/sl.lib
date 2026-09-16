@@ -142,3 +142,5 @@ websoftwarewarning="Po tem popravku je za upravljanje nastavitev naprave še ved
 itbinput="Za uporabo ibus-typing-booster ga dodajte med načine vnosa v sistemskih nastavitvah GNOME ali prek ibus-setup."
 hwincompat="Vaša strojna oprema ni združljiva s to funkcijo. Postopek je bil preklican."
 requirerebar="Za namestitev gonilnikov AMD GPU sta potrebna \"Resize BAR\" in \"Above 4G Decoding\". Omogočite ju v BIOS-u in poskusite znova."
+parumsg="paru je potreben, da lahko LinuxToys upravlja pakete AUR. Zdaj bo nameščen."
+gearlevermsg="Gear Lever je potreben, da lahko LinuxToys upravlja pakete AppImage. Zdaj bo nameščen."

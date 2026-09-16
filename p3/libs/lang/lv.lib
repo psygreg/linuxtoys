@@ -142,3 +142,5 @@ websoftwarewarning="Pēc šī ielāpa ierīces iestatījumu pārvaldībai joproj
 itbinput="Lai izmantotu ibus-typing-booster, pievienojiet to ievades metodēm GNOME sistēmas iestatījumos vai izmantojot ibus-setup."
 hwincompat="Jūsu aparatūra nav saderīga ar šo funkciju. Darbība atcelta."
 requirerebar="Lai instalētu AMD GPU draiverus, ir nepieciešami \"Resize BAR\" un \"Above 4G Decoding\". Iespējojiet tos BIOS un mēģiniet vēlreiz."
+parumsg="LinuxToys ir nepieciešams paru, lai apstrādātu AUR pakotnes. Tas tagad tiks instalēts."
+gearlevermsg="LinuxToys ir nepieciešams Gear Lever, lai apstrādātu AppImage pakotnes. Tas tagad tiks instalēts."

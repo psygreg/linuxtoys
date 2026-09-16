@@ -141,3 +141,5 @@ websoftwarewarning="ຫຼັງຈາກແພັດນີ້ ຍັງຈຳ�
 itbinput="ເພື່ອໃຊ້ ibus-typing-booster ໃຫ້ເພີ່ມມັນເຂົ້າໃນວິທີປ້ອນຂໍ້ມູນໃນການຕັ້ງຄ່າລະບົບຂອງ GNOME ຫຼືຜ່ານ ibus-setup."
 hwincompat="ຮາດແວຂອງທ່ານບໍ່ຮອງຮັບຄຸນສົມບັດນີ້. ການດຳເນີນງານຖືກຍົກເລີກ."
 requirerebar="ຈຳເປັນຕ້ອງເປີດ \"Resize BAR\" ແລະ \"Above 4G Decoding\" ເພື່ອຕິດຕັ້ງໄດຣເວີ AMD GPU. ກະລຸນາເປີດໃຊ້ງານພວກມັນໃນ BIOS ແລ້ວລອງໃໝ່."
+parumsg="LinuxToys ຕ້ອງການ paru ເພື່ອຈັດການແພັກເກດ AUR. ມັນຈະຖືກຕິດຕັ້ງຕອນນີ້."
+gearlevermsg="LinuxToys ຕ້ອງການ Gear Lever ເພື່ອຈັດການແພັກເກດ AppImage. ມັນຈະຖືກຕິດຕັ້ງຕອນນີ້."

@@ -141,3 +141,5 @@ websoftwarewarning="Bu yamadan sonra, cihaz ayarlarını yönetmek için hâlâ 
 itbinput="ibus-typing-booster kullanmak için GNOME sistem ayarlarında giriş yöntemlerinize ekleyin veya ibus-setup aracılığıyla ekleyin."
 hwincompat="Donanımınız bu özellikle uyumlu değil. İşlem iptal edildi."
 requirerebar="AMD GPU sürücülerini yüklemek için \"Resize BAR\" ve \"Above 4G Decoding\" gereklidir. Bunları BIOS üzerinden etkinleştirip tekrar deneyin."
+parumsg="LinuxToys'un AUR paketlerini yönetebilmesi için paru gereklidir. Şimdi yüklenecek."
+gearlevermsg="LinuxToys'un AppImage paketlerini yönetebilmesi için Gear Lever gereklidir. Şimdi yüklenecek."

@@ -142,3 +142,5 @@ websoftwarewarning="לאחר תיקון זה עדיין נדרש דפדפן מב
 itbinput="כדי להשתמש ב-ibus-typing-booster, הוסף אותו לשיטות הקלט שלך בהגדרות המערכת של GNOME או באמצעות ibus-setup."
 hwincompat="החומרה שלך אינה תואמת לתכונה זו. הפעולה בוטלה."
 requirerebar="יש צורך ב-\"Resize BAR\" וב-\"Above 4G Decoding\" כדי להתקין מנהלי התקנים של AMD GPU. יש להפעיל אותם ב-BIOS ולנסות שוב."
+parumsg="paru נדרש כדי ש-LinuxToys יוכל לטפל בחבילות AUR. הוא יותקן כעת."
+gearlevermsg="Gear Lever נדרש כדי ש-LinuxToys יוכל לטפל בחבילות AppImage. הוא יותקן כעת."

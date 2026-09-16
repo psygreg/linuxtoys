@@ -142,3 +142,5 @@ websoftwarewarning="Tar éis an paiste seo, beidh brabhsálaí gréasáin bunait
 itbinput="Chun ibus-typing-booster a úsáid, cuir le do mhodhanna ionchuir é i socruithe córais GNOME nó trí ibus-setup."
 hwincompat="Níl do chrua-earraí comhoiriúnach leis an ngné seo. Cuireadh an oibríocht ar ceal."
 requirerebar="Tá \"Resize BAR\" agus \"Above 4G Decoding\" riachtanach chun tiománaithe AMD GPU a shuiteáil. Cumasaigh iad sa BIOS agus bain triail eile as."
+parumsg="Tá paru riachtanach chun go mbeidh LinuxToys in ann pacáistí AUR a láimhseáil. Suiteálfar anois é."
+gearlevermsg="Tá Gear Lever riachtanach chun go mbeidh LinuxToys in ann pacáistí AppImage a láimhseáil. Suiteálfar anois é."

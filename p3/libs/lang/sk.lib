@@ -140,3 +140,5 @@ websoftwarewarning="Po tejto oprave je na správu nastavení zariadenia stále p
 itbinput="Ak chcete používať ibus-typing-booster, pridajte ho medzi metódy vstupu v systémových nastaveniach GNOME alebo pomocou ibus-setup."
 hwincompat="Váš hardvér nie je kompatibilný s touto funkciou. Operácia bola zrušená."
 requirerebar="Na inštaláciu ovládačov AMD GPU sú potrebné \"Resize BAR\" a \"Above 4G Decoding\". Povoľte ich v systéme BIOS a skúste to znova."
+parumsg="paru je potrebný, aby LinuxToys mohol pracovať s balíkmi AUR. Teraz bude nainštalovaný."
+gearlevermsg="Gear Lever je potrebný, aby LinuxToys mohol pracovať s balíkmi AppImage. Teraz bude nainštalovaný."

@@ -142,3 +142,5 @@ websoftwarewarning="Après ce correctif, un navigateur Web basé sur Chromium no
 itbinput="Pour utiliser ibus-typing-booster, ajoutez-le à vos méthodes de saisie dans les paramètres système de GNOME ou via ibus-setup."
 hwincompat="Votre matériel n’est pas compatible avec cette fonctionnalité. Opération annulée."
 requirerebar="\"Resize BAR\" et \"Above 4G Decoding\" sont requis pour installer les pilotes GPU AMD. Veuillez les activer dans le BIOS et réessayer."
+parumsg="paru est requis pour permettre à LinuxToys de gérer les paquets AUR. Il va maintenant être installé."
+gearlevermsg="Gear Lever est requis pour permettre à LinuxToys de gérer les paquets AppImage. Il va maintenant être installé."

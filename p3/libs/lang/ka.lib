@@ -141,3 +141,5 @@ websoftwarewarning="ამ პატჩის შემდეგ მოწყო
 itbinput="ibus-typing-booster-ის გამოსაყენებლად დაამატეთ ის შეყვანის მეთოდებში GNOME-ის სისტემურ პარამეტრებში ან გამოიყენეთ ibus-setup."
 hwincompat="თქვენი აპარატურა ამ ფუნქციასთან თავსებადი არ არის. ოპერაცია გაუქმდა."
 requirerebar="AMD GPU-ის დრაივერების დასაყენებლად საჭიროა \"Resize BAR\" და \"Above 4G Decoding\". ჩართეთ ისინი BIOS-ში და სცადეთ ხელახლა."
+parumsg="LinuxToys-ს AUR პაკეტების სამართავად paru სჭირდება. ის ახლა დაინსტალირდება."
+gearlevermsg="LinuxToys-ს AppImage პაკეტების სამართავად Gear Lever სჭირდება. ის ახლა დაინსტალირდება."

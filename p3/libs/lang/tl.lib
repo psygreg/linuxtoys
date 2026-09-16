@@ -141,3 +141,5 @@ websoftwarewarning="Pagkatapos ng patch na ito, kailangan pa rin ang isang Chrom
 itbinput="Upang gamitin ang ibus-typing-booster, idagdag ito sa iyong mga paraan ng pag-input sa mga setting ng system ng GNOME o sa pamamagitan ng ibus-setup."
 hwincompat="Hindi tugma ang iyong hardware sa feature na ito. Kinansela ang operasyon."
 requirerebar="Kinakailangan ang \"Resize BAR\" at \"Above 4G Decoding\" upang mai-install ang mga driver ng AMD GPU. Paganahin ang mga ito sa BIOS at subukang muli."
+parumsg="Kinakailangan ang paru upang mapangasiwaan ng LinuxToys ang mga AUR package. Ii-install ito ngayon."
+gearlevermsg="Kinakailangan ang Gear Lever upang mapangasiwaan ng LinuxToys ang mga AppImage package. Ii-install ito ngayon."

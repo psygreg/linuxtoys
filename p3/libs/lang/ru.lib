@@ -142,3 +142,5 @@ websoftwarewarning="После применения этого патча для
 itbinput="Чтобы использовать ibus-typing-booster, добавьте его в методы ввода в настройках системы GNOME или с помощью ibus-setup."
 hwincompat="Ваше оборудование несовместимо с этой функцией. Операция отменена."
 requirerebar="\"Resize BAR\" и \"Above 4G Decoding\" необходимы для установки драйверов AMD GPU. Включите эти параметры в BIOS и повторите попытку."
+parumsg="paru необходим LinuxToys для работы с пакетами AUR. Он будет установлен сейчас."
+gearlevermsg="Gear Lever необходим LinuxToys для работы с пакетами AppImage. Он будет установлен сейчас."

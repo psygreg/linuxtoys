@@ -143,3 +143,5 @@ websoftwarewarning="Após este patch, ainda é necessário um navegador baseado 
 itbinput="Para usar o ibus-typing-booster, adicione-o aos seus métodos de entrada nas configurações do sistema do GNOME ou através do ibus-setup."
 hwincompat="Seu hardware não é compatível com este recurso. Operação cancelada."
 requirerebar="\"Resize BAR\" e \"Above 4G Decoding\" são necessários para instalar os drivers de GPU da AMD. Ative essas opções na BIOS e tente novamente."
+parumsg="O paru é necessário para que o LinuxToys possa gerenciar pacotes do AUR. Ele será instalado agora."
+gearlevermsg="O Gear Lever é necessário para que o LinuxToys possa gerenciar pacotes AppImage. Ele será instalado agora."

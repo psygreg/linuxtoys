@@ -141,3 +141,5 @@ websoftwarewarning="اس پیچ کے بعد بھی ڈیوائس کی ترتیب�
 itbinput="ibus-typing-booster استعمال کرنے کے لیے اسے GNOME کی نظامی ترتیبات میں اپنے ان پٹ طریقوں میں شامل کریں یا ibus-setup استعمال کریں۔"
 hwincompat="آپ کا ہارڈویئر اس خصوصیت کے ساتھ مطابقت نہیں رکھتا۔ کارروائی منسوخ کر دی گئی۔"
 requirerebar="AMD GPU ڈرائیور انسٹال کرنے کے لیے \"Resize BAR\" اور \"Above 4G Decoding\" ضروری ہیں۔ براہ کرم انہیں BIOS میں فعال کریں اور دوبارہ کوشش کریں۔"
+parumsg="LinuxToys کو AUR پیکیجز سنبھالنے کے لیے paru درکار ہے۔ اسے اب انسٹال کیا جائے گا۔"
+gearlevermsg="LinuxToys کو AppImage پیکیجز سنبھالنے کے لیے Gear Lever درکار ہے۔ اسے اب انسٹال کیا جائے گا۔"

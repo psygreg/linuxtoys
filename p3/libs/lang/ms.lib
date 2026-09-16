@@ -142,3 +142,5 @@ websoftwarewarning="Selepas tampalan ini, pelayar web berasaskan Chromium yang b
 itbinput="Untuk menggunakan ibus-typing-booster, tambahkannya pada kaedah input dalam tetapan sistem GNOME atau melalui ibus-setup."
 hwincompat="Perkakasan anda tidak serasi dengan ciri ini. Operasi dibatalkan."
 requirerebar="\"Resize BAR\" dan \"Above 4G Decoding\" diperlukan untuk memasang pemacu AMD GPU. Sila dayakannya dalam BIOS dan cuba lagi."
+parumsg="paru diperlukan supaya LinuxToys dapat mengendalikan pakej AUR. Ia akan dipasang sekarang."
+gearlevermsg="Gear Lever diperlukan supaya LinuxToys dapat mengendalikan pakej AppImage. Ia akan dipasang sekarang."

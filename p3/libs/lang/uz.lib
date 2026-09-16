@@ -141,3 +141,5 @@ websoftwarewarning="Ushbu yamadan so‘ng ham qurilma sozlamalarini boshqarish u
 itbinput="ibus-typing-booster-dan foydalanish uchun uni GNOME tizim sozlamalaridagi kiritish usullariga qo‘shing yoki ibus-setup orqali qo‘shing."
 hwincompat="Qurilmangiz ushbu imkoniyat bilan mos emas. Amal bekor qilindi."
 requirerebar="AMD GPU drayverlarini o‘rnatish uchun \"Resize BAR\" va \"Above 4G Decoding\" talab qilinadi. Ularni BIOS’da yoqing va qayta urinib ko‘ring."
+parumsg="LinuxToys AUR paketlarini boshqarishi uchun paru talab qilinadi. U hozir o‘rnatiladi."
+gearlevermsg="LinuxToys AppImage paketlarini boshqarishi uchun Gear Lever talab qilinadi. U hozir o‘rnatiladi."

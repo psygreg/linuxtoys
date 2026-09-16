@@ -153,6 +153,7 @@ pkg_install () {
                 fi
                 if ! paru --version >/dev/null 2>&1; then # handle broken paru compiled against different libs, fix #1196
                     runner_unlock
+                    info "$parumsg"
                     call_script paru || die "Failed to repair paru"
                     paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
                     runner_lock "package-transaction"
@@ -1411,7 +1412,10 @@ EOF
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
     if is_systemd; then
-        call_script GEAR_LEVER
+        if ! flatpak list | grep "it.mijorus.gearlever"; then
+            info "$gearlevermsg"
+            call_script GEAR_LEVER
+        fi
         local output
         if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then
             local appimage_name
@@ -1424,13 +1428,13 @@ EOF
             if [[ -n "$appimage_name" ]]; then
                 _append_transmap "appimage $appimage_name"
             else
-                nonfatal "Could not determine integrated AppImage filename."
+                warn "Could not determine integrated AppImage filename."
             fi
             return 0
         fi
 
         echo "$output"
-        nonfatal "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
+        warn "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
     fi
 
     # Minimal fallback/non-systemd integration. Repository metadata already

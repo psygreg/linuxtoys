@@ -141,3 +141,5 @@ websoftwarewarning="Sau bản vá này, vẫn cần một trình duyệt web d�
 itbinput="Để sử dụng ibus-typing-booster, hãy thêm nó vào các phương thức nhập trong cài đặt hệ thống của GNOME hoặc thông qua ibus-setup."
 hwincompat="Phần cứng của bạn không tương thích với tính năng này. Thao tác đã bị hủy."
 requirerebar="Cần bật \"Resize BAR\" và \"Above 4G Decoding\" để cài đặt trình điều khiển GPU AMD. Hãy bật các tùy chọn này trong BIOS rồi thử lại."
+parumsg="LinuxToys cần paru để xử lý các gói AUR. paru sẽ được cài đặt ngay bây giờ."
+gearlevermsg="LinuxToys cần Gear Lever để xử lý các gói AppImage. Gear Lever sẽ được cài đặt ngay bây giờ."

@@ -142,3 +142,5 @@ websoftwarewarning="Bu yamaqdan sonra cihaz parametrlərini idarə etmək üçü
 itbinput="ibus-typing-booster istifadə etmək üçün onu GNOME sistem ayarlarında giriş metodlarına əlavə edin və ya ibus-setup vasitəsilə əlavə edin."
 hwincompat="Avadanlığınız bu funksiya ilə uyğun deyil. Əməliyyat ləğv edildi."
 requirerebar="\"Resize BAR\" və \"Above 4G Decoding\" AMD GPU sürücülərini quraşdırmaq üçün tələb olunur. Zəhmət olmasa onları BIOS-da aktivləşdirin və yenidən cəhd edin."
+parumsg="LinuxToys-un AUR paketlərini idarə etməsi üçün paru tələb olunur. İndi quraşdırılacaq."
+gearlevermsg="LinuxToys-un AppImage paketlərini idarə etməsi üçün Gear Lever tələb olunur. İndi quraşdırılacaq."

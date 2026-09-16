@@ -142,3 +142,5 @@ websoftwarewarning="หลังจากแพตช์นี้ ยังจ�
 itbinput="หากต้องการใช้ ibus-typing-booster ให้เพิ่มลงในวิธีป้อนข้อมูลในตั้งค่าระบบของ GNOME หรือผ่าน ibus-setup"
 hwincompat="ฮาร์ดแวร์ของคุณไม่รองรับคุณสมบัตินี้ ยกเลิกการดำเนินการแล้ว"
 requirerebar="จำเป็นต้องเปิดใช้ \"Resize BAR\" และ \"Above 4G Decoding\" เพื่อติดตั้งไดรเวอร์ AMD GPU โปรดเปิดใช้ตัวเลือกเหล่านี้ใน BIOS แล้วลองอีกครั้ง"
+parumsg="LinuxToys ต้องใช้ paru เพื่อจัดการแพ็กเกจ AUR โดยจะติดตั้งตอนนี้"
+gearlevermsg="LinuxToys ต้องใช้ Gear Lever เพื่อจัดการแพ็กเกจ AppImage โดยจะติดตั้งตอนนี้"

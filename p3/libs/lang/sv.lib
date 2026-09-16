@@ -142,3 +142,5 @@ websoftwarewarning="Efter denna uppdatering krävs fortfarande en Chromium-baser
 itbinput="För att använda ibus-typing-booster, lägg till det bland dina inmatningsmetoder i GNOME:s systeminställningar eller via ibus-setup."
 hwincompat="Din maskinvara är inte kompatibel med den här funktionen. Åtgärden avbröts."
 requirerebar="\"Resize BAR\" och \"Above 4G Decoding\" krävs för att installera AMD GPU-drivrutiner. Aktivera dem i BIOS och försök igen."
+parumsg="paru krävs för att LinuxToys ska kunna hantera AUR-paket. Det installeras nu."
+gearlevermsg="Gear Lever krävs för att LinuxToys ska kunna hantera AppImage-paket. Det installeras nu."

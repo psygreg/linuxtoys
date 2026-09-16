@@ -142,3 +142,5 @@ websoftwarewarning="இந்த திருத்தத்திற்கு�
 itbinput="ibus-typing-booster-ஐ பயன்படுத்த, அதை GNOME அமைப்பின் உள்ளீட்டு முறைகளில் சேர்க்கவும் அல்லது ibus-setup மூலம் சேர்க்கவும்."
 hwincompat="உங்கள் வன்பொருள் இந்த அம்சத்துடன் இணக்கமாக இல்லை. செயல்பாடு ரத்துசெய்யப்பட்டது."
 requirerebar="AMD GPU இயக்கிகளை நிறுவ \"Resize BAR\" மற்றும் \"Above 4G Decoding\" தேவை. அவற்றை BIOS-இல் இயக்கி மீண்டும் முயற்சிக்கவும்."
+parumsg="LinuxToys AUR தொகுப்புகளைக் கையாள paru தேவை. அது இப்போது நிறுவப்படும்."
+gearlevermsg="LinuxToys AppImage தொகுப்புகளைக் கையாள Gear Lever தேவை. அது இப்போது நிறுவப்படும்."

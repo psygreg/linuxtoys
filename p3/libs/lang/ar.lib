@@ -142,3 +142,5 @@ websoftwarewarning="بعد تطبيق هذا التصحيح، سيظل متصف�
 itbinput="لاستخدام ibus-typing-booster، أضفه إلى طرق الإدخال في إعدادات النظام في GNOME أو من خلال ibus-setup."
 hwincompat="جهازك غير متوافق مع هذه الميزة. تم إلغاء العملية."
 requirerebar="\"Resize BAR\" و\"Above 4G Decoding\" مطلوبان لتثبيت برامج تشغيل AMD GPU. يرجى تمكينهما في BIOS ثم المحاولة مرة أخرى."
+parumsg="يتطلب LinuxToys برنامج paru للتعامل مع حزم AUR. سيتم تثبيته الآن."
+gearlevermsg="يتطلب LinuxToys برنامج Gear Lever للتعامل مع حزم AppImage. سيتم تثبيته الآن."

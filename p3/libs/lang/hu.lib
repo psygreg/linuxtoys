@@ -142,3 +142,5 @@ websoftwarewarning="A javítás után továbbra is szükség van egy nem Flatpak
 itbinput="Az ibus-typing-booster használatához adja hozzá a beviteli módokhoz a GNOME rendszerbeállításaiban vagy az ibus-setup segítségével."
 hwincompat="A hardvere nem kompatibilis ezzel a funkcióval. A művelet megszakítva."
 requirerebar="Az AMD GPU-illesztőprogramok telepítéséhez szükséges a \"Resize BAR\" és az \"Above 4G Decoding\". Engedélyezze ezeket a BIOS-ban, majd próbálja újra."
+parumsg="A LinuxToys számára a paru szükséges az AUR-csomagok kezeléséhez. Most telepítésre kerül."
+gearlevermsg="A LinuxToys számára a Gear Lever szükséges az AppImage-csomagok kezeléséhez. Most telepítésre kerül."

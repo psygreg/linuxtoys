@@ -142,3 +142,5 @@ websoftwarewarning="Po zastosowaniu tej poprawki nadal wymagane jest korzystanie
 itbinput="Aby używać ibus-typing-booster, dodaj go do metod wprowadzania w ustawieniach systemowych GNOME lub za pomocą ibus-setup."
 hwincompat="Twój sprzęt nie jest zgodny z tą funkcją. Operacja została anulowana."
 requirerebar="\"Resize BAR\" i \"Above 4G Decoding\" są wymagane do zainstalowania sterowników GPU AMD. Włącz je w BIOS-ie i spróbuj ponownie."
+parumsg="paru jest wymagany, aby LinuxToys mógł obsługiwać pakiety AUR. Zostanie teraz zainstalowany."
+gearlevermsg="Gear Lever jest wymagany, aby LinuxToys mógł obsługiwać pakiety AppImage. Zostanie teraz zainstalowany."

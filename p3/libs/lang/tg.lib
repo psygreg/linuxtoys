@@ -141,3 +141,5 @@ websoftwarewarning="Пас аз ин ислоҳ барои идоракунии 
 itbinput="Барои истифодаи ibus-typing-booster онро ба усулҳои воридкунии худ дар танзимоти системаи GNOME ё тавассути ibus-setup илова кунед."
 hwincompat="Сахтафзори шумо бо ин хусусият мувофиқ нест. Амалиёт бекор карда шуд."
 requirerebar="Барои насб кардани драйверҳои AMD GPU, \"Resize BAR\" ва \"Above 4G Decoding\" лозиманд. Онҳоро дар BIOS фаъол кунед ва дубора кӯшиш кунед."
+parumsg="Барои коркарди бастаҳои AUR ба LinuxToys paru лозим аст. Он ҳоло насб карда мешавад."
+gearlevermsg="Барои коркарди бастаҳои AppImage ба LinuxToys Gear Lever лозим аст. Он ҳоло насб карда мешавад."

@@ -142,3 +142,5 @@ websoftwarewarning="پس از اعمال این وصله، همچنان برای
 itbinput="برای استفاده از ibus-typing-booster، آن را در تنظیمات سیستم GNOME به روش‌های ورودی خود اضافه کنید یا از ibus-setup استفاده کنید."
 hwincompat="سخت‌افزار شما با این قابلیت سازگار نیست. عملیات لغو شد."
 requirerebar="برای نصب درایورهای AMD GPU، گزینه‌های \"Resize BAR\" و \"Above 4G Decoding\" لازم هستند. لطفاً آن‌ها را در BIOS فعال کرده و دوباره تلاش کنید."
+parumsg="برای مدیریت بسته‌های AUR توسط LinuxToys، paru مورد نیاز است. اکنون نصب خواهد شد."
+gearlevermsg="برای مدیریت بسته‌های AppImage توسط LinuxToys، Gear Lever مورد نیاز است. اکنون نصب خواهد شد."
