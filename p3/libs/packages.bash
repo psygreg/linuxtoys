@@ -765,7 +765,11 @@ pkg_make () {
         source_dir="$workdir/source"
     else
         archive="$workdir/source.tar"
-        curl -fL --retry 3 --proto '=https' --tlsv1.2 -- "$source" -o "$archive" || {
+        curl -fL --retry 3 \
+            --proto '=https' \
+            --tlsv1.2 \
+            --output "$archive" \
+            -- "$source" || {
             rm -rf -- "$workdir"
             die "Failed to download make source: $source"
         }

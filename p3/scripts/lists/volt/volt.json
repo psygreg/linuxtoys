@@ -14,7 +14,9 @@
         "make-command": "make install-user",
         "donate": "https://ko-fi.com/pythonlover02",
         "overrides": {
-            "post": "./volt-post.sh"
+            "post": {
+                "script": "./volt-post.sh"
+            }
         }
     }
 ]
