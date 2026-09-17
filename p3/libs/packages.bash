@@ -1437,7 +1437,7 @@ EOF
             pkg_install libfuse2t64;
         fi
     }
-    { ( is_fedora || is_ostree || is_rhel ) && pkg_install fuse; }
+    { ( is_fedora || is_ostree || is_rhel ) && pkg_install --ostreecheck fuse; }
     { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
     prep_dir "$HOME/AppImages"
 
