@@ -849,11 +849,11 @@ pkg_make () {
     else
         if ! command -v make >/dev/null 2>&1; then
             askpass
-            pkg_install make
+            pkg_install --ostreecheck make
         fi
         if (( ! uninstall && ${#build_dependencies[@]} > 0 )); then
             askpass
-            pkg_install --ignore-appends "${build_dependencies[@]}"
+            pkg_install --ostreecheck --ignore-appends "${build_dependencies[@]}"
         fi
     fi
 
