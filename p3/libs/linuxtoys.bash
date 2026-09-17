@@ -406,7 +406,7 @@ call_script () {
 
     if [[ -n "$found_script" && -f "$found_script" ]]; then
         python3 "$SCRIPT_DIR/app/compat.py" --check-script "$found_script" || {
-            echo "W: call_script: Script '$script_name' is not compatible with this host, skipping."
+            echo "'$script_name' is not compatible with this host, skipping. This is not an error."
             return 2
         }
 
