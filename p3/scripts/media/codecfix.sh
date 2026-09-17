@@ -20,7 +20,7 @@ elif is_fedora || is_rhel; then
     sudo dnf install @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
     zeninf "$msg018"
 elif is_ostree; then
-    sudo rpm-ostree override remove \
+    pkg_exists \
         ffmpeg-free \
         libavcodec-free \
         libavfilter-free \
@@ -30,8 +30,13 @@ elif is_ostree; then
         libswresample-free \
         libswscale-free \
         libavdevice-free \
-        noopenh264 \
-        --install ffmpeg openh264 gstreamer1-plugin-openh264 libavcodec-freeworld mesa-va-drivers-freeworld mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld libavcodec-freeworld gstreamer1-plugins-bad-freeworld
+        noopenh264
+    sudo rpm-ostree override remove \
+        "${pkg_found[@]}" \
+        --install ffmpeg openh264 gstreamer1-plugin-openh264 \
+        libavcodec-freeworld mesa-va-drivers-freeworld \
+        mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld \
+        gstreamer1-plugins-bad-freeworld
     info "$finishmsg"
 else
     zeninf "$msg077"
