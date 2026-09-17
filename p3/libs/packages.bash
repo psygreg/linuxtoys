@@ -1319,6 +1319,27 @@ pkg_remove () {
 }
 pkg_rm () { pkg_remove "$@"; }
 
+_pkg_appimage_gearlever_previous () {
+    local app_name="${LINUXTOYS_APP_NAME:-}"
+    [[ -n "$app_name" ]] || return 0
+
+    flatpak run it.mijorus.gearlever --list-installed 2>/dev/null |
+        awk -v target="$app_name" '
+        {
+            # Gear Lever ends each record with the absolute AppImage path.
+            path = $NF
+
+            # Everything preceding " (" at the beginning is the app name.
+            line = $0
+            sub(/[[:space:]]+\([^)]*\).*/, "", line)
+
+            if (line == target) {
+                print path
+                exit
+            }
+        }'
+}
+
 _pkg_appimage_previous () {
     python3 - "${LINUXTOYS_SCRIPT_NAME:-}" <<'PY'
 import os
@@ -1378,6 +1399,17 @@ pkg_appimage () {
     done
     set -- "${appimage_inputs[@]}"
     previous_appimage=$(_pkg_appimage_previous) || die "Failed to identify installed AppImage"
+    # No LinuxToys-owned copy: look for an existing Gear Lever installation.
+    if [[ -z "$previous_appimage" && -n "${LINUXTOYS_APP_NAME:-}" ]] && is_systemd; then
+        local gearlever_path
+        gearlever_path=$(_pkg_appimage_gearlever_previous) || die "Failed to query Gear Lever AppImages"
+        if [[ -n "$gearlever_path" ]]; then
+            case "$gearlever_path" in
+                "$HOME/AppImages/"*) previous_appimage="${gearlever_path##*/}" ;;
+                *) die "Gear Lever returned an unexpected AppImage path: $gearlever_path" ;;
+            esac
+        fi
+    fi
     if [[ -n "$previous_appimage" ]]; then
         [[ $# -eq 1 ]] || die "Cannot map multiple new AppImages to one installed AppImage"
         [[ "$1" != "$(realpath -- "$HOME/AppImages/$previous_appimage")" ]] || die "Update input is the installed AppImage itself"
