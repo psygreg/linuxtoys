@@ -217,6 +217,10 @@ pkg_flat() {
     done
     if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
         call_script flathub
+        # Installing Flatpak or adding Flathub changes the AppStream source universe.
+        # Keep the last completed catalog usable, but force the next AppStream check
+        # to rebuild it against the newly available source.
+        rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
     fi
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
@@ -1416,15 +1420,22 @@ pkg_appimage () {
         pkg_appimage_rm --skip-appends "$previous_appimage" || die "Failed to remove previous AppImage: $previous_appimage"
     fi
 
-    ( is_ubuntu || is_debian ) && {
+    { is_ubuntu || is_debian; } && {
         if [ "$VERSION_CODENAME" = "bookworm" ]; then
-            pkg_install libfuse2  # workaround for debian 12
+            pkg_exists libfuse2
+            [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
+                askpass
+                pkg_install libfuse2  # workaround for debian 12
+            }
         else
-            if ! apt-cache --no-all-versions show libfuse2t64 >/dev/null 2>&1; then # probably forky/testing
-                sudo mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d # ensure directories exist
-                prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
-                echo 'deb https://deb.debian.org/debian trixie main' | sudo tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
-                sudo tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
+            pkg_exists libfuse2
+            [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
+                askpass
+                if ! apt-cache --no-all-versions show libfuse2t64 >/dev/null 2>&1; then # probably forky/testing
+                    sudo mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d # ensure directories exist
+                    prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
+                    echo 'deb https://deb.debian.org/debian trixie main' | sudo tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
+                    sudo tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
 Package: *
 Pin: release n=trixie
 Pin-Priority: -1
@@ -1433,18 +1444,31 @@ Package: libfuse2t64
 Pin: release n=trixie
 Pin-Priority: 990
 EOF
-            fi
-            pkg_install libfuse2t64;
+                fi
+                pkg_install libfuse2t64;
+            }
         fi
     }
-    { ( is_fedora || is_ostree || is_rhel ) && pkg_install --ostreecheck fuse; }
-    { ( is_arch || is_cachy || is_solus ) && pkg_install fuse2; }
+    { is_fedora || is_ostree || is_rhel; } && {
+        pkg_exists fuse
+        [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
+            askpass
+            pkg_install --ostreecheck fuse;
+        }
+    }
+    { is_arch || is_cachy || is_solus; } && {
+        pkg_exists fuse
+        [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
+            askpass
+            pkg_install fuse2;
+        }
+    }
     prep_dir "$HOME/AppImages"
 
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
     if is_systemd; then
-        if ! flatpak list | grep "it.mijorus.gearlever"; then
+        if ! flatpak list | grep -q "it.mijorus.gearlever"; then
             info "$gearlevermsg"
             call_script GEAR_LEVER
         fi
