@@ -84,6 +84,8 @@ EOF
     fi
 }
 
+askpass
+
 _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 if [ "$_total_ram_kb" -gt 32000000 ] && ! is_rhel && ! is_cachy; then
     setup_zram
@@ -91,4 +93,5 @@ else
     setup_zswap
     warn "$zswapmsg"
 fi
+
 info "$rebootmsg"
