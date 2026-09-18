@@ -7,8 +7,8 @@
 # repo: https://github.com/libratbag/piper
 
 # --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-_lang_
+
+askpass
 if is_debian || is_ubuntu; then
     if [[ ${UBUNTU_CODENAME:-} == noble ]]; then
         pkg_exists cmake libudev-dev libevdev-dev libsystemd-dev libglib2.0-dev libjson-glib-dev libunistring-dev check valgrind swig ninja-build python3-dev
