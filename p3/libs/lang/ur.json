@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "درجہ بندی جمع کرا دی گئی",
   "app_page_rate_success_message": "شکریہ! آپ کی درجہ بندی ODRS کو جمع کرا دی گئی۔",
   "app_page_rate_failed_title": "درجہ بندی ناکام ہو گئی",
-  "app_page_rate_failed_message": "درجہ بندی جمع نہیں کرائی جا سکی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔"
+  "app_page_rate_failed_message": "درجہ بندی جمع نہیں کرائی جا سکی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
+  "specials": "خصوصی",
+  "specials_desc": "LinuxToys کے منتخب کردہ سافٹ ویئر اور انسٹالیشن اسکرپٹس۔"
 }

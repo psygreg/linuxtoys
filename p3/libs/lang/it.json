@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Valutazione inviata",
   "app_page_rate_success_message": "Grazie! La tua valutazione è stata inviata a ODRS.",
   "app_page_rate_failed_title": "Valutazione non riuscita",
-  "app_page_rate_failed_message": "Impossibile inviare la valutazione. Riprova più tardi."
+  "app_page_rate_failed_message": "Impossibile inviare la valutazione. Riprova più tardi.",
+  "specials": "Esclusivi",
+  "specials_desc": "Software e script di installazione selezionati da LinuxToys."
 }

@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Naisumite ang Rating",
   "app_page_rate_success_message": "Salamat! Naisumite ang iyong rating sa ODRS.",
   "app_page_rate_failed_title": "Nabigo ang Rating",
-  "app_page_rate_failed_message": "Hindi maisumite ang rating. Pakisubukan muli mamaya."
+  "app_page_rate_failed_message": "Hindi maisumite ang rating. Pakisubukan muli mamaya.",
+  "specials": "Eksklusibo",
+  "specials_desc": "Software at mga script sa pag-install na pinili ng LinuxToys."
 }

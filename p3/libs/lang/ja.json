@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "評価を送信しました",
   "app_page_rate_success_message": "ありがとうございます！評価が ODRS に送信されました。",
   "app_page_rate_failed_title": "評価の送信に失敗しました",
-  "app_page_rate_failed_message": "評価を送信できませんでした。後でもう一度お試しください。"
+  "app_page_rate_failed_message": "評価を送信できませんでした。後でもう一度お試しください。",
+  "specials": "限定",
+  "specials_desc": "LinuxToysが厳選したソフトウェアとインストールスクリプト。"
 }

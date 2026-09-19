@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Įvertinimas pateiktas",
   "app_page_rate_success_message": "Ačiū! Jūsų įvertinimas pateiktas ODRS.",
   "app_page_rate_failed_title": "Įvertinimas nepavyko",
-  "app_page_rate_failed_message": "Nepavyko pateikti įvertinimo. Bandykite dar kartą vėliau."
+  "app_page_rate_failed_message": "Nepavyko pateikti įvertinimo. Bandykite dar kartą vėliau.",
+  "specials": "Išskirtinė",
+  "specials_desc": "LinuxToys atrinkta programinė įranga ir diegimo scenarijai."
 }

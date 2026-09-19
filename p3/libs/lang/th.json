@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "ส่งคะแนนแล้ว",
   "app_page_rate_success_message": "ขอบคุณ! คะแนนของคุณถูกส่งไปยัง ODRS แล้ว",
   "app_page_rate_failed_title": "การให้คะแนนล้มเหลว",
-  "app_page_rate_failed_message": "ไม่สามารถส่งคะแนนได้ โปรดลองอีกครั้งในภายหลัง"
+  "app_page_rate_failed_message": "ไม่สามารถส่งคะแนนได้ โปรดลองอีกครั้งในภายหลัง",
+  "specials": "เอ็กซ์คลูซีฟ",
+  "specials_desc": "ซอฟต์แวร์และสคริปต์ติดตั้งที่คัดสรรโดย LinuxToys"
 }

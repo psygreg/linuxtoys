@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Vurdering sendt inn",
   "app_page_rate_success_message": "Takk! Vurderingen din ble sendt inn til ODRS.",
   "app_page_rate_failed_title": "Vurderingen mislyktes",
-  "app_page_rate_failed_message": "Kunne ikke sende inn vurderingen. Prøv igjen senere."
+  "app_page_rate_failed_message": "Kunne ikke sende inn vurderingen. Prøv igjen senere.",
+  "specials": "Eksklusivt",
+  "specials_desc": "Programvare og installasjonsskript utvalgt av LinuxToys."
 }

@@ -722,7 +722,13 @@ class NavCtl:
             self.navigation_stack.append(self.current_category_info)
 
         self.current_category_info = category_info
-        self._record_featured_category(category_info)
+        # Specials is a virtual curated browser, not part of the user's normal
+        # category-browsing history used to bias main-menu Featured suggestions.
+        if not (
+            category_info.get("is_linuxtoys_specials")
+            or category_info.get("is_linuxtoys_specials_category")
+        ):
+            self._record_featured_category(category_info)
 
         # Switch to the current scripts view (which may be a new one created for subcategories)
         current_child = self.main_stack.get_visible_child()

@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Hodnotenie odoslané",
   "app_page_rate_success_message": "Ďakujeme! Vaše hodnotenie bolo odoslané do ODRS.",
   "app_page_rate_failed_title": "Hodnotenie zlyhalo",
-  "app_page_rate_failed_message": "Hodnotenie sa nepodarilo odoslať. Skúste to znova neskôr."
+  "app_page_rate_failed_message": "Hodnotenie sa nepodarilo odoslať. Skúste to znova neskôr.",
+  "specials": "Exkluzívne",
+  "specials_desc": "Softvér a inštalačné skripty vybrané LinuxToys."
 }

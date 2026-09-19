@@ -384,7 +384,7 @@ class ItemWidgetFactory:
             if not os.path.isabs(icon_value) and "/" not in icon_value:
                 icon_path = get_icon_path(
                     "local-script.svg"
-                    if ".local/linuxtoys/scripts" in item_info.get("path")
+                    if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
                     else icon_value
                 )
             else:
@@ -880,7 +880,7 @@ class ItemWidgetFactory:
             info = widget.info
 
             if (
-                ".local/linuxtoys/scripts/" in info.get("path")
+                ".local/linuxtoys/scripts/" in (info.get("path") or "")
                 and event.state & Gdk.ModifierType.CONTROL_MASK
             ):
                 if event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
@@ -898,6 +898,7 @@ class ItemWidgetFactory:
     def _activate_item(self, widget, event):
         """Route keyboard and pointer activation through the same handlers."""
         info = widget.info
+
         if self.search_active or info.get("is_script", False):
             self.on_script_clicked(widget, event)
         else:

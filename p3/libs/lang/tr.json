@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Değerlendirme Gönderildi",
   "app_page_rate_success_message": "Teşekkürler! Değerlendirmeniz ODRS'ye gönderildi.",
   "app_page_rate_failed_title": "Değerlendirme Başarısız",
-  "app_page_rate_failed_message": "Değerlendirme gönderilemedi. Lütfen daha sonra tekrar deneyin."
+  "app_page_rate_failed_message": "Değerlendirme gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+  "specials": "Özel",
+  "specials_desc": "LinuxToys tarafından seçilen yazılımlar ve kurulum betikleri."
 }

@@ -545,6 +545,76 @@ class CategoryCache:
         """
         return self.scripts_by_category.get(category_path, []).copy()
 
+    def get_linuxtoys_special_categories(self, translations=None):
+        """Return a flat list of categories containing LinuxToys-curated items."""
+        translations = translations or {}
+        categories = []
+
+        for category_path, items in self.scripts_by_category.items():
+            curated = [
+                item for item in items
+                if not item.get("is_subcategory")
+                and not item.get("is_create_script")
+                and popularity.is_linuxtoys_curated(item)
+            ]
+            if not curated:
+                continue
+
+            real_path = os.path.abspath(category_path)
+            info = None
+
+            for candidate in self.categories:
+                candidate_path = candidate.get("path", "")
+                if candidate_path and os.path.abspath(candidate_path) == real_path:
+                    info = candidate.copy()
+                    break
+
+            if info is None:
+                parent_path = os.path.dirname(real_path)
+                for candidate in parser.get_subcategories_for_category(
+                    parent_path, translations
+                ):
+                    candidate_path = candidate.get("path", "")
+                    if candidate_path and os.path.abspath(candidate_path) == real_path:
+                        info = candidate.copy()
+                        break
+
+            if info is None:
+                # Defensive fallback for a category that exists in the cache but has
+                # no parser metadata. Keep it navigable rather than dropping its apps.
+                leaf = os.path.basename(real_path)
+                info = {
+                    "name": translations.get(leaf, leaf.replace("_", " ").title()),
+                    "description": "",
+                    "icon": "folder-symbolic",
+                    "type": "category",
+                    "is_script": False,
+                    "is_subcategory": True,
+                }
+
+            info["path"] = f"specials://category/{len(categories)}"
+            info["type"] = "category"
+            info["is_script"] = False
+            info["is_subcategory"] = True
+            info["is_linuxtoys_specials_category"] = True
+            info["specials_category_path"] = real_path
+            categories.append(info)
+
+        categories.sort(key=lambda item: item.get("name", "").casefold())
+        return categories
+
+    def get_linuxtoys_special_scripts(self, category_path):
+        """Return only LinuxToys-curated items from one real category path."""
+        real_path = os.path.abspath(category_path)
+        items = [
+            item for item in self.scripts_by_category.get(real_path, ())
+            if not item.get("is_subcategory")
+            and not item.get("is_create_script")
+            and popularity.is_linuxtoys_curated(item)
+        ]
+        popularity.sort_for_browse(items)
+        return items
+
     def invalidate(self):
         """Invalidate the cache, forcing repopulation on next use."""
         self.is_populated = False

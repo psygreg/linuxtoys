@@ -1436,7 +1436,27 @@ class AppWindow(
         self.categories_flowbox.foreach(
             lambda widget: self.categories_flowbox.remove(widget)
         )
-        for cat in categories:
+
+        # Specials is a virtual top-level category backed by the curated category
+        # cache. Keep it first so the LinuxToys-curated catalog is the leading
+        # main-menu option. Its visible strings come from the normal translation
+        # dictionary, just like the parser-backed categories.
+        specials_category = {
+            "name": self.translations.get("specials", "Specials"),
+            "description": self.translations.get(
+                "specials_desc",
+                "LinuxToys-curated software and scripts.",
+            ),
+            "icon": "linuxtoys.svg",
+            "path": "specials://root",
+            "type": "category",
+            "is_script": False,
+            "is_subcategory": False,
+            "is_linuxtoys_specials": True,
+        }
+        rendered_categories = [specials_category, *categories]
+
+        for cat in rendered_categories:
             widget = self.create_item_widget(cat)
             description = cat.get("description", "")
             widget.set_tooltip_text(description or None)
@@ -1507,7 +1527,52 @@ class AppWindow(
 
         category_path = category_info["path"]
 
-        if self.category_cache.is_populated:
+        # Specials depends on the complete recursive CategoryCache. The main menu
+        # is published from the top-level bootstrap before that cache has finished,
+        # so a fast click could previously snapshot the still-partial cache and leave
+        # the virtual view permanently empty. Wait for the active cache generation
+        # to finish, then populate this same FlowBox.
+        if (
+            category_info.get("is_linuxtoys_specials")
+            or category_info.get("is_linuxtoys_specials_category")
+        ) and not self.category_cache.is_populated:
+            expected_cache = self.category_cache
+
+            def populate_specials_when_ready():
+                if (
+                    getattr(flowbox, "_linuxtoys_population_generation", None)
+                    != generation
+                ):
+                    return False
+                if self.category_cache is not expected_cache:
+                    # A source/language refresh replaced the cache. Restart against
+                    # the current generation instead of publishing stale data.
+                    self._load_scripts_into_flowbox(
+                        flowbox, category_info, defer_initial=False
+                    )
+                    return False
+                if not expected_cache.is_populated:
+                    return True
+                self._load_scripts_into_flowbox(
+                    flowbox, category_info, defer_initial=False
+                )
+                return False
+
+            GLib.timeout_add(100, populate_specials_when_ready)
+            return
+
+        if category_info.get("is_linuxtoys_specials"):
+            # Specials is a virtual root whose children are every real category
+            # containing at least one LinuxToys-curated item. Nested categories are
+            # deliberately flattened into this one level.
+            scripts = self.category_cache.get_linuxtoys_special_categories(
+                self.translations
+            )
+        elif category_info.get("is_linuxtoys_specials_category"):
+            scripts = self.category_cache.get_linuxtoys_special_scripts(
+                category_info.get("specials_category_path", "")
+            )
+        elif self.category_cache.is_populated:
             scripts = self.category_cache.get_scripts_for_category(category_path)
             if not scripts:
                 scripts = parser.get_scripts_for_category(

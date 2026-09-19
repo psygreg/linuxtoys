@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "បានដាក់ស្នើការវាយតម្លៃ",
   "app_page_rate_success_message": "សូមអរគុណ! ការវាយតម្លៃរបស់អ្នកត្រូវបានដាក់ស្នើទៅ ODRS។",
   "app_page_rate_failed_title": "ការវាយតម្លៃបានបរាជ័យ",
-  "app_page_rate_failed_message": "មិនអាចដាក់ស្នើការវាយតម្លៃបានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។"
+  "app_page_rate_failed_message": "មិនអាចដាក់ស្នើការវាយតម្លៃបានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
+  "specials": "ផ្តាច់មុខ",
+  "specials_desc": "កម្មវិធី និងស្គ្រីបដំឡើងដែលជ្រើសរើសដោយ LinuxToys។"
 }

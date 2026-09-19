@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Bedømmelse indsendt",
   "app_page_rate_success_message": "Tak! Din bedømmelse blev indsendt til ODRS.",
   "app_page_rate_failed_title": "Bedømmelsen mislykkedes",
-  "app_page_rate_failed_message": "Bedømmelsen kunne ikke indsendes. Prøv igen senere."
+  "app_page_rate_failed_message": "Bedømmelsen kunne ikke indsendes. Prøv igen senere.",
+  "specials": "Eksklusivt",
+  "specials_desc": "Software og installationsscripts udvalgt af LinuxToys."
 }

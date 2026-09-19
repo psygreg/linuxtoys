@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "امتیاز ارسال شد",
   "app_page_rate_success_message": "متشکریم! امتیاز شما به ODRS ارسال شد.",
   "app_page_rate_failed_title": "ارسال امتیاز ناموفق بود",
-  "app_page_rate_failed_message": "امتیاز ارسال نشد. لطفاً بعداً دوباره تلاش کنید."
+  "app_page_rate_failed_message": "امتیاز ارسال نشد. لطفاً بعداً دوباره تلاش کنید.",
+  "specials": "اختصاصی",
+  "specials_desc": "نرم‌افزارها و اسکریپت‌های نصب منتخب LinuxToys."
 }

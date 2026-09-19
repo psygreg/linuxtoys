@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Оцена је послата",
   "app_page_rate_success_message": "Хвала! Ваша оцена је послата на ODRS.",
   "app_page_rate_failed_title": "Слање оцене није успело",
-  "app_page_rate_failed_message": "Није могуће послати оцену. Покушајте поново касније."
+  "app_page_rate_failed_message": "Није могуће послати оцену. Покушајте поново касније.",
+  "specials": "Ексклузивно",
+  "specials_desc": "Софтвер и инсталационе скрипте које је одабрао LinuxToys."
 }

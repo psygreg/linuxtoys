@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Einkunn send inn",
   "app_page_rate_success_message": "Takk! Einkunnin þín var send til ODRS.",
   "app_page_rate_failed_title": "Einkunn mistókst",
-  "app_page_rate_failed_message": "Ekki tókst að senda einkunnina inn. Reyndu aftur síðar."
+  "app_page_rate_failed_message": "Ekki tókst að senda einkunnina inn. Reyndu aftur síðar.",
+  "specials": "Sérstakt",
+  "specials_desc": "Hugbúnaður og uppsetningarskriftur valdar af LinuxToys."
 }

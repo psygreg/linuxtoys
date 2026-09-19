@@ -663,5 +663,7 @@
   "app_page_rate_success_title": "Үнэлгээ илгээгдлээ",
   "app_page_rate_success_message": "Баярлалаа! Таны үнэлгээг ODRS руу илгээлээ.",
   "app_page_rate_failed_title": "Үнэлгээ амжилтгүй боллоо",
-  "app_page_rate_failed_message": "Үнэлгээг илгээж чадсангүй. Дараа дахин оролдоно уу."
+  "app_page_rate_failed_message": "Үнэлгээг илгээж чадсангүй. Дараа дахин оролдоно уу.",
+  "specials": "Онцгой",
+  "specials_desc": "LinuxToys-оос сонгосон програм хангамж болон суулгах скриптүүд."
 }

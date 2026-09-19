@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Értékelés beküldve",
   "app_page_rate_success_message": "Köszönjük! Az értékelésed elküldésre került az ODRS-nek.",
   "app_page_rate_failed_title": "Az értékelés sikertelen",
-  "app_page_rate_failed_message": "Nem sikerült beküldeni az értékelést. Próbáld újra később."
+  "app_page_rate_failed_message": "Nem sikerült beküldeni az értékelést. Próbáld újra később.",
+  "specials": "Exkluzív",
+  "specials_desc": "A LinuxToys által válogatott szoftverek és telepítési szkriptek."
 }

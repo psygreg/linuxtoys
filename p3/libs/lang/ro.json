@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Evaluare trimisă",
   "app_page_rate_success_message": "Mulțumim! Evaluarea ta a fost trimisă la ODRS.",
   "app_page_rate_failed_title": "Evaluarea a eșuat",
-  "app_page_rate_failed_message": "Evaluarea nu a putut fi trimisă. Încearcă din nou mai târziu."
+  "app_page_rate_failed_message": "Evaluarea nu a putut fi trimisă. Încearcă din nou mai târziu.",
+  "specials": "Exclusive",
+  "specials_desc": "Software și scripturi de instalare selectate de LinuxToys."
 }

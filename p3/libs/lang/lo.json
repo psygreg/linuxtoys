@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "ສົ່ງຄະແນນແລ້ວ",
   "app_page_rate_success_message": "ຂອບໃຈ! ຄະແນນຂອງທ່ານຖືກສົ່ງໄປຫາ ODRS ແລ້ວ.",
   "app_page_rate_failed_title": "ການໃຫ້ຄະແນນລົ້ມເຫຼວ",
-  "app_page_rate_failed_message": "ບໍ່ສາມາດສົ່ງຄະແນນໄດ້. ກະລຸນາລອງໃໝ່ພາຍຫຼັງ."
+  "app_page_rate_failed_message": "ບໍ່ສາມາດສົ່ງຄະແນນໄດ້. ກະລຸນາລອງໃໝ່ພາຍຫຼັງ.",
+  "specials": "ພິເສດ",
+  "specials_desc": "ຊອບແວ ແລະ ສະຄຣິບຕິດຕັ້ງທີ່ຄັດເລືອກໂດຍ LinuxToys."
 }

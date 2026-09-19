@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Rátáil curtha isteach",
   "app_page_rate_success_message": "Go raibh maith agat! Cuireadh do rátáil isteach chuig ODRS.",
   "app_page_rate_failed_title": "Theip ar an rátáil",
-  "app_page_rate_failed_message": "Níorbh fhéidir an rátáil a chur isteach. Bain triail eile as ar ball."
+  "app_page_rate_failed_message": "Níorbh fhéidir an rátáil a chur isteach. Bain triail eile as ar ball.",
+  "specials": "Eisiach",
+  "specials_desc": "Bogearraí agus scripteanna suiteála roghnaithe ag LinuxToys."
 }

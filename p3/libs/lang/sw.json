@@ -662,5 +662,7 @@
   "app_page_rate_success_title": "Tathmini Imewasilishwa",
   "app_page_rate_success_message": "Asante! Tathmini yako imewasilishwa kwa ODRS.",
   "app_page_rate_failed_title": "Tathmini Imeshindikana",
-  "app_page_rate_failed_message": "Haikuwezekana kuwasilisha tathmini. Tafadhali jaribu tena baadaye."
+  "app_page_rate_failed_message": "Haikuwezekana kuwasilisha tathmini. Tafadhali jaribu tena baadaye.",
+  "specials": "Kipekee",
+  "specials_desc": "Programu na hati za usakinishaji zilizochaguliwa na LinuxToys."
 }

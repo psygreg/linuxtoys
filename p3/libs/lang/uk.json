@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Оцінку надіслано",
   "app_page_rate_success_message": "Дякуємо! Вашу оцінку надіслано до ODRS.",
   "app_page_rate_failed_title": "Не вдалося надіслати оцінку",
-  "app_page_rate_failed_message": "Не вдалося надіслати оцінку. Спробуйте ще раз пізніше."
+  "app_page_rate_failed_message": "Не вдалося надіслати оцінку. Спробуйте ще раз пізніше.",
+  "specials": "Ексклюзив",
+  "specials_desc": "Програми та сценарії встановлення, відібрані LinuxToys."
 }

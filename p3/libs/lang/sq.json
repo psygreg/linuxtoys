@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Vlerësimi u dërgua",
   "app_page_rate_success_message": "Faleminderit! Vlerësimi juaj u dërgua në ODRS.",
   "app_page_rate_failed_title": "Vlerësimi dështoi",
-  "app_page_rate_failed_message": "Nuk u arrit të dërgohej vlerësimi. Provo përsëri më vonë."
+  "app_page_rate_failed_message": "Nuk u arrit të dërgohej vlerësimi. Provo përsëri më vonë.",
+  "specials": "Ekskluzive",
+  "specials_desc": "Programe dhe skripte instalimi të përzgjedhura nga LinuxToys."
 }

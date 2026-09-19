@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Bewertung übermittelt",
   "app_page_rate_success_message": "Vielen Dank! Deine Bewertung wurde an ODRS übermittelt.",
   "app_page_rate_failed_title": "Bewertung fehlgeschlagen",
-  "app_page_rate_failed_message": "Die Bewertung konnte nicht übermittelt werden. Bitte versuche es später erneut."
+  "app_page_rate_failed_message": "Die Bewertung konnte nicht übermittelt werden. Bitte versuche es später erneut.",
+  "specials": "Exklusiv",
+  "specials_desc": "Von LinuxToys ausgewählte Software und Installationsskripte."
 }

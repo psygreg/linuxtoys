@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Hinnang esitatud",
   "app_page_rate_success_message": "Aitäh! Teie hinnang esitati ODRS-i.",
   "app_page_rate_failed_title": "Hinnangu saatmine ebaõnnestus",
-  "app_page_rate_failed_message": "Hinnangut ei õnnestunud esitada. Proovige hiljem uuesti."
+  "app_page_rate_failed_message": "Hinnangut ei õnnestunud esitada. Proovige hiljem uuesti.",
+  "specials": "Eksklusiivne",
+  "specials_desc": "LinuxToysi valitud tarkvara ja paigaldusskriptid."
 }

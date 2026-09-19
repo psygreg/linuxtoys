@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Đã gửi đánh giá",
   "app_page_rate_success_message": "Cảm ơn bạn! Đánh giá của bạn đã được gửi tới ODRS.",
   "app_page_rate_failed_title": "Đánh giá thất bại",
-  "app_page_rate_failed_message": "Không thể gửi đánh giá. Vui lòng thử lại sau."
+  "app_page_rate_failed_message": "Không thể gửi đánh giá. Vui lòng thử lại sau.",
+  "specials": "Độc quyền",
+  "specials_desc": "Phần mềm và tập lệnh cài đặt do LinuxToys tuyển chọn."
 }

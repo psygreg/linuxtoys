@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "تم إرسال التقييم",
   "app_page_rate_success_message": "شكرًا لك! تم إرسال تقييمك إلى ODRS.",
   "app_page_rate_failed_title": "فشل إرسال التقييم",
-  "app_page_rate_failed_message": "تعذر إرسال التقييم. يرجى المحاولة مرة أخرى لاحقًا."
+  "app_page_rate_failed_message": "تعذر إرسال التقييم. يرجى المحاولة مرة أخرى لاحقًا.",
+  "specials": "حصري",
+  "specials_desc": "برامج ونصوص تثبيت منتقاة من LinuxToys."
 }

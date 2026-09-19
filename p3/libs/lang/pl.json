@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Ocena przesłana",
   "app_page_rate_success_message": "Dziękujemy! Twoja ocena została przesłana do ODRS.",
   "app_page_rate_failed_title": "Nie udało się przesłać oceny",
-  "app_page_rate_failed_message": "Nie udało się przesłać oceny. Spróbuj ponownie później."
+  "app_page_rate_failed_message": "Nie udało się przesłać oceny. Spróbuj ponownie później.",
+  "specials": "Ekskluzywne",
+  "specials_desc": "Oprogramowanie i skrypty instalacyjne wybrane przez LinuxToys."
 }

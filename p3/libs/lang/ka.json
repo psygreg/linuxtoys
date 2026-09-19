@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "შეფასება გაგზავნილია",
   "app_page_rate_success_message": "გმადლობთ! თქვენი შეფასება ODRS-ში გაიგზავნა.",
   "app_page_rate_failed_title": "შეფასება ვერ გაიგზავნა",
-  "app_page_rate_failed_message": "შეფასების გაგზავნა ვერ მოხერხდა. გთხოვთ, მოგვიანებით სცადოთ."
+  "app_page_rate_failed_message": "შეფასების გაგზავნა ვერ მოხერხდა. გთხოვთ, მოგვიანებით სცადოთ.",
+  "specials": "ექსკლუზიური",
+  "specials_desc": "LinuxToys-ის მიერ შერჩეული პროგრამები და ინსტალაციის სკრიპტები."
 }

@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Betyg inskickat",
   "app_page_rate_success_message": "Tack! Ditt betyg skickades till ODRS.",
   "app_page_rate_failed_title": "Betygsättningen misslyckades",
-  "app_page_rate_failed_message": "Det gick inte att skicka in betyget. Försök igen senare."
+  "app_page_rate_failed_message": "Det gick inte att skicka in betyget. Försök igen senare.",
+  "specials": "Exklusivt",
+  "specials_desc": "Programvara och installationsskript utvalda av LinuxToys."
 }

@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "הדירוג נשלח",
   "app_page_rate_success_message": "תודה! הדירוג שלכם נשלח אל ODRS.",
   "app_page_rate_failed_title": "שליחת הדירוג נכשלה",
-  "app_page_rate_failed_message": "לא ניתן היה לשלוח את הדירוג. נסו שוב מאוחר יותר."
+  "app_page_rate_failed_message": "לא ניתן היה לשלוח את הדירוג. נסו שוב מאוחר יותר.",
+  "specials": "בלעדי",
+  "specials_desc": "תוכנות וסקריפטים להתקנה שנבחרו על ידי LinuxToys."
 }

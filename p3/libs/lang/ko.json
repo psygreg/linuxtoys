@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "평가 제출 완료",
   "app_page_rate_success_message": "감사합니다! 평가가 ODRS에 제출되었습니다.",
   "app_page_rate_failed_title": "평가 실패",
-  "app_page_rate_failed_message": "평가를 제출할 수 없습니다. 나중에 다시 시도하세요."
+  "app_page_rate_failed_message": "평가를 제출할 수 없습니다. 나중에 다시 시도하세요.",
+  "specials": "독점",
+  "specials_desc": "LinuxToys가 엄선한 소프트웨어 및 설치 스크립트."
 }

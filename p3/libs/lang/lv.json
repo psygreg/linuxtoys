@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Vērtējums iesniegts",
   "app_page_rate_success_message": "Paldies! Jūsu vērtējums tika iesniegts ODRS.",
   "app_page_rate_failed_title": "Vērtēšana neizdevās",
-  "app_page_rate_failed_message": "Neizdevās iesniegt vērtējumu. Lūdzu, mēģiniet vēlreiz vēlāk."
+  "app_page_rate_failed_message": "Neizdevās iesniegt vērtējumu. Lūdzu, mēģiniet vēlreiz vēlāk.",
+  "specials": "Ekskluzīvi",
+  "specials_desc": "LinuxToys atlasīta programmatūra un instalēšanas skripti."
 }

@@ -663,5 +663,7 @@
   "app_page_rate_success_title": "Qiymətləndirmə Göndərildi",
   "app_page_rate_success_message": "Təşəkkür edirik! Qiymətləndirməniz ODRS-ə göndərildi.",
   "app_page_rate_failed_title": "Qiymətləndirmə Göndərilmədi",
-  "app_page_rate_failed_message": "Qiymətləndirməni göndərmək mümkün olmadı. Daha sonra yenidən cəhd edin."
+  "app_page_rate_failed_message": "Qiymətləndirməni göndərmək mümkün olmadı. Daha sonra yenidən cəhd edin.",
+  "specials": "Eksklüziv",
+  "specials_desc": "LinuxToys tərəfindən seçilmiş proqram təminatı və quraşdırma skriptləri."
 }

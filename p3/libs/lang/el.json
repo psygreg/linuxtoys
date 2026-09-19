@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Η αξιολόγηση υποβλήθηκε",
   "app_page_rate_success_message": "Ευχαριστούμε! Η αξιολόγησή σας υποβλήθηκε στο ODRS.",
   "app_page_rate_failed_title": "Η αξιολόγηση απέτυχε",
-  "app_page_rate_failed_message": "Δεν ήταν δυνατή η υποβολή της αξιολόγησης. Δοκιμάστε ξανά αργότερα."
+  "app_page_rate_failed_message": "Δεν ήταν δυνατή η υποβολή της αξιολόγησης. Δοκιμάστε ξανά αργότερα.",
+  "specials": "Αποκλειστικά",
+  "specials_desc": "Λογισμικό και σενάρια εγκατάστασης επιλεγμένα από το LinuxToys."
 }

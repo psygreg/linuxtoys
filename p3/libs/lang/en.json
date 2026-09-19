@@ -36,6 +36,8 @@
   "select_button": "Select",
   "loading_manifest_message": "Loading your manifest file... Please Wait...",
   "packages_flatpaks": "Packages & Flatpaks",
+  "specials": "Specials",
+  "specials_desc": "LinuxToys-curated software and scripts.",
   "psypicks": "Psygreg's Picks",
   "psypicks_desc": "Curated selection of software for gaming and quality of life on Linux.",
   "pdefaults": "Optimized Defaults",

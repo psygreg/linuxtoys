@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Penilaian Terkirim",
   "app_page_rate_success_message": "Terima kasih! Penilaian Anda telah dikirim ke ODRS.",
   "app_page_rate_failed_title": "Penilaian Gagal",
-  "app_page_rate_failed_message": "Tidak dapat mengirim penilaian. Silakan coba lagi nanti."
+  "app_page_rate_failed_message": "Tidak dapat mengirim penilaian. Silakan coba lagi nanti.",
+  "specials": "Eksklusif",
+  "specials_desc": "Perangkat lunak dan skrip instalasi pilihan LinuxToys."
 }

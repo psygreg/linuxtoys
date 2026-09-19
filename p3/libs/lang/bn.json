@@ -663,5 +663,7 @@
   "app_page_rate_success_title": "রেটিং জমা দেওয়া হয়েছে",
   "app_page_rate_success_message": "ধন্যবাদ! আপনার রেটিং ODRS-এ জমা দেওয়া হয়েছে।",
   "app_page_rate_failed_title": "রেটিং জমা দেওয়া ব্যর্থ হয়েছে",
-  "app_page_rate_failed_message": "রেটিং জমা দেওয়া যায়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।"
+  "app_page_rate_failed_message": "রেটিং জমা দেওয়া যায়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।",
+  "specials": "এক্সক্লুসিভ",
+  "specials_desc": "LinuxToys দ্বারা নির্বাচিত সফটওয়্যার এবং ইনস্টলেশন স্ক্রিপ্ট।"
 }

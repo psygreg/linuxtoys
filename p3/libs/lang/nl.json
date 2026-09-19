@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Beoordeling ingediend",
   "app_page_rate_success_message": "Bedankt! Je beoordeling is ingediend bij ODRS.",
   "app_page_rate_failed_title": "Beoordeling mislukt",
-  "app_page_rate_failed_message": "De beoordeling kon niet worden ingediend. Probeer het later opnieuw."
+  "app_page_rate_failed_message": "De beoordeling kon niet worden ingediend. Probeer het later opnieuw.",
+  "specials": "Exclusief",
+  "specials_desc": "Door LinuxToys geselecteerde software en installatiescripts."
 }

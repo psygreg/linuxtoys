@@ -664,5 +664,7 @@
   "app_page_rate_success_title": "Оценката е изпратена",
   "app_page_rate_success_message": "Благодарим! Вашата оценка беше изпратена до ODRS.",
   "app_page_rate_failed_title": "Неуспешно изпращане на оценката",
-  "app_page_rate_failed_message": "Оценката не можа да бъде изпратена. Моля, опитайте отново по-късно."
+  "app_page_rate_failed_message": "Оценката не можа да бъде изпратена. Моля, опитайте отново по-късно.",
+  "specials": "Ексклузивно",
+  "specials_desc": "Софтуер и инсталационни скриптове, подбрани от LinuxToys."
 }
