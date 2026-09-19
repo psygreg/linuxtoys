@@ -27,7 +27,7 @@ from pathlib import Path
 from . import popularity
 
 
-CACHE_SCHEMA = 14
+CACHE_SCHEMA = 15
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -378,12 +378,12 @@ def _component_license(component) -> str:
 
 
 def _component_screenshots(component):
-    """Return local screenshot paths or remote URLs from libAppStream."""
-    values = []
-    seen = set()
+    """Return logical screenshots with all available libAppStream image variants."""
+    screenshots = []
     for screenshot in _as_list(_safe_call(component, "get_screenshots_all", [])):
-        images = _as_list(_safe_call(screenshot, "get_images", []))
-        for image in images:
+        variants = []
+        seen = set()
+        for image in _as_list(_safe_call(screenshot, "get_images", [])):
             value = _safe_call(image, "get_filename", "")
             if value and os.path.isfile(str(value)):
                 candidate = str(value)
@@ -391,13 +391,25 @@ def _component_screenshots(component):
                 candidate = str(_safe_call(image, "get_url", "") or "").strip()
             if not candidate or candidate in seen:
                 continue
-            if candidate.startswith(("https://", "http://")) or (
-                os.path.isfile(candidate)
-                and candidate.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+            if not (
+                candidate.startswith(("https://", "http://"))
+                or (
+                    os.path.isfile(candidate)
+                    and candidate.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+                )
             ):
-                seen.add(candidate)
-                values.append(candidate)
-    return values
+                continue
+            seen.add(candidate)
+            try:
+                width = max(0, int(_safe_call(image, "get_width", 0) or 0))
+                height = max(0, int(_safe_call(image, "get_height", 0) or 0))
+            except (TypeError, ValueError):
+                width = height = 0
+            variants.append({"url": candidate, "width": width, "height": height})
+        if variants:
+            variants.sort(key=lambda item: (item.get("width", 0), item.get("height", 0)))
+            screenshots.append({"images": variants})
+    return screenshots
 
 
 def _component_identity(component) -> str:
@@ -898,14 +910,31 @@ def _normalize_flatpak_component(component, source):
         developer = _xml_localized_text(component.find("developer"), "name")
     screenshots = []
     media_baseurl = str(source.get("media_baseurl", "") or "").strip()
-    for image in component.findall("./screenshots/screenshot/image"):
-        value = (image.text or "").strip()
-        if not value:
-            continue
-        if value.startswith(("https://", "http://")):
-            screenshots.append(value)
-        elif media_baseurl:
-            screenshots.append(urljoin(media_baseurl.rstrip("/") + "/", value.lstrip("/")))
+    for screenshot in component.findall("./screenshots/screenshot"):
+        variants = []
+        seen = set()
+        for image in screenshot.findall("image"):
+            value = (image.text or "").strip()
+            if not value:
+                continue
+            if value.startswith(("https://", "http://")):
+                candidate = value
+            elif media_baseurl:
+                candidate = urljoin(media_baseurl.rstrip("/") + "/", value.lstrip("/"))
+            else:
+                continue
+            if candidate in seen:
+                continue
+            seen.add(candidate)
+            try:
+                width = max(0, int(image.attrib.get("width", 0) or 0))
+                height = max(0, int(image.attrib.get("height", 0) or 0))
+            except (TypeError, ValueError):
+                width = height = 0
+            variants.append({"url": candidate, "width": width, "height": height})
+        if variants:
+            variants.sort(key=lambda item: (item.get("width", 0), item.get("height", 0)))
+            screenshots.append({"images": variants})
 
     homepage = ""
     homepage_node = component.find("./url[@type='homepage']")
@@ -1220,10 +1249,24 @@ def refresh_cache(force=False, status_callback=None):
             # Nothing touches catalog.json until the completed candidate is atomically
             # written at the end of this transaction.
             previous = load_catalog()
+
+            # Delta reuse is only valid when the published catalog was produced by
+            # this exact schema. A schema bump can change the normalized JSON shape
+            # without changing the underlying AppStream metadata hash (for example,
+            # schema 15 groups screenshot resolution variants). Reusing a schema-14
+            # entry here would therefore preserve the old representation forever.
+            published_state = _read_json(STATE_PATH, {})
+            reuse_previous_entries = (
+                isinstance(published_state, dict)
+                and published_state.get("schema") == CACHE_SCHEMA
+                and published_state.get("complete") is True
+            )
             previous_by_identity = {
                 str(item.get("identity")): item
                 for item in previous
-                if isinstance(item, dict) and item.get("identity")
+                if reuse_previous_entries
+                and isinstance(item, dict)
+                and item.get("identity")
             }
 
             native_supported = _native_appstream_supported_host()

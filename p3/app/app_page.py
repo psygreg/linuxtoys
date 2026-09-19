@@ -1426,6 +1426,74 @@ class AppPageView(Gtk.Box):
         self.header.vbox_infos.pack_start(controls, False, False, 10)
         self.refresh_install_state()
 
+    def _screenshot_variants(self, screenshot):
+        """Normalize new AppStream variant groups and legacy string screenshots."""
+        if isinstance(screenshot, dict):
+            raw = screenshot.get("images") or []
+        else:
+            raw = [{"url": screenshot, "width": 0, "height": 0}]
+
+        variants = []
+        seen = set()
+        for item in raw:
+            if isinstance(item, dict):
+                value = str(item.get("url", "") or "").strip()
+                try:
+                    width = max(0, int(item.get("width", 0) or 0))
+                    height = max(0, int(item.get("height", 0) or 0))
+                except (TypeError, ValueError):
+                    width = height = 0
+            else:
+                value = str(item or "").strip()
+                width = height = 0
+            if not value or value in seen:
+                continue
+            seen.add(value)
+            variants.append({"url": value, "width": width, "height": height})
+        variants.sort(key=lambda item: (item["width"], item["height"]))
+        return variants
+
+    @staticmethod
+    def _choose_screenshot_variant(variants, target_width):
+        """Choose the smallest known variant meeting target_width, else the largest."""
+        if not variants:
+            return None
+        sized = [item for item in variants if item.get("width", 0) > 0]
+        if not sized:
+            return variants[0]
+        for item in sized:
+            if item["width"] >= target_width:
+                return item
+        return sized[-1]
+
+    def _screenshot_target_width(self, frame, allocation=None):
+        # 1120px is the normal quality floor. Account for the monitor scale factor
+        # so a HiDPI window can request a sharper source before it becomes blurry.
+        width = allocation.width if allocation is not None else frame.get_allocated_width()
+        try:
+            scale = max(1, int(frame.get_scale_factor()))
+        except Exception:
+            scale = 1
+        return max(1120, max(0, int(width)) * scale)
+
+    def _on_screenshot_size_allocate(self, frame, allocation):
+        variants = getattr(frame, "_linuxtoys_screenshot_variants", ())
+        if not variants:
+            return
+        variant = self._choose_screenshot_variant(
+            variants, self._screenshot_target_width(frame, allocation)
+        )
+        if not variant:
+            return
+        current_width = int(getattr(frame, "_linuxtoys_screenshot_source_width", 0) or 0)
+        requested_url = getattr(frame, "_linuxtoys_screenshot_requested_url", "")
+        # Resizing upward may upgrade quality. Never downgrade an already fetched
+        # image just because the window later becomes smaller.
+        if variant["url"] != requested_url and (
+            variant.get("width", 0) > current_width or current_width <= 0
+        ):
+            self._request_screenshot_variant(frame, variant, initial=False)
+
     def _build_screenshot_viewer(self, screenshots):
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
@@ -1450,33 +1518,24 @@ class AppPageView(Gtk.Box):
         self.screenshot_stack.set_transition_duration(220)
 
         valid_count = 0
-        for path in screenshots:
-            path = str(path or "").strip()
-            if not path:
+        for screenshot in screenshots:
+            variants = self._screenshot_variants(screenshot)
+            if not variants:
                 continue
 
             frame = Gtk.Frame()
             frame.set_shadow_type(Gtk.ShadowType.IN)
-            image = Gtk.Image()
-            image.set_halign(Gtk.Align.CENTER)
-            image.set_valign(Gtk.Align.CENTER)
-            frame.add(image)
+            frame._linuxtoys_screenshot_variants = variants
+            frame._linuxtoys_screenshot_source_width = 0
+            frame._linuxtoys_screenshot_requested_url = ""
+            frame._linuxtoys_screenshot_request_id = 0
+            frame.connect("size-allocate", self._on_screenshot_size_allocate)
 
-            if path.startswith(("https://", "http://")):
-                spinner = Gtk.Spinner()
-                spinner.start()
-                spinner.set_halign(Gtk.Align.CENTER)
-                spinner.set_valign(Gtk.Align.CENTER)
-                frame.remove(image)
-                frame.add(spinner)
-                self._remote_screenshots_pending += 1
-                self._load_remote_screenshot_async(path, frame, spinner)
-            else:
-                try:
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, 760, 430, True)
-                    image.set_from_pixbuf(pixbuf)
-                except Exception:
-                    continue
+            variant = self._choose_screenshot_variant(variants, 1120)
+            if not variant:
+                continue
+            if not self._request_screenshot_variant(frame, variant, initial=True):
+                continue
 
             self.screenshot_stack.add_named(frame, f"shot_{valid_count}")
             valid_count += 1
@@ -1506,8 +1565,45 @@ class AppPageView(Gtk.Box):
 
         return outer
 
-    def _load_remote_screenshot_async(self, url, frame, spinner):
-        """Fetch a remote AppStream screenshot without blocking the GTK thread."""
+    def _request_screenshot_variant(self, frame, variant, *, initial=False):
+        path = str(variant.get("url", "") or "").strip()
+        if not path:
+            return False
+
+        frame._linuxtoys_screenshot_requested_url = path
+        frame._linuxtoys_screenshot_request_id += 1
+        request_id = frame._linuxtoys_screenshot_request_id
+
+        if path.startswith(("https://", "http://")):
+            spinner = None
+            if initial:
+                spinner = Gtk.Spinner()
+                spinner.start()
+                spinner.set_halign(Gtk.Align.CENTER)
+                spinner.set_valign(Gtk.Align.CENTER)
+                frame.add(spinner)
+                self._remote_screenshots_pending += 1
+            self._load_remote_screenshot_async(
+                path, frame, spinner, variant, request_id, initial=initial
+            )
+            return True
+
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, 760, 430, True)
+            image = Gtk.Image.new_from_pixbuf(pixbuf)
+            image.set_halign(Gtk.Align.CENTER)
+            image.set_valign(Gtk.Align.CENTER)
+            old = frame.get_child()
+            if old is not None:
+                frame.remove(old)
+            frame.add(image)
+            frame._linuxtoys_screenshot_source_width = int(variant.get("width", 0) or 0)
+            return True
+        except Exception:
+            return False
+
+    def _load_remote_screenshot_async(self, url, frame, spinner, variant, request_id, *, initial=False):
+        """Fetch only the selected AppStream screenshot variant without blocking GTK."""
         cache_dir = Path(os.path.expanduser("~/.cache/linuxtoys/appstream/screenshots"))
         digest = hashlib.sha256(url.encode("utf-8")).hexdigest()
         target = cache_dir / f"{digest}.img"
@@ -1525,15 +1621,20 @@ class AppPageView(Gtk.Box):
                     tmp.write_bytes(data)
                     os.replace(tmp, target)
                 if not self._destroyed:
-                    GLib.idle_add(self._finish_remote_screenshot, frame, spinner, str(target))
+                    GLib.idle_add(
+                        self._finish_remote_screenshot, frame, spinner, str(target),
+                        variant, request_id, initial
+                    )
             except Exception:
                 if not self._destroyed:
-                    GLib.idle_add(self._fail_remote_screenshot, frame, spinner)
+                    GLib.idle_add(
+                        self._fail_remote_screenshot, frame, spinner, request_id, initial
+                    )
 
         threading.Thread(target=worker, daemon=True).start()
 
     def _remote_screenshot_settled(self, frame):
-        """Release the Featured measurement gate once a remote screenshot settles."""
+        """Release the Featured measurement gate once an initial screenshot settles."""
         if getattr(frame, "_linuxtoys_screenshot_settled", False):
             return
         frame._linuxtoys_screenshot_settled = True
@@ -1541,44 +1642,59 @@ class AppPageView(Gtk.Box):
             0, self._remote_screenshots_pending - 1
         )
         if self._remote_screenshots_pending == 0 and not self._destroyed:
-            # Let the newly loaded images receive their final GTK allocation first.
             GLib.timeout_add(80, self._schedule_featured_fill)
 
-    def _finish_remote_screenshot(self, frame, spinner, path):
-        # The page may have been closed while the network request was running.
-        # Never mutate widgets belonging to a destroyed AppPageView.
+    def _finish_remote_screenshot(self, frame, spinner, path, variant, request_id, initial):
         if self._destroyed:
             return False
 
-        try:
-            # Gtk.Frame is a Gtk.Bin: only remove the spinner if it is still the
-            # frame's actual child. This also makes duplicate/stale callbacks safe.
-            if frame.get_child() is not spinner:
-                return False
+        # A resize can request a larger variant while an older request is still in
+        # flight. Cache the old response, but never let it replace the newer one.
+        stale = request_id != getattr(frame, "_linuxtoys_screenshot_request_id", 0)
+        if stale and not (initial and spinner is not None and frame.get_child() is spinner):
+            if initial:
+                self._remote_screenshot_settled(frame)
+            return False
 
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, 760, 430, True)
+        try:
+            allocated = max(0, frame.get_allocated_width())
+            render_width = 760 if allocated <= 1120 else min(1600, allocated)
+            render_height = max(430, int(render_width * 9 / 16))
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                path, render_width, render_height, True
+            )
             image = Gtk.Image.new_from_pixbuf(pixbuf)
             image.set_halign(Gtk.Align.CENTER)
             image.set_valign(Gtk.Align.CENTER)
-            frame.remove(spinner)
+            old = frame.get_child()
+            if old is not None:
+                if isinstance(old, Gtk.Spinner):
+                    old.stop()
+                frame.remove(old)
             frame.add(image)
+            frame._linuxtoys_screenshot_source_width = int(variant.get("width", 0) or 0)
             frame.show_all()
-            self._remote_screenshot_settled(frame)
+            if initial:
+                self._remote_screenshot_settled(frame)
         except Exception:
-            return self._fail_remote_screenshot(frame, spinner)
+            return self._fail_remote_screenshot(frame, spinner, request_id, initial)
         return False
 
-    def _fail_remote_screenshot(self, frame, spinner):
+    def _fail_remote_screenshot(self, frame, spinner, request_id=None, initial=True):
         if self._destroyed:
             return False
-
+        if request_id is not None and request_id != getattr(frame, "_linuxtoys_screenshot_request_id", 0):
+            if initial:
+                self._remote_screenshot_settled(frame)
+            return False
         try:
-            if frame.get_child() is spinner:
+            if spinner is not None and frame.get_child() is spinner:
                 spinner.stop()
                 spinner.hide()
         except Exception:
             pass
-        self._remote_screenshot_settled(frame)
+        if initial:
+            self._remote_screenshot_settled(frame)
         return False
 
     def _on_screenshot_nav_clicked(self, _button, direction):

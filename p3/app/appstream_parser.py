@@ -638,7 +638,33 @@ def _to_repo_entry(component, category, lang_code):
         )
         for block in long_description_blocks
     ).strip()
-    screenshots = [str(path) for path in component.get("screenshots", ()) if path]
+    # AppStream cache schema 15 stores each logical screenshot as a mapping
+    # containing its available image variants.  Preserve that structure for the
+    # app page instead of stringifying the mapping (which turns it into an
+    # unusable path such as "{\'images\': [...]}" ).  Legacy string screenshots
+    # remain supported for curated/older entries.
+    screenshots = []
+    for screenshot in component.get("screenshots", ()):
+        if isinstance(screenshot, dict):
+            variants = []
+            for image in screenshot.get("images") or ():
+                if not isinstance(image, dict):
+                    continue
+                url = str(image.get("url", "") or "").strip()
+                if not url:
+                    continue
+                try:
+                    width = max(0, int(image.get("width", 0) or 0))
+                    height = max(0, int(image.get("height", 0) or 0))
+                except (TypeError, ValueError):
+                    width = height = 0
+                variants.append({"url": url, "width": width, "height": height})
+            if variants:
+                screenshots.append({"images": variants})
+        else:
+            path = str(screenshot or "").strip()
+            if path:
+                screenshots.append(path)
     origin = str(component.get("origin", "") or "").strip()
     source = str(component.get("source", "native") or "native")
     is_flatpak = source == "flatpak"
