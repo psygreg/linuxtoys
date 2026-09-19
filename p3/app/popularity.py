@@ -100,6 +100,11 @@ def _is_curated_or_linuxtoys_script(item):
     return bool(item.get("is_repo_entry") or item.get("is_script"))
 
 
+def is_linuxtoys_curated(item):
+    """Return whether an item is curated and shipped by LinuxToys."""
+    return _is_curated_or_linuxtoys_script(item)
+
+
 def _is_flatpak_appstream(item):
     return (
         item.get("is_appstream_entry")

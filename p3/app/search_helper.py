@@ -653,8 +653,13 @@ class SearchEngine:
         query = query.strip().lower()
         results = []
 
-        # Search through cached scripts (much faster than directory traversal)
-        self._search_cached_scripts(query, results)
+        # "linuxtoys" is a special discovery filter: show everything curated by
+        # LinuxToys, plus AppStream entries explicitly selected as KNOWN_POPULAR.
+        if query == "linuxtoys":
+            self._search_linuxtoys_entries(results)
+        else:
+            # Search through cached scripts (much faster than directory traversal)
+            self._search_cached_scripts(query, results)
 
         # Group results by category
         grouped = self._group_results_by_category(results, max_results)
@@ -802,6 +807,18 @@ class SearchEngine:
             return display_name
 
         return 'Other'
+
+    def _search_linuxtoys_entries(self, results):
+        """Return LinuxToys-curated entries and developer-selected popular apps."""
+        if not self.script_cache.is_populated:
+            return
+
+        for script_info in self.script_cache.get_all_scripts():
+            if (
+                popularity.is_linuxtoys_curated(script_info)
+                or popularity.is_known_popular(script_info)
+            ):
+                results.append(SearchResult(script_info, "script", 100))
 
     def _search_cached_scripts(self, query, results):
         """Search through cached scripts."""
