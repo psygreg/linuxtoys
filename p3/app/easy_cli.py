@@ -16,7 +16,7 @@ from .manifest_helper import (
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
-from .compat import get_system_compat_keys
+from .compat import get_system_compat_keys, get_linuxtoys_cache_dir
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
 from .repo_parser import materialize_repo_script
 
@@ -92,7 +92,7 @@ def _save_script_to_registry(script_name, transmap_path):
     """Save script execution record to registry."""
     try:
         import datetime
-        registry_dir = os.path.expanduser("~/.cache/linuxtoys")
+        registry_dir = get_linuxtoys_cache_dir()
         registry_file = os.path.join(registry_dir, "registry")
         
         # Create directory if it doesn't exist

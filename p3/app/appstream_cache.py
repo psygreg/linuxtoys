@@ -25,13 +25,14 @@ from urllib.error import HTTPError, URLError
 from pathlib import Path
 
 from . import popularity
+from .compat import get_linuxtoys_cache_dir
 
 
 CACHE_SCHEMA = 15
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
-CACHE_DIR = Path(os.path.expanduser("~/.cache/linuxtoys/appstream"))
+CACHE_DIR = Path(get_linuxtoys_cache_dir()) / "appstream"
 STATE_PATH = CACHE_DIR / "state.json"
 CATALOG_PATH = CACHE_DIR / "catalog.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"

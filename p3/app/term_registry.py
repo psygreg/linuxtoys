@@ -6,10 +6,12 @@ import os
 if __package__:
     from .revert_helper import build_auto_revert_script_entry
     from .registry_utils import parse_registry_file
+    from .compat import get_linuxtoys_cache_dir
 else:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
     from registry_utils import parse_registry_file
+    from compat import get_linuxtoys_cache_dir
     build_auto_revert_script_entry = None
 
 class ExecutionRegistry:
@@ -48,7 +50,7 @@ class ExecutionRegistry:
         Returns True if entries were removed or file doesn't exist, False on error.
         """
         
-        registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+        registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
         
         if not os.path.exists(registry_file):
             return True
@@ -97,7 +99,7 @@ class ExecutionRegistry:
         """Save script execution record to registry."""
         try:
             import datetime
-            registry_dir = os.path.expanduser("~/.cache/linuxtoys")
+            registry_dir = get_linuxtoys_cache_dir()
             registry_file = os.path.join(registry_dir, "registry")
             
             # Create directory if it doesn't exist

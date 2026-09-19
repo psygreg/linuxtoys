@@ -1,9 +1,11 @@
 import os
 import re
 
+from .compat import get_linuxtoys_cache_dir
+
 
 def parse_registry_file():
-    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
 
     if not os.path.exists(registry_file):
         return {}

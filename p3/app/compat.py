@@ -147,6 +147,37 @@ def is_containerized():
 
     return bool(_cached_host_value("containerized", _detect_containerized))
 
+
+def get_linuxtoys_cache_dir():
+    """Return LinuxToys' cache root, isolated by distro ID inside containers.
+
+    Host executions retain the historical ~/.cache/linuxtoys path. Containerized
+    executions use ~/.cache/linuxtoys/<ID>, where ID comes from /etc/os-release.
+    """
+    base_dir = os.path.expanduser("~/.cache/linuxtoys")
+    if not is_containerized():
+        return base_dir
+
+    os_id = "container"
+    try:
+        with open("/etc/os-release", "r", encoding="utf-8", errors="replace") as handle:
+            for raw_line in handle:
+                key, separator, value = raw_line.rstrip().partition("=")
+                if separator and key == "ID":
+                    candidate = value.strip().strip('"').strip("'").casefold()
+                    # Keep the directory a single safe path component.
+                    candidate = "".join(
+                        char for char in candidate
+                        if char.isalnum() or char in ("-", "_", ".")
+                    ).strip(".")
+                    if candidate:
+                        os_id = candidate
+                    break
+    except OSError:
+        pass
+
+    return os.path.join(base_dir, os_id)
+
 def _detect_wsl():
     try:
         with open("/proc/sys/kernel/osrelease", "r", encoding="utf-8") as f:

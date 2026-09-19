@@ -11,6 +11,7 @@ from .lang_utils import create_translator, load_translations
 from .registry_utils import parse_registry_file, search_registry_entries
 from .manifest_helper import export_registered_manifest
 from .parser import get_display_name
+from .compat import get_linuxtoys_cache_dir
 
 
 def _find_backup_files_for_script(script_name, registry_data):
@@ -57,7 +58,7 @@ def _remove_script_from_registry(script_name):
 
     Returns True if successful, False otherwise.
     """
-    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
 
     if not os.path.exists(registry_file):
         return False
