@@ -201,78 +201,169 @@ ADDITIONAL_CATEGORY_CANDIDATES = {
     "ConsoleOnly": ("devs", "utilities"),
 }
 
-# AppStream categories are tags rather than a strict taxonomy.  LinuxToys needs
-# one destination, so resolve combinations that describe an application's purpose
-# before considering individual capability tags.  Rules are ordered: first match wins.
-CATEGORY_COMBINATION_RULES = (
-    # Development / technical applications.
-    (("Development", "Database"), ("devs", "development")),
-    (("Development", "WebDevelopment"), ("devs", "development")),
-    (("Development", "Electronics"), ("eng", "devs", "development")),
-    (("Development", "Engineering"), ("eng", "devs", "development")),
-
-    # Engineering must beat generic graphics capabilities (CAD is the key case).
+# AppStream categories are tags rather than a strict taxonomy.  Following the
+# same basic model used by GNOME Software, LinuxToys resolves meaningful
+# Main+Additional expressions before falling back to a broad Main category.
+# LinuxToys still chooses one destination, so rules are ordered: first match wins.
+#
+# A few cross-main overrides come first for cases where the functional tag is more
+# informative than the broad main tag (CAD/engineering is the canonical example).
+CATEGORY_EXPRESSION_RULES = (
+    # Cross-main semantic overrides.
     (("Engineering", "3DGraphics"), ("eng", "utilities")),
     (("Engineering", "2DGraphics"), ("eng", "utilities")),
     (("Engineering", "VectorGraphics"), ("eng", "utilities")),
     (("Engineering", "Graphics"), ("eng", "utilities")),
     (("Electronics", "Graphics"), ("eng", "utilities")),
+    (("Development", "Database"), ("devs", "development")),
+    (("Development", "Engineering"), ("eng", "devs", "development")),
+    (("Development", "Electronics"), ("eng", "devs", "development")),
 
-    # More specific graphics purposes beat generic graphics capabilities.
-    (("Photography", "ImageProcessing"), ("photo", "graphics", "office")),
-    (("Photography", "Graphics"), ("photo", "graphics", "office")),
+    # Development.
+    (("Development", "IDE"), ("ides", "development")),
+    (("Development", "GUIDesigner"), ("ides", "development")),
+    (("Development", "Building"), ("tools", "development")),
+    (("Development", "Debugger"), ("tools", "development")),
+    (("Development", "Profiling"), ("tools", "development")),
+    (("Development", "RevisionControl"), ("tools", "development")),
+    (("Development", "Translation"), ("tools", "development")),
+    (("Development", "WebDevelopment"), ("devs", "development")),
 
-    # Database means different things in developer and office contexts.
+    # Office / productivity.
+    (("Office", "Calendar"), ("planning", "productivity")),
+    (("Office", "ContactManagement"), ("chat", "productivity")),
     (("Office", "Database"), ("planning", "productivity")),
+    (("Office", "Chart"), ("planning", "productivity")),
+    (("Office", "Finance"), ("fin", "productivity")),
+    (("Office", "FlowChart"), ("planning", "productivity")),
+    (("Office", "PDA"), ("planning", "productivity")),
+    (("Office", "ProjectManagement"), ("planning", "productivity")),
+    (("Office", "Presentation"), ("document", "productivity")),
+    (("Office", "Spreadsheet"), ("document", "productivity")),
+    (("Office", "WordProcessor"), ("document", "productivity")),
 
-    # File management is a system task; archiving is only a fallback.
+    # Graphics. Engineering overrides above deliberately beat 3D graphics.
+    (("Graphics", "Photography"), ("photo", "graphics", "office")),
+    (("Graphics", "ImageProcessing"), ("photo", "graphics", "office")),
+    (("Graphics", "2DGraphics"), ("draw", "graphics", "office")),
+    (("Graphics", "VectorGraphics"), ("draw", "graphics", "office")),
+    (("Graphics", "RasterGraphics"), ("draw", "graphics", "office")),
+    (("Graphics", "3DGraphics"), ("creative", "graphics", "office")),
+    (("Graphics", "Scanning"), ("document", "graphics", "office")),
+    (("Graphics", "OCR"), ("creative", "graphics", "office")),
+    (("Graphics", "Publishing"), ("creative", "graphics", "office")),
+    (("Graphics", "Viewer"), ("viewer", "graphics", "office")),
+
+    # Settings / system.
+    (("Settings", "DesktopSettings"), ("sysadm", "system", "utils")),
+    (("Settings", "HardwareSettings"), ("sysadm", "system", "utils")),
+    (("Settings", "Printing"), ("document", "system", "utils")),
+    (("Settings", "PackageManager"), ("sysadm", "system", "utils")),
+    (("System", "PackageManager"), ("sysadm", "system", "utils")),
     (("System", "FileManager"), ("sysadm", "system", "utils")),
     (("System", "FileTools"), ("sysadm", "system", "utils")),
-)
+    (("System", "TerminalEmulator"), ("sys", "system", "utils")),
+    (("System", "Filesystem"), ("sys", "system", "utils")),
+    (("System", "Monitor"), ("sec", "system", "network", "utils")),
+    (("System", "Security"), ("sec", "system", "utils")),
+    (("System", "Emulator"), ("emu", "system", "game", "games")),
 
-# Purpose-oriented Additional categories are preferred over capability-oriented
-# categories.  Toolkit/implementation hints intentionally come last.
-ADDITIONAL_CATEGORY_PRIORITY = (
-    # Strong application purpose / type.
-    "IDE", "GUIDesigner", "RevisionControl", "Debugger", "Profiling",
-    "WebDevelopment", "Building", "Translation",
-    "Engineering", "Electronics", "Robotics", "MedicalSoftware",
-    "Finance", "ProjectManagement", "Database", "Presentation",
-    "Spreadsheet", "WordProcessor", "Calendar", "ContactManagement",
-    "WebBrowser", "Email", "InstantMessaging", "Chat", "IRCClient",
-    "RemoteAccess", "P2P", "FileTransfer", "VideoConference",
-    "Telephony", "TelephonyTools", "Feed", "News", "Dialup",
-    "Photography", "AudioVideoEditing", "Recorder", "Player",
-    "PackageManager", "TerminalEmulator", "FileManager", "Security",
-    "Accessibility", "Archiving", "Compression",
+    # Network / communication.
+    (("Network", "WebBrowser"), ("browsers", "utils")),
+    (("Network", "InstantMessaging"), ("chat", "utils")),
+    (("Network", "Chat"), ("chat", "utils")),
+    (("Network", "IRCClient"), ("chat", "utils")),
+    (("Network", "Email"), ("chat", "network", "productivity")),
+    (("Network", "VideoConference"), ("chat", "utils")),
+    (("Network", "RemoteAccess"), ("remote", "utils")),
+    (("Network", "P2P"), ("p2p", "utils")),
+    (("Network", "FileTransfer"), ("p2p", "utils")),
+    (("Network", "Feed"), ("network", "utils")),
+    (("Network", "News"), ("network", "utils")),
+    (("Network", "Dialup"), ("network", "utils")),
+    (("Network", "Telephony"), ("network", "utils")),
+    (("Network", "TelephonyTools"), ("network", "utilities")),
+    (("Network", "WebDevelopment"), ("devs", "development", "network")),
 
-    # Science / education subjects.
-    "ArtificialIntelligence", "Astronomy", "Biology", "Chemistry",
-    "ComputerScience", "Economy", "Electricity", "Geography", "Geology",
-    "Geoscience", "History", "Humanities", "Languages", "Literature",
-    "Maps", "Math", "NumericalAnalysis", "Physics", "ParallelComputing",
-    "Sports", "Spirituality", "Art", "Construction",
+    # Audio / video.
+    (("Audio", "Midi"), ("audio", "multimedia", "media")),
+    (("Audio", "Mixer"), ("audio", "multimedia", "media")),
+    (("Audio", "Sequencer"), ("audio", "multimedia", "media")),
+    (("Audio", "Tuner"), ("tv", "audio", "multimedia", "media")),
+    (("Video", "TV"), ("tv", "video", "multimedia", "media")),
+    (("AudioVideo", "AudioVideoEditing"), ("video", "multimedia", "office")),
+    (("AudioVideo", "Player"), ("players", "multimedia", "office")),
+    (("AudioVideo", "Recorder"), ("rec", "multimedia", "office")),
+    (("AudioVideo", "DiscBurning"), ("rec", "multimedia")),
 
     # Games.
-    "ActionGame", "AdventureGame", "ArcadeGame", "BoardGame",
-    "BlocksGame", "CardGame", "KidsGame", "LogicGame", "RolePlaying",
-    "Shooter", "Simulation", "SportsGame", "StrategyGame",
+    (("Game", "ActionGame"), ("action", "games")),
+    (("Game", "AdventureGame"), ("action", "games")),
+    (("Game", "ArcadeGame"), ("classic", "games")),
+    (("Game", "BoardGame"), ("classic", "games")),
+    (("Game", "BlocksGame"), ("kids", "games")),
+    (("Game", "CardGame"), ("classic", "games")),
+    (("Game", "KidsGame"), ("kids", "games")),
+    (("Game", "LogicGame"), ("kids", "games")),
+    (("Game", "RolePlaying"), ("sim", "games")),
+    (("Game", "Shooter"), ("action", "games")),
+    (("Game", "Simulation"), ("sim", "games")),
+    (("Game", "SportsGame"), ("sports", "games")),
+    (("Game", "StrategyGame"), ("strategy", "games")),
 
-    # Media / functional capabilities.
-    "Midi", "Mixer", "Sequencer", "Tuner", "TV", "DiscBurning",
-    "ImageProcessing", "DataVisualization", "3DGraphics", "VectorGraphics",
-    "RasterGraphics", "2DGraphics", "Scanning", "OCR", "Publishing",
-    "FlowChart", "Chart", "Dictionary", "PDA", "TextTools", "Viewer",
-    "FileTools", "Filesystem", "Monitor", "Calculator", "Clock",
-    "TextEditor", "Emulator", "Amusement", "Music",
+    # Education / science. Accept either main tag where the desktop spec allows
+    # the subject to appear in both contexts.
+    (("Education", "Languages"), ("langs", "science", "education")),
+    (("Education", "Literature"), ("langs", "science", "education")),
+    (("Education", "Astronomy"), ("nature", "science", "education")),
+    (("Education", "Biology"), ("nature", "science", "education")),
+    (("Education", "Chemistry"), ("nature", "science", "education")),
+    (("Education", "Geography"), ("geo", "science", "education")),
+    (("Education", "Math"), ("math", "science", "education")),
+    (("Education", "NumericalAnalysis"), ("math", "science", "education")),
+    (("Science", "ArtificialIntelligence"), ("tech", "science", "education")),
+    (("Science", "Astronomy"), ("nature", "science", "education")),
+    (("Science", "Biology"), ("nature", "science", "education")),
+    (("Science", "Chemistry"), ("nature", "science", "education")),
+    (("Science", "ComputerScience"), ("tech", "science", "education")),
+    (("Science", "DataVisualization"), ("tech", "science", "education")),
+    (("Science", "Economy"), ("math", "science", "education")),
+    (("Science", "Electricity"), ("tech", "science", "education")),
+    (("Science", "Geography"), ("geo", "science", "education")),
+    (("Science", "Geology"), ("nature", "science", "education")),
+    (("Science", "Geoscience"), ("nature", "science", "education")),
+    (("Science", "ImageProcessing"), ("photo", "science", "education")),
+    (("Science", "Maps"), ("geo", "science", "education", "utils")),
+    (("Science", "Math"), ("math", "science", "education")),
+    (("Science", "NumericalAnalysis"), ("math", "science", "education")),
+    (("Science", "MedicalSoftware"), ("health", "science", "education")),
+    (("Science", "Physics"), ("math", "science", "education")),
+    (("Science", "Robotics"), ("tech", "science", "education")),
+    (("Science", "ParallelComputing"), ("tech", "science", "education")),
 
-    # Settings and broad utility hints.
-    "DesktopSettings", "HardwareSettings", "Printing", "Documentation",
-    "Adult", "Core",
-
-    # Toolkit / implementation hints: useful only when nothing semantic matched.
-    "Java", "ConsoleOnly", "KDE", "GNOME", "XFCE", "GTK", "Qt", "Motif",
+    # Utility expressions. Implementation/toolkit hints (KDE, GNOME, GTK, Qt,
+    # Java, etc.) are intentionally absent: they describe how an app is built,
+    # not what the app is for.
+    (("Utility", "Archiving"), ("archive", "utilities")),
+    (("Utility", "Compression"), ("archive", "utilities")),
+    (("Utility", "Engineering"), ("eng", "utilities")),
+    (("Utility", "Electronics"), ("eng", "utilities")),
+    (("Utility", "Accessibility"), ("accessibility", "utils")),
+    (("Utility", "Calculator"), ("fin", "utilities")),
+    (("Utility", "TextEditor"), ("txt", "utilities")),
+    (("Utility", "TextTools"), ("document", "utilities")),
 )
+
+# A deliberately small escape hatch for useful purpose tags found in imperfect
+# metadata without a suitable Main category.  Unlike the old Additional-category
+# table, these do not include capability or implementation hints.
+STANDALONE_PURPOSE_PRIORITY = (
+    "Engineering", "Electronics", "MedicalSoftware", "PackageManager",
+    "TerminalEmulator", "FileManager", "WebBrowser", "RemoteAccess",
+    "IDE", "GUIDesigner", "ProjectManagement", "Finance", "Photography",
+    "TextEditor", "Accessibility", "Archiving", "Compression",
+)
+
 
 MAIN_CATEGORY_PRIORITY = (
     "Game",
@@ -372,33 +463,42 @@ def _first_existing_category(candidates, exact, by_name):
 def _resolve_category(appstream_categories, category_paths):
     """Resolve AppStream's tag set into one semantic LinuxToys category.
 
-    AppStream categories are non-hierarchical tags.  Combination rules therefore
-    get first refusal, followed by purpose-weighted Additional categories and,
-    finally, broad Main-category fallbacks.
+    AppStream categories are non-hierarchical tags.  Match curated Main+Additional
+    expressions first, then a small set of safe standalone purpose tags, and
+    finally broad Main-category fallbacks.
     """
     categories = set(appstream_categories or ())
     exact, by_name = _category_path_lookup(category_paths)
 
-    # Context-sensitive combinations prevent capability tags from stealing apps
-    # whose actual purpose is clearer (for example Engineering + 3DGraphics CAD).
-    for required, candidates in CATEGORY_COMBINATION_RULES:
+    # Contextual expressions prevent a capability tag from becoming a global
+    # classification rule. For example, Graphics+3DGraphics is creative work,
+    # while Engineering+3DGraphics is classified as engineering/CAD.
+    for required, candidates in CATEGORY_EXPRESSION_RULES:
         if set(required).issubset(categories):
             resolved = _first_existing_category(candidates, exact, by_name)
             if resolved:
                 return resolved
 
-    for priority, mappings in (
-        (ADDITIONAL_CATEGORY_PRIORITY, ADDITIONAL_CATEGORY_CANDIDATES),
-        (MAIN_CATEGORY_PRIORITY, MAIN_CATEGORY_CANDIDATES),
-    ):
-        for appstream_category in priority:
-            if appstream_category not in categories:
-                continue
-            resolved = _first_existing_category(
-                mappings[appstream_category], exact, by_name
-            )
-            if resolved:
-                return resolved
+    # Some real-world metadata omits the expected Main category. Keep only a
+    # conservative set of purpose-like Additional categories as a recovery path.
+    for appstream_category in STANDALONE_PURPOSE_PRIORITY:
+        if appstream_category not in categories:
+            continue
+        resolved = _first_existing_category(
+            ADDITIONAL_CATEGORY_CANDIDATES[appstream_category], exact, by_name
+        )
+        if resolved:
+            return resolved
+
+    # Broad Main categories are the authoritative fallback.
+    for appstream_category in MAIN_CATEGORY_PRIORITY:
+        if appstream_category not in categories:
+            continue
+        resolved = _first_existing_category(
+            MAIN_CATEGORY_CANDIDATES[appstream_category], exact, by_name
+        )
+        if resolved:
+            return resolved
 
     return None
 
