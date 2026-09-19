@@ -168,8 +168,12 @@ class ExecutionRegistry:
 
             if not executions:
                 try:
-                    from .lang_utils import load_translations
-                    from .parser import get_display_name
+                    if __package__:
+                        from .lang_utils import load_translations
+                        from .parser import get_display_name
+                    else:
+                        from lang_utils import load_translations
+                        from parser import get_display_name
 
                     translations = load_translations()
                     target = str(script_name).strip().casefold()

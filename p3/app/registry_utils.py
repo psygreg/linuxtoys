@@ -1,7 +1,12 @@
 import os
 import re
 
-from .compat import get_linuxtoys_cache_dir
+if __package__:
+    from .compat import get_linuxtoys_cache_dir
+else:
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from compat import get_linuxtoys_cache_dir
 
 
 def parse_registry_file():
