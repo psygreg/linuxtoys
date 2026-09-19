@@ -396,12 +396,51 @@ class FeaturedCtl:
             script.get("repo", ""),
         )
 
+    @staticmethod
+    def _featured_rating_weight(script):
+        """Return the Featured selection weight for an eligible candidate.
+
+        LinuxToys-curated entries keep the historical baseline weight. AppStream
+        entries require at least 3.5 stars (70 on the ODRS 0-100 scale); their weight
+        then rises linearly from 1.0 at 70 to 2.0 at 90 (4.5 stars) and remains
+        capped there.
+        """
+        if not script.get("is_appstream_entry", False):
+            return 1.0
+
+        try:
+            rating = float(script.get("review_rating"))
+        except (TypeError, ValueError):
+            return 0.0
+
+        if rating < 70.0:
+            return 0.0
+        return min(2.0, 1.0 + ((rating - 70.0) / 20.0))
+
+    @classmethod
+    def _weighted_featured_sample(cls, candidates, count):
+        """Sample Featured candidates without replacement using rating weights."""
+        pool = list(candidates)
+        selected = []
+        count = min(max(0, int(count or 0)), len(pool))
+
+        for _ in range(count):
+            weights = [cls._featured_rating_weight(script) for script in pool]
+            total = sum(weights)
+            if total <= 0:
+                break
+            index = random.choices(range(len(pool)), weights=weights, k=1)[0]
+            selected.append(pool.pop(index))
+
+        return selected
+
     def _eligible_featured_scripts(self):
         """Return scripts that may currently appear in Featured."""
         return [
             script
             for script in self.all_scripts
             if not self._is_script_removable(script)
+            and self._featured_rating_weight(script) > 0
         ]
 
     @staticmethod
@@ -453,7 +492,7 @@ class FeaturedCtl:
         ]
         sensed_target = (count * self.SENSE_PERSONALIZED_PERCENT) // 100
         sensed_count = min(sensed_target, len(sensed_candidates), count)
-        selected = random.sample(sensed_candidates, sensed_count)
+        selected = self._weighted_featured_sample(sensed_candidates, sensed_count)
         selected_keys = {self._featured_script_key(script) for script in selected}
 
         # The remaining quarter keeps the previous global random discovery behavior.
@@ -464,7 +503,7 @@ class FeaturedCtl:
         remaining_count = count - len(selected)
         if remaining_count > 0:
             selected.extend(
-                random.sample(
+                self._weighted_featured_sample(
                     remaining_candidates,
                     min(remaining_count, len(remaining_candidates)),
                 )
@@ -555,7 +594,7 @@ class FeaturedCtl:
             for script in candidates
             if self._featured_script_key(script) not in selected_keys
         ]
-        selected = selected_curated + random.sample(
+        selected = selected_curated + self._weighted_featured_sample(
             remaining, min(count - len(selected_curated), len(remaining))
         )
         random.shuffle(selected)
