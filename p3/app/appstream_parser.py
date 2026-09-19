@@ -201,10 +201,79 @@ ADDITIONAL_CATEGORY_CANDIDATES = {
     "ConsoleOnly": ("devs", "utilities"),
 }
 
-# Additional categories are deliberately considered before Main categories.
-# They are more specific, and keeping the priority lists separate makes it easy
-# to tune this behavior later alongside the mappings above.
-ADDITIONAL_CATEGORY_PRIORITY = tuple(ADDITIONAL_CATEGORY_CANDIDATES)
+# AppStream categories are tags rather than a strict taxonomy.  LinuxToys needs
+# one destination, so resolve combinations that describe an application's purpose
+# before considering individual capability tags.  Rules are ordered: first match wins.
+CATEGORY_COMBINATION_RULES = (
+    # Development / technical applications.
+    (("Development", "Database"), ("devs", "development")),
+    (("Development", "WebDevelopment"), ("devs", "development")),
+    (("Development", "Electronics"), ("eng", "devs", "development")),
+    (("Development", "Engineering"), ("eng", "devs", "development")),
+
+    # Engineering must beat generic graphics capabilities (CAD is the key case).
+    (("Engineering", "3DGraphics"), ("eng", "utilities")),
+    (("Engineering", "2DGraphics"), ("eng", "utilities")),
+    (("Engineering", "VectorGraphics"), ("eng", "utilities")),
+    (("Engineering", "Graphics"), ("eng", "utilities")),
+    (("Electronics", "Graphics"), ("eng", "utilities")),
+
+    # More specific graphics purposes beat generic graphics capabilities.
+    (("Photography", "ImageProcessing"), ("photo", "graphics", "office")),
+    (("Photography", "Graphics"), ("photo", "graphics", "office")),
+
+    # Database means different things in developer and office contexts.
+    (("Office", "Database"), ("planning", "productivity")),
+
+    # File management is a system task; archiving is only a fallback.
+    (("System", "FileManager"), ("sysadm", "system", "utils")),
+    (("System", "FileTools"), ("sysadm", "system", "utils")),
+)
+
+# Purpose-oriented Additional categories are preferred over capability-oriented
+# categories.  Toolkit/implementation hints intentionally come last.
+ADDITIONAL_CATEGORY_PRIORITY = (
+    # Strong application purpose / type.
+    "IDE", "GUIDesigner", "RevisionControl", "Debugger", "Profiling",
+    "WebDevelopment", "Building", "Translation",
+    "Engineering", "Electronics", "Robotics", "MedicalSoftware",
+    "Finance", "ProjectManagement", "Database", "Presentation",
+    "Spreadsheet", "WordProcessor", "Calendar", "ContactManagement",
+    "WebBrowser", "Email", "InstantMessaging", "Chat", "IRCClient",
+    "RemoteAccess", "P2P", "FileTransfer", "VideoConference",
+    "Telephony", "TelephonyTools", "Feed", "News", "Dialup",
+    "Photography", "AudioVideoEditing", "Recorder", "Player",
+    "PackageManager", "TerminalEmulator", "FileManager", "Security",
+    "Accessibility", "Archiving", "Compression",
+
+    # Science / education subjects.
+    "ArtificialIntelligence", "Astronomy", "Biology", "Chemistry",
+    "ComputerScience", "Economy", "Electricity", "Geography", "Geology",
+    "Geoscience", "History", "Humanities", "Languages", "Literature",
+    "Maps", "Math", "NumericalAnalysis", "Physics", "ParallelComputing",
+    "Sports", "Spirituality", "Art", "Construction",
+
+    # Games.
+    "ActionGame", "AdventureGame", "ArcadeGame", "BoardGame",
+    "BlocksGame", "CardGame", "KidsGame", "LogicGame", "RolePlaying",
+    "Shooter", "Simulation", "SportsGame", "StrategyGame",
+
+    # Media / functional capabilities.
+    "Midi", "Mixer", "Sequencer", "Tuner", "TV", "DiscBurning",
+    "ImageProcessing", "DataVisualization", "3DGraphics", "VectorGraphics",
+    "RasterGraphics", "2DGraphics", "Scanning", "OCR", "Publishing",
+    "FlowChart", "Chart", "Dictionary", "PDA", "TextTools", "Viewer",
+    "FileTools", "Filesystem", "Monitor", "Calculator", "Clock",
+    "TextEditor", "Emulator", "Amusement", "Music",
+
+    # Settings and broad utility hints.
+    "DesktopSettings", "HardwareSettings", "Printing", "Documentation",
+    "Adult", "Core",
+
+    # Toolkit / implementation hints: useful only when nothing semantic matched.
+    "Java", "ConsoleOnly", "KDE", "GNOME", "XFCE", "GTK", "Qt", "Motif",
+)
+
 MAIN_CATEGORY_PRIORITY = (
     "Game",
     "Development",
@@ -288,10 +357,35 @@ def _category_path_lookup(category_paths):
     return exact, by_name
 
 
+def _first_existing_category(candidates, exact, by_name):
+    """Return the first LinuxToys category candidate present in the indexed tree."""
+    for candidate in candidates:
+        candidate = str(candidate).replace(os.sep, "/").strip("/")
+        if candidate in exact:
+            return candidate
+        matches = by_name.get(candidate)
+        if matches:
+            return matches[0]
+    return None
+
+
 def _resolve_category(appstream_categories, category_paths):
-    """Resolve Additional categories first, using the complete indexed tree."""
+    """Resolve AppStream's tag set into one semantic LinuxToys category.
+
+    AppStream categories are non-hierarchical tags.  Combination rules therefore
+    get first refusal, followed by purpose-weighted Additional categories and,
+    finally, broad Main-category fallbacks.
+    """
     categories = set(appstream_categories or ())
     exact, by_name = _category_path_lookup(category_paths)
+
+    # Context-sensitive combinations prevent capability tags from stealing apps
+    # whose actual purpose is clearer (for example Engineering + 3DGraphics CAD).
+    for required, candidates in CATEGORY_COMBINATION_RULES:
+        if set(required).issubset(categories):
+            resolved = _first_existing_category(candidates, exact, by_name)
+            if resolved:
+                return resolved
 
     for priority, mappings in (
         (ADDITIONAL_CATEGORY_PRIORITY, ADDITIONAL_CATEGORY_CANDIDATES),
@@ -300,13 +394,11 @@ def _resolve_category(appstream_categories, category_paths):
         for appstream_category in priority:
             if appstream_category not in categories:
                 continue
-            for candidate in mappings[appstream_category]:
-                candidate = str(candidate).replace(os.sep, "/").strip("/")
-                if candidate in exact:
-                    return candidate
-                matches = by_name.get(candidate)
-                if matches:
-                    return matches[0]
+            resolved = _first_existing_category(
+                mappings[appstream_category], exact, by_name
+            )
+            if resolved:
+                return resolved
 
     return None
 
