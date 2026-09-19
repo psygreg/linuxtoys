@@ -1,3 +1,5 @@
+import os
+
 from .gtk_common import Gtk, Pango, escape_markup, load_scaled_pixbuf
 from . import get_icon_path
 
@@ -90,14 +92,33 @@ class InfosHead(Gtk.Box):
             self.label_repo.set_text("")
             self.label_repo.hide()
 
-        icon_value = script_info.get("icon") or "local-script.svg"
-        icon_path = get_icon_path(icon_value) or get_icon_path("local-script.svg")
-        pixbuf = load_scaled_pixbuf(icon_path, 100, 100) if icon_path else None
+        icon_value = str(script_info.get("icon") or "local-script.svg")
+        icon_size = 100
 
-        if pixbuf is not None:
-            self.icon_head.set_from_pixbuf(pixbuf)
-        else:
-            self.icon_head.set_from_icon_name(
-                "application-x-executable", Gtk.IconSize.DIALOG
+        # AppStream entries may carry an absolute path to an icon from the
+        # distribution AppStream cache.  Do not feed those paths through
+        # LinuxToys' bundled-icon resolver: on distributions such as Arch that
+        # can discard an otherwise valid AppStream icon.  This mirrors the icon
+        # handling used by the application cards.
+        if icon_value.endswith((".png", ".svg")):
+            if os.path.isabs(icon_value) or "/" in icon_value:
+                icon_path = icon_value if os.path.exists(icon_value) else None
+            else:
+                icon_path = get_icon_path(icon_value)
+
+            pixbuf = (
+                load_scaled_pixbuf(icon_path, icon_size, icon_size, True)
+                if icon_path
+                else None
             )
-            self.icon_head.set_pixel_size(100)
+            if pixbuf is not None:
+                self.icon_head.set_from_pixbuf(pixbuf)
+            else:
+                self.icon_head.set_from_icon_name(
+                    "application-x-executable", Gtk.IconSize.DIALOG
+                )
+                self.icon_head.set_pixel_size(icon_size)
+        else:
+            # Named icons belong to the active GTK icon theme.
+            self.icon_head.set_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
+            self.icon_head.set_pixel_size(icon_size)
