@@ -903,7 +903,7 @@ def _normalize_flatpak_component(component, source):
         "verified": _flatpak_verified(component),
         "origin": source["remote"],
         "source": "flatpak",
-        "version": str(((component.find("releases/release") or {}).attrib.get("version", "")) if component.find("releases/release") is not None else ""),
+        "version": str(component.find("releases/release").attrib.get("version", "")) if component.find("releases/release") is not None else "",
         "flatpak_remote": source["remote"],
         "flatpak_scope": source["scope"],
         "flatpak_installation": source["installation"],
