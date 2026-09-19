@@ -1,2 +1,2 @@
-ICON: ide.png
+ICON: ide.svg
 description: devs_desc

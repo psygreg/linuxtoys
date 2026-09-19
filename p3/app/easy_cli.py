@@ -7,7 +7,7 @@ import asyncio
 import subprocess
 import re
 import shutil
-from .parser import get_categories, get_all_scripts_recursive
+from .parser import get_categories, get_all_scripts_recursive, get_appstream_entries
 from .updater import __version__
 from .manifest_helper import (
     run_manifest_mode, run_update_check_cli, find_script_by_name, 
@@ -428,14 +428,9 @@ def scripts_install(args: list, skip_confirmation, translations):
     scripts_found_list = []
     scripts_missing = []
 
-    # Search scripts by name
+    # Search LinuxToys scripts, curated entries and AppStream entries by
+    # display name or stable internal/component ID.
     for script_name in install_list:
-        # Heuristic: if it looks like a flatpak, skip script search
-        if script_name.count('.') >= 2:
-            print(f"⚠️  Skipping script search for '{script_name}' (appears to be a flatpak)")
-            scripts_missing.append(f"{script_name} (Flatpak pattern)")
-            continue
-
         script_info = find_script_by_name(script_name, translations)
         if script_info:
             scripts_found_list.append(script_info)
@@ -854,11 +849,29 @@ def smart_install(args: list, skip_confirmation, translations):
     flatpaks_to_install = []
     items_missing = []
 
-    # Identify potential flatpaks
-    potential_flatpaks = [item for item in install_list if item.count('.') >= 2]
-    other_items = [item for item in install_list if item.count('.') < 2]
+    # Resolve LinuxToys/AppStream entries before applying the dotted-ID
+    # Flatpak heuristic. AppStream component IDs commonly contain several dots.
+    potential_flatpaks = []
+    for item_name in install_list:
+        script_info = find_script_by_name(item_name, translations)
+        if script_info:
+            scripts_found_list.append(script_info)
+            print(f"✓ Found script: {item_name}")
+            continue
 
-    # Check flatpaks asynchronously
+        if item_name.count('.') >= 2:
+            potential_flatpaks.append(item_name)
+            continue
+
+        package_exist = check_package_exists(item_name)
+        if package_exist:
+            packages_to_install.append(item_name)
+            print(f"✓ Found package: {item_name}")
+        else:
+            items_missing.append(item_name)
+            print(f"✗ Not found: {item_name}")
+
+    # Only dotted IDs unresolved by LinuxToys/AppStream reach Flatpak detection.
     if potential_flatpaks:
         print(f"Checking {len(potential_flatpaks)} potential flatpak(s) asynchronously...")
         exists_results = asyncio.run(check_flatpaks_async(potential_flatpaks))
@@ -869,23 +882,6 @@ def smart_install(args: list, skip_confirmation, translations):
             else:
                 items_missing.append(name)
                 print(f"✗ Flatpak not found: {name}")
-
-    # For other items, decide based on its name pattern
-    for item_name in other_items:
-        # try to find it as a script first
-        script_info = find_script_by_name(item_name, translations)
-        if script_info:
-            scripts_found_list.append(script_info)
-            print(f"✓ Found script: {item_name}")
-        else:
-            # If not a script, check if it's a package
-            package_exist = check_package_exists(item_name)
-            if package_exist:
-                packages_to_install.append(item_name)
-                print(f"✓ Found package: {item_name}")
-            else:
-                items_missing.append(item_name)
-                print(f"✗ Not found: {item_name}")
     
     print()
 
@@ -983,6 +979,10 @@ def get_all_scripts(translations=None):
         else:
             for script in (get_all_scripts_recursive(path, translations) or []):
                 add_script(script.get('name'), script.get('path'))
+
+    # AppStream entries are first-class installable entries in CLI mode too.
+    for script in get_appstream_entries(translations):
+        add_script(script.get("name"), script.get("path"))
 
     # Remove duplicates and sort by name
     unique_scripts = { (s["name"], s["path"]) : s for s in scripts }.values()

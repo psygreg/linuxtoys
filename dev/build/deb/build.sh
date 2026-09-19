@@ -90,12 +90,15 @@ Depends: bash,
  curl,
  wget,
  zenity,
+ appstream,
+ libappstream5,
  python3,
  python3-gi,
  python3-requests,
  libgtk-3-0,
  gir1.2-gtk-3.0,
  gir1.2-vte-2.91,
+ gir1.2-appstream-1.0,
  sudo | sudo-rs
 Description: A set of tools for Linux presented in a user-friendly way.
  .

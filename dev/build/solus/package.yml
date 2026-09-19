@@ -27,6 +27,7 @@ rundeps    :
     - bash
     - git
     - libvte
+    - appstream
 
 setup      : |
     # No special setup needed for Python application

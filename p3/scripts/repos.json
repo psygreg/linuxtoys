@@ -12,7 +12,7 @@
         "description": "A web-based UI/UX design application.",
         "description_tag": "figma_desc",
         "repo": "https://github.com/arximus88/figma-linux-next",
-        "category": "office",
+        "category": "creative",
         "icon": "figma.svg"
     },
     {
@@ -106,71 +106,11 @@
         "package-name": "com.moonlight_stream.Moonlight"
     },
     {
-        "name": "Endless Key",
-        "description": "Curated learning anytime, anywhere.",
-        "description_tag": "endlesskey_desc",
-        "repo": "https://support.endlessos.org/en/endless-key/linux",
-        "category": "edu",
-        "icon": "endlesskey.png",
-        "type": "flathub",
-        "package-name": "org.endlessos.Key"
-    },
-    {
-        "name": "GCompris",
-        "description": "Educational game for children.",
-        "description_tag": "gcompris_desc",
-        "repo": "https://www.gcompris.net",
-        "category": "edu",
-        "icon": "gcompris.png",
-        "type": "flathub",
-        "package-name": "org.kde.gcompris"
-    },
-    {
-        "name": "GeoGebra",
-        "description": "Dynamic mathematics software.",
-        "description_tag": "geogebra_desc",
-        "repo": "https://www.geogebra.org",
-        "category": "edu",
-        "icon": "geogebra.png",
-        "type": "flathub",
-        "package-name": "org.geogebra.GeoGebra"
-    },
-    {
-        "name": "Kalzium",
-        "description": "Periodic Table of Elements.",
-        "description_tag": "kalzium_desc",
-        "repo": "https://apps.kde.org/kalzium",
-        "category": "edu",
-        "icon": "kalzium.png",
-        "type": "flathub",
-        "package-name": "org.kde.kalzium"
-    },
-    {
-        "name": "Kolibri",
-        "description": "Offline learning platform.",
-        "description_tag": "kolibri_desc",
-        "repo": "https://learningequality.org/kolibri",
-        "category": "edu",
-        "icon": "kolibri.png",
-        "type": "flathub",
-        "package-name": "org.learningequality.Kolibri"
-    },
-    {
-        "name": "Stellarium",
-        "description": "A Planetarium in your computer.",
-        "description_tag": "stellarium_desc",
-        "repo": "https://stellarium.org",
-        "category": "edu",
-        "icon": "stellarium.png",
-        "type": "flathub",
-        "package-name": "org.stellarium.Stellarium"
-    },
-    {
         "name": "Audacity",
         "description": "A free, open source, cross-platform audio software.",
         "description_tag": "audacity_desc",
         "repo": "https://github.com/audacity/audacity",
-        "category": "media",
+        "category": "audio",
         "icon": "audacity.svg"
     },
     {
@@ -204,7 +144,7 @@
         "description": "SDL/ImGui edition software for viewing .brd files, intended as a drop-in replacement for the 'Test_Link' software and 'Landrex'.",
         "description_tag": "openboardview_desc",
         "repo": "https://github.com/OpenBoardView/OpenBoardView",
-        "category": "office",
+        "category": "eng",
         "icon": "openboardview.svg",
         "type": {
             "arch": "native",
@@ -221,16 +161,6 @@
         "icon": "zennotes.png"
     },
     {
-        "name": "Texmaker",
-        "description": "A clean, powerful and highly configurable LaTeX editor.",
-        "description_tag": "texmaker_desc",
-        "repo": "https://www.xm1math.net/texmaker/",
-        "category": "edu",
-        "icon": "texmaker.svg",
-        "type": "flathub",
-        "package-name": "net.xm1math.Texmaker"
-    },
-    {
         "name": "Discord",
         "description": "A popular communication platform for gamers and communities.",
         "description_tag": "discord_desc",
@@ -245,7 +175,7 @@
         "description": "A collaboration platform for remote work.",
         "description_tag": "msteams_desc",
         "repo": "https://github.com/IsmaelMartinez/teams-for-linux",
-        "category": "chat",
+        "category": "office",
         "icon": "teams.svg",
         "type": "flathub",
         "package-name": "com.github.IsmaelMartinez.teams_for_linux"
@@ -265,7 +195,7 @@
         "description": "Team collaboration and messaging platform.",
         "description_tag": "slack_desc",
         "repo": "https://slack.com",
-        "category": "chat",
+        "category": "office",
         "icon": "slack.svg",
         "type": "flathub",
         "package-name": "com.slack.Slack"
@@ -322,16 +252,6 @@
         "icon": "leshade.png"
     },
     {
-        "name": "Google Chrome",
-        "description": "A popular web browser from Google.",
-        "description_tag": "chrome_desc",
-        "repo": "https://chrome.google.com",
-        "category": "office",
-        "icon": "chrome.svg",
-        "type": "flathub",
-        "package-name": "com.google.Chrome"
-    },
-    {
         "name": "Cohesion",
         "description": "A community port of Notion for Linux.",
         "description_tag": "cohesion_desc",
@@ -342,76 +262,6 @@
         "package-name": "io.github.brunofin.Cohesion"
     },
     {
-        "name": "Darktable",
-        "description": "A free and open-source photography workflow application.",
-        "description_tag": "darktable_desc",
-        "repo": "https://www.darktable.org",
-        "category": "office",
-        "icon": "dartkable.svg",
-        "type": "flathub",
-        "package-name": "org.darktable.Darktable"
-    },
-    {
-        "name": "Foliate",
-        "description": "An eBook reader designed for simplicity and ease of use.",
-        "description_tag": "foliate_desc",
-        "repo": "https://johnfactotum.github.io/foliate",
-        "category": "media",
-        "icon": "foliate.svg",
-        "type": "flathub",
-        "package-name": "com.github.johnfactotum.Foliate"
-    },
-    {
-        "name": "FreeCAD",
-        "description": "A free and open-source parametric 3D CAD modeler.",
-        "description_tag": "freecad_desc",
-        "repo": "https://www.freecad.org",
-        "category": "office",
-        "icon": "freecad.svg",
-        "type": "flathub",
-        "package-name": "org.freecad.FreeCAD"
-    },
-    {
-        "name": "Inkscape",
-        "description": "A professional free and open-source vector graphics editor.",
-        "description_tag": "inkscape_desc",
-        "repo": "https://inkscape.org",
-        "category": "office",
-        "icon": "inkscape.svg",
-        "type": "flathub",
-        "package-name": "org.inkscape.Inkscape"
-    },
-    {
-        "name": "KiCad",
-        "description": "A free and open-source PCB design tool.",
-        "description_tag": "kicad_desc",
-        "repo": "https://www.kicad.org",
-        "category": "office",
-        "icon": "kicad.svg",
-        "type": "flathub",
-        "package-name": "org.kicad.KiCad"
-    },
-    {
-        "name": "Krita",
-        "description": "A professional free and open-source painting program.",
-        "description_tag": "krita_desc",
-        "repo": "https://apps.kde.org/krita",
-        "category": "office",
-        "icon": "krita.svg",
-        "type": "flathub",
-        "package-name": "org.kde.krita"
-    },
-    {
-        "name": "LibreOffice",
-        "description": "A powerful office suite.",
-        "description_tag": "libreoffice_desc",
-        "repo": "https://libreoffice.org",
-        "category": "office",
-        "icon": "libreoffice.svg",
-        "type": "flathub",
-        "package-name": "org.libreoffice.LibreOffice"
-    },
-    {
         "name": "Obsidian",
         "description": "A free, flexible app for your thoughts, notes, and organization.",
         "description_tag": "obsidian_desc",
@@ -420,36 +270,6 @@
         "icon": "obsidian.svg",
         "type": "flathub",
         "package-name": "md.obsidian.Obsidian"
-    },
-    {
-        "name": "OnlyOffice",
-        "description": "A suite with better compatibility to Microsoft Office files.",
-        "description_tag": "onlyoffice_desc",
-        "repo": "https://onlyoffice.com",
-        "category": "office",
-        "icon": "onlyoffice.svg",
-        "type": "flathub",
-        "package-name": "org.onlyoffice.desktopeditors"
-    },
-    {
-        "name": "Pinta",
-        "description": "A free painting program very similar to Paint.",
-        "description_tag": "pinta_desc",
-        "repo": "https://www.pinta-project.com",
-        "category": "office",
-        "icon": "pinta.svg",
-        "type": "flathub",
-        "package-name": "com.github.PintaProject.Pinta"
-    },
-    {
-        "name": "Zen Browser",
-        "description": "A minimalist web browser designed for distraction-free browsing.",
-        "description_tag": "zen_desc",
-        "repo": "https://zen-browser.app",
-        "category": "office",
-        "icon": "zen.svg",
-        "type": "flathub",
-        "package-name": "app.zen_browser.zen"
     },
     {
         "name": "Lutris",
@@ -617,72 +437,12 @@
         "os": [ "fedora", "ostree", "arch", "cachy", "ubuntu", "debian", "suse", "solus" ]
     },
     {
-        "name": "CPU-X",
-        "description": "Gathers information on CPU, motherboard and more.",
-        "description_tag": "cpux_desc",
-        "repo": "https://thetumultuousunicornofdarkness.github.io/CPU-X/",
-        "category": "sysadm",
-        "icon": "cpu-x.png",
-        "type": "flathub",
-        "package-name": "io.github.thetumultuousunicornofdarkness.cpu-x"
-    },
-    {
         "name": "QDiskInfo",
         "description": "A frontend for smartctl that shows the SMART data of modern hard disk and solid state drives. Provides a user experience similar to CrystalDiskInfo.",
         "description_tag": "qdi_desc",
         "repo": "https://github.com/edisionnano/QDiskInfo",
         "category": "sysadm",
         "icon": "qdiskinfo.svg"
-    },
-    {
-        "name": "Termius",
-        "description": "Modern SSH client for Linux with intuitive graphical interface and advanced connection management features.",
-        "description_tag": "termius_desc",
-        "repo": "https://termius.com",
-        "category": "sysadm",
-        "icon": "termius.png",
-        "type": "flathub",
-        "package-name": "com.termius.Termius"
-    },
-    {
-        "name": "Cockpit Client",
-        "description": "A web-based interface for managing Linux servers (client).",
-        "description_tag": "cockpitclient_desc",
-        "repo": "https://cockpit-project.org",
-        "category": "sysadm",
-        "icon": "cockpit.png",
-        "type": "flathub",
-        "package-name": "org.cockpit_project.CockpitClient"
-    },
-    {
-        "name": "Bitwarden",
-        "description": "A secure and free password manager for all of your devices.",
-        "description_tag": "bitwarden_desc",
-        "repo": "https://www.bitwarden.com",
-        "category": "privacy",
-        "icon": "bitwarden.png",
-        "type": "flathub",
-        "package-name": "com.bitwarden.desktop"
-    },
-    {
-        "name": "Brave Browser",
-        "description": "A privacy-focused web browser with built-in ad blocking.",
-        "description_tag": "brave_desc",
-        "repo": "https://brave.com",
-        "category": "privacy",
-        "icon": "brave.svg",
-        "type": "flathub",
-        "package-name": "com.brave.Browser"
-    },
-    {
-        "name": "Cryptomator",
-        "description": "Encryption for your cloud made easy.",
-        "description_tag": "cryptomator_desc",
-        "repo": "https://cryptomator.org",
-        "category": "privacy",
-        "icon": "cryptomator.png",
-        "type": "flathub",
-        "package-name": "org.cryptomator.Cryptomator"
     },
     {
         "name": "Helium Browser",
@@ -693,96 +453,11 @@
         "icon": "helium.png"
     },
     {
-        "name": "KeePassXC",
-        "description": "Secure and Full-featured Password Manager.",
-        "description_tag": "keepassxc_desc",
-        "repo": "https://keepassxc.org",
-        "category": "privacy",
-        "icon": "keepassxc.png",
-        "type": "flathub",
-        "package-name": "org.keepassxc.KeePassXC"
-    },
-    {
-        "name": "LibreWolf",
-        "description": "LibreWolf browser.",
-        "repo": "https://librewolf.net",
-        "category": "privacy",
-        "icon": "librewolf.svg",
-        "type": "flathub",
-        "package-name": "io.gitlab.librewolf-community"
-    },
-    {
-        "name": "LogSEQ",
-        "description": "A privacy-first, open-source knowledge base. Alternative to Obsidian.",
-        "description_tag": "logseq_desc",
-        "repo": "https://logseq.com",
-        "category": "privacy",
-        "icon": "logseq.svg",
-        "type": "flathub",
-        "package-name": "com.logseq.Logseq"
-    },
-    {
-        "name": "Mullvad Browser",
-        "description": "Mullvad VPN browser.",
-        "repo": "https://mullvad.net/browser",
-        "category": "privacy",
-        "icon": "mullvad_browser.svg",
-        "type": "flathub",
-        "package-name": "net.mullvad.MullvadBrowser"
-    },
-    {
-        "name": "Proton VPN",
-        "description": "Proton VPN.",
-        "repo": "https://protonvpn.com",
-        "category": "privacy",
-        "icon": "protonvpn.svg",
-        "type": "flathub",
-        "package-name": "com.protonvpn.www"
-    },
-    {
-        "name": "SiriKali",
-        "description": "A GUI to Gocryptfs, Securefs and Cryfs.",
-        "description_tag": "sirikali_desc",
-        "repo": "https://mhogomchungu.github.io/sirikali",
-        "category": "privacy",
-        "icon": "sirikali.png",
-        "type": "flathub",
-        "package-name": "io.github.mhogomchungu.sirikali"
-    },
-    {
-        "name": "Surfshark VPN",
-        "description": "Surfshark VPN.",
-        "repo": "https://surfshark.com",
-        "category": "privacy",
-        "icon": "surfsharkvpn.svg",
-        "type": "flathub",
-        "package-name": "com.surfshark.Surfshark"
-    },
-    {
-        "name": "Ungoogled Chromium",
-        "description": "Ungoogled Chromium browser.",
-        "repo": "https://github.com/ungoogled-software/ungoogled-chromium",
-        "category": "privacy",
-        "icon": "ungoogled_chromium.png",
-        "type": "flathub",
-        "package-name": "io.github.ungoogled_software.ungoogled_chromium"
-    },
-    {
-        "name": "Warehouse",
-        "description": "A feature-rich tool for managing Flatpak applications and repositories tailored towards more technical users.",
-        "description_tag": "wrhs_desc",
-        "repo": "https://github.com/flattool/warehouse",
-        "category": "utils",
-        "icon": "warehouse.svg",
-        "type": "flathub",
-        "package-name": "io.github.flattool.Warehouse"
-    },
-    {
         "name": "VLC",
         "description": "Open source, fully-featured media player. Includes codecs for proprietary media formats for Fedora and OpenSUSE.",
         "description_tag": "vlc_desc",
         "repo": "https://lutris.net",
-        "category": "media",
+        "category": "players",
         "icon": "vlc.svg",
         "type": "native",
         "package-name": "vlc",
@@ -795,7 +470,7 @@
         "description": "Installs ffmpegthumbnailer to generate thumbnails for video files in file managers.",
         "description_tag": "thumb_desc",
         "repo": "https://github.com/dirkvdb/ffmpegthumbnailer",
-        "category": "media",
+        "category": "extra",
         "icon": "media.svg",
         "type": "native",
         "package-name": "ffmpegthumbnailer"
@@ -809,76 +484,6 @@
         "icon": "qtscrcpy.png"
     },
     {
-        "name": "QPWGraph",
-        "description": "A graphical tool for managing PipeWire audio connections.",
-        "description_tag": "qpw_desc",
-        "repo": "https://github.com/rncbc/qpwgraph",
-        "category": "media",
-        "icon": "qpwgraph.svg",
-        "type": "flathub",
-        "package-name": "org.rncbc.qpwgraph"
-    },
-    {
-        "name": "HandBrake",
-        "description": "An open-source video converter with support for many formats and codecs.",
-        "description_tag": "hndbrk_desc",
-        "repo": "https://handbrake.fr",
-        "category": "media",
-        "icon": "handbrake.svg",
-        "type": "flathub",
-        "package-name": "fr.handbrake.ghb"
-    },
-    {
-        "name": "EasyEffects",
-        "description": "A powerful audio processing tool for Pipewire that offers from noise filtering to spatial audio.",
-        "description_tag": "efx_desc",
-        "repo": "https://github.com/wwmm/easyeffects",
-        "category": "media",
-        "icon": "efx.svg",
-        "type": "flathub",
-        "package-name": "com.github.wwmm.easyeffects"
-    },
-    {
-        "name": "S3Drive",
-        "description": "Convert S3, SFTP, WebDAV or Rclone back-end into your encrypted storage.",
-        "description_tag": "s3d_desc",
-        "repo": "https://s3drive.app",
-        "category": "privacy",
-        "icon": "s3drive.png",
-        "type": "flathub",
-        "package-name": "io.kapsa.drive"
-    },
-    {
-        "name": "Pika Backup",
-        "description": "A simple and space-efficient backup application based on BorgBackup.",
-        "description_tag": "pika_desc",
-        "repo": "https://apps.gnome.org/PikaBackup",
-        "category": "utils",
-        "icon": "pika.svg",
-        "type": "flathub",
-        "package-name": "org.gnome.World.PikaBackup"
-    },
-    {
-        "name": "Peazip",
-        "description": "Free file archiver utility supporting many formats.",
-        "description_tag": "peazip_desc",
-        "repo": "https://peazip.github.io",
-        "category": "utils",
-        "icon": "peazip.png",
-        "type": "flathub",
-        "package-name": "io.github.peazip.PeaZip"
-    },
-    {
-        "name": "Mission Center",
-        "description": "A system monitor for Linux very similar to Windows Task Manager, based on GTK4.",
-        "description_tag": "mctl_desc",
-        "repo": "https://missioncenter.io",
-        "category": "utils",
-        "icon": "mctl.svg",
-        "type": "flathub",
-        "package-name": "io.missioncenter.MissionCenter"
-    },
-    {
         "name": "LACT",
         "description": "GPU fan control and overlocking tool. Use with caution!",
         "description_tag": "lact_desc",
@@ -890,36 +495,6 @@
         "overrides": {
             "skip-user": true
         }
-    },
-    {
-        "name": "Haguichi",
-        "description": "Facilitates the use of Hamachi on Linux with an intuitive graphical interface that covers all its features.",
-        "description_tag": "haguichi_desc",
-        "repo": "https://github.com/ztefn/haguichi",
-        "category": "utils",
-        "icon": "haguichi.svg",
-        "type": "flathub",
-        "package-name": "com.github.ztefn.haguichi"
-    },
-    {
-        "name": "Gear Lever",
-        "description": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
-        "description_tag": "glever_desc",
-        "repo": "https://github.com/mijorus/gearlever",
-        "category": "utils",
-        "icon": "gearlever.png",
-        "type": "flathub",
-        "package-name": "it.mijorus.gearlever"
-    },
-    {
-        "name": "Flatseal",
-        "description": "A graphical interface to manage Flatpak permissions.",
-        "description_tag": "fseal_desc",
-        "repo": "https://github.com/tchx84/Flatseal",
-        "category": "utils",
-        "icon": "flatseal.svg",
-        "type": "flathub",
-        "package-name": "com.github.tchx84.Flatseal"
     },
     {
         "name": "F3 (Fight Flash Fraud)",
@@ -943,16 +518,6 @@
         "icon": "bottles.svg",
         "type": "flathub",
         "package-name": "com.usebottles.bottles"
-    },
-    {
-        "name": "Bazaar",
-        "description": "A new app store with a focus on discovering and installing applications and add-ons from Flatpak remotes, and supporting the developers who make the Linux desktop possible.",
-        "description_tag": "bazaar_desc",
-        "repo": "https://github.com/kolunmi/bazaar",
-        "category": "utils",
-        "icon": "bazaar.svg",
-        "type": "flathub",
-        "package-name": "io.github.kolunmi.Bazaar"
     },
     {
         "name": "Extension Manager",
@@ -984,26 +549,6 @@
         "type": "native",
         "package-name": "gnome-tweaks",
         "desktop": "gnome"
-    },
-    {
-        "name": "StreamController",
-        "description": "A tool for setting up Stream Decks and similar devices.",
-        "description_tag": "sc_desc",
-        "repo": "https://github.com/StreamController/StreamController",
-        "category": "peripherals",
-        "icon": "streamcontroller.svg",
-        "type": "flathub",
-        "package-name": "com.core447.StreamController"
-    },
-    {
-        "name": "Insomnia",
-        "description": "A powerful REST API client with a sleek interface.",
-        "description_tag": "insomnia_desc",
-        "repo": "https://insomnia.rest",
-        "category": "devs",
-        "icon": "insomnia.svg",
-        "type": "flathub",
-        "package-name": "rest.insomnia.Insomnia"
     },
     {
         "name": "Nala",
@@ -1051,16 +596,6 @@
         "overrides": {
             "post": "desktop_shortcut \"$LINUXTOYS_TARBALL_DIR/Postman\" && path_link \"$LINUXTOYS_TARBALL_DIR/Postman\" --useappid"
         }
-    },
-    {
-        "name": "NeoVim",
-        "description": "A powerful CLI-based text editor for developers.",
-        "description_tag": "nvim_desc",
-        "repo": "https://neovim.io",
-        "category": "ides",
-        "icon": "neovim.svg",
-        "type": "native",
-        "package-name": "neovim"
     },
     {
         "name": "LM Studio",
@@ -1112,16 +647,5 @@
             "ubuntu": "r-base",
             "debian": "r-base"
         }
-    },
-    {
-        "name": "Hardinfo2",
-        "description": "Advanced system information and basic benchmarks.",
-        "description_tag": "hardinfo_desc",
-        "repo": "https://hardinfo2.org/",
-        "category": "sysadm",
-        "icon": "hardinfo2.svg",
-        "type": "native",
-        "package-name": "hardinfo2",
-        "os": [ "!zorin" ]
     }
 ]

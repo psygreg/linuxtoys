@@ -207,7 +207,7 @@ def is_current_version(version: str | None = None) -> tuple[bool, str | None]:
 def run_background_update():
     """Install the latest LinuxToys release without opening the VTE viewer.
 
-    Keep LinuxToys' normal sudo_rq pre-authentication on systems that may need
+    Keep LinuxToys' normal askpass pre-authentication on systems that may need
     native package operations, but bypass it on SteamOS where install.sh uses
     the user-level AppImage/Gear Lever update path. Returns
     (success, error_message).
@@ -243,9 +243,9 @@ def run_background_update():
         script = (
             "#!/usr/bin/env bash\n"
             f"source {shlex.quote(library_path)}\n"
-            "sudo_rq\n"
+            "askpass\n"
             "\n"
-            # Keep install.sh in the same shell that ran sudo_rq. In the\n"
+            # Keep install.sh in the same shell that ran askpass. In the\n"
             # background updater there is no controlling TTY, so spawning a\n"
             # separate `bash` via a pipe can make sudo's cached authorization\n"
             # unavailable to the installer.\n"

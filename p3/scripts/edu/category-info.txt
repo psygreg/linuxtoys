@@ -1,3 +1,2 @@
-ICON: education.png
+ICON: edu.svg
 description: edu_desc
-mode: checklist

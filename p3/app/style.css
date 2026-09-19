@@ -87,3 +87,44 @@ button.update-indicator {
 button.update-restart-ready {
     font-weight: bold;
 }
+
+/* App-page long descriptions should inherit the page background instead of
+   the theme's default GtkTextView/view background. */
+textview.app-page-description,
+textview.app-page-description text {
+    background-color: transparent;
+}
+
+/* Session-scoped AppStream installation queue. */
+button.appstream-queue-indicator {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+button.appstream-queue-error:hover,
+button.appstream-queue-error:active {
+    background-color: rgba(180, 55, 55, 0.28);
+    border-color: rgba(234, 178, 178, 0.75);
+}
+
+.queue-item {
+    background-color: rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 8px;
+}
+
+button.queue-remove:hover {
+    background-color: rgba(180, 55, 55, 0.28);
+}
+
+/* Border-only top layer for category cards with decorative SVG watermarks. */
+.category-watermark-frame {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.category-watermark-frame-hover {
+    border-color: rgba(255, 255, 255, 0.9);
+}

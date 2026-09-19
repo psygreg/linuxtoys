@@ -77,7 +77,7 @@ ossuse() {
             dependencies=(
                 bash git curl wget zenity python3 python3-gobject gtk3
                 python3-requests python3-urllib3 python3-certifi
-                libvte-2_91-0 typelib-1_0-Vte-2.91
+                libvte-2_91-0 typelib-1_0-Vte-2.91 libappstream5 typelib-1_0-AppStream-1_0
             )
             for pkg in "${dependencies[@]}"; do
                 sudo zypper --non-interactive install "${pkg}"

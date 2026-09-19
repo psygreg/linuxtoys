@@ -1,0 +1,1062 @@
+"""Persistent AppStream catalog cache for LinuxToys.
+
+The cache builder is deliberately UI-agnostic.  It loads the distribution's
+AppStream pool through libappstream, normalizes the useful application metadata
+into JSON, checkpoints partial work, and atomically publishes a completed
+catalog under ~/.cache/linuxtoys/appstream.
+"""
+
+from __future__ import annotations
+
+import gzip
+import hashlib
+import html
+import json
+import os
+import re
+import shutil
+import subprocess
+import threading
+import time
+import xml.etree.ElementTree as ET
+from urllib.parse import urljoin
+from pathlib import Path
+
+from . import popularity
+
+
+CACHE_SCHEMA = 11
+CACHE_MAX_AGE = 14 * 24 * 60 * 60
+CHECKPOINT_EVERY = 100
+
+CACHE_DIR = Path(os.path.expanduser("~/.cache/linuxtoys/appstream"))
+STATE_PATH = CACHE_DIR / "state.json"
+CATALOG_PATH = CACHE_DIR / "catalog.json"
+PARTIAL_PATH = CACHE_DIR / "native.partial.json"
+FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
+
+_LOCK = threading.RLock()
+
+
+def _flatpak_supported_host() -> bool:
+    """Return whether Flatpak-backed AppStream should be considered on this host.
+
+    LinuxToys treats Flatpak as systemd-only and does not expose Flatpak
+    applications from containers.
+    """
+    try:
+        from .compat import get_system_compat_keys, is_containerized
+
+        return (
+            not is_containerized()
+            and "systemd" in get_system_compat_keys()
+        )
+    except (ImportError, AttributeError):
+        return False
+
+
+def _atomic_json_write(path: Path, value) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as handle:
+        json.dump(value, handle, ensure_ascii=False, separators=(",", ":"))
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(tmp, path)
+
+
+def _read_json(path: Path, default):
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except (OSError, ValueError, TypeError):
+        return default
+
+
+def _strip_markup(value) -> str:
+    if not value:
+        return ""
+    text = str(value)
+    text = re.sub(r"<\s*br\s*/?\s*>", "\n", text, flags=re.I)
+    text = re.sub(r"</\s*(p|li)\s*>", "\n", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = html.unescape(text)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def _normalize_description_text(value) -> str:
+    """Collapse XML formatting whitespace while preserving explicit <br> breaks."""
+    text = html.unescape(str(value or ""))
+    parts = text.split("\n")
+    return "\n".join(re.sub(r"\s+", " ", part).strip() for part in parts).strip()
+
+
+def _inline_segments(node, inherited=()):
+    """Return JSON-safe styled text spans from an AppStream inline XML node."""
+    segments = []
+
+    def append(raw_text, styles):
+        if raw_text is None:
+            return
+        # XML indentation and source wrapping are insignificant whitespace. Collapse
+        # them to a single space, but keep that space across inline-style boundaries.
+        text = re.sub(r"\s+", " ", html.unescape(str(raw_text)))
+        if not text:
+            return
+        styles = list(styles)
+        if segments and segments[-1].get("styles") == styles:
+            segments[-1]["text"] += text
+        else:
+            segments.append({"text": text, "styles": styles})
+
+    if node.text:
+        append(node.text, inherited)
+
+    for child in list(node):
+        tag = child.tag.rsplit("}", 1)[-1].lower() if isinstance(child.tag, str) else ""
+        if tag == "br":
+            if segments:
+                segments[-1]["text"] = segments[-1]["text"].rstrip() + "\n"
+        else:
+            styles = inherited
+            if tag in ("em", "i"):
+                styles = (*styles, "italic")
+            elif tag in ("strong", "b"):
+                styles = (*styles, "bold")
+            elif tag == "code":
+                styles = (*styles, "code")
+            for segment in _inline_segments(child, styles):
+                if segments and segments[-1].get("styles") == segment.get("styles"):
+                    segments[-1]["text"] += segment["text"]
+                else:
+                    segments.append(segment)
+        if child.tail:
+            append(child.tail, inherited)
+
+    # Formatting indentation around the block is not content.
+    if segments:
+        segments[0]["text"] = segments[0]["text"].lstrip(" ")
+        segments[-1]["text"] = segments[-1]["text"].rstrip(" ")
+    return [segment for segment in segments if segment.get("text")]
+
+def _description_blocks_from_element(description):
+    """Preserve AppStream paragraph/list structure without a Markdown intermediary."""
+    if description is None:
+        return []
+    blocks = []
+    for child in list(description):
+        tag = child.tag.rsplit("}", 1)[-1].lower() if isinstance(child.tag, str) else ""
+        if tag == "p":
+            spans = _inline_segments(child)
+            if spans:
+                blocks.append({"type": "paragraph", "spans": spans})
+        elif tag in ("ul", "ol"):
+            items = []
+            for item in list(child):
+                item_tag = item.tag.rsplit("}", 1)[-1].lower() if isinstance(item.tag, str) else ""
+                if item_tag != "li":
+                    continue
+                spans = _inline_segments(item)
+                if spans:
+                    items.append(spans)
+            if items:
+                blocks.append({"type": "ordered_list" if tag == "ol" else "unordered_list", "items": items})
+
+    # Be tolerant of metadata that puts plain text directly in <description>.
+    if not blocks and (description.text or "").strip():
+        text = _normalize_description_text(description.text)
+        if text:
+            blocks.append({"type": "paragraph", "spans": [{"text": text.replace("\n", " "), "styles": []}]})
+    return blocks
+
+
+def _description_blocks(value):
+    """Parse libappstream description markup into the same neutral block model."""
+    if not value:
+        return []
+    text = str(value).strip()
+    if not text:
+        return []
+    try:
+        root = ET.fromstring(f"<description>{text}</description>")
+        blocks = _description_blocks_from_element(root)
+        if blocks:
+            return blocks
+    except ET.ParseError:
+        pass
+
+    # Some libappstream versions expose already-flattened text. Keep paragraph
+    # boundaries where available, but never treat source wrapping as hard lines.
+    paragraphs = [re.sub(r"\s+", " ", part).strip() for part in re.split(r"\n\s*\n", _strip_markup(text))]
+    return [
+        {"type": "paragraph", "spans": [{"text": paragraph, "styles": []}]}
+        for paragraph in paragraphs if paragraph
+    ]
+
+
+_XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
+
+
+def _normalize_locale_code(value):
+    """Normalize locale spelling for AppStream matching (pt_BR.UTF-8 -> pt-BR)."""
+    value = str(value or "").strip()
+    if not value:
+        return ""
+    value = value.split(".", 1)[0].split("@", 1)[0].replace("_", "-")
+    parts = [part for part in value.split("-") if part]
+    if not parts:
+        return ""
+    language = parts[0].lower()
+    if len(parts) == 1:
+        return language
+    region = parts[1].upper() if len(parts[1]) in (2, 3) else parts[1]
+    return "-".join((language, region, *parts[2:]))
+
+
+def _localized_xml_values(node, tag, converter):
+    """Return default + xml:lang variants for a localized AppStream element."""
+    values = {}
+    if node is None:
+        return values
+    for child in node.findall(tag):
+        value = converter(child)
+        if not value:
+            continue
+        lang = _normalize_locale_code(child.attrib.get(_XML_LANG, ""))
+        values[lang] = value
+    return values
+
+
+def _localized_xml_text_values(node, tag):
+    return _localized_xml_values(
+        node,
+        tag,
+        lambda child: _strip_markup("".join(child.itertext())),
+    )
+
+
+def _localized_xml_description_values(node):
+    return _localized_xml_values(
+        node,
+        "description",
+        _description_blocks_from_element,
+    )
+
+def _xml_description_blocks(node):
+    """Return the default AppStream description for compatibility."""
+    values = _localized_xml_description_values(node)
+    return values.get("", next(iter(values.values()), []))
+
+
+def _safe_call(obj, method, default=None, *args):
+    if obj is None:
+        return default
+    func = getattr(obj, method, None)
+    if func is None:
+        return default
+    try:
+        value = func(*args)
+    except Exception:
+        return default
+    return default if value is None else value
+
+
+def _as_list(value):
+    if value is None:
+        return []
+    try:
+        # AppStream 1.x ComponentBox exposes as_array(); older GI versions return
+        # an iterable directly.
+        converter = getattr(value, "as_array", None) or getattr(value, "asArray", None)
+        if converter is not None:
+            value = converter()
+        return list(value)
+    except (TypeError, AttributeError):
+        return []
+
+
+def _icon_value(component) -> str:
+    # Prefer a cached local PNG/SVG because LinuxToys can display it directly.
+    for icon in _as_list(_safe_call(component, "get_icons", [])):
+        for method in ("get_filename", "get_name"):
+            value = _safe_call(icon, method, "")
+            if not value:
+                continue
+            value = str(value)
+            if os.path.isabs(value) and os.path.isfile(value):
+                if value.lower().endswith((".png", ".svg")):
+                    return value
+
+    # A stock icon name is the best portable fallback and lets Gtk.IconTheme do
+    # the resolution.  JXL/remote icons can be added later without changing the
+    # cache schema.
+    stock = _safe_call(component, "get_icon_stock")
+    for method in ("get_name", "get_filename"):
+        value = _safe_call(stock, method, "")
+        if value:
+            value = str(value)
+            if not os.path.isabs(value):
+                return value
+
+    return "application-x-executable"
+
+
+def _local_screenshots(component):
+    paths = []
+    for screenshot in _as_list(_safe_call(component, "get_screenshots_all", [])):
+        images = _as_list(_safe_call(screenshot, "get_images", []))
+        for image in images:
+            value = _safe_call(image, "get_filename", "")
+            if value and os.path.isfile(str(value)):
+                path = str(value)
+                if path.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
+                    paths.append(path)
+                    break
+    return paths
+
+
+def _developer_name(component) -> str:
+    developer = _safe_call(component, "get_developer")
+    return str(_safe_call(developer, "get_name", "") or "").strip()
+
+
+def _component_homepage(component) -> str:
+    """Return the component homepage URL when libAppStream exposes one."""
+    try:
+        from gi.repository import AppStream
+
+        url_kind = getattr(getattr(AppStream, "UrlKind", None), "HOMEPAGE", None)
+        if url_kind is not None:
+            value = _safe_call(component, "get_url", "", url_kind)
+            if value:
+                return str(value).strip()
+    except (ImportError, AttributeError):
+        pass
+
+    # Keep compatibility with bindings exposing URL items rather than get_url().
+    for item in _as_list(_safe_call(component, "get_urls", [])):
+        kind = str(_safe_call(item, "get_kind", "") or "").casefold()
+        if "homepage" in kind:
+            value = _safe_call(item, "get_url", "") or _safe_call(item, "get_value", "")
+            if value:
+                return str(value).strip()
+    return ""
+
+
+def _component_donation(component) -> str:
+    """Return the component donation URL when libAppStream exposes one."""
+    try:
+        from gi.repository import AppStream
+
+        url_kind = getattr(getattr(AppStream, "UrlKind", None), "DONATION", None)
+        if url_kind is not None:
+            value = _safe_call(component, "get_url", "", url_kind)
+            if value:
+                return str(value).strip()
+    except (ImportError, AttributeError):
+        pass
+
+    # Keep compatibility with bindings exposing URL items rather than get_url().
+    for item in _as_list(_safe_call(component, "get_urls", [])):
+        kind = str(_safe_call(item, "get_kind", "") or "").casefold()
+        if "donation" in kind:
+            value = _safe_call(item, "get_url", "") or _safe_call(item, "get_value", "")
+            if value:
+                return str(value).strip()
+    return ""
+
+
+def _component_license(component) -> str:
+    return str(_safe_call(component, "get_project_license", "") or "").strip()
+
+
+def _component_screenshots(component):
+    """Return local screenshot paths or remote URLs from libAppStream."""
+    values = []
+    seen = set()
+    for screenshot in _as_list(_safe_call(component, "get_screenshots_all", [])):
+        images = _as_list(_safe_call(screenshot, "get_images", []))
+        for image in images:
+            value = _safe_call(image, "get_filename", "")
+            if value and os.path.isfile(str(value)):
+                candidate = str(value)
+            else:
+                candidate = str(_safe_call(image, "get_url", "") or "").strip()
+            if not candidate or candidate in seen:
+                continue
+            if candidate.startswith(("https://", "http://")) or (
+                os.path.isfile(candidate)
+                and candidate.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+            ):
+                seen.add(candidate)
+                values.append(candidate)
+    return values
+
+
+def _component_identity(component) -> str:
+    data_id = str(_safe_call(component, "get_data_id", "") or "").strip()
+    if data_id:
+        return data_id
+    component_id = str(_safe_call(component, "get_id", "") or "").strip()
+    origin = str(_safe_call(component, "get_origin", "") or "").strip()
+    packages = ",".join(str(p) for p in _as_list(_safe_call(component, "get_pkgnames", [])))
+    return f"{origin}\0{component_id}\0{packages}"
+
+
+def _normalize_component(component):
+    component_id = str(_safe_call(component, "get_id", "") or "").strip()
+    name = str(_safe_call(component, "get_name", "") or "").strip()
+    summary = _strip_markup(_safe_call(component, "get_summary", ""))
+    packages = [
+        str(package).strip()
+        for package in _as_list(_safe_call(component, "get_pkgnames", []))
+        if str(package).strip()
+    ]
+    categories = [
+        str(category).strip()
+        for category in _as_list(_safe_call(component, "get_categories", []))
+        if str(category).strip()
+    ]
+
+    # LinuxToys only wants installable application-like entries at this stage.
+    # Requiring both package ownership and desktop categories naturally excludes
+    # most fonts, codecs, firmware, addons and OS metadata without relying on enum
+    # names that changed between libappstream generations.
+    if not component_id or not name or not summary or not packages or not categories:
+        return None
+
+    return {
+        "identity": _component_identity(component),
+        "id": component_id,
+        "name": name,
+        "summary": summary,
+        "description_blocks": _description_blocks(_safe_call(component, "get_description", "")),
+        "packages": packages,
+        "categories": categories,
+        "icon": _icon_value(component),
+        "screenshots": _component_screenshots(component),
+        "homepage": _component_homepage(component),
+        "donation": _component_donation(component),
+        "license": _component_license(component),
+        "developer": _developer_name(component),
+        "origin": str(_safe_call(component, "get_origin", "") or "").strip(),
+        "source": "native",
+    }
+
+
+def _native_appstream_supported_host() -> bool:
+    """Return whether LinuxToys may install native AppStream packages here."""
+    try:
+        from .compat import get_system_compat_keys
+
+        return "steamos" not in get_system_compat_keys()
+    except (ImportError, AttributeError):
+        return True
+
+
+def _load_appstream_components():
+    if not _native_appstream_supported_host():
+        return []
+
+    import gi
+
+    gi.require_version("AppStream", "1.0")
+    from gi.repository import AppStream
+
+    pool = AppStream.Pool()
+    set_flags = getattr(pool, "set_flags", None)
+    if set_flags is not None:
+        # Native catalog only for the first integration milestone. Flatpak will
+        # become its own independently refreshable source later.
+        flags = AppStream.PoolFlags.LOAD_OS_CATALOG | AppStream.PoolFlags.LOAD_OS_METAINFO
+        set_flags(flags)
+    pool.load()
+    return _as_list(pool.get_components())
+
+
+
+def _flatpak_installations():
+    """Return Flatpak installations whose local AppStream caches we can consume."""
+    result = []
+    user_root = Path(os.path.expanduser("~/.local/share/flatpak"))
+    if user_root.is_dir():
+        result.append(("user", "user", user_root))
+
+    system_root = Path("/var/lib/flatpak")
+    if system_root.is_dir():
+        result.append(("system", "default", system_root))
+
+    # Flatpak supports additional named system installations. Keep this parser tiny
+    # and dependency-free; Path is the only field we need from these INI-ish files.
+    config_dir = Path("/etc/flatpak/installations.d")
+    if config_dir.is_dir():
+        for config in sorted(config_dir.glob("*.conf")):
+            current_name = None
+            current_path = None
+            try:
+                for raw in config.read_text(encoding="utf-8", errors="replace").splitlines():
+                    line = raw.strip()
+                    match = re.match(r'^\[Installation\s+"([^"]+)"\]$', line)
+                    if match:
+                        if current_name and current_path:
+                            result.append(("system", current_name, Path(current_path)))
+                        current_name, current_path = match.group(1), None
+                    elif current_name and line.lower().startswith("path="):
+                        current_path = line.split("=", 1)[1].strip()
+                if current_name and current_path:
+                    result.append(("system", current_name, Path(current_path)))
+            except OSError:
+                continue
+    return result
+
+
+def _configured_flatpak_remotes():
+    """Enumerate configured remotes without requiring libflatpak GI bindings."""
+    remotes = []
+    if not shutil.which("flatpak"):
+        return remotes
+    for scope, installation, root in _flatpak_installations():
+        cmd = ["flatpak"]
+        if scope == "user":
+            cmd.append("--user")
+        elif installation == "default":
+            cmd.append("--system")
+        else:
+            cmd.append(f"--installation={installation}")
+        cmd += ["remotes", "--columns=name"]
+        try:
+            proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=15, check=False)
+        except (OSError, subprocess.SubprocessError):
+            continue
+        if proc.returncode != 0:
+            continue
+        for line in proc.stdout.splitlines():
+            remote = line.strip()
+            if not remote or remote.lower() == "name":
+                continue
+            remotes.append({"scope": scope, "installation": installation, "root": root, "remote": remote})
+    return remotes
+
+
+def _flatpak_eol_app_ids(source):
+    """Return application IDs whose current Flatpak refs are marked EOL.
+
+    EOL is ref/commit metadata, not AppStream XML metadata, so query libflatpak's
+    local remote-ref view once per AppStream source instead of probing every app.
+    Failure is intentionally non-fatal: AppStream remains usable on systems where
+    the Flatpak GI typelib is unavailable.
+    """
+    try:
+        import gi
+
+        gi.require_version("Flatpak", "1.0")
+        from gi.repository import Flatpak, Gio
+
+        installation = Flatpak.Installation.new_for_path(
+            Gio.File.new_for_path(str(source["root"])),
+            source["scope"] == "user",
+            None,
+        )
+        refs = installation.list_remote_refs_sync(source["remote"], None)
+    except (ImportError, ValueError, TypeError, AttributeError, Exception):
+        return set()
+
+    eol_ids = set()
+    for ref in refs or ():
+        try:
+            # Ignore runtimes/extensions: LinuxToys only publishes application
+            # components from this catalog.
+            kind = ref.get_kind()
+            app_kind = getattr(getattr(Flatpak, "RefKind", None), "APP", None)
+            if app_kind is not None and kind != app_kind:
+                continue
+
+            # Respect the architecture represented by this AppStream source.
+            ref_arch = str(ref.get_arch() or "")
+            if ref_arch and ref_arch != str(source.get("arch") or ""):
+                continue
+
+            if ref.get_eol():
+                app_id = str(ref.get_name() or "").strip()
+                if app_id:
+                    eol_ids.add(app_id)
+        except Exception:
+            continue
+
+    return eol_ids
+
+
+def _xml_localized_text(node, tag):
+    """Return the default value; localized variants are retained separately."""
+    values = _localized_xml_text_values(node, tag)
+    return values.get("", next(iter(values.values()), ""))
+
+
+
+def _xml_custom_value(component, key):
+    """Return an AppStream <custom><value key="..."> value."""
+    if component is None:
+        return ""
+    node = component.find(f"./custom/value[@key='{key}']")
+    return (node.text or "").strip() if node is not None else ""
+
+
+def _flatpak_verified(component) -> bool:
+    """Read Flathub's publisher-verification flag from its AppStream metadata."""
+    return _xml_custom_value(
+        component, "flathub::verification::verified"
+    ).casefold() == "true"
+
+
+def _flatpak_icon(component, appstream_dir, component_id):
+    icon = component.find("icon[@type='cached']")
+    if icon is not None and (icon.text or "").strip():
+        name = icon.text.strip()
+        for size in ("128x128", "64x64"):
+            candidate = appstream_dir / "icons" / size / name
+            if candidate.is_file():
+                return str(candidate)
+    for size in ("128x128", "64x64"):
+        for suffix in (".png", ".svg"):
+            candidate = appstream_dir / "icons" / size / f"{component_id}{suffix}"
+            if candidate.is_file():
+                return str(candidate)
+    return "application-x-executable"
+
+
+def _normalize_flatpak_component(component, source):
+    component_id = _xml_localized_text(component, "id")
+    name = _xml_localized_text(component, "name")
+    summary = _xml_localized_text(component, "summary")
+    categories = [
+        (item.text or "").strip()
+        for item in component.findall("./categories/category")
+        if (item.text or "").strip()
+    ]
+    if not component_id or not name or not summary or not categories:
+        return None
+    developer = _xml_localized_text(component, "developer_name")
+    if not developer:
+        developer = _xml_localized_text(component.find("developer"), "name")
+    screenshots = []
+    media_baseurl = str(source.get("media_baseurl", "") or "").strip()
+    for image in component.findall("./screenshots/screenshot/image"):
+        value = (image.text or "").strip()
+        if not value:
+            continue
+        if value.startswith(("https://", "http://")):
+            screenshots.append(value)
+        elif media_baseurl:
+            screenshots.append(urljoin(media_baseurl.rstrip("/") + "/", value.lstrip("/")))
+
+    homepage = ""
+    homepage_node = component.find("./url[@type='homepage']")
+    if homepage_node is not None:
+        homepage = (homepage_node.text or "").strip()
+    donation = ""
+    donation_node = component.find("./url[@type='donation']")
+    if donation_node is not None:
+        donation = (donation_node.text or "").strip()
+    license_name = _xml_localized_text(component, "project_license")
+    appstream_dir = source["appstream_dir"]
+    return {
+        "identity": f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{component_id}",
+        "id": component_id,
+        "name": name,
+        "summary": summary,
+        "description_blocks": _xml_description_blocks(component),
+        "localized_names": _localized_xml_text_values(component, "name"),
+        "localized_summaries": _localized_xml_text_values(component, "summary"),
+        "localized_descriptions": _localized_xml_description_values(component),
+        "localized_developers": (
+            _localized_xml_text_values(component, "developer_name")
+            or _localized_xml_text_values(component.find("developer"), "name")
+        ),
+        "packages": [component_id],
+        "categories": categories,
+        "icon": _flatpak_icon(component, appstream_dir, component_id),
+        "screenshots": screenshots,
+        "homepage": homepage,
+        "donation": donation,
+        "license": license_name,
+        "developer": developer,
+        "verified": _flatpak_verified(component),
+        "origin": source["remote"],
+        "source": "flatpak",
+        "flatpak_remote": source["remote"],
+        "flatpak_scope": source["scope"],
+        "flatpak_installation": source["installation"],
+        # Transient input for popularity normalization; removed before publication.
+        "_releases_last_year": popularity.count_releases_last_year(component),
+    }
+
+
+def _flatpak_appstream_sources():
+    """Locate locally cached AppStream catalogs for configured Flatpak remotes."""
+    if not _flatpak_supported_host():
+        return []
+
+    sources = []
+    for remote in _configured_flatpak_remotes():
+        # LinuxToys' pkg_flat currently installs from Flathub explicitly. Do not
+        # publish apps from another remote until that installer accepts a remote.
+        if remote["remote"] != "flathub":
+            continue
+        base = remote["root"] / "appstream" / remote["remote"]
+        if not base.is_dir():
+            continue
+        for arch_dir in base.iterdir():
+            active = arch_dir / "active"
+            if not active.is_dir():
+                continue
+            xml_path = active / "appstream.xml.gz"
+            if not xml_path.is_file():
+                xml_path = active / "appstream.xml"
+            if xml_path.is_file():
+                item = dict(remote)
+                item.update({"arch": arch_dir.name, "appstream_dir": active, "xml_path": xml_path})
+                sources.append(item)
+    return sources
+
+
+def _load_flatpak_components():
+    if not _flatpak_supported_host():
+        return [], []
+
+    entries = []
+    source_keys = []
+    for source in _flatpak_appstream_sources():
+        path = source["xml_path"]
+        source_keys.append(f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{source['arch']}")
+        try:
+            opener = gzip.open if path.suffix == ".gz" else open
+            with opener(path, "rb") as handle:
+                root = ET.parse(handle).getroot()
+                source = dict(source)
+                source["media_baseurl"] = (
+                    root.attrib.get("media_baseurl")
+                    or root.attrib.get("media-baseurl")
+                    or ""
+                )
+        except (OSError, ET.ParseError):
+            continue
+        eol_app_ids = _flatpak_eol_app_ids(source)
+        for component in root.findall("component"):
+            component_id = _xml_localized_text(component, "id")
+            if component_id in eol_app_ids:
+                continue
+            item = _normalize_flatpak_component(component, source)
+            if item is not None:
+                entries.append(item)
+    return entries, sorted(source_keys)
+
+
+def _path_state(path):
+    """Return a cheap metadata signature for one file or directory."""
+    path = Path(path)
+    try:
+        stat = path.stat()
+    except OSError:
+        return None
+    return (str(path), stat.st_mtime_ns, stat.st_size)
+
+
+def _native_source_fingerprint():
+    """Fingerprint native repository/AppStream state without reading large databases."""
+    if not _native_appstream_supported_host():
+        return "unsupported"
+
+    paths = set()
+
+    # Repository definitions. Directory mtimes catch files being added/removed;
+    # file mtimes/sizes catch edits to existing definitions.
+    repo_locations = (
+        "/etc/apt/sources.list",
+        "/etc/apt/sources.list.d",
+        "/etc/yum.repos.d",
+        "/etc/dnf/repos.d",
+        "/etc/zypp/repos.d",
+        "/etc/pacman.conf",
+        "/etc/pacman.d",
+        "/etc/eopkg",
+    )
+
+    # Locally installed AppStream catalogs. These are what libappstream ultimately
+    # consumes, so changes made by a package-manager refresh are detected even when
+    # the repository configuration itself did not change.
+    appstream_locations = (
+        "/usr/share/app-info",
+        "/usr/share/appdata",
+        "/usr/share/metainfo",
+        "/var/cache/app-info",
+        "/var/lib/app-info",
+        "/var/cache/swcatalog",
+    )
+
+    def collect(location, recursive=False):
+        root = Path(location)
+        if not root.exists():
+            return
+        paths.add(root)
+        if root.is_dir():
+            try:
+                iterator = root.rglob("*") if recursive else root.iterdir()
+                for child in iterator:
+                    if child.is_file():
+                        paths.add(child)
+            except OSError:
+                pass
+
+    for location in repo_locations:
+        collect(location, recursive=False)
+    for location in appstream_locations:
+        collect(location, recursive=True)
+
+    states = sorted(state for path in paths if (state := _path_state(path)) is not None)
+    payload = json.dumps(states, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _flatpak_source_fingerprint():
+    """Fingerprint Flathub configuration and its locally cached AppStream data."""
+    if not _flatpak_supported_host():
+        return "unsupported"
+
+    states = []
+    for source in _flatpak_appstream_sources():
+        path_state = _path_state(source["xml_path"])
+        states.append((
+            source["scope"],
+            source["installation"],
+            source["remote"],
+            source["arch"],
+            path_state,
+        ))
+
+    # This also distinguishes "Flatpak installed but no Flathub yet" from a host
+    # where Flatpak is unavailable.
+    payload = {
+        "flatpak": bool(shutil.which("flatpak")),
+        "sources": sorted(states, key=repr),
+    }
+    raw = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def _source_fingerprints():
+    return {
+        "native": _native_source_fingerprint(),
+        "flatpak": _flatpak_source_fingerprint(),
+    }
+
+
+def _default_state():
+    return {
+        "schema": CACHE_SCHEMA,
+        "complete": False,
+        "last_completed": 0,
+        "sources": {
+            "native": {"complete": False, "updated": 0, "fingerprint": ""},
+            "flatpak": {"complete": False, "updated": 0, "fingerprint": ""}
+        },
+    }
+
+
+def get_state():
+    state = _read_json(STATE_PATH, _default_state())
+    if not isinstance(state, dict) or state.get("schema") != CACHE_SCHEMA:
+        return _default_state()
+    return state
+
+
+def load_catalog():
+    """Return the last fully published catalog without triggering any work."""
+    data = _read_json(CATALOG_PATH, [])
+    return data if isinstance(data, list) else []
+
+
+def cache_needs_refresh(now=None) -> bool:
+    now = time.time() if now is None else float(now)
+    state = get_state()
+    if not state.get("complete") or not CATALOG_PATH.is_file():
+        return True
+
+    completed = float(state.get("last_completed") or 0)
+    if completed <= 0 or now - completed >= CACHE_MAX_AGE:
+        return True
+
+    # Refresh early when the installable software universe changed. This is cheap:
+    # only repository definitions and local AppStream metadata are stat'ed.
+    current = _source_fingerprints()
+    sources = state.get("sources", {})
+    return (
+        current["native"] != sources.get("native", {}).get("fingerprint")
+        or current["flatpak"] != sources.get("flatpak", {}).get("fingerprint")
+    )
+
+
+def _load_partial():
+    partial = _read_json(PARTIAL_PATH, {})
+    if not isinstance(partial, dict) or partial.get("schema") != CACHE_SCHEMA:
+        return [], set()
+    entries = partial.get("entries")
+    if not isinstance(entries, list):
+        return [], set()
+    processed_values = partial.get("processed")
+    if isinstance(processed_values, list):
+        processed = {str(value) for value in processed_values if value}
+    else:
+        processed = {
+            str(item.get("identity"))
+            for item in entries
+            if isinstance(item, dict) and item.get("identity")
+        }
+    return entries, processed
+
+
+def _write_partial(entries, processed):
+    _atomic_json_write(
+        PARTIAL_PATH,
+        {
+            "schema": CACHE_SCHEMA,
+            "entries": entries,
+            "processed": sorted(processed),
+        },
+    )
+
+
+def refresh_cache(force=False, status_callback=None):
+    """Refresh the native AppStream cache synchronously.
+
+    Intended to run on a worker thread.  Returns a result dictionary containing
+    ``changed``, ``count`` and, on failure, ``error``.  Existing completed data is
+    never destroyed by a failed refresh.
+    """
+    with _LOCK:
+        if not force and not cache_needs_refresh():
+            if status_callback:
+                status_callback("ready")
+            # Do not decode the potentially large catalog merely to report a count.
+            # A fresh cache needs no catalog contents in this worker at all.
+            state = get_state()
+            return {
+                "success": True,
+                "changed": False,
+                "count": int(state.get("count") or 0),
+            }
+
+        if status_callback:
+            status_callback("building")
+
+        state = get_state()
+        state["complete"] = False
+        state.setdefault("sources", {}).setdefault("native", {})["complete"] = False
+        state.setdefault("sources", {}).setdefault("flatpak", {})["complete"] = False
+        _atomic_json_write(STATE_PATH, state)
+
+        try:
+            native_supported = _native_appstream_supported_host()
+            components = _load_appstream_components()
+            entries, processed = _load_partial()
+            if not native_supported:
+                # A partial native build from another compatibility context must
+                # never leak native entries onto SteamOS.
+                entries, processed = [], set()
+
+            # A resumed build may see repository metadata newer than the partial
+            # checkpoint. Drop components that disappeared before continuing.
+            current_identities = {_component_identity(component) for component in components}
+            entries = [
+                item for item in entries
+                if isinstance(item, dict) and item.get("identity") in current_identities
+            ]
+            processed.intersection_update(current_identities)
+
+            added_since_checkpoint = 0
+            for component in components:
+                identity = _component_identity(component)
+                if identity in processed:
+                    continue
+
+                item = _normalize_component(component)
+                if item is not None:
+                    entries.append(item)
+                processed.add(identity)
+
+                added_since_checkpoint += 1
+                if added_since_checkpoint >= CHECKPOINT_EVERY:
+                    _write_partial(entries, processed)
+                    added_since_checkpoint = 0
+
+            # Flatpak catalogs are already local caches maintained by Flatpak. They
+            # are cheap enough to rebuild source-by-source, so native resume state
+            # remains independent from them.
+            flatpak_entries, _flatpak_catalog_sources = _load_flatpak_components()
+
+            # Keep the last completed popularity metrics available as a fallback.
+            # A temporary Flathub statistics failure must not erase useful ranking
+            # data from an otherwise successful AppStream refresh.
+            previous = load_catalog()
+            previous_flatpak_metrics = {
+                str(item.get("id", "")): {
+                    "popularity_downloads": item.get("popularity_downloads"),
+                    "popularity_metric": item.get("popularity_metric"),
+                }
+                for item in previous
+                if isinstance(item, dict)
+                and item.get("source") == "flatpak"
+                and item.get("id")
+                and item.get("popularity_metric") is not None
+            }
+
+            popularity.apply_flathub_metrics(
+                flatpak_entries,
+                fallback_metrics=previous_flatpak_metrics,
+            )
+            entries.extend(flatpak_entries)
+
+            # Deterministic output helps us distinguish a real metadata change from
+            # a refresh that merely visited components in a different order.
+            entries.sort(key=lambda item: (item.get("name", "").casefold(), item.get("id", "")))
+            changed = previous != entries
+            _atomic_json_write(CATALOG_PATH, entries)
+
+            now = int(time.time())
+            state = _default_state()
+            state.update({"complete": True, "last_completed": now, "count": len(entries)})
+            # Capture fingerprints only after the successful build so the state
+            # describes the exact environment represented by the published catalog.
+            fingerprints = _source_fingerprints()
+            state["sources"]["native"] = {
+                "complete": True,
+                "updated": now,
+                "fingerprint": fingerprints["native"],
+            }
+            state["sources"]["flatpak"] = {
+                "complete": True,
+                "updated": now,
+                "fingerprint": fingerprints["flatpak"],
+            }
+            _atomic_json_write(STATE_PATH, state)
+
+            try:
+                PARTIAL_PATH.unlink()
+            except FileNotFoundError:
+                pass
+
+            if status_callback:
+                status_callback("ready")
+            return {"success": True, "changed": changed, "count": len(entries)}
+        except Exception as error:
+            # Preserve the checkpoint and the last complete catalog.  The next run
+            # sees complete=false and resumes from native.partial.json.
+            if status_callback:
+                status_callback("error")
+            return {
+                "success": False,
+                "changed": False,
+                "count": len(load_catalog()),
+                "error": str(error),
+            }

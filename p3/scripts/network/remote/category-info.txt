@@ -1,0 +1,2 @@
+ICON: remote.svg
+description: remote_desc

@@ -12,7 +12,7 @@ from .compat import (
     clear_script_file_cache,
 )
 from .lang_utils import detect_system_language
-from . import git_scripts_manager, new_index, official_index, repo_parser
+from . import appstream_parser, git_scripts_manager, new_index, official_index, repo_parser
 
 
 # Select an immediately available scripts tree. GUI synchronization happens later.
@@ -26,6 +26,7 @@ def set_scripts_dir(path):
     clear_script_file_cache()
     clear_script_tree_cache()
     repo_parser.clear_runtime_caches()
+    appstream_parser.clear_runtime_cache()
     return SCRIPTS_DIR
 
 RESERVED_DIRECTORIES = {
@@ -143,6 +144,22 @@ def _get_script_tree_index():
 def prepare_script_tree_index():
     """Build the managed scripts-tree index once before parallel consumers start."""
     return _get_script_tree_index()
+
+
+def _indexed_category_paths():
+    """Return every indexed category directory relative to SCRIPTS_DIR."""
+    index = _get_script_tree_index()
+    root = index["root"]
+    result = []
+
+    for directory_path in index["directories"]:
+        if directory_path == root:
+            continue
+        relative = os.path.relpath(directory_path, root).replace(os.sep, "/")
+        if relative and relative != ".":
+            result.append(relative)
+
+    return tuple(result)
 
 
 def _indexed_directory(directory_path):
@@ -286,6 +303,16 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                     translated_value = translations.get(value, value)
                     if key == "name" and translated_value != value:
                         metadata["_name_is_translated"] = True
+                    if key == "description":
+                        current_language = detect_system_language()
+                        metadata["description_localized"] = (
+                            current_language == "en"
+                            or (
+                                value in translations
+                                and isinstance(translated_value, str)
+                                and bool(translated_value.strip())
+                            )
+                        )
                     value = translated_value
 
                 if key in metadata:
@@ -308,6 +335,16 @@ def _parse_metadata_file(file_path, default_values, translations=None):
                         translated_value = translations.get(value, value)
                         if key == "name" and translated_value != value:
                             metadata["_name_is_translated"] = True
+                        if key == "description":
+                            current_language = detect_system_language()
+                            metadata["description_localized"] = (
+                                current_language == "en"
+                                or (
+                                    value in translations
+                                    and isinstance(translated_value, str)
+                                    and bool(translated_value.strip())
+                                )
+                            )
                         value = translated_value
 
                     if key in metadata:
@@ -434,6 +471,23 @@ def get_repo_entries(translations=None):
     """Return all valid dynamic repository entries from scripts/repos.json."""
     return repo_parser.load_repo_entries(SCRIPTS_DIR, translations)
 
+
+def _get_appstream_curated_entries(translations=None):
+    """Return every LinuxToys-curated offer that should suppress AppStream duplicates."""
+    return [
+        *get_repo_entries(translations),
+        *get_all_scripts_recursive(SCRIPTS_DIR, translations),
+    ]
+
+
+def get_appstream_entries(translations=None):
+    """Return the last published AppStream catalog as repository-like entries."""
+    return appstream_parser.load_entries(
+        SCRIPTS_DIR,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
 def get_repository_map():
     """Return internal software names mapped to upstream repositories."""
     repositories = {}
@@ -502,8 +556,13 @@ def get_display_name(name, translations=None):
 
     return name
 
-def get_scripts_for_category(category_path, translations=None):
-    """Return scripts and subcategories for one category."""
+def get_scripts_for_category(category_path, translations=None, include_appstream=True):
+    """Return scripts and subcategories for one category.
+
+    ``include_appstream=False`` is used by the startup bootstrap so the curated
+    LinuxToys interface can be published without waiting for the much larger
+    AppStream catalog. Normal callers retain the previous behavior.
+    """
     items = []
 
     if category_path.endswith('.local/linuxtoys/scripts'):
@@ -585,6 +644,16 @@ def get_scripts_for_category(category_path, translations=None):
             translations,
         )
     )
+
+    if include_appstream:
+        items.extend(
+            appstream_parser.get_entries_for_category(
+                SCRIPTS_DIR,
+                category_path,
+                curated_entries=_get_appstream_curated_entries(translations),
+                category_paths=_indexed_category_paths(),
+            )
+        )
 
     return sorted(
         items,

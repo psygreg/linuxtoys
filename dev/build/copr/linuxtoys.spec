@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        7.1.6
+Version:        7.2
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash git curl wget zenity python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 (sudo or sudo-rs)
+Requires:       bash git curl wget zenity appstream fedora-appstream-metadata appstream-data python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 (sudo or sudo-rs)
 BuildRequires:  desktop-file-utils
 
 %description
@@ -49,6 +49,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/applications/LinuxToys.desktop
 
 %changelog
-* Wed Sep 16 2026 Victor Gregory <psygreg@pm.me> - 7.1.6
+* Fri Sep 18 2026 Victor Gregory <psygreg@pm.me> - 7.2
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements

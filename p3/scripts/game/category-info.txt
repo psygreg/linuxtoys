@@ -1,3 +1,2 @@
 ICON: gaming.svg
 description: game_desc
-mode: checklist

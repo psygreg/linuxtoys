@@ -91,6 +91,10 @@ class SearchCtl:
         return False
 
     def _on_search_activate(self, search_entry):
+        query = search_entry.get_text().strip()
+        if self._try_smart_search_navigation(query):
+            return
+
     # Search results are grouped by category, so find the first
     # actual SearchResult object from the first non-empty group.
         for category_group in self.search_results:
@@ -167,8 +171,73 @@ class SearchCtl:
         # Cap at 5 columns maximum and ensure at least 1
         return max(1, min(5, result))
 
+    def _smart_search_categories(self):
+        """Yield every parser-backed category currently available to the UI."""
+        seen = set()
+
+        for category in self.category_cache.get_categories():
+            path = category.get("path", "")
+            if path and path not in seen:
+                seen.add(path)
+                yield category
+
+        for items in self.category_cache.scripts_by_category.values():
+            for item in items:
+                if not item.get("is_subcategory"):
+                    continue
+                path = item.get("path", "")
+                if path and path not in seen:
+                    seen.add(path)
+                    yield item
+
+    def _try_smart_search_navigation(self, query):
+        """Open an exact localized category or special utility search target."""
+        normalized = query.strip().casefold()
+        if not normalized:
+            return False
+
+        queue_alias = self.translations.get("search_queue_alias", "queue").strip().casefold()
+        installed_alias = self.translations.get(
+            "search_installed_alias", "installed"
+        ).strip().casefold()
+
+        if normalized == queue_alias:
+            self.search_entry.set_text("")
+            self._open_appstream_queue()
+            return True
+
+        if normalized == installed_alias:
+            self.search_entry.set_text("")
+            self._open_installed_features()
+            return True
+
+        if not self.category_cache.is_populated:
+            return False
+
+        for category in self._smart_search_categories():
+            pretty_name = str(category.get("name", "") or "").strip()
+            if pretty_name and normalized == pretty_name.casefold():
+                # Smart category navigation is absolute rather than relative to the
+                # current browse/search history. Start at root, then reuse the normal
+                # category-click path so view creation and deferred card loading stay
+                # identical to a mouse click.
+                self.search_entry.set_text("")
+                self.show_categories_view()
+
+                class _CategoryTarget:
+                    pass
+
+                target = _CategoryTarget()
+                target.info = category
+                self.on_category_clicked(target, None)
+                return True
+
+        return False
+
     def _perform_search(self, query):
-        """Perform the actual search and display results."""
+        """Perform smart navigation or display the regular search results."""
+        if self._try_smart_search_navigation(query):
+            return
         self.search_results = self.search_engine.search(query)
         self._display_search_results()
 

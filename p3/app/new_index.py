@@ -6,17 +6,7 @@ import os
 # Include features here while they should display the "New" marker.
 # Supports both normal LinuxToys scripts and repository-list entries.
 NEW_FEATURES = {
-    "Amethyst Mod Manager",
-    "OpenBoardView",
-    "Hardinfo2",
-    "Zotero",
-    "Texmaker",
-    "ZenNotes",
-    "Save Desktop",
-    "Thunderbird",
-    "Volt",
-    "R",
-    "Quarto"
+
 }
 _NEW_FEATURE_NAMES = frozenset(item.casefold() for item in NEW_FEATURES)
 

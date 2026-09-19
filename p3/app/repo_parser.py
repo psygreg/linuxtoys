@@ -1084,6 +1084,8 @@ def _resolve_entry_descriptions(entry, translations=None):
     if not isinstance(description, str):
         description = ""
     description = description.strip()
+    current_language = detect_system_language()
+    description_localized = current_language == "en" and bool(description)
 
     description_tag = entry.get("description_tag", "")
     if not isinstance(description_tag, str):
@@ -1094,6 +1096,7 @@ def _resolve_entry_descriptions(entry, translations=None):
         translated = translations[description_tag]
         if isinstance(translated, str) and translated.strip():
             description = translated.strip()
+            description_localized = True
 
     long_description = entry.get(
         "long-description", entry.get("long_description", "")
@@ -1130,6 +1133,14 @@ def _resolve_entry_descriptions(entry, translations=None):
         catalog_short = _catalog_translation(catalog, language, description_tag)
         if catalog_short:
             description = catalog_short
+            language_key = str(language or "en").strip().replace("_", "-")
+            base_language = language_key.split("-", 1)[0]
+            description_localized = any(
+                isinstance(catalog.get(candidate), dict)
+                and isinstance(catalog[candidate].get(description_tag), str)
+                and bool(catalog[candidate][description_tag].strip())
+                for candidate in dict.fromkeys((language_key, base_language))
+            )
 
         catalog_long = _catalog_translation(catalog, language, long_tag)
         if catalog_long:
@@ -1145,6 +1156,7 @@ def _resolve_entry_descriptions(entry, translations=None):
         long_description,
         long_tag,
         long_description_format,
+        description_localized,
     )
 
 
@@ -1424,11 +1436,12 @@ def _resolve_app_page_metadata(
     """Return normalized optional app-page metadata for a repository entry."""
     if resolved_long_description is None or resolved_long_tag is None:
         (
-            _,
-            _,
+            description,
+            description_tag,
             long_description,
-            long_tag,
+            long_description_tag,
             long_description_format,
+            description_localized,
         ) = _resolve_entry_descriptions(entry, translations)
     else:
         long_description = resolved_long_description
@@ -1678,6 +1691,7 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
             long_description,
             long_description_tag,
             long_description_format,
+            description_localized,
         ) = _resolve_entry_descriptions(entry, translations)
 
         # A usable short description is still mandatory. If a referenced
@@ -1717,6 +1731,7 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         item.update({
             "description": description,
             "description_tag": description_tag,
+            "description_localized": description_localized,
             "icon": _resolve_list_icon(entry, scripts_dir),
             "type": install_type,
             **app_page_metadata,
@@ -2168,6 +2183,7 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
     )
 
     command_block = "\n".join(commands)
+    finish_command = "" if entry.get("is_appstream_entry") else 'info "$finishmsg"'
 
     contents = f"""#!/usr/bin/env bash
 # name: {name}
@@ -2182,7 +2198,7 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
 
 {post_override}
 
-info "$finishmsg"
+{finish_command}
 """
 
     tmp_dir = "/tmp/linuxtoys/repo-scripts"

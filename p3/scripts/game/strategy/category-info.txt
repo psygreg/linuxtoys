@@ -1,0 +1,2 @@
+ICON: strategy.svg
+description: strategy_desc

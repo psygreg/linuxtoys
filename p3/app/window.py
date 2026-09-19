@@ -7,6 +7,12 @@ import sys
 
 from . import (
     action_registry,
+    appstream_cache,
+    appstream_parser,
+    appstream_queue,
+    appstream_runner,
+    installed_features,
+    installed_packages,
     compat,
     deepin_immutable_helper,
     dev_mode,
@@ -22,6 +28,7 @@ from . import (
     search_helper,
     skills_view,
     repo_parser,
+    uri_parser,
     git_scripts_manager
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
@@ -50,7 +57,7 @@ class AppWindow(
         self.translations = translations
 
         self.set_title("LinuxToys")
-        self.set_default_size(920, 800)  ##
+        self.set_default_size(860, 630)  ##
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # Set window icon for proper GNOME integration
@@ -65,6 +72,10 @@ class AppWindow(
         self._category_view_cache = {}
         self.view_counter = 0  # Counter for unique view names
         self._scripts_sync_started = False
+        self._appstream_cache_started = False
+        self._installed_packages_refresh_started = False
+        self._installed_packages_refresh_pending = False
+        self._appstream_runner = appstream_runner.AppStreamRunner(self)
 
         # Initialize search functionality with cache
         self.script_cache = search_helper.ScriptCache()
@@ -91,6 +102,8 @@ class AppWindow(
         self._featured_last_layout = None
         self._featured_large_positions = set()
         self._featured_history = []
+        self._featured_sensed_categories = []
+        self._load_featured_sense()
         self.featured_scripts_revealer = None
         self.random_scripts_revealer = None
 
@@ -104,6 +117,7 @@ class AppWindow(
         self.automatic_updates_enabled = get_automatic_updates()
         self._background_update_started = False
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
+        self._appstream_state = "hidden"
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -149,14 +163,39 @@ class AppWindow(
         )
         self.header_bar.pack_end(self.menu_button)
 
-        # Automatic update status indicator, shown only while automatic updates
-        # are enabled (or while an installed update is waiting for restart).
+        # Shared background-status indicator. Automatic updater states have
+        # priority; while the updater is idle/up-to-date, AppStream may borrow the
+        # same indicator while its catalog is synchronizing.
         self.update_indicator = Gtk.Button()
         self.update_indicator.set_relief(Gtk.ReliefStyle.NONE)
         self.update_indicator.get_style_context().add_class("update-indicator")
         self.update_indicator.connect("clicked", self._on_update_indicator_clicked)
         self.header_bar.pack_end(self.update_indicator)
-        self._set_update_state(self._update_state)
+        self._refresh_status_indicator()
+
+        # Installed features library. pack_end() ordering is right-to-left here,
+        # so this sits immediately to the left of the shared LinuxToys state button.
+        self.installed_features_button = Gtk.Button.new_from_icon_name(
+            "view-list-symbolic", Gtk.IconSize.BUTTON
+        )
+        self.installed_features_button.set_relief(Gtk.ReliefStyle.NONE)
+        self.installed_features_button.set_tooltip_text(
+            self.translations.get("installed_features", "Installed Features")
+        )
+        self.installed_features_button.connect("clicked", self._open_installed_features)
+        self.header_bar.pack_end(self.installed_features_button)
+
+        # Session AppStream queue. It becomes part of the header only after the
+        # persistent PTY has actually been requested for the first time.
+        self.appstream_queue_button = Gtk.Button.new_from_icon_name(
+            "folder-download-symbolic", Gtk.IconSize.BUTTON
+        )
+        self.appstream_queue_button.set_relief(Gtk.ReliefStyle.NONE)
+        self.appstream_queue_button.get_style_context().add_class("appstream-queue-indicator")
+        self.appstream_queue_button.set_tooltip_text("Application installation queue")
+        self.appstream_queue_button.connect("clicked", self._open_appstream_queue)
+        self.header_bar.pack_end(self.appstream_queue_button)
+        self.appstream_queue_button.hide()
 
         self.main_stack = Gtk.Stack()
         self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -240,7 +279,29 @@ class AppWindow(
 
         self.categories_view = Gtk.ScrolledWindow()
         self.categories_view.add(categories_container)
-        self.main_stack.add_named(self.categories_view, "categories")
+
+        # The parser-backed menu is populated asynchronously. Keep the already-open
+        # window visually responsive while the first usable category snapshot is
+        # prepared instead of presenting an unexplained blank page.
+        self.categories_loading_overlay = Gtk.Overlay()
+        self.categories_loading_overlay.add(self.categories_view)
+
+        self.categories_loading_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=10,
+        )
+        self.categories_loading_box.set_halign(Gtk.Align.CENTER)
+        self.categories_loading_box.set_valign(Gtk.Align.CENTER)
+
+        self.categories_loading_spinner = Gtk.Spinner()
+        self.categories_loading_spinner.set_size_request(64, 64)
+        self.categories_loading_spinner.start()
+        self.categories_loading_box.pack_start(
+            self.categories_loading_spinner, False, False, 0
+        )
+
+        self.categories_loading_overlay.add_overlay(self.categories_loading_box)
+        self.main_stack.add_named(self.categories_loading_overlay, "categories")
 
         self.scripts_flowbox = self.create_flowbox()
         self.scripts_view = Gtk.ScrolledWindow()
@@ -266,6 +327,10 @@ class AppWindow(
 
         # --- Show the Window ---
         self.show_all()
+        # show_all() recursively reveals header children, including the queue
+        # button that was intentionally hidden when it was created. Re-apply
+        # queue visibility from the actual session queue after the initial show.
+        self._on_appstream_queue_changed()
         self.show_categories_view()  # Call this after show_all to ensure proper visibility state
 
         # Connect focus events to enable/disable tooltips
@@ -273,6 +338,7 @@ class AppWindow(
         self.connect("focus-out-event", self._on_focus_out)
 
         self.connect("key-press-event", self._on_key_press)
+        self.connect("delete-event", self._on_close_requested)
 
         self.categories_view.connect(
             "size-allocate",
@@ -293,10 +359,74 @@ class AppWindow(
         # Prioritize parser-backed startup data. Git synchronization begins as
         # soon as top-level scripts (and therefore Featured Scripts) are ready.
         GLib.idle_add(self._populate_runtime_caches)
+        GLib.idle_add(self._refresh_installed_packages_async)
         GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
+
+    def _set_appstream_state(self, state):
+        """Record AppStream state and refresh the shared header indicator."""
+        self._appstream_state = state
+        return self._refresh_status_indicator()
+
+    def _start_appstream_cache(self):
+        """Refresh AppStream metadata after the first usable UI is queued."""
+        if self._appstream_cache_started:
+            return False
+        self._appstream_cache_started = True
+        def report_state(state):
+            GLib.idle_add(self._set_appstream_state, state)
+
+        def worker():
+            result = appstream_cache.refresh_cache(status_callback=report_state)
+            if not result.get("success"):
+                logger.warning(
+                    "AppStream catalog refresh failed: %s",
+                    result.get("error", "unknown error"),
+                )
+                return
+            if result.get("changed"):
+                GLib.idle_add(self._apply_appstream_catalog)
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-appstream-cache",
+        ).start()
+        return False
+
+    def _apply_appstream_catalog(self):
+        """Publish a newly completed AppStream catalog through normal UI caches."""
+        appstream_parser.clear_runtime_cache()
+        self._discard_retained_category_views()
+
+        # Replace rather than invalidate in place: an older parser worker can then
+        # finish harmlessly while generation guards prevent it from publishing.
+        self.script_cache = search_helper.ScriptCache()
+        self.category_cache = search_helper.CategoryCache()
+        self.search_engine.set_cache(self.script_cache)
+        self.all_scripts = []
+
+        self.load_categories()
+        if self.current_category_info is not None:
+            self.load_scripts(self.current_category_info)
+
+        self._populate_runtime_caches()
+
+        if self.main_stack.get_visible_child_name() == "search":
+            query = self.search_entry.get_text()
+
+            def refresh_search_when_ready():
+                if not self.script_cache.is_populated:
+                    return True
+                if query and self.search_entry.get_text() == query:
+                    self.search_entry.emit("changed")
+                return False
+
+            GLib.timeout_add(100, refresh_search_when_ready)
+
+        return False
 
     def _populate_runtime_caches(self):
         """Build parser caches while progressively publishing startup-ready data."""
@@ -342,6 +472,7 @@ class AppWindow(
                 return False
 
             self._render_categories(categories)
+            self._hide_categories_loading_indicator()
             self.all_scripts = featured
             if self.should_start_random_timer and featured:
                 self._deferred_start_random_scripts_refresh_timer()
@@ -355,6 +486,9 @@ class AppWindow(
 
             featured = collect_featured(categories, scripts_by_category)
             GLib.idle_add(publish_bootstrap, categories, featured)
+            # AppStream is supplemental. Do not let even its freshness check/catalog
+            # decode contend with the parser before the first usable UI is queued.
+            GLib.idle_add(self._start_appstream_cache)
 
             # Network/git work is lower startup priority than getting the first
             # usable Featured pool ready, but need not wait for recursive caches.
@@ -388,6 +522,7 @@ class AppWindow(
                 GLib.idle_add(publish_full_featured, full_featured)
 
                 script_cache.populate_from_category_cache(category_cache)
+                GLib.idle_add(self._refresh_installed_features_view)
             except Exception as e:
                 print(f"Error populating runtime caches: {e}")
             finally:
@@ -585,9 +720,13 @@ class AppWindow(
         value = create_translator()(key)
         return fallback if value == key else value
 
-    def _set_update_state(self, state):
-        """Update the header indicator. Must only be called on the GTK thread."""
-        self._update_state = state
+    def _refresh_status_indicator(self):
+        """Render updater/AppStream state through the single header indicator.
+
+        Active updater states always win. The passive up-to-date/disabled states
+        yield to an AppStream synchronization or failure; once AppStream reaches
+        ready, the normal updater state becomes visible again.
+        """
         if not hasattr(self, "update_indicator"):
             return False
 
@@ -596,36 +735,93 @@ class AppWindow(
         context.remove_class("update-restart-ready")
         self.update_indicator.set_sensitive(False)
 
-        if state == "disabled":
-            self.update_indicator.hide()
-            return False
+        # Updating LinuxToys itself is always the highest-priority information.
+        updater_active = self._update_state in (
+            "checking",
+            "updating",
+            "restart-ready",
+            "error",
+        )
 
-        self.update_indicator.show()
-        if state == "checking":
-            image = Gtk.Image.new_from_icon_name("view-refresh-symbolic", Gtk.IconSize.BUTTON)
-            tooltip = self._tr_update("update_status_checking", "Checking for updates…")
-        elif state == "up-to-date":
-            image = Gtk.Image.new_from_icon_name("emblem-ok-symbolic", Gtk.IconSize.BUTTON)
-            tooltip = self._tr_update("update_status_up_to_date", "LinuxToys is up to date.")
-        elif state == "updating":
-            spinner = Gtk.Spinner()
-            spinner.start()
-            image = spinner
-            tooltip = self._tr_update("update_status_updating", "Updating LinuxToys…")
-        elif state == "restart-ready":
-            image = Gtk.Image.new_from_icon_name("software-update-available-symbolic", Gtk.IconSize.BUTTON)
-            tooltip = self._tr_update("update_status_restart", "Update installed. Restart LinuxToys.")
-            self.update_indicator.set_sensitive(True)
-            context.add_class("suggested-action")
-            context.add_class("update-restart-ready")
+        if updater_active:
+            state = self._update_state
+            source = "updater"
+        elif self._appstream_state in ("building", "failed"):
+            state = self._appstream_state
+            source = "appstream"
         else:
-            image = Gtk.Image.new_from_icon_name("dialog-warning-symbolic", Gtk.IconSize.BUTTON)
-            tooltip = self._tr_update("update_status_failed", "Automatic update failed.")
+            state = self._update_state
+            source = "updater"
+
+        if source == "appstream":
+            if state == "building":
+                spinner = Gtk.Spinner()
+                spinner.start()
+                image = spinner
+                tooltip = self.translations.get(
+                    "appstream_status_building",
+                    "Building application catalog…",
+                )
+            else:
+                image = Gtk.Image.new_from_icon_name(
+                    "dialog-warning-symbolic", Gtk.IconSize.BUTTON
+                )
+                tooltip = self.translations.get(
+                    "appstream_status_failed",
+                    "Application catalog refresh failed. The previous catalog will be used.",
+                )
+        else:
+            if state == "disabled":
+                self.update_indicator.hide()
+                return False
+            if state == "checking":
+                image = Gtk.Image.new_from_icon_name(
+                    "view-refresh-symbolic", Gtk.IconSize.BUTTON
+                )
+                tooltip = self._tr_update(
+                    "update_status_checking", "Checking for updates…"
+                )
+            elif state == "up-to-date":
+                image = Gtk.Image.new_from_icon_name(
+                    "emblem-ok-symbolic", Gtk.IconSize.BUTTON
+                )
+                tooltip = self._tr_update(
+                    "update_status_up_to_date", "LinuxToys is up to date."
+                )
+            elif state == "updating":
+                spinner = Gtk.Spinner()
+                spinner.start()
+                image = spinner
+                tooltip = self._tr_update(
+                    "update_status_updating", "Updating LinuxToys…"
+                )
+            elif state == "restart-ready":
+                image = Gtk.Image.new_from_icon_name(
+                    "software-update-available-symbolic", Gtk.IconSize.BUTTON
+                )
+                tooltip = self._tr_update(
+                    "update_status_restart", "Update installed. Restart LinuxToys."
+                )
+                self.update_indicator.set_sensitive(True)
+                context.add_class("suggested-action")
+                context.add_class("update-restart-ready")
+            else:
+                image = Gtk.Image.new_from_icon_name(
+                    "dialog-warning-symbolic", Gtk.IconSize.BUTTON
+                )
+                tooltip = self._tr_update(
+                    "update_status_failed", "Automatic update failed."
+                )
 
         self.update_indicator.set_image(image)
         self.update_indicator.set_tooltip_text(tooltip)
         self.update_indicator.show_all()
         return False
+
+    def _set_update_state(self, state):
+        """Record updater state and refresh the shared header indicator."""
+        self._update_state = state
+        return self._refresh_status_indicator()
 
     def set_automatic_updates_enabled(self, enabled):
         self.automatic_updates_enabled = bool(enabled)
@@ -643,6 +839,205 @@ class AppWindow(
         if self._update_state != "restart-ready":
             return
         os.execv(sys.executable, [sys.executable, *sys.argv])
+
+    def _refresh_installed_packages_async(self, force=False):
+        """Refresh observed native/Flatpak installations without blocking GTK."""
+        if self._installed_packages_refresh_started:
+            if force:
+                self._installed_packages_refresh_pending = True
+            return False
+        self._installed_packages_refresh_started = True
+        self._installed_packages_refresh_pending = False
+
+        def worker():
+            try:
+                installed_packages.refresh()
+            except Exception as exc:
+                logger.warning("Installed package refresh failed: %s", exc)
+            finally:
+                self._installed_packages_refresh_started = False
+                rerun = self._installed_packages_refresh_pending
+                self._installed_packages_refresh_pending = False
+                GLib.idle_add(self._on_installed_packages_changed)
+                if rerun:
+                    GLib.idle_add(self._refresh_installed_packages_async, True)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-installed-packages"
+        ).start()
+        return False
+
+    def _refresh_installed_features_view(self):
+        view = self.main_stack.get_child_by_name("installed_features")
+        if view is not None and hasattr(view, "refresh"):
+            view.refresh()
+        return False
+
+    def _on_installed_packages_changed(self):
+        # Observed AppStream state participates in ScriptCache removability.
+        if self.script_cache.is_populated:
+            self.script_cache.refresh_removable_cache()
+
+        app_page = self.main_stack.get_child_by_name("app_page")
+        if app_page is not None and hasattr(app_page, "refresh_install_state"):
+            app_page.refresh_install_state()
+
+        installed_view = self.main_stack.get_child_by_name("installed_features")
+        if installed_view is not None and hasattr(installed_view, "refresh"):
+            installed_view.refresh()
+        return False
+
+    def _appstream_registry_managed(self, info):
+        registry_data = action_registry.parse_registry_file()
+        candidates = (
+            str(info.get("appstream_id", "") or "").strip(),
+            str(info.get("name", "") or "").strip(),
+            str(info.get("appstream_canonical_name", "") or "").strip(),
+        )
+        return any(candidate and candidate in registry_data for candidate in candidates)
+
+    def _on_item_remove_clicked(self, button, info):
+        """Use observed package state when AppStream was installed outside LinuxToys."""
+        if not info.get("is_appstream_entry") or self._appstream_registry_managed(info):
+            return ItemWidgetFactory._on_item_remove_clicked(self, button, info)
+
+        observed = installed_packages.match(info)
+        if observed is None:
+            return ItemWidgetFactory._on_item_remove_clicked(self, button, info)
+
+        remove_info = installed_packages.build_external_removal(
+            info, observed, self.translations
+        )
+        if remove_info is None:
+            return
+        record_id = info.get("_appstream_queue_record_id")
+        self._appstream_runner.enqueue_removal(info, remove_info, record_id=record_id)
+        app_page = self.main_stack.get_child_by_name("app_page")
+        if app_page is not None and hasattr(app_page, "refresh_install_state"):
+            app_page.refresh_install_state()
+
+    def _get_appstream_install_state(self, info):
+        """Resolve AppStream page state from this session first, then the registry."""
+        appstream_id = str(info.get("appstream_id", "") or "").strip()
+        if not appstream_id:
+            return "available"
+
+        session_state = self._appstream_runner.status_for_appstream_id(appstream_id)
+        if session_state is not None:
+            return session_state
+
+        registry_data = action_registry.parse_registry_file()
+        # appstream_id is the stable identity used by new background installs.
+        # Keep display/canonical-name fallbacks for entries installed by older builds.
+        registry_candidates = (
+            appstream_id,
+            str(info.get("name", "") or "").strip(),
+            str(info.get("appstream_canonical_name", "") or "").strip(),
+        )
+        if any(candidate and candidate in registry_data for candidate in registry_candidates):
+            return "installed"
+        if installed_packages.match(info) is not None:
+            return "installed"
+        return "available"
+
+    def _on_appstream_queue_changed(self):
+        """Refresh the session queue button and the queue view, if visible."""
+        records = self._appstream_runner.snapshot()
+
+        # Always refresh the visible AppStream page before handling the empty
+        # queue case. A successful removal retires its session record, so the
+        # queue can become empty here; returning before this refresh would leave
+        # the page stuck in the transient "removing" state. The resolver can
+        # now fall through to the registry, where the reverted install
+        # transaction has already been removed, and render the Install state.
+        app_page = self.main_stack.get_child_by_name("app_page")
+        if app_page is not None and hasattr(app_page, "refresh_install_state"):
+            app_page.refresh_install_state()
+
+        context = self.appstream_queue_button.get_style_context()
+        if not records:
+            context.remove_class("suggested-action")
+            context.remove_class("appstream-queue-error")
+            self.appstream_queue_button.hide()
+            queue_view = self.main_stack.get_child_by_name("appstream_queue")
+            if queue_view is not None and hasattr(queue_view, "refresh"):
+                queue_view.refresh()
+            return False
+
+        self.appstream_queue_button.show_all()
+        context.remove_class("suggested-action")
+        context.remove_class("appstream-queue-error")
+
+        active = any(record["status"] in ("queued", "running") for record in records)
+        failed = any(record["status"] == "failed" for record in records)
+        if active:
+            context.add_class("suggested-action")
+            self.appstream_queue_button.set_tooltip_text("Application installations in progress")
+        elif failed:
+            context.add_class("appstream-queue-error")
+            self.appstream_queue_button.set_tooltip_text("One or more application installations failed")
+        else:
+            self.appstream_queue_button.set_tooltip_text("Application installation queue")
+
+        queue_view = self.main_stack.get_child_by_name("appstream_queue")
+        if queue_view is not None and hasattr(queue_view, "refresh"):
+            queue_view.refresh()
+
+        return False
+
+    def _open_installed_features(self, _button=None):
+        """Open the system-wide list of features LinuxToys can currently remove."""
+        if self.main_stack.get_visible_child_name() == "installed_features":
+            return
+
+        old = self.main_stack.get_child_by_name("installed_features")
+        if old is not None:
+            self.main_stack.remove(old)
+            old.destroy()
+
+        self._installed_features_prev = {
+            "child": self.main_stack.get_visible_child(),
+            "header_visible": self.header_widget.get_visible(),
+            "title": self.header_bar.props.title,
+            "footer_revealed": self.reveal.get_reveal_child(),
+            "back_visible": self.back_button.get_visible(),
+        }
+        view = installed_features.InstalledFeaturesView(self)
+        self.main_stack.add_named(view, "installed_features")
+        view.show_all()
+        self.header_widget.hide()
+        self.reveal.set_reveal_child(False)
+        self.back_button.show()
+        title = self.translations.get("installed_features", "Installed Features")
+        self.header_bar.props.title = f"LinuxToys: {title}"
+        self.main_stack.set_visible_child_name("installed_features")
+
+    def _open_appstream_queue(self, _button=None):
+        """Open the session history/queue attached to the persistent AppStream PTY."""
+        if self.main_stack.get_visible_child_name() == "appstream_queue":
+            return
+
+        old = self.main_stack.get_child_by_name("appstream_queue")
+        if old is not None:
+            self.main_stack.remove(old)
+            old.destroy()
+
+        self._appstream_queue_prev = {
+            "child": self.main_stack.get_visible_child(),
+            "header_visible": self.header_widget.get_visible(),
+            "title": self.header_bar.props.title,
+            "footer_revealed": self.reveal.get_reveal_child(),
+            "back_visible": self.back_button.get_visible(),
+        }
+        view = appstream_queue.AppStreamQueueView(self)
+        self.main_stack.add_named(view, "appstream_queue")
+        view.show_all()
+        self.header_widget.hide()
+        self.reveal.set_reveal_child(False)
+        self.back_button.show()
+        title = self.translations.get("installation_queue", "Installation Queue")
+        self.header_bar.props.title = f"LinuxToys: {title}"
+        self.main_stack.set_visible_child_name("appstream_queue")
 
     def _check_updates(self):
         if self.automatic_updates_enabled:
@@ -1024,6 +1419,14 @@ class AppWindow(
         self.reveal.support.hide()
         self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
+    def _hide_categories_loading_indicator(self):
+        """Remove the startup spinner once the first usable menu is published."""
+        if not hasattr(self, "categories_loading_box"):
+            return False
+        self.categories_loading_spinner.stop()
+        self.categories_loading_box.hide()
+        return False
+
     def _render_categories(self, categories):
         """Render an already parsed category snapshot on the GTK thread."""
         # Store current category info and temporarily set to None for proper bold formatting.
@@ -1050,6 +1453,7 @@ class AppWindow(
         if not categories:
             categories = parser.get_categories(self.translations)
         self._render_categories(categories)
+        self._hide_categories_loading_indicator()
 
     def _load_scripts_into_flowbox(
         self,
@@ -1338,7 +1742,7 @@ class AppWindow(
         if self.reboot_required and not self._show_reboot_warning_dialog():
             return
 
-        script_info = manifest_helper.find_script_by_id(target_id, self.translations)
+        script_info = uri_parser.resolve_install_target(target_id, self.translations)
         if script_info is None:
             self.show_external_install_error(
                 self.translations.get(
@@ -1377,6 +1781,15 @@ class AppWindow(
         """Run the normal single-entry confirmation and terminal-view flow."""
         deps = asyncio.run(self._process_needed_scripts([info]))
         if not deps:
+            return
+
+        if info.get("is_appstream_entry"):
+            # AppStream installs stay on the app page. Queue state owns the button
+            # until the background operation succeeds, fails, or is cancelled.
+            self._appstream_runner.enqueue(deps)
+            app_page = self.main_stack.get_child_by_name("app_page")
+            if app_page is not None and hasattr(app_page, "refresh_install_state"):
+                app_page.refresh_install_state()
             return
 
         script_name = info.get("name", "")
@@ -1512,8 +1925,68 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # Return True if user clicked "Cancel Script" (YES), False otherwise
         return response == Gtk.ResponseType.YES
 
+    def _on_close_requested(self, _widget, _event):
+        """Guard application shutdown while AppStream work is still active."""
+        runner = getattr(self, "_appstream_runner", None)
+        if runner is not None and runner.has_pending_operations():
+            if not self._show_queue_close_warning_dialog():
+                return True
+
+        self._close_application()
+        return True
+
+    def _show_queue_close_warning_dialog(self):
+        """Warn before closing while queued or running operations remain."""
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get(
+                "queue_close_title",
+                "Operations Are Still Running",
+            ),
+        )
+
+        dialog.format_secondary_text(
+            self.translations.get(
+                "queue_close_message",
+                "Closing LinuxToys will stop all queued and running operations. "
+                "Interrupting an operation while it is in progress may cause "
+                "problems with your system. Are you sure you want to close?",
+            )
+        )
+
+        dialog.add_button(
+            self.translations.get(
+                "queue_close_continue_btn",
+                "Keep LinuxToys Open",
+            ),
+            Gtk.ResponseType.NO,
+        )
+        close_button = dialog.add_button(
+            self.translations.get(
+                "queue_close_close_btn",
+                "Close Anyway",
+            ),
+            Gtk.ResponseType.YES,
+        )
+        close_button.get_style_context().add_class("destructive-action")
+        dialog.set_default_response(Gtk.ResponseType.NO)
+
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.YES
+
     def _close_application(self):
         """Closes the application gracefully and performs cleanup."""
+        # Persist Featured category sense once per session, at shutdown.
+        self._save_featured_sense()
+
+        # Stop the persistent AppStream PTY before deleting its temporary state.
+        if getattr(self, "_appstream_runner", None) is not None:
+            self._appstream_runner.shutdown()
+
         # Clean up temporary directory
         tmp_linuxtoys_path = "/tmp/linuxtoys"
         try:
@@ -1583,6 +2056,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # Refresh the dropdown menu with new translations
         if hasattr(self, "menu_button"):
             self.menu_button.refresh_menu_translations()
+
+        # Refresh the shared updater/AppStream indicator tooltip in the new language.
+        self._refresh_status_indicator()
 
         # Always reload categories with new translations (so they're ready when user navigates back)
         self.load_categories()

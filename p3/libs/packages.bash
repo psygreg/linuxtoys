@@ -250,7 +250,7 @@ pkg_flat() {
                 }
             else
                 flatpak install --or-update "$flatpak_scope" -y flathub "$arg" 2>/dev/null || {
-                    sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "$arg"
+                    askpass && sudo flatpak install --or-update "$flatpak_scope" -y flathub "$arg"
                 } || {
                     rm -f "$_runtime_before"
                     fatal "Failed to install flatpak package $arg"
@@ -278,7 +278,7 @@ pkg_flat() {
                 fatal "Failed to install flatpak packages ${_flatpak_normal[*]}"
         else
             flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}" 2>/dev/null || \
-                { sudo_rq && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}"; } || \
+                { askpass && sudo flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}"; } || \
                 fatal "Failed to install flatpak packages ${_flatpak_normal[*]}"
         fi
 
@@ -319,7 +319,7 @@ pkg_fromfile () {
     if [[ "$1" == *.flatpak ]]; then
         if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
             summon_helpers
-            sudo_rq
+            askpass
             flatpak_in_lib
         fi
         local flatpak_file="$1"
@@ -1553,7 +1553,7 @@ pkg_appimage_rm () {
 
 pkg_npm () {
     if ! command -v npm &>/dev/null; then
-        sudo_rq
+        askpass
         { ( is_ubuntu || is_debian || is_suse ) && pkg_install npm; }
         { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
         { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
@@ -1594,7 +1594,7 @@ pkg_npm () {
     done
     for pkg in "${packages[@]}"; do
         if ! npm list -g "$pkg" &>/dev/null; then
-            { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || ( sudo_rq && sudo npm install -g "${flags[@]}" "$pkg" ) } || fatal "Failed to install npm package $pkg"
+            { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || ( askpass && sudo npm install -g "${flags[@]}" "$pkg" ) } || fatal "Failed to install npm package $pkg"
             _append_transmap "npm $pkg"
         fi
     done
@@ -1602,7 +1602,7 @@ pkg_npm () {
 
 pkg_bun () {
     if ! command -v bun &>/dev/null; then
-        sudo_rq
+        askpass
         { curl -fsSL https://bun.sh/install | bash; } || fatal "Failed to install bun"
     else
         bun upgrade

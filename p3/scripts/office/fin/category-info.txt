@@ -1,0 +1,2 @@
+ICON: fin.svg
+description: fin_desc

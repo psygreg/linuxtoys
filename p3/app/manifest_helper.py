@@ -13,7 +13,8 @@ import shutil
 import asyncio
 import argparse
 import re
-from .parser import get_categories, get_all_scripts_recursive, get_repo_entries
+from .parser import get_categories, get_all_scripts_recursive, get_repo_entries, get_appstream_entries
+from . import appstream_cache, appstream_parser
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .reboot_helper import check_ostree_pending_deployments
 from .repo_parser import materialize_repo_script
@@ -185,6 +186,84 @@ def install_flatpaks(flatpak_names):
     return result.returncode == 0
 
 
+def _bootstrap_flatpak_for_manifest():
+    """Ensure Flatpak/Flathub exists, then synchronously rebuild AppStream if needed."""
+    if shutil.which("flatpak"):
+        try:
+            remote = subprocess.run(
+                ["flatpak", "remote-list", "--columns=name"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                text=True,
+                timeout=30,
+                env=os.environ.copy(),
+            )
+            if remote.returncode == 0 and "flathub" in {
+                line.strip() for line in remote.stdout.splitlines()
+            }:
+                return True
+        except (subprocess.TimeoutExpired, OSError):
+            pass
+
+    print("Flatpak/Flathub is required by this manifest. Setting it up...")
+    result = _run_library_function("pkg_flat", [])
+    if result.returncode != 0:
+        if result.stderr:
+            print(result.stderr.strip())
+        return False
+
+    # pkg_flat invalidates AppStream state when it bootstraps Flathub. Rebuild
+    # synchronously here because this same manifest may need Flathub AppStream
+    # entries during its validation pass.
+    try:
+        appstream_cache.refresh_cache(force=True)
+        appstream_parser.clear_runtime_cache()
+    except Exception as exc:
+        print(f"Error: Could not refresh AppStream after enabling Flathub: {exc}")
+        return False
+
+    return True
+
+
+def _entry_stable_id(entry):
+    """Return the stable LinuxToys/AppStream identifier for an entry."""
+    explicit_id = str(entry.get("id") or entry.get("script") or "").strip()
+    if explicit_id:
+        return explicit_id
+
+    path = str(entry.get("virtual_path") or entry.get("path") or "").strip()
+    if path.startswith("repo://"):
+        return path[len("repo://"):].strip()
+    if path:
+        return os.path.splitext(os.path.basename(path))[0]
+    return ""
+
+
+def _appstream_entries(translations=None):
+    """Return compatibility-filtered AppStream entries using current curated overrides."""
+    return get_appstream_entries(translations)
+
+
+
+
+def _entry_matches_name(entry, requested_name, stable_id=""):
+    """Match a manifest name without tying it to the active UI language."""
+    target = str(requested_name or "").strip().casefold()
+    if not target:
+        return False
+
+    candidates = (
+        entry.get("name"),
+        entry.get("canonical_name"),
+        entry.get("appstream_canonical_name"),
+        entry.get("registry_name"),
+        stable_id,
+    )
+    return any(
+        str(candidate or "").strip().casefold() == target
+        for candidate in candidates
+    )
+
 def find_script_by_name(script_name, translations=None):
     """
     Find a script by its name across all categories and root scripts, including nested subcategories.
@@ -196,8 +275,7 @@ def find_script_by_name(script_name, translations=None):
         if category.get('is_script'):
             # For root scripts, check both the filename and the parsed name
             filename_without_ext = os.path.splitext(os.path.basename(category['path']))[0]
-            if (category['name'].lower() == script_name.lower() or 
-                filename_without_ext.lower() == script_name.lower()):
+            if _entry_matches_name(category, script_name, filename_without_ext):
                 return category
 
     # Check scripts within categories (including nested subcategories)
@@ -207,14 +285,21 @@ def find_script_by_name(script_name, translations=None):
             all_scripts = get_all_scripts_recursive(category['path'], translations)
             for script in all_scripts:
                 filename_without_ext = os.path.splitext(os.path.basename(script['path']))[0]
-                if (script['name'].lower() == script_name.lower() or 
-                    filename_without_ext.lower() == script_name.lower()):
+                if _entry_matches_name(script, script_name, filename_without_ext):
                     return script
 
     # Dynamic repos.json entries behave as scripts too. Keep their repo://
     # path here and materialize only when execution begins.
     for script in get_repo_entries(translations):
-        if script.get("name", "").lower() == script_name.lower():
+        stable_id = _entry_stable_id(script)
+        if _entry_matches_name(script, script_name, stable_id):
+            return script
+
+    # AppStream entries are repository-style virtual scripts too. Accept both
+    # their localized display name and stable component ID.
+    for script in _appstream_entries(translations):
+        stable_id = _entry_stable_id(script)
+        if _entry_matches_name(script, script_name, stable_id):
             return script
 
     return None
@@ -257,15 +342,11 @@ def find_script_by_id(script_id, translations=None):
                 return script
 
     for script in get_repo_entries(translations):
-        repo_path = str(script.get("path", ""))
-        path_id = repo_path[len("repo://"):] if repo_path.startswith("repo://") else ""
-        stable_id = str(
-            script.get("id")
-            or script.get("script")
-            or path_id
-            or script.get("name", "")
-        ).strip()
-        if stable_id.casefold() == target:
+        if _entry_stable_id(script).casefold() == target:
+            return script
+
+    for script in _appstream_entries(translations):
+        if _entry_stable_id(script).casefold() == target:
             return script
 
     return None
@@ -327,7 +408,79 @@ def _is_removal_registry_entry(script_name, translations=None):
     return False
 
 
-def build_registered_manifest_entries(registry_data=None, translations=None):
+def _registry_entry_install_source(registry_data, registry_name):
+    """Infer the application source actually used by a registry transaction."""
+    saw_native_package = False
+    for _timestamp, operations in (registry_data or {}).get(registry_name, []):
+        for operation in operations:
+            operation = str(operation or "").strip().casefold()
+            if operation.startswith("flatpak ") and not operation.startswith("flatpak rm "):
+                return "flatpak"
+            if operation.startswith("pkg ") and not operation.startswith("pkg rm "):
+                saw_native_package = True
+    return "native" if saw_native_package else ""
+
+
+def _appstream_source_override(script_info, registry_data, registry_name):
+    """Return a non-default AppStream source choice that must be preserved."""
+    if not script_info or not script_info.get("is_appstream_entry"):
+        return ""
+
+    default_source = str(script_info.get("appstream_source", "") or "").strip().casefold()
+    if default_source not in {"native", "flatpak"}:
+        return ""
+
+    available_sources = {
+        str(option.get("appstream_source", "") or "").strip().casefold()
+        for option in script_info.get("source_options") or ()
+        if isinstance(option, dict)
+    }
+    available_sources.add(default_source)
+
+    actual_source = _registry_entry_install_source(registry_data, registry_name)
+    if (
+        actual_source in {"native", "flatpak"}
+        and actual_source in available_sources
+        and actual_source != default_source
+    ):
+        return actual_source
+    return ""
+
+
+def _select_manifest_source(script_info, source):
+    """Select an explicitly requested AppStream source from a portable entry."""
+    source = str(source or "").strip().casefold()
+    if source not in {"native", "flatpak"}:
+        return None
+
+    candidates = [script_info]
+    candidates.extend(
+        option for option in script_info.get("source_options") or ()
+        if isinstance(option, dict)
+    )
+    for candidate in candidates:
+        if str(candidate.get("appstream_source", "") or "").strip().casefold() == source:
+            return candidate
+    return None
+
+
+def _registry_export_requires_flathub(registry_data, exported_names):
+    """Return whether any exported registry transaction actually installed a Flatpak."""
+    exported = {str(name).casefold() for name in exported_names}
+    for registry_name, executions in (registry_data or {}).items():
+        if str(registry_name).casefold() not in exported:
+            continue
+        for _timestamp, operations in executions:
+            for operation in operations:
+                operation = str(operation or "").strip().casefold()
+                # pkg_flat records successful installs as "flatpak <ref...>".
+                # Ignore removal records if they ever appear in an exported history.
+                if operation.startswith("flatpak ") and not operation.startswith("flatpak rm "):
+                    return True
+    return False
+
+
+def build_registered_manifest_entries(registry_data=None, translations=None, include_requirements=False):
     """Build explicit script entries from the current Action Registry.
 
     System-update and registry-generated removal records are excluded. Scripts
@@ -369,11 +522,34 @@ def build_registered_manifest_entries(registry_data=None, translations=None):
                 if child_key in candidate_keys:
                     called_children.add(child_key)
 
-    return [
-        f"script:{name}"
-        for name in sorted(candidates, key=str.casefold)
+    exported_names = [
+        name for name in sorted(candidates, key=str.casefold)
         if name.casefold() not in called_children
     ]
+
+    entries = []
+    for name in exported_names:
+        script_info = find_script_by_name(name, translations)
+        stable_id = _entry_stable_id(script_info) if script_info else ""
+        entry = f"script:{stable_id or name}"
+
+        # Keep ordinary exports policy-following. Only pin the source when the
+        # registry proves that the user installed a non-default AppStream source.
+        source_override = _appstream_source_override(
+            script_info, registry_data, name
+        )
+        if source_override:
+            entry += f"@{source_override}"
+
+        entries.append(entry)
+
+    if include_requirements:
+        requirements = {
+            "flathub": _registry_export_requires_flathub(registry_data, exported_names),
+        }
+        return entries, requirements
+
+    return entries
 
 
 def export_registered_manifest(output_path=None, registry_data=None, translations=None):
@@ -392,11 +568,18 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
     # custom path remains available to callers/tests of this helper.
     os.makedirs(os.path.dirname(destination) or home, exist_ok=True)
 
-    entries = build_registered_manifest_entries(registry_data, translations)
+    entries, requirements = build_registered_manifest_entries(
+        registry_data, translations, include_requirements=True
+    )
+    requirement_lines = []
+    if requirements.get("flathub"):
+        requirement_lines.append("require:flathub")
+
     lines = [
         "# LinuxToys Manifest File",
         "# Generated from the LinuxToys Action Registry",
         "",
+        *requirement_lines,
         *entries,
         "",
     ]
@@ -664,6 +847,10 @@ def print_cli_usage():
     print("Manifest File Format:")
     print("  - First line must be: # LinuxToys Manifest File")
     print("  - List items one per line (scripts, packages, or flatpaks)")
+    print("  - script:<id> uses LinuxToys' portable internal ID (recommended)")
+    print("  - script:<id>@native/@flatpak preserves an explicit non-default source choice")
+    print("  - require:flathub ensures Flatpak/Flathub is available before resolution")
+    print("  - package:<name> and flatpak:<id> request those exact source identifiers")
     print("  - Lines starting with # are comments")
     print("  - Empty lines are ignored")
     print()
@@ -739,24 +926,55 @@ def run_manifest_mode(translations=None):
     potential_flatpaks = []
     explicit_packages = []
     explicit_scripts = []
+    manifest_requirements = set()
     other_items = []
     for raw_name in script_names:
         prefix, separator, value = raw_name.partition(':')
-        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak'}:
+        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak', 'require'}:
             name = value.strip()
             if not name:
                 print(f"Error: empty manifest entry '{raw_name}'.")
                 invalid_items.append(raw_name)
             elif prefix.lower() == 'script':
-                explicit_scripts.append(name)
+                script_id = name
+                source_override = ""
+                if "@" in name:
+                    candidate_id, candidate_source = name.rsplit("@", 1)
+                    if candidate_source.casefold() in {"native", "flatpak"}:
+                        script_id = candidate_id
+                        source_override = candidate_source.casefold()
+                explicit_scripts.append((script_id, source_override))
             elif prefix.lower() in {'package', 'pkg'}:
                 explicit_packages.append(name)
+            elif prefix.lower() == 'require':
+                requirement = name.casefold()
+                if requirement == "flathub":
+                    manifest_requirements.add(requirement)
+                else:
+                    print(f"Error: unknown manifest requirement '{name}'.")
+                    invalid_items.append(raw_name)
             else:
                 potential_flatpaks.append(name)
-        elif valid_flatpak_id(raw_name):
-            potential_flatpaks.append(raw_name)
         else:
+            # Unprefixed entries are resolved as LinuxToys/AppStream first.
+            # Only unresolved dotted IDs fall through to Flatpak auto-detection.
             other_items.append(raw_name)
+
+    # A manifest can be restored on a fresh system that has no Flatpak yet.
+    # Bootstrap Flatpak/Flathub before validation so explicit Flatpak IDs can be
+    # checked and the newly available Flathub AppStream catalog can participate
+    # in script/AppStream resolution during this same run.
+    pinned_flatpak = any(
+        source_override == "flatpak"
+        for _script_id, source_override in explicit_scripts
+    )
+    if (
+        "flathub" in manifest_requirements
+        or potential_flatpaks
+        or pinned_flatpak
+    ) and not _bootstrap_flatpak_for_manifest():
+        print("Error: Could not prepare Flatpak/Flathub required by this manifest.")
+        return 2
 
     for package_name in explicit_packages:
         if not valid_package_name(package_name):
@@ -769,7 +987,89 @@ def run_manifest_mode(translations=None):
             print(f"Error: package '{package_name}' was not found in available repositories.")
             invalid_items.append(package_name)
 
-    other_items = explicit_scripts + other_items
+    # Explicit script: entries are stable LinuxToys IDs. Resolve them strictly
+    # through the internal ID namespace so manifests remain independent of the
+    # display name, active language, distro package name, or chosen install source.
+    #
+    # A portable ID may refer to a Flathub-only AppStream application that is not
+    # visible yet on a fresh system. Resolve once against the current catalog; if
+    # anything remains unknown and Flatpak/Flathub is absent, bootstrap it, rebuild
+    # AppStream synchronously, then retry only those unresolved IDs.
+    resolved_explicit_scripts = []
+    unresolved_explicit_scripts = []
+
+    for script_id, source_override in explicit_scripts:
+        script_info = find_script_by_id(script_id, translations)
+        if script_info is None:
+            unresolved_explicit_scripts.append((script_id, source_override))
+        else:
+            resolved_explicit_scripts.append((script_id, source_override, script_info))
+
+    if unresolved_explicit_scripts:
+        flatpak_ready = shutil.which("flatpak") is not None
+        if flatpak_ready:
+            try:
+                remote = subprocess.run(
+                    ["flatpak", "remote-list", "--columns=name"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    text=True,
+                    timeout=30,
+                    env=os.environ.copy(),
+                )
+                flatpak_ready = (
+                    remote.returncode == 0
+                    and "flathub" in {line.strip() for line in remote.stdout.splitlines()}
+                )
+            except (subprocess.TimeoutExpired, OSError):
+                flatpak_ready = False
+
+        if not flatpak_ready:
+            if _bootstrap_flatpak_for_manifest():
+                still_unresolved = []
+                for script_id, source_override in unresolved_explicit_scripts:
+                    script_info = find_script_by_id(script_id, translations)
+                    if script_info is None:
+                        still_unresolved.append((script_id, source_override))
+                    else:
+                        resolved_explicit_scripts.append(
+                            (script_id, source_override, script_info)
+                        )
+                unresolved_explicit_scripts = still_unresolved
+            else:
+                print("Error: Could not prepare Flatpak/Flathub while resolving portable manifest IDs.")
+
+    for script_id, source_override in unresolved_explicit_scripts:
+        print(f"Error: LinuxToys ID '{script_id}' was not found on this system.")
+        invalid_items.append(f"script:{script_id}")
+
+    for script_id, source_override, script_info in resolved_explicit_scripts:
+        if source_override:
+            selected_source = _select_manifest_source(script_info, source_override)
+            if selected_source is None:
+                print(
+                    f"Error: LinuxToys ID '{script_id}' does not provide the "
+                    f"requested '{source_override}' source on this system."
+                )
+                invalid_items.append(f"script:{script_id}@{source_override}")
+                continue
+            script_info = selected_source
+        if script_info.get("is_repo_entry"):
+            try:
+                script_info = materialize_repo_script(script_info)
+            except (ValueError, NotImplementedError, OSError) as exc:
+                print(f"Error: Could not prepare LinuxToys entry '{script_id}': {exc}")
+                invalid_items.append(f"script:{script_id}")
+                continue
+        else:
+            if not script_is_compatible(script_info['path'], compat_keys):
+                print(f"Warning: LinuxToys entry '{script_id}' is not compatible with this system. Skipping.")
+                continue
+            if is_containerized() and not script_is_container_compatible(script_info['path']):
+                print(f"Warning: LinuxToys entry '{script_id}' is not compatible with containerized systems. Skipping.")
+                continue
+
+        scripts_to_run.append(script_info)
 
     # Check flatpaks asynchronously
     if potential_flatpaks:
@@ -792,7 +1092,13 @@ def run_manifest_mode(translations=None):
         script_info = find_script_by_name(script_name, translations)
         
         if script_info is None:
-            # Not a script, validate and check it as a system package.
+            # Not a LinuxToys/AppStream entry. Preserve smart Flatpak detection,
+            # but only after stable AppStream IDs had a chance to resolve.
+            if valid_flatpak_id(script_name):
+                potential_flatpaks.append(script_name)
+                continue
+
+            # Otherwise validate and check it as a system package.
             if not valid_package_name(script_name):
                 print(f"Error: unsafe or malformed manifest item '{script_name}'.")
                 invalid_items.append(script_name)
@@ -828,6 +1134,24 @@ def run_manifest_mode(translations=None):
                 continue
 
         scripts_to_run.append(script_info)
+
+    # Unprefixed dotted IDs that did not resolve to AppStream are Flatpak
+    # candidates. Validate those now; explicit flatpak: entries were handled
+    # by the earlier batch.
+    unresolved_flatpaks = [
+        name for name in potential_flatpaks
+        if name not in flatpaks_to_install and name not in invalid_items
+    ]
+    if unresolved_flatpaks:
+        print(f"Checking {len(unresolved_flatpaks)} potential flatpak(s) asynchronously...")
+        flatpak_exists_results = asyncio.run(check_flatpaks_async(unresolved_flatpaks))
+        for name, exists in zip(unresolved_flatpaks, flatpak_exists_results):
+            if exists:
+                print(f"✓ Found flatpak: {name}")
+                flatpaks_to_install.append(name)
+            else:
+                print(f"Error: Flatpak '{name}' was not found in configured remotes.")
+                invalid_items.append(name)
 
     if invalid_items:
         print("\nManifest validation failed. Nothing will be executed or installed.")

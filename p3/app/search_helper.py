@@ -12,7 +12,7 @@ Works transparently with both git-synced and bundled scripts:
 import os
 import re
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
-from . import parser
+from . import parser, popularity, installed_packages
 from .compat import (
     get_system_compat_keys,
     script_is_compatible,
@@ -77,6 +77,9 @@ class ScriptCache:
 
         for repo_item in parser.get_repo_entries(translations):
             self.scripts.append(repo_item)
+
+        for appstream_item in parser.get_appstream_entries(translations):
+            self.scripts.append(appstream_item)
 
         # Also get local scripts directory
         local_scripts_dir = f'{os.environ.get("HOME", "")}/.local/linuxtoys/scripts'
@@ -200,6 +203,15 @@ class ScriptCache:
             script_path = script_info.get("path", "")
             script_name = script_info.get("name", "")
 
+            # AppStream entries can be installed outside LinuxToys. Their observed
+            # package state is therefore part of removability, not just Registry state.
+            if script_info.get("is_appstream_entry"):
+                self._removable_cache[script_path] = (
+                    script_name in executed_names
+                    or installed_packages.match(script_info) is not None
+                )
+                continue
+
             if script_info.get("is_repo_entry"):
                 self._removable_cache[script_path] = (
                     script_name in executed_names
@@ -245,6 +257,13 @@ class ScriptCache:
 
         if script_path in self._removable_cache:
             return self._removable_cache[script_path]
+
+        if script_info.get("is_appstream_entry"):
+            executed_names = _get_executed_script_names()
+            return (
+                script_info.get("name") in executed_names
+                or installed_packages.match(script_info) is not None
+            )
 
         if script_info.get("is_repo_entry"):
             executed_names = _get_executed_script_names()
@@ -415,9 +434,14 @@ class CategoryCache:
             top_level_ready(categories_snapshot, scripts_snapshot)
 
         def parse_category(category_path):
-            return category_path, parser.get_scripts_for_category(
-                category_path, translations
+            # Keep AppStream off the startup-critical category walk. The normal
+            # LinuxToys tree is enough to render the interface immediately; the
+            # larger AppStream dataset is merged after the structural walk.
+            scripts = parser.get_scripts_for_category(
+                category_path, translations, include_appstream=False
             )
+            popularity.sort_for_browse(scripts)
+            return category_path, scripts
 
         # Phase 1: top-level categories. Completion order is intentionally allowed to
         # differ from source order for latency, while consumers still iterate the
@@ -488,6 +512,25 @@ class CategoryCache:
                             if subcategory_path:
                                 submit_nested(subcategory_path)
 
+        # Phase 3: enrich the already-published structural cache with AppStream.
+        # Load/transform the catalog once, then distribute its entries by category
+        # instead of making every category independently enter the AppStream parser.
+        appstream_entries = parser.get_appstream_entries(translations)
+        appstream_by_category = {}
+        for item in appstream_entries:
+            category = str(item.get("category", "")).strip()
+            if not category:
+                continue
+            category_path = os.path.abspath(os.path.join(parser.SCRIPTS_DIR, category))
+            appstream_by_category.setdefault(category_path, []).append(item)
+
+        for category_path, appstream_items in appstream_by_category.items():
+            existing = self.scripts_by_category.get(category_path)
+            if existing is None:
+                continue
+            existing.extend(appstream_items)
+            popularity.sort_for_browse(existing)
+
         self.is_populated = True
 
     def get_categories(self):
@@ -529,9 +572,20 @@ class SearchResult:
         self.match_score = match_score  # Higher score = better match
 
     def __lt__(self, other):
-        # Sort by score (descending), then by name
+        # Relevance remains authoritative. Flathub popularity is only a tie-breaker
+        # when both equally relevant results have real cached Flathub scores.
         if self.match_score != other.match_score:
             return self.match_score > other.match_score
+
+        own_popularity = popularity.flathub_search_tiebreak(self.item_info)
+        other_popularity = popularity.flathub_search_tiebreak(other.item_info)
+        if (
+            own_popularity is not None
+            and other_popularity is not None
+            and own_popularity != other_popularity
+        ):
+            return own_popularity > other_popularity
+
         return self.item_info.get('name', '').lower() < other.item_info.get('name', '').lower()
 
 
@@ -802,6 +856,37 @@ class SearchEngine:
         if score > 0:
             results.append(SearchResult(create_script_item, 'create_script', score))
 
+    @staticmethod
+    def _searchable_package_names(item_info):
+        """Return package/application IDs that should participate in search."""
+        names = []
+        seen = set()
+
+        def add(value):
+            if isinstance(value, str):
+                value = value.strip().lower()
+                if value and value not in seen:
+                    seen.add(value)
+                    names.append(value)
+            elif isinstance(value, (list, tuple, set)):
+                for item in value:
+                    add(item)
+            elif isinstance(value, dict):
+                for item in value.values():
+                    add(item)
+
+        # The selected AppStream source.
+        add(item_info.get("package-name"))
+
+        # Source selection can preserve a discarded native/Flathub alternative.
+        # Search both so e.g. native "0ad" still finds "0 A.D." even when the
+        # displayed/default entry is the Flathub application ID, and vice versa.
+        for option in item_info.get("source_options") or ():
+            if isinstance(option, dict):
+                add(option.get("package-name"))
+
+        return names
+
     def _calculate_match_score(self, query, item_info, item_type):
         """
         Calculate relevance score for a search match.
@@ -845,6 +930,18 @@ class SearchEngine:
         aliases = self.SEARCH_ALIASES.get(name, ())
         if any(query in alias for alias in aliases):
             score += 60
+
+        # AppStream/native package names are useful aliases too. Keep them below
+        # display-name matches, but above descriptions. Source alternatives are
+        # included so both the native package and Flathub application ID remain
+        # searchable after duplicate-source collapsing.
+        package_names = self._searchable_package_names(item_info)
+        if query in package_names:
+            score += 90
+        elif any(package.startswith(query) for package in package_names):
+            score += 70
+        elif any(query in package for package in package_names):
+            score += 50
 
         # Description matches (lower priority than name)
         if query in description:

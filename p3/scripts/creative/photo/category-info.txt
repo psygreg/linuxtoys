@@ -1,0 +1,2 @@
+ICON: darktable.svg
+description: photo_desc

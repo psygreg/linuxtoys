@@ -1,0 +1,2 @@
+ICON: planning.svg
+description: planning_desc

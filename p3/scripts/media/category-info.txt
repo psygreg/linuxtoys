@@ -1,3 +1,2 @@
 ICON: media.svg
 description: media_desc
-mode: checklist

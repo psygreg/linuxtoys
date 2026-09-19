@@ -1,0 +1,2 @@
+ICON: browsers.svg
+description: browsers_desc

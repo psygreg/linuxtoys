@@ -182,6 +182,7 @@ cd "${APPDIR:?}/bin"
 export LINUXTOYS_PROCESS_NAME=linuxtoys
 export LINUXTOYS_APPIMAGE=1
 export LINUXTOYS_APPIMAGE_DIR="$APPDIR"
+export GI_TYPELIB_PATH="$APPDIR/lib/girepository-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
 
 if [ "$#" -eq 1 ]; then
     case "$1" in
@@ -245,8 +246,18 @@ unset UPINFO || true
 # AppDir rather than the AUR package.
 (
     cd "$BUILD_DIR"
-    "$QUICK_SHARUN" "$APP_BIN/linuxtoys" /usr/bin/zenity
+    "$QUICK_SHARUN" \
+        "$APP_BIN/linuxtoys" \
+        /usr/bin/zenity \
+        /usr/lib/libappstream.so.5
 )
+
+# AppStream is loaded dynamically through GObject Introspection, so its typelib
+# is not discoverable from the ELF dependency graph followed by quick-sharun.
+# Arch's appstream package supplies both files; bundle the typelib explicitly.
+install -Dm644 \
+    /usr/lib/girepository-1.0/AppStream-1.0.typelib \
+    "$APPDIR/lib/girepository-1.0/AppStream-1.0.typelib"
 
 replace_upstream_glycin
 

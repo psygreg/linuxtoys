@@ -1,3 +1,4 @@
+import os
 from . import reboot_helper
 from .compat import should_enable_manual_revert, get_revert_capability
 from .gtk_common import Gdk, GLib, Gtk, Vte
@@ -30,6 +31,10 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self._self_update = False
         self._cleanup_script_path = None
         self._current_action_is_removal = False
+        self._appstream_queue_record_id = (
+            self.removable_script_info.get("_appstream_queue_record_id")
+            if self.removable_script_info else None
+        )
         if self.removable_script_info:
             script_path = self.removable_script_info.get('path')
             script_name = self.removable_script_info.get('name')
@@ -278,6 +283,24 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self._run_next_script()
         return False
  
+    def on_child_exit(self, term, status):
+        """Run normal completion handling, then retire a successfully removed queue item."""
+        was_removal = bool(getattr(self, "_current_action_is_removal", False))
+        removal_succeeded = (
+            was_removal
+            and os.WIFEXITED(status)
+            and os.WEXITSTATUS(status) == 0
+        )
+        record_id = getattr(self, "_appstream_queue_record_id", None)
+
+        super().on_child_exit(term, status)
+
+        if removal_succeeded and record_id:
+            runner = getattr(self.parent, "_appstream_runner", None)
+            if runner is not None:
+                runner.remove_record(record_id)
+            self._appstream_queue_record_id = None
+
     def _on_terminal_key_press(self, widget, event):
         state = event.state
         ctrl_shift = (state & Gdk.ModifierType.CONTROL_MASK) and (
