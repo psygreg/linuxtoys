@@ -108,27 +108,27 @@ Ensure your system has the necessary dependencies installed.
 
 **Debian/Ubuntu:**
 ```bash
-sudo apt install -y bash git curl wget zenity python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91
+sudo apt install -y bash git curl wget zenity appstream libappstream5 python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91 gir1.2-appstream-1.0
 ```
 
 **Fedora/RHEL:**
 ```bash
-sudo dnf install -y bash git curl wget zenity python3 python3-gobject python3-requests gtk3 vte291
+sudo dnf install -y bash git curl wget zenity appstream appstream-data python3 python3-gobject python3-requests gtk3 vte291
 ```
 
 **Arch Linux:**
 ```bash
-sudo pacman -S --noconfirm bash git curl wget zenity python python-gobject python-requests gtk3 vte3
+sudo pacman -S --noconfirm bash git curl wget zenity appstream archlinux-appstream-data python python-gobject python-requests gtk3 vte3
 ```
 
 **OpenSUSE:**
 ```bash
-sudo zypper in -y bash git curl wget zenity python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91
+sudo zypper in -y bash git curl wget zenity libappstream5 python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91 typelib-1_0-AppStream-1_0
 ```
 
 **Solus:**
 ```bash
-sudo eopkg it -y git curl wget zenity python3 python-gobject python-requests libvte
+sudo eopkg it -y git curl wget zenity appstream python3 python-gobject python-requests libvte
 ```
 
 ### Cloning and Running
