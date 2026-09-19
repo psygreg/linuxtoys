@@ -9,6 +9,7 @@ import shlex
 import subprocess
 import tempfile
 import threading
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from .compat import get_system_compat_keys, is_containerized
@@ -115,14 +116,21 @@ def _collect_native(manager):
         output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", "%{name}"])
         return {line.strip() for line in output.splitlines() if line.strip() and not line.startswith("Updating")}
     if manager == "zypper":
-        packages = set()
-        for line in _run(["zypper", "--non-interactive", "search", "-ir"]).splitlines():
-            if "|" not in line:
-                continue
-            cols = [part.strip() for part in line.split("|")]
-            if len(cols) >= 3 and cols[0].lower().startswith("i") and cols[1] and cols[1].lower() != "name":
-                packages.add(cols[1])
-        return packages
+        output = _run([
+            "zypper", "--xmlout", "--non-interactive", "--disable-repositories",
+            "packages", "--userinstalled",
+        ])
+        if not output.strip():
+            return set()
+        try:
+            root = ET.fromstring(output)
+        except ET.ParseError:
+            return set()
+        return {
+            node.get("name", "").strip()
+            for node in root.iter("solvable")
+            if node.get("name", "").strip()
+        }
     if manager == "rpm-ostree":
         packages = set()
         collecting = False
