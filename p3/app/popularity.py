@@ -22,7 +22,7 @@ REVIEW_CONFIDENCE_COUNT = 10
 # Developer-maintained identities that should always live in the top section.
 # Matching is case-insensitive against IDs, package names and canonical/display names.
 KNOWN_POPULAR = {
-    "steam",
+    "Steam",
     "com.valvesoftware.steam",
     "EasyEffects",
     "com.github.wwmm.easyeffects",
@@ -35,7 +35,11 @@ KNOWN_POPULAR = {
     "StreamController",
     "com.core447.StreamController",
     "Hardinfo2",
-    "hardinfo2"
+    "hardinfo2",
+    "Thunderbird",
+    "org.mozilla.thunderbird",
+    "Save Desktop",
+    "io.github.vikdevelop.SaveDesktop"
 }
 
 FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"
