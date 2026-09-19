@@ -650,7 +650,7 @@ class SearchEngine:
         if not query or len(query.strip()) < 2:
             return []
 
-        query = query.strip().lower()
+        query = query.strip().casefold()
         results = []
 
         # "linuxtoys" is a special discovery filter: show everything curated by
@@ -933,8 +933,9 @@ class SearchEngine:
         Calculate relevance score for a search match.
         Higher score = more relevant.
         """
-        name = item_info.get('name', '').lower()
-        description = item_info.get('description', '').lower()
+        name = str(item_info.get('name', '') or '').casefold()
+        description = str(item_info.get('description', '') or '').casefold()
+        developer = str(item_info.get('developer', '') or '').casefold()
         score = 0
 
         # Check for 'new' keyword match (English or translated)
@@ -984,7 +985,16 @@ class SearchEngine:
         elif any(query in package for package in package_names):
             score += 50
 
-        # Description matches (lower priority than name)
+        # Developer matches. Keep these below application/package identity matches,
+        # but above free-form description matches.
+        if query == developer:
+            score += 55
+        elif developer.startswith(query):
+            score += 45
+        elif query in developer:
+            score += 40
+
+        # Description matches (lower priority than name/developer)
         if query in description:
             score += 30
 
@@ -1004,6 +1014,8 @@ class SearchEngine:
             word_pattern = r'\b' + re.escape(query) + r'\b'
             if re.search(word_pattern, name):
                 score += 20
+            elif re.search(word_pattern, developer):
+                score += 15
             elif re.search(word_pattern, description):
                 score += 10
 
