@@ -647,5 +647,22 @@
   "txt": "Textaritlar",
   "txt_desc": "Ekki rugla þeim saman við IDE.",
   "tools": "Verkfæri",
-  "tools_desc": "Villuleit, afkastagreining, útgáfustýring og önnur verkfæri sem geta komið að góðum notum."
+  "tools_desc": "Villuleit, afkastagreining, útgáfustýring og önnur verkfæri sem geta komið að góðum notum.",
+  "app_page_rate": "Gefðu þessu forriti einkunn",
+  "app_page_rate_stars": "Gefðu {stars} stjörnur",
+  "app_page_rate_install": "Settu þetta forrit upp áður en þú gefur því einkunn.",
+  "app_page_rate_done": "Þú hefur þegar gefið þessu forriti einkunn.",
+  "app_page_rate_5": "Frábært, þetta forrit er algjört skyldueign!!",
+  "app_page_rate_4": "Mjög gott forrit. Prófaðu það.",
+  "app_page_rate_3": "Ágætis kostur.",
+  "app_page_rate_2": "Þarfnast endurbóta...",
+  "app_page_rate_1": "Vandamál komu upp.",
+  "app_page_rate_signature": "Sent inn í gegnum LinuxToys",
+  "app_page_rate_confirm_title": "Senda inn einkunn?",
+  "app_page_rate_confirm_message": "Ekki er hægt að breyta þessari einkunn eða draga hana til baka eftir að hún hefur verið send inn.\\n\\n{stars}/5 — {review}\\nSent inn í gegnum LinuxToys",
+  "app_page_rate_submit": "Senda inn",
+  "app_page_rate_success_title": "Einkunn send inn",
+  "app_page_rate_success_message": "Takk! Einkunnin þín var send til ODRS.",
+  "app_page_rate_failed_title": "Einkunn mistókst",
+  "app_page_rate_failed_message": "Ekki tókst að senda einkunnina inn. Reyndu aftur síðar."
 }

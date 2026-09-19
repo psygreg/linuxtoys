@@ -645,5 +645,22 @@
   "txt": "Vihariri wa Maandishi",
   "txt_desc": "Usizichanganye na IDE.",
   "tools": "Zana",
-  "tools_desc": "Utatuzi wa hitilafu, uchanganuzi wa utendaji, udhibiti wa matoleo na zana nyingine zinazoweza kuwa muhimu."
+  "tools_desc": "Utatuzi wa hitilafu, uchanganuzi wa utendaji, udhibiti wa matoleo na zana nyingine zinazoweza kuwa muhimu.",
+  "app_page_rate": "Kadiria programu hii",
+  "app_page_rate_stars": "Kadiria kwa nyota {stars}",
+  "app_page_rate_install": "Sakinisha programu hii kabla ya kuikadiria.",
+  "app_page_rate_done": "Tayari umekadiria programu hii.",
+  "app_page_rate_5": "Bora kabisa, programu hii ni ya lazima kuwa nayo!!",
+  "app_page_rate_4": "Programu nzuri sana. Ijaribu.",
+  "app_page_rate_3": "Chaguo zuri kiasi.",
+  "app_page_rate_2": "Inahitaji maboresho...",
+  "app_page_rate_1": "Kulikuwa na matatizo.",
+  "app_page_rate_signature": "Imewasilishwa kupitia LinuxToys",
+  "app_page_rate_confirm_title": "Wasilisha tathmini?",
+  "app_page_rate_confirm_message": "Tathmini hii haiwezi kubadilishwa au kuondolewa baada ya kuwasilishwa.\\n\\n{stars}/5 — {review}\\nImewasilishwa kupitia LinuxToys",
+  "app_page_rate_submit": "Wasilisha",
+  "app_page_rate_success_title": "Tathmini Imewasilishwa",
+  "app_page_rate_success_message": "Asante! Tathmini yako imewasilishwa kwa ODRS.",
+  "app_page_rate_failed_title": "Tathmini Imeshindikana",
+  "app_page_rate_failed_message": "Haikuwezekana kuwasilisha tathmini. Tafadhali jaribu tena baadaye."
 }

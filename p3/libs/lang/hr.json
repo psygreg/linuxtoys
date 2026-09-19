@@ -647,5 +647,22 @@
   "txt": "Uređivači teksta",
   "txt_desc": "Nemojte ih miješati s IDE-ovima.",
   "tools": "Alati",
-  "tools_desc": "Otklanjanje pogrešaka, profiliranje, kontrola verzija i drugi alati koji mogu biti korisni."
+  "tools_desc": "Otklanjanje pogrešaka, profiliranje, kontrola verzija i drugi alati koji mogu biti korisni.",
+  "app_page_rate": "Ocijenite ovu aplikaciju",
+  "app_page_rate_stars": "Ocijenite s {stars} zvjezdica",
+  "app_page_rate_install": "Instalirajte ovu aplikaciju prije nego što je ocijenite.",
+  "app_page_rate_done": "Već ste ocijenili ovu aplikaciju.",
+  "app_page_rate_5": "Odlično, ovu aplikaciju morate imati!!",
+  "app_page_rate_4": "Vrlo dobra aplikacija. Isprobajte je.",
+  "app_page_rate_3": "Solidan izbor.",
+  "app_page_rate_2": "Potrebna su poboljšanja...",
+  "app_page_rate_1": "Bilo je problema.",
+  "app_page_rate_signature": "Poslano putem LinuxToysa",
+  "app_page_rate_confirm_title": "Poslati ocjenu?",
+  "app_page_rate_confirm_message": "Ova se ocjena ne može promijeniti niti povući nakon slanja.\\n\\n{stars}/5 — {review}\\nPoslano putem LinuxToysa",
+  "app_page_rate_submit": "Pošalji",
+  "app_page_rate_success_title": "Ocjena je poslana",
+  "app_page_rate_success_message": "Hvala! Vaša ocjena je poslana na ODRS.",
+  "app_page_rate_failed_title": "Slanje ocjene nije uspjelo",
+  "app_page_rate_failed_message": "Nije moguće poslati ocjenu. Pokušajte ponovno kasnije."
 }

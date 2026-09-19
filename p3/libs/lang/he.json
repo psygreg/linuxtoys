@@ -647,5 +647,22 @@
   "txt": "עורכי טקסט",
   "txt_desc": "אל תבלבלו אותם עם IDE.",
   "tools": "כלים",
-  "tools_desc": "ניפוי שגיאות, פרופיילינג, בקרת גרסאות וכלים נוספים שעשויים להיות שימושיים."
+  "tools_desc": "ניפוי שגיאות, פרופיילינג, בקרת גרסאות וכלים נוספים שעשויים להיות שימושיים.",
+  "app_page_rate": "דרגו את היישום הזה",
+  "app_page_rate_stars": "דרגו ב-{stars} כוכבים",
+  "app_page_rate_install": "התקינו את היישום הזה לפני שתדרגו אותו.",
+  "app_page_rate_done": "כבר דירגתם את היישום הזה.",
+  "app_page_rate_5": "מצוין, זה יישום שפשוט חייבים!!",
+  "app_page_rate_4": "יישום טוב מאוד. כדאי לנסות.",
+  "app_page_rate_3": "בחירה סבירה.",
+  "app_page_rate_2": "דורש שיפורים...",
+  "app_page_rate_1": "היו בעיות.",
+  "app_page_rate_signature": "נשלח דרך LinuxToys",
+  "app_page_rate_confirm_title": "לשלוח את הדירוג?",
+  "app_page_rate_confirm_message": "לא ניתן לשנות או לבטל דירוג זה לאחר שליחתו.\\n\\n{stars}/5 — {review}\\nנשלח דרך LinuxToys",
+  "app_page_rate_submit": "שליחה",
+  "app_page_rate_success_title": "הדירוג נשלח",
+  "app_page_rate_success_message": "תודה! הדירוג שלכם נשלח אל ODRS.",
+  "app_page_rate_failed_title": "שליחת הדירוג נכשלה",
+  "app_page_rate_failed_message": "לא ניתן היה לשלוח את הדירוג. נסו שוב מאוחר יותר."
 }

@@ -647,5 +647,22 @@
   "txt": "Penyunting Teks",
   "txt_desc": "Jangan kelirukan ini dengan IDE.",
   "tools": "Alat",
-  "tools_desc": "Penyahpepijatan, pemprofilan, kawalan versi dan alat lain yang mungkin berguna."
+  "tools_desc": "Penyahpepijatan, pemprofilan, kawalan versi dan alat lain yang mungkin berguna.",
+  "app_page_rate": "Nilai aplikasi ini",
+  "app_page_rate_stars": "Beri {stars} bintang",
+  "app_page_rate_install": "Pasang aplikasi ini sebelum menilainya.",
+  "app_page_rate_done": "Anda telah menilai aplikasi ini.",
+  "app_page_rate_5": "Cemerlang, aplikasi ini memang wajib dimiliki!!",
+  "app_page_rate_4": "Aplikasi yang sangat bagus. Cubalah.",
+  "app_page_rate_3": "Pilihan yang agak baik.",
+  "app_page_rate_2": "Perlu penambahbaikan...",
+  "app_page_rate_1": "Mengalami masalah.",
+  "app_page_rate_signature": "Dihantar melalui LinuxToys",
+  "app_page_rate_confirm_title": "Hantar penilaian?",
+  "app_page_rate_confirm_message": "Penilaian ini tidak boleh diubah atau ditarik balik selepas dihantar.\\n\\n{stars}/5 — {review}\\nDihantar melalui LinuxToys",
+  "app_page_rate_submit": "Hantar",
+  "app_page_rate_success_title": "Penilaian Dihantar",
+  "app_page_rate_success_message": "Terima kasih! Penilaian anda telah dihantar ke ODRS.",
+  "app_page_rate_failed_title": "Penilaian Gagal",
+  "app_page_rate_failed_message": "Tidak dapat menghantar penilaian. Sila cuba lagi kemudian."
 }

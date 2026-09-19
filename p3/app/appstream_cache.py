@@ -20,12 +20,14 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 from urllib.parse import urljoin
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 from pathlib import Path
 
 from . import popularity
 
 
-CACHE_SCHEMA = 11
+CACHE_SCHEMA = 13
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -34,6 +36,9 @@ STATE_PATH = CACHE_DIR / "state.json"
 CATALOG_PATH = CACHE_DIR / "catalog.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"
 FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
+ODRS_RATED_PATH = Path(os.path.expanduser("~/.config/linuxtoys/odrs-ratings.json"))
+ODRS_SUBMIT_URL = "https://odrs.gnome.org/1.0/reviews/api/submit"
+ODRS_USER_SALT = "linuxtoys-odrs-v1"
 
 _LOCK = threading.RLock()
 
@@ -405,6 +410,218 @@ def _component_identity(component) -> str:
     return f"{origin}\0{component_id}\0{packages}"
 
 
+
+def _odrs_user_hash() -> str:
+    """Return LinuxToys' stable pseudonymous ODRS identity for this local user."""
+    machine_id = ""
+    for candidate in ("/etc/machine-id", "/var/lib/dbus/machine-id"):
+        try:
+            machine_id = Path(candidate).read_text(encoding="utf-8").strip()
+        except OSError:
+            continue
+        if machine_id:
+            break
+    username = os.environ.get("USER") or os.environ.get("LOGNAME") or "unknown"
+    payload = f"{machine_id}\0{username}\0{ODRS_USER_SALT}".encode("utf-8")
+    return hashlib.sha1(payload).hexdigest()
+
+
+def _odrs_locale() -> str:
+    value = os.environ.get("LC_ALL") or os.environ.get("LC_MESSAGES") or os.environ.get("LANG") or "en_US"
+    return value.split(".", 1)[0] or "en_US"
+
+
+def _odrs_distro() -> str:
+    try:
+        values = {}
+        with open("/etc/os-release", "r", encoding="utf-8") as handle:
+            for line in handle:
+                if "=" not in line:
+                    continue
+                key, value = line.rstrip().split("=", 1)
+                values[key] = value.strip().strip('"')
+        return values.get("PRETTY_NAME") or values.get("NAME") or values.get("ID") or "Linux"
+    except OSError:
+        return "Linux"
+
+
+def get_submitted_odrs_rating(app_id: str):
+    """Return the locally submitted 1-5 star rating, or None if unrated.
+
+    Current cache entries store {"stars": N, "submitted": timestamp}.  Integer
+    values are also accepted for forward/backward compatibility with simpler
+    cache formats.  Legacy marker-only entries remain rated, but have no score
+    that can be rendered.
+    """
+    app_id = str(app_id or "").strip()
+    if not app_id:
+        return None
+    data = _read_json(ODRS_RATED_PATH, {})
+    if not isinstance(data, dict) or app_id not in data:
+        return None
+
+    entry = data.get(app_id)
+    value = entry.get("stars") if isinstance(entry, dict) else entry
+    try:
+        stars = int(value)
+    except (TypeError, ValueError):
+        return None
+    return stars if 1 <= stars <= 5 else None
+
+
+def has_submitted_odrs_rating(app_id: str) -> bool:
+    app_id = str(app_id or "").strip()
+    if not app_id:
+        return False
+    data = _read_json(ODRS_RATED_PATH, {})
+    return isinstance(data, dict) and app_id in data
+
+
+def _record_submitted_odrs_rating(app_id: str, stars: int) -> None:
+    data = _read_json(ODRS_RATED_PATH, {})
+    if not isinstance(data, dict):
+        data = {}
+    data[str(app_id)] = {"stars": int(stars), "submitted": int(time.time())}
+    _atomic_json_write(ODRS_RATED_PATH, data)
+
+
+def submit_odrs_rating(app_id: str, stars: int, summary: str, description: str, version: str = "unknown"):
+    """Submit one irreversible LinuxToys preset review to ODRS.
+
+    Returns (success, error_message). The local one-rating marker is written only
+    after ODRS confirms success.
+    """
+    app_id = str(app_id or "").strip()
+    summary = str(summary or "").strip()
+    description = str(description or "").strip()
+    version = str(version or "unknown").strip() or "unknown"
+    try:
+        stars = int(stars)
+    except (TypeError, ValueError):
+        return False, "invalid rating"
+    if not app_id or stars not in (1, 2, 3, 4, 5) or not summary or not description:
+        return False, "invalid review data"
+    if has_submitted_odrs_rating(app_id):
+        return False, "already rated"
+
+    payload = {
+        "app_id": app_id,
+        "locale": _odrs_locale(),
+        "summary": summary,
+        "description": description,
+        "user_hash": _odrs_user_hash(),
+        "user_display": "LinuxToys User",
+        "distro": _odrs_distro(),
+        "rating": stars * 20,
+        "version": version,
+    }
+    request = Request(
+        ODRS_SUBMIT_URL,
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+            "User-Agent": "LinuxToys-AppStream/1",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=20) as response:
+            result = json.load(response)
+    except HTTPError as exc:
+        try:
+            result = json.loads(exc.read().decode("utf-8", errors="replace"))
+            message = str(result.get("msg") or result.get("message") or exc.reason)
+        except Exception:
+            message = str(exc.reason or exc)
+        return False, message
+    except (URLError, OSError, ValueError) as exc:
+        return False, str(exc)
+
+    if not isinstance(result, dict) or not result.get("success"):
+        message = result.get("msg") if isinstance(result, dict) else None
+        return False, str(message or "ODRS rejected the review")
+
+    _record_submitted_odrs_rating(app_id, stars)
+    return True, ""
+
+def _fetch_odrs_ratings():
+    """Fetch the complete ODRS rating histogram in one HTTP request.
+
+    Returns app-id -> {review_rating, review_count}.  None means the request or
+    payload failed, allowing callers to preserve the previous completed cache.
+    """
+    url = "https://odrs.gnome.org/1.0/reviews/api/ratings"
+    request = Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "LinuxToys-AppStream/1",
+        },
+    )
+    try:
+        with urlopen(request, timeout=20) as response:
+            payload = json.load(response)
+    except Exception:
+        return None
+
+    if not isinstance(payload, dict):
+        return None
+
+    summaries = {}
+    for component_id, histogram in payload.items():
+        if not isinstance(histogram, dict):
+            continue
+        try:
+            counts = [max(0, int(histogram.get(f"star{i}", 0) or 0)) for i in range(6)]
+            count = max(0, int(histogram.get("total", sum(counts)) or 0))
+        except (TypeError, ValueError):
+            continue
+
+        # ODRS currently publishes entries with at least two ratings.  Trust the
+        # histogram itself for the average, but keep the advertised total for the
+        # confidence weighting and app-page count.
+        histogram_count = sum(counts)
+        if count <= 0 or histogram_count <= 0:
+            continue
+        weighted_total = sum((i * 20) * counts[i] for i in range(6))
+        rating = weighted_total / histogram_count
+        summaries[str(component_id)] = {
+            "review_rating": round(float(rating), 2),
+            "review_count": int(count),
+        }
+
+    return summaries
+
+
+def _apply_review_summaries(entries, previous=None):
+    """Attach ODRS summaries from one bulk HTTP request.
+
+    A failed download preserves the previous completed cache.  A successful
+    download is authoritative: IDs absent from it have no usable ODRS rating.
+    """
+    previous = previous or {}
+    fetched = _fetch_odrs_ratings()
+
+    for item in entries or ():
+        component_id = str(item.get("id", "") or "").strip()
+        if not component_id:
+            continue
+
+        if fetched is None:
+            summary = previous.get(component_id)
+        else:
+            summary = fetched.get(component_id)
+
+        if summary:
+            item["review_rating"] = summary.get("review_rating")
+            item["review_count"] = summary.get("review_count")
+        else:
+            item.pop("review_rating", None)
+            item.pop("review_count", None)
+
+    return entries
+
 def _normalize_component(component):
     component_id = str(_safe_call(component, "get_id", "") or "").strip()
     name = str(_safe_call(component, "get_name", "") or "").strip()
@@ -443,6 +660,7 @@ def _normalize_component(component):
         "developer": _developer_name(component),
         "origin": str(_safe_call(component, "get_origin", "") or "").strip(),
         "source": "native",
+        "version": str(_safe_call(_safe_call(component, "get_release_default"), "get_version", "") or "").strip(),
     }
 
 
@@ -685,6 +903,7 @@ def _normalize_flatpak_component(component, source):
         "verified": _flatpak_verified(component),
         "origin": source["remote"],
         "source": "flatpak",
+        "version": str(((component.find("releases/release") or {}).attrib.get("version", "")) if component.find("releases/release") is not None else ""),
         "flatpak_remote": source["remote"],
         "flatpak_scope": source["scope"],
         "flatpak_installation": source["installation"],
@@ -999,6 +1218,16 @@ def refresh_cache(force=False, status_callback=None):
             # A temporary Flathub statistics failure must not erase useful ranking
             # data from an otherwise successful AppStream refresh.
             previous = load_catalog()
+            previous_review_metrics = {
+                str(item.get("id", "")): {
+                    "review_rating": item.get("review_rating"),
+                    "review_count": item.get("review_count"),
+                }
+                for item in previous
+                if isinstance(item, dict)
+                and item.get("id")
+                and item.get("review_count")
+            }
             previous_flatpak_metrics = {
                 str(item.get("id", "")): {
                     "popularity_downloads": item.get("popularity_downloads"),
@@ -1016,6 +1245,11 @@ def refresh_cache(force=False, status_callback=None):
                 fallback_metrics=previous_flatpak_metrics,
             )
             entries.extend(flatpak_entries)
+
+            # ODRS publishes all rating histograms through one bulk HTTP endpoint.
+            # This works independently of the distro's libappstream typelib and
+            # avoids one network round-trip per application.
+            _apply_review_summaries(entries, previous_review_metrics)
 
             # Deterministic output helps us distinguish a real metadata change from
             # a refresh that merely visited components in a different order.

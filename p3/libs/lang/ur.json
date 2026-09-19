@@ -647,5 +647,22 @@
   "txt": "ٹیکسٹ ایڈیٹرز",
   "txt_desc": "انہیں IDEs نہ سمجھیں۔",
   "tools": "ٹولز",
-  "tools_desc": "ڈی بگنگ، پروفائلنگ، ورژن کنٹرول اور دیگر ٹولز جو کام آ سکتے ہیں۔"
+  "tools_desc": "ڈی بگنگ، پروفائلنگ، ورژن کنٹرول اور دیگر ٹولز جو کام آ سکتے ہیں۔",
+  "app_page_rate": "اس ایپ کی درجہ بندی کریں",
+  "app_page_rate_stars": "{stars} ستارے دیں",
+  "app_page_rate_install": "درجہ بندی کرنے سے پہلے اس ایپ کو انسٹال کریں۔",
+  "app_page_rate_done": "آپ پہلے ہی اس ایپ کی درجہ بندی کر چکے ہیں۔",
+  "app_page_rate_5": "بہترین، یہ ایپ لازماً ہونی چاہیے!!",
+  "app_page_rate_4": "بہت اچھی ایپ ہے۔ اسے آزمائیں۔",
+  "app_page_rate_3": "مناسب انتخاب۔",
+  "app_page_rate_2": "بہتری کی ضرورت ہے...",
+  "app_page_rate_1": "مسائل پیش آئے۔",
+  "app_page_rate_signature": "LinuxToys کے ذریعے جمع کرایا گیا",
+  "app_page_rate_confirm_title": "درجہ بندی جمع کرائیں؟",
+  "app_page_rate_confirm_message": "جمع کرانے کے بعد اس درجہ بندی کو تبدیل یا واپس نہیں لیا جا سکتا۔\\n\\n{stars}/5 — {review}\\nLinuxToys کے ذریعے جمع کرایا گیا",
+  "app_page_rate_submit": "جمع کرائیں",
+  "app_page_rate_success_title": "درجہ بندی جمع کرا دی گئی",
+  "app_page_rate_success_message": "شکریہ! آپ کی درجہ بندی ODRS کو جمع کرا دی گئی۔",
+  "app_page_rate_failed_title": "درجہ بندی ناکام ہو گئی",
+  "app_page_rate_failed_message": "درجہ بندی جمع نہیں کرائی جا سکی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔"
 }

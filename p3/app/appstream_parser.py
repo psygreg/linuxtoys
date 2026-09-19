@@ -683,6 +683,9 @@ def _to_repo_entry(component, category, lang_code):
         "flatpak_installation": str(component.get("flatpak_installation", "") or ""),
         # Native entries may inherit this from a discarded Flatpak duplicate.
         "popularity_metric": component.get("popularity_metric"),
+        "review_rating": component.get("review_rating"),
+        "review_count": component.get("review_count"),
+        "appstream_version": str(component.get("version", "") or ""),
         "repo_app_id": component_id,
         "is_new": False,
         # For AppStream entries this is specifically the publisher-verification

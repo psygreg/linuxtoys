@@ -647,5 +647,22 @@
   "txt": "Tekstiredaktorid",
   "txt_desc": "Ärge ajage neid IDE-dega segamini.",
   "tools": "Tööriistad",
-  "tools_desc": "Silumine, profileerimine, versioonihaldus ja muud tööriistad, mis võivad kasuks tulla."
+  "tools_desc": "Silumine, profileerimine, versioonihaldus ja muud tööriistad, mis võivad kasuks tulla.",
+  "app_page_rate": "Hinda seda rakendust",
+  "app_page_rate_stars": "Hinda {stars} tärniga",
+  "app_page_rate_install": "Installige see rakendus enne selle hindamist.",
+  "app_page_rate_done": "Olete seda rakendust juba hinnanud.",
+  "app_page_rate_5": "Suurepärane, see rakendus on lausa hädavajalik!!",
+  "app_page_rate_4": "Väga hea rakendus. Proovige järele.",
+  "app_page_rate_3": "Täitsa korralik valik.",
+  "app_page_rate_2": "Vajab täiustamist...",
+  "app_page_rate_1": "Esines probleeme.",
+  "app_page_rate_signature": "Esitatud LinuxToysi kaudu",
+  "app_page_rate_confirm_title": "Kas esitada hinnang?",
+  "app_page_rate_confirm_message": "Seda hinnangut ei saa pärast esitamist muuta ega tagasi võtta.\\n\\n{stars}/5 — {review}\\nEsitatud LinuxToysi kaudu",
+  "app_page_rate_submit": "Esita",
+  "app_page_rate_success_title": "Hinnang esitatud",
+  "app_page_rate_success_message": "Aitäh! Teie hinnang esitati ODRS-i.",
+  "app_page_rate_failed_title": "Hinnangu saatmine ebaõnnestus",
+  "app_page_rate_failed_message": "Hinnangut ei õnnestunud esitada. Proovige hiljem uuesti."
 }

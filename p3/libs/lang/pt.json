@@ -647,5 +647,22 @@
   "txt": "Editores de Texto",
   "txt_desc": "Não confunda estes com IDEs.",
   "tools": "Ferramentas",
-  "tools_desc": "Depuração, análise de desempenho, controle de versão e outras ferramentas que podem ser úteis."
+  "tools_desc": "Depuração, análise de desempenho, controle de versão e outras ferramentas que podem ser úteis.",
+  "app_page_rate": "Avalie este aplicativo",
+  "app_page_rate_stars": "Avaliar com {stars} estrelas",
+  "app_page_rate_install": "Instale este aplicativo antes de avaliá-lo.",
+  "app_page_rate_done": "Você já avaliou este aplicativo.",
+  "app_page_rate_5": "Excelente, este aplicativo é indispensável!!",
+  "app_page_rate_4": "Aplicativo muito bom. Vale a pena experimentar.",
+  "app_page_rate_3": "Uma escolha razoável.",
+  "app_page_rate_2": "Precisa de melhorias...",
+  "app_page_rate_1": "Tive problemas.",
+  "app_page_rate_signature": "Enviado pelo LinuxToys",
+  "app_page_rate_confirm_title": "Enviar avaliação?",
+  "app_page_rate_confirm_message": "Esta avaliação não poderá ser alterada ou retirada após o envio.\\n\\n{stars}/5 — {review}\\nEnviado pelo LinuxToys",
+  "app_page_rate_submit": "Enviar",
+  "app_page_rate_success_title": "Avaliação Enviada",
+  "app_page_rate_success_message": "Obrigado! Sua avaliação foi enviada ao ODRS.",
+  "app_page_rate_failed_title": "Falha na Avaliação",
+  "app_page_rate_failed_message": "Não foi possível enviar a avaliação. Tente novamente mais tarde."
 }

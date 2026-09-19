@@ -647,5 +647,22 @@
   "txt": "Text Editors",
   "txt_desc": "Don't mistake those for IDEs.",
   "tools": "Tools",
-  "tools_desc": "Debugging, profiling, revision control and other tools that may come in handy."
+  "tools_desc": "Debugging, profiling, revision control and other tools that may come in handy.",
+  "app_page_rate": "Rate this app",
+  "app_page_rate_stars": "Rate {stars} stars",
+  "app_page_rate_install": "Install this app before rating it.",
+  "app_page_rate_done": "You have already rated this app.",
+  "app_page_rate_5": "Excellent, this app is a must have!!",
+  "app_page_rate_4": "Very good app. Give it a try.",
+  "app_page_rate_3": "Decent pick.",
+  "app_page_rate_2": "Needs improvements...",
+  "app_page_rate_1": "Had issues.",
+  "app_page_rate_signature": "Submitted via LinuxToys",
+  "app_page_rate_confirm_title": "Submit Rating?",
+  "app_page_rate_confirm_message": "This rating cannot be changed or retracted after it is submitted.\\n\\n{stars}/5 — {review}\\nSubmitted via LinuxToys",
+  "app_page_rate_submit": "Submit",
+  "app_page_rate_success_title": "Rating Submitted",
+  "app_page_rate_success_message": "Thank you! Your rating was submitted to ODRS.",
+  "app_page_rate_failed_title": "Rating Failed",
+  "app_page_rate_failed_message": "Could not submit the rating. Please try again later."
 }

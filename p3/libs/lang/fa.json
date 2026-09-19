@@ -647,5 +647,22 @@
   "txt": "ویرایشگرهای متن",
   "txt_desc": "آن‌ها را با IDEها اشتباه نگیرید.",
   "tools": "ابزارها",
-  "tools_desc": "اشکال‌زدایی، پروفایلینگ، کنترل نسخه و ابزارهای دیگری که ممکن است مفید باشند."
+  "tools_desc": "اشکال‌زدایی، پروفایلینگ، کنترل نسخه و ابزارهای دیگری که ممکن است مفید باشند.",
+  "app_page_rate": "به این برنامه امتیاز دهید",
+  "app_page_rate_stars": "امتیاز {stars} ستاره",
+  "app_page_rate_install": "پیش از امتیاز دادن، این برنامه را نصب کنید.",
+  "app_page_rate_done": "شما قبلاً به این برنامه امتیاز داده‌اید.",
+  "app_page_rate_5": "عالی، این برنامه واقعاً ضروری است!!",
+  "app_page_rate_4": "برنامه بسیار خوبی است. امتحانش کنید.",
+  "app_page_rate_3": "انتخاب قابل قبولی است.",
+  "app_page_rate_2": "نیاز به بهبود دارد...",
+  "app_page_rate_1": "مشکلاتی داشت.",
+  "app_page_rate_signature": "ارسال‌شده از طریق LinuxToys",
+  "app_page_rate_confirm_title": "امتیاز ارسال شود؟",
+  "app_page_rate_confirm_message": "این امتیاز پس از ارسال قابل تغییر یا پس گرفتن نیست.\\n\\n{stars}/5 — {review}\\nارسال‌شده از طریق LinuxToys",
+  "app_page_rate_submit": "ارسال",
+  "app_page_rate_success_title": "امتیاز ارسال شد",
+  "app_page_rate_success_message": "متشکریم! امتیاز شما به ODRS ارسال شد.",
+  "app_page_rate_failed_title": "ارسال امتیاز ناموفق بود",
+  "app_page_rate_failed_message": "امتیاز ارسال نشد. لطفاً بعداً دوباره تلاش کنید."
 }

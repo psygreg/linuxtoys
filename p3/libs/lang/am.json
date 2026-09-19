@@ -647,5 +647,22 @@
   "txt": "የጽሑፍ አርታዒዎች",
   "txt_desc": "እነዚህን ከIDEዎች ጋር አያምታቱ።",
   "tools": "መሣሪያዎች",
-  "tools_desc": "ስህተት ማረም፣ ፕሮፋይል ማድረግ፣ የስሪት ቁጥጥር እና ሌሎች ጠቃሚ ሊሆኑ የሚችሉ መሣሪያዎች።"
+  "tools_desc": "ስህተት ማረም፣ ፕሮፋይል ማድረግ፣ የስሪት ቁጥጥር እና ሌሎች ጠቃሚ ሊሆኑ የሚችሉ መሣሪያዎች።",
+  "app_page_rate": "ይህን መተግበሪያ ደረጃ ይስጡ",
+  "app_page_rate_stars": "{stars} ኮከቦች ይስጡ",
+  "app_page_rate_install": "ደረጃ ከመስጠትዎ በፊት ይህን መተግበሪያ ይጫኑ።",
+  "app_page_rate_done": "ይህን መተግበሪያ አስቀድመው ደረጃ ሰጥተዋል።",
+  "app_page_rate_5": "በጣም ጥሩ፣ ይህ መተግበሪያ የግድ ሊኖርዎት ይገባል!!",
+  "app_page_rate_4": "በጣም ጥሩ መተግበሪያ። ይሞክሩት።",
+  "app_page_rate_3": "ጥሩ ምርጫ።",
+  "app_page_rate_2": "ማሻሻያዎች ያስፈልጉታል...",
+  "app_page_rate_1": "ችግሮች ነበሩበት።",
+  "app_page_rate_signature": "በLinuxToys በኩል ቀርቧል",
+  "app_page_rate_confirm_title": "ደረጃውን ይላኩ?",
+  "app_page_rate_confirm_message": "ይህ ደረጃ ከተላከ በኋላ ሊቀየር ወይም ሊሰረዝ አይችልም።\\n\\n{stars}/5 — {review}\\nበLinuxToys በኩል ቀርቧል",
+  "app_page_rate_submit": "አስገባ",
+  "app_page_rate_success_title": "ደረጃው ተልኳል",
+  "app_page_rate_success_message": "እናመሰግናለን! ደረጃዎ ወደ ODRS ተልኳል።",
+  "app_page_rate_failed_title": "ደረጃው አልተላከም",
+  "app_page_rate_failed_message": "ደረጃውን መላክ አልተቻለም። እባክዎ ቆይተው እንደገና ይሞክሩ።"
 }

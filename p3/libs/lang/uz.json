@@ -646,5 +646,22 @@
   "txt": "Matn Muharrirlari",
   "txt_desc": "Ularni IDE-lar bilan adashtirmang.",
   "tools": "Vositalar",
-  "tools_desc": "Nosozliklarni tuzatish, profillash, versiyalarni boshqarish va asqatishi mumkin bo‘lgan boshqa vositalar."
+  "tools_desc": "Nosozliklarni tuzatish, profillash, versiyalarni boshqarish va asqatishi mumkin bo‘lgan boshqa vositalar.",
+  "app_page_rate": "Bu ilovani baholang",
+  "app_page_rate_stars": "{stars} yulduz bering",
+  "app_page_rate_install": "Baholashdan oldin bu ilovani o‘rnating.",
+  "app_page_rate_done": "Siz bu ilovani allaqachon baholagansiz.",
+  "app_page_rate_5": "Ajoyib, bu ilova albatta bo‘lishi kerak!!",
+  "app_page_rate_4": "Juda yaxshi ilova. Sinab ko‘ring.",
+  "app_page_rate_3": "Yomon bo‘lmagan tanlov.",
+  "app_page_rate_2": "Yaxshilanishi kerak...",
+  "app_page_rate_1": "Muammolar bo‘ldi.",
+  "app_page_rate_signature": "LinuxToys orqali yuborildi",
+  "app_page_rate_confirm_title": "Bahoni yuborilsinmi?",
+  "app_page_rate_confirm_message": "Bu baho yuborilgandan keyin uni o‘zgartirish yoki qaytarib olish mumkin emas.\\n\\n{stars}/5 — {review}\\nLinuxToys orqali yuborildi",
+  "app_page_rate_submit": "Yuborish",
+  "app_page_rate_success_title": "Baho Yuborildi",
+  "app_page_rate_success_message": "Rahmat! Bahoyingiz ODRS'ga yuborildi.",
+  "app_page_rate_failed_title": "Baholash Muvaffaqiyatsiz",
+  "app_page_rate_failed_message": "Bahoni yuborib bo‘lmadi. Keyinroq qayta urinib ko‘ring."
 }

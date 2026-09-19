@@ -647,5 +647,22 @@
   "txt": "โปรแกรมแก้ไขข้อความ",
   "txt_desc": "อย่าสับสนกับ IDE",
   "tools": "เครื่องมือ",
-  "tools_desc": "การดีบัก การวิเคราะห์ประสิทธิภาพ การควบคุมเวอร์ชัน และเครื่องมืออื่น ๆ ที่อาจมีประโยชน์"
+  "tools_desc": "การดีบัก การวิเคราะห์ประสิทธิภาพ การควบคุมเวอร์ชัน และเครื่องมืออื่น ๆ ที่อาจมีประโยชน์",
+  "app_page_rate": "ให้คะแนนแอปนี้",
+  "app_page_rate_stars": "ให้ {stars} ดาว",
+  "app_page_rate_install": "ติดตั้งแอปนี้ก่อนให้คะแนน",
+  "app_page_rate_done": "คุณให้คะแนนแอปนี้แล้ว",
+  "app_page_rate_5": "ยอดเยี่ยม แอปนี้ต้องมีเลย!!",
+  "app_page_rate_4": "แอปดีมาก ลองใช้ดูสิ",
+  "app_page_rate_3": "เป็นตัวเลือกที่ใช้ได้",
+  "app_page_rate_2": "ต้องปรับปรุง...",
+  "app_page_rate_1": "พบปัญหา",
+  "app_page_rate_signature": "ส่งผ่าน LinuxToys",
+  "app_page_rate_confirm_title": "ส่งคะแนนหรือไม่?",
+  "app_page_rate_confirm_message": "ไม่สามารถเปลี่ยนหรือถอนคะแนนนี้ได้หลังจากส่งแล้ว\\n\\n{stars}/5 — {review}\\nส่งผ่าน LinuxToys",
+  "app_page_rate_submit": "ส่ง",
+  "app_page_rate_success_title": "ส่งคะแนนแล้ว",
+  "app_page_rate_success_message": "ขอบคุณ! คะแนนของคุณถูกส่งไปยัง ODRS แล้ว",
+  "app_page_rate_failed_title": "การให้คะแนนล้มเหลว",
+  "app_page_rate_failed_message": "ไม่สามารถส่งคะแนนได้ โปรดลองอีกครั้งในภายหลัง"
 }

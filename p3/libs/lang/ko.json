@@ -647,5 +647,22 @@
   "txt": "텍스트 편집기",
   "txt_desc": "IDE와 혼동하지 마세요.",
   "tools": "도구",
-  "tools_desc": "디버깅, 프로파일링, 버전 관리 등 유용하게 쓰일 수 있는 도구."
+  "tools_desc": "디버깅, 프로파일링, 버전 관리 등 유용하게 쓰일 수 있는 도구.",
+  "app_page_rate": "이 앱 평가하기",
+  "app_page_rate_stars": "별 {stars}개로 평가",
+  "app_page_rate_install": "평가하기 전에 이 앱을 설치하세요.",
+  "app_page_rate_done": "이미 이 앱을 평가했습니다.",
+  "app_page_rate_5": "훌륭합니다. 꼭 있어야 할 앱이에요!!",
+  "app_page_rate_4": "아주 좋은 앱입니다. 한번 사용해 보세요.",
+  "app_page_rate_3": "괜찮은 선택입니다.",
+  "app_page_rate_2": "개선이 필요합니다...",
+  "app_page_rate_1": "문제가 있었습니다.",
+  "app_page_rate_signature": "LinuxToys를 통해 제출됨",
+  "app_page_rate_confirm_title": "평가를 제출할까요?",
+  "app_page_rate_confirm_message": "이 평가는 제출한 후 변경하거나 철회할 수 없습니다.\\n\\n{stars}/5 — {review}\\nLinuxToys를 통해 제출됨",
+  "app_page_rate_submit": "제출",
+  "app_page_rate_success_title": "평가 제출 완료",
+  "app_page_rate_success_message": "감사합니다! 평가가 ODRS에 제출되었습니다.",
+  "app_page_rate_failed_title": "평가 실패",
+  "app_page_rate_failed_message": "평가를 제출할 수 없습니다. 나중에 다시 시도하세요."
 }

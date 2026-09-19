@@ -647,5 +647,22 @@
   "txt": "Trình soạn thảo văn bản",
   "txt_desc": "Đừng nhầm chúng với IDE.",
   "tools": "Công cụ",
-  "tools_desc": "Gỡ lỗi, phân tích hiệu năng, kiểm soát phiên bản và các công cụ hữu ích khác."
+  "tools_desc": "Gỡ lỗi, phân tích hiệu năng, kiểm soát phiên bản và các công cụ hữu ích khác.",
+  "app_page_rate": "Đánh giá ứng dụng này",
+  "app_page_rate_stars": "Đánh giá {stars} sao",
+  "app_page_rate_install": "Hãy cài đặt ứng dụng này trước khi đánh giá.",
+  "app_page_rate_done": "Bạn đã đánh giá ứng dụng này rồi.",
+  "app_page_rate_5": "Xuất sắc, đây là ứng dụng nhất định phải có!!",
+  "app_page_rate_4": "Ứng dụng rất tốt. Hãy dùng thử.",
+  "app_page_rate_3": "Một lựa chọn khá ổn.",
+  "app_page_rate_2": "Cần cải thiện...",
+  "app_page_rate_1": "Đã gặp sự cố.",
+  "app_page_rate_signature": "Đã gửi qua LinuxToys",
+  "app_page_rate_confirm_title": "Gửi đánh giá?",
+  "app_page_rate_confirm_message": "Không thể thay đổi hoặc rút lại đánh giá này sau khi gửi.\\n\\n{stars}/5 — {review}\\nĐã gửi qua LinuxToys",
+  "app_page_rate_submit": "Gửi",
+  "app_page_rate_success_title": "Đã gửi đánh giá",
+  "app_page_rate_success_message": "Cảm ơn bạn! Đánh giá của bạn đã được gửi tới ODRS.",
+  "app_page_rate_failed_title": "Đánh giá thất bại",
+  "app_page_rate_failed_message": "Không thể gửi đánh giá. Vui lòng thử lại sau."
 }

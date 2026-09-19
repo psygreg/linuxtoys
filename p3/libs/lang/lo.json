@@ -647,5 +647,22 @@
   "txt": "ໂປຣແກຣມແກ້ໄຂຂໍ້ຄວາມ",
   "txt_desc": "ຢ່າສັບສົນພວກມັນກັບ IDE.",
   "tools": "ເຄື່ອງມື",
-  "tools_desc": "ການແກ້ບັນຫາ, ການວິເຄາະປະສິດທິພາບ, ການຄວບຄຸມເວີຊັນ ແລະ ເຄື່ອງມືອື່ນໆທີ່ອາດມີປະໂຫຍດ."
+  "tools_desc": "ການແກ້ບັນຫາ, ການວິເຄາະປະສິດທິພາບ, ການຄວບຄຸມເວີຊັນ ແລະ ເຄື່ອງມືອື່ນໆທີ່ອາດມີປະໂຫຍດ.",
+  "app_page_rate": "ໃຫ້ຄະແນນແອັບນີ້",
+  "app_page_rate_stars": "ໃຫ້ {stars} ດາວ",
+  "app_page_rate_install": "ຕິດຕັ້ງແອັບນີ້ກ່ອນໃຫ້ຄະແນນ.",
+  "app_page_rate_done": "ທ່ານໄດ້ໃຫ້ຄະແນນແອັບນີ້ແລ້ວ.",
+  "app_page_rate_5": "ດີເລີດ, ແອັບນີ້ຕ້ອງມີໄວ້ແທ້ໆ!!",
+  "app_page_rate_4": "ແອັບດີຫຼາຍ. ລອງໃຊ້ເບິ່ງ.",
+  "app_page_rate_3": "ເປັນຕົວເລືອກທີ່ໃຊ້ໄດ້.",
+  "app_page_rate_2": "ຕ້ອງການການປັບປຸງ...",
+  "app_page_rate_1": "ມີບັນຫາ.",
+  "app_page_rate_signature": "ສົ່ງຜ່ານ LinuxToys",
+  "app_page_rate_confirm_title": "ສົ່ງຄະແນນ?",
+  "app_page_rate_confirm_message": "ຄະແນນນີ້ບໍ່ສາມາດປ່ຽນ ຫຼື ຖອນຄືນໄດ້ຫຼັງຈາກສົ່ງແລ້ວ.\\n\\n{stars}/5 — {review}\\nສົ່ງຜ່ານ LinuxToys",
+  "app_page_rate_submit": "ສົ່ງ",
+  "app_page_rate_success_title": "ສົ່ງຄະແນນແລ້ວ",
+  "app_page_rate_success_message": "ຂອບໃຈ! ຄະແນນຂອງທ່ານຖືກສົ່ງໄປຫາ ODRS ແລ້ວ.",
+  "app_page_rate_failed_title": "ການໃຫ້ຄະແນນລົ້ມເຫຼວ",
+  "app_page_rate_failed_message": "ບໍ່ສາມາດສົ່ງຄະແນນໄດ້. ກະລຸນາລອງໃໝ່ພາຍຫຼັງ."
 }

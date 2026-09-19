@@ -647,5 +647,22 @@
   "txt": "Redaktues Teksti",
   "txt_desc": "Mos i ngatërroni me IDE-të.",
   "tools": "Mjete",
-  "tools_desc": "Debugim, profilizim, kontroll versionesh dhe mjete të tjera që mund të jenë të dobishme."
+  "tools_desc": "Debugim, profilizim, kontroll versionesh dhe mjete të tjera që mund të jenë të dobishme.",
+  "app_page_rate": "Vlerëso këtë aplikacion",
+  "app_page_rate_stars": "Vlerëso me {stars} yje",
+  "app_page_rate_install": "Instalo këtë aplikacion para se ta vlerësosh.",
+  "app_page_rate_done": "E ke vlerësuar tashmë këtë aplikacion.",
+  "app_page_rate_5": "Shkëlqyeshëm, ky aplikacion është i domosdoshëm!!",
+  "app_page_rate_4": "Aplikacion shumë i mirë. Provojeni.",
+  "app_page_rate_3": "Zgjedhje e mirë.",
+  "app_page_rate_2": "Ka nevojë për përmirësime...",
+  "app_page_rate_1": "Pati probleme.",
+  "app_page_rate_signature": "Dërguar përmes LinuxToys",
+  "app_page_rate_confirm_title": "Dërgo vlerësimin?",
+  "app_page_rate_confirm_message": "Ky vlerësim nuk mund të ndryshohet ose të tërhiqet pasi të dërgohet.\\n\\n{stars}/5 — {review}\\nDërguar përmes LinuxToys",
+  "app_page_rate_submit": "Dërgo",
+  "app_page_rate_success_title": "Vlerësimi u dërgua",
+  "app_page_rate_success_message": "Faleminderit! Vlerësimi juaj u dërgua në ODRS.",
+  "app_page_rate_failed_title": "Vlerësimi dështoi",
+  "app_page_rate_failed_message": "Nuk u arrit të dërgohej vlerësimi. Provo përsëri më vonë."
 }

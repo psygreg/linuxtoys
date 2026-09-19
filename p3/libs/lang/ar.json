@@ -647,5 +647,22 @@
   "txt": "محررات النصوص",
   "txt_desc": "لا تخلط بينها وبين بيئات التطوير المتكاملة (IDE).",
   "tools": "الأدوات",
-  "tools_desc": "أدوات لتصحيح الأخطاء وتحليل الأداء والتحكم في الإصدارات وغيرها من الأدوات التي قد تكون مفيدة."
+  "tools_desc": "أدوات لتصحيح الأخطاء وتحليل الأداء والتحكم في الإصدارات وغيرها من الأدوات التي قد تكون مفيدة.",
+  "app_page_rate": "قيّم هذا التطبيق",
+  "app_page_rate_stars": "قيّم بـ {stars} نجوم",
+  "app_page_rate_install": "ثبّت هذا التطبيق قبل تقييمه.",
+  "app_page_rate_done": "لقد قيّمت هذا التطبيق بالفعل.",
+  "app_page_rate_5": "ممتاز، هذا تطبيق لا غنى عنه!!",
+  "app_page_rate_4": "تطبيق جيد جدًا. جرّبه.",
+  "app_page_rate_3": "خيار جيد.",
+  "app_page_rate_2": "يحتاج إلى تحسينات...",
+  "app_page_rate_1": "واجهت مشكلات.",
+  "app_page_rate_signature": "تم الإرسال عبر LinuxToys",
+  "app_page_rate_confirm_title": "إرسال التقييم؟",
+  "app_page_rate_confirm_message": "لا يمكن تغيير هذا التقييم أو سحبه بعد إرساله.\\n\\n{stars}/5 — {review}\\nتم الإرسال عبر LinuxToys",
+  "app_page_rate_submit": "إرسال",
+  "app_page_rate_success_title": "تم إرسال التقييم",
+  "app_page_rate_success_message": "شكرًا لك! تم إرسال تقييمك إلى ODRS.",
+  "app_page_rate_failed_title": "فشل إرسال التقييم",
+  "app_page_rate_failed_message": "تعذر إرسال التقييم. يرجى المحاولة مرة أخرى لاحقًا."
 }

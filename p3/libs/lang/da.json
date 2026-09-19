@@ -647,5 +647,22 @@
   "txt": "Teksteditorer",
   "txt_desc": "Forveksl dem ikke med IDE'er.",
   "tools": "Værktøjer",
-  "tools_desc": "Fejlfinding, profilering, versionsstyring og andre værktøjer, der kan være nyttige."
+  "tools_desc": "Fejlfinding, profilering, versionsstyring og andre værktøjer, der kan være nyttige.",
+  "app_page_rate": "Bedøm denne app",
+  "app_page_rate_stars": "Giv {stars} stjerner",
+  "app_page_rate_install": "Installér denne app, før du bedømmer den.",
+  "app_page_rate_done": "Du har allerede bedømt denne app.",
+  "app_page_rate_5": "Fremragende, denne app er et must-have!!",
+  "app_page_rate_4": "Rigtig god app. Prøv den.",
+  "app_page_rate_3": "Et udmærket valg.",
+  "app_page_rate_2": "Trænger til forbedringer...",
+  "app_page_rate_1": "Havde problemer.",
+  "app_page_rate_signature": "Indsendt via LinuxToys",
+  "app_page_rate_confirm_title": "Indsend bedømmelse?",
+  "app_page_rate_confirm_message": "Denne bedømmelse kan ikke ændres eller trækkes tilbage, efter den er indsendt.\\n\\n{stars}/5 — {review}\\nIndsendt via LinuxToys",
+  "app_page_rate_submit": "Indsend",
+  "app_page_rate_success_title": "Bedømmelse indsendt",
+  "app_page_rate_success_message": "Tak! Din bedømmelse blev indsendt til ODRS.",
+  "app_page_rate_failed_title": "Bedømmelsen mislykkedes",
+  "app_page_rate_failed_message": "Bedømmelsen kunne ikke indsendes. Prøv igen senere."
 }

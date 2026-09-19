@@ -647,5 +647,22 @@
   "txt": "Eagarthóirí Téacs",
   "txt_desc": "Ná cuir amú iad le IDEanna.",
   "tools": "Uirlisí",
-  "tools_desc": "Dífhabhtú, próifíliú, rialú leaganacha agus uirlisí eile a d'fhéadfadh a bheith úsáideach."
+  "tools_desc": "Dífhabhtú, próifíliú, rialú leaganacha agus uirlisí eile a d'fhéadfadh a bheith úsáideach.",
+  "app_page_rate": "Rátáil an aip seo",
+  "app_page_rate_stars": "Tabhair {stars} réalta",
+  "app_page_rate_install": "Suiteáil an aip seo sula rátálann tú í.",
+  "app_page_rate_done": "Tá an aip seo rátáilte agat cheana féin.",
+  "app_page_rate_5": "Ar fheabhas, tá an aip seo riachtanach!!",
+  "app_page_rate_4": "Aip an-mhaith. Bain triail aisti.",
+  "app_page_rate_3": "Rogha réasúnta.",
+  "app_page_rate_2": "Tá feabhsuithe de dhíth...",
+  "app_page_rate_1": "Bhí fadhbanna ann.",
+  "app_page_rate_signature": "Curtha isteach trí LinuxToys",
+  "app_page_rate_confirm_title": "Rátáil a chur isteach?",
+  "app_page_rate_confirm_message": "Ní féidir an rátáil seo a athrú ná a tharraingt siar tar éis í a chur isteach.\\n\\n{stars}/5 — {review}\\nCurtha isteach trí LinuxToys",
+  "app_page_rate_submit": "Cuir isteach",
+  "app_page_rate_success_title": "Rátáil curtha isteach",
+  "app_page_rate_success_message": "Go raibh maith agat! Cuireadh do rátáil isteach chuig ODRS.",
+  "app_page_rate_failed_title": "Theip ar an rátáil",
+  "app_page_rate_failed_message": "Níorbh fhéidir an rátáil a chur isteach. Bain triail eile as ar ball."
 }

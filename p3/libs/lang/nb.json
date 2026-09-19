@@ -647,5 +647,22 @@
   "txt": "Tekstredigerere",
   "txt_desc": "Ikke forveksle dem med IDE-er.",
   "tools": "Verktøy",
-  "tools_desc": "Feilsøking, profilering, versjonskontroll og andre verktøy som kan komme til nytte."
+  "tools_desc": "Feilsøking, profilering, versjonskontroll og andre verktøy som kan komme til nytte.",
+  "app_page_rate": "Vurder denne appen",
+  "app_page_rate_stars": "Gi {stars} stjerner",
+  "app_page_rate_install": "Installer denne appen før du vurderer den.",
+  "app_page_rate_done": "Du har allerede vurdert denne appen.",
+  "app_page_rate_5": "Utmerket, denne appen er et must!!",
+  "app_page_rate_4": "Veldig god app. Prøv den.",
+  "app_page_rate_3": "Et greit valg.",
+  "app_page_rate_2": "Trenger forbedringer...",
+  "app_page_rate_1": "Hadde problemer.",
+  "app_page_rate_signature": "Sendt inn via LinuxToys",
+  "app_page_rate_confirm_title": "Send inn vurdering?",
+  "app_page_rate_confirm_message": "Denne vurderingen kan ikke endres eller trekkes tilbake etter at den er sendt inn.\\n\\n{stars}/5 — {review}\\nSendt inn via LinuxToys",
+  "app_page_rate_submit": "Send inn",
+  "app_page_rate_success_title": "Vurdering sendt inn",
+  "app_page_rate_success_message": "Takk! Vurderingen din ble sendt inn til ODRS.",
+  "app_page_rate_failed_title": "Vurderingen mislyktes",
+  "app_page_rate_failed_message": "Kunne ikke sende inn vurderingen. Prøv igjen senere."
 }

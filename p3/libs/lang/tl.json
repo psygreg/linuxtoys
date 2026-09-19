@@ -647,5 +647,22 @@
   "txt": "Mga Text Editor",
   "txt_desc": "Huwag itong ipagkamali sa mga IDE.",
   "tools": "Mga Tool",
-  "tools_desc": "Debugging, profiling, revision control, at iba pang mga tool na maaaring magamit."
+  "tools_desc": "Debugging, profiling, revision control, at iba pang mga tool na maaaring magamit.",
+  "app_page_rate": "I-rate ang app na ito",
+  "app_page_rate_stars": "Bigyan ng {stars} bituin",
+  "app_page_rate_install": "I-install ang app na ito bago ito i-rate.",
+  "app_page_rate_done": "Na-rate mo na ang app na ito.",
+  "app_page_rate_5": "Napakahusay, dapat mayroon ka ng app na ito!!",
+  "app_page_rate_4": "Napakagandang app. Subukan mo.",
+  "app_page_rate_3": "Disenteng pagpipilian.",
+  "app_page_rate_2": "Kailangan ng mga pagpapabuti...",
+  "app_page_rate_1": "Nagkaroon ng mga problema.",
+  "app_page_rate_signature": "Isinumite sa pamamagitan ng LinuxToys",
+  "app_page_rate_confirm_title": "Isumite ang rating?",
+  "app_page_rate_confirm_message": "Hindi na mababago o mababawi ang rating na ito pagkatapos itong isumite.\\n\\n{stars}/5 — {review}\\nIsinumite sa pamamagitan ng LinuxToys",
+  "app_page_rate_submit": "Isumite",
+  "app_page_rate_success_title": "Naisumite ang Rating",
+  "app_page_rate_success_message": "Salamat! Naisumite ang iyong rating sa ODRS.",
+  "app_page_rate_failed_title": "Nabigo ang Rating",
+  "app_page_rate_failed_message": "Hindi maisumite ang rating. Pakisubukan muli mamaya."
 }

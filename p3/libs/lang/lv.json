@@ -647,5 +647,22 @@
   "txt": "Teksta redaktori",
   "txt_desc": "Nejauciet tos ar IDE.",
   "tools": "Rīki",
-  "tools_desc": "Atkļūdošana, profilēšana, versiju kontrole un citi rīki, kas var noderēt."
+  "tools_desc": "Atkļūdošana, profilēšana, versiju kontrole un citi rīki, kas var noderēt.",
+  "app_page_rate": "Novērtējiet šo lietotni",
+  "app_page_rate_stars": "Novērtējiet ar {stars} zvaigznēm",
+  "app_page_rate_install": "Pirms vērtēšanas instalējiet šo lietotni.",
+  "app_page_rate_done": "Jūs jau esat novērtējis šo lietotni.",
+  "app_page_rate_5": "Izcili, šī lietotne ir obligāti nepieciešama!!",
+  "app_page_rate_4": "Ļoti laba lietotne. Izmēģiniet to.",
+  "app_page_rate_3": "Diezgan laba izvēle.",
+  "app_page_rate_2": "Nepieciešami uzlabojumi...",
+  "app_page_rate_1": "Bija problēmas.",
+  "app_page_rate_signature": "Iesniegts, izmantojot LinuxToys",
+  "app_page_rate_confirm_title": "Iesniegt vērtējumu?",
+  "app_page_rate_confirm_message": "Pēc iesniegšanas šo vērtējumu nevar mainīt vai atsaukt.\\n\\n{stars}/5 — {review}\\nIesniegts, izmantojot LinuxToys",
+  "app_page_rate_submit": "Iesniegt",
+  "app_page_rate_success_title": "Vērtējums iesniegts",
+  "app_page_rate_success_message": "Paldies! Jūsu vērtējums tika iesniegts ODRS.",
+  "app_page_rate_failed_title": "Vērtēšana neizdevās",
+  "app_page_rate_failed_message": "Neizdevās iesniegt vērtējumu. Lūdzu, mēģiniet vēlreiz vēlāk."
 }

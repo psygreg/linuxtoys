@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
 from .term_header import InfosHead
-from . import get_icon_path
+from . import get_icon_path, appstream_cache
 
 
 class AppPageView(Gtk.Box):
@@ -25,6 +25,9 @@ class AppPageView(Gtk.Box):
         self._source_button = None
         self._install_button = None
         self._install_state = "available"
+        self._rating_buttons = []
+        self._rating_box = None
+        self._rating_submitting = False
         self.screenshot_index = 0
         self.screenshot_stack = None
         self.screenshot_counter = None
@@ -40,10 +43,19 @@ class AppPageView(Gtk.Box):
 
         self.header = InfosHead(self.translations, show_terminal_controls=False)
         self.header._update_header_labels(script_info)
+
+        # Keep secondary metadata such as the ODRS rating out of InfosHead's
+        # left-side information column. An overlay lets it occupy the free
+        # top-right corner without changing the header's existing layout.
+        self._header_overlay = Gtk.Overlay()
+        self._header_overlay.add(self.header)
+
         self._build_name_line()
         self._build_developer_line()
+        self._build_rating_line()
+        self._build_repository_rating_row()
         self._build_actions()
-        self.pack_start(self.header, False, False, 0)
+        self.pack_start(self._header_overlay, False, False, 0)
 
         scroller = Gtk.ScrolledWindow()
         scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -830,6 +842,236 @@ class AppPageView(Gtk.Box):
         )
 
 
+    def _build_rating_line(self):
+        """Show only the cached ODRS aggregate in the header's top-right corner."""
+        if not self.script_info.get("is_appstream_entry", False):
+            return
+
+        try:
+            rating = float(self.script_info.get("review_rating"))
+            count = int(self.script_info.get("review_count"))
+        except (TypeError, ValueError):
+            return
+        if count <= 0 or not (0.0 <= rating <= 100.0):
+            return
+
+        aggregate = Gtk.Label()
+        aggregate.set_markup(
+            f'<span size="large" weight="bold">★ {rating / 20.0:.1f}</span>'
+            f'  <span>({count})</span>'
+        )
+        aggregate.set_halign(Gtk.Align.END)
+        aggregate.set_valign(Gtk.Align.START)
+        aggregate.set_margin_top(14)
+        aggregate.set_margin_right(24)
+        aggregate.set_selectable(False)
+        aggregate.set_can_focus(False)
+        self._header_overlay.add_overlay(aggregate)
+
+    def _build_rating_control(self):
+        """Build the compact installed-only rating control for the actions row."""
+        if not self.script_info.get("is_appstream_entry", False):
+            return None
+
+        rating_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        rating_row.set_halign(Gtk.Align.END)
+        rating_row.set_valign(Gtk.Align.CENTER)
+
+        self._rating_buttons = []
+        for stars in range(1, 6):
+            button = Gtk.Button(label="☆")
+            button.set_relief(Gtk.ReliefStyle.NONE)
+            button.set_can_focus(False)
+            button.set_size_request(24, 24)
+            button.set_tooltip_text(
+                self.translations.get("app_page_rate_stars", "Rate {stars} stars").format(stars=stars)
+            )
+
+            # GTK themes often give ordinary buttons generous horizontal padding.
+            # Keep these five glyph-only buttons tight so the whole control fits on
+            # the same row as Website/Repository and the install/source actions.
+            css = Gtk.CssProvider()
+            css.load_from_data(
+                b"button { min-width: 20px; min-height: 20px; padding: 1px 3px; margin: 0; }"
+            )
+            button.get_style_context().add_provider(
+                css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+
+            button.connect("clicked", self._on_rating_clicked, stars)
+            rating_row.pack_start(button, False, False, 0)
+            self._rating_buttons.append(button)
+
+        self._rating_box = rating_row
+        return rating_row
+
+    def _build_repository_rating_row(self):
+        """Put the rating control on the same row as InfosHead's repository link."""
+        if not self.script_info.get("is_appstream_entry", False):
+            return
+
+        repo_label = getattr(self.header, "label_repo", None)
+        infos_box = getattr(self.header, "vbox_infos", None)
+        if repo_label is None or infos_box is None:
+            return
+
+        parent = repo_label.get_parent()
+        if parent is not None:
+            parent.remove(repo_label)
+
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        row.set_hexpand(True)
+        row.set_halign(Gtk.Align.FILL)
+        row.set_valign(Gtk.Align.CENTER)
+
+        # Preserve InfosHead's existing repository/URL label on the left.
+        row.pack_start(repo_label, False, False, 0)
+
+        # Let the empty middle of this metadata row absorb translated prompt width
+        # instead of competing with install/source/commerce buttons below.
+        spacer = Gtk.Box()
+        spacer.set_hexpand(True)
+        row.pack_start(spacer, True, True, 0)
+
+        rating_control = self._build_rating_control()
+        if rating_control is not None:
+            row.pack_end(rating_control, False, False, 0)
+
+        # _build_developer_line() inserts itself at index 1, leaving the original
+        # repository label at index 3 (name, developer, description, repository).
+        infos_box.pack_start(row, False, False, 0)
+        infos_box.reorder_child(row, 3)
+        row.show_all()
+        if not str(self.script_info.get("repo", "") or "").strip():
+            repo_label.hide()
+
+    def _rating_app_id(self):
+        return str(self.script_info.get("appstream_id") or self.script_info.get("id") or "").strip()
+
+    def _refresh_rating_state(self):
+        if not self._rating_buttons:
+            return
+        app_id = self._rating_app_id()
+        rated = appstream_cache.has_submitted_odrs_rating(app_id)
+        submitted_stars = appstream_cache.get_submitted_odrs_rating(app_id) if rated else None
+        enabled = self._install_state == "installed" and not rated and not self._rating_submitting
+        for index, button in enumerate(self._rating_buttons, start=1):
+            button.set_sensitive(enabled)
+            # Once rated, keep the control locked but paint the user's submitted
+            # score so the local cache also serves as their rating history.
+            if rated and submitted_stars is not None:
+                button.set_label("★" if index <= submitted_stars else "☆")
+            else:
+                button.set_label("☆")
+        if self._rating_box is not None:
+            # Do not expose the rating control at all unless this exact source is
+            # currently installed/removable.  no-show-all keeps later parent
+            # show_all() calls from accidentally revealing it while unavailable.
+            installed = self._install_state == "installed"
+            self._rating_box.set_no_show_all(not installed)
+            if installed:
+                self._rating_box.show_all()
+            else:
+                self._rating_box.hide()
+
+            if rated:
+                self._rating_box.set_tooltip_text(
+                    self.translations.get("app_page_rate_done", "You have already rated this app.")
+                )
+            else:
+                self._rating_box.set_tooltip_text(None)
+
+    def _on_rating_clicked(self, _button, stars):
+        if self._install_state != "installed" or self._rating_submitting:
+            return
+        app_id = self._rating_app_id()
+        if not app_id or appstream_cache.has_submitted_odrs_rating(app_id):
+            self._refresh_rating_state()
+            return
+
+        presets = {
+            5: self.translations.get("app_page_rate_5", "Excellent, this app is a must have!!"),
+            4: self.translations.get("app_page_rate_4", "Very good app. Give it a try."),
+            3: self.translations.get("app_page_rate_3", "Decent pick."),
+            2: self.translations.get("app_page_rate_2", "Needs improvements..."),
+            1: self.translations.get("app_page_rate_1", "Had issues."),
+        }
+        summary = presets[int(stars)]
+        # The preset review is intentionally not shown here. The user only needs
+        # to confirm the score they selected; the localized preset remains the
+        # plain-text summary submitted to ODRS below.
+        confirm_template = self.translations.get(
+            "app_page_rate_confirm_message",
+            "This rating cannot be changed or retracted after it is submitted.",
+        ).replace("\\n", "\n")
+        confirm_warning = confirm_template.split("\n\n", 1)[0].strip()
+        star_rating = "★" * int(stars) + "☆" * (5 - int(stars))
+
+        dialog = Gtk.MessageDialog(
+            transient_for=self.parent,
+            modal=True,
+            message_type=Gtk.MessageType.OTHER,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get("app_page_rate_confirm_title", "Submit Rating?"),
+        )
+        dialog.format_secondary_text(confirm_warning)
+
+        # Keep the explanatory text normally aligned, but present the selected
+        # score as its own centered row underneath it.
+        star_label = Gtk.Label(label=star_rating)
+        star_label.set_halign(Gtk.Align.CENTER)
+        star_label.set_xalign(0.5)
+        star_label.set_margin_top(12)
+        star_label.set_margin_bottom(4)
+        star_label.get_style_context().add_class("title-2")
+        dialog.get_message_area().pack_start(star_label, False, False, 0)
+        star_label.show()
+
+        dialog.add_button(self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL)
+        dialog.add_button(self.translations.get("app_page_rate_submit", "Submit"), Gtk.ResponseType.OK)
+        response = dialog.run()
+        dialog.destroy()
+        if response != Gtk.ResponseType.OK:
+            return
+
+        self._rating_submitting = True
+        self._refresh_rating_state()
+        description = self.translations.get("app_page_rate_signature", "Submitted via LinuxToys")
+        version = str(self._selected_install_info.get("appstream_version", "") or "unknown")
+
+        def worker():
+            success, error = appstream_cache.submit_odrs_rating(
+                app_id, stars, summary, description, version
+            )
+            GLib.idle_add(self._finish_rating_submission, success, error)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _finish_rating_submission(self, success, error):
+        self._rating_submitting = False
+        self._refresh_rating_state()
+        if self._destroyed:
+            return False
+        if success:
+            title = self.translations.get("app_page_rate_success_title", "Rating Submitted")
+            message = self.translations.get("app_page_rate_success_message", "Thank you! Your rating was submitted to ODRS.")
+            message_type = Gtk.MessageType.INFO
+        else:
+            title = self.translations.get("app_page_rate_failed_title", "Rating Failed")
+            message = self.translations.get("app_page_rate_failed_message", "Could not submit the rating. Please try again later.")
+            if error:
+                message = f"{message}\n\n{error}"
+            message_type = Gtk.MessageType.ERROR
+        dialog = Gtk.MessageDialog(
+            transient_for=self.parent, modal=True, message_type=message_type,
+            buttons=Gtk.ButtonsType.OK, text=title,
+        )
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+        return False
+
+
     def _build_developer_line(self):
         developer = str(self.script_info.get("developer", "") or "").strip()
         if not developer:
@@ -1088,6 +1330,7 @@ class AppPageView(Gtk.Box):
         if self._source_button is not None:
             self._source_button.set_sensitive(sensitive)
         button.show_all()
+        self._refresh_rating_state()
 
     def refresh_install_state(self):
         """Refresh Available/Queued/Installed from the window's session/registry state."""
@@ -1179,6 +1422,7 @@ class AppPageView(Gtk.Box):
             donate_button.connect("clicked", self._open_url, donate_url)
             controls.pack_start(donate_button, False, False, 0)
 
+        controls.set_hexpand(True)
         self.header.vbox_infos.pack_start(controls, False, False, 10)
         self.refresh_install_state()
 

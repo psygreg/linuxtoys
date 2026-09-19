@@ -647,5 +647,22 @@
   "txt": "Texteditoren",
   "txt_desc": "Nicht mit IDEs verwechseln.",
   "tools": "Werkzeuge",
-  "tools_desc": "Debugging, Profiling, Versionsverwaltung und andere Werkzeuge, die nützlich sein können."
+  "tools_desc": "Debugging, Profiling, Versionsverwaltung und andere Werkzeuge, die nützlich sein können.",
+  "app_page_rate": "Diese App bewerten",
+  "app_page_rate_stars": "Mit {stars} Sternen bewerten",
+  "app_page_rate_install": "Installiere diese App, bevor du sie bewertest.",
+  "app_page_rate_done": "Du hast diese App bereits bewertet.",
+  "app_page_rate_5": "Ausgezeichnet, diese App ist ein absolutes Muss!!",
+  "app_page_rate_4": "Sehr gute App. Probier sie aus.",
+  "app_page_rate_3": "Solide Wahl.",
+  "app_page_rate_2": "Verbesserungsbedarf...",
+  "app_page_rate_1": "Es gab Probleme.",
+  "app_page_rate_signature": "Über LinuxToys eingereicht",
+  "app_page_rate_confirm_title": "Bewertung absenden?",
+  "app_page_rate_confirm_message": "Diese Bewertung kann nach dem Absenden nicht geändert oder zurückgezogen werden.\\n\\n{stars}/5 — {review}\\nÜber LinuxToys eingereicht",
+  "app_page_rate_submit": "Absenden",
+  "app_page_rate_success_title": "Bewertung übermittelt",
+  "app_page_rate_success_message": "Vielen Dank! Deine Bewertung wurde an ODRS übermittelt.",
+  "app_page_rate_failed_title": "Bewertung fehlgeschlagen",
+  "app_page_rate_failed_message": "Die Bewertung konnte nicht übermittelt werden. Bitte versuche es später erneut."
 }

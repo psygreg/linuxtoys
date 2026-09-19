@@ -647,5 +647,22 @@
   "txt": "テキストエディター",
   "txt_desc": "IDE と間違えないように。",
   "tools": "ツール",
-  "tools_desc": "デバッグ、プロファイリング、バージョン管理など、役立つさまざまなツール。"
+  "tools_desc": "デバッグ、プロファイリング、バージョン管理など、役立つさまざまなツール。",
+  "app_page_rate": "このアプリを評価",
+  "app_page_rate_stars": "{stars}つ星で評価",
+  "app_page_rate_install": "評価する前にこのアプリをインストールしてください。",
+  "app_page_rate_done": "このアプリはすでに評価済みです。",
+  "app_page_rate_5": "最高。このアプリは必携です！！",
+  "app_page_rate_4": "とても良いアプリです。ぜひ試してみてください。",
+  "app_page_rate_3": "まずまずの選択肢です。",
+  "app_page_rate_2": "改善が必要です...",
+  "app_page_rate_1": "問題がありました。",
+  "app_page_rate_signature": "LinuxToys 経由で投稿",
+  "app_page_rate_confirm_title": "評価を送信しますか？",
+  "app_page_rate_confirm_message": "この評価は送信後に変更または取り消すことはできません。\\n\\n{stars}/5 — {review}\\nLinuxToys 経由で投稿",
+  "app_page_rate_submit": "送信",
+  "app_page_rate_success_title": "評価を送信しました",
+  "app_page_rate_success_message": "ありがとうございます！評価が ODRS に送信されました。",
+  "app_page_rate_failed_title": "評価の送信に失敗しました",
+  "app_page_rate_failed_message": "評価を送信できませんでした。後でもう一度お試しください。"
 }

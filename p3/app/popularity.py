@@ -17,6 +17,7 @@ SCORE_MAX = 999
 TOP_SECTION_MIN = 900
 SECTION_SIZE = 100
 NATIVE_SECTION_COUNT = 10
+REVIEW_CONFIDENCE_COUNT = 10
 
 # Developer-maintained identities that should always live in the top section.
 # Matching is case-insensitive against IDs, package names and canonical/display names.
@@ -116,6 +117,50 @@ def _session_random_score(key, low, high):
         return _SESSION_SCORES[key]
 
 
+def review_subscore(item):
+    """Return the cached Bayesian ODRS score (0..999), or None when unavailable."""
+    value = item.get("review_subscore")
+    try:
+        return max(SCORE_MIN, min(SCORE_MAX, int(value)))
+    except (TypeError, ValueError):
+        return None
+
+
+def apply_review_scores(items):
+    """Calculate Bayesian ODRS scores from cached rating/count information.
+
+    The population mean is the prior. REVIEW_CONFIDENCE_COUNT controls how many
+    reviews are needed before an application's own average dominates that prior.
+    Ratings are expected on AppStream's 0..100 scale.
+    """
+    rated = []
+    for item in items or ():
+        try:
+            rating = float(item.get("review_rating"))
+            count = int(item.get("review_count"))
+        except (TypeError, ValueError):
+            item.pop("review_subscore", None)
+            continue
+        if count <= 0 or not (0.0 <= rating <= 100.0):
+            item.pop("review_subscore", None)
+            continue
+        rated.append((rating, count, item))
+
+    if not rated:
+        return items
+
+    total_reviews = sum(count for _rating, count, _item in rated)
+    prior = (
+        sum(rating * count for rating, count, _item in rated) / total_reviews
+        if total_reviews else 50.0
+    )
+    confidence = float(REVIEW_CONFIDENCE_COUNT)
+    for rating, count, item in rated:
+        weighted = ((count * rating) + (confidence * prior)) / (count + confidence)
+        item["review_subscore"] = round((weighted / 100.0) * SCORE_MAX)
+    return items
+
+
 def score_for_item(item):
     """Return the effective 0..999 browse score for one entry.
 
@@ -143,6 +188,9 @@ def score_for_item(item):
         except (TypeError, ValueError):
             pass
 
+        # Pure native applications are ranked by their weighted ODRS review score,
+        # then evenly distributed across the ten sections by
+        # apply_native_category_scores().
         value = item.get("_category_native_score")
         try:
             return max(SCORE_MIN, min(SCORE_MAX, int(value)))
@@ -173,10 +221,20 @@ def browse_sort_key(item):
         return (0, 0, 0.0)
     if item.get("is_subcategory", False):
         return (1, 0, str(item.get("name", "")).casefold())
-    return (2, -score_section(item), _session_order(item))
+    review = review_subscore(item)
+    # Reviews refine ordering inside an already-established popularity section.
+    # Unknown review data keeps the old stable session shuffle behavior.
+    return (
+        2,
+        -score_section(item),
+        0 if review is None else -1,
+        0 if review is None else -review,
+        _session_order(item),
+    )
 
 
 def sort_for_browse(items):
+    apply_review_scores(items)
     apply_native_category_scores(items)
     apply_category_scores(items)
     items.sort(key=browse_sort_key)
@@ -194,10 +252,12 @@ def flathub_search_tiebreak(item):
 
 
 def apply_native_category_scores(items):
-    """Evenly distribute native AppStream entries across all ten browse sections.
+    """Evenly distribute pure-native AppStream entries across all ten sections.
 
-    Assignments are stable for the current session and contextual to this exact
-    category population. Known-popular native apps remain forced into section 9.
+    Reviewed native entries are ranked by their Bayesian ODRS score. Native entries
+    without review data retain a neutral session-random rank. The complete native
+    population is then dealt into the same ten rank quantiles used for Flathub
+    popularity, preventing review-score clustering in the highest sections.
     """
     native = []
     for item in items or ():
@@ -209,49 +269,67 @@ def apply_native_category_scores(items):
             )
             continue
 
-        # Preferred native duplicates can carry Flathub's persistent raw metric.
-        # Leave those to apply_category_scores() instead of assigning random native
-        # placement.
+        # Native duplicates carrying an inherited Flathub metric participate in
+        # apply_category_scores() instead.
         if item.get("popularity_metric") is not None:
             continue
 
         native.append(item)
 
-    if not native:
+    count = len(native)
+    if not count:
         return items
 
-    # The population signature makes the assignment category-specific without
-    # requiring callers to know or pass a category path. It also prevents one
-    # category's native score from leaking into another category.
-    population = tuple(sorted(_session_key(item) for item in native))
-    with _SESSION_LOCK:
-        assignments = _NATIVE_CATEGORY_SCORES.get(population)
-
-    if assignments is None:
-        shuffled = list(native)
-        random.shuffle(shuffled)
-        assignments = {}
-        for index, item in enumerate(shuffled):
-            # Round-robin dealing keeps section populations within one entry of
-            # each other. For fewer than ten entries, spread them over the full
-            # 0..9 range rather than filling only the lowest sections.
-            count = len(shuffled)
-            if count == 1:
-                section = 5
-            elif count < 10:
-                section = round(index * 9 / (count - 1))
-            else:
-                section = index % 10
-
-            low = section * SECTION_SIZE
-            high = SCORE_MAX if section == 9 else low + SECTION_SIZE - 1
-            assignments[_session_key(item)] = random.randint(low, high)
-
-        with _SESSION_LOCK:
-            _NATIVE_CATEGORY_SCORES[population] = assignments
-
+    reviewed = []
+    unreviewed = []
     for item in native:
-        item["_category_native_score"] = assignments[_session_key(item)]
+        review = review_subscore(item)
+        if review is None:
+            unreviewed.append(item)
+        else:
+            reviewed.append((review, _session_key(item), item))
+
+    # Review data is a ranking signal, not an absolute section number.
+    reviewed.sort(key=lambda row: (row[0], row[1]))
+    unreviewed.sort(key=_session_order)
+
+    # Do not interpret missing reviews as a score of zero. Spread unknown entries
+    # through the review-ranked population while preserving the reviewed order.
+    ranked_reviewed = [row[2] for row in reviewed]
+    if not ranked_reviewed:
+        ranked = list(unreviewed)
+    elif not unreviewed:
+        ranked = ranked_reviewed
+    else:
+        ranked = []
+        reviewed_i = 0
+        unknown_i = 0
+        total = len(native)
+        for index in range(total):
+            expected_unknown = ((index + 1) * len(unreviewed)) // total
+            if unknown_i < expected_unknown:
+                ranked.append(unreviewed[unknown_i])
+                unknown_i += 1
+            elif reviewed_i < len(ranked_reviewed):
+                ranked.append(ranked_reviewed[reviewed_i])
+                reviewed_i += 1
+            else:
+                ranked.append(unreviewed[unknown_i])
+                unknown_i += 1
+
+    for index, item in enumerate(ranked):
+        if count == 1:
+            section = 5
+        elif count < 10:
+            section = round(index * 9 / (count - 1))
+        else:
+            section = min(9, (index * 10) // count)
+
+        low = section * SECTION_SIZE
+        high = SCORE_MAX if section == 9 else low + SECTION_SIZE - 1
+        item["_category_native_score"] = _session_random_score(
+            f"native-category:{_session_key(item)}:{section}", low, high
+        )
 
     return items
 
@@ -284,6 +362,12 @@ def apply_category_scores(items):
                 raise TypeError
             metric = float(raw_metric)
         except (TypeError, ValueError):
+            # Pure native entries are handled by their ODRS score when available,
+            # otherwise by apply_native_category_scores(). Do not manufacture a
+            # category-popularity score that would override either path.
+            if _is_native_appstream(item):
+                item.pop("_category_popularity_score", None)
+                continue
             item["_category_popularity_score"] = _session_random_score(
                 _session_key(item), SCORE_MIN, SCORE_MAX
             )

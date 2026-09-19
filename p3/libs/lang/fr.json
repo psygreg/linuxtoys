@@ -647,5 +647,22 @@
   "txt": "Éditeurs de texte",
   "txt_desc": "Ne les confondez pas avec les IDE.",
   "tools": "Outils",
-  "tools_desc": "Débogage, profilage, gestion des versions et autres outils qui peuvent s'avérer utiles."
+  "tools_desc": "Débogage, profilage, gestion des versions et autres outils qui peuvent s'avérer utiles.",
+  "app_page_rate": "Évaluer cette application",
+  "app_page_rate_stars": "Noter {stars} étoiles",
+  "app_page_rate_install": "Installez cette application avant de l'évaluer.",
+  "app_page_rate_done": "Vous avez déjà évalué cette application.",
+  "app_page_rate_5": "Excellente, cette application est indispensable !!",
+  "app_page_rate_4": "Très bonne application. Essayez-la.",
+  "app_page_rate_3": "Un choix correct.",
+  "app_page_rate_2": "Des améliorations sont nécessaires...",
+  "app_page_rate_1": "J'ai rencontré des problèmes.",
+  "app_page_rate_signature": "Envoyé via LinuxToys",
+  "app_page_rate_confirm_title": "Envoyer l'évaluation ?",
+  "app_page_rate_confirm_message": "Cette évaluation ne peut pas être modifiée ni retirée après son envoi.\\n\\n{stars}/5 — {review}\\nEnvoyé via LinuxToys",
+  "app_page_rate_submit": "Envoyer",
+  "app_page_rate_success_title": "Évaluation envoyée",
+  "app_page_rate_success_message": "Merci ! Votre évaluation a été envoyée à ODRS.",
+  "app_page_rate_failed_title": "Échec de l'évaluation",
+  "app_page_rate_failed_message": "Impossible d'envoyer l'évaluation. Veuillez réessayer plus tard."
 }

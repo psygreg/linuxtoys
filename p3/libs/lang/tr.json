@@ -647,5 +647,22 @@
   "txt": "Metin Düzenleyicileri",
   "txt_desc": "Bunları IDE'lerle karıştırmayın.",
   "tools": "Araçlar",
-  "tools_desc": "Hata ayıklama, profilleme, sürüm kontrolü ve işe yarayabilecek diğer araçlar."
+  "tools_desc": "Hata ayıklama, profilleme, sürüm kontrolü ve işe yarayabilecek diğer araçlar.",
+  "app_page_rate": "Bu uygulamayı değerlendir",
+  "app_page_rate_stars": "{stars} yıldız ver",
+  "app_page_rate_install": "Değerlendirmeden önce bu uygulamayı yükleyin.",
+  "app_page_rate_done": "Bu uygulamayı zaten değerlendirdiniz.",
+  "app_page_rate_5": "Mükemmel, bu uygulama kesinlikle olmazsa olmaz!!",
+  "app_page_rate_4": "Çok iyi bir uygulama. Bir deneyin.",
+  "app_page_rate_3": "Fena bir seçim değil.",
+  "app_page_rate_2": "İyileştirmelere ihtiyacı var...",
+  "app_page_rate_1": "Sorunlar yaşandı.",
+  "app_page_rate_signature": "LinuxToys üzerinden gönderildi",
+  "app_page_rate_confirm_title": "Değerlendirme gönderilsin mi?",
+  "app_page_rate_confirm_message": "Bu değerlendirme gönderildikten sonra değiştirilemez veya geri çekilemez.\\n\\n{stars}/5 — {review}\\nLinuxToys üzerinden gönderildi",
+  "app_page_rate_submit": "Gönder",
+  "app_page_rate_success_title": "Değerlendirme Gönderildi",
+  "app_page_rate_success_message": "Teşekkürler! Değerlendirmeniz ODRS'ye gönderildi.",
+  "app_page_rate_failed_title": "Değerlendirme Başarısız",
+  "app_page_rate_failed_message": "Değerlendirme gönderilemedi. Lütfen daha sonra tekrar deneyin."
 }

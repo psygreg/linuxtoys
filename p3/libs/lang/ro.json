@@ -647,5 +647,22 @@
   "txt": "Editoare de text",
   "txt_desc": "Nu le confundați cu IDE-urile.",
   "tools": "Instrumente",
-  "tools_desc": "Depanare, profilare, controlul versiunilor și alte instrumente care pot fi utile."
+  "tools_desc": "Depanare, profilare, controlul versiunilor și alte instrumente care pot fi utile.",
+  "app_page_rate": "Evaluează această aplicație",
+  "app_page_rate_stars": "Evaluează cu {stars} stele",
+  "app_page_rate_install": "Instalează această aplicație înainte de a o evalua.",
+  "app_page_rate_done": "Ai evaluat deja această aplicație.",
+  "app_page_rate_5": "Excelentă, această aplicație este indispensabilă!!",
+  "app_page_rate_4": "Aplicație foarte bună. Încearc-o.",
+  "app_page_rate_3": "O alegere decentă.",
+  "app_page_rate_2": "Are nevoie de îmbunătățiri...",
+  "app_page_rate_1": "Au existat probleme.",
+  "app_page_rate_signature": "Trimis prin LinuxToys",
+  "app_page_rate_confirm_title": "Trimiți evaluarea?",
+  "app_page_rate_confirm_message": "Această evaluare nu poate fi modificată sau retrasă după ce este trimisă.\\n\\n{stars}/5 — {review}\\nTrimis prin LinuxToys",
+  "app_page_rate_submit": "Trimite",
+  "app_page_rate_success_title": "Evaluare trimisă",
+  "app_page_rate_success_message": "Mulțumim! Evaluarea ta a fost trimisă la ODRS.",
+  "app_page_rate_failed_title": "Evaluarea a eșuat",
+  "app_page_rate_failed_message": "Evaluarea nu a putut fi trimisă. Încearcă din nou mai târziu."
 }

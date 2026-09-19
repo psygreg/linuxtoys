@@ -627,5 +627,22 @@
   "txt": "टेक्स्ट एडिटर",
   "txt_desc": "इन्हें IDE न समझें।",
   "tools": "टूल",
-  "tools_desc": "डीबगिंग, प्रोफाइलिंग, संस्करण नियंत्रण और अन्य उपयोगी टूल।"
+  "tools_desc": "डीबगिंग, प्रोफाइलिंग, संस्करण नियंत्रण और अन्य उपयोगी टूल।",
+  "app_page_rate": "इस ऐप को रेट करें",
+  "app_page_rate_stars": "{stars} स्टार दें",
+  "app_page_rate_install": "रेटिंग देने से पहले इस ऐप को इंस्टॉल करें।",
+  "app_page_rate_done": "आप इस ऐप को पहले ही रेट कर चुके हैं।",
+  "app_page_rate_5": "शानदार, यह ऐप तो होना ही चाहिए!!",
+  "app_page_rate_4": "बहुत अच्छा ऐप। इसे आज़माएँ।",
+  "app_page_rate_3": "ठीक-ठाक विकल्प।",
+  "app_page_rate_2": "सुधार की ज़रूरत है...",
+  "app_page_rate_1": "समस्याएँ आईं।",
+  "app_page_rate_signature": "LinuxToys के माध्यम से सबमिट किया गया",
+  "app_page_rate_confirm_title": "रेटिंग सबमिट करें?",
+  "app_page_rate_confirm_message": "सबमिट करने के बाद इस रेटिंग को बदला या वापस नहीं लिया जा सकता।\\n\\n{stars}/5 — {review}\\nLinuxToys के माध्यम से सबमिट किया गया",
+  "app_page_rate_submit": "सबमिट करें",
+  "app_page_rate_success_title": "रेटिंग सबमिट हो गई",
+  "app_page_rate_success_message": "धन्यवाद! आपकी रेटिंग ODRS पर सबमिट कर दी गई।",
+  "app_page_rate_failed_title": "रेटिंग विफल रही",
+  "app_page_rate_failed_message": "रेटिंग सबमिट नहीं की जा सकी। कृपया बाद में फिर से प्रयास करें।"
 }

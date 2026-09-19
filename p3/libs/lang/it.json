@@ -647,5 +647,22 @@
   "txt": "Editor di testo",
   "txt_desc": "Non confonderli con gli IDE.",
   "tools": "Strumenti",
-  "tools_desc": "Debugging, profilazione, controllo di versione e altri strumenti che possono tornare utili."
+  "tools_desc": "Debugging, profilazione, controllo di versione e altri strumenti che possono tornare utili.",
+  "app_page_rate": "Valuta questa app",
+  "app_page_rate_stars": "Valuta con {stars} stelle",
+  "app_page_rate_install": "Installa questa app prima di valutarla.",
+  "app_page_rate_done": "Hai già valutato questa app.",
+  "app_page_rate_5": "Eccellente, questa app è indispensabile!!",
+  "app_page_rate_4": "Ottima app. Provala.",
+  "app_page_rate_3": "Una scelta discreta.",
+  "app_page_rate_2": "Ha bisogno di miglioramenti...",
+  "app_page_rate_1": "Ha avuto dei problemi.",
+  "app_page_rate_signature": "Inviato tramite LinuxToys",
+  "app_page_rate_confirm_title": "Inviare la valutazione?",
+  "app_page_rate_confirm_message": "Questa valutazione non può essere modificata o ritirata dopo l'invio.\\n\\n{stars}/5 — {review}\\nInviato tramite LinuxToys",
+  "app_page_rate_submit": "Invia",
+  "app_page_rate_success_title": "Valutazione inviata",
+  "app_page_rate_success_message": "Grazie! La tua valutazione è stata inviata a ODRS.",
+  "app_page_rate_failed_title": "Valutazione non riuscita",
+  "app_page_rate_failed_message": "Impossibile inviare la valutazione. Riprova più tardi."
 }

@@ -647,5 +647,22 @@
   "txt": "Teksto redaktoriai",
   "txt_desc": "Nepainiokite jų su IDE.",
   "tools": "Įrankiai",
-  "tools_desc": "Derinimas, profiliavimas, versijų valdymas ir kiti įrankiai, kurie gali praversti."
+  "tools_desc": "Derinimas, profiliavimas, versijų valdymas ir kiti įrankiai, kurie gali praversti.",
+  "app_page_rate": "Įvertinkite šią programą",
+  "app_page_rate_stars": "Įvertinkite {stars} žvaigždutėmis",
+  "app_page_rate_install": "Prieš vertindami įdiekite šią programą.",
+  "app_page_rate_done": "Jūs jau įvertinote šią programą.",
+  "app_page_rate_5": "Puiki, šią programą tiesiog būtina turėti!!",
+  "app_page_rate_4": "Labai gera programa. Išbandykite.",
+  "app_page_rate_3": "Neblogas pasirinkimas.",
+  "app_page_rate_2": "Reikia patobulinimų...",
+  "app_page_rate_1": "Kilo problemų.",
+  "app_page_rate_signature": "Pateikta per LinuxToys",
+  "app_page_rate_confirm_title": "Pateikti įvertinimą?",
+  "app_page_rate_confirm_message": "Pateikus šio įvertinimo negalima pakeisti ar atšaukti.\\n\\n{stars}/5 — {review}\\nPateikta per LinuxToys",
+  "app_page_rate_submit": "Pateikti",
+  "app_page_rate_success_title": "Įvertinimas pateiktas",
+  "app_page_rate_success_message": "Ačiū! Jūsų įvertinimas pateiktas ODRS.",
+  "app_page_rate_failed_title": "Įvertinimas nepavyko",
+  "app_page_rate_failed_message": "Nepavyko pateikti įvertinimo. Bandykite dar kartą vėliau."
 }

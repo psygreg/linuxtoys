@@ -647,5 +647,22 @@
   "txt": "Szövegszerkesztők",
   "txt_desc": "Ne keverd össze őket az IDE-kkel.",
   "tools": "Eszközök",
-  "tools_desc": "Hibakeresés, profilozás, verziókezelés és más hasznos eszközök."
+  "tools_desc": "Hibakeresés, profilozás, verziókezelés és más hasznos eszközök.",
+  "app_page_rate": "Értékeld ezt az alkalmazást",
+  "app_page_rate_stars": "Értékeld {stars} csillagra",
+  "app_page_rate_install": "Értékelés előtt telepítsd ezt az alkalmazást.",
+  "app_page_rate_done": "Már értékelted ezt az alkalmazást.",
+  "app_page_rate_5": "Kiváló, ez az alkalmazás kötelező darab!!",
+  "app_page_rate_4": "Nagyon jó alkalmazás. Próbáld ki.",
+  "app_page_rate_3": "Egész jó választás.",
+  "app_page_rate_2": "Fejlesztésre szorul...",
+  "app_page_rate_1": "Problémák voltak vele.",
+  "app_page_rate_signature": "Beküldve a LinuxToyson keresztül",
+  "app_page_rate_confirm_title": "Beküldöd az értékelést?",
+  "app_page_rate_confirm_message": "Ez az értékelés a beküldés után nem módosítható és nem vonható vissza.\\n\\n{stars}/5 — {review}\\nBeküldve a LinuxToyson keresztül",
+  "app_page_rate_submit": "Beküldés",
+  "app_page_rate_success_title": "Értékelés beküldve",
+  "app_page_rate_success_message": "Köszönjük! Az értékelésed elküldésre került az ODRS-nek.",
+  "app_page_rate_failed_title": "Az értékelés sikertelen",
+  "app_page_rate_failed_message": "Nem sikerült beküldeni az értékelést. Próbáld újra később."
 }

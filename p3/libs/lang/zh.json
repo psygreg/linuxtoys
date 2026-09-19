@@ -649,5 +649,22 @@
   "txt": "文本编辑器",
   "txt_desc": "别把它们和 IDE 混为一谈。",
   "tools": "工具",
-  "tools_desc": "调试、性能分析、版本控制以及其他可能派上用场的工具。"
+  "tools_desc": "调试、性能分析、版本控制以及其他可能派上用场的工具。",
+  "app_page_rate": "为此应用评分",
+  "app_page_rate_stars": "评为 {stars} 星",
+  "app_page_rate_install": "请先安装此应用再进行评分。",
+  "app_page_rate_done": "你已经为此应用评分。",
+  "app_page_rate_5": "非常出色，这款应用绝对值得拥有！！",
+  "app_page_rate_4": "非常不错的应用，值得一试。",
+  "app_page_rate_3": "还不错的选择。",
+  "app_page_rate_2": "需要改进...",
+  "app_page_rate_1": "遇到了问题。",
+  "app_page_rate_signature": "通过 LinuxToys 提交",
+  "app_page_rate_confirm_title": "提交评分？",
+  "app_page_rate_confirm_message": "此评分提交后无法更改或撤回。\\n\\n{stars}/5 — {review}\\n通过 LinuxToys 提交",
+  "app_page_rate_submit": "提交",
+  "app_page_rate_success_title": "评分已提交",
+  "app_page_rate_success_message": "谢谢！你的评分已提交至 ODRS。",
+  "app_page_rate_failed_title": "评分失败",
+  "app_page_rate_failed_message": "无法提交评分，请稍后重试。"
 }

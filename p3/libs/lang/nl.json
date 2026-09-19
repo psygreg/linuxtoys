@@ -647,5 +647,22 @@
   "txt": "Teksteditors",
   "txt_desc": "Verwar ze niet met IDE's.",
   "tools": "Hulpmiddelen",
-  "tools_desc": "Debugging, profiling, versiebeheer en andere hulpmiddelen die van pas kunnen komen."
+  "tools_desc": "Debugging, profiling, versiebeheer en andere hulpmiddelen die van pas kunnen komen.",
+  "app_page_rate": "Beoordeel deze app",
+  "app_page_rate_stars": "Geef {stars} sterren",
+  "app_page_rate_install": "Installeer deze app voordat je hem beoordeelt.",
+  "app_page_rate_done": "Je hebt deze app al beoordeeld.",
+  "app_page_rate_5": "Uitstekend, deze app is een absolute must-have!!",
+  "app_page_rate_4": "Erg goede app. Probeer hem eens.",
+  "app_page_rate_3": "Een prima keuze.",
+  "app_page_rate_2": "Heeft verbeteringen nodig...",
+  "app_page_rate_1": "Er waren problemen.",
+  "app_page_rate_signature": "Ingediend via LinuxToys",
+  "app_page_rate_confirm_title": "Beoordeling indienen?",
+  "app_page_rate_confirm_message": "Deze beoordeling kan na het indienen niet worden gewijzigd of ingetrokken.\\n\\n{stars}/5 — {review}\\nIngediend via LinuxToys",
+  "app_page_rate_submit": "Indienen",
+  "app_page_rate_success_title": "Beoordeling ingediend",
+  "app_page_rate_success_message": "Bedankt! Je beoordeling is ingediend bij ODRS.",
+  "app_page_rate_failed_title": "Beoordeling mislukt",
+  "app_page_rate_failed_message": "De beoordeling kon niet worden ingediend. Probeer het later opnieuw."
 }

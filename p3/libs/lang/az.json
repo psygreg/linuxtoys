@@ -646,5 +646,22 @@
   "txt": "Mətn Redaktorları",
   "txt_desc": "Bunları IDE-lərlə qarışdırmayın.",
   "tools": "Alətlər",
-  "tools_desc": "Sazlama, profilləşdirmə, versiya nəzarəti və işə yaraya biləcək digər alətlər."
+  "tools_desc": "Sazlama, profilləşdirmə, versiya nəzarəti və işə yaraya biləcək digər alətlər.",
+  "app_page_rate": "Bu tətbiqi qiymətləndirin",
+  "app_page_rate_stars": "{stars} ulduz verin",
+  "app_page_rate_install": "Qiymətləndirməzdən əvvəl bu tətbiqi quraşdırın.",
+  "app_page_rate_done": "Bu tətbiqi artıq qiymətləndirmisiniz.",
+  "app_page_rate_5": "Əla, bu tətbiq mütləq olmalıdır!!",
+  "app_page_rate_4": "Çox yaxşı tətbiqdir. Sınayın.",
+  "app_page_rate_3": "Pis seçim deyil.",
+  "app_page_rate_2": "Təkmilləşdirmələrə ehtiyacı var...",
+  "app_page_rate_1": "Problemlər yaşadım.",
+  "app_page_rate_signature": "LinuxToys vasitəsilə göndərilib",
+  "app_page_rate_confirm_title": "Qiymətləndirmə göndərilsin?",
+  "app_page_rate_confirm_message": "Bu qiymətləndirmə göndərildikdən sonra dəyişdirilə və ya geri götürülə bilməz.\\n\\n{stars}/5 — {review}\\nLinuxToys vasitəsilə göndərilib",
+  "app_page_rate_submit": "Göndər",
+  "app_page_rate_success_title": "Qiymətləndirmə Göndərildi",
+  "app_page_rate_success_message": "Təşəkkür edirik! Qiymətləndirməniz ODRS-ə göndərildi.",
+  "app_page_rate_failed_title": "Qiymətləndirmə Göndərilmədi",
+  "app_page_rate_failed_message": "Qiymətləndirməni göndərmək mümkün olmadı. Daha sonra yenidən cəhd edin."
 }

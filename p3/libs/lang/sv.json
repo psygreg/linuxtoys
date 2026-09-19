@@ -647,5 +647,22 @@
   "txt": "Textredigerare",
   "txt_desc": "Förväxla dem inte med IDE:er.",
   "tools": "Verktyg",
-  "tools_desc": "Felsökning, profilering, versionshantering och andra verktyg som kan komma till nytta."
+  "tools_desc": "Felsökning, profilering, versionshantering och andra verktyg som kan komma till nytta.",
+  "app_page_rate": "Betygsätt den här appen",
+  "app_page_rate_stars": "Ge {stars} stjärnor",
+  "app_page_rate_install": "Installera den här appen innan du betygsätter den.",
+  "app_page_rate_done": "Du har redan betygsatt den här appen.",
+  "app_page_rate_5": "Utmärkt, den här appen är ett måste!!",
+  "app_page_rate_4": "Mycket bra app. Prova den.",
+  "app_page_rate_3": "Ett helt okej val.",
+  "app_page_rate_2": "Behöver förbättras...",
+  "app_page_rate_1": "Hade problem.",
+  "app_page_rate_signature": "Skickat via LinuxToys",
+  "app_page_rate_confirm_title": "Skicka in betyg?",
+  "app_page_rate_confirm_message": "Det här betyget kan inte ändras eller dras tillbaka efter att det har skickats in.\\n\\n{stars}/5 — {review}\\nSkickat via LinuxToys",
+  "app_page_rate_submit": "Skicka",
+  "app_page_rate_success_title": "Betyg inskickat",
+  "app_page_rate_success_message": "Tack! Ditt betyg skickades till ODRS.",
+  "app_page_rate_failed_title": "Betygsättningen misslyckades",
+  "app_page_rate_failed_message": "Det gick inte att skicka in betyget. Försök igen senare."
 }

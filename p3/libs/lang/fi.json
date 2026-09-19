@@ -647,5 +647,22 @@
   "txt": "Tekstieditorit",
   "txt_desc": "Älä sekoita niitä IDE-ympäristöihin.",
   "tools": "Työkalut",
-  "tools_desc": "Virheenkorjaus, profilointi, versionhallinta ja muut hyödylliset työkalut."
+  "tools_desc": "Virheenkorjaus, profilointi, versionhallinta ja muut hyödylliset työkalut.",
+  "app_page_rate": "Arvostele tämä sovellus",
+  "app_page_rate_stars": "Anna {stars} tähteä",
+  "app_page_rate_install": "Asenna tämä sovellus ennen sen arvostelemista.",
+  "app_page_rate_done": "Olet jo arvostellut tämän sovelluksen.",
+  "app_page_rate_5": "Erinomainen, tämä sovellus on ehdoton hankinta!!",
+  "app_page_rate_4": "Erittäin hyvä sovellus. Kokeile sitä.",
+  "app_page_rate_3": "Kelpo valinta.",
+  "app_page_rate_2": "Kaipaa parannuksia...",
+  "app_page_rate_1": "Siinä oli ongelmia.",
+  "app_page_rate_signature": "Lähetetty LinuxToysin kautta",
+  "app_page_rate_confirm_title": "Lähetetäänkö arvio?",
+  "app_page_rate_confirm_message": "Tätä arviota ei voi muuttaa tai perua lähettämisen jälkeen.\\n\\n{stars}/5 — {review}\\nLähetetty LinuxToysin kautta",
+  "app_page_rate_submit": "Lähetä",
+  "app_page_rate_success_title": "Arvio lähetetty",
+  "app_page_rate_success_message": "Kiitos! Arviosi lähetettiin ODRS:ään.",
+  "app_page_rate_failed_title": "Arvion lähetys epäonnistui",
+  "app_page_rate_failed_message": "Arviota ei voitu lähettää. Yritä myöhemmin uudelleen."
 }

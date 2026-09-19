@@ -647,5 +647,22 @@
   "txt": "Urejevalniki besedila",
   "txt_desc": "Ne zamenjujte jih z IDE-ji.",
   "tools": "Orodja",
-  "tools_desc": "Razhroščevanje, profiliranje, nadzor različic in druga orodja, ki lahko pridejo prav."
+  "tools_desc": "Razhroščevanje, profiliranje, nadzor različic in druga orodja, ki lahko pridejo prav.",
+  "app_page_rate": "Ocenite to aplikacijo",
+  "app_page_rate_stars": "Ocenite z {stars} zvezdicami",
+  "app_page_rate_install": "Namestite to aplikacijo, preden jo ocenite.",
+  "app_page_rate_done": "To aplikacijo ste že ocenili.",
+  "app_page_rate_5": "Odlično, to aplikacijo preprosto morate imeti!!",
+  "app_page_rate_4": "Zelo dobra aplikacija. Preizkusite jo.",
+  "app_page_rate_3": "Solidna izbira.",
+  "app_page_rate_2": "Potrebuje izboljšave...",
+  "app_page_rate_1": "Prišlo je do težav.",
+  "app_page_rate_signature": "Poslano prek LinuxToys",
+  "app_page_rate_confirm_title": "Poslati oceno?",
+  "app_page_rate_confirm_message": "Te ocene po oddaji ni mogoče spremeniti ali umakniti.\\n\\n{stars}/5 — {review}\\nPoslano prek LinuxToys",
+  "app_page_rate_submit": "Pošlji",
+  "app_page_rate_success_title": "Ocena poslana",
+  "app_page_rate_success_message": "Hvala! Vaša ocena je bila poslana v ODRS.",
+  "app_page_rate_failed_title": "Ocenjevanje ni uspelo",
+  "app_page_rate_failed_message": "Ocene ni bilo mogoče poslati. Poskusite znova pozneje."
 }

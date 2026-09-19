@@ -647,5 +647,22 @@
   "txt": "Edytory tekstu",
   "txt_desc": "Nie myl ich ze środowiskami IDE.",
   "tools": "Narzędzia",
-  "tools_desc": "Debugowanie, profilowanie, kontrola wersji i inne narzędzia, które mogą się przydać."
+  "tools_desc": "Debugowanie, profilowanie, kontrola wersji i inne narzędzia, które mogą się przydać.",
+  "app_page_rate": "Oceń tę aplikację",
+  "app_page_rate_stars": "Oceń na {stars} gwiazdek",
+  "app_page_rate_install": "Zainstaluj tę aplikację przed jej ocenieniem.",
+  "app_page_rate_done": "Ta aplikacja została już przez Ciebie oceniona.",
+  "app_page_rate_5": "Doskonała, tę aplikację po prostu trzeba mieć!!",
+  "app_page_rate_4": "Bardzo dobra aplikacja. Warto ją wypróbować.",
+  "app_page_rate_3": "Całkiem niezły wybór.",
+  "app_page_rate_2": "Wymaga ulepszeń...",
+  "app_page_rate_1": "Wystąpiły problemy.",
+  "app_page_rate_signature": "Przesłano przez LinuxToys",
+  "app_page_rate_confirm_title": "Przesłać ocenę?",
+  "app_page_rate_confirm_message": "Po przesłaniu tej oceny nie można jej zmienić ani wycofać.\\n\\n{stars}/5 — {review}\\nPrzesłano przez LinuxToys",
+  "app_page_rate_submit": "Prześlij",
+  "app_page_rate_success_title": "Ocena przesłana",
+  "app_page_rate_success_message": "Dziękujemy! Twoja ocena została przesłana do ODRS.",
+  "app_page_rate_failed_title": "Nie udało się przesłać oceny",
+  "app_page_rate_failed_message": "Nie udało się przesłać oceny. Spróbuj ponownie później."
 }

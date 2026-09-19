@@ -647,5 +647,22 @@
   "txt": "Editores de texto",
   "txt_desc": "No los confundas con los IDE.",
   "tools": "Herramientas",
-  "tools_desc": "Depuración, perfilado, control de versiones y otras herramientas que pueden resultar útiles."
+  "tools_desc": "Depuración, perfilado, control de versiones y otras herramientas que pueden resultar útiles.",
+  "app_page_rate": "Califica esta aplicación",
+  "app_page_rate_stars": "Calificar con {stars} estrellas",
+  "app_page_rate_install": "Instala esta aplicación antes de calificarla.",
+  "app_page_rate_done": "Ya has calificado esta aplicación.",
+  "app_page_rate_5": "Excelente, ¡esta aplicación es imprescindible!",
+  "app_page_rate_4": "Muy buena aplicación. Pruébala.",
+  "app_page_rate_3": "Una opción decente.",
+  "app_page_rate_2": "Necesita mejoras...",
+  "app_page_rate_1": "Tuvo problemas.",
+  "app_page_rate_signature": "Enviado mediante LinuxToys",
+  "app_page_rate_confirm_title": "¿Enviar calificación?",
+  "app_page_rate_confirm_message": "Esta calificación no se puede cambiar ni retirar después de enviarla.\\n\\n{stars}/5 — {review}\\nEnviado mediante LinuxToys",
+  "app_page_rate_submit": "Enviar",
+  "app_page_rate_success_title": "Calificación enviada",
+  "app_page_rate_success_message": "¡Gracias! Tu calificación fue enviada a ODRS.",
+  "app_page_rate_failed_title": "Error al enviar la calificación",
+  "app_page_rate_failed_message": "No se pudo enviar la calificación. Inténtalo de nuevo más tarde."
 }

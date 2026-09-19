@@ -647,5 +647,22 @@
   "txt": "Textové editory",
   "txt_desc": "Nemýľte si ich s IDE.",
   "tools": "Nástroje",
-  "tools_desc": "Ladenie, profilovanie, správa verzií a ďalšie nástroje, ktoré sa môžu hodiť."
+  "tools_desc": "Ladenie, profilovanie, správa verzií a ďalšie nástroje, ktoré sa môžu hodiť.",
+  "app_page_rate": "Ohodnoťte túto aplikáciu",
+  "app_page_rate_stars": "Ohodnoťte {stars} hviezdičkami",
+  "app_page_rate_install": "Pred hodnotením túto aplikáciu nainštalujte.",
+  "app_page_rate_done": "Túto aplikáciu ste už ohodnotili.",
+  "app_page_rate_5": "Vynikajúca, túto aplikáciu musíte mať!!",
+  "app_page_rate_4": "Veľmi dobrá aplikácia. Vyskúšajte ju.",
+  "app_page_rate_3": "Slušná voľba.",
+  "app_page_rate_2": "Potrebuje vylepšenia...",
+  "app_page_rate_1": "Vyskytli sa problémy.",
+  "app_page_rate_signature": "Odoslané prostredníctvom LinuxToys",
+  "app_page_rate_confirm_title": "Odoslať hodnotenie?",
+  "app_page_rate_confirm_message": "Toto hodnotenie po odoslaní nemožno zmeniť ani odvolať.\\n\\n{stars}/5 — {review}\\nOdoslané prostredníctvom LinuxToys",
+  "app_page_rate_submit": "Odoslať",
+  "app_page_rate_success_title": "Hodnotenie odoslané",
+  "app_page_rate_success_message": "Ďakujeme! Vaše hodnotenie bolo odoslané do ODRS.",
+  "app_page_rate_failed_title": "Hodnotenie zlyhalo",
+  "app_page_rate_failed_message": "Hodnotenie sa nepodarilo odoslať. Skúste to znova neskôr."
 }
