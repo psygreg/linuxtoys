@@ -684,37 +684,61 @@ class SearchEngine:
         for result in results:
             item_info = result.item_info
 
-            if item_info.get("is_repo_entry"):
-                category_key = item_info.get("category", "")
+            # Resolve every managed category through the parser's breadcrumb
+            # metadata.  Explicit category values are relative paths such as
+            # ``sys/sysadm`` rather than translation keys, so translating the whole
+            # string directly produces labels like "Sys/Sysadm".
+            category_key = str(item_info.get("category", "") or "").strip().strip("/")
+            if category_key:
+                category_path = os.path.abspath(os.path.join(parser.SCRIPTS_DIR, category_key))
+                # Normal category navigation uses the directory leaf as the
+                # translation key (see parser.get_categories() /
+                # get_subcategories_for_category()).  Do the same here rather than
+                # get_breadcrumb_path(), whose category-info fallback can replace a
+                # translated leaf with the raw directory name.
+                leaf = category_key.rsplit("/", 1)[-1]
                 category_name = self.translations.get(
-                    category_key,
-                    category_key.replace("_", " ").title(),
-                )
-                category_path = os.path.join(
-                    parser.SCRIPTS_DIR,
-                    category_key,
+                    leaf,
+                    leaf.replace("_", " ").title(),
                 )
             else:
-                category_name = self._extract_category_name(
-                    item_info.get("path", "")
-                )
+                # Traditional scripts do not carry category metadata. Resolve their
+                # containing directory through the same parser path so both sources
+                # use identical category naming rules.
+                path = str(item_info.get("path", "") or "")
+                if path and "/" in path:
+                    category_path = os.path.abspath(path.rsplit("/", 1)[0])
+                    try:
+                        relative_category = os.path.relpath(category_path, parser.SCRIPTS_DIR)
+                    except ValueError:
+                        relative_category = "."
 
-                if category_name == "Other":
+                    if relative_category not in ("", ".") and not relative_category.startswith(".."):
+                        leaf = relative_category.replace(os.sep, "/").rsplit("/", 1)[-1]
+                        category_name = self.translations.get(
+                            leaf,
+                            leaf.replace("_", " ").title(),
+                        )
+                    else:
+                        category_name = self.translations.get(
+                            "uncategorized",
+                            "Uncategorized",
+                        )
+                        category_path = "uncategorized"
+                else:
                     category_name = self.translations.get(
                         "uncategorized",
                         "Uncategorized",
                     )
                     category_path = "uncategorized"
-                else:
-                    path = item_info.get("path", "")
-                    category_path = (
-                        path.rsplit("/", 1)[0]
-                        if "/" in path
-                        else "Uncategorized"
-                    )
 
-            if category_path not in category_groups:
-                category_groups[category_path] = {
+            # The same logical category can be reached through different internal
+            # paths (for example a curated entry and a filesystem script). Group by
+            # the resolved UI name so search never renders duplicate category headers.
+            group_key = category_name.strip().casefold()
+
+            if group_key not in category_groups:
+                category_groups[group_key] = {
                     "category_name": category_name,
                     "category_path": category_path,
                     "best_match_score": 0,
@@ -728,10 +752,10 @@ class SearchEngine:
                     ),
                 }
 
-            if result.match_score > category_groups[category_path]["best_match_score"]:
-                category_groups[category_path]["best_match_score"] = result.match_score
+            if result.match_score > category_groups[group_key]["best_match_score"]:
+                category_groups[group_key]["best_match_score"] = result.match_score
 
-            category_groups[category_path]["scripts"].append(result)
+            category_groups[group_key]["scripts"].append(result)
 
         # Sort scripts within each category by relevance
         for group in category_groups.values():
