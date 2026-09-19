@@ -15,8 +15,8 @@ class FeaturedCtl:
     FEATURED_RESIZE_DEBOUNCE_MS = 150
     FEATURED_SWAP_ANIMATION_MS = 180
 
-    SENSE_HISTORY_LIMIT = 3
-    SENSE_PERSONALIZED_PERCENT = 75
+    SENSE_HISTORY_LIMIT = 2
+    SENSE_PERSONALIZED_PERCENT = 80
 
     @staticmethod
     def _sense_file_path():
@@ -70,15 +70,76 @@ class FeaturedCtl:
         except OSError as error:
             print(f"Warning: Could not save Featured sense data: {error}")
 
-    def _sensed_featured_keys(self):
-        """Return eligible script identities belonging to the last three categories."""
-        history = getattr(self, "_featured_sensed_categories", ())
+    def _personalized_featured_category_paths(self):
+        """Return recent + strongest installed categories, without duplicates."""
         category_cache = getattr(self, "category_cache", None)
-        if not history or category_cache is None:
+        if category_cache is None:
+            return []
+
+        paths = []
+        seen = set()
+
+        # Recency contributes at most the last two categories entered.
+        for category_path in getattr(self, "_featured_sensed_categories", ()):
+            category_path = os.path.abspath(str(category_path or "").strip())
+            if not category_path or category_path in seen:
+                continue
+            seen.add(category_path)
+            paths.append(category_path)
+            if len(paths) >= self.SENSE_HISTORY_LIMIT:
+                break
+
+        # Rank categories by how many of their apps are currently removable. This
+        # reuses the same installed-state source as the rest of the UI, so AppStream
+        # and LinuxToys entries are treated consistently.
+        installed_counts = []
+        try:
+            categories = category_cache.get_categories()
+        except Exception:
+            categories = ()
+
+        for category in categories or ():
+            if category.get("is_script"):
+                continue
+            category_path = str(category.get("path", "") or "").strip()
+            if not category_path:
+                continue
+            category_path = os.path.abspath(category_path)
+            try:
+                scripts = category_cache.get_scripts_for_category(category_path)
+            except Exception:
+                continue
+
+            installed_count = sum(
+                1
+                for script in scripts or ()
+                if script.get("is_script", False)
+                and not script.get("is_create_script", False)
+                and self._is_script_removable(script)
+            )
+            if installed_count > 0:
+                installed_counts.append((installed_count, category_path))
+
+        # Stable path tie-break makes equal-count ordering deterministic. Categories
+        # already supplied by recency simply consume one of the possible categories;
+        # do not backfill with a third/fourth installed category when they coincide.
+        installed_counts.sort(key=lambda item: (-item[0], item[1]))
+        for _count, category_path in installed_counts[:2]:
+            if category_path in seen:
+                continue
+            seen.add(category_path)
+            paths.append(category_path)
+
+        return paths
+
+    def _sensed_featured_keys(self):
+        """Return eligible identities from the main menu's personalized categories."""
+        category_cache = getattr(self, "category_cache", None)
+        if category_cache is None:
             return set()
 
         keys = set()
-        for category_path in history:
+        for category_path in self._personalized_featured_category_paths():
             try:
                 scripts = category_cache.get_scripts_for_category(category_path)
             except Exception:
@@ -458,7 +519,7 @@ class FeaturedCtl:
         return not script.get("is_appstream_entry", False)
 
     def _select_random_scripts(self, count):
-        """Select Featured cards, biasing 75% toward recently entered categories."""
+        """Select Featured cards, biasing 80% toward personalized categories."""
         if not self.all_scripts or count <= 0:
             return []
 
@@ -495,7 +556,7 @@ class FeaturedCtl:
         selected = self._weighted_featured_sample(sensed_candidates, sensed_count)
         selected_keys = {self._featured_script_key(script) for script in selected}
 
-        # The remaining quarter keeps the previous global random discovery behavior.
+        # The remaining share keeps the previous global random discovery behavior.
         remaining_candidates = [
             script for script in candidates
             if self._featured_script_key(script) not in selected_keys
@@ -510,8 +571,8 @@ class FeaturedCtl:
             )
 
         # Preserve the existing LinuxToys-curated minimum. Prefer satisfying it by
-        # replacing globally-random cards so the sensed 75% remains intact whenever
-        # the candidate pool allows it.
+        # replacing globally-random cards so the personalized 80% remains intact
+        # whenever the candidate pool allows it.
         curated_required = min(
             max(1, count // 5),
             sum(self._is_linuxtoys_curated_featured(script) for script in candidates),

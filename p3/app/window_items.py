@@ -617,17 +617,18 @@ class ItemWidgetFactory:
         base_box.set_margin_end(16)
 
         # Preserve the regular card's horizontal name/icon row, but normalize the
-        # normal-card spacer/padding before moving the widgets. The large card's
-        # 10 px side margins now provide the intended edge padding themselves.
-        # Keep the app name and icon as one centered visual group. The normal
-        # card expands the name across the row and pushes the icon to the edge;
-        # the large Featured card instead keeps exactly 16 px between them.
+        # normal-card spacer/padding before moving the widgets. Large AppStream
+        # cards use the free right side for the same ODRS aggregate shown on the
+        # app page; all other large cards keep their historical centered header.
+        is_appstream = bool(item_info.get("is_appstream_entry", False))
         top_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
         top_row.set_hexpand(True)
-        top_row.set_halign(Gtk.Align.CENTER)
+        top_row.set_halign(Gtk.Align.FILL if is_appstream else Gtk.Align.CENTER)
 
+        icon_widget = None
+        name_widget = None
+        other_widgets = []
         for child in tuple(base_box.get_children()):
-            expand, fill, _padding, pack_type = base_box.query_child_packing(child)
             base_box.remove(child)
 
             if isinstance(child, Gtk.Label):
@@ -637,18 +638,54 @@ class ItemWidgetFactory:
                 child.set_markup(
                     f"<span size=\"x-large\"><b>{html.escape(item_info.get('name', ''))}</b></span>"
                 )
+                name_widget = child
+            elif isinstance(child, Gtk.Image):
+                icon_widget = child
+            else:
+                other_widgets.append(child)
 
-            # The large card does not preserve the regular card's expand/pack-end
-            # geometry: name and icon are deliberately adjacent and centered.
+        # Large Featured cards deliberately reverse the regular card's title/icon
+        # order: icon first, then title. AppStream cards keep that identity group
+        # on the left while their ODRS aggregate occupies the opposite edge.
+        if icon_widget is not None:
+            # Give the outer edge of the large-card identity group a little more
+            # breathing room without changing the spacing between icon and title.
+            icon_widget.set_margin_start(4)
+            top_row.pack_start(icon_widget, False, False, 0)
+        if name_widget is not None:
+            top_row.pack_start(name_widget, False, False, 0)
+        for child in other_widgets:
             top_row.pack_start(child, False, False, 0)
+
+        if is_appstream:
+            try:
+                rating = float(item_info.get("review_rating"))
+                review_count = int(item_info.get("review_count"))
+            except (TypeError, ValueError):
+                rating = -1.0
+                review_count = 0
+
+            if review_count > 0 and 0.0 <= rating <= 100.0:
+                aggregate = Gtk.Label()
+                aggregate.set_markup(
+                    f'<span size="large" weight="bold">★ {rating / 20.0:.1f}</span>'
+                    f'  <span>({review_count})</span>'
+                )
+                aggregate.set_halign(Gtk.Align.END)
+                aggregate.set_valign(Gtk.Align.CENTER)
+                # Match the icon's extra inset on the opposite outer edge.
+                aggregate.set_margin_end(4)
+                aggregate.set_selectable(False)
+                aggregate.set_can_focus(False)
+                # pack_end leaves any spare header width between the app identity
+                # on the left and the ODRS aggregate on the right.
+                top_row.pack_end(aggregate, False, False, 0)
 
         # Increase the application icon from the regular 38 px presentation to
         # 48 px. File-backed icons need their pixbuf reloaded at the new size;
         # themed icons only need a larger pixel-size request.
         large_icon_size = 48
         icon_value = item_info.get("icon", "application-x-executable")
-        icon_holder = top_row.get_children()[-1] if top_row.get_children() else None
-        icon_widget = icon_holder if isinstance(icon_holder, Gtk.Image) else None
 
         if isinstance(icon_widget, Gtk.Image):
             if icon_value.endswith(".png") or icon_value.endswith(".svg"):
