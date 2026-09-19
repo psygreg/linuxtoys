@@ -182,6 +182,59 @@ def script_command(script_path, script_dir):
     return ["/bin/bash", "-c", script_preamble(text, script_dir)
             + 'source "$0" "$@"\n', script_path]
 
+def script_info_from_path(script_path, script_dir, base_env=None):
+    """Build canonical script metadata for nested call_script execution."""
+    env = os.environ if base_env is None else base_env
+    path = Path(script_path).resolve()
+    text = path.read_text(encoding="utf-8")
+
+    headers = {}
+    for line in text.splitlines():
+        match = re.match(r"^#\s*([A-Za-z0-9_-]+):\s*(.*)$", line)
+        if match:
+            headers.setdefault(match.group(1).lower(), match.group(2).strip())
+
+    name = headers.get("name") or path.stem
+    description = headers.get("description") or ""
+
+    # Script headers may contain localization keys rather than display text.
+    try:
+        import sys
+        script_dir = os.path.abspath(script_dir)
+        if script_dir not in sys.path:
+            sys.path.insert(0, script_dir)
+        from app.lang_utils import load_translations
+        translations = load_translations()
+        name = translations.get(name, name)
+        description = translations.get(description, description)
+    except (ImportError, OSError, KeyError):
+        pass
+
+    info = {
+        "path": str(path),
+        "script": path.stem,
+        "name": name,
+        "description": description,
+        "icon": headers.get("icon") or "application-x-executable",
+    }
+
+    # Repository entries are materialized before reaching this path. Preserve
+    # their stable repository identity so script_environment() does not discard it.
+    repo_app_id = env.get("LINUXTOYS_REPO_APP_ID")
+    if repo_app_id:
+        info["id"] = repo_app_id
+        info["repo_app_id"] = repo_app_id
+        info["repo"] = env.get("LINUXTOYS_REPO_URL", "")
+        info["is_repo_entry"] = True
+
+    return info
+
+
+def exec_script(script_info, script_dir, argv=(), base_env=None):
+    """Execute one script with the same canonical app identity as GUI runners."""
+    env = script_environment(script_info, base_env)
+    command = script_command(script_info["path"], script_dir)
+    os.execve(command[0], command + list(argv), env)
 
 def materialize_repo_by_app_id(app_id, script_dir):
     """Resolve a compatible repository-list entry by repo_app_id."""
@@ -221,5 +274,7 @@ if __name__ == "__main__":
 
     if len(sys.argv) < 2:
         sys.exit("Usage: library_loader.py SCRIPT [ARG ...]")
-    command = script_command(sys.argv[1], os.environ["SCRIPT_DIR"])
-    os.execv(command[0], command + sys.argv[2:])
+
+    script_dir = os.environ["SCRIPT_DIR"]
+    script_info = script_info_from_path(sys.argv[1], script_dir, os.environ)
+    exec_script(script_info, script_dir, sys.argv[2:], os.environ)
