@@ -27,7 +27,7 @@ from pathlib import Path
 from . import popularity
 
 
-CACHE_SCHEMA = 13
+CACHE_SCHEMA = 14
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -622,6 +622,43 @@ def _apply_review_summaries(entries, previous=None):
 
     return entries
 
+def _native_component_fingerprint(component) -> str:
+    """Hash source metadata that affects the normalized native catalog entry."""
+    payload = {
+        "identity": _component_identity(component),
+        "id": str(_safe_call(component, "get_id", "") or "").strip(),
+        "name": str(_safe_call(component, "get_name", "") or "").strip(),
+        "summary": str(_safe_call(component, "get_summary", "") or ""),
+        "description": str(_safe_call(component, "get_description", "") or ""),
+        "packages": [str(v) for v in _as_list(_safe_call(component, "get_pkgnames", []))],
+        "categories": [str(v) for v in _as_list(_safe_call(component, "get_categories", []))],
+        "icon": _icon_value(component),
+        "screenshots": _component_screenshots(component),
+        "homepage": _component_homepage(component),
+        "donation": _component_donation(component),
+        "license": _component_license(component),
+        "developer": _developer_name(component),
+        "origin": str(_safe_call(component, "get_origin", "") or "").strip(),
+        "version": str(_safe_call(_safe_call(component, "get_release_default"), "get_version", "") or "").strip(),
+    }
+    raw = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def _flatpak_component_fingerprint(component, source) -> str:
+    """Hash one Flatpak component plus source values that affect normalization."""
+    raw_component = ET.tostring(component, encoding="utf-8")
+    source_bits = json.dumps({
+        "scope": source.get("scope", ""),
+        "installation": source.get("installation", ""),
+        "remote": source.get("remote", ""),
+        "arch": source.get("arch", ""),
+        "media_baseurl": source.get("media_baseurl", ""),
+        "appstream_dir": str(source.get("appstream_dir", "")),
+    }, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(raw_component + b"\0" + source_bits).hexdigest()
+
+
 def _normalize_component(component):
     component_id = str(_safe_call(component, "get_id", "") or "").strip()
     name = str(_safe_call(component, "get_name", "") or "").strip()
@@ -646,6 +683,7 @@ def _normalize_component(component):
 
     return {
         "identity": _component_identity(component),
+        "_metadata_hash": _native_component_fingerprint(component),
         "id": component_id,
         "name": name,
         "summary": summary,
@@ -881,6 +919,7 @@ def _normalize_flatpak_component(component, source):
     appstream_dir = source["appstream_dir"]
     return {
         "identity": f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{component_id}",
+        "_metadata_hash": _flatpak_component_fingerprint(component, source),
         "id": component_id,
         "name": name,
         "summary": summary,
@@ -940,12 +979,13 @@ def _flatpak_appstream_sources():
     return sources
 
 
-def _load_flatpak_components():
+def _load_flatpak_components(previous_by_identity=None):
     if not _flatpak_supported_host():
         return [], []
 
     entries = []
     source_keys = []
+    previous_by_identity = previous_by_identity or {}
     for source in _flatpak_appstream_sources():
         path = source["xml_path"]
         source_keys.append(f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{source['arch']}")
@@ -965,6 +1005,12 @@ def _load_flatpak_components():
         for component in root.findall("component"):
             component_id = _xml_localized_text(component, "id")
             if component_id in eol_app_ids:
+                continue
+            identity = f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{component_id}"
+            metadata_hash = _flatpak_component_fingerprint(component, source)
+            old = previous_by_identity.get(identity)
+            if isinstance(old, dict) and old.get("_metadata_hash") == metadata_hash:
+                entries.append(dict(old))
                 continue
             item = _normalize_flatpak_component(component, source)
             if item is not None:
@@ -1169,55 +1215,49 @@ def refresh_cache(force=False, status_callback=None):
         if status_callback:
             status_callback("building")
 
-        state = get_state()
-        state["complete"] = False
-        state.setdefault("sources", {}).setdefault("native", {})["complete"] = False
-        state.setdefault("sources", {}).setdefault("flatpak", {})["complete"] = False
-        _atomic_json_write(STATE_PATH, state)
-
         try:
+            # The published catalog remains authoritative while the delta is built.
+            # Nothing touches catalog.json until the completed candidate is atomically
+            # written at the end of this transaction.
+            previous = load_catalog()
+            previous_by_identity = {
+                str(item.get("identity")): item
+                for item in previous
+                if isinstance(item, dict) and item.get("identity")
+            }
+
             native_supported = _native_appstream_supported_host()
             components = _load_appstream_components()
-            entries, processed = _load_partial()
-            if not native_supported:
-                # A partial native build from another compatibility context must
-                # never leak native entries onto SteamOS.
-                entries, processed = [], set()
+            entries = []
+            processed = set()
 
-            # A resumed build may see repository metadata newer than the partial
-            # checkpoint. Drop components that disappeared before continuing.
-            current_identities = {_component_identity(component) for component in components}
-            entries = [
-                item for item in entries
-                if isinstance(item, dict) and item.get("identity") in current_identities
-            ]
-            processed.intersection_update(current_identities)
+            if native_supported:
+                for component in components:
+                    identity = _component_identity(component)
+                    metadata_hash = _native_component_fingerprint(component)
+                    old = previous_by_identity.get(identity)
+                    if (
+                        isinstance(old, dict)
+                        and old.get("source") == "native"
+                        and old.get("_metadata_hash") == metadata_hash
+                    ):
+                        entries.append(dict(old))
+                    else:
+                        item = _normalize_component(component)
+                        if item is not None:
+                            entries.append(item)
+                    processed.add(identity)
 
-            added_since_checkpoint = 0
-            for component in components:
-                identity = _component_identity(component)
-                if identity in processed:
-                    continue
+                    if len(processed) % CHECKPOINT_EVERY == 0:
+                        _write_partial(entries, processed)
 
-                item = _normalize_component(component)
-                if item is not None:
-                    entries.append(item)
-                processed.add(identity)
-
-                added_since_checkpoint += 1
-                if added_since_checkpoint >= CHECKPOINT_EVERY:
-                    _write_partial(entries, processed)
-                    added_since_checkpoint = 0
-
-            # Flatpak catalogs are already local caches maintained by Flatpak. They
-            # are cheap enough to rebuild source-by-source, so native resume state
-            # remains independent from them.
-            flatpak_entries, _flatpak_catalog_sources = _load_flatpak_components()
+            # Flatpak is reconciled independently against the same published catalog.
+            # Unchanged XML components reuse their normalized JSON entries verbatim.
+            flatpak_entries, _flatpak_catalog_sources = _load_flatpak_components(previous_by_identity)
 
             # Keep the last completed popularity metrics available as a fallback.
             # A temporary Flathub statistics failure must not erase useful ranking
             # data from an otherwise successful AppStream refresh.
-            previous = load_catalog()
             previous_review_metrics = {
                 str(item.get("id", "")): {
                     "review_rating": item.get("review_rating"),
@@ -1284,8 +1324,9 @@ def refresh_cache(force=False, status_callback=None):
                 status_callback("ready")
             return {"success": True, "changed": changed, "count": len(entries)}
         except Exception as error:
-            # Preserve the checkpoint and the last complete catalog.  The next run
-            # sees complete=false and resumes from native.partial.json.
+            # The published catalog/state were never invalidated, so a failed delta
+            # leaves the last complete catalog authoritative. The partial checkpoint
+            # is retained only as diagnostic/resume-friendly working state.
             if status_callback:
                 status_callback("error")
             return {
