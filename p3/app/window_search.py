@@ -529,13 +529,13 @@ class SearchCtl:
     def _update_search_header(self):
         """Update header for search results view."""
         search_query = self.search_entry.get_text().strip()
-        results_count = len(self.search_results)
-
-        # Create search results info for header
+        # The icon already identifies this as search, so keep the header compact
+        # and show only the active query beside it.
         search_info = {
-            "name": f'{self.translations.get("search_results", "Search Results")}: "{search_query}"',
-            "description": f"{results_count} {self.translations.get('results_found', 'results found')}",
+            "name": "",
+            "description": "",
             "icon": "system-search-symbolic",
+            "is_search_header": True,
         }
 
         self._update_header(search_info)
