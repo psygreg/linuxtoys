@@ -1733,11 +1733,12 @@ class AppWindow(
         animate_initial=True,
     ):
         """
-        Populate a category without blocking navigation on every card.
+        Populate category cards lazily.
 
-        Navigation may defer the entire lookup/construction pass until after the
-        Gtk.Stack slide completes. This is important for cache misses and nested
-        categories too: even parser work should not compete with the transition.
+        Only a small viewport-sized buffer is materialized initially. More cards
+        are appended when the user reaches 75% of the currently materialized
+        content. The complete category remains lightweight Python data until its
+        cards are actually needed.
         """
         if defer_initial:
             scheduled_generation = (
@@ -1767,20 +1768,19 @@ class AppWindow(
                 priority=GLib.PRIORITY_LOW,
             )
             return
+
         for child in flowbox.get_children():
             flowbox.remove(child)
 
-        # Invalidate an older deferred population targeting this same FlowBox.
+        # Invalidate every deferred/timed population targeting this FlowBox.
         generation = getattr(flowbox, "_linuxtoys_population_generation", 0) + 1
         flowbox._linuxtoys_population_generation = generation
+        flowbox._linuxtoys_lazy_state = None
 
         category_path = category_info["path"]
 
         # Specials depends on the complete recursive CategoryCache. The main menu
-        # is published from the top-level bootstrap before that cache has finished,
-        # so a fast click could previously snapshot the still-partial cache and leave
-        # the virtual view permanently empty. Wait for the active cache generation
-        # to finish, then populate this same FlowBox.
+        # is published from the top-level bootstrap before that cache has finished.
         if (
             category_info.get("is_linuxtoys_specials")
             or category_info.get("is_linuxtoys_specials_category")
@@ -1794,8 +1794,6 @@ class AppWindow(
                 ):
                     return False
                 if self.category_cache is not expected_cache:
-                    # A source/language refresh replaced the cache. Restart against
-                    # the current generation instead of publishing stale data.
                     self._load_scripts_into_flowbox(
                         flowbox, category_info, defer_initial=False
                     )
@@ -1811,9 +1809,6 @@ class AppWindow(
             return
 
         if category_info.get("is_linuxtoys_specials"):
-            # Specials is a virtual root whose children are every real category
-            # containing at least one LinuxToys-curated item. Nested categories are
-            # deliberately flattened into this one level.
             scripts = self.category_cache.get_linuxtoys_special_categories(
                 self.translations
             )
@@ -1832,16 +1827,83 @@ class AppWindow(
                 category_path, self.translations
             )
 
+        scripts = list(scripts)
         checklist_mode = category_info.get("display_mode", "menu") == "checklist"
         allow_drag = self._is_local_scripts_category(category_info)
 
-        # Around three rows at the normal five-column layout. This bounds the
-        # click-to-first-frame work independently of category size.
-        initial_batch_size = 10
-        # Keep FlowBox mutation frame-sized after the first screenful. Two cards
-        # per frame avoids the ten-widget layout bursts that made large categories
-        # visibly hitch while still filling them at roughly 120 cards/second.
         frame_batch_size = 2
+        frame_interval_ms = 20
+        scroll_trigger = 0.75
+
+        def find_scrolled_window():
+            widget = flowbox
+            while widget is not None:
+                if isinstance(widget, Gtk.ScrolledWindow):
+                    return widget
+                try:
+                    widget = widget.get_parent()
+                except (AttributeError, RuntimeError):
+                    return None
+            return None
+
+        def viewport_capacity():
+            """
+            Estimate one visible viewport of cards from the live allocation.
+
+            Card content has a 128x52 minimum request. Account for FlowBox margins,
+            card badge-edge space and row/column spacing. Once GTK has real child
+            allocations, prefer those measurements over the fallback constants.
+            """
+            scrolled = find_scrolled_window()
+            if scrolled is not None:
+                allocation = scrolled.get_allocation()
+                viewport_width = max(1, int(allocation.width))
+                viewport_height = max(1, int(allocation.height))
+            else:
+                allocation = flowbox.get_allocation()
+                viewport_width = max(1, int(allocation.width))
+                viewport_height = max(1, int(allocation.height))
+
+            card_width = 132
+            card_height = 56
+            children = flowbox.get_children()
+            if children:
+                child_allocation = children[0].get_allocation()
+                if child_allocation.width > 1:
+                    card_width = int(child_allocation.width)
+                if child_allocation.height > 1:
+                    card_height = int(child_allocation.height)
+
+            horizontal_space = max(1, viewport_width - 64)
+            columns = max(
+                1,
+                min(
+                    5,
+                    int((horizontal_space + 16) // max(1, card_width + 16)),
+                ),
+            )
+            visible_rows = max(
+                1,
+                int((viewport_height + 12 + card_height - 1) // (card_height + 12)),
+            )
+            return max(1, columns * visible_rows)
+
+        state = {
+            "scripts": scripts,
+            "next_index": 0,
+            "target_index": 0,
+            "timer_id": None,
+            "generation": generation,
+            "initial_complete": False,
+        }
+        flowbox._linuxtoys_lazy_state = state
+
+        def state_is_current():
+            return (
+                getattr(flowbox, "_linuxtoys_population_generation", None)
+                == generation
+                and getattr(flowbox, "_linuxtoys_lazy_state", None) is state
+            )
 
         def add_card(script_info):
             widget = self.create_item_widget(
@@ -1851,114 +1913,190 @@ class AppWindow(
             )
             description = script_info.get("description", "")
             widget.set_tooltip_text(description or None)
-            # Opacity must be zero before the widget becomes visible; otherwise
-            # GTK may paint one fully-opaque frame before the fade scheduler runs.
             widget.set_opacity(0.0)
             flowbox.add(widget)
             return widget
 
-        initial_count = min(len(scripts), initial_batch_size)
-        remaining = iter(scripts[initial_count:])
-        frame_interval_ms = 20
-
         def populate_timed_batch():
-            if (
-                getattr(flowbox, "_linuxtoys_population_generation", None)
-                != generation
-            ):
+            if not state_is_current():
+                state["timer_id"] = None
                 return False
 
-            added = 0
-            batch_widgets = []
-            exhausted = False
-            while added < frame_batch_size:
-                try:
-                    script_info = next(remaining)
-                except StopIteration:
-                    exhausted = True
-                    break
+            target = min(state["target_index"], len(scripts))
+            if state["next_index"] >= target:
+                state["timer_id"] = None
+                return False
 
-                widget = add_card(script_info)
+            batch_widgets = []
+            stop = min(target, state["next_index"] + frame_batch_size)
+            while state["next_index"] < stop:
+                widget = add_card(scripts[state["next_index"]])
+                state["next_index"] += 1
                 widget.show_all()
                 batch_widgets.append(widget)
-                added += 1
 
             self.animate_item_batch(
                 batch_widgets,
                 duration_ms=110,
                 stagger_ms=5,
             )
-            return not exhausted
+
+            if state["next_index"] >= target:
+                state["timer_id"] = None
+                return False
+            return True
+
+        def ensure_population_timer(delay_ms=frame_interval_ms):
+            if not state_is_current():
+                return
+            if state["next_index"] >= state["target_index"]:
+                return
+            if state["timer_id"] is not None:
+                return
+
+            def start_or_continue():
+                if not state_is_current():
+                    state["timer_id"] = None
+                    return False
+                return populate_timed_batch()
+
+            state["timer_id"] = GLib.timeout_add(
+                max(1, int(delay_ms)),
+                start_or_continue,
+                priority=GLib.PRIORITY_LOW,
+            )
+
+        def request_more(viewports=1):
+            if not state_is_current() or state["next_index"] >= len(scripts):
+                return
+
+            capacity = viewport_capacity()
+            extra = max(1, capacity * max(1, int(viewports)))
+            state["target_index"] = min(
+                len(scripts),
+                max(state["target_index"], state["next_index"] + extra),
+            )
+            ensure_population_timer()
+
+        def on_scroll_position_changed(adjustment):
+            if not state_is_current() or not state["initial_complete"]:
+                return
+            if state["target_index"] >= len(scripts):
+                return
+
+            upper = float(adjustment.get_upper())
+            page_size = float(adjustment.get_page_size())
+            if upper <= 0.0:
+                return
+
+            progress = (float(adjustment.get_value()) + page_size) / upper
+            if progress >= scroll_trigger:
+                request_more(1)
+
+        def on_flowbox_size_allocate(_widget, _allocation):
+            if not state_is_current() or not state["initial_complete"]:
+                return
+
+            # A resize can expose substantially more room without producing a
+            # scroll event. Keep at least two viewports materialized ahead of an
+            # enlarged viewport, but never discard cards when the window shrinks.
+            capacity = viewport_capacity()
+            desired = min(len(scripts), max(capacity * 2, state["next_index"]))
+            if desired > state["target_index"]:
+                state["target_index"] = desired
+                ensure_population_timer()
+
+        # Connect the scrolling/resize observers once per FlowBox. Their callbacks
+        # always consult the FlowBox's current lazy state, so retained category
+        # views and later generations do not accumulate active population logic.
+        scrolled = find_scrolled_window()
+        if scrolled is not None:
+            adjustment = scrolled.get_vadjustment()
+            if not getattr(flowbox, "_linuxtoys_lazy_scroll_connected", False):
+                def lazy_scroll_dispatch(adj, target_flowbox=flowbox):
+                    current = getattr(
+                        target_flowbox, "_linuxtoys_lazy_scroll_callback", None
+                    )
+                    if current is not None:
+                        current(adj)
+
+                adjustment.connect("value-changed", lazy_scroll_dispatch)
+                flowbox._linuxtoys_lazy_scroll_connected = True
+            flowbox._linuxtoys_lazy_scroll_callback = on_scroll_position_changed
+
+        if not getattr(flowbox, "_linuxtoys_lazy_resize_connected", False):
+            def lazy_resize_dispatch(widget, allocation, target_flowbox=flowbox):
+                current = getattr(
+                    target_flowbox, "_linuxtoys_lazy_resize_callback", None
+                )
+                if current is not None:
+                    current(widget, allocation)
+
+            flowbox.connect("size-allocate", lazy_resize_dispatch)
+            flowbox._linuxtoys_lazy_resize_connected = True
+        flowbox._linuxtoys_lazy_resize_callback = on_flowbox_size_allocate
 
         def populate_initial_batch():
-            if (
-                getattr(flowbox, "_linuxtoys_population_generation", None)
-                != generation
-            ):
+            if not state_is_current():
                 return False
 
-            initial_widgets = []
-            for script_info in scripts[:initial_count]:
-                widget = add_card(script_info)
+            # Put a small seed batch on screen immediately. This deliberately
+            # happens before asking GTK for the real viewport/card geometry, so
+            # entering a category never presents an empty page while allocations
+            # settle. The seed also gives viewport_capacity() a real card
+            # allocation to measure on the following main-loop turn.
+            seed_count = min(len(scripts), 6)
+            seed_widgets = []
+            while state["next_index"] < seed_count:
+                widget = add_card(scripts[state["next_index"]])
+                state["next_index"] += 1
                 widget.show_all()
-                initial_widgets.append(widget)
+                seed_widgets.append(widget)
 
             if animate_initial:
                 self.animate_item_batch(
-                    initial_widgets,
-                    duration_ms=120,
-                    stagger_ms=8,
+                    seed_widgets,
+                    duration_ms=90,
+                    stagger_ms=5,
                 )
             else:
-                # Terminal-return refreshes happen behind the still-visible VTE.
-                # Make the first screenful fully ready immediately so no per-card
-                # fade animation competes with the Gtk.Stack reverse transition.
-                for widget in initial_widgets:
+                for widget in seed_widgets:
                     widget.set_opacity(1.0)
 
             self._configure_local_scripts_interaction(flowbox, category_info)
             if checklist_mode:
                 self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
-            if initial_count < len(scripts):
-                pause_ms = int(pause_after_initial_ms)
-                if pause_ms > frame_interval_ms:
-                    # The terminal-return pause is only a one-shot hold before
-                    # progressive population resumes.  Do not use it as the
-                    # repeating timeout interval: populate_timed_batch() returns
-                    # True while work remains, so GLib would otherwise repeat
-                    # every ~stack-transition duration instead of every frame.
-                    def resume_timed_population():
-                        if (
-                            getattr(
-                                flowbox,
-                                "_linuxtoys_population_generation",
-                                None,
-                            )
-                            != generation
-                        ):
-                            return False
+            def finish_initial_sizing():
+                if not state_is_current():
+                    return False
 
-                        has_more = populate_timed_batch()
-                        if has_more:
-                            GLib.timeout_add(
-                                frame_interval_ms,
-                                populate_timed_batch,
-                                priority=GLib.PRIORITY_LOW,
-                            )
-                        return False
+                capacity = viewport_capacity()
+                # Small windows get more scrolling headroom; large windows already
+                # expose many cards, so two viewports are enough.
+                multiplier = 3 if capacity <= 20 else 2
+                state["target_index"] = min(
+                    len(scripts),
+                    max(state["next_index"], capacity * multiplier),
+                )
+                state["initial_complete"] = True
 
-                    GLib.timeout_add(
-                        pause_ms,
-                        resume_timed_population,
-                        priority=GLib.PRIORITY_LOW,
+                if state["next_index"] < state["target_index"]:
+                    pause_ms = max(0, int(pause_after_initial_ms))
+                    ensure_population_timer(
+                        pause_ms
+                        if pause_ms > frame_interval_ms
+                        else frame_interval_ms
                     )
-                else:
-                    GLib.timeout_add(
-                        frame_interval_ms,
-                        populate_timed_batch,
-                        priority=GLib.PRIORITY_LOW,
-                    )
+                return False
+
+            # Let GTK paint/allocate the seed cards first. The expensive-looking
+            # part of entering the category is therefore overlapped with the first
+            # visible frame instead of preceding it.
+            GLib.idle_add(
+                finish_initial_sizing,
+                priority=GLib.PRIORITY_LOW,
+            )
             return False
 
         populate_initial_batch()
