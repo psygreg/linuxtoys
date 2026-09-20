@@ -12,6 +12,16 @@ from .term_header import InfosHead
 from . import get_icon_path, appstream_cache
 
 
+class _WidthNeutralTextView(Gtk.TextView):
+    """Wrapped app-page text whose content must not establish page width."""
+
+    def do_get_preferred_width(self):
+        return (0, 0)
+
+    def do_get_preferred_width_for_height(self, height):
+        return (0, 0)
+
+
 class AppPageView(Gtk.Box):
     """Repository-entry details page with screenshots and install/support actions."""
 
@@ -369,7 +379,7 @@ class AppPageView(Gtk.Box):
 
     def _build_appstream_description(self, blocks):
         """Render preserved AppStream XML semantics directly, without Markdown."""
-        view = Gtk.TextView()
+        view = _WidthNeutralTextView()
         view.get_style_context().add_class("app-page-description")
         view.set_halign(Gtk.Align.FILL)
         view.set_valign(Gtk.Align.START)
@@ -460,7 +470,7 @@ class AppPageView(Gtk.Box):
         # preserves source line structure: adjacent list items stay adjacent and
         # explicit blank lines stay blank lines, without HTML "loose list"
         # paragraphs introducing synthetic spacing.
-        view = Gtk.TextView()
+        view = _WidthNeutralTextView()
         view.get_style_context().add_class("app-page-description")
         view.set_halign(Gtk.Align.FILL)
         view.set_valign(Gtk.Align.START)
@@ -1485,13 +1495,11 @@ class AppPageView(Gtk.Box):
         )
         if not variant:
             return
-        current_width = int(getattr(frame, "_linuxtoys_screenshot_source_width", 0) or 0)
         requested_url = getattr(frame, "_linuxtoys_screenshot_requested_url", "")
-        # Resizing upward may upgrade quality. Never downgrade an already fetched
-        # image just because the window later becomes smaller.
-        if variant["url"] != requested_url and (
-            variant.get("width", 0) > current_width or current_width <= 0
-        ):
+        # Follow the best AppStream variant in both directions.  A larger
+        # allocation may upgrade the source; shrinking may select a smaller one
+        # again. Cached variants make subsequent switches inexpensive.
+        if variant["url"] != requested_url:
             self._request_screenshot_variant(frame, variant, initial=False)
 
     def _build_screenshot_viewer(self, screenshots):
@@ -1657,11 +1665,13 @@ class AppPageView(Gtk.Box):
             return False
 
         try:
-            allocated = max(0, frame.get_allocated_width())
-            render_width = 760 if allocated <= 1120 else min(1600, allocated)
-            render_height = max(430, int(render_width * 9 / 16))
+            # Source resolution follows the current allocation, but presentation
+            # size must not.  Giving Gtk.Image a maximized-window-sized pixbuf
+            # makes that pixbuf part of GTK's preferred-width calculation and can
+            # prevent the window from shrinking again.  Keep the same stable
+            # presentation size used by local screenshots.
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                path, render_width, render_height, True
+                path, 760, 430, True
             )
             image = Gtk.Image.new_from_pixbuf(pixbuf)
             image.set_halign(Gtk.Align.CENTER)
