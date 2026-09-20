@@ -666,5 +666,6 @@
   "app_page_rate_failed_message": "Bahoni yuborib bo‘lmadi. Keyinroq qayta urinib ko‘ring.",
   "specials": "Eksklyuziv",
   "specials_desc": "LinuxToys tomonidan saralangan dasturlar va o‘rnatish skriptlari.",
-  "appstream_initial_building": "Dastlabki AppStream katalogi yaratilmoqda.\nBu bir necha soniya vaqt olishi mumkin..."
+  "appstream_initial_building": "Dastlabki AppStream katalogi yaratilmoqda.\nBu bir necha soniya vaqt olishi mumkin...",
+  "app_page_source_system": "tizim"
 }

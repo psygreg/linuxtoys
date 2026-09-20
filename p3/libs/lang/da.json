@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Bedømmelsen kunne ikke indsendes. Prøv igen senere.",
   "specials": "Eksklusivt",
   "specials_desc": "Software og installationsscripts udvalgt af LinuxToys.",
-  "appstream_initial_building": "Opbygger det indledende AppStream-katalog.\nDette kan tage et par sekunder..."
+  "appstream_initial_building": "Opbygger det indledende AppStream-katalog.\nDette kan tage et par sekunder...",
+  "app_page_source_system": "system"
 }

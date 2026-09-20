@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Neizdevās iesniegt vērtējumu. Lūdzu, mēģiniet vēlreiz vēlāk.",
   "specials": "Ekskluzīvi",
   "specials_desc": "LinuxToys atlasīta programmatūra un instalēšanas skripti.",
-  "appstream_initial_building": "Tiek veidots sākotnējais AppStream katalogs.\nTas var aizņemt dažas sekundes..."
+  "appstream_initial_building": "Tiek veidots sākotnējais AppStream katalogs.\nTas var aizņemt dažas sekundes...",
+  "app_page_source_system": "sistēma"
 }

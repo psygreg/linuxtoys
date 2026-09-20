@@ -666,5 +666,6 @@
   "app_page_rate_failed_message": "Үнэлгээг илгээж чадсангүй. Дараа дахин оролдоно уу.",
   "specials": "Онцгой",
   "specials_desc": "LinuxToys-оос сонгосон програм хангамж болон суулгах скриптүүд.",
-  "appstream_initial_building": "Анхны AppStream каталогийг үүсгэж байна.\nҮүнд хэдэн секунд зарцуулагдаж магадгүй..."
+  "appstream_initial_building": "Анхны AppStream каталогийг үүсгэж байна.\nҮүнд хэдэн секунд зарцуулагдаж магадгүй...",
+  "app_page_source_system": "систем"
 }

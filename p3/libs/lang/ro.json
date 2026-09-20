@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Evaluarea nu a putut fi trimisă. Încearcă din nou mai târziu.",
   "specials": "Exclusive",
   "specials_desc": "Software și scripturi de instalare selectate de LinuxToys.",
-  "appstream_initial_building": "Se creează catalogul AppStream inițial.\nAcest lucru poate dura câteva secunde..."
+  "appstream_initial_building": "Se creează catalogul AppStream inițial.\nAcest lucru poate dura câteva secunde...",
+  "app_page_source_system": "sistem"
 }

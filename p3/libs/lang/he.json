@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "לא ניתן היה לשלוח את הדירוג. נסו שוב מאוחר יותר.",
   "specials": "בלעדי",
   "specials_desc": "תוכנות וסקריפטים להתקנה שנבחרו על ידי LinuxToys.",
-  "appstream_initial_building": "בונה את קטלוג AppStream הראשוני.\nפעולה זו עשויה להימשך מספר שניות..."
+  "appstream_initial_building": "בונה את קטלוג AppStream הראשוני.\nפעולה זו עשויה להימשך מספר שניות...",
+  "app_page_source_system": "מערכת"
 }

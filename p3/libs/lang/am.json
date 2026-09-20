@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "ደረጃውን መላክ አልተቻለም። እባክዎ ቆይተው እንደገና ይሞክሩ።",
   "specials": "ልዩ",
   "specials_desc": "በLinuxToys የተመረጡ ሶፍትዌሮች እና የመጫኛ ስክሪፕቶች።",
-  "appstream_initial_building": "የመጀመሪያውን AppStream ካታሎግ በመገንባት ላይ።\nይህ ጥቂት ሰከንዶች ሊወስድ ይችላል..."
+  "appstream_initial_building": "የመጀመሪያውን AppStream ካታሎግ በመገንባት ላይ።\nይህ ጥቂት ሰከንዶች ሊወስድ ይችላል...",
+  "app_page_source_system": "ስርዓት"
 }

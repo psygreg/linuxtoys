@@ -666,5 +666,6 @@
   "app_page_rate_failed_message": "রেটিং জমা দেওয়া যায়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।",
   "specials": "এক্সক্লুসিভ",
   "specials_desc": "LinuxToys দ্বারা নির্বাচিত সফটওয়্যার এবং ইনস্টলেশন স্ক্রিপ্ট।",
-  "appstream_initial_building": "প্রাথমিক AppStream ক্যাটালগ তৈরি করা হচ্ছে।\nএতে কয়েক সেকেন্ড সময় লাগতে পারে..."
+  "appstream_initial_building": "প্রাথমিক AppStream ক্যাটালগ তৈরি করা হচ্ছে।\nএতে কয়েক সেকেন্ড সময় লাগতে পারে...",
+  "app_page_source_system": "সিস্টেম"
 }

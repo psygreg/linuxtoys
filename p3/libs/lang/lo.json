@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "ບໍ່ສາມາດສົ່ງຄະແນນໄດ້. ກະລຸນາລອງໃໝ່ພາຍຫຼັງ.",
   "specials": "ພິເສດ",
   "specials_desc": "ຊອບແວ ແລະ ສະຄຣິບຕິດຕັ້ງທີ່ຄັດເລືອກໂດຍ LinuxToys.",
-  "appstream_initial_building": "ກຳລັງສ້າງລາຍການ AppStream ເບື້ອງຕົ້ນ.\nອາດໃຊ້ເວລາສອງສາມວິນາທີ..."
+  "appstream_initial_building": "ກຳລັງສ້າງລາຍການ AppStream ເບື້ອງຕົ້ນ.\nອາດໃຊ້ເວລາສອງສາມວິນາທີ...",
+  "app_page_source_system": "ລະບົບ"
 }

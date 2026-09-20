@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Níorbh fhéidir an rátáil a chur isteach. Bain triail eile as ar ball.",
   "specials": "Eisiach",
   "specials_desc": "Bogearraí agus scripteanna suiteála roghnaithe ag LinuxToys.",
-  "appstream_initial_building": "Catalóg tosaigh AppStream á chruthú.\nSeans go dtógfaidh sé seo cúpla soicind..."
+  "appstream_initial_building": "Catalóg tosaigh AppStream á chruthú.\nSeans go dtógfaidh sé seo cúpla soicind...",
+  "app_page_source_system": "córas"
 }

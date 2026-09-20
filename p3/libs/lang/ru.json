@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Не удалось отправить оценку. Повторите попытку позже.",
   "specials": "Эксклюзив",
   "specials_desc": "Программы и сценарии установки, отобранные LinuxToys.",
-  "appstream_initial_building": "Создание начального каталога AppStream.\nЭто может занять несколько секунд..."
+  "appstream_initial_building": "Создание начального каталога AppStream.\nЭто может занять несколько секунд...",
+  "app_page_source_system": "система"
 }

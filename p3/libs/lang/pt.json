@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Não foi possível enviar a avaliação. Tente novamente mais tarde.",
   "specials": "Exclusivos",
   "specials_desc": "Softwares e scripts de instalação selecionados pelo LinuxToys.",
-  "appstream_initial_building": "Criando o catálogo inicial do AppStream.\nIsso pode levar alguns segundos..."
+  "appstream_initial_building": "Criando o catálogo inicial do AppStream.\nIsso pode levar alguns segundos...",
+  "app_page_source_system": "sistema"
 }

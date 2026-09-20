@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Không thể gửi đánh giá. Vui lòng thử lại sau.",
   "specials": "Độc quyền",
   "specials_desc": "Phần mềm và tập lệnh cài đặt do LinuxToys tuyển chọn.",
-  "appstream_initial_building": "Đang tạo danh mục AppStream ban đầu.\nQuá trình này có thể mất vài giây..."
+  "appstream_initial_building": "Đang tạo danh mục AppStream ban đầu.\nQuá trình này có thể mất vài giây...",
+  "app_page_source_system": "hệ thống"
 }

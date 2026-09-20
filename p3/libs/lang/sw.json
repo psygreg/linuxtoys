@@ -665,5 +665,6 @@
   "app_page_rate_failed_message": "Haikuwezekana kuwasilisha tathmini. Tafadhali jaribu tena baadaye.",
   "specials": "Kipekee",
   "specials_desc": "Programu na hati za usakinishaji zilizochaguliwa na LinuxToys.",
-  "appstream_initial_building": "Inaunda katalogi ya awali ya AppStream.\nHii inaweza kuchukua sekunde chache..."
+  "appstream_initial_building": "Inaunda katalogi ya awali ya AppStream.\nHii inaweza kuchukua sekunde chache...",
+  "app_page_source_system": "mfumo"
 }

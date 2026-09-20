@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Değerlendirme gönderilemedi. Lütfen daha sonra tekrar deneyin.",
   "specials": "Özel",
   "specials_desc": "LinuxToys tarafından seçilen yazılımlar ve kurulum betikleri.",
-  "appstream_initial_building": "İlk AppStream kataloğu oluşturuluyor.\nBu işlem birkaç saniye sürebilir..."
+  "appstream_initial_building": "İlk AppStream kataloğu oluşturuluyor.\nBu işlem birkaç saniye sürebilir...",
+  "app_page_source_system": "sistem"
 }

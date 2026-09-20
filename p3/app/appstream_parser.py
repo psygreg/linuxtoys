@@ -18,7 +18,7 @@ _RUNTIME_CACHE = {}
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 1
+RUNTIME_CACHE_SCHEMA = 4
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -630,36 +630,71 @@ def _component_match_keys(component):
     return component_id, name
 
 
+def _source_option_key(item):
+    """Return a stable key that distinguishes Flatpak installation scopes."""
+    source = str(item.get("source", "native") or "native")
+    if source != "flatpak":
+        return source
+    scope = str(item.get("flatpak_scope", "") or "")
+    installation = str(item.get("flatpak_installation", "") or "")
+    return f"flatpak:{scope}:{installation}"
+
+
+def _expand_source_group(group):
+    """Restore source alternatives nested by an earlier duplicate-collapse pass."""
+    expanded = []
+    seen = set()
+    for item in group:
+        candidates = [item]
+        candidates.extend(
+            alternate for alternate in item.get("_source_alternatives", ())
+            if isinstance(alternate, dict)
+        )
+        for candidate in candidates:
+            key = _source_option_key(candidate)
+            if key in seen:
+                continue
+            seen.add(key)
+            # Nested alternatives belong to the collapsed parent, not the option
+            # itself. Rebuild them from the complete group below.
+            candidate = dict(candidate)
+            candidate.pop("_source_alternatives", None)
+            candidate.pop("_source_recommended", None)
+            expanded.append(candidate)
+    return expanded
+
+
 def _with_source_options(selected, group):
-    """Preserve installable native/Flatpak alternatives when source choice is useful."""
-    sources = {str(item.get("source", "native") or "native") for item in group}
-    if not {"native", "flatpak"} <= sources:
-        return selected
-
+    """Preserve useful native and Flatpak-scope installation alternatives."""
     flatpaks = [item for item in group if item.get("source") == "flatpak"]
-    selected_source = str(selected.get("source", "native") or "native")
+    natives = [item for item in group if item.get("source", "native") == "native"]
+    selected_key = _source_option_key(selected)
 
-    # A verified Flathub entry remains authoritative when it is the selected
-    # default. Otherwise expose both sources and mark the selected one as the
-    # LinuxToys recommendation.
-    if selected_source == "flatpak" and any(_is_verified_flatpak(item) for item in flatpaks):
+    # Multiple configured Flathub scopes are independently useful even for
+    # verified apps. Native remains hidden for verified Flathub applications.
+    selected_verified_flatpak = _is_verified_flatpak(selected)
+    candidates = list(flatpaks)
+    if not selected_verified_flatpak:
+        candidates = natives + candidates
+
+    # A selector is useful for either native-vs-Flatpak choice or Flatpak scope.
+    unique = []
+    seen = set()
+    for item in candidates:
+        key = _source_option_key(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(item)
+    if len(unique) < 2:
         return selected
 
     result = dict(selected)
-    alternatives = []
-    seen_sources = set()
-    for item in group:
-        source = str(item.get("source", "native") or "native")
-        if source == selected_source or source in seen_sources:
-            continue
-        seen_sources.add(source)
-        alternatives.append(dict(item))
-
+    alternatives = [dict(item) for item in unique if _source_option_key(item) != selected_key]
     if alternatives:
         result["_source_alternatives"] = alternatives
-        result["_source_recommended"] = selected_source
+        result["_source_recommended"] = selected_key
     return result
-
 
 def _prefer_sources(components, category_paths):
     """Collapse native/Flatpak duplicates according to the developer filter."""
@@ -684,9 +719,13 @@ def _prefer_sources(components, category_paths):
         flatpaks = [item for item in group if item.get("source") == "flatpak"]
         natives = [item for item in group if item.get("source", "native") == "native"]
         if flatpaks:
+            # User Flathub is the default Flatpak installation when available, but
+            # retain system installations so the app page can expose scope choice.
             flatpaks.sort(key=lambda item: (item.get("flatpak_scope") != "user", item.get("flatpak_installation", "")))
-            flatpaks = flatpaks[:1]
         group = natives + flatpaks
+        if not natives and len(flatpaks) > 1:
+            result.append(_with_source_options(flatpaks[0], group))
+            continue
         sources = {str(item.get("source", "native")) for item in group}
         if len(sources) < 2:
             result.extend(group)
@@ -703,7 +742,7 @@ def _prefer_sources(components, category_paths):
 
         if verified_flatpaks:
             # Publisher verification normally outranks distro-specific preference.
-            result.extend(_with_source_options(item, group) for item in verified_flatpaks)
+            result.append(_with_source_options(verified_flatpaks[0], group))
             continue
 
         if _host_prefers_native_appstream() and natives:
@@ -713,6 +752,8 @@ def _prefer_sources(components, category_paths):
         preferred = _resolve_source_preference(group[0])
         chosen = [item for item in group if item.get("source", "native") == preferred]
         selected = chosen or group
+        if selected and selected[0].get("source") == "flatpak":
+            selected = selected[:1]
         result.extend(_with_source_options(item, group) for item in selected)
 
     by_name = {}
@@ -725,12 +766,28 @@ def _prefer_sources(components, category_paths):
             unnamed.append(component)
     final = list(unnamed)
     for group in by_name.values():
+        # Exact-ID collapsing may already have nested the other Flatpak scope in
+        # _source_alternatives. Expand it again before the conservative name pass
+        # so combining that Flatpak entry with a differently-IDed native package
+        # does not silently discard the system/user scope alternative.
+        group = _expand_source_group(group)
+        flatpaks = [item for item in group if item.get("source") == "flatpak"]
+        natives = [item for item in group if item.get("source", "native") == "native"]
+        flatpaks.sort(key=lambda item: (item.get("flatpak_scope") != "user", item.get("flatpak_installation", "")))
+
+        # Scope alternatives are still meaningful when every candidate is Flatpak.
+        # Handle that before the source-kind early exit, otherwise expanding a
+        # previously collapsed user/system pair turns it back into two independent
+        # app entries and loses the selector.
+        if not natives and len(flatpaks) > 1:
+            final.append(_with_source_options(flatpaks[0], flatpaks))
+            continue
+
         sources = {str(item.get("source", "native")) for item in group}
         if len(sources) < 2:
             final.extend(group)
             continue
-        flatpaks = [item for item in group if item.get("source") == "flatpak"]
-        natives = [item for item in group if item.get("source", "native") == "native"]
+
         verified_flatpaks = [item for item in flatpaks if _is_verified_flatpak(item)]
 
         if natives and _group_prefers_native_development(group, category_paths):
@@ -739,7 +796,7 @@ def _prefer_sources(components, category_paths):
             continue
 
         if verified_flatpaks:
-            final.extend(_with_source_options(item, group) for item in verified_flatpaks)
+            final.append(_with_source_options(verified_flatpaks[0], group))
             continue
 
         if _host_prefers_native_appstream() and natives:
@@ -749,6 +806,8 @@ def _prefer_sources(components, category_paths):
         preferred = _resolve_source_preference(group[0])
         chosen = [item for item in group if item.get("source", "native") == preferred]
         selected = chosen or group
+        if selected and selected[0].get("source") == "flatpak":
+            selected = selected[:1]
         final.extend(_with_source_options(item, group) for item in selected)
     return final
 
@@ -912,6 +971,9 @@ def _to_repo_entry(component, category, lang_code):
         "flatpak_remote": str(component.get("flatpak_remote", "") or ""),
         "flatpak_scope": str(component.get("flatpak_scope", "") or ""),
         "flatpak_installation": str(component.get("flatpak_installation", "") or ""),
+        # Generic repo materialization maps this existing override to
+        # pkg_flat --skip-user, forcing the system Flatpak installation.
+        "overrides": ({"skip-user": True} if is_flatpak and str(component.get("flatpak_scope", "") or "") == "system" else {}),
         # Native entries may inherit this from a discarded Flatpak duplicate.
         "popularity_metric": component.get("popularity_metric"),
         "review_rating": component.get("review_rating"),
@@ -940,7 +1002,8 @@ def _to_repo_entry(component, category, lang_code):
         if len(source_options) > 1:
             entry["source_options"] = source_options
             entry["recommended_source"] = str(
-                component.get("_source_recommended", source) or source
+                component.get("_source_recommended", _source_option_key(component))
+                or _source_option_key(component)
             )
 
     return entry

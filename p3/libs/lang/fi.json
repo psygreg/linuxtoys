@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Arviota ei voitu lähettää. Yritä myöhemmin uudelleen.",
   "specials": "Eksklusiiviset",
   "specials_desc": "LinuxToysin valitsemat ohjelmistot ja asennusskriptit.",
-  "appstream_initial_building": "Luodaan alkuperäistä AppStream-luetteloa.\nTämä voi kestää muutaman sekunnin..."
+  "appstream_initial_building": "Luodaan alkuperäistä AppStream-luetteloa.\nTämä voi kestää muutaman sekunnin...",
+  "app_page_source_system": "järjestelmä"
 }

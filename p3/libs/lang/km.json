@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "មិនអាចដាក់ស្នើការវាយតម្លៃបានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
   "specials": "ផ្តាច់មុខ",
   "specials_desc": "កម្មវិធី និងស្គ្រីបដំឡើងដែលជ្រើសរើសដោយ LinuxToys។",
-  "appstream_initial_building": "កំពុងបង្កើតកាតាឡុក AppStream ដំបូង។\nវាអាចចំណាយពេលពីរបីវិនាទី..."
+  "appstream_initial_building": "កំពុងបង្កើតកាតាឡុក AppStream ដំបូង។\nវាអាចចំណាយពេលពីរបីវិនាទី...",
+  "app_page_source_system": "ប្រព័ន្ធ"
 }

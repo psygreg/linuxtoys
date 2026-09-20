@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Չհաջողվեց ուղարկել գնահատականը։ Խնդրում ենք ավելի ուշ կրկին փորձել։",
   "specials": "Բացառիկ",
   "specials_desc": "LinuxToys-ի կողմից ընտրված ծրագրեր և տեղադրման սկրիպտներ։",
-  "appstream_initial_building": "Ստեղծվում է սկզբնական AppStream կատալոգը։\nՍա կարող է տևել մի քանի վայրկյան..."
+  "appstream_initial_building": "Ստեղծվում է սկզբնական AppStream կատալոգը։\nՍա կարող է տևել մի քանի վայրկյան...",
+  "app_page_source_system": "համակարգ"
 }

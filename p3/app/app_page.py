@@ -1418,10 +1418,34 @@ class AppPageView(Gtk.Box):
     def _source_label(self, entry):
         source = str(entry.get("appstream_source", "") or "").strip()
         if source == "flatpak":
+            scope = str(entry.get("flatpak_scope", "") or "").strip()
+            if scope == "system" and self._has_multiple_flatpak_scopes():
+                system = self.translations.get("app_page_source_system", "system")
+                return f"Flathub ({system})"
             return "Flathub"
         if source == "native":
             return self.translations.get("app_page_source_native", "Native")
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
+
+    @staticmethod
+    def _source_key(entry):
+        source = str(entry.get("appstream_source", "") or "").strip()
+        if source != "flatpak":
+            return source
+        scope = str(entry.get("flatpak_scope", "") or "").strip()
+        installation = str(entry.get("flatpak_installation", "") or "").strip()
+        return f"flatpak:{scope}:{installation}"
+
+    def _has_multiple_flatpak_scopes(self):
+        options = self.script_info.get("source_options") or ()
+        scopes = {
+            str(option.get("flatpak_scope", "") or "").strip()
+            for option in options
+            if isinstance(option, dict)
+            and str(option.get("appstream_source", "") or "").strip() == "flatpak"
+        }
+        scopes.discard("")
+        return len(scopes) > 1
 
     def _set_source_button_content(self, button, entry):
         child = button.get_child()
@@ -1438,7 +1462,7 @@ class AppPageView(Gtk.Box):
     def _source_menu_item(self, entry, recommended_source):
         item = Gtk.MenuItem()
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        source = str(entry.get("appstream_source", "") or "")
+        source = self._source_key(entry)
         if source == recommended_source:
             badge_path = get_icon_path("distros/linuxtoys.svg")
             if badge_path and os.path.exists(badge_path):

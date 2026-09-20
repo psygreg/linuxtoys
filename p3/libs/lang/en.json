@@ -565,6 +565,7 @@
   "quarto_desc": "An open-source scientific and technical publishing system.",
   "rbase_desc": "A free software environment for statistical computing and graphics.",
   "app_page_source_native": "Native",
+  "app_page_source_system": "system",
   "health": "Health & Wellness",
   "health_desc": "Tools and apps to help you take care of yourself and supply your accessibility needs.",
   "creative": "Creativity",

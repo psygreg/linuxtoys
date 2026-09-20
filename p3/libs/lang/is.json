@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Ekki tókst að senda einkunnina inn. Reyndu aftur síðar.",
   "specials": "Sérstakt",
   "specials_desc": "Hugbúnaður og uppsetningarskriftur valdar af LinuxToys.",
-  "appstream_initial_building": "Byggi upp upphaflegan AppStream-vörulista.\nÞetta gæti tekið nokkrar sekúndur..."
+  "appstream_initial_building": "Byggi upp upphaflegan AppStream-vörulista.\nÞetta gæti tekið nokkrar sekúndur...",
+  "app_page_source_system": "kerfi"
 }

@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Tidak dapat mengirim penilaian. Silakan coba lagi nanti.",
   "specials": "Eksklusif",
   "specials_desc": "Perangkat lunak dan skrip instalasi pilihan LinuxToys.",
-  "appstream_initial_building": "Membangun katalog AppStream awal.\nIni mungkin memerlukan waktu beberapa detik..."
+  "appstream_initial_building": "Membangun katalog AppStream awal.\nIni mungkin memerlukan waktu beberapa detik...",
+  "app_page_source_system": "sistem"
 }

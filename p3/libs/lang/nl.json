@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "De beoordeling kon niet worden ingediend. Probeer het later opnieuw.",
   "specials": "Exclusief",
   "specials_desc": "Door LinuxToys geselecteerde software en installatiescripts.",
-  "appstream_initial_building": "De eerste AppStream-catalogus wordt opgebouwd.\nDit kan enkele seconden duren..."
+  "appstream_initial_building": "De eerste AppStream-catalogus wordt opgebouwd.\nDit kan enkele seconden duren...",
+  "app_page_source_system": "systeem"
 }

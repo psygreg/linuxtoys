@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "امتیاز ارسال نشد. لطفاً بعداً دوباره تلاش کنید.",
   "specials": "اختصاصی",
   "specials_desc": "نرم‌افزارها و اسکریپت‌های نصب منتخب LinuxToys.",
-  "appstream_initial_building": "در حال ساخت فهرست اولیه AppStream.\nاین کار ممکن است چند ثانیه طول بکشد..."
+  "appstream_initial_building": "در حال ساخت فهرست اولیه AppStream.\nاین کار ممکن است چند ثانیه طول بکشد...",
+  "app_page_source_system": "سیستم"
 }

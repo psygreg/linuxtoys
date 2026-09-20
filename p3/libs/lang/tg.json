@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Арзёбиро фиристодан имкон нашуд. Лутфан баъдтар аз нав кӯшиш кунед.",
   "specials": "Истисноӣ",
   "specials_desc": "Нармафзор ва скриптҳои насбкунӣ, ки аз ҷониби LinuxToys интихоб шудаанд.",
-  "appstream_initial_building": "Каталоги ибтидоии AppStream сохта мешавад.\nИн метавонад чанд сония вақт гирад..."
+  "appstream_initial_building": "Каталоги ибтидоии AppStream сохта мешавад.\nИн метавонад чанд сония вақт гирад...",
+  "app_page_source_system": "система"
 }

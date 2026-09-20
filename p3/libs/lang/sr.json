@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Није могуће послати оцену. Покушајте поново касније.",
   "specials": "Ексклузивно",
   "specials_desc": "Софтвер и инсталационе скрипте које је одабрао LinuxToys.",
-  "appstream_initial_building": "Креирање почетног AppStream каталога.\nОво може потрајати неколико секунди..."
+  "appstream_initial_building": "Креирање почетног AppStream каталога.\nОво може потрајати неколико секунди...",
+  "app_page_source_system": "систем"
 }

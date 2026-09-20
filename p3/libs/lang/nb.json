@@ -667,5 +667,6 @@
   "app_page_rate_failed_message": "Kunne ikke sende inn vurderingen. Prøv igjen senere.",
   "specials": "Eksklusivt",
   "specials_desc": "Programvare og installasjonsskript utvalgt av LinuxToys.",
-  "appstream_initial_building": "Bygger den første AppStream-katalogen.\nDette kan ta noen sekunder..."
+  "appstream_initial_building": "Bygger den første AppStream-katalogen.\nDette kan ta noen sekunder...",
+  "app_page_source_system": "system"
 }
