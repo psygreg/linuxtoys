@@ -91,7 +91,7 @@ pkg_install () {
 
     pkg_exists "${_filtered_args[@]}"
     [[ ${#pkg_found[@]} -gt 0 ]] && echo "Packages ${pkg_found[*]} already installed, skipping."
-    [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
+    { [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0; } || askpass
     local to_install="${pkg_notfound[*]}"
     runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
@@ -388,6 +388,7 @@ pkg_fromfile () {
         return 0
     fi
 
+    askpass
     if is_debian || is_ubuntu; then
         { sudo apt-get -o APT::Sandbox::User=root install -y "${@}" || sudo dpkg -i "${@}"; } || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
@@ -1290,6 +1291,7 @@ pkg_remove () {
     [[ ${#pkg_found[@]} -eq 0 ]] && return 0
     local to_remove="${pkg_found[*]}"
 
+    askpass
     runner_lock "package-transaction"
 
     if is_debian || is_ubuntu; then
