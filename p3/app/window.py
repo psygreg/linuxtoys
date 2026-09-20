@@ -356,11 +356,6 @@ class AppWindow(
         self.categories_loading_box.pack_start(
             self.categories_loading_label, False, False, 0
         )
-        # The message is specifically for first-time AppStream preparation. Normal
-        # startup still uses the same roller while category cards/watermarks settle.
-        self.categories_loading_label.set_visible(
-            self._appstream_pickle_missing_at_startup
-        )
 
         self.categories_loading_overlay.add_overlay(self.categories_loading_box)
         self.main_stack.add_named(self.categories_loading_overlay, "categories")
@@ -392,6 +387,14 @@ class AppWindow(
         self.connect("configure-event", self._on_window_configure)
         self.connect("window-state-event", self._on_window_state_changed)
         self.show_all()
+
+        # no-show-all keeps the first-run message out of recursive show_all().
+        # Explicitly restore its intended startup state afterwards.
+        if self._appstream_pickle_missing_at_startup:
+            self.categories_loading_label.show()
+        else:
+            self.categories_loading_label.hide()
+
         # show_all() recursively reveals header children, including the queue
         # button that was intentionally hidden when it was created. Re-apply
         # queue visibility from the actual session queue after the initial show.
