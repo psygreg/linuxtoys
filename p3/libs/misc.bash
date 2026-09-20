@@ -2,7 +2,7 @@
 
 # shell change
 shell_change() {
-    sudo chsh -s "$*" || fatal "Failed to change shell: $*"
+    sudo_ chsh -s "$*" || fatal "Failed to change shell: $*"
     _append_transmap "chsh $*"
 }
 
@@ -46,8 +46,7 @@ flatpak_override () {
     flatpak info "$target" &>/dev/null || { echo "W: override target not available" && return 100; }
 
     if [ "$scope" = "system" ]; then
-        askpass
-        sudo -i sh -c "'flatpak override --$scope --$type=$setting $target'"
+        sudo_ -i sh -c "'flatpak override --$scope --$type=$setting $target'"
     elif [ "$scope" = "user" ]; then
         flatpak override --"$scope" --"$type"="$setting" "$target"
     else

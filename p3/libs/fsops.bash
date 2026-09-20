@@ -11,7 +11,7 @@ prep_create() {
     for target in "$@"; do
         [ ! -f "$target" ] || { _append_transmap "WARN: unexpected $target already exists"; prep_edit "$target"; continue; }
         { mkdir -p "$(dirname "$target")" && touch "$target"; } 2>/dev/null \
-        || { sudo mkdir -p "$(dirname "$target")" && sudo touch "$target"; } \
+        || { sudo_ mkdir -p "$(dirname "$target")" && sudo_ touch "$target"; } \
         || fatal "Failed to create: $target"
         _append_transmap "created $target"
     done
@@ -38,7 +38,7 @@ prep_tmp_noram () {
 prep_dir() {
     for dir in "$@"; do
         if [ ! -d "$dir" ]; then
-            { mkdir -p "$dir" 2>/dev/null || sudo mkdir -p "$dir"; } || fatal "Failed to create $dir"
+            { mkdir -p "$dir" 2>/dev/null || sudo_ mkdir -p "$dir"; } || fatal "Failed to create $dir"
             _append_transmap "created $dir"
         fi
     done
@@ -66,7 +66,7 @@ copy_() {
     local -a sources=("${args[@]:0:${#args[@]}-1}")
     for src in "${sources[@]}"; do
         [ -e "$src" ] || fatal "Source $src not found"
-        { cp "${flags[@]}" "$src" "$dest" 2>/dev/null || sudo cp "${flags[@]}" "$src" "$dest"; } || fatal "Failed to copy $src to $dest"
+        { cp "${flags[@]}" "$src" "$dest" 2>/dev/null || sudo_ cp "${flags[@]}" "$src" "$dest"; } || fatal "Failed to copy $src to $dest"
     done
 }
 
@@ -85,6 +85,6 @@ move_() {
     local -a sources=("${args[@]:0:${#args[@]}-1}")
     for src in "${sources[@]}"; do
         [ -e "$src" ] || fatal "Source $src not found"
-        { mv "${flags[@]}" "$src" "$dest" 2>/dev/null || sudo mv "${flags[@]}" "$src" "$dest"; } || fatal "Failed to move $src to $dest"
+        { mv "${flags[@]}" "$src" "$dest" 2>/dev/null || sudo_ mv "${flags[@]}" "$src" "$dest"; } || fatal "Failed to move $src to $dest"
     done
 }

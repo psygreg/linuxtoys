@@ -123,7 +123,7 @@ has_rebar() {
                     ;;
             esac
         done < <(
-            sudo lspci -vv -s "$pci" 2>/dev/null |
+            sudo_ lspci -vv -s "$pci" 2>/dev/null |
             sed -nE 's/.*current size: ([0-9]+)(MB|GB).*/\1 \2/p'
         )
     done < <(

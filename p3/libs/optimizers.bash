@@ -9,16 +9,16 @@ nvidia_ctkpatch () {
     prep_create "$VAR_OUTPUT"
     prep_create "$ETC_OUTPUT"
     # ensure files can be created cleanly after adding to transmap
-    sudo rm "$VAR_OUTPUT"
-    sudo rm "$ETC_OUTPUT"
-    sudo nvidia-ctk cdi generate --output="$VAR_OUTPUT" || die "failed to generate CDI spec on /var"
-    sudo nvidia-ctk cdi generate --output="$ETC_OUTPUT" || die "failed to generate CDI spec on /etc"
+    sudo_ rm "$VAR_OUTPUT"
+    sudo_ rm "$ETC_OUTPUT"
+    sudo_ nvidia-ctk cdi generate --output="$VAR_OUTPUT" || die "failed to generate CDI spec on /var"
+    sudo_ nvidia-ctk cdi generate --output="$ETC_OUTPUT" || die "failed to generate CDI spec on /etc"
     if systemctl list-unit-files | grep -q nvidia-cdi; then
         sysd_enable nvidia-cdi-refresh.path nvidia-cdi-refresh.service
         sysd_start nvidia-cdi-refresh.path nvidia-cdi-refresh.service
     fi
-    sudo chmod a+r "$VAR_OUTPUT"
-    sudo chmod a+r "$ETC_OUTPUT"
+    sudo_ chmod a+r "$VAR_OUTPUT"
+    sudo_ chmod a+r "$ETC_OUTPUT"
     if ! nvidia-ctk cdi list 2>/dev/null | grep -q '^nvidia.com/gpu=all$'; then
         die "NVIDIA CDI device nvidia.com/gpu=all is unavailable."
     fi

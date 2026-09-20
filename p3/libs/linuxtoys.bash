@@ -170,6 +170,14 @@ askpass() {
     esac
 }
 
+
+# Privileged command wrapper. Library helpers should use sudo_ instead of calling
+# askpass directly: authentication is validated immediately before escalation.
+sudo_() {
+    askpass sudo || return $?
+    command sudo "$@"
+}
+
 # Unified message handler
 _msg() {
     local type="$1"

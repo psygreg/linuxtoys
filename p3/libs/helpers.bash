@@ -19,9 +19,9 @@ fetch_from_mirror () {
 multilib_chk() {
     pacman -Slq multilib &>/dev/null && return 0;
 
-    printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf >/dev/null
+    printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | sudo_ tee -a /etc/pacman.conf >/dev/null
 
-    if sudo pacman -Syy && pacman -Slq multilib &>/dev/null; then
+    if sudo_ pacman -Syy && pacman -Slq multilib &>/dev/null; then
         return 0
     else
         _msg error "Failed to enable multilib repository. Please check /etc/pacman.conf manually."
@@ -33,7 +33,6 @@ multilib_chk() {
 clinfo_chk () {
     if ! command -v clinfo &>/dev/null; then
         _msg info "clinfo not found, installing..."
-        sudo_rq
         pkg_install clinfo
     fi
     # Check if OpenCL acceleration is available
@@ -56,29 +55,29 @@ enable_debian_nonfree () {
         if ! grep -qE "contrib" /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources 2>/dev/null; then
             if [ -f /etc/apt/sources.list ]; then
                 prep_edit /etc/apt/sources.list
-                sudo sed -i 's/main$/main contrib/' /etc/apt/sources.list
+                sudo_ sed -i 's/main$/main contrib/' /etc/apt/sources.list
                 updated=1
             fi
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 prep_edit /etc/apt/sources.list.d/debian.sources
-                sudo sed -i 's/^Components: \(.*\)$/Components: \1 contrib/' /etc/apt/sources.list.d/debian.sources
+                sudo_ sed -i 's/^Components: \(.*\)$/Components: \1 contrib/' /etc/apt/sources.list.d/debian.sources
                 updated=1
             fi
         fi
         if ! grep -qE "non-free" /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources 2>/dev/null; then
             if [ -f /etc/apt/sources.list ]; then
                 prep_edit /etc/apt/sources.list
-                sudo sed -i 's/main$/main non-free/' /etc/apt/sources.list
+                sudo_ sed -i 's/main$/main non-free/' /etc/apt/sources.list
                 updated=1
             fi
             if [ -f /etc/apt/sources.list.d/debian.sources ]; then
                 prep_edit /etc/apt/sources.list.d/debian.sources
-                sudo sed -i 's/^Components: \(.*\)$/Components: \1 non-free/' /etc/apt/sources.list.d/debian.sources
+                sudo_ sed -i 's/^Components: \(.*\)$/Components: \1 non-free/' /etc/apt/sources.list.d/debian.sources
                 updated=1
             fi
         fi
         if [ $updated -eq 1 ]; then
-            sudo apt update
+            sudo_ apt update
         fi
     fi
 }
@@ -116,7 +115,7 @@ enable_debian_backports() {
     else
         prep_create "$source_file"
     fi
-    sudo tee "$source_file" >/dev/null <<EOF
+    sudo_ tee "$source_file" >/dev/null <<EOF
 Types: deb
 URIs: https://deb.debian.org/debian
 Suites: ${codename}-backports
@@ -124,7 +123,7 @@ Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
 
-    sudo apt update
+    sudo_ apt update
 }
 
 # legacy function call support - kept here so older code and local user scripts won't break
