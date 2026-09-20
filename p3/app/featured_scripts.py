@@ -663,7 +663,7 @@ class FeaturedCtl:
 
 
     def _choose_featured_large_positions(self, rows, columns, count):
-        """Pick non-overlapping three-row spans, avoiding last positions if possible."""
+        """Pick moved large spans while minimizing ordinary-card replacement."""
         if count <= 0 or rows < 3 or columns <= 0:
             self._featured_large_positions = set()
             return []
@@ -681,12 +681,11 @@ class FeaturedCtl:
 
             def overlaps(position, chosen):
                 column, row = position
-                for other_column, other_row in chosen:
-                    if column != other_column:
-                        continue
-                    if not (row + 2 < other_row or other_row + 2 < row):
-                        return True
-                return False
+                return any(
+                    column == other_column
+                    and not (row + 2 < other_row or other_row + 2 < row)
+                    for other_column, other_row in chosen
+                )
 
             def search(index, chosen):
                 if len(chosen) == count:
@@ -704,12 +703,40 @@ class FeaturedCtl:
 
             return search(0, [])
 
-        # Strong preference: none of the large cards uses the exact same top-left
-        # slot as the previous rotation. If current geometry makes that impossible
-        # (for example one column with exactly six rows and two large cards), fall
-        # back to the best valid non-overlapping layout instead of dropping cards.
+        # Preserve the existing rule that large cards should move. Generate several
+        # valid moved layouts, then choose the one that changes the fewest occupied
+        # cells. This directly maximizes the number of ordinary cards we can rebind.
         fresh_positions = [pos for pos in all_positions if pos not in previous]
-        chosen = find_layout(fresh_positions) or find_layout(all_positions) or []
+        candidates = []
+        for _ in range(32):
+            layout = find_layout(fresh_positions)
+            if layout is not None:
+                candidates.append(layout)
+
+        if not candidates:
+            # Geometry can make a completely fresh set impossible.
+            for _ in range(32):
+                layout = find_layout(all_positions)
+                if layout is not None:
+                    candidates.append(layout)
+
+        if not candidates:
+            self._featured_large_positions = set()
+            return []
+
+        previous_cells = set()
+        for position in previous:
+            previous_cells.update(self._featured_occupied_cells(position))
+
+        def changed_cells(layout):
+            new_cells = set()
+            for position in layout:
+                new_cells.update(self._featured_occupied_cells(position))
+            return len(previous_cells.symmetric_difference(new_cells))
+
+        best_cost = min(changed_cells(layout) for layout in candidates)
+        best = [layout for layout in candidates if changed_cells(layout) == best_cost]
+        chosen = random.choice(best)
         self._featured_large_positions = set(chosen)
         return chosen
 
@@ -745,7 +772,13 @@ class FeaturedCtl:
         self._hide_featured_section(discard=True)
 
     def _populate_random_scripts(self, scripts, count, layout):
-        """Replace hidden Featured cards, including true three-row variants."""
+        """
+        Replace Featured content.
+
+        Geometry changes deliberately use the original full redraw. When geometry
+        is unchanged, ordinary cards whose cells remain ordinary are rebound in
+        place; only large cards and cells whose role changes are rebuilt.
+        """
         self._featured_swap_timer = None
         self._featured_swap_required_by_layout = False
 
@@ -764,17 +797,27 @@ class FeaturedCtl:
         if rows <= 0 or columns <= 0:
             return False
 
-        self._clear_random_scripts()
+        new_signature = (rows, columns, large_count, count)
+        previous_signature = getattr(self, "_featured_last_layout", None)
+        existing_children = list(self.random_scripts_flowbox.get_children())
+        same_geometry = bool(existing_children) and previous_signature == new_signature
 
+        # A resize/maximize/restore that changes rows, columns, large allowance or
+        # item count intentionally falls back to the proven original behavior.
+        if not same_geometry:
+            self._clear_random_scripts()
+            existing_children = []
+            # A new geometry has no meaningful large-card placement to preserve.
+            self._featured_large_positions = set()
+
+        previous_large_positions = set(
+            getattr(self, "_featured_large_positions", set())
+        )
         large_positions = self._choose_featured_large_positions(
             rows, columns, large_count
         )
         large_count = min(large_count, len(large_positions))
 
-        # Prefer entries with a genuinely localized short description for the
-        # richer presentation. The layout's current large_count is authoritative:
-        # localized entries exclusively fill large cards when there are enough,
-        # otherwise every localized entry is used and the remainder stays random.
         localized_scripts = [
             script for script in scripts
             if script.get("description_localized", False)
@@ -799,6 +842,13 @@ class FeaturedCtl:
         random.shuffle(large_positions)
 
         occupied = set()
+        for position in large_positions:
+            occupied.update(self._featured_occupied_cells(position))
+
+        previous_occupied = set()
+        for position in previous_large_positions:
+            previous_occupied.update(self._featured_occupied_cells(position))
+
         large_height = (3 * card_height) + (2 * row_spacing)
 
         def prepare_widget(script_info, *, large=False):
@@ -807,6 +857,7 @@ class FeaturedCtl:
                 featured_large=large,
                 featured_height=large_height if large else 0,
             )
+            widget._featured_grid_large = large
             description = script_info.get("description", "")
             widget.set_tooltip_text(description or None)
             widget.set_can_focus(True)
@@ -819,9 +870,27 @@ class FeaturedCtl:
             widget.connect("leave-notify-event", self._on_featured_card_leave)
             return widget
 
+        reusable_normals = {}
+        if same_geometry:
+            # Read positions from Gtk.Grid itself. Stable ordinary cells remain
+            # parented throughout the swap; large cards and role-changing cells do not.
+            for widget in existing_children:
+                left = self.random_scripts_flowbox.child_get_property(widget, "left-attach")
+                top = self.random_scripts_flowbox.child_get_property(widget, "top-attach")
+                width = self.random_scripts_flowbox.child_get_property(widget, "width")
+                height = self.random_scripts_flowbox.child_get_property(widget, "height")
+                position = (int(left), int(top))
+
+                if int(width) == 1 and int(height) == 1 and position not in occupied:
+                    reusable_normals[position] = widget
+                else:
+                    widget.destroy()
+
+        # Large cards are intentionally cheap structural churn. We do not try to
+        # preserve/reparent them; the placement algorithm instead minimizes how many
+        # ordinary cells have to be sacrificed when the large spans move.
         for script_info, position in zip(large_scripts, large_positions):
             column, row = position
-            occupied.update(self._featured_occupied_cells(position))
             widget = prepare_widget(script_info, large=True)
             self.random_scripts_flowbox.attach(widget, column, row, 1, 3)
 
@@ -831,14 +900,23 @@ class FeaturedCtl:
             for column in range(columns)
             if (column, row) not in occupied
         ]
-        for script_info, (column, row) in zip(normal_scripts, free_cells):
-            widget = prepare_widget(script_info, large=False)
-            self.random_scripts_flowbox.attach(widget, column, row, 1, 1)
+
+        for script_info, position in zip(normal_scripts, free_cells):
+            widget = reusable_normals.pop(position, None)
+            if widget is not None:
+                self.update_featured_normal_widget(widget, script_info)
+            else:
+                widget = prepare_widget(script_info, large=False)
+                column, row = position
+                self.random_scripts_flowbox.attach(widget, column, row, 1, 1)
+
+        # Defensive cleanup if selection/capacity ever leaves an old normal card
+        # without a corresponding new item.
+        for widget in reusable_normals.values():
+            widget.destroy()
 
         self._featured_last_count = count
-        self._featured_last_layout = (
-            rows, columns, large_count, count
-        )
+        self._featured_last_layout = new_signature
 
         displayed_keys = {
             self._featured_script_key(script_info)

@@ -531,6 +531,12 @@ class ItemWidgetFactory:
 
         card_surface.get_style_context().add_class("script-item")
         event_box.card_surface = card_surface
+        # Ordinary Featured cards can be rebound in-place between timed rotations.
+        # These references do not alter the widget hierarchy.
+        event_box._featured_name_widget = label
+        event_box._featured_icon_widget = icon_widget
+        event_box._featured_card_overlay = None
+        event_box._featured_badge_widget = None
 
         if item_info.get("is_new", False):
             card_surface.get_style_context().add_class("script-item-new")
@@ -541,6 +547,7 @@ class ItemWidgetFactory:
 
         card_overlay = Gtk.Overlay()
         card_overlay.add(card_surface)
+        event_box._featured_card_overlay = card_overlay
 
         if badge_path:
             badge_size = 20
@@ -555,6 +562,7 @@ class ItemWidgetFactory:
                 badge.set_halign(Gtk.Align.END)
                 badge.set_valign(Gtk.Align.START)
                 card_overlay.add_overlay(badge)
+                event_box._featured_badge_widget = badge
 
         event_box.add(card_overlay)
 
@@ -597,6 +605,98 @@ class ItemWidgetFactory:
 
         return event_box
 
+
+    def update_featured_normal_widget(self, widget, item_info):
+        """Rebind an existing ordinary Featured card without changing its hierarchy."""
+        widget.info = item_info
+        widget.set_tooltip_text(item_info.get("description", "") or None)
+
+        label = getattr(widget, "_featured_name_widget", None)
+        if isinstance(label, Gtk.Label):
+            label.set_text(item_info.get("name", ""))
+
+        icon = getattr(widget, "_featured_icon_widget", None)
+        if isinstance(icon, Gtk.Image):
+            icon_value = item_info.get("icon", "application-x-executable")
+            icon_size = 38
+            pixbuf = None
+            if icon_value.endswith((".png", ".svg")):
+                if not os.path.isabs(icon_value) and "/" not in icon_value:
+                    icon_path = get_icon_path(
+                        "local-script.svg"
+                        if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
+                        else icon_value
+                    )
+                else:
+                    icon_path = icon_value if os.path.exists(icon_value) else None
+                if icon_path and os.path.exists(icon_path):
+                    pixbuf = load_scaled_pixbuf(icon_path, icon_size, icon_size, True)
+
+            if pixbuf is not None:
+                icon.set_from_pixbuf(pixbuf)
+            else:
+                themed = (
+                    icon_value
+                    if not icon_value.endswith((".png", ".svg"))
+                    else "application-x-executable"
+                )
+                icon.set_from_icon_name(themed, Gtk.IconSize.DIALOG)
+                icon.set_pixel_size(icon_size)
+
+        overlay = getattr(widget, "_featured_card_overlay", None)
+        old_badge = getattr(widget, "_featured_badge_widget", None)
+        if overlay is not None and old_badge is not None:
+            overlay.remove(old_badge)
+            widget._featured_badge_widget = None
+
+        internal_id = str(
+            item_info.get("id") or item_info.get("script") or ""
+        ).strip()
+        if not internal_id:
+            item_path = str(item_info.get("path", "") or "")
+            if item_path and not item_path.startswith("repo://"):
+                internal_id = os.path.splitext(os.path.basename(item_path))[0]
+
+        badge_excluded = internal_id.casefold() in {
+            value.casefold() for value in BADGE_EXCLUDED_IDS
+        }
+        badge_path = ""
+        if not badge_excluded:
+            if item_info.get("is_verified", False):
+                badge_path = get_icon_path("verified.svg")
+            elif item_info.get("is_appstream_entry", False):
+                distro_badge = str(item_info.get("native_distro_badge", "") or "")
+                appstream_badge = str(item_info.get("appstream_badge", "") or "")
+                if distro_badge:
+                    badge_path = get_icon_path(distro_badge)
+                elif appstream_badge:
+                    badge_path = get_icon_path(appstream_badge)
+            elif item_info.get("is_repo_entry", False):
+                badge_path = get_icon_path("distros/linuxtoys.svg")
+            elif (
+                item_info.get("is_script", False)
+                and not item_info.get("is_subcategory", False)
+                and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
+            ):
+                badge_path = get_icon_path("distros/linuxtoys.svg")
+
+        if overlay is not None and badge_path:
+            badge_pixbuf = load_scaled_pixbuf(badge_path, 20, 20, True)
+            if badge_pixbuf is not None:
+                badge = Gtk.Image.new_from_pixbuf(badge_pixbuf)
+                badge.set_halign(Gtk.Align.END)
+                badge.set_valign(Gtk.Align.START)
+                overlay.add_overlay(badge)
+                badge.show()
+                widget._featured_badge_widget = badge
+
+        style = widget.card_surface.get_style_context()
+        if item_info.get("is_new", False):
+            style.add_class("script-item-new")
+        else:
+            style.remove_class("script-item-new")
+
+        return widget
 
     def _create_featured_large_item_widget(self, item_info, featured_height: int = 0):
         """Create the three-row Featured variant without changing normal cards."""
