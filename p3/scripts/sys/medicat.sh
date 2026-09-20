@@ -11,6 +11,7 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 
+askpass
 pkg_install --ostreecheck dos2unix
 prep_tmp_noram
 
