@@ -43,6 +43,14 @@ APPSTREAM_SOURCE_PREFERENCE = {
     },
 }
 
+# Developer-facing hard lock for applications that must use the system Flathub
+# installation. Match by AppStream/Flatpak application ID; a trailing .desktop
+# is ignored. The lock is applied only when a system-scope Flathub entry exists.
+# When active, native and user-scope Flatpak alternatives are intentionally hidden.
+SYSTEM_FLATPAK_ONLY = {
+    # "org.example.App",
+}
+
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
 # and Additional categories separate so the finer Additional mappings can be
 # tuned independently without changing the broad Main-category fallback.
@@ -630,6 +638,50 @@ def _component_match_keys(component):
     return component_id, name
 
 
+def _normalized_component_id(component):
+    component_id = str(component.get("id", "") or "").strip().casefold()
+    if component_id.endswith(".desktop"):
+        component_id = component_id[:-8]
+    return component_id
+
+
+def _system_flatpak_lock_ids():
+    result = set()
+    for value in SYSTEM_FLATPAK_ONLY:
+        component_id = str(value or "").strip().casefold()
+        if component_id.endswith(".desktop"):
+            component_id = component_id[:-8]
+        if component_id:
+            result.add(component_id)
+    return result
+
+
+def _locked_system_flatpak(group):
+    """Return the forced system Flathub candidate for this group, when available."""
+    locked_ids = _system_flatpak_lock_ids()
+    if not locked_ids:
+        return None
+    candidates = [
+        item for item in group
+        if item.get("source") == "flatpak"
+        and str(item.get("flatpak_scope", "") or "") == "system"
+        and _normalized_component_id(item) in locked_ids
+    ]
+    if not candidates:
+        return None
+    # Prefer Flatpak's default system installation over additional named ones.
+    candidates.sort(
+        key=lambda item: (
+            str(item.get("flatpak_installation", "") or "") != "default",
+            str(item.get("flatpak_installation", "") or ""),
+        )
+    )
+    selected = dict(candidates[0])
+    selected.pop("_source_alternatives", None)
+    selected.pop("_source_recommended", None)
+    return selected
+
+
 def _source_option_key(item):
     """Return a stable key that distinguishes Flatpak installation scopes."""
     source = str(item.get("source", "native") or "native")
@@ -714,6 +766,11 @@ def _prefer_sources(components, category_paths):
     # First merge exact IDs. A second conservative name pass catches native IDs
     # that use a desktop-file identifier different from the Flatpak app ID.
     for group in groups.values():
+        locked = _locked_system_flatpak(group)
+        if locked is not None:
+            result.append(locked)
+            continue
+
         # The same Flatpak remote can exist at user and system scope. Present one
         # app, preferring user scope because pkg_flat follows the same policy.
         flatpaks = [item for item in group if item.get("source") == "flatpak"]
@@ -771,6 +828,11 @@ def _prefer_sources(components, category_paths):
         # so combining that Flatpak entry with a differently-IDed native package
         # does not silently discard the system/user scope alternative.
         group = _expand_source_group(group)
+        locked = _locked_system_flatpak(group)
+        if locked is not None:
+            final.append(locked)
+            continue
+
         flatpaks = [item for item in group if item.get("source") == "flatpak"]
         natives = [item for item in group if item.get("source", "native") == "native"]
         flatpaks.sort(key=lambda item: (item.get("flatpak_scope") != "user", item.get("flatpak_installation", "")))
@@ -1020,6 +1082,7 @@ def _persistent_runtime_cache_key(
     """Return a stable, pickle-friendly key for the derived runtime cache."""
     return (
         RUNTIME_CACHE_SCHEMA,
+        tuple(sorted(_system_flatpak_lock_ids())),
         scripts_dir,
         int(catalog_mtime),
         curated_signature,
@@ -1112,7 +1175,14 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         )
     )
     category_paths = tuple(sorted(str(path) for path in (category_paths or ())))
-    cache_key = (scripts_dir, catalog_mtime, curated_signature, lang_code, category_paths)
+    cache_key = (
+        tuple(sorted(_system_flatpak_lock_ids())),
+        scripts_dir,
+        catalog_mtime,
+        curated_signature,
+        lang_code,
+        category_paths,
+    )
 
     with _CACHE_LOCK:
         cached = _RUNTIME_CACHE.get(cache_key)
