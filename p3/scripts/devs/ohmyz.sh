@@ -12,9 +12,13 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 sudo_rq
 pkg_install zsh
-prep_edit "$HOME/.zshrc"
+if [ -f "$HOME/.zshrc" ]; then
+    prep_edit "$HOME/.zshrc"
+else
+    prep_create "$HOME/.zshrc"
+fi
 (
 	sh -c "$(curl -fsSL https://install.ohmyz.sh/) --unattended" && {
 		shell_change "$(type -p zsh)";
 	}
-) && { zeninf "$msg018"; } || { fatal "Unable to complete installation"; }
+) && { info "$finishmsg"; } || die "Unable to complete installation"
