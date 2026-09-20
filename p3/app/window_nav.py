@@ -131,18 +131,25 @@ class NavCtl:
     def open_app_page(self, info, preserve_previous=False):
         """Open a repository entry's optional details page without altering checklist state."""
         old_page = self.main_stack.get_child_by_name("app_page")
-        if old_page is not None:
-            self.main_stack.remove(old_page)
-            old_page.destroy()
+        visible_child = self.main_stack.get_visible_child()
+        chaining_from_app_page = old_page is not None and visible_child is old_page
 
-        if not preserve_previous:
+        # Capture the origin before touching the current app page. When Featured
+        # opens another app page, keep the origin of the whole chain (search,
+        # category, or root) instead of replacing it with whatever Gtk.Stack makes
+        # visible after the old app page is removed.
+        if not preserve_previous and not chaining_from_app_page:
             self._app_page_prev = {
-                "child": self.main_stack.get_visible_child(),
+                "child": visible_child,
                 "header_visible": self.header_widget.get_visible(),
                 "title": self.header_bar.props.title,
                 "footer_revealed": self.reveal.get_reveal_child(),
                 "back_visible": self.back_button.get_visible(),
             }
+
+        if old_page is not None:
+            self.main_stack.remove(old_page)
+            old_page.destroy()
 
         page = app_page.AppPageView(
             info,
@@ -381,26 +388,45 @@ class NavCtl:
 
         if self.main_stack.get_visible_child_name() == "app_page":
             child = self.main_stack.get_child_by_name("app_page")
+            prev = getattr(self, "_app_page_prev", None)
 
-            if child is not None:
-                self.main_stack.remove(child)
-                child.destroy()
+            # App pages remember the exact view from which the app-page chain
+            # started. This includes generated search results, category views and
+            # the main menu. Opening another app from an app page's Featured
+            # section replaces the page but leaves that root origin intact.
+            if prev and prev.get("child") is not None:
+                self.main_stack.set_transition_type(
+                    Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
+                )
+                self.main_stack.set_visible_child(prev["child"])
+                self.header_bar.props.title = prev.get("title") or "LinuxToys"
 
-            # App pages are leaf views. Regardless of whether this page was opened
-            # from a category card, search result, URI, or another app page's
-            # Featured section, Back always returns to the app's owning category.
-            #
-            # The category view is already kept alive in scripts_view while an app
-            # page is open, so prefer it when it matches the page's category. This
-            # avoids treating another app page as navigation history.
-            if self.current_category_info and self.scripts_view is not None:
+                if prev.get("header_visible"):
+                    self.header_widget.show()
+                else:
+                    self.header_widget.hide()
+                self.reveal.set_reveal_child(bool(prev.get("footer_revealed")))
+
+                if prev.get("back_visible"):
+                    self.back_button.show()
+                else:
+                    self.back_button.hide()
+
+                if self.current_category_info and self._is_local_scripts_category(
+                    self.current_category_info
+                ):
+                    self._enable_drag_and_drop()
+                else:
+                    self._disable_drag_and_drop()
+            elif self.current_category_info and self.scripts_view is not None:
+                # Defensive fallback for app pages created before origin state was
+                # captured or for callers that deliberately omit it.
                 self.main_stack.set_transition_type(
                     Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
                 )
                 self.main_stack.set_visible_child(self.scripts_view)
                 self.header_widget.show()
                 self._update_header(self.current_category_info)
-
                 category_name = self.current_category_info.get("name", "Unknown")
                 self.header_bar.props.title = f"LinuxToys: {category_name}"
                 self.back_button.show()
@@ -418,10 +444,30 @@ class NavCtl:
                 else:
                     self.reveal.set_reveal_child(False)
             else:
-                # Root-level app pages have no owning category view to restore.
                 self.show_categories_view()
 
             self._app_page_prev = None
+
+            # Keep the departing app page alive for the reverse stack transition,
+            # just as terminal/category navigation does.
+            if child is not None:
+                transition_delay = max(
+                    1, int(self.main_stack.get_transition_duration())
+                )
+
+                def cleanup_app_page():
+                    try:
+                        if child.get_parent() is self.main_stack:
+                            self.main_stack.remove(child)
+                    except (AttributeError, TypeError):
+                        pass
+                    try:
+                        child.destroy()
+                    except (AttributeError, TypeError):
+                        pass
+                    return False
+
+                GLib.timeout_add(transition_delay, cleanup_app_page)
             return
 
         # Handle leaving the terminal before normal search navigation.
