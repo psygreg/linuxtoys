@@ -1,2 +1,0 @@
-ICON: misc.svg
-description: misc_desc
