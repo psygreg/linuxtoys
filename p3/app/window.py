@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import os
 import shutil
@@ -57,7 +58,9 @@ class AppWindow(
         self.translations = translations
 
         self.set_title("LinuxToys")
-        self.set_default_size(920, 630)  ##
+        self._default_window_size = (920, 630)
+        self._last_normal_window_size = self._default_window_size
+        self.set_default_size(*self._default_window_size)
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
 
         # Set window icon for proper GNOME integration
@@ -325,7 +328,10 @@ class AppWindow(
         # --- Check for pending ostree deployments ---
         self._check_ostree_deployments_on_startup()
 
-        # --- Show the Window ---
+        # --- Restore and show the Window ---
+        self._restore_window_state()
+        self.connect("configure-event", self._on_window_configure)
+        self.connect("window-state-event", self._on_window_state_changed)
         self.show_all()
         # show_all() recursively reveals header children, including the queue
         # button that was intentionally hidden when it was created. Re-apply
@@ -2043,9 +2049,162 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         dialog.destroy()
         return response == Gtk.ResponseType.YES
 
+
+    def _window_state_path(self):
+        """Return the per-environment cache path used for window geometry."""
+        try:
+            cache_dir = compat.get_linuxtoys_cache_dir()
+        except (AttributeError, TypeError):
+            cache_dir = os.path.join(os.path.expanduser("~"), ".cache", "linuxtoys")
+        return os.path.join(cache_dir, "window-state.json")
+
+    def _primary_monitor_workarea(self):
+        """Return the primary monitor's usable (non-panel) width and height."""
+        display = Gdk.Display.get_default()
+        if display is not None and hasattr(display, "get_primary_monitor"):
+            monitor = display.get_primary_monitor()
+            if monitor is not None:
+                area = monitor.get_workarea()
+                return area.width, area.height
+
+        screen = Gdk.Screen.get_default()
+        if screen is not None:
+            monitor_index = screen.get_primary_monitor()
+            area = screen.get_monitor_workarea(monitor_index)
+            return area.width, area.height
+        return None
+
+    def _restore_window_state(self):
+        """Restore the last usable size/maximized state for the current display."""
+        default_width, default_height = self._default_window_size
+        workarea = self._primary_monitor_workarea()
+
+        state = {}
+        try:
+            with open(self._window_state_path(), "r", encoding="utf-8") as state_file:
+                state = json.load(state_file)
+            if not isinstance(state, dict):
+                state = {}
+        except (OSError, ValueError, TypeError):
+            state = {}
+
+        if state.get("maximized") is True:
+            self.maximize()
+            return
+
+        try:
+            width = int(state.get("width", default_width))
+            height = int(state.get("height", default_height))
+        except (TypeError, ValueError):
+            width, height = default_width, default_height
+
+        # Reject nonsensical/corrupt geometry as well as geometry that no longer
+        # fits the current monitor. In either case, retry with the app default.
+        saved_size_valid = width > 0 and height > 0
+        if workarea is not None:
+            saved_size_valid = (
+                saved_size_valid
+                and width <= workarea[0]
+                and height <= workarea[1]
+            )
+
+        if not saved_size_valid:
+            width, height = default_width, default_height
+
+        if workarea is not None and (width > workarea[0] or height > workarea[1]):
+            self.maximize()
+            return
+
+        self._last_normal_window_size = (width, height)
+        self.set_default_size(width, height)
+
+    def _on_window_state_changed(self, _widget, event):
+        """Break stale Featured width constraints when leaving maximized state.
+
+        Featured uses a fixed-column Gtk.Grid. While maximized, that grid can have
+        more columns than fit in the restored window. If its old natural width
+        participates in the first post-unmaximize size negotiation, the surrounding
+        Gtk.ScrolledWindow can keep that wide allocation and expose horizontal
+        scrolling instead of letting the main FlowBox reflow.
+
+        Clear only the rendered Featured cards for that transition. The script pool
+        and selection history stay intact; the normal size-allocate path rebuilds
+        the grid once GTK has allocated the restored window width.
+        """
+        changed = bool(event.changed_mask & Gdk.WindowState.MAXIMIZED)
+        maximized = bool(event.new_window_state & Gdk.WindowState.MAXIMIZED)
+        if not changed or maximized:
+            return False
+
+        if (
+            hasattr(self, "main_stack")
+            and self.main_stack.get_visible_child_name() == "categories"
+            and getattr(self, "random_scripts_flowbox", None) is not None
+        ):
+            if getattr(self, "_featured_swap_timer", None):
+                GLib.source_remove(self._featured_swap_timer)
+                self._featured_swap_timer = None
+                self._featured_swap_required_by_layout = False
+
+            # Remove the old fixed-column grid immediately so it cannot impose the
+            # maximized natural width on the restored window.
+            self._clear_random_scripts()
+            self._featured_last_count = 0
+            self._featured_last_layout = None
+            self._featured_layout_metrics = None
+
+            self.random_scripts_revealer.set_reveal_child(False)
+            self.featured_scripts_revealer.set_reveal_child(False)
+
+            # Force a fresh width negotiation. categories_view's size-allocate
+            # callback will then run the existing debounced Featured recalculation.
+            self.categories_flowbox.queue_resize()
+            self.random_scripts_flowbox.queue_resize()
+            self.categories_view.queue_resize()
+
+        return False
+
+    def _on_window_configure(self, _widget, _event):
+        """Remember resizes without replacing the normal size while maximized."""
+        gdk_window = self.get_window()
+        if gdk_window is None:
+            return False
+        if gdk_window.get_state() & Gdk.WindowState.MAXIMIZED:
+            return False
+
+        width, height = self.get_size()
+        if width > 0 and height > 0:
+            self._last_normal_window_size = (width, height)
+        return False
+
+    def _save_window_state(self):
+        """Persist the last normal size plus the current maximized state."""
+        maximized = False
+        gdk_window = self.get_window()
+        if gdk_window is not None:
+            maximized = bool(gdk_window.get_state() & Gdk.WindowState.MAXIMIZED)
+
+        width, height = self._last_normal_window_size
+        state = {
+            "width": int(width),
+            "height": int(height),
+            "maximized": maximized,
+        }
+
+        state_path = self._window_state_path()
+        try:
+            os.makedirs(os.path.dirname(state_path), exist_ok=True)
+            temporary_path = f"{state_path}.tmp"
+            with open(temporary_path, "w", encoding="utf-8") as state_file:
+                json.dump(state, state_file)
+            os.replace(temporary_path, state_path)
+        except OSError as exc:
+            logger.warning("Could not save window state: %s", exc)
+
     def _close_application(self):
         """Closes the application gracefully and performs cleanup."""
-        # Persist Featured category sense once per session, at shutdown.
+        # Persist UI state once per session, at shutdown.
+        self._save_window_state()
         self._save_featured_sense()
 
         # Stop the persistent AppStream PTY before deleting its temporary state.
