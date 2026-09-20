@@ -582,6 +582,11 @@ class ItemWidgetFactory:
 
         badge_edge_space = 4
         card_surface.set_margin_top(badge_edge_space)
+        # Reserve the same horizontal breathing room on both sides. The badge
+        # still uses the overlay's full allocation and can straddle the painted
+        # card's right edge, while the visible card surface stays geometrically
+        # centered inside its FlowBox/Grid cell.
+        card_surface.set_margin_start(badge_edge_space)
         card_surface.set_margin_end(badge_edge_space)
 
         card_overlay = Gtk.Overlay()
