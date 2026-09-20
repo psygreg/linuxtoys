@@ -281,6 +281,13 @@ class AppWindow(
         )
 
         self.categories_view = Gtk.ScrolledWindow()
+        # This page is horizontally responsive: category cards reflow and Featured
+        # mirrors their effective column count. Never let an old natural width
+        # become a horizontal scrollable area after a window resize/state change.
+        self.categories_view.set_policy(
+            Gtk.PolicyType.AUTOMATIC,
+            Gtk.PolicyType.AUTOMATIC,
+        )
         self.categories_view.add(categories_container)
 
         # The parser-backed menu is populated asynchronously. Keep the already-open
@@ -2119,18 +2126,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self.set_default_size(width, height)
 
     def _on_window_state_changed(self, _widget, event):
-        """Break stale Featured width constraints when leaving maximized state.
-
-        Featured uses a fixed-column Gtk.Grid. While maximized, that grid can have
-        more columns than fit in the restored window. If its old natural width
-        participates in the first post-unmaximize size negotiation, the surrounding
-        Gtk.ScrolledWindow can keep that wide allocation and expose horizontal
-        scrolling instead of letting the main FlowBox reflow.
-
-        Clear only the rendered Featured cards for that transition. The script pool
-        and selection history stay intact; the normal size-allocate path rebuilds
-        the grid once GTK has allocated the restored window width.
-        """
+        """Keep Featured out of width negotiation while leaving maximized state."""
         changed = bool(event.changed_mask & Gdk.WindowState.MAXIMIZED)
         maximized = bool(event.new_window_state & Gdk.WindowState.MAXIMIZED)
         if not changed or maximized:
@@ -2141,27 +2137,38 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             and self.main_stack.get_visible_child_name() == "categories"
             and getattr(self, "random_scripts_flowbox", None) is not None
         ):
-            if getattr(self, "_featured_swap_timer", None):
-                GLib.source_remove(self._featured_swap_timer)
-                self._featured_swap_timer = None
-                self._featured_swap_required_by_layout = False
-
-            # Remove the old fixed-column grid immediately so it cannot impose the
-            # maximized natural width on the restored window.
-            self._clear_random_scripts()
-            self._featured_last_count = 0
-            self._featured_last_layout = None
-            self._featured_layout_metrics = None
-
-            self.random_scripts_revealer.set_reveal_child(False)
-            self.featured_scripts_revealer.set_reveal_child(False)
-
-            # Force a fresh width negotiation. categories_view's size-allocate
-            # callback will then run the existing debounced Featured recalculation.
-            self.categories_flowbox.queue_resize()
-            self.random_scripts_flowbox.queue_resize()
+            # Do not destroy/reselect cards here. Hiding the fixed-column grid is
+            # enough to stop its maximized natural width influencing the restored
+            # top-level size, while preserving Featured state and history.
+            self.random_scripts_flowbox.hide()
             self.categories_view.queue_resize()
+            self.categories_flowbox.queue_resize()
 
+            if getattr(self, "_featured_unmaximize_timer", None):
+                GLib.source_remove(self._featured_unmaximize_timer)
+
+            self._featured_unmaximize_timer = GLib.timeout_add(
+                self.FEATURED_RESIZE_DEBOUNCE_MS,
+                self._finish_featured_unmaximize,
+            )
+
+        return False
+
+    def _finish_featured_unmaximize(self):
+        """Re-enable Featured after the restored window geometry has settled."""
+        self._featured_unmaximize_timer = None
+
+        if self.main_stack.get_visible_child_name() != "categories":
+            self.random_scripts_flowbox.show()
+            return False
+
+        # At this point the category FlowBox has the restored viewport width, so the
+        # existing Featured geometry calculation can safely mirror its real columns.
+        self._featured_last_layout = None
+        self._featured_layout_metrics = None
+        self._refresh_random_scripts_display(force=False)
+        self.random_scripts_flowbox.show()
+        self.categories_view.queue_resize()
         return False
 
     def _on_window_configure(self, _widget, _event):
@@ -2203,6 +2210,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
     def _close_application(self):
         """Closes the application gracefully and performs cleanup."""
+        if getattr(self, "_featured_unmaximize_timer", None):
+            GLib.source_remove(self._featured_unmaximize_timer)
+            self._featured_unmaximize_timer = None
         # Persist UI state once per session, at shutdown.
         self._save_window_state()
         self._save_featured_sense()
