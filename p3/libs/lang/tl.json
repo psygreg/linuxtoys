@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Nabigo ang Rating",
   "app_page_rate_failed_message": "Hindi maisumite ang rating. Pakisubukan muli mamaya.",
   "specials": "Eksklusibo",
-  "specials_desc": "Software at mga script sa pag-install na pinili ng LinuxToys."
+  "specials_desc": "Software at mga script sa pag-install na pinili ng LinuxToys.",
+  "appstream_initial_building": "Binubuo ang paunang katalogo ng AppStream.\nMaaaring tumagal ito nang ilang segundo..."
 }

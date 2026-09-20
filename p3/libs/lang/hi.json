@@ -646,5 +646,6 @@
   "app_page_rate_failed_title": "रेटिंग विफल रही",
   "app_page_rate_failed_message": "रेटिंग सबमिट नहीं की जा सकी। कृपया बाद में फिर से प्रयास करें।",
   "specials": "विशेष",
-  "specials_desc": "LinuxToys द्वारा चुने गए सॉफ़्टवेयर और इंस्टॉलेशन स्क्रिप्ट।"
+  "specials_desc": "LinuxToys द्वारा चुने गए सॉफ़्टवेयर और इंस्टॉलेशन स्क्रिप्ट।",
+  "appstream_initial_building": "प्रारंभिक AppStream कैटलॉग बनाया जा रहा है।\nइसमें कुछ सेकंड लग सकते हैं..."
 }

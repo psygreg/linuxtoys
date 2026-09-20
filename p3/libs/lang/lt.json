@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Įvertinimas nepavyko",
   "app_page_rate_failed_message": "Nepavyko pateikti įvertinimo. Bandykite dar kartą vėliau.",
   "specials": "Išskirtinė",
-  "specials_desc": "LinuxToys atrinkta programinė įranga ir diegimo scenarijai."
+  "specials_desc": "LinuxToys atrinkta programinė įranga ir diegimo scenarijai.",
+  "appstream_initial_building": "Kuriamas pradinis AppStream katalogas.\nTai gali užtrukti kelias sekundes..."
 }

@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "درجہ بندی ناکام ہو گئی",
   "app_page_rate_failed_message": "درجہ بندی جمع نہیں کرائی جا سکی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
   "specials": "خصوصی",
-  "specials_desc": "LinuxToys کے منتخب کردہ سافٹ ویئر اور انسٹالیشن اسکرپٹس۔"
+  "specials_desc": "LinuxToys کے منتخب کردہ سافٹ ویئر اور انسٹالیشن اسکرپٹس۔",
+  "appstream_initial_building": "ابتدائی AppStream کیٹلاگ بنایا جا رہا ہے۔\nاس میں چند سیکنڈ لگ سکتے ہیں..."
 }

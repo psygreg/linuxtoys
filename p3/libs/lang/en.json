@@ -666,5 +666,6 @@
   "app_page_rate_success_title": "Rating Submitted",
   "app_page_rate_success_message": "Thank you! Your rating was submitted to ODRS.",
   "app_page_rate_failed_title": "Rating Failed",
-  "app_page_rate_failed_message": "Could not submit the rating. Please try again later."
+  "app_page_rate_failed_message": "Could not submit the rating. Please try again later.",
+  "appstream_initial_building": "Building initial AppStream catalog.\nThis may take a few seconds..."
 }

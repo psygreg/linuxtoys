@@ -129,6 +129,15 @@ class AppWindow(
         self._background_update_started = False
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
+        # Only the bootstrap case blocks the main menu. Once both artifacts exist,
+        # future AppStream refreshes remain fully background operations.
+        self._appstream_pickle_missing_at_startup = (
+            not appstream_parser.RUNTIME_CACHE_PATH.is_file()
+        )
+        self._appstream_initial_build_pending = (
+            not appstream_cache.CATALOG_PATH.is_file()
+            or self._appstream_pickle_missing_at_startup
+        )
         self._categories_loading_hide_source = None
         self._categories_loading_hide_started_us = None
         self._categories_loading_watermarks_flushed = False
@@ -329,6 +338,30 @@ class AppWindow(
             self.categories_loading_spinner, False, False, 0
         )
 
+        self.categories_loading_label = Gtk.Label()
+        loading_text = self.translations.get(
+            "appstream_initial_building",
+            "Building initial AppStream catalog.\nThis may take a few seconds...",
+        )
+        self.categories_loading_label.set_markup(
+            f'<span weight="bold" size="large">{GLib.markup_escape_text(loading_text)}</span>'
+        )
+        self.categories_loading_label.set_line_wrap(True)
+        self.categories_loading_label.set_justify(Gtk.Justification.CENTER)
+        self.categories_loading_label.set_max_width_chars(56)
+        # The window calls show_all() later during startup. Without no-show-all,
+        # that recursively makes this label visible again even when the pickle
+        # already existed and set_visible(False) was used here.
+        self.categories_loading_label.set_no_show_all(True)
+        self.categories_loading_box.pack_start(
+            self.categories_loading_label, False, False, 0
+        )
+        # The message is specifically for first-time AppStream preparation. Normal
+        # startup still uses the same roller while category cards/watermarks settle.
+        self.categories_loading_label.set_visible(
+            self._appstream_pickle_missing_at_startup
+        )
+
         self.categories_loading_overlay.add_overlay(self.categories_loading_box)
         self.main_stack.add_named(self.categories_loading_overlay, "categories")
 
@@ -411,23 +444,40 @@ class AppWindow(
             GLib.idle_add(self._set_appstream_state, state)
 
         def worker():
+            initial_build = self._appstream_initial_build_pending
             result = appstream_cache.refresh_cache(status_callback=report_state)
             if not result.get("success"):
                 logger.warning(
                     "AppStream catalog refresh failed: %s",
                     result.get("error", "unknown error"),
                 )
+                if initial_build:
+                    # Never strand a first launch behind the roller. LinuxToys can
+                    # still operate with curated entries and retry AppStream later.
+                    GLib.idle_add(self._finish_initial_appstream_build, False, False)
                 return
-            if result.get("changed"):
-                # catalog.json has already been atomically published at this point.
-                # Rebuild the derived AppStream pickle here, while GTK continues
-                # displaying the previous in-memory catalog. Only hand the update
-                # to GTK after the new persistent runtime cache is ready.
-                if not appstream_parser.prepare_runtime_cache():
+
+            changed = bool(result.get("changed"))
+            prepared = True
+
+            # A first launch must have the derived pickle before the menu is
+            # revealed, even if a catalog happened to appear before this worker ran.
+            # For later refreshes, prewarm only when a new catalog was published.
+            if initial_build or changed:
+                prepared = appstream_parser.prepare_runtime_cache()
+                if not prepared:
                     logger.warning(
-                        "Could not prewarm updated AppStream runtime cache; "
-                        "the normal refresh path will rebuild it."
+                        "Could not prewarm AppStream runtime cache; "
+                        "the normal parser path will rebuild it."
                     )
+
+            if initial_build:
+                GLib.idle_add(
+                    self._finish_initial_appstream_build,
+                    changed,
+                    prepared,
+                )
+            elif changed:
                 GLib.idle_add(self._apply_appstream_catalog)
 
         threading.Thread(
@@ -435,6 +485,24 @@ class AppWindow(
             daemon=True,
             name="linuxtoys-appstream-cache",
         ).start()
+        return False
+
+    def _finish_initial_appstream_build(self, catalog_changed, prepared):
+        """Release first-run startup after AppStream catalog/pickle preparation."""
+        self._appstream_initial_build_pending = False
+        if hasattr(self, "categories_loading_label"):
+            self.categories_loading_label.hide()
+
+        if catalog_changed:
+            # Rebuild parser/UI caches against the newly published catalog. The
+            # ordinary startup loading gate will then wait for the final category
+            # watermarks before revealing the menu.
+            return self._apply_appstream_catalog()
+
+        # If the catalog was already current, preparation only needed to create the
+        # missing derived pickle. The existing in-memory UI data is already valid.
+        # If preparation failed, release startup anyway rather than trapping the UI.
+        self._hide_categories_loading_indicator()
         return False
 
     def _apply_appstream_catalog(self):
@@ -1581,8 +1649,10 @@ class AppWindow(
         return False
 
     def _hide_categories_loading_indicator(self):
-        """Hide startup loading only after the first category watermarks are ready."""
+        """Hide startup loading only after bootstrap data and watermarks are ready."""
         if not hasattr(self, "categories_loading_box"):
+            return False
+        if self._appstream_initial_build_pending:
             return False
         if not self.categories_loading_box.get_visible():
             return False

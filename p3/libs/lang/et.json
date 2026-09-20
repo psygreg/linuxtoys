@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Hinnangu saatmine ebaõnnestus",
   "app_page_rate_failed_message": "Hinnangut ei õnnestunud esitada. Proovige hiljem uuesti.",
   "specials": "Eksklusiivne",
-  "specials_desc": "LinuxToysi valitud tarkvara ja paigaldusskriptid."
+  "specials_desc": "LinuxToysi valitud tarkvara ja paigaldusskriptid.",
+  "appstream_initial_building": "Esialgse AppStreami kataloogi loomine.\nSee võib võtta mõne sekundi..."
 }

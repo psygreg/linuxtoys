@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "評価の送信に失敗しました",
   "app_page_rate_failed_message": "評価を送信できませんでした。後でもう一度お試しください。",
   "specials": "限定",
-  "specials_desc": "LinuxToysが厳選したソフトウェアとインストールスクリプト。"
+  "specials_desc": "LinuxToysが厳選したソフトウェアとインストールスクリプト。",
+  "appstream_initial_building": "初期 AppStream カタログを構築しています。\n数秒かかる場合があります..."
 }

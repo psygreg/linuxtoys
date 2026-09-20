@@ -665,5 +665,6 @@
   "app_page_rate_failed_title": "Qiymətləndirmə Göndərilmədi",
   "app_page_rate_failed_message": "Qiymətləndirməni göndərmək mümkün olmadı. Daha sonra yenidən cəhd edin.",
   "specials": "Eksklüziv",
-  "specials_desc": "LinuxToys tərəfindən seçilmiş proqram təminatı və quraşdırma skriptləri."
+  "specials_desc": "LinuxToys tərəfindən seçilmiş proqram təminatı və quraşdırma skriptləri.",
+  "appstream_initial_building": "İlkin AppStream kataloqu yaradılır.\nBu bir neçə saniyə çəkə bilər..."
 }

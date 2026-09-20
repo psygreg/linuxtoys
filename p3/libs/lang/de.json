@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Bewertung fehlgeschlagen",
   "app_page_rate_failed_message": "Die Bewertung konnte nicht übermittelt werden. Bitte versuche es später erneut.",
   "specials": "Exklusiv",
-  "specials_desc": "Von LinuxToys ausgewählte Software und Installationsskripte."
+  "specials_desc": "Von LinuxToys ausgewählte Software und Installationsskripte.",
+  "appstream_initial_building": "Der anfängliche AppStream-Katalog wird erstellt.\nDies kann einige Sekunden dauern..."
 }

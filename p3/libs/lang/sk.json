@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Hodnotenie zlyhalo",
   "app_page_rate_failed_message": "Hodnotenie sa nepodarilo odoslať. Skúste to znova neskôr.",
   "specials": "Exkluzívne",
-  "specials_desc": "Softvér a inštalačné skripty vybrané LinuxToys."
+  "specials_desc": "Softvér a inštalačné skripty vybrané LinuxToys.",
+  "appstream_initial_building": "Vytvára sa počiatočný katalóg AppStream.\nMôže to trvať niekoľko sekúnd..."
 }

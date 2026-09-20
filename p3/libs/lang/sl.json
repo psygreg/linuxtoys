@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Ocenjevanje ni uspelo",
   "app_page_rate_failed_message": "Ocene ni bilo mogoče poslati. Poskusite znova pozneje.",
   "specials": "Ekskluzivno",
-  "specials_desc": "Programska oprema in namestitveni skripti, ki jih je izbral LinuxToys."
+  "specials_desc": "Programska oprema in namestitveni skripti, ki jih je izbral LinuxToys.",
+  "appstream_initial_building": "Ustvarjanje začetnega kataloga AppStream.\nTo lahko traja nekaj sekund..."
 }

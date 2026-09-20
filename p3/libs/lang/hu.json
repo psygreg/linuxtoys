@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Az értékelés sikertelen",
   "app_page_rate_failed_message": "Nem sikerült beküldeni az értékelést. Próbáld újra később.",
   "specials": "Exkluzív",
-  "specials_desc": "A LinuxToys által válogatott szoftverek és telepítési szkriptek."
+  "specials_desc": "A LinuxToys által válogatott szoftverek és telepítési szkriptek.",
+  "appstream_initial_building": "A kezdeti AppStream-katalógus létrehozása.\nEz néhány másodpercet vehet igénybe..."
 }

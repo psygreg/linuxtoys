@@ -668,5 +668,6 @@
   "app_page_rate_failed_title": "评分失败",
   "app_page_rate_failed_message": "无法提交评分，请稍后重试。",
   "specials": "独家",
-  "specials_desc": "由 LinuxToys 精选的软件和安装脚本。"
+  "specials_desc": "由 LinuxToys 精选的软件和安装脚本。",
+  "appstream_initial_building": "正在构建初始 AppStream 目录。\n这可能需要几秒钟..."
 }

@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Odeslání hodnocení selhalo",
   "app_page_rate_failed_message": "Hodnocení se nepodařilo odeslat. Zkuste to prosím později.",
   "specials": "Exkluzivní",
-  "specials_desc": "Software a instalační skripty vybrané LinuxToys."
+  "specials_desc": "Software a instalační skripty vybrané LinuxToys.",
+  "appstream_initial_building": "Vytváří se počáteční katalog AppStream.\nMůže to trvat několik sekund..."
 }

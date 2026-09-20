@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "فشل إرسال التقييم",
   "app_page_rate_failed_message": "تعذر إرسال التقييم. يرجى المحاولة مرة أخرى لاحقًا.",
   "specials": "حصري",
-  "specials_desc": "برامج ونصوص تثبيت منتقاة من LinuxToys."
+  "specials_desc": "برامج ونصوص تثبيت منتقاة من LinuxToys.",
+  "appstream_initial_building": "جارٍ إنشاء كتالوج AppStream الأولي.\nقد يستغرق هذا بضع ثوانٍ..."
 }

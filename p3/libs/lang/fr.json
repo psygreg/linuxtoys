@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "Échec de l'évaluation",
   "app_page_rate_failed_message": "Impossible d'envoyer l'évaluation. Veuillez réessayer plus tard.",
   "specials": "Exclusif",
-  "specials_desc": "Logiciels et scripts d’installation sélectionnés par LinuxToys."
+  "specials_desc": "Logiciels et scripts d’installation sélectionnés par LinuxToys.",
+  "appstream_initial_building": "Création du catalogue AppStream initial.\nCela peut prendre quelques secondes..."
 }

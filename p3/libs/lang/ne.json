@@ -666,5 +666,6 @@
   "app_page_rate_failed_title": "मूल्याङ्कन असफल भयो",
   "app_page_rate_failed_message": "मूल्याङ्कन पेश गर्न सकिएन। कृपया पछि फेरि प्रयास गर्नुहोस्।",
   "specials": "विशेष",
-  "specials_desc": "LinuxToys द्वारा छानिएका सफ्टवेयर र स्थापना स्क्रिप्टहरू।"
+  "specials_desc": "LinuxToys द्वारा छानिएका सफ्टवेयर र स्थापना स्क्रिप्टहरू।",
+  "appstream_initial_building": "प्रारम्भिक AppStream क्याटलग निर्माण हुँदैछ।\nयसले केही सेकेन्ड लिन सक्छ..."
 }
