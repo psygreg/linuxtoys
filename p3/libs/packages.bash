@@ -140,9 +140,11 @@ pkg_install () {
                 pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 runner_lock "package-transaction"
             else
+                runner_unlock
                 if ! command -v paru &>/dev/null; then
                     if question "Installer" "$msg305" 300 300; then
                         if pacman -Si paru &>/dev/null; then
+                            askpass
                             pkg_install paru || fatal "Failed to install paru"
                         else
                             call_script paru
@@ -152,13 +154,10 @@ pkg_install () {
                     fi
                 fi
                 if ! paru --version >/dev/null 2>&1; then # handle broken paru compiled against different libs, fix #1196
-                    runner_unlock
                     info "$parumsg"
                     call_script paru || die "Failed to repair paru"
                     paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
-                    runner_lock "package-transaction"
                 fi
-                runner_unlock
                 paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
                 runner_lock "package-transaction"
