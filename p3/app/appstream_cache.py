@@ -1168,7 +1168,14 @@ def get_state():
 
 def load_catalog():
     """Return the last fully published catalog without triggering any work."""
+    started = time.perf_counter()
     data = _read_json(CATALOG_PATH, [])
+    elapsed = time.perf_counter() - started
+    count = len(data) if isinstance(data, list) else 0
+    print(
+        f"[AppStream timing] catalog JSON load: {elapsed:.3f}s "
+        f"({count} components)"
+    )
     return data if isinstance(data, list) else []
 
 

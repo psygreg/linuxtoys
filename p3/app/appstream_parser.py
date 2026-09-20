@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import pickle
 import re
 import threading
 
@@ -13,6 +14,18 @@ from .lang_utils import detect_system_language
 
 _CACHE_LOCK = threading.RLock()
 _RUNTIME_CACHE = {}
+
+# Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
+# catalog.json remains authoritative; this file is disposable and regenerated
+# whenever any input represented by the runtime cache key changes.
+RUNTIME_CACHE_SCHEMA = 1
+RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
+
+# Most recent inputs used to build the live runtime catalog. This is process-local
+# only; it lets the AppStream refresh worker prewarm a newly published catalog
+# before GTK is told to switch to it.
+_LAST_LOAD_CONTEXT = None
+
 
 # Developer-facing source preference filter. Flatpak wins by default when the
 # same application exists in both catalogs. Add exceptions here by AppStream ID
@@ -933,13 +946,90 @@ def _to_repo_entry(component, category, lang_code):
     return entry
 
 
+
+def _persistent_runtime_cache_key(
+    scripts_dir,
+    catalog_mtime,
+    curated_signature,
+    lang_code,
+    category_paths,
+):
+    """Return a stable, pickle-friendly key for the derived runtime cache."""
+    return (
+        RUNTIME_CACHE_SCHEMA,
+        scripts_dir,
+        int(catalog_mtime),
+        curated_signature,
+        lang_code,
+        category_paths,
+    )
+
+
+def _load_persistent_runtime_cache(cache_key):
+    """Load final adapted entries when the on-disk cache matches this invocation.
+
+    The cache is derived/disposable. Any read, format, schema, or key mismatch is
+    treated as a normal cache miss and falls back to catalog.json.
+    """
+    try:
+        with open(RUNTIME_CACHE_PATH, "rb") as handle:
+            payload = pickle.load(handle)
+    except (OSError, EOFError, pickle.PickleError, AttributeError, ValueError, TypeError):
+        return None
+
+    if not isinstance(payload, dict):
+        return None
+    if payload.get("schema") != RUNTIME_CACHE_SCHEMA:
+        return None
+    if payload.get("key") != cache_key:
+        return None
+
+    entries = payload.get("entries")
+    if not isinstance(entries, list):
+        return None
+    if not all(isinstance(entry, dict) for entry in entries):
+        return None
+    return entries
+
+
+def _write_persistent_runtime_cache(cache_key, entries):
+    """Atomically publish the final adapted entries as a disposable pickle cache."""
+    try:
+        RUNTIME_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        tmp = RUNTIME_CACHE_PATH.with_name(RUNTIME_CACHE_PATH.name + ".tmp")
+        payload = {
+            "schema": RUNTIME_CACHE_SCHEMA,
+            "key": cache_key,
+            "entries": entries,
+        }
+        with open(tmp, "wb") as handle:
+            pickle.dump(payload, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, RUNTIME_CACHE_PATH)
+    except (OSError, pickle.PickleError, AttributeError, TypeError, ValueError):
+        try:
+            tmp.unlink()
+        except (OSError, UnboundLocalError):
+            pass
+
+
 def load_entries(scripts_dir, curated_entries=None, category_paths=None):
     """Return cached AppStream components as LinuxToys repository-like entries.
 
     This function never builds or refreshes AppStream metadata.  It only consumes
     the last atomically published catalog, keeping category parsing fast and safe.
     """
+    global _LAST_LOAD_CONTEXT
+
     scripts_dir = os.path.realpath(scripts_dir)
+    # Snapshot the actual parser inputs, not merely their derived signature. A
+    # catalog refresh can then rebuild the persistent cache off the GTK thread.
+    _LAST_LOAD_CONTEXT = (
+        scripts_dir,
+        [dict(entry) for entry in (curated_entries or ())],
+        tuple(str(path) for path in (category_paths or ())),
+    )
     try:
         catalog_mtime = appstream_cache.CATALOG_PATH.stat().st_mtime_ns
     except OSError:
@@ -965,6 +1055,20 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         cached = _RUNTIME_CACHE.get(cache_key)
         if cached is not None:
             return [dict(entry) for entry in cached]
+
+    persistent_key = _persistent_runtime_cache_key(
+        scripts_dir,
+        catalog_mtime,
+        curated_signature,
+        lang_code,
+        category_paths,
+    )
+    persistent = _load_persistent_runtime_cache(persistent_key)
+    if persistent is not None:
+        with _CACHE_LOCK:
+            _RUNTIME_CACHE.clear()
+            _RUNTIME_CACHE[cache_key] = persistent
+        return [dict(entry) for entry in persistent]
 
     curated_ids, curated_packages, curated_names = _curated_identity_sets(curated_entries)
     result = []
@@ -994,7 +1098,42 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         _RUNTIME_CACHE.clear()
         _RUNTIME_CACHE[cache_key] = result
 
+    _write_persistent_runtime_cache(persistent_key, result)
     return [dict(entry) for entry in result]
+
+
+
+def prepare_runtime_cache():
+    """Prebuild the derived cache for the currently published AppStream catalog.
+
+    Intended for the AppStream refresh worker after catalog.json has been
+    atomically replaced and before GTK is notified. The UI can keep using its
+    existing in-memory entries while this runs.
+
+    Returns True when a live parser context was available and the new catalog was
+    successfully adapted/cached, otherwise False.
+    """
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+
+    if context is None:
+        return False
+
+    scripts_dir, curated_entries, category_paths = context
+
+    # catalog.json has a new mtime after publication, so clearing the process
+    # cache guarantees load_entries() adapts that new catalog and atomically
+    # replaces runtime-entries.pickle before the UI refresh is scheduled.
+    clear_runtime_cache()
+    try:
+        load_entries(
+            scripts_dir,
+            curated_entries=curated_entries,
+            category_paths=category_paths,
+        )
+    except Exception:
+        return False
+    return True
 
 
 def find_entry_by_id(scripts_dir, appstream_id, curated_entries=None, category_paths=None):

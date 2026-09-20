@@ -129,6 +129,13 @@ class AppWindow(
         self._background_update_started = False
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
+        self._categories_loading_hide_source = None
+        self._categories_loading_hide_started_us = None
+        self._categories_loading_watermarks_flushed = False
+        self._categories_loading_fade_source = None
+        self._categories_loading_fade_started_us = None
+        self._categories_loading_fade_duration_ms = 220
+        self._categories_startup_transition_complete = False
 
         # --- UI Structure ---
         main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -297,6 +304,10 @@ class AppWindow(
             Gtk.PolicyType.AUTOMATIC,
         )
         self.categories_view.add(categories_container)
+        # Keep the real menu in the widget/layout tree so category allocations and
+        # watermark rendering can complete behind the startup roller, but do not let
+        # the unfinished menu flash on screen.
+        self.categories_view.set_opacity(0.0)
 
         # The parser-backed menu is populated asynchronously. Keep the already-open
         # window visually responsive while the first usable category snapshot is
@@ -408,6 +419,15 @@ class AppWindow(
                 )
                 return
             if result.get("changed"):
+                # catalog.json has already been atomically published at this point.
+                # Rebuild the derived AppStream pickle here, while GTK continues
+                # displaying the previous in-memory catalog. Only hand the update
+                # to GTK after the new persistent runtime cache is ready.
+                if not appstream_parser.prepare_runtime_cache():
+                    logger.warning(
+                        "Could not prewarm updated AppStream runtime cache; "
+                        "the normal refresh path will rebuild it."
+                    )
                 GLib.idle_add(self._apply_appstream_catalog)
 
         threading.Thread(
@@ -495,7 +515,11 @@ class AppWindow(
             self._render_categories(categories)
             self._hide_categories_loading_indicator()
             self.all_scripts = featured
-            if self.should_start_random_timer and featured:
+            if (
+                self.should_start_random_timer
+                and featured
+                and self._categories_startup_transition_complete
+            ):
                 self._deferred_start_random_scripts_refresh_timer()
             return False
 
@@ -519,7 +543,11 @@ class AppWindow(
             if self.category_cache is not category_cache:
                 return False
             self.all_scripts = featured
-            if self.should_start_random_timer and featured:
+            if (
+                self.should_start_random_timer
+                and featured
+                and self._categories_startup_transition_complete
+            ):
                 self._deferred_start_random_scripts_refresh_timer()
             return False
 
@@ -1440,12 +1468,142 @@ class AppWindow(
         self.reveal.support.hide()
         self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
-    def _hide_categories_loading_indicator(self):
-        """Remove the startup spinner once the first usable menu is published."""
-        if not hasattr(self, "categories_loading_box"):
+    def _categories_watermarks_ready(self):
+        """Return True once every rendered category watermark has a real pixbuf."""
+        flowbox = getattr(self, "categories_flowbox", None)
+        if flowbox is None or not flowbox.get_children():
             return False
+
+        watermark_surfaces = []
+        stack = [flowbox]
+        while stack:
+            widget = stack.pop()
+            if hasattr(widget, "_linuxtoys_apply_pending_watermark"):
+                watermark_surfaces.append(widget)
+            try:
+                stack.extend(widget.get_children())
+            except (AttributeError, RuntimeError):
+                pass
+
+        # Category cards without a watermark are valid, but if no watermark surface
+        # has even been constructed yet GTK has not reached the state we are waiting
+        # for.
+        if not watermark_surfaces:
+            return False
+
+        for surface in watermark_surfaces:
+            # The size-allocate callback creates this attribute.  None means its
+            # pending final size has already been rendered successfully.
+            if not hasattr(surface, "_linuxtoys_pending_watermark_size"):
+                return False
+            if surface._linuxtoys_pending_watermark_size is not None:
+                return False
+
+        return True
+
+    def _finish_categories_loading_when_ready(self):
+        """Keep the startup roller visible until category watermarks are painted."""
+        if not hasattr(self, "categories_loading_box"):
+            self._categories_loading_hide_source = None
+            return False
+
+        # This callback runs every 16 ms while startup is waiting. It must remain
+        # inspection-only: watermark rendering is comparatively expensive GTK work
+        # and should never be repeated from the polling loop.
+        if self._categories_watermarks_ready():
+            self._categories_loading_hide_source = None
+            self._categories_loading_hide_started_us = None
+            self._start_categories_loading_fade()
+            return False
+
+        # Never strand the application behind the roller if an icon is malformed or
+        # a theme/backend never produces the expected allocation callback.
+        started = self._categories_loading_hide_started_us
+        if started is not None and GLib.get_monotonic_time() - started >= 2_000_000:
+            self._categories_loading_hide_source = None
+            self._categories_loading_hide_started_us = None
+            self.categories_view.set_opacity(1.0)
+            self.categories_loading_spinner.stop()
+            self.categories_loading_box.hide()
+            self._categories_startup_transition_complete = True
+            if self.should_start_random_timer and self.all_scripts:
+                GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
+            return False
+
+        return True
+
+    def _start_categories_loading_fade(self):
+        """Cross-fade the completed main menu in while the startup roller fades out."""
+        if self._categories_loading_fade_source is not None:
+            return False
+        if not hasattr(self, "categories_view"):
+            return False
+
+        self._categories_loading_fade_started_us = GLib.get_monotonic_time()
+        self.categories_view.set_opacity(0.0)
+        self.categories_loading_box.set_opacity(1.0)
+        self._categories_loading_fade_source = GLib.timeout_add(
+            16,
+            self._step_categories_loading_fade,
+        )
+        return False
+
+    def _step_categories_loading_fade(self):
+        """Advance the startup cross-fade without removing either widget from layout."""
+        started = self._categories_loading_fade_started_us
+        if started is None:
+            self._categories_loading_fade_source = None
+            return False
+
+        elapsed_ms = (GLib.get_monotonic_time() - started) / 1000.0
+        duration = max(1, self._categories_loading_fade_duration_ms)
+        progress = min(1.0, elapsed_ms / duration)
+
+        self.categories_view.set_opacity(progress)
+        self.categories_loading_box.set_opacity(1.0 - progress)
+
+        if progress < 1.0:
+            return True
+
+        self._categories_loading_fade_source = None
+        self._categories_loading_fade_started_us = None
+        self.categories_view.set_opacity(1.0)
+        self.categories_loading_box.set_opacity(1.0)
         self.categories_loading_spinner.stop()
         self.categories_loading_box.hide()
+
+        # Featured creation/animation is intentionally held back during startup so
+        # its GTK work cannot contend with the opacity crossfade. Release it only
+        # after the final crossfade frame has been committed.
+        self._categories_startup_transition_complete = True
+        if self.should_start_random_timer and self.all_scripts:
+            GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
+        return False
+
+    def _hide_categories_loading_indicator(self):
+        """Hide startup loading only after the first category watermarks are ready."""
+        if not hasattr(self, "categories_loading_box"):
+            return False
+        if not self.categories_loading_box.get_visible():
+            return False
+        if self._categories_loading_hide_source is not None:
+            return False
+
+        self._categories_loading_hide_started_us = GLib.get_monotonic_time()
+
+        # Give any deferred startup watermark allocations one explicit chance to
+        # render before polling. After this, the 16 ms readiness callback only
+        # observes state; normal allocation/resize machinery owns further renders.
+        if not self._categories_loading_watermarks_flushed:
+            flush = getattr(self, "_flush_deferred_category_watermarks", None)
+            if flush is not None:
+                flush()
+            self._categories_loading_watermarks_flushed = True
+
+        self._categories_loading_hide_source = GLib.timeout_add(
+            16,
+            self._finish_categories_loading_when_ready,
+        )
         return False
 
     def _render_categories(self, categories):
@@ -2221,6 +2379,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             if (
                 self.should_start_random_timer
                 and self.all_scripts
+                and self._categories_startup_transition_complete
                 and self.main_stack.get_visible_child_name() == "categories"
             ):
                 self._apply_featured_resize()
