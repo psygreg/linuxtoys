@@ -72,6 +72,7 @@ class AppPageView(Gtk.Box):
         self._featured_flow_columns = None
         self._featured_flow_width = 0
         self._remote_screenshots_pending = 0
+        self._responsive_textviews = []
         self.connect("destroy", self._on_destroy)
 
         self.header = InfosHead(self.translations, show_terminal_controls=False)
@@ -128,8 +129,9 @@ class AppPageView(Gtk.Box):
         self.set_border_width(12)
 
         # Re-evaluate only after GTK has wrapped/measured the real page contents.
-        scroller.connect("size-allocate", self._schedule_featured_fill)
-        content.connect("size-allocate", self._schedule_featured_fill)
+        # Do not schedule Featured from every intermediate GTK allocation.
+        # Initial population comes from map; window resizing is handled by the
+        # single top-level settled-resize coordinator.
         self.connect("map", self._schedule_featured_fill)
 
     def _build_featured_fill(self):
@@ -182,6 +184,10 @@ class AppPageView(Gtk.Box):
             return False
 
         self._featured_flow_width = available_width
+        if getattr(self.parent, "_window_resize_pending", False):
+            # Record geometry only. Column arithmetic and rebuilding wait for the
+            # single settled-resize pass.
+            return False
 
         # 128px is only the hard minimum size request of an ordinary script
         # widget; it is not a useful layout column width. At normal app-page
@@ -223,11 +229,48 @@ class AppPageView(Gtk.Box):
     def _schedule_featured_fill(self, *_args):
         if self._destroyed:
             return False
+
+        if getattr(self.parent, "_window_resize_pending", False):
+            return False
+
         if self._featured_fill_source is not None:
             GLib.source_remove(self._featured_fill_source)
         self._featured_fill_source = GLib.timeout_add(
             120, self._refresh_featured_fill
         )
+        return False
+
+    def on_window_resize_settled(self, *, size_changed=True):
+        """Consume final window geometry once after the global resize debounce."""
+        if self._destroyed:
+            return False
+
+        # Re-evaluate FlowBox columns from its final allocation. The handler only
+        # rebuilds when the calculated column count actually changes.
+        flowbox = self._featured_fill_flowbox
+        if flowbox is not None:
+            allocation = flowbox.get_allocation()
+            self._on_featured_flowbox_allocate(flowbox, allocation)
+
+        # Wrapped TextViews need a final height-for-width fit, but not one for
+        # every intermediate allocation produced during the drag.
+        for view in tuple(self._responsive_textviews):
+            try:
+                self._fit_markdown_view_height(view)
+            except (RuntimeError, AttributeError):
+                pass
+
+        # Screenshot presentation stays fixed, but source variant selection follows
+        # the final allocation in both grow and shrink directions.
+        if self.screenshot_stack is not None:
+            for frame in self.screenshot_stack.get_children():
+                try:
+                    self._on_screenshot_size_allocate(frame, frame.get_allocation())
+                except (RuntimeError, AttributeError):
+                    pass
+
+        self._featured_fill_signature = None if size_changed else self._featured_fill_signature
+        self._schedule_featured_fill()
         return False
 
     def _clear_featured_fill(self):
@@ -576,6 +619,7 @@ class AppPageView(Gtk.Box):
 
         view.set_buffer(buffer)
         view._markdown_fit_source = None
+        self._responsive_textviews.append(view)
         view.connect("size-allocate", self._schedule_markdown_view_height_fit)
         view.connect("map", self._schedule_markdown_view_height_fit)
         return view
@@ -622,6 +666,7 @@ class AppPageView(Gtk.Box):
         view.set_vexpand(False)
         view.set_size_request(-1, 1)
         view._markdown_fit_source = None
+        self._responsive_textviews.append(view)
         view.connect("size-allocate", self._schedule_markdown_view_height_fit)
         view.connect("map", self._schedule_markdown_view_height_fit)
         view.connect("button-release-event", self._on_markdown_link_clicked)
@@ -913,6 +958,8 @@ class AppPageView(Gtk.Box):
 
     def _schedule_markdown_view_height_fit(self, view, *_args):
         """Measure Markdown after GTK finishes the current layout pass."""
+        if getattr(self.parent, "_window_resize_pending", False):
+            return
         if getattr(view, "_markdown_fit_source", None) is None:
             view._markdown_fit_source = GLib.idle_add(
                 self._fit_markdown_view_height,
@@ -923,6 +970,8 @@ class AppPageView(Gtk.Box):
     def _fit_markdown_view_height(self, view):
         """Keep a wrapped Markdown TextView only as tall as its rendered text."""
         view._markdown_fit_source = None
+        if getattr(self.parent, "_window_resize_pending", False):
+            return False
 
         # If the widget has not received a real width yet, wait for the next
         # allocation. Text wrapping (and therefore height) depends on that width.
@@ -1615,6 +1664,8 @@ class AppPageView(Gtk.Box):
         return max(1120, max(0, int(width)) * scale)
 
     def _on_screenshot_size_allocate(self, frame, allocation):
+        if getattr(self.parent, "_window_resize_pending", False):
+            return
         variants = getattr(frame, "_linuxtoys_screenshot_variants", ())
         if not variants:
             return

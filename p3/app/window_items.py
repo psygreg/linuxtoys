@@ -165,6 +165,26 @@ class ItemWidgetFactory:
             rowstride,
         )
 
+    def _flush_deferred_category_watermarks(self):
+        """Render allocation-sized category watermarks once after resize settles."""
+        root = getattr(self, "categories_flowbox", None)
+        if root is None:
+            return
+
+        stack = [root]
+        while stack:
+            widget = stack.pop()
+            apply_pending = getattr(widget, "_linuxtoys_apply_pending_watermark", None)
+            if apply_pending is not None:
+                try:
+                    apply_pending(widget)
+                except (RuntimeError, AttributeError):
+                    pass
+            try:
+                stack.extend(widget.get_children())
+            except (AttributeError, RuntimeError):
+                pass
+
     def create_flowbox(self):
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
@@ -497,17 +517,35 @@ class ItemWidgetFactory:
             category_watermark.set_halign(Gtk.Align.FILL)
             category_watermark.set_valign(Gtk.Align.FILL)
 
-            def category_watermark_update(_surface, allocation, image=category_watermark, path=icon_path):
+            def category_watermark_update(surface, allocation, image=category_watermark, path=icon_path):
                 size = (int(allocation.width), int(allocation.height))
                 if size[0] <= 0 or size[1] <= 0:
                     return
                 if getattr(image, "_linuxtoys_watermark_size", None) == size:
                     return
 
+                # During interactive resize, record only the final requested size.
+                # The 4x render/downsample/rounded-corner work is deferred to the
+                # window-level settled-resize pass.
+                surface._linuxtoys_pending_watermark_size = size
+                if getattr(self, "_window_resize_pending", False):
+                    return
+
                 pixbuf = self._category_watermark_pixbuf(path, *size)
                 if pixbuf is not None:
                     image.set_from_pixbuf(pixbuf)
                     image._linuxtoys_watermark_size = size
+                    surface._linuxtoys_pending_watermark_size = None
+
+            def apply_pending_watermark(surface, image=category_watermark, path=icon_path):
+                size = getattr(surface, "_linuxtoys_pending_watermark_size", None)
+                if not size or getattr(image, "_linuxtoys_watermark_size", None) == size:
+                    return
+                pixbuf = self._category_watermark_pixbuf(path, *size)
+                if pixbuf is not None:
+                    image.set_from_pixbuf(pixbuf)
+                    image._linuxtoys_watermark_size = size
+                    surface._linuxtoys_pending_watermark_size = None
 
         if category_watermark is not None:
             # The normal card_surface Gtk.Box expands `box` across the full FlowBox
@@ -524,6 +562,7 @@ class ItemWidgetFactory:
             card_surface = Gtk.Grid()
             card_surface.attach(category_watermark, 0, 0, 1, 1)
             card_surface.attach(box, 0, 0, 1, 1)
+            card_surface._linuxtoys_apply_pending_watermark = apply_pending_watermark
             card_surface.connect("size-allocate", category_watermark_update)
         else:
             card_surface = Gtk.Box()

@@ -232,13 +232,11 @@ class FeaturedCtl:
             return widget.get_allocated_width()
 
     def _get_featured_card_size(self):
-        """
-        Measure a representative script card.
+        """Return the stable representative Featured card measurement."""
+        cached = getattr(self, "_featured_card_size_cache", None)
+        if cached is not None:
+            return cached
 
-        Existing category cards are preferred because they are already realized.
-        A featured card is created temporarily only when no existing card can be
-        measured yet.
-        """
         sample = None
         temporary_sample = False
 
@@ -256,8 +254,16 @@ class FeaturedCtl:
         if temporary_sample:
             sample.destroy()
 
-        # Safe fallbacks for the first allocation cycle.
-        return max(1, card_width or 120), max(1, card_height or 64)
+        # Safe fallbacks for the first allocation cycle. Cache only a real
+        # measurement; fallback geometry is intentionally retried later.
+        result = (max(1, card_width or 120), max(1, card_height or 64))
+        if card_width > 0 and card_height > 0:
+            self._featured_card_size_cache = result
+        return result
+
+    def _invalidate_featured_measurements(self):
+        """Invalidate stable measurements after content/theme/language rebuilds."""
+        self._featured_card_size_cache = None
 
     def _calculate_featured_columns(self):
         """Mirror the main menu's *actual* currently allocated column count."""
@@ -985,11 +991,11 @@ class FeaturedCtl:
             GLib.source_remove(self._featured_swap_timer)
             self._featured_swap_timer = None
 
-        if current_children:
-            # Hover is allowed to cancel a cosmetic timed rotation, but a resize
-            # that changes the grid geometry must complete. Window maximization can
-            # synthesize pointer enter events while GTK reallocates the cards.
-            self._featured_swap_required_by_layout = layout_changed
+        if current_children and not layout_changed:
+            # Timed content rotations keep the cosmetic cross-fade. Their geometry
+            # is unchanged, so hiding/revealing the inner revealer cannot disturb
+            # the section's vertical allocation.
+            self._featured_swap_required_by_layout = False
             self.random_scripts_revealer.set_reveal_child(False)
             self._featured_swap_timer = GLib.timeout_add(
                 self.FEATURED_SWAP_ANIMATION_MS,
@@ -999,8 +1005,16 @@ class FeaturedCtl:
                 layout,
             )
         else:
+            # A settled resize that changes rows/columns is structural, not a
+            # cosmetic card swap. Rebuilding through a hidden Gtk.Revealer left its
+            # previous allocation in the surrounding vertical box for one layout
+            # cycle, which is what produced the one-off title/card gap on the second
+            # draw. Apply the final geometry immediately instead.
             self._featured_swap_required_by_layout = False
             self._populate_random_scripts(scripts, count, layout)
+            if layout_changed:
+                self.random_scripts_flowbox.queue_resize()
+                self.featured_scripts_container.queue_resize()
 
         return True
 
@@ -1017,13 +1031,14 @@ class FeaturedCtl:
         if self.main_stack.get_visible_child_name() != "categories":
             return
 
-        if getattr(self, "_featured_resize_timer", None):
-            GLib.source_remove(self._featured_resize_timer)
-
-        self._featured_resize_timer = GLib.timeout_add(
-            self.FEATURED_RESIZE_DEBOUNCE_MS,
-            self._apply_featured_resize,
-        )
+        # Window owns the only responsive debounce timer. This signal is still
+        # important for navigation back to the main menu, where the window itself
+        # may not have changed size.
+        request_settle = getattr(self, "_request_window_resize_settle", None)
+        if request_settle is not None:
+            request_settle()
+        else:
+            self._apply_featured_resize()
 
     def _apply_featured_resize(self):
         """Apply the resize-triggered featured-section update using settled geometry."""

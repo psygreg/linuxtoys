@@ -99,6 +99,14 @@ class AppWindow(
         self.featured_scripts_container = None  # Container for the featured section
         self.should_start_random_timer = False  # Flag to start timer when scripts are ready
         self._featured_resize_timer = None
+        # One debounce authority for all expensive application-level responsive
+        # work. GTK may continue allocating live while the user drags the window;
+        # LinuxToys only recalculates custom layouts after geometry settles.
+        self._window_resize_settle_timer = None
+        self._window_resize_pending = False
+        self._window_resize_settling = False
+        self._pending_window_size = self._default_window_size
+        self._last_settled_window_size = None
         self._featured_last_count = None
         self._featured_swap_timer = None
         self._featured_hovered = False
@@ -2171,8 +2179,68 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self.categories_view.queue_resize()
         return False
 
+    def _request_window_resize_settle(self, *_args):
+        """Restart the single debounce used by responsive LinuxToys UI work."""
+        if getattr(self, "_window_resize_settling", False):
+            return False
+
+        width, height = self.get_size()
+        if width > 0 and height > 0:
+            self._pending_window_size = (int(width), int(height))
+
+        self._window_resize_pending = True
+        if self._window_resize_settle_timer is not None:
+            GLib.source_remove(self._window_resize_settle_timer)
+
+        self._window_resize_settle_timer = GLib.timeout_add(
+            self.FEATURED_RESIZE_DEBOUNCE_MS,
+            self._apply_window_resize_settled,
+        )
+        return False
+
+    def _apply_window_resize_settled(self):
+        """Run expensive responsive calculations once after resizing goes quiet."""
+        self._window_resize_settle_timer = None
+        self._window_resize_pending = False
+        self._window_resize_settling = True
+
+        try:
+            size = tuple(getattr(self, "_pending_window_size", self.get_size()))
+            size_changed = size != self._last_settled_window_size
+            self._last_settled_window_size = size
+
+            # Allocation-sized category watermarks are intentionally not regenerated
+            # while an interactive resize is in progress. Render them once at the
+            # final settled allocation instead.
+            flush_watermarks = getattr(self, "_flush_deferred_category_watermarks", None)
+            if flush_watermarks is not None:
+                flush_watermarks()
+
+            # Main-menu Featured already compares its final rows/columns against
+            # the previous layout, so this is cheap when no breakpoint changed.
+            if (
+                self.should_start_random_timer
+                and self.all_scripts
+                and self.main_stack.get_visible_child_name() == "categories"
+            ):
+                self._apply_featured_resize()
+
+            # App pages own several width-dependent operations (description height,
+            # screenshot source choice and Featured geometry). Let the page consume
+            # the same final window geometry in one pass.
+            if self.main_stack.get_visible_child_name() == "app_page":
+                page = self.main_stack.get_child_by_name("app_page")
+                if page is not None and hasattr(page, "on_window_resize_settled"):
+                    page.on_window_resize_settled(size_changed=size_changed)
+        finally:
+            self._window_resize_settling = False
+
+        return False
+
     def _on_window_configure(self, _widget, _event):
-        """Remember resizes without replacing the normal size while maximized."""
+        """Remember normal size and debounce expensive responsive recalculation."""
+        self._request_window_resize_settle()
+
         gdk_window = self.get_window()
         if gdk_window is None:
             return False
