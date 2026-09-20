@@ -145,7 +145,7 @@ davincinatd () {
     fi
 }
 
-davinciboxd () {    
+davinciboxd () {
     curl -L -o autodavincibox.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autodavincibox.sh"
     chmod +x autodavincibox.sh
     ./autodavincibox.sh
@@ -234,7 +234,7 @@ davinciboxatom () {
     # installation
     dv_atom_in () {
         check_disk_space "$_upkgname"
-        sudo_rq  
+        sudo_rq
         dv_atom_deps
         git clone https://github.com/zelikos/davincibox.git
         sleep 1
@@ -294,7 +294,7 @@ if is_ostree; then
     { ! is_hybridgpu && davinciboxatom; } || die "$incompatmsg"
 elif is_solus; then
     { ! is_hybridgpu && davinciboxd; } || die "$incompatmsg"
-elif is_hybridgpu; then
+elif is_hybridgpu || is_zorin; then
     davincinatd
 else
     # menu
