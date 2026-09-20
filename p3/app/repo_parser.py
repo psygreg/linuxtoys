@@ -2074,6 +2074,21 @@ def create_install_script(entry):
             raise ValueError("No Flathub package name matches this operating system")
 
         skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
+        print(
+            "APPSTREAM MATERIALIZATION DEBUG:",
+            {
+                "name": entry.get("name"),
+                "type": install_type,
+                "package-name": entry.get("package-name"),
+                "appstream_id": entry.get("appstream_id"),
+                "appstream_source": entry.get("appstream_source"),
+                "flatpak_remote": entry.get("flatpak_remote"),
+                "flatpak_scope": entry.get("flatpak_scope"),
+                "flatpak_installation": entry.get("flatpak_installation"),
+                "resolved_packages": packages,
+            },
+            flush=True,
+        )
         command = "\n".join(
             f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
             for package in packages

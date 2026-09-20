@@ -898,7 +898,7 @@ def _to_repo_entry(component, category, lang_code):
         "icon": str(component.get("icon", "") or "application-x-executable"),
         "category": category,
         "type": "flathub" if is_flatpak else "native",
-        "package-name": component_id if is_flatpak else packages,
+        "package-name": packages[0] if is_flatpak and packages else component_id if is_flatpak else packages,
         "repo": origin or "appstream",
         "revert": "yes",
         "reboot": "no",

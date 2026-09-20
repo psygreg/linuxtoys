@@ -28,7 +28,7 @@ from . import popularity
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 15
+CACHE_SCHEMA = 16
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -671,6 +671,12 @@ def _flatpak_component_fingerprint(component, source) -> str:
     }, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(raw_component + b"\0" + source_bits).hexdigest()
 
+def _flatpak_app_id(component_id):
+    """Return the installable Flatpak app ID for an AppStream component ID."""
+    component_id = str(component_id or "").strip()
+    if component_id.endswith(".desktop"):
+        return component_id[:-8]
+    return component_id
 
 def _normalize_component(component):
     component_id = str(_safe_call(component, "get_id", "") or "").strip()
@@ -897,6 +903,7 @@ def _flatpak_icon(component, appstream_dir, component_id):
 
 def _normalize_flatpak_component(component, source):
     component_id = _xml_localized_text(component, "id")
+    flatpak_app_id = _flatpak_app_id(component_id)
     name = _xml_localized_text(component, "name")
     summary = _xml_localized_text(component, "summary")
     categories = [
@@ -961,7 +968,7 @@ def _normalize_flatpak_component(component, source):
             _localized_xml_text_values(component, "developer_name")
             or _localized_xml_text_values(component.find("developer"), "name")
         ),
-        "packages": [component_id],
+        "packages": [flatpak_app_id],
         "categories": categories,
         "icon": _flatpak_icon(component, appstream_dir, component_id),
         "screenshots": screenshots,
