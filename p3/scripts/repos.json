@@ -26,6 +26,16 @@
         "package-name": "org.prismlauncher.PrismLauncher"
     },
     {
+        "name": "Gear Lever",
+        "description": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
+        "description_tag": "glever_desc",
+        "repo": "https://github.com/mijorus/gearlever",
+        "category": "sysadm",
+        "icon": "gearlever.png",
+        "type": "flathub",
+        "package-name": "it.mijorus.gearlever"
+    },
+    {
         "name": "ProtonPlus",
         "description": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
         "description_tag": "pp_desc",
