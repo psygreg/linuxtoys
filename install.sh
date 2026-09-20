@@ -100,12 +100,23 @@ osarch() {
         error "Failed to install makepkg dependency debugedit"
     { pacman -Qi fakeroot &>/dev/null || sudo pacman -S --noconfirm fakeroot; } ||
         error "Failed to install makepkg dependency fakeroot"
+    if [ "$ID" = "cachyos" ]; then
+        mapfile -t missing_deps < <(
+            pacman -T \
+                bash git curl wget zenity appstream archlinux-appstream-data \
+                python python-gobject python-requests gtk3 vte3 sudo
+                )
+        if ((${#missing_deps[@]})); then
+            sudo pacman -S --noconfirm --asdeps "${missing_deps[@]}" || error "Failed to install LinuxToys dependencies."
+        fi
+    fi
     rm -rf "${_pkg_dir}" # fix file permanence on /tmp on some arch distros
     mkdir -p "${_pkg_dir}"
 
     if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
         cd "${_pkg_dir}" || error "Failed to enter build directory."
-		if makepkg -s -f; then
+        { [ "$ID" = "cachyos" ] && _makepkg_args=(-f); } || _makepkg_args=(-s -f)
+        if makepkg "${_makepkg_args[@]}"; then
 			if sudo pacman -U --noconfirm "${_pkg_dir}linuxtoys-${_tag_name}-1-$(uname -m).pkg.tar.zst"; then
                 info "LinuxToys installed or updated!"
             else
