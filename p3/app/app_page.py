@@ -22,6 +22,26 @@ class _WidthNeutralTextView(Gtk.TextView):
         return (0, 0)
 
 
+class _WidthNeutralFeaturedGrid(Gtk.Grid):
+    """Lower Featured rows must not establish the app-page/window width."""
+
+    def do_get_preferred_width(self):
+        return (0, 0)
+
+    def do_get_preferred_width_for_height(self, height):
+        return (0, 0)
+
+
+class _WidthNeutralFeaturedFlowBox(Gtk.FlowBox):
+    """App-page measuring FlowBox that must not establish window width."""
+
+    def do_get_preferred_width(self):
+        return (0, 0)
+
+    def do_get_preferred_width_for_height(self, height):
+        return (0, 0)
+
+
 class AppPageView(Gtk.Box):
     """Repository-entry details page with screenshots and install/support actions."""
 
@@ -47,7 +67,10 @@ class AppPageView(Gtk.Box):
         self._featured_fill_signature = None
         self._featured_fill_first_draw = True
         self._featured_fill_box = None
+        self._featured_fill_flowbox = None
         self._featured_fill_grid = None
+        self._featured_flow_columns = None
+        self._featured_flow_width = 0
         self._remote_screenshots_pending = 0
         self.connect("destroy", self._on_destroy)
 
@@ -125,16 +148,77 @@ class AppPageView(Gtk.Box):
         label.get_style_context().add_class("title-2")
         box.pack_start(label, False, False, 0)
 
-        grid = Gtk.Grid()
+        # The first visible row is a FlowBox. GTK can therefore reflow it from
+        # the real app-page allocation without the Featured section establishing
+        # its own window width. The rows below inherit the resulting column count.
+        flowbox = _WidthNeutralFeaturedFlowBox()
+        flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        flowbox.set_homogeneous(True)
+        flowbox.set_min_children_per_line(1)
+        flowbox.set_max_children_per_line(5)
+        flowbox.set_column_spacing(16)
+        flowbox.set_row_spacing(18)
+        flowbox.set_valign(Gtk.Align.START)
+        flowbox.set_hexpand(True)
+        flowbox.connect("size-allocate", self._on_featured_flowbox_allocate)
+        box.pack_start(flowbox, False, False, 0)
+
+        grid = _WidthNeutralFeaturedGrid()
         grid.set_valign(Gtk.Align.START)
         grid.set_column_homogeneous(True)
-        grid.set_column_spacing(20)
+        grid.set_column_spacing(22)
         grid.set_row_spacing(18)
         box.pack_start(grid, False, False, 0)
 
         self._featured_fill_box = box
+        self._featured_fill_flowbox = flowbox
         self._featured_fill_grid = grid
         self._content_box.pack_start(box, False, False, 0)
+
+    def _on_featured_flowbox_allocate(self, flowbox, allocation):
+        """Derive columns directly from this width-neutral FlowBox allocation."""
+        available_width = int(allocation.width)
+        if available_width <= 1:
+            return False
+
+        self._featured_flow_width = available_width
+
+        # 128px is only the hard minimum size request of an ordinary script
+        # widget; it is not a useful layout column width. At normal app-page
+        # widths it trivially allows all five columns (~704px total), which is why
+        # the previous implementation effectively stayed at five columns.
+        #
+        # Use a dedicated *layout* minimum instead. Cards remain free to expand
+        # homogeneously beyond this width; this value only controls when another
+        # column is allowed to appear.
+        minimum_card_width = 280
+
+        spacing = int(flowbox.get_column_spacing())
+        columns = max(
+            1,
+            (available_width + spacing)
+            // (minimum_card_width + spacing),
+        )
+
+        max_columns = 5
+        categories_flowbox = getattr(self.parent, "categories_flowbox", None)
+        if categories_flowbox is not None:
+            configured = int(categories_flowbox.get_max_children_per_line())
+            if configured > 0:
+                max_columns = configured
+        columns = min(max_columns, int(columns))
+
+        # Re-evaluate on *every* meaningful FlowBox allocation. This is what
+        # makes shrinking symmetric with growing: a 4-column layout cannot stay
+        # latched merely because it was previously locked to four children.
+        if columns != self._featured_flow_columns:
+            self._featured_flow_columns = columns
+            flowbox.set_min_children_per_line(columns)
+            flowbox.set_max_children_per_line(columns)
+            self._featured_fill_signature = None
+            self._schedule_featured_fill()
+
+        return False
 
     def _schedule_featured_fill(self, *_args):
         if self._destroyed:
@@ -147,6 +231,9 @@ class AppPageView(Gtk.Box):
         return False
 
     def _clear_featured_fill(self):
+        if self._featured_fill_flowbox is not None:
+            for child in self._featured_fill_flowbox.get_children():
+                child.destroy()
         if self._featured_fill_grid is not None:
             for child in self._featured_fill_grid.get_children():
                 child.destroy()
@@ -210,10 +297,12 @@ class AppPageView(Gtk.Box):
         children = self._featured_fill_box.get_children()
         separator = children[0]
         label = children[1]
+        card_width, card_height = parent._get_featured_card_size()
         fixed_height = (
             separator.get_preferred_height()[1]
             + label.get_preferred_height()[1]
-            + (self._featured_fill_box.get_spacing() * 2)
+            + int(card_height)
+            + (self._featured_fill_box.get_spacing() * 3)
         )
 
         capacity = parent.calculate_featured_capacity(
@@ -228,18 +317,34 @@ class AppPageView(Gtk.Box):
             self._featured_fill_signature = None
             return False
 
-        rows = capacity["rows"]
-        columns = capacity["columns"]
+        # The first row belongs to the FlowBox. Before it has measured the real
+        # allocation, give it the maximum candidate count so natural wrapping can
+        # discover the actual number that fits. After that, its observed count is
+        # authoritative for every lower Grid row.
+        max_columns = 5
+        categories_flowbox = getattr(parent, "categories_flowbox", None)
+        if categories_flowbox is not None:
+            configured = int(categories_flowbox.get_max_children_per_line())
+            if configured > 0:
+                max_columns = configured
+
+        measuring_columns = self._featured_flow_columns is None
+        columns = int(self._featured_flow_columns or max_columns)
+        columns = max(1, min(max_columns, columns))
+        grid_rows = max(0, int(capacity["rows"]))
+        rows = 1 + grid_rows
         slot_count = rows * columns
 
         # Use exactly the same large-card allowance as main-menu Featured.
         eligible_count = len(eligible)
         large_count = parent._calculate_featured_large_count(
-            rows, columns, eligible_count
+            grid_rows, columns, eligible_count
         )
         count = min(eligible_count, max(0, slot_count - (2 * large_count)))
         large_count = min(large_count, count)
         count = min(eligible_count, max(0, slot_count - (2 * large_count)))
+        if measuring_columns:
+            count = min(eligible_count, max(count, max_columns))
 
         current_key = parent._featured_script_key(self.script_info)
         scripts = parent.select_featured_scripts_for_app_page(
@@ -263,7 +368,10 @@ class AppPageView(Gtk.Box):
             if self._featured_fill_signature
             else None
         )
-        if geometry == previous_geometry and self._featured_fill_grid.get_children():
+        if (
+            geometry == previous_geometry
+            and self._featured_fill_flowbox.get_children()
+        ):
             for child in self._featured_fill_box.get_children():
                 child.show_all()
             self._featured_fill_box.show()
@@ -277,19 +385,31 @@ class AppPageView(Gtk.Box):
 
         self._clear_featured_fill()
 
-        large_positions = parent._choose_featured_large_positions(
-            rows, columns, large_count
-        )
-        large_count = min(large_count, len(large_positions), len(scripts))
+        # Keep the FlowBox row visually ordinary so it can be the reliable
+        # horizontal measuring authority. Large cards remain in the lower Grid.
+        if measuring_columns:
+            first_row_scripts = scripts[:max_columns]
+            remaining_scripts = []
+        else:
+            first_row_scripts = scripts[:columns]
+            remaining_scripts = scripts[columns:]
 
         localized_scripts = [
-            script for script in scripts if script.get("description_localized", False)
+            script for script in remaining_scripts
+            if script.get("description_localized", False)
         ]
         other_scripts = [
-            script for script in scripts if not script.get("description_localized", False)
+            script for script in remaining_scripts
+            if not script.get("description_localized", False)
         ]
         random.shuffle(localized_scripts)
         random.shuffle(other_scripts)
+
+        large_count = min(
+            0 if measuring_columns else large_count,
+            len(remaining_scripts),
+            max(0, grid_rows // 3) * columns,
+        )
         if len(localized_scripts) >= large_count:
             large_scripts = localized_scripts[:large_count]
             normal_scripts = localized_scripts[large_count:] + other_scripts
@@ -299,11 +419,10 @@ class AppPageView(Gtk.Box):
             normal_scripts = other_scripts[needed:]
         random.shuffle(large_scripts)
         random.shuffle(normal_scripts)
-        random.shuffle(large_positions)
 
         prepared_widgets = []
         occupied = set()
-        card_height = int(capacity.get("card_height", 52))
+        card_height = int(capacity.get("card_height", card_height))
         row_spacing = int(capacity.get("row_spacing", 18))
         large_height = (3 * card_height) + (2 * row_spacing)
 
@@ -324,6 +443,15 @@ class AppPageView(Gtk.Box):
             prepared_widgets.append(widget)
             return widget
 
+        for script_info in first_row_scripts:
+            self._featured_fill_flowbox.add(prepare_widget(script_info, large=False))
+
+        large_positions = parent._choose_featured_large_positions(
+            grid_rows, columns, large_count
+        )
+        large_count = min(large_count, len(large_positions), len(large_scripts))
+        random.shuffle(large_positions)
+
         for script_info, position in zip(large_scripts, large_positions):
             column, row = position
             occupied.update(parent._featured_occupied_cells(position))
@@ -333,7 +461,7 @@ class AppPageView(Gtk.Box):
 
         free_cells = [
             (column, row)
-            for row in range(rows)
+            for row in range(grid_rows)
             for column in range(columns)
             if (column, row) not in occupied
         ]
@@ -356,7 +484,7 @@ class AppPageView(Gtk.Box):
         for child in self._featured_fill_box.get_children():
             child.show_all()
 
-        if self._featured_fill_first_draw:
+        if self._featured_fill_first_draw or self._featured_flow_columns is None:
             # Keep the provisional Featured layout fully allocated but visually
             # transparent. Unlike hide(), opacity does not remove it from GTK's
             # layout, so the next pass sees the same geometry that previously
