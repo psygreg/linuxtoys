@@ -299,7 +299,17 @@ class AppStreamRunner:
         marker = f"__LINUXTOYS_APPSTREAM_DONE_{token}__"
         assignments = " ".join(f"{key}={shlex.quote(str(value))}" for key, value in env.items())
         command = " ".join(shlex.quote(part) for part in argv)
-        dispatch = f"env {assignments} {command}; _lt_status=$?; printf '\\n{marker}:%s\\n' \"$_lt_status\"\n"
+        marker_mid = len(marker) // 2
+        marker_left = marker[:marker_mid]
+        marker_right = marker[marker_mid:]
+
+        dispatch = (
+            f"_lt_marker={shlex.quote(marker_left)};"
+            f"_lt_marker=\"$_lt_marker\"{shlex.quote(marker_right)}; "
+            f"env {assignments} {command}; "
+            f"_lt_status=$?; "
+            f"printf '\\n%s:%s\\n' \"$_lt_marker\" \"$_lt_status\"\n"
+        )
 
         self._process.stdin.write(dispatch.encode("utf-8"))
         self._process.stdin.flush()
@@ -325,7 +335,17 @@ class AppStreamRunner:
             f"{key}={shlex.quote(str(value))}" for key, value in env.items()
         )
         command = " ".join(shlex.quote(part) for part in argv)
-        dispatch = f"env {assignments} {command}; _lt_status=$?; printf '\\n{marker}:%s\\n' \"$_lt_status\"\n"
+        marker_mid = len(marker) // 2
+        marker_left = marker[:marker_mid]
+        marker_right = marker[marker_mid:]
+
+        dispatch = (
+            f"_lt_marker={shlex.quote(marker_left)};"
+            f"_lt_marker=\"$_lt_marker\"{shlex.quote(marker_right)}; "
+            f"env {assignments} {command}; "
+            f"_lt_status=$?; "
+            f"printf '\\n%s:%s\\n' \"$_lt_marker\" \"$_lt_status\"\n"
+        )
 
         try:
             self._process.stdin.write(dispatch.encode("utf-8"))
