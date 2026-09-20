@@ -266,21 +266,15 @@ class SearchCtl:
                 flowbox.unselect_all()
 
     def _display_search_results(self):
-        """Display search results incrementally, grouped by category."""
+        """Display grouped search results with viewport-driven lazy materialization."""
         self.search_active = True
         self._search_result_flowboxes = []
-
-        # Each query invalidates population work from the previous result set.
         generation = getattr(self, "_search_population_generation", 0) + 1
         self._search_population_generation = generation
 
-        # Clear existing search results completely.
         for child in self.search_flowbox.get_children():
             self.search_flowbox.remove(child)
 
-        # Only the first entry into the search page has a Gtk.Stack transition.
-        # Starting the population timer during that transition hides most or all
-        # of the gradient because cards are created behind the sliding page.
         entering_search = self.main_stack.get_visible_child_name() != "search"
         self.main_stack.set_visible_child_name("search")
         self.back_button.show()
@@ -289,162 +283,162 @@ class SearchCtl:
         self._update_search_header()
 
         def begin_population():
-            # The query may have changed while waiting for the stack transition.
             if getattr(self, "_search_population_generation", None) != generation:
                 return False
 
-            results_container = Gtk.Box(
-                orientation=Gtk.Orientation.VERTICAL,
-                spacing=0,
-            )
-            results_container.set_margin_left(0)
-            results_container.set_margin_right(0)
+            results_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
             results_container.set_margin_top(8)
             results_container.set_margin_bottom(4)
 
-            # Search result sets are commonly <= 10 items. Keeping the old initial
-            # batch of 10 therefore bypassed progressive rendering for most queries.
-            # Start with one frame-sized batch so even small searches visibly flow in.
-            initial_batch_size = 2
-            frame_batch_size = 2
-            initial_widgets = []
-
-            # Flatten the grouped search result model into one ordered population
-            # stream. Category UI is created only when the first result belonging to
-            # that group reaches the stream.
-            population_queue = []
-            for category_group in self.search_results:
-                for search_result in category_group.get("scripts", []):
-                    population_queue.append((category_group, search_result))
-
+            population_queue = [
+                (group, result)
+                for group in self.search_results
+                for result in group.get("scripts", [])
+            ]
             group_flowboxes = {}
+            state = {"next": 0, "target": 0, "timer": None, "ready": False}
+            self._search_lazy_state = state
 
-            def ensure_group(category_group):
-                group_key = id(category_group)
-                existing = group_flowboxes.get(group_key)
-                if existing is not None:
-                    return existing
+            def current():
+                return (getattr(self, "_search_population_generation", None) == generation
+                        and getattr(self, "_search_lazy_state", None) is state)
 
-                category_name = category_group.get("category_name", "Other")
-                scripts = category_group.get("scripts", [])
-                show_header = category_group.get("show_header", True)
+            def ensure_group(group):
+                key = id(group)
+                if key in group_flowboxes:
+                    return group_flowboxes[key]
+                if group.get("show_header", True):
+                    header = self._create_search_category_header(
+                        group.get("category_name", "Other"))
+                    results_container.pack_start(header, False, False, 0)
+                    header.show()
+                fb = Gtk.FlowBox()
+                fb.set_valign(Gtk.Align.START)
+                fb.set_max_children_per_line(
+                    self._calculate_search_results_columns(len(group.get("scripts", []))))
+                fb.set_activate_on_single_click(False)
+                fb.set_selection_mode(Gtk.SelectionMode.SINGLE)
+                fb.connect("key-press-event", self._on_flowbox_key_press)
+                fb.connect("selected-children-changed",
+                           self._on_search_result_selection_changed)
+                fb.set_homogeneous(True)
+                fb.set_margin_left(32); fb.set_margin_right(32)
+                fb.set_margin_top(8); fb.set_margin_bottom(4)
+                fb.set_column_spacing(16); fb.set_row_spacing(12)
+                self._search_result_flowboxes.append(fb)
+                results_container.pack_start(fb, False, False, 0)
+                fb.show()
+                group_flowboxes[key] = fb
+                return fb
 
-                if show_header:
-                    category_header = self._create_search_category_header(category_name)
-                    results_container.pack_start(category_header, False, False, 0)
-                    category_header.show()
-
-                category_flowbox = Gtk.FlowBox()
-                category_flowbox.set_valign(Gtk.Align.START)
-                columns = self._calculate_search_results_columns(len(scripts))
-                category_flowbox.set_max_children_per_line(columns)
-                category_flowbox.set_activate_on_single_click(False)
-                category_flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
-                category_flowbox.connect("key-press-event", self._on_flowbox_key_press)
-                category_flowbox.connect(
-                    "selected-children-changed",
-                    self._on_search_result_selection_changed,
-                )
-                category_flowbox.set_homogeneous(True)
-                category_flowbox.set_margin_left(32)
-                category_flowbox.set_margin_right(32)
-                category_flowbox.set_margin_top(8)
-                category_flowbox.set_margin_bottom(4)
-                category_flowbox.set_column_spacing(16)
-                category_flowbox.set_row_spacing(12)
-
-                self._search_result_flowboxes.append(category_flowbox)
-                results_container.pack_start(category_flowbox, False, False, 0)
-                category_flowbox.show()
-                group_flowboxes[group_key] = category_flowbox
-                return category_flowbox
-
-            def add_result_card(category_group, search_result, *, show_now=False):
-                flowbox = ensure_group(category_group)
-                item_info = search_result.item_info
-                widget = self.create_item_widget(item_info)
-                widget.set_tooltip_text(item_info.get("description", "") or None)
-
-                # Hide before insertion/showing so no fully-opaque frame can leak
-                # through before the shared fade scheduler handles the card.
+            def add_card(group, result):
+                fb = ensure_group(group)
+                info = result.item_info
+                widget = self.create_item_widget(info)
+                widget.set_tooltip_text(info.get("description", "") or None)
                 widget.set_opacity(0.0)
-                flowbox.add(widget)
-                if show_now:
-                    widget.show_all()
+                fb.add(widget)
+                widget.show_all()
                 return widget
 
-            initial_count = min(initial_batch_size, len(population_queue))
-            for category_group, search_result in population_queue[:initial_count]:
-                initial_widgets.append(
-                    add_result_card(category_group, search_result)
-                )
+            def capacity():
+                alloc = self.search_view.get_allocation()
+                width, height = max(1, alloc.width), max(1, alloc.height)
+                columns = max(1, min(5, (max(1, width - 64) + 16) // 148))
+                rows = max(1, (height + 67) // 68)
+                return max(1, int(columns * rows))
+
+            def tick():
+                if not current():
+                    state["timer"] = None
+                    return False
+                target = min(state["target"], len(population_queue))
+                if state["next"] >= target:
+                    state["timer"] = None
+                    return False
+                widgets = []
+                end = min(target, state["next"] + 2)
+                while state["next"] < end:
+                    group, result = population_queue[state["next"]]
+                    widgets.append(add_card(group, result))
+                    state["next"] += 1
+                self.animate_item_batch(widgets, duration_ms=110, stagger_ms=5)
+                if state["next"] >= target:
+                    state["timer"] = None
+                    return False
+                return True
+
+            def start_timer():
+                if (not current() or state["next"] >= state["target"]
+                        or state["timer"] is not None):
+                    return
+                state["timer"] = GLib.timeout_add(
+                    20, tick, priority=GLib.PRIORITY_LOW)
+
+            def request_more():
+                if not current() or state["target"] >= len(population_queue):
+                    return
+                amount = capacity()
+                state["target"] = min(
+                    len(population_queue),
+                    max(state["target"], state["next"] + amount))
+                start_timer()
+
+            def on_scroll(adj):
+                if not current() or not state["ready"]:
+                    return
+                if state["target"] >= len(population_queue):
+                    return
+                upper = float(adj.get_upper())
+                if upper > 0 and (
+                    float(adj.get_value()) + float(adj.get_page_size())
+                ) / upper >= 0.75:
+                    request_more()
+
+            adj = self.search_view.get_vadjustment()
+            if not getattr(self, "_search_lazy_scroll_connected", False):
+                def dispatch(adjustment):
+                    cb = getattr(self, "_search_lazy_scroll_callback", None)
+                    if cb:
+                        cb(adjustment)
+                adj.connect("value-changed", dispatch)
+                self._search_lazy_scroll_connected = True
+            self._search_lazy_scroll_callback = on_scroll
 
             self.search_flowbox.add(results_container)
-            self.search_flowbox.show_all()
-            self.animate_item_batch(
-                initial_widgets,
-                duration_ms=120,
-                stagger_ms=8,
-                delay_ms=16,
-            )
+            results_container.show()
 
-            if initial_count >= len(population_queue):
+            # Seed cards immediately, then calculate the real viewport target
+            # after GTK has had a chance to allocate the visible content.
+            seed_widgets = []
+            for _ in range(min(6, len(population_queue))):
+                group, result = population_queue[state["next"]]
+                seed_widgets.append(add_card(group, result))
+                state["next"] += 1
+            self.animate_item_batch(seed_widgets, duration_ms=90, stagger_ms=5)
+
+            def finish_initial():
+                if not current():
+                    return False
+                cap = capacity()
+                multiplier = 3 if cap <= 20 else 2
+                state["target"] = min(
+                    len(population_queue),
+                    max(state["next"], cap * multiplier))
+                state["ready"] = True
+                start_timer()
                 return False
 
-            next_index = initial_count
-            frame_interval_ms = 16
-
-            def populate_search_batch():
-                nonlocal next_index
-
-                if getattr(self, "_search_population_generation", None) != generation:
-                    return False
-
-                end_index = min(
-                    next_index + frame_batch_size,
-                    len(population_queue),
-                )
-                batch_widgets = []
-                for category_group, search_result in population_queue[
-                    next_index:end_index
-                ]:
-                    batch_widgets.append(
-                        add_result_card(
-                            category_group,
-                            search_result,
-                            show_now=True,
-                        )
-                    )
-
-                next_index = end_index
-                self.animate_item_batch(
-                    batch_widgets,
-                    duration_ms=110,
-                    stagger_ms=5,
-                )
-                return next_index < len(population_queue)
-
-            GLib.timeout_add(
-                frame_interval_ms,
-                populate_search_batch,
-                priority=GLib.PRIORITY_LOW,
-            )
+            GLib.idle_add(finish_initial, priority=GLib.PRIORITY_LOW)
             return False
 
         if entering_search:
-            transition_delay = max(
-                1,
-                int(self.main_stack.get_transition_duration()),
-            )
             GLib.timeout_add(
-                transition_delay,
-                begin_population,
-                priority=GLib.PRIORITY_LOW,
-            )
+                max(1, int(self.main_stack.get_transition_duration())),
+                begin_population, priority=GLib.PRIORITY_LOW)
         else:
-            # Already on the search page: there is no stack transition to wait for.
-            # Build the first tiny batch now, then continue frame-paced.
             begin_population()
+
 
     def _create_search_category_header(self, category_name):
         """
