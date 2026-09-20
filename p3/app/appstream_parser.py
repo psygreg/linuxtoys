@@ -554,9 +554,9 @@ def _is_verified_flatpak(component):
 
 
 def _host_prefers_native_appstream():
-    """Arch Linux and CachyOS prefer native packages over ordinary Flathub."""
+    """Arch Linux, CachyOS, and Solus prefer native packages over ordinary Flathub."""
     compat_keys = get_system_compat_keys()
-    return "arch" in compat_keys or "cachy" in compat_keys
+    return bool({"arch", "cachy", "solus"} & compat_keys)
 
 
 def _is_steamos_host():
