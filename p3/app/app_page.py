@@ -1551,9 +1551,12 @@ class AppPageView(Gtk.Box):
                     and resolver(self._selected_install_info)
                 )
 
-            self._open_button.set_sensitive(can_launch)
             if can_launch:
-                self._open_button.show_all()
+                self._open_button.set_sensitive(True)
+                self._open_button.show()
+                child = self._open_button.get_child()
+                if child is not None:
+                    child.show_all()
             else:
                 self._open_button.hide()
 
@@ -1588,7 +1591,7 @@ class AppPageView(Gtk.Box):
             self.translations.get("app_page_open", " Open "),
             "media-playback-start-symbolic",
         )
-        #open_button.set_size_request(125, 35)
+        open_button.set_no_show_all(True)
         open_button.hide()
         open_button.connect("clicked", self._on_open_clicked)
         controls.pack_start(open_button, False, False, 0)
