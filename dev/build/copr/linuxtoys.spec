@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash git curl wget zenity appstream appstream-data python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 (sudo or sudo-rs)
+Requires:       bash git curl wget zenity appstream appstream-data python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 /usr/bin/script (sudo or sudo-rs)
 BuildRequires:  desktop-file-utils
 
 %description
