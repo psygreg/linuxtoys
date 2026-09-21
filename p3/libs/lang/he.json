@@ -668,5 +668,6 @@
   "specials": "בלעדי",
   "specials_desc": "תוכנות וסקריפטים להתקנה שנבחרו על ידי LinuxToys.",
   "appstream_initial_building": "בונה את קטלוג AppStream הראשוני.\nפעולה זו עשויה להימשך מספר שניות...",
-  "app_page_source_system": "מערכת"
+  "app_page_source_system": "מערכת",
+  "app_page_open": "פתיחה"
 }

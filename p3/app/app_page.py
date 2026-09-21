@@ -54,6 +54,7 @@ class AppPageView(Gtk.Box):
         self._selected_install_info = script_info
         self._source_button = None
         self._install_button = None
+        self._open_button = None
         self._install_state = "available"
         self._rating_buttons = []
         self._rating_box = None
@@ -1540,6 +1541,22 @@ class AppPageView(Gtk.Box):
         button.set_sensitive(sensitive)
         if self._source_button is not None:
             self._source_button.set_sensitive(sensitive)
+
+        if self._open_button is not None:
+            can_launch = False
+            if state == "installed":
+                resolver = getattr(self.parent, "_can_launch_appstream_app", None)
+                can_launch = bool(
+                    resolver is not None
+                    and resolver(self._selected_install_info)
+                )
+
+            self._open_button.set_sensitive(can_launch)
+            if can_launch:
+                self._open_button.show_all()
+            else:
+                self._open_button.hide()
+
         button.show_all()
         self._refresh_rating_state()
 
@@ -1563,6 +1580,18 @@ class AppPageView(Gtk.Box):
         install_button.set_size_request(125, 35)
         install_button.connect("clicked", self._on_install_clicked)
         controls.pack_start(install_button, False, False, 0)
+
+        open_button = Gtk.Button()
+        self._open_button = open_button
+        self._set_action_button_content(
+            open_button,
+            self.translations.get("app_page_open", " Open "),
+            "media-playback-start-symbolic",
+        )
+        #open_button.set_size_request(125, 35)
+        open_button.hide()
+        open_button.connect("clicked", self._on_open_clicked)
+        controls.pack_start(open_button, False, False, 0)
 
         source_button = self._build_source_button()
         if source_button is not None:
@@ -1963,6 +1992,11 @@ class AppPageView(Gtk.Box):
             self.screenshot_counter.set_text(
                 f"{self.screenshot_index + 1} / {self._screenshot_count}"
             )
+
+    def _on_open_clicked(self, _button):
+        launcher = getattr(self.parent, "_launch_appstream_app", None)
+        if launcher is not None:
+            launcher(self._selected_install_info)
 
     def _on_install_clicked(self, _button):
         if self._install_state == "installed":

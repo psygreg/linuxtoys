@@ -668,5 +668,6 @@
   "specials": "Eksklusif",
   "specials_desc": "Perisian dan skrip pemasangan pilihan LinuxToys.",
   "appstream_initial_building": "Membina katalog AppStream awal.\nIni mungkin mengambil masa beberapa saat...",
-  "app_page_source_system": "sistem"
+  "app_page_source_system": "sistem",
+  "app_page_open": "Buka"
 }

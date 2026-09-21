@@ -668,5 +668,6 @@
   "specials": "Բացառիկ",
   "specials_desc": "LinuxToys-ի կողմից ընտրված ծրագրեր և տեղադրման սկրիպտներ։",
   "appstream_initial_building": "Ստեղծվում է սկզբնական AppStream կատալոգը։\nՍա կարող է տևել մի քանի վայրկյան...",
-  "app_page_source_system": "համակարգ"
+  "app_page_source_system": "համակարգ",
+  "app_page_open": "Բացել"
 }

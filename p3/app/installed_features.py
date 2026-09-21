@@ -73,6 +73,20 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         name.set_halign(Gtk.Align.START)
         outer.pack_start(name, True, True, 0)
 
+        if (
+            info.get("is_appstream_entry")
+            and self.parent_window._can_launch_appstream_app(info)
+        ):
+            launch_button = Gtk.Button.new_from_icon_name(
+                "media-playback-start-symbolic", Gtk.IconSize.BUTTON
+            )
+            launch_button.set_relief(Gtk.ReliefStyle.NONE)
+            launch_button.set_tooltip_text(
+                self.parent_window.translations.get("app_page_open", "Open")
+            )
+            launch_button.connect("clicked", self._launch, info)
+            outer.pack_start(launch_button, False, False, 0)
+
         button = Gtk.Button.new_from_icon_name("edit-delete-symbolic", Gtk.IconSize.BUTTON)
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.get_style_context().add_class("destructive-action")
@@ -85,6 +99,9 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         button.connect("clicked", self._remove, info)
         outer.pack_start(button, False, False, 4)
         return outer
+
+    def _launch(self, _button, info):
+        self.parent_window._launch_appstream_app(info)
 
     def _remove(self, button, info):
         self.parent_window._on_item_remove_clicked(button, dict(info))

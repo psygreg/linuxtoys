@@ -668,5 +668,6 @@
   "specials": "Exkluzív",
   "specials_desc": "A LinuxToys által válogatott szoftverek és telepítési szkriptek.",
   "appstream_initial_building": "A kezdeti AppStream-katalógus létrehozása.\nEz néhány másodpercet vehet igénybe...",
-  "app_page_source_system": "rendszer"
+  "app_page_source_system": "rendszer",
+  "app_page_open": "Megnyitás"
 }

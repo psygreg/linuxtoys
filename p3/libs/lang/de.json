@@ -668,5 +668,6 @@
   "specials": "Exklusiv",
   "specials_desc": "Von LinuxToys ausgewählte Software und Installationsskripte.",
   "appstream_initial_building": "Der anfängliche AppStream-Katalog wird erstellt.\nDies kann einige Sekunden dauern...",
-  "app_page_source_system": "System"
+  "app_page_source_system": "System",
+  "app_page_open": "Öffnen"
 }

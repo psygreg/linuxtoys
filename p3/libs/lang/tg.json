@@ -668,5 +668,6 @@
   "specials": "Истисноӣ",
   "specials_desc": "Нармафзор ва скриптҳои насбкунӣ, ки аз ҷониби LinuxToys интихоб шудаанд.",
   "appstream_initial_building": "Каталоги ибтидоии AppStream сохта мешавад.\nИн метавонад чанд сония вақт гирад...",
-  "app_page_source_system": "система"
+  "app_page_source_system": "система",
+  "app_page_open": "Кушодан"
 }

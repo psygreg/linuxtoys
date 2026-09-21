@@ -668,5 +668,6 @@
   "specials": "Ekskluzīvi",
   "specials_desc": "LinuxToys atlasīta programmatūra un instalēšanas skripti.",
   "appstream_initial_building": "Tiek veidots sākotnējais AppStream katalogs.\nTas var aizņemt dažas sekundes...",
-  "app_page_source_system": "sistēma"
+  "app_page_source_system": "sistēma",
+  "app_page_open": "Atvērt"
 }

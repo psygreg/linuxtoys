@@ -18,7 +18,7 @@ _RUNTIME_CACHE = {}
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 4
+RUNTIME_CACHE_SCHEMA = 5
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -1028,6 +1028,7 @@ def _to_repo_entry(component, category, lang_code):
         "is_repo_entry": True,
         "is_appstream_entry": True,
         "appstream_id": component_id,
+        "appstream_launchable": str(component.get("launchable", "") or ""),
         "appstream_source": source,
         "appstream_origin": origin,
         "flatpak_remote": str(component.get("flatpak_remote", "") or ""),

@@ -668,5 +668,6 @@
   "specials": "خصوصی",
   "specials_desc": "LinuxToys کے منتخب کردہ سافٹ ویئر اور انسٹالیشن اسکرپٹس۔",
   "appstream_initial_building": "ابتدائی AppStream کیٹلاگ بنایا جا رہا ہے۔\nاس میں چند سیکنڈ لگ سکتے ہیں...",
-  "app_page_source_system": "سسٹم"
+  "app_page_source_system": "سسٹم",
+  "app_page_open": "کھولیں"
 }

@@ -668,5 +668,6 @@
   "specials": "독점",
   "specials_desc": "LinuxToys가 엄선한 소프트웨어 및 설치 스크립트.",
   "appstream_initial_building": "초기 AppStream 카탈로그를 생성하는 중입니다.\n몇 초 정도 걸릴 수 있습니다...",
-  "app_page_source_system": "시스템"
+  "app_page_source_system": "시스템",
+  "app_page_open": "열기"
 }

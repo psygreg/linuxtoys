@@ -668,5 +668,6 @@
   "specials": "Exclusive",
   "specials_desc": "Software și scripturi de instalare selectate de LinuxToys.",
   "appstream_initial_building": "Se creează catalogul AppStream inițial.\nAcest lucru poate dura câteva secunde...",
-  "app_page_source_system": "sistem"
+  "app_page_source_system": "sistem",
+  "app_page_open": "Deschide"
 }

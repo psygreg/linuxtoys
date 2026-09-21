@@ -668,5 +668,6 @@
   "specials": "Özel",
   "specials_desc": "LinuxToys tarafından seçilen yazılımlar ve kurulum betikleri.",
   "appstream_initial_building": "İlk AppStream kataloğu oluşturuluyor.\nBu işlem birkaç saniye sürebilir...",
-  "app_page_source_system": "sistem"
+  "app_page_source_system": "sistem",
+  "app_page_open": "Aç"
 }

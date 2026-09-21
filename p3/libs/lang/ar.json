@@ -668,5 +668,6 @@
   "specials": "حصري",
   "specials_desc": "برامج ونصوص تثبيت منتقاة من LinuxToys.",
   "appstream_initial_building": "جارٍ إنشاء كتالوج AppStream الأولي.\nقد يستغرق هذا بضع ثوانٍ...",
-  "app_page_source_system": "النظام"
+  "app_page_source_system": "النظام",
+  "app_page_open": "فتح"
 }

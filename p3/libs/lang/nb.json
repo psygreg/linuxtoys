@@ -668,5 +668,6 @@
   "specials": "Eksklusivt",
   "specials_desc": "Programvare og installasjonsskript utvalgt av LinuxToys.",
   "appstream_initial_building": "Bygger den første AppStream-katalogen.\nDette kan ta noen sekunder...",
-  "app_page_source_system": "system"
+  "app_page_source_system": "system",
+  "app_page_open": "Åpne"
 }

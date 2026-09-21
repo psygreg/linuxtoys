@@ -668,5 +668,6 @@
   "specials": "Exkluzívne",
   "specials_desc": "Softvér a inštalačné skripty vybrané LinuxToys.",
   "appstream_initial_building": "Vytvára sa počiatočný katalóg AppStream.\nMôže to trvať niekoľko sekúnd...",
-  "app_page_source_system": "systém"
+  "app_page_source_system": "systém",
+  "app_page_open": "Otvoriť"
 }

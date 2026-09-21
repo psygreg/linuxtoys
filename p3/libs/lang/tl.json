@@ -668,5 +668,6 @@
   "specials": "Eksklusibo",
   "specials_desc": "Software at mga script sa pag-install na pinili ng LinuxToys.",
   "appstream_initial_building": "Binubuo ang paunang katalogo ng AppStream.\nMaaaring tumagal ito nang ilang segundo...",
-  "app_page_source_system": "system"
+  "app_page_source_system": "system",
+  "app_page_open": "Buksan"
 }

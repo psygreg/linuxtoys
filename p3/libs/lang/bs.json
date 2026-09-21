@@ -667,5 +667,6 @@
   "specials": "Ekskluzivno",
   "specials_desc": "Softver i instalacijske skripte koje je odabrao LinuxToys.",
   "appstream_initial_building": "Izrada početnog AppStream kataloga.\nOvo može potrajati nekoliko sekundi...",
-  "app_page_source_system": "sistem"
+  "app_page_source_system": "sistem",
+  "app_page_open": "Otvori"
 }

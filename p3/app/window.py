@@ -33,6 +33,7 @@ from . import (
     git_scripts_manager
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
+from gi.repository import Gio
 from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
 from .window_nav import NavCtl
@@ -1035,6 +1036,38 @@ class AppWindow(
         app_page = self.main_stack.get_child_by_name("app_page")
         if app_page is not None and hasattr(app_page, "refresh_install_state"):
             app_page.refresh_install_state()
+
+    @staticmethod
+    def _appstream_desktop_app(info):
+        """Resolve an installed AppStream entry to a desktop application."""
+        if not info or not info.get("is_appstream_entry"):
+            return None
+        desktop_id = str(info.get("appstream_launchable", "") or "").strip()
+        if not desktop_id:
+            return None
+        try:
+            return Gio.DesktopAppInfo.new(desktop_id)
+        except (TypeError, AttributeError):
+            return None
+
+    def _can_launch_appstream_app(self, info):
+        return self._appstream_desktop_app(info) is not None
+
+    def _launch_appstream_app(self, info):
+        """Launch an AppStream application's installed desktop entry."""
+        app = self._appstream_desktop_app(info)
+        if app is None:
+            return False
+        try:
+            app.launch([], None)
+            return True
+        except GLib.Error as exc:
+            logger.warning(
+                "Unable to launch AppStream application %s: %s",
+                info.get("appstream_id") or info.get("name") or "",
+                exc,
+            )
+            return False
 
     def _get_appstream_install_state(self, info):
         """Resolve AppStream page state from this session first, then the registry."""

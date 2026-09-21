@@ -668,5 +668,6 @@
   "specials": "သီးသန့်",
   "specials_desc": "LinuxToys မှ ရွေးချယ်ထားသော ဆော့ဖ်ဝဲနှင့် တပ်ဆင်ရေး script များ။",
   "appstream_initial_building": "ကနဦး AppStream ကတ်တလောက်ကို တည်ဆောက်နေသည်။\nစက္ကန့်အနည်းငယ် ကြာနိုင်သည်...",
-  "app_page_source_system": "စနစ်"
+  "app_page_source_system": "စနစ်",
+  "app_page_open": "ဖွင့်ရန်"
 }

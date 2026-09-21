@@ -668,5 +668,6 @@
   "specials": "Эксклюзив",
   "specials_desc": "Программы и сценарии установки, отобранные LinuxToys.",
   "appstream_initial_building": "Создание начального каталога AppStream.\nЭто может занять несколько секунд...",
-  "app_page_source_system": "система"
+  "app_page_source_system": "система",
+  "app_page_open": "Открыть"
 }

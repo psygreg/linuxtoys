@@ -668,5 +668,6 @@
   "specials": "Αποκλειστικά",
   "specials_desc": "Λογισμικό και σενάρια εγκατάστασης επιλεγμένα από το LinuxToys.",
   "appstream_initial_building": "Δημιουργία του αρχικού καταλόγου AppStream.\nΑυτό μπορεί να διαρκέσει μερικά δευτερόλεπτα...",
-  "app_page_source_system": "σύστημα"
+  "app_page_source_system": "σύστημα",
+  "app_page_open": "Άνοιγμα"
 }

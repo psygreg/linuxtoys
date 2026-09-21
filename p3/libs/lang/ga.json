@@ -668,5 +668,6 @@
   "specials": "Eisiach",
   "specials_desc": "Bogearraí agus scripteanna suiteála roghnaithe ag LinuxToys.",
   "appstream_initial_building": "Catalóg tosaigh AppStream á chruthú.\nSeans go dtógfaidh sé seo cúpla soicind...",
-  "app_page_source_system": "córas"
+  "app_page_source_system": "córas",
+  "app_page_open": "Oscail"
 }

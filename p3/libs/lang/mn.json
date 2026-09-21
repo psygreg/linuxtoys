@@ -667,5 +667,6 @@
   "specials": "Онцгой",
   "specials_desc": "LinuxToys-оос сонгосон програм хангамж болон суулгах скриптүүд.",
   "appstream_initial_building": "Анхны AppStream каталогийг үүсгэж байна.\nҮүнд хэдэн секунд зарцуулагдаж магадгүй...",
-  "app_page_source_system": "систем"
+  "app_page_source_system": "систем",
+  "app_page_open": "Нээх"
 }

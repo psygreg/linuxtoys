@@ -668,5 +668,6 @@
   "specials": "विशेष",
   "specials_desc": "LinuxToys द्वारा छानिएका सफ्टवेयर र स्थापना स्क्रिप्टहरू।",
   "appstream_initial_building": "प्रारम्भिक AppStream क्याटलग निर्माण हुँदैछ।\nयसले केही सेकेन्ड लिन सक्छ...",
-  "app_page_source_system": "प्रणाली"
+  "app_page_source_system": "प्रणाली",
+  "app_page_open": "खोल्नुहोस्"
 }

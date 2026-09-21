@@ -668,5 +668,6 @@
   "specials": "Eksklusiivne",
   "specials_desc": "LinuxToysi valitud tarkvara ja paigaldusskriptid.",
   "appstream_initial_building": "Esialgse AppStreami kataloogi loomine.\nSee võib võtta mõne sekundi...",
-  "app_page_source_system": "süsteem"
+  "app_page_source_system": "süsteem",
+  "app_page_open": "Ava"
 }

@@ -668,5 +668,6 @@
   "specials": "ልዩ",
   "specials_desc": "በLinuxToys የተመረጡ ሶፍትዌሮች እና የመጫኛ ስክሪፕቶች።",
   "appstream_initial_building": "የመጀመሪያውን AppStream ካታሎግ በመገንባት ላይ።\nይህ ጥቂት ሰከንዶች ሊወስድ ይችላል...",
-  "app_page_source_system": "ስርዓት"
+  "app_page_source_system": "ስርዓት",
+  "app_page_open": "ክፈት"
 }

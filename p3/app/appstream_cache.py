@@ -28,7 +28,7 @@ from . import popularity
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 16
+CACHE_SCHEMA = 17
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -645,6 +645,7 @@ def _native_component_fingerprint(component) -> str:
         "description": str(_safe_call(component, "get_description", "") or ""),
         "packages": [str(v) for v in _as_list(_safe_call(component, "get_pkgnames", []))],
         "categories": [str(v) for v in _as_list(_safe_call(component, "get_categories", []))],
+        "launchable": _native_launchable_id(component),
         "icon": _icon_value(component),
         "screenshots": _component_screenshots(component),
         "homepage": _component_homepage(component),
@@ -678,6 +679,29 @@ def _flatpak_app_id(component_id):
         return component_id[:-8]
     return component_id
 
+
+def _native_launchable_id(component) -> str:
+    """Return the component's desktop-file launchable ID when AppStream exposes one."""
+    for launchable in _as_list(_safe_call(component, "get_launchables", [])):
+        value = str(_safe_call(launchable, "get_value", "") or "").strip()
+        if value.endswith(".desktop"):
+            return value
+    component_id = str(_safe_call(component, "get_id", "") or "").strip()
+    return component_id if component_id.endswith(".desktop") else ""
+
+
+def _xml_launchable_id(component) -> str:
+    """Return a desktop-id launchable from raw AppStream XML."""
+    if component is None:
+        return ""
+    for node in component.findall("./launchable"):
+        value = (node.text or "").strip()
+        kind = str(node.attrib.get("type", "") or "").strip()
+        if value and (kind == "desktop-id" or value.endswith(".desktop")):
+            return value
+    component_id = _xml_localized_text(component, "id")
+    return component_id if component_id.endswith(".desktop") else ""
+
 def _normalize_component(component):
     component_id = str(_safe_call(component, "get_id", "") or "").strip()
     name = str(_safe_call(component, "get_name", "") or "").strip()
@@ -709,6 +733,7 @@ def _normalize_component(component):
         "description_blocks": _description_blocks(_safe_call(component, "get_description", "")),
         "packages": packages,
         "categories": categories,
+        "launchable": _native_launchable_id(component),
         "icon": _icon_value(component),
         "screenshots": _component_screenshots(component),
         "homepage": _component_homepage(component),
@@ -970,6 +995,7 @@ def _normalize_flatpak_component(component, source):
         ),
         "packages": [flatpak_app_id],
         "categories": categories,
+        "launchable": _xml_launchable_id(component),
         "icon": _flatpak_icon(component, appstream_dir, component_id),
         "screenshots": screenshots,
         "homepage": homepage,

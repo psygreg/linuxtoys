@@ -668,5 +668,6 @@
   "specials": "Ексклузивно",
   "specials_desc": "Софтуер и инсталационни скриптове, подбрани от LinuxToys.",
   "appstream_initial_building": "Създаване на първоначалния AppStream каталог.\nТова може да отнеме няколко секунди...",
-  "app_page_source_system": "система"
+  "app_page_source_system": "система",
+  "app_page_open": "Отвори"
 }
