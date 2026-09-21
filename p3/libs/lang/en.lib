@@ -146,3 +146,4 @@ hwincompat="Your hardware is not compatible with this feature. Operation cancell
 requirerebar="\"Resize BAR\" and \"Above 4G Decoding\" are required to install AMD GPU drivers. Please enable those in your BIOS and try again."
 parumsg="paru is required for LinuxToys to handle AUR packages. It will be installed now."
 gearlevermsg="Gear Lever is required for LinuxToys to handle AppImage packages. It will be installed now."
+libvirtdnsmasq="dnsmasq was detected. If you're using it as a DNS cache, libvirt may cause problems and render your connection unable to resolve DNS requests. Proceed anyway?"

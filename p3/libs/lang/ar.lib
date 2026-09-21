@@ -144,3 +144,4 @@ hwincompat="جهازك غير متوافق مع هذه الميزة. تم إلغ
 requirerebar="\"Resize BAR\" و\"Above 4G Decoding\" مطلوبان لتثبيت برامج تشغيل AMD GPU. يرجى تمكينهما في BIOS ثم المحاولة مرة أخرى."
 parumsg="يتطلب LinuxToys برنامج paru للتعامل مع حزم AUR. سيتم تثبيته الآن."
 gearlevermsg="يتطلب LinuxToys برنامج Gear Lever للتعامل مع حزم AppImage. سيتم تثبيته الآن."
+libvirtdnsmasq="تم اكتشاف dnsmasq. إذا كنت تستخدمه كذاكرة تخزين مؤقت لـ DNS، فقد يتسبب libvirt في حدوث مشكلات ويجعل اتصالك غير قادر على حل طلبات DNS. هل تريد المتابعة على أي حال؟"

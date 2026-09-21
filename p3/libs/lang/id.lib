@@ -144,3 +144,4 @@ hwincompat="Perangkat keras Anda tidak kompatibel dengan fitur ini. Operasi diba
 requirerebar="\"Resize BAR\" dan \"Above 4G Decoding\" diperlukan untuk memasang driver GPU AMD. Aktifkan keduanya di BIOS lalu coba lagi."
 parumsg="paru diperlukan agar LinuxToys dapat menangani paket AUR. paru akan dipasang sekarang."
 gearlevermsg="Gear Lever diperlukan agar LinuxToys dapat menangani paket AppImage. Gear Lever akan dipasang sekarang."
+libvirtdnsmasq="dnsmasq terdeteksi. Jika Anda menggunakannya sebagai cache DNS, libvirt dapat menyebabkan masalah dan membuat koneksi Anda tidak dapat meresolusi permintaan DNS. Tetap lanjutkan?"

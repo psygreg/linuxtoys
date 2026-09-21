@@ -144,3 +144,4 @@ hwincompat="Votre matériel n’est pas compatible avec cette fonctionnalité. O
 requirerebar="\"Resize BAR\" et \"Above 4G Decoding\" sont requis pour installer les pilotes GPU AMD. Veuillez les activer dans le BIOS et réessayer."
 parumsg="paru est requis pour permettre à LinuxToys de gérer les paquets AUR. Il va maintenant être installé."
 gearlevermsg="Gear Lever est requis pour permettre à LinuxToys de gérer les paquets AppImage. Il va maintenant être installé."
+libvirtdnsmasq="dnsmasq a été détecté. Si vous l’utilisez comme cache DNS, libvirt peut provoquer des problèmes et empêcher votre connexion de résoudre les requêtes DNS. Continuer quand même ?"

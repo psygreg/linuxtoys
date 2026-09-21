@@ -142,3 +142,4 @@ hwincompat="Váš hardvér nie je kompatibilný s touto funkciou. Operácia bola
 requirerebar="Na inštaláciu ovládačov AMD GPU sú potrebné \"Resize BAR\" a \"Above 4G Decoding\". Povoľte ich v systéme BIOS a skúste to znova."
 parumsg="paru je potrebný, aby LinuxToys mohol pracovať s balíkmi AUR. Teraz bude nainštalovaný."
 gearlevermsg="Gear Lever je potrebný, aby LinuxToys mohol pracovať s balíkmi AppImage. Teraz bude nainštalovaný."
+libvirtdnsmasq="Bol zistený dnsmasq. Ak ho používate ako vyrovnávaciu pamäť DNS, libvirt môže spôsobiť problémy a zabrániť vášmu pripojeniu v preklade DNS požiadaviek. Napriek tomu pokračovať?"

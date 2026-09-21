@@ -144,3 +144,4 @@ hwincompat="Din maskinvara är inte kompatibel med den här funktionen. Åtgärd
 requirerebar="\"Resize BAR\" och \"Above 4G Decoding\" krävs för att installera AMD GPU-drivrutiner. Aktivera dem i BIOS och försök igen."
 parumsg="paru krävs för att LinuxToys ska kunna hantera AUR-paket. Det installeras nu."
 gearlevermsg="Gear Lever krävs för att LinuxToys ska kunna hantera AppImage-paket. Det installeras nu."
+libvirtdnsmasq="dnsmasq upptäcktes. Om du använder den som DNS-cache kan libvirt orsaka problem och göra att din anslutning inte kan lösa DNS-förfrågningar. Fortsätt ändå?"

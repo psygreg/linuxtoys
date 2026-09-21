@@ -144,3 +144,4 @@ hwincompat="החומרה שלך אינה תואמת לתכונה זו. הפעו�
 requirerebar="יש צורך ב-\"Resize BAR\" וב-\"Above 4G Decoding\" כדי להתקין מנהלי התקנים של AMD GPU. יש להפעיל אותם ב-BIOS ולנסות שוב."
 parumsg="paru נדרש כדי ש-LinuxToys יוכל לטפל בחבילות AUR. הוא יותקן כעת."
 gearlevermsg="Gear Lever נדרש כדי ש-LinuxToys יוכל לטפל בחבילות AppImage. הוא יותקן כעת."
+libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS, ‏libvirt עלול לגרום לבעיות ולמנוע מהחיבור שלך לפתור בקשות DNS. להמשיך בכל זאת?"

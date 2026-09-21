@@ -144,3 +144,4 @@ hwincompat="Pajisja juaj nuk është e përputhshme me këtë veçori. Veprimi u
 requirerebar="\"Resize BAR\" dhe \"Above 4G Decoding\" kërkohen për të instaluar drejtuesit e AMD GPU. Aktivizojini në BIOS dhe provoni përsëri."
 parumsg="paru kërkohet që LinuxToys të mund të menaxhojë paketat AUR. Do të instalohet tani."
 gearlevermsg="Gear Lever kërkohet që LinuxToys të mund të menaxhojë paketat AppImage. Do të instalohet tani."
+libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mund të shkaktojë probleme dhe ta bëjë lidhjen tuaj të paaftë për të zgjidhur kërkesat DNS. Të vazhdohet gjithsesi?"

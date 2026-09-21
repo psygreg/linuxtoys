@@ -144,3 +144,4 @@ hwincompat="Laitteistosi ei ole yhteensopiva tämän ominaisuuden kanssa. Toimin
 requirerebar="\"Resize BAR\" ja \"Above 4G Decoding\" vaaditaan AMD GPU -ajureiden asentamiseen. Ota ne käyttöön BIOSissa ja yritä uudelleen."
 parumsg="LinuxToys tarvitsee paru-ohjelman AUR-pakettien käsittelyyn. Se asennetaan nyt."
 gearlevermsg="LinuxToys tarvitsee Gear Leverin AppImage-pakettien käsittelyyn. Se asennetaan nyt."
+libvirtdnsmasq="dnsmasq havaittiin. Jos käytät sitä DNS-välimuistina, libvirt voi aiheuttaa ongelmia ja estää yhteyttäsi selvittämästä DNS-pyyntöjä. Jatketaanko silti?"

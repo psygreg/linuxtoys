@@ -144,3 +144,4 @@ hwincompat="Jūsų aparatinė įranga nesuderinama su šia funkcija. Veiksmas at
 requirerebar="Norint įdiegti AMD GPU tvarkykles, reikalingi \"Resize BAR\" ir \"Above 4G Decoding\". Įjunkite juos BIOS ir bandykite dar kartą."
 parumsg="LinuxToys reikalingas paru AUR paketams tvarkyti. Jis bus įdiegtas dabar."
 gearlevermsg="LinuxToys reikalingas Gear Lever AppImage paketams tvarkyti. Jis bus įdiegtas dabar."
+libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"

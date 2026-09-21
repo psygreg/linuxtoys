@@ -11,6 +11,10 @@
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 
+if command -v dnsmasq &> /dev/null; then
+    question "Virt-Manager" "$libvirtdnsmasq" || exit 100
+fi
+
 configure_libvirt() {
     sudo_rq
     if is_ubuntu || is_debian; then

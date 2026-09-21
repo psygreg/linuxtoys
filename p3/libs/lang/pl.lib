@@ -144,3 +144,4 @@ hwincompat="Twój sprzęt nie jest zgodny z tą funkcją. Operacja została anul
 requirerebar="\"Resize BAR\" i \"Above 4G Decoding\" są wymagane do zainstalowania sterowników GPU AMD. Włącz je w BIOS-ie i spróbuj ponownie."
 parumsg="paru jest wymagany, aby LinuxToys mógł obsługiwać pakiety AUR. Zostanie teraz zainstalowany."
 gearlevermsg="Gear Lever jest wymagany, aby LinuxToys mógł obsługiwać pakiety AppImage. Zostanie teraz zainstalowany."
+libvirtdnsmasq="Wykryto dnsmasq. Jeśli używasz go jako pamięci podręcznej DNS, libvirt może powodować problemy i uniemożliwić połączeniu rozwiązywanie zapytań DNS. Kontynuować mimo to?"

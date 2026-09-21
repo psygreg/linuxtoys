@@ -144,3 +144,4 @@ hwincompat="Vaš hardver nije kompatibilan s ovom funkcijom. Operacija je otkaza
 requirerebar="\"Resize BAR\" i \"Above 4G Decoding\" su potrebni za instalaciju AMD GPU upravljačkih programa. Omogućite ih u BIOS-u i pokušajte ponovo."
 parumsg="paru je potreban da bi LinuxToys mogao upravljati AUR paketima. Sada će biti instaliran."
 gearlevermsg="Gear Lever je potreban da bi LinuxToys mogao upravljati AppImage paketima. Sada će biti instaliran."
+libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"

@@ -144,3 +144,4 @@ hwincompat="お使いのハードウェアはこの機能に対応していま�
 requirerebar="AMD GPU ドライバーをインストールするには、\"Resize BAR\" と \"Above 4G Decoding\" が必要です。BIOS でこれらを有効にして、もう一度お試しください。"
 parumsg="LinuxToys で AUR パッケージを処理するには paru が必要です。今すぐインストールされます。"
 gearlevermsg="LinuxToys で AppImage パッケージを処理するには Gear Lever が必要です。今すぐインストールされます。"
+libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして使用している場合、libvirt が問題を引き起こし、接続で DNS リクエストを解決できなくなる可能性があります。それでも続行しますか？"

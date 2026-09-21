@@ -144,3 +144,4 @@ hwincompat="Ihre Hardware ist mit dieser Funktion nicht kompatibel. Der Vorgang 
 requirerebar="\"Resize BAR\" und \"Above 4G Decoding\" sind erforderlich, um AMD-GPU-Treiber zu installieren. Bitte aktivieren Sie beide Optionen im BIOS und versuchen Sie es erneut."
 parumsg="paru wird benötigt, damit LinuxToys AUR-Pakete verwalten kann. Es wird jetzt installiert."
 gearlevermsg="Gear Lever wird benötigt, damit LinuxToys AppImage-Pakete verwalten kann. Es wird jetzt installiert."
+libvirtdnsmasq="dnsmasq wurde erkannt. Wenn Sie es als DNS-Cache verwenden, kann libvirt Probleme verursachen und dazu führen, dass Ihre Verbindung keine DNS-Anfragen mehr auflösen kann. Trotzdem fortfahren?"

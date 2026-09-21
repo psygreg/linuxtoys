@@ -144,3 +144,4 @@ hwincompat="የእርስዎ ሃርድዌር ከዚህ ባህሪ ጋር ተኳሃ
 requirerebar="\"Resize BAR\" እና \"Above 4G Decoding\" የAMD GPU ነጂዎችን ለመጫን ያስፈልጋሉ። እባክዎ እነዚህን በBIOS ውስጥ ያንቁ እና እንደገና ይሞክሩ።"
 parumsg="LinuxToys የAUR ጥቅሎችን ለማስተዳደር paru ያስፈልገዋል። አሁን ይጫናል።"
 gearlevermsg="LinuxToys የAppImage ጥቅሎችን ለማስተዳደር Gear Lever ያስፈልገዋል። አሁን ይጫናል።"
+libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"

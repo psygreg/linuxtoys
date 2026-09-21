@@ -143,3 +143,4 @@ hwincompat="하드웨어가 이 기능과 호환되지 않습니다. 작업이 �
 requirerebar="AMD GPU 드라이버를 설치하려면 \"Resize BAR\" 및 \"Above 4G Decoding\"이 필요합니다. BIOS에서 해당 옵션을 활성화한 후 다시 시도하십시오."
 parumsg="LinuxToys에서 AUR 패키지를 처리하려면 paru가 필요합니다. 지금 설치됩니다."
 gearlevermsg="LinuxToys에서 AppImage 패키지를 처리하려면 Gear Lever가 필요합니다. 지금 설치됩니다."
+libvirtdnsmasq="dnsmasq가 감지되었습니다. DNS 캐시로 사용 중인 경우 libvirt로 인해 문제가 발생하여 연결에서 DNS 요청을 확인할 수 없게 될 수 있습니다. 그래도 계속하시겠습니까?"

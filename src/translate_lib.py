@@ -11,232 +11,175 @@ LANG_DIR = "../p3/libs/lang"
 # Translations for all messages across all supported languages
 TRANSLATIONS = {
     'am.lib': {
-        'parumsg': 'parumsg="LinuxToys የAUR ጥቅሎችን ለማስተዳደር paru ያስፈልገዋል። አሁን ይጫናል።"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys የAppImage ጥቅሎችን ለማስተዳደር Gear Lever ያስፈልገዋል። አሁን ይጫናል።"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"'
     },
     'ar.lib': {
-        'parumsg': 'parumsg="يتطلب LinuxToys برنامج paru للتعامل مع حزم AUR. سيتم تثبيته الآن."',
-        'gearlevermsg': 'gearlevermsg="يتطلب LinuxToys برنامج Gear Lever للتعامل مع حزم AppImage. سيتم تثبيته الآن."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="تم اكتشاف dnsmasq. إذا كنت تستخدمه كذاكرة تخزين مؤقت لـ DNS، فقد يتسبب libvirt في حدوث مشكلات ويجعل اتصالك غير قادر على حل طلبات DNS. هل تريد المتابعة على أي حال؟"'
     },
     'az.lib': {
-        'parumsg': 'parumsg="LinuxToys-un AUR paketlərini idarə etməsi üçün paru tələb olunur. İndi quraşdırılacaq."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys-un AppImage paketlərini idarə etməsi üçün Gear Lever tələb olunur. İndi quraşdırılacaq."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aşkarlandı. Əgər onu DNS keşi kimi istifadə edirsinizsə, libvirt problemlər yarada və bağlantınızın DNS sorğularını həll etməsinə mane ola bilər. Yenə də davam edilsin?"'
     },
     'bg.lib': {
-        'parumsg': 'parumsg="paru е необходим, за да може LinuxToys да обработва AUR пакети. Той ще бъде инсталиран сега."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever е необходим, за да може LinuxToys да обработва AppImage пакети. Той ще бъде инсталиран сега."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Открит е dnsmasq. Ако го използвате като DNS кеш, libvirt може да причини проблеми и да попречи на връзката ви да разрешава DNS заявки. Искате ли да продължите въпреки това?"'
     },
     'bn.lib': {
-        'parumsg': 'parumsg="LinuxToys-এর AUR প্যাকেজ পরিচালনার জন্য paru প্রয়োজন। এটি এখন ইনস্টল করা হবে।"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys-এর AppImage প্যাকেজ পরিচালনার জন্য Gear Lever প্রয়োজন। এটি এখন ইনস্টল করা হবে।"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq শনাক্ত করা হয়েছে। আপনি যদি এটিকে DNS ক্যাশ হিসেবে ব্যবহার করেন, তাহলে libvirt সমস্যা সৃষ্টি করতে পারে এবং আপনার সংযোগকে DNS অনুরোধ সমাধান করতে অক্ষম করে দিতে পারে। তবুও এগিয়ে যাবেন?"'
     },
     'bs.lib': {
-        'parumsg': 'parumsg="paru je potreban da bi LinuxToys mogao upravljati AUR paketima. Sada će biti instaliran."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever je potreban da bi LinuxToys mogao upravljati AppImage paketima. Sada će biti instaliran."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"'
     },
     'cs.lib': {
-        'parumsg': 'parumsg="paru je vyžadován, aby LinuxToys mohl pracovat s balíčky AUR. Nyní bude nainstalován."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever je vyžadován, aby LinuxToys mohl pracovat s balíčky AppImage. Nyní bude nainstalován."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Byl zjištěn dnsmasq. Pokud jej používáte jako mezipaměť DNS, může libvirt způsobit problémy a znemožnit vašemu připojení překlad DNS požadavků. Přesto pokračovat?"'
     },
     'da.lib': {
-        'parumsg': 'parumsg="paru er påkrævet, for at LinuxToys kan håndtere AUR-pakker. Det installeres nu."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever er påkrævet, for at LinuxToys kan håndtere AppImage-pakker. Det installeres nu."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq blev fundet. Hvis du bruger den som DNS-cache, kan libvirt forårsage problemer og gøre din forbindelse ude af stand til at opløse DNS-forespørgsler. Fortsæt alligevel?"'
     },
     'de.lib': {
-        'parumsg': 'parumsg="paru wird benötigt, damit LinuxToys AUR-Pakete verwalten kann. Es wird jetzt installiert."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever wird benötigt, damit LinuxToys AppImage-Pakete verwalten kann. Es wird jetzt installiert."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq wurde erkannt. Wenn Sie es als DNS-Cache verwenden, kann libvirt Probleme verursachen und dazu führen, dass Ihre Verbindung keine DNS-Anfragen mehr auflösen kann. Trotzdem fortfahren?"'
     },
     'el.lib': {
-        'parumsg': 'parumsg="Το paru απαιτείται ώστε το LinuxToys να μπορεί να διαχειρίζεται πακέτα AUR. Θα εγκατασταθεί τώρα."',
-        'gearlevermsg': 'gearlevermsg="Το Gear Lever απαιτείται ώστε το LinuxToys να μπορεί να διαχειρίζεται πακέτα AppImage. Θα εγκατασταθεί τώρα."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Εντοπίστηκε το dnsmasq. Εάν το χρησιμοποιείτε ως προσωρινή μνήμη DNS, το libvirt ενδέχεται να προκαλέσει προβλήματα και να εμποδίσει τη σύνδεσή σας να επιλύει αιτήματα DNS. Συνέχεια ούτως ή άλλως;"'
     },
     'es.lib': {
-        'parumsg': 'parumsg="paru es necesario para que LinuxToys pueda gestionar paquetes de AUR. Se instalará ahora."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever es necesario para que LinuxToys pueda gestionar paquetes AppImage. Se instalará ahora."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Se detectó dnsmasq. Si lo utiliza como caché de DNS, libvirt puede causar problemas e impedir que su conexión resuelva solicitudes DNS. ¿Continuar de todos modos?"'
     },
     'et.lib': {
-        'parumsg': 'parumsg="LinuxToys vajab AUR-pakettide haldamiseks paru. See paigaldatakse nüüd."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys vajab AppImage-pakettide haldamiseks Gear Leverit. See paigaldatakse nüüd."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib libvirt põhjustada probleeme ja takistada teie ühendusel DNS-päringute lahendamist. Kas jätkata ikkagi?"'
     },
     'fa.lib': {
-        'parumsg': 'parumsg="برای مدیریت بسته‌های AUR توسط LinuxToys، paru مورد نیاز است. اکنون نصب خواهد شد."',
-        'gearlevermsg': 'gearlevermsg="برای مدیریت بسته‌های AppImage توسط LinuxToys، Gear Lever مورد نیاز است. اکنون نصب خواهد شد."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq شناسایی شد. اگر از آن به‌عنوان حافظه نهان DNS استفاده می‌کنید، libvirt ممکن است باعث بروز مشکل شود و اتصال شما را از حل درخواست‌های DNS بازدارد. با این حال ادامه داده شود؟"'
     },
     'fi.lib': {
-        'parumsg': 'parumsg="LinuxToys tarvitsee paru-ohjelman AUR-pakettien käsittelyyn. Se asennetaan nyt."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys tarvitsee Gear Leverin AppImage-pakettien käsittelyyn. Se asennetaan nyt."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq havaittiin. Jos käytät sitä DNS-välimuistina, libvirt voi aiheuttaa ongelmia ja estää yhteyttäsi selvittämästä DNS-pyyntöjä. Jatketaanko silti?"'
     },
     'fr.lib': {
-        'parumsg': 'parumsg="paru est requis pour permettre à LinuxToys de gérer les paquets AUR. Il va maintenant être installé."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever est requis pour permettre à LinuxToys de gérer les paquets AppImage. Il va maintenant être installé."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq a été détecté. Si vous l’utilisez comme cache DNS, libvirt peut provoquer des problèmes et empêcher votre connexion de résoudre les requêtes DNS. Continuer quand même ?"'
     },
     'ga.lib': {
-        'parumsg': 'parumsg="Tá paru riachtanach chun go mbeidh LinuxToys in ann pacáistí AUR a láimhseáil. Suiteálfar anois é."',
-        'gearlevermsg': 'gearlevermsg="Tá Gear Lever riachtanach chun go mbeidh LinuxToys in ann pacáistí AppImage a láimhseáil. Suiteálfar anois é."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’fhéadfadh libvirt fadhbanna a chruthú agus cosc a chur ar do cheangal iarratais DNS a réiteach. Lean ar aghaidh mar sin féin?"'
     },
     'he.lib': {
-        'parumsg': 'parumsg="paru נדרש כדי ש-LinuxToys יוכל לטפל בחבילות AUR. הוא יותקן כעת."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever נדרש כדי ש-LinuxToys יוכל לטפל בחבילות AppImage. הוא יותקן כעת."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS, ‏libvirt עלול לגרום לבעיות ולמנוע מהחיבור שלך לפתור בקשות DNS. להמשיך בכל זאת?"'
     },
     'hi.lib': {
-        'parumsg': 'parumsg="LinuxToys को AUR पैकेज संभालने के लिए paru की आवश्यकता है। इसे अब इंस्टॉल किया जाएगा।"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys को AppImage पैकेज संभालने के लिए Gear Lever की आवश्यकता है। इसे अब इंस्टॉल किया जाएगा।"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq का पता चला है। यदि आप इसे DNS कैश के रूप में उपयोग कर रहे हैं, तो libvirt समस्याएँ पैदा कर सकता है और आपके कनेक्शन को DNS अनुरोध हल करने में असमर्थ बना सकता है। फिर भी आगे बढ़ें?"'
     },
     'hr.lib': {
-        'parumsg': 'parumsg="paru je potreban kako bi LinuxToys mogao upravljati AUR paketima. Sada će biti instaliran."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever je potreban kako bi LinuxToys mogao upravljati AppImage paketima. Sada će biti instaliran."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS predmemoriju, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"'
     },
     'hu.lib': {
-        'parumsg': 'parumsg="A LinuxToys számára a paru szükséges az AUR-csomagok kezeléséhez. Most telepítésre kerül."',
-        'gearlevermsg': 'gearlevermsg="A LinuxToys számára a Gear Lever szükséges az AppImage-csomagok kezeléséhez. Most telepítésre kerül."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítótárként használja, a libvirt problémákat okozhat, és megakadályozhatja, hogy a kapcsolat DNS-kéréseket oldjon fel. Mindenképpen folytatja?"'
     },
     'hy.lib': {
-        'parumsg': 'parumsg="LinuxToys-ին AUR փաթեթները կառավարելու համար անհրաժեշտ է paru։ Այն այժմ կտեղադրվի։"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys-ին AppImage փաթեթները կառավարելու համար անհրաժեշտ է Gear Lever։ Այն այժմ կտեղադրվի։"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Հայտնաբերվել է dnsmasq։ Եթե այն օգտագործում եք որպես DNS քեշ, libvirt-ը կարող է խնդիրներ առաջացնել և խանգարել ձեր կապին DNS հարցումները լուծել։ Շարունակե՞լ այնուամենայնիվ։"'
     },
     'id.lib': {
-        'parumsg': 'parumsg="paru diperlukan agar LinuxToys dapat menangani paket AUR. paru akan dipasang sekarang."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever diperlukan agar LinuxToys dapat menangani paket AppImage. Gear Lever akan dipasang sekarang."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq terdeteksi. Jika Anda menggunakannya sebagai cache DNS, libvirt dapat menyebabkan masalah dan membuat koneksi Anda tidak dapat meresolusi permintaan DNS. Tetap lanjutkan?"'
     },
     'is.lib': {
-        'parumsg': 'parumsg="paru er nauðsynlegt svo LinuxToys geti meðhöndlað AUR-pakka. Það verður sett upp núna."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever er nauðsynlegt svo LinuxToys geti meðhöndlað AppImage-pakka. Það verður sett upp núna."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur libvirt valdið vandamálum og komið í veg fyrir að tengingin þín geti leyst DNS-beiðnir. Halda samt áfram?"'
     },
     'it.lib': {
-        'parumsg': 'parumsg="paru è necessario affinché LinuxToys possa gestire i pacchetti AUR. Verrà installato ora."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever è necessario affinché LinuxToys possa gestire i pacchetti AppImage. Verrà installato ora."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="È stato rilevato dnsmasq. Se lo utilizzi come cache DNS, libvirt potrebbe causare problemi e impedire alla tua connessione di risolvere le richieste DNS. Procedere comunque?"'
     },
     'ja.lib': {
-        'parumsg': 'parumsg="LinuxToys で AUR パッケージを処理するには paru が必要です。今すぐインストールされます。"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys で AppImage パッケージを処理するには Gear Lever が必要です。今すぐインストールされます。"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして使用している場合、libvirt が問題を引き起こし、接続で DNS リクエストを解決できなくなる可能性があります。それでも続行しますか？"'
     },
     'ka.lib': {
-        'parumsg': 'parumsg="LinuxToys-ს AUR პაკეტების სამართავად paru სჭირდება. ის ახლა დაინსტალირდება."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys-ს AppImage პაკეტების სამართავად Gear Lever სჭირდება. ის ახლა დაინსტალირდება."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="აღმოჩენილია dnsmasq. თუ მას DNS ქეშად იყენებთ, libvirt-მა შეიძლება პრობლემები გამოიწვიოს და თქვენს კავშირს DNS მოთხოვნების ამოხსნა აღარ შეეძლოს. მაინც გაგრძელდეს?"'
     },
     'km.lib': {
-        'parumsg': 'parumsg="LinuxToys ត្រូវការ paru ដើម្បីគ្រប់គ្រងកញ្ចប់ AUR។ វានឹងត្រូវបានដំឡើងឥឡូវនេះ។"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys ត្រូវការ Gear Lever ដើម្បីគ្រប់គ្រងកញ្ចប់ AppImage។ វានឹងត្រូវបានដំឡើងឥឡូវនេះ។"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="បានរកឃើញ dnsmasq។ ប្រសិនបើអ្នកកំពុងប្រើវាជាឃ្លាំងសម្ងាត់ DNS នោះ libvirt អាចបង្កបញ្ហា និងធ្វើឱ្យការតភ្ជាប់របស់អ្នកមិនអាចដោះស្រាយសំណើ DNS បាន។ តើនៅតែបន្តឬ?"'
     },
     'ko.lib': {
-        'parumsg': 'parumsg="LinuxToys에서 AUR 패키지를 처리하려면 paru가 필요합니다. 지금 설치됩니다."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys에서 AppImage 패키지를 처리하려면 Gear Lever가 필요합니다. 지금 설치됩니다."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq가 감지되었습니다. DNS 캐시로 사용 중인 경우 libvirt로 인해 문제가 발생하여 연결에서 DNS 요청을 확인할 수 없게 될 수 있습니다. 그래도 계속하시겠습니까?"'
     },
     'lo.lib': {
-        'parumsg': 'parumsg="LinuxToys ຕ້ອງການ paru ເພື່ອຈັດການແພັກເກດ AUR. ມັນຈະຖືກຕິດຕັ້ງຕອນນີ້."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys ຕ້ອງການ Gear Lever ເພື່ອຈັດການແພັກເກດ AppImage. ມັນຈະຖືກຕິດຕັ້ງຕອນນີ້."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="ກວດພົບ dnsmasq. ຖ້າທ່ານໃຊ້ມັນເປັນແຄດ DNS, libvirt ອາດເຮັດໃຫ້ເກີດບັນຫາ ແລະ ເຮັດໃຫ້ການເຊື່ອມຕໍ່ຂອງທ່ານບໍ່ສາມາດແກ້ໄຂຄຳຮ້ອງຂໍ DNS ໄດ້. ຍັງຈະສືບຕໍ່ບໍ?"'
     },
     'lt.lib': {
-        'parumsg': 'parumsg="LinuxToys reikalingas paru AUR paketams tvarkyti. Jis bus įdiegtas dabar."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys reikalingas Gear Lever AppImage paketams tvarkyti. Jis bus įdiegtas dabar."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"'
     },
     'lv.lib': {
-        'parumsg': 'parumsg="LinuxToys ir nepieciešams paru, lai apstrādātu AUR pakotnes. Tas tagad tiks instalēts."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys ir nepieciešams Gear Lever, lai apstrādātu AppImage pakotnes. Tas tagad tiks instalēts."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Tika konstatēts dnsmasq. Ja izmantojat to kā DNS kešatmiņu, libvirt var radīt problēmas un neļaut savienojumam atrisināt DNS pieprasījumus. Vai tomēr turpināt?"'
     },
     'mn.lib': {
-        'parumsg': 'parumsg="LinuxToys-д AUR багцуудыг удирдахын тулд paru шаардлагатай. Одоо суулгана."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys-д AppImage багцуудыг удирдахын тулд Gear Lever шаардлагатай. Одоо суулгана."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq илэрлээ. Хэрэв та үүнийг DNS кэш болгон ашиглаж байгаа бол libvirt асуудал үүсгэж, таны холболт DNS хүсэлтүүдийг шийдвэрлэх боломжгүй болж магадгүй. Ямартай ч үргэлжлүүлэх үү?"'
     },
     'ms.lib': {
-        'parumsg': 'parumsg="paru diperlukan supaya LinuxToys dapat mengendalikan pakej AUR. Ia akan dipasang sekarang."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever diperlukan supaya LinuxToys dapat mengendalikan pakej AppImage. Ia akan dipasang sekarang."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq dikesan. Jika anda menggunakannya sebagai cache DNS, libvirt mungkin menyebabkan masalah dan menjadikan sambungan anda tidak dapat menyelesaikan permintaan DNS. Teruskan juga?"'
     },
     'my.lib': {
-        'parumsg': 'parumsg="LinuxToys မှ AUR ပက်ကေ့ဂျ်များကို ကိုင်တွယ်ရန် paru လိုအပ်ပါသည်။ ယခု ထည့်သွင်းပါမည်။"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys မှ AppImage ပက်ကေ့ဂျ်များကို ကိုင်တွယ်ရန် Gear Lever လိုအပ်ပါသည်။ ယခု ထည့်သွင်းပါမည်။"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ကို တွေ့ရှိထားသည်။ ၎င်းကို DNS cache အဖြစ် အသုံးပြုနေပါက libvirt သည် ပြဿနာများ ဖြစ်စေနိုင်ပြီး သင့်ချိတ်ဆက်မှုမှ DNS တောင်းဆိုချက်များကို ဖြေရှင်းနိုင်ခြင်း မရှိစေနိုင်ပါသည်။ ဆက်လက်လုပ်ဆောင်မည်လား?"'
     },
     'nb.lib': {
-        'parumsg': 'parumsg="paru kreves for at LinuxToys skal kunne håndtere AUR-pakker. Det installeres nå."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever kreves for at LinuxToys skal kunne håndtere AppImage-pakker. Det installeres nå."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ble oppdaget. Hvis du bruker den som DNS-hurtigbuffer, kan libvirt forårsake problemer og gjøre at tilkoblingen din ikke kan løse DNS-forespørsler. Fortsette likevel?"'
     },
     'ne.lib': {
-        'parumsg': 'parumsg="LinuxToys लाई AUR प्याकेजहरू व्यवस्थापन गर्न paru आवश्यक छ। यो अब स्थापना गरिनेछ।"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys लाई AppImage प्याकेजहरू व्यवस्थापन गर्न Gear Lever आवश्यक छ। यो अब स्थापना गरिनेछ।"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq पत्ता लागेको छ। यदि तपाईं यसलाई DNS क्यासको रूपमा प्रयोग गर्दै हुनुहुन्छ भने, libvirt ले समस्या निम्त्याउन सक्छ र तपाईंको जडानलाई DNS अनुरोधहरू समाधान गर्न असमर्थ बनाउन सक्छ। तैपनि अगाडि बढ्ने?"'
     },
     'nl.lib': {
-        'parumsg': 'parumsg="paru is vereist zodat LinuxToys AUR-pakketten kan verwerken. Het wordt nu geïnstalleerd."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever is vereist zodat LinuxToys AppImage-pakketten kan verwerken. Het wordt nu geïnstalleerd."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq is gedetecteerd. Als u het als DNS-cache gebruikt, kan libvirt problemen veroorzaken waardoor uw verbinding geen DNS-verzoeken meer kan oplossen. Toch doorgaan?"'
     },
     'pl.lib': {
-        'parumsg': 'parumsg="paru jest wymagany, aby LinuxToys mógł obsługiwać pakiety AUR. Zostanie teraz zainstalowany."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever jest wymagany, aby LinuxToys mógł obsługiwać pakiety AppImage. Zostanie teraz zainstalowany."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Wykryto dnsmasq. Jeśli używasz go jako pamięci podręcznej DNS, libvirt może powodować problemy i uniemożliwić połączeniu rozwiązywanie zapytań DNS. Kontynuować mimo to?"'
     },
     'pt.lib': {
-        'parumsg': 'parumsg="O paru é necessário para que o LinuxToys possa gerenciar pacotes do AUR. Ele será instalado agora."',
-        'gearlevermsg': 'gearlevermsg="O Gear Lever é necessário para que o LinuxToys possa gerenciar pacotes AppImage. Ele será instalado agora."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="O dnsmasq foi detectado. Se você o utiliza como cache DNS, o libvirt pode causar problemas e fazer com que sua conexão não consiga resolver solicitações DNS. Continuar mesmo assim?"'
     },
     'ro.lib': {
-        'parumsg': 'parumsg="paru este necesar pentru ca LinuxToys să poată gestiona pachetele AUR. Acesta va fi instalat acum."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever este necesar pentru ca LinuxToys să poată gestiona pachetele AppImage. Acesta va fi instalat acum."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="A fost detectat dnsmasq. Dacă îl utilizați drept cache DNS, libvirt poate cauza probleme și poate împiedica conexiunea să rezolve cererile DNS. Continuați oricum?"'
     },
     'ru.lib': {
-        'parumsg': 'parumsg="paru необходим LinuxToys для работы с пакетами AUR. Он будет установлен сейчас."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever необходим LinuxToys для работы с пакетами AppImage. Он будет установлен сейчас."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Обнаружен dnsmasq. Если вы используете его в качестве DNS-кэша, libvirt может вызвать проблемы и лишить ваше соединение возможности разрешать DNS-запросы. Всё равно продолжить?"'
     },
     'sk.lib': {
-        'parumsg': 'parumsg="paru je potrebný, aby LinuxToys mohol pracovať s balíkmi AUR. Teraz bude nainštalovaný."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever je potrebný, aby LinuxToys mohol pracovať s balíkmi AppImage. Teraz bude nainštalovaný."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Bol zistený dnsmasq. Ak ho používate ako vyrovnávaciu pamäť DNS, libvirt môže spôsobiť problémy a zabrániť vášmu pripojeniu v preklade DNS požiadaviek. Napriek tomu pokračovať?"'
     },
     'sl.lib': {
-        'parumsg': 'parumsg="paru je potreben, da lahko LinuxToys upravlja pakete AUR. Zdaj bo nameščen."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever je potreben, da lahko LinuxToys upravlja pakete AppImage. Zdaj bo nameščen."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Zaznan je bil dnsmasq. Če ga uporabljate kot predpomnilnik DNS, lahko libvirt povzroči težave in vaši povezavi onemogoči razreševanje zahtev DNS. Vseeno nadaljujem?"'
     },
     'sq.lib': {
-        'parumsg': 'parumsg="paru kërkohet që LinuxToys të mund të menaxhojë paketat AUR. Do të instalohet tani."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever kërkohet që LinuxToys të mund të menaxhojë paketat AppImage. Do të instalohet tani."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mund të shkaktojë probleme dhe ta bëjë lidhjen tuaj të paaftë për të zgjidhur kërkesat DNS. Të vazhdohet gjithsesi?"'
     },
     'sr.lib': {
-        'parumsg': 'parumsg="paru је неопходан да би LinuxToys могао да управља AUR пакетима. Сада ће бити инсталиран."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever је неопходан да би LinuxToys могао да управља AppImage пакетима. Сада ће бити инсталиран."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Откривен је dnsmasq. Ако га користите као DNS кеш, libvirt може изазвати проблеме и онемогућити вашој вези да разрешава DNS захтеве. Ипак наставити?"'
     },
     'sv.lib': {
-        'parumsg': 'parumsg="paru krävs för att LinuxToys ska kunna hantera AUR-paket. Det installeras nu."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever krävs för att LinuxToys ska kunna hantera AppImage-paket. Det installeras nu."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq upptäcktes. Om du använder den som DNS-cache kan libvirt orsaka problem och göra att din anslutning inte kan lösa DNS-förfrågningar. Fortsätt ändå?"'
     },
     'sw.lib': {
-        'parumsg': 'parumsg="paru inahitajika ili LinuxToys iweze kushughulikia vifurushi vya AUR. Itasakinishwa sasa."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever inahitajika ili LinuxToys iweze kushughulikia vifurushi vya AppImage. Itasakinishwa sasa."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq imegunduliwa. Ikiwa unaitumia kama akiba ya DNS, libvirt inaweza kusababisha matatizo na kufanya muunganisho wako ushindwe kutatua maombi ya DNS. Uendelee hata hivyo?"'
     },
     'ta.lib': {
-        'parumsg': 'parumsg="LinuxToys AUR தொகுப்புகளைக் கையாள paru தேவை. அது இப்போது நிறுவப்படும்."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys AppImage தொகுப்புகளைக் கையாள Gear Lever தேவை. அது இப்போது நிறுவப்படும்."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq கண்டறியப்பட்டது. இதை DNS தற்காலிக சேமிப்பாகப் பயன்படுத்தினால், libvirt சிக்கல்களை ஏற்படுத்தி உங்கள் இணைப்பால் DNS கோரிக்கைகளைத் தீர்க்க முடியாமல் போகலாம். இருப்பினும் தொடரவா?"'
     },
     'tg.lib': {
-        'parumsg': 'parumsg="Барои коркарди бастаҳои AUR ба LinuxToys paru лозим аст. Он ҳоло насб карда мешавад."',
-        'gearlevermsg': 'gearlevermsg="Барои коркарди бастаҳои AppImage ба LinuxToys Gear Lever лозим аст. Он ҳоло насб карда мешавад."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq муайян карда шуд. Агар шумо онро ҳамчун кэши DNS истифода баред, libvirt метавонад мушкилот эҷод кунад ва пайвасти шуморо аз ҳалли дархостҳои DNS боздорад. Ба ҳар ҳол идома дода шавад?"'
     },
     'th.lib': {
-        'parumsg': 'parumsg="LinuxToys ต้องใช้ paru เพื่อจัดการแพ็กเกจ AUR โดยจะติดตั้งตอนนี้"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys ต้องใช้ Gear Lever เพื่อจัดการแพ็กเกจ AppImage โดยจะติดตั้งตอนนี้"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="ตรวจพบ dnsmasq หากคุณใช้เป็นแคช DNS, libvirt อาจทำให้เกิดปัญหาและทำให้การเชื่อมต่อของคุณไม่สามารถแก้ไขคำขอ DNS ได้ ต้องการดำเนินการต่อหรือไม่?"'
     },
     'tl.lib': {
-        'parumsg': 'parumsg="Kinakailangan ang paru upang mapangasiwaan ng LinuxToys ang mga AUR package. Ii-install ito ngayon."',
-        'gearlevermsg': 'gearlevermsg="Kinakailangan ang Gear Lever upang mapangasiwaan ng LinuxToys ang mga AppImage package. Ii-install ito ngayon."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Natukoy ang dnsmasq. Kung ginagamit mo ito bilang DNS cache, maaaring magdulot ng problema ang libvirt at gawing hindi kayang lutasin ng iyong koneksyon ang mga kahilingan sa DNS. Magpatuloy pa rin?"'
     },
     'tr.lib': {
-        'parumsg': 'parumsg="LinuxToys\'un AUR paketlerini yönetebilmesi için paru gereklidir. Şimdi yüklenecek."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys\'un AppImage paketlerini yönetebilmesi için Gear Lever gereklidir. Şimdi yüklenecek."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız libvirt sorunlara yol açabilir ve bağlantınızın DNS isteklerini çözümleyememesine neden olabilir. Yine de devam edilsin mi?"'
     },
     'uk.lib': {
-        'parumsg': 'parumsg="paru потрібен LinuxToys для роботи з пакетами AUR. Його буде встановлено зараз."',
-        'gearlevermsg': 'gearlevermsg="Gear Lever потрібен LinuxToys для роботи з пакетами AppImage. Його буде встановлено зараз."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Виявлено dnsmasq. Якщо ви використовуєте його як DNS-кеш, libvirt може спричинити проблеми та позбавити ваше з’єднання можливості розв’язувати DNS-запити. Усе одно продовжити?"'
     },
     'ur.lib': {
-        'parumsg': 'parumsg="LinuxToys کو AUR پیکیجز سنبھالنے کے لیے paru درکار ہے۔ اسے اب انسٹال کیا جائے گا۔"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys کو AppImage پیکیجز سنبھالنے کے لیے Gear Lever درکار ہے۔ اسے اب انسٹال کیا جائے گا۔"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq کا پتہ چلا ہے۔ اگر آپ اسے DNS کیش کے طور پر استعمال کر رہے ہیں تو libvirt مسائل پیدا کر سکتا ہے اور آپ کے کنکشن کو DNS درخواستیں حل کرنے سے روک سکتا ہے۔ پھر بھی آگے بڑھیں؟"'
     },
     'uz.lib': {
-        'parumsg': 'parumsg="LinuxToys AUR paketlarini boshqarishi uchun paru talab qilinadi. U hozir o‘rnatiladi."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys AppImage paketlarini boshqarishi uchun Gear Lever talab qilinadi. U hozir o‘rnatiladi."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aniqlandi. Agar undan DNS keshi sifatida foydalanayotgan bo‘lsangiz, libvirt muammolarga sabab bo‘lishi va ulanishingiz DNS so‘rovlarini hal qila olmay qolishiga olib kelishi mumkin. Shunga qaramay davom etilsinmi?"'
     },
     'vi.lib': {
-        'parumsg': 'parumsg="LinuxToys cần paru để xử lý các gói AUR. paru sẽ được cài đặt ngay bây giờ."',
-        'gearlevermsg': 'gearlevermsg="LinuxToys cần Gear Lever để xử lý các gói AppImage. Gear Lever sẽ được cài đặt ngay bây giờ."'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Đã phát hiện dnsmasq. Nếu bạn đang sử dụng nó làm bộ nhớ đệm DNS, libvirt có thể gây ra sự cố và khiến kết nối của bạn không thể phân giải các yêu cầu DNS. Vẫn tiếp tục?"'
     },
     'zh.lib': {
-        'parumsg': 'parumsg="LinuxToys 需要 paru 来处理 AUR 软件包。现在将安装 paru。"',
-        'gearlevermsg': 'gearlevermsg="LinuxToys 需要 Gear Lever 来处理 AppImage 软件包。现在将安装 Gear Lever。"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="检测到 dnsmasq。如果您将其用作 DNS 缓存，libvirt 可能会引发问题，导致您的连接无法解析 DNS 请求。仍要继续吗？"'
     }
 }
 

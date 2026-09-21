@@ -144,3 +144,4 @@ hwincompat="A hardvere nem kompatibilis ezzel a funkcióval. A művelet megszak�
 requirerebar="Az AMD GPU-illesztőprogramok telepítéséhez szükséges a \"Resize BAR\" és az \"Above 4G Decoding\". Engedélyezze ezeket a BIOS-ban, majd próbálja újra."
 parumsg="A LinuxToys számára a paru szükséges az AUR-csomagok kezeléséhez. Most telepítésre kerül."
 gearlevermsg="A LinuxToys számára a Gear Lever szükséges az AppImage-csomagok kezeléséhez. Most telepítésre kerül."
+libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítótárként használja, a libvirt problémákat okozhat, és megakadályozhatja, hogy a kapcsolat DNS-kéréseket oldjon fel. Mindenképpen folytatja?"

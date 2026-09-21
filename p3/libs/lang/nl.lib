@@ -144,3 +144,4 @@ hwincompat="Uw hardware is niet compatibel met deze functie. De bewerking is gea
 requirerebar="\"Resize BAR\" en \"Above 4G Decoding\" zijn vereist om AMD GPU-stuurprogramma’s te installeren. Schakel deze opties in het BIOS in en probeer het opnieuw."
 parumsg="paru is vereist zodat LinuxToys AUR-pakketten kan verwerken. Het wordt nu geïnstalleerd."
 gearlevermsg="Gear Lever is vereist zodat LinuxToys AppImage-pakketten kan verwerken. Het wordt nu geïnstalleerd."
+libvirtdnsmasq="dnsmasq is gedetecteerd. Als u het als DNS-cache gebruikt, kan libvirt problemen veroorzaken waardoor uw verbinding geen DNS-verzoeken meer kan oplossen. Toch doorgaan?"

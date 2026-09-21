@@ -143,3 +143,4 @@ hwincompat="Hindi tugma ang iyong hardware sa feature na ito. Kinansela ang oper
 requirerebar="Kinakailangan ang \"Resize BAR\" at \"Above 4G Decoding\" upang mai-install ang mga driver ng AMD GPU. Paganahin ang mga ito sa BIOS at subukang muli."
 parumsg="Kinakailangan ang paru upang mapangasiwaan ng LinuxToys ang mga AUR package. Ii-install ito ngayon."
 gearlevermsg="Kinakailangan ang Gear Lever upang mapangasiwaan ng LinuxToys ang mga AppImage package. Ii-install ito ngayon."
+libvirtdnsmasq="Natukoy ang dnsmasq. Kung ginagamit mo ito bilang DNS cache, maaaring magdulot ng problema ang libvirt at gawing hindi kayang lutasin ng iyong koneksyon ang mga kahilingan sa DNS. Magpatuloy pa rin?"

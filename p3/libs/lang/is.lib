@@ -143,3 +143,4 @@ hwincompat="Vélbúnaðurinn þinn er ekki samhæfur þessum eiginleika. Aðger�
 requirerebar="\"Resize BAR\" og \"Above 4G Decoding\" eru nauðsynleg til að setja upp AMD GPU-rekla. Virkjaðu þau í BIOS og reyndu aftur."
 parumsg="paru er nauðsynlegt svo LinuxToys geti meðhöndlað AUR-pakka. Það verður sett upp núna."
 gearlevermsg="Gear Lever er nauðsynlegt svo LinuxToys geti meðhöndlað AppImage-pakka. Það verður sett upp núna."
+libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur libvirt valdið vandamálum og komið í veg fyrir að tengingin þín geti leyst DNS-beiðnir. Halda samt áfram?"
