@@ -220,15 +220,21 @@ class AppStreamRunner:
             self._thread.start()
 
     def _spawn_shell(self):
+        env = os.environ.copy()
+        env["HISTFILE"] = "/dev/null"
+
         self._process = subprocess.Popen(
             ["script", "-qefc", "stty -echo; exec bash --noprofile --norc", "/dev/null"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            env=os.environ.copy(),
+            env=env,
             bufsize=0,
         )
         self._master_fd = self._process.stdout.fileno()
+
+        self._process.stdin.write(b"set +o history\n")
+        self._process.stdin.flush()
 
     def _worker(self):
         while not self._stopping.is_set():
