@@ -1148,13 +1148,19 @@ class AppWindow(
             self.main_stack.remove(old)
             old.destroy()
 
-        self._installed_features_prev = {
-            "child": self.main_stack.get_visible_child(),
-            "header_visible": self.header_widget.get_visible(),
-            "title": self.header_bar.props.title,
-            "footer_revealed": self.reveal.get_reveal_child(),
-            "back_visible": self.back_button.get_visible(),
-        }
+        # Installed Features and Queue are sibling utility views, not navigation
+        # levels. Switching between them must preserve the original non-utility
+        # origin instead of making one utility view the parent of the other.
+        if self.main_stack.get_visible_child_name() == "appstream_queue":
+            self._installed_features_prev = getattr(self, "_appstream_queue_prev", None)
+        else:
+            self._installed_features_prev = {
+                "child": self.main_stack.get_visible_child(),
+                "header_visible": self.header_widget.get_visible(),
+                "title": self.header_bar.props.title,
+                "footer_revealed": self.reveal.get_reveal_child(),
+                "back_visible": self.back_button.get_visible(),
+            }
         view = installed_features.InstalledFeaturesView(self)
         self.main_stack.add_named(view, "installed_features")
         view.show_all()
@@ -1175,13 +1181,19 @@ class AppWindow(
             self.main_stack.remove(old)
             old.destroy()
 
-        self._appstream_queue_prev = {
-            "child": self.main_stack.get_visible_child(),
-            "header_visible": self.header_widget.get_visible(),
-            "title": self.header_bar.props.title,
-            "footer_revealed": self.reveal.get_reveal_child(),
-            "back_visible": self.back_button.get_visible(),
-        }
+        # Installed Features and Queue are sibling utility views, not navigation
+        # levels. Switching between them must preserve the original non-utility
+        # origin instead of making one utility view the parent of the other.
+        if self.main_stack.get_visible_child_name() == "installed_features":
+            self._appstream_queue_prev = getattr(self, "_installed_features_prev", None)
+        else:
+            self._appstream_queue_prev = {
+                "child": self.main_stack.get_visible_child(),
+                "header_visible": self.header_widget.get_visible(),
+                "title": self.header_bar.props.title,
+                "footer_revealed": self.reveal.get_reveal_child(),
+                "back_visible": self.back_button.get_visible(),
+            }
         view = appstream_queue.AppStreamQueueView(self)
         self.main_stack.add_named(view, "appstream_queue")
         view.show_all()
