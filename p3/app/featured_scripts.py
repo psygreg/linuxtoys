@@ -616,54 +616,121 @@ class FeaturedCtl:
         self, count, exclude_keys=(), category=None
     ):
         """
-        Select Featured cards for spare app-page space without touching main history.
+        Select one stable Featured set for spare app-page space.
 
-        App-page recommendations can be restricted to the category currently being
-        viewed. Main-menu Featured selection remains global and unchanged.
+        Prefer the app's exact category, including nested subcategories. If that
+        category cannot fill the available slots, backfill from the same
+        personalized/global pool used by main-menu Featured without touching its
+        history or refresh timer.
         """
         if count <= 0:
             return []
 
         excluded = set(exclude_keys or ())
-        category = str(category or "").strip().casefold()
+        category = str(category or "").strip().replace("\\", "/").strip("/")
+        category_folded = category.casefold()
 
-        def same_category(script):
-            if not category:
-                return True
-            script_category = str(script.get("category", "") or "").strip().casefold()
-            return script_category == category
-
-        candidates = [
+        eligible = [
             script
             for script in self._eligible_featured_scripts()
             if self._featured_script_key(script) not in excluded
-            and same_category(script)
         ]
-        if not candidates:
+        if not eligible:
             return []
 
-        count = min(int(count), len(candidates))
-        curated_required = max(1, count // 5)
-        curated_candidates = [
-            script
-            for script in candidates
-            if self._is_linuxtoys_curated_featured(script)
-        ]
-        curated_required = min(curated_required, len(curated_candidates), count)
+        count = min(int(count), len(eligible))
 
-        selected_curated = random.sample(curated_candidates, curated_required)
-        selected_keys = {
-            self._featured_script_key(script)
-            for script in selected_curated
-        }
-        remaining = [
-            script
-            for script in candidates
-            if self._featured_script_key(script) not in selected_keys
-        ]
-        selected = selected_curated + self._weighted_featured_sample(
-            remaining, min(count - len(selected_curated), len(remaining))
+        def same_category(script):
+            if not category_folded:
+                return True
+            script_category = (
+                str(script.get("category", "") or "")
+                .strip()
+                .replace("\\", "/")
+                .strip("/")
+                .casefold()
+            )
+            return script_category == category_folded
+
+        # ``all_scripts`` is intentionally built from top-level categories for the
+        # main-menu Featured pool. Nested subcategory entries therefore may not be
+        # present in it at all. Pull the exact category directly from CategoryCache
+        # as well so app-page recommendations work for e.g. Gaming/Emulators.
+        category_candidates = [script for script in eligible if same_category(script)]
+        if category:
+            category_cache = getattr(self, "category_cache", None)
+            if category_cache is not None:
+                category_path = os.path.join(
+                    parser.SCRIPTS_DIR, *[part for part in category.split("/") if part]
+                )
+                try:
+                    direct_scripts = category_cache.get_scripts_for_category(category_path)
+                except Exception:
+                    direct_scripts = ()
+
+                known_keys = {
+                    self._featured_script_key(script) for script in category_candidates
+                }
+                for script in direct_scripts or ():
+                    key = self._featured_script_key(script)
+                    if (
+                        key in excluded
+                        or key in known_keys
+                        or not script.get("is_script", False)
+                        or script.get("is_create_script", False)
+                        or self._is_script_removable(script)
+                        or self._featured_rating_weight(script) <= 0
+                        or not same_category(script)
+                    ):
+                        continue
+                    known_keys.add(key)
+                    category_candidates.append(script)
+
+        selected = self._weighted_featured_sample(
+            category_candidates, min(count, len(category_candidates))
         )
+        selected_keys = {self._featured_script_key(script) for script in selected}
+
+        # Only spare slots are backfilled. A category that can fill the page remains
+        # entirely category-local; sparse categories retain all of their own picks
+        # and receive main-menu-style recommendations for the remainder.
+        remaining_count = count - len(selected)
+        if remaining_count > 0:
+            remaining = [
+                script for script in eligible
+                if self._featured_script_key(script) not in selected_keys
+            ]
+            sensed_keys = self._sensed_featured_keys()
+            sensed_candidates = [
+                script for script in remaining
+                if self._featured_script_key(script) in sensed_keys
+            ]
+            sensed_target = (
+                remaining_count * self.SENSE_PERSONALIZED_PERCENT
+            ) // 100
+            sensed_count = min(
+                sensed_target, len(sensed_candidates), remaining_count
+            )
+            backfill = self._weighted_featured_sample(
+                sensed_candidates, sensed_count
+            )
+            backfill_keys = {
+                self._featured_script_key(script) for script in backfill
+            }
+
+            global_candidates = [
+                script for script in remaining
+                if self._featured_script_key(script) not in backfill_keys
+            ]
+            still_needed = remaining_count - len(backfill)
+            if still_needed > 0:
+                backfill.extend(
+                    self._weighted_featured_sample(
+                        global_candidates, min(still_needed, len(global_candidates))
+                    )
+                )
+            selected.extend(backfill)
+
         random.shuffle(selected)
         return selected
 
