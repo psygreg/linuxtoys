@@ -1,7 +1,6 @@
 """Internal popularity scoring and session browse ordering for LinuxToys."""
 
 from __future__ import annotations
-from DistUpgrade.xorg_fix_proprietary import m
 
 import json
 import math
@@ -77,6 +76,8 @@ KNOWN_POPULAR = {
     "ffmpegthumbnailer",
     "Bottles",
     "com.usebottles.bottles",
+    "ONLYOFFICE Desktop Editors",
+    "org.onlyoffice.desktopeditors"
 }
 
 FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"
