@@ -48,7 +48,7 @@ APPSTREAM_SOURCE_PREFERENCE = {
 # is ignored. The lock is applied only when a system-scope Flathub entry exists.
 # When active, native and user-scope Flatpak alternatives are intentionally hidden.
 SYSTEM_FLATPAK_ONLY = {
-    # "org.example.App",
+    "io.github.ilya_zlobintsev.LACT",
 }
 
 # Developer-facing denylist for AppStream applications that must not be offered

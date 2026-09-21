@@ -249,6 +249,7 @@ unset UPINFO || true
     "$QUICK_SHARUN" \
         "$APP_BIN/linuxtoys" \
         /usr/bin/zenity \
+        /usr/bin/script \
         /usr/lib/libappstream.so.5
 )
 
