@@ -14,5 +14,4 @@ _lang_
 sudo_rq
 pkg_install nvidia-open-dkms nvidia-utils nvidia-settings
 initramfs_upd
-bootloader_upd
 info "$rebootmsg"

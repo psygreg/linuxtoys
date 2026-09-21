@@ -15,7 +15,6 @@ if is_arch || is_cachy; then
     pkg_remove nvidia-open nvidia-open-dkms nvidia-open-lts nvidia-settings nvidia-utils
     pkg_install nvidia-580xx-dkms nvidia-580xx-utils nvidia-580xx-settings
     initramfs_upd
-    bootloader_upd
 elif is_fedora || is_rhel; then
     rpmfusion_chk
     secureboot_check

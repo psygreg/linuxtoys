@@ -20,5 +20,4 @@ wget https://raw.githubusercontent.com/psygreg/linuxtoys/master/resources/10-nvi
 copy_ 10-nvidia.conf /etc/modprobe.d/
 # refresh boot image
 initramfs_upd
-bootloader_upd
 info "$rebootmsg"
