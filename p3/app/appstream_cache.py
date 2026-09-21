@@ -1014,6 +1014,46 @@ def _normalize_flatpak_component(component, source):
     }
 
 
+def _refresh_missing_flatpak_appstream():
+    """Refresh Flathub AppStream metadata when a configured installation has none.
+
+    Flatpak normally refreshes this metadata itself, but a newly added remote can
+    exist before its local AppStream database has been populated. Keep this as a
+    narrow safeguard: only installations with a configured Flathub remote and no
+    local Flathub AppStream directory are refreshed.
+    """
+    if not _flatpak_supported_host() or not shutil.which("flatpak"):
+        return
+
+    for remote in _configured_flatpak_remotes():
+        if remote["remote"] != "flathub":
+            continue
+        if (remote["root"] / "appstream" / remote["remote"]).is_dir():
+            continue
+
+        cmd = ["flatpak"]
+        if remote["scope"] == "user":
+            cmd.append("--user")
+        elif remote["installation"] == "default":
+            cmd.append("--system")
+        else:
+            cmd.append(f"--installation={remote['installation']}")
+        cmd += ["update", "--appstream", remote["remote"]]
+
+        try:
+            subprocess.run(
+                cmd,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=60,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            # AppStream refresh is best-effort. Native metadata and any other
+            # already-cached Flatpak installation must remain usable.
+            continue
+
+
 def _flatpak_appstream_sources():
     """Locate locally cached AppStream catalogs for configured Flatpak remotes."""
     if not _flatpak_supported_host():
@@ -1334,6 +1374,11 @@ def refresh_cache(force=False, status_callback=None):
 
                     if len(processed) % CHECKPOINT_EVERY == 0:
                         _write_partial(entries, processed)
+
+            # Flatpak normally keeps remote AppStream metadata current itself. A
+            # freshly configured Flathub remote can briefly have no local AppStream
+            # database, though, so populate that missing metadata before discovery.
+            _refresh_missing_flatpak_appstream()
 
             # Flatpak is reconciled independently against the same published catalog.
             # Unchanged XML components reuse their normalized JSON entries verbatim.
