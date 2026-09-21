@@ -10,6 +10,10 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 askpass
 
+if command -v podman &> /dev/null; then
+    echo "Fixing rootless podman permissions before installing VirtualBox. You may need to recreate your podman containers after this."
+    pkg_install crun
+fi
 echo "Installing and building kernel modules for VirtualBox. This may take a while..."
 if is_ubuntu || is_debian; then
     if is_ubuntu; then
