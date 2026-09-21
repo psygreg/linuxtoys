@@ -777,6 +777,19 @@ class FeaturedCtl:
         self._stop_random_scripts_refresh_timer()
         self._hide_featured_section(discard=True)
 
+    def _reveal_initial_featured_layout(self):
+        """Reveal the first Featured set after GTK has negotiated its final size."""
+        if (
+            not self.all_scripts
+            or self.current_category_info is not None
+            or self.main_stack.get_visible_child_name() != "categories"
+        ):
+            return False
+
+        self.featured_scripts_revealer.set_reveal_child(True)
+        self.random_scripts_revealer.set_reveal_child(True)
+        return False
+
     def _populate_random_scripts(self, scripts, count, layout):
         """
         Replace Featured content.
@@ -934,8 +947,33 @@ class FeaturedCtl:
         self._featured_history = history[-history_limit:]
 
         self.featured_scripts_revealer.show_all()
-        self.featured_scripts_revealer.set_reveal_child(True)
-        self.random_scripts_revealer.set_reveal_child(True)
+
+        # On the very first Featured draw GTK may still be propagating the new
+        # Gtk.Grid requisition through the nested revealer/container hierarchy.
+        # This is especially easy to hit on the fast startup path where the
+        # AppStream runtime pickle is already available. Revealing immediately
+        # can therefore expose one transient allocation with excess space above
+        # the grid.
+        #
+        # Let the newly populated grid request its final geometry first, then
+        # reveal it from the next main-loop iteration. Later redraws already have
+        # established geometry and can be revealed immediately.
+        if not getattr(self, "_featured_first_layout_committed", False):
+            self._featured_first_layout_committed = True
+
+            self.random_scripts_revealer.set_reveal_child(False)
+            self.featured_scripts_revealer.set_reveal_child(False)
+
+            self.random_scripts_flowbox.queue_resize()
+            self.random_scripts_revealer.queue_resize()
+            self.featured_scripts_container.queue_resize()
+            self.featured_scripts_revealer.queue_resize()
+
+            GLib.idle_add(self._reveal_initial_featured_layout)
+        else:
+            self.featured_scripts_revealer.set_reveal_child(True)
+            self.random_scripts_revealer.set_reveal_child(True)
+
         return False
 
     def _refresh_random_scripts_display(self, force=False):
