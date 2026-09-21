@@ -16,16 +16,6 @@
         "icon": "figma.svg"
     },
     {
-        "name": "Prism Launcher",
-        "description": "A custom launcher for Minecraft Java Edition with support for mods and shaders.",
-        "description_tag": "prism_desc",
-        "repo": "https://prismlauncher.org",
-        "category": "game",
-        "icon": "prism.svg",
-        "type": "flathub",
-        "package-name": "org.prismlauncher.PrismLauncher"
-    },
-    {
         "name": "Gear Lever",
         "description": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
         "description_tag": "glever_desc",
@@ -34,86 +24,6 @@
         "icon": "gearlever.png",
         "type": "flathub",
         "package-name": "it.mijorus.gearlever"
-    },
-    {
-        "name": "ProtonPlus",
-        "description": "A GTK-based tool to easily obtain community runners for gaming on Linux.",
-        "description_tag": "pp_desc",
-        "repo": "https://github.com/Vysp3r/ProtonPlus",
-        "category": "game",
-        "icon": "protonplus.svg",
-        "type": "flathub",
-        "package-name": "com.vysp3r.ProtonPlus"
-    },
-    {
-        "name": "Vinegar",
-        "description": "A community wrapper for Roblox Studio, for Roblox game creators.",
-        "description_tag": "vinegar_desc",
-        "repo": "https://vinegarhq.org",
-        "category": "game",
-        "icon": "vinegar.png",
-        "type": "flathub",
-        "package-name": "org.vinegarhq.Vinegar"
-    },
-    {
-        "name": "Sober",
-        "description": "Roblox community port for Linux, based on the Android version of the game.",
-        "description_tag": "sober_desc",
-        "repo": "https://sober.vinegarhq.org",
-        "category": "game",
-        "icon": "sober.png",
-        "type": "flathub",
-        "package-name": "org.vinegarhq.Sober"
-    },
-    {
-        "name": "ProtonUp",
-        "description": "A Qt-based tool to easily obtain community runners for gaming on Linux.",
-        "description_tag": "pup_desc",
-        "repo": "https://davidotek.github.io/protonup-qt",
-        "category": "game",
-        "icon": "pupgui.png",
-        "type": "flathub",
-        "package-name": "net.davidotek.pupgui2"
-    },
-    {
-        "name": "Protontricks",
-        "description": "Proton configuration tool, akin to Winetricks. Useful in very specific cases.",
-        "description_tag": "ptricks_desc",
-        "repo": "https://github.com/Matoking/protontricks",
-        "category": "game",
-        "icon": "proton.svg",
-        "type": "flathub",
-        "package-name": "com.github.Matoking.protontricks"
-    },
-    {
-        "name": "Osu!",
-        "description": "A community-made wrapper for the rhythm game with a large community and many user-created beatmaps.",
-        "description_tag": "osu_desc",
-        "repo": "https://osu.ppy.sh",
-        "category": "game",
-        "icon": "osu.png",
-        "type": "flathub",
-        "package-name": "sh.ppy.osu"
-    },
-    {
-        "name": "Greenlight",
-        "description": "A community-made client for Xbox's XCloud.",
-        "description_tag": "glight_desc",
-        "repo": "https://github.com/unknownskl/greenlight",
-        "category": "game",
-        "icon": "greenlight.png",
-        "type": "flathub",
-        "package-name": "io.github.unknownskl.greenlight"
-    },
-    {
-        "name": "Moonlight",
-        "description": "Open source PC client for NVIDIA GameStream and Sunshine.",
-        "description_tag": "mlight_desc",
-        "repo": "https://github.com/moonlight-stream/moonlight-qt",
-        "category": "game",
-        "icon": "moonlight.svg",
-        "type": "flathub",
-        "package-name": "com.moonlight_stream.Moonlight"
     },
     {
         "name": "Audacity",
@@ -171,66 +81,6 @@
         "icon": "zennotes.png"
     },
     {
-        "name": "Discord",
-        "description": "A popular communication platform for gamers and communities.",
-        "description_tag": "discord_desc",
-        "repo": "https://discord.com",
-        "category": "chat",
-        "icon": "discord.svg",
-        "type": "flathub",
-        "package-name": "com.discordapp.Discord"
-    },
-    {
-        "name": "Microsoft Teams",
-        "description": "A collaboration platform for remote work.",
-        "description_tag": "msteams_desc",
-        "repo": "https://github.com/IsmaelMartinez/teams-for-linux",
-        "category": "office",
-        "icon": "teams.svg",
-        "type": "flathub",
-        "package-name": "com.github.IsmaelMartinez.teams_for_linux"
-    },
-    {
-        "name": "Signal",
-        "description": "Private messenger with end-to-end encryption and no user IDs.",
-        "description_tag": "signal_desc",
-        "repo": "https://discord.com",
-        "category": "chat",
-        "icon": "signal.png",
-        "type": "flathub",
-        "package-name": "org.signal.Signal"
-    },
-    {
-        "name": "Slack",
-        "description": "Team collaboration and messaging platform.",
-        "description_tag": "slack_desc",
-        "repo": "https://slack.com",
-        "category": "office",
-        "icon": "slack.svg",
-        "type": "flathub",
-        "package-name": "com.slack.Slack"
-    },
-    {
-        "name": "Telegram",
-        "description": "Messaging app with better social features and bigger group limits.",
-        "description_tag": "telegram_desc",
-        "repo": "https://desktop.telegram.org",
-        "category": "chat",
-        "icon": "telegram.png",
-        "type": "flathub",
-        "package-name": "org.telegram.desktop"
-    },
-    {
-        "name": "ZapZap",
-        "description": "An electron wrapper for WhatsApp Web.",
-        "description_tag": "zap_desc",
-        "repo": "https://github.com/rafatosta/zapzap",
-        "category": "chat",
-        "icon": "zapzap.png",
-        "type": "flathub",
-        "package-name": "com.rtosta.zapzap"
-    },
-    {
         "name": "Gamemode",
         "description": "A daemon for optimizing game performance on Linux.",
         "description_tag": "gamemode_desc",
@@ -260,26 +110,6 @@
         ],
         "category": "game",
         "icon": "leshade.png"
-    },
-    {
-        "name": "Cohesion",
-        "description": "A community port of Notion for Linux.",
-        "description_tag": "cohesion_desc",
-        "repo": "https://github.com/brunofin/cohesion",
-        "category": "office",
-        "icon": "cohesion.svg",
-        "type": "flathub",
-        "package-name": "io.github.brunofin.Cohesion"
-    },
-    {
-        "name": "Obsidian",
-        "description": "A free, flexible app for your thoughts, notes, and organization.",
-        "description_tag": "obsidian_desc",
-        "repo": "https://obsidian.md",
-        "category": "office",
-        "icon": "obsidian.svg",
-        "type": "flathub",
-        "package-name": "md.obsidian.Obsidian"
     },
     {
         "name": "Lutris",
@@ -476,16 +306,6 @@
         }
     },
     {
-        "name": "Thumbnailer",
-        "description": "Installs ffmpegthumbnailer to generate thumbnails for video files in file managers.",
-        "description_tag": "thumb_desc",
-        "repo": "https://github.com/dirkvdb/ffmpegthumbnailer",
-        "category": "extra",
-        "icon": "media.svg",
-        "type": "native",
-        "package-name": "ffmpegthumbnailer"
-    },
-    {
         "name": "QtScrcpy",
         "description": "Mirror and control Android devices via USB or WiFi network.",
         "description_tag": "qtscrcpy_desc",
@@ -518,16 +338,6 @@
         "overrides": {
             "post": "info \"$msg287\" && xdg-open https://fight-flash-fraud.readthedocs.io/en/latest/introduction.html#examples-1 || true"
         }
-    },
-    {
-        "name": "Bottles",
-        "description": "A tool for managing Windows applications on Linux using Wine.",
-        "description_tag": "bottles_desc",
-        "repo": "https://usebottles.com",
-        "category": "utils",
-        "icon": "bottles.svg",
-        "type": "flathub",
-        "package-name": "com.usebottles.bottles"
     },
     {
         "name": "Extension Manager",

@@ -1,6 +1,7 @@
 """Internal popularity scoring and session browse ordering for LinuxToys."""
 
 from __future__ import annotations
+from DistUpgrade.xorg_fix_proprietary import m
 
 import json
 import math
@@ -39,7 +40,43 @@ KNOWN_POPULAR = {
     "Thunderbird",
     "org.mozilla.thunderbird",
     "Save Desktop",
-    "io.github.vikdevelop.SaveDesktop"
+    "io.github.vikdevelop.SaveDesktop",
+    "Prism Launcher",
+    "org.prismlauncher.PrismLauncher",
+    "ProtonPlus",
+    "com.vysp3r.ProtonPlus",
+    "Vinegar",
+    "org.vinegarhq.Vinegar",
+    "Sober",
+    "org.vinegarhq.Sober",
+    "net.davidotek.pupgui2",
+    "Protontricks",
+    "com.github.Matoking.protontricks",
+    "Osu!",
+    "sh.ppy.osu",
+    "Greenlight",
+    "io.github.unknownskl.greenlight",
+    "Moonlight",
+    "com.moonlight_stream.Moonlight",
+    "Discord",
+    "com.discordapp.Discord",
+    "Signal",
+    "org.signal.Signal",
+    "Microsoft Teams",
+    "com.github.IsmaelMartinez.teams_for_linux",
+    "Slack",
+    "com.slack.Slack",
+    "Telegram",
+    "org.telegram.desktop",
+    "ZapZap",
+    "com.rtosta.zapzap",
+    "Cohesion",
+    "io.github.brunofin.Cohesion",
+    "Obsidian",
+    "md.obsidian.Obsidian",
+    "ffmpegthumbnailer",
+    "Bottles",
+    "com.usebottles.bottles",
 }
 
 FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"
