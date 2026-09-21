@@ -18,7 +18,7 @@ _RUNTIME_CACHE = {}
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 5
+RUNTIME_CACHE_SCHEMA = 6
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -49,6 +49,17 @@ APPSTREAM_SOURCE_PREFERENCE = {
 # When active, native and user-scope Flatpak alternatives are intentionally hidden.
 SYSTEM_FLATPAK_ONLY = {
     # "org.example.App",
+}
+
+# Developer-facing denylist for AppStream applications that must not be offered
+# through the generic AppStream installer. Use this when LinuxToys has (or needs)
+# a dedicated installation procedure for an application. Match by AppStream ID,
+# Flatpak application ID, or native package name. AppStream IDs ending in
+# .desktop are normalized automatically. Matching is case-insensitive.
+APPSTREAM_OMIT = {
+    "virtualbox",
+    "virt-manager",
+    "org.virt_manager.virt-manager"
 }
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
@@ -645,6 +656,35 @@ def _normalized_component_id(component):
     return component_id
 
 
+def _appstream_omit_keys():
+    result = set()
+    for value in APPSTREAM_OMIT:
+        key = str(value or "").strip().casefold()
+        if key.endswith(".desktop"):
+            key = key[:-8]
+        if key:
+            result.add(key)
+    return result
+
+
+def _is_omitted_component(component, omit_keys=None):
+    """Return whether a raw AppStream component is developer-blocked."""
+    omit_keys = _appstream_omit_keys() if omit_keys is None else omit_keys
+    if not omit_keys:
+        return False
+
+    if _normalized_component_id(component) in omit_keys:
+        return True
+
+    for package in _flatten_package_names(component.get("packages")):
+        key = str(package or "").strip().casefold()
+        if key.endswith(".desktop"):
+            key = key[:-8]
+        if key in omit_keys:
+            return True
+    return False
+
+
 def _system_flatpak_lock_ids():
     result = set()
     for value in SYSTEM_FLATPAK_ONLY:
@@ -1084,6 +1124,7 @@ def _persistent_runtime_cache_key(
     return (
         RUNTIME_CACHE_SCHEMA,
         tuple(sorted(_system_flatpak_lock_ids())),
+        tuple(sorted(_appstream_omit_keys())),
         scripts_dir,
         int(catalog_mtime),
         curated_signature,
@@ -1178,6 +1219,7 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
     category_paths = tuple(sorted(str(path) for path in (category_paths or ())))
     cache_key = (
         tuple(sorted(_system_flatpak_lock_ids())),
+        tuple(sorted(_appstream_omit_keys())),
         scripts_dir,
         catalog_mtime,
         curated_signature,
@@ -1207,7 +1249,15 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
     curated_ids, curated_packages, curated_names = _curated_identity_sets(curated_entries)
     result = []
 
-    for component in _prefer_sources(appstream_cache.load_catalog(), category_paths):
+    omit_keys = _appstream_omit_keys()
+    components = [
+        component
+        for component in appstream_cache.load_catalog()
+        if isinstance(component, dict)
+        and not _is_omitted_component(component, omit_keys)
+    ]
+
+    for component in _prefer_sources(components, category_paths):
         if not isinstance(component, dict):
             continue
         if _is_curated(component, curated_ids, curated_packages, curated_names):
