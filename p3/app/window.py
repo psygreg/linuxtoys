@@ -2758,9 +2758,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # labels/tooltips. Drop them so Back never resurrects the old locale.
         self._discard_retained_category_views()
 
-        # App pages own their own InfosHead. Rebuilding the normal category header
-        # while one is visible both exposes that header and corrupts the page state.
-        if current_view != "app_page":
+        # App pages and utility views own their visible header state. Rebuilding the
+        # normal category header while one is visible can expose that header and
+        # corrupt the view we are trying to preserve across a language change.
+        if current_view not in ("app_page", "appstream_queue", "installed_features"):
             self._update_header(self.current_category_info)
 
             # Update title bar
@@ -2782,6 +2783,32 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
         # Refresh footer translations
         self.reveal.update_translations(self.translations)
+
+        # Queue and Installed Features are persistent utility views whose rows are
+        # rendered directly from self.translations. Refresh them in place and keep
+        # their utility-view header state instead of falling through to category
+        # navigation refresh logic from the view they were opened from.
+        if current_view == "appstream_queue":
+            queue_view = self.main_stack.get_child_by_name("appstream_queue")
+            if queue_view is not None and hasattr(queue_view, "refresh"):
+                queue_view.refresh()
+            self.header_widget.hide()
+            self.reveal.set_reveal_child(False)
+            self.back_button.show()
+            title = self.translations.get("installation_queue", "Installation Queue")
+            self.header_bar.props.title = f"LinuxToys: {title}"
+            return
+
+        if current_view == "installed_features":
+            installed_view = self.main_stack.get_child_by_name("installed_features")
+            if installed_view is not None and hasattr(installed_view, "refresh"):
+                installed_view.refresh()
+            self.header_widget.hide()
+            self.reveal.set_reveal_child(False)
+            self.back_button.show()
+            title = self.translations.get("installed_features", "Installed Features")
+            self.header_bar.props.title = f"LinuxToys: {title}"
+            return
 
         # App pages are snapshots of translated repository metadata, so recreate
         # the active page from freshly parsed metadata while preserving the exact
