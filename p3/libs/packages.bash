@@ -72,11 +72,13 @@ pkg_exists () {
 }
 
 pkg_install () {
-    # Handle --ignore-appends and --ostreecheck flags
+    # Handle --ignore-appends, --ostreecheck, --allowerasing and --bypass flags
     local _ignore_appends=0
     local _ostreecheck=0
     local _allowerasing=0
+    local _bypass=0
     local -a _filtered_args=()
+
     for arg in "$@"; do
         if [[ "$arg" == "--ignore-appends" ]]; then
             _ignore_appends=1
@@ -84,6 +86,8 @@ pkg_install () {
             _ostreecheck=1
         elif [[ "$arg" == "--allowerasing" ]]; then
             _allowerasing=1
+        elif [[ "$arg" == "--bypass" ]]; then
+            _bypass=1
         else
             _filtered_args+=("$arg")
         fi
@@ -94,7 +98,7 @@ pkg_install () {
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
     askpass
-    runner_lock "package-transaction"
+    (( _bypass )) || runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
         interrupted_apt_guard
         sudo_ apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
@@ -137,11 +141,11 @@ pkg_install () {
         fi
         if [ -n "$to_install_paru" ]; then
             if is_manjaro; then
-                runner_unlock
+                (( _bypass )) || runner_unlock
                 pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
-                runner_lock "package-transaction"
+                (( _bypass )) || runner_lock "package-transaction"
             else
-                runner_unlock
+                (( _bypass )) || runner_unlock
                 if ! command -v paru &>/dev/null; then
                     if question "Installer" "$msg305" 300 300; then
                         if pacman -Si paru &>/dev/null; then
@@ -160,7 +164,7 @@ pkg_install () {
                 fi
                 paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
-                runner_lock "package-transaction"
+                (( _bypass )) || runner_lock "package-transaction"
             fi
         fi
     elif is_ostree; then
@@ -185,7 +189,7 @@ pkg_install () {
         sudo_ eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     fi
-    runner_unlock
+    (( _bypass )) || runner_unlock
 }
 
 # List installed Freedesktop runtime-extension refs in a stable, registry-friendly form.
