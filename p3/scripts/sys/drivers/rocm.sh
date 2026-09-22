@@ -12,7 +12,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 # functions
 rocm_rpm () {
-    if is_amd; then
+    if is_rocm_capable; then
         _packages=()
         if [[ "$ID_LIKE" == *suse* ]]; then
             if [ "$ID" = "opensuse-leap" ] || [[ "$VERSION_ID" =~ ^[0-9]+\.[0-9]+$ ]]; then
@@ -33,7 +33,7 @@ rocm_rpm () {
     fi
 }
 rocm_deb () {
-    if is_amd; then
+    if is_rocm_capable; then
         pkg_install clinfo rocm
         sudo usermod -aG render,video $USER
     else
@@ -41,7 +41,7 @@ rocm_deb () {
     fi
 }
 rocm_arch () {
-    if is_amd; then
+    if is_rocm_capable; then
         pkg_install rocminfo rocm-opencl-runtime rocm-hip-runtime ocl-icd clinfo
         sudo usermod -aG render,video $USER
     else
