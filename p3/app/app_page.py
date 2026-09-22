@@ -3,13 +3,17 @@ import random
 import re
 import webbrowser
 import hashlib
+import json
 import threading
 from pathlib import Path
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
 from .term_header import InfosHead
 from . import get_icon_path, appstream_cache
+from .lang_utils import detect_system_language
 
 
 class _WidthNeutralTextView(Gtk.TextView):
@@ -74,6 +78,12 @@ class AppPageView(Gtk.Box):
         self._featured_flow_width = 0
         self._remote_screenshots_pending = 0
         self._responsive_textviews = []
+        self._description_translation_button = None
+        self._description_translation_spinner = None
+        self._description_original_blocks = None
+        self._description_translated_blocks = None
+        self._description_view = None
+        self._description_showing_translation = False
         self.connect("destroy", self._on_destroy)
 
         self.header = InfosHead(self.translations, show_terminal_controls=False)
@@ -114,7 +124,7 @@ class AppPageView(Gtk.Box):
         long_description = str(script_info.get("long_description", "") or "").strip()
         long_description_blocks = script_info.get("long_description_blocks") or []
         if long_description_blocks and script_info.get("long_description_format") == "appstream":
-            description = self._build_appstream_description(long_description_blocks)
+            description = self._build_translatable_appstream_description(long_description_blocks)
             content.pack_start(description, False, False, 0)
             self._last_content_widget = description
         elif long_description:
@@ -549,26 +559,261 @@ class AppPageView(Gtk.Box):
         parent.animate_item_batch(prepared_widgets)
         return False
 
-    def _build_appstream_description(self, blocks):
-        """Render preserved AppStream XML semantics directly, without Markdown."""
-        view = _WidthNeutralTextView()
-        view.get_style_context().add_class("app-page-description")
-        view.set_halign(Gtk.Align.FILL)
-        view.set_valign(Gtk.Align.START)
-        view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
-        view.set_editable(False)
-        view.set_cursor_visible(False)
-        view.set_can_focus(False)
-        view.set_focus_on_click(False)
-        view.set_accepts_tab(False)
-        view.set_left_margin(0)
-        view.set_right_margin(0)
-        view.set_pixels_above_lines(0)
-        view.set_pixels_below_lines(0)
-        view.set_hexpand(True)
-        view.set_vexpand(False)
-        view.set_size_request(-1, 1)
+    @staticmethod
+    def _normalized_language(value):
+        value = str(value or "").strip().replace("_", "-")
+        return value.split("-", 1)[0].casefold() if value else ""
 
+    def _description_needs_translation(self):
+        # Native AppStream metadata does not reliably preserve which locale
+        # supplied the already-selected long description. Always offer the
+        # best-effort translation action for native entries rather than hiding
+        # it based on an uncertain locale. Flatpak entries retain locale
+        # provenance, so keep the precise source-vs-target check for them.
+        if self.script_info.get("appstream_source") != "flatpak":
+            return True
+
+        source = self._normalized_language(self.script_info.get("long_description_locale"))
+        target = self._normalized_language(detect_system_language())
+        return bool(source and target and source != target)
+
+    def _build_translatable_appstream_description(self, blocks):
+        self._description_original_blocks = blocks
+        self._description_view = self._build_appstream_description(blocks)
+
+        if not self._description_needs_translation():
+            return self._description_view
+
+        # Give the translation control its own compact row.  Gtk.Overlay does not
+        # reserve layout space for overlays, so placing the button over the TextView
+        # allowed the first wrapped lines to run underneath it.
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        container.set_hexpand(True)
+
+        button_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        button_row.set_hexpand(True)
+
+        button = Gtk.Button()
+        self._set_translation_button_symbol(button)
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.set_halign(Gtk.Align.END)
+        button.set_valign(Gtk.Align.CENTER)
+        button.set_can_focus(False)
+        button.set_tooltip_text(self.translations.get("app_page_translate", "Translate"))
+        button.connect("clicked", self._on_translate_description_clicked)
+        button_row.pack_end(button, False, False, 0)
+
+        container.pack_start(button_row, False, False, 0)
+        container.pack_start(self._description_view, False, False, 0)
+        self._description_translation_button = button
+        return container
+
+    def _translation_cache_path(self):
+        app_id = str(self.script_info.get("appstream_id") or self.script_info.get("id") or "").strip()
+        target = self._normalized_language(detect_system_language())
+        payload = json.dumps(
+            self._description_original_blocks or [], ensure_ascii=False, sort_keys=True,
+            separators=(",", ":"),
+        )
+        digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        key = hashlib.sha256(f"{app_id}\0{target}\0{digest}".encode("utf-8")).hexdigest()
+        cache_dir = appstream_cache.CACHE_DIR / "translations"
+        return cache_dir / f"{key}.json"
+
+    def _load_cached_description_translation(self):
+        path = self._translation_cache_path()
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                value = json.load(handle)
+            return value if isinstance(value, list) else None
+        except (OSError, ValueError, TypeError):
+            return None
+
+    def _save_cached_description_translation(self, blocks):
+        path = self._translation_cache_path()
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_name(path.name + ".tmp")
+            with open(tmp, "w", encoding="utf-8") as handle:
+                json.dump(blocks, handle, ensure_ascii=False, separators=(",", ":"))
+            os.replace(tmp, path)
+        except OSError:
+            pass
+
+    @staticmethod
+    def _set_translation_button_symbol(button):
+        """Use a bold text symbol without depending on a particular icon theme."""
+        child = button.get_child()
+        if child is not None:
+            button.remove(child)
+        label = Gtk.Label()
+        label.set_markup("<b>文/A</b>")
+        button.add(label)
+        label.show()
+
+    @staticmethod
+    def _google_translate_text(text, target_language):
+        """Best-effort translation through Google's public web endpoint.
+
+        Use POST rather than putting the description in the URL. Besides avoiding
+        URL-length failures, this behaves better with punctuation and non-ASCII
+        AppStream prose. This remains an unofficial endpoint and may be throttled.
+        """
+        text = str(text or "")
+        if not text.strip():
+            return text
+
+        data = urlencode({
+            "client": "gtx",
+            "sl": "auto",
+            "tl": target_language,
+            "dt": "t",
+            "q": text,
+        }).encode("utf-8")
+        request = Request(
+            "https://translate.googleapis.com/translate_a/single",
+            data=data,
+            headers={
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) LinuxToys/1",
+                "Accept": "application/json,text/plain,*/*",
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            },
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=20) as response:
+                payload = json.load(response)
+        except HTTPError as exc:
+            # Keep the concrete HTTP status in stderr; the UI remains best-effort.
+            detail = ""
+            try:
+                detail = exc.read().decode("utf-8", errors="replace")[:300]
+            except Exception:
+                pass
+            raise RuntimeError(
+                f"Google Translate HTTP {exc.code}: {detail or exc.reason}"
+            ) from exc
+        except URLError as exc:
+            raise RuntimeError(f"Google Translate connection failed: {exc.reason}") from exc
+
+        segments = payload[0] if isinstance(payload, list) and payload else []
+        translated = "".join(
+            str(segment[0]) for segment in segments
+            if isinstance(segment, list) and segment and segment[0] is not None
+        )
+        if not translated:
+            raise ValueError("Google Translate returned an empty translation")
+        return translated
+
+    def _translate_description_blocks(self, blocks, target_language):
+        translated = []
+        for block in blocks or ():
+            copy_block = {"type": block.get("type")}
+            if block.get("type") == "paragraph":
+                copy_block["spans"] = self._translate_description_spans(
+                    block.get("spans") or (), target_language
+                )
+            elif block.get("type") in ("unordered_list", "ordered_list"):
+                copy_block["items"] = [
+                    self._translate_description_spans(item, target_language)
+                    for item in block.get("items") or ()
+                ]
+            else:
+                copy_block.update(block)
+            translated.append(copy_block)
+        return translated
+
+    def _translate_description_spans(self, spans, target_language):
+        result = []
+        for span in spans or ():
+            item = dict(span)
+            styles = set(item.get("styles") or ())
+            if "code" not in styles:
+                item["text"] = self._google_translate_text(item.get("text", ""), target_language)
+            result.append(item)
+        return result
+
+    def _on_translate_description_clicked(self, _button):
+        if self._description_showing_translation:
+            self._set_appstream_description_blocks(self._description_original_blocks)
+            self._description_showing_translation = False
+            self._description_translation_button.set_tooltip_text(
+                self.translations.get("app_page_translate", "Translate")
+            )
+            return
+
+        if self._description_translated_blocks is not None:
+            self._show_description_translation(self._description_translated_blocks)
+            return
+
+        cached = self._load_cached_description_translation()
+        if cached is not None:
+            self._description_translated_blocks = cached
+            self._show_description_translation(cached)
+            return
+
+        button = self._description_translation_button
+        button.set_sensitive(False)
+        child = button.get_child()
+        if child is not None:
+            button.remove(child)
+        spinner = Gtk.Spinner()
+        spinner.start()
+        button.add(spinner)
+        spinner.show()
+        self._description_translation_spinner = spinner
+        target = self._normalized_language(detect_system_language())
+
+        def worker():
+            try:
+                translated = self._translate_description_blocks(
+                    self._description_original_blocks, target
+                )
+                self._save_cached_description_translation(translated)
+                GLib.idle_add(self._finish_description_translation, translated, None)
+            except Exception as exc:
+                print(f"AppStream description translation failed: {exc}", flush=True)
+                GLib.idle_add(self._finish_description_translation, None, str(exc))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _finish_description_translation(self, translated, error):
+        if self._destroyed:
+            return False
+        button = self._description_translation_button
+        child = button.get_child() if button is not None else None
+        if child is not None:
+            button.remove(child)
+        self._set_translation_button_symbol(button)
+        button.set_sensitive(True)
+        self._description_translation_spinner = None
+
+        if translated is not None:
+            self._description_translated_blocks = translated
+            self._show_description_translation(translated)
+        else:
+            button.set_tooltip_text(
+                self.translations.get("app_page_translate_failed", "Translation failed. Try again.")
+            )
+        return False
+
+    def _show_description_translation(self, blocks):
+        self._set_appstream_description_blocks(blocks)
+        self._description_showing_translation = True
+        self._description_translation_button.set_tooltip_text(
+            self.translations.get("app_page_show_original", "Show original")
+        )
+
+    def _set_appstream_description_blocks(self, blocks):
+        replacement = self._appstream_description_buffer(blocks)
+        self._description_view.set_buffer(replacement)
+        self._description_view.set_size_request(-1, 1)
+        self._schedule_markdown_view_height_fit(self._description_view)
+        self._featured_fill_signature = None
+        self._schedule_featured_fill()
+
+    def _appstream_description_buffer(self, blocks):
+        """Build the AppStream description buffer while preserving its block styling."""
         buffer = Gtk.TextBuffer()
         tag_base = buffer.create_tag("as-base", scale=1.10)
         tag_lead = buffer.create_tag("as-lead", scale=1.20)
@@ -617,8 +862,28 @@ class AppPageView(Gtk.Box):
                     buffer.insert_with_tags(buffer.get_end_iter(), prefix, tag_list)
                     insert_spans(item, (tag_list,))
                 rendered_blocks += 1
+        return buffer
 
-        view.set_buffer(buffer)
+    def _build_appstream_description(self, blocks):
+        """Render preserved AppStream XML semantics directly, without Markdown."""
+        view = _WidthNeutralTextView()
+        view.get_style_context().add_class("app-page-description")
+        view.set_halign(Gtk.Align.FILL)
+        view.set_valign(Gtk.Align.START)
+        view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        view.set_editable(False)
+        view.set_cursor_visible(False)
+        view.set_can_focus(False)
+        view.set_focus_on_click(False)
+        view.set_accepts_tab(False)
+        view.set_left_margin(0)
+        view.set_right_margin(0)
+        view.set_pixels_above_lines(0)
+        view.set_pixels_below_lines(0)
+        view.set_hexpand(True)
+        view.set_vexpand(False)
+        view.set_size_request(-1, 1)
+        view.set_buffer(self._appstream_description_buffer(blocks))
         view._markdown_fit_source = None
         self._responsive_textviews.append(view)
         view.connect("size-allocate", self._schedule_markdown_view_height_fit)

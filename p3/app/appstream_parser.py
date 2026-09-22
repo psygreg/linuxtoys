@@ -18,7 +18,7 @@ _RUNTIME_CACHE = {}
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 6
+RUNTIME_CACHE_SCHEMA = 7
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -985,13 +985,38 @@ def _localized_value(component, field, lang_code, fallback):
             return value
     return values.get("", fallback) or fallback
 
+
+def _localized_value_with_locale(component, field, lang_code, fallback):
+    """Return a localized value together with the AppStream locale that supplied it."""
+    values = component.get(field)
+    if not isinstance(values, dict):
+        return fallback, ""
+
+    normalized = {
+        str(key).replace("_", "-").casefold(): (value, str(key))
+        for key, value in values.items()
+        if value
+    }
+    for candidate in _locale_candidates(lang_code):
+        match = normalized.get(candidate.replace("_", "-").casefold())
+        if match:
+            return match[0], match[1]
+
+    # AppStream's unqualified/default strings are the source-language fallback.
+    # In normal AppStream metadata this is English; retaining "en" here lets the
+    # app page offer translation when the requested locale had no translation.
+    default = values.get("")
+    if default:
+        return default, "en"
+    return fallback, ""
+
 def _to_repo_entry(component, category, lang_code):
     component_id = str(component["id"])
     packages = [str(package) for package in component.get("packages", ()) if package]
     name = _localized_value(component, "localized_names", lang_code, component.get("name", ""))
     summary = _localized_value(component, "localized_summaries", lang_code, component.get("summary", ""))
     developer = _localized_value(component, "localized_developers", lang_code, component.get("developer", ""))
-    long_description_blocks = _localized_value(
+    long_description_blocks, long_description_locale = _localized_value_with_locale(
         component, "localized_descriptions", lang_code, component.get("description_blocks") or []
     )
     # Keep a plain fallback for older app-page consumers and page-presence checks.
@@ -1048,6 +1073,7 @@ def _to_repo_entry(component, category, lang_code):
         ),
         "long_description": long_description,
         "long_description_blocks": long_description_blocks,
+        "long_description_locale": long_description_locale,
         "long_description_tag": "",
         "long_description_format": "appstream",
         "screenshots": screenshots,
