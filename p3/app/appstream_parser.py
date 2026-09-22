@@ -18,7 +18,7 @@ _RUNTIME_CACHE = {}
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 7
+RUNTIME_CACHE_SCHEMA = 8
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -501,6 +501,12 @@ def _resolve_category(appstream_categories, category_paths):
     """
     categories = set(appstream_categories or ())
     exact, by_name = _category_path_lookup(category_paths)
+
+    # Emulation is authoritative regardless of the component's Main category.
+    if "Emulator" in categories:
+        resolved = _first_existing_category(("emu",), exact, by_name)
+        if resolved:
+            return resolved
 
     # Contextual expressions prevent a capability tag from becoming a global
     # classification rule. For example, Graphics+3DGraphics is creative work,
