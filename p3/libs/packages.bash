@@ -72,11 +72,12 @@ pkg_exists () {
 }
 
 pkg_install () {
-    # Handle --ignore-appends, --ostreecheck, --allowerasing and --bypass flags
+    # Handle --ignore-appends, --ostreecheck, --allowerasing, --bypass and --no-recommends flags
     local _ignore_appends=0
     local _ostreecheck=0
     local _allowerasing=0
     local _bypass=0
+    local _no_recommends=0
     local -a _filtered_args=()
 
     for arg in "$@"; do
@@ -88,6 +89,8 @@ pkg_install () {
             _allowerasing=1
         elif [[ "$arg" == "--bypass" ]]; then
             _bypass=1
+        elif [[ "$arg" == "--no-recommends" ]]; then
+            _no_recommends=1
         else
             _filtered_args+=("$arg")
         fi
@@ -101,7 +104,11 @@ pkg_install () {
     (( _bypass )) || runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
         interrupted_apt_guard
-        sudo_ apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        if (( _no_recommends )); then
+            sudo_ apt-get install -y --no-install-recommends "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        else
+            sudo_ apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        fi
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy || is_manjaro; then
         if ! is_manjaro; then
