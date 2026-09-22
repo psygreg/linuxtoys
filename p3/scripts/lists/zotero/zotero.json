@@ -11,7 +11,9 @@
             "tar": "https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64"
         },
         "overrides": {
-            "post": "./zotero-post.sh"
+            "post": {
+                "script": "./zotero-post.sh"
+            }
         }
     }
 ]
