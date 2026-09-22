@@ -22,7 +22,7 @@ dep_check () {
     elif is_arch || is_cachy; then
         command -v grub-mkconfig &>/dev/null && grub_found=true
     elif is_ubuntu || is_debian; then
-        command -v update-grub &>/dev/null && grub_found=true
+        { command -v update-grub &>/dev/null || [ -x /usr/sbin/update-grub ]; } && grub_found=true
     fi
     [ "$grub_found" = true ] || die "No GRUB found."
 
@@ -191,7 +191,7 @@ setup_snapper () {
 }
 
 install_grub_btrfs () {
-    is_fedora && { 
+    is_fedora && {
         [ -e /boot/grub ] || \
             sudo ln -s /boot/grub2 /boot/grub || die "Failed to create symlink for /boot/grub2"
         [ -e /usr/bin/grub-script-check ] || \
