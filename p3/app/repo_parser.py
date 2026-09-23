@@ -1450,32 +1450,8 @@ def _resolve_app_page_metadata(
 
     screenshots = _resolve_list_screenshots(entry, scripts_dir)
 
-    purchase_url = ""
-    purchase_price = None
-    purchase_currency_symbol = ""
-    subscription_price = None
-    subscription_currency_symbol = ""
-    purchase_options = []
-    subscription_options = []
-    purchase = entry.get("purchase")
-    if isinstance(purchase, dict):
-        url = purchase.get("url")
-        if _valid_package_url(url):
-            purchase_url = url.strip()
+    commerce = resolve_commerce_metadata(entry)
 
-        purchase_options = _resolve_purchase_options(purchase, purchase_url)
-        subscription_options = _resolve_subscription_options(purchase, purchase_url)
-
-        # Preserve the old scalar metadata for callers that still consume it.
-        # For multi-option commerce these expose the lowest currently resolved price.
-        if purchase_options:
-            lowest = min(purchase_options, key=lambda option: option["price"])
-            purchase_price = lowest["price"]
-            purchase_currency_symbol = lowest["currency_symbol"]
-        if subscription_options:
-            lowest = min(subscription_options, key=lambda option: option["price"])
-            subscription_price = lowest["price"]
-            subscription_currency_symbol = lowest["currency_symbol"]
 
     donate_url = ""
     donate = entry.get("donate")
@@ -1490,6 +1466,61 @@ def _resolve_app_page_metadata(
         "long_description_tag": long_tag,
         "long_description_format": long_description_format,
         "screenshots": screenshots,
+        **commerce,
+        "donate_url": donate_url,
+        "has_app_page": bool(
+            long_description
+            or screenshots
+            or commerce["purchase_url"]
+            or commerce["purchase_options"]
+            or commerce["subscription_options"]
+            or donate_url
+        ),
+    }
+
+
+APPSTREAM_OVERLAY_KEYS = {"appstream-name", "purchase", "overrides"}
+
+
+def _normalize_appstream_overlay_id(value):
+    """Normalize a repository-list AppStream target ID for matching."""
+    if not isinstance(value, str):
+        return ""
+    value = value.strip()
+    if value.lower().endswith(".desktop"):
+        value = value[:-8]
+    return value.strip().casefold()
+
+
+def resolve_commerce_metadata(entry):
+    """Return the purchase/subscription metadata understood by AppPageView."""
+    purchase_url = ""
+    purchase_price = None
+    purchase_currency_symbol = ""
+    subscription_price = None
+    subscription_currency_symbol = ""
+    purchase_options = []
+    subscription_options = []
+
+    purchase = entry.get("purchase") if isinstance(entry, dict) else None
+    if isinstance(purchase, dict):
+        url = purchase.get("url")
+        if _valid_package_url(url):
+            purchase_url = url.strip()
+
+        purchase_options = _resolve_purchase_options(purchase, purchase_url)
+        subscription_options = _resolve_subscription_options(purchase, purchase_url)
+
+        if purchase_options:
+            lowest = min(purchase_options, key=lambda option: option["price"])
+            purchase_price = lowest["price"]
+            purchase_currency_symbol = lowest["currency_symbol"]
+        if subscription_options:
+            lowest = min(subscription_options, key=lambda option: option["price"])
+            subscription_price = lowest["price"]
+            subscription_currency_symbol = lowest["currency_symbol"]
+
+    return {
         "purchase_url": purchase_url,
         "purchase_price": purchase_price,
         "purchase_currency_symbol": purchase_currency_symbol,
@@ -1497,15 +1528,74 @@ def _resolve_app_page_metadata(
         "subscription_price": subscription_price,
         "subscription_currency_symbol": subscription_currency_symbol,
         "subscription_options": subscription_options,
-        "donate_url": donate_url,
-        "has_app_page": bool(
-            long_description
-            or screenshots
-            or purchase_url
-            or purchase_options
-            or subscription_options
-            or donate_url
-        ),
+    }
+
+
+def load_appstream_overlays(scripts_dir, list_paths=None):
+    """Return valid metadata overlays keyed by normalized AppStream component ID.
+
+    AppStream overlays never become standalone repository entries. They may add
+    commerce metadata and/or reviewed pre/post/Flatpak overrides to an upstream
+    AppStream component without replacing its normal installation source.
+    """
+    if list_paths is None:
+        list_paths = _get_repo_list_paths(scripts_dir)
+
+    overlays = {}
+    for path in list_paths:
+        for entry in _load_json_entries(path):
+            if not isinstance(entry, dict) or "appstream-name" not in entry:
+                continue
+
+            # _list_source is parser-internal metadata added by _load_json_entries.
+            public_keys = set(entry) - {"_list_source"}
+            if not public_keys <= APPSTREAM_OVERLAY_KEYS:
+                continue
+
+            appstream_id = _normalize_appstream_overlay_id(entry.get("appstream-name"))
+            if not appstream_id:
+                continue
+
+            overlay = {}
+            if isinstance(entry.get("purchase"), dict):
+                commerce = resolve_commerce_metadata(entry)
+                if commerce["purchase_options"] or commerce["subscription_options"]:
+                    overlay.update(commerce)
+
+            if entry.get("overrides") is not None:
+                # AppStream overlays deliberately support only execution hooks and
+                # Flatpak permission overrides. Source-selection controls such as
+                # skip-user remain owned by the AppStream source selector itself.
+                overrides = entry.get("overrides")
+                if not isinstance(overrides, dict) or set(overrides) - {"pre", "post", "flatpak"}:
+                    continue
+                if not _validate_overrides(entry):
+                    continue
+                resolved = _resolve_hook_paths(entry, scripts_dir)
+                if not isinstance(resolved, dict):
+                    continue
+                overlay["appstream_overrides"] = resolved
+
+            if not overlay:
+                continue
+
+            # Deterministic list order: the first valid declaration wins.
+            overlays.setdefault(appstream_id, overlay)
+
+    return overlays
+
+
+def load_appstream_commerce_overlays(scripts_dir, list_paths=None):
+    """Backward-compatible commerce-only view of AppStream overlays."""
+    commerce_keys = {
+        "purchase_url", "purchase_price", "purchase_currency_symbol",
+        "purchase_options", "subscription_price",
+        "subscription_currency_symbol", "subscription_options",
+    }
+    return {
+        key: {name: value for name, value in overlay.items() if name in commerce_keys}
+        for key, overlay in load_appstream_overlays(scripts_dir, list_paths).items()
+        if any(name in commerce_keys for name in overlay)
     }
 
 
@@ -1637,6 +1727,11 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
 
     for entry in data:
         if not isinstance(entry, dict):
+            continue
+
+        # Metadata-only AppStream overlays are consumed separately by
+        # appstream_parser and must never appear as standalone repository apps.
+        if "appstream-name" in entry:
             continue
 
         if not _required_fields_present(entry):

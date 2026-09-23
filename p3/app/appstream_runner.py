@@ -300,10 +300,64 @@ class AppStreamRunner:
         env["TRANSMAP_PATH"] = transmap_path
         env.pop("LINUXTOYS_RUNNER_STATE", None)
 
-        argv = script_command(script_info.get("path", "true"), env["SCRIPT_DIR"])
+        override_paths = []
+        try:
+            overrides = script_info.get("appstream_overrides")
+            if not isinstance(overrides, dict):
+                overrides = {}
+
+            pre_path = self._new_override_script(overrides, "pre")
+            if pre_path:
+                override_paths.append(pre_path)
+                exit_code = self._dispatch_path(pre_path, env)
+                if exit_code != 0:
+                    self._finish_job(registry_name, transmap_path, exit_code)
+                    return exit_code
+
+            # Keep the ordinary AppStream installation completely unchanged.
+            # Overlay hooks are separate runner phases around it rather than being
+            # folded into the generated AppStream installation script.
+            exit_code = self._dispatch_path(script_info.get("path", "true"), env)
+            if exit_code != 0:
+                self._finish_job(registry_name, transmap_path, exit_code)
+                return exit_code
+
+            # Permission overrides only make sense for the Flatpak source. Native
+            # alternatives still receive pre/post hooks but skip this phase.
+            if script_info.get("appstream_source") == "flatpak":
+                flatpak_path = self._new_override_script(overrides, "flatpak")
+                if flatpak_path:
+                    override_paths.append(flatpak_path)
+                    exit_code = self._dispatch_path(flatpak_path, env)
+                    if exit_code != 0:
+                        self._finish_job(registry_name, transmap_path, exit_code)
+                        return exit_code
+
+            post_path = self._new_override_script(overrides, "post")
+            if post_path:
+                override_paths.append(post_path)
+                exit_code = self._dispatch_path(post_path, env)
+                if exit_code != 0:
+                    self._finish_job(registry_name, transmap_path, exit_code)
+                    return exit_code
+
+            self._finish_job(registry_name, transmap_path, 0)
+            return 0
+        finally:
+            for path in override_paths:
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
+
+    def _dispatch_path(self, path, env):
+        """Execute one LinuxToys script phase through the persistent AppStream PTY."""
+        argv = script_command(path, env["SCRIPT_DIR"])
         token = uuid.uuid4().hex
         marker = f"__LINUXTOYS_APPSTREAM_DONE_{token}__"
-        assignments = " ".join(f"{key}={shlex.quote(str(value))}" for key, value in env.items())
+        assignments = " ".join(
+            f"{key}={shlex.quote(str(value))}" for key, value in env.items()
+        )
         command = " ".join(shlex.quote(part) for part in argv)
         marker_mid = len(marker) // 2
         marker_left = marker[:marker_mid]
@@ -316,12 +370,60 @@ class AppStreamRunner:
             f"_lt_status=$?; "
             f"printf '\\n%s:%s\\n' \"$_lt_marker\" \"$_lt_status\"\n"
         )
-
         self._process.stdin.write(dispatch.encode("utf-8"))
         self._process.stdin.flush()
-        exit_code = self._read_until_marker(marker)
-        self._finish_job(registry_name, transmap_path, exit_code)
-        return exit_code
+        return self._read_until_marker(marker)
+
+    @staticmethod
+    def _new_override_script(overrides, phase):
+        """Materialize one reviewed AppStream overlay phase for LinuxToys helpers."""
+        if not isinstance(overrides, dict):
+            return None
+
+        lines = []
+        if phase in ("pre", "post"):
+            value = overrides.get(phase)
+            if isinstance(value, str) and value.strip():
+                lines.append(value.strip())
+            elif isinstance(value, dict):
+                script = str(value.get("script", "") or "").strip()
+                if script:
+                    lines.append(f"run_list_hook {shlex.quote(script)}")
+        elif phase == "flatpak":
+            values = overrides.get("flatpak")
+            if isinstance(values, list):
+                for override in values:
+                    if not isinstance(override, dict):
+                        continue
+                    lines.append(
+                        "flatpak_override "
+                        f"{shlex.quote(str(override.get('scope', '')).strip())} "
+                        f"{shlex.quote(str(override.get('type', '')).strip())} "
+                        f"{shlex.quote(str(override.get('setting', '')).strip())} "
+                        f"{shlex.quote(str(override.get('target', '')).strip())}"
+                    )
+
+        if not lines:
+            return None
+
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(
+            prefix=f"{phase}-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write("\n".join(lines))
+                handle.write("\n")
+            os.chmod(path, 0o700)
+        except Exception:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+            raise
+        return path
 
     def _run_removal_job(self, script_info):
         """Execute a generated registry-revert script without recording a new transaction."""
