@@ -77,7 +77,8 @@ KNOWN_POPULAR = {
     "Bottles",
     "com.usebottles.bottles",
     "ONLYOFFICE Desktop Editors",
-    "org.onlyoffice.desktopeditors"
+    "org.onlyoffice.desktopeditors",
+    "com.dec05eba.gpu_screen_recorder"
 }
 
 FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"

@@ -49,6 +49,7 @@ APPSTREAM_SOURCE_PREFERENCE = {
 # When active, native and user-scope Flatpak alternatives are intentionally hidden.
 SYSTEM_FLATPAK_ONLY = {
     "io.github.ilya_zlobintsev.LACT",
+    "com.dec05eba.gpu_screen_recorder"
 }
 
 # Developer-facing denylist for AppStream applications that must not be offered
@@ -592,9 +593,9 @@ def _is_verified_flatpak(component):
 
 
 def _host_prefers_native_appstream():
-    """Arch Linux, CachyOS, and Solus prefer native packages over ordinary Flathub."""
+    """Arch Linux, CachyOS, Fedora and Solus prefer native packages over ordinary Flathub."""
     compat_keys = get_system_compat_keys()
-    return bool({"arch", "cachy", "solus"} & compat_keys)
+    return bool({"arch", "cachy", "solus", "fedora"} & compat_keys)
 
 
 def _is_steamos_host():
