@@ -1479,7 +1479,7 @@ def _resolve_app_page_metadata(
     }
 
 
-APPSTREAM_OVERLAY_KEYS = {"appstream-name", "purchase", "overrides"}
+APPSTREAM_OVERLAY_KEYS = {"appstream-name", "purchase", "overrides", "dependencies"}
 
 
 def _normalize_appstream_overlay_id(value):
@@ -1535,8 +1535,8 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
     """Return valid metadata overlays keyed by normalized AppStream component ID.
 
     AppStream overlays never become standalone repository entries. They may add
-    commerce metadata and/or reviewed pre/post/Flatpak overrides to an upstream
-    AppStream component without replacing its normal installation source.
+    commerce metadata, reviewed pre/post/Flatpak overrides, and dependencies to
+    an upstream AppStream component without replacing its normal install source.
     """
     if list_paths is None:
         list_paths = _get_repo_list_paths(scripts_dir)
@@ -1561,6 +1561,36 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
                 commerce = resolve_commerce_metadata(entry)
                 if commerce["purchase_options"] or commerce["subscription_options"]:
                     overlay.update(commerce)
+
+            if entry.get("dependencies") is not None:
+                # Reuse the normal repository dependency schema and resolve native
+                # package mappings for this host before the overlay reaches the
+                # AppStream runner. The runner can then execute the dependencies
+                # directly without invoking the repository-script materializer.
+                if not _validate_dependencies(entry):
+                    continue
+                compat_keys = get_system_compat_keys()
+                if not _dependencies_are_compatible(entry, compat_keys):
+                    continue
+                resolved_dependencies = []
+                dependency_valid = True
+                for dependency in entry.get("dependencies", []):
+                    dependency_type = dependency.get("type")
+                    if dependency_type == "native":
+                        packages = _resolve_native_package(dependency, compat_keys)
+                    else:
+                        packages = _normalize_package_names(dependency.get("package-name"))
+                    if not packages:
+                        dependency_valid = False
+                        break
+                    resolved_dependencies.append({
+                        "type": dependency_type,
+                        "packages": list(packages),
+                    })
+                if not dependency_valid:
+                    continue
+                if resolved_dependencies:
+                    overlay["appstream_dependencies"] = resolved_dependencies
 
             if entry.get("overrides") is not None:
                 # AppStream overlays deliberately support only execution hooks and

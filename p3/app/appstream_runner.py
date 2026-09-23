@@ -314,9 +314,19 @@ class AppStreamRunner:
                     self._finish_job(registry_name, transmap_path, exit_code)
                     return exit_code
 
+            dependency_path = self._new_dependency_script(
+                script_info.get("appstream_dependencies")
+            )
+            if dependency_path:
+                override_paths.append(dependency_path)
+                exit_code = self._dispatch_path(dependency_path, env)
+                if exit_code != 0:
+                    self._finish_job(registry_name, transmap_path, exit_code)
+                    return exit_code
+
             # Keep the ordinary AppStream installation completely unchanged.
-            # Overlay hooks are separate runner phases around it rather than being
-            # folded into the generated AppStream installation script.
+            # Overlay hooks/dependencies are separate runner phases around it rather
+            # than being folded into the generated AppStream installation script.
             exit_code = self._dispatch_path(script_info.get("path", "true"), env)
             if exit_code != 0:
                 self._finish_job(registry_name, transmap_path, exit_code)
@@ -373,6 +383,51 @@ class AppStreamRunner:
         self._process.stdin.write(dispatch.encode("utf-8"))
         self._process.stdin.flush()
         return self._read_until_marker(marker)
+
+    @staticmethod
+    def _new_dependency_script(dependencies):
+        """Materialize reviewed AppStream dependencies for LinuxToys helpers."""
+        if not isinstance(dependencies, list):
+            return None
+
+        lines = []
+        for dependency in dependencies:
+            if not isinstance(dependency, dict):
+                continue
+            dependency_type = dependency.get("type")
+            packages = dependency.get("packages")
+            if not isinstance(packages, list):
+                continue
+            for package in packages:
+                package = str(package or "").strip()
+                if not package:
+                    continue
+                if dependency_type == "native":
+                    lines.append(f"pkg_install {shlex.quote(package)}")
+                elif dependency_type == "flathub":
+                    lines.append(f"pkg_flat {shlex.quote(package)}")
+
+        if not lines:
+            return None
+
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(
+            prefix="dependencies-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write("\n".join(lines))
+                handle.write("\n")
+            os.chmod(path, 0o700)
+        except Exception:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+            raise
+        return path
 
     @staticmethod
     def _new_override_script(overrides, phase):
