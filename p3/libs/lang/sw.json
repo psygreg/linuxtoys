@@ -668,5 +668,13 @@
   "appstream_initial_building": "Inaunda katalogi ya awali ya AppStream.\nHii inaweza kuchukua sekunde chache...",
   "app_page_source_system": "mfumo",
   "app_page_open": "Fungua",
-  "multilib_desc": "Multilib ina programu na maktaba za biti 32 ambazo zinaweza kutumika kuendesha na kujenga programu za biti 32 kwenye usakinishaji wa biti 64. Inahitajika kwa programu kama Steam."
+  "multilib_desc": "Multilib ina programu na maktaba za biti 32 ambazo zinaweza kutumika kuendesha na kujenga programu za biti 32 kwenye usakinishaji wa biti 64. Inahitajika kwa programu kama Steam.",
+  "startup_recommendations_title": "Usanidi wa mfumo unaopendekezwa",
+  "startup_recommendations_message": "LinuxToys inapendekeza kuwezesha vipengele vifuatavyo ili kuboresha upatikanaji wa programu kwenye mfumo huu:",
+  "startup_recommendations_install": "Sakinisha vilivyopendekezwa",
+  "startup_recommendations_not_now": "Si sasa",
+  "startup_recommendations_dont_remind": "Usinikumbushe tena",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

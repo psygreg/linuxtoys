@@ -6,6 +6,7 @@
 
 pacman -Slq multilib &>/dev/null && info "$notdomsg" && exit 100;
 
+prep_edit /etc/pacman.conf
 printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | sudo_ tee -a /etc/pacman.conf >/dev/null
 
 if sudo_ pacman -Syy && pacman -Slq multilib &>/dev/null; then

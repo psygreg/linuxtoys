@@ -670,5 +670,13 @@
   "appstream_initial_building": "Izrada početnog AppStream kataloga.\nOvo može potrajati nekoliko sekundi...",
   "app_page_source_system": "sustav",
   "app_page_open": "Otvori",
-  "multilib_desc": "Multilib sadrži 32-bitni softver i biblioteke koji se mogu koristiti za pokretanje i izgradnju 32-bitnih aplikacija na 64-bitnim instalacijama. Potreban je za aplikacije poput Steama."
+  "multilib_desc": "Multilib sadrži 32-bitni softver i biblioteke koji se mogu koristiti za pokretanje i izgradnju 32-bitnih aplikacija na 64-bitnim instalacijama. Potreban je za aplikacije poput Steama.",
+  "startup_recommendations_title": "Preporučeno podešavanje sustava",
+  "startup_recommendations_message": "LinuxToys preporučuje omogućavanje sljedećih značajki radi bolje dostupnosti softvera na ovom sustavu:",
+  "startup_recommendations_install": "Instaliraj preporučeno",
+  "startup_recommendations_not_now": "Ne sada",
+  "startup_recommendations_dont_remind": "Ne podsjećaj me ponovno",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

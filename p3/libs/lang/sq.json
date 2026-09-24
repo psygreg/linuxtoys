@@ -670,5 +670,13 @@
   "appstream_initial_building": "Po ndërtohet katalogu fillestar AppStream.\nKjo mund të zgjasë disa sekonda...",
   "app_page_source_system": "sistem",
   "app_page_open": "Hap",
-  "multilib_desc": "Multilib përmban softuer dhe biblioteka 32-bit që mund të përdoren për të ekzekutuar dhe ndërtuar aplikacione 32-bit në instalime 64-bit. Kërkohet për aplikacione si Steam."
+  "multilib_desc": "Multilib përmban softuer dhe biblioteka 32-bit që mund të përdoren për të ekzekutuar dhe ndërtuar aplikacione 32-bit në instalime 64-bit. Kërkohet për aplikacione si Steam.",
+  "startup_recommendations_title": "Konfigurimi i rekomanduar i sistemit",
+  "startup_recommendations_message": "LinuxToys rekomandon aktivizimin e veçorive të mëposhtme për disponueshmëri më të mirë të softuerit në këtë sistem:",
+  "startup_recommendations_install": "Instalo të rekomanduarat",
+  "startup_recommendations_not_now": "Jo tani",
+  "startup_recommendations_dont_remind": "Mos ma kujto përsëri",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

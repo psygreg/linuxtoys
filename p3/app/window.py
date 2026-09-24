@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import shutil
+import subprocess
 import threading
 import sys
 
@@ -30,7 +31,8 @@ from . import (
     skills_view,
     repo_parser,
     uri_parser,
-    git_scripts_manager
+    git_scripts_manager,
+    gtk_dialogs
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
 from gi.repository import Gio
@@ -433,6 +435,138 @@ class AppWindow(
         GLib.idle_add(self._check_updates)
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
+        GLib.idle_add(self._start_startup_recommendation_check)
+
+    def _startup_recommendations_suppressed(self):
+        marker = os.path.join(
+            compat.get_linuxtoys_cache_dir(), "startup-recommendations-dismissed"
+        )
+        return os.path.isfile(marker)
+
+    def _suppress_startup_recommendations(self):
+        marker = os.path.join(
+            compat.get_linuxtoys_cache_dir(), "startup-recommendations-dismissed"
+        )
+        try:
+            os.makedirs(os.path.dirname(marker), exist_ok=True)
+            with open(marker, "w", encoding="utf-8") as handle:
+                handle.write("1\n")
+        except OSError as exc:
+            logger.warning("Could not save startup recommendation preference: %s", exc)
+
+    @staticmethod
+    def _command_succeeds(command):
+        try:
+            return subprocess.run(
+                command,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=8,
+                check=False,
+            ).returncode == 0
+        except (OSError, subprocess.SubprocessError):
+            return False
+
+    def _detect_startup_recommendations(self):
+        """Return optional repository/setup scripts useful on this host."""
+        keys = compat.get_system_compat_keys()
+        recommendations = []
+
+        # Match flathub.sh: !solus, !ostree, systemd: yes. Recommend it when
+        # Flatpak itself is absent or neither user nor system scope has Flathub.
+        if "solus" not in keys and "ostree" not in keys and "systemd" in keys:
+            flatpak = shutil.which("flatpak")
+            flathub_ready = False
+            if flatpak:
+                for scope in ("--user", "--system"):
+                    try:
+                        result = subprocess.run(
+                            [flatpak, scope, "remotes", "--columns=name"],
+                            capture_output=True,
+                            text=True,
+                            timeout=8,
+                            check=False,
+                        )
+                    except (OSError, subprocess.SubprocessError):
+                        continue
+                    if result.returncode == 0 and "flathub" in {
+                        line.strip() for line in result.stdout.splitlines()
+                    }:
+                        flathub_ready = True
+                        break
+            if not flatpak or not flathub_ready:
+                recommendations.append("flathub")
+
+        # The startup recommendation is intentionally Fedora-only even though the
+        # standalone RPM Fusion script also supports other compatibility classes.
+        if "fedora" in keys:
+            if not (
+                self._command_succeeds(["rpm", "-q", "rpmfusion-free-release"])
+                and self._command_succeeds(["rpm", "-q", "rpmfusion-nonfree-release"])
+            ):
+                recommendations.append("rpmfusion")
+
+        if "arch" in keys:
+            if not self._command_succeeds(["pacman", "-Slq", "multilib"]):
+                recommendations.append("multilib")
+
+        return recommendations
+
+    def _start_startup_recommendation_check(self):
+        if self._startup_recommendations_suppressed():
+            return False
+
+        def worker():
+            recommendations = self._detect_startup_recommendations()
+            if recommendations:
+                GLib.idle_add(self._show_startup_recommendations, recommendations)
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-startup-recommendations",
+        ).start()
+        return False
+
+    def _show_startup_recommendations(self, recommendations):
+        if self._startup_recommendations_suppressed():
+            return False
+
+        accepted, dont_remind = gtk_dialogs.run_startup_recommendations_dialog(
+            self,
+            self.translations,
+            recommendations,
+        )
+        if dont_remind:
+            self._suppress_startup_recommendations()
+
+        if not accepted:
+            return False
+
+        async def resolve():
+            resolved = []
+            for script_id in recommendations:
+                info = await manifest_helper.find_script_by_name_async(
+                    script_id, self.translations
+                )
+                if info is not None:
+                    resolved.append(info)
+            return resolved
+
+        script_infos = asyncio.run(resolve())
+        if len(script_infos) != len(recommendations):
+            missing = len(recommendations) - len(script_infos)
+            logger.warning("Could not resolve %d startup recommendation(s)", missing)
+
+        if not script_infos:
+            return False
+
+        deps = asyncio.run(self._process_needed_scripts(script_infos))
+        if deps:
+            # open_term_view already executes a list sequentially, which gives the
+            # combined Flathub+RPM Fusion / Flathub+Multilib cases one chain.
+            self.open_term_view(deps, auto_run=True)
+        return False
 
     def _set_appstream_state(self, state):
         """Record AppStream state and refresh the shared header indicator."""

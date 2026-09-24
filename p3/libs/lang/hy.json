@@ -670,5 +670,13 @@
   "appstream_initial_building": "Ստեղծվում է սկզբնական AppStream կատալոգը։\nՍա կարող է տևել մի քանի վայրկյան...",
   "app_page_source_system": "համակարգ",
   "app_page_open": "Բացել",
-  "multilib_desc": "Multilib-ը պարունակում է 32-բիթանոց ծրագրեր և գրադարաններ, որոնք կարող են օգտագործվել 64-բիթանոց համակարգերում 32-բիթանոց հավելվածներ գործարկելու և կառուցելու համար։ Այն անհրաժեշտ է Steam-ի նման հավելվածների համար։"
+  "multilib_desc": "Multilib-ը պարունակում է 32-բիթանոց ծրագրեր և գրադարաններ, որոնք կարող են օգտագործվել 64-բիթանոց համակարգերում 32-բիթանոց հավելվածներ գործարկելու և կառուցելու համար։ Այն անհրաժեշտ է Steam-ի նման հավելվածների համար։",
+  "startup_recommendations_title": "Համակարգի առաջարկվող կարգավորում",
+  "startup_recommendations_message": "LinuxToys-ը խորհուրդ է տալիս միացնել հետևյալ հնարավորությունները՝ այս համակարգում ծրագրերի հասանելիությունը բարելավելու համար․",
+  "startup_recommendations_install": "Տեղադրել առաջարկվածը",
+  "startup_recommendations_not_now": "Ոչ հիմա",
+  "startup_recommendations_dont_remind": "Այլևս չհիշեցնել",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

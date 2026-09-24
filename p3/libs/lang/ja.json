@@ -670,5 +670,13 @@
   "appstream_initial_building": "初期 AppStream カタログを構築しています。\n数秒かかる場合があります...",
   "app_page_source_system": "システム",
   "app_page_open": "開く",
-  "multilib_desc": "Multilib には、64 ビット環境で 32 ビットアプリケーションを実行およびビルドするために使用できる 32 ビットのソフトウェアとライブラリが含まれています。Steam などのアプリに必要です。"
+  "multilib_desc": "Multilib には、64 ビット環境で 32 ビットアプリケーションを実行およびビルドするために使用できる 32 ビットのソフトウェアとライブラリが含まれています。Steam などのアプリに必要です。",
+  "startup_recommendations_title": "推奨システム設定",
+  "startup_recommendations_message": "LinuxToys は、このシステムで利用できるソフトウェアを増やすため、次の機能を有効にすることを推奨します：",
+  "startup_recommendations_install": "推奨項目をインストール",
+  "startup_recommendations_not_now": "今はしない",
+  "startup_recommendations_dont_remind": "今後表示しない",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

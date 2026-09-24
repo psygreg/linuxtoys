@@ -670,5 +670,13 @@
   "appstream_initial_building": "בונה את קטלוג AppStream הראשוני.\nפעולה זו עשויה להימשך מספר שניות...",
   "app_page_source_system": "מערכת",
   "app_page_open": "פתיחה",
-  "multilib_desc": "Multilib מכיל תוכנות וספריות של 32 סיביות שניתן להשתמש בהן כדי להריץ ולבנות יישומי 32 סיביות בהתקנות של 64 סיביות. הוא נדרש עבור יישומים כמו Steam."
+  "multilib_desc": "Multilib מכיל תוכנות וספריות של 32 סיביות שניתן להשתמש בהן כדי להריץ ולבנות יישומי 32 סיביות בהתקנות של 64 סיביות. הוא נדרש עבור יישומים כמו Steam.",
+  "startup_recommendations_title": "הגדרת מערכת מומלצת",
+  "startup_recommendations_message": "LinuxToys ממליץ להפעיל את התכונות הבאות כדי לשפר את זמינות התוכנות במערכת זו:",
+  "startup_recommendations_install": "התקנת המומלצים",
+  "startup_recommendations_not_now": "לא עכשיו",
+  "startup_recommendations_dont_remind": "לא להזכיר לי שוב",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

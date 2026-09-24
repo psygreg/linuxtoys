@@ -670,5 +670,13 @@
   "appstream_initial_building": "جارٍ إنشاء كتالوج AppStream الأولي.\nقد يستغرق هذا بضع ثوانٍ...",
   "app_page_source_system": "النظام",
   "app_page_open": "فتح",
-  "multilib_desc": "يحتوي Multilib على برامج ومكتبات 32 بت يمكن استخدامها لتشغيل وبناء تطبيقات 32 بت على أنظمة 64 بت. وهو مطلوب لتطبيقات مثل Steam."
+  "multilib_desc": "يحتوي Multilib على برامج ومكتبات 32 بت يمكن استخدامها لتشغيل وبناء تطبيقات 32 بت على أنظمة 64 بت. وهو مطلوب لتطبيقات مثل Steam.",
+  "startup_recommendations_title": "إعداد النظام الموصى به",
+  "startup_recommendations_message": "يوصي LinuxToys بتمكين الميزات التالية لتحسين توفر البرامج على هذا النظام:",
+  "startup_recommendations_install": "تثبيت الموصى به",
+  "startup_recommendations_not_now": "ليس الآن",
+  "startup_recommendations_dont_remind": "لا تذكرني مرة أخرى",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

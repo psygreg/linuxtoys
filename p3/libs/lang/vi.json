@@ -670,5 +670,13 @@
   "appstream_initial_building": "Đang tạo danh mục AppStream ban đầu.\nQuá trình này có thể mất vài giây...",
   "app_page_source_system": "hệ thống",
   "app_page_open": "Mở",
-  "multilib_desc": "Multilib chứa phần mềm và thư viện 32-bit có thể được sử dụng để chạy và xây dựng các ứng dụng 32-bit trên các bản cài đặt 64-bit. Đây là yêu cầu đối với các ứng dụng như Steam."
+  "multilib_desc": "Multilib chứa phần mềm và thư viện 32-bit có thể được sử dụng để chạy và xây dựng các ứng dụng 32-bit trên các bản cài đặt 64-bit. Đây là yêu cầu đối với các ứng dụng như Steam.",
+  "startup_recommendations_title": "Thiết lập hệ thống được đề xuất",
+  "startup_recommendations_message": "LinuxToys khuyên bạn nên bật các tính năng sau để có thêm nhiều phần mềm khả dụng trên hệ thống này:",
+  "startup_recommendations_install": "Cài đặt các mục đề xuất",
+  "startup_recommendations_not_now": "Không phải bây giờ",
+  "startup_recommendations_dont_remind": "Đừng nhắc lại",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

@@ -670,5 +670,13 @@
   "appstream_initial_building": "Създаване на първоначалния AppStream каталог.\nТова може да отнеме няколко секунди...",
   "app_page_source_system": "система",
   "app_page_open": "Отвори",
-  "multilib_desc": "Multilib съдържа 32-битов софтуер и библиотеки, които могат да се използват за стартиране и изграждане на 32-битови приложения върху 64-битови инсталации. Необходим е за приложения като Steam."
+  "multilib_desc": "Multilib съдържа 32-битов софтуер и библиотеки, които могат да се използват за стартиране и изграждане на 32-битови приложения върху 64-битови инсталации. Необходим е за приложения като Steam.",
+  "startup_recommendations_title": "Препоръчителна настройка на системата",
+  "startup_recommendations_message": "LinuxToys препоръчва да активирате следните функции за по-добра наличност на софтуер в тази система:",
+  "startup_recommendations_install": "Инсталиране на препоръчаното",
+  "startup_recommendations_not_now": "Не сега",
+  "startup_recommendations_dont_remind": "Не ми напомняй отново",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

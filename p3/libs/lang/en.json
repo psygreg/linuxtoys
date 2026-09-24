@@ -670,5 +670,13 @@
   "app_page_rate_failed_message": "Could not submit the rating. Please try again later.",
   "appstream_initial_building": "Building initial AppStream catalog.\nThis may take a few seconds...",
   "app_page_open": "Open",
-  "multilib_desc": "Multilib contains 32-bit software and libraries that can be used to run and build 32-bit applications on 64-bit installs. It is a requirement for apps like Steam."
+  "multilib_desc": "Multilib contains 32-bit software and libraries that can be used to run and build 32-bit applications on 64-bit installs. It is a requirement for apps like Steam.",
+  "startup_recommendations_title": "Recommended system setup",
+  "startup_recommendations_message": "LinuxToys recommends enabling the following features for better software availability on this system:",
+  "startup_recommendations_install": "Install recommended",
+  "startup_recommendations_not_now": "Not now",
+  "startup_recommendations_dont_remind": "Don't remind me again",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

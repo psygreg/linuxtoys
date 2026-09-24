@@ -668,5 +668,13 @@
   "appstream_initial_building": "ஆரம்ப AppStream பட்டியல் உருவாக்கப்படுகிறது.\nஇதற்கு சில வினாடிகள் ஆகலாம்...",
   "app_page_source_system": "கணினி",
   "app_page_open": "திற",
-  "multilib_desc": "Multilib ஆனது 64-bit நிறுவல்களில் 32-bit பயன்பாடுகளை இயக்கவும் உருவாக்கவும் பயன்படுத்தக்கூடிய 32-bit மென்பொருள் மற்றும் நூலகங்களைக் கொண்டுள்ளது. Steam போன்ற பயன்பாடுகளுக்கு இது தேவைப்படுகிறது."
+  "multilib_desc": "Multilib ஆனது 64-bit நிறுவல்களில் 32-bit பயன்பாடுகளை இயக்கவும் உருவாக்கவும் பயன்படுத்தக்கூடிய 32-bit மென்பொருள் மற்றும் நூலகங்களைக் கொண்டுள்ளது. Steam போன்ற பயன்பாடுகளுக்கு இது தேவைப்படுகிறது.",
+  "startup_recommendations_title": "பரிந்துரைக்கப்பட்ட கணினி அமைப்பு",
+  "startup_recommendations_message": "இந்தக் கணினியில் மென்பொருள் கிடைப்பை மேம்படுத்த பின்வரும் அம்சங்களை இயக்க LinuxToys பரிந்துரைக்கிறது:",
+  "startup_recommendations_install": "பரிந்துரைக்கப்பட்டவற்றை நிறுவு",
+  "startup_recommendations_not_now": "இப்போது வேண்டாம்",
+  "startup_recommendations_dont_remind": "மீண்டும் நினைவூட்ட வேண்டாம்",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

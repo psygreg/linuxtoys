@@ -670,5 +670,13 @@
   "appstream_initial_building": "A kezdeti AppStream-katalógus létrehozása.\nEz néhány másodpercet vehet igénybe...",
   "app_page_source_system": "rendszer",
   "app_page_open": "Megnyitás",
-  "multilib_desc": "A Multilib 32 bites szoftvereket és könyvtárakat tartalmaz, amelyekkel 32 bites alkalmazások futtathatók és építhetők 64 bites telepítéseken. Olyan alkalmazásokhoz szükséges, mint a Steam."
+  "multilib_desc": "A Multilib 32 bites szoftvereket és könyvtárakat tartalmaz, amelyekkel 32 bites alkalmazások futtathatók és építhetők 64 bites telepítéseken. Olyan alkalmazásokhoz szükséges, mint a Steam.",
+  "startup_recommendations_title": "Ajánlott rendszerbeállítás",
+  "startup_recommendations_message": "A LinuxToys a szoftverek jobb elérhetősége érdekében a következő funkciók engedélyezését javasolja ezen a rendszeren:",
+  "startup_recommendations_install": "Ajánlottak telepítése",
+  "startup_recommendations_not_now": "Most nem",
+  "startup_recommendations_dont_remind": "Ne emlékeztessen újra",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

@@ -669,5 +669,13 @@
   "appstream_initial_building": "প্রাথমিক AppStream ক্যাটালগ তৈরি করা হচ্ছে।\nএতে কয়েক সেকেন্ড সময় লাগতে পারে...",
   "app_page_source_system": "সিস্টেম",
   "app_page_open": "খুলুন",
-  "multilib_desc": "Multilib-এ 32-বিট সফটওয়্যার ও লাইব্রেরি রয়েছে, যা 64-বিট ইনস্টলে 32-বিট অ্যাপ্লিকেশন চালানো ও তৈরি করতে ব্যবহার করা যায়। Steam-এর মতো অ্যাপের জন্য এটি প্রয়োজনীয়।"
+  "multilib_desc": "Multilib-এ 32-বিট সফটওয়্যার ও লাইব্রেরি রয়েছে, যা 64-বিট ইনস্টলে 32-বিট অ্যাপ্লিকেশন চালানো ও তৈরি করতে ব্যবহার করা যায়। Steam-এর মতো অ্যাপের জন্য এটি প্রয়োজনীয়।",
+  "startup_recommendations_title": "প্রস্তাবিত সিস্টেম সেটআপ",
+  "startup_recommendations_message": "এই সিস্টেমে আরও বেশি সফটওয়্যার উপলব্ধ করতে LinuxToys নিম্নলিখিত সুবিধাগুলো সক্রিয় করার পরামর্শ দেয়:",
+  "startup_recommendations_install": "প্রস্তাবিতগুলো ইনস্টল করুন",
+  "startup_recommendations_not_now": "এখন নয়",
+  "startup_recommendations_dont_remind": "আমাকে আবার মনে করিয়ে দেবেন না",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

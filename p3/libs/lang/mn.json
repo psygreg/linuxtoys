@@ -669,5 +669,13 @@
   "appstream_initial_building": "Анхны AppStream каталогийг үүсгэж байна.\nҮүнд хэдэн секунд зарцуулагдаж магадгүй...",
   "app_page_source_system": "систем",
   "app_page_open": "Нээх",
-  "multilib_desc": "Multilib нь 64-бит суулгац дээр 32-бит аппликейшн ажиллуулах болон бүтээхэд ашиглаж болох 32-бит програм хангамж, сангуудыг агуулдаг. Steam зэрэг аппуудад шаардлагатай."
+  "multilib_desc": "Multilib нь 64-бит суулгац дээр 32-бит аппликейшн ажиллуулах болон бүтээхэд ашиглаж болох 32-бит програм хангамж, сангуудыг агуулдаг. Steam зэрэг аппуудад шаардлагатай.",
+  "startup_recommendations_title": "Санал болгож буй системийн тохиргоо",
+  "startup_recommendations_message": "LinuxToys энэ системд илүү олон програм хангамж ашиглах боломжтой болгохын тулд дараах боломжуудыг идэвхжүүлэхийг зөвлөж байна:",
+  "startup_recommendations_install": "Санал болгосныг суулгах",
+  "startup_recommendations_not_now": "Одоо биш",
+  "startup_recommendations_dont_remind": "Дахин сануулахгүй",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

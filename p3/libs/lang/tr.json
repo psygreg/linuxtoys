@@ -670,5 +670,13 @@
   "appstream_initial_building": "İlk AppStream kataloğu oluşturuluyor.\nBu işlem birkaç saniye sürebilir...",
   "app_page_source_system": "sistem",
   "app_page_open": "Aç",
-  "multilib_desc": "Multilib, 64 bit kurulumlarda 32 bit uygulamaları çalıştırmak ve derlemek için kullanılabilen 32 bit yazılım ve kitaplıkları içerir. Steam gibi uygulamalar için gereklidir."
+  "multilib_desc": "Multilib, 64 bit kurulumlarda 32 bit uygulamaları çalıştırmak ve derlemek için kullanılabilen 32 bit yazılım ve kitaplıkları içerir. Steam gibi uygulamalar için gereklidir.",
+  "startup_recommendations_title": "Önerilen sistem kurulumu",
+  "startup_recommendations_message": "LinuxToys, bu sistemde daha fazla yazılıma erişilebilmesi için aşağıdaki özelliklerin etkinleştirilmesini önerir:",
+  "startup_recommendations_install": "Önerilenleri yükle",
+  "startup_recommendations_not_now": "Şimdi değil",
+  "startup_recommendations_dont_remind": "Bir daha hatırlatma",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

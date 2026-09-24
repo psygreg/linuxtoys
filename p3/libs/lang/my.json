@@ -670,5 +670,13 @@
   "appstream_initial_building": "ကနဦး AppStream ကတ်တလောက်ကို တည်ဆောက်နေသည်။\nစက္ကန့်အနည်းငယ် ကြာနိုင်သည်...",
   "app_page_source_system": "စနစ်",
   "app_page_open": "ဖွင့်ရန်",
-  "multilib_desc": "Multilib တွင် 64-bit စနစ်များပေါ်၌ 32-bit အက်ပ်များကို အသုံးပြုရန်နှင့် တည်ဆောက်ရန် အသုံးပြုနိုင်သည့် 32-bit ဆော့ဖ်ဝဲနှင့် library များ ပါဝင်သည်။ Steam ကဲ့သို့သော အက်ပ်များအတွက် လိုအပ်သည်။"
+  "multilib_desc": "Multilib တွင် 64-bit စနစ်များပေါ်၌ 32-bit အက်ပ်များကို အသုံးပြုရန်နှင့် တည်ဆောက်ရန် အသုံးပြုနိုင်သည့် 32-bit ဆော့ဖ်ဝဲနှင့် library များ ပါဝင်သည်။ Steam ကဲ့သို့သော အက်ပ်များအတွက် လိုအပ်သည်။",
+  "startup_recommendations_title": "အကြံပြုထားသော စနစ်ပြင်ဆင်မှု",
+  "startup_recommendations_message": "ဤစနစ်တွင် ဆော့ဖ်ဝဲများ ပိုမိုရရှိနိုင်စေရန် အောက်ပါအင်္ဂါရပ်များကို ဖွင့်ရန် LinuxToys က အကြံပြုပါသည်:",
+  "startup_recommendations_install": "အကြံပြုထားသည်များကို ထည့်သွင်းရန်",
+  "startup_recommendations_not_now": "ယခု မလုပ်သေးပါ",
+  "startup_recommendations_dont_remind": "ထပ်မံသတိမပေးပါနှင့်",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

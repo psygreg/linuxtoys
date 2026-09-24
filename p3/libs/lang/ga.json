@@ -670,5 +670,13 @@
   "appstream_initial_building": "Catalóg tosaigh AppStream á chruthú.\nSeans go dtógfaidh sé seo cúpla soicind...",
   "app_page_source_system": "córas",
   "app_page_open": "Oscail",
-  "multilib_desc": "Tá bogearraí agus leabharlanna 32-giotán in Multilib is féidir a úsáid chun feidhmchláir 32-giotán a rith agus a thógáil ar shuiteálacha 64-giotán. Tá sé riachtanach d’fheidhmchláir ar nós Steam."
+  "multilib_desc": "Tá bogearraí agus leabharlanna 32-giotán in Multilib is féidir a úsáid chun feidhmchláir 32-giotán a rith agus a thógáil ar shuiteálacha 64-giotán. Tá sé riachtanach d’fheidhmchláir ar nós Steam.",
+  "startup_recommendations_title": "Socrú córais molta",
+  "startup_recommendations_message": "Molann LinuxToys na gnéithe seo a leanas a chumasú chun infhaighteacht bogearraí ar an gcóras seo a fheabhsú:",
+  "startup_recommendations_install": "Suiteáil na cinn mholta",
+  "startup_recommendations_not_now": "Ní anois",
+  "startup_recommendations_dont_remind": "Ná cuir i gcuimhne dom arís",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

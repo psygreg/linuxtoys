@@ -98,3 +98,70 @@ class WaitDialog(Gtk.Dialog):
 
 	def stop(self):
 		self.destroy()
+
+def run_startup_recommendations_dialog(parent, translations, recommendations):
+    """Ask whether to install recommended host integration features.
+
+    Returns ``(accepted, dont_remind)``. ``recommendations`` contains stable
+    internal IDs (flathub, rpmfusion, multilib), while all visible text comes
+    from translation keys.
+    """
+    parent_window = get_toplevel_window(parent) if parent else None
+    dialog = Gtk.Dialog(
+        title=translations.get(
+            "startup_recommendations_title", "Recommended system setup"
+        ),
+        transient_for=parent_window,
+        modal=True,
+    )
+    dialog.add_button(
+        translations.get("startup_recommendations_not_now", "Not now"),
+        Gtk.ResponseType.CANCEL,
+    )
+    dialog.add_button(
+        translations.get("startup_recommendations_install", "Install recommended"),
+        Gtk.ResponseType.OK,
+    )
+    dialog.set_default_response(Gtk.ResponseType.OK)
+    dialog.set_resizable(False)
+
+    content = dialog.get_content_area()
+    content.set_spacing(12)
+    content.set_border_width(18)
+
+    intro = Gtk.Label(
+        label=translations.get(
+            "startup_recommendations_message",
+            "LinuxToys recommends enabling the following features for better software availability on this system:",
+        )
+    )
+    intro.set_xalign(0)
+    intro.set_line_wrap(True)
+    intro.set_max_width_chars(64)
+    content.pack_start(intro, False, False, 0)
+
+    names = {
+        "flathub": translations.get("startup_recommendation_flathub", "Flathub"),
+        "rpmfusion": translations.get("startup_recommendation_rpmfusion", "RPM Fusion"),
+        "multilib": translations.get("startup_recommendation_multilib", "Multilib"),
+    }
+    features = Gtk.Label(
+        label="\n".join(f"• {names[item]}" for item in recommendations if item in names)
+    )
+    features.set_xalign(0)
+    features.set_selectable(False)
+    content.pack_start(features, False, False, 0)
+
+    dont_remind = Gtk.CheckButton.new_with_label(
+        translations.get(
+            "startup_recommendations_dont_remind", "Don't remind me again"
+        )
+    )
+    content.pack_start(dont_remind, False, False, 0)
+
+    dialog.show_all()
+    try:
+        response = dialog.run()
+        return response == Gtk.ResponseType.OK, dont_remind.get_active()
+    finally:
+        dialog.destroy()

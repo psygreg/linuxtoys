@@ -650,5 +650,13 @@
   "appstream_initial_building": "प्रारंभिक AppStream कैटलॉग बनाया जा रहा है।\nइसमें कुछ सेकंड लग सकते हैं...",
   "app_page_source_system": "सिस्टम",
   "app_page_open": "खोलें",
-  "multilib_desc": "Multilib में 32-बिट सॉफ़्टवेयर और लाइब्रेरी शामिल हैं, जिनका उपयोग 64-बिट इंस्टॉलेशन पर 32-बिट एप्लिकेशन चलाने और बनाने के लिए किया जा सकता है। Steam जैसे ऐप्स के लिए यह आवश्यक है।"
+  "multilib_desc": "Multilib में 32-बिट सॉफ़्टवेयर और लाइब्रेरी शामिल हैं, जिनका उपयोग 64-बिट इंस्टॉलेशन पर 32-बिट एप्लिकेशन चलाने और बनाने के लिए किया जा सकता है। Steam जैसे ऐप्स के लिए यह आवश्यक है।",
+  "startup_recommendations_title": "अनुशंसित सिस्टम सेटअप",
+  "startup_recommendations_message": "LinuxToys इस सिस्टम पर सॉफ़्टवेयर की बेहतर उपलब्धता के लिए निम्नलिखित सुविधाएँ सक्षम करने की सलाह देता है:",
+  "startup_recommendations_install": "अनुशंसित इंस्टॉल करें",
+  "startup_recommendations_not_now": "अभी नहीं",
+  "startup_recommendations_dont_remind": "मुझे फिर याद न दिलाएँ",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

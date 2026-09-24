@@ -670,5 +670,13 @@
   "appstream_initial_building": "Δημιουργία του αρχικού καταλόγου AppStream.\nΑυτό μπορεί να διαρκέσει μερικά δευτερόλεπτα...",
   "app_page_source_system": "σύστημα",
   "app_page_open": "Άνοιγμα",
-  "multilib_desc": "Το Multilib περιέχει λογισμικό και βιβλιοθήκες 32-bit που μπορούν να χρησιμοποιηθούν για την εκτέλεση και τη δημιουργία εφαρμογών 32-bit σε εγκαταστάσεις 64-bit. Απαιτείται για εφαρμογές όπως το Steam."
+  "multilib_desc": "Το Multilib περιέχει λογισμικό και βιβλιοθήκες 32-bit που μπορούν να χρησιμοποιηθούν για την εκτέλεση και τη δημιουργία εφαρμογών 32-bit σε εγκαταστάσεις 64-bit. Απαιτείται για εφαρμογές όπως το Steam.",
+  "startup_recommendations_title": "Προτεινόμενη ρύθμιση συστήματος",
+  "startup_recommendations_message": "Το LinuxToys συνιστά την ενεργοποίηση των ακόλουθων δυνατοτήτων για καλύτερη διαθεσιμότητα λογισμικού σε αυτό το σύστημα:",
+  "startup_recommendations_install": "Εγκατάσταση προτεινόμενων",
+  "startup_recommendations_not_now": "Όχι τώρα",
+  "startup_recommendations_dont_remind": "Να μην γίνει ξανά υπενθύμιση",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

@@ -670,5 +670,13 @@
   "appstream_initial_building": "Byggi upp upphaflegan AppStream-vörulista.\nÞetta gæti tekið nokkrar sekúndur...",
   "app_page_source_system": "kerfi",
   "app_page_open": "Opna",
-  "multilib_desc": "Multilib inniheldur 32-bita hugbúnað og söfn sem hægt er að nota til að keyra og byggja 32-bita forrit á 64-bita uppsetningum. Það er nauðsynlegt fyrir forrit eins og Steam."
+  "multilib_desc": "Multilib inniheldur 32-bita hugbúnað og söfn sem hægt er að nota til að keyra og byggja 32-bita forrit á 64-bita uppsetningum. Það er nauðsynlegt fyrir forrit eins og Steam.",
+  "startup_recommendations_title": "Ráðlögð kerfisuppsetning",
+  "startup_recommendations_message": "LinuxToys mælir með að virkja eftirfarandi eiginleika til að bæta framboð hugbúnaðar á þessu kerfi:",
+  "startup_recommendations_install": "Setja upp ráðlagt",
+  "startup_recommendations_not_now": "Ekki núna",
+  "startup_recommendations_dont_remind": "Ekki minna mig á þetta aftur",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

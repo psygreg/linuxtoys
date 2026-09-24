@@ -670,5 +670,13 @@
   "appstream_initial_building": "Vytvára sa počiatočný katalóg AppStream.\nMôže to trvať niekoľko sekúnd...",
   "app_page_source_system": "systém",
   "app_page_open": "Otvoriť",
-  "multilib_desc": "Multilib obsahuje 32-bitový softvér a knižnice, ktoré možno použiť na spúšťanie a zostavovanie 32-bitových aplikácií v 64-bitových inštaláciách. Vyžadujú ho aplikácie ako Steam."
+  "multilib_desc": "Multilib obsahuje 32-bitový softvér a knižnice, ktoré možno použiť na spúšťanie a zostavovanie 32-bitových aplikácií v 64-bitových inštaláciách. Vyžadujú ho aplikácie ako Steam.",
+  "startup_recommendations_title": "Odporúčané nastavenie systému",
+  "startup_recommendations_message": "LinuxToys odporúča povoliť nasledujúce funkcie pre lepšiu dostupnosť softvéru v tomto systéme:",
+  "startup_recommendations_install": "Nainštalovať odporúčané",
+  "startup_recommendations_not_now": "Teraz nie",
+  "startup_recommendations_dont_remind": "Už nepripomínať",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

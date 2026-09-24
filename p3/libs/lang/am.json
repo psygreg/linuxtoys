@@ -670,5 +670,13 @@
   "appstream_initial_building": "የመጀመሪያውን AppStream ካታሎግ በመገንባት ላይ።\nይህ ጥቂት ሰከንዶች ሊወስድ ይችላል...",
   "app_page_source_system": "ስርዓት",
   "app_page_open": "ክፈት",
-  "multilib_desc": "Multilib በ64-ቢት ጭነቶች ላይ የ32-ቢት መተግበሪያዎችን ለማስኬድ እና ለመገንባት የሚያገለግሉ የ32-ቢት ሶፍትዌሮችን እና ላይብረሪዎችን ይዟል። እንደ Steam ላሉ መተግበሪያዎች አስፈላጊ ነው።"
+  "multilib_desc": "Multilib በ64-ቢት ጭነቶች ላይ የ32-ቢት መተግበሪያዎችን ለማስኬድ እና ለመገንባት የሚያገለግሉ የ32-ቢት ሶፍትዌሮችን እና ላይብረሪዎችን ይዟል። እንደ Steam ላሉ መተግበሪያዎች አስፈላጊ ነው።",
+  "startup_recommendations_title": "የሚመከር የስርዓት ማዋቀር",
+  "startup_recommendations_message": "LinuxToys በዚህ ስርዓት ላይ የሶፍትዌር ተደራሽነትን ለማሻሻል የሚከተሉትን ባህሪያት እንዲያነቁ ይመክራል፦",
+  "startup_recommendations_install": "የሚመከሩትን ጫን",
+  "startup_recommendations_not_now": "አሁን አይደለም",
+  "startup_recommendations_dont_remind": "እንደገና አታስታውሰኝ",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

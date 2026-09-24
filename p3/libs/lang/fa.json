@@ -670,5 +670,13 @@
   "appstream_initial_building": "در حال ساخت فهرست اولیه AppStream.\nاین کار ممکن است چند ثانیه طول بکشد...",
   "app_page_source_system": "سیستم",
   "app_page_open": "باز کردن",
-  "multilib_desc": "Multilib شامل نرم‌افزارها و کتابخانه‌های ۳۲ بیتی است که می‌توان از آن‌ها برای اجرا و ساخت برنامه‌های ۳۲ بیتی روی نصب‌های ۶۴ بیتی استفاده کرد. برنامه‌هایی مانند Steam به آن نیاز دارند."
+  "multilib_desc": "Multilib شامل نرم‌افزارها و کتابخانه‌های ۳۲ بیتی است که می‌توان از آن‌ها برای اجرا و ساخت برنامه‌های ۳۲ بیتی روی نصب‌های ۶۴ بیتی استفاده کرد. برنامه‌هایی مانند Steam به آن نیاز دارند.",
+  "startup_recommendations_title": "راه‌اندازی پیشنهادی سیستم",
+  "startup_recommendations_message": "LinuxToys برای دسترسی بهتر به نرم‌افزارها در این سیستم، فعال کردن قابلیت‌های زیر را توصیه می‌کند:",
+  "startup_recommendations_install": "نصب موارد پیشنهادی",
+  "startup_recommendations_not_now": "الان نه",
+  "startup_recommendations_dont_remind": "دوباره یادآوری نکن",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

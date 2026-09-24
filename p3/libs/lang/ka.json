@@ -670,5 +670,13 @@
   "appstream_initial_building": "მიმდინარეობს საწყისი AppStream კატალოგის შექმნა.\nამას შეიძლება რამდენიმე წამი დასჭირდეს...",
   "app_page_source_system": "სისტემა",
   "app_page_open": "გახსნა",
-  "multilib_desc": "Multilib შეიცავს 32-ბიტიან პროგრამებსა და ბიბლიოთეკებს, რომლებიც შეიძლება გამოყენებულ იქნეს 64-ბიტიან სისტემებზე 32-ბიტიანი აპლიკაციების გასაშვებად და ასაწყობად. ის საჭიროა ისეთი აპლიკაციებისთვის, როგორიცაა Steam."
+  "multilib_desc": "Multilib შეიცავს 32-ბიტიან პროგრამებსა და ბიბლიოთეკებს, რომლებიც შეიძლება გამოყენებულ იქნეს 64-ბიტიან სისტემებზე 32-ბიტიანი აპლიკაციების გასაშვებად და ასაწყობად. ის საჭიროა ისეთი აპლიკაციებისთვის, როგორიცაა Steam.",
+  "startup_recommendations_title": "სისტემის რეკომენდებული გამართვა",
+  "startup_recommendations_message": "LinuxToys ამ სისტემაზე პროგრამული უზრუნველყოფის უკეთესი ხელმისაწვდომობისთვის შემდეგი ფუნქციების ჩართვას გირჩევთ:",
+  "startup_recommendations_install": "რეკომენდებულის დაყენება",
+  "startup_recommendations_not_now": "ახლა არა",
+  "startup_recommendations_dont_remind": "აღარ შემახსენო",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

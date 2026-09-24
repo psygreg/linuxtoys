@@ -670,5 +670,13 @@
   "appstream_initial_building": "ກຳລັງສ້າງລາຍການ AppStream ເບື້ອງຕົ້ນ.\nອາດໃຊ້ເວລາສອງສາມວິນາທີ...",
   "app_page_source_system": "ລະບົບ",
   "app_page_open": "ເປີດ",
-  "multilib_desc": "Multilib ປະກອບມີຊອບແວ ແລະ ໄລບຣາຣີ 32-bit ທີ່ສາມາດໃຊ້ເພື່ອເປີດໃຊ້ ແລະ ສ້າງແອັບ 32-bit ໃນລະບົບ 64-bit. ມັນຈຳເປັນສຳລັບແອັບເຊັ່ນ Steam."
+  "multilib_desc": "Multilib ປະກອບມີຊອບແວ ແລະ ໄລບຣາຣີ 32-bit ທີ່ສາມາດໃຊ້ເພື່ອເປີດໃຊ້ ແລະ ສ້າງແອັບ 32-bit ໃນລະບົບ 64-bit. ມັນຈຳເປັນສຳລັບແອັບເຊັ່ນ Steam.",
+  "startup_recommendations_title": "ການຕັ້ງຄ່າລະບົບທີ່ແນະນຳ",
+  "startup_recommendations_message": "LinuxToys ແນະນຳໃຫ້ເປີດໃຊ້ຄຸນສົມບັດຕໍ່ໄປນີ້ ເພື່ອໃຫ້ມີຊອບແວໃຫ້ໃຊ້ຫຼາຍຂຶ້ນໃນລະບົບນີ້:",
+  "startup_recommendations_install": "ຕິດຕັ້ງລາຍການທີ່ແນະນຳ",
+  "startup_recommendations_not_now": "ບໍ່ແມ່ນຕອນນີ້",
+  "startup_recommendations_dont_remind": "ຢ່າເຕືອນຂ້ອຍອີກ",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

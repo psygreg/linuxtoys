@@ -670,5 +670,13 @@
   "appstream_initial_building": "Membina katalog AppStream awal.\nIni mungkin mengambil masa beberapa saat...",
   "app_page_source_system": "sistem",
   "app_page_open": "Buka",
-  "multilib_desc": "Multilib mengandungi perisian dan pustaka 32-bit yang boleh digunakan untuk menjalankan dan membina aplikasi 32-bit pada pemasangan 64-bit. Ia diperlukan untuk aplikasi seperti Steam."
+  "multilib_desc": "Multilib mengandungi perisian dan pustaka 32-bit yang boleh digunakan untuk menjalankan dan membina aplikasi 32-bit pada pemasangan 64-bit. Ia diperlukan untuk aplikasi seperti Steam.",
+  "startup_recommendations_title": "Persediaan sistem yang disyorkan",
+  "startup_recommendations_message": "LinuxToys mengesyorkan agar ciri berikut didayakan untuk meningkatkan ketersediaan perisian pada sistem ini:",
+  "startup_recommendations_install": "Pasang yang disyorkan",
+  "startup_recommendations_not_now": "Bukan sekarang",
+  "startup_recommendations_dont_remind": "Jangan ingatkan saya lagi",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

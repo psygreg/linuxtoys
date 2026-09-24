@@ -670,5 +670,13 @@
   "appstream_initial_building": "Ustvarjanje začetnega kataloga AppStream.\nTo lahko traja nekaj sekund...",
   "app_page_source_system": "sistem",
   "app_page_open": "Odpri",
-  "multilib_desc": "Multilib vsebuje 32-bitno programsko opremo in knjižnice, ki jih je mogoče uporabiti za zagon in gradnjo 32-bitnih aplikacij v 64-bitnih namestitvah. Potrebujejo ga aplikacije, kot je Steam."
+  "multilib_desc": "Multilib vsebuje 32-bitno programsko opremo in knjižnice, ki jih je mogoče uporabiti za zagon in gradnjo 32-bitnih aplikacij v 64-bitnih namestitvah. Potrebujejo ga aplikacije, kot je Steam.",
+  "startup_recommendations_title": "Priporočena nastavitev sistema",
+  "startup_recommendations_message": "LinuxToys priporoča, da omogočite naslednje funkcije za boljšo razpoložljivost programske opreme v tem sistemu:",
+  "startup_recommendations_install": "Namesti priporočeno",
+  "startup_recommendations_not_now": "Ne zdaj",
+  "startup_recommendations_dont_remind": "Ne opominjaj me več",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

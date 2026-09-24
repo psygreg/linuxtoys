@@ -670,5 +670,13 @@
   "appstream_initial_building": "Kuriamas pradinis AppStream katalogas.\nTai gali užtrukti kelias sekundes...",
   "app_page_source_system": "sistema",
   "app_page_open": "Atverti",
-  "multilib_desc": "Multilib yra 32 bitų programinė įranga ir bibliotekos, kurias galima naudoti 32 bitų programoms paleisti ir kurti 64 bitų sistemose. Jis reikalingas tokioms programoms kaip Steam."
+  "multilib_desc": "Multilib yra 32 bitų programinė įranga ir bibliotekos, kurias galima naudoti 32 bitų programoms paleisti ir kurti 64 bitų sistemose. Jis reikalingas tokioms programoms kaip Steam.",
+  "startup_recommendations_title": "Rekomenduojama sistemos sąranka",
+  "startup_recommendations_message": "LinuxToys rekomenduoja įjungti šias funkcijas, kad šioje sistemoje būtų prieinama daugiau programinės įrangos:",
+  "startup_recommendations_install": "Įdiegti rekomenduojamus",
+  "startup_recommendations_not_now": "Ne dabar",
+  "startup_recommendations_dont_remind": "Daugiau nebepriminti",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

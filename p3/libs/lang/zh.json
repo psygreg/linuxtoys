@@ -672,5 +672,13 @@
   "appstream_initial_building": "正在构建初始 AppStream 目录。\n这可能需要几秒钟...",
   "app_page_source_system": "系统",
   "app_page_open": "打开",
-  "multilib_desc": "Multilib 包含 32 位软件和库，可用于在 64 位系统上运行和构建 32 位应用程序。Steam 等应用需要它。"
+  "multilib_desc": "Multilib 包含 32 位软件和库，可用于在 64 位系统上运行和构建 32 位应用程序。Steam 等应用需要它。",
+  "startup_recommendations_title": "推荐的系统设置",
+  "startup_recommendations_message": "LinuxToys 建议启用以下功能，以便在此系统上获得更多可用软件：",
+  "startup_recommendations_install": "安装推荐项",
+  "startup_recommendations_not_now": "暂不",
+  "startup_recommendations_dont_remind": "不再提醒",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

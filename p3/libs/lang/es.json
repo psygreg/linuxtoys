@@ -670,5 +670,13 @@
   "appstream_initial_building": "Creando el catálogo inicial de AppStream.\nEsto puede tardar unos segundos...",
   "app_page_source_system": "sistema",
   "app_page_open": "Abrir",
-  "multilib_desc": "Multilib contiene software y bibliotecas de 32 bits que permiten ejecutar y compilar aplicaciones de 32 bits en instalaciones de 64 bits. Es un requisito para aplicaciones como Steam."
+  "multilib_desc": "Multilib contiene software y bibliotecas de 32 bits que permiten ejecutar y compilar aplicaciones de 32 bits en instalaciones de 64 bits. Es un requisito para aplicaciones como Steam.",
+  "startup_recommendations_title": "Configuración recomendada del sistema",
+  "startup_recommendations_message": "LinuxToys recomienda habilitar las siguientes funciones para mejorar la disponibilidad de software en este sistema:",
+  "startup_recommendations_install": "Instalar lo recomendado",
+  "startup_recommendations_not_now": "Ahora no",
+  "startup_recommendations_dont_remind": "No volver a recordármelo",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

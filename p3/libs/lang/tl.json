@@ -670,5 +670,13 @@
   "appstream_initial_building": "Binubuo ang paunang katalogo ng AppStream.\nMaaaring tumagal ito nang ilang segundo...",
   "app_page_source_system": "system",
   "app_page_open": "Buksan",
-  "multilib_desc": "Naglalaman ang Multilib ng 32-bit na software at mga library na maaaring gamitin upang magpatakbo at bumuo ng mga 32-bit na application sa mga 64-bit na installation. Kinakailangan ito para sa mga app tulad ng Steam."
+  "multilib_desc": "Naglalaman ang Multilib ng 32-bit na software at mga library na maaaring gamitin upang magpatakbo at bumuo ng mga 32-bit na application sa mga 64-bit na installation. Kinakailangan ito para sa mga app tulad ng Steam.",
+  "startup_recommendations_title": "Inirerekomendang pag-setup ng system",
+  "startup_recommendations_message": "Inirerekomenda ng LinuxToys na paganahin ang mga sumusunod na feature para mas maraming software ang maging available sa system na ito:",
+  "startup_recommendations_install": "I-install ang inirerekomenda",
+  "startup_recommendations_not_now": "Hindi ngayon",
+  "startup_recommendations_dont_remind": "Huwag nang ipaalala muli",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }

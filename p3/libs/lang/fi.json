@@ -670,5 +670,13 @@
   "appstream_initial_building": "Luodaan alkuperäistä AppStream-luetteloa.\nTämä voi kestää muutaman sekunnin...",
   "app_page_source_system": "järjestelmä",
   "app_page_open": "Avaa",
-  "multilib_desc": "Multilib sisältää 32-bittisiä ohjelmistoja ja kirjastoja, joiden avulla 32-bittisiä sovelluksia voidaan suorittaa ja rakentaa 64-bittisissä asennuksissa. Sitä tarvitaan esimerkiksi Steamia varten."
+  "multilib_desc": "Multilib sisältää 32-bittisiä ohjelmistoja ja kirjastoja, joiden avulla 32-bittisiä sovelluksia voidaan suorittaa ja rakentaa 64-bittisissä asennuksissa. Sitä tarvitaan esimerkiksi Steamia varten.",
+  "startup_recommendations_title": "Suositeltu järjestelmän määritys",
+  "startup_recommendations_message": "LinuxToys suosittelee seuraavien ominaisuuksien käyttöönottoa, jotta ohjelmistoja olisi paremmin saatavilla tässä järjestelmässä:",
+  "startup_recommendations_install": "Asenna suositellut",
+  "startup_recommendations_not_now": "Ei nyt",
+  "startup_recommendations_dont_remind": "Älä muistuta uudelleen",
+  "startup_recommendation_flathub": "Flathub",
+  "startup_recommendation_rpmfusion": "RPM Fusion",
+  "startup_recommendation_multilib": "Multilib"
 }
