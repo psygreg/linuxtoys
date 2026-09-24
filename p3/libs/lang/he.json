@@ -669,5 +669,6 @@
   "specials_desc": "תוכנות וסקריפטים להתקנה שנבחרו על ידי LinuxToys.",
   "appstream_initial_building": "בונה את קטלוג AppStream הראשוני.\nפעולה זו עשויה להימשך מספר שניות...",
   "app_page_source_system": "מערכת",
-  "app_page_open": "פתיחה"
+  "app_page_open": "פתיחה",
+  "multilib_desc": "Multilib מכיל תוכנות וספריות של 32 סיביות שניתן להשתמש בהן כדי להריץ ולבנות יישומי 32 סיביות בהתקנות של 64 סיביות. הוא נדרש עבור יישומים כמו Steam."
 }

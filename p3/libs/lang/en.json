@@ -669,5 +669,6 @@
   "app_page_rate_failed_title": "Rating Failed",
   "app_page_rate_failed_message": "Could not submit the rating. Please try again later.",
   "appstream_initial_building": "Building initial AppStream catalog.\nThis may take a few seconds...",
-  "app_page_open": "Open"
+  "app_page_open": "Open",
+  "multilib_desc": "Multilib contains 32-bit software and libraries that can be used to run and build 32-bit applications on 64-bit installs. It is a requirement for apps like Steam."
 }

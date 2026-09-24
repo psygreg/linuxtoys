@@ -671,5 +671,6 @@
   "specials_desc": "由 LinuxToys 精选的软件和安装脚本。",
   "appstream_initial_building": "正在构建初始 AppStream 目录。\n这可能需要几秒钟...",
   "app_page_source_system": "系统",
-  "app_page_open": "打开"
+  "app_page_open": "打开",
+  "multilib_desc": "Multilib 包含 32 位软件和库，可用于在 64 位系统上运行和构建 32 位应用程序。Steam 等应用需要它。"
 }

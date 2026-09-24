@@ -15,20 +15,6 @@ fetch_from_mirror () {
     return 1
 }
 
-# --- Multilib ---
-multilib_chk() {
-    pacman -Slq multilib &>/dev/null && return 0;
-
-    printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | sudo_ tee -a /etc/pacman.conf >/dev/null
-
-    if sudo_ pacman -Syy && pacman -Slq multilib &>/dev/null; then
-        return 0
-    else
-        _msg error "Failed to enable multilib repository. Please check /etc/pacman.conf manually."
-        return 1
-    fi
-}
-
 # --- CLInfo Test ---
 clinfo_chk () {
     if ! command -v clinfo &>/dev/null; then
@@ -127,6 +113,10 @@ EOF
 }
 
 # legacy function call support - kept here so older code and local user scripts won't break
+
+multilib_chk() {
+    call_script multilib
+}
 
 chaotic_aur_lib() {
     call_script chaotic

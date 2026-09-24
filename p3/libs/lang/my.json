@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToys မှ ရွေးချယ်ထားသော ဆော့ဖ်ဝဲနှင့် တပ်ဆင်ရေး script များ။",
   "appstream_initial_building": "ကနဦး AppStream ကတ်တလောက်ကို တည်ဆောက်နေသည်။\nစက္ကန့်အနည်းငယ် ကြာနိုင်သည်...",
   "app_page_source_system": "စနစ်",
-  "app_page_open": "ဖွင့်ရန်"
+  "app_page_open": "ဖွင့်ရန်",
+  "multilib_desc": "Multilib တွင် 64-bit စနစ်များပေါ်၌ 32-bit အက်ပ်များကို အသုံးပြုရန်နှင့် တည်ဆောက်ရန် အသုံးပြုနိုင်သည့် 32-bit ဆော့ဖ်ဝဲနှင့် library များ ပါဝင်သည်။ Steam ကဲ့သို့သော အက်ပ်များအတွက် လိုအပ်သည်။"
 }

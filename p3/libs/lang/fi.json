@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToysin valitsemat ohjelmistot ja asennusskriptit.",
   "appstream_initial_building": "Luodaan alkuperäistä AppStream-luetteloa.\nTämä voi kestää muutaman sekunnin...",
   "app_page_source_system": "järjestelmä",
-  "app_page_open": "Avaa"
+  "app_page_open": "Avaa",
+  "multilib_desc": "Multilib sisältää 32-bittisiä ohjelmistoja ja kirjastoja, joiden avulla 32-bittisiä sovelluksia voidaan suorittaa ja rakentaa 64-bittisissä asennuksissa. Sitä tarvitaan esimerkiksi Steamia varten."
 }

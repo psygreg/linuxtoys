@@ -669,5 +669,6 @@
   "specials_desc": "A LinuxToys által válogatott szoftverek és telepítési szkriptek.",
   "appstream_initial_building": "A kezdeti AppStream-katalógus létrehozása.\nEz néhány másodpercet vehet igénybe...",
   "app_page_source_system": "rendszer",
-  "app_page_open": "Megnyitás"
+  "app_page_open": "Megnyitás",
+  "multilib_desc": "A Multilib 32 bites szoftvereket és könyvtárakat tartalmaz, amelyekkel 32 bites alkalmazások futtathatók és építhetők 64 bites telepítéseken. Olyan alkalmazásokhoz szükséges, mint a Steam."
 }

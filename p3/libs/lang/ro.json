@@ -669,5 +669,6 @@
   "specials_desc": "Software și scripturi de instalare selectate de LinuxToys.",
   "appstream_initial_building": "Se creează catalogul AppStream inițial.\nAcest lucru poate dura câteva secunde...",
   "app_page_source_system": "sistem",
-  "app_page_open": "Deschide"
+  "app_page_open": "Deschide",
+  "multilib_desc": "Multilib conține software și biblioteci pe 32 de biți care pot fi utilizate pentru a rula și compila aplicații pe 32 de biți în instalări pe 64 de biți. Este necesar pentru aplicații precum Steam."
 }

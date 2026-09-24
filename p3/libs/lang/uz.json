@@ -668,5 +668,6 @@
   "specials_desc": "LinuxToys tomonidan saralangan dasturlar va o‘rnatish skriptlari.",
   "appstream_initial_building": "Dastlabki AppStream katalogi yaratilmoqda.\nBu bir necha soniya vaqt olishi mumkin...",
   "app_page_source_system": "tizim",
-  "app_page_open": "Ochish"
+  "app_page_open": "Ochish",
+  "multilib_desc": "Multilib 64-bitli o‘rnatmalarda 32-bitli ilovalarni ishga tushirish va yaratish uchun ishlatiladigan 32-bitli dasturiy ta’minot va kutubxonalarni o‘z ichiga oladi. U Steam kabi ilovalar uchun talab qilinadi."
 }

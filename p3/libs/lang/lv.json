@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToys atlasīta programmatūra un instalēšanas skripti.",
   "appstream_initial_building": "Tiek veidots sākotnējais AppStream katalogs.\nTas var aizņemt dažas sekundes...",
   "app_page_source_system": "sistēma",
-  "app_page_open": "Atvērt"
+  "app_page_open": "Atvērt",
+  "multilib_desc": "Multilib satur 32 bitu programmatūru un bibliotēkas, ko var izmantot 32 bitu lietotņu palaišanai un būvēšanai 64 bitu instalācijās. Tas ir nepieciešams tādām lietotnēm kā Steam."
 }

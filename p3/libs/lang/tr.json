@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToys tarafından seçilen yazılımlar ve kurulum betikleri.",
   "appstream_initial_building": "İlk AppStream kataloğu oluşturuluyor.\nBu işlem birkaç saniye sürebilir...",
   "app_page_source_system": "sistem",
-  "app_page_open": "Aç"
+  "app_page_open": "Aç",
+  "multilib_desc": "Multilib, 64 bit kurulumlarda 32 bit uygulamaları çalıştırmak ve derlemek için kullanılabilen 32 bit yazılım ve kitaplıkları içerir. Steam gibi uygulamalar için gereklidir."
 }

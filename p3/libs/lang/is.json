@@ -669,5 +669,6 @@
   "specials_desc": "Hugbúnaður og uppsetningarskriftur valdar af LinuxToys.",
   "appstream_initial_building": "Byggi upp upphaflegan AppStream-vörulista.\nÞetta gæti tekið nokkrar sekúndur...",
   "app_page_source_system": "kerfi",
-  "app_page_open": "Opna"
+  "app_page_open": "Opna",
+  "multilib_desc": "Multilib inniheldur 32-bita hugbúnað og söfn sem hægt er að nota til að keyra og byggja 32-bita forrit á 64-bita uppsetningum. Það er nauðsynlegt fyrir forrit eins og Steam."
 }

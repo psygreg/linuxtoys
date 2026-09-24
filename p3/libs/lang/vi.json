@@ -669,5 +669,6 @@
   "specials_desc": "Phần mềm và tập lệnh cài đặt do LinuxToys tuyển chọn.",
   "appstream_initial_building": "Đang tạo danh mục AppStream ban đầu.\nQuá trình này có thể mất vài giây...",
   "app_page_source_system": "hệ thống",
-  "app_page_open": "Mở"
+  "app_page_open": "Mở",
+  "multilib_desc": "Multilib chứa phần mềm và thư viện 32-bit có thể được sử dụng để chạy và xây dựng các ứng dụng 32-bit trên các bản cài đặt 64-bit. Đây là yêu cầu đối với các ứng dụng như Steam."
 }

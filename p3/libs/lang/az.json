@@ -668,5 +668,6 @@
   "specials_desc": "LinuxToys tərəfindən seçilmiş proqram təminatı və quraşdırma skriptləri.",
   "appstream_initial_building": "İlkin AppStream kataloqu yaradılır.\nBu bir neçə saniyə çəkə bilər...",
   "app_page_source_system": "sistem",
-  "app_page_open": "Aç"
+  "app_page_open": "Aç",
+  "multilib_desc": "Multilib 64-bit quraşdırmalarda 32-bit tətbiqləri işə salmaq və qurmaq üçün istifadə edilə bilən 32-bit proqram və kitabxanaları ehtiva edir. Steam kimi tətbiqlər üçün tələb olunur."
 }

@@ -667,5 +667,6 @@
   "specials_desc": "Programu na hati za usakinishaji zilizochaguliwa na LinuxToys.",
   "appstream_initial_building": "Inaunda katalogi ya awali ya AppStream.\nHii inaweza kuchukua sekunde chache...",
   "app_page_source_system": "mfumo",
-  "app_page_open": "Fungua"
+  "app_page_open": "Fungua",
+  "multilib_desc": "Multilib ina programu na maktaba za biti 32 ambazo zinaweza kutumika kuendesha na kujenga programu za biti 32 kwenye usakinishaji wa biti 64. Inahitajika kwa programu kama Steam."
 }

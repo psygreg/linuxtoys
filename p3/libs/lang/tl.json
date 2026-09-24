@@ -669,5 +669,6 @@
   "specials_desc": "Software at mga script sa pag-install na pinili ng LinuxToys.",
   "appstream_initial_building": "Binubuo ang paunang katalogo ng AppStream.\nMaaaring tumagal ito nang ilang segundo...",
   "app_page_source_system": "system",
-  "app_page_open": "Buksan"
+  "app_page_open": "Buksan",
+  "multilib_desc": "Naglalaman ang Multilib ng 32-bit na software at mga library na maaaring gamitin upang magpatakbo at bumuo ng mga 32-bit na application sa mga 64-bit na installation. Kinakailangan ito para sa mga app tulad ng Steam."
 }

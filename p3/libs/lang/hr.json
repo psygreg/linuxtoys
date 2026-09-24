@@ -669,5 +669,6 @@
   "specials_desc": "Softver i instalacijske skripte koje je odabrao LinuxToys.",
   "appstream_initial_building": "Izrada početnog AppStream kataloga.\nOvo može potrajati nekoliko sekundi...",
   "app_page_source_system": "sustav",
-  "app_page_open": "Otvori"
+  "app_page_open": "Otvori",
+  "multilib_desc": "Multilib sadrži 32-bitni softver i biblioteke koji se mogu koristiti za pokretanje i izgradnju 32-bitnih aplikacija na 64-bitnim instalacijama. Potreban je za aplikacije poput Steama."
 }

@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToysi valitud tarkvara ja paigaldusskriptid.",
   "appstream_initial_building": "Esialgse AppStreami kataloogi loomine.\nSee võib võtta mõne sekundi...",
   "app_page_source_system": "süsteem",
-  "app_page_open": "Ava"
+  "app_page_open": "Ava",
+  "multilib_desc": "Multilib sisaldab 32-bitist tarkvara ja teeke, mida saab kasutada 32-bitiste rakenduste käitamiseks ja koostamiseks 64-bitistel paigaldustel. Seda vajavad sellised rakendused nagu Steam."
 }

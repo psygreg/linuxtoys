@@ -669,5 +669,6 @@
   "specials_desc": "Software a instalační skripty vybrané LinuxToys.",
   "appstream_initial_building": "Vytváří se počáteční katalog AppStream.\nMůže to trvat několik sekund...",
   "app_page_source_system": "systém",
-  "app_page_open": "Otevřít"
+  "app_page_open": "Otevřít",
+  "multilib_desc": "Multilib obsahuje 32bitový software a knihovny, které lze použít ke spouštění a sestavování 32bitových aplikací na 64bitových instalacích. Je vyžadován aplikacemi, jako je Steam."
 }

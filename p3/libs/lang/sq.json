@@ -669,5 +669,6 @@
   "specials_desc": "Programe dhe skripte instalimi të përzgjedhura nga LinuxToys.",
   "appstream_initial_building": "Po ndërtohet katalogu fillestar AppStream.\nKjo mund të zgjasë disa sekonda...",
   "app_page_source_system": "sistem",
-  "app_page_open": "Hap"
+  "app_page_open": "Hap",
+  "multilib_desc": "Multilib përmban softuer dhe biblioteka 32-bit që mund të përdoren për të ekzekutuar dhe ndërtuar aplikacione 32-bit në instalime 64-bit. Kërkohet për aplikacione si Steam."
 }

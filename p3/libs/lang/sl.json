@@ -669,5 +669,6 @@
   "specials_desc": "Programska oprema in namestitveni skripti, ki jih je izbral LinuxToys.",
   "appstream_initial_building": "Ustvarjanje začetnega kataloga AppStream.\nTo lahko traja nekaj sekund...",
   "app_page_source_system": "sistem",
-  "app_page_open": "Odpri"
+  "app_page_open": "Odpri",
+  "multilib_desc": "Multilib vsebuje 32-bitno programsko opremo in knjižnice, ki jih je mogoče uporabiti za zagon in gradnjo 32-bitnih aplikacij v 64-bitnih namestitvah. Potrebujejo ga aplikacije, kot je Steam."
 }

@@ -669,5 +669,6 @@
   "specials_desc": "በLinuxToys የተመረጡ ሶፍትዌሮች እና የመጫኛ ስክሪፕቶች።",
   "appstream_initial_building": "የመጀመሪያውን AppStream ካታሎግ በመገንባት ላይ።\nይህ ጥቂት ሰከንዶች ሊወስድ ይችላል...",
   "app_page_source_system": "ስርዓት",
-  "app_page_open": "ክፈት"
+  "app_page_open": "ክፈት",
+  "multilib_desc": "Multilib በ64-ቢት ጭነቶች ላይ የ32-ቢት መተግበሪያዎችን ለማስኬድ እና ለመገንባት የሚያገለግሉ የ32-ቢት ሶፍትዌሮችን እና ላይብረሪዎችን ይዟል። እንደ Steam ላሉ መተግበሪያዎች አስፈላጊ ነው።"
 }

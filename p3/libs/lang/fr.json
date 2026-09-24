@@ -669,5 +669,6 @@
   "specials_desc": "Logiciels et scripts d’installation sélectionnés par LinuxToys.",
   "appstream_initial_building": "Création du catalogue AppStream initial.\nCela peut prendre quelques secondes...",
   "app_page_source_system": "système",
-  "app_page_open": "Ouvrir"
+  "app_page_open": "Ouvrir",
+  "multilib_desc": "Multilib contient des logiciels et des bibliothèques 32 bits permettant d’exécuter et de compiler des applications 32 bits sur des installations 64 bits. Il est requis pour des applications comme Steam."
 }

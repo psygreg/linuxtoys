@@ -669,5 +669,6 @@
   "specials_desc": "Perisian dan skrip pemasangan pilihan LinuxToys.",
   "appstream_initial_building": "Membina katalog AppStream awal.\nIni mungkin mengambil masa beberapa saat...",
   "app_page_source_system": "sistem",
-  "app_page_open": "Buka"
+  "app_page_open": "Buka",
+  "multilib_desc": "Multilib mengandungi perisian dan pustaka 32-bit yang boleh digunakan untuk menjalankan dan membina aplikasi 32-bit pada pemasangan 64-bit. Ia diperlukan untuk aplikasi seperti Steam."
 }

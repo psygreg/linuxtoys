@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToysが厳選したソフトウェアとインストールスクリプト。",
   "appstream_initial_building": "初期 AppStream カタログを構築しています。\n数秒かかる場合があります...",
   "app_page_source_system": "システム",
-  "app_page_open": "開く"
+  "app_page_open": "開く",
+  "multilib_desc": "Multilib には、64 ビット環境で 32 ビットアプリケーションを実行およびビルドするために使用できる 32 ビットのソフトウェアとライブラリが含まれています。Steam などのアプリに必要です。"
 }

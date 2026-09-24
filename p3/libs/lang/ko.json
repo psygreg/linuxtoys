@@ -669,5 +669,6 @@
   "specials_desc": "LinuxToys가 엄선한 소프트웨어 및 설치 스크립트.",
   "appstream_initial_building": "초기 AppStream 카탈로그를 생성하는 중입니다.\n몇 초 정도 걸릴 수 있습니다...",
   "app_page_source_system": "시스템",
-  "app_page_open": "열기"
+  "app_page_open": "열기",
+  "multilib_desc": "Multilib에는 64비트 설치 환경에서 32비트 애플리케이션을 실행하고 빌드하는 데 사용할 수 있는 32비트 소프트웨어와 라이브러리가 포함되어 있습니다. Steam과 같은 앱에 필요합니다."
 }
