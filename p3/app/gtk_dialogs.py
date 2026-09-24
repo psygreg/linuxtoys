@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Iterable, Optional, Tuple
-from .gtk_common import Gtk, get_toplevel_window
+from .gtk_common import Gtk, GLib, get_toplevel_window
 from .lang_utils import create_translator
 
 DialogButton = Tuple[str, Gtk.ResponseType]
@@ -118,10 +118,11 @@ def run_startup_recommendations_dialog(parent, translations, recommendations):
         translations.get("startup_recommendations_not_now", "Not now"),
         Gtk.ResponseType.CANCEL,
     )
-    dialog.add_button(
+    install_button = dialog.add_button(
         translations.get("startup_recommendations_install", "Install recommended"),
         Gtk.ResponseType.OK,
     )
+    install_button.get_style_context().add_class("suggested-action")
     dialog.set_default_response(Gtk.ResponseType.OK)
     dialog.set_resizable(False)
 
@@ -145,8 +146,14 @@ def run_startup_recommendations_dialog(parent, translations, recommendations):
         "rpmfusion": translations.get("startup_recommendation_rpmfusion", "RPM Fusion"),
         "multilib": translations.get("startup_recommendation_multilib", "Multilib"),
     }
-    features = Gtk.Label(
-        label="\n".join(f"• {names[item]}" for item in recommendations if item in names)
+
+    features = Gtk.Label()
+    features.set_markup(
+        "\n".join(
+            f"• <b>{GLib.markup_escape_text(names[item])}</b>"
+            for item in recommendations
+            if item in names
+        )
     )
     features.set_xalign(0)
     features.set_selectable(False)
