@@ -1018,7 +1018,7 @@ class AppPageView(Gtk.Box):
                         f"md-link-{link_count}",
                         underline=Pango.Underline.SINGLE,
                     )
-                    tag_link.set_data("url", url)
+                    tag_link._markdown_url = url
                     insert_inline(label, (*base_tags, tag_link))
                 elif match.group(5):
                     insert_inline(match.group(6), (*base_tags, tag_bold))
@@ -1273,7 +1273,7 @@ class AppPageView(Gtk.Box):
             iterator = iterator[-1]
 
         for tag in iterator.get_tags():
-            url = tag.get_data("url")
+            url = getattr(tag, "_markdown_url", None)
             if url:
                 try:
                     Gtk.show_uri_on_window(self.parent, url, Gdk.CURRENT_TIME)
