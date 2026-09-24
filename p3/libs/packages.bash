@@ -321,10 +321,10 @@ pkg_fromfile () {
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
 
-    [[ "$1" == *.flatpak ]] || askpass
+    [[ "$1" == *.flatpak || "$1" == *.flatpakref ]] || askpass
     runner_lock "package-transaction"
 
-    if [[ "$1" == *.flatpak ]]; then
+    if [[ "$1" == *.flatpak || "$1" == *.flatpakref ]]; then
         if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
             summon_helpers
             flatpak_in_lib
