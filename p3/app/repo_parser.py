@@ -49,6 +49,8 @@ def clear_runtime_caches():
 DESKTOP_KEYS = {
     "gnome": "desktop-gnome",
     "plasma": "desktop-plasma",
+    "hyprland": "desktop-hyprland",
+    "sway": "desktop-sway",
     "other": "desktop-other",
 }
 

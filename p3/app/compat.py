@@ -288,7 +288,7 @@ def get_system_compat_keys():
         set: Set of compatibility keys for the current system
                (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue;
               GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
-              Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-other;
+              Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-hyprland, desktop-sway, desktop-other;
               Init keys: systemd;
               Session keys: x11, wayland)
     """
@@ -534,7 +534,7 @@ def get_desktop_compat_keys():
     Get the desktop environment compatibility keys based on detected DE.
 
     Returns:
-        set: Set of desktop compatibility keys ('desktop', 'desktop-gnome', 'desktop-plasma', 'desktop-other')
+        set: Set of desktop compatibility keys ('desktop', 'desktop-gnome', 'desktop-plasma', 'desktop-hyprland', 'desktop-sway', 'desktop-other')
     """
     keys = set()
     import os
@@ -544,6 +544,10 @@ def get_desktop_compat_keys():
         keys.add("desktop-gnome")
     elif "KDE" in desktop_parts:
         keys.add("desktop-plasma")
+    elif "HYPRLAND" in desktop_parts:
+        keys.add("desktop-hyprland")
+    elif "SWAY" in desktop_parts:
+        keys.add("desktop-sway")
     else:
         keys.add("desktop-other")
 
@@ -940,6 +944,10 @@ def script_is_compatible(script_path, compat_keys):
                             desktop_script_keys.add("desktop-gnome")
                         elif v.lower() == "plasma":
                             desktop_script_keys.add("desktop-plasma")
+                        elif v.lower() == "hyprland":
+                            desktop_script_keys.add("desktop-hyprland")
+                        elif v.lower() == "sway":
+                            desktop_script_keys.add("desktop-sway")
                         elif v.lower() == "other":
                             desktop_script_keys.add("desktop-other")
                         else:
