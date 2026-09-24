@@ -76,7 +76,7 @@ ossuse() {
         if sudo rpm -U --nodeps --replacefiles --replacepkgs "/tmp/${_rpm_name}"; then
             dependencies=(
                 bash git curl wget zenity python3 python3-gobject gtk3
-                python3-requests python3-urllib3 python3-certifi
+                python3-requests python3-urllib3 python3-certifi util-linux
                 libvte-2_91-0 typelib-1_0-Vte-2.91 libappstream5 typelib-1_0-AppStream-1_0
             )
             for pkg in "${dependencies[@]}"; do
@@ -104,7 +104,7 @@ osarch() {
         mapfile -t missing_deps < <(
             pacman -T \
                 bash git curl wget zenity appstream archlinux-appstream-data \
-                python python-gobject python-requests gtk3 vte3 sudo
+                python python-gobject python-requests gtk3 vte3 sudo util-linux
                 )
         if ((${#missing_deps[@]})); then
             sudo pacman -S --noconfirm --asdeps "${missing_deps[@]}" || error "Failed to install LinuxToys dependencies."
