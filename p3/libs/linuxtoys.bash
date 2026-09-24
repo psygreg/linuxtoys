@@ -449,15 +449,29 @@ PY
         )
         local resolve_status=${PIPESTATUS[0]}
 
-        if [[ $resolve_status -ne 0 || ${#repo_selection[@]} -ne 3 ]]; then
-            die "call_script: Script or repository app '$script_name' not found"
-        fi
+        if [[ $resolve_status -eq 0 && ${#repo_selection[@]} -eq 3 ]]; then
+            found_script="${repo_selection[0]}"
+            script_display_name="${repo_selection[1]}"
+            repo_url="${repo_selection[2]}"
+            repo_app_id="${script_name^^}"
+            script_registry_name="$script_display_name"
+        else
+            # Repository-list resolution failed. AppStream is the final resolver;
+            # it accepts a stable component ID or an exact display/canonical name.
+            local -a appstream_selection=()
+            mapfile -t appstream_selection < <(
+                python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name"
+            )
+            local appstream_status=${PIPESTATUS[0]}
 
-        found_script="${repo_selection[0]}"
-        script_display_name="${repo_selection[1]}"
-        repo_url="${repo_selection[2]}"
-        repo_app_id="${script_name^^}"
-        script_registry_name="$script_display_name"
+            if [[ $appstream_status -ne 0 || ${#appstream_selection[@]} -ne 4 ]]; then
+                die "call_script: Script, repository app or AppStream app '$script_name' not found"
+            fi
+
+            found_script="${appstream_selection[0]}"
+            script_display_name="${appstream_selection[1]}"
+            script_registry_name="$script_display_name"
+        fi
     fi
 
     [[ -n "$script_registry_name" ]] || script_registry_name="$script_display_name"

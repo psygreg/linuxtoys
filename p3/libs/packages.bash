@@ -1472,7 +1472,7 @@ EOF
     if is_systemd; then
         if ! flatpak list | grep -q "it.mijorus.gearlever"; then
             info "$gearlevermsg"
-            call_script GEAR_LEVER
+            call_script it.mijorus.gearlever
         fi
         local output
         if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then

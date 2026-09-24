@@ -236,6 +236,160 @@ def exec_script(script_info, script_dir, argv=(), base_env=None):
     command = script_command(script_info["path"], script_dir)
     os.execve(command[0], command + list(argv), env)
 
+def _appstream_phase_lines(entry):
+    """Return reviewed AppStream overlay commands in normal runner order."""
+    pre = []
+    dependencies = []
+    flatpak = []
+    post = []
+
+    overrides = entry.get("appstream_overrides")
+    if not isinstance(overrides, dict):
+        overrides = {}
+
+    def hook_lines(phase):
+        value = overrides.get(phase)
+        if isinstance(value, str) and value.strip():
+            return [value.strip()]
+        if isinstance(value, dict):
+            script = str(value.get("script", "") or "").strip()
+            if script:
+                return [f"run_list_hook {shlex.quote(script)}"]
+        return []
+
+    pre.extend(hook_lines("pre"))
+    post.extend(hook_lines("post"))
+
+    values = entry.get("appstream_dependencies")
+    if isinstance(values, list):
+        for dependency in values:
+            if not isinstance(dependency, dict):
+                continue
+            dependency_type = dependency.get("type")
+            packages = dependency.get("packages")
+            if not isinstance(packages, list):
+                continue
+            for package in packages:
+                package = str(package or "").strip()
+                if not package:
+                    continue
+                if dependency_type == "native":
+                    dependencies.append(f"pkg_install {shlex.quote(package)}")
+                elif dependency_type == "flathub":
+                    dependencies.append(f"pkg_flat {shlex.quote(package)}")
+
+    if entry.get("appstream_source") == "flatpak":
+        values = overrides.get("flatpak")
+        if isinstance(values, list):
+            for override in values:
+                if not isinstance(override, dict):
+                    continue
+                flatpak.append(
+                    "flatpak_override "
+                    f"{shlex.quote(str(override.get('scope', '')).strip())} "
+                    f"{shlex.quote(str(override.get('type', '')).strip())} "
+                    f"{shlex.quote(str(override.get('setting', '')).strip())} "
+                    f"{shlex.quote(str(override.get('target', '')).strip())}"
+                )
+
+    return pre, dependencies, flatpak, post
+
+
+def materialize_appstream_by_target(target, script_dir):
+    """Resolve and materialize an AppStream app for nested call_script execution.
+
+    IDs are preferred; exact localized/canonical display names are accepted as a
+    convenience. Source selection and reviewed overlays come from appstream_parser,
+    so this follows the same default source choice as the normal AppStream UI.
+    """
+    import sys
+
+    script_dir = os.path.abspath(script_dir)
+    if script_dir not in sys.path:
+        sys.path.insert(0, script_dir)
+
+    from app import appstream_parser, repo_parser
+
+    scripts_dir = os.path.join(script_dir, "scripts")
+    curated_entries = repo_parser.load_repo_entries(scripts_dir, translations=None)
+    category_paths = []
+    for root, dirs, _files in os.walk(scripts_dir):
+        dirs[:] = [name for name in dirs if name != "lists"]
+        relative = os.path.relpath(root, scripts_dir).replace(os.sep, "/")
+        if relative != ".":
+            category_paths.append(relative)
+
+    entry = appstream_parser.find_entry_by_id(
+        scripts_dir,
+        target,
+        curated_entries=curated_entries,
+        category_paths=category_paths,
+    )
+    if entry is None:
+        entry = appstream_parser.find_entry_by_name(
+            scripts_dir,
+            target,
+            curated_entries=curated_entries,
+            category_paths=category_paths,
+        )
+    if entry is None:
+        return None
+
+    # create_install_script() deliberately handles only the ordinary AppStream
+    # package transaction. Keep overlays in the same order as AppStreamRunner:
+    # pre -> dependencies -> install -> Flatpak overrides -> post.
+    install_path = repo_parser.create_install_script(entry)
+    try:
+        install_text = Path(install_path).read_text(encoding="utf-8")
+    finally:
+        try:
+            os.remove(install_path)
+        except OSError:
+            pass
+
+    pre, dependencies, flatpak, post = _appstream_phase_lines(entry)
+    lines = install_text.splitlines()
+    if lines and lines[0].startswith("#!"):
+        lines = lines[1:]
+    install_body = "\n".join(lines).strip()
+
+    contents = "#!/usr/bin/env bash\n"
+    contents += f"# name: {str(entry.get('name') or target).replace(chr(10), ' ')}\n"
+    contents += f"# description: {str(entry.get('description') or '').replace(chr(10), ' ')}\n"
+    contents += f"# icon: {str(entry.get('icon') or 'application-x-executable').replace(chr(10), ' ')}\n"
+    contents += "# revert: yes\n\n"
+    for phase in (pre, dependencies):
+        if phase:
+            contents += "\n".join(phase) + "\n\n"
+    contents += install_body + "\n"
+    for phase in (flatpak, post):
+        if phase:
+            contents += "\n" + "\n".join(phase) + "\n"
+
+    directory = "/tmp/linuxtoys/appstream-called"
+    os.makedirs(directory, mode=0o700, exist_ok=True)
+    safe = re.sub(r"[^A-Za-z0-9._-]+", "-", str(entry.get("appstream_id") or target)).strip("-._") or "appstream"
+    path = os.path.join(directory, f"{safe}.sh")
+    tmp = path + ".tmp"
+    try:
+        Path(tmp).write_text(contents, encoding="utf-8")
+        os.chmod(tmp, 0o700)
+        os.replace(tmp, path)
+    except Exception:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        raise
+
+    return {
+        "path": path,
+        "name": str(entry.get("name") or target),
+        "appstream_id": str(entry.get("appstream_id") or target),
+        "source": str(entry.get("appstream_source") or ""),
+    }
+
+
 def materialize_repo_by_app_id(app_id, script_dir):
     """Resolve a compatible repository-list entry by repo_app_id."""
     import sys
@@ -262,6 +416,16 @@ if __name__ == "__main__":
     # call_script uses this entry point for nested scripts. exec preserves the
     # child's exit status and lets the existing Bash caller manage transactions.
     import sys
+
+    if len(sys.argv) >= 3 and sys.argv[1] == "--materialize-appstream":
+        entry = materialize_appstream_by_target(sys.argv[2], os.environ["SCRIPT_DIR"])
+        if not entry:
+            sys.exit(3)
+        print(entry["path"])
+        print(entry["name"])
+        print(entry["appstream_id"])
+        print(entry["source"])
+        sys.exit(0)
 
     if len(sys.argv) >= 3 and sys.argv[1] == "--materialize-repo":
         entry = materialize_repo_by_app_id(sys.argv[2], os.environ["SCRIPT_DIR"])
