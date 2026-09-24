@@ -39,7 +39,7 @@ _LAST_LOAD_CONTEXT = None
 APPSTREAM_SOURCE_PREFERENCE = {
     "default": "flatpak",
     "apps": {
-        # "org.example.App": {"fedora": "native", "all": "flatpak"},
+        "org.kde.ghostwriter": {"all": "native"},
     },
 }
 

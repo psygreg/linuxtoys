@@ -78,7 +78,8 @@ KNOWN_POPULAR = {
     "com.usebottles.bottles",
     "ONLYOFFICE Desktop Editors",
     "org.onlyoffice.desktopeditors",
-    "com.dec05eba.gpu_screen_recorder"
+    "com.dec05eba.gpu_screen_recorder",
+    "org.gimp.GIMP"
 }
 
 FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"
