@@ -3,7 +3,7 @@ import os
 import random
 
 from .gtk_common import Gdk, GLib
-from . import parser
+from . import parser, popularity, category_affinity
 
 
 class FeaturedCtl:
@@ -484,15 +484,35 @@ class FeaturedCtl:
             return 0.0
         return min(2.0, 1.0 + ((rating - 70.0) / 20.0))
 
+    @staticmethod
+    def _featured_popularity_weight(script):
+        """Return a bounded 1..2 popularity multiplier for Featured sampling."""
+        try:
+            score = popularity.score_for_item(script)
+        except Exception:
+            score = 0
+        return 1.0 + (max(0, min(popularity.SCORE_MAX, int(score))) / popularity.SCORE_MAX)
+
     @classmethod
-    def _weighted_featured_sample(cls, candidates, count):
-        """Sample Featured candidates without replacement using rating weights."""
+    def _weighted_featured_sample(cls, candidates, count, extra_weight=None):
+        """Sample without replacement; reviews/popularity dominate optional priors."""
         pool = list(candidates)
         selected = []
         count = min(max(0, int(count or 0)), len(pool))
 
         for _ in range(count):
-            weights = [cls._featured_rating_weight(script) for script in pool]
+            weights = []
+            for script in pool:
+                weight = (
+                    cls._featured_rating_weight(script)
+                    * cls._featured_popularity_weight(script)
+                )
+                if extra_weight is not None:
+                    try:
+                        weight *= max(0.0, float(extra_weight(script)))
+                    except (TypeError, ValueError):
+                        pass
+                weights.append(weight)
             total = sum(weights)
             if total <= 0:
                 break
@@ -552,14 +572,25 @@ class FeaturedCtl:
 
         self._featured_history = history
 
-        sensed_keys = self._sensed_featured_keys()
-        sensed_candidates = [
-            script for script in candidates
-            if self._featured_script_key(script) in sensed_keys
-        ]
+        sensed_categories = self._personalized_featured_category_paths()
+
+        def sensed_affinity(script):
+            return category_affinity.affinity_from_sources(
+                sensed_categories, script.get("category")
+            )
+
+        # The personalized share is no longer a binary exact-category pool. Myket's
+        # offline co-installation prior expands it to statistically related areas.
+        # Its multiplier tops out at 1.5x, deliberately below both the 2x review
+        # and 2x popularity multipliers used by the base Featured sampler.
+        sensed_candidates = [script for script in candidates if sensed_affinity(script) > 0.0]
         sensed_target = (count * self.SENSE_PERSONALIZED_PERCENT) // 100
         sensed_count = min(sensed_target, len(sensed_candidates), count)
-        selected = self._weighted_featured_sample(sensed_candidates, sensed_count)
+        selected = self._weighted_featured_sample(
+            sensed_candidates, sensed_count,
+            extra_weight=lambda script: 1.0 + (0.50 * sensed_affinity(script)),
+        )
+        sensed_keys = {self._featured_script_key(script) for script in sensed_candidates}
         selected_keys = {self._featured_script_key(script) for script in selected}
 
         # The remaining share keeps the previous global random discovery behavior.
@@ -615,21 +646,18 @@ class FeaturedCtl:
     def select_featured_scripts_for_app_page(
         self, count, exclude_keys=(), category=None
     ):
-        """
-        Select one stable Featured set for spare app-page space.
+        """Select app-page Featured with Myket affinity as the master criterion.
 
-        Prefer the app's exact category, including nested subcategories. If that
-        category cannot fill the available slots, backfill from the same
-        personalized/global pool used by main-menu Featured without touching its
-        history or refresh timer.
+        The ordinary Featured eligibility gate still applies (including the 3.5-star
+        ODRS minimum for AppStream entries). Among eligible candidates, category
+        affinity to the current app is authoritative; reviews and popularity break
+        ties/near-equivalent relationships, followed by stable session randomness.
         """
         if count <= 0:
             return []
 
         excluded = set(exclude_keys or ())
         category = str(category or "").strip().replace("\\", "/").strip("/")
-        category_folded = category.casefold()
-
         eligible = [
             script
             for script in self._eligible_featured_scripts()
@@ -640,99 +668,26 @@ class FeaturedCtl:
 
         count = min(int(count), len(eligible))
 
-        def same_category(script):
-            if not category_folded:
-                return True
-            script_category = (
-                str(script.get("category", "") or "")
-                .strip()
-                .replace("\\", "/")
-                .strip("/")
-                .casefold()
-            )
-            return script_category == category_folded
-
-        # ``all_scripts`` is intentionally built from top-level categories for the
-        # main-menu Featured pool. Nested subcategory entries therefore may not be
-        # present in it at all. Pull the exact category directly from CategoryCache
-        # as well so app-page recommendations work for e.g. Gaming/Emulators.
-        category_candidates = [script for script in eligible if same_category(script)]
-        if category:
-            category_cache = getattr(self, "category_cache", None)
-            if category_cache is not None:
-                category_path = os.path.join(
-                    parser.SCRIPTS_DIR, *[part for part in category.split("/") if part]
-                )
+        def recommendation_key(script):
+            affinity = category_affinity.affinity(category, script.get("category"))
+            try:
+                review = float(script.get("review_subscore"))
+            except (TypeError, ValueError):
                 try:
-                    direct_scripts = category_cache.get_scripts_for_category(category_path)
-                except Exception:
-                    direct_scripts = ()
+                    review = float(script.get("review_rating")) * 10.0
+                except (TypeError, ValueError):
+                    review = 0.0
+            try:
+                pop = popularity.score_for_item(script)
+            except Exception:
+                pop = 0
+            # Affinity is intentionally first: app-page Featured is a related-app
+            # surface, not another popularity chart. The minimum review threshold
+            # has already been enforced by _eligible_featured_scripts().
+            return (-affinity, -review, -pop, random.random())
 
-                known_keys = {
-                    self._featured_script_key(script) for script in category_candidates
-                }
-                for script in direct_scripts or ():
-                    key = self._featured_script_key(script)
-                    if (
-                        key in excluded
-                        or key in known_keys
-                        or not script.get("is_script", False)
-                        or script.get("is_create_script", False)
-                        or self._is_script_removable(script)
-                        or self._featured_rating_weight(script) <= 0
-                        or not same_category(script)
-                    ):
-                        continue
-                    known_keys.add(key)
-                    category_candidates.append(script)
-
-        selected = self._weighted_featured_sample(
-            category_candidates, min(count, len(category_candidates))
-        )
-        selected_keys = {self._featured_script_key(script) for script in selected}
-
-        # Only spare slots are backfilled. A category that can fill the page remains
-        # entirely category-local; sparse categories retain all of their own picks
-        # and receive main-menu-style recommendations for the remainder.
-        remaining_count = count - len(selected)
-        if remaining_count > 0:
-            remaining = [
-                script for script in eligible
-                if self._featured_script_key(script) not in selected_keys
-            ]
-            sensed_keys = self._sensed_featured_keys()
-            sensed_candidates = [
-                script for script in remaining
-                if self._featured_script_key(script) in sensed_keys
-            ]
-            sensed_target = (
-                remaining_count * self.SENSE_PERSONALIZED_PERCENT
-            ) // 100
-            sensed_count = min(
-                sensed_target, len(sensed_candidates), remaining_count
-            )
-            backfill = self._weighted_featured_sample(
-                sensed_candidates, sensed_count
-            )
-            backfill_keys = {
-                self._featured_script_key(script) for script in backfill
-            }
-
-            global_candidates = [
-                script for script in remaining
-                if self._featured_script_key(script) not in backfill_keys
-            ]
-            still_needed = remaining_count - len(backfill)
-            if still_needed > 0:
-                backfill.extend(
-                    self._weighted_featured_sample(
-                        global_candidates, min(still_needed, len(global_candidates))
-                    )
-                )
-            selected.extend(backfill)
-
-        random.shuffle(selected)
-        return selected
+        eligible.sort(key=recommendation_key)
+        return eligible[:count]
 
 
     def _choose_featured_large_positions(self, rows, columns, count):
