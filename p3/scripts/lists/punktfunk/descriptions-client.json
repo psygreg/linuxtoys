@@ -1,0 +1,181 @@
+{
+  "description_tag": "punktfunk_client_desc",
+  "long-description": "md/en.md",
+  "description_long_tag": "punktfunk_client_long",
+  "en": {
+    "punktfunk_client_long": "md/en.md",
+    "punktfunk_client_desc": "Client side for Punktfunk game streaming."
+  },
+  "pt": {
+    "punktfunk_client_long": "md/pt.md",
+    "punktfunk_client_desc": "Componente cliente para streaming de jogos com o Punktfunk."
+  },
+  "am": {
+    "punktfunk_client_desc": "የPunktfunk ጨዋታ ዥረት ደንበኛ ክፍል።"
+  },
+  "ar": {
+    "punktfunk_client_desc": "جانب العميل لبث الألعاب عبر Punktfunk."
+  },
+  "az": {
+    "punktfunk_client_desc": "Punktfunk oyun yayımı üçün klient tərəfi."
+  },
+  "bg": {
+    "punktfunk_client_desc": "Клиентска страна за стрийминг на игри с Punktfunk."
+  },
+  "bn": {
+    "punktfunk_client_desc": "Punktfunk গেম স্ট্রিমিংয়ের ক্লায়েন্ট অংশ।"
+  },
+  "bs": {
+    "punktfunk_client_desc": "Klijentska strana za Punktfunk streaming igara."
+  },
+  "cs": {
+    "punktfunk_client_desc": "Klientská část pro streamování her pomocí Punktfunk."
+  },
+  "da": {
+    "punktfunk_client_desc": "Klientside til Punktfunk-spilstreaming."
+  },
+  "de": {
+    "punktfunk_client_desc": "Client-Seite für Punktfunk-Game-Streaming."
+  },
+  "el": {
+    "punktfunk_client_desc": "Η πλευρά πελάτη για streaming παιχνιδιών με το Punktfunk."
+  },
+  "es": {
+    "punktfunk_client_desc": "Componente cliente para la transmisión de juegos con Punktfunk."
+  },
+  "et": {
+    "punktfunk_client_desc": "Punktfunki mängude voogedastuse kliendipool."
+  },
+  "fa": {
+    "punktfunk_client_desc": "بخش کلاینت برای استریم بازی با Punktfunk."
+  },
+  "fi": {
+    "punktfunk_client_desc": "Punktfunk-pelisuoratoiston asiakaspuoli."
+  },
+  "fr": {
+    "punktfunk_client_desc": "Composant client pour le streaming de jeux avec Punktfunk."
+  },
+  "ga": {
+    "punktfunk_client_desc": "Taobh cliaint do shruthú cluichí Punktfunk."
+  },
+  "he": {
+    "punktfunk_client_desc": "צד הלקוח להזרמת משחקים באמצעות Punktfunk."
+  },
+  "hi": {
+    "punktfunk_client_desc": "Punktfunk गेम स्ट्रीमिंग के लिए क्लाइंट साइड।"
+  },
+  "hr": {
+    "punktfunk_client_desc": "Klijentska strana za Punktfunk streaming igara."
+  },
+  "hu": {
+    "punktfunk_client_desc": "Kliensoldali komponens Punktfunk játékstreameléshez."
+  },
+  "hy": {
+    "punktfunk_client_desc": "Punktfunk խաղերի հեռարձակման հաճախորդային կողմը։"
+  },
+  "id": {
+    "punktfunk_client_desc": "Sisi klien untuk streaming game Punktfunk."
+  },
+  "is": {
+    "punktfunk_client_desc": "Biðlarahlið fyrir Punktfunk-leikjastreymi."
+  },
+  "it": {
+    "punktfunk_client_desc": "Componente client per lo streaming di giochi con Punktfunk."
+  },
+  "ja": {
+    "punktfunk_client_desc": "Punktfunk ゲームストリーミングのクライアント側コンポーネント。"
+  },
+  "ka": {
+    "punktfunk_client_desc": "კლიენტის მხარე Punktfunk-ით თამაშების სტრიმინგისთვის."
+  },
+  "km": {
+    "punktfunk_client_desc": "ផ្នែកម៉ាស៊ីនភ្ញៀវសម្រាប់ការស្ទ្រីមហ្គេម Punktfunk។"
+  },
+  "ko": {
+    "punktfunk_client_desc": "Punktfunk 게임 스트리밍용 클라이언트 측 구성 요소입니다."
+  },
+  "lo": {
+    "punktfunk_client_desc": "ຝັ່ງໄຄລເອັນສຳລັບການສະຕຣີມເກມດ້ວຍ Punktfunk."
+  },
+  "lt": {
+    "punktfunk_client_desc": "Punktfunk žaidimų transliavimo kliento dalis."
+  },
+  "lv": {
+    "punktfunk_client_desc": "Klienta puse Punktfunk spēļu straumēšanai."
+  },
+  "mn": {
+    "punktfunk_client_desc": "Punktfunk тоглоом стриймингийн клиент тал."
+  },
+  "ms": {
+    "punktfunk_client_desc": "Bahagian klien untuk penstriman permainan Punktfunk."
+  },
+  "my": {
+    "punktfunk_client_desc": "Punktfunk ဂိမ်း streaming အတွက် client ဘက်ခြမ်း။"
+  },
+  "nb": {
+    "punktfunk_client_desc": "Klientside for Punktfunk-spillstrømming."
+  },
+  "ne": {
+    "punktfunk_client_desc": "Punktfunk गेम स्ट्रिमिङका लागि क्लाइन्ट पक्ष।"
+  },
+  "nl": {
+    "punktfunk_client_desc": "Clientcomponent voor gamestreaming met Punktfunk."
+  },
+  "pl": {
+    "punktfunk_client_desc": "Część klienta do strumieniowania gier przez Punktfunk."
+  },
+  "ro": {
+    "punktfunk_client_desc": "Componentă client pentru streaming de jocuri cu Punktfunk."
+  },
+  "ru": {
+    "punktfunk_client_desc": "Клиентский компонент для трансляции игр через Punktfunk."
+  },
+  "sk": {
+    "punktfunk_client_desc": "Klientská časť na streamovanie hier pomocou Punktfunk."
+  },
+  "sl": {
+    "punktfunk_client_desc": "Odjemalska stran za pretakanje iger s Punktfunk."
+  },
+  "sq": {
+    "punktfunk_client_desc": "Ana e klientit për transmetimin e lojërave me Punktfunk."
+  },
+  "sr": {
+    "punktfunk_client_desc": "Клијентска страна за Punktfunk стримовање игара."
+  },
+  "sv": {
+    "punktfunk_client_desc": "Klientsida för Punktfunk-spelströmning."
+  },
+  "sw": {
+    "punktfunk_client_desc": "Upande wa mteja kwa utiririshaji wa michezo wa Punktfunk."
+  },
+  "ta": {
+    "punktfunk_client_desc": "Punktfunk கேம் ஸ்ட்ரீமிங்கிற்கான கிளையன்ட் பகுதி."
+  },
+  "tg": {
+    "punktfunk_client_desc": "Қисми муштарӣ барои пахши бозиҳо бо Punktfunk."
+  },
+  "th": {
+    "punktfunk_client_desc": "ฝั่งไคลเอนต์สำหรับการสตรีมเกมด้วย Punktfunk"
+  },
+  "tl": {
+    "punktfunk_client_desc": "Client side para sa Punktfunk game streaming."
+  },
+  "tr": {
+    "punktfunk_client_desc": "Punktfunk oyun akışı için istemci tarafı."
+  },
+  "uk": {
+    "punktfunk_client_desc": "Клієнтський компонент для трансляції ігор через Punktfunk."
+  },
+  "ur": {
+    "punktfunk_client_desc": "Punktfunk گیم اسٹریمنگ کے لیے کلائنٹ سائیڈ۔"
+  },
+  "uz": {
+    "punktfunk_client_desc": "Punktfunk o'yin strimingi uchun klient tomoni."
+  },
+  "vi": {
+    "punktfunk_client_desc": "Phía máy khách cho tính năng phát trực tuyến trò chơi Punktfunk."
+  },
+  "zh": {
+    "punktfunk_client_desc": "Punktfunk 游戏串流的客户端。"
+  }
+}

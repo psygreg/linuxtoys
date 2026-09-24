@@ -16,16 +16,6 @@
         "icon": "figma.svg"
     },
     {
-        "name": "Gear Lever",
-        "description": "An utility to manage AppImages, generating desktop entries and app metadata, updating apps in-place or keeping multiple versions side-by-side.",
-        "description_tag": "glever_desc",
-        "repo": "https://github.com/mijorus/gearlever",
-        "category": "sysadm",
-        "icon": "gearlever.png",
-        "type": "flathub",
-        "package-name": "it.mijorus.gearlever"
-    },
-    {
         "name": "Audacity",
         "description": "A free, open source, cross-platform audio software.",
         "description_tag": "audacity_desc",
@@ -112,70 +102,19 @@
         "icon": "leshade.png"
     },
     {
-        "name": "Lutris",
-        "description": "A gaming platform for Linux that allows you to install and manage games from various sources, including emulators.",
-        "description_tag": "lutris_desc",
-        "repo": "https://lutris.net",
-        "category": "game",
-        "icon": "lutris.svg",
-        "type": {
-            "fedora": "native",
-            "arch": "native",
-            "cachy": "native",
-            "all": "flathub"
-        },
-        "package-name": {
-            "fedora": "lutris",
-            "arch": "lutris",
-            "cachy": "lutris",
-            "all": "net.lutris.Lutris"
-        },
+        "appstream-name": "com.dec05eba.gpu_screen_recorder",
         "overrides": {
-            "pre": "{ is_fedora && call_script rpmfusion; } || true"
+            "post": "{ is_intel && pkg_flat --skip-user org.freedesktop.Platform.VAAPI.Intel/x86_64/24.08; } || true"
         }
     },
     {
-        "name": "GPU Screen Recorder",
-        "description": "A screen recording tool with hardware encoding akin to Shadowplay for any GPU on Linux.",
-        "description_tag": "gsr_desc",
-        "repo": "https://git.dec05eba.com/?p=about",
-        "category": "media",
-        "icon": "gsr.png",
-        "type": "flathub",
-        "package-name": "com.dec05eba.gpu_screen_recorder",
-        "overrides": {
-            "post": "{ is_intel && pkg_flat --skip-user org.freedesktop.Platform.VAAPI.Intel/x86_64/24.08; } || true",
-            "skip-user": true
-        }
-    },
-    {
-        "name": "Steam",
-        "description": "The most popular PC gaming platform and store.",
-        "description_tag": "steam_desc",
-        "repo": "https://store.steampowered.com",
-        "category": "game",
-        "icon": "steam.svg",
-        "type": {
-            "fedora": "native",
-            "arch": "native",
-            "cachy": "native",
-            "all": "flathub"
-        },
-        "package-name": {
-            "fedora": "steam",
-            "arch": "steam",
-            "cachy": "steam",
-            "all": "com.valvesoftware.Steam"
-        },
+        "appstream-name": "com.valvesoftware.Steam",
         "dependencies": [
             {
                 "type": "native",
                 "package-name": "steam-devices"
             }
-        ],
-        "overrides": {
-            "pre": "{ { { is_rhel || is_fedora; } && call_script rpmfusion; } || { { is_arch && summon_helpers; } && multilib_chk; }; } || true"
-        }
+        ]
     },
     {
         "name": "Heroic Games Launcher",
@@ -210,26 +149,8 @@
         "os": [ "fedora", "ostree", "arch", "cachy", "ubuntu", "debian", "suse", "solus" ]
     },
     {
-        "name": "Faugus Launcher",
-        "description": "A newer, lightweight and simplified application to manage your games and their WINE prefixes on Linux, similarly to Lutris.",
-        "description_tag": "faugus_desc",
-        "repo": "https://github.com/Faugus/faugus-launcher",
-        "category": "game",
-        "icon": "faugus-launcher.png",
-        "type": {
-            "fedora": "native",
-            "arch": "native",
-            "cachy": "native",
-            "all": "flathub"
-        },
-        "package-name": {
-            "fedora": "faugus-launcher",
-            "arch": "faugus-launcher",
-            "cachy": "faugus-launcher",
-            "all": "io.github.Faugus.faugus-launcher"
-        },
+        "appstream-name": "io.github.Faugus.faugus-launcher",
         "overrides": {
-            "pre": "{ is_fedora && sudo dnf -y copr enable faugus/faugus-launcher; } || true",
             "flatpak": [
                 {
                     "scope": "user",
@@ -312,19 +233,6 @@
         "repo": "https://github.com/barry-ran/QtScrcpy",
         "category": "media",
         "icon": "qtscrcpy.png"
-    },
-    {
-        "name": "LACT",
-        "description": "GPU fan control and overlocking tool. Use with caution!",
-        "description_tag": "lact_desc",
-        "repo": "https://github.com/ilya-zlobintsev/LACT",
-        "category": "utils",
-        "icon": "device.svg",
-        "type": "flathub",
-        "package-name": "io.github.ilya_zlobintsev.LACT",
-        "overrides": {
-            "skip-user": true
-        }
     },
     {
         "name": "F3 (Fight Flash Fraud)",
@@ -466,6 +374,13 @@
             "suse": "R-base",
             "ubuntu": "r-base",
             "debian": "r-base"
+        }
+    },
+    {
+        "appstream-name": "at.vintagestory.VintageStory",
+        "purchase": {
+          "url": "https://www.vintagestory.at/store/category/1-game-account-game-servers/",
+          "price": 24.00
         }
     }
 ]

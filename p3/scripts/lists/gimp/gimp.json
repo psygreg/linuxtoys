@@ -1,22 +1,10 @@
 [
-    {
-        "name": "GIMP (& PhotoGIMP)",
-        "developer": "GNU Image Manipulation Program",
-        "description": "A powerful open source image editor.",
-        "description_tag": "gimp_desc",
-        "repo": "https://www.gimp.org",
-        "category": "office",
-        "icon": "gimp.svg",
-        "license": "GPLv3",
-        "type": "flathub",
-        "package-name": "org.gimp.GIMP",
-        "overrides": {
-            "post": {
-                "script": "./photogimp.sh"
-            }
-        },
-        "descriptions": "descriptions.json",
-        "donate": "https://www.gimp.org/donating",
-        "screenshots": "screenshots/"
-    }
+  {
+      "appstream-name": "org.gimp.GIMP",
+      "overrides": {
+          "post": {
+              "script": "./photogimp.sh"
+          }
+      }
+  }
 ]

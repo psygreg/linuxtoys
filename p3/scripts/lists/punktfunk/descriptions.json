@@ -1,0 +1,181 @@
+{
+  "description_tag": "punktfunk_host_desc",
+  "long-description": "md/en.md",
+  "description_long_tag": "punktfunk_host_long",
+  "en": {
+    "punktfunk_host_long": "md/en.md",
+    "punktfunk_host_desc": "Host side for Punktfunk game streaming. Stream your desktop or games to a Mac, PC, phone, tablet or TV."
+  },
+  "pt": {
+    "punktfunk_host_long": "md/pt.md",
+    "punktfunk_host_desc": "Componente host para streaming de jogos com o Punktfunk. Transmita sua área de trabalho ou jogos para um Mac, PC, celular, tablet ou TV."
+  },
+  "am": {
+    "punktfunk_host_desc": "የPunktfunk ጨዋታ ዥረት አስተናጋጅ ክፍል። ዴስክቶፕዎን ወይም ጨዋታዎችዎን ወደ Mac፣ PC፣ ስልክ፣ ታብሌት ወይም TV ያስተላልፉ።"
+  },
+  "ar": {
+    "punktfunk_host_desc": "جانب المضيف لبث الألعاب عبر Punktfunk. قم ببث سطح المكتب أو الألعاب إلى Mac أو PC أو هاتف أو جهاز لوحي أو تلفاز."
+  },
+  "az": {
+    "punktfunk_host_desc": "Punktfunk oyun yayımı üçün host tərəfi. Masaüstünüzü və ya oyunlarınızı Mac, PC, telefon, planşet və ya TV-yə yayımlayın."
+  },
+  "bg": {
+    "punktfunk_host_desc": "Хост страна за стрийминг на игри с Punktfunk. Стриймвайте работния плот или игрите си към Mac, PC, телефон, таблет или телевизор."
+  },
+  "bn": {
+    "punktfunk_host_desc": "Punktfunk গেম স্ট্রিমিংয়ের হোস্ট অংশ। আপনার ডেস্কটপ বা গেম Mac, PC, ফোন, ট্যাবলেট বা TV-তে স্ট্রিম করুন।"
+  },
+  "bs": {
+    "punktfunk_host_desc": "Host strana za Punktfunk streaming igara. Streamajte radnu površinu ili igre na Mac, PC, telefon, tablet ili TV."
+  },
+  "cs": {
+    "punktfunk_host_desc": "Hostitelská část pro streamování her pomocí Punktfunk. Streamujte svou plochu nebo hry na Mac, PC, telefon, tablet nebo TV."
+  },
+  "da": {
+    "punktfunk_host_desc": "Værtsside til Punktfunk-spilstreaming. Stream dit skrivebord eller dine spil til en Mac, PC, telefon, tablet eller et TV."
+  },
+  "de": {
+    "punktfunk_host_desc": "Host-Seite für Punktfunk-Game-Streaming. Streamen Sie Ihren Desktop oder Ihre Spiele auf einen Mac, PC, ein Smartphone, Tablet oder einen Fernseher."
+  },
+  "el": {
+    "punktfunk_host_desc": "Η πλευρά κεντρικού υπολογιστή για streaming παιχνιδιών με το Punktfunk. Μεταδώστε την επιφάνεια εργασίας ή τα παιχνίδια σας σε Mac, PC, τηλέφωνο, tablet ή TV."
+  },
+  "es": {
+    "punktfunk_host_desc": "Componente anfitrión para la transmisión de juegos con Punktfunk. Transmite tu escritorio o juegos a un Mac, PC, teléfono, tableta o TV."
+  },
+  "et": {
+    "punktfunk_host_desc": "Punktfunki mängude voogedastuse hostipool. Voogedastage oma töölauda või mänge Maci, PC-sse, telefoni, tahvelarvutisse või telerisse."
+  },
+  "fa": {
+    "punktfunk_host_desc": "بخش میزبان برای استریم بازی با Punktfunk. دسکتاپ یا بازی‌های خود را به Mac، PC، تلفن، تبلت یا TV استریم کنید."
+  },
+  "fi": {
+    "punktfunk_host_desc": "Punktfunk-pelisuoratoiston isäntäpuoli. Suoratoista työpöytäsi tai pelisi Macille, PC:lle, puhelimelle, tabletille tai televisioon."
+  },
+  "fr": {
+    "punktfunk_host_desc": "Composant hôte pour le streaming de jeux avec Punktfunk. Diffusez votre bureau ou vos jeux vers un Mac, PC, téléphone, tablette ou téléviseur."
+  },
+  "ga": {
+    "punktfunk_host_desc": "Taobh óstach do shruthú cluichí Punktfunk. Sruthaigh do dheasc nó do chluichí chuig Mac, PC, fón, táibléad nó TV."
+  },
+  "he": {
+    "punktfunk_host_desc": "צד המארח להזרמת משחקים באמצעות Punktfunk. הזרימו את שולחן העבודה או המשחקים שלכם ל-Mac, למחשב PC, לטלפון, לטאבלט או לטלוויזיה."
+  },
+  "hi": {
+    "punktfunk_host_desc": "Punktfunk गेम स्ट्रीमिंग के लिए होस्ट साइड। अपने डेस्कटॉप या गेम को Mac, PC, फ़ोन, टैबलेट या TV पर स्ट्रीम करें।"
+  },
+  "hr": {
+    "punktfunk_host_desc": "Host strana za Punktfunk streaming igara. Streamajte radnu površinu ili igre na Mac, PC, telefon, tablet ili TV."
+  },
+  "hu": {
+    "punktfunk_host_desc": "Gazdaoldali komponens Punktfunk játékstreameléshez. Streamelje asztalát vagy játékait Macre, PC-re, telefonra, táblagépre vagy TV-re."
+  },
+  "hy": {
+    "punktfunk_host_desc": "Punktfunk խաղերի հեռարձակման հոսթային կողմը։ Հեռարձակեք ձեր աշխատասեղանը կամ խաղերը Mac, PC, հեռախոս, պլանշետ կամ TV։"
+  },
+  "id": {
+    "punktfunk_host_desc": "Sisi host untuk streaming game Punktfunk. Streaming desktop atau game Anda ke Mac, PC, ponsel, tablet, atau TV."
+  },
+  "is": {
+    "punktfunk_host_desc": "Hýsill fyrir Punktfunk-leikjastreymi. Streymdu skjáborðinu þínu eða leikjum á Mac, PC, síma, spjaldtölvu eða sjónvarp."
+  },
+  "it": {
+    "punktfunk_host_desc": "Componente host per lo streaming di giochi con Punktfunk. Trasmetti il desktop o i giochi su Mac, PC, telefono, tablet o TV."
+  },
+  "ja": {
+    "punktfunk_host_desc": "Punktfunk ゲームストリーミングのホスト側コンポーネント。デスクトップやゲームを Mac、PC、スマートフォン、タブレット、TV にストリーミングできます。"
+  },
+  "ka": {
+    "punktfunk_host_desc": "ჰოსტის მხარე Punktfunk-ით თამაშების სტრიმინგისთვის. გაუშვით თქვენი სამუშაო მაგიდის ან თამაშების სტრიმი Mac-ზე, PC-ზე, ტელეფონზე, ტაბლეტზე ან TV-ზე."
+  },
+  "km": {
+    "punktfunk_host_desc": "ផ្នែកម៉ាស៊ីនមេសម្រាប់ការស្ទ្រីមហ្គេម Punktfunk។ ស្ទ្រីមផ្ទៃតុ ឬហ្គេមរបស់អ្នកទៅកាន់ Mac, PC, ទូរស័ព្ទ, ថេប្លេត ឬ TV។"
+  },
+  "ko": {
+    "punktfunk_host_desc": "Punktfunk 게임 스트리밍용 호스트 측 구성 요소입니다. 데스크톱이나 게임을 Mac, PC, 휴대폰, 태블릿 또는 TV로 스트리밍하세요."
+  },
+  "lo": {
+    "punktfunk_host_desc": "ຝັ່ງໂຮສສຳລັບການສະຕຣີມເກມດ້ວຍ Punktfunk. ສະຕຣີມເດັສທັອບ ຫຼື ເກມຂອງທ່ານໄປຫາ Mac, PC, ໂທລະສັບ, ແທັບເລັດ ຫຼື TV."
+  },
+  "lt": {
+    "punktfunk_host_desc": "Punktfunk žaidimų transliavimo pagrindinio kompiuterio dalis. Transliuokite darbalaukį ar žaidimus į Mac, PC, telefoną, planšetinį kompiuterį ar televizorių."
+  },
+  "lv": {
+    "punktfunk_host_desc": "Resursdatora puse Punktfunk spēļu straumēšanai. Straumējiet savu darbvirsmu vai spēles uz Mac, PC, tālruni, planšetdatoru vai televizoru."
+  },
+  "mn": {
+    "punktfunk_host_desc": "Punktfunk тоглоом стриймингийн хост тал. Десктоп эсвэл тоглоомоо Mac, PC, утас, таблет эсвэл TV рүү стрийм хийнэ."
+  },
+  "ms": {
+    "punktfunk_host_desc": "Bahagian hos untuk penstriman permainan Punktfunk. Strim desktop atau permainan anda ke Mac, PC, telefon, tablet atau TV."
+  },
+  "my": {
+    "punktfunk_host_desc": "Punktfunk ဂိမ်း streaming အတွက် host ဘက်ခြမ်း။ သင့် desktop သို့မဟုတ် ဂိမ်းများကို Mac၊ PC၊ ဖုန်း၊ tablet သို့မဟုတ် TV သို့ stream လုပ်ပါ။"
+  },
+  "nb": {
+    "punktfunk_host_desc": "Vertsside for Punktfunk-spillstrømming. Strøm skrivebordet eller spillene dine til en Mac, PC, telefon, et nettbrett eller en TV."
+  },
+  "ne": {
+    "punktfunk_host_desc": "Punktfunk गेम स्ट्रिमिङका लागि होस्ट पक्ष। आफ्नो डेस्कटप वा गेमहरू Mac, PC, फोन, ट्याब्लेट वा TV मा स्ट्रिम गर्नुहोस्।"
+  },
+  "nl": {
+    "punktfunk_host_desc": "Hostcomponent voor gamestreaming met Punktfunk. Stream je bureaublad of games naar een Mac, PC, telefoon, tablet of tv."
+  },
+  "pl": {
+    "punktfunk_host_desc": "Część hosta do strumieniowania gier przez Punktfunk. Strumieniuj pulpit lub gry na Maca, PC, telefon, tablet lub telewizor."
+  },
+  "ro": {
+    "punktfunk_host_desc": "Componentă gazdă pentru streaming de jocuri cu Punktfunk. Transmiteți desktopul sau jocurile către un Mac, PC, telefon, tabletă sau televizor."
+  },
+  "ru": {
+    "punktfunk_host_desc": "Хост-компонент для трансляции игр через Punktfunk. Транслируйте рабочий стол или игры на Mac, PC, телефон, планшет или телевизор."
+  },
+  "sk": {
+    "punktfunk_host_desc": "Hostiteľská časť na streamovanie hier pomocou Punktfunk. Streamujte svoju pracovnú plochu alebo hry na Mac, PC, telefón, tablet alebo TV."
+  },
+  "sl": {
+    "punktfunk_host_desc": "Gostiteljska stran za pretakanje iger s Punktfunk. Pretakajte namizje ali igre na Mac, PC, telefon, tablični računalnik ali TV."
+  },
+  "sq": {
+    "punktfunk_host_desc": "Ana pritëse për transmetimin e lojërave me Punktfunk. Transmetoni desktopin ose lojërat tuaja në Mac, PC, telefon, tablet ose TV."
+  },
+  "sr": {
+    "punktfunk_host_desc": "Хост страна за Punktfunk стримовање игара. Стримујте радну површину или игре на Mac, PC, телефон, таблет или TV."
+  },
+  "sv": {
+    "punktfunk_host_desc": "Värdsida för Punktfunk-spelströmning. Strömma ditt skrivbord eller dina spel till en Mac, PC, telefon, surfplatta eller TV."
+  },
+  "sw": {
+    "punktfunk_host_desc": "Upande wa seva kwa utiririshaji wa michezo wa Punktfunk. Tiririsha eneo-kazi au michezo yako kwenda kwenye Mac, PC, simu, kompyuta kibao au TV."
+  },
+  "ta": {
+    "punktfunk_host_desc": "Punktfunk கேம் ஸ்ட்ரீமிங்கிற்கான ஹோஸ்ட் பகுதி. உங்கள் டெஸ்க்டாப் அல்லது கேம்களை Mac, PC, தொலைபேசி, டேப்லெட் அல்லது TV-க்கு ஸ்ட்ரீம் செய்யுங்கள்."
+  },
+  "tg": {
+    "punktfunk_host_desc": "Қисми мизбон барои пахши бозиҳо бо Punktfunk. Мизи корӣ ё бозиҳои худро ба Mac, PC, телефон, планшет ё TV пахш кунед."
+  },
+  "th": {
+    "punktfunk_host_desc": "ฝั่งโฮสต์สำหรับการสตรีมเกมด้วย Punktfunk สตรีมเดสก์ท็อปหรือเกมของคุณไปยัง Mac, PC, โทรศัพท์, แท็บเล็ต หรือ TV"
+  },
+  "tl": {
+    "punktfunk_host_desc": "Host side para sa Punktfunk game streaming. I-stream ang iyong desktop o mga laro sa Mac, PC, phone, tablet, o TV."
+  },
+  "tr": {
+    "punktfunk_host_desc": "Punktfunk oyun akışı için ana makine tarafı. Masaüstünüzü veya oyunlarınızı Mac, PC, telefon, tablet ya da TV'ye aktarın."
+  },
+  "uk": {
+    "punktfunk_host_desc": "Хост-компонент для трансляції ігор через Punktfunk. Транслюйте робочий стіл або ігри на Mac, PC, телефон, планшет чи телевізор."
+  },
+  "ur": {
+    "punktfunk_host_desc": "Punktfunk گیم اسٹریمنگ کے لیے ہوسٹ سائیڈ۔ اپنے ڈیسک ٹاپ یا گیمز کو Mac، PC، فون، ٹیبلیٹ یا TV پر اسٹریم کریں۔"
+  },
+  "uz": {
+    "punktfunk_host_desc": "Punktfunk o'yin strimingi uchun host tomoni. Ish stolingiz yoki o'yinlaringizni Mac, PC, telefon, planshet yoki TV'ga strim qiling."
+  },
+  "vi": {
+    "punktfunk_host_desc": "Phía máy chủ cho tính năng phát trực tuyến trò chơi Punktfunk. Phát trực tuyến màn hình nền hoặc trò chơi của bạn tới Mac, PC, điện thoại, máy tính bảng hoặc TV."
+  },
+  "zh": {
+    "punktfunk_host_desc": "Punktfunk 游戏串流的主机端。将您的桌面或游戏串流到 Mac、PC、手机、平板电脑或电视。"
+  }
+}

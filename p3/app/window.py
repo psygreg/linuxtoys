@@ -474,7 +474,12 @@ class AppWindow(
 
         # Match flathub.sh: !solus, !ostree, systemd: yes. Recommend it when
         # Flatpak itself is absent or neither user nor system scope has Flathub.
-        if "solus" not in keys and "ostree" not in keys and "systemd" in keys:
+        if (
+            not compat.is_containerized()
+            and "solus" not in keys
+            and "ostree" not in keys
+            and "systemd" in keys
+        ):
             flatpak = shutil.which("flatpak")
             flathub_ready = False
             if flatpak:

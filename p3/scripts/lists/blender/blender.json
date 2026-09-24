@@ -1,17 +1,27 @@
 [
-    {
-        "name": "Blender",
-        "developer": "Blender",
-        "description": "A free and open-source 3D creation suite.",
-        "description_tag": "blender_desc",
-        "repo": "https://www.blender.org",
-        "category": "office",
-        "icon": "blender.svg",
-        "license": "GPLv3",
-        "descriptions": "descriptions.json",
-        "screenshots": "screenshots/",
-        "type": "flathub",
-        "package-name": "org.blender.Blender",
-        "donate": "https://fund.blender.org"
-    }
+  {
+      "name": "Blender",
+      "developer": "Blender",
+      "description": "A free and open-source 3D creation suite.",
+      "description_tag": "blender_desc",
+      "repo": "https://www.blender.org",
+      "category": "office",
+      "icon": "blender.svg",
+      "license": "GPLv3",
+      "descriptions": "descriptions.json",
+      "screenshots": "screenshots/",
+      "type": "url",
+      "urls": {
+          "tar": {
+              "env": "BLENDER_URL"
+          }
+      },
+      "overrides": {
+          "pre": {
+              "script": "blender-pre.sh"
+          },
+          "post": "path_link \"$LINUXTOYS_TARBALL_DIR/blender\" && desktop_shortcut \"$LINUXTOYS_TARBALL_DIR/blender\""
+      },
+      "donate": "https://fund.blender.org"
+  }
 ]

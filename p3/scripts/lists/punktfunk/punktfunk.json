@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Punktfunk Host",
+        "description": "Host side for Punktfunk game streaming.",
+        "description_tag": "punktfunk_host_desc",
+        "repo": "https://punktfunk.unom.io",
+        "category": "game",
+        "icon": "./punktfunk.svg",
+        "type": "native",
+        "desktop": ["gnome", "plasma", "hyprland", "sway"],
+        "package-name": {
+            "ubuntu": ["punktfunk-host", "punktfunk-web", "punktfunk-scripting"],
+            "debian": ["punktfunk-host", "punktfunk-web", "punktfunk-scripting"],
+            "fedora": ["punktfunk", "punktfunk-web", "punktfunk-scripting"],
+            "arch": ["punktfunk-host", "punktfunk-web", "punktfunk-scripting"],
+            "cachy": ["punktfunk-host", "punktfunk-web", "punktfunk-scripting"]
+        },
+        "overrides": {
+            "pre": {
+                "script": "./punktfunk-pre.sh"
+            },
+            "post": {
+                "script": "./punktfunk-post.sh"
+            }
+        },
+        "services": {
+            "user": [ "punktfunk-host", "punktfunk-web" ]
+        },
+        "descriptions": "descriptions.json",
+        "donate": "https://ko-fi.com/punktfunk"
+    }
+]
