@@ -1,6 +1,6 @@
 # LinuxToys
 
-[LinuxToys](https://linux.toys) is a collection of user-friendly tools and software distribution platform for Linux systems. It aims to make powerful Linux functionality simple and accessible to all users through an intuitive interface, and enable developers to ship their apps consistently and reliably by giving them control over the installation process of their apps.
+[LinuxToys](https://linux.toys) is a software distribution platform for Linux systems. It aims to make powerful Linux functionality simple and accessible to all users through an intuitive interface, and enable developers to ship their apps consistently and reliably by giving them control over the installation process of their apps, all in one solution for dozens of Linux distributions.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="src/screenshot-dark.webp">
