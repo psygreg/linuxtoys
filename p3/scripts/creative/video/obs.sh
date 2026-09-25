@@ -29,7 +29,7 @@ pkg_install wireplumber
 if is_arch || is_cachy || is_solus; then
     pkg_install xorg-xwayland v4l2loopback-dkms
 elif is_debian || is_ubuntu; then
-    pkg_install xwayland v4l2loopback-dkms
+    pkg_install --bypass xwayland v4l2loopback-dkms
     secureboot_check
 elif is_fedora || is_rhel || is_ostree; then
     summon_helpers
