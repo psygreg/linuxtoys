@@ -539,6 +539,55 @@ def get_appstream_entries(translations=None):
         category_paths=_indexed_category_paths(),
     )
 
+def get_appstream_entries_for_category(category_path, translations=None):
+    """Materialize only one category from the Rust-owned AppStream catalog."""
+    return appstream_parser.get_entries_for_category(
+        SCRIPTS_DIR,
+        category_path,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
+
+def get_installed_appstream_entries(native_packages, flatpak_ids, executed_names=(), translations=None):
+    """Materialize only AppStream entries matching the current installed snapshot."""
+    return appstream_parser.get_installed_entries(
+        SCRIPTS_DIR,
+        native_packages,
+        flatpak_ids,
+        executed_names=executed_names,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
+
+def search_appstream_entries(query, translations=None, translated_new="new", translated_official="official"):
+    """Search the Rust-owned AppStream catalog without materializing unrelated entries."""
+    return appstream_parser.search_entries(
+        SCRIPTS_DIR, query, translated_new, translated_official,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
+
+def get_appstream_featured_descriptors(translations=None):
+    """Return lightweight review-eligible AppStream candidates for Featured."""
+    return appstream_parser.get_featured_descriptors(
+        SCRIPTS_DIR,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
+
+def materialize_appstream_featured_entries(indices, translations=None):
+    """Materialize only AppStream Featured candidates selected by Python."""
+    return appstream_parser.materialize_featured_entries(
+        SCRIPTS_DIR,
+        indices,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
 def get_repository_map():
     """Return internal software names mapped to upstream repositories."""
     repositories = {}

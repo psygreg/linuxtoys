@@ -3,8 +3,9 @@
 import html
 import os
 
-from . import get_icon_path
+from . import get_icon_path, installed_packages, parser
 from .gtk_common import Gtk, load_scaled_pixbuf
+from .revert_helper import _get_executed_script_names
 
 
 class InstalledFeaturesView(Gtk.ScrolledWindow):
@@ -42,6 +43,30 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
             info for info in cache.get_all_scripts()
             if cache.is_script_removable(info)
         ]
+
+        # Ask the Rust-owned AppStream catalog for only entries that can match the
+        # observed native/Flatpak snapshot (plus Registry-managed display names).
+        # This keeps the Installed view catalog-wide semantically without converting
+        # every AppStream entry into a Python dictionary.
+        snapshot = installed_packages.snapshot()
+        flatpak_ids = snapshot.get("flatpak", {}).keys()
+        appstream_installed = parser.get_installed_appstream_entries(
+            snapshot.get("native", ()),
+            flatpak_ids,
+            executed_names=_get_executed_script_names(),
+            translations=self.parent_window.translations,
+        )
+        seen = {
+            info.get("path") or (info.get("name", ""), info.get("repo", ""))
+            for info in installed
+        }
+        for info in appstream_installed:
+            key = info.get("path") or (info.get("name", ""), info.get("repo", ""))
+            if key in seen or not cache.is_script_removable(info):
+                continue
+            seen.add(key)
+            installed.append(info)
+
         installed.sort(key=lambda info: str(info.get("name", "")).casefold())
 
         if not installed:

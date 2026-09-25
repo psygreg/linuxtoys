@@ -11,6 +11,7 @@ Works transparently with both git-synced and bundled scripts:
 
 import os
 import re
+import threading
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from . import parser, popularity, installed_packages, _catalog_rs
 from .compat import (
@@ -361,6 +362,9 @@ class CategoryCache:
         self.system_compat_keys = get_system_compat_keys()
         self.current_locale = detect_system_language()
         self.is_containerized = is_containerized()
+        self._translations = None
+        self._appstream_by_category = {}
+        self._appstream_lock = threading.RLock()
 
     def populate(
         self,
@@ -385,6 +389,9 @@ class CategoryCache:
 
         self.categories = []
         self.scripts_by_category = {}
+        self._translations = translations
+        with self._appstream_lock:
+            self._appstream_by_category = {}
 
         # Build shared structural state before the pool starts. Without this, several
         # workers could all arrive at the tree-cache initialization lock together and
@@ -512,25 +519,9 @@ class CategoryCache:
                             if subcategory_path:
                                 submit_nested(subcategory_path)
 
-        # Phase 3: enrich the already-published structural cache with AppStream.
-        # Load/transform the catalog once, then distribute its entries by category
-        # instead of making every category independently enter the AppStream parser.
-        appstream_entries = parser.get_appstream_entries(translations)
-        appstream_by_category = {}
-        for item in appstream_entries:
-            category = str(item.get("category", "")).strip()
-            if not category:
-                continue
-            category_path = os.path.abspath(os.path.join(parser.SCRIPTS_DIR, category))
-            appstream_by_category.setdefault(category_path, []).append(item)
-
-        for category_path, appstream_items in appstream_by_category.items():
-            existing = self.scripts_by_category.get(category_path)
-            if existing is None:
-                continue
-            existing.extend(appstream_items)
-            popularity.sort_for_browse(existing)
-
+        # AppStream intentionally remains Rust-owned here. Category entries cross
+        # the PyO3 boundary only when that category is actually opened. This keeps
+        # startup from materializing the complete AppStream catalog category-by-category.
         self.is_populated = True
 
     def get_categories(self):
@@ -538,12 +529,35 @@ class CategoryCache:
         return self.categories.copy()
 
     def get_scripts_for_category(self, category_path):
-        """Get scripts for a specific category from cache.
+        """Return one category, lazily materializing its AppStream entries.
 
-        If the path is not in the cache, returns an empty list.
-        The caller should have a fallback to parser.get_scripts_for_category().
+        The structural LinuxToys items are populated at startup. AppStream remains
+        inside ``AppStreamCatalog`` until this method is called for a real cached
+        category; the materialized slice is then retained for subsequent visits.
         """
-        return self.scripts_by_category.get(category_path, []).copy()
+        category_path = os.path.abspath(category_path)
+        structural = self.scripts_by_category.get(category_path)
+        if structural is None:
+            return []
+
+        with self._appstream_lock:
+            appstream_items = self._appstream_by_category.get(category_path)
+            if appstream_items is None:
+                try:
+                    appstream_items = parser.get_appstream_entries_for_category(
+                        category_path,
+                        self._translations,
+                    )
+                except Exception as error:
+                    print(f"Error loading AppStream category {category_path}: {error}")
+                    appstream_items = []
+                self._appstream_by_category[category_path] = appstream_items
+
+        result = structural.copy()
+        if appstream_items:
+            result.extend(appstream_items)
+            popularity.sort_for_browse(result)
+        return result
 
     def get_linuxtoys_special_categories(self, translations=None):
         """Return a flat list of categories containing LinuxToys-curated items."""
@@ -620,6 +634,9 @@ class CategoryCache:
         self.is_populated = False
         self.categories = []
         self.scripts_by_category = {}
+        self._translations = None
+        with self._appstream_lock:
+            self._appstream_by_category = {}
 
     def refresh_for_translations(self, translations):
         """
@@ -673,6 +690,7 @@ class SearchEngine:
         self.script_cache = script_cache or ScriptCache()
         self._rust_search_index = None
         self._rust_search_index_token = None
+        self._rust_search_items = []
 
     def update_translations(self, translations):
         """
@@ -699,6 +717,7 @@ class SearchEngine:
         self.script_cache = script_cache
         self._rust_search_index = None
         self._rust_search_index_token = None
+        self._rust_search_items = []
 
     def _ensure_rust_search_index(self):
         """Build the immutable Rust-side search index for the current ScriptCache."""
@@ -708,7 +727,13 @@ class SearchEngine:
             return
 
         rows = []
+        indexed_items = []
         for script_info in scripts:
+            # AppStream already lives in AppStreamCatalog. Do not duplicate thousands
+            # of its strings into the generic Rust SearchIndex.
+            if script_info.get("is_appstream_entry"):
+                continue
+            indexed_items.append(script_info)
             name = str(script_info.get("name", "") or "").casefold()
             description = str(script_info.get("description", "") or "").casefold()
             developer = str(script_info.get("developer", "") or "").casefold()
@@ -734,6 +759,7 @@ class SearchEngine:
             ))
 
         self._rust_search_index = _catalog_rs.build_search_index(rows)
+        self._rust_search_items = indexed_items
         self._rust_search_index_token = token
 
     def search(self, query, max_results=50):
@@ -971,7 +997,7 @@ class SearchEngine:
             translated_new,
             translated_official,
         ):
-            script_info = self.script_cache.scripts[index]
+            script_info = self._rust_search_items[index]
             score = base_score
 
             # Preserve Python re's Unicode word-boundary semantics exactly while
@@ -987,6 +1013,28 @@ class SearchEngine:
             elif re.search(word_pattern, description):
                 score += 10
 
+            results.append(SearchResult(script_info, "script", score))
+
+        # AppStream stays in its Rust-owned catalog and only matching dictionaries
+        # cross PyO3. Preserve Python re's Unicode word-boundary bonus on that small
+        # matched subset, just as for the curated/script index above.
+        for script_info, base_score in parser.search_appstream_entries(
+            query,
+            self.translations,
+            translated_new,
+            translated_official,
+        ):
+            score = base_score
+            name = str(script_info.get("name", "") or "").casefold()
+            developer = str(script_info.get("developer", "") or "").casefold()
+            description = str(script_info.get("description", "") or "").casefold()
+            word_pattern = r"\b" + re.escape(query) + r"\b"
+            if re.search(word_pattern, name):
+                score += 20
+            elif re.search(word_pattern, developer):
+                score += 15
+            elif re.search(word_pattern, description):
+                score += 10
             results.append(SearchResult(script_info, "script", score))
 
         # This is one synthetic item, so retaining the Python scorer is cheaper than

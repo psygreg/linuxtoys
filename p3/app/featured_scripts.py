@@ -3,7 +3,8 @@ import os
 import random
 
 from .gtk_common import Gdk, GLib
-from . import parser, popularity, category_affinity
+from . import parser, popularity, category_affinity, installed_packages, _catalog_rs
+from .revert_helper import _get_executed_script_names
 
 
 class FeaturedCtl:
@@ -17,6 +18,10 @@ class FeaturedCtl:
 
     SENSE_HISTORY_LIMIT = 2
     SENSE_PERSONALIZED_PERCENT = 80
+
+    def _invalidate_featured_eligibility_cache(self):
+        """Discard Featured eligibility after installed/registry state changes."""
+        self._featured_eligibility_cache = None
 
     @staticmethod
     def _sense_file_path():
@@ -71,7 +76,7 @@ class FeaturedCtl:
             print(f"Warning: Could not save Featured sense data: {error}")
 
     def _personalized_featured_category_paths(self):
-        """Return recent + strongest installed categories, without duplicates."""
+        """Return recent + strongest installed categories, without materializing them."""
         category_cache = getattr(self, "category_cache", None)
         if category_cache is None:
             return []
@@ -89,15 +94,17 @@ class FeaturedCtl:
             if len(paths) >= self.SENSE_HISTORY_LIMIT:
                 break
 
-        # Rank categories by how many of their apps are currently removable. This
-        # reuses the same installed-state source as the rest of the UI, so AppStream
-        # and LinuxToys entries are treated consistently.
-        installed_counts = []
+        # Count installed LinuxToys entries directly from the structural cache.
+        # Crucially, do not call get_scripts_for_category(): that would lazily
+        # materialize every AppStream entry in every category just to count the
+        # handful that are installed.
+        installed_by_category = {}
         try:
             categories = category_cache.get_categories()
         except Exception:
             categories = ()
 
+        category_paths = []
         for category in categories or ():
             if category.get("is_script"):
                 continue
@@ -105,20 +112,52 @@ class FeaturedCtl:
             if not category_path:
                 continue
             category_path = os.path.abspath(category_path)
-            try:
-                scripts = category_cache.get_scripts_for_category(category_path)
-            except Exception:
-                continue
+            category_paths.append(category_path)
 
-            installed_count = sum(
+            structural = category_cache.scripts_by_category.get(category_path, ())
+            count = sum(
                 1
-                for script in scripts or ()
+                for script in structural
                 if script.get("is_script", False)
                 and not script.get("is_create_script", False)
                 and self._is_script_removable(script)
             )
-            if installed_count > 0:
-                installed_counts.append((installed_count, category_path))
+            if count:
+                installed_by_category[category_path] = count
+
+        # AppStream already has package/name indexes in Rust. Ask it only for the
+        # entries matching the installed snapshot, then count those few entries by
+        # category in Python. This preserves Registry-managed AppStream installs too.
+        try:
+            snapshot = installed_packages.snapshot()
+            if snapshot.get("loaded"):
+                appstream_installed = parser.get_installed_appstream_entries(
+                    snapshot.get("native", ()),
+                    snapshot.get("flatpak", {}).keys(),
+                    executed_names=_get_executed_script_names(),
+                    translations=self.translations,
+                )
+            else:
+                appstream_installed = ()
+        except Exception:
+            appstream_installed = ()
+
+        scripts_root = os.path.abspath(parser.SCRIPTS_DIR)
+        valid_paths = set(category_paths)
+        for script in appstream_installed or ():
+            category = str(script.get("category", "") or "").strip().strip("/")
+            if not category:
+                continue
+            category_path = os.path.abspath(os.path.join(scripts_root, *category.split("/")))
+            if category_path not in valid_paths:
+                continue
+            installed_by_category[category_path] = installed_by_category.get(category_path, 0) + 1
+
+        installed_counts = [
+            (count, category_path)
+            for category_path, count in installed_by_category.items()
+            if count > 0
+        ]
 
         # Stable path tie-break makes equal-count ordering deterministic. Categories
         # already supplied by recency simply consume one of the possible categories;
@@ -179,9 +218,15 @@ class FeaturedCtl:
                         continue
                     category_path = category.get("path", "")
                     if category_path:
+                        # Featured startup already owns the structural category
+                        # snapshot. Do not trigger lazy AppStream materialization merely
+                        # to discard those entries again below.
                         add_scripts(
-                            category_cache.get_scripts_for_category(category_path)
+                            category_cache.scripts_by_category.get(
+                                os.path.abspath(category_path), ()
+                            )
                         )
+                add_scripts(parser.get_appstream_featured_descriptors(self.translations))
                 return all_scripts
 
             # Compatibility fallback for callers that do not own a CategoryCache.
@@ -194,13 +239,15 @@ class FeaturedCtl:
                     continue
                 try:
                     add_scripts(
-                        parser.get_scripts_for_category(
+                        script for script in parser.get_scripts_for_category(
                             category_path,
                             self.translations,
                         )
+                        if not script.get("is_appstream_entry", False)
                     )
                 except Exception:
                     continue
+            add_scripts(parser.get_appstream_featured_descriptors(self.translations))
 
         except Exception as error:
             print(f"Error collecting all scripts: {error}")
@@ -495,40 +542,105 @@ class FeaturedCtl:
 
     @classmethod
     def _weighted_featured_sample(cls, candidates, count, extra_weight=None):
-        """Sample without replacement; reviews/popularity dominate optional priors."""
+        """Sample without replacement with one weight pass and one Rust call."""
         pool = list(candidates)
-        selected = []
         count = min(max(0, int(count or 0)), len(pool))
+        if count <= 0:
+            return []
 
-        for _ in range(count):
-            weights = []
-            for script in pool:
-                weight = (
-                    cls._featured_rating_weight(script)
-                    * cls._featured_popularity_weight(script)
-                )
-                if extra_weight is not None:
-                    try:
-                        weight *= max(0.0, float(extra_weight(script)))
-                    except (TypeError, ValueError):
-                        pass
-                weights.append(weight)
-            total = sum(weights)
-            if total <= 0:
-                break
-            index = random.choices(range(len(pool)), weights=weights, k=1)[0]
-            selected.append(pool.pop(index))
+        # These weights are invariant during this selection. Compute each exactly
+        # once instead of recomputing the whole shrinking pool for every draw.
+        weights = []
+        for script in pool:
+            weight = (
+                cls._featured_rating_weight(script)
+                * cls._featured_popularity_weight(script)
+            )
+            if extra_weight is not None:
+                try:
+                    weight *= max(0.0, float(extra_weight(script)))
+                except (TypeError, ValueError):
+                    pass
+            weights.append(weight)
 
-        return selected
+        if not any(weight > 0.0 for weight in weights):
+            return []
+
+        # Keep Python's RNG as the entropy source; Rust only executes the weighted
+        # sequential removals. This avoids adding an RNG dependency to the extension.
+        draws = [random.random() for _ in range(count)]
+        indices = _catalog_rs.featured_weighted_sample(weights, draws, count)
+        return [pool[index] for index in indices]
 
     def _eligible_featured_scripts(self):
-        """Return scripts that may currently appear in Featured."""
-        return [
-            script
-            for script in self.all_scripts
-            if not self._is_script_removable(script)
-            and self._featured_rating_weight(script) > 0
-        ]
+        """Return Featured eligibility from one installed/registry-state snapshot."""
+        cached = getattr(self, "_featured_eligibility_cache", None)
+        if cached is not None:
+            cached_source, cached_items = cached
+            if cached_source is self.all_scripts:
+                return cached_items
+
+        # Registry and installed-package state are shared by the entire candidate
+        # pool. Read each once instead of making every AppStream descriptor repeat
+        # the same registry parse / installed-state lookup.
+        try:
+            executed_names = _get_executed_script_names()
+        except Exception:
+            executed_names = set()
+
+        try:
+            installed_snapshot = installed_packages.snapshot()
+        except Exception:
+            installed_snapshot = {
+                "manager": None,
+                "native": set(),
+                "flatpak": {},
+                "loaded": False,
+            }
+
+        native = installed_snapshot.get("native", set())
+        flatpak = installed_snapshot.get("flatpak", {})
+
+        def appstream_is_removable(script):
+            if script.get("name") in executed_names:
+                return True
+
+            source = str(script.get("appstream_source", "") or "").strip()
+            value = script.get("package-name") or ()
+
+            if source == "flatpak":
+                # Runtime descriptors retain the package-name list. AppStream's
+                # Flatpak representation normally has one application ID, but
+                # accept all values so this remains robust to overlays.
+                packages = [value] if isinstance(value, str) else list(value)
+                if not packages:
+                    packages = [script.get("appstream_id", "")]
+                return any(
+                    str(package or "").strip().casefold() in flatpak
+                    for package in packages
+                    if str(package or "").strip()
+                )
+
+            if source == "native":
+                packages = [value] if isinstance(value, str) else list(value)
+                return any(str(package) in native for package in packages)
+
+            return False
+
+        eligible = []
+        for script in self.all_scripts:
+            if script.get("is_appstream_entry"):
+                removable = appstream_is_removable(script)
+            else:
+                # Structural/repository entries are already represented in
+                # ScriptCache's removable cache, so this is normally a dict lookup.
+                removable = self._is_script_removable(script)
+
+            if not removable and self._featured_rating_weight(script) > 0:
+                eligible.append(script)
+
+        self._featured_eligibility_cache = (self.all_scripts, eligible)
+        return eligible
 
     @staticmethod
     def _featured_history_limit(count):
@@ -543,6 +655,39 @@ class FeaturedCtl:
     def _is_linuxtoys_curated_featured(script):
         """Return whether a Featured candidate comes from LinuxToys itself."""
         return not script.get("is_appstream_entry", False)
+
+    def _materialize_featured_selection(self, selected):
+        """Replace selected AppStream descriptors with their full Rust payloads."""
+        selected = list(selected or ())
+        indices = [
+            script.get("_appstream_featured_index")
+            for script in selected
+            if script.get("_appstream_featured_index") is not None
+        ]
+        if not indices:
+            return selected
+
+        try:
+            full_entries = parser.materialize_appstream_featured_entries(
+                indices, self.translations
+            )
+        except Exception as error:
+            print(f"Error materializing selected AppStream Featured entries: {error}")
+            full_entries = ()
+
+        full_by_key = {
+            self._featured_script_key(script): script
+            for script in full_entries or ()
+        }
+        result = []
+        for script in selected:
+            if script.get("_appstream_featured_index") is None:
+                result.append(script)
+                continue
+            full = full_by_key.get(self._featured_script_key(script))
+            if full is not None:
+                result.append(full)
+        return result
 
     def _select_random_scripts(self, count):
         """Select Featured cards, biasing 80% toward personalized categories."""
@@ -641,7 +786,7 @@ class FeaturedCtl:
                 selected[index] = replacement
 
         random.shuffle(selected)
-        return selected
+        return self._materialize_featured_selection(selected)
 
     def select_featured_scripts_for_app_page(
         self, count, exclude_keys=(), category=None
@@ -687,7 +832,7 @@ class FeaturedCtl:
             return (-affinity, -review, -pop, random.random())
 
         eligible.sort(key=recommendation_key)
-        return eligible[:count]
+        return self._materialize_featured_selection(eligible[:count])
 
 
     def _choose_featured_large_positions(self, rows, columns, count):
@@ -968,7 +1113,10 @@ class FeaturedCtl:
         history.append(displayed_keys)
         self._featured_history = history[-history_limit:]
 
-        self.featured_scripts_revealer.show_all()
+        # The surrounding Featured hierarchy was already shown during window
+        # startup. Only cards attached after that point start hidden, so limit the
+        # recursive show traversal to the grid instead of the whole revealer tree.
+        self.random_scripts_flowbox.show_all()
 
         # On the very first Featured draw GTK may still be propagating the new
         # Gtk.Grid requisition through the nested revealer/container hierarchy.
@@ -986,11 +1134,9 @@ class FeaturedCtl:
             self.random_scripts_revealer.set_reveal_child(False)
             self.featured_scripts_revealer.set_reveal_child(False)
 
-            self.random_scripts_flowbox.queue_resize()
-            self.random_scripts_revealer.queue_resize()
-            self.featured_scripts_container.queue_resize()
-            self.featured_scripts_revealer.queue_resize()
-
+            # Attaching and showing the new grid children already invalidates GTK's
+            # requisition chain. Avoid explicitly invalidating all four ancestors;
+            # that only repeats the same size negotiation before the idle reveal.
             GLib.idle_add(self._reveal_initial_featured_layout)
         else:
             self.featured_scripts_revealer.set_reveal_child(True)
@@ -1091,9 +1237,24 @@ class FeaturedCtl:
         if self.main_stack.get_visible_child_name() != "categories":
             return
 
+        allocation_size = (
+            max(0, int(getattr(_allocation, "width", 0))),
+            max(0, int(getattr(_allocation, "height", 0))),
+        )
+        waiting_for_allocation = bool(
+            getattr(self, "_featured_waiting_for_allocation", False)
+        )
+        if (
+            allocation_size == getattr(self, "_featured_viewport_allocation", None)
+            and not waiting_for_allocation
+        ):
+            return
+        self._featured_viewport_allocation = allocation_size
+
         # Window owns the only responsive debounce timer. This signal is still
         # important for navigation back to the main menu, where the window itself
-        # may not have changed size.
+        # may not have changed size. A navigation return deliberately bypasses the
+        # duplicate-allocation guard once via _featured_waiting_for_allocation.
         request_settle = getattr(self, "_request_window_resize_settle", None)
         if request_settle is not None:
             request_settle()

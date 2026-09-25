@@ -5,6 +5,7 @@ mod appstream;
 mod popularity;
 mod search;
 mod scripts;
+mod image;
 
 #[pymodule]
 fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -22,12 +23,17 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(appstream::parse_flatpak_appstream_source, m)?)?;
     m.add_function(wrap_pyfunction!(appstream::reconcile_appstream_components, m)?)?;
     m.add_function(wrap_pyfunction!(appstream::build_appstream_catalog, m)?)?;
+    m.add_function(wrap_pyfunction!(appstream::build_appstream_catalog_index, m)?)?;
+    m.add_function(wrap_pyfunction!(appstream::source_metadata_fingerprint, m)?)?;
+    m.add_class::<appstream::AppStreamCatalog>()?;
     m.add_function(wrap_pyfunction!(popularity::review_subscores, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::metric_rank_sections, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::native_rank_sections, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::flathub_metric, m)?)?;
+    m.add_function(wrap_pyfunction!(popularity::featured_weighted_sample, m)?)?;
     m.add_function(wrap_pyfunction!(search::build_search_index, m)?)?;
     m.add_function(wrap_pyfunction!(search::search_index, m)?)?;
     m.add_function(wrap_pyfunction!(scripts::build_script_tree_index, m)?)?;
+    m.add_function(wrap_pyfunction!(image::render_category_watermark, m)?)?;
     Ok(())
 }

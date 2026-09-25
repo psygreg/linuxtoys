@@ -8,9 +8,7 @@ catalog under ~/.cache/linuxtoys/appstream.
 
 from __future__ import annotations
 
-import gzip
 import hashlib
-import html
 import json
 import os
 import re
@@ -18,8 +16,6 @@ import shutil
 import subprocess
 import threading
 import time
-import xml.etree.ElementTree as ET
-from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 from pathlib import Path
@@ -38,6 +34,7 @@ STATE_PATH = CACHE_DIR / "state.json"
 CATALOG_PATH = CACHE_DIR / "catalog.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"
 FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
+SOURCE_INVENTORY_PATH = CACHE_DIR / "source-inventory.json"
 ODRS_RATED_PATH = Path(os.path.expanduser("~/.config/linuxtoys/odrs-ratings.json"))
 ODRS_SUBMIT_URL = "https://odrs.gnome.org/1.0/reviews/api/submit"
 ODRS_USER_SALT = "linuxtoys-odrs-v1"
@@ -80,181 +77,24 @@ def _read_json(path: Path, default):
         return default
 
 
-def _strip_markup(value) -> str:
-    if not value:
-        return ""
-    text = str(value)
-    text = re.sub(r"<\s*br\s*/?\s*>", "\n", text, flags=re.I)
-    text = re.sub(r"</\s*(p|li)\s*>", "\n", text, flags=re.I)
-    text = re.sub(r"<[^>]+>", "", text)
-    text = html.unescape(text)
-    text = re.sub(r"[ \t]+\n", "\n", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip()
 
 
-def _normalize_description_text(value) -> str:
-    """Collapse XML formatting whitespace while preserving explicit <br> breaks."""
-    text = html.unescape(str(value or ""))
-    parts = text.split("\n")
-    return "\n".join(re.sub(r"\s+", " ", part).strip() for part in parts).strip()
 
 
-def _inline_segments(node, inherited=()):
-    """Return JSON-safe styled text spans from an AppStream inline XML node."""
-    segments = []
-
-    def append(raw_text, styles):
-        if raw_text is None:
-            return
-        # XML indentation and source wrapping are insignificant whitespace. Collapse
-        # them to a single space, but keep that space across inline-style boundaries.
-        text = re.sub(r"\s+", " ", html.unescape(str(raw_text)))
-        if not text:
-            return
-        styles = list(styles)
-        if segments and segments[-1].get("styles") == styles:
-            segments[-1]["text"] += text
-        else:
-            segments.append({"text": text, "styles": styles})
-
-    if node.text:
-        append(node.text, inherited)
-
-    for child in list(node):
-        tag = child.tag.rsplit("}", 1)[-1].lower() if isinstance(child.tag, str) else ""
-        if tag == "br":
-            if segments:
-                segments[-1]["text"] = segments[-1]["text"].rstrip() + "\n"
-        else:
-            styles = inherited
-            if tag in ("em", "i"):
-                styles = (*styles, "italic")
-            elif tag in ("strong", "b"):
-                styles = (*styles, "bold")
-            elif tag == "code":
-                styles = (*styles, "code")
-            for segment in _inline_segments(child, styles):
-                if segments and segments[-1].get("styles") == segment.get("styles"):
-                    segments[-1]["text"] += segment["text"]
-                else:
-                    segments.append(segment)
-        if child.tail:
-            append(child.tail, inherited)
-
-    # Formatting indentation around the block is not content.
-    if segments:
-        segments[0]["text"] = segments[0]["text"].lstrip(" ")
-        segments[-1]["text"] = segments[-1]["text"].rstrip(" ")
-    return [segment for segment in segments if segment.get("text")]
-
-def _description_blocks_from_element(description):
-    """Preserve AppStream paragraph/list structure without a Markdown intermediary."""
-    if description is None:
-        return []
-    blocks = []
-    for child in list(description):
-        tag = child.tag.rsplit("}", 1)[-1].lower() if isinstance(child.tag, str) else ""
-        if tag == "p":
-            spans = _inline_segments(child)
-            if spans:
-                blocks.append({"type": "paragraph", "spans": spans})
-        elif tag in ("ul", "ol"):
-            items = []
-            for item in list(child):
-                item_tag = item.tag.rsplit("}", 1)[-1].lower() if isinstance(item.tag, str) else ""
-                if item_tag != "li":
-                    continue
-                spans = _inline_segments(item)
-                if spans:
-                    items.append(spans)
-            if items:
-                blocks.append({"type": "ordered_list" if tag == "ol" else "unordered_list", "items": items})
-
-    # Be tolerant of metadata that puts plain text directly in <description>.
-    if not blocks and (description.text or "").strip():
-        text = _normalize_description_text(description.text)
-        if text:
-            blocks.append({"type": "paragraph", "spans": [{"text": text.replace("\n", " "), "styles": []}]})
-    return blocks
 
 
-def _description_blocks(value):
-    """Parse libappstream description markup into the same neutral block model."""
-    if not value:
-        return []
-    text = str(value).strip()
-    if not text:
-        return []
-    try:
-        root = ET.fromstring(f"<description>{text}</description>")
-        blocks = _description_blocks_from_element(root)
-        if blocks:
-            return blocks
-    except ET.ParseError:
-        pass
-
-    # Some libappstream versions expose already-flattened text. Keep paragraph
-    # boundaries where available, but never treat source wrapping as hard lines.
-    paragraphs = [re.sub(r"\s+", " ", part).strip() for part in re.split(r"\n\s*\n", _strip_markup(text))]
-    return [
-        {"type": "paragraph", "spans": [{"text": paragraph, "styles": []}]}
-        for paragraph in paragraphs if paragraph
-    ]
 
 
-_XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 
-def _normalize_locale_code(value):
-    """Normalize locale spelling for AppStream matching (pt_BR.UTF-8 -> pt-BR)."""
-    value = str(value or "").strip()
-    if not value:
-        return ""
-    value = value.split(".", 1)[0].split("@", 1)[0].replace("_", "-")
-    parts = [part for part in value.split("-") if part]
-    if not parts:
-        return ""
-    language = parts[0].lower()
-    if len(parts) == 1:
-        return language
-    region = parts[1].upper() if len(parts[1]) in (2, 3) else parts[1]
-    return "-".join((language, region, *parts[2:]))
 
 
-def _localized_xml_values(node, tag, converter):
-    """Return default + xml:lang variants for a localized AppStream element."""
-    values = {}
-    if node is None:
-        return values
-    for child in node.findall(tag):
-        value = converter(child)
-        if not value:
-            continue
-        lang = _normalize_locale_code(child.attrib.get(_XML_LANG, ""))
-        values[lang] = value
-    return values
 
 
-def _localized_xml_text_values(node, tag):
-    return _localized_xml_values(
-        node,
-        tag,
-        lambda child: _strip_markup("".join(child.itertext())),
-    )
 
 
-def _localized_xml_description_values(node):
-    return _localized_xml_values(
-        node,
-        "description",
-        _description_blocks_from_element,
-    )
 
-def _xml_description_blocks(node):
-    """Return the default AppStream description for compatibility."""
-    values = _localized_xml_description_values(node)
-    return values.get("", next(iter(values.values()), []))
+
 
 
 def _safe_call(obj, method, default=None, *args):
@@ -665,49 +505,9 @@ def _normalize_native_payloads(payloads):
     return list(_catalog_rs.normalize_native_appstream_components(payloads))
 
 
-def _native_component_fingerprint(component) -> str:
-    """Hash source metadata that affects the normalized native catalog entry."""
-    payload = {
-        "identity": _component_identity(component),
-        "id": str(_safe_call(component, "get_id", "") or "").strip(),
-        "name": str(_safe_call(component, "get_name", "") or "").strip(),
-        "summary": str(_safe_call(component, "get_summary", "") or ""),
-        "description": str(_safe_call(component, "get_description", "") or ""),
-        "packages": [str(v) for v in _as_list(_safe_call(component, "get_pkgnames", []))],
-        "categories": [str(v) for v in _as_list(_safe_call(component, "get_categories", []))],
-        "launchable": _native_launchable_id(component),
-        "icon": _icon_value(component),
-        "screenshots": _component_screenshots(component),
-        "homepage": _component_homepage(component),
-        "donation": _component_donation(component),
-        "license": _component_license(component),
-        "developer": _developer_name(component),
-        "origin": str(_safe_call(component, "get_origin", "") or "").strip(),
-        "version": str(_safe_call(_safe_call(component, "get_release_default"), "get_version", "") or "").strip(),
-    }
-    raw = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    return hashlib.sha256(raw).hexdigest()
 
 
-def _flatpak_component_fingerprint(component, source) -> str:
-    """Hash one Flatpak component plus source values that affect normalization."""
-    raw_component = ET.tostring(component, encoding="utf-8")
-    source_bits = json.dumps({
-        "scope": source.get("scope", ""),
-        "installation": source.get("installation", ""),
-        "remote": source.get("remote", ""),
-        "arch": source.get("arch", ""),
-        "media_baseurl": source.get("media_baseurl", ""),
-        "appstream_dir": str(source.get("appstream_dir", "")),
-    }, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    return hashlib.sha256(raw_component + b"\0" + source_bits).hexdigest()
 
-def _flatpak_app_id(component_id):
-    """Return the installable Flatpak app ID for an AppStream component ID."""
-    component_id = str(component_id or "").strip()
-    if component_id.endswith(".desktop"):
-        return component_id[:-8]
-    return component_id
 
 
 def _native_launchable_id(component) -> str:
@@ -720,60 +520,7 @@ def _native_launchable_id(component) -> str:
     return component_id if component_id.endswith(".desktop") else ""
 
 
-def _xml_launchable_id(component) -> str:
-    """Return a desktop-id launchable from raw AppStream XML."""
-    if component is None:
-        return ""
-    for node in component.findall("./launchable"):
-        value = (node.text or "").strip()
-        kind = str(node.attrib.get("type", "") or "").strip()
-        if value and (kind == "desktop-id" or value.endswith(".desktop")):
-            return value
-    component_id = _xml_localized_text(component, "id")
-    return component_id if component_id.endswith(".desktop") else ""
 
-def _normalize_component(component):
-    component_id = str(_safe_call(component, "get_id", "") or "").strip()
-    name = str(_safe_call(component, "get_name", "") or "").strip()
-    summary = _strip_markup(_safe_call(component, "get_summary", ""))
-    packages = [
-        str(package).strip()
-        for package in _as_list(_safe_call(component, "get_pkgnames", []))
-        if str(package).strip()
-    ]
-    categories = [
-        str(category).strip()
-        for category in _as_list(_safe_call(component, "get_categories", []))
-        if str(category).strip()
-    ]
-
-    # LinuxToys only wants installable application-like entries at this stage.
-    # Requiring both package ownership and desktop categories naturally excludes
-    # most fonts, codecs, firmware, addons and OS metadata without relying on enum
-    # names that changed between libappstream generations.
-    if not component_id or not name or not summary or not packages or not categories:
-        return None
-
-    return {
-        "identity": _component_identity(component),
-        "_metadata_hash": _native_component_fingerprint(component),
-        "id": component_id,
-        "name": name,
-        "summary": summary,
-        "description_blocks": _description_blocks(_safe_call(component, "get_description", "")),
-        "packages": packages,
-        "categories": categories,
-        "launchable": _native_launchable_id(component),
-        "icon": _icon_value(component),
-        "screenshots": _component_screenshots(component),
-        "homepage": _component_homepage(component),
-        "donation": _component_donation(component),
-        "license": _component_license(component),
-        "developer": _developer_name(component),
-        "origin": str(_safe_call(component, "get_origin", "") or "").strip(),
-        "source": "native",
-        "version": str(_safe_call(_safe_call(component, "get_release_default"), "get_version", "") or "").strip(),
-    }
 
 
 def _native_appstream_supported_host() -> bool:
@@ -918,128 +665,15 @@ def _flatpak_eol_app_ids(source):
     return eol_ids
 
 
-def _xml_localized_text(node, tag):
-    """Return the default value; localized variants are retained separately."""
-    values = _localized_xml_text_values(node, tag)
-    return values.get("", next(iter(values.values()), ""))
 
 
 
-def _xml_custom_value(component, key):
-    """Return an AppStream <custom><value key="..."> value."""
-    if component is None:
-        return ""
-    node = component.find(f"./custom/value[@key='{key}']")
-    return (node.text or "").strip() if node is not None else ""
 
 
-def _flatpak_verified(component) -> bool:
-    """Read Flathub's publisher-verification flag from its AppStream metadata."""
-    return _xml_custom_value(
-        component, "flathub::verification::verified"
-    ).casefold() == "true"
 
 
-def _flatpak_icon(component, appstream_dir, component_id):
-    icon = component.find("icon[@type='cached']")
-    if icon is not None and (icon.text or "").strip():
-        name = icon.text.strip()
-        for size in ("128x128", "64x64"):
-            candidate = appstream_dir / "icons" / size / name
-            if candidate.is_file():
-                return str(candidate)
-    for size in ("128x128", "64x64"):
-        for suffix in (".png", ".svg"):
-            candidate = appstream_dir / "icons" / size / f"{component_id}{suffix}"
-            if candidate.is_file():
-                return str(candidate)
-    return "application-x-executable"
 
 
-def _normalize_flatpak_component(component, source):
-    component_id = _xml_localized_text(component, "id")
-    flatpak_app_id = _flatpak_app_id(component_id)
-    name = _xml_localized_text(component, "name")
-    summary = _xml_localized_text(component, "summary")
-    categories = [
-        (item.text or "").strip()
-        for item in component.findall("./categories/category")
-        if (item.text or "").strip()
-    ]
-    if not component_id or not name or not summary or not categories:
-        return None
-    developer = _xml_localized_text(component, "developer_name")
-    if not developer:
-        developer = _xml_localized_text(component.find("developer"), "name")
-    screenshots = []
-    media_baseurl = str(source.get("media_baseurl", "") or "").strip()
-    for screenshot in component.findall("./screenshots/screenshot"):
-        variants = []
-        seen = set()
-        for image in screenshot.findall("image"):
-            value = (image.text or "").strip()
-            if not value:
-                continue
-            if value.startswith(("https://", "http://")):
-                candidate = value
-            elif media_baseurl:
-                candidate = urljoin(media_baseurl.rstrip("/") + "/", value.lstrip("/"))
-            else:
-                continue
-            if candidate in seen:
-                continue
-            seen.add(candidate)
-            try:
-                width = max(0, int(image.attrib.get("width", 0) or 0))
-                height = max(0, int(image.attrib.get("height", 0) or 0))
-            except (TypeError, ValueError):
-                width = height = 0
-            variants.append({"url": candidate, "width": width, "height": height})
-        if variants:
-            variants.sort(key=lambda item: (item.get("width", 0), item.get("height", 0)))
-            screenshots.append({"images": variants})
-
-    homepage = ""
-    homepage_node = component.find("./url[@type='homepage']")
-    if homepage_node is not None:
-        homepage = (homepage_node.text or "").strip()
-    donation = ""
-    donation_node = component.find("./url[@type='donation']")
-    if donation_node is not None:
-        donation = (donation_node.text or "").strip()
-    license_name = _xml_localized_text(component, "project_license")
-    appstream_dir = source["appstream_dir"]
-    return {
-        "identity": f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{component_id}",
-        "_metadata_hash": _flatpak_component_fingerprint(component, source),
-        "id": component_id,
-        "name": name,
-        "summary": summary,
-        "description_blocks": _xml_description_blocks(component),
-        "localized_names": _localized_xml_text_values(component, "name"),
-        "localized_summaries": _localized_xml_text_values(component, "summary"),
-        "localized_descriptions": _localized_xml_description_values(component),
-        "localized_developers": (
-            _localized_xml_text_values(component, "developer_name")
-            or _localized_xml_text_values(component.find("developer"), "name")
-        ),
-        "packages": [flatpak_app_id],
-        "categories": categories,
-        "launchable": _xml_launchable_id(component),
-        "icon": _flatpak_icon(component, appstream_dir, component_id),
-        "screenshots": screenshots,
-        "homepage": homepage,
-        "donation": donation,
-        "license": license_name,
-        "developer": developer,
-        "verified": _flatpak_verified(component),
-        "origin": source["remote"],
-        "source": "flatpak",
-        "version": str(component.find("releases/release").attrib.get("version", "")) if component.find("releases/release") is not None else "",
-        "flatpak_remote": source["remote"],
-        "flatpak_scope": source["scope"],
-        "flatpak_installation": source["installation"],
-    }
 
 
 def _refresh_missing_flatpak_appstream():
@@ -1159,15 +793,145 @@ def _path_state(path):
     return (str(path), stat.st_mtime_ns, stat.st_size)
 
 
-def _native_source_fingerprint():
-    """Fingerprint native repository/AppStream state without reading large databases."""
+def _directory_state(path):
+    """Return metadata sufficient to detect directory membership changes."""
+    path = Path(path)
+    try:
+        stat = path.stat()
+    except OSError:
+        return None
+    if not path.is_dir():
+        return None
+    return (str(path), stat.st_mtime_ns, stat.st_size)
+
+
+def _source_inventory_default():
+    return {
+        "schema": 1,
+        "native": {"roots": {}},
+    }
+
+
+def _load_source_inventory():
+    inventory = _read_json(SOURCE_INVENTORY_PATH, _source_inventory_default())
+    if not isinstance(inventory, dict) or inventory.get("schema") != 1:
+        return _source_inventory_default()
+    native = inventory.get("native")
+    if not isinstance(native, dict):
+        inventory["native"] = {"roots": {}}
+    elif not isinstance(native.get("roots"), dict):
+        native["roots"] = {}
+    return inventory
+
+
+def _scan_source_root(root, recursive):
+    """Discover source files once and retain only their paths.
+
+    Directory mtimes are tracked separately. A later warm check can therefore
+    reuse this file inventory until directory membership changes.
+    """
+    root = Path(root)
+    files = []
+    directories = {}
+
+    if not root.exists():
+        return {"kind": "missing", "recursive": bool(recursive), "directories": {}, "files": []}
+
+    if root.is_file():
+        return {
+            "kind": "file",
+            "recursive": False,
+            "directories": {},
+            "files": [str(root)],
+        }
+
+    def remember_directory(directory):
+        state = _directory_state(directory)
+        if state is not None:
+            directories[str(directory)] = [state[1], state[2]]
+
+    remember_directory(root)
+    try:
+        if recursive:
+            # os.walk already yields every directory. Tracking each directory's
+            # metadata lets us notice additions/removals anywhere below the root
+            # without re-running Path.rglob() on an unchanged tree.
+            for current, dirnames, filenames in os.walk(root):
+                current_path = Path(current)
+                remember_directory(current_path)
+                for name in filenames:
+                    files.append(str(current_path / name))
+        else:
+            for child in root.iterdir():
+                if child.is_file():
+                    files.append(str(child))
+                elif child.is_dir():
+                    # Non-recursive repository directories only need the root
+                    # membership mtime; child contents are intentionally ignored.
+                    pass
+    except OSError:
+        pass
+
+    return {
+        "kind": "directory",
+        "recursive": bool(recursive),
+        "directories": directories,
+        "files": sorted(set(files)),
+    }
+
+
+def _source_root_inventory_is_current(root, cached):
+    """Return True when a cached source inventory can be reused."""
+    root = Path(root)
+    if not isinstance(cached, dict):
+        return False
+
+    kind = cached.get("kind")
+    if not root.exists():
+        return kind == "missing"
+
+    if root.is_file():
+        return kind == "file"
+
+    if not root.is_dir() or kind != "directory":
+        return False
+
+    directories = cached.get("directories")
+    if not isinstance(directories, dict) or not directories:
+        return False
+
+    # A directory mtime changes when an immediate child is added, removed, or
+    # renamed. Recursive roots remember every directory from the previous scan,
+    # so membership changes anywhere in the tree invalidate only that root.
+    for directory, old_state in directories.items():
+        state = _directory_state(directory)
+        if state is None:
+            return False
+        try:
+            old_mtime, old_size = int(old_state[0]), int(old_state[1])
+        except (TypeError, ValueError, IndexError):
+            return False
+        if state[1] != old_mtime or state[2] != old_size:
+            return False
+
+    return True
+
+
+def _native_source_fingerprint(inventory=None):
+    """Fingerprint native AppStream state while avoiding repeated tree discovery.
+
+    Known source trees are persisted separately. On warm checks LinuxToys stats
+    the remembered directories/files; Path.rglob()/os.walk is only repeated for
+    roots whose directory membership changed.
+    """
     if not _native_appstream_supported_host():
-        return "unsupported"
+        return "unsupported", False
 
-    paths = set()
+    inventory = inventory if isinstance(inventory, dict) else _source_inventory_default()
+    native_inventory = inventory.setdefault("native", {})
+    cached_roots = native_inventory.setdefault("roots", {})
+    inventory_changed = False
 
-    # Repository definitions. Directory mtimes catch files being added/removed;
-    # file mtimes/sizes catch edits to existing definitions.
     repo_locations = (
         "/etc/apt/sources.list",
         "/etc/apt/sources.list.d",
@@ -1178,10 +942,6 @@ def _native_source_fingerprint():
         "/etc/pacman.d",
         "/etc/eopkg",
     )
-
-    # Locally installed AppStream catalogs. These are what libappstream ultimately
-    # consumes, so changes made by a package-manager refresh are detected even when
-    # the repository configuration itself did not change.
     appstream_locations = (
         "/usr/share/app-info",
         "/usr/share/appdata",
@@ -1191,28 +951,33 @@ def _native_source_fingerprint():
         "/var/cache/swcatalog",
     )
 
-    def collect(location, recursive=False):
-        root = Path(location)
-        if not root.exists():
-            return
-        paths.add(root)
-        if root.is_dir():
-            try:
-                iterator = root.rglob("*") if recursive else root.iterdir()
-                for child in iterator:
-                    if child.is_file():
-                        paths.add(child)
-            except OSError:
-                pass
+    roots = [(location, False) for location in repo_locations]
+    roots.extend((location, True) for location in appstream_locations)
 
-    for location in repo_locations:
-        collect(location, recursive=False)
-    for location in appstream_locations:
-        collect(location, recursive=True)
+    states = []
+    active_keys = set()
+    for location, recursive in roots:
+        key = f"{int(recursive)}:{location}"
+        active_keys.add(key)
+        cached = cached_roots.get(key)
 
-    states = sorted(state for path in paths if (state := _path_state(path)) is not None)
-    payload = json.dumps(states, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+        if not _source_root_inventory_is_current(location, cached):
+            cached = _scan_source_root(location, recursive)
+            cached_roots[key] = cached
+            inventory_changed = True
+
+        # Keep discovery/policy in Python, but let Rust perform the hot warm-start
+        # metadata stat/hash pass over the already-known inventory.
+        states.extend((cached.get("directories") or {}).keys())
+        states.extend(cached.get("files") or ())
+
+    stale_keys = set(cached_roots) - active_keys
+    if stale_keys:
+        for key in stale_keys:
+            cached_roots.pop(key, None)
+        inventory_changed = True
+
+    return _catalog_rs.source_metadata_fingerprint(states), inventory_changed
 
 
 def _flatpak_source_fingerprint():
@@ -1231,8 +996,6 @@ def _flatpak_source_fingerprint():
             path_state,
         ))
 
-    # This also distinguishes "Flatpak installed but no Flathub yet" from a host
-    # where Flatpak is unavailable.
     payload = {
         "flatpak": bool(shutil.which("flatpak")),
         "sources": sorted(states, key=repr),
@@ -1242,10 +1005,15 @@ def _flatpak_source_fingerprint():
 
 
 def _source_fingerprints():
-    return {
-        "native": _native_source_fingerprint(),
+    inventory = _load_source_inventory()
+    native, inventory_changed = _native_source_fingerprint(inventory)
+    result = {
+        "native": native,
         "flatpak": _flatpak_source_fingerprint(),
     }
+    if inventory_changed or not SOURCE_INVENTORY_PATH.is_file():
+        _atomic_json_write(SOURCE_INVENTORY_PATH, inventory)
+    return result
 
 
 def _default_state():

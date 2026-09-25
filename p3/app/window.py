@@ -141,8 +141,6 @@ class AppWindow(
             not appstream_cache.CATALOG_PATH.is_file()
             or self._appstream_pickle_missing_at_startup
         )
-        self._categories_loading_hide_source = None
-        self._categories_loading_hide_started_us = None
         self._categories_loading_watermarks_flushed = False
         self._categories_loading_watermark_queue = []
         self._categories_loading_watermark_source = None
@@ -580,8 +578,24 @@ class AppWindow(
         self._appstream_state = state
         return self._refresh_status_indicator()
 
+    def _schedule_appstream_cache_after_startup(self):
+        """Start the AppStream freshness worker after the startup transition.
+
+        A genuine first build still starts immediately because the initial loading
+        gate depends on it.  Warm starts already have a complete published catalog
+        and Rust runtime cache, so source fingerprinting/refresh discovery can wait
+        until the first usable UI has finished its cross-fade.
+        """
+        if self._appstream_cache_started:
+            return False
+        if self._appstream_initial_build_pending:
+            return self._start_appstream_cache()
+        if not self._categories_startup_transition_complete:
+            return True
+        return self._start_appstream_cache()
+
     def _start_appstream_cache(self):
-        """Refresh AppStream metadata after the first usable UI is queued."""
+        """Refresh AppStream metadata on its background worker."""
         if self._appstream_cache_started:
             return False
         self._appstream_cache_started = True
@@ -695,16 +709,12 @@ class AppWindow(
             git_sync_scheduled = True
             GLib.idle_add(self._start_scripts_synchronization)
 
-        def collect_featured(categories, scripts_by_category):
+        def collect_featured(categories, scripts_by_category, *, include_appstream=False):
             featured = []
             seen = set()
-            for category in categories:
-                if category.get("is_script"):
-                    continue
-                category_path = category.get("path", "")
-                if not category_path:
-                    continue
-                for item in scripts_by_category.get(os.path.abspath(category_path), ()):
+
+            def add_items(items):
+                for item in items or ():
                     if not item.get("is_script") or item.get("is_create_script"):
                         continue
                     key = item.get("path") or (
@@ -715,6 +725,28 @@ class AppWindow(
                         continue
                     seen.add(key)
                     featured.append(item)
+
+            for category in categories:
+                if category.get("is_script"):
+                    continue
+                category_path = category.get("path", "")
+                if not category_path:
+                    continue
+                add_items(
+                    scripts_by_category.get(os.path.abspath(category_path), ())
+                )
+
+            # CategoryCache intentionally keeps AppStream entries Rust-owned and
+            # lazily materialized. For the completed Featured pool, ask Rust only
+            # for review-eligible AppStream candidates instead of materializing
+            # every category. Keep the bootstrap structural-only so warm startup
+            # does not wait for the AppStream runtime catalog.
+            if include_appstream:
+                try:
+                    add_items(parser.get_appstream_featured_descriptors(translations))
+                except Exception as error:
+                    print(f"Error loading AppStream Featured candidates: {error}")
+
             return featured
 
         def publish_bootstrap(categories, featured):
@@ -726,6 +758,7 @@ class AppWindow(
             self._render_categories(categories)
             self._hide_categories_loading_indicator()
             self.all_scripts = featured
+            self._invalidate_featured_eligibility_cache()
             if (
                 self.should_start_random_timer
                 and featured
@@ -742,9 +775,15 @@ class AppWindow(
 
             featured = collect_featured(categories, scripts_by_category)
             GLib.idle_add(publish_bootstrap, categories, featured)
-            # AppStream is supplemental. Do not let even its freshness check/catalog
-            # decode contend with the parser before the first usable UI is queued.
-            GLib.idle_add(self._start_appstream_cache)
+            # AppStream is supplemental on warm starts. Keep source fingerprinting
+            # and refresh discovery completely outside the startup transition; the
+            # last atomically published catalog remains usable in the meantime. A
+            # genuine first build is the exception because the loading gate depends
+            # on producing the initial catalog/runtime cache.
+            if self._appstream_initial_build_pending:
+                GLib.idle_add(self._start_appstream_cache)
+            else:
+                GLib.timeout_add(50, self._schedule_appstream_cache_after_startup)
 
             # Network/git work is lower startup priority than getting the first
             # usable Featured pool ready, but need not wait for recursive caches.
@@ -754,6 +793,7 @@ class AppWindow(
             if self.category_cache is not category_cache:
                 return False
             self.all_scripts = featured
+            self._invalidate_featured_eligibility_cache()
             if (
                 self.should_start_random_timer
                 and featured
@@ -792,6 +832,7 @@ class AppWindow(
                 full_featured = collect_featured(
                     category_cache.get_categories(),
                     category_cache.scripts_by_category,
+                    include_appstream=True,
                 )
                 GLib.idle_add(publish_full_featured, full_featured)
 
@@ -838,6 +879,7 @@ class AppWindow(
         def populate_in_background():
             try:
                 self.all_scripts = self._collect_all_scripts()
+                self._invalidate_featured_eligibility_cache()
                 # Start the timer if we're on the main menu and scripts were collected
                 if self.should_start_random_timer and self.all_scripts:
                     GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
@@ -1149,9 +1191,10 @@ class AppWindow(
         return False
 
     def _on_installed_packages_changed(self):
-        # Observed AppStream state participates in ScriptCache removability.
+        # Observed AppStream state participates in ScriptCache and Featured eligibility.
         if self.script_cache.is_populated:
             self.script_cache.refresh_removable_cache()
+        self._invalidate_featured_eligibility_cache()
 
         app_page = self.main_stack.get_child_by_name("app_page")
         if app_page is not None and hasattr(app_page, "refresh_install_state"):
@@ -1738,70 +1781,6 @@ class AppWindow(
         self.reveal.support.hide()
         self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
-    def _categories_watermarks_ready(self):
-        """Return True once every rendered category watermark has a real pixbuf."""
-        flowbox = getattr(self, "categories_flowbox", None)
-        if flowbox is None or not flowbox.get_children():
-            return False
-
-        watermark_surfaces = []
-        stack = [flowbox]
-        while stack:
-            widget = stack.pop()
-            if hasattr(widget, "_linuxtoys_apply_pending_watermark"):
-                watermark_surfaces.append(widget)
-            try:
-                stack.extend(widget.get_children())
-            except (AttributeError, RuntimeError):
-                pass
-
-        # Category cards without a watermark are valid, but if no watermark surface
-        # has even been constructed yet GTK has not reached the state we are waiting
-        # for.
-        if not watermark_surfaces:
-            return False
-
-        for surface in watermark_surfaces:
-            # The size-allocate callback creates this attribute.  None means its
-            # pending final size has already been rendered successfully.
-            if not hasattr(surface, "_linuxtoys_pending_watermark_size"):
-                return False
-            if surface._linuxtoys_pending_watermark_size is not None:
-                return False
-
-        return True
-
-    def _finish_categories_loading_when_ready(self):
-        """Keep the startup roller visible until category watermarks are painted."""
-        if not hasattr(self, "categories_loading_box"):
-            self._categories_loading_hide_source = None
-            return False
-
-        # This callback runs every 16 ms while startup is waiting. It must remain
-        # inspection-only: watermark rendering is comparatively expensive GTK work
-        # and should never be repeated from the polling loop.
-        if self._categories_watermarks_ready():
-            self._categories_loading_hide_source = None
-            self._categories_loading_hide_started_us = None
-            self._start_categories_loading_fade()
-            return False
-
-        # Never strand the application behind the roller if an icon is malformed or
-        # a theme/backend never produces the expected allocation callback.
-        started = self._categories_loading_hide_started_us
-        if started is not None and GLib.get_monotonic_time() - started >= 2_000_000:
-            self._categories_loading_hide_source = None
-            self._categories_loading_hide_started_us = None
-            self.categories_view.set_opacity(1.0)
-            self.categories_loading_spinner.stop()
-            self.categories_loading_box.hide()
-            self._categories_startup_transition_complete = True
-            if self.should_start_random_timer and self.all_scripts:
-                GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
-            return False
-
-        return True
-
     def _start_categories_loading_fade(self):
         """Cross-fade the completed main menu in while the startup roller fades out."""
         if self._categories_loading_fade_source is not None:
@@ -1902,31 +1881,24 @@ class AppWindow(
         return False
 
     def _hide_categories_loading_indicator(self):
-        """Hide startup loading only after bootstrap data and watermarks are ready."""
+        """Begin the usable-menu transition as soon as bootstrap data is ready."""
         if not hasattr(self, "categories_loading_box"):
             return False
         if self._appstream_initial_build_pending:
             return False
         if not self.categories_loading_box.get_visible():
             return False
-        if self._categories_loading_hide_source is not None:
+        if self._categories_loading_fade_source is not None:
             return False
 
-        self._categories_loading_hide_started_us = GLib.get_monotonic_time()
-
-        # Startup category watermarks are deliberately deferred while the roller is
-        # visible. Rendering every supersampled watermark in one GTK callback can
-        # monopolize the main loop long enough to make Gtk.Spinner appear frozen.
-        # Drain them one at a time through idle callbacks so GTK gets a redraw/event
-        # opportunity between expensive pixbuf compositions. The menu remains at
-        # opacity 0 until all watermarks are complete, so no partial UI is exposed.
+        # Watermark composition is cosmetic and already cooperative: one expensive
+        # pixbuf is produced per idle dispatch. Do not serialize first paint behind
+        # the complete watermark queue. Start draining it and cross-fade the usable
+        # menu at the same time; GTK can paint between individual compositions.
         if not self._categories_loading_watermarks_flushed:
             self._start_startup_watermark_flush()
 
-        self._categories_loading_hide_source = GLib.timeout_add(
-            16,
-            self._finish_categories_loading_when_ready,
-        )
+        self._start_categories_loading_fade()
         return False
 
     def _render_categories(self, categories):
@@ -2832,7 +2804,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             # while an interactive resize is in progress. Render them once at the
             # final settled allocation instead.
             flush_watermarks = getattr(self, "_flush_deferred_category_watermarks", None)
-            if flush_watermarks is not None:
+            startup_watermarks_active = (
+                getattr(self, "_categories_loading_watermark_source", None) is not None
+            )
+            if flush_watermarks is not None and not startup_watermarks_active:
                 flush_watermarks()
 
             # Main-menu Featured already compares its final rows/columns against
@@ -2897,55 +2872,28 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             logger.warning("Could not save window state: %s", exc)
 
     def _close_application(self):
-        """Hide immediately, then finish potentially blocking cleanup off the GTK thread."""
-        if getattr(self, "_shutdown_started", False):
-            return
-        self._shutdown_started = True
-
+        """Closes the application gracefully and performs cleanup."""
         if getattr(self, "_featured_unmaximize_timer", None):
             GLib.source_remove(self._featured_unmaximize_timer)
             self._featured_unmaximize_timer = None
-
-        # Anything that needs the live GTK/GDK window must be captured before it is
-        # hidden. These writes are tiny; the potentially blocking PTY/filesystem
-        # cleanup happens after the window has disappeared.
+        # Persist UI state once per session, at shutdown.
         self._save_window_state()
         self._save_featured_sense()
 
-        application = self.get_application()
-        runner = getattr(self, "_appstream_runner", None)
+        # Stop the persistent AppStream PTY before deleting its temporary state.
+        if getattr(self, "_appstream_runner", None) is not None:
+            self._appstream_runner.shutdown()
 
-        # Give immediate visual acknowledgement to the close request.
-        self.hide()
+        # Clean up temporary directory
+        tmp_linuxtoys_path = "/tmp/linuxtoys"
+        try:
+            if os.path.exists(tmp_linuxtoys_path):
+                shutil.rmtree(tmp_linuxtoys_path)
+                print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
+        except Exception as e:
+            print(f"Warning: Could not clean up temporary directory {tmp_linuxtoys_path}: {e}")
 
-        def cleanup():
-            # shutdown() may wait for the persistent shell and worker thread, so it
-            # must not run on GTK's main loop.
-            if runner is not None:
-                try:
-                    runner.shutdown()
-                except Exception as exc:
-                    print(f"Warning: Could not shut down AppStream runner: {exc}")
-
-            tmp_linuxtoys_path = "/tmp/linuxtoys"
-            try:
-                if os.path.exists(tmp_linuxtoys_path):
-                    shutil.rmtree(tmp_linuxtoys_path)
-                    print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
-            except Exception as exc:
-                print(
-                    f"Warning: Could not clean up temporary directory "
-                    f"{tmp_linuxtoys_path}: {exc}"
-                )
-
-            # Gtk.Application.quit() belongs on the GTK main thread.
-            GLib.idle_add(application.quit)
-
-        threading.Thread(
-            target=cleanup,
-            name="linuxtoys-shutdown",
-            daemon=False,
-        ).start()
+        self.get_application().quit()
 
     def on_language_changed(self, new_language_code):
         """Handle language change by reloading translations and updating UI"""
@@ -3249,6 +3197,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         """
         if self.script_cache.is_populated:
             self.script_cache.refresh_removable_cache()
+        self._invalidate_featured_eligibility_cache()
 
         # Refresh the current category/subcategory view.
         if self.current_category_info is not None:

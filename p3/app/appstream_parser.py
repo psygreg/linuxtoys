@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 import json
-import pickle
+import re
 import threading
 
 from . import appstream_cache, repo_parser
@@ -14,14 +14,14 @@ from .lang_utils import detect_system_language
 
 
 _CACHE_LOCK = threading.RLock()
-_RUNTIME_CACHE = {}
+_RUNTIME_CACHE = {}  # cache-key -> Rust AppStreamCatalog
+_DERIVED_REFRESHING = set()
 
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 16
-RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
-PERSISTENT_CACHE_SCHEMA = 3
+RUNTIME_CACHE_SCHEMA = 18
+RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
 # only; it lets the AppStream refresh worker prewarm a newly published catalog
@@ -423,48 +423,6 @@ def clear_runtime_cache():
         _RUNTIME_CACHE.clear()
 
 
-def _load_persistent_runtime_cache(cache_key):
-    """Load the disposable Python-ready catalog from the local pickle cache."""
-    try:
-        with open(RUNTIME_CACHE_PATH, "rb") as cache_file:
-            payload = pickle.load(cache_file)
-    except (OSError, pickle.PickleError, EOFError, AttributeError, ValueError, TypeError):
-        return None
-
-    if not isinstance(payload, dict):
-        return None
-    if payload.get("schema") != PERSISTENT_CACHE_SCHEMA:
-        return None
-    if payload.get("key") != cache_key:
-        return None
-
-    entries = payload.get("entries")
-    if not isinstance(entries, list) or not all(isinstance(entry, dict) for entry in entries):
-        return None
-    return entries
-
-
-def _store_persistent_runtime_cache(cache_key, entries):
-    """Atomically persist the already-materialized Python catalog as pickle."""
-    target = RUNTIME_CACHE_PATH
-    tmp = target.with_suffix(target.suffix + ".tmp")
-    payload = {
-        "schema": PERSISTENT_CACHE_SCHEMA,
-        "key": cache_key,
-        "entries": entries,
-    }
-    try:
-        target.parent.mkdir(parents=True, exist_ok=True)
-        with open(tmp, "wb") as cache_file:
-            pickle.dump(payload, cache_file, protocol=pickle.HIGHEST_PROTOCOL)
-        os.replace(tmp, target)
-    except (OSError, pickle.PickleError, TypeError, ValueError):
-        try:
-            tmp.unlink()
-        except OSError:
-            pass
-
-
 def _flatten_package_names(value):
     result = []
     if isinstance(value, str):
@@ -613,17 +571,11 @@ def _native_distro_badge():
     return ""
 
 
-def load_entries(scripts_dir, curated_entries=None, category_paths=None):
-    """Return cached AppStream components as LinuxToys repository-like entries.
-
-    This function never builds or refreshes AppStream metadata.  It only consumes
-    the last atomically published catalog, keeping category parsing fast and safe.
-    """
+def _runtime_catalog(scripts_dir, curated_entries=None, category_paths=None, *, force_rebuild=False):
+    """Return the Rust-owned, indexed AppStream runtime catalog."""
     global _LAST_LOAD_CONTEXT
 
     scripts_dir = os.path.realpath(scripts_dir)
-    # Snapshot the actual parser inputs, not merely their derived signature. A
-    # catalog refresh can then rebuild the persistent cache off the GTK thread.
     _LAST_LOAD_CONTEXT = (
         scripts_dir,
         [dict(entry) for entry in (curated_entries or ())],
@@ -636,21 +588,13 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
 
     curated_entries = list(curated_entries or ())
     appstream_overlays = repo_parser.load_appstream_overlays(scripts_dir)
-    overlay_signature = tuple(
-        sorted((key, repr(value)) for key, value in appstream_overlays.items())
-    )
+    overlay_signature = tuple(sorted((key, repr(value)) for key, value in appstream_overlays.items()))
     lang_code = detect_system_language()
-    curated_signature = tuple(
-        sorted(
-            (
-                str(entry.get("name", "")),
-                str(entry.get("type", "")),
-                repr(entry.get("package-name")),
-                str(entry.get("appstream-id", entry.get("appstream_id", ""))),
-            )
-            for entry in curated_entries
-        )
-    )
+    curated_signature = tuple(sorted((
+        str(entry.get("name", "")), str(entry.get("type", "")),
+        repr(entry.get("package-name")),
+        str(entry.get("appstream-id", entry.get("appstream_id", ""))),
+    ) for entry in curated_entries))
     category_paths = tuple(sorted(str(path) for path in (category_paths or ())))
     cache_key = (
         tuple(sorted(_system_flatpak_lock_ids())),
@@ -662,18 +606,14 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         lang_code,
         category_paths,
     )
-
-    with _CACHE_LOCK:
-        cached = _RUNTIME_CACHE.get(cache_key)
-        if cached is not None:
-            return [dict(entry) for entry in cached]
+    if not force_rebuild:
+        with _CACHE_LOCK:
+            cached = _RUNTIME_CACHE.get(cache_key)
+            if cached is not None:
+                return cached
 
     curated_ids, curated_packages, curated_names = _curated_identity_sets(curated_entries)
-    result = []
-
     omit_keys = _appstream_omit_keys()
-    # Step 10 collapses catalog loading, structural filtering, source selection,
-    # and final AppStream adaptation into one Rust-owned catalog operation.
     category_config = {
         "main": MAIN_CATEGORY_CANDIDATES,
         "additional": ADDITIONAL_CATEGORY_CANDIDATES,
@@ -681,8 +621,6 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         "standalone_priority": STANDALONE_PURPOSE_PRIORITY,
         "main_priority": MAIN_CATEGORY_PRIORITY,
     }
-    # Rust owns the persistent derived cache.  The key describes every input
-    # that can affect the final LinuxToys-ready AppStream catalog.
     rust_cache_key = json.dumps({
         "schema": RUNTIME_CACHE_SCHEMA,
         "catalog_mtime": catalog_mtime,
@@ -701,35 +639,55 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         "native_badge": _native_distro_badge(),
     }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
-    persistent = _load_persistent_runtime_cache(rust_cache_key)
-    if persistent is not None:
-        result = persistent
-    else:
-        result = list(_catalog_rs.build_appstream_catalog(
-            os.fspath(appstream_cache.CATALOG_PATH),
-            sorted(omit_keys),
-            list(category_paths),
-            json.dumps(category_config, ensure_ascii=False, separators=(",", ":")),
-            json.dumps(APPSTREAM_SOURCE_PREFERENCE, ensure_ascii=False, separators=(",", ":")),
-            sorted(_system_flatpak_lock_ids()),
-            sorted(_host_os_keys()),
-            sorted(get_system_compat_keys()),
-            lang_code,
-            sorted(curated_ids),
-            sorted(curated_packages),
-            sorted(curated_names),
-            json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
-            _native_distro_badge(),
-        ))
-        _store_persistent_runtime_cache(rust_cache_key, result)
-
+    catalog = _catalog_rs.build_appstream_catalog_index(
+        os.fspath(appstream_cache.CATALOG_PATH), sorted(omit_keys), list(category_paths),
+        json.dumps(category_config, ensure_ascii=False, separators=(",", ":")),
+        json.dumps(APPSTREAM_SOURCE_PREFERENCE, ensure_ascii=False, separators=(",", ":")),
+        sorted(_system_flatpak_lock_ids()), sorted(_host_os_keys()),
+        sorted(get_system_compat_keys()), lang_code, sorted(curated_ids),
+        sorted(curated_packages), sorted(curated_names),
+        json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
+        _native_distro_badge(), os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
+        force_rebuild,
+    )
     with _CACHE_LOCK:
         _RUNTIME_CACHE.clear()
-        _RUNTIME_CACHE[cache_key] = result
+        _RUNTIME_CACHE[cache_key] = catalog
 
-    return [dict(entry) for entry in result]
+    # A stale but complete binary generation is intentionally returned immediately.
+    # Refresh it off-thread so startup/category/search callers never block on the
+    # authoritative JSON rebuild merely because policy, locale, or catalog mtime
+    # changed. The forced worker atomically publishes the replacement generation.
+    if not force_rebuild and not catalog.cache_is_current(rust_cache_key):
+        refresh_token = rust_cache_key
+        with _CACHE_LOCK:
+            should_start = refresh_token not in _DERIVED_REFRESHING
+            if should_start:
+                _DERIVED_REFRESHING.add(refresh_token)
+        if should_start:
+            def _refresh_stale_generation():
+                try:
+                    _runtime_catalog(
+                        scripts_dir,
+                        curated_entries=curated_entries,
+                        category_paths=category_paths,
+                        force_rebuild=True,
+                    )
+                finally:
+                    with _CACHE_LOCK:
+                        _DERIVED_REFRESHING.discard(refresh_token)
+
+            threading.Thread(
+                target=_refresh_stale_generation,
+                name="linuxtoys-appstream-derived-cache",
+                daemon=True,
+            ).start()
+    return catalog
 
 
+def load_entries(scripts_dir, curated_entries=None, category_paths=None):
+    """Compatibility API: materialize the complete Rust-owned catalog."""
+    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths).all_entries())
 
 def prepare_runtime_cache():
     """Prebuild the derived cache for the currently published AppStream catalog.
@@ -749,15 +707,16 @@ def prepare_runtime_cache():
 
     scripts_dir, curated_entries, category_paths = context
 
-    # catalog.json has a new mtime after publication, so clearing the process
-    # cache guarantees load_entries() adapts that new catalog and atomically
-    # replaces the Rust-owned derived cache before the UI refresh is scheduled.
-    clear_runtime_cache()
+    # Keep the previous in-memory/binary generation available while this worker
+    # builds the replacement. Rust writes the new binary cache to a temporary
+    # file and atomically renames it only after the complete payload is synced.
+    # _runtime_catalog() swaps the process cache only after that rebuild returns.
     try:
-        load_entries(
+        _runtime_catalog(
             scripts_dir,
             curated_entries=curated_entries,
             category_paths=category_paths,
+            force_rebuild=True,
         )
     except Exception:
         return False
@@ -770,10 +729,7 @@ def find_entry_by_id(scripts_dir, appstream_id, curated_entries=None, category_p
     if not target:
         return None
 
-    for entry in load_entries(scripts_dir, curated_entries, category_paths):
-        if str(entry.get("appstream_id", "") or "").strip().casefold() == target:
-            return entry
-    return None
+    return _runtime_catalog(scripts_dir, curated_entries, category_paths).find_by_id(target)
 
 
 def find_entry_by_name(scripts_dir, name, curated_entries=None, category_paths=None):
@@ -786,17 +742,7 @@ def find_entry_by_name(scripts_dir, name, curated_entries=None, category_paths=N
     if not target:
         return None
 
-    for entry in load_entries(scripts_dir, curated_entries, category_paths):
-        names = (
-            entry.get("name"),
-            entry.get("appstream_canonical_name"),
-        )
-        if any(
-            str(candidate or "").strip().casefold() == target
-            for candidate in names
-        ):
-            return entry
-    return None
+    return _runtime_catalog(scripts_dir, curated_entries, category_paths).find_by_name(target)
 
 
 def get_entries_for_category(
@@ -816,8 +762,55 @@ def get_entries_for_category(
     if category == "." or category.startswith("../"):
         return []
 
-    return [
-        entry
-        for entry in load_entries(scripts_dir, curated_entries, category_paths)
-        if entry.get("category") == category
-    ]
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .entries_for_category(category)
+    )
+
+def search_entries(scripts_dir, query, translated_new="new", translated_official="official", curated_entries=None, category_paths=None):
+    """Search AppStream inside Rust and materialize only matching entries."""
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .search(str(query or ""), str(translated_new or ""), str(translated_official or ""))
+    )
+
+
+def get_featured_descriptors(scripts_dir, curated_entries=None, category_paths=None):
+    """Return lightweight review-eligible Featured metadata without decoding payloads."""
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .featured_descriptors()
+    )
+
+
+def materialize_featured_entries(scripts_dir, indices, curated_entries=None, category_paths=None):
+    """Decode only selected AppStream Featured payloads."""
+    clean_indices = sorted({
+        int(index) for index in (indices or ())
+        if isinstance(index, int) or str(index).isdigit()
+    })
+    if not clean_indices:
+        return []
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .materialize_featured(clean_indices)
+    )
+
+
+
+def get_installed_entries(
+    scripts_dir,
+    native_packages,
+    flatpak_ids,
+    executed_names=(),
+    curated_entries=None,
+    category_paths=None,
+):
+    """Materialize only AppStream entries matching observed/Registry installs."""
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths).installed_entries(
+            sorted({str(value) for value in (native_packages or ()) if str(value).strip()}),
+            sorted({str(value) for value in (flatpak_ids or ()) if str(value).strip()}),
+            sorted({str(value) for value in (executed_names or ()) if str(value).strip()}),
+        )
+    )

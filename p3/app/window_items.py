@@ -3,6 +3,7 @@ import os
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, load_scaled_pixbuf
 from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index
+from . import _catalog_rs
 from .gtk_dialogs import run_message_dialog
 
 
@@ -48,10 +49,10 @@ class ItemWidgetFactory:
         if cached is not None:
             return cached
 
-        # Render the complete composition at 4x and downsample once.  The
-        # watermark geometry scales with the allocated card height, so GTK text
-        # scaling can make a card taller without exposing a fixed-height image.
-        supersample = 4
+        # 2x supersampling is enough for this low-opacity decorative layer while
+        # cutting the intermediate canvas from 16x to 4x the final pixel count.
+        # The SVG is still rasterized above display resolution and downsampled once.
+        supersample = 2
         canvas_width = width * supersample
         canvas_height = height * supersample
 
@@ -70,41 +71,41 @@ class ItemWidgetFactory:
         except GLib.Error:
             return None
 
-        canvas = GdkPixbuf.Pixbuf.new(
-            GdkPixbuf.Colorspace.RGB, True, 8, canvas_width, canvas_height
-        )
-        canvas.fill(0x00000000)
-
-        dest_x = max(0, icon_x * supersample)
-        dest_y = max(0, icon_y * supersample)
-        source_x = max(0, -icon_x * supersample)
-        source_y = max(0, -icon_y * supersample)
-        copy_width = min(icon_size_ss - source_x, canvas_width - dest_x)
-        copy_height = min(icon_size_ss - source_y, canvas_height - dest_y)
-
-        if copy_width > 0 and copy_height > 0:
-            # composite() lets us apply watermark opacity while retaining the
-            # SVG's own alpha channel. offset_x/y select the cropped source area.
-            source.composite(
-                canvas,
-                dest_x, dest_y, copy_width, copy_height,
-                dest_x - source_x, dest_y - source_y,
-                1.0, 1.0,
-                GdkPixbuf.InterpType.BILINEAR,
-                46,
+        # GTK remains responsible for SVG rasterization. Rust owns the deterministic
+        # crop/composite/downsample/rounded-alpha transform in one coarse call, without
+        # allocating the old supersampled transparent canvas.
+        try:
+            pixels = _catalog_rs.render_category_watermark(
+                bytes(source.get_pixels()),
+                source.get_width(),
+                source.get_height(),
+                source.get_rowstride(),
+                source.get_n_channels(),
+                source.get_has_alpha(),
+                width,
+                height,
+                icon_x,
+                icon_y,
+                supersample,
+                0.46,
+                10.0,
             )
-
-        result = canvas.scale_simple(
-            width, height, GdkPixbuf.InterpType.HYPER
-        )
-        if result is None:
+        except (ValueError, TypeError, RuntimeError):
             return None
 
-        # The watermark is a child of the CSS-rounded card, and GTK3 does not clip
-        # child drawing to the parent's border-radius. Apply the same 10 px rounded
-        # geometry directly to the pixbuf alpha channel so the decorative layer
-        # cannot leak into the four transparent corner areas.
-        result = self._clip_pixbuf_rounded(result, 10.0)
+        if not pixels:
+            return None
+
+        data = GLib.Bytes.new(pixels)
+        result = GdkPixbuf.Pixbuf.new_from_bytes(
+            data,
+            GdkPixbuf.Colorspace.RGB,
+            True,
+            8,
+            width,
+            height,
+            width * 4,
+        )
 
         # Allocation sizes are highly repetitive. Keep the cache bounded in case
         # a compositor repeatedly reports one-pixel intermediate resize values.
@@ -112,58 +113,6 @@ class ItemWidgetFactory:
             cache.clear()
         cache[key] = result
         return result
-
-    @staticmethod
-    def _clip_pixbuf_rounded(pixbuf, radius):
-        """Return a copy whose alpha follows the card's rounded corners."""
-        if pixbuf is None or not pixbuf.get_has_alpha():
-            return pixbuf
-
-        width = pixbuf.get_width()
-        height = pixbuf.get_height()
-        if width <= 0 or height <= 0:
-            return pixbuf
-
-        radius = max(0.0, min(float(radius), width / 2.0, height / 2.0))
-        if radius <= 0.0:
-            return pixbuf
-
-        rowstride = pixbuf.get_rowstride()
-        channels = pixbuf.get_n_channels()
-        pixels = bytearray(pixbuf.get_pixels())
-        alpha_index = channels - 1
-
-        # Pixel-centre distance plus a one-pixel coverage ramp gives the clipped
-        # corners a smooth edge at the final display resolution.
-        for y in range(min(int(radius) + 1, height)):
-            py = y + 0.5
-            for x in range(min(int(radius) + 1, width)):
-                px = x + 0.5
-                distance = ((radius - px) ** 2 + (radius - py) ** 2) ** 0.5
-                coverage = max(0.0, min(1.0, radius + 0.5 - distance))
-                if coverage >= 1.0:
-                    continue
-
-                positions = (
-                    (x, y),
-                    (width - 1 - x, y),
-                    (x, height - 1 - y),
-                    (width - 1 - x, height - 1 - y),
-                )
-                for corner_x, corner_y in positions:
-                    offset = corner_y * rowstride + corner_x * channels + alpha_index
-                    pixels[offset] = int(round(pixels[offset] * coverage))
-
-        data = GLib.Bytes.new(bytes(pixels))
-        return GdkPixbuf.Pixbuf.new_from_bytes(
-            data,
-            GdkPixbuf.Colorspace.RGB,
-            True,
-            8,
-            width,
-            height,
-            rowstride,
-        )
 
     def _flush_deferred_category_watermarks(self):
         """Render allocation-sized category watermarks once after resize settles."""

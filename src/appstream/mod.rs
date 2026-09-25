@@ -1,7 +1,9 @@
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
+use std::io::Write;
 
 fn json_to_py(py: Python<'_>, value: &Value) -> PyResult<Py<PyAny>> {
     Ok(match value {
@@ -103,7 +105,7 @@ fn resolve_category_rs(cats:&Value, paths:&[String], cfg:&Value)->Option<String>
 fn flatten_blocks(v:&Value)->String{let Some(a)=v.as_array()else{return String::new()};let mut blocks=Vec::new();for b in a{let Some(m)=b.as_object()else{continue};if m.get("type").and_then(Value::as_str)==Some("paragraph"){if let Some(sp)=m.get("spans").and_then(Value::as_array){blocks.push(sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string())}}else if let Some(items)=m.get("items").and_then(Value::as_array){blocks.push(items.iter().filter_map(|i|i.as_array()).map(|sp|sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string()).collect::<Vec<_>>().join("\n"))}}blocks.into_iter().filter(|s|!s.is_empty()).collect::<Vec<_>>().join("\n\n")}
 fn clean_screens(v:Option<&Value>)->Value{let mut out=Vec::new();if let Some(a)=v.and_then(Value::as_array){for s in a{if let Some(m)=s.as_object(){let mut imgs=Vec::new();if let Some(ia)=m.get("images").and_then(Value::as_array){for i in ia{let Some(im)=i.as_object()else{continue};let url=im.get("url").and_then(Value::as_str).unwrap_or("").trim();if url.is_empty(){continue}imgs.push(serde_json::json!({"url":url,"width":im.get("width").and_then(Value::as_i64).unwrap_or(0).max(0),"height":im.get("height").and_then(Value::as_i64).unwrap_or(0).max(0)}))}}if !imgs.is_empty(){out.push(serde_json::json!({"images":imgs}))}}else if let Some(p)=s.as_str(){if !p.trim().is_empty(){out.push(Value::String(p.trim().into()))}}}}Value::Array(out)}
 
-fn adapt_appstream_maps(py:Python<'_>, components:Vec<serde_json::Map<String,Value>>, category_paths:Vec<String>, category_config_json:&str, lang:&str, curated_ids:Vec<String>, curated_packages:Vec<String>, curated_names:Vec<String>, overlays_json:&str, native_badge:&str)->PyResult<Vec<Py<PyAny>>>{
+fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, category_paths:Vec<String>, category_config_json:&str, lang:&str, curated_ids:Vec<String>, curated_packages:Vec<String>, curated_names:Vec<String>, overlays_json:&str, native_badge:&str)->Vec<Value>{
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);let overlays:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));let ov=overlays.as_object();let ids:std::collections::HashSet<String>=curated_ids.into_iter().map(|s|s.to_lowercase()).collect();let pkgs:std::collections::HashSet<String>=curated_packages.into_iter().map(|s|s.to_lowercase()).collect();let names:std::collections::HashSet<String>=curated_names.into_iter().map(|s|s.to_lowercase()).collect();let mut out=Vec::new();
     for m in components {let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||ids.contains(&id.to_lowercase()){continue}if m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
         let Some(category)=resolve_category_rs(m.get("categories").unwrap_or(&Value::Null),&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
@@ -112,18 +114,11 @@ fn adapt_appstream_maps(py:Python<'_>, components:Vec<serde_json::Map<String,Val
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format","appstream");e.insert("screenshots".into(),shots.clone());
         for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else{"native"});e.insert("package-name".into(),if flat{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["popularity_metric","review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
-        if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let temp=Value::Object(am.clone());let pytemp=json_to_py(py,&temp)?;let l=PyList::empty(py);l.append(pytemp.bind(py))?;let nested=adapt_appstream_entries(py,&l,category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge)?;if let Some(n)=nested.first(){opts.push(py_to_json(n.bind(py))?);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
-        out.push(json_to_py(py,&Value::Object(e))?);
+        if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
+        out.push(Value::Object(e));
     }
-    out.sort_by_key(|x|x.bind(py).get_item("name").ok().and_then(|v|v.extract::<String>().ok()).unwrap_or_default().to_lowercase());Ok(out)
+    out.sort_by_key(|x|x.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase());out
 }
-
-fn adapt_appstream_entries(py:Python<'_>, components:&Bound<'_,PyList>, category_paths:Vec<String>, category_config_json:&str, lang:&str, curated_ids:Vec<String>, curated_packages:Vec<String>, curated_names:Vec<String>, overlays_json:&str, native_badge:&str)->PyResult<Vec<Py<PyAny>>>{
-    let mut maps=Vec::with_capacity(components.len());
-    for obj in components.iter(){if let Value::Object(m)=py_to_json(&obj)?{maps.push(m)}}
-    adapt_appstream_maps(py,maps,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge)
-}
-
 
 fn source_option_key_rs(item: &serde_json::Map<String, Value>) -> String {
     let source = item.get("source").and_then(Value::as_str).unwrap_or("native");
@@ -545,7 +540,394 @@ pub(crate) fn build_appstream_catalog(
     let steamos=compat.contains("steamos");
     let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,false);
     let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,true);
-    let result = adapt_appstream_maps(py,selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge)?;
+    let result = adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);
+    result.iter().map(|value| json_to_py(py, value)).collect()
+}
 
-    Ok(result)
+fn collect_search_packages(value: Option<&Value>, out: &mut Vec<String>) {
+    let Some(value) = value else { return; };
+    match value {
+        Value::String(s) => { let s=s.trim().to_lowercase(); if !s.is_empty() && !out.contains(&s) { out.push(s); } }
+        Value::Array(values) => for value in values { collect_search_packages(Some(value), out); },
+        Value::Object(values) => for value in values.values() { collect_search_packages(Some(value), out); },
+        _ => {}
+    }
+}
+
+// The warm runtime cache deliberately does not deserialize every AppStream entry
+// into serde_json::Value.  It keeps the fields needed for indexing/search typed,
+// while the complete Python-facing entry remains an opaque MessagePack blob and
+// is decoded only when that entry actually crosses the PyO3 boundary.
+#[derive(Clone, Serialize, Deserialize)]
+struct RuntimeAppStreamEntry {
+    category: String,
+    appstream_id: String,
+    name: String,
+    canonical_name: String,
+    source: String,
+    package_names: Vec<String>,
+    search_packages: Vec<String>,
+    description_lower: String,
+    developer_lower: String,
+    is_new: bool,
+    review_rating: Option<f64>,
+    review_subscore: Option<i64>,
+    category_popularity_score: Option<i64>,
+    category_native_score: Option<i64>,
+    #[serde(with = "serde_bytes")]
+    payload: Vec<u8>,
+}
+
+impl RuntimeAppStreamEntry {
+    fn from_value(value: Value) -> Option<Self> {
+        let category = value.get("category").and_then(Value::as_str).unwrap_or("").to_string();
+        let appstream_id = value.get("appstream_id").and_then(Value::as_str).unwrap_or("").to_string();
+        let name = value.get("name").and_then(Value::as_str).unwrap_or("").to_string();
+        let canonical_name = value.get("appstream_canonical_name").and_then(Value::as_str).unwrap_or("").to_string();
+        let source = value.get("appstream_source").and_then(Value::as_str).unwrap_or("").to_string();
+        let mut package_names = Vec::new();
+        collect_search_packages(value.get("package-name"), &mut package_names);
+        let mut search_packages = package_names.clone();
+        if let Some(options) = value.get("source_options").and_then(Value::as_array) {
+            for option in options { collect_search_packages(option.get("package-name"), &mut search_packages); }
+        }
+        let description_lower = value.get("description").and_then(Value::as_str).unwrap_or("").to_lowercase();
+        let developer_lower = value.get("developer").and_then(Value::as_str).unwrap_or("").to_lowercase();
+        let is_new = value.get("is_new").and_then(Value::as_bool).unwrap_or(false);
+        let review_rating = value.get("review_rating").and_then(Value::as_f64);
+        let review_subscore = value.get("review_subscore").and_then(Value::as_i64);
+        let category_popularity_score = value.get("_category_popularity_score").and_then(Value::as_i64);
+        let category_native_score = value.get("_category_native_score").and_then(Value::as_i64);
+        let payload = rmp_serde::to_vec_named(&value).ok()?;
+        Some(Self {
+            category, appstream_id, name, canonical_name, source, package_names,
+            search_packages, description_lower, developer_lower, is_new,
+            review_rating, review_subscore, category_popularity_score,
+            category_native_score, payload,
+        })
+    }
+
+    fn decode(&self) -> Option<Value> {
+        rmp_serde::from_slice(&self.payload).ok()
+    }
+}
+
+#[pyclass]
+pub(crate) struct AppStreamCatalog {
+    entries: Vec<RuntimeAppStreamEntry>,
+    by_category: std::collections::HashMap<String, Vec<usize>>,
+    by_id: std::collections::HashMap<String, usize>,
+    by_name: std::collections::HashMap<String, usize>,
+    by_removable_name: std::collections::HashMap<String, Vec<usize>>,
+    by_native_package: std::collections::HashMap<String, Vec<usize>>,
+    by_flatpak_package: std::collections::HashMap<String, Vec<usize>>,
+    cache_key: String,
+}
+
+impl AppStreamCatalog {
+    fn from_values(entries: Vec<Value>, cache_key: String) -> Self {
+        let entries = entries.into_iter().filter_map(RuntimeAppStreamEntry::from_value).collect();
+        Self::from_entries(entries, cache_key)
+    }
+
+    fn from_entries(entries: Vec<RuntimeAppStreamEntry>, cache_key: String) -> Self {
+        let mut by_category: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        let mut by_id = std::collections::HashMap::new();
+        let mut by_name = std::collections::HashMap::new();
+        let mut by_removable_name: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        let mut by_native_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        let mut by_flatpak_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        for (index, entry) in entries.iter().enumerate() {
+            if !entry.category.is_empty() { by_category.entry(entry.category.clone()).or_default().push(index); }
+            let id = normalize_id(&entry.appstream_id);
+            if !id.is_empty() { by_id.entry(id).or_insert(index); }
+            for (name, removable) in [(&entry.name, true), (&entry.canonical_name, false)] {
+                let key = name.trim().to_lowercase();
+                if !key.is_empty() {
+                    by_name.entry(key.clone()).or_insert(index);
+                    if removable { by_removable_name.entry(key).or_default().push(index); }
+                }
+            }
+            let target = match entry.source.as_str() {
+                "flatpak" => Some(&mut by_flatpak_package),
+                "native" => Some(&mut by_native_package),
+                _ => None,
+            };
+            if let Some(target) = target {
+                for package in &entry.package_names { target.entry(package.clone()).or_default().push(index); }
+            }
+        }
+        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, cache_key }
+    }
+
+    fn materialize_entry(&self, py: Python<'_>, index: usize) -> PyResult<Option<Py<PyAny>>> {
+        let Some(entry) = self.entries.get(index) else { return Ok(None); };
+        let Some(value) = entry.decode() else { return Ok(None); };
+        Ok(Some(json_to_py(py, &value)?))
+    }
+
+    fn materialize_indices(&self, py: Python<'_>, indices: &[usize]) -> PyResult<Vec<Py<PyAny>>> {
+        let mut out = Vec::with_capacity(indices.len());
+        for &index in indices {
+            if let Some(value) = self.materialize_entry(py, index)? { out.push(value); }
+        }
+        Ok(out)
+    }
+}
+
+#[pymethods]
+impl AppStreamCatalog {
+    fn __len__(&self) -> usize { self.entries.len() }
+
+    fn cache_is_current(&self, expected_key: &str) -> bool { self.cache_key == expected_key }
+
+    fn all_entries(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
+        let indices: Vec<usize> = (0..self.entries.len()).collect();
+        self.materialize_indices(py, &indices)
+    }
+
+    fn entries_for_category(&self, py: Python<'_>, category: &str) -> PyResult<Vec<Py<PyAny>>> {
+        match self.by_category.get(category.trim_matches('/')) {
+            Some(indices) => self.materialize_indices(py, indices),
+            None => Ok(Vec::new()),
+        }
+    }
+
+    fn find_by_id(&self, py: Python<'_>, appstream_id: &str) -> PyResult<Option<Py<PyAny>>> {
+        let key = normalize_id(appstream_id);
+        match self.by_id.get(&key).copied() {
+            Some(index) => self.materialize_entry(py, index),
+            None => Ok(None),
+        }
+    }
+
+    fn find_by_name(&self, py: Python<'_>, name: &str) -> PyResult<Option<Py<PyAny>>> {
+        let key = name.trim().to_lowercase();
+        match self.by_name.get(&key).copied() {
+            Some(index) => self.materialize_entry(py, index),
+            None => Ok(None),
+        }
+    }
+
+    fn search(&self, py: Python<'_>, query: &str, translated_new: &str, translated_official: &str) -> PyResult<Vec<(Py<PyAny>, i64)>> {
+        let query = query.trim().to_lowercase();
+        if query.is_empty() { return Ok(Vec::new()); }
+        let translated_new = translated_new.trim().to_lowercase();
+        let _translated_official = translated_official.trim().to_lowercase();
+        let mut matches = Vec::new();
+
+        for (index, entry) in self.entries.iter().enumerate() {
+            let name = entry.name.to_lowercase();
+            let packages = &entry.search_packages;
+            let developer = &entry.developer_lower;
+            let mut score = 0i64;
+            if (query == "new" || query == translated_new) && entry.is_new { score += 90; }
+            if query == name { score += 100; } else if name.starts_with(&query) { score += 80; } else if name.contains(&query) { score += 60; }
+            if name == "r" && ("positron".contains(&query) || "rstudio".contains(&query)) { score += 60; }
+            if packages.iter().any(|package| package == &query) { score += 90; }
+            else if packages.iter().any(|package| package.starts_with(&query)) { score += 70; }
+            else if packages.iter().any(|package| package.contains(&query)) { score += 50; }
+            if query.as_str() == developer.as_str() { score += 55; } else if developer.starts_with(&query) { score += 45; } else if developer.contains(&query) { score += 40; }
+            if entry.description_lower.contains(&query) { score += 30; }
+            if score > 0 && name.chars().count() < 20 { score += 5; }
+            if score > 0 { matches.push((index, score)); }
+        }
+        let mut out = Vec::with_capacity(matches.len());
+        for (index, score) in matches {
+            if let Some(value) = self.materialize_entry(py, index)? { out.push((value, score)); }
+        }
+        Ok(out)
+    }
+
+    fn featured_descriptors(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
+        let mut out = Vec::new();
+        for (index, entry) in self.entries.iter().enumerate() {
+            let Some(rating) = entry.review_rating.filter(|rating| *rating >= 70.0) else {
+                continue;
+            };
+            let descriptor = serde_json::json!({
+                "_appstream_featured_index": index,
+                "id": entry.appstream_id,
+                "appstream_id": entry.appstream_id,
+                "appstream_canonical_name": entry.canonical_name,
+                "repo_app_id": entry.appstream_id,
+                "name": entry.name,
+                "category": entry.category,
+                "appstream_source": entry.source,
+                "package-name": entry.package_names,
+                "review_rating": rating,
+                "review_subscore": entry.review_subscore,
+                "_category_popularity_score": entry.category_popularity_score,
+                "_category_native_score": entry.category_native_score,
+                "is_script": true,
+                "is_repo_entry": true,
+                "is_appstream_entry": true,
+                "is_create_script": false,
+                "path": format!("appstream://{}/{}", entry.source, entry.appstream_id),
+                "repo": "appstream",
+            });
+            out.push(json_to_py(py, &descriptor)?);
+        }
+        Ok(out)
+    }
+
+    fn materialize_featured(&self, py: Python<'_>, indices: Vec<usize>) -> PyResult<Vec<Py<PyAny>>> {
+        self.materialize_indices(py, &indices)
+    }
+
+    fn installed_entries(&self, py: Python<'_>, native_packages: Vec<String>, flatpak_ids: Vec<String>, executed_names: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
+        let mut indices = std::collections::HashSet::new();
+        for package in native_packages {
+            let key = package.trim().to_lowercase();
+            if let Some(matches) = self.by_native_package.get(&key) { indices.extend(matches.iter().copied()); }
+        }
+        for app_id in flatpak_ids {
+            let key = app_id.trim().to_lowercase();
+            if let Some(matches) = self.by_flatpak_package.get(&key) { indices.extend(matches.iter().copied()); }
+        }
+        for name in executed_names {
+            let key = name.trim().to_lowercase();
+            if let Some(matches) = self.by_removable_name.get(&key) { indices.extend(matches.iter().copied()); }
+        }
+        let mut indices: Vec<usize> = indices.into_iter().collect();
+        indices.sort_unstable();
+        self.materialize_indices(py, &indices)
+    }
+}
+
+const RUNTIME_CACHE_SCHEMA: u32 = 4;
+
+#[derive(Serialize, Deserialize)]
+struct CachedAppStreamCatalog {
+    schema: u32,
+    key: String,
+    entries: Vec<RuntimeAppStreamEntry>,
+}
+
+fn load_binary_catalog_cache(cache_path: &str) -> Option<CachedAppStreamCatalog> {
+    if cache_path.is_empty() { return None; }
+    let bytes = fs::read(cache_path).ok()?;
+    let payload: CachedAppStreamCatalog = rmp_serde::from_slice(&bytes).ok()?;
+    (payload.schema == RUNTIME_CACHE_SCHEMA).then_some(payload)
+}
+
+fn write_binary_catalog_cache(cache_path: &str, cache_key: &str, entries: &[RuntimeAppStreamEntry]) {
+    if cache_path.is_empty() { return; }
+    let payload = CachedAppStreamCatalog { schema: RUNTIME_CACHE_SCHEMA, key: cache_key.to_string(), entries: entries.to_vec() };
+    let Ok(bytes) = rmp_serde::to_vec_named(&payload) else { return; };
+    let path = std::path::Path::new(cache_path);
+    if let Some(parent) = path.parent() { if fs::create_dir_all(parent).is_err() { return; } }
+    let tmp = path.with_extension(format!("{}.tmp", path.extension().and_then(|value| value.to_str()).unwrap_or("bin")));
+    let write_result = (|| -> std::io::Result<()> {
+        let mut file = fs::File::create(&tmp)?;
+        file.write_all(&bytes)?;
+        file.sync_all()?;
+        fs::rename(&tmp, path)?;
+        Ok(())
+    })();
+    if write_result.is_err() { let _ = fs::remove_file(tmp); }
+}
+
+#[pyfunction]
+pub(crate) fn build_appstream_catalog_index(
+    path: &str,
+    omit_keys: Vec<String>,
+    category_paths: Vec<String>,
+    category_config_json: &str,
+    source_preferences_json: &str,
+    system_flatpak_locks: Vec<String>,
+    host_os_keys: Vec<String>,
+    compat_keys: Vec<String>,
+    lang: &str,
+    curated_ids: Vec<String>,
+    curated_packages: Vec<String>,
+    curated_names: Vec<String>,
+    overlays_json: &str,
+    native_badge: &str,
+    cache_path: &str,
+    cache_key: &str,
+    force_rebuild: bool,
+) -> PyResult<AppStreamCatalog> {
+    // A warm cache is immediately usable even when its key is stale.  Normal UI
+    // callers keep using that last complete snapshot while the refresh worker
+    // rebuilds the new generation with force_rebuild=true.  Publication below is
+    // atomic, so readers can only ever observe a complete old or new cache.
+    if !force_rebuild {
+        if let Some(payload) = load_binary_catalog_cache(cache_path) {
+            return Ok(AppStreamCatalog::from_entries(payload.entries, payload.key));
+        }
+    } else if let Some(payload) = load_binary_catalog_cache(cache_path) {
+        if payload.key == cache_key {
+            return Ok(AppStreamCatalog::from_entries(payload.entries, payload.key));
+        }
+    }
+
+    let content = match fs::read_to_string(path) { Ok(v) => v, Err(_) => return Ok(AppStreamCatalog::from_values(Vec::new(), cache_key.to_string())) };
+    let parsed: Value = match serde_json::from_str(&content) { Ok(v) => v, Err(_) => return Ok(AppStreamCatalog::from_values(Vec::new(), cache_key.to_string())) };
+    let Some(values) = parsed.as_array() else { return Ok(AppStreamCatalog::from_values(Vec::new(), cache_key.to_string())); };
+    let omit: std::collections::HashSet<String> = omit_keys.into_iter().map(|s| s.trim().to_lowercase()).collect();
+    let mut vals = Vec::with_capacity(values.len());
+    for value in values {
+        let Some(m) = value.as_object() else { continue; };
+        if !m.get("packages").and_then(Value::as_array).is_some_and(|a| !a.is_empty()) { continue; }
+        let mut keys = Vec::new();
+        if let Some(id)=m.get("id").and_then(Value::as_str) { keys.push(normalize_id(id)); }
+        if let Some(id)=m.get("flatpak_id").and_then(Value::as_str) { keys.push(normalize_id(id)); }
+        if let Some(name)=m.get("name").and_then(Value::as_str) { keys.push(name.trim().to_lowercase()); }
+        if let Some(pkgs)=m.get("packages").and_then(Value::as_array) { for p in pkgs.iter().filter_map(Value::as_str) { keys.push(p.trim().to_lowercase()); } }
+        if keys.iter().any(|k| omit.contains(k)) { continue; }
+        vals.push(m.clone());
+    }
+    let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);
+    let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
+    let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
+    let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
+    let compat:std::collections::HashSet<String>=compat_keys.into_iter().map(|s|s.to_lowercase()).collect();
+    let prefer_native=compat.iter().any(|s|matches!(s.as_str(),"arch"|"cachy"|"solus"|"fedora"));
+    let steamos=compat.contains("steamos");
+    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,false);
+    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,true);
+    let entries=adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);
+
+    let runtime_entries: Vec<RuntimeAppStreamEntry> = entries.into_iter().filter_map(RuntimeAppStreamEntry::from_value).collect();
+    write_binary_catalog_cache(cache_path, cache_key, &runtime_entries);
+    Ok(AppStreamCatalog::from_entries(runtime_entries, cache_key.to_string()))
+}
+
+
+
+/// Hash filesystem metadata for an already-discovered source inventory.
+///
+/// Python owns source-root discovery/inventory policy. Rust performs the hot warm-start
+/// path: stat every remembered file/directory and feed path + mtime + size directly
+/// into SHA-256 without constructing thousands of Python tuples or JSON-serializing
+/// them first. Missing paths are ignored, matching the previous `_path_state()` loop.
+#[pyfunction]
+pub(crate) fn source_metadata_fingerprint(paths: Vec<String>) -> String {
+    use sha2::{Digest, Sha256};
+    use std::os::unix::fs::MetadataExt;
+
+    let mut paths = paths;
+    paths.sort_unstable();
+    paths.dedup();
+
+    let mut hasher = Sha256::new();
+    for path in paths {
+        let Ok(metadata) = fs::metadata(&path) else {
+            continue;
+        };
+
+        let mtime_ns = (metadata.mtime() as i128)
+            .saturating_mul(1_000_000_000i128)
+            .saturating_add(metadata.mtime_nsec() as i128);
+
+        // Length-prefix the path so concatenated records are unambiguous.
+        let bytes = path.as_bytes();
+        hasher.update((bytes.len() as u64).to_le_bytes());
+        hasher.update(bytes);
+        hasher.update(mtime_ns.to_le_bytes());
+        hasher.update(metadata.size().to_le_bytes());
+    }
+
+    format!("{:x}", hasher.finalize())
 }
