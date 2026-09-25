@@ -11,12 +11,12 @@ description: |
     tools in a user-friendly graphical interface.
 homepage   : https://git.linux.toys/psygreg/linuxtoys
 component  : system.desktop
+networking : true
 
 # Build dependencies required
 builddeps  :
     - desktop-file-utils
     - rust
-    - cargo
 
 # Runtime dependencies
 rundeps    :
@@ -33,10 +33,10 @@ rundeps    :
     - util-linux
 
 setup      : |
-    true
+    %cargo_fetch
 
 build      : |
-    cargo build --release --locked
+    %cargo_build --locked
     test -f target/release/lib_catalog_rs.so
 
 install    : |
