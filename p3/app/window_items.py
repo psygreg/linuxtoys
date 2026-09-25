@@ -2,7 +2,7 @@ import os
 
 from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, load_scaled_pixbuf
 from gi.repository import Pango
-from . import get_icon_path, compat, revert_helper
+from . import get_icon_path, compat, revert_helper, official_index
 from .gtk_dialogs import run_message_dialog
 
 
@@ -305,6 +305,30 @@ class ItemWidgetFactory:
 
         self._item_fade_timer_id = GLib.timeout_add(20, tick)
 
+    @staticmethod
+    def _uses_linuxtoys_verified_badge(item_info):
+        """Return whether this entry is first-party verified by LinuxToys."""
+        if item_info.get("is_official", False):
+            return True
+
+        path = str(item_info.get("path", "") or "").strip()
+        if item_info.get("is_script", False) and path and not path.startswith("repo://"):
+            return official_index.is_verified_script(path)
+
+        # Compatibility fallback for older cached/repository entries that predate
+        # is_official. Repository-list entries use their name as the official-index
+        # identity; AppStream's own is_verified flag remains a separate concept.
+        values = [item_info.get("id"), item_info.get("script")]
+        if item_info.get("is_repo_entry", False):
+            values.append(item_info.get("name"))
+        for value in values:
+            if not value:
+                continue
+            candidate = os.path.splitext(os.path.basename(str(value).strip()))[0]
+            if official_index.is_verified_name(candidate):
+                return True
+        return False
+
     def create_item_widget(
         self,
         item_info,
@@ -463,6 +487,8 @@ class ItemWidgetFactory:
 
         if badge_excluded:
             pass
+        elif self._uses_linuxtoys_verified_badge(item_info):
+            badge_path = get_icon_path("ltverified.svg")
         elif verified:
             badge_path = get_icon_path("verified.svg")
         elif item_info.get("is_appstream_entry", False):
@@ -706,7 +732,9 @@ class ItemWidgetFactory:
         }
         badge_path = ""
         if not badge_excluded:
-            if item_info.get("is_verified", False):
+            if self._uses_linuxtoys_verified_badge(item_info):
+                badge_path = get_icon_path("ltverified.svg")
+            elif item_info.get("is_verified", False):
                 badge_path = get_icon_path("verified.svg")
             elif item_info.get("is_appstream_entry", False):
                 distro_badge = str(item_info.get("native_distro_badge", "") or "")

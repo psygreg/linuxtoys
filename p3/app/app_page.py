@@ -1544,7 +1544,9 @@ class AppPageView(Gtk.Box):
         row.pack_start(label, False, False, 0)
 
         badge_path = ""
-        if self.script_info.get("is_verified", False):
+        if self.script_info.get("is_official", False):
+            badge_path = get_icon_path("ltverified.svg")
+        elif self.script_info.get("is_verified", False):
             badge_path = get_icon_path("verified.svg")
         elif self.script_info.get("is_appstream_entry", False):
             distro_badge = str(self.script_info.get("native_distro_badge", "") or "")

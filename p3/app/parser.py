@@ -358,9 +358,11 @@ def _parse_metadata_file(file_path, default_values, translations=None):
 
     if file_path.endswith(".sh"):
         metadata["is_new"] = new_index.is_new_script(file_path)
-        metadata["is_verified"] = official_index.is_verified_script(file_path)
+        metadata["is_official"] = official_index.is_verified_script(file_path)
+        metadata["is_verified"] = metadata["is_official"]
     else:
         metadata["is_new"] = False
+        metadata["is_official"] = False
         metadata["is_verified"] = False
 
     return metadata
@@ -442,6 +444,7 @@ def get_categories(translations=None):
             'description': header.get('description', ''),
             'is_script': True,
             'is_new': header.get('is_new', False),
+            'is_official': header.get('is_official', False),
             'is_verified': header.get('is_verified', False)
         }
         if header.get("_name_is_translated"):

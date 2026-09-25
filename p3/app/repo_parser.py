@@ -1878,6 +1878,11 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
             # Virtual identity, NOT an actual shell script.
             "path": f"repo://{entry['name']}",
 
+            "is_official": official_index.is_verified_name(
+                entry["name"]
+            ),
+            # Retain the legacy field for callers that still use it as a generic
+            # verified/support marker. UI badge selection uses is_official first.
             "is_verified": official_index.is_verified_name(
                 entry["name"]
             ),
