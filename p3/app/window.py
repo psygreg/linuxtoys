@@ -686,16 +686,25 @@ class AppWindow(
         self.script_cache = search_helper.ScriptCache()
         self.category_cache = search_helper.CategoryCache()
         self.search_engine.set_cache(self.script_cache)
-        self.all_scripts = []
 
+        # Keep the currently published Featured/category GTK snapshot alive while
+        # the replacement parser generation is built. Clearing all_scripts here
+        # turns a background catalog handoff into visible Featured churn and can
+        # make resize/timer callbacks rebuild against an empty intermediate state.
+        #
         # Never synchronously call load_categories()/load_scripts() here. The new
         # CategoryCache is intentionally empty at this point, and load_categories()
         # would therefore invoke parser.get_categories() on the GTK main thread.
-        self._populate_runtime_caches()
+        self._populate_runtime_caches(catalog_refresh=True)
         return False
 
-    def _populate_runtime_caches(self):
-        """Build parser caches while progressively publishing startup-ready data."""
+    def _populate_runtime_caches(self, *, catalog_refresh=False):
+        """Build parser caches while progressively publishing startup-ready data.
+
+        catalog_refresh=True means a complete GTK snapshot is already on screen.
+        In that case only swap the backing parser/search/Featured data; do not
+        rebuild the top-level category widgets as an intermediate publication.
+        """
 
         category_cache = self.category_cache
         script_cache = self.script_cache
@@ -755,16 +764,23 @@ class AppWindow(
             if self.category_cache is not category_cache:
                 return False
 
-            self._render_categories(categories)
-            self._hide_categories_loading_indicator()
-            self.all_scripts = featured
-            self._invalidate_featured_eligibility_cache()
-            if (
-                self.should_start_random_timer
-                and featured
-                and self._categories_startup_transition_complete
-            ):
-                self._deferred_start_random_scripts_refresh_timer()
+            if not catalog_refresh:
+                self._render_categories(categories)
+                self._hide_categories_loading_indicator()
+                self.all_scripts = featured
+                self._invalidate_featured_eligibility_cache()
+                if (
+                    self.should_start_random_timer
+                    and featured
+                    and self._categories_startup_transition_complete
+                ):
+                    self._deferred_start_random_scripts_refresh_timer()
+            # During a background AppStream refresh the top-level category UI and
+            # existing Featured cards remain valid while the complete replacement
+            # pool is assembled below. Rebuilding the FlowBox here was the main
+            # post-refresh GTK burst: remove every category widget, recreate it,
+            # renegotiate layout and regenerate watermarks despite the structural
+            # category tree being unchanged.
             return False
 
         def top_level_ready(categories, scripts_by_category):
@@ -1185,6 +1201,12 @@ class AppWindow(
         return False
 
     def _refresh_installed_features_view(self):
+        # Hidden Installed Features views can be expensive to rebuild and GTK will
+        # still perform their widget work even though the user cannot see it.
+        # A catalog publication only needs an immediate refresh when this view is
+        # actually visible; opening it later constructs/refreshes current data.
+        if self.main_stack.get_visible_child_name() != "installed_features":
+            return False
         view = self.main_stack.get_child_by_name("installed_features")
         if view is not None and hasattr(view, "refresh"):
             view.refresh()
