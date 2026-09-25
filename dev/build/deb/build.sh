@@ -44,9 +44,9 @@ mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/.cargo
     cd "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"
     cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
 )
-# Clean up Python cache files to avoid warnings
-find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" -name "*.pyc" -delete 2>/dev/null || true
+# Clean up Python cache files from the entire staged source tree
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type d -name "__pycache__" -prune -exec rm -rf {} +
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
 # Copy desktop file and icon
 cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps/"
@@ -77,8 +77,8 @@ tar -C "$OUTPUT_PATH" -cJf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig.tar.xz" "lin
 # Create debian package structure
 mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
 
-# Copy the orig structure into the debian build directory
-cp -rf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/* "$OUTPUT_PATH/linuxtoys-$LT_VERSION/"
+# Copy the complete orig structure into the debian build directory, including dotfiles such as .cargo
+cp -a "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/." "$OUTPUT_PATH/linuxtoys-$LT_VERSION/"
 
 # Copy debian packaging files from existing structure (assuming they exist)
 mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source"
@@ -101,7 +101,9 @@ Homepage: https://git.linux.toys/psygreg/linuxtoys
 
 Package: linuxtoys
 Architecture: amd64
-Depends: bash,
+Depends: ${shlibs:Depends},
+ ${misc:Depends},
+ bash,
  git,
  curl,
  wget,

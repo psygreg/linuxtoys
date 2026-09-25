@@ -92,38 +92,19 @@ ossuse() {
 }
 
 osarch() {
-    _pkg_dir="/tmp/linuxtoys/"
-    if pacman -Qi linuxtoys-bin &>/dev/null; then
-        sudo pacman -R --noconfirm linuxtoys-bin || error "Failed to remove existing linuxtoys-bin package."
-    fi
-    { pacman -Qi debugedit &>/dev/null || sudo pacman -S --noconfirm debugedit; } ||
-        error "Failed to install makepkg dependency debugedit"
-    { pacman -Qi fakeroot &>/dev/null || sudo pacman -S --noconfirm fakeroot; } ||
-        error "Failed to install makepkg dependency fakeroot"
-    if [ "$ID" = "cachyos" ]; then
-        mapfile -t missing_deps < <(
-            pacman -T \
-                bash git curl wget zenity appstream archlinux-appstream-data \
-                python python-gobject python-requests gtk3 vte3 sudo util-linux
-                )
-        if ((${#missing_deps[@]})); then
-            sudo pacman -S --noconfirm --asdeps "${missing_deps[@]}" || error "Failed to install LinuxToys dependencies."
-        fi
-    fi
-    rm -rf "${_pkg_dir}" # fix file permanence on /tmp on some arch distros
-    mkdir -p "${_pkg_dir}"
+    [ -n "${_pkg:-}" ] || error "No Arch Linux package was found in the latest LinuxToys release."
+    [ -n "${_pkg_name:-}" ] || error "Could not determine the LinuxToys Arch package filename."
 
-    if curl -fsSL "${_pkg}" -o "${_pkg_dir}${_pkg_name}"; then
-        cd "${_pkg_dir}" || error "Failed to enter build directory."
-        { [ "$ID" = "cachyos" ] && _makepkg_args=(-f); } || _makepkg_args=(-s -f)
-        if makepkg "${_makepkg_args[@]}"; then
-			if sudo pacman -U --noconfirm "${_pkg_dir}linuxtoys-${_tag_name}-1-$(uname -m).pkg.tar.zst"; then
-                info "LinuxToys installed or updated!"
-            else
-                error "Installation failed (pacman)."
-            fi
+    if pacman -Qi linuxtoys-bin &>/dev/null; then
+        sudo pacman -R --noconfirm linuxtoys-bin ||
+            error "Failed to remove existing linuxtoys-bin package."
+    fi
+
+    if curl -fL --retry 3 "${_pkg}" -o "/tmp/${_pkg_name}"; then
+        if sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
+            info "LinuxToys installed or updated!"
         else
-            error "Build failed (makepkg)."
+            error "Installation failed (pacman)."
         fi
     else
         error "Failed to download: ${_pkg_name}"
@@ -252,10 +233,8 @@ installer() {
 	_deb=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.deb')
 	_deb_name=$(basename "${_deb}")
 
-	_pkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?/PKGBUILD')
-	# _pkg_tarball=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.tar.xz')
+	_pkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?/linuxtoys-[^"/]+-[0-9]+-x86_64\.pkg\.tar\.zst' | head -n1)
 	_pkg_name=$(basename "${_pkg}")
-	# _pkg_tarball_name=$(basename "${_pkg_tarball}")
 
 	_eopkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.eopkg')
 	_eopkg_name=$(basename "${_eopkg}")

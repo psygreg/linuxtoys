@@ -302,7 +302,7 @@ fn validate_static_entry(entry: &serde_json::Map<String, Value>, compat: &[Strin
                 let typ=m.get("type").and_then(Value::as_str);
                 let setting=m.get("setting").and_then(Value::as_str).map(str::trim);
                 let target=m.get("target").and_then(Value::as_str).map(str::trim);
-                if !matches!(scope,Some("user"|"system")) || !matches!(typ,Some("fs"|"name"|"dbus"|"share"|"env"|"runtime"|"device"|"socket"|"filesystem"|"talk-name"|"talk-dbus")) || setting.is_none_or(str::is_empty) || target.is_none_or(str::is_empty) { return None; }
+                if !matches!(scope,Some("user"|"system")) || !matches!(typ,Some("fs"|"name"|"dbus"|"share"|"env"|"runtime"|"device"|"socket"|"filesystem"|"talk-name"|"talk-dbus")) || setting.map_or(true, str::is_empty) || target.map_or(true, str::is_empty) { return None; }
             }
         }
     }

@@ -49,7 +49,8 @@ year=$(date +%Y)
 specfile_line="Version:        ${LT_VERSION}"
 specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${LT_VERSION}"
 sed -i "s/^Version:.*/$specfile_line/" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
-sed -i "0,/^\\* .*Victor Gregory <psygreg@pm.me> - /s//$specfile_line2/" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
+sed -i "0,/^\\* .*Victor Gregory <psygreg@pm.me> - .*/s//$specfile_line2/" \
+    "${ROOT_DIR}/dev/build/copr/linuxtoys.spec"
 # build
 # rm -r $HOME/rpmbuild # ensure there's no leftover build artifacts previous to building
 # cp -r rpmbuild $HOME # only works with this setup on Silverblue, which is what I use
