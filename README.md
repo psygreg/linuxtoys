@@ -137,7 +137,7 @@ git clone --depth=1 https://github.com/psygreg/linuxtoys.git
 cd linuxtoys
 ```
 
-**Build rust library for development**
+#### Build rust library for development
 Start by setting up a python virtual environment for maturin, from the repository root:
 ```bash
 python3 -m venv --system-site-packages .venv
