@@ -1,5 +1,8 @@
 .cache
 solbuild
+.venv
+/target/
+_catalog_rs.abi3.so
 
 # AGENTS.md (OpenCode-specific)
 AGENTS.md

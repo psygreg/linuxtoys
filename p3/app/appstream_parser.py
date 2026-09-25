@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import os
+import json
 import pickle
-import re
 import threading
 
 from . import appstream_cache, repo_parser
+from . import _catalog_rs as _catalog_rs
 from .compat import get_system_compat_keys
 from .lang_utils import detect_system_language
 
@@ -18,8 +19,9 @@ _RUNTIME_CACHE = {}
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 10
+RUNTIME_CACHE_SCHEMA = 16
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries.pickle"
+PERSISTENT_CACHE_SCHEMA = 3
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
 # only; it lets the AppStream refresh worker prewarm a newly published catalog
@@ -421,6 +423,48 @@ def clear_runtime_cache():
         _RUNTIME_CACHE.clear()
 
 
+def _load_persistent_runtime_cache(cache_key):
+    """Load the disposable Python-ready catalog from the local pickle cache."""
+    try:
+        with open(RUNTIME_CACHE_PATH, "rb") as cache_file:
+            payload = pickle.load(cache_file)
+    except (OSError, pickle.PickleError, EOFError, AttributeError, ValueError, TypeError):
+        return None
+
+    if not isinstance(payload, dict):
+        return None
+    if payload.get("schema") != PERSISTENT_CACHE_SCHEMA:
+        return None
+    if payload.get("key") != cache_key:
+        return None
+
+    entries = payload.get("entries")
+    if not isinstance(entries, list) or not all(isinstance(entry, dict) for entry in entries):
+        return None
+    return entries
+
+
+def _store_persistent_runtime_cache(cache_key, entries):
+    """Atomically persist the already-materialized Python catalog as pickle."""
+    target = RUNTIME_CACHE_PATH
+    tmp = target.with_suffix(target.suffix + ".tmp")
+    payload = {
+        "schema": PERSISTENT_CACHE_SCHEMA,
+        "key": cache_key,
+        "entries": entries,
+    }
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with open(tmp, "wb") as cache_file:
+            pickle.dump(payload, cache_file, protocol=pickle.HIGHEST_PROTOCOL)
+        os.replace(tmp, target)
+    except (OSError, pickle.PickleError, TypeError, ValueError):
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+
+
 def _flatten_package_names(value):
     result = []
     if isinstance(value, str):
@@ -461,102 +505,12 @@ def _curated_identity_sets(curated_entries):
     return ids, packages, names
 
 
-def _category_path_lookup(category_paths):
-    """Build exact-relative-path and basename lookups from parser's tree index."""
-    exact = set()
-    by_name = {}
-
-    for raw_path in category_paths or ():
-        path = str(raw_path or "").strip().replace(os.sep, "/").strip("/")
-        if not path or path == "lists":
-            continue
-        exact.add(path)
-        by_name.setdefault(path.rsplit("/", 1)[-1], []).append(path)
-
-    # Prefer the shallowest match when the same directory basename exists in
-    # multiple branches, then use lexical order for deterministic resolution.
-    for matches in by_name.values():
-        matches.sort(key=lambda path: (path.count("/"), path))
-
-    return exact, by_name
 
 
-def _first_existing_category(candidates, exact, by_name):
-    """Return the first LinuxToys category candidate present in the indexed tree."""
-    for candidate in candidates:
-        candidate = str(candidate).replace(os.sep, "/").strip("/")
-        if candidate in exact:
-            return candidate
-        matches = by_name.get(candidate)
-        if matches:
-            return matches[0]
-    return None
 
 
-def _resolve_category(appstream_categories, category_paths):
-    """Resolve AppStream's tag set into one semantic LinuxToys category.
-
-    AppStream categories are non-hierarchical tags.  Match curated Main+Additional
-    expressions first, then a small set of safe standalone purpose tags, and
-    finally broad Main-category fallbacks.
-    """
-    categories = set(appstream_categories or ())
-    exact, by_name = _category_path_lookup(category_paths)
-
-    # Emulation is authoritative regardless of the component's Main category.
-    if "Emulator" in categories:
-        resolved = _first_existing_category(("emu",), exact, by_name)
-        if resolved:
-            return resolved
-
-    # Contextual expressions prevent a capability tag from becoming a global
-    # classification rule. For example, Graphics+3DGraphics is creative work,
-    # while Engineering+3DGraphics is classified as engineering/CAD.
-    for required, candidates in CATEGORY_EXPRESSION_RULES:
-        if set(required).issubset(categories):
-            resolved = _first_existing_category(candidates, exact, by_name)
-            if resolved:
-                return resolved
-
-    # Some real-world metadata omits the expected Main category. Keep only a
-    # conservative set of purpose-like Additional categories as a recovery path.
-    for appstream_category in STANDALONE_PURPOSE_PRIORITY:
-        if appstream_category not in categories:
-            continue
-        resolved = _first_existing_category(
-            ADDITIONAL_CATEGORY_CANDIDATES[appstream_category], exact, by_name
-        )
-        if resolved:
-            return resolved
-
-    # Broad Main categories are the authoritative fallback.
-    for appstream_category in MAIN_CATEGORY_PRIORITY:
-        if appstream_category not in categories:
-            continue
-        resolved = _first_existing_category(
-            MAIN_CATEGORY_CANDIDATES[appstream_category], exact, by_name
-        )
-        if resolved:
-            return resolved
-
-    return None
 
 
-def _is_curated(component, curated_ids, curated_packages, curated_names):
-    component_id = str(component.get("id", "") or "").casefold()
-    if component_id and component_id in curated_ids:
-        return True
-
-    packages = {
-        str(package).casefold()
-        for package in component.get("packages", ())
-        if package
-    }
-    if packages & curated_packages:
-        return True
-
-    name = str(component.get("name", "") or "").strip().casefold()
-    return bool(name and name in curated_names)
 
 
 
@@ -585,82 +539,22 @@ def _host_os_keys():
     return values
 
 
-def _is_verified_flatpak(component):
-    return (
-        str(component.get("source", "native") or "native") == "flatpak"
-        and bool(component.get("verified", False))
-    )
 
 
-def _host_prefers_native_appstream():
-    """Arch Linux, CachyOS, Fedora and Solus prefer native packages over ordinary Flathub."""
-    compat_keys = get_system_compat_keys()
-    return bool({"arch", "cachy", "solus", "fedora"} & compat_keys)
 
 
-def _is_steamos_host():
-    """SteamOS cannot install native AppStream packages through LinuxToys."""
-    return "steamos" in get_system_compat_keys()
 
 
-def _is_native_preferred_development_component(component, category_paths):
-    """Return whether LinuxToys resolves this component into devs or its IDE child."""
-    category = _resolve_category(component.get("categories", ()), category_paths)
-    return bool(category and category.rsplit("/", 1)[-1] in {"devs", "ides"})
 
 
-def _group_prefers_native_development(group, category_paths):
-    """Development/IDE entries prefer native packages everywhere except SteamOS."""
-    return not _is_steamos_host() and any(
-        _is_native_preferred_development_component(component, category_paths)
-        for component in group
-    )
 
 
-def _inherit_flatpak_popularity(natives, flatpaks):
-    """Copy a discarded Flatpak's persistent popularity metric onto native duplicates."""
-    donor = next(
-        (
-            item for item in flatpaks
-            if item.get("popularity_metric") is not None
-        ),
-        None,
-    )
-    if donor is None:
-        return
-
-    for native in natives:
-        native["popularity_metric"] = donor.get("popularity_metric")
-        native["popularity_downloads"] = donor.get("popularity_downloads")
 
 
-def _resolve_source_preference(component):
-    apps = APPSTREAM_SOURCE_PREFERENCE.get("apps", {})
-    component_id = str(component.get("id", "") or "")
-    name = str(component.get("name", "") or "")
-    value = apps.get(component_id, apps.get(name, APPSTREAM_SOURCE_PREFERENCE.get("default", "flatpak")))
-    if isinstance(value, dict):
-        os_keys = _host_os_keys()
-        for key, choice in value.items():
-            if key != "all" and key.casefold() in os_keys:
-                return choice
-        value = value.get("all", APPSTREAM_SOURCE_PREFERENCE.get("default", "flatpak"))
-    return value if value in {"native", "flatpak"} else "flatpak"
 
 
-def _component_match_keys(component):
-    component_id = str(component.get("id", "") or "").strip().casefold()
-    if component_id.endswith(".desktop"):
-        component_id = component_id[:-8]
-    name = str(component.get("name", "") or "").strip().casefold()
-    return component_id, name
 
 
-def _normalized_component_id(component):
-    component_id = str(component.get("id", "") or "").strip().casefold()
-    if component_id.endswith(".desktop"):
-        component_id = component_id[:-8]
-    return component_id
 
 
 def _appstream_omit_keys():
@@ -674,22 +568,6 @@ def _appstream_omit_keys():
     return result
 
 
-def _is_omitted_component(component, omit_keys=None):
-    """Return whether a raw AppStream component is developer-blocked."""
-    omit_keys = _appstream_omit_keys() if omit_keys is None else omit_keys
-    if not omit_keys:
-        return False
-
-    if _normalized_component_id(component) in omit_keys:
-        return True
-
-    for package in _flatten_package_names(component.get("packages")):
-        key = str(package or "").strip().casefold()
-        if key.endswith(".desktop"):
-            key = key[:-8]
-        if key in omit_keys:
-            return True
-    return False
 
 
 def _system_flatpak_lock_ids():
@@ -703,222 +581,13 @@ def _system_flatpak_lock_ids():
     return result
 
 
-def _locked_system_flatpak(group):
-    """Return the forced system Flathub candidate for this group, when available."""
-    locked_ids = _system_flatpak_lock_ids()
-    if not locked_ids:
-        return None
-    candidates = [
-        item for item in group
-        if item.get("source") == "flatpak"
-        and str(item.get("flatpak_scope", "") or "") == "system"
-        and _normalized_component_id(item) in locked_ids
-    ]
-    if not candidates:
-        return None
-    # Prefer Flatpak's default system installation over additional named ones.
-    candidates.sort(
-        key=lambda item: (
-            str(item.get("flatpak_installation", "") or "") != "default",
-            str(item.get("flatpak_installation", "") or ""),
-        )
-    )
-    selected = dict(candidates[0])
-    selected.pop("_source_alternatives", None)
-    selected.pop("_source_recommended", None)
-    return selected
 
 
-def _source_option_key(item):
-    """Return a stable key that distinguishes Flatpak installation scopes."""
-    source = str(item.get("source", "native") or "native")
-    if source != "flatpak":
-        return source
-    scope = str(item.get("flatpak_scope", "") or "")
-    installation = str(item.get("flatpak_installation", "") or "")
-    return f"flatpak:{scope}:{installation}"
 
 
-def _expand_source_group(group):
-    """Restore source alternatives nested by an earlier duplicate-collapse pass."""
-    expanded = []
-    seen = set()
-    for item in group:
-        candidates = [item]
-        candidates.extend(
-            alternate for alternate in item.get("_source_alternatives", ())
-            if isinstance(alternate, dict)
-        )
-        for candidate in candidates:
-            key = _source_option_key(candidate)
-            if key in seen:
-                continue
-            seen.add(key)
-            # Nested alternatives belong to the collapsed parent, not the option
-            # itself. Rebuild them from the complete group below.
-            candidate = dict(candidate)
-            candidate.pop("_source_alternatives", None)
-            candidate.pop("_source_recommended", None)
-            expanded.append(candidate)
-    return expanded
 
 
-def _with_source_options(selected, group):
-    """Preserve useful native and Flatpak-scope installation alternatives."""
-    flatpaks = [item for item in group if item.get("source") == "flatpak"]
-    natives = [item for item in group if item.get("source", "native") == "native"]
-    selected_key = _source_option_key(selected)
 
-    # Multiple configured Flathub scopes are independently useful even for
-    # verified apps. Native remains hidden for verified Flathub applications.
-    selected_verified_flatpak = _is_verified_flatpak(selected)
-    candidates = list(flatpaks)
-    if not selected_verified_flatpak:
-        candidates = natives + candidates
-
-    # A selector is useful for either native-vs-Flatpak choice or Flatpak scope.
-    unique = []
-    seen = set()
-    for item in candidates:
-        key = _source_option_key(item)
-        if key in seen:
-            continue
-        seen.add(key)
-        unique.append(item)
-    if len(unique) < 2:
-        return selected
-
-    result = dict(selected)
-    alternatives = [dict(item) for item in unique if _source_option_key(item) != selected_key]
-    if alternatives:
-        result["_source_alternatives"] = alternatives
-        result["_source_recommended"] = selected_key
-    return result
-
-def _prefer_sources(components, category_paths):
-    """Collapse native/Flatpak duplicates according to the developer filter."""
-    groups = {}
-    passthrough = []
-    for component in components:
-        if not isinstance(component, dict):
-            continue
-        cid, name = _component_match_keys(component)
-        key = ("id", cid) if cid else (("name", name) if name else None)
-        if key is None:
-            passthrough.append(component)
-            continue
-        groups.setdefault(key, []).append(component)
-
-    result = list(passthrough)
-    # First merge exact IDs. A second conservative name pass catches native IDs
-    # that use a desktop-file identifier different from the Flatpak app ID.
-    for group in groups.values():
-        locked = _locked_system_flatpak(group)
-        if locked is not None:
-            result.append(locked)
-            continue
-
-        # The same Flatpak remote can exist at user and system scope. Present one
-        # app, preferring user scope because pkg_flat follows the same policy.
-        flatpaks = [item for item in group if item.get("source") == "flatpak"]
-        natives = [item for item in group if item.get("source", "native") == "native"]
-        if flatpaks:
-            # User Flathub is the default Flatpak installation when available, but
-            # retain system installations so the app page can expose scope choice.
-            flatpaks.sort(key=lambda item: (item.get("flatpak_scope") != "user", item.get("flatpak_installation", "")))
-        group = natives + flatpaks
-        if not natives and len(flatpaks) > 1:
-            result.append(_with_source_options(flatpaks[0], group))
-            continue
-        sources = {str(item.get("source", "native")) for item in group}
-        if len(sources) < 2:
-            result.extend(group)
-            continue
-        verified_flatpaks = [item for item in flatpaks if _is_verified_flatpak(item)]
-
-        # Development tools and IDEs prefer the distro package even when the
-        # matching Flathub build is verified. Preserve Flathub's popularity metric
-        # on the native entry so browse ranking can still use real usage data.
-        if natives and _group_prefers_native_development(group, category_paths):
-            _inherit_flatpak_popularity(natives, flatpaks)
-            result.extend(_with_source_options(item, group) for item in natives)
-            continue
-
-        if verified_flatpaks:
-            # Publisher verification normally outranks distro-specific preference.
-            result.append(_with_source_options(verified_flatpaks[0], group))
-            continue
-
-        if _host_prefers_native_appstream() and natives:
-            result.extend(_with_source_options(item, group) for item in natives)
-            continue
-
-        preferred = _resolve_source_preference(group[0])
-        chosen = [item for item in group if item.get("source", "native") == preferred]
-        selected = chosen or group
-        if selected and selected[0].get("source") == "flatpak":
-            selected = selected[:1]
-        result.extend(_with_source_options(item, group) for item in selected)
-
-    by_name = {}
-    unnamed = []
-    for component in result:
-        name = str(component.get("name", "") or "").strip().casefold()
-        if name:
-            by_name.setdefault(name, []).append(component)
-        else:
-            unnamed.append(component)
-    final = list(unnamed)
-    for group in by_name.values():
-        # Exact-ID collapsing may already have nested the other Flatpak scope in
-        # _source_alternatives. Expand it again before the conservative name pass
-        # so combining that Flatpak entry with a differently-IDed native package
-        # does not silently discard the system/user scope alternative.
-        group = _expand_source_group(group)
-        locked = _locked_system_flatpak(group)
-        if locked is not None:
-            final.append(locked)
-            continue
-
-        flatpaks = [item for item in group if item.get("source") == "flatpak"]
-        natives = [item for item in group if item.get("source", "native") == "native"]
-        flatpaks.sort(key=lambda item: (item.get("flatpak_scope") != "user", item.get("flatpak_installation", "")))
-
-        # Scope alternatives are still meaningful when every candidate is Flatpak.
-        # Handle that before the source-kind early exit, otherwise expanding a
-        # previously collapsed user/system pair turns it back into two independent
-        # app entries and loses the selector.
-        if not natives and len(flatpaks) > 1:
-            final.append(_with_source_options(flatpaks[0], flatpaks))
-            continue
-
-        sources = {str(item.get("source", "native")) for item in group}
-        if len(sources) < 2:
-            final.extend(group)
-            continue
-
-        verified_flatpaks = [item for item in flatpaks if _is_verified_flatpak(item)]
-
-        if natives and _group_prefers_native_development(group, category_paths):
-            _inherit_flatpak_popularity(natives, flatpaks)
-            final.extend(_with_source_options(item, group) for item in natives)
-            continue
-
-        if verified_flatpaks:
-            final.append(_with_source_options(verified_flatpaks[0], group))
-            continue
-
-        if _host_prefers_native_appstream() and natives:
-            final.extend(_with_source_options(item, group) for item in natives)
-            continue
-
-        preferred = _resolve_source_preference(group[0])
-        chosen = [item for item in group if item.get("source", "native") == preferred]
-        selected = chosen or group
-        if selected and selected[0].get("source") == "flatpak":
-            selected = selected[:1]
-        final.extend(_with_source_options(item, group) for item in selected)
-    return final
 
 
 
@@ -942,292 +611,6 @@ def _native_distro_badge():
         if key in compat_keys:
             return f"distros/{filename}"
     return ""
-
-
-def _locale_candidates(lang_code):
-    """Return AppStream locale keys in LinuxToys preference order."""
-    code = str(lang_code or "en").strip().replace("_", "-")
-    if not code:
-        code = "en"
-    language = code.split("-", 1)[0].lower()
-    candidates = []
-    for value in (code, code.replace("-", "_"), language):
-        if value and value not in candidates:
-            candidates.append(value)
-    return candidates
-
-
-def _has_localized_value(component, field, lang_code):
-    """Return whether a field genuinely has content for the active language."""
-    language = str(lang_code or "en").strip().replace("_", "-").split("-", 1)[0].lower()
-    if language == "en":
-        return bool(component.get("summary", ""))
-
-    values = component.get(field)
-    if not isinstance(values, dict):
-        return False
-    normalized = {
-        str(key).replace("_", "-").casefold(): value
-        for key, value in values.items()
-        if value
-    }
-    return any(
-        bool(normalized.get(candidate.replace("_", "-").casefold()))
-        for candidate in _locale_candidates(lang_code)
-    )
-
-
-def _localized_value(component, field, lang_code, fallback):
-    values = component.get(field)
-    if not isinstance(values, dict):
-        return fallback
-    normalized = {
-        str(key).replace("_", "-").casefold(): value
-        for key, value in values.items()
-        if value
-    }
-    for candidate in _locale_candidates(lang_code):
-        value = normalized.get(candidate.replace("_", "-").casefold())
-        if value:
-            return value
-    return values.get("", fallback) or fallback
-
-
-def _localized_value_with_locale(component, field, lang_code, fallback):
-    """Return a localized value together with the AppStream locale that supplied it."""
-    values = component.get(field)
-    if not isinstance(values, dict):
-        return fallback, ""
-
-    normalized = {
-        str(key).replace("_", "-").casefold(): (value, str(key))
-        for key, value in values.items()
-        if value
-    }
-    for candidate in _locale_candidates(lang_code):
-        match = normalized.get(candidate.replace("_", "-").casefold())
-        if match:
-            return match[0], match[1]
-
-    # AppStream's unqualified/default strings are the source-language fallback.
-    # In normal AppStream metadata this is English; retaining "en" here lets the
-    # app page offer translation when the requested locale had no translation.
-    default = values.get("")
-    if default:
-        return default, "en"
-    return fallback, ""
-
-def _to_repo_entry(component, category, lang_code):
-    component_id = str(component["id"])
-    packages = [str(package) for package in component.get("packages", ()) if package]
-    name = _localized_value(component, "localized_names", lang_code, component.get("name", ""))
-    summary = _localized_value(component, "localized_summaries", lang_code, component.get("summary", ""))
-    developer = _localized_value(component, "localized_developers", lang_code, component.get("developer", ""))
-    long_description_blocks, long_description_locale = _localized_value_with_locale(
-        component, "localized_descriptions", lang_code, component.get("description_blocks") or []
-    )
-    # Keep a plain fallback for older app-page consumers and page-presence checks.
-    long_description = "\n\n".join(
-        " ".join(span.get("text", "") for span in block.get("spans", ())).strip()
-        if block.get("type") == "paragraph"
-        else "\n".join(
-            " ".join(span.get("text", "") for span in item).strip()
-            for item in block.get("items", ())
-        )
-        for block in long_description_blocks
-    ).strip()
-    # AppStream cache schema 15 stores each logical screenshot as a mapping
-    # containing its available image variants.  Preserve that structure for the
-    # app page instead of stringifying the mapping (which turns it into an
-    # unusable path such as "{\'images\': [...]}" ).  Legacy string screenshots
-    # remain supported for curated/older entries.
-    screenshots = []
-    for screenshot in component.get("screenshots", ()):
-        if isinstance(screenshot, dict):
-            variants = []
-            for image in screenshot.get("images") or ():
-                if not isinstance(image, dict):
-                    continue
-                url = str(image.get("url", "") or "").strip()
-                if not url:
-                    continue
-                try:
-                    width = max(0, int(image.get("width", 0) or 0))
-                    height = max(0, int(image.get("height", 0) or 0))
-                except (TypeError, ValueError):
-                    width = height = 0
-                variants.append({"url": url, "width": width, "height": height})
-            if variants:
-                screenshots.append({"images": variants})
-        else:
-            path = str(screenshot or "").strip()
-            if path:
-                screenshots.append(path)
-    origin = str(component.get("origin", "") or "").strip()
-    source = str(component.get("source", "native") or "native")
-    is_flatpak = source == "flatpak"
-
-    entry = {
-        "id": component_id,
-        "name": str(name),
-        # Keep the catalog's canonical/default display name available for stable
-        # pretty-name URI resolution even when LinuxToys is using a translation.
-        "appstream_canonical_name": str(component.get("name", "") or name),
-        "description": str(summary or ""),
-        "description_tag": "",
-        "description_localized": _has_localized_value(
-            component, "localized_summaries", lang_code
-        ),
-        "long_description": long_description,
-        "long_description_blocks": long_description_blocks,
-        "long_description_locale": long_description_locale,
-        "long_description_tag": "",
-        "long_description_format": "appstream",
-        "screenshots": screenshots,
-        "homepage_url": str(component.get("homepage", "") or ""),
-        "donate": str(component.get("donation", "") or ""),
-        "donate_url": str(component.get("donation", "") or ""),
-        "license": str(component.get("license", "") or ""),
-        "developer": str(developer or ""),
-        "icon": str(component.get("icon", "") or "application-x-executable"),
-        "category": category,
-        "type": "flathub" if is_flatpak else "native",
-        "package-name": packages[0] if is_flatpak and packages else component_id if is_flatpak else packages,
-        "repo": origin or "appstream",
-        "revert": "yes",
-        "reboot": "no",
-        "is_script": True,
-        "is_subcategory": False,
-        "is_repo_entry": True,
-        "is_appstream_entry": True,
-        "appstream_id": component_id,
-        "appstream_launchable": str(component.get("launchable", "") or ""),
-        "appstream_source": source,
-        "appstream_origin": origin,
-        "flatpak_remote": str(component.get("flatpak_remote", "") or ""),
-        "flatpak_scope": str(component.get("flatpak_scope", "") or ""),
-        "flatpak_installation": str(component.get("flatpak_installation", "") or ""),
-        # Generic repo materialization maps this existing override to
-        # pkg_flat --skip-user, forcing the system Flatpak installation.
-        "overrides": ({"skip-user": True} if is_flatpak and str(component.get("flatpak_scope", "") or "") == "system" else {}),
-        # Native entries may inherit this from a discarded Flatpak duplicate.
-        "popularity_metric": component.get("popularity_metric"),
-        "review_rating": component.get("review_rating"),
-        "review_count": component.get("review_count"),
-        "appstream_version": str(component.get("version", "") or ""),
-        "repo_app_id": component_id,
-        "is_new": False,
-        # For AppStream entries this is specifically the publisher-verification
-        # status supplied by Flathub. Native AppStream entries remain unverified.
-        "is_verified": bool(is_flatpak and component.get("verified", False)),
-        "native_distro_badge": "" if is_flatpak else _native_distro_badge(),
-        "appstream_badge": "distros/flathub.webp" if is_flatpak else "",
-        "has_app_page": bool(long_description or screenshots),
-        "path": f"appstream://{source}/{component_id}",
-    }
-
-    overlay = component.get("_linuxtoys_overlay")
-    if isinstance(overlay, dict):
-        entry.update(overlay)
-        entry["has_app_page"] = bool(
-            entry.get("has_app_page")
-            or overlay.get("purchase_options")
-            or overlay.get("subscription_options")
-        )
-
-    alternatives = component.get("_source_alternatives") or ()
-    if alternatives:
-        source_options = [dict(entry)]
-        for alternate in alternatives:
-            try:
-                option_category = category
-                alternate_for_entry = alternate
-                if isinstance(overlay, dict):
-                    alternate_for_entry = dict(alternate)
-                    alternate_for_entry["_linuxtoys_overlay"] = overlay
-                source_options.append(_to_repo_entry(alternate_for_entry, option_category, lang_code))
-            except (KeyError, TypeError, ValueError):
-                continue
-        if len(source_options) > 1:
-            entry["source_options"] = source_options
-            entry["recommended_source"] = str(
-                component.get("_source_recommended", _source_option_key(component))
-                or _source_option_key(component)
-            )
-
-    return entry
-
-
-
-def _persistent_runtime_cache_key(
-    scripts_dir,
-    catalog_mtime,
-    curated_signature,
-    overlay_signature,
-    lang_code,
-    category_paths,
-):
-    """Return a stable, pickle-friendly key for the derived runtime cache."""
-    return (
-        RUNTIME_CACHE_SCHEMA,
-        tuple(sorted(_system_flatpak_lock_ids())),
-        tuple(sorted(_appstream_omit_keys())),
-        scripts_dir,
-        int(catalog_mtime),
-        curated_signature,
-        overlay_signature,
-        lang_code,
-        category_paths,
-    )
-
-
-def _load_persistent_runtime_cache(cache_key):
-    """Load final adapted entries when the on-disk cache matches this invocation.
-
-    The cache is derived/disposable. Any read, format, schema, or key mismatch is
-    treated as a normal cache miss and falls back to catalog.json.
-    """
-    try:
-        with open(RUNTIME_CACHE_PATH, "rb") as handle:
-            payload = pickle.load(handle)
-    except (OSError, EOFError, pickle.PickleError, AttributeError, ValueError, TypeError):
-        return None
-
-    if not isinstance(payload, dict):
-        return None
-    if payload.get("schema") != RUNTIME_CACHE_SCHEMA:
-        return None
-    if payload.get("key") != cache_key:
-        return None
-
-    entries = payload.get("entries")
-    if not isinstance(entries, list):
-        return None
-    if not all(isinstance(entry, dict) for entry in entries):
-        return None
-    return entries
-
-
-def _write_persistent_runtime_cache(cache_key, entries):
-    """Atomically publish the final adapted entries as a disposable pickle cache."""
-    try:
-        RUNTIME_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        tmp = RUNTIME_CACHE_PATH.with_name(RUNTIME_CACHE_PATH.name + ".tmp")
-        payload = {
-            "schema": RUNTIME_CACHE_SCHEMA,
-            "key": cache_key,
-            "entries": entries,
-        }
-        with open(tmp, "wb") as handle:
-            pickle.dump(payload, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(tmp, RUNTIME_CACHE_PATH)
-    except (OSError, pickle.PickleError, AttributeError, TypeError, ValueError):
-        try:
-            tmp.unlink()
-        except (OSError, UnboundLocalError):
-            pass
 
 
 def load_entries(scripts_dir, curated_entries=None, category_paths=None):
@@ -1285,65 +668,65 @@ def load_entries(scripts_dir, curated_entries=None, category_paths=None):
         if cached is not None:
             return [dict(entry) for entry in cached]
 
-    persistent_key = _persistent_runtime_cache_key(
-        scripts_dir,
-        catalog_mtime,
-        curated_signature,
-        overlay_signature,
-        lang_code,
-        category_paths,
-    )
-    persistent = _load_persistent_runtime_cache(persistent_key)
-    if persistent is not None:
-        with _CACHE_LOCK:
-            _RUNTIME_CACHE.clear()
-            _RUNTIME_CACHE[cache_key] = persistent
-        return [dict(entry) for entry in persistent]
-
     curated_ids, curated_packages, curated_names = _curated_identity_sets(curated_entries)
     result = []
 
     omit_keys = _appstream_omit_keys()
-    components = [
-        component
-        for component in appstream_cache.load_catalog()
-        if isinstance(component, dict)
-        and not _is_omitted_component(component, omit_keys)
-    ]
+    # Step 10 collapses catalog loading, structural filtering, source selection,
+    # and final AppStream adaptation into one Rust-owned catalog operation.
+    category_config = {
+        "main": MAIN_CATEGORY_CANDIDATES,
+        "additional": ADDITIONAL_CATEGORY_CANDIDATES,
+        "expressions": CATEGORY_EXPRESSION_RULES,
+        "standalone_priority": STANDALONE_PURPOSE_PRIORITY,
+        "main_priority": MAIN_CATEGORY_PRIORITY,
+    }
+    # Rust owns the persistent derived cache.  The key describes every input
+    # that can affect the final LinuxToys-ready AppStream catalog.
+    rust_cache_key = json.dumps({
+        "schema": RUNTIME_CACHE_SCHEMA,
+        "catalog_mtime": catalog_mtime,
+        "omit": sorted(omit_keys),
+        "category_paths": list(category_paths),
+        "category_config": category_config,
+        "source_preferences": APPSTREAM_SOURCE_PREFERENCE,
+        "system_flatpak_locks": sorted(_system_flatpak_lock_ids()),
+        "host_os_keys": sorted(_host_os_keys()),
+        "compat_keys": sorted(get_system_compat_keys()),
+        "language": lang_code,
+        "curated_ids": sorted(curated_ids),
+        "curated_packages": sorted(curated_packages),
+        "curated_names": sorted(curated_names),
+        "overlays": appstream_overlays,
+        "native_badge": _native_distro_badge(),
+    }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
-    for component in _prefer_sources(components, category_paths):
-        if not isinstance(component, dict):
-            continue
-        if _is_curated(component, curated_ids, curated_packages, curated_names):
-            continue
-
-        category = _resolve_category(component.get("categories", ()), category_paths)
-        if not category:
-            continue
-
-        packages = component.get("packages")
-        if not isinstance(packages, list) or not packages:
-            continue
-
-        component_for_entry = component
-        overlay_key = repo_parser._normalize_appstream_overlay_id(component.get("id"))
-        overlay = appstream_overlays.get(overlay_key)
-        if overlay:
-            component_for_entry = dict(component)
-            component_for_entry["_linuxtoys_overlay"] = overlay
-
-        try:
-            result.append(_to_repo_entry(component_for_entry, category, lang_code))
-        except (KeyError, TypeError, ValueError):
-            continue
-
-    result.sort(key=lambda entry: entry["name"].casefold())
+    persistent = _load_persistent_runtime_cache(rust_cache_key)
+    if persistent is not None:
+        result = persistent
+    else:
+        result = list(_catalog_rs.build_appstream_catalog(
+            os.fspath(appstream_cache.CATALOG_PATH),
+            sorted(omit_keys),
+            list(category_paths),
+            json.dumps(category_config, ensure_ascii=False, separators=(",", ":")),
+            json.dumps(APPSTREAM_SOURCE_PREFERENCE, ensure_ascii=False, separators=(",", ":")),
+            sorted(_system_flatpak_lock_ids()),
+            sorted(_host_os_keys()),
+            sorted(get_system_compat_keys()),
+            lang_code,
+            sorted(curated_ids),
+            sorted(curated_packages),
+            sorted(curated_names),
+            json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
+            _native_distro_badge(),
+        ))
+        _store_persistent_runtime_cache(rust_cache_key, result)
 
     with _CACHE_LOCK:
         _RUNTIME_CACHE.clear()
         _RUNTIME_CACHE[cache_key] = result
 
-    _write_persistent_runtime_cache(persistent_key, result)
     return [dict(entry) for entry in result]
 
 
@@ -1368,7 +751,7 @@ def prepare_runtime_cache():
 
     # catalog.json has a new mtime after publication, so clearing the process
     # cache guarantees load_entries() adapts that new catalog and atomically
-    # replaces runtime-entries.pickle before the UI refresh is scheduled.
+    # replaces the Rust-owned derived cache before the UI refresh is scheduled.
     clear_runtime_cache()
     try:
         load_entries(

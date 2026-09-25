@@ -8,11 +8,14 @@ from .compat import (
     is_containerized,
     script_is_container_compatible,
     should_show_optimization_script,
+    are_optimizations_installed,
     get_script_file_data,
     clear_script_file_cache,
+    seed_script_file_cache,
 )
 from .lang_utils import detect_system_language
 from . import appstream_parser, git_scripts_manager, new_index, official_index, repo_parser
+from . import _catalog_rs as _rs
 
 
 # Select an immediately available scripts tree. GUI synchronization happens later.
@@ -39,90 +42,48 @@ RESERVED_DIRECTORIES = {
 # category, search, repository-map and display-name paths.
 _SCRIPT_TREE_LOCK = threading.RLock()
 _SCRIPT_TREE_CACHE = None
+_RESOLVED_SCRIPT_CATALOG_CACHE = {}
 
 
 def clear_script_tree_cache():
-    """Drop the scripts-tree index after a source or filesystem change."""
+    """Drop structural and resolved managed-script caches after a source change."""
     global _SCRIPT_TREE_CACHE
     with _SCRIPT_TREE_LOCK:
         _SCRIPT_TREE_CACHE = None
+        _RESOLVED_SCRIPT_CATALOG_CACHE.clear()
 
 
 def _build_script_tree_index(root_path):
-    """Collect directory relationships and shell-script locations in one traversal."""
+    """Build the managed scripts-tree index and parse script files in one Rust traversal."""
     root_path = os.path.abspath(root_path)
+    raw = _rs.build_script_tree_index(os.fspath(root_path))
+
     directories = {}
-    all_scripts = []
+    for directory_path, data in dict(raw.get("directories", {})).items():
+        directories[str(directory_path)] = {
+            "dirs": tuple(data.get("dirs", ())),
+            "scripts": tuple(data.get("scripts", ())),
+            "files": frozenset(data.get("files", ())),
+            "entries": tuple(tuple(entry) for entry in data.get("entries", ())),
+        }
+
+    # compat.py remains the policy owner. Seed its existing cache with the file
+    # contents/headers Rust already read so compatibility/localization checks do
+    # not reopen every managed script after indexing.
+    seed_script_file_cache(raw.get("script_data", ()))
+
+    all_scripts = tuple(raw.get("all_scripts", ()))
+    # Keep Python casefold semantics for public script-ID lookup. Rust lowercase
+    # is intentionally not treated as a Unicode casefold substitute.
     scripts_by_id = {}
-
-    if not os.path.isdir(root_path):
-        return {
-            "root": root_path,
-            "directories": directories,
-            "all_scripts": (),
-            "scripts_by_id": {},
-        }
-
-    def scan_directory(directory_path):
-        try:
-            entries = list(os.scandir(directory_path))
-        except OSError:
-            return
-
-        child_dirs = []
-        script_names = []
-        file_names = []
-        ordered_entries = []
-
-        for entry in entries:
-            name = entry.name
-            try:
-                is_dir = entry.is_dir()
-                is_file = entry.is_file()
-            except OSError:
-                continue
-
-            if is_dir:
-                if _should_skip_directory(name):
-                    continue
-                child_dirs.append(name)
-                ordered_entries.append(("dir", name))
-                continue
-
-            if not is_file:
-                continue
-
-            file_names.append(name)
-            if name.endswith(".sh"):
-                script_names.append(name)
-                ordered_entries.append(("script", name))
-
-        directory_path = os.path.abspath(directory_path)
-        directories[directory_path] = {
-            "dirs": tuple(child_dirs),
-            "scripts": tuple(script_names),
-            "files": frozenset(file_names),
-            # Preserve os.listdir-style interleaving for recursive collection.
-            "entries": tuple(ordered_entries),
-        }
-
-        # os.walk exposed all files in the current directory before descending.
-        # Preserve that ordering for repository/display-name lookups.
-        for file_name in script_names:
-            script_path = os.path.join(directory_path, file_name)
-            all_scripts.append(script_path)
-            script_id = os.path.splitext(file_name)[0].casefold()
-            scripts_by_id.setdefault(script_id, script_path)
-
-        for child_name in child_dirs:
-            scan_directory(os.path.join(directory_path, child_name))
-
-    scan_directory(root_path)
+    for script_path in all_scripts:
+        script_id = os.path.splitext(os.path.basename(script_path))[0].casefold()
+        scripts_by_id.setdefault(script_id, script_path)
 
     return {
-        "root": root_path,
+        "root": str(raw.get("root", root_path)),
         "directories": directories,
-        "all_scripts": tuple(all_scripts),
+        "all_scripts": all_scripts,
         "scripts_by_id": scripts_by_id,
     }
 
@@ -367,6 +328,120 @@ def _parse_metadata_file(file_path, default_values, translations=None):
 
     return metadata
 
+def _get_resolved_script_catalog(translations=None):
+    """Resolve managed-script policy once and reuse it across catalog consumers.
+
+    Rust owns the structural/file parsing pass. Python intentionally remains the
+    policy owner for compatibility, localization, container and optimizer rules.
+    This cache makes those policy checks a publication-time operation rather
+    than repeating them in categories, search/bootstrap and AppStream curation.
+    """
+    index = _get_script_tree_index()
+    root = index["root"]
+    compat_keys = get_system_compat_keys()
+    current_locale = detect_system_language()
+    containerized = is_containerized()
+
+    # Developer simulations affect compatibility/container/optimizer policy.
+    # Including their environment controls keeps direct dev-mode changes from
+    # reusing a catalog resolved under a different simulated host state.
+    runtime_key = (
+        root,
+        id(translations),
+        tuple(sorted(compat_keys)),
+        current_locale,
+        containerized,
+        os.environ.get("DEV_MODE", ""),
+        os.environ.get("COMPAT", ""),
+        os.environ.get("CONTAINER", ""),
+        os.environ.get("OPTIMIZER", ""),
+        are_optimizations_installed(),
+    )
+
+    with _SCRIPT_TREE_LOCK:
+        cached = _RESOLVED_SCRIPT_CATALOG_CACHE.get(runtime_key)
+        if cached is not None:
+            return cached
+
+    # Negation semantics only require the negating script itself to be host
+    # compatible, matching _get_negated_scripts(). Compute that compatibility
+    # once and retain it for the final visibility pass.
+    host_compatible = {}
+    negated_by_dir = {}
+    for directory_path, directory in index["directories"].items():
+        negated = set()
+        for file_name in directory["scripts"]:
+            file_path = os.path.join(directory_path, file_name)
+            compatible = host_compatible.get(file_path)
+            if compatible is None:
+                compatible = script_is_compatible(file_path, compat_keys)
+                host_compatible[file_path] = compatible
+            if not compatible:
+                continue
+            negates_value = get_script_file_data(file_path)["headers"].get("negates")
+            if negates_value:
+                negated.update(
+                    name.strip() for name in negates_value.split(",") if name.strip()
+                )
+        negated_by_dir[directory_path] = frozenset(negated)
+
+    by_path = {}
+    visible_by_dir = {}
+    for directory_path, directory in index["directories"].items():
+        visible = []
+        negated = negated_by_dir.get(directory_path, ())
+        for file_name in directory["scripts"]:
+            file_path = os.path.join(directory_path, file_name)
+            script_id = os.path.splitext(file_name)[0]
+            if script_id in negated or not host_compatible.get(file_path, False):
+                continue
+            if not script_is_localized(file_path, current_locale):
+                continue
+            if containerized and not script_is_container_compatible(file_path):
+                continue
+            if not should_show_optimization_script(file_path):
+                continue
+
+            defaults = {
+                "name": "No Name",
+                "version": "N/A",
+                "description": "",
+                "icon": "application-x-executable",
+                "reboot": "no",
+                "repo": "",
+                "revert": "yes",
+            }
+            item = _parse_metadata_file(file_path, defaults, translations)
+            if item.pop("_name_is_translated", False):
+                item["registry_name"] = script_id
+            item["is_script"] = True
+            item["is_subcategory"] = False
+            by_path[file_path] = item
+            visible.append(file_path)
+        visible_by_dir[directory_path] = tuple(visible)
+
+    catalog = {
+        "by_path": by_path,
+        "visible_by_dir": visible_by_dir,
+    }
+    with _SCRIPT_TREE_LOCK:
+        _RESOLVED_SCRIPT_CATALOG_CACHE.clear()
+        _RESOLVED_SCRIPT_CATALOG_CACHE[runtime_key] = catalog
+    return catalog
+
+
+def _managed_visible_scripts(directory_path, translations=None):
+    """Return resolved visible script items for one managed directory."""
+    directory_path = os.path.abspath(directory_path)
+    if _indexed_directory(directory_path) is None:
+        return None
+    catalog = _get_resolved_script_catalog(translations)
+    return [
+        dict(catalog["by_path"][path])
+        for path in catalog["visible_by_dir"].get(directory_path, ())
+    ]
+
+
 def get_subcategories_for_category(category_path, translations=None):
     """Return subcategories for a category using the shared structural index."""
     subcategories = []
@@ -404,71 +479,44 @@ def get_subcategories_for_category(category_path, translations=None):
     return sorted(subcategories, key=lambda cat: cat['name'])
 
 def get_categories(translations=None):
-    """Return top-level categories from the shared scripts-tree index."""
+    """Return top-level categories from the shared resolved script catalog."""
     categories = []
     if not os.path.isdir(SCRIPTS_DIR):
         return categories
 
-    compat_keys = get_system_compat_keys()
-    current_locale = detect_system_language()
-    negated_scripts = _get_negated_scripts(SCRIPTS_DIR, compat_keys)
-
-    for file_name in _script_names_in(SCRIPTS_DIR):
-        file_path = os.path.join(SCRIPTS_DIR, file_name)
-        script_name_without_ext = os.path.splitext(file_name)[0]
-        if script_name_without_ext in negated_scripts:
-            continue
-
-        defaults = {
-            'name': file_name,
-            'description': '',
-            'icon': 'application-x-executable',
-            'reboot': 'no',
-            'repo': '',
-            'revert': 'yes',
-        }
-        header = _parse_metadata_file(file_path, defaults, translations)
-        if not script_is_compatible(file_path, compat_keys):
-            continue
-        if not script_is_localized(file_path, current_locale):
-            continue
-        if is_containerized() and not script_is_container_compatible(file_path):
-            continue
-        if not should_show_optimization_script(file_path):
-            continue
-
+    for script_info in _managed_visible_scripts(SCRIPTS_DIR, translations) or ():
         category_entry = {
-            'name': header.get('name', file_name),
-            'path': file_path,
-            'icon': header.get('icon', 'application-x-executable'),
-            'description': header.get('description', ''),
-            'is_script': True,
-            'is_new': header.get('is_new', False),
-            'is_official': header.get('is_official', False),
-            'is_verified': header.get('is_verified', False)
+            "name": script_info.get("name", os.path.basename(script_info["path"])),
+            "path": script_info["path"],
+            "icon": script_info.get("icon", "application-x-executable"),
+            "description": script_info.get("description", ""),
+            "is_script": True,
+            "is_new": script_info.get("is_new", False),
+            "is_official": script_info.get("is_official", False),
+            "is_verified": script_info.get("is_verified", False),
         }
-        if header.get("_name_is_translated"):
-            category_entry["registry_name"] = script_name_without_ext
+        if script_info.get("registry_name"):
+            category_entry["registry_name"] = script_info["registry_name"]
         categories.append(category_entry)
 
     for category_name in _subcategory_names_in(SCRIPTS_DIR):
         category_path = os.path.join(SCRIPTS_DIR, category_name)
-        info_file_path = os.path.join(category_path, 'category-info.txt')
+        info_file_path = os.path.join(category_path, "category-info.txt")
         defaults = {
-            'name': category_name,
-            'description': 'A category of scripts.',
-            'icon': 'folder-open',
-            'mode': 'auto'
+            "name": category_name,
+            "description": "A category of scripts.",
+            "icon": "folder-open",
+            "mode": "auto",
         }
         cat_info = _parse_metadata_file(info_file_path, defaults, translations)
-        cat_info['name'] = translations.get(category_name, category_name) if translations else category_name
-        cat_info['path'] = category_path
-        cat_info['is_script'] = False
-        cat_info['has_subcategories'] = has_subcategories(category_path)
-        cat_info['display_mode'] = get_category_mode(category_path, translations)
+        cat_info["name"] = translations.get(category_name, category_name) if translations else category_name
+        cat_info["path"] = category_path
+        cat_info["is_script"] = False
+        cat_info["has_subcategories"] = has_subcategories(category_path)
+        cat_info["display_mode"] = get_category_mode(category_path, translations)
         categories.append(cat_info)
 
-    return sorted(categories, key=lambda cat: cat['name'])
+    return sorted(categories, key=lambda cat: cat["name"])
 
 def get_repo_entries(translations=None):
     """Return all valid dynamic repository entries from scripts/repos.json."""
@@ -586,10 +634,6 @@ def get_scripts_for_category(category_path, translations=None, include_appstream
     if _indexed_directory(category_path) is None and not os.path.isdir(category_path):
         return items
 
-    compat_keys = get_system_compat_keys()
-    current_locale = detect_system_language()
-    negated_scripts = _get_negated_scripts(category_path, compat_keys)
-
     items.extend(get_subcategories_for_category(category_path, translations))
 
     if category_path.endswith('sysadm') or category_path.endswith('sysadm/'):
@@ -608,37 +652,44 @@ def get_scripts_for_category(category_path, translations=None, include_appstream
             'display_mode': 'menu'
         })
 
-    for file_name in _script_names_in(category_path):
-        file_path = os.path.join(category_path, file_name)
-        script_name_without_ext = os.path.splitext(file_name)[0]
-        if script_name_without_ext in negated_scripts:
-            continue
-        if not script_is_compatible(file_path, compat_keys):
-            continue
-        if not script_is_localized(file_path, current_locale):
-            continue
-        if is_containerized() and not script_is_container_compatible(file_path):
-            continue
-        if not should_show_optimization_script(file_path):
-            continue
+    managed_scripts = _managed_visible_scripts(category_path, translations)
+    if managed_scripts is not None:
+        items.extend(managed_scripts)
+    else:
+        # Local Scripts intentionally remain live and outside the managed cache.
+        compat_keys = get_system_compat_keys()
+        current_locale = detect_system_language()
+        negated_scripts = _get_negated_scripts(category_path, compat_keys)
+        for file_name in _script_names_in(category_path):
+            file_path = os.path.join(category_path, file_name)
+            script_name_without_ext = os.path.splitext(file_name)[0]
+            if script_name_without_ext in negated_scripts:
+                continue
+            if not script_is_compatible(file_path, compat_keys):
+                continue
+            if not script_is_localized(file_path, current_locale):
+                continue
+            if is_containerized() and not script_is_container_compatible(file_path):
+                continue
+            if not should_show_optimization_script(file_path):
+                continue
 
-        is_local_script = '.local/linuxtoys/scripts' in file_path
-        defaults = {
-            'name': 'No Name', 'version': 'N/A',
-            'description': '',
-            'icon': 'application-x-executable',
-            'reboot': 'no',
-            'repo': '',
-            'revert': 'yes',
-        }
-        script_info = _parse_metadata_file(file_path, defaults, translations)
-        if is_local_script and script_info['name'] == 'No Name':
-            script_info['name'] = os.path.splitext(file_name)[0]
-        if script_info.pop("_name_is_translated", False):
-            script_info["registry_name"] = script_name_without_ext
-        script_info['is_script'] = True
-        script_info['is_subcategory'] = False
-        items.append(script_info)
+            defaults = {
+                "name": "No Name", "version": "N/A",
+                "description": "",
+                "icon": "application-x-executable",
+                "reboot": "no",
+                "repo": "",
+                "revert": "yes",
+            }
+            script_info = _parse_metadata_file(file_path, defaults, translations)
+            if script_info["name"] == "No Name":
+                script_info["name"] = script_name_without_ext
+            if script_info.pop("_name_is_translated", False):
+                script_info["registry_name"] = script_name_without_ext
+            script_info["is_script"] = True
+            script_info["is_subcategory"] = False
+            items.append(script_info)
 
     items.extend(
         repo_parser.get_entries_for_category(
@@ -668,50 +719,55 @@ def get_scripts_for_category(category_path, translations=None, include_appstream
     )
 
 def get_all_scripts_recursive(directory_path, translations=None):
-    """Recursively return compatible scripts, reusing the structural index."""
+    """Recursively return compatible scripts from the resolved managed catalog."""
     scripts = []
-    if _indexed_directory(directory_path) is None and not os.path.isdir(directory_path):
+    managed = _indexed_directory(directory_path)
+    if managed is None:
+        if not os.path.isdir(directory_path):
+            return scripts
+        # External/local trees preserve the previous live-filesystem behavior.
+        compat_keys = get_system_compat_keys()
+        current_locale = detect_system_language()
+        negated_scripts = _get_negated_scripts(directory_path, compat_keys)
+        for entry_kind, item_name in _directory_entries_in(directory_path):
+            item_path = os.path.join(directory_path, item_name)
+            if entry_kind == "dir":
+                scripts.extend(get_all_scripts_recursive(item_path, translations))
+                continue
+            script_id = os.path.splitext(item_name)[0]
+            if script_id in negated_scripts:
+                continue
+            if not script_is_compatible(item_path, compat_keys):
+                continue
+            if not script_is_localized(item_path, current_locale):
+                continue
+            if is_containerized() and not script_is_container_compatible(item_path):
+                continue
+            if not should_show_optimization_script(item_path):
+                continue
+            defaults = {
+                "name": "No Name", "version": "N/A", "description": "",
+                "icon": "application-x-executable", "reboot": "no", "repo": "",
+            }
+            item = _parse_metadata_file(item_path, defaults, translations)
+            if ".local/linuxtoys/scripts" in item_path and item["name"] == "No Name":
+                item["name"] = script_id
+            if item.pop("_name_is_translated", False):
+                item["registry_name"] = script_id
+            item["is_script"] = True
+            item["is_subcategory"] = False
+            scripts.append(item)
         return scripts
 
-    compat_keys = get_system_compat_keys()
-    current_locale = detect_system_language()
-    negated_scripts = _get_negated_scripts(directory_path, compat_keys)
-
+    catalog = _get_resolved_script_catalog(translations)
     for entry_kind, item_name in _directory_entries_in(directory_path):
         item_path = os.path.join(directory_path, item_name)
-
         if entry_kind == "dir":
             scripts.extend(get_all_scripts_recursive(item_path, translations))
             continue
-
-        script_name_without_ext = os.path.splitext(item_name)[0]
-        if script_name_without_ext in negated_scripts:
-            continue
-        if not script_is_compatible(item_path, compat_keys):
-            continue
-        if not script_is_localized(item_path, current_locale):
-            continue
-        if is_containerized() and not script_is_container_compatible(item_path):
-            continue
-        if not should_show_optimization_script(item_path):
-            continue
-
-        defaults = {
-            'name': 'No Name', 'version': 'N/A',
-            'description': '',
-            'icon': 'application-x-executable',
-            'reboot': 'no',
-            'repo': '',
-        }
-        script_info = _parse_metadata_file(item_path, defaults, translations)
-        if '.local/linuxtoys/scripts' in item_path and script_info['name'] == 'No Name':
-            script_info['name'] = os.path.splitext(item_name)[0]
-        if script_info.pop("_name_is_translated", False):
-            script_info["registry_name"] = script_name_without_ext
-        script_info['is_script'] = True
-        script_info['is_subcategory'] = False
-        scripts.append(script_info)
-
+        item = catalog["by_path"].get(item_path)
+        if item is not None:
+            scripts.append(dict(item))
     return scripts
 
 

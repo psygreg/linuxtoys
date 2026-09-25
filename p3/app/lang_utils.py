@@ -8,6 +8,7 @@ import json
 import glob
 import configparser
 import re
+from functools import lru_cache
 
 def get_config_dir():
     """
@@ -49,6 +50,7 @@ def save_language(lang_code):
     try:
         with open(config_file, 'w') as f:
             config.write(f)
+        detect_system_language.cache_clear()
         return True
     except Exception as e:
         print(f"Error saving language preference: {e}")
@@ -88,6 +90,7 @@ def save_automatic_updates(enabled):
         print(f"Error saving automatic update preference: {e}")
         return False
 
+@lru_cache(maxsize=1)
 def detect_system_language():
     """
     Detect language using saved preference first, then system language

@@ -15,6 +15,8 @@ component  : system.desktop
 # Build dependencies required
 builddeps  :
     - desktop-file-utils
+    - rust
+    - cargo
 
 # Runtime dependencies
 rundeps    :
@@ -31,12 +33,11 @@ rundeps    :
     - util-linux
 
 setup      : |
-    # No special setup needed for Python application
     true
 
 build      : |
-    # No compilation needed for Python application
-    true
+    cargo build --release --locked
+    test -f target/release/lib_catalog_rs.so
 
 install    : |
     # Create directory structure
@@ -75,6 +76,12 @@ install    : |
         # Generic files directory (fallback)
         cp -r --preserve=mode files/[^L]* $installdir/usr/share/linuxtoys/ 2>/dev/null || true
     fi
+
+    # The crate uses PyO3's abi3-py310 stable ABI, so the cdylib can be installed
+    # under the stable-extension filename expected by Python.
+    install -m 755 target/release/lib_catalog_rs.so \
+        "$installdir/usr/share/linuxtoys/app/_catalog_rs.abi3.so"
+    test -f "$installdir/usr/share/linuxtoys/app/_catalog_rs.abi3.so"
 
     # Clean up Python cache files
     find $installdir/usr/share/linuxtoys/ -name "__pycache__" -type d -delete

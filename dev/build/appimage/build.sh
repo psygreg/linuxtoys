@@ -92,6 +92,41 @@ build_glycin_ng() {
     }
 }
 
+build_linuxtoys_rust() {
+    if ! command -v cargo >/dev/null 2>&1; then
+        _msg error "cargo is required to build the LinuxToys Rust extension."
+        exit 1
+    fi
+    if ! command -v maturin >/dev/null 2>&1; then
+        _msg error "maturin is required to build the LinuxToys Rust extension."
+        exit 1
+    fi
+
+    _msg info "Building LinuxToys Rust catalog extension..."
+    rm -rf "$BUILD_DIR/linuxtoys-wheel" "$ROOT_DIR/target/wheels"
+    (
+        cd "$ROOT_DIR"
+        maturin build --release --locked --out target/wheels
+    )
+
+    local wheel
+    wheel="$(find "$ROOT_DIR/target/wheels" -maxdepth 1 -type f -name '*.whl' -print -quit)"
+    [[ -n "$wheel" ]] || {
+        _msg error "maturin did not produce a LinuxToys wheel."
+        exit 1
+    }
+
+    mkdir -p "$BUILD_DIR/linuxtoys-wheel"
+    python3 -m zipfile -e "$wheel" "$BUILD_DIR/linuxtoys-wheel"
+    local extension
+    extension="$(find "$BUILD_DIR/linuxtoys-wheel/app" -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+    [[ -n "$extension" ]] || {
+        _msg error "LinuxToys Rust extension was not found in the built wheel."
+        exit 1
+    }
+    install -Dm755 "$extension" "$APP_BIN/app/$(basename "$extension")"
+}
+
 replace_upstream_glycin() {
     _msg info "Replacing upstream Glycin deployment with glycin-ng..."
 
@@ -169,8 +204,10 @@ build_glycin_ng
 # Build directly from the official source tree. This replaces pkgforge's
 # linuxtoys-bin AUR install + /usr/share/linuxtoys copy step.
 cp -a "$ROOT_DIR/p3/." "$APP_BIN/"
+build_linuxtoys_rust
 find "$APP_BIN" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 find "$APP_BIN" -type f -name '*.pyc' -delete 2>/dev/null || true
+[[ -f "$APP_BIN/app/_catalog_rs.abi3.so" ]] || { _msg error "Rust extension missing from AppDir."; exit 1; }
 
 # LinuxToys launcher for the AppImage runtime. quick-sharun/uruntime provides
 # APPDIR, so no host /usr/share/linuxtoys path is involved.

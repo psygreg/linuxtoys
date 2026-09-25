@@ -95,41 +95,39 @@ makepkg -si
 
 You may use the AppImage available at the latest release to use LinuxToys without requiring installation. For SteamOS, the automatic installer will integrate this AppImage using *Gear Lever*.
 
-## From source [GIT](https://github.com/psygreg/linuxtoys/)
+## Development [GIT](https://github.com/psygreg/linuxtoys/)
 
-> [!WARNING]
-> This version is under constant development, therefore it may have instability as well as new features not yet available in the stable versions. Usage of this is only intended for developers.
-
-Running the application from source, please follow these steps.
+For running the application from source, please follow these steps.
 
 ### Prerequisites
 
-Ensure your system has the necessary dependencies installed.
+Ensure your system has the necessary dependencies installed. Those will include build dependencies and python virtual environment setup.
 
 **Debian/Ubuntu:**
 ```bash
-sudo apt install -y bash git curl wget zenity appstream libappstream5 python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91 gir1.2-appstream-1.0
+sudo apt install -y bash git curl wget zenity appstream libappstream5 python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91 gir1.2-appstream-1.0 cargo python3-dev python3-maturin python3-venv
 ```
 
 **Fedora/RHEL:**
 ```bash
-sudo dnf install -y bash git curl wget zenity appstream appstream-data python3 python3-gobject python3-requests gtk3 vte291
+sudo dnf install -y bash git curl wget zenity appstream appstream-data python3 python3-gobject python3-requests gtk3 vte291 cargo python3-devel maturin
 ```
 
 **Arch Linux:**
 ```bash
-sudo pacman -S --noconfirm bash git curl wget zenity appstream archlinux-appstream-data python python-gobject python-requests gtk3 vte3
+sudo pacman -S --noconfirm bash git curl wget zenity appstream archlinux-appstream-data python python-gobject python-requests gtk3 vte3 cargo maturin
 ```
 
 **OpenSUSE:**
 ```bash
-sudo zypper in -y bash git curl wget zenity libappstream5 python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91 typelib-1_0-AppStream-1_0
+sudo zypper in -y bash git curl wget zenity libappstream5 python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91 typelib-1_0-AppStream-1_0 cargo python3-devel python3-maturin
 ```
 
 **Solus:**
 ```bash
-sudo eopkg it -y git curl wget zenity appstream python3 python-gobject python-requests libvte
+sudo eopkg it -y git curl wget zenity appstream python3 python-gobject python-requests libvte cargo python-devel
 ```
+> For Solus, you will have to install `maturin` using `pip` on the virtual environment you will set up in the next steps.
 
 ### Cloning and Running
 
@@ -139,20 +137,22 @@ git clone --depth=1 https://github.com/psygreg/linuxtoys.git
 cd linuxtoys
 ```
 
+**Build rust library for development**
+Start by setting up a python virtual environment for maturin, from the repository root:
+```bash
+python3 -m venv --system-site-packages .venv
+source .venv/bin/activate
+```
+Then compile the library:
+```bash
+maturin develop --release
+```
+> The compiled rust library for development and testing, virtual environment files and building artifacts are automatically ignored by the repository if you follow this procedure correctly.
+
 **Run the application:**
 ```bash
 p3/linuxtoys.py
 ```
-
-**Update the application:**
-> [!NOTE]
-> When choosing the GIT method, updates must be made via GIT.
-
-```bash
-git pull
-```
-
-## Developers
 
 For developers who wish to contribute, check our documentation, please refer to the [Contribution Guidelines](CONTRIBUTING.md).
 

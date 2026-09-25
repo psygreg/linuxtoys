@@ -18,6 +18,47 @@ def _script_file_signature(path):
     return (stat.st_mtime_ns, stat.st_size)
 
 
+def seed_script_file_cache(records):
+    """Seed parsed script data produced by the Rust structural-index pass.
+
+    Compatibility policy stays in Python; this only prevents those checks from
+    reopening files whose content and headers Rust has already parsed.
+    """
+    prepared = []
+    for record in records or ():
+        if not isinstance(record, dict):
+            continue
+        path = os.path.realpath(str(record.get("path") or ""))
+        signature = record.get("signature")
+        if not path or not isinstance(signature, (tuple, list)) or len(signature) != 2:
+            continue
+        try:
+            normalized_signature = (int(signature[0]), int(signature[1]))
+        except (TypeError, ValueError):
+            continue
+        headers = record.get("headers")
+        header_lines = record.get("header_lines")
+        content = record.get("content")
+        if not isinstance(headers, dict) or not isinstance(content, str):
+            continue
+        prepared.append((
+            path,
+            normalized_signature,
+            {
+                "content": content,
+                "header_lines": tuple(header_lines or ()),
+                "headers": dict(headers),
+            },
+        ))
+
+    if not prepared:
+        return
+
+    with _SCRIPT_FILE_CACHE_LOCK:
+        for path, signature, data in prepared:
+            _SCRIPT_FILE_CACHE[path] = (signature, data)
+
+
 def clear_script_file_cache():
     """Discard cached script headers/content and per-path synchronization state."""
     with _SCRIPT_FILE_CACHE_LOCK:

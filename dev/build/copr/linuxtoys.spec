@@ -8,7 +8,7 @@ License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
 Requires:       bash git curl wget zenity appstream appstream-data python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 /usr/bin/script (sudo or sudo-rs)
-BuildRequires:  desktop-file-utils
+BuildRequires:  desktop-file-utils cargo rust python3-devel maturin
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
@@ -18,28 +18,47 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %prep
 %setup -q
 
+%build
+maturin build --release --locked --out target/wheels
+WHEEL=$(find target/wheels -maxdepth 1 -type f -name '*.whl' -print -quit)
+test -n "$WHEEL"
+rm -rf wheel-unpack
+python3 -m zipfile -e "$WHEEL" wheel-unpack
+test -n "$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+
 %install
 mkdir -p %{buildroot}/usr/bin/
 mkdir -p %{buildroot}/usr/share/linuxtoys/
 mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 mkdir -p %{buildroot}/usr/share/applications/
 
-# Install the main executable script
-install -m 755 usr/bin/linuxtoys %{buildroot}/usr/bin/
+cp -a p3/. %{buildroot}/usr/share/linuxtoys/
+find %{buildroot}/usr/share/linuxtoys -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
+find %{buildroot}/usr/share/linuxtoys -type f -name '*.pyc' -delete 2>/dev/null || true
 
-# Install the Python application directory with all subdirectories
-cp -rf usr/share/linuxtoys/* %{buildroot}/usr/share/linuxtoys/
+EXTENSION=$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)
+test -n "$EXTENSION"
+install -m 755 "$EXTENSION" %{buildroot}/usr/share/linuxtoys/app/$(basename "$EXTENSION")
 
-# Set proper permissions for executable files
+cat > %{buildroot}/usr/bin/linuxtoys <<'LAUNCHER'
+#!/bin/bash
+export LINUXTOYS_PROCESS_NAME="linuxtoys"
+if [ "$#" -eq 1 ] && [[ "$1" == linuxtoys://* ]]; then
+    unset EASY_CLI
+elif [ "$#" -gt 0 ]; then
+    export EASY_CLI=1
+fi
+cd /usr/share/linuxtoys
+exec /usr/bin/python3 linuxtoys.py "$@"
+LAUNCHER
+chmod 755 %{buildroot}/usr/bin/linuxtoys
 chmod +x %{buildroot}/usr/share/linuxtoys/linuxtoys.py
-find %{buildroot}/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
+find %{buildroot}/usr/share/linuxtoys/scripts/ -name '*.sh' -exec chmod +x {} \;
 
-# Install icon and desktop file
-install -m 644 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
-desktop-file-install --dir=%{buildroot}/usr/share/applications usr/share/applications/LinuxToys.desktop
+install -m 644 src/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
+desktop-file-install --dir=%{buildroot}/usr/share/applications src/LinuxToys.desktop
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+test -f %{buildroot}/usr/share/linuxtoys/app/_catalog_rs.abi3.so
 
 %files
 %defattr(-, root, root, -)

@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import json
-import math
 import random
 import threading
-import time
-from datetime import datetime, timezone
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+
+from . import _catalog_rs
 
 
 SCORE_MIN = 0
@@ -178,35 +177,26 @@ def review_subscore(item):
 def apply_review_scores(items):
     """Calculate Bayesian ODRS scores from cached rating/count information.
 
-    The population mean is the prior. REVIEW_CONFIDENCE_COUNT controls how many
-    reviews are needed before an application's own average dominates that prior.
-    Ratings are expected on AppStream's 0..100 scale.
+    Rust owns the population prior and Bayesian weighting pass; Python only
+    applies the resulting scores to the existing entry dictionaries.
     """
-    rated = []
-    for item in items or ():
+    items = list(items or ())
+    rows = []
+    for item in items:
         try:
             rating = float(item.get("review_rating"))
             count = int(item.get("review_count"))
         except (TypeError, ValueError):
-            item.pop("review_subscore", None)
-            continue
-        if count <= 0 or not (0.0 <= rating <= 100.0):
-            item.pop("review_subscore", None)
-            continue
-        rated.append((rating, count, item))
+            rating = None
+            count = None
+        rows.append((rating, count))
 
-    if not rated:
-        return items
-
-    total_reviews = sum(count for _rating, count, _item in rated)
-    prior = (
-        sum(rating * count for rating, count, _item in rated) / total_reviews
-        if total_reviews else 50.0
-    )
-    confidence = float(REVIEW_CONFIDENCE_COUNT)
-    for rating, count, item in rated:
-        weighted = ((count * rating) + (confidence * prior)) / (count + confidence)
-        item["review_subscore"] = round((weighted / 100.0) * SCORE_MAX)
+    scores = _catalog_rs.review_subscores(rows)
+    for item, score in zip(items, scores):
+        if score is None:
+            item.pop("review_subscore", None)
+        else:
+            item["review_subscore"] = int(score)
     return items
 
 
@@ -325,55 +315,20 @@ def apply_native_category_scores(items):
 
         native.append(item)
 
-    count = len(native)
-    if not count:
+    if not native:
         return items
 
-    reviewed = []
-    unreviewed = []
-    for item in native:
-        review = review_subscore(item)
-        if review is None:
-            unreviewed.append(item)
-        else:
-            reviewed.append((review, _session_key(item), item))
+    rows = []
+    for index, item in enumerate(native):
+        rows.append((
+            index,
+            review_subscore(item),
+            _session_key(item),
+            _session_order(item),
+        ))
 
-    # Review data is a ranking signal, not an absolute section number.
-    reviewed.sort(key=lambda row: (row[0], row[1]))
-    unreviewed.sort(key=_session_order)
-
-    # Do not interpret missing reviews as a score of zero. Spread unknown entries
-    # through the review-ranked population while preserving the reviewed order.
-    ranked_reviewed = [row[2] for row in reviewed]
-    if not ranked_reviewed:
-        ranked = list(unreviewed)
-    elif not unreviewed:
-        ranked = ranked_reviewed
-    else:
-        ranked = []
-        reviewed_i = 0
-        unknown_i = 0
-        total = len(native)
-        for index in range(total):
-            expected_unknown = ((index + 1) * len(unreviewed)) // total
-            if unknown_i < expected_unknown:
-                ranked.append(unreviewed[unknown_i])
-                unknown_i += 1
-            elif reviewed_i < len(ranked_reviewed):
-                ranked.append(ranked_reviewed[reviewed_i])
-                reviewed_i += 1
-            else:
-                ranked.append(unreviewed[unknown_i])
-                unknown_i += 1
-
-    for index, item in enumerate(ranked):
-        if count == 1:
-            section = 5
-        elif count < 10:
-            section = round(index * 9 / (count - 1))
-        else:
-            section = min(9, (index * 10) // count)
-
+    for index, section in _catalog_rs.native_rank_sections(rows):
+        item = native[index]
         low = section * SECTION_SIZE
         high = SCORE_MAX if section == 9 else low + SECTION_SIZE - 1
         item["_category_native_score"] = _session_random_score(
@@ -424,25 +379,12 @@ def apply_category_scores(items):
 
         candidates.append((metric, _session_key(item), item))
 
-    count = len(candidates)
-    if not count:
+    if not candidates:
         return items
 
-    # Low popularity first. The stable session key breaks equal-metric ties so
-    # large tie groups cannot bunch several sections together.
-    candidates.sort(key=lambda row: (row[0], row[1]))
-
-    for index, (_metric, key, item) in enumerate(candidates):
-        if count == 1:
-            section = 5
-        elif count < 10:
-            # With fewer than ten entries, span the complete ranking range.
-            section = round(index * 9 / (count - 1))
-        else:
-            # Rank quantiles: each section receives either floor(n/10) or
-            # ceil(n/10) entries, while preserving popularity ordering.
-            section = min(9, (index * 10) // count)
-
+    rows = [(index, metric, key) for index, (metric, key, _item) in enumerate(candidates)]
+    for candidate_index, section in _catalog_rs.metric_rank_sections(rows):
+        _metric, key, item = candidates[candidate_index]
         low = section * SECTION_SIZE
         high = SCORE_MAX if section == 9 else low + SECTION_SIZE - 1
         item["_category_popularity_score"] = _session_random_score(
@@ -450,36 +392,6 @@ def apply_category_scores(items):
         )
 
     return items
-
-def count_releases_last_year(component, now=None):
-    """Count AppStream releases dated within the trailing 365 days."""
-    now = time.time() if now is None else float(now)
-    cutoff = now - (365 * 24 * 60 * 60)
-    count = 0
-
-    for release in component.findall("./releases/release"):
-        timestamp = release.attrib.get("timestamp")
-        release_time = None
-        if timestamp:
-            try:
-                release_time = float(timestamp)
-            except (TypeError, ValueError):
-                pass
-
-        if release_time is None:
-            date_value = str(release.attrib.get("date", "") or "").strip()
-            if date_value:
-                try:
-                    release_time = datetime.fromisoformat(
-                        date_value.replace("Z", "+00:00")
-                    ).replace(tzinfo=timezone.utc).timestamp()
-                except (TypeError, ValueError):
-                    release_time = None
-
-        if release_time is not None and cutoff <= release_time <= now:
-            count += 1
-
-    return count
 
 
 def _collection_items(payload):
@@ -585,7 +497,7 @@ def apply_flathub_metrics(entries, downloads=None, fallback_metrics=None):
         if fetch_available and app_id in downloads:
             download_count = max(0, int(downloads[app_id] or 0))
             item["popularity_downloads"] = download_count
-            item["popularity_metric"] = download_count / release_count
+            item["popularity_metric"] = _catalog_rs.flathub_metric(download_count, release_count)
             continue
 
         previous = fallback_metrics.get(app_id)

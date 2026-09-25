@@ -144,6 +144,8 @@ class AppWindow(
         self._categories_loading_hide_source = None
         self._categories_loading_hide_started_us = None
         self._categories_loading_watermarks_flushed = False
+        self._categories_loading_watermark_queue = []
+        self._categories_loading_watermark_source = None
         self._categories_loading_fade_source = None
         self._categories_loading_fade_started_us = None
         self._categories_loading_fade_duration_ms = 220
@@ -649,35 +651,33 @@ class AppWindow(
         return False
 
     def _apply_appstream_catalog(self):
-        """Publish a newly completed AppStream catalog through normal UI caches."""
-        appstream_parser.clear_runtime_cache()
+        """Stage a newly completed AppStream catalog without blocking GTK.
+
+        The refresh worker has already prewarmed the Rust-derived runtime cache.
+        Keep the currently rendered widgets alive while fresh parser caches are
+        populated in the background; swapping empty caches and immediately calling
+        load_categories() used to fall back to parser.get_categories() on the GTK
+        thread, which caused the visible pause at catalog publication time.
+        """
         self._discard_retained_category_views()
 
-        # Replace rather than invalidate in place: an older parser worker can then
-        # finish harmlessly while generation guards prevent it from publishing.
+        # Do not clear appstream_parser's runtime cache here. prepare_runtime_cache()
+        # just built the new generation off-thread, so invalidating it at the handoff
+        # defeats the prewarm and forces the parser path to reacquire it.
+        #
+        # Replace the parser cache objects so an older worker can still finish
+        # harmlessly; generation guards in _populate_runtime_caches() prevent stale
+        # workers from publishing into this generation. The old GTK snapshot remains
+        # visible until the new category snapshot is ready.
         self.script_cache = search_helper.ScriptCache()
         self.category_cache = search_helper.CategoryCache()
         self.search_engine.set_cache(self.script_cache)
         self.all_scripts = []
 
-        self.load_categories()
-        if self.current_category_info is not None:
-            self.load_scripts(self.current_category_info)
-
+        # Never synchronously call load_categories()/load_scripts() here. The new
+        # CategoryCache is intentionally empty at this point, and load_categories()
+        # would therefore invoke parser.get_categories() on the GTK main thread.
         self._populate_runtime_caches()
-
-        if self.main_stack.get_visible_child_name() == "search":
-            query = self.search_entry.get_text()
-
-            def refresh_search_when_ready():
-                if not self.script_cache.is_populated:
-                    return True
-                if query and self.search_entry.get_text() == query:
-                    self.search_entry.emit("changed")
-                return False
-
-            GLib.timeout_add(100, refresh_search_when_ready)
-
         return False
 
     def _populate_runtime_caches(self):
@@ -762,6 +762,20 @@ class AppWindow(
                 self._deferred_start_random_scripts_refresh_timer()
             return False
 
+        def publish_completed_runtime():
+            """Refresh only the currently visible secondary view after cache swap."""
+            if self.category_cache is not category_cache or self.script_cache is not script_cache:
+                return False
+
+            visible = self.main_stack.get_visible_child_name()
+            if visible == "scripts" and self.current_category_info is not None:
+                self.load_scripts(self.current_category_info)
+            elif visible == "search":
+                query = self.search_entry.get_text()
+                if query:
+                    self.search_entry.emit("changed")
+            return False
+
         def populate_in_background():
             try:
                 category_cache.populate(
@@ -782,6 +796,7 @@ class AppWindow(
                 GLib.idle_add(publish_full_featured, full_featured)
 
                 script_cache.populate_from_category_cache(category_cache)
+                GLib.idle_add(publish_completed_runtime)
                 GLib.idle_add(self._refresh_installed_features_view)
             except Exception as e:
                 print(f"Error populating runtime caches: {e}")
@@ -1835,6 +1850,57 @@ class AppWindow(
             GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
         return False
 
+    def _start_startup_watermark_flush(self):
+        """Render deferred startup watermarks cooperatively with the GTK main loop."""
+        if self._categories_loading_watermark_source is not None:
+            return False
+
+        flowbox = getattr(self, "categories_flowbox", None)
+        if flowbox is None:
+            self._categories_loading_watermarks_flushed = True
+            return False
+
+        surfaces = []
+        stack = [flowbox]
+        while stack:
+            widget = stack.pop()
+            apply_pending = getattr(widget, "_linuxtoys_apply_pending_watermark", None)
+            if apply_pending is not None:
+                surfaces.append(widget)
+            try:
+                stack.extend(widget.get_children())
+            except (AttributeError, RuntimeError):
+                pass
+
+        self._categories_loading_watermark_queue = surfaces
+        if not surfaces:
+            self._categories_loading_watermarks_flushed = True
+            return False
+
+        self._categories_loading_watermark_source = GLib.idle_add(
+            self._flush_one_startup_watermark
+        )
+        return False
+
+    def _flush_one_startup_watermark(self):
+        """Render one category watermark, then yield so the roller can repaint."""
+        queue = self._categories_loading_watermark_queue
+        while queue:
+            surface = queue.pop()
+            apply_pending = getattr(surface, "_linuxtoys_apply_pending_watermark", None)
+            if apply_pending is None:
+                continue
+            try:
+                apply_pending(surface)
+            except (RuntimeError, AttributeError):
+                pass
+            # Exactly one expensive composition per main-loop dispatch.
+            return True
+
+        self._categories_loading_watermark_source = None
+        self._categories_loading_watermarks_flushed = True
+        return False
+
     def _hide_categories_loading_indicator(self):
         """Hide startup loading only after bootstrap data and watermarks are ready."""
         if not hasattr(self, "categories_loading_box"):
@@ -1848,14 +1914,14 @@ class AppWindow(
 
         self._categories_loading_hide_started_us = GLib.get_monotonic_time()
 
-        # Give any deferred startup watermark allocations one explicit chance to
-        # render before polling. After this, the 16 ms readiness callback only
-        # observes state; normal allocation/resize machinery owns further renders.
+        # Startup category watermarks are deliberately deferred while the roller is
+        # visible. Rendering every supersampled watermark in one GTK callback can
+        # monopolize the main loop long enough to make Gtk.Spinner appear frozen.
+        # Drain them one at a time through idle callbacks so GTK gets a redraw/event
+        # opportunity between expensive pixbuf compositions. The menu remains at
+        # opacity 0 until all watermarks are complete, so no partial UI is exposed.
         if not self._categories_loading_watermarks_flushed:
-            flush = getattr(self, "_flush_deferred_category_watermarks", None)
-            if flush is not None:
-                flush()
-            self._categories_loading_watermarks_flushed = True
+            self._start_startup_watermark_flush()
 
         self._categories_loading_hide_source = GLib.timeout_add(
             16,
@@ -2831,28 +2897,55 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             logger.warning("Could not save window state: %s", exc)
 
     def _close_application(self):
-        """Closes the application gracefully and performs cleanup."""
+        """Hide immediately, then finish potentially blocking cleanup off the GTK thread."""
+        if getattr(self, "_shutdown_started", False):
+            return
+        self._shutdown_started = True
+
         if getattr(self, "_featured_unmaximize_timer", None):
             GLib.source_remove(self._featured_unmaximize_timer)
             self._featured_unmaximize_timer = None
-        # Persist UI state once per session, at shutdown.
+
+        # Anything that needs the live GTK/GDK window must be captured before it is
+        # hidden. These writes are tiny; the potentially blocking PTY/filesystem
+        # cleanup happens after the window has disappeared.
         self._save_window_state()
         self._save_featured_sense()
 
-        # Stop the persistent AppStream PTY before deleting its temporary state.
-        if getattr(self, "_appstream_runner", None) is not None:
-            self._appstream_runner.shutdown()
+        application = self.get_application()
+        runner = getattr(self, "_appstream_runner", None)
 
-        # Clean up temporary directory
-        tmp_linuxtoys_path = "/tmp/linuxtoys"
-        try:
-            if os.path.exists(tmp_linuxtoys_path):
-                shutil.rmtree(tmp_linuxtoys_path)
-                print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
-        except Exception as e:
-            print(f"Warning: Could not clean up temporary directory {tmp_linuxtoys_path}: {e}")
+        # Give immediate visual acknowledgement to the close request.
+        self.hide()
 
-        self.get_application().quit()
+        def cleanup():
+            # shutdown() may wait for the persistent shell and worker thread, so it
+            # must not run on GTK's main loop.
+            if runner is not None:
+                try:
+                    runner.shutdown()
+                except Exception as exc:
+                    print(f"Warning: Could not shut down AppStream runner: {exc}")
+
+            tmp_linuxtoys_path = "/tmp/linuxtoys"
+            try:
+                if os.path.exists(tmp_linuxtoys_path):
+                    shutil.rmtree(tmp_linuxtoys_path)
+                    print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
+            except Exception as exc:
+                print(
+                    f"Warning: Could not clean up temporary directory "
+                    f"{tmp_linuxtoys_path}: {exc}"
+                )
+
+            # Gtk.Application.quit() belongs on the GTK main thread.
+            GLib.idle_add(application.quit)
+
+        threading.Thread(
+            target=cleanup,
+            name="linuxtoys-shutdown",
+            daemon=False,
+        ).start()
 
     def on_language_changed(self, new_language_code):
         """Handle language change by reloading translations and updating UI"""

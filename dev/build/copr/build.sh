@@ -23,42 +23,23 @@ _msg info "Output path: $OUTPUT_PATH"
 # Delete output directory if it exists
 rm -rf "$OUTPUT_PATH"
 
-# set up directory and copy files from p3
-mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin"
-mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys"
-mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/applications"
-mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/icons/hicolor/scalable/apps"
-mkdir -p "$OUTPUT_PATH/SOURCES"
+# Stage the complete source needed by the distro build environment.
+mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION" "$OUTPUT_PATH/SOURCES"
+cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/"
+cp -a "$ROOT_DIR/src" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/"
+cp "$ROOT_DIR/Cargo.toml" "$ROOT_DIR/Cargo.lock" "$ROOT_DIR/pyproject.toml" \
+    "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/"
 
-# Copy the Python app from p3 directory
-cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/"
-# Copy desktop file and icon
-cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/applications/"
-cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/icons/hicolor/scalable/apps/"
+# Vendor locked Rust dependencies so sandboxed distro builds need no network.
+mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION"/.cargo
+(
+    cd "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION"
+    cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
+)
 
-# Create the main executable script
-cat >"$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys" <<'EOF'
-#!/bin/bash
-# Set process name for better desktop integration
-export LINUXTOYS_PROCESS_NAME="linuxtoys"
-# Enable CLI mode if arguments are provided
-if [ "$#" -eq 1 ] && [[ "$1" == linuxtoys://* ]]; then
-    unset EASY_CLI
-elif [ "$#" -gt 0 ]; then
-    export EASY_CLI=1
-fi
-cd /usr/share/linuxtoys
-exec /usr/bin/python3 linuxtoys.py "$@"
-EOF
-chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/bin/linuxtoys"
-
-# Make sure all shell scripts are executable
-find "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
-chmod +x "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/usr/share/linuxtoys/linuxtoys.py"
-
-# tarball source for COPR
+# Source tarball for COPR/RPM. Rust is compiled by rpmbuild, not prebuilt here.
 tar -cJf "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION.tar.xz" -C "$OUTPUT_PATH/SOURCES" "linuxtoys-$LT_VERSION"
-rm -r "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION"
+rm -rf "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION"
 # set up rpmbuild
 # cp -r "$OUTPUT_PATH/linuxtoys-$LT_VERSION" "$HOME/rpmbuild/SOURCES/"
 day=$(date +%d)
@@ -67,8 +48,8 @@ month=$(LC_TIME=C date +%b)
 year=$(date +%Y)
 specfile_line="Version:        ${LT_VERSION}"
 specfile_line2="* ${day_abbr} ${month} ${day} ${year} Victor Gregory <psygreg@pm.me> - ${LT_VERSION}"
-sed -i "2c\\$specfile_line" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
-sed -i "52c\\$specfile_line2" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
+sed -i "s/^Version:.*/$specfile_line/" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
+sed -i "0,/^\\* .*Victor Gregory <psygreg@pm.me> - /s//$specfile_line2/" ${ROOT_DIR}/dev/build/copr/linuxtoys.spec
 # build
 # rm -r $HOME/rpmbuild # ensure there's no leftover build artifacts previous to building
 # cp -r rpmbuild $HOME # only works with this setup on Silverblue, which is what I use

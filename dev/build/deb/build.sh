@@ -32,6 +32,18 @@ mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalab
 
 # Copy the Python app from p3 directory to proper location
 cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/"
+# Include Rust/PyO3 sources so Debian builds the extension in its own build environment.
+cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/"
+cp -a "$ROOT_DIR/src" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/"
+cp "$ROOT_DIR/Cargo.toml" "$ROOT_DIR/Cargo.lock" "$ROOT_DIR/pyproject.toml" \
+    "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/"
+
+# Vendor locked Rust dependencies so sandboxed distro builds need no network.
+mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/.cargo
+(
+    cd "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"
+    cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
+)
 # Clean up Python cache files to avoid warnings
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/" -name "*.pyc" -delete 2>/dev/null || true
@@ -80,6 +92,10 @@ Maintainer: Victor Gregory <psygreg@icloud.com>
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
+ cargo,
+ rustc,
+ python3-dev,
+ python3-maturin,
 Standards-Version: 4.7.2
 Homepage: https://git.linux.toys/psygreg/linuxtoys
 
@@ -113,9 +129,16 @@ cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules" <<'EOF'
 %:
 	dh $@
 
+override_dh_auto_build:
+	maturin build --release --locked --out target/wheels
+	rm -rf wheel-unpack
+	python3 -m zipfile -e $$(find target/wheels -maxdepth 1 -type f -name '*.whl' -print -quit) wheel-unpack
+	test -n "$$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+
 override_dh_install:
 	dh_install
-	# Set proper permissions for executable files after they are installed
+	install -m 755 $$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit) debian/linuxtoys/usr/share/linuxtoys/app/
+	test -f debian/linuxtoys/usr/share/linuxtoys/app/_catalog_rs.abi3.so
 	chmod +x debian/linuxtoys/usr/bin/linuxtoys
 	chmod +x debian/linuxtoys/usr/share/linuxtoys/linuxtoys.py
 	find debian/linuxtoys/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;

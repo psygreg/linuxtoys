@@ -31,6 +31,18 @@ mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/
 
 # Copy the Python app from p3 directory
 cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/"
+# Keep the build sources in the release tarball; makepkg compiles the PyO3 module.
+cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
+cp -a "$ROOT_DIR/src" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
+cp "$ROOT_DIR/Cargo.toml" "$ROOT_DIR/Cargo.lock" "$ROOT_DIR/pyproject.toml" \
+    "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
+
+# Vendor locked Rust dependencies so sandboxed distro builds need no network.
+mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}"/.cargo
+(
+    cd "$OUTPUT_PATH/linuxtoys-${LT_VERSION}"
+    cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
+)
 # Copy desktop file and icon
 cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps/"

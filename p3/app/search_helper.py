@@ -12,7 +12,7 @@ Works transparently with both git-synced and bundled scripts:
 import os
 import re
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
-from . import parser, popularity, installed_packages
+from . import parser, popularity, installed_packages, _catalog_rs
 from .compat import (
     get_system_compat_keys,
     script_is_compatible,
@@ -671,6 +671,8 @@ class SearchEngine:
         self.system_compat_keys = get_system_compat_keys()
         self.current_locale = detect_system_language()
         self.script_cache = script_cache or ScriptCache()
+        self._rust_search_index = None
+        self._rust_search_index_token = None
 
     def update_translations(self, translations):
         """
@@ -695,6 +697,44 @@ class SearchEngine:
     def set_cache(self, script_cache):
         """Set the script cache to use."""
         self.script_cache = script_cache
+        self._rust_search_index = None
+        self._rust_search_index_token = None
+
+    def _ensure_rust_search_index(self):
+        """Build the immutable Rust-side search index for the current ScriptCache."""
+        scripts = self.script_cache.scripts
+        token = (id(scripts), len(scripts))
+        if self._rust_search_index_token == token and self._rust_search_index is not None:
+            return
+
+        rows = []
+        for script_info in scripts:
+            name = str(script_info.get("name", "") or "").casefold()
+            description = str(script_info.get("description", "") or "").casefold()
+            developer = str(script_info.get("developer", "") or "").casefold()
+            aliases = tuple(self.SEARCH_ALIASES.get(name, ()))
+            packages = tuple(
+                package.casefold()
+                for package in self._searchable_package_names(script_info)
+            )
+
+            if script_info.get("is_repo_entry"):
+                official = is_verified_name(script_info.get("name", ""))
+            else:
+                official = is_verified_script(script_info.get("path", ""))
+
+            rows.append((
+                name,
+                description,
+                developer,
+                aliases,
+                packages,
+                bool(script_info.get("is_new", False)),
+                bool(official),
+            ))
+
+        self._rust_search_index = _catalog_rs.build_search_index(rows)
+        self._rust_search_index_token = token
 
     def search(self, query, max_results=50):
         """
@@ -915,16 +955,42 @@ class SearchEngine:
                 results.append(SearchResult(script_info, "script", 100))
 
     def _search_cached_scripts(self, query, results):
-        """Search through cached scripts."""
+        """Search cached scripts through the prebuilt Rust index."""
         if not self.script_cache.is_populated:
             return  # Cache not ready
 
-        for script_info in self.script_cache.get_all_scripts():
-            score = self._calculate_match_score(query, script_info, 'script')
-            if score > 0:
-                results.append(SearchResult(script_info, 'script', score))
+        self._ensure_rust_search_index()
+        translated_new = self.translations.get("new_spec_key", "new").casefold()
+        translated_official = self.translations.get(
+            "official_spec_key", "official"
+        ).casefold()
 
-        # Add "Create New Script" option as a searchable item
+        for index, base_score in _catalog_rs.search_index(
+            self._rust_search_index,
+            query,
+            translated_new,
+            translated_official,
+        ):
+            script_info = self.script_cache.scripts[index]
+            score = base_score
+
+            # Preserve Python re's Unicode word-boundary semantics exactly while
+            # keeping the full-catalog scan and substring scoring in Rust.
+            name = str(script_info.get("name", "") or "").casefold()
+            developer = str(script_info.get("developer", "") or "").casefold()
+            description = str(script_info.get("description", "") or "").casefold()
+            word_pattern = r"\b" + re.escape(query) + r"\b"
+            if re.search(word_pattern, name):
+                score += 20
+            elif re.search(word_pattern, developer):
+                score += 15
+            elif re.search(word_pattern, description):
+                score += 10
+
+            results.append(SearchResult(script_info, "script", score))
+
+        # This is one synthetic item, so retaining the Python scorer is cheaper than
+        # rebuilding the persistent index around it.
         self._search_create_new_script_option(query, results)
 
     def _search_categories(self, query, results):

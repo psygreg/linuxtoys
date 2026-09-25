@@ -554,7 +554,13 @@ class ItemWidgetFactory:
                 # The 4x render/downsample/rounded-corner work is deferred to the
                 # window-level settled-resize pass.
                 surface._linuxtoys_pending_watermark_size = size
-                if getattr(self, "_window_resize_pending", False):
+                if (
+                    getattr(self, "_window_resize_pending", False)
+                    or not getattr(self, "_categories_startup_transition_complete", True)
+                ):
+                    # During startup the opaque roller owns the screen. Defer the
+                    # expensive 4x watermark composition until window.py drains the
+                    # pending cards cooperatively, one per GTK idle dispatch.
                     return
 
                 pixbuf = self._category_watermark_pixbuf(path, *size)

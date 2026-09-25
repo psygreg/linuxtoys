@@ -3,15 +3,27 @@ pkgver='1.0'
 pkgrel=1
 arch=('x86_64')
 depends=(bash git curl wget zenity appstream archlinux-appstream-data python python-gobject python-requests gtk3 vte3 sudo util-linux)
-makedepends=()
+makedepends=(rust cargo maturin python)
 conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
 sha256sums=('b45db155c7ee6b0e78e7ef1126267882929df672af53c5b16000de44d6e614e8')
 
+build() {
+    cd "${srcdir}/linuxtoys-${pkgver}"
+    maturin build --release --locked --out target/wheels
+    rm -rf wheel-unpack
+    python -m zipfile -e "$(find target/wheels -maxdepth 1 -type f -name '*.whl' -print -quit)" wheel-unpack
+    test -n "$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+}
+
 package() {
     mkdir -p ${pkgdir}/usr
     cp -rf ${srcdir}/linuxtoys-${pkgver}/usr/* ${pkgdir}/usr/
+    extension="$(find "${srcdir}/linuxtoys-${pkgver}/wheel-unpack/app" -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+    test -n "$extension"
+    install -Dm755 "$extension" "${pkgdir}/usr/share/linuxtoys/app/$(basename "$extension")"
+    test -f "${pkgdir}/usr/share/linuxtoys/app/_catalog_rs.abi3.so"
     find "${pkgdir}/usr/share/linuxtoys" -type d -name '__pycache__' -prune -exec rm -rf {} +
     find "${pkgdir}/usr/share/linuxtoys" -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete
 
