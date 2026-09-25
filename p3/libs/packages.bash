@@ -456,11 +456,11 @@ pkg_tarball () {
         archive="$(realpath -- "$archive")" || die "Failed to resolve tarball path: $archive"
         archive_name="$(basename -- "$archive")"
 
-        case "${archive_name,,}" in
-            *.tar.gz)
+        case "$archive_name" in
+            *.[Tt][Aa][Rr].[Gg][Zz])
                 app_name="${archive_name:0:${#archive_name}-7}"
                 ;;
-            *.tar.xz)
+            *.[Tt][Aa][Rr].[Xx][Zz])
                 app_name="${archive_name:0:${#archive_name}-7}"
                 ;;
             *)
@@ -682,8 +682,8 @@ pkg_fromurl () {
         esac
 
         if [[ $_tarball -eq 1 ]]; then
-            case "${filename,,}" in
-                *.tar.gz|*.tar.xz) ;;
+            case "$filename" in
+                *.[Tt][Aa][Rr].[Gg][Zz]|*.[Tt][Aa][Rr].[Xx][Zz]) ;;
                 *)
                     rm -f -- "$temp_file"
                     die "Tarball URL did not resolve to a .tar.gz or .tar.xz file: $url"
@@ -695,8 +695,8 @@ pkg_fromurl () {
         # --tar/--bin modes are user-level installs and are allowed; otherwise
         # the resolved download must be an AppImage or Flatpak file.
         if is_steamos && [[ $_tarball -eq 0 && $_binary -eq 0 ]]; then
-            case "${filename,,}" in
-                *.appimage|*.flatpak) ;;
+            case "$filename" in
+                *.[Aa][Pp][Pp][Ii][Mm][Aa][Gg][Ee]|*.[Ff][Ll][Aa][Tt][Pp][Aa][Kk]) ;;
                 *)
                     rm -f -- "$temp_file"
                     die "SteamOS only supports AppImage, Flatpak, tarball, or single-binary installs from URLs: $filename"
@@ -729,8 +729,8 @@ pkg_fromurl () {
             continue
         fi
 
-        case "${package_file,,}" in
-            *.appimage)
+        case "$package_file" in
+            *.[Aa][Pp][Pp][Ii][Mm][Aa][Gg][Ee])
                 pkg_appimage "$package_file"
                 ;;
             *)
