@@ -6,7 +6,7 @@ URL="$(
     head -n1 |
     sed 's/&amp;/\&/g'
 )"
-[ -n "$url" ] || die "Failed to resolve latest Android Studio Linux tarball"
+[ -n "$URL" ] || die "Failed to resolve latest Android Studio Linux tarball"
 
 askpass
 if is_ubuntu || is_debian; then
