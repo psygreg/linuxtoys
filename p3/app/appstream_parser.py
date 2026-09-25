@@ -62,7 +62,8 @@ SYSTEM_FLATPAK_ONLY = {
 APPSTREAM_OMIT = {
     "virtualbox",
     "virt-manager",
-    "org.virt_manager.virt-manager"
+    "org.virt_manager.virt-manager",
+    "com.heroicgameslauncher.hgl"
 }
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
