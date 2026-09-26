@@ -50,7 +50,7 @@ optimizer () {
 # menu
 while true; do
     OPTIONS=(
-        TRUE  "standard"    "Install without Power Profile"
+        TRUE  "standard"    "$defaultpwr"
     )
     if ! is_zorin && ! is_cachy && ! is_suse; then
         OPTIONS+=(
@@ -60,7 +60,7 @@ while true; do
     CPU_VENDOR=$(awk -F ': *' '/^vendor_id/ { print $2; exit }' /proc/cpuinfo)
     if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
         OPTIONS+=(
-            FALSE "performance" "High Performance"
+            FALSE "performance" "$highperfpwr"
         )
     fi
     OPTIONS+=(
