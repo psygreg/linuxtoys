@@ -21,22 +21,19 @@ elif is_fedora || is_rhel; then
     zeninf "$msg018"
 elif is_ostree; then
     pkg_exists \
-        ffmpeg-free \
+        fdk-aac-free \
         libavcodec-free \
+        libavdevice-free \
         libavfilter-free \
         libavformat-free \
         libavutil-free \
         libpostproc-free \
         libswresample-free \
         libswscale-free \
-        libavdevice-free \
-        noopenh264
+        ffmpeg-free
     sudo rpm-ostree override remove \
         "${pkg_found[@]}" \
-        --install ffmpeg openh264 gstreamer1-plugin-openh264 \
-        libavcodec-freeworld mesa-va-drivers-freeworld \
-        mesa-vdpau-drivers-freeworld mesa-vulkan-drivers-freeworld \
-        gstreamer1-plugins-bad-freeworld
+        --install ffmpeg
     info "$finishmsg"
 else
     zeninf "$msg077"
