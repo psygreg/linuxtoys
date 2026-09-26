@@ -37,7 +37,7 @@ if is_rhel; then
         echo "RPMFusion Non-Free repository is already installed"
     fi
 else
-    is_ostree && { _package_manager_cmd="sudo rpm-ostree install"; } || _package_manager_cmd="sudo dnf install -y --setopt=timeout=5"
+    is_ostree && { _package_manager_cmd="sudo rpm-ostree install -yA"; } || _package_manager_cmd="sudo dnf install -y --setopt=timeout=5"
     if ! fedora_version=$(rpm -E %fedora 2>/dev/null) || [ "$fedora_version" = "%fedora" ]; then
         die "Could not determine Fedora version"
     fi

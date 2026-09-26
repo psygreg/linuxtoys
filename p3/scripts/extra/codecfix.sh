@@ -20,6 +20,7 @@ elif is_fedora || is_rhel; then
     sudo dnf install @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
     zeninf "$msg018"
 elif is_ostree; then
+    call_script rpmfusion
     pkg_exists \
         fdk-aac-free \
         libavcodec-free \
