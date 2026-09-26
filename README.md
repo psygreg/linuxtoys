@@ -105,27 +105,27 @@ Ensure your system has the necessary dependencies installed. Those will include 
 
 **Debian/Ubuntu:**
 ```bash
-sudo apt install -y bash git curl wget zenity appstream libappstream5 python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91 gir1.2-appstream-1.0 cargo python3-dev python3-maturin python3-venv
+sudo apt install -y bash git curl wget zenity appstream libappstream5 python3 python3-gi python3-requests libgtk-3-0 gir1.2-gtk-3.0 gir1.2-vte-2.91 gir1.2-appstream-1.0 cargo python3-dev python3-maturin python3-venv pkgconf libgtk-3-dev patchelf
 ```
 
 **Fedora/RHEL:**
 ```bash
-sudo dnf install -y bash git curl wget zenity appstream appstream-data python3 python3-gobject python3-requests gtk3 vte291 cargo python3-devel maturin
+sudo dnf install -y bash git curl wget zenity appstream appstream-data python3 python3-gobject python3-requests gtk3 vte291 cargo python3-devel maturin gtk3-devel pkgconf-pkg-config patchelf
 ```
 
 **Arch Linux:**
 ```bash
-sudo pacman -S --noconfirm bash git curl wget zenity appstream archlinux-appstream-data python python-gobject python-requests gtk3 vte3 cargo maturin
+sudo pacman -S --noconfirm bash git curl wget zenity appstream archlinux-appstream-data python python-gobject python-requests gtk3 vte3 cargo maturin pkgconf patchelf
 ```
 
 **OpenSUSE:**
 ```bash
-sudo zypper in -y bash git curl wget zenity libappstream5 python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91 typelib-1_0-AppStream-1_0 cargo python3-devel python3-maturin
+sudo zypper in -y bash git curl wget zenity libappstream5 python3 python3-gobject python3-requests gtk3 libvte-2_91-0 typelib-1_0-Vte-2.91 typelib-1_0-AppStream-1_0 cargo python3-devel python3-maturin gtk3-devel pkgconf-pkg-config patchelf
 ```
 
 **Solus:**
 ```bash
-sudo eopkg it -y git curl wget zenity appstream python3 python-gobject python-requests libvte cargo python-devel
+sudo eopkg it -y git curl wget zenity appstream python3 python-gobject python-requests libvte rust python-devel pkg-config gtk3-devel patchelf
 ```
 > For Solus, you will have to install `maturin` using `pip` on the virtual environment you will set up in the next steps.
 
@@ -137,15 +137,15 @@ git clone --depth=1 https://github.com/psygreg/linuxtoys.git
 cd linuxtoys
 ```
 
-#### Build rust library for development
+#### Build rust libraries for development
 Start by setting up a python virtual environment for maturin, from the repository root:
 ```bash
 python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
 ```
-Then compile the library:
+Then compile the libraries with the script:
 ```bash
-maturin develop --release
+./build-rust.sh develop
 ```
 > The compiled rust library for development and testing, virtual environment files and building artifacts are automatically ignored by the repository if you follow this procedure correctly.
 
