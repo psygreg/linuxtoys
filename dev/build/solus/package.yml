@@ -17,8 +17,8 @@ networking : true
 builddeps  :
     - desktop-file-utils
     - rust
-    - gtk3-devel
-    - pkg-config
+    - libgtk-3-devel
+    - pkgconf
     - patchelf
 
 # Runtime dependencies
