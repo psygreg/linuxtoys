@@ -139,7 +139,7 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format","appstream");e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else{"native"});e.insert("package-name".into(),if flat{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["popularity_metric","review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else{"native"});e.insert("package-name".into(),if flat{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["popularity_metric","review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
         if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
         out.push(Value::Object(e));
@@ -342,6 +342,39 @@ fn flatpak_icon_rs(component:&XmlNode,dir:&str,id:&str)->String{
 }
 fn launchable_rs(c:&XmlNode,id:&str)->String{for n in c.children_named("launchable"){let v=n.text_trimmed();if !v.is_empty()&&(n.attrs.get("type").map(String::as_str)==Some("desktop-id")||v.ends_with(".desktop")){return v}}if id.ends_with(".desktop"){id.into()}else{String::new()}}
 
+
+fn flatpak_bundle_ref_rs(component: &XmlNode) -> String {
+    component.children_named("bundle")
+        .find(|n| n.attrs.get("type").map(String::as_str) == Some("flatpak"))
+        .map(XmlNode::text_trimmed).unwrap_or_default()
+}
+
+fn normalize_flatpak_extension_rs(component: &XmlNode, source: &serde_json::Map<String,Value>) -> Option<serde_json::Map<String,Value>> {
+    let id = default_localized_text_rs(component, "id");
+    let parent = component.children_named("extends").map(XmlNode::text_trimmed).find(|v| !v.is_empty())?;
+    let flatpak_ref = flatpak_bundle_ref_rs(component);
+    if id.is_empty() || flatpak_ref.is_empty() { return None; }
+    let name = { let v=default_localized_text_rs(component,"name"); if v.is_empty(){id.clone()}else{v} };
+    let summary = default_localized_text_rs(component,"summary");
+    let remote=source.get("remote").and_then(Value::as_str).unwrap_or("");
+    let scope=source.get("scope").and_then(Value::as_str).unwrap_or("");
+    let installation=source.get("installation").and_then(Value::as_str).unwrap_or("");
+    let arch=source.get("arch").and_then(Value::as_str).unwrap_or("");
+    let dir=source.get("appstream_dir").and_then(Value::as_str).unwrap_or("");
+    let parts: Vec<&str> = flatpak_ref.split('/').collect();
+    let ref_arch = parts.get(2).copied().unwrap_or(arch).to_string();
+    let branch = parts.get(3).copied().unwrap_or("").to_string();
+    let mut m=serde_json::Map::new();
+    m.insert("id".into(),Value::String(id.clone()));
+    m.insert("parent_id".into(),Value::String(parent.strip_suffix(".desktop").unwrap_or(&parent).to_string()));
+    m.insert("name".into(),Value::String(name)); m.insert("summary".into(),Value::String(summary));
+    m.insert("icon".into(),Value::String(flatpak_icon_rs(component,dir,&id)));
+    m.insert("flatpak_ref".into(),Value::String(flatpak_ref)); m.insert("flatpak_remote".into(),Value::String(remote.into()));
+    m.insert("flatpak_scope".into(),Value::String(scope.into())); m.insert("flatpak_installation".into(),Value::String(installation.into()));
+    m.insert("flatpak_arch".into(),Value::String(ref_arch)); m.insert("flatpak_branch".into(),Value::String(branch));
+    Some(m)
+}
+
 fn normalize_flatpak_component_rs(component:&XmlNode, source:&serde_json::Map<String,Value>, eol:&std::collections::HashSet<String>, now:i64)->Option<serde_json::Map<String,Value>>{
     let id=default_localized_text_rs(component,"id"); let app_id=id.strip_suffix(".desktop").unwrap_or(&id).to_string(); if eol.contains(&id)||eol.contains(&app_id){return None}
     let name=default_localized_text_rs(component,"name");let summary=default_localized_text_rs(component,"summary");
@@ -355,7 +388,7 @@ fn normalize_flatpak_component_rs(component:&XmlNode, source:&serde_json::Map<St
     let localized_names=localized_text_values_rs(component,"name");let localized_summaries=localized_text_values_rs(component,"summary");let localized_desc=localized_description_values_rs(component);let localized_devs={let a=localized_text_values_rs(component,"developer_name");if !a.is_empty(){a}else{component.child("developer").map(|d|localized_text_values_rs(d,"name")).unwrap_or_default()}};
     let raw_hash={use sha2::{Digest,Sha256};let mut h=Sha256::new();h.update(format!("{}\0{}\0{}\0{}\0{}\0{}",scope,installation,remote,source.get("arch").and_then(Value::as_str).unwrap_or(""),media,dir));let mut stable=String::new();stable_xml_repr(component,&mut stable);h.update(stable.as_bytes());format!("{:x}",h.finalize())};
     let mut m=serde_json::Map::new();macro_rules! ins{($k:expr,$v:expr)=>{m.insert($k.into(),$v);}}
-    ins!("identity",Value::String(format!("flatpak:{scope}:{installation}:{remote}:{id}")));ins!("_metadata_hash",Value::String(raw_hash));ins!("id",Value::String(id.clone()));ins!("name",Value::String(name));ins!("summary",Value::String(summary));ins!("description_blocks",default_description_rs(component));ins!("localized_names",Value::Object(localized_names));ins!("localized_summaries",Value::Object(localized_summaries));ins!("localized_descriptions",Value::Object(localized_desc));ins!("localized_developers",Value::Object(localized_devs));ins!("packages",Value::Array(vec![Value::String(app_id)]));ins!("categories",Value::Array(categories));ins!("launchable",Value::String(launchable_rs(component,&id)));ins!("icon",Value::String(flatpak_icon_rs(component,dir,&id)));ins!("screenshots",Value::Array(screenshots));ins!("homepage",Value::String(url_of("homepage")));ins!("donation",Value::String(url_of("donation")));ins!("license",Value::String(default_localized_text_rs(component,"project_license")));ins!("developer",Value::String(developer));ins!("verified",Value::Bool(verified));ins!("origin",Value::String(remote.into()));ins!("source",Value::String("flatpak".into()));ins!("version",Value::String(version));ins!("flatpak_remote",Value::String(remote.into()));ins!("flatpak_scope",Value::String(scope.into()));ins!("flatpak_installation",Value::String(installation.into()));ins!("_releases_last_year",Value::Number(release_count_last_year_rs(component,now).into()));Some(m)
+    ins!("identity",Value::String(format!("flatpak:{scope}:{installation}:{remote}:{id}")));ins!("_metadata_hash",Value::String(raw_hash));ins!("id",Value::String(id.clone()));ins!("name",Value::String(name));ins!("summary",Value::String(summary));ins!("description_blocks",default_description_rs(component));ins!("localized_names",Value::Object(localized_names));ins!("localized_summaries",Value::Object(localized_summaries));ins!("localized_descriptions",Value::Object(localized_desc));ins!("localized_developers",Value::Object(localized_devs));ins!("packages",Value::Array(vec![Value::String(app_id)]));ins!("categories",Value::Array(categories));ins!("launchable",Value::String(launchable_rs(component,&id)));ins!("icon",Value::String(flatpak_icon_rs(component,dir,&id)));ins!("screenshots",Value::Array(screenshots));ins!("homepage",Value::String(url_of("homepage")));ins!("donation",Value::String(url_of("donation")));ins!("license",Value::String(default_localized_text_rs(component,"project_license")));ins!("developer",Value::String(developer));ins!("verified",Value::Bool(verified));ins!("origin",Value::String(remote.into()));ins!("source",Value::String("flatpak".into()));ins!("version",Value::String(version));ins!("flatpak_remote",Value::String(remote.into()));ins!("flatpak_scope",Value::String(scope.into()));ins!("flatpak_installation",Value::String(installation.into()));let bundle=flatpak_bundle_ref_rs(component);if !bundle.is_empty(){let parts:Vec<String>=bundle.split('/').map(str::to_string).collect();ins!("flatpak_ref",Value::String(bundle));if parts.len()>2{ins!("flatpak_arch",Value::String(parts[2].clone()));}if parts.len()>3{ins!("flatpak_branch",Value::String(parts[3].clone()));}}ins!("_releases_last_year",Value::Number(release_count_last_year_rs(component,now).into()));Some(m)
 }
 
 
@@ -509,6 +542,7 @@ pub(crate) fn parse_flatpak_appstream_source(py:Python<'_>, path:&str, source_js
 pub(crate) struct AppStreamGeneration {
     previous: Vec<serde_json::Map<String, Value>>,
     entries: Vec<serde_json::Map<String, Value>>,
+    extensions: Vec<serde_json::Map<String, Value>>,
 }
 
 impl AppStreamGeneration {
@@ -539,7 +573,7 @@ impl AppStreamGeneration {
                 .filter_map(|value| value.as_object().cloned())
                 .collect()
         });
-        Self { previous, entries: Vec::new() }
+        Self { previous, entries: Vec::new(), extensions: Vec::new() }
     }
 
     fn __len__(&self) -> usize {
@@ -577,14 +611,14 @@ impl AppStreamGeneration {
             use std::io::Read;
             let mut bytes = Vec::new();
             if path.ends_with(".gz") {
-                let file = match fs::File::open(&path) { Ok(v) => v, Err(_) => return Vec::new() };
+                let file = match fs::File::open(&path) { Ok(v) => v, Err(_) => return (Vec::new(), Vec::new()) };
                 let mut gz = flate2::read::GzDecoder::new(file);
-                if gz.read_to_end(&mut bytes).is_err() { return Vec::new(); }
+                if gz.read_to_end(&mut bytes).is_err() { return (Vec::new(), Vec::new()); }
             } else {
-                bytes = match fs::read(&path) { Ok(v) => v, Err(_) => return Vec::new() };
+                bytes = match fs::read(&path) { Ok(v) => v, Err(_) => return (Vec::new(), Vec::new()) };
             }
 
-            let root = match parse_xml_tree(&bytes) { Ok(v) => v, Err(_) => return Vec::new() };
+            let root = match parse_xml_tree(&bytes) { Ok(v) => v, Err(_) => return (Vec::new(), Vec::new()) };
             let mut source: serde_json::Map<String, Value> =
                 serde_json::from_str::<Value>(&source_json)
                     .ok().and_then(|v| v.as_object().cloned()).unwrap_or_default();
@@ -594,12 +628,23 @@ impl AppStreamGeneration {
                 }
             }
             let eol: std::collections::HashSet<String> = eol_ids.into_iter().collect();
-            root.children_named("component")
-                .filter_map(|component| normalize_flatpak_component_rs(component, &source, &eol, now))
-                .collect::<Vec<_>>()
+            let mut apps = Vec::new();
+            let mut extensions = Vec::new();
+            for component in root.children_named("component") {
+                if component.attrs.get("type").map(String::as_str) == Some("addon") {
+                    if let Some(extension) = normalize_flatpak_extension_rs(component, &source) {
+                        extensions.push(extension);
+                    }
+                } else if let Some(app) = normalize_flatpak_component_rs(component, &source, &eol, now) {
+                    apps.push(app);
+                }
+            }
+            (apps, extensions)
         });
+        let (normalized, extensions) = normalized;
         let count = normalized.len();
         self.entries.extend(normalized);
+        self.extensions.extend(extensions);
         Ok(count)
     }
 
@@ -712,6 +757,20 @@ impl AppStreamGeneration {
             }
         });
         Ok(())
+    }
+
+    fn publish_extensions(&self, py: Python<'_>, path: &str) -> PyResult<usize> {
+        let path = path.to_string();
+        let mut extensions = self.extensions.clone();
+        py.allow_threads(move || -> PyResult<usize> {
+            extensions.sort_by(|a,b| {
+                a.get("parent_id").and_then(Value::as_str).unwrap_or("").cmp(b.get("parent_id").and_then(Value::as_str).unwrap_or(""))
+                    .then_with(|| a.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase().cmp(&b.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase()))
+            });
+            let count=extensions.len();
+            atomic_write_json_value(&path,&Value::Array(extensions.into_iter().map(Value::Object).collect()))?;
+            Ok(count)
+        })
     }
 
     fn publish(

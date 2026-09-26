@@ -145,3 +145,5 @@ requirerebar="\"Resize BAR\" dan \"Above 4G Decoding\" diperlukan untuk memasang
 parumsg="paru diperlukan supaya LinuxToys dapat mengendalikan pakej AUR. Ia akan dipasang sekarang."
 gearlevermsg="Gear Lever diperlukan supaya LinuxToys dapat mengendalikan pakej AppImage. Ia akan dipasang sekarang."
 libvirtdnsmasq="dnsmasq dikesan. Jika anda menggunakannya sebagai cache DNS, libvirt mungkin menyebabkan masalah dan menjadikan sambungan anda tidak dapat menyelesaikan permintaan DNS. Teruskan juga?"
+defaultpwr="Lalai"
+highperfpwr="AMD Prestasi Tinggi"

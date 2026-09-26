@@ -144,3 +144,5 @@ requirerebar="AMD GPU drayverlarini o‘rnatish uchun \"Resize BAR\" va \"Above 
 parumsg="LinuxToys AUR paketlarini boshqarishi uchun paru talab qilinadi. U hozir o‘rnatiladi."
 gearlevermsg="LinuxToys AppImage paketlarini boshqarishi uchun Gear Lever talab qilinadi. U hozir o‘rnatiladi."
 libvirtdnsmasq="dnsmasq aniqlandi. Agar undan DNS keshi sifatida foydalanayotgan bo‘lsangiz, libvirt muammolarga sabab bo‘lishi va ulanishingiz DNS so‘rovlarini hal qila olmay qolishiga olib kelishi mumkin. Shunga qaramay davom etilsinmi?"
+defaultpwr="Standart"
+highperfpwr="AMD Yuqori unumdorlik"

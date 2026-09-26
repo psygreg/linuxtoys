@@ -145,3 +145,5 @@ requirerebar="AMD GPU ड्राइवर इंस्टॉल करने �
 parumsg="LinuxToys को AUR पैकेज संभालने के लिए paru की आवश्यकता है। इसे अब इंस्टॉल किया जाएगा।"
 gearlevermsg="LinuxToys को AppImage पैकेज संभालने के लिए Gear Lever की आवश्यकता है। इसे अब इंस्टॉल किया जाएगा।"
 libvirtdnsmasq="dnsmasq का पता चला है। यदि आप इसे DNS कैश के रूप में उपयोग कर रहे हैं, तो libvirt समस्याएँ पैदा कर सकता है और आपके कनेक्शन को DNS अनुरोध हल करने में असमर्थ बना सकता है। फिर भी आगे बढ़ें?"
+defaultpwr="डिफ़ॉल्ट"
+highperfpwr="AMD उच्च प्रदर्शन"

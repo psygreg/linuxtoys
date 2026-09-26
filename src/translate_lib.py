@@ -11,175 +11,289 @@ LANG_DIR = "../p3/libs/lang"
 # Translations for all messages across all supported languages
 TRANSLATIONS = {
     'am.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"',
+        'defaultpwr': 'defaultpwr="ነባሪ"',
+        'highperfpwr': 'highperfpwr="AMD ከፍተኛ አፈጻጸም"'
     },
     'ar.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="تم اكتشاف dnsmasq. إذا كنت تستخدمه كذاكرة تخزين مؤقت لـ DNS، فقد يتسبب libvirt في حدوث مشكلات ويجعل اتصالك غير قادر على حل طلبات DNS. هل تريد المتابعة على أي حال؟"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="تم اكتشاف dnsmasq. إذا كنت تستخدمه كذاكرة تخزين مؤقت لـ DNS، فقد يتسبب libvirt في حدوث مشكلات ويجعل اتصالك غير قادر على حل طلبات DNS. هل تريد المتابعة على أي حال؟"',
+        'defaultpwr': 'defaultpwr="افتراضي"',
+        'highperfpwr': 'highperfpwr="AMD أداء عالٍ"'
     },
     'az.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aşkarlandı. Əgər onu DNS keşi kimi istifadə edirsinizsə, libvirt problemlər yarada və bağlantınızın DNS sorğularını həll etməsinə mane ola bilər. Yenə də davam edilsin?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aşkarlandı. Əgər onu DNS keşi kimi istifadə edirsinizsə, libvirt problemlər yarada və bağlantınızın DNS sorğularını həll etməsinə mane ola bilər. Yenə də davam edilsin?"',
+        'defaultpwr': 'defaultpwr="Standart"',
+        'highperfpwr': 'highperfpwr="AMD Yüksək Performans"'
     },
     'bg.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Открит е dnsmasq. Ако го използвате като DNS кеш, libvirt може да причини проблеми и да попречи на връзката ви да разрешава DNS заявки. Искате ли да продължите въпреки това?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Открит е dnsmasq. Ако го използвате като DNS кеш, libvirt може да причини проблеми и да попречи на връзката ви да разрешава DNS заявки. Искате ли да продължите въпреки това?"',
+        'defaultpwr': 'defaultpwr="По подразбиране"',
+        'highperfpwr': 'highperfpwr="AMD Висока производителност"'
     },
     'bn.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq শনাক্ত করা হয়েছে। আপনি যদি এটিকে DNS ক্যাশ হিসেবে ব্যবহার করেন, তাহলে libvirt সমস্যা সৃষ্টি করতে পারে এবং আপনার সংযোগকে DNS অনুরোধ সমাধান করতে অক্ষম করে দিতে পারে। তবুও এগিয়ে যাবেন?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq শনাক্ত করা হয়েছে। আপনি যদি এটিকে DNS ক্যাশ হিসেবে ব্যবহার করেন, তাহলে libvirt সমস্যা সৃষ্টি করতে পারে এবং আপনার সংযোগকে DNS অনুরোধ সমাধান করতে অক্ষম করে দিতে পারে। তবুও এগিয়ে যাবেন?"',
+        'defaultpwr': 'defaultpwr="ডিফল্ট"',
+        'highperfpwr': 'highperfpwr="AMD উচ্চ কর্মক্ষমতা"'
     },
     'bs.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"',
+        'defaultpwr': 'defaultpwr="Zadano"',
+        'highperfpwr': 'highperfpwr="AMD Visoke performanse"'
     },
     'cs.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Byl zjištěn dnsmasq. Pokud jej používáte jako mezipaměť DNS, může libvirt způsobit problémy a znemožnit vašemu připojení překlad DNS požadavků. Přesto pokračovat?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Byl zjištěn dnsmasq. Pokud jej používáte jako mezipaměť DNS, může libvirt způsobit problémy a znemožnit vašemu připojení překlad DNS požadavků. Přesto pokračovat?"',
+        'defaultpwr': 'defaultpwr="Výchozí"',
+        'highperfpwr': 'highperfpwr="AMD Vysoký výkon"'
     },
     'da.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq blev fundet. Hvis du bruger den som DNS-cache, kan libvirt forårsage problemer og gøre din forbindelse ude af stand til at opløse DNS-forespørgsler. Fortsæt alligevel?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq blev fundet. Hvis du bruger den som DNS-cache, kan libvirt forårsage problemer og gøre din forbindelse ude af stand til at opløse DNS-forespørgsler. Fortsæt alligevel?"',
+        'defaultpwr': 'defaultpwr="Standard"',
+        'highperfpwr': 'highperfpwr="AMD Høj ydeevne"'
     },
     'de.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq wurde erkannt. Wenn Sie es als DNS-Cache verwenden, kann libvirt Probleme verursachen und dazu führen, dass Ihre Verbindung keine DNS-Anfragen mehr auflösen kann. Trotzdem fortfahren?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq wurde erkannt. Wenn Sie es als DNS-Cache verwenden, kann libvirt Probleme verursachen und dazu führen, dass Ihre Verbindung keine DNS-Anfragen mehr auflösen kann. Trotzdem fortfahren?"',
+        'defaultpwr': 'defaultpwr="Standard"',
+        'highperfpwr': 'highperfpwr="AMD Hohe Leistung"'
     },
     'el.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Εντοπίστηκε το dnsmasq. Εάν το χρησιμοποιείτε ως προσωρινή μνήμη DNS, το libvirt ενδέχεται να προκαλέσει προβλήματα και να εμποδίσει τη σύνδεσή σας να επιλύει αιτήματα DNS. Συνέχεια ούτως ή άλλως;"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Εντοπίστηκε το dnsmasq. Εάν το χρησιμοποιείτε ως προσωρινή μνήμη DNS, το libvirt ενδέχεται να προκαλέσει προβλήματα και να εμποδίσει τη σύνδεσή σας να επιλύει αιτήματα DNS. Συνέχεια ούτως ή άλλως;"',
+        'defaultpwr': 'defaultpwr="Προεπιλογή"',
+        'highperfpwr': 'highperfpwr="AMD Υψηλή απόδοση"'
     },
     'es.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Se detectó dnsmasq. Si lo utiliza como caché de DNS, libvirt puede causar problemas e impedir que su conexión resuelva solicitudes DNS. ¿Continuar de todos modos?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Se detectó dnsmasq. Si lo utiliza como caché de DNS, libvirt puede causar problemas e impedir que su conexión resuelva solicitudes DNS. ¿Continuar de todos modos?"',
+        'defaultpwr': 'defaultpwr="Predeterminado"',
+        'highperfpwr': 'highperfpwr="AMD Alto rendimiento"'
     },
     'et.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib libvirt põhjustada probleeme ja takistada teie ühendusel DNS-päringute lahendamist. Kas jätkata ikkagi?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib libvirt põhjustada probleeme ja takistada teie ühendusel DNS-päringute lahendamist. Kas jätkata ikkagi?"',
+        'defaultpwr': 'defaultpwr="Vaikimisi"',
+        'highperfpwr': 'highperfpwr="AMD Suur jõudlus"'
     },
     'fa.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq شناسایی شد. اگر از آن به‌عنوان حافظه نهان DNS استفاده می‌کنید، libvirt ممکن است باعث بروز مشکل شود و اتصال شما را از حل درخواست‌های DNS بازدارد. با این حال ادامه داده شود؟"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq شناسایی شد. اگر از آن به‌عنوان حافظه نهان DNS استفاده می‌کنید، libvirt ممکن است باعث بروز مشکل شود و اتصال شما را از حل درخواست‌های DNS بازدارد. با این حال ادامه داده شود؟"',
+        'defaultpwr': 'defaultpwr="پیش‌فرض"',
+        'highperfpwr': 'highperfpwr="AMD عملکرد بالا"'
     },
     'fi.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq havaittiin. Jos käytät sitä DNS-välimuistina, libvirt voi aiheuttaa ongelmia ja estää yhteyttäsi selvittämästä DNS-pyyntöjä. Jatketaanko silti?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq havaittiin. Jos käytät sitä DNS-välimuistina, libvirt voi aiheuttaa ongelmia ja estää yhteyttäsi selvittämästä DNS-pyyntöjä. Jatketaanko silti?"',
+        'defaultpwr': 'defaultpwr="Oletus"',
+        'highperfpwr': 'highperfpwr="AMD Korkea suorituskyky"'
     },
     'fr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq a été détecté. Si vous l’utilisez comme cache DNS, libvirt peut provoquer des problèmes et empêcher votre connexion de résoudre les requêtes DNS. Continuer quand même ?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq a été détecté. Si vous l’utilisez comme cache DNS, libvirt peut provoquer des problèmes et empêcher votre connexion de résoudre les requêtes DNS. Continuer quand même ?"',
+        'defaultpwr': 'defaultpwr="Par défaut"',
+        'highperfpwr': 'highperfpwr="AMD Hautes performances"'
     },
     'ga.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’fhéadfadh libvirt fadhbanna a chruthú agus cosc a chur ar do cheangal iarratais DNS a réiteach. Lean ar aghaidh mar sin féin?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’fhéadfadh libvirt fadhbanna a chruthú agus cosc a chur ar do cheangal iarratais DNS a réiteach. Lean ar aghaidh mar sin féin?"',
+        'defaultpwr': 'defaultpwr="Réamhshocrú"',
+        'highperfpwr': 'highperfpwr="AMD Ardfheidhmíocht"'
     },
     'he.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS, ‏libvirt עלול לגרום לבעיות ולמנוע מהחיבור שלך לפתור בקשות DNS. להמשיך בכל זאת?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS, ‏libvirt עלול לגרום לבעיות ולמנוע מהחיבור שלך לפתור בקשות DNS. להמשיך בכל זאת?"',
+        'defaultpwr': 'defaultpwr="ברירת מחדל"',
+        'highperfpwr': 'highperfpwr="AMD ביצועים גבוהים"'
     },
     'hi.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq का पता चला है। यदि आप इसे DNS कैश के रूप में उपयोग कर रहे हैं, तो libvirt समस्याएँ पैदा कर सकता है और आपके कनेक्शन को DNS अनुरोध हल करने में असमर्थ बना सकता है। फिर भी आगे बढ़ें?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq का पता चला है। यदि आप इसे DNS कैश के रूप में उपयोग कर रहे हैं, तो libvirt समस्याएँ पैदा कर सकता है और आपके कनेक्शन को DNS अनुरोध हल करने में असमर्थ बना सकता है। फिर भी आगे बढ़ें?"',
+        'defaultpwr': 'defaultpwr="डिफ़ॉल्ट"',
+        'highperfpwr': 'highperfpwr="AMD उच्च प्रदर्शन"'
     },
     'hr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS predmemoriju, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS predmemoriju, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"',
+        'defaultpwr': 'defaultpwr="Zadano"',
+        'highperfpwr': 'highperfpwr="AMD Visoke performanse"'
     },
     'hu.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítótárként használja, a libvirt problémákat okozhat, és megakadályozhatja, hogy a kapcsolat DNS-kéréseket oldjon fel. Mindenképpen folytatja?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítótárként használja, a libvirt problémákat okozhat, és megakadályozhatja, hogy a kapcsolat DNS-kéréseket oldjon fel. Mindenképpen folytatja?"',
+        'defaultpwr': 'defaultpwr="Alapértelmezett"',
+        'highperfpwr': 'highperfpwr="AMD Nagy teljesítmény"'
     },
     'hy.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Հայտնաբերվել է dnsmasq։ Եթե այն օգտագործում եք որպես DNS քեշ, libvirt-ը կարող է խնդիրներ առաջացնել և խանգարել ձեր կապին DNS հարցումները լուծել։ Շարունակե՞լ այնուամենայնիվ։"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Հայտնաբերվել է dnsmasq։ Եթե այն օգտագործում եք որպես DNS քեշ, libvirt-ը կարող է խնդիրներ առաջացնել և խանգարել ձեր կապին DNS հարցումները լուծել։ Շարունակե՞լ այնուամենայնիվ։"',
+        'defaultpwr': 'defaultpwr="Լռելյայն"',
+        'highperfpwr': 'highperfpwr="AMD Բարձր արտադրողականություն"'
     },
     'id.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq terdeteksi. Jika Anda menggunakannya sebagai cache DNS, libvirt dapat menyebabkan masalah dan membuat koneksi Anda tidak dapat meresolusi permintaan DNS. Tetap lanjutkan?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq terdeteksi. Jika Anda menggunakannya sebagai cache DNS, libvirt dapat menyebabkan masalah dan membuat koneksi Anda tidak dapat meresolusi permintaan DNS. Tetap lanjutkan?"',
+        'defaultpwr': 'defaultpwr="Bawaan"',
+        'highperfpwr': 'highperfpwr="AMD Performa Tinggi"'
     },
     'is.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur libvirt valdið vandamálum og komið í veg fyrir að tengingin þín geti leyst DNS-beiðnir. Halda samt áfram?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur libvirt valdið vandamálum og komið í veg fyrir að tengingin þín geti leyst DNS-beiðnir. Halda samt áfram?"',
+        'defaultpwr': 'defaultpwr="Sjálfgefið"',
+        'highperfpwr': 'highperfpwr="AMD Mikil afköst"'
     },
     'it.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="È stato rilevato dnsmasq. Se lo utilizzi come cache DNS, libvirt potrebbe causare problemi e impedire alla tua connessione di risolvere le richieste DNS. Procedere comunque?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="È stato rilevato dnsmasq. Se lo utilizzi come cache DNS, libvirt potrebbe causare problemi e impedire alla tua connessione di risolvere le richieste DNS. Procedere comunque?"',
+        'defaultpwr': 'defaultpwr="Predefinito"',
+        'highperfpwr': 'highperfpwr="AMD Prestazioni elevate"'
     },
     'ja.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして使用している場合、libvirt が問題を引き起こし、接続で DNS リクエストを解決できなくなる可能性があります。それでも続行しますか？"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして使用している場合、libvirt が問題を引き起こし、接続で DNS リクエストを解決できなくなる可能性があります。それでも続行しますか？"',
+        'defaultpwr': 'defaultpwr="デフォルト"',
+        'highperfpwr': 'highperfpwr="AMD 高パフォーマンス"'
     },
     'ka.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="აღმოჩენილია dnsmasq. თუ მას DNS ქეშად იყენებთ, libvirt-მა შეიძლება პრობლემები გამოიწვიოს და თქვენს კავშირს DNS მოთხოვნების ამოხსნა აღარ შეეძლოს. მაინც გაგრძელდეს?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="აღმოჩენილია dnsmasq. თუ მას DNS ქეშად იყენებთ, libvirt-მა შეიძლება პრობლემები გამოიწვიოს და თქვენს კავშირს DNS მოთხოვნების ამოხსნა აღარ შეეძლოს. მაინც გაგრძელდეს?"',
+        'defaultpwr': 'defaultpwr="ნაგულისხმევი"',
+        'highperfpwr': 'highperfpwr="AMD მაღალი წარმადობა"'
     },
     'km.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="បានរកឃើញ dnsmasq។ ប្រសិនបើអ្នកកំពុងប្រើវាជាឃ្លាំងសម្ងាត់ DNS នោះ libvirt អាចបង្កបញ្ហា និងធ្វើឱ្យការតភ្ជាប់របស់អ្នកមិនអាចដោះស្រាយសំណើ DNS បាន។ តើនៅតែបន្តឬ?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="បានរកឃើញ dnsmasq។ ប្រសិនបើអ្នកកំពុងប្រើវាជាឃ្លាំងសម្ងាត់ DNS នោះ libvirt អាចបង្កបញ្ហា និងធ្វើឱ្យការតភ្ជាប់របស់អ្នកមិនអាចដោះស្រាយសំណើ DNS បាន។ តើនៅតែបន្តឬ?"',
+        'defaultpwr': 'defaultpwr="លំនាំដើម"',
+        'highperfpwr': 'highperfpwr="AMD ដំណើរការខ្ពស់"'
     },
     'ko.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq가 감지되었습니다. DNS 캐시로 사용 중인 경우 libvirt로 인해 문제가 발생하여 연결에서 DNS 요청을 확인할 수 없게 될 수 있습니다. 그래도 계속하시겠습니까?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq가 감지되었습니다. DNS 캐시로 사용 중인 경우 libvirt로 인해 문제가 발생하여 연결에서 DNS 요청을 확인할 수 없게 될 수 있습니다. 그래도 계속하시겠습니까?"',
+        'defaultpwr': 'defaultpwr="기본값"',
+        'highperfpwr': 'highperfpwr="AMD 고성능"'
     },
     'lo.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="ກວດພົບ dnsmasq. ຖ້າທ່ານໃຊ້ມັນເປັນແຄດ DNS, libvirt ອາດເຮັດໃຫ້ເກີດບັນຫາ ແລະ ເຮັດໃຫ້ການເຊື່ອມຕໍ່ຂອງທ່ານບໍ່ສາມາດແກ້ໄຂຄຳຮ້ອງຂໍ DNS ໄດ້. ຍັງຈະສືບຕໍ່ບໍ?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="ກວດພົບ dnsmasq. ຖ້າທ່ານໃຊ້ມັນເປັນແຄດ DNS, libvirt ອາດເຮັດໃຫ້ເກີດບັນຫາ ແລະ ເຮັດໃຫ້ການເຊື່ອມຕໍ່ຂອງທ່ານບໍ່ສາມາດແກ້ໄຂຄຳຮ້ອງຂໍ DNS ໄດ້. ຍັງຈະສືບຕໍ່ບໍ?"',
+        'defaultpwr': 'defaultpwr="ຄ່າເລີ່ມຕົ້ນ"',
+        'highperfpwr': 'highperfpwr="AMD ປະສິດທິພາບສູງ"'
     },
     'lt.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"',
+        'defaultpwr': 'defaultpwr="Numatytasis"',
+        'highperfpwr': 'highperfpwr="AMD Didelis našumas"'
     },
     'lv.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Tika konstatēts dnsmasq. Ja izmantojat to kā DNS kešatmiņu, libvirt var radīt problēmas un neļaut savienojumam atrisināt DNS pieprasījumus. Vai tomēr turpināt?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Tika konstatēts dnsmasq. Ja izmantojat to kā DNS kešatmiņu, libvirt var radīt problēmas un neļaut savienojumam atrisināt DNS pieprasījumus. Vai tomēr turpināt?"',
+        'defaultpwr': 'defaultpwr="Noklusējums"',
+        'highperfpwr': 'highperfpwr="AMD Augsta veiktspēja"'
     },
     'mn.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq илэрлээ. Хэрэв та үүнийг DNS кэш болгон ашиглаж байгаа бол libvirt асуудал үүсгэж, таны холболт DNS хүсэлтүүдийг шийдвэрлэх боломжгүй болж магадгүй. Ямартай ч үргэлжлүүлэх үү?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq илэрлээ. Хэрэв та үүнийг DNS кэш болгон ашиглаж байгаа бол libvirt асуудал үүсгэж, таны холболт DNS хүсэлтүүдийг шийдвэрлэх боломжгүй болж магадгүй. Ямартай ч үргэлжлүүлэх үү?"',
+        'defaultpwr': 'defaultpwr="Өгөгдмөл"',
+        'highperfpwr': 'highperfpwr="AMD Өндөр гүйцэтгэл"'
     },
     'ms.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq dikesan. Jika anda menggunakannya sebagai cache DNS, libvirt mungkin menyebabkan masalah dan menjadikan sambungan anda tidak dapat menyelesaikan permintaan DNS. Teruskan juga?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq dikesan. Jika anda menggunakannya sebagai cache DNS, libvirt mungkin menyebabkan masalah dan menjadikan sambungan anda tidak dapat menyelesaikan permintaan DNS. Teruskan juga?"',
+        'defaultpwr': 'defaultpwr="Lalai"',
+        'highperfpwr': 'highperfpwr="AMD Prestasi Tinggi"'
     },
     'my.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ကို တွေ့ရှိထားသည်။ ၎င်းကို DNS cache အဖြစ် အသုံးပြုနေပါက libvirt သည် ပြဿနာများ ဖြစ်စေနိုင်ပြီး သင့်ချိတ်ဆက်မှုမှ DNS တောင်းဆိုချက်များကို ဖြေရှင်းနိုင်ခြင်း မရှိစေနိုင်ပါသည်။ ဆက်လက်လုပ်ဆောင်မည်လား?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ကို တွေ့ရှိထားသည်။ ၎င်းကို DNS cache အဖြစ် အသုံးပြုနေပါက libvirt သည် ပြဿနာများ ဖြစ်စေနိုင်ပြီး သင့်ချိတ်ဆက်မှုမှ DNS တောင်းဆိုချက်များကို ဖြေရှင်းနိုင်ခြင်း မရှိစေနိုင်ပါသည်။ ဆက်လက်လုပ်ဆောင်မည်လား?"',
+        'defaultpwr': 'defaultpwr="မူလ"',
+        'highperfpwr': 'highperfpwr="AMD စွမ်းဆောင်ရည်မြင့်"'
     },
     'nb.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ble oppdaget. Hvis du bruker den som DNS-hurtigbuffer, kan libvirt forårsake problemer og gjøre at tilkoblingen din ikke kan løse DNS-forespørsler. Fortsette likevel?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ble oppdaget. Hvis du bruker den som DNS-hurtigbuffer, kan libvirt forårsake problemer og gjøre at tilkoblingen din ikke kan løse DNS-forespørsler. Fortsette likevel?"',
+        'defaultpwr': 'defaultpwr="Standard"',
+        'highperfpwr': 'highperfpwr="AMD Høy ytelse"'
     },
     'ne.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq पत्ता लागेको छ। यदि तपाईं यसलाई DNS क्यासको रूपमा प्रयोग गर्दै हुनुहुन्छ भने, libvirt ले समस्या निम्त्याउन सक्छ र तपाईंको जडानलाई DNS अनुरोधहरू समाधान गर्न असमर्थ बनाउन सक्छ। तैपनि अगाडि बढ्ने?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq पत्ता लागेको छ। यदि तपाईं यसलाई DNS क्यासको रूपमा प्रयोग गर्दै हुनुहुन्छ भने, libvirt ले समस्या निम्त्याउन सक्छ र तपाईंको जडानलाई DNS अनुरोधहरू समाधान गर्न असमर्थ बनाउन सक्छ। तैपनि अगाडि बढ्ने?"',
+        'defaultpwr': 'defaultpwr="पूर्वनिर्धारित"',
+        'highperfpwr': 'highperfpwr="AMD उच्च कार्यसम्पादन"'
     },
     'nl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq is gedetecteerd. Als u het als DNS-cache gebruikt, kan libvirt problemen veroorzaken waardoor uw verbinding geen DNS-verzoeken meer kan oplossen. Toch doorgaan?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq is gedetecteerd. Als u het als DNS-cache gebruikt, kan libvirt problemen veroorzaken waardoor uw verbinding geen DNS-verzoeken meer kan oplossen. Toch doorgaan?"',
+        'defaultpwr': 'defaultpwr="Standaard"',
+        'highperfpwr': 'highperfpwr="AMD Hoge prestaties"'
     },
     'pl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Wykryto dnsmasq. Jeśli używasz go jako pamięci podręcznej DNS, libvirt może powodować problemy i uniemożliwić połączeniu rozwiązywanie zapytań DNS. Kontynuować mimo to?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Wykryto dnsmasq. Jeśli używasz go jako pamięci podręcznej DNS, libvirt może powodować problemy i uniemożliwić połączeniu rozwiązywanie zapytań DNS. Kontynuować mimo to?"',
+        'defaultpwr': 'defaultpwr="Domyślny"',
+        'highperfpwr': 'highperfpwr="AMD Wysoka wydajność"'
     },
     'pt.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="O dnsmasq foi detectado. Se você o utiliza como cache DNS, o libvirt pode causar problemas e fazer com que sua conexão não consiga resolver solicitações DNS. Continuar mesmo assim?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="O dnsmasq foi detectado. Se você o utiliza como cache DNS, o libvirt pode causar problemas e fazer com que sua conexão não consiga resolver solicitações DNS. Continuar mesmo assim?"',
+        'defaultpwr': 'defaultpwr="Padrão"',
+        'highperfpwr': 'highperfpwr="AMD Alto desempenho"'
     },
     'ro.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="A fost detectat dnsmasq. Dacă îl utilizați drept cache DNS, libvirt poate cauza probleme și poate împiedica conexiunea să rezolve cererile DNS. Continuați oricum?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="A fost detectat dnsmasq. Dacă îl utilizați drept cache DNS, libvirt poate cauza probleme și poate împiedica conexiunea să rezolve cererile DNS. Continuați oricum?"',
+        'defaultpwr': 'defaultpwr="Implicit"',
+        'highperfpwr': 'highperfpwr="AMD Performanță ridicată"'
     },
     'ru.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Обнаружен dnsmasq. Если вы используете его в качестве DNS-кэша, libvirt может вызвать проблемы и лишить ваше соединение возможности разрешать DNS-запросы. Всё равно продолжить?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Обнаружен dnsmasq. Если вы используете его в качестве DNS-кэша, libvirt может вызвать проблемы и лишить ваше соединение возможности разрешать DNS-запросы. Всё равно продолжить?"',
+        'defaultpwr': 'defaultpwr="По умолчанию"',
+        'highperfpwr': 'highperfpwr="AMD Высокая производительность"'
     },
     'sk.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Bol zistený dnsmasq. Ak ho používate ako vyrovnávaciu pamäť DNS, libvirt môže spôsobiť problémy a zabrániť vášmu pripojeniu v preklade DNS požiadaviek. Napriek tomu pokračovať?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Bol zistený dnsmasq. Ak ho používate ako vyrovnávaciu pamäť DNS, libvirt môže spôsobiť problémy a zabrániť vášmu pripojeniu v preklade DNS požiadaviek. Napriek tomu pokračovať?"',
+        'defaultpwr': 'defaultpwr="Predvolené"',
+        'highperfpwr': 'highperfpwr="AMD Vysoký výkon"'
     },
     'sl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Zaznan je bil dnsmasq. Če ga uporabljate kot predpomnilnik DNS, lahko libvirt povzroči težave in vaši povezavi onemogoči razreševanje zahtev DNS. Vseeno nadaljujem?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Zaznan je bil dnsmasq. Če ga uporabljate kot predpomnilnik DNS, lahko libvirt povzroči težave in vaši povezavi onemogoči razreševanje zahtev DNS. Vseeno nadaljujem?"',
+        'defaultpwr': 'defaultpwr="Privzeto"',
+        'highperfpwr': 'highperfpwr="AMD Visoka zmogljivost"'
     },
     'sq.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mund të shkaktojë probleme dhe ta bëjë lidhjen tuaj të paaftë për të zgjidhur kërkesat DNS. Të vazhdohet gjithsesi?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mund të shkaktojë probleme dhe ta bëjë lidhjen tuaj të paaftë për të zgjidhur kërkesat DNS. Të vazhdohet gjithsesi?"',
+        'defaultpwr': 'defaultpwr="Parazgjedhur"',
+        'highperfpwr': 'highperfpwr="AMD Performancë e lartë"'
     },
     'sr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Откривен је dnsmasq. Ако га користите као DNS кеш, libvirt може изазвати проблеме и онемогућити вашој вези да разрешава DNS захтеве. Ипак наставити?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Откривен је dnsmasq. Ако га користите као DNS кеш, libvirt може изазвати проблеме и онемогућити вашој вези да разрешава DNS захтеве. Ипак наставити?"',
+        'defaultpwr': 'defaultpwr="Подразумевано"',
+        'highperfpwr': 'highperfpwr="AMD Високе перформансе"'
     },
     'sv.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq upptäcktes. Om du använder den som DNS-cache kan libvirt orsaka problem och göra att din anslutning inte kan lösa DNS-förfrågningar. Fortsätt ändå?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq upptäcktes. Om du använder den som DNS-cache kan libvirt orsaka problem och göra att din anslutning inte kan lösa DNS-förfrågningar. Fortsätt ändå?"',
+        'defaultpwr': 'defaultpwr="Standard"',
+        'highperfpwr': 'highperfpwr="AMD Hög prestanda"'
     },
     'sw.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq imegunduliwa. Ikiwa unaitumia kama akiba ya DNS, libvirt inaweza kusababisha matatizo na kufanya muunganisho wako ushindwe kutatua maombi ya DNS. Uendelee hata hivyo?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq imegunduliwa. Ikiwa unaitumia kama akiba ya DNS, libvirt inaweza kusababisha matatizo na kufanya muunganisho wako ushindwe kutatua maombi ya DNS. Uendelee hata hivyo?"',
+        'defaultpwr': 'defaultpwr="Chaguo-msingi"',
+        'highperfpwr': 'highperfpwr="AMD Utendaji wa Juu"'
     },
     'ta.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq கண்டறியப்பட்டது. இதை DNS தற்காலிக சேமிப்பாகப் பயன்படுத்தினால், libvirt சிக்கல்களை ஏற்படுத்தி உங்கள் இணைப்பால் DNS கோரிக்கைகளைத் தீர்க்க முடியாமல் போகலாம். இருப்பினும் தொடரவா?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq கண்டறியப்பட்டது. இதை DNS தற்காலிக சேமிப்பாகப் பயன்படுத்தினால், libvirt சிக்கல்களை ஏற்படுத்தி உங்கள் இணைப்பால் DNS கோரிக்கைகளைத் தீர்க்க முடியாமல் போகலாம். இருப்பினும் தொடரவா?"',
+        'defaultpwr': 'defaultpwr="இயல்புநிலை"',
+        'highperfpwr': 'highperfpwr="AMD உயர் செயல்திறன்"'
     },
     'tg.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq муайян карда шуд. Агар шумо онро ҳамчун кэши DNS истифода баред, libvirt метавонад мушкилот эҷод кунад ва пайвасти шуморо аз ҳалли дархостҳои DNS боздорад. Ба ҳар ҳол идома дода шавад?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq муайян карда шуд. Агар шумо онро ҳамчун кэши DNS истифода баред, libvirt метавонад мушкилот эҷод кунад ва пайвасти шуморо аз ҳалли дархостҳои DNS боздорад. Ба ҳар ҳол идома дода шавад?"',
+        'defaultpwr': 'defaultpwr="Пешфарз"',
+        'highperfpwr': 'highperfpwr="AMD Иҷрои баланд"'
     },
     'th.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="ตรวจพบ dnsmasq หากคุณใช้เป็นแคช DNS, libvirt อาจทำให้เกิดปัญหาและทำให้การเชื่อมต่อของคุณไม่สามารถแก้ไขคำขอ DNS ได้ ต้องการดำเนินการต่อหรือไม่?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="ตรวจพบ dnsmasq หากคุณใช้เป็นแคช DNS, libvirt อาจทำให้เกิดปัญหาและทำให้การเชื่อมต่อของคุณไม่สามารถแก้ไขคำขอ DNS ได้ ต้องการดำเนินการต่อหรือไม่?"',
+        'defaultpwr': 'defaultpwr="ค่าเริ่มต้น"',
+        'highperfpwr': 'highperfpwr="AMD ประสิทธิภาพสูง"'
     },
     'tl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Natukoy ang dnsmasq. Kung ginagamit mo ito bilang DNS cache, maaaring magdulot ng problema ang libvirt at gawing hindi kayang lutasin ng iyong koneksyon ang mga kahilingan sa DNS. Magpatuloy pa rin?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Natukoy ang dnsmasq. Kung ginagamit mo ito bilang DNS cache, maaaring magdulot ng problema ang libvirt at gawing hindi kayang lutasin ng iyong koneksyon ang mga kahilingan sa DNS. Magpatuloy pa rin?"',
+        'defaultpwr': 'defaultpwr="Default"',
+        'highperfpwr': 'highperfpwr="AMD Mataas na Pagganap"'
     },
     'tr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız libvirt sorunlara yol açabilir ve bağlantınızın DNS isteklerini çözümleyememesine neden olabilir. Yine de devam edilsin mi?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız libvirt sorunlara yol açabilir ve bağlantınızın DNS isteklerini çözümleyememesine neden olabilir. Yine de devam edilsin mi?"',
+        'defaultpwr': 'defaultpwr="Varsayılan"',
+        'highperfpwr': 'highperfpwr="AMD Yüksek Performans"'
     },
     'uk.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Виявлено dnsmasq. Якщо ви використовуєте його як DNS-кеш, libvirt може спричинити проблеми та позбавити ваше з’єднання можливості розв’язувати DNS-запити. Усе одно продовжити?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Виявлено dnsmasq. Якщо ви використовуєте його як DNS-кеш, libvirt може спричинити проблеми та позбавити ваше з’єднання можливості розв’язувати DNS-запити. Усе одно продовжити?"',
+        'defaultpwr': 'defaultpwr="Типово"',
+        'highperfpwr': 'highperfpwr="AMD Висока продуктивність"'
     },
     'ur.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq کا پتہ چلا ہے۔ اگر آپ اسے DNS کیش کے طور پر استعمال کر رہے ہیں تو libvirt مسائل پیدا کر سکتا ہے اور آپ کے کنکشن کو DNS درخواستیں حل کرنے سے روک سکتا ہے۔ پھر بھی آگے بڑھیں؟"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq کا پتہ چلا ہے۔ اگر آپ اسے DNS کیش کے طور پر استعمال کر رہے ہیں تو libvirt مسائل پیدا کر سکتا ہے اور آپ کے کنکشن کو DNS درخواستیں حل کرنے سے روک سکتا ہے۔ پھر بھی آگے بڑھیں؟"',
+        'defaultpwr': 'defaultpwr="ڈیفالٹ"',
+        'highperfpwr': 'highperfpwr="AMD اعلیٰ کارکردگی"'
     },
     'uz.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aniqlandi. Agar undan DNS keshi sifatida foydalanayotgan bo‘lsangiz, libvirt muammolarga sabab bo‘lishi va ulanishingiz DNS so‘rovlarini hal qila olmay qolishiga olib kelishi mumkin. Shunga qaramay davom etilsinmi?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aniqlandi. Agar undan DNS keshi sifatida foydalanayotgan bo‘lsangiz, libvirt muammolarga sabab bo‘lishi va ulanishingiz DNS so‘rovlarini hal qila olmay qolishiga olib kelishi mumkin. Shunga qaramay davom etilsinmi?"',
+        'defaultpwr': 'defaultpwr="Standart"',
+        'highperfpwr': 'highperfpwr="AMD Yuqori unumdorlik"'
     },
     'vi.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Đã phát hiện dnsmasq. Nếu bạn đang sử dụng nó làm bộ nhớ đệm DNS, libvirt có thể gây ra sự cố và khiến kết nối của bạn không thể phân giải các yêu cầu DNS. Vẫn tiếp tục?"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="Đã phát hiện dnsmasq. Nếu bạn đang sử dụng nó làm bộ nhớ đệm DNS, libvirt có thể gây ra sự cố và khiến kết nối của bạn không thể phân giải các yêu cầu DNS. Vẫn tiếp tục?"',
+        'defaultpwr': 'defaultpwr="Mặc định"',
+        'highperfpwr': 'highperfpwr="AMD Hiệu năng cao"'
     },
     'zh.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="检测到 dnsmasq。如果您将其用作 DNS 缓存，libvirt 可能会引发问题，导致您的连接无法解析 DNS 请求。仍要继续吗？"'
+        'libvirtdnsmasq': 'libvirtdnsmasq="检测到 dnsmasq。如果您将其用作 DNS 缓存，libvirt 可能会引发问题，导致您的连接无法解析 DNS 请求。仍要继续吗？"',
+        'defaultpwr': 'defaultpwr="默认"',
+        'highperfpwr': 'highperfpwr="AMD 高性能"'
     }
 }
 

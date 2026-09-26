@@ -144,3 +144,5 @@ requirerebar="AMD GPU-ის დრაივერების დასაყ�
 parumsg="LinuxToys-ს AUR პაკეტების სამართავად paru სჭირდება. ის ახლა დაინსტალირდება."
 gearlevermsg="LinuxToys-ს AppImage პაკეტების სამართავად Gear Lever სჭირდება. ის ახლა დაინსტალირდება."
 libvirtdnsmasq="აღმოჩენილია dnsmasq. თუ მას DNS ქეშად იყენებთ, libvirt-მა შეიძლება პრობლემები გამოიწვიოს და თქვენს კავშირს DNS მოთხოვნების ამოხსნა აღარ შეეძლოს. მაინც გაგრძელდეს?"
+defaultpwr="ნაგულისხმევი"
+highperfpwr="AMD მაღალი წარმადობა"

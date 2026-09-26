@@ -12,12 +12,42 @@ from urllib.error import HTTPError, URLError
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
 from .term_header import InfosHead
-from . import get_icon_path, appstream_cache, gui_rs
+from . import get_icon_path, appstream_cache, appstream_extensions, gui_rs
 from .lang_utils import detect_system_language
 
 
 class _WidthNeutralTextView(Gtk.TextView):
     """Wrapped app-page text whose content must not establish page width."""
+
+    def do_get_preferred_width(self):
+        return (0, 0)
+
+    def do_get_preferred_width_for_height(self, height):
+        return (0, 0)
+
+
+class _WidthNeutralScreenshotFrame(Gtk.Frame):
+    """Screenshot frame whose image must follow, not establish, page width."""
+
+    def do_get_preferred_width(self):
+        return (0, 0)
+
+    def do_get_preferred_width_for_height(self, height):
+        return (0, 0)
+
+
+class _WidthNeutralStack(Gtk.Stack):
+    """Tabbed app-page body that must not establish the window's minimum width."""
+
+    def do_get_preferred_width(self):
+        return (0, 0)
+
+    def do_get_preferred_width_for_height(self, height):
+        return (0, 0)
+
+
+class _WidthNeutralStackSwitcher(Gtk.StackSwitcher):
+    """Tab selector whose natural width must not establish the app-page/window width."""
 
     def do_get_preferred_width(self):
         return (0, 0)
@@ -84,6 +114,10 @@ class AppPageView(Gtk.Box):
         self._description_translated_blocks = None
         self._description_view = None
         self._description_showing_translation = False
+        self._body_holder = None
+        self._body_stack = None
+        self._body_switcher = None
+        self._extensions_view = None
         self.connect("destroy", self._on_destroy)
 
         self.header = InfosHead(self.translations, show_terminal_controls=False)
@@ -134,7 +168,9 @@ class AppPageView(Gtk.Box):
             self._last_content_widget = description
 
         self._build_featured_fill()
-        self.pack_start(scroller, True, True, 0)
+        self._body_holder = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.pack_start(self._body_holder, True, True, 0)
+        self._sync_extensions_tabs()
         self.set_border_width(12)
 
         # Re-evaluate only after GTK has wrapped/measured the real page contents.
@@ -1825,7 +1861,74 @@ class AppPageView(Gtk.Box):
         self._selected_install_info = entry
         if self._source_button is not None:
             self._set_source_button_content(self._source_button, entry)
+        self._sync_extensions_tabs()
         self.refresh_install_state()
+
+    def _sync_extensions_tabs(self):
+        """Show Details/Extensions only when the selected Flatpak source has addons."""
+        if self._body_holder is None:
+            return
+        extensions = appstream_cache.get_flatpak_extensions(self._selected_install_info)
+        old_stack = self._body_stack
+        if old_stack is not None and self._content_scroller.get_parent() is old_stack:
+            old_stack.remove(self._content_scroller)
+        for child in list(self._body_holder.get_children()):
+            self._body_holder.remove(child)
+            child.destroy()
+
+        if not extensions:
+            self._body_stack = None
+            self._body_switcher = None
+            self._extensions_view = None
+            self._body_holder.pack_start(self._content_scroller, True, True, 0)
+            self._body_holder.show_all()
+            return
+
+        stack = _WidthNeutralStack()
+        # Keep initialization transition-free. Gtk.Stack only considers visible
+        # children when settling its initial visible child, and show_all() below
+        # changes child visibility during realization.
+        stack.set_transition_type(Gtk.StackTransitionType.NONE)
+        stack.set_transition_duration(140)
+        stack.add_titled(
+            self._content_scroller, "details",
+            self.translations.get("app_page_details", "Details"),
+        )
+        extensions_view = appstream_extensions.AppStreamExtensionsView(
+            self.parent, self._selected_install_info, extensions
+        )
+        stack.add_titled(
+            extensions_view, "extensions",
+            self.translations.get("app_page_extensions", "Extensions"),
+        )
+        switcher = _WidthNeutralStackSwitcher()
+        switcher.set_stack(stack)
+        switcher.set_halign(Gtk.Align.FILL)
+        switcher.set_hexpand(True)
+        switcher.set_margin_top(2)
+        switcher.set_margin_bottom(2)
+
+        # Gtk.StackSwitcher itself can expand while its internal toggle buttons
+        # keep their natural widths. Expand those too so Details/Extensions read
+        # as two equal-width tabs across the app page rather than centered buttons.
+        for child in switcher.get_children():
+            child.set_hexpand(True)
+            child.set_halign(Gtk.Align.FILL)
+
+        self._body_holder.pack_start(switcher, False, False, 0)
+        self._body_holder.pack_start(stack, True, True, 0)
+        self._body_stack = stack
+        self._body_switcher = switcher
+        self._extensions_view = extensions_view
+
+        # Realize/show both stack children first, then choose Details while
+        # transitions are disabled. This prevents GTK from settling on the
+        # already-visible Extensions child during show_all().
+        self._body_holder.show_all()
+        stack.set_visible_child(self._content_scroller)
+
+        # User-driven tab changes can animate normally from this point onward.
+        stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
 
     def set_install_state(self, state):
         """Render the AppStream install action without affecting the rest of the page."""
@@ -1890,6 +1993,8 @@ class AppPageView(Gtk.Box):
         resolver = getattr(self.parent, "_get_appstream_install_state", None)
         state = resolver(self._selected_install_info) if resolver is not None else "available"
         self.set_install_state(state)
+        if self._extensions_view is not None:
+            self._extensions_view.refresh()
 
     def _screenshot_variants(self, screenshot):
         """Normalize new AppStream variant groups and legacy string screenshots."""
@@ -1942,6 +2047,10 @@ class AppPageView(Gtk.Box):
         return max(1120, max(0, int(width)) * scale)
 
     def _on_screenshot_size_allocate(self, frame, allocation):
+        # Presentation must follow every allocation, including intermediate drag
+        # allocations. Source-variant selection can remain settled-resize-only.
+        self._fit_screenshot_to_frame(frame, allocation)
+
         if getattr(self.parent, "_window_resize_pending", False):
             return
         variants = getattr(frame, "_linuxtoys_screenshot_variants", ())
@@ -1958,6 +2067,51 @@ class AppPageView(Gtk.Box):
         # again. Cached variants make subsequent switches inexpensive.
         if variant["url"] != requested_url:
             self._request_screenshot_variant(frame, variant, initial=False)
+
+    @staticmethod
+    def _fit_screenshot_to_frame(frame, allocation=None):
+        """Scale the displayed screenshot to the frame's current allocation."""
+        master = getattr(frame, "_linuxtoys_screenshot_master_pixbuf", None)
+        image = getattr(frame, "_linuxtoys_screenshot_image", None)
+        if master is None or image is None:
+            return
+
+        width = allocation.width if allocation is not None else frame.get_allocated_width()
+        # A screenshot can finish loading before its frame receives a useful
+        # allocation. Do not collapse it to 1px in that transient state: use the
+        # already allocated details viewport as the initial width, then normal
+        # size-allocate events take over.
+        if int(width) <= 1:
+            owner = frame.get_ancestor(Gtk.ScrolledWindow)
+            if owner is not None:
+                width = owner.get_allocated_width()
+        if int(width) <= 1:
+            return
+
+        # Leave a tiny allowance for Gtk.Frame borders and never enlarge beyond
+        # the normal 760x430 presentation envelope.
+        available_width = max(1, int(width) - 4)
+        source_width = max(1, master.get_width())
+        source_height = max(1, master.get_height())
+        scale = min(1.0, 760.0 / source_width, 430.0 / source_height,
+                    available_width / source_width)
+        target_width = max(1, int(source_width * scale))
+        target_height = max(1, int(source_height * scale))
+
+        if getattr(frame, "_linuxtoys_screenshot_display_size", None) == (
+            target_width, target_height
+        ):
+            return
+
+        if target_width == source_width and target_height == source_height:
+            displayed = master
+        else:
+            displayed = master.scale_simple(
+                target_width, target_height, GdkPixbuf.InterpType.BILINEAR
+            )
+        if displayed is not None:
+            image.set_from_pixbuf(displayed)
+            frame._linuxtoys_screenshot_display_size = (target_width, target_height)
 
     def _build_screenshot_viewer(self, screenshots):
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -1978,7 +2132,7 @@ class AppPageView(Gtk.Box):
         previous_button.connect("clicked", self._on_screenshot_nav_clicked, -1)
         next_button.connect("clicked", self._on_screenshot_nav_clicked, 1)
 
-        self.screenshot_stack = Gtk.Stack()
+        self.screenshot_stack = _WidthNeutralStack()
         self.screenshot_stack.set_hexpand(True)
         self.screenshot_stack.set_transition_duration(220)
 
@@ -1988,9 +2142,13 @@ class AppPageView(Gtk.Box):
             if not variants:
                 continue
 
-            frame = Gtk.Frame()
+            frame = _WidthNeutralScreenshotFrame()
             frame.set_shadow_type(Gtk.ShadowType.IN)
+            frame.set_hexpand(True)
             frame._linuxtoys_screenshot_variants = variants
+            frame._linuxtoys_screenshot_master_pixbuf = None
+            frame._linuxtoys_screenshot_image = None
+            frame._linuxtoys_screenshot_display_size = None
             frame._linuxtoys_screenshot_source_width = 0
             frame._linuxtoys_screenshot_requested_url = ""
             frame._linuxtoys_screenshot_request_id = 0
@@ -2055,13 +2213,19 @@ class AppPageView(Gtk.Box):
 
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, 760, 430, True)
-            image = Gtk.Image.new_from_pixbuf(pixbuf)
+            image = Gtk.Image()
             image.set_halign(Gtk.Align.CENTER)
             image.set_valign(Gtk.Align.CENTER)
             old = frame.get_child()
             if old is not None:
                 frame.remove(old)
             frame.add(image)
+            frame._linuxtoys_screenshot_master_pixbuf = pixbuf
+            frame._linuxtoys_screenshot_image = image
+            frame._linuxtoys_screenshot_display_size = None
+            self._fit_screenshot_to_frame(frame)
+            frame.queue_resize()
+            GLib.idle_add(self._fit_screenshot_to_frame, frame)
             frame._linuxtoys_screenshot_source_width = int(variant.get("width", 0) or 0)
             return True
         except Exception:
@@ -2130,7 +2294,7 @@ class AppPageView(Gtk.Box):
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 path, 760, 430, True
             )
-            image = Gtk.Image.new_from_pixbuf(pixbuf)
+            image = Gtk.Image()
             image.set_halign(Gtk.Align.CENTER)
             image.set_valign(Gtk.Align.CENTER)
             old = frame.get_child()
@@ -2139,6 +2303,12 @@ class AppPageView(Gtk.Box):
                     old.stop()
                 frame.remove(old)
             frame.add(image)
+            frame._linuxtoys_screenshot_master_pixbuf = pixbuf
+            frame._linuxtoys_screenshot_image = image
+            frame._linuxtoys_screenshot_display_size = None
+            self._fit_screenshot_to_frame(frame)
+            frame.queue_resize()
+            GLib.idle_add(self._fit_screenshot_to_frame, frame)
             frame._linuxtoys_screenshot_source_width = int(variant.get("width", 0) or 0)
             frame.show_all()
             if initial:

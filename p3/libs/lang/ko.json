@@ -678,5 +678,7 @@
   "startup_recommendations_dont_remind": "다시 알리지 않기",
   "startup_recommendation_flathub": "Flathub",
   "startup_recommendation_rpmfusion": "RPM Fusion",
-  "startup_recommendation_multilib": "Multilib"
+  "startup_recommendation_multilib": "Multilib",
+  "app_page_details": "세부 정보",
+  "app_page_extensions": "확장 기능"
 }

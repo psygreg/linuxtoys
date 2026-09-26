@@ -678,5 +678,7 @@
   "startup_recommendations_dont_remind": "Να μην γίνει ξανά υπενθύμιση",
   "startup_recommendation_flathub": "Flathub",
   "startup_recommendation_rpmfusion": "RPM Fusion",
-  "startup_recommendation_multilib": "Multilib"
+  "startup_recommendation_multilib": "Multilib",
+  "app_page_details": "Λεπτομέρειες",
+  "app_page_extensions": "Επεκτάσεις"
 }

@@ -135,6 +135,11 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         self.parent_window._appstream_runner.cancel(job_id)
 
     def _remove(self, _button, record_id, info):
+        if info.get("is_flatpak_extension"):
+            self.parent_window._appstream_runner.enqueue_extension_removal(
+                dict(info), record_id=record_id
+            )
+            return
         removal_info = dict(info)
         removal_info["_appstream_queue_record_id"] = record_id
         self.parent_window._on_item_remove_clicked(_button, removal_info)

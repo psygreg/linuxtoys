@@ -677,5 +677,7 @@
   "startup_recommendations_dont_remind": "Bir daha xatırlatma",
   "startup_recommendation_flathub": "Flathub",
   "startup_recommendation_rpmfusion": "RPM Fusion",
-  "startup_recommendation_multilib": "Multilib"
+  "startup_recommendation_multilib": "Multilib",
+  "app_page_details": "Təfərrüatlar",
+  "app_page_extensions": "Genişləndirmələr"
 }

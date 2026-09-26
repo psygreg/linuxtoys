@@ -658,5 +658,7 @@
   "startup_recommendations_dont_remind": "मुझे फिर याद न दिलाएँ",
   "startup_recommendation_flathub": "Flathub",
   "startup_recommendation_rpmfusion": "RPM Fusion",
-  "startup_recommendation_multilib": "Multilib"
+  "startup_recommendation_multilib": "Multilib",
+  "app_page_details": "विवरण",
+  "app_page_extensions": "एक्सटेंशन"
 }

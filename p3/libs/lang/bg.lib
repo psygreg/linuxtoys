@@ -145,3 +145,5 @@ requirerebar="\"Resize BAR\" и \"Above 4G Decoding\" са необходими 
 parumsg="paru е необходим, за да може LinuxToys да обработва AUR пакети. Той ще бъде инсталиран сега."
 gearlevermsg="Gear Lever е необходим, за да може LinuxToys да обработва AppImage пакети. Той ще бъде инсталиран сега."
 libvirtdnsmasq="Открит е dnsmasq. Ако го използвате като DNS кеш, libvirt може да причини проблеми и да попречи на връзката ви да разрешава DNS заявки. Искате ли да продължите въпреки това?"
+defaultpwr="По подразбиране"
+highperfpwr="AMD Висока производителност"

@@ -678,5 +678,7 @@
   "startup_recommendations_dont_remind": "Більше не нагадувати",
   "startup_recommendation_flathub": "Flathub",
   "startup_recommendation_rpmfusion": "RPM Fusion",
-  "startup_recommendation_multilib": "Multilib"
+  "startup_recommendation_multilib": "Multilib",
+  "app_page_details": "Подробиці",
+  "app_page_extensions": "Розширення"
 }

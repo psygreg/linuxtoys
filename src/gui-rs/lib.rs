@@ -699,12 +699,33 @@ unsafe fn create_list_row_from_spec(spec: &LtGuiListRowSpec) -> gtk::Box {
     if spec.spinner != 0 {
         let indicator = gtk::Spinner::new();
         indicator.set_widget_name("linuxtoys-list-row-status");
+        indicator.set_size_request(16, 16);
+        indicator.set_halign(gtk::Align::Center);
+        indicator.set_valign(gtk::Align::Center);
         indicator.start();
-        outer.pack_start(&indicator, false, false, 4);
+
+        // Keep status indicators in the same button-sized slot used by the
+        // ordinary action icons so running rows do not shift horizontally.
+        let slot = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+        slot.set_widget_name("linuxtoys-list-row-status-slot");
+        slot.set_size_request(34, 34);
+        slot.set_halign(gtk::Align::Center);
+        slot.set_valign(gtk::Align::Center);
+        slot.pack_start(&indicator, true, true, 0);
+        outer.pack_start(&slot, false, false, 4);
     } else if !status_icon.is_empty() {
         let indicator = gtk::Image::from_icon_name(Some(&status_icon), gtk::IconSize::Button);
         indicator.set_widget_name("linuxtoys-list-row-status");
-        outer.pack_start(&indicator, false, false, 4);
+        indicator.set_halign(gtk::Align::Center);
+        indicator.set_valign(gtk::Align::Center);
+
+        let slot = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+        slot.set_widget_name("linuxtoys-list-row-status-slot");
+        slot.set_size_request(34, 34);
+        slot.set_halign(gtk::Align::Center);
+        slot.set_valign(gtk::Align::Center);
+        slot.pack_start(&indicator, true, true, 0);
+        outer.pack_start(&slot, false, false, 4);
     }
 
     if spec.launch != 0 {
@@ -720,6 +741,8 @@ unsafe fn create_list_row_from_spec(spec: &LtGuiListRowSpec) -> gtk::Box {
     if spec.action_kind != 0 {
         let icon_name = if spec.destructive_action != 0 {
             "edit-delete-symbolic"
+        } else if spec.action_kind == 3 {
+            "list-add-symbolic"
         } else {
             "process-stop-symbolic"
         };
@@ -769,26 +792,48 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
         secondary.hide();
     }
 
-    // Status indicator changes between GtkSpinner and GtkImage, so replace only
-    // that small child when its role changes rather than rebuilding the row.
-    if let Some(old) = named_descendant(&root, "linuxtoys-list-row-status") {
+    // Status indicator changes between GtkSpinner and GtkImage. Replace its
+    // complete fixed-size slot so both roles retain identical geometry.
+    if let Some(old) = named_descendant(&root, "linuxtoys-list-row-status-slot") {
+        row.remove(&old);
+    } else if let Some(old) = named_descendant(&root, "linuxtoys-list-row-status") {
+        // Compatibility with rows created by an older version of this code.
         row.remove(&old);
     }
     if spec.spinner != 0 {
         let indicator = gtk::Spinner::new();
         indicator.set_widget_name("linuxtoys-list-row-status");
+        indicator.set_size_request(16, 16);
+        indicator.set_halign(gtk::Align::Center);
+        indicator.set_valign(gtk::Align::Center);
         indicator.start();
-        row.pack_start(&indicator, false, false, 4);
-        row.reorder_child(&indicator, 2);
-        indicator.show();
+
+        let slot = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+        slot.set_widget_name("linuxtoys-list-row-status-slot");
+        slot.set_size_request(34, 34);
+        slot.set_halign(gtk::Align::Center);
+        slot.set_valign(gtk::Align::Center);
+        slot.pack_start(&indicator, true, true, 0);
+        row.pack_start(&slot, false, false, 4);
+        row.reorder_child(&slot, 2);
+        slot.show_all();
     } else {
         let status_icon = cstr(spec.status_icon);
         if !status_icon.is_empty() {
             let indicator = gtk::Image::from_icon_name(Some(&status_icon), gtk::IconSize::Button);
             indicator.set_widget_name("linuxtoys-list-row-status");
-            row.pack_start(&indicator, false, false, 4);
-            row.reorder_child(&indicator, 2);
-            indicator.show();
+            indicator.set_halign(gtk::Align::Center);
+            indicator.set_valign(gtk::Align::Center);
+
+            let slot = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+            slot.set_widget_name("linuxtoys-list-row-status-slot");
+            slot.set_size_request(34, 34);
+            slot.set_halign(gtk::Align::Center);
+            slot.set_valign(gtk::Align::Center);
+            slot.pack_start(&indicator, true, true, 0);
+            row.pack_start(&slot, false, false, 4);
+            row.reorder_child(&slot, 2);
+            slot.show_all();
         }
     }
 
@@ -799,6 +844,8 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
     if spec.action_kind != 0 {
         let action_icon = if spec.destructive_action != 0 {
             "edit-delete-symbolic"
+        } else if spec.action_kind == 3 {
+            "list-add-symbolic"
         } else {
             "process-stop-symbolic"
         };

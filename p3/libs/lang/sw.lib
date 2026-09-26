@@ -146,3 +146,5 @@ requirerebar="\"Resize BAR\" na \"Above 4G Decoding\" zinahitajika ili kusakinis
 parumsg="paru inahitajika ili LinuxToys iweze kushughulikia vifurushi vya AUR. Itasakinishwa sasa."
 gearlevermsg="Gear Lever inahitajika ili LinuxToys iweze kushughulikia vifurushi vya AppImage. Itasakinishwa sasa."
 libvirtdnsmasq="dnsmasq imegunduliwa. Ikiwa unaitumia kama akiba ya DNS, libvirt inaweza kusababisha matatizo na kufanya muunganisho wako ushindwe kutatua maombi ya DNS. Uendelee hata hivyo?"
+defaultpwr="Chaguo-msingi"
+highperfpwr="AMD Utendaji wa Juu"

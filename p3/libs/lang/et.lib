@@ -145,3 +145,5 @@ requirerebar="\"Resize BAR\" ja \"Above 4G Decoding\" on AMD GPU draiverite inst
 parumsg="LinuxToys vajab AUR-pakettide haldamiseks paru. See paigaldatakse nüüd."
 gearlevermsg="LinuxToys vajab AppImage-pakettide haldamiseks Gear Leverit. See paigaldatakse nüüd."
 libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib libvirt põhjustada probleeme ja takistada teie ühendusel DNS-päringute lahendamist. Kas jätkata ikkagi?"
+defaultpwr="Vaikimisi"
+highperfpwr="AMD Suur jõudlus"

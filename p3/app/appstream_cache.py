@@ -32,6 +32,7 @@ CHECKPOINT_EVERY = 100
 CACHE_DIR = Path(get_linuxtoys_cache_dir()) / "appstream"
 STATE_PATH = CACHE_DIR / "state.json"
 CATALOG_PATH = CACHE_DIR / "catalog.json"
+EXTENSIONS_PATH = CACHE_DIR / "extensions.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"
 FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
 SOURCE_INVENTORY_PATH = CACHE_DIR / "source-inventory.json"
@@ -961,7 +962,7 @@ def load_catalog():
 def cache_needs_refresh(now=None) -> bool:
     now = time.time() if now is None else float(now)
     state = get_state()
-    if not state.get("complete") or not CATALOG_PATH.is_file():
+    if not state.get("complete") or not CATALOG_PATH.is_file() or not EXTENSIONS_PATH.is_file():
         return True
 
     completed = float(state.get("last_completed") or 0)
@@ -1037,6 +1038,7 @@ def refresh_cache(force=False, status_callback=None):
                 ratings is not None,
             )
 
+            generation.publish_extensions(os.fspath(EXTENSIONS_PATH))
             changed, published_count = generation.publish(
                 os.fspath(CATALOG_PATH),
                 reuse_previous_entries,
@@ -1080,3 +1082,73 @@ def refresh_cache(force=False, status_callback=None):
                 "count": len(load_catalog()),
                 "error": str(error),
             }
+
+
+def get_flatpak_extensions(info):
+    """Return extensions belonging to the selected Flatpak source/app."""
+    if not isinstance(info, dict) or info.get("appstream_source") != "flatpak":
+        return []
+    app_id = str(info.get("appstream_id") or info.get("package-name") or "").strip()
+    if app_id.endswith(".desktop"):
+        app_id = app_id[:-8]
+    scope = str(info.get("flatpak_scope") or "").strip()
+    installation = str(info.get("flatpak_installation") or "").strip()
+    remote = str(info.get("flatpak_remote") or info.get("appstream_origin") or "").strip()
+    try:
+        payload = _read_json(EXTENSIONS_PATH, [])
+    except (OSError, ValueError, TypeError):
+        return []
+    if not isinstance(payload, list):
+        return []
+    return [
+        dict(item) for item in payload
+        if isinstance(item, dict)
+        and str(item.get("parent_id") or "").strip() == app_id
+        and str(item.get("flatpak_scope") or "").strip() == scope
+        and str(item.get("flatpak_installation") or "").strip() == installation
+        and str(item.get("flatpak_remote") or "").strip() == remote
+    ]
+
+
+def installed_flatpak_extension_refs(info):
+    """Return installed runtime refs for the selected Flatpak installation."""
+    if not isinstance(info, dict) or info.get("appstream_source") != "flatpak":
+        return set()
+    cmd = ["flatpak"]
+    scope = str(info.get("flatpak_scope") or "").strip()
+    installation = str(info.get("flatpak_installation") or "").strip()
+    if scope == "user":
+        cmd.append("--user")
+    elif installation and installation != "default":
+        cmd.append(f"--installation={installation}")
+    else:
+        cmd.append("--system")
+    cmd += ["list", "--runtime", "--columns=ref"]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=8, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return set()
+    if result.returncode != 0:
+        return set()
+    refs = set()
+    for line in result.stdout.splitlines():
+        ref = line.strip()
+        if not ref:
+            continue
+
+        # `flatpak list --columns=ref` normally prints the compact form
+        #   org.example.Extension/x86_64/stable
+        # while AppStream <bundle type="flatpak"> values use the canonical
+        #   runtime/org.example.Extension/x86_64/stable
+        # form. Extensions are runtimes, so retain both spellings. This also
+        # keeps the lookup tolerant of Flatpak versions that already include
+        # the ref kind in their output.
+        refs.add(ref)
+        if ref.startswith("runtime/"):
+            refs.add(ref[len("runtime/"):])
+        elif ref.startswith("app/"):
+            refs.add(ref[len("app/"):])
+        else:
+            refs.add(f"runtime/{ref}")
+
+    return refs

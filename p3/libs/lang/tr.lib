@@ -144,3 +144,5 @@ requirerebar="AMD GPU sürücülerini yüklemek için \"Resize BAR\" ve \"Above 
 parumsg="LinuxToys'un AUR paketlerini yönetebilmesi için paru gereklidir. Şimdi yüklenecek."
 gearlevermsg="LinuxToys'un AppImage paketlerini yönetebilmesi için Gear Lever gereklidir. Şimdi yüklenecek."
 libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız libvirt sorunlara yol açabilir ve bağlantınızın DNS isteklerini çözümleyememesine neden olabilir. Yine de devam edilsin mi?"
+defaultpwr="Varsayılan"
+highperfpwr="AMD Yüksek Performans"

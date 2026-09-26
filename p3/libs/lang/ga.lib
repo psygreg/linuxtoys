@@ -145,3 +145,5 @@ requirerebar="Tá \"Resize BAR\" agus \"Above 4G Decoding\" riachtanach chun tio
 parumsg="Tá paru riachtanach chun go mbeidh LinuxToys in ann pacáistí AUR a láimhseáil. Suiteálfar anois é."
 gearlevermsg="Tá Gear Lever riachtanach chun go mbeidh LinuxToys in ann pacáistí AppImage a láimhseáil. Suiteálfar anois é."
 libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’fhéadfadh libvirt fadhbanna a chruthú agus cosc a chur ar do cheangal iarratais DNS a réiteach. Lean ar aghaidh mar sin féin?"
+defaultpwr="Réamhshocrú"
+highperfpwr="AMD Ardfheidhmíocht"

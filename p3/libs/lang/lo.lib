@@ -144,3 +144,5 @@ requirerebar="ຈຳເປັນຕ້ອງເປີດ \"Resize BAR\" ແລ�
 parumsg="LinuxToys ຕ້ອງການ paru ເພື່ອຈັດການແພັກເກດ AUR. ມັນຈະຖືກຕິດຕັ້ງຕອນນີ້."
 gearlevermsg="LinuxToys ຕ້ອງການ Gear Lever ເພື່ອຈັດການແພັກເກດ AppImage. ມັນຈະຖືກຕິດຕັ້ງຕອນນີ້."
 libvirtdnsmasq="ກວດພົບ dnsmasq. ຖ້າທ່ານໃຊ້ມັນເປັນແຄດ DNS, libvirt ອາດເຮັດໃຫ້ເກີດບັນຫາ ແລະ ເຮັດໃຫ້ການເຊື່ອມຕໍ່ຂອງທ່ານບໍ່ສາມາດແກ້ໄຂຄຳຮ້ອງຂໍ DNS ໄດ້. ຍັງຈະສືບຕໍ່ບໍ?"
+defaultpwr="ຄ່າເລີ່ມຕົ້ນ"
+highperfpwr="AMD ປະສິດທິພາບສູງ"

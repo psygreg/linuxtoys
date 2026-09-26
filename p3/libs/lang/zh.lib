@@ -144,3 +144,5 @@ requirerebar="安装 AMD GPU 驱动程序需要启用 \"Resize BAR\" 和 \"Above
 parumsg="LinuxToys 需要 paru 来处理 AUR 软件包。现在将安装 paru。"
 gearlevermsg="LinuxToys 需要 Gear Lever 来处理 AppImage 软件包。现在将安装 Gear Lever。"
 libvirtdnsmasq="检测到 dnsmasq。如果您将其用作 DNS 缓存，libvirt 可能会引发问题，导致您的连接无法解析 DNS 请求。仍要继续吗？"
+defaultpwr="默认"
+highperfpwr="AMD 高性能"

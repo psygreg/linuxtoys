@@ -145,3 +145,5 @@ requirerebar="\"Resize BAR\" እና \"Above 4G Decoding\" የAMD GPU ነጂዎ�
 parumsg="LinuxToys የAUR ጥቅሎችን ለማስተዳደር paru ያስፈልገዋል። አሁን ይጫናል።"
 gearlevermsg="LinuxToys የAppImage ጥቅሎችን ለማስተዳደር Gear Lever ያስፈልገዋል። አሁን ይጫናል።"
 libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"
+defaultpwr="ነባሪ"
+highperfpwr="AMD ከፍተኛ አፈጻጸም"

@@ -145,3 +145,5 @@ requirerebar="\"Resize BAR\" и \"Above 4G Decoding\" су неопходни з
 parumsg="paru је неопходан да би LinuxToys могао да управља AUR пакетима. Сада ће бити инсталиран."
 gearlevermsg="Gear Lever је неопходан да би LinuxToys могао да управља AppImage пакетима. Сада ће бити инсталиран."
 libvirtdnsmasq="Откривен је dnsmasq. Ако га користите као DNS кеш, libvirt може изазвати проблеме и онемогућити вашој вези да разрешава DNS захтеве. Ипак наставити?"
+defaultpwr="Подразумевано"
+highperfpwr="AMD Високе перформансе"

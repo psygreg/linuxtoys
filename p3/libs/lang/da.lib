@@ -145,3 +145,5 @@ requirerebar="\"Resize BAR\" og \"Above 4G Decoding\" er påkrævet for at insta
 parumsg="paru er påkrævet, for at LinuxToys kan håndtere AUR-pakker. Det installeres nu."
 gearlevermsg="Gear Lever er påkrævet, for at LinuxToys kan håndtere AppImage-pakker. Det installeres nu."
 libvirtdnsmasq="dnsmasq blev fundet. Hvis du bruger den som DNS-cache, kan libvirt forårsage problemer og gøre din forbindelse ude af stand til at opløse DNS-forespørgsler. Fortsæt alligevel?"
+defaultpwr="Standard"
+highperfpwr="AMD Høj ydeevne"

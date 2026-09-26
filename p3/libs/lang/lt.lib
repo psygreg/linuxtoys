@@ -145,3 +145,5 @@ requirerebar="Norint įdiegti AMD GPU tvarkykles, reikalingi \"Resize BAR\" ir \
 parumsg="LinuxToys reikalingas paru AUR paketams tvarkyti. Jis bus įdiegtas dabar."
 gearlevermsg="LinuxToys reikalingas Gear Lever AppImage paketams tvarkyti. Jis bus įdiegtas dabar."
 libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"
+defaultpwr="Numatytasis"
+highperfpwr="AMD Didelis našumas"

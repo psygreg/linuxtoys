@@ -145,3 +145,5 @@ requirerebar="برای نصب درایورهای AMD GPU، گزینه‌های \
 parumsg="برای مدیریت بسته‌های AUR توسط LinuxToys، paru مورد نیاز است. اکنون نصب خواهد شد."
 gearlevermsg="برای مدیریت بسته‌های AppImage توسط LinuxToys، Gear Lever مورد نیاز است. اکنون نصب خواهد شد."
 libvirtdnsmasq="dnsmasq شناسایی شد. اگر از آن به‌عنوان حافظه نهان DNS استفاده می‌کنید، libvirt ممکن است باعث بروز مشکل شود و اتصال شما را از حل درخواست‌های DNS بازدارد. با این حال ادامه داده شود؟"
+defaultpwr="پیش‌فرض"
+highperfpwr="AMD عملکرد بالا"
