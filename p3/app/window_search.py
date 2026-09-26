@@ -331,15 +331,32 @@ class SearchCtl:
                 group_flowboxes[key] = fb
                 return fb
 
-            def add_card(group, result):
+            def add_card_batch(group, results):
+                """Materialize one search-group batch, preferring native GTK cards."""
+                results = list(results)
+                if not results:
+                    return []
+
                 fb = ensure_group(group)
-                info = result.item_info
-                widget = self.create_item_widget(info)
-                widget.set_tooltip_text(info.get("description", "") or None)
-                widget.set_opacity(0.0)
-                fb.add(widget)
-                widget.show_all()
-                return widget
+                infos = [result.item_info for result in results]
+                widgets = self.create_native_item_batch(fb, infos)
+
+                if widgets is None:
+                    widgets = []
+                    for info in infos:
+                        widget = self.create_item_widget(info)
+                        widget.set_tooltip_text(info.get("description", "") or None)
+                        widget.set_opacity(0.0)
+                        fb.add(widget)
+                        widget.show_all()
+                        widgets.append(widget)
+                    return widgets
+
+                for widget, info in zip(widgets, infos):
+                    widget.set_tooltip_text(info.get("description", "") or None)
+                    widget.set_opacity(0.0)
+                    widget.show_all()
+                return widgets
 
             def capacity():
                 alloc = self.search_view.get_allocation()
@@ -359,9 +376,15 @@ class SearchCtl:
                 widgets = []
                 end = min(target, state["next"] + 2)
                 while state["next"] < end:
-                    group, result = population_queue[state["next"]]
-                    widgets.append(add_card(group, result))
-                    state["next"] += 1
+                    group = population_queue[state["next"]][0]
+                    batch = []
+                    while (
+                        state["next"] < end
+                        and population_queue[state["next"]][0] is group
+                    ):
+                        batch.append(population_queue[state["next"]][1])
+                        state["next"] += 1
+                    widgets.extend(add_card_batch(group, batch))
                 self.animate_item_batch(widgets, duration_ms=110, stagger_ms=5)
                 if state["next"] >= target:
                     state["timer"] = None
@@ -411,10 +434,17 @@ class SearchCtl:
             # Seed cards immediately, then calculate the real viewport target
             # after GTK has had a chance to allocate the visible content.
             seed_widgets = []
-            for _ in range(min(6, len(population_queue))):
-                group, result = population_queue[state["next"]]
-                seed_widgets.append(add_card(group, result))
-                state["next"] += 1
+            seed_end = min(6, len(population_queue))
+            while state["next"] < seed_end:
+                group = population_queue[state["next"]][0]
+                batch = []
+                while (
+                    state["next"] < seed_end
+                    and population_queue[state["next"]][0] is group
+                ):
+                    batch.append(population_queue[state["next"]][1])
+                    state["next"] += 1
+                seed_widgets.extend(add_card_batch(group, batch))
             self.animate_item_batch(seed_widgets, duration_ms=90, stagger_ms=5)
 
             def finish_initial():

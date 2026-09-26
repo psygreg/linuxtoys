@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
 use std::io::Write;
+use std::hash::{BuildHasher, Hash, Hasher};
+use std::sync::OnceLock;
 
 fn json_to_py(py: Python<'_>, value: &Value) -> PyResult<Py<PyAny>> {
     Ok(match value {
@@ -34,24 +36,17 @@ fn normalize_id(value: &str) -> String {
 
 #[pyfunction]
 pub(crate) fn load_appstream_catalog(py: Python<'_>, path: &str) -> PyResult<Vec<Py<PyAny>>> {
-    let content = match fs::read_to_string(path) {
-        Ok(v) => v,
-        Err(_) => return Ok(Vec::new()),
-    };
-    let parsed: Value = match serde_json::from_str(&content) {
-        Ok(v) => v,
-        Err(_) => return Ok(Vec::new()),
-    };
-    let Some(values) = parsed.as_array() else {
-        return Ok(Vec::new());
-    };
-    let mut out = Vec::with_capacity(values.len());
-    for value in values {
-        if value.is_object() {
-            out.push(json_to_py(py, value)?);
-        }
-    }
-    Ok(out)
+    // I/O and JSON parsing are pure Rust. Do not block GTK's Python main loop.
+    let values: Vec<Value> = py.allow_threads(|| {
+        let content = fs::read_to_string(path).ok()?;
+        let parsed: Value = serde_json::from_str(&content).ok()?;
+        parsed.as_array().map(|values| {
+            values.iter().filter(|value| value.is_object()).cloned().collect()
+        })
+    }).unwrap_or_default();
+
+    // Python object materialization still requires the GIL.
+    values.iter().map(|value| json_to_py(py, value)).collect()
 }
 
 fn py_to_json(obj: &Bound<'_, PyAny>) -> PyResult<Value> {
@@ -102,13 +97,45 @@ fn resolve_category_rs(cats:&Value, paths:&[String], cfg:&Value)->Option<String>
     for pair in [("standalone_priority","additional"),("main_priority","main")] {if let Some(pr)=o.get(pair.0).and_then(Value::as_array){for k in pr.iter().filter_map(Value::as_str){if set.contains(k){if let Some(c)=o.get(pair.1).and_then(Value::as_object).and_then(|m|m.get(k)){if let Some(v)=first_category(c,&exact,&by){return Some(v)}}}}}}
     None
 }
+fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths:&[String], cfg:&Value)->Option<String>{
+    if let Some(overrides)=cfg.get("overrides").and_then(Value::as_object){
+        let id=normalize_id(component.get("id").and_then(Value::as_str).unwrap_or(""));
+        if !id.is_empty(){
+            if let Some(destination)=overrides.iter()
+                .find(|(key,_)|normalize_id(key)==id)
+                .and_then(|(_,value)|value.as_str())
+                .map(str::trim)
+                .filter(|value|!value.is_empty())
+            {
+                if let Some(category)=first_category(&serde_json::json!([destination]),&{
+                    let mut exact=std::collections::HashSet::new();
+                    for path in paths {
+                        let path=path.replace('\\',"/").trim_matches('/').to_string();
+                        if !path.is_empty()&&path!="lists"{exact.insert(path);}
+                    }
+                    exact
+                },&{
+                    let mut by:std::collections::HashMap<String,Vec<String>>=std::collections::HashMap::new();
+                    for path in paths {
+                        let path=path.replace('\\',"/").trim_matches('/').to_string();
+                        if path.is_empty()||path=="lists"{continue}
+                        by.entry(path.rsplit('/').next().unwrap_or(&path).into()).or_default().push(path);
+                    }
+                    for values in by.values_mut(){values.sort_by_key(|p|(p.matches('/').count(),p.clone()));}
+                    by
+                }){return Some(category)}
+            }
+        }
+    }
+    resolve_category_rs(component.get("categories").unwrap_or(&Value::Null),paths,cfg)
+}
 fn flatten_blocks(v:&Value)->String{let Some(a)=v.as_array()else{return String::new()};let mut blocks=Vec::new();for b in a{let Some(m)=b.as_object()else{continue};if m.get("type").and_then(Value::as_str)==Some("paragraph"){if let Some(sp)=m.get("spans").and_then(Value::as_array){blocks.push(sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string())}}else if let Some(items)=m.get("items").and_then(Value::as_array){blocks.push(items.iter().filter_map(|i|i.as_array()).map(|sp|sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string()).collect::<Vec<_>>().join("\n"))}}blocks.into_iter().filter(|s|!s.is_empty()).collect::<Vec<_>>().join("\n\n")}
 fn clean_screens(v:Option<&Value>)->Value{let mut out=Vec::new();if let Some(a)=v.and_then(Value::as_array){for s in a{if let Some(m)=s.as_object(){let mut imgs=Vec::new();if let Some(ia)=m.get("images").and_then(Value::as_array){for i in ia{let Some(im)=i.as_object()else{continue};let url=im.get("url").and_then(Value::as_str).unwrap_or("").trim();if url.is_empty(){continue}imgs.push(serde_json::json!({"url":url,"width":im.get("width").and_then(Value::as_i64).unwrap_or(0).max(0),"height":im.get("height").and_then(Value::as_i64).unwrap_or(0).max(0)}))}}if !imgs.is_empty(){out.push(serde_json::json!({"images":imgs}))}}else if let Some(p)=s.as_str(){if !p.trim().is_empty(){out.push(Value::String(p.trim().into()))}}}}Value::Array(out)}
 
 fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, category_paths:Vec<String>, category_config_json:&str, lang:&str, curated_ids:Vec<String>, curated_packages:Vec<String>, curated_names:Vec<String>, overlays_json:&str, native_badge:&str)->Vec<Value>{
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);let overlays:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));let ov=overlays.as_object();let ids:std::collections::HashSet<String>=curated_ids.into_iter().map(|s|s.to_lowercase()).collect();let pkgs:std::collections::HashSet<String>=curated_packages.into_iter().map(|s|s.to_lowercase()).collect();let names:std::collections::HashSet<String>=curated_names.into_iter().map(|s|s.to_lowercase()).collect();let mut out=Vec::new();
     for m in components {let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||ids.contains(&id.to_lowercase()){continue}if m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
-        let Some(category)=resolve_category_rs(m.get("categories").unwrap_or(&Value::Null),&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
+        let Some(category)=resolve_component_category_rs(&m,&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format","appstream");e.insert("screenshots".into(),shots.clone());
@@ -155,7 +182,7 @@ fn inherit_popularity_rs(natives:&mut [serde_json::Map<String,Value>],flat:&[ser
     if let Some(d)=flat.iter().find(|m|m.get("popularity_metric").is_some_and(|v|!v.is_null())) {for n in natives {for k in ["popularity_metric","popularity_downloads"]{n.insert(k.into(),d.get(k).cloned().unwrap_or(Value::Null));}}}
 }
 fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool)->bool{
-    !steamos&&group.iter().any(|m|resolve_category_rs(m.get("categories").unwrap_or(&Value::Null),paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"))))
+    !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"))))
 }
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
     let Some(o)=prefs.as_object()else{return "flatpak".into()};let default=o.get("default").and_then(Value::as_str).unwrap_or("flatpak");let apps=o.get("apps").and_then(Value::as_object);
@@ -424,77 +451,477 @@ fn normalize_native_payload_rs(mut m: serde_json::Map<String, Value>) -> Option<
 
 #[pyfunction]
 pub(crate) fn normalize_native_appstream_components(py: Python<'_>, components: &Bound<'_, PyList>) -> PyResult<Vec<Py<PyAny>>> {
-    let mut out = Vec::with_capacity(components.len());
+    // Detach from Python first.
+    let mut maps = Vec::with_capacity(components.len());
     for obj in components.iter() {
-        let Value::Object(map) = py_to_json(&obj)? else { continue; };
-        if let Some(normalized) = normalize_native_payload_rs(map) {
-            out.push(json_to_py(py, &Value::Object(normalized))?);
+        if let Value::Object(map) = py_to_json(&obj)? {
+            maps.push(map);
         }
     }
-    Ok(out)
+
+    // Markup parsing, hashing and normalization are pure Rust.
+    let normalized: Vec<Value> = py.allow_threads(move || {
+        maps.into_iter()
+            .filter_map(normalize_native_payload_rs)
+            .map(Value::Object)
+            .collect()
+    });
+
+    normalized.iter().map(|value| json_to_py(py, value)).collect()
 }
 
 #[pyfunction]
 pub(crate) fn parse_flatpak_appstream_source(py:Python<'_>, path:&str, source_json:&str, eol_ids:Vec<String>, now:i64)->PyResult<Vec<Py<PyAny>>>{
-    use std::io::Read; let mut bytes=Vec::new(); if path.ends_with(".gz"){let file=match fs::File::open(path){Ok(v)=>v,Err(_)=>return Ok(vec![])};let mut gz=flate2::read::GzDecoder::new(file);if gz.read_to_end(&mut bytes).is_err(){return Ok(vec![])}}else{bytes=match fs::read(path){Ok(v)=>v,Err(_)=>return Ok(vec![])}};
-    let root=match parse_xml_tree(&bytes){Ok(v)=>v,Err(_)=>return Ok(vec![])};let mut source:serde_json::Map<String,Value>=serde_json::from_str::<Value>(source_json).ok().and_then(|v|v.as_object().cloned()).unwrap_or_default();if source.get("media_baseurl").and_then(Value::as_str).unwrap_or("").is_empty(){if let Some(v)=root.attrs.get("media_baseurl").or_else(||root.attrs.get("media-baseurl")){source.insert("media_baseurl".into(),Value::String(v.clone()));}}
-    let eol:std::collections::HashSet<String>=eol_ids.into_iter().collect();let mut out=Vec::new();for c in root.children_named("component"){if let Some(m)=normalize_flatpak_component_rs(c,&source,&eol,now){out.push(json_to_py(py,&Value::Object(m))?);}}Ok(out)
+    // Decompression, XML parsing and normalization are pure Rust and can take
+    // well over a second for large remotes.
+    let values: Vec<Value> = py.allow_threads(|| {
+        use std::io::Read;
+        let mut bytes=Vec::new();
+        if path.ends_with(".gz"){
+            let file=match fs::File::open(path){Ok(v)=>v,Err(_)=>return Vec::new()};
+            let mut gz=flate2::read::GzDecoder::new(file);
+            if gz.read_to_end(&mut bytes).is_err(){return Vec::new()}
+        }else{
+            bytes=match fs::read(path){Ok(v)=>v,Err(_)=>return Vec::new()}
+        }
+
+        let root=match parse_xml_tree(&bytes){Ok(v)=>v,Err(_)=>return Vec::new()};
+        let mut source:serde_json::Map<String,Value>=serde_json::from_str::<Value>(source_json)
+            .ok().and_then(|v|v.as_object().cloned()).unwrap_or_default();
+        if source.get("media_baseurl").and_then(Value::as_str).unwrap_or("").is_empty(){
+            if let Some(v)=root.attrs.get("media_baseurl").or_else(||root.attrs.get("media-baseurl")){
+                source.insert("media_baseurl".into(),Value::String(v.clone()));
+            }
+        }
+        let eol:std::collections::HashSet<String>=eol_ids.into_iter().collect();
+        root.children_named("component")
+            .filter_map(|c|normalize_flatpak_component_rs(c,&source,&eol,now))
+            .map(Value::Object)
+            .collect()
+    });
+
+    values.iter().map(|value|json_to_py(py,value)).collect()
 }
 
 
 
+#[pyclass]
+pub(crate) struct AppStreamGeneration {
+    previous: Vec<serde_json::Map<String, Value>>,
+    entries: Vec<serde_json::Map<String, Value>>,
+}
+
+impl AppStreamGeneration {
+    fn previous_by_id(&self) -> std::collections::HashMap<&str, &serde_json::Map<String, Value>> {
+        let mut out = std::collections::HashMap::with_capacity(self.previous.len());
+        for map in &self.previous {
+            let id = map.get("id").and_then(Value::as_str).unwrap_or("");
+            if !id.is_empty() {
+                out.insert(id, map);
+            }
+        }
+        out
+    }
+}
+
+#[pymethods]
+impl AppStreamGeneration {
+    #[new]
+    fn new(py: Python<'_>, previous_path: &str) -> Self {
+        let previous_path = previous_path.to_string();
+        let previous = py.allow_threads(move || {
+            fs::read_to_string(&previous_path)
+                .ok()
+                .and_then(|raw| serde_json::from_str::<Value>(&raw).ok())
+                .and_then(|value| value.as_array().cloned())
+                .unwrap_or_default()
+                .into_iter()
+                .filter_map(|value| value.as_object().cloned())
+                .collect()
+        });
+        Self { previous, entries: Vec::new() }
+    }
+
+    fn __len__(&self) -> usize {
+        self.entries.len()
+    }
+
+    fn add_native(&mut self, py: Python<'_>, components: &Bound<'_, PyList>) -> PyResult<usize> {
+        // GI extraction still arrives as small Python batches. Detach only that
+        // batch, then keep the normalized result native for the rest of refresh.
+        let mut maps = Vec::with_capacity(components.len());
+        for obj in components.iter() {
+            if let Value::Object(map) = py_to_json(&obj)? {
+                maps.push(map);
+            }
+        }
+        let normalized = py.allow_threads(move || {
+            maps.into_iter().filter_map(normalize_native_payload_rs).collect::<Vec<_>>()
+        });
+        let count = normalized.len();
+        self.entries.extend(normalized);
+        Ok(count)
+    }
+
+    fn add_flatpak_source(
+        &mut self,
+        py: Python<'_>,
+        path: &str,
+        source_json: &str,
+        eol_ids: Vec<String>,
+        now: i64,
+    ) -> PyResult<usize> {
+        let path = path.to_string();
+        let source_json = source_json.to_string();
+        let normalized = py.allow_threads(move || {
+            use std::io::Read;
+            let mut bytes = Vec::new();
+            if path.ends_with(".gz") {
+                let file = match fs::File::open(&path) { Ok(v) => v, Err(_) => return Vec::new() };
+                let mut gz = flate2::read::GzDecoder::new(file);
+                if gz.read_to_end(&mut bytes).is_err() { return Vec::new(); }
+            } else {
+                bytes = match fs::read(&path) { Ok(v) => v, Err(_) => return Vec::new() };
+            }
+
+            let root = match parse_xml_tree(&bytes) { Ok(v) => v, Err(_) => return Vec::new() };
+            let mut source: serde_json::Map<String, Value> =
+                serde_json::from_str::<Value>(&source_json)
+                    .ok().and_then(|v| v.as_object().cloned()).unwrap_or_default();
+            if source.get("media_baseurl").and_then(Value::as_str).unwrap_or("").is_empty() {
+                if let Some(v) = root.attrs.get("media_baseurl").or_else(|| root.attrs.get("media-baseurl")) {
+                    source.insert("media_baseurl".into(), Value::String(v.clone()));
+                }
+            }
+            let eol: std::collections::HashSet<String> = eol_ids.into_iter().collect();
+            root.children_named("component")
+                .filter_map(|component| normalize_flatpak_component_rs(component, &source, &eol, now))
+                .collect::<Vec<_>>()
+        });
+        let count = normalized.len();
+        self.entries.extend(normalized);
+        Ok(count)
+    }
+
+    fn write_partial(&self, py: Python<'_>, path: &str, schema: u64) -> PyResult<()> {
+        let path = path.to_string();
+        let entries = self.entries.clone();
+        py.allow_threads(move || -> PyResult<()> {
+            let processed = entries.iter().filter_map(|map| {
+                map.get("identity").and_then(Value::as_str).filter(|v| !v.is_empty()).map(str::to_string)
+            }).collect::<Vec<_>>();
+            let mut payload = serde_json::Map::new();
+            payload.insert("schema".into(), Value::Number(schema.into()));
+            payload.insert("entries".into(), Value::Array(entries.into_iter().map(Value::Object).collect()));
+            payload.insert("processed".into(), Value::Array(processed.into_iter().map(Value::String).collect()));
+            atomic_write_json_value(&path, &Value::Object(payload))
+        })
+    }
+
+    fn apply_flathub_metrics(
+        &mut self,
+        py: Python<'_>,
+        downloads_json: &str,
+        fetch_available: bool,
+    ) -> PyResult<()> {
+        let downloads: std::collections::HashMap<String, i64> =
+            serde_json::from_str(downloads_json).unwrap_or_default();
+        let previous_metrics = self.previous_by_id().into_iter().filter_map(|(id, map)| {
+            if map.get("source").and_then(Value::as_str) != Some("flatpak") {
+                return None;
+            }
+            let metric = map.get("popularity_metric").and_then(Value::as_f64)?;
+            let raw = map.get("popularity_downloads").and_then(Value::as_i64);
+            Some((id.to_string(), (raw, metric)))
+        }).collect::<std::collections::HashMap<_, _>>();
+
+        py.allow_threads(|| {
+            for map in &mut self.entries {
+                if map.get("source").and_then(Value::as_str) != Some("flatpak") {
+                    continue;
+                }
+                let id = map.get("id").and_then(Value::as_str).unwrap_or("").to_string();
+                let releases = map.remove("_releases_last_year")
+                    .and_then(|v| v.as_i64()).unwrap_or(0).max(1);
+
+                if fetch_available {
+                    if let Some(download_count) = downloads.get(&id).copied() {
+                        let count = download_count.max(0);
+                        map.insert("popularity_downloads".into(), Value::Number(count.into()));
+                        if let Some(metric) = serde_json::Number::from_f64(count as f64 / releases as f64) {
+                            map.insert("popularity_metric".into(), Value::Number(metric));
+                        }
+                        continue;
+                    }
+                } else if let Some((raw, metric)) = previous_metrics.get(&id) {
+                    match raw {
+                        Some(value) => { map.insert("popularity_downloads".into(), Value::Number((*value).into())); }
+                        None => { map.insert("popularity_downloads".into(), Value::Null); }
+                    }
+                    if let Some(value) = serde_json::Number::from_f64(*metric) {
+                        map.insert("popularity_metric".into(), Value::Number(value));
+                    }
+                    continue;
+                }
+
+                map.insert("popularity_downloads".into(), Value::Null);
+                map.insert("popularity_metric".into(), Value::Null);
+            }
+        });
+        Ok(())
+    }
+
+    fn apply_review_summaries(
+        &mut self,
+        py: Python<'_>,
+        summaries_json: &str,
+        fetch_available: bool,
+    ) -> PyResult<()> {
+        let summaries: std::collections::HashMap<String, Value> =
+            serde_json::from_str(summaries_json).unwrap_or_default();
+        let previous = self.previous_by_id().into_iter().filter_map(|(id, map)| {
+            let count = map.get("review_count").and_then(Value::as_i64)?;
+            let rating = map.get("review_rating").and_then(Value::as_f64)?;
+            Some((id.to_string(), (rating, count)))
+        }).collect::<std::collections::HashMap<_, _>>();
+
+        py.allow_threads(|| {
+            for map in &mut self.entries {
+                let id = map.get("id").and_then(Value::as_str).unwrap_or("").to_string();
+                let fresh = summaries.get(&id).and_then(Value::as_object);
+                let pair = if fetch_available {
+                    fresh.and_then(|summary| {
+                        Some((
+                            summary.get("review_rating")?.as_f64()?,
+                            summary.get("review_count")?.as_i64()?,
+                        ))
+                    })
+                } else {
+                    previous.get(&id).copied()
+                };
+
+                if let Some((rating, count)) = pair {
+                    if let Some(value) = serde_json::Number::from_f64(rating) {
+                        map.insert("review_rating".into(), Value::Number(value));
+                    }
+                    map.insert("review_count".into(), Value::Number(count.into()));
+                } else {
+                    map.remove("review_rating");
+                    map.remove("review_count");
+                }
+            }
+        });
+        Ok(())
+    }
+
+    fn publish(
+        &mut self,
+        py: Python<'_>,
+        output_path: &str,
+        reuse_previous: bool,
+    ) -> PyResult<(bool, usize)> {
+        let output_path = output_path.to_string();
+        py.allow_threads(|| -> PyResult<(bool, usize)> {
+            let mut previous_by_identity =
+                std::collections::HashMap::<String, serde_json::Map<String, Value>>::new();
+            if reuse_previous {
+                previous_by_identity.reserve(self.previous.len());
+                for map in &self.previous {
+                    let identity = map.get("identity").and_then(Value::as_str).unwrap_or("");
+                    if !identity.is_empty() {
+                        previous_by_identity.insert(identity.to_string(), map.clone());
+                    }
+                }
+            }
+
+            let mut reconciled = Vec::with_capacity(self.entries.len());
+            for map in self.entries.drain(..) {
+                let identity = map.get("identity").and_then(Value::as_str).unwrap_or("");
+                let metadata_hash = map.get("_metadata_hash").and_then(Value::as_str).unwrap_or("");
+                let source = map.get("source").and_then(Value::as_str).unwrap_or("");
+
+                let reused = if reuse_previous && !identity.is_empty() && !metadata_hash.is_empty() {
+                    previous_by_identity.get(identity).filter(|old| {
+                        old.get("source").and_then(Value::as_str).unwrap_or("") == source
+                            && old.get("_metadata_hash").and_then(Value::as_str).unwrap_or("") == metadata_hash
+                    }).cloned()
+                } else { None };
+
+                if let Some(mut old) = reused {
+                    for key in [
+                        "popularity_downloads", "popularity_metric",
+                        "review_rating", "review_count",
+                    ] {
+                        match map.get(key) {
+                            Some(value) => { old.insert(key.to_string(), value.clone()); }
+                            None => { old.remove(key); }
+                        }
+                    }
+                    reconciled.push(old);
+                } else {
+                    reconciled.push(map);
+                }
+            }
+
+            reconciled.sort_by(|a, b| {
+                let an = a.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
+                let bn = b.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
+                an.cmp(&bn).then_with(|| {
+                    a.get("id").and_then(Value::as_str).unwrap_or("")
+                        .cmp(b.get("id").and_then(Value::as_str).unwrap_or(""))
+                })
+            });
+
+            let changed = self.previous != reconciled;
+            let count = reconciled.len();
+            let value = Value::Array(reconciled.iter().cloned().map(Value::Object).collect());
+            atomic_write_json_value(&output_path, &value)?;
+            self.entries = reconciled;
+            Ok((changed, count))
+        })
+    }
+}
+
+fn atomic_write_json_value(path: &str, value: &Value) -> PyResult<()> {
+    let path = std::path::Path::new(path);
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+    }
+    let tmp = path.with_file_name(format!(
+        "{}.tmp",
+        path.file_name().and_then(|v| v.to_str()).unwrap_or("catalog.json")
+    ));
+    let result = (|| -> PyResult<()> {
+        let mut file = fs::File::create(&tmp)
+            .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+        serde_json::to_writer(&mut file, value)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+        file.flush()
+            .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+        file.sync_all()
+            .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+        fs::rename(&tmp, path)
+            .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+        Ok(())
+    })();
+    if result.is_err() {
+        let _ = fs::remove_file(&tmp);
+    }
+    result
+}
+
 #[pyfunction]
 pub(crate) fn reconcile_appstream_components(
     py: Python<'_>,
-    previous: &Bound<'_, PyList>,
+    previous_path: &str,
     current: &Bound<'_, PyList>,
-) -> PyResult<Vec<Py<PyAny>>> {
-    // Reconciliation is deliberately data-only: Python decides whether the
-    // previous catalog is schema-compatible, while Rust indexes it and reuses
-    // unchanged normalized entries by identity + metadata hash.
-    let mut previous_by_identity: std::collections::HashMap<String, serde_json::Map<String, Value>> =
-        std::collections::HashMap::with_capacity(previous.len());
-    for obj in previous.iter() {
-        let Value::Object(map) = py_to_json(&obj)? else { continue; };
-        let identity = map.get("identity").and_then(Value::as_str).unwrap_or("");
-        if !identity.is_empty() {
-            previous_by_identity.insert(identity.to_string(), map);
+    output_path: &str,
+    reuse_previous: bool,
+) -> PyResult<(bool, usize)> {
+    let mut current_maps = Vec::with_capacity(current.len());
+    for obj in current.iter() {
+        if let Value::Object(map) = py_to_json(&obj)? {
+            current_maps.push(map);
         }
     }
 
-    let mut reconciled: Vec<serde_json::Map<String, Value>> = Vec::with_capacity(current.len());
-    for obj in current.iter() {
-        let Value::Object(map) = py_to_json(&obj)? else { continue; };
-        let identity = map.get("identity").and_then(Value::as_str).unwrap_or("");
-        let metadata_hash = map.get("_metadata_hash").and_then(Value::as_str).unwrap_or("");
-        let source = map.get("source").and_then(Value::as_str).unwrap_or("");
+    let previous_path = previous_path.to_string();
+    let output_path = output_path.to_string();
 
-        let reused = if !identity.is_empty() && !metadata_hash.is_empty() {
-            previous_by_identity.get(identity).filter(|old| {
-                old.get("source").and_then(Value::as_str).unwrap_or("") == source
-                    && old.get("_metadata_hash").and_then(Value::as_str).unwrap_or("") == metadata_hash
-            }).cloned()
-        } else {
-            None
-        };
-        reconciled.push(reused.unwrap_or(map));
-    }
+    py.allow_threads(move || -> PyResult<(bool, usize)> {
+        let previous: Vec<Value> = fs::read_to_string(&previous_path)
+            .ok()
+            .and_then(|raw| serde_json::from_str::<Value>(&raw).ok())
+            .and_then(|value| value.as_array().cloned())
+            .unwrap_or_default();
 
-    // Keep publication deterministic without another Python-wide sort pass.
-    reconciled.sort_by(|a, b| {
-        let an = a.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
-        let bn = b.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
-        an.cmp(&bn).then_with(|| {
-            a.get("id").and_then(Value::as_str).unwrap_or("")
-                .cmp(b.get("id").and_then(Value::as_str).unwrap_or(""))
-        })
-    });
+        let mut previous_by_identity: std::collections::HashMap<String, serde_json::Map<String, Value>> =
+            std::collections::HashMap::new();
 
-    let mut out = Vec::with_capacity(reconciled.len());
-    for map in reconciled {
-        out.push(json_to_py(py, &Value::Object(map))?);
-    }
-    Ok(out)
+        if reuse_previous {
+            previous_by_identity.reserve(previous.len());
+            for value in &previous {
+                let Some(map) = value.as_object() else { continue; };
+                let identity = map.get("identity").and_then(Value::as_str).unwrap_or("");
+                if !identity.is_empty() {
+                    previous_by_identity.insert(identity.to_string(), map.clone());
+                }
+            }
+        }
+
+        let mut reconciled = Vec::with_capacity(current_maps.len());
+        for map in current_maps {
+            let identity = map.get("identity").and_then(Value::as_str).unwrap_or("");
+            let metadata_hash = map.get("_metadata_hash").and_then(Value::as_str).unwrap_or("");
+            let source = map.get("source").and_then(Value::as_str).unwrap_or("");
+
+            let reused = if reuse_previous && !identity.is_empty() && !metadata_hash.is_empty() {
+                previous_by_identity.get(identity).filter(|old| {
+                    old.get("source").and_then(Value::as_str).unwrap_or("") == source
+                        && old.get("_metadata_hash").and_then(Value::as_str).unwrap_or("") == metadata_hash
+                }).cloned()
+            } else {
+                None
+            };
+
+            if let Some(mut old) = reused {
+                // Dynamic metrics are independent of the AppStream metadata hash.
+                // Refresh them even when the normalized component itself is reused.
+                for key in [
+                    "popularity_downloads",
+                    "popularity_metric",
+                    "review_rating",
+                    "review_count",
+                ] {
+                    match map.get(key) {
+                        Some(value) => { old.insert(key.to_string(), value.clone()); }
+                        None => { old.remove(key); }
+                    }
+                }
+                reconciled.push(old);
+            } else {
+                reconciled.push(map);
+            }
+        }
+
+        reconciled.sort_by(|a, b| {
+            let an = a.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
+            let bn = b.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
+            an.cmp(&bn).then_with(|| {
+                a.get("id").and_then(Value::as_str).unwrap_or("")
+                    .cmp(b.get("id").and_then(Value::as_str).unwrap_or(""))
+            })
+        });
+
+        let result = Value::Array(reconciled.into_iter().map(Value::Object).collect());
+        let changed = previous.as_slice() != result.as_array().map(Vec::as_slice).unwrap_or(&[]);
+        let count = result.as_array().map(Vec::len).unwrap_or(0);
+
+        let path = std::path::Path::new(&output_path);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)
+                .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+        }
+        let tmp = path.with_file_name(format!(
+            "{}.tmp",
+            path.file_name().and_then(|v| v.to_str()).unwrap_or("catalog.json")
+        ));
+        {
+            let mut file = fs::File::create(&tmp)
+                .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+            serde_json::to_writer(&mut file, &result)
+                .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+            file.flush()
+                .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+            file.sync_all()
+                .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+        }
+        fs::rename(&tmp, path)
+            .map_err(|e| pyo3::exceptions::PyOSError::new_err(e.to_string()))?;
+
+        Ok((changed, count))
+    })
 }
 
 #[pyfunction]
@@ -612,6 +1039,90 @@ impl RuntimeAppStreamEntry {
     }
 }
 
+
+fn browse_identity_values(value: &serde_json::Map<String, Value>) -> Vec<String> {
+    let mut values = Vec::new();
+    for key in ["id", "appstream_id", "appstream_canonical_name", "canonical_name", "registry_name", "repo_app_id", "name"] {
+        if let Some(v) = value.get(key).and_then(Value::as_str) {
+            let v = v.trim().to_lowercase();
+            if !v.is_empty() { values.push(v); }
+        }
+    }
+    let mut add_package = |v: &Value| {
+        if let Some(s) = v.as_str() {
+            let s = s.trim().to_lowercase();
+            if !s.is_empty() { values.push(s); }
+        }
+    };
+    if let Some(packages) = value.get("package-name") {
+        if let Some(items) = packages.as_array() { for item in items { add_package(item); } }
+        else { add_package(packages); }
+    }
+    if let Some(path) = value.get("path").and_then(Value::as_str) {
+        let leaf = path.rsplit('/').next().unwrap_or(path);
+        let stem = leaf.rsplit_once('.').map(|(stem, _)| stem).unwrap_or(leaf).to_lowercase();
+        if !stem.is_empty() { values.push(stem); }
+    }
+    values.sort(); values.dedup(); values
+}
+
+fn browse_session_key(value: &serde_json::Map<String, Value>) -> String {
+    browse_identity_values(value).into_iter().next().unwrap_or_else(|| {
+        format!("entry:{}:{}", value.get("name").and_then(Value::as_str).unwrap_or(""), value.get("path").and_then(Value::as_str).unwrap_or(""))
+    })
+}
+
+fn browse_hash(key: &str, salt: &str) -> u64 {
+    static STATE: OnceLock<std::collections::hash_map::RandomState> = OnceLock::new();
+    let state = STATE.get_or_init(std::collections::hash_map::RandomState::new);
+    let mut hasher = state.build_hasher();
+    salt.hash(&mut hasher); key.hash(&mut hasher); hasher.finish()
+}
+
+fn browse_unit(key: &str, salt: &str) -> f64 {
+    (browse_hash(key, salt) as f64) / (u64::MAX as f64)
+}
+
+fn browse_score(key: &str, salt: &str, low: i64, high: i64) -> i64 {
+    if high <= low { return low; }
+    low + (browse_hash(key, salt) % ((high - low + 1) as u64)) as i64
+}
+
+fn browse_is_appstream(value: &serde_json::Map<String, Value>) -> bool { value.get("is_appstream_entry").and_then(Value::as_bool).unwrap_or(false) }
+fn browse_source(value: &serde_json::Map<String, Value>) -> &str { value.get("appstream_source").and_then(Value::as_str).unwrap_or("native") }
+fn browse_is_curated(value: &serde_json::Map<String, Value>) -> bool {
+    if browse_is_appstream(value) { return false; }
+    let local = value.get("path").and_then(Value::as_str).unwrap_or("").contains(".local/linuxtoys/scripts");
+    !local && (value.get("is_repo_entry").and_then(Value::as_bool).unwrap_or(false) || value.get("is_script").and_then(Value::as_bool).unwrap_or(false))
+}
+fn browse_is_known(value: &serde_json::Map<String, Value>, known: &std::collections::HashSet<String>) -> bool {
+    browse_identity_values(value).iter().any(|v| known.contains(v))
+}
+
+fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
+    const SCORE_MAX:i64=999; const TOP:i64=900; const SECTION:i64=100;
+    let known:std::collections::HashSet<String>=known_popular.iter().map(|s|s.trim().to_lowercase()).filter(|s|!s.is_empty()).collect();
+    let rows:Vec<(Option<f64>,Option<i64>)>=values.iter().map(|v|(v.get("review_rating").and_then(Value::as_f64),v.get("review_count").and_then(Value::as_i64))).collect();
+    let reviews=crate::popularity::review_subscores(rows);
+    for (v,score) in values.iter_mut().zip(reviews) { if let Some(m)=v.as_object_mut(){ if let Some(score)=score{m.insert("review_subscore".into(),Value::Number(score.into()));}else{m.remove("review_subscore");} } }
+
+    let mut metric_rows=Vec::new(); let mut metric_indices=Vec::new();
+    let mut native_rows=Vec::new(); let mut native_indices=Vec::new();
+    for (i,v) in values.iter_mut().enumerate(){let Some(m)=v.as_object_mut()else{continue}; if !browse_is_appstream(m){continue} let key=browse_session_key(m);
+        if browse_is_known(m,&known){m.insert("_category_popularity_score".into(),Value::Number(browse_score(&key,"known",TOP,SCORE_MAX).into()));continue}
+        let source=browse_source(m).to_string(); let metric=m.get("popularity_metric").and_then(Value::as_f64);
+        if let Some(metric)=metric { metric_indices.push(i); metric_rows.push((metric_indices.len()-1,metric,key)); continue }
+        if source=="flatpak" {m.insert("_category_popularity_score".into(),Value::Number(browse_score(&key,"flatpak-unknown",0,SCORE_MAX).into()));continue}
+        if source=="native" {m.remove("_category_popularity_score"); let review=m.get("review_subscore").and_then(Value::as_i64); native_indices.push(i); native_rows.push((native_indices.len()-1,review,key.clone(),browse_unit(&key,"order")));}
+    }
+    for (row,section) in crate::popularity::metric_rank_sections(metric_rows){if let Some(m)=values.get_mut(metric_indices[row]).and_then(Value::as_object_mut){let key=browse_session_key(m);let low=section*SECTION;let high=if section==9{SCORE_MAX}else{low+SECTION-1};m.insert("_category_popularity_score".into(),Value::Number(browse_score(&key,&format!("flatpak-category:{section}"),low,high).into()));}}
+    for (row,section) in crate::popularity::native_rank_sections(native_rows){if let Some(m)=values.get_mut(native_indices[row]).and_then(Value::as_object_mut){let key=browse_session_key(m);let low=section*SECTION;let high=if section==9{SCORE_MAX}else{low+SECTION-1};m.insert("_category_native_score".into(),Value::Number(browse_score(&key,&format!("native-category:{section}"),low,high).into()));}}
+
+    values.sort_by(|a,b|{let am=a.as_object();let bm=b.as_object();let structural=|m:Option<&serde_json::Map<String,Value>>|{let m=m.unwrap();if m.get("is_create_script").and_then(Value::as_bool).unwrap_or(false){0}else if m.get("is_subcategory").and_then(Value::as_bool).unwrap_or(false){1}else{2}};let sa=structural(am);let sb=structural(bm);if sa!=sb{return sa.cmp(&sb)};let am=am.unwrap();let bm=bm.unwrap();if sa==1{return am.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase().cmp(&bm.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase())}
+        let score=|m:&serde_json::Map<String,Value>|->i64{let key=browse_session_key(m);if browse_is_known(m,&known){return browse_score(&key,"known",TOP,SCORE_MAX)}if browse_is_appstream(m){if let Some(v)=m.get("_category_popularity_score").and_then(Value::as_i64){return v.clamp(0,SCORE_MAX)}if browse_source(m)=="native"{if let Some(v)=m.get("_category_native_score").and_then(Value::as_i64){return v.clamp(0,SCORE_MAX)}}}if browse_is_curated(m){browse_score(&key,"curated",TOP,SCORE_MAX)}else{browse_score(&key,"fallback",0,TOP-1)}};
+        let seca=score(am)/SECTION;let secb=score(bm)/SECTION;if seca!=secb{return secb.cmp(&seca)};let ra=am.get("review_subscore").and_then(Value::as_i64);let rb=bm.get("review_subscore").and_then(Value::as_i64);match (ra,rb){(Some(a),Some(b)) if a!=b=>return b.cmp(&a),(Some(_),None)=>return std::cmp::Ordering::Less,(None,Some(_))=>return std::cmp::Ordering::Greater,_=>{}}let ka=browse_session_key(am);let kb=browse_session_key(bm);browse_unit(&ka,"order").total_cmp(&browse_unit(&kb,"order"))});
+}
+
 #[pyclass]
 pub(crate) struct AppStreamCatalog {
     entries: Vec<RuntimeAppStreamEntry>,
@@ -691,6 +1202,20 @@ impl AppStreamCatalog {
             Some(indices) => self.materialize_indices(py, indices),
             None => Ok(Vec::new()),
         }
+    }
+
+    fn browse_entries_for_category(&self, py: Python<'_>, category: &str, structural: Vec<Py<PyAny>>, known_popular: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
+        let mut values = Vec::with_capacity(structural.len() + self.by_category.get(category.trim_matches('/')).map_or(0, Vec::len));
+        for item in structural {
+            values.push(py_to_json(item.bind(py))?);
+        }
+        if let Some(indices) = self.by_category.get(category.trim_matches('/')) {
+            for &index in indices {
+                if let Some(value) = self.entries.get(index).and_then(RuntimeAppStreamEntry::decode) { values.push(value); }
+            }
+        }
+        rank_browse_values(&mut values, &known_popular);
+        values.iter().map(|value| json_to_py(py, value)).collect()
     }
 
     fn find_by_id(&self, py: Python<'_>, appstream_id: &str) -> PyResult<Option<Py<PyAny>>> {
@@ -830,6 +1355,7 @@ fn write_binary_catalog_cache(cache_path: &str, cache_key: &str, entries: &[Runt
 
 #[pyfunction]
 pub(crate) fn build_appstream_catalog_index(
+    py: Python<'_>,
     path: &str,
     omit_keys: Vec<String>,
     category_paths: Vec<String>,
@@ -848,6 +1374,7 @@ pub(crate) fn build_appstream_catalog_index(
     cache_key: &str,
     force_rebuild: bool,
 ) -> PyResult<AppStreamCatalog> {
+    py.allow_threads(|| {
     // A warm cache is immediately usable even when its key is stale.  Normal UI
     // callers keep using that last complete snapshot while the refresh worker
     // rebuilds the new generation with force_rebuild=true.  Publication below is
@@ -892,6 +1419,7 @@ pub(crate) fn build_appstream_catalog_index(
     let runtime_entries: Vec<RuntimeAppStreamEntry> = entries.into_iter().filter_map(RuntimeAppStreamEntry::from_value).collect();
     write_binary_catalog_cache(cache_path, cache_key, &runtime_entries);
     Ok(AppStreamCatalog::from_entries(runtime_entries, cache_key.to_string()))
+    })
 }
 
 

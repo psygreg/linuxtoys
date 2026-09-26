@@ -1087,14 +1087,37 @@ class FeaturedCtl:
             if (column, row) not in occupied
         ]
 
+        new_normals = []
         for script_info, position in zip(normal_scripts, free_cells):
             widget = reusable_normals.pop(position, None)
             if widget is not None:
                 self.update_featured_normal_widget(widget, script_info)
             else:
-                widget = prepare_widget(script_info, large=False)
-                column, row = position
-                self.random_scripts_flowbox.attach(widget, column, row, 1, 1)
+                new_normals.append((script_info, position))
+
+        if new_normals:
+            native_widgets = self.create_native_featured_grid_batch(
+                self.random_scripts_flowbox, new_normals
+            )
+            if native_widgets is None:
+                native_widgets = []
+                for script_info, position in new_normals:
+                    widget = prepare_widget(script_info, large=False)
+                    column, row = position
+                    self.random_scripts_flowbox.attach(widget, column, row, 1, 1)
+                    native_widgets.append(widget)
+            else:
+                for widget, (script_info, _position) in zip(native_widgets, new_normals):
+                    widget._featured_grid_large = False
+                    widget.set_tooltip_text(script_info.get("description", "") or None)
+                    widget.set_can_focus(True)
+                    widget.connect("key-press-event", self._on_featured_card_key_press)
+                    widget.add_events(
+                        Gdk.EventMask.ENTER_NOTIFY_MASK
+                        | Gdk.EventMask.LEAVE_NOTIFY_MASK
+                    )
+                    widget.connect("enter-notify-event", self._on_featured_card_enter)
+                    widget.connect("leave-notify-event", self._on_featured_card_leave)
 
         # Defensive cleanup if selection/capacity ever leaves an old normal card
         # without a corresponding new item.

@@ -5,6 +5,7 @@ from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index
 from . import _catalog_rs
 from .gtk_dialogs import run_message_dialog
+from . import gui_rs
 
 
 # Internal IDs whose menu cards should never display a badge.
@@ -277,6 +278,184 @@ class ItemWidgetFactory:
             if official_index.is_verified_name(candidate):
                 return True
         return False
+
+    def _native_item_spec(self, item_info, checklist=False):
+        """Return the native-card descriptor, or None for Python-only cards."""
+        is_main_category = self.current_category_info is None
+        is_subcategory = item_info.get("is_subcategory", False)
+        is_category_type = item_info.get("type") == "category"
+        is_not_script = not item_info.get("is_script", False)
+        is_category_card = (
+            is_subcategory
+            or (is_category_type and is_not_script)
+            or (is_main_category and is_not_script)
+        )
+        if is_category_card or not gui_rs.available():
+            return None
+
+        is_removable_script = self._is_script_removable(item_info)
+        icon_value = str(item_info.get("icon", "application-x-executable") or "")
+        icon_path = ""
+        icon_name = icon_value
+        if icon_value.endswith((".png", ".svg")):
+            if not os.path.isabs(icon_value) and "/" not in icon_value:
+                icon_path = get_icon_path(
+                    "local-script.svg"
+                    if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
+                    else icon_value
+                ) or ""
+            elif os.path.exists(icon_value):
+                icon_path = icon_value
+            icon_name = "application-x-executable"
+
+        verified = item_info.get("is_verified", False)
+        distro_badge = str(item_info.get("native_distro_badge", "") or "")
+        appstream_badge = str(item_info.get("appstream_badge", "") or "")
+        badge_path = ""
+        internal_id = str(item_info.get("id") or item_info.get("script") or "").strip()
+        if not internal_id:
+            item_path = str(item_info.get("path", "") or "")
+            if item_path and not item_path.startswith("repo://"):
+                internal_id = os.path.splitext(os.path.basename(item_path))[0]
+        badge_excluded = internal_id.casefold() in {
+            value.casefold() for value in BADGE_EXCLUDED_IDS
+        }
+        if not badge_excluded:
+            if self._uses_linuxtoys_verified_badge(item_info):
+                badge_path = get_icon_path("ltverified.svg") or ""
+            elif verified:
+                badge_path = get_icon_path("verified.svg") or ""
+            elif item_info.get("is_appstream_entry", False):
+                if distro_badge:
+                    badge_path = get_icon_path(distro_badge) or ""
+                elif appstream_badge:
+                    badge_path = get_icon_path(appstream_badge) or ""
+            elif item_info.get("is_repo_entry", False):
+                badge_path = get_icon_path("distros/linuxtoys.svg") or ""
+            elif (
+                item_info.get("is_script", False)
+                and not item_info.get("is_subcategory", False)
+                and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
+            ):
+                badge_path = get_icon_path("distros/linuxtoys.svg") or ""
+
+        return {
+            "name": item_info["name"],
+            "icon_path": icon_path,
+            "icon_name": icon_name,
+            "badge_path": badge_path,
+            "bold": False,
+            "removable": is_removable_script,
+            "checklist": bool(checklist),
+            "is_new": bool(item_info.get("is_new", False)),
+        }
+
+    def _finish_native_item_widget(
+        self, event_box, item_info, spec, *, allow_drag=False
+    ):
+        """Attach Python state/callbacks to a card already constructed by Rust."""
+        event_box.info = item_info
+
+        # Match the Python card contract: hover styling belongs to the inset
+        # painted surface, not the outer EventBox whose allocation also reserves
+        # room for the edge badge.
+        card_surface = gui_rs.card_child(event_box, "linuxtoys-native-surface")
+        if card_surface is not None:
+            event_box.card_surface = card_surface
+
+        if spec.get("checklist"):
+            check = gui_rs.card_child(event_box, "linuxtoys-native-check")
+            if check is not None:
+                check.script_info = item_info
+                check.connect("toggled", self._on_toggled_check)
+                event_box.checkbox = check
+
+        if spec.get("removable"):
+            remove_btn = gui_rs.card_child(event_box, "linuxtoys-native-remove")
+            if remove_btn is not None:
+                remove_btn.set_tooltip_text(
+                    self.translations.get(
+                        "term_view_remove", "Remove installed components"
+                    )
+                )
+                remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
+                remove_btn.connect(
+                    "focus-in-event", self._on_item_remove_focus_in, event_box
+                )
+
+        if allow_drag:
+            event_box.drag_source_set(
+                Gdk.ModifierType.BUTTON1_MASK,
+                [Gtk.TargetEntry.new("text/uri-list", 0, 0)],
+                Gdk.DragAction.COPY,
+            )
+            event_box.connect("drag-data-get", self.on_drag_data_get)
+            event_box.connect("drag-end", self.on_drag_end)
+
+        event_box.connect("enter-notify-event", self.on_item_enter)
+        event_box.connect("leave-notify-event", self.on_item_leave)
+        event_box.connect("button-press-event", self.on_item_button_press)
+        return event_box
+
+    def create_native_item_batch(
+        self, flowbox, item_infos, *, checklist=False, allow_drag=False
+    ):
+        """Construct and insert a homogeneous ordinary-card batch in native GTK."""
+        item_infos = list(item_infos)
+        if not item_infos:
+            return []
+        specs = [self._native_item_spec(info, checklist=checklist) for info in item_infos]
+        if any(spec is None for spec in specs):
+            return None
+        try:
+            widgets = gui_rs.add_item_cards(flowbox, specs)
+        except Exception as error:
+            print(f"Warning: native GTK batch creation failed, using Python fallback: {error}")
+            return None
+        return [
+            self._finish_native_item_widget(
+                widget, info, spec, allow_drag=allow_drag
+            )
+            for widget, info, spec in zip(widgets, item_infos, specs)
+        ]
+
+    def create_native_featured_grid_batch(self, grid, items_with_positions):
+        """Construct ordinary Featured cards directly in their Gtk.Grid cells."""
+        items_with_positions = list(items_with_positions)
+        if not items_with_positions:
+            return []
+
+        infos = [info for info, _position in items_with_positions]
+        positions = [position for _info, position in items_with_positions]
+        specs = [self._native_item_spec(info) for info in infos]
+        if any(spec is None or spec.get("removable") or spec.get("checklist") for spec in specs):
+            return None
+
+        try:
+            widgets = gui_rs.attach_item_cards_grid(grid, specs, positions)
+        except Exception as error:
+            print(f"Warning: native Featured grid creation failed, using Python fallback: {error}")
+            return None
+
+        return [
+            self._finish_native_item_widget(widget, info, spec)
+            for widget, info, spec in zip(widgets, infos, specs)
+        ]
+
+    def update_native_featured_widget(self, widget, item_info):
+        """Rebind one native ordinary Featured card in place."""
+        spec = self._native_item_spec(item_info)
+        if spec is None or spec.get("removable") or spec.get("checklist"):
+            return False
+        try:
+            updated = gui_rs.update_item_card(widget, spec)
+        except Exception as error:
+            print(f"Warning: native Featured card update failed: {error}")
+            return False
+        if updated:
+            widget.info = item_info
+            widget.set_tooltip_text(item_info.get("description", "") or None)
+        return updated
 
     def create_item_widget(
         self,
@@ -633,6 +812,9 @@ class ItemWidgetFactory:
 
     def update_featured_normal_widget(self, widget, item_info):
         """Rebind an existing ordinary Featured card without changing its hierarchy."""
+        if self.update_native_featured_widget(widget, item_info):
+            return widget
+
         widget.info = item_info
         widget.set_tooltip_text(item_info.get("description", "") or None)
 

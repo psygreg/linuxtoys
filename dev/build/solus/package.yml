@@ -17,6 +17,9 @@ networking : true
 builddeps  :
     - desktop-file-utils
     - rust
+    - gtk3-devel
+    - pkg-config
+    - patchelf
 
 # Runtime dependencies
 rundeps    :
@@ -38,6 +41,7 @@ setup      : |
 build      : |
     %cargo_build --locked
     test -f target/release/lib_catalog_rs.so
+    test -f target/release/liblinuxtoys_gui.so
 
 install    : |
     # Create directory structure
@@ -77,11 +81,14 @@ install    : |
         cp -r --preserve=mode files/[^L]* $installdir/usr/share/linuxtoys/ 2>/dev/null || true
     fi
 
-    # The crate uses PyO3's abi3-py310 stable ABI, so the cdylib can be installed
-    # under the stable-extension filename expected by Python.
+    # The catalog crate is a PyO3 abi3 extension. The GUI crate is a plain
+    # C-ABI cdylib loaded through ctypes and must retain its native filename.
     install -m 755 target/release/lib_catalog_rs.so \
         "$installdir/usr/share/linuxtoys/app/_catalog_rs.abi3.so"
+    install -m 755 target/release/liblinuxtoys_gui.so \
+        "$installdir/usr/share/linuxtoys/app/liblinuxtoys_gui.so"
     test -f "$installdir/usr/share/linuxtoys/app/_catalog_rs.abi3.so"
+    test -f "$installdir/usr/share/linuxtoys/app/liblinuxtoys_gui.so"
 
     # Clean up Python cache files
     find $installdir/usr/share/linuxtoys/ -name "__pycache__" -type d -delete

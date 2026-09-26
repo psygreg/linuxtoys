@@ -94,37 +94,53 @@ build_glycin_ng() {
 
 build_linuxtoys_rust() {
     if ! command -v cargo >/dev/null 2>&1; then
-        _msg error "cargo is required to build the LinuxToys Rust extension."
+        _msg error "cargo is required to build the LinuxToys Rust components."
         exit 1
     fi
     if ! command -v maturin >/dev/null 2>&1; then
-        _msg error "maturin is required to build the LinuxToys Rust extension."
+        _msg error "maturin is required to build the LinuxToys Rust catalog extension."
+        exit 1
+    fi
+    if ! command -v pkg-config >/dev/null 2>&1; then
+        _msg error "pkg-config is required to build the LinuxToys native GTK library."
+        exit 1
+    fi
+    if ! pkg-config --exists gtk+-3.0; then
+        _msg error "GTK3 development files are required to build the LinuxToys native GTK library."
         exit 1
     fi
 
-    _msg info "Building LinuxToys Rust catalog extension..."
-    rm -rf "$BUILD_DIR/linuxtoys-wheel" "$ROOT_DIR/target/wheels"
+    _msg info "Building LinuxToys Rust catalog extension and native GTK library..."
+    rm -rf \
+        "$BUILD_DIR/linuxtoys-catalog-wheel" \
+        "$ROOT_DIR/target/wheels/catalog"
+    mkdir -p "$ROOT_DIR/target/wheels/catalog"
+
     (
-        cd "$ROOT_DIR"
-        maturin build --release --locked --out target/wheels
+        cd "$ROOT_DIR/src/catalog-rs"
+        maturin build --release --locked --out "$ROOT_DIR/target/wheels/catalog"
     )
+    cargo build --release --locked --manifest-path "$ROOT_DIR/src/gui-rs/Cargo.toml"
 
-    local wheel
-    wheel="$(find "$ROOT_DIR/target/wheels" -maxdepth 1 -type f -name '*.whl' -print -quit)"
-    [[ -n "$wheel" ]] || {
-        _msg error "maturin did not produce a LinuxToys wheel."
+    local catalog_wheel catalog_extension gui_library
+    catalog_wheel="$(find "$ROOT_DIR/target/wheels/catalog" -maxdepth 1 -type f -name '*.whl' -print -quit)"
+    [[ -n "$catalog_wheel" ]] || {
+        _msg error "maturin did not produce the LinuxToys catalog wheel."
         exit 1
     }
 
-    mkdir -p "$BUILD_DIR/linuxtoys-wheel"
-    python3 -m zipfile -e "$wheel" "$BUILD_DIR/linuxtoys-wheel"
-    local extension
-    extension="$(find "$BUILD_DIR/linuxtoys-wheel/app" -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
-    [[ -n "$extension" ]] || {
-        _msg error "LinuxToys Rust extension was not found in the built wheel."
+    mkdir -p "$BUILD_DIR/linuxtoys-catalog-wheel"
+    python3 -m zipfile -e "$catalog_wheel" "$BUILD_DIR/linuxtoys-catalog-wheel"
+
+    catalog_extension="$(find "$BUILD_DIR/linuxtoys-catalog-wheel" -type f -name '_catalog_rs*.so' -print -quit)"
+    gui_library="$ROOT_DIR/target/release/liblinuxtoys_gui.so"
+    [[ -n "$catalog_extension" && -f "$gui_library" ]] || {
+        _msg error "LinuxToys Rust build artifacts were not produced."
         exit 1
     }
-    install -Dm755 "$extension" "$APP_BIN/app/$(basename "$extension")"
+
+    install -Dm755 "$catalog_extension" "$APP_BIN/app/$(basename "$catalog_extension")"
+    install -Dm755 "$gui_library" "$APP_BIN/app/liblinuxtoys_gui.so"
 }
 
 replace_upstream_glycin() {
@@ -207,7 +223,8 @@ cp -a "$ROOT_DIR/p3/." "$APP_BIN/"
 build_linuxtoys_rust
 find "$APP_BIN" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 find "$APP_BIN" -type f -name '*.pyc' -delete 2>/dev/null || true
-[[ -f "$APP_BIN/app/_catalog_rs.abi3.so" ]] || { _msg error "Rust extension missing from AppDir."; exit 1; }
+[[ -f "$APP_BIN/app/_catalog_rs.abi3.so" ]] || { _msg error "Rust catalog extension missing from AppDir."; exit 1; }
+[[ -f "$APP_BIN/app/liblinuxtoys_gui.so" ]] || { _msg error "Rust native GTK library missing from AppDir."; exit 1; }
 
 # LinuxToys launcher for the AppImage runtime. quick-sharun/uruntime provides
 # APPDIR, so no host /usr/share/linuxtoys path is involved.

@@ -8,7 +8,7 @@ License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
 Requires:       bash git curl wget zenity appstream appstream-data python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 /usr/bin/script (sudo or sudo-rs)
-BuildRequires:  desktop-file-utils cargo rust python3-devel maturin
+BuildRequires:  desktop-file-utils cargo rust python3-devel maturin gtk3-devel pkgconf-pkg-config patchelf
 
 %description
 A menu with various handy tools for Linux gaming, optimization and other tweaks.
@@ -19,12 +19,15 @@ A menu with various handy tools for Linux gaming, optimization and other tweaks.
 %setup -q
 
 %build
-maturin build --release --locked --out target/wheels
-WHEEL=$(find target/wheels -maxdepth 1 -type f -name '*.whl' -print -quit)
-test -n "$WHEEL"
-rm -rf wheel-unpack
-python3 -m zipfile -e "$WHEEL" wheel-unpack
-test -n "$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+mkdir -p target/wheels/catalog
+(cd src/catalog-rs && maturin build --release --locked --out ../../target/wheels/catalog)
+cargo build --release --locked --manifest-path src/gui-rs/Cargo.toml
+CATALOG_WHEEL=$(find target/wheels/catalog -maxdepth 1 -type f -name '*.whl' -print -quit)
+test -n "$CATALOG_WHEEL"
+rm -rf wheel-unpack-catalog
+python3 -m zipfile -e "$CATALOG_WHEEL" wheel-unpack-catalog
+test -n "$(find wheel-unpack-catalog -type f -name '_catalog_rs*.so' -print -quit)"
+test -f target/release/liblinuxtoys_gui.so
 
 %install
 mkdir -p %{buildroot}/usr/bin/
@@ -36,9 +39,12 @@ cp -a p3/. %{buildroot}/usr/share/linuxtoys/
 find %{buildroot}/usr/share/linuxtoys -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 find %{buildroot}/usr/share/linuxtoys -type f -name '*.pyc' -delete 2>/dev/null || true
 
-EXTENSION=$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)
-test -n "$EXTENSION"
-install -m 755 "$EXTENSION" %{buildroot}/usr/share/linuxtoys/app/$(basename "$EXTENSION")
+CATALOG_EXTENSION=$(find wheel-unpack-catalog -type f -name '_catalog_rs*.so' -print -quit)
+GUI_LIBRARY=target/release/liblinuxtoys_gui.so
+test -n "$CATALOG_EXTENSION"
+test -f "$GUI_LIBRARY"
+install -m 755 "$CATALOG_EXTENSION" %{buildroot}/usr/share/linuxtoys/app/$(basename "$CATALOG_EXTENSION")
+install -m 755 "$GUI_LIBRARY" %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 
 cat > %{buildroot}/usr/bin/linuxtoys <<'LAUNCHER'
 #!/bin/bash
@@ -59,6 +65,7 @@ install -m 644 src/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/a
 desktop-file-install --dir=%{buildroot}/usr/share/applications src/LinuxToys.desktop
 
 test -f %{buildroot}/usr/share/linuxtoys/app/_catalog_rs.abi3.so
+test -f %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 
 %files
 %defattr(-, root, root, -)

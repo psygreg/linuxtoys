@@ -45,6 +45,16 @@ APPSTREAM_SOURCE_PREFERENCE = {
     },
 }
 
+# Developer-facing category override for AppStream entries whose upstream
+# categories resolve to the wrong LinuxToys destination. Match by AppStream ID;
+# a trailing .desktop is ignored and matching is case-insensitive.
+#
+# Values are LinuxToys category paths (for example "utils", "game/emu", etc.).
+# The destination must exist in the active scripts tree.
+APPSTREAM_CATEGORY_OVERRIDE = {
+    "com.valvesoftware.Steam": "game",
+}
+
 # Developer-facing hard lock for applications that must use the system Flathub
 # installation. Match by AppStream/Flatpak application ID; a trailing .desktop
 # is ignored. The lock is applied only when a system-scope Flathub entry exists.
@@ -621,6 +631,7 @@ def _runtime_catalog(scripts_dir, curated_entries=None, category_paths=None, *, 
         "expressions": CATEGORY_EXPRESSION_RULES,
         "standalone_priority": STANDALONE_PURPOSE_PRIORITY,
         "main_priority": MAIN_CATEGORY_PRIORITY,
+        "overrides": APPSTREAM_CATEGORY_OVERRIDE,
     }
     rust_cache_key = json.dumps({
         "schema": RUNTIME_CACHE_SCHEMA,
@@ -766,6 +777,39 @@ def get_entries_for_category(
     return list(
         _runtime_catalog(scripts_dir, curated_entries, category_paths)
         .entries_for_category(category)
+    )
+
+
+def get_browse_entries_for_category(
+    scripts_dir,
+    category_path,
+    structural_items,
+    known_popular,
+    curated_entries=None,
+    category_paths=None,
+):
+    """Rank and materialize one complete browse category inside Rust.
+
+    Only the comparatively small structural LinuxToys slice crosses into Rust;
+    AppStream entries remain indexed/native until the final ordered result is
+    materialized back to Python.
+    """
+    try:
+        category = os.path.relpath(
+            os.path.realpath(category_path),
+            os.path.realpath(scripts_dir),
+        ).replace(os.sep, "/")
+    except ValueError:
+        return list(structural_items or ())
+    if category == "." or category.startswith("../"):
+        return list(structural_items or ())
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .browse_entries_for_category(
+            category,
+            list(structural_items or ()),
+            sorted({str(value) for value in (known_popular or ()) if str(value).strip()}),
+        )
     )
 
 def search_entries(scripts_dir, query, translated_new="new", translated_official="official", curated_entries=None, category_paths=None):

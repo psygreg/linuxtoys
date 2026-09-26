@@ -12,7 +12,7 @@ from urllib.error import HTTPError, URLError
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
 from .term_header import InfosHead
-from . import get_icon_path, appstream_cache
+from . import get_icon_path, appstream_cache, gui_rs
 from .lang_utils import detect_system_language
 
 
@@ -97,9 +97,7 @@ class AppPageView(Gtk.Box):
 
         self._build_name_line()
         self._build_developer_line()
-        self._build_rating_line()
-        self._build_repository_rating_row()
-        self._build_actions()
+        self._build_native_header_actions()
         self.pack_start(self._header_overlay, False, False, 0)
 
         scroller = Gtk.ScrolledWindow()
@@ -480,12 +478,8 @@ class AppPageView(Gtk.Box):
         row_spacing = int(capacity.get("row_spacing", 18))
         large_height = (3 * card_height) + (2 * row_spacing)
 
-        def prepare_widget(script_info, *, large=False):
-            widget = parent.create_item_widget(
-                script_info,
-                featured_large=large,
-                featured_height=large_height if large else 0,
-            )
+        def finish_featured_widget(widget, script_info):
+            """Apply app-page Featured behavior after native or Python construction."""
             widget.set_tooltip_text(script_info.get("description") or None)
             widget.set_can_focus(True)
             widget.connect("key-press-event", parent._on_featured_card_key_press)
@@ -497,8 +491,29 @@ class AppPageView(Gtk.Box):
             prepared_widgets.append(widget)
             return widget
 
-        for script_info in first_row_scripts:
-            self._featured_fill_flowbox.add(prepare_widget(script_info, large=False))
+        def prepare_large_widget(script_info):
+            # Large Featured cards keep their specialized Python construction.
+            widget = parent.create_item_widget(
+                script_info,
+                featured_large=True,
+                featured_height=large_height,
+            )
+            return finish_featured_widget(widget, script_info)
+
+        # The measuring first row is a FlowBox, so use the Stage 2/3 native batch
+        # path. Native cards are already parented to the FlowBox on return.
+        first_row_widgets = parent.create_native_item_batch(
+            self._featured_fill_flowbox, first_row_scripts
+        )
+        if first_row_widgets is None:
+            first_row_widgets = []
+            for script_info in first_row_scripts:
+                widget = parent.create_item_widget(script_info)
+                self._featured_fill_flowbox.add(widget)
+                first_row_widgets.append(widget)
+
+        for widget, script_info in zip(first_row_widgets, first_row_scripts):
+            finish_featured_widget(widget, script_info)
 
         large_positions = parent._choose_featured_large_positions(
             grid_rows, columns, large_count
@@ -510,7 +525,7 @@ class AppPageView(Gtk.Box):
             column, row = position
             occupied.update(parent._featured_occupied_cells(position))
             self._featured_fill_grid.attach(
-                prepare_widget(script_info, large=True), column, row, 1, 3
+                prepare_large_widget(script_info), column, row, 1, 3
             )
 
         free_cells = [
@@ -519,10 +534,22 @@ class AppPageView(Gtk.Box):
             for column in range(columns)
             if (column, row) not in occupied
         ]
-        for script_info, (column, row) in zip(normal_scripts, free_cells):
-            self._featured_fill_grid.attach(
-                prepare_widget(script_info, large=False), column, row, 1, 1
+        normal_grid_items = list(zip(normal_scripts, free_cells))
+        if normal_grid_items:
+            normal_grid_widgets = parent.create_native_featured_grid_batch(
+                self._featured_fill_grid, normal_grid_items
             )
+            if normal_grid_widgets is None:
+                normal_grid_widgets = []
+                for script_info, (column, row) in normal_grid_items:
+                    widget = parent.create_item_widget(script_info)
+                    self._featured_fill_grid.attach(widget, column, row, 1, 1)
+                    normal_grid_widgets.append(widget)
+
+            for widget, (script_info, _position) in zip(
+                normal_grid_widgets, normal_grid_items
+            ):
+                finish_featured_widget(widget, script_info)
 
         self._featured_fill_signature = (
             rows,
@@ -1295,108 +1322,134 @@ class AppPageView(Gtk.Box):
         )
 
 
-    def _build_rating_line(self):
-        """Show only the cached ODRS aggregate in the header's top-right corner."""
-        if not self.script_info.get("is_appstream_entry", False):
-            return
+    def _build_native_header_actions(self):
+        """Build the repetitive app-page header/action hierarchy in native GTK."""
+        is_appstream = bool(self.script_info.get("is_appstream_entry", False))
+
+        aggregate_markup = ""
+        show_aggregate = False
+        if is_appstream:
+            try:
+                rating = float(self.script_info.get("review_rating"))
+                count = int(self.script_info.get("review_count"))
+            except (TypeError, ValueError):
+                rating = -1.0
+                count = 0
+            if count > 0 and 0.0 <= rating <= 100.0:
+                aggregate_markup = (
+                    f'<span size="large" weight="bold">★ {rating / 20.0:.1f}</span>'
+                    f'  <span>({count})</span>'
+                )
+                show_aggregate = True
 
         try:
-            rating = float(self.script_info.get("review_rating"))
-            count = int(self.script_info.get("review_count"))
-        except (TypeError, ValueError):
-            return
-        if count <= 0 or not (0.0 <= rating <= 100.0):
-            return
+            widgets = gui_rs.populate_app_page_header(
+                self._header_overlay,
+                self.header.vbox_infos,
+                self.header.label_repo,
+                aggregate_markup=aggregate_markup,
+                install_label=self.translations.get("skills_install_label", " Install "),
+                open_label=self.translations.get("app_page_open", " Open "),
+                show_aggregate=show_aggregate,
+                show_rating=is_appstream,
+            )
+        except Exception as error:
+            raise RuntimeError("Native app-page header construction failed") from error
 
-        aggregate = Gtk.Label()
-        aggregate.set_markup(
-            f'<span size="large" weight="bold">★ {rating / 20.0:.1f}</span>'
-            f'  <span>({count})</span>'
-        )
-        aggregate.set_halign(Gtk.Align.END)
-        aggregate.set_valign(Gtk.Align.START)
-        aggregate.set_margin_top(16)
-        aggregate.set_margin_right(32)
-        aggregate.set_selectable(False)
-        aggregate.set_can_focus(False)
-        self._header_overlay.add_overlay(aggregate)
+        if widgets is None:
+            raise RuntimeError("Native app-page header construction failed")
 
-    def _build_rating_control(self):
-        """Build the compact installed-only rating control for the actions row."""
-        if not self.script_info.get("is_appstream_entry", False):
-            return None
+        self._install_button = widgets["install_button"]
+        self._open_button = widgets["open_button"]
+        self._rating_box = widgets["rating_box"]
+        self._rating_buttons = widgets["rating_buttons"]
+        controls = widgets["controls"]
 
-        rating_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        rating_row.set_halign(Gtk.Align.END)
-        rating_row.set_valign(Gtk.Align.CENTER)
+        self._install_button.connect("clicked", self._on_install_clicked)
+        self._open_button.connect("clicked", self._on_open_clicked)
 
-        self._rating_buttons = []
-        for stars in range(1, 6):
-            button = Gtk.Button(label="☆")
-            button.set_relief(Gtk.ReliefStyle.NONE)
-            button.set_can_focus(False)
-            button.set_size_request(24, 24)
-            button.set_tooltip_text(
-                self.translations.get("app_page_rate_stars", "Rate {stars} stars").format(stars=stars)
+        if self._rating_buttons:
+            tooltip = self.translations.get("app_page_rate_stars", "Rate {stars} stars")
+            for stars, button in enumerate(self._rating_buttons, start=1):
+                button.set_tooltip_text(tooltip.format(stars=stars))
+                button.connect("clicked", self._on_rating_clicked, stars)
+
+        # Rust creates the stable shell. Dynamic/source-specific controls remain
+        # Python-owned because their presence and behavior are application state.
+        source_button = self._build_source_button()
+        if source_button is not None:
+            controls.pack_start(source_button, False, False, 0)
+
+        purchase_url = self.script_info.get("purchase_url") or ""
+        purchase_options = self.script_info.get("purchase_options") or []
+        subscription_options = self.script_info.get("subscription_options") or []
+        purchase_price = self.script_info.get("purchase_price")
+        subscription_price = self.script_info.get("subscription_price")
+        donate_url = self.script_info.get("donate_url") or ""
+        homepage_url = self.script_info.get("homepage_url") or ""
+
+        if not purchase_options and purchase_url and purchase_price is not None:
+            purchase_options = [{
+                "name": "",
+                "price": purchase_price,
+                "currency_symbol": self.script_info.get("purchase_currency_symbol") or "$",
+                "url": purchase_url,
+            }]
+        if not subscription_options and purchase_url and subscription_price is not None:
+            subscription_options = [{
+                "name": "",
+                "months": 1,
+                "price": subscription_price,
+                "currency_symbol": self.script_info.get("subscription_currency_symbol") or "$",
+                "url": purchase_url,
+            }]
+
+        if purchase_options:
+            controls.pack_start(
+                self._build_commerce_button("purchase", purchase_options, purchase_url),
+                False, False, 0,
+            )
+        if subscription_options:
+            controls.pack_start(
+                self._build_commerce_button("subscription", subscription_options, purchase_url),
+                False, False, 0,
+            )
+        if purchase_url and not purchase_options and not subscription_options:
+            controls.pack_start(
+                self._build_commerce_button("purchase", [], purchase_url),
+                False, False, 0,
             )
 
-            # GTK themes often give ordinary buttons generous horizontal padding.
-            # Keep these five glyph-only buttons tight so the whole control fits on
-            # the same row as Website/Repository and the install/source actions.
-            css = Gtk.CssProvider()
-            css.load_from_data(
-                b"button { min-width: 20px; min-height: 20px; padding: 1px 3px; margin: 0; }"
+        if homepage_url:
+            homepage_button = Gtk.Button()
+            self._set_action_button_content(
+                homepage_button,
+                self.translations.get("app_page_homepage", " Website "),
+                "web-browser-symbolic",
             )
-            button.get_style_context().add_provider(
-                css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            homepage_button.connect("clicked", self._open_url, homepage_url)
+            controls.pack_start(homepage_button, False, False, 0)
+
+        if donate_url:
+            donate_button = Gtk.Button()
+            self._set_action_button_content(
+                donate_button,
+                self.translations.get("app_page_donate", " Donate "),
+                "emblem-favorite-symbolic",
             )
+            if not purchase_url and not purchase_options and not subscription_options:
+                donate_button.get_style_context().add_class("suggested-action")
+            donate_button.connect("clicked", self._open_url, donate_url)
+            controls.pack_start(donate_button, False, False, 0)
 
-            button.connect("clicked", self._on_rating_clicked, stars)
-            rating_row.pack_start(button, False, False, 0)
-            self._rating_buttons.append(button)
+        # Match the old repository/rating row visibility behavior.
+        if is_appstream and not str(self.script_info.get("repo", "") or "").strip():
+            self.header.label_repo.hide()
 
-        self._rating_box = rating_row
-        return rating_row
+        controls.show_all()
+        self._open_button.hide()
+        self.refresh_install_state()
 
-    def _build_repository_rating_row(self):
-        """Put the rating control on the same row as InfosHead's repository link."""
-        if not self.script_info.get("is_appstream_entry", False):
-            return
-
-        repo_label = getattr(self.header, "label_repo", None)
-        infos_box = getattr(self.header, "vbox_infos", None)
-        if repo_label is None or infos_box is None:
-            return
-
-        parent = repo_label.get_parent()
-        if parent is not None:
-            parent.remove(repo_label)
-
-        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        row.set_hexpand(True)
-        row.set_halign(Gtk.Align.FILL)
-        row.set_valign(Gtk.Align.CENTER)
-
-        # Preserve InfosHead's existing repository/URL label on the left.
-        row.pack_start(repo_label, False, False, 0)
-
-        # Let the empty middle of this metadata row absorb translated prompt width
-        # instead of competing with install/source/commerce buttons below.
-        spacer = Gtk.Box()
-        spacer.set_hexpand(True)
-        row.pack_start(spacer, True, True, 0)
-
-        rating_control = self._build_rating_control()
-        if rating_control is not None:
-            row.pack_end(rating_control, False, False, 0)
-
-        # _build_developer_line() inserts itself at index 1, leaving the original
-        # repository label at index 3 (name, developer, description, repository).
-        infos_box.pack_start(row, False, False, 0)
-        infos_box.reorder_child(row, 3)
-        row.show_all()
-        if not str(self.script_info.get("repo", "") or "").strip():
-            repo_label.hide()
 
     def _rating_app_id(self):
         return str(self.script_info.get("appstream_id") or self.script_info.get("id") or "").strip()
@@ -1837,104 +1890,6 @@ class AppPageView(Gtk.Box):
         resolver = getattr(self.parent, "_get_appstream_install_state", None)
         state = resolver(self._selected_install_info) if resolver is not None else "available"
         self.set_install_state(state)
-
-    def _build_actions(self):
-        controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-
-        install_label = self.translations.get("skills_install_label", " Install ")
-        install_button = Gtk.Button(label=install_label)
-        self._install_button = install_button
-        install_button.set_image(
-            Gtk.Image.new_from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON)
-        )
-        install_button.set_size_request(125, 35)
-        install_button.connect("clicked", self._on_install_clicked)
-        controls.pack_start(install_button, False, False, 0)
-
-        open_button = Gtk.Button()
-        self._open_button = open_button
-        self._set_action_button_content(
-            open_button,
-            self.translations.get("app_page_open", " Open "),
-            "media-playback-start-symbolic",
-        )
-        open_button.set_no_show_all(True)
-        open_button.hide()
-        open_button.connect("clicked", self._on_open_clicked)
-        controls.pack_start(open_button, False, False, 0)
-
-        source_button = self._build_source_button()
-        if source_button is not None:
-            controls.pack_start(source_button, False, False, 0)
-
-        purchase_url = self.script_info.get("purchase_url") or ""
-        purchase_options = self.script_info.get("purchase_options") or []
-        subscription_options = self.script_info.get("subscription_options") or []
-        purchase_price = self.script_info.get("purchase_price")
-        subscription_price = self.script_info.get("subscription_price")
-        donate_url = self.script_info.get("donate_url") or ""
-        homepage_url = self.script_info.get("homepage_url") or ""
-
-        # Backward compatibility for script_info produced by an older parser.
-        if not purchase_options and purchase_url and purchase_price is not None:
-            purchase_options = [{
-                "name": "",
-                "price": purchase_price,
-                "currency_symbol": self.script_info.get("purchase_currency_symbol") or "$",
-                "url": purchase_url,
-            }]
-        if not subscription_options and purchase_url and subscription_price is not None:
-            subscription_options = [{
-                "name": "",
-                "months": 1,
-                "price": subscription_price,
-                "currency_symbol": self.script_info.get("subscription_currency_symbol") or "$",
-                "url": purchase_url,
-            }]
-
-        if purchase_options:
-            controls.pack_start(
-                self._build_commerce_button("purchase", purchase_options, purchase_url),
-                False, False, 0
-            )
-
-        if subscription_options:
-            controls.pack_start(
-                self._build_commerce_button("subscription", subscription_options, purchase_url),
-                False, False, 0
-            )
-
-        if purchase_url and not purchase_options and not subscription_options:
-            controls.pack_start(
-                self._build_commerce_button("purchase", [], purchase_url),
-                False, False, 0
-            )
-
-        if homepage_url:
-            homepage_button = Gtk.Button()
-            self._set_action_button_content(
-                homepage_button,
-                self.translations.get("app_page_homepage", " Website "),
-                "web-browser-symbolic",
-            )
-            homepage_button.connect("clicked", self._open_url, homepage_url)
-            controls.pack_start(homepage_button, False, False, 0)
-
-        if donate_url:
-            donate_button = Gtk.Button()
-            self._set_action_button_content(
-                donate_button,
-                self.translations.get("app_page_donate", " Donate "),
-                "emblem-favorite-symbolic",
-            )
-            if not purchase_url and not purchase_options and not subscription_options:
-                donate_button.get_style_context().add_class("suggested-action")
-            donate_button.connect("clicked", self._open_url, donate_url)
-            controls.pack_start(donate_button, False, False, 0)
-
-        controls.set_hexpand(True)
-        self.header.vbox_infos.pack_start(controls, False, False, 10)
-        self.refresh_install_state()
 
     def _screenshot_variants(self, screenshot):
         """Normalize new AppStream variant groups and legacy string screenshots."""

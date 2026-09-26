@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import threading
 import sys
+import time
 
 from . import (
     action_registry,
@@ -599,6 +600,7 @@ class AppWindow(
         if self._appstream_cache_started:
             return False
         self._appstream_cache_started = True
+
         def report_state(state):
             GLib.idle_add(self._set_appstream_state, state)
 
@@ -619,9 +621,8 @@ class AppWindow(
             changed = bool(result.get("changed"))
             prepared = True
 
-            # A first launch must have the derived pickle before the menu is
-            # revealed, even if a catalog happened to appear before this worker ran.
-            # For later refreshes, prewarm only when a new catalog was published.
+            # A first launch must have the derived runtime cache before the menu is
+            # revealed. For later refreshes, prewarm only after a changed catalog.
             if initial_build or changed:
                 prepared = appstream_parser.prepare_runtime_cache()
                 if not prepared:
@@ -653,10 +654,10 @@ class AppWindow(
             self.categories_loading_label.hide()
 
         if catalog_changed:
-            # Rebuild parser/UI caches against the newly published catalog. The
-            # ordinary startup loading gate will then wait for the final category
-            # watermarks before revealing the menu.
-            return self._apply_appstream_catalog()
+            # This is still the bootstrap generation: no completed GTK snapshot is
+            # visible yet. Rebuild against the newly published catalog, then let the
+            # replacement parser generation render categories and release the roller.
+            return self._apply_appstream_catalog(initial_build=True)
 
         # If the catalog was already current, preparation only needed to create the
         # missing derived pickle. The existing in-memory UI data is already valid.
@@ -664,14 +665,14 @@ class AppWindow(
         self._hide_categories_loading_indicator()
         return False
 
-    def _apply_appstream_catalog(self):
+    def _apply_appstream_catalog(self, *, initial_build=False):
         """Stage a newly completed AppStream catalog without blocking GTK.
 
         The refresh worker has already prewarmed the Rust-derived runtime cache.
-        Keep the currently rendered widgets alive while fresh parser caches are
-        populated in the background; swapping empty caches and immediately calling
-        load_categories() used to fall back to parser.get_categories() on the GTK
-        thread, which caused the visible pause at catalog publication time.
+        During a normal refresh, keep the currently rendered widgets alive while
+        fresh parser caches are populated in the background. During the initial
+        build there is no published GTK snapshot yet, so the replacement generation
+        must perform the normal bootstrap publication and release the startup roller.
         """
         self._discard_retained_category_views()
 
@@ -695,7 +696,7 @@ class AppWindow(
         # Never synchronously call load_categories()/load_scripts() here. The new
         # CategoryCache is intentionally empty at this point, and load_categories()
         # would therefore invoke parser.get_categories() on the GTK main thread.
-        self._populate_runtime_caches(catalog_refresh=True)
+        self._populate_runtime_caches(catalog_refresh=not initial_build)
         return False
 
     def _populate_runtime_caches(self, *, catalog_refresh=False):
@@ -2164,6 +2165,24 @@ class AppWindow(
             flowbox.add(widget)
             return widget
 
+        def add_card_batch(batch_infos):
+            """Create/insert ordinary cards in one Rust call when possible."""
+            batch_infos = list(batch_infos)
+            widgets = self.create_native_item_batch(
+                flowbox,
+                batch_infos,
+                checklist=checklist_mode,
+                allow_drag=allow_drag,
+            )
+            if widgets is None:
+                return [add_card(info) for info in batch_infos]
+
+            for widget, info in zip(widgets, batch_infos):
+                description = info.get("description", "")
+                widget.set_tooltip_text(description or None)
+                widget.set_opacity(0.0)
+            return widgets
+
         def populate_timed_batch():
             if not state_is_current():
                 state["timer_id"] = None
@@ -2174,13 +2193,12 @@ class AppWindow(
                 state["timer_id"] = None
                 return False
 
-            batch_widgets = []
             stop = min(target, state["next_index"] + frame_batch_size)
-            while state["next_index"] < stop:
-                widget = add_card(scripts[state["next_index"]])
-                state["next_index"] += 1
+            batch_infos = scripts[state["next_index"]:stop]
+            batch_widgets = add_card_batch(batch_infos)
+            state["next_index"] = stop
+            for widget in batch_widgets:
                 widget.show_all()
-                batch_widgets.append(widget)
 
             self.animate_item_batch(
                 batch_widgets,
@@ -2293,12 +2311,11 @@ class AppWindow(
             # settle. The seed also gives viewport_capacity() a real card
             # allocation to measure on the following main-loop turn.
             seed_count = min(len(scripts), 6)
-            seed_widgets = []
-            while state["next_index"] < seed_count:
-                widget = add_card(scripts[state["next_index"]])
-                state["next_index"] += 1
+            seed_infos = scripts[state["next_index"]:seed_count]
+            seed_widgets = add_card_batch(seed_infos)
+            state["next_index"] = seed_count
+            for widget in seed_widgets:
                 widget.show_all()
-                seed_widgets.append(widget)
 
             if animate_initial:
                 self.animate_item_batch(

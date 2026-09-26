@@ -13,7 +13,7 @@ import os
 import re
 import threading
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
-from . import parser, popularity, installed_packages, _catalog_rs
+from . import parser, appstream_parser, popularity, installed_packages, _catalog_rs
 from .compat import (
     get_system_compat_keys,
     script_is_compatible,
@@ -540,24 +540,27 @@ class CategoryCache:
         if structural is None:
             return []
 
+        # Rank the complete category in Rust. The structural LinuxToys slice is
+        # small; AppStream stays indexed/native until the final ordered category is
+        # materialized, avoiding Python-side AppStream scoring and a second sort.
         with self._appstream_lock:
-            appstream_items = self._appstream_by_category.get(category_path)
-            if appstream_items is None:
+            result = self._appstream_by_category.get(category_path)
+            if result is None:
                 try:
-                    appstream_items = parser.get_appstream_entries_for_category(
+                    result = appstream_parser.get_browse_entries_for_category(
+                        parser.SCRIPTS_DIR,
                         category_path,
-                        self._translations,
+                        structural,
+                        popularity.KNOWN_POPULAR,
+                        curated_entries=parser._get_appstream_curated_entries(self._translations),
+                        category_paths=parser._indexed_category_paths(),
                     )
                 except Exception as error:
                     print(f"Error loading AppStream category {category_path}: {error}")
-                    appstream_items = []
-                self._appstream_by_category[category_path] = appstream_items
-
-        result = structural.copy()
-        if appstream_items:
-            result.extend(appstream_items)
-            popularity.sort_for_browse(result)
-        return result
+                    result = structural.copy()
+                    popularity.sort_for_browse(result)
+                self._appstream_by_category[category_path] = result
+        return result.copy()
 
     def get_linuxtoys_special_categories(self, translations=None):
         """Return a flat list of categories containing LinuxToys-curated items."""

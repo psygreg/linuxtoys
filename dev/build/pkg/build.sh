@@ -31,7 +31,7 @@ mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/
 
 # Copy the Python app from p3 directory
 cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/"
-# Keep the build sources in the release tarball; makepkg compiles the PyO3 module.
+# Keep the build sources in the release tarball; makepkg compiles the PyO3 catalog extension and native GTK library.
 cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
 cp -a "$ROOT_DIR/src" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
 cp "$ROOT_DIR/Cargo.toml" "$ROOT_DIR/Cargo.lock" "$ROOT_DIR/pyproject.toml" \

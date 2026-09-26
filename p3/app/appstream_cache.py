@@ -77,26 +77,6 @@ def _read_json(path: Path, default):
         return default
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def _safe_call(obj, method, default=None, *args):
     if obj is None:
         return default
@@ -262,7 +242,6 @@ def _component_identity(component) -> str:
     origin = str(_safe_call(component, "get_origin", "") or "").strip()
     packages = ",".join(str(p) for p in _as_list(_safe_call(component, "get_pkgnames", [])))
     return f"{origin}\0{component_id}\0{packages}"
-
 
 
 def _odrs_user_hash() -> str:
@@ -448,34 +427,6 @@ def _fetch_odrs_ratings():
     return summaries
 
 
-def _apply_review_summaries(entries, previous=None):
-    """Attach ODRS summaries from one bulk HTTP request.
-
-    A failed download preserves the previous completed cache.  A successful
-    download is authoritative: IDs absent from it have no usable ODRS rating.
-    """
-    previous = previous or {}
-    fetched = _fetch_odrs_ratings()
-
-    for item in entries or ():
-        component_id = str(item.get("id", "") or "").strip()
-        if not component_id:
-            continue
-
-        if fetched is None:
-            summary = previous.get(component_id)
-        else:
-            summary = fetched.get(component_id)
-
-        if summary:
-            item["review_rating"] = summary.get("review_rating")
-            item["review_count"] = summary.get("review_count")
-        else:
-            item.pop("review_rating", None)
-            item.pop("review_count", None)
-
-    return entries
-
 def _native_component_payload(component):
     """Extract libappstream/GI values; Rust performs normalization and hashing."""
     return {
@@ -498,18 +449,6 @@ def _native_component_payload(component):
     }
 
 
-def _normalize_native_payloads(payloads):
-    """Normalize a batch of extracted native AppStream components in Rust."""
-    if not payloads:
-        return []
-    return list(_catalog_rs.normalize_native_appstream_components(payloads))
-
-
-
-
-
-
-
 def _native_launchable_id(component) -> str:
     """Return the component's desktop-file launchable ID when AppStream exposes one."""
     for launchable in _as_list(_safe_call(component, "get_launchables", [])):
@@ -518,9 +457,6 @@ def _native_launchable_id(component) -> str:
             return value
     component_id = str(_safe_call(component, "get_id", "") or "").strip()
     return component_id if component_id.endswith(".desktop") else ""
-
-
-
 
 
 def _native_appstream_supported_host() -> bool:
@@ -551,7 +487,6 @@ def _load_appstream_components():
         set_flags(flags)
     pool.load()
     return _as_list(pool.get_components())
-
 
 
 def _flatpak_installations():
@@ -665,17 +600,6 @@ def _flatpak_eol_app_ids(source):
     return eol_ids
 
 
-
-
-
-
-
-
-
-
-
-
-
 def _refresh_missing_flatpak_appstream():
     """Refresh Flathub AppStream metadata when a configured installation has none.
 
@@ -744,21 +668,13 @@ def _flatpak_appstream_sources():
     return sources
 
 
-def _load_flatpak_components():
-    """Parse and normalize local Flatpak AppStream catalogs in Rust.
-
-    Python still owns source discovery and Flatpak EOL-ref inspection because those
-    are host/integration concerns. The expensive XML decode, localized metadata
-    extraction, description/screenshot normalization and release counting happen
-    in one Rust call per AppStream source.
-    """
+def _load_flatpak_components(generation):
+    """Parse local Flatpak AppStream catalogs directly into the Rust generation."""
     if not _flatpak_supported_host():
-        return [], []
+        return []
 
-    entries = []
     source_keys = []
     now = int(time.time())
-
     for source in _flatpak_appstream_sources():
         source_keys.append(
             f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{source['arch']}"
@@ -770,18 +686,16 @@ def _load_flatpak_components():
             "remote": source.get("remote", ""),
             "arch": source.get("arch", ""),
             "appstream_dir": os.fspath(source.get("appstream_dir", "")),
-            # Rust reads media_baseurl/media-baseurl directly from the XML root.
             "media_baseurl": "",
         }
-        parsed = _catalog_rs.parse_flatpak_appstream_source(
+        generation.add_flatpak_source(
             os.fspath(source["xml_path"]),
             json.dumps(rust_source, ensure_ascii=False, separators=(",", ":")),
             eol_app_ids,
             now,
         )
-        entries.extend(item for item in parsed if isinstance(item, dict))
+    return sorted(source_keys)
 
-    return entries, sorted(source_keys)
 
 def _path_state(path):
     """Return a cheap metadata signature for one file or directory."""
@@ -1041,14 +955,7 @@ def load_catalog():
     The published JSON remains the on-disk interchange/cache format, but decoding
     is now owned by the Rust catalog backend.
     """
-    started = time.perf_counter()
-    data = list(_catalog_rs.load_appstream_catalog(os.fspath(CATALOG_PATH)))
-    elapsed = time.perf_counter() - started
-    print(
-        f"[AppStream timing] Rust catalog load: {elapsed:.3f}s "
-        f"({len(data)} components)"
-    )
-    return data
+    return list(_catalog_rs.load_appstream_catalog(os.fspath(CATALOG_PATH)))
 
 
 def cache_needs_refresh(now=None) -> bool:
@@ -1068,36 +975,6 @@ def cache_needs_refresh(now=None) -> bool:
     return (
         current["native"] != sources.get("native", {}).get("fingerprint")
         or current["flatpak"] != sources.get("flatpak", {}).get("fingerprint")
-    )
-
-
-def _load_partial():
-    partial = _read_json(PARTIAL_PATH, {})
-    if not isinstance(partial, dict) or partial.get("schema") != CACHE_SCHEMA:
-        return [], set()
-    entries = partial.get("entries")
-    if not isinstance(entries, list):
-        return [], set()
-    processed_values = partial.get("processed")
-    if isinstance(processed_values, list):
-        processed = {str(value) for value in processed_values if value}
-    else:
-        processed = {
-            str(item.get("identity"))
-            for item in entries
-            if isinstance(item, dict) and item.get("identity")
-        }
-    return entries, processed
-
-
-def _write_partial(entries, processed):
-    _atomic_json_write(
-        PARTIAL_PATH,
-        {
-            "schema": CACHE_SCHEMA,
-            "entries": entries,
-            "processed": sorted(processed),
-        },
     )
 
 
@@ -1125,107 +1002,49 @@ def refresh_cache(force=False, status_callback=None):
             status_callback("building")
 
         try:
-            # The published catalog remains authoritative while the delta is built.
-            # Nothing touches catalog.json until the completed candidate is atomically
-            # written at the end of this transaction.
-            previous = load_catalog()
-
-            # Delta reuse is only valid when the published catalog was produced by
-            # this exact schema. A schema bump can change the normalized JSON shape
-            # without changing the underlying AppStream metadata hash (for example,
-            # schema 15 groups screenshot resolution variants). Reusing a schema-14
-            # entry here would therefore preserve the old representation forever.
             published_state = _read_json(STATE_PATH, {})
             reuse_previous_entries = (
                 isinstance(published_state, dict)
                 and published_state.get("schema") == CACHE_SCHEMA
                 and published_state.get("complete") is True
             )
-            reusable_previous = previous if reuse_previous_entries else []
+            generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
 
             native_supported = _native_appstream_supported_host()
             components = _load_appstream_components()
-            entries = []
-            processed = set()
-
             if native_supported:
-                # GI/libappstream remains responsible for loading distro metadata, but
-                # normalization, filtering, description parsing and fingerprinting are
-                # performed in Rust in coarse batches to avoid per-field PyO3 calls.
                 for start in range(0, len(components), CHECKPOINT_EVERY):
                     batch = components[start:start + CHECKPOINT_EVERY]
                     payloads = [_native_component_payload(component) for component in batch]
-                    normalized = _normalize_native_payloads(payloads)
+                    generation.add_native(payloads)
+                    generation.write_partial(os.fspath(PARTIAL_PATH), CACHE_SCHEMA)
 
-                    for payload in payloads:
-                        identity = str(payload.get("identity", "") or "")
-                        if identity:
-                            processed.add(identity)
-
-                    entries.extend(item for item in normalized if isinstance(item, dict))
-
-                    _write_partial(entries, processed)
-
-            # Flatpak normally keeps remote AppStream metadata current itself. A
-            # freshly configured Flathub remote can briefly have no local AppStream
-            # database, though, so populate that missing metadata before discovery.
             _refresh_missing_flatpak_appstream()
+            _flatpak_catalog_sources = _load_flatpak_components(generation)
 
-            # Flatpak is reconciled independently against the same published catalog.
-            # Unchanged XML components reuse their normalized JSON entries verbatim.
-            flatpak_entries, _flatpak_catalog_sources = _load_flatpak_components()
-
-            # Keep the last completed popularity metrics available as a fallback.
-            # A temporary Flathub statistics failure must not erase useful ranking
-            # data from an otherwise successful AppStream refresh.
-            previous_review_metrics = {
-                str(item.get("id", "")): {
-                    "review_rating": item.get("review_rating"),
-                    "review_count": item.get("review_count"),
-                }
-                for item in previous
-                if isinstance(item, dict)
-                and item.get("id")
-                and item.get("review_count")
-            }
-            previous_flatpak_metrics = {
-                str(item.get("id", "")): {
-                    "popularity_downloads": item.get("popularity_downloads"),
-                    "popularity_metric": item.get("popularity_metric"),
-                }
-                for item in previous
-                if isinstance(item, dict)
-                and item.get("source") == "flatpak"
-                and item.get("id")
-                and item.get("popularity_metric") is not None
-            }
-
-            popularity.apply_flathub_metrics(
-                flatpak_entries,
-                fallback_metrics=previous_flatpak_metrics,
+            # An AppStream rebuild invalidates its popularity input too. The
+            # popularity module keeps the previous snapshot on disk so a transient
+            # Flathub failure can still fall back to the last known data.
+            downloads = popularity.fetch_flathub_downloads(force=True)
+            generation.apply_flathub_metrics(
+                json.dumps(downloads or {}, ensure_ascii=False, separators=(",", ":")),
+                bool(downloads),
             )
-            entries.extend(flatpak_entries)
 
-            # Rust owns the incremental reconciliation step now. It builds the
-            # previous identity index once, reuses byte-for-byte normalized entries
-            # whose metadata hash is unchanged, drops entries absent from the new
-            # source set, and returns deterministic catalog ordering.
-            entries = list(_catalog_rs.reconcile_appstream_components(
-                reusable_previous,
-                entries,
-            ))
+            ratings = _fetch_odrs_ratings()
+            generation.apply_review_summaries(
+                json.dumps(ratings or {}, ensure_ascii=False, separators=(",", ":")),
+                ratings is not None,
+            )
 
-            # ODRS publishes all rating histograms through one bulk HTTP endpoint.
-            # This works independently of the distro's libappstream typelib and
-            # avoids one network round-trip per application.
-            _apply_review_summaries(entries, previous_review_metrics)
-
-            changed = previous != entries
-            _atomic_json_write(CATALOG_PATH, entries)
+            changed, published_count = generation.publish(
+                os.fspath(CATALOG_PATH),
+                reuse_previous_entries,
+            )
 
             now = int(time.time())
             state = _default_state()
-            state.update({"complete": True, "last_completed": now, "count": len(entries)})
+            state.update({"complete": True, "last_completed": now, "count": int(published_count)})
             # Capture fingerprints only after the successful build so the state
             # describes the exact environment represented by the published catalog.
             fingerprints = _source_fingerprints()
@@ -1248,7 +1067,7 @@ def refresh_cache(force=False, status_callback=None):
 
             if status_callback:
                 status_callback("ready")
-            return {"success": True, "changed": changed, "count": len(entries)}
+            return {"success": True, "changed": bool(changed), "count": int(published_count)}
         except Exception as error:
             # The published catalog/state were never invalidated, so a failed delta
             # leaves the last complete catalog authoritative. The partial checkpoint

@@ -1,9 +1,9 @@
 """GTK view for the session-scoped AppStream installation queue."""
 
-import html
+import os
+
+from . import get_icon_path, gui_rs
 from .gtk_common import Gtk
-from . import get_icon_path
-from .gtk_common import load_scaled_pixbuf
 
 
 class AppStreamQueueView(Gtk.ScrolledWindow):
@@ -17,70 +17,124 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         self.content.set_margin_top(18)
         self.content.set_margin_bottom(18)
         self.add(self.content)
+        self._rows = {}
+        self._row_states = {}
         self.refresh()
 
     def refresh(self):
-        for child in self.content.get_children():
-            self.content.remove(child)
-            child.destroy()
+        records = list(self.parent_window._appstream_runner.snapshot())
+        wanted = {str(record["id"]): record for record in records}
 
-        for record in self.parent_window._appstream_runner.snapshot():
-            self.content.pack_start(self._create_row(record), False, False, 0)
+        # Remove jobs that disappeared from the runner snapshot.
+        for key in list(self._rows):
+            if key in wanted:
+                continue
+            row = self._rows.pop(key)
+            self._row_states.pop(key, None)
+            self.content.remove(row)
+            row.destroy()
+
+        # Reconcile existing rows and collect genuinely new jobs for one native batch.
+        new_records = []
+        for record in records:
+            key = str(record["id"])
+            spec = self._row_spec(record)
+            row = self._rows.get(key)
+            if row is None:
+                new_records.append((record, spec))
+                continue
+
+            state_signature = (
+                record.get("status"),
+                spec["secondary"],
+                spec["status_icon"],
+                spec["spinner"],
+                spec["action_kind"],
+                spec["destructive_action"],
+                spec["action_tooltip"],
+            )
+            if self._row_states.get(key) != state_signature:
+                if not gui_rs.reconcile_list_row(row, spec):
+                    raise RuntimeError(f"Failed to reconcile native queue row {key}")
+                self._bind_action(row, record)
+                self._row_states[key] = state_signature
+
+        if new_records:
+            rows = gui_rs.add_list_rows(
+                self.content, [spec for _record, spec in new_records]
+            )
+            if len(rows) != len(new_records):
+                raise RuntimeError("Native queue row batch returned an incomplete result")
+            for row, (record, spec) in zip(rows, new_records):
+                key = str(record["id"])
+                self._rows[key] = row
+                self._row_states[key] = (
+                    record.get("status"),
+                    spec["secondary"],
+                    spec["status_icon"],
+                    spec["spinner"],
+                    spec["action_kind"],
+                    spec["destructive_action"],
+                    spec["action_tooltip"],
+                )
+                self._bind_action(row, record)
+
+        # Runner snapshots are ordered. Preserve that order without rebuilding rows.
+        for position, record in enumerate(records):
+            row = self._rows.get(str(record["id"]))
+            if row is not None:
+                self.content.reorder_child(row, position)
+
         self.show_all()
 
-    def _create_row(self, record):
-        outer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        outer.get_style_context().add_class("queue-item")
-        outer.set_margin_top(2)
-        outer.set_margin_bottom(2)
-
-        icon_value = record.get("icon") or "application-x-executable"
-        image = self._image_for(icon_value, 38)
-        outer.pack_start(image, False, False, 12)
-
-        text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        name = Gtk.Label()
-        name.set_markup(f"<b>{html.escape(record.get('name', ''))}</b>")
-        name.set_halign(Gtk.Align.START)
-        status = Gtk.Label(label=self._status_text(record["status"]))
-        status.set_halign(Gtk.Align.START)
-        status.get_style_context().add_class("dim-label")
-        text.pack_start(name, False, False, 0)
-        text.pack_start(status, False, False, 0)
-        outer.pack_start(text, True, True, 0)
-
+    def _bind_action(self, row, record):
+        action = gui_rs.card_child(row, "linuxtoys-list-row-action")
+        if action is None:
+            return
         state = record["status"]
-        if state == "running":
-            indicator = Gtk.Spinner()
-            indicator.start()
-        else:
-            indicator = Gtk.Image.new_from_icon_name(self._status_icon(state), Gtk.IconSize.BUTTON)
-        outer.pack_start(indicator, False, False, 4)
-
         if state == "queued":
-            button = Gtk.Button.new_from_icon_name("process-stop-symbolic", Gtk.IconSize.BUTTON)
-            button.set_relief(Gtk.ReliefStyle.NONE)
-            button.set_tooltip_text(self.parent_window.translations.get("cancel_btn_label", "Cancel"))
-            button.connect("clicked", self._cancel, record["id"])
-            outer.pack_start(button, False, False, 4)
+            action.connect("clicked", self._cancel, record["id"])
         elif state == "success":
-            button = Gtk.Button.new_from_icon_name("edit-delete-symbolic", Gtk.IconSize.BUTTON)
-            button.set_relief(Gtk.ReliefStyle.NONE)
-            button.get_style_context().add_class("destructive-action")
-            button.get_style_context().add_class("queue-remove")
-            button.set_tooltip_text(self.parent_window.translations.get("term_view_remove", "Remove installed components"))
-            button.connect("clicked", self._remove, record["id"], record["info"])
-            outer.pack_start(button, False, False, 4)
+            action.connect("clicked", self._remove, record["id"], record["info"])
 
-        return outer
+    def _row_spec(self, record):
+        state = record["status"]
+        icon_value = str(record.get("icon") or "application-x-executable")
+        icon_path = ""
+        icon_name = icon_value
+        if icon_value.endswith((".png", ".svg")):
+            path = icon_value if os.path.isabs(icon_value) else get_icon_path(icon_value)
+            if path and os.path.exists(path):
+                icon_path = path
+                icon_name = "application-x-executable"
+
+        action_kind = 1 if state == "queued" else 2 if state == "success" else 0
+        tooltip = ""
+        if state == "queued":
+            tooltip = self.parent_window.translations.get("cancel_btn_label", "Cancel")
+        elif state == "success":
+            tooltip = self.parent_window.translations.get(
+                "term_view_remove", "Remove installed components"
+            )
+
+        return {
+            "key": str(record["id"]),
+            "name": record.get("name", ""),
+            "secondary": self._status_text(state),
+            "secondary_visible": True,
+            "icon_path": icon_path,
+            "icon_name": icon_name,
+            "status_icon": self._status_icon(state) if state != "running" else "",
+            "spinner": state == "running",
+            "action_kind": action_kind,
+            "destructive_action": state == "success",
+            "action_tooltip": tooltip,
+        }
 
     def _cancel(self, _button, job_id):
         self.parent_window._appstream_runner.cancel(job_id)
 
     def _remove(self, _button, record_id, info):
-        # Keep the queue identity separate from the AppStream/catalog identity.
-        # The terminal removal flow will consume this only after a successful
-        # uninstall, so failed/cancelled removals leave the queue entry intact.
         removal_info = dict(info)
         removal_info["_appstream_queue_record_id"] = record_id
         self.parent_window._on_item_remove_clicked(_button, removal_info)
@@ -105,16 +159,3 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
             "failed": "dialog-warning-symbolic",
             "cancelled": "process-stop-symbolic",
         }.get(state, "dialog-information-symbolic")
-
-    @staticmethod
-    def _image_for(icon_value, size):
-        if icon_value.endswith((".png", ".svg")):
-            import os
-            path = icon_value if os.path.isabs(icon_value) else get_icon_path(icon_value)
-            if path and os.path.exists(path):
-                pixbuf = load_scaled_pixbuf(path, size, size, True)
-                if pixbuf is not None:
-                    return Gtk.Image.new_from_pixbuf(pixbuf)
-        image = Gtk.Image.new_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
-        image.set_pixel_size(size)
-        return image

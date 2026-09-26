@@ -25,6 +25,7 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(appstream::build_appstream_catalog, m)?)?;
     m.add_function(wrap_pyfunction!(appstream::build_appstream_catalog_index, m)?)?;
     m.add_function(wrap_pyfunction!(appstream::source_metadata_fingerprint, m)?)?;
+    m.add_class::<appstream::AppStreamGeneration>()?;
     m.add_class::<appstream::AppStreamCatalog>()?;
     m.add_function(wrap_pyfunction!(popularity::review_subscores, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::metric_rank_sections, m)?)?;

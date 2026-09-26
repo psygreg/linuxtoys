@@ -3,6 +3,7 @@ solbuild
 .venv
 /target/
 _catalog_rs.abi3.so
+liblinuxtoys_gui.so
 
 # AGENTS.md (OpenCode-specific)
 AGENTS.md

@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
 import random
 import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -80,11 +84,17 @@ KNOWN_POPULAR = {
     "com.dec05eba.gpu_screen_recorder",
     "org.gimp.GIMP"
 }
+KNOWN_POPULAR_FOLDED = frozenset(value.casefold() for value in KNOWN_POPULAR)
 
 FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"
 FLATHUB_PAGE_SIZE = 100
 FLATHUB_MAX_PAGES = 100
+FLATHUB_FETCH_WORKERS = 8
 NETWORK_TIMEOUT = 12
+FLATHUB_CACHE_MAX_AGE = 14 * 24 * 60 * 60
+FLATHUB_CACHE_PATH = Path(
+    os.path.expanduser("~/.cache/linuxtoys/appstream/flathub-popularity.json")
+)
 
 _SESSION_LOCK = threading.RLock()
 _SESSION_SCORES = {}
@@ -117,7 +127,7 @@ def _identity_values(item):
 
 
 def is_known_popular(item):
-    return bool(_identity_values(item) & {value.casefold() for value in KNOWN_POPULAR})
+    return bool(_identity_values(item) & KNOWN_POPULAR_FOLDED)
 
 
 def _session_key(item):
@@ -428,87 +438,168 @@ def _item_downloads(item):
     return 0
 
 
-def fetch_flathub_downloads():
-    """Fetch Flathub's popularity collection and return app-id -> monthly downloads.
+def invalidate_flathub_download_cache():
+    """Invalidate the persisted snapshot before an explicit AppStream rebuild."""
+    try:
+        FLATHUB_CACHE_PATH.touch(exist_ok=True)
+        os.utime(FLATHUB_CACHE_PATH, (0, 0))
+    except OSError:
+        pass
 
-    This runs only with the AppStream cache refresh. Pagination is bounded so an API
-    regression cannot stall LinuxToys indefinitely.
-    """
-    downloads = {}
-    headers = {
+
+def _load_flathub_download_cache():
+    """Return a fresh persisted Flathub snapshot, or None when it needs refreshing."""
+    try:
+        stat = FLATHUB_CACHE_PATH.stat()
+        if time.time() - stat.st_mtime > FLATHUB_CACHE_MAX_AGE:
+            return None
+        with FLATHUB_CACHE_PATH.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        if not isinstance(payload, dict):
+            return None
+        return {
+            str(app_id): max(0, int(downloads))
+            for app_id, downloads in payload.items()
+            if app_id
+        }
+    except (OSError, ValueError, TypeError):
+        return None
+
+
+def _write_flathub_download_cache(downloads):
+    """Atomically persist the last complete Flathub popularity snapshot."""
+    try:
+        FLATHUB_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        tmp_path = FLATHUB_CACHE_PATH.with_name(
+            f"{FLATHUB_CACHE_PATH.name}.{os.getpid()}.tmp"
+        )
+        with tmp_path.open("w", encoding="utf-8") as handle:
+            json.dump(downloads, handle, ensure_ascii=False, separators=(",", ":"))
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp_path, FLATHUB_CACHE_PATH)
+    except OSError:
+        try:
+            tmp_path.unlink(missing_ok=True)
+        except (OSError, UnboundLocalError):
+            pass
+
+
+def _fetch_flathub_page(page):
+    query = urlencode({
+        "page": page,
+        "per_page": FLATHUB_PAGE_SIZE,
+        "locale": "en",
+    })
+    request = Request(f"{FLATHUB_POPULAR_URL}?{query}", headers={
         "Accept": "application/json",
         "User-Agent": "LinuxToys-AppStream/1",
-    }
+    })
+    with urlopen(request, timeout=NETWORK_TIMEOUT) as response:
+        payload = json.load(response)
+    return page, _collection_items(payload)
 
-    for page in range(FLATHUB_MAX_PAGES):
-        query = urlencode({
-            "page": page,
-            "per_page": FLATHUB_PAGE_SIZE,
-            "locale": "en",
-        })
-        request = Request(f"{FLATHUB_POPULAR_URL}?{query}", headers=headers)
+
+def _merge_flathub_items(downloads, items):
+    for item in items:
+        app_id = _item_id(item)
+        if app_id:
+            downloads[app_id] = max(
+                downloads.get(app_id, 0),
+                _item_downloads(item),
+            )
+
+
+def fetch_flathub_downloads(force=False):
+    """Return Flathub app-id -> monthly downloads.
+
+    A fresh persisted snapshot avoids network work during ordinary AppStream
+    rebuilds. When refresh is necessary, pages are fetched in bounded parallel
+    batches rather than serially.
+    """
+    if not force:
+        cached = _load_flathub_download_cache()
+        if cached is not None:
+            return cached
+
+    downloads = {}
+
+    # Probe page 0 synchronously. Besides avoiding a worker pool for an empty
+    # collection, this preserves the old endpoint-failure semantics cleanly.
+    try:
+        _page, first_items = _fetch_flathub_page(0)
+    except Exception:
+        # Preserve the last known snapshot even when it is stale. Returning an
+        # empty dict would make a transient Flathub outage authoritative.
         try:
-            with urlopen(request, timeout=NETWORK_TIMEOUT) as response:
-                payload = json.load(response)
-        except Exception:
-            # Some Flathub endpoints use one-based pagination.
-            if page == 0:
-                continue
-            break
+            with FLATHUB_CACHE_PATH.open("r", encoding="utf-8") as handle:
+                stale = json.load(handle)
+            if isinstance(stale, dict):
+                return {
+                    str(app_id): max(0, int(value))
+                    for app_id, value in stale.items()
+                    if app_id
+                }
+        except (OSError, ValueError, TypeError):
+            pass
+        return {}
 
-        items = _collection_items(payload)
-        if not items:
-            break
+    if not first_items:
+        return {}
 
-        for item in items:
-            app_id = _item_id(item)
-            if app_id:
-                downloads[app_id] = max(downloads.get(app_id, 0), _item_downloads(item))
+    _merge_flathub_items(downloads, first_items)
+    if len(first_items) < FLATHUB_PAGE_SIZE:
+        _write_flathub_download_cache(downloads)
+        return downloads
 
-        if len(items) < FLATHUB_PAGE_SIZE:
-            break
+    # Fetch in bounded waves. Once a short/empty page appears, later pages in
+    # that wave may already be in flight, but no additional wave is scheduled.
+    next_page = 1
+    finished = False
+    with ThreadPoolExecutor(max_workers=FLATHUB_FETCH_WORKERS) as executor:
+        while next_page < FLATHUB_MAX_PAGES and not finished:
+            pages = list(range(
+                next_page,
+                min(next_page + FLATHUB_FETCH_WORKERS, FLATHUB_MAX_PAGES),
+            ))
+            futures = {
+                executor.submit(_fetch_flathub_page, page): page
+                for page in pages
+            }
 
+            results = {}
+            failed = False
+            for future in as_completed(futures):
+                page = futures[future]
+                try:
+                    _returned_page, items = future.result()
+                    results[page] = items
+                except Exception:
+                    failed = True
+
+            # Only consume the contiguous successful prefix. This prevents a
+            # failed middle page from silently publishing an incomplete snapshot.
+            for page in pages:
+                if page not in results:
+                    finished = True
+                    break
+                items = results[page]
+                if not items:
+                    finished = True
+                    break
+                _merge_flathub_items(downloads, items)
+                if len(items) < FLATHUB_PAGE_SIZE:
+                    finished = True
+                    break
+
+            if failed:
+                finished = True
+            next_page += len(pages)
+
+    # Publish only when the fetch reached a natural end. If all 100 pages were
+    # full, that is also a bounded complete snapshot for our configured horizon.
+    complete = finished or next_page >= FLATHUB_MAX_PAGES
+    if complete and downloads:
+        _write_flathub_download_cache(downloads)
     return downloads
 
-
-def apply_flathub_metrics(entries, downloads=None, fallback_metrics=None):
-    """Attach persistent raw Flathub popularity metrics to cache entries.
-
-    Fresh statistics win. If the statistics fetch is unavailable, metrics from the
-    last completed AppStream catalog are reused per app. Apps with neither fresh
-    nor cached statistics retain None and use the runtime session fallback.
-    """
-    fallback_metrics = fallback_metrics or {}
-
-    if downloads is None:
-        downloads = fetch_flathub_downloads()
-        fetch_available = bool(downloads)
-    else:
-        downloads = dict(downloads or {})
-        fetch_available = bool(downloads)
-
-    for item in entries:
-        if str(item.get("source", "") or "") != "flatpak":
-            continue
-
-        app_id = str(item.get("id", "") or "")
-        release_count = max(1, int(item.pop("_releases_last_year", 0) or 0))
-
-        if fetch_available and app_id in downloads:
-            download_count = max(0, int(downloads[app_id] or 0))
-            item["popularity_downloads"] = download_count
-            item["popularity_metric"] = _catalog_rs.flathub_metric(download_count, release_count)
-            continue
-
-        previous = fallback_metrics.get(app_id)
-        if previous and previous.get("popularity_metric") is not None:
-            item["popularity_downloads"] = previous.get("popularity_downloads")
-            item["popularity_metric"] = previous.get("popularity_metric")
-            continue
-
-        # Missing from a successful statistics response is still unknown rather
-        # than zero. The runtime scorer will provide a session fallback.
-        item["popularity_downloads"] = None
-        item["popularity_metric"] = None
-
-    return entries

@@ -1,0 +1,17 @@
+[package]
+name = "linuxtoys-gui"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+
+[lib]
+name = "linuxtoys_gui"
+path = "lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.24", features = ["abi3-py310", "extension-module"] }
+gtk = { version = "0.18", features = ["v3_24"] }
+gdk = "0.18"
+gdk-pixbuf = "0.18"
+glib = "0.18"

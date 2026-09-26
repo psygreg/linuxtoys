@@ -38,6 +38,14 @@ cp -a "$ROOT_DIR/src" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/"
 cp "$ROOT_DIR/Cargo.toml" "$ROOT_DIR/Cargo.lock" "$ROOT_DIR/pyproject.toml" \
     "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/"
 
+# Development builds place native Rust artifacts in p3/app. They are build
+# products, not upstream source, and must never enter the Debian orig tarball.
+rm -f \
+    "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/p3/app/_catalog_rs.abi3.so" \
+    "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/p3/app/liblinuxtoys_gui.so" \
+    "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/app/_catalog_rs.abi3.so" \
+    "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/app/liblinuxtoys_gui.so"
+
 # Vendor locked Rust dependencies so sandboxed distro builds need no network.
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/.cargo
 (
@@ -96,7 +104,10 @@ Build-Depends:
  rustc,
  python3-dev,
  python3-maturin,
-Standards-Version: 4.7.2
+ pkgconf,
+ libgtk-3-dev,
+ patchelf,
+Standards-Version: 4.6.2
 Homepage: https://git.linux.toys/psygreg/linuxtoys
 
 Package: linuxtoys
@@ -132,15 +143,20 @@ cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules" <<'EOF'
 	dh $@
 
 override_dh_auto_build:
-	maturin build --release --locked --out target/wheels
-	rm -rf wheel-unpack
-	python3 -m zipfile -e $$(find target/wheels -maxdepth 1 -type f -name '*.whl' -print -quit) wheel-unpack
-	test -n "$$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit)"
+	mkdir -p target/wheels/catalog
+	cd src/catalog-rs && maturin build --release --locked --out ../../target/wheels/catalog
+	cargo build --release --locked --manifest-path src/gui-rs/Cargo.toml
+	rm -rf wheel-unpack-catalog
+	python3 -m zipfile -e $$(find target/wheels/catalog -maxdepth 1 -type f -name '*.whl' -print -quit) wheel-unpack-catalog
+	test -n "$$(find wheel-unpack-catalog -type f -name '_catalog_rs*.so' -print -quit)"
+	test -f target/release/liblinuxtoys_gui.so
 
 override_dh_install:
 	dh_install
-	install -m 755 $$(find wheel-unpack/app -maxdepth 1 -type f -name '_catalog_rs*.so' -print -quit) debian/linuxtoys/usr/share/linuxtoys/app/
+	install -m 755 $$(find wheel-unpack-catalog -type f -name '_catalog_rs*.so' -print -quit) debian/linuxtoys/usr/share/linuxtoys/app/
+	install -m 755 target/release/liblinuxtoys_gui.so debian/linuxtoys/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 	test -f debian/linuxtoys/usr/share/linuxtoys/app/_catalog_rs.abi3.so
+	test -f debian/linuxtoys/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 	chmod +x debian/linuxtoys/usr/bin/linuxtoys
 	chmod +x debian/linuxtoys/usr/share/linuxtoys/linuxtoys.py
 	find debian/linuxtoys/usr/share/linuxtoys/scripts/ -name "*.sh" -exec chmod +x {} \;
@@ -178,6 +194,14 @@ EOF
 # Create debian/source/format
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/format" <<'EOF'
 3.0 (quilt)
+EOF
+
+# Cargo's vendored winapi target crates contain upstream Windows GNU import
+# libraries. Lintian's source unpacker tries to inspect these .a files with the
+# host ar and emits unpack-message-for-orig. They are kept byte-for-byte intact
+# because Cargo's vendored source is checksum-verified.
+cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/lintian-overrides" <<'EOF'
+linuxtoys source: unpack-message-for-orig *vendor/winapi-*-pc-windows-gnu/lib/*.a*
 EOF
 
 # Create initial debian/changelog
