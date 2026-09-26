@@ -99,17 +99,17 @@ check_disk_space () {
 	fi
 
 	local required_space_kb=$((required_space_gb * 1024 * 1024))
-	local home_available_kb=$(df "$HOME" | awk 'NR==2 {print $4}')
-	local root_available_kb=$(df / | awk 'NR==2 {print $4}')
+	home_available_kb=$(df --output=avail -k "$HOME" | tail -n 1 | tr -d ' ')
+	root_available_kb=$(df --output=avail -k / | tail -n 1 | tr -d ' ')
 
 	# check home directory
 	if [ "$home_available_kb" -lt "$required_space_kb" ]; then
-		fatal "$outofspace"
+		fatal "$outofspace -- $HOME -- $required_space_gb"
 	fi
 
 	# check root filesystem
 	if [ "$root_available_kb" -lt "$required_space_kb" ]; then
-		fatal "$outofspace"
+		fatal "$outofspace -- / 'root' -- $required_space_gb"
 	fi
 }
 
