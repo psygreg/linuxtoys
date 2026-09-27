@@ -407,11 +407,11 @@ def get_system_compat_keys():
     # Check for rpm-ostree immutable distros
     import os
 
-    if os.system("command -v rpm-ostree >/dev/null 2>&1") == 0:
-        if id_val in ["bazzite"] or id_val in ["bluefin"] or id_val in ["aurora"]:
+    if os.path.exists("/run/ostree-booted") and os.system("command -v rpm-ostree >/dev/null 2>&1") == 0:
+        if id_val in {"bazzite", "bluefin", "aurora"}:
             keys = {"ublue", "ostree"}
         else:
-            keys = {"ostree"}  # Override all other keys
+            keys = {"ostree"}
 
     # Add GPU compatibility keys
     gpu_keys = get_gpu_compat_keys()
