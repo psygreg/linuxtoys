@@ -182,7 +182,7 @@ fn inherit_popularity_rs(natives:&mut [serde_json::Map<String,Value>],flat:&[ser
     if let Some(d)=flat.iter().find(|m|m.get("popularity_metric").is_some_and(|v|!v.is_null())) {for n in natives {for k in ["popularity_metric","popularity_downloads"]{n.insert(k.into(),d.get(k).cloned().unwrap_or(Value::Null));}}}
 }
 fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool)->bool{
-    !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"))))
+    !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"|"txt"))))
 }
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
     let Some(o)=prefs.as_object()else{return "flatpak".into()};let default=o.get("default").and_then(Value::as_str).unwrap_or("flatpak");let apps=o.get("apps").and_then(Value::as_object);
