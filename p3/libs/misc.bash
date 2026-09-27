@@ -168,7 +168,7 @@ desktop_shortcut() {
     local app_name="${LINUXTOYS_APP_NAME:-}"
     local app_description="${LINUXTOYS_APP_DESCRIPTION:-}"
     local app_icon="${LINUXTOYS_APP_ICON:-}"
-    local safe_id desktop_file executable wmclass
+    local safe_id desktop_file executable wmclass existing_desktop
 
     [ -n "$exec_line" ] || die "desktop_shortcut received an empty Exec value"
     [ -n "$app_id" ] || die "LinuxToys app identity is unavailable"
@@ -186,6 +186,16 @@ desktop_shortcut() {
     exec_line="${exec_line//$'\n'/ }"
     wmclass_override="${wmclass_override//$'\r'/}"
     wmclass_override="${wmclass_override//$'\n'/ }"
+
+    if [ -d "$applications_dir" ]; then
+        for existing_desktop in "$applications_dir"/*.desktop; do
+            [ -f "$existing_desktop" ] || continue
+            if grep -Fxq "Name=$app_name" "$existing_desktop" \
+                && grep -Fxq "Exec=$exec_line" "$existing_desktop"; then
+                return 0
+            fi
+        done
+    fi
 
     safe_id=$(printf '%s' "$app_id" | tr -cs 'A-Za-z0-9._-' '-' | sed 's/^-*//; s/-*$//')
     [ -n "$safe_id" ] || safe_id="application"
