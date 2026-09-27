@@ -1026,7 +1026,7 @@ def refresh_cache(force=False, status_callback=None):
             # An AppStream rebuild invalidates its popularity input too. The
             # popularity module keeps the previous snapshot on disk so a transient
             # Flathub failure can still fall back to the last known data.
-            downloads = popularity.fetch_flathub_downloads(force=True)
+            downloads = popularity.fetch_flathub_downloads()
             generation.apply_flathub_metrics(
                 json.dumps(downloads or {}, ensure_ascii=False, separators=(",", ":")),
                 bool(downloads),
