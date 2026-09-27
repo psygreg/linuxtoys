@@ -112,19 +112,23 @@ class NavCtl:
         switcher.set_stack(tabs)
         switcher.set_halign(Gtk.Align.FILL)
         switcher.set_hexpand(True)
-        # Match the app-page tab bar: its 12 px page border keeps the switcher
-        # inset from the window edges while the tab buttons still fill the row.
-        switcher.set_margin_start(12)
-        switcher.set_margin_end(12)
-        switcher.set_margin_top(2)
-        switcher.set_margin_bottom(2)
+        # Category tabs are a flush, full-width footer rather than the inset
+        # app-page tab treatment. Styling is scoped so app-page tabs are unchanged.
+        switcher.get_style_context().add_class("category-footer-tabs")
+        switcher.set_margin_start(0)
+        switcher.set_margin_end(0)
+        switcher.set_margin_top(0)
+        switcher.set_margin_bottom(0)
         for child in switcher.get_children():
             child.set_hexpand(True)
             child.set_halign(Gtk.Align.FILL)
 
         view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        view.pack_start(switcher, False, False, 0)
+        # Keep the category contents as the expanding body and pin the tab bar
+        # to the bottom, outside either ScrolledWindow, so it behaves like a
+        # persistent category footer while the selected tab scrolls independently.
         view.pack_start(tabs, True, True, 0)
+        view.pack_end(switcher, False, False, 0)
         view._linuxtoys_available_flowbox = available_flowbox
         view._linuxtoys_installed_flowbox = installed_flowbox
         view._linuxtoys_category_tabs = tabs

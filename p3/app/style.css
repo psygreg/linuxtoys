@@ -128,3 +128,15 @@ button.queue-remove:hover {
 .category-watermark-frame-hover {
     border-color: rgba(255, 255, 255, 0.9);
 }
+
+/* Full-width category Available/Installed footer tabs. */
+.category-footer-tabs {
+    margin: 0;
+}
+
+.category-footer-tabs button,
+.category-footer-tabs button:hover,
+.category-footer-tabs button:active,
+.category-footer-tabs button:checked {
+    border-radius: 0;
+}
