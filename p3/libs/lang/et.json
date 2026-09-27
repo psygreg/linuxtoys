@@ -680,5 +680,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Üksikasjad",
-  "app_page_extensions": "Laiendused"
+  "app_page_extensions": "Laiendused",
+  "category_available": "Saadaval"
 }

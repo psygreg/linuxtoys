@@ -679,5 +679,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Дэлгэрэнгүй",
-  "app_page_extensions": "Өргөтгөлүүд"
+  "app_page_extensions": "Өргөтгөлүүд",
+  "category_available": "Боломжтой"
 }

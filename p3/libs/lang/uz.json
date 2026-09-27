@@ -679,5 +679,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Tafsilotlar",
-  "app_page_extensions": "Kengaytmalar"
+  "app_page_extensions": "Kengaytmalar",
+  "category_available": "Mavjud"
 }

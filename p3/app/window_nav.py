@@ -70,6 +70,79 @@ class NavCtl:
             if retained.get("view") is view:
                 cache.pop(key, None)
 
+    def _create_category_browser_view(self, category_info, view_name):
+        """Create a category surface, adding Available/Installed tabs for menu views."""
+        available_flowbox = self.create_flowbox()
+
+        # Checklist categories keep their existing single-list behavior.
+        if category_info.get("display_mode", "menu") == "checklist":
+            view = gui_rs.stack_add_scrolled_flowbox(
+                self.main_stack, available_flowbox, view_name
+            )
+            return view, available_flowbox
+
+        available_flowbox._linuxtoys_category_tab = "available"
+        installed_flowbox = self.create_flowbox()
+        installed_flowbox._linuxtoys_category_tab = "installed"
+
+        def scroller_for(flowbox):
+            scroller = Gtk.ScrolledWindow()
+            scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            scroller.add(flowbox)
+            return scroller
+
+        available_scroller = scroller_for(available_flowbox)
+        installed_scroller = scroller_for(installed_flowbox)
+
+        tabs = Gtk.Stack()
+        tabs.set_transition_type(Gtk.StackTransitionType.NONE)
+        tabs.set_transition_duration(140)
+        tabs.add_titled(
+            available_scroller,
+            "available",
+            self.translations.get("category_available", "Available"),
+        )
+        tabs.add_titled(
+            installed_scroller,
+            "installed",
+            self.translations.get("skills_tab_installed", "Installed"),
+        )
+
+        switcher = Gtk.StackSwitcher()
+        switcher.set_stack(tabs)
+        switcher.set_halign(Gtk.Align.FILL)
+        switcher.set_hexpand(True)
+        # Match the app-page tab bar: its 12 px page border keeps the switcher
+        # inset from the window edges while the tab buttons still fill the row.
+        switcher.set_margin_start(12)
+        switcher.set_margin_end(12)
+        switcher.set_margin_top(2)
+        switcher.set_margin_bottom(2)
+        for child in switcher.get_children():
+            child.set_hexpand(True)
+            child.set_halign(Gtk.Align.FILL)
+
+        view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        view.pack_start(switcher, False, False, 0)
+        view.pack_start(tabs, True, True, 0)
+        view._linuxtoys_available_flowbox = available_flowbox
+        view._linuxtoys_installed_flowbox = installed_flowbox
+        view._linuxtoys_category_tabs = tabs
+        view._linuxtoys_category_switcher = switcher
+
+        gui_rs.stack_attach_child(
+            self.main_stack, view, view_name, make_visible=False
+        )
+        view.show_all()
+        tabs.set_visible_child(available_scroller)
+        tabs.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+
+        if not self._category_has_installed_items(category_info):
+            switcher.set_no_show_all(True)
+            switcher.hide()
+
+        return view, available_flowbox
+
     def on_category_clicked(self, widget, event):
         """Handles category click, subcategory click, or root script click."""
         # Check if reboot is required before proceeding
@@ -104,9 +177,8 @@ class NavCtl:
             # Rust owns the repetitive GTK container lifecycle for category
             # levels. Python retains the configured FlowBox because card loading,
             # callbacks and navigation policy remain here.
-            new_flowbox = self.create_flowbox()
-            new_scrolled_view = gui_rs.stack_add_scrolled_flowbox(
-                self.main_stack, new_flowbox, new_view_name
+            new_scrolled_view, new_flowbox = self._create_category_browser_view(
+                info, new_view_name
             )
 
             # The empty destination is attached and shown before the transition.
@@ -126,6 +198,15 @@ class NavCtl:
                 info,
                 defer_initial=True,
             )
+            installed_flowbox = getattr(
+                new_scrolled_view, "_linuxtoys_installed_flowbox", None
+            )
+            if installed_flowbox is not None:
+                self._load_scripts_into_flowbox(
+                    installed_flowbox,
+                    info,
+                    defer_initial=True,
+                )
 
     def open_app_page(self, info, preserve_previous=False):
         """Open a repository entry's optional details page without altering checklist state."""
@@ -236,7 +317,7 @@ class NavCtl:
         # Check if any script has auto_run flag set in its info dict
         if not auto_run and infos:
             auto_run = any(script.get("auto_run", False) for script in infos)
-        
+
         run_box = term_view.TermRunScripts(
             infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run
         )
@@ -640,9 +721,8 @@ class NavCtl:
                 self.view_counter += 1
                 new_view_name = f"scripts_{self.view_counter}"
 
-                new_flowbox = self.create_flowbox()
-                new_scrolled_view = gui_rs.stack_add_scrolled_flowbox(
-                    self.main_stack, new_flowbox, new_view_name
+                new_scrolled_view, new_flowbox = self._create_category_browser_view(
+                    previous_category, new_view_name
                 )
 
                 self.scripts_flowbox = new_flowbox
@@ -654,6 +734,15 @@ class NavCtl:
                     previous_category,
                     defer_initial=True,
                 )
+                installed_flowbox = getattr(
+                    new_scrolled_view, "_linuxtoys_installed_flowbox", None
+                )
+                if installed_flowbox is not None:
+                    self._load_scripts_into_flowbox(
+                        installed_flowbox,
+                        previous_category,
+                        defer_initial=True,
+                    )
 
             category_name = previous_category.get("name", "Unknown")
             self.header_bar.props.title = f"LinuxToys: {category_name}"
@@ -706,7 +795,7 @@ class NavCtl:
 
         # Disable drag-and-drop when viewing main categories
         self._disable_drag_and_drop()
-        
+
         # Prepare random scripts display (deferred loading)
         self._prepare_random_scripts_display()
 
@@ -715,7 +804,7 @@ class NavCtl:
         # Stop random scripts timer when leaving main menu
         self.should_start_random_timer = False
         self._stop_random_scripts_refresh_timer()
-        
+
         # If we have current category info, push it to navigation stack
         if self.current_category_info:
             self.navigation_stack.append(self.current_category_info)
@@ -757,7 +846,7 @@ class NavCtl:
             self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
         else:
             self.reveal.set_reveal_child(False)
-    
+
     def _update_header(self, category_info=None):
         """Updates the header with new category information."""
         # Remove the old header

@@ -1951,6 +1951,54 @@ class AppWindow(
         self._render_categories(categories)
         self._hide_categories_loading_indicator()
 
+    def _category_items_for_display(self, category_info):
+        """Return the exact item list used by normal category browsing."""
+        category_path = category_info["path"]
+        if category_info.get("is_linuxtoys_specials"):
+            return list(
+                self.category_cache.get_linuxtoys_special_categories(self.translations)
+            )
+        if category_info.get("is_linuxtoys_specials_category"):
+            return list(
+                self.category_cache.get_linuxtoys_special_scripts(
+                    category_info.get("specials_category_path", "")
+                )
+            )
+        if self.category_cache.is_populated:
+            scripts = self.category_cache.get_scripts_for_category(category_path)
+            if scripts:
+                return list(scripts)
+        return list(
+            parser.get_scripts_for_category(category_path, self.translations)
+        )
+
+    def _partition_category_items(self, category_info, items=None):
+        """Split one category into Available and Installed without changing order."""
+        available = []
+        installed = []
+        if items is None:
+            items = self._category_items_for_display(category_info)
+        for item in items:
+            if item.get("is_script") and self._is_script_removable(item):
+                installed.append(item)
+            else:
+                # Subcategories, create-script entries and every other structural
+                # card stay exactly where normal category browsing puts them.
+                available.append(item)
+        return available, installed
+
+    def _category_has_installed_items(self, category_info):
+        """Return whether this category needs the Available/Installed tab UI."""
+        if not category_info or category_info.get("display_mode", "menu") == "checklist":
+            return False
+        if (
+            category_info.get("is_linuxtoys_specials")
+            and not self.category_cache.is_populated
+        ):
+            return False
+        _available, installed = self._partition_category_items(category_info)
+        return bool(installed)
+
     def _load_scripts_into_flowbox(
         self,
         flowbox,
@@ -2035,26 +2083,13 @@ class AppWindow(
             GLib.timeout_add(100, populate_specials_when_ready)
             return
 
-        if category_info.get("is_linuxtoys_specials"):
-            scripts = self.category_cache.get_linuxtoys_special_categories(
-                self.translations
+        scripts = self._category_items_for_display(category_info)
+        category_tab = getattr(flowbox, "_linuxtoys_category_tab", None)
+        if category_tab in ("available", "installed"):
+            available, installed = self._partition_category_items(
+                category_info, scripts
             )
-        elif category_info.get("is_linuxtoys_specials_category"):
-            scripts = self.category_cache.get_linuxtoys_special_scripts(
-                category_info.get("specials_category_path", "")
-            )
-        elif self.category_cache.is_populated:
-            scripts = self.category_cache.get_scripts_for_category(category_path)
-            if not scripts:
-                scripts = parser.get_scripts_for_category(
-                    category_path, self.translations
-                )
-        else:
-            scripts = parser.get_scripts_for_category(
-                category_path, self.translations
-            )
-
-        scripts = list(scripts)
+            scripts = available if category_tab == "available" else installed
         checklist_mode = category_info.get("display_mode", "menu") == "checklist"
         allow_drag = self._is_local_scripts_category(category_info)
 
@@ -3237,4 +3272,58 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             if self.current_category_info is not None
             else self.categories_flowbox
         )
+
+        view = getattr(self, "scripts_view", None)
+        available_flowbox = getattr(view, "_linuxtoys_available_flowbox", None)
+        installed_flowbox = getattr(view, "_linuxtoys_installed_flowbox", None)
+        if self.current_category_info is not None and installed_flowbox is not None:
+            # Only rebuild the two lazy lists when an actually displayed card has
+            # crossed the Available/Installed boundary. Ordinary terminal returns
+            # remain the same zero-rebuild path as before.
+            membership_changed = False
+            for fb, expected_installed in (
+                (available_flowbox, False),
+                (installed_flowbox, True),
+            ):
+                for child in fb.get_children():
+                    card = child.get_child()
+                    info = getattr(card, "info", None)
+                    if not info or not info.get("is_script"):
+                        continue
+                    if bool(self._is_script_removable(info)) != expected_installed:
+                        membership_changed = True
+                        break
+                if membership_changed:
+                    break
+
+            if membership_changed:
+                self._load_scripts_into_flowbox(
+                    available_flowbox, self.current_category_info, animate_initial=False
+                )
+                self._load_scripts_into_flowbox(
+                    installed_flowbox, self.current_category_info, animate_initial=False
+                )
+            else:
+                self._refresh_flowbox_removable_states(available_flowbox)
+                self._refresh_flowbox_removable_states(installed_flowbox)
+
+            # The tab bar itself is conditional. The wrapper always exists so a
+            # just-installed app can expose Installed without replacing the whole
+            # category view, while removing the last installed app hides it again.
+            switcher = getattr(view, "_linuxtoys_category_switcher", None)
+            tabs = getattr(view, "_linuxtoys_category_tabs", None)
+            has_installed = self._category_has_installed_items(
+                self.current_category_info
+            )
+            if switcher is not None:
+                if has_installed:
+                    switcher.set_no_show_all(False)
+                    switcher.show_all()
+                else:
+                    switcher.hide()
+                    switcher.set_no_show_all(True)
+                    if tabs is not None:
+                        tabs.set_visible_child_name("available")
+            return
+
         self._refresh_flowbox_removable_states(flowbox)

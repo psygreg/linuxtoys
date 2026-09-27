@@ -680,5 +680,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Podrobnosti",
-  "app_page_extensions": "Rozšírenia"
+  "app_page_extensions": "Rozšírenia",
+  "category_available": "Dostupné"
 }

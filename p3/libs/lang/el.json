@@ -680,5 +680,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Λεπτομέρειες",
-  "app_page_extensions": "Επεκτάσεις"
+  "app_page_extensions": "Επεκτάσεις",
+  "category_available": "Διαθέσιμο"
 }

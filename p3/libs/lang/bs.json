@@ -679,5 +679,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Detalji",
-  "app_page_extensions": "Proširenja"
+  "app_page_extensions": "Proširenja",
+  "category_available": "Dostupno"
 }

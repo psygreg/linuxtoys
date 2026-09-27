@@ -680,5 +680,6 @@
   "startup_recommendation_rpmfusion": "RPM Fusion",
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "विवरण",
-  "app_page_extensions": "विस्तारहरू"
+  "app_page_extensions": "विस्तारहरू",
+  "category_available": "उपलब्ध"
 }
