@@ -114,8 +114,7 @@ def _icon_value(component) -> str:
                 continue
             value = str(value)
             if os.path.isabs(value) and os.path.isfile(value):
-                if value.lower().endswith((".png", ".svg")):
-                    return value
+                return value
 
     # A stock icon name is the best portable fallback and lets Gtk.IconTheme do
     # the resolution.  JXL/remote icons can be added later without changing the
