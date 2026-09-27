@@ -7,7 +7,7 @@ from .term_header import InfosHead
 from .term_reporting import BugReporting
 from .term_runner import TerminalRunner
 from .revert_helper import build_uninstall_script_entry, _load_last_execution
- 
+
 class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
     def __init__(
         self, scripts_infos: list, parent, translations=None, removable_script_info=None, auto_run=False
@@ -21,7 +21,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.scripts_executed = 0
         self.auto_run = auto_run
         self.executed_scripts = []  # Track scripts that actually ran for cache updates
-        
+
         # Track revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
         self.removable_script_manual_revert_enabled = False
@@ -48,7 +48,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
                 # Check if this script has a registry entry (was previously installed)
                 operations = _load_last_execution(script_name)
                 self.removable_script_has_registry_entry = bool(operations)
-        
+
         # Track if current/first script has a registry entry for bug report visibility
         self.current_script_has_registry_entry = False
         self._current_script_name = None  # Will be set when script runs, or from first script
@@ -60,15 +60,15 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
                 self._current_script_name = first_script_name
                 operations = _load_last_execution(first_script_name)
                 self.current_script_has_registry_entry = bool(operations)
- 
+
         self.terminal = Vte.Terminal()
         self.terminal.connect("child-exited", self.on_child_exit)
         self.terminal.connect("key-press-event", self._on_terminal_key_press)
         self.terminal.set_vexpand(True)
         self.terminal.set_can_focus(True)
- 
+
         self.vbox_main = InfosHead(translations)
- 
+
         self._run_button_handler_id = self.vbox_main.button_run.connect(
             "clicked", self.on_button_run_clicked
         )
@@ -77,7 +77,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.vbox_main.button_remove.set_sensitive(bool(self.removable_script_info))
         self._set_remove_button_visibility()
         self._set_bug_report_button_visibility()
-        
+
         # Use translatable waiting text
         waiting_text = self.translations.get(
             "term_view_waiting", "Waiting {current}/{total}"
@@ -85,22 +85,22 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.vbox_main.progress_bar.set_text(
             waiting_text.format(current=self.scripts_executed, total=self.total_scripts)
         )
- 
+
         self.vbox_main.pack_start(self.terminal, True, True, 0)
- 
+
         self.set_border_width(12)
         self.add(self.vbox_main)
- 
+
         # Connect key press event to handle Escape
         self.connect("key-press-event", self._on_key_press)
- 
+
         if self.script_queue:
             self.vbox_main._update_header_labels(self.script_queue[0])
-        
+
         # If auto_run is enabled, automatically start running the scripts
         if self.auto_run:
             GLib.idle_add(self.on_button_run_clicked, None)
- 
+
     def _set_remove_button_visibility(self):
         # Button shown if ALL conditions are met:
         # 1. There's a removable script
@@ -117,28 +117,20 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         else:
             self.vbox_main.button_remove.set_no_show_all(True)
             self.vbox_main.button_remove.hide()
- 
+
     def _set_bug_report_button_visibility(self):
-        """
-        Set bug report button visibility based on:
-        1. Auto error reporting is NOT enabled
-        2. Script has been run before (exists in registry) OR is being run now
-        """
-        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-        
-        # Hide button if auto error reports are enabled
+        auto_reports_enabled = getattr(
+            self.parent, "auto_error_reports_enabled", False
+        )
+
         if auto_reports_enabled:
             self.vbox_main.button_copy.set_no_show_all(True)
             self.vbox_main.button_copy.hide()
-        # Hide button if script has never been run before (not in registry)
-        elif not self.current_script_has_registry_entry:
-            self.vbox_main.button_copy.set_no_show_all(True)
-            self.vbox_main.button_copy.hide()
-        # Show button if both conditions are met
         else:
             self.vbox_main.button_copy.set_no_show_all(False)
             self.vbox_main.button_copy.show()
- 
+            self.vbox_main.button_copy.set_sensitive(False)
+
     def _show_remove_confirmation_dialog(self, script_name):
         response = run_message_dialog(
             self,
@@ -165,7 +157,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
             default_response=Gtk.ResponseType.CANCEL,
         )
         return response == Gtk.ResponseType.YES
- 
+
     def _show_remove_not_available_dialog(self):
         response = run_message_dialog(
             self,
@@ -183,7 +175,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
             ],
         )
         return response == Gtk.ResponseType.OK
- 
+
     def _show_internal_revert_confirmation_dialog(self, script_name):
         response = run_message_dialog(
             self,
@@ -209,14 +201,14 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
             default_response=Gtk.ResponseType.CANCEL,
         )
         return response == Gtk.ResponseType.YES
- 
+
     def on_button_remove_clicked(self, widget):
         if not self.removable_script_info or self.parent._script_running:
             return
- 
+
         script_name = self.removable_script_info.get("name", "Script")
         is_internal_revert = self.removable_script_revert_capability == "internal"
-        
+
         # Show appropriate confirmation dialog
         if is_internal_revert:
             if not self._show_internal_revert_confirmation_dialog(script_name):
@@ -234,7 +226,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
                 self._show_remove_not_available_dialog()
                 return
             self.script_queue = [remove_script_entry]
-        
+
         self.total_scripts = 1
         self.scripts_executed = 0
         self.vbox_main.progress_bar.set_fraction(0.0)
@@ -245,7 +237,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.vbox_main.progress_bar.set_text(waiting_text.format(current=0, total=1))
         self.vbox_main.button_remove.set_sensitive(False)
         self.on_button_run_clicked(self.vbox_main.button_run)
- 
+
     def on_button_run_clicked(self, widget):
         # Ignore repeated clicks or duplicate idle callbacks while a script is active.
         if self.parent._script_running:
@@ -272,17 +264,13 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
             )
         self.vbox_main.button_run.set_label(running_label)
         self.terminal.set_can_focus(True)
-        
-        # Make bug report button available once run is started (for error reporting during execution)
-        auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-        if not auto_reports_enabled and not self.current_script_has_registry_entry:
-            self.vbox_main.button_copy.set_no_show_all(False)
-            self.vbox_main.button_copy.show()
-            self.current_script_has_registry_entry = True  # Mark as available for this session
-        
+
+        # Bug reports are only available after execution finishes.
+        self.vbox_main.button_copy.set_sensitive(False)
+
         self._run_next_script()
         return False
- 
+
     def on_child_exit(self, term, status):
         """Run normal completion handling, then retire a successfully removed queue item."""
         was_removal = bool(getattr(self, "_current_action_is_removal", False))
@@ -315,7 +303,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
             self._copy_terminal_text(copy_all=not has_selection)
             return True
         return False
- 
+
     def _on_key_press(self, widget, event):
         """Handle key press events - specifically Escape to go back."""
         if event.keyval == Gdk.KEY_Escape:
@@ -323,12 +311,12 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
             # NavCtl.on_back_button_clicked(), which is also used by the header button.
             self.on_done_clicked(None)
             return True
- 
+
         return False
- 
+
     def on_done_clicked(self, button):
         self.parent.set_focus(None)
- 
+
         # Check for reboot requirements after checklist completion
         reboot_helper.check_reboot_requirement_after_checklist(
             self.parent, self.translations, self.parent._close_application
@@ -339,5 +327,5 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         if hasattr(self.parent, 'script_cache') and self.parent.script_cache.is_populated:
             for script_info in getattr(self, 'executed_scripts', []):
                 self.parent.script_cache.update_removable_for_script(script_info)
- 
+
         self.parent.on_back_button_clicked(None)

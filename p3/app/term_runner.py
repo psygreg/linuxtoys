@@ -52,7 +52,7 @@ class TerminalRunner:
             self.vbox_main.button_run.set_sensitive(True)
             self.terminal.set_can_focus(True)
             self.vbox_main.button_run.grab_focus()
-            
+
             # Show the Flatpak session-path notice when Flatpak itself was installed
             # during this run, or when this run installed the system's first Flatpak app.
             flatpak_was_installed = getattr(self, "_flatpak_installed_detected", False)
@@ -70,12 +70,17 @@ class TerminalRunner:
             if hasattr(self, "_flatpak_apps_present_before_run"):
                 del self._flatpak_apps_present_before_run
 
+            auto_reports_enabled = getattr(
+                self.parent, "auto_error_reports_enabled", False
+            )
+            self.vbox_main.button_copy.set_sensitive(not auto_reports_enabled)
+
             return
- 
+
         self.parent._script_running = True
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
- 
+
         # Add script to execution history
         script_name = current_script.get("name", "unknown")
         registry_name = current_script.get("registry_name", script_name)
@@ -83,22 +88,22 @@ class TerminalRunner:
         self._current_script_display_name = script_name
         self.executed_scripts.append(current_script)
         antenna.add_script_to_history(script_name)
-        
+
         # Clear transmap file for new script execution
         try:
             self._transmap_path = self._select_transmap_path()
         except RuntimeError as error:
             print(f"Failed to initialize transaction map: {error}", file=sys.stderr)
             self._transmap_path = ""
- 
+
         script_path = current_script.get("path", "true")
         if current_script.get("reboot") == "yes":
             self.parent.reboot_required = True
- 
+
         self._self_update = current_script.get("self_update", False)
         self._cleanup_script_path = current_script.get("cleanup_path")
         self._current_action_is_removal = bool(self._cleanup_script_path)
- 
+
         child_env = script_environment(current_script, os.environ.copy())
         self._prepare_runner_state()
         if self._runner_state_path:
@@ -115,7 +120,7 @@ class TerminalRunner:
         # SCRIPT_DIR is set by linuxtoys.py at startup relative to the entry point
         # This ensures all scripts can find their libs at the same location
         child_env_list = [f"{key}={value}" for key, value in child_env.items()]
- 
+
         if dev_mode.is_dev_mode_enabled():
             lib_path = os.path.dirname(__file__)
             shell_exec = [
@@ -123,7 +128,7 @@ class TerminalRunner:
                 "-c",
                 f'import sys; sys.path.append("{lib_path}"); import dev_mode; dev_mode.dry_run_script("{script_path}")',
             ]
- 
+
         else:
             shell_exec = script_command(script_path, child_env["SCRIPT_DIR"])
 
@@ -139,11 +144,11 @@ class TerminalRunner:
             None,
             None,
         )
- 
+
         # Shift focus to terminal to capture user keyboard input
         # This prevents accidental cancellation when search bar or other widgets have focus
         self.terminal.grab_focus()
- 
+
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
 
@@ -158,18 +163,18 @@ class TerminalRunner:
             except Exception:
                 pass
             self._cleanup_script_path = None
- 
+
         # Handle transmap file based on exit status
         transmap_path = getattr(self, "_transmap_path", "")
-        
+
         if os.WIFEXITED(status):
             exit_code = os.WEXITSTATUS(status)
-            
+
             if exit_code == 0:
                 # Success - save to registry and wipe transmap
                 script_name = getattr(self, "_current_script_name", "unknown")
                 ExecutionRegistry._save_to_registry(script_name, transmap_path)
-                
+
                 # Check if flatpak was installed during this script before transmap is deleted
                 if not getattr(self, "_flatpak_installed_detected", False):
                     if os.path.exists(transmap_path):
@@ -180,44 +185,44 @@ class TerminalRunner:
                                     self._flatpak_installed_detected = True
                         except Exception:
                             pass
-                
+
                 # Clean up any temp directories created by prep_tmp_noram before removing transmap
                 ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
-                
+
                 self._remove_transmap(transmap_path)
-            
+
             elif exit_code == 100:
                 # User cancelled - clean up and wipe transmap but don't save to registry
                 ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
-                
+
                 self._remove_transmap(transmap_path)
-        
+
         else:
             # Signal termination (e.g., Ctrl+C) - clean up and wipe transmap
             ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
-            
+
             self._remove_transmap(transmap_path)
- 
+
         # Check for error exit codes and handle auto-reversion or bug report
         if self._is_error_exit_code(status) and not self._current_action_is_removal:
             # Only auto-handle for regular scripts, not removal operations
             # Save the error to registry before attempting auto-revert
             script_name = getattr(self, "_current_script_name", "unknown")
             ExecutionRegistry._save_to_registry(script_name, transmap_path)
-            
+
             auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-            
+
             # Submit bug report first if enabled (before auto-revert consumes transmap)
             if auto_reports_enabled:
                 self._auto_submit_bug_report_on_error()
-            
+
             # Try to auto-revert if there are operations in the transmap
             auto_revert_entry = ExecutionRegistry._try_auto_revert(
                 transmap_path,
                 getattr(self, "_current_script_display_name", script_name),
                 self.translations,
             )
-            
+
             if auto_revert_entry:
                 # Auto-revert was successful, execute the reversion script
                 self.script_queue = [auto_revert_entry]
@@ -237,7 +242,7 @@ class TerminalRunner:
                 if auto_reports_enabled:
                     self._remove_transmap(transmap_path)
                 # If auto-reporting is disabled, preserve transmap for user to potentially report manually
- 
+
         self.scripts_executed += 1
         progress = self.scripts_executed / self.total_scripts
         self.vbox_main.progress_bar.set_fraction(progress)
@@ -334,7 +339,7 @@ class TerminalRunner:
         # If terminated by signal (e.g., keyboard interrupt), it's not an error to report
         # Signals are expected user interactions (Ctrl+C = SIGINT)
         return False
-    
+
     @staticmethod
     def _select_transmap_path() -> str:
         """Select and prepare a writable transaction-map location."""
