@@ -18,37 +18,14 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         self.content.set_margin_top(18)
         self.content.set_margin_bottom(18)
         self.add(self.content)
-        self._rows = {}
-        self._row_states = {}
         self.refresh()
 
     def refresh(self):
         cache = self.parent_window.script_cache
         if not cache.is_populated:
-            # Installed data is not ready yet. Do not retain stale application rows
-            # behind the loading indicator.
-            for row in self._rows.values():
-                self.content.remove(row)
-                row.destroy()
-            self._rows.clear()
-            self._row_states.clear()
-            for child in self.content.get_children():
-                self.content.remove(child)
-                child.destroy()
-            spinner = Gtk.Spinner()
-            spinner.start()
-            spinner.set_halign(Gtk.Align.CENTER)
-            spinner.set_margin_top(24)
-            self.content.pack_start(spinner, False, False, 0)
+            gui_rs.reconcile_list_rows(self.content, state="loading")
             self.show_all()
             return
-
-        # Remove a previous loading/empty-state widget without disturbing retained
-        # native application rows.
-        for child in list(self.content.get_children()):
-            if child not in self._rows.values():
-                self.content.remove(child)
-                child.destroy()
 
         cache.refresh_removable_cache()
         installed = [
@@ -76,56 +53,24 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
             installed.append(info)
 
         installed.sort(key=lambda info: str(info.get("name", "")).casefold())
-
         keyed = [(self._stable_key(info), info) for info in installed]
-        wanted = {key for key, _info in keyed}
-
-        for key in list(self._rows):
-            if key in wanted:
-                continue
-            row = self._rows.pop(key)
-            self._row_states.pop(key, None)
-            self.content.remove(row)
-            row.destroy()
-
-        new_items = []
-        for key, info in keyed:
-            spec = self._row_spec(info, key)
-            signature = self._row_signature(spec)
-            row = self._rows.get(key)
-            if row is None:
-                new_items.append((key, info, spec, signature))
-                continue
-            if self._row_states.get(key) != signature:
-                if not gui_rs.reconcile_list_row(row, spec):
-                    raise RuntimeError(f"Failed to reconcile native installed row {key}")
-                self._bind_row(row, info)
-                self._row_states[key] = signature
-
-        if new_items:
-            rows = gui_rs.add_list_rows(
-                self.content, [spec for _key, _info, spec, _signature in new_items]
-            )
-            if len(rows) != len(new_items):
-                raise RuntimeError("Native installed row batch returned an incomplete result")
-            for row, (key, info, _spec, signature) in zip(rows, new_items):
-                self._rows[key] = row
-                self._row_states[key] = signature
-                self._bind_row(row, info)
 
         if not keyed:
-            label = Gtk.Label(
-                label=self.parent_window.translations.get(
+            gui_rs.reconcile_list_rows(
+                self.content,
+                state="empty",
+                empty_text=self.parent_window.translations.get(
                     "installed_features_empty",
                     "No removable features are currently installed.",
-                )
+                ),
             )
-            label.get_style_context().add_class("dim-label")
-            label.set_margin_top(24)
-            self.content.pack_start(label, False, False, 0)
-        else:
-            for position, (key, _info) in enumerate(keyed):
-                self.content.reorder_child(self._rows[key], position)
+            self.show_all()
+            return
+
+        specs = [self._row_spec(info, key) for key, info in keyed]
+        rows = gui_rs.reconcile_list_rows(self.content, specs)
+        for key, info in keyed:
+            self._bind_row(rows[key], info)
 
         self.show_all()
 
@@ -144,16 +89,6 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         return "entry:{}:{}".format(
             str(info.get("name", "")).casefold(),
             str(info.get("repo", "")).casefold(),
-        )
-
-    @staticmethod
-    def _row_signature(spec):
-        return (
-            spec["name"],
-            spec["icon_path"],
-            spec["icon_name"],
-            spec["launch"],
-            spec["action_tooltip"],
         )
 
     def _bind_row(self, row, info):

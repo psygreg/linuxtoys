@@ -17,73 +17,16 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         self.content.set_margin_top(18)
         self.content.set_margin_bottom(18)
         self.add(self.content)
-        self._rows = {}
-        self._row_states = {}
         self.refresh()
 
     def refresh(self):
         records = list(self.parent_window._appstream_runner.snapshot())
-        wanted = {str(record["id"]): record for record in records}
+        specs = [self._row_spec(record) for record in records]
+        rows = gui_rs.reconcile_list_rows(self.content, specs)
 
-        # Remove jobs that disappeared from the runner snapshot.
-        for key in list(self._rows):
-            if key in wanted:
-                continue
-            row = self._rows.pop(key)
-            self._row_states.pop(key, None)
-            self.content.remove(row)
-            row.destroy()
-
-        # Reconcile existing rows and collect genuinely new jobs for one native batch.
-        new_records = []
         for record in records:
-            key = str(record["id"])
-            spec = self._row_spec(record)
-            row = self._rows.get(key)
-            if row is None:
-                new_records.append((record, spec))
-                continue
-
-            state_signature = (
-                record.get("status"),
-                spec["secondary"],
-                spec["status_icon"],
-                spec["spinner"],
-                spec["action_kind"],
-                spec["destructive_action"],
-                spec["action_tooltip"],
-            )
-            if self._row_states.get(key) != state_signature:
-                if not gui_rs.reconcile_list_row(row, spec):
-                    raise RuntimeError(f"Failed to reconcile native queue row {key}")
-                self._bind_action(row, record)
-                self._row_states[key] = state_signature
-
-        if new_records:
-            rows = gui_rs.add_list_rows(
-                self.content, [spec for _record, spec in new_records]
-            )
-            if len(rows) != len(new_records):
-                raise RuntimeError("Native queue row batch returned an incomplete result")
-            for row, (record, spec) in zip(rows, new_records):
-                key = str(record["id"])
-                self._rows[key] = row
-                self._row_states[key] = (
-                    record.get("status"),
-                    spec["secondary"],
-                    spec["status_icon"],
-                    spec["spinner"],
-                    spec["action_kind"],
-                    spec["destructive_action"],
-                    spec["action_tooltip"],
-                )
-                self._bind_action(row, record)
-
-        # Runner snapshots are ordered. Preserve that order without rebuilding rows.
-        for position, record in enumerate(records):
-            row = self._rows.get(str(record["id"]))
-            if row is not None:
-                self.content.reorder_child(row, position)
+            row = rows[str(record["id"])]
+            self._bind_action(row, record)
 
         self.show_all()
 

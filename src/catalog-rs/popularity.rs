@@ -1,7 +1,91 @@
 use pyo3::prelude::*;
+use std::collections::HashMap;
+use std::hash::{DefaultHasher, Hash, Hasher};
+use std::sync::{Mutex, OnceLock};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 const SCORE_MAX: i64 = 999;
 const REVIEW_CONFIDENCE_COUNT: f64 = 10.0;
+
+const SCORE_MIN: i64 = 0;
+const TOP_SECTION_MIN: i64 = 900;
+
+static SESSION_SCORES: OnceLock<Mutex<HashMap<String, i64>>> = OnceLock::new();
+static SESSION_SEED: OnceLock<u64> = OnceLock::new();
+
+fn session_seed() -> u64 {
+    *SESSION_SEED.get_or_init(|| {
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|duration| {
+                (duration.as_nanos() as u64)
+                    ^ (std::process::id() as u64).rotate_left(17)
+            })
+            .unwrap_or(0x6a09e667f3bcc909)
+    })
+}
+
+fn generated_session_score(key: &str, low: i64, high: i64) -> i64 {
+    let low = low.min(high);
+    let high = high.max(low);
+    let scores = SESSION_SCORES.get_or_init(|| Mutex::new(HashMap::new()));
+    let mut scores = scores.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+
+    if let Some(score) = scores.get(key) {
+        return *score;
+    }
+
+    let mut hasher = DefaultHasher::new();
+    session_seed().hash(&mut hasher);
+    key.hash(&mut hasher);
+    let span = (high - low + 1) as u64;
+    let score = low + (hasher.finish() % span) as i64;
+    scores.insert(key.to_owned(), score);
+    score
+}
+
+/// Session-stable random score used by Python's remaining category-distribution
+/// code. The first range requested for a key wins, matching the previous
+/// `_SESSION_SCORES` dictionary semantics.
+#[pyfunction]
+pub(crate) fn session_random_score(key: &str, low: i64, high: i64) -> i64 {
+    generated_session_score(key, low, high)
+}
+
+/// Resolve the effective 0..999 popularity score for one already-classified item.
+///
+/// `kind`: 1 = Flatpak AppStream, 2 = native AppStream, 3 = curated LinuxToys,
+/// 0 = other. Known-popular overrides every kind.
+#[pyfunction]
+pub(crate) fn score_for_item(
+    key: &str,
+    known_popular: bool,
+    kind: u8,
+    category_popularity_score: Option<i64>,
+    category_native_score: Option<i64>,
+) -> i64 {
+    if known_popular {
+        return generated_session_score(key, TOP_SECTION_MIN, SCORE_MAX);
+    }
+
+    match kind {
+        1 => category_popularity_score
+            .map(|value| value.clamp(SCORE_MIN, SCORE_MAX))
+            .unwrap_or_else(|| {
+                generated_session_score(key, SCORE_MIN, TOP_SECTION_MIN - 1)
+            }),
+        2 => {
+            if let Some(value) = category_popularity_score {
+                return value.clamp(SCORE_MIN, SCORE_MAX);
+            }
+            category_native_score
+                .map(|value| value.clamp(SCORE_MIN, SCORE_MAX))
+                .unwrap_or_else(|| generated_session_score(key, SCORE_MIN, SCORE_MAX))
+        }
+        3 => generated_session_score(key, TOP_SECTION_MIN, SCORE_MAX),
+        _ => generated_session_score(key, SCORE_MIN, TOP_SECTION_MIN - 1),
+    }
+}
 
 #[pyfunction]
 pub(crate) fn review_subscores(rows: Vec<(Option<f64>, Option<i64>)>) -> Vec<Option<i64>> {

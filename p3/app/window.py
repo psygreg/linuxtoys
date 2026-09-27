@@ -33,7 +33,8 @@ from . import (
     repo_parser,
     uri_parser,
     git_scripts_manager,
-    gtk_dialogs
+    gtk_dialogs,
+    gui_rs
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
 from gi.repository import Gio
@@ -1853,29 +1854,12 @@ class AppWindow(
         return False
 
     def _start_startup_watermark_flush(self):
-        """Render deferred startup watermarks cooperatively with the GTK main loop."""
+        """Render native startup watermarks cooperatively with the GTK main loop."""
         if self._categories_loading_watermark_source is not None:
             return False
 
         flowbox = getattr(self, "categories_flowbox", None)
         if flowbox is None:
-            self._categories_loading_watermarks_flushed = True
-            return False
-
-        surfaces = []
-        stack = [flowbox]
-        while stack:
-            widget = stack.pop()
-            apply_pending = getattr(widget, "_linuxtoys_apply_pending_watermark", None)
-            if apply_pending is not None:
-                surfaces.append(widget)
-            try:
-                stack.extend(widget.get_children())
-            except (AttributeError, RuntimeError):
-                pass
-
-        self._categories_loading_watermark_queue = surfaces
-        if not surfaces:
             self._categories_loading_watermarks_flushed = True
             return False
 
@@ -1885,18 +1869,9 @@ class AppWindow(
         return False
 
     def _flush_one_startup_watermark(self):
-        """Render one category watermark, then yield so the roller can repaint."""
-        queue = self._categories_loading_watermark_queue
-        while queue:
-            surface = queue.pop()
-            apply_pending = getattr(surface, "_linuxtoys_apply_pending_watermark", None)
-            if apply_pending is None:
-                continue
-            try:
-                apply_pending(surface)
-            except (RuntimeError, AttributeError):
-                pass
-            # Exactly one expensive composition per main-loop dispatch.
+        """Ask gui-rs to render one pending category watermark, then yield."""
+        flowbox = getattr(self, "categories_flowbox", None)
+        if flowbox is not None and gui_rs.flush_category_watermarks(flowbox, 1):
             return True
 
         self._categories_loading_watermark_source = None
@@ -2153,6 +2128,13 @@ class AppWindow(
                 and getattr(flowbox, "_linuxtoys_lazy_state", None) is state
             )
 
+        def flush_new_category_watermarks():
+            """Flush newly allocated native category cards after this population pass."""
+            if not state_is_current():
+                return False
+            gui_rs.flush_category_watermarks(flowbox)
+            return False
+
         def add_card(script_info):
             widget = self.create_item_widget(
                 script_info,
@@ -2199,6 +2181,11 @@ class AppWindow(
             state["next_index"] = stop
             for widget in batch_widgets:
                 widget.show_all()
+
+            GLib.idle_add(
+                flush_new_category_watermarks,
+                priority=GLib.PRIORITY_LOW,
+            )
 
             self.animate_item_batch(
                 batch_widgets,
@@ -2316,6 +2303,11 @@ class AppWindow(
             state["next_index"] = seed_count
             for widget in seed_widgets:
                 widget.show_all()
+
+            GLib.idle_add(
+                flush_new_category_watermarks,
+                priority=GLib.PRIORITY_LOW,
+            )
 
             if animate_initial:
                 self.animate_item_batch(
@@ -2828,6 +2820,14 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         )
         return False
 
+    def _flush_visible_category_watermarks(self):
+        """Apply deferred native category watermarks in the visible view."""
+        if not hasattr(self, "main_stack"):
+            return
+        root = self.main_stack.get_visible_child()
+        if root is not None:
+            gui_rs.flush_category_watermarks(root)
+
     def _apply_window_resize_settled(self):
         """Run expensive responsive calculations once after resizing goes quiet."""
         self._window_resize_settle_timer = None
@@ -2842,12 +2842,11 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             # Allocation-sized category watermarks are intentionally not regenerated
             # while an interactive resize is in progress. Render them once at the
             # final settled allocation instead.
-            flush_watermarks = getattr(self, "_flush_deferred_category_watermarks", None)
             startup_watermarks_active = (
                 getattr(self, "_categories_loading_watermark_source", None) is not None
             )
-            if flush_watermarks is not None and not startup_watermarks_active:
-                flush_watermarks()
+            if not startup_watermarks_active:
+                self._flush_visible_category_watermarks()
 
             # Main-menu Featured already compares its final rows/columns against
             # the previous layout, so this is cheap when no breakpoint changed.

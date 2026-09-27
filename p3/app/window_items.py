@@ -1,9 +1,8 @@
 import os
 
-from .gtk_common import Gdk, GdkPixbuf, GLib, Gtk, load_scaled_pixbuf
+from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
 from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index
-from . import _catalog_rs
 from .gtk_dialogs import run_message_dialog
 from . import gui_rs
 
@@ -17,124 +16,7 @@ BADGE_EXCLUDED_IDS = {
 }
 
 
-class _LayoutNeutralImage(Gtk.Image):
-    """Gtk.Image whose pixbuf never contributes to parent size negotiation."""
-
-    def do_get_preferred_width(self):
-        return (0, 0)
-
-    def do_get_preferred_height(self):
-        return (0, 0)
-
-    def do_get_preferred_width_for_height(self, height):
-        return (0, 0)
-
-    def do_get_preferred_height_for_width(self, width):
-        return (0, 0)
-
 class ItemWidgetFactory:
-    def _category_watermark_pixbuf(self, icon_path, width, height):
-        """Render a supersampled, allocation-sized category watermark."""
-        width = int(width)
-        height = int(height)
-        if width <= 0 or height <= 0:
-            return None
-
-        cache = getattr(self, "_category_watermark_cache", None)
-        if cache is None:
-            cache = {}
-            self._category_watermark_cache = cache
-
-        key = (icon_path, width, height)
-        cached = cache.get(key)
-        if cached is not None:
-            return cached
-
-        # 2x supersampling is enough for this low-opacity decorative layer while
-        # cutting the intermediate canvas from 16x to 4x the final pixel count.
-        # The SVG is still rasterized above display resolution and downsampled once.
-        supersample = 2
-        canvas_width = width * supersample
-        canvas_height = height * supersample
-
-        # Preserve the deliberately oversized/cropped presentation used by the
-        # pre-rendered watermark: roughly 1.7 card-heights, hanging off the left
-        # edge and vertically centred.
-        icon_size = max(1, int(round(height * 1.70)))
-        icon_size_ss = icon_size * supersample
-        icon_x = int(round(-height * 0.42))
-        icon_y = int(round((height - icon_size) / 2.0))
-
-        try:
-            source = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                icon_path, icon_size_ss, icon_size_ss, True
-            )
-        except GLib.Error:
-            return None
-
-        # GTK remains responsible for SVG rasterization. Rust owns the deterministic
-        # crop/composite/downsample/rounded-alpha transform in one coarse call, without
-        # allocating the old supersampled transparent canvas.
-        try:
-            pixels = _catalog_rs.render_category_watermark(
-                bytes(source.get_pixels()),
-                source.get_width(),
-                source.get_height(),
-                source.get_rowstride(),
-                source.get_n_channels(),
-                source.get_has_alpha(),
-                width,
-                height,
-                icon_x,
-                icon_y,
-                supersample,
-                0.46,
-                10.0,
-            )
-        except (ValueError, TypeError, RuntimeError):
-            return None
-
-        if not pixels:
-            return None
-
-        data = GLib.Bytes.new(pixels)
-        result = GdkPixbuf.Pixbuf.new_from_bytes(
-            data,
-            GdkPixbuf.Colorspace.RGB,
-            True,
-            8,
-            width,
-            height,
-            width * 4,
-        )
-
-        # Allocation sizes are highly repetitive. Keep the cache bounded in case
-        # a compositor repeatedly reports one-pixel intermediate resize values.
-        if len(cache) >= 96:
-            cache.clear()
-        cache[key] = result
-        return result
-
-    def _flush_deferred_category_watermarks(self):
-        """Render allocation-sized category watermarks once after resize settles."""
-        root = getattr(self, "categories_flowbox", None)
-        if root is None:
-            return
-
-        stack = [root]
-        while stack:
-            widget = stack.pop()
-            apply_pending = getattr(widget, "_linuxtoys_apply_pending_watermark", None)
-            if apply_pending is not None:
-                try:
-                    apply_pending(widget)
-                except (RuntimeError, AttributeError):
-                    pass
-            try:
-                stack.extend(widget.get_children())
-            except (AttributeError, RuntimeError):
-                pass
-
     def create_flowbox(self):
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
@@ -290,7 +172,7 @@ class ItemWidgetFactory:
             or (is_category_type and is_not_script)
             or (is_main_category and is_not_script)
         )
-        if is_category_card or not gui_rs.available():
+        if not gui_rs.available():
             return None
 
         is_removable_script = self._is_script_removable(item_info)
@@ -344,10 +226,11 @@ class ItemWidgetFactory:
             "icon_path": icon_path,
             "icon_name": icon_name,
             "badge_path": badge_path,
-            "bold": False,
+            "bold": bool(is_category_card),
             "removable": is_removable_script,
             "checklist": bool(checklist),
             "is_new": bool(item_info.get("is_new", False)),
+            "category": bool(is_category_card),
         }
 
     def _finish_native_item_widget(
@@ -442,6 +325,29 @@ class ItemWidgetFactory:
             for widget, info, spec in zip(widgets, infos, specs)
         ]
 
+    def create_native_featured_large_widget(
+        self, grid, item_info, position, *, featured_height=0
+    ):
+        """Construct and attach one two-row Featured card in native GTK."""
+        spec = self._native_item_spec(item_info)
+        if spec is None or spec.get("removable") or spec.get("checklist"):
+            return None
+        spec = dict(spec)
+        spec["description"] = item_info.get("description", "") or ""
+        try:
+            widget = gui_rs.attach_featured_large_card(
+                grid, spec, position, featured_height
+            )
+        except Exception as error:
+            print(
+                "Warning: native Featured large-card creation failed, "
+                f"using Python fallback: {error}"
+            )
+            return None
+        if widget is None:
+            return None
+        return self._finish_native_item_widget(widget, item_info, spec)
+
     def update_native_featured_widget(self, widget, item_info):
         """Rebind one native ordinary Featured card in place."""
         spec = self._native_item_spec(item_info)
@@ -465,349 +371,40 @@ class ItemWidgetFactory:
         featured_large: bool = False,
         featured_height: int = 0,
     ):
-        import os
-
         if featured_large:
             return self._create_featured_large_item_widget(
                 item_info, featured_height=featured_height
             )
 
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        box.set_size_request(128, 52)  # Fixed width for all items
-        box.set_hexpand(False)
-        box.set_halign(Gtk.Align.FILL)
-
-        # Show a remove button on the left for scripts that are already installed
-        is_removable_script = self._is_script_removable(item_info)
-        if is_removable_script:
-            box.get_style_context().add_class("installed-card")
-            remove_btn = Gtk.Button.new_from_icon_name(
-                "edit-delete-symbolic", Gtk.IconSize.MENU
-            )
-            remove_btn.get_style_context().add_class("installed-card-remove-left")
-            remove_btn.set_size_request(24, 24)
-            remove_btn.set_tooltip_text(
-                self.translations.get(
-                    "term_view_remove", "Remove installed components"
-                )
-            )
-            remove_btn.set_relief(Gtk.ReliefStyle.NONE)
-            remove_btn.set_can_focus(True)
-            remove_btn.get_style_context().add_class("destructive-action")
-            remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
-            box.pack_start(remove_btn, False, False, 0)
-        display_name = item_info["name"]
-
-        label = Gtk.Label(label=display_name)
-        if not is_removable_script and not checklist:
-            # Preserve the old spacer + box-spacing offset without allocating
-            # a throwaway Gtk.Label for normal non-checklist cards. In checklist
-            # mode the offset belongs on the checkbox, which is the first visible
-            # child after the omitted spacer.
-            label.set_margin_start(22)
-        label.set_line_wrap(True)
-        label.set_justify(Gtk.Justification.CENTER)
-        label.set_halign(Gtk.Align.CENTER)
-        label.set_valign(Gtk.Align.CENTER)
-        label.set_max_width_chars(28)  # Limit label width
-        label.set_width_chars(4)  # Set consistent width
-        label.set_hexpand(False)
-
-        # Make categories and subcategories bold, keep scripts regular
-        is_main_category = self.current_category_info is None  # We're in the main menu
-        is_subcategory = item_info.get("is_subcategory", False)
-        is_category_type = item_info.get("type") == "category"
-        is_not_script = not item_info.get("is_script", False)
-
-        if checklist:
-            check = Gtk.CheckButton()
-            check.connect("toggled", self._on_toggled_check)
-            check.script_info = item_info
-            # Make checkbox non-focusable so it doesn't interfere with keyboard navigation
-            check.set_can_focus(False)
-            if not is_removable_script:
-                # The original layout had a 10 px spacer widget before the checkbox
-                # plus the Gtk.Box's 12 px spacing. Preserve that geometry without
-                # allocating a dummy widget for every normal checklist card.
-                check.set_margin_start(22)
-            box.pack_start(check, False, False, 0)
-
-        if (
-            is_subcategory
-            or (is_category_type and is_not_script)
-            or (is_main_category and is_not_script)
-        ):
-            # This is a category or subcategory - make it bold
-            # Escape HTML characters to prevent markup issues
-            import html
-
-            escaped_name = html.escape(display_name)
-            label.set_markup(f"<b>{escaped_name}</b>")
-        box.pack_start(label, True, True, 0)
-
-        icon_value = item_info.get("icon", "application-x-executable")
-        icon_widget = None
-        icon_path = None
-        icon_size = 38  # Target icon size
-
-        # If icon_value looks like a file path or just a filename, use Gtk.Image.new_from_file
-        if icon_value.endswith(".png") or icon_value.endswith(".svg"):
-            # If only a filename, use the global icon path resolver
-            if not os.path.isabs(icon_value) and "/" not in icon_value:
-                icon_path = get_icon_path(
-                    "local-script.svg"
-                    if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
-                    else icon_value
-                )
-            else:
-                icon_path = icon_value if os.path.exists(icon_value) else None
-
-            if icon_path and os.path.exists(icon_path):
-                if icon_path.endswith(".svg") or icon_path.endswith(".png"):
-                    # For SVG files, load as pixbuf with specific size
-                    pixbuf = load_scaled_pixbuf(
-                        icon_path, icon_size, icon_size, True
-                    )
-                    if pixbuf is not None:
-                        icon_widget = Gtk.Image.new_from_pixbuf(pixbuf)
-                    else:
-                        # Fallback to default icon if file loading fails.
-                        icon_widget = Gtk.Image.new_from_icon_name(
-                            "application-x-executable", Gtk.IconSize.DIALOG
-                        )
-                        icon_widget.set_pixel_size(icon_size)
-                else:
-                    # For PNG files, use regular loading and set pixel size
-                    icon_widget = Gtk.Image.new_from_file(icon_path)
-                    icon_widget.set_pixel_size(icon_size)
-            else:
-                icon_widget = Gtk.Image.new_from_icon_name(
-                    "application-x-executable", Gtk.IconSize.DIALOG
-                )
-                icon_widget.set_pixel_size(icon_size)
-        else:
-            icon_widget = Gtk.Image.new_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
-            icon_widget.set_pixel_size(icon_size)  ## altura dos icones
-        icon_widget.set_halign(Gtk.Align.END)
-        icon_widget.set_valign(Gtk.Align.CENTER)
-
-        verified = item_info.get("is_verified", False)
-        distro_badge = str(item_info.get("native_distro_badge", "") or "")
-        appstream_badge = str(item_info.get("appstream_badge", "") or "")
-        badge_path = ""
-        badge_tooltip = ""
-
-        # Resolve the same stable/internal identity LinuxToys uses elsewhere:
-        # explicit repository/AppStream ID first, then the physical script's
-        # filename stem. Local scripts are already excluded from LinuxToys badges.
-        internal_id = str(
-            item_info.get("id")
-            or item_info.get("script")
-            or ""
-        ).strip()
-        if not internal_id:
-            item_path = str(item_info.get("path", "") or "")
-            if item_path and not item_path.startswith("repo://"):
-                internal_id = os.path.splitext(os.path.basename(item_path))[0]
-        badge_excluded = internal_id.casefold() in {
-            value.casefold() for value in BADGE_EXCLUDED_IDS
-        }
-
-        if badge_excluded:
-            pass
-        elif self._uses_linuxtoys_verified_badge(item_info):
-            badge_path = get_icon_path("ltverified.svg")
-        elif verified:
-            badge_path = get_icon_path("verified.svg")
-        elif item_info.get("is_appstream_entry", False):
-            if distro_badge:
-                badge_path = get_icon_path(distro_badge)
-            elif appstream_badge:
-                badge_path = get_icon_path(appstream_badge)
-        elif item_info.get("is_repo_entry", False):
-            badge_path = get_icon_path("distros/linuxtoys.svg")
-        elif (
-            item_info.get("is_script", False)
-            and not item_info.get("is_subcategory", False)
-            and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
-        ):
-            badge_path = get_icon_path("distros/linuxtoys.svg")
-
-        # Keep the application icon independent from the source/support badge.
-        # The badge is attached to the card itself below, so it never obscures
-        # unusually large or edge-filling application artwork.
-        box.pack_start(icon_widget, False, False, 20)
-
-        event_box = Gtk.EventBox()
-
-        # Keep the painted card surface separate from the outer event widget.
-        # Every card reserves the same small amount of transparent space at the
-        # top/right. This keeps badged and unbadged cards geometrically identical
-        # while letting a 20 px badge straddle the painted card edge without
-        # negative margins or invalid GTK size allocations.
-        # Category cards use a transparent, card-height GdkPixbuf as a purely
-        # decorative background layer. The enlarged SVG is composited into that
-        # pixbuf with negative source coordinates, so cropping happens in pixel
-        # space rather than GTK allocation space. No Cairo/Pycairo bridge is needed.
-        is_category_card = (
-            is_subcategory
-            or (is_category_type and is_not_script)
-            or (is_main_category and is_not_script)
-        )
-        category_watermark = None
-        category_watermark_update = None
-        if (
-            is_category_card
-            and icon_value.endswith(".svg")
-            and icon_path
-            and os.path.exists(icon_path)
-        ):
-            # Gtk.Image normally reports its pixbuf as its natural size. Because the
-            # pixbuf itself is generated from the current allocation, allowing that
-            # request into Gtk.Grid creates an allocation -> pixbuf -> preferred-size
-            # feedback loop. The layout-neutral image paints into the allocation it
-            # receives but contributes zero to GTK's size negotiation.
-            category_watermark = _LayoutNeutralImage()
-            category_watermark.set_halign(Gtk.Align.FILL)
-            category_watermark.set_valign(Gtk.Align.FILL)
-
-            def category_watermark_update(surface, allocation, image=category_watermark, path=icon_path):
-                size = (int(allocation.width), int(allocation.height))
-                if size[0] <= 0 or size[1] <= 0:
-                    return
-                if getattr(image, "_linuxtoys_watermark_size", None) == size:
-                    return
-
-                # During interactive resize, record only the final requested size.
-                # The 4x render/downsample/rounded-corner work is deferred to the
-                # window-level settled-resize pass.
-                surface._linuxtoys_pending_watermark_size = size
-                if (
-                    getattr(self, "_window_resize_pending", False)
-                    or not getattr(self, "_categories_startup_transition_complete", True)
-                ):
-                    # During startup the opaque roller owns the screen. Defer the
-                    # expensive 4x watermark composition until window.py drains the
-                    # pending cards cooperatively, one per GTK idle dispatch.
-                    return
-
-                pixbuf = self._category_watermark_pixbuf(path, *size)
-                if pixbuf is not None:
-                    image.set_from_pixbuf(pixbuf)
-                    image._linuxtoys_watermark_size = size
-                    surface._linuxtoys_pending_watermark_size = None
-
-            def apply_pending_watermark(surface, image=category_watermark, path=icon_path):
-                size = getattr(surface, "_linuxtoys_pending_watermark_size", None)
-                if not size or getattr(image, "_linuxtoys_watermark_size", None) == size:
-                    return
-                pixbuf = self._category_watermark_pixbuf(path, *size)
-                if pixbuf is not None:
-                    image.set_from_pixbuf(pixbuf)
-                    image._linuxtoys_watermark_size = size
-                    surface._linuxtoys_pending_watermark_size = None
-
-        if category_watermark is not None:
-            # The normal card_surface Gtk.Box expands `box` across the full FlowBox
-            # cell. In the watermark variant both widgets share a Gtk.Grid cell, so
-            # the foreground box must explicitly expand as well; otherwise it keeps
-            # its 128 px minimum width at the left edge, pulling the centered title
-            # and trailing icon left with it.
-            box.set_hexpand(True)
-            box.set_halign(Gtk.Align.FILL)
-
-            # Stack both children in the same Gtk.Grid cell. The watermark remains
-            # behind the normal foreground layout and does not participate in its
-            # title/icon positioning.
-            card_surface = Gtk.Grid()
-            card_surface.attach(category_watermark, 0, 0, 1, 1)
-            card_surface.attach(box, 0, 0, 1, 1)
-            card_surface._linuxtoys_apply_pending_watermark = apply_pending_watermark
-            card_surface.connect("size-allocate", category_watermark_update)
-        else:
-            card_surface = Gtk.Box()
-            card_surface.pack_start(box, True, True, 0)
-
-        card_surface.get_style_context().add_class("script-item")
-        event_box.card_surface = card_surface
-        # Ordinary Featured cards can be rebound in-place between timed rotations.
-        # These references do not alter the widget hierarchy.
-        event_box._featured_name_widget = label
-        event_box._featured_icon_widget = icon_widget
-        event_box._featured_card_overlay = None
-        event_box._featured_badge_widget = None
-
-        if item_info.get("is_new", False):
-            card_surface.get_style_context().add_class("script-item-new")
-
-        badge_edge_space = 4
-        card_surface.set_margin_top(badge_edge_space)
-        # Reserve the same horizontal breathing room on both sides. The badge
-        # still uses the overlay's full allocation and can straddle the painted
-        # card's right edge, while the visible card surface stays geometrically
-        # centered inside its FlowBox/Grid cell.
-        card_surface.set_margin_start(badge_edge_space)
-        card_surface.set_margin_end(badge_edge_space)
-
-        card_overlay = Gtk.Overlay()
-        card_overlay.add(card_surface)
-        event_box._featured_card_overlay = card_overlay
-
-        if badge_path:
-            badge_size = 20
-            badge_pixbuf = load_scaled_pixbuf(
-                badge_path,
-                badge_size,
-                badge_size,
-                True,
-            )
-            if badge_pixbuf is not None:
-                badge = Gtk.Image.new_from_pixbuf(badge_pixbuf)
-                badge.set_halign(Gtk.Align.END)
-                badge.set_valign(Gtk.Align.START)
-                card_overlay.add_overlay(badge)
-                event_box._featured_badge_widget = badge
-
-        event_box.add(card_overlay)
-
-        event_box.info = item_info
-        # Store reference to checkbox for easy access in keyboard handlers
-        if checklist:
-            event_box.checkbox = check
-
-        if is_removable_script:
-            remove_btn.connect(
-                "focus-in-event", self._on_item_remove_focus_in, event_box
+        # All standard cards are native-only. The Rust GUI owns the complete
+        # foreground/card hierarchy; Python only attaches application state,
+        # callbacks, and the allocation-dependent category watermark wrapper.
+        native_spec = self._native_item_spec(item_info, checklist=checklist)
+        if native_spec is None:
+            raise RuntimeError(
+                "Standard cards require the native Rust GUI implementation"
             )
 
-        # Enable mouse events for hover effects and right-click
-        event_box.set_events(
-            event_box.get_events()
-            | Gdk.EventMask.ENTER_NOTIFY_MASK
-            | Gdk.EventMask.LEAVE_NOTIFY_MASK
-            | Gdk.EventMask.BUTTON_PRESS_MASK
-            | Gdk.EventMask.BUTTON_RELEASE_MASK
-        )
-
-        # Connect hover events only (click events are connected separately)
-        if allow_drag:
-            event_box.drag_source_set(
-                Gdk.ModifierType.BUTTON1_MASK,
-                [Gtk.TargetEntry.new("text/uri-list", 0, 0)],
-                Gdk.DragAction.COPY,
+        staging_grid = Gtk.Grid()
+        try:
+            native_widgets = gui_rs.attach_item_cards_grid(
+                staging_grid, [native_spec], [(0, 0)]
             )
-            event_box.connect("drag-data-get", self.on_drag_data_get)
-            event_box.connect("drag-end", self.on_drag_end)
+            if not native_widgets:
+                raise RuntimeError("native constructor returned no widget")
 
-        # Gtk.EventBox does not reliably expose :hover state to GTK3 CSS, so
-        # keep the lightweight explicit class toggle used by the original UI.
-        # This restores the standard card hover effect without affecting the
-        # removal button's own hover styling.
-        event_box.connect("enter-notify-event", self.on_item_enter)
-        event_box.connect("leave-notify-event", self.on_item_leave)
-        event_box.connect("button-press-event", self.on_item_button_press)
-
-        return event_box
+            event_box = native_widgets[0]
+            staging_grid.remove(event_box)
+            return self._finish_native_item_widget(
+                event_box,
+                item_info,
+                native_spec,
+                allow_drag=allow_drag,
+            )
+        except Exception as error:
+            raise RuntimeError(
+                f"Native standard-card creation failed: {error}"
+            ) from error
 
 
     def update_featured_normal_widget(self, widget, item_info):
@@ -908,149 +505,15 @@ class ItemWidgetFactory:
         return widget
 
     def _create_featured_large_item_widget(self, item_info, featured_height: int = 0):
-        """Create the three-row Featured variant without changing normal cards."""
-        import html
-
-        # Start from the regular card so icon resolution, card badges, activation,
-        # hover behavior and script metadata remain exactly the same everywhere.
-        event_box = self.create_item_widget(item_info)
-        card_surface = event_box.card_surface
-        base_box = card_surface.get_children()[0]
-
-        # The large card has its own more spacious presentation. Keep all padding
-        # inside the existing card boundary so its outer size still matches exactly
-        # three normal Featured rows.
-        base_box.set_margin_top(16)
-        base_box.set_margin_bottom(16)
-        base_box.set_margin_start(16)
-        base_box.set_margin_end(16)
-
-        # Preserve the regular card's horizontal name/icon row, but normalize the
-        # normal-card spacer/padding before moving the widgets. Large AppStream
-        # cards use the free right side for the same ODRS aggregate shown on the
-        # app page; all other large cards keep their historical centered header.
-        is_appstream = bool(item_info.get("is_appstream_entry", False))
-        top_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
-        top_row.set_hexpand(True)
-        top_row.set_halign(Gtk.Align.FILL if is_appstream else Gtk.Align.CENTER)
-
-        icon_widget = None
-        name_widget = None
-        other_widgets = []
-        for child in tuple(base_box.get_children()):
-            base_box.remove(child)
-
-            if isinstance(child, Gtk.Label):
-                child.set_margin_start(0)
-                child.set_margin_end(0)
-                child.set_hexpand(False)
-                child.set_markup(
-                    f"<span size=\"x-large\"><b>{html.escape(item_info.get('name', ''))}</b></span>"
-                )
-                name_widget = child
-            elif isinstance(child, Gtk.Image):
-                icon_widget = child
-            else:
-                other_widgets.append(child)
-
-        # Large Featured cards deliberately reverse the regular card's title/icon
-        # order: icon first, then title. AppStream cards keep that identity group
-        # on the left while their ODRS aggregate occupies the opposite edge.
-        if icon_widget is not None:
-            # Give the outer edge of the large-card identity group a little more
-            # breathing room without changing the spacing between icon and title.
-            icon_widget.set_margin_start(4)
-            top_row.pack_start(icon_widget, False, False, 0)
-        if name_widget is not None:
-            top_row.pack_start(name_widget, False, False, 0)
-        for child in other_widgets:
-            top_row.pack_start(child, False, False, 0)
-
-        if is_appstream:
-            try:
-                rating = float(item_info.get("review_rating"))
-                review_count = int(item_info.get("review_count"))
-            except (TypeError, ValueError):
-                rating = -1.0
-                review_count = 0
-
-            if review_count > 0 and 0.0 <= rating <= 100.0:
-                aggregate = Gtk.Label()
-                aggregate.set_markup(
-                    f'<span size="large" weight="bold">★ {rating / 20.0:.1f}</span>'
-                    f'  <span>({review_count})</span>'
-                )
-                aggregate.set_halign(Gtk.Align.END)
-                aggregate.set_valign(Gtk.Align.CENTER)
-                # Match the icon's extra inset on the opposite outer edge.
-                aggregate.set_margin_end(4)
-                aggregate.set_selectable(False)
-                aggregate.set_can_focus(False)
-                # pack_end leaves any spare header width between the app identity
-                # on the left and the ODRS aggregate on the right.
-                top_row.pack_end(aggregate, False, False, 0)
-
-        # Increase the application icon from the regular 38 px presentation to
-        # 48 px. File-backed icons need their pixbuf reloaded at the new size;
-        # themed icons only need a larger pixel-size request.
-        large_icon_size = 48
-        icon_value = item_info.get("icon", "application-x-executable")
-
-        if isinstance(icon_widget, Gtk.Image):
-            if icon_value.endswith(".png") or icon_value.endswith(".svg"):
-                if not os.path.isabs(icon_value) and "/" not in icon_value:
-                    icon_path = get_icon_path(
-                        "local-script.svg"
-                        if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
-                        else icon_value
-                    )
-                else:
-                    icon_path = icon_value if os.path.exists(icon_value) else None
-
-                if icon_path and os.path.exists(icon_path):
-                    pixbuf = load_scaled_pixbuf(
-                        icon_path, large_icon_size, large_icon_size, True
-                    )
-                    if pixbuf is not None:
-                        icon_widget.set_from_pixbuf(pixbuf)
-                    else:
-                        icon_widget.set_from_icon_name(
-                            "application-x-executable", Gtk.IconSize.DIALOG
-                        )
-                        icon_widget.set_pixel_size(large_icon_size)
-            else:
-                icon_widget.set_from_icon_name(icon_value, Gtk.IconSize.DIALOG)
-                icon_widget.set_pixel_size(large_icon_size)
-
-        base_box.set_orientation(Gtk.Orientation.VERTICAL)
-        base_box.set_spacing(10)
-        base_box.pack_start(top_row, False, False, 0)
-
-        description = Gtk.Label(label=item_info.get("description", ""))
-        description.set_markup(
-            f"<span size=\"large\">{html.escape(item_info.get('description', ''))}</span>"
+        """Create the large Featured variant entirely in native GTK."""
+        staging_grid = Gtk.Grid()
+        widget = self.create_native_featured_large_widget(
+            staging_grid, item_info, (0, 0), featured_height=featured_height
         )
-        description.set_line_wrap(True)
-        description.set_ellipsize(Pango.EllipsizeMode.END)
-        description.set_lines(4)
-        description.set_justify(Gtk.Justification.CENTER)
-        description.set_halign(Gtk.Align.FILL)
-        description.set_valign(Gtk.Align.CENTER)
-        description.set_hexpand(True)
-        description.set_vexpand(True)
-        description.get_style_context().add_class("dim-label")
-        base_box.pack_start(description, True, True, 0)
-
-        # Widget margins contribute to preferred size, so subtract the vertical
-        # 14+14 px internal padding from the requested content height. The EventBox
-        # therefore continues to fit the exact three-row span calculated by Featured.
-        outer_height = int(featured_height) if featured_height > 0 else 180
-        content_height = max(1, outer_height - 28)
-        base_box.set_size_request(108, content_height)
-        event_box.set_size_request(128, outer_height)
-
-        base_box.show_all()
-        return event_box
+        if widget is None:
+            raise RuntimeError("Large Featured cards require the native Rust GUI implementation")
+        staging_grid.remove(widget)
+        return widget
 
     def _is_script_removable(self, item_info):
         """Check if a script item is installed and can be removed."""

@@ -15,3 +15,4 @@ gtk = { version = "0.18", features = ["v3_24"] }
 gdk = "0.18"
 gdk-pixbuf = "0.18"
 glib = "0.18"
+serde_json = "1"

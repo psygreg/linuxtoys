@@ -3,7 +3,7 @@
 import os
 
 from . import appstream_cache, get_icon_path, gui_rs
-from .gtk_common import Gtk, Pango
+from .gtk_common import Gtk
 
 
 class AppStreamExtensionsView(Gtk.ScrolledWindow):
@@ -27,8 +27,6 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
         self.content.set_margin_top(18)
         self.content.set_margin_bottom(18)
         self.add(self.content)
-        self._rows = {}
-        self._row_states = {}
         self.refresh()
 
     def set_source(self, source_info, extensions):
@@ -46,6 +44,7 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
                 jobs.setdefault(ref, record)
 
         keyed = []
+        specs = []
         for info in self.extensions:
             ref = str(info.get("flatpak_ref") or "").strip()
             if not ref:
@@ -53,48 +52,20 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
             state = "installed" if ref in installed else "available"
             record = jobs.get(ref)
             if record and record.get("status") in ("queued", "running"):
-                state = "removing" if record.get("action") == "extension_remove" else record["status"]
+                state = (
+                    "removing"
+                    if record.get("action") == "extension_remove"
+                    else record["status"]
+                )
             keyed.append((ref, info, state, record))
-
-        wanted = {ref for ref, *_rest in keyed}
-        for key in list(self._rows):
-            if key in wanted:
-                continue
-            row = self._rows.pop(key)
-            self._row_states.pop(key, None)
-            self.content.remove(row)
-            row.destroy()
-
-        new_items = []
-        for ref, info, state, record in keyed:
             spec = self._row_spec(ref, info, state)
-            signature = self._signature(spec, state)
-            row = self._rows.get(ref)
-            if row is None:
-                new_items.append((ref, info, state, record, spec, signature))
-            elif self._row_states.get(ref) != signature:
-                if not gui_rs.reconcile_list_row(row, spec):
-                    raise RuntimeError(f"Failed to reconcile extension row {ref}")
-                self._bind(row, info, state, record)
-                self._row_states[ref] = signature
+            spec["embedded"] = True
+            specs.append(spec)
 
-        if new_items:
-            rows = gui_rs.add_list_rows(self.content, [item[4] for item in new_items])
-            if len(rows) != len(new_items):
-                raise RuntimeError("Native extension row batch returned an incomplete result")
-            for row, (ref, info, state, record, _spec, signature) in zip(rows, new_items):
-                self._rows[ref] = row
-                self._row_states[ref] = signature
-                self._bind(row, info, state, record)
-
-        for position, (ref, *_rest) in enumerate(keyed):
-            self.content.reorder_child(self._rows[ref], position)
+        rows = gui_rs.reconcile_list_rows(self.content, specs)
+        for ref, info, state, record in keyed:
+            self._bind(rows[ref], info, state, record)
         self.show_all()
-
-    @staticmethod
-    def _signature(spec, state):
-        return (state, spec["secondary"], spec["status_icon"], spec["spinner"],
-                spec["action_kind"], spec["destructive_action"], spec["action_tooltip"])
 
     def _row_spec(self, ref, info, state):
         icon_value = str(info.get("icon") or "application-x-addon-symbolic")
@@ -134,19 +105,6 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
                 "destructive_action": destructive, "action_tooltip": tooltip}
 
     def _bind(self, row, info, state, record):
-        # These generic rows normally live directly in Queue/Library scrollers.
-        # Inside an app-page Gtk.Stack their label requisitions can instead make
-        # the row wider than the viewport. Make only this embedded projection
-        # explicitly shrinkable; keep the shared native row implementation intact.
-        for widget_name in ("linuxtoys-list-row-name", "linuxtoys-list-row-secondary"):
-            label = gui_rs.card_child(row, widget_name)
-            if isinstance(label, Gtk.Label):
-                label.set_ellipsize(Pango.EllipsizeMode.END)
-                label.set_single_line_mode(True)
-                label.set_hexpand(True)
-                label.set_halign(Gtk.Align.FILL)
-                label.set_xalign(0.0)
-
         action = gui_rs.card_child(row, "linuxtoys-list-row-action")
         if action is None:
             return

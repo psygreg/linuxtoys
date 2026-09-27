@@ -3,9 +3,9 @@ use pyo3::prelude::*;
 mod repo;
 mod appstream;
 mod popularity;
+mod featured;
 mod search;
 mod scripts;
-mod image;
 
 #[pymodule]
 fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -32,9 +32,13 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(popularity::native_rank_sections, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::flathub_metric, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::featured_weighted_sample, m)?)?;
+    m.add_function(wrap_pyfunction!(popularity::session_random_score, m)?)?;
+    m.add_function(wrap_pyfunction!(popularity::score_for_item, m)?)?;
+    m.add_function(wrap_pyfunction!(featured::featured_large_count, m)?)?;
+    m.add_function(wrap_pyfunction!(featured::featured_layout_plan, m)?)?;
+    m.add_function(wrap_pyfunction!(featured::app_page_featured_rank, m)?)?;
     m.add_function(wrap_pyfunction!(search::build_search_index, m)?)?;
     m.add_function(wrap_pyfunction!(search::search_index, m)?)?;
     m.add_function(wrap_pyfunction!(scripts::build_script_tree_index, m)?)?;
-    m.add_function(wrap_pyfunction!(image::render_category_watermark, m)?)?;
     Ok(())
 }

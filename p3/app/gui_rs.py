@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ctypes
 import os
+import json
 from pathlib import Path
 
 _LIB = None
@@ -18,6 +19,7 @@ class _ItemCardSpec(ctypes.Structure):
         ("removable", ctypes.c_uint8),
         ("checklist", ctypes.c_uint8),
         ("is_new", ctypes.c_uint8),
+        ("category", ctypes.c_uint8),
     ]
 
 
@@ -25,6 +27,18 @@ class _GridPosition(ctypes.Structure):
     _fields_ = [
         ("column", ctypes.c_int32),
         ("row", ctypes.c_int32),
+    ]
+
+
+class _FeaturedLargeCardSpec(ctypes.Structure):
+    _fields_ = [
+        ("name", ctypes.c_char_p),
+        ("description", ctypes.c_char_p),
+        ("icon_path", ctypes.c_char_p),
+        ("icon_name", ctypes.c_char_p),
+        ("badge_path", ctypes.c_char_p),
+        ("is_new", ctypes.c_uint8),
+        ("height", ctypes.c_int32),
     ]
 
 
@@ -45,6 +59,19 @@ class _AppPageHeaderSpec(ctypes.Structure):
     ]
 
 
+class _DeveloperLineSpec(ctypes.Structure):
+    _fields_ = [("developer", ctypes.c_char_p), ("badge_path", ctypes.c_char_p)]
+
+
+class _ActionButtonSpec(ctypes.Structure):
+    _fields_ = [("label", ctypes.c_char_p), ("icon_name", ctypes.c_char_p),
+                ("dropdown", ctypes.c_uint8), ("suggested", ctypes.c_uint8)]
+
+
+class _ScreenshotChromeSpec(ctypes.Structure):
+    _fields_ = [("previous_tooltip", ctypes.c_char_p), ("next_tooltip", ctypes.c_char_p)]
+
+
 class _ListRowSpec(ctypes.Structure):
     _fields_ = [
         ("key", ctypes.c_char_p),
@@ -59,6 +86,7 @@ class _ListRowSpec(ctypes.Structure):
         ("launch", ctypes.c_uint8),
         ("destructive_action", ctypes.c_uint8),
         ("action_kind", ctypes.c_uint8),
+        ("embedded", ctypes.c_uint8),
     ]
 
 
@@ -89,8 +117,12 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 7:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 7)")
+            if lib.lt_gui_abi_version() != 13:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 13)")
+            lib.lt_gui_flush_category_watermarks.argtypes = [
+                ctypes.c_void_p, ctypes.c_size_t,
+            ]
+            lib.lt_gui_flush_category_watermarks.restype = ctypes.c_size_t
             lib.lt_gui_flowbox_add_item_cards.argtypes = [
                 ctypes.c_void_p, ctypes.POINTER(_ItemCardSpec), ctypes.c_size_t,
             ]
@@ -102,6 +134,17 @@ def _load():
                 ctypes.c_size_t,
             ]
             lib.lt_gui_grid_attach_item_cards.restype = ctypes.c_size_t
+            lib.lt_gui_grid_attach_featured_large_card.argtypes = [
+                ctypes.c_void_p,
+                ctypes.POINTER(_FeaturedLargeCardSpec),
+                ctypes.c_int32,
+                ctypes.c_int32,
+            ]
+            lib.lt_gui_grid_attach_featured_large_card.restype = ctypes.c_bool
+            lib.lt_gui_populate_markdown_buffer.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+            lib.lt_gui_populate_markdown_buffer.restype = ctypes.c_bool
+            lib.lt_gui_populate_appstream_buffer.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+            lib.lt_gui_populate_appstream_buffer.restype = ctypes.c_bool
             lib.lt_gui_update_item_card.argtypes = [
                 ctypes.c_void_p, ctypes.POINTER(_ItemCardSpec),
             ]
@@ -119,14 +162,20 @@ def _load():
                 ctypes.c_uint8,
             ]
             lib.lt_gui_populate_app_page_header.restype = ctypes.c_bool
-            lib.lt_gui_box_add_list_rows.argtypes = [
-                ctypes.c_void_p, ctypes.POINTER(_ListRowSpec), ctypes.c_size_t,
+            lib.lt_gui_reconcile_list_rows.argtypes = [
+                ctypes.c_void_p,
+                ctypes.POINTER(_ListRowSpec),
+                ctypes.c_size_t,
+                ctypes.c_uint8,
+                ctypes.c_char_p,
             ]
-            lib.lt_gui_box_add_list_rows.restype = ctypes.c_size_t
-            lib.lt_gui_reconcile_list_row.argtypes = [
-                ctypes.c_void_p, ctypes.POINTER(_ListRowSpec),
-            ]
-            lib.lt_gui_reconcile_list_row.restype = ctypes.c_bool
+            lib.lt_gui_reconcile_list_rows.restype = ctypes.c_size_t
+            lib.lt_gui_add_app_page_developer_line.argtypes = [ctypes.c_void_p, ctypes.POINTER(_DeveloperLineSpec)]
+            lib.lt_gui_add_app_page_developer_line.restype = ctypes.c_bool
+            lib.lt_gui_add_app_page_action_button.argtypes = [ctypes.c_void_p, ctypes.POINTER(_ActionButtonSpec)]
+            lib.lt_gui_add_app_page_action_button.restype = ctypes.c_bool
+            lib.lt_gui_populate_screenshot_chrome.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(_ScreenshotChromeSpec)]
+            lib.lt_gui_populate_screenshot_chrome.restype = ctypes.c_bool
             _LIB = lib
             return lib
     return None
@@ -142,6 +191,16 @@ def _event_box_from_flowbox_child(child):
         return None
     get_child = getattr(child, "get_child", None)
     return get_child() if get_child is not None else None
+
+
+def flush_category_watermarks(root, max_count=0):
+    """Render pending native category watermarks below ``root``."""
+    lib = _load()
+    if lib is None or root is None:
+        return 0
+    return int(lib.lt_gui_flush_category_watermarks(
+        _pointer(root), max(0, int(max_count))
+    ))
 
 
 def card_child(card, name):
@@ -175,6 +234,7 @@ def _native_spec(spec):
         int(bool(spec.get("removable", False))),
         int(bool(spec.get("checklist", False))),
         int(bool(spec.get("is_new", False))),
+        int(bool(spec.get("category", False))),
     )
     return native, values
 
@@ -273,6 +333,38 @@ def attach_item_cards_grid(grid, specs, positions):
         raise RuntimeError(
             f"Native GTK grid batch could not recover card at {error.args[0]}"
         ) from error
+
+
+def attach_featured_large_card(grid, spec, position, height):
+    """Create one two-row Featured card natively and attach it to ``grid``."""
+    lib = _load()
+    if lib is None or grid is None:
+        return None
+
+    column, row = (int(position[0]), int(position[1]))
+    values = [
+        str(spec.get("name", "")).encode(),
+        str(spec.get("description", "") or "").encode(),
+        str(spec.get("icon_path", "") or "").encode(),
+        str(spec.get("icon_name", "") or "").encode(),
+        str(spec.get("badge_path", "") or "").encode(),
+    ]
+    native = _FeaturedLargeCardSpec(
+        *values, int(bool(spec.get("is_new", False))), int(height or 0),
+    )
+
+    before = set(grid.get_children())
+    if not lib.lt_gui_grid_attach_featured_large_card(
+        _pointer(grid), ctypes.byref(native), column, row
+    ):
+        return None
+
+    new_children = [child for child in grid.get_children() if child not in before]
+    if len(new_children) != 1:
+        raise RuntimeError(
+            f"Native Featured large-card attach produced {len(new_children)} new children"
+        )
+    return new_children[0]
 
 
 def update_item_card(card, spec):
@@ -394,16 +486,21 @@ def _native_list_row_spec(spec):
         int(bool(spec.get("launch", False))),
         int(bool(spec.get("destructive_action", False))),
         int(spec.get("action_kind", 0)),
+        int(bool(spec.get("embedded", False))),
     )
     return native, values
 
 
-def add_list_rows(container, specs):
-    """Batch-create queue/library rows in a Python-owned Gtk.Box."""
+def reconcile_list_rows(container, specs=(), state="content", empty_text=""):
+    """Reconcile a complete ordered native list in one gui-rs call."""
     lib = _load()
+    if lib is None or container is None:
+        raise RuntimeError("LinuxToys GUI Rust library is unavailable")
+
     specs = list(specs)
-    if lib is None or container is None or not specs:
-        return []
+    state_kind = {"content": 0, "loading": 1, "empty": 2}.get(state)
+    if state_kind is None:
+        raise ValueError(f"Unsupported native list state: {state}")
 
     encoded = []
     native_specs = []
@@ -412,28 +509,93 @@ def add_list_rows(container, specs):
         encoded.append(values)
         native_specs.append(native)
 
-    array_type = _ListRowSpec * len(native_specs)
-    native_array = array_type(*native_specs)
-    before = set(container.get_children())
-    created = lib.lt_gui_box_add_list_rows(
-        _pointer(container), native_array, len(native_specs)
-    )
-    if created != len(native_specs):
+    native_array = None
+    native_ptr = None
+    if native_specs:
+        array_type = _ListRowSpec * len(native_specs)
+        native_array = array_type(*native_specs)
+        native_ptr = native_array
+
+    empty_encoded = str(empty_text or "").encode("utf-8")
+    reconciled = int(lib.lt_gui_reconcile_list_rows(
+        _pointer(container),
+        native_ptr,
+        len(native_specs),
+        state_kind,
+        empty_encoded,
+    ))
+    if state_kind == 0 and reconciled != len(native_specs):
         raise RuntimeError(
-            f"Native GTK list batch created {created}/{len(native_specs)} rows"
+            f"Native GTK list reconciliation returned {reconciled}/{len(native_specs)} rows"
         )
-    rows = [child for child in container.get_children() if child not in before]
-    if len(rows) != created:
-        raise RuntimeError(
-            f"Native GTK list batch inserted {created} rows but Python found {len(rows)}"
-        )
+
+    if state_kind != 0:
+        return {}
+
+    rows = {}
+    prefix = "linuxtoys-list-row-"
+    for child in container.get_children():
+        name = child.get_name()
+        if name.startswith(prefix):
+            rows[name[len(prefix):]] = child
+
+    expected = {str(spec.get("key", "")) for spec in specs}
+    if set(rows) != expected:
+        raise RuntimeError("Native GTK list reconciliation returned an inconsistent row set")
     return rows
 
 
-def reconcile_list_row(row, spec):
-    """Update the mutable parts of an existing native list row in place."""
+def populate_markdown_buffer(buffer, text):
+    """Populate an existing Gtk.TextBuffer with native Markdown rendering."""
     lib = _load()
-    if lib is None or row is None:
+    if lib is None or buffer is None:
         return False
-    native, encoded = _native_list_row_spec(spec)
-    return bool(lib.lt_gui_reconcile_list_row(_pointer(row), ctypes.byref(native)))
+    encoded = str(text or "").encode("utf-8")
+    return bool(lib.lt_gui_populate_markdown_buffer(_pointer(buffer), encoded))
+
+
+def populate_appstream_buffer(buffer, blocks):
+    """Populate an existing Gtk.TextBuffer from preserved AppStream blocks."""
+    lib = _load()
+    if lib is None or buffer is None:
+        return False
+    encoded = json.dumps(blocks or [], ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    return bool(lib.lt_gui_populate_appstream_buffer(_pointer(buffer), encoded))
+
+
+def add_app_page_developer_line(infos_box, developer, badge_path=""):
+    lib = _load()
+    if lib is None or infos_box is None:
+        return False
+    values = [str(developer or "").encode(), str(badge_path or "").encode()]
+    spec = _DeveloperLineSpec(*values)
+    return bool(lib.lt_gui_add_app_page_developer_line(_pointer(infos_box), ctypes.byref(spec)))
+
+
+def add_app_page_action_button(controls, label, icon_name, *, dropdown=False, suggested=False):
+    lib = _load()
+    if lib is None or controls is None:
+        return None
+    values = [str(label or "").encode(), str(icon_name or "").encode()]
+    spec = _ActionButtonSpec(*values, int(bool(dropdown)), int(bool(suggested)))
+    before = set(controls.get_children())
+    if not lib.lt_gui_add_app_page_action_button(_pointer(controls), ctypes.byref(spec)):
+        return None
+    created = [w for w in controls.get_children() if w not in before]
+    return created[0] if len(created) == 1 else None
+
+
+def populate_screenshot_chrome(outer, stack, *, previous_tooltip, next_tooltip):
+    lib = _load()
+    if lib is None or outer is None or stack is None:
+        return None
+    values = [str(previous_tooltip or "").encode(), str(next_tooltip or "").encode()]
+    spec = _ScreenshotChromeSpec(*values)
+    if not lib.lt_gui_populate_screenshot_chrome(_pointer(outer), _pointer(stack), ctypes.byref(spec)):
+        return None
+    previous = card_child(outer, "linuxtoys-screenshot-previous")
+    next_button = card_child(outer, "linuxtoys-screenshot-next")
+    counter = card_child(outer, "linuxtoys-screenshot-counter")
+    if previous is None or next_button is None or counter is None:
+        return None
+    return {"previous": previous, "next": next_button, "counter": counter}

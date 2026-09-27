@@ -680,6 +680,7 @@ dependencies = [
  "glib",
  "gtk",
  "pyo3",
+ "serde_json",
 ]
 
 [[package]]

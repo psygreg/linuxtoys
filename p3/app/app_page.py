@@ -12,7 +12,7 @@ from urllib.error import HTTPError, URLError
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
 from .term_header import InfosHead
-from . import get_icon_path, appstream_cache, appstream_extensions, gui_rs
+from . import get_icon_path, appstream_cache, appstream_extensions, gui_rs, _catalog_rs
 from .lang_utils import detect_system_language
 
 
@@ -213,6 +213,13 @@ class AppPageView(Gtk.Box):
         grid = _WidthNeutralFeaturedGrid()
         grid.set_valign(Gtk.Align.START)
         grid.set_column_homogeneous(True)
+        # Large Featured cards span two rows. Without homogeneous grid rows, GTK
+        # is free to satisfy overlapping two-row height requests by distributing
+        # height unevenly between individual rows, so the exact same card can look
+        # taller or shorter depending on neighboring large-card placements. Keep
+        # every lower-grid row at one shared height; a large card then always owns
+        # exactly two identical rows plus the row spacing.
+        grid.set_row_homogeneous(True)
         grid.set_column_spacing(22)
         grid.set_row_spacing(18)
         box.pack_start(grid, False, False, 0)
@@ -385,11 +392,27 @@ class AppPageView(Gtk.Box):
         children = self._featured_fill_box.get_children()
         separator = children[0]
         label = children[1]
-        card_width, card_height = parent._get_featured_card_size()
+        card_width, fallback_card_height = parent._get_featured_card_size()
+
+        # App-page Featured has its own ordinary-card geometry. Once the measuring
+        # FlowBox has been allocated, use the height GTK actually gave those cards
+        # instead of the representative main-menu card height. This keeps a large
+        # card exactly two app-page rows tall.
+        measured_row_height = 0
+        for flow_child in self._featured_fill_flowbox.get_children():
+            try:
+                child = flow_child.get_child()
+                height = int((child or flow_child).get_allocated_height())
+            except (AttributeError, RuntimeError, TypeError):
+                height = 0
+            if height > 1:
+                measured_row_height = max(measured_row_height, height)
+
+        card_height = measured_row_height or int(fallback_card_height)
         fixed_height = (
             separator.get_preferred_height()[1]
             + label.get_preferred_height()[1]
-            + int(card_height)
+            + card_height
             + (self._featured_fill_box.get_spacing() * 3)
         )
 
@@ -419,19 +442,57 @@ class AppPageView(Gtk.Box):
         measuring_columns = self._featured_flow_columns is None
         columns = int(self._featured_flow_columns or max_columns)
         columns = max(1, min(max_columns, columns))
-        grid_rows = max(0, int(capacity["rows"]))
+        # calculate_featured_capacity() is shared with the main menu and therefore
+        # bases its row count on the main-menu representative card. Recalculate only
+        # the app-page lower-grid rows from the measured FlowBox row height.
+        available_grid_height = int(capacity.get("available_rows_height", 0))
+        grid_row_spacing = max(0, int(self._featured_fill_grid.get_row_spacing()))
+        if available_grid_height < card_height:
+            grid_rows = 0
+        else:
+            grid_rows = 1 + (
+                available_grid_height - card_height
+            ) // (card_height + grid_row_spacing)
+        grid_rows = max(0, int(grid_rows))
         rows = 1 + grid_rows
-        slot_count = rows * columns
 
-        # Use exactly the same large-card allowance as main-menu Featured.
+        # App-page Featured has two distinct layout regions:
+        #   1. the first FlowBox row, which is always ordinary cards and exists
+        #      primarily to measure the real number of columns;
+        #   2. the lower Grid, which is the only region allowed to contain large
+        #      two-row cards.
+        #
+        # Keep their capacities separate so the measuring row can never be
+        # interpreted as space available to a large card.
+        first_row_count = columns
+        grid_slot_count = grid_rows * columns
+
         eligible_count = len(eligible)
         large_count = parent._calculate_featured_large_count(
             grid_rows, columns, eligible_count
         )
-        count = min(eligible_count, max(0, slot_count - (2 * large_count)))
-        large_count = min(large_count, count)
-        count = min(eligible_count, max(0, slot_count - (2 * large_count)))
+
+        # A large card may only consume two rows in the lower Grid. Clamp the
+        # shared main-menu heuristic to the physical capacity of that region
+        # before converting Grid slots into an item count.
+        max_grid_large_count = max(0, grid_rows // 2) * columns
+        large_count = min(
+            large_count,
+            max_grid_large_count,
+            max(0, eligible_count - first_row_count),
+        )
+
+        # Every two-row large card consumes one additional Grid slot compared
+        # with an ordinary card.
+        grid_item_count = max(0, grid_slot_count - large_count)
+        count = min(
+            eligible_count,
+            first_row_count + grid_item_count,
+        )
+
         if measuring_columns:
+            # During the provisional measuring pass the FlowBox receives the
+            # maximum possible ordinary-card row and the lower Grid stays empty.
             count = min(eligible_count, max(count, max_columns))
 
         current_key = parent._featured_script_key(self.script_info)
@@ -482,40 +543,24 @@ class AppPageView(Gtk.Box):
             first_row_scripts = scripts[:columns]
             remaining_scripts = scripts[columns:]
 
-        localized_scripts = [
-            script for script in remaining_scripts
-            if script.get("description_localized", False)
-        ]
-        other_scripts = [
-            script for script in remaining_scripts
-            if not script.get("description_localized", False)
-        ]
-        random.shuffle(localized_scripts)
-        random.shuffle(other_scripts)
-
+        # App-page Featured keeps its unique two-stage layout: the first row is
+        # still a FlowBox and remains the sole authority for the real column count.
+        # Only the lower-grid assignment is planned in Rust. The app-page candidate
+        # selection above (Myket affinity first) is intentionally unchanged.
         large_count = min(
             0 if measuring_columns else large_count,
             len(remaining_scripts),
-            max(0, grid_rows // 3) * columns,
+            max(0, grid_rows // 2) * columns,
         )
-        if len(localized_scripts) >= large_count:
-            large_scripts = localized_scripts[:large_count]
-            normal_scripts = localized_scripts[large_count:] + other_scripts
-        else:
-            needed = large_count - len(localized_scripts)
-            large_scripts = localized_scripts + other_scripts[:needed]
-            normal_scripts = other_scripts[needed:]
-        random.shuffle(large_scripts)
-        random.shuffle(normal_scripts)
 
         prepared_widgets = []
-        occupied = set()
-        card_height = int(capacity.get("card_height", card_height))
-        row_spacing = int(capacity.get("row_spacing", 18))
-        large_height = (3 * card_height) + (2 * row_spacing)
+        # Keep the exact row height established by the app-page measuring FlowBox.
+        # Do not replace it with capacity["card_height"], which belongs to the main
+        # Featured geometry.
+        row_spacing = int(self._featured_fill_grid.get_row_spacing())
+        large_height = (2 * card_height) + row_spacing
 
         def finish_featured_widget(widget, script_info):
-            """Apply app-page Featured behavior after native or Python construction."""
             widget.set_tooltip_text(script_info.get("description") or None)
             widget.set_can_focus(True)
             widget.connect("key-press-event", parent._on_featured_card_key_press)
@@ -527,63 +572,65 @@ class AppPageView(Gtk.Box):
             prepared_widgets.append(widget)
             return widget
 
-        def prepare_large_widget(script_info):
-            # Large Featured cards keep their specialized Python construction.
-            widget = parent.create_item_widget(
-                script_info,
-                featured_large=True,
-                featured_height=large_height,
-            )
-            return finish_featured_widget(widget, script_info)
-
-        # The measuring first row is a FlowBox, so use the Stage 2/3 native batch
-        # path. Native cards are already parented to the FlowBox on return.
+        # Preserve the measuring FlowBox behavior exactly: before its first real
+        # allocation it receives max_columns ordinary cards and no lower-grid cards.
         first_row_widgets = parent.create_native_item_batch(
             self._featured_fill_flowbox, first_row_scripts
         )
         if first_row_widgets is None:
-            first_row_widgets = []
-            for script_info in first_row_scripts:
-                widget = parent.create_item_widget(script_info)
-                self._featured_fill_flowbox.add(widget)
-                first_row_widgets.append(widget)
-
+            raise RuntimeError("App-page Featured first row requires native GTK cards")
         for widget, script_info in zip(first_row_widgets, first_row_scripts):
             finish_featured_widget(widget, script_info)
 
-        large_positions = parent._choose_featured_large_positions(
-            grid_rows, columns, large_count
+        previous_large_positions = list(
+            getattr(parent, "_featured_large_positions", set())
         )
-        large_count = min(large_count, len(large_positions), len(large_scripts))
-        random.shuffle(large_positions)
-
-        for script_info, position in zip(large_scripts, large_positions):
-            column, row = position
-            occupied.update(parent._featured_occupied_cells(position))
-            self._featured_fill_grid.attach(
-                prepare_large_widget(script_info), column, row, 1, 3
-            )
-
-        free_cells = [
-            (column, row)
-            for row in range(grid_rows)
-            for column in range(columns)
-            if (column, row) not in occupied
+        candidate_flags = [
+            (bool(script.get("description_localized", False)), False)
+            for script in remaining_scripts
         ]
-        normal_grid_items = list(zip(normal_scripts, free_cells))
-        if normal_grid_items:
+        grid_plan = _catalog_rs.featured_layout_plan(
+            candidate_flags,
+            grid_rows,
+            columns,
+            large_count,
+            previous_large_positions,
+            random.getrandbits(64),
+        ) if remaining_scripts else []
+
+        large_entries = [
+            (remaining_scripts[index], (column, row))
+            for index, column, row, is_large in grid_plan
+            if is_large
+        ]
+        normal_entries = [
+            (remaining_scripts[index], (column, row))
+            for index, column, row, is_large in grid_plan
+            if not is_large
+        ]
+        parent._featured_large_positions = {position for _script, position in large_entries}
+        large_count = len(large_entries)
+
+        # Large Featured cards use the same two-row geometry as the main section.
+        for script_info, position in large_entries:
+            widget = parent.create_native_featured_large_widget(
+                self._featured_fill_grid,
+                script_info,
+                position,
+                featured_height=large_height,
+            )
+            if widget is None:
+                raise RuntimeError("App-page large Featured card creation failed")
+            finish_featured_widget(widget, script_info)
+
+        if normal_entries:
             normal_grid_widgets = parent.create_native_featured_grid_batch(
-                self._featured_fill_grid, normal_grid_items
+                self._featured_fill_grid, normal_entries
             )
             if normal_grid_widgets is None:
-                normal_grid_widgets = []
-                for script_info, (column, row) in normal_grid_items:
-                    widget = parent.create_item_widget(script_info)
-                    self._featured_fill_grid.attach(widget, column, row, 1, 1)
-                    normal_grid_widgets.append(widget)
-
+                raise RuntimeError("App-page Featured grid requires native GTK cards")
             for widget, (script_info, _position) in zip(
-                normal_grid_widgets, normal_grid_items
+                normal_grid_widgets, normal_entries
             ):
                 finish_featured_widget(widget, script_info)
 
@@ -876,55 +923,10 @@ class AppPageView(Gtk.Box):
         self._schedule_featured_fill()
 
     def _appstream_description_buffer(self, blocks):
-        """Build the AppStream description buffer while preserving its block styling."""
+        """Build the AppStream description buffer in native Rust/GTK."""
         buffer = Gtk.TextBuffer()
-        tag_base = buffer.create_tag("as-base", scale=1.10)
-        tag_lead = buffer.create_tag("as-lead", scale=1.20)
-        tag_list = buffer.create_tag("as-list", left_margin=18, indent=-12, scale=1.10)
-        tag_bold = buffer.create_tag("as-bold", weight=Pango.Weight.BOLD)
-        tag_italic = buffer.create_tag("as-italic", style=Pango.Style.ITALIC)
-        tag_code = buffer.create_tag("as-code", family="monospace")
-
-        def insert_spans(spans, base_tags=()):
-            for span in spans or ():
-                text = str(span.get("text", "") or "")
-                if not text:
-                    continue
-                tags = list(base_tags)
-                for style in span.get("styles", ()):
-                    if style == "bold":
-                        tags.append(tag_bold)
-                    elif style == "italic":
-                        tags.append(tag_italic)
-                    elif style == "code":
-                        tags.append(tag_code)
-                end = buffer.get_end_iter()
-                if tags:
-                    buffer.insert_with_tags(end, text, *tags)
-                else:
-                    buffer.insert(end, text)
-
-        first_paragraph = True
-        rendered_blocks = 0
-        for block in blocks or ():
-            block_type = block.get("type")
-            if block_type == "paragraph":
-                if rendered_blocks:
-                    buffer.insert(buffer.get_end_iter(), "\n\n")
-                insert_spans(block.get("spans"), (tag_lead,) if first_paragraph else (tag_base,))
-                first_paragraph = False
-                rendered_blocks += 1
-            elif block_type in ("unordered_list", "ordered_list"):
-                if rendered_blocks:
-                    buffer.insert(buffer.get_end_iter(), "\n\n")
-                items = block.get("items") or ()
-                for index, item in enumerate(items, 1):
-                    if index > 1:
-                        buffer.insert(buffer.get_end_iter(), "\n")
-                    prefix = f"{index}. " if block_type == "ordered_list" else "• "
-                    buffer.insert_with_tags(buffer.get_end_iter(), prefix, tag_list)
-                    insert_spans(item, (tag_list,))
-                rendered_blocks += 1
+        if not gui_rs.populate_appstream_buffer(buffer, blocks):
+            raise RuntimeError("Native AppStream description rendering failed")
         return buffer
 
     def _build_appstream_description(self, blocks):
@@ -1002,287 +1004,10 @@ class AppPageView(Gtk.Box):
         return view
 
     def _markdown_to_textbuffer(self, md_text):
-        """Render app-page Markdown directly into a Gtk.TextBuffer.
-
-        Based on the update-dialog renderer, with app-page-specific restrained
-        headings and recursive inline parsing so combinations such as
-        ``**text with `code`**`` retain both styles.
-        """
+        """Render app-page Markdown into a Gtk.TextBuffer in native Rust/GTK."""
         buffer = Gtk.TextBuffer()
-
-        tag_bold = buffer.create_tag("md-bold", weight=Pango.Weight.BOLD)
-        tag_italic = buffer.create_tag("md-italic", style=Pango.Style.ITALIC)
-        tag_code = buffer.create_tag("md-code", family="monospace")
-        tag_code_block = buffer.create_tag(
-            "md-code-block",
-            family="monospace",
-            left_margin=14,
-            right_margin=14,
-            pixels_above_lines=3,
-            pixels_below_lines=3,
-        )
-        tag_table_header = buffer.create_tag(
-            "md-table-header", family="monospace", weight=Pango.Weight.BOLD
-        )
-        tag_table = buffer.create_tag("md-table", family="monospace")
-        tag_strike = buffer.create_tag("md-strike", strikethrough=True)
-        tag_heading = buffer.create_tag(
-            "md-heading",
-            weight=Pango.Weight.BOLD,
-            scale=1.08,
-        )
-        # Give the first prose paragraph a little more visual weight without
-        # turning it into a heading. Block elements before it do not consume it.
-        tag_base = buffer.create_tag("md-base", scale=1.10)
-        tag_lead = buffer.create_tag("md-lead", scale=1.20)
-        tag_quote = buffer.create_tag(
-            "md-quote",
-            style=Pango.Style.ITALIC,
-            left_margin=18,
-            right_margin=8,
-        )
-        tag_list = buffer.create_tag("md-list", left_margin=18, indent=-12, scale=1.10)
-        tag_rule = buffer.create_tag("md-rule")
-
-        inline_pattern = re.compile(
-            r"(`[^`]+`)"
-            r"|(\[([^\]]+)\]\(([^)\s]+)(?:\s+[\"'][^\"']*[\"'])?\))"
-            r"|(\*\*([^*]+)\*\*)"
-            r"|(__([^_]+)__)"
-            r"|(~~([^~]+)~~)"
-            r"|(\*([^*\n]+)\*)"
-            r"|(?<!\w)_([^_\n]+)_(?!\w)"
-        )
-
-        def insert(value, *tags):
-            if not value:
-                return
-            end_iter = buffer.get_end_iter()
-            if tags:
-                buffer.insert_with_tags(end_iter, value, *tags)
-            else:
-                buffer.insert(end_iter, value)
-
-        link_count = 0
-
-        def insert_inline(value, base_tags=()):
-            nonlocal link_count
-            pos = 0
-            for match in inline_pattern.finditer(value):
-                insert(value[pos:match.start()], *base_tags)
-
-                if match.group(1):
-                    insert(match.group(1)[1:-1], *base_tags, tag_code)
-                elif match.group(2):
-                    label = match.group(3)
-                    url = match.group(4)
-                    link_count += 1
-                    tag_link = buffer.create_tag(
-                        f"md-link-{link_count}",
-                        underline=Pango.Underline.SINGLE,
-                    )
-                    tag_link._markdown_url = url
-                    insert_inline(label, (*base_tags, tag_link))
-                elif match.group(5):
-                    insert_inline(match.group(6), (*base_tags, tag_bold))
-                elif match.group(7):
-                    insert_inline(match.group(8), (*base_tags, tag_bold))
-                elif match.group(9):
-                    insert_inline(match.group(10), (*base_tags, tag_strike))
-                elif match.group(11):
-                    insert_inline(match.group(12), (*base_tags, tag_italic))
-                else:
-                    insert_inline(match.group(13), (*base_tags, tag_italic))
-
-                pos = match.end()
-
-            insert(value[pos:], *base_tags)
-
-        def split_table_row(value):
-            """Split a simple GFM pipe row while preserving escaped pipes."""
-            value = value.strip()
-            if value.startswith("|"):
-                value = value[1:]
-            if value.endswith("|") and not value.endswith(r"\|"):
-                value = value[:-1]
-
-            cells = []
-            current = []
-            escaped = False
-            for char in value:
-                if escaped:
-                    current.append(char)
-                    escaped = False
-                elif char == "\\":
-                    escaped = True
-                    current.append(char)
-                elif char == "|":
-                    cells.append("".join(current).strip())
-                    current = []
-                else:
-                    current.append(char)
-            cells.append("".join(current).strip())
-            return cells
-
-        def table_separator(value):
-            cells = split_table_row(value)
-            if not cells:
-                return None
-            aligns = []
-            for cell in cells:
-                compact = cell.replace(" ", "")
-                if not re.fullmatch(r":?-{3,}:?", compact):
-                    return None
-                if compact.startswith(":") and compact.endswith(":"):
-                    aligns.append("center")
-                elif compact.endswith(":"):
-                    aligns.append("right")
-                else:
-                    aligns.append("left")
-            return aligns
-
-        def render_table(rows, aligns):
-            # TextBuffer cannot host a real Gtk.Grid inline, so render tables as
-            # a compact monospace grid. Column widths are derived from source
-            # text and capped so pathological cells do not explode page width.
-            column_count = max(len(row) for row in rows)
-            normalized = [row + [""] * (column_count - len(row)) for row in rows]
-            widths = []
-            for col in range(column_count):
-                widths.append(min(40, max(len(row[col]) for row in normalized)))
-
-            for row_index, row in enumerate(normalized):
-                pieces = []
-                for col, cell in enumerate(row):
-                    width = widths[col]
-                    align = aligns[col] if col < len(aligns) else "left"
-                    plain = re.sub(r"[`*_~]", "", cell)
-                    if len(plain) > width:
-                        plain = plain[:max(1, width - 1)] + "…"
-                    if align == "right":
-                        pieces.append(plain.rjust(width))
-                    elif align == "center":
-                        pieces.append(plain.center(width))
-                    else:
-                        pieces.append(plain.ljust(width))
-                insert(" | ".join(pieces), tag_table_header if row_index == 0 else tag_table)
-
-                # Keep the header visually separated from the body. Because both
-                # header and body use the same monospace metrics, the columns stay
-                # aligned even though the header is bold.
-                if row_index == 0:
-                    insert("\n", tag_table)
-                    separators = []
-                    for col, width in enumerate(widths):
-                        align = aligns[col] if col < len(aligns) else "left"
-                        if align == "center" and width >= 2:
-                            separators.append(":" + "-" * (width - 2) + ":")
-                        elif align == "right" and width >= 1:
-                            separators.append("-" * (width - 1) + ":")
-                        elif align == "left" and col < len(aligns) and aligns[col] == "left" and width >= 1:
-                            separators.append("-" * width)
-                        else:
-                            separators.append("-" * width)
-                    insert("-+-".join(separators), tag_table)
-
-                if row_index < len(normalized) - 1:
-                    insert("\n")
-
-        lines = str(md_text or "").splitlines()
-        index = 0
-        in_fence = False
-        fence_char = ""
-        fence_len = 0
-        code_lines = []
-        lead_started = False
-        lead_finished = False
-
-        while index < len(lines):
-            raw_line = lines[index]
-            line = raw_line.rstrip()
-
-            fence = re.match(r"^\s{0,3}(`{3,}|~{3,})(.*)$", line)
-            if in_fence:
-                closing = re.match(r"^\s{0,3}([`~]{3,})\s*$", line)
-                if closing and closing.group(1)[0] == fence_char and len(closing.group(1)) >= fence_len:
-                    insert("\n".join(code_lines), tag_code_block)
-                    code_lines = []
-                    in_fence = False
-                    if index < len(lines) - 1:
-                        insert("\n")
-                else:
-                    code_lines.append(raw_line)
-                index += 1
-                continue
-
-            if fence:
-                in_fence = True
-                fence_char = fence.group(1)[0]
-                fence_len = len(fence.group(1))
-                code_lines = []
-                index += 1
-                continue
-
-            # A GFM table starts with a normal row followed immediately by a
-            # delimiter row such as | --- | :---: | ---: |.
-            if "|" in line and index + 1 < len(lines):
-                aligns = table_separator(lines[index + 1])
-                if aligns is not None:
-                    rows = [split_table_row(line)]
-                    index += 2
-                    while index < len(lines) and "|" in lines[index] and lines[index].strip():
-                        rows.append(split_table_row(lines[index]))
-                        index += 1
-                    render_table(rows, aligns)
-                    if index < len(lines):
-                        insert("\n")
-                    continue
-
-            heading = re.match(r"^\s*(#{1,6})\s+(.+?)\s*#*\s*$", line)
-            unordered = re.match(r"^(\s*)[-+*]\s+(.+)$", line)
-            ordered = re.match(r"^(\s*)(\d+)[.)]\s+(.+)$", line)
-            quote = re.match(r"^\s*>\s?(.*)$", line)
-
-            is_rule = bool(re.match(r"^\s{0,3}([-*_])(?:\s*\1){2,}\s*$", line))
-            is_block = bool(heading or unordered or ordered or quote or is_rule)
-
-            # The lead style belongs to the first ordinary prose paragraph. A
-            # heading/list/etc. before it is ignored; once prose has started, a
-            # blank line or another block closes the lead paragraph.
-            if lead_started and not lead_finished and (not line.strip() or is_block):
-                lead_finished = True
-
-            if is_rule:
-                insert("────────────────────────", tag_rule)
-            elif heading:
-                insert_inline(heading.group(2), (tag_heading,))
-            elif unordered:
-                depth = min(len(unordered.group(1).expandtabs(4)) // 2, 4)
-                prefix = f"{'    ' * depth}• "
-                insert(prefix, tag_list)
-                insert_inline(unordered.group(2), (tag_list,))
-            elif ordered:
-                depth = min(len(ordered.group(1).expandtabs(4)) // 2, 4)
-                prefix = f"{'    ' * depth}{ordered.group(2)}. "
-                insert(prefix, tag_list)
-                insert_inline(ordered.group(3), (tag_list,))
-            elif quote:
-                insert_inline(quote.group(1), (tag_quote,))
-            elif line.strip():
-                if not lead_started:
-                    lead_started = True
-                insert_inline(line, (tag_lead,) if not lead_finished else (tag_base,))
-            else:
-                insert_inline(line)
-
-            if index < len(lines) - 1:
-                insert("\n")
-            index += 1
-
-        # Unclosed fences remain useful/readable rather than disappearing.
-        if in_fence:
-            insert("\n".join(code_lines), tag_code_block)
-
+        if not gui_rs.populate_markdown_buffer(buffer, md_text):
+            raise RuntimeError("Native Markdown rendering failed")
         return buffer
 
     def _schedule_markdown_view_height_fit(self, view, *_args):
@@ -1336,7 +1061,13 @@ class AppPageView(Gtk.Box):
             iterator = iterator[-1]
 
         for tag in iterator.get_tags():
-            url = getattr(tag, "_markdown_url", None)
+            name = str(tag.get_property("name") or "")
+            if not name.startswith("md-link-"):
+                continue
+            try:
+                url = bytes.fromhex(name[len("md-link-"):]).decode("utf-8")
+            except (ValueError, UnicodeDecodeError):
+                continue
             if url:
                 try:
                     Gtk.show_uri_on_window(self.parent, url, Gdk.CURRENT_TIME)
@@ -1457,26 +1188,23 @@ class AppPageView(Gtk.Box):
             )
 
         if homepage_url:
-            homepage_button = Gtk.Button()
-            self._set_action_button_content(
-                homepage_button,
-                self.translations.get("app_page_homepage", " Website "),
+            homepage_button = gui_rs.add_app_page_action_button(
+                controls, self.translations.get("app_page_homepage", " Website "),
                 "web-browser-symbolic",
             )
+            if homepage_button is None:
+                raise RuntimeError("Native homepage action construction failed")
             homepage_button.connect("clicked", self._open_url, homepage_url)
-            controls.pack_start(homepage_button, False, False, 0)
 
         if donate_url:
-            donate_button = Gtk.Button()
-            self._set_action_button_content(
-                donate_button,
-                self.translations.get("app_page_donate", " Donate "),
+            donate_button = gui_rs.add_app_page_action_button(
+                controls, self.translations.get("app_page_donate", " Donate "),
                 "emblem-favorite-symbolic",
+                suggested=not purchase_url and not purchase_options and not subscription_options,
             )
-            if not purchase_url and not purchase_options and not subscription_options:
-                donate_button.get_style_context().add_class("suggested-action")
+            if donate_button is None:
+                raise RuntimeError("Native donate action construction failed")
             donate_button.connect("clicked", self._open_url, donate_url)
-            controls.pack_start(donate_button, False, False, 0)
 
         # Match the old repository/rating row visibility behavior.
         if is_appstream and not str(self.script_info.get("repo", "") or "").strip():
@@ -1619,57 +1347,29 @@ class AppPageView(Gtk.Box):
         if not developer:
             return
 
-        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        row.set_halign(Gtk.Align.START)
-        row.set_margin_bottom(5)
-
-        label = Gtk.Label()
-        label.set_markup(
-            f'<span size="small" weight="bold">{GLib.markup_escape_text(developer)}</span>'
-        )
-        label.set_halign(Gtk.Align.START)
-        label.set_selectable(False)
-        label.set_can_focus(False)
-        row.pack_start(label, False, False, 0)
-
         badge_path = ""
         if self.script_info.get("is_official", False):
-            badge_path = get_icon_path("ltverified.svg")
+            badge_path = get_icon_path("ltverified.svg") or ""
         elif self.script_info.get("is_verified", False):
-            badge_path = get_icon_path("verified.svg")
+            badge_path = get_icon_path("verified.svg") or ""
         elif self.script_info.get("is_appstream_entry", False):
             distro_badge = str(self.script_info.get("native_distro_badge", "") or "")
             appstream_badge = str(self.script_info.get("appstream_badge", "") or "")
             if distro_badge:
-                badge_path = get_icon_path(distro_badge)
+                badge_path = get_icon_path(distro_badge) or ""
             elif appstream_badge:
-                badge_path = get_icon_path(appstream_badge)
+                badge_path = get_icon_path(appstream_badge) or ""
         elif self.script_info.get("is_repo_entry", False):
-            badge_path = get_icon_path("distros/linuxtoys.svg")
-        elif (
-            self.script_info.get("is_script", False)
-            and not self.script_info.get("is_subcategory", False)
-            and ".local/linuxtoys/scripts"
-            not in str(self.script_info.get("path", ""))
-        ):
-            badge_path = get_icon_path("distros/linuxtoys.svg")
+            badge_path = get_icon_path("distros/linuxtoys.svg") or ""
+        elif (self.script_info.get("is_script", False)
+              and not self.script_info.get("is_subcategory", False)
+              and ".local/linuxtoys/scripts" not in str(self.script_info.get("path", ""))):
+            badge_path = get_icon_path("distros/linuxtoys.svg") or ""
 
-        if badge_path and os.path.exists(badge_path):
-            try:
-                badge_size = 16
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                    badge_path, badge_size, badge_size, True
-                )
-                badge = Gtk.Image.new_from_pixbuf(pixbuf)
-                row.pack_start(badge, False, False, 0)
-            except Exception:
-                pass
-
-        self.header.vbox_infos.pack_start(row, False, False, 0)
-
-        # InfosHead builds the name first, followed by the description/repository.
-        # Reorder the developer row directly below the application name.
-        self.header.vbox_infos.reorder_child(row, 1)
+        if badge_path and not os.path.exists(badge_path):
+            badge_path = ""
+        if not gui_rs.add_app_page_developer_line(self.header.vbox_infos, developer, badge_path):
+            raise RuntimeError("Native app-page developer line construction failed")
 
 
     def _format_price(self, option):
@@ -2115,23 +1815,9 @@ class AppPageView(Gtk.Box):
 
     def _build_screenshot_viewer(self, screenshots):
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
 
-        previous_button = Gtk.Button.new_from_icon_name(
-            "go-previous-symbolic", Gtk.IconSize.BUTTON
-        )
-        next_button = Gtk.Button.new_from_icon_name(
-            "go-next-symbolic", Gtk.IconSize.BUTTON
-        )
-        previous_button.set_tooltip_text(
-            self.translations.get("app_page_previous_screenshot", "Previous screenshot")
-        )
-        next_button.set_tooltip_text(
-            self.translations.get("app_page_next_screenshot", "Next screenshot")
-        )
-        previous_button.connect("clicked", self._on_screenshot_nav_clicked, -1)
-        next_button.connect("clicked", self._on_screenshot_nav_clicked, 1)
-
+        # The width-neutral stack remains a Python policy widget; Rust owns the
+        # repetitive navigation/counter chrome around it.
         self.screenshot_stack = _WidthNeutralStack()
         self.screenshot_stack.set_hexpand(True)
         self.screenshot_stack.set_transition_duration(220)
@@ -2168,15 +1854,23 @@ class AppPageView(Gtk.Box):
 
         self._screenshot_count = valid_count
         self.screenshot_stack.set_visible_child_name("shot_0")
-        row.pack_start(previous_button, False, False, 0)
-        row.pack_start(self.screenshot_stack, True, True, 0)
-        row.pack_start(next_button, False, False, 0)
-        outer.pack_start(row, False, False, 0)
-
-        self.screenshot_counter = Gtk.Label()
-        self.screenshot_counter.set_halign(Gtk.Align.CENTER)
+        chrome = gui_rs.populate_screenshot_chrome(
+            outer, self.screenshot_stack,
+            previous_tooltip=self.translations.get(
+                "app_page_previous_screenshot", "Previous screenshot"
+            ),
+            next_tooltip=self.translations.get(
+                "app_page_next_screenshot", "Next screenshot"
+            ),
+        )
+        if chrome is None:
+            raise RuntimeError("Native screenshot chrome construction failed")
+        previous_button = chrome["previous"]
+        next_button = chrome["next"]
+        self.screenshot_counter = chrome["counter"]
+        previous_button.connect("clicked", self._on_screenshot_nav_clicked, -1)
+        next_button.connect("clicked", self._on_screenshot_nav_clicked, 1)
         self._update_screenshot_counter()
-        outer.pack_start(self.screenshot_counter, False, False, 0)
 
         if valid_count == 1:
             previous_button.set_sensitive(False)

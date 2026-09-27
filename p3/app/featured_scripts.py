@@ -407,16 +407,11 @@ class FeaturedCtl:
     @staticmethod
     def _calculate_featured_large_count(rows, columns, eligible_count):
         """Return the large-card allowance shared by main-menu and app-page Featured."""
-        rows = max(0, int(rows or 0))
-        columns = max(0, int(columns or 0))
-        eligible_count = max(0, int(eligible_count or 0))
-        if rows >= 9:
-            max_large_cards = max(3, columns)
-        else:
-            max_large_cards = min(3, rows // 3)
-        if rows > 6:
-            max_large_cards += columns // 2
-        return min(max_large_cards, eligible_count)
+        return int(_catalog_rs.featured_large_count(
+            int(rows or 0),
+            int(columns or 0),
+            max(0, int(eligible_count or 0)),
+        ))
 
     def _calculate_random_scripts_count(self):
         """Calculate Featured geometry and the number of actual app cards shown."""
@@ -475,21 +470,21 @@ class FeaturedCtl:
             self._featured_layout_metrics = None
             return 0
 
-        # A large card occupies three normal grid cells, so every one reduces the
-        # number of distinct apps that fit by two while preserving exactly the
+        # A large card occupies two normal grid cells, so every one reduces the
+        # number of distinct apps that fit by one while preserving exactly the
         # same overall Featured height and column count. The allowance itself is
         # shared with app-page Featured.
         large_count = self._calculate_featured_large_count(
             rows, columns, eligible_count
         )
         slot_count = rows * columns
-        item_capacity = max(0, slot_count - (2 * large_count))
+        item_capacity = max(0, slot_count - large_count)
         item_count = min(eligible_count, item_capacity)
         large_count = min(large_count, item_count)
 
         # If a very small eligible pool forced large_count down, reclaim the slots
-        # that no longer need to be reserved by a three-row card.
-        item_capacity = max(0, slot_count - (2 * large_count))
+        # that no longer need to be reserved by a two-row card.
+        item_capacity = max(0, slot_count - large_count)
         item_count = min(eligible_count, item_capacity)
 
         self._featured_layout_metrics = {
@@ -534,11 +529,10 @@ class FeaturedCtl:
     @staticmethod
     def _featured_popularity_weight(script):
         """Return a bounded 1..2 popularity multiplier for Featured sampling."""
-        try:
-            score = popularity.score_for_item(script)
-        except Exception:
-            score = 0
-        return 1.0 + (max(0, min(popularity.SCORE_MAX, int(score))) / popularity.SCORE_MAX)
+        score = popularity.score_for_item(script)
+        return 1.0 + (
+            max(0, min(popularity.SCORE_MAX, score)) / popularity.SCORE_MAX
+        )
 
     @classmethod
     def _weighted_featured_sample(cls, candidates, count, extra_weight=None):
@@ -813,8 +807,10 @@ class FeaturedCtl:
 
         count = min(int(count), len(eligible))
 
-        def recommendation_key(script):
-            affinity = category_affinity.affinity(category, script.get("category"))
+        # catalog-rs now owns both Myket affinity calculation and ranking.
+        # Python only supplies candidate metadata plus the existing popularity score.
+        ranking_inputs = []
+        for script in eligible:
             try:
                 review = float(script.get("review_subscore"))
             except (TypeError, ValueError):
@@ -822,22 +818,50 @@ class FeaturedCtl:
                     review = float(script.get("review_rating")) * 10.0
                 except (TypeError, ValueError):
                     review = 0.0
-            try:
-                pop = popularity.score_for_item(script)
-            except Exception:
-                pop = 0
-            # Affinity is intentionally first: app-page Featured is a related-app
-            # surface, not another popularity chart. The minimum review threshold
-            # has already been enforced by _eligible_featured_scripts().
-            return (-affinity, -review, -pop, random.random())
+            if popularity._is_flatpak_appstream(script):
+                popularity_kind = 1
+            elif popularity._is_native_appstream(script):
+                popularity_kind = 2
+            elif popularity._is_curated_or_linuxtoys_script(script):
+                popularity_kind = 3
+            else:
+                popularity_kind = 0
 
-        eligible.sort(key=recommendation_key)
-        return self._materialize_featured_selection(eligible[:count])
+            def optional_int(name):
+                value = script.get(name)
+                try:
+                    return int(value)
+                except (TypeError, ValueError):
+                    return None
+
+            ranking_inputs.append((
+                str(script.get("category") or ""),
+                review,
+                str(popularity._session_key(script)),
+                bool(popularity.is_known_popular(script)),
+                popularity_kind,
+                optional_int("_category_popularity_score"),
+                optional_int("_category_native_score"),
+            ))
+
+        ranked_indices = _catalog_rs.app_page_featured_rank(
+            category,
+            ranking_inputs,
+            count,
+            random.getrandbits(64),
+            os.path.join(os.path.dirname(__file__), "myket_affinity.json"),
+        )
+        selected = [
+            eligible[index]
+            for index in ranked_indices
+            if 0 <= index < len(eligible)
+        ]
+        return self._materialize_featured_selection(selected)
 
 
     def _choose_featured_large_positions(self, rows, columns, count):
         """Pick moved large spans while minimizing ordinary-card replacement."""
-        if count <= 0 or rows < 3 or columns <= 0:
+        if count <= 0 or rows < 2 or columns <= 0:
             self._featured_large_positions = set()
             return []
 
@@ -845,7 +869,7 @@ class FeaturedCtl:
         all_positions = [
             (column, row)
             for column in range(columns)
-            for row in range(rows - 2)
+            for row in range(rows - 1)
         ]
 
         def find_layout(candidates):
@@ -856,7 +880,7 @@ class FeaturedCtl:
                 column, row = position
                 return any(
                     column == other_column
-                    and not (row + 2 < other_row or other_row + 2 < row)
+                    and not (row + 1 < other_row or other_row + 1 < row)
                     for other_column, other_row in chosen
                 )
 
@@ -916,7 +940,7 @@ class FeaturedCtl:
     @staticmethod
     def _featured_occupied_cells(position):
         column, row = position
-        return {(column, row + offset) for offset in range(3)}
+        return {(column, row + offset) for offset in range(2)}
 
     def _clear_random_scripts(self):
         """Remove every currently displayed featured card."""
@@ -999,33 +1023,37 @@ class FeaturedCtl:
         previous_large_positions = set(
             getattr(self, "_featured_large_positions", set())
         )
-        large_positions = self._choose_featured_large_positions(
-            rows, columns, large_count
+
+        candidate_flags = [
+            (
+                bool(script.get("description_localized", False)),
+                self._is_linuxtoys_curated_featured(script),
+            )
+            for script in scripts
+        ]
+        plan = _catalog_rs.featured_layout_plan(
+            candidate_flags,
+            rows,
+            columns,
+            large_count,
+            list(previous_large_positions),
+            random.getrandbits(64),
         )
-        large_count = min(large_count, len(large_positions))
 
-        localized_scripts = [
-            script for script in scripts
-            if script.get("description_localized", False)
+        large_entries = [
+            (scripts[index], (column, row))
+            for index, column, row, is_large in plan
+            if is_large
         ]
-        other_scripts = [
-            script for script in scripts
-            if not script.get("description_localized", False)
+        normal_entries = [
+            (scripts[index], (column, row))
+            for index, column, row, is_large in plan
+            if not is_large
         ]
-        random.shuffle(localized_scripts)
-        random.shuffle(other_scripts)
-
-        if len(localized_scripts) >= large_count:
-            large_scripts = localized_scripts[:large_count]
-            normal_scripts = localized_scripts[large_count:] + other_scripts
-        else:
-            needed = large_count - len(localized_scripts)
-            large_scripts = localized_scripts + other_scripts[:needed]
-            normal_scripts = other_scripts[needed:]
-
-        random.shuffle(large_scripts)
-        random.shuffle(normal_scripts)
-        random.shuffle(large_positions)
+        large_scripts = [script for script, _position in large_entries]
+        large_positions = [position for _script, position in large_entries]
+        large_count = len(large_positions)
+        self._featured_large_positions = set(large_positions)
 
         occupied = set()
         for position in large_positions:
@@ -1035,7 +1063,7 @@ class FeaturedCtl:
         for position in previous_large_positions:
             previous_occupied.update(self._featured_occupied_cells(position))
 
-        large_height = (3 * card_height) + (2 * row_spacing)
+        large_height = (2 * card_height) + row_spacing
 
         def prepare_widget(script_info, *, large=False):
             widget = self.create_item_widget(
@@ -1075,20 +1103,31 @@ class FeaturedCtl:
         # Large cards are intentionally cheap structural churn. We do not try to
         # preserve/reparent them; the placement algorithm instead minimizes how many
         # ordinary cells have to be sacrificed when the large spans move.
-        for script_info, position in zip(large_scripts, large_positions):
-            column, row = position
-            widget = prepare_widget(script_info, large=True)
-            self.random_scripts_flowbox.attach(widget, column, row, 1, 3)
-
-        free_cells = [
-            (column, row)
-            for row in range(rows)
-            for column in range(columns)
-            if (column, row) not in occupied
-        ]
+        for script_info, position in large_entries:
+            widget = self.create_native_featured_large_widget(
+                self.random_scripts_flowbox,
+                script_info,
+                position,
+                featured_height=large_height,
+            )
+            if widget is None:
+                column, row = position
+                widget = prepare_widget(script_info, large=True)
+                self.random_scripts_flowbox.attach(widget, column, row, 1, 2)
+            else:
+                widget._featured_grid_large = True
+                widget.set_tooltip_text(script_info.get("description", "") or None)
+                widget.set_can_focus(True)
+                widget.connect("key-press-event", self._on_featured_card_key_press)
+                widget.add_events(
+                    Gdk.EventMask.ENTER_NOTIFY_MASK
+                    | Gdk.EventMask.LEAVE_NOTIFY_MASK
+                )
+                widget.connect("enter-notify-event", self._on_featured_card_enter)
+                widget.connect("leave-notify-event", self._on_featured_card_leave)
 
         new_normals = []
-        for script_info, position in zip(normal_scripts, free_cells):
+        for script_info, position in normal_entries:
             widget = reusable_normals.pop(position, None)
             if widget is not None:
                 self.update_featured_normal_widget(widget, script_info)
