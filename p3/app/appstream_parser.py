@@ -42,6 +42,7 @@ APPSTREAM_SOURCE_PREFERENCE = {
     "default": "flatpak",
     "apps": {
         "org.kde.ghostwriter": {"all": "native"},
+        "com.helix_editor.Helix": {"all": "native"}
     },
 }
 

@@ -1561,8 +1561,22 @@ class AppPageView(Gtk.Box):
         self._selected_install_info = entry
         if self._source_button is not None:
             self._set_source_button_content(self._source_button, entry)
+
+        # A source change may reparent _content_scroller between the bare body and
+        # a Details/Extensions Gtk.Stack. Do not let Featured keep geometry measured
+        # against the previous body hierarchy while GTK is reallocating the scroller.
+        if self._featured_fill_box is not None:
+            self._featured_fill_box.hide()
+        self._clear_featured_fill()
+        self._featured_fill_signature = None
+
         self._sync_extensions_tabs()
         self.refresh_install_state()
+
+        # Re-measure only after the new body hierarchy has been attached and GTK has
+        # had an idle turn to allocate the persistent content scroller in its new
+        # parent. _schedule_featured_fill adds the normal settling debounce itself.
+        GLib.idle_add(self._schedule_featured_fill)
 
     def _sync_extensions_tabs(self):
         """Show Details/Extensions only when the selected Flatpak source has addons."""
