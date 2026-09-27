@@ -1569,9 +1569,14 @@ class AppPageView(Gtk.Box):
         if self._body_holder is None:
             return
         extensions = appstream_cache.get_flatpak_extensions(self._selected_install_info)
-        old_stack = self._body_stack
-        if old_stack is not None and self._content_scroller.get_parent() is old_stack:
-            old_stack.remove(self._content_scroller)
+        # _content_scroller is persistent across source changes. Detach it from
+        # whichever temporary body container currently owns it before destroying
+        # the old body hierarchy; otherwise the no-extensions layout destroys the
+        # scroller itself and the next source selection reuses an invalid widget.
+        content_parent = self._content_scroller.get_parent()
+        if content_parent is not None:
+            content_parent.remove(self._content_scroller)
+
         for child in list(self._body_holder.get_children()):
             self._body_holder.remove(child)
             child.destroy()
