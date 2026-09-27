@@ -1,6 +1,6 @@
 from .gtk_common import Gdk, Gtk, GLib
 from .window_items import ItemWidgetFactory
-from .lang_utils import escape_for_markup
+from . import gui_rs
 
 class SearchCtl:
     def _create_search_ui(self):
@@ -134,43 +134,6 @@ class SearchCtl:
             return True
         return False
 
-    def _calculate_search_results_columns(self, num_scripts):
-        """
-        Calculate the optimal number of columns for search results based on available width and script count.
-        
-        Args:
-            num_scripts: Number of scripts to display
-            
-        Returns:
-            int: Number of columns (1-5)
-        """
-        # Get available width from the search view scrolled window
-        if not self.search_view:
-            return 2
-        
-        available_width = self.search_view.get_allocated_width()
-        if available_width <= 1:  # Not yet allocated
-            return 2
-        
-        # Item width is 128px + column spacing is 16px = 144px per column
-        # Also account for flowbox margins (32px left + 32px right)
-        item_with_spacing_width = 128 + 16
-        flowbox_margins = 32 + 32
-        usable_width = available_width - flowbox_margins
-        
-        # Calculate how many columns can fit
-        columns_by_width = max(1, usable_width // item_with_spacing_width)
-        
-        # Calculate how many columns we actually need based on scripts
-        # Aim for roughly square layouts: don't waste rows
-        columns_by_count = min(num_scripts, 5)  # Cap at 5 columns max
-        
-        # Use the minimum of available width and needed columns, but at least 1
-        result = min(columns_by_width, columns_by_count)
-        
-        # Cap at 5 columns maximum and ensure at least 1
-        return max(1, min(5, result))
-
     def _smart_search_categories(self):
         """Yield every parser-backed category currently available to the UI."""
         seen = set()
@@ -266,14 +229,11 @@ class SearchCtl:
                 flowbox.unselect_all()
 
     def _display_search_results(self):
-        """Display grouped search results with viewport-driven lazy materialization."""
+        """Display grouped search results with native GTK presentation."""
         self.search_active = True
         self._search_result_flowboxes = []
         generation = getattr(self, "_search_population_generation", 0) + 1
         self._search_population_generation = generation
-
-        for child in self.search_flowbox.get_children():
-            self.search_flowbox.remove(child)
 
         entering_search = self.main_stack.get_visible_child_name() != "search"
         self.main_stack.set_visible_child_name("search")
@@ -285,14 +245,12 @@ class SearchCtl:
         def begin_population():
             if getattr(self, "_search_population_generation", None) != generation:
                 return False
-
-            results_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-            results_container.set_margin_top(8)
-            results_container.set_margin_bottom(4)
+            if not gui_rs.begin_search_results(self.search_flowbox):
+                raise RuntimeError("Native GTK search results surface is unavailable")
 
             population_queue = [
-                (group, result)
-                for group in self.search_results
+                (group_index, result)
+                for group_index, group in enumerate(self.search_results)
                 for result in group.get("scripts", [])
             ]
             group_flowboxes = {}
@@ -303,55 +261,39 @@ class SearchCtl:
                 return (getattr(self, "_search_population_generation", None) == generation
                         and getattr(self, "_search_lazy_state", None) is state)
 
-            def ensure_group(group):
-                key = id(group)
-                if key in group_flowboxes:
-                    return group_flowboxes[key]
-                if group.get("show_header", True):
-                    header = self._create_search_category_header(
-                        group.get("category_name", "Other"))
-                    results_container.pack_start(header, False, False, 0)
-                    header.show()
-                fb = Gtk.FlowBox()
-                fb.set_valign(Gtk.Align.START)
-                fb.set_max_children_per_line(
-                    self._calculate_search_results_columns(len(group.get("scripts", []))))
-                fb.set_activate_on_single_click(False)
-                fb.set_selection_mode(Gtk.SelectionMode.SINGLE)
+            def ensure_group(group_index):
+                if group_index in group_flowboxes:
+                    return group_flowboxes[group_index]
+                group = self.search_results[group_index]
+                width = max(1, self.search_view.get_allocated_width())
+                fb = gui_rs.ensure_search_group(
+                    self.search_flowbox,
+                    group_index,
+                    category_name=group.get("category_name", "Other"),
+                    show_header=group.get("show_header", True),
+                    result_count=len(group.get("scripts", [])),
+                    viewport_width=width,
+                )
+                if fb is None:
+                    raise RuntimeError("Native GTK search group is unavailable")
                 fb.connect("key-press-event", self._on_flowbox_key_press)
-                fb.connect("selected-children-changed",
-                           self._on_search_result_selection_changed)
-                fb.set_homogeneous(True)
-                fb.set_margin_left(32); fb.set_margin_right(32)
-                fb.set_margin_top(8); fb.set_margin_bottom(4)
-                fb.set_column_spacing(16); fb.set_row_spacing(12)
+                fb.connect(
+                    "selected-children-changed",
+                    self._on_search_result_selection_changed,
+                )
                 self._search_result_flowboxes.append(fb)
-                results_container.pack_start(fb, False, False, 0)
-                fb.show()
-                group_flowboxes[key] = fb
+                group_flowboxes[group_index] = fb
                 return fb
 
-            def add_card_batch(group, results):
-                """Materialize one search-group batch, preferring native GTK cards."""
+            def add_card_batch(group_index, results):
                 results = list(results)
                 if not results:
                     return []
-
-                fb = ensure_group(group)
+                fb = ensure_group(group_index)
                 infos = [result.item_info for result in results]
                 widgets = self.create_native_item_batch(fb, infos)
-
                 if widgets is None:
-                    widgets = []
-                    for info in infos:
-                        widget = self.create_item_widget(info)
-                        widget.set_tooltip_text(info.get("description", "") or None)
-                        widget.set_opacity(0.0)
-                        fb.add(widget)
-                        widget.show_all()
-                        widgets.append(widget)
-                    return widgets
-
+                    raise RuntimeError("Native GTK search card creation failed")
                 for widget, info in zip(widgets, infos):
                     widget.set_tooltip_text(info.get("description", "") or None)
                     widget.set_opacity(0.0)
@@ -360,10 +302,9 @@ class SearchCtl:
 
             def capacity():
                 alloc = self.search_view.get_allocation()
-                width, height = max(1, alloc.width), max(1, alloc.height)
-                columns = max(1, min(5, (max(1, width - 64) + 16) // 148))
-                rows = max(1, (height + 67) // 68)
-                return max(1, int(columns * rows))
+                return gui_rs.search_viewport_capacity(
+                    max(1, alloc.width), max(1, alloc.height)
+                )
 
             def tick():
                 if not current():
@@ -376,15 +317,15 @@ class SearchCtl:
                 widgets = []
                 end = min(target, state["next"] + 2)
                 while state["next"] < end:
-                    group = population_queue[state["next"]][0]
+                    group_index = population_queue[state["next"]][0]
                     batch = []
                     while (
                         state["next"] < end
-                        and population_queue[state["next"]][0] is group
+                        and population_queue[state["next"]][0] == group_index
                     ):
                         batch.append(population_queue[state["next"]][1])
                         state["next"] += 1
-                    widgets.extend(add_card_batch(group, batch))
+                    widgets.extend(add_card_batch(group_index, batch))
                 self.animate_item_batch(widgets, duration_ms=110, stagger_ms=5)
                 if state["next"] >= target:
                     state["timer"] = None
@@ -396,7 +337,8 @@ class SearchCtl:
                         or state["timer"] is not None):
                     return
                 state["timer"] = GLib.timeout_add(
-                    20, tick, priority=GLib.PRIORITY_LOW)
+                    20, tick, priority=GLib.PRIORITY_LOW
+                )
 
             def request_more():
                 if not current() or state["target"] >= len(population_queue):
@@ -404,7 +346,8 @@ class SearchCtl:
                 amount = capacity()
                 state["target"] = min(
                     len(population_queue),
-                    max(state["target"], state["next"] + amount))
+                    max(state["target"], state["next"] + amount),
+                )
                 start_timer()
 
             def on_scroll(adj):
@@ -428,23 +371,18 @@ class SearchCtl:
                 self._search_lazy_scroll_connected = True
             self._search_lazy_scroll_callback = on_scroll
 
-            self.search_flowbox.add(results_container)
-            results_container.show()
-
-            # Seed cards immediately, then calculate the real viewport target
-            # after GTK has had a chance to allocate the visible content.
             seed_widgets = []
             seed_end = min(6, len(population_queue))
             while state["next"] < seed_end:
-                group = population_queue[state["next"]][0]
+                group_index = population_queue[state["next"]][0]
                 batch = []
                 while (
                     state["next"] < seed_end
-                    and population_queue[state["next"]][0] is group
+                    and population_queue[state["next"]][0] == group_index
                 ):
                     batch.append(population_queue[state["next"]][1])
                     state["next"] += 1
-                seed_widgets.extend(add_card_batch(group, batch))
+                seed_widgets.extend(add_card_batch(group_index, batch))
             self.animate_item_batch(seed_widgets, duration_ms=90, stagger_ms=5)
 
             def finish_initial():
@@ -454,7 +392,8 @@ class SearchCtl:
                 multiplier = 3 if cap <= 20 else 2
                 state["target"] = min(
                     len(population_queue),
-                    max(state["next"], cap * multiplier))
+                    max(state["next"], cap * multiplier),
+                )
                 state["ready"] = True
                 start_timer()
                 return False
@@ -465,37 +404,11 @@ class SearchCtl:
         if entering_search:
             GLib.timeout_add(
                 max(1, int(self.main_stack.get_transition_duration())),
-                begin_population, priority=GLib.PRIORITY_LOW)
+                begin_population, priority=GLib.PRIORITY_LOW,
+            )
         else:
             begin_population()
 
-
-    def _create_search_category_header(self, category_name):
-        """
-        Create a category header widget for search results.
-        Styled consistently with the featured scripts section headers.
-        
-        Args:
-            category_name: Name of the category
-            
-        Returns:
-            A Gtk.Label widget styled as a category header
-        """
-        header = Gtk.Label()
-        # Escape category name to handle & and other special characters in markup
-        escaped_name = escape_for_markup(category_name)
-        header.set_markup(f"<big><b>{escaped_name}</b></big>")
-        header.set_halign(Gtk.Align.START)
-        header.set_margin_top(12)
-        header.set_margin_bottom(6)
-        header.set_margin_start(32)  # Container handles horizontal margins
-        header.set_margin_end(0)
-        
-        # Apply consistent styling with the rest of the app
-        label_style = header.get_style_context()
-        label_style.add_class("title-2")  # Use same CSS class as featured scripts
-        
-        return header
 
     def _activate_search_result(self, search_result):
         """Activate a specific search result (simulate click)."""

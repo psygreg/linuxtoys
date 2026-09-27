@@ -90,6 +90,14 @@ class _ListRowSpec(ctypes.Structure):
     ]
 
 
+class _SearchGroupSpec(ctypes.Structure):
+    _fields_ = [
+        ("category_name", ctypes.c_char_p),
+        ("show_header", ctypes.c_uint8),
+        ("result_count", ctypes.c_size_t),
+    ]
+
+
 def _pointer(obj):
     if obj is None:
         return None
@@ -117,8 +125,24 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 13:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 13)")
+            if lib.lt_gui_abi_version() != 15:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 15)")
+            lib.lt_gui_stack_add_scrolled_flowbox.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p,
+            ]
+            lib.lt_gui_stack_add_scrolled_flowbox.restype = ctypes.c_bool
+            lib.lt_gui_stack_attach_child.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint8,
+            ]
+            lib.lt_gui_stack_attach_child.restype = ctypes.c_bool
+            lib.lt_gui_stack_remove_child.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_uint8,
+            ]
+            lib.lt_gui_stack_remove_child.restype = ctypes.c_bool
+            lib.lt_gui_stack_remove_child_after_transition.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint32,
+            ]
+            lib.lt_gui_stack_remove_child_after_transition.restype = ctypes.c_bool
             lib.lt_gui_flush_category_watermarks.argtypes = [
                 ctypes.c_void_p, ctypes.c_size_t,
             ]
@@ -127,6 +151,15 @@ def _load():
                 ctypes.c_void_p, ctypes.POINTER(_ItemCardSpec), ctypes.c_size_t,
             ]
             lib.lt_gui_flowbox_add_item_cards.restype = ctypes.c_size_t
+            lib.lt_gui_search_results_begin.argtypes = [ctypes.c_void_p]
+            lib.lt_gui_search_results_begin.restype = ctypes.c_bool
+            lib.lt_gui_search_ensure_group.argtypes = [
+                ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(_SearchGroupSpec),
+                ctypes.c_int32,
+            ]
+            lib.lt_gui_search_ensure_group.restype = ctypes.c_bool
+            lib.lt_gui_search_viewport_capacity.argtypes = [ctypes.c_int32, ctypes.c_int32]
+            lib.lt_gui_search_viewport_capacity.restype = ctypes.c_size_t
             lib.lt_gui_grid_attach_item_cards.argtypes = [
                 ctypes.c_void_p,
                 ctypes.POINTER(_ItemCardSpec),
@@ -193,6 +226,60 @@ def _event_box_from_flowbox_child(child):
     return get_child() if get_child is not None else None
 
 
+def stack_add_scrolled_flowbox(stack, flowbox, name):
+    lib = _load()
+    if lib is None:
+        raise RuntimeError("LinuxToys native GUI library is unavailable")
+    encoded = str(name).encode("utf-8")
+    if not lib.lt_gui_stack_add_scrolled_flowbox(
+        _pointer(stack), _pointer(flowbox), encoded
+    ):
+        raise RuntimeError(f"Native stack failed to create category view {name!r}")
+    child = stack.get_child_by_name(str(name))
+    if child is None:
+        raise RuntimeError(f"Native category view {name!r} was not attached")
+    return child
+
+
+def stack_attach_child(stack, child, name, *, make_visible=False):
+    lib = _load()
+    if lib is None:
+        raise RuntimeError("LinuxToys native GUI library is unavailable")
+    encoded = str(name).encode("utf-8")
+    if not lib.lt_gui_stack_attach_child(
+        _pointer(stack), _pointer(child), encoded, int(bool(make_visible))
+    ):
+        raise RuntimeError(f"Native stack failed to attach child {name!r}")
+    return child
+
+
+def stack_remove_child(stack, child, *, destroy=True):
+    if child is None:
+        return False
+    lib = _load()
+    if lib is None:
+        raise RuntimeError("LinuxToys native GUI library is unavailable")
+    return bool(lib.lt_gui_stack_remove_child(
+        _pointer(stack), _pointer(child), int(bool(destroy))
+    ))
+
+
+def stack_remove_child_after_transition(
+    stack, child, *, destroy=True, extra_delay_ms=0
+):
+    if child is None:
+        return False
+    lib = _load()
+    if lib is None:
+        raise RuntimeError("LinuxToys native GUI library is unavailable")
+    return bool(lib.lt_gui_stack_remove_child_after_transition(
+        _pointer(stack),
+        _pointer(child),
+        int(bool(destroy)),
+        max(0, int(extra_delay_ms)),
+    ))
+
+
 def flush_category_watermarks(root, max_count=0):
     """Render pending native category watermarks below ``root``."""
     lib = _load()
@@ -218,6 +305,37 @@ def card_child(card, name):
             return found
     return None
 
+
+
+def begin_search_results(root):
+    """Reset the search result surface and create its native results container."""
+    lib = _load()
+    if lib is None or root is None:
+        return False
+    return bool(lib.lt_gui_search_results_begin(_pointer(root)))
+
+
+def ensure_search_group(root, group_index, *, category_name, show_header, result_count, viewport_width):
+    """Create one grouped native search FlowBox on first materialization."""
+    lib = _load()
+    if lib is None or root is None:
+        return None
+    name = str(category_name or "Other").encode()
+    spec = _SearchGroupSpec(name, int(bool(show_header)), max(0, int(result_count)))
+    ok = lib.lt_gui_search_ensure_group(
+        _pointer(root), max(0, int(group_index)), ctypes.byref(spec), int(viewport_width)
+    )
+    if not ok:
+        raise RuntimeError("Native GTK search group creation failed")
+    return card_child(root, f"linuxtoys-search-group-{int(group_index)}")
+
+
+def search_viewport_capacity(width, height):
+    """Return the native search-card capacity for a viewport allocation."""
+    lib = _load()
+    if lib is None:
+        return 1
+    return max(1, int(lib.lt_gui_search_viewport_capacity(int(width), int(height))))
 
 
 def _native_spec(spec):

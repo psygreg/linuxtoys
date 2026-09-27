@@ -3,7 +3,7 @@ from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
-from . import app_page, term_view, skills_view, get_icon_path, header
+from . import app_page, term_view, skills_view, get_icon_path, header, gui_rs
 
 class NavCtl:
     @staticmethod
@@ -55,11 +55,10 @@ class NavCtl:
             view = retained.get("view")
             if view is None or view is current_view:
                 continue
-            try:
-                if view.get_parent() is self.main_stack:
-                    self.main_stack.remove(view)
-            except (AttributeError, TypeError):
-                pass
+            if view.get_parent() is self.main_stack:
+                gui_rs.stack_remove_child(
+                    self.main_stack, view, destroy=True
+                )
         cache.clear()
 
     def _forget_retained_view(self, view):
@@ -102,17 +101,17 @@ class NavCtl:
             self.view_counter += 1
             new_view_name = f"scripts_{self.view_counter}"
 
-            # Create new flowbox and scrolled window for this level
+            # Rust owns the repetitive GTK container lifecycle for category
+            # levels. Python retains the configured FlowBox because card loading,
+            # callbacks and navigation policy remain here.
             new_flowbox = self.create_flowbox()
-            new_scrolled_view = Gtk.ScrolledWindow()
-            new_scrolled_view.add(new_flowbox)
+            new_scrolled_view = gui_rs.stack_add_scrolled_flowbox(
+                self.main_stack, new_flowbox, new_view_name
+            )
 
-            # Attach and show the empty destination first so Gtk.Stack can begin
-            # its slide immediately. Card construction is intentionally deferred
-            # until the transition finishes; otherwise the first 10-card layout
-            # pass can stall the animation on larger categories.
-            self.main_stack.add_named(new_scrolled_view, new_view_name)
-            new_scrolled_view.show_all()
+            # The empty destination is attached and shown before the transition.
+            # Card construction remains deferred so the initial layout cannot
+            # stall the slide animation on larger categories.
 
             self.main_stack.set_transition_type(
                 Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
@@ -148,8 +147,7 @@ class NavCtl:
             }
 
         if old_page is not None:
-            self.main_stack.remove(old_page)
-            old_page.destroy()
+            gui_rs.stack_remove_child(self.main_stack, old_page, destroy=True)
 
         page = app_page.AppPageView(
             info,
@@ -157,8 +155,9 @@ class NavCtl:
             self.translations,
             on_install_callback=self._install_from_app_page,
         )
-        self.main_stack.add_named(page, "app_page")
-        page.show_all()
+        gui_rs.stack_attach_child(
+            self.main_stack, page, "app_page", make_visible=False
+        )
 
         self.header_widget.hide()
         self.reveal.set_reveal_child(False)
@@ -184,8 +183,9 @@ class NavCtl:
         # makes Gtk.Stack animate from the underlying category instead.
         refresh_name = f"app_page_refresh_{self.view_counter}"
         self.view_counter += 1
-        self.main_stack.add_named(page, refresh_name)
-        page.show_all()
+        gui_rs.stack_attach_child(
+            self.main_stack, page, refresh_name, make_visible=False
+        )
 
         old_transition = self.main_stack.get_transition_type()
         old_duration = self.main_stack.get_transition_duration()
@@ -229,8 +229,7 @@ class NavCtl:
 
         child = self.main_stack.get_child_by_name("app_page")
         if child is not None:
-            self.main_stack.remove(child)
-            child.destroy()
+            gui_rs.stack_remove_child(self.main_stack, child, destroy=True)
         self._app_page_prev = None
 
     def open_term_view(self, infos, removable_script_info=None, auto_run=True):
@@ -286,14 +285,11 @@ class NavCtl:
 
         child = self.main_stack.get_child_by_name("running_scripts")
         if child is not None:
-            self.main_stack.remove(child)
-            child.destroy()
+            gui_rs.stack_remove_child(self.main_stack, child, destroy=True)
 
-        self.main_stack.add_named(run_box, "running_scripts")
-
-        run_box.show_all()
-
-        self.main_stack.set_visible_child_name("running_scripts")
+        gui_rs.stack_attach_child(
+            self.main_stack, run_box, "running_scripts", make_visible=True
+        )
         return run_box
 
     def open_skills_seeker_view(self):
@@ -321,8 +317,10 @@ class NavCtl:
 
         child = self.main_stack.get_child_by_name("skills_seeker")
         if child is not None:
-            self.main_stack.remove(child)
-        self.main_stack.add_named(skills_view_widget, "skills_seeker")
+            gui_rs.stack_remove_child(self.main_stack, child, destroy=True)
+        gui_rs.stack_attach_child(
+            self.main_stack, skills_view_widget, "skills_seeker", make_visible=False
+        )
 
         if self.current_category_info and not self.search_active:
             self.navigation_stack.append(self.current_category_info)
@@ -372,18 +370,9 @@ class NavCtl:
 
             setattr(self, attr, None)
             if child is not None:
-                def cleanup_utility_view():
-                    try:
-                        if child.get_parent() is self.main_stack:
-                            self.main_stack.remove(child)
-                    except (AttributeError, TypeError):
-                        pass
-                    try:
-                        child.destroy()
-                    except (AttributeError, TypeError):
-                        pass
-                    return False
-                GLib.timeout_add(max(1, int(self.main_stack.get_transition_duration())), cleanup_utility_view)
+                gui_rs.stack_remove_child_after_transition(
+                    self.main_stack, child, destroy=True
+                )
             return
 
         if self.main_stack.get_visible_child_name() == "app_page":
@@ -448,26 +437,11 @@ class NavCtl:
 
             self._app_page_prev = None
 
-            # Keep the departing app page alive for the reverse stack transition,
-            # just as terminal/category navigation does.
+            # Keep the departing app page alive for the reverse stack transition.
             if child is not None:
-                transition_delay = max(
-                    1, int(self.main_stack.get_transition_duration())
+                gui_rs.stack_remove_child_after_transition(
+                    self.main_stack, child, destroy=True
                 )
-
-                def cleanup_app_page():
-                    try:
-                        if child.get_parent() is self.main_stack:
-                            self.main_stack.remove(child)
-                    except (AttributeError, TypeError):
-                        pass
-                    try:
-                        child.destroy()
-                    except (AttributeError, TypeError):
-                        pass
-                    return False
-
-                GLib.timeout_add(transition_delay, cleanup_app_page)
             return
 
         # Handle leaving the terminal before normal search navigation.
@@ -515,18 +489,12 @@ class NavCtl:
             )
 
             def cleanup_terminal_view():
-                # Keep the source child alive for the whole reverse transition,
-                # matching normal category Back navigation.
+                # Search refresh paths still decide *when* cleanup starts; Rust owns
+                # the actual Stack detach/destroy operation.
                 if child is not None:
-                    try:
-                        if child.get_parent() is self.main_stack:
-                            self.main_stack.remove(child)
-                    except (AttributeError, TypeError):
-                        pass
-                    try:
-                        child.destroy()
-                    except (AttributeError, TypeError):
-                        pass
+                    gui_rs.stack_remove_child(
+                        self.main_stack, child, destroy=True
+                    )
                 return False
 
             # Search results are generated views whose removable buttons also need
@@ -617,7 +585,9 @@ class NavCtl:
 
             child = self.main_stack.get_child_by_name("skills_seeker")
             if child is not None:
-                self.main_stack.remove(child)
+                gui_rs.stack_remove_child(
+                    self.main_stack, child, destroy=True
+                )
 
             self.header_widget.show()
             self._update_header(self.current_category_info)
@@ -677,10 +647,9 @@ class NavCtl:
                 new_view_name = f"scripts_{self.view_counter}"
 
                 new_flowbox = self.create_flowbox()
-                new_scrolled_view = Gtk.ScrolledWindow()
-                new_scrolled_view.add(new_flowbox)
-                self.main_stack.add_named(new_scrolled_view, new_view_name)
-                new_scrolled_view.show_all()
+                new_scrolled_view = gui_rs.stack_add_scrolled_flowbox(
+                    self.main_stack, new_flowbox, new_view_name
+                )
 
                 self.scripts_flowbox = new_flowbox
                 self.scripts_view = new_scrolled_view
@@ -706,17 +675,12 @@ class NavCtl:
             else:
                 self.reveal.set_reveal_child(False)
 
-            # The child we are leaving is no longer part of history. Remove it
-            # after the animation; parent views deeper in history remain cached.
-            def cleanup_old_view():
-                self._forget_retained_view(current_view)
-                try:
-                    self.main_stack.remove(current_view)
-                except Exception:
-                    pass
-                return False
-
-            GLib.timeout_add(300, cleanup_old_view)
+            # The child we are leaving is no longer part of history. Rust keeps
+            # it alive through the Stack transition and then detaches/destroys it.
+            self._forget_retained_view(current_view)
+            gui_rs.stack_remove_child_after_transition(
+                self.main_stack, current_view, destroy=True
+            )
 
         else:
             # No more items in stack, go to main categories view.
@@ -726,15 +690,10 @@ class NavCtl:
             )
             self.show_categories_view()
 
-            def cleanup_scripts_view():
-                self._forget_retained_view(current_view)
-                try:
-                    self.main_stack.remove(current_view)
-                except Exception:
-                    pass
-                return False
-
-            GLib.timeout_add(300, cleanup_scripts_view)
+            self._forget_retained_view(current_view)
+            gui_rs.stack_remove_child_after_transition(
+                self.main_stack, current_view, destroy=True
+            )
 
     def show_categories_view(self):
         """Switches to the main categories view."""

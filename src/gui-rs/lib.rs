@@ -273,8 +273,117 @@ fn ensure_gtk_initialized() {
     }
 }
 
+
+fn stack_remove_child(stack: &gtk::Stack, child: &gtk::Widget, destroy: bool) -> bool {
+    if child.parent().as_ref() != Some(stack.upcast_ref::<gtk::Widget>()) {
+        return false;
+    }
+    stack.remove(child);
+    if destroy {
+        unsafe {
+            child.destroy();
+        }
+    }
+    true
+}
+
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 13 }
+pub unsafe extern "C" fn lt_gui_stack_add_scrolled_flowbox(
+    stack: *mut gtk::ffi::GtkWidget,
+    flowbox: *mut gtk::ffi::GtkWidget,
+    name: *const c_char,
+) -> bool {
+    if stack.is_null() || flowbox.is_null() || name.is_null() {
+        return false;
+    }
+
+    let stack: gtk::Stack = from_glib_none(stack as *mut gtk::ffi::GtkStack);
+    let flowbox: gtk::FlowBox = from_glib_none(flowbox as *mut gtk::ffi::GtkFlowBox);
+    let name = cstr(name);
+    if name.is_empty() || stack.child_by_name(&name).is_some() {
+        return false;
+    }
+
+    let scrolled = gtk::ScrolledWindow::new(None::<&gtk::Adjustment>, None::<&gtk::Adjustment>);
+    scrolled.add(&flowbox);
+    stack.add_named(&scrolled, &name);
+    scrolled.show_all();
+    true
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_stack_attach_child(
+    stack: *mut gtk::ffi::GtkWidget,
+    child: *mut gtk::ffi::GtkWidget,
+    name: *const c_char,
+    make_visible: u8,
+) -> bool {
+    if stack.is_null() || child.is_null() || name.is_null() {
+        return false;
+    }
+
+    let stack: gtk::Stack = from_glib_none(stack as *mut gtk::ffi::GtkStack);
+    let child: gtk::Widget = from_glib_none(child);
+    let name = cstr(name);
+    if name.is_empty() || stack.child_by_name(&name).is_some() {
+        return false;
+    }
+
+    stack.add_named(&child, &name);
+    child.show_all();
+    if make_visible != 0 {
+        stack.set_visible_child(&child);
+    }
+    true
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_stack_remove_child(
+    stack: *mut gtk::ffi::GtkWidget,
+    child: *mut gtk::ffi::GtkWidget,
+    destroy: u8,
+) -> bool {
+    if stack.is_null() || child.is_null() {
+        return false;
+    }
+    let stack: gtk::Stack = from_glib_none(stack as *mut gtk::ffi::GtkStack);
+    let child: gtk::Widget = from_glib_none(child);
+    stack_remove_child(&stack, &child, destroy != 0)
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
+    stack: *mut gtk::ffi::GtkWidget,
+    child: *mut gtk::ffi::GtkWidget,
+    destroy: u8,
+    extra_delay_ms: u32,
+) -> bool {
+    if stack.is_null() || child.is_null() {
+        return false;
+    }
+
+    let stack: gtk::Stack = from_glib_none(stack as *mut gtk::ffi::GtkStack);
+    let child: gtk::Widget = from_glib_none(child);
+    if child.parent().as_ref() != Some(stack.upcast_ref::<gtk::Widget>()) {
+        return false;
+    }
+
+    let delay_ms = stack
+        .transition_duration()
+        .max(1)
+        .saturating_add(extra_delay_ms);
+
+    glib::timeout_add_local_once(
+        std::time::Duration::from_millis(delay_ms as u64),
+        move || {
+            let _ = stack_remove_child(&stack, &child, destroy != 0);
+        },
+    );
+    true
+}
+
+#[no_mangle]
+pub extern "C" fn lt_gui_abi_version() -> u32 { 15 }
 
 #[no_mangle]
 pub extern "C" fn lt_gui_clear_pixbuf_cache() {
@@ -490,6 +599,116 @@ pub unsafe extern "C" fn lt_gui_flowbox_add_item_cards(
 }
 
 
+
+#[repr(C)]
+pub struct LtGuiSearchGroupSpec {
+    category_name: *const c_char,
+    show_header: u8,
+    result_count: usize,
+}
+
+fn search_group_columns(viewport_width: i32, result_count: usize) -> u32 {
+    if viewport_width <= 1 {
+        return 2.min(result_count.max(1) as u32).max(1);
+    }
+    let usable_width = (viewport_width - 64).max(1);
+    let columns_by_width = (usable_width / 144).max(1);
+    let columns_by_count = (result_count as i32).clamp(1, 5);
+    columns_by_width.min(columns_by_count).clamp(1, 5) as u32
+}
+
+#[no_mangle]
+pub extern "C" fn lt_gui_search_viewport_capacity(width: i32, height: i32) -> usize {
+    let width = width.max(1);
+    let height = height.max(1);
+    let columns = (((width - 64).max(1) + 16) / 148).clamp(1, 5);
+    let rows = ((height + 67) / 68).max(1);
+    columns.saturating_mul(rows) as usize
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_search_results_begin(
+    root: *mut gtk::ffi::GtkWidget,
+) -> bool {
+    ensure_gtk_initialized();
+    if root.is_null() { return false; }
+
+    let widget: gtk::Widget = from_glib_none(root);
+    let container = match widget.downcast::<gtk::Container>() {
+        Ok(container) => container,
+        Err(_) => return false,
+    };
+
+    for child in container.children() {
+        container.remove(&child);
+    }
+
+    let results = gtk::Box::new(gtk::Orientation::Vertical, 0);
+    results.set_widget_name("linuxtoys-search-results-container");
+    results.set_margin_top(8);
+    results.set_margin_bottom(4);
+    container.add(&results);
+    results.show();
+    true
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_search_ensure_group(
+    root: *mut gtk::ffi::GtkWidget,
+    group_index: usize,
+    spec: *const LtGuiSearchGroupSpec,
+    viewport_width: i32,
+) -> bool {
+    ensure_gtk_initialized();
+    if root.is_null() || spec.is_null() { return false; }
+
+    let root_widget: gtk::Widget = from_glib_none(root);
+    let results = match named_descendant(&root_widget, "linuxtoys-search-results-container")
+        .and_then(|w| w.downcast::<gtk::Box>().ok())
+    {
+        Some(results) => results,
+        None => return false,
+    };
+
+    let flowbox_name = format!("linuxtoys-search-group-{group_index}");
+    if named_descendant(&root_widget, &flowbox_name).is_some() {
+        return true;
+    }
+
+    let spec = &*spec;
+    if spec.show_header != 0 {
+        let header = gtk::Label::new(None);
+        header.set_widget_name(&format!("linuxtoys-search-header-{group_index}"));
+        header.set_markup(&format!(
+            "<big><b>{}</b></big>",
+            glib::markup_escape_text(&cstr(spec.category_name))
+        ));
+        header.set_halign(gtk::Align::Start);
+        header.set_margin_top(12);
+        header.set_margin_bottom(6);
+        header.set_margin_start(32);
+        header.style_context().add_class("title-2");
+        results.pack_start(&header, false, false, 0);
+        header.show();
+    }
+
+    let flowbox = gtk::FlowBox::new();
+    flowbox.set_widget_name(&flowbox_name);
+    flowbox.set_valign(gtk::Align::Start);
+    flowbox.set_max_children_per_line(search_group_columns(viewport_width, spec.result_count));
+    flowbox.set_activate_on_single_click(false);
+    flowbox.set_selection_mode(gtk::SelectionMode::Single);
+    flowbox.set_homogeneous(true);
+    flowbox.set_margin_start(32);
+    flowbox.set_margin_end(32);
+    flowbox.set_margin_top(8);
+    flowbox.set_margin_bottom(4);
+    flowbox.set_column_spacing(16);
+    flowbox.set_row_spacing(12);
+    results.pack_start(&flowbox, false, false, 0);
+    flowbox.show();
+    true
+}
 
 #[repr(C)]
 pub struct LtGuiFeaturedLargeCardSpec {

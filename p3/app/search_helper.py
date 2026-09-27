@@ -1040,10 +1040,6 @@ class SearchEngine:
                 score += 10
             results.append(SearchResult(script_info, "script", score))
 
-        # This is one synthetic item, so retaining the Python scorer is cheaper than
-        # rebuilding the persistent index around it.
-        self._search_create_new_script_option(query, results)
-
     def _search_categories(self, query, results):
         """Search through categories."""
         categories = parser.get_categories(self.translations)
@@ -1059,30 +1055,6 @@ class SearchEngine:
                 category_copy = category.copy()
                 category_copy['type'] = 'category'
                 results.append(SearchResult(category_copy, 'category', score))
-
-    def _search_create_new_script_option(self, query, results):
-        """Search for the 'Create New Script' option."""
-        # Always include the create script option since the directory can be created on demand
-        # We don't need to check if the directory exists as it will be created when needed
-
-        local_scripts_dir = f'{os.environ.get("HOME", "")}/.local/linuxtoys/scripts'
-        create_script_name = self.translations.get('create_new_script_name', 'Create New Script')
-        create_script_desc = self.translations.get('create_new_script_desc', 'Create a new local script')
-
-        create_script_item = {
-            'name': create_script_name,
-            'description': create_script_desc,
-            'icon': 'document-new',
-            'path': local_scripts_dir,
-            'is_script': False,
-            'is_subcategory': False,
-            'is_create_script': True
-        }
-
-        # Calculate match score for the create script option
-        score = self._calculate_match_score(query, create_script_item, 'create_script')
-        if score > 0:
-            results.append(SearchResult(create_script_item, 'create_script', score))
 
     @staticmethod
     def _searchable_package_names(item_info):
@@ -1188,8 +1160,6 @@ class SearchEngine:
         # Boost scores for certain item types
         if item_type == 'category':
             score += 10  # Categories slightly boosted for navigation
-        elif item_type == 'create_script':
-            score += 15  # Create script option gets a good boost for utility
 
         # Boost for shorter names (more specific matches)
         if score > 0 and len(name) < 20:
