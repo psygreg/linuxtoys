@@ -891,6 +891,10 @@ def submit_issue(
     logs    = _strip_control_characters(logs)
     title   = _strip_control_characters(title).strip()
     context = _strip_control_characters(context).strip()
+
+    # Never submit a bug report without logs.
+    if not logs.strip():
+        return None
  
     try:
         resp = requests.post(
