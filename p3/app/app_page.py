@@ -1516,8 +1516,11 @@ class AppPageView(Gtk.Box):
         )
         button.show_all()
 
-    def _source_menu_item(self, entry, recommended_source):
-        item = Gtk.MenuItem()
+    def _source_popover_item(self, entry, recommended_source, popover):
+        button = Gtk.Button()
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.set_halign(Gtk.Align.FILL)
+
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         source = self._source_key(entry)
         if source == recommended_source:
@@ -1527,13 +1530,24 @@ class AppPageView(Gtk.Box):
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                         badge_path, 16, 16, True
                     )
-                    row.pack_start(Gtk.Image.new_from_pixbuf(pixbuf), False, False, 0)
+                    row.pack_start(
+                        Gtk.Image.new_from_pixbuf(pixbuf), False, False, 0
+                    )
                 except Exception:
                     pass
-        row.pack_start(Gtk.Label(label=self._source_label(entry)), False, False, 0)
-        item.add(row)
-        item.connect("activate", self._on_source_selected, entry)
-        return item
+
+        label = Gtk.Label(label=self._source_label(entry))
+        label.set_halign(Gtk.Align.START)
+        label.set_xalign(0.0)
+        row.pack_start(label, True, True, 0)
+        button.add(row)
+
+        def activate(_button):
+            popover.popdown()
+            self._on_source_selected(_button, entry)
+
+        button.connect("clicked", activate)
+        return button
 
     def _build_source_button(self):
         options = self.script_info.get("source_options") or ()
@@ -1545,15 +1559,32 @@ class AppPageView(Gtk.Box):
             or self.script_info.get("appstream_source")
             or ""
         )
+
         button = Gtk.MenuButton()
         self._set_source_button_content(button, self._selected_install_info)
 
-        menu = Gtk.Menu()
+        popover = Gtk.Popover.new(button)
+        popover.set_position(Gtk.PositionType.BOTTOM)
+
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        box.set_margin_top(4)
+        box.set_margin_bottom(4)
+        box.set_margin_left(4)
+        box.set_margin_right(4)
+
         for option in options:
             if isinstance(option, dict):
-                menu.append(self._source_menu_item(option, recommended_source))
-        menu.show_all()
-        button.set_popup(menu)
+                box.pack_start(
+                    self._source_popover_item(option, recommended_source, popover),
+                    False,
+                    False,
+                    0,
+                )
+
+        popover.add(box)
+        box.show_all()
+        button.set_popover(popover)
+
         self._source_button = button
         return button
 
