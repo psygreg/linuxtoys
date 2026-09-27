@@ -11,6 +11,8 @@ import tempfile
 import subprocess
 import shlex
 
+from .compat import get_linuxtoys_cache_dir
+
 
 def _run_ok(cmd):
     """Execute a command and return True if successful."""
@@ -77,7 +79,7 @@ def _load_last_execution(script_name):
     as terminal remove-button availability checks) working without making the
     registry itself language-dependent.
     """
-    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
 
     if not os.path.exists(registry_file):
         return []
@@ -134,7 +136,7 @@ def _load_last_execution(script_name):
 
 def _load_registry_entries():
     """Load registry transactions in chronological order."""
-    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
 
     if not os.path.exists(registry_file):
         return []
@@ -201,7 +203,7 @@ def _get_executed_script_names():
     script when only the presence of a record is needed (e.g. caching the
     removable state of many scripts at once).
     """
-    registry_file = os.path.expanduser("~/.cache/linuxtoys/registry")
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
     executed = set()
 
     if not os.path.exists(registry_file):
@@ -1085,7 +1087,7 @@ def build_uninstall_script_entry(script_info, translations=None):
 
     lines.append("python3 - <<'PY'")
     lines.append("import os")
-    lines.append("reg = os.path.expanduser('~/.cache/linuxtoys/registry')")
+    lines.append(f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}")
     lines.append(f"remove_indices = set({reverted_indices_repr})")
     lines.append("")
     lines.append("if os.path.exists(reg):")
@@ -1223,7 +1225,7 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
 
     lines.append("python3 - <<'PY'")
     lines.append("import os")
-    lines.append("reg = os.path.expanduser('~/.cache/linuxtoys/registry')")
+    lines.append(f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}")
     lines.append(f"remove_indices = set({reverted_indices_repr})")
     lines.append("")
     lines.append("if remove_indices and os.path.exists(reg):")
