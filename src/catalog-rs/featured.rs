@@ -454,8 +454,7 @@ pub(crate) fn app_page_featured_rank(
                 &key,
                 known_popular,
                 kind,
-                category_score,
-                native_score,
+                category_score.or(native_score),
             ) as f64;
             (
                 index,

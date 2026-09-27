@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import random
 import threading
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
 
 from . import _catalog_rs
 
@@ -81,10 +78,6 @@ KNOWN_POPULAR = {
     "org.gimp.GIMP"
 }
 
-FLATHUB_POPULAR_URL = "https://flathub.org/api/v2/collection/popular"
-FLATHUB_PAGE_SIZE = 100
-FLATHUB_MAX_PAGES = 100
-NETWORK_TIMEOUT = 12
 
 _SESSION_LOCK = threading.RLock()
 _SESSION_ORDER = {}
@@ -197,35 +190,13 @@ def apply_review_scores(items):
 
 
 def score_for_item(item):
-    """Return the effective 0..999 browse score resolved by catalog-rs."""
-    key = _session_key(item)
-
-    def optional_int(name):
-        value = item.get(name)
-        try:
-            return int(value)
-        except (TypeError, ValueError):
-            return None
-
-    if _is_flatpak_appstream(item):
-        kind = 1
-    elif _is_native_appstream(item):
-        kind = 2
-    elif _is_curated_or_linuxtoys_script(item):
-        kind = 3
-    else:
-        kind = 0
-
-    return int(_catalog_rs.score_for_item(
-        str(key),
-        bool(is_known_popular(item)),
-        kind,
-        optional_int("_category_popularity_score"),
-        optional_int("_category_native_score"),
-    ))
-
-def score_section(item):
-    return min(9, max(0, score_for_item(item) // SECTION_SIZE))
+    """Return the direct Bayesian ODRS score for AppStream entries."""
+    if _is_flatpak_appstream(item) or _is_native_appstream(item):
+        score = review_subscore(item)
+        return SCORE_MIN if score is None else max(SCORE_MIN, min(SCORE_MAX, int(score)))
+    if is_known_popular(item) or _is_curated_or_linuxtoys_script(item):
+        return SCORE_MAX
+    return SCORE_MIN
 
 
 def _session_order(item):
@@ -236,220 +207,90 @@ def _session_order(item):
         return _SESSION_ORDER[key]
 
 
-def browse_sort_key(item):
-    """Keep structural actions first, then popularity sections, shuffled within each."""
+def _is_promoted(item):
+    return is_known_popular(item) or _is_curated_or_linuxtoys_script(item)
+
+
+def _direct_sort_key(item):
     if item.get("is_create_script", False):
-        return (0, 0, 0.0)
+        return (0, 0.0, "")
     if item.get("is_subcategory", False):
-        return (1, 0, str(item.get("name", "")).casefold())
+        return (1, 0.0, str(item.get("name", "")).casefold())
     review = review_subscore(item)
-    # Reviews refine ordering inside an already-established popularity section.
-    # Unknown review data keeps the old stable session shuffle behavior.
     return (
         2,
-        -score_section(item),
-        0 if review is None else -1,
-        0 if review is None else -review,
+        0 if review is not None else 1,
+        0.0 if review is None else -float(review),
         _session_order(item),
     )
 
 
+def _spread_promoted(ranked, promoted):
+    """Place promoted entries evenly through the top 10%, with deterministic jitter."""
+    if not promoted:
+        return ranked
+
+    promoted = sorted(promoted, key=lambda item: (_session_order(item), _session_key(item)))
+    total = len(ranked) + len(promoted)
+    top_ten = (total + 9) // 10
+    # A strict 10% window cannot keep N promoted entries apart when it contains
+    # fewer than 2N-1 slots. Expand only as much as needed to preserve a normal
+    # result between promoted entries whenever the category has enough entries.
+    top_slots = max(top_ten, (2 * len(promoted)) - 1)
+    top_slots = min(total, top_slots)
+
+    # Even cell centers keep promoted entries apart. Stable jitter moves each entry
+    # within its own cell without allowing neighboring promoted entries to collapse
+    # onto the same position.
+    positions = []
+    count = len(promoted)
+    for i, item in enumerate(promoted):
+        left = (i * top_slots) // count
+        right = max(left, ((i + 1) * top_slots) // count - 1)
+        width = right - left + 1
+        jitter = int(_session_order(item) * width) if width > 1 else 0
+        positions.append(min(top_slots - 1, left + jitter))
+
+    out = list(ranked)
+    for pos, item in sorted(zip(positions, promoted), key=lambda pair: pair[0]):
+        out.insert(min(pos, len(out)), item)
+    return out
+
+
 def sort_for_browse(items):
     apply_review_scores(items)
-    apply_native_category_scores(items)
-    apply_category_scores(items)
-    items.sort(key=browse_sort_key)
+
+    structural = [
+        item for item in items
+        if item.get("is_create_script", False) or item.get("is_subcategory", False)
+    ]
+    promoted = [
+        item for item in items
+        if not item.get("is_create_script", False)
+        and not item.get("is_subcategory", False)
+        and _is_promoted(item)
+    ]
+    ranked = [
+        item for item in items
+        if not item.get("is_create_script", False)
+        and not item.get("is_subcategory", False)
+        and not _is_promoted(item)
+    ]
+
+    structural.sort(key=_direct_sort_key)
+    ranked.sort(key=_direct_sort_key)
+    items[:] = structural + _spread_promoted(ranked, promoted)
     return items
+
+
+def browse_sort_key(item):
+    """Compatibility key for callers sorting individual entries."""
+    return _direct_sort_key(item)
 
 
 def flathub_search_tiebreak(item):
-    """Use only the cached raw Flathub metric as a search tie-breaker."""
+    """Compatibility helper: use the Bayesian ODRS score."""
     if not _is_flatpak_appstream(item):
         return None
-    try:
-        return float(item.get("popularity_metric"))
-    except (TypeError, ValueError):
-        return None
-
-
-def apply_native_category_scores(items):
-    """Evenly distribute pure-native AppStream entries across all ten sections.
-
-    Reviewed native entries are ranked by their Bayesian ODRS score. Native entries
-    without review data retain a neutral session-random rank. The complete native
-    population is then dealt into the same ten rank quantiles used for Flathub
-    popularity, preventing review-score clustering in the highest sections.
-    """
-    native = []
-    for item in items or ():
-        if not _is_native_appstream(item):
-            continue
-        if is_known_popular(item):
-            item["_category_native_score"] = _session_random_score(
-                _session_key(item), TOP_SECTION_MIN, SCORE_MAX
-            )
-            continue
-
-        # Native duplicates carrying an inherited Flathub metric participate in
-        # apply_category_scores() instead.
-        if item.get("popularity_metric") is not None:
-            continue
-
-        native.append(item)
-
-    if not native:
-        return items
-
-    rows = []
-    for index, item in enumerate(native):
-        rows.append((
-            index,
-            review_subscore(item),
-            _session_key(item),
-            _session_order(item),
-        ))
-
-    for index, section in _catalog_rs.native_rank_sections(rows):
-        item = native[index]
-        low = section * SECTION_SIZE
-        high = SCORE_MAX if section == 9 else low + SECTION_SIZE - 1
-        item["_category_native_score"] = _session_random_score(
-            f"native-category:{_session_key(item)}:{section}", low, high
-        )
-
-    return items
-
-
-def apply_category_scores(items):
-    """Distribute AppStream entries with Flathub metrics across browse sections.
-
-    Real Flathub popularity still determines ordering: entries are sorted by their
-    cached popularity_metric, then dealt into ten approximately equal rank buckets.
-    Missing statistics do not participate and receive a stable session score.
-    KNOWN_POPULAR entries remain forced into section 9.
-    """
-    candidates = []
-
-    for item in items or ():
-        # Normal Flatpaks and native entries carrying an inherited Flathub metric
-        # share one category-relative popularity population.
-        if not (_is_flatpak_appstream(item) or _is_native_appstream(item)):
-            continue
-
-        if is_known_popular(item):
-            item["_category_popularity_score"] = _session_random_score(
-                _session_key(item), TOP_SECTION_MIN, SCORE_MAX
-            )
-            continue
-
-        try:
-            raw_metric = item.get("popularity_metric")
-            if raw_metric is None:
-                raise TypeError
-            metric = float(raw_metric)
-        except (TypeError, ValueError):
-            # Pure native entries are handled by their ODRS score when available,
-            # otherwise by apply_native_category_scores(). Do not manufacture a
-            # category-popularity score that would override either path.
-            if _is_native_appstream(item):
-                item.pop("_category_popularity_score", None)
-                continue
-            item["_category_popularity_score"] = _session_random_score(
-                _session_key(item), SCORE_MIN, SCORE_MAX
-            )
-            continue
-
-        candidates.append((metric, _session_key(item), item))
-
-    if not candidates:
-        return items
-
-    rows = [(index, metric, key) for index, (metric, key, _item) in enumerate(candidates)]
-    for candidate_index, section in _catalog_rs.metric_rank_sections(rows):
-        _metric, key, item = candidates[candidate_index]
-        low = section * SECTION_SIZE
-        high = SCORE_MAX if section == 9 else low + SECTION_SIZE - 1
-        item["_category_popularity_score"] = _session_random_score(
-            f"flatpak-category:{key}:{section}", low, high
-        )
-
-    return items
-
-
-def _collection_items(payload):
-    if isinstance(payload, list):
-        return payload
-    if not isinstance(payload, dict):
-        return []
-    for key in ("hits", "apps", "items", "results", "data"):
-        value = payload.get(key)
-        if isinstance(value, list):
-            return value
-    return []
-
-
-def _item_id(item):
-    if not isinstance(item, dict):
-        return ""
-    for key in ("id", "app_id", "appstream_id"):
-        value = str(item.get(key, "") or "").strip()
-        if value:
-            return value
-    return ""
-
-
-def _item_downloads(item):
-    if not isinstance(item, dict):
-        return 0
-    for key in ("installs_last_month", "downloads_last_month", "downloads"):
-        value = item.get(key)
-        try:
-            return max(0, int(value))
-        except (TypeError, ValueError):
-            continue
-    return 0
-
-
-def fetch_flathub_downloads():
-    """Fetch Flathub's popularity collection and return app-id -> monthly downloads.
-
-    This runs only with the AppStream cache refresh. Pagination is bounded so an API
-    regression cannot stall LinuxToys indefinitely.
-    """
-    downloads = {}
-    headers = {
-        "Accept": "application/json",
-        "User-Agent": "LinuxToys-AppStream/1",
-    }
-
-    for page in range(FLATHUB_MAX_PAGES):
-        query = urlencode({
-            "page": page,
-            "per_page": FLATHUB_PAGE_SIZE,
-            "locale": "en",
-        })
-        request = Request(f"{FLATHUB_POPULAR_URL}?{query}", headers=headers)
-        try:
-            with urlopen(request, timeout=NETWORK_TIMEOUT) as response:
-                payload = json.load(response)
-        except Exception:
-            # Some Flathub endpoints use one-based pagination.
-            if page == 0:
-                continue
-            break
-
-        items = _collection_items(payload)
-        if not items:
-            break
-
-        for item in items:
-            app_id = _item_id(item)
-            if app_id:
-                downloads[app_id] = max(downloads.get(app_id, 0), _item_downloads(item))
-
-        if len(items) < FLATHUB_PAGE_SIZE:
-            break
-
-    return downloads
-
-
+    score = review_subscore(item)
+    return None if score is None else float(score)

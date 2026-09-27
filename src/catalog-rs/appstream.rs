@@ -139,7 +139,7 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format","appstream");e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else{"native"});e.insert("package-name".into(),if flat{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["popularity_metric","review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else{"native"});e.insert("package-name".into(),if flat{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
         if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
         out.push(Value::Object(e));
@@ -178,9 +178,6 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
     let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
-fn inherit_popularity_rs(natives:&mut [serde_json::Map<String,Value>],flat:&[serde_json::Map<String,Value>]){
-    if let Some(d)=flat.iter().find(|m|m.get("popularity_metric").is_some_and(|v|!v.is_null())) {for n in natives {for k in ["popularity_metric","popularity_downloads"]{n.insert(k.into(),d.get(k).cloned().unwrap_or(Value::Null));}}}
-}
 fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool)->bool{
     !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"|"txt"))))
 }
@@ -214,10 +211,10 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
     for m in components {let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
-        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let mut natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).collect();
+        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).collect();
         if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{out.extend(group);continue}
         if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if pref=="flatpak"{selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
-        if !natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos){inherit_popularity_rs(&mut natives,&flat);out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
+        if !natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=group.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
     } out
@@ -352,10 +349,6 @@ fn localized_description_values_rs(node:&XmlNode)->serde_json::Map<String,Value>
 fn default_description_rs(node:&XmlNode)->Value{let vals=localized_description_values_rs(node);vals.get("").cloned().or_else(||vals.values().next().cloned()).unwrap_or_else(||Value::Array(vec![]))}
 
 fn join_url_rs(base:&str,value:&str)->String { url::Url::parse(base.trim_end_matches('/')).ok().and_then(|u|u.join(value.trim_start_matches('/')).ok()).map(|u|u.to_string()).unwrap_or_default() }
-fn release_count_last_year_rs(component:&XmlNode, now:i64)->i64 {
-    use chrono::{DateTime,NaiveDate}; let cutoff=now-365*24*60*60; let mut count=0;
-    if let Some(releases)=component.child("releases") { for r in releases.children_named("release") { let mut ts=r.attrs.get("timestamp").and_then(|v|v.parse::<f64>().ok()).map(|v|v as i64); if ts.is_none(){if let Some(d)=r.attrs.get("date"){ts=DateTime::parse_from_rfc3339(&d.replace('Z',"+00:00")).ok().map(|x|x.timestamp()).or_else(||NaiveDate::parse_from_str(d,"%Y-%m-%d").ok().and_then(|x|x.and_hms_opt(0,0,0)).map(|x|x.and_utc().timestamp()));}} if ts.is_some_and(|v|v>=cutoff&&v<=now){count+=1} } } count
-}
 fn flatpak_icon_rs(component:&XmlNode,dir:&str,id:&str)->String{
     if let Some(icon)=component.children_named("icon").find(|n|n.attrs.get("type").map(String::as_str)==Some("cached")){let name=icon.text_trimmed();for size in ["128x128","64x64"]{let p=std::path::Path::new(dir).join("icons").join(size).join(&name);if p.is_file(){return p.to_string_lossy().into_owned()}}}
     for size in ["128x128","64x64"]{for ext in ["png","svg"]{let p=std::path::Path::new(dir).join("icons").join(size).join(format!("{id}.{ext}"));if p.is_file(){return p.to_string_lossy().into_owned()}}} "application-x-executable".into()
@@ -395,7 +388,7 @@ fn normalize_flatpak_extension_rs(component: &XmlNode, source: &serde_json::Map<
     Some(m)
 }
 
-fn normalize_flatpak_component_rs(component:&XmlNode, source:&serde_json::Map<String,Value>, eol:&std::collections::HashSet<String>, now:i64)->Option<serde_json::Map<String,Value>>{
+fn normalize_flatpak_component_rs(component:&XmlNode, source:&serde_json::Map<String,Value>, eol:&std::collections::HashSet<String>, _now:i64)->Option<serde_json::Map<String,Value>>{
     let id=default_localized_text_rs(component,"id"); let app_id=id.strip_suffix(".desktop").unwrap_or(&id).to_string(); if eol.contains(&id)||eol.contains(&app_id){return None}
     let name=default_localized_text_rs(component,"name");let summary=default_localized_text_rs(component,"summary");
     let categories:Vec<Value>=component.child("categories").into_iter().flat_map(|n|n.children_named("category")).map(|n|n.text_trimmed()).filter(|s|!s.is_empty()).map(Value::String).collect();if id.is_empty()||name.is_empty()||summary.is_empty()||categories.is_empty(){return None}
@@ -408,7 +401,7 @@ fn normalize_flatpak_component_rs(component:&XmlNode, source:&serde_json::Map<St
     let localized_names=localized_text_values_rs(component,"name");let localized_summaries=localized_text_values_rs(component,"summary");let localized_desc=localized_description_values_rs(component);let localized_devs={let a=localized_text_values_rs(component,"developer_name");if !a.is_empty(){a}else{component.child("developer").map(|d|localized_text_values_rs(d,"name")).unwrap_or_default()}};
     let raw_hash={use sha2::{Digest,Sha256};let mut h=Sha256::new();h.update(format!("{}\0{}\0{}\0{}\0{}\0{}",scope,installation,remote,source.get("arch").and_then(Value::as_str).unwrap_or(""),media,dir));let mut stable=String::new();stable_xml_repr(component,&mut stable);h.update(stable.as_bytes());format!("{:x}",h.finalize())};
     let mut m=serde_json::Map::new();macro_rules! ins{($k:expr,$v:expr)=>{m.insert($k.into(),$v);}}
-    ins!("identity",Value::String(format!("flatpak:{scope}:{installation}:{remote}:{id}")));ins!("_metadata_hash",Value::String(raw_hash));ins!("id",Value::String(id.clone()));ins!("name",Value::String(name));ins!("summary",Value::String(summary));ins!("description_blocks",default_description_rs(component));ins!("localized_names",Value::Object(localized_names));ins!("localized_summaries",Value::Object(localized_summaries));ins!("localized_descriptions",Value::Object(localized_desc));ins!("localized_developers",Value::Object(localized_devs));ins!("packages",Value::Array(vec![Value::String(app_id)]));ins!("categories",Value::Array(categories));ins!("launchable",Value::String(launchable_rs(component,&id)));ins!("icon",Value::String(flatpak_icon_rs(component,dir,&id)));ins!("screenshots",Value::Array(screenshots));ins!("homepage",Value::String(url_of("homepage")));ins!("donation",Value::String(url_of("donation")));ins!("license",Value::String(default_localized_text_rs(component,"project_license")));ins!("developer",Value::String(developer));ins!("verified",Value::Bool(verified));ins!("origin",Value::String(remote.into()));ins!("source",Value::String("flatpak".into()));ins!("version",Value::String(version));ins!("flatpak_remote",Value::String(remote.into()));ins!("flatpak_scope",Value::String(scope.into()));ins!("flatpak_installation",Value::String(installation.into()));let bundle=flatpak_bundle_ref_rs(component);if !bundle.is_empty(){let parts:Vec<String>=bundle.split('/').map(str::to_string).collect();ins!("flatpak_ref",Value::String(bundle));if parts.len()>2{ins!("flatpak_arch",Value::String(parts[2].clone()));}if parts.len()>3{ins!("flatpak_branch",Value::String(parts[3].clone()));}}ins!("_releases_last_year",Value::Number(release_count_last_year_rs(component,now).into()));Some(m)
+    ins!("identity",Value::String(format!("flatpak:{scope}:{installation}:{remote}:{id}")));ins!("_metadata_hash",Value::String(raw_hash));ins!("id",Value::String(id.clone()));ins!("name",Value::String(name));ins!("summary",Value::String(summary));ins!("description_blocks",default_description_rs(component));ins!("localized_names",Value::Object(localized_names));ins!("localized_summaries",Value::Object(localized_summaries));ins!("localized_descriptions",Value::Object(localized_desc));ins!("localized_developers",Value::Object(localized_devs));ins!("packages",Value::Array(vec![Value::String(app_id)]));ins!("categories",Value::Array(categories));ins!("launchable",Value::String(launchable_rs(component,&id)));ins!("icon",Value::String(flatpak_icon_rs(component,dir,&id)));ins!("screenshots",Value::Array(screenshots));ins!("homepage",Value::String(url_of("homepage")));ins!("donation",Value::String(url_of("donation")));ins!("license",Value::String(default_localized_text_rs(component,"project_license")));ins!("developer",Value::String(developer));ins!("verified",Value::Bool(verified));ins!("origin",Value::String(remote.into()));ins!("source",Value::String("flatpak".into()));ins!("version",Value::String(version));ins!("flatpak_remote",Value::String(remote.into()));ins!("flatpak_scope",Value::String(scope.into()));ins!("flatpak_installation",Value::String(installation.into()));let bundle=flatpak_bundle_ref_rs(component);if !bundle.is_empty(){let parts:Vec<String>=bundle.split('/').map(str::to_string).collect();ins!("flatpak_ref",Value::String(bundle));if parts.len()>2{ins!("flatpak_arch",Value::String(parts[2].clone()));}if parts.len()>3{ins!("flatpak_branch",Value::String(parts[3].clone()));}}Some(m)
 }
 
 
@@ -683,59 +676,6 @@ impl AppStreamGeneration {
         })
     }
 
-    fn apply_flathub_metrics(
-        &mut self,
-        py: Python<'_>,
-        downloads_json: &str,
-        fetch_available: bool,
-    ) -> PyResult<()> {
-        let downloads: std::collections::HashMap<String, i64> =
-            serde_json::from_str(downloads_json).unwrap_or_default();
-        let previous_metrics = self.previous_by_id().into_iter().filter_map(|(id, map)| {
-            if map.get("source").and_then(Value::as_str) != Some("flatpak") {
-                return None;
-            }
-            let metric = map.get("popularity_metric").and_then(Value::as_f64)?;
-            let raw = map.get("popularity_downloads").and_then(Value::as_i64);
-            Some((id.to_string(), (raw, metric)))
-        }).collect::<std::collections::HashMap<_, _>>();
-
-        py.allow_threads(|| {
-            for map in &mut self.entries {
-                if map.get("source").and_then(Value::as_str) != Some("flatpak") {
-                    continue;
-                }
-                let id = map.get("id").and_then(Value::as_str).unwrap_or("").to_string();
-                let releases = map.remove("_releases_last_year")
-                    .and_then(|v| v.as_i64()).unwrap_or(0).max(1);
-
-                if fetch_available {
-                    if let Some(download_count) = downloads.get(&id).copied() {
-                        let count = download_count.max(0);
-                        map.insert("popularity_downloads".into(), Value::Number(count.into()));
-                        if let Some(metric) = serde_json::Number::from_f64(count as f64 / releases as f64) {
-                            map.insert("popularity_metric".into(), Value::Number(metric));
-                        }
-                        continue;
-                    }
-                } else if let Some((raw, metric)) = previous_metrics.get(&id) {
-                    match raw {
-                        Some(value) => { map.insert("popularity_downloads".into(), Value::Number((*value).into())); }
-                        None => { map.insert("popularity_downloads".into(), Value::Null); }
-                    }
-                    if let Some(value) = serde_json::Number::from_f64(*metric) {
-                        map.insert("popularity_metric".into(), Value::Number(value));
-                    }
-                    continue;
-                }
-
-                map.insert("popularity_downloads".into(), Value::Null);
-                map.insert("popularity_metric".into(), Value::Null);
-            }
-        });
-        Ok(())
-    }
-
     fn apply_review_summaries(
         &mut self,
         py: Python<'_>,
@@ -828,7 +768,6 @@ impl AppStreamGeneration {
 
                 if let Some(mut old) = reused {
                     for key in [
-                        "popularity_downloads", "popularity_metric",
                         "review_rating", "review_count",
                     ] {
                         match map.get(key) {
@@ -948,8 +887,6 @@ pub(crate) fn reconcile_appstream_components(
                 // Dynamic metrics are independent of the AppStream metadata hash.
                 // Refresh them even when the normalized component itself is reused.
                 for key in [
-                    "popularity_downloads",
-                    "popularity_metric",
                     "review_rating",
                     "review_count",
                 ] {
@@ -1078,8 +1015,7 @@ struct RuntimeAppStreamEntry {
     is_new: bool,
     review_rating: Option<f64>,
     review_subscore: Option<i64>,
-    category_popularity_score: Option<i64>,
-    category_native_score: Option<i64>,
+    category_review_score: Option<i64>,
     #[serde(with = "serde_bytes")]
     payload: Vec<u8>,
 }
@@ -1102,14 +1038,12 @@ impl RuntimeAppStreamEntry {
         let is_new = value.get("is_new").and_then(Value::as_bool).unwrap_or(false);
         let review_rating = value.get("review_rating").and_then(Value::as_f64);
         let review_subscore = value.get("review_subscore").and_then(Value::as_i64);
-        let category_popularity_score = value.get("_category_popularity_score").and_then(Value::as_i64);
-        let category_native_score = value.get("_category_native_score").and_then(Value::as_i64);
+        let category_review_score = value.get("_category_review_score").and_then(Value::as_i64);
         let payload = rmp_serde::to_vec_named(&value).ok()?;
         Some(Self {
             category, appstream_id, name, canonical_name, source, package_names,
             search_packages, description_lower, developer_lower, is_new,
-            review_rating, review_subscore, category_popularity_score,
-            category_native_score, payload,
+            review_rating, review_subscore, category_review_score, payload,
         })
     }
 
@@ -1162,13 +1096,8 @@ fn browse_unit(key: &str, salt: &str) -> f64 {
     (browse_hash(key, salt) as f64) / (u64::MAX as f64)
 }
 
-fn browse_score(key: &str, salt: &str, low: i64, high: i64) -> i64 {
-    if high <= low { return low; }
-    low + (browse_hash(key, salt) % ((high - low + 1) as u64)) as i64
-}
 
 fn browse_is_appstream(value: &serde_json::Map<String, Value>) -> bool { value.get("is_appstream_entry").and_then(Value::as_bool).unwrap_or(false) }
-fn browse_source(value: &serde_json::Map<String, Value>) -> &str { value.get("appstream_source").and_then(Value::as_str).unwrap_or("native") }
 fn browse_is_curated(value: &serde_json::Map<String, Value>) -> bool {
     if browse_is_appstream(value) { return false; }
     let local = value.get("path").and_then(Value::as_str).unwrap_or("").contains(".local/linuxtoys/scripts");
@@ -1179,27 +1108,75 @@ fn browse_is_known(value: &serde_json::Map<String, Value>, known: &std::collecti
 }
 
 fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
-    const SCORE_MAX:i64=999; const TOP:i64=900; const SECTION:i64=100;
     let known:std::collections::HashSet<String>=known_popular.iter().map(|s|s.trim().to_lowercase()).filter(|s|!s.is_empty()).collect();
     let rows:Vec<(Option<f64>,Option<i64>)>=values.iter().map(|v|(v.get("review_rating").and_then(Value::as_f64),v.get("review_count").and_then(Value::as_i64))).collect();
     let reviews=crate::popularity::review_subscores(rows);
-    for (v,score) in values.iter_mut().zip(reviews) { if let Some(m)=v.as_object_mut(){ if let Some(score)=score{m.insert("review_subscore".into(),Value::Number(score.into()));}else{m.remove("review_subscore");} } }
-
-    let mut metric_rows=Vec::new(); let mut metric_indices=Vec::new();
-    let mut native_rows=Vec::new(); let mut native_indices=Vec::new();
-    for (i,v) in values.iter_mut().enumerate(){let Some(m)=v.as_object_mut()else{continue}; if !browse_is_appstream(m){continue} let key=browse_session_key(m);
-        if browse_is_known(m,&known){m.insert("_category_popularity_score".into(),Value::Number(browse_score(&key,"known",TOP,SCORE_MAX).into()));continue}
-        let source=browse_source(m).to_string(); let metric=m.get("popularity_metric").and_then(Value::as_f64);
-        if let Some(metric)=metric { metric_indices.push(i); metric_rows.push((metric_indices.len()-1,metric,key)); continue }
-        if source=="flatpak" {m.insert("_category_popularity_score".into(),Value::Number(browse_score(&key,"flatpak-unknown",0,SCORE_MAX).into()));continue}
-        if source=="native" {m.remove("_category_popularity_score"); let review=m.get("review_subscore").and_then(Value::as_i64); native_indices.push(i); native_rows.push((native_indices.len()-1,review,key.clone(),browse_unit(&key,"order")));}
+    for (v,score) in values.iter_mut().zip(reviews) {
+        if let Some(m)=v.as_object_mut(){
+            if let Some(score)=score{m.insert("review_subscore".into(),Value::Number(score.into()));}else{m.remove("review_subscore");}
+        }
     }
-    for (row,section) in crate::popularity::metric_rank_sections(metric_rows){if let Some(m)=values.get_mut(metric_indices[row]).and_then(Value::as_object_mut){let key=browse_session_key(m);let low=section*SECTION;let high=if section==9{SCORE_MAX}else{low+SECTION-1};m.insert("_category_popularity_score".into(),Value::Number(browse_score(&key,&format!("flatpak-category:{section}"),low,high).into()));}}
-    for (row,section) in crate::popularity::native_rank_sections(native_rows){if let Some(m)=values.get_mut(native_indices[row]).and_then(Value::as_object_mut){let key=browse_session_key(m);let low=section*SECTION;let high=if section==9{SCORE_MAX}else{low+SECTION-1};m.insert("_category_native_score".into(),Value::Number(browse_score(&key,&format!("native-category:{section}"),low,high).into()));}}
 
-    values.sort_by(|a,b|{let am=a.as_object();let bm=b.as_object();let structural=|m:Option<&serde_json::Map<String,Value>>|{let m=m.unwrap();if m.get("is_create_script").and_then(Value::as_bool).unwrap_or(false){0}else if m.get("is_subcategory").and_then(Value::as_bool).unwrap_or(false){1}else{2}};let sa=structural(am);let sb=structural(bm);if sa!=sb{return sa.cmp(&sb)};let am=am.unwrap();let bm=bm.unwrap();if sa==1{return am.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase().cmp(&bm.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase())}
-        let score=|m:&serde_json::Map<String,Value>|->i64{let key=browse_session_key(m);if browse_is_known(m,&known){return browse_score(&key,"known",TOP,SCORE_MAX)}if browse_is_appstream(m){if let Some(v)=m.get("_category_popularity_score").and_then(Value::as_i64){return v.clamp(0,SCORE_MAX)}if browse_source(m)=="native"{if let Some(v)=m.get("_category_native_score").and_then(Value::as_i64){return v.clamp(0,SCORE_MAX)}}}if browse_is_curated(m){browse_score(&key,"curated",TOP,SCORE_MAX)}else{browse_score(&key,"fallback",0,TOP-1)}};
-        let seca=score(am)/SECTION;let secb=score(bm)/SECTION;if seca!=secb{return secb.cmp(&seca)};let ra=am.get("review_subscore").and_then(Value::as_i64);let rb=bm.get("review_subscore").and_then(Value::as_i64);match (ra,rb){(Some(a),Some(b)) if a!=b=>return b.cmp(&a),(Some(_),None)=>return std::cmp::Ordering::Less,(None,Some(_))=>return std::cmp::Ordering::Greater,_=>{}}let ka=browse_session_key(am);let kb=browse_session_key(bm);browse_unit(&ka,"order").total_cmp(&browse_unit(&kb,"order"))});
+    let structural=|m:&serde_json::Map<String,Value>|m.get("is_create_script").and_then(Value::as_bool).unwrap_or(false)||m.get("is_subcategory").and_then(Value::as_bool).unwrap_or(false);
+    let promoted=|m:&serde_json::Map<String,Value>|browse_is_known(m,&known)||browse_is_curated(m);
+
+    let mut structural_values=Vec::new();
+    let mut promoted_values=Vec::new();
+    let mut ranked_values=Vec::new();
+    for v in values.iter().cloned(){
+        let Some(m)=v.as_object()else{continue};
+        if structural(m){structural_values.push(v)}
+        else if promoted(m){promoted_values.push(v)}
+        else{ranked_values.push(v)}
+    }
+
+    structural_values.sort_by(|a,b|{
+        let am=a.as_object().unwrap();let bm=b.as_object().unwrap();
+        let asub=am.get("is_subcategory").and_then(Value::as_bool).unwrap_or(false);
+        let bsub=bm.get("is_subcategory").and_then(Value::as_bool).unwrap_or(false);
+        if asub!=bsub{return asub.cmp(&bsub)}
+        am.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase().cmp(&bm.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase())
+    });
+    ranked_values.sort_by(|a,b|{
+        let am=a.as_object().unwrap();let bm=b.as_object().unwrap();
+        let ar=am.get("review_subscore").and_then(Value::as_i64);
+        let br=bm.get("review_subscore").and_then(Value::as_i64);
+        match (ar,br){
+            (Some(a),Some(b)) if a!=b=>return b.cmp(&a),
+            (Some(_),None)=>return std::cmp::Ordering::Less,
+            (None,Some(_))=>return std::cmp::Ordering::Greater,
+            _=>{}
+        }
+        let ak=browse_session_key(am);let bk=browse_session_key(bm);
+        browse_unit(&ak,"order").total_cmp(&browse_unit(&bk,"order"))
+    });
+    promoted_values.sort_by(|a,b|{
+        let ak=browse_session_key(a.as_object().unwrap());let bk=browse_session_key(b.as_object().unwrap());
+        browse_unit(&ak,"promoted-order").total_cmp(&browse_unit(&bk,"promoted-order"))
+    });
+
+    let total=ranked_values.len()+promoted_values.len();
+    let count=promoted_values.len();
+    let top_ten=(total+9)/10;
+    // Preserve at least one ordinary result between promoted entries whenever
+    // possible. If 10% is too small, widen only the promotion window needed.
+    let top_slots=top_ten.max(count.saturating_mul(2).saturating_sub(1)).min(total);
+    if count>0 {
+        let mut placed=0usize;
+        for (i,item) in promoted_values.into_iter().enumerate(){
+            let left=i*top_slots/count;
+            let right=(((i+1)*top_slots)/count).saturating_sub(1).max(left);
+            let width=right-left+1;
+            let key=browse_session_key(item.as_object().unwrap());
+            let jitter=if width>1{(browse_unit(&key,"promoted-jitter")*(width as f64)) as usize}else{0};
+            let pos=(left+jitter).min(top_slots.saturating_sub(1))+placed;
+            ranked_values.insert(pos.min(ranked_values.len()),item);
+            placed+=1;
+        }
+    }
+
+    structural_values.extend(ranked_values);
+    for (dst,src) in values.iter_mut().zip(structural_values){*dst=src;}
 }
 
 #[pyclass]
@@ -1361,8 +1338,7 @@ impl AppStreamCatalog {
                 "package-name": entry.package_names,
                 "review_rating": rating,
                 "review_subscore": entry.review_subscore,
-                "_category_popularity_score": entry.category_popularity_score,
-                "_category_native_score": entry.category_native_score,
+                "_category_review_score": entry.category_review_score,
                 "is_script": true,
                 "is_repo_entry": true,
                 "is_appstream_entry": true,

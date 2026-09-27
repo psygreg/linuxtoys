@@ -25,7 +25,7 @@ from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 19
+CACHE_SCHEMA = 20
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -1011,6 +1011,21 @@ def refresh_cache(force=False, status_callback=None):
             )
             generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
 
+            ratings_box = {"value": None, "done": False}
+
+            def fetch_ratings():
+                try:
+                    ratings_box["value"] = _fetch_odrs_ratings()
+                finally:
+                    ratings_box["done"] = True
+
+            ratings_thread = threading.Thread(
+                target=fetch_ratings,
+                name="linuxtoys-appstream-odrs",
+                daemon=True,
+            )
+            ratings_thread.start()
+
             native_supported = _native_appstream_supported_host()
             components = _load_appstream_components()
             if native_supported:
@@ -1023,16 +1038,8 @@ def refresh_cache(force=False, status_callback=None):
             _refresh_missing_flatpak_appstream()
             _flatpak_catalog_sources = _load_flatpak_components(generation)
 
-            # An AppStream rebuild invalidates its popularity input too. The
-            # popularity module keeps the previous snapshot on disk so a transient
-            # Flathub failure can still fall back to the last known data.
-            downloads = popularity.fetch_flathub_downloads()
-            generation.apply_flathub_metrics(
-                json.dumps(downloads or {}, ensure_ascii=False, separators=(",", ":")),
-                bool(downloads),
-            )
-
-            ratings = _fetch_odrs_ratings()
+            ratings_thread.join()
+            ratings = ratings_box["value"]
             generation.apply_review_summaries(
                 json.dumps(ratings or {}, ensure_ascii=False, separators=(",", ":")),
                 ratings is not None,

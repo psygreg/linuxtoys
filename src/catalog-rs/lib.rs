@@ -28,9 +28,6 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<appstream::AppStreamGeneration>()?;
     m.add_class::<appstream::AppStreamCatalog>()?;
     m.add_function(wrap_pyfunction!(popularity::review_subscores, m)?)?;
-    m.add_function(wrap_pyfunction!(popularity::metric_rank_sections, m)?)?;
-    m.add_function(wrap_pyfunction!(popularity::native_rank_sections, m)?)?;
-    m.add_function(wrap_pyfunction!(popularity::flathub_metric, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::featured_weighted_sample, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::session_random_score, m)?)?;
     m.add_function(wrap_pyfunction!(popularity::score_for_item, m)?)?;
