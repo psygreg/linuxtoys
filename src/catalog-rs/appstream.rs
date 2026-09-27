@@ -184,11 +184,30 @@ fn inherit_popularity_rs(natives:&mut [serde_json::Map<String,Value>],flat:&[ser
 fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool)->bool{
     !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"|"txt"))))
 }
+fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
+    if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak").then(||s.to_string())}
+    if let Some(m)=v.as_object(){
+        for(k,v)in m{if k!="all"&&host_os.contains(&k.to_lowercase()){if let Some(s)=v.as_str(){if matches!(s,"native"|"flatpak"){return Some(s.into())}}}}
+        return m.get("all").and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).map(str::to_string)
+    }
+    None
+}
+fn explicit_preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
+    let apps=prefs.as_object()?.get("apps")?.as_object()?;
+    let id=normalize_id(item.get("id").and_then(Value::as_str).unwrap_or(""));
+    let flatpak_id=normalize_id(item.get("flatpak_id").and_then(Value::as_str).unwrap_or(""));
+    let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
+    let v=apps.iter().find_map(|(key,value)| {
+        let key_id=normalize_id(key);
+        (key_id==id || (!flatpak_id.is_empty()&&key_id==flatpak_id) || key.trim().eq_ignore_ascii_case(name)).then_some(value)
+    })?;
+    preference_value_rs(v,host_os)
+}
+fn explicit_group_preference_rs(group:&[serde_json::Map<String,Value>],prefs:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
+    group.iter().find_map(|item|explicit_preference_rs(item,prefs,host_os))
+}
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
-    let Some(o)=prefs.as_object()else{return "flatpak".into()};let default=o.get("default").and_then(Value::as_str).unwrap_or("flatpak");let apps=o.get("apps").and_then(Value::as_object);
-    let id=item.get("id").and_then(Value::as_str).unwrap_or("");let name=item.get("name").and_then(Value::as_str).unwrap_or("");let Some(v)=apps.and_then(|a|a.get(id).or_else(||a.get(name)))else{return default.into()};
-    if let Some(s)=v.as_str(){return if matches!(s,"native"|"flatpak"){s.into()}else{"flatpak".into()}}
-    if let Some(m)=v.as_object(){for(k,v)in m{if k!="all"&&host_os.contains(&k.to_lowercase()){if let Some(s)=v.as_str(){return s.into()}}}return m.get("all").and_then(Value::as_str).unwrap_or(default).into()} default.into()
+    explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).unwrap_or("flatpak").to_string())
 }
 fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
@@ -197,6 +216,7 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
         let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let mut natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).collect();
         if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{out.extend(group);continue}
+        if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if pref=="flatpak"{selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
         if !natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos){inherit_popularity_rs(&mut natives,&flat);out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=group.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
