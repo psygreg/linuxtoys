@@ -86,11 +86,14 @@ elif is_manjaro; then
     pamac remove --orphans --no-confirm || fatal "Failed to remove orphaned packages"
     pamac update --no-confirm || fatal "Failed to upgrade packages"
 elif is_suse; then
-    orphaned_packages=$(zypper packages --unneeded | awk '/^i/{print $5}')
-    if [[ -n "$orphaned_packages" ]]; then
-        sudo zypper rm --clean-deps $orphaned_packages -y || fatal "Failed to remove orphaned packages"
+    mapfile -t orphaned_packages < <(
+        zypper --xmlout packages --unneeded 2>/dev/null |
+        sed -n 's/.*<solvable[^>]*name="\([^"]*\)".*/\1/p'
+    )
+    if (( ${#orphaned_packages[@]} )); then
+        sudo_ zypper -n rm --clean-deps "${orphaned_packages[@]}" || die "Failed to remove orphaned packages"
     fi
-    sudo zypper dup -y || fatal "Failed to upgrade packages"
+    sudo_ zypper dup -y || fatal "Failed to upgrade packages"
 elif is_solus; then
     { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo eopkg rmo -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo eopkg up -y || fatal "Failed to upgrade packages"
