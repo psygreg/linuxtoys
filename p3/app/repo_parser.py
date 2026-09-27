@@ -1084,10 +1084,21 @@ def create_install_script(entry):
                 "No native package name matches this operating system"
             )
 
-        command = "\n".join(
-            f"pkg_install {shlex.quote(package)}"
-            for package in packages
-        )
+        if entry.get("is_appstream_entry") and len(packages) == 1:
+            # The AppStream runner may promote a metadata/runtime package to
+            # the actual user-facing package before this script starts. Keep
+            # the AppStream package as the standalone-execution fallback.
+            fallback_package = shlex.quote(packages[0])
+            command = (
+                'pkg_install "${LINUXTOYS_APPSTREAM_PACKAGE:-'
+                + fallback_package
+                + '}"'
+            )
+        else:
+            command = "\n".join(
+                f"pkg_install {shlex.quote(package)}"
+                for package in packages
+            )
         needs_askpass = True
 
     elif install_type == "url":

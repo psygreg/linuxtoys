@@ -12,6 +12,7 @@ import uuid
 from .antenna import antenna
 from .gtk_common import GLib
 from .library_loader import script_command, script_environment
+from .appstream_resolver import resolve_native_appstream_package
 from .term_registry import ExecutionRegistry
 
 
@@ -396,6 +397,38 @@ class AppStreamRunner:
         env = script_environment(script_info, os.environ.copy())
         env["TRANSMAP_PATH"] = transmap_path
         env.pop("LINUXTOYS_RUNNER_STATE", None)
+
+        # Resolve misleading AppStream native package ownership before any
+        # background script starts.  The generated AppStream script consumes
+        # this value instead of asking pkg_install to reinterpret its argument.
+        env.pop("LINUXTOYS_APPSTREAM_PACKAGE", None)
+        if script_info.get("appstream_source") == "native":
+            package_value = script_info.get("package-name")
+            if isinstance(package_value, str):
+                packages = [package_value.strip()] if package_value.strip() else []
+            elif isinstance(package_value, (list, tuple)):
+                packages = [str(value).strip() for value in package_value if str(value).strip()]
+            else:
+                packages = []
+
+            # A single AppStream package is the only case where semantic
+            # promotion is unambiguous. Multi-package entries keep their
+            # materialized pkg_install commands unchanged.
+            if len(packages) == 1:
+                original_package = packages[0]
+                resolved_package = resolve_native_appstream_package(
+                    original_package,
+                    component_id=script_info.get("appstream_id"),
+                    desktop_id=script_info.get("appstream_launchable"),
+                    name=script_info.get("name"),
+                )
+                env["LINUXTOYS_APPSTREAM_PACKAGE"] = resolved_package
+                if resolved_package != original_package:
+                    print(
+                        f"Resolved AppStream package '{original_package}' to "
+                        f"'{resolved_package}'.",
+                        file=os.sys.stderr,
+                    )
 
         override_paths = []
         try:
