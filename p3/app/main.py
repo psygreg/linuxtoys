@@ -85,7 +85,7 @@ def run():
     if os.environ.get('UPD_SERVICE') == '1':
         # Set EASY_CLI mode for the script execution
         os.environ['EASY_CLI'] = '1'
-        
+
         try:
             # Find and run sysup.sh script
             script_info = find_script_by_name('sysup', translations)
@@ -99,9 +99,9 @@ def run():
             print(f"Error running sysup.sh in UPD_SERVICE mode: {e}")
             sys.exit(1)
 
-    # Check for CLI mode 
-    if os.environ.get('EASY_CLI') == '1': 
-        # Run in EASY_CLI 
+    # Check for CLI mode
+    if os.environ.get('EASY_CLI') == '1':
+        # Run in EASY_CLI
         sys.exit(easy_cli_handler(translations))
 
     # Check if the system is supported before starting GUI
@@ -120,7 +120,7 @@ def run():
         dialog.run()
         dialog.destroy()
         sys.exit(1)
-    
+
     # Run kernel update check for psycachy kernels (debian/ubuntu only)
     try:
         import threading
@@ -131,7 +131,7 @@ def run():
                 run_kernel_update_check(show_dialog=True, verbose=False, translations=translations)
             except Exception as e:
                 print(f"Kernel update check failed: {e}")
-        
+
         # Run kernel check in background thread to prevent blocking
         kernel_thread = threading.Thread(target=async_kernel_check, daemon=True)
         kernel_thread.start()

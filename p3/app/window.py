@@ -1904,8 +1904,13 @@ class AppWindow(
         return False
 
     def _render_categories(self, categories):
-        """Render an already parsed category snapshot on the GTK thread."""
-        # Store current category info and temporarily set to None for proper bold formatting.
+        """Render a parsed category snapshot cooperatively on the GTK thread."""
+        # Cancel any older publication that may still be draining. Incrementing the
+        # generation makes its idle callback harmless without needing to remove a
+        # source that may currently be dispatching.
+        generation = getattr(self, "_category_render_generation", 0) + 1
+        self._category_render_generation = generation
+
         temp_current_category = self.current_category_info
         self.current_category_info = None
 
@@ -1913,10 +1918,6 @@ class AppWindow(
             lambda widget: self.categories_flowbox.remove(widget)
         )
 
-        # Specials is a virtual top-level category backed by the curated category
-        # cache. Keep it first so the LinuxToys-curated catalog is the leading
-        # main-menu option. Its visible strings come from the normal translation
-        # dictionary, just like the parser-backed categories.
         specials_category = {
             "name": self.translations.get("specials", "Specials"),
             "description": self.translations.get(
@@ -1930,16 +1931,47 @@ class AppWindow(
             "is_subcategory": False,
             "is_linuxtoys_specials": True,
         }
-        rendered_categories = [specials_category, *categories]
+        pending = iter([specials_category, *categories])
 
-        for cat in rendered_categories:
-            widget = self.create_item_widget(cat)
-            description = cat.get("description", "")
-            widget.set_tooltip_text(description or None)
-            self.categories_flowbox.add(widget)
+        # Four cards keeps each GTK burst short while normally filling enough of
+        # the first viewport to begin the startup transition immediately.
+        batch_size = 4
+        first_batch = True
 
-        self.current_category_info = temp_current_category
-        self.categories_flowbox.show_all()
+        def append_batch():
+            nonlocal first_batch
+
+            if self._category_render_generation != generation:
+                return False
+
+            added = 0
+            while added < batch_size:
+                try:
+                    cat = next(pending)
+                except StopIteration:
+                    self.current_category_info = temp_current_category
+                    return False
+
+                widget = self.create_item_widget(cat)
+                description = cat.get("description", "")
+                widget.set_tooltip_text(description or None)
+                self.categories_flowbox.add(widget)
+                widget.show_all()
+                added += 1
+
+            if first_batch:
+                first_batch = False
+                # The first visible row is enough to release the startup overlay.
+                # Remaining category cards continue to arrive in later idle turns.
+                self.current_category_info = temp_current_category
+                self._hide_categories_loading_indicator()
+
+            return True
+
+        # Publish the first small batch now so the parser-ready callback immediately
+        # produces useful UI, then yield between all remaining batches.
+        if append_batch():
+            GLib.idle_add(append_batch)
 
     def load_categories(self):
         """Load categories synchronously for explicit refresh/fallback paths."""
@@ -1949,7 +1981,6 @@ class AppWindow(
         if not categories:
             categories = parser.get_categories(self.translations)
         self._render_categories(categories)
-        self._hide_categories_loading_indicator()
 
     def _category_items_for_display(self, category_info):
         """Return the exact item list used by normal category browsing."""
