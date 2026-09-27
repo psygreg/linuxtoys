@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
+use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
-use std::hash::{DefaultHasher, Hash, Hasher};
+use std::hash::{Hash, Hasher};
 use std::sync::{Mutex, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};
 
