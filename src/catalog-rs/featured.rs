@@ -1,5 +1,4 @@
 use pyo3::prelude::*;
-use crate::popularity;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::sync::OnceLock;
@@ -426,16 +425,14 @@ fn category_affinity(source_category: &str, target_category: &str, table: &Affin
 
 /// Rank already-eligible app-page Featured candidates.
 ///
-/// Each candidate is `(category, review_score, popularity_score)`. Rust resolves
-/// LinuxToys -> Myket category affinity, then ranks by affinity -> review ->
-/// popularity -> per-call random tie-breaker.
-///
-/// The affinity JSON is loaded once per process and retained for subsequent app
-/// pages, matching category_affinity.py's previous process-local cache behavior.
+/// Each candidate is `(category, bayesian_odrs_score)`. Myket category affinity
+/// remains authoritative; Bayesian ODRS quality is the secondary criterion, then
+/// per-call randomness breaks exact ties. The raw star average is deliberately not
+/// part of ranking because Python has already applied the >= 3.5-star eligibility gate.
 #[pyfunction]
 pub(crate) fn app_page_featured_rank(
     source_category: &str,
-    candidates: Vec<(String, f64, String, bool, u8, Option<i64>, Option<i64>)>,
+    candidates: Vec<(String, f64)>,
     count: usize,
     seed: u64,
     affinity_path: &str,
@@ -446,21 +443,14 @@ pub(crate) fn app_page_featured_rank(
 
     let table = MYKET_AFFINITY.get_or_init(|| load_myket_affinity(affinity_path));
     let mut rng = SmallRng::new(seed);
-    let mut ranked: Vec<(usize, f64, f64, f64, f64)> = candidates
+    let mut ranked: Vec<(usize, f64, f64, f64)> = candidates
         .into_iter()
         .enumerate()
-        .map(|(index, (category, review, key, known_popular, kind, category_score, native_score))| {
-            let popularity_score = popularity::score_for_item(
-                &key,
-                known_popular,
-                kind,
-                category_score.or(native_score),
-            ) as f64;
+        .map(|(index, (category, bayesian_score))| {
             (
                 index,
                 category_affinity(source_category, &category, table),
-                if review.is_finite() { review } else { 0.0 },
-                popularity_score,
+                if bayesian_score.is_finite() { bayesian_score } else { 0.0 },
                 rng.unit(),
             )
         })
@@ -469,14 +459,9 @@ pub(crate) fn app_page_featured_rank(
     ranked.sort_by(|a, b| {
         b.1.total_cmp(&a.1)
             .then_with(|| b.2.total_cmp(&a.2))
-            .then_with(|| b.3.total_cmp(&a.3))
-            .then_with(|| a.4.total_cmp(&b.4))
+            .then_with(|| a.3.total_cmp(&b.3))
             .then_with(|| a.0.cmp(&b.0))
     });
-
-    ranked
-        .into_iter()
-        .take(count)
-        .map(|(index, _, _, _, _)| index)
-        .collect()
+    ranked.truncate(count.min(ranked.len()));
+    ranked.into_iter().map(|entry| entry.0).collect()
 }

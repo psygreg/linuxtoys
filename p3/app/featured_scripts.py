@@ -507,12 +507,10 @@ class FeaturedCtl:
 
     @staticmethod
     def _featured_rating_weight(script):
-        """Return the Featured selection weight for an eligible candidate.
+        """Eligibility gate: AppStream entries must have at least 3.5 stars.
 
-        LinuxToys-curated entries keep the historical baseline weight. AppStream
-        entries require at least 3.5 stars (70 on the ODRS 0-100 scale); their weight
-        then rises linearly from 1.0 at 70 to 2.0 at 90 (4.5 stars) and remains
-        capped there.
+        The raw star average no longer affects Featured odds. Once eligible, the
+        Bayesian ODRS score is the sole review-quality weight.
         """
         if not script.get("is_appstream_entry", False):
             return 1.0
@@ -521,18 +519,19 @@ class FeaturedCtl:
             rating = float(script.get("review_rating"))
         except (TypeError, ValueError):
             return 0.0
-
-        if rating < 70.0:
-            return 0.0
-        return min(2.0, 1.0 + ((rating - 70.0) / 20.0))
+        return 1.0 if rating >= 70.0 else 0.0
 
     @staticmethod
-    def _featured_popularity_weight(script):
-        """Return a bounded 1..2 popularity multiplier for Featured sampling."""
-        score = popularity.score_for_item(script)
-        return 1.0 + (
-            max(0, min(popularity.SCORE_MAX, score)) / popularity.SCORE_MAX
-        )
+    def _featured_bayesian_weight(script):
+        """Return a bounded 1..2 multiplier from the Bayesian ODRS score."""
+        if not script.get("is_appstream_entry", False):
+            return 1.0
+        try:
+            score = float(script.get("review_subscore"))
+        except (TypeError, ValueError):
+            return 1.0
+        score = max(popularity.SCORE_MIN, min(popularity.SCORE_MAX, score))
+        return 1.0 + (score / popularity.SCORE_MAX)
 
     @classmethod
     def _weighted_featured_sample(cls, candidates, count, extra_weight=None):
@@ -548,7 +547,7 @@ class FeaturedCtl:
         for script in pool:
             weight = (
                 cls._featured_rating_weight(script)
-                * cls._featured_popularity_weight(script)
+                * cls._featured_bayesian_weight(script)
             )
             if extra_weight is not None:
                 try:
@@ -807,41 +806,18 @@ class FeaturedCtl:
 
         count = min(int(count), len(eligible))
 
-        # catalog-rs now owns both Myket affinity calculation and ranking.
-        # Python only supplies candidate metadata plus the existing popularity score.
+        # Myket affinity remains the master criterion. The secondary quality
+        # criterion is now the Bayesian ODRS score; the raw star average is used
+        # only by _eligible_featured_scripts() for the >= 3.5-star gate.
         ranking_inputs = []
         for script in eligible:
             try:
-                review = float(script.get("review_subscore"))
+                bayesian_score = float(script.get("review_subscore"))
             except (TypeError, ValueError):
-                try:
-                    review = float(script.get("review_rating")) * 10.0
-                except (TypeError, ValueError):
-                    review = 0.0
-            if popularity._is_flatpak_appstream(script):
-                popularity_kind = 1
-            elif popularity._is_native_appstream(script):
-                popularity_kind = 2
-            elif popularity._is_curated_or_linuxtoys_script(script):
-                popularity_kind = 3
-            else:
-                popularity_kind = 0
-
-            def optional_int(name):
-                value = script.get(name)
-                try:
-                    return int(value)
-                except (TypeError, ValueError):
-                    return None
-
+                bayesian_score = 0.0
             ranking_inputs.append((
                 str(script.get("category") or ""),
-                review,
-                str(popularity._session_key(script)),
-                bool(popularity.is_known_popular(script)),
-                popularity_kind,
-                optional_int("_category_popularity_score"),
-                optional_int("_category_native_score"),
+                bayesian_score,
             ))
 
         ranked_indices = _catalog_rs.app_page_featured_rank(
