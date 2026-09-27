@@ -507,6 +507,13 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec) -> Option<gtk::Ev
 
         let drawing = gtk::DrawingArea::new();
         drawing.set_widget_name("linuxtoys-native-category-watermark");
+
+        // Draw into the parent window instead of creating an input-owning
+        // GdkWindow over the whole category card. This preserves the GtkGrid
+        // as the CSS-painted surface while letting the outer EventBox receive
+        // pointer enter/leave events reliably.
+        drawing.set_has_window(false);
+
         drawing.set_hexpand(true);
         drawing.set_vexpand(true);
         drawing.set_halign(gtk::Align::Fill);
