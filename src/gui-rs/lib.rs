@@ -419,16 +419,27 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec) -> Option<gtk::Ev
     row.set_hexpand(false);
     row.set_halign(gtk::Align::Fill);
 
-    if removable {
-        row.style_context().add_class("installed-card");
-        let button = gtk::Button::from_icon_name(Some("edit-delete-symbolic"), gtk::IconSize::Menu);
-        button.style_context().add_class("installed-card-remove-left");
-        button.style_context().add_class("destructive-action");
-        button.set_size_request(24, 24);
-        button.set_relief(gtk::ReliefStyle::None);
-        button.set_can_focus(true);
-        button.set_widget_name("linuxtoys-native-remove");
-        row.pack_start(&button, false, false, 0);
+    // Keep the removal control in every ordinary installable card so installed
+    // state can be changed in place after a transaction. Categories can never be
+    // removable, so do not create or reserve a removal-control slot for them.
+    if !category {
+        let remove_button = gtk::Button::from_icon_name(
+            Some("edit-delete-symbolic"),
+            gtk::IconSize::Menu,
+        );
+        remove_button.style_context().add_class("installed-card-remove-left");
+        remove_button.style_context().add_class("destructive-action");
+        remove_button.set_size_request(24, 24);
+        remove_button.set_relief(gtk::ReliefStyle::None);
+        remove_button.set_can_focus(true);
+        remove_button.set_widget_name("linuxtoys-native-remove");
+        row.pack_start(&remove_button, false, false, 0);
+        if removable {
+            row.style_context().add_class("installed-card");
+        } else {
+            remove_button.set_no_show_all(true);
+            remove_button.hide();
+        }
     }
 
     if checklist {
@@ -443,7 +454,7 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec) -> Option<gtk::Ev
     label.set_widget_name("linuxtoys-native-name");
     if !removable && !checklist {
         if category {
-            label.set_margin_end(42);
+            label.set_margin_end(46);
         } else {
             label.set_margin_start(22);
         }

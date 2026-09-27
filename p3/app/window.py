@@ -1220,6 +1220,10 @@ class AppWindow(
             self.script_cache.refresh_removable_cache()
         self._invalidate_featured_eligibility_cache()
 
+        # The installed-package snapshot is now current, so update the removal
+        # controls on already-built category cards without rebuilding the FlowBox.
+        self._refresh_removable_scripts(refresh_cache=False)
+
         app_page = self.main_stack.get_child_by_name("app_page")
         if app_page is not None and hasattr(app_page, "refresh_install_state"):
             app_page.refresh_install_state()
@@ -3219,33 +3223,18 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                                 self.navigation_stack[i] = subcategory
                                 break
 
-    def _refresh_removable_scripts(
-        self, pause_after_initial_ms=0, animate_initial=True
-    ):
-        """
-        Refresh removable-script state and rebuild the currently visible cards.
-
-        The removal button is created inside create_item_widget(), so refreshing
-        only the boolean cache is insufficient: the displayed widgets must also
-        be recreated.
-
-        ``pause_after_initial_ms`` is used by terminal Back navigation: the first
-        screenful is rebuilt synchronously while the terminal is still visible,
-        then later progressive batches are held until the stack transition ends.
-        """
-        if self.script_cache.is_populated:
+    def _refresh_removable_scripts(self, refresh_cache=True):
+        """Refresh removable state and update existing cards in place."""
+        if refresh_cache and self.script_cache.is_populated:
             self.script_cache.refresh_removable_cache()
         self._invalidate_featured_eligibility_cache()
 
-        # Refresh the current category/subcategory view.
-        if self.current_category_info is not None:
-            self._load_scripts_into_flowbox(
-                self.scripts_flowbox,
-                self.current_category_info,
-                pause_after_initial_ms=pause_after_initial_ms,
-                animate_initial=animate_initial,
-            )
-            self.scripts_flowbox.show_all()
-        else:
-            # Root-level scripts can also be removable.
-            self.load_categories()
+        # Card hierarchies now always contain a hidden removal control. Updating
+        # state therefore requires no parser work, card reconstruction, or FlowBox
+        # repopulation.
+        flowbox = (
+            self.scripts_flowbox
+            if self.current_category_info is not None
+            else self.categories_flowbox
+        )
+        self._refresh_flowbox_removable_states(flowbox)

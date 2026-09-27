@@ -477,16 +477,10 @@ class NavCtl:
                 1, int(self.main_stack.get_transition_duration())
             )
 
-            # Installation/removal may have changed the action registry. Rebuild
-            # only the first screenful while the terminal is still visible. The
-            # remaining progressive batches are deliberately held until after the
-            # reverse Gtk.Stack transition, so FlowBox layout cannot steal frames
-            # from the slide. The initial cards are also made fully opaque at once
-            # because their fade would otherwise overlap the stack animation.
-            self._refresh_removable_scripts(
-                pause_after_initial_ms=transition_delay + 16,
-                animate_initial=False,
-            )
+            # Installation/removal may have changed removable state. Cards keep a
+            # hidden removal control permanently, so this is now an in-place state
+            # update rather than a category/FlowBox rebuild.
+            self._refresh_removable_scripts()
 
             def cleanup_terminal_view():
                 # Search refresh paths still decide *when* cleanup starts; Rust owns

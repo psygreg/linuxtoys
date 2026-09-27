@@ -253,18 +253,20 @@ class ItemWidgetFactory:
                 check.connect("toggled", self._on_toggled_check)
                 event_box.checkbox = check
 
-        if spec.get("removable"):
-            remove_btn = gui_rs.card_child(event_box, "linuxtoys-native-remove")
-            if remove_btn is not None:
-                remove_btn.set_tooltip_text(
-                    self.translations.get(
-                        "term_view_remove", "Remove installed components"
-                    )
+        # Rust keeps this control in the card even while it is hidden, allowing
+        # terminal completion to update removable state without rebuilding the card.
+        remove_btn = gui_rs.card_child(event_box, "linuxtoys-native-remove")
+        if remove_btn is not None:
+            remove_btn.set_tooltip_text(
+                self.translations.get(
+                    "term_view_remove", "Remove installed components"
                 )
-                remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
-                remove_btn.connect(
-                    "focus-in-event", self._on_item_remove_focus_in, event_box
-                )
+            )
+            remove_btn.connect("clicked", self._on_item_remove_clicked, item_info)
+            remove_btn.connect(
+                "focus-in-event", self._on_item_remove_focus_in, event_box
+            )
+            event_box.remove_button = remove_btn
 
         if allow_drag:
             event_box.drag_source_set(
@@ -550,6 +552,53 @@ class ItemWidgetFactory:
             return False
 
         return bool(revert_helper._load_last_execution(script_name))
+
+    def _set_item_removable_state(self, event_box, removable):
+        """Toggle an existing card's removal affordance without rebuilding it."""
+        remove_btn = getattr(event_box, "remove_button", None)
+        if remove_btn is None:
+            remove_btn = gui_rs.card_child(event_box, "linuxtoys-native-remove")
+        if remove_btn is None:
+            return False
+
+        removable = bool(removable)
+        row = remove_btn.get_parent()
+        if row is not None:
+            style = row.get_style_context()
+            if removable:
+                style.add_class("installed-card")
+            else:
+                style.remove_class("installed-card")
+
+        label = gui_rs.card_child(event_box, "linuxtoys-native-name")
+        if isinstance(label, Gtk.Label):
+            is_category = bool(
+                event_box.info.get("is_subcategory", False)
+                or event_box.info.get("type") == "category"
+            )
+            label.set_margin_start(0 if removable else (0 if is_category else 22))
+
+        if removable:
+            remove_btn.set_no_show_all(False)
+            remove_btn.show()
+        else:
+            remove_btn.hide()
+            remove_btn.set_no_show_all(True)
+
+        return True
+
+    def _refresh_flowbox_removable_states(self, flowbox):
+        """Refresh removal controls on already-built cards in one FlowBox."""
+        if flowbox is None:
+            return
+        for flowbox_child in flowbox.get_children():
+            event_box = flowbox_child.get_child()
+            item_info = getattr(event_box, "info", None)
+            if not item_info:
+                continue
+            self._set_item_removable_state(
+                event_box, self._is_script_removable(item_info)
+            )
 
     def _on_item_remove_clicked(self, button, item_info):
         """Handle remove button click on a script item."""

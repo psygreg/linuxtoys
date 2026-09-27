@@ -37,8 +37,7 @@ fn create_item_widget(
     row.set_hexpand(false);
     row.set_halign(gtk::Align::Fill);
 
-    let remove_button = if removable {
-        row.style_context().add_class("installed-card");
+    let remove_button = {
         let button = gtk::Button::from_icon_name(Some("edit-delete-symbolic"), gtk::IconSize::Menu);
         button.style_context().add_class("installed-card-remove-left");
         button.style_context().add_class("destructive-action");
@@ -46,8 +45,14 @@ fn create_item_widget(
         button.set_relief(gtk::ReliefStyle::None);
         button.set_can_focus(true);
         row.pack_start(&button, false, false, 0);
+        if removable {
+            row.style_context().add_class("installed-card");
+        } else {
+            button.set_no_show_all(true);
+            button.hide();
+        }
         Some(button)
-    } else { None };
+    };
 
     let check = if checklist {
         let button = gtk::CheckButton::new();
