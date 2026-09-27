@@ -105,7 +105,7 @@ class NavCtl:
         tabs.add_titled(
             installed_scroller,
             "installed",
-            self.translations.get("skills_tab_installed", "Installed"),
+            self.translations.get("app_page_installed", "Installed"),
         )
 
         switcher = Gtk.StackSwitcher()
