@@ -85,63 +85,17 @@ class NavCtl:
         installed_flowbox = self.create_flowbox()
         installed_flowbox._linuxtoys_category_tab = "installed"
 
-        def scroller_for(flowbox):
-            scroller = Gtk.ScrolledWindow()
-            scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-            scroller.add(flowbox)
-            return scroller
-
-        available_scroller = scroller_for(available_flowbox)
-        installed_scroller = scroller_for(installed_flowbox)
-
-        tabs = Gtk.Stack()
-        tabs.set_transition_type(Gtk.StackTransitionType.NONE)
-        tabs.set_transition_duration(140)
-        tabs.add_titled(
-            available_scroller,
-            "available",
-            self.translations.get("category_available", "Available"),
+        view = gui_rs.stack_add_category_browser(
+            self.main_stack,
+            available_flowbox,
+            installed_flowbox,
+            view_name,
+            available_label=self.translations.get("category_available", "Available"),
+            installed_label=self.translations.get("app_page_installed", "Installed"),
         )
-        tabs.add_titled(
-            installed_scroller,
-            "installed",
-            self.translations.get("app_page_installed", "Installed"),
-        )
-
-        switcher = Gtk.StackSwitcher()
-        switcher.set_stack(tabs)
-        switcher.set_halign(Gtk.Align.FILL)
-        switcher.set_hexpand(True)
-        # Category tabs are a flush, full-width footer rather than the inset
-        # app-page tab treatment. Styling is scoped so app-page tabs are unchanged.
-        switcher.get_style_context().add_class("category-footer-tabs")
-        switcher.set_margin_start(0)
-        switcher.set_margin_end(0)
-        switcher.set_margin_top(0)
-        switcher.set_margin_bottom(0)
-        for child in switcher.get_children():
-            child.set_hexpand(True)
-            child.set_halign(Gtk.Align.FILL)
-
-        view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        # Keep the category contents as the expanding body and pin the tab bar
-        # to the bottom, outside either ScrolledWindow, so it behaves like a
-        # persistent category footer while the selected tab scrolls independently.
-        view.pack_start(tabs, True, True, 0)
-        view.pack_end(switcher, False, False, 0)
-        view._linuxtoys_available_flowbox = available_flowbox
-        view._linuxtoys_installed_flowbox = installed_flowbox
-        view._linuxtoys_category_tabs = tabs
-        view._linuxtoys_category_switcher = switcher
-
-        gui_rs.stack_attach_child(
-            self.main_stack, view, view_name, make_visible=False
-        )
-        view.show_all()
-        tabs.set_visible_child(available_scroller)
-        tabs.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
 
         if not self._category_has_installed_items(category_info):
+            switcher = view._linuxtoys_category_switcher
             switcher.set_no_show_all(True)
             switcher.hide()
 

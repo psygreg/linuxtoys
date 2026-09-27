@@ -125,12 +125,17 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 15:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 15)")
+            if lib.lt_gui_abi_version() != 16:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 16)")
             lib.lt_gui_stack_add_scrolled_flowbox.argtypes = [
                 ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p,
             ]
             lib.lt_gui_stack_add_scrolled_flowbox.restype = ctypes.c_bool
+            lib.lt_gui_stack_add_category_browser.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+            ]
+            lib.lt_gui_stack_add_category_browser.restype = ctypes.c_bool
             lib.lt_gui_stack_attach_child.argtypes = [
                 ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint8,
             ]
@@ -239,6 +244,44 @@ def stack_add_scrolled_flowbox(stack, flowbox, name):
     if child is None:
         raise RuntimeError(f"Native category view {name!r} was not attached")
     return child
+
+
+def stack_add_category_browser(
+    stack, available_flowbox, installed_flowbox, name, *,
+    available_label="Available", installed_label="Installed"
+):
+    """Build and attach the native Available/Installed category browser."""
+    lib = _load()
+    if lib is None:
+        raise RuntimeError("LinuxToys native GUI library is unavailable")
+
+    encoded = [
+        str(name).encode("utf-8"),
+        str(available_label).encode("utf-8"),
+        str(installed_label).encode("utf-8"),
+    ]
+    if not lib.lt_gui_stack_add_category_browser(
+        _pointer(stack),
+        _pointer(available_flowbox),
+        _pointer(installed_flowbox),
+        *encoded,
+    ):
+        raise RuntimeError(f"Native stack failed to create category browser {name!r}")
+
+    view = stack.get_child_by_name(str(name))
+    if view is None:
+        raise RuntimeError(f"Native category browser {name!r} was not attached")
+
+    tabs = card_child(view, "linuxtoys-category-tabs")
+    switcher = card_child(view, "linuxtoys-category-switcher")
+    if tabs is None or switcher is None:
+        raise RuntimeError("Native category browser returned an incomplete widget tree")
+
+    view._linuxtoys_available_flowbox = available_flowbox
+    view._linuxtoys_installed_flowbox = installed_flowbox
+    view._linuxtoys_category_tabs = tabs
+    view._linuxtoys_category_switcher = switcher
+    return view
 
 
 def stack_attach_child(stack, child, name, *, make_visible=False):

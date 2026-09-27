@@ -312,6 +312,80 @@ pub unsafe extern "C" fn lt_gui_stack_add_scrolled_flowbox(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn lt_gui_stack_add_category_browser(
+    stack: *mut gtk::ffi::GtkWidget,
+    available_flowbox: *mut gtk::ffi::GtkWidget,
+    installed_flowbox: *mut gtk::ffi::GtkWidget,
+    name: *const c_char,
+    available_label: *const c_char,
+    installed_label: *const c_char,
+) -> bool {
+    if stack.is_null() || available_flowbox.is_null() || installed_flowbox.is_null()
+        || name.is_null() || available_label.is_null() || installed_label.is_null()
+    {
+        return false;
+    }
+
+    let stack: gtk::Stack = from_glib_none(stack as *mut gtk::ffi::GtkStack);
+    let available_flowbox: gtk::FlowBox =
+        from_glib_none(available_flowbox as *mut gtk::ffi::GtkFlowBox);
+    let installed_flowbox: gtk::FlowBox =
+        from_glib_none(installed_flowbox as *mut gtk::ffi::GtkFlowBox);
+    let name = cstr(name);
+    if name.is_empty() || stack.child_by_name(&name).is_some() {
+        return false;
+    }
+
+    available_flowbox.set_widget_name("linuxtoys-category-available-flowbox");
+    installed_flowbox.set_widget_name("linuxtoys-category-installed-flowbox");
+
+    let available_scroller =
+        gtk::ScrolledWindow::new(None::<&gtk::Adjustment>, None::<&gtk::Adjustment>);
+    available_scroller.set_policy(gtk::PolicyType::Never, gtk::PolicyType::Automatic);
+    available_scroller.add(&available_flowbox);
+
+    let installed_scroller =
+        gtk::ScrolledWindow::new(None::<&gtk::Adjustment>, None::<&gtk::Adjustment>);
+    installed_scroller.set_policy(gtk::PolicyType::Never, gtk::PolicyType::Automatic);
+    installed_scroller.add(&installed_flowbox);
+
+    let tabs = gtk::Stack::new();
+    tabs.set_widget_name("linuxtoys-category-tabs");
+    tabs.set_transition_type(gtk::StackTransitionType::None);
+    tabs.set_transition_duration(140);
+    tabs.add_titled(&available_scroller, "available", &cstr(available_label));
+    tabs.add_titled(&installed_scroller, "installed", &cstr(installed_label));
+
+    let switcher = gtk::StackSwitcher::new();
+    switcher.set_widget_name("linuxtoys-category-switcher");
+    switcher.style_context().add_class("category-footer-tabs");
+    switcher.set_stack(Some(&tabs));
+    switcher.set_halign(gtk::Align::Fill);
+    switcher.set_hexpand(true);
+    // Footer tabs are deliberately flush with the category view edges.
+    switcher.set_margin_start(0);
+    switcher.set_margin_end(0);
+    switcher.set_margin_top(0);
+    switcher.set_margin_bottom(0);
+    for child in switcher.children() {
+        child.set_hexpand(true);
+        child.set_halign(gtk::Align::Fill);
+    }
+
+    let view = gtk::Box::new(gtk::Orientation::Vertical, 0);
+    view.set_widget_name("linuxtoys-category-browser");
+    // The selected category contents own the expanding body. Keep the switcher
+    // outside either ScrolledWindow and pinned to the bottom as a fixed footer.
+    view.pack_start(&tabs, true, true, 0);
+    view.pack_end(&switcher, false, false, 0);
+    stack.add_named(&view, &name);
+    view.show_all();
+    tabs.set_visible_child(&available_scroller);
+    tabs.set_transition_type(gtk::StackTransitionType::Crossfade);
+    true
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn lt_gui_stack_attach_child(
     stack: *mut gtk::ffi::GtkWidget,
     child: *mut gtk::ffi::GtkWidget,
@@ -383,7 +457,7 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 15 }
+pub extern "C" fn lt_gui_abi_version() -> u32 { 16 }
 
 #[no_mangle]
 pub extern "C" fn lt_gui_clear_pixbuf_cache() {
