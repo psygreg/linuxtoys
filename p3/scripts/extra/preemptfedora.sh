@@ -19,4 +19,4 @@ elif is_ostree; then
     kargs_upd 'preempt=full'
 fi
 
-info "$finishmsg"
+info "$rebootmsg"

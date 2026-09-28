@@ -35,7 +35,7 @@ net.core.netdev_max_backlog = 5000
 net.ipv4.tcp_slow_start_after_idle = 0
 EOF
 
-sudo_ sysctl -p /etc/sysctl.d/99-bbr.conf || die "Failed to enable tcp_bbr settings"
+sudo_ sysctl -p /usr/lib/sysctl.d/99-bbr.conf || die "Failed to enable tcp_bbr settings"
 sudo_ sysctl --system || die "Failed to refresh sysctl"
 
 info "$finishmsg"
