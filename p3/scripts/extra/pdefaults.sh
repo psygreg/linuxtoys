@@ -33,6 +33,8 @@ sysag_run () {
     call_script preemptfedora
     # enable x86_64v3 repositories on ubuntu
     call_script ubuntuv3
+    # enable tcp_bbr if applicable
+    call_script bbr
 }
 # consolidated installation
 optimizer () {

@@ -679,5 +679,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Maelezo",
   "app_page_extensions": "Viendelezi",
-  "category_available": "Inapatikana"
+  "category_available": "Inapatikana",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoriti ya hali ya juu ya Google ya kudhibiti msongamano, iliyoundwa kuongeza upitishaji wa mtandao na kupunguza ucheleweshaji."
 }

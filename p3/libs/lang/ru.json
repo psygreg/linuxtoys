@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Подробности",
   "app_page_extensions": "Расширения",
-  "category_available": "Доступно"
+  "category_available": "Доступно",
+  "bbr_desc": "«Bottleneck Bandwidth and Round-trip propagation time» — усовершенствованный алгоритм Google для управления перегрузкой, разработанный для максимизации пропускной способности сети и минимизации задержки."
 }

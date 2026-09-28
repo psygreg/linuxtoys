@@ -661,5 +661,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "विवरण",
   "app_page_extensions": "एक्सटेंशन",
-  "category_available": "उपलब्ध"
+  "category_available": "उपलब्ध",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Google का उन्नत कंजेशन कंट्रोल एल्गोरिदम, जिसे नेटवर्क थ्रूपुट को अधिकतम और लेटेंसी को न्यूनतम करने के लिए डिज़ाइन किया गया है।"
 }

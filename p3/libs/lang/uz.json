@@ -680,5 +680,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Tafsilotlar",
   "app_page_extensions": "Kengaytmalar",
-  "category_available": "Mavjud"
+  "category_available": "Mavjud",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, tarmoq o'tkazuvchanligini maksimal darajada oshirish va kechikishni minimallashtirish uchun Google tomonidan ishlab chiqilgan ilg'or tirbandlikni boshqarish algoritmi."
 }

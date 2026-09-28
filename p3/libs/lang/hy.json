@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Մանրամասներ",
   "app_page_extensions": "Ընդլայնումներ",
-  "category_available": "Հասանելի"
+  "category_available": "Հասանելի",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Google-ի առաջադեմ գերբեռնվածության կառավարման ալգորիթմը, որը նախատեսված է ցանցի թողունակությունը առավելագույնի և ուշացումը նվազագույնի հասցնելու համար։"
 }

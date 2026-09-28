@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "დეტალები",
   "app_page_extensions": "გაფართოებები",
-  "category_available": "ხელმისაწვდომი"
+  "category_available": "ხელმისაწვდომი",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ — Google-ის მოწინავე გადატვირთვის კონტროლის ალგორითმი, რომელიც შექმნილია ქსელის გამტარუნარიანობის მაქსიმალურად გაზრდისა და დაყოვნების მინიმუმამდე შემცირებისთვის."
 }

@@ -1,0 +1,48 @@
+[
+  {
+      "appstream-name": "com.obsproject.Studio",
+      "overrides": {
+          "post": {
+              "script": "./obs-post.sh"
+          },
+          "flatpak": [
+            {
+              "scope": "user",
+              "type": "filesystem",
+              "setting": "xdg-run/pipewire-0",
+              "target": "com.obsproject.Studio"
+            },
+            {
+              "scope": "user",
+              "type": "filesystem",
+              "setting": "/tmp/.X11-unix",
+              "target": "com.obsproject.Studio"
+            },
+            {
+              "scope": "user",
+              "type": "env",
+              "setting": "QT_QPA_PLATFORM=xcb",
+              "target": "com.obsproject.Studio"
+            },
+            {
+              "scope": "user",
+              "type": "socket",
+              "setting": "x11",
+              "target": "com.obsproject.Studio"
+            },
+            {
+              "scope": "user",
+              "type": "env",
+              "setting": "DISPLAY=$VALID_DISPLAY",
+              "target": "com.obsproject.Studio"
+            }
+          ]
+      },
+      "dependencies": [
+        {
+          "type": "flathub",
+          "package-name": "com.obsproject.Studio.Plugin.WaylandHotkeys"
+        }
+      ]
+  }
+]

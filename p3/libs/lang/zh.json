@@ -683,5 +683,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "详细信息",
   "app_page_extensions": "扩展",
-  "category_available": "可用"
+  "category_available": "可用",
+  "bbr_desc": "“Bottleneck Bandwidth and Round-trip propagation time”，Google 设计的高级拥塞控制算法，旨在最大化网络吞吐量并尽可能降低延迟。"
 }

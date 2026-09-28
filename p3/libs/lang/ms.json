@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Butiran",
   "app_page_extensions": "Sambungan",
-  "category_available": "Tersedia"
+  "category_available": "Tersedia",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritma kawalan kesesakan lanjutan Google yang direka untuk memaksimumkan daya pemprosesan rangkaian dan meminimumkan kependaman."
 }

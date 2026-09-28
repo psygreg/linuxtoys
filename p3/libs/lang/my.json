@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "အသေးစိတ်",
   "app_page_extensions": "တိုးချဲ့မှုများ",
-  "category_available": "ရရှိနိုင်သည်"
+  "category_available": "ရရှိနိုင်သည်",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’၊ ကွန်ရက် throughput ကို အမြင့်ဆုံးနှင့် latency ကို အနည်းဆုံးဖြစ်စေရန် Google မှ ဒီဇိုင်းထုတ်ထားသော အဆင့်မြင့် congestion control algorithm ဖြစ်သည်။"
 }

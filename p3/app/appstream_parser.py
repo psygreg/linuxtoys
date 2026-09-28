@@ -42,7 +42,9 @@ APPSTREAM_SOURCE_PREFERENCE = {
     "default": "flatpak",
     "apps": {
         "org.kde.ghostwriter": {"all": "native"},
-        "com.helix_editor.Helix": {"all": "native"}
+        "com.helix_editor.Helix": {"all": "native"},
+        "org.gimp.GIMP": {"all": "flatpak"},
+        "com.obsproject.Studio": {"all": "flatpak"}
     },
 }
 
@@ -54,6 +56,8 @@ APPSTREAM_SOURCE_PREFERENCE = {
 # The destination must exist in the active scripts tree.
 APPSTREAM_CATEGORY_OVERRIDE = {
     "com.valvesoftware.Steam": "game",
+    "com.obsproject.Studio": "media",
+    "com.dec05eba.gpu_screen_recorder": "media"
 }
 
 # Developer-facing hard lock for applications that must use the system Flathub

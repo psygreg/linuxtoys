@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Detaje",
   "app_page_extensions": "Shtesa",
-  "category_available": "E disponueshme"
+  "category_available": "E disponueshme",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritmi i avancuar i Google për kontrollin e mbingarkesës, i projektuar për të maksimizuar xhiron e rrjetit dhe minimizuar vonesën."
 }

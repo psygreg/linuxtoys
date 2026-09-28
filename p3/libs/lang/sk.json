@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Podrobnosti",
   "app_page_extensions": "Rozšírenia",
-  "category_available": "Dostupné"
+  "category_available": "Dostupné",
+  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, pokročilý algoritmus riadenia zahltenia od Googlu navrhnutý na maximalizáciu priepustnosti siete a minimalizáciu latencie."
 }

@@ -679,5 +679,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "விவரங்கள்",
   "app_page_extensions": "நீட்சிகள்",
-  "category_available": "கிடைக்கிறது"
+  "category_available": "கிடைக்கிறது",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, நெட்வொர்க் செயல்திறனை அதிகரிக்கவும் தாமதத்தைக் குறைக்கவும் Google வடிவமைத்த மேம்பட்ட நெரிசல் கட்டுப்பாட்டு அல்காரிதம்."
 }

@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "Detalles",
   "app_page_extensions": "Extensiones",
-  "category_available": "Disponible"
+  "category_available": "Disponible",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, el avanzado algoritmo de control de congestión de Google diseñado para maximizar el rendimiento de la red y minimizar la latencia."
 }

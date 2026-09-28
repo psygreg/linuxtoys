@@ -681,5 +681,6 @@
   "startup_recommendation_multilib": "Multilib",
   "app_page_details": "ព័ត៌មានលម្អិត",
   "app_page_extensions": "ផ្នែកបន្ថែម",
-  "category_available": "មាន"
+  "category_available": "មាន",
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ ជាអាល់ហ្គរីធម៍គ្រប់គ្រងការកកស្ទះកម្រិតខ្ពស់របស់ Google ដែលត្រូវបានរចនាឡើងដើម្បីបង្កើនលំហូរទិន្នន័យបណ្តាញឱ្យអតិបរមា និងកាត់បន្ថយភាពយឺតយ៉ាវឱ្យអប្បបរមា។"
 }

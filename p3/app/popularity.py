@@ -75,7 +75,8 @@ KNOWN_POPULAR = {
     "ONLYOFFICE Desktop Editors",
     "org.onlyoffice.desktopeditors",
     "com.dec05eba.gpu_screen_recorder",
-    "org.gimp.GIMP"
+    "org.gimp.GIMP",
+    "com.obsproject.Studio"
 }
 
 
