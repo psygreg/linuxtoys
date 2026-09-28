@@ -1172,10 +1172,24 @@ class FeaturedCtl:
             self.random_scripts_revealer.set_reveal_child(False)
             self.featured_scripts_revealer.set_reveal_child(False)
 
-            # Attaching and showing the new grid children already invalidates GTK's
-            # requisition chain. Avoid explicitly invalidating all four ancestors;
-            # that only repeats the same size negotiation before the idle reveal.
-            GLib.idle_add(self._reveal_initial_featured_layout)
+            def reveal_after_allocation(_grid, _allocation):
+                handler_id = getattr(
+                    self, "_featured_initial_allocate_handler", None
+                )
+                if handler_id is not None:
+                    _grid.disconnect(handler_id)
+                    self._featured_initial_allocate_handler = None
+
+                GLib.idle_add(self._reveal_initial_featured_layout)
+
+            self._featured_initial_allocate_handler = (
+                self.random_scripts_flowbox.connect(
+                    "size-allocate",
+                    reveal_after_allocation,
+                )
+            )
+
+            self.random_scripts_flowbox.queue_resize()
         else:
             self.featured_scripts_revealer.set_reveal_child(True)
             self.random_scripts_revealer.set_reveal_child(True)

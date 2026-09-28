@@ -5,14 +5,18 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 MODE="release"
 COMMAND="build"
 OUT_DIR="${ROOT}/target/wheels"
+TARGET=""
 
 usage() {
     cat <<'EOF'
-Usage: ./build-rust.sh [build|develop] [--debug] [--out DIR]
+Usage:
+      ./build-rust.sh [build|develop] [--debug] [--out DIR]
+      ./build-rust.sh release VERSION
 
 Commands:
   build       Build the catalog wheel and native GUI library (default).
   develop     Build both Rust components and deploy their libraries into p3/app.
+  release     Build all packages except for Solus for release
 
 Options:
   --debug     Build without --release.
@@ -26,6 +30,16 @@ if [[ $# -gt 0 && "$1" != -* ]]; then
     shift
 fi
 
+if [[ "$COMMAND" == "release" ]]; then
+    [[ $# -gt 0 && "$1" != -* ]] || {
+        echo "error: release requires a version" >&2
+        echo "usage: $0 release VERSION" >&2
+        exit 2
+    }
+    TARGET="$1"
+    shift
+fi
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --debug)
@@ -33,7 +47,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --out)
-            [[ $# -ge 2 ]] || { echo "error: --out requires a directory" >&2; exit 2; }
+            [[ $# -ge 2 ]] || {
+                echo "error: --out requires a directory" >&2
+                exit 2
+            }
             OUT_DIR="$2"
             shift 2
             ;;
@@ -50,9 +67,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$COMMAND" in
-    build|develop) ;;
+    build|develop|release) ;;
     *)
-        echo "error: command must be 'build' or 'develop'" >&2
+        echo "error: command must be 'build', 'develop' or 'release'" >&2
         usage >&2
         exit 2
         ;;
@@ -76,7 +93,7 @@ build_python_component() {
 
     echo "==> ${COMMAND}: ${name}"
 
-    if [[ "$COMMAND" == "build" ]]; then
+    if [[ "$COMMAND" != "develop" ]]; then
         mkdir -p "$OUT_DIR"
         (
             cd "$dir"
@@ -153,13 +170,39 @@ build_gui_component() {
     fi
 }
 
-build_python_component "_catalog_rs" "${ROOT}/src/catalog-rs"
-build_gui_component
+if [[ "$COMMAND" == "release" ]]; then
+    COMMAND="build"
+    build_python_component "_catalog_rs" "${ROOT}/src/catalog-rs"
+    build_gui_component
 
-if [[ "$COMMAND" == "build" ]]; then
+    COMMAND="develop"
+    build_python_component "_catalog_rs" "${ROOT}/src/catalog-rs"
+    build_gui_component
+
+    COMMAND="release"
+
     echo
     echo "Rust build artifacts written to: ${OUT_DIR}"
-else
-    echo
     echo "Rust libraries deployed into: ${ROOT}/p3/app"
+
+    distrobox enter fedora -- bash -lc \
+        'cd ~/dev/build/copr && ./build.sh "$1" "$HOME/copr"' _ "$TARGET"
+    distrobox enter archlinux -- bash -lc \
+        'cd ~/dev/build/pkg && ./build.sh "$1" "$HOME/pkg"' _ "$TARGET"
+    distrobox enter archlinux -- bash -lc \
+        'cd ~/dev/build/appimage && ./build.sh "$1" "$HOME/appimage"' _ "$TARGET"
+    distrobox enter ubuntu -- bash -lc \
+        'cd ~/dev/build/deb && ./build.sh "$1" "$HOME/deb"' _ "$TARGET"
+
+    echo "All packages done."
+else
+    build_python_component "_catalog_rs" "${ROOT}/src/catalog-rs"
+    build_gui_component
+
+    echo
+    if [[ "$COMMAND" == "develop" ]]; then
+        echo "Rust libraries deployed into: ${ROOT}/p3/app"
+    else
+        echo "Rust build artifacts written to: ${OUT_DIR}"
+    fi
 fi
