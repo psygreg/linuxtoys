@@ -1,0 +1,13 @@
+{
+  "description_tag": "photon_desc",
+  "long-description": "md/en.md",
+  "description_long_tag": "photon_long",
+  "en": {
+    "photon_long": "md/en.md",
+    "photon_desc": "A free desktop photo editor for macOS, Windows, and Linux. Edit photos, create layered designs, and open or save PSD files."
+  },
+  "pt": {
+    "photon_long": "md/pt.md",
+    "photon_desc": "Um editor de fotos gratuito para macOS, Windows e Linux. Edite fotos, crie designs com camadas e abra ou salve arquivos PSD."
+  }
+}

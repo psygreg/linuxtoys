@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Photon Studio",
+        "description": "A free desktop photo editor for macOS, Windows, and Linux. Edit photos, create layered designs, and open or save PSD files.",
+        "description_tag": "photon_desc",
+        "descriptions": "descriptions.json",
+        "license": "Proprietary",
+        "repo": "https://tenzen.studio/photon",
+        "category": "photo",
+        "icon": "./photon.png",
+        "screenshots": "screenshots/",
+        "type": "url",
+        "urls": {
+            "flatpak": "https://tenzen.studio/api/v1/photon/download?platform=linux&arch=x64&kind=flatpak"
+        },
+        "donate": "https://anglit-ai.lemonsqueezy.com/checkout/buy/140a4aa4-d447-4f64-8a8f-00f370f1d346?embed=1"
+    }
+]
