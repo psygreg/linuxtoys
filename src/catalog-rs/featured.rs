@@ -202,7 +202,14 @@ pub(crate) fn featured_large_count(rows: i32, columns: i32, eligible_count: usiz
         max_large += columns / 2;
     }
 
-    (max_large.max(0) as usize).min(eligible_count)
+    // Keep a meaningful ordinary-card population even on very tall/wide grids.
+    // Large cards occupy two rows and are randomly positioned; allowing them to
+    // consume the entire candidate set produces sparse, irregular Featured layouts.
+    let population_cap = eligible_count / 2;
+
+    (max_large.max(0) as usize)
+        .min(population_cap)
+        .min(eligible_count)
 }
 
 /// Plan the complete card assignment for one already-selected Featured set.

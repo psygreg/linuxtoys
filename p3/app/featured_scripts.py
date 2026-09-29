@@ -460,7 +460,7 @@ class FeaturedCtl:
             self._featured_layout_metrics = None
             return 0
 
-        rows = capacity["rows"]
+        max_rows = capacity["rows"]
         columns = capacity["columns"]
         card_height = capacity["card_height"]
         row_spacing = capacity["row_spacing"]
@@ -470,10 +470,40 @@ class FeaturedCtl:
             self._featured_layout_metrics = None
             return 0
 
-        # A large card occupies two normal grid cells, so every one reduces the
-        # number of distinct apps that fit by one while preserving exactly the
-        # same overall Featured height and column count. The allowance itself is
-        # shared with app-page Featured.
+        # ``calculate_featured_capacity`` returns how many rows *could* fit in the
+        # viewport. That is an upper bound, not the logical height of the grid.
+        # Passing all of those rows to the layout planner when the eligible pool is
+        # smaller than rows*columns gives it a large sparse canvas and allows cards
+        # to be scattered across otherwise empty rows (most visible when maximized).
+        #
+        # Compact the logical grid to the fewest rows needed by the available apps.
+        # Large cards consume one extra cell each because they span two rows, so the
+        # calculation is iterated until the row count and large-card allowance agree.
+        rows = min(
+            max_rows,
+            max(1, (eligible_count + columns - 1) // columns),
+        )
+        for _ in range(4):
+            large_count = self._calculate_featured_large_count(
+                rows, columns, eligible_count
+            )
+            slot_count = rows * columns
+            item_capacity = max(0, slot_count - large_count)
+            item_count = min(eligible_count, item_capacity)
+            large_count = min(large_count, item_count)
+
+            required_slots = item_count + large_count
+            compact_rows = min(
+                max_rows,
+                max(1, (required_slots + columns - 1) // columns),
+            )
+            if compact_rows == rows:
+                break
+            rows = compact_rows
+
+        # Recompute against the final compact geometry. This is the geometry that
+        # is handed to Rust, so the planner can randomize placement without ever
+        # creating phantom empty rows merely because the viewport is tall.
         large_count = self._calculate_featured_large_count(
             rows, columns, eligible_count
         )
@@ -481,9 +511,6 @@ class FeaturedCtl:
         item_capacity = max(0, slot_count - large_count)
         item_count = min(eligible_count, item_capacity)
         large_count = min(large_count, item_count)
-
-        # If a very small eligible pool forced large_count down, reclaim the slots
-        # that no longer need to be reserved by a two-row card.
         item_capacity = max(0, slot_count - large_count)
         item_count = min(eligible_count, item_capacity)
 
@@ -650,34 +677,44 @@ class FeaturedCtl:
         return not script.get("is_appstream_entry", False)
 
     def _materialize_featured_selection(self, selected):
-        """Replace selected AppStream descriptors with their full Rust payloads."""
+        """Replace AppStream descriptors with full payloads from the current catalog.
+
+        Numeric Featured indices are deliberately not used here: they identify a
+        position only inside the Rust catalog generation that produced the
+        descriptor. Language changes can rebuild/swap that catalog while
+        ``self.all_scripts`` still contains descriptors from the previous generation.
+        AppStream component IDs remain stable across that boundary.
+        """
         selected = list(selected or ())
-        indices = [
-            script.get("_appstream_featured_index")
+        appstream_ids = [
+            str(script.get("appstream_id") or "").strip()
             for script in selected
-            if script.get("_appstream_featured_index") is not None
+            if script.get("is_appstream_entry", False)
         ]
-        if not indices:
+        appstream_ids = [value for value in appstream_ids if value]
+        if not appstream_ids:
             return selected
 
         try:
-            full_entries = parser.materialize_appstream_featured_entries(
-                indices, self.translations
+            full_entries = parser.materialize_appstream_featured_entries_by_ids(
+                appstream_ids, self.translations
             )
         except Exception as error:
             print(f"Error materializing selected AppStream Featured entries: {error}")
             full_entries = ()
 
-        full_by_key = {
-            self._featured_script_key(script): script
+        full_by_id = {
+            str(script.get("appstream_id") or "").strip().casefold(): script
             for script in full_entries or ()
+            if str(script.get("appstream_id") or "").strip()
         }
         result = []
         for script in selected:
-            if script.get("_appstream_featured_index") is None:
+            if not script.get("is_appstream_entry", False):
                 result.append(script)
                 continue
-            full = full_by_key.get(self._featured_script_key(script))
+            appstream_id = str(script.get("appstream_id") or "").strip().casefold()
+            full = full_by_id.get(appstream_id)
             if full is not None:
                 result.append(full)
         return result
@@ -944,12 +981,34 @@ class FeaturedCtl:
         self._stop_random_scripts_refresh_timer()
         self._hide_featured_section(discard=True)
 
+    def _prepare_featured_language_rebuild(self):
+        """Reset Featured while the outer language cross-fade already hides the UI.
+
+        Unlike normal invalidation, keep both revealers logically open. Collapsing
+        the SLIDE_DOWN revealer during a language transaction changes the main-menu
+        requisition while category geometry is being measured, so repeated rebuilds
+        can feed different transient heights back into Featured capacity.
+        """
+        self._stop_random_scripts_refresh_timer()
+        self._clear_random_scripts()
+        self._featured_last_count = 0
+        self._featured_last_layout = None
+        self._featured_history = []
+        self._featured_large_positions = set()
+        self._featured_first_layout_committed = True
+
+        # main_stack is already fully transparent here. Keeping the revealers open
+        # removes an unnecessary animated geometry transition from the hidden rebuild.
+        self.featured_scripts_revealer.set_reveal_child(True)
+        self.random_scripts_revealer.set_reveal_child(True)
+
     def _reveal_initial_featured_layout(self):
         """Reveal the first Featured set after GTK has negotiated its final size."""
         if (
             not self.all_scripts
             or self.current_category_info is not None
             or self.main_stack.get_visible_child_name() != "categories"
+            or getattr(self, "_language_transition_active", False)
         ):
             return False
 
@@ -975,9 +1034,42 @@ class FeaturedCtl:
         if not self.all_scripts or not on_categories_view or count <= 0:
             return False
 
+        scripts = list(scripts or ())
+        count = min(int(count), len(scripts))
+        if count <= 0:
+            self._hide_featured_section(discard=False)
+            return False
+        if len(scripts) > count:
+            scripts = scripts[:count]
+
         rows = int(layout.get("rows", 0))
         columns = int(layout.get("columns", 0))
         large_count = min(int(layout.get("large_count", 0)), len(scripts))
+
+        # Materialization should normally preserve the requested count. If a
+        # component disappeared during a catalog swap, compact the logical grid
+        # around what actually materialized instead of handing Rust phantom rows.
+        planned_count = int(layout.get("item_count", count) or count)
+        if count < planned_count and rows > 0 and columns > 0:
+            rows = min(rows, max(1, (count + columns - 1) // columns))
+            for _ in range(4):
+                large_count = min(
+                    self._calculate_featured_large_count(rows, columns, count),
+                    count,
+                )
+                required_slots = count + large_count
+                compact_rows = min(
+                    rows,
+                    max(1, (required_slots + columns - 1) // columns),
+                )
+                if compact_rows == rows:
+                    break
+                rows = compact_rows
+            large_count = min(
+                self._calculate_featured_large_count(rows, columns, count),
+                count,
+            )
+
         card_height = int(layout.get("card_height", 52))
         row_spacing = int(layout.get("row_spacing", 12))
         if rows <= 0 or columns <= 0:
@@ -988,17 +1080,24 @@ class FeaturedCtl:
         existing_children = list(self.random_scripts_flowbox.get_children())
         same_geometry = bool(existing_children) and previous_signature == new_signature
 
-        # A resize/maximize/restore that changes rows, columns, large allowance or
-        # item count intentionally falls back to the proven original behavior.
-        if not same_geometry:
-            self._clear_random_scripts()
-            existing_children = []
-            # A new geometry has no meaningful large-card placement to preserve.
-            self._featured_large_positions = set()
-
+        # Featured rerolls deliberately move large cards to different cells.  That
+        # means a nominally "same geometry" reroll is still a structural Gtk.Grid
+        # mutation: some ordinary 1x1 cells become 1x2 spans and the previous 1x2
+        # spans become ordinary cells.  Reusing the surviving normal widgets across
+        # that mutation proved unsafe after maximize/language/restore allocation
+        # cycles: GTK can retain stale child visibility/allocation state, leaving only
+        # the freshly-created large cards visible on the next timed reroll.
+        #
+        # Preserve the previous large positions for Rust's placement diversity, but
+        # rebuild the grid contents atomically every time.  Ordinary cards are created
+        # by the native Rust batch path, so the small amount of extra construction is
+        # bounded and avoids a much more expensive/fragile mixed reuse/reparent pass.
         previous_large_positions = set(
             getattr(self, "_featured_large_positions", set())
         )
+        self._clear_random_scripts()
+        existing_children = []
+        same_geometry = False
 
         candidate_flags = [
             (
@@ -1172,24 +1271,10 @@ class FeaturedCtl:
             self.random_scripts_revealer.set_reveal_child(False)
             self.featured_scripts_revealer.set_reveal_child(False)
 
-            def reveal_after_allocation(_grid, _allocation):
-                handler_id = getattr(
-                    self, "_featured_initial_allocate_handler", None
-                )
-                if handler_id is not None:
-                    _grid.disconnect(handler_id)
-                    self._featured_initial_allocate_handler = None
-
-                GLib.idle_add(self._reveal_initial_featured_layout)
-
-            self._featured_initial_allocate_handler = (
-                self.random_scripts_flowbox.connect(
-                    "size-allocate",
-                    reveal_after_allocation,
-                )
-            )
-
-            self.random_scripts_flowbox.queue_resize()
+            # Attaching and showing the new grid children already invalidates GTK's
+            # requisition chain. Avoid explicitly invalidating all four ancestors;
+            # that only repeats the same size negotiation before the idle reveal.
+            GLib.idle_add(self._reveal_initial_featured_layout)
         else:
             self.featured_scripts_revealer.set_reveal_child(True)
             self.random_scripts_revealer.set_reveal_child(True)
@@ -1288,6 +1373,10 @@ class FeaturedCtl:
         """
         if self.main_stack.get_visible_child_name() != "categories":
             return
+        if getattr(self, "_language_transition_active", False):
+            # The language transaction owns Featured until translated category
+            # geometry and native decoration are fully settled.
+            return
 
         allocation_size = (
             max(0, int(getattr(_allocation, "width", 0))),
@@ -1316,6 +1405,9 @@ class FeaturedCtl:
     def _apply_featured_resize(self):
         """Apply the resize-triggered featured-section update using settled geometry."""
         self._featured_resize_timer = None
+
+        if getattr(self, "_language_transition_active", False):
+            return False
 
         if not (
             self.should_start_random_timer
@@ -1412,6 +1504,8 @@ class FeaturedCtl:
     def _periodic_random_scripts_refresh(self):
         """Rotate Featured once, then schedule the next dynamic interval."""
         self.random_scripts_refresh_timer = None
+        if getattr(self, "_language_transition_active", False):
+            return False
         self._refresh_random_scripts_display(force=True)
 
         if (
@@ -1448,6 +1542,8 @@ class FeaturedCtl:
 
     def _deferred_start_random_scripts_refresh_timer(self):
         """Populate Featured on initial startup once usable geometry exists."""
+        if getattr(self, "_language_transition_active", False):
+            return False
         if not self.featured_scripts_container or not self.all_scripts:
             return False
 

@@ -847,6 +847,39 @@ def materialize_featured_entries(scripts_dir, indices, curated_entries=None, cat
     )
 
 
+def materialize_featured_entries_by_ids(
+    scripts_dir, appstream_ids, curated_entries=None, category_paths=None
+):
+    """Resolve Featured entries by stable AppStream ID in the current catalog.
+
+    Featured descriptors may outlive a runtime-catalog rebuild (notably across a
+    language change). Their numeric ``_appstream_featured_index`` is local to the
+    catalog generation that produced it, so it must not be used after such a swap.
+    Resolve the selected stable component IDs against one current catalog snapshot
+    instead.
+    """
+    clean_ids = []
+    seen = set()
+    for appstream_id in appstream_ids or ():
+        value = str(appstream_id or "").strip()
+        key = value.casefold()
+        if not value or key in seen:
+            continue
+        seen.add(key)
+        clean_ids.append(value)
+
+    if not clean_ids:
+        return []
+
+    catalog = _runtime_catalog(scripts_dir, curated_entries, category_paths)
+    result = []
+    for appstream_id in clean_ids:
+        entry = catalog.find_by_id(appstream_id.casefold())
+        if entry is not None:
+            result.append(entry)
+    return result
+
+
 
 def get_installed_entries(
     scripts_dir,

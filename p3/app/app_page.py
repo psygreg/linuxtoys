@@ -669,6 +669,44 @@ class AppPageView(Gtk.Box):
         parent.animate_item_batch(prepared_widgets)
         return False
 
+    def language_render_ready(self):
+        """Return True only when a hidden language rebuild is visually settled."""
+        if self._destroyed or not self.get_realized():
+            return False
+        if self.get_allocated_width() <= 1 or self.get_allocated_height() <= 1:
+            return False
+        if self._content_scroller.get_allocated_width() <= 1:
+            return False
+
+        # Remote screenshot placeholders materially change page height when they
+        # resolve, so never reveal a page measured against those placeholders.
+        if self._remote_screenshots_pending > 0:
+            return False
+
+        # Wrapped text height is deferred to idle after GTK knows its real width.
+        # A pending fit means both page height and Featured capacity can still move.
+        for view in tuple(self._responsive_textviews):
+            if getattr(view, "_markdown_fit_source", None) is not None:
+                return False
+            if view.get_allocated_width() <= 1:
+                return False
+
+        # App-page Featured is deliberately a two-pass layout.  Wait until neither
+        # pass is queued and, when the section fits, until its provisional opacity-0
+        # layout has reached the settled visible state.
+        if self._featured_fill_source is not None:
+            return False
+        box = self._featured_fill_box
+        if box is not None and box.get_visible():
+            if self._featured_flow_columns is None:
+                self._schedule_featured_fill()
+                return False
+            if box.get_opacity() < 0.999:
+                self._schedule_featured_fill()
+                return False
+
+        return True
+
     @staticmethod
     def _normalized_language(value):
         value = str(value or "").strip().replace("_", "-")

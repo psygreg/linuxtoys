@@ -20,7 +20,7 @@ class ItemWidgetFactory:
     def create_flowbox(self):
         flowbox = Gtk.FlowBox()
         flowbox.set_valign(Gtk.Align.START)
-        flowbox.set_max_children_per_line(5)
+        flowbox.set_max_children_per_line(10)
         flowbox.set_activate_on_single_click(False)
 
         flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)

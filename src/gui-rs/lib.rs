@@ -196,6 +196,12 @@ fn register_category_watermark(
         });
     });
 
+    surface.connect_destroy(move |_| {
+        CATEGORY_WATERMARKS.with(|states| {
+            states.borrow_mut().remove(&key);
+        });
+    });
+
     drawing.connect_draw(move |_drawing, cr| {
         let pixbuf = CATEGORY_WATERMARKS.with(|states| {
             states.borrow().get(&key).and_then(|state| state.pixbuf.clone())
@@ -235,6 +241,37 @@ fn flush_category_surface(widget: &gtk::Widget) -> bool {
     true
 }
 
+fn category_surface_has_pending_render(widget: &gtk::Widget) -> bool {
+    let key = widget_key(widget);
+    CATEGORY_WATERMARKS.with(|states| {
+        let states = states.borrow();
+        let Some(state) = states.get(&key) else { return false; };
+
+        // A registered category surface is not ready until GTK has allocated it
+        // and the allocation-sized watermark for that exact size exists.
+        state.pending_width <= 0 ||
+        state.pending_height <= 0 ||
+        state.pixbuf.is_none() ||
+        state.pending_width != state.rendered_width ||
+        state.pending_height != state.rendered_height
+    })
+}
+
+fn category_tree_has_pending_render(widget: &gtk::Widget) -> bool {
+    if category_surface_has_pending_render(widget) {
+        return true;
+    }
+
+    if let Ok(container) = widget.clone().downcast::<gtk::Container>() {
+        for child in container.children() {
+            if category_tree_has_pending_render(&child) {
+                return true;
+            }
+        }
+    }
+    false
+}
+
 fn flush_category_tree(widget: &gtk::Widget, remaining: &mut usize, unlimited: bool) -> usize {
     let mut rendered = 0usize;
     if (unlimited || *remaining > 0) && flush_category_surface(widget) {
@@ -250,6 +287,16 @@ fn flush_category_tree(widget: &gtk::Widget, remaining: &mut usize, unlimited: b
         }
     }
     rendered
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_has_pending_render_work(
+    root: *mut gtk::ffi::GtkWidget,
+) -> bool {
+    if root.is_null() { return false; }
+    ensure_gtk_initialized();
+    let root: gtk::Widget = from_glib_none(root);
+    category_tree_has_pending_render(&root)
 }
 
 #[no_mangle]
@@ -457,7 +504,7 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 16 }
+pub extern "C" fn lt_gui_abi_version() -> u32 { 17 }
 
 #[no_mangle]
 pub extern "C" fn lt_gui_clear_pixbuf_cache() {

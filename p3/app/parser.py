@@ -588,6 +588,16 @@ def materialize_appstream_featured_entries(indices, translations=None):
         category_paths=_indexed_category_paths(),
     )
 
+
+def materialize_appstream_featured_entries_by_ids(appstream_ids, translations=None):
+    """Materialize selected Featured candidates by stable AppStream component ID."""
+    return appstream_parser.materialize_featured_entries_by_ids(
+        SCRIPTS_DIR,
+        appstream_ids,
+        curated_entries=_get_appstream_curated_entries(translations),
+        category_paths=_indexed_category_paths(),
+    )
+
 def get_repository_map():
     """Return internal software names mapped to upstream repositories."""
     repositories = {}

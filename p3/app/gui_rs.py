@@ -125,8 +125,8 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 16:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 16)")
+            if lib.lt_gui_abi_version() != 17:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 17)")
             lib.lt_gui_stack_add_scrolled_flowbox.argtypes = [
                 ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p,
             ]
@@ -152,6 +152,8 @@ def _load():
                 ctypes.c_void_p, ctypes.c_size_t,
             ]
             lib.lt_gui_flush_category_watermarks.restype = ctypes.c_size_t
+            lib.lt_gui_has_pending_render_work.argtypes = [ctypes.c_void_p]
+            lib.lt_gui_has_pending_render_work.restype = ctypes.c_bool
             lib.lt_gui_flowbox_add_item_cards.argtypes = [
                 ctypes.c_void_p, ctypes.POINTER(_ItemCardSpec), ctypes.c_size_t,
             ]
@@ -331,6 +333,14 @@ def flush_category_watermarks(root, max_count=0):
     return int(lib.lt_gui_flush_category_watermarks(
         _pointer(root), max(0, int(max_count))
     ))
+
+
+def has_pending_render_work(root):
+    """Return whether native allocation-dependent rendering is incomplete."""
+    lib = _load()
+    if lib is None or root is None:
+        return False
+    return bool(lib.lt_gui_has_pending_render_work(_pointer(root)))
 
 
 def card_child(card, name):
