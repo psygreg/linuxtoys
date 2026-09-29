@@ -6,6 +6,7 @@ mod popularity;
 mod featured;
 mod search;
 mod scripts;
+mod snap_ratings;
 
 #[pymodule]
 fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -37,5 +38,8 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search::build_search_index, m)?)?;
     m.add_function(wrap_pyfunction!(search::search_index, m)?)?;
     m.add_function(wrap_pyfunction!(scripts::build_script_tree_index, m)?)?;
+    m.add_function(wrap_pyfunction!(snap_ratings::snap_bulk_ratings, m)?)?;
+    m.add_function(wrap_pyfunction!(snap_ratings::snap_user_vote, m)?)?;
+    m.add_function(wrap_pyfunction!(snap_ratings::submit_snap_vote, m)?)?;
     Ok(())
 }

@@ -8,7 +8,6 @@ from pathlib import Path
 
 _LIB = None
 
-
 class _ItemCardSpec(ctypes.Structure):
     _fields_ = [
         ("name", ctypes.c_char_p),
@@ -125,8 +124,8 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 17:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 17)")
+            if lib.lt_gui_abi_version() != 18:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 18)")
             lib.lt_gui_stack_add_scrolled_flowbox.argtypes = [
                 ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p,
             ]
@@ -189,6 +188,10 @@ def _load():
                 ctypes.c_void_p, ctypes.POINTER(_ItemCardSpec),
             ]
             lib.lt_gui_update_item_card.restype = ctypes.c_bool
+            lib.lt_gui_set_image_source.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int32,
+            ]
+            lib.lt_gui_set_image_source.restype = ctypes.c_bool
             lib.lt_gui_populate_infos_head.argtypes = [
                 ctypes.c_void_p, ctypes.POINTER(_InfosHeadSpec),
             ]
@@ -545,6 +548,18 @@ def update_item_card(card, spec):
         return False
     native, encoded = _native_spec(spec)
     return bool(lib.lt_gui_update_item_card(_pointer(card), ctypes.byref(native)))
+
+
+def set_image_source(image, icon_path="", icon_name="", size=38):
+    """Set a local, themed, or remote image source through the native GUI loader."""
+    lib = _load()
+    if lib is None or image is None:
+        return False
+    path = str(icon_path or "").encode()
+    name = str(icon_name or "").encode()
+    return bool(lib.lt_gui_set_image_source(
+        _pointer(image), path, name, max(1, int(size)),
+    ))
 
 
 def populate_infos_head(root, *, execute_label, remove_label, report_label,

@@ -682,5 +682,6 @@
   "app_page_details": "Ayrıntılar",
   "app_page_extensions": "Uzantılar",
   "category_available": "Mevcut",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ağ verimini en üst düzeye çıkarmak ve gecikmeyi en aza indirmek için Google tarafından tasarlanan gelişmiş bir tıkanıklık kontrol algoritması."
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ağ verimini en üst düzeye çıkarmak ve gecikmeyi en aza indirmek için Google tarafından tasarlanan gelişmiş bir tıkanıklık kontrol algoritması.",
+  "snap_desc": "Canonical Snapcraft depoları ve bunların snapd hizmeti."
 }

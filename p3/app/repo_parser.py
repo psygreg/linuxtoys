@@ -53,7 +53,7 @@ OS_KEYS = {
     "manjaro",
 }
 
-VALID_TYPES = {"git", "tar", "bin", "make", "flathub", "native", "repository", "url", "external"}
+VALID_TYPES = {"git", "tar", "bin", "make", "flathub", "snap", "native", "repository", "url", "external"}
 
 URL_PACKAGE_KEYS = {
     "deb",
@@ -515,7 +515,7 @@ def _resolve_developer_name(entry):
 
 
 
-APPSTREAM_OVERLAY_KEYS = {"appstream-name", "purchase", "overrides", "dependencies"}
+APPSTREAM_OVERLAY_KEYS = {"appstream-name", "snap-name", "purchase", "overrides", "dependencies"}
 
 
 def _normalize_appstream_overlay_id(value):
@@ -587,6 +587,9 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
                 continue
 
             overlay = {}
+            snap_name = entry.get("snap-name")
+            if isinstance(snap_name, str) and snap_name.strip():
+                overlay["snap_name"] = snap_name.strip()
             if isinstance(entry.get("purchase"), dict):
                 commerce = resolve_commerce_metadata(entry)
                 if commerce["purchase_options"] or commerce["subscription_options"]:
@@ -1075,6 +1078,15 @@ def create_install_script(entry):
             for package in packages
         )
 
+    elif install_type == "snap":
+        packages = _normalize_package_names(entry.get("package-name"))
+        if not packages:
+            raise ValueError("Snap entry has no package-name")
+        command = "\n".join(
+            f"pkg_snap {shlex.quote(package)}"
+            for package in packages
+        )
+
     elif install_type == "native":
         compat_keys = get_system_compat_keys()
         packages = _resolve_package_names(entry, compat_keys)
@@ -1260,7 +1272,7 @@ def _validate_dependencies(entry):
 
         dependency_type = dependency.get("type")
 
-        if dependency_type not in {"native", "flathub"}:
+        if dependency_type not in {"native", "flathub", "snap"}:
             return False
 
         package = dependency.get("package-name")
@@ -1284,7 +1296,7 @@ def _dependencies_are_compatible(entry, compat_keys):
     for dependency in dependencies:
         dependency_type = dependency.get("type")
 
-        if dependency_type == "flathub":
+        if dependency_type in {"flathub", "snap"}:
             if "systemd" not in compat_keys:
                 return False
 
@@ -1331,6 +1343,15 @@ def _create_dependency_commands(entry, compat_keys):
             skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
             commands.extend(
                 f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
+                for package in packages
+            )
+
+        elif dependency_type == "snap":
+            packages = _normalize_package_names(dependency["package-name"])
+            if not packages:
+                raise ValueError("Snap dependency has no package-name")
+            commands.extend(
+                f"pkg_snap {shlex.quote(package)}"
                 for package in packages
             )
 

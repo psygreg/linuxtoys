@@ -682,5 +682,6 @@
   "app_page_details": "Sonraí",
   "app_page_extensions": "Eisínteachtaí",
   "category_available": "Ar fáil",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ard-algartam rialaithe plódaithe Google atá deartha chun tréchur líonra a uasmhéadú agus aga folaigh a íoslaghdú."
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ard-algartam rialaithe plódaithe Google atá deartha chun tréchur líonra a uasmhéadú agus aga folaigh a íoslaghdú.",
+  "snap_desc": "Stórtha Canonical Snapcraft lena seirbhís snapd."
 }

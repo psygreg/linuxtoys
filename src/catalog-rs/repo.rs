@@ -164,7 +164,7 @@ fn normalize_package_names_json(v: Option<&Value>) -> Option<Vec<String>> {
 
 const OS_KEYS_RS: &[&str] = &["debian","ubuntu","cachy","arch","steamos","fedora","rhel","suse","ostree","ublue","zorin","solus","pika","deepin","manjaro"];
 const TYPE_PRIORITY_RS: &[&str] = &["ublue","steamos","deepin","zorin","pika","manjaro","cachy","ostree","ubuntu","debian","fedora","rhel","suse","solus","arch"];
-const VALID_TYPES_RS: &[&str] = &["git","tar","bin","make","flathub","native","repository","url","external"];
+const VALID_TYPES_RS: &[&str] = &["git","tar","bin","make","flathub","snap","native","repository","url","external"];
 const DESKTOP_KEYS_RS: &[&str] = &["gnome","plasma","hyprland","sway","other"];
 
 fn resolve_install_type_json(entry: &serde_json::Map<String, Value>, compat: &[String], dev_mode: bool, dev_override: bool) -> Option<String> {
@@ -239,7 +239,7 @@ fn validate_static_entry(entry: &serde_json::Map<String, Value>, compat: &[Strin
 
     let ty = resolve_install_type_json(entry, compat, dev_mode, dev_override)?;
     match ty.as_str() {
-        "flathub" | "native" => if !validate_package_spec_json(entry.get("package-name")) { return None; },
+        "flathub" | "snap" | "native" => if !validate_package_spec_json(entry.get("package-name")) { return None; },
         "git" | "tar" => if !valid_release_selector_rs(entry.get("package-name")) { return None; },
         "make" => {
             let source = entry.get("make-source").and_then(Value::as_str).unwrap_or("git").trim().to_ascii_lowercase();
@@ -283,7 +283,7 @@ fn validate_static_entry(entry: &serde_json::Map<String, Value>, compat: &[Strin
             for dep in arr {
                 let Some(d)=dep.as_object() else { return None; };
                 let Some(dt)=d.get("type").and_then(Value::as_str) else { return None; };
-                if dt!="native" && dt!="flathub" { return None; }
+                if dt!="native" && dt!="flathub" && dt!="snap" { return None; }
                 if dt=="native" { if !validate_package_spec_json(d.get("package-name")) { return None; } }
                 else if normalize_package_names_json(d.get("package-name")).is_none() { return None; }
             }
@@ -362,13 +362,13 @@ fn services_empty_rs(entry:&serde_json::Map<String,Value>)->bool {
     match entry.get("services") { None=>true, Some(Value::String(s))=>s.trim().is_empty(), Some(Value::Array(a))=>a.is_empty(), Some(Value::Object(m))=> ["system","user"].iter().all(|k| match m.get(*k){None=>true,Some(Value::String(s))=>s.trim().is_empty(),Some(Value::Array(a))=>a.is_empty(),_=>false}), _=>false }
 }
 fn runtime_compatible_rs(entry:&serde_json::Map<String,Value>, keys:&[String], ty:&str, dev_plain:bool, containerized:bool, wsl:bool, override_container:bool)->bool {
-    let sandboxed = ty=="flathub" || (ty=="url" && matches!(resolve_url_kind_rs(entry,keys),Some("flatpak"|"appimage"))) || entry.get("dependencies").and_then(Value::as_array).is_some_and(|a|a.iter().any(|d|d.get("type").and_then(Value::as_str)==Some("flathub")));
+    let sandboxed = ty=="flathub" || ty=="snap" || (ty=="url" && matches!(resolve_url_kind_rs(entry,keys),Some("flatpak"|"appimage"))) || entry.get("dependencies").and_then(Value::as_array).is_some_and(|a|a.iter().any(|d|matches!(d.get("type").and_then(Value::as_str),Some("flathub"|"snap"))));
     if !override_container && containerized && (sandboxed || entry.get("container").and_then(Value::as_str).unwrap_or("allow").trim().eq_ignore_ascii_case("deny")) { return false; }
     if dev_plain { return true; }
     if let Some(v)=entry.get("wsl").and_then(Value::as_str) { if v.trim().eq_ignore_ascii_case("yes") != wsl { return false; } }
     if compat_has(keys,"steamos") {
         let user_make=ty=="make"&&!make_uses_sudo_rs(entry);
-        match ty {"git"|"flathub"|"tar"|"bin"|"external"=>{},"make" if user_make=>{},"url" if matches!(resolve_url_kind_rs(entry,keys),Some("flatpak"|"appimage"|"tar"|"bin"))=>{},_=>return false}
+        match ty {"git"|"flathub"|"snap"|"tar"|"bin"|"external"=>{},"make" if user_make=>{},"url" if matches!(resolve_url_kind_rs(entry,keys),Some("flatpak"|"appimage"|"tar"|"bin"))=>{},_=>return false}
         if !user_make && entry.get("dependencies").and_then(Value::as_array).is_some_and(|a|a.iter().any(|d|d.get("type").and_then(Value::as_str)==Some("native"))) {return false}
         if let Some(o)=entry.get("overrides").and_then(Value::as_object) { if o.get("pre").is_some(){return false} if o.get("post").is_some() && ty!="tar" && !(ty=="url"&&resolve_url_kind_rs(entry,keys)==Some("tar")){return false} }
         if !services_empty_rs(entry){return false}
@@ -381,10 +381,10 @@ fn runtime_compatible_rs(entry:&serde_json::Map<String,Value>, keys:&[String], t
     if let Some(d)=entry.get("desktop") { let Some(vals)=string_list(Some(d)) else{return false}; let ok=vals.iter().any(|x| {let k=format!("desktop-{x}");compat_has(keys,&k)}); if !ok{return false} }
     if let Some(s)=entry.get("systemd") { let Some(v)=s.as_str() else{return false}; let v=v.trim().to_ascii_lowercase(); if v=="yes"&&!compat_has(keys,"systemd"){return false} if v=="no"&&compat_has(keys,"systemd"){return false} }
     if entry.get("services").is_some()&&!compat_has(keys,"systemd"){return false}
-    if ty=="flathub"&&!compat_has(keys,"systemd"){return false}
+    if (ty=="flathub"||ty=="snap")&&!compat_has(keys,"systemd"){return false}
     if ty=="url" { let Some(k)=resolve_url_kind_rs(entry,keys) else{return false}; if k=="flatpak"&&!compat_has(keys,"systemd"){return false} }
     if let Some(h)=entry.get("hardware") { if !h.is_null() { let Some(m)=h.as_object() else{return false}; for kind in ["gpu","cpu"] { if let Some(vals)=string_list(m.get(kind)) { let required:Vec<String>=vals.into_iter().filter(|v|!v.is_empty()&&v!="all").map(|v|if v.starts_with(&format!("{kind}-")){v}else{format!("{kind}-{v}")}).collect(); if !required.is_empty()&&!required.iter().any(|k|compat_has(keys,k)){return false} } } } }
-    if let Some(deps)=entry.get("dependencies").and_then(Value::as_array) { for d in deps { let Some(dm)=d.as_object() else{return false}; match dm.get("type").and_then(Value::as_str){Some("flathub") if !compat_has(keys,"systemd")=>return false,Some("native")=>{ let depkeys:Vec<String>=if compat_has(keys,"steamos")&&ty=="make"&&!make_uses_sudo_rs(entry){vec!["arch".into()]}else{keys.to_vec()}; if resolve_package_names_rs(dm,&depkeys).is_none(){return false}},_=>{}} } }
+    if let Some(deps)=entry.get("dependencies").and_then(Value::as_array) { for d in deps { let Some(dm)=d.as_object() else{return false}; match dm.get("type").and_then(Value::as_str){Some("flathub")|Some("snap") if !compat_has(keys,"systemd")=>return false,Some("native")=>{ let depkeys:Vec<String>=if compat_has(keys,"steamos")&&ty=="make"&&!make_uses_sudo_rs(entry){vec!["arch".into()]}else{keys.to_vec()}; if resolve_package_names_rs(dm,&depkeys).is_none(){return false}},_=>{}} } }
     true
 }
 

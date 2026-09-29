@@ -682,5 +682,6 @@
   "app_page_details": "Szczegóły",
   "app_page_extensions": "Rozszerzenia",
   "category_available": "Dostępne",
-  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time”, zaawansowany algorytm kontroli przeciążenia firmy Google, zaprojektowany w celu maksymalizacji przepustowości sieci i minimalizacji opóźnień."
+  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time”, zaawansowany algorytm kontroli przeciążenia firmy Google, zaprojektowany w celu maksymalizacji przepustowości sieci i minimalizacji opóźnień.",
+  "snap_desc": "Repozytoria Canonical Snapcraft wraz z usługą snapd."
 }

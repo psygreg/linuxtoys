@@ -26,7 +26,7 @@ from .registry_utils import parse_registry_file
 PACKAGE_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9+_.:@-]*$")
 MANIFEST_ITEM_MAX_LENGTH = 256
 CONTROL_CHARACTER_RE = re.compile(r"[\x00-\x1f\x7f]")
-ALLOWED_LIBRARY_FUNCTIONS = frozenset({'pkg_install', 'pkg_flat'})
+ALLOWED_LIBRARY_FUNCTIONS = frozenset({'pkg_install', 'pkg_flat', 'pkg_snap'})
 FLATPAK_ID_RE = re.compile(
     r"^[A-Za-z][A-Za-z0-9_-]*(?:\.[A-Za-z0-9][A-Za-z0-9_-]*){2,}(?:/[A-Za-z0-9_.-]+){0,2}$"
 )
@@ -185,6 +185,27 @@ def install_flatpaks(flatpak_names):
         print(result.stderr.strip())
     return result.returncode == 0
 
+
+
+def check_snaps(snap_names):
+    """Return installed/not-installed Snap names."""
+    found, missing = [], []
+    if not shutil.which("snap"):
+        return found, list(snap_names)
+    for name in snap_names:
+        result = subprocess.run(
+            ["snap", "list", name], stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL, check=False,
+        )
+        (found if result.returncode == 0 else missing).append(name)
+    return found, missing
+
+
+def install_snaps(snap_names):
+    """Install Snaps in one pkg_snap call through the core library."""
+    if not snap_names:
+        return True
+    return _run_library_function("pkg_snap", list(snap_names)).returncode == 0
 
 def _bootstrap_flatpak_for_manifest():
     """Ensure Flatpak/Flathub exists, then synchronously rebuild AppStream if needed."""
@@ -416,6 +437,8 @@ def _registry_entry_install_source(registry_data, registry_name):
             operation = str(operation or "").strip().casefold()
             if operation.startswith("flatpak ") and not operation.startswith("flatpak rm "):
                 return "flatpak"
+            if operation.startswith("snap ") and not operation.startswith("snap rm "):
+                return "snap"
             if operation.startswith("pkg ") and not operation.startswith("pkg rm "):
                 saw_native_package = True
     return "native" if saw_native_package else ""
@@ -427,7 +450,7 @@ def _appstream_source_override(script_info, registry_data, registry_name):
         return ""
 
     default_source = str(script_info.get("appstream_source", "") or "").strip().casefold()
-    if default_source not in {"native", "flatpak"}:
+    if default_source not in {"native", "flatpak", "snap"}:
         return ""
 
     available_sources = {
@@ -439,7 +462,7 @@ def _appstream_source_override(script_info, registry_data, registry_name):
 
     actual_source = _registry_entry_install_source(registry_data, registry_name)
     if (
-        actual_source in {"native", "flatpak"}
+        actual_source in {"native", "flatpak", "snap"}
         and actual_source in available_sources
         and actual_source != default_source
     ):
@@ -450,7 +473,7 @@ def _appstream_source_override(script_info, registry_data, registry_name):
 def _select_manifest_source(script_info, source):
     """Select an explicitly requested AppStream source from a portable entry."""
     source = str(source or "").strip().casefold()
-    if source not in {"native", "flatpak"}:
+    if source not in {"native", "flatpak", "snap"}:
         return None
 
     candidates = [script_info]
@@ -920,17 +943,19 @@ def run_manifest_mode(translations=None):
     scripts_to_run = []
     packages_to_install = []
     flatpaks_to_install = []
+    snaps_to_install = []
     invalid_items = []
     
     # Explicit prefixes avoid ambiguity; unprefixed entries retain auto-detection.
     potential_flatpaks = []
     explicit_packages = []
+    explicit_snaps = []
     explicit_scripts = []
     manifest_requirements = set()
     other_items = []
     for raw_name in script_names:
         prefix, separator, value = raw_name.partition(':')
-        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak', 'require'}:
+        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak', 'snap', 'require'}:
             name = value.strip()
             if not name:
                 print(f"Error: empty manifest entry '{raw_name}'.")
@@ -940,12 +965,14 @@ def run_manifest_mode(translations=None):
                 source_override = ""
                 if "@" in name:
                     candidate_id, candidate_source = name.rsplit("@", 1)
-                    if candidate_source.casefold() in {"native", "flatpak"}:
+                    if candidate_source.casefold() in {"native", "flatpak", "snap"}:
                         script_id = candidate_id
                         source_override = candidate_source.casefold()
                 explicit_scripts.append((script_id, source_override))
             elif prefix.lower() in {'package', 'pkg'}:
                 explicit_packages.append(name)
+            elif prefix.lower() == 'snap':
+                explicit_snaps.append(name)
             elif prefix.lower() == 'require':
                 requirement = name.casefold()
                 if requirement == "flathub":
@@ -1160,7 +1187,7 @@ def run_manifest_mode(translations=None):
             print(f"  - {item}")
         return 2
 
-    total_items = len(scripts_to_run) + len(packages_to_install) + len(flatpaks_to_install)
+    total_items = len(scripts_to_run) + len(packages_to_install) + len(flatpaks_to_install) + len(snaps_to_install)
     
     if total_items == 0:
         print("No compatible scripts, packages, or flatpaks found to run/install.")
@@ -1204,6 +1231,16 @@ def run_manifest_mode(translations=None):
             print("✗ Package installation failed")
 
     # Avoid concurrent Flatpak/sudo operations by using one pkg_flat call.
+    if snaps_to_install:
+        current_item += len(snaps_to_install)
+        print(f"\nInstalling {len(snaps_to_install)} Snap(s)...")
+        if install_snaps(snaps_to_install):
+            for snap_name in snaps_to_install:
+                print(f"✓ Successfully installed snap: {snap_name}")
+        else:
+            for snap_name in snaps_to_install:
+                print(f"✗ Failed to install snap: {snap_name}")
+
     if flatpaks_to_install:
         current_item += len(flatpaks_to_install)
         print(f"\nInstalling {len(flatpaks_to_install)} Flatpak(s)...")

@@ -536,6 +536,8 @@ class AppStreamRunner:
                     lines.append(f"pkg_install {shlex.quote(package)}")
                 elif dependency_type == "flathub":
                     lines.append(f"pkg_flat {shlex.quote(package)}")
+                elif dependency_type == "snap":
+                    lines.append(f"pkg_snap {shlex.quote(package)}")
 
         if not lines:
             return None

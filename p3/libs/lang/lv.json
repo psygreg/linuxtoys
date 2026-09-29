@@ -682,5 +682,6 @@
   "app_page_details": "Informācija",
   "app_page_extensions": "Paplašinājumi",
   "category_available": "Pieejams",
-  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“ — Google uzlabotais pārslodzes kontroles algoritms, kas izstrādāts, lai maksimāli palielinātu tīkla caurlaidspēju un samazinātu latentumu."
+  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“ — Google uzlabotais pārslodzes kontroles algoritms, kas izstrādāts, lai maksimāli palielinātu tīkla caurlaidspēju un samazinātu latentumu.",
+  "snap_desc": "Canonical Snapcraft repozitoriji ar snapd pakalpojumu."
 }

@@ -34,6 +34,37 @@ fn normalize_id(value: &str) -> String {
     value.trim().strip_suffix(".desktop").or_else(|| value.trim().strip_suffix(".Desktop")).unwrap_or(value.trim()).to_lowercase()
 }
 
+
+fn component_policy_keys_rs(item: &serde_json::Map<String, Value>) -> Vec<String> {
+    let mut keys = Vec::new();
+    let mut push = |value: &str, normalize: bool| {
+        let key = if normalize { normalize_id(value) } else { value.trim().to_lowercase() };
+        if !key.is_empty() && !keys.contains(&key) { keys.push(key); }
+    };
+    if let Some(v) = item.get("id").and_then(Value::as_str) { push(v, true); }
+    if let Some(v) = item.get("flatpak_id").and_then(Value::as_str) { push(v, true); }
+    if let Some(v) = item.get("snap_name").and_then(Value::as_str) { push(v, false); }
+    if let Some(v) = item.get("snap_id").and_then(Value::as_str) { push(v, false); }
+    if let Some(v) = item.get("name").and_then(Value::as_str) { push(v, false); }
+    if let Some(pkgs) = item.get("packages").and_then(Value::as_array) {
+        for pkg in pkgs.iter().filter_map(Value::as_str) { push(pkg, false); }
+    }
+    keys
+}
+
+fn apply_snap_identity_overlays_rs(components: &mut [serde_json::Map<String, Value>], overlays: &Value) {
+    let Some(overlays) = overlays.as_object() else { return; };
+    for component in components.iter_mut().filter(|m| m.get("source").and_then(Value::as_str) == Some("snap")) {
+        let snap_name = component.get("snap_name").and_then(Value::as_str).unwrap_or("");
+        if snap_name.is_empty() { continue; }
+        if let Some((appstream_id, _)) = overlays.iter().find(|(_, v)| {
+            v.get("snap_name").and_then(Value::as_str).is_some_and(|n| n.eq_ignore_ascii_case(snap_name))
+        }) {
+            component.insert("id".into(), Value::String(appstream_id.clone()));
+        }
+    }
+}
+
 #[pyfunction]
 pub(crate) fn load_appstream_catalog(py: Python<'_>, path: &str) -> PyResult<Vec<Py<PyAny>>> {
     // I/O and JSON parsing are pure Rust. Do not block GTK's Python main loop.
@@ -136,10 +167,10 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);let overlays:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));let ov=overlays.as_object();let ids:std::collections::HashSet<String>=curated_ids.into_iter().map(|s|s.to_lowercase()).collect();let pkgs:std::collections::HashSet<String>=curated_packages.into_iter().map(|s|s.to_lowercase()).collect();let names:std::collections::HashSet<String>=curated_names.into_iter().map(|s|s.to_lowercase()).collect();let mut out=Vec::new();
     for m in components {let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||ids.contains(&id.to_lowercase()){continue}if m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
         let Some(category)=resolve_component_category_rs(&m,&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
-        let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
+        let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format","appstream");e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else{"native"});e.insert("package-name".into(),if flat{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else{"native"});e.insert("package-name".into(),if flat||snap{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else if snap{"snapbadge.svg"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
         if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
         out.push(Value::Object(e));
@@ -174,7 +205,8 @@ fn expand_source_group_rs(group:&[serde_json::Map<String,Value>])->Vec<serde_jso
 fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_json::Map<String,Value>])->serde_json::Map<String,Value>{
     let flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).collect();
     let native:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").collect();
-    let mut candidates:Vec<&serde_json::Map<String,Value>>=if is_verified_flatpak_rs(selected){flat}else{native.into_iter().chain(flat).collect()};
+    let snap:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).collect();
+    let mut candidates:Vec<&serde_json::Map<String,Value>>=if is_verified_flatpak_rs(selected){flat}else{native.into_iter().chain(flat).chain(snap).collect()};
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
     let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
@@ -191,12 +223,11 @@ fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Opt
 }
 fn explicit_preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
     let apps=prefs.as_object()?.get("apps")?.as_object()?;
-    let id=normalize_id(item.get("id").and_then(Value::as_str).unwrap_or(""));
-    let flatpak_id=normalize_id(item.get("flatpak_id").and_then(Value::as_str).unwrap_or(""));
-    let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
+    let policy_keys=component_policy_keys_rs(item);
     let v=apps.iter().find_map(|(key,value)| {
         let key_id=normalize_id(key);
-        (key_id==id || (!flatpak_id.is_empty()&&key_id==flatpak_id) || key.trim().eq_ignore_ascii_case(name)).then_some(value)
+        let key_plain=key.trim().to_lowercase();
+        policy_keys.iter().any(|candidate| candidate==&key_id || candidate==&key_plain).then_some(value)
     })?;
     preference_value_rs(v,host_os)
 }
@@ -211,12 +242,12 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
     for m in components {let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
-        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).collect();
+        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).collect();
         if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{out.extend(group);continue}
         if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if pref=="flatpak"{selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
         if !natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
-        let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=group.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
+        let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=natives.clone()}if selected.is_empty(){selected=flat.clone()}if selected.is_empty(){selected=snaps.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("snap"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
     } out
 }
 
@@ -610,6 +641,16 @@ impl AppStreamGeneration {
         Ok(count)
     }
 
+    fn add_snap(&mut self, _py: Python<'_>, components: &Bound<'_, PyList>) -> PyResult<usize> {
+        let mut maps = Vec::with_capacity(components.len());
+        for obj in components.iter() {
+            if let Value::Object(map) = py_to_json(&obj)? { maps.push(map); }
+        }
+        let count = maps.len();
+        self.entries.extend(maps);
+        Ok(count)
+    }
+
     fn add_flatpak_source(
         &mut self,
         py: Python<'_>,
@@ -680,10 +721,14 @@ impl AppStreamGeneration {
         &mut self,
         py: Python<'_>,
         summaries_json: &str,
+        snap_summaries_json: &str,
         fetch_available: bool,
+        snap_fetch_available: bool,
     ) -> PyResult<()> {
         let summaries: std::collections::HashMap<String, Value> =
             serde_json::from_str(summaries_json).unwrap_or_default();
+        let snap_summaries: std::collections::HashMap<String, Value> =
+            serde_json::from_str(snap_summaries_json).unwrap_or_default();
         let previous = self.previous_by_id().into_iter().filter_map(|(id, map)| {
             let count = map.get("review_count").and_then(Value::as_i64)?;
             let rating = map.get("review_rating").and_then(Value::as_f64)?;
@@ -693,16 +738,35 @@ impl AppStreamGeneration {
         py.allow_threads(|| {
             for map in &mut self.entries {
                 let id = map.get("id").and_then(Value::as_str).unwrap_or("").to_string();
-                let fresh = summaries.get(&id).and_then(Value::as_object);
-                let pair = if fetch_available {
-                    fresh.and_then(|summary| {
-                        Some((
-                            summary.get("review_rating")?.as_f64()?,
-                            summary.get("review_count")?.as_i64()?,
-                        ))
+                let odrs = if fetch_available {
+                    summaries.get(&id).and_then(Value::as_object).and_then(|summary| Some((
+                        summary.get("review_rating")?.as_f64()?,
+                        summary.get("review_count")?.as_i64()?,
+                    )))
+                } else { previous.get(&id).copied() };
+
+                // Canonical exposes raw_rating as a normalized binary-vote score.
+                // Convert the [0, 1] value to LT/ODRS' [0, 100] scale before
+                // weighting it by the number of Canonical votes.
+                let snap = if map.get("source").and_then(Value::as_str) == Some("snap") && snap_fetch_available {
+                    let snap_id = map.get("snap_id").and_then(Value::as_str).unwrap_or("");
+                    snap_summaries.get(snap_id).and_then(Value::as_object).and_then(|summary| {
+                        let raw = summary.get("raw_rating")?.as_f64()?;
+                        let count = summary.get("total_votes")?.as_i64()?;
+                        let band = summary.get("ratings_band").and_then(Value::as_i64).unwrap_or(5);
+                        if count <= 0 || band == 5 || !(0.0..=1.0).contains(&raw) { return None; }
+                        Some(((raw * 100.0).clamp(0.0, 100.0), count))
                     })
-                } else {
-                    previous.get(&id).copied()
+                } else { None };
+
+                let pair = match (odrs, snap) {
+                    (Some((orating, ocount)), Some((srating, scount))) if ocount > 0 && scount > 0 => {
+                        let count = ocount.saturating_add(scount);
+                        Some(((orating * ocount as f64 + srating * scount as f64) / count as f64, count))
+                    }
+                    (Some(pair), _) => Some(pair),
+                    (None, Some(pair)) => Some(pair),
+                    (None, None) => None,
                 };
 
                 if let Some((rating, count)) = pair {
@@ -961,20 +1025,23 @@ pub(crate) fn build_appstream_catalog(
     let content = match fs::read_to_string(path) { Ok(v) => v, Err(_) => return Ok(Vec::new()) };
     let parsed: Value = match serde_json::from_str(&content) { Ok(v) => v, Err(_) => return Ok(Vec::new()) };
     let Some(values) = parsed.as_array() else { return Ok(Vec::new()); };
-    let omit: std::collections::HashSet<String> = omit_keys.into_iter().map(|s| s.trim().to_lowercase()).collect();
-    let mut vals = Vec::with_capacity(values.len());
-    for value in values {
-        let Some(m) = value.as_object() else { continue; };
-        if !m.get("packages").and_then(Value::as_array).is_some_and(|a| !a.is_empty()) { continue; }
-        let mut keys = Vec::new();
-        if let Some(id)=m.get("id").and_then(Value::as_str) { keys.push(normalize_id(id)); }
-        if let Some(id)=m.get("flatpak_id").and_then(Value::as_str) { keys.push(normalize_id(id)); }
-        if let Some(name)=m.get("name").and_then(Value::as_str) { keys.push(name.trim().to_lowercase()); }
-        if let Some(pkgs)=m.get("packages").and_then(Value::as_array) { for p in pkgs.iter().filter_map(Value::as_str) { keys.push(p.trim().to_lowercase()); } }
-        if keys.iter().any(|k| omit.contains(k)) { continue; }
-        vals.push(m.clone());
-    }
+    let omit: std::collections::HashSet<String> = omit_keys.into_iter().flat_map(|s| {
+        let plain=s.trim().to_lowercase();
+        let normalized=normalize_id(&s);
+        if plain==normalized { vec![plain] } else { vec![plain,normalized] }
+    }).filter(|s|!s.is_empty()).collect();
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);
+    let overlay_map:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));
+    let mut vals:Vec<_>=values.iter().filter_map(|value| {
+        let m=value.as_object()?;
+        m.get("packages").and_then(Value::as_array).is_some_and(|a|!a.is_empty()).then(||m.clone())
+    }).collect();
+
+    // Canonicalize Snap identities before applying parser policy. This makes omit,
+    // category overrides, source grouping/locks and explicit source preferences see
+    // the same AppStream ID as the rest of the catalog while retaining snap_name.
+    apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
+    vals.retain(|m|!component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1188,6 +1255,7 @@ pub(crate) struct AppStreamCatalog {
     by_removable_name: std::collections::HashMap<String, Vec<usize>>,
     by_native_package: std::collections::HashMap<String, Vec<usize>>,
     by_flatpak_package: std::collections::HashMap<String, Vec<usize>>,
+    by_snap_package: std::collections::HashMap<String, Vec<usize>>,
     cache_key: String,
 }
 
@@ -1204,6 +1272,7 @@ impl AppStreamCatalog {
         let mut by_removable_name: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         let mut by_native_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         let mut by_flatpak_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        let mut by_snap_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         for (index, entry) in entries.iter().enumerate() {
             if !entry.category.is_empty() { by_category.entry(entry.category.clone()).or_default().push(index); }
             let id = normalize_id(&entry.appstream_id);
@@ -1217,6 +1286,7 @@ impl AppStreamCatalog {
             }
             let target = match entry.source.as_str() {
                 "flatpak" => Some(&mut by_flatpak_package),
+                "snap" => Some(&mut by_snap_package),
                 "native" => Some(&mut by_native_package),
                 _ => None,
             };
@@ -1224,7 +1294,7 @@ impl AppStreamCatalog {
                 for package in &entry.package_names { target.entry(package.clone()).or_default().push(index); }
             }
         }
-        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, cache_key }
+        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, by_snap_package, cache_key }
     }
 
     fn materialize_entry(&self, py: Python<'_>, index: usize) -> PyResult<Option<Py<PyAny>>> {
@@ -1355,7 +1425,8 @@ impl AppStreamCatalog {
         self.materialize_indices(py, &indices)
     }
 
-    fn installed_entries(&self, py: Python<'_>, native_packages: Vec<String>, flatpak_ids: Vec<String>, executed_names: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
+    #[pyo3(signature = (native_packages, flatpak_ids, executed_names, snap_names=Vec::new()))]
+    fn installed_entries(&self, py: Python<'_>, native_packages: Vec<String>, flatpak_ids: Vec<String>, executed_names: Vec<String>, snap_names: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
         let mut indices = std::collections::HashSet::new();
         for package in native_packages {
             let key = package.trim().to_lowercase();
@@ -1364,6 +1435,10 @@ impl AppStreamCatalog {
         for app_id in flatpak_ids {
             let key = app_id.trim().to_lowercase();
             if let Some(matches) = self.by_flatpak_package.get(&key) { indices.extend(matches.iter().copied()); }
+        }
+        for snap_name in snap_names {
+            let key = snap_name.trim().to_lowercase();
+            if let Some(matches) = self.by_snap_package.get(&key) { indices.extend(matches.iter().copied()); }
         }
         for name in executed_names {
             let key = name.trim().to_lowercase();
@@ -1447,20 +1522,23 @@ pub(crate) fn build_appstream_catalog_index(
     let content = match fs::read_to_string(path) { Ok(v) => v, Err(_) => return Ok(AppStreamCatalog::from_values(Vec::new(), cache_key.to_string())) };
     let parsed: Value = match serde_json::from_str(&content) { Ok(v) => v, Err(_) => return Ok(AppStreamCatalog::from_values(Vec::new(), cache_key.to_string())) };
     let Some(values) = parsed.as_array() else { return Ok(AppStreamCatalog::from_values(Vec::new(), cache_key.to_string())); };
-    let omit: std::collections::HashSet<String> = omit_keys.into_iter().map(|s| s.trim().to_lowercase()).collect();
-    let mut vals = Vec::with_capacity(values.len());
-    for value in values {
-        let Some(m) = value.as_object() else { continue; };
-        if !m.get("packages").and_then(Value::as_array).is_some_and(|a| !a.is_empty()) { continue; }
-        let mut keys = Vec::new();
-        if let Some(id)=m.get("id").and_then(Value::as_str) { keys.push(normalize_id(id)); }
-        if let Some(id)=m.get("flatpak_id").and_then(Value::as_str) { keys.push(normalize_id(id)); }
-        if let Some(name)=m.get("name").and_then(Value::as_str) { keys.push(name.trim().to_lowercase()); }
-        if let Some(pkgs)=m.get("packages").and_then(Value::as_array) { for p in pkgs.iter().filter_map(Value::as_str) { keys.push(p.trim().to_lowercase()); } }
-        if keys.iter().any(|k| omit.contains(k)) { continue; }
-        vals.push(m.clone());
-    }
+    let omit: std::collections::HashSet<String> = omit_keys.into_iter().flat_map(|s| {
+        let plain=s.trim().to_lowercase();
+        let normalized=normalize_id(&s);
+        if plain==normalized { vec![plain] } else { vec![plain,normalized] }
+    }).filter(|s|!s.is_empty()).collect();
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);
+    let overlay_map:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));
+    let mut vals:Vec<_>=values.iter().filter_map(|value| {
+        let m=value.as_object()?;
+        m.get("packages").and_then(Value::as_array).is_some_and(|a|!a.is_empty()).then(||m.clone())
+    }).collect();
+
+    // Canonicalize Snap identities before applying parser policy. This makes omit,
+    // category overrides, source grouping/locks and explicit source preferences see
+    // the same AppStream ID as the rest of the catalog while retaining snap_name.
+    apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
+    vals.retain(|m|!component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();

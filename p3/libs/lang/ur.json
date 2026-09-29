@@ -682,5 +682,6 @@
   "app_page_details": "تفصیلات",
   "app_page_extensions": "ایکسٹینشنز",
   "category_available": "دستیاب",
-  "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، Google کا جدید کنجیشن کنٹرول الگورتھم، جسے نیٹ ورک تھروپٹ کو زیادہ سے زیادہ اور لیٹنسی کو کم سے کم کرنے کے لیے ڈیزائن کیا گیا ہے۔"
+  "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، Google کا جدید کنجیشن کنٹرول الگورتھم، جسے نیٹ ورک تھروپٹ کو زیادہ سے زیادہ اور لیٹنسی کو کم سے کم کرنے کے لیے ڈیزائن کیا گیا ہے۔",
+  "snap_desc": "Canonical Snapcraft ریپوزٹریز اور ان کی snapd سروس۔"
 }

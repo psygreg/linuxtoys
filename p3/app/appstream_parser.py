@@ -20,7 +20,7 @@ _DERIVED_REFRESHING = set()
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 20
+RUNTIME_CACHE_SCHEMA = 22
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -78,7 +78,8 @@ APPSTREAM_OMIT = {
     "virtualbox",
     "virt-manager",
     "org.virt_manager.virt-manager",
-    "com.heroicgameslauncher.hgl"
+    "com.heroicgameslauncher.hgl",
+    "code"
 }
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
@@ -886,14 +887,30 @@ def get_installed_entries(
     native_packages,
     flatpak_ids,
     executed_names=(),
+    snap_names=None,
     curated_entries=None,
     category_paths=None,
 ):
     """Materialize only AppStream entries matching observed/Registry installs."""
+    if snap_names is None:
+        snap_names = []
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["snap", "list"], capture_output=True, text=True, timeout=8, check=False
+            )
+            if result.returncode == 0:
+                for line in result.stdout.splitlines()[1:]:
+                    fields = line.split()
+                    if fields:
+                        snap_names.append(fields[0])
+        except (OSError, subprocess.SubprocessError):
+            pass
     return list(
         _runtime_catalog(scripts_dir, curated_entries, category_paths).installed_entries(
             sorted({str(value) for value in (native_packages or ()) if str(value).strip()}),
             sorted({str(value) for value in (flatpak_ids or ()) if str(value).strip()}),
             sorted({str(value) for value in (executed_names or ()) if str(value).strip()}),
+            sorted({str(value) for value in (snap_names or ()) if str(value).strip()}),
         )
     )

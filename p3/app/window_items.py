@@ -180,7 +180,11 @@ class ItemWidgetFactory:
         icon_value = str(item_info.get("icon", "application-x-executable") or "")
         icon_path = ""
         icon_name = icon_value
-        if icon_value.endswith((".png", ".svg")):
+
+        # Remote icons are first-class sources for the native Rust image loader.
+        # Do not classify URL paths ending in .png/.svg as local filesystem icons.
+        is_remote_icon = icon_value.startswith(("https://", "http://", "/v2/"))
+        if not is_remote_icon and icon_value.endswith((".png", ".svg")):
             if not os.path.isabs(icon_value) and "/" not in icon_value:
                 icon_path = get_icon_path(
                     "local-script.svg"

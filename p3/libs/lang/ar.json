@@ -682,5 +682,6 @@
   "app_page_details": "التفاصيل",
   "app_page_extensions": "الامتدادات",
   "category_available": "متاح",
-  "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، خوارزمية Google المتقدمة للتحكم في الازدحام، والمصممة لزيادة معدل نقل الشبكة إلى أقصى حد وتقليل زمن الاستجابة."
+  "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، خوارزمية Google المتقدمة للتحكم في الازدحام، والمصممة لزيادة معدل نقل الشبكة إلى أقصى حد وتقليل زمن الاستجابة.",
+  "snap_desc": "مستودعات Canonical Snapcraft مع خدمة snapd الخاصة بها."
 }

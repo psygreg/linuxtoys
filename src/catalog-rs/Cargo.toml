@@ -22,3 +22,8 @@ quick-xml = "0.38"
 flate2 = "1"
 sha2 = "0.10"
 chrono = { version = "0.4", default-features = false, features = ["std"] }
+
+prost = "0.12"
+prost-types = "0.12"
+tokio = { version = "1", features = ["rt", "net", "time"] }
+tonic = { version = "0.11", features = ["tls", "tls-roots"] }

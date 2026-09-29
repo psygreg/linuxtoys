@@ -21,6 +21,7 @@ from urllib.error import HTTPError, URLError
 from pathlib import Path
 
 from . import popularity
+from . import snap_catalog
 from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
@@ -35,12 +36,34 @@ CATALOG_PATH = CACHE_DIR / "catalog.json"
 EXTENSIONS_PATH = CACHE_DIR / "extensions.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"
 FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
+SNAP_CATALOG_PATH = CACHE_DIR / "snap.json"
 SOURCE_INVENTORY_PATH = CACHE_DIR / "source-inventory.json"
 ODRS_RATED_PATH = Path(os.path.expanduser("~/.config/linuxtoys/odrs-ratings.json"))
 ODRS_SUBMIT_URL = "https://odrs.gnome.org/1.0/reviews/api/submit"
 ODRS_USER_SALT = "linuxtoys-odrs-v1"
+SNAP_VOTED_PATH = Path(os.path.expanduser("~/.config/linuxtoys/snap-ratings.json"))
 
 _LOCK = threading.RLock()
+
+
+def _snap_supported_host() -> bool:
+    """Return whether Snap-backed catalog entries may be exposed on this host.
+
+    Keep this in sync with the Snap installer constraints: systemd is required
+    and ostree hosts are excluded. The Snap Store catalog is only exposed after
+    snapd is installed, matching the existing Flatpak/Flathub behavior.
+    """
+    try:
+        from .compat import get_system_compat_keys
+
+        compat = get_system_compat_keys()
+        return (
+            "systemd" in compat
+            and "ostree" not in compat
+            and shutil.which("snap") is not None
+        )
+    except (ImportError, AttributeError):
+        return False
 
 
 def _flatpak_supported_host() -> bool:
@@ -376,6 +399,84 @@ def submit_odrs_rating(app_id: str, stars: int, summary: str, description: str, 
         return False, str(message or "ODRS rejected the review")
 
     _record_submitted_odrs_rating(app_id, stars)
+    return True, ""
+
+
+def get_snap_installed_revision(snap_name: str):
+    snap_name = str(snap_name or "").strip()
+    if not snap_name or shutil.which("snap") is None:
+        return None
+    try:
+        result = subprocess.run(
+            ["snap", "list", snap_name], capture_output=True, text=True, timeout=10, check=False
+        )
+        if result.returncode != 0:
+            return None
+        lines = [line.split() for line in result.stdout.splitlines() if line.strip()]
+        if len(lines) < 2 or len(lines[1]) < 3:
+            return None
+        return int(lines[1][2])
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
+
+
+def get_submitted_snap_vote(snap_id: str, revision=None):
+    snap_id = str(snap_id or "").strip()
+    if not snap_id:
+        return None
+    data = _read_json(SNAP_VOTED_PATH, {})
+    entry = data.get(snap_id) if isinstance(data, dict) else None
+    if not isinstance(entry, dict) or "vote_up" not in entry:
+        return None
+    if revision is not None:
+        try:
+            if int(entry.get("revision", -1)) != int(revision):
+                return None
+        except (TypeError, ValueError):
+            return None
+    return bool(entry.get("vote_up"))
+
+
+def sync_snap_vote(snap_id: str):
+    """Refresh this user's latest Canonical vote into LT's local UI cache."""
+    snap_id = str(snap_id or "").strip()
+    if not snap_id:
+        return None
+    try:
+        result = _catalog_rs.snap_user_vote(snap_id)
+    except Exception:
+        return None
+    if not isinstance(result, dict) or result.get("_error") or "vote_up" not in result:
+        return None
+    try:
+        revision = int(result.get("revision"))
+    except (TypeError, ValueError):
+        return None
+    data = _read_json(SNAP_VOTED_PATH, {})
+    if not isinstance(data, dict):
+        data = {}
+    data[snap_id] = {"vote_up": bool(result.get("vote_up")), "revision": revision, "submitted": int(time.time())}
+    _atomic_json_write(SNAP_VOTED_PATH, data)
+    return bool(result.get("vote_up")), revision
+
+
+def submit_snap_vote(snap_id: str, snap_name: str, vote_up: bool):
+    snap_id = str(snap_id or "").strip()
+    snap_name = str(snap_name or "").strip()
+    if not snap_id or not snap_name:
+        return False, "invalid snap vote data"
+    revision = get_snap_installed_revision(snap_name)
+    if revision is None:
+        return False, "installed Snap revision could not be determined"
+    try:
+        _catalog_rs.submit_snap_vote(snap_id, int(revision), bool(vote_up))
+    except Exception as exc:
+        return False, str(exc)
+    data = _read_json(SNAP_VOTED_PATH, {})
+    if not isinstance(data, dict):
+        data = {}
+    data[snap_id] = {"vote_up": bool(vote_up), "revision": int(revision), "submitted": int(time.time())}
+    _atomic_json_write(SNAP_VOTED_PATH, data)
     return True, ""
 
 def _fetch_odrs_ratings():
@@ -918,12 +1019,30 @@ def _flatpak_source_fingerprint():
     return hashlib.sha256(raw).hexdigest()
 
 
+def _snap_source_fingerprint():
+    """Fingerprint Snap availability and the local Snap Store metadata snapshot."""
+    if not _snap_supported_host():
+        return "unavailable"
+
+    state = _path_state(SNAP_CATALOG_PATH)
+    if state is None:
+        return "missing"
+
+    raw = json.dumps(
+        {"snap": True, "snapshot": state},
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
 def _source_fingerprints():
     inventory = _load_source_inventory()
     native, inventory_changed = _native_source_fingerprint(inventory)
     result = {
         "native": native,
         "flatpak": _flatpak_source_fingerprint(),
+        "snap": _snap_source_fingerprint(),
     }
     if inventory_changed or not SOURCE_INVENTORY_PATH.is_file():
         _atomic_json_write(SOURCE_INVENTORY_PATH, inventory)
@@ -937,7 +1056,8 @@ def _default_state():
         "last_completed": 0,
         "sources": {
             "native": {"complete": False, "updated": 0, "fingerprint": ""},
-            "flatpak": {"complete": False, "updated": 0, "fingerprint": ""}
+            "flatpak": {"complete": False, "updated": 0, "fingerprint": ""},
+            "snap": {"complete": False, "updated": 0, "fingerprint": ""},
         },
     }
 
@@ -975,6 +1095,7 @@ def cache_needs_refresh(now=None) -> bool:
     return (
         current["native"] != sources.get("native", {}).get("fingerprint")
         or current["flatpak"] != sources.get("flatpak", {}).get("fingerprint")
+        or current["snap"] != sources.get("snap", {}).get("fingerprint")
     )
 
 
@@ -1037,11 +1158,38 @@ def refresh_cache(force=False, status_callback=None):
             _refresh_missing_flatpak_appstream()
             _flatpak_catalog_sources = _load_flatpak_components(generation)
 
+            # Snap Store metadata is normalized into the same source-neutral catalog.
+            # A failed refresh retains the previous Snap snapshot and never blocks
+            # native/Flatpak publication.
+            snap_components = []
+            if _snap_supported_host():
+                snap_components = snap_catalog.load_or_refresh(
+                    SNAP_CATALOG_PATH,
+                    force=force,
+                )
+            snap_ratings = None
+            if snap_components:
+                generation.add_snap(snap_components)
+                snap_ids = sorted({
+                    str(item.get("snap_id") or "").strip()
+                    for item in snap_components
+                    if isinstance(item, dict) and str(item.get("snap_id") or "").strip()
+                })
+                if snap_ids:
+                    try:
+                        fetched = _catalog_rs.snap_bulk_ratings(snap_ids)
+                        if isinstance(fetched, dict) and not fetched.get("_error"):
+                            snap_ratings = fetched
+                    except Exception:
+                        snap_ratings = None
+
             ratings_thread.join()
             ratings = ratings_box["value"]
             generation.apply_review_summaries(
                 json.dumps(ratings or {}, ensure_ascii=False, separators=(",", ":")),
+                json.dumps(snap_ratings or {}, ensure_ascii=False, separators=(",", ":")),
                 ratings is not None,
+                snap_ratings is not None,
             )
 
             generation.publish_extensions(os.fspath(EXTENSIONS_PATH))
@@ -1065,6 +1213,11 @@ def refresh_cache(force=False, status_callback=None):
                 "complete": True,
                 "updated": now,
                 "fingerprint": fingerprints["flatpak"],
+            }
+            state["sources"]["snap"] = {
+                "complete": True,
+                "updated": now,
+                "fingerprint": fingerprints["snap"],
             }
             _atomic_json_write(STATE_PATH, state)
 

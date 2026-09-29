@@ -303,6 +303,64 @@ pkg_flat() {
     fi
 }
 
+# Install Snap packages and register only snaps newly added by this transaction.
+pkg_snap () {
+    (( $# > 0 )) || return 0
+    if ! command -v snap >/dev/null 2>&1; then
+        call_script snap || die "Failed to install Snap support"
+        command -v snap >/dev/null 2>&1 || die "Snap is unavailable after installing Snap support"
+    fi
+
+    local -a _snap_new=()
+    local pak
+    for pak in "$@"; do
+        if snap list "$pak" >/dev/null 2>&1; then
+            echo "Snap $pak already installed, skipping."
+        else
+            _snap_new+=("$pak")
+        fi
+    done
+    (( ${#_snap_new[@]} > 0 )) || return 0
+
+    askpass
+    runner_lock "package-transaction"
+    sudo_ snap install "${_snap_new[@]}" || {
+        runner_unlock
+        die "Failed to install snap packages ${_snap_new[*]}"
+    }
+    runner_unlock
+
+    for pak in "${_snap_new[@]}"; do
+        snap list "$pak" >/dev/null 2>&1 || die "Failed to verify snap package $pak"
+    done
+
+    _append_transmap "snap ${_snap_new[*]}"
+}
+# Remove installed Snap packages. This helper intentionally does not append a
+# transaction entry: the initial Snap backend only needs install transactions
+# to be reversible, matching the existing Flatpak install transaction model.
+pkg_snap_remove () {
+    (( $# > 0 )) || return 0
+    command -v snap >/dev/null 2>&1 || return 0
+
+    local -a _snap_found=()
+    local pak
+    for pak in "$@"; do
+        if snap list "$pak" >/dev/null 2>&1; then
+            _snap_found+=("$pak")
+        fi
+    done
+    (( ${#_snap_found[@]} > 0 )) || return 0
+
+    askpass
+    runner_lock "package-transaction"
+    sudo_ snap remove "${_snap_found[@]}" || {
+        runner_unlock
+        fatal "Failed to remove snap packages ${_snap_found[*]}"
+    }
+    runner_unlock
+}
+
 pkg_fromfile () {
     # Handle flags that should not be passed to native package managers.
     local _ostreecheck=0

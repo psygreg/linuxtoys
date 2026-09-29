@@ -307,6 +307,9 @@ def _parse_operation(op_line):
         elif op_type == "flatpak":
             # flatpak can have multiple operands (e.g., "flatpak app1 app2")
             return op_type, parts[1:]
+        elif op_type == "snap":
+            # snap can have multiple operands (e.g., "snap app1 app2")
+            return op_type, parts[1:]
         elif op_type == "override":
             # override scope type setting target
             return op_type, parts[1:]
@@ -570,6 +573,27 @@ def _reverse_flatpak_removal(app_ids):
             f"fi"
         )
         commands.append(cmd)
+
+    return commands
+
+
+def _reverse_snap_removal(packages):
+    """Reverse Snap installation(s) by removing packages that are still installed."""
+    if isinstance(packages, str):
+        packages = [packages]
+
+    if not packages:
+        return []
+
+    commands = []
+    for package in packages:
+        package = shlex.quote(package)
+        commands.append(
+            f"if command -v snap >/dev/null 2>&1 && "
+            f"snap list {package} >/dev/null 2>&1; then "
+            f"sudo_rq && sudo snap remove {package}; "
+            f"fi"
+        )
 
     return commands
 
@@ -909,6 +933,9 @@ def _reverse_operation(op_line, package_manager):
     
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)
+
+    elif op_type == "snap" and operands:
+        return _reverse_snap_removal(operands)
 
     elif op_type == "override" and operands:
         return _reverse_flatpak_override(operands)

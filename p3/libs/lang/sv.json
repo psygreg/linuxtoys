@@ -682,5 +682,6 @@
   "app_page_details": "Detaljer",
   "app_page_extensions": "Tillägg",
   "category_available": "Tillgänglig",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googles avancerade algoritm för överbelastningskontroll, utformad för att maximera nätverkets genomströmning och minimera latensen."
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googles avancerade algoritm för överbelastningskontroll, utformad för att maximera nätverkets genomströmning och minimera latensen.",
+  "snap_desc": "Canonical Snapcraft-förråd med tillhörande snapd-tjänst."
 }

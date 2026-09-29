@@ -682,5 +682,6 @@
   "app_page_details": "Detail",
   "app_page_extensions": "Ekstensi",
   "category_available": "Tersedia",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritma kontrol kemacetan canggih Google yang dirancang untuk memaksimalkan throughput jaringan dan meminimalkan latensi."
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritma kontrol kemacetan canggih Google yang dirancang untuk memaksimalkan throughput jaringan dan meminimalkan latensi.",
+  "snap_desc": "Repositori Canonical Snapcraft beserta layanan snapd."
 }

@@ -12,7 +12,7 @@ from .updater import __version__
 from .manifest_helper import (
     run_manifest_mode, run_update_check_cli, find_script_by_name, 
     run_script, check_package_exists, install_packages, 
-    check_flatpaks_async, install_flatpaks, export_registered_manifest
+    check_flatpaks_async, install_flatpaks, check_snaps, install_snaps, export_registered_manifest
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
@@ -24,7 +24,7 @@ CLI_OPTIONS = frozenset({
     "-D", "--DEV_MODE", "--devmode", "--debug",
     "-h", "--help", "-i", "--install", "-u", "--uninstall", "-l", "--list",
     "-m", "--manifest", "-p", "--package", "--packages",
-    "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks",
+    "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks", "--snap", "--snaps",
     "-v", "--version", "-y", "--yes", "--check-updates", "--export-manifest",
 })
 
@@ -779,6 +779,15 @@ def install_flatpaks_with_feedback(flatpaks_found):
         print(f"\n⚠️  {len(failed_items)} flatpak installation(s) failed.")
 
 
+
+def install_snaps_with_feedback(snaps):
+    if not snaps:
+        return
+    if install_snaps(snaps):
+        print(f"Successfully installed {len(snaps)} Snap(s).")
+    else:
+        print("Failed to install one or more Snaps.", file=sys.stderr)
+
 def flatpaks_install(args: list, skip_confirmation, translations):
     """Handle flatpak installation in EASY_CLI mode."""
 
@@ -1007,12 +1016,14 @@ def easy_cli_help_message():
     print("  -s, --script       Install specified LinuxToys scripts")
     print("  -p, --package      Install packages from the system package manager")
     print("  -f, --flatpak      Install specified Flatpaks")
+    print("      --snap         Install specified Snaps")
     print("  (no option)        Smart mode: checks items by pattern (scripts, packages, flatpaks)")
     print()
     print("Examples:")
     print("  linuxtoys --install --script <script1> <script2>")
     print("  linuxtoys --install --package <package1> <package2>")
     print("  linuxtoys --install --flatpak <flatpak1> <flatpak2>")
+    print("  linuxtoys --install --snap <snap1> <snap2>")
     print("  linuxtoys --install <item1> <item2>  (smart mode)")
     print("  linuxtoys --uninstall --script <script1> <script2>")
     print("  linuxtoys --uninstall --package <package1> <package2>")
@@ -1163,6 +1174,17 @@ def easy_cli_handler(translations=None):
         elif args[1] in ("-f", "--flatpak", "--flatpaks"): # Para instalação de flatpaks
             flatpaks_install(args[2:], skip_confirmation(args), translations)
             return 0
+
+        elif args[1] in ("--snap", "--snaps"):
+            snap_names = args[2:]
+            if not snap_names:
+                print("No Snap package names provided.")
+                return
+            _found, missing = check_snaps(snap_names)
+            if missing:
+                install_snaps_with_feedback(missing)
+            else:
+                print("All requested Snaps are already installed.")
 
         elif args[1] in ("-l", "--list"):
             print_script_list(translations)

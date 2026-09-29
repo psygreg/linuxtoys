@@ -682,5 +682,6 @@
   "app_page_details": "פרטים",
   "app_page_extensions": "הרחבות",
   "category_available": "זמין",
-  "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’, אלגוריתם בקרת העומס המתקדם של Google, שנועד למקסם את תפוקת הרשת ולמזער את זמן ההשהיה."
+  "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’, אלגוריתם בקרת העומס המתקדם של Google, שנועד למקסם את תפוקת הרשת ולמזער את זמן ההשהיה.",
+  "snap_desc": "מאגרי Canonical Snapcraft עם שירות snapd שלהם."
 }

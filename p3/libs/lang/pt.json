@@ -682,5 +682,6 @@
   "app_page_details": "Detalhes",
   "app_page_extensions": "Extensões",
   "category_available": "Disponível",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, o algoritmo avançado de controle de congestionamento do Google, desenvolvido para maximizar a taxa de transferência da rede e minimizar a latência."
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, o algoritmo avançado de controle de congestionamento do Google, desenvolvido para maximizar a taxa de transferência da rede e minimizar a latência.",
+  "snap_desc": "Repositórios Snapcraft da Canonical com seu serviço snapd."
 }

@@ -3,10 +3,15 @@ use gdk_pixbuf::Pixbuf;
 use glib::translate::{from_glib_none, ToGlibPtr};
 use gtk::prelude::*;
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{hash_map::DefaultHasher, HashMap};
 use std::ffi::{c_char, CStr};
 use std::fs;
-use std::path::Path;
+use std::hash::{Hash, Hasher};
+use std::io::{Read, Write};
+use std::os::unix::net::UnixStream;
+use std::path::{Path, PathBuf};
+use std::sync::{Mutex, OnceLock};
+use std::time::Duration;
 
 #[derive(Clone, Hash, Eq, PartialEq)]
 struct PixbufKey {
@@ -46,15 +51,192 @@ fn load_scaled(path: &str, width: i32, height: i32) -> Option<Pixbuf> {
     Some(pixbuf)
 }
 
-fn image(icon_path: &str, icon_name: &str, size: i32) -> gtk::Image {
+const REMOTE_ICON_LIMIT: u64 = 4 * 1024 * 1024;
+
+static REMOTE_ICON_FETCHES: OnceLock<Mutex<HashMap<String, Option<bool>>>> = OnceLock::new();
+
+thread_local! {
+    static REMOTE_IMAGE_BINDINGS: RefCell<HashMap<usize, String>> = RefCell::new(HashMap::new());
+}
+
+fn remote_fetches() -> &'static Mutex<HashMap<String, Option<bool>>> {
+    REMOTE_ICON_FETCHES.get_or_init(|| Mutex::new(HashMap::new()))
+}
+
+fn is_remote_image(value: &str) -> bool {
+    value.starts_with("https://") || value.starts_with("http://") || value.starts_with("/v2/")
+}
+
+fn remote_icon_cache_dir() -> PathBuf {
+    if let Some(cache) = std::env::var_os("XDG_CACHE_HOME").filter(|v| !v.is_empty()) {
+        return PathBuf::from(cache).join("linuxtoys/appstream/icons");
+    }
+    if let Some(home) = std::env::var_os("HOME").filter(|v| !v.is_empty()) {
+        return PathBuf::from(home).join(".cache/linuxtoys/appstream/icons");
+    }
+    std::env::temp_dir().join("linuxtoys/appstream/icons")
+}
+
+fn remote_icon_path(source: &str) -> PathBuf {
+    let mut hasher = DefaultHasher::new();
+    source.hash(&mut hasher);
+    remote_icon_cache_dir().join(format!("{:016x}.img", hasher.finish()))
+}
+
+fn fetch_http_icon(source: &str) -> Result<Vec<u8>, String> {
+    let response = ureq::get(source)
+        .set("User-Agent", "LinuxToys AppStream")
+        .timeout(Duration::from_secs(20))
+        .call()
+        .map_err(|error| error.to_string())?;
+    let mut reader = response.into_reader().take(REMOTE_ICON_LIMIT + 1);
+    let mut data = Vec::new();
+    reader.read_to_end(&mut data).map_err(|error| error.to_string())?;
+    if data.is_empty() || data.len() as u64 > REMOTE_ICON_LIMIT {
+        return Err("remote icon is empty or exceeds size limit".to_string());
+    }
+    Ok(data)
+}
+
+fn fetch_snapd_icon(source: &str) -> Result<Vec<u8>, String> {
+    let mut stream = UnixStream::connect("/run/snapd.socket").map_err(|error| error.to_string())?;
+    stream.set_read_timeout(Some(Duration::from_secs(20))).ok();
+    stream.set_write_timeout(Some(Duration::from_secs(20))).ok();
+    write!(
+        stream,
+        "GET {} HTTP/1.1\r\nHost: localhost\r\nAccept: */*\r\nConnection: close\r\n\r\n",
+        source
+    ).map_err(|error| error.to_string())?;
+
+    let mut response = Vec::new();
+    stream.read_to_end(&mut response).map_err(|error| error.to_string())?;
+    let header_end = response.windows(4).position(|window| window == b"\r\n\r\n")
+        .ok_or_else(|| "invalid snapd icon response".to_string())?;
+    let header = std::str::from_utf8(&response[..header_end]).map_err(|error| error.to_string())?;
+    let status = header.lines().next().unwrap_or_default();
+    if !status.contains(" 200 ") {
+        return Err(format!("snapd icon request failed: {status}"));
+    }
+    let data = response[(header_end + 4)..].to_vec();
+    if data.is_empty() || data.len() as u64 > REMOTE_ICON_LIMIT {
+        return Err("snapd icon is empty or exceeds size limit".to_string());
+    }
+    Ok(data)
+}
+
+fn fetch_remote_icon(source: &str) -> Result<Vec<u8>, String> {
+    if source.starts_with("https://") || source.starts_with("http://") {
+        fetch_http_icon(source)
+    } else if source.starts_with("/v2/") {
+        fetch_snapd_icon(source)
+    } else {
+        Err("unsupported remote icon source".to_string())
+    }
+}
+
+fn bind_remote_image(image: &gtk::Image, source: &str, size: i32) {
+    let source = source.to_string();
+    let target = remote_icon_path(&source);
+    let key = widget_key(image);
+
+    REMOTE_IMAGE_BINDINGS.with(|bindings| {
+        bindings.borrow_mut().insert(key, source.clone());
+    });
+
+    if target.is_file() {
+        if let Some(pixbuf) = load_scaled(target.to_string_lossy().as_ref(), size, size) {
+            image.set_from_pixbuf(Some(&pixbuf));
+            return;
+        }
+        let _ = fs::remove_file(&target);
+    }
+
+    let should_spawn = {
+        let mut fetches = remote_fetches().lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+        match fetches.get(&source).copied() {
+            Some(None) => false,
+            _ => {
+                fetches.insert(source.clone(), None);
+                true
+            }
+        }
+    };
+
+    if should_spawn {
+        let worker_source = source.clone();
+        let worker_target = target.clone();
+        std::thread::spawn(move || {
+            let success = (|| -> Result<(), String> {
+                let data = fetch_remote_icon(&worker_source)?;
+                if let Some(parent) = worker_target.parent() {
+                    fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+                }
+                let tmp = worker_target.with_extension("tmp");
+                fs::write(&tmp, data).map_err(|error| error.to_string())?;
+                fs::rename(&tmp, &worker_target).map_err(|error| error.to_string())?;
+                Ok(())
+            })().is_ok();
+            let mut fetches = remote_fetches().lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+            fetches.insert(worker_source, Some(success));
+        });
+    }
+
+    let image = image.clone();
+    glib::timeout_add_local(Duration::from_millis(75), move || {
+        let still_bound = REMOTE_IMAGE_BINDINGS.with(|bindings| {
+            bindings.borrow().get(&key).map(String::as_str) == Some(source.as_str())
+        });
+        if !still_bound {
+            return glib::ControlFlow::Break;
+        }
+
+        let state = remote_fetches()
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .get(&source)
+            .copied()
+            .flatten();
+        match state {
+            None => glib::ControlFlow::Continue,
+            Some(false) => glib::ControlFlow::Break,
+            Some(true) => {
+                if let Some(pixbuf) = load_scaled(target.to_string_lossy().as_ref(), size, size) {
+                    image.set_from_pixbuf(Some(&pixbuf));
+                }
+                glib::ControlFlow::Break
+            }
+        }
+    });
+}
+
+fn set_image_source(image: &gtk::Image, icon_path: &str, icon_name: &str, size: i32) {
+    let key = widget_key(image);
+    REMOTE_IMAGE_BINDINGS.with(|bindings| {
+        bindings.borrow_mut().remove(&key);
+    });
+
     if !icon_path.is_empty() && Path::new(icon_path).exists() {
         if let Some(pixbuf) = load_scaled(icon_path, size, size) {
-            return gtk::Image::from_pixbuf(Some(&pixbuf));
+            image.set_from_pixbuf(Some(&pixbuf));
+            return;
         }
     }
+
+    if is_remote_image(icon_name) {
+        image.set_from_icon_name(Some("application-x-executable"), gtk::IconSize::Dialog);
+        image.set_pixel_size(size);
+        bind_remote_image(image, icon_name, size);
+        return;
+    }
+
     let name = if icon_name.is_empty() { "application-x-executable" } else { icon_name };
-    let img = gtk::Image::from_icon_name(Some(name), gtk::IconSize::Dialog);
-    img.set_pixel_size(size);
+    image.set_from_icon_name(Some(name), gtk::IconSize::Dialog);
+    image.set_pixel_size(size);
+}
+
+fn image(icon_path: &str, icon_name: &str, size: i32) -> gtk::Image {
+    let img = gtk::Image::new();
+    set_image_source(&img, icon_path, icon_name, size);
     img
 }
 
@@ -504,11 +686,29 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 17 }
+pub extern "C" fn lt_gui_abi_version() -> u32 { 18 }
 
 #[no_mangle]
 pub extern "C" fn lt_gui_clear_pixbuf_cache() {
     PIXBUF_CACHE.with(|cache| cache.borrow_mut().clear());
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_set_image_source(
+    image: *mut gtk::ffi::GtkWidget,
+    icon_path: *const c_char,
+    icon_name: *const c_char,
+    size: i32,
+) -> bool {
+    ensure_gtk_initialized();
+    if image.is_null() { return false; }
+    let widget: gtk::Widget = from_glib_none(image);
+    let image = match widget.downcast::<gtk::Image>() {
+        Ok(image) => image,
+        Err(_) => return false,
+    };
+    set_image_source(&image, &cstr(icon_path), &cstr(icon_name), size.max(1));
+    true
 }
 
 #[repr(C)]
@@ -1050,27 +1250,7 @@ unsafe fn update_item_card_from_spec(
         label.set_text(&name);
     }
 
-    if !icon_path.is_empty() && Path::new(&icon_path).exists() {
-        if let Some(pixbuf) = load_scaled(&icon_path, 38, 38) {
-            icon.set_from_pixbuf(Some(&pixbuf));
-        } else {
-            let fallback = if icon_name.is_empty() {
-                "application-x-executable"
-            } else {
-                icon_name.as_str()
-            };
-            icon.set_from_icon_name(Some(fallback), gtk::IconSize::Dialog);
-            icon.set_pixel_size(38);
-        }
-    } else {
-        let themed = if icon_name.is_empty() {
-            "application-x-executable"
-        } else {
-            icon_name.as_str()
-        };
-        icon.set_from_icon_name(Some(themed), gtk::IconSize::Dialog);
-        icon.set_pixel_size(38);
-    }
+    set_image_source(&icon, &icon_path, &icon_name, 38);
 
     let style = surface.style_context();
     if spec.is_new != 0 {

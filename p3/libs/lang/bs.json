@@ -681,5 +681,6 @@
   "app_page_details": "Detalji",
   "app_page_extensions": "Proširenja",
   "category_available": "Dostupno",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googleov napredni algoritam za kontrolu zagušenja dizajniran da poveća propusnost mreže i smanji kašnjenje."
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googleov napredni algoritam za kontrolu zagušenja dizajniran da poveća propusnost mreže i smanji kašnjenje.",
+  "snap_desc": "Canonical Snapcraft repozitoriji s njihovom snapd uslugom."
 }

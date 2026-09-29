@@ -682,5 +682,6 @@
   "app_page_details": "Üksikasjad",
   "app_page_extensions": "Laiendused",
   "category_available": "Saadaval",
-  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, Google'i täiustatud ülekoormuse juhtimise algoritm, mis on loodud võrgu läbilaskevõime maksimeerimiseks ja latentsuse minimeerimiseks."
+  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, Google'i täiustatud ülekoormuse juhtimise algoritm, mis on loodud võrgu läbilaskevõime maksimeerimiseks ja latentsuse minimeerimiseks.",
+  "snap_desc": "Canonical Snapcrafti hoidlad koos snapd-teenusega."
 }

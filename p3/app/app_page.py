@@ -93,6 +93,8 @@ class AppPageView(Gtk.Box):
         self._rating_buttons = []
         self._rating_box = None
         self._rating_submitting = False
+        self._rating_submission_backend = "odrs"
+        self._snap_vote_synced = set()
         self.screenshot_index = 0
         self.screenshot_stack = None
         self.screenshot_counter = None
@@ -122,6 +124,9 @@ class AppPageView(Gtk.Box):
 
         self.header = InfosHead(self.translations, show_terminal_controls=False)
         self.header._update_header_labels(script_info)
+        app_icon = str(script_info.get("icon", "") or "").strip()
+        if app_icon.startswith(("https://", "http://", "/v2/")):
+            gui_rs.set_image_source(self.header.icon_head, icon_name=app_icon, size=100)
 
         # Keep secondary metadata such as the ODRS rating out of InfosHead's
         # left-side information column. An overlay lets it occupy the free
@@ -1256,32 +1261,79 @@ class AppPageView(Gtk.Box):
     def _rating_app_id(self):
         return str(self.script_info.get("appstream_id") or self.script_info.get("id") or "").strip()
 
+    def _selected_is_snap(self):
+        return str(self._selected_install_info.get("appstream_source", "") or "").strip() == "snap"
+
+    def _snap_rating_identity(self):
+        info = self._selected_install_info
+        return (
+            str(info.get("snap_id", "") or "").strip(),
+            str(info.get("snap_name", "") or info.get("package-name", "") or "").strip(),
+        )
+
+    def _sync_snap_rating_state(self):
+        if not self._selected_is_snap() or self._install_state != "installed":
+            return
+        snap_id, _snap_name = self._snap_rating_identity()
+        if not snap_id or snap_id in self._snap_vote_synced:
+            return
+        self._snap_vote_synced.add(snap_id)
+        def worker():
+            appstream_cache.sync_snap_vote(snap_id)
+            GLib.idle_add(self._refresh_rating_state)
+        threading.Thread(target=worker, daemon=True).start()
+
     def _refresh_rating_state(self):
         if not self._rating_buttons:
             return
-        app_id = self._rating_app_id()
-        rated = appstream_cache.has_submitted_odrs_rating(app_id)
-        submitted_stars = appstream_cache.get_submitted_odrs_rating(app_id) if rated else None
-        enabled = self._install_state == "installed" and not rated and not self._rating_submitting
-        for index, button in enumerate(self._rating_buttons, start=1):
-            button.set_sensitive(enabled)
-            # Once rated, keep the control locked but paint the user's submitted
-            # score so the local cache also serves as their rating history.
-            if rated and submitted_stars is not None:
-                button.set_label("★" if index <= submitted_stars else "☆")
-            else:
-                button.set_label("☆")
+        installed = self._install_state == "installed"
+        if self._selected_is_snap():
+            snap_id, snap_name = self._snap_rating_identity()
+            revision = appstream_cache.get_snap_installed_revision(snap_name) if installed else None
+            submitted = appstream_cache.get_submitted_snap_vote(snap_id, revision)
+            rated = submitted is not None
+            enabled = installed and bool(snap_id and snap_name and revision) and not rated and not self._rating_submitting
+            for index, button in enumerate(self._rating_buttons, start=1):
+                visible = index in (1, 5)
+                button.set_no_show_all(not visible)
+                if visible:
+                    button.show()
+                    button.set_sensitive(enabled)
+                    button.set_label("👎" if index == 1 else "👍")
+                    button.set_tooltip_text(
+                        "Do not recommend" if index == 1 else "Recommend"
+                    )
+                else:
+                    button.hide()
+            self._sync_snap_rating_state()
+        else:
+            app_id = self._rating_app_id()
+            rated = appstream_cache.has_submitted_odrs_rating(app_id)
+            submitted_stars = appstream_cache.get_submitted_odrs_rating(app_id) if rated else None
+            enabled = installed and not rated and not self._rating_submitting
+            tooltip = self.translations.get("app_page_rate_stars", "Rate {stars} stars")
+            for index, button in enumerate(self._rating_buttons, start=1):
+                button.set_no_show_all(False)
+                button.show()
+                button.set_sensitive(enabled)
+                button.set_tooltip_text(tooltip.format(stars=index))
+                if rated and submitted_stars is not None:
+                    button.set_label("★" if index <= submitted_stars else "☆")
+                else:
+                    button.set_label("☆")
+
         if self._rating_box is not None:
-            # Do not expose the rating control at all unless this exact source is
-            # currently installed/removable.  no-show-all keeps later parent
-            # show_all() calls from accidentally revealing it while unavailable.
-            installed = self._install_state == "installed"
             self._rating_box.set_no_show_all(not installed)
             if installed:
                 self._rating_box.show_all()
+                # show_all() can reveal the three Snap-only hidden buttons; restore
+                # their source-specific visibility after the parent is shown.
+                if self._selected_is_snap():
+                    for index, button in enumerate(self._rating_buttons, start=1):
+                        if index not in (1, 5):
+                            button.hide()
             else:
                 self._rating_box.hide()
-
             if rated:
                 self._rating_box.set_tooltip_text(
                     self.translations.get("app_page_rate_done", "You have already rated this app.")
@@ -1292,6 +1344,40 @@ class AppPageView(Gtk.Box):
     def _on_rating_clicked(self, _button, stars):
         if self._install_state != "installed" or self._rating_submitting:
             return
+
+        if self._selected_is_snap():
+            snap_id, snap_name = self._snap_rating_identity()
+            revision = appstream_cache.get_snap_installed_revision(snap_name)
+            if not snap_id or not snap_name or revision is None:
+                return
+            if appstream_cache.get_submitted_snap_vote(snap_id, revision) is not None:
+                self._refresh_rating_state()
+                return
+            vote_up = int(stars) == 5
+            vote_label = "👍 Recommend" if vote_up else "👎 Do not recommend"
+            dialog = Gtk.MessageDialog(
+                transient_for=self.parent,
+                modal=True,
+                message_type=Gtk.MessageType.OTHER,
+                buttons=Gtk.ButtonsType.NONE,
+                text=self.translations.get("app_page_rate_confirm_title", "Submit Rating?"),
+            )
+            dialog.format_secondary_text(vote_label)
+            dialog.add_button(self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL)
+            dialog.add_button(self.translations.get("app_page_rate_submit", "Submit"), Gtk.ResponseType.OK)
+            response = dialog.run()
+            dialog.destroy()
+            if response != Gtk.ResponseType.OK:
+                return
+            self._rating_submitting = True
+            self._rating_submission_backend = "snap"
+            self._refresh_rating_state()
+            def worker():
+                success, error = appstream_cache.submit_snap_vote(snap_id, snap_name, vote_up)
+                GLib.idle_add(self._finish_rating_submission, success, error)
+            threading.Thread(target=worker, daemon=True).start()
+            return
+
         app_id = self._rating_app_id()
         if not app_id or appstream_cache.has_submitted_odrs_rating(app_id):
             self._refresh_rating_state()
@@ -1305,9 +1391,6 @@ class AppPageView(Gtk.Box):
             1: self.translations.get("app_page_rate_1", "Had issues."),
         }
         summary = presets[int(stars)]
-        # The preset review is intentionally not shown here. The user only needs
-        # to confirm the score they selected; the localized preset remains the
-        # plain-text summary submitted to ODRS below.
         confirm_template = self.translations.get(
             "app_page_rate_confirm_message",
             "This rating cannot be changed or retracted after it is submitted.",
@@ -1323,9 +1406,6 @@ class AppPageView(Gtk.Box):
             text=self.translations.get("app_page_rate_confirm_title", "Submit Rating?"),
         )
         dialog.format_secondary_text(confirm_warning)
-
-        # Keep the explanatory text normally aligned, but present the selected
-        # score as its own centered row underneath it.
         star_label = Gtk.Label(label=star_rating)
         star_label.set_halign(Gtk.Align.CENTER)
         star_label.set_xalign(0.5)
@@ -1334,7 +1414,6 @@ class AppPageView(Gtk.Box):
         star_label.get_style_context().add_class("title-2")
         dialog.get_message_area().pack_start(star_label, False, False, 0)
         star_label.show()
-
         dialog.add_button(self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL)
         dialog.add_button(self.translations.get("app_page_rate_submit", "Submit"), Gtk.ResponseType.OK)
         response = dialog.run()
@@ -1343,16 +1422,15 @@ class AppPageView(Gtk.Box):
             return
 
         self._rating_submitting = True
+        self._rating_submission_backend = "odrs"
         self._refresh_rating_state()
         description = self.translations.get("app_page_rate_signature", "Submitted via LinuxToys")
         version = str(self._selected_install_info.get("appstream_version", "") or "unknown")
-
         def worker():
             success, error = appstream_cache.submit_odrs_rating(
                 app_id, stars, summary, description, version
             )
             GLib.idle_add(self._finish_rating_submission, success, error)
-
         threading.Thread(target=worker, daemon=True).start()
 
     def _finish_rating_submission(self, success, error):
@@ -1362,7 +1440,10 @@ class AppPageView(Gtk.Box):
             return False
         if success:
             title = self.translations.get("app_page_rate_success_title", "Rating Submitted")
-            message = self.translations.get("app_page_rate_success_message", "Thank you! Your rating was submitted to ODRS.")
+            if self._rating_submission_backend == "snap":
+                message = self.translations.get("app_page_rate_success_message_snap", "Thank you! Your vote was submitted to Canonical Snap ratings.")
+            else:
+                message = self.translations.get("app_page_rate_success_message", "Thank you! Your rating was submitted to ODRS.")
             message_type = Gtk.MessageType.INFO
         else:
             title = self.translations.get("app_page_rate_failed_title", "Rating Failed")
@@ -1520,6 +1601,8 @@ class AppPageView(Gtk.Box):
             return "Flathub"
         if source == "native":
             return self.translations.get("app_page_source_native", "Native")
+        if source == "snap":
+            return "Snap"
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
 
     @staticmethod

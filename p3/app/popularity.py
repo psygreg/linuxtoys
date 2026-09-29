@@ -150,13 +150,29 @@ def _is_native_appstream(item):
     )
 
 
+def _is_snap_appstream(item):
+    return (
+        item.get("is_appstream_entry")
+        and str(item.get("appstream_source", "") or "") == "snap"
+    )
+
+
+def _is_rated_appstream(item):
+    """Return whether this AppStream source participates in review-based ranking."""
+    return (
+        _is_flatpak_appstream(item)
+        or _is_native_appstream(item)
+        or _is_snap_appstream(item)
+    )
+
+
 def _session_random_score(key, low, high):
     """Return the catalog-rs session-stable score for this identity."""
     return int(_catalog_rs.session_random_score(str(key), int(low), int(high)))
 
 
 def review_subscore(item):
-    """Return the cached Bayesian ODRS score (0..999), or None when unavailable."""
+    """Return the cached Bayesian review score (0..999), or None when unavailable."""
     value = item.get("review_subscore")
     try:
         return max(SCORE_MIN, min(SCORE_MAX, int(value)))
@@ -165,7 +181,7 @@ def review_subscore(item):
 
 
 def apply_review_scores(items):
-    """Calculate Bayesian ODRS scores from cached rating/count information.
+    """Calculate Bayesian review scores from cached rating/count information.
 
     Rust owns the population prior and Bayesian weighting pass; Python only
     applies the resulting scores to the existing entry dictionaries.
@@ -191,8 +207,8 @@ def apply_review_scores(items):
 
 
 def score_for_item(item):
-    """Return the direct Bayesian ODRS score for AppStream entries."""
-    if _is_flatpak_appstream(item) or _is_native_appstream(item):
+    """Return the direct Bayesian review score for rated AppStream entries."""
+    if _is_rated_appstream(item):
         score = review_subscore(item)
         return SCORE_MIN if score is None else max(SCORE_MIN, min(SCORE_MAX, int(score)))
     if is_known_popular(item) or _is_curated_or_linuxtoys_script(item):
@@ -290,7 +306,7 @@ def browse_sort_key(item):
 
 
 def flathub_search_tiebreak(item):
-    """Compatibility helper: use the Bayesian ODRS score."""
+    """Compatibility helper: use the Bayesian review score for Flathub entries."""
     if not _is_flatpak_appstream(item):
         return None
     score = review_subscore(item)

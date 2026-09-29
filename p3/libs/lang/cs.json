@@ -682,5 +682,6 @@
   "app_page_details": "Podrobnosti",
   "app_page_extensions": "Rozšíření",
   "category_available": "Dostupné",
-  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, pokročilý algoritmus řízení zahlcení od Googlu navržený pro maximalizaci propustnosti sítě a minimalizaci latence."
+  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, pokročilý algoritmus řízení zahlcení od Googlu navržený pro maximalizaci propustnosti sítě a minimalizaci latence.",
+  "snap_desc": "Repozitáře Canonical Snapcraft se službou snapd."
 }

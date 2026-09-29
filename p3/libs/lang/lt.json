@@ -682,5 +682,6 @@
   "app_page_details": "Išsami informacija",
   "app_page_extensions": "Plėtiniai",
   "category_available": "Pasiekiama",
-  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“ – pažangus Google perkrovos valdymo algoritmas, sukurtas maksimaliai padidinti tinklo pralaidumą ir sumažinti delsą."
+  "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“ – pažangus Google perkrovos valdymo algoritmas, sukurtas maksimaliai padidinti tinklo pralaidumą ir sumažinti delsą.",
+  "snap_desc": "Canonical Snapcraft saugyklos su snapd paslauga."
 }

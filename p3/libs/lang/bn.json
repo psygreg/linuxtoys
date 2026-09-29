@@ -681,5 +681,6 @@
   "app_page_details": "বিস্তারিত",
   "app_page_extensions": "এক্সটেনশন",
   "category_available": "উপলব্ধ",
-  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, নেটওয়ার্ক থ্রুপুট সর্বাধিক এবং লেটেন্সি সর্বনিম্ন করার জন্য Google-এর তৈরি উন্নত কনজেশন কন্ট্রোল অ্যালগরিদম।"
+  "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, নেটওয়ার্ক থ্রুপুট সর্বাধিক এবং লেটেন্সি সর্বনিম্ন করার জন্য Google-এর তৈরি উন্নত কনজেশন কন্ট্রোল অ্যালগরিদম।",
+  "snap_desc": "Canonical Snapcraft রিপোজিটরি এবং এর snapd পরিষেবা।"
 }

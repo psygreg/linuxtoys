@@ -52,7 +52,7 @@ pub(crate) fn session_random_score(key: &str, low: i64, high: i64) -> i64 {
     generated_session_score(key, low, high)
 }
 
-/// Resolve a direct browse score. AppStream uses its Bayesian ODRS subscore.
+/// Resolve a direct browse score. Rated AppStream sources use their Bayesian review subscore.
 #[pyfunction]
 pub(crate) fn score_for_item(
     key: &str,
