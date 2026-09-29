@@ -149,6 +149,14 @@ class AppWindow(
         self._categories_loading_fade_source = None
         self._categories_loading_fade_started_us = None
         self._categories_loading_fade_duration_ms = 220
+        # Startup has three independent readiness stages. Do not expose the real
+        # menu or let Featured measure it until the complete category snapshot has
+        # been published, GTK has allocated that snapshot, and its allocation-sized
+        # watermarks have been rendered.
+        self._categories_startup_render_complete = False
+        self._categories_startup_allocation_complete = False
+        self._categories_startup_waiting_for_allocation = False
+        self._categories_startup_expected_children = 0
         self._categories_startup_transition_complete = False
 
         # --- UI Structure ---
@@ -240,6 +248,10 @@ class AppWindow(
         categories_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
         self.categories_flowbox = self.create_flowbox()
+        self.categories_flowbox.connect(
+            "size-allocate",
+            self._on_categories_startup_size_allocate,
+        )
         categories_container.pack_start(self.categories_flowbox, False, False, 0)
 
         # Create separator and featured scripts section. The outer revealer animates
@@ -1809,8 +1821,53 @@ class AppWindow(
         self.reveal.support.hide()
         self.reveal.set_reveal_child(len(self.check_buttons) >= 2)
 
+    def _on_categories_startup_size_allocate(self, _widget, allocation):
+        """Commit startup geometry only after the complete category snapshot allocates."""
+        if self._categories_startup_transition_complete:
+            return
+        if not self._categories_startup_render_complete:
+            return
+        if not self._categories_startup_waiting_for_allocation:
+            return
+        if allocation.width <= 1 or allocation.height <= 1:
+            return
+        if (
+            self._categories_startup_expected_children > 0
+            and len(self.categories_flowbox.get_children())
+            != self._categories_startup_expected_children
+        ):
+            return
+
+        self._categories_startup_waiting_for_allocation = False
+        self._categories_startup_allocation_complete = True
+
+        # Every category surface now exists and has an allocation, so the native
+        # watermark pass can no longer finish before later cards are registered.
+        self._categories_loading_watermarks_flushed = False
+        self._start_startup_watermark_flush()
+
+    def _maybe_start_categories_loading_fade(self):
+        """Reveal the main menu only when its complete startup snapshot is paint-ready."""
+        if self._categories_startup_transition_complete:
+            return False
+        if self._appstream_initial_build_pending:
+            return False
+        if not (
+            self._categories_startup_render_complete
+            and self._categories_startup_allocation_complete
+            and self._categories_loading_watermarks_flushed
+        ):
+            return False
+        if not self.categories_loading_box.get_visible():
+            return False
+        if self._categories_loading_fade_source is not None:
+            return False
+
+        self._start_categories_loading_fade()
+        return False
+
     def _start_categories_loading_fade(self):
-        """Cross-fade the completed main menu in while the startup roller fades out."""
+        """Cross-fade the fully rendered main menu in while the startup roller fades out."""
         if self._categories_loading_fade_source is not None:
             return False
         if not hasattr(self, "categories_view"):
@@ -1880,28 +1937,14 @@ class AppWindow(
 
         self._categories_loading_watermark_source = None
         self._categories_loading_watermarks_flushed = True
+        self._maybe_start_categories_loading_fade()
         return False
 
     def _hide_categories_loading_indicator(self):
-        """Begin the usable-menu transition as soon as bootstrap data is ready."""
+        """Release startup only after the complete category snapshot is paint-ready."""
         if not hasattr(self, "categories_loading_box"):
             return False
-        if self._appstream_initial_build_pending:
-            return False
-        if not self.categories_loading_box.get_visible():
-            return False
-        if self._categories_loading_fade_source is not None:
-            return False
-
-        # Watermark composition is cosmetic and already cooperative: one expensive
-        # pixbuf is produced per idle dispatch. Do not serialize first paint behind
-        # the complete watermark queue. Start draining it and cross-fade the usable
-        # menu at the same time; GTK can paint between individual compositions.
-        if not self._categories_loading_watermarks_flushed:
-            self._start_startup_watermark_flush()
-
-        self._start_categories_loading_fade()
-        return False
+        return self._maybe_start_categories_loading_fade()
 
     def _render_categories(self, categories):
         """Render a parsed category snapshot cooperatively on the GTK thread."""
@@ -1910,6 +1953,14 @@ class AppWindow(
         # source that may currently be dispatching.
         generation = getattr(self, "_category_render_generation", 0) + 1
         self._category_render_generation = generation
+
+        startup_render = not self._categories_startup_transition_complete
+        if startup_render:
+            self._categories_startup_render_complete = False
+            self._categories_startup_allocation_complete = False
+            self._categories_startup_waiting_for_allocation = False
+            self._categories_startup_expected_children = 0
+            self._categories_loading_watermarks_flushed = False
 
         temp_current_category = self.current_category_info
         self.current_category_info = None
@@ -1942,6 +1993,7 @@ class AppWindow(
             nonlocal first_batch
 
             if self._category_render_generation != generation:
+                self.current_category_info = temp_current_category
                 return False
 
             added = 0
@@ -1950,6 +2002,16 @@ class AppWindow(
                     cat = next(pending)
                 except StopIteration:
                     self.current_category_info = temp_current_category
+                    if startup_render:
+                        self._categories_startup_expected_children = len(
+                            self.categories_flowbox.get_children()
+                        )
+                        self._categories_startup_render_complete = True
+                        self._categories_startup_waiting_for_allocation = True
+                        # Force one allocation of the final, complete FlowBox. The
+                        # size-allocate callback is the startup geometry barrier.
+                        self.categories_flowbox.queue_resize()
+                        self.categories_view.queue_resize()
                     return False
 
                 widget = self.create_item_widget(cat)
@@ -1961,10 +2023,10 @@ class AppWindow(
 
             if first_batch:
                 first_batch = False
-                # The first visible row is enough to release the startup overlay.
-                # Remaining category cards continue to arrive in later idle turns.
+                # Restore normal card classification immediately, but keep the
+                # startup overlay until every category has been published and the
+                # final FlowBox allocation/watermark pass has completed.
                 self.current_category_info = temp_current_category
-                self._hide_categories_loading_indicator()
 
             return True
 
