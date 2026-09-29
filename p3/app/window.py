@@ -2064,7 +2064,10 @@ class AppWindow(
                         self.categories_flowbox.queue_resize()
                     return False
 
-                widget = self.create_item_widget(cat)
+                # Root-menu cards have an explicit structural role. Do not infer
+                # it from mutable navigation state while this cooperative render
+                # yields back to the GTK main loop between batches.
+                widget = self.create_item_widget(cat, force_category=True)
                 description = cat.get("description", "")
                 widget.set_tooltip_text(description or None)
                 self.categories_flowbox.add(widget)
@@ -2073,10 +2076,11 @@ class AppWindow(
 
             if first_batch:
                 first_batch = False
-                # Restore normal card classification immediately, but keep the
-                # startup overlay until every category has been published and the
-                # final FlowBox allocation/watermark pass has completed.
-                self.current_category_info = temp_current_category
+                # Keep current_category_info cleared for the entire cooperative
+                # publication. create_item_widget() uses this state to distinguish
+                # main-menu category cards from ordinary category/app entries.
+                # Restoring it after only the first batch makes later cards use the
+                # ordinary icon layout when a refresh originates from another view.
 
             return True
 
