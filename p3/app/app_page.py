@@ -1134,6 +1134,12 @@ class AppPageView(Gtk.Box):
             f'<big><big><b>{name}</b></big></big>  <span size="small">{license_markup}</span>'
         )
 
+        # License expressions can be arbitrarily long (for example compound SPDX
+        # expressions or LicenseRef values). Do not let their natural width resize
+        # the app page/window; keep the existing single-line presentation and
+        # ellipsize only when the available allocation is too narrow.
+        self.header.label_name.set_ellipsize(Pango.EllipsizeMode.END)
+
 
     def _build_native_header_actions(self):
         """Build the repetitive app-page header/action hierarchy in native GTK."""
