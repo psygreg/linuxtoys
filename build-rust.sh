@@ -186,13 +186,13 @@ if [[ "$COMMAND" == "release" ]]; then
     echo "Rust libraries deployed into: ${ROOT}/p3/app"
 
     distrobox enter fedora -- bash -lc \
-        'cd ~/dev/build/copr && ./build.sh "$1" "$HOME/copr"' _ "$TARGET"
+        'cd "$1/dev/build/copr" && ./build.sh "$2" "$HOME/copr"' _ "$ROOT" "$TARGET"
     distrobox enter archlinux -- bash -lc \
-        'cd ~/dev/build/pkg && ./build.sh "$1" "$HOME/pkg"' _ "$TARGET"
+        'cd "$1/dev/build/pkg" && ./build.sh "$2" "$HOME/pkg"' _ "$ROOT" "$TARGET"
     distrobox enter archlinux -- bash -lc \
-        'cd ~/dev/build/appimage && ./build.sh "$1" "$HOME/appimage"' _ "$TARGET"
+        'cd "$1/dev/build/appimage" && ./build.sh "$2" "$HOME/appimage"' _ "$ROOT" "$TARGET"
     distrobox enter ubuntu -- bash -lc \
-        'cd ~/dev/build/deb && ./build.sh "$1" "$HOME/deb"' _ "$TARGET"
+        'cd "$1/dev/build/deb" && ./build.sh "$2" "$HOME/deb"' _ "$ROOT" "$TARGET"
 
     echo "All packages done."
 else
