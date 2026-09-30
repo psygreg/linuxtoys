@@ -339,6 +339,25 @@ pkg_snap () {
 # Remove installed Snap packages. This helper intentionally does not append a
 # transaction entry: the initial Snap backend only needs install transactions
 # to be reversible, matching the existing Flatpak install transaction model.
+# Revert an installed Snap to its previously installed revision. This does not
+# append a transaction entry: the original install remains installed and its
+# Action Registry transaction must stay intact.
+pkg_snap_revert () {
+    (( $# > 0 )) || return 0
+    command -v snap >/dev/null 2>&1 || return 1
+
+    local pak="$1"
+    snap list "$pak" >/dev/null 2>&1 || return 1
+
+    askpass
+    runner_lock "package-transaction"
+    sudo_ snap revert "$pak" || {
+        runner_unlock
+        fatal "Failed to revert snap package $pak"
+    }
+    runner_unlock
+}
+
 pkg_snap_remove () {
     (( $# > 0 )) || return 0
     command -v snap >/dev/null 2>&1 || return 0

@@ -154,6 +154,41 @@ class AppStreamRunner:
         self._notify_changed()
         return record["id"]
 
+    def enqueue_snap_revert(self, app_info):
+        """Queue a Snap revision revert through the persistent PTY."""
+        snap_name = str(
+            app_info.get("snap_name") or app_info.get("package-name") or ""
+        ).strip()
+        if not snap_name:
+            return None
+
+        self._ensure_started()
+        with self._condition:
+            appstream_id = str(app_info.get("appstream_id", "") or "").casefold()
+            if any(
+                item["status"] in ("queued", "running")
+                and str(item["info"].get("appstream_id", "") or "").casefold() == appstream_id
+                for item in self._records
+            ):
+                return None
+
+            record = {
+                "id": uuid.uuid4().hex,
+                "info": dict(app_info),
+                "name": app_info.get("name", snap_name),
+                "icon": app_info.get("icon", "application-x-executable"),
+                "status": "queued",
+                "exit_code": None,
+                "action": "snap_revert",
+                "snap_name": snap_name,
+            }
+            self._records.append(record)
+            self._jobs.append(record)
+            self._condition.notify()
+
+        self._notify_changed()
+        return record["id"]
+
     def snapshot(self):
         """Return newest-first copies suitable for the GTK queue view."""
         with self._condition:
@@ -313,6 +348,8 @@ class AppStreamRunner:
                 # installation registry/transmap behavior.
                 if record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
+                elif record.get("action") == "snap_revert":
+                    exit_code = self._run_snap_revert(record["info"], record["snap_name"])
                 elif record.get("action") == "extension_remove":
                     exit_code = self._run_flatpak_extension(record["info"], remove=True)
                 elif record["info"].get("is_flatpak_extension"):
@@ -341,6 +378,32 @@ class AppStreamRunner:
                 refresh = getattr(self.parent, "_refresh_installed_packages_async", None)
                 if refresh is not None:
                     GLib.idle_add(refresh, True)
+
+    def _run_snap_revert(self, app_info, snap_name):
+        """Execute pkg_snap_revert through the normal LinuxToys script wrapper."""
+        if self._process is None or self._process.poll() is not None:
+            self._close_pty()
+            self._spawn_shell()
+
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(
+            prefix="snap-revert-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write(f"pkg_snap_revert {shlex.quote(snap_name)}\n")
+            os.chmod(path, 0o700)
+
+            env = script_environment(app_info, os.environ.copy())
+            env.pop("LINUXTOYS_RUNNER_STATE", None)
+            return self._dispatch_path(path, env)
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
     def _flatpak_scope_args(self, info):
         scope = str(info.get("flatpak_scope") or "").strip()

@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import subprocess
 import webbrowser
 import hashlib
 import json
@@ -89,6 +90,8 @@ class AppPageView(Gtk.Box):
         self._source_button = None
         self._install_button = None
         self._open_button = None
+        self._snap_revert_button = None
+        self._snap_revert_probe_generation = 0
         self._install_state = "available"
         self._rating_buttons = []
         self._rating_box = None
@@ -1190,6 +1193,17 @@ class AppPageView(Gtk.Box):
         if source_button is not None:
             controls.pack_start(source_button, False, False, 0)
 
+        self._snap_revert_button = gui_rs.add_app_page_action_button(
+            controls,
+            self.translations.get("app_page_snap_revert", " Revert "),
+            "document-revert-symbolic",
+        )
+        if self._snap_revert_button is None:
+            raise RuntimeError("Native Snap revert action construction failed")
+        self._snap_revert_button.connect("clicked", self._on_snap_revert_clicked)
+        self._snap_revert_button.set_no_show_all(True)
+        self._snap_revert_button.hide()
+
         purchase_url = self.script_info.get("purchase_url") or ""
         purchase_options = self.script_info.get("purchase_options") or []
         subscription_options = self.script_info.get("subscription_options") or []
@@ -1864,8 +1878,117 @@ class AppPageView(Gtk.Box):
         resolver = getattr(self.parent, "_get_appstream_install_state", None)
         state = resolver(self._selected_install_info) if resolver is not None else "available"
         self.set_install_state(state)
+        self._refresh_snap_revert_state()
         if self._extensions_view is not None:
             self._extensions_view.refresh()
+
+    def _refresh_snap_revert_state(self):
+        """Probe Snap revision history off the GTK thread and expose Revert if usable."""
+        button = self._snap_revert_button
+        if button is None:
+            return
+
+        self._snap_revert_probe_generation += 1
+        generation = self._snap_revert_probe_generation
+        button.hide()
+        button.set_no_show_all(True)
+
+        if self._install_state != "installed" or not self._selected_is_snap():
+            return
+
+        info = self._selected_install_info
+        snap_name = str(info.get("snap_name") or info.get("package-name") or "").strip()
+        if not snap_name:
+            return
+
+        def worker():
+            available = False
+            try:
+                env = os.environ.copy()
+                env["LC_ALL"] = "C"
+                result = subprocess.run(
+                    ["snap", "list", "--all", snap_name],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    text=True,
+                    env=env,
+                    timeout=5,
+                    check=False,
+                )
+                if result.returncode == 0:
+                    rows = [line.split() for line in result.stdout.splitlines()[1:] if line.strip()]
+                    available = any(
+                        len(row) >= 2 and "disabled" in row[-1].split(",")
+                        for row in rows
+                    )
+            except (OSError, subprocess.SubprocessError):
+                available = False
+            GLib.idle_add(self._finish_snap_revert_probe, generation, snap_name, available)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-snap-revert-probe"
+        ).start()
+
+    def _finish_snap_revert_probe(self, generation, snap_name, available):
+        if self._destroyed or generation != self._snap_revert_probe_generation:
+            return False
+        current_name = str(
+            self._selected_install_info.get("snap_name")
+            or self._selected_install_info.get("package-name")
+            or ""
+        ).strip()
+        if (
+            not available
+            or self._install_state != "installed"
+            or not self._selected_is_snap()
+            or current_name != snap_name
+        ):
+            return False
+        self._snap_revert_button.set_no_show_all(False)
+        self._snap_revert_button.set_sensitive(True)
+        self._snap_revert_button.show_all()
+        return False
+
+    def _on_snap_revert_clicked(self, _button):
+        if self._install_state != "installed" or not self._selected_is_snap():
+            return
+
+        info = self._selected_install_info
+        snap_name = str(info.get("snap_name") or info.get("package-name") or "").strip()
+        if not snap_name:
+            return
+
+        dialog = Gtk.MessageDialog(
+            transient_for=self.parent,
+            modal=True,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get("app_page_snap_revert_confirm_title", "Revert Snap?"),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "app_page_snap_revert_confirm_message",
+                "LinuxToys will revert '{app_name}' to its previously installed Snap revision. "
+                "Do you want to continue?",
+            ).format(app_name=str(info.get("name") or snap_name))
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
+        )
+        dialog.add_button(
+            self.translations.get("yes", "Yes"), Gtk.ResponseType.YES
+        )
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        if response != Gtk.ResponseType.YES:
+            return
+
+        runner = getattr(self.parent, "_appstream_runner", None)
+        if runner is None:
+            return
+        if runner.enqueue_snap_revert(info) is not None:
+            self.refresh_install_state()
 
     def _screenshot_variants(self, screenshot):
         """Normalize new AppStream variant groups and legacy string screenshots."""
