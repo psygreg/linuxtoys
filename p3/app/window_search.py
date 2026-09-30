@@ -463,6 +463,13 @@ class SearchCtl:
         # Return to appropriate view
         if self.current_category_info:
             self.main_stack.set_visible_child(self.scripts_view)
+            if getattr(self, "_search_origin_needs_language_refresh", False):
+                self._search_origin_needs_language_refresh = False
+                self.load_scripts(self.current_category_info)
+                self._update_header(self.current_category_info)
+                category_name = self.current_category_info.get("name", "Unknown")
+                self.header_bar.props.title = f"LinuxToys: {category_name}"
+
             # Ensure back button is visible for category views
             self.back_button.show()
 
@@ -475,15 +482,8 @@ class SearchCtl:
             else:
                 self._disable_drag_and_drop()
         else:
-            self.main_stack.set_visible_child_name("categories")
-            # Hide back button for main categories view
-            self.back_button.hide()
-            # Disable drag-and-drop for main categories
-            self._disable_drag_and_drop()
-            # Restore footer state for main menu
-            self.reveal.set_reveal_child(True)
-            self.reveal.button_box.hide()
-            self.reveal.support.show_all()
+            self._search_origin_needs_language_refresh = False
+            self.show_categories_view()
 
     def _update_search_header(self):
         """Update header for search results view."""

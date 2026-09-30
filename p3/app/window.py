@@ -2076,9 +2076,6 @@ class AppWindow(
                         self.categories_view.queue_resize()
                     return
 
-        temp_current_category = self.current_category_info
-        self.current_category_info = None
-
         self.categories_flowbox.foreach(
             lambda widget: self.categories_flowbox.remove(widget)
         )
@@ -2094,7 +2091,6 @@ class AppWindow(
             nonlocal first_batch
 
             if self._category_render_generation != generation:
-                self.current_category_info = temp_current_category
                 return False
 
             added = 0
@@ -2102,7 +2098,6 @@ class AppWindow(
                 try:
                     cat = next(pending)
                 except StopIteration:
-                    self.current_category_info = temp_current_category
                     if getattr(self, "_language_transition_active", False):
                         self._language_categories_expected_children = len(
                             self.categories_flowbox.get_children()
@@ -2135,11 +2130,6 @@ class AppWindow(
 
             if first_batch:
                 first_batch = False
-                # Keep current_category_info cleared for the entire cooperative
-                # publication. create_item_widget() uses this state to distinguish
-                # main-menu category cards from ordinary category/app entries.
-                # Restoring it after only the first batch makes later cards use the
-                # ordinary icon layout when a refresh originates from another view.
 
             return True
 
@@ -3579,6 +3569,13 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # Keep the search surface active while hidden, then let the runtime-cache
         # completion callback rerun the exact query against the new language.
         if current_view == "search":
+            if self.current_category_info:
+                self._refresh_navigation_stack_translations()
+                updated_category_info = self._get_fresh_category_info_with_translations()
+                if updated_category_info:
+                    self.current_category_info = updated_category_info
+                self._search_origin_needs_language_refresh = True
+
             self._language_search_refresh_pending = bool(
                 self.search_entry.get_text().strip()
             )
