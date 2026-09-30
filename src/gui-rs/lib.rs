@@ -250,6 +250,7 @@ struct CategoryWatermarkState {
     pending_height: i32,
     rendered_width: i32,
     rendered_height: i32,
+    render_scheduled: bool,
 }
 
 thread_local! {
@@ -366,16 +367,44 @@ fn register_category_watermark(
             pending_height: 0,
             rendered_width: 0,
             rendered_height: 0,
+            render_scheduled: false,
         });
     });
 
-    surface.connect_size_allocate(move |_widget, allocation| {
-        CATEGORY_WATERMARKS.with(|states| {
-            if let Some(state) = states.borrow_mut().get_mut(&key) {
-                state.pending_width = allocation.width();
-                state.pending_height = allocation.height();
+    surface.connect_size_allocate(move |widget, allocation| {
+        let should_schedule = CATEGORY_WATERMARKS.with(|states| {
+            let mut states = states.borrow_mut();
+            let Some(state) = states.get_mut(&key) else { return false; };
+            let width = allocation.width();
+            let height = allocation.height();
+            let changed = state.pending_width != width || state.pending_height != height;
+            state.pending_width = width;
+            state.pending_height = height;
+
+            if changed && !state.render_scheduled {
+                state.render_scheduled = true;
+                true
+            } else {
+                false
             }
         });
+
+        if should_schedule {
+            // Startup/language transitions still use their explicit cooperative
+            // barriers. For ordinary post-startup reallocations, coalesce repeated
+            // size-allocate signals into one idle render so window resizing and
+            // AppStream/Featured layout churn cannot leave a stale watermark or
+            // synchronously rasterize every intermediate size.
+            let widget = widget.clone();
+            glib::idle_add_local_once(move || {
+                CATEGORY_WATERMARKS.with(|states| {
+                    if let Some(state) = states.borrow_mut().get_mut(&key) {
+                        state.render_scheduled = false;
+                    }
+                });
+                let _ = flush_category_surface(&widget);
+            });
+        }
     });
 
     surface.connect_destroy(move |_| {
@@ -402,7 +431,8 @@ fn flush_category_surface(widget: &gtk::Widget) -> bool {
         let states = states.borrow();
         let state = states.get(&key)?;
         if state.pending_width <= 0 || state.pending_height <= 0 ||
-           (state.pending_width == state.rendered_width &&
+           (state.pixbuf.is_some() &&
+            state.pending_width == state.rendered_width &&
             state.pending_height == state.rendered_height) {
             return None;
         }

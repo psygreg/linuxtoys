@@ -6,7 +6,8 @@ import os
 # Include features here while they should display the "New" marker.
 # Supports both normal LinuxToys scripts and repository-list entries.
 NEW_FEATURES = {
-
+    "G-Helper",
+    "Photon Studio"
 }
 _NEW_FEATURE_NAMES = frozenset(item.casefold() for item in NEW_FEATURES)
 
