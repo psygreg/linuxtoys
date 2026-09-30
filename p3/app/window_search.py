@@ -329,6 +329,31 @@ class SearchCtl:
                 self.animate_item_batch(widgets, duration_ms=110, stagger_ms=5)
                 if state["next"] >= target:
                     state["timer"] = None
+
+                    # During initial filling, wait for GTK to allocate this batch
+                    # before deciding whether the first viewport still needs more.
+                    # Otherwise the adjustment can contain stale geometry and make
+                    # Search materialize far too many cards up front.
+                    if state["ready"]:
+                        def fill_initial_viewport():
+                            if not current():
+                                return False
+                            adj = self.search_view.get_vadjustment()
+                            if (
+                                float(adj.get_upper())
+                                <= max(1.0, float(adj.get_page_size()))
+                                and state["next"] < len(population_queue)
+                            ):
+                                state["target"] = min(
+                                    len(population_queue), state["next"] + 2
+                                )
+                                start_timer()
+                            return False
+
+                        GLib.idle_add(
+                            fill_initial_viewport,
+                            priority=GLib.PRIORITY_LOW,
+                        )
                     return False
                 return True
 
@@ -402,10 +427,7 @@ class SearchCtl:
             return False
 
         if entering_search:
-            GLib.timeout_add(
-                max(1, int(self.main_stack.get_transition_duration())),
-                begin_population, priority=GLib.PRIORITY_LOW,
-            )
+            GLib.idle_add(begin_population, priority=GLib.PRIORITY_DEFAULT_IDLE)
         else:
             begin_population()
 

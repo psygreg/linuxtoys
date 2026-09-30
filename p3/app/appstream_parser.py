@@ -588,7 +588,14 @@ def _native_distro_badge():
     return ""
 
 
-def _runtime_catalog(scripts_dir, curated_entries=None, category_paths=None, *, force_rebuild=False):
+def _runtime_catalog(
+    scripts_dir,
+    curated_entries=None,
+    category_paths=None,
+    *,
+    force_rebuild=False,
+    require_current=False,
+):
     """Return the Rust-owned, indexed AppStream runtime catalog."""
     global _LAST_LOAD_CONTEXT
 
@@ -623,7 +630,7 @@ def _runtime_catalog(scripts_dir, curated_entries=None, category_paths=None, *, 
         lang_code,
         category_paths,
     )
-    if not force_rebuild:
+    if not force_rebuild and not require_current:
         with _CACHE_LOCK:
             cached = _RUNTIME_CACHE.get(cache_key)
             if cached is not None:
@@ -668,6 +675,24 @@ def _runtime_catalog(scripts_dir, curated_entries=None, category_paths=None, *, 
         _native_distro_badge(), os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
         force_rebuild,
     )
+
+    # Interactive search cannot consume the stale-while-revalidate generation:
+    # after a language change that would expose old localized names/descriptions
+    # until some unrelated later refresh. Rebuild synchronously on this worker
+    # only when the persisted generation does not match the requested key.
+    if require_current and not catalog.cache_is_current(rust_cache_key):
+        catalog = _catalog_rs.build_appstream_catalog_index(
+            os.fspath(appstream_cache.CATALOG_PATH), sorted(omit_keys), list(category_paths),
+            json.dumps(category_config, ensure_ascii=False, separators=(",", ":")),
+            json.dumps(APPSTREAM_SOURCE_PREFERENCE, ensure_ascii=False, separators=(",", ":")),
+            sorted(_system_flatpak_lock_ids()), sorted(_host_os_keys()),
+            sorted(get_system_compat_keys()), lang_code, sorted(curated_ids),
+            sorted(curated_packages), sorted(curated_names),
+            json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
+            _native_distro_badge(), os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
+            True,
+        )
+
     with _CACHE_LOCK:
         _RUNTIME_CACHE.clear()
         _RUNTIME_CACHE[cache_key] = catalog
@@ -676,7 +701,7 @@ def _runtime_catalog(scripts_dir, curated_entries=None, category_paths=None, *, 
     # Refresh it off-thread so startup/category/search callers never block on the
     # authoritative JSON rebuild merely because policy, locale, or catalog mtime
     # changed. The forced worker atomically publishes the replacement generation.
-    if not force_rebuild and not catalog.cache_is_current(rust_cache_key):
+    if not force_rebuild and not require_current and not catalog.cache_is_current(rust_cache_key):
         refresh_token = rust_cache_key
         with _CACHE_LOCK:
             should_start = refresh_token not in _DERIVED_REFRESHING
@@ -821,8 +846,16 @@ def get_browse_entries_for_category(
 def search_entries(scripts_dir, query, translated_new="new", translated_official="official", curated_entries=None, category_paths=None):
     """Search AppStream inside Rust and materialize only matching entries."""
     return list(
-        _runtime_catalog(scripts_dir, curated_entries, category_paths)
-        .search(str(query or ""), str(translated_new or ""), str(translated_official or ""))
+        _runtime_catalog(
+            scripts_dir,
+            curated_entries,
+            category_paths,
+            require_current=True,
+        ).search(
+            str(query or ""),
+            str(translated_new or ""),
+            str(translated_official or ""),
+        )
     )
 
 

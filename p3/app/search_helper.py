@@ -57,6 +57,7 @@ class ScriptCache:
         self.current_locale = detect_system_language()
         self.is_containerized = is_containerized()
         self._removable_cache = {}  # script_path -> bool
+        self.generation = 0  # Explicit content generation for derived search indexes
 
     def populate(self, translations=None):
         """
@@ -91,6 +92,7 @@ class ScriptCache:
         self._populate_removable_cache()
 
         self.is_populated = True
+        self.generation += 1
 
     def populate_from_category_cache(self, category_cache):
         """Build the search cache from already parsed category data.
@@ -125,6 +127,7 @@ class ScriptCache:
 
         self._populate_removable_cache()
         self.is_populated = True
+        self.generation += 1
 
     def _collect_scripts_from_directory(self, directory_path, translations=None):
         """Recursively collect scripts from a directory."""
@@ -330,6 +333,7 @@ class ScriptCache:
         self.is_populated = False
         self.scripts = []
         self._removable_cache = {}
+        self.generation += 1
 
     def refresh_for_translations(self, translations):
         """
@@ -704,6 +708,9 @@ class SearchEngine:
             translations: Dictionary of translations
         """
         self.translations = translations
+        self._rust_search_index = None
+        self._rust_search_index_token = None
+        self._rust_search_items = []
 
         # Invalidate cache and repopulate with new translations in a background thread
         def refresh_cache():
@@ -725,7 +732,9 @@ class SearchEngine:
     def _ensure_rust_search_index(self):
         """Build the immutable Rust-side search index for the current ScriptCache."""
         scripts = self.script_cache.scripts
-        token = (id(scripts), len(scripts))
+        # Do not use id(scripts) as a cache generation. CPython may reuse object
+        # addresses after an old list dies, and length says nothing about content.
+        token = (self.script_cache, self.script_cache.generation)
         if self._rust_search_index_token == token and self._rust_search_index is not None:
             return
 

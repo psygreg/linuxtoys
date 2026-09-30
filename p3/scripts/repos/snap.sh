@@ -34,4 +34,6 @@ pkg_install "${snap_packages[@]}"
 if is_suse; then
     { sysd_enable snapd && sysd_start snapd; } || die "Failed to enable snapd"
     { sysd_enable snapd.apparmor && sysd_start snapd.apparmor; } || die "Failed to enable snapd AppArmor support"
+elif is_solus; then
+    sudo_ ln -s /var/lib/snapd/snap /snap
 fi
