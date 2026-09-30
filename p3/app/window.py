@@ -2039,10 +2039,31 @@ class AppWindow(
         return False
 
     def _flush_one_startup_watermark(self):
-        """Ask gui-rs to render one pending category watermark, then yield."""
+        """Render one startup watermark without mistaking unallocated cards for done."""
         flowbox = getattr(self, "categories_flowbox", None)
-        if flowbox is not None and gui_rs.flush_category_watermarks(flowbox, 1):
-            return True
+        if flowbox is None:
+            self._categories_loading_watermark_source = None
+            self._categories_loading_watermarks_flushed = True
+            self._maybe_start_categories_loading_fade()
+            return False
+
+        rendered = gui_rs.flush_category_watermarks(flowbox, 1)
+        pending = gui_rs.has_pending_render_work(flowbox)
+
+        if pending:
+            if rendered:
+                # More paint-ready work exists. Yield through the existing idle
+                # source so GTK can interleave normal drawing/allocation work.
+                return True
+
+            # A registered category surface still needs rendering, but none was
+            # paint-ready in this pass. This can happen when the FlowBox's final
+            # size-allocate arrives before all nested native surfaces receive
+            # theirs. Do not declare startup complete; retry on the next frame.
+            self._categories_loading_watermark_source = GLib.timeout_add(
+                16, self._flush_one_startup_watermark
+            )
+            return False
 
         self._categories_loading_watermark_source = None
         self._categories_loading_watermarks_flushed = True
