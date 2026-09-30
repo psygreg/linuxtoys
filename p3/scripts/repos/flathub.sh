@@ -35,6 +35,10 @@ repair_flathub_remote() {
 [ -f /tmp/linuxtoys_flatpak_done ] && exit 0
 
 askpass
+# fix for MODICIA OS, issue #1407
+if [ -f /etc/apt/preferences.d/noflatpak-nosnap.pref ]; then
+    prep_rm /etc/apt/preferences.d/noflatpak-nosnap.pref
+fi
 if ! command -v flatpak &>/dev/null; then
     pkg_install flatpak
     sysd_start flatpak-system-helper.service
