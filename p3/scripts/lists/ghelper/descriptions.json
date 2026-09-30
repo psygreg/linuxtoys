@@ -1,0 +1,181 @@
+{
+  "long-description": "md/en.md",
+  "description_tag": "ghelper_desc",
+  "description_long_tag": "ghelper_long",
+  "en": {
+    "ghelper_long": "md/en.md",
+    "ghelper_desc": "Unofficial Linux port of G-Helper."
+  },
+  "pt": {
+    "ghelper_long": "md/pt.md",
+    "ghelper_desc": "Port não oficial do G-Helper para Linux."
+  },
+  "am": {
+    "ghelper_desc": "ያልተፈቀደ የG-Helper የLinux ፖርት።"
+  },
+  "ar": {
+    "ghelper_desc": "نسخة غير رسمية من G-Helper لنظام Linux."
+  },
+  "az": {
+    "ghelper_desc": "G-Helper-in qeyri-rəsmi Linux portu."
+  },
+  "bg": {
+    "ghelper_desc": "Неофициален Linux порт на G-Helper."
+  },
+  "bn": {
+    "ghelper_desc": "G-Helper-এর অনানুষ্ঠানিক Linux পোর্ট।"
+  },
+  "bs": {
+    "ghelper_desc": "Neslužbeni Linux port G-Helpera."
+  },
+  "cs": {
+    "ghelper_desc": "Neoficiální port G-Helperu pro Linux."
+  },
+  "da": {
+    "ghelper_desc": "Uofficiel Linux-port af G-Helper."
+  },
+  "de": {
+    "ghelper_desc": "Inoffizielle Linux-Portierung von G-Helper."
+  },
+  "el": {
+    "ghelper_desc": "Ανεπίσημη μεταφορά του G-Helper για Linux."
+  },
+  "es": {
+    "ghelper_desc": "Port no oficial de G-Helper para Linux."
+  },
+  "et": {
+    "ghelper_desc": "G-Helperi mitteametlik Linuxi port."
+  },
+  "fa": {
+    "ghelper_desc": "پورت غیررسمی G-Helper برای لینوکس."
+  },
+  "fi": {
+    "ghelper_desc": "Epävirallinen G-Helper-porttaus Linuxille."
+  },
+  "fr": {
+    "ghelper_desc": "Portage Linux non officiel de G-Helper."
+  },
+  "ga": {
+    "ghelper_desc": "Leagan neamhoifigiúil de G-Helper do Linux."
+  },
+  "he": {
+    "ghelper_desc": "פורט לא רשמי של G-Helper ללינוקס."
+  },
+  "hi": {
+    "ghelper_desc": "G-Helper का अनौपचारिक Linux पोर्ट।"
+  },
+  "hr": {
+    "ghelper_desc": "Neslužbeni Linux port G-Helpera."
+  },
+  "hu": {
+    "ghelper_desc": "A G-Helper nem hivatalos Linux-portja."
+  },
+  "hy": {
+    "ghelper_desc": "G-Helper-ի ոչ պաշտոնական Linux տարբերակը։"
+  },
+  "id": {
+    "ghelper_desc": "Port G-Helper tidak resmi untuk Linux."
+  },
+  "is": {
+    "ghelper_desc": "Óopinber Linux-útgáfa af G-Helper."
+  },
+  "it": {
+    "ghelper_desc": "Porting non ufficiale di G-Helper per Linux."
+  },
+  "ja": {
+    "ghelper_desc": "G-Helper の非公式 Linux 移植版。"
+  },
+  "ka": {
+    "ghelper_desc": "G-Helper-ის არაოფიციალური Linux პორტი."
+  },
+  "km": {
+    "ghelper_desc": "កំណែ Linux មិនផ្លូវការរបស់ G-Helper។"
+  },
+  "ko": {
+    "ghelper_desc": "G-Helper의 비공식 Linux 포트입니다."
+  },
+  "lo": {
+    "ghelper_desc": "ພອດ G-Helper ສຳລັບ Linux ແບບບໍ່ເປັນທາງການ."
+  },
+  "lt": {
+    "ghelper_desc": "Neoficiali „G-Helper“ Linux versija."
+  },
+  "lv": {
+    "ghelper_desc": "Neoficiāls G-Helper ports operētājsistēmai Linux."
+  },
+  "mn": {
+    "ghelper_desc": "G-Helper-ийн албан бус Linux порт."
+  },
+  "ms": {
+    "ghelper_desc": "Port G-Helper tidak rasmi untuk Linux."
+  },
+  "my": {
+    "ghelper_desc": "G-Helper ၏ တရားဝင်မဟုတ်သော Linux port။"
+  },
+  "nb": {
+    "ghelper_desc": "Uoffisiell Linux-port av G-Helper."
+  },
+  "ne": {
+    "ghelper_desc": "G-Helper को अनौपचारिक Linux पोर्ट।"
+  },
+  "nl": {
+    "ghelper_desc": "Onofficiële Linux-port van G-Helper."
+  },
+  "pl": {
+    "ghelper_desc": "Nieoficjalny port G-Helper na Linuksa."
+  },
+  "ro": {
+    "ghelper_desc": "Portare neoficială a G-Helper pentru Linux."
+  },
+  "ru": {
+    "ghelper_desc": "Неофициальный порт G-Helper для Linux."
+  },
+  "sk": {
+    "ghelper_desc": "Neoficiálny port G-Helperu pre Linux."
+  },
+  "sl": {
+    "ghelper_desc": "Neuradna Linux različica G-Helperja."
+  },
+  "sq": {
+    "ghelper_desc": "Port jozyrtar i G-Helper për Linux."
+  },
+  "sr": {
+    "ghelper_desc": "Незванични Linux порт G-Helper-а."
+  },
+  "sv": {
+    "ghelper_desc": "Inofficiell Linux-port av G-Helper."
+  },
+  "sw": {
+    "ghelper_desc": "Toleo lisilo rasmi la G-Helper kwa Linux."
+  },
+  "ta": {
+    "ghelper_desc": "G-Helper-இன் அதிகாரப்பூர்வமற்ற Linux பதிப்பு."
+  },
+  "tg": {
+    "ghelper_desc": "Порти ғайрирасмии G-Helper барои Linux."
+  },
+  "th": {
+    "ghelper_desc": "พอร์ต G-Helper สำหรับ Linux อย่างไม่เป็นทางการ"
+  },
+  "tl": {
+    "ghelper_desc": "Hindi opisyal na Linux port ng G-Helper."
+  },
+  "tr": {
+    "ghelper_desc": "G-Helper'ın resmi olmayan Linux portu."
+  },
+  "uk": {
+    "ghelper_desc": "Неофіційний порт G-Helper для Linux."
+  },
+  "ur": {
+    "ghelper_desc": "G-Helper کا غیر سرکاری Linux پورٹ۔"
+  },
+  "uz": {
+    "ghelper_desc": "G-Helper'ning norasmiy Linux porti."
+  },
+  "vi": {
+    "ghelper_desc": "Bản port G-Helper không chính thức dành cho Linux."
+  },
+  "zh": {
+    "ghelper_desc": "G-Helper 的非官方 Linux 移植版。"
+  }
+}

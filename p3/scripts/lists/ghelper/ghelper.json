@@ -1,0 +1,20 @@
+[
+    {
+        "name": "G-Helper",
+        "developer": "Vladimir Tasic",
+        "description": "Unofficial Linux port of G-Helper.",
+        "description_tag": "ghelper_desc",
+        "repo": "https://github.com/utajum/g-helper-linux",
+        "category": "drivers",
+        "icon": "./ghelper.png",
+        "license": "GPLv3",
+        "overrides": {
+            "post": {
+                "script": "./ghelper-post.sh"
+            }
+        },
+        "descriptions": "descriptions.json",
+        "donate": "https://github.com/sponsors/utajum",
+        "screenshots": "screenshots/"
+    }
+]
