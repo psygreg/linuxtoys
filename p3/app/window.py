@@ -3161,32 +3161,43 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self._last_normal_window_size = (width, height)
         self.set_default_size(width, height)
 
+    def _start_categories_unmaximize_reflow(self):
+        """Reflow the root menu after a maximized allocation becomes stale."""
+        if getattr(self, "random_scripts_flowbox", None) is None:
+            return
+
+        # Do not destroy/reselect cards here. Hiding the fixed-column grid is
+        # enough to stop its maximized natural width influencing the restored
+        # top-level size, while preserving Featured state and history.
+        self.random_scripts_flowbox.hide()
+        self.categories_view.queue_resize()
+        self.categories_flowbox.queue_resize()
+
+        if getattr(self, "_featured_unmaximize_timer", None):
+            GLib.source_remove(self._featured_unmaximize_timer)
+
+        self._featured_unmaximize_timer = GLib.timeout_add(
+            self.FEATURED_RESIZE_DEBOUNCE_MS,
+            self._finish_featured_unmaximize,
+        )
+
     def _on_window_state_changed(self, _widget, event):
-        """Keep Featured out of width negotiation while leaving maximized state."""
+        """Keep stale maximized root-menu geometry out of restored sizing."""
         changed = bool(event.changed_mask & Gdk.WindowState.MAXIMIZED)
         maximized = bool(event.new_window_state & Gdk.WindowState.MAXIMIZED)
         if not changed or maximized:
             return False
 
-        if (
-            hasattr(self, "main_stack")
-            and self.main_stack.get_visible_child_name() == "categories"
-            and getattr(self, "random_scripts_flowbox", None) is not None
-        ):
-            # Do not destroy/reselect cards here. Hiding the fixed-column grid is
-            # enough to stop its maximized natural width influencing the restored
-            # top-level size, while preserving Featured state and history.
-            self.random_scripts_flowbox.hide()
-            self.categories_view.queue_resize()
-            self.categories_flowbox.queue_resize()
+        if not hasattr(self, "main_stack"):
+            return False
 
-            if getattr(self, "_featured_unmaximize_timer", None):
-                GLib.source_remove(self._featured_unmaximize_timer)
-
-            self._featured_unmaximize_timer = GLib.timeout_add(
-                self.FEATURED_RESIZE_DEBOUNCE_MS,
-                self._finish_featured_unmaximize,
-            )
+        if self.main_stack.get_visible_child_name() == "categories":
+            self._categories_geometry_stale = False
+            self._start_categories_unmaximize_reflow()
+        else:
+            # The root menu is hidden, so it will not receive the restored
+            # allocation now. Reflow it when navigation exposes it again.
+            self._categories_geometry_stale = True
 
         return False
 
@@ -3200,6 +3211,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
         # At this point the category FlowBox has the restored viewport width, so the
         # existing Featured geometry calculation can safely mirror its real columns.
+        self._categories_geometry_stale = False
         self._featured_last_layout = None
         self._featured_layout_metrics = None
         self._refresh_random_scripts_display(force=False)

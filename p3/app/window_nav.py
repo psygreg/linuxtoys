@@ -744,6 +744,14 @@ class NavCtl:
         self.current_category_info = None
         self.navigation_stack.clear()  # Clear navigation history
         self.main_stack.set_visible_child_name("categories")
+
+        # If the window was restored while a category page was visible, the hidden
+        # root menu still carries its maximized allocation. Reuse the normal
+        # unmaximize reflow now that Categories is visible instead of permanently
+        # constraining the root scroller's horizontal policy.
+        if getattr(self, "_categories_geometry_stale", False):
+            self._start_categories_unmaximize_reflow()
+
         self.back_button.hide()
         self.header_bar.props.title = "LinuxToys"
         self._update_header()  # Reset to default header
