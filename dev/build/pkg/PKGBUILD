@@ -8,6 +8,7 @@ conflicts=(linuxtoys-bin)
 provides=("linuxtoys=$pkgver")
 source=("https://github.com/psygreg/linuxtoys/releases/download/${pkgver}/linuxtoys-${pkgver}.tar.xz")
 sha256sums=('b45db155c7ee6b0e78e7ef1126267882929df672af53c5b16000de44d6e614e8')
+options=(!lto)
 
 build() {
     cd "${srcdir}/linuxtoys-${pkgver}"
