@@ -52,6 +52,35 @@ fn component_policy_keys_rs(item: &serde_json::Map<String, Value>) -> Vec<String
     keys
 }
 
+fn reconcile_snap_common_ids_rs(components: &mut [serde_json::Map<String, Value>]) {
+    // Snap Store records can advertise several common IDs. snap_catalog.py keeps
+    // all of them in snap_common_ids but uses only the first one as `id`.
+    // Resolve any common ID that matches an existing native/Flatpak component so
+    // source grouping sees the Snap as another source for that application.
+    let canonical_ids: std::collections::HashMap<String, String> = components.iter()
+        .filter(|m| m.get("source").and_then(Value::as_str) != Some("snap"))
+        .filter_map(|m| {
+            let id = m.get("id").and_then(Value::as_str)?.trim();
+            (!id.is_empty()).then(|| (normalize_id(id), id.to_string()))
+        })
+        .collect();
+
+    for component in components.iter_mut()
+        .filter(|m| m.get("source").and_then(Value::as_str) == Some("snap"))
+    {
+        let matched = component.get("snap_common_ids")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .find_map(|common_id| canonical_ids.get(&normalize_id(common_id)).cloned());
+
+        if let Some(id) = matched {
+            component.insert("id".into(), Value::String(id));
+        }
+    }
+}
+
 fn apply_snap_identity_overlays_rs(components: &mut [serde_json::Map<String, Value>], overlays: &Value) {
     let Some(overlays) = overlays.as_object() else { return; };
     for component in components.iter_mut().filter(|m| m.get("source").and_then(Value::as_str) == Some("snap")) {
@@ -206,7 +235,7 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     let flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).collect();
     let native:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").collect();
     let snap:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).collect();
-    let mut candidates:Vec<&serde_json::Map<String,Value>>=if is_verified_flatpak_rs(selected){flat}else{native.into_iter().chain(flat).chain(snap).collect()};
+    let mut candidates:Vec<&serde_json::Map<String,Value>>=if is_verified_flatpak_rs(selected){flat.into_iter().chain(snap).collect()}else{native.into_iter().chain(flat).chain(snap).collect()};
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
     let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
@@ -1040,6 +1069,7 @@ pub(crate) fn build_appstream_catalog(
     // Canonicalize Snap identities before applying parser policy. This makes omit,
     // category overrides, source grouping/locks and explicit source preferences see
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
+    reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
     vals.retain(|m|!component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
@@ -1537,6 +1567,7 @@ pub(crate) fn build_appstream_catalog_index(
     // Canonicalize Snap identities before applying parser policy. This makes omit,
     // category overrides, source grouping/locks and explicit source preferences see
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
+    reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
     vals.retain(|m|!component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
