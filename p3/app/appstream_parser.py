@@ -96,7 +96,7 @@ MAIN_CATEGORY_CANDIDATES = {
     "Education": ("edu", "education"),
     "HealthFitness": ("health", "utilities"),
     "Game": ("game", "games"),
-    "Graphics": ("creat", "graphics", "office"),
+    "Graphics": ("creative", "graphics", "office"),
     "Network": ("network", "utils"),
     "Office": ("office", "productivity"),
     "Science": ("edu", "science", "education"),
