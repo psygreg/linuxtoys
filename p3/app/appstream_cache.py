@@ -47,24 +47,19 @@ _LOCK = threading.RLock()
 
 
 def _snap_supported_host() -> bool:
-    """Return whether Snap-backed catalog entries may be exposed on this host.
-
-    Keep this in sync with the Snap installer constraints: systemd is required
-    and ostree hosts are excluded. The Snap Store catalog is only exposed after
-    snapd is installed, matching the existing Flatpak/Flathub behavior.
-    """
+    """Return whether Snap-backed catalog entries may be exposed on this host."""
     try:
-        from .compat import get_system_compat_keys
+        from .compat import get_system_compat_keys, is_containerized
 
         compat = get_system_compat_keys()
         return (
-            "systemd" in compat
+            not is_containerized()
+            and "systemd" in compat
             and "ostree" not in compat
             and shutil.which("snap") is not None
         )
     except (ImportError, AttributeError):
         return False
-
 
 def _flatpak_supported_host() -> bool:
     """Return whether Flatpak-backed AppStream should be considered on this host.

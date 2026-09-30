@@ -303,8 +303,17 @@ pkg_flat() {
     fi
 }
 
+# Snap requires a real host system. Keep this check centralized so Store,
+# local-file, URL and release-asset installs cannot bypass it.
+_snap_supported_host () {
+    is_systemd && ! is_ostree && ! is_steamos || return 1
+    python3 "$SCRIPT_DIR/app/compat.py" --is-containerized >/dev/null 2>&1 && return 1
+    return 0
+}
+
 # Install Snap packages and register only snaps newly added by this transaction.
 pkg_snap () {
+    _snap_supported_host || die "Snap packages are unsupported on this system"
     (( $# > 0 )) || return 0
     if ! command -v snap >/dev/null 2>&1; then
         call_script snap || die "Failed to install Snap support"
@@ -387,6 +396,7 @@ _snap_installed_names () {
 
 pkg_snap_file () {
     (( $# > 0 )) || die "No Snap package files provided"
+    _snap_supported_host || die "Snap packages are unsupported on this system"
 
     if ! command -v snap >/dev/null 2>&1; then
         call_script snap || die "Failed to install Snap support"
@@ -1165,7 +1175,7 @@ pkg_fromrelease () {
 
     local native_type="" package_url snap_release_allowed=0
     local -a release_selection
-    if is_systemd && ! is_ostree && ! is_steamos; then
+    if _snap_supported_host; then
         snap_release_allowed=1
     fi
     if [[ $_snap -eq 1 && $snap_release_allowed -ne 1 ]]; then

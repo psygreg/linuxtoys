@@ -1201,6 +1201,9 @@ def is_script_compatible_with_host(script_path):
 if __name__ == "__main__":
     import sys
 
+    if len(sys.argv) == 2 and sys.argv[1] == "--is-containerized":
+        sys.exit(0 if is_containerized() else 1)
+
     if len(sys.argv) == 3 and sys.argv[1] == "--check-script":
         sys.exit(
             0 if is_script_compatible_with_host(sys.argv[2]) else 1

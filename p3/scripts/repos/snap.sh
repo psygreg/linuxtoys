@@ -7,6 +7,7 @@
 # repo: https://snapcraft.io
 # compat: !ostree, !steamos
 # systemd: yes
+# nocontainer
 
 snap_packages=("snapd")
 is_fedora && snap_packages+=("snapd-selinux")
