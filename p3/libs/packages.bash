@@ -361,6 +361,54 @@ pkg_snap_remove () {
     runner_unlock
 }
 
+_snap_installed_names () {
+    command -v snap >/dev/null 2>&1 || return 0
+    snap list 2>/dev/null | awk 'NR > 1 { print $1 }' | sort -u
+}
+
+pkg_snap_file () {
+    (( $# > 0 )) || die "No Snap package files provided"
+
+    if ! command -v snap >/dev/null 2>&1; then
+        call_script snap || die "Failed to install Snap support"
+        command -v snap >/dev/null 2>&1 || die "Snap is unavailable after installing Snap support"
+    fi
+
+    local before_file snap_file
+    local -a new_snaps=()
+    before_file=$(mktemp) || die "Failed to create Snap transaction snapshot"
+    _snap_installed_names > "$before_file"
+
+    askpass
+    runner_lock "package-transaction"
+
+    for snap_file in "$@"; do
+        [[ -f "$snap_file" ]] || {
+            rm -f "$before_file"
+            runner_unlock
+            die "Snap package file not found: $snap_file"
+        }
+
+        # Local snaps obtained outside the Store do not carry a Store assertion,
+        # so snapd requires --dangerous. --classic is harmless for strict snaps
+        # and is required when the package itself declares classic confinement.
+        sudo_ snap install --dangerous --classic "$snap_file" || {
+            rm -f "$before_file"
+            runner_unlock
+            die "Failed to install Snap package from file: $snap_file"
+        }
+    done
+
+    runner_unlock
+
+    mapfile -t new_snaps < <(comm -13 "$before_file" <(_snap_installed_names))
+    rm -f "$before_file"
+
+    if [[ ${#new_snaps[@]} -gt 0 ]]; then
+        _append_transmap "snap ${new_snaps[*]}"
+    fi
+}
+
 pkg_fromfile () {
     # Handle flags that should not be passed to native package managers.
     local _ostreecheck=0
@@ -378,6 +426,18 @@ pkg_fromfile () {
 
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
+
+    # Snap files are handled by snapd rather than the host package manager.
+    # Keep this outside the generic lock because installing Snap support may
+    # itself execute a nested LinuxToys package transaction.
+    if [[ "$1" == *.[Ss][Nn][Aa][Pp] ]]; then
+        local snap_file
+        for snap_file in "$@"; do
+            [[ "$snap_file" == *.[Ss][Nn][Aa][Pp] ]] ||                 die "Cannot mix Snap and non-Snap files in one pkg_fromfile transaction"
+        done
+        pkg_snap_file "$@"
+        return $?
+    fi
 
     [[ "$1" == *.flatpak || "$1" == *.flatpakref ]] || askpass
     runner_lock "package-transaction"
@@ -1041,7 +1101,7 @@ PY2
 }
 
 pkg_fromrelease () {
-    local _tarball=0 _binary=0 _make=0 arg make_command="sudo make install"
+    local _tarball=0 _binary=0 _make=0 _snap=0 arg make_command="sudo make install"
     local -a release_args=() make_dependencies=()
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -1050,6 +1110,9 @@ pkg_fromrelease () {
                 ;;
             --bin|--binary)
                 _binary=1
+                ;;
+            --snap)
+                _snap=1
                 ;;
             --make)
                 _make=1
@@ -1073,13 +1136,22 @@ pkg_fromrelease () {
     done
     set -- "${release_args[@]}"
 
-    [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_fromrelease [--tar|--bin|--make] REPOSITORY_URL [ASSET_NAME_OR_GLOB]"
+    [[ $# -ge 1 && $# -le 2 ]] || die "Usage: pkg_fromrelease [--tar|--bin|--snap|--make] REPOSITORY_URL [ASSET_NAME_OR_GLOB]"
     [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
+    [[ $_snap -eq 0 || $_tarball -eq 0 ]] || die "--snap and --tar cannot be used together"
+    [[ $_snap -eq 0 || $_binary -eq 0 ]] || die "--snap and --bin cannot be used together"
     [[ $_make -eq 0 || $_binary -eq 0 ]] || die "--make and --bin cannot be used together"
+    [[ $_make -eq 0 || $_snap -eq 0 ]] || die "--make and --snap cannot be used together"
     [[ $_binary -eq 0 || $# -eq 2 ]] || die "pkg_fromrelease --bin requires the exact release asset name"
 
-    local native_type="" package_url
+    local native_type="" package_url snap_release_allowed=0
     local -a release_selection
+    if is_systemd && ! is_ostree && ! is_steamos; then
+        snap_release_allowed=1
+    fi
+    if [[ $_snap -eq 1 && $snap_release_allowed -ne 1 ]]; then
+        die "Snap packages are unsupported on this system"
+    fi
     if is_steamos; then
         native_type=""
     elif is_arch || is_cachy; then
@@ -1092,7 +1164,7 @@ pkg_fromrelease () {
         native_type=eopkg
     fi
 
-    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(uname -m)" "$_tarball" "$_binary" <<'PY'
+    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(uname -m)" "$_tarball" "$_binary" "$_snap" "$snap_release_allowed" <<'PY'
 import fnmatch
 import json
 import re
@@ -1170,9 +1242,11 @@ def normalize_release(host, release):
     return normalized
 
 
-repository, pattern, native, machine, tarball_mode, binary_mode = sys.argv[1:]
+repository, pattern, native, machine, tarball_mode, binary_mode, snap_mode, snap_allowed = sys.argv[1:]
 tarball_mode = tarball_mode == "1"
 binary_mode = binary_mode == "1"
+snap_mode = snap_mode == "1"
+snap_allowed = snap_allowed == "1"
 host, api = repository_api(repository)
 try:
     response = subprocess.run(
@@ -1212,8 +1286,18 @@ if binary_mode:
     formats = None
 elif tarball_mode:
     formats = [(".tar.gz", ".tar.xz")]
+elif snap_mode:
+    formats = [(".snap",)]
 else:
-    formats = [(".appimage",), (".flatpak",), native_extensions.get(native, ())]
+    # Keep Snap as the lowest-priority automatically selected release format.
+    # Existing preference remains AppImage > Flatpak > native package > Snap.
+    formats = [
+        (".appimage",),
+        (".flatpak",),
+        native_extensions.get(native, ()),
+    ]
+    if snap_allowed:
+        formats.append((".snap",))
 candidates = []
 for asset in release["assets"]:
     name, url = asset.get("name", ""), asset.get("browser_download_url", "")
@@ -1243,7 +1327,7 @@ for asset in release["assets"]:
         else:
             continue
     # Use 32-bit x86 only when no native or architecture-unlabelled asset matches.
-    # Within each tier, retain AppImage > Flatpak > native package preference.
+    # Within each tier, retain AppImage > Flatpak > native package > Snap preference.
     # Explicit architecture matches outrank assets whose names omit architecture.
     candidates.append(((x86_fallback, kind, 0 if detected else 1), name, url))
 if not candidates:
@@ -1274,6 +1358,8 @@ PY
         pkg_fromurl --bin "$package_url"
     elif [[ $_tarball -eq 1 ]]; then
         pkg_fromurl --tar "$package_url"
+    elif [[ $_snap -eq 1 ]]; then
+        pkg_fromurl "$package_url"
     else
         pkg_fromurl "$package_url"
     fi

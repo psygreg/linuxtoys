@@ -61,6 +61,7 @@ URL_PACKAGE_KEYS = {
     "pacman",
     "pkg.tar.zst",
     "flatpak",
+    "snap",
     "appimage",
     "tar",
     "bin",
@@ -976,8 +977,10 @@ def _resolve_url_package(entry, compat_keys):
         if resolved:
             return resolved
 
-    # Portable fallbacks.
-    for key in ("appimage", "flatpak", "tar", "bin"):
+    # Portable fallbacks. Snap files are valid sideloadable packages and are
+    # deliberately below Flatpak/AppImage so they do not become a preferred
+    # alternative merely because Snap support exists.
+    for key in ("appimage", "flatpak", "snap", "tar", "bin"):
         resolved = resolve_value(key)
         if resolved:
             return resolved
