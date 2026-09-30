@@ -413,14 +413,22 @@ class SearchCtl:
             def finish_initial():
                 if not current():
                     return False
-                cap = capacity()
-                multiplier = 3 if cap <= 20 else 2
-                state["target"] = min(
-                    len(population_queue),
-                    max(state["next"], cap * multiplier),
-                )
+
+                # The six-card seed has now had a chance to enter GTK's layout.
+                # Only extend the initial result set while it still does not make
+                # the Search viewport scrollable. Each completed two-card batch
+                # rechecks the real adjustment in tick() after GTK reallocates it.
                 state["ready"] = True
-                start_timer()
+                adj = self.search_view.get_vadjustment()
+                if (
+                    float(adj.get_upper())
+                    <= max(1.0, float(adj.get_page_size()))
+                    and state["next"] < len(population_queue)
+                ):
+                    state["target"] = min(
+                        len(population_queue), state["next"] + 2
+                    )
+                    start_timer()
                 return False
 
             GLib.idle_add(finish_initial, priority=GLib.PRIORITY_LOW)
