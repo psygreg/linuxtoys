@@ -88,7 +88,12 @@ askpass
 
 _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 if [ "$_total_ram_kb" -gt 32000000 ] && ! is_rhel && ! is_cachy; then
-    setup_zram
+    choice=$(radioselect "ZRAM" "ZSWAP" "Cancel")
+    case $choice in
+        ZRAM) setup_zram ;;
+        ZSWAP) setup_zswap ;;
+        *) warn "$abortmsg" && exit 100 ;;
+    esac
 else
     setup_zswap
     warn "$zswapmsg"
