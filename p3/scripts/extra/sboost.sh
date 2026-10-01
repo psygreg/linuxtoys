@@ -58,12 +58,12 @@ if [ ! -f ${HOME}/.booster ]; then
         fi
 
         if [ $PATCH_APPLIED -eq 1 ]; then
-            info "Success! Reboot to apply."
+            info "$finishmsg"
             prep_create "${HOME}/.booster"
             exit 0
         fi
     fi
-    zeninf "$finishmsg"
+    info "$finishmsg"
 else
     zenwrn "System already patched."
     exit 100
