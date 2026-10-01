@@ -16,7 +16,7 @@ from .compat import get_system_compat_keys, is_containerized
 
 CACHE_ROOT = Path(os.path.expanduser("~/.cache/linuxtoys"))
 _LOCK = threading.RLock()
-_STATE = {"manager": None, "native": set(), "flatpak": {}, "loaded": False}
+_STATE = {"manager": None, "native": set(), "flatpak": {}, "snap": set(), "loaded": False}
 
 
 def _manager():
@@ -69,6 +69,7 @@ def load_previous():
         _STATE["manager"] = manager
         _STATE["native"] = _read_lines(manager) if manager else set()
         _STATE["flatpak"] = flatpak
+        _STATE["snap"] = {value.casefold() for value in _read_lines("snap")}
         _STATE["loaded"] = True
     return snapshot()
 
@@ -93,6 +94,18 @@ def _collect_flatpak():
             app_id = line.strip()
             if app_id:
                 result.setdefault(app_id.casefold(), set()).add(scope)
+    return result
+
+
+def _collect_snap():
+    if is_containerized() or not shutil_which("snap"):
+        return set()
+    output = _run(["snap", "list"])
+    result = set()
+    for line in output.splitlines()[1:]:
+        fields = line.split()
+        if fields:
+            result.add(fields[0].casefold())
     return result
 
 
@@ -155,12 +168,20 @@ def refresh():
     manager = _manager()
     native = _collect_native(manager) if manager else set()
     flatpak = _collect_flatpak()
+    snap = _collect_snap()
     if manager:
         _atomic_lines(manager, native)
     flatpak_lines = [f"{scope}\t{app_id}" for app_id, scopes in flatpak.items() for scope in scopes]
     _atomic_lines("flatpak", flatpak_lines)
+    _atomic_lines("snap", snap)
     with _LOCK:
-        _STATE.update(manager=manager, native=set(native), flatpak={k: set(v) for k, v in flatpak.items()}, loaded=True)
+        _STATE.update(
+            manager=manager,
+            native=set(native),
+            flatpak={k: set(v) for k, v in flatpak.items()},
+            snap=set(snap),
+            loaded=True,
+        )
     return snapshot()
 
 
@@ -170,6 +191,7 @@ def snapshot():
             "manager": _STATE["manager"],
             "native": set(_STATE["native"]),
             "flatpak": {key: set(value) for key, value in _STATE["flatpak"].items()},
+            "snap": set(_STATE["snap"]),
             "loaded": _STATE["loaded"],
         }
 
@@ -186,6 +208,11 @@ def match(info):
             preferred = str(info.get("flatpak_scope", "") or "").strip()
             scope = preferred if preferred in scopes else ("user" if "user" in scopes else sorted(scopes)[0])
             return {"source": "flatpak", "package": app_id, "scope": scope}
+        if source == "snap":
+            snap_name = str(info.get("snap_name") or info.get("package-name") or "").strip()
+            if snap_name and snap_name.casefold() in _STATE["snap"]:
+                return {"source": "snap", "package": snap_name}
+            return None
         if source == "native":
             value = info.get("package-name") or ()
             packages = [value] if isinstance(value, str) else list(value)
@@ -205,6 +232,9 @@ def build_external_removal(info, installed_match, translations=None):
         scope = installed_match.get("scope")
         flag = "--user" if scope == "user" else "--system" if scope == "system" else ""
         lines.append(f"flatpak {flag} uninstall -y {app_id}".replace("  ", " "))
+    elif installed_match["source"] == "snap":
+        snap_name = shlex.quote(installed_match["package"])
+        lines += ["sudo_rq", f"sudo_ snap remove {snap_name}"]
     else:
         packages = " ".join(shlex.quote(pkg) for pkg in installed_match.get("packages", ()))
         if not packages:
