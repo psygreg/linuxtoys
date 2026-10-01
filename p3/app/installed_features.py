@@ -106,7 +106,7 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         icon_value = str(info.get("icon") or "application-x-executable")
         icon_path = ""
         icon_name = icon_value
-        if icon_value.endswith((".png", ".svg")):
+        if icon_value.lower().endswith((".png", ".svg", ".webp")):
             path = icon_value if os.path.isabs(icon_value) else get_icon_path(icon_value)
             if path and os.path.exists(path):
                 icon_path = path
