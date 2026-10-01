@@ -216,6 +216,11 @@ class TerminalRunner:
             if auto_reports_enabled:
                 self._auto_submit_bug_report_on_error()
 
+            # Temporary non-RAM directories must never survive script termination.
+            # Keep the transmap itself for reporting/auto-revert, but remove the
+            # directories recorded by prep_tmp_noram.
+            ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
+
             # Try to auto-revert if there are operations in the transmap
             auto_revert_entry = ExecutionRegistry._try_auto_revert(
                 transmap_path,
