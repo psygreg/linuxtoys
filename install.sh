@@ -101,6 +101,16 @@ osarch() {
     fi
 
     if curl -fL --retry 3 "${_pkg}" -o "/tmp/${_pkg_name}"; then
+        if [ "$ID" = "cachyos" ]; then
+            dependencies=(
+                bash git curl wget zenity appstream archlinux-appstream-data
+                python python-gobject python-requests gtk3 vte3 sudo util-linux
+                webp-pixbuf-loader
+            )
+            for pkg in "${dependencies[@]}"; do
+                sudo pacman -S --noconfirm "${pkg}"
+            done
+        fi
         if sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
             info "LinuxToys installed or updated!"
         else
@@ -242,7 +252,6 @@ installer() {
 	ostree
 
 	if [ -r /etc/os-release ]; then
-		# shellcheck disable=SC1091
 		. /etc/os-release
 	else
 		error "Unsupported operating system (no /etc/os-release)."
