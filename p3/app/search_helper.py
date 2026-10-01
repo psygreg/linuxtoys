@@ -194,6 +194,22 @@ class ScriptCache:
         """Get all cached scripts."""
         return self.scripts.copy()
 
+    @staticmethod
+    def _is_registered(script_info, executed_names):
+        """Match Registry entries by stable identity, with display-name fallback."""
+        script_name = str(script_info.get("name", "") or "").strip()
+        registry_name = str(
+            script_info.get("registry_name", script_name) or ""
+        ).strip()
+
+        return (
+            registry_name in executed_names
+            or (
+                registry_name != script_name
+                and script_name in executed_names
+            )
+        )
+
     def _populate_removable_cache(self):
         """
         Pre-compute the removable state for every cached script.
@@ -205,46 +221,49 @@ class ScriptCache:
 
         for script_info in self.scripts:
             script_path = script_info.get("path", "")
-            script_name = script_info.get("name", "")
+            registered = self._is_registered(script_info, executed_names)
 
             # AppStream entries can be installed outside LinuxToys. Their observed
             # package state is therefore part of removability, not just Registry state.
             if script_info.get("is_appstream_entry"):
                 self._removable_cache[script_path] = (
-                    script_name in executed_names
+                    registered
                     or installed_packages.match(script_info) is not None
                 )
                 continue
 
             if script_info.get("is_repo_entry"):
-                self._removable_cache[script_path] = (
-                    script_name in executed_names
-                )
+                self._removable_cache[script_path] = registered
                 continue
 
             if not script_path or not os.path.isfile(script_path):
                 self._removable_cache[script_path] = False
                 continue
 
-            script_name = script_info.get('name', '')
-            if not script_name:
+            if not script_info.get("name"):
                 self._removable_cache[script_path] = False
                 continue
 
-            revert_capability = get_revert_capability(script_path, self.system_compat_keys)
-            if revert_capability == 'no':
+            revert_capability = get_revert_capability(
+                script_path,
+                self.system_compat_keys,
+            )
+            if revert_capability == "no":
                 self._removable_cache[script_path] = False
                 continue
 
-            if revert_capability == 'internal':
-                self._removable_cache[script_path] = script_name in executed_names
+            if revert_capability == "internal":
+                self._removable_cache[script_path] = registered
                 continue
 
-            if not should_enable_manual_revert(script_path, self.system_compat_keys):
+            if not should_enable_manual_revert(
+                script_path,
+                self.system_compat_keys,
+            ):
                 self._removable_cache[script_path] = False
                 continue
 
-            self._removable_cache[script_path] = script_name in executed_names
+            self._removable_cache[script_path] = registered
 
     def refresh_removable_cache(self):
         """
@@ -262,19 +281,17 @@ class ScriptCache:
         if script_path in self._removable_cache:
             return self._removable_cache[script_path]
 
+        executed_names = _get_executed_script_names()
+        registered = self._is_registered(script_info, executed_names)
+
         if script_info.get("is_appstream_entry"):
-            executed_names = _get_executed_script_names()
             return (
-                script_info.get("name") in executed_names
+                registered
                 or installed_packages.match(script_info) is not None
             )
 
         if script_info.get("is_repo_entry"):
-            executed_names = _get_executed_script_names()
-            return self._repo_entry_is_removable(
-                script_info,
-                executed_names,
-            )
+            return registered
 
         # Normal physical-script fallback
         if (
@@ -284,8 +301,7 @@ class ScriptCache:
         ):
             return False
 
-        script_name = script_info.get("name", "")
-        if not script_name:
+        if not script_info.get("name"):
             return False
 
         revert_capability = get_revert_capability(
@@ -296,10 +312,8 @@ class ScriptCache:
         if revert_capability == "no":
             return False
 
-        executed_names = _get_executed_script_names()
-
         if revert_capability == "internal":
-            return script_name in executed_names
+            return registered
 
         if not should_enable_manual_revert(
             script_path,
@@ -307,13 +321,7 @@ class ScriptCache:
         ):
             return False
 
-        return script_name in executed_names
-
-    def _repo_entry_is_removable(self, script_info, executed_names):
-        return (
-            script_info.get("is_repo_entry", False)
-            and script_info.get("name") in executed_names
-        )
+        return registered
 
     def update_removable_for_script(self, script_info):
         """
