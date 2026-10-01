@@ -70,6 +70,151 @@ class NavCtl:
             if retained.get("view") is view:
                 cache.pop(key, None)
 
+    @staticmethod
+    def _category_view_initial_population_ready(view):
+        """Return True once the hidden category has its first viewport materialized."""
+        flowboxes = []
+        available = getattr(view, "_linuxtoys_available_flowbox", None)
+        installed = getattr(view, "_linuxtoys_installed_flowbox", None)
+        if available is not None:
+            flowboxes.append(available)
+        if installed is not None:
+            flowboxes.append(installed)
+
+        # Checklist pages expose only the primary flowbox through the retained entry,
+        # so callers may attach it explicitly for the readiness check.
+        primary = getattr(view, "_linuxtoys_primary_flowbox", None)
+        if primary is not None and primary not in flowboxes:
+            flowboxes.append(primary)
+
+        if not flowboxes:
+            return True
+
+        for flowbox in flowboxes:
+            state = getattr(flowbox, "_linuxtoys_lazy_state", None)
+            if state is None or not state.get("initial_complete", False):
+                return False
+        return True
+
+    def _prewarm_retained_navigation_views(self, generation):
+        """Rebuild hidden Back targets for the final settled window geometry.
+
+        The old retained widgets stay authoritative until each replacement has
+        materialized its initial viewport. If Back wins the race, its normal
+        retained/fallback path remains unchanged and the prewarm is discarded.
+        """
+        if generation != getattr(self, "_navigation_prewarm_generation", 0):
+            return False
+
+        cache = getattr(self, "_category_view_cache", None) or {}
+        history = list(getattr(self, "navigation_stack", ()) or ())
+        if not history or not cache:
+            return False
+
+        jobs = []
+        seen = set()
+        # Warm nearest Back targets first.
+        for category_info in reversed(history):
+            key = self._category_view_key(category_info)
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            retained = cache.get(key)
+            if retained is not None:
+                jobs.append((key, category_info, retained))
+
+        def discard_candidate(view):
+            if view is not None and view.get_parent() is self.main_stack:
+                gui_rs.stack_remove_child(self.main_stack, view, destroy=True)
+
+        def start_next_job():
+            if generation != getattr(self, "_navigation_prewarm_generation", 0):
+                return False
+            if not jobs:
+                return False
+
+            key, category_info, old_retained = jobs.pop(0)
+
+            # Back may already have consumed/replaced this entry.
+            current_entry = (getattr(self, "_category_view_cache", None) or {}).get(key)
+            if current_entry is not old_retained:
+                if jobs:
+                    GLib.idle_add(start_next_job, priority=GLib.PRIORITY_LOW)
+                return False
+
+            self.view_counter += 1
+            view_name = f"scripts_prewarm_{generation}_{self.view_counter}"
+            fresh_view, fresh_flowbox = self._create_category_browser_view(
+                category_info, view_name
+            )
+            fresh_view._linuxtoys_primary_flowbox = fresh_flowbox
+
+            # Force the hidden page through the settled Stack allocation before its
+            # lazy loader estimates viewport capacity.
+            allocation = self.main_stack.get_allocation()
+            if allocation.width > 1 and allocation.height > 1:
+                fresh_view.size_allocate(allocation)
+
+            self._load_scripts_into_flowbox(
+                fresh_flowbox,
+                category_info,
+                defer_initial=False,
+                animate_initial=False,
+            )
+            installed_flowbox = getattr(
+                fresh_view, "_linuxtoys_installed_flowbox", None
+            )
+            if installed_flowbox is not None:
+                self._load_scripts_into_flowbox(
+                    installed_flowbox,
+                    category_info,
+                    defer_initial=False,
+                    animate_initial=False,
+                )
+
+            def publish_when_ready():
+                if generation != getattr(self, "_navigation_prewarm_generation", 0):
+                    discard_candidate(fresh_view)
+                    return False
+
+                live_cache = getattr(self, "_category_view_cache", None) or {}
+                # Back/navigation/source refresh won the race: preserve its normal
+                # behavior and throw away this speculative replacement.
+                if live_cache.get(key) is not old_retained:
+                    discard_candidate(fresh_view)
+                    return False
+
+                if not self._category_view_initial_population_ready(fresh_view):
+                    return True
+
+                gui_rs.flush_category_watermarks(fresh_view)
+                live_cache[key] = {
+                    "view": fresh_view,
+                    "flowbox": fresh_flowbox,
+                }
+
+                old_view = old_retained.get("view")
+                if (
+                    old_view is not None
+                    and old_view is not getattr(self, "scripts_view", None)
+                    and old_view.get_parent() is self.main_stack
+                ):
+                    gui_rs.stack_remove_child(
+                        self.main_stack, old_view, destroy=True
+                    )
+
+                if jobs:
+                    GLib.idle_add(start_next_job, priority=GLib.PRIORITY_LOW)
+                return False
+
+            GLib.timeout_add(
+                25, publish_when_ready, priority=GLib.PRIORITY_LOW
+            )
+            return False
+
+        GLib.idle_add(start_next_job, priority=GLib.PRIORITY_LOW)
+        return False
+
     def _create_category_browser_view(self, category_info, view_name):
         """Create one complete animated category page: header plus browser content."""
         available_flowbox = self.create_flowbox()

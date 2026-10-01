@@ -111,6 +111,12 @@ class AppWindow(
         self._window_resize_pending = False
         self._window_resize_settling = False
         self._pending_window_size = self._default_window_size
+        # Hidden Back targets get a second, longer debounce. Resize never waits for
+        # this speculative work; Back keeps its existing retained/rebuild fallback
+        # until a freshly prewarmed replacement is completely ready.
+        self._navigation_prewarm_timer = None
+        self._navigation_prewarm_generation = 0
+        self._navigation_prewarm_extra_delay_ms = 180
         self._last_settled_window_size = None
         self._featured_last_count = None
         self._featured_swap_timer = None
@@ -3236,6 +3242,58 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             self.FEATURED_RESIZE_DEBOUNCE_MS,
             self._apply_window_resize_settled,
         )
+
+        # Restart the speculative navigation prewarm on every configure event. It
+        # intentionally fires after the normal resize settle work, so interactive
+        # resizing never competes with hidden-page reconstruction.
+        self._navigation_prewarm_generation += 1
+        if self._navigation_prewarm_timer is not None:
+            GLib.source_remove(self._navigation_prewarm_timer)
+        prewarm_generation = self._navigation_prewarm_generation
+        self._navigation_prewarm_timer = GLib.timeout_add(
+            self.FEATURED_RESIZE_DEBOUNCE_MS
+            + self._navigation_prewarm_extra_delay_ms,
+            self._run_navigation_resize_prewarm,
+            prewarm_generation,
+            priority=GLib.PRIORITY_LOW,
+        )
+        return False
+
+    def _run_navigation_resize_prewarm(self, generation):
+        """Prewarm hidden Back targets after the final resize geometry settles."""
+        if generation != self._navigation_prewarm_generation:
+            return False
+        self._navigation_prewarm_timer = None
+
+        # A new configure may have landed between this timer and the normal settle
+        # callback. Never build against geometry that is still moving.
+        if self._window_resize_pending or self._window_resize_settling:
+            return False
+
+        # Reallocate the persistent hidden root menu to the settled Stack geometry.
+        # Unlike category history it is a singleton, so rebuilding it would disturb
+        # Featured/history state. Preallocation is enough to avoid doing its first
+        # new-size layout on the Back click.
+        if (
+            hasattr(self, "categories_loading_overlay")
+            and self.main_stack.get_visible_child_name() != "categories"
+        ):
+            allocation = self.main_stack.get_allocation()
+            if allocation.width > 1 and allocation.height > 1:
+                self.categories_loading_overlay.size_allocate(allocation)
+            self.categories_flowbox.queue_resize()
+            self.categories_view.queue_resize()
+            gui_rs.flush_category_watermarks(self.categories_loading_overlay)
+
+            # If unmaximize marked the hidden root stale, consume that work now
+            # rather than waiting for root navigation.
+            if getattr(self, "_categories_geometry_stale", False):
+                self._categories_geometry_stale = False
+                self._featured_last_layout = None
+                self._featured_layout_metrics = None
+                self._refresh_random_scripts_display(force=False)
+
+        self._prewarm_retained_navigation_views(generation)
         return False
 
     def _flush_visible_category_watermarks(self):
@@ -3332,6 +3390,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         if getattr(self, "_featured_unmaximize_timer", None):
             GLib.source_remove(self._featured_unmaximize_timer)
             self._featured_unmaximize_timer = None
+        if getattr(self, "_navigation_prewarm_timer", None):
+            GLib.source_remove(self._navigation_prewarm_timer)
+            self._navigation_prewarm_timer = None
+        self._navigation_prewarm_generation += 1
         # Persist UI state once per session, at shutdown.
         self._save_window_state()
         self._save_featured_sense()
