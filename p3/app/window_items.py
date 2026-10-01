@@ -182,9 +182,9 @@ class ItemWidgetFactory:
         icon_name = icon_value
 
         # Remote icons are first-class sources for the native Rust image loader.
-        # Do not classify URL paths ending in .png/.svg as local filesystem icons.
+        # Do not classify URL paths ending in .png/.svg/.webp as local filesystem icons.
         is_remote_icon = icon_value.startswith(("https://", "http://", "/v2/"))
-        if not is_remote_icon and icon_value.endswith((".png", ".svg")):
+        if not is_remote_icon and icon_value.endswith((".png", ".svg", ".webp")):
             if not os.path.isabs(icon_value) and "/" not in icon_value:
                 icon_path = get_icon_path(
                     "local-script.svg"
@@ -209,7 +209,7 @@ class ItemWidgetFactory:
         }
         if not badge_excluded:
             if self._uses_linuxtoys_verified_badge(item_info):
-                badge_path = get_icon_path("ltverified.svg") or ""
+                badge_path = get_icon_path("ltverified.webp") or ""
             elif verified:
                 badge_path = get_icon_path("verified.svg") or ""
             elif item_info.get("is_appstream_entry", False):
@@ -218,13 +218,13 @@ class ItemWidgetFactory:
                 elif appstream_badge:
                     badge_path = get_icon_path(appstream_badge) or ""
             elif item_info.get("is_repo_entry", False):
-                badge_path = get_icon_path("distros/linuxtoys.svg") or ""
+                badge_path = get_icon_path("distros/linuxtoys.webp") or ""
             elif (
                 item_info.get("is_script", False)
                 and not item_info.get("is_subcategory", False)
                 and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
             ):
-                badge_path = get_icon_path("distros/linuxtoys.svg") or ""
+                badge_path = get_icon_path("distros/linuxtoys.webp") or ""
 
         return {
             "name": item_info["name"],
@@ -436,7 +436,7 @@ class ItemWidgetFactory:
             icon_value = item_info.get("icon", "application-x-executable")
             icon_size = 38
             pixbuf = None
-            if icon_value.endswith((".png", ".svg")):
+            if icon_value.endswith((".png", ".svg", ".webp")):
                 if not os.path.isabs(icon_value) and "/" not in icon_value:
                     icon_path = get_icon_path(
                         "local-script.svg"
@@ -453,7 +453,7 @@ class ItemWidgetFactory:
             else:
                 themed = (
                     icon_value
-                    if not icon_value.endswith((".png", ".svg"))
+                    if not icon_value.endswith((".png", ".svg", ".webp"))
                     else "application-x-executable"
                 )
                 icon.set_from_icon_name(themed, Gtk.IconSize.DIALOG)
@@ -479,7 +479,7 @@ class ItemWidgetFactory:
         badge_path = ""
         if not badge_excluded:
             if self._uses_linuxtoys_verified_badge(item_info):
-                badge_path = get_icon_path("ltverified.svg")
+                badge_path = get_icon_path("ltverified.webp")
             elif item_info.get("is_verified", False):
                 badge_path = get_icon_path("verified.svg")
             elif item_info.get("is_appstream_entry", False):
@@ -490,13 +490,13 @@ class ItemWidgetFactory:
                 elif appstream_badge:
                     badge_path = get_icon_path(appstream_badge)
             elif item_info.get("is_repo_entry", False):
-                badge_path = get_icon_path("distros/linuxtoys.svg")
+                badge_path = get_icon_path("distros/linuxtoys.webp")
             elif (
                 item_info.get("is_script", False)
                 and not item_info.get("is_subcategory", False)
                 and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
             ):
-                badge_path = get_icon_path("distros/linuxtoys.svg")
+                badge_path = get_icon_path("distros/linuxtoys.webp")
 
         if overlay is not None and badge_path:
             badge_pixbuf = load_scaled_pixbuf(badge_path, 20, 20, True)

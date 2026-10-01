@@ -52,7 +52,7 @@ class InfosHead(Gtk.Box):
         # LinuxToys' bundled-icon resolver: on distributions such as Arch that
         # can discard an otherwise valid AppStream icon.  This mirrors the icon
         # handling used by the application cards.
-        if icon_value.endswith((".png", ".svg")):
+        if icon_value.lower().endswith((".png", ".svg", ".webp")):
             if os.path.isabs(icon_value) or "/" in icon_value:
                 icon_path = icon_value if os.path.exists(icon_value) else None
             else:

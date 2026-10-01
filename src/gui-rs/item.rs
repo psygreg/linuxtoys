@@ -8,7 +8,7 @@ fn widget_ptr<W: IsA<gtk::Widget>>(widget: &W) -> usize {
 }
 
 fn load_image(value: &str, size: i32) -> gtk::Image {
-    if (value.ends_with(".png") || value.ends_with(".svg")) && Path::new(value).is_file() {
+    if (value.ends_with(".png") || value.ends_with(".svg") || value.ends_with(".webp")) && Path::new(value).is_file() {
         if let Ok(pixbuf) = gdk_pixbuf::Pixbuf::from_file_at_scale(value, size, size, true) {
             return gtk::Image::from_pixbuf(Some(&pixbuf));
         }

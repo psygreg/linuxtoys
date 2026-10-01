@@ -613,7 +613,7 @@ fn resolve_icon_rs(entry:&serde_json::Map<String,Value>,scripts_dir:&Path)->Stri
     if !icon.contains('/')&&!icon.starts_with('.') {return icon.to_owned()}
     if Path::new(icon).is_absolute(){return "application-x-executable".into()}
     let Some(p)=safe_list_path_rs(entry,scripts_dir,icon) else{return "application-x-executable".into()};
-    let lower=p.to_string_lossy().to_ascii_lowercase(); if p.is_file()&&(lower.ends_with(".svg")||lower.ends_with(".png")){p.to_string_lossy().into_owned()}else{"application-x-executable".into()}
+    let lower=p.to_string_lossy().to_ascii_lowercase(); if p.is_file()&&(lower.ends_with(".svg")||lower.ends_with(".png")||lower.ends_with(".webp")){p.to_string_lossy().into_owned()}else{"application-x-executable".into()}
 }
 
 fn resolve_screenshots_rs(entry:&serde_json::Map<String,Value>,scripts_dir:&Path)->Vec<String>{
