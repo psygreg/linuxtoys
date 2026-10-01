@@ -71,35 +71,86 @@ class NavCtl:
                 cache.pop(key, None)
 
     def _create_category_browser_view(self, category_info, view_name):
-        """Create a category surface, adding Available/Installed tabs for menu views."""
+        """Create one complete animated category page: header plus browser content."""
         available_flowbox = self.create_flowbox()
+        content_name = f"{view_name}__content"
 
-        # Checklist categories keep their existing single-list behavior.
+        # Let the existing Rust helpers build the browser content exactly as before,
+        # then reparent that content into a Python-owned page together with the
+        # category header. The wrapper, not the inner browser, becomes the Stack
+        # child so Gtk.Stack animates the header and cards as one surface.
         if category_info.get("display_mode", "menu") == "checklist":
-            view = gui_rs.stack_add_scrolled_flowbox(
-                self.main_stack, available_flowbox, view_name
+            content_view = gui_rs.stack_add_scrolled_flowbox(
+                self.main_stack, available_flowbox, content_name
             )
-            return view, available_flowbox
+        else:
+            available_flowbox._linuxtoys_category_tab = "available"
+            installed_flowbox = self.create_flowbox()
+            installed_flowbox._linuxtoys_category_tab = "installed"
 
-        available_flowbox._linuxtoys_category_tab = "available"
-        installed_flowbox = self.create_flowbox()
-        installed_flowbox._linuxtoys_category_tab = "installed"
+            content_view = gui_rs.stack_add_category_browser(
+                self.main_stack,
+                available_flowbox,
+                installed_flowbox,
+                content_name,
+                available_label=self.translations.get("category_available", "Available"),
+                installed_label=self.translations.get("app_page_installed", "Installed"),
+            )
 
-        view = gui_rs.stack_add_category_browser(
-            self.main_stack,
-            available_flowbox,
-            installed_flowbox,
-            view_name,
-            available_label=self.translations.get("category_available", "Available"),
-            installed_label=self.translations.get("app_page_installed", "Installed"),
+            if not self._category_has_installed_items(category_info):
+                switcher = content_view._linuxtoys_category_switcher
+                switcher.set_no_show_all(True)
+                switcher.hide()
+
+        # Detach without destroying: the content is immediately reparented below.
+        self.main_stack.remove(content_view)
+
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        category_header = header.create_header(self.translations, category_info)
+        page.pack_start(category_header, False, False, 8)
+        page.pack_start(content_view, True, True, 0)
+
+        page._linuxtoys_category_header = category_header
+        page._linuxtoys_category_content = content_view
+        page._linuxtoys_category_info = category_info
+
+        # Preserve the browser attributes consumed elsewhere through scripts_view.
+        for attr in (
+            "_linuxtoys_available_flowbox",
+            "_linuxtoys_installed_flowbox",
+            "_linuxtoys_category_switcher",
+            "_linuxtoys_category_tabs",
+        ):
+            if hasattr(content_view, attr):
+                setattr(page, attr, getattr(content_view, attr))
+
+        gui_rs.stack_attach_child(
+            self.main_stack, page, view_name, make_visible=False
         )
+        page.show_all()
+        return page, available_flowbox
 
-        if not self._category_has_installed_items(category_info):
-            switcher = view._linuxtoys_category_switcher
-            switcher.set_no_show_all(True)
-            switcher.hide()
+    def _update_embedded_category_header(self, view, category_info):
+        """Refresh a retained category page's in-stack header in place."""
+        if view is None or category_info is None:
+            return False
 
-        return view, available_flowbox
+        old_header = getattr(view, "_linuxtoys_category_header", None)
+        content_view = getattr(view, "_linuxtoys_category_content", None)
+        if old_header is None or content_view is None:
+            return False
+
+        if old_header.get_parent() is view:
+            view.remove(old_header)
+        old_header.destroy()
+
+        new_header = header.create_header(self.translations, category_info)
+        view.pack_start(new_header, False, False, 8)
+        view.reorder_child(new_header, 0)
+        view._linuxtoys_category_header = new_header
+        view._linuxtoys_category_info = category_info
+        new_header.show_all()
+        return True
 
     def on_category_clicked(self, widget, event):
         """Handles category click, subcategory click, or root script click."""
@@ -198,6 +249,8 @@ class NavCtl:
             self.main_stack, page, "app_page", make_visible=False
         )
 
+        # Category headers are part of their Stack child, so no external-header
+        # timing workaround is needed. App pages intentionally use no outer header.
         self.header_widget.hide()
         self.reveal.set_reveal_child(False)
         self.back_button.show()
@@ -797,9 +850,11 @@ class NavCtl:
         )
         self.header_bar.props.title = f"LinuxToys: {category_name}"
 
-        # Update header with category information
+        # Category headers live inside scripts_view so they participate in the
+        # same Gtk.Stack transition as the category cards.
+        self.header_widget.hide()
         if category_info:
-            self._update_header(category_info)
+            self._update_embedded_category_header(self.scripts_view, category_info)
 
         # Enable drag-and-drop only for Local Scripts category
         if self._is_local_scripts_category(category_info):
@@ -814,15 +869,25 @@ class NavCtl:
             self.reveal.set_reveal_child(False)
 
     def _update_header(self, category_info=None):
-        """Updates the header with new category information."""
-        # Remove the old header
+        """Update root/external header state or the current in-stack category header."""
+        if category_info is not None:
+            # Category pages own their header. Keep the legacy outer header hidden
+            # so it contributes no allocation outside the animated Stack child.
+            self.header_widget.hide()
+            self._update_embedded_category_header(
+                getattr(self, "scripts_view", None), category_info
+            )
+            return
+
+        # Root Categories retains the historical external header object (which
+        # create_header hides for the main menu). Utility/search code can continue
+        # to manage this object independently.
         main_vbox = self.get_child()
-        main_vbox.remove(self.header_widget)
+        if self.header_widget.get_parent() is main_vbox:
+            main_vbox.remove(self.header_widget)
+        self.header_widget.destroy()
 
-        # Create new header with category info
-        self.header_widget = header.create_header(self.translations, category_info)
+        self.header_widget = header.create_header(self.translations)
         main_vbox.pack_start(self.header_widget, False, False, 8)
-        main_vbox.reorder_child(self.header_widget, 0)  # Move to top
-
-        # Show the new header
+        main_vbox.reorder_child(self.header_widget, 0)
         self.header_widget.show_all()

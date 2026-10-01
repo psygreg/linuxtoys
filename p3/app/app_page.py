@@ -1750,6 +1750,15 @@ class AppPageView(Gtk.Box):
         # parent. _schedule_featured_fill adds the normal settling debounce itself.
         GLib.idle_add(self._schedule_featured_fill)
 
+    def _on_body_visible_child_changed(self, stack, _pspec):
+        """Populate the Extensions tab only when the user actually opens it."""
+        extensions_view = self._extensions_view
+        if (
+            extensions_view is not None
+            and stack.get_visible_child() is extensions_view
+        ):
+            extensions_view.ensure_populated()
+
     def _sync_extensions_tabs(self):
         """Show Details/Extensions only when the selected Flatpak source has addons."""
         if self._body_holder is None:
@@ -1811,6 +1820,7 @@ class AppPageView(Gtk.Box):
         self._body_stack = stack
         self._body_switcher = switcher
         self._extensions_view = extensions_view
+        stack.connect("notify::visible-child", self._on_body_visible_child_changed)
 
         # Realize/show both stack children first, then choose Details while
         # transitions are disabled. This prevents GTK from settling on the

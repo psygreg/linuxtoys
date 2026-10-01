@@ -27,11 +27,19 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
         self.content.set_margin_top(18)
         self.content.set_margin_bottom(18)
         self.add(self.content)
-        self.refresh()
+        self._populated = False
 
     def set_source(self, source_info, extensions):
         self.source_info = dict(source_info)
         self.extensions = [dict(item) for item in extensions]
+        if self._populated:
+            self.refresh()
+
+    def ensure_populated(self):
+        """Populate extension state/rows only when the tab is first shown."""
+        if self._populated:
+            return
+        self._populated = True
         self.refresh()
 
     def refresh(self):
@@ -71,7 +79,7 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
         icon_value = str(info.get("icon") or "application-x-addon-symbolic")
         icon_path = ""
         icon_name = icon_value
-        if icon_value.endswith((".png", ".svg")):
+        if icon_value.lower().endswith((".png", ".svg", ".webp")):
             path = icon_value if os.path.isabs(icon_value) else get_icon_path(icon_value)
             if path and os.path.exists(path):
                 icon_path = path
