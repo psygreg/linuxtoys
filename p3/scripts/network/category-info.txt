@@ -1,2 +1,2 @@
-ICON: network.svg
+ICON: net.svg
 description: network_desc
