@@ -184,16 +184,20 @@ class ItemWidgetFactory:
         # Remote icons are first-class sources for the native Rust image loader.
         # Do not classify URL paths ending in .png/.svg/.webp as local filesystem icons.
         is_remote_icon = icon_value.startswith(("https://", "http://", "/v2/"))
-        if not is_remote_icon and icon_value.endswith((".png", ".svg", ".webp")):
-            if not os.path.isabs(icon_value) and "/" not in icon_value:
+        if not is_remote_icon:
+            if os.path.isabs(icon_value) and os.path.isfile(icon_value):
+                # AppStream and other sources may use any image format supported by
+                # GdkPixbuf, including JXL on current Arch/CachyOS catalogs.
+                icon_path = icon_value
+                icon_name = "application-x-executable"
+            elif "/" not in icon_value and icon_value.endswith((".png", ".svg", ".webp")):
+                # LinuxToys-bundled relative artwork.
                 icon_path = get_icon_path(
                     "local-script.svg"
                     if ".local/linuxtoys/scripts" in (item_info.get("path") or "")
                     else icon_value
                 ) or ""
-            elif os.path.exists(icon_value):
-                icon_path = icon_value
-            icon_name = "application-x-executable"
+                icon_name = "application-x-executable"
 
         verified = item_info.get("is_verified", False)
         distro_badge = str(item_info.get("native_distro_badge", "") or "")

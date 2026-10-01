@@ -124,19 +124,55 @@ def _as_list(value):
 
 
 def _icon_value(component) -> str:
-    # Prefer a cached local PNG/SVG because LinuxToys can display it directly.
-    for icon in _as_list(_safe_call(component, "get_icons", [])):
+    # AppStream cached icons are not necessarily exposed as absolute filenames.
+    # Arch-style catalogs, for example, keep them below /usr/share/swcatalog/icons
+    # and may expose only the cached icon name plus its size.
+    icons = _as_list(_safe_call(component, "get_icons", []))
+    cached_roots = (
+        "/usr/share/swcatalog/icons",
+        "/var/cache/swcatalog/icons",
+        "/usr/share/app-info/icons",
+        "/var/cache/app-info/icons",
+        "/var/lib/app-info/icons",
+    )
+
+    for icon in icons:
         for method in ("get_filename", "get_name"):
             value = _safe_call(icon, method, "")
             if not value:
                 continue
-            value = str(value)
+            value = str(value).strip()
             if os.path.isabs(value) and os.path.isfile(value):
                 return value
 
+            # Resolve cached AppStream icon names against the distro cache.  Use
+            # the advertised size first, but keep a recursive fallback because
+            # repositories add an origin directory between icons/ and SIZE/.
+            if value and not os.path.isabs(value):
+                width = _safe_call(icon, "get_width", 0) or 0
+                height = _safe_call(icon, "get_height", 0) or 0
+                sizes = []
+                if width and height:
+                    sizes.append(f"{int(width)}x{int(height)}")
+                sizes.extend(size for size in ("128x128", "64x64", "48x48") if size not in sizes)
+
+                for root in cached_roots:
+                    root_path = Path(root)
+                    if not root_path.is_dir():
+                        continue
+                    for size in sizes:
+                        direct = root_path / size / value
+                        if direct.is_file():
+                            return str(direct)
+                        try:
+                            match = next(root_path.glob(f"*/{size}/{value}"), None)
+                        except OSError:
+                            match = None
+                        if match is not None and match.is_file():
+                            return str(match)
+
     # A stock icon name is the best portable fallback and lets Gtk.IconTheme do
-    # the resolution.  JXL/remote icons can be added later without changing the
-    # cache schema.
+    # the resolution.
     stock = _safe_call(component, "get_icon_stock")
     for method in ("get_name", "get_filename"):
         value = _safe_call(stock, method, "")
@@ -144,6 +180,14 @@ def _icon_value(component) -> str:
             value = str(value)
             if not os.path.isabs(value):
                 return value
+
+    # Some metadata exposes a themed/stock icon through get_icons() without a
+    # separate get_icon_stock() result.  Preserve a simple extensionless name so
+    # Gtk.IconTheme still gets a chance to resolve it.
+    for icon in icons:
+        value = str(_safe_call(icon, "get_name", "") or "").strip()
+        if value and not os.path.isabs(value) and "/" not in value and not Path(value).suffix:
+            return value
 
     return "application-x-executable"
 

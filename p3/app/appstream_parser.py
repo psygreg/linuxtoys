@@ -567,7 +567,7 @@ def _system_flatpak_lock_ids():
 
 
 _DISTRO_BADGES = (
-    ("cachy", "cachyos.webp"),
+    ("cachy", "cachy.webp"),
     ("manjaro", "manjaro.webp"),
     ("ubuntu", "ubuntu.webp"),
     ("debian", "debian.webp"),
