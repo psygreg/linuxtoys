@@ -479,16 +479,6 @@ def _curated_identity_sets(curated_entries):
 
     return ids, packages, names
 
-
-
-
-
-
-
-
-
-
-
 def _host_os_keys():
     values = set()
     try:
@@ -513,25 +503,6 @@ def _host_os_keys():
     values.update(aliases[key] for key in tuple(values) if key in aliases)
     return values
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def _appstream_omit_keys():
     result = set()
     for value in APPSTREAM_OMIT:
@@ -541,8 +512,6 @@ def _appstream_omit_keys():
         if key:
             result.add(key)
     return result
-
-
 
 
 def _system_flatpak_lock_ids():
