@@ -129,6 +129,7 @@ Depends: ${shlibs:Depends},
  gir1.2-gtk-3.0,
  gir1.2-vte-2.91,
  gir1.2-appstream-1.0,
+ webp-pixbuf-loader,
  sudo | sudo-rs
 Description: A set of tools for Linux presented in a user-friendly way.
  .

@@ -298,13 +298,24 @@ unset UPINFO || true
 # Deploy the launcher/runtime and the GTK3 zenity helper used by LinuxToys.
 # This follows pkgforge's proven LinuxToys recipe, but against our source-built
 # AppDir rather than the AUR package.
+WEBP_PIXBUF_LOADER="$(
+    find /usr/lib/gdk-pixbuf-2.0 -type f \
+        -name 'libpixbufloader-webp.so' \
+        -print -quit
+)"
+[ -n "$WEBP_PIXBUF_LOADER" ] || {
+    echo "Error: WebP GdkPixbuf loader not found."
+    exit 1
+}
+
 (
     cd "$BUILD_DIR"
     "$QUICK_SHARUN" \
         "$APP_BIN/linuxtoys" \
         /usr/bin/zenity \
         /usr/bin/script \
-        /usr/lib/libappstream.so.5
+        /usr/lib/libappstream.so.5 \
+        "$WEBP_PIXBUF_LOADER"
 )
 
 # AppStream is loaded dynamically through GObject Introspection, so its typelib
