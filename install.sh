@@ -109,7 +109,7 @@ osarch() {
                 webp-pixbuf-loader
             )
             for pkg in "${dependencies[@]}"; do
-                sudo pacman -S --noconfirm "${pkg}"
+                sudo pacman -S --noconfirm --needed "${pkg}"
             done
         fi
         if sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
