@@ -2,7 +2,7 @@
 # name: DNSMasq
 # version: 1.0
 # description: dnsmasq_desc
-# icon: dnsmasq.svg
+# icon: dnsmasq.webp
 # nocontainer
 # reboot: yes
 # repo: https://thekelleys.org.uk/gitweb/?p=dnsmasq.git

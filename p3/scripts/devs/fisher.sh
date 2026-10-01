@@ -2,7 +2,7 @@
 # name: Fisher
 # version: 1.0
 # description: fisher_desc
-# icon: fish.svg
+# icon: fish.webp
 # repo: https://github.com/jorgebucaran/fisher
 # compat: !steamos
 

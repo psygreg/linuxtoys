@@ -5,7 +5,7 @@
         "description_tag": "kdenlive_desc",
         "repo": "https://kdenlive.org",
         "category": "office",
-        "icon": "kdenlive.svg",
+        "icon": "kdenlive.webp",
         "license": "GPLv3",
         "type": "url",
         "urls": {

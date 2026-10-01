@@ -2,7 +2,7 @@
 # name: Portainer CE
 # version: 1.0
 # description: portainer_desc
-# icon: portainer.svg
+# icon: portainer.webp
 # revert: no
 # compat: !steamos
 

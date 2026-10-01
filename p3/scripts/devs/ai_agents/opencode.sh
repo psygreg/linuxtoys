@@ -2,7 +2,7 @@
 # name: OpenCode
 # version: 1.0
 # description: opencode_desc
-# icon: opencode.svg
+# icon: opencode.webp
 # repo: https://github.com/opencode-ai/opencode
 # compat: debian, ubuntu, fedora, arch, cachy, ostree, rhel, suse, solus
 # noconfirm: yes
@@ -20,7 +20,7 @@ if command -v opencode &>/dev/null; then
     else
         zeninf "$msg281"
         exit 100
-    fi  
+    fi
 fi
 
 sudo_rq

@@ -55,7 +55,7 @@
         "description_tag": "openboardview_desc",
         "repo": "https://github.com/OpenBoardView/OpenBoardView",
         "category": "eng",
-        "icon": "openboardview.svg",
+        "icon": "openboardview.webp",
         "type": {
             "arch": "native",
             "cachy": "native",
@@ -364,7 +364,7 @@
         "description_tag": "rbase_desc",
         "repo": "https://www.r-project.org/",
         "category": "devs",
-        "icon": "rbase.svg",
+        "icon": "rbase.webp",
         "type": "native",
         "package-name": {
             "solus": "r",

@@ -2,7 +2,7 @@
 # name: IVPN
 # version: 1.0
 # description: IVPN
-# icon: ivpn.svg
+# icon: ivpn.webp
 # compat: ubuntu, debian, fedora, ostree, ublue, rhel
 # repo: https://www.ivpn.net
 

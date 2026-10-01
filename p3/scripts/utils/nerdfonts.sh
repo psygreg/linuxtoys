@@ -2,7 +2,7 @@
 # name: Nerd Fonts
 # version: 1.0
 # description: nerdfonts_desc
-# icon: nerdfonts.svg
+# icon: nerdfonts.webp
 # repo: https://www.nerdfonts.com
 
 # --- Start of the script code ---
@@ -53,7 +53,7 @@ rm -f "${_selection_file}"
 
 [ ${#_selected_fonts[@]} -gt 0 ] || { zenwrn "No font selected"; exit 0; }
 
-mkdir -p "${_work_dir}" 
+mkdir -p "${_work_dir}"
 prep_dir "${_fonts_dir}"
 
 for _font in "${_selected_fonts[@]}"; do

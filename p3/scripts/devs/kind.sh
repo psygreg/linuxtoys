@@ -2,7 +2,7 @@
 # name: Kind (Kubernetes)
 # version: 1.0
 # description: kind_desc
-# icon: kind.svg
+# icon: kind.webp
 # compat: ubuntu, debian, fedora, suse, arch, cachy, ostree, ublue, rhel
 # repo: https://kind.sigs.k8s.io/
 

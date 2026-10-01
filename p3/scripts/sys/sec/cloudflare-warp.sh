@@ -2,7 +2,7 @@
 # name: Cloudflare WARP
 # version: 1.0
 # description: cloudflare_warp_desc
-# icon: cloudflare-warp.svg
+# icon: cloudflare-warp.webp
 # compat: ubuntu, debian, rhel
 # nocontainer
 

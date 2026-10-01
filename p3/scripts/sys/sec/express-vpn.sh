@@ -2,7 +2,7 @@
 # name: Express VPN
 # version: 1.0
 # description: Express VPN
-# icon: expressvpn.svg
+# icon: expressvpn.webp
 # compat: ubuntu, debian, fedora, arch, cachy, rhel
 # repo: https://www.expressvpn.com
 # revert: no
