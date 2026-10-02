@@ -683,5 +683,6 @@
   "app_page_extensions": "တိုးချဲ့မှုများ",
   "category_available": "ရရှိနိုင်သည်",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’၊ ကွန်ရက် throughput ကို အမြင့်ဆုံးနှင့် latency ကို အနည်းဆုံးဖြစ်စေရန် Google မှ ဒီဇိုင်းထုတ်ထားသော အဆင့်မြင့် congestion control algorithm ဖြစ်သည်။",
-  "snap_desc": "Canonical Snapcraft repository များနှင့် ၎င်းတို့၏ snapd service။"
+  "snap_desc": "Canonical Snapcraft repository များနှင့် ၎င်းတို့၏ snapd service။",
+  "resolveaac_desc": "Linux ပေါ်ရှိ DaVinci Resolve Studio အတွက် AAC import/playback နှင့် export။"
 }

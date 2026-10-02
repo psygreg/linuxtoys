@@ -683,5 +683,6 @@
   "app_page_extensions": "Rozšíření",
   "category_available": "Dostupné",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, pokročilý algoritmus řízení zahlcení od Googlu navržený pro maximalizaci propustnosti sítě a minimalizaci latence.",
-  "snap_desc": "Repozitáře Canonical Snapcraft se službou snapd."
+  "snap_desc": "Repozitáře Canonical Snapcraft se službou snapd.",
+  "resolveaac_desc": "Import/přehrávání a export AAC pro DaVinci Resolve Studio v Linuxu."
 }

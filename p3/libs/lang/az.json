@@ -682,5 +682,6 @@
   "app_page_extensions": "Genişləndirmələr",
   "category_available": "Mövcud",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, şəbəkə ötürmə qabiliyyətini maksimuma çatdırmaq və gecikməni minimuma endirmək üçün Google tərəfindən hazırlanmış qabaqcıl sıxlıq idarəetmə alqoritmi.",
-  "snap_desc": "Canonical Snapcraft repozitoriyaları və onların snapd xidməti."
+  "snap_desc": "Canonical Snapcraft repozitoriyaları və onların snapd xidməti.",
+  "resolveaac_desc": "Linux-da DaVinci Resolve Studio üçün AAC idxalı/oxudulması və ixracı."
 }

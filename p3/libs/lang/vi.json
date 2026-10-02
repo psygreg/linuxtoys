@@ -683,5 +683,6 @@
   "app_page_extensions": "Tiện ích mở rộng",
   "category_available": "Có sẵn",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, thuật toán kiểm soát tắc nghẽn tiên tiến của Google được thiết kế để tối đa hóa thông lượng mạng và giảm thiểu độ trễ.",
-  "snap_desc": "Các kho phần mềm Canonical Snapcraft cùng với dịch vụ snapd."
+  "snap_desc": "Các kho phần mềm Canonical Snapcraft cùng với dịch vụ snapd.",
+  "resolveaac_desc": "Nhập/phát và xuất AAC cho DaVinci Resolve Studio trên Linux."
 }

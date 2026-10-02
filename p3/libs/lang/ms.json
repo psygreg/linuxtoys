@@ -683,5 +683,6 @@
   "app_page_extensions": "Sambungan",
   "category_available": "Tersedia",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritma kawalan kesesakan lanjutan Google yang direka untuk memaksimumkan daya pemprosesan rangkaian dan meminimumkan kependaman.",
-  "snap_desc": "Repositori Canonical Snapcraft bersama perkhidmatan snapd."
+  "snap_desc": "Repositori Canonical Snapcraft bersama perkhidmatan snapd.",
+  "resolveaac_desc": "Import/main balik dan eksport AAC untuk DaVinci Resolve Studio di Linux."
 }

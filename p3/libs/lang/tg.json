@@ -683,5 +683,6 @@
   "app_page_extensions": "Васеъкуниҳо",
   "category_available": "Дастрас",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, алгоритми пешрафтаи Google барои идоракунии серборӣ, ки барои ба ҳадди аксар расонидани гузарониши шабака ва кам кардани таъхир тарҳрезӣ шудааст.",
-  "snap_desc": "Анборҳои Canonical Snapcraft бо хидмати snapd."
+  "snap_desc": "Анборҳои Canonical Snapcraft бо хидмати snapd.",
+  "resolveaac_desc": "Воридот/пахш ва содироти AAC барои DaVinci Resolve Studio дар Linux."
 }

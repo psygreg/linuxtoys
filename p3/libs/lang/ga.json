@@ -683,5 +683,6 @@
   "app_page_extensions": "Eisínteachtaí",
   "category_available": "Ar fáil",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ard-algartam rialaithe plódaithe Google atá deartha chun tréchur líonra a uasmhéadú agus aga folaigh a íoslaghdú.",
-  "snap_desc": "Stórtha Canonical Snapcraft lena seirbhís snapd."
+  "snap_desc": "Stórtha Canonical Snapcraft lena seirbhís snapd.",
+  "resolveaac_desc": "Iompórtáil/athsheinm agus easpórtáil AAC do DaVinci Resolve Studio ar Linux."
 }

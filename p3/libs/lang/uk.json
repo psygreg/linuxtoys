@@ -683,5 +683,6 @@
   "app_page_extensions": "Розширення",
   "category_available": "Доступно",
   "bbr_desc": "«Bottleneck Bandwidth and Round-trip propagation time» — удосконалений алгоритм Google для керування перевантаженням, розроблений для максимізації пропускної здатності мережі та мінімізації затримки.",
-  "snap_desc": "Репозиторії Canonical Snapcraft разом зі службою snapd."
+  "snap_desc": "Репозиторії Canonical Snapcraft разом зі службою snapd.",
+  "resolveaac_desc": "Імпорт/відтворення та експорт AAC для DaVinci Resolve Studio у Linux."
 }

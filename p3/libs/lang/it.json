@@ -683,5 +683,6 @@
   "app_page_extensions": "Estensioni",
   "category_available": "Disponibile",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, l'algoritmo avanzato di Google per il controllo della congestione, progettato per massimizzare il throughput della rete e ridurre al minimo la latenza.",
-  "snap_desc": "Repository Canonical Snapcraft con il relativo servizio snapd."
+  "snap_desc": "Repository Canonical Snapcraft con il relativo servizio snapd.",
+  "resolveaac_desc": "Importazione/riproduzione ed esportazione AAC per DaVinci Resolve Studio su Linux."
 }

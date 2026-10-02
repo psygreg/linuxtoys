@@ -683,5 +683,6 @@
   "app_page_extensions": "გაფართოებები",
   "category_available": "ხელმისაწვდომი",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ — Google-ის მოწინავე გადატვირთვის კონტროლის ალგორითმი, რომელიც შექმნილია ქსელის გამტარუნარიანობის მაქსიმალურად გაზრდისა და დაყოვნების მინიმუმამდე შემცირებისთვის.",
-  "snap_desc": "Canonical Snapcraft-ის რეპოზიტორიები snapd სერვისთან ერთად."
+  "snap_desc": "Canonical Snapcraft-ის რეპოზიტორიები snapd სერვისთან ერთად.",
+  "resolveaac_desc": "AAC-ის იმპორტი/დაკვრა და ექსპორტი DaVinci Resolve Studio-სთვის Linux-ზე."
 }

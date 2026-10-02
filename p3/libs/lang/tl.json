@@ -683,5 +683,6 @@
   "app_page_extensions": "Mga extension",
   "category_available": "Available",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, advanced congestion control algorithm ng Google na idinisenyo para i-maximize ang network throughput at i-minimize ang latency.",
-  "snap_desc": "Mga repository ng Canonical Snapcraft kasama ang snapd service nito."
+  "snap_desc": "Mga repository ng Canonical Snapcraft kasama ang snapd service nito.",
+  "resolveaac_desc": "Pag-import/pag-playback at pag-export ng AAC para sa DaVinci Resolve Studio sa Linux."
 }

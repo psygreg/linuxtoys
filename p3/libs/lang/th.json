@@ -683,5 +683,6 @@
   "app_page_extensions": "ส่วนขยาย",
   "category_available": "พร้อมใช้งาน",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ อัลกอริทึมควบคุมความแออัดขั้นสูงของ Google ที่ออกแบบมาเพื่อเพิ่มปริมาณงานของเครือข่ายให้สูงสุดและลดเวลาแฝงให้เหลือน้อยที่สุด",
-  "snap_desc": "คลัง Canonical Snapcraft พร้อมบริการ snapd"
+  "snap_desc": "คลัง Canonical Snapcraft พร้อมบริการ snapd",
+  "resolveaac_desc": "การนำเข้า/เล่นและส่งออก AAC สำหรับ DaVinci Resolve Studio บน Linux"
 }

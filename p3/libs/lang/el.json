@@ -683,5 +683,6 @@
   "app_page_extensions": "Επεκτάσεις",
   "category_available": "Διαθέσιμο",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ο προηγμένος αλγόριθμος ελέγχου συμφόρησης της Google, σχεδιασμένος για τη μεγιστοποίηση της απόδοσης του δικτύου και την ελαχιστοποίηση της καθυστέρησης.",
-  "snap_desc": "Αποθετήρια Canonical Snapcraft με την υπηρεσία snapd."
+  "snap_desc": "Αποθετήρια Canonical Snapcraft με την υπηρεσία snapd.",
+  "resolveaac_desc": "Εισαγωγή/αναπαραγωγή και εξαγωγή AAC για το DaVinci Resolve Studio στο Linux."
 }

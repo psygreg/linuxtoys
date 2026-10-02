@@ -682,5 +682,6 @@
   "app_page_extensions": "Өргөтгөлүүд",
   "category_available": "Боломжтой",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, сүлжээний дамжуулах чадварыг дээд хэмжээнд хүргэж, саатлыг багасгах зорилготой Google-ийн дэвшилтэт түгжрэлийн хяналтын алгоритм.",
-  "snap_desc": "Canonical Snapcraft репозиторууд болон тэдгээрийн snapd үйлчилгээ."
+  "snap_desc": "Canonical Snapcraft репозиторууд болон тэдгээрийн snapd үйлчилгээ.",
+  "resolveaac_desc": "Linux дээрх DaVinci Resolve Studio-д AAC импорт/тоглуулах болон экспортлох."
 }

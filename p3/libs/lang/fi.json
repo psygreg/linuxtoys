@@ -683,5 +683,6 @@
   "app_page_extensions": "Laajennukset",
   "category_available": "Saatavilla",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googlen edistynyt ruuhkanhallinta-algoritmi, joka on suunniteltu maksimoimaan verkon läpäisykyky ja minimoimaan viive.",
-  "snap_desc": "Canonical Snapcraft -pakettivarastot ja niiden snapd-palvelu."
+  "snap_desc": "Canonical Snapcraft -pakettivarastot ja niiden snapd-palvelu.",
+  "resolveaac_desc": "AAC-tuonti/toisto ja vienti DaVinci Resolve Studioon Linuxissa."
 }

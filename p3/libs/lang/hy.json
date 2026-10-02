@@ -683,5 +683,6 @@
   "app_page_extensions": "Ընդլայնումներ",
   "category_available": "Հասանելի",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Google-ի առաջադեմ գերբեռնվածության կառավարման ալգորիթմը, որը նախատեսված է ցանցի թողունակությունը առավելագույնի և ուշացումը նվազագույնի հասցնելու համար։",
-  "snap_desc": "Canonical Snapcraft շտեմարանները՝ իրենց snapd ծառայությամբ։"
+  "snap_desc": "Canonical Snapcraft շտեմարանները՝ իրենց snapd ծառայությամբ։",
+  "resolveaac_desc": "AAC ներմուծում/նվագարկում և արտահանում DaVinci Resolve Studio-ի համար Linux-ում։"
 }

@@ -191,7 +191,13 @@ dv_rhel () {
         move_ /opt/resolve/libs/libgio* /opt/resolve/libs/disabled/
         move_ /opt/resolve/libs/libgmodule* /opt/resolve/libs/disabled/
 
-        zeninf "$finishmsg"
+        if [ "$_upkgname" = "davinci-resolve-studio" ]; then
+            export AUTO_DVNAT=1
+            call_script resolveaac
+            call_script resolvehw
+        fi
+
+        info "$finishmsg"
     }
 
     while true; do
@@ -256,6 +262,13 @@ davinciboxatom () {
         fi
         cd $HOME
         sudo rm -rf davincibox #cleanup
+
+        if [ "$_upkgname" = "davinci-resolve-studio" ]; then
+            export AUTO_DVBOX=1
+            call_script resolveaac
+            call_script resolvehw
+        fi
+
         zeninf "$finishmsg"
     }
 

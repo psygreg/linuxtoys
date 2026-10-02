@@ -683,5 +683,6 @@
   "app_page_extensions": "확장 기능",
   "category_available": "사용 가능",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, 네트워크 처리량을 극대화하고 지연 시간을 최소화하도록 설계된 Google의 고급 혼잡 제어 알고리즘입니다.",
-  "snap_desc": "snapd 서비스를 사용하는 Canonical Snapcraft 저장소."
+  "snap_desc": "snapd 서비스를 사용하는 Canonical Snapcraft 저장소.",
+  "resolveaac_desc": "Linux용 DaVinci Resolve Studio에서 AAC 가져오기/재생 및 내보내기."
 }

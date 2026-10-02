@@ -685,5 +685,6 @@
   "app_page_extensions": "扩展",
   "category_available": "可用",
   "bbr_desc": "“Bottleneck Bandwidth and Round-trip propagation time”，Google 设计的高级拥塞控制算法，旨在最大化网络吞吐量并尽可能降低延迟。",
-  "snap_desc": "Canonical Snapcraft 软件仓库及其 snapd 服务。"
+  "snap_desc": "Canonical Snapcraft 软件仓库及其 snapd 服务。",
+  "resolveaac_desc": "在 Linux 上为 DaVinci Resolve Studio 提供 AAC 导入/播放和导出支持。"
 }
