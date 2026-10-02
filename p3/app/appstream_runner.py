@@ -314,7 +314,7 @@ class AppStreamRunner:
         env["HISTFILE"] = "/dev/null"
 
         self._process = subprocess.Popen(
-            ["script", "-qefc", "stty -echo; exec bash --noprofile --norc", "/dev/null"],
+            ["script", "-qefc", "stty -echo rows 24 cols 120; exec bash --noprofile --norc", "/dev/null"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
