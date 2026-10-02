@@ -328,6 +328,11 @@ def _parse_operation(op_line):
         elif op_type == "distrobox":
             # distrobox operations have format: "distrobox container_name"
             return op_type, parts[1:]
+        elif op_type == "distrobox-fs":
+            # Encoded format: "distrobox-fs action container64 path64".
+            # Base64 keeps arbitrary container names and paths safe in the
+            # whitespace-delimited transaction map.
+            return op_type, parts[1:]
         elif op_type == "rclone":
             # rclone operations have format: "rclone mounted /source /destination"
             if len(parts) >= 2 and parts[1] == "mounted":
@@ -697,6 +702,43 @@ def _reverse_bun_installation(packages):
     return commands
 
 
+def _reverse_distrobox_fs(operands):
+    """Reverse a filesystem operation performed inside a Distrobox container."""
+    if len(operands) < 3:
+        return []
+
+    action, container64, path64 = operands[:3]
+
+    try:
+        container = base64.b64decode(container64, validate=True).decode("utf-8")
+        path = base64.b64decode(path64, validate=True).decode("utf-8")
+    except (ValueError, UnicodeDecodeError):
+        return []
+
+    if not container or not path:
+        return []
+
+    container_q = shlex.quote(container)
+    path_q = shlex.quote(path)
+    backup_q = shlex.quote(path + ".bak")
+
+    if action == "created":
+        return [
+            f"distrobox enter {container_q} -- rm -rf -- {path_q} 2>/dev/null || "
+            f"distrobox enter {container_q} -- sudo rm -rf -- {path_q}"
+        ]
+
+    if action in ("edited", "removed"):
+        return [
+            f"{{ distrobox enter {container_q} -- rm -rf -- {path_q} 2>/dev/null && "
+            f"distrobox enter {container_q} -- mv -- {backup_q} {path_q} 2>/dev/null; }} || "
+            f"{{ distrobox enter {container_q} -- sudo rm -rf -- {path_q} && "
+            f"distrobox enter {container_q} -- sudo mv -- {backup_q} {path_q}; }}"
+        ]
+
+    return []
+
+
 def _reverse_distrobox_creation(container_names):
     """Reverse distrobox container creation(s) by removing it/them.
     
@@ -955,6 +997,10 @@ def _reverse_operation(op_line, package_manager):
     elif op_type == "distrobox" and operands:
         # Reverse distrobox container creation by removing
         return _reverse_distrobox_creation(operands)
+
+    elif op_type == "distrobox-fs" and operands:
+        # Reverse filesystem changes made inside an existing Distrobox container.
+        return _reverse_distrobox_fs(operands)
     
     elif op_type == "rclone mounted" and operands:
         # Reverse rclone mountpoint creation by unmounting
