@@ -542,7 +542,7 @@ _DISTRO_BADGES = (
     ("debian", "debian.webp"),
     ("rhel", "redhat.webp"),
     ("fedora", "fedora.webp"),
-    ("suse", "opensuse.webp"),
+    ("suse", "suse.webp"),
     ("solus", "solus.webp"),
     ("arch", "arch.webp"),
 )
