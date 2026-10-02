@@ -684,5 +684,18 @@
   "category_available": "ມີໃຫ້ໃຊ້",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ອັນກໍຣິທຶມຄວບຄຸມຄວາມແອອັດຂັ້ນສູງຂອງ Google ທີ່ອອກແບບມາເພື່ອເພີ່ມປະສິດທິພາບການຮັບສົ່ງຂອງເຄືອຂ່າຍໃຫ້ສູງສຸດ ແລະຫຼຸດຄວາມຫນ່ວງໃຫ້ຕ່ຳສຸດ.",
   "snap_desc": "ຄັງຊອບແວ Canonical Snapcraft ພ້ອມກັບບໍລິການ snapd.",
-  "resolveaac_desc": "ການນຳເຂົ້າ/ຫຼິ້ນ ແລະ ສົ່ງອອກ AAC ສຳລັບ DaVinci Resolve Studio ເທິງ Linux."
+  "resolveaac_desc": "ການນຳເຂົ້າ/ຫຼິ້ນ ແລະ ສົ່ງອອກ AAC ສຳລັບ DaVinci Resolve Studio ເທິງ Linux.",
+  "aur_security_blocked_title": "ແພັກເກດ AUR ຖືກບລັອກ",
+  "aur_security_blocked_message": "LinuxToys ກວດພົບການປິດບັງໂຄດໃນສະຄຣິບສ້າງ ຫຼື ຕິດຕັ້ງສຳລັບ '{name}'. ການຕິດຕັ້ງຖືກບລັອກເພື່ອຄວາມປອດໄພຂອງທ່ານ.\n\nກວດພົບ:\n{details}",
+  "aur_security_unavailable_title": "ການກວດສອບຄວາມປອດໄພ AUR ລົ້ມເຫຼວ",
+  "aur_security_unavailable_message": "LinuxToys ບໍ່ສາມາດກວດສອບສະຄຣິບສ້າງ ແລະ ຕິດຕັ້ງສຳລັບ '{name}' ໄດ້, ດັ່ງນັ້ນຈຶ່ງບໍ່ໄດ້ເລີ່ມການຕິດຕັ້ງ.\n\n{details}",
+  "aur_category": "ຄັງຊອບແວຜູ້ໃຊ້ Arch (AUR)",
+  "aur_category_desc": "ເບິ່ງແພັກເກດຈາກ Arch User Repository.",
+  "aur_warning_title": "ເປີດໃຊ້ AUR?",
+  "aur_warning_message": "Arch User Repository ມີສະຄຣິບສ້າງທີ່ຜູ້ໃຊ້ສ້າງຂຶ້ນ ເຊິ່ງ Arch Linux ບໍ່ໄດ້ກວດສອບ ຫຼື ສະໜັບສະໜູນ. ການຕິດຕັ້ງແພັກເກດ AUR ສາມາດປະຕິບັດຄຳສັ່ງສ້າງແພັກເກດໃນລະບົບຂອງທ່ານ. ກວດສອບແພັກເກດ ແລະ PKGBUILD ກ່ອນຕິດຕັ້ງ.",
+  "aur_warning_return": "ກັບຄືນ",
+  "aur_warning_enable": "ເປີດໃຊ້ AUR",
+  "aur_refresh_failed_title": "ຂໍ້ມູນເມຕາ AUR ບໍ່ພ້ອມໃຊ້ງານ",
+  "aur_operation_failed_title": "ການດຳເນີນງານ AUR ລົ້ມເຫຼວ",
+  "aur_operation_failed_message": "ການດຳເນີນງານສຳລັບ '{name}' ລົ້ມເຫຼວ. ຜົນລັບຈາກເທີມິນອນ:\n\n{output}"
 }

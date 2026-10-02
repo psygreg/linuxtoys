@@ -684,5 +684,18 @@
   "category_available": "موجود",
   "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، الگوریتم پیشرفته کنترل ازدحام Google که برای به حداکثر رساندن توان عملیاتی شبکه و به حداقل رساندن تأخیر طراحی شده است.",
   "snap_desc": "مخازن Canonical Snapcraft به همراه سرویس snapd.",
-  "resolveaac_desc": "وارد کردن/پخش و خروجی AAC برای DaVinci Resolve Studio در Linux."
+  "resolveaac_desc": "وارد کردن/پخش و خروجی AAC برای DaVinci Resolve Studio در Linux.",
+  "aur_security_blocked_title": "بسته AUR مسدود شد",
+  "aur_security_blocked_message": "LinuxToys مبهم‌سازی کد را در اسکریپت‌های ساخت یا نصب '{name}' شناسایی کرد. برای حفظ امنیت شما، نصب مسدود شد.\n\nشناسایی‌شده:\n{details}",
+  "aur_security_unavailable_title": "بررسی امنیتی AUR ناموفق بود",
+  "aur_security_unavailable_message": "LinuxToys نتوانست اسکریپت‌های ساخت و نصب '{name}' را تأیید کند، بنابراین نصب آغاز نشد.\n\n{details}",
+  "aur_category": "مخزن کاربران Arch (AUR)",
+  "aur_category_desc": "بسته‌های Arch User Repository را مرور کنید.",
+  "aur_warning_title": "AUR فعال شود؟",
+  "aur_warning_message": "Arch User Repository شامل اسکریپت‌های ساخت ایجادشده توسط کاربران است که توسط Arch Linux بررسی یا پشتیبانی نمی‌شوند. نصب بسته‌های AUR می‌تواند دستورالعمل‌های ساخت بسته را روی سیستم شما اجرا کند. پیش از نصب، بسته‌ها و فایل‌های PKGBUILD را بررسی کنید.",
+  "aur_warning_return": "بازگشت",
+  "aur_warning_enable": "فعال‌سازی AUR",
+  "aur_refresh_failed_title": "فراداده AUR در دسترس نیست",
+  "aur_operation_failed_title": "عملیات AUR ناموفق بود",
+  "aur_operation_failed_message": "عملیات برای '{name}' ناموفق بود. خروجی ترمینال:\n\n{output}"
 }

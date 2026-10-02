@@ -684,5 +684,18 @@
   "category_available": "Verfügbar",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, Googles fortschrittlicher Algorithmus zur Überlastungssteuerung, der den Netzwerkdurchsatz maximieren und die Latenz minimieren soll.",
   "snap_desc": "Canonical-Snapcraft-Paketquellen mit dem zugehörigen snapd-Dienst.",
-  "resolveaac_desc": "AAC-Import/-Wiedergabe und -Export für DaVinci Resolve Studio unter Linux."
+  "resolveaac_desc": "AAC-Import/-Wiedergabe und -Export für DaVinci Resolve Studio unter Linux.",
+  "aur_security_blocked_title": "AUR-Paket blockiert",
+  "aur_security_blocked_message": "LinuxToys hat Code-Verschleierung in den Build- oder Installationsskripten für „{name}“ erkannt. Die Installation wurde zu Ihrer Sicherheit blockiert.\n\nErkannt:\n{details}",
+  "aur_security_unavailable_title": "AUR-Sicherheitsprüfung fehlgeschlagen",
+  "aur_security_unavailable_message": "LinuxToys konnte die Build- und Installationsskripte für „{name}“ nicht überprüfen, daher wurde die Installation nicht gestartet.\n\n{details}",
+  "aur_category": "Arch User Repository (AUR)",
+  "aur_category_desc": "Pakete aus dem Arch User Repository durchsuchen.",
+  "aur_warning_title": "AUR aktivieren?",
+  "aur_warning_message": "Das Arch User Repository enthält von Benutzern erstellte Build-Skripte, die von Arch Linux weder überprüft noch unterstützt werden. Bei der Installation von AUR-Paketen können Anweisungen zum Erstellen von Paketen auf Ihrem System ausgeführt werden. Überprüfen Sie Pakete und PKGBUILDs vor der Installation.",
+  "aur_warning_return": "Zurück",
+  "aur_warning_enable": "AUR aktivieren",
+  "aur_refresh_failed_title": "AUR-Metadaten nicht verfügbar",
+  "aur_operation_failed_title": "AUR-Vorgang fehlgeschlagen",
+  "aur_operation_failed_message": "Der Vorgang für „{name}“ ist fehlgeschlagen. Terminalausgabe:\n\n{output}"
 }

@@ -684,5 +684,18 @@
   "category_available": "متاح",
   "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، خوارزمية Google المتقدمة للتحكم في الازدحام، والمصممة لزيادة معدل نقل الشبكة إلى أقصى حد وتقليل زمن الاستجابة.",
   "snap_desc": "مستودعات Canonical Snapcraft مع خدمة snapd الخاصة بها.",
-  "resolveaac_desc": "استيراد/تشغيل وتصدير AAC في DaVinci Resolve Studio على Linux."
+  "resolveaac_desc": "استيراد/تشغيل وتصدير AAC في DaVinci Resolve Studio على Linux.",
+  "aur_security_blocked_title": "تم حظر حزمة AUR",
+  "aur_security_blocked_message": "اكتشف LinuxToys تمويهًا للكود في نصوص البناء أو التثبيت الخاصة بـ '{name}'. تم حظر التثبيت حفاظًا على سلامتك.\n\nتم اكتشاف:\n{details}",
+  "aur_security_unavailable_title": "فشل فحص أمان AUR",
+  "aur_security_unavailable_message": "تعذر على LinuxToys التحقق من نصوص البناء والتثبيت الخاصة بـ '{name}'، لذلك لم يبدأ التثبيت.\n\n{details}",
+  "aur_category": "مستودع مستخدمي Arch (AUR)",
+  "aur_category_desc": "تصفح الحزم من Arch User Repository.",
+  "aur_warning_title": "تمكين AUR؟",
+  "aur_warning_message": "يحتوي Arch User Repository على نصوص بناء أنشأها المستخدمون ولا تتم مراجعتها أو دعمها من قِبل Arch Linux. يمكن أن يؤدي تثبيت حزم AUR إلى تنفيذ تعليمات بناء الحزم على نظامك. راجع الحزم وملفات PKGBUILD قبل تثبيتها.",
+  "aur_warning_return": "رجوع",
+  "aur_warning_enable": "تمكين AUR",
+  "aur_refresh_failed_title": "بيانات AUR الوصفية غير متاحة",
+  "aur_operation_failed_title": "فشلت عملية AUR",
+  "aur_operation_failed_message": "فشلت العملية الخاصة بـ '{name}'. مخرجات الطرفية:\n\n{output}"
 }

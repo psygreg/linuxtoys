@@ -684,5 +684,18 @@
   "category_available": "Elérhető",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time”, a Google fejlett torlódásvezérlő algoritmusa, amelyet a hálózati átviteli teljesítmény maximalizálására és a késleltetés minimalizálására terveztek.",
   "snap_desc": "Canonical Snapcraft-tárolók a hozzájuk tartozó snapd szolgáltatással.",
-  "resolveaac_desc": "AAC-import/lejátszás és exportálás a DaVinci Resolve Studio számára Linuxon."
+  "resolveaac_desc": "AAC-import/lejátszás és exportálás a DaVinci Resolve Studio számára Linuxon.",
+  "aur_security_blocked_title": "AUR-csomag blokkolva",
+  "aur_security_blocked_message": "A LinuxToys kódobfuszkációt észlelt a(z) „{name}” összeállítási vagy telepítési szkriptjeiben. A telepítést az Ön biztonsága érdekében blokkolta.\n\nÉszlelve:\n{details}",
+  "aur_security_unavailable_title": "Az AUR biztonsági ellenőrzése sikertelen",
+  "aur_security_unavailable_message": "A LinuxToys nem tudta ellenőrizni a(z) „{name}” összeállítási és telepítési szkriptjeit, ezért a telepítés nem indult el.\n\n{details}",
+  "aur_category": "Arch felhasználói tároló (AUR)",
+  "aur_category_desc": "Böngésszen az Arch User Repository csomagjai között.",
+  "aur_warning_title": "Engedélyezi az AUR-t?",
+  "aur_warning_message": "Az Arch User Repository felhasználók által készített összeállítási szkripteket tartalmaz, amelyeket az Arch Linux nem ellenőriz és nem támogat. Az AUR-csomagok telepítése csomag-összeállítási utasításokat futtathat a rendszerén. Telepítés előtt ellenőrizze a csomagokat és a PKGBUILD fájlokat.",
+  "aur_warning_return": "Vissza",
+  "aur_warning_enable": "AUR engedélyezése",
+  "aur_refresh_failed_title": "Az AUR metaadatai nem érhetők el",
+  "aur_operation_failed_title": "Az AUR-művelet sikertelen",
+  "aur_operation_failed_message": "A(z) „{name}” művelete sikertelen. Terminálkimenet:\n\n{output}"
 }

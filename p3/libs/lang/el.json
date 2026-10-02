@@ -684,5 +684,18 @@
   "category_available": "Διαθέσιμο",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ο προηγμένος αλγόριθμος ελέγχου συμφόρησης της Google, σχεδιασμένος για τη μεγιστοποίηση της απόδοσης του δικτύου και την ελαχιστοποίηση της καθυστέρησης.",
   "snap_desc": "Αποθετήρια Canonical Snapcraft με την υπηρεσία snapd.",
-  "resolveaac_desc": "Εισαγωγή/αναπαραγωγή και εξαγωγή AAC για το DaVinci Resolve Studio στο Linux."
+  "resolveaac_desc": "Εισαγωγή/αναπαραγωγή και εξαγωγή AAC για το DaVinci Resolve Studio στο Linux.",
+  "aur_security_blocked_title": "Το πακέτο AUR αποκλείστηκε",
+  "aur_security_blocked_message": "Το LinuxToys εντόπισε απόκρυψη κώδικα στα σενάρια δημιουργίας ή εγκατάστασης για το '{name}'. Η εγκατάσταση αποκλείστηκε για την ασφάλειά σας.\n\nΕντοπίστηκε:\n{details}",
+  "aur_security_unavailable_title": "Ο έλεγχος ασφαλείας AUR απέτυχε",
+  "aur_security_unavailable_message": "Το LinuxToys δεν μπόρεσε να επαληθεύσει τα σενάρια δημιουργίας και εγκατάστασης για το '{name}', επομένως η εγκατάσταση δεν ξεκίνησε.\n\n{details}",
+  "aur_category": "Αποθετήριο χρηστών Arch (AUR)",
+  "aur_category_desc": "Περιηγηθείτε σε πακέτα από το Arch User Repository.",
+  "aur_warning_title": "Ενεργοποίηση του AUR;",
+  "aur_warning_message": "Το Arch User Repository περιέχει σενάρια δημιουργίας που παράγονται από χρήστες και δεν ελέγχονται ούτε υποστηρίζονται από το Arch Linux. Η εγκατάσταση πακέτων AUR μπορεί να εκτελέσει οδηγίες δημιουργίας πακέτων στο σύστημά σας. Ελέγξτε τα πακέτα και τα PKGBUILD πριν από την εγκατάσταση.",
+  "aur_warning_return": "Επιστροφή",
+  "aur_warning_enable": "Ενεργοποίηση AUR",
+  "aur_refresh_failed_title": "Τα μεταδεδομένα AUR δεν είναι διαθέσιμα",
+  "aur_operation_failed_title": "Η λειτουργία AUR απέτυχε",
+  "aur_operation_failed_message": "Η λειτουργία για το '{name}' απέτυχε. Έξοδος τερματικού:\n\n{output}"
 }

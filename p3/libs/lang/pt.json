@@ -684,5 +684,18 @@
   "category_available": "Disponível",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, o algoritmo avançado de controle de congestionamento do Google, desenvolvido para maximizar a taxa de transferência da rede e minimizar a latência.",
   "snap_desc": "Repositórios Snapcraft da Canonical com seu serviço snapd.",
-  "resolveaac_desc": "Importação/reprodução e exportação de AAC para o DaVinci Resolve Studio no Linux."
+  "resolveaac_desc": "Importação/reprodução e exportação de AAC para o DaVinci Resolve Studio no Linux.",
+  "aur_security_blocked_title": "Pacote AUR bloqueado",
+  "aur_security_blocked_message": "O LinuxToys detectou ofuscação de código nos scripts de compilação ou instalação de '{name}'. A instalação foi bloqueada para sua segurança.\n\nDetectado:\n{details}",
+  "aur_security_unavailable_title": "Falha na verificação de segurança do AUR",
+  "aur_security_unavailable_message": "O LinuxToys não conseguiu verificar os scripts de compilação e instalação de '{name}', então a instalação não foi iniciada.\n\n{details}",
+  "aur_category": "Repositório de Usuários do Arch (AUR)",
+  "aur_category_desc": "Explore pacotes do Arch User Repository.",
+  "aur_warning_title": "Ativar o AUR?",
+  "aur_warning_message": "O Arch User Repository contém scripts de compilação criados por usuários que não são revisados nem recebem suporte do Arch Linux. A instalação de pacotes AUR pode executar instruções de compilação de pacotes no seu sistema. Revise os pacotes e PKGBUILDs antes de instalá-los.",
+  "aur_warning_return": "Voltar",
+  "aur_warning_enable": "Ativar AUR",
+  "aur_refresh_failed_title": "Metadados do AUR indisponíveis",
+  "aur_operation_failed_title": "Falha na operação do AUR",
+  "aur_operation_failed_message": "A operação para '{name}' falhou. Saída do terminal:\n\n{output}"
 }

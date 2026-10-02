@@ -684,5 +684,18 @@
   "category_available": "พร้อมใช้งาน",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ อัลกอริทึมควบคุมความแออัดขั้นสูงของ Google ที่ออกแบบมาเพื่อเพิ่มปริมาณงานของเครือข่ายให้สูงสุดและลดเวลาแฝงให้เหลือน้อยที่สุด",
   "snap_desc": "คลัง Canonical Snapcraft พร้อมบริการ snapd",
-  "resolveaac_desc": "การนำเข้า/เล่นและส่งออก AAC สำหรับ DaVinci Resolve Studio บน Linux"
+  "resolveaac_desc": "การนำเข้า/เล่นและส่งออก AAC สำหรับ DaVinci Resolve Studio บน Linux",
+  "aur_security_blocked_title": "แพ็กเกจ AUR ถูกบล็อก",
+  "aur_security_blocked_message": "LinuxToys ตรวจพบการทำให้โค้ดอ่านได้ยากในสคริปต์การสร้างหรือการติดตั้งของ '{name}' การติดตั้งจึงถูกบล็อกเพื่อความปลอดภัยของคุณ\n\nตรวจพบ:\n{details}",
+  "aur_security_unavailable_title": "การตรวจสอบความปลอดภัยของ AUR ล้มเหลว",
+  "aur_security_unavailable_message": "LinuxToys ไม่สามารถตรวจสอบสคริปต์การสร้างและการติดตั้งของ '{name}' ได้ จึงไม่ได้เริ่มการติดตั้ง\n\n{details}",
+  "aur_category": "คลังแพ็กเกจผู้ใช้ Arch (AUR)",
+  "aur_category_desc": "เรียกดูแพ็กเกจจาก Arch User Repository",
+  "aur_warning_title": "เปิดใช้งาน AUR?",
+  "aur_warning_message": "Arch User Repository มีสคริปต์สำหรับสร้างแพ็กเกจที่ผู้ใช้จัดทำขึ้น ซึ่งไม่ได้รับการตรวจสอบหรือสนับสนุนโดย Arch Linux การติดตั้งแพ็กเกจ AUR อาจเรียกใช้คำสั่งสำหรับสร้างแพ็กเกจบนระบบของคุณ โปรดตรวจสอบแพ็กเกจและ PKGBUILD ก่อนติดตั้ง",
+  "aur_warning_return": "กลับ",
+  "aur_warning_enable": "เปิดใช้งาน AUR",
+  "aur_refresh_failed_title": "ข้อมูลเมตาของ AUR ไม่พร้อมใช้งาน",
+  "aur_operation_failed_title": "การดำเนินการ AUR ล้มเหลว",
+  "aur_operation_failed_message": "การดำเนินการสำหรับ '{name}' ล้มเหลว ผลลัพธ์จากเทอร์มินัล:\n\n{output}"
 }

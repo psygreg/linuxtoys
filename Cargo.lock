@@ -954,8 +954,10 @@ dependencies = [
  "tokio",
  "tonic",
  "unicode-normalization",
+ "ureq",
  "url",
  "walkdir",
+ "zeroize",
 ]
 
 [[package]]

@@ -684,5 +684,18 @@
   "category_available": "Pieejams",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“ — Google uzlabotais pārslodzes kontroles algoritms, kas izstrādāts, lai maksimāli palielinātu tīkla caurlaidspēju un samazinātu latentumu.",
   "snap_desc": "Canonical Snapcraft repozitoriji ar snapd pakalpojumu.",
-  "resolveaac_desc": "AAC importēšana/atskaņošana un eksportēšana DaVinci Resolve Studio operētājsistēmā Linux."
+  "resolveaac_desc": "AAC importēšana/atskaņošana un eksportēšana DaVinci Resolve Studio operētājsistēmā Linux.",
+  "aur_security_blocked_title": "AUR pakotne bloķēta",
+  "aur_security_blocked_message": "LinuxToys konstatēja koda obfuskāciju „{name}“ būvēšanas vai instalēšanas skriptos. Jūsu drošībai instalēšana tika bloķēta.\n\nKonstatēts:\n{details}",
+  "aur_security_unavailable_title": "AUR drošības pārbaude neizdevās",
+  "aur_security_unavailable_message": "LinuxToys nevarēja pārbaudīt „{name}“ būvēšanas un instalēšanas skriptus, tāpēc instalēšana netika sākta.\n\n{details}",
+  "aur_category": "Arch lietotāju repozitorijs (AUR)",
+  "aur_category_desc": "Pārlūkojiet pakotnes no Arch User Repository.",
+  "aur_warning_title": "Iespējot AUR?",
+  "aur_warning_message": "Arch User Repository satur lietotāju veidotus būvēšanas skriptus, kurus Arch Linux nepārskata un neatbalsta. Instalējot AUR pakotnes, jūsu sistēmā var tikt izpildītas pakotņu būvēšanas instrukcijas. Pirms instalēšanas pārskatiet pakotnes un PKGBUILD failus.",
+  "aur_warning_return": "Atgriezties",
+  "aur_warning_enable": "Iespējot AUR",
+  "aur_refresh_failed_title": "AUR metadati nav pieejami",
+  "aur_operation_failed_title": "AUR darbība neizdevās",
+  "aur_operation_failed_message": "Darbība ar „{name}“ neizdevās. Termināļa izvade:\n\n{output}"
 }

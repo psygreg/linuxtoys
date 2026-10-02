@@ -682,5 +682,18 @@
   "category_available": "Inapatikana",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoriti ya hali ya juu ya Google ya kudhibiti msongamano, iliyoundwa kuongeza upitishaji wa mtandao na kupunguza ucheleweshaji.",
   "snap_desc": "Hazina za Canonical Snapcraft pamoja na huduma yake ya snapd.",
-  "resolveaac_desc": "Uingizaji/uchezaji na uhamishaji wa AAC kwa DaVinci Resolve Studio kwenye Linux."
+  "resolveaac_desc": "Uingizaji/uchezaji na uhamishaji wa AAC kwa DaVinci Resolve Studio kwenye Linux.",
+  "aur_security_blocked_title": "Kifurushi cha AUR kimezuiwa",
+  "aur_security_blocked_message": "LinuxToys imegundua ufichaji wa msimbo katika hati za kujenga au kusakinisha za '{name}'. Usakinishaji umezuiwa kwa usalama wako.\n\nImegunduliwa:\n{details}",
+  "aur_security_unavailable_title": "Ukaguzi wa usalama wa AUR umeshindwa",
+  "aur_security_unavailable_message": "LinuxToys haikuweza kuthibitisha hati za kujenga na kusakinisha za '{name}', kwa hivyo usakinishaji haukuanzishwa.\n\n{details}",
+  "aur_category": "Hazina ya Watumiaji wa Arch (AUR)",
+  "aur_category_desc": "Vinjari vifurushi kutoka Arch User Repository.",
+  "aur_warning_title": "Washa AUR?",
+  "aur_warning_message": "Arch User Repository ina hati za kujenga zilizotengenezwa na watumiaji ambazo hazikaguliwi wala kuungwa mkono na Arch Linux. Kusakinisha vifurushi vya AUR kunaweza kutekeleza maagizo ya kujenga vifurushi kwenye mfumo wako. Kagua vifurushi na PKGBUILD kabla ya kusakinisha.",
+  "aur_warning_return": "Rudi",
+  "aur_warning_enable": "Washa AUR",
+  "aur_refresh_failed_title": "Metadata ya AUR haipatikani",
+  "aur_operation_failed_title": "Operesheni ya AUR imeshindwa",
+  "aur_operation_failed_message": "Operesheni ya '{name}' imeshindwa. Matokeo ya terminali:\n\n{output}"
 }

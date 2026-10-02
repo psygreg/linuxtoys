@@ -126,7 +126,7 @@ def _collect_native(manager):
             packages.add(line.split("/", 1)[0])
         return packages
     if manager == "dnf":
-        output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", r"%{name}\n"])
+        output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", "%{name}"])
         return {line.strip() for line in output.splitlines() if line.strip() and not line.startswith("Updating")}
     if manager == "zypper":
         output = _run([
@@ -213,7 +213,7 @@ def match(info):
             if snap_name and snap_name.casefold() in _STATE["snap"]:
                 return {"source": "snap", "package": snap_name}
             return None
-        if source == "native":
+        if source in ("native", "aur"):
             value = info.get("package-name") or ()
             packages = [value] if isinstance(value, str) else list(value)
             installed = [str(pkg) for pkg in packages if str(pkg) in _STATE["native"]]

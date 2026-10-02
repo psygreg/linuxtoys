@@ -684,5 +684,18 @@
   "category_available": "Հասանելի",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Google-ի առաջադեմ գերբեռնվածության կառավարման ալգորիթմը, որը նախատեսված է ցանցի թողունակությունը առավելագույնի և ուշացումը նվազագույնի հասցնելու համար։",
   "snap_desc": "Canonical Snapcraft շտեմարանները՝ իրենց snapd ծառայությամբ։",
-  "resolveaac_desc": "AAC ներմուծում/նվագարկում և արտահանում DaVinci Resolve Studio-ի համար Linux-ում։"
+  "resolveaac_desc": "AAC ներմուծում/նվագարկում և արտահանում DaVinci Resolve Studio-ի համար Linux-ում։",
+  "aur_security_blocked_title": "AUR փաթեթն արգելափակվել է",
+  "aur_security_blocked_message": "LinuxToys-ը հայտնաբերել է կոդի քողարկում '{name}'-ի կառուցման կամ տեղադրման սկրիպտներում։ Ձեր անվտանգության համար տեղադրումն արգելափակվել է։\n\nՀայտնաբերվել է՝\n{details}",
+  "aur_security_unavailable_title": "AUR անվտանգության ստուգումը ձախողվեց",
+  "aur_security_unavailable_message": "LinuxToys-ը չկարողացավ ստուգել '{name}'-ի կառուցման և տեղադրման սկրիպտները, ուստի տեղադրումը չսկսվեց։\n\n{details}",
+  "aur_category": "Arch օգտատերերի շտեմարան (AUR)",
+  "aur_category_desc": "Դիտեք Arch User Repository-ի փաթեթները։",
+  "aur_warning_title": "Միացնե՞լ AUR-ը։",
+  "aur_warning_message": "Arch User Repository-ը պարունակում է օգտատերերի ստեղծած կառուցման սկրիպտներ, որոնք չեն ստուգվում կամ աջակցվում Arch Linux-ի կողմից։ AUR փաթեթների տեղադրումը կարող է ձեր համակարգում գործարկել փաթեթի կառուցման հրահանգներ։ Տեղադրելուց առաջ ստուգեք փաթեթներն ու PKGBUILD-ները։",
+  "aur_warning_return": "Վերադառնալ",
+  "aur_warning_enable": "Միացնել AUR-ը",
+  "aur_refresh_failed_title": "AUR մետատվյալները հասանելի չեն",
+  "aur_operation_failed_title": "AUR գործողությունը ձախողվեց",
+  "aur_operation_failed_message": "'{name}'-ի գործողությունը ձախողվեց։ Տերմինալի ելքը՝\n\n{output}"
 }

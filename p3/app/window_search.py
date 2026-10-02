@@ -3,6 +3,11 @@ from .window_items import ItemWidgetFactory
 from . import gui_rs
 
 class SearchCtl:
+    def _aur_search_mode_active(self):
+        """Return whether the search field is scoped to the AUR category."""
+        category = getattr(self, "current_category_info", None)
+        return bool(category and category.get("is_aur_category"))
+
     def _create_search_ui(self):
         """Create the search UI components for the header bar."""
         # Create search entry
@@ -92,8 +97,9 @@ class SearchCtl:
 
     def _on_search_activate(self, search_entry):
         query = search_entry.get_text().strip()
-        if self._try_smart_search_navigation(query):
-            return
+        if not self._aur_search_mode_active():
+            if self._try_smart_search_navigation(query):
+                return
 
     # Search results are grouped by category, so find the first
     # actual SearchResult object from the first non-empty group.
@@ -192,16 +198,24 @@ class SearchCtl:
 
                 target = _CategoryTarget()
                 target.info = category
-                self.on_category_clicked(target, None)
+                if category.get("is_aur_category"):
+                    self._activate_aur_category(category)
+                else:
+                    self.on_category_clicked(target, None)
                 return True
 
         return False
 
     def _perform_search(self, query):
-        """Perform smart navigation or display the regular search results."""
-        if self._try_smart_search_navigation(query):
-            return
-        self.search_results = self.search_engine.search(query)
+        """Search in the scope implied by the current browser context."""
+        if self._aur_search_mode_active():
+            # AUR browsing has its own search scope. Do not allow smart-navigation
+            # aliases/categories or results from scripts/AppStream to leak into it.
+            self.search_results = self.search_engine.search_aur_only(query)
+        else:
+            if self._try_smart_search_navigation(query):
+                return
+            self.search_results = self.search_engine.search(query)
         self._display_search_results()
 
     def _get_selected_search_result_children(self):

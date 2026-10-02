@@ -683,5 +683,18 @@
   "category_available": "উপলব্ধ",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, নেটওয়ার্ক থ্রুপুট সর্বাধিক এবং লেটেন্সি সর্বনিম্ন করার জন্য Google-এর তৈরি উন্নত কনজেশন কন্ট্রোল অ্যালগরিদম।",
   "snap_desc": "Canonical Snapcraft রিপোজিটরি এবং এর snapd পরিষেবা।",
-  "resolveaac_desc": "Linux-এ DaVinci Resolve Studio-এর জন্য AAC ইমপোর্ট/প্লেব্যাক এবং এক্সপোর্ট।"
+  "resolveaac_desc": "Linux-এ DaVinci Resolve Studio-এর জন্য AAC ইমপোর্ট/প্লেব্যাক এবং এক্সপোর্ট।",
+  "aur_security_blocked_title": "AUR প্যাকেজ ব্লক করা হয়েছে",
+  "aur_security_blocked_message": "LinuxToys '{name}'-এর বিল্ড বা ইনস্টলেশন স্ক্রিপ্টে কোড অবফাসকেশন শনাক্ত করেছে। আপনার নিরাপত্তার জন্য ইনস্টলেশনটি ব্লক করা হয়েছে।\n\nশনাক্ত হয়েছে:\n{details}",
+  "aur_security_unavailable_title": "AUR নিরাপত্তা পরীক্ষা ব্যর্থ হয়েছে",
+  "aur_security_unavailable_message": "LinuxToys '{name}'-এর বিল্ড এবং ইনস্টলেশন স্ক্রিপ্ট যাচাই করতে পারেনি, তাই ইনস্টলেশন শুরু করা হয়নি।\n\n{details}",
+  "aur_category": "Arch ব্যবহারকারী রিপোজিটরি (AUR)",
+  "aur_category_desc": "Arch User Repository থেকে প্যাকেজ ব্রাউজ করুন।",
+  "aur_warning_title": "AUR সক্রিয় করবেন?",
+  "aur_warning_message": "Arch User Repository-এ ব্যবহারকারীদের তৈরি বিল্ড স্ক্রিপ্ট রয়েছে, যেগুলো Arch Linux দ্বারা পর্যালোচিত বা সমর্থিত নয়। AUR প্যাকেজ ইনস্টল করলে আপনার সিস্টেমে প্যাকেজ বিল্ড নির্দেশনা কার্যকর হতে পারে। ইনস্টল করার আগে প্যাকেজ ও PKGBUILD পর্যালোচনা করুন।",
+  "aur_warning_return": "ফিরে যান",
+  "aur_warning_enable": "AUR সক্রিয় করুন",
+  "aur_refresh_failed_title": "AUR মেটাডেটা উপলব্ধ নয়",
+  "aur_operation_failed_title": "AUR অপারেশন ব্যর্থ হয়েছে",
+  "aur_operation_failed_message": "'{name}'-এর অপারেশন ব্যর্থ হয়েছে। টার্মিনাল আউটপুট:\n\n{output}"
 }

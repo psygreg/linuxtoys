@@ -684,5 +684,18 @@
   "category_available": "Available",
   "bbr_desc": "'Bottleneck Bandwidth and Round-trip propagation time', Google's advanced congestion control algorithm designed to maximize network throughput and minimize latency.",
   "snap_desc": "Canonical Snapcraft repositories with its snapd service.",
-  "resolveaac_desc": "AAC import/playback and export for DaVinci Resolve Studio on Linux."
+  "resolveaac_desc": "AAC import/playback and export for DaVinci Resolve Studio on Linux.",
+  "aur_security_blocked_title": "AUR package blocked",
+  "aur_security_blocked_message": "LinuxToys detected code obfuscation in the build or installation scripts for '{name}'. The installation was blocked for your safety.\n\nDetected:\n{details}",
+  "aur_security_unavailable_title": "AUR security check failed",
+  "aur_security_unavailable_message": "LinuxToys could not verify the build and installation scripts for '{name}', so the installation was not started.\n\n{details}",
+  "aur_category": "Arch User Repository (AUR)",
+  "aur_category_desc": "Browse packages from the Arch User Repository.",
+  "aur_warning_title": "Enable the AUR?",
+  "aur_warning_message": "The Arch User Repository contains user-produced build scripts that are not reviewed or supported by Arch Linux. Installing AUR packages can execute package build instructions on your system. Review packages and PKGBUILDs before installing them.",
+  "aur_warning_return": "Return",
+  "aur_warning_enable": "Enable AUR",
+  "aur_refresh_failed_title": "AUR metadata unavailable",
+  "aur_operation_failed_title": "AUR operation failed",
+  "aur_operation_failed_message": "The operation for '{name}' failed. Terminal output:\n\n{output}"
 }

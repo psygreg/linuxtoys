@@ -684,5 +684,18 @@
   "category_available": "មាន",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ ជាអាល់ហ្គរីធម៍គ្រប់គ្រងការកកស្ទះកម្រិតខ្ពស់របស់ Google ដែលត្រូវបានរចនាឡើងដើម្បីបង្កើនលំហូរទិន្នន័យបណ្តាញឱ្យអតិបរមា និងកាត់បន្ថយភាពយឺតយ៉ាវឱ្យអប្បបរមា។",
   "snap_desc": "ឃ្លាំង Canonical Snapcraft ជាមួយសេវាកម្ម snapd របស់វា។",
-  "resolveaac_desc": "ការនាំចូល/ចាក់ និងនាំចេញ AAC សម្រាប់ DaVinci Resolve Studio លើ Linux។"
+  "resolveaac_desc": "ការនាំចូល/ចាក់ និងនាំចេញ AAC សម្រាប់ DaVinci Resolve Studio លើ Linux។",
+  "aur_security_blocked_title": "កញ្ចប់ AUR ត្រូវបានទប់ស្កាត់",
+  "aur_security_blocked_message": "LinuxToys បានរកឃើញការធ្វើឱ្យកូដពិបាកយល់នៅក្នុងស្គ្រីប build ឬដំឡើងសម្រាប់ '{name}'។ ការដំឡើងត្រូវបានទប់ស្កាត់ដើម្បីសុវត្ថិភាពរបស់អ្នក។\n\nបានរកឃើញ៖\n{details}",
+  "aur_security_unavailable_title": "ការត្រួតពិនិត្យសុវត្ថិភាព AUR បានបរាជ័យ",
+  "aur_security_unavailable_message": "LinuxToys មិនអាចផ្ទៀងផ្ទាត់ស្គ្រីប build និងដំឡើងសម្រាប់ '{name}' បានទេ ដូច្នេះការដំឡើងមិនត្រូវបានចាប់ផ្តើមឡើយ។\n\n{details}",
+  "aur_category": "ឃ្លាំងអ្នកប្រើប្រាស់ Arch (AUR)",
+  "aur_category_desc": "រកមើលកញ្ចប់ពី Arch User Repository។",
+  "aur_warning_title": "បើក AUR?",
+  "aur_warning_message": "Arch User Repository មានស្គ្រីប build ដែលបង្កើតដោយអ្នកប្រើប្រាស់ ហើយមិនត្រូវបានពិនិត្យ ឬគាំទ្រដោយ Arch Linux ទេ។ ការដំឡើងកញ្ចប់ AUR អាចដំណើរការសេចក្តីណែនាំ build កញ្ចប់លើប្រព័ន្ធរបស់អ្នក។ សូមពិនិត្យកញ្ចប់ និង PKGBUILD មុនពេលដំឡើង។",
+  "aur_warning_return": "ត្រឡប់",
+  "aur_warning_enable": "បើក AUR",
+  "aur_refresh_failed_title": "ទិន្នន័យមេតា AUR មិនអាចប្រើបាន",
+  "aur_operation_failed_title": "ប្រតិបត្តិការ AUR បានបរាជ័យ",
+  "aur_operation_failed_message": "ប្រតិបត្តិការសម្រាប់ '{name}' បានបរាជ័យ។ លទ្ធផលពី terminal៖\n\n{output}"
 }

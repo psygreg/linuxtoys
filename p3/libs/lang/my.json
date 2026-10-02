@@ -684,5 +684,18 @@
   "category_available": "ရရှိနိုင်သည်",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’၊ ကွန်ရက် throughput ကို အမြင့်ဆုံးနှင့် latency ကို အနည်းဆုံးဖြစ်စေရန် Google မှ ဒီဇိုင်းထုတ်ထားသော အဆင့်မြင့် congestion control algorithm ဖြစ်သည်။",
   "snap_desc": "Canonical Snapcraft repository များနှင့် ၎င်းတို့၏ snapd service။",
-  "resolveaac_desc": "Linux ပေါ်ရှိ DaVinci Resolve Studio အတွက် AAC import/playback နှင့် export။"
+  "resolveaac_desc": "Linux ပေါ်ရှိ DaVinci Resolve Studio အတွက် AAC import/playback နှင့် export။",
+  "aur_security_blocked_title": "AUR package ကို ပိတ်ဆို့ထားသည်",
+  "aur_security_blocked_message": "LinuxToys သည် '{name}' ၏ build သို့မဟုတ် installation script များတွင် code obfuscation ကို တွေ့ရှိခဲ့သည်။ သင့်လုံခြုံရေးအတွက် installation ကို ပိတ်ဆို့ထားသည်။\n\nတွေ့ရှိသည်:\n{details}",
+  "aur_security_unavailable_title": "AUR လုံခြုံရေးစစ်ဆေးမှု မအောင်မြင်ပါ",
+  "aur_security_unavailable_message": "LinuxToys သည် '{name}' ၏ build နှင့် installation script များကို အတည်ပြုစစ်ဆေးနိုင်ခြင်းမရှိသောကြောင့် installation ကို မစတင်ခဲ့ပါ။\n\n{details}",
+  "aur_category": "Arch အသုံးပြုသူ Repository (AUR)",
+  "aur_category_desc": "Arch User Repository မှ package များကို ရှာဖွေကြည့်ရှုပါ။",
+  "aur_warning_title": "AUR ကို ဖွင့်မလား?",
+  "aur_warning_message": "Arch User Repository တွင် Arch Linux မှ စစ်ဆေးခြင်း သို့မဟုတ် ပံ့ပိုးခြင်းမရှိသော အသုံးပြုသူများဖန်တီးထားသည့် build script များ ပါဝင်သည်။ AUR package များကို ထည့်သွင်းခြင်းသည် သင့်စနစ်ပေါ်တွင် package build ညွှန်ကြားချက်များကို လုပ်ဆောင်နိုင်သည်။ မထည့်သွင်းမီ package များနှင့် PKGBUILD များကို စစ်ဆေးပါ။",
+  "aur_warning_return": "ပြန်သွားရန်",
+  "aur_warning_enable": "AUR ကို ဖွင့်ရန်",
+  "aur_refresh_failed_title": "AUR metadata မရရှိနိုင်ပါ",
+  "aur_operation_failed_title": "AUR လုပ်ဆောင်ချက် မအောင်မြင်ပါ",
+  "aur_operation_failed_message": "'{name}' အတွက် လုပ်ဆောင်ချက် မအောင်မြင်ပါ။ Terminal output:\n\n{output}"
 }

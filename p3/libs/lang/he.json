@@ -684,5 +684,18 @@
   "category_available": "זמין",
   "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’, אלגוריתם בקרת העומס המתקדם של Google, שנועד למקסם את תפוקת הרשת ולמזער את זמן ההשהיה.",
   "snap_desc": "מאגרי Canonical Snapcraft עם שירות snapd שלהם.",
-  "resolveaac_desc": "ייבוא/השמעה וייצוא של AAC עבור DaVinci Resolve Studio ב-Linux."
+  "resolveaac_desc": "ייבוא/השמעה וייצוא של AAC עבור DaVinci Resolve Studio ב-Linux.",
+  "aur_security_blocked_title": "חבילת AUR נחסמה",
+  "aur_security_blocked_message": "LinuxToys זיהה ערפול קוד בסקריפטים לבנייה או להתקנה של '{name}'. ההתקנה נחסמה למען בטיחותך.\n\nזוהה:\n{details}",
+  "aur_security_unavailable_title": "בדיקת האבטחה של AUR נכשלה",
+  "aur_security_unavailable_message": "LinuxToys לא הצליח לאמת את סקריפטי הבנייה וההתקנה של '{name}', ולכן ההתקנה לא התחילה.\n\n{details}",
+  "aur_category": "מאגר המשתמשים של Arch ‏(AUR)",
+  "aur_category_desc": "עיינו בחבילות מ-Arch User Repository.",
+  "aur_warning_title": "להפעיל את AUR?",
+  "aur_warning_message": "Arch User Repository מכיל סקריפטי בנייה שנוצרו על ידי משתמשים ואינם נבדקים או נתמכים על ידי Arch Linux. התקנת חבילות AUR יכולה להפעיל הוראות לבניית חבילות במערכת שלך. בדקו חבילות וקובצי PKGBUILD לפני ההתקנה.",
+  "aur_warning_return": "חזרה",
+  "aur_warning_enable": "הפעלת AUR",
+  "aur_refresh_failed_title": "מטא-נתוני AUR אינם זמינים",
+  "aur_operation_failed_title": "פעולת AUR נכשלה",
+  "aur_operation_failed_message": "הפעולה עבור '{name}' נכשלה. פלט המסוף:\n\n{output}"
 }

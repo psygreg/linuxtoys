@@ -684,5 +684,18 @@
   "category_available": "Na voljo",
   "bbr_desc": "»Bottleneck Bandwidth and Round-trip propagation time«, Googlov napredni algoritem za nadzor prezasedenosti, zasnovan za povečanje prepustnosti omrežja in zmanjšanje zakasnitve.",
   "snap_desc": "Repozitoriji Canonical Snapcraft s storitvijo snapd.",
-  "resolveaac_desc": "Uvoz/predvajanje in izvoz AAC za DaVinci Resolve Studio v Linuxu."
+  "resolveaac_desc": "Uvoz/predvajanje in izvoz AAC za DaVinci Resolve Studio v Linuxu.",
+  "aur_security_blocked_title": "Paket AUR je blokiran",
+  "aur_security_blocked_message": "LinuxToys je zaznal zakrivanje kode v skriptih za gradnjo ali namestitev paketa »{name}«. Namestitev je bila zaradi vaše varnosti blokirana.\n\nZaznano:\n{details}",
+  "aur_security_unavailable_title": "Varnostno preverjanje AUR ni uspelo",
+  "aur_security_unavailable_message": "LinuxToys ni mogel preveriti skriptov za gradnjo in namestitev paketa »{name}«, zato namestitev ni bila zagnana.\n\n{details}",
+  "aur_category": "Uporabniški repozitorij Arch (AUR)",
+  "aur_category_desc": "Brskajte po paketih iz Arch User Repository.",
+  "aur_warning_title": "Omogočiti AUR?",
+  "aur_warning_message": "Arch User Repository vsebuje uporabniško ustvarjene skripte za gradnjo, ki jih Arch Linux ne pregleduje ali podpira. Namestitev paketov AUR lahko v vašem sistemu izvede navodila za gradnjo paketov. Pred namestitvijo preglejte pakete in datoteke PKGBUILD.",
+  "aur_warning_return": "Nazaj",
+  "aur_warning_enable": "Omogoči AUR",
+  "aur_refresh_failed_title": "Metapodatki AUR niso na voljo",
+  "aur_operation_failed_title": "Operacija AUR ni uspela",
+  "aur_operation_failed_message": "Operacija za »{name}« ni uspela. Izhod terminala:\n\n{output}"
 }

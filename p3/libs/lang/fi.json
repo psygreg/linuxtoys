@@ -684,5 +684,18 @@
   "category_available": "Saatavilla",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googlen edistynyt ruuhkanhallinta-algoritmi, joka on suunniteltu maksimoimaan verkon läpäisykyky ja minimoimaan viive.",
   "snap_desc": "Canonical Snapcraft -pakettivarastot ja niiden snapd-palvelu.",
-  "resolveaac_desc": "AAC-tuonti/toisto ja vienti DaVinci Resolve Studioon Linuxissa."
+  "resolveaac_desc": "AAC-tuonti/toisto ja vienti DaVinci Resolve Studioon Linuxissa.",
+  "aur_security_blocked_title": "AUR-paketti estetty",
+  "aur_security_blocked_message": "LinuxToys havaitsi koodin obfuskointia paketin '{name}' koonti- tai asennusskripteissä. Asennus estettiin turvallisuutesi vuoksi.\n\nHavaittu:\n{details}",
+  "aur_security_unavailable_title": "AUR-turvallisuustarkistus epäonnistui",
+  "aur_security_unavailable_message": "LinuxToys ei voinut tarkistaa paketin '{name}' koonti- ja asennusskriptejä, joten asennusta ei aloitettu.\n\n{details}",
+  "aur_category": "Arch-käyttäjäpakettivarasto (AUR)",
+  "aur_category_desc": "Selaa Arch User Repository -paketteja.",
+  "aur_warning_title": "Otetaanko AUR käyttöön?",
+  "aur_warning_message": "Arch User Repository sisältää käyttäjien tekemiä koontiskriptejä, joita Arch Linux ei tarkista eikä tue. AUR-pakettien asentaminen voi suorittaa pakettien koontiohjeita järjestelmässäsi. Tarkista paketit ja PKGBUILD-tiedostot ennen asentamista.",
+  "aur_warning_return": "Palaa",
+  "aur_warning_enable": "Ota AUR käyttöön",
+  "aur_refresh_failed_title": "AUR-metatiedot eivät ole saatavilla",
+  "aur_operation_failed_title": "AUR-toiminto epäonnistui",
+  "aur_operation_failed_message": "Toiminto paketille '{name}' epäonnistui. Päätteen tuloste:\n\n{output}"
 }

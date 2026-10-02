@@ -684,5 +684,18 @@
   "category_available": "Có sẵn",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, thuật toán kiểm soát tắc nghẽn tiên tiến của Google được thiết kế để tối đa hóa thông lượng mạng và giảm thiểu độ trễ.",
   "snap_desc": "Các kho phần mềm Canonical Snapcraft cùng với dịch vụ snapd.",
-  "resolveaac_desc": "Nhập/phát và xuất AAC cho DaVinci Resolve Studio trên Linux."
+  "resolveaac_desc": "Nhập/phát và xuất AAC cho DaVinci Resolve Studio trên Linux.",
+  "aur_security_blocked_title": "Gói AUR đã bị chặn",
+  "aur_security_blocked_message": "LinuxToys phát hiện mã bị làm rối trong các tập lệnh biên dịch hoặc cài đặt của '{name}'. Quá trình cài đặt đã bị chặn để đảm bảo an toàn cho bạn.\n\nĐã phát hiện:\n{details}",
+  "aur_security_unavailable_title": "Kiểm tra bảo mật AUR thất bại",
+  "aur_security_unavailable_message": "LinuxToys không thể xác minh các tập lệnh biên dịch và cài đặt của '{name}', vì vậy quá trình cài đặt chưa được bắt đầu.\n\n{details}",
+  "aur_category": "Kho lưu trữ người dùng Arch (AUR)",
+  "aur_category_desc": "Duyệt các gói từ Arch User Repository.",
+  "aur_warning_title": "Bật AUR?",
+  "aur_warning_message": "Arch User Repository chứa các tập lệnh biên dịch do người dùng tạo, không được Arch Linux xem xét hoặc hỗ trợ. Việc cài đặt các gói AUR có thể thực thi các hướng dẫn biên dịch gói trên hệ thống của bạn. Hãy xem xét các gói và PKGBUILD trước khi cài đặt.",
+  "aur_warning_return": "Quay lại",
+  "aur_warning_enable": "Bật AUR",
+  "aur_refresh_failed_title": "Siêu dữ liệu AUR không khả dụng",
+  "aur_operation_failed_title": "Thao tác AUR thất bại",
+  "aur_operation_failed_message": "Thao tác cho '{name}' thất bại. Đầu ra terminal:\n\n{output}"
 }

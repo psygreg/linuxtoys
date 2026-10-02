@@ -684,5 +684,18 @@
   "category_available": "Tilgjengelig",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googles avanserte algoritme for overbelastningskontroll, utviklet for å maksimere nettverkskapasiteten og minimere forsinkelsen.",
   "snap_desc": "Canonical Snapcraft-pakkebrønner med tilhørende snapd-tjeneste.",
-  "resolveaac_desc": "AAC-import/avspilling og eksport for DaVinci Resolve Studio på Linux."
+  "resolveaac_desc": "AAC-import/avspilling og eksport for DaVinci Resolve Studio på Linux.",
+  "aur_security_blocked_title": "AUR-pakke blokkert",
+  "aur_security_blocked_message": "LinuxToys oppdaget kodeobfuskering i bygge- eller installasjonsskriptene for '{name}'. Installasjonen ble blokkert av hensyn til sikkerheten din.\n\nOppdaget:\n{details}",
+  "aur_security_unavailable_title": "AUR-sikkerhetskontroll mislyktes",
+  "aur_security_unavailable_message": "LinuxToys kunne ikke verifisere bygge- og installasjonsskriptene for '{name}', så installasjonen ble ikke startet.\n\n{details}",
+  "aur_category": "Arch-brukerarkiv (AUR)",
+  "aur_category_desc": "Bla gjennom pakker fra Arch User Repository.",
+  "aur_warning_title": "Aktivere AUR?",
+  "aur_warning_message": "Arch User Repository inneholder brukerlagde byggeskript som ikke gjennomgås eller støttes av Arch Linux. Installering av AUR-pakker kan kjøre instruksjoner for pakkebygging på systemet ditt. Se gjennom pakker og PKGBUILD-filer før du installerer dem.",
+  "aur_warning_return": "Tilbake",
+  "aur_warning_enable": "Aktiver AUR",
+  "aur_refresh_failed_title": "AUR-metadata er utilgjengelige",
+  "aur_operation_failed_title": "AUR-operasjon mislyktes",
+  "aur_operation_failed_message": "Operasjonen for '{name}' mislyktes. Terminalutdata:\n\n{output}"
 }

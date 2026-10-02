@@ -684,5 +684,18 @@
   "category_available": "የሚገኝ",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’፣ የኔትወርክ ፍሰትን ከፍ ለማድረግ እና መዘግየትን ለመቀነስ በGoogle የተነደፈ የላቀ የመጨናነቅ መቆጣጠሪያ አልጎሪዝም።",
   "snap_desc": "የCanonical Snapcraft ማከማቻዎች ከsnapd አገልግሎታቸው ጋር።",
-  "resolveaac_desc": "በLinux ላይ ለDaVinci Resolve Studio የAAC ማስመጣት/ማጫወት እና ወደ ውጭ መላክ።"
+  "resolveaac_desc": "በLinux ላይ ለDaVinci Resolve Studio የAAC ማስመጣት/ማጫወት እና ወደ ውጭ መላክ።",
+  "aur_security_blocked_title": "የAUR ጥቅል ታግዷል",
+  "aur_security_blocked_message": "LinuxToys በ'{name}' የግንባታ ወይም የመጫኛ ስክሪፕቶች ውስጥ የኮድ ማደበቅን አግኝቷል። ለደህንነትዎ ሲባል መጫኑ ታግዷል።\n\nየተገኘው፦\n{details}",
+  "aur_security_unavailable_title": "የAUR ደህንነት ምርመራ አልተሳካም",
+  "aur_security_unavailable_message": "LinuxToys የ'{name}' የግንባታ እና የመጫኛ ስክሪፕቶችን ማረጋገጥ አልቻለም፣ ስለዚህ መጫኑ አልተጀመረም።\n\n{details}",
+  "aur_category": "Arch የተጠቃሚ ማከማቻ (AUR)",
+  "aur_category_desc": "ከArch User Repository ጥቅሎችን ያስሱ።",
+  "aur_warning_title": "AURን ይንቃ?",
+  "aur_warning_message": "Arch User Repository በArch Linux ያልተገመገሙ ወይም ድጋፍ የማይደረግላቸው በተጠቃሚዎች የተዘጋጁ የግንባታ ስክሪፕቶችን ይዟል። የAUR ጥቅሎችን መጫን የጥቅል ግንባታ መመሪያዎችን በስርዓትዎ ላይ ሊያስኬድ ይችላል። ከመጫንዎ በፊት ጥቅሎችን እና PKGBUILDsን ይገምግሙ።",
+  "aur_warning_return": "ተመለስ",
+  "aur_warning_enable": "AURን አንቃ",
+  "aur_refresh_failed_title": "የAUR ሜታዳታ አይገኝም",
+  "aur_operation_failed_title": "የAUR ክዋኔ አልተሳካም",
+  "aur_operation_failed_message": "የ'{name}' ክዋኔ አልተሳካም። የተርሚናል ውጤት፦\n\n{output}"
 }

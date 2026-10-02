@@ -683,5 +683,18 @@
   "category_available": "Боломжтой",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, сүлжээний дамжуулах чадварыг дээд хэмжээнд хүргэж, саатлыг багасгах зорилготой Google-ийн дэвшилтэт түгжрэлийн хяналтын алгоритм.",
   "snap_desc": "Canonical Snapcraft репозиторууд болон тэдгээрийн snapd үйлчилгээ.",
-  "resolveaac_desc": "Linux дээрх DaVinci Resolve Studio-д AAC импорт/тоглуулах болон экспортлох."
+  "resolveaac_desc": "Linux дээрх DaVinci Resolve Studio-д AAC импорт/тоглуулах болон экспортлох.",
+  "aur_security_blocked_title": "AUR багцыг блоклосон",
+  "aur_security_blocked_message": "LinuxToys '{name}'-ийн бүтээх эсвэл суулгах скриптээс кодын далдлалтыг илрүүлсэн. Таны аюулгүй байдлын үүднээс суулгалтыг блоклосон.\n\nИлэрсэн:\n{details}",
+  "aur_security_unavailable_title": "AUR аюулгүй байдлын шалгалт амжилтгүй боллоо",
+  "aur_security_unavailable_message": "LinuxToys '{name}'-ийн бүтээх болон суулгах скриптүүдийг шалгаж чадсангүй, тиймээс суулгалтыг эхлүүлээгүй.\n\n{details}",
+  "aur_category": "Arch хэрэглэгчийн репозитор (AUR)",
+  "aur_category_desc": "Arch User Repository дахь багцуудыг үзэх.",
+  "aur_warning_title": "AUR-г идэвхжүүлэх үү?",
+  "aur_warning_message": "Arch User Repository нь Arch Linux-аар хянагддаггүй, дэмжигддэггүй хэрэглэгчдийн үүсгэсэн бүтээх скриптүүдийг агуулдаг. AUR багц суулгах үед таны систем дээр багц бүтээх зааврууд ажиллаж болно. Суулгахаасаа өмнө багц болон PKGBUILD файлуудыг шалгана уу.",
+  "aur_warning_return": "Буцах",
+  "aur_warning_enable": "AUR-г идэвхжүүлэх",
+  "aur_refresh_failed_title": "AUR мета өгөгдөл боломжгүй",
+  "aur_operation_failed_title": "AUR үйлдэл амжилтгүй боллоо",
+  "aur_operation_failed_message": "'{name}'-ийн үйлдэл амжилтгүй боллоо. Терминалын гаралт:\n\n{output}"
 }

@@ -684,5 +684,18 @@
   "category_available": "Tillgänglig",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googles avancerade algoritm för överbelastningskontroll, utformad för att maximera nätverkets genomströmning och minimera latensen.",
   "snap_desc": "Canonical Snapcraft-förråd med tillhörande snapd-tjänst.",
-  "resolveaac_desc": "AAC-import/uppspelning och export för DaVinci Resolve Studio på Linux."
+  "resolveaac_desc": "AAC-import/uppspelning och export för DaVinci Resolve Studio på Linux.",
+  "aur_security_blocked_title": "AUR-paket blockerat",
+  "aur_security_blocked_message": "LinuxToys upptäckte kodobfuskering i bygg- eller installationsskripten för '{name}'. Installationen blockerades för din säkerhet.\n\nUpptäckt:\n{details}",
+  "aur_security_unavailable_title": "AUR-säkerhetskontrollen misslyckades",
+  "aur_security_unavailable_message": "LinuxToys kunde inte verifiera bygg- och installationsskripten för '{name}', så installationen startades inte.\n\n{details}",
+  "aur_category": "Arch användararkiv (AUR)",
+  "aur_category_desc": "Bläddra bland paket från Arch User Repository.",
+  "aur_warning_title": "Aktivera AUR?",
+  "aur_warning_message": "Arch User Repository innehåller användarskapade byggskript som inte granskas eller stöds av Arch Linux. Installation av AUR-paket kan köra instruktioner för paketbyggen på ditt system. Granska paket och PKGBUILD-filer innan du installerar dem.",
+  "aur_warning_return": "Tillbaka",
+  "aur_warning_enable": "Aktivera AUR",
+  "aur_refresh_failed_title": "AUR-metadata är inte tillgängliga",
+  "aur_operation_failed_title": "AUR-åtgärden misslyckades",
+  "aur_operation_failed_message": "Åtgärden för '{name}' misslyckades. Terminalutdata:\n\n{output}"
 }

@@ -14,7 +14,7 @@ from .compat import (
     seed_script_file_cache,
 )
 from .lang_utils import detect_system_language
-from . import appstream_parser, git_scripts_manager, new_index, official_index, repo_parser
+from . import appstream_parser, aur_cache, git_scripts_manager, new_index, official_index, repo_parser
 from . import _catalog_rs as _rs
 
 
@@ -516,7 +516,33 @@ def get_categories(translations=None):
         cat_info["display_mode"] = get_category_mode(category_path, translations)
         categories.append(cat_info)
 
-    return sorted(categories, key=lambda cat: cat["name"])
+    categories = sorted(categories, key=lambda cat: cat["name"])
+
+    # AUR is an opt-in pseudo-category available only on Arch-family hosts. It is
+    # deliberately appended after the localized alphabetical sort so it always
+    # remains the final main-menu category.
+    compat_keys = {str(key).casefold() for key in get_system_compat_keys()}
+    if any(key == "arch" or key.startswith("cachy") for key in compat_keys):
+        categories.append({
+            "name": translations.get("aur_category", "AUR") if translations else "AUR",
+            "path": "aur://catalog",
+            "icon": "aur.svg",
+            "description": translations.get(
+                "aur_category_desc", "Browse packages from the Arch User Repository."
+            ) if translations else "Browse packages from the Arch User Repository.",
+            "is_script": False,
+            "is_aur_category": True,
+            "has_subcategories": False,
+            "display_mode": "menu",
+            "type": "category",
+        })
+    return categories
+
+def search_aur_entries(query):
+    """Search the opt-in Rust-owned AUR catalog."""
+    if not aur_cache.enabled():
+        return []
+    return aur_cache.search_entries(query)
 
 def get_repo_entries(translations=None):
     """Return all valid dynamic repository entries from scripts/repos.json."""

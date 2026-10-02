@@ -664,5 +664,18 @@
   "category_available": "उपलब्ध",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Google का उन्नत कंजेशन कंट्रोल एल्गोरिदम, जिसे नेटवर्क थ्रूपुट को अधिकतम और लेटेंसी को न्यूनतम करने के लिए डिज़ाइन किया गया है।",
   "snap_desc": "Canonical Snapcraft रिपॉज़िटरी और उनकी snapd सेवा।",
-  "resolveaac_desc": "Linux पर DaVinci Resolve Studio के लिए AAC इंपोर्ट/प्लेबैक और एक्सपोर्ट।"
+  "resolveaac_desc": "Linux पर DaVinci Resolve Studio के लिए AAC इंपोर्ट/प्लेबैक और एक्सपोर्ट।",
+  "aur_security_blocked_title": "AUR पैकेज ब्लॉक किया गया",
+  "aur_security_blocked_message": "LinuxToys ने '{name}' की बिल्ड या इंस्टॉलेशन स्क्रिप्ट में कोड ऑब्फ़स्केशन का पता लगाया। आपकी सुरक्षा के लिए इंस्टॉलेशन को ब्लॉक कर दिया गया।\n\nपता चला:\n{details}",
+  "aur_security_unavailable_title": "AUR सुरक्षा जाँच विफल रही",
+  "aur_security_unavailable_message": "LinuxToys '{name}' की बिल्ड और इंस्टॉलेशन स्क्रिप्ट सत्यापित नहीं कर सका, इसलिए इंस्टॉलेशन शुरू नहीं किया गया।\n\n{details}",
+  "aur_category": "Arch उपयोगकर्ता रिपॉज़िटरी (AUR)",
+  "aur_category_desc": "Arch User Repository से पैकेज ब्राउज़ करें।",
+  "aur_warning_title": "AUR सक्षम करें?",
+  "aur_warning_message": "Arch User Repository में उपयोगकर्ताओं द्वारा बनाए गए बिल्ड स्क्रिप्ट होते हैं, जिनकी Arch Linux द्वारा समीक्षा या सहायता नहीं की जाती। AUR पैकेज इंस्टॉल करने पर आपके सिस्टम पर पैकेज बिल्ड निर्देश चल सकते हैं। इंस्टॉल करने से पहले पैकेज और PKGBUILD की समीक्षा करें।",
+  "aur_warning_return": "वापस जाएँ",
+  "aur_warning_enable": "AUR सक्षम करें",
+  "aur_refresh_failed_title": "AUR मेटाडेटा उपलब्ध नहीं है",
+  "aur_operation_failed_title": "AUR कार्रवाई विफल रही",
+  "aur_operation_failed_message": "'{name}' के लिए कार्रवाई विफल रही। टर्मिनल आउटपुट:\n\n{output}"
 }

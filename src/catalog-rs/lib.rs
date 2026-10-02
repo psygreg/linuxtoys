@@ -7,6 +7,7 @@ mod featured;
 mod search;
 mod scripts;
 mod snap_ratings;
+mod aur;
 
 #[pymodule]
 fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -41,5 +42,9 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(snap_ratings::snap_bulk_ratings, m)?)?;
     m.add_function(wrap_pyfunction!(snap_ratings::snap_user_vote, m)?)?;
     m.add_function(wrap_pyfunction!(snap_ratings::submit_snap_vote, m)?)?;
+    m.add_function(wrap_pyfunction!(aur::aur_cache_is_fresh, m)?)?;
+    m.add_function(wrap_pyfunction!(aur::refresh_aur_archive, m)?)?;
+    m.add_function(wrap_pyfunction!(aur::load_aur_catalog, m)?)?;
+    m.add_class::<aur::AurCatalog>()?;
     Ok(())
 }

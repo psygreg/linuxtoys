@@ -684,5 +684,18 @@
   "category_available": "Disponibil",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time”, algoritmul avansat de control al congestiei de la Google, conceput pentru a maximiza debitul rețelei și a minimiza latența.",
   "snap_desc": "Depozitele Canonical Snapcraft împreună cu serviciul snapd.",
-  "resolveaac_desc": "Import/redare și export AAC pentru DaVinci Resolve Studio pe Linux."
+  "resolveaac_desc": "Import/redare și export AAC pentru DaVinci Resolve Studio pe Linux.",
+  "aur_security_blocked_title": "Pachet AUR blocat",
+  "aur_security_blocked_message": "LinuxToys a detectat ofuscarea codului în scripturile de compilare sau instalare pentru „{name}”. Instalarea a fost blocată pentru siguranța dvs.\n\nDetectat:\n{details}",
+  "aur_security_unavailable_title": "Verificarea de securitate AUR a eșuat",
+  "aur_security_unavailable_message": "LinuxToys nu a putut verifica scripturile de compilare și instalare pentru „{name}”, astfel că instalarea nu a fost pornită.\n\n{details}",
+  "aur_category": "Depozitul utilizatorilor Arch (AUR)",
+  "aur_category_desc": "Răsfoiți pachete din Arch User Repository.",
+  "aur_warning_title": "Activați AUR?",
+  "aur_warning_message": "Arch User Repository conține scripturi de compilare create de utilizatori, care nu sunt verificate sau acceptate de Arch Linux. Instalarea pachetelor AUR poate executa instrucțiuni de compilare a pachetelor pe sistemul dvs. Verificați pachetele și fișierele PKGBUILD înainte de instalare.",
+  "aur_warning_return": "Înapoi",
+  "aur_warning_enable": "Activează AUR",
+  "aur_refresh_failed_title": "Metadatele AUR nu sunt disponibile",
+  "aur_operation_failed_title": "Operațiunea AUR a eșuat",
+  "aur_operation_failed_message": "Operațiunea pentru „{name}” a eșuat. Ieșirea terminalului:\n\n{output}"
 }

@@ -684,5 +684,18 @@
   "category_available": "उपलब्ध",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, नेटवर्क थ्रुपुट अधिकतम र विलम्बता न्यूनतम बनाउन Google द्वारा डिजाइन गरिएको उन्नत कन्जेसन नियन्त्रण एल्गोरिदम।",
   "snap_desc": "Canonical Snapcraft रिपोजिटरीहरू र तिनको snapd सेवा।",
-  "resolveaac_desc": "Linux मा DaVinci Resolve Studio का लागि AAC आयात/प्लेब्याक र निर्यात।"
+  "resolveaac_desc": "Linux मा DaVinci Resolve Studio का लागि AAC आयात/प्लेब्याक र निर्यात।",
+  "aur_security_blocked_title": "AUR प्याकेज रोकियो",
+  "aur_security_blocked_message": "LinuxToys ले '{name}' का बिल्ड वा स्थापना स्क्रिप्टहरूमा कोड अस्पष्टीकरण पत्ता लगायो। तपाईंको सुरक्षाका लागि स्थापना रोकिएको छ।\n\nपत्ता लागेको:\n{details}",
+  "aur_security_unavailable_title": "AUR सुरक्षा जाँच असफल भयो",
+  "aur_security_unavailable_message": "LinuxToys ले '{name}' का बिल्ड र स्थापना स्क्रिप्टहरू प्रमाणित गर्न सकेन, त्यसैले स्थापना सुरु गरिएन।\n\n{details}",
+  "aur_category": "Arch प्रयोगकर्ता रिपोजिटरी (AUR)",
+  "aur_category_desc": "Arch User Repository का प्याकेजहरू ब्राउज गर्नुहोस्।",
+  "aur_warning_title": "AUR सक्षम गर्ने?",
+  "aur_warning_message": "Arch User Repository मा प्रयोगकर्ताले बनाएका बिल्ड स्क्रिप्टहरू हुन्छन्, जसलाई Arch Linux ले समीक्षा वा समर्थन गर्दैन। AUR प्याकेज स्थापना गर्दा तपाईंको प्रणालीमा प्याकेज बिल्ड निर्देशनहरू चल्न सक्छन्। स्थापना गर्नुअघि प्याकेज र PKGBUILD हरू समीक्षा गर्नुहोस्।",
+  "aur_warning_return": "फर्कनुहोस्",
+  "aur_warning_enable": "AUR सक्षम गर्नुहोस्",
+  "aur_refresh_failed_title": "AUR मेटाडेटा उपलब्ध छैन",
+  "aur_operation_failed_title": "AUR कार्य असफल भयो",
+  "aur_operation_failed_message": "'{name}' का लागि कार्य असफल भयो। टर्मिनल आउटपुट:\n\n{output}"
 }

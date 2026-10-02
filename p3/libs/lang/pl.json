@@ -684,5 +684,18 @@
   "category_available": "Dostępne",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time”, zaawansowany algorytm kontroli przeciążenia firmy Google, zaprojektowany w celu maksymalizacji przepustowości sieci i minimalizacji opóźnień.",
   "snap_desc": "Repozytoria Canonical Snapcraft wraz z usługą snapd.",
-  "resolveaac_desc": "Import/odtwarzanie i eksport AAC dla DaVinci Resolve Studio w systemie Linux."
+  "resolveaac_desc": "Import/odtwarzanie i eksport AAC dla DaVinci Resolve Studio w systemie Linux.",
+  "aur_security_blocked_title": "Pakiet AUR zablokowany",
+  "aur_security_blocked_message": "LinuxToys wykrył zaciemnianie kodu w skryptach kompilacji lub instalacji pakietu „{name}”. Instalacja została zablokowana dla Twojego bezpieczeństwa.\n\nWykryto:\n{details}",
+  "aur_security_unavailable_title": "Kontrola bezpieczeństwa AUR nie powiodła się",
+  "aur_security_unavailable_message": "LinuxToys nie mógł zweryfikować skryptów kompilacji i instalacji pakietu „{name}”, dlatego instalacja nie została rozpoczęta.\n\n{details}",
+  "aur_category": "Repozytorium użytkowników Arch (AUR)",
+  "aur_category_desc": "Przeglądaj pakiety z Arch User Repository.",
+  "aur_warning_title": "Włączyć AUR?",
+  "aur_warning_message": "Arch User Repository zawiera tworzone przez użytkowników skrypty budowania, które nie są sprawdzane ani wspierane przez Arch Linux. Instalowanie pakietów AUR może wykonywać instrukcje budowania pakietów w systemie. Przed instalacją przejrzyj pakiety i pliki PKGBUILD.",
+  "aur_warning_return": "Wróć",
+  "aur_warning_enable": "Włącz AUR",
+  "aur_refresh_failed_title": "Metadane AUR są niedostępne",
+  "aur_operation_failed_title": "Operacja AUR nie powiodła się",
+  "aur_operation_failed_message": "Operacja dla „{name}” nie powiodła się. Dane wyjściowe terminala:\n\n{output}"
 }

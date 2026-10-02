@@ -684,5 +684,18 @@
   "category_available": "Tersedia",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritma kontrol kemacetan canggih Google yang dirancang untuk memaksimalkan throughput jaringan dan meminimalkan latensi.",
   "snap_desc": "Repositori Canonical Snapcraft beserta layanan snapd.",
-  "resolveaac_desc": "Impor/pemutaran dan ekspor AAC untuk DaVinci Resolve Studio di Linux."
+  "resolveaac_desc": "Impor/pemutaran dan ekspor AAC untuk DaVinci Resolve Studio di Linux.",
+  "aur_security_blocked_title": "Paket AUR diblokir",
+  "aur_security_blocked_message": "LinuxToys mendeteksi obfuscation kode dalam skrip build atau instalasi untuk '{name}'. Instalasi diblokir demi keamanan Anda.\n\nTerdeteksi:\n{details}",
+  "aur_security_unavailable_title": "Pemeriksaan keamanan AUR gagal",
+  "aur_security_unavailable_message": "LinuxToys tidak dapat memverifikasi skrip build dan instalasi untuk '{name}', sehingga instalasi tidak dimulai.\n\n{details}",
+  "aur_category": "Repositori Pengguna Arch (AUR)",
+  "aur_category_desc": "Jelajahi paket dari Arch User Repository.",
+  "aur_warning_title": "Aktifkan AUR?",
+  "aur_warning_message": "Arch User Repository berisi skrip build buatan pengguna yang tidak ditinjau atau didukung oleh Arch Linux. Menginstal paket AUR dapat menjalankan instruksi build paket pada sistem Anda. Tinjau paket dan PKGBUILD sebelum menginstalnya.",
+  "aur_warning_return": "Kembali",
+  "aur_warning_enable": "Aktifkan AUR",
+  "aur_refresh_failed_title": "Metadata AUR tidak tersedia",
+  "aur_operation_failed_title": "Operasi AUR gagal",
+  "aur_operation_failed_message": "Operasi untuk '{name}' gagal. Keluaran terminal:\n\n{output}"
 }

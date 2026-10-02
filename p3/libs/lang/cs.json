@@ -684,5 +684,18 @@
   "category_available": "Dostupné",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, pokročilý algoritmus řízení zahlcení od Googlu navržený pro maximalizaci propustnosti sítě a minimalizaci latence.",
   "snap_desc": "Repozitáře Canonical Snapcraft se službou snapd.",
-  "resolveaac_desc": "Import/přehrávání a export AAC pro DaVinci Resolve Studio v Linuxu."
+  "resolveaac_desc": "Import/přehrávání a export AAC pro DaVinci Resolve Studio v Linuxu.",
+  "aur_security_blocked_title": "Balíček AUR byl zablokován",
+  "aur_security_blocked_message": "LinuxToys zjistil obfuskaci kódu ve skriptech pro sestavení nebo instalaci balíčku „{name}“. Instalace byla z bezpečnostních důvodů zablokována.\n\nZjištěno:\n{details}",
+  "aur_security_unavailable_title": "Kontrola zabezpečení AUR selhala",
+  "aur_security_unavailable_message": "LinuxToys nemohl ověřit skripty pro sestavení a instalaci balíčku „{name}“, takže instalace nebyla spuštěna.\n\n{details}",
+  "aur_category": "Uživatelský repozitář Arch (AUR)",
+  "aur_category_desc": "Procházejte balíčky z Arch User Repository.",
+  "aur_warning_title": "Povolit AUR?",
+  "aur_warning_message": "Arch User Repository obsahuje uživatelské sestavovací skripty, které Arch Linux nekontroluje ani nepodporuje. Instalace balíčků AUR může ve vašem systému spouštět pokyny pro sestavení balíčku. Před instalací zkontrolujte balíčky a soubory PKGBUILD.",
+  "aur_warning_return": "Zpět",
+  "aur_warning_enable": "Povolit AUR",
+  "aur_refresh_failed_title": "Metadata AUR nejsou dostupná",
+  "aur_operation_failed_title": "Operace AUR selhala",
+  "aur_operation_failed_message": "Operace pro „{name}“ selhala. Výstup terminálu:\n\n{output}"
 }

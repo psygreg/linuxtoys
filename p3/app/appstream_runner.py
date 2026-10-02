@@ -1,6 +1,8 @@
 """Persistent hidden-PTY runner and session queue for AppStream installations."""
 
 import os
+import re
+import shutil
 from collections import deque
 import select
 import shlex
@@ -18,6 +20,66 @@ from .term_registry import ExecutionRegistry
 
 class AppStreamRunner:
     """Serialize AppStream jobs through one session-lifetime PTY."""
+
+    # PTY captures contain terminal protocol that VTE normally consumes rather
+    # than displays. Keep failure dialogs textual without changing the terminal
+    # session itself.
+    _ANSI_CSI_RE = re.compile(
+        rb"\x1b\[[0-?]*[ -/]*[@-~]"
+    )
+    _ANSI_OSC_RE = re.compile(
+        rb"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)"
+    )
+    _ANSI_SINGLE_RE = re.compile(
+        rb"\x1b[@-_]"
+    )
+
+    # Internal result used when the AUR pre-install inspection blocks a package.
+    _AUR_SECURITY_BLOCKED = 126
+    _AUR_SECURITY_UNAVAILABLE = 125
+    _AUR_SCAN_MAX_FILE = 1024 * 1024
+
+    # High-confidence obfuscation indicators only. This is intentionally not a
+    # general "suspicious shell" scanner: ordinary PKGBUILDs legitimately use
+    # curl, sed, awk, eval-like configure machinery, etc.
+    _AUR_OBFUSCATION_RULES = (
+        (
+            "encoded data is decoded and executed by a shell",
+            re.compile(
+                r"""(?ix)
+                (?:base64\s+(?:-[A-Za-z]*d|--decode)|openssl\s+(?:enc\s+)?-[A-Za-z0-9_-]*d|
+                   xxd\s+-r|(?:gzip|bzip2|xz)\s+-d[c]?|python[23]?\s+-c\s+[^;\n]*(?:b64decode|fromhex))
+                [^;\n|]{0,240}\|\s*(?:ba|z|k|da)?sh\b
+                """
+            ),
+        ),
+        (
+            "decoded or generated content is passed to eval",
+            re.compile(
+                r"""(?ix)
+                \beval\b[^\n]{0,300}
+                (?:base64|b64decode|fromhex|xxd\s+-r|openssl\s+(?:enc\s+)?-|
+                   printf\s+['"][^'"]*\\x[0-9a-f]{2})
+                """
+            ),
+        ),
+        (
+            "eval executes command substitution",
+            re.compile(r"""(?ix)\beval\s+["']?\s*\$\(\s*[^)\n]{4,}\)"""),
+        ),
+        (
+            "a large encoded payload is embedded in the build script",
+            re.compile(r"""(?<![A-Za-z0-9+/])[A-Za-z0-9+/]{600,}={0,2}(?![A-Za-z0-9+/])"""),
+        ),
+        (
+            "a large hexadecimal payload is embedded in the build script",
+            re.compile(r"""(?i)(?<![0-9a-f])(?:[0-9a-f]{2}){300,}(?![0-9a-f])"""),
+        ),
+        (
+            "long hexadecimal escape sequence suggests hidden executable text",
+            re.compile(r"""(?i)(?:\\x[0-9a-f]{2}){40,}"""),
+        ),
+    )
 
     def __init__(self, parent):
         self.parent = parent
@@ -346,8 +408,14 @@ class AppStreamRunner:
                 # Keep the proven installation path completely unchanged. Removal
                 # is additive and has its own execution path so it cannot alter
                 # installation registry/transmap behavior.
-                if record.get("action") == "remove":
+                aur_job = str(record["info"].get("appstream_source", "") or "") == "aur"
+                failure_output = ""
+                if record.get("action") == "remove" and aur_job:
+                    exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
+                elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
+                elif aur_job:
+                    exit_code, failure_output = self._run_aur_job(record["info"])
                 elif record.get("action") == "snap_revert":
                     exit_code = self._run_snap_revert(record["info"], record["snap_name"])
                 elif record.get("action") == "extension_remove":
@@ -368,6 +436,26 @@ class AppStreamRunner:
                             pass
                     else:
                         record["status"] = "success" if exit_code == 0 else "failed"
+                if aur_job and exit_code == self._AUR_SECURITY_BLOCKED:
+                    callback = getattr(self.parent, "_show_aur_security_blocked", None)
+                    if callback is not None:
+                        GLib.idle_add(
+                            callback,
+                            record.get("name", "AUR package"),
+                            failure_output,
+                        )
+                elif aur_job and exit_code == self._AUR_SECURITY_UNAVAILABLE:
+                    callback = getattr(self.parent, "_show_aur_security_unavailable", None)
+                    if callback is not None:
+                        GLib.idle_add(
+                            callback,
+                            record.get("name", "AUR package"),
+                            failure_output,
+                        )
+                elif aur_job and exit_code not in (0, 100) and failure_output:
+                    callback = getattr(self.parent, "_show_aur_operation_failure", None)
+                    if callback is not None:
+                        GLib.idle_add(callback, record.get("name", "AUR package"), failure_output)
             except Exception as exc:
                 with self._condition:
                     record["exit_code"] = -1
@@ -378,6 +466,199 @@ class AppStreamRunner:
                 refresh = getattr(self.parent, "_refresh_installed_packages_async", None)
                 if refresh is not None:
                     GLib.idle_add(refresh, True)
+
+    def _run_aur_job(self, script_info):
+        """Run an AUR install through normal pkg_install/registry machinery and capture PTY output."""
+        if self._process is None or self._process.poll() is not None:
+            self._close_pty()
+            self._spawn_shell()
+        registry_name = script_info.get("registry_name", script_info.get("name", "AUR package"))
+        package = str(script_info.get("package-name") or "").strip()
+        if not package:
+            return 2, "Missing AUR package name"
+
+        security_status, security_details = self._verify_aur_package_sources(package)
+        if security_status != 0:
+            return security_status, security_details
+
+        # Only record/execute the transaction after the AUR repository has passed
+        # the pre-install source inspection.
+        antenna.add_script_to_history(script_info.get("name", "AUR package"))
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(prefix="aur-install-", suffix=".sh", dir=directory, text=True)
+        transmap_path = self._new_transmap()
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write(f"pkg_install {shlex.quote(package)}\n")
+            os.chmod(path, 0o700)
+            env = script_environment(script_info, os.environ.copy())
+            env["TRANSMAP_PATH"] = transmap_path
+            env.pop("LINUXTOYS_RUNNER_STATE", None)
+            exit_code, output = self._dispatch_path(path, env, capture_output=True)
+            self._finish_job(registry_name, transmap_path, exit_code)
+            return exit_code, output
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+
+    @classmethod
+    def _scan_aur_text_for_obfuscation(cls, filename, text):
+        findings = []
+        for description, pattern in cls._AUR_OBFUSCATION_RULES:
+            match = pattern.search(text)
+            if match is None:
+                continue
+            line = text.count("\n", 0, match.start()) + 1
+            findings.append(f"{filename}:{line}: {description}")
+        return findings
+
+    @classmethod
+    def _verify_aur_package_sources(cls, package):
+        """Fetch and statically inspect AUR-controlled install sources.
+
+        Nothing from the repository is sourced or executed. We inspect PKGBUILD
+        plus every regular *.install file shipped in the AUR Git repository.
+        """
+        git = shutil.which("git")
+        if not git:
+            return (
+                cls._AUR_SECURITY_UNAVAILABLE,
+                "Git is required to verify the AUR package sources.",
+            )
+
+        safe_package = str(package or "").strip()
+        if not safe_package or not re.fullmatch(r"[A-Za-z0-9@._+:-]+", safe_package):
+            return (
+                cls._AUR_SECURITY_UNAVAILABLE,
+                "The AUR package name could not be safely verified.",
+            )
+
+        temp_root = tempfile.mkdtemp(prefix="linuxtoys-aur-verify-")
+        repo_dir = os.path.join(temp_root, "repo")
+        try:
+            repository = f"https://aur.archlinux.org/{safe_package}.git"
+            try:
+                result = subprocess.run(
+                    [
+                        git,
+                        "-c", "protocol.file.allow=never",
+                        "clone",
+                        "--quiet",
+                        "--depth", "1",
+                        "--no-tags",
+                        "--config", "core.hooksPath=/dev/null",
+                        repository,
+                        repo_dir,
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=45,
+                    check=False,
+                    env={
+                        **os.environ,
+                        "GIT_TERMINAL_PROMPT": "0",
+                        "GIT_CONFIG_NOSYSTEM": "1",
+                    },
+                )
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                return (
+                    cls._AUR_SECURITY_UNAVAILABLE,
+                    f"Could not fetch the AUR repository for verification: {exc}",
+                )
+
+            if result.returncode != 0:
+                detail = (result.stderr or result.stdout or "").strip()
+                if len(detail) > 1000:
+                    detail = detail[-1000:]
+                return (
+                    cls._AUR_SECURITY_UNAVAILABLE,
+                    "Could not fetch the AUR repository for verification."
+                    + (f"\n\n{detail}" if detail else ""),
+                )
+
+            candidates = []
+            pkgbuild = os.path.join(repo_dir, "PKGBUILD")
+            if os.path.isfile(pkgbuild) and not os.path.islink(pkgbuild):
+                candidates.append(pkgbuild)
+
+            # .install files are package-manager hooks executed around package
+            # installation/removal. Scan all regular ones tracked in the AUR repo,
+            # which also covers PKGBUILDs that choose the hook indirectly.
+            for root, dirs, files in os.walk(repo_dir, followlinks=False):
+                dirs[:] = [d for d in dirs if d != ".git"]
+                for filename in files:
+                    if not filename.endswith(".install"):
+                        continue
+                    path = os.path.join(root, filename)
+                    if os.path.isfile(path) and not os.path.islink(path):
+                        candidates.append(path)
+
+            if not candidates or pkgbuild not in candidates:
+                return (
+                    cls._AUR_SECURITY_UNAVAILABLE,
+                    "The AUR repository did not contain a readable PKGBUILD.",
+                )
+
+            findings = []
+            for path in candidates:
+                try:
+                    size = os.path.getsize(path)
+                    if size > cls._AUR_SCAN_MAX_FILE:
+                        relative = os.path.relpath(path, repo_dir)
+                        findings.append(
+                            f"{relative}: file is too large to safely inspect "
+                            f"({size} bytes)"
+                        )
+                        continue
+                    with open(path, "r", encoding="utf-8", errors="replace") as handle:
+                        source = handle.read(cls._AUR_SCAN_MAX_FILE + 1)
+                except OSError as exc:
+                    return (
+                        cls._AUR_SECURITY_UNAVAILABLE,
+                        f"Could not read an AUR source file for verification: {exc}",
+                    )
+
+                relative = os.path.relpath(path, repo_dir)
+                findings.extend(
+                    cls._scan_aur_text_for_obfuscation(relative, source)
+                )
+
+            if findings:
+                return (
+                    cls._AUR_SECURITY_BLOCKED,
+                    "\n".join(findings[:20]),
+                )
+            return 0, ""
+        finally:
+            shutil.rmtree(temp_root, ignore_errors=True)
+
+    def _run_aur_removal_job(self, script_info):
+        """Run an AUR registry revert and retain terminal output when it fails."""
+        if self._process is None or self._process.poll() is not None:
+            self._close_pty()
+            self._spawn_shell()
+        transmap_path = self._new_transmap()
+        env = script_environment(script_info, os.environ.copy())
+        env["TRANSMAP_PATH"] = transmap_path
+        env.pop("LINUXTOYS_RUNNER_STATE", None)
+        try:
+            exit_code, output = self._dispatch_path(script_info.get("path", "true"), env, capture_output=True)
+            ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
+            self._remove_transmap(transmap_path)
+            return exit_code, output
+        finally:
+            cleanup_path = script_info.get("cleanup_path")
+            if cleanup_path:
+                try:
+                    os.remove(cleanup_path)
+                except OSError:
+                    pass
 
     def _run_snap_revert(self, app_info, snap_name):
         """Execute pkg_snap_revert through the normal LinuxToys script wrapper."""
@@ -553,7 +834,7 @@ class AppStreamRunner:
                 except OSError:
                     pass
 
-    def _dispatch_path(self, path, env):
+    def _dispatch_path(self, path, env, capture_output=False):
         """Execute one LinuxToys script phase through the persistent AppStream PTY."""
         argv = script_command(path, env["SCRIPT_DIR"])
         token = uuid.uuid4().hex
@@ -566,16 +847,22 @@ class AppStreamRunner:
         marker_left = marker[:marker_mid]
         marker_right = marker[marker_mid:]
 
+        start_marker = f"__LINUXTOYS_APPSTREAM_START_{token}__"
         dispatch = (
             f"_lt_marker={shlex.quote(marker_left)};"
             f"_lt_marker=\"$_lt_marker\"{shlex.quote(marker_right)}; "
-            f"env {assignments} {command}; "
+            + (f"printf '%s\\n' {shlex.quote(start_marker)}; " if capture_output else "")
+            + f"env {assignments} {command}; "
             f"_lt_status=$?; "
             f"printf '\\n%s:%s\\n' \"$_lt_marker\" \"$_lt_status\"\n"
         )
         self._process.stdin.write(dispatch.encode("utf-8"))
         self._process.stdin.flush()
-        return self._read_until_marker(marker)
+        return self._read_until_marker(
+            marker,
+            capture_output=capture_output,
+            start_marker=start_marker if capture_output else None,
+        )
 
     @staticmethod
     def _new_dependency_script(dependencies):
@@ -724,9 +1011,47 @@ class AppStreamRunner:
                 except OSError:
                     pass
 
-    def _read_until_marker(self, marker):
+    @classmethod
+    def _clean_captured_pty_output(cls, raw):
+        """Convert a bounded PTY transcript into plain text for error dialogs."""
+        # OSC must be removed before CSI/single-character escapes because OSC
+        # payloads can themselves contain bytes that resemble other sequences.
+        raw = cls._ANSI_OSC_RE.sub(b"", raw)
+        raw = cls._ANSI_CSI_RE.sub(b"", raw)
+        raw = cls._ANSI_SINGLE_RE.sub(b"", raw)
+
+        # Model the two terminal editing controls that commonly leak into command
+        # output. CR returns to column zero; for a textual log, normalizing it to
+        # LF is more useful than preserving an overwrite operation.
+        raw = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+        while b"\x08" in raw:
+            raw = re.sub(rb"[^\n]\x08", b"", raw)
+            raw = raw.replace(b"\x08", b"")
+
+        text = raw.decode("utf-8", errors="replace")
+        lines = [line.rstrip() for line in text.splitlines()]
+
+        # Collapse PTY-induced vertical whitespace without disturbing normal
+        # multiline diagnostics.
+        cleaned = []
+        blank = False
+        for line in lines:
+            if not line.strip():
+                if cleaned and not blank:
+                    cleaned.append("")
+                blank = True
+                continue
+            cleaned.append(line)
+            blank = False
+        return "\n".join(cleaned).strip()
+
+    def _read_until_marker(self, marker, capture_output=False, start_marker=None):
         marker_bytes = (marker + ":").encode("utf-8")
+        start_bytes = start_marker.encode("utf-8") if start_marker else None
         pending = b""
+        captured = bytearray()
+        capture_started = not bool(start_bytes)
+        capture_limit = 512 * 1024
         while not self._stopping.is_set():
             if self._process is None or self._process.poll() is not None:
                 raise RuntimeError("persistent AppStream PTY shell exited unexpectedly")
@@ -736,16 +1061,42 @@ class AppStreamRunner:
             chunk = os.read(self._master_fd, 4096)
             if not chunk:
                 raise RuntimeError("persistent AppStream PTY closed unexpectedly")
+
             pending += chunk
+
+            if capture_output:
+                if capture_started:
+                    captured.extend(chunk)
+                elif start_bytes in pending:
+                    _before_start, after_start = pending.split(start_bytes, 1)
+                    # Drop the marker's own line ending. Everything before it is
+                    # stale shell/prompt/control traffic from the persistent PTY.
+                    after_start = after_start.lstrip(b"\r\n")
+                    captured.extend(after_start)
+                    capture_started = True
+
+                if len(captured) > capture_limit:
+                    del captured[:len(captured) - capture_limit]
+
             if marker_bytes not in pending:
-                pending = pending[-max(4096, len(marker_bytes) * 2):]
+                pending = pending[-max(4096, len(marker_bytes) * 2, len(start_bytes or b"") * 2):]
                 continue
-            line = pending.split(marker_bytes, 1)[1].splitlines()[0].strip()
+
+            _before, after = pending.split(marker_bytes, 1)
+            line = after.splitlines()[0].strip()
             try:
-                return int(line)
+                status = int(line)
             except ValueError as exc:
                 raise RuntimeError("invalid AppStream runner completion status") from exc
-        return 100
+            if not capture_output:
+                return status
+
+            raw = bytes(captured)
+            marker_at = raw.rfind(marker_bytes)
+            if marker_at >= 0:
+                raw = raw[:marker_at]
+            return status, self._clean_captured_pty_output(raw)
+        return (100, "") if capture_output else 100
 
     def _notify_changed(self):
         callback = getattr(self.parent, "_on_appstream_queue_changed", None)

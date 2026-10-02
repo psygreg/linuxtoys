@@ -684,5 +684,18 @@
   "category_available": "利用可能",
   "bbr_desc": "「Bottleneck Bandwidth and Round-trip propagation time」。ネットワークのスループットを最大化し、レイテンシを最小限に抑えるために Google が設計した高度な輻輳制御アルゴリズムです。",
   "snap_desc": "snapd サービスを使用する Canonical Snapcraft リポジトリ。",
-  "resolveaac_desc": "Linux 版 DaVinci Resolve Studio での AAC のインポート/再生およびエクスポート。"
+  "resolveaac_desc": "Linux 版 DaVinci Resolve Studio での AAC のインポート/再生およびエクスポート。",
+  "aur_security_blocked_title": "AUR パッケージをブロックしました",
+  "aur_security_blocked_message": "LinuxToys は「{name}」のビルドまたはインストールスクリプトでコードの難読化を検出しました。安全のため、インストールはブロックされました。\n\n検出内容:\n{details}",
+  "aur_security_unavailable_title": "AUR セキュリティチェックに失敗しました",
+  "aur_security_unavailable_message": "LinuxToys は「{name}」のビルドおよびインストールスクリプトを検証できなかったため、インストールを開始しませんでした。\n\n{details}",
+  "aur_category": "Arch ユーザーリポジトリ (AUR)",
+  "aur_category_desc": "Arch User Repository のパッケージを閲覧します。",
+  "aur_warning_title": "AUR を有効にしますか？",
+  "aur_warning_message": "Arch User Repository には、Arch Linux によるレビューやサポートを受けていない、ユーザー作成のビルドスクリプトが含まれています。AUR パッケージをインストールすると、システム上でパッケージのビルド手順が実行される場合があります。インストールする前にパッケージと PKGBUILD を確認してください。",
+  "aur_warning_return": "戻る",
+  "aur_warning_enable": "AUR を有効にする",
+  "aur_refresh_failed_title": "AUR メタデータを利用できません",
+  "aur_operation_failed_title": "AUR 操作に失敗しました",
+  "aur_operation_failed_message": "「{name}」の操作に失敗しました。ターミナル出力:\n\n{output}"
 }

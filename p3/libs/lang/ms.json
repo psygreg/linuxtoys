@@ -684,5 +684,18 @@
   "category_available": "Tersedia",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritma kawalan kesesakan lanjutan Google yang direka untuk memaksimumkan daya pemprosesan rangkaian dan meminimumkan kependaman.",
   "snap_desc": "Repositori Canonical Snapcraft bersama perkhidmatan snapd.",
-  "resolveaac_desc": "Import/main balik dan eksport AAC untuk DaVinci Resolve Studio di Linux."
+  "resolveaac_desc": "Import/main balik dan eksport AAC untuk DaVinci Resolve Studio di Linux.",
+  "aur_security_blocked_title": "Pakej AUR disekat",
+  "aur_security_blocked_message": "LinuxToys mengesan pengaburan kod dalam skrip binaan atau pemasangan untuk '{name}'. Pemasangan telah disekat demi keselamatan anda.\n\nDikesan:\n{details}",
+  "aur_security_unavailable_title": "Pemeriksaan keselamatan AUR gagal",
+  "aur_security_unavailable_message": "LinuxToys tidak dapat mengesahkan skrip binaan dan pemasangan untuk '{name}', jadi pemasangan tidak dimulakan.\n\n{details}",
+  "aur_category": "Repositori Pengguna Arch (AUR)",
+  "aur_category_desc": "Semak imbas pakej daripada Arch User Repository.",
+  "aur_warning_title": "Dayakan AUR?",
+  "aur_warning_message": "Arch User Repository mengandungi skrip binaan yang dihasilkan oleh pengguna dan tidak disemak atau disokong oleh Arch Linux. Memasang pakej AUR boleh melaksanakan arahan binaan pakej pada sistem anda. Semak pakej dan PKGBUILD sebelum memasangnya.",
+  "aur_warning_return": "Kembali",
+  "aur_warning_enable": "Dayakan AUR",
+  "aur_refresh_failed_title": "Metadata AUR tidak tersedia",
+  "aur_operation_failed_title": "Operasi AUR gagal",
+  "aur_operation_failed_message": "Operasi untuk '{name}' gagal. Output terminal:\n\n{output}"
 }

@@ -684,5 +684,18 @@
   "category_available": "Beschikbaar",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, Googles geavanceerde algoritme voor congestiebeheer, ontworpen om de netwerkdoorvoer te maximaliseren en de latentie te minimaliseren.",
   "snap_desc": "Canonical Snapcraft-pakketbronnen met de bijbehorende snapd-service.",
-  "resolveaac_desc": "AAC-import/-afspelen en export voor DaVinci Resolve Studio op Linux."
+  "resolveaac_desc": "AAC-import/-afspelen en export voor DaVinci Resolve Studio op Linux.",
+  "aur_security_blocked_title": "AUR-pakket geblokkeerd",
+  "aur_security_blocked_message": "LinuxToys heeft code-obfuscatie gedetecteerd in de build- of installatiescripts voor '{name}'. De installatie is voor uw veiligheid geblokkeerd.\n\nGedetecteerd:\n{details}",
+  "aur_security_unavailable_title": "AUR-beveiligingscontrole mislukt",
+  "aur_security_unavailable_message": "LinuxToys kon de build- en installatiescripts voor '{name}' niet verifiëren, waardoor de installatie niet is gestart.\n\n{details}",
+  "aur_category": "Arch-gebruikersrepository (AUR)",
+  "aur_category_desc": "Blader door pakketten uit de Arch User Repository.",
+  "aur_warning_title": "AUR inschakelen?",
+  "aur_warning_message": "De Arch User Repository bevat door gebruikers gemaakte buildscripts die niet door Arch Linux worden beoordeeld of ondersteund. Bij het installeren van AUR-pakketten kunnen instructies voor het bouwen van pakketten op uw systeem worden uitgevoerd. Controleer pakketten en PKGBUILD-bestanden voordat u ze installeert.",
+  "aur_warning_return": "Terug",
+  "aur_warning_enable": "AUR inschakelen",
+  "aur_refresh_failed_title": "AUR-metadata niet beschikbaar",
+  "aur_operation_failed_title": "AUR-bewerking mislukt",
+  "aur_operation_failed_message": "De bewerking voor '{name}' is mislukt. Terminaluitvoer:\n\n{output}"
 }

@@ -684,5 +684,18 @@
   "category_available": "Available",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, advanced congestion control algorithm ng Google na idinisenyo para i-maximize ang network throughput at i-minimize ang latency.",
   "snap_desc": "Mga repository ng Canonical Snapcraft kasama ang snapd service nito.",
-  "resolveaac_desc": "Pag-import/pag-playback at pag-export ng AAC para sa DaVinci Resolve Studio sa Linux."
+  "resolveaac_desc": "Pag-import/pag-playback at pag-export ng AAC para sa DaVinci Resolve Studio sa Linux.",
+  "aur_security_blocked_title": "Na-block ang AUR package",
+  "aur_security_blocked_message": "Nakakita ang LinuxToys ng code obfuscation sa mga build o installation script para sa '{name}'. Na-block ang installation para sa iyong kaligtasan.\n\nNatukoy:\n{details}",
+  "aur_security_unavailable_title": "Nabigo ang AUR security check",
+  "aur_security_unavailable_message": "Hindi ma-verify ng LinuxToys ang mga build at installation script para sa '{name}', kaya hindi sinimulan ang installation.\n\n{details}",
+  "aur_category": "Repository ng mga Gumagamit ng Arch (AUR)",
+  "aur_category_desc": "Mag-browse ng mga package mula sa Arch User Repository.",
+  "aur_warning_title": "I-enable ang AUR?",
+  "aur_warning_message": "Naglalaman ang Arch User Repository ng mga build script na ginawa ng mga user at hindi sinusuri o sinusuportahan ng Arch Linux. Ang pag-install ng mga AUR package ay maaaring magpatakbo ng mga tagubilin sa pag-build ng package sa iyong system. Suriin ang mga package at PKGBUILD bago i-install ang mga ito.",
+  "aur_warning_return": "Bumalik",
+  "aur_warning_enable": "I-enable ang AUR",
+  "aur_refresh_failed_title": "Hindi available ang AUR metadata",
+  "aur_operation_failed_title": "Nabigo ang AUR operation",
+  "aur_operation_failed_message": "Nabigo ang operation para sa '{name}'. Terminal output:\n\n{output}"
 }

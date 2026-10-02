@@ -684,5 +684,18 @@
   "category_available": "Доступно",
   "bbr_desc": "«Bottleneck Bandwidth and Round-trip propagation time» — усовершенствованный алгоритм Google для управления перегрузкой, разработанный для максимизации пропускной способности сети и минимизации задержки.",
   "snap_desc": "Репозитории Canonical Snapcraft вместе со службой snapd.",
-  "resolveaac_desc": "Импорт/воспроизведение и экспорт AAC для DaVinci Resolve Studio в Linux."
+  "resolveaac_desc": "Импорт/воспроизведение и экспорт AAC для DaVinci Resolve Studio в Linux.",
+  "aur_security_blocked_title": "Пакет AUR заблокирован",
+  "aur_security_blocked_message": "LinuxToys обнаружил обфускацию кода в сценариях сборки или установки «{name}». Установка была заблокирована в целях вашей безопасности.\n\nОбнаружено:\n{details}",
+  "aur_security_unavailable_title": "Проверка безопасности AUR не удалась",
+  "aur_security_unavailable_message": "LinuxToys не смог проверить сценарии сборки и установки «{name}», поэтому установка не была запущена.\n\n{details}",
+  "aur_category": "Пользовательский репозиторий Arch (AUR)",
+  "aur_category_desc": "Просматривайте пакеты из Arch User Repository.",
+  "aur_warning_title": "Включить AUR?",
+  "aur_warning_message": "Arch User Repository содержит созданные пользователями сценарии сборки, которые не проверяются и не поддерживаются Arch Linux. При установке пакетов AUR в вашей системе могут выполняться инструкции по сборке пакетов. Проверяйте пакеты и файлы PKGBUILD перед установкой.",
+  "aur_warning_return": "Назад",
+  "aur_warning_enable": "Включить AUR",
+  "aur_refresh_failed_title": "Метаданные AUR недоступны",
+  "aur_operation_failed_title": "Операция AUR завершилась с ошибкой",
+  "aur_operation_failed_message": "Операция для «{name}» завершилась с ошибкой. Вывод терминала:\n\n{output}"
 }

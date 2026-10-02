@@ -737,7 +737,9 @@ class ItemWidgetFactory:
         # Route by the item's own type, not by the global search state. Search
         # remains active while an app page is open, and using it here would make
         # unrelated category cards behave like executable scripts.
-        if info.get("is_script", False):
+        if info.get("is_aur_category"):
+            self._activate_aur_category(info)
+        elif info.get("is_script", False):
             self.on_script_clicked(widget, event)
         else:
             self.on_category_clicked(widget, event)

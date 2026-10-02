@@ -1623,6 +1623,8 @@ class AppPageView(Gtk.Box):
             return self.translations.get("app_page_source_native", "Native")
         if source == "snap":
             return "Snap"
+        if source == "aur":
+            return "AUR"
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
 
     @staticmethod

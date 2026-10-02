@@ -684,5 +684,18 @@
   "category_available": "Ar fáil",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ard-algartam rialaithe plódaithe Google atá deartha chun tréchur líonra a uasmhéadú agus aga folaigh a íoslaghdú.",
   "snap_desc": "Stórtha Canonical Snapcraft lena seirbhís snapd.",
-  "resolveaac_desc": "Iompórtáil/athsheinm agus easpórtáil AAC do DaVinci Resolve Studio ar Linux."
+  "resolveaac_desc": "Iompórtáil/athsheinm agus easpórtáil AAC do DaVinci Resolve Studio ar Linux.",
+  "aur_security_blocked_title": "Pacáiste AUR blocáilte",
+  "aur_security_blocked_message": "Bhraith LinuxToys doiléiriú cóid sna scripteanna tógála nó suiteála do '{name}'. Cuireadh bac ar an tsuiteáil ar mhaithe le do shábháilteacht.\n\nBraitheadh:\n{details}",
+  "aur_security_unavailable_title": "Theip ar sheiceáil slándála AUR",
+  "aur_security_unavailable_message": "Níorbh fhéidir le LinuxToys na scripteanna tógála agus suiteála do '{name}' a fhíorú, mar sin níor cuireadh tús leis an tsuiteáil.\n\n{details}",
+  "aur_category": "Stór Úsáideoirí Arch (AUR)",
+  "aur_category_desc": "Brabhsáil pacáistí ón Arch User Repository.",
+  "aur_warning_title": "Cumasaigh an AUR?",
+  "aur_warning_message": "Tá scripteanna tógála arna gcruthú ag úsáideoirí san Arch User Repository nach ndéanann Arch Linux athbhreithniú orthu ná tacú leo. Is féidir le suiteáil pacáistí AUR treoracha tógála pacáiste a rith ar do chóras. Déan athbhreithniú ar phacáistí agus ar PKGBUILDs sula suiteálann tú iad.",
+  "aur_warning_return": "Ar ais",
+  "aur_warning_enable": "Cumasaigh AUR",
+  "aur_refresh_failed_title": "Meiteashonraí AUR gan fáil",
+  "aur_operation_failed_title": "Theip ar oibríocht AUR",
+  "aur_operation_failed_message": "Theip ar an oibríocht do '{name}'. Aschur teirminéil:\n\n{output}"
 }

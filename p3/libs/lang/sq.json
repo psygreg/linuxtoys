@@ -684,5 +684,18 @@
   "category_available": "E disponueshme",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, algoritmi i avancuar i Google për kontrollin e mbingarkesës, i projektuar për të maksimizuar xhiron e rrjetit dhe minimizuar vonesën.",
   "snap_desc": "Depot e Canonical Snapcraft me shërbimin e tyre snapd.",
-  "resolveaac_desc": "Importim/riprodhim dhe eksportim AAC për DaVinci Resolve Studio në Linux."
+  "resolveaac_desc": "Importim/riprodhim dhe eksportim AAC për DaVinci Resolve Studio në Linux.",
+  "aur_security_blocked_title": "Paketa AUR u bllokua",
+  "aur_security_blocked_message": "LinuxToys zbuloi fshehje të kodit në skriptet e ndërtimit ose instalimit për '{name}'. Instalimi u bllokua për sigurinë tuaj.\n\nU zbulua:\n{details}",
+  "aur_security_unavailable_title": "Kontrolli i sigurisë AUR dështoi",
+  "aur_security_unavailable_message": "LinuxToys nuk mundi të verifikonte skriptet e ndërtimit dhe instalimit për '{name}', prandaj instalimi nuk u nis.\n\n{details}",
+  "aur_category": "Depoja e përdoruesve të Arch (AUR)",
+  "aur_category_desc": "Shfletoni paketat nga Arch User Repository.",
+  "aur_warning_title": "Të aktivizohet AUR?",
+  "aur_warning_message": "Arch User Repository përmban skripte ndërtimi të krijuara nga përdoruesit që nuk shqyrtohen ose mbështeten nga Arch Linux. Instalimi i paketave AUR mund të ekzekutojë udhëzime për ndërtimin e paketave në sistemin tuaj. Shqyrtoni paketat dhe PKGBUILD para instalimit.",
+  "aur_warning_return": "Kthehu",
+  "aur_warning_enable": "Aktivizo AUR",
+  "aur_refresh_failed_title": "Metadatat AUR nuk janë të disponueshme",
+  "aur_operation_failed_title": "Operacioni AUR dështoi",
+  "aur_operation_failed_message": "Operacioni për '{name}' dështoi. Dalja e terminalit:\n\n{output}"
 }

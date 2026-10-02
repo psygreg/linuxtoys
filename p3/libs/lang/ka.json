@@ -684,5 +684,18 @@
   "category_available": "ხელმისაწვდომი",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’ — Google-ის მოწინავე გადატვირთვის კონტროლის ალგორითმი, რომელიც შექმნილია ქსელის გამტარუნარიანობის მაქსიმალურად გაზრდისა და დაყოვნების მინიმუმამდე შემცირებისთვის.",
   "snap_desc": "Canonical Snapcraft-ის რეპოზიტორიები snapd სერვისთან ერთად.",
-  "resolveaac_desc": "AAC-ის იმპორტი/დაკვრა და ექსპორტი DaVinci Resolve Studio-სთვის Linux-ზე."
+  "resolveaac_desc": "AAC-ის იმპორტი/დაკვრა და ექსპორტი DaVinci Resolve Studio-სთვის Linux-ზე.",
+  "aur_security_blocked_title": "AUR პაკეტი დაიბლოკა",
+  "aur_security_blocked_message": "LinuxToys-მა '{name}'-ის აგების ან ინსტალაციის სკრიპტებში კოდის ობფუსკაცია აღმოაჩინა. თქვენი უსაფრთხოებისთვის ინსტალაცია დაიბლოკა.\n\nაღმოჩენილია:\n{details}",
+  "aur_security_unavailable_title": "AUR-ის უსაფრთხოების შემოწმება ვერ მოხერხდა",
+  "aur_security_unavailable_message": "LinuxToys-მა ვერ შეძლო '{name}'-ის აგებისა და ინსტალაციის სკრიპტების შემოწმება, ამიტომ ინსტალაცია არ დაწყებულა.\n\n{details}",
+  "aur_category": "Arch-ის მომხმარებელთა რეპოზიტორია (AUR)",
+  "aur_category_desc": "დაათვალიერეთ პაკეტები Arch User Repository-დან.",
+  "aur_warning_title": "ჩაირთოს AUR?",
+  "aur_warning_message": "Arch User Repository შეიცავს მომხმარებლების მიერ შექმნილ აგების სკრიპტებს, რომლებსაც Arch Linux არ ამოწმებს და არ უჭერს მხარს. AUR პაკეტების ინსტალაციამ შეიძლება თქვენს სისტემაში პაკეტის აგების ინსტრუქციები შეასრულოს. ინსტალაციამდე შეამოწმეთ პაკეტები და PKGBUILD ფაილები.",
+  "aur_warning_return": "დაბრუნება",
+  "aur_warning_enable": "AUR-ის ჩართვა",
+  "aur_refresh_failed_title": "AUR-ის მეტამონაცემები მიუწვდომელია",
+  "aur_operation_failed_title": "AUR ოპერაცია ვერ შესრულდა",
+  "aur_operation_failed_message": "'{name}'-ის ოპერაცია ვერ შესრულდა. ტერმინალის გამოტანა:\n\n{output}"
 }

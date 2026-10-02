@@ -683,5 +683,18 @@
   "category_available": "Mavjud",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, tarmoq o'tkazuvchanligini maksimal darajada oshirish va kechikishni minimallashtirish uchun Google tomonidan ishlab chiqilgan ilg'or tirbandlikni boshqarish algoritmi.",
   "snap_desc": "Canonical Snapcraft repozitoriylari va ularning snapd xizmati.",
-  "resolveaac_desc": "Linux'da DaVinci Resolve Studio uchun AAC import/ijro etish va eksport."
+  "resolveaac_desc": "Linux'da DaVinci Resolve Studio uchun AAC import/ijro etish va eksport.",
+  "aur_security_blocked_title": "AUR paketi bloklandi",
+  "aur_security_blocked_message": "LinuxToys '{name}' uchun build yoki o'rnatish skriptlarida kodni yashirishni aniqladi. Xavfsizligingiz uchun o'rnatish bloklandi.\n\nAniqlandi:\n{details}",
+  "aur_security_unavailable_title": "AUR xavfsizlik tekshiruvi muvaffaqiyatsiz tugadi",
+  "aur_security_unavailable_message": "LinuxToys '{name}' uchun build va o'rnatish skriptlarini tekshira olmadi, shuning uchun o'rnatish boshlanmadi.\n\n{details}",
+  "aur_category": "Arch foydalanuvchilar repozitoriysi (AUR)",
+  "aur_category_desc": "Arch User Repository paketlarini ko'rib chiqing.",
+  "aur_warning_title": "AUR yoqilsinmi?",
+  "aur_warning_message": "Arch User Repository foydalanuvchilar yaratgan, Arch Linux tomonidan tekshirilmaydigan yoki qo'llab-quvvatlanmaydigan build skriptlarini o'z ichiga oladi. AUR paketlarini o'rnatish tizimingizda paket build ko'rsatmalarini bajarishi mumkin. O'rnatishdan oldin paketlar va PKGBUILD fayllarini tekshiring.",
+  "aur_warning_return": "Qaytish",
+  "aur_warning_enable": "AUR-ni yoqish",
+  "aur_refresh_failed_title": "AUR metadata ma'lumotlari mavjud emas",
+  "aur_operation_failed_title": "AUR amaliyoti muvaffaqiyatsiz tugadi",
+  "aur_operation_failed_message": "'{name}' uchun amaliyot muvaffaqiyatsiz tugadi. Terminal chiqishi:\n\n{output}"
 }

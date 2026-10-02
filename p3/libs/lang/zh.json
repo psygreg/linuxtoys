@@ -686,5 +686,18 @@
   "category_available": "可用",
   "bbr_desc": "“Bottleneck Bandwidth and Round-trip propagation time”，Google 设计的高级拥塞控制算法，旨在最大化网络吞吐量并尽可能降低延迟。",
   "snap_desc": "Canonical Snapcraft 软件仓库及其 snapd 服务。",
-  "resolveaac_desc": "在 Linux 上为 DaVinci Resolve Studio 提供 AAC 导入/播放和导出支持。"
+  "resolveaac_desc": "在 Linux 上为 DaVinci Resolve Studio 提供 AAC 导入/播放和导出支持。",
+  "aur_security_blocked_title": "AUR 软件包已被阻止",
+  "aur_security_blocked_message": "LinuxToys 在“{name}”的构建或安装脚本中检测到代码混淆。为保障您的安全，安装已被阻止。\n\n检测到：\n{details}",
+  "aur_security_unavailable_title": "AUR 安全检查失败",
+  "aur_security_unavailable_message": "LinuxToys 无法验证“{name}”的构建和安装脚本，因此未开始安装。\n\n{details}",
+  "aur_category": "Arch 用户软件仓库 (AUR)",
+  "aur_category_desc": "浏览 Arch User Repository 中的软件包。",
+  "aur_warning_title": "启用 AUR？",
+  "aur_warning_message": "Arch User Repository 包含由用户编写、未经 Arch Linux 审核或支持的构建脚本。安装 AUR 软件包可能会在您的系统上执行软件包构建指令。安装前请检查软件包和 PKGBUILD。",
+  "aur_warning_return": "返回",
+  "aur_warning_enable": "启用 AUR",
+  "aur_refresh_failed_title": "AUR 元数据不可用",
+  "aur_operation_failed_title": "AUR 操作失败",
+  "aur_operation_failed_message": "“{name}”的操作失败。终端输出：\n\n{output}"
 }

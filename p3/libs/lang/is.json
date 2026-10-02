@@ -684,5 +684,18 @@
   "category_available": "Í boði",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, háþróað reiknirit Google fyrir stýringu á netþrengslum, hannað til að hámarka afköst netsins og lágmarka töf.",
   "snap_desc": "Canonical Snapcraft-hugbúnaðarsöfn með snapd-þjónustunni.",
-  "resolveaac_desc": "AAC-innflutningur/afspilun og útflutningur fyrir DaVinci Resolve Studio á Linux."
+  "resolveaac_desc": "AAC-innflutningur/afspilun og útflutningur fyrir DaVinci Resolve Studio á Linux.",
+  "aur_security_blocked_title": "AUR-pakki lokaður",
+  "aur_security_blocked_message": "LinuxToys greindi kóðaflækju í byggingar- eða uppsetningarskriftum fyrir '{name}'. Lokað var á uppsetninguna til að tryggja öryggi þitt.\n\nGreint:\n{details}",
+  "aur_security_unavailable_title": "AUR-öryggisathugun mistókst",
+  "aur_security_unavailable_message": "LinuxToys gat ekki staðfest byggingar- og uppsetningarskriftir fyrir '{name}', svo uppsetningin var ekki ræst.\n\n{details}",
+  "aur_category": "Notendahugbúnaðarsafn Arch (AUR)",
+  "aur_category_desc": "Skoðaðu pakka úr Arch User Repository.",
+  "aur_warning_title": "Virkja AUR?",
+  "aur_warning_message": "Arch User Repository inniheldur byggingarskriftur frá notendum sem Arch Linux hvorki yfirfer né styður. Uppsetning AUR-pakka getur keyrt leiðbeiningar um byggingu pakka á kerfinu þínu. Farðu yfir pakka og PKGBUILD-skrár áður en þú setur þá upp.",
+  "aur_warning_return": "Til baka",
+  "aur_warning_enable": "Virkja AUR",
+  "aur_refresh_failed_title": "AUR-lýsigögn ekki tiltæk",
+  "aur_operation_failed_title": "AUR-aðgerð mistókst",
+  "aur_operation_failed_message": "Aðgerðin fyrir '{name}' mistókst. Úttak úr skjáhermi:\n\n{output}"
 }

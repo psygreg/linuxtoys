@@ -822,6 +822,24 @@ class SearchEngine:
 
         return grouped
 
+    def search_aur_only(self, query, max_results=50):
+        """Search only the enabled AUR catalog.
+
+        This is used while the user is browsing the AUR pseudo-category. It
+        deliberately bypasses normal scripts, AppStream, smart category matches,
+        and LinuxToys' special discovery query so the search field behaves as a
+        local filter for the AUR catalog.
+        """
+        if not query or len(query.strip()) < 2:
+            return []
+
+        query = query.strip().casefold()
+        results = [
+            SearchResult(script_info, "script", int(base_score))
+            for script_info, base_score in parser.search_aur_entries(query)
+        ]
+        return self._group_results_by_category(results, max_results)
+
     def _group_results_by_category(self, results, max_results_per_category):
         """
         Group search results by category and sort appropriately.
@@ -845,7 +863,10 @@ class SearchEngine:
             # ``sys/sysadm`` rather than translation keys, so translating the whole
             # string directly produces labels like "Sys/Sysadm".
             category_key = str(item_info.get("category", "") or "").strip().strip("/")
-            if category_key:
+            if item_info.get("is_aur_entry"):
+                category_name = self.translations.get("aur_category", "AUR")
+                category_path = "aur://catalog"
+            elif category_key:
                 category_path = os.path.abspath(os.path.join(parser.SCRIPTS_DIR, category_key))
                 # Normal category navigation uses the directory leaf as the
                 # translation key (see parser.get_categories() /
@@ -899,6 +920,7 @@ class SearchEngine:
                     "category_path": category_path,
                     "best_match_score": 0,
                     "scripts": [],
+                    "is_aur_group": bool(item_info.get("is_aur_entry")),
                     "show_header": (
                         category_name
                         != self.translations.get(
@@ -920,7 +942,12 @@ class SearchEngine:
 
         # Convert to list and sort by best match score (descending)
         grouped_list = list(category_groups.values())
-        grouped_list.sort(key=lambda g: g['best_match_score'], reverse=True)
+        grouped_list.sort(
+            key=lambda g: (
+                bool(g.get("is_aur_group", False)),
+                -g["best_match_score"],
+            )
+        )
 
         return grouped_list
 
@@ -1056,6 +1083,11 @@ class SearchEngine:
             elif re.search(word_pattern, description):
                 score += 10
             results.append(SearchResult(script_info, "script", score))
+
+        # AUR is strictly opt-in. Once enabled it participates in normal search,
+        # but remains its own pseudo-category and is ordered last below.
+        for script_info, base_score in parser.search_aur_entries(query):
+            results.append(SearchResult(script_info, "script", int(base_score)))
 
     def _search_categories(self, query, results):
         """Search through categories."""

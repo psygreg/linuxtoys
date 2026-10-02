@@ -684,5 +684,18 @@
   "category_available": "Pasiekiama",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“ – pažangus Google perkrovos valdymo algoritmas, sukurtas maksimaliai padidinti tinklo pralaidumą ir sumažinti delsą.",
   "snap_desc": "Canonical Snapcraft saugyklos su snapd paslauga.",
-  "resolveaac_desc": "AAC importavimas / atkūrimas ir eksportavimas „DaVinci Resolve Studio“ sistemoje „Linux“."
+  "resolveaac_desc": "AAC importavimas / atkūrimas ir eksportavimas „DaVinci Resolve Studio“ sistemoje „Linux“.",
+  "aur_security_blocked_title": "AUR paketas užblokuotas",
+  "aur_security_blocked_message": "LinuxToys aptiko kodo maskavimą „{name}“ kūrimo arba diegimo scenarijuose. Jūsų saugumui diegimas buvo užblokuotas.\n\nAptikta:\n{details}",
+  "aur_security_unavailable_title": "AUR saugumo patikra nepavyko",
+  "aur_security_unavailable_message": "LinuxToys nepavyko patikrinti „{name}“ kūrimo ir diegimo scenarijų, todėl diegimas nebuvo pradėtas.\n\n{details}",
+  "aur_category": "Arch naudotojų saugykla (AUR)",
+  "aur_category_desc": "Naršykite Arch User Repository paketus.",
+  "aur_warning_title": "Įjungti AUR?",
+  "aur_warning_message": "Arch User Repository yra naudotojų sukurtų kūrimo scenarijų, kurių Arch Linux neperžiūri ir nepalaiko. Diegiant AUR paketus jūsų sistemoje gali būti vykdomos paketų kūrimo instrukcijos. Prieš diegdami peržiūrėkite paketus ir PKGBUILD failus.",
+  "aur_warning_return": "Grįžti",
+  "aur_warning_enable": "Įjungti AUR",
+  "aur_refresh_failed_title": "AUR metaduomenys nepasiekiami",
+  "aur_operation_failed_title": "AUR operacija nepavyko",
+  "aur_operation_failed_message": "„{name}“ operacija nepavyko. Terminalo išvestis:\n\n{output}"
 }

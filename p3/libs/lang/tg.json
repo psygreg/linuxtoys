@@ -684,5 +684,18 @@
   "category_available": "Дастрас",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, алгоритми пешрафтаи Google барои идоракунии серборӣ, ки барои ба ҳадди аксар расонидани гузарониши шабака ва кам кардани таъхир тарҳрезӣ шудааст.",
   "snap_desc": "Анборҳои Canonical Snapcraft бо хидмати snapd.",
-  "resolveaac_desc": "Воридот/пахш ва содироти AAC барои DaVinci Resolve Studio дар Linux."
+  "resolveaac_desc": "Воридот/пахш ва содироти AAC барои DaVinci Resolve Studio дар Linux.",
+  "aur_security_blocked_title": "Бастаи AUR масдуд шуд",
+  "aur_security_blocked_message": "LinuxToys дар скриптҳои сохтан ё насби '{name}' пинҳонсозии кодро ошкор кард. Барои амнияти шумо насб масдуд карда шуд.\n\nОшкор шуд:\n{details}",
+  "aur_security_unavailable_title": "Санҷиши амнияти AUR ноком шуд",
+  "aur_security_unavailable_message": "LinuxToys скриптҳои сохтан ва насби '{name}'-ро санҷида натавонист, бинобар ин насб оғоз нашуд.\n\n{details}",
+  "aur_category": "Анбори корбарони Arch (AUR)",
+  "aur_category_desc": "Бастаҳои Arch User Repository-ро аз назар гузаронед.",
+  "aur_warning_title": "AUR фаъол карда шавад?",
+  "aur_warning_message": "Arch User Repository скриптҳои сохтанеро дар бар мегирад, ки корбарон эҷод кардаанд ва Arch Linux онҳоро баррасӣ ё дастгирӣ намекунад. Насби бастаҳои AUR метавонад дастурҳои сохтани бастаҳоро дар системаи шумо иҷро кунад. Пеш аз насб бастаҳо ва PKGBUILD-ҳоро санҷед.",
+  "aur_warning_return": "Бозгашт",
+  "aur_warning_enable": "AUR-ро фаъол кардан",
+  "aur_refresh_failed_title": "Метамаълумоти AUR дастрас нест",
+  "aur_operation_failed_title": "Амалиёти AUR ноком шуд",
+  "aur_operation_failed_message": "Амалиёт барои '{name}' ноком шуд. Натиҷаи терминал:\n\n{output}"
 }

@@ -683,5 +683,18 @@
   "category_available": "Mövcud",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, şəbəkə ötürmə qabiliyyətini maksimuma çatdırmaq və gecikməni minimuma endirmək üçün Google tərəfindən hazırlanmış qabaqcıl sıxlıq idarəetmə alqoritmi.",
   "snap_desc": "Canonical Snapcraft repozitoriyaları və onların snapd xidməti.",
-  "resolveaac_desc": "Linux-da DaVinci Resolve Studio üçün AAC idxalı/oxudulması və ixracı."
+  "resolveaac_desc": "Linux-da DaVinci Resolve Studio üçün AAC idxalı/oxudulması və ixracı.",
+  "aur_security_blocked_title": "AUR paketi bloklandı",
+  "aur_security_blocked_message": "LinuxToys '{name}' üçün qurma və ya quraşdırma skriptlərində kod gizlətmə aşkar etdi. Təhlükəsizliyiniz üçün quraşdırma bloklandı.\n\nAşkar edildi:\n{details}",
+  "aur_security_unavailable_title": "AUR təhlükəsizlik yoxlaması uğursuz oldu",
+  "aur_security_unavailable_message": "LinuxToys '{name}' üçün qurma və quraşdırma skriptlərini yoxlaya bilmədi, buna görə quraşdırma başladılmadı.\n\n{details}",
+  "aur_category": "Arch İstifadəçi Repozitoriyası (AUR)",
+  "aur_category_desc": "Arch User Repository paketlərinə nəzər salın.",
+  "aur_warning_title": "AUR aktiv edilsin?",
+  "aur_warning_message": "Arch User Repository istifadəçilər tərəfindən hazırlanmış və Arch Linux tərəfindən nəzərdən keçirilməyən və ya dəstəklənməyən qurma skriptlərini ehtiva edir. AUR paketlərinin quraşdırılması sisteminizdə paket qurma təlimatlarını icra edə bilər. Quraşdırmadan əvvəl paketləri və PKGBUILD fayllarını nəzərdən keçirin.",
+  "aur_warning_return": "Geri qayıt",
+  "aur_warning_enable": "AUR-u aktiv et",
+  "aur_refresh_failed_title": "AUR metadatası əlçatan deyil",
+  "aur_operation_failed_title": "AUR əməliyyatı uğursuz oldu",
+  "aur_operation_failed_message": "'{name}' üçün əməliyyat uğursuz oldu. Terminal çıxışı:\n\n{output}"
 }

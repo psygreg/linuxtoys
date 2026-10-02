@@ -684,5 +684,18 @@
   "category_available": "دستیاب",
   "bbr_desc": "‏‘Bottleneck Bandwidth and Round-trip propagation time’، Google کا جدید کنجیشن کنٹرول الگورتھم، جسے نیٹ ورک تھروپٹ کو زیادہ سے زیادہ اور لیٹنسی کو کم سے کم کرنے کے لیے ڈیزائن کیا گیا ہے۔",
   "snap_desc": "Canonical Snapcraft ریپوزٹریز اور ان کی snapd سروس۔",
-  "resolveaac_desc": "Linux پر DaVinci Resolve Studio کے لیے AAC درآمد/پلے بیک اور برآمد۔"
+  "resolveaac_desc": "Linux پر DaVinci Resolve Studio کے لیے AAC درآمد/پلے بیک اور برآمد۔",
+  "aur_security_blocked_title": "AUR پیکیج بلاک کر دیا گیا",
+  "aur_security_blocked_message": "LinuxToys نے '{name}' کی بلڈ یا انسٹالیشن اسکرپٹس میں کوڈ کی مبہم کاری کا پتہ لگایا۔ آپ کی حفاظت کے لیے انسٹالیشن بلاک کر دی گئی۔\n\nپتہ چلا:\n{details}",
+  "aur_security_unavailable_title": "AUR سیکیورٹی چیک ناکام ہو گیا",
+  "aur_security_unavailable_message": "LinuxToys '{name}' کی بلڈ اور انسٹالیشن اسکرپٹس کی تصدیق نہیں کر سکا، اس لیے انسٹالیشن شروع نہیں کی گئی۔\n\n{details}",
+  "aur_category": "Arch صارف ریپوزٹری (AUR)",
+  "aur_category_desc": "Arch User Repository سے پیکیجز براؤز کریں۔",
+  "aur_warning_title": "AUR فعال کریں؟",
+  "aur_warning_message": "Arch User Repository میں صارفین کی بنائی ہوئی بلڈ اسکرپٹس شامل ہیں جن کا Arch Linux جائزہ نہیں لیتا اور نہ ہی انہیں سپورٹ کرتا ہے۔ AUR پیکیجز انسٹال کرنے سے آپ کے سسٹم پر پیکیج بلڈ ہدایات چل سکتی ہیں۔ انسٹال کرنے سے پہلے پیکیجز اور PKGBUILD کا جائزہ لیں۔",
+  "aur_warning_return": "واپس",
+  "aur_warning_enable": "AUR فعال کریں",
+  "aur_refresh_failed_title": "AUR میٹا ڈیٹا دستیاب نہیں",
+  "aur_operation_failed_title": "AUR آپریشن ناکام ہو گیا",
+  "aur_operation_failed_message": "'{name}' کے لیے آپریشن ناکام ہو گیا۔ ٹرمینل آؤٹ پٹ:\n\n{output}"
 }

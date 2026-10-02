@@ -684,5 +684,18 @@
   "category_available": "Mevcut",
   "bbr_desc": "‘Bottleneck Bandwidth and Round-trip propagation time’, ağ verimini en üst düzeye çıkarmak ve gecikmeyi en aza indirmek için Google tarafından tasarlanan gelişmiş bir tıkanıklık kontrol algoritması.",
   "snap_desc": "Canonical Snapcraft depoları ve bunların snapd hizmeti.",
-  "resolveaac_desc": "Linux'ta DaVinci Resolve Studio için AAC içe aktarma/oynatma ve dışa aktarma."
+  "resolveaac_desc": "Linux'ta DaVinci Resolve Studio için AAC içe aktarma/oynatma ve dışa aktarma.",
+  "aur_security_blocked_title": "AUR paketi engellendi",
+  "aur_security_blocked_message": "LinuxToys, '{name}' için derleme veya kurulum betiklerinde kod gizleme tespit etti. Güvenliğiniz için kurulum engellendi.\n\nTespit edilen:\n{details}",
+  "aur_security_unavailable_title": "AUR güvenlik kontrolü başarısız oldu",
+  "aur_security_unavailable_message": "LinuxToys, '{name}' için derleme ve kurulum betiklerini doğrulayamadığı için kurulum başlatılmadı.\n\n{details}",
+  "aur_category": "Arch Kullanıcı Deposu (AUR)",
+  "aur_category_desc": "Arch User Repository paketlerine göz atın.",
+  "aur_warning_title": "AUR etkinleştirilsin mi?",
+  "aur_warning_message": "Arch User Repository, Arch Linux tarafından incelenmeyen veya desteklenmeyen, kullanıcılar tarafından hazırlanmış derleme betikleri içerir. AUR paketlerini yüklemek, sisteminizde paket derleme talimatlarını çalıştırabilir. Yüklemeden önce paketleri ve PKGBUILD dosyalarını inceleyin.",
+  "aur_warning_return": "Geri dön",
+  "aur_warning_enable": "AUR'u etkinleştir",
+  "aur_refresh_failed_title": "AUR meta verileri kullanılamıyor",
+  "aur_operation_failed_title": "AUR işlemi başarısız oldu",
+  "aur_operation_failed_message": "'{name}' işlemi başarısız oldu. Terminal çıktısı:\n\n{output}"
 }

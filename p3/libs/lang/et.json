@@ -684,5 +684,18 @@
   "category_available": "Saadaval",
   "bbr_desc": "„Bottleneck Bandwidth and Round-trip propagation time“, Google'i täiustatud ülekoormuse juhtimise algoritm, mis on loodud võrgu läbilaskevõime maksimeerimiseks ja latentsuse minimeerimiseks.",
   "snap_desc": "Canonical Snapcrafti hoidlad koos snapd-teenusega.",
-  "resolveaac_desc": "AAC import/esitus ja eksport DaVinci Resolve Studio jaoks Linuxis."
+  "resolveaac_desc": "AAC import/esitus ja eksport DaVinci Resolve Studio jaoks Linuxis.",
+  "aur_security_blocked_title": "AUR-i pakett blokeeriti",
+  "aur_security_blocked_message": "LinuxToys tuvastas paketi „{name}“ ehitus- või paigaldusskriptides koodi hägustamise. Paigaldamine blokeeriti teie turvalisuse huvides.\n\nTuvastatud:\n{details}",
+  "aur_security_unavailable_title": "AUR-i turvakontroll nurjus",
+  "aur_security_unavailable_message": "LinuxToys ei saanud paketi „{name}“ ehitus- ja paigaldusskripte kontrollida, seega paigaldamist ei alustatud.\n\n{details}",
+  "aur_category": "Archi kasutajate hoidla (AUR)",
+  "aur_category_desc": "Sirvige Arch User Repository pakette.",
+  "aur_warning_title": "Kas lubada AUR?",
+  "aur_warning_message": "Arch User Repository sisaldab kasutajate loodud ehitusskripte, mida Arch Linux ei kontrolli ega toeta. AUR-i pakettide paigaldamine võib käivitada teie süsteemis paketi ehitamise juhiseid. Enne paigaldamist vaadake paketid ja PKGBUILD-failid üle.",
+  "aur_warning_return": "Tagasi",
+  "aur_warning_enable": "Luba AUR",
+  "aur_refresh_failed_title": "AUR-i metaandmed pole saadaval",
+  "aur_operation_failed_title": "AUR-i toiming nurjus",
+  "aur_operation_failed_message": "Toiming paketiga „{name}“ nurjus. Terminali väljund:\n\n{output}"
 }
