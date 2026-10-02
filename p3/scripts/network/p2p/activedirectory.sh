@@ -13,6 +13,6 @@ if is_fedora || is_ostree || is_rhel; then
 elif is_ubuntu; then
     pkg_install --bypass sssd realmd adcli samba-common-bin adsys krb5-user libpam-krb5 libpam-ccreds auth-client-config
 elif is_debian; then
-    pkg_install --bypass sssd realmd adcli samba-common-bin adsys krb5-user libpam-krb5 libpam-ccreds auth-client-config oddjob oddjob-mkhomedir
+    pkg_install --bypass sssd realmd adcli samba-common-bin krb5-user libpam-krb5 libpam-ccreds auth-client-config oddjob oddjob-mkhomedir
 fi
 zeninf "$msg289"
