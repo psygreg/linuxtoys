@@ -1184,6 +1184,7 @@ class AppWindow(
             "checking",
             "updating",
             "restart-ready",
+            "reboot-ready",
             "error",
         )
 
@@ -1249,6 +1250,16 @@ class AppWindow(
                 self.update_indicator.set_sensitive(True)
                 context.add_class("suggested-action")
                 context.add_class("update-restart-ready")
+            elif state == "reboot-ready":
+                image = Gtk.Image.new_from_icon_name(
+                    "system-reboot-symbolic", Gtk.IconSize.BUTTON
+                )
+                tooltip = self.translations.get(
+                    "ostree_deployment_title", "Pending System Updates"
+                )
+                self.update_indicator.set_sensitive(True)
+                context.add_class("suggested-action")
+                context.add_class("update-restart-ready")
             else:
                 image = Gtk.Image.new_from_icon_name(
                     "dialog-warning-symbolic", Gtk.IconSize.BUTTON
@@ -1271,7 +1282,7 @@ class AppWindow(
         self.automatic_updates_enabled = bool(enabled)
         if not enabled:
             # Do not discard a completed update's restart affordance.
-            if self._update_state != "restart-ready":
+            if self._update_state not in ("restart-ready", "reboot-ready"):
                 self._set_update_state("disabled")
             return
 
@@ -1280,6 +1291,9 @@ class AppWindow(
             self._check_updates()
 
     def _on_update_indicator_clicked(self, _button):
+        if self._update_state == "reboot-ready":
+            self._show_ostree_deployment_warning()
+            return
         if self._update_state != "restart-ready":
             return
         os.execv(sys.executable, [sys.executable, *sys.argv])
@@ -1563,7 +1577,12 @@ class AppWindow(
         GLib.idle_add(self._set_update_state, "updating")
         success, error = run_background_update()
         if success:
-            GLib.idle_add(self._set_update_state, "restart-ready")
+            system_compat_keys = compat.get_system_compat_keys()
+            if {"ostree", "ublue"} & system_compat_keys:
+                GLib.idle_add(self._set_update_state, "reboot-ready")
+                GLib.idle_add(self._show_ostree_deployment_warning)
+            else:
+                GLib.idle_add(self._set_update_state, "restart-ready")
         else:
             self._background_update_started = False
             if error:
