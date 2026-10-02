@@ -95,6 +95,10 @@ makepkg -si
 
 You may use the AppImage available at the latest release to use LinuxToys without requiring installation. For SteamOS, the automatic installer will integrate this AppImage using *Gear Lever*.
 
+## Suggestions, feature requests and other topics
+
+For suggestions, feature requests and issue reports that for any reason are not possible to send through the LinuxToys bug reporting system, please refer to the [Discussions](https://github.com/psygreg/linuxtoys/discussions).
+
 ## Development [GIT](https://github.com/psygreg/linuxtoys/)
 
 For running the application from source, please follow these steps.
