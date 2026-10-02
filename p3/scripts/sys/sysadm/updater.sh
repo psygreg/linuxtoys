@@ -23,16 +23,21 @@ copy_ -f linuxtoys-update.service /etc/systemd/system/linuxtoys-update.service
 copy_ -f linuxtoys-update.timer /etc/systemd/system/linuxtoys-update.timer
 sudo systemctl daemon-reload
 
-prep_create ~/.config/systemd/user/linuxtoys-flatpak-update.service
-prep_create ~/.config/systemd/user/linuxtoys-flatpak-update.timer
-copy_ -f linuxtoys-flatpak-update.service ~/.config/systemd/user/linuxtoys-flatpak-update.service
-copy_ -f linuxtoys-flatpak-update.timer ~/.config/systemd/user/linuxtoys-flatpak-update.timer
+if command -v flatpak &>/dev/null; then
+    prep_create ~/.config/systemd/user/linuxtoys-flatpak-update.service
+    prep_create ~/.config/systemd/user/linuxtoys-flatpak-update.timer
+    copy_ -f linuxtoys-flatpak-update.service ~/.config/systemd/user/linuxtoys-flatpak-update.service
+    copy_ -f linuxtoys-flatpak-update.timer ~/.config/systemd/user/linuxtoys-flatpak-update.timer
+fi
+
 systemctl --user daemon-reload
 
 sysd_enable linuxtoys-update.timer
 sysd_start linuxtoys-update.timer
 
-sysd_enable_usr linuxtoys-flatpak-update.timer
-sysd_start_usr linuxtoys-flatpak-update.timer
+if command -v flatpak &>/dev/null; then
+    sysd_enable_usr linuxtoys-flatpak-update.timer
+    sysd_start_usr linuxtoys-flatpak-update.timer
+fi
 
 zeninf "$msg018"

@@ -98,9 +98,13 @@ elif is_solus; then
     { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo eopkg rmo -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo eopkg up -y || fatal "Failed to upgrade packages"
 fi
+
 if command -v flatpak >/dev/null 2>&1; then
     { [ "$UPD_SERVICE" = "1" ] && flatpak uninstall --system --unused --delete-data -y; } || flatpak uninstall --unused --delete-data -y || warn "Failed to remove orphaned flatpak packages"
     { [ "$UPD_SERVICE" = "1" ] && flatpak update --system -y; } || flatpak update -y || warn "Failed to upgrade flatpak packages"
+fi
+if command -v snap >/dev/null 2>&1 && command -v snapd >/dev/null 2>&1; then
+    { [ "$UPD_SERVICE" = "1" ] && snap refresh; } || sudo snap refresh || warn "Failed to upgrade snap packages"
 fi
 
 # Update applications installed directly from GitHub/Codeberg releases through
