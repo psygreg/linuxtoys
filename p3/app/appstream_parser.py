@@ -813,13 +813,18 @@ def get_browse_entries_for_category(
     )
 
 def search_entries(scripts_dir, query, translated_new="new", translated_official="official", curated_entries=None, category_paths=None):
-    """Search AppStream inside Rust and materialize only matching entries."""
+    """Search AppStream without blocking on a derived-catalog rebuild.
+
+    Keep using the previous complete generation while a newly published catalog
+    is adapted in the background. _runtime_catalog() atomically publishes the
+    replacement only after it is ready, so interactive searches never have to
+    synchronously rebuild the AppStream search index.
+    """
     return list(
         _runtime_catalog(
             scripts_dir,
             curated_entries,
             category_paths,
-            require_current=True,
         ).search(
             str(query or ""),
             str(translated_new or ""),
