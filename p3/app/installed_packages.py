@@ -126,7 +126,7 @@ def _collect_native(manager):
             packages.add(line.split("/", 1)[0])
         return packages
     if manager == "dnf":
-        output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", "%{name}"])
+        output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", r"%{name}\n"])
         return {line.strip() for line in output.splitlines() if line.strip() and not line.startswith("Updating")}
     if manager == "zypper":
         output = _run([
