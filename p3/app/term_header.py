@@ -52,17 +52,18 @@ class InfosHead(Gtk.Box):
         # LinuxToys' bundled-icon resolver: on distributions such as Arch that
         # can discard an otherwise valid AppStream icon.  This mirrors the icon
         # handling used by the application cards.
-        if icon_value.lower().endswith((".png", ".svg", ".webp")):
-            if os.path.isabs(icon_value) or "/" in icon_value:
-                icon_path = icon_value if os.path.exists(icon_value) else None
-            else:
-                icon_path = get_icon_path(icon_value)
+        if os.path.isabs(icon_value) and os.path.isfile(icon_value):
+            # AppStream may use any image format supported by GdkPixbuf,
+            # including JXL on current Arch/CachyOS catalogs.
+            icon_path = icon_value
+        elif "/" not in icon_value and icon_value.lower().endswith((".png", ".svg", ".webp")):
+            # LinuxToys-bundled relative artwork.
+            icon_path = get_icon_path(icon_value)
+        else:
+            icon_path = None
 
-            pixbuf = (
-                load_scaled_pixbuf(icon_path, icon_size, icon_size, True)
-                if icon_path
-                else None
-            )
+        if icon_path:
+            pixbuf = load_scaled_pixbuf(icon_path, icon_size, icon_size, True)
             if pixbuf is not None:
                 self.icon_head.set_from_pixbuf(pixbuf)
             else:

@@ -79,11 +79,16 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
         icon_value = str(info.get("icon") or "application-x-addon-symbolic")
         icon_path = ""
         icon_name = icon_value
-        if icon_value.lower().endswith((".png", ".svg", ".webp")):
-            path = icon_value if os.path.isabs(icon_value) else get_icon_path(icon_value)
-            if path and os.path.exists(path):
+        if os.path.isabs(icon_value) and os.path.isfile(icon_value):
+            # AppStream may use any image format supported by GdkPixbuf,
+            # including JXL on current Arch/CachyOS catalogs.
+            icon_path = icon_value
+            icon_name = "application-x-executable"
+        elif "/" not in icon_value and icon_value.lower().endswith((".png", ".svg", ".webp")):
+            path = get_icon_path(icon_value)
+            if path and os.path.isfile(path):
                 icon_path = path
-                icon_name = "application-x-addon-symbolic"
+                icon_name = "application-x-executable"
 
         tr = self.parent_window.translations
         if state == "available":
