@@ -697,5 +697,21 @@
   "aur_warning_enable": "Aktivér AUR",
   "aur_refresh_failed_title": "AUR-metadata er ikke tilgængelige",
   "aur_operation_failed_title": "AUR-handling mislykkedes",
-  "aur_operation_failed_message": "Handlingen for '{name}' mislykkedes. Terminaloutput:\n\n{output}"
+  "aur_operation_failed_message": "Handlingen for '{name}' mislykkedes. Terminaloutput:\n\n{output}",
+  "package_view_title": "Installér pakke",
+  "package_view_completed": "Fuldført",
+  "package_view_unsupported": "Dette pakkeformat understøttes ikke.",
+  "package_view_external_warning": "Denne pakke kommer fra en ekstern fil. Installér kun pakker fra kilder, du har tillid til.",
+  "package_view_version": "Version",
+  "package_view_architecture": "Arkitektur",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Vedligeholder",
+  "package_view_file": "Fil",
+  "package_view_format_deb": "Debian-pakke",
+  "package_view_format_rpm": "RPM-pakke",
+  "package_view_format_arch": "Arch Linux-pakke",
+  "package_view_format_eopkg": "Solus-pakke",
+  "package_view_format_flatpak": "Flatpak-pakke",
+  "package_view_format_flatpakref": "Flatpak-reference",
+  "package_view_format_snap": "Snap-pakke"
 }

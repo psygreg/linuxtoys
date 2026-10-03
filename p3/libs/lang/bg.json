@@ -697,5 +697,21 @@
   "aur_warning_enable": "Активиране на AUR",
   "aur_refresh_failed_title": "Метаданните на AUR не са налични",
   "aur_operation_failed_title": "Операцията с AUR е неуспешна",
-  "aur_operation_failed_message": "Операцията за „{name}“ е неуспешна. Изход от терминала:\n\n{output}"
+  "aur_operation_failed_message": "Операцията за „{name}“ е неуспешна. Изход от терминала:\n\n{output}",
+  "package_view_title": "Инсталиране на пакет",
+  "package_view_completed": "Завършено",
+  "package_view_unsupported": "Този формат на пакет не се поддържа.",
+  "package_view_external_warning": "Този пакет идва от външен файл. Инсталирайте пакети само от източници, на които имате доверие.",
+  "package_view_version": "Версия",
+  "package_view_architecture": "Архитектура",
+  "package_view_format": "Формат",
+  "package_view_maintainer": "Поддържащ",
+  "package_view_file": "Файл",
+  "package_view_format_deb": "Debian пакет",
+  "package_view_format_rpm": "RPM пакет",
+  "package_view_format_arch": "Arch Linux пакет",
+  "package_view_format_eopkg": "Solus пакет",
+  "package_view_format_flatpak": "Flatpak пакет",
+  "package_view_format_flatpakref": "Flatpak препратка",
+  "package_view_format_snap": "Snap пакет"
 }

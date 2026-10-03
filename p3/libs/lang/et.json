@@ -697,5 +697,21 @@
   "aur_warning_enable": "Luba AUR",
   "aur_refresh_failed_title": "AUR-i metaandmed pole saadaval",
   "aur_operation_failed_title": "AUR-i toiming nurjus",
-  "aur_operation_failed_message": "Toiming paketiga „{name}“ nurjus. Terminali väljund:\n\n{output}"
+  "aur_operation_failed_message": "Toiming paketiga „{name}“ nurjus. Terminali väljund:\n\n{output}",
+  "package_view_title": "Paigalda pakett",
+  "package_view_completed": "Lõpetatud",
+  "package_view_unsupported": "Seda paketivormingut ei toetata.",
+  "package_view_external_warning": "See pakett pärineb välisest failist. Paigaldage pakette ainult allikatest, mida usaldate.",
+  "package_view_version": "Versioon",
+  "package_view_architecture": "Arhitektuur",
+  "package_view_format": "Vorming",
+  "package_view_maintainer": "Haldaja",
+  "package_view_file": "Fail",
+  "package_view_format_deb": "Debiani pakett",
+  "package_view_format_rpm": "RPM-pakett",
+  "package_view_format_arch": "Arch Linuxi pakett",
+  "package_view_format_eopkg": "Soluse pakett",
+  "package_view_format_flatpak": "Flatpaki pakett",
+  "package_view_format_flatpakref": "Flatpaki viide",
+  "package_view_format_snap": "Snapi pakett"
 }

@@ -33,6 +33,7 @@ rundeps    :
     - git
     - libvte
     - appstream
+    - shared-mime-info
     - util-linux
     - webp-pixbuf-loader
 
@@ -50,6 +51,7 @@ install    : |
     install -dm 755 $installdir/usr/share/linuxtoys
     install -dm 755 $installdir/usr/share/icons/hicolor/scalable/apps
     install -dm 755 $installdir/usr/share/applications
+    install -dm 755 $installdir/usr/share/mime/packages
 
     # Create the main executable wrapper script
     printf '%s\n' '#!/bin/bash' \
@@ -98,6 +100,7 @@ install    : |
 
     # Install desktop file and icon from src/
     install -m 644 $workdir/src/LinuxToys.desktop $installdir/usr/share/applications/
+    install -m 644 $workdir/src/linuxtoys-mimetypes.xml $installdir/usr/share/mime/packages/
     install -m 644 $workdir/src/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
 
     # Fix permissions on Python scripts

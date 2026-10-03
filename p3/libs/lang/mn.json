@@ -696,5 +696,21 @@
   "aur_warning_enable": "AUR-г идэвхжүүлэх",
   "aur_refresh_failed_title": "AUR мета өгөгдөл боломжгүй",
   "aur_operation_failed_title": "AUR үйлдэл амжилтгүй боллоо",
-  "aur_operation_failed_message": "'{name}'-ийн үйлдэл амжилтгүй боллоо. Терминалын гаралт:\n\n{output}"
+  "aur_operation_failed_message": "'{name}'-ийн үйлдэл амжилтгүй боллоо. Терминалын гаралт:\n\n{output}",
+  "package_view_title": "Багц суулгах",
+  "package_view_completed": "Дууссан",
+  "package_view_unsupported": "Энэ багцын форматыг дэмждэггүй.",
+  "package_view_external_warning": "Энэ багц гадаад файлаас ирсэн. Зөвхөн итгэдэг эх сурвалжийн багцуудыг суулгана уу.",
+  "package_view_version": "Хувилбар",
+  "package_view_architecture": "Архитектур",
+  "package_view_format": "Формат",
+  "package_view_maintainer": "Хариуцагч",
+  "package_view_file": "Файл",
+  "package_view_format_deb": "Debian багц",
+  "package_view_format_rpm": "RPM багц",
+  "package_view_format_arch": "Arch Linux багц",
+  "package_view_format_eopkg": "Solus багц",
+  "package_view_format_flatpak": "Flatpak багц",
+  "package_view_format_flatpakref": "Flatpak лавлагаа",
+  "package_view_format_snap": "Snap багц"
 }

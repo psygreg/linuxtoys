@@ -697,5 +697,21 @@
   "aur_warning_enable": "Povoliť AUR",
   "aur_refresh_failed_title": "Metadáta AUR nie sú dostupné",
   "aur_operation_failed_title": "Operácia AUR zlyhala",
-  "aur_operation_failed_message": "Operácia pre „{name}“ zlyhala. Výstup terminálu:\n\n{output}"
+  "aur_operation_failed_message": "Operácia pre „{name}“ zlyhala. Výstup terminálu:\n\n{output}",
+  "package_view_title": "Nainštalovať balík",
+  "package_view_completed": "Dokončené",
+  "package_view_unsupported": "Tento formát balíka nie je podporovaný.",
+  "package_view_external_warning": "Tento balík pochádza z externého súboru. Inštalujte iba balíky zo zdrojov, ktorým dôverujete.",
+  "package_view_version": "Verzia",
+  "package_view_architecture": "Architektúra",
+  "package_view_format": "Formát",
+  "package_view_maintainer": "Správca",
+  "package_view_file": "Súbor",
+  "package_view_format_deb": "Balík Debian",
+  "package_view_format_rpm": "Balík RPM",
+  "package_view_format_arch": "Balík Arch Linux",
+  "package_view_format_eopkg": "Balík Solus",
+  "package_view_format_flatpak": "Balík Flatpak",
+  "package_view_format_flatpakref": "Odkaz Flatpak",
+  "package_view_format_snap": "Balík Snap"
 }

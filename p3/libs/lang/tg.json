@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR-ро фаъол кардан",
   "aur_refresh_failed_title": "Метамаълумоти AUR дастрас нест",
   "aur_operation_failed_title": "Амалиёти AUR ноком шуд",
-  "aur_operation_failed_message": "Амалиёт барои '{name}' ноком шуд. Натиҷаи терминал:\n\n{output}"
+  "aur_operation_failed_message": "Амалиёт барои '{name}' ноком шуд. Натиҷаи терминал:\n\n{output}",
+  "package_view_title": "Насб кардани баста",
+  "package_view_completed": "Анҷом ёфт",
+  "package_view_unsupported": "Ин формати баста дастгирӣ намешавад.",
+  "package_view_external_warning": "Ин баста аз файли беруна меояд. Танҳо бастаҳоро аз манбаъҳое насб кунед, ки ба онҳо эътимод доред.",
+  "package_view_version": "Версия",
+  "package_view_architecture": "Меъморӣ",
+  "package_view_format": "Формат",
+  "package_view_maintainer": "Нигоҳдоранда",
+  "package_view_file": "Файл",
+  "package_view_format_deb": "Бастаи Debian",
+  "package_view_format_rpm": "Бастаи RPM",
+  "package_view_format_arch": "Бастаи Arch Linux",
+  "package_view_format_eopkg": "Бастаи Solus",
+  "package_view_format_flatpak": "Бастаи Flatpak",
+  "package_view_format_flatpakref": "Истиноди Flatpak",
+  "package_view_format_snap": "Бастаи Snap"
 }

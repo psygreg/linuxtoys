@@ -697,5 +697,21 @@
   "aur_warning_enable": "Dayakan AUR",
   "aur_refresh_failed_title": "Metadata AUR tidak tersedia",
   "aur_operation_failed_title": "Operasi AUR gagal",
-  "aur_operation_failed_message": "Operasi untuk '{name}' gagal. Output terminal:\n\n{output}"
+  "aur_operation_failed_message": "Operasi untuk '{name}' gagal. Output terminal:\n\n{output}",
+  "package_view_title": "Pasang pakej",
+  "package_view_completed": "Selesai",
+  "package_view_unsupported": "Format pakej ini tidak disokong.",
+  "package_view_external_warning": "Pakej ini berasal daripada fail luaran. Pasang hanya pakej daripada sumber yang anda percayai.",
+  "package_view_version": "Versi",
+  "package_view_architecture": "Seni bina",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Penyelenggara",
+  "package_view_file": "Fail",
+  "package_view_format_deb": "Pakej Debian",
+  "package_view_format_rpm": "Pakej RPM",
+  "package_view_format_arch": "Pakej Arch Linux",
+  "package_view_format_eopkg": "Pakej Solus",
+  "package_view_format_flatpak": "Pakej Flatpak",
+  "package_view_format_flatpakref": "Rujukan Flatpak",
+  "package_view_format_snap": "Pakej Snap"
 }

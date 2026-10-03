@@ -697,5 +697,21 @@
   "aur_warning_enable": "Virkja AUR",
   "aur_refresh_failed_title": "AUR-lýsigögn ekki tiltæk",
   "aur_operation_failed_title": "AUR-aðgerð mistókst",
-  "aur_operation_failed_message": "Aðgerðin fyrir '{name}' mistókst. Úttak úr skjáhermi:\n\n{output}"
+  "aur_operation_failed_message": "Aðgerðin fyrir '{name}' mistókst. Úttak úr skjáhermi:\n\n{output}",
+  "package_view_title": "Setja upp pakka",
+  "package_view_completed": "Lokið",
+  "package_view_unsupported": "Þetta pakkasnið er ekki stutt.",
+  "package_view_external_warning": "Þessi pakki kemur úr utanaðkomandi skrá. Settu aðeins upp pakka frá heimildum sem þú treystir.",
+  "package_view_version": "Útgáfa",
+  "package_view_architecture": "Kerfisgerð",
+  "package_view_format": "Snið",
+  "package_view_maintainer": "Umsjónaraðili",
+  "package_view_file": "Skrá",
+  "package_view_format_deb": "Debian-pakki",
+  "package_view_format_rpm": "RPM-pakki",
+  "package_view_format_arch": "Arch Linux-pakki",
+  "package_view_format_eopkg": "Solus-pakki",
+  "package_view_format_flatpak": "Flatpak-pakki",
+  "package_view_format_flatpakref": "Flatpak-tilvísun",
+  "package_view_format_snap": "Snap-pakki"
 }

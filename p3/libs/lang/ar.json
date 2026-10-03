@@ -697,5 +697,21 @@
   "aur_warning_enable": "تمكين AUR",
   "aur_refresh_failed_title": "بيانات AUR الوصفية غير متاحة",
   "aur_operation_failed_title": "فشلت عملية AUR",
-  "aur_operation_failed_message": "فشلت العملية الخاصة بـ '{name}'. مخرجات الطرفية:\n\n{output}"
+  "aur_operation_failed_message": "فشلت العملية الخاصة بـ '{name}'. مخرجات الطرفية:\n\n{output}",
+  "package_view_title": "تثبيت الحزمة",
+  "package_view_completed": "مكتمل",
+  "package_view_unsupported": "تنسيق الحزمة هذا غير مدعوم.",
+  "package_view_external_warning": "تأتي هذه الحزمة من ملف خارجي. ثبّت الحزم فقط من المصادر التي تثق بها.",
+  "package_view_version": "الإصدار",
+  "package_view_architecture": "المعمارية",
+  "package_view_format": "التنسيق",
+  "package_view_maintainer": "المشرف",
+  "package_view_file": "الملف",
+  "package_view_format_deb": "حزمة Debian",
+  "package_view_format_rpm": "حزمة RPM",
+  "package_view_format_arch": "حزمة Arch Linux",
+  "package_view_format_eopkg": "حزمة Solus",
+  "package_view_format_flatpak": "حزمة Flatpak",
+  "package_view_format_flatpakref": "مرجع Flatpak",
+  "package_view_format_snap": "حزمة Snap"
 }

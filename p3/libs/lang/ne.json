@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR सक्षम गर्नुहोस्",
   "aur_refresh_failed_title": "AUR मेटाडेटा उपलब्ध छैन",
   "aur_operation_failed_title": "AUR कार्य असफल भयो",
-  "aur_operation_failed_message": "'{name}' का लागि कार्य असफल भयो। टर्मिनल आउटपुट:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' का लागि कार्य असफल भयो। टर्मिनल आउटपुट:\n\n{output}",
+  "package_view_title": "प्याकेज स्थापना गर्नुहोस्",
+  "package_view_completed": "सम्पन्न",
+  "package_view_unsupported": "यो प्याकेज ढाँचा समर्थित छैन।",
+  "package_view_external_warning": "यो प्याकेज बाह्य फाइलबाट आएको हो। तपाईंले विश्वास गर्ने स्रोतका प्याकेजहरू मात्र स्थापना गर्नुहोस्।",
+  "package_view_version": "संस्करण",
+  "package_view_architecture": "आर्किटेक्चर",
+  "package_view_format": "ढाँचा",
+  "package_view_maintainer": "मर्मतकर्ता",
+  "package_view_file": "फाइल",
+  "package_view_format_deb": "Debian प्याकेज",
+  "package_view_format_rpm": "RPM प्याकेज",
+  "package_view_format_arch": "Arch Linux प्याकेज",
+  "package_view_format_eopkg": "Solus प्याकेज",
+  "package_view_format_flatpak": "Flatpak प्याकेज",
+  "package_view_format_flatpakref": "Flatpak सन्दर्भ",
+  "package_view_format_snap": "Snap प्याकेज"
 }

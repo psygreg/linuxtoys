@@ -697,5 +697,21 @@
   "aur_warning_enable": "Bật AUR",
   "aur_refresh_failed_title": "Siêu dữ liệu AUR không khả dụng",
   "aur_operation_failed_title": "Thao tác AUR thất bại",
-  "aur_operation_failed_message": "Thao tác cho '{name}' thất bại. Đầu ra terminal:\n\n{output}"
+  "aur_operation_failed_message": "Thao tác cho '{name}' thất bại. Đầu ra terminal:\n\n{output}",
+  "package_view_title": "Cài đặt gói",
+  "package_view_completed": "Hoàn tất",
+  "package_view_unsupported": "Định dạng gói này không được hỗ trợ.",
+  "package_view_external_warning": "Gói này đến từ một tệp bên ngoài. Chỉ cài đặt các gói từ những nguồn mà bạn tin cậy.",
+  "package_view_version": "Phiên bản",
+  "package_view_architecture": "Kiến trúc",
+  "package_view_format": "Định dạng",
+  "package_view_maintainer": "Người duy trì",
+  "package_view_file": "Tệp",
+  "package_view_format_deb": "Gói Debian",
+  "package_view_format_rpm": "Gói RPM",
+  "package_view_format_arch": "Gói Arch Linux",
+  "package_view_format_eopkg": "Gói Solus",
+  "package_view_format_flatpak": "Gói Flatpak",
+  "package_view_format_flatpakref": "Tham chiếu Flatpak",
+  "package_view_format_snap": "Gói Snap"
 }

@@ -697,5 +697,21 @@
   "aur_warning_enable": "Įjungti AUR",
   "aur_refresh_failed_title": "AUR metaduomenys nepasiekiami",
   "aur_operation_failed_title": "AUR operacija nepavyko",
-  "aur_operation_failed_message": "„{name}“ operacija nepavyko. Terminalo išvestis:\n\n{output}"
+  "aur_operation_failed_message": "„{name}“ operacija nepavyko. Terminalo išvestis:\n\n{output}",
+  "package_view_title": "Įdiegti paketą",
+  "package_view_completed": "Baigta",
+  "package_view_unsupported": "Šis paketo formatas nepalaikomas.",
+  "package_view_external_warning": "Šis paketas yra iš išorinio failo. Diekite tik paketus iš šaltinių, kuriais pasitikite.",
+  "package_view_version": "Versija",
+  "package_view_architecture": "Architektūra",
+  "package_view_format": "Formatas",
+  "package_view_maintainer": "Prižiūrėtojas",
+  "package_view_file": "Failas",
+  "package_view_format_deb": "Debian paketas",
+  "package_view_format_rpm": "RPM paketas",
+  "package_view_format_arch": "Arch Linux paketas",
+  "package_view_format_eopkg": "Solus paketas",
+  "package_view_format_flatpak": "Flatpak paketas",
+  "package_view_format_flatpakref": "Flatpak nuoroda",
+  "package_view_format_snap": "Snap paketas"
 }

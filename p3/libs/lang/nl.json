@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR inschakelen",
   "aur_refresh_failed_title": "AUR-metadata niet beschikbaar",
   "aur_operation_failed_title": "AUR-bewerking mislukt",
-  "aur_operation_failed_message": "De bewerking voor '{name}' is mislukt. Terminaluitvoer:\n\n{output}"
+  "aur_operation_failed_message": "De bewerking voor '{name}' is mislukt. Terminaluitvoer:\n\n{output}",
+  "package_view_title": "Pakket installeren",
+  "package_view_completed": "Voltooid",
+  "package_view_unsupported": "Dit pakketformaat wordt niet ondersteund.",
+  "package_view_external_warning": "Dit pakket is afkomstig uit een extern bestand. Installeer alleen pakketten uit bronnen die u vertrouwt.",
+  "package_view_version": "Versie",
+  "package_view_architecture": "Architectuur",
+  "package_view_format": "Formaat",
+  "package_view_maintainer": "Beheerder",
+  "package_view_file": "Bestand",
+  "package_view_format_deb": "Debian-pakket",
+  "package_view_format_rpm": "RPM-pakket",
+  "package_view_format_arch": "Arch Linux-pakket",
+  "package_view_format_eopkg": "Solus-pakket",
+  "package_view_format_flatpak": "Flatpak-pakket",
+  "package_view_format_flatpakref": "Flatpak-verwijzing",
+  "package_view_format_snap": "Snap-pakket"
 }

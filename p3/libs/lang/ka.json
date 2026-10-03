@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR-ის ჩართვა",
   "aur_refresh_failed_title": "AUR-ის მეტამონაცემები მიუწვდომელია",
   "aur_operation_failed_title": "AUR ოპერაცია ვერ შესრულდა",
-  "aur_operation_failed_message": "'{name}'-ის ოპერაცია ვერ შესრულდა. ტერმინალის გამოტანა:\n\n{output}"
+  "aur_operation_failed_message": "'{name}'-ის ოპერაცია ვერ შესრულდა. ტერმინალის გამოტანა:\n\n{output}",
+  "package_view_title": "პაკეტის ინსტალაცია",
+  "package_view_completed": "დასრულებულია",
+  "package_view_unsupported": "პაკეტის ეს ფორმატი არ არის მხარდაჭერილი.",
+  "package_view_external_warning": "ეს პაკეტი გარე ფაილიდან მოდის. დააინსტალირეთ პაკეტები მხოლოდ იმ წყაროებიდან, რომლებსაც ენდობით.",
+  "package_view_version": "ვერსია",
+  "package_view_architecture": "არქიტექტურა",
+  "package_view_format": "ფორმატი",
+  "package_view_maintainer": "მომვლელი",
+  "package_view_file": "ფაილი",
+  "package_view_format_deb": "Debian პაკეტი",
+  "package_view_format_rpm": "RPM პაკეტი",
+  "package_view_format_arch": "Arch Linux პაკეტი",
+  "package_view_format_eopkg": "Solus პაკეტი",
+  "package_view_format_flatpak": "Flatpak პაკეტი",
+  "package_view_format_flatpakref": "Flatpak მითითება",
+  "package_view_format_snap": "Snap პაკეტი"
 }

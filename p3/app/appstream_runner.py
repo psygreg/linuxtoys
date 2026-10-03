@@ -120,6 +120,30 @@ class AppStreamRunner:
         return added
 
 
+    def enqueue_local_package(self, package_path, metadata=None):
+        """Queue a local package through the same hidden PTY used by AppStream."""
+        package_path = os.path.realpath(os.fspath(package_path))
+        try:
+            stat = os.stat(package_path)
+        except OSError:
+            return None
+        metadata = dict(metadata or {})
+        name = str(metadata.get("name") or os.path.basename(package_path))
+        payload = {
+            "name": name,
+            "description": str(metadata.get("description") or ""),
+            "icon": str(metadata.get("icon_name") or "package-x-generic"),
+            "registry_name": name,
+            "is_local_package": True,
+            "local_package_path": package_path,
+            "local_package_kind": str(metadata.get("kind") or ""),
+            "local_package_signature": (
+                stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns
+            ),
+        }
+        ids = self.enqueue([payload])
+        return ids[0] if ids else None
+
     def enqueue_extension(self, info):
         """Queue a Flatpak extension install through the persistent PTY."""
         payload = dict(info)
@@ -427,6 +451,8 @@ class AppStreamRunner:
                     exit_code = self._run_flatpak_extension(record["info"], remove=True)
                 elif record["info"].get("is_flatpak_extension"):
                     exit_code = self._run_flatpak_extension(record["info"], remove=False)
+                elif record["info"].get("is_local_package"):
+                    exit_code = self._run_local_package_job(record["info"])
                 else:
                     exit_code = self._run_job(record["info"])
 
@@ -898,6 +924,37 @@ class AppStreamRunner:
         self._process.stdin.write(dispatch.encode("utf-8"))
         self._process.stdin.flush()
         return self._read_until_marker(marker)
+
+    def _run_local_package_job(self, script_info):
+        package_path = os.path.realpath(str(script_info.get("local_package_path") or ""))
+        expected = tuple(script_info.get("local_package_signature") or ())
+        try:
+            stat = os.stat(package_path)
+            current = (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns)
+        except OSError:
+            return 1
+        if expected and current != expected:
+            print(f"Local package changed before installation: {package_path}", file=os.sys.stderr)
+            return 1
+
+        kind = str(script_info.get("local_package_kind") or "")
+        function = "pkg_appimage" if kind == "appimage" else "pkg_fromfile"
+        directory = "/tmp/linuxtoys"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, script_path = tempfile.mkstemp(prefix="local-package-", suffix=".sh", dir=directory, text=True)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write(f"{function} {shlex.quote(package_path)}\n")
+            os.chmod(script_path, 0o700)
+            payload = dict(script_info)
+            payload["path"] = script_path
+            return self._run_job(payload)
+        finally:
+            try:
+                os.remove(script_path)
+            except OSError:
+                pass
 
     def _run_job(self, script_info):
         if self._process is None or self._process.poll() is not None:

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=LinuxToys
 Type=Application
-Exec=/usr/bin/linuxtoys %u
+Exec=/usr/bin/linuxtoys %U
 Terminal=false
 Icon=linuxtoys
 Comment=Your Linux toolbox
@@ -66,6 +66,6 @@ Comment[tg]=Маҷмӯи абзорҳои Linux-и шумо
 Comment[uz]=Sizning Linux vositalar to'plamingiz
 NoDisplay=false
 Categories=System;
-MimeType=x-scheme-handler/linuxtoys;
+MimeType=x-scheme-handler/linuxtoys;application/vnd.debian.binary-package;application/x-rpm;application/x-arch-package;application/vnd.flatpak;application/vnd.flatpak.ref;application/vnd.snap;application/vnd.appimage;application/x-appimage;application/x-iso9660-appimage;application/x-eopkg;
 StartupNotify=true
 StartupWMClass=linuxtoys.py

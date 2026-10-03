@@ -697,5 +697,21 @@
   "aur_warning_enable": "Abilita AUR",
   "aur_refresh_failed_title": "Metadati AUR non disponibili",
   "aur_operation_failed_title": "Operazione AUR non riuscita",
-  "aur_operation_failed_message": "L'operazione per '{name}' non è riuscita. Output del terminale:\n\n{output}"
+  "aur_operation_failed_message": "L'operazione per '{name}' non è riuscita. Output del terminale:\n\n{output}",
+  "package_view_title": "Installa pacchetto",
+  "package_view_completed": "Completato",
+  "package_view_unsupported": "Questo formato di pacchetto non è supportato.",
+  "package_view_external_warning": "Questo pacchetto proviene da un file esterno. Installa solo pacchetti provenienti da fonti attendibili.",
+  "package_view_version": "Versione",
+  "package_view_architecture": "Architettura",
+  "package_view_format": "Formato",
+  "package_view_maintainer": "Manutentore",
+  "package_view_file": "File",
+  "package_view_format_deb": "Pacchetto Debian",
+  "package_view_format_rpm": "Pacchetto RPM",
+  "package_view_format_arch": "Pacchetto Arch Linux",
+  "package_view_format_eopkg": "Pacchetto Solus",
+  "package_view_format_flatpak": "Pacchetto Flatpak",
+  "package_view_format_flatpakref": "Riferimento Flatpak",
+  "package_view_format_snap": "Pacchetto Snap"
 }

@@ -697,5 +697,21 @@
   "aur_warning_enable": "Povolit AUR",
   "aur_refresh_failed_title": "Metadata AUR nejsou dostupná",
   "aur_operation_failed_title": "Operace AUR selhala",
-  "aur_operation_failed_message": "Operace pro „{name}“ selhala. Výstup terminálu:\n\n{output}"
+  "aur_operation_failed_message": "Operace pro „{name}“ selhala. Výstup terminálu:\n\n{output}",
+  "package_view_title": "Nainstalovat balíček",
+  "package_view_completed": "Dokončeno",
+  "package_view_unsupported": "Tento formát balíčku není podporován.",
+  "package_view_external_warning": "Tento balíček pochází z externího souboru. Instalujte pouze balíčky ze zdrojů, kterým důvěřujete.",
+  "package_view_version": "Verze",
+  "package_view_architecture": "Architektura",
+  "package_view_format": "Formát",
+  "package_view_maintainer": "Správce",
+  "package_view_file": "Soubor",
+  "package_view_format_deb": "Balíček Debian",
+  "package_view_format_rpm": "Balíček RPM",
+  "package_view_format_arch": "Balíček Arch Linux",
+  "package_view_format_eopkg": "Balíček Solus",
+  "package_view_format_flatpak": "Balíček Flatpak",
+  "package_view_format_flatpakref": "Odkaz Flatpak",
+  "package_view_format_snap": "Balíček Snap"
 }

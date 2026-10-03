@@ -697,5 +697,21 @@
   "aur_warning_enable": "I-enable ang AUR",
   "aur_refresh_failed_title": "Hindi available ang AUR metadata",
   "aur_operation_failed_title": "Nabigo ang AUR operation",
-  "aur_operation_failed_message": "Nabigo ang operation para sa '{name}'. Terminal output:\n\n{output}"
+  "aur_operation_failed_message": "Nabigo ang operation para sa '{name}'. Terminal output:\n\n{output}",
+  "package_view_title": "I-install ang package",
+  "package_view_completed": "Tapos na",
+  "package_view_unsupported": "Hindi suportado ang format ng package na ito.",
+  "package_view_external_warning": "Ang package na ito ay mula sa isang external na file. Mag-install lamang ng mga package mula sa mga source na pinagkakatiwalaan mo.",
+  "package_view_version": "Bersyon",
+  "package_view_architecture": "Arkitektura",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Tagapanatili",
+  "package_view_file": "File",
+  "package_view_format_deb": "Debian package",
+  "package_view_format_rpm": "RPM package",
+  "package_view_format_arch": "Arch Linux package",
+  "package_view_format_eopkg": "Solus package",
+  "package_view_format_flatpak": "Flatpak package",
+  "package_view_format_flatpakref": "Flatpak reference",
+  "package_view_format_snap": "Snap package"
 }

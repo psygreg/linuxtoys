@@ -696,5 +696,21 @@
   "aur_warning_enable": "AUR-ni yoqish",
   "aur_refresh_failed_title": "AUR metadata ma'lumotlari mavjud emas",
   "aur_operation_failed_title": "AUR amaliyoti muvaffaqiyatsiz tugadi",
-  "aur_operation_failed_message": "'{name}' uchun amaliyot muvaffaqiyatsiz tugadi. Terminal chiqishi:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' uchun amaliyot muvaffaqiyatsiz tugadi. Terminal chiqishi:\n\n{output}",
+  "package_view_title": "Paketni o'rnatish",
+  "package_view_completed": "Tugallandi",
+  "package_view_unsupported": "Bu paket formati qo'llab-quvvatlanmaydi.",
+  "package_view_external_warning": "Bu paket tashqi fayldan keladi. Faqat ishonchli manbalardan olingan paketlarni o'rnating.",
+  "package_view_version": "Versiya",
+  "package_view_architecture": "Arxitektura",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Qo'llab-quvvatlovchi",
+  "package_view_file": "Fayl",
+  "package_view_format_deb": "Debian paketi",
+  "package_view_format_rpm": "RPM paketi",
+  "package_view_format_arch": "Arch Linux paketi",
+  "package_view_format_eopkg": "Solus paketi",
+  "package_view_format_flatpak": "Flatpak paketi",
+  "package_view_format_flatpakref": "Flatpak havolasi",
+  "package_view_format_snap": "Snap paketi"
 }

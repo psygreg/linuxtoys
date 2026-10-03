@@ -27,6 +27,7 @@ rm -rf "$OUTPUT_PATH"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications"
+mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/mime/packages"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps"
 
 # Copy the Python app from p3 directory
@@ -45,6 +46,7 @@ mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}"/.cargo
 )
 # Copy desktop file and icon
 cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications/"
+cp "$ROOT_DIR/src/linuxtoys-mimetypes.xml" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/mime/packages/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script

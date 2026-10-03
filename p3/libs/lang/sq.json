@@ -697,5 +697,21 @@
   "aur_warning_enable": "Aktivizo AUR",
   "aur_refresh_failed_title": "Metadatat AUR nuk janë të disponueshme",
   "aur_operation_failed_title": "Operacioni AUR dështoi",
-  "aur_operation_failed_message": "Operacioni për '{name}' dështoi. Dalja e terminalit:\n\n{output}"
+  "aur_operation_failed_message": "Operacioni për '{name}' dështoi. Dalja e terminalit:\n\n{output}",
+  "package_view_title": "Instalo paketën",
+  "package_view_completed": "Përfunduar",
+  "package_view_unsupported": "Ky format pakete nuk mbështetet.",
+  "package_view_external_warning": "Kjo paketë vjen nga një skedar i jashtëm. Instaloni vetëm paketa nga burime të cilave u besoni.",
+  "package_view_version": "Versioni",
+  "package_view_architecture": "Arkitektura",
+  "package_view_format": "Formati",
+  "package_view_maintainer": "Mirëmbajtësi",
+  "package_view_file": "Skedari",
+  "package_view_format_deb": "Paketë Debian",
+  "package_view_format_rpm": "Paketë RPM",
+  "package_view_format_arch": "Paketë Arch Linux",
+  "package_view_format_eopkg": "Paketë Solus",
+  "package_view_format_flatpak": "Paketë Flatpak",
+  "package_view_format_flatpakref": "Referencë Flatpak",
+  "package_view_format_snap": "Paketë Snap"
 }

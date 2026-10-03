@@ -35,7 +35,8 @@ from . import (
     uri_parser,
     git_scripts_manager,
     gtk_dialogs,
-    gui_rs
+    gui_rs,
+    package_view
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
 from gi.repository import Gio
@@ -85,6 +86,7 @@ class AppWindow(
         self._installed_packages_refresh_started = False
         self._installed_packages_refresh_pending = False
         self._appstream_runner = appstream_runner.AppStreamRunner(self)
+        self._package_view_prev = None
 
         # Initialize search functionality with cache
         self.script_cache = search_helper.ScriptCache()
@@ -490,6 +492,7 @@ class AppWindow(
 
         # Initialize drag-and-drop but don't enable it by default
         self._setup_drag_and_drop()
+        self._setup_package_drag_and_drop()
 
         self._script_running = False
 
@@ -1406,6 +1409,10 @@ class AppWindow(
         if app_page is not None and hasattr(app_page, "refresh_install_state"):
             app_page.refresh_install_state()
 
+        local_package_view = self.main_stack.get_child_by_name("package_view")
+        if local_package_view is not None and hasattr(local_package_view, "refresh_install_state"):
+            local_package_view.refresh_install_state()
+
         installed_view = self.main_stack.get_child_by_name("installed_features")
         if installed_view is not None and hasattr(installed_view, "refresh"):
             installed_view.refresh()
@@ -1495,6 +1502,203 @@ class AppWindow(
         if installed_packages.match(info) is not None:
             return "installed"
         return "available"
+
+    @staticmethod
+    def _local_package_extension(path):
+        name = os.path.basename(os.fspath(path)).lower()
+        if name.endswith(".pkg.tar.zst") or name.endswith(".pkg.tar.xz") or name.endswith(".pkg.tar.gz") or name.endswith(".pkg.tar.lz4"):
+            return "arch"
+        for suffix, kind in (
+            (".deb", "deb"), (".rpm", "rpm"), (".pacman", "arch"),
+            (".eopkg", "eopkg"), (".flatpakref", "flatpakref"),
+            (".flatpak", "flatpak"), (".snap", "snap"), (".appimage", "appimage"),
+        ):
+            if name.endswith(suffix):
+                return kind
+        return None
+
+    def _local_package_supported_on_host(self, kind):
+        if kind in ("appimage", "flatpak", "flatpakref", "snap"):
+            return True
+        keys = compat.get_system_compat_keys()
+        if kind == "deb":
+            return bool(keys & {"debian", "ubuntu"})
+        if kind == "rpm":
+            return bool(keys & {"fedora", "rhel", "suse", "ostree"})
+        if kind == "arch":
+            return bool(keys & {"arch", "cachy", "manjaro"})
+        if kind == "eopkg":
+            return "solus" in keys
+        return False
+
+    def _create_package_loading_view(self):
+        """Create the same centered roller geometry used by startup loading."""
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        box.set_halign(Gtk.Align.CENTER)
+        box.set_valign(Gtk.Align.CENTER)
+        box.set_hexpand(True)
+        box.set_vexpand(True)
+
+        spinner = Gtk.Spinner()
+        spinner.set_size_request(64, 64)
+        spinner.start()
+        box.pack_start(spinner, False, False, 0)
+        # Keep a strong reference so the spinner can be stopped explicitly when
+        # inspection finishes or the user navigates away.
+        box._package_loading_spinner = spinner
+        return box
+
+    def handle_package_open_request(self, package_path):
+        """Open a local package without blocking GTK while its metadata is inspected."""
+        package_path = os.path.realpath(os.fspath(package_path))
+        kind = self._local_package_extension(package_path)
+        if not kind or not os.path.isfile(package_path) or not self._local_package_supported_on_host(kind):
+            return False
+
+        current_name = self.main_stack.get_visible_child_name()
+        if current_name not in ("package_view", "package_loading"):
+            self._package_view_prev = {
+                "child": self.main_stack.get_visible_child(),
+                "header_visible": self.header_widget.get_visible(),
+                "title": self.header_bar.props.title,
+                "footer_revealed": self.reveal.get_reveal_child(),
+                "back_visible": self.back_button.get_visible(),
+            }
+
+        # Supersede any older inspection. Workers are intentionally not killed;
+        # their result is simply discarded if a newer request/back navigation wins.
+        request_id = getattr(self, "_package_inspection_request_id", 0) + 1
+        self._package_inspection_request_id = request_id
+
+        for child_name in ("package_view", "package_loading"):
+            old = self.main_stack.get_child_by_name(child_name)
+            if old is not None:
+                spinner = getattr(old, "_package_loading_spinner", None)
+                if spinner is not None:
+                    spinner.stop()
+                gui_rs.stack_remove_child(self.main_stack, old, destroy=True)
+
+        loading = self._create_package_loading_view()
+        gui_rs.stack_attach_child(self.main_stack, loading, "package_loading", make_visible=False)
+        self.main_stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+        self.main_stack.set_visible_child(loading)
+
+        # Match Terminal View: Package View owns this navigation flow, so prevent
+        # header-menu actions from mutating global UI/application state until the
+        # package/loading view has been closed.
+        self._set_header_actions_sensitive(False)
+
+        self.header_widget.hide()
+        self.reveal.set_reveal_child(False)
+        self.back_button.show()
+        title = self.translations.get("package_view_title", "Install package")
+        self.header_bar.props.title = f"LinuxToys: {title}"
+        self.present()
+
+        def worker():
+            try:
+                metadata = gui_rs.inspect_local_package(package_path) or {}
+            except Exception as exc:
+                logger.warning("Could not inspect local package %s: %s", package_path, exc)
+                metadata = {}
+            metadata.setdefault("kind", kind)
+            metadata.setdefault("name", os.path.basename(package_path))
+            GLib.idle_add(
+                self._finish_package_inspection,
+                request_id,
+                package_path,
+                metadata,
+            )
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-package-inspection",
+        ).start()
+        return True
+
+    def _finish_package_inspection(self, request_id, package_path, metadata):
+        """Publish worker metadata and cross-fade the roller into Package View."""
+        if request_id != getattr(self, "_package_inspection_request_id", 0):
+            return False
+
+        loading = self.main_stack.get_child_by_name("package_loading")
+        if loading is None or self.main_stack.get_visible_child_name() != "package_loading":
+            return False
+
+        spinner = getattr(loading, "_package_loading_spinner", None)
+        if spinner is not None:
+            spinner.stop()
+
+        old_package = self.main_stack.get_child_by_name("package_view")
+        if old_package is not None:
+            gui_rs.stack_remove_child(self.main_stack, old_package, destroy=True)
+
+        view = package_view.PackageView(self, package_path, metadata)
+        gui_rs.stack_attach_child(self.main_stack, view, "package_view", make_visible=False)
+        self.main_stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        self.main_stack.set_visible_child(view)
+        gui_rs.stack_remove_child_after_transition(
+            self.main_stack, loading, destroy=True
+        )
+        return False
+
+    def enqueue_local_package(self, package_path, metadata):
+        return self._appstream_runner.enqueue_local_package(package_path, metadata)
+
+    def close_package_view(self, crossfade=False):
+        visible_name = self.main_stack.get_visible_child_name()
+        child = self.main_stack.get_child_by_name(visible_name) if visible_name in ("package_view", "package_loading") else None
+        prev = self._package_view_prev
+        if child is None:
+            return False
+
+        # Package View uses the same header-menu lock as Terminal View. Restore it
+        # before returning to the exact view that opened the package.
+        self._set_header_actions_sensitive(True)
+
+        # Invalidate an in-flight inspector before restoring the previous view.
+        self._package_inspection_request_id = getattr(self, "_package_inspection_request_id", 0) + 1
+        spinner = getattr(child, "_package_loading_spinner", None)
+        if spinner is not None:
+            spinner.stop()
+
+        if prev and prev.get("child") is not None and prev["child"].get_parent() is self.main_stack:
+            transition = Gtk.StackTransitionType.CROSSFADE if crossfade else Gtk.StackTransitionType.SLIDE_LEFT_RIGHT
+            self.main_stack.set_transition_type(transition)
+            self.main_stack.set_visible_child(prev["child"])
+            self.header_bar.props.title = prev.get("title") or "LinuxToys"
+            if prev.get("header_visible"):
+                self.header_widget.show()
+            else:
+                self.header_widget.hide()
+            self.reveal.set_reveal_child(bool(prev.get("footer_revealed")))
+            if prev.get("back_visible"):
+                self.back_button.show()
+            else:
+                self.back_button.hide()
+        else:
+            self.show_categories_view()
+
+        self._package_view_prev = None
+        gui_rs.stack_remove_child_after_transition(self.main_stack, child, destroy=True)
+        return False
+
+    def _setup_package_drag_and_drop(self):
+        target = Gtk.TargetEntry.new("text/uri-list", 0, 0)
+        self.main_stack.drag_dest_set(Gtk.DestDefaults.ALL, [target], Gdk.DragAction.COPY)
+        self.main_stack.connect("drag-data-received", self._on_package_drag_data_received)
+
+    def _on_package_drag_data_received(self, widget, context, x, y, selection, info, event_time):
+        uris = selection.get_uris() or []
+        accepted = False
+        for uri in uris:
+            file = Gio.File.new_for_uri(uri)
+            path = file.get_path()
+            if path and self.handle_package_open_request(path):
+                accepted = True
+                break
+        Gtk.drag_finish(context, accepted, False, event_time)
 
     def _on_appstream_queue_changed(self):
         """Refresh the session queue button and the queue view, if visible."""

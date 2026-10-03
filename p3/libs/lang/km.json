@@ -697,5 +697,21 @@
   "aur_warning_enable": "បើក AUR",
   "aur_refresh_failed_title": "ទិន្នន័យមេតា AUR មិនអាចប្រើបាន",
   "aur_operation_failed_title": "ប្រតិបត្តិការ AUR បានបរាជ័យ",
-  "aur_operation_failed_message": "ប្រតិបត្តិការសម្រាប់ '{name}' បានបរាជ័យ។ លទ្ធផលពី terminal៖\n\n{output}"
+  "aur_operation_failed_message": "ប្រតិបត្តិការសម្រាប់ '{name}' បានបរាជ័យ។ លទ្ធផលពី terminal៖\n\n{output}",
+  "package_view_title": "ដំឡើងកញ្ចប់",
+  "package_view_completed": "បានបញ្ចប់",
+  "package_view_unsupported": "ទម្រង់កញ្ចប់នេះមិនត្រូវបានគាំទ្រទេ។",
+  "package_view_external_warning": "កញ្ចប់នេះមកពីឯកសារខាងក្រៅ។ ដំឡើងតែកញ្ចប់ពីប្រភពដែលអ្នកទុកចិត្តប៉ុណ្ណោះ។",
+  "package_view_version": "កំណែ",
+  "package_view_architecture": "ស្ថាបត្យកម្ម",
+  "package_view_format": "ទម្រង់",
+  "package_view_maintainer": "អ្នកថែទាំ",
+  "package_view_file": "ឯកសារ",
+  "package_view_format_deb": "កញ្ចប់ Debian",
+  "package_view_format_rpm": "កញ្ចប់ RPM",
+  "package_view_format_arch": "កញ្ចប់ Arch Linux",
+  "package_view_format_eopkg": "កញ្ចប់ Solus",
+  "package_view_format_flatpak": "កញ្ចប់ Flatpak",
+  "package_view_format_flatpakref": "សេចក្តីយោង Flatpak",
+  "package_view_format_snap": "កញ្ចប់ Snap"
 }

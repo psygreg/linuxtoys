@@ -697,5 +697,21 @@
   "aur_warning_enable": "Увімкнути AUR",
   "aur_refresh_failed_title": "Метадані AUR недоступні",
   "aur_operation_failed_title": "Операція AUR завершилася помилкою",
-  "aur_operation_failed_message": "Операція для «{name}» завершилася помилкою. Вивід термінала:\n\n{output}"
+  "aur_operation_failed_message": "Операція для «{name}» завершилася помилкою. Вивід термінала:\n\n{output}",
+  "package_view_title": "Встановити пакет",
+  "package_view_completed": "Завершено",
+  "package_view_unsupported": "Цей формат пакета не підтримується.",
+  "package_view_external_warning": "Цей пакет походить із зовнішнього файлу. Встановлюйте пакети лише з джерел, яким довіряєте.",
+  "package_view_version": "Версія",
+  "package_view_architecture": "Архітектура",
+  "package_view_format": "Формат",
+  "package_view_maintainer": "Супровідник",
+  "package_view_file": "Файл",
+  "package_view_format_deb": "Пакет Debian",
+  "package_view_format_rpm": "Пакет RPM",
+  "package_view_format_arch": "Пакет Arch Linux",
+  "package_view_format_eopkg": "Пакет Solus",
+  "package_view_format_flatpak": "Пакет Flatpak",
+  "package_view_format_flatpakref": "Посилання Flatpak",
+  "package_view_format_snap": "Пакет Snap"
 }

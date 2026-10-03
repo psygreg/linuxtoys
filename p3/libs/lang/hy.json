@@ -697,5 +697,21 @@
   "aur_warning_enable": "Միացնել AUR-ը",
   "aur_refresh_failed_title": "AUR մետատվյալները հասանելի չեն",
   "aur_operation_failed_title": "AUR գործողությունը ձախողվեց",
-  "aur_operation_failed_message": "'{name}'-ի գործողությունը ձախողվեց։ Տերմինալի ելքը՝\n\n{output}"
+  "aur_operation_failed_message": "'{name}'-ի գործողությունը ձախողվեց։ Տերմինալի ելքը՝\n\n{output}",
+  "package_view_title": "Տեղադրել փաթեթը",
+  "package_view_completed": "Ավարտված",
+  "package_view_unsupported": "Փաթեթի այս ձևաչափը չի աջակցվում։",
+  "package_view_external_warning": "Այս փաթեթը գալիս է արտաքին ֆայլից։ Տեղադրեք փաթեթներ միայն այն աղբյուրներից, որոնց վստահում եք։",
+  "package_view_version": "Տարբերակ",
+  "package_view_architecture": "Ճարտարապետություն",
+  "package_view_format": "Ձևաչափ",
+  "package_view_maintainer": "Սպասարկող",
+  "package_view_file": "Ֆայլ",
+  "package_view_format_deb": "Debian փաթեթ",
+  "package_view_format_rpm": "RPM փաթեթ",
+  "package_view_format_arch": "Arch Linux փաթեթ",
+  "package_view_format_eopkg": "Solus փաթեթ",
+  "package_view_format_flatpak": "Flatpak փաթեթ",
+  "package_view_format_flatpakref": "Flatpak հղում",
+  "package_view_format_snap": "Snap փաթեթ"
 }

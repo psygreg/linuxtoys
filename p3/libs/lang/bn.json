@@ -696,5 +696,21 @@
   "aur_warning_enable": "AUR সক্রিয় করুন",
   "aur_refresh_failed_title": "AUR মেটাডেটা উপলব্ধ নয়",
   "aur_operation_failed_title": "AUR অপারেশন ব্যর্থ হয়েছে",
-  "aur_operation_failed_message": "'{name}'-এর অপারেশন ব্যর্থ হয়েছে। টার্মিনাল আউটপুট:\n\n{output}"
+  "aur_operation_failed_message": "'{name}'-এর অপারেশন ব্যর্থ হয়েছে। টার্মিনাল আউটপুট:\n\n{output}",
+  "package_view_title": "প্যাকেজ ইনস্টল করুন",
+  "package_view_completed": "সম্পন্ন",
+  "package_view_unsupported": "এই প্যাকেজ ফরম্যাটটি সমর্থিত নয়।",
+  "package_view_external_warning": "এই প্যাকেজটি একটি বাহ্যিক ফাইল থেকে এসেছে। শুধুমাত্র বিশ্বস্ত উৎসের প্যাকেজ ইনস্টল করুন।",
+  "package_view_version": "সংস্করণ",
+  "package_view_architecture": "আর্কিটেকচার",
+  "package_view_format": "ফরম্যাট",
+  "package_view_maintainer": "রক্ষণাবেক্ষণকারী",
+  "package_view_file": "ফাইল",
+  "package_view_format_deb": "Debian প্যাকেজ",
+  "package_view_format_rpm": "RPM প্যাকেজ",
+  "package_view_format_arch": "Arch Linux প্যাকেজ",
+  "package_view_format_eopkg": "Solus প্যাকেজ",
+  "package_view_format_flatpak": "Flatpak প্যাকেজ",
+  "package_view_format_flatpakref": "Flatpak রেফারেন্স",
+  "package_view_format_snap": "Snap প্যাকেজ"
 }

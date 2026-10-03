@@ -695,5 +695,21 @@
   "aur_warning_enable": "AUR-ஐ இயக்கு",
   "aur_refresh_failed_title": "AUR மெட்டாடேட்டா கிடைக்கவில்லை",
   "aur_operation_failed_title": "AUR செயல்பாடு தோல்வியடைந்தது",
-  "aur_operation_failed_message": "'{name}'-க்கான செயல்பாடு தோல்வியடைந்தது. முனைய வெளியீடு:\n\n{output}"
+  "aur_operation_failed_message": "'{name}'-க்கான செயல்பாடு தோல்வியடைந்தது. முனைய வெளியீடு:\n\n{output}",
+  "package_view_title": "தொகுப்பை நிறுவு",
+  "package_view_completed": "முடிந்தது",
+  "package_view_unsupported": "இந்த தொகுப்பு வடிவம் ஆதரிக்கப்படவில்லை.",
+  "package_view_external_warning": "இந்த தொகுப்பு வெளிப்புறக் கோப்பிலிருந்து வருகிறது. நீங்கள் நம்பும் மூலங்களிலிருந்து வரும் தொகுப்புகளை மட்டுமே நிறுவவும்.",
+  "package_view_version": "பதிப்பு",
+  "package_view_architecture": "கட்டமைப்பு",
+  "package_view_format": "வடிவம்",
+  "package_view_maintainer": "பராமரிப்பாளர்",
+  "package_view_file": "கோப்பு",
+  "package_view_format_deb": "Debian தொகுப்பு",
+  "package_view_format_rpm": "RPM தொகுப்பு",
+  "package_view_format_arch": "Arch Linux தொகுப்பு",
+  "package_view_format_eopkg": "Solus தொகுப்பு",
+  "package_view_format_flatpak": "Flatpak தொகுப்பு",
+  "package_view_format_flatpakref": "Flatpak குறிப்பு",
+  "package_view_format_snap": "Snap தொகுப்பு"
 }

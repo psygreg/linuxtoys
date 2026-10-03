@@ -697,5 +697,21 @@
   "aur_warning_enable": "Ota AUR käyttöön",
   "aur_refresh_failed_title": "AUR-metatiedot eivät ole saatavilla",
   "aur_operation_failed_title": "AUR-toiminto epäonnistui",
-  "aur_operation_failed_message": "Toiminto paketille '{name}' epäonnistui. Päätteen tuloste:\n\n{output}"
+  "aur_operation_failed_message": "Toiminto paketille '{name}' epäonnistui. Päätteen tuloste:\n\n{output}",
+  "package_view_title": "Asenna paketti",
+  "package_view_completed": "Valmis",
+  "package_view_unsupported": "Tätä pakettimuotoa ei tueta.",
+  "package_view_external_warning": "Tämä paketti tulee ulkoisesta tiedostosta. Asenna paketteja vain lähteistä, joihin luotat.",
+  "package_view_version": "Versio",
+  "package_view_architecture": "Arkkitehtuuri",
+  "package_view_format": "Muoto",
+  "package_view_maintainer": "Ylläpitäjä",
+  "package_view_file": "Tiedosto",
+  "package_view_format_deb": "Debian-paketti",
+  "package_view_format_rpm": "RPM-paketti",
+  "package_view_format_arch": "Arch Linux -paketti",
+  "package_view_format_eopkg": "Solus-paketti",
+  "package_view_format_flatpak": "Flatpak-paketti",
+  "package_view_format_flatpakref": "Flatpak-viite",
+  "package_view_format_snap": "Snap-paketti"
 }

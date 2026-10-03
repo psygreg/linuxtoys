@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-arch-package">
+    <comment>Arch Linux package</comment>
+    <glob pattern="*.pkg.tar.zst" weight="80"/>
+    <glob pattern="*.pacman" weight="80"/>
+  </mime-type>
+  <mime-type type="application/x-eopkg">
+    <comment>Solus package</comment>
+    <glob pattern="*.eopkg" weight="80"/>
+  </mime-type>
+</mime-info>

@@ -6,6 +6,17 @@ from .local_scripts import LocalScriptsCtl
 from . import app_page, term_view, skills_view, get_icon_path, header, gui_rs
 
 class NavCtl:
+    def _set_header_actions_sensitive(self, sensitive):
+        """Lock/unlock header actions that can change the active application view."""
+        for widget_name in (
+            "menu_button",
+            "installed_features_button",
+            "appstream_queue_button",
+        ):
+            widget = getattr(self, widget_name, None)
+            if widget is not None:
+                widget.set_sensitive(bool(sensitive))
+
     @staticmethod
     def _category_view_key(category_info):
         """Return a stable key for a parser-backed category view."""
@@ -480,13 +491,13 @@ class NavCtl:
 
         # Header-menu actions can mutate global UI/application state in ways that
         # are unsafe or confusing while the terminal workflow owns navigation.
-        self.menu_button.set_sensitive(False)
+        self._set_header_actions_sensitive(False)
 
         # Defensive restore for any non-standard path that destroys the terminal
         # widget without going through on_back_button_clicked().
         run_box.connect(
             "destroy",
-            lambda *_args: self.menu_button.set_sensitive(True),
+            lambda *_args: self._set_header_actions_sensitive(True),
         )
 
         # Keep the exact previous view alive, just like app-page/category
@@ -578,6 +589,12 @@ class NavCtl:
 
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
+
+        if self.main_stack.get_visible_child_name() in ("package_view", "package_loading"):
+            # A local package view always returns to the exact view that opened it.
+            # Cold-start package activation records Categories as that origin.
+            self.close_package_view()
+            return
 
         # Header utility views preserve the exact view they were opened from.
         utility_name = self.main_stack.get_visible_child_name()

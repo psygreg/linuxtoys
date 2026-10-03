@@ -697,5 +697,21 @@
   "aur_warning_enable": "ເປີດໃຊ້ AUR",
   "aur_refresh_failed_title": "ຂໍ້ມູນເມຕາ AUR ບໍ່ພ້ອມໃຊ້ງານ",
   "aur_operation_failed_title": "ການດຳເນີນງານ AUR ລົ້ມເຫຼວ",
-  "aur_operation_failed_message": "ການດຳເນີນງານສຳລັບ '{name}' ລົ້ມເຫຼວ. ຜົນລັບຈາກເທີມິນອນ:\n\n{output}"
+  "aur_operation_failed_message": "ການດຳເນີນງານສຳລັບ '{name}' ລົ້ມເຫຼວ. ຜົນລັບຈາກເທີມິນອນ:\n\n{output}",
+  "package_view_title": "ຕິດຕັ້ງແພັກເກດ",
+  "package_view_completed": "ສຳເລັດ",
+  "package_view_unsupported": "ຮູບແບບແພັກເກດນີ້ບໍ່ຮອງຮັບ.",
+  "package_view_external_warning": "ແພັກເກດນີ້ມາຈາກໄຟລ໌ພາຍນອກ. ຕິດຕັ້ງສະເພາະແພັກເກດຈາກແຫຼ່ງທີ່ທ່ານໄວ້ໃຈເທົ່ານັ້ນ.",
+  "package_view_version": "ເວີຊັນ",
+  "package_view_architecture": "ສະຖາປັດຕະຍະກຳ",
+  "package_view_format": "ຮູບແບບ",
+  "package_view_maintainer": "ຜູ້ດູແລ",
+  "package_view_file": "ໄຟລ໌",
+  "package_view_format_deb": "ແພັກເກດ Debian",
+  "package_view_format_rpm": "ແພັກເກດ RPM",
+  "package_view_format_arch": "ແພັກເກດ Arch Linux",
+  "package_view_format_eopkg": "ແພັກເກດ Solus",
+  "package_view_format_flatpak": "ແພັກເກດ Flatpak",
+  "package_view_format_flatpakref": "ການອ້າງອີງ Flatpak",
+  "package_view_format_snap": "ແພັກເກດ Snap"
 }

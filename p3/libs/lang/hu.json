@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR engedélyezése",
   "aur_refresh_failed_title": "Az AUR metaadatai nem érhetők el",
   "aur_operation_failed_title": "Az AUR-művelet sikertelen",
-  "aur_operation_failed_message": "A(z) „{name}” művelete sikertelen. Terminálkimenet:\n\n{output}"
+  "aur_operation_failed_message": "A(z) „{name}” művelete sikertelen. Terminálkimenet:\n\n{output}",
+  "package_view_title": "Csomag telepítése",
+  "package_view_completed": "Befejezve",
+  "package_view_unsupported": "Ez a csomagformátum nem támogatott.",
+  "package_view_external_warning": "Ez a csomag külső fájlból származik. Csak megbízható forrásból származó csomagokat telepítsen.",
+  "package_view_version": "Verzió",
+  "package_view_architecture": "Architektúra",
+  "package_view_format": "Formátum",
+  "package_view_maintainer": "Karbantartó",
+  "package_view_file": "Fájl",
+  "package_view_format_deb": "Debian-csomag",
+  "package_view_format_rpm": "RPM-csomag",
+  "package_view_format_arch": "Arch Linux-csomag",
+  "package_view_format_eopkg": "Solus-csomag",
+  "package_view_format_flatpak": "Flatpak-csomag",
+  "package_view_format_flatpakref": "Flatpak-hivatkozás",
+  "package_view_format_snap": "Snap-csomag"
 }

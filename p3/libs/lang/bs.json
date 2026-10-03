@@ -696,5 +696,21 @@
   "aur_warning_enable": "Omogući AUR",
   "aur_refresh_failed_title": "AUR metapodaci nisu dostupni",
   "aur_operation_failed_title": "AUR operacija nije uspjela",
-  "aur_operation_failed_message": "Operacija za '{name}' nije uspjela. Izlaz terminala:\n\n{output}"
+  "aur_operation_failed_message": "Operacija za '{name}' nije uspjela. Izlaz terminala:\n\n{output}",
+  "package_view_title": "Instaliraj paket",
+  "package_view_completed": "Završeno",
+  "package_view_unsupported": "Ovaj format paketa nije podržan.",
+  "package_view_external_warning": "Ovaj paket dolazi iz vanjske datoteke. Instalirajte samo pakete iz izvora kojima vjerujete.",
+  "package_view_version": "Verzija",
+  "package_view_architecture": "Arhitektura",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Održavatelj",
+  "package_view_file": "Datoteka",
+  "package_view_format_deb": "Debian paket",
+  "package_view_format_rpm": "RPM paket",
+  "package_view_format_arch": "Arch Linux paket",
+  "package_view_format_eopkg": "Solus paket",
+  "package_view_format_flatpak": "Flatpak paket",
+  "package_view_format_flatpakref": "Flatpak referenca",
+  "package_view_format_snap": "Snap paket"
 }

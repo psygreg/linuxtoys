@@ -697,5 +697,21 @@
   "aur_warning_enable": "Enable AUR",
   "aur_refresh_failed_title": "AUR metadata unavailable",
   "aur_operation_failed_title": "AUR operation failed",
-  "aur_operation_failed_message": "The operation for '{name}' failed. Terminal output:\n\n{output}"
+  "aur_operation_failed_message": "The operation for '{name}' failed. Terminal output:\n\n{output}",
+  "package_view_title": "Install package",
+  "package_view_completed": "Completed",
+  "package_view_unsupported": "This package format is not supported.",
+  "package_view_external_warning": "This package comes from an external file. Only install packages from sources you trust.",
+  "package_view_version": "Version",
+  "package_view_architecture": "Architecture",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Maintainer",
+  "package_view_file": "File",
+  "package_view_format_deb": "Debian package",
+  "package_view_format_rpm": "RPM package",
+  "package_view_format_arch": "Arch Linux package",
+  "package_view_format_eopkg": "Solus package",
+  "package_view_format_flatpak": "Flatpak package",
+  "package_view_format_flatpakref": "Flatpak reference",
+  "package_view_format_snap": "Snap package"
 }

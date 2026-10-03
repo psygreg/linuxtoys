@@ -697,5 +697,21 @@
   "aur_warning_enable": "Aktifkan AUR",
   "aur_refresh_failed_title": "Metadata AUR tidak tersedia",
   "aur_operation_failed_title": "Operasi AUR gagal",
-  "aur_operation_failed_message": "Operasi untuk '{name}' gagal. Keluaran terminal:\n\n{output}"
+  "aur_operation_failed_message": "Operasi untuk '{name}' gagal. Keluaran terminal:\n\n{output}",
+  "package_view_title": "Instal paket",
+  "package_view_completed": "Selesai",
+  "package_view_unsupported": "Format paket ini tidak didukung.",
+  "package_view_external_warning": "Paket ini berasal dari file eksternal. Instal hanya paket dari sumber yang Anda percayai.",
+  "package_view_version": "Versi",
+  "package_view_architecture": "Arsitektur",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Pemelihara",
+  "package_view_file": "Berkas",
+  "package_view_format_deb": "Paket Debian",
+  "package_view_format_rpm": "Paket RPM",
+  "package_view_format_arch": "Paket Arch Linux",
+  "package_view_format_eopkg": "Paket Solus",
+  "package_view_format_flatpak": "Paket Flatpak",
+  "package_view_format_flatpakref": "Referensi Flatpak",
+  "package_view_format_snap": "Paket Snap"
 }

@@ -699,5 +699,21 @@
   "aur_warning_enable": "启用 AUR",
   "aur_refresh_failed_title": "AUR 元数据不可用",
   "aur_operation_failed_title": "AUR 操作失败",
-  "aur_operation_failed_message": "“{name}”的操作失败。终端输出：\n\n{output}"
+  "aur_operation_failed_message": "“{name}”的操作失败。终端输出：\n\n{output}",
+  "package_view_title": "安装软件包",
+  "package_view_completed": "已完成",
+  "package_view_unsupported": "不支持此软件包格式。",
+  "package_view_external_warning": "此软件包来自外部文件。请仅安装来自您信任来源的软件包。",
+  "package_view_version": "版本",
+  "package_view_architecture": "架构",
+  "package_view_format": "格式",
+  "package_view_maintainer": "维护者",
+  "package_view_file": "文件",
+  "package_view_format_deb": "Debian 软件包",
+  "package_view_format_rpm": "RPM 软件包",
+  "package_view_format_arch": "Arch Linux 软件包",
+  "package_view_format_eopkg": "Solus 软件包",
+  "package_view_format_flatpak": "Flatpak 软件包",
+  "package_view_format_flatpakref": "Flatpak 引用",
+  "package_view_format_snap": "Snap 软件包"
 }

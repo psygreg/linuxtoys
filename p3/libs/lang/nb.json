@@ -697,5 +697,21 @@
   "aur_warning_enable": "Aktiver AUR",
   "aur_refresh_failed_title": "AUR-metadata er utilgjengelige",
   "aur_operation_failed_title": "AUR-operasjon mislyktes",
-  "aur_operation_failed_message": "Operasjonen for '{name}' mislyktes. Terminalutdata:\n\n{output}"
+  "aur_operation_failed_message": "Operasjonen for '{name}' mislyktes. Terminalutdata:\n\n{output}",
+  "package_view_title": "Installer pakke",
+  "package_view_completed": "Fullført",
+  "package_view_unsupported": "Dette pakkeformatet støttes ikke.",
+  "package_view_external_warning": "Denne pakken kommer fra en ekstern fil. Installer bare pakker fra kilder du stoler på.",
+  "package_view_version": "Versjon",
+  "package_view_architecture": "Arkitektur",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Vedlikeholder",
+  "package_view_file": "Fil",
+  "package_view_format_deb": "Debian-pakke",
+  "package_view_format_rpm": "RPM-pakke",
+  "package_view_format_arch": "Arch Linux-pakke",
+  "package_view_format_eopkg": "Solus-pakke",
+  "package_view_format_flatpak": "Flatpak-pakke",
+  "package_view_format_flatpakref": "Flatpak-referanse",
+  "package_view_format_snap": "Snap-pakke"
 }

@@ -697,5 +697,21 @@
   "aur_warning_enable": "הפעלת AUR",
   "aur_refresh_failed_title": "מטא-נתוני AUR אינם זמינים",
   "aur_operation_failed_title": "פעולת AUR נכשלה",
-  "aur_operation_failed_message": "הפעולה עבור '{name}' נכשלה. פלט המסוף:\n\n{output}"
+  "aur_operation_failed_message": "הפעולה עבור '{name}' נכשלה. פלט המסוף:\n\n{output}",
+  "package_view_title": "התקנת חבילה",
+  "package_view_completed": "הושלם",
+  "package_view_unsupported": "פורמט חבילה זה אינו נתמך.",
+  "package_view_external_warning": "חבילה זו מגיעה מקובץ חיצוני. התקינו חבילות רק ממקורות שאתם סומכים עליהם.",
+  "package_view_version": "גרסה",
+  "package_view_architecture": "ארכיטקטורה",
+  "package_view_format": "פורמט",
+  "package_view_maintainer": "מתחזק",
+  "package_view_file": "קובץ",
+  "package_view_format_deb": "חבילת Debian",
+  "package_view_format_rpm": "חבילת RPM",
+  "package_view_format_arch": "חבילת Arch Linux",
+  "package_view_format_eopkg": "חבילת Solus",
+  "package_view_format_flatpak": "חבילת Flatpak",
+  "package_view_format_flatpakref": "הפניית Flatpak",
+  "package_view_format_snap": "חבילת Snap"
 }

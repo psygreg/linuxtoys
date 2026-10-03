@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR فعال کریں",
   "aur_refresh_failed_title": "AUR میٹا ڈیٹا دستیاب نہیں",
   "aur_operation_failed_title": "AUR آپریشن ناکام ہو گیا",
-  "aur_operation_failed_message": "'{name}' کے لیے آپریشن ناکام ہو گیا۔ ٹرمینل آؤٹ پٹ:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' کے لیے آپریشن ناکام ہو گیا۔ ٹرمینل آؤٹ پٹ:\n\n{output}",
+  "package_view_title": "پیکیج انسٹال کریں",
+  "package_view_completed": "مکمل",
+  "package_view_unsupported": "یہ پیکیج فارمیٹ معاونت یافتہ نہیں ہے۔",
+  "package_view_external_warning": "یہ پیکیج ایک بیرونی فائل سے آیا ہے۔ صرف ان ذرائع سے پیکیجز انسٹال کریں جن پر آپ اعتماد کرتے ہیں۔",
+  "package_view_version": "ورژن",
+  "package_view_architecture": "آرکیٹیکچر",
+  "package_view_format": "فارمیٹ",
+  "package_view_maintainer": "مینٹینر",
+  "package_view_file": "فائل",
+  "package_view_format_deb": "Debian پیکیج",
+  "package_view_format_rpm": "RPM پیکیج",
+  "package_view_format_arch": "Arch Linux پیکیج",
+  "package_view_format_eopkg": "Solus پیکیج",
+  "package_view_format_flatpak": "Flatpak پیکیج",
+  "package_view_format_flatpakref": "Flatpak حوالہ",
+  "package_view_format_snap": "Snap پیکیج"
 }

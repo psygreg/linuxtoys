@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR を有効にする",
   "aur_refresh_failed_title": "AUR メタデータを利用できません",
   "aur_operation_failed_title": "AUR 操作に失敗しました",
-  "aur_operation_failed_message": "「{name}」の操作に失敗しました。ターミナル出力:\n\n{output}"
+  "aur_operation_failed_message": "「{name}」の操作に失敗しました。ターミナル出力:\n\n{output}",
+  "package_view_title": "パッケージをインストール",
+  "package_view_completed": "完了",
+  "package_view_unsupported": "このパッケージ形式はサポートされていません。",
+  "package_view_external_warning": "このパッケージは外部ファイルから取得されています。信頼できる提供元のパッケージのみをインストールしてください。",
+  "package_view_version": "バージョン",
+  "package_view_architecture": "アーキテクチャ",
+  "package_view_format": "形式",
+  "package_view_maintainer": "メンテナー",
+  "package_view_file": "ファイル",
+  "package_view_format_deb": "Debian パッケージ",
+  "package_view_format_rpm": "RPM パッケージ",
+  "package_view_format_arch": "Arch Linux パッケージ",
+  "package_view_format_eopkg": "Solus パッケージ",
+  "package_view_format_flatpak": "Flatpak パッケージ",
+  "package_view_format_flatpakref": "Flatpak 参照",
+  "package_view_format_snap": "Snap パッケージ"
 }

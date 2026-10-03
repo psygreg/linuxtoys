@@ -695,5 +695,21 @@
   "aur_warning_enable": "Washa AUR",
   "aur_refresh_failed_title": "Metadata ya AUR haipatikani",
   "aur_operation_failed_title": "Operesheni ya AUR imeshindwa",
-  "aur_operation_failed_message": "Operesheni ya '{name}' imeshindwa. Matokeo ya terminali:\n\n{output}"
+  "aur_operation_failed_message": "Operesheni ya '{name}' imeshindwa. Matokeo ya terminali:\n\n{output}",
+  "package_view_title": "Sakinisha kifurushi",
+  "package_view_completed": "Imekamilika",
+  "package_view_unsupported": "Muundo huu wa kifurushi hautumiki.",
+  "package_view_external_warning": "Kifurushi hiki kinatoka kwenye faili ya nje. Sakinisha vifurushi kutoka vyanzo unavyoviamini pekee.",
+  "package_view_version": "Toleo",
+  "package_view_architecture": "Usanifu",
+  "package_view_format": "Muundo",
+  "package_view_maintainer": "Msimamizi",
+  "package_view_file": "Faili",
+  "package_view_format_deb": "Kifurushi cha Debian",
+  "package_view_format_rpm": "Kifurushi cha RPM",
+  "package_view_format_arch": "Kifurushi cha Arch Linux",
+  "package_view_format_eopkg": "Kifurushi cha Solus",
+  "package_view_format_flatpak": "Kifurushi cha Flatpak",
+  "package_view_format_flatpakref": "Rejeleo la Flatpak",
+  "package_view_format_snap": "Kifurushi cha Snap"
 }

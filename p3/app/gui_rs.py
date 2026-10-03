@@ -124,8 +124,10 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 18:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 18)")
+            if lib.lt_gui_abi_version() != 19:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 19)")
+            lib.lt_gui_inspect_local_package.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_size_t]
+            lib.lt_gui_inspect_local_package.restype = ctypes.c_bool
             lib.lt_gui_stack_add_scrolled_flowbox.argtypes = [
                 ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p,
             ]
@@ -785,3 +787,19 @@ def populate_screenshot_chrome(outer, stack, *, previous_tooltip, next_tooltip):
     if previous is None or next_button is None or counter is None:
         return None
     return {"previous": previous, "next": next_button, "counter": counter}
+
+
+def inspect_local_package(path):
+    """Return native metadata for a supported local package file."""
+    lib = _load()
+    if lib is None:
+        raise RuntimeError("LinuxToys GUI Rust library is unavailable")
+    encoded = os.fsencode(os.path.realpath(os.fspath(path)))
+    output = ctypes.create_string_buffer(65536)
+    if not lib.lt_gui_inspect_local_package(encoded, output, len(output)):
+        return None
+    try:
+        value = json.loads(output.value.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None

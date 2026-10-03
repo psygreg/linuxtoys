@@ -696,5 +696,21 @@
   "aur_warning_enable": "AUR-u aktiv et",
   "aur_refresh_failed_title": "AUR metadatası əlçatan deyil",
   "aur_operation_failed_title": "AUR əməliyyatı uğursuz oldu",
-  "aur_operation_failed_message": "'{name}' üçün əməliyyat uğursuz oldu. Terminal çıxışı:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' üçün əməliyyat uğursuz oldu. Terminal çıxışı:\n\n{output}",
+  "package_view_title": "Paketi quraşdır",
+  "package_view_completed": "Tamamlandı",
+  "package_view_unsupported": "Bu paket formatı dəstəklənmir.",
+  "package_view_external_warning": "Bu paket xarici fayldan gəlir. Yalnız etibar etdiyiniz mənbələrdən olan paketləri quraşdırın.",
+  "package_view_version": "Versiya",
+  "package_view_architecture": "Arxitektura",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Müşayiətçi",
+  "package_view_file": "Fayl",
+  "package_view_format_deb": "Debian paketi",
+  "package_view_format_rpm": "RPM paketi",
+  "package_view_format_arch": "Arch Linux paketi",
+  "package_view_format_eopkg": "Solus paketi",
+  "package_view_format_flatpak": "Flatpak paketi",
+  "package_view_format_flatpakref": "Flatpak istinadı",
+  "package_view_format_snap": "Snap paketi"
 }

@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR aktivieren",
   "aur_refresh_failed_title": "AUR-Metadaten nicht verfügbar",
   "aur_operation_failed_title": "AUR-Vorgang fehlgeschlagen",
-  "aur_operation_failed_message": "Der Vorgang für „{name}“ ist fehlgeschlagen. Terminalausgabe:\n\n{output}"
+  "aur_operation_failed_message": "Der Vorgang für „{name}“ ist fehlgeschlagen. Terminalausgabe:\n\n{output}",
+  "package_view_title": "Paket installieren",
+  "package_view_completed": "Abgeschlossen",
+  "package_view_unsupported": "Dieses Paketformat wird nicht unterstützt.",
+  "package_view_external_warning": "Dieses Paket stammt aus einer externen Datei. Installieren Sie nur Pakete aus Quellen, denen Sie vertrauen.",
+  "package_view_version": "Version",
+  "package_view_architecture": "Architektur",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Betreuer",
+  "package_view_file": "Datei",
+  "package_view_format_deb": "Debian-Paket",
+  "package_view_format_rpm": "RPM-Paket",
+  "package_view_format_arch": "Arch-Linux-Paket",
+  "package_view_format_eopkg": "Solus-Paket",
+  "package_view_format_flatpak": "Flatpak-Paket",
+  "package_view_format_flatpakref": "Flatpak-Referenz",
+  "package_view_format_snap": "Snap-Paket"
 }

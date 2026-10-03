@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR 활성화",
   "aur_refresh_failed_title": "AUR 메타데이터를 사용할 수 없음",
   "aur_operation_failed_title": "AUR 작업 실패",
-  "aur_operation_failed_message": "'{name}' 작업에 실패했습니다. 터미널 출력:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' 작업에 실패했습니다. 터미널 출력:\n\n{output}",
+  "package_view_title": "패키지 설치",
+  "package_view_completed": "완료됨",
+  "package_view_unsupported": "이 패키지 형식은 지원되지 않습니다.",
+  "package_view_external_warning": "이 패키지는 외부 파일에서 가져왔습니다. 신뢰할 수 있는 출처의 패키지만 설치하세요.",
+  "package_view_version": "버전",
+  "package_view_architecture": "아키텍처",
+  "package_view_format": "형식",
+  "package_view_maintainer": "관리자",
+  "package_view_file": "파일",
+  "package_view_format_deb": "Debian 패키지",
+  "package_view_format_rpm": "RPM 패키지",
+  "package_view_format_arch": "Arch Linux 패키지",
+  "package_view_format_eopkg": "Solus 패키지",
+  "package_view_format_flatpak": "Flatpak 패키지",
+  "package_view_format_flatpakref": "Flatpak 참조",
+  "package_view_format_snap": "Snap 패키지"
 }

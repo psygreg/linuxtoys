@@ -697,5 +697,21 @@
   "aur_warning_enable": "Cumasaigh AUR",
   "aur_refresh_failed_title": "Meiteashonraí AUR gan fáil",
   "aur_operation_failed_title": "Theip ar oibríocht AUR",
-  "aur_operation_failed_message": "Theip ar an oibríocht do '{name}'. Aschur teirminéil:\n\n{output}"
+  "aur_operation_failed_message": "Theip ar an oibríocht do '{name}'. Aschur teirminéil:\n\n{output}",
+  "package_view_title": "Suiteáil pacáiste",
+  "package_view_completed": "Críochnaithe",
+  "package_view_unsupported": "Ní thacaítear leis an bhformáid phacáiste seo.",
+  "package_view_external_warning": "Tagann an pacáiste seo ó chomhad seachtrach. Ná suiteáil ach pacáistí ó fhoinsí a bhfuil muinín agat astu.",
+  "package_view_version": "Leagan",
+  "package_view_architecture": "Ailtireacht",
+  "package_view_format": "Formáid",
+  "package_view_maintainer": "Cothaitheoir",
+  "package_view_file": "Comhad",
+  "package_view_format_deb": "Pacáiste Debian",
+  "package_view_format_rpm": "Pacáiste RPM",
+  "package_view_format_arch": "Pacáiste Arch Linux",
+  "package_view_format_eopkg": "Pacáiste Solus",
+  "package_view_format_flatpak": "Pacáiste Flatpak",
+  "package_view_format_flatpakref": "Tagairt Flatpak",
+  "package_view_format_snap": "Pacáiste Snap"
 }

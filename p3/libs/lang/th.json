@@ -697,5 +697,21 @@
   "aur_warning_enable": "เปิดใช้งาน AUR",
   "aur_refresh_failed_title": "ข้อมูลเมตาของ AUR ไม่พร้อมใช้งาน",
   "aur_operation_failed_title": "การดำเนินการ AUR ล้มเหลว",
-  "aur_operation_failed_message": "การดำเนินการสำหรับ '{name}' ล้มเหลว ผลลัพธ์จากเทอร์มินัล:\n\n{output}"
+  "aur_operation_failed_message": "การดำเนินการสำหรับ '{name}' ล้มเหลว ผลลัพธ์จากเทอร์มินัล:\n\n{output}",
+  "package_view_title": "ติดตั้งแพ็กเกจ",
+  "package_view_completed": "เสร็จสิ้น",
+  "package_view_unsupported": "ไม่รองรับรูปแบบแพ็กเกจนี้",
+  "package_view_external_warning": "แพ็กเกจนี้มาจากไฟล์ภายนอก โปรดติดตั้งเฉพาะแพ็กเกจจากแหล่งที่คุณเชื่อถือเท่านั้น",
+  "package_view_version": "เวอร์ชัน",
+  "package_view_architecture": "สถาปัตยกรรม",
+  "package_view_format": "รูปแบบ",
+  "package_view_maintainer": "ผู้ดูแล",
+  "package_view_file": "ไฟล์",
+  "package_view_format_deb": "แพ็กเกจ Debian",
+  "package_view_format_rpm": "แพ็กเกจ RPM",
+  "package_view_format_arch": "แพ็กเกจ Arch Linux",
+  "package_view_format_eopkg": "แพ็กเกจ Solus",
+  "package_view_format_flatpak": "แพ็กเกจ Flatpak",
+  "package_view_format_flatpakref": "การอ้างอิง Flatpak",
+  "package_view_format_snap": "แพ็กเกจ Snap"
 }

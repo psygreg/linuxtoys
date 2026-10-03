@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR'u etkinleştir",
   "aur_refresh_failed_title": "AUR meta verileri kullanılamıyor",
   "aur_operation_failed_title": "AUR işlemi başarısız oldu",
-  "aur_operation_failed_message": "'{name}' işlemi başarısız oldu. Terminal çıktısı:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' işlemi başarısız oldu. Terminal çıktısı:\n\n{output}",
+  "package_view_title": "Paketi yükle",
+  "package_view_completed": "Tamamlandı",
+  "package_view_unsupported": "Bu paket biçimi desteklenmiyor.",
+  "package_view_external_warning": "Bu paket harici bir dosyadan geliyor. Yalnızca güvendiğiniz kaynaklardan gelen paketleri yükleyin.",
+  "package_view_version": "Sürüm",
+  "package_view_architecture": "Mimari",
+  "package_view_format": "Biçim",
+  "package_view_maintainer": "Bakımcı",
+  "package_view_file": "Dosya",
+  "package_view_format_deb": "Debian paketi",
+  "package_view_format_rpm": "RPM paketi",
+  "package_view_format_arch": "Arch Linux paketi",
+  "package_view_format_eopkg": "Solus paketi",
+  "package_view_format_flatpak": "Flatpak paketi",
+  "package_view_format_flatpakref": "Flatpak referansı",
+  "package_view_format_snap": "Snap paketi"
 }

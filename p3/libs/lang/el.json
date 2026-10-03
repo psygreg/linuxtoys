@@ -697,5 +697,21 @@
   "aur_warning_enable": "Ενεργοποίηση AUR",
   "aur_refresh_failed_title": "Τα μεταδεδομένα AUR δεν είναι διαθέσιμα",
   "aur_operation_failed_title": "Η λειτουργία AUR απέτυχε",
-  "aur_operation_failed_message": "Η λειτουργία για το '{name}' απέτυχε. Έξοδος τερματικού:\n\n{output}"
+  "aur_operation_failed_message": "Η λειτουργία για το '{name}' απέτυχε. Έξοδος τερματικού:\n\n{output}",
+  "package_view_title": "Εγκατάσταση πακέτου",
+  "package_view_completed": "Ολοκληρώθηκε",
+  "package_view_unsupported": "Αυτή η μορφή πακέτου δεν υποστηρίζεται.",
+  "package_view_external_warning": "Αυτό το πακέτο προέρχεται από εξωτερικό αρχείο. Εγκαθιστάτε πακέτα μόνο από πηγές που εμπιστεύεστε.",
+  "package_view_version": "Έκδοση",
+  "package_view_architecture": "Αρχιτεκτονική",
+  "package_view_format": "Μορφή",
+  "package_view_maintainer": "Συντηρητής",
+  "package_view_file": "Αρχείο",
+  "package_view_format_deb": "Πακέτο Debian",
+  "package_view_format_rpm": "Πακέτο RPM",
+  "package_view_format_arch": "Πακέτο Arch Linux",
+  "package_view_format_eopkg": "Πακέτο Solus",
+  "package_view_format_flatpak": "Πακέτο Flatpak",
+  "package_view_format_flatpakref": "Αναφορά Flatpak",
+  "package_view_format_snap": "Πακέτο Snap"
 }

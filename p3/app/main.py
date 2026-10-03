@@ -46,21 +46,38 @@ if os.environ.get('EASY_CLI') != '1':
                 print("Error: LinuxToys accepts only one URI request at a time.")
                 return 2
 
-            target = uri_parser.parse_install_uri(extra_args[0])
-            if target is None:
-                print(f"Error: Unsupported LinuxToys URI: {extra_args[0]}")
-                if self.window:
-                    self.window.show_external_install_error(
-                        self.translations.get(
-                            "uri_invalid_message",
-                            "The requested LinuxToys link is invalid or unsupported.",
+            request = extra_args[0]
+            if request.startswith("linuxtoys:"):
+                target = uri_parser.parse_install_uri(request)
+                if target is None:
+                    print(f"Error: Unsupported LinuxToys URI: {request}")
+                    if self.window:
+                        self.window.show_external_install_error(
+                            self.translations.get(
+                                "uri_invalid_message",
+                                "The requested LinuxToys link is invalid or unsupported.",
+                            )
                         )
-                    )
-                return 2
+                    return 2
+                if self.window:
+                    self.window.handle_external_install_request(target)
+                return 0
 
+            local_file = Gio.File.new_for_commandline_arg(request)
+            package_path = local_file.get_path()
+            if package_path and os.path.isfile(package_path) and self.window:
+                if self.window.handle_package_open_request(package_path):
+                    return 0
+
+            print(f"Error: Unsupported LinuxToys file request: {request}")
             if self.window:
-                self.window.handle_external_install_request(target)
-            return 0
+                self.window.show_external_install_error(
+                    self.translations.get(
+                        "package_view_unsupported",
+                        "This file is not a supported package for this system.",
+                    )
+                )
+            return 2
 
         def load_css(self):
             try:

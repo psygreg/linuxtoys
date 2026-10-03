@@ -697,5 +697,21 @@
   "aur_warning_enable": "Iespējot AUR",
   "aur_refresh_failed_title": "AUR metadati nav pieejami",
   "aur_operation_failed_title": "AUR darbība neizdevās",
-  "aur_operation_failed_message": "Darbība ar „{name}“ neizdevās. Termināļa izvade:\n\n{output}"
+  "aur_operation_failed_message": "Darbība ar „{name}“ neizdevās. Termināļa izvade:\n\n{output}",
+  "package_view_title": "Instalēt pakotni",
+  "package_view_completed": "Pabeigts",
+  "package_view_unsupported": "Šis pakotnes formāts netiek atbalstīts.",
+  "package_view_external_warning": "Šī pakotne nāk no ārēja faila. Instalējiet pakotnes tikai no avotiem, kuriem uzticaties.",
+  "package_view_version": "Versija",
+  "package_view_architecture": "Arhitektūra",
+  "package_view_format": "Formāts",
+  "package_view_maintainer": "Uzturētājs",
+  "package_view_file": "Fails",
+  "package_view_format_deb": "Debian pakotne",
+  "package_view_format_rpm": "RPM pakotne",
+  "package_view_format_arch": "Arch Linux pakotne",
+  "package_view_format_eopkg": "Solus pakotne",
+  "package_view_format_flatpak": "Flatpak pakotne",
+  "package_view_format_flatpakref": "Flatpak atsauce",
+  "package_view_format_snap": "Snap pakotne"
 }

@@ -697,5 +697,21 @@
   "aur_warning_enable": "AUR ကို ဖွင့်ရန်",
   "aur_refresh_failed_title": "AUR metadata မရရှိနိုင်ပါ",
   "aur_operation_failed_title": "AUR လုပ်ဆောင်ချက် မအောင်မြင်ပါ",
-  "aur_operation_failed_message": "'{name}' အတွက် လုပ်ဆောင်ချက် မအောင်မြင်ပါ။ Terminal output:\n\n{output}"
+  "aur_operation_failed_message": "'{name}' အတွက် လုပ်ဆောင်ချက် မအောင်မြင်ပါ။ Terminal output:\n\n{output}",
+  "package_view_title": "Package ထည့်သွင်းရန်",
+  "package_view_completed": "ပြီးစီးပါပြီ",
+  "package_view_unsupported": "ဤ package format ကို မပံ့ပိုးပါ။",
+  "package_view_external_warning": "ဤ package သည် ပြင်ပဖိုင်တစ်ခုမှ လာသည်။ သင်ယုံကြည်ရသော ရင်းမြစ်များမှ package များကိုသာ ထည့်သွင်းပါ။",
+  "package_view_version": "ဗားရှင်း",
+  "package_view_architecture": "Architecture",
+  "package_view_format": "Format",
+  "package_view_maintainer": "ထိန်းသိမ်းသူ",
+  "package_view_file": "ဖိုင်",
+  "package_view_format_deb": "Debian package",
+  "package_view_format_rpm": "RPM package",
+  "package_view_format_arch": "Arch Linux package",
+  "package_view_format_eopkg": "Solus package",
+  "package_view_format_flatpak": "Flatpak package",
+  "package_view_format_flatpakref": "Flatpak reference",
+  "package_view_format_snap": "Snap package"
 }

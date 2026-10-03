@@ -697,5 +697,21 @@
   "aur_warning_enable": "Activează AUR",
   "aur_refresh_failed_title": "Metadatele AUR nu sunt disponibile",
   "aur_operation_failed_title": "Operațiunea AUR a eșuat",
-  "aur_operation_failed_message": "Operațiunea pentru „{name}” a eșuat. Ieșirea terminalului:\n\n{output}"
+  "aur_operation_failed_message": "Operațiunea pentru „{name}” a eșuat. Ieșirea terminalului:\n\n{output}",
+  "package_view_title": "Instalează pachetul",
+  "package_view_completed": "Finalizat",
+  "package_view_unsupported": "Acest format de pachet nu este acceptat.",
+  "package_view_external_warning": "Acest pachet provine dintr-un fișier extern. Instalați numai pachete din surse în care aveți încredere.",
+  "package_view_version": "Versiune",
+  "package_view_architecture": "Arhitectură",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Responsabil",
+  "package_view_file": "Fișier",
+  "package_view_format_deb": "Pachet Debian",
+  "package_view_format_rpm": "Pachet RPM",
+  "package_view_format_arch": "Pachet Arch Linux",
+  "package_view_format_eopkg": "Pachet Solus",
+  "package_view_format_flatpak": "Pachet Flatpak",
+  "package_view_format_flatpakref": "Referință Flatpak",
+  "package_view_format_snap": "Pachet Snap"
 }

@@ -697,5 +697,21 @@
   "aur_warning_enable": "AURን አንቃ",
   "aur_refresh_failed_title": "የAUR ሜታዳታ አይገኝም",
   "aur_operation_failed_title": "የAUR ክዋኔ አልተሳካም",
-  "aur_operation_failed_message": "የ'{name}' ክዋኔ አልተሳካም። የተርሚናል ውጤት፦\n\n{output}"
+  "aur_operation_failed_message": "የ'{name}' ክዋኔ አልተሳካም። የተርሚናል ውጤት፦\n\n{output}",
+  "package_view_title": "ጥቅል ጫን",
+  "package_view_completed": "ተጠናቋል",
+  "package_view_unsupported": "ይህ የጥቅል ቅርጸት አይደገፍም።",
+  "package_view_external_warning": "ይህ ጥቅል ከውጫዊ ፋይል የመጣ ነው። ከሚያምኗቸው ምንጮች የመጡ ጥቅሎችን ብቻ ይጫኑ።",
+  "package_view_version": "ስሪት",
+  "package_view_architecture": "አርክቴክቸር",
+  "package_view_format": "ቅርጸት",
+  "package_view_maintainer": "ጥገና አድራጊ",
+  "package_view_file": "ፋይል",
+  "package_view_format_deb": "የDebian ጥቅል",
+  "package_view_format_rpm": "የRPM ጥቅል",
+  "package_view_format_arch": "የArch Linux ጥቅል",
+  "package_view_format_eopkg": "የSolus ጥቅል",
+  "package_view_format_flatpak": "የFlatpak ጥቅል",
+  "package_view_format_flatpakref": "የFlatpak ማጣቀሻ",
+  "package_view_format_snap": "የSnap ጥቅል"
 }

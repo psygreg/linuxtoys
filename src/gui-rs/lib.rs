@@ -10,6 +10,7 @@ use std::hash::{Hash, Hasher};
 use std::io::{Read, Write};
 use std::os::unix::net::UnixStream;
 use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
 
@@ -716,7 +717,453 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 18 }
+pub extern "C" fn lt_gui_abi_version() -> u32 { 19 }
+
+fn command_stdout(program: &str, args: &[&str]) -> Option<String> {
+    let output = Command::new(program).args(args).output().ok()?;
+    if !output.status.success() { return None; }
+    Some(String::from_utf8_lossy(&output.stdout).trim().to_string())
+}
+
+fn package_icon_cache_dir() -> PathBuf {
+    if let Some(cache) = std::env::var_os("XDG_CACHE_HOME").filter(|v| !v.is_empty()) {
+        return PathBuf::from(cache).join("linuxtoys/package-icons");
+    }
+    if let Some(home) = std::env::var_os("HOME").filter(|v| !v.is_empty()) {
+        return PathBuf::from(home).join(".cache/linuxtoys/package-icons");
+    }
+    std::env::temp_dir().join("linuxtoys/package-icons")
+}
+
+fn command_output_bytes(program: &str, args: &[&str]) -> Option<Vec<u8>> {
+    let output = Command::new(program).args(args).output().ok()?;
+    output.status.success().then_some(output.stdout)
+}
+
+fn piped_output_bytes(
+    first_program: &str,
+    first_args: &[&str],
+    second_program: &str,
+    second_args: &[&str],
+) -> Option<Vec<u8>> {
+    let mut first = Command::new(first_program)
+        .args(first_args)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+        .ok()?;
+    let stdout = first.stdout.take()?;
+    let second = Command::new(second_program)
+        .args(second_args)
+        .stdin(Stdio::from(stdout))
+        .stderr(Stdio::null())
+        .output()
+        .ok()?;
+    let first_status = first.wait().ok()?;
+    (first_status.success() && second.status.success()).then_some(second.stdout)
+}
+
+fn normalize_archive_member(value: &str) -> String {
+    value.trim().trim_start_matches("./").trim_start_matches('/').to_string()
+}
+
+fn tar_stream_members(program: &str, args: &[&str]) -> Option<Vec<String>> {
+    let bytes = piped_output_bytes(program, args, "tar", &["-tf", "-"])?;
+    Some(String::from_utf8_lossy(&bytes)
+        .lines()
+        .map(normalize_archive_member)
+        .filter(|v| !v.is_empty())
+        .collect())
+}
+
+fn tar_stream_member(program: &str, args: &[&str], member: &str) -> Option<Vec<u8>> {
+    // GNU tar normally preserves the spelling returned by -tf. Debian payloads
+    // commonly use ./usr/..., so try both canonical spellings without extracting.
+    for candidate in [member.to_string(), format!("./{member}")] {
+        if let Some(bytes) = piped_output_bytes(program, args, "tar", &["-xOf", "-", &candidate]) {
+            return Some(bytes);
+        }
+    }
+    None
+}
+
+fn bsdtar_members(path: &str) -> Option<Vec<String>> {
+    let bytes = command_output_bytes("bsdtar", &["-tf", path])?;
+    Some(String::from_utf8_lossy(&bytes)
+        .lines()
+        .map(normalize_archive_member)
+        .filter(|v| !v.is_empty())
+        .collect())
+}
+
+fn bsdtar_member(path: &str, member: &str) -> Option<Vec<u8>> {
+    for candidate in [member.to_string(), format!("./{member}")] {
+        if let Some(bytes) = command_output_bytes("bsdtar", &["-xOf", path, &candidate]) {
+            return Some(bytes);
+        }
+    }
+    None
+}
+
+fn rpm_members(path: &str) -> Option<Vec<String>> {
+    let bytes = piped_output_bytes("rpm2cpio", &[path], "cpio", &["-t", "--quiet"])?;
+    Some(String::from_utf8_lossy(&bytes)
+        .lines()
+        .map(normalize_archive_member)
+        .filter(|v| !v.is_empty())
+        .collect())
+}
+
+fn rpm_member(path: &str, member: &str) -> Option<Vec<u8>> {
+    for candidate in [format!("./{member}"), member.to_string()] {
+        if let Some(bytes) = piped_output_bytes(
+            "rpm2cpio", &[path], "cpio", &["-i", "--quiet", "--to-stdout", &candidate],
+        ) {
+            if !bytes.is_empty() { return Some(bytes); }
+        }
+    }
+    None
+}
+
+fn appimage_squashfs_offset(path: &str) -> Option<u64> {
+    // Type-2 AppImages append a SquashFS filesystem to the ELF launcher. Locate
+    // the SquashFS magic without executing the untrusted AppImage.
+    let mut file = fs::File::open(path).ok()?;
+    let mut buffer = [0u8; 1024 * 1024];
+    let mut absolute = 0u64;
+    let mut overlap = Vec::<u8>::new();
+    loop {
+        let count = file.read(&mut buffer).ok()?;
+        if count == 0 { break; }
+        let mut data = overlap.clone();
+        data.extend_from_slice(&buffer[..count]);
+        if let Some(pos) = data.windows(4).position(|w| w == b"hsqs") {
+            return Some(absolute.saturating_sub(overlap.len() as u64) + pos as u64);
+        }
+        overlap.clear();
+        let keep = count.min(3);
+        overlap.extend_from_slice(&buffer[count - keep..count]);
+        absolute += count as u64;
+    }
+    None
+}
+
+fn squashfs_members(path: &str, offset: Option<u64>) -> Option<Vec<String>> {
+    let mut command = Command::new("unsquashfs");
+    command.arg("-ll");
+    if let Some(offset) = offset { command.arg("-o").arg(offset.to_string()); }
+    command.arg(path);
+    let output = command.output().ok()?;
+    if !output.status.success() { return None; }
+    let mut members = Vec::new();
+    for line in String::from_utf8_lossy(&output.stdout).lines() {
+        // unsquashfs -ll prefixes metadata, then squashfs-root/<member>.
+        let Some(pos) = line.find("squashfs-root/") else { continue; };
+        let member = normalize_archive_member(&line[pos + "squashfs-root/".len()..]);
+        if !member.is_empty() { members.push(member); }
+    }
+    Some(members)
+}
+
+fn squashfs_member(path: &str, offset: Option<u64>, member: &str) -> Option<Vec<u8>> {
+    let mut command = Command::new("unsquashfs");
+    command.arg("-cat");
+    if let Some(offset) = offset { command.arg("-o").arg(offset.to_string()); }
+    command.arg(path).arg(member);
+    let output = command.output().ok()?;
+    output.status.success().then_some(output.stdout)
+}
+
+fn package_members(path: &str, kind: &str) -> Option<Vec<String>> {
+    match kind {
+        // dpkg-deb supplies the tar payload; GNU tar only lists it. No payload
+        // file is materialized here.
+        "deb" => tar_stream_members("dpkg-deb", &["--fsys-tarfile", path]),
+        "arch" => bsdtar_members(path),
+        "rpm" => rpm_members(path),
+        "snap" => squashfs_members(path, None),
+        "appimage" => squashfs_members(path, appimage_squashfs_offset(path)),
+        _ => None,
+    }
+}
+
+fn package_member(path: &str, kind: &str, member: &str) -> Option<Vec<u8>> {
+    match kind {
+        "deb" => tar_stream_member("dpkg-deb", &["--fsys-tarfile", path], member),
+        "arch" => bsdtar_member(path, member),
+        "rpm" => rpm_member(path, member),
+        "snap" => squashfs_member(path, None, member),
+        "appimage" => squashfs_member(path, appimage_squashfs_offset(path), member),
+        _ => None,
+    }
+}
+
+fn desktop_icon_value(text: &str) -> Option<String> {
+    let mut in_desktop_entry = false;
+    for raw in text.lines() {
+        let line = raw.trim();
+        if line.starts_with('[') && line.ends_with(']') {
+            in_desktop_entry = line == "[Desktop Entry]";
+            continue;
+        }
+        if !in_desktop_entry || line.starts_with('#') { continue; }
+        if let Some(value) = line.strip_prefix("Icon=") {
+            let value = value.trim();
+            if !value.is_empty() { return Some(value.to_string()); }
+        }
+    }
+    None
+}
+
+fn desktop_member_score(member: &str, package_name: &str, kind: &str) -> i32 {
+    let normalized = normalize_archive_member(member);
+    let lower = normalized.to_ascii_lowercase();
+    if !lower.ends_with(".desktop") { return -1; }
+    let canonical = lower.contains("usr/share/applications/")
+        || lower.contains("share/applications/")
+        || (kind == "snap" && lower.starts_with("meta/gui/"))
+        || (kind == "appimage" && !lower.contains('/'));
+    if !canonical { return -1; }
+    let base = Path::new(&normalized).file_stem().and_then(|v| v.to_str()).unwrap_or_default();
+    let mut score = 10;
+    if base.eq_ignore_ascii_case(package_name) { score += 100; }
+    if base.to_ascii_lowercase().contains(&package_name.to_ascii_lowercase()) { score += 25; }
+    if lower.contains("share/applications/") { score += 10; }
+    score
+}
+
+fn icon_member_score(member: &str, icon_value: &str, kind: &str) -> i32 {
+    let normalized = normalize_archive_member(member);
+    let lower = normalized.to_ascii_lowercase();
+    if lower.contains("/symbolic/") || lower.ends_with("-symbolic.svg") { return -1; }
+
+    let mut requested = icon_value.trim().trim_start_matches('/').to_string();
+    if kind == "snap" || kind == "appimage" {
+        requested = requested
+            .replace("${SNAP}/", "")
+            .replace("$SNAP/", "")
+            .replace("${APPDIR}/", "")
+            .replace("$APPDIR/", "");
+    }
+    let requested_path = Path::new(&requested);
+    if requested.contains('/') {
+        if normalized != requested && !normalized.ends_with(&format!("/{requested}")) { return -1; }
+        return match requested_path.extension().and_then(|v| v.to_str()).unwrap_or("").to_ascii_lowercase().as_str() {
+            "svg" => 1000,
+            "png" => 980,
+            "xpm" => 940,
+            _ => -1,
+        };
+    }
+
+    let canonical = lower.contains("share/icons/")
+        || lower.contains("share/pixmaps/")
+        || (kind == "snap" && lower.starts_with("meta/gui/"))
+        || (kind == "appimage" && !lower.contains('/'));
+    if !canonical { return -1; }
+    let requested_name = requested_path.file_name().and_then(|v| v.to_str()).unwrap_or(&requested);
+    let requested_stem = Path::new(requested_name).file_stem().and_then(|v| v.to_str()).unwrap_or(requested_name);
+    let member_name = Path::new(&normalized).file_name().and_then(|v| v.to_str()).unwrap_or_default();
+    let member_stem = Path::new(member_name).file_stem().and_then(|v| v.to_str()).unwrap_or_default();
+    if Path::new(requested_name).extension().is_some() {
+        if !member_name.eq_ignore_ascii_case(requested_name) { return -1; }
+    } else if !member_stem.eq_ignore_ascii_case(requested_stem) {
+        return -1;
+    }
+
+    let mut score = 100;
+    if member_name.eq_ignore_ascii_case(requested_name) { score += 100; }
+    if lower.ends_with(".svg") { score += 80; }
+    else if lower.ends_with(".png") { score += 60; }
+    else if lower.ends_with(".xpm") { score += 20; }
+    else { return -1; }
+    for (needle, bonus) in [("/512x512/", 55), ("/256x256/", 50), ("/128x128/", 45), ("/96x96/", 40), ("/64x64/", 35), ("/48x48/", 30), ("/scalable/", 70)] {
+        if lower.contains(needle) { score += bonus; break; }
+    }
+    score
+}
+
+fn packaged_desktop_icon(path: &str, kind: &str, package_name: &str) -> Option<String> {
+    // Strict policy and selective I/O: list members, read only candidate desktop
+    // files, then read only the chosen icon. Never unpack the package payload.
+    let entries = package_members(path, kind)?;
+    let mut desktops: Vec<(i32, &String)> = entries.iter().filter_map(|member| {
+        let score = desktop_member_score(member, package_name, kind);
+        (score >= 0).then_some((score, member))
+    }).collect();
+    desktops.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.cmp(b.1)));
+
+    for (_, desktop_member) in desktops {
+        let Some(desktop_bytes) = package_member(path, kind, desktop_member) else { continue; };
+        if desktop_bytes.len() as u64 > REMOTE_ICON_LIMIT { continue; }
+        let desktop = String::from_utf8_lossy(&desktop_bytes);
+        let Some(icon_value) = desktop_icon_value(&desktop) else { continue; };
+        let Some((_, icon_member)) = entries.iter().filter_map(|member| {
+            let score = icon_member_score(member, &icon_value, kind);
+            (score >= 0).then_some((score, member))
+        }).max_by(|a, b| a.0.cmp(&b.0).then_with(|| b.1.cmp(a.1))) else { continue; };
+
+        let Some(icon_bytes) = package_member(path, kind, icon_member) else { continue; };
+        if icon_bytes.is_empty() || icon_bytes.len() as u64 > REMOTE_ICON_LIMIT { continue; }
+
+        let package_meta = fs::metadata(path).ok()?;
+        let mut hasher = DefaultHasher::new();
+        path.hash(&mut hasher);
+        package_meta.len().hash(&mut hasher);
+        package_meta.modified().ok()?.duration_since(std::time::UNIX_EPOCH).ok()?.as_nanos().hash(&mut hasher);
+        desktop_member.hash(&mut hasher);
+        icon_member.hash(&mut hasher);
+        let extension = Path::new(icon_member).extension().and_then(|v| v.to_str()).unwrap_or("img");
+        let target = package_icon_cache_dir().join(format!("{:016x}.{extension}", hasher.finish()));
+        if !target.is_file() {
+            fs::create_dir_all(target.parent()?).ok()?;
+            let tmp = target.with_extension(format!("{extension}.tmp"));
+            fs::write(&tmp, &icon_bytes).ok()?;
+            fs::rename(&tmp, &target).ok()?;
+        }
+        return Some(target.to_string_lossy().into_owned());
+    }
+    None
+}
+
+fn deb_control_value(control: &str, field: &str) -> String {
+    let prefix = format!("{field}:");
+    let mut value = String::new();
+    let mut collecting = false;
+    for line in control.lines() {
+        if collecting {
+            if line.starts_with(' ') || line.starts_with('\t') {
+                let part = line.trim();
+                if !part.is_empty() && part != "." {
+                    if !value.is_empty() { value.push(' '); }
+                    value.push_str(part);
+                }
+                continue;
+            }
+            break;
+        }
+        if let Some(rest) = line.strip_prefix(&prefix) {
+            value = rest.trim().to_string();
+            collecting = true;
+        }
+    }
+    value
+}
+
+fn pkginfo_value(text: &str, key: &str) -> String {
+    let prefix = format!("{key} = ");
+    text.lines()
+        .find_map(|line| line.strip_prefix(&prefix).map(str::trim))
+        .unwrap_or_default()
+        .to_string()
+}
+
+fn local_package_metadata(path: &str) -> serde_json::Value {
+    let file = Path::new(path);
+    let basename = file.file_name().and_then(|v| v.to_str()).unwrap_or(path);
+    let lower = basename.to_ascii_lowercase();
+    let mut kind = "unknown";
+    let mut format_label = "Package".to_string();
+    let mut name = file.file_stem().and_then(|v| v.to_str()).unwrap_or(basename).to_string();
+    let mut version = String::new();
+    let mut architecture = String::new();
+    let mut maintainer = String::new();
+    let mut description = String::new();
+
+    if lower.ends_with(".deb") {
+        kind = "deb";
+        format_label = "Debian package".to_string();
+        if let Some(control) = command_stdout("dpkg-deb", &["-f", path]) {
+            let value = deb_control_value(&control, "Package"); if !value.is_empty() { name = value; }
+            version = deb_control_value(&control, "Version");
+            architecture = deb_control_value(&control, "Architecture");
+            maintainer = deb_control_value(&control, "Maintainer");
+            description = deb_control_value(&control, "Description");
+        }
+    } else if lower.ends_with(".rpm") {
+        kind = "rpm";
+        format_label = "RPM package".to_string();
+        if let Some(output) = command_stdout("rpm", &["-qp", "--qf", "%{NAME}\\x1f%{VERSION}-%{RELEASE}\\x1f%{ARCH}\\x1f%{PACKAGER}\\x1f%{SUMMARY}", path]) {
+            let fields: Vec<&str> = output.split('\u{1f}').collect();
+            if let Some(value) = fields.get(0).filter(|v| !v.is_empty()) { name = (*value).to_string(); }
+            version = fields.get(1).unwrap_or(&"").to_string();
+            architecture = fields.get(2).unwrap_or(&"").to_string();
+            maintainer = fields.get(3).unwrap_or(&"").to_string();
+            description = fields.get(4).unwrap_or(&"").to_string();
+        }
+    } else if lower.contains(".pkg.tar.") || lower.ends_with(".pacman") {
+        kind = "arch";
+        format_label = "Arch Linux package".to_string();
+        if let Some(info) = command_stdout("bsdtar", &["-xOf", path, ".PKGINFO"]) {
+            let value = pkginfo_value(&info, "pkgname"); if !value.is_empty() { name = value; }
+            version = pkginfo_value(&info, "pkgver");
+            architecture = pkginfo_value(&info, "arch");
+            maintainer = pkginfo_value(&info, "packager");
+            description = pkginfo_value(&info, "pkgdesc");
+        }
+    } else if lower.ends_with(".eopkg") {
+        kind = "eopkg";
+        format_label = "Solus package".to_string();
+    } else if lower.ends_with(".flatpakref") {
+        kind = "flatpakref";
+        format_label = "Flatpak reference".to_string();
+        if let Ok(text) = fs::read_to_string(file) {
+            for line in text.lines() {
+                if let Some(v) = line.strip_prefix("Name=") { name = v.trim().to_string(); }
+                else if let Some(v) = line.strip_prefix("Title=") { if !v.trim().is_empty() { name = v.trim().to_string(); } }
+                else if let Some(v) = line.strip_prefix("Comment=") { description = v.trim().to_string(); }
+            }
+        }
+    } else if lower.ends_with(".flatpak") {
+        kind = "flatpak";
+        format_label = "Flatpak bundle".to_string();
+    } else if lower.ends_with(".snap") {
+        kind = "snap";
+        format_label = "Snap package".to_string();
+    } else if lower.ends_with(".appimage") {
+        kind = "appimage";
+        format_label = "AppImage".to_string();
+        name = basename[..basename.len().saturating_sub(9)].trim_end_matches('.').to_string();
+    }
+
+    let size = fs::metadata(file).map(|m| m.len()).unwrap_or(0);
+    let icon_path = if matches!(kind, "deb" | "rpm" | "arch" | "snap" | "appimage") {
+        packaged_desktop_icon(path, kind, &name).unwrap_or_default()
+    } else {
+        String::new()
+    };
+    serde_json::json!({
+        "kind": kind,
+        "format_label": format_label,
+        "name": name,
+        "version": version,
+        "architecture": architecture,
+        "maintainer": maintainer,
+        "description": description,
+        "size": size,
+        "icon_path": icon_path,
+        "icon_name": "package-x-generic"
+    })
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_inspect_local_package(
+    path: *const c_char,
+    output: *mut c_char,
+    output_len: usize,
+) -> bool {
+    if path.is_null() || output.is_null() || output_len < 2 { return false; }
+    let path = cstr(path);
+    if path.is_empty() || !Path::new(&path).is_file() { return false; }
+    let encoded = match serde_json::to_vec(&local_package_metadata(&path)) {
+        Ok(value) => value,
+        Err(_) => return false,
+    };
+    if encoded.len() + 1 > output_len { return false; }
+    std::ptr::copy_nonoverlapping(encoded.as_ptr(), output as *mut u8, encoded.len());
+    *(output.add(encoded.len())) = 0;
+    true
+}
 
 #[no_mangle]
 pub extern "C" fn lt_gui_clear_pixbuf_cache() {

@@ -697,5 +697,21 @@
   "aur_warning_enable": "Aktivera AUR",
   "aur_refresh_failed_title": "AUR-metadata är inte tillgängliga",
   "aur_operation_failed_title": "AUR-åtgärden misslyckades",
-  "aur_operation_failed_message": "Åtgärden för '{name}' misslyckades. Terminalutdata:\n\n{output}"
+  "aur_operation_failed_message": "Åtgärden för '{name}' misslyckades. Terminalutdata:\n\n{output}",
+  "package_view_title": "Installera paket",
+  "package_view_completed": "Slutfört",
+  "package_view_unsupported": "Det här paketformatet stöds inte.",
+  "package_view_external_warning": "Det här paketet kommer från en extern fil. Installera endast paket från källor du litar på.",
+  "package_view_version": "Version",
+  "package_view_architecture": "Arkitektur",
+  "package_view_format": "Format",
+  "package_view_maintainer": "Underhållare",
+  "package_view_file": "Fil",
+  "package_view_format_deb": "Debian-paket",
+  "package_view_format_rpm": "RPM-paket",
+  "package_view_format_arch": "Arch Linux-paket",
+  "package_view_format_eopkg": "Solus-paket",
+  "package_view_format_flatpak": "Flatpak-paket",
+  "package_view_format_flatpakref": "Flatpak-referens",
+  "package_view_format_snap": "Snap-paket"
 }
