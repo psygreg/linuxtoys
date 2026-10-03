@@ -30,7 +30,7 @@ if is_suse; then
     sudo_ zypper dup -y --from snappy || die "Failed to update packages from the Snap repository"
 fi
 
-pkg_install "${snap_packages[@]}"
+pkg_install --ostreecheck "${snap_packages[@]}"
 
 if is_suse; then
     { sysd_enable snapd && sysd_start snapd; } || die "Failed to enable snapd"

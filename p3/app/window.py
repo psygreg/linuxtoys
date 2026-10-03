@@ -1485,7 +1485,11 @@ class AppWindow(
         return None
 
     def _local_package_supported_on_host(self, kind):
-        if kind in ("appimage", "flatpak", "flatpakref", "snap"):
+        if kind == "snap":
+            return "steamos" not in compat.get_system_compat_keys()
+        if kind in ("flatpak", "flatpakref"):
+            return "systemd" in compat.get_system_compat_keys()
+        if kind == "appimage":
             return True
         keys = compat.get_system_compat_keys()
         if kind == "deb":
