@@ -51,6 +51,7 @@ install    : |
     install -dm 755 $installdir/usr/share/linuxtoys
     install -dm 755 $installdir/usr/share/icons/hicolor/scalable/apps
     install -dm 755 $installdir/usr/share/applications
+    install -dm 755 $installdir/usr/share/metainfo
     install -dm 755 $installdir/usr/share/mime/packages
 
     # Create the main executable wrapper script
@@ -99,8 +100,9 @@ install    : |
     find $installdir/usr/share/linuxtoys/ -name ".git*" -delete 2>/dev/null || true
 
     # Install desktop file and icon from src/
-    install -m 644 $workdir/src/LinuxToys.desktop $installdir/usr/share/applications/
+    install -m 644 $workdir/src/toys.linux.LinuxToys.desktop $installdir/usr/share/applications/
     install -m 644 $workdir/src/linuxtoys-mimetypes.xml $installdir/usr/share/mime/packages/
+    install -m 644 $workdir/src/toys.linux.LinuxToys.metainfo.xml $installdir/usr/share/metainfo/
     install -m 644 $workdir/src/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
 
     # Fix permissions on Python scripts

@@ -34,6 +34,7 @@ mkdir -p %{buildroot}/usr/bin/
 mkdir -p %{buildroot}/usr/share/linuxtoys/
 mkdir -p %{buildroot}/usr/share/icons/hicolor/scalable/apps/
 mkdir -p %{buildroot}/usr/share/applications/
+mkdir -p %{buildroot}/usr/share/metainfo/
 mkdir -p %{buildroot}/usr/share/mime/packages/
 
 cp -a p3/. %{buildroot}/usr/share/linuxtoys/
@@ -63,8 +64,9 @@ chmod +x %{buildroot}/usr/share/linuxtoys/linuxtoys.py
 find %{buildroot}/usr/share/linuxtoys/scripts/ -name '*.sh' -exec chmod +x {} \;
 
 install -m 644 src/linuxtoys.svg %{buildroot}/usr/share/icons/hicolor/scalable/apps/
-desktop-file-install --dir=%{buildroot}/usr/share/applications src/LinuxToys.desktop
+desktop-file-install --dir=%{buildroot}/usr/share/applications src/toys.linux.LinuxToys.desktop
 install -m 644 src/linuxtoys-mimetypes.xml %{buildroot}/usr/share/mime/packages/linuxtoys-mimetypes.xml
+install -m 644 src/toys.linux.LinuxToys.metainfo.xml %{buildroot}/usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml
 
 test -f %{buildroot}/usr/share/linuxtoys/app/_catalog_rs.abi3.so
 test -f %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
@@ -74,8 +76,9 @@ test -f %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 /usr/bin/linuxtoys
 /usr/share/linuxtoys
 /usr/share/icons/hicolor/scalable/apps/linuxtoys.svg
-/usr/share/applications/LinuxToys.desktop
+/usr/share/applications/toys.linux.LinuxToys.desktop
 /usr/share/mime/packages/linuxtoys-mimetypes.xml
+/usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml
 
 %changelog
 * Fri Oct 02 2026 Victor Gregory <psygreg@pm.me> - 7.4.6

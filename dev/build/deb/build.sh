@@ -28,6 +28,7 @@ mkdir -p "$OUTPUT_PATH"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications"
+mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/metainfo"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/mime/packages"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps"
 
@@ -57,8 +58,9 @@ mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/.cargo
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type d -name "__pycache__" -prune -exec rm -rf {} +
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
 # Copy desktop file and icon
-cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications/"
+cp "$ROOT_DIR/src/toys.linux.LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications/"
 cp "$ROOT_DIR/src/linuxtoys-mimetypes.xml" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/mime/packages/"
+cp "$ROOT_DIR/src/toys.linux.LinuxToys.metainfo.xml" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/metainfo/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script
@@ -231,8 +233,9 @@ sed -i "6c\\$changelog_line2" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changel
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/install" <<'EOF'
 usr/bin/linuxtoys /usr/bin/
 usr/share/linuxtoys /usr/share/
-usr/share/applications/LinuxToys.desktop /usr/share/applications/
+usr/share/applications/toys.linux.LinuxToys.desktop /usr/share/applications/
 usr/share/mime/packages/linuxtoys-mimetypes.xml /usr/share/mime/packages/
+usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml /usr/share/metainfo/
 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/scalable/apps/
 EOF
 

@@ -45,6 +45,7 @@ OUTPUT_PATH="$OUTPUT_PATH_BASE/$LT_VERSION"
 _msg info "Latest version: $LT_VERSION"
 _msg info "Downloading tarball and calculating SHA256..."
 
+# The release tarball includes src/, including the desktop file, MIME XML, and AppStream metainfo.
 # Get the tarball URL and download it
 TARBALL_URL="https://github.com/psygreg/linuxtoys/archive/refs/tags/$LT_TAG.tar.gz"
 TEMP_TARBALL="/tmp/linuxtoys-$LT_VERSION.tar.gz"

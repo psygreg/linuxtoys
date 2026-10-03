@@ -38,7 +38,7 @@ OUTPUT_PATH="$(realpath -m "$2")"
 BUILD_DIR="$OUTPUT_PATH/appimage-build"
 APPDIR="$BUILD_DIR/AppDir"
 APP_BIN="$APPDIR/bin"
-DESKTOP_FILE="$BUILD_DIR/LinuxToys.desktop"
+DESKTOP_FILE="$BUILD_DIR/toys.linux.LinuxToys.desktop"
 QUICK_SHARUN="$BUILD_DIR/quick-sharun"
 QUICK_SHARUN_URL="https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/main/useful-tools/quick-sharun.sh"
 GLYCIN_NG_REPO="https://github.com/QaidVoid/glycin-ng.git"
@@ -260,8 +260,8 @@ find "$APP_BIN/scripts" -type f -name '*.sh' -exec chmod +x {} \; 2>/dev/null ||
 find "$APP_BIN/helpers" -type f -name '*.sh' -exec chmod +x {} \; 2>/dev/null || true
 chmod +x "$APP_BIN/linuxtoys.py"
 
-# Work on a build-local copy: never alter src/LinuxToys.desktop in the tree.
-cp "$ROOT_DIR/src/LinuxToys.desktop" "$DESKTOP_FILE"
+# Work on a build-local copy: never alter src/toys.linux.LinuxToys.desktop in the tree.
+cp "$ROOT_DIR/src/toys.linux.LinuxToys.desktop" "$DESKTOP_FILE"
 
 # AppImage desktop integration launches the Exec target *inside* the AppImage.
 # The packaged desktop file used by DEB/RPM installs intentionally points at
@@ -286,6 +286,7 @@ export VERSION="$LT_VERSION"
 export OUTPATH="$OUTPUT_PATH"
 export DESKTOP="$DESKTOP_FILE"
 export ICON="$ROOT_DIR/src/linuxtoys.svg"
+install -Dm644 "$ROOT_DIR/src/toys.linux.LinuxToys.metainfo.xml" "$APPDIR/share/metainfo/toys.linux.LinuxToys.metainfo.xml"
 export DEPLOY_PYTHON=1
 export ANYLINUX_LIB=1
 

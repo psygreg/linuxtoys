@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>toys.linux.LinuxToys</id>
+
+  <name>LinuxToys</name>
+  <summary>For everything Linux</summary>
+
+  <developer id="toys.linux">
+    <name>psygreg</name>
+  </developer>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+      LinuxToys is a graphical utility for Linux that brings together software,
+      system tools, tweaks, and other useful features in one place.
+    </p>
+    <p>
+      Browse available features, install and remove software, manage queued
+      operations, and discover tools suited to your Linux system through a
+      unified interface.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">toys.linux.LinuxToys.desktop</launchable>
+
+  <url type="homepage">https://linux.toys</url>
+
+  <categories>
+    <category>System</category>
+  </categories>
+
+  <provides>
+    <mediatype>application/vnd.debian.binary-package</mediatype>
+    <mediatype>application/x-rpm</mediatype>
+    <mediatype>application/x-arch-package</mediatype>
+    <mediatype>application/vnd.flatpak</mediatype>
+    <mediatype>application/vnd.flatpak.ref</mediatype>
+    <mediatype>application/vnd.snap</mediatype>
+    <mediatype>application/vnd.appimage</mediatype>
+    <mediatype>application/x-appimage</mediatype>
+    <mediatype>application/x-iso9660-appimage</mediatype>
+    <mediatype>application/x-eopkg</mediatype>
+  </provides>
+
+  <content_rating type="oars-1.1" />
+</component>

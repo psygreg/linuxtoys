@@ -24,6 +24,7 @@ _msg info "Output path: $OUTPUT_PATH"
 rm -rf "$OUTPUT_PATH"
 
 # Stage the complete source needed by the distro build environment.
+# src/ includes the desktop file, MIME XML, and AppStream metainfo.
 mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION" "$OUTPUT_PATH/SOURCES"
 cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/"
 cp -a "$ROOT_DIR/src" "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION/"

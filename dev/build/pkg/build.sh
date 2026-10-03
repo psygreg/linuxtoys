@@ -27,6 +27,7 @@ rm -rf "$OUTPUT_PATH"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications"
+mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/metainfo"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/mime/packages"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps"
 
@@ -45,8 +46,9 @@ mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}"/.cargo
     cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
 )
 # Copy desktop file and icon
-cp "$ROOT_DIR/src/LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications/"
+cp "$ROOT_DIR/src/toys.linux.LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications/"
 cp "$ROOT_DIR/src/linuxtoys-mimetypes.xml" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/mime/packages/"
+cp "$ROOT_DIR/src/toys.linux.LinuxToys.metainfo.xml" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/metainfo/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps/"
 
 # Create the main executable script

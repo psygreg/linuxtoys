@@ -23,6 +23,7 @@ build() {
 
 package() {
     mkdir -p ${pkgdir}/usr
+    # The release tarball already stages desktop, MIME and metainfo files under usr/.
     cp -rf ${srcdir}/linuxtoys-${pkgver}/usr/* ${pkgdir}/usr/
     catalog_extension="$(find "${srcdir}/linuxtoys-${pkgver}/wheel-unpack-catalog" -type f -name '_catalog_rs*.so' -print -quit)"
     gui_library="${srcdir}/linuxtoys-${pkgver}/target/release/liblinuxtoys_gui.so"
