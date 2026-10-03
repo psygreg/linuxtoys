@@ -519,6 +519,7 @@ class AppStreamRunner:
         os.makedirs(directory, mode=0o700, exist_ok=True)
         fd, path = tempfile.mkstemp(prefix="aur-install-", suffix=".sh", dir=directory, text=True)
         transmap_path = self._new_transmap()
+        self._mark_no_manifest_export(transmap_path)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
                 handle.write("#!/usr/bin/env bash\n")
@@ -969,6 +970,8 @@ class AppStreamRunner:
             self.parent.reboot_required = True
 
         transmap_path = self._new_transmap()
+        if script_info.get("is_local_package"):
+            self._mark_no_manifest_export(transmap_path)
         env = script_environment(script_info, os.environ.copy())
         env["TRANSMAP_PATH"] = transmap_path
         env.pop("LINUXTOYS_RUNNER_STATE", None)
@@ -1342,6 +1345,15 @@ class AppStreamRunner:
         os.close(fd)
         os.chmod(path, 0o600)
         return path
+
+    @staticmethod
+    def _mark_no_manifest_export(path):
+        """Mark a registry transaction as intentionally non-portable."""
+        try:
+            with open(path, "a", encoding="utf-8") as transmap:
+                transmap.write("manifest-export skip\n")
+        except OSError:
+            pass
 
     @staticmethod
     def _remove_transmap(path):

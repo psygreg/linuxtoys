@@ -47,27 +47,27 @@ def _detect_package_manager():
 def _load_from_transmap(transmap_path):
     """
     Load operations from a transmap file created during script execution.
-    
+
     Returns a list of operation strings in the order they appear in the file.
     Returns empty list if file doesn't exist or cannot be read.
     """
     if not os.path.exists(transmap_path):
         return []
-    
+
     try:
         with open(transmap_path, "r") as f:
             content = f.read()
     except Exception:
         return []
-    
+
     operations = []
-    
+
     # Parse operation lines (format: "operation_type operand1 operand2 ...")
     for line in content.split("\n"):
         line = line.strip()
         if line and not line.startswith("#"):  # Skip empty lines and comments
             operations.append(line)
-    
+
     return operations
 
 
@@ -253,7 +253,7 @@ def _get_executed_script_names():
 def _parse_operation(op_line):
     """
     Parse an operation line from the transmap.
-    
+
     Returns a tuple of (operation_type, operands_list)
     E.g., "pkg curl git vim" -> ("pkg install", ["curl", "git", "vim"])
           "pkg rm curl" -> ("pkg rm", ["curl"])
@@ -268,15 +268,15 @@ def _parse_operation(op_line):
     parts = op_line.split()
     if not parts:
         return None, []
-    
+
     op_type = parts[0]
-    
+
     # Strip trailing colon from operation type if present (e.g., "WARN:" -> "warn")
     if op_type.endswith(':'):
         op_type = op_type[:-1].lower()
     else:
         op_type = op_type.lower() if op_type.lower() in ("warn",) else op_type
-    
+
     if len(parts) > 1:
         # For operations with multiple parts (e.g., "sysd enabled service")
         if op_type == "sysd":
@@ -359,30 +359,30 @@ def _parse_operation(op_line):
         else:
             # Most operations: "type operand" (e.g., "edited /etc/config")
             return op_type, [parts[1]]
-    
+
     return op_type, []
 
 
 def _reverse_package_install(packages, package_manager):
     """Reverse a package installation by removing it(s).
-    
+
     Args:
         packages: list of package names or single package name string
         package_manager: detected package manager
-    
+
     Returns:
         list of shell commands to reverse the package installation
     """
     if not package_manager:
         return []
-    
+
     # Normalize to list
     if isinstance(packages, str):
         packages = [packages]
-    
+
     if not packages:
         return []
-    
+
     # Use pkg_remove library function to handle distro-specific removal
     pkg_args = " ".join(packages)
     return [f"pkg_remove {pkg_args}"]
@@ -390,24 +390,24 @@ def _reverse_package_install(packages, package_manager):
 
 def _reverse_package_removal(packages, package_manager):
     """Reverse a package removal by reinstalling it(s).
-    
+
     Args:
         packages: list of package names or single package name string
         package_manager: detected package manager
-    
+
     Returns:
         list of shell commands to reverse the package removal
     """
     if not package_manager:
         return []
-    
+
     # Normalize to list
     if isinstance(packages, str):
         packages = [packages]
-    
+
     if not packages:
         return []
-    
+
     # Use pkg_install library function to handle distro-specific reinstallation
     pkg_args = " ".join(packages)
     return [f"pkg_install {pkg_args}"]
@@ -415,31 +415,31 @@ def _reverse_package_removal(packages, package_manager):
 
 def _reverse_package_fromfile(file_paths):
     """Reverse a package-from-file installation by removing it(s).
-    
+
     Attempts to extract package name from file path and remove it.
     For .deb files, extracts name before first underscore.
     For .pkg.tar.zst files, similar approach.
     For .flatpak bundles, extracts app ID using flatpak info.
-    
+
     Args:
         file_paths: list of file paths or single file path string
-    
+
     Returns:
         list of shell commands to reverse the package installation
     """
     # Normalize to list
     if isinstance(file_paths, str):
         file_paths = [file_paths]
-    
+
     if not file_paths:
         return []
-    
+
     packages_to_remove = []
     flatpak_app_ids = []
-    
+
     for file_path in file_paths:
         basename = os.path.basename(file_path)
-        
+
         # Handle flatpak bundles specially
         if basename.endswith('.flatpak'):
             # Try to extract app ID from the flatpak bundle using flatpak info
@@ -461,7 +461,7 @@ def _reverse_package_fromfile(file_paths):
             except Exception:
                 pass
             continue
-        
+
         # Extract package name from filename for other package types
         if basename.endswith('.deb'):
             # For deb files: package_1.0-1_amd64.deb -> package
@@ -475,15 +475,15 @@ def _reverse_package_fromfile(file_paths):
             # For rpm files: package-1.0-1.fc35.x86_64.rpm -> package
             pkg_name = basename.replace('.rpm', '').rsplit('-', 2)[0]
             packages_to_remove.append(pkg_name)
-    
+
     # Build reversal commands
     reversal_commands = []
-    
+
     if packages_to_remove:
         # Use pkg_remove library function to safely remove the packages
         pkg_args = " ".join(packages_to_remove)
         reversal_commands.append(f"pkg_remove {pkg_args}")
-    
+
     if flatpak_app_ids:
         for app_id in flatpak_app_ids:
             app_id = shlex.quote(app_id)
@@ -496,7 +496,7 @@ def _reverse_package_fromfile(file_paths):
                 f"fi"
             )
             reversal_commands.append(cmd)
-    
+
     return reversal_commands
 
 
@@ -527,7 +527,7 @@ def _reverse_make_installation(operands):
 
 def _reverse_file_deletion(file_path):
     """Reverse file deletion by removing the created file.
-    
+
     Attempts removal without sudo first. If permission is denied,
     calls sudo_rq and retries with root access.
     """
@@ -540,16 +540,16 @@ def _reverse_file_deletion(file_path):
 
 def _reverse_file_restoration(file_path):
     """Reverse a file or directory change by restoring from .bak file/directory.
-    
+
     Attempts restoration without sudo first. If permission is denied,
     calls sudo_rq and retries with root access.
     """
     backup_path = f"{file_path}.bak"
-    
+
     # Check if backup exists
     if not os.path.exists(backup_path):
         return None
-    
+
     # Try without sudo first; if permission denied, request sudo and retry
     # Use proper quoting to handle paths with spaces and special characters
     return (
@@ -604,20 +604,20 @@ def _reverse_snap_removal(packages):
 
 def _reverse_appimage_removal(appimage_files):
     """Reverse appimage installation(s) by removing it/them.
-    
+
     Args:
         appimage_files: list of appimage filenames or single filename string
-    
+
     Returns:
         list of shell commands to reverse the appimage installation
     """
     # Normalize to list
     if isinstance(appimage_files, str):
         appimage_files = [appimage_files]
-    
+
     if not appimage_files:
         return []
-    
+
     # Use pkg_appimage_rm library function to handle appimage removal
     appimage_args = " ".join(appimage_files)
     return [f"pkg_appimage_rm {appimage_args}"]
@@ -654,51 +654,51 @@ def _reverse_tarball_installation(app_names):
 
 def _reverse_npm_installation(packages):
     """Reverse npm package installation(s) by removing them globally.
-    
+
     Args:
         packages: list of package names or single package name string
-    
+
     Returns:
         list of shell commands to reverse the npm package installation
     """
     # Normalize to list
     if isinstance(packages, str):
         packages = [packages]
-    
+
     if not packages:
         return []
-    
+
     commands = []
     for package in packages:
         # Uninstall globally using npm uninstall -g
         cmd = f"npm uninstall -g {package} 2>/dev/null || true"
         commands.append(cmd)
-    
+
     return commands
 
 
 def _reverse_bun_installation(packages):
     """Reverse bun package installation(s) by removing them globally.
-    
+
     Args:
         packages: list of package names or single package name string
-    
+
     Returns:
         list of shell commands to reverse the bun package installation
     """
     # Normalize to list
     if isinstance(packages, str):
         packages = [packages]
-    
+
     if not packages:
         return []
-    
+
     commands = []
     for package in packages:
         # Uninstall globally using bun remove -g
         cmd = f"bun remove -g {package} 2>/dev/null || true"
         commands.append(cmd)
-    
+
     return commands
 
 
@@ -741,35 +741,35 @@ def _reverse_distrobox_fs(operands):
 
 def _reverse_distrobox_creation(container_names):
     """Reverse distrobox container creation(s) by removing it/them.
-    
+
     Args:
         container_names: list of container names or single container name string
-    
+
     Returns:
         list of shell commands to reverse the distrobox creation
     """
     # Normalize to list
     if isinstance(container_names, str):
         container_names = [container_names]
-    
+
     if not container_names:
         return []
-    
+
     commands = []
     for container_name in container_names:
         # Remove the distrobox container
         cmd = f"distrobox rm --force {container_name} 2>/dev/null || true"
         commands.append(cmd)
-    
+
     return commands
 
 
 def _reverse_rclone_mount(mount_paths):
     """Reverse rclone mountpoint creation(s) by unmounting it/them.
-    
+
     Args:
         mount_paths: list of mount destination paths or single path string
-    
+
     Returns:
         list of shell commands to reverse the rclone mounting
     """
@@ -778,10 +778,10 @@ def _reverse_rclone_mount(mount_paths):
     # Normalize to list (could be single path or paired source/dest)
     if isinstance(mount_paths, str):
         mount_paths = [mount_paths]
-    
+
     if not mount_paths:
         return []
-    
+
     commands = []
     # If we have an even number of paths, they're pairs (source, dest)
     # If odd, assume the last one is the destination
@@ -797,7 +797,7 @@ def _reverse_rclone_mount(mount_paths):
         for path in mount_paths:
             cmd = f"fusermount -u {path} 2>/dev/null || sudo umount {path} 2>/dev/null || true"
             commands.append(cmd)
-    
+
     return commands
 
 
@@ -809,16 +809,16 @@ def _reverse_systemd_operation(service, action):
         "started": "sudo systemctl stop",
         "stopped": "sudo systemctl start",
     }
-    
+
     if action not in reversals:
         return None
-    
+
     return f"{reversals[action]} {service}"
 
 
 def _reverse_systemd_usermode_operation(service, action):
     """Reverse user-level systemd operations (without sudo).
-    
+
     User-level systemd operations are run by the user for their own services,
     so they don't need sudo and use --user flag instead.
     """
@@ -828,17 +828,17 @@ def _reverse_systemd_usermode_operation(service, action):
         "started": "systemctl --user stop",
         "stopped": "systemctl --user start",
     }
-    
+
     if action not in reversals:
         return None
-    
+
     return f"{reversals[action]} {service}"
 
 
 def _reverse_bootloader_update():
     """
     Reverse a bootloader update by triggering another bootloader update.
-    
+
     Bootloader updates are idempotent, so re-running the update ensures
     consistency and reverses any partial or corrupted state.
     Uses the bootloader_upd function from linuxtoys.lib for proper distro handling.
@@ -849,7 +849,7 @@ def _reverse_bootloader_update():
 def _reverse_initramfs_update():
     """
     Reverse an initramfs update by triggering another initramfs update.
-    
+
     Initramfs updates are idempotent, so re-running the update ensures
     consistency and reverses any partial or corrupted state.
     Uses the initramfs_upd function from linuxtoys.lib for proper distro handling.
@@ -859,10 +859,10 @@ def _reverse_initramfs_update():
 
 def _reverse_shell_change(shell_path):
     """Reverse a shell change by reverting to bash.
-    
+
     Args:
         shell_path: the shell that was changed to (ignored, always revert to bash)
-    
+
     Returns:
         list containing a single shell_change command to revert to bash
     """
@@ -873,63 +873,63 @@ def _reverse_shell_change(shell_path):
 def _reverse_kargs_update(karg):
     """
     Reverse a kernel argument update by deleting the appended karg.
-    
+
     Uses rpm-ostree kargs --delete to remove the previously appended kernel argument.
     """
     if not karg:
         return None
-    
+
     return f"sudo rpm-ostree kargs --delete=\"{karg}\" || true"
 
 
 def _reverse_grubbyargs_update(karg):
     """
     Reverse a grubby kernel argument update by removing the appended karg.
-    
+
     Uses grubby --remove-args to remove the previously appended kernel argument.
     """
     if not karg:
         return None
-    
+
     return f"sudo grubby --remove-args=\"{karg}\" --update-kernel ALL || true"
 
 
 def _reverse_swapfile_creation(swapfile_type, swapfile_path):
     """
     Reverse swapfile creation by disabling and removing the swapfile.
-    
+
     Handles both btrfs and regular swapfile types by:
     1. Disabling the swapfile with swapoff
     2. Removing the swapfile entry from /etc/fstab
     3. Deleting the swapfile
     4. For btrfs swapfiles, updating initramfs to ensure proper kernel configuration
-    
+
     Args:
         swapfile_type: "btrfs" or "regular" indicating the swapfile type
         swapfile_path: path to the swapfile to remove
-    
+
     Returns:
         list of shell commands to reverse the swapfile creation
     """
     if not swapfile_path:
         return []
-    
+
     commands = []
-    
+
     # Disable the swapfile
     commands.append(f"sudo swapoff {swapfile_path} 2>/dev/null || true")
-    
+
     # Remove the swapfile entry from fstab (escape special characters in path)
     escaped_path = swapfile_path.replace("/", "\\/")
     commands.append(f'sudo sed -i "\\|{escaped_path}|d" /etc/fstab || true')
-    
+
     # Remove the swapfile itself
     commands.append(f"sudo rm -f {swapfile_path} || true")
-    
+
     # For btrfs swapfiles, update initramfs since kernel parameters may have been set
     if swapfile_type and swapfile_type.lower() == "btrfs":
         commands.append("initramfs_upd")
-    
+
     return commands
 
 
@@ -948,31 +948,31 @@ def _reverse_exec_operation(command_parts):
 def _reverse_operation(op_line, package_manager):
     """
     Generate shell command(s) to reverse a single operation.
-    
+
     Returns a list of command strings or empty list if unable to reverse.
     """
     op_type, operands = _parse_operation(op_line)
-    
+
     # WARN entries are informational only - no reversal action needed
-    if op_type in ("warn", "git-release"):
+    if op_type in ("warn", "git-release", "manifest-export"):
         # Informational registry entries are deliberately non-reversible.
         return []
-    
+
     elif op_type == "pkg install" and operands:
         # Reverse package installation by removing
         return _reverse_package_install(operands, package_manager)
-    
+
     elif op_type == "pkg rm" and operands:
         # Reverse package removal by reinstalling
         return _reverse_package_removal(operands, package_manager)
-    
+
     elif op_type == "pkg file" and operands:
         # Reverse package-from-file installation by removing
         return _reverse_package_fromfile(operands)
 
     elif op_type == "pkg make" and operands:
         return _reverse_make_installation(operands)
-    
+
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)
 
@@ -981,19 +981,19 @@ def _reverse_operation(op_line, package_manager):
 
     elif op_type == "override" and operands:
         return _reverse_flatpak_override(operands)
-    
+
     elif op_type == "appimage" and operands:
         return _reverse_appimage_removal(operands)
 
     elif op_type == "tarball" and operands:
         return _reverse_tarball_installation(operands)
-    
+
     elif op_type == "npm" and operands:
         return _reverse_npm_installation(operands)
-    
+
     elif op_type == "bun" and operands:
         return _reverse_bun_installation(operands)
-    
+
     elif op_type == "distrobox" and operands:
         # Reverse distrobox container creation by removing
         return _reverse_distrobox_creation(operands)
@@ -1001,15 +1001,15 @@ def _reverse_operation(op_line, package_manager):
     elif op_type == "distrobox-fs" and operands:
         # Reverse filesystem changes made inside an existing Distrobox container.
         return _reverse_distrobox_fs(operands)
-    
+
     elif op_type == "rclone mounted" and operands:
         # Reverse rclone mountpoint creation by unmounting
         return _reverse_rclone_mount(operands)
-    
+
     elif op_type == "chsh" and operands:
         # Reverse shell change by reverting to bash
         return _reverse_shell_change(operands[0])
-    
+
     elif op_type == "exec" and operands:
         # Reverse specially supported external installer operations.
         return _reverse_exec_operation(operands)
@@ -1019,17 +1019,17 @@ def _reverse_operation(op_line, package_manager):
         # operands[0] = type ("btrfs" or "regular")
         # operands[1] = path to the swapfile
         return _reverse_swapfile_creation(operands[0], operands[1])
-    
+
     elif op_type == "created" and operands:
         # Reverse created files by deleting them
         return [_reverse_file_deletion(operands[0])]
-    
+
     elif op_type in ("edited", "removed") and operands:
         # Reverse edited/removed files by restoring from .bak backup
         # File operations typically have one file per operation
         cmd = _reverse_file_restoration(operands[0])
         return [cmd] if cmd else []
-    
+
     elif op_type == "sysd" and len(operands) >= 2:
         # Check if this is a usermode operation
         if operands[0] == "usermode" and len(operands) >= 3:
@@ -1042,22 +1042,22 @@ def _reverse_operation(op_line, package_manager):
             action, service = operands[0], operands[1]
             cmd = _reverse_systemd_operation(service, action)
             return [cmd] if cmd else []
-    
+
     elif op_type == "updated" and "bootloader" in op_line:
         # Bootloader updates need to be re-run to ensure consistency
         cmd = _reverse_bootloader_update()
         return [cmd] if cmd else []
-    
+
     elif op_type == "updated" and "initramfs" in op_line:
         # Initramfs updates need to be re-run to ensure consistency
         cmd = _reverse_initramfs_update()
         return [cmd] if cmd else []
-    
+
     elif op_type == "updated" and "kargs" in op_line:
         # Check if this is grubby kargs or rpm-ostree kargs
         # grubby kargs format: "updated grubby kargs kernel-argument"
         # rpm-ostree kargs format: "updated kargs kernel-argument"
-        
+
         if "grubby" in op_line:
             # Extract the kargs value from "updated grubby kargs kernel-argument"
             parts = op_line.split(None, 3)  # ["updated", "grubby", "kargs", "kernel-argument"]
@@ -1073,17 +1073,17 @@ def _reverse_operation(op_line, package_manager):
                 cmd = _reverse_kargs_update(karg)
                 return [cmd] if cmd else []
         return []
-    
+
     return []
 
 
 def build_uninstall_script_entry(script_info, translations=None):
     """
     Build a temporary uninstall script for a given LinuxToys script.
-    
+
     Reads the last execution record from the registry and generates
     reverse operations to undo the changes.
-    
+
     Returns a script_info-like dict or None when no removable components were found.
     """
     script_name = script_info.get("name")
@@ -1094,7 +1094,7 @@ def build_uninstall_script_entry(script_info, translations=None):
     # a stable registry_name (the internal script ID), while ordinary applications
     # continue using their pretty name as the registry identity.
     registry_name = script_info.get("registry_name", script_name)
-    
+
     registry_entries = _load_registry_entries()
 
     parent_index, parent_entry = _find_registry_execution(
@@ -1127,9 +1127,9 @@ def build_uninstall_script_entry(script_info, translations=None):
 
     reverted_registry_indices = {parent_index}
     reverted_registry_indices.update(child_indices)
-    
+
     script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
-    
+
     lines = [
         "#!/bin/bash",
         "set -eo pipefail",
@@ -1137,19 +1137,19 @@ def build_uninstall_script_entry(script_info, translations=None):
         'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
         'source "$SCRIPT_DIR/libs/helpers.bash"',
     ]
-    
+
     # Pre-authorize privileged package operations before the terminal can be locked.
     # Keep the existing direct-sudo detection for other unconditional reversals.
     needs_sudo = any(
         cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
         for cmd in reverse_commands
     )
-    
+
     if needs_sudo:
         lines.append("")
         lines.append("# Request sudo authorization")
         lines.append("sudo_rq")
-    
+
     lines.append("")
     lines.append("# Reverse operations (in reverse order, most recent first)")
     lines.extend(reverse_commands)
@@ -1196,7 +1196,7 @@ def build_uninstall_script_entry(script_info, translations=None):
     lines.append("PY")
     lines.append("")
     lines.append('echo "Removal completed."')
-    
+
     # Write temporary script
     try:
         with tempfile.NamedTemporaryFile(
@@ -1206,9 +1206,9 @@ def build_uninstall_script_entry(script_info, translations=None):
             temp_path = temp_script.name
     except Exception:
         return None
-    
+
     os.chmod(temp_path, 0o700)
-    
+
     # Prepare return entry
     script_name_display = script_info.get("name", "Script")
     remove_name = (
@@ -1216,7 +1216,7 @@ def build_uninstall_script_entry(script_info, translations=None):
         if translations
         else "Remove {name}"
     ).format(name=script_name_display)
-    
+
     return {
         "icon": script_info.get("icon", "application-x-executable"),
         "name": remove_name,
@@ -1236,22 +1236,22 @@ def build_uninstall_script_entry(script_info, translations=None):
 def build_auto_revert_script_entry(script_info, transmap_path, translations=None):
     """
     Build a temporary auto-revert script for a script that exited with an error.
-    
+
     Reads the transmap file created during script execution and generates
     reverse operations to undo the changes made before the error occurred.
-    
+
     Returns a script_info-like dict or None when no reversible operations were found.
     """
     if not os.path.exists(transmap_path):
         return None
-    
+
     # Load operations from the transmap file
     operations = _load_from_transmap(transmap_path)
-    
+
     if not operations:
         # No operations found in transmap
         return None
-    
+
     package_manager = _detect_package_manager()
     registry_entries = _load_registry_entries()
 
@@ -1266,9 +1266,9 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         return None
 
     reverted_registry_indices = child_indices
-    
+
     script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
-    
+
     lines = [
         "#!/bin/bash",
         "set -eo pipefail",
@@ -1276,19 +1276,19 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
         'source "$SCRIPT_DIR/libs/helpers.bash"',
     ]
-    
+
     # Pre-authorize privileged package operations before the terminal can be locked.
     # Keep the existing direct-sudo detection for other unconditional reversals.
     needs_sudo = any(
         cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
         for cmd in reverse_commands
     )
-    
+
     if needs_sudo:
         lines.append("")
         lines.append("# Request sudo authorization")
         lines.append("sudo_rq")
-    
+
     lines.append("")
     lines.append("# Reverse operations from failed script execution (in reverse order)")
     lines.extend(reverse_commands)
@@ -1332,7 +1332,7 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     lines.append("PY")
     lines.append("")
     lines.append('echo "Automatic reversion completed."')
-    
+
     # Write temporary script
     try:
         with tempfile.NamedTemporaryFile(
@@ -1342,9 +1342,9 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
             temp_path = temp_script.name
     except Exception:
         return None
-    
+
     os.chmod(temp_path, 0o700)
-    
+
     # Prepare return entry
     script_name_display = script_info.get("name", "Script")
     revert_name = (
@@ -1352,7 +1352,7 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         if translations
         else "Auto-revert {name}"
     ).format(name=script_name_display)
-    
+
     return {
         "icon": script_info.get("icon", "application-x-executable"),
         "name": revert_name,

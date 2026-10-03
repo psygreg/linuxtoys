@@ -503,6 +503,15 @@ def _registry_export_requires_flathub(registry_data, exported_names):
     return False
 
 
+def _registry_entry_blocks_manifest_export(executions):
+    """Return True when a registry transaction is explicitly non-portable."""
+    for _timestamp, operations in executions or ():
+        for operation in operations:
+            if str(operation or "").strip().casefold() == "manifest-export skip":
+                return True
+    return False
+
+
 def build_registered_manifest_entries(registry_data=None, translations=None, include_requirements=False):
     """Build explicit script entries from the current Action Registry.
 
@@ -523,6 +532,8 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
         if _is_system_update_registry_entry(name, translations):
             continue
         if _is_removal_registry_entry(name, translations):
+            continue
+        if _registry_entry_blocks_manifest_export(registry_data.get(raw_name, [])):
             continue
         seen.add(key)
         candidates.append(name)
