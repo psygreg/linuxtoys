@@ -1,9 +1,30 @@
 """Detect Bash library requirements without executing the inspected code."""
 
 import os
+import atexit
+import shutil
+import tempfile
+import threading
 from pathlib import Path
 import re
 import shlex
+
+_SESSION_LOCK = threading.Lock()
+_SESSION_DIR = None
+
+
+def _execution_session_dir():
+    """Share one mirror preflight across runners and nested child processes."""
+    inherited = os.environ.get("LINUXTOYS_EXECUTION_SESSION_DIR")
+    if inherited:
+        return inherited
+    global _SESSION_DIR
+    with _SESSION_LOCK:
+        if _SESSION_DIR is None:
+            _SESSION_DIR = tempfile.mkdtemp(prefix="linuxtoys-session-")
+            atexit.register(shutil.rmtree, _SESSION_DIR, ignore_errors=True)
+        return _SESSION_DIR
+
 
 LIBRARY_FLAGS = {
     "fsops.bash": "FS_OPS",
@@ -113,18 +134,44 @@ def script_preamble(script_text, script_dir):
     """Set invocation-local flags and always load the core before script code."""
     script_dir = os.path.abspath(script_dir)
     flags = library_flags(script_text, script_dir)
-    lines = ["export SCRIPT_DIR=" + shlex.quote(script_dir)]
+    lines = ["export SCRIPT_DIR=" + shlex.quote(script_dir),
+             "export LINUXTOYS_EXECUTION_SESSION_DIR="
+             + shlex.quote(_execution_session_dir())]
     lines.extend("export " + key + "=" + shlex.quote(value)
                  for key, value in flags.items())
     lines.append("source " + shlex.quote(str(Path(script_dir) / "libs/linuxtoys.bash"))
                  + " || exit $?")
+    lines.append(
+        "_linuxtoys_prepare_session || { "
+        "_lt_mirror_status=$?; "
+        'if [[ ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS:-1} != 0 ]]; then '
+        'exit "$_lt_mirror_status"; fi; '
+        'echo "Continuing without CachyOS mirror refresh for this Flatpak/Snap entry."; }'
+    )
     return "\n".join(lines) + "\n"
 
+
+
+def _requires_cachyos_mirrors(script_info):
+    """Only plain non-native AppStream jobs may ignore failed mirror ranking."""
+    if script_info.get("is_repo_entry"):
+        return True
+    if script_info.get("appstream_source") not in {"flatpak", "snap"}:
+        return True
+    if script_info.get("appstream_overrides") or script_info.get("appstream_dependencies"):
+        return True
+    return script_info.get("cachyos_mirrors_required", False)
 
 
 def script_environment(script_info, base_env=None):
     """Return a child environment enriched with invocation-local app metadata."""
     env = dict(os.environ if base_env is None else base_env)
+    env.setdefault("LINUXTOYS_EXECUTION_SESSION_DIR", _execution_session_dir())
+    # Reset for every invocation: a nested native/curated script must not inherit
+    # the exemption granted to its plain Flatpak/Snap caller.
+    env["LINUXTOYS_REQUIRE_CACHYOS_MIRRORS"] = (
+        "1" if _requires_cachyos_mirrors(script_info) else "0"
+    )
 
     name = str(script_info.get("name") or "unknown")
     description = str(script_info.get("description") or "")
@@ -217,6 +264,11 @@ def script_info_from_path(script_path, script_dir, base_env=None):
         "description": description,
         "icon": headers.get("icon") or "application-x-executable",
     }
+
+    source = headers.get("appstream-source")
+    if source in {"flatpak", "snap", "native"}:
+        info["appstream_source"] = source
+        info["cachyos_mirrors_required"] = headers.get("cachyos-mirrors-required") != "0"
 
     # Repository entries are materialized before reaching this path. Preserve
     # their stable repository identity so script_environment() does not discard it.
@@ -357,6 +409,8 @@ def materialize_appstream_by_target(target, script_dir):
     contents += f"# name: {str(entry.get('name') or target).replace(chr(10), ' ')}\n"
     contents += f"# description: {str(entry.get('description') or '').replace(chr(10), ' ')}\n"
     contents += f"# icon: {str(entry.get('icon') or 'application-x-executable').replace(chr(10), ' ')}\n"
+    contents += "# appstream-source: " + str(entry.get("appstream_source") or "") + "\n"
+    contents += "# cachyos-mirrors-required: " + ("1" if _requires_cachyos_mirrors(entry) else "0") + "\n"
     contents += "# revert: yes\n\n"
     for phase in (pre, dependencies):
         if phase:

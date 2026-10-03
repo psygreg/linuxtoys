@@ -540,3 +540,41 @@ run_list_hook() {
 
     source "$path"
 }
+
+# Run before user-triggered script code, through the canonical script preamble.
+# A private directory is shared by all runners in this application session.
+_linuxtoys_prepare_session() (
+    [[ -r /etc/os-release ]] || return 0
+    source /etc/os-release
+    [[ ${ID:-} == cachyos ]] || return 0
+    [[ -n ${LINUXTOYS_EXECUTION_SESSION_DIR:-} ]] || return 0
+
+    local session_dir="$LINUXTOYS_EXECUTION_SESSION_DIR"
+    local mirror_status=1
+    # Hold the lock until ranking finishes, so parallel runners wait for the
+    # first result rather than starting installations with an unfinished list.
+    exec 9>"$session_dir/cachyos-mirrors.lock" || return 1
+    flock -x 9 || return 1
+    if [[ -f "$session_dir/cachyos-mirrors.status" ]]; then
+        read -r mirror_status < "$session_dir/cachyos-mirrors.status"
+        if (( mirror_status != 0 )); then
+            echo "CachyOS mirror refresh failed earlier in this session. Restart LinuxToys to retry." >&2
+        fi
+        return "$mirror_status"
+    fi
+
+    # Record an attempted preflight before invoking sudo. Authentication can
+    # exit the shell, and a cancelled attempt must not silently permit installs.
+    printf '1\n' > "$session_dir/cachyos-mirrors.status" || return 1
+    echo "Refreshing CachyOS mirrors..."
+    runner_lock "CachyOS mirror refresh"
+    if sudo_ cachyos-rate-mirrors; then
+        mirror_status=0
+    else
+        mirror_status=$?
+        printf 'CachyOS mirror refresh failed (status %d). Restart LinuxToys to retry.\n' "$mirror_status" >&2
+    fi
+    runner_unlock
+    printf '%s\n' "$mirror_status" > "$session_dir/cachyos-mirrors.status"
+    return "$mirror_status"
+)
