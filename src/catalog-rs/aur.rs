@@ -591,6 +591,15 @@ impl AurCatalog {
 #[pyfunction]
 #[pyo3(signature = (path, omit=Vec::new(), native_packages=Vec::new()))]
 pub fn load_aur_catalog(
+    py: Python<'_>,
+    path: &str,
+    omit: Vec<String>,
+    native_packages: Vec<String>,
+) -> PyResult<AurCatalog> {
+    py.allow_threads(|| load_aur_catalog_inner(path, omit, native_packages))
+}
+
+fn load_aur_catalog_inner(
     path: &str,
     omit: Vec<String>,
     native_packages: Vec<String>,

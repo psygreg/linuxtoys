@@ -3056,32 +3056,47 @@ class AppWindow(
                 return
             aur_cache.enable()
 
+        # Navigate immediately after consent so the pending download/build has
+        # a visible destination instead of leaving the category button inert.
+        self._open_aur_category_view(category_info, loading=True)
+        page = self.scripts_view
+        flowbox = self.scripts_flowbox
+
+        def finish_loading(error_message=None):
+            page._linuxtoys_aur_spinner.stop()
+            page._linuxtoys_aur_spinner.hide()
+            page._linuxtoys_category_content.set_sensitive(True)
+            # Back navigation or another category selection must never be undone
+            # by a late worker completion.
+            if self.main_stack.get_visible_child() is not page:
+                return False
+            if error_message is not None:
+                gtk_dialogs.run_message_dialog(
+                    self,
+                    title=self.translations.get("aur_refresh_failed_title", "AUR metadata unavailable"),
+                    secondary_text=error_message,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=[("OK", Gtk.ResponseType.OK)],
+                    default_response=Gtk.ResponseType.OK,
+                )
+            else:
+                self._load_scripts_into_flowbox(flowbox, category_info, defer_initial=True)
+            return False
+
         def worker():
             try:
                 # The refresh publishes catalog.bin atomically. Do not materialize
                 # the AUR here: category browsing is paged directly from Rust.
                 aur_cache.refresh_if_stale()
+                # Prewarm the lazy catalog off GTK too: loading/filtering the
+                # binary and querying pacman's repositories can be expensive.
+                aur_cache.browse_entries()
             except Exception as error:
                 logger.warning("AUR catalog refresh failed: %s", error)
-                message = str(error)
-
-                def show_error():
-                    gtk_dialogs.run_message_dialog(
-                        self,
-                        title=self.translations.get(
-                            "aur_refresh_failed_title", "AUR metadata unavailable"
-                        ),
-                        secondary_text=message,
-                        message_type=Gtk.MessageType.ERROR,
-                        buttons=[("OK", Gtk.ResponseType.OK)],
-                        default_response=Gtk.ResponseType.OK,
-                    )
-                    return False
-
-                GLib.idle_add(show_error)
+                GLib.idle_add(finish_loading, str(error))
                 return
 
-            GLib.idle_add(self._open_aur_category_view, category_info)
+            GLib.idle_add(finish_loading)
 
         threading.Thread(
             target=worker,
@@ -3089,7 +3104,7 @@ class AppWindow(
             name="linuxtoys-aur-enable",
         ).start()
 
-    def _open_aur_category_view(self, category_info):
+    def _open_aur_category_view(self, category_info, *, loading=False):
         """Open AUR through the same retained/deferred category-view machinery."""
         self._retain_current_category_view()
 
@@ -3109,7 +3124,20 @@ class AppWindow(
         page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         category_header = header.create_header(self.translations, category_info)
         page.pack_start(category_header, False, False, 8)
-        page.pack_start(content_view, True, True, 0)
+        if loading:
+            overlay = Gtk.Overlay()
+            overlay.add(content_view)
+            spinner = Gtk.Spinner()
+            spinner.set_size_request(64, 64)
+            spinner.set_halign(Gtk.Align.CENTER)
+            spinner.set_valign(Gtk.Align.CENTER)
+            spinner.set_no_show_all(True)
+            overlay.add_overlay(spinner)
+            page.pack_start(overlay, True, True, 0)
+            page._linuxtoys_aur_spinner = spinner
+            content_view.set_sensitive(False)
+        else:
+            page.pack_start(content_view, True, True, 0)
 
         page._linuxtoys_category_header = category_header
         page._linuxtoys_category_content = content_view
@@ -3124,6 +3152,11 @@ class AppWindow(
         self.scripts_flowbox = new_flowbox
         self.scripts_view = page
         self.show_scripts_view(category_info)
+
+        if loading:
+            spinner.show()
+            spinner.start()
+            return False
 
         # Match normal category navigation: let the slide start with an attached
         # empty destination, then lazily materialize the first viewport.
