@@ -1600,19 +1600,23 @@ pkg_appimage () {
     fi
 
     { is_ubuntu || is_debian; } && {
-        if [ "$VERSION_CODENAME" = "bookworm" ]; then
-            pkg_exists libfuse2
-            [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
-                pkg_install libfuse2  # workaround for debian 12
-            }
-        else
-            pkg_exists libfuse2
-            [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
-                                if ! apt-cache --no-all-versions show libfuse2t64 >/dev/null 2>&1; then # probably forky/testing
-                    sudo_ mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d # ensure directories exist
-                    prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
-                    echo 'deb https://deb.debian.org/debian trixie main' | sudo_ tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
-                    sudo_ tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
+        # FUSE 2 changed package names across Debian/Ubuntu releases. Prefer the
+        # package exposed by the host repositories instead of keying off a codename.
+        if dpkg -s libfuse2t64 >/dev/null 2>&1 || dpkg -s libfuse2 >/dev/null 2>&1; then
+            :
+        elif apt-cache --no-all-versions show libfuse2t64 >/dev/null 2>&1; then
+            pkg_install libfuse2t64
+        elif apt-cache --no-all-versions show libfuse2 >/dev/null 2>&1; then
+            pkg_install libfuse2
+        elif is_debian; then
+            # Debian testing may temporarily lack a FUSE 2 compatibility package.
+            # Expose only Trixie's libfuse2t64 through a narrowly pinned source.
+            sudo_ mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d
+            prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" \
+                        "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
+            echo 'deb https://deb.debian.org/debian trixie main' | \
+                sudo_ tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
+            sudo_ tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
 Package: *
 Pin: release n=trixie
 Pin-Priority: -1
@@ -1621,9 +1625,10 @@ Package: libfuse2t64
 Pin: release n=trixie
 Pin-Priority: 990
 EOF
-                fi
-                pkg_install libfuse2t64;
-            }
+            sudo_ apt-get update || die "Failed to refresh APT repositories for FUSE 2 compatibility"
+            pkg_install libfuse2t64
+        else
+            die "No FUSE 2 compatibility package is available from this system's APT repositories"
         fi
     }
     { is_fedora || is_ostree || is_rhel; } && {
