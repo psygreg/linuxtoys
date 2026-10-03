@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Täname! Teie hääl edastati Canonical Snapi hinnangutesse.",
   "app_page_snap_revert_confirm_title": "Kas taastada Snapi eelmine versioon?",
   "app_page_snap_revert_confirm_message": "LinuxToys taastab rakenduse „{app_name}“ varem paigaldatud Snapi versioonile.\n\nKas soovite jätkata?",
-  "app_page_snap_revert": " Taasta "
+  "app_page_snap_revert": " Taasta ",
+  "uri_install_error_title": "LinuxToysi linki ei saa avada"
 }

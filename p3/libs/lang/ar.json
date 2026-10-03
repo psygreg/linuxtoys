@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "شكرًا لك! تم إرسال تصويتك إلى تقييمات Canonical Snap.",
   "app_page_snap_revert_confirm_title": "الرجوع بإصدار Snap؟",
   "app_page_snap_revert_confirm_message": "سيعيد LinuxToys تطبيق '{app_name}' إلى مراجعة Snap المثبتة سابقًا.\n\nهل تريد المتابعة؟",
-  "app_page_snap_revert": " رجوع "
+  "app_page_snap_revert": " رجوع ",
+  "uri_install_error_title": "تعذر فتح رابط LinuxToys"
 }

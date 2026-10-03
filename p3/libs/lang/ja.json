@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "ありがとうございます！あなたの投票が Canonical Snap の評価に送信されました。",
   "app_page_snap_revert_confirm_title": "Snap を以前のリビジョンに戻しますか？",
   "app_page_snap_revert_confirm_message": "LinuxToys は「{app_name}」を以前インストールされていた Snap リビジョンに戻します。\n\n続行しますか？",
-  "app_page_snap_revert": " 元に戻す "
+  "app_page_snap_revert": " 元に戻す ",
+  "uri_install_error_title": "LinuxToys リンクを開けません"
 }

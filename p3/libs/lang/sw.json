@@ -719,5 +719,6 @@
   "app_page_rate_success_message_snap": "Asante! Kura yako imetumwa kwenye ukadiriaji wa Canonical Snap.",
   "app_page_snap_revert_confirm_title": "Rejesha Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys itarejesha '{app_name}' kwenye toleo la Snap lililosakinishwa awali.\n\nUnataka kuendelea?",
-  "app_page_snap_revert": " Rejesha "
+  "app_page_snap_revert": " Rejesha ",
+  "uri_install_error_title": "Imeshindikana kufungua kiungo cha LinuxToys"
 }

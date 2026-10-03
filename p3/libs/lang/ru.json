@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Спасибо! Ваш голос был отправлен в систему оценок Canonical Snap.",
   "app_page_snap_revert_confirm_title": "Откатить Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys откатит «{app_name}» до ранее установленной ревизии Snap.\n\nПродолжить?",
-  "app_page_snap_revert": " Откатить "
+  "app_page_snap_revert": " Откатить ",
+  "uri_install_error_title": "Не удалось открыть ссылку LinuxToys"
 }

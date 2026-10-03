@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "ကျေးဇူးတင်ပါသည်! သင့်မဲကို Canonical Snap ratings သို့ ပေးပို့ပြီးပါပြီ။",
   "app_page_snap_revert_confirm_title": "Snap ကို ယခင် revision သို့ ပြန်ပြောင်းမလား?",
   "app_page_snap_revert_confirm_message": "LinuxToys သည် '{app_name}' ကို ယခင်က ထည့်သွင်းထားသော Snap revision သို့ ပြန်ပြောင်းမည်။\n\nဆက်လုပ်လိုပါသလား?",
-  "app_page_snap_revert": " ပြန်ပြောင်းရန် "
+  "app_page_snap_revert": " ပြန်ပြောင်းရန် ",
+  "uri_install_error_title": "LinuxToys လင့်ခ်ကို ဖွင့်၍မရပါ"
 }

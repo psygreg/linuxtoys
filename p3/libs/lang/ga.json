@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Go raibh maith agat! Cuireadh do vóta chuig rátálacha Canonical Snap.",
   "app_page_snap_revert_confirm_title": "Fill Snap ar ais?",
   "app_page_snap_revert_confirm_message": "Fillfidh LinuxToys '{app_name}' ar ais chuig an leasú Snap a bhí suiteáilte roimhe seo.\n\nAr mhaith leat leanúint ar aghaidh?",
-  "app_page_snap_revert": " Fill ar ais "
+  "app_page_snap_revert": " Fill ar ais ",
+  "uri_install_error_title": "Níorbh fhéidir nasc LinuxToys a oscailt"
 }

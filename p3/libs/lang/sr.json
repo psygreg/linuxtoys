@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Хвала! Ваш глас је послат у Canonical Snap оцене.",
   "app_page_snap_revert_confirm_title": "Вратити Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys ће вратити „{app_name}“ на претходно инсталирану Snap ревизију.\n\nЖелите ли да наставите?",
-  "app_page_snap_revert": " Врати "
+  "app_page_snap_revert": " Врати ",
+  "uri_install_error_title": "Није могуће отворити LinuxToys везу"
 }

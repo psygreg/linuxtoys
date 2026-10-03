@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Bedankt! Uw stem is ingediend bij de Canonical Snap-beoordelingen.",
   "app_page_snap_revert_confirm_title": "Snap terugzetten?",
   "app_page_snap_revert_confirm_message": "LinuxToys zet '{app_name}' terug naar de eerder geïnstalleerde Snap-revisie.\n\nWilt u doorgaan?",
-  "app_page_snap_revert": " Terugzetten "
+  "app_page_snap_revert": " Terugzetten ",
+  "uri_install_error_title": "Kan LinuxToys-link niet openen"
 }

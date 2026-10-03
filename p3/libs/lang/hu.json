@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Köszönjük! Szavazatát elküldtük a Canonical Snap értékeléseihez.",
   "app_page_snap_revert_confirm_title": "Visszaállítja a Snapet?",
   "app_page_snap_revert_confirm_message": "A LinuxToys visszaállítja a(z) „{app_name}” alkalmazást a korábban telepített Snap-revízióra.\n\nSzeretné folytatni?",
-  "app_page_snap_revert": " Visszaállítás "
+  "app_page_snap_revert": " Visszaállítás ",
+  "uri_install_error_title": "A LinuxToys-hivatkozás nem nyitható meg"
 }

@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Takk! Stemmen din ble sendt inn til Canonical Snap-vurderinger.",
   "app_page_snap_revert_confirm_title": "Tilbakestille Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys vil tilbakestille '{app_name}' til den tidligere installerte Snap-revisjonen.\n\nVil du fortsette?",
-  "app_page_snap_revert": " Tilbakestill "
+  "app_page_snap_revert": " Tilbakestill ",
+  "uri_install_error_title": "Kunne ikke åpne LinuxToys-lenken"
 }

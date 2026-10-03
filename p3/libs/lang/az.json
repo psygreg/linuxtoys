@@ -720,5 +720,6 @@
   "app_page_rate_success_message_snap": "Təşəkkür edirik! Səsiniz Canonical Snap reytinqlərinə göndərildi.",
   "app_page_snap_revert_confirm_title": "Snap əvvəlki versiyaya qaytarılsın?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}' tətbiqini əvvəllər quraşdırılmış Snap reviziyasına qaytaracaq.\n\nDavam etmək istəyirsiniz?",
-  "app_page_snap_revert": " Geri qaytar "
+  "app_page_snap_revert": " Geri qaytar ",
+  "uri_install_error_title": "LinuxToys keçidini açmaq mümkün olmadı"
 }

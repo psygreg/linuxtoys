@@ -723,5 +723,6 @@
   "app_page_rate_success_message_snap": "谢谢！您的投票已提交至 Canonical Snap 评分。",
   "app_page_snap_revert_confirm_title": "还原 Snap？",
   "app_page_snap_revert_confirm_message": "LinuxToys 会将“{app_name}”还原到之前安装的 Snap 修订版本。\n\n是否继续？",
-  "app_page_snap_revert": " 还原 "
+  "app_page_snap_revert": " 还原 ",
+  "uri_install_error_title": "无法打开 LinuxToys 链接"
 }

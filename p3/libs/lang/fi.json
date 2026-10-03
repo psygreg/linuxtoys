@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Kiitos! Äänesi lähetettiin Canonical Snap -arvosteluihin.",
   "app_page_snap_revert_confirm_title": "Palautetaanko Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys palauttaa sovelluksen '{app_name}' aiemmin asennettuun Snap-revisioon.\n\nHaluatko jatkaa?",
-  "app_page_snap_revert": " Palauta "
+  "app_page_snap_revert": " Palauta ",
+  "uri_install_error_title": "LinuxToys-linkkiä ei voitu avata"
 }

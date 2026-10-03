@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Faleminderit! Vota juaj u dërgua te vlerësimet Canonical Snap.",
   "app_page_snap_revert_confirm_title": "Të rikthehet Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys do ta rikthejë '{app_name}' te rishikimi Snap i instaluar më parë.\n\nDëshironi të vazhdoni?",
-  "app_page_snap_revert": " Rikthe "
+  "app_page_snap_revert": " Rikthe ",
+  "uri_install_error_title": "Nuk mund të hapet lidhja LinuxToys"
 }

@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Paldies! Jūsu balsojums tika iesniegts Canonical Snap vērtējumiem.",
   "app_page_snap_revert_confirm_title": "Atgriezt Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys atgriezīs „{app_name}“ uz iepriekš instalēto Snap revīziju.\n\nVai vēlaties turpināt?",
-  "app_page_snap_revert": " Atgriezt "
+  "app_page_snap_revert": " Atgriezt ",
+  "uri_install_error_title": "Neizdevās atvērt LinuxToys saiti"
 }

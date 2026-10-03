@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "متشکریم! رأی شما به رتبه‌بندی‌های Canonical Snap ارسال شد.",
   "app_page_snap_revert_confirm_title": "Snap به نسخه قبلی بازگردانده شود؟",
   "app_page_snap_revert_confirm_message": "LinuxToys برنامه '{app_name}' را به ویرایش Snap که قبلاً نصب شده بود بازمی‌گرداند.\n\nآیا می‌خواهید ادامه دهید؟",
-  "app_page_snap_revert": " بازگردانی "
+  "app_page_snap_revert": " بازگردانی ",
+  "uri_install_error_title": "پیوند LinuxToys باز نشد"
 }

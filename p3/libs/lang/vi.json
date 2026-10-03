@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Cảm ơn bạn! Phiếu bầu của bạn đã được gửi tới hệ thống xếp hạng Canonical Snap.",
   "app_page_snap_revert_confirm_title": "Hoàn nguyên Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys sẽ hoàn nguyên '{app_name}' về bản sửa đổi Snap đã được cài đặt trước đó.\n\nBạn có muốn tiếp tục không?",
-  "app_page_snap_revert": " Hoàn nguyên "
+  "app_page_snap_revert": " Hoàn nguyên ",
+  "uri_install_error_title": "Không thể mở liên kết LinuxToys"
 }

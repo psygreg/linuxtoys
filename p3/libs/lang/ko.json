@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "감사합니다! 투표가 Canonical Snap 평점에 제출되었습니다.",
   "app_page_snap_revert_confirm_title": "Snap을 이전 리비전으로 되돌리시겠습니까?",
   "app_page_snap_revert_confirm_message": "LinuxToys가 '{app_name}'을(를) 이전에 설치된 Snap 리비전으로 되돌립니다.\n\n계속하시겠습니까?",
-  "app_page_snap_revert": " 되돌리기 "
+  "app_page_snap_revert": " 되돌리기 ",
+  "uri_install_error_title": "LinuxToys 링크를 열 수 없음"
 }

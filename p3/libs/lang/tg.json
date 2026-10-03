@@ -721,5 +721,6 @@
   "app_page_rate_success_message_snap": "Ташаккур! Овози шумо ба рейтингҳои Canonical Snap фиристода шуд.",
   "app_page_snap_revert_confirm_title": "Snap ба нусхаи қаблӣ баргардонида шавад?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ро ба ревизияи Snap, ки қаблан насб шуда буд, бармегардонад.\n\nМехоҳед идома диҳед?",
-  "app_page_snap_revert": " Баргардондан "
+  "app_page_snap_revert": " Баргардондан ",
+  "uri_install_error_title": "Пайванди LinuxToys кушода нашуд"
 }
