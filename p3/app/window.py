@@ -370,6 +370,9 @@ class AppWindow(
         # watermark rendering can complete behind the startup roller, but do not let
         # the unfinished menu flash on screen.
         self.categories_view.set_opacity(0.0)
+        # Opacity only changes painting; disable input and hover handling while
+        # the invisible menu remains allocated behind the startup overlay.
+        self.categories_view.set_sensitive(False)
 
         # The parser-backed menu is populated asynchronously. Keep the already-open
         # window visually responsive while the first usable category snapshot is
@@ -2267,6 +2270,7 @@ class AppWindow(
         # its GTK work cannot contend with the opacity crossfade. Release it only
         # after the final crossfade frame has been committed.
         self._categories_startup_transition_complete = True
+        self.categories_view.set_sensitive(True)
         if self.should_start_random_timer and self.all_scripts:
             GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
         return False
