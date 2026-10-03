@@ -65,7 +65,7 @@ class AppWindow(
         self.translations = translations
 
         self.set_title("LinuxToys")
-        self._default_window_size = (920, 630)
+        self._default_window_size = self._calculate_default_window_size()
         self._last_normal_window_size = self._default_window_size
         self.set_default_size(*self._default_window_size)
         # self.set_resizable(False) ## Desabilita o redimensionamento da janela
@@ -3554,11 +3554,27 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             cache_dir = os.path.join(os.path.expanduser("~"), ".cache", "linuxtoys")
         return os.path.join(cache_dir, "window-state.json")
 
+    def _calculate_default_window_size(self):
+        """Choose an initial size in GTK logical pixels, keeping desktop margins."""
+        workarea = self._primary_monitor_workarea()
+        if workarea is None or min(workarea) <= 0:
+            return (920, 630)
+        available_width, available_height = workarea
+        width = min(1440, max(920, round(available_width * 0.72)))
+        height = min(960, max(630, round(available_height * 0.78)))
+        # Smaller displays must take precedence over the preferred minimum.
+        return (
+            max(1, min(width, int(available_width * 0.90))),
+            max(1, min(height, int(available_height * 0.90))),
+        )
+
     def _primary_monitor_workarea(self):
         """Return the primary monitor's usable (non-panel) width and height."""
         display = Gdk.Display.get_default()
         if display is not None and hasattr(display, "get_primary_monitor"):
             monitor = display.get_primary_monitor()
+            if monitor is None and display.get_n_monitors() > 0:
+                monitor = display.get_monitor(0)
             if monitor is not None:
                 area = monitor.get_workarea()
                 return area.width, area.height
