@@ -3,6 +3,46 @@
 import os
 import subprocess
 import sys
+from urllib.parse import unquote, urlparse
+
+
+GUI_PACKAGE_SUFFIXES = (
+    ".deb",
+    ".rpm",
+    ".pacman",
+    ".eopkg",
+    ".flatpak",
+    ".flatpakref",
+    ".snap",
+    ".appimage",
+    ".pkg.tar.zst",
+    ".pkg.tar.xz",
+    ".pkg.tar.gz",
+    ".pkg.tar.lz4",
+)
+
+
+def is_gui_external_request(argument):
+    """Return True for external requests that must be handled by the GUI."""
+    if not isinstance(argument, str) or not argument:
+        return False
+
+    if argument.casefold().startswith("linuxtoys://"):
+        return True
+
+    try:
+        parsed = urlparse(argument)
+        if parsed.scheme.casefold() == "file":
+            path = unquote(parsed.path)
+        elif not parsed.scheme:
+            path = argument
+        else:
+            return False
+    except (TypeError, ValueError):
+        return False
+
+    path = os.path.expanduser(path)
+    return os.path.isfile(path) and path.casefold().endswith(GUI_PACKAGE_SUFFIXES)
 
 
 def configure_launch_flags():
@@ -25,11 +65,9 @@ def configure_launch_flags():
 if __name__ == "__main__":
     configure_launch_flags()
 
-    # LinuxToys URIs are graphical activation requests, never CLI install targets.
-    if (
-        len(sys.argv) == 2
-        and sys.argv[1].casefold().startswith("linuxtoys://")
-    ):
+    # LinuxToys install URIs and supported local package files are graphical
+    # activation requests, never EASY_CLI install targets.
+    if len(sys.argv) == 2 and is_gui_external_request(sys.argv[1]):
         os.environ.pop("EASY_CLI", None)
 
     # Commands that are intrinsically headless should enter the CLI path even

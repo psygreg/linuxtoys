@@ -17,14 +17,17 @@ from . import get_app_resource_path, get_icon_path
 # Only define GUI classes if not in CLI mode
 if os.environ.get('EASY_CLI') != '1':
     class Application(Gtk.Application):
+        APPLICATION_ID = "toys.linux.LinuxToys"
+
         def __init__(self, translations, *args, **kwargs):
             kwargs.setdefault("flags", Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
-            super().__init__(*args, application_id="com.linuxtoys.app", **kwargs)
+            super().__init__(
+                *args,
+                application_id=self.APPLICATION_ID,
+                **kwargs,
+            )
             self.window = None
             self.translations = translations
-
-            # Set application properties for better desktop integration
-            self.set_application_id("com.linuxtoys.app")
 
         def do_activate(self):
             if not self.window:
