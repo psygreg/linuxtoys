@@ -808,7 +808,7 @@ def _flatpak_appstream_sources():
     return sources
 
 
-def _load_flatpak_components(generation):
+def _load_flatpak_components(generation, *, starter=False):
     """Parse local Flatpak AppStream catalogs directly into the Rust generation."""
     if not _flatpak_supported_host():
         return []
@@ -819,7 +819,7 @@ def _load_flatpak_components(generation):
         source_keys.append(
             f"flatpak:{source['scope']}:{source['installation']}:{source['remote']}:{source['arch']}"
         )
-        eol_app_ids = sorted(_flatpak_eol_app_ids(source))
+        eol_app_ids = [] if starter else sorted(_flatpak_eol_app_ids(source))
         rust_source = {
             "scope": source.get("scope", ""),
             "installation": source.get("installation", ""),
@@ -1120,7 +1120,7 @@ def load_catalog():
 def cache_needs_refresh(now=None) -> bool:
     now = time.time() if now is None else float(now)
     state = get_state()
-    if not state.get("complete") or not CATALOG_PATH.is_file() or not EXTENSIONS_PATH.is_file():
+    if state.get("starter") or not state.get("complete") or not CATALOG_PATH.is_file() or not EXTENSIONS_PATH.is_file():
         return True
 
     completed = float(state.get("last_completed") or 0)
@@ -1138,8 +1138,44 @@ def cache_needs_refresh(now=None) -> bool:
     )
 
 
-def refresh_cache(force=False, status_callback=None):
-    """Refresh the native AppStream cache synchronously.
+def _build_starter_catalog(status_callback=None):
+    """Publish one usable local generation; leave enrichment due for refresh.
+
+    Called under _LOCK by refresh_cache(). No network refresh, ratings, metrics
+    or source fingerprinting belongs in this cold-start path.
+    """
+    from .compat import get_system_compat_keys
+
+    keys = get_system_compat_keys()
+    flatpak_primary = bool({"ostree", "ublue", "steamos"}.intersection(keys))
+    generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
+    if flatpak_primary:
+        _load_flatpak_components(generation, starter=True)
+    else:
+        components = _load_appstream_components()
+        for start in range(0, len(components), CHECKPOINT_EVERY):
+            generation.add_native([
+                _native_component_payload(component)
+                for component in components[start:start + CHECKPOINT_EVERY]
+            ])
+
+    generation.publish_extensions(os.fspath(EXTENSIONS_PATH))
+    changed, count = generation.publish(os.fspath(CATALOG_PATH), False)
+    state = _default_state()
+    # Complete means this published generation is usable. Starter separately
+    # records that enrichment is still due, including after an interrupted run.
+    state.update({"complete": True, "starter": True, "count": int(count)})
+    _atomic_json_write(STATE_PATH, state)
+    if status_callback:
+        status_callback("ready")
+    return {"success": True, "changed": bool(changed), "count": int(count), "starter": True}
+
+
+def refresh_cache(force=False, status_callback=None, *, starter=False):
+    """Refresh the AppStream cache synchronously.
+
+    ``starter`` publishes only the primary local source on a cold start. A
+    subsequent ordinary refresh constructs and publishes the full generation.
 
     Intended to run on a worker thread.  Returns a result dictionary containing
     ``changed``, ``count`` and, on failure, ``error``.  Existing completed data is
@@ -1162,6 +1198,18 @@ def refresh_cache(force=False, status_callback=None):
             status_callback("building")
 
         try:
+            if starter:
+                if not CATALOG_PATH.is_file():
+                    return _build_starter_catalog(status_callback)
+                state = get_state()
+                if state.get("starter"):
+                    # Resume an interrupted enrichment without blocking startup
+                    # on a full build or replacing the usable starter again.
+                    if status_callback:
+                        status_callback("ready")
+                    return {"success": True, "changed": False,
+                            "count": int(state.get("count") or 0), "starter": True}
+
             published_state = _read_json(STATE_PATH, {})
             reuse_previous_entries = (
                 isinstance(published_state, dict)

@@ -666,7 +666,7 @@ class AppWindow(
             return True
         return self._start_appstream_cache()
 
-    def _start_appstream_cache(self):
+    def _start_appstream_cache(self, *, force=False):
         """Refresh AppStream metadata on its background worker."""
         if self._appstream_cache_started:
             return False
@@ -678,7 +678,11 @@ class AppWindow(
 
         def worker():
             initial_build = self._appstream_initial_build_pending
-            result = appstream_cache.refresh_cache(status_callback=report_state)
+            result = appstream_cache.refresh_cache(
+                force=force,
+                status_callback=report_state,
+                starter=initial_build,
+            )
             if not result.get("success"):
                 logger.warning(
                     "AppStream catalog refresh failed: %s",
@@ -708,6 +712,7 @@ class AppWindow(
                     self._finish_initial_appstream_build,
                     changed,
                     prepared,
+                    bool(result.get("starter")),
                 )
             elif changed:
                 GLib.idle_add(self._apply_appstream_catalog)
@@ -719,9 +724,21 @@ class AppWindow(
         ).start()
         return False
 
-    def _finish_initial_appstream_build(self, catalog_changed, prepared):
+    def _start_appstream_enrichment_after_startup(self):
+        """Keep the starter snapshot until one complete enrichment is ready."""
+        if not self._categories_startup_transition_complete:
+            return True
+        self._appstream_cache_started = False
+        self._start_appstream_cache(force=True)
+        return False
+
+    def _finish_initial_appstream_build(self, catalog_changed, prepared, starter=False):
         """Release first-run startup after AppStream catalog/pickle preparation."""
         self._appstream_initial_build_pending = False
+        if starter:
+            # Wait for the starter's parser/GTK handoff before allowing the full
+            # generation to replace its on-disk/runtime caches.
+            GLib.timeout_add(250, self._start_appstream_enrichment_after_startup)
         if hasattr(self, "categories_loading_label"):
             self.categories_loading_label.hide()
 
