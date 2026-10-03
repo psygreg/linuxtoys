@@ -780,14 +780,6 @@ class AppWindow(
         """
 
         category_cache = self.category_cache
-        language_debug = bool(getattr(self, "_language_transition_active", False))
-        if language_debug:
-            self._language_debug(
-                "runtime cache: generation created",
-                catalog_refresh=catalog_refresh,
-                category_cache_id=id(category_cache),
-                script_cache_id=id(self.script_cache),
-            )
         script_cache = self.script_cache
         translations = self.translations
         search_engine = self.search_engine
@@ -894,20 +886,9 @@ class AppWindow(
             schedule_git_sync()
 
         def publish_full_featured(featured):
-            if language_debug:
-                self._language_debug(
-                    "runtime cache: publish_full_featured entered",
-                    featured=len(featured),
-                    generation_current=self.category_cache is category_cache,
-                )
             if self.category_cache is not category_cache:
                 return False
             self.all_scripts = featured
-            if language_debug:
-                self._language_debug(
-                    "runtime cache: all_scripts published",
-                    count=len(featured),
-                )
             self._invalidate_featured_eligibility_cache()
             if (
                 self.should_start_random_timer
@@ -919,15 +900,6 @@ class AppWindow(
 
         def publish_completed_runtime(prepared_search_query="", prepared_search_results=None):
             """Refresh only the currently visible secondary view after cache swap."""
-            if language_debug:
-                self._language_debug(
-                    "runtime cache: publish_completed_runtime entered",
-                    generation_current=(
-                        self.category_cache is category_cache
-                        and self.script_cache is script_cache
-                    ),
-                    visible=self.main_stack.get_visible_child_name(),
-                )
             if self.category_cache is not category_cache or self.script_cache is not script_cache:
                 return False
 
@@ -966,43 +938,25 @@ class AppWindow(
 
         def populate_in_background():
             try:
-                if language_debug:
-                    self._language_debug("runtime cache worker: CategoryCache.populate begin")
                 category_cache.populate(
                     translations,
                     top_level_ready=top_level_ready,
                     top_level_ready_min_scripts=10,
                 )
-                if language_debug:
-                    self._language_debug(
-                        "runtime cache worker: CategoryCache.populate complete",
-                        categories=len(category_cache.get_categories()),
-                    )
 
                 # A scripts sync/language change may have swapped cache objects while
                 # this worker was parsing the previous source. Never publish stale data.
                 if self.category_cache is not category_cache:
                     return
 
-                if language_debug:
-                    self._language_debug("runtime cache worker: collect full Featured begin")
                 full_featured = collect_featured(
                     category_cache.get_categories(),
                     category_cache.scripts_by_category,
                     include_appstream=True,
                 )
-                if language_debug:
-                    self._language_debug(
-                        "runtime cache worker: collect full Featured complete",
-                        count=len(full_featured),
-                    )
                 GLib.idle_add(publish_full_featured, full_featured)
 
-                if language_debug:
-                    self._language_debug("runtime cache worker: ScriptCache.populate begin")
                 script_cache.populate_from_category_cache(category_cache)
-                if language_debug:
-                    self._language_debug("runtime cache worker: ScriptCache.populate complete")
 
                 prepared_search_results = None
                 if language_search_query:
@@ -1011,8 +965,6 @@ class AppWindow(
                     # Keep it off the main loop so Gtk.Spinner continues to animate.
                     prepared_search_results = search_engine.search(language_search_query)
 
-                if language_debug:
-                    self._language_debug("runtime cache worker: scheduling completed publication")
                 GLib.idle_add(
                     publish_completed_runtime,
                     language_search_query,
@@ -1020,11 +972,6 @@ class AppWindow(
                 )
                 GLib.idle_add(self._refresh_installed_features_view)
             except Exception as e:
-                if language_debug:
-                    self._language_debug(
-                        "runtime cache worker: EXCEPTION",
-                        error=repr(e),
-                    )
                 print(f"Error populating runtime caches: {e}")
             finally:
                 # Do not suppress synchronization merely because one parser entry
@@ -2384,13 +2331,7 @@ class AppWindow(
         therefore never route the persistent root FlowBox through _render_categories().
         Match existing cards by their stable path and update only translated metadata.
         """
-        self._language_debug("root translation rebind: begin")
         categories = parser.get_categories(self.translations)
-        self._language_debug(
-            "root translation rebind: parser categories loaded",
-            categories=len(categories),
-            existing_children=len(self.categories_flowbox.get_children()),
-        )
         specials_category = {
             "name": self.translations.get("specials", "Specials"),
             "description": self.translations.get(
@@ -2440,10 +2381,6 @@ class AppWindow(
             self._language_categories_allocation_complete = False
             self.categories_flowbox.queue_resize()
             self.categories_view.queue_resize()
-            self._language_debug(
-                "root translation rebind: allocation barrier armed",
-                expected_children=self._language_categories_expected_children,
-            )
 
 
     def _render_categories(self, categories):
@@ -3865,56 +3802,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
         self.get_application().quit()
 
-    def _language_debug(self, event, **state):
-        """Emit focused language-transition diagnostics without changing behavior."""
-        try:
-            elapsed = ""
-            started = getattr(self, "_language_debug_started_us", None)
-            if started is not None:
-                elapsed = f" +{(GLib.get_monotonic_time() - started) / 1000.0:.1f}ms"
-            thread_name = threading.current_thread().name
-            details = " ".join(f"{key}={value!r}" for key, value in state.items())
-            print(
-                f"[LANGDBG]{elapsed} [{thread_name}] {event}"
-                + (f" | {details}" if details else ""),
-                flush=True,
-            )
-        except Exception as exc:
-            print(f"[LANGDBG] debug logging failed: {exc}", flush=True)
-
-    def _language_debug_wait_state(self, blocker, **extra):
-        """Log a wait blocker only when it changes, avoiding per-frame spam."""
-        state = (
-            blocker,
-            self.main_stack.get_visible_child_name(),
-            getattr(self, "_language_transition_phase", None),
-            getattr(self, "_language_categories_render_pending", None),
-            getattr(self, "_language_categories_waiting_for_allocation", None),
-            getattr(self, "_language_categories_allocation_complete", None),
-            len(getattr(self, "all_scripts", ()) or ()),
-            getattr(self, "_language_featured_refresh_started", None),
-            getattr(self, "_language_featured_allocation_complete", None),
-            getattr(self, "_language_search_refresh_pending", None),
-            getattr(self, "_language_visible_allocation_complete", None),
-        )
-        if state == getattr(self, "_language_debug_last_wait_state", None):
-            return
-        self._language_debug_last_wait_state = state
-        self._language_debug(
-            f"WAIT: {blocker}",
-            visible=state[1],
-            phase=state[2],
-            categories_render_pending=state[3],
-            categories_waiting_allocation=state[4],
-            categories_allocation_complete=state[5],
-            all_scripts=state[6],
-            featured_refresh_started=state[7],
-            featured_allocation_complete=state[8],
-            search_refresh_pending=state[9],
-            visible_allocation_complete=state[10],
-            **extra,
-        )
-
     def _on_language_visible_size_allocate(self, widget, allocation):
         """Commit a translated non-category view only after a fresh allocation."""
         if not getattr(self, "_language_transition_active", False):
@@ -3929,12 +3816,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                 pass
             self._language_visible_allocate_handler = None
         self._language_visible_allocation_complete = True
-        self._language_debug(
-            "visible allocation complete",
-            widget=type(widget).__name__,
-            width=allocation.width,
-            height=allocation.height,
-        )
 
     def _arm_language_visible_allocation_barrier(self, widget):
         """Require an allocation produced by the translated rebuild, not an old one."""
@@ -3950,10 +3831,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self._language_visible_allocate_handler = widget.connect(
             "size-allocate", self._on_language_visible_size_allocate
         )
-        self._language_debug(
-            "armed visible allocation barrier",
-            widget=type(widget).__name__,
-        )
         widget.queue_resize()
 
     def _on_language_featured_size_allocate(self, grid, allocation):
@@ -3967,12 +3844,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             grid.disconnect(handler_id)
             self._language_featured_allocate_handler = None
         self._language_featured_allocation_complete = True
-        self._language_debug(
-            "featured allocation complete",
-            width=allocation.width,
-            height=allocation.height,
-            children=len(grid.get_children()),
-        )
 
     def _show_language_search_loading(self):
         """Replace the old Search snapshot with a centered roller while translating."""
@@ -4033,22 +3904,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
     def on_language_changed(self, new_language_code):
         """Cross-fade a complete language refresh instead of exposing rebuild work."""
         if getattr(self, "_language_transition_active", False):
-            self._language_debug(
-                "language change requested while transition is already active",
-                requested=new_language_code,
-                current_target=getattr(self, "_language_transition_target", None),
-                phase=getattr(self, "_language_transition_phase", None),
-            )
             self._language_transition_target = new_language_code
             return
 
-        self._language_debug_started_us = GLib.get_monotonic_time()
-        self._language_debug_last_wait_state = None
-        self._language_debug(
-            "language change requested",
-            requested=new_language_code,
-            visible=self.main_stack.get_visible_child_name(),
-        )
         self._language_transition_active = True
         self._language_transition_target = new_language_code
         self._language_transition_search_query = (
@@ -4123,24 +3981,17 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             return True
 
         self._language_transition_source = None
-        self._language_debug("fade phase complete", phase=phase)
         if phase == "out":
             if not search_transition_owned:
                 self.main_stack.set_opacity(0.0)
             self._language_transition_phase = "waiting"
-            self._language_debug(
-                "entering hidden language rebuild",
-                target=self._language_transition_target,
-            )
             self._apply_language_change_hidden(self._language_transition_target)
-            self._language_debug("hidden language rebuild scheduled; arming readiness waiter")
             GLib.idle_add(self._wait_for_language_render_ready)
         else:
             self.main_stack.set_opacity(1.0)
             self._language_transition_phase = None
             self._language_transition_started_us = None
             self._language_transition_active = False
-            self._language_debug("language transition committed")
             self._language_transition_target = None
             self._language_featured_refresh_started = False
 
@@ -4173,9 +4024,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         """Apply translations while main-stack content is fully transparent."""
         from . import lang_utils
 
-        self._language_debug("hidden apply: loading translations", target=new_language_code)
         self.translations = lang_utils.load_translations(new_language_code)
-        self._language_debug("hidden apply: translations loaded")
         self.search_engine.translations = self.translations
         self.script_cache = search_helper.ScriptCache()
         self.category_cache = search_helper.CategoryCache()
@@ -4192,9 +4041,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # The entire stack is already transparent. Reset Featured without
         # collapsing its revealers, otherwise the SLIDE_DOWN animation changes the
         # menu requisition while translated category geometry is being measured.
-        self._language_debug("hidden apply: preparing Featured rebuild")
         self._prepare_featured_language_rebuild()
-        self._language_debug("hidden apply: Featured prepared")
 
         # Establish every visible-view readiness flag before the replacement cache
         # worker is allowed to publish.  Search in particular sets
@@ -4202,20 +4049,11 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # publish_completed_runtime() to clear the flag and arm its allocation
         # barrier, only for this refresh to set the flag back to True afterward.
         # That left the language transaction permanently stuck in the waiting phase.
-        self._language_debug("hidden apply: refreshing translated GTK state")
         self._refresh_ui_with_new_translations()
-        self._language_debug(
-            "hidden apply: translated GTK state refreshed",
-            categories_render_pending=self._language_categories_render_pending,
-            categories_waiting_allocation=self._language_categories_waiting_for_allocation,
-            categories_allocation_complete=self._language_categories_allocation_complete,
-        )
         # The root FlowBox has already been translated in place above. Rebuild only
         # the backing parser/search/Featured data; top_level_ready must not call
         # _render_categories() for a mere locale change.
-        self._language_debug("hidden apply: starting replacement runtime-cache worker")
         self._populate_runtime_caches(catalog_refresh=True)
-        self._language_debug("hidden apply: replacement runtime-cache worker started")
 
     def _wait_for_language_render_ready(self):
         """Reveal only after structural and native allocation-dependent work is done."""
@@ -4225,16 +4063,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         visible_name = self.main_stack.get_visible_child_name()
         root = self.main_stack.get_visible_child()
         if root is None:
-            self._language_debug_wait_state("visible root is None")
             return True
 
         allocation = root.get_allocation()
         if allocation.width <= 1 or allocation.height <= 1:
-            self._language_debug_wait_state(
-                "visible root allocation",
-                width=allocation.width,
-                height=allocation.height,
-            )
             root.queue_resize()
             return True
 
@@ -4243,11 +4075,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # guaranteed to receive a fresh allocation, so allowing their cooperative
         # rebuild to block Search/utility/app-page transitions can deadlock forever.
         if visible_name == "categories" and self._language_categories_render_pending:
-            self._language_debug_wait_state("categories render pending")
             return True
 
         if visible_name == "search" and self._language_search_refresh_pending:
-            self._language_debug_wait_state("search refresh pending")
             return True
 
         if (
@@ -4263,21 +4093,12 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             # allocations are deliberately insufficient here.
             if not self._language_categories_allocation_complete:
                 allocation = self.categories_flowbox.get_allocation()
-                self._language_debug_wait_state(
-                    "categories allocation incomplete",
-                    width=allocation.width,
-                    height=allocation.height,
-                    children=len(self.categories_flowbox.get_children()),
-                    expected=getattr(self, "_language_categories_expected_children", 0),
-                )
                 self.categories_flowbox.queue_resize()
                 self.categories_view.queue_resize()
                 return True
             if not self.all_scripts:
-                self._language_debug_wait_state("all_scripts is empty")
                 return True
             if not self._language_featured_refresh_started:
-                self._language_debug("readiness: starting Featured language refresh")
                 self._language_featured_refresh_started = True
                 self._language_featured_allocation_complete = False
                 self._language_featured_allocate_handler = (
@@ -4305,10 +4126,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                         self.random_scripts_flowbox.disconnect(handler_id)
                         self._language_featured_allocate_handler = None
                     self._language_featured_allocation_complete = True
-                    self._language_debug(
-                        "Featured intentionally absent: zero layout capacity; "
-                        "language barrier complete"
-                    )
                     return True
 
                 self.random_scripts_flowbox.queue_resize()
@@ -4322,16 +4139,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                     and self._calculate_random_scripts_count() > 0
                 )
             ):
-                self._language_debug_wait_state(
-                    "featured not ready",
-                    children=len(featured_children),
-                    capacity=self._calculate_random_scripts_count(),
-                )
                 return True
 
         if visible_name != "categories":
             if not self._language_visible_allocation_complete:
-                self._language_debug_wait_state("visible allocation incomplete")
                 root.queue_resize()
                 return True
 
@@ -4339,7 +4150,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             # screenshots, extension/body layout, and their adaptive Featured fill.
             if visible_name == "app_page" and hasattr(root, "language_render_ready"):
                 if not root.language_render_ready():
-                    self._language_debug_wait_state("app page language_render_ready is false")
                     root.queue_resize()
                     return True
 
@@ -4347,11 +4157,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # small batch per main-loop turn and do not reveal zero/stale allocations.
         gui_rs.flush_category_watermarks(root, 2)
         if gui_rs.has_pending_render_work(root):
-            self._language_debug_wait_state("Rust render work pending")
             root.queue_resize()
             return True
 
-        self._language_debug("all language readiness barriers passed; starting fade in")
         self._language_transition_phase = "in"
         self._language_transition_started_us = GLib.get_monotonic_time()
         self._language_transition_duration_ms = 180
@@ -4565,13 +4373,6 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                         self._language_visible_allocate_handler = None
                     self._language_visible_allocate_widget = None
                     self._language_visible_allocation_complete = True
-                    self._language_debug(
-                        "category language refresh reused valid visible allocation",
-                        widget=type(category_view).__name__,
-                        width=allocation.width,
-                        height=allocation.height,
-                        visible=self.main_stack.get_visible_child_name(),
-                    )
 
         # Update footer if in checklist mode
         if (

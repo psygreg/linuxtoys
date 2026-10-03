@@ -17,8 +17,14 @@ is_intel && { pkg_flat org.freedesktop.Platform.VAAPI.Intel/x86_64/25.08 || fata
 askpass
 # check dependency for Pipewire Audio Capture plugin, xwayland and virtual camera
 pkg_install wireplumber
-if is_arch || is_cachy || is_solus; then
+if is_arch || is_cachy; then
     pkg_install xorg-xwayland v4l2loopback-dkms
+elif is_solus; then
+    if [[ "$(uname -r)" == *.current ]]; then
+        pkg_install xorg-xwayland v4l2loopback-current
+    else
+        pkg_install xorg-xwayland v4l2loopback
+    fi
 elif is_debian || is_ubuntu; then
     pkg_exists xwayland v4l2loopback-dkms
     sudo_ env DEBIAN_FRONTEND=noninteractive apt-get install -y "${pkg_notfound[@]}"
