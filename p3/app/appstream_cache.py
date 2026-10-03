@@ -56,6 +56,7 @@ def _snap_supported_host() -> bool:
             not is_containerized()
             and "systemd" in compat
             and "ostree" not in compat
+            and not {"steamos", "dakota", "gnomeos", "kde-linux"}.intersection(compat)
             and shutil.which("snap") is not None
         )
     except (ImportError, AttributeError):
@@ -604,7 +605,7 @@ def _native_appstream_supported_host() -> bool:
     try:
         from .compat import get_system_compat_keys
 
-        return "steamos" not in get_system_compat_keys()
+        return not {"steamos", "dakota", "gnomeos", "kde-linux"}.intersection(get_system_compat_keys())
     except (ImportError, AttributeError):
         return True
 
@@ -1147,7 +1148,7 @@ def _build_starter_catalog(status_callback=None):
     from .compat import get_system_compat_keys
 
     keys = get_system_compat_keys()
-    flatpak_primary = bool({"ostree", "ublue", "steamos"}.intersection(keys))
+    flatpak_primary = bool({"ostree", "ublue", "steamos", "dakota", "gnomeos", "kde-linux"}.intersection(keys))
     generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
     if flatpak_primary:
         _load_flatpak_components(generation, starter=True)

@@ -302,6 +302,9 @@ def is_supported_system():
         "cachy",
         "arch",
         "steamos",
+        "dakota",
+        "gnomeos",
+        "kde-linux",
         "fedora",
         "rhel",
         "suse",
@@ -338,7 +341,12 @@ def get_system_compat_keys():
         from .dev_mode import get_effective_compat_keys, is_dev_mode_enabled
 
         if is_dev_mode_enabled():
-            return get_effective_compat_keys()
+            keys = set(get_effective_compat_keys())
+            if keys.intersection({"dakota", "gnomeos", "kde-linux"}):
+                keys.difference_update({"arch", "cachy", "manjaro", "debian", "ubuntu",
+                                        "fedora", "rhel", "suse", "solus", "ostree", "ublue"})
+                keys.add("steamos")
+            return keys
     except ImportError:
         # dev_mode not available, continue with normal behavior
         pass
@@ -412,6 +420,25 @@ def get_system_compat_keys():
             keys = {"ublue", "ostree"}
         else:
             keys = {"ostree"}
+
+    # These hosts share SteamOS's installation policy, but have no supported
+    # make-build container workaround. Keep their identity as an extra key so
+    # repository policy can reject make even when it permits it on SteamOS.
+    variant = " ".join(os_release.get(field, "").lower() for field in
+                       ("VARIANT_ID", "VARIANT", "NAME", "PRETTY_NAME"))
+    restricted_host = None
+    if id_val in {"dakota", "bluefin-dakota"} or (
+        id_val == "bluefin" and ("dakota" in variant or "gnomeos" in id_like.split())
+    ):
+        restricted_host = "dakota"
+    elif id_val == "gnomeos" or "gnomeos" in id_like.split():
+        restricted_host = "gnomeos"
+    elif id_val == "kde-linux":
+        restricted_host = "kde-linux"
+    if restricted_host:
+        # Do not inherit Arch/Fedora/etc. install privileges via ID_LIKE or
+        # accidentally classify bootc hosts as rpm-ostree package-layering hosts.
+        keys = {"steamos", restricted_host}
 
     # Add GPU compatibility keys
     gpu_keys = get_gpu_compat_keys()

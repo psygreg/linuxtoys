@@ -1084,7 +1084,7 @@ pub(crate) fn build_appstream_catalog(
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let compat:std::collections::HashSet<String>=compat_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let prefer_native=compat.iter().any(|s|matches!(s.as_str(),"arch"|"cachy"|"solus"|"fedora"));
-    let steamos=compat.contains("steamos");
+    let steamos=compat.iter().any(|key| matches!(key.as_str(), "steamos"|"dakota"|"gnomeos"|"kde-linux"));
     let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,false);
     let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,true);
     let result = adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);
@@ -1582,7 +1582,7 @@ pub(crate) fn build_appstream_catalog_index(
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let compat:std::collections::HashSet<String>=compat_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let prefer_native=compat.iter().any(|s|matches!(s.as_str(),"arch"|"cachy"|"solus"|"fedora"));
-    let steamos=compat.contains("steamos");
+    let steamos=compat.iter().any(|key| matches!(key.as_str(), "steamos"|"dakota"|"gnomeos"|"kde-linux"));
     let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,false);
     let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,true);
     let entries=adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);

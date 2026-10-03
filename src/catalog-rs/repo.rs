@@ -162,8 +162,8 @@ fn normalize_package_names_json(v: Option<&Value>) -> Option<Vec<String>> {
     }
 }
 
-const OS_KEYS_RS: &[&str] = &["debian","ubuntu","cachy","arch","steamos","fedora","rhel","suse","ostree","ublue","zorin","solus","pika","deepin","manjaro"];
-const TYPE_PRIORITY_RS: &[&str] = &["ublue","steamos","deepin","zorin","pika","manjaro","cachy","ostree","ubuntu","debian","fedora","rhel","suse","solus","arch"];
+const OS_KEYS_RS: &[&str] = &["debian","ubuntu","cachy","arch","dakota","gnomeos","kde-linux","steamos","fedora","rhel","suse","ostree","ublue","zorin","solus","pika","deepin","manjaro"];
+const TYPE_PRIORITY_RS: &[&str] = &["dakota","gnomeos","kde-linux","ublue","steamos","deepin","zorin","pika","manjaro","cachy","ostree","ubuntu","debian","fedora","rhel","suse","solus","arch"];
 const VALID_TYPES_RS: &[&str] = &["git","tar","bin","make","flathub","snap","native","repository","url","external"];
 const DESKTOP_KEYS_RS: &[&str] = &["gnome","plasma","hyprland","sway","other"];
 
@@ -366,7 +366,9 @@ fn runtime_compatible_rs(entry:&serde_json::Map<String,Value>, keys:&[String], t
     if !override_container && containerized && (sandboxed || entry.get("container").and_then(Value::as_str).unwrap_or("allow").trim().eq_ignore_ascii_case("deny")) { return false; }
     if dev_plain { return true; }
     if let Some(v)=entry.get("wsl").and_then(Value::as_str) { if v.trim().eq_ignore_ascii_case("yes") != wsl { return false; } }
-    if compat_has(keys,"steamos") {
+    let immutable_no_make = ["dakota", "gnomeos", "kde-linux"].iter().any(|k| compat_has(keys, k));
+    if immutable_no_make && ty == "make" { return false; }
+    if compat_has(keys,"steamos") || immutable_no_make {
         let user_make=ty=="make"&&!make_uses_sudo_rs(entry);
         match ty {"git"|"flathub"|"tar"|"bin"|"external"=>{},"make" if user_make=>{},"url" if matches!(resolve_url_kind_rs(entry,keys),Some("flatpak"|"appimage"|"tar"|"bin"))=>{},_=>return false}
         if !user_make && entry.get("dependencies").and_then(Value::as_array).is_some_and(|a|a.iter().any(|d|d.get("type").and_then(Value::as_str)==Some("native"))) {return false}

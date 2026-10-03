@@ -1486,7 +1486,7 @@ class AppWindow(
 
     def _local_package_supported_on_host(self, kind):
         if kind == "snap":
-            return "steamos" not in compat.get_system_compat_keys()
+            return not {"steamos", "dakota", "gnomeos", "kde-linux"}.intersection(compat.get_system_compat_keys())
         if kind in ("flatpak", "flatpakref"):
             return "systemd" in compat.get_system_compat_keys()
         if kind == "appimage":

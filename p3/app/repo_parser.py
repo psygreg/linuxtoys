@@ -40,6 +40,9 @@ OS_KEYS = {
     "ubuntu",
     "cachy",
     "arch",
+    "dakota",
+    "gnomeos",
+    "kde-linux",
     "steamos",
     "fedora",
     "rhel",
@@ -69,6 +72,9 @@ URL_PACKAGE_KEYS = {
 
 NATIVE_PACKAGE_KEY_PRIORITY = (
     "ublue",
+    "dakota",
+    "gnomeos",
+    "kde-linux",
     "steamos",
     "deepin",
     "zorin",
@@ -188,6 +194,7 @@ def _make_command_uses_sudo(entry):
 def _steamos_user_make(entry, compat_keys):
     return (
         "steamos" in compat_keys
+        and not compat_keys.intersection({"dakota", "gnomeos", "kde-linux"})
         and _resolve_install_type(entry, compat_keys) == "make"
         and not _make_command_uses_sudo(entry)
     )
@@ -1007,6 +1014,10 @@ def create_install_script(entry):
     icon = _metadata_line(entry.get("icon", "application-x-executable"))
 
     compat_keys = get_system_compat_keys()
+    if compat_keys.intersection({"dakota", "gnomeos", "kde-linux"}) and (
+        _resolve_install_type(entry, compat_keys) == "make"
+    ):
+        raise ValueError("Make repository installations are unsupported on this immutable host")
 
     if not _validate_tarball_post_requirement(entry, compat_keys):
         raise ValueError(
