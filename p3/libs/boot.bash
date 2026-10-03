@@ -11,11 +11,11 @@ bootloader_upd() {
             if command -v limine-mkinitcpio >/dev/null 2>&1; then
                 sudo_ limine-mkinitcpio || die "Unable to update bootloader"
             elif command -v sdboot-manage >/dev/null 2>&1 &&
-                bootctl is-installed >/dev/null 2>&1; then
+                sudo_ bootctl is-installed >/dev/null 2>&1; then
                 sudo_ sdboot-manage gen || die "Unable to update bootloader"
             elif command -v grub-mkconfig >/dev/null 2>&1; then
                 sudo_ grub-mkconfig -o /boot/grub/grub.cfg || die "Unable to update bootloader"
-            elif command -v bootctl >/dev/null 2>&1 && bootctl is-installed >/dev/null 2>&1; then
+            elif command -v bootctl >/dev/null 2>&1 && sudo_ bootctl is-installed >/dev/null 2>&1; then
                 sudo_ bootctl update || die "Unable to update bootloader"
             else
                 die "Unable to determine installed bootloader"
@@ -24,7 +24,7 @@ bootloader_upd() {
         elif is_ubuntu; then
             sudo_ update-grub || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
-        elif is_debian; then 
+        elif is_debian; then
             {
                 sudo_ update-grub && exit_status=0 || {
                     if sudo_ bootctl is-installed >/dev/null 2>&1; then
@@ -34,7 +34,7 @@ bootloader_upd() {
                         exit_status=1
                     fi
                 }
-            } 
+            }
             [ "$exit_status" -eq 0 ] || fatal "Unable to update bootloader"
             _append_transmap "updated bootloader"
         elif is_solus; then
