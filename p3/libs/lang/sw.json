@@ -711,5 +711,13 @@
   "package_view_format_eopkg": "Kifurushi cha Solus",
   "package_view_format_flatpak": "Kifurushi cha Flatpak",
   "package_view_format_flatpakref": "Rejeleo la Flatpak",
-  "package_view_format_snap": "Kifurushi cha Snap"
+  "package_view_format_snap": "Kifurushi cha Snap",
+  "app_page_remove_data": "Ondoa data",
+  "app_page_remove_data_confirm_title": "Ondoa data ya programu?",
+  "app_page_remove_data_confirm_message": "Hii itaondoa kabisa data ya mtumiaji iliyobaki ya '{app_name}'. Kitendo hiki hakiwezi kutenduliwa.",
+  "app_page_remove_data_failed_title": "Haikuweza kuondoa data ya programu",
+  "app_page_rate_success_message_snap": "Asante! Kura yako imetumwa kwenye ukadiriaji wa Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Rejesha Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys itarejesha '{app_name}' kwenye toleo la Snap lililosakinishwa awali.\n\nUnataka kuendelea?",
+  "app_page_snap_revert": " Rejesha "
 }

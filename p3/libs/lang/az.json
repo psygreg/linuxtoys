@@ -712,5 +712,13 @@
   "package_view_format_eopkg": "Solus paketi",
   "package_view_format_flatpak": "Flatpak paketi",
   "package_view_format_flatpakref": "Flatpak istinadı",
-  "package_view_format_snap": "Snap paketi"
+  "package_view_format_snap": "Snap paketi",
+  "app_page_remove_data": "Məlumatları sil",
+  "app_page_remove_data_confirm_title": "Tətbiq məlumatları silinsin?",
+  "app_page_remove_data_confirm_message": "Bu, '{app_name}' üçün qalan istifadəçi məlumatlarını həmişəlik siləcək. Bu əməliyyatı geri qaytarmaq mümkün deyil.",
+  "app_page_remove_data_failed_title": "Tətbiq məlumatlarını silmək mümkün olmadı",
+  "app_page_rate_success_message_snap": "Təşəkkür edirik! Səsiniz Canonical Snap reytinqlərinə göndərildi.",
+  "app_page_snap_revert_confirm_title": "Snap əvvəlki versiyaya qaytarılsın?",
+  "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}' tətbiqini əvvəllər quraşdırılmış Snap reviziyasına qaytaracaq.\n\nDavam etmək istəyirsiniz?",
+  "app_page_snap_revert": " Geri qaytar "
 }

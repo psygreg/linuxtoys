@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus-pakki",
   "package_view_format_flatpak": "Flatpak-pakki",
   "package_view_format_flatpakref": "Flatpak-tilvísun",
-  "package_view_format_snap": "Snap-pakki"
+  "package_view_format_snap": "Snap-pakki",
+  "app_page_remove_data": "Fjarlægja gögn",
+  "app_page_remove_data_confirm_title": "Fjarlægja gögn forritsins?",
+  "app_page_remove_data_confirm_message": "Þetta fjarlægir varanlega þau notandagögn sem eftir eru fyrir '{app_name}'. Ekki er hægt að afturkalla þessa aðgerð.",
+  "app_page_remove_data_failed_title": "Ekki tókst að fjarlægja gögn forritsins",
+  "app_page_rate_success_message_snap": "Takk! Atkvæði þitt var sent inn í Canonical Snap-einkunnir.",
+  "app_page_snap_revert_confirm_title": "Færa Snap aftur?",
+  "app_page_snap_revert_confirm_message": "LinuxToys færir '{app_name}' aftur í áður uppsetta Snap-útgáfu.\n\nViltu halda áfram?",
+  "app_page_snap_revert": " Færa aftur "
 }

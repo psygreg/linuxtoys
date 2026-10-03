@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus pakotne",
   "package_view_format_flatpak": "Flatpak pakotne",
   "package_view_format_flatpakref": "Flatpak atsauce",
-  "package_view_format_snap": "Snap pakotne"
+  "package_view_format_snap": "Snap pakotne",
+  "app_page_remove_data": "Noņemt datus",
+  "app_page_remove_data_confirm_title": "Noņemt lietotnes datus?",
+  "app_page_remove_data_confirm_message": "Tas neatgriezeniski noņems atlikušos „{app_name}“ lietotāja datus. Šo darbību nevar atsaukt.",
+  "app_page_remove_data_failed_title": "Neizdevās noņemt lietotnes datus",
+  "app_page_rate_success_message_snap": "Paldies! Jūsu balsojums tika iesniegts Canonical Snap vērtējumiem.",
+  "app_page_snap_revert_confirm_title": "Atgriezt Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys atgriezīs „{app_name}“ uz iepriekš instalēto Snap revīziju.\n\nVai vēlaties turpināt?",
+  "app_page_snap_revert": " Atgriezt "
 }

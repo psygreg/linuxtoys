@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Бастаи Solus",
   "package_view_format_flatpak": "Бастаи Flatpak",
   "package_view_format_flatpakref": "Истиноди Flatpak",
-  "package_view_format_snap": "Бастаи Snap"
+  "package_view_format_snap": "Бастаи Snap",
+  "app_page_remove_data": "Нест кардани маълумот",
+  "app_page_remove_data_confirm_title": "Маълумоти барнома нест карда шавад?",
+  "app_page_remove_data_confirm_message": "Ин маълумоти боқимондаи корбари '{app_name}'-ро ба таври доимӣ нест мекунад. Ин амалро бекор кардан мумкин нест.",
+  "app_page_remove_data_failed_title": "Маълумоти барномаро нест кардан муяссар нашуд",
+  "app_page_rate_success_message_snap": "Ташаккур! Овози шумо ба рейтингҳои Canonical Snap фиристода шуд.",
+  "app_page_snap_revert_confirm_title": "Snap ба нусхаи қаблӣ баргардонида шавад?",
+  "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ро ба ревизияи Snap, ки қаблан насб шуда буд, бармегардонад.\n\nМехоҳед идома диҳед?",
+  "app_page_snap_revert": " Баргардондан "
 }

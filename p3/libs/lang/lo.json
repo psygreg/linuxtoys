@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "ແພັກເກດ Solus",
   "package_view_format_flatpak": "ແພັກເກດ Flatpak",
   "package_view_format_flatpakref": "ການອ້າງອີງ Flatpak",
-  "package_view_format_snap": "ແພັກເກດ Snap"
+  "package_view_format_snap": "ແພັກເກດ Snap",
+  "app_page_remove_data": "ລຶບຂໍ້ມູນ",
+  "app_page_remove_data_confirm_title": "ລຶບຂໍ້ມູນແອັບ?",
+  "app_page_remove_data_confirm_message": "ການດຳເນີນການນີ້ຈະລຶບຂໍ້ມູນຜູ້ໃຊ້ທີ່ເຫຼືອຂອງ '{app_name}' ຢ່າງຖາວອນ. ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.",
+  "app_page_remove_data_failed_title": "ບໍ່ສາມາດລຶບຂໍ້ມູນແອັບໄດ້",
+  "app_page_rate_success_message_snap": "ຂອບໃຈ! ຄະແນນຂອງທ່ານຖືກສົ່ງໄປຍັງການຈັດອັນດັບ Canonical Snap ແລ້ວ.",
+  "app_page_snap_revert_confirm_title": "ຍ້ອນ Snap ກັບ?",
+  "app_page_snap_revert_confirm_message": "LinuxToys ຈະຍ້ອນ '{app_name}' ກັບໄປຫາ Snap revision ທີ່ເຄີຍຕິດຕັ້ງກ່ອນໜ້ານີ້.\n\nທ່ານຕ້ອງການສືບຕໍ່ບໍ?",
+  "app_page_snap_revert": " ຍ້ອນກັບ "
 }

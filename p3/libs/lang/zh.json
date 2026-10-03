@@ -715,5 +715,13 @@
   "package_view_format_eopkg": "Solus 软件包",
   "package_view_format_flatpak": "Flatpak 软件包",
   "package_view_format_flatpakref": "Flatpak 引用",
-  "package_view_format_snap": "Snap 软件包"
+  "package_view_format_snap": "Snap 软件包",
+  "app_page_remove_data": "删除数据",
+  "app_page_remove_data_confirm_title": "删除应用数据？",
+  "app_page_remove_data_confirm_message": "这将永久删除“{app_name}”剩余的用户数据。此操作无法撤销。",
+  "app_page_remove_data_failed_title": "无法删除应用数据",
+  "app_page_rate_success_message_snap": "谢谢！您的投票已提交至 Canonical Snap 评分。",
+  "app_page_snap_revert_confirm_title": "还原 Snap？",
+  "app_page_snap_revert_confirm_message": "LinuxToys 会将“{app_name}”还原到之前安装的 Snap 修订版本。\n\n是否继续？",
+  "app_page_snap_revert": " 还原 "
 }

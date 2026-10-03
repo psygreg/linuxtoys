@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Paketë Solus",
   "package_view_format_flatpak": "Paketë Flatpak",
   "package_view_format_flatpakref": "Referencë Flatpak",
-  "package_view_format_snap": "Paketë Snap"
+  "package_view_format_snap": "Paketë Snap",
+  "app_page_remove_data": "Hiq të dhënat",
+  "app_page_remove_data_confirm_title": "Të hiqen të dhënat e aplikacionit?",
+  "app_page_remove_data_confirm_message": "Kjo do të heqë përgjithmonë të dhënat e mbetura të përdoruesit për '{app_name}'. Ky veprim nuk mund të zhbëhet.",
+  "app_page_remove_data_failed_title": "Nuk u hoqën dot të dhënat e aplikacionit",
+  "app_page_rate_success_message_snap": "Faleminderit! Vota juaj u dërgua te vlerësimet Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Të rikthehet Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys do ta rikthejë '{app_name}' te rishikimi Snap i instaluar më parë.\n\nDëshironi të vazhdoni?",
+  "app_page_snap_revert": " Rikthe "
 }

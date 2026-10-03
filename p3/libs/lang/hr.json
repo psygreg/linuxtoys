@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus paket",
   "package_view_format_flatpak": "Flatpak paket",
   "package_view_format_flatpakref": "Flatpak referenca",
-  "package_view_format_snap": "Snap paket"
+  "package_view_format_snap": "Snap paket",
+  "app_page_remove_data": "Ukloni podatke",
+  "app_page_remove_data_confirm_title": "Ukloniti podatke aplikacije?",
+  "app_page_remove_data_confirm_message": "Ovo će trajno ukloniti preostale korisničke podatke za '{app_name}'. Ova se radnja ne može poništiti.",
+  "app_page_remove_data_failed_title": "Nije moguće ukloniti podatke aplikacije",
+  "app_page_rate_success_message_snap": "Hvala! Vaš glas je poslan u Canonical Snap ocjene.",
+  "app_page_snap_revert_confirm_title": "Vratiti Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys će vratiti '{app_name}' na prethodno instaliranu Snap reviziju.\n\nŽelite li nastaviti?",
+  "app_page_snap_revert": " Vrati "
 }

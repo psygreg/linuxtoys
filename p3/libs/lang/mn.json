@@ -712,5 +712,13 @@
   "package_view_format_eopkg": "Solus багц",
   "package_view_format_flatpak": "Flatpak багц",
   "package_view_format_flatpakref": "Flatpak лавлагаа",
-  "package_view_format_snap": "Snap багц"
+  "package_view_format_snap": "Snap багц",
+  "app_page_remove_data": "Өгөгдөл устгах",
+  "app_page_remove_data_confirm_title": "Аппын өгөгдлийг устгах уу?",
+  "app_page_remove_data_confirm_message": "Энэ нь '{app_name}'-ийн үлдсэн хэрэглэгчийн өгөгдлийг бүрмөсөн устгана. Энэ үйлдлийг буцаах боломжгүй.",
+  "app_page_remove_data_failed_title": "Аппын өгөгдлийг устгаж чадсангүй",
+  "app_page_rate_success_message_snap": "Баярлалаа! Таны саналыг Canonical Snap үнэлгээнд илгээлээ.",
+  "app_page_snap_revert_confirm_title": "Snap-ыг өмнөх хувилбар руу буцаах уу?",
+  "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ийг өмнө нь суулгасан Snap хувилбар руу буцаана.\n\nҮргэлжлүүлэх үү?",
+  "app_page_snap_revert": " Буцаах "
 }

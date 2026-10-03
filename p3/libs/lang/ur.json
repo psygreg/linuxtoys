@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus پیکیج",
   "package_view_format_flatpak": "Flatpak پیکیج",
   "package_view_format_flatpakref": "Flatpak حوالہ",
-  "package_view_format_snap": "Snap پیکیج"
+  "package_view_format_snap": "Snap پیکیج",
+  "app_page_remove_data": "ڈیٹا ہٹائیں",
+  "app_page_remove_data_confirm_title": "ایپ کا ڈیٹا ہٹائیں؟",
+  "app_page_remove_data_confirm_message": "یہ '{app_name}' کا باقی ماندہ صارف ڈیٹا مستقل طور پر ہٹا دے گا۔ اس عمل کو واپس نہیں کیا جا سکتا۔",
+  "app_page_remove_data_failed_title": "ایپ کا ڈیٹا نہیں ہٹایا جا سکا",
+  "app_page_rate_success_message_snap": "شکریہ! آپ کا ووٹ Canonical Snap ریٹنگز میں جمع کر دیا گیا۔",
+  "app_page_snap_revert_confirm_title": "Snap کو پچھلے ورژن پر واپس کریں؟",
+  "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}' کو پہلے انسٹال شدہ Snap ریویژن پر واپس لے جائے گا۔\n\nکیا آپ جاری رکھنا چاہتے ہیں؟",
+  "app_page_snap_revert": " واپس کریں "
 }

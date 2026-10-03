@@ -712,5 +712,13 @@
   "package_view_format_eopkg": "Solus paketi",
   "package_view_format_flatpak": "Flatpak paketi",
   "package_view_format_flatpakref": "Flatpak havolasi",
-  "package_view_format_snap": "Snap paketi"
+  "package_view_format_snap": "Snap paketi",
+  "app_page_remove_data": "Ma'lumotlarni o'chirish",
+  "app_page_remove_data_confirm_title": "Ilova ma'lumotlari o'chirilsinmi?",
+  "app_page_remove_data_confirm_message": "Bu '{app_name}' uchun qolgan foydalanuvchi ma'lumotlarini butunlay o'chirib tashlaydi. Bu amalni bekor qilib bo'lmaydi.",
+  "app_page_remove_data_failed_title": "Ilova ma'lumotlarini o'chirib bo'lmadi",
+  "app_page_rate_success_message_snap": "Rahmat! Ovozingiz Canonical Snap reytinglariga yuborildi.",
+  "app_page_snap_revert_confirm_title": "Snap oldingi versiyaga qaytarilsinmi?",
+  "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}' ilovasini avval o'rnatilgan Snap reviziyasiga qaytaradi.\n\nDavom etishni xohlaysizmi?",
+  "app_page_snap_revert": " Qaytarish "
 }

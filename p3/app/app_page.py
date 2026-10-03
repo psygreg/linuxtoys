@@ -1,5 +1,6 @@
 import os
 import random
+import shutil
 import re
 import subprocess
 import webbrowser
@@ -92,6 +93,8 @@ class AppPageView(Gtk.Box):
         self._open_button = None
         self._snap_revert_button = None
         self._snap_revert_probe_generation = 0
+        self._flatpak_data_button = None
+        self._flatpak_data_probe_generation = 0
         self._install_state = "available"
         self._rating_buttons = []
         self._rating_box = None
@@ -1210,6 +1213,18 @@ class AppPageView(Gtk.Box):
         self._snap_revert_button.set_no_show_all(True)
         self._snap_revert_button.hide()
 
+        self._flatpak_data_button = gui_rs.add_app_page_action_button(
+            controls,
+            self.translations.get("app_page_remove_data", " Remove data "),
+            "edit-delete-symbolic",
+        )
+        if self._flatpak_data_button is None:
+            raise RuntimeError("Native Flatpak residual-data action construction failed")
+        self._flatpak_data_button.connect("clicked", self._on_flatpak_data_remove_clicked)
+        self._flatpak_data_button.get_style_context().add_class("destructive-action")
+        self._flatpak_data_button.set_no_show_all(True)
+        self._flatpak_data_button.hide()
+
         purchase_url = self.script_info.get("purchase_url") or ""
         purchase_options = self.script_info.get("purchase_options") or []
         subscription_options = self.script_info.get("subscription_options") or []
@@ -1897,8 +1912,202 @@ class AppPageView(Gtk.Box):
         state = resolver(self._selected_install_info) if resolver is not None else "available"
         self.set_install_state(state)
         self._refresh_snap_revert_state()
+        self._refresh_flatpak_data_state()
         if self._extensions_view is not None:
             self._extensions_view.refresh()
+
+    @staticmethod
+    def _flatpak_data_identity(info):
+        """Return a safe Flatpak application ID for ~/.var/app/<ID>."""
+        if str(info.get("appstream_source", "") or "").strip() != "flatpak":
+            return ""
+
+        # AppStream IDs for Flatpak applications are normally the Flatpak app ID.
+        # Prefer an explicit package/app ID if the catalog supplies one.
+        candidates = (
+            info.get("flatpak_id"),
+            info.get("package-name"),
+            info.get("appstream_id"),
+            info.get("id"),
+        )
+        pattern = re.compile(r"^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+$")
+        for value in candidates:
+            value = str(value or "").strip()
+            if value.endswith(".desktop"):
+                value = value[:-8]
+            if pattern.fullmatch(value):
+                return value
+        return ""
+
+    @staticmethod
+    def _flatpak_data_path(app_id):
+        """Build, but never resolve through, the only directory we may remove."""
+        if not app_id:
+            return None
+        base = Path.home() / ".var" / "app"
+        target = base / app_id
+        # app_id validation forbids '/' and traversal. Keep this explicit guard too
+        # so future changes to the ID parser cannot broaden the deletion boundary.
+        try:
+            if target.parent != base or target.name != app_id:
+                return None
+        except (OSError, ValueError):
+            return None
+        return target
+
+    def _refresh_flatpak_data_state(self):
+        """Offer cleanup only for an uninstalled Flatpak with residual user data."""
+        button = self._flatpak_data_button
+        if button is None:
+            return
+
+        self._flatpak_data_probe_generation += 1
+        generation = self._flatpak_data_probe_generation
+        button.hide()
+        button.set_no_show_all(True)
+
+        info = self._selected_install_info
+        app_id = self._flatpak_data_identity(info)
+        if self._install_state != "available" or not app_id:
+            return
+
+        target = self._flatpak_data_path(app_id)
+        if target is None:
+            return
+
+        def worker():
+            try:
+                present = os.path.lexists(target)
+            except OSError:
+                present = False
+            GLib.idle_add(
+                self._finish_flatpak_data_probe,
+                generation,
+                app_id,
+                present,
+            )
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-flatpak-data-probe",
+        ).start()
+
+    def _finish_flatpak_data_probe(self, generation, app_id, present):
+        if self._destroyed or generation != self._flatpak_data_probe_generation:
+            return False
+        if (
+            not present
+            or self._install_state != "available"
+            or self._flatpak_data_identity(self._selected_install_info) != app_id
+        ):
+            return False
+
+        self._flatpak_data_button.set_no_show_all(False)
+        self._flatpak_data_button.set_sensitive(True)
+        self._flatpak_data_button.show_all()
+        return False
+
+    def _on_flatpak_data_remove_clicked(self, _button):
+        if self._install_state != "available":
+            return
+
+        info = self._selected_install_info
+        app_id = self._flatpak_data_identity(info)
+        target = self._flatpak_data_path(app_id)
+        if target is None or not os.path.lexists(target):
+            self._refresh_flatpak_data_state()
+            return
+
+        app_name = str(info.get("name") or app_id)
+        dialog = Gtk.MessageDialog(
+            transient_for=self.parent,
+            modal=True,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE,
+            text=self.translations.get(
+                "app_page_remove_data_confirm_title",
+                "Remove app data?",
+            ),
+        )
+        dialog.format_secondary_text(
+            self.translations.get(
+                "app_page_remove_data_confirm_message",
+                "This will permanently remove the remaining user data for "
+                "'{app_name}'. This action cannot be undone.",
+            ).format(app_name=app_name)
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"),
+            Gtk.ResponseType.CANCEL,
+        )
+        remove_button = dialog.add_button(
+            self.translations.get("app_page_remove_data", "Remove data"),
+            Gtk.ResponseType.YES,
+        )
+        remove_button.get_style_context().add_class("destructive-action")
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        if response != Gtk.ResponseType.YES:
+            return
+
+        self._flatpak_data_button.set_sensitive(False)
+        self._flatpak_data_probe_generation += 1
+        generation = self._flatpak_data_probe_generation
+
+        def worker():
+            error = None
+            try:
+                # Never follow a symlink at ~/.var/app/<ID>. A symlink is itself
+                # residual data, so unlink it rather than touching its destination.
+                if target.is_symlink():
+                    target.unlink()
+                elif target.is_dir():
+                    shutil.rmtree(target)
+                elif os.path.lexists(target):
+                    target.unlink()
+            except OSError as exc:
+                error = str(exc)
+            GLib.idle_add(
+                self._finish_flatpak_data_removal,
+                generation,
+                app_id,
+                error,
+            )
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-flatpak-data-remove",
+        ).start()
+
+    def _finish_flatpak_data_removal(self, generation, app_id, error):
+        if self._destroyed or generation != self._flatpak_data_probe_generation:
+            return False
+        if self._flatpak_data_identity(self._selected_install_info) != app_id:
+            return False
+
+        if error:
+            self._flatpak_data_button.set_sensitive(True)
+            dialog = Gtk.MessageDialog(
+                transient_for=self.parent,
+                modal=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.CLOSE,
+                text=self.translations.get(
+                    "app_page_remove_data_failed_title",
+                    "Could not remove app data",
+                ),
+            )
+            dialog.format_secondary_text(error)
+            dialog.run()
+            dialog.destroy()
+            return False
+
+        self._flatpak_data_button.hide()
+        self._flatpak_data_button.set_no_show_all(True)
+        return False
 
     def _refresh_snap_revert_state(self):
         """Probe Snap revision history off the GTK thread and expose Revert if usable."""

@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Pachet Solus",
   "package_view_format_flatpak": "Pachet Flatpak",
   "package_view_format_flatpakref": "Referință Flatpak",
-  "package_view_format_snap": "Pachet Snap"
+  "package_view_format_snap": "Pachet Snap",
+  "app_page_remove_data": "Elimină datele",
+  "app_page_remove_data_confirm_title": "Eliminați datele aplicației?",
+  "app_page_remove_data_confirm_message": "Aceasta va elimina definitiv datele de utilizator rămase pentru „{app_name}”. Această acțiune nu poate fi anulată.",
+  "app_page_remove_data_failed_title": "Datele aplicației nu au putut fi eliminate",
+  "app_page_rate_success_message_snap": "Vă mulțumim! Votul dvs. a fost trimis către evaluările Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Reveniți la versiunea Snap anterioară?",
+  "app_page_snap_revert_confirm_message": "LinuxToys va reveni pentru „{app_name}” la revizia Snap instalată anterior.\n\nDoriți să continuați?",
+  "app_page_snap_revert": " Revino "
 }

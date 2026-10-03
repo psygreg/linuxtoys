@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Πακέτο Solus",
   "package_view_format_flatpak": "Πακέτο Flatpak",
   "package_view_format_flatpakref": "Αναφορά Flatpak",
-  "package_view_format_snap": "Πακέτο Snap"
+  "package_view_format_snap": "Πακέτο Snap",
+  "app_page_remove_data": "Αφαίρεση δεδομένων",
+  "app_page_remove_data_confirm_title": "Αφαίρεση δεδομένων εφαρμογής;",
+  "app_page_remove_data_confirm_message": "Αυτό θα αφαιρέσει οριστικά τα υπόλοιπα δεδομένα χρήστη για το '{app_name}'. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
+  "app_page_remove_data_failed_title": "Δεν ήταν δυνατή η αφαίρεση των δεδομένων εφαρμογής",
+  "app_page_rate_success_message_snap": "Ευχαριστούμε! Η ψήφος σας υποβλήθηκε στις αξιολογήσεις Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Επαναφορά του Snap;",
+  "app_page_snap_revert_confirm_message": "Το LinuxToys θα επαναφέρει το '{app_name}' στην προηγουμένως εγκατεστημένη αναθεώρηση Snap.\n\nΘέλετε να συνεχίσετε;",
+  "app_page_snap_revert": " Επαναφορά "
 }

@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus პაკეტი",
   "package_view_format_flatpak": "Flatpak პაკეტი",
   "package_view_format_flatpakref": "Flatpak მითითება",
-  "package_view_format_snap": "Snap პაკეტი"
+  "package_view_format_snap": "Snap პაკეტი",
+  "app_page_remove_data": "მონაცემების წაშლა",
+  "app_page_remove_data_confirm_title": "წაიშალოს აპის მონაცემები?",
+  "app_page_remove_data_confirm_message": "ეს სამუდამოდ წაშლის '{app_name}'-ის დარჩენილ მომხმარებლის მონაცემებს. ამ მოქმედების გაუქმება შეუძლებელია.",
+  "app_page_remove_data_failed_title": "აპის მონაცემების წაშლა ვერ მოხერხდა",
+  "app_page_rate_success_message_snap": "გმადლობთ! თქვენი ხმა გაიგზავნა Canonical Snap-ის რეიტინგებში.",
+  "app_page_snap_revert_confirm_title": "დაბრუნდეს Snap წინა ვერსიაზე?",
+  "app_page_snap_revert_confirm_message": "LinuxToys დააბრუნებს '{app_name}'-ს ადრე დაყენებულ Snap რევიზიაზე.\n\nგსურთ გაგრძელება?",
+  "app_page_snap_revert": " დაბრუნება "
 }

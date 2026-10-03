@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus package",
   "package_view_format_flatpak": "Flatpak package",
   "package_view_format_flatpakref": "Flatpak reference",
-  "package_view_format_snap": "Snap package"
+  "package_view_format_snap": "Snap package",
+  "app_page_remove_data": "Alisin ang data",
+  "app_page_remove_data_confirm_title": "Alisin ang data ng app?",
+  "app_page_remove_data_confirm_message": "Permanente nitong aalisin ang natitirang user data para sa '{app_name}'. Hindi maa-undo ang pagkilos na ito.",
+  "app_page_remove_data_failed_title": "Hindi maalis ang data ng app",
+  "app_page_rate_success_message_snap": "Salamat! Isinumite ang iyong boto sa Canonical Snap ratings.",
+  "app_page_snap_revert_confirm_title": "I-revert ang Snap?",
+  "app_page_snap_revert_confirm_message": "Ibabalik ng LinuxToys ang '{app_name}' sa dating naka-install na Snap revision.\n\nGusto mo bang magpatuloy?",
+  "app_page_snap_revert": " I-revert "
 }

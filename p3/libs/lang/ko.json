@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus 패키지",
   "package_view_format_flatpak": "Flatpak 패키지",
   "package_view_format_flatpakref": "Flatpak 참조",
-  "package_view_format_snap": "Snap 패키지"
+  "package_view_format_snap": "Snap 패키지",
+  "app_page_remove_data": "데이터 삭제",
+  "app_page_remove_data_confirm_title": "앱 데이터를 삭제하시겠습니까?",
+  "app_page_remove_data_confirm_message": "이 작업은 '{app_name}'의 남아 있는 사용자 데이터를 영구적으로 삭제합니다. 이 작업은 실행 취소할 수 없습니다.",
+  "app_page_remove_data_failed_title": "앱 데이터를 삭제할 수 없음",
+  "app_page_rate_success_message_snap": "감사합니다! 투표가 Canonical Snap 평점에 제출되었습니다.",
+  "app_page_snap_revert_confirm_title": "Snap을 이전 리비전으로 되돌리시겠습니까?",
+  "app_page_snap_revert_confirm_message": "LinuxToys가 '{app_name}'을(를) 이전에 설치된 Snap 리비전으로 되돌립니다.\n\n계속하시겠습니까?",
+  "app_page_snap_revert": " 되돌리기 "
 }

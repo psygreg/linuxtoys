@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "حزمة Solus",
   "package_view_format_flatpak": "حزمة Flatpak",
   "package_view_format_flatpakref": "مرجع Flatpak",
-  "package_view_format_snap": "حزمة Snap"
+  "package_view_format_snap": "حزمة Snap",
+  "app_page_remove_data": "إزالة البيانات",
+  "app_page_remove_data_confirm_title": "إزالة بيانات التطبيق؟",
+  "app_page_remove_data_confirm_message": "سيؤدي هذا إلى إزالة بيانات المستخدم المتبقية لـ '{app_name}' نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+  "app_page_remove_data_failed_title": "تعذرت إزالة بيانات التطبيق",
+  "app_page_rate_success_message_snap": "شكرًا لك! تم إرسال تصويتك إلى تقييمات Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "الرجوع بإصدار Snap؟",
+  "app_page_snap_revert_confirm_message": "سيعيد LinuxToys تطبيق '{app_name}' إلى مراجعة Snap المثبتة سابقًا.\n\nهل تريد المتابعة؟",
+  "app_page_snap_revert": " رجوع "
 }

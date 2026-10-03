@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus-Paket",
   "package_view_format_flatpak": "Flatpak-Paket",
   "package_view_format_flatpakref": "Flatpak-Referenz",
-  "package_view_format_snap": "Snap-Paket"
+  "package_view_format_snap": "Snap-Paket",
+  "app_page_remove_data": "Daten entfernen",
+  "app_page_remove_data_confirm_title": "App-Daten entfernen?",
+  "app_page_remove_data_confirm_message": "Dadurch werden die verbleibenden Benutzerdaten für „{app_name}“ dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+  "app_page_remove_data_failed_title": "App-Daten konnten nicht entfernt werden",
+  "app_page_rate_success_message_snap": "Vielen Dank! Ihre Stimme wurde an die Canonical-Snap-Bewertungen übermittelt.",
+  "app_page_snap_revert_confirm_title": "Snap zurücksetzen?",
+  "app_page_snap_revert_confirm_message": "LinuxToys setzt „{app_name}“ auf die zuvor installierte Snap-Revision zurück.\n\nMöchten Sie fortfahren?",
+  "app_page_snap_revert": " Zurücksetzen "
 }

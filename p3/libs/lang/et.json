@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Soluse pakett",
   "package_view_format_flatpak": "Flatpaki pakett",
   "package_view_format_flatpakref": "Flatpaki viide",
-  "package_view_format_snap": "Snapi pakett"
+  "package_view_format_snap": "Snapi pakett",
+  "app_page_remove_data": "Eemalda andmed",
+  "app_page_remove_data_confirm_title": "Kas eemaldada rakenduse andmed?",
+  "app_page_remove_data_confirm_message": "See eemaldab jäädavalt rakenduse „{app_name}“ allesjäänud kasutajaandmed. Seda toimingut ei saa tagasi võtta.",
+  "app_page_remove_data_failed_title": "Rakenduse andmeid ei saanud eemaldada",
+  "app_page_rate_success_message_snap": "Täname! Teie hääl edastati Canonical Snapi hinnangutesse.",
+  "app_page_snap_revert_confirm_title": "Kas taastada Snapi eelmine versioon?",
+  "app_page_snap_revert_confirm_message": "LinuxToys taastab rakenduse „{app_name}“ varem paigaldatud Snapi versioonile.\n\nKas soovite jätkata?",
+  "app_page_snap_revert": " Taasta "
 }

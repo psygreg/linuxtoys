@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Пакет Solus",
   "package_view_format_flatpak": "Пакет Flatpak",
   "package_view_format_flatpakref": "Посилання Flatpak",
-  "package_view_format_snap": "Пакет Snap"
+  "package_view_format_snap": "Пакет Snap",
+  "app_page_remove_data": "Видалити дані",
+  "app_page_remove_data_confirm_title": "Видалити дані застосунку?",
+  "app_page_remove_data_confirm_message": "Це назавжди видалить решту даних користувача для «{app_name}». Цю дію неможливо скасувати.",
+  "app_page_remove_data_failed_title": "Не вдалося видалити дані застосунку",
+  "app_page_rate_success_message_snap": "Дякуємо! Ваш голос було надіслано до рейтингу Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Відкотити Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys відкотить «{app_name}» до раніше встановленої ревізії Snap.\n\nПродовжити?",
+  "app_page_snap_revert": " Відкотити "
 }

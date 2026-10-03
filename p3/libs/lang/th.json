@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "แพ็กเกจ Solus",
   "package_view_format_flatpak": "แพ็กเกจ Flatpak",
   "package_view_format_flatpakref": "การอ้างอิง Flatpak",
-  "package_view_format_snap": "แพ็กเกจ Snap"
+  "package_view_format_snap": "แพ็กเกจ Snap",
+  "app_page_remove_data": "ลบข้อมูล",
+  "app_page_remove_data_confirm_title": "ลบข้อมูลแอป?",
+  "app_page_remove_data_confirm_message": "การดำเนินการนี้จะลบข้อมูลผู้ใช้ที่เหลืออยู่ของ '{app_name}' อย่างถาวร และไม่สามารถย้อนกลับได้",
+  "app_page_remove_data_failed_title": "ไม่สามารถลบข้อมูลแอปได้",
+  "app_page_rate_success_message_snap": "ขอบคุณ! คะแนนโหวตของคุณถูกส่งไปยังระบบการให้คะแนน Canonical Snap แล้ว",
+  "app_page_snap_revert_confirm_title": "ย้อน Snap กลับ?",
+  "app_page_snap_revert_confirm_message": "LinuxToys จะย้อน '{app_name}' กลับไปเป็น revision ของ Snap ที่ติดตั้งไว้ก่อนหน้านี้\n\nคุณต้องการดำเนินการต่อหรือไม่?",
+  "app_page_snap_revert": " ย้อนกลับ "
 }

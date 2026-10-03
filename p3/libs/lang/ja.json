@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus パッケージ",
   "package_view_format_flatpak": "Flatpak パッケージ",
   "package_view_format_flatpakref": "Flatpak 参照",
-  "package_view_format_snap": "Snap パッケージ"
+  "package_view_format_snap": "Snap パッケージ",
+  "app_page_remove_data": "データを削除",
+  "app_page_remove_data_confirm_title": "アプリのデータを削除しますか？",
+  "app_page_remove_data_confirm_message": "これにより、「{app_name}」の残っているユーザーデータが完全に削除されます。この操作は元に戻せません。",
+  "app_page_remove_data_failed_title": "アプリのデータを削除できませんでした",
+  "app_page_rate_success_message_snap": "ありがとうございます！あなたの投票が Canonical Snap の評価に送信されました。",
+  "app_page_snap_revert_confirm_title": "Snap を以前のリビジョンに戻しますか？",
+  "app_page_snap_revert_confirm_message": "LinuxToys は「{app_name}」を以前インストールされていた Snap リビジョンに戻します。\n\n続行しますか？",
+  "app_page_snap_revert": " 元に戻す "
 }

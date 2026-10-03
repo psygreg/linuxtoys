@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus प्याकेज",
   "package_view_format_flatpak": "Flatpak प्याकेज",
   "package_view_format_flatpakref": "Flatpak सन्दर्भ",
-  "package_view_format_snap": "Snap प्याकेज"
+  "package_view_format_snap": "Snap प्याकेज",
+  "app_page_remove_data": "डेटा हटाउनुहोस्",
+  "app_page_remove_data_confirm_title": "एप डेटा हटाउने?",
+  "app_page_remove_data_confirm_message": "यसले '{app_name}' का बाँकी प्रयोगकर्ता डेटा स्थायी रूपमा हटाउनेछ। यो कार्य पूर्ववत गर्न सकिँदैन।",
+  "app_page_remove_data_failed_title": "एप डेटा हटाउन सकिएन",
+  "app_page_rate_success_message_snap": "धन्यवाद! तपाईंको मत Canonical Snap मूल्याङ्कनमा पेश गरियो।",
+  "app_page_snap_revert_confirm_title": "Snap लाई अघिल्लो संस्करणमा फर्काउने?",
+  "app_page_snap_revert_confirm_message": "LinuxToys ले '{app_name}' लाई पहिले स्थापना गरिएको Snap संशोधनमा फर्काउनेछ।\n\nके तपाईं जारी राख्न चाहनुहुन्छ?",
+  "app_page_snap_revert": " फर्काउनुहोस् "
 }

@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus-paket",
   "package_view_format_flatpak": "Flatpak-paket",
   "package_view_format_flatpakref": "Flatpak-referens",
-  "package_view_format_snap": "Snap-paket"
+  "package_view_format_snap": "Snap-paket",
+  "app_page_remove_data": "Ta bort data",
+  "app_page_remove_data_confirm_title": "Ta bort appdata?",
+  "app_page_remove_data_confirm_message": "Detta tar permanent bort återstående användardata för '{app_name}'. Den här åtgärden kan inte ångras.",
+  "app_page_remove_data_failed_title": "Kunde inte ta bort appdata",
+  "app_page_rate_success_message_snap": "Tack! Din röst skickades till Canonical Snap-betygen.",
+  "app_page_snap_revert_confirm_title": "Återställ Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys återställer '{app_name}' till den tidigare installerade Snap-revisionen.\n\nVill du fortsätta?",
+  "app_page_snap_revert": " Återställ "
 }

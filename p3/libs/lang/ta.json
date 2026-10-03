@@ -711,5 +711,13 @@
   "package_view_format_eopkg": "Solus தொகுப்பு",
   "package_view_format_flatpak": "Flatpak தொகுப்பு",
   "package_view_format_flatpakref": "Flatpak குறிப்பு",
-  "package_view_format_snap": "Snap தொகுப்பு"
+  "package_view_format_snap": "Snap தொகுப்பு",
+  "app_page_remove_data": "தரவை அகற்று",
+  "app_page_remove_data_confirm_title": "செயலியின் தரவை அகற்றவா?",
+  "app_page_remove_data_confirm_message": "இது '{app_name}'-க்கான மீதமுள்ள பயனர் தரவை நிரந்தரமாக அகற்றும். இந்தச் செயலைச் செயல்தவிர்க்க முடியாது.",
+  "app_page_remove_data_failed_title": "செயலியின் தரவை அகற்ற முடியவில்லை",
+  "app_page_rate_success_message_snap": "நன்றி! உங்கள் வாக்கு Canonical Snap மதிப்பீடுகளுக்கு சமர்ப்பிக்கப்பட்டது.",
+  "app_page_snap_revert_confirm_title": "Snap-ஐ முந்தைய பதிப்பிற்கு மாற்றவா?",
+  "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ஐ முன்பு நிறுவப்பட்ட Snap revision-க்கு மாற்றும்.\n\nதொடர விரும்புகிறீர்களா?",
+  "app_page_snap_revert": " மாற்றியமை "
 }

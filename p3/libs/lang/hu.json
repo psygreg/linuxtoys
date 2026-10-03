@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus-csomag",
   "package_view_format_flatpak": "Flatpak-csomag",
   "package_view_format_flatpakref": "Flatpak-hivatkozás",
-  "package_view_format_snap": "Snap-csomag"
+  "package_view_format_snap": "Snap-csomag",
+  "app_page_remove_data": "Adatok eltávolítása",
+  "app_page_remove_data_confirm_title": "Eltávolítja az alkalmazás adatait?",
+  "app_page_remove_data_confirm_message": "Ez véglegesen eltávolítja a(z) „{app_name}” megmaradt felhasználói adatait. Ez a művelet nem vonható vissza.",
+  "app_page_remove_data_failed_title": "Az alkalmazás adatai nem távolíthatók el",
+  "app_page_rate_success_message_snap": "Köszönjük! Szavazatát elküldtük a Canonical Snap értékeléseihez.",
+  "app_page_snap_revert_confirm_title": "Visszaállítja a Snapet?",
+  "app_page_snap_revert_confirm_message": "A LinuxToys visszaállítja a(z) „{app_name}” alkalmazást a korábban telepített Snap-revízióra.\n\nSzeretné folytatni?",
+  "app_page_snap_revert": " Visszaállítás "
 }

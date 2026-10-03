@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Paquete Solus",
   "package_view_format_flatpak": "Paquete Flatpak",
   "package_view_format_flatpakref": "Referencia Flatpak",
-  "package_view_format_snap": "Paquete Snap"
+  "package_view_format_snap": "Paquete Snap",
+  "app_page_remove_data": "Eliminar datos",
+  "app_page_remove_data_confirm_title": "¿Eliminar los datos de la aplicación?",
+  "app_page_remove_data_confirm_message": "Esto eliminará permanentemente los datos de usuario restantes de '{app_name}'. Esta acción no se puede deshacer.",
+  "app_page_remove_data_failed_title": "No se pudieron eliminar los datos de la aplicación",
+  "app_page_rate_success_message_snap": "¡Gracias! Tu voto se envió a las valoraciones de Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "¿Revertir Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys revertirá '{app_name}' a la revisión de Snap instalada anteriormente.\n\n¿Quieres continuar?",
+  "app_page_snap_revert": " Revertir "
 }

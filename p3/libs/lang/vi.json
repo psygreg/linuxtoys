@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Gói Solus",
   "package_view_format_flatpak": "Gói Flatpak",
   "package_view_format_flatpakref": "Tham chiếu Flatpak",
-  "package_view_format_snap": "Gói Snap"
+  "package_view_format_snap": "Gói Snap",
+  "app_page_remove_data": "Xóa dữ liệu",
+  "app_page_remove_data_confirm_title": "Xóa dữ liệu ứng dụng?",
+  "app_page_remove_data_confirm_message": "Thao tác này sẽ xóa vĩnh viễn dữ liệu người dùng còn lại của '{app_name}'. Không thể hoàn tác thao tác này.",
+  "app_page_remove_data_failed_title": "Không thể xóa dữ liệu ứng dụng",
+  "app_page_rate_success_message_snap": "Cảm ơn bạn! Phiếu bầu của bạn đã được gửi tới hệ thống xếp hạng Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Hoàn nguyên Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys sẽ hoàn nguyên '{app_name}' về bản sửa đổi Snap đã được cài đặt trước đó.\n\nBạn có muốn tiếp tục không?",
+  "app_page_snap_revert": " Hoàn nguyên "
 }

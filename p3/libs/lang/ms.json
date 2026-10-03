@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Pakej Solus",
   "package_view_format_flatpak": "Pakej Flatpak",
   "package_view_format_flatpakref": "Rujukan Flatpak",
-  "package_view_format_snap": "Pakej Snap"
+  "package_view_format_snap": "Pakej Snap",
+  "app_page_remove_data": "Buang data",
+  "app_page_remove_data_confirm_title": "Buang data aplikasi?",
+  "app_page_remove_data_confirm_message": "Ini akan membuang secara kekal baki data pengguna untuk '{app_name}'. Tindakan ini tidak boleh dibuat asal.",
+  "app_page_remove_data_failed_title": "Tidak dapat membuang data aplikasi",
+  "app_page_rate_success_message_snap": "Terima kasih! Undian anda telah dihantar kepada penilaian Canonical Snap.",
+  "app_page_snap_revert_confirm_title": "Kembalikan Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys akan mengembalikan '{app_name}' kepada revisi Snap yang dipasang sebelum ini.\n\nAdakah anda mahu meneruskan?",
+  "app_page_snap_revert": " Kembalikan "
 }

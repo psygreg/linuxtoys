@@ -713,5 +713,13 @@
   "package_view_format_eopkg": "Solus-paketti",
   "package_view_format_flatpak": "Flatpak-paketti",
   "package_view_format_flatpakref": "Flatpak-viite",
-  "package_view_format_snap": "Snap-paketti"
+  "package_view_format_snap": "Snap-paketti",
+  "app_page_remove_data": "Poista tiedot",
+  "app_page_remove_data_confirm_title": "Poistetaanko sovelluksen tiedot?",
+  "app_page_remove_data_confirm_message": "Tämä poistaa pysyvästi sovelluksen '{app_name}' jäljellä olevat käyttäjätiedot. Tätä toimintoa ei voi kumota.",
+  "app_page_remove_data_failed_title": "Sovelluksen tietoja ei voitu poistaa",
+  "app_page_rate_success_message_snap": "Kiitos! Äänesi lähetettiin Canonical Snap -arvosteluihin.",
+  "app_page_snap_revert_confirm_title": "Palautetaanko Snap?",
+  "app_page_snap_revert_confirm_message": "LinuxToys palauttaa sovelluksen '{app_name}' aiemmin asennettuun Snap-revisioon.\n\nHaluatko jatkaa?",
+  "app_page_snap_revert": " Palauta "
 }
