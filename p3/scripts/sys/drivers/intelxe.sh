@@ -26,7 +26,7 @@ if is_intel && [ -n "$intel_arc" ]; then
     if is_ostree; then
         kargs_upd 'i915.force_probe=!'"$DEVID" "xe.force_probe=$DEVID"
     else
-        [ -f /etc/kernel/cmdline.d/10-intel-xe-enable.conf ] || { 
+        [ -f /etc/kernel/cmdline.d/10-intel-xe-enable.conf ] || {
             # Create kernel cmdline drop-in file for systemd-based systems
             prep_create /etc/kernel/cmdline.d/10-intel-xe-enable.conf
             echo "i915.force_probe=!${DEVID} xe.force_probe=${DEVID}" | sudo tee /etc/kernel/cmdline.d/10-intel-xe-enable.conf >/dev/null
@@ -57,6 +57,8 @@ if is_ubuntu; then
     pkg_install intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo
 elif is_fedora || is_rhel; then
     rpmfusion_chk
+    pkg_install intel-media-driver
+elif is_suse; then
     pkg_install intel-media-driver
 elif is_debian; then
     enable_debian_nonfree

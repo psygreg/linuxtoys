@@ -4,8 +4,15 @@
 bootloader_upd() {
     if ! is_ostree; then
         local exit_status
-        if is_fedora || is_suse || is_rhel; then
+        if is_fedora || is_rhel; then
             sudo_ grub2-mkconfig -o /boot/grub2/grub.cfg || die "Unable to update bootloader"
+            _append_transmap "updated bootloader"
+        elif is_suse; then
+            if command -v sdbootutil >/dev/null 2>&1 && sudo_ sdbootutil is-installed >/dev/null 2>&1; then
+                sudo_ sdbootutil update-all-entries || die "Unable to update bootloader"
+            else
+                sudo_ grub2-mkconfig -o /boot/grub2/grub.cfg || die "Unable to update bootloader"
+            fi
             _append_transmap "updated bootloader"
         elif is_arch || is_cachy; then
             if command -v limine-mkinitcpio >/dev/null 2>&1; then
