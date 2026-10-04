@@ -183,6 +183,12 @@ pkg_install () {
             exit 100
         fi
     elif is_fedora || is_rhel; then
+        # Non-fatal dnf mirror timeouts startle users; prefer the fastest
+        # mirror unless fastestmirror was already configured.
+        if ! grep -qiE '^[[:space:]]*fastestmirror[[:space:]]*=' /etc/dnf/dnf.conf; then
+            prep_edit /etc/dnf/dnf.conf
+            echo 'fastestmirror=True' | sudo_ tee -a /etc/dnf/dnf.conf >/dev/null
+        fi
         if [[ $_allowerasing -eq 1 ]]; then
             sudo_ dnf install -y --allowerasing "${pkg_notfound[@]}" || die "Failed to install $to_install"
         else
