@@ -18,10 +18,10 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **Arch Linux** and derivatives (EndeavourOS, CachyOS, etc.)
 *   **Manjaro** and **Big Linux**
 *   **OpenSUSE** (Leap, Slowroll and Tumbleweed)
-*   Fedora-based **Atomic Distributions** (Atomic Fedora, Universal Blue images like Bazzite, Bluefin, Aurora)
+*   Fedora-based **Atomic Distributions** (Atomic Fedora, `rpm-ostree` Universal Blue images like Bazzite and Aurora)
 *   **Solus**
 *   **Deepin**
-*   **SteamOS**
+*   **SteamOS**, **Bluefin Dakota**, **Gnome OS** and **KDE Linux**
 
 Only x86 computers are supported, as other architectures lack support from most packages that are components of LinuxToys, even though the app itself may run on ARM devices. Support for non-systemd init systems is limited, and some features of the app cannot be offered for them.
 
