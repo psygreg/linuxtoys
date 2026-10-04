@@ -1185,7 +1185,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
     ``changed``, ``count`` and, on failure, ``error``.  Existing completed data is
     never destroyed by a failed refresh.
     """
-    with startup_perf.measured_lock(_LOCK, "catalog-publication-lock"):
+    with _LOCK:
         if not force and not cache_needs_refresh():
             if status_callback:
                 status_callback("ready")
@@ -1220,8 +1220,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                 and published_state.get("schema") == CACHE_SCHEMA
                 and published_state.get("complete") is True
             )
-            with startup_perf.span("catalog-generation-load-rust"):
-                generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
+            generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
 
             ratings_box = {"value": None, "done": False}
 
@@ -1347,7 +1346,6 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
             }
 
 
-@startup_perf.timed("homebrew-refresh")
 def refresh_homebrew_cache(force=False):
     """Refresh only the optional source; call from a background worker.
 
@@ -1356,10 +1354,9 @@ def refresh_homebrew_cache(force=False):
     """
     if not homebrew_catalog.enabled():
         return {"success": True, "changed": False}
-    with startup_perf.measured_lock(_LOCK, "catalog-publication-lock"):
+    with _LOCK:
         source = get_state().get("sources", {}).get("homebrew", {})
-        with startup_perf.span("catalog-generation-load-rust"):
-            generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
+        generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
         try:
             path = homebrew_catalog.load_or_refresh(force=force)
             if path is None or not homebrew_catalog.enabled():
@@ -1367,8 +1364,7 @@ def refresh_homebrew_cache(force=False):
             homebrew_catalog.refresh_popularity(force=force)
             # Even a current published generation must validate/repair the
             # source binary. The Rust loader rebuilds empty or corrupt files.
-            with startup_perf.span("homebrew-source-binary-load-rust"):
-                source_count = generation.add_homebrew(os.fspath(path), homebrew_catalog.linux_arch())
+            source_count = generation.add_homebrew(os.fspath(path), homebrew_catalog.linux_arch())
             if not source_count:
                 return {"success": False, "changed": False, "error": "No usable Linux formulae"}
             if (not force and source.get("complete")
@@ -1377,12 +1373,10 @@ def refresh_homebrew_cache(force=False):
                     and generation.homebrew_popularity_matches_previous()
                     and not homebrew_catalog.needs_refresh()):
                 return {"success": True, "changed": False}
-            with startup_perf.span("homebrew-retain-other-sources-rust"):
-                generation.retain_other_sources("homebrew")
+            generation.retain_other_sources("homebrew")
             if not homebrew_catalog.enabled():
                 return {"success": False, "changed": False}
-            with startup_perf.span("homebrew-publish-rust"):
-                changed, count = generation.publish(os.fspath(CATALOG_PATH), False)
+            changed, count = generation.publish(os.fspath(CATALOG_PATH), False)
             state = get_state()
             state["count"] = int(count)
             state.setdefault("sources", {})["homebrew"] = {
@@ -1395,8 +1389,7 @@ def refresh_homebrew_cache(force=False):
             logging.warning("Homebrew catalog refresh failed: %s", error)
             return {"success": False, "changed": False, "error": str(error)}
         finally:
-            with startup_perf.span("homebrew-release-buffers-rust"):
-                generation.release_buffers()
+            generation.release_buffers()
 
 
 def get_flatpak_extensions(info):

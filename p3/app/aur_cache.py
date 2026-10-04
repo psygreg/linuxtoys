@@ -94,7 +94,9 @@ def _catalog():
     if not enabled() or not CATALOG_PATH.is_file():
         return None
     try:
-        mtime = CATALOG_PATH.stat().st_mtime_ns
+        appstream_path = CACHE_DIR.parent / "appstream/catalog.json"
+        mtime = (CATALOG_PATH.stat().st_mtime_ns,
+                 appstream_path.stat().st_mtime_ns if appstream_path.is_file() else None)
     except OSError:
         return None
     with _LOCK:

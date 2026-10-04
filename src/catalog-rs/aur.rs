@@ -9,9 +9,6 @@ use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime};
 
 const AUR_ARCHIVE_URL: &str = "https://aur.archlinux.org/packages-meta-ext-v1.json.gz";
-const SHELLY_ICON_MANIFEST_URL: &str = "https://raw.githubusercontent.com/Seafoam-Labs/shelly-icon-stream/main/manifest.json";
-const SHELLY_ICON_RAW_BASE: &str = "https://raw.githubusercontent.com/Seafoam-Labs/shelly-icon-stream/main/";
-const SHELLY_ICON_MANIFEST_FILE: &str = "shelly-icon-stream.json";
 const AUR_CATALOG_FILE: &str = "catalog.bin";
 const AUR_CATALOG_VERSION_FILE: &str = "catalog.version";
 const AUR_CATALOG_VERSION: u32 = 3;
@@ -73,10 +70,8 @@ fn modified_time(path: &Path) -> Option<SystemTime> {
 #[pyfunction]
 pub fn aur_cache_is_fresh(path: &str) -> bool {
     let archive = Path::new(path);
-    let manifest = shelly_manifest_path(archive);
     let binary = catalog_path(archive);
     if !cache_fresh(archive)
-        || !cache_fresh(&manifest)
         || !binary.is_file()
         || !catalog_version_matches(archive)
     {
@@ -88,8 +83,7 @@ pub fn aur_cache_is_fresh(path: &str) -> bool {
     // retries the build instead of serving that generation for another 14 days.
     let Some(binary_time) = modified_time(&binary) else { return false; };
     let Some(archive_time) = modified_time(archive) else { return false; };
-    let Some(manifest_time) = modified_time(&manifest) else { return false; };
-    binary_time >= archive_time && binary_time >= manifest_time
+    binary_time >= archive_time
 }
 
 fn download_to_path(url: &str, destination: &Path, user_agent: &str) -> Result<(), String> {
@@ -109,13 +103,6 @@ fn download_to_path(url: &str, destination: &Path, user_agent: &str) -> Result<(
     output.sync_all().map_err(|error| error.to_string())?;
     fs::rename(&tmp, destination).map_err(|error| error.to_string())?;
     Ok(())
-}
-
-fn shelly_manifest_path(aur_archive: &Path) -> PathBuf {
-    aur_archive
-        .parent()
-        .unwrap_or_else(|| Path::new("."))
-        .join(SHELLY_ICON_MANIFEST_FILE)
 }
 
 fn catalog_path(aur_archive: &Path) -> PathBuf {
@@ -150,33 +137,59 @@ fn publish_catalog_version(aur_archive: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn resolve_icon(
-    pkg: &AurPackage,
-    icons: &HashMap<String, Vec<String>>,
-) -> String {
-    let paths = icons.get(&pkg.Name).or_else(|| {
-        if pkg.PackageBase.is_empty() || pkg.PackageBase == pkg.Name {
-            None
-        } else {
-            icons.get(&pkg.PackageBase)
-        }
-    });
-
-    let Some(paths) = paths else {
-        return "aurpackage.webp".to_string();
-    };
-    let selected = paths
-        .iter()
-        .find(|path| path.contains("/128x128/"))
-        .or_else(|| paths.iter().find(|path| path.contains("/64x64/")))
-        .or_else(|| paths.iter().find(|path| path.contains("/48x48/")))
-        .or_else(|| paths.first());
-
-    selected
-        .map(|path| format!("{SHELLY_ICON_RAW_BASE}{path}"))
-        .unwrap_or_else(|| "aurpackage.webp".to_string())
+// Match AUR variants to the same application without changing install identities.
+fn icon_key(name: &str) -> String {
+    let name = name.trim().to_lowercase();
+    name.strip_suffix("-bin").or_else(|| name.strip_suffix("-git"))
+        .unwrap_or(&name).to_string()
 }
 
+fn appstream_icons(path: &Path) -> HashMap<String, String> {
+    fn collect(row: &serde_json::Value, native: bool, icons: &mut HashMap<String, String>) {
+        let source = row.get("source").or_else(|| row.get("appstream_source"))
+            .and_then(|x| x.as_str()).unwrap_or("");
+        if source == if native { "native" } else { "flatpak" } {
+            if let Some(icon) = row.get("icon").and_then(|x| x.as_str()).filter(|x| !x.is_empty()) {
+                let mut keys = Vec::new();
+                for field in ["name", "appstream_canonical_name", "package-name", "packages", "pkgname", "id", "appstream_id"] {
+                    if let Some(value) = row.get(field) {
+                        if let Some(name) = value.as_str() { keys.push(name.to_string()); }
+                        if let Some(names) = value.as_array() {
+                            keys.extend(names.iter().filter_map(|x| x.as_str().map(str::to_string)));
+                        }
+                    }
+                }
+                for name in keys {
+                    let name = name.strip_suffix(".desktop").unwrap_or(&name);
+                    icons.entry(icon_key(name)).or_insert_with(|| icon.to_string());
+                    // Flatpak IDs supply an application name even when display names are localized.
+                    if source == "flatpak" {
+                        if let Some(tail) = name.rsplit('.').next() {
+                            icons.entry(icon_key(tail)).or_insert_with(|| icon.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        if let Some(options) = row.get("source_options").and_then(|x| x.as_array()) {
+            for option in options { collect(option, native, icons); }
+        }
+    }
+    let mut icons = HashMap::new();
+    let rows: Vec<serde_json::Value> = File::open(path).ok()
+        .and_then(|file| serde_json::from_reader(BufReader::new(file)).ok()).unwrap_or_default();
+    for native in [true, false] {
+        for row in &rows { collect(row, native, &mut icons); }
+    }
+    icons
+}
+
+fn resolve_icon(pkg: &AurPackage, icons: &HashMap<String, String>) -> String {
+    icons.get(&icon_key(&pkg.Name))
+        .or_else(|| icons.get(&icon_key(&pkg.PackageBase)))
+        .or_else(|| pkg.Provides.iter().find_map(|name| icons.get(&icon_key(&dependency_name(name)))))
+        .cloned().unwrap_or_else(|| "aurpackage.webp".to_string())
+}
 
 fn dependency_name(value: &str) -> &str {
     let value = value.split(':').next().unwrap_or(value).trim();
@@ -357,12 +370,6 @@ fn build_binary_catalog(aur_archive: &Path, destination: &Path) -> Result<(), St
     let packages: Vec<AurPackage> =
         serde_json::from_reader(decoder).map_err(|error| error.to_string())?;
 
-    let manifest_path = shelly_manifest_path(aur_archive);
-    let icons: HashMap<String, Vec<String>> = File::open(&manifest_path)
-        .ok()
-        .and_then(|file| serde_json::from_reader(BufReader::new(file)).ok())
-        .unwrap_or_default();
-
     let referenced_dependencies = dependency_library_names(&packages);
     let now = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
@@ -396,7 +403,7 @@ fn build_binary_catalog(aur_archive: &Path, destination: &Path) -> Result<(), St
     }
 
     for pkg in &mut entries {
-        pkg.Icon = resolve_icon(pkg, &icons);
+        pkg.Icon = "aurpackage.webp".to_string();
     }
 
     let mut browse_order: Vec<usize> = (0..entries.len()).collect();
@@ -426,22 +433,19 @@ fn build_binary_catalog(aur_archive: &Path, destination: &Path) -> Result<(), St
 
 fn refresh_aur_archive_inner(path: &str, force: bool) -> Result<bool, String> {
     let destination = PathBuf::from(path);
-    let manifest = shelly_manifest_path(&destination);
     let binary = catalog_path(&destination);
     let aur_needs_refresh = force || !cache_fresh(&destination);
-    let icons_need_refresh = force || !cache_fresh(&manifest);
     let binary_missing = !binary.is_file();
     let binary_incompatible = !catalog_version_matches(&destination);
     let binary_outdated = match modified_time(&binary) {
         Some(binary_time) => {
             modified_time(&destination).map(|time| binary_time < time).unwrap_or(true)
-                || modified_time(&manifest).map(|time| binary_time < time).unwrap_or(true)
+
         }
         None => true,
     };
 
     if !aur_needs_refresh
-        && !icons_need_refresh
         && !binary_missing
         && !binary_incompatible
         && !binary_outdated
@@ -456,16 +460,6 @@ fn refresh_aur_archive_inner(path: &str, force: bool) -> Result<bool, String> {
     // binary remains published and usable while all of this work happens.
     if aur_needs_refresh {
         download_to_path(AUR_ARCHIVE_URL, &destination, "LinuxToys AUR catalog")?;
-    }
-
-    // Icon enrichment is optional. A failed Shelly refresh retains the previous
-    // manifest if one exists, otherwise the binary builder uses aurpackage.webp.
-    if icons_need_refresh {
-        let _ = download_to_path(
-            SHELLY_ICON_MANIFEST_URL,
-            &manifest,
-            "LinuxToys AUR icon catalog",
-        );
     }
 
     // Publish only after the complete new generation has parsed, filtered,
@@ -605,7 +599,7 @@ fn load_aur_catalog_inner(
     native_packages: Vec<String>,
 ) -> PyResult<AurCatalog> {
     let file = File::open(path).map_err(io_py)?;
-    let cached: CachedAurCatalog =
+    let mut cached: CachedAurCatalog =
         rmp_serde::from_read(BufReader::new(file)).map_err(io_py)?;
     if cached.version != AUR_CATALOG_VERSION {
         return Err(io_py(format!(
@@ -613,6 +607,12 @@ fn load_aur_catalog_inner(
             cached.version, AUR_CATALOG_VERSION
         )));
     }
+
+    // Enrich at load time so existing binaries cannot retain Shelly URLs.
+    let appstream_path = Path::new(path).parent().and_then(Path::parent)
+        .unwrap_or_else(|| Path::new(".")) .join("appstream/catalog.json");
+    let icons = appstream_icons(&appstream_path);
+    for pkg in &mut cached.entries { pkg.Icon = resolve_icon(pkg, &icons); }
 
     // Resolve runtime-only exclusions once. catalog.bin remains independent of
     // both developer policy and the host's currently enabled native repositories.
@@ -675,4 +675,29 @@ fn load_aur_catalog_inner(
         browse_order,
         omitted,
     })
+}
+
+#[cfg(test)]
+mod appstream_icon_tests {
+    use super::*;
+    #[test]
+    fn variants_keep_a_shared_icon_key() {
+        assert_eq!(icon_key("Neovim-bin"), "neovim");
+        assert_eq!(icon_key("neovim-git"), "neovim");
+        assert_eq!(icon_key("git"), "git");
+        assert_eq!(icon_key("foo-bin-extra"), "foo-bin-extra");
+    }
+    #[test]
+    fn native_icons_precede_flatpak_and_other_sources_are_ignored() {
+        let path = std::env::temp_dir().join(format!("lt-aur-icons-{}.json", std::process::id()));
+        fs::write(&path, r#"[
+            {"source":"flatpak","id":"org.example.Editor","icon":"flatpak.png"},
+            {"source":"native","packages":["editor"],"icon":"native.png"},
+            {"source":"homebrew","name":"other","icon":"brewpkg.webp"}
+        ]"#).unwrap();
+        let icons = appstream_icons(&path);
+        fs::remove_file(path).unwrap();
+        assert_eq!(icons.get("editor").map(String::as_str), Some("native.png"));
+        assert!(!icons.contains_key("other"));
+    }
 }
