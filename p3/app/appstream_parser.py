@@ -7,7 +7,7 @@ import json
 import re
 import threading
 
-from . import appstream_cache, repo_parser
+from . import appstream_cache, repo_parser, homebrew_catalog
 from . import _catalog_rs as _catalog_rs
 from .compat import get_system_compat_keys
 from .lang_utils import detect_system_language
@@ -20,7 +20,7 @@ _DERIVED_REFRESHING = set()
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 23
+RUNTIME_CACHE_SCHEMA = 24
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -590,6 +590,7 @@ def _runtime_catalog(
     ) for entry in curated_entries))
     category_paths = tuple(sorted(str(path) for path in (category_paths or ())))
     cache_key = (
+        homebrew_catalog.enabled(),
         tuple(sorted(_system_flatpak_lock_ids())),
         tuple(sorted(_appstream_omit_keys())),
         scripts_dir,
@@ -608,6 +609,7 @@ def _runtime_catalog(
     curated_ids, curated_packages, curated_names = _curated_identity_sets(curated_entries)
     omit_keys = _appstream_omit_keys()
     category_config = {
+        "homebrew_enabled": homebrew_catalog.enabled(),
         "main": MAIN_CATEGORY_CANDIDATES,
         "additional": ADDITIONAL_CATEGORY_CANDIDATES,
         "expressions": CATEGORY_EXPRESSION_RULES,
@@ -897,6 +899,7 @@ def get_installed_entries(
     snap_names=None,
     curated_entries=None,
     category_paths=None,
+    homebrew_names=None,
 ):
     """Materialize only AppStream entries matching observed/Registry installs."""
     if snap_names is None:
@@ -913,11 +916,68 @@ def get_installed_entries(
                         snap_names.append(fields[0])
         except (OSError, subprocess.SubprocessError):
             pass
+    if homebrew_names is None:
+        from . import installed_packages
+        homebrew_names = installed_packages.snapshot().get("homebrew", ())
     return list(
         _runtime_catalog(scripts_dir, curated_entries, category_paths).installed_entries(
             sorted({str(value) for value in (native_packages or ()) if str(value).strip()}),
             sorted({str(value) for value in (flatpak_ids or ()) if str(value).strip()}),
             sorted({str(value) for value in (executed_names or ()) if str(value).strip()}),
             sorted({str(value) for value in (snap_names or ()) if str(value).strip()}),
+            sorted({str(value) for value in (homebrew_names or ()) if str(value).strip()}) if homebrew_catalog.enabled() else [],
         )
     )
+
+
+class HomebrewEntriesView:
+    """Keep a generation alive and decode only requested category slices."""
+    def __init__(self, catalog):
+        self._catalog = catalog
+        self._length = int(catalog.category_entry_count("homebrew"))
+
+    def __len__(self):
+        return self._length
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            start, stop, step = key.indices(self._length)
+            if step != 1:
+                return [self[index] for index in range(start, stop, step)]
+            if stop <= start:
+                return []
+            entries = self._catalog.category_entry_slice("homebrew", start, stop - start)
+            return entries
+        import operator
+        index = operator.index(key)
+        if index < 0:
+            index += self._length
+        if not 0 <= index < self._length:
+            raise IndexError(index)
+        return self._catalog.category_entry_slice("homebrew", index, 1)[0]
+
+
+def get_homebrew_entries():
+    """Browse the independent Homebrew category in the current runtime context."""
+    if not homebrew_catalog.enabled():
+        return []
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    catalog = _runtime_catalog(scripts_dir, curated_entries, category_paths)
+    return HomebrewEntriesView(catalog)
+
+
+def search_homebrew_entries(query):
+    """Search only Homebrew in Rust, converting only matching entries."""
+    if not homebrew_catalog.enabled():
+        return []
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths)
+                .search(str(query or ""), "new", "official", "homebrew"))

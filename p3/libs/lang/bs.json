@@ -721,5 +721,7 @@
   "app_page_snap_revert_confirm_title": "Vratiti Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys će vratiti '{app_name}' na prethodno instaliranu Snap reviziju.\n\nŽelite li nastaviti?",
   "app_page_snap_revert": " Vrati ",
-  "uri_install_error_title": "Nije moguće otvoriti LinuxToys vezu"
+  "uri_install_error_title": "Nije moguće otvoriti LinuxToys vezu",
+  "homebrew_catalog_unavailable": "Homebrew metapodaci nisu dostupni. Pokušajte ponovo kasnije.",
+  "homebrew_category_desc": "Pregledajte pakete iz Homebrew-a."
 }

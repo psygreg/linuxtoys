@@ -11,6 +11,7 @@ import time
 from . import (
     action_registry,
     appstream_cache,
+    homebrew_catalog,
     appstream_parser,
     aur_cache,
     appstream_queue,
@@ -508,6 +509,11 @@ class AppWindow(
         GLib.idle_add(self._refresh_installed_packages_async)
         GLib.idle_add(self._show_ostree_package_deployment_info_on_startup)
         GLib.idle_add(self._check_updates)
+        self._homebrew_source_fingerprint = homebrew_catalog.availability_fingerprint()
+        self._homebrew_refresh_running = False
+        self._homebrew_refresh_pending = False
+        self._homebrew_watch_id = GLib.timeout_add_seconds(3, self._check_homebrew_source)
+        self.connect("destroy", self._stop_homebrew_watch)
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
         GLib.idle_add(self._start_startup_recommendation_check)
@@ -669,6 +675,125 @@ class AppWindow(
             return True
         return self._start_appstream_cache()
 
+    def _activate_homebrew_category(self, widget, event):
+        if not homebrew_catalog.enabled():
+            self._check_homebrew_source()
+            return
+        source = appstream_cache.get_state().get("sources", {}).get("homebrew", {})
+        if (source.get("complete") and homebrew_catalog.binary_snapshot_available()
+                and source.get("fingerprint") == homebrew_catalog.fingerprint()):
+            # Browse the already-published runtime generation immediately.
+            # Refresh/validation stays off GTK and does not gate navigation.
+            self._open_aur_category_view(self._homebrew_category_info(), loading=False)
+            return
+        category_info = self._homebrew_category_info()
+        self._open_aur_category_view(category_info, loading=True)
+        page = self.scripts_view
+        flowbox = self.scripts_flowbox
+        self._refresh_homebrew_catalog()
+
+        def finish_loading():
+            if self.main_stack.get_visible_child() is not page:
+                return False
+            if self._homebrew_refresh_running or self._homebrew_refresh_pending:
+                return True
+            page._linuxtoys_aur_spinner.stop()
+            page._linuxtoys_aur_spinner.hide()
+            page._linuxtoys_category_content.set_sensitive(True)
+            state = appstream_cache.get_state().get("sources", {}).get("homebrew", {})
+            if (state.get("complete") and homebrew_catalog.enabled()
+                    and self._homebrew_refresh_result.get("success")):
+                self._load_scripts_into_flowbox(flowbox, category_info, defer_initial=True)
+            else:
+                gtk_dialogs.run_message_dialog(
+                    self, title="Homebrew",
+                    secondary_text=self.translations.get(
+                        "homebrew_catalog_unavailable", "Homebrew metadata is unavailable. Try again later."),
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=[("OK", Gtk.ResponseType.OK)],
+                    default_response=Gtk.ResponseType.OK,
+                )
+            return False
+
+        GLib.timeout_add(100, finish_loading)
+
+    def _homebrew_category_info(self):
+        return {
+            "name": "Homebrew",
+            "description": self.translations.get("homebrew_category_desc", "Packages from Homebrew."),
+            "icon": "brew.png", "path": "homebrew://catalog", "type": "category",
+            "is_script": False, "is_subcategory": False, "is_homebrew_category": True,
+        }
+
+    def _stop_homebrew_watch(self, _window):
+        if self._homebrew_watch_id is not None:
+            GLib.source_remove(self._homebrew_watch_id)
+            self._homebrew_watch_id = None
+
+    def _check_homebrew_source(self):
+        """Observe installer/remover signals and externally changed Brew presence."""
+        if not self._categories_startup_transition_complete:
+            return True
+        fingerprint = homebrew_catalog.availability_fingerprint()
+        if fingerprint == self._homebrew_source_fingerprint:
+            return True
+        self._homebrew_source_fingerprint = fingerprint
+        self._homebrew_refresh_pending = True
+        self._discard_retained_category_views()
+        self.load_categories()
+        if not homebrew_catalog.enabled() and (self.current_category_info or {}).get("is_homebrew_category"):
+            self.show_categories_view()
+        if homebrew_catalog.enabled():
+            self._refresh_homebrew_catalog()
+        else:
+            self._homebrew_refresh_pending = False
+            self._apply_appstream_catalog()
+        return True
+
+    def _refresh_homebrew_catalog(self):
+        if self._homebrew_refresh_running or not homebrew_catalog.enabled():
+            return
+        self._homebrew_refresh_pending = False
+        self._homebrew_refresh_running = True
+
+        def worker():
+            try:
+                result = appstream_cache.refresh_homebrew_cache()
+                if result.get("success"):
+                    if result.get("changed"):
+                        appstream_parser.prepare_runtime_cache()
+                    # Warm the binary runtime/category index off GTK, even when
+                    # the published source is unchanged. No entries are decoded.
+                    appstream_parser.get_homebrew_entries()
+            except Exception as error:
+                result = {"success": False, "error": str(error)}
+            GLib.idle_add(finish, result)
+
+        def finish(result):
+            self._homebrew_refresh_result = result
+            self._homebrew_refresh_running = False
+            current = homebrew_catalog.availability_fingerprint()
+            if not homebrew_catalog.enabled():
+                self._homebrew_refresh_pending = False
+            elif current != self._homebrew_source_fingerprint:
+                self._homebrew_refresh_pending = True
+            self._homebrew_source_fingerprint = current
+            if result.get("success") and result.get("changed"):
+                self._apply_appstream_catalog()
+                self._refresh_installed_packages_async(force=True)
+            if self._homebrew_refresh_pending:
+                self._refresh_homebrew_catalog()
+            return False
+
+        threading.Thread(target=worker, daemon=True, name="linuxtoys-homebrew-source").start()
+
+    def _start_homebrew_after_startup(self):
+        """Keep optional-source work outside the initial GTK transition."""
+        if not self._categories_startup_transition_complete:
+            return True
+        self._refresh_homebrew_catalog()
+        return False
+
     def _start_appstream_cache(self, *, force=False):
         """Refresh AppStream metadata on its background worker."""
         if self._appstream_cache_started:
@@ -719,6 +844,8 @@ class AppWindow(
                 )
             elif changed:
                 GLib.idle_add(self._apply_appstream_catalog)
+            if not initial_build and homebrew_catalog.enabled():
+                GLib.timeout_add(250, self._start_homebrew_after_startup)
 
         threading.Thread(
             target=worker,
@@ -738,6 +865,8 @@ class AppWindow(
     def _finish_initial_appstream_build(self, catalog_changed, prepared, starter=False):
         """Release first-run startup after AppStream catalog/pickle preparation."""
         self._appstream_initial_build_pending = False
+        if homebrew_catalog.enabled():
+            GLib.timeout_add(250, self._start_homebrew_after_startup)
         if starter:
             # Wait for the starter's parser/GTK handoff before allowing the full
             # generation to replace its on-disk/runtime caches.
@@ -824,7 +953,8 @@ class AppWindow(
 
             def add_items(items):
                 for item in items or ():
-                    if not item.get("is_script") or item.get("is_create_script"):
+                    if (not item.get("is_script") or item.get("is_create_script")
+                            or item.get("appstream_source") == "homebrew"):
                         continue
                     key = item.get("path") or (
                         item.get("name", ""),
@@ -1363,6 +1493,7 @@ class AppWindow(
         return False
 
     def _on_installed_packages_changed(self):
+        self._check_homebrew_source()
         # Observed AppStream state participates in ScriptCache and Featured eligibility.
         if self.script_cache.is_populated:
             self.script_cache.refresh_removable_cache()
@@ -1388,6 +1519,7 @@ class AppWindow(
     def _appstream_registry_managed(self, info):
         registry_data = action_registry.parse_registry_file()
         candidates = (
+            str(info.get("registry_name", "") or "").strip(),
             str(info.get("appstream_id", "") or "").strip(),
             str(info.get("name", "") or "").strip(),
             str(info.get("appstream_canonical_name", "") or "").strip(),
@@ -1453,9 +1585,13 @@ class AppWindow(
             return "available"
 
         session_state = self._appstream_runner.status_for_appstream_id(appstream_id)
-        if session_state is not None:
+        if session_state is not None and (
+            info.get("appstream_source") != "homebrew" or session_state in ("queued", "removing")
+        ):
             return session_state
 
+        if info.get("appstream_source") == "homebrew":
+            return "installed" if installed_packages.match(info) is not None else "available"
         registry_data = action_registry.parse_registry_file()
         # appstream_id is the stable identity used by new background installs.
         # Keep display/canonical-name fallbacks for entries installed by older builds.
@@ -2443,6 +2579,8 @@ class AppWindow(
             "is_linuxtoys_specials": True,
         }
         category_snapshot = [specials_category, *categories]
+        if homebrew_catalog.enabled():
+            category_snapshot.append(self._homebrew_category_info())
 
         # A language change only changes translated card metadata; the root category
         # structure and artwork normally remain identical. Rebind those native cards
@@ -2578,6 +2716,8 @@ class AppWindow(
     def _category_items_for_display(self, category_info):
         """Return the exact item list used by normal category browsing."""
         category_path = category_info["path"]
+        if category_info.get("is_homebrew_category"):
+            return appstream_parser.get_homebrew_entries()
         if category_info.get("is_aur_category"):
             # Keep AUR as a lazy Rust-backed sequence. Converting this to list()
             # materializes tens of thousands of Python dictionaries at once.
@@ -2623,7 +2763,7 @@ class AppWindow(
         # Available/Installed split would enumerate the complete repository and
         # defeat paged browsing. Individual AUR cards still refresh their normal
         # installed/removable state after transactions.
-        if category_info.get("is_aur_category"):
+        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category"):
             return False
         if (
             category_info.get("is_linuxtoys_specials")
@@ -2719,7 +2859,9 @@ class AppWindow(
 
         scripts = self._category_items_for_display(category_info)
         category_tab = getattr(flowbox, "_linuxtoys_category_tab", None)
-        if category_tab in ("available", "installed"):
+        if category_info.get("is_homebrew_category") and category_tab == "installed":
+            scripts = []
+        elif category_tab in ("available", "installed") and not category_info.get("is_homebrew_category"):
             available, installed = self._partition_category_items(
                 category_info, scripts
             )
@@ -2830,7 +2972,8 @@ class AppWindow(
                 allow_drag=allow_drag,
             )
             if widgets is None:
-                return [add_card(info) for info in batch_infos]
+                fallback = [add_card(info) for info in batch_infos]
+                return fallback
 
             for widget, info in zip(widgets, batch_infos):
                 description = info.get("description", "")
@@ -3337,7 +3480,15 @@ class AppWindow(
 
     def _run_single_script_install(self, info, close_app_page=False):
         """Run the normal single-entry confirmation and terminal-view flow."""
-        deps = asyncio.run(self._process_needed_scripts([info]))
+        if info.get("appstream_source") == "homebrew":
+            # Brew is already required for exposing the source; formula dependencies
+            # are handled by Brew, and overlay dependencies by the queued runner.
+            if not homebrew_catalog.enabled():
+                self._check_homebrew_source()
+                return
+            deps = [info]
+        else:
+            deps = asyncio.run(self._process_needed_scripts([info]))
         if not deps:
             return
 
@@ -4486,6 +4637,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                 }
             )
             return refreshed
+
+        if self.current_category_info.get("is_homebrew_category"):
+            return self._homebrew_category_info() if homebrew_catalog.enabled() else None
 
         if (
             self.current_category_info.get("is_aur_category")

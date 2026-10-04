@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "I-revert ang Snap?",
   "app_page_snap_revert_confirm_message": "Ibabalik ng LinuxToys ang '{app_name}' sa dating naka-install na Snap revision.\n\nGusto mo bang magpatuloy?",
   "app_page_snap_revert": " I-revert ",
-  "uri_install_error_title": "Hindi mabuksan ang LinuxToys link"
+  "uri_install_error_title": "Hindi mabuksan ang LinuxToys link",
+  "homebrew_catalog_unavailable": "Hindi available ang Homebrew metadata. Subukan ulit mamaya.",
+  "homebrew_category_desc": "Mag-browse ng mga package mula sa Homebrew."
 }

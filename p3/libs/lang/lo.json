@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "ຍ້ອນ Snap ກັບ?",
   "app_page_snap_revert_confirm_message": "LinuxToys ຈະຍ້ອນ '{app_name}' ກັບໄປຫາ Snap revision ທີ່ເຄີຍຕິດຕັ້ງກ່ອນໜ້ານີ້.\n\nທ່ານຕ້ອງການສືບຕໍ່ບໍ?",
   "app_page_snap_revert": " ຍ້ອນກັບ ",
-  "uri_install_error_title": "ບໍ່ສາມາດເປີດລິ້ງ LinuxToys ໄດ້"
+  "uri_install_error_title": "ບໍ່ສາມາດເປີດລິ້ງ LinuxToys ໄດ້",
+  "homebrew_catalog_unavailable": "ຂໍ້ມູນເມຕາ Homebrew ບໍ່ພ້ອມໃຊ້ງານ. ລອງໃໝ່ພາຍຫຼັງ.",
+  "homebrew_category_desc": "ເບິ່ງແພັກເກດຈາກ Homebrew."
 }

@@ -307,6 +307,8 @@ def _parse_operation(op_line):
         elif op_type == "flatpak":
             # flatpak can have multiple operands (e.g., "flatpak app1 app2")
             return op_type, parts[1:]
+        elif op_type in ("homebrew", "homebrew-manager"):
+            return op_type, parts[1:]
         elif op_type == "snap":
             # snap can have multiple operands (e.g., "snap app1 app2")
             return op_type, parts[1:]
@@ -975,6 +977,18 @@ def _reverse_operation(op_line, package_manager):
 
     elif op_type == "flatpak" and operands:
         return _reverse_flatpak_removal(operands)
+
+    elif op_type == "homebrew" and operands:
+        return ['source "$SCRIPT_DIR/libs/packages.bash"',
+                "pkg_brew_remove " + " ".join(shlex.quote(name) for name in operands)]
+
+    elif op_type == "homebrew-manager" and operands:
+        try:
+            prefix = base64.b64decode(operands[0], validate=True).decode("utf-8")
+        except (ValueError, UnicodeError):
+            return ["false # Invalid Homebrew installation prefix"]
+        return ['source "$SCRIPT_DIR/libs/packages.bash"',
+                "_brew_uninstall_manager " + shlex.quote(prefix)]
 
     elif op_type == "snap" and operands:
         return _reverse_snap_removal(operands)

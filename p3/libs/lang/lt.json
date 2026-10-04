@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Grąžinti Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys grąžins „{app_name}“ į anksčiau įdiegtą Snap reviziją.\n\nAr norite tęsti?",
   "app_page_snap_revert": " Grąžinti ",
-  "uri_install_error_title": "Nepavyko atidaryti LinuxToys nuorodos"
+  "uri_install_error_title": "Nepavyko atidaryti LinuxToys nuorodos",
+  "homebrew_catalog_unavailable": "Homebrew metaduomenys nepasiekiami. Bandykite dar kartą vėliau.",
+  "homebrew_category_desc": "Naršykite Homebrew paketus."
 }

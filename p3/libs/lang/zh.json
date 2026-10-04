@@ -724,5 +724,7 @@
   "app_page_snap_revert_confirm_title": "还原 Snap？",
   "app_page_snap_revert_confirm_message": "LinuxToys 会将“{app_name}”还原到之前安装的 Snap 修订版本。\n\n是否继续？",
   "app_page_snap_revert": " 还原 ",
-  "uri_install_error_title": "无法打开 LinuxToys 链接"
+  "uri_install_error_title": "无法打开 LinuxToys 链接",
+  "homebrew_catalog_unavailable": "Homebrew 元数据不可用。请稍后重试。",
+  "homebrew_category_desc": "浏览 Homebrew 中的软件包。"
 }

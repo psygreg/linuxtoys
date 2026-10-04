@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "ត្រឡប់ Snap ទៅកំណែមុន?",
   "app_page_snap_revert_confirm_message": "LinuxToys នឹងត្រឡប់ '{app_name}' ទៅកំណែ Snap ដែលបានដំឡើងពីមុន។\n\nតើអ្នកចង់បន្តទេ?",
   "app_page_snap_revert": " ត្រឡប់ ",
-  "uri_install_error_title": "មិនអាចបើកតំណ LinuxToys បានទេ"
+  "uri_install_error_title": "មិនអាចបើកតំណ LinuxToys បានទេ",
+  "homebrew_catalog_unavailable": "ទិន្នន័យមេតា Homebrew មិនអាចប្រើបានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
+  "homebrew_category_desc": "រកមើលកញ្ចប់ពី Homebrew។"
 }

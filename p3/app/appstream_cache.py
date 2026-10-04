@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
 import shutil
@@ -21,7 +22,7 @@ from urllib.error import HTTPError, URLError
 from pathlib import Path
 
 from . import popularity
-from . import snap_catalog
+from . import snap_catalog, homebrew_catalog
 from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
@@ -1083,6 +1084,7 @@ def _source_fingerprints():
         "native": native,
         "flatpak": _flatpak_source_fingerprint(),
         "snap": _snap_source_fingerprint(),
+        "homebrew": homebrew_catalog.fingerprint(),
     }
     if inventory_changed or not SOURCE_INVENTORY_PATH.is_file():
         _atomic_json_write(SOURCE_INVENTORY_PATH, inventory)
@@ -1098,6 +1100,7 @@ def _default_state():
             "native": {"complete": False, "updated": 0, "fingerprint": ""},
             "flatpak": {"complete": False, "updated": 0, "fingerprint": ""},
             "snap": {"complete": False, "updated": 0, "fingerprint": ""},
+            "homebrew": {"complete": False, "updated": 0, "fingerprint": ""},
         },
     }
 
@@ -1182,7 +1185,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
     ``changed``, ``count`` and, on failure, ``error``.  Existing completed data is
     never destroyed by a failed refresh.
     """
-    with _LOCK:
+    with startup_perf.measured_lock(_LOCK, "catalog-publication-lock"):
         if not force and not cache_needs_refresh():
             if status_callback:
                 status_callback("ready")
@@ -1217,7 +1220,8 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                 and published_state.get("schema") == CACHE_SCHEMA
                 and published_state.get("complete") is True
             )
-            generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
+            with startup_perf.span("catalog-generation-load-rust"):
+                generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
 
             ratings_box = {"value": None, "done": False}
 
@@ -1255,6 +1259,14 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                     SNAP_CATALOG_PATH,
                     force=force,
                 )
+            homebrew_path = homebrew_catalog.cached_path()
+            homebrew_complete = not homebrew_catalog.enabled()
+            if homebrew_path is not None and homebrew_catalog.enabled():
+                try:
+                    homebrew_complete = bool(generation.add_homebrew(
+                        os.fspath(homebrew_path), homebrew_catalog.linux_arch()))
+                except Exception as error:
+                    logging.warning("Could not load Homebrew metadata: %s", error)
             snap_ratings = None
             if snap_components:
                 generation.add_snap(snap_components)
@@ -1307,6 +1319,10 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                 "updated": now,
                 "fingerprint": fingerprints["snap"],
             }
+            state["sources"]["homebrew"] = {
+                "complete": homebrew_complete, "updated": now,
+                "fingerprint": fingerprints["homebrew"],
+            }
             _atomic_json_write(STATE_PATH, state)
 
             try:
@@ -1329,6 +1345,58 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                 "count": len(load_catalog()),
                 "error": str(error),
             }
+
+
+@startup_perf.timed("homebrew-refresh")
+def refresh_homebrew_cache(force=False):
+    """Refresh only the optional source; call from a background worker.
+
+    Serialize publication with AppStream, preserve all other sources/extensions,
+    and leave the starter/enrichment state untouched.
+    """
+    if not homebrew_catalog.enabled():
+        return {"success": True, "changed": False}
+    with startup_perf.measured_lock(_LOCK, "catalog-publication-lock"):
+        source = get_state().get("sources", {}).get("homebrew", {})
+        with startup_perf.span("catalog-generation-load-rust"):
+            generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
+        try:
+            path = homebrew_catalog.load_or_refresh(force=force)
+            if path is None or not homebrew_catalog.enabled():
+                return {"success": False, "changed": False}
+            homebrew_catalog.refresh_popularity(force=force)
+            # Even a current published generation must validate/repair the
+            # source binary. The Rust loader rebuilds empty or corrupt files.
+            with startup_perf.span("homebrew-source-binary-load-rust"):
+                source_count = generation.add_homebrew(os.fspath(path), homebrew_catalog.linux_arch())
+            if not source_count:
+                return {"success": False, "changed": False, "error": "No usable Linux formulae"}
+            if (not force and source.get("complete")
+                    and source.get("fingerprint") == homebrew_catalog.fingerprint()
+                    and generation.previous_source_count("homebrew") > 0
+                    and generation.homebrew_popularity_matches_previous()
+                    and not homebrew_catalog.needs_refresh()):
+                return {"success": True, "changed": False}
+            with startup_perf.span("homebrew-retain-other-sources-rust"):
+                generation.retain_other_sources("homebrew")
+            if not homebrew_catalog.enabled():
+                return {"success": False, "changed": False}
+            with startup_perf.span("homebrew-publish-rust"):
+                changed, count = generation.publish(os.fspath(CATALOG_PATH), False)
+            state = get_state()
+            state["count"] = int(count)
+            state.setdefault("sources", {})["homebrew"] = {
+                "complete": True, "updated": int(time.time()),
+                "fingerprint": homebrew_catalog.fingerprint(),
+            }
+            _atomic_json_write(STATE_PATH, state)
+            return {"success": True, "changed": bool(changed)}
+        except Exception as error:
+            logging.warning("Homebrew catalog refresh failed: %s", error)
+            return {"success": False, "changed": False, "error": str(error)}
+        finally:
+            with startup_perf.span("homebrew-release-buffers-rust"):
+                generation.release_buffers()
 
 
 def get_flatpak_extensions(info):

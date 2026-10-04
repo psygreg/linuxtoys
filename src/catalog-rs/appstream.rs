@@ -187,6 +187,7 @@ fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths
             }
         }
     }
+    if component.get("source").and_then(Value::as_str) == Some("homebrew") { return Some("homebrew".into()); }
     resolve_category_rs(component.get("categories").unwrap_or(&Value::Null),paths,cfg)
 }
 fn flatten_blocks(v:&Value)->String{let Some(a)=v.as_array()else{return String::new()};let mut blocks=Vec::new();for b in a{let Some(m)=b.as_object()else{continue};if m.get("type").and_then(Value::as_str)==Some("paragraph"){if let Some(sp)=m.get("spans").and_then(Value::as_array){blocks.push(sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string())}}else if let Some(items)=m.get("items").and_then(Value::as_array){blocks.push(items.iter().filter_map(|i|i.as_array()).map(|sp|sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string()).collect::<Vec<_>>().join("\n"))}}blocks.into_iter().filter(|s|!s.is_empty()).collect::<Vec<_>>().join("\n\n")}
@@ -194,12 +195,13 @@ fn clean_screens(v:Option<&Value>)->Value{let mut out=Vec::new();if let Some(a)=
 
 fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, category_paths:Vec<String>, category_config_json:&str, lang:&str, curated_ids:Vec<String>, curated_packages:Vec<String>, curated_names:Vec<String>, overlays_json:&str, native_badge:&str)->Vec<Value>{
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);let overlays:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));let ov=overlays.as_object();let ids:std::collections::HashSet<String>=curated_ids.into_iter().map(|s|s.to_lowercase()).collect();let pkgs:std::collections::HashSet<String>=curated_packages.into_iter().map(|s|s.to_lowercase()).collect();let names:std::collections::HashSet<String>=curated_names.into_iter().map(|s|s.to_lowercase()).collect();let mut out=Vec::new();
-    for m in components {let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||ids.contains(&id.to_lowercase()){continue}if m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
+    for m in components {let brew=m.get("source").and_then(Value::as_str)==Some("homebrew");let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||(!brew&&ids.contains(&id.to_lowercase())){continue}if !brew&&m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if !brew&&m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
         let Some(category)=resolve_component_category_rs(&m,&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",if snap{"markdown"}else{"appstream"});e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable"));s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else{"native"});e.insert("package-name".into(),if flat||snap{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else if snap{"snapbadge.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else{"native"});e.insert("package-name".into(),if flat||snap||brew{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        if brew { e.insert("homebrew_install_count".into(), m.get("homebrew_install_count").cloned().unwrap_or(Value::Number(0.into()))); s!("homebrew_name",packages.first().map(String::as_str).unwrap_or("")); s!("registry_name",id); }
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
         if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
         out.push(Value::Object(e));
@@ -271,7 +273,7 @@ fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::
 }
 fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
-    for m in components {let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
+    for m in components {if m.get("source").and_then(Value::as_str)==Some("homebrew"){pass.push(m);continue}let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
         let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).collect();
@@ -618,6 +620,110 @@ pub(crate) fn parse_flatpak_appstream_source(py:Python<'_>, path:&str, source_js
 
 
 
+
+/// Formula metadata is independent of desktop AppStream identities.
+/// No name-based merging: a CLI formula can share a name with a desktop app.
+fn normalize_homebrew_formula(value: &Value, arch: &str) -> Option<serde_json::Map<String, Value>> {
+    let mut item = value.as_object()?.clone();
+    let tag = format!("{arch}_linux");
+    if let Some(variation) = item.get("variations").and_then(|v|v.get(&tag)).and_then(Value::as_object).cloned() {
+        item.extend(variation);
+    }
+    let name = item.get("name")?.as_str()?.trim();
+    if name.is_empty() || !name.chars().all(|c|c.is_ascii_alphanumeric() || matches!(c,'+'|'-'|'_'|'.'|'@')) || name.starts_with('-') { return None; }
+    if item.get("disabled").and_then(Value::as_bool).unwrap_or(false) { return None; }
+    if item.get("requirements").and_then(Value::as_array).is_some_and(|requirements| requirements.iter().any(|r| {
+        let stable = r.get("contexts").and_then(Value::as_array).map_or(true, |a| a.is_empty() || a.iter().any(|v|v.as_str()==Some("stable")));
+        if !stable { return false; }
+        match r.get("name").and_then(Value::as_str).unwrap_or("") {
+            "macos" | "xcode" => true,
+            "arch" => r.get("version").and_then(Value::as_str).is_some_and(|v| !v.is_empty() && v != arch),
+            _ => false,
+        }
+    })) { return None; }
+    let summary = item.get("desc").and_then(Value::as_str).unwrap_or("");
+    let mut paragraphs = vec![summary.to_string()];
+    if let Some(caveats) = item.get("caveats").and_then(Value::as_str).filter(|v|!v.trim().is_empty()) { paragraphs.push(caveats.to_string()); }
+    let id = format!("homebrew:{name}");
+    let blocks: Vec<Value> = paragraphs.iter().filter(|p|!p.is_empty()).map(|p|serde_json::json!({"type":"paragraph","spans":[{"text":p}]})).collect();
+    serde_json::json!({
+        "identity":id, "id":id, "source":"homebrew", "origin":"homebrew/core",
+        "name":name, "summary":summary, "description_blocks":blocks,
+        "packages":[name], "categories":[], "icon":"brewpkg.webp", "screenshots":[],
+        "homepage":item.get("homepage").and_then(Value::as_str).unwrap_or(""),
+        "license":item.get("license").and_then(Value::as_str).unwrap_or(""),
+        "version":item.get("versions").and_then(|v|v.get("stable")).and_then(Value::as_str).unwrap_or(""),
+        "launchable":"", "developer":"", "verified":false
+    }).as_object().cloned()
+}
+
+const HOMEBREW_CACHE_SCHEMA: u32 = 2;
+
+#[derive(Serialize, Deserialize)]
+struct CachedHomebrewFormulae {
+    schema: u32,
+    key: String,
+    entries: Vec<serde_json::Map<String, Value>>,
+}
+
+fn load_homebrew_formulae(path: &str, arch: &str) -> Result<Vec<serde_json::Map<String, Value>>, String> {
+    let source = std::path::Path::new(path);
+    let metadata = fs::metadata(source).map_err(|e| e.to_string())?;
+    let modified = metadata.modified().map_err(|e| e.to_string())?
+        .duration_since(std::time::UNIX_EPOCH).map_err(|e| e.to_string())?.as_nanos();
+    let popularity_path = source.with_file_name("popularity.json");
+    let popularity_state = fs::metadata(&popularity_path).ok().and_then(|m| {
+        Some((m.len(), m.modified().ok()?.duration_since(std::time::UNIX_EPOCH).ok()?.as_nanos()))
+    });
+    let key = format!("{arch}:{}:{modified}:{popularity_state:?}", metadata.len());
+    let binary_path = source.with_extension(format!("{arch}.bin"));
+    if let Ok(bytes) = fs::read(&binary_path) {
+        if let Ok(cache) = rmp_serde::from_slice::<CachedHomebrewFormulae>(&bytes) {
+            if cache.schema == HOMEBREW_CACHE_SCHEMA && cache.key == key && !cache.entries.is_empty() {
+                return Ok(cache.entries);
+            }
+        }
+    }
+    let text = fs::read_to_string(source).map_err(|e| e.to_string())?;
+    let values: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+    let rows = values.as_array().ok_or("Homebrew catalog must be an array")?;
+    let popularity: std::collections::HashMap<String, u64> = fs::read(&popularity_path).ok()
+        .and_then(|bytes| serde_json::from_slice(&bytes).ok()).unwrap_or_default();
+    let entries: Vec<_> = rows.iter().filter_map(|value| normalize_homebrew_formula(value, arch)).map(|mut entry| {
+        let name = entry.get("name").and_then(Value::as_str).unwrap_or("");
+        let count = popularity.get(name).copied().unwrap_or(0);
+        entry.insert("homebrew_install_count".into(), Value::Number(count.into()));
+        entry
+    }).collect();
+    if entries.is_empty() { return Err("No usable Linux formulae".into()); }
+    let cache = CachedHomebrewFormulae { schema: HOMEBREW_CACHE_SCHEMA, key, entries };
+    let bytes = rmp_serde::to_vec_named(&cache).map_err(|e| e.to_string())?;
+    // Exclusive temporary files also isolate simultaneous catalog workers.
+    static TEMP_SEQUENCE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let sequence = TEMP_SEQUENCE.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let temporary = binary_path.with_extension(format!("bin.{}.{}.tmp", std::process::id(), sequence));
+    let result = (|| -> std::io::Result<()> {
+        let mut file = fs::OpenOptions::new().write(true).create_new(true).open(&temporary)?;
+        file.write_all(&bytes)?;
+        file.sync_all()?;
+        drop(file);
+        let written = fs::read(&temporary)?;
+        let verified: CachedHomebrewFormulae = rmp_serde::from_slice(&written)
+            .map_err(|error| std::io::Error::new(std::io::ErrorKind::InvalidData, error.to_string()))?;
+        if written != bytes || verified.schema != HOMEBREW_CACHE_SCHEMA
+            || verified.key != cache.key || verified.entries.is_empty() {
+            return Err(std::io::Error::new(std::io::ErrorKind::InvalidData,
+                "Homebrew binary cache failed verification"));
+        }
+        fs::rename(&temporary, &binary_path)
+    })();
+    if let Err(error) = result {
+        let _ = fs::remove_file(&temporary);
+        return Err(format!("Could not publish Homebrew binary cache: {error}"));
+    }
+    Ok(cache.entries)
+}
+
 #[pyclass]
 pub(crate) struct AppStreamGeneration {
     previous: Vec<serde_json::Map<String, Value>>,
@@ -675,6 +781,50 @@ impl AppStreamGeneration {
         let count = normalized.len();
         self.entries.extend(normalized);
         Ok(count)
+    }
+
+    #[staticmethod]
+    fn homebrew_snapshot_valid(py: Python<'_>, path: &str, max_bytes: u64) -> bool {
+        let path = path.to_string();
+        py.allow_threads(move || {
+            validate_homebrew_snapshot_rs(&path, max_bytes)
+        })
+    }
+
+    fn release_buffers(&mut self, py: Python<'_>) {
+        // Dropping thousands of JSON maps must not stop GTK via the GIL.
+        py.allow_threads(|| {
+            self.previous.clear();
+            self.entries.clear();
+            self.extensions.clear();
+        });
+    }
+
+    fn previous_source_count(&self, source: &str) -> usize {
+        self.previous.iter().filter(|entry| {
+            entry.get("source").and_then(Value::as_str) == Some(source)
+        }).count()
+    }
+
+    fn homebrew_popularity_matches_previous(&self, py: Python<'_>) -> bool {
+        py.allow_threads(|| {
+            homebrew_counts_match(&self.entries, &self.previous)
+        })
+    }
+
+    fn retain_other_sources(&mut self, py: Python<'_>, source: &str) {
+        py.allow_threads(|| {
+            self.entries.extend(self.previous.iter().filter(|entry| {
+                entry.get("source").and_then(Value::as_str) != Some(source)
+            }).cloned());
+        });
+    }
+
+    fn add_homebrew(&mut self, py: Python<'_>, path: &str, arch: &str) -> PyResult<usize> {
+        let path = path.to_string(); let arch = arch.to_string();
+        let maps = py.allow_threads(move || load_homebrew_formulae(&path, &arch))
+            .map_err(pyo3::exceptions::PyValueError::new_err)?;
+        let count = maps.len(); self.entries.extend(maps); Ok(count)
     }
 
     fn add_snap(&mut self, _py: Python<'_>, components: &Bound<'_, PyList>) -> PyResult<usize> {
@@ -773,6 +923,9 @@ impl AppStreamGeneration {
 
         py.allow_threads(|| {
             for map in &mut self.entries {
+                if map.get("source").and_then(Value::as_str) == Some("homebrew") {
+                    map.remove("review_rating"); map.remove("review_count"); continue;
+                }
                 let id = map.get("id").and_then(Value::as_str).unwrap_or("").to_string();
                 let odrs = if fetch_available {
                     summaries.get(&id).and_then(Value::as_object).and_then(|summary| Some((
@@ -867,14 +1020,7 @@ impl AppStreamGeneration {
                 } else { None };
 
                 if let Some(mut old) = reused {
-                    for key in [
-                        "review_rating", "review_count",
-                    ] {
-                        match map.get(key) {
-                            Some(value) => { old.insert(key.to_string(), value.clone()); }
-                            None => { old.remove(key); }
-                        }
-                    }
+                    update_reused_metadata(&mut old, &map);
                     reconciled.push(old);
                 } else {
                     reconciled.push(map);
@@ -897,6 +1043,39 @@ impl AppStreamGeneration {
             self.entries = reconciled;
             Ok((changed, count))
         })
+    }
+}
+
+fn validate_homebrew_snapshot_rs(path: &str, max_bytes: u64) -> bool {
+            let Ok(metadata) = fs::metadata(path) else { return false; };
+            if metadata.len() == 0 || metadata.len() > max_bytes { return false; }
+            let Ok(file) = fs::File::open(path) else { return false; };
+            let Ok(rows) = serde_json::from_reader::<_, Vec<Value>>(std::io::BufReader::new(file)) else { return false; };
+            !rows.is_empty() && rows.iter().all(|row| {
+                row.as_object().and_then(|m|m.get("name")).and_then(Value::as_str)
+                    .is_some_and(|name|!name.trim().is_empty())
+            })
+}
+
+fn homebrew_counts_match(current_entries: &[serde_json::Map<String, Value>], previous_entries: &[serde_json::Map<String, Value>]) -> bool {
+        let counts = |entries: &[serde_json::Map<String, Value>]| {
+            entries.iter().filter(|entry| entry.get("source").and_then(Value::as_str) == Some("homebrew"))
+                .map(|entry| (
+                    entry.get("identity").and_then(Value::as_str).unwrap_or("").to_string(),
+                    entry.get("homebrew_install_count").and_then(Value::as_u64),
+                )).collect::<std::collections::HashMap<_, _>>()
+        };
+        let current = counts(current_entries);
+        !current.is_empty() && current.values().all(Option::is_some)
+            && current == counts(previous_entries)
+}
+
+fn update_reused_metadata(old: &mut serde_json::Map<String, Value>, current: &serde_json::Map<String, Value>) {
+    for key in ["review_rating", "review_count", "homebrew_install_count"] {
+        match current.get(key) {
+            Some(value) => { old.insert(key.to_string(), value.clone()); }
+            None => { old.remove(key); }
+        }
     }
 }
 
@@ -1078,7 +1257,7 @@ pub(crate) fn build_appstream_catalog(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
-    vals.retain(|m|!component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
+    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1120,6 +1299,8 @@ struct RuntimeAppStreamEntry {
     review_rating: Option<f64>,
     review_subscore: Option<i64>,
     category_review_score: Option<i64>,
+    #[serde(default)]
+    homebrew_install_count: u64,
     #[serde(with = "serde_bytes")]
     payload: Vec<u8>,
 }
@@ -1143,11 +1324,12 @@ impl RuntimeAppStreamEntry {
         let review_rating = value.get("review_rating").and_then(Value::as_f64);
         let review_subscore = value.get("review_subscore").and_then(Value::as_i64);
         let category_review_score = value.get("_category_review_score").and_then(Value::as_i64);
+        let homebrew_install_count = value.get("homebrew_install_count").and_then(Value::as_u64).unwrap_or(0);
         let payload = rmp_serde::to_vec_named(&value).ok()?;
         Some(Self {
             category, appstream_id, name, canonical_name, source, package_names,
             search_packages, description_lower, developer_lower, is_new,
-            review_rating, review_subscore, category_review_score, payload,
+            review_rating, review_subscore, category_review_score, homebrew_install_count, payload,
         })
     }
 
@@ -1293,6 +1475,7 @@ pub(crate) struct AppStreamCatalog {
     by_native_package: std::collections::HashMap<String, Vec<usize>>,
     by_flatpak_package: std::collections::HashMap<String, Vec<usize>>,
     by_snap_package: std::collections::HashMap<String, Vec<usize>>,
+    by_homebrew_package: std::collections::HashMap<String, Vec<usize>>,
     cache_key: String,
 }
 
@@ -1310,6 +1493,7 @@ impl AppStreamCatalog {
         let mut by_native_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         let mut by_flatpak_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         let mut by_snap_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        let mut by_homebrew_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         for (index, entry) in entries.iter().enumerate() {
             if !entry.category.is_empty() { by_category.entry(entry.category.clone()).or_default().push(index); }
             let id = normalize_id(&entry.appstream_id);
@@ -1324,6 +1508,7 @@ impl AppStreamCatalog {
             let target = match entry.source.as_str() {
                 "flatpak" => Some(&mut by_flatpak_package),
                 "snap" => Some(&mut by_snap_package),
+                "homebrew" => Some(&mut by_homebrew_package),
                 "native" => Some(&mut by_native_package),
                 _ => None,
             };
@@ -1331,7 +1516,11 @@ impl AppStreamCatalog {
                 for package in &entry.package_names { target.entry(package.clone()).or_default().push(index); }
             }
         }
-        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, by_snap_package, cache_key }
+        if let Some(indices) = by_category.get_mut("homebrew") {
+            indices.sort_by(|&a, &b| entries[b].homebrew_install_count.cmp(&entries[a].homebrew_install_count)
+                .then_with(|| entries[a].name.to_lowercase().cmp(&entries[b].name.to_lowercase())));
+        }
+        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, by_snap_package, by_homebrew_package, cache_key }
     }
 
     fn materialize_entry(&self, py: Python<'_>, index: usize) -> PyResult<Option<Py<PyAny>>> {
@@ -1367,6 +1556,17 @@ impl AppStreamCatalog {
         }
     }
 
+    fn category_entry_count(&self, category: &str) -> usize {
+        self.by_category.get(category.trim_matches('/')).map_or(0, Vec::len)
+    }
+
+    fn category_entry_slice(&self, py: Python<'_>, category: &str, offset: usize, limit: usize) -> PyResult<Vec<Py<PyAny>>> {
+        let Some(indices) = self.by_category.get(category.trim_matches('/')) else { return Ok(Vec::new()); };
+        let start = offset.min(indices.len());
+        let end = start.saturating_add(limit).min(indices.len());
+        self.materialize_indices(py, &indices[start..end])
+    }
+
     fn browse_entries_for_category(&self, py: Python<'_>, category: &str, structural: Vec<Py<PyAny>>, known_popular: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
         let mut values = Vec::with_capacity(structural.len() + self.by_category.get(category.trim_matches('/')).map_or(0, Vec::len));
         for item in structural {
@@ -1397,7 +1597,8 @@ impl AppStreamCatalog {
         }
     }
 
-    fn search(&self, py: Python<'_>, query: &str, translated_new: &str, translated_official: &str) -> PyResult<Vec<(Py<PyAny>, i64)>> {
+    #[pyo3(signature = (query, translated_new, translated_official, source=""))]
+    fn search(&self, py: Python<'_>, query: &str, translated_new: &str, translated_official: &str, source: &str) -> PyResult<Vec<(Py<PyAny>, i64)>> {
         let query = query.trim().to_lowercase();
         if query.is_empty() { return Ok(Vec::new()); }
         let translated_new = translated_new.trim().to_lowercase();
@@ -1405,6 +1606,7 @@ impl AppStreamCatalog {
         let mut matches = Vec::new();
 
         for (index, entry) in self.entries.iter().enumerate() {
+            if !source.is_empty() && entry.source != source { continue; }
             let name = entry.name.to_lowercase();
             let packages = &entry.search_packages;
             let developer = &entry.developer_lower;
@@ -1430,6 +1632,7 @@ impl AppStreamCatalog {
     fn featured_descriptors(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
         let mut out = Vec::new();
         for (index, entry) in self.entries.iter().enumerate() {
+            if entry.source == "homebrew" { continue; }
             let Some(rating) = entry.review_rating.filter(|rating| *rating >= 70.0) else {
                 continue;
             };
@@ -1462,8 +1665,8 @@ impl AppStreamCatalog {
         self.materialize_indices(py, &indices)
     }
 
-    #[pyo3(signature = (native_packages, flatpak_ids, executed_names, snap_names=Vec::new()))]
-    fn installed_entries(&self, py: Python<'_>, native_packages: Vec<String>, flatpak_ids: Vec<String>, executed_names: Vec<String>, snap_names: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
+    #[pyo3(signature = (native_packages, flatpak_ids, executed_names, snap_names=Vec::new(), homebrew_names=Vec::new()))]
+    fn installed_entries(&self, py: Python<'_>, native_packages: Vec<String>, flatpak_ids: Vec<String>, executed_names: Vec<String>, snap_names: Vec<String>, homebrew_names: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
         let mut indices = std::collections::HashSet::new();
         for package in native_packages {
             let key = package.trim().to_lowercase();
@@ -1472,6 +1675,9 @@ impl AppStreamCatalog {
         for app_id in flatpak_ids {
             let key = app_id.trim().to_lowercase();
             if let Some(matches) = self.by_flatpak_package.get(&key) { indices.extend(matches.iter().copied()); }
+        }
+        for name in homebrew_names {
+            if let Some(matches) = self.by_homebrew_package.get(&name.to_lowercase()) { indices.extend(matches.iter().copied()); }
         }
         for snap_name in snap_names {
             let key = snap_name.trim().to_lowercase();
@@ -1487,7 +1693,7 @@ impl AppStreamCatalog {
     }
 }
 
-const RUNTIME_CACHE_SCHEMA: u32 = 4;
+const RUNTIME_CACHE_SCHEMA: u32 = 7;
 
 #[derive(Serialize, Deserialize)]
 struct CachedAppStreamCatalog {
@@ -1542,15 +1748,19 @@ pub(crate) fn build_appstream_catalog_index(
     force_rebuild: bool,
 ) -> PyResult<AppStreamCatalog> {
     py.allow_threads(|| {
+    let homebrew_enabled = serde_json::from_str::<Value>(category_config_json).ok()
+        .and_then(|v|v.get("homebrew_enabled").and_then(Value::as_bool)).unwrap_or(false);
     // A warm cache is immediately usable even when its key is stale.  Normal UI
     // callers keep using that last complete snapshot while the refresh worker
     // rebuilds the new generation with force_rebuild=true.  Publication below is
     // atomic, so readers can only ever observe a complete old or new cache.
     if !force_rebuild {
-        if let Some(payload) = load_binary_catalog_cache(cache_path) {
+        if let Some(mut payload) = load_binary_catalog_cache(cache_path) {
+            if !homebrew_enabled { payload.entries.retain(|entry|entry.source != "homebrew"); }
             return Ok(AppStreamCatalog::from_entries(payload.entries, payload.key));
         }
-    } else if let Some(payload) = load_binary_catalog_cache(cache_path) {
+    } else if let Some(mut payload) = load_binary_catalog_cache(cache_path) {
+            if !homebrew_enabled { payload.entries.retain(|entry|entry.source != "homebrew"); }
         if payload.key == cache_key {
             return Ok(AppStreamCatalog::from_entries(payload.entries, payload.key));
         }
@@ -1576,7 +1786,7 @@ pub(crate) fn build_appstream_catalog_index(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
-    vals.retain(|m|!component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
+    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1629,4 +1839,91 @@ pub(crate) fn source_metadata_fingerprint(paths: Vec<String>) -> String {
     }
 
     format!("{:x}", hasher.finalize())
+}
+
+#[cfg(test)]
+mod homebrew_binary_tests {
+    use super::*;
+
+    #[test]
+    fn snapshot_validation_rejects_empty_and_malformed_rows() {
+        let path = std::env::temp_dir().join(format!("lt-brew-validation-{}-{}", std::process::id(),
+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+        for (text, expected) in [("[]", false), ("{", false), ("[{}]", false),
+                                 ("[{\"name\":\" \"}]", false), ("[{\"name\":\"gh\"}]", true)] {
+            fs::write(&path, text).unwrap();
+            assert_eq!(validate_homebrew_snapshot_rs(path.to_str().unwrap(), 1024), expected);
+        }
+        assert!(!validate_homebrew_snapshot_rs(path.to_str().unwrap(), 1));
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn reused_metadata_keeps_latest_homebrew_counts() {
+        let mut old = serde_json::json!({"source":"homebrew", "_metadata_hash":"same"}).as_object().unwrap().clone();
+        let mut current = old.clone();
+        current.insert("homebrew_install_count".into(), Value::Number(321.into()));
+        update_reused_metadata(&mut old, &current);
+        assert_eq!(old.get("homebrew_install_count"), Some(&Value::Number(321.into())));
+        current.insert("homebrew_install_count".into(), Value::Number(654.into()));
+        update_reused_metadata(&mut old, &current);
+        assert_eq!(old.get("homebrew_install_count"), Some(&Value::Number(654.into())));
+    }
+
+
+    #[test]
+    fn missing_published_counts_require_republication() {
+        let previous = serde_json::json!({"identity":"homebrew:gh", "source":"homebrew", "name":"gh"}).as_object().unwrap().clone();
+        let mut current = previous.clone();
+        current.insert("homebrew_install_count".into(), Value::Number(100.into()));
+        let mut generation = AppStreamGeneration { previous: vec![previous], entries: vec![current.clone()], extensions: vec![] };
+        assert!(!homebrew_counts_match(&generation.entries, &generation.previous));
+        generation.previous = vec![current];
+        assert!(homebrew_counts_match(&generation.entries, &generation.previous));
+    }
+
+    #[test]
+    fn homebrew_category_indexes_popular_entries_first() {
+        let entries = vec![
+            serde_json::json!({"name":"zeta","category":"homebrew","appstream_source":"homebrew","homebrew_install_count":100}),
+            serde_json::json!({"name":"alpha","category":"homebrew","appstream_source":"homebrew","homebrew_install_count":100}),
+            serde_json::json!({"name":"unranked","category":"homebrew","appstream_source":"homebrew"}),
+            serde_json::json!({"name":"popular","category":"homebrew","appstream_source":"homebrew","homebrew_install_count":500}),
+        ];
+        let catalog = AppStreamCatalog::from_values(entries, "test".into());
+        let names: Vec<_> = catalog.by_category["homebrew"].iter()
+            .map(|&index| catalog.entries[index].name.as_str()).collect();
+        assert_eq!(names, vec!["popular", "alpha", "zeta", "unranked"]);
+    }
+
+    #[test]
+    fn source_binary_rebuilds_after_corruption_and_source_change() {
+        let directory = std::env::temp_dir().join(format!("linuxtoys-brew-{}-{}",
+            std::process::id(), std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("formula.json");
+        fs::write(&path, r#"[{"name":"wget","desc":"Downloader"}]"#).unwrap();
+        let source = path.to_str().unwrap();
+        let first = load_homebrew_formulae(source, "x86_64").unwrap();
+        assert_eq!(first.len(), 1);
+        let binary = path.with_extension("x86_64.bin");
+        assert!(binary.is_file());
+        let modified = fs::metadata(&binary).unwrap().modified().unwrap();
+        assert_eq!(load_homebrew_formulae(source, "x86_64").unwrap(), first);
+        assert_eq!(fs::metadata(&binary).unwrap().modified().unwrap(), modified);
+        fs::write(&binary, b"").unwrap();
+        assert_eq!(load_homebrew_formulae(source, "x86_64").unwrap(), first);
+        assert!(fs::metadata(&binary).unwrap().len() > 0);
+        fs::write(&binary, b"corrupt").unwrap();
+        assert_eq!(load_homebrew_formulae(source, "x86_64").unwrap(), first);
+        fs::write(&path, r#"[{"name":"git","desc":"Version control system"}]"#).unwrap();
+        let updated = load_homebrew_formulae(source, "x86_64").unwrap();
+        assert_eq!(updated[0].get("name").and_then(Value::as_str), Some("git"));
+        load_homebrew_formulae(source, "arm64").unwrap();
+        assert!(path.with_extension("arm64.bin").is_file());
+        fs::write(&path, b"[]").unwrap();
+        assert!(load_homebrew_formulae(source, "x86_64").is_err());
+        fs::remove_dir_all(directory).unwrap();
+    }
 }

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap zurücksetzen?",
   "app_page_snap_revert_confirm_message": "LinuxToys setzt „{app_name}“ auf die zuvor installierte Snap-Revision zurück.\n\nMöchten Sie fortfahren?",
   "app_page_snap_revert": " Zurücksetzen ",
-  "uri_install_error_title": "LinuxToys-Link konnte nicht geöffnet werden"
+  "uri_install_error_title": "LinuxToys-Link konnte nicht geöffnet werden",
+  "homebrew_catalog_unavailable": "Homebrew-Metadaten sind nicht verfügbar. Versuchen Sie es später erneut.",
+  "homebrew_category_desc": "Pakete aus Homebrew durchsuchen."
 }

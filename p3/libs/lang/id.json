@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Kembalikan Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys akan mengembalikan '{app_name}' ke revisi Snap yang sebelumnya terinstal.\n\nApakah Anda ingin melanjutkan?",
   "app_page_snap_revert": " Kembalikan ",
-  "uri_install_error_title": "Tidak dapat membuka tautan LinuxToys"
+  "uri_install_error_title": "Tidak dapat membuka tautan LinuxToys",
+  "homebrew_catalog_unavailable": "Metadata Homebrew tidak tersedia. Coba lagi nanti.",
+  "homebrew_category_desc": "Jelajahi paket dari Homebrew."
 }

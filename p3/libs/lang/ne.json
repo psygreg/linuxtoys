@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap लाई अघिल्लो संस्करणमा फर्काउने?",
   "app_page_snap_revert_confirm_message": "LinuxToys ले '{app_name}' लाई पहिले स्थापना गरिएको Snap संशोधनमा फर्काउनेछ।\n\nके तपाईं जारी राख्न चाहनुहुन्छ?",
   "app_page_snap_revert": " फर्काउनुहोस् ",
-  "uri_install_error_title": "LinuxToys लिङ्क खोल्न सकिएन"
+  "uri_install_error_title": "LinuxToys लिङ्क खोल्न सकिएन",
+  "homebrew_catalog_unavailable": "Homebrew मेटाडेटा उपलब्ध छैन। पछि फेरि प्रयास गर्नुहोस्।",
+  "homebrew_category_desc": "Homebrew का प्याकेजहरू ब्राउज गर्नुहोस्।"
 }

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "ย้อน Snap กลับ?",
   "app_page_snap_revert_confirm_message": "LinuxToys จะย้อน '{app_name}' กลับไปเป็น revision ของ Snap ที่ติดตั้งไว้ก่อนหน้านี้\n\nคุณต้องการดำเนินการต่อหรือไม่?",
   "app_page_snap_revert": " ย้อนกลับ ",
-  "uri_install_error_title": "ไม่สามารถเปิดลิงก์ LinuxToys ได้"
+  "uri_install_error_title": "ไม่สามารถเปิดลิงก์ LinuxToys ได้",
+  "homebrew_catalog_unavailable": "ข้อมูลเมตาของ Homebrew ไม่พร้อมใช้งาน โปรดลองอีกครั้งในภายหลัง",
+  "homebrew_category_desc": "เรียกดูแพ็กเกจจาก Homebrew"
 }

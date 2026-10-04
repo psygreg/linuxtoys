@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "להחזיר את ה-Snap לגרסה הקודמת?",
   "app_page_snap_revert_confirm_message": "LinuxToys יחזיר את '{app_name}' לגרסת ה-Snap שהייתה מותקנת קודם לכן.\n\nהאם להמשיך?",
   "app_page_snap_revert": " החזרה ",
-  "uri_install_error_title": "לא ניתן לפתוח את הקישור של LinuxToys"
+  "uri_install_error_title": "לא ניתן לפתוח את הקישור של LinuxToys",
+  "homebrew_catalog_unavailable": "מטא-נתוני Homebrew אינם זמינים. נסו שוב מאוחר יותר.",
+  "homebrew_category_desc": "עיינו בחבילות מ-Homebrew."
 }

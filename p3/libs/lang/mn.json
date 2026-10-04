@@ -721,5 +721,7 @@
   "app_page_snap_revert_confirm_title": "Snap-ыг өмнөх хувилбар руу буцаах уу?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ийг өмнө нь суулгасан Snap хувилбар руу буцаана.\n\nҮргэлжлүүлэх үү?",
   "app_page_snap_revert": " Буцаах ",
-  "uri_install_error_title": "LinuxToys холбоосыг нээх боломжгүй"
+  "uri_install_error_title": "LinuxToys холбоосыг нээх боломжгүй",
+  "homebrew_catalog_unavailable": "Homebrew мета өгөгдөл боломжгүй байна. Дараа дахин оролдоно уу.",
+  "homebrew_category_desc": "Homebrew дахь багцуудыг үзэх."
 }

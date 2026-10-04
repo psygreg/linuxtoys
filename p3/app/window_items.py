@@ -2,7 +2,7 @@ import os
 
 from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
 from gi.repository import Pango
-from . import get_icon_path, compat, revert_helper, official_index
+from . import get_icon_path, compat, revert_helper, official_index, installed_packages
 from .gtk_dialogs import run_message_dialog
 from . import gui_rs
 
@@ -306,12 +306,13 @@ class ItemWidgetFactory:
         except Exception as error:
             print(f"Warning: native GTK batch creation failed, using Python fallback: {error}")
             return None
-        return [
+        finished = [
             self._finish_native_item_widget(
                 widget, info, spec, allow_drag=allow_drag
             )
             for widget, info, spec in zip(widgets, item_infos, specs)
         ]
+        return finished
 
     def create_native_featured_grid_batch(self, grid, items_with_positions):
         """Construct ordinary Featured cards directly in their Gtk.Grid cells."""
@@ -533,6 +534,8 @@ class ItemWidgetFactory:
 
     def _is_script_removable(self, item_info):
         """Check if a script item is installed and can be removed."""
+        if item_info.get("appstream_source") == "homebrew":
+            return installed_packages.match(item_info) is not None
         # Use the search cache's pre-computed removable state whenever possible
         if self.script_cache.is_populated:
             return self.script_cache.is_script_removable(item_info)
@@ -737,7 +740,9 @@ class ItemWidgetFactory:
         # Route by the item's own type, not by the global search state. Search
         # remains active while an app page is open, and using it here would make
         # unrelated category cards behave like executable scripts.
-        if info.get("is_aur_category"):
+        if info.get("is_homebrew_category"):
+            self._activate_homebrew_category(widget, event)
+        elif info.get("is_aur_category"):
             self._activate_aur_category(info)
         elif info.get("is_script", False):
             self.on_script_clicked(widget, event)

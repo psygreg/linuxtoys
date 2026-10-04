@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import threading
 
 from .gtk_common import Gdk, GLib
 from . import parser, popularity, category_affinity, installed_packages, _catalog_rs
@@ -22,6 +23,8 @@ class FeaturedCtl:
     def _invalidate_featured_eligibility_cache(self):
         """Discard Featured eligibility after installed/registry state changes."""
         self._featured_eligibility_cache = None
+        self._featured_personalization_generation = getattr(self, "_featured_personalization_generation", 0) + 1
+        self._schedule_featured_personalization()
 
     @staticmethod
     def _sense_file_path():
@@ -94,6 +97,43 @@ class FeaturedCtl:
             if len(paths) >= self.SENSE_HISTORY_LIMIT:
                 break
 
+        if not hasattr(self, "_featured_installed_category_paths"):
+            self._schedule_featured_personalization()
+        for category_path in getattr(self, "_featured_installed_category_paths", ()):
+            if category_path not in seen:
+                seen.add(category_path)
+                paths.append(category_path)
+        return paths
+
+    def _schedule_featured_personalization(self):
+        category_cache = getattr(self, "category_cache", None)
+        if category_cache is None or getattr(self, "_featured_personalization_running", False):
+            return
+        self._featured_personalization_running = True
+        generation = getattr(self, "_featured_personalization_generation", 0)
+
+        def worker():
+            try:
+                paths = self._compute_installed_featured_categories(category_cache)
+            except Exception as error:
+                print(f"Error preparing Featured personalization: {error}")
+                paths = ()
+            GLib.idle_add(finish, paths)
+
+        def finish(paths):
+            self._featured_personalization_running = False
+            if (generation != getattr(self, "_featured_personalization_generation", 0)
+                    or category_cache is not self.category_cache):
+                self._schedule_featured_personalization()
+                return False
+            self._featured_installed_category_paths = tuple(paths)
+            # The next normal selection uses the new weights; no startup reroll.
+            return False
+
+        threading.Thread(target=worker, daemon=True,
+                         name="linuxtoys-featured-personalization").start()
+
+    def _compute_installed_featured_categories(self, category_cache):
         # Count installed LinuxToys entries directly from the structural cache.
         # Crucially, do not call get_scripts_for_category(): that would lazily
         # materialize every AppStream entry in every category just to count the
@@ -163,13 +203,7 @@ class FeaturedCtl:
         # already supplied by recency simply consume one of the possible categories;
         # do not backfill with a third/fourth installed category when they coincide.
         installed_counts.sort(key=lambda item: (-item[0], item[1]))
-        for _count, category_path in installed_counts[:2]:
-            if category_path in seen:
-                continue
-            seen.add(category_path)
-            paths.append(category_path)
-
-        return paths
+        return [path for _count, path in installed_counts[:2]]
 
     def _sensed_featured_keys(self):
         """Return eligible identities from the main menu's personalized categories."""
@@ -539,6 +573,8 @@ class FeaturedCtl:
         The raw star average no longer affects Featured odds. Once eligible, the
         Bayesian ODRS score is the sole review-quality weight.
         """
+        if script.get("appstream_source") == "homebrew":
+            return 0.0
         if not script.get("is_appstream_entry", False):
             return 1.0
 
@@ -649,6 +685,8 @@ class FeaturedCtl:
 
         eligible = []
         for script in self.all_scripts:
+            if script.get("appstream_source") == "homebrew":
+                continue
             if script.get("is_appstream_entry"):
                 removable = appstream_is_removable(script)
             else:

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap به نسخه قبلی بازگردانده شود؟",
   "app_page_snap_revert_confirm_message": "LinuxToys برنامه '{app_name}' را به ویرایش Snap که قبلاً نصب شده بود بازمی‌گرداند.\n\nآیا می‌خواهید ادامه دهید؟",
   "app_page_snap_revert": " بازگردانی ",
-  "uri_install_error_title": "پیوند LinuxToys باز نشد"
+  "uri_install_error_title": "پیوند LinuxToys باز نشد",
+  "homebrew_catalog_unavailable": "فراداده Homebrew در دسترس نیست. بعداً دوباره تلاش کنید.",
+  "homebrew_category_desc": "بسته‌های Homebrew را مرور کنید."
 }

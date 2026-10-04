@@ -12,11 +12,12 @@ import threading
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from . import homebrew_catalog
 from .compat import get_system_compat_keys, is_containerized
 
 CACHE_ROOT = Path(os.path.expanduser("~/.cache/linuxtoys"))
 _LOCK = threading.RLock()
-_STATE = {"manager": None, "native": set(), "flatpak": {}, "snap": set(), "loaded": False}
+_STATE = {"manager": None, "native": set(), "flatpak": {}, "snap": set(), "homebrew": set(), "loaded": False}
 
 
 def _manager():
@@ -70,6 +71,7 @@ def load_previous():
         _STATE["native"] = _read_lines(manager) if manager else set()
         _STATE["flatpak"] = flatpak
         _STATE["snap"] = {value.casefold() for value in _read_lines("snap")}
+        _STATE["homebrew"] = {v.casefold() for v in _read_lines("homebrew-installed")} if homebrew_catalog.enabled() else set()
         _STATE["loaded"] = True
     return snapshot()
 
@@ -169,17 +171,20 @@ def refresh():
     native = _collect_native(manager) if manager else set()
     flatpak = _collect_flatpak()
     snap = _collect_snap()
+    homebrew = homebrew_catalog.installed_names()
     if manager:
         _atomic_lines(manager, native)
     flatpak_lines = [f"{scope}\t{app_id}" for app_id, scopes in flatpak.items() for scope in scopes]
     _atomic_lines("flatpak", flatpak_lines)
     _atomic_lines("snap", snap)
+    _atomic_lines("homebrew-installed", homebrew)
     with _LOCK:
         _STATE.update(
             manager=manager,
             native=set(native),
             flatpak={k: set(v) for k, v in flatpak.items()},
             snap=set(snap),
+            homebrew=set(homebrew),
             loaded=True,
         )
     return snapshot()
@@ -192,6 +197,7 @@ def snapshot():
             "native": set(_STATE["native"]),
             "flatpak": {key: set(value) for key, value in _STATE["flatpak"].items()},
             "snap": set(_STATE["snap"]),
+            "homebrew": set(_STATE["homebrew"]) if homebrew_catalog.enabled() else set(),
             "loaded": _STATE["loaded"],
         }
 
@@ -208,6 +214,11 @@ def match(info):
             preferred = str(info.get("flatpak_scope", "") or "").strip()
             scope = preferred if preferred in scopes else ("user" if "user" in scopes else sorted(scopes)[0])
             return {"source": "flatpak", "package": app_id, "scope": scope}
+        if source == "homebrew":
+            package = str(info.get("homebrew_name") or info.get("package-name") or "").strip()
+            if homebrew_catalog.enabled() and package.casefold() in _STATE["homebrew"]:
+                return {"source": "homebrew", "package": package}
+            return None
         if source == "snap":
             snap_name = str(info.get("snap_name") or info.get("package-name") or "").strip()
             if snap_name and snap_name.casefold() in _STATE["snap"]:
@@ -232,6 +243,9 @@ def build_external_removal(info, installed_match, translations=None):
         scope = installed_match.get("scope")
         flag = "--user" if scope == "user" else "--system" if scope == "system" else ""
         lines.append(f"flatpak {flag} uninstall -y {app_id}".replace("  ", " "))
+    elif installed_match["source"] == "homebrew":
+        lines += ['source "$SCRIPT_DIR/libs/packages.bash"',
+                  f"pkg_brew_remove {shlex.quote(installed_match['package'])}"]
     elif installed_match["source"] == "snap":
         snap_name = shlex.quote(installed_match["package"])
         lines += ["sudo_rq", f"sudo_ snap remove {snap_name}"]

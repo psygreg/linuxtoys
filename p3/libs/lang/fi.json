@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Palautetaanko Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys palauttaa sovelluksen '{app_name}' aiemmin asennettuun Snap-revisioon.\n\nHaluatko jatkaa?",
   "app_page_snap_revert": " Palauta ",
-  "uri_install_error_title": "LinuxToys-linkkiä ei voitu avata"
+  "uri_install_error_title": "LinuxToys-linkkiä ei voitu avata",
+  "homebrew_catalog_unavailable": "Homebrew-metatiedot eivät ole saatavilla. Yritä myöhemmin uudelleen.",
+  "homebrew_category_desc": "Selaa Homebrew-paketteja."
 }

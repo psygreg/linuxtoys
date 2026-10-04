@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap を以前のリビジョンに戻しますか？",
   "app_page_snap_revert_confirm_message": "LinuxToys は「{app_name}」を以前インストールされていた Snap リビジョンに戻します。\n\n続行しますか？",
   "app_page_snap_revert": " 元に戻す ",
-  "uri_install_error_title": "LinuxToys リンクを開けません"
+  "uri_install_error_title": "LinuxToys リンクを開けません",
+  "homebrew_catalog_unavailable": "Homebrew のメタデータを利用できません。後でもう一度お試しください。",
+  "homebrew_category_desc": "Homebrew のパッケージを閲覧します。"
 }

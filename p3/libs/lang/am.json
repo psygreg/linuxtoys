@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snapን ወደ ቀድሞው ስሪት ይመልሱ?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'ን ቀደም ሲል ወደተጫነው የSnap ክለሳ ይመልሳል።\n\nመቀጠል ይፈልጋሉ?",
   "app_page_snap_revert": " ወደ ቀድሞው መልስ ",
-  "uri_install_error_title": "የLinuxToys አገናኝን መክፈት አልተቻለም"
+  "uri_install_error_title": "የLinuxToys አገናኝን መክፈት አልተቻለም",
+  "homebrew_catalog_unavailable": "የHomebrew ሜታዳታ አይገኝም። ቆይተው እንደገና ይሞክሩ።",
+  "homebrew_category_desc": "ከHomebrew ጥቅሎችን ያስሱ።"
 }

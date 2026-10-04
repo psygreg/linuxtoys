@@ -1811,3 +1811,94 @@ pkg_bun () {
         fi
     done
 }
+
+# Homebrew stays in the user's writable prefix, including on immutable hosts.
+_brew_executable () {
+    local candidate
+    local from_path
+    from_path=$(type -P brew) || from_path=""
+    for candidate in "$from_path" "${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/bin/brew}" \
+        /home/linuxbrew/.linuxbrew/bin/brew "$HOME/.linuxbrew/bin/brew"; do
+        if [[ -n "$candidate" && -f "$candidate" && -x "$candidate" ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+_brew_source_changed () {
+    local cache_dir="$HOME/.cache/linuxtoys/homebrew-catalog"
+    mkdir -p "$cache_dir" && touch "$cache_dir/source-changed"
+}
+
+_brew_formula_valid () {
+    [[ "$1" =~ ^[[:alnum:]][[:alnum:]+_.@-]*$ ]]
+}
+
+# Record only newly requested formulae; Brew owns their dependency resolution.
+pkg_brew () {
+    (( $# > 0 )) || return 0
+    local brew_bin pak status
+    if ! brew_bin=$(_brew_executable); then
+        call_script brew || return "$?"
+        brew_bin=$(_brew_executable) || die "Homebrew is not installed"
+    fi
+    for pak in "$@"; do
+        _brew_formula_valid "$pak" || die "Invalid Homebrew formula name: $pak"
+        if HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" list --formula --versions "$pak" 2>/dev/null | grep -q .; then
+            echo "Homebrew formula $pak already installed, skipping."
+            continue
+        fi
+        runner_lock "package-transaction"
+        status=0
+        HOMEBREW_NO_ASK=1 "$brew_bin" install --formula "$pak" || status=$?
+        runner_unlock
+        # A failed command may nevertheless have installed the requested formula.
+        # Record it before failing so the standard rollback can undo that change.
+        if HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" list --formula --versions "$pak" 2>/dev/null | grep -q .; then
+            _append_transmap "homebrew $pak"
+        else
+            (( status != 0 )) || status=1
+        fi
+        (( status == 0 )) || die "Failed to install Homebrew formula $pak"
+    done
+}
+
+pkg_brew_remove () {
+    (( $# > 0 )) || return 0
+    local brew_bin pak status
+    brew_bin=$(_brew_executable) || return 100
+    for pak in "$@"; do
+        _brew_formula_valid "$pak" || return 1
+        if ! HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" list --formula --versions "$pak" 2>/dev/null | grep -q .; then
+            continue
+        fi
+        runner_lock "package-transaction"
+        status=0
+        HOMEBREW_NO_ASK=1 HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" uninstall --formula "$pak" || status=$?
+        runner_unlock
+        (( status == 0 )) || return "$status"
+        if HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" list --formula --versions "$pak" 2>/dev/null | grep -q .; then
+            return 1
+        fi
+    done
+}
+
+_brew_uninstall_manager () {
+    local prefix="$1" brew_bin uninstall_file status=0
+    # The prefix is recorded at installation, not inferred from arbitrary metadata.
+    [[ "$prefix" = /* && "$prefix" != / && "$prefix" != /home && "$prefix" != "$HOME" ]] || return 1
+    brew_bin="$prefix/bin/brew"
+    [[ -x "$brew_bin" ]] || { _brew_source_changed; return 0; }
+    uninstall_file=$(mktemp) || return 1
+    if ! curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh -o "$uninstall_file"; then
+        rm -f "$uninstall_file"
+        return 1
+    fi
+    askpass || { rm -f "$uninstall_file"; return 1; }
+    NONINTERACTIVE=1 /bin/bash "$uninstall_file" --path "$prefix" --force || status=$?
+    rm -f "$uninstall_file"
+    _brew_source_changed
+    (( status == 0 )) && [[ ! -x "$brew_bin" ]]
+}

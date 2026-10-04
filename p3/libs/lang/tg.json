@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap ба нусхаи қаблӣ баргардонида шавад?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ро ба ревизияи Snap, ки қаблан насб шуда буд, бармегардонад.\n\nМехоҳед идома диҳед?",
   "app_page_snap_revert": " Баргардондан ",
-  "uri_install_error_title": "Пайванди LinuxToys кушода нашуд"
+  "uri_install_error_title": "Пайванди LinuxToys кушода нашуд",
+  "homebrew_catalog_unavailable": "Метамаълумоти Homebrew дастрас нест. Баъдтар дубора кӯшиш кунед.",
+  "homebrew_category_desc": "Бастаҳои Homebrew-ро аз назар гузаронед."
 }

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Откатить Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys откатит «{app_name}» до ранее установленной ревизии Snap.\n\nПродолжить?",
   "app_page_snap_revert": " Откатить ",
-  "uri_install_error_title": "Не удалось открыть ссылку LinuxToys"
+  "uri_install_error_title": "Не удалось открыть ссылку LinuxToys",
+  "homebrew_catalog_unavailable": "Метаданные Homebrew недоступны. Повторите попытку позже.",
+  "homebrew_category_desc": "Просматривайте пакеты из Homebrew."
 }

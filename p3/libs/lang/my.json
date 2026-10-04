@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap ကို ယခင် revision သို့ ပြန်ပြောင်းမလား?",
   "app_page_snap_revert_confirm_message": "LinuxToys သည် '{app_name}' ကို ယခင်က ထည့်သွင်းထားသော Snap revision သို့ ပြန်ပြောင်းမည်။\n\nဆက်လုပ်လိုပါသလား?",
   "app_page_snap_revert": " ပြန်ပြောင်းရန် ",
-  "uri_install_error_title": "LinuxToys လင့်ခ်ကို ဖွင့်၍မရပါ"
+  "uri_install_error_title": "LinuxToys လင့်ခ်ကို ဖွင့်၍မရပါ",
+  "homebrew_catalog_unavailable": "Homebrew metadata မရရှိနိုင်ပါ။ နောက်မှ ထပ်စမ်းကြည့်ပါ။",
+  "homebrew_category_desc": "Homebrew မှ package များကို ရှာဖွေကြည့်ရှုပါ။"
 }

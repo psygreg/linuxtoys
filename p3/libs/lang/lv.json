@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Atgriezt Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys atgriezīs „{app_name}“ uz iepriekš instalēto Snap revīziju.\n\nVai vēlaties turpināt?",
   "app_page_snap_revert": " Atgriezt ",
-  "uri_install_error_title": "Neizdevās atvērt LinuxToys saiti"
+  "uri_install_error_title": "Neizdevās atvērt LinuxToys saiti",
+  "homebrew_catalog_unavailable": "Homebrew metadati nav pieejami. Mēģiniet vēlreiz vēlāk.",
+  "homebrew_category_desc": "Pārlūkojiet Homebrew pakotnes."
 }

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "დაბრუნდეს Snap წინა ვერსიაზე?",
   "app_page_snap_revert_confirm_message": "LinuxToys დააბრუნებს '{app_name}'-ს ადრე დაყენებულ Snap რევიზიაზე.\n\nგსურთ გაგრძელება?",
   "app_page_snap_revert": " დაბრუნება ",
-  "uri_install_error_title": "LinuxToys-ის ბმულის გახსნა ვერ მოხერხდა"
+  "uri_install_error_title": "LinuxToys-ის ბმულის გახსნა ვერ მოხერხდა",
+  "homebrew_catalog_unavailable": "Homebrew-ის მეტამონაცემები მიუწვდომელია. მოგვიანებით სცადეთ ხელახლა.",
+  "homebrew_category_desc": "დაათვალიერეთ პაკეტები Homebrew-დან."
 }

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Snap terugzetten?",
   "app_page_snap_revert_confirm_message": "LinuxToys zet '{app_name}' terug naar de eerder geïnstalleerde Snap-revisie.\n\nWilt u doorgaan?",
   "app_page_snap_revert": " Terugzetten ",
-  "uri_install_error_title": "Kan LinuxToys-link niet openen"
+  "uri_install_error_title": "Kan LinuxToys-link niet openen",
+  "homebrew_catalog_unavailable": "Homebrew-metadata zijn niet beschikbaar. Probeer het later opnieuw.",
+  "homebrew_category_desc": "Blader door pakketten van Homebrew."
 }

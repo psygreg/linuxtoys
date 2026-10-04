@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Reveniți la versiunea Snap anterioară?",
   "app_page_snap_revert_confirm_message": "LinuxToys va reveni pentru „{app_name}” la revizia Snap instalată anterior.\n\nDoriți să continuați?",
   "app_page_snap_revert": " Revino ",
-  "uri_install_error_title": "Linkul LinuxToys nu a putut fi deschis"
+  "uri_install_error_title": "Linkul LinuxToys nu a putut fi deschis",
+  "homebrew_catalog_unavailable": "Metadatele Homebrew nu sunt disponibile. Încercați din nou mai târziu.",
+  "homebrew_category_desc": "Răsfoiți pachetele din Homebrew."
 }

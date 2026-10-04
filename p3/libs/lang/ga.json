@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Fill Snap ar ais?",
   "app_page_snap_revert_confirm_message": "Fillfidh LinuxToys '{app_name}' ar ais chuig an leasú Snap a bhí suiteáilte roimhe seo.\n\nAr mhaith leat leanúint ar aghaidh?",
   "app_page_snap_revert": " Fill ar ais ",
-  "uri_install_error_title": "Níorbh fhéidir nasc LinuxToys a oscailt"
+  "uri_install_error_title": "Níorbh fhéidir nasc LinuxToys a oscailt",
+  "homebrew_catalog_unavailable": "Níl meiteashonraí Homebrew ar fáil. Bain triail eile as ar ball.",
+  "homebrew_category_desc": "Brabhsáil pacáistí ó Homebrew."
 }

@@ -1321,6 +1321,11 @@ class AppPageView(Gtk.Box):
     def _refresh_rating_state(self):
         if not self._rating_buttons:
             return
+        if self._selected_install_info.get("appstream_source") == "homebrew":
+            if self._rating_box is not None:
+                self._rating_box.set_no_show_all(True)
+                self._rating_box.hide()
+            return
         installed = self._install_state == "installed"
         if self._selected_is_snap():
             snap_id, snap_name = self._snap_rating_identity()
@@ -1640,6 +1645,8 @@ class AppPageView(Gtk.Box):
             return "Snap"
         if source == "aur":
             return "AUR"
+        if source == "homebrew":
+            return "Homebrew"
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
 
     @staticmethod

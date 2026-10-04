@@ -223,6 +223,9 @@ class ScriptCache:
             script_path = script_info.get("path", "")
             registered = self._is_registered(script_info, executed_names)
 
+            if script_info.get("appstream_source") == "homebrew":
+                self._removable_cache[script_path] = installed_packages.match(script_info) is not None
+                continue
             # AppStream entries can be installed outside LinuxToys. Their observed
             # package state is therefore part of removability, not just Registry state.
             if script_info.get("is_appstream_entry"):
@@ -278,6 +281,8 @@ class ScriptCache:
     def is_script_removable(self, script_info):
         script_path = script_info.get("path", "")
 
+        if script_info.get("appstream_source") == "homebrew":
+            return installed_packages.match(script_info) is not None
         if script_path in self._removable_cache:
             return self._removable_cache[script_path]
 
@@ -840,6 +845,14 @@ class SearchEngine:
         ]
         return self._group_results_by_category(results, max_results)
 
+    def search_homebrew_only(self, query, max_results=50):
+        """Filter the current Homebrew category without global discovery/navigation."""
+        if not query or len(query.strip()) < 2:
+            return []
+        results = [SearchResult(info, "script", int(score))
+                   for info, score in appstream_parser.search_homebrew_entries(query.strip().casefold())]
+        return self._group_results_by_category(results, max_results)
+
     def _group_results_by_category(self, results, max_results_per_category):
         """
         Group search results by category and sort appropriately.
@@ -863,7 +876,10 @@ class SearchEngine:
             # ``sys/sysadm`` rather than translation keys, so translating the whole
             # string directly produces labels like "Sys/Sysadm".
             category_key = str(item_info.get("category", "") or "").strip().strip("/")
-            if item_info.get("is_aur_entry"):
+            if item_info.get("appstream_source") == "homebrew":
+                category_name = "Homebrew"
+                category_path = "homebrew://catalog"
+            elif item_info.get("is_aur_entry"):
                 category_name = self.translations.get("aur_category", "AUR")
                 category_path = "aur://catalog"
             elif category_key:
@@ -921,6 +937,7 @@ class SearchEngine:
                     "best_match_score": 0,
                     "scripts": [],
                     "is_aur_group": bool(item_info.get("is_aur_entry")),
+                    "is_homebrew_group": item_info.get("appstream_source") == "homebrew",
                     "show_header": (
                         category_name
                         != self.translations.get(
@@ -944,7 +961,7 @@ class SearchEngine:
         grouped_list = list(category_groups.values())
         grouped_list.sort(
             key=lambda g: (
-                bool(g.get("is_aur_group", False)),
+                2 if g.get("is_aur_group") else 1 if g.get("is_homebrew_group") else 0,
                 -g["best_match_score"],
             )
         )

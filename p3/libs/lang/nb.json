@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Tilbakestille Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys vil tilbakestille '{app_name}' til den tidligere installerte Snap-revisjonen.\n\nVil du fortsette?",
   "app_page_snap_revert": " Tilbakestill ",
-  "uri_install_error_title": "Kunne ikke åpne LinuxToys-lenken"
+  "uri_install_error_title": "Kunne ikke åpne LinuxToys-lenken",
+  "homebrew_catalog_unavailable": "Homebrew-metadata er utilgjengelige. Prøv igjen senere.",
+  "homebrew_category_desc": "Bla gjennom pakker fra Homebrew."
 }

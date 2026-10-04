@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Færa Snap aftur?",
   "app_page_snap_revert_confirm_message": "LinuxToys færir '{app_name}' aftur í áður uppsetta Snap-útgáfu.\n\nViltu halda áfram?",
   "app_page_snap_revert": " Færa aftur ",
-  "uri_install_error_title": "Ekki tókst að opna LinuxToys-tengilinn"
+  "uri_install_error_title": "Ekki tókst að opna LinuxToys-tengilinn",
+  "homebrew_catalog_unavailable": "Homebrew-lýsigögn eru ekki tiltæk. Reyndu aftur síðar.",
+  "homebrew_category_desc": "Skoðaðu pakka frá Homebrew."
 }

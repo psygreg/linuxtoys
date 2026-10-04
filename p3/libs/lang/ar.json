@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "الرجوع بإصدار Snap؟",
   "app_page_snap_revert_confirm_message": "سيعيد LinuxToys تطبيق '{app_name}' إلى مراجعة Snap المثبتة سابقًا.\n\nهل تريد المتابعة؟",
   "app_page_snap_revert": " رجوع ",
-  "uri_install_error_title": "تعذر فتح رابط LinuxToys"
+  "uri_install_error_title": "تعذر فتح رابط LinuxToys",
+  "homebrew_catalog_unavailable": "بيانات Homebrew الوصفية غير متاحة. حاول مرة أخرى لاحقًا.",
+  "homebrew_category_desc": "تصفح الحزم من Homebrew."
 }

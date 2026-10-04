@@ -437,6 +437,8 @@ def _registry_entry_install_source(registry_data, registry_name):
             operation = str(operation or "").strip().casefold()
             if operation.startswith("flatpak ") and not operation.startswith("flatpak rm "):
                 return "flatpak"
+            if str(registry_name).startswith("homebrew:") and operation.startswith("homebrew "):
+                return "homebrew"
             if operation.startswith("snap ") and not operation.startswith("snap rm "):
                 return "snap"
             if operation.startswith("pkg ") and not operation.startswith("pkg rm "):
@@ -450,7 +452,7 @@ def _appstream_source_override(script_info, registry_data, registry_name):
         return ""
 
     default_source = str(script_info.get("appstream_source", "") or "").strip().casefold()
-    if default_source not in {"native", "flatpak", "snap"}:
+    if default_source not in {"native", "flatpak", "snap", "homebrew"}:
         return ""
 
     available_sources = {
@@ -462,7 +464,7 @@ def _appstream_source_override(script_info, registry_data, registry_name):
 
     actual_source = _registry_entry_install_source(registry_data, registry_name)
     if (
-        actual_source in {"native", "flatpak", "snap"}
+        actual_source in {"native", "flatpak", "snap", "homebrew"}
         and actual_source in available_sources
         and actual_source != default_source
     ):
@@ -473,7 +475,7 @@ def _appstream_source_override(script_info, registry_data, registry_name):
 def _select_manifest_source(script_info, source):
     """Select an explicitly requested AppStream source from a portable entry."""
     source = str(source or "").strip().casefold()
-    if source not in {"native", "flatpak", "snap"}:
+    if source not in {"native", "flatpak", "snap", "homebrew"}:
         return None
 
     candidates = [script_info]
@@ -563,6 +565,14 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
 
     entries = []
     for name in exported_names:
+        formulae = []
+        for _timestamp, operations in registry_data.get(name, ()):
+            for operation in operations:
+                if str(operation).startswith("homebrew "):
+                    formulae.extend(str(operation).split()[1:])
+        if name.startswith("homebrew:") and formulae:
+            entries.extend(f"homebrew:{formula}" for formula in dict.fromkeys(formulae))
+            continue
         script_info = find_script_by_name(name, translations)
         stable_id = _entry_stable_id(script_info) if script_info else ""
         entry = f"script:{stable_id or name}"
@@ -678,7 +688,43 @@ def load_manifest(manifest_path='manifest.txt'):
     return script_names
 
 
+def _prepare_homebrew_manifest_entries(formulae, translations=None):
+    """Validate exact formula IDs before setup; replay without a catalog lookup."""
+    formulae = list(dict.fromkeys(formulae))
+    for formula in formulae:
+        if not valid_manifest_value(formula) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9+_.@-]*", formula):
+            raise ValueError(f"Invalid Homebrew formula name: {formula!r}")
+    if not formulae:
+        return []
+    from . import homebrew_catalog
+    if not homebrew_catalog.enabled():
+        brew_script = find_script_by_id("brew", translations)
+        if brew_script is None or run_script(brew_script) != 0 or not homebrew_catalog.enabled():
+            raise ValueError("Could not prepare Homebrew required by this manifest.")
+    return [{
+        "name": formula, "registry_name": "homebrew:" + formula,
+        "homebrew_name": formula, "package-name": formula,
+        "appstream_source": "homebrew", "is_appstream_entry": True,
+        "path": "appstream://homebrew/homebrew:" + formula,
+    } for formula in formulae]
+
+
 def run_script(script_info):
+    if script_info.get("appstream_source") == "homebrew":
+        from . import homebrew_catalog
+        script_info = homebrew_catalog.materialize_install(script_info)
+        script_info["cleanup_path"] = script_info["path"]
+    try:
+        return _run_script_impl(script_info)
+    finally:
+        if script_info.get("appstream_source") == "homebrew" and script_info.get("cleanup_path"):
+            try:
+                os.unlink(script_info["cleanup_path"])
+            except OSError:
+                pass
+
+
+def _run_script_impl(script_info):
     """
     Execute a single script and return its exit code.
     In developer mode, performs dry-run validation instead of execution.
@@ -884,7 +930,7 @@ def print_cli_usage():
     print("  - script:<id> uses LinuxToys' portable internal ID (recommended)")
     print("  - script:<id>@native/@flatpak preserves an explicit non-default source choice")
     print("  - require:flathub ensures Flatpak/Flathub is available before resolution")
-    print("  - package:<name> and flatpak:<id> request those exact source identifiers")
+    print("  - package:<name>, flatpak:<id>, and homebrew:<formula> request exact source identifiers")
     print("  - Lines starting with # are comments")
     print("  - Empty lines are ignored")
     print()
@@ -961,12 +1007,13 @@ def run_manifest_mode(translations=None):
     potential_flatpaks = []
     explicit_packages = []
     explicit_snaps = []
+    explicit_homebrew = []
     explicit_scripts = []
     manifest_requirements = set()
     other_items = []
     for raw_name in script_names:
         prefix, separator, value = raw_name.partition(':')
-        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak', 'snap', 'require'}:
+        if separator and prefix.lower() in {'script', 'package', 'pkg', 'flatpak', 'snap', 'homebrew', 'require'}:
             name = value.strip()
             if not name:
                 print(f"Error: empty manifest entry '{raw_name}'.")
@@ -976,12 +1023,14 @@ def run_manifest_mode(translations=None):
                 source_override = ""
                 if "@" in name:
                     candidate_id, candidate_source = name.rsplit("@", 1)
-                    if candidate_source.casefold() in {"native", "flatpak", "snap"}:
+                    if candidate_source.casefold() in {"native", "flatpak", "snap", "homebrew"}:
                         script_id = candidate_id
                         source_override = candidate_source.casefold()
                 explicit_scripts.append((script_id, source_override))
             elif prefix.lower() in {'package', 'pkg'}:
                 explicit_packages.append(name)
+            elif prefix.lower() == 'homebrew':
+                explicit_homebrew.append(name)
             elif prefix.lower() == 'snap':
                 explicit_snaps.append(name)
             elif prefix.lower() == 'require':
@@ -1013,6 +1062,13 @@ def run_manifest_mode(translations=None):
     ) and not _bootstrap_flatpak_for_manifest():
         print("Error: Could not prepare Flatpak/Flathub required by this manifest.")
         return 2
+
+    if explicit_homebrew:
+        try:
+            scripts_to_run.extend(_prepare_homebrew_manifest_entries(explicit_homebrew, translations))
+        except ValueError as exc:
+            print(f"Error: {exc}")
+            return 2
 
     for package_name in explicit_packages:
         if not valid_package_name(package_name):
@@ -1092,7 +1148,12 @@ def run_manifest_mode(translations=None):
                 invalid_items.append(f"script:{script_id}@{source_override}")
                 continue
             script_info = selected_source
-        if script_info.get("is_repo_entry"):
+        if script_info.get("appstream_source") == "homebrew":
+            from . import homebrew_catalog
+            if not homebrew_catalog.enabled():
+                invalid_items.append(script_info.get("name", "Homebrew"))
+                continue
+        elif script_info.get("is_repo_entry"):
             try:
                 script_info = materialize_repo_script(script_info)
             except (ValueError, NotImplementedError, OSError) as exc:
@@ -1151,7 +1212,12 @@ def run_manifest_mode(translations=None):
             invalid_items.append(script_name)
             continue
             
-        if script_info.get("is_repo_entry"):
+        if script_info.get("appstream_source") == "homebrew":
+            from . import homebrew_catalog
+            if not homebrew_catalog.enabled():
+                invalid_items.append(script_info.get("name", "Homebrew"))
+                continue
+        elif script_info.get("is_repo_entry"):
             # repo_parser already applied the entry's os/hardware compatibility.
             # Its repo:// path must become a real file before execution.
             try:

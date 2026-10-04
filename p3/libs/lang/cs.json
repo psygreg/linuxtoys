@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Vrátit Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys vrátí aplikaci „{app_name}“ na dříve nainstalovanou revizi Snap.\n\nChcete pokračovat?",
   "app_page_snap_revert": " Vrátit ",
-  "uri_install_error_title": "Odkaz LinuxToys nelze otevřít"
+  "uri_install_error_title": "Odkaz LinuxToys nelze otevřít",
+  "homebrew_catalog_unavailable": "Metadata Homebrew nejsou dostupná. Zkuste to znovu později.",
+  "homebrew_category_desc": "Procházejte balíčky z Homebrew."
 }

@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Επαναφορά του Snap;",
   "app_page_snap_revert_confirm_message": "Το LinuxToys θα επαναφέρει το '{app_name}' στην προηγουμένως εγκατεστημένη αναθεώρηση Snap.\n\nΘέλετε να συνεχίσετε;",
   "app_page_snap_revert": " Επαναφορά ",
-  "uri_install_error_title": "Δεν ήταν δυνατό το άνοιγμα του συνδέσμου LinuxToys"
+  "uri_install_error_title": "Δεν ήταν δυνατό το άνοιγμα του συνδέσμου LinuxToys",
+  "homebrew_catalog_unavailable": "Τα μεταδεδομένα του Homebrew δεν είναι διαθέσιμα. Δοκιμάστε ξανά αργότερα.",
+  "homebrew_category_desc": "Περιηγηθείτε σε πακέτα από το Homebrew."
 }

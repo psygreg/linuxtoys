@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Vrátiť Snap?",
   "app_page_snap_revert_confirm_message": "LinuxToys vráti aplikáciu „{app_name}“ na predtým nainštalovanú revíziu Snap.\n\nChcete pokračovať?",
   "app_page_snap_revert": " Vrátiť ",
-  "uri_install_error_title": "Odkaz LinuxToys sa nepodarilo otvoriť"
+  "uri_install_error_title": "Odkaz LinuxToys sa nepodarilo otvoriť",
+  "homebrew_catalog_unavailable": "Metadáta Homebrew nie sú dostupné. Skúste to znova neskôr.",
+  "homebrew_category_desc": "Prehliadajte balíky z Homebrew."
 }

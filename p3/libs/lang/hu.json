@@ -722,5 +722,7 @@
   "app_page_snap_revert_confirm_title": "Visszaállítja a Snapet?",
   "app_page_snap_revert_confirm_message": "A LinuxToys visszaállítja a(z) „{app_name}” alkalmazást a korábban telepített Snap-revízióra.\n\nSzeretné folytatni?",
   "app_page_snap_revert": " Visszaállítás ",
-  "uri_install_error_title": "A LinuxToys-hivatkozás nem nyitható meg"
+  "uri_install_error_title": "A LinuxToys-hivatkozás nem nyitható meg",
+  "homebrew_catalog_unavailable": "A Homebrew metaadatai nem érhetők el. Próbálja újra később.",
+  "homebrew_category_desc": "Böngésszen a Homebrew csomagjai között."
 }

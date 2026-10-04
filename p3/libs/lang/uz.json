@@ -721,5 +721,7 @@
   "app_page_snap_revert_confirm_title": "Snap oldingi versiyaga qaytarilsinmi?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}' ilovasini avval o'rnatilgan Snap reviziyasiga qaytaradi.\n\nDavom etishni xohlaysizmi?",
   "app_page_snap_revert": " Qaytarish ",
-  "uri_install_error_title": "LinuxToys havolasini ochib bo'lmadi"
+  "uri_install_error_title": "LinuxToys havolasini ochib bo'lmadi",
+  "homebrew_catalog_unavailable": "Homebrew metadata ma'lumotlari mavjud emas. Keyinroq qayta urinib ko'ring.",
+  "homebrew_category_desc": "Homebrew paketlarini ko'rib chiqing."
 }

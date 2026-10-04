@@ -8,6 +8,10 @@ class SearchCtl:
         category = getattr(self, "current_category_info", None)
         return bool(category and category.get("is_aur_category"))
 
+    def _homebrew_search_mode_active(self):
+        category = getattr(self, "current_category_info", None)
+        return bool(category and category.get("is_homebrew_category"))
+
     def _create_search_ui(self):
         """Create the search UI components for the header bar."""
         # Create search entry
@@ -97,7 +101,7 @@ class SearchCtl:
 
     def _on_search_activate(self, search_entry):
         query = search_entry.get_text().strip()
-        if not self._aur_search_mode_active():
+        if not (self._aur_search_mode_active() or self._homebrew_search_mode_active()):
             if self._try_smart_search_navigation(query):
                 return
 
@@ -212,6 +216,8 @@ class SearchCtl:
             # AUR browsing has its own search scope. Do not allow smart-navigation
             # aliases/categories or results from scripts/AppStream to leak into it.
             self.search_results = self.search_engine.search_aur_only(query)
+        elif self._homebrew_search_mode_active():
+            self.search_results = self.search_engine.search_homebrew_only(query)
         else:
             if self._try_smart_search_navigation(query):
                 return

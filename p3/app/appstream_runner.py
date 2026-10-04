@@ -16,6 +16,7 @@ import urllib.request
 import threading
 import uuid
 
+from . import homebrew_catalog
 from .antenna import antenna
 from .gtk_common import GLib
 from .library_loader import script_command, script_environment
@@ -443,6 +444,8 @@ class AppStreamRunner:
                     exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
                 elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
+                elif record["info"].get("appstream_source") == "homebrew":
+                    exit_code = self._run_homebrew_job(record["info"])
                 elif aur_job:
                     exit_code, failure_output = self._run_aur_job(record["info"])
                 elif record.get("action") == "snap_revert":
@@ -957,6 +960,16 @@ class AppStreamRunner:
             except OSError:
                 pass
 
+    def _run_homebrew_job(self, script_info):
+        payload = homebrew_catalog.materialize_install(script_info)
+        try:
+            return self._run_job(payload)
+        finally:
+            try:
+                os.unlink(payload["path"])
+            except OSError:
+                pass
+
     def _run_job(self, script_info):
         if self._process is None or self._process.poll() is not None:
             self._close_pty()
@@ -1120,6 +1133,8 @@ class AppStreamRunner:
                     lines.append(f"pkg_install {shlex.quote(package)}")
                 elif dependency_type == "flathub":
                     lines.append(f"pkg_flat {shlex.quote(package)}")
+                elif dependency_type == "homebrew":
+                    lines.append(f"pkg_brew {shlex.quote(package)}")
                 elif dependency_type == "snap":
                     lines.append(f"pkg_snap {shlex.quote(package)}")
 

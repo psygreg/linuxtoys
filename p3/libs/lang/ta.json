@@ -720,5 +720,7 @@
   "app_page_snap_revert_confirm_title": "Snap-ஐ முந்தைய பதிப்பிற்கு மாற்றவா?",
   "app_page_snap_revert_confirm_message": "LinuxToys '{app_name}'-ஐ முன்பு நிறுவப்பட்ட Snap revision-க்கு மாற்றும்.\n\nதொடர விரும்புகிறீர்களா?",
   "app_page_snap_revert": " மாற்றியமை ",
-  "uri_install_error_title": "LinuxToys இணைப்பைத் திறக்க முடியவில்லை"
+  "uri_install_error_title": "LinuxToys இணைப்பைத் திறக்க முடியவில்லை",
+  "homebrew_catalog_unavailable": "Homebrew மெட்டாடேட்டா கிடைக்கவில்லை. பின்னர் மீண்டும் முயற்சிக்கவும்.",
+  "homebrew_category_desc": "Homebrew-இலிருந்து தொகுப்புகளை உலாவுங்கள்."
 }
