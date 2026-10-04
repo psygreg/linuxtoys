@@ -16,8 +16,17 @@ if ! brew_bin=$(_brew_executable); then
     brew_prefix64=$(printf '%s' "$brew_prefix" | base64 | tr -d '\n')
     _append_transmap "homebrew-manager $brew_prefix64"
     if [ -f "$HOME/.bashrc" ]; then
+        prep_edit "$HOME/.bashrc"
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+    fi
+    if [ -f "$HOME/.zshrc" ]; then
+        prep_edit "$HOME/.zshrc"
+        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.zshrc
+    fi
+    if [ -f "$HOME/.config/fish/config.fish" ]; then
+        prep_edit "$HOME/.config/fish/config.fish"
+        echo 'brew shellenv | source' >> "$HOME/.config/fish/config.fish"
     fi
 fi
 _brew_source_changed
