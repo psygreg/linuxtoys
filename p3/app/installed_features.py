@@ -2,7 +2,7 @@
 
 import os
 
-from . import get_icon_path, gui_rs, installed_packages, parser
+from . import get_icon_path, gui_rs, installed_packages, parser, registry_utils
 from .gtk_common import Gtk
 from .revert_helper import _get_executed_script_names
 
@@ -48,6 +48,33 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         for info in appstream_installed:
             key = info.get("path") or (info.get("name", ""), info.get("repo", ""))
             if key in seen or not cache.is_script_removable(info):
+                continue
+            seen.add(key)
+            installed.append(info)
+
+        # External packages installed through the package view have no catalog
+        # entry backing them. Their registry transactions record a package-file
+        # or AppImage install, so surface them here to stay removable.
+        known_registry_names = {
+            str(item.get("registry_name") or item.get("name") or "").strip()
+            for item in cache.get_all_scripts()
+        }
+        known_registry_names.discard("")
+        for registry_name in registry_utils.get_local_package_entries():
+            if registry_name in known_registry_names:
+                continue
+            info = {
+                "name": registry_name,
+                "description": "",
+                "icon": "package-x-generic",
+                "repo": "",
+                "path": "",
+                "is_script": True,
+                "is_local_package": True,
+                "registry_name": registry_name,
+            }
+            key = self._stable_key(info)
+            if key in seen:
                 continue
             seen.add(key)
             installed.append(info)

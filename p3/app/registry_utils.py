@@ -67,6 +67,43 @@ def parse_registry_file():
 
     return scripts_registry
 
+def _is_local_package_operation(operation):
+    """Whether one registry operation records an external package-file install."""
+    text = str(operation).strip()
+    if text.startswith("pkg file "):
+        return True
+    # "appimage rm" operations record removals, not installs.
+    return text.startswith("appimage ") and not text.startswith("appimage rm ")
+
+
+def get_local_package_entries(registry_data=None):
+    """
+    Return registry entries that record external package-file installs.
+
+    Packages installed through the package view are registered like any other
+    transaction, but no catalog entry backs them. Their transactions carry a
+    "pkg file <path>" (deb/rpm/arch/flatpak bundle) or "appimage <name>"
+    operation. Catalog scripts can record the same operations, so callers must
+    exclude registry names that a catalog script already uses.
+
+    Returns a registry-shaped dict: {script_name: [(timestamp, [operations])]}.
+    """
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    local_packages = {}
+    for script_name, executions in registry_data.items():
+        matched = [
+            (timestamp, operations)
+            for timestamp, operations in executions
+            if any(_is_local_package_operation(operation) for operation in operations)
+        ]
+        if matched:
+            local_packages[script_name] = matched
+
+    return local_packages
+
+
 def search_registry_entries(registry_data, query):
     """
     Search registry entries by script name, timestamp, or operation text.
