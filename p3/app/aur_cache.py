@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import threading
 from pathlib import Path
-from . import _catalog_rs
+from . import _catalog_rs, compat
 
 CACHE_DIR = Path(os.path.expanduser("~/.cache/linuxtoys/aur"))
 ARCHIVE_PATH = CACHE_DIR / "packages-meta-ext-v1.json.gz"
@@ -57,13 +57,24 @@ def _native_repository_packages():
     })
 
 
+def supported():
+    """A shared opt-in/cache cannot enable AUR on an incompatible system."""
+    keys = set(compat.get_system_compat_keys())
+    return bool(keys.intersection({"arch", "cachy", "manjaro"})) and not keys.intersection(
+        {"steamos", "dakota", "gnomeos", "kde-linux", "ostree", "ublue"}
+    )
+
+
 def enabled():
-    return ENABLED_PATH.is_file()
+    return supported() and ENABLED_PATH.is_file()
 
 
 def enable():
+    if not supported():
+        return False
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     ENABLED_PATH.touch(exist_ok=True)
+    return True
 
 
 def refresh(force=False):
