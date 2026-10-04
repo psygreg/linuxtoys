@@ -596,6 +596,9 @@ class AppWindow(
             if not self._command_succeeds(["pacman", "-Slq", "multilib"]):
                 recommendations.append("multilib")
 
+        if keys.intersection({"steamos", "gnomeos", "dakota", "kde-linux"}) and not homebrew_catalog.enabled():
+            recommendations.append("brew")
+
         return recommendations
 
     def _start_startup_recommendation_check(self):

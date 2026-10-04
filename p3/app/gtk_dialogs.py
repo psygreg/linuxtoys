@@ -142,6 +142,7 @@ def run_startup_recommendations_dialog(parent, translations, recommendations):
     content.pack_start(intro, False, False, 0)
 
     names = {
+        "brew": translations.get("startup_recommendation_homebrew", "Homebrew"),
         "flathub": translations.get("startup_recommendation_flathub", "Flathub"),
         "rpmfusion": translations.get("startup_recommendation_rpmfusion", "RPM Fusion"),
         "multilib": translations.get("startup_recommendation_multilib", "Multilib"),
