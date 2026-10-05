@@ -9,11 +9,31 @@ else:
     from compat import get_linuxtoys_cache_dir
 
 
+_PARSE_CACHE = {"key": None, "data": {}}
+
+
 def parse_registry_file():
+    """Parse the registry file, memoized by (mtime, size).
+
+    The returned dict is shared between callers and must be treated as
+    read-only. Any write to the registry file changes its key and invalidates
+    the cache automatically.
+    """
+    global _PARSE_CACHE
     registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
 
     if not os.path.exists(registry_file):
+        _PARSE_CACHE = {"key": None, "data": {}}
         return {}
+
+    try:
+        stat = os.stat(registry_file)
+        cache_key = (stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return {}
+
+    if _PARSE_CACHE["key"] == cache_key:
+        return _PARSE_CACHE["data"]
 
     try:
         with open(registry_file, "r") as f:
@@ -69,6 +89,7 @@ def parse_registry_file():
             (timestamp, operations)
         )
 
+    _PARSE_CACHE = {"key": cache_key, "data": scripts_registry}
     return scripts_registry
 
 def _is_local_package_operation(operation):

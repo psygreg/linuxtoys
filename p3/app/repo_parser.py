@@ -33,6 +33,12 @@ def clear_runtime_caches():
         _REPO_ENTRIES_CACHE.clear()
         global _MONETARY_LOCALE_CACHE
         _MONETARY_LOCALE_CACHE = None
+    # Display names resolve through the repo lists; they must not outlive them.
+    try:
+        from .parser import clear_display_name_cache
+        clear_display_name_cache()
+    except Exception:
+        pass
 
 
 OS_KEYS = {

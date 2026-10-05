@@ -663,6 +663,15 @@ def get_repository(name):
         str(name).strip().casefold()
     )
 
+_DISPLAY_NAME_CACHE = {"translations": None, "resolved": {}}
+
+
+def clear_display_name_cache():
+    """Drop memoized display names (catalog resync / language change)."""
+    _DISPLAY_NAME_CACHE["translations"] = None
+    _DISPLAY_NAME_CACHE["resolved"] = {}
+
+
 def get_display_name(name, translations=None):
     """Resolve an internal script/repository name to its UI display name."""
     if not name:
@@ -681,6 +690,22 @@ def get_display_name(name, translations=None):
             template = (translations or {}).get(template_key, default_template)
             return template.format(name=get_display_name(target, translations))
 
+    # Resolution walks the repo lists and the script tree on every call, which
+    # is measurable during startup bursts; memoize per translations object.
+    cache = _DISPLAY_NAME_CACHE
+    if cache["translations"] is not translations:
+        cache["translations"] = translations
+        cache["resolved"] = {}
+    cache_key = text
+    if cache_key in cache["resolved"]:
+        return cache["resolved"][cache_key]
+
+    resolved = _resolve_display_name(text, translations)
+    cache["resolved"][cache_key] = resolved
+    return resolved
+
+
+def _resolve_display_name(name, translations=None):
     normalized_name = str(name).strip().casefold()
 
     for entry in get_repo_entries(translations):

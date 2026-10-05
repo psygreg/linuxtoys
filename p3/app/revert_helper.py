@@ -15,6 +15,10 @@ from .compat import get_linuxtoys_cache_dir
 from .registry_utils import normalize_registry_content
 
 
+_LOAD_ENTRIES_CACHE = {"key": None, "entries": []}
+_EXECUTED_NAMES_CACHE = {"key": None, "executed": frozenset()}
+
+
 def _run_ok(cmd):
     """Execute a command and return True if successful."""
     try:
@@ -80,42 +84,17 @@ def _load_last_execution(script_name):
     as terminal remove-button availability checks) working without making the
     registry itself language-dependent.
     """
-    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
-
-    if not os.path.exists(registry_file):
+    registry_entries = _load_registry_entries()
+    if not registry_entries:
         return []
 
-    try:
-        with open(registry_file, "r") as f:
-            content = f.read()
-    except Exception:
-        return []
+    parsed_entries = [
+        (entry["name"], entry) for entry in reversed(registry_entries)
+    ]
 
-    entries = normalize_registry_content(content).split("---\n")
-    entries.reverse()
-
-    def extract_operations(entry):
-        operations = []
-        for line in entry.split("\n")[1:]:
-            line = line.strip()
-            if line.startswith("- "):
-                op_line = line[2:].strip()
-                if op_line and op_line not in ("Changes:", "Changes: (none)"):
-                    operations.append(op_line)
-        return operations
-
-    parsed_entries = []
-    for entry in entries:
-        entry = entry.strip()
-        if not entry:
-            continue
-        lines = entry.split("\n")
-        if not lines or "Script: " not in lines[0]:
-            continue
-        stored_name = lines[0].split("Script: ", 1)[1].strip()
-        parsed_entries.append((stored_name, entry))
+    for stored_name, entry in parsed_entries:
         if stored_name == script_name:
-            return extract_operations(entry)
+            return list(entry["operations"])
 
     # A caller may still pass the localized pretty name. Resolve stored stable IDs
     # to their current display names only for lookup; never rewrite registry data.
@@ -128,7 +107,7 @@ def _load_last_execution(script_name):
         for stored_name, entry in parsed_entries:
             display_name = get_display_name(stored_name, translations)
             if str(display_name).strip().casefold() == target:
-                return extract_operations(entry)
+                return list(entry["operations"])
     except Exception:
         pass
 
@@ -136,11 +115,22 @@ def _load_last_execution(script_name):
 
 
 def _load_registry_entries():
-    """Load registry transactions in chronological order."""
+    """Load registry transactions in chronological order (mtime-memoized)."""
+    global _LOAD_ENTRIES_CACHE
     registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
 
     if not os.path.exists(registry_file):
+        _LOAD_ENTRIES_CACHE = {"key": None, "entries": []}
         return []
+
+    try:
+        stat = os.stat(registry_file)
+        cache_key = (stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return []
+
+    if _LOAD_ENTRIES_CACHE["key"] == cache_key:
+        return _LOAD_ENTRIES_CACHE["entries"]
 
     try:
         with open(registry_file, "r") as f:
@@ -177,6 +167,7 @@ def _load_registry_entries():
             "operations": operations,
         })
 
+    _LOAD_ENTRIES_CACHE = {"key": cache_key, "entries": entries}
     return entries
 
 
@@ -204,11 +195,22 @@ def _get_executed_script_names():
     script when only the presence of a record is needed (e.g. caching the
     removable state of many scripts at once).
     """
+    global _EXECUTED_NAMES_CACHE
     registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
     executed = set()
 
     if not os.path.exists(registry_file):
+        _EXECUTED_NAMES_CACHE = {"key": None, "executed": frozenset()}
         return executed
+
+    try:
+        stat = os.stat(registry_file)
+        cache_key = (stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return executed
+
+    if _EXECUTED_NAMES_CACHE["key"] == cache_key:
+        return set(_EXECUTED_NAMES_CACHE["executed"])
 
     try:
         with open(registry_file, "r") as f:
@@ -248,7 +250,10 @@ def _get_executed_script_names():
         if has_operations:
             executed.add(script_name)
 
-    return executed
+    _EXECUTED_NAMES_CACHE = {
+        "key": cache_key, "executed": frozenset(executed),
+    }
+    return set(executed)
 
 
 def _parse_operation(op_line):

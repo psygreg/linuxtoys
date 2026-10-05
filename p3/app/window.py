@@ -791,9 +791,18 @@ class AppWindow(
         threading.Thread(target=worker, daemon=True, name="linuxtoys-homebrew-source").start()
 
     def _start_homebrew_after_startup(self):
-        """Keep optional-source work outside the initial GTK transition."""
+        """Keep optional-source work well outside the launch window.
+
+        The refresh holds the GIL through a heavy catalog parse (~1s), which
+        stalls UI interaction if it runs while the user is settling in. Wait
+        briefly after the startup transition before spending that time.
+        """
         if not self._categories_startup_transition_complete:
             return True
+        GLib.timeout_add_seconds(15, self._deferred_homebrew_refresh)
+        return False
+
+    def _deferred_homebrew_refresh(self):
         self._refresh_homebrew_catalog()
         return False
 
