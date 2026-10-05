@@ -724,5 +724,7 @@
   "app_page_snap_revert": " Visszaállítás ",
   "uri_install_error_title": "A LinuxToys-hivatkozás nem nyitható meg",
   "homebrew_catalog_unavailable": "A Homebrew metaadatai nem érhetők el. Próbálja újra később.",
-  "homebrew_category_desc": "Böngésszen a Homebrew csomagjai között."
+  "homebrew_category_desc": "Böngésszen a Homebrew csomagjai között.",
+  "mtuprobe": "MTU Probing engedélyezése",
+  "mtuprobe_desc": "Az MTU probing (Packetization Layer Path MTU Discovery) egy automatizált hálózati technika, amely meghatározza azt a legnagyobb csomagméretet, amely töredezés vagy eldobás nélkül képes végighaladni egy hálózati útvonalon. Engedélyezése megold bizonyos játékokkal kapcsolatos problémákat, különösen a Ubisoft játékainál."
 }

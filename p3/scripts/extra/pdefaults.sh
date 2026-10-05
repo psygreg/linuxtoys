@@ -35,6 +35,8 @@ sysag_run () {
     call_script ubuntuv3
     # enable tcp_bbr if applicable
     call_script bbr
+    # enable MTU probing
+    call_script mtuprobe
 }
 # consolidated installation
 optimizer () {

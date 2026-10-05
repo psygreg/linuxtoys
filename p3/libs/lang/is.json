@@ -724,5 +724,7 @@
   "app_page_snap_revert": " Færa aftur ",
   "uri_install_error_title": "Ekki tókst að opna LinuxToys-tengilinn",
   "homebrew_catalog_unavailable": "Homebrew-lýsigögn eru ekki tiltæk. Reyndu aftur síðar.",
-  "homebrew_category_desc": "Skoðaðu pakka frá Homebrew."
+  "homebrew_category_desc": "Skoðaðu pakka frá Homebrew.",
+  "mtuprobe": "Virkja MTU Probing",
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) er sjálfvirk nettækni sem er notuð til að finna stærstu pakkastærð sem getur farið um netslóð án þess að brotna upp eða falla niður. Virkjun þess lagar sum vandamál með leiki, sérstaklega leiki frá Ubisoft."
 }

@@ -724,5 +724,7 @@
   "app_page_snap_revert": " Reverter ",
   "uri_install_error_title": "Não foi possível abrir o link do LinuxToys",
   "homebrew_catalog_unavailable": "Os metadados do Homebrew estão indisponíveis. Tente novamente mais tarde.",
-  "homebrew_category_desc": "Explore pacotes do Homebrew."
+  "homebrew_category_desc": "Explore pacotes do Homebrew.",
+  "mtuprobe": "Ativar MTU Probing",
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) é uma técnica automatizada de rede usada para encontrar o maior tamanho de pacote que pode trafegar por uma rota de rede sem ser fragmentado ou descartado. Ativá-la corrige alguns problemas com jogos, especialmente os da Ubisoft."
 }

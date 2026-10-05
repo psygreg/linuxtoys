@@ -724,5 +724,7 @@
   "app_page_snap_revert": " Grąžinti ",
   "uri_install_error_title": "Nepavyko atidaryti LinuxToys nuorodos",
   "homebrew_catalog_unavailable": "Homebrew metaduomenys nepasiekiami. Bandykite dar kartą vėliau.",
-  "homebrew_category_desc": "Naršykite Homebrew paketus."
+  "homebrew_category_desc": "Naršykite Homebrew paketus.",
+  "mtuprobe": "Įjungti MTU Probing",
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) yra automatizuotas tinklo metodas, naudojamas didžiausiam paketo dydžiui, galinčiam keliauti tinklo keliu be fragmentavimo ar atmetimo, nustatyti. Jo įjungimas išsprendžia kai kurias žaidimų problemas, ypač Ubisoft žaidimuose."
 }

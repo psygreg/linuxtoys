@@ -724,5 +724,7 @@
   "app_page_snap_revert": " ပြန်ပြောင်းရန် ",
   "uri_install_error_title": "LinuxToys လင့်ခ်ကို ဖွင့်၍မရပါ",
   "homebrew_catalog_unavailable": "Homebrew metadata မရရှိနိုင်ပါ။ နောက်မှ ထပ်စမ်းကြည့်ပါ။",
-  "homebrew_category_desc": "Homebrew မှ package များကို ရှာဖွေကြည့်ရှုပါ။"
+  "homebrew_category_desc": "Homebrew မှ package များကို ရှာဖွေကြည့်ရှုပါ။",
+  "mtuprobe": "MTU Probing ကို ဖွင့်ရန်",
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) သည် network လမ်းကြောင်းတစ်လျှောက် fragment ဖြစ်ခြင်း သို့မဟုတ် drop ဖြစ်ခြင်းမရှိဘဲ ဖြတ်သန်းနိုင်သည့် အကြီးဆုံး packet size ကို ရှာဖွေရန် အသုံးပြုသော အလိုအလျောက် networking နည်းပညာဖြစ်သည်။ ၎င်းကို ဖွင့်ခြင်းဖြင့် အထူးသဖြင့် Ubisoft ဂိမ်းများတွင် ဖြစ်ပေါ်သော ပြဿနာအချို့ကို ဖြေရှင်းပေးနိုင်သည်။"
 }

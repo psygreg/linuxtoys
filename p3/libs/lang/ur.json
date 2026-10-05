@@ -724,5 +724,7 @@
   "app_page_snap_revert": " واپس کریں ",
   "uri_install_error_title": "LinuxToys لنک نہیں کھولا جا سکا",
   "homebrew_catalog_unavailable": "Homebrew میٹا ڈیٹا دستیاب نہیں ہے۔ بعد میں دوبارہ کوشش کریں۔",
-  "homebrew_category_desc": "Homebrew سے پیکیجز براؤز کریں۔"
+  "homebrew_category_desc": "Homebrew سے پیکیجز براؤز کریں۔",
+  "mtuprobe": "MTU Probing فعال کریں",
+  "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) ایک خودکار نیٹ ورکنگ تکنیک ہے جو اس سب سے بڑے پیکیٹ سائز کا تعین کرتی ہے جو کسی نیٹ ورک راستے سے بغیر تقسیم یا ضائع ہوئے گزر سکتا ہے۔ اسے فعال کرنے سے گیمز، خاص طور پر Ubisoft کی گیمز، کے کچھ مسائل حل ہوتے ہیں۔"
 }

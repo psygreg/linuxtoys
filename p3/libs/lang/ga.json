@@ -724,5 +724,7 @@
   "app_page_snap_revert": " Fill ar ais ",
   "uri_install_error_title": "Níorbh fhéidir nasc LinuxToys a oscailt",
   "homebrew_catalog_unavailable": "Níl meiteashonraí Homebrew ar fáil. Bain triail eile as ar ball.",
-  "homebrew_category_desc": "Brabhsáil pacáistí ó Homebrew."
+  "homebrew_category_desc": "Brabhsáil pacáistí ó Homebrew.",
+  "mtuprobe": "Cumasaigh MTU Probing",
+  "mtuprobe_desc": "Is teicníc líonraithe uathoibrithe é MTU probing (Packetization Layer Path MTU Discovery) a úsáidtear chun an méid paicéid is mó atá in ann taisteal thar chonair líonra gan a bheith ilroinnte ná caillte a aimsiú. Réitíonn a chumasú roinnt fadhbanna le cluichí, go háirithe cluichí ó Ubisoft."
 }

@@ -724,5 +724,7 @@
   "app_page_snap_revert": " Vrati ",
   "uri_install_error_title": "Nije moguće otvoriti LinuxToys poveznicu",
   "homebrew_catalog_unavailable": "Homebrew metapodaci nisu dostupni. Pokušajte ponovno kasnije.",
-  "homebrew_category_desc": "Pregledajte pakete iz Homebrew-a."
+  "homebrew_category_desc": "Pregledajte pakete iz Homebrew-a.",
+  "mtuprobe": "Omogući MTU Probing",
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) automatizirana je mrežna tehnika koja pronalazi najveću veličinu paketa koja može proći mrežnom putanjom bez fragmentiranja ili odbacivanja. Omogućavanje ove opcije rješava neke probleme s igrama, posebno Ubisoftovim igrama."
 }
